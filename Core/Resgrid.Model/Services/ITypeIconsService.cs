@@ -15,8 +15,8 @@ namespace Resgrid.Model.Services
 
 		/// <summary>
 		/// Re-encodes <paramref name="data"/> to the stored icon and makes it the type's icon under a new IconKey, replacing
-		/// any earlier upload. Throws a user-facing rejection when the file is not a usable image. Returns the new IconKey,
-		/// or null when the type is not this department's.
+		/// any earlier upload (of uploads at once, the newest is kept). Throws a user-facing rejection when the file is not a
+		/// usable image. Returns the new IconKey, or null when the type is not this department's.
 		/// </summary>
 		Task<string> UploadIconAsync(int departmentId, TypeIconKinds kind, int typeId, string userId, byte[] data, CancellationToken cancellationToken = default);
 

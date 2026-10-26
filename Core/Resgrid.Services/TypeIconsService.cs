@@ -48,18 +48,20 @@ namespace Resgrid.Services
 
 			var icon = BuildIcon(departmentId, kind, typeId, null, userId, TypeIconRenditions.Build(data));
 
-			// New row first, then point the type at it (the update is scoped to the department, so it also proves
-			// ownership), then drop the replaced rows: a failure part way leaves the type on a working icon, old or new.
+			// New row first, then point the type at the newest icon of its slot (the update is scoped to the department, so it
+			// also proves ownership), then drop the older rows: a failure part way leaves the type on a working icon, old or new.
+			// The newest, not "this one": two uploads at once would each delete the other's row and leave the type on a key
+			// that no longer exists, while each step here keeps the newest row, so whichever runs last leaves the type on it.
 			// Only the type's own icon slot is touched; its status and priority icons stay.
 			await _typeIconsRepository.InsertAsync(icon, cancellationToken);
 
-			if (await _typeIconsRepository.SetTypeIconKeyAsync(departmentId, kind, typeId, icon.IconKey, cancellationToken) == 0)
+			if (await _typeIconsRepository.SetTypeIconKeyToNewestAsync(departmentId, kind, typeId, cancellationToken) == 0)
 			{
 				await _typeIconsRepository.DeleteSlotAsync(departmentId, kind, typeId, null, null, cancellationToken);
 				return null;
 			}
 
-			await _typeIconsRepository.DeleteSlotAsync(departmentId, kind, typeId, null, icon.IconKey, cancellationToken);
+			await _typeIconsRepository.DeleteAllButNewestInSlotAsync(departmentId, kind, typeId, null, cancellationToken);
 
 			return icon.IconKey;
 		}
@@ -92,8 +94,9 @@ namespace Resgrid.Services
 
 			var icon = BuildIcon(departmentId, kind, typeId, variant, userId, rendition);
 
+			// The slot keeps its newest upload rather than "this one": two uploads at once would each delete the other's row.
 			await _typeIconsRepository.InsertAsync(icon, cancellationToken);
-			await _typeIconsRepository.DeleteSlotAsync(departmentId, kind, typeId, variant, icon.IconKey, cancellationToken);
+			await _typeIconsRepository.DeleteAllButNewestInSlotAsync(departmentId, kind, typeId, variant, cancellationToken);
 			await InvalidateVariantsAsync(departmentId);
 
 			return icon.IconKey;

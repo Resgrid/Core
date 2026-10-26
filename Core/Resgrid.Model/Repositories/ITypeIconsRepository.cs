@@ -21,6 +21,13 @@ namespace Resgrid.Model.Repositories
 		/// </summary>
 		Task<int> DeleteSlotAsync(int departmentId, TypeIconKinds kind, int typeId, string variant, string keepIconKey = null, CancellationToken cancellationToken = default);
 
+		/// <summary>
+		/// Deletes every row of one icon slot (as <see cref="DeleteSlotAsync"/>) but its newest upload (latest UploadedOn, then
+		/// the greater IconKey), in one statement: of two uploads to the slot at once (a double-submitted form), whichever runs
+		/// it last sees both rows, so the slot keeps one icon and never ends up with none.
+		/// </summary>
+		Task<int> DeleteAllButNewestInSlotAsync(int departmentId, TypeIconKinds kind, int typeId, string variant, CancellationToken cancellationToken = default);
+
 		/// <summary>Every status and priority icon of the department, without bytes.</summary>
 		Task<List<TypeIconVariant>> GetVariantsForDepartmentAsync(int departmentId);
 
@@ -32,5 +39,12 @@ namespace Resgrid.Model.Repositories
 		/// update, so no other column of the type is rewritten. Returns the rows changed: 0 when the type is not the department's.
 		/// </summary>
 		Task<int> SetTypeIconKeyAsync(int departmentId, TypeIconKinds kind, int typeId, string iconKey, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Points the department's type at the newest upload of its own icon slot (as <see cref="DeleteAllButNewestInSlotAsync"/>
+		/// picks it; null when the slot is empty), in one statement, so of two uploads at once the one that runs it last leaves
+		/// the type on the icon the slot keeps. Returns the rows changed: 0 when the type is not the department's.
+		/// </summary>
+		Task<int> SetTypeIconKeyToNewestAsync(int departmentId, TypeIconKinds kind, int typeId, CancellationToken cancellationToken = default);
 	}
 }

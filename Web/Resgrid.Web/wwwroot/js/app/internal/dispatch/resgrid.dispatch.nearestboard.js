@@ -468,6 +468,11 @@ var resgrid;
                 }
                 var hasBoundaries = typeof groupBoundaries !== 'undefined' && groupBoundaries && groupBoundaries.length > 0;
                 if (!unitCount && !personCount && !hasBoundaries) {
+                    // A refresh that leaves nobody available must not keep the last counts on an empty map.
+                    if (legend) {
+                        legend.remove();
+                        legend = null;
+                    }
                     return;
                 }
                 if (!legend) {

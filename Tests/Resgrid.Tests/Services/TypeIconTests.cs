@@ -159,7 +159,7 @@ namespace Resgrid.Tests.Services
 			TypeIcon inserted = null;
 			repository.Setup(x => x.InsertAsync(It.IsAny<TypeIcon>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
 				.Callback((TypeIcon i, CancellationToken _, bool __) => inserted = i).ReturnsAsync((TypeIcon i, CancellationToken _, bool __) => i);
-			repository.Setup(x => x.SetTypeIconKeyAsync(DepartmentId, kind, TypeId, It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(1);
+			repository.Setup(x => x.SetTypeIconKeyToNewestAsync(DepartmentId, kind, TypeId, It.IsAny<CancellationToken>())).ReturnsAsync(1);
 
 			var key = await Service(repository.Object).UploadIconAsync(DepartmentId, kind, TypeId, "admin", Png(48, 48, new Rgba32(0, 120, 0, 255)));
 
@@ -171,9 +171,12 @@ namespace Resgrid.Tests.Services
 			inserted.Checksum.Should().HaveLength(64);
 			inserted.Data.Length.Should().Be((int)inserted.ByteSize);
 			key.Should().Be(inserted.IconKey, "a new upload gets a new key, so the cached URL never serves the old image");
-			repository.Verify(x => x.SetTypeIconKeyAsync(DepartmentId, kind, TypeId, inserted.IconKey, It.IsAny<CancellationToken>()), Times.Once);
-			repository.Verify(x => x.DeleteSlotAsync(DepartmentId, kind, TypeId, null, inserted.IconKey, It.IsAny<CancellationToken>()), Times.Once,
+			repository.Verify(x => x.SetTypeIconKeyToNewestAsync(DepartmentId, kind, TypeId, It.IsAny<CancellationToken>()), Times.Once);
+			repository.Verify(x => x.DeleteAllButNewestInSlotAsync(DepartmentId, kind, TypeId, null, It.IsAny<CancellationToken>()), Times.Once,
 				"only the type's own icon slot is replaced; its status and priority icons stay");
+			repository.Verify(x => x.SetTypeIconKeyAsync(It.IsAny<int>(), It.IsAny<TypeIconKinds>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never,
+				"pointing the type at \"this upload\" would let two uploads at once leave it on a deleted row");
+			repository.Verify(x => x.DeleteSlotAsync(It.IsAny<int>(), It.IsAny<TypeIconKinds>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
 			repository.Verify(x => x.DeleteForTypeAsync(It.IsAny<int>(), It.IsAny<TypeIconKinds>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
 
@@ -181,13 +184,14 @@ namespace Resgrid.Tests.Services
 		public async Task UploadIconAsync_for_another_departments_type_stores_nothing()
 		{
 			var repository = new Mock<ITypeIconsRepository>();
-			repository.Setup(x => x.SetTypeIconKeyAsync(DepartmentId, TypeIconKinds.CallType, TypeId, It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(0);
+			repository.Setup(x => x.SetTypeIconKeyToNewestAsync(DepartmentId, TypeIconKinds.CallType, TypeId, It.IsAny<CancellationToken>())).ReturnsAsync(0);
 
 			var key = await Service(repository.Object).UploadIconAsync(DepartmentId, TypeIconKinds.CallType, TypeId, "admin", Png(48, 48, new Rgba32(0, 0, 0, 255)));
 
 			key.Should().BeNull("the department-scoped update changed no row, so the type is not this department's");
 			repository.Verify(x => x.DeleteSlotAsync(DepartmentId, TypeIconKinds.CallType, TypeId, null, null, It.IsAny<CancellationToken>()), Times.Once,
 				"the row inserted for it is removed again");
+			repository.Verify(x => x.DeleteAllButNewestInSlotAsync(It.IsAny<int>(), It.IsAny<TypeIconKinds>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
 
 		[Test]
@@ -229,7 +233,9 @@ namespace Resgrid.Tests.Services
 
 			key.Should().Be(inserted.IconKey);
 			inserted.Variant.Should().Be(variant);
-			repository.Verify(x => x.DeleteSlotAsync(DepartmentId, kind, TypeId, variant, inserted.IconKey, It.IsAny<CancellationToken>()), Times.Once);
+			repository.Verify(x => x.DeleteAllButNewestInSlotAsync(DepartmentId, kind, TypeId, variant, It.IsAny<CancellationToken>()), Times.Once);
+			repository.Verify(x => x.DeleteSlotAsync(It.IsAny<int>(), It.IsAny<TypeIconKinds>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never,
+				"keeping \"this upload\" would let two uploads at once delete each other's row");
 			repository.Verify(x => x.SetTypeIconKeyAsync(It.IsAny<int>(), It.IsAny<TypeIconKinds>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never,
 				"a status or priority icon is never mirrored on the type");
 			cache.Verify(x => x.RemoveAsync($"TypeIconVariants_{DepartmentId}"), Times.Once, "the map picks up the new icon at once");

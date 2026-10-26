@@ -1,0 +1,313 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Mapping
+@model Resgrid.Web.Areas.User.Models.Mapping.MapIconLegendView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.Mapping> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.MapIconLegend> legendStrings
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.CustomStatuses.CustomStatuses> statusStrings
+@{
+	var moduleTitle = await departmentTerms.NameAsync(DepartmentTerms.Mapping, localizer["MappingHeader"]);
+	ViewBag.Title = "Resgrid | " + legendStrings["LegendPageTitle"];
+}
+@functions {
+	// What a legend icon is, for its tooltip and screen readers.
+	private string IconKind(MapLegendIcon icon, IStringLocalizer legend)
+	{
+		if (icon == null)
+			return string.Empty;
+		if (icon.IsUploaded)
+			return icon.IsVariant || icon.Style == null || icon.Style == MapIconStyles.Unknown ? legend["KeyVariant"] : legend["KeyBadge"];
+		return icon.Style == null || icon.Style == MapIconStyles.Unknown ? legend["NoMeaning"] : legend["KeyPin"];
+	}
+}
+@section Styles
+{
+	<link rel="stylesheet" href="~/clib/mapMarkers/map-icons.min.css"/>
+	<style>
+		.rg-legend-icon { display: inline-block; vertical-align: bottom; }
+		.rg-legend-icon.pin { width: 32px; height: 37px; }
+		.rg-legend-icon.upload { width: 32px; height: 32px; object-fit: contain; }
+		.rg-legend-swatch { display: inline-block; width: 14px; height: 14px; border-radius: 3px; vertical-align: middle; margin-right: 6px; border: 1px solid rgba(0,0,0,.15); }
+		.rg-legend-table td, .rg-legend-table th { vertical-align: middle !important; text-align: center; }
+		.rg-legend-table td:first-child, .rg-legend-table th:first-child { text-align: left; white-space: nowrap; }
+		.rg-legend-states { display: flex; flex-wrap: wrap; gap: 12px 18px; }
+		.rg-legend-state { display: flex; flex-direction: column; align-items: center; min-width: 72px; max-width: 110px; text-align: center; font-size: 12px; line-height: 15px; }
+		.rg-legend-state span { margin-top: 4px; word-break: break-word; }
+		.rg-legend-meanings { color: #777; font-size: 12px; }
+		.rg-legend-names { font-size: 12px; margin-top: 2px; }
+		.rg-legend-hydrant { display: inline-block; width: 18px; height: 18px; border-radius: 9px; background: #d32f2f; border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(0,0,0,.35); vertical-align: middle; }
+		.rg-legend-poi { font-size: 22px; vertical-align: middle; }
+	</style>
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@legendStrings["LegendPageTitle"]</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+			</li>
+			<li>
+				<a asp-controller="Mapping" asp-action="Index" asp-route-area="User">@moduleTitle</a>
+			</li>
+			<li class="active">
+				<strong>@legendStrings["LegendPageTitle"]</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<p>@legendStrings["LegendIntro"]</p>
+					<h4>@legendStrings["HowPickedHeader"]</h4>
+					<ol>
+						<li>@legendStrings["HowPicked1"]</li>
+						<li>@legendStrings["HowPicked2"]</li>
+						<li>@legendStrings["HowPicked3"]</li>
+					</ol>
+					<p class="rg-legend-meanings">@legendStrings["HowPicked4"]</p>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-7">
+					<div class="ibox float-e-margins">
+						<div class="ibox-title"><h5>@legendStrings["StatusColorsHeader"]</h5></div>
+						<div class="ibox-content">
+							<p>@legendStrings["StatusColorsIntro"]</p>
+							<table class="table table-condensed">
+								<tbody>
+									@foreach (var style in Model.Legend.StatusStyles)
+									{
+										<tr>
+											<td style="white-space: nowrap;">
+												<img class="rg-legend-icon pin" src="@TypeIcons.WebPinUrl(TypeIcons.PinName(TypeIcons.UnitPinBase, style.Key))" alt="" />
+												<img class="rg-legend-icon pin" src="@TypeIcons.WebPinUrl(TypeIcons.PinName(TypeIcons.PersonPinBase, style.Key))" alt="" />
+											</td>
+											<td>
+												<span class="rg-legend-swatch" style="background: @style.Color;"></span><strong>@legendStrings["Style." + style.Key]</strong>
+												<div class="rg-legend-meanings">@(style.Key == MapIconStyles.Unknown ? legendStrings["NoMeaning"].Value : string.Join(", ", style.Meanings.Select(m => statusStrings[m.ToString()].Value)))</div>
+												@if (style.UnitStatusNames.Any())
+												{
+													<div class="rg-legend-names">@string.Format(legendStrings["UnitStatusesInStyle"].Value, string.Join(", ", style.UnitStatusNames))</div>
+												}
+												@if (style.PersonnelStatusNames.Any())
+												{
+													<div class="rg-legend-names">@string.Format(legendStrings["PersonnelStatusesInStyle"].Value, string.Join(", ", style.PersonnelStatusNames))</div>
+												}
+											</td>
+										</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-5">
+					<div class="ibox float-e-margins">
+						<div class="ibox-title"><h5>@legendStrings["PriorityColorsHeader"]</h5></div>
+						<div class="ibox-content">
+							<p>@legendStrings["PriorityColorsIntro"]</p>
+							<table class="table table-condensed">
+								<tbody>
+									@foreach (var style in Model.Legend.PriorityStyles)
+									{
+										<tr>
+											<td style="width: 1%;"><img class="rg-legend-icon pin" src="@TypeIcons.WebPinUrl(TypeIcons.PinName(TypeIcons.CallPinBase, style.Key))" alt="" /></td>
+											<td>
+												<span class="rg-legend-swatch" style="background: @style.Color;"></span>
+												@if (style.Key == MapIconStyles.Unknown)
+												{
+													@legendStrings["NoMeaning"]
+												}
+												else
+												{
+													<strong>@legendStrings["Style." + style.Key]</strong>
+												}
+												@if (style.PriorityNames.Any())
+												{
+													<div class="rg-legend-names">@string.Format(legendStrings["PrioritiesInStyle"].Value, string.Join(", ", style.PriorityNames))</div>
+												}
+											</td>
+										</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="ibox float-e-margins">
+				<div class="ibox-title"><h5>@legendStrings["CallsHeader"]</h5></div>
+				<div class="ibox-content">
+					<p>@legendStrings["CallsIntro"]</p>
+					<div class="table-responsive">
+						<table class="table table-striped rg-legend-table">
+							<thead>
+								<tr>
+									<th>@legendStrings["Type"]</th>
+									@foreach (var priority in Model.Legend.CallRows.FirstOrDefault()?.States ?? new List<MapIconLegendState>())
+									{
+										<th>
+											@if (priority.Color != null)
+											{
+												<span class="rg-legend-swatch" style="background: @priority.Color;"></span>
+											}
+											@priority.Name
+										</th>
+									}
+									@if (Model.CanEditTypes)
+									{
+										<th style="width: 1%;"></th>
+									}
+								</tr>
+							</thead>
+							<tbody>
+								@foreach (var row in Model.Legend.CallRows)
+								{
+									<tr>
+										<td>@row.Name</td>
+										@foreach (var state in row.States)
+										{
+											var icon = MapLegendIcon.From(state.Icon);
+											var title = $"{row.Name} · {state.Name} · {(state.FollowsUnitStatus ? legendStrings["KeyOnUnit"].Value : IconKind(icon, legendStrings))}";
+											<td><img class="rg-legend-icon @(icon.IsUploaded ? "upload" : "pin")" src="@icon.Url" alt="@title" title="@title" /></td>
+										}
+										@if (Model.CanEditTypes)
+										{
+											<td>
+												@if (row.Id.HasValue)
+												{
+													<a class="btn btn-xs btn-default" asp-controller="Mapping" asp-action="StatusIcons" asp-route-area="User" asp-route-kind="@((int)TypeIconKinds.CallType)" asp-route-typeId="@row.Id">@legendStrings["EditIcons"]</a>
+												}
+											</td>
+										}
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+
+			<div class="ibox float-e-margins">
+				<div class="ibox-title"><h5>@legendStrings["UnitsHeader"]</h5></div>
+				<div class="ibox-content">
+					<p>@legendStrings["UnitsIntro"]</p>
+					<table class="table table-striped">
+						<tbody>
+							@foreach (var row in Model.Legend.UnitRows)
+							{
+								<tr>
+									<td style="width: 20%;">
+										<strong>@row.Name</strong>
+										<div class="rg-legend-meanings">@legendStrings["StatusSet"]: @(row.StatusSetName ?? legendStrings["BuiltInUnitStatuses"])</div>
+										@if (Model.CanEditTypes && row.Id.HasValue)
+										{
+											<a class="btn btn-xs btn-default" style="margin-top: 6px;" asp-controller="Mapping" asp-action="StatusIcons" asp-route-area="User" asp-route-kind="@((int)TypeIconKinds.UnitType)" asp-route-typeId="@row.Id">@legendStrings["EditIcons"]</a>
+										}
+									</td>
+									<td>
+										<div class="rg-legend-states">
+											@foreach (var state in row.States)
+											{
+												var icon = MapLegendIcon.From(state.Icon);
+												var title = $"{row.Name} · {state.Name} · {(state.FollowsUnitStatus ? legendStrings["KeyOnUnit"].Value : IconKind(icon, legendStrings))}";
+												<div class="rg-legend-state">
+													<img class="rg-legend-icon @(icon.IsUploaded ? "upload" : "pin")" src="@icon.Url" alt="@title" title="@title" />
+													<span>@state.Name</span>
+												</div>
+											}
+										</div>
+									</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+			<div class="ibox float-e-margins">
+				<div class="ibox-title"><h5>@legendStrings["PersonnelHeader"]</h5></div>
+				<div class="ibox-content">
+					<p>@legendStrings["PersonnelIntro"]</p>
+					<div class="table-responsive">
+						<table class="table table-striped rg-legend-table">
+							<thead>
+								<tr>
+									<th>@legendStrings["Role"]</th>
+									@foreach (var status in Model.Legend.PersonnelRows.FirstOrDefault()?.States ?? new List<MapIconLegendState>())
+									{
+										<th>@status.Name</th>
+									}
+									@if (Model.CanEditRoles)
+									{
+										<th style="width: 1%;"></th>
+									}
+								</tr>
+							</thead>
+							<tbody>
+								@foreach (var row in Model.Legend.PersonnelRows)
+								{
+									<tr>
+										<td>@row.Name</td>
+										@foreach (var state in row.States)
+										{
+											var icon = MapLegendIcon.From(state.Icon);
+											var title = $"{row.Name} · {state.Name} · {(state.FollowsUnitStatus ? legendStrings["KeyOnUnit"].Value : IconKind(icon, legendStrings))}";
+											<td><img class="rg-legend-icon @(icon.IsUploaded ? "upload" : "pin")" src="@icon.Url" alt="@title" title="@title" /></td>
+										}
+										@if (Model.CanEditRoles)
+										{
+											<td>
+												@if (row.Id.HasValue)
+												{
+													<a class="btn btn-xs btn-default" asp-controller="Mapping" asp-action="StatusIcons" asp-route-area="User" asp-route-kind="@((int)TypeIconKinds.PersonnelRole)" asp-route-typeId="@row.Id">@legendStrings["EditIcons"]</a>
+												}
+											</td>
+										}
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+
+			<div class="ibox float-e-margins">
+				<div class="ibox-title"><h5>@legendStrings["OtherHeader"]</h5></div>
+				<div class="ibox-content">
+					<p>@legendStrings["OtherIntro"]</p>
+					<div class="rg-legend-states">
+						<div class="rg-legend-state">
+							<img class="rg-legend-icon pin" src="/images/Mapping/Station.png" alt="" />
+							<span>@legendStrings["Station"]</span>
+						</div>
+						<div class="rg-legend-state">
+							<span class="rg-legend-hydrant" style="margin: 9px 0 10px 0;"></span>
+							<span>@legendStrings["Hydrant"]</span>
+						</div>
+						@foreach (var poiType in Model.PoiTypes)
+						{
+							<div class="rg-legend-state">
+								@if (poiType.IconUrl != null)
+								{
+									<img class="rg-legend-icon upload" src="@poiType.IconUrl" alt="" />
+								}
+								else
+								{
+									<span class="map-icon @(poiType.IconClass ?? "map-icon-map-pin") rg-legend-poi" style="color: @(poiType.Color ?? "#2563eb");" aria-hidden="true"></span>
+								}
+								<span>@poiType.Name</span>
+							</div>
+						}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

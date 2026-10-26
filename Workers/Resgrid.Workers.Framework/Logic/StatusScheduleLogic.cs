@@ -43,7 +43,8 @@ namespace Resgrid.Workers.Framework.Logic
 						}
 						else
 						{
-							Logging.LogError($"Department Status Reset {item.ScheduledTask.ScheduledTaskId}: '{item.ScheduledTask.Data}' matches none of department {item.ScheduledTask.DepartmentId}'s statuses; nobody was reset.");
+							// The department's configuration, not a fault: Department Settings shows it beside the reset (no Sentry event).
+							Logging.LogWarning($"Department Status Reset {item.ScheduledTask.ScheduledTaskId}: '{item.ScheduledTask.Data}' matches none of department {item.ScheduledTask.DepartmentId}'s statuses; nobody was reset.");
 						}
 					}
 				}

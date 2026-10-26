@@ -1724,6 +1724,12 @@
   <data name="ResetTargetSavedOption" xml:space="preserve">
     <value>{0} (früher gespeichert, nicht mehr angeboten)</value>
   </data>
+  <data name="ResetTargetSetsNow" xml:space="preserve">
+    <value>Diese Auswahl wurde früher gespeichert und wird nicht mehr angeboten. Das tägliche Zurücksetzen setzt derzeit alle auf {0}. Wählen Sie eine Bedeutung oder eine Ihrer eigenen Optionen und speichern Sie, um das zu ändern.</value>
+  </data>
+  <data name="ResetTargetSetsNobody" xml:space="preserve">
+    <value>Diese Auswahl wurde früher gespeichert und passt zu nichts, was die Abteilung verwendet, daher ändert das tägliche Zurücksetzen niemanden. Wählen Sie eine Bedeutung oder eine Ihrer eigenen Optionen und speichern Sie.</value>
+  </data>
   <data name="RunCardRelaxUnfilledRowsLabel" xml:space="preserve">
     <value>Statusfilter bei offenen Zeilen lockern</value>
   </data>

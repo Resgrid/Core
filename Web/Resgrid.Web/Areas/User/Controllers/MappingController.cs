@@ -48,6 +48,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly Model.Services.IAuthorizationService _authorizationService;
 		private readonly ITypeIconsService _typeIconsService;
 		private readonly Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.Icons.IconUpload> _iconLocalizer;
+		private readonly IMapIconsService _mapIconsService;
+		private readonly ICustomStateService _customStateService;
+		private readonly Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.MapIconLegend> _legendLocalizer;
 
 		public MappingController(IDepartmentSettingsService departmentSettingsService,
 			IGeoLocationProvider geoLocationProvider, ICallsService callsService,
@@ -56,9 +59,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 			IKmlProvider kmlProvider, IPermissionsService permissionsService, IPersonnelRolesService personnelRolesService,
 			IProtectedReadService protectedReadService, IRecordsHydrantsService hydrantsService, IDispatchScopeService dispatchScopeService,
 			Model.Services.IAuthorizationService authorizationService, ITypeIconsService typeIconsService,
-			Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.Icons.IconUpload> iconLocalizer)
+			Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.Icons.IconUpload> iconLocalizer,
+			IMapIconsService mapIconsService, ICustomStateService customStateService,
+			Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.MapIconLegend> legendLocalizer)
 		{
 			_iconLocalizer = iconLocalizer;
+			_mapIconsService = mapIconsService;
+			_customStateService = customStateService;
+			_legendLocalizer = legendLocalizer;
 			_authorizationService = authorizationService;
 			_typeIconsService = typeIconsService;
 			_dispatchScopeService = dispatchScopeService;
@@ -554,6 +562,160 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		/// <summary>The form field the POI type pages post the custom icon in.</summary>
 		private const string IconFileField = TypeIconUploads.FileField;
+
+		/// <summary>
+		/// Every icon the map can show: calls by type and priority, units by type and status, members by role and status, and
+		/// the status and priority colours. Open to every member who can open the map.
+		/// </summary>
+		[HttpGet]
+		public async Task<IActionResult> Legend()
+		{
+			var model = new MapIconLegendView
+			{
+				Legend = await _mapIconsService.GetLegendAsync(DepartmentId, _legendLocalizer["NoCallType"], _legendLocalizer["NoUnitType"], _legendLocalizer["NoRoleIcon"]),
+				CanEditTypes = CanEditStatusIcons(TypeIconKinds.UnitType),
+				CanEditRoles = CanEditStatusIcons(TypeIconKinds.PersonnelRole)
+			};
+
+			foreach (var poiType in (await _mappingService.GetPOITypesForDepartmentAsync(DepartmentId) ?? new List<PoiType>()).OrderBy(x => x.Name, StringComparer.CurrentCultureIgnoreCase))
+			{
+				model.PoiTypes.Add(new MapLegendPoiType
+				{
+					Name = poiType.Name,
+					Color = MapIconLegendBuilder.HexOrNull(poiType.Color),
+					IconClass = poiType.Image,
+					IconUrl = TypeIcons.WebIconUrl(poiType.IconKey)
+				});
+			}
+
+			return View(model);
+		}
+
+		/// <summary>
+		/// The status icons of a unit type or role, or the priority icons of a call type: an upload per status or priority,
+		/// shown on the map instead of the type's own icon while it holds.
+		/// </summary>
+		[HttpGet]
+		public async Task<IActionResult> StatusIcons(int kind, int typeId)
+		{
+			var typeKind = (TypeIconKinds)kind;
+			if (!CanEditStatusIcons(typeKind))
+				return Unauthorized();
+
+			var model = await BuildStatusIconsViewAsync(typeKind, typeId);
+			if (model == null)
+				return NotFound();
+
+			model.Message = TempData["StatusIconMessage"] as string;
+			model.ErrorMessage = TempData["StatusIconError"] as string;
+
+			return View(model);
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> UploadStatusIcon(int kind, int typeId, string variant, IFormFile iconFile, CancellationToken cancellationToken)
+		{
+			var typeKind = (TypeIconKinds)kind;
+			if (!CanEditStatusIcons(typeKind))
+				return Unauthorized();
+
+			if (!TypeIcons.IsValidVariant(typeKind, variant))
+				return BadRequest();
+
+			var iconData = await ReadIconUploadAsync(iconFile, cancellationToken);
+
+			if (!ModelState.IsValid)
+				TempData["StatusIconError"] = ModelState[IconFileField]?.Errors.FirstOrDefault()?.ErrorMessage;
+			else if (iconData == null)
+				TempData["StatusIconError"] = TypeIconUploads.RejectionMessage(_iconLocalizer, TypeIconRejections.Required);
+			else if (await _typeIconsService.UploadVariantIconAsync(DepartmentId, typeKind, typeId, variant, UserId, iconData, cancellationToken) == null)
+				return NotFound();
+			else
+				TempData["StatusIconMessage"] = _legendLocalizer["IconSaved"].Value;
+
+			return RedirectToAction("StatusIcons", new { kind, typeId });
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> RemoveStatusIcon(int kind, int typeId, string variant, CancellationToken cancellationToken)
+		{
+			var typeKind = (TypeIconKinds)kind;
+			if (!CanEditStatusIcons(typeKind))
+				return Unauthorized();
+
+			if (!await _typeIconsService.RemoveVariantIconAsync(DepartmentId, typeKind, typeId, variant, cancellationToken))
+				return NotFound();
+
+			TempData["StatusIconMessage"] = _legendLocalizer["IconRemoved"].Value;
+			return RedirectToAction("StatusIcons", new { kind, typeId });
+		}
+
+		// Unit and call types are department configuration (the Types pages need Department_Update); roles need Role_Update,
+		// as on the role pages. POI types have no status or priority.
+		private bool CanEditStatusIcons(TypeIconKinds kind)
+		{
+			switch (kind)
+			{
+				case TypeIconKinds.UnitType:
+				case TypeIconKinds.CallType:
+					return User.HasClaim(Resgrid.Providers.Claims.ResgridClaimTypes.Resources.Department, Resgrid.Providers.Claims.ResgridClaimTypes.Actions.Update);
+				case TypeIconKinds.PersonnelRole:
+					return User.HasClaim(Resgrid.Providers.Claims.ResgridClaimTypes.Resources.Role, Resgrid.Providers.Claims.ResgridClaimTypes.Actions.Update);
+				default:
+					return false;
+			}
+		}
+
+		private async Task<StatusIconsView> BuildStatusIconsViewAsync(TypeIconKinds kind, int typeId)
+		{
+			var resolver = await _mapIconsService.GetResolverAsync(DepartmentId);
+			MapIconLegendRow row;
+
+			switch (kind)
+			{
+				case TypeIconKinds.UnitType:
+				{
+					var type = resolver.UnitTypes.FirstOrDefault(x => x.UnitTypeId == typeId);
+					if (type == null)
+						return null;
+
+					row = MapIconLegendBuilder.UnitRow(resolver, type, null, await _customStateService.GetAllCustomStatesForDepartmentAsync(DepartmentId),
+						_customStateService.GetDefaultUnitStatuses());
+					break;
+				}
+				case TypeIconKinds.CallType:
+				{
+					var type = resolver.CallTypes.FirstOrDefault(x => x.CallTypeId == typeId);
+					if (type == null)
+						return null;
+
+					row = MapIconLegendBuilder.CallRow(resolver, type, null, await _callsService.GetActiveCallPrioritiesForDepartmentAsync(DepartmentId));
+					break;
+				}
+				case TypeIconKinds.PersonnelRole:
+				{
+					var role = await _personnelRolesService.GetRoleByIdAsync(typeId);
+					if (role == null || role.DepartmentId != DepartmentId)
+						return null;
+
+					row = MapIconLegendBuilder.RoleRow(resolver, role, null, await _customStateService.GetCustomPersonnelStatusesOrDefaultsAsync(DepartmentId));
+					break;
+				}
+				default:
+					return null;
+			}
+
+			return new StatusIconsView
+			{
+				Kind = (int)kind,
+				TypeId = typeId,
+				TypeName = row.Name,
+				OwnIcon = MapLegendIcon.From(row.OwnIcon),
+				Rows = StatusIconRow.ForRow(resolver, kind, typeId, row)
+			};
+		}
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]

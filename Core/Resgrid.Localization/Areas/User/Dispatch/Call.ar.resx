@@ -526,10 +526,10 @@
     <value>على {0}</value>
   </data>
   <data name="NearestUnitsMapUnits" xml:space="preserve">
-    <value>الوحدات</value>
+    <value>الوحدات المتاحة</value>
   </data>
   <data name="NearestUnitsMapPersonnel" xml:space="preserve">
-    <value>الأفراد</value>
+    <value>الأفراد المتاحون</value>
   </data>
   <data name="NearestUnitsMapBoundaries" xml:space="preserve">
     <value>حدود المحطات</value>

@@ -996,10 +996,10 @@
     <value>Στο {0}</value>
   </data>
   <data name="NearestUnitsMapUnits" xml:space="preserve">
-    <value>Μονάδες</value>
+    <value>Διαθέσιμες μονάδες</value>
   </data>
   <data name="NearestUnitsMapPersonnel" xml:space="preserve">
-    <value>Προσωπικό</value>
+    <value>Διαθέσιμο προσωπικό</value>
   </data>
   <data name="NearestUnitsMapBoundaries" xml:space="preserve">
     <value>Όρια σταθμών</value>

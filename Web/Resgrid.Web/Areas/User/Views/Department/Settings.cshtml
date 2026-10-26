@@ -330,6 +330,10 @@
                             <label class="col-sm-4 control-label">@localizer["ResetStaffingLevelTo"]</label>
                             <div class="col-sm-8">
                                 @Html.DropDownListFor(m => m.ResetStaffingTo, Model.StaffingLevels, new { style = "width: 100%" })
+                                @if (!String.IsNullOrWhiteSpace(Model.StaffingResetWarning))
+                                {
+                                    <span class="help-block m-b-none text-warning"><i class="fa fa-exclamation-triangle"></i> @Model.StaffingResetWarning</span>
+                                }
                             </div>
                         </div>
 
@@ -369,6 +373,10 @@
                             <label class="col-sm-4 control-label">@localizer["ResetStatusDailyTo"]</label>
                             <div class="col-sm-8">
                                 @Html.DropDownListFor(m => m.ResetStatusTo, Model.StatusLevels, new { style = "width: 100%" })
+                                @if (!String.IsNullOrWhiteSpace(Model.StatusResetWarning))
+                                {
+                                    <span class="help-block m-b-none text-warning"><i class="fa fa-exclamation-triangle"></i> @Model.StatusResetWarning</span>
+                                }
                             </div>
                         </div>
 

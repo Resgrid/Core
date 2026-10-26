@@ -1084,10 +1084,10 @@
     <value>Sur {0}</value>
   </data>
   <data name="NearestUnitsMapUnits" xml:space="preserve">
-    <value>Unités</value>
+    <value>Unités disponibles</value>
   </data>
   <data name="NearestUnitsMapPersonnel" xml:space="preserve">
-    <value>Personnel</value>
+    <value>Personnel disponible</value>
   </data>
   <data name="NearestUnitsMapBoundaries" xml:space="preserve">
     <value>Secteurs des casernes</value>

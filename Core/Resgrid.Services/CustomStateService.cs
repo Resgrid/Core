@@ -372,10 +372,27 @@ namespace Resgrid.Services
 				return raw;
 
 			var rawMeaning = option != null ? option.BaseType : (int)BuiltInStatusBaseTypes.ForPersonnelStatus(raw);
-			return rawMeaning != (int)ActionBaseTypes.None && Enum.IsDefined(typeof(ActionBaseTypes), rawMeaning)
+			var byMeaning = rawMeaning != (int)ActionBaseTypes.None && Enum.IsDefined(typeof(ActionBaseTypes), rawMeaning)
 				? await ResolvePersonnelStatusAsync(departmentId, (ActionBaseTypes)rawMeaning)
 				: null;
+			if (byMeaning.HasValue)
+				return byMeaning;
+
+			// No status has that meaning (options created before meanings all read None): one of those named like the saved
+			// status ("Standing By", the deleted option's text), or whose name suggests its meaning, stands in for it.
+			var byName = personnelSet != null
+				? StatusNameMatch.Find(personnelSet.GetActiveDetails(), CustomStateTypes.Personnel, option?.ButtonText ?? BuiltInName(GetDefaultPersonStatuses(), raw), rawMeaning)
+				: null;
+			if (byName != null)
+				return byName.CustomStateDetailId;
+
+			// Nothing does: keep resetting to the value the reset wrote before meanings rather than skipping everyone. Only a
+			// value that is neither built-in nor one of the department's own options is dropped.
+			return option != null || Enum.IsDefined(typeof(ActionTypes), raw) ? raw : (int?)null;
 		}
+
+		private static string BuiltInName(List<CustomStateDetail> builtIns, int raw) =>
+			builtIns.FirstOrDefault(x => x.CustomStateDetailId == raw)?.ButtonText;
 
 		public async Task<int?> ResolveStaffingResetAsync(int departmentId, string target)
 		{
@@ -386,7 +403,9 @@ namespace Resgrid.Services
 			if (!int.TryParse(target?.Trim(), out var raw))
 				return null;
 
-			// Same rule as statuses: a value that is still one of the department's levels is kept, anything else follows its meaning.
+			// Same rule as statuses: a value that is still one of the department's levels is kept, anything else follows its
+			// meaning, then a level without a meaning matched by name, and with none of those the value is written as it was
+			// before meanings.
 			var staffingSet = await GetActiveStaffingLevelsForDepartmentAsync(departmentId);
 			var option = await FindDepartmentOptionAsync(departmentId, CustomStateTypes.Staffing, raw);
 
@@ -397,7 +416,17 @@ namespace Resgrid.Services
 				return raw;
 
 			var rawMeaning = option != null ? option.BaseType : (int)BuiltInStatusBaseTypes.ForStaffing(raw);
-			return Enum.IsDefined(typeof(StaffingBaseTypes), rawMeaning) ? await ResolvePersonnelStaffingAsync(departmentId, (StaffingBaseTypes)rawMeaning) : null;
+			var byMeaning = Enum.IsDefined(typeof(StaffingBaseTypes), rawMeaning) ? await ResolvePersonnelStaffingAsync(departmentId, (StaffingBaseTypes)rawMeaning) : null;
+			if (byMeaning.HasValue)
+				return byMeaning;
+
+			var byName = staffingSet != null
+				? StatusNameMatch.Find(staffingSet.GetActiveDetails(), CustomStateTypes.Staffing, option?.ButtonText ?? BuiltInName(GetDefaultPersonStaffings(), raw), rawMeaning)
+				: null;
+			if (byName != null)
+				return byName.CustomStateDetailId;
+
+			return option != null || Enum.IsDefined(typeof(UserStateTypes), raw) ? raw : (int?)null;
 		}
 
 		public async Task<CustomStateDetail> GetDefaultPersonnelStatusAsync(int departmentId)

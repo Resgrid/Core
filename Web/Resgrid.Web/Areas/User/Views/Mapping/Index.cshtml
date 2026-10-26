@@ -4,6 +4,7 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.Mapping> localizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> hydrantStrings
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.MapVisualizations> visualizationStrings
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.MapIconLegend> legendStrings
 @{
 	var moduleTitle = await departmentTerms.NameAsync(DepartmentTerms.Mapping, localizer["MappingHeader"]);
 	ViewBag.Title = "Resgrid | " + moduleTitle;
@@ -44,6 +45,7 @@
 	<div class="col-sm-8">
 		@* One joined group, in reading order; each button keeps its own colour so none of them reads as disabled. *@
 		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			<a title="@legendStrings["LegendIntro"]" class="btn btn-default" asp-controller="Mapping" asp-action="Legend" asp-route-area="User"><i class="fa fa-map-marker"></i> @legendStrings["LegendPageTitle"]</a>
 			@if (ClaimsAuthorizationHelper.CanViewCalls())
 			{
 				<a title="@visualizationStrings["PageIntro"]" class="btn btn-warning" asp-controller="MapVisualizations" asp-action="Index" asp-route-area="User">@visualizationStrings["PageTitle"]</a>

@@ -468,6 +468,11 @@ var resgrid;
                 }
                 var hasBoundaries = typeof groupBoundaries !== 'undefined' && groupBoundaries && groupBoundaries.length > 0;
                 if (!unitCount && !personCount && !hasBoundaries) {
+                    // A refresh that leaves nobody available must not keep the last counts on an empty map.
+                    if (legend) {
+                        legend.remove();
+                        legend = null;
+                    }
                     return;
                 }
                 if (!legend) {
@@ -492,7 +497,8 @@ var resgrid;
                 $(legend.getContainer()).html(lines.join('<br/>'));
             }
 
-            // Units and personnel the board placed, around the call; hidden positions come without coordinates.
+            // Available units and personnel the board placed, around the call; hidden positions come without coordinates. The
+            // map shows only who can be sent; the dispatch lists keep everyone, with their status, for reassigning someone busy.
             function drawMarkers(board, units, personnel) {
                 var map = getMap();
                 if (!map) {
@@ -508,19 +514,18 @@ var resgrid;
                 var unitCount = 0;
                 var personCount = 0;
                 function place(entry, isUnit, rank) {
-                    if (!hasCoordinates(entry)) {
+                    if (!hasCoordinates(entry) || !prop(entry, 'isAvailable')) {
                         return;
                     }
                     var lat = prop(entry, 'latitude');
                     var lng = prop(entry, 'longitude');
-                    var available = !!prop(entry, 'isAvailable');
                     var marker = L.circleMarker([lat, lng], {
                         radius: isUnit ? 8 : 6,
                         color: '#ffffff',
                         weight: isUnit ? 2.5 : 1.5,
                         fillColor: hexOr(prop(entry, 'statusColor'), isUnit ? '#2563eb' : '#7c3aed'),
-                        fillOpacity: available ? 0.95 : 0.45,
-                        opacity: available ? 1 : 0.6,
+                        fillOpacity: 0.95,
+                        opacity: 1,
                         // A click on a resource opens its popup; it must not also move the call.
                         bubblingMouseEvents: false
                     });

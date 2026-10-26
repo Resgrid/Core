@@ -996,10 +996,10 @@
     <value>On {0}</value>
   </data>
   <data name="NearestUnitsMapUnits" xml:space="preserve">
-    <value>Units</value>
+    <value>Available units</value>
   </data>
   <data name="NearestUnitsMapPersonnel" xml:space="preserve">
-    <value>Personnel</value>
+    <value>Available personnel</value>
   </data>
   <data name="NearestUnitsMapBoundaries" xml:space="preserve">
     <value>Station boundaries</value>

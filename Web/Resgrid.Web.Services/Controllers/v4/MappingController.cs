@@ -40,7 +40,6 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IUnitsService _unitsService;
 		private readonly ICallsService _callsService;
 		private readonly IDepartmentGroupsService _departmentGroupsService;
-		private readonly IPersonnelRolesService _personnelRolesService;
 		private readonly ICustomStateService _customStateService;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly IGeoLocationProvider _geoLocationProvider;
@@ -52,6 +51,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IProtectedReadService _protectedReadService;
 		private readonly IDepartmentDataProtectionService _dataProtectionService;
 		private readonly IDispatchScopeService _dispatchScopeService;
+		private readonly IMapIconsService _mapIconsService;
+		private readonly Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.MapIconLegend> _legendStrings;
 
 		public MappingController(
 			IUsersService usersService,
@@ -62,7 +63,6 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IUnitsService unitsService,
 			ICallsService callsService,
 			IDepartmentGroupsService departmentGroupsService,
-			IPersonnelRolesService personnelRolesService,
 			ICustomStateService customStateService,
 			IDepartmentSettingsService departmentSettingsService,
 			IGeoLocationProvider geoLocationProvider,
@@ -73,10 +73,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IProtectedReadService protectedReadService,
 			IDepartmentDataProtectionService dataProtectionService,
 			IRecordsHydrantsService hydrantsService,
-			IDispatchScopeService dispatchScopeService
+			IDispatchScopeService dispatchScopeService,
+			IMapIconsService mapIconsService,
+			Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.MapIconLegend> legendStrings
 			)
 		{
 			_dispatchScopeService = dispatchScopeService;
+			_mapIconsService = mapIconsService;
+			_legendStrings = legendStrings;
 			_usersService = usersService;
 			_actionLogsService = actionLogsService;
 			_departmentsService = departmentsService;
@@ -85,7 +89,6 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_unitsService = unitsService;
 			_callsService = callsService;
 			_departmentGroupsService = departmentGroupsService;
-			_personnelRolesService = personnelRolesService;
 			_customStateService = customStateService;
 			_departmentSettingsService = departmentSettingsService;
 			_geoLocationProvider = geoLocationProvider;
@@ -129,17 +132,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
 			var unitStates = await _unitsService.GetAllLatestStatusForUnitsByDepartmentIdAsync(DepartmentId);
 			var unitLocations = await _unitsService.GetLatestUnitLocationsAsync(DepartmentId);
-			var unitTypes = await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId);
-			var callTypes = await _callsService.GetCallTypesForDepartmentAsync(DepartmentId);
 			var poiTypes = await _mappingService.GetPOITypesForDepartmentAsync(DepartmentId);
 
 			var personnelStates = await _actionLogsService.GetLastActionLogsForDepartmentAsync(DepartmentId);
 			//var personnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
 			var people = await _usersService.GetUserGroupAndRolesByDepartmentIdAsync(DepartmentId, false, false, false);
 			var personnelLocations = await _usersService.GetLatestLocationsForDepartmentPersonnelAsync(DepartmentId);
-			// A person's pin uses the icon of the first role they hold, in the department's role order, that has one.
-			var rolesById = (await _personnelRolesService.GetRolesForDepartmentAsync(DepartmentId) ?? new List<PersonnelRole>())
-				.GroupBy(r => r.PersonnelRoleId).ToDictionary(g => g.Key, g => g.First());
+			// Every call, unit and person icon follows its type or role and its priority or status (MapIconResolver).
+			var icons = await _mapIconsService.GetResolverAsync(DepartmentId, unitStates);
 			// A person holding an active role on a unit is labelled "Name (Unit)", naming only units this member may view.
 			var unitNamesByUser = await PersonnelMapLabel.BuildUnitNamesByUserAsync(
 				await _unitsService.GetAllActiveRolesForUnitsByDepartmentIdAsync(DepartmentId), units,
@@ -216,7 +216,6 @@ namespace Resgrid.Web.Services.Controllers.v4
 					var natureIsRedacted = call.NatureOfCall == ProtectedDataEnvelope.RedactionValue || ProtectedDataEnvelope.HasEnvelopePrefix(call.NatureOfCall);
 
 					MapMakerInfoData info = new MapMakerInfoData();
-					info.ImagePath = "Call";
 					info.Id = $"c{call.CallId}";
 					info.Title = ProtectedDataEnvelope.SafeDisplay(call.Name);
 					info.InfoWindowContent = natureIsRedacted ? null : call.NatureOfCall;
@@ -224,18 +223,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 					try
 					{
-						if (callTypes != null && callTypes.Count > 0 && !String.IsNullOrWhiteSpace(call.Type))
-						{
-							var type = CallTypeLink.Find(call, callTypes);
-
-							if (type != null && type.MapIconType.HasValue)
-								info.ImagePath = MapIcons.ConvertTypeToName((MapIconTypes)type.MapIconType.Value);
-
-							info.IconUrl = TypeIcons.ApiIconUrl(Config.SystemBehaviorConfig.ResgridApiBaseUrl, type);
-						}
-						//	if (type != null && type.MapIconType.HasValue)
-						//		info.ImagePath = ((MapIconTypes)type.MapIconType.Value).ToString();
-						//}
+						ApplyIcon(info, icons.ForCall(call));
 
 						if (!String.IsNullOrEmpty(call.GeoLocationData) && call.GeoLocationData.Length > 1 &&
 							call.GeoLocationData != ProtectedDataEnvelope.RedactionValue &&
@@ -275,8 +263,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 					if (!await _authorizationService.CanUserViewUnitLocationViaMatrixAsync(unit.UnitId, UserId, DepartmentId))
 						continue;
 
+					var unitState = unitStates.FirstOrDefault(x => x.UnitId == unit.UnitId);
 					var unitMarker = BuildUnitMarker(unit, unitLocations.FirstOrDefault(x => x.UnitId == unit.UnitId),
-						unitStates.FirstOrDefault(x => x.UnitId == unit.UnitId), unitTypes, unitLocationTTL, unitAllowStatusWithNoLocationToOverwrite, DateTime.UtcNow);
+						unitState, icons.ForUnit(unit, unitState), unitLocationTTL, unitAllowStatusWithNoLocationToOverwrite, DateTime.UtcNow);
 
 					if (unitMarker.Marker != null)
 						result.Data.MapMakerInfos.Add(unitMarker.Marker);
@@ -290,9 +279,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 					if (!await _authorizationService.CanUserViewPersonLocationViaMatrixAsync(person.UserId, UserId, DepartmentId))
 						continue;
 
+					var personState = personnelStates.FirstOrDefault(x => x.UserId == person.UserId);
 					var personMarker = BuildPersonMarker(person, PersonnelMapLabel.Format(person.Name, person.UserId, unitNamesByUser),
-						personnelLocations.FirstOrDefault(x => x.UserId == person.UserId), personnelStates.FirstOrDefault(x => x.UserId == person.UserId),
-						rolesById, personnelLocationTTL, personnelAllowStatusWithNoLocationToOverwrite, DateTime.UtcNow);
+						personnelLocations.FirstOrDefault(x => x.UserId == person.UserId), personState,
+						icons.ForPerson(person.RoleList, personState), personnelLocationTTL, personnelAllowStatusWithNoLocationToOverwrite, DateTime.UtcNow);
 
 					if (personMarker.Marker != null)
 						result.Data.MapMakerInfos.Add(personMarker.Marker);
@@ -384,10 +374,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (unit.StationGroupId.HasValue)
 				result.Data.GroupName = (await _departmentGroupsService.GetGroupByIdAsync(unit.StationGroupId.Value, false))?.Name;
 
+			var unitState = await _unitsService.GetLastUnitStateByUnitIdAsync(unit.UnitId);
+			var icons = await _mapIconsService.GetResolverAsync(DepartmentId, unitState != null ? new[] { unitState } : null);
+
 			if (await _authorizationService.CanUserViewUnitLocationViaMatrixAsync(unit.UnitId, UserId, DepartmentId))
 			{
 				var unitMarker = BuildUnitMarker(unit, await _unitsService.GetLatestUnitLocationAsync(unit.UnitId),
-					await _unitsService.GetLastUnitStateByUnitIdAsync(unit.UnitId), await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId),
+					unitState, icons.ForUnit(unit, unitState),
 					await _departmentSettingsService.GetMappingUnitLocationTTLAsync(DepartmentId),
 					await _departmentSettingsService.GetMappingUnitAllowStatusWithNoLocationToOverwriteAsync(DepartmentId), now);
 
@@ -409,8 +402,6 @@ namespace Resgrid.Web.Services.Controllers.v4
 				var people = await _usersService.GetUserGroupAndRolesByDepartmentIdAsync(DepartmentId, false, false, false) ?? new List<UserGroupRole>();
 				var personnelLocations = await _usersService.GetLatestLocationsForDepartmentPersonnelAsync(DepartmentId) ?? new List<PersonnelLocation>();
 				var personnelStates = await _actionLogsService.GetLastActionLogsForDepartmentAsync(DepartmentId) ?? new List<ActionLog>();
-				var rolesById = (await _personnelRolesService.GetRolesForDepartmentAsync(DepartmentId) ?? new List<PersonnelRole>())
-					.GroupBy(r => r.PersonnelRoleId).ToDictionary(g => g.Key, g => g.First());
 				var personnelLocationTTL = await _departmentSettingsService.GetMappingPersonnelLocationTTLAsync(DepartmentId);
 				var personnelAllowStatusWithNoLocationToOverwrite = await _departmentSettingsService.GetMappingPersonnelAllowStatusWithNoLocationToOverwriteAsync(DepartmentId);
 
@@ -431,9 +422,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 					if (await _authorizationService.CanUserViewPersonLocationViaMatrixAsync(person.UserId, UserId, DepartmentId))
 					{
+						var personState = personnelStates.FirstOrDefault(x => x.UserId == person.UserId);
 						var personMarker = BuildPersonMarker(person, $"{person.Name} ({crewMember.RoleName})",
-							personnelLocations.FirstOrDefault(x => x.UserId == person.UserId), personnelStates.FirstOrDefault(x => x.UserId == person.UserId),
-							rolesById, personnelLocationTTL, personnelAllowStatusWithNoLocationToOverwrite, now);
+							personnelLocations.FirstOrDefault(x => x.UserId == person.UserId), personState,
+							icons.ForPerson(person.RoleList, personState), personnelLocationTTL, personnelAllowStatusWithNoLocationToOverwrite, now);
 
 						crewMember.Marker = personMarker.Marker;
 						crewMember.LocationTimestamp = personMarker.Timestamp;
@@ -532,10 +524,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// expired or the status is newer; Marker is null when it has no current position. Timestamp is the source's time.
 		/// </summary>
 		private static (MapMakerInfoData Marker, DateTime? Timestamp) BuildUnitMarker(Unit unit, UnitsLocation latestLocation, UnitState state,
-			List<UnitType> unitTypes, int unitLocationTTL, bool allowStatusWithNoLocationToOverwrite, DateTime nowUtc)
+			MapMarkerIcon icon, int unitLocationTTL, bool allowStatusWithNoLocationToOverwrite, DateTime nowUtc)
 		{
 			MapMakerInfoData info = new MapMakerInfoData();
-			info.ImagePath = "Engine_Responding";
 			info.Id = $"u{unit.UnitId}";
 			info.Title = unit.Name;
 			info.InfoWindowContent = "";
@@ -543,18 +534,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			try
 			{
-				if (unitTypes != null && unitTypes.Count > 0 && !String.IsNullOrWhiteSpace(unit.Type))
-				{
-					var type = unitTypes.FirstOrDefault(x => x.Type == unit.Type);
-
-					// The lowercase asset name: the web map loads /images/Mapping/{ImagePath}.png, and the enum name
-					// ("Ambulance", "CarTwo") missed the lowercase file on case-sensitive hosts.
-					var builtInIcon = TypeIcons.BuiltInIconName(type);
-					if (builtInIcon != null)
-						info.ImagePath = builtInIcon;
-
-					info.IconUrl = TypeIcons.ApiIconUrl(Config.SystemBehaviorConfig.ResgridApiBaseUrl, type);
-				}
+				ApplyIcon(info, icon);
 
 				var markerSource = MappingMarkerSelection.Select(latestLocation?.Timestamp, state?.Timestamp, () => state?.HasLocation() == true,
 					unitLocationTTL, allowStatusWithNoLocationToOverwrite, nowUtc);
@@ -581,11 +561,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// status location under the same rules as a unit; Marker is null when they have no current position.
 		/// </summary>
 		private static (MapMakerInfoData Marker, DateTime? Timestamp) BuildPersonMarker(UserGroupRole person, string title, PersonnelLocation latestLocation,
-			ActionLog state, Dictionary<int, PersonnelRole> rolesById, int personnelLocationTTL, bool allowStatusWithNoLocationToOverwrite, DateTime nowUtc)
+			ActionLog state, MapMarkerIcon icon, int personnelLocationTTL, bool allowStatusWithNoLocationToOverwrite, DateTime nowUtc)
 		{
 			MapMakerInfoData info = new MapMakerInfoData();
 
-			info.ImagePath = "Person_RespondingCall";
 			info.Id = $"p{person.UserId}";
 			info.Title = title;
 			info.InfoWindowContent = "";
@@ -593,8 +572,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			try
 			{
-				info.IconUrl = TypeIcons.ApiIconUrl(Config.SystemBehaviorConfig.ResgridApiBaseUrl,
-					TypeIcons.MapIconRole(person.RoleList.Where(rolesById.ContainsKey).Select(id => rolesById[id])));
+				ApplyIcon(info, icon);
 
 				var markerSource = MappingMarkerSelection.Select(latestLocation?.Timestamp, state?.Timestamp, () => state?.HasLocation() == true,
 					personnelLocationTTL, allowStatusWithNoLocationToOverwrite, nowUtc);
@@ -617,10 +595,106 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return (null, null);
 		}
 
+		/// <summary>
+		/// Sets a call, unit or person marker's icon fields: ImagePath stays the bundled icon older clients show, IconUrl the
+		/// department's uploaded icon (for the exact status or priority, else the type's own icon with a badge of the style),
+		/// PinIconUrl the built-in pin in the style of the status or priority and IconStyle that style.
+		/// </summary>
+		private static void ApplyIcon(MapMakerInfoData info, MapMarkerIcon icon)
+		{
+			var apiBaseUrl = Config.SystemBehaviorConfig.ResgridApiBaseUrl;
+
+			info.ImagePath = icon.ImagePath;
+			info.IconUrl = TypeIcons.ApiIconUrl(apiBaseUrl, icon.IconKey, icon.BadgeStyle);
+			info.PinIconUrl = TypeIcons.ApiPinUrl(apiBaseUrl, icon.PinName);
+			info.IconStyle = icon.Style;
+		}
+
 		// Location and status times are stored as UTC but can come back from the document store as Unspecified; without a
 		// "Z" on the wire a browser would read them as local time.
 		private static DateTime AsUtc(DateTime timestamp) =>
 			timestamp.Kind == DateTimeKind.Unspecified ? DateTime.SpecifyKind(timestamp, DateTimeKind.Utc) : timestamp.ToUniversalTime();
+
+		/// <summary>
+		/// Every icon the department's map can show, for an in-app map legend: calls by type and priority, units by type and
+		/// status, members by role and status, the status and priority colours and the POI types. Built from the same icons as
+		/// GetMapDataAndMarkers, so the department's uploads, the built-in pin each type picked and its own names for types,
+		/// priorities, status sets, statuses and roles all show as they do on the map.
+		/// </summary>
+		/// <returns>GetMapIconLegendResult object</returns>
+		[HttpGet("GetMapIconLegend")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		public async Task<ActionResult<GetMapIconLegendResult>> GetMapIconLegend()
+		{
+			var result = new GetMapIconLegendResult();
+			var apiBaseUrl = Config.SystemBehaviorConfig.ResgridApiBaseUrl;
+			var legend = await _mapIconsService.GetLegendAsync(DepartmentId, _legendStrings["NoCallType"], _legendStrings["NoUnitType"], _legendStrings["NoRoleIcon"]);
+
+			result.Data.StatusStyles = legend.StatusStyles.Select(style => new MapLegendStyleData
+			{
+				Key = style.Key,
+				Color = style.Color,
+				Meanings = style.Meanings.Select(x => (int)x).ToList(),
+				UnitStatuses = style.UnitStatusNames,
+				PersonnelStatuses = style.PersonnelStatusNames,
+				UnitPinIconUrl = TypeIcons.ApiPinUrl(apiBaseUrl, TypeIcons.PinName(TypeIcons.UnitPinBase, style.Key)),
+				PersonPinIconUrl = TypeIcons.ApiPinUrl(apiBaseUrl, TypeIcons.PinName(TypeIcons.PersonPinBase, style.Key))
+			}).ToList();
+
+			result.Data.PriorityStyles = legend.PriorityStyles.Select(style => new MapLegendStyleData
+			{
+				Key = style.Key,
+				Color = style.Color,
+				Priorities = style.PriorityNames,
+				CallPinIconUrl = TypeIcons.ApiPinUrl(apiBaseUrl, TypeIcons.PinName(TypeIcons.CallPinBase, style.Key))
+			}).ToList();
+
+			result.Data.Calls = legend.CallRows.Select(x => ConvertLegendRow(x, apiBaseUrl)).ToList();
+			result.Data.Units = legend.UnitRows.Select(x => ConvertLegendRow(x, apiBaseUrl)).ToList();
+			result.Data.Personnel = legend.PersonnelRows.Select(x => ConvertLegendRow(x, apiBaseUrl)).ToList();
+
+			var poiTypes = await _mappingService.GetPOITypesForDepartmentAsync(DepartmentId) ?? new List<PoiType>();
+			result.Data.PoiTypes = poiTypes.OrderBy(x => x.Name, StringComparer.CurrentCultureIgnoreCase).Select(poiType => new MapLegendPoiTypeData
+			{
+				PoiTypeId = poiType.PoiTypeId,
+				Name = poiType.Name,
+				Color = poiType.Color,
+				PoiImage = poiType.Image,
+				ImagePath = PoiIconHelper.ResolveIconName(poiType.Image),
+				Marker = poiType.Marker,
+				IconUrl = TypeIcons.ApiIconUrl(apiBaseUrl, poiType)
+			}).ToList();
+
+			result.PageSize = result.Data.Calls.Count + result.Data.Units.Count + result.Data.Personnel.Count;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
+		}
+
+		private static MapLegendRowData ConvertLegendRow(MapIconLegendRow row, string apiBaseUrl) =>
+			new MapLegendRowData
+			{
+				Id = row.Id,
+				Name = row.Name,
+				StatusSetName = row.StatusSetName,
+				IconUrl = TypeIcons.ApiIconUrl(apiBaseUrl, row.OwnIcon.IconKey, row.OwnIcon.BadgeStyle),
+				PinIconUrl = TypeIcons.ApiPinUrl(apiBaseUrl, row.OwnIcon.PinName),
+				ImagePath = row.OwnIcon.ImagePath,
+				States = row.States.Select(state => new MapLegendStateData
+				{
+					Id = state.Value,
+					Name = state.Name,
+					Color = state.Color,
+					IconStyle = state.Style,
+					IconUrl = TypeIcons.ApiIconUrl(apiBaseUrl, state.Icon.IconKey, state.Icon.BadgeStyle),
+					PinIconUrl = TypeIcons.ApiPinUrl(apiBaseUrl, state.Icon.PinName),
+					ImagePath = state.Icon.ImagePath,
+					IsVariant = state.Icon.IconIsVariant,
+					FollowsUnitStatus = state.FollowsUnitStatus
+				}).ToList()
+			};
 
 		/// <summary>
 		/// Gets the user created map layers in the system.

@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Map Icon Legend and status / priority map icon pages -->
+  <data name="LegendPageTitle" xml:space="preserve">
+    <value>Map Icon Legend</value>
+  </data>
+  <data name="LegendIntro" xml:space="preserve">
+    <value>Every icon the map shows for calls, units and personnel. A call's icon follows its type and priority, a unit's its type and status, and a member's their role and status. Staffing levels never change an icon.</value>
+  </data>
+  <data name="HowPickedHeader" xml:space="preserve">
+    <value>How an icon is picked</value>
+  </data>
+  <data name="HowPicked1" xml:space="preserve">
+    <value>An icon uploaded for the type or role for that exact priority or status.</value>
+  </data>
+  <data name="HowPicked2" xml:space="preserve">
+    <value>Otherwise the type's or role's own uploaded icon, with a badge in the color of the priority or status.</value>
+  </data>
+  <data name="HowPicked3" xml:space="preserve">
+    <value>Otherwise the built-in pin in the color of the priority or status.</value>
+  </data>
+  <data name="HowPicked4" xml:space="preserve">
+    <value>A priority or status with no meaning set is colored by what its name suggests, such as Emergency or Out of Service; one whose name suggests nothing shows a gray pin, as does a unit or member that has set no status. Set meanings on the Custom Statuses and Call Priorities pages to be sure.</value>
+  </data>
+  <data name="StatusColorsHeader" xml:space="preserve">
+    <value>Status colors</value>
+  </data>
+  <data name="StatusColorsIntro" xml:space="preserve">
+    <value>Units and personnel take the color of their status's meaning.</value>
+  </data>
+  <data name="PriorityColorsHeader" xml:space="preserve">
+    <value>Priority colors</value>
+  </data>
+  <data name="PriorityColorsIntro" xml:space="preserve">
+    <value>Calls take the color of their priority's meaning.</value>
+  </data>
+  <data name="Style.available" xml:space="preserve">
+    <value>Available</value>
+  </data>
+  <data name="Style.dispatched" xml:space="preserve">
+    <value>Dispatched</value>
+  </data>
+  <data name="Style.responding" xml:space="preserve">
+    <value>Responding</value>
+  </data>
+  <data name="Style.onscene" xml:space="preserve">
+    <value>On scene</value>
+  </data>
+  <data name="Style.transporting" xml:space="preserve">
+    <value>Transporting</value>
+  </data>
+  <data name="Style.returning" xml:space="preserve">
+    <value>Returning</value>
+  </data>
+  <data name="Style.staging" xml:space="preserve">
+    <value>Staging and standby</value>
+  </data>
+  <data name="Style.delayed" xml:space="preserve">
+    <value>On break</value>
+  </data>
+  <data name="Style.unavailable" xml:space="preserve">
+    <value>Unavailable</value>
+  </data>
+  <data name="Style.unknown" xml:space="preserve">
+    <value>No meaning or no status</value>
+  </data>
+  <data name="Style.low" xml:space="preserve">
+    <value>Low</value>
+  </data>
+  <data name="Style.medium" xml:space="preserve">
+    <value>Medium</value>
+  </data>
+  <data name="Style.high" xml:space="preserve">
+    <value>High</value>
+  </data>
+  <data name="Style.emergency" xml:space="preserve">
+    <value>Emergency</value>
+  </data>
+  <data name="CallsHeader" xml:space="preserve">
+    <value>Calls</value>
+  </data>
+  <data name="CallsIntro" xml:space="preserve">
+    <value>One row per call type, one column per priority.</value>
+  </data>
+  <data name="UnitsHeader" xml:space="preserve">
+    <value>Units</value>
+  </data>
+  <data name="UnitsIntro" xml:space="preserve">
+    <value>One row per unit type, with the statuses of its status set.</value>
+  </data>
+  <data name="PersonnelHeader" xml:space="preserve">
+    <value>Personnel</value>
+  </data>
+  <data name="PersonnelIntro" xml:space="preserve">
+    <value>A member shows the icon of the first role they hold, in role order, that has one. A member On Unit takes the color of their unit's status.</value>
+  </data>
+  <data name="OtherHeader" xml:space="preserve">
+    <value>Stations, hydrants and points of interest</value>
+  </data>
+  <data name="OtherIntro" xml:space="preserve">
+    <value>These icons do not change with status.</value>
+  </data>
+  <data name="NoCallType" xml:space="preserve">
+    <value>Calls with no type</value>
+  </data>
+  <data name="NoUnitType" xml:space="preserve">
+    <value>Units with no type</value>
+  </data>
+  <data name="NoRoleIcon" xml:space="preserve">
+    <value>Members with no role icon</value>
+  </data>
+  <data name="BuiltInUnitStatuses" xml:space="preserve">
+    <value>Built-in unit statuses</value>
+  </data>
+  <data name="Station" xml:space="preserve">
+    <value>Station</value>
+  </data>
+  <data name="Hydrant" xml:space="preserve">
+    <value>Hydrant</value>
+  </data>
+  <data name="EditIcons" xml:space="preserve">
+    <value>Edit icons</value>
+  </data>
+  <data name="KeyHeader" xml:space="preserve">
+    <value>Key</value>
+  </data>
+  <data name="KeyVariant" xml:space="preserve">
+    <value>Uploaded for this status or priority</value>
+  </data>
+  <data name="KeyBadge" xml:space="preserve">
+    <value>Type or role icon with a status or priority badge</value>
+  </data>
+  <data name="KeyPin" xml:space="preserve">
+    <value>Built-in pin</value>
+  </data>
+  <data name="NoMeaning" xml:space="preserve">
+    <value>No meaning: gray pin</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="Role" xml:space="preserve">
+    <value>Role</value>
+  </data>
+  <data name="StatusSet" xml:space="preserve">
+    <value>Status set</value>
+  </data>
+  <data name="StatusIconsTitle" xml:space="preserve">
+    <value>Map icons for {0}</value>
+  </data>
+  <data name="StatusIconsUnitIntro" xml:space="preserve">
+    <value>Upload an icon for a status to show it on the map while a unit of this type is in that status. Without one, the default shown is used.</value>
+  </data>
+  <data name="StatusIconsCallIntro" xml:space="preserve">
+    <value>Upload an icon for a priority to show it on the map while a call of this type has that priority. Without one, the default shown is used.</value>
+  </data>
+  <data name="StatusIconsRoleIntro" xml:space="preserve">
+    <value>Upload an icon for a status to show it on the map while a member whose icon comes from this role is in that status. Without one, the default shown is used.</value>
+  </data>
+  <data name="OwnIcon" xml:space="preserve">
+    <value>Icon with no status or priority</value>
+  </data>
+  <data name="StatusColumn" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="PriorityColumn" xml:space="preserve">
+    <value>Priority</value>
+  </data>
+  <data name="ColorColumn" xml:space="preserve">
+    <value>Map color</value>
+  </data>
+  <data name="DefaultColumn" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="UploadedColumn" xml:space="preserve">
+    <value>Uploaded icon</value>
+  </data>
+  <data name="Upload" xml:space="preserve">
+    <value>Upload</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="NoneUploaded" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="IconSaved" xml:space="preserve">
+    <value>Icon saved.</value>
+  </data>
+  <data name="IconRemoved" xml:space="preserve">
+    <value>Icon removed.</value>
+  </data>
+  <data name="StatusMapIcons" xml:space="preserve">
+    <value>Status map icons</value>
+  </data>
+  <data name="PriorityMapIcons" xml:space="preserve">
+    <value>Priority map icons</value>
+  </data>
+  <data name="StatusMapIconsHelp" xml:space="preserve">
+    <value>A different map icon for each status, so a unit or member is easy to read at a glance.</value>
+  </data>
+  <data name="PriorityMapIconsHelp" xml:space="preserve">
+    <value>A different map icon for each priority, so a call is easy to read at a glance.</value>
+  </data>
+  <data name="UnitStatusesInStyle" xml:space="preserve">
+    <value>Your unit statuses: {0}</value>
+  </data>
+  <data name="PersonnelStatusesInStyle" xml:space="preserve">
+    <value>Your personnel statuses: {0}</value>
+  </data>
+  <data name="PrioritiesInStyle" xml:space="preserve">
+    <value>Your priorities: {0}</value>
+  </data>
+  <data name="KeyOnUnit" xml:space="preserve">
+    <value>Takes the color of their unit's status</value>
+  </data>
+</root>

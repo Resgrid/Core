@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Map Icon Legend and status / priority map icon pages -->
+  <data name="LegendPageTitle" xml:space="preserve">
+    <value>Förklaring till kartikoner</value>
+  </data>
+  <data name="LegendIntro" xml:space="preserve">
+    <value>Alla ikoner som kartan visar för larm, enheter och personal. Ett larms ikon följer dess typ och prioritet, en enhets dess typ och status och en medlems dess roll och status. Bemanningsnivåer ändrar aldrig en ikon.</value>
+  </data>
+  <data name="HowPickedHeader" xml:space="preserve">
+    <value>Så väljs en ikon</value>
+  </data>
+  <data name="HowPicked1" xml:space="preserve">
+    <value>En ikon som laddats upp för typen eller rollen för just den prioriteten eller statusen.</value>
+  </data>
+  <data name="HowPicked2" xml:space="preserve">
+    <value>Annars typens eller rollens egen uppladdade ikon, med en bricka i prioritetens eller statusens färg.</value>
+  </data>
+  <data name="HowPicked3" xml:space="preserve">
+    <value>Annars den inbyggda nålen i prioritetens eller statusens färg.</value>
+  </data>
+  <data name="HowPicked4" xml:space="preserve">
+    <value>En prioritet eller status utan angiven betydelse färgas efter vad namnet antyder, som Akut eller Ur tjänst; antyder namnet inget visas en grå nål, liksom för en enhet eller medlem utan status. Ange betydelser på sidorna Anpassade statusar och Larmprioriteter för att vara säker.</value>
+  </data>
+  <data name="StatusColorsHeader" xml:space="preserve">
+    <value>Statusfärger</value>
+  </data>
+  <data name="StatusColorsIntro" xml:space="preserve">
+    <value>Enheter och personal får färgen för betydelsen av sin status.</value>
+  </data>
+  <data name="PriorityColorsHeader" xml:space="preserve">
+    <value>Prioritetsfärger</value>
+  </data>
+  <data name="PriorityColorsIntro" xml:space="preserve">
+    <value>Larm får färgen för betydelsen av sin prioritet.</value>
+  </data>
+  <data name="Style.available" xml:space="preserve">
+    <value>Tillgänglig</value>
+  </data>
+  <data name="Style.dispatched" xml:space="preserve">
+    <value>Larmad</value>
+  </data>
+  <data name="Style.responding" xml:space="preserve">
+    <value>På väg</value>
+  </data>
+  <data name="Style.onscene" xml:space="preserve">
+    <value>På plats</value>
+  </data>
+  <data name="Style.transporting" xml:space="preserve">
+    <value>Transporterar</value>
+  </data>
+  <data name="Style.returning" xml:space="preserve">
+    <value>Återvänder</value>
+  </data>
+  <data name="Style.staging" xml:space="preserve">
+    <value>Uppställning och beredskap</value>
+  </data>
+  <data name="Style.delayed" xml:space="preserve">
+    <value>Rast</value>
+  </data>
+  <data name="Style.unavailable" xml:space="preserve">
+    <value>Inte tillgänglig</value>
+  </data>
+  <data name="Style.unknown" xml:space="preserve">
+    <value>Ingen betydelse eller ingen status</value>
+  </data>
+  <data name="Style.low" xml:space="preserve">
+    <value>Låg</value>
+  </data>
+  <data name="Style.medium" xml:space="preserve">
+    <value>Medel</value>
+  </data>
+  <data name="Style.high" xml:space="preserve">
+    <value>Hög</value>
+  </data>
+  <data name="Style.emergency" xml:space="preserve">
+    <value>Akut</value>
+  </data>
+  <data name="CallsHeader" xml:space="preserve">
+    <value>Larm</value>
+  </data>
+  <data name="CallsIntro" xml:space="preserve">
+    <value>En rad per larmtyp, en kolumn per prioritet.</value>
+  </data>
+  <data name="UnitsHeader" xml:space="preserve">
+    <value>Enheter</value>
+  </data>
+  <data name="UnitsIntro" xml:space="preserve">
+    <value>En rad per enhetstyp, med statusarna i dess statusuppsättning.</value>
+  </data>
+  <data name="PersonnelHeader" xml:space="preserve">
+    <value>Personal</value>
+  </data>
+  <data name="PersonnelIntro" xml:space="preserve">
+    <value>En medlem visar ikonen för den första roll de har, i rollordning, som har en. En medlem ”På enhet” får färgen för sin enhets status.</value>
+  </data>
+  <data name="OtherHeader" xml:space="preserve">
+    <value>Stationer, brandposter och intressepunkter</value>
+  </data>
+  <data name="OtherIntro" xml:space="preserve">
+    <value>Dessa ikoner ändras inte med status.</value>
+  </data>
+  <data name="NoCallType" xml:space="preserve">
+    <value>Larm utan typ</value>
+  </data>
+  <data name="NoUnitType" xml:space="preserve">
+    <value>Enheter utan typ</value>
+  </data>
+  <data name="NoRoleIcon" xml:space="preserve">
+    <value>Medlemmar utan rollikon</value>
+  </data>
+  <data name="BuiltInUnitStatuses" xml:space="preserve">
+    <value>Inbyggda enhetsstatusar</value>
+  </data>
+  <data name="Station" xml:space="preserve">
+    <value>Station</value>
+  </data>
+  <data name="Hydrant" xml:space="preserve">
+    <value>Brandpost</value>
+  </data>
+  <data name="EditIcons" xml:space="preserve">
+    <value>Redigera ikoner</value>
+  </data>
+  <data name="KeyHeader" xml:space="preserve">
+    <value>Teckenförklaring</value>
+  </data>
+  <data name="KeyVariant" xml:space="preserve">
+    <value>Uppladdad för denna status eller prioritet</value>
+  </data>
+  <data name="KeyBadge" xml:space="preserve">
+    <value>Typ- eller rollikon med status- eller prioritetsbricka</value>
+  </data>
+  <data name="KeyPin" xml:space="preserve">
+    <value>Inbyggd nål</value>
+  </data>
+  <data name="NoMeaning" xml:space="preserve">
+    <value>Ingen betydelse: grå nål</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Typ</value>
+  </data>
+  <data name="Role" xml:space="preserve">
+    <value>Roll</value>
+  </data>
+  <data name="StatusSet" xml:space="preserve">
+    <value>Statusuppsättning</value>
+  </data>
+  <data name="StatusIconsTitle" xml:space="preserve">
+    <value>Kartikoner för {0}</value>
+  </data>
+  <data name="StatusIconsUnitIntro" xml:space="preserve">
+    <value>Ladda upp en ikon för en status för att visa den på kartan medan en enhet av denna typ har den statusen. Utan en används standardikonen som visas.</value>
+  </data>
+  <data name="StatusIconsCallIntro" xml:space="preserve">
+    <value>Ladda upp en ikon för en prioritet för att visa den på kartan medan ett larm av denna typ har den prioriteten. Utan en används standardikonen som visas.</value>
+  </data>
+  <data name="StatusIconsRoleIntro" xml:space="preserve">
+    <value>Ladda upp en ikon för en status för att visa den på kartan medan en medlem vars ikon kommer från denna roll har den statusen. Utan en används standardikonen som visas.</value>
+  </data>
+  <data name="OwnIcon" xml:space="preserve">
+    <value>Ikon utan status eller prioritet</value>
+  </data>
+  <data name="StatusColumn" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="PriorityColumn" xml:space="preserve">
+    <value>Prioritet</value>
+  </data>
+  <data name="ColorColumn" xml:space="preserve">
+    <value>Kartfärg</value>
+  </data>
+  <data name="DefaultColumn" xml:space="preserve">
+    <value>Standard</value>
+  </data>
+  <data name="UploadedColumn" xml:space="preserve">
+    <value>Uppladdad ikon</value>
+  </data>
+  <data name="Upload" xml:space="preserve">
+    <value>Ladda upp</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Ta bort</value>
+  </data>
+  <data name="NoneUploaded" xml:space="preserve">
+    <value>Ingen</value>
+  </data>
+  <data name="IconSaved" xml:space="preserve">
+    <value>Ikonen sparades.</value>
+  </data>
+  <data name="IconRemoved" xml:space="preserve">
+    <value>Ikonen togs bort.</value>
+  </data>
+  <data name="StatusMapIcons" xml:space="preserve">
+    <value>Kartikoner per status</value>
+  </data>
+  <data name="PriorityMapIcons" xml:space="preserve">
+    <value>Kartikoner per prioritet</value>
+  </data>
+  <data name="StatusMapIconsHelp" xml:space="preserve">
+    <value>En egen kartikon för varje status, så att en enhet eller medlem syns med en blick.</value>
+  </data>
+  <data name="PriorityMapIconsHelp" xml:space="preserve">
+    <value>En egen kartikon för varje prioritet, så att ett larm syns med en blick.</value>
+  </data>
+  <data name="UnitStatusesInStyle" xml:space="preserve">
+    <value>Era enhetsstatusar: {0}</value>
+  </data>
+  <data name="PersonnelStatusesInStyle" xml:space="preserve">
+    <value>Era personalstatusar: {0}</value>
+  </data>
+  <data name="PrioritiesInStyle" xml:space="preserve">
+    <value>Era prioriteter: {0}</value>
+  </data>
+  <data name="KeyOnUnit" xml:space="preserve">
+    <value>Får färgen från sin enhets status</value>
+  </data>
+</root>

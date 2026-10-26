@@ -14,13 +14,24 @@ namespace Resgrid.Tests.Services
 	/// The daily status and staffing resets (Department Settings) now save a meaning ("b{n}") and resolve it when they run,
 	/// so a department on its own statuses or levels resets to its option with that meaning. Values saved before meanings
 	/// keep working: one that is still the department's option is used as is, anything else (a built-in value after the
-	/// department moved to its own set, or an option since deleted) follows its meaning, and nothing matching means skip.
+	/// department moved to its own set, or an option since deleted) follows its meaning. When no option has that meaning
+	/// (sets created before meanings read None on every option) an option without a meaning matched by name stands in, and
+	/// with none of those the value is written as it was before meanings; only a
+	/// value that is neither built-in nor the department's own option, or a meaning with no match, means skip.
 	/// </summary>
 	[TestFixture]
 	public class CustomStateServiceResetTargetTests
 	{
 		private const int CustomDepartmentId = 14856;
 		private const int BuiltInDepartmentId = 2;
+		private const int LegacyDepartmentId = 2163;
+
+		private const int LegacyStatusId = 6101;
+		private const int DeletedLegacyStatusId = 6102;
+		private const int LegacyNotRespondingStatusId = 6103;
+		private const int LegacyLevelId = 6190;
+		private const int DeletedLegacyLevelId = 6191;
+		private const int LegacyWorkingLevelId = 6192;
 
 		private const int AvailableStatusId = 19721;
 		private const int EnRouteStatusId = 19722;
@@ -55,13 +66,28 @@ namespace Resgrid.Tests.Services
 			});
 			repository.Setup(x => x.GetCustomStatesByDepartmentIdAsync(BuiltInDepartmentId)).ReturnsAsync(new List<CustomState>());
 
+			// Sets created before meanings: every option reads None, so no meaning matches anything.
+			repository.Setup(x => x.GetCustomStatesByDepartmentIdAsync(LegacyDepartmentId)).ReturnsAsync(new List<CustomState>
+			{
+				Set(301, CustomStateTypes.Personnel, LegacyDepartmentId,
+					Option(LegacyStatusId, 301, "In Service", ActionBaseTypes.None),
+					Option(DeletedLegacyStatusId, 301, "Old", ActionBaseTypes.None, deleted: true),
+					Option(LegacyNotRespondingStatusId, 301, "Not Responding", ActionBaseTypes.None)),
+				Set(302, CustomStateTypes.Staffing, LegacyDepartmentId,
+					Option(LegacyLevelId, 302, "Duty Crew", StaffingBaseTypes.None),
+					Option(DeletedLegacyLevelId, 302, "Old", StaffingBaseTypes.None, deleted: true),
+					Option(LegacyWorkingLevelId, 302, "Working", StaffingBaseTypes.None))
+			});
+
 			_service = new CustomStateService(repository.Object, Mock.Of<ICustomStateDetailRepository>(), Mock.Of<IEventAggregator>(), Mock.Of<ICacheProvider>());
 		}
 
-		private static CustomState Set(int id, CustomStateTypes type, params CustomStateDetail[] details) => new CustomState
+		private static CustomState Set(int id, CustomStateTypes type, params CustomStateDetail[] details) => Set(id, type, CustomDepartmentId, details);
+
+		private static CustomState Set(int id, CustomStateTypes type, int departmentId, params CustomStateDetail[] details) => new CustomState
 		{
 			CustomStateId = id,
-			DepartmentId = CustomDepartmentId,
+			DepartmentId = departmentId,
 			Type = (int)type,
 			Name = type.ToString(),
 			Details = new List<CustomStateDetail>(details)
@@ -110,6 +136,32 @@ namespace Resgrid.Tests.Services
 		public async Task A_saved_status_since_deleted_follows_its_meaning()
 		{
 			(await _service.ResolveStatusResetAsync(CustomDepartmentId, DeletedUnavailableStatusId.ToString())).Should().Be(UnavailableStatusId);
+		}
+
+		[Test]
+		public async Task A_saved_status_with_no_status_of_its_meaning_follows_a_status_without_a_meaning_by_name()
+		{
+			// RESGRID-WEBJOBS-BT: "'0' matches none of department 2163's statuses; nobody was reset".
+			(await _service.ResolveStatusResetAsync(LegacyDepartmentId, ((int)ActionTypes.StandingBy).ToString())).Should().Be(LegacyStatusId,
+				"\"In Service\" suggests Available, Standing By's meaning");
+			(await _service.ResolveStatusResetAsync(LegacyDepartmentId, ((int)ActionTypes.NotResponding).ToString())).Should().Be(LegacyNotRespondingStatusId,
+				"the status with the built-in status's name");
+		}
+
+		[Test]
+		public async Task A_saved_status_with_no_status_of_its_meaning_or_name_is_written_as_before_meanings()
+		{
+			(await _service.ResolveStatusResetAsync(LegacyDepartmentId, ((int)ActionTypes.OnScene).ToString())).Should().Be((int)ActionTypes.OnScene);
+			(await _service.ResolveStatusResetAsync(CustomDepartmentId, ((int)ActionTypes.OnScene).ToString())).Should().Be((int)ActionTypes.OnScene,
+				"the department has no On Scene status, so the built-in one is written as before");
+			(await _service.ResolveStatusResetAsync(LegacyDepartmentId, DeletedLegacyStatusId.ToString())).Should().Be(DeletedLegacyStatusId);
+		}
+
+		[Test]
+		public async Task A_saved_status_that_is_neither_built_in_nor_the_departments_resolves_to_nothing()
+		{
+			(await _service.ResolveStatusResetAsync(CustomDepartmentId, "10898")).Should().BeNull();
+			(await _service.ResolveStatusResetAsync(CustomDepartmentId, LegacyStatusId.ToString())).Should().BeNull("another department's option");
 		}
 
 		[TestCase(null)]
@@ -163,14 +215,36 @@ namespace Resgrid.Tests.Services
 		public async Task A_saved_built_in_level_on_a_custom_department_follows_its_meaning()
 		{
 			(await _service.ResolveStaffingResetAsync(CustomDepartmentId, ((int)UserStateTypes.Unavailable).ToString())).Should().Be(OffLevelId);
-			(await _service.ResolveStaffingResetAsync(CustomDepartmentId, ((int)UserStateTypes.Delayed).ToString())).Should().BeNull(
-				"the department has no Delayed level, so the reset is skipped rather than writing a level it does not use");
 		}
 
 		[Test]
 		public async Task A_saved_level_since_deleted_follows_its_meaning()
 		{
 			(await _service.ResolveStaffingResetAsync(CustomDepartmentId, DeletedOffLevelId.ToString())).Should().Be(OffLevelId);
+		}
+
+		[Test]
+		public async Task A_saved_level_with_no_level_of_its_meaning_follows_a_level_without_a_meaning_by_name()
+		{
+			(await _service.ResolveStaffingResetAsync(LegacyDepartmentId, ((int)UserStateTypes.OnShift).ToString())).Should().Be(LegacyLevelId,
+				"\"Duty Crew\" is the first level whose name suggests On Shift");
+		}
+
+		[Test]
+		public async Task A_saved_level_with_no_level_of_its_meaning_or_name_is_written_as_before_meanings()
+		{
+			// RESGRID-WEBJOBS-BV / C7: "'2' matches none of department 2163's staffing levels; nobody was reset".
+			(await _service.ResolveStaffingResetAsync(LegacyDepartmentId, ((int)UserStateTypes.Unavailable).ToString())).Should().Be((int)UserStateTypes.Unavailable);
+			(await _service.ResolveStaffingResetAsync(LegacyDepartmentId, ((int)UserStateTypes.Available).ToString())).Should().Be((int)UserStateTypes.Available);
+			(await _service.ResolveStaffingResetAsync(CustomDepartmentId, ((int)UserStateTypes.Delayed).ToString())).Should().Be((int)UserStateTypes.Delayed,
+				"the department has no Delayed level, so the built-in one is written as before");
+			(await _service.ResolveStaffingResetAsync(LegacyDepartmentId, DeletedLegacyLevelId.ToString())).Should().Be(DeletedLegacyLevelId);
+		}
+
+		[Test]
+		public async Task A_saved_level_that_is_neither_built_in_nor_the_departments_resolves_to_nothing()
+		{
+			(await _service.ResolveStaffingResetAsync(CustomDepartmentId, LegacyLevelId.ToString())).Should().BeNull("another department's level");
 		}
 
 		[TestCase(null)]

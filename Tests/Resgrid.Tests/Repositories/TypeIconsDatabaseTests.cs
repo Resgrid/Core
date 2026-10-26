@@ -34,7 +34,10 @@ namespace Resgrid.Tests.Repositories
 	/// CallTypes, POITypes and PersonnelRoles, and PersonnelRoles.SortOrder (0 for existing roles); an icon round-trips through the generic insert and is found by its key (the service refuses
 	/// anything but lowercase hex first, since SQL Server's default collation compares case-insensitively); the type's key
 	/// is set only on the department's own row; a type's delete keeps only the key it is told to and the other kinds;
-	/// and the role order is written only to the department's own roles.
+	/// and the role order is written only to the department's own roles. M0289: a status or priority icon (Variant) is its own
+	/// slot, so replacing or removing the type's own icon keeps it and replacing one slot keeps the others, while the type
+	/// delete removes them all; a slot's clean-up after an upload keeps its newest row and the type is pointed at its newest own
+	/// icon, so two uploads at once leave the type on the row that stays; the department's slots list without their bytes.
 	/// Set RESGRID_ADP_SQLSERVER_TEST_CONNECTION / RESGRID_ADP_POSTGRES_TEST_CONNECTION (server-level connections) to run.
 	/// </summary>
 	[TestFixture(DatabaseTypes.SqlServer), TestFixture(DatabaseTypes.Postgres), NonParallelizable]
@@ -114,8 +117,8 @@ namespace Resgrid.Tests.Repositories
 
 			var source = new Mock<IMigrationSource>();
 			source.Setup(s => s.GetMigrations()).Returns(IsPostgres
-				? new IMigration[] { new M0285_AddTypeIconsPg(), new M0286_AddPersonnelRoleIconsPg() }
-				: new IMigration[] { new M0285_AddTypeIcons(), new M0286_AddPersonnelRoleIcons() });
+				? new IMigration[] { new M0285_AddTypeIconsPg(), new M0286_AddPersonnelRoleIconsPg(), new M0289_AddTypeIconVariantsPg() }
+				: new IMigration[] { new M0285_AddTypeIcons(), new M0286_AddPersonnelRoleIcons(), new M0289_AddTypeIconVariants() });
 			_runner = new ServiceCollection().AddFluentMigratorCore().ConfigureRunner(r =>
 			{
 				if (IsPostgres) r.AddPostgres(); else r.AddSqlServer();
@@ -274,6 +277,163 @@ namespace Resgrid.Tests.Repositories
 			(await Repository().GetByIconKeyAsync(current.IconKey)).Should().BeNull();
 			(await Repository().GetByIconKeyAsync(otherType.IconKey)).Should().NotBeNull();
 			(await Repository().GetByIconKeyAsync(otherKind.IconKey)).Should().NotBeNull("the POI type with the same id is a different type");
+		}
+
+		private static TypeIcon NewVariant(TypeIconKinds kind, int typeId, string variant)
+		{
+			var icon = NewIcon(kind, typeId);
+			icon.Variant = variant;
+			return icon;
+		}
+
+		[Test]
+		public async Task DeleteSlotAsync_touches_only_its_own_slot()
+		{
+			var own = NewIcon(TypeIconKinds.UnitType, 31);
+			var oldResponding = NewVariant(TypeIconKinds.UnitType, 31, "s5");
+			var responding = NewVariant(TypeIconKinds.UnitType, 31, "s5");
+			var onScene = NewVariant(TypeIconKinds.UnitType, 31, "o44");
+			foreach (var icon in new[] { own, oldResponding, responding, onScene })
+				await Repository().InsertAsync(icon, CancellationToken.None);
+
+			(await Repository().DeleteSlotAsync(DepartmentId, TypeIconKinds.UnitType, 31, "s5", responding.IconKey)).Should().Be(1);
+			(await Repository().GetByIconKeyAsync(oldResponding.IconKey)).Should().BeNull();
+			(await Repository().GetByIconKeyAsync(responding.IconKey)).Should().NotBeNull();
+
+			(await Repository().DeleteSlotAsync(DepartmentId, TypeIconKinds.UnitType, 31, null)).Should().Be(1, "only the type's own icon is in the null slot");
+			(await Repository().GetByIconKeyAsync(own.IconKey)).Should().BeNull();
+			(await Repository().GetByIconKeyAsync(responding.IconKey)).Should().NotBeNull();
+			(await Repository().GetByIconKeyAsync(onScene.IconKey)).Should().NotBeNull();
+
+			(await Repository().DeleteForTypeAsync(DepartmentId, TypeIconKinds.UnitType, 31)).Should().Be(2, "the type delete removes every slot");
+		}
+
+		[Test]
+		public async Task DeleteAllButNewestInSlotAsync_keeps_the_newest_upload_of_only_its_own_slot()
+		{
+			var older = NewVariant(TypeIconKinds.UnitType, 31, "s5");
+			var newer = NewVariant(TypeIconKinds.UnitType, 31, "s5");
+			newer.UploadedOn = older.UploadedOn.AddSeconds(1);
+			var own = NewIcon(TypeIconKinds.UnitType, 31);
+			var otherSlot = NewVariant(TypeIconKinds.UnitType, 31, "o44");
+			var otherType = NewVariant(TypeIconKinds.UnitType, 32, "s5");
+			foreach (var icon in new[] { newer, older, own, otherSlot, otherType })
+				await Repository().InsertAsync(icon, CancellationToken.None);
+
+			// Two uploads at once: both rows are in before either upload's clean-up runs, and both run it.
+			(await Repository().DeleteAllButNewestInSlotAsync(DepartmentId, TypeIconKinds.UnitType, 31, "s5")).Should().Be(1);
+			(await Repository().DeleteAllButNewestInSlotAsync(DepartmentId, TypeIconKinds.UnitType, 31, "s5")).Should().Be(0, "the newest upload is never deleted");
+
+			(await Repository().GetByIconKeyAsync(older.IconKey)).Should().BeNull();
+			(await Repository().GetByIconKeyAsync(newer.IconKey)).Should().NotBeNull();
+			foreach (var kept in new[] { own, otherSlot, otherType })
+				(await Repository().GetByIconKeyAsync(kept.IconKey)).Should().NotBeNull();
+		}
+
+		[Test]
+		public async Task DeleteAllButNewestInSlotAsync_keeps_the_greater_key_of_uploads_made_at_the_same_time()
+		{
+			var first = NewVariant(TypeIconKinds.CallType, 31, "p2");
+			var second = NewVariant(TypeIconKinds.CallType, 31, "p2");
+			foreach (var icon in new[] { first, second })
+				await Repository().InsertAsync(icon, CancellationToken.None);
+			var greater = string.CompareOrdinal(first.IconKey, second.IconKey) > 0 ? first : second;
+			var lesser = greater == first ? second : first;
+
+			(await Repository().DeleteAllButNewestInSlotAsync(DepartmentId, TypeIconKinds.CallType, 31, "p2")).Should().Be(1);
+
+			(await Repository().GetByIconKeyAsync(greater.IconKey)).Should().NotBeNull();
+			(await Repository().GetByIconKeyAsync(lesser.IconKey)).Should().BeNull();
+		}
+
+		[TestCase(TypeIconKinds.UnitType, "UnitTypes", "Type")]
+		[TestCase(TypeIconKinds.CallType, "CallTypes", "Type")]
+		[TestCase(TypeIconKinds.PoiType, "POITypes", "Name")]
+		[TestCase(TypeIconKinds.PersonnelRole, "PersonnelRoles", "Name")]
+		public async Task SetTypeIconKeyToNewestAsync_points_only_the_departments_own_type_at_its_newest_own_icon(TypeIconKinds kind, string table, string nameColumn)
+		{
+			var own = await InsertTypeAsync(table, nameColumn, DepartmentId);
+			var foreign = await InsertTypeAsync(table, nameColumn, DepartmentId + 1);
+			var older = NewIcon(kind, own);
+			var newer = NewIcon(kind, own);
+			newer.UploadedOn = older.UploadedOn.AddSeconds(1);
+			// Newer still, but not the type's own icon slot, or not this type.
+			var variant = NewVariant(kind, own, "s5");
+			variant.UploadedOn = older.UploadedOn.AddSeconds(2);
+			var otherType = NewIcon(kind, own + 1000);
+			otherType.UploadedOn = older.UploadedOn.AddSeconds(2);
+			foreach (var icon in new[] { newer, older, variant, otherType })
+				await Repository().InsertAsync(icon, CancellationToken.None);
+
+			(await Repository().SetTypeIconKeyToNewestAsync(DepartmentId, kind, own)).Should().Be(1);
+			(await Repository().SetTypeIconKeyToNewestAsync(DepartmentId, kind, foreign)).Should().Be(0, "another department's type is never touched");
+
+			(await IconKeyOfAsync(table, own)).Should().Be(newer.IconKey);
+			(await IconKeyOfAsync(table, foreign)).Should().BeNull();
+		}
+
+		[Test]
+		public async Task SetTypeIconKeyToNewestAsync_clears_the_key_when_the_slot_is_empty()
+		{
+			var own = await InsertTypeAsync("UnitTypes", "Type", DepartmentId);
+			(await Repository().SetTypeIconKeyAsync(DepartmentId, TypeIconKinds.UnitType, own, "abc")).Should().Be(1);
+
+			(await Repository().SetTypeIconKeyToNewestAsync(DepartmentId, TypeIconKinds.UnitType, own)).Should().Be(1);
+
+			(await IconKeyOfAsync("UnitTypes", own)).Should().BeNull();
+		}
+
+		[Test]
+		public async Task Two_uploads_at_once_leave_the_type_on_the_one_icon_its_slot_keeps()
+		{
+			var type = await InsertTypeAsync("CallTypes", "Type", DepartmentId);
+			var first = NewIcon(TypeIconKinds.CallType, type);
+			var second = NewIcon(TypeIconKinds.CallType, type);
+			second.UploadedOn = first.UploadedOn.AddMilliseconds(5);
+
+			// Both rows go in before either upload goes on; then each points the type and cleans up, the first upload first.
+			// Pointing at "this upload" and keeping "this upload" would delete both rows here and leave the type on a dead key.
+			await Repository().InsertAsync(first, CancellationToken.None);
+			await Repository().InsertAsync(second, CancellationToken.None);
+			for (var upload = 0; upload < 2; upload++)
+			{
+				(await Repository().SetTypeIconKeyToNewestAsync(DepartmentId, TypeIconKinds.CallType, type)).Should().Be(1);
+				await Repository().DeleteAllButNewestInSlotAsync(DepartmentId, TypeIconKinds.CallType, type, null);
+			}
+
+			(await IconKeyOfAsync("CallTypes", type)).Should().Be(second.IconKey);
+			(await Repository().GetByIconKeyAsync(second.IconKey)).Should().NotBeNull();
+			(await Repository().GetByIconKeyAsync(first.IconKey)).Should().BeNull();
+		}
+
+		[Test]
+		public async Task GetVariantsForDepartmentAsync_lists_only_the_departments_status_and_priority_icons()
+		{
+			var own = NewIcon(TypeIconKinds.CallType, 31);
+			var high = NewVariant(TypeIconKinds.CallType, 31, "p2");
+			var foreign = NewVariant(TypeIconKinds.CallType, 31, "p3");
+			foreign.DepartmentId = DepartmentId + 1;
+			foreach (var icon in new[] { own, high, foreign })
+				await Repository().InsertAsync(icon, CancellationToken.None);
+
+			var variants = await Repository().GetVariantsForDepartmentAsync(DepartmentId);
+
+			variants.Should().ContainSingle();
+			variants[0].TypeKind.Should().Be((int)TypeIconKinds.CallType);
+			variants[0].TypeId.Should().Be(31);
+			variants[0].Variant.Should().Be("p2");
+			variants[0].IconKey.Should().Be(high.IconKey);
+		}
+
+		[TestCase(TypeIconKinds.UnitType, "UnitTypes", "Type")]
+		[TestCase(TypeIconKinds.PersonnelRole, "PersonnelRoles", "Name")]
+		public async Task TypeBelongsToDepartmentAsync_is_true_only_for_the_departments_own_type(TypeIconKinds kind, string table, string nameColumn)
+		{
+			var own = await InsertTypeAsync(table, nameColumn, DepartmentId);
+			var foreign = await InsertTypeAsync(table, nameColumn, DepartmentId + 1);
+
+			(await Repository().TypeBelongsToDepartmentAsync(DepartmentId, kind, own)).Should().BeTrue();
+			(await Repository().TypeBelongsToDepartmentAsync(DepartmentId, kind, foreign)).Should().BeFalse();
 		}
 
 		[Test]

@@ -1724,6 +1724,12 @@
   <data name="ResetTargetSavedOption" xml:space="preserve">
     <value>{0} (sparad tidigare, erbjuds inte längre)</value>
   </data>
+  <data name="ResetTargetSetsNow" xml:space="preserve">
+    <value>Det här valet sparades tidigare och erbjuds inte längre. Den dagliga återställningen sätter för närvarande alla till {0}. Välj en betydelse eller ett av dina egna alternativ och spara för att ändra det.</value>
+  </data>
+  <data name="ResetTargetSetsNobody" xml:space="preserve">
+    <value>Det här valet sparades tidigare och matchar inget som avdelningen använder, så den dagliga återställningen ändrar ingen. Välj en betydelse eller ett av dina egna alternativ och spara.</value>
+  </data>
   <data name="RunCardRelaxUnfilledRowsLabel" xml:space="preserve">
     <value>Lätta på statusfilter för ofyllda rader</value>
   </data>

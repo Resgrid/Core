@@ -36,6 +36,8 @@ export interface EventingHandlers {
   onUnitStatusUpdated?: (unitStateId: string) => void;
   /** A personnel status was saved; the id is the action log id, not the user id. */
   onPersonnelStatusUpdated?: (actionLogId: string) => void;
+  /** A call was added, changed or closed; the id is the call id. */
+  onCallsChanged?: (callId: string) => void;
   /** Called after an automatic reconnect has re-joined the department group. Events sent while offline were missed. */
   onResubscribed?: () => void;
 }
@@ -104,6 +106,9 @@ export async function connectEventingHub(departmentId: number, handlers: Eventin
   connection.on('unitActiveRolesUpdated', (id: unknown) => handlers.onUnitActiveRolesUpdated?.(asId(id)));
   connection.on('unitStatusUpdated', (id: unknown) => handlers.onUnitStatusUpdated?.(asId(id)));
   connection.on('personnelStatusUpdated', (id: unknown) => handlers.onPersonnelStatusUpdated?.(asId(id)));
+  connection.on('callsUpdated', (id: unknown) => handlers.onCallsChanged?.(asId(id)));
+  connection.on('callAdded', (id: unknown) => handlers.onCallsChanged?.(asId(id)));
+  connection.on('callClosed', (id: unknown) => handlers.onCallsChanged?.(asId(id)));
 
   // As with the geolocation hub, a reconnect gets a new connection id that is in no group yet.
   connection.onreconnected(async () => {

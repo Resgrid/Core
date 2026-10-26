@@ -29,6 +29,10 @@ export interface MapMarkerInfo {
   LayerName?: string;
   /** The department's uploaded unit, call or POI type icon for the marker (absolute URL, 128 px square PNG). */
   IconUrl?: string | null;
+  /** The built-in 32 x 37 pin recoloured to the call's priority or the unit's or person's status (absolute API URL). */
+  PinIconUrl?: string | null;
+  /** The priority or status style of a call, unit or person marker ("responding", "high"), when it has one. */
+  IconStyle?: string | null;
 }
 
 export interface PoiLayerInfo {
@@ -335,10 +339,34 @@ export function hasUploadedMarkerIcon(marker: Pick<MapMarkerInfo, 'IconUrl'>): b
   return typeof marker.IconUrl === 'string' && marker.IconUrl.length > 0;
 }
 
-export function getMarkerIconUrl(marker: Pick<MapMarkerInfo, 'ImagePath' | 'IconUrl'>): string {
-  // A type's uploaded icon wins over the built-in pin named by ImagePath.
+const apiPinPath = '/api/v4/TypeIcons/Pins/';
+const webPinPath = '/TypeIcons/Pins/';
+
+/**
+ * The styled built-in pin of a call, unit or person, loaded from this site's own copy of the API's pin endpoint so the
+ * map does not depend on reaching the API host for it; null when the marker has none.
+ */
+export function getPinIconUrl(marker: Pick<MapMarkerInfo, 'PinIconUrl'>): string | null {
+  const url = typeof marker.PinIconUrl === 'string' ? marker.PinIconUrl.trim() : '';
+
+  if (url.length === 0) {
+    return null;
+  }
+
+  const index = url.indexOf(apiPinPath);
+  return index >= 0 ? `${webPinPath}${url.substring(index + apiPinPath.length)}` : url;
+}
+
+export function getMarkerIconUrl(marker: Pick<MapMarkerInfo, 'ImagePath' | 'IconUrl' | 'PinIconUrl'>): string {
+  // A type's uploaded icon wins over the styled built-in pin, which wins over the plain pin named by ImagePath.
   if (hasUploadedMarkerIcon(marker)) {
     return marker.IconUrl as string;
+  }
+
+  const pinIconUrl = getPinIconUrl(marker);
+
+  if (pinIconUrl) {
+    return pinIconUrl;
   }
 
   const imagePath = typeof marker.ImagePath === 'string' && marker.ImagePath.length > 0

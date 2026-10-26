@@ -1782,6 +1782,12 @@
   <data name="ResetTargetSavedOption" xml:space="preserve">
     <value>{0} (αποθηκεύτηκε νωρίτερα, δεν προσφέρεται πια)</value>
   </data>
+  <data name="ResetTargetSetsNow" xml:space="preserve">
+    <value>Αυτή η επιλογή αποθηκεύτηκε παλαιότερα και δεν προσφέρεται πλέον. Η ημερήσια επαναφορά ορίζει αυτή τη στιγμή όλους σε {0}. Επιλέξτε μια σημασία ή μία από τις δικές σας επιλογές και αποθηκεύστε για να το αλλάξετε.</value>
+  </data>
+  <data name="ResetTargetSetsNobody" xml:space="preserve">
+    <value>Αυτή η επιλογή αποθηκεύτηκε παλαιότερα και δεν αντιστοιχεί σε τίποτα από όσα χρησιμοποιεί το τμήμα, οπότε η ημερήσια επαναφορά δεν αλλάζει κανέναν. Επιλέξτε μια σημασία ή μία από τις δικές σας επιλογές και αποθηκεύστε.</value>
+  </data>
   <data name="RunCardRelaxUnfilledRowsLabel" xml:space="preserve">
     <value>Χαλάρωση φίλτρων κατάστασης για μη καλυμμένες γραμμές</value>
   </data>

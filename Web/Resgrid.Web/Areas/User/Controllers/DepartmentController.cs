@@ -364,6 +364,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			model.StaffingLevels = await BuildStaffingResetOptionsAsync(staffingLevels, model.ResetStaffingTo);
+			model.StaffingResetWarning = await StaffingResetWarningAsync(model.EnableStaffingReset, model.StaffingLevels, model.ResetStaffingTo);
 
 			// Status Reset
 			var statusTask = await _scheduledTasksService.GetScheduledTasksByUserTypeAsync(model.Department.ManagingUserId, (int)TaskTypes.DepartmentStatusReset);
@@ -379,6 +380,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			model.StatusLevels = await BuildStatusResetOptionsAsync(actionLogs, model.ResetStatusTo);
+			model.StatusResetWarning = await StatusResetWarningAsync(model.EnableStatusReset, model.StatusLevels, model.ResetStatusTo);
 
 			// The organization type is one label; a department doing several kinds of work records them in the operating profile.
 			ViewBag.CanConfigureOperatingProfile = await CanEditOperatingProfileAsync();
@@ -452,6 +454,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var statusResetOptions = await BuildStatusResetOptionsAsync(actionLogs, savedStatusReset);
 			model.StaffingLevels = SelectResetOption(staffingResetOptions, model.ResetStaffingTo);
 			model.StatusLevels = SelectResetOption(statusResetOptions, model.ResetStatusTo);
+			model.StaffingResetWarning = await StaffingResetWarningAsync(model.EnableStaffingReset, model.StaffingLevels, model.ResetStaffingTo);
+			model.StatusResetWarning = await StatusResetWarningAsync(model.EnableStatusReset, model.StatusLevels, model.ResetStatusTo);
 
 			Address departmentAddress = null;
 			if (model.Department.Address.AddressId != 0)
@@ -2883,6 +2887,46 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			return items;
 		}
+
+		/// <summary>
+		/// The warning under the staffing reset when its choice is no longer offered (saved before meanings, or a level since
+		/// deleted): the level the reset sets now, or that it sets nobody. Null when the reset is off or its choice is offered.
+		/// </summary>
+		private async Task<string> StaffingResetWarningAsync(bool enabled, List<SelectListItem> options, string selected)
+		{
+			if (!IsResetTargetNoLongerOffered(enabled, options, selected))
+				return null;
+
+			var staffing = await _customStateService.ResolveStaffingResetAsync(DepartmentId, selected);
+			var name = staffing.HasValue
+				? (await _customStateService.GetCustomPersonnelStaffingAsync(DepartmentId, new UserState { DepartmentId = DepartmentId, State = staffing.Value }))?.ButtonText
+				: null;
+
+			return ResetTargetWarning(staffing, name);
+		}
+
+		/// <summary>The same as <see cref="StaffingResetWarningAsync"/> for the status reset.</summary>
+		private async Task<string> StatusResetWarningAsync(bool enabled, List<SelectListItem> options, string selected)
+		{
+			if (!IsResetTargetNoLongerOffered(enabled, options, selected))
+				return null;
+
+			var status = await _customStateService.ResolveStatusResetAsync(DepartmentId, selected);
+			var name = status.HasValue
+				? (await _customStateService.GetCustomPersonnelStatusAsync(DepartmentId, new ActionLog { DepartmentId = DepartmentId, ActionTypeId = status.Value }))?.ButtonText
+				: null;
+
+			return ResetTargetWarning(status, name);
+		}
+
+		// The offered choices sit in the meaning and option groups; a saved choice no longer offered is added without a group.
+		private static bool IsResetTargetNoLongerOffered(bool enabled, List<SelectListItem> options, string selected) =>
+			enabled && !String.IsNullOrWhiteSpace(selected) && options != null && !options.Any(x => x.Group != null && x.Value == selected.Trim());
+
+		private string ResetTargetWarning(int? value, string name) =>
+			value.HasValue
+				? string.Format(_departmentLocalizer["ResetTargetSetsNow"], name ?? value.Value.ToString())
+				: _departmentLocalizer["ResetTargetSetsNobody"];
 
 		/// <summary>The localized name of a staffing meaning (the Custom Statuses strings), or its display name without one.</summary>
 		private string StaffingMeaningName(StaffingBaseTypes baseType)

@@ -48,6 +48,8 @@ namespace Resgrid.Web.Areas.User.Models
 		public List<CustomStateDetail> Staffings { get; set; }
 		/// <summary>"b{n}" for a staffing meaning, or a staffing level value (the format saved before meanings).</summary>
 		public string ResetStaffingTo { get; set; }
+		/// <summary>Shown under the staffing reset when its saved choice is no longer offered: what it sets now, or that it sets nobody.</summary>
+		public string StaffingResetWarning { get; set; }
 		public UserStateTypes UserStateTypes { get; set; }
 
 		public bool EnableStaffingSupress { get; set; }
@@ -59,6 +61,8 @@ namespace Resgrid.Web.Areas.User.Models
 		public List<SelectListItem> StatusLevels { get; set; }
 		/// <summary>"b{n}" for a status meaning, or a status value (the format saved before meanings).</summary>
 		public string ResetStatusTo { get; set; }
+		/// <summary>Shown under the status reset when its saved choice is no longer offered: what it sets now, or that it sets nobody.</summary>
+		public string StatusResetWarning { get; set; }
 		public ActionTypes UserStatusTypes { get; set; }
 
 		public int PersonnelSort { get; set; }

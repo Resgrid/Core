@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Map Icon Legend and status / priority map icon pages -->
+  <data name="LegendPageTitle" xml:space="preserve">
+    <value>Legende der Kartensymbole</value>
+  </data>
+  <data name="LegendIntro" xml:space="preserve">
+    <value>Alle Symbole, die die Karte für Einsätze, Einheiten und Personal zeigt. Das Symbol eines Einsatzes richtet sich nach Typ und Priorität, das einer Einheit nach Typ und Status und das eines Mitglieds nach Rolle und Status. Die Personalstärke ändert nie ein Symbol.</value>
+  </data>
+  <data name="HowPickedHeader" xml:space="preserve">
+    <value>So wird ein Symbol gewählt</value>
+  </data>
+  <data name="HowPicked1" xml:space="preserve">
+    <value>Ein für den Typ oder die Rolle genau für diese Priorität oder diesen Status hochgeladenes Symbol.</value>
+  </data>
+  <data name="HowPicked2" xml:space="preserve">
+    <value>Sonst das eigene hochgeladene Symbol des Typs oder der Rolle, mit einem Abzeichen in der Farbe der Priorität oder des Status.</value>
+  </data>
+  <data name="HowPicked3" xml:space="preserve">
+    <value>Sonst die eingebaute Markierung in der Farbe der Priorität oder des Status.</value>
+  </data>
+  <data name="HowPicked4" xml:space="preserve">
+    <value>Eine Priorität oder ein Status ohne festgelegte Bedeutung wird nach dem gefärbt, was ihr Name nahelegt, etwa „Notfall“ oder „Außer Dienst“; legt der Name nichts nahe, erscheint eine graue Markierung, ebenso bei einer Einheit oder einem Mitglied ohne Status. Legen Sie Bedeutungen auf den Seiten Benutzerdefinierte Status und Einsatzprioritäten fest, um sicherzugehen.</value>
+  </data>
+  <data name="StatusColorsHeader" xml:space="preserve">
+    <value>Statusfarben</value>
+  </data>
+  <data name="StatusColorsIntro" xml:space="preserve">
+    <value>Einheiten und Personal nehmen die Farbe der Bedeutung ihres Status an.</value>
+  </data>
+  <data name="PriorityColorsHeader" xml:space="preserve">
+    <value>Prioritätsfarben</value>
+  </data>
+  <data name="PriorityColorsIntro" xml:space="preserve">
+    <value>Einsätze nehmen die Farbe der Bedeutung ihrer Priorität an.</value>
+  </data>
+  <data name="Style.available" xml:space="preserve">
+    <value>Verfügbar</value>
+  </data>
+  <data name="Style.dispatched" xml:space="preserve">
+    <value>Alarmiert</value>
+  </data>
+  <data name="Style.responding" xml:space="preserve">
+    <value>Auf Anfahrt</value>
+  </data>
+  <data name="Style.onscene" xml:space="preserve">
+    <value>Vor Ort</value>
+  </data>
+  <data name="Style.transporting" xml:space="preserve">
+    <value>Transport</value>
+  </data>
+  <data name="Style.returning" xml:space="preserve">
+    <value>Rückfahrt</value>
+  </data>
+  <data name="Style.staging" xml:space="preserve">
+    <value>Bereitstellung und Bereitschaft</value>
+  </data>
+  <data name="Style.delayed" xml:space="preserve">
+    <value>Pause</value>
+  </data>
+  <data name="Style.unavailable" xml:space="preserve">
+    <value>Nicht verfügbar</value>
+  </data>
+  <data name="Style.unknown" xml:space="preserve">
+    <value>Keine Bedeutung oder kein Status</value>
+  </data>
+  <data name="Style.low" xml:space="preserve">
+    <value>Niedrig</value>
+  </data>
+  <data name="Style.medium" xml:space="preserve">
+    <value>Mittel</value>
+  </data>
+  <data name="Style.high" xml:space="preserve">
+    <value>Hoch</value>
+  </data>
+  <data name="Style.emergency" xml:space="preserve">
+    <value>Notfall</value>
+  </data>
+  <data name="CallsHeader" xml:space="preserve">
+    <value>Einsätze</value>
+  </data>
+  <data name="CallsIntro" xml:space="preserve">
+    <value>Eine Zeile je Einsatztyp, eine Spalte je Priorität.</value>
+  </data>
+  <data name="UnitsHeader" xml:space="preserve">
+    <value>Einheiten</value>
+  </data>
+  <data name="UnitsIntro" xml:space="preserve">
+    <value>Eine Zeile je Einheitentyp, mit den Status seines Statussatzes.</value>
+  </data>
+  <data name="PersonnelHeader" xml:space="preserve">
+    <value>Personal</value>
+  </data>
+  <data name="PersonnelIntro" xml:space="preserve">
+    <value>Ein Mitglied zeigt das Symbol der ersten seiner Rollen in Rollenreihenfolge, die eines hat. Ein Mitglied „Auf Einheit“ nimmt die Farbe des Status seiner Einheit an.</value>
+  </data>
+  <data name="OtherHeader" xml:space="preserve">
+    <value>Wachen, Hydranten und Points of Interest</value>
+  </data>
+  <data name="OtherIntro" xml:space="preserve">
+    <value>Diese Symbole ändern sich nicht mit dem Status.</value>
+  </data>
+  <data name="NoCallType" xml:space="preserve">
+    <value>Einsätze ohne Typ</value>
+  </data>
+  <data name="NoUnitType" xml:space="preserve">
+    <value>Einheiten ohne Typ</value>
+  </data>
+  <data name="NoRoleIcon" xml:space="preserve">
+    <value>Mitglieder ohne Rollensymbol</value>
+  </data>
+  <data name="BuiltInUnitStatuses" xml:space="preserve">
+    <value>Eingebaute Einheitenstatus</value>
+  </data>
+  <data name="Station" xml:space="preserve">
+    <value>Wache</value>
+  </data>
+  <data name="Hydrant" xml:space="preserve">
+    <value>Hydrant</value>
+  </data>
+  <data name="EditIcons" xml:space="preserve">
+    <value>Symbole bearbeiten</value>
+  </data>
+  <data name="KeyHeader" xml:space="preserve">
+    <value>Zeichenerklärung</value>
+  </data>
+  <data name="KeyVariant" xml:space="preserve">
+    <value>Für diesen Status oder diese Priorität hochgeladen</value>
+  </data>
+  <data name="KeyBadge" xml:space="preserve">
+    <value>Typ- oder Rollensymbol mit Status- oder Prioritätsabzeichen</value>
+  </data>
+  <data name="KeyPin" xml:space="preserve">
+    <value>Eingebaute Markierung</value>
+  </data>
+  <data name="NoMeaning" xml:space="preserve">
+    <value>Keine Bedeutung: graue Markierung</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Typ</value>
+  </data>
+  <data name="Role" xml:space="preserve">
+    <value>Rolle</value>
+  </data>
+  <data name="StatusSet" xml:space="preserve">
+    <value>Statussatz</value>
+  </data>
+  <data name="StatusIconsTitle" xml:space="preserve">
+    <value>Kartensymbole für {0}</value>
+  </data>
+  <data name="StatusIconsUnitIntro" xml:space="preserve">
+    <value>Laden Sie für einen Status ein Symbol hoch, um es auf der Karte zu zeigen, solange eine Einheit dieses Typs in diesem Status ist. Ohne eines wird die gezeigte Vorgabe verwendet.</value>
+  </data>
+  <data name="StatusIconsCallIntro" xml:space="preserve">
+    <value>Laden Sie für eine Priorität ein Symbol hoch, um es auf der Karte zu zeigen, solange ein Einsatz dieses Typs diese Priorität hat. Ohne eines wird die gezeigte Vorgabe verwendet.</value>
+  </data>
+  <data name="StatusIconsRoleIntro" xml:space="preserve">
+    <value>Laden Sie für einen Status ein Symbol hoch, um es auf der Karte zu zeigen, solange ein Mitglied, dessen Symbol von dieser Rolle kommt, in diesem Status ist. Ohne eines wird die gezeigte Vorgabe verwendet.</value>
+  </data>
+  <data name="OwnIcon" xml:space="preserve">
+    <value>Symbol ohne Status oder Priorität</value>
+  </data>
+  <data name="StatusColumn" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="PriorityColumn" xml:space="preserve">
+    <value>Priorität</value>
+  </data>
+  <data name="ColorColumn" xml:space="preserve">
+    <value>Kartenfarbe</value>
+  </data>
+  <data name="DefaultColumn" xml:space="preserve">
+    <value>Vorgabe</value>
+  </data>
+  <data name="UploadedColumn" xml:space="preserve">
+    <value>Hochgeladenes Symbol</value>
+  </data>
+  <data name="Upload" xml:space="preserve">
+    <value>Hochladen</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Entfernen</value>
+  </data>
+  <data name="NoneUploaded" xml:space="preserve">
+    <value>Keines</value>
+  </data>
+  <data name="IconSaved" xml:space="preserve">
+    <value>Symbol gespeichert.</value>
+  </data>
+  <data name="IconRemoved" xml:space="preserve">
+    <value>Symbol entfernt.</value>
+  </data>
+  <data name="StatusMapIcons" xml:space="preserve">
+    <value>Kartensymbole nach Status</value>
+  </data>
+  <data name="PriorityMapIcons" xml:space="preserve">
+    <value>Kartensymbole nach Priorität</value>
+  </data>
+  <data name="StatusMapIconsHelp" xml:space="preserve">
+    <value>Ein anderes Kartensymbol für jeden Status, damit eine Einheit oder ein Mitglied auf einen Blick erkennbar ist.</value>
+  </data>
+  <data name="PriorityMapIconsHelp" xml:space="preserve">
+    <value>Ein anderes Kartensymbol für jede Priorität, damit ein Einsatz auf einen Blick erkennbar ist.</value>
+  </data>
+  <data name="UnitStatusesInStyle" xml:space="preserve">
+    <value>Status Ihrer Einheiten: {0}</value>
+  </data>
+  <data name="PersonnelStatusesInStyle" xml:space="preserve">
+    <value>Status Ihres Personals: {0}</value>
+  </data>
+  <data name="PrioritiesInStyle" xml:space="preserve">
+    <value>Ihre Prioritäten: {0}</value>
+  </data>
+  <data name="KeyOnUnit" xml:space="preserve">
+    <value>Nimmt die Farbe des Status seiner Einheit an</value>
+  </data>
+</root>

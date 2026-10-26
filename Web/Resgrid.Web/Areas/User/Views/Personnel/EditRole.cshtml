@@ -1,6 +1,7 @@
 ﻿@model Resgrid.Web.Areas.User.Models.Personnel.EditRoleModel
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Certifications.Certifications> certificationLocalizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Personnel.Person> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.MapIconLegend> legendStrings
 @{
 		ViewBag.Title = "Resgrid | " + @localizer["EditRoleHeader"];
 }
@@ -59,6 +60,13 @@
 						</div>
 						@{ var iconPicker = new TypeIconPicker { HelpKey = "RoleIconHelp", SampleNameInputId = "Role_Name", SampleName = Model.Role?.Name, DefaultIconUrl = "/images/Mapping/Person_RespondingCall.png", CurrentIconUrl = TypeIcons.WebIconUrl(Model.Role?.IconKey), RemoveFieldName = "RemoveCustomIcon", RemoveChecked = Model.RemoveCustomIcon }; }
 						<partial name="_TypeIconPicker" model="iconPicker" />
+						<div class="form-group">
+							<label class="col-sm-2 control-label">@legendStrings["StatusMapIcons"]</label>
+							<div class="col-sm-10">
+								<a class="btn btn-white btn-sm" asp-controller="Mapping" asp-action="StatusIcons" asp-route-area="User" asp-route-kind="@((int)Resgrid.Model.TypeIconKinds.PersonnelRole)" asp-route-typeId="@Model.Role.PersonnelRoleId"><i class="fa fa-map-marker"></i> @legendStrings["StatusMapIcons"]</a>
+								<span class="help-block m-b-none">@legendStrings["StatusMapIconsHelp"]</span>
+							</div>
+						</div>
 
 						<div class="form-group">
 							<div class="col-sm-4 col-sm-offset-2">

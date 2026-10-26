@@ -1724,6 +1724,12 @@
   <data name="ResetTargetSavedOption" xml:space="preserve">
     <value>{0} (enregistré auparavant, plus proposé)</value>
   </data>
+  <data name="ResetTargetSetsNow" xml:space="preserve">
+    <value>Ce choix a été enregistré auparavant et n'est plus proposé. La réinitialisation quotidienne définit actuellement tout le monde sur {0}. Choisissez une signification ou l'une de vos propres options et enregistrez pour le modifier.</value>
+  </data>
+  <data name="ResetTargetSetsNobody" xml:space="preserve">
+    <value>Ce choix a été enregistré auparavant et ne correspond à rien de ce qu'utilise le service, donc la réinitialisation quotidienne ne modifie personne. Choisissez une signification ou l'une de vos propres options et enregistrez.</value>
+  </data>
   <data name="RunCardRelaxUnfilledRowsLabel" xml:space="preserve">
     <value>Assouplir les filtres de statut des lignes non pourvues</value>
   </data>

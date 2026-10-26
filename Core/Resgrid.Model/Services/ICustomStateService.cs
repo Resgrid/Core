@@ -47,7 +47,10 @@ namespace Resgrid.Model.Services
 		/// <summary>
 		/// The status a daily status reset sets everyone to. <paramref name="target"/> is the reset's stored value: "b{n}" is a
 		/// meaning, resolved to the department's status with it; a plain value saved before meanings is kept while it is still
-		/// one of the department's statuses, otherwise it follows its meaning. Null when nothing matches (nobody is reset).
+		/// one of the department's statuses, otherwise it follows its meaning; when no status has that meaning, a status
+		/// without a meaning matched by name (<see cref="StatusNameMatch"/>) stands in, and when none does it is kept as the
+		/// reset wrote it before meanings. Null when nothing matches (nobody is reset): a meaning the department has no
+		/// status for, or a plain value that is neither built-in nor one of the department's options.
 		/// </summary>
 		Task<int?> ResolveStatusResetAsync(int departmentId, string target);
 		/// <summary>The staffing level a daily staffing reset sets everyone to; the same rules as <see cref="ResolveStatusResetAsync"/>.</summary>

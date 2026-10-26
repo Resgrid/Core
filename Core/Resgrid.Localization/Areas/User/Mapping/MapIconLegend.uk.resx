@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Map Icon Legend and status / priority map icon pages -->
+  <data name="LegendPageTitle" xml:space="preserve">
+    <value>Легенда значків карти</value>
+  </data>
+  <data name="LegendIntro" xml:space="preserve">
+    <value>Усі значки, які карта показує для викликів, підрозділів і персоналу. Значок виклику залежить від його типу та пріоритету, значок підрозділу — від типу та статусу, а значок учасника — від ролі та статусу. Рівні укомплектованості ніколи не змінюють значок.</value>
+  </data>
+  <data name="HowPickedHeader" xml:space="preserve">
+    <value>Як вибирається значок</value>
+  </data>
+  <data name="HowPicked1" xml:space="preserve">
+    <value>Значок, завантажений для типу чи ролі саме для цього пріоритету або статусу.</value>
+  </data>
+  <data name="HowPicked2" xml:space="preserve">
+    <value>Інакше власний завантажений значок типу чи ролі з позначкою кольору пріоритету або статусу.</value>
+  </data>
+  <data name="HowPicked3" xml:space="preserve">
+    <value>Інакше вбудована мітка кольору пріоритету або статусу.</value>
+  </data>
+  <data name="HowPicked4" xml:space="preserve">
+    <value>Пріоритет або статус без заданого значення отримує колір, який підказує його назва, як-от «Екстрений» чи «Не в строю»; якщо назва нічого не підказує, показується сіра мітка, як і для підрозділу чи учасника без статусу. Задайте значення на сторінках «Власні статуси» та «Пріоритети викликів», щоб бути певними.</value>
+  </data>
+  <data name="StatusColorsHeader" xml:space="preserve">
+    <value>Кольори статусів</value>
+  </data>
+  <data name="StatusColorsIntro" xml:space="preserve">
+    <value>Підрозділи та персонал набувають кольору значення свого статусу.</value>
+  </data>
+  <data name="PriorityColorsHeader" xml:space="preserve">
+    <value>Кольори пріоритетів</value>
+  </data>
+  <data name="PriorityColorsIntro" xml:space="preserve">
+    <value>Виклики набувають кольору значення свого пріоритету.</value>
+  </data>
+  <data name="Style.available" xml:space="preserve">
+    <value>Доступний</value>
+  </data>
+  <data name="Style.dispatched" xml:space="preserve">
+    <value>Направлений</value>
+  </data>
+  <data name="Style.responding" xml:space="preserve">
+    <value>Реагує</value>
+  </data>
+  <data name="Style.onscene" xml:space="preserve">
+    <value>На місці</value>
+  </data>
+  <data name="Style.transporting" xml:space="preserve">
+    <value>Транспортує</value>
+  </data>
+  <data name="Style.returning" xml:space="preserve">
+    <value>Повертається</value>
+  </data>
+  <data name="Style.staging" xml:space="preserve">
+    <value>Збір і очікування</value>
+  </data>
+  <data name="Style.delayed" xml:space="preserve">
+    <value>Перерва</value>
+  </data>
+  <data name="Style.unavailable" xml:space="preserve">
+    <value>Недоступний</value>
+  </data>
+  <data name="Style.unknown" xml:space="preserve">
+    <value>Без значення або без статусу</value>
+  </data>
+  <data name="Style.low" xml:space="preserve">
+    <value>Низький</value>
+  </data>
+  <data name="Style.medium" xml:space="preserve">
+    <value>Середній</value>
+  </data>
+  <data name="Style.high" xml:space="preserve">
+    <value>Високий</value>
+  </data>
+  <data name="Style.emergency" xml:space="preserve">
+    <value>Екстрений</value>
+  </data>
+  <data name="CallsHeader" xml:space="preserve">
+    <value>Виклики</value>
+  </data>
+  <data name="CallsIntro" xml:space="preserve">
+    <value>Один рядок на тип виклику, один стовпець на пріоритет.</value>
+  </data>
+  <data name="UnitsHeader" xml:space="preserve">
+    <value>Підрозділи</value>
+  </data>
+  <data name="UnitsIntro" xml:space="preserve">
+    <value>Один рядок на тип підрозділу зі статусами його набору статусів.</value>
+  </data>
+  <data name="PersonnelHeader" xml:space="preserve">
+    <value>Персонал</value>
+  </data>
+  <data name="PersonnelIntro" xml:space="preserve">
+    <value>Учасник показує значок першої своєї ролі в порядку ролей, яка його має. Учасник «У підрозділі» набуває кольору статусу свого підрозділу.</value>
+  </data>
+  <data name="OtherHeader" xml:space="preserve">
+    <value>Станції, гідранти та точки інтересу</value>
+  </data>
+  <data name="OtherIntro" xml:space="preserve">
+    <value>Ці значки не змінюються зі статусом.</value>
+  </data>
+  <data name="NoCallType" xml:space="preserve">
+    <value>Виклики без типу</value>
+  </data>
+  <data name="NoUnitType" xml:space="preserve">
+    <value>Підрозділи без типу</value>
+  </data>
+  <data name="NoRoleIcon" xml:space="preserve">
+    <value>Учасники без значка ролі</value>
+  </data>
+  <data name="BuiltInUnitStatuses" xml:space="preserve">
+    <value>Вбудовані статуси підрозділів</value>
+  </data>
+  <data name="Station" xml:space="preserve">
+    <value>Станція</value>
+  </data>
+  <data name="Hydrant" xml:space="preserve">
+    <value>Гідрант</value>
+  </data>
+  <data name="EditIcons" xml:space="preserve">
+    <value>Редагувати значки</value>
+  </data>
+  <data name="KeyHeader" xml:space="preserve">
+    <value>Умовні позначення</value>
+  </data>
+  <data name="KeyVariant" xml:space="preserve">
+    <value>Завантажено для цього статусу чи пріоритету</value>
+  </data>
+  <data name="KeyBadge" xml:space="preserve">
+    <value>Значок типу чи ролі з позначкою статусу або пріоритету</value>
+  </data>
+  <data name="KeyPin" xml:space="preserve">
+    <value>Вбудована мітка</value>
+  </data>
+  <data name="NoMeaning" xml:space="preserve">
+    <value>Без значення: сіра мітка</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Тип</value>
+  </data>
+  <data name="Role" xml:space="preserve">
+    <value>Роль</value>
+  </data>
+  <data name="StatusSet" xml:space="preserve">
+    <value>Набір статусів</value>
+  </data>
+  <data name="StatusIconsTitle" xml:space="preserve">
+    <value>Значки карти для {0}</value>
+  </data>
+  <data name="StatusIconsUnitIntro" xml:space="preserve">
+    <value>Завантажте значок для статусу, щоб показувати його на карті, поки підрозділ цього типу має цей статус. Без нього використовується показаний типовий.</value>
+  </data>
+  <data name="StatusIconsCallIntro" xml:space="preserve">
+    <value>Завантажте значок для пріоритету, щоб показувати його на карті, поки виклик цього типу має цей пріоритет. Без нього використовується показаний типовий.</value>
+  </data>
+  <data name="StatusIconsRoleIntro" xml:space="preserve">
+    <value>Завантажте значок для статусу, щоб показувати його на карті, поки учасник, чий значок походить від цієї ролі, має цей статус. Без нього використовується показаний типовий.</value>
+  </data>
+  <data name="OwnIcon" xml:space="preserve">
+    <value>Значок без статусу чи пріоритету</value>
+  </data>
+  <data name="StatusColumn" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="PriorityColumn" xml:space="preserve">
+    <value>Пріоритет</value>
+  </data>
+  <data name="ColorColumn" xml:space="preserve">
+    <value>Колір на карті</value>
+  </data>
+  <data name="DefaultColumn" xml:space="preserve">
+    <value>Типовий</value>
+  </data>
+  <data name="UploadedColumn" xml:space="preserve">
+    <value>Завантажений значок</value>
+  </data>
+  <data name="Upload" xml:space="preserve">
+    <value>Завантажити</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Вилучити</value>
+  </data>
+  <data name="NoneUploaded" xml:space="preserve">
+    <value>Немає</value>
+  </data>
+  <data name="IconSaved" xml:space="preserve">
+    <value>Значок збережено.</value>
+  </data>
+  <data name="IconRemoved" xml:space="preserve">
+    <value>Значок вилучено.</value>
+  </data>
+  <data name="StatusMapIcons" xml:space="preserve">
+    <value>Значки карти за статусом</value>
+  </data>
+  <data name="PriorityMapIcons" xml:space="preserve">
+    <value>Значки карти за пріоритетом</value>
+  </data>
+  <data name="StatusMapIconsHelp" xml:space="preserve">
+    <value>Окремий значок карти для кожного статусу, щоб підрозділ чи учасника було видно з першого погляду.</value>
+  </data>
+  <data name="PriorityMapIconsHelp" xml:space="preserve">
+    <value>Окремий значок карти для кожного пріоритету, щоб виклик було видно з першого погляду.</value>
+  </data>
+  <data name="UnitStatusesInStyle" xml:space="preserve">
+    <value>Ваші статуси підрозділів: {0}</value>
+  </data>
+  <data name="PersonnelStatusesInStyle" xml:space="preserve">
+    <value>Ваші статуси персоналу: {0}</value>
+  </data>
+  <data name="PrioritiesInStyle" xml:space="preserve">
+    <value>Ваші пріоритети: {0}</value>
+  </data>
+  <data name="KeyOnUnit" xml:space="preserve">
+    <value>Набуває кольору статусу свого підрозділу</value>
+  </data>
+</root>

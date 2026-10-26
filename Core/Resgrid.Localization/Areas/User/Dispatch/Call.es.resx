@@ -1142,10 +1142,10 @@
     <value>En {0}</value>
   </data>
   <data name="NearestUnitsMapUnits" xml:space="preserve">
-    <value>Unidades</value>
+    <value>Unidades disponibles</value>
   </data>
   <data name="NearestUnitsMapPersonnel" xml:space="preserve">
-    <value>Personal</value>
+    <value>Personal disponible</value>
   </data>
   <data name="NearestUnitsMapBoundaries" xml:space="preserve">
     <value>Límites de estaciones</value>

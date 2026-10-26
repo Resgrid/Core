@@ -1624,7 +1624,7 @@
     <value>Aggiungi riunioni ricorrenti e serate di formazione.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.call-types-priorities">
-    <value>Aggiungi i tipi di chiamata usati dai tuoi operatori e imposta le loro priorità. Dai a ogni tipo di chiamata una classe e a ogni priorità un significato, così report e app possono raggrupparli e ordinarli. Un tipo di chiamata può avere anche un'icona personalizzata, mostrata accanto alle sue chiamate negli elenchi, nelle app e sulla mappa.</value>
+    <value>Aggiungi i tipi di chiamata usati dai tuoi operatori e imposta le loro priorità. Dai a ogni tipo di chiamata una classe e a ogni priorità un significato, così report e app possono raggrupparli e ordinarli. Un tipo di chiamata può avere anche un'icona personalizzata, mostrata accanto alle sue chiamate negli elenchi, nelle app e sulla mappa. Il significato di una priorità colora anche i segnaposto delle sue chiamate sulla mappa, e la legenda delle icone della mappa elenca ogni priorità sotto il suo colore.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.certification-dashboard">
     <value>Registra le certificazioni attuali dei membri, quindi verifica cosa sta per scadere.</value>
@@ -1654,7 +1654,7 @@
     <value>Aggiungi i tuoi contratti di servizio e le relative tariffe.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.custom-statuses">
-    <value>Rivedi gli stati predefiniti e aggiungi i tuoi dove i tuoi termini sono diversi. Dai a ogni opzione un significato (tipo base): l'invio, la disponibilità, le notifiche e le app leggono il significato, non il testo del pulsante. In sede indica alle raccomandazioni di invio che un'unità è alla sua sede.</value>
+    <value>Rivedi gli stati predefiniti e aggiungi i tuoi dove i tuoi termini sono diversi. Dai a ogni opzione un significato (tipo base): l'invio, la disponibilità, le notifiche e le app leggono il significato, non il testo del pulsante. In sede indica alle raccomandazioni di invio che un'unità è alla sua sede. La legenda delle icone della mappa elenca ogni stato sotto il colore che gli dà il suo significato; uno elencato sotto il grigio non ha ancora un significato.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.data-protection">
     <value>Esamina la lista di controllo per la registrazione e pianifica il recupero delle chiavi prima di registrarti.</value>
@@ -7075,7 +7075,16 @@
     <value>Icone personalizzate per tipi di unità, tipi di chiamata, punti di interesse e ruoli del personale, mostrate negli elenchi, nelle app e sulla mappa.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.custom-map-icons">
-    <value>Carica un PNG quadrato con sfondo trasparente, di 128 × 128 px o più, nella pagina del tipo di unità, del tipo di chiamata, del tipo di POI o del ruolo; la pagina ne mostra l'anteprima su una mappa chiara e una scura. Per scegliere l'icona di una persona con più ruoli, ordina i ruoli nella pagina Ruoli.</value>
+    <value>Carica un PNG quadrato con sfondo trasparente, di 128 × 128 px o più, nella pagina del tipo di unità, del tipo di chiamata, del tipo di POI o del ruolo; la pagina ne mostra l'anteprima su una mappa chiara e una scura. Per scegliere l'icona di una persona con più ruoli, ordina i ruoli nella pagina Ruoli. Usa Icone della mappa per stato o Icone della mappa per priorità nella stessa pagina per aggiungere un'icona per ogni stato o priorità.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.map-icon-legend">
+    <value>Legenda delle icone della mappa</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.map-icon-legend">
+    <value>Tutte le icone che la mappa mostra per chiamate, unità e personale in ogni priorità e stato, con i colori di stati e priorità.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.map-icon-legend">
+    <value>Apri Mappa, poi Legenda delle icone della mappa. Gli amministratori del dipartimento possono scegliere Modifica icone su un tipo di chiamata, un tipo di unità o un ruolo per caricare un'icona per una priorità o uno stato. Nelle app Responder, Unit e IC, tocca il pulsante della legenda sulla mappa per vedere la stessa legenda.</value>
   </data>
   <data xml:space="preserve" name="Feature.map-visualizations">
     <value>Visualizzazioni mappa</value>

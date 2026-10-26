@@ -1624,7 +1624,7 @@
     <value>Agregue reuniones recurrentes y noches de capacitación.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.call-types-priorities">
-    <value>Añada los tipos de llamada que usan sus despachadores y defina sus prioridades. Dé a cada tipo de llamada una clase y a cada prioridad un significado para que los informes y las aplicaciones puedan agruparlos y ordenarlos. Un tipo de llamada también puede tener un icono personalizado, que se muestra junto a sus llamadas en listas, las aplicaciones y el mapa.</value>
+    <value>Añada los tipos de llamada que usan sus despachadores y defina sus prioridades. Dé a cada tipo de llamada una clase y a cada prioridad un significado para que los informes y las aplicaciones puedan agruparlos y ordenarlos. Un tipo de llamada también puede tener un icono personalizado, que se muestra junto a sus llamadas en listas, las aplicaciones y el mapa. El significado de una prioridad también colorea los marcadores de sus llamadas en el mapa, y la leyenda de iconos del mapa muestra cada prioridad bajo su color.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.certification-dashboard">
     <value>Registre las certificaciones actuales de los miembros y luego revise cuáles vencen pronto.</value>
@@ -1654,7 +1654,7 @@
     <value>Agregue sus contratos de servicio y sus tarifas.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.custom-statuses">
-    <value>Revise los estados integrados y añada los suyos donde sus términos difieran. Dé a cada opción un significado (tipo base): el despacho, la disponibilidad, las notificaciones y las aplicaciones leen el significado, no el texto del botón. En el cuartel indica a las recomendaciones de despacho que una unidad está en su estación.</value>
+    <value>Revise los estados integrados y añada los suyos donde sus términos difieran. Dé a cada opción un significado (tipo base): el despacho, la disponibilidad, las notificaciones y las aplicaciones leen el significado, no el texto del botón. En el cuartel indica a las recomendaciones de despacho que una unidad está en su estación. La leyenda de iconos del mapa muestra cada estado bajo el color de mapa que le da su significado; uno que aparece en gris aún no tiene significado.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.data-protection">
     <value>Revise la lista de verificación de inscripción y planifique la recuperación de claves antes de inscribirse.</value>
@@ -7075,7 +7075,16 @@
     <value>Iconos propios para tipos de unidad, tipos de llamada, puntos de interés y roles de personal, que se muestran en listas, las aplicaciones y el mapa.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.custom-map-icons">
-    <value>Suba un PNG cuadrado con fondo transparente, de 128 × 128 px o más, en la página del tipo de unidad, tipo de llamada, tipo de POI o rol; la página muestra una vista previa en un mapa claro y uno oscuro. Para elegir el icono de una persona con varios roles, ordene los roles en la página Roles.</value>
+    <value>Suba un PNG cuadrado con fondo transparente, de 128 × 128 px o más, en la página del tipo de unidad, tipo de llamada, tipo de POI o rol; la página muestra una vista previa en un mapa claro y uno oscuro. Para elegir el icono de una persona con varios roles, ordene los roles en la página Roles. Use Iconos del mapa por estado o Iconos del mapa por prioridad en la misma página para añadir un icono para cada estado o prioridad.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.map-icon-legend">
+    <value>Leyenda de iconos del mapa</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.map-icon-legend">
+    <value>Todos los iconos que el mapa muestra para llamadas, unidades y personal en cada prioridad y estado, con los colores de estado y de prioridad.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.map-icon-legend">
+    <value>Abra Mapa y luego Leyenda de iconos del mapa. Los administradores del departamento pueden elegir Editar iconos en un tipo de llamada, tipo de unidad o rol para subir un icono para una prioridad o un estado. En las aplicaciones Responder, Unit e IC, toque el botón de leyenda en el mapa para ver la misma leyenda.</value>
   </data>
   <data xml:space="preserve" name="Feature.map-visualizations">
     <value>Visualizaciones del mapa</value>

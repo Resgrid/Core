@@ -1624,7 +1624,7 @@
     <value>Ajoutez les réunions récurrentes et les soirées de formation.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.call-types-priorities">
-    <value>Ajoutez les types d'appel utilisés par vos répartiteurs et définissez leurs priorités. Donnez à chaque type d'appel une classe et à chaque priorité une signification pour que les rapports et les applications puissent les regrouper et les trier. Un type d'appel peut aussi avoir une icône personnalisée, affichée à côté de ses appels dans les listes, les applications et sur la carte.</value>
+    <value>Ajoutez les types d'appel utilisés par vos répartiteurs et définissez leurs priorités. Donnez à chaque type d'appel une classe et à chaque priorité une signification pour que les rapports et les applications puissent les regrouper et les trier. Un type d'appel peut aussi avoir une icône personnalisée, affichée à côté de ses appels dans les listes, les applications et sur la carte. La signification d'une priorité colore aussi les repères de ses appels sur la carte, et la légende des icônes de la carte range chaque priorité sous sa couleur.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.certification-dashboard">
     <value>Enregistrez les certifications actuelles des membres, puis vérifiez ce qui expire prochainement.</value>
@@ -1654,7 +1654,7 @@
     <value>Ajoutez vos contrats de service et leurs tarifs.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.custom-statuses">
-    <value>Vérifiez les statuts intégrés et ajoutez les vôtres là où vos termes diffèrent. Donnez à chaque option une signification (type de base) : l'envoi, la disponibilité, les notifications et les applications lisent la signification, pas le texte du bouton. « À la caserne » indique aux recommandations d'envoi qu'une unité est à sa caserne.</value>
+    <value>Vérifiez les statuts intégrés et ajoutez les vôtres là où vos termes diffèrent. Donnez à chaque option une signification (type de base) : l'envoi, la disponibilité, les notifications et les applications lisent la signification, pas le texte du bouton. « À la caserne » indique aux recommandations d'envoi qu'une unité est à sa caserne. La légende des icônes de la carte range chaque statut sous la couleur que lui donne sa signification ; un statut rangé sous le gris n'a pas encore de signification.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.data-protection">
     <value>Consultez la liste de contrôle d'inscription et planifiez la récupération de clé avant de vous inscrire.</value>
@@ -7075,7 +7075,16 @@
     <value>Vos propres icônes pour les types d'unités, les types d'appels, les points d'intérêt et les rôles du personnel, affichées dans les listes, les applications et sur la carte.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.custom-map-icons">
-    <value>Téléversez un PNG carré à fond transparent, de 128 × 128 px ou plus, sur la page du type d'unité, du type d'appel, du type de POI ou du rôle ; la page en affiche un aperçu sur une carte claire et une carte sombre. Pour choisir l'icône d'une personne ayant plusieurs rôles, ordonnez les rôles sur la page Rôles.</value>
+    <value>Téléversez un PNG carré à fond transparent, de 128 × 128 px ou plus, sur la page du type d'unité, du type d'appel, du type de POI ou du rôle ; la page en affiche un aperçu sur une carte claire et une carte sombre. Pour choisir l'icône d'une personne ayant plusieurs rôles, ordonnez les rôles sur la page Rôles. Utilisez Icônes de carte par statut ou Icônes de carte par priorité sur la même page pour ajouter une icône pour chaque statut ou priorité.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.map-icon-legend">
+    <value>Légende des icônes de la carte</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.map-icon-legend">
+    <value>Toutes les icônes que la carte affiche pour les appels, les unités et le personnel selon chaque priorité et chaque statut, avec les couleurs des statuts et des priorités.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.map-icon-legend">
+    <value>Ouvrez Carte, puis Légende des icônes de la carte. Les administrateurs du service peuvent choisir Modifier les icônes sur un type d'appel, un type d'unité ou un rôle pour téléverser une icône pour une priorité ou un statut. Dans les applications Responder, Unit et IC, touchez le bouton de légende sur la carte pour voir la même légende.</value>
   </data>
   <data xml:space="preserve" name="Feature.map-visualizations">
     <value>Visualisations cartographiques</value>

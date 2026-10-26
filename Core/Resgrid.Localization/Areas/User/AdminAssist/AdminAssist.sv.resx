@@ -1624,7 +1624,7 @@
     <value>Lägg till återkommande möten och utbildningskvällar.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.call-types-priorities">
-    <value>Lägg till de ärendetyper era operatörer använder och ange deras prioriteter. Ge varje ärendetyp en klass och varje prioritet en betydelse så att rapporter och appar kan gruppera och sortera dem. En larmtyp kan också ha en egen ikon som visas bredvid dess larm i listor, apparna och på kartan.</value>
+    <value>Lägg till de ärendetyper era operatörer använder och ange deras prioriteter. Ge varje ärendetyp en klass och varje prioritet en betydelse så att rapporter och appar kan gruppera och sortera dem. En larmtyp kan också ha en egen ikon som visas bredvid dess larm i listor, apparna och på kartan. En prioritets betydelse färgar också dess larms kartnålar, och förklaringen till kartikoner visar varje prioritet under dess färg.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.certification-dashboard">
     <value>Registrera medlemmarnas aktuella certifieringar och granska sedan vad som snart går ut.</value>
@@ -1654,7 +1654,7 @@
     <value>Lägg till dina tjänsteavtal och deras taxor.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.custom-statuses">
-    <value>Granska de inbyggda statusarna och lägg till egna där era begrepp skiljer sig. Ge varje alternativ en betydelse (bastyp): larmning, tillgänglighet, aviseringar och apparna läser betydelsen, inte knapptexten. På stationen talar om för larmrekommendationerna att en enhet är på sin station.</value>
+    <value>Granska de inbyggda statusarna och lägg till egna där era begrepp skiljer sig. Ge varje alternativ en betydelse (bastyp): larmning, tillgänglighet, aviseringar och apparna läser betydelsen, inte knapptexten. På stationen talar om för larmrekommendationerna att en enhet är på sin station. Förklaringen till kartikoner visar varje status under den kartfärg som dess betydelse ger; en status under grått saknar ännu betydelse.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.data-protection">
     <value>Granska checklistan för anslutning och planera nyckelåterställning innan ni ansluter er.</value>
@@ -7075,7 +7075,16 @@
     <value>Egna ikoner för enhetstyper, larmtyper, intressepunkter och personalroller som visas i listor, apparna och på kartan.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.custom-map-icons">
-    <value>Ladda upp en kvadratisk PNG med genomskinlig bakgrund, 128 × 128 px eller större, på sidan för enhetstypen, larmtypen, POI-typen eller rollen; sidan förhandsgranskar den på en ljus och en mörk karta. Ordna rollerna på sidan Roller för att välja vilken ikon en person med flera roller får.</value>
+    <value>Ladda upp en kvadratisk PNG med genomskinlig bakgrund, 128 × 128 px eller större, på sidan för enhetstypen, larmtypen, POI-typen eller rollen; sidan förhandsgranskar den på en ljus och en mörk karta. Ordna rollerna på sidan Roller för att välja vilken ikon en person med flera roller får. Använd Kartikoner per status eller Kartikoner per prioritet på samma sida för att lägga till en ikon för varje status eller prioritet.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.map-icon-legend">
+    <value>Förklaring till kartikoner</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.map-icon-legend">
+    <value>Alla ikoner som kartan visar för larm, enheter och personal i varje prioritet och status, med status- och prioritetsfärgerna.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.map-icon-legend">
+    <value>Öppna Karta och sedan Förklaring till kartikoner. Avdelningsadministratörer kan välja Redigera ikoner på en larmtyp, enhetstyp eller roll för att ladda upp en ikon för en prioritet eller status. I apparna Responder, Unit och IC trycker du på förklaringsknappen på kartan för att se samma förklaring.</value>
   </data>
   <data xml:space="preserve" name="Feature.map-visualizations">
     <value>Kartvisualiseringar</value>

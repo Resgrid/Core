@@ -19,7 +19,7 @@ namespace Resgrid.Services.IncidentLogistics
 	/// The Incident Back Office worker passes (registry §4C: 74, 75, 52-55, 57, 58). Each walks the open activations of departments
 	/// with the module switched on (flag and switch only — workers never call billing), acts as the system actor, and is safe to run
 	/// every minute: evaluated triggers go through <see cref="IncidentAlertLatch"/> so each start and each recovery is emitted once,
-	/// and the daily cost pass is idempotent per source row. One activation's failure is logged and the pass continues.
+	/// and the daily cost pass is idempotent per source row (its rollup per day). One activation's failure is logged and the pass continues.
 	/// </summary>
 	public sealed class IncidentAutomationService : IIncidentAutomationService
 	{
@@ -950,7 +950,11 @@ namespace Resgrid.Services.IncidentLogistics
 			var all = (await _costs.ListAsync(departmentId, In(activation.IncidentActivationId).Between("CostDate", null, day.AddDays(1)), cancellationToken)).Where(c => c.Amount.HasValue).ToList();
 			if (all.Count == 0)
 				return;
-			var runId = Guid.NewGuid().ToString();
+			// One run id per activation and day: a pass retried for the same day (worker stopped mid-run) replaces that day's
+			// rollup instead of adding a second set of accrual and projection rows.
+			var runId = DailyRunId(activation.IncidentActivationId, day);
+			await _accruals.PurgeWhereAsync(departmentId, "RunId", runId, cancellationToken: cancellationToken);
+			await _projections.PurgeWhereAsync(departmentId, "RunId", runId, cancellationToken: cancellationToken);
 			foreach (var group in all.Where(c => c.CostDate == day).GroupBy(c => (c.Measure, c.Category)))
 				await _accruals.InsertNewAsync(new IncidentAccrualSnapshot
 				{
@@ -1091,6 +1095,9 @@ namespace Resgrid.Services.IncidentLogistics
 			foreach (var party in parties)
 				yield return (party.Key, party.Name ?? party.Key, party.Percent / total);
 		}
+
+		private static string DailyRunId(string activationId, DateTime day) =>
+			new Guid(SHA256.HashData(Encoding.UTF8.GetBytes("ibo-daily-cost:" + activationId?.ToLowerInvariant() + ":" + day.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture))).Take(16).ToArray()).ToString();
 
 		private static string Checksum(string value)
 		{

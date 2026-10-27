@@ -44,6 +44,12 @@ namespace Resgrid.Model.Repositories
 		/// </summary>
 		Task<int> PurgeWhereAsync(int departmentId, string column, string value, string dateColumn = null, DateTime? fromDate = null, CancellationToken cancellationToken = default);
 
+		/// <summary>
+		/// Physically removes the department's rows whose <paramref name="column"/> is one of <paramref name="values"/> (the
+		/// <see cref="PurgeWhereAsync"/> rule: tables without IsDeleted only).
+		/// </summary>
+		Task<int> PurgeInAsync(int departmentId, string column, IReadOnlyList<string> values, CancellationToken cancellationToken = default);
+
 		/// <summary>Takes an update lock on the row in the current transaction (UPDLOCK, HOLDLOCK / FOR UPDATE).</summary>
 		Task<T> LockForUpdateAsync(int departmentId, string id, CancellationToken cancellationToken = default);
 	}

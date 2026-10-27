@@ -630,7 +630,7 @@ namespace Resgrid.Providers.Migrations.Migrations
 					.WithColumn("AddedOn").AsDateTime2().NotNullable()
 					.WithColumn("AddedByUserId").AsString(128).Nullable();
 				Execute.Sql("IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_IncidentCostProjections_Activation' AND object_id = OBJECT_ID('IncidentCostProjections')) CREATE NONCLUSTERED INDEX [IX_IncidentCostProjections_Activation] ON [IncidentCostProjections] ([DepartmentId], [IncidentActivationId]);");
-				Execute.Sql("IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_IncidentCostProjections_Activation' AND object_id = OBJECT_ID('IncidentCostProjections')) CREATE NONCLUSTERED INDEX [IX_IncidentCostProjections_Activation] ON [IncidentCostProjections] ([DepartmentId], [IncidentActivationId], [AddedOn]);");
+				Execute.Sql("IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_IncidentCostProjections_Recent' AND object_id = OBJECT_ID('IncidentCostProjections')) CREATE NONCLUSTERED INDEX [IX_IncidentCostProjections_Recent] ON [IncidentCostProjections] ([DepartmentId], [IncidentActivationId], [AddedOn]);");
 			}
 
 			if (!Schema.Table("IncidentCostShareAgreements").Exists())

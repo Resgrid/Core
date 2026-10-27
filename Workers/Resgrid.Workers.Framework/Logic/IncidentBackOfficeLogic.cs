@@ -13,7 +13,7 @@ namespace Resgrid.Workers.Framework.Logic
 	/// </summary>
 	public sealed class IncidentBackOfficeLogic
 	{
-		/// <summary>Worker 74: incremental operational snapshot per open activation; trigger 120 when the projection lags.</summary>
+		/// <summary>Worker 74: incremental operational snapshot per open activation; trigger 120 when the projection lags; once an hour, snapshots older than a day are thinned to one per hour.</summary>
 		public Task<Tuple<bool, string>> IncidentSnapshotProjection(CancellationToken ct) => RunAsync("Incident Snapshot Projection", s => s.ProjectSnapshotsAsync(ct), ct);
 
 		/// <summary>Worker 75: full rebuild snapshot per open activation; drift is flagged.</summary>

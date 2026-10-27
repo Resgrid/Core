@@ -831,7 +831,7 @@ add('IncidentCostProjections', 'IncidentCostProjection', C_, 295, 'CostEntities'
     "A cost projection scenario: daily burn, cumulative to date and forecast at completion (plan §9.13).",
     [C('ScenarioName', 's200'), C('ProjectedEndOn', 'date', True), C('DailyBurn', 'money'), C('CumulativeToDate', 'money'), C('ForecastAtCompletion', 'money'),
      C('Currency', 's3'), C('Assumptions', 's2000', True), C('RunId', 'ref', True)],
-    mutable=False, soft=False, ver=False, idx=[('Activation', ['DepartmentId', 'IncidentActivationId', 'AddedOn'])])
+    mutable=False, soft=False, ver=False, idx=[('Recent', ['DepartmentId', 'IncidentActivationId', 'AddedOn'])])
 
 add('IncidentCostShareAgreements', 'IncidentCostShareAgreement', C_, 295, 'CostEntities',
     "A versioned cost-share agreement (plan §9.23). Amendments create a new version; the signed document is an RMS record.",

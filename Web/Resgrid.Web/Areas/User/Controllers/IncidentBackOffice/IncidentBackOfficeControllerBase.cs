@@ -124,7 +124,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (HttpMethods.IsPost(Request.Method) && !CanWrite)
 			{
 				TempData["IboMessage"] = Desk.Strings["LapsedReadOnly"].Value;
-				context.Result = Redirect(Request.Headers["Referer"].ToString() is { Length: > 0 } referer && Url.IsLocalUrl(new Uri(referer).PathAndQuery) ? new Uri(referer).PathAndQuery : Url.Action("Index", "IncidentBackOffice", new { area = "User" }));
+				// The Referer is client-controlled: a relative or malformed value falls back to the index instead of throwing.
+				context.Result = Redirect(Uri.TryCreate(Request.Headers["Referer"].ToString(), UriKind.Absolute, out var referer) && Url.IsLocalUrl(referer.PathAndQuery)
+					? referer.PathAndQuery : Url.Action("Index", "IncidentBackOffice", new { area = "User" }));
 				return;
 			}
 
@@ -257,7 +259,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (errors.Count > 0)
 				{
 					var view = await ledger.EditAsync(LedgerRequestFor(null, 0, form["ParentField"], form["ParentValue"]), id, cancellationToken) ?? new LedgerEditView { Kind = ledger.Descriptor };
-					foreach (var field in ledger.Descriptor.Fields.Where(f => form.ContainsKey(f.Name)))
+					// Read-only fields are never bound, so the stored value stays on screen rather than whatever was posted.
+					foreach (var field in ledger.Descriptor.Fields.Where(f => form.ContainsKey(f.Name) && !f.ReadOnly && f.Input != LedgerInput.ReadOnly))
 						view.Values[field.Name] = form[field.Name];
 					foreach (var (field, error) in errors)
 						view.Errors[field] = Desk.Strings["Error." + error].Value;

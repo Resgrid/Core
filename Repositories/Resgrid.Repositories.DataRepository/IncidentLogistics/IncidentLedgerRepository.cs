@@ -244,6 +244,20 @@ namespace Resgrid.Repositories.DataRepository.IncidentLogistics
 				new { DepartmentId = departmentId, Value = value, FromDate = fromDate?.Date }, cancellationToken);
 		}
 
+		public async Task<int> PurgeInAsync(int departmentId, string column, IReadOnlyList<string> values, CancellationToken cancellationToken = default)
+		{
+			if (SoftDeletable)
+				throw new InvalidOperationException($"{Table} is soft-deletable; its rows are never purged.");
+			if (!IsStringColumn(Checked(column)))
+				throw new ArgumentException($"'{column}' is not a text column of {Table}.", nameof(column));
+			var removed = 0;
+			// SQL Server expands the list into one parameter per value (2100 at most), so large sets go in chunks.
+			foreach (var chunk in (values ?? Array.Empty<string>()).Where(v => !string.IsNullOrWhiteSpace(v)).Distinct(StringComparer.OrdinalIgnoreCase).Chunk(500))
+				removed += await ExecuteAsync($"DELETE FROM {Tbl(Table)} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {CaseInsensitiveInList(column, "Values")}",
+					new { DepartmentId = departmentId, Values = chunk }, cancellationToken);
+			return removed;
+		}
+
 		public Task<T> LockForUpdateAsync(int departmentId, string id, CancellationToken cancellationToken = default)
 		{
 			if (UnitOfWork?.Transaction == null)

@@ -646,7 +646,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 					.WithColumn("addedon").AsDateTime2().NotNullable()
 					.WithColumn("addedbyuserid").AsCustom("citext").Nullable();
 				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_incidentcostprojections_activation ON incidentcostprojections (departmentid, incidentactivationid);");
-				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_incidentcostprojections_activation ON incidentcostprojections (departmentid, incidentactivationid, addedon);");
+				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_incidentcostprojections_recent ON incidentcostprojections (departmentid, incidentactivationid, addedon);");
 				Execute.Sql("DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'ck_incidentcostprojections_currency') THEN ALTER TABLE incidentcostprojections ADD CONSTRAINT ck_incidentcostprojections_currency CHECK (char_length(currency) <= 3); END IF; END $$;");
 			}
 

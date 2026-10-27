@@ -24,6 +24,7 @@ namespace Resgrid.Services.IncidentLogistics
 	{
 		private const int CodeMinutes = 10;
 		private const int MaxCodeAttempts = 5;
+		private const int MaxCodesPerHour = 5;
 		private static readonly int[] HoldingNights = { (int)IncidentLodgingAssignmentStatuses.Held, (int)IncidentLodgingAssignmentStatuses.Confirmed, (int)IncidentLodgingAssignmentStatuses.Occupied };
 
 		private readonly IIncidentLookupRepository _lookup;
@@ -155,11 +156,14 @@ namespace Resgrid.Services.IncidentLogistics
 				ExpiresOn = link.ExpiresOn
 			};
 
-			var query = new IncidentLedgerQuery { ActivationIds = new[] { activation.IncidentActivationId }, Take = 200 };
-			var open = (await _assignments.ListAsync(departmentId, query, cancellationToken))
-				.Where(a => (string.Equals(a.IncidentParticipantId, participant.IncidentParticipantId, StringComparison.OrdinalIgnoreCase)
-					|| (participant.UserId != null && string.Equals(a.UserId, participant.UserId, StringComparison.OrdinalIgnoreCase)))
-					&& (!a.EndOn.HasValue || a.EndOn > now)).ToList();
+			// Filtered to this participant in the query (by participant, and by user when one is linked) so a large incident's other
+			// assignments cannot push theirs past the page.
+			IncidentLedgerQuery Assignments() => new IncidentLedgerQuery { ActivationIds = new[] { activation.IncidentActivationId }, Take = 200 }.Order("StartOn", true);
+			var held = (await _assignments.ListAsync(departmentId, Assignments().Where("IncidentParticipantId", participant.IncidentParticipantId), cancellationToken)).ToList();
+			if (!string.IsNullOrWhiteSpace(participant.UserId))
+				held.AddRange(await _assignments.ListAsync(departmentId, Assignments().Where("UserId", participant.UserId), cancellationToken));
+			var open = held.Where(a => !a.EndOn.HasValue || a.EndOn > now)
+				.GroupBy(a => a.IncidentPositionAssignmentId, StringComparer.OrdinalIgnoreCase).Select(g => g.First()).ToList();
 			if (open.Count > 0)
 				page.Positions = (await _positions.GetByIdsAsync(departmentId, open.Select(a => a.IncidentPositionDefinitionId), cancellationToken)).Select(p => p.Name).ToList();
 
@@ -196,6 +200,9 @@ namespace Resgrid.Services.IncidentLogistics
 			if (resolved == null || string.IsNullOrWhiteSpace(resolved.Value.Participant.UserId))
 				return false;
 			var (link, participant, activation) = resolved.Value;
+			// A new code starts a new five-guess budget, so codes per link are limited too (keyed by the link, not by the code).
+			if (await _cache.IncrementAsync("ibo-selfservice-send:" + link.IncidentSelfServiceLinkId, TimeSpan.FromHours(1)) > MaxCodesPerHour)
+				return false;
 			var code = RandomNumberGenerator.GetInt32(0, 1000000).ToString("D6", CultureInfo.InvariantCulture);
 			link.OneTimeCodeHash = Hash(link.IncidentSelfServiceLinkId + ":" + code);
 			link.OneTimeCodeExpiresOn = DateTime.UtcNow.AddMinutes(CodeMinutes);

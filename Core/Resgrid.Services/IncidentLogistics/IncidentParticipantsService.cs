@@ -23,7 +23,6 @@ namespace Resgrid.Services.IncidentLogistics
 		private readonly IIncidentLedgerService<IncidentParticipantQualification> _qualifications;
 		private readonly IIncidentLedgerService<IncidentResource> _resources;
 		private readonly IIncidentLedgerService<IncidentCheckIn> _checkIns;
-		private readonly IIncidentLedgerService<IncidentResourceStatusHistory> _history;
 		private readonly IIncidentEventPublisher _events;
 		private readonly ICallsService _calls;
 		private readonly IIncidentCommandService _incidentCommand;
@@ -36,7 +35,7 @@ namespace Resgrid.Services.IncidentLogistics
 
 		public IncidentParticipantsService(IIncidentLedgerService<IncidentActivation> activations, IIncidentLedgerService<IncidentParticipant> participants,
 			IIncidentLedgerService<IncidentParticipantQualification> qualifications, IIncidentLedgerService<IncidentResource> resources,
-			IIncidentLedgerService<IncidentCheckIn> checkIns, IIncidentLedgerService<IncidentResourceStatusHistory> history, IIncidentEventPublisher events,
+			IIncidentLedgerService<IncidentCheckIn> checkIns, IIncidentEventPublisher events,
 			ICallsService calls, IIncidentCommandService incidentCommand, IIncidentResourcesService incidentResources, IUserProfileService profiles,
 			IUnitsService units, IDepartmentsService departments, IDepartmentGroupsService groups, ICertificationService certifications)
 		{
@@ -45,7 +44,6 @@ namespace Resgrid.Services.IncidentLogistics
 			_qualifications = qualifications;
 			_resources = resources;
 			_checkIns = checkIns;
-			_history = history;
 			_events = events;
 			_calls = calls;
 			_incidentCommand = incidentCommand;
@@ -264,8 +262,9 @@ namespace Resgrid.Services.IncidentLogistics
 			var activation = await _activations.GetAsync(actor, participant.IncidentActivationId, false, cancellationToken);
 			var now = DateTime.UtcNow;
 			var from = participant.SupportStatus;
+			// The transition's IncidentParticipantStatusRule writes the support-status history row.
 			if (from < (int)IncidentSupportStatuses.Arrived)
-				participant = await _participants.TransitionAsync(actor, participantId, (int)IncidentSupportStatuses.Arrived, null, null, cancellationToken);
+				participant = await _participants.TransitionAsync(actor, participantId, (int)IncidentSupportStatuses.Arrived, "CheckIn", null, cancellationToken);
 			participant.CheckedInOn ??= now;
 			participant.ArrivedOn ??= now;
 			participant.IsDraft = false;
@@ -280,16 +279,6 @@ namespace Resgrid.Services.IncidentLogistics
 				Source = (int)source,
 				CheckedInOn = now
 			}, null, cancellationToken);
-			if (from != participant.SupportStatus)
-				await _history.SaveAsync(actor, new IncidentResourceStatusHistory
-				{
-					IncidentActivationId = participant.IncidentActivationId,
-					SubjectType = (int)IncidentSubjectTypes.Participant,
-					SubjectId = participantId,
-					OldStatus = from,
-					NewStatus = participant.SupportStatus,
-					Reason = "CheckIn"
-				}, null, cancellationToken);
 
 			await _events.PublishAsync(actor.DepartmentId, activation, WorkflowTriggerEventType.IncidentParticipantCheckedIn, new Dictionary<string, object>
 			{

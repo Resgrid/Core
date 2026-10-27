@@ -95,6 +95,10 @@ namespace Resgrid.Services.IncidentLogistics
 			(int)IncidentRequestStatuses.PartiallyFilled, (int)IncidentRequestStatuses.Filled, (int)IncidentRequestStatuses.EnRoute
 		};
 		private static readonly (string Window, double Hours)[] Windows = { ("2h", 2), ("6h", 6), ("12h", 12), ("24h", 24) };
+		/// <summary>How far back every per-minute snapshot is kept before the hourly thinning applies.</summary>
+		private static readonly TimeSpan FullResolution = TimeSpan.FromHours(24);
+		/// <summary>Snapshots read per thinning pass (the repository's list ceiling); a backlog drains over later hours.</summary>
+		private const int ThinPage = 5000;
 
 		private readonly IIncidentLedgerRepository<IncidentParticipant> _participants;
 		private readonly IIncidentLedgerRepository<IncidentResource> _resources;
@@ -276,7 +280,35 @@ namespace Resgrid.Services.IncidentLogistics
 					["health.oldest_source_utc"] = previous?.TakenOn,
 					["resolved"] = !edge.Value
 				}, snapshot.TableName, snapshot.IncidentOperationalSnapshotId, cancellationToken);
+
+			// Worker 74 adds a snapshot every minute; once an hour (the first incremental pass of a new UTC hour) the history behind
+			// the last day is thinned so a long incident does not keep ~1,440 snapshots and their metric rows per day until retention.
+			if (kind == IncidentSnapshotKinds.Incremental && previous != null && HourOf(previous.TakenOn) != HourOf(now))
+				await ThinSnapshotsAsync(departmentId, activationId, now, cancellationToken);
 			return snapshot;
+		}
+
+		private static long HourOf(DateTime value) => value.Ticks / TimeSpan.TicksPerHour;
+
+		/// <summary>
+		/// The last <see cref="FullResolution"/> keeps every snapshot; each older UTC hour keeps its newest, plus any snapshot that
+		/// detected drift. The newest snapshot is always the newest of its own hour, so everything that reads only the latest one — the
+		/// context bar's staleness, the next pass's lag and drift check, the projection cursor — keeps its row. Metric values go with
+		/// their snapshot, metrics first so a failure part-way never leaves values without their snapshot.
+		/// </summary>
+		private async Task ThinSnapshotsAsync(int departmentId, string activationId, DateTime now, CancellationToken cancellationToken)
+		{
+			var older = (await _snapshots.ListAsync(departmentId, new IncidentLedgerQuery { ActivationIds = new[] { activationId }, Take = ThinPage }
+				.Between("TakenOn", null, now - FullResolution).Order("Cursor", true), cancellationToken)).ToList();
+			var hours = older.GroupBy(s => HourOf(s.TakenOn)).ToList();
+			// A full page can stop part-way through its oldest hour; that hour waits for a later pass so its true newest is never removed.
+			if (older.Count == ThinPage)
+				hours.RemoveAt(hours.Count - 1);
+			var remove = hours.SelectMany(h => h.OrderByDescending(s => s.Cursor).Skip(1)).Where(s => !s.DriftDetected).Select(s => s.IncidentOperationalSnapshotId).ToList();
+			if (remove.Count == 0)
+				return;
+			await _metrics.PurgeInAsync(departmentId, "IncidentOperationalSnapshotId", remove, cancellationToken);
+			await _snapshots.PurgeInAsync(departmentId, "IncidentOperationalSnapshotId", remove, cancellationToken);
 		}
 	}
 

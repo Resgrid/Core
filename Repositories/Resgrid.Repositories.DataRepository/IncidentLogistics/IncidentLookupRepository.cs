@@ -70,7 +70,7 @@ namespace Resgrid.Repositories.DataRepository.IncidentLogistics
 				return null;
 			var row = (await QueryAsync<IncidentLookupLinkRow>(
 				$"SELECT {Col("DepartmentId")} AS DepartmentId, {Col("IncidentSelfServiceLinkId")} AS LinkId FROM {Tbl("IncidentSelfServiceLinks")} " +
-				$"WHERE {Col("TokenHash")} = {P}Hash AND {Col("IsDeleted")} = {False} AND {Col("RevokedOn")} IS NULL",
+				$"WHERE {Col("TokenHash")} = {P}Hash AND {Col("RevokedOn")} IS NULL",
 				new { Hash = tokenHash }, cancellationToken)).FirstOrDefault();
 			return row == null ? null : (row.DepartmentId, row.LinkId);
 		}

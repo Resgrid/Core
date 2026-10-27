@@ -44,6 +44,7 @@ reviews:
     - "!**/.agent/**"
     - "!**/*.md"
     - "!**/Core/Resgrid.Config/**"
+    - "!**/Core/Resgrid.Model/**"
   path_instructions: []
   abort_on_close: true
   disable_cache: false

@@ -1,0 +1,108 @@
+@model Resgrid.Web.Areas.User.Models.IncidentBackOffice.IncidentCommandDeskView
+@using Resgrid.Web.Areas.User.Models.IncidentBackOffice
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.IncidentBackOffice.IncidentBackOffice> localizer
+@*
+    The command desk (plan §9.17): the incident's headline numbers with their as-of time, inbound and outbound windows, who holds
+    which position right now, and the way into each section. Numbers are computed by the intelligence service, never stored here.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Nav.CommandDesk"];
+    ViewData["Title"] = localizer["Nav.CommandDesk"].Value;
+    var time = ViewData["IboTime"] as IncidentTime;
+    var summary = Model.Summary;
+    var access = Model.Access;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/IncidentBackOffice/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("~/Areas/User/Views/IncidentBackOffice/_Message.cshtml", (IncidentDeskView)Model)
+    @if (summary != null)
+    {
+        <p class="text-muted small"><i class="fa fa-clock-o" aria-hidden="true"></i> @localizer["AsOf", time?.Format(summary.AsOf)]</p>
+        <div class="ibo-board m-b-md">
+            @foreach (var (key, value) in summary.Values.OrderBy(v => v.Key, StringComparer.Ordinal))
+            {
+                <div class="ibo-tile">
+                    <h4>@(localizer["Metric." + key] is { ResourceNotFound: false } m ? m.Value : LedgerText.Humanize(key.Replace(".", " ")))</h4>
+                    <div class="ibo-value">@value.ToString("#,0.##", System.Globalization.CultureInfo.CurrentCulture)</div>
+                </div>
+            }
+        </div>
+        @if (summary.Inbound.Count > 0 || summary.Outbound.Count > 0)
+        {
+            <div class="row">
+                @foreach (var (label, buckets) in new[] { ("Inbound", summary.Inbound), ("Outbound", summary.Outbound) })
+                {
+                    <div class="col-md-6">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title"><h5>@localizer[label]</h5></div>
+                            <div class="ibox-content">
+                                <table class="table table-condensed rgw-table">
+                                    <thead><tr><th scope="col">@localizer["Window"]</th><th scope="col">@localizer["Apparatus"]</th><th scope="col">@localizer["Personnel"]</th><th scope="col">@localizer["Predicted"]</th></tr></thead>
+                                    <tbody>
+                                        @foreach (var bucket in buckets)
+                                        {
+                                            <tr><td>@(localizer["Window." + bucket.Window] is { ResourceNotFound: false } w ? w.Value : bucket.Window)</td><td>@bucket.Apparatus</td><td>@bucket.Personnel</td><td>@bucket.Predicted</td></tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    }
+    <div class="row">
+        <div class="col-md-6">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["CurrentHolders"]</h5></div>
+                <div class="ibox-content">
+                    @if (Model.Holders.Count == 0)
+                    {
+                        <p class="text-muted">@localizer["NoHolders"]</p>
+                    }
+                    else
+                    {
+                        <table class="table table-condensed rgw-table">
+                            <thead><tr><th scope="col">@localizer["Field.IncidentPositionDefinitionId"]</th><th scope="col">@localizer["Field.UserId"]</th><th scope="col">@localizer["Field.StartOn"]</th></tr></thead>
+                            <tbody>
+                                @foreach (var holder in Model.Holders)
+                                {
+                                    <tr>
+                                        <td>@(Model.PositionNames.TryGetValue(holder.IncidentPositionDefinitionId ?? string.Empty, out var position) ? position : holder.IncidentPositionDefinitionId)</td>
+                                        <td>@(holder.UserId != null && Model.People.TryGetValue(holder.UserId, out var person) ? person : holder.PlaceholderLabel ?? holder.UserId)</td>
+                                        <td>@time?.Format(holder.StartOn)</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    <a asp-controller="IncidentOrganization" asp-action="Index" class="btn btn-xs btn-default">@localizer["Nav.Organization"]</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["Sections"]</h5></div>
+                <div class="ibox-content">
+                    <ul class="list-unstyled">
+                        @foreach (var group in IncidentBackOfficeNavigation.Sections.Where(s => s.Key != "Command" && s.Key != "Department"))
+                        {
+                            var first = group.Items.FirstOrDefault(i => IncidentBackOfficeNavigation.Allowed(i, access));
+                            if (first == null) { continue; }
+                            <li class="m-b-xs"><a asp-controller="@first.Controller" asp-action="@first.Action"><i class="fa @group.Icon" aria-hidden="true"></i> @localizer[group.LabelKey]</a></li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/incident-back-office.css" asp-append-version="true" />
+}

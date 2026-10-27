@@ -2508,4 +2508,226 @@
   <data name="ApiKeyScopeUnitsRead" xml:space="preserve">
     <value>Läsa enheter och deras status</value>
   </data>
+  <data name="PermIncidentBackOfficeSectionHeader" xml:space="preserve">
+    <value>Incident Back Office</value>
+  </data>
+  <data name="PermIncidentBackOfficeSectionNote" xml:space="preserve">
+    <value>Dessa behörigheter gäller endast med ett aktivt Incident Back Office-tillägg. Ekonomiraderna kräver även att Incident Business är aktiverat, och raderna för samordningstavlor kräver Incident Coordination. Själva händelserapporterna använder behörigheterna för Rapporter ovan.</value>
+  </data>
+  <data name="PermRecordsViewIncidentBackOfficeLabel" xml:space="preserve">
+    <value>Visa Incident Back Office</value>
+  </data>
+  <data name="PermRecordsViewIncidentBackOfficeNote" xml:space="preserve">
+    <value>Tillåter att öppna panelerna i Incident Back Office och läsa aktiveringar, perioder, organisation och logistik. Ändringar på varje panel kräver panelens egen behörighet.</value>
+  </data>
+  <data name="PermRecordsManageIncidentActivationLabel" xml:space="preserve">
+    <value>Hantera händelseaktivering</value>
+  </data>
+  <data name="PermRecordsManageIncidentActivationNote" xml:space="preserve">
+    <value>Tillåter att öppna aktiveringar, lägga till dem i ett händelsekomplex samt avsluta, försegla eller återöppna dem.</value>
+  </data>
+  <data name="PermRecordsManageIncidentPeriodsLabel" xml:space="preserve">
+    <value>Hantera operativa perioder</value>
+  </data>
+  <data name="PermRecordsManageIncidentPeriodsNote" xml:space="preserve">
+    <value>Tillåter att skapa och redigera operativa perioder och godkänna deras planversioner.</value>
+  </data>
+  <data name="PermRecordsManageIncidentPositionsLabel" xml:space="preserve">
+    <value>Hantera befattningar vid händelser</value>
+  </data>
+  <data name="PermRecordsManageIncidentPositionsNote" xml:space="preserve">
+    <value>Tillåter att redigera befattningskatalogen, befattningstilldelningar och teambemanning.</value>
+  </data>
+  <data name="PermRecordsManageIncidentParticipantsLabel" xml:space="preserve">
+    <value>Hantera deltagare vid händelser</value>
+  </data>
+  <data name="PermRecordsManageIncidentParticipantsNote" xml:space="preserve">
+    <value>Tillåter att registrera och redigera deltagare och skicka deras självbetjäningslänkar. Rutan Endast grupp begränsar den till deltagare från användarens egen grupp.</value>
+  </data>
+  <data name="PermRecordsViewParticipantSensitiveLabel" xml:space="preserve">
+    <value>Visa känsliga deltagaruppgifter</value>
+  </data>
+  <data name="PermRecordsViewParticipantSensitiveNote" xml:space="preserve">
+    <value>Tillåter att se deltagarnas nödkontakter och deras uppgifter om hälsa, tillgänglighet, allergener och kost.</value>
+  </data>
+  <data name="PermRecordsCreateIncidentRequestLabel" xml:space="preserve">
+    <value>Skapa resursbegäranden</value>
+  </data>
+  <data name="PermRecordsCreateIncidentRequestNote" xml:space="preserve">
+    <value>Tillåter att skapa resursbegäranden och uppdragspaket. Rutan Endast grupp begränsar den till begäranden för användarens egen grupp.</value>
+  </data>
+  <data name="PermRecordsApproveIncidentRequestLabel" xml:space="preserve">
+    <value>Godkänn resursbegäranden</value>
+  </data>
+  <data name="PermRecordsApproveIncidentRequestNote" xml:space="preserve">
+    <value>Tillåter att godkänna eller avslå resursbegäranden. Rutan Endast grupp begränsar den till begäranden från användarens egen grupp.</value>
+  </data>
+  <data name="PermRecordsOrderIncidentRequestLabel" xml:space="preserve">
+    <value>Beställ mot resursbegäranden</value>
+  </data>
+  <data name="PermRecordsOrderIncidentRequestNote" xml:space="preserve">
+    <value>Tillåter att lägga den beställning som tillgodoser en godkänd resursbegäran, inklusive avrop mot leverantörsavtal.</value>
+  </data>
+  <data name="PermRecordsReceiveIncidentRequestLabel" xml:space="preserve">
+    <value>Registrera mottagning för resursbegäranden</value>
+  </data>
+  <data name="PermRecordsReceiveIncidentRequestNote" xml:space="preserve">
+    <value>Tillåter att registrera ankomster och mottagningar för tillgodosedda begäranden. Rutan Endast grupp begränsar den till användarens egen grupp.</value>
+  </data>
+  <data name="PermRecordsManageIncidentFacilitiesLabel" xml:space="preserve">
+    <value>Hantera händelseanläggningar</value>
+  </data>
+  <data name="PermRecordsManageIncidentFacilitiesNote" xml:space="preserve">
+    <value>Tillåter att hantera händelsens anläggningar, deras kapacitet, avtal och tjänster.</value>
+  </data>
+  <data name="PermRecordsManageIncidentLodgingLabel" xml:space="preserve">
+    <value>Hantera logi vid händelser</value>
+  </data>
+  <data name="PermRecordsManageIncidentLodgingNote" xml:space="preserve">
+    <value>Tillåter att hantera logianläggningar, rumsblock, tillgänglighet per natt och sängtilldelningar.</value>
+  </data>
+  <data name="PermRecordsViewLodgingAssignmentDetailLabel" xml:space="preserve">
+    <value>Visa detaljer om logitilldelning</value>
+  </data>
+  <data name="PermRecordsViewLodgingAssignmentDetailNote" xml:space="preserve">
+    <value>Tillåter att se rumsnummer och logibegränsningar i sängtilldelningar och rumslistor.</value>
+  </data>
+  <data name="PermRecordsManageIncidentFeedingLabel" xml:space="preserve">
+    <value>Hantera förplägnad vid händelser</value>
+  </data>
+  <data name="PermRecordsManageIncidentFeedingNote" xml:space="preserve">
+    <value>Tillåter att hantera måltidsplaner, behov, måltidsbeställningar och serverade måltider.</value>
+  </data>
+  <data name="PermRecordsManageIncidentServicesLabel" xml:space="preserve">
+    <value>Hantera stödtjänster</value>
+  </data>
+  <data name="PermRecordsManageIncidentServicesNote" xml:space="preserve">
+    <value>Tillåter att begära och registrera stödtjänster som tvätt eller duschar. Rutan Endast grupp begränsar den till användarens egen grupp.</value>
+  </data>
+  <data name="PermRecordsManageIncidentGroundSupportLabel" xml:space="preserve">
+    <value>Hantera transportstöd</value>
+  </data>
+  <data name="PermRecordsManageIncidentGroundSupportNote" xml:space="preserve">
+    <value>Tillåter att hantera transportbegäranden och förflyttningar, resplaner och bränsle.</value>
+  </data>
+  <data name="PermRecordsManageIncidentCommsLabel" xml:space="preserve">
+    <value>Hantera samband vid händelser</value>
+  </data>
+  <data name="PermRecordsManageIncidentCommsNote" xml:space="preserve">
+    <value>Tillåter att hantera sambandsplanen och tilldelningar av radio och enheter.</value>
+  </data>
+  <data name="PermRecordsManageVendorCatalogLabel" xml:space="preserve">
+    <value>Hantera leverantörskatalog</value>
+  </data>
+  <data name="PermRecordsManageVendorCatalogNote" xml:space="preserve">
+    <value>Tillåter att lägga till och redigera leverantörer, deras platser, förmågor, tillgänglighet och efterlevnadsdokument.</value>
+  </data>
+  <data name="PermRecordsViewVendorProtectedLabel" xml:space="preserve">
+    <value>Visa skyddade leverantörsuppgifter</value>
+  </data>
+  <data name="PermRecordsViewVendorProtectedNote" xml:space="preserve">
+    <value>Tillåter att se leverantörers skatteregistreringsnummer och betalningsuppgifter.</value>
+  </data>
+  <data name="PermRecordsEngageVendorLabel" xml:space="preserve">
+    <value>Anlita leverantörer</value>
+  </data>
+  <data name="PermRecordsEngageVendorNote" xml:space="preserve">
+    <value>Tillåter att anlita leverantörer för en aktivering, registrera kapacitetsåtaganden och offerter samt skicka leverantörslänkar.</value>
+  </data>
+  <data name="PermRecordsManageIncidentProcurementLabel" xml:space="preserve">
+    <value>Hantera inköp för händelser</value>
+  </data>
+  <data name="PermRecordsManageIncidentProcurementNote" xml:space="preserve">
+    <value>Tillåter att hantera leverantörsavtal, rekvisitioner, godsmottagningar, leverantörsfakturor och betalningspaket.</value>
+  </data>
+  <data name="PermRecordsCommitIncidentPurchaseLabel" xml:space="preserve">
+    <value>Ingå åtaganden för händelseinköp</value>
+  </data>
+  <data name="PermRecordsCommitIncidentPurchaseNote" xml:space="preserve">
+    <value>Tillåter att registrera ett ekonomiskt åtagande för ett inköp; detta är kontrollen för behörig inköpare.</value>
+  </data>
+  <data name="PermRecordsAcceptVendorInvoiceLabel" xml:space="preserve">
+    <value>Acceptera leverantörsfakturor</value>
+  </data>
+  <data name="PermRecordsAcceptVendorInvoiceNote" xml:space="preserve">
+    <value>Tillåter att acceptera leverantörsfakturor för betalning efter att de har matchats mot godsmottagningar.</value>
+  </data>
+  <data name="PermRecordsManageIncidentBudgetLabel" xml:space="preserve">
+    <value>Hantera händelsebudget</value>
+  </data>
+  <data name="PermRecordsManageIncidentBudgetNote" xml:space="preserve">
+    <value>Tillåter att hantera budgetposter, utgiftsdelegeringar, finansieringskoder och kostnadsgrupper.</value>
+  </data>
+  <data name="PermRecordsAuthorizeIncidentFundingLabel" xml:space="preserve">
+    <value>Bevilja finansiering för händelser</value>
+  </data>
+  <data name="PermRecordsAuthorizeIncidentFundingNote" xml:space="preserve">
+    <value>Tillåter att godkänna finansieringsbeslut för händelsens budget.</value>
+  </data>
+  <data name="PermRecordsEnterIncidentTimeLabel" xml:space="preserve">
+    <value>Registrera tid vid händelser</value>
+  </data>
+  <data name="PermRecordsEnterIncidentTimeNote" xml:space="preserve">
+    <value>Tillåter att registrera tid, utrustningsanvändning och utgifter. Rutan Endast grupp begränsar den till personer i användarens egen grupp.</value>
+  </data>
+  <data name="PermRecordsCertifyIncidentTimeLabel" xml:space="preserve">
+    <value>Attestera tid vid händelser</value>
+  </data>
+  <data name="PermRecordsCertifyIncidentTimeNote" xml:space="preserve">
+    <value>Tillåter arbetsledare att attestera registrerad tid före godkännande. Rutan Endast grupp begränsar den till personer i användarens egen grupp.</value>
+  </data>
+  <data name="PermRecordsApproveIncidentTimeLabel" xml:space="preserve">
+    <value>Godkänn tid vid händelser</value>
+  </data>
+  <data name="PermRecordsApproveIncidentTimeNote" xml:space="preserve">
+    <value>Tillåter att godkänna attesterad tid för kostnadsberäkning och betalning. Rutan Endast grupp begränsar den till personer i användarens egen grupp.</value>
+  </data>
+  <data name="PermRecordsViewIncidentCostLabel" xml:space="preserve">
+    <value>Visa händelsekostnader</value>
+  </data>
+  <data name="PermRecordsViewIncidentCostNote" xml:space="preserve">
+    <value>Tillåter att se kostnadstransaktioner, periodiseringar och dagliga kostnadsprognoser.</value>
+  </data>
+  <data name="PermRecordsManageIncidentCostLabel" xml:space="preserve">
+    <value>Hantera händelsekostnader</value>
+  </data>
+  <data name="PermRecordsManageIncidentCostNote" xml:space="preserve">
+    <value>Tillåter att redigera kostnadsposter, avtal om kostnadsdelning och fördelningskörningar samt exportera kostnadsrapporter.</value>
+  </data>
+  <data name="PermRecordsManageIncidentClaimsLabel" xml:space="preserve">
+    <value>Hantera skadeanspråk vid händelser</value>
+  </data>
+  <data name="PermRecordsManageIncidentClaimsNote" xml:space="preserve">
+    <value>Tillåter att öppna och handlägga anspråk för personskada, sakskada eller förlust.</value>
+  </data>
+  <data name="PermRecordsViewClaimProtectedLabel" xml:space="preserve">
+    <value>Visa skyddade uppgifter om skadeanspråk</value>
+  </data>
+  <data name="PermRecordsViewClaimProtectedNote" xml:space="preserve">
+    <value>Tillåter att se ekonomiska uppgifter och ärendeanteckningar för skadeanspråk.</value>
+  </data>
+  <data name="PermRecordsAssembleIncidentIapLabel" xml:space="preserve">
+    <value>Sammanställ handlingsplaner för händelser</value>
+  </data>
+  <data name="PermRecordsAssembleIncidentIapNote" xml:space="preserve">
+    <value>Tillåter att sammanställa händelsens handlingsplan: dess sidor, sidordning, sändlista och utskriftsjobb. Godkännande och slutförande av planens rapport använder behörigheterna för Rapporter.</value>
+  </data>
+  <data name="PermRecordsViewCoordinationBoardsLabel" xml:space="preserve">
+    <value>Visa samordningstavlor</value>
+  </data>
+  <data name="PermRecordsViewCoordinationBoardsNote" xml:space="preserve">
+    <value>Tillåter att läsa samordningstavlor och lägespanelen. Rutan Endast grupp begränsar den till tavlor i användarens egen grupp.</value>
+  </data>
+  <data name="PermRecordsManageCoordinationBoardsLabel" xml:space="preserve">
+    <value>Hantera samordningstavlor</value>
+  </data>
+  <data name="PermRecordsManageCoordinationBoardsNote" xml:space="preserve">
+    <value>Tillåter att skapa och redigera samordningstavlor, deras objekt och lägespanelen. Rutan Endast grupp begränsar den till tavlor i användarens egen grupp.</value>
+  </data>
+  <data name="PermRecordsShareCoordinationBoardsLabel" xml:space="preserve">
+    <value>Dela samordningstavlor</value>
+  </data>
+  <data name="PermRecordsShareCoordinationBoardsNote" xml:space="preserve">
+    <value>Tillåter att dela en samordningstavla med samverkansparter.</value>
+  </data>
 </root>

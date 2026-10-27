@@ -133,7 +133,11 @@ namespace Resgrid.Services.AdminAssist
 							"Logs" => module.LogsDisabled, "Reports" => module.ReportsDisabled, "Documents" => module.DocumentsDisabled,
 							"Calendar" => module.CalendarDisabled, "Notes" => module.NotesDisabled, "Training" => module.TrainingDisabled,
 							"Inventory" => module.InventoryDisabled, "Maintenance" => module.MaintenanceDisabled,
-							"Checklists" => module.ChecklistsDisabled, "BusinessOperations" => module.BusinessOperationsDisabled, _ => null
+							"Checklists" => module.ChecklistsDisabled, "BusinessOperations" => module.BusinessOperationsDisabled,
+							// The two Incident Back Office sub-switches only apply while the back office itself is on.
+							"IncidentBackOffice" => module.IncidentBackOfficeDisabled,
+							"IncidentBusiness" => module.IncidentBackOfficeDisabled || module.IncidentBusinessDisabled,
+							"IncidentCoordination" => module.IncidentBackOfficeDisabled || module.IncidentCoordinationDisabled, _ => null
 						};
 						return disabled == null ? (EvidenceState.Unknown, "AvailabilityUnknown") : disabled.Value ? (EvidenceState.Unavailable, "ModuleDisabled") : (EvidenceState.Known, null);
 					case "protection":

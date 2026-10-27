@@ -222,7 +222,85 @@ ViewChecklistResults = 113,
 		/// <summary>Phase E (registry 77): the California CRD report wizard — runs, employee snapshots, overrides, aggregation, validation, remarks, certification observation, corrections and the compliance officer's demographic records. Defaults to department administrators.</summary>
 		ManagePayDataReporting = 77,
 		/// <summary>Phase E (registry 78): freeze a validated run and download its export artifacts and portal worksheet. Defaults to department administrators.</summary>
-		ExportPayDataReporting = 78
+		ExportPayDataReporting = 78,
+
+		// -- Incident Back Office (registry section 4C; large-incident-logistics-finance-plan.md §15.1) --------------
+		// Ledger, catalog, dashboard and board operations only: incident record authorization is RMS 50-67. Every value
+		// is behind the Incident Back Office add-on (PlanAddonTypes 6), its flags and module switches, so the permissive
+		// no-row defaults below are unreachable for a department that has not bought it.
+
+		/// <summary>LI-A (registry 80): open the Incident Back Office desks. No-row default everyone.</summary>
+		ViewIncidentBackOffice = 80,
+		/// <summary>LI-A (registry 81): activate, team-activate, complex membership, close, seal and reopen. Department administrators only.</summary>
+		ManageIncidentActivation = 81,
+		/// <summary>LI-A (registry 82): operational periods and plan versions. Department and group administrators.</summary>
+		ManageIncidentPeriods = 82,
+		/// <summary>LI-A (registry 83): position catalog, assignments and standing team rosters. Department and group administrators.</summary>
+		ManageIncidentPositions = 83,
+		/// <summary>LI-A (registry 84): participants, enrollment and participant links. Department and group administrators.</summary>
+		ManageIncidentParticipants = 84,
+		/// <summary>LI-A (registry 85): protected participant detail (emergency contact, accommodation, dietary). Department administrators only.</summary>
+		ViewParticipantSensitive = 85,
+		/// <summary>LI-B (registry 86): create and view resource requests. Department and group administrators.</summary>
+		CreateIncidentRequest = 86,
+		/// <summary>LI-B (registry 87): approve resource requests. Department administrators.</summary>
+		ApproveIncidentRequest = 87,
+		/// <summary>LI-B (registry 88): place an order (mutual aid, vendor, external). Department administrators.</summary>
+		OrderIncidentRequest = 88,
+		/// <summary>LI-B (registry 89): receive, check in and record receipts. Department and group administrators.</summary>
+		ReceiveIncidentRequest = 89,
+		/// <summary>LI-B (registry 90): facilities, capacities and services. Department and group administrators.</summary>
+		ManageIncidentFacilities = 90,
+		/// <summary>LI-B (registry 91): lodging properties, blocks, beds and assignments. Department administrators.</summary>
+		ManageIncidentLodging = 91,
+		/// <summary>LI-B (registry 92): room numbers and accommodation restrictions. Department administrators only.</summary>
+		ViewLodgingAssignmentDetail = 92,
+		/// <summary>LI-B (registry 93): meal and potable-water planning. Department and group administrators.</summary>
+		ManageIncidentFeeding = 93,
+		/// <summary>LI-B (registry 94): support-service queues. Everyone with back-office view.</summary>
+		ManageIncidentServices = 94,
+		/// <summary>LI-B (registry 95): ground support, transport, travel and fuel. Department and group administrators.</summary>
+		ManageIncidentGroundSupport = 95,
+		/// <summary>LI-B (registry 96): communications assignment ledger. Department and group administrators.</summary>
+		ManageIncidentComms = 96,
+		/// <summary>LI-B (registry 97): department vendor catalog and support plan. Department and group administrators.</summary>
+		ManageVendorCatalog = 97,
+		/// <summary>LI-B (registry 98): vendor tax, remittance and bank references. Department administrators only.</summary>
+		ViewVendorProtected = 98,
+		/// <summary>LI-B (registry 99): engage vendors, holds and vendor links. Department administrators.</summary>
+		EngageVendor = 99,
+		/// <summary>LI-C (registry 100): requisitions, receipts and invoices. Department administrators.</summary>
+		ManageIncidentProcurement = 100,
+		/// <summary>LI-C (registry 101): record a financial obligation — the warranted-purchaser control. Department administrators only.</summary>
+		CommitIncidentPurchase = 101,
+		/// <summary>LI-C (registry 102): accept a vendor invoice. Department administrators.</summary>
+		AcceptVendorInvoice = 102,
+		/// <summary>LI-C (registry 103): budgets, lines, funding codes and cost groups. Department administrators.</summary>
+		ManageIncidentBudget = 103,
+		/// <summary>LI-C (registry 104): authorize and delegate funding. Department administrators only.</summary>
+		AuthorizeIncidentFunding = 104,
+		/// <summary>LI-C (registry 105): enter time, equipment use and expenses. Department and group administrators.</summary>
+		EnterIncidentTime = 105,
+		/// <summary>LI-C (registry 106): supervisor certification of time. Department and group administrators.</summary>
+		CertifyIncidentTime = 106,
+		/// <summary>LI-C (registry 107): finance approval of time. Department administrators only.</summary>
+		ApproveIncidentTime = 107,
+		/// <summary>LI-C (registry 108): view incident cost. Department administrators only.</summary>
+		ViewIncidentCost = 108,
+		/// <summary>LI-C (registry 109): cost runs, projections, cost share, export and disaster cost recovery. Department administrators only.</summary>
+		ManageIncidentCost = 109,
+		/// <summary>LI-C (registry 110): claim case ledger and closeout. Department administrators.</summary>
+		ManageIncidentClaims = 110,
+		/// <summary>LI-C (registry 120): claim financials and case notes. Department administrators only.</summary>
+		ViewClaimProtected = 120,
+		/// <summary>LI-C (registry 121): IAP assembly manifest, page order, distribution and print job (approval is RMS). Department administrators.</summary>
+		AssembleIncidentIap = 121,
+		/// <summary>LI-D (registry 122): view coordination boards. Everyone.</summary>
+		ViewCoordinationBoards = 122,
+		/// <summary>LI-D (registry 123): boards, lanes and the situation entities. Department and group administrators.</summary>
+		ManageCoordinationBoards = 123,
+		/// <summary>LI-D (registry 124): interagency board share grants. Department administrators only.</summary>
+		ShareCoordinationBoards = 124
 	}
 
 }

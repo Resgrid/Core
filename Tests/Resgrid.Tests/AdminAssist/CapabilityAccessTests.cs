@@ -74,6 +74,37 @@ namespace Resgrid.Tests.AdminAssist
 			readiness.Verify(r => r.CanUseChecklistsAsync(actor.DepartmentId), Times.Once, "Five checklist capabilities share one gate.");
 		}
 
+		[TestCase(false, false, false, "Known", "Known", "Known")]
+		[TestCase(true, false, false, "ModuleDisabled", "ModuleDisabled", "ModuleDisabled")]
+		[TestCase(false, true, false, "Known", "ModuleDisabled", "Known")]
+		[TestCase(false, false, true, "Known", "Known", "ModuleDisabled")]
+		public async Task Incident_Back_Office_switches_gate_their_desks(bool backOfficeOff, bool businessOff, bool coordinationOff,
+			string activation, string finance, string boards)
+		{
+			// The finance and board switches only apply while the back office itself is on, so turning the master off closes every desk.
+			var actor = new AdminAssistActor(7, "admin");
+			var flags = new Mock<IFeatureToggleService>();
+			flags.Setup(f => f.EvaluateFreshAsync(It.IsAny<string>(), actor.DepartmentId)).ReturnsAsync(new Resgrid.Model.FeatureFlagEvaluation { IsEnabled = true });
+			var settings = new Mock<IDepartmentSettingsService>();
+			settings.Setup(s => s.GetDepartmentModuleSettingsAsync(actor.DepartmentId, true)).ReturnsAsync(new Resgrid.Model.DepartmentModuleSettings
+				{ IncidentBackOfficeDisabled = backOfficeOff, IncidentBusinessDisabled = businessOff, IncidentCoordinationDisabled = coordinationOff });
+			var service = new AdminAssistAccessService(Admin(actor).Object, flags.Object, settings.Object, Mock.Of<ISubscriptionsService>(),
+				Mock.Of<IDepartmentDataProtectionService>(), Mock.Of<IReadinessAccessService>(), Mock.Of<IBusinessOperationsAccessService>(), new ConfigurationCatalog(),
+				TimeProvider.System, Mock.Of<IAuthorizationService>());
+
+			var features = await service.GetCapabilitiesAsync(actor);
+
+			// The add-on itself cannot be read without the Billing API, so a desk whose switches are on is Unknown, never Unavailable.
+			string Outcome(string id)
+			{
+				var feature = features.Single(f => f.CapabilityId == id);
+				return feature.ReasonCodes.Contains("ModuleDisabled") ? "ModuleDisabled" : feature.State == EvidenceState.Unavailable ? "Unavailable" : "Known";
+			}
+			Assert.That(Outcome("incident-activation"), Is.EqualTo(activation));
+			Assert.That(Outcome("incident-finance"), Is.EqualTo(finance));
+			Assert.That(Outcome("coordination-boards"), Is.EqualTo(boards));
+		}
+
 		[Test, NonParallelizable]
 		public async Task Unresponsive_billing_spends_one_bounded_budget_and_reports_unknown_entitlement()
 		{

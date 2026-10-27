@@ -1160,6 +1160,228 @@
   <data name="ApiKeyScopeUnitsRead" xml:space="preserve">
     <value>Ανάγνωση μονάδων και της κατάστασής τους</value>
   </data>
+  <data name="PermIncidentBackOfficeSectionHeader" xml:space="preserve">
+    <value>Incident Back Office</value>
+  </data>
+  <data name="PermIncidentBackOfficeSectionNote" xml:space="preserve">
+    <value>Αυτά τα δικαιώματα ισχύουν μόνο με ενεργό πρόσθετο Incident Back Office. Οι γραμμές οικονομικών απαιτούν επίσης ενεργοποιημένο το Incident Business και οι γραμμές πινάκων συντονισμού το Incident Coordination. Οι ίδιες οι αναφορές συμβάντος χρησιμοποιούν τα δικαιώματα των Αναφορών παραπάνω.</value>
+  </data>
+  <data name="PermRecordsViewIncidentBackOfficeLabel" xml:space="preserve">
+    <value>Προβολή Incident Back Office</value>
+  </data>
+  <data name="PermRecordsViewIncidentBackOfficeNote" xml:space="preserve">
+    <value>Επιτρέπει το άνοιγμα των γραφείων του Incident Back Office και την ανάγνωση ενεργοποιήσεων, περιόδων, οργάνωσης και εφοδιαστικής. Οι αλλαγές σε κάθε γραφείο απαιτούν το δικό του δικαίωμα του συγκεκριμένου γραφείου.</value>
+  </data>
+  <data name="PermRecordsManageIncidentActivationLabel" xml:space="preserve">
+    <value>Διαχείριση ενεργοποίησης συμβάντος</value>
+  </data>
+  <data name="PermRecordsManageIncidentActivationNote" xml:space="preserve">
+    <value>Επιτρέπει το άνοιγμα ενεργοποιήσεων, την προσθήκη τους σε σύμπλεγμα, καθώς και το κλείσιμο, τη σφράγιση ή το επανάνοιγμά τους.</value>
+  </data>
+  <data name="PermRecordsManageIncidentPeriodsLabel" xml:space="preserve">
+    <value>Διαχείριση επιχειρησιακών περιόδων</value>
+  </data>
+  <data name="PermRecordsManageIncidentPeriodsNote" xml:space="preserve">
+    <value>Επιτρέπει τη δημιουργία και την επεξεργασία επιχειρησιακών περιόδων και την έγκριση των εκδόσεων των σχεδίων τους.</value>
+  </data>
+  <data name="PermRecordsManageIncidentPositionsLabel" xml:space="preserve">
+    <value>Διαχείριση θέσεων συμβάντος</value>
+  </data>
+  <data name="PermRecordsManageIncidentPositionsNote" xml:space="preserve">
+    <value>Επιτρέπει την επεξεργασία του καταλόγου θέσεων, των αναθέσεων θέσεων και των συνθέσεων ομάδων.</value>
+  </data>
+  <data name="PermRecordsManageIncidentParticipantsLabel" xml:space="preserve">
+    <value>Διαχείριση συμμετεχόντων συμβάντος</value>
+  </data>
+  <data name="PermRecordsManageIncidentParticipantsNote" xml:space="preserve">
+    <value>Επιτρέπει την ένταξη και την επεξεργασία συμμετεχόντων και την αποστολή των συνδέσμων αυτοεξυπηρέτησής τους. Το πλαίσιο «Μόνο ομάδα» το περιορίζει σε συμμετέχοντες της ομάδας του χρήστη.</value>
+  </data>
+  <data name="PermRecordsViewParticipantSensitiveLabel" xml:space="preserve">
+    <value>Προβολή ευαίσθητων στοιχείων συμμετεχόντων</value>
+  </data>
+  <data name="PermRecordsViewParticipantSensitiveNote" xml:space="preserve">
+    <value>Επιτρέπει την προβολή των επαφών έκτακτης ανάγκης των συμμετεχόντων και των στοιχείων τους σχετικά με ιατρικά θέματα, προσβασιμότητα, αλλεργιογόνα και διατροφή.</value>
+  </data>
+  <data name="PermRecordsCreateIncidentRequestLabel" xml:space="preserve">
+    <value>Δημιουργία αιτημάτων πόρων</value>
+  </data>
+  <data name="PermRecordsCreateIncidentRequestNote" xml:space="preserve">
+    <value>Επιτρέπει τη δημιουργία αιτημάτων πόρων και πακέτων αποστολής. Το πλαίσιο «Μόνο ομάδα» το περιορίζει σε αιτήματα για την ομάδα του χρήστη.</value>
+  </data>
+  <data name="PermRecordsApproveIncidentRequestLabel" xml:space="preserve">
+    <value>Έγκριση αιτημάτων πόρων</value>
+  </data>
+  <data name="PermRecordsApproveIncidentRequestNote" xml:space="preserve">
+    <value>Επιτρέπει την έγκριση ή την απόρριψη αιτημάτων πόρων. Το πλαίσιο «Μόνο ομάδα» το περιορίζει σε αιτήματα από την ομάδα του χρήστη.</value>
+  </data>
+  <data name="PermRecordsOrderIncidentRequestLabel" xml:space="preserve">
+    <value>Παραγγελία αιτημάτων πόρων</value>
+  </data>
+  <data name="PermRecordsOrderIncidentRequestNote" xml:space="preserve">
+    <value>Επιτρέπει την υποβολή της παραγγελίας που καλύπτει ένα εγκεκριμένο αίτημα πόρων, συμπεριλαμβανομένων παραγγελιών βάσει συμφωνιών με προμηθευτές.</value>
+  </data>
+  <data name="PermRecordsReceiveIncidentRequestLabel" xml:space="preserve">
+    <value>Παραλαβή αιτημάτων πόρων</value>
+  </data>
+  <data name="PermRecordsReceiveIncidentRequestNote" xml:space="preserve">
+    <value>Επιτρέπει την καταγραφή αφίξεων και παραλαβών για αιτήματα που έχουν καλυφθεί. Το πλαίσιο «Μόνο ομάδα» το περιορίζει στην ομάδα του χρήστη.</value>
+  </data>
+  <data name="PermRecordsManageIncidentFacilitiesLabel" xml:space="preserve">
+    <value>Διαχείριση εγκαταστάσεων συμβάντος</value>
+  </data>
+  <data name="PermRecordsManageIncidentFacilitiesNote" xml:space="preserve">
+    <value>Επιτρέπει τη διαχείριση των εγκαταστάσεων συμβάντος, της χωρητικότητας, των συμφωνιών και των υπηρεσιών τους.</value>
+  </data>
+  <data name="PermRecordsManageIncidentLodgingLabel" xml:space="preserve">
+    <value>Διαχείριση διαμονής συμβάντος</value>
+  </data>
+  <data name="PermRecordsManageIncidentLodgingNote" xml:space="preserve">
+    <value>Επιτρέπει τη διαχείριση καταλυμάτων, μπλοκ δωματίων, νυχτερινής διαθεσιμότητας και αναθέσεων κλινών.</value>
+  </data>
+  <data name="PermRecordsViewLodgingAssignmentDetailLabel" xml:space="preserve">
+    <value>Προβολή στοιχείων ανάθεσης διαμονής</value>
+  </data>
+  <data name="PermRecordsViewLodgingAssignmentDetailNote" xml:space="preserve">
+    <value>Επιτρέπει την προβολή αριθμών δωματίων και περιορισμών διαμονής στις αναθέσεις κλινών και στις λίστες κατανομής δωματίων.</value>
+  </data>
+  <data name="PermRecordsManageIncidentFeedingLabel" xml:space="preserve">
+    <value>Διαχείριση σίτισης συμβάντος</value>
+  </data>
+  <data name="PermRecordsManageIncidentFeedingNote" xml:space="preserve">
+    <value>Επιτρέπει τη διαχείριση προγραμμάτων γευμάτων, ζήτησης, παραγγελιών γευμάτων και γευμάτων που σερβιρίστηκαν.</value>
+  </data>
+  <data name="PermRecordsManageIncidentServicesLabel" xml:space="preserve">
+    <value>Διαχείριση υπηρεσιών υποστήριξης</value>
+  </data>
+  <data name="PermRecordsManageIncidentServicesNote" xml:space="preserve">
+    <value>Επιτρέπει την αίτηση και την καταγραφή υπηρεσιών υποστήριξης όπως πλυντήριο ή ντους. Το πλαίσιο «Μόνο ομάδα» το περιορίζει στην ομάδα του χρήστη.</value>
+  </data>
+  <data name="PermRecordsManageIncidentGroundSupportLabel" xml:space="preserve">
+    <value>Διαχείριση επίγειας υποστήριξης</value>
+  </data>
+  <data name="PermRecordsManageIncidentGroundSupportNote" xml:space="preserve">
+    <value>Επιτρέπει τη διαχείριση αιτημάτων μεταφοράς και μετακινήσεων, δρομολογίων ταξιδιών και καυσίμων.</value>
+  </data>
+  <data name="PermRecordsManageIncidentCommsLabel" xml:space="preserve">
+    <value>Διαχείριση επικοινωνιών συμβάντος</value>
+  </data>
+  <data name="PermRecordsManageIncidentCommsNote" xml:space="preserve">
+    <value>Επιτρέπει τη διαχείριση του σχεδίου επικοινωνιών και των αναθέσεων ασυρμάτων και συσκευών.</value>
+  </data>
+  <data name="PermRecordsManageVendorCatalogLabel" xml:space="preserve">
+    <value>Διαχείριση καταλόγου προμηθευτών</value>
+  </data>
+  <data name="PermRecordsManageVendorCatalogNote" xml:space="preserve">
+    <value>Επιτρέπει την προσθήκη και την επεξεργασία προμηθευτών, των τοποθεσιών, των δυνατοτήτων, της διαθεσιμότητας και των εγγράφων συμμόρφωσής τους.</value>
+  </data>
+  <data name="PermRecordsViewVendorProtectedLabel" xml:space="preserve">
+    <value>Προβολή προστατευμένων στοιχείων προμηθευτών</value>
+  </data>
+  <data name="PermRecordsViewVendorProtectedNote" xml:space="preserve">
+    <value>Επιτρέπει την προβολή των φορολογικών αναγνωριστικών και των στοιχείων πληρωμής των προμηθευτών.</value>
+  </data>
+  <data name="PermRecordsEngageVendorLabel" xml:space="preserve">
+    <value>Συνεργασία με προμηθευτές</value>
+  </data>
+  <data name="PermRecordsEngageVendorNote" xml:space="preserve">
+    <value>Επιτρέπει τη σύναψη συνεργασίας με προμηθευτές σε μια ενεργοποίηση, την καταγραφή δεσμεύσεων χωρητικότητας και προσφορών και την αποστολή συνδέσμων προμηθευτών.</value>
+  </data>
+  <data name="PermRecordsManageIncidentProcurementLabel" xml:space="preserve">
+    <value>Διαχείριση προμηθειών συμβάντος</value>
+  </data>
+  <data name="PermRecordsManageIncidentProcurementNote" xml:space="preserve">
+    <value>Επιτρέπει τη διαχείριση συμφωνιών με προμηθευτές, αιτήσεων προμήθειας, παραλαβών, τιμολογίων προμηθευτών και πακέτων πληρωμών.</value>
+  </data>
+  <data name="PermRecordsCommitIncidentPurchaseLabel" xml:space="preserve">
+    <value>Δέσμευση αγορών συμβάντος</value>
+  </data>
+  <data name="PermRecordsCommitIncidentPurchaseNote" xml:space="preserve">
+    <value>Επιτρέπει την καταγραφή οικονομικής δέσμευσης για μια αγορά· αυτός είναι ο έλεγχος εξουσιοδοτημένου αγοραστή.</value>
+  </data>
+  <data name="PermRecordsAcceptVendorInvoiceLabel" xml:space="preserve">
+    <value>Αποδοχή τιμολογίων προμηθευτών</value>
+  </data>
+  <data name="PermRecordsAcceptVendorInvoiceNote" xml:space="preserve">
+    <value>Επιτρέπει την αποδοχή τιμολογίων προμηθευτών για πληρωμή αφού αντιστοιχιστούν με παραλαβές.</value>
+  </data>
+  <data name="PermRecordsManageIncidentBudgetLabel" xml:space="preserve">
+    <value>Διαχείριση προϋπολογισμού συμβάντος</value>
+  </data>
+  <data name="PermRecordsManageIncidentBudgetNote" xml:space="preserve">
+    <value>Επιτρέπει τη διαχείριση γραμμών προϋπολογισμού, εκχωρήσεων δαπανών, κωδικών χρηματοδότησης και ομάδων κόστους.</value>
+  </data>
+  <data name="PermRecordsAuthorizeIncidentFundingLabel" xml:space="preserve">
+    <value>Εξουσιοδότηση χρηματοδότησης συμβάντος</value>
+  </data>
+  <data name="PermRecordsAuthorizeIncidentFundingNote" xml:space="preserve">
+    <value>Επιτρέπει την έγκριση εξουσιοδοτήσεων χρηματοδότησης για τον προϋπολογισμό του συμβάντος.</value>
+  </data>
+  <data name="PermRecordsEnterIncidentTimeLabel" xml:space="preserve">
+    <value>Καταχώριση χρόνου συμβάντος</value>
+  </data>
+  <data name="PermRecordsEnterIncidentTimeNote" xml:space="preserve">
+    <value>Επιτρέπει την καταχώριση χρόνου, χρήσης εξοπλισμού και εξόδων. Το πλαίσιο «Μόνο ομάδα» το περιορίζει σε άτομα της ομάδας του χρήστη.</value>
+  </data>
+  <data name="PermRecordsCertifyIncidentTimeLabel" xml:space="preserve">
+    <value>Πιστοποίηση χρόνου συμβάντος</value>
+  </data>
+  <data name="PermRecordsCertifyIncidentTimeNote" xml:space="preserve">
+    <value>Επιτρέπει στους επόπτες να πιστοποιούν τον καταχωρισμένο χρόνο πριν από την έγκριση. Το πλαίσιο «Μόνο ομάδα» το περιορίζει σε άτομα της ομάδας του χρήστη.</value>
+  </data>
+  <data name="PermRecordsApproveIncidentTimeLabel" xml:space="preserve">
+    <value>Έγκριση χρόνου συμβάντος</value>
+  </data>
+  <data name="PermRecordsApproveIncidentTimeNote" xml:space="preserve">
+    <value>Επιτρέπει την έγκριση πιστοποιημένου χρόνου για κοστολόγηση και πληρωμή. Το πλαίσιο «Μόνο ομάδα» το περιορίζει σε άτομα της ομάδας του χρήστη.</value>
+  </data>
+  <data name="PermRecordsViewIncidentCostLabel" xml:space="preserve">
+    <value>Προβολή κόστους συμβάντος</value>
+  </data>
+  <data name="PermRecordsViewIncidentCostNote" xml:space="preserve">
+    <value>Επιτρέπει την προβολή συναλλαγών κόστους, δεδουλευμένων και ημερήσιων προβλέψεων κόστους.</value>
+  </data>
+  <data name="PermRecordsManageIncidentCostLabel" xml:space="preserve">
+    <value>Διαχείριση κόστους συμβάντος</value>
+  </data>
+  <data name="PermRecordsManageIncidentCostNote" xml:space="preserve">
+    <value>Επιτρέπει την επεξεργασία εγγραφών κόστους, συμφωνιών επιμερισμού κόστους και εκτελέσεων επιμερισμού, καθώς και την εξαγωγή εκθέσεων κόστους.</value>
+  </data>
+  <data name="PermRecordsManageIncidentClaimsLabel" xml:space="preserve">
+    <value>Διαχείριση αξιώσεων συμβάντος</value>
+  </data>
+  <data name="PermRecordsManageIncidentClaimsNote" xml:space="preserve">
+    <value>Επιτρέπει το άνοιγμα και τον χειρισμό αξιώσεων για τραυματισμό, ζημία ή απώλεια.</value>
+  </data>
+  <data name="PermRecordsViewClaimProtectedLabel" xml:space="preserve">
+    <value>Προβολή προστατευμένων στοιχείων αξιώσεων</value>
+  </data>
+  <data name="PermRecordsViewClaimProtectedNote" xml:space="preserve">
+    <value>Επιτρέπει την προβολή των οικονομικών στοιχείων και των σημειώσεων υπόθεσης των αξιώσεων.</value>
+  </data>
+  <data name="PermRecordsAssembleIncidentIapLabel" xml:space="preserve">
+    <value>Σύνταξη σχεδίων δράσης συμβάντος</value>
+  </data>
+  <data name="PermRecordsAssembleIncidentIapNote" xml:space="preserve">
+    <value>Επιτρέπει τη σύνταξη του σχεδίου δράσης συμβάντος: των σελίδων του, της σειράς των σελίδων, της λίστας διανομής και της εργασίας εκτύπωσης. Η έγκριση και η οριστικοποίηση της αναφοράς του σχεδίου χρησιμοποιούν τα δικαιώματα των Αναφορών.</value>
+  </data>
+  <data name="PermRecordsViewCoordinationBoardsLabel" xml:space="preserve">
+    <value>Προβολή πινάκων συντονισμού</value>
+  </data>
+  <data name="PermRecordsViewCoordinationBoardsNote" xml:space="preserve">
+    <value>Επιτρέπει την ανάγνωση των πινάκων συντονισμού και του γραφείου κατάστασης. Το πλαίσιο «Μόνο ομάδα» το περιορίζει σε πίνακες της ομάδας του χρήστη.</value>
+  </data>
+  <data name="PermRecordsManageCoordinationBoardsLabel" xml:space="preserve">
+    <value>Διαχείριση πινάκων συντονισμού</value>
+  </data>
+  <data name="PermRecordsManageCoordinationBoardsNote" xml:space="preserve">
+    <value>Επιτρέπει τη δημιουργία και την επεξεργασία πινάκων συντονισμού, των στοιχείων τους και του γραφείου κατάστασης. Το πλαίσιο «Μόνο ομάδα» το περιορίζει σε πίνακες της ομάδας του χρήστη.</value>
+  </data>
+  <data name="PermRecordsShareCoordinationBoardsLabel" xml:space="preserve">
+    <value>Κοινή χρήση πινάκων συντονισμού</value>
+  </data>
+  <data name="PermRecordsShareCoordinationBoardsNote" xml:space="preserve">
+    <value>Επιτρέπει την κοινή χρήση ενός πίνακα συντονισμού με συνεργαζόμενους φορείς.</value>
+  </data>
 </root>
 
 

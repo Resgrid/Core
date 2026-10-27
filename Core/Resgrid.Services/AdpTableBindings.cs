@@ -581,6 +581,11 @@ namespace Resgrid.Services
 					Text("RmsPreventionAttachments", "FileName"), Text("RmsPreventionAttachments", "Description"), Binary("RmsPreventionAttachments", "Data")
 				}) with { ProtectedMarkerColumn = "IsProtected" }
 			};
+			// Incident Back Office (ADP catalogs 34-36): every table with catalogued columns, keyed by its string id; the IsProtected
+			// marker on each row says whether its values are sealed.
+			bindings.AddRange(Resgrid.Model.IncidentLogistics.IncidentBackOfficeProtectedFields.All().GroupBy(f => f.Table).Select(table =>
+				AdpTableBinding.Direct(table.Key, Resgrid.Model.IncidentLogistics.IncidentBackOfficeTables.All.First(t => t.Table == table.Key).Key, false, "DepartmentId",
+					table.Select(f => Text(table.Key, f.Column)).ToArray()) with { ProtectedMarkerColumn = "IsProtected" }));
 			bindings.AddRange(Resgrid.Model.WorkOrders.WorkOrderTables.All.Values.Where(Resgrid.Model.WorkOrders.WorkOrderTables.ProtectedContent.Contains).Select(table =>
 				AdpTableBinding.Direct(table, "Id", false, "DepartmentId", table == "WorkOrderFiles" ? new[] { Text(table, "Content"), Binary(table, "Data") } : new[] { Text(table, Resgrid.Model.WorkOrders.WorkOrderTables.SealedColumn(table)) }) with { ProtectedMarkerColumn = "IsProtected" }));
 			// Inventory transactions use their stable GUID public Id for field AAD, independently of the bigint EntryId ledger key.

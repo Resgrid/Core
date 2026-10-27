@@ -1,0 +1,80 @@
+@model Resgrid.Web.Areas.User.Models.IncidentBackOffice.IncidentTeamReadinessView
+@using Resgrid.Model.IncidentLogistics
+@using Resgrid.Web.Areas.User.Models.IncidentBackOffice
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.IncidentBackOffice.IncidentBackOffice> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["TeamReadiness"];
+    ViewData["Title"] = localizer["TeamReadiness"].Value;
+    ViewData["Subtitle"] = localizer["TeamReadinessIntro"].Value;
+    var time = ViewData["IboTime"] as IncidentTime;
+    var readiness = Model.Readiness;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/IncidentBackOffice/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("~/Areas/User/Views/IncidentBackOffice/_Message.cshtml", (IncidentDeskView)Model)
+    <form method="get" asp-action="Readiness" class="rgw-filter">
+        <div class="rgw-grid">
+            <div class="form-group">
+                <label for="ibo-team">@localizer["Field.DepartmentIncidentTeamId"]</label>
+                <select id="ibo-team" name="teamId" class="form-control">
+                    @foreach (var team in Model.Teams)
+                    {
+                        <option value="@team.DepartmentIncidentTeamId" selected="@(team.DepartmentIncidentTeamId == Model.TeamId)">@team.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group"><label for="ibo-start">@localizer["WindowStart"] (@time?.ZoneId)</label><input id="ibo-start" type="datetime-local" name="start" value="@Model.WindowStart" class="form-control" /></div>
+            <div class="form-group"><label for="ibo-end">@localizer["WindowEnd"]</label><input id="ibo-end" type="datetime-local" name="end" value="@Model.WindowEnd" class="form-control" /></div>
+        </div>
+        <div class="rgw-filter-actions"><button type="submit" class="btn btn-sm btn-primary">@localizer["CheckReadiness"]</button></div>
+    </form>
+
+    @if (readiness != null)
+    {
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>@readiness.Team?.Name</h5>
+                <span class="label pull-right @(readiness.Readiness == IncidentTeamReadiness.Ready ? "label-primary" : readiness.Readiness == IncidentTeamReadiness.Degraded ? "label-warning" : "label-danger")">@LedgerText.Status(localizer, typeof(IncidentTeamReadiness), (int)readiness.Readiness)</span>
+            </div>
+            <div class="ibox-content">
+                <p>@localizer["ReadinessGaps", readiness.Gaps]</p>
+                <table class="table table-striped rgw-table">
+                    <thead><tr><th scope="col">@localizer["Field.IncidentPositionDefinitionId"]</th><th scope="col">@localizer["Candidate"]</th><th scope="col">@localizer["Readiness"]</th><th scope="col">@localizer["Missing"]</th></tr></thead>
+                    <tbody>
+                        @foreach (var slot in readiness.Slots)
+                        {
+                            <tr>
+                                <td>@(slot.Position != null ? slot.Position.Code + " · " + slot.Position.Name : slot.Slot?.DepartmentIncidentTeamSlotId)</td>
+                                <td>@(slot.CandidateName ?? "—")</td>
+                                <td><span class="label @(slot.Readiness switch { IncidentSlotReadiness.Qualified => "label-primary", IncidentSlotReadiness.QualifiedAsTrainee or IncidentSlotReadiness.ExpiringBeforeWindowEnd => "label-warning", _ => "label-danger" })">@LedgerText.Status(localizer, typeof(IncidentSlotReadiness), (int)slot.Readiness)</span></td>
+                                <td>@string.Join(", ", slot.Missing)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                @if (Model.CanActivate && Model.Activations.Count > 0)
+                {
+                    <form method="get" asp-action="Propose" class="form-inline">
+                        <input type="hidden" name="teamId" value="@Model.TeamId" />
+                        <label for="ibo-activation" class="m-r-xs">@localizer["ActivateInto"]</label>
+                        <select id="ibo-activation" name="activationId" class="form-control m-r-xs">
+                            @foreach (var activation in Model.Activations)
+                            {
+                                <option value="@activation.Value">@activation.Text</option>
+                            }
+                        </select>
+                        <button type="submit" class="btn btn-primary">@localizer["ProposeActivation"]</button>
+                    </form>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/incident-back-office.css" asp-append-version="true" />
+}

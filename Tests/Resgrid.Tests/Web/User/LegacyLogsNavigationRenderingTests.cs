@@ -65,6 +65,7 @@ namespace Resgrid.Tests.Web.User
 			builder.Services.AddSingleton(Mock.Of<IReadinessAccessService>());
 			builder.Services.AddSingleton(Mock.Of<IRecordsAuthorizationService>());
 			builder.Services.AddSingleton(Mock.Of<IBusinessOperationsAccessService>());
+			builder.Services.AddSingleton(Mock.Of<IIncidentBackOfficeAccessService>());
 			builder.Services.AddControllersWithViews()
 				.AddApplicationPart(typeof(Resgrid.Web.Areas.User.Controllers.LogsController).Assembly)
 				.AddApplicationPart(typeof(LegacyLogsNavigationRenderingController).Assembly);

@@ -7125,4 +7125,568 @@
   <data name="FieldHelp.DepartmentTermOverride.Singular" xml:space="preserve">
     <value>För en modul organisationens ord för ett objekt, till exempel Lag för Enheter som döpts om till Lag, som används på knappar och rubriker som Nytt lag; högst 50 tecken. Tomt härleds från namnet. Journaltyper har inget.</value>
   </data>
+  <data name="Area.incidents" xml:space="preserve">
+    <value>Incident Back Office</value>
+  </data>
+  <data name="AreaPurpose.incidents" xml:space="preserve">
+    <value>Aktivering, planering, logistik, ekonomi och samordningstavlor för stora eller långvariga händelser, planerade evenemang och övningar.</value>
+  </data>
+  <data name="AreaValue.incidents" xml:space="preserve">
+    <value>Driv stödverksamheten för en stor händelse från en enda aktivering: vilka som deltar, var de sover och äter, vad som beställts och vad det kostade.</value>
+  </data>
+  <data name="AreaExample.incidents" xml:space="preserve">
+    <value>En aktivering för en skogsbrand checkar in anländande insatsstyrkor, bokar deras logi och måltider och följer upp varje inköp mot händelsens budget.</value>
+  </data>
+  <data name="ModuleAdoption.incidents" xml:space="preserve">
+    <value>Kräver tillägget Incident Back Office. Ekonomipanelerna kräver även att Incident Business är aktiverat, och samordningstavlorna kräver Incident Coordination. Genomför en övningsaktivering före den första verkliga händelsen.</value>
+  </data>
+  <data name="Ui.AddonRequired.IncidentBackOffice" xml:space="preserve">
+    <value>Kräver Incident Back Office</value>
+  </data>
+  <data name="Module.IncidentBackOfficeDisabled" xml:space="preserve">
+    <value>Tillgänglighet för Incident Back Office</value>
+  </data>
+  <data name="ModuleHelp.IncidentBackOfficeDisabled" xml:space="preserve">
+    <value>Styr tillgängligheten för panelerna i Incident Back Office. Att inaktivera denna modul tar bort dem från navigeringen och blockerar deras funktioner; det raderar inte aktiveringar eller deras poster. Att aktivera den kräver fortfarande tillägget Incident Back Office, utrullning och behörigheter.</value>
+  </data>
+  <data name="Module.IncidentBusinessDisabled" xml:space="preserve">
+    <value>Tillgänglighet för händelseekonomi</value>
+  </data>
+  <data name="ModuleHelp.IncidentBusinessDisabled" xml:space="preserve">
+    <value>Styr ekonomipanelerna för händelser: inköp, budget, tid, kostnader, skadeanspråk, återuppbyggnad, dokumentmottagning och avslut. Att inaktivera den döljer dessa paneler och blockerar deras funktioner utan att radera deras poster. Den gäller bara när Incident Back Office är aktiverat, och att aktivera den kräver fortfarande utrullning av Incident Business och behörigheter.</value>
+  </data>
+  <data name="Module.IncidentCoordinationDisabled" xml:space="preserve">
+    <value>Tillgänglighet för samordningstavlor</value>
+  </data>
+  <data name="ModuleHelp.IncidentCoordinationDisabled" xml:space="preserve">
+    <value>Styr samordningstavlorna och lägespanelen. Att inaktivera den döljer dem och blockerar deras funktioner utan att radera tavlor eller deras objekt. Den gäller bara när Incident Back Office är aktiverat, och att aktivera den kräver fortfarande utrullning av Incident Coordination och behörigheter.</value>
+  </data>
+  <data name="Setting.IncidentBackOfficeDefaults" xml:space="preserve">
+    <value>Standardvärden för Incident Back Office</value>
+  </data>
+  <data name="SettingHelp.IncidentBackOfficeDefaults" xml:space="preserve">
+    <value>Standardvärden för nya aktiveringar: hur gammal en källa för insatsledning eller utlarmning får bli innan dess rutor grånas ut, valuta och måttsystem (tomt innebär att avdelningens land används), längden på en operativ period och om övningar får meddela externa deltagare och leverantörer.</value>
+  </data>
+  <data name="Setting.IncidentEnrollmentPolicy" xml:space="preserve">
+    <value>Registreringspolicy för händelser</value>
+  </data>
+  <data name="SettingHelp.IncidentEnrollmentPolicy" xml:space="preserve">
+    <value>Hur personer och enheter som syns vid en händelse blir deltagare (registreringsläget), om personer som ännu inte registrerats räknas som en separat grupp i prognoserna för förplägnad, övernattning och vatten, och hur lång eller gammal registreringskön får bli innan ett larm utlöses.</value>
+  </data>
+  <data name="Setting.IncidentNotificationRouting" xml:space="preserve">
+    <value>Routning av händelseaviseringar</value>
+  </data>
+  <data name="SettingHelp.IncidentNotificationRouting" xml:space="preserve">
+    <value>Vilka befattningar vid händelsen som tar emot varje avisering från Incident Back Office. Befattningarna matchas mot sina aktuella innehavare när aviseringen skickas; en avisering utan konfigurerade befattningar använder sina inbyggda standardbefattningar.</value>
+  </data>
+  <data name="Setting.IncidentForecastPolicy" xml:space="preserve">
+    <value>Prognospolicy för händelser</value>
+  </data>
+  <data name="SettingHelp.IncidentForecastPolicy" xml:space="preserve">
+    <value>Koefficienter och larmfönster för logistikprognoser: marginal för måltider och vatten, dricksvatten per person och dag, sängreserv, om förutsedda tidsgränsöverskridanden minskar prognoserna, ledtid för ersättare, framförhållningsfönster för ankomster, tidsgränser och sista beställningstid för måltider samt tröskelvärden för anläggningskapacitet och antal dagars vattenförsörjning.</value>
+  </data>
+  <data name="Setting.IncidentAssignmentRulePolicy" xml:space="preserve">
+    <value>Tilldelningsregler för händelser</value>
+  </data>
+  <data name="SettingHelp.IncidentAssignmentRulePolicy" xml:space="preserve">
+    <value>Regelpaketet för arbete och vila samt de tilldelningsgränser som används för att flagga personer som närmar sig sina gränser: maximalt antal tilldelningsdagar, resdagar, maximal förlängning, maximalt antal arbetstimmar per pass och den vila som krävs per arbetad timme.</value>
+  </data>
+  <data name="Setting.IncidentVendorPolicy" xml:space="preserve">
+    <value>Leverantörspolicy för händelser</value>
+  </data>
+  <data name="SettingHelp.IncidentVendorPolicy" xml:space="preserve">
+    <value>Hur ofta leverantörer måste verifieras på nytt, hur länge en kapacitetsreservation gäller och hur långt i förväg utgående efterlevnadsdokument och kapacitetsreservationer flaggas.</value>
+  </data>
+  <data name="Setting.IncidentSelfServicePolicy" xml:space="preserve">
+    <value>Självbetjäningspolicy för händelser</value>
+  </data>
+  <data name="SettingHelp.IncidentSelfServicePolicy" xml:space="preserve">
+    <value>Självbetjäningslänkar för deltagare och leverantörer: hur många dagar en länk är giltig efter att tilldelningen eller uppdraget har avslutats, om en engångskod krävs innan uppgifter om logi eller resor visas och om leverantörslänkar kräver en verifierad leverantörskontakt.</value>
+  </data>
+  <data name="Setting.IncidentFinancePolicy" xml:space="preserve">
+    <value>Ekonomipolicy för händelser</value>
+  </data>
+  <data name="SettingHelp.IncidentFinancePolicy" xml:space="preserve">
+    <value>Ekonomiska kontroller: enpersonsdrift (en person får begära, godkänna, ingå åtaganden, ta emot och acceptera endast med en registrerad bekräftelse), extra avsändardomäner för mottagningsinkorgen, tröskelvärden för budget, avtalstak och daglig förbrukning, gränser för obehandlade dokument i mottagningen, varningar för tidsfrister för skadeanspråk och återuppbyggnad, fönstret för uppdelade inköp och tröskeln för mikroinköp.</value>
+  </data>
+  <data name="Setting.IncidentRetentionPolicy" xml:space="preserve">
+    <value>Lagringspolicy för händelser</value>
+  </data>
+  <data name="SettingHelp.IncidentRetentionPolicy" xml:space="preserve">
+    <value>Hur länge operativa ögonblicksbilder sparas efter att en händelse avslutats, hur många år huvudboksposter sparas och hur länge utgångna självbetjäningslänkar sparas. Händelsens rapporter följer i stället lagringsreglerna för Rapporter.</value>
+  </data>
+  <data name="Setting.CoordinationBoardDefaults" xml:space="preserve">
+    <value>Standardvärden för samordningstavlor</value>
+  </data>
+  <data name="SettingHelp.CoordinationBoardDefaults" xml:space="preserve">
+    <value>Standardvärden för samordningstavlor: när ett objekt räknas som inaktuellt, om vägavstängningar och kapacitet på evakueringsplatser utlöser larm, hur många dagar en delning av en tavla gäller och hur långt i förväg ett objekt med förfallodatum flaggas.</value>
+  </data>
+  <data name="Feature.incident-activation" xml:space="preserve">
+    <value>Aktivering och ledning av händelser</value>
+  </data>
+  <data name="FeaturePurpose.incident-activation" xml:space="preserve">
+    <value>Öppna en aktivering för en stor händelse, ett planerat evenemang eller en övning och följ den från ledningspanelen.</value>
+  </data>
+  <data name="FeatureSetup.incident-activation" xml:space="preserve">
+    <value>Granska inställningarna för Incident Back Office och öppna sedan en övningsaktivering.</value>
+  </data>
+  <data name="Feature.incident-planning" xml:space="preserve">
+    <value>Planering, organisation och incheckning</value>
+  </data>
+  <data name="FeaturePurpose.incident-planning" xml:space="preserve">
+    <value>Operativa perioder och planversioner, händelsens organisation och befattningar, deltagare och incheckning.</value>
+  </data>
+  <data name="FeatureSetup.incident-planning" xml:space="preserve">
+    <value>Bygg upp din befattningskatalog och teambemanning och checka sedan in deltagare under en övning.</value>
+  </data>
+  <data name="Feature.incident-logistics" xml:space="preserve">
+    <value>Händelselogistik</value>
+  </data>
+  <data name="FeaturePurpose.incident-logistics" xml:space="preserve">
+    <value>Resursbegäranden, anläggningar, logi, förplägnad, vatten och stödtjänster, med leverantörer och stödplanen.</value>
+  </data>
+  <data name="FeatureSetup.incident-logistics" xml:space="preserve">
+    <value>Lägg till dina leverantörer av logi, förplägnad, vatten och transport och granska sedan prognospolicyn.</value>
+  </data>
+  <data name="Feature.incident-finance" xml:space="preserve">
+    <value>Händelseekonomi</value>
+  </data>
+  <data name="FeaturePurpose.incident-finance" xml:space="preserve">
+    <value>Inköp, budget, tid, kostnader och skadeanspråk för en händelse, med uppdelning av ansvar.</value>
+  </data>
+  <data name="FeatureSetup.incident-finance" xml:space="preserve">
+    <value>Aktivera Incident Business, granska ekonomipolicyn och ange sedan händelsens budget.</value>
+  </data>
+  <data name="Feature.coordination-boards" xml:space="preserve">
+    <value>Samordningstavlor</value>
+  </data>
+  <data name="FeaturePurpose.coordination-boards" xml:space="preserve">
+    <value>Delade tavlor för vägavstängningar, evakueringsplatser och andra objekt som samordnas med samverkansparter.</value>
+  </data>
+  <data name="FeatureSetup.coordination-boards" xml:space="preserve">
+    <value>Aktivera Incident Coordination, granska standardvärdena för tavlor och skapa sedan en tavla.</value>
+  </data>
+  <data name="Feature.incident-open" xml:space="preserve">
+    <value>Öppna en händelse</value>
+  </data>
+  <data name="FeaturePurpose.incident-open" xml:space="preserve">
+    <value>Starta en aktivering för en händelse, ett planerat evenemang eller en övning, eventuellt kopplad till ett larm eller ett överordnat händelsekomplex.</value>
+  </data>
+  <data name="Feature.incident-command-desk" xml:space="preserve">
+    <value>Ledningspanel</value>
+  </data>
+  <data name="FeaturePurpose.incident-command-desk" xml:space="preserve">
+    <value>En aktiverings status, operativa lägesbild, dataaktualitet och öppna arbetsuppgifter på ett ställe.</value>
+  </data>
+  <data name="Feature.incident-operations" xml:space="preserve">
+    <value>Operativ panel</value>
+  </data>
+  <data name="FeaturePurpose.incident-operations" xml:space="preserve">
+    <value>Vilka som deltar i händelsen, deras stödstatus och befattning samt resurserna efter stödstatus.</value>
+  </data>
+  <data name="Feature.incident-settings" xml:space="preserve">
+    <value>Inställningar för Incident Back Office</value>
+  </data>
+  <data name="FeaturePurpose.incident-settings" xml:space="preserve">
+    <value>Avdelningens policyer för aktiveringar, registrering, routning av aviseringar, prognoser, tilldelningar, leverantörer, självbetjäningslänkar, ekonomi, lagring och tavlor.</value>
+  </data>
+  <data name="Feature.incident-organization" xml:space="preserve">
+    <value>Händelsens organisation</value>
+  </data>
+  <data name="FeaturePurpose.incident-organization" xml:space="preserve">
+    <value>En aktiverings organisationsschema och vem som är tilldelad varje befattning.</value>
+  </data>
+  <data name="Feature.incident-positions" xml:space="preserve">
+    <value>Befattningskatalog</value>
+  </data>
+  <data name="FeaturePurpose.incident-positions" xml:space="preserve">
+    <value>De befattningar vid händelser som din avdelning bemannar och de förmågor som varje befattning kräver.</value>
+  </data>
+  <data name="Feature.incident-teams" xml:space="preserve">
+    <value>Händelseteam</value>
+  </data>
+  <data name="FeaturePurpose.incident-teams" xml:space="preserve">
+    <value>Stående teambemanning med rotationer, platser och kvalificerade kandidater.</value>
+  </data>
+  <data name="Feature.incident-participants" xml:space="preserve">
+    <value>Deltagare</value>
+  </data>
+  <data name="FeaturePurpose.incident-participants" xml:space="preserve">
+    <value>De personer som stöder en aktivering, med deras kvalifikationer, hemorganisationer och självbetjäningslänkar.</value>
+  </data>
+  <data name="Feature.incident-check-in" xml:space="preserve">
+    <value>Incheckning</value>
+  </data>
+  <data name="FeaturePurpose.incident-check-in" xml:space="preserve">
+    <value>Checka in och ut personer och resurser och följ deras status, förflyttningar och förlängningar av tilldelningar.</value>
+  </data>
+  <data name="Feature.incident-iap" xml:space="preserve">
+    <value>Handlingsplan för händelsen</value>
+  </data>
+  <data name="FeaturePurpose.incident-iap" xml:space="preserve">
+    <value>Sammanställ händelsens handlingsplan för varje operativ period.</value>
+  </data>
+  <data name="Feature.incident-authority" xml:space="preserve">
+    <value>Befogenheter vid händelser</value>
+  </data>
+  <data name="FeaturePurpose.incident-authority" xml:space="preserve">
+    <value>Delegering av befogenheter per område, den befogenhetsprofil som kopieras till varje aktivering och de poster som återstår att stämma av.</value>
+  </data>
+  <data name="Feature.incident-demob" xml:space="preserve">
+    <value>Demobilisering</value>
+  </data>
+  <data name="FeaturePurpose.incident-demob" xml:space="preserve">
+    <value>Demobiliseringsplaner och checklistor för att frigöra personer och resurser.</value>
+  </data>
+  <data name="Feature.support-plan" xml:space="preserve">
+    <value>Krisstödsplan</value>
+  </data>
+  <data name="FeaturePurpose.support-plan" xml:space="preserve">
+    <value>Din avdelnings krisstödsplan: stödområden och föredragna leverantörer, som kopieras till varje aktivering.</value>
+  </data>
+  <data name="Feature.incident-requests" xml:space="preserve">
+    <value>Resursbegäranden</value>
+  </data>
+  <data name="FeaturePurpose.incident-requests" xml:space="preserve">
+    <value>Uppdragspaket och resursbegäranden från godkännande via tillsättning och ankomst till mottagning.</value>
+  </data>
+  <data name="Feature.incident-facilities" xml:space="preserve">
+    <value>Händelsens anläggningar</value>
+  </data>
+  <data name="FeaturePurpose.incident-facilities" xml:space="preserve">
+    <value>Basläger, uppställningsplatser och andra anläggningar för händelsen, med kapacitet, avtal och tjänster.</value>
+  </data>
+  <data name="Feature.incident-lodging" xml:space="preserve">
+    <value>Logi</value>
+  </data>
+  <data name="FeaturePurpose.incident-lodging" xml:space="preserve">
+    <value>Logianläggningar, rumsblock, tillgänglighet per natt, sängtilldelningar och rumslistor.</value>
+  </data>
+  <data name="Feature.incident-feeding" xml:space="preserve">
+    <value>Förplägnad</value>
+  </data>
+  <data name="FeaturePurpose.incident-feeding" xml:space="preserve">
+    <value>Måltidsplaner, prognostiserat behov, måltidsbeställningar och faktiskt serverade måltider.</value>
+  </data>
+  <data name="Feature.incident-water" xml:space="preserve">
+    <value>Vatten</value>
+  </data>
+  <data name="FeaturePurpose.incident-water" xml:space="preserve">
+    <value>Planer för dricksvatten, aktuellt lager och leveranser.</value>
+  </data>
+  <data name="Feature.incident-services" xml:space="preserve">
+    <value>Stödtjänster</value>
+  </data>
+  <data name="FeaturePurpose.incident-services" xml:space="preserve">
+    <value>Stödtjänster som tvätt, duschar eller sanitet, med tillhörande begäranden, aktiviteter och tillgångar.</value>
+  </data>
+  <data name="Feature.incident-ground-support" xml:space="preserve">
+    <value>Transportstöd</value>
+  </data>
+  <data name="FeaturePurpose.incident-ground-support" xml:space="preserve">
+    <value>Transportbegäranden och förflyttningar, resplaner och bränsle.</value>
+  </data>
+  <data name="Feature.incident-communications" xml:space="preserve">
+    <value>Samband vid händelsen</value>
+  </data>
+  <data name="FeaturePurpose.incident-communications" xml:space="preserve">
+    <value>En aktiverings sambandsplan och dess tilldelningar av radio och enheter.</value>
+  </data>
+  <data name="Feature.vendor-catalog" xml:space="preserve">
+    <value>Leverantörskatalog</value>
+  </data>
+  <data name="FeaturePurpose.vendor-catalog" xml:space="preserve">
+    <value>Leverantörer med deras platser, förmågor, tillgänglighetsfönster och efterlevnadsdokument.</value>
+  </data>
+  <data name="Feature.incident-vendors" xml:space="preserve">
+    <value>Leverantörsuppdrag</value>
+  </data>
+  <data name="FeaturePurpose.incident-vendors" xml:space="preserve">
+    <value>Leverantörer som anlitats för en aktivering, med deras kapacitetsåtaganden och offerter.</value>
+  </data>
+  <data name="Feature.incident-procurement" xml:space="preserve">
+    <value>Inköp för händelser</value>
+  </data>
+  <data name="FeaturePurpose.incident-procurement" xml:space="preserve">
+    <value>Leverantörsavtal, rekvisitioner och godkännanden, åtaganden, godsmottagningar, leverantörsfakturor och betalningspaket.</value>
+  </data>
+  <data name="Feature.incident-budget" xml:space="preserve">
+    <value>Händelsebudget</value>
+  </data>
+  <data name="FeaturePurpose.incident-budget" xml:space="preserve">
+    <value>Budgetposter, finansieringsbeslut, utgiftsdelegeringar, finansieringskoder och kostnadsgrupper.</value>
+  </data>
+  <data name="Feature.incident-time" xml:space="preserve">
+    <value>Tid vid händelser</value>
+  </data>
+  <data name="FeaturePurpose.incident-time" xml:space="preserve">
+    <value>Tidsposter och justeringar, utrustningsanvändning och utgifter, med attestering och godkännande.</value>
+  </data>
+  <data name="Feature.incident-cost" xml:space="preserve">
+    <value>Händelsekostnader</value>
+  </data>
+  <data name="FeaturePurpose.incident-cost" xml:space="preserve">
+    <value>Kostnadstransaktioner, periodiseringar, dagliga kostnadsprognoser och fördelning av delade kostnader.</value>
+  </data>
+  <data name="Feature.incident-claims" xml:space="preserve">
+    <value>Skadeanspråk vid händelser</value>
+  </data>
+  <data name="FeaturePurpose.incident-claims" xml:space="preserve">
+    <value>Anspråk för personskada, sakskada eller förlust som uppstått till följd av en händelse.</value>
+  </data>
+  <data name="Feature.incident-recovery" xml:space="preserve">
+    <value>Återuppbyggnad efter katastrof</value>
+  </data>
+  <data name="FeaturePurpose.incident-recovery" xml:space="preserve">
+    <value>Katastrofförklaringar, återuppbyggnadsprojekt och deras tidsfrister.</value>
+  </data>
+  <data name="Feature.incident-intake" xml:space="preserve">
+    <value>Dokumentmottagning för händelser</value>
+  </data>
+  <data name="FeaturePurpose.incident-intake" xml:space="preserve">
+    <value>Dokument och kvitton som skickats till händelsens mottagningsinkorg och som väntar på att arkiveras.</value>
+  </data>
+  <data name="Feature.incident-closeout" xml:space="preserve">
+    <value>Avslut av händelse</value>
+  </data>
+  <data name="FeaturePurpose.incident-closeout" xml:space="preserve">
+    <value>Avslutschecklistan som stänger händelsens räkenskaper.</value>
+  </data>
+  <data name="Feature.incident-situation" xml:space="preserve">
+    <value>Lägespanel</value>
+  </data>
+  <data name="FeaturePurpose.incident-situation" xml:space="preserve">
+    <value>Status för samhällsviktiga funktioner, öppna åtgärder, beslut och kartlagda lägesobjekt.</value>
+  </data>
+  <data name="Feature.addon-incidents" xml:space="preserve">
+    <value>Incident Back Office</value>
+  </data>
+  <data name="FeaturePurpose.addon-incidents" xml:space="preserve">
+    <value>Tillägget Incident Back Office: aktivering, planering, logistik, ekonomi och samordningstavlor för stora händelser.</value>
+  </data>
+  <data name="FeatureValue.addon-incidents" xml:space="preserve">
+    <value>Samla stödverksamheten för en långvarig händelse på ett ställe i stället för i kalkylblad, radioanteckningar och e-post.</value>
+  </data>
+  <data name="FeatureExample.addon-incidents" xml:space="preserve">
+    <value>Boka logi och måltider för anländande besättningar och följ upp varje inköp mot händelsens budget.</value>
+  </data>
+  <data name="FeatureAdoption.addon-incidents" xml:space="preserve">
+    <value>Händelseekonomi och samordningstavlor aktiveras separat. Händelsens rapporter ligger kvar i Rapporter och följer dess behörigheter. Ingen ersättning garanteras.</value>
+  </data>
+  <data name="Permission.ViewIncidentBackOffice" xml:space="preserve">
+    <value>Visa Incident Back Office</value>
+  </data>
+  <data name="PermissionHelp.ViewIncidentBackOffice" xml:space="preserve">
+    <value>Tillåter att öppna panelerna i Incident Back Office och läsa aktiveringar, perioder, organisation och logistik. Ändringar på varje panel kräver panelens egen behörighet. Utan sparad regel får alla medlemmar göra detta. Kräver att Incident Back Office är aktiverat och ett aktivt Incident Back Office-tillägg.</value>
+  </data>
+  <data name="Permission.ManageIncidentActivation" xml:space="preserve">
+    <value>Hantera händelseaktivering</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentActivation" xml:space="preserve">
+    <value>Tillåter att öppna aktiveringar, lägga till dem i ett händelsekomplex samt avsluta, försegla eller återöppna dem. Utan sparad regel får endast avdelningsadministratörer göra detta. Kräver att Incident Back Office är aktiverat och ett aktivt Incident Back Office-tillägg.</value>
+  </data>
+  <data name="Permission.ManageIncidentPeriods" xml:space="preserve">
+    <value>Hantera operativa perioder</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentPeriods" xml:space="preserve">
+    <value>Tillåter att skapa och redigera operativa perioder och godkänna deras planversioner. Utan sparad regel får avdelnings- och gruppadministratörer göra detta. Kräver att Incident Back Office är aktiverat och ett aktivt Incident Back Office-tillägg.</value>
+  </data>
+  <data name="Permission.ManageIncidentPositions" xml:space="preserve">
+    <value>Hantera befattningar vid händelser</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentPositions" xml:space="preserve">
+    <value>Tillåter att redigera befattningskatalogen, befattningstilldelningar och teambemanning. Utan sparad regel får avdelnings- och gruppadministratörer göra detta. Kräver att Incident Back Office är aktiverat och ett aktivt Incident Back Office-tillägg.</value>
+  </data>
+  <data name="Permission.ManageIncidentParticipants" xml:space="preserve">
+    <value>Hantera deltagare vid händelser</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentParticipants" xml:space="preserve">
+    <value>Tillåter att registrera och redigera deltagare och skicka deras självbetjäningslänkar. Rutan Endast grupp begränsar den till deltagare från användarens egen grupp. Utan sparad regel får avdelnings- och gruppadministratörer göra detta. Kräver att Incident Back Office är aktiverat och ett aktivt Incident Back Office-tillägg.</value>
+  </data>
+  <data name="Permission.ViewParticipantSensitive" xml:space="preserve">
+    <value>Visa känsliga deltagaruppgifter</value>
+  </data>
+  <data name="PermissionHelp.ViewParticipantSensitive" xml:space="preserve">
+    <value>Tillåter att se deltagarnas nödkontakter och deras uppgifter om hälsa, tillgänglighet, allergener och kost. Utan sparad regel får endast avdelningsadministratörer göra detta. Kräver att Incident Back Office är aktiverat och ett aktivt Incident Back Office-tillägg.</value>
+  </data>
+  <data name="Permission.CreateIncidentRequest" xml:space="preserve">
+    <value>Skapa resursbegäranden</value>
+  </data>
+  <data name="PermissionHelp.CreateIncidentRequest" xml:space="preserve">
+    <value>Tillåter att skapa resursbegäranden och uppdragspaket. Rutan Endast grupp begränsar den till begäranden för användarens egen grupp. Utan sparad regel får avdelnings- och gruppadministratörer göra detta. Kräver att Incident Back Office är aktiverat och ett aktivt Incident Back Office-tillägg.</value>
+  </data>
+  <data name="Permission.ApproveIncidentRequest" xml:space="preserve">
+    <value>Godkänn resursbegäranden</value>
+  </data>
+  <data name="PermissionHelp.ApproveIncidentRequest" xml:space="preserve">
+    <value>Tillåter att godkänna eller avslå resursbegäranden. Rutan Endast grupp begränsar den till begäranden från användarens egen grupp. Utan sparad regel får endast avdelningsadministratörer göra detta. Kräver att Incident Back Office är aktiverat och ett aktivt Incident Back Office-tillägg.</value>
+  </data>
+  <data name="Permission.OrderIncidentRequest" xml:space="preserve">
+    <value>Beställ mot resursbegäranden</value>
+  </data>
+  <data name="PermissionHelp.OrderIncidentRequest" xml:space="preserve">
+    <value>Tillåter att lägga den beställning som tillgodoser en godkänd resursbegäran, inklusive avrop mot leverantörsavtal. Utan sparad regel får endast avdelningsadministratörer göra detta. Kräver att Incident Back Office är aktiverat och ett aktivt Incident Back Office-tillägg.</value>
+  </data>
+  <data name="Permission.ReceiveIncidentRequest" xml:space="preserve">
+    <value>Registrera mottagning för resursbegäranden</value>
+  </data>
+  <data name="PermissionHelp.ReceiveIncidentRequest" xml:space="preserve">
+    <value>Tillåter att registrera ankomster och mottagningar för tillgodosedda begäranden. Rutan Endast grupp begränsar den till användarens egen grupp. Utan sparad regel får avdelnings- och gruppadministratörer göra detta. Kräver att Incident Back Office är aktiverat och ett aktivt Incident Back Office-tillägg.</value>
+  </data>
+  <data name="Permission.ManageIncidentFacilities" xml:space="preserve">
+    <value>Hantera händelseanläggningar</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentFacilities" xml:space="preserve">
+    <value>Tillåter att hantera händelsens anläggningar, deras kapacitet, avtal och tjänster. Utan sparad regel får avdelnings- och gruppadministratörer göra detta. Kräver att Incident Back Office är aktiverat och ett aktivt Incident Back Office-tillägg.</value>
+  </data>
+  <data name="Permission.ManageIncidentLodging" xml:space="preserve">
+    <value>Hantera logi vid händelser</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentLodging" xml:space="preserve">
+    <value>Tillåter att hantera logianläggningar, rumsblock, tillgänglighet per natt och sängtilldelningar. Utan sparad regel får endast avdelningsadministratörer göra detta. Kräver att Incident Back Office är aktiverat och ett aktivt Incident Back Office-tillägg.</value>
+  </data>
+  <data name="Permission.ViewLodgingAssignmentDetail" xml:space="preserve">
+    <value>Visa detaljer om logitilldelning</value>
+  </data>
+  <data name="PermissionHelp.ViewLodgingAssignmentDetail" xml:space="preserve">
+    <value>Tillåter att se rumsnummer och logibegränsningar i sängtilldelningar och rumslistor. Utan sparad regel får endast avdelningsadministratörer göra detta. Kräver att Incident Back Office är aktiverat och ett aktivt Incident Back Office-tillägg.</value>
+  </data>
+  <data name="Permission.ManageIncidentFeeding" xml:space="preserve">
+    <value>Hantera förplägnad vid händelser</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentFeeding" xml:space="preserve">
+    <value>Tillåter att hantera måltidsplaner, behov, måltidsbeställningar och serverade måltider. Utan sparad regel får avdelnings- och gruppadministratörer göra detta. Kräver att Incident Back Office är aktiverat och ett aktivt Incident Back Office-tillägg.</value>
+  </data>
+  <data name="Permission.ManageIncidentServices" xml:space="preserve">
+    <value>Hantera stödtjänster</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentServices" xml:space="preserve">
+    <value>Tillåter att begära och registrera stödtjänster som tvätt eller duschar. Rutan Endast grupp begränsar den till användarens egen grupp. Utan sparad regel får alla medlemmar göra detta. Kräver att Incident Back Office är aktiverat och ett aktivt Incident Back Office-tillägg.</value>
+  </data>
+  <data name="Permission.ManageIncidentGroundSupport" xml:space="preserve">
+    <value>Hantera transportstöd</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentGroundSupport" xml:space="preserve">
+    <value>Tillåter att hantera transportbegäranden och förflyttningar, resplaner och bränsle. Utan sparad regel får avdelnings- och gruppadministratörer göra detta. Kräver att Incident Back Office är aktiverat och ett aktivt Incident Back Office-tillägg.</value>
+  </data>
+  <data name="Permission.ManageIncidentComms" xml:space="preserve">
+    <value>Hantera samband vid händelser</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentComms" xml:space="preserve">
+    <value>Tillåter att hantera sambandsplanen och tilldelningar av radio och enheter. Utan sparad regel får avdelnings- och gruppadministratörer göra detta. Kräver att Incident Back Office är aktiverat och ett aktivt Incident Back Office-tillägg.</value>
+  </data>
+  <data name="Permission.ManageVendorCatalog" xml:space="preserve">
+    <value>Hantera leverantörskatalog</value>
+  </data>
+  <data name="PermissionHelp.ManageVendorCatalog" xml:space="preserve">
+    <value>Tillåter att lägga till och redigera leverantörer, deras platser, förmågor, tillgänglighet och efterlevnadsdokument. Utan sparad regel får avdelnings- och gruppadministratörer göra detta. Kräver att Incident Back Office är aktiverat och ett aktivt Incident Back Office-tillägg.</value>
+  </data>
+  <data name="Permission.ViewVendorProtected" xml:space="preserve">
+    <value>Visa skyddade leverantörsuppgifter</value>
+  </data>
+  <data name="PermissionHelp.ViewVendorProtected" xml:space="preserve">
+    <value>Tillåter att se leverantörers skatteregistreringsnummer och betalningsuppgifter. Utan sparad regel får endast avdelningsadministratörer göra detta. Kräver att Incident Back Office är aktiverat och ett aktivt Incident Back Office-tillägg.</value>
+  </data>
+  <data name="Permission.EngageVendor" xml:space="preserve">
+    <value>Anlita leverantörer</value>
+  </data>
+  <data name="PermissionHelp.EngageVendor" xml:space="preserve">
+    <value>Tillåter att anlita leverantörer för en aktivering, registrera kapacitetsåtaganden och offerter samt skicka leverantörslänkar. Utan sparad regel får endast avdelningsadministratörer göra detta. Kräver att Incident Back Office är aktiverat och ett aktivt Incident Back Office-tillägg.</value>
+  </data>
+  <data name="Permission.ManageIncidentProcurement" xml:space="preserve">
+    <value>Hantera inköp för händelser</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentProcurement" xml:space="preserve">
+    <value>Tillåter att hantera leverantörsavtal, rekvisitioner, godsmottagningar, leverantörsfakturor och betalningspaket. Utan sparad regel får endast avdelningsadministratörer göra detta. Kräver att Incident Business är aktiverat och ett aktivt Incident Back Office-tillägg.</value>
+  </data>
+  <data name="Permission.CommitIncidentPurchase" xml:space="preserve">
+    <value>Ingå åtaganden för händelseinköp</value>
+  </data>
+  <data name="PermissionHelp.CommitIncidentPurchase" xml:space="preserve">
+    <value>Tillåter att registrera ett ekonomiskt åtagande för ett inköp; detta är kontrollen för behörig inköpare. Utan sparad regel får endast avdelningsadministratörer göra detta. Kräver att Incident Business är aktiverat och ett aktivt Incident Back Office-tillägg.</value>
+  </data>
+  <data name="Permission.AcceptVendorInvoice" xml:space="preserve">
+    <value>Acceptera leverantörsfakturor</value>
+  </data>
+  <data name="PermissionHelp.AcceptVendorInvoice" xml:space="preserve">
+    <value>Tillåter att acceptera leverantörsfakturor för betalning efter att de har matchats mot godsmottagningar. Utan sparad regel får endast avdelningsadministratörer göra detta. Kräver att Incident Business är aktiverat och ett aktivt Incident Back Office-tillägg.</value>
+  </data>
+  <data name="Permission.ManageIncidentBudget" xml:space="preserve">
+    <value>Hantera händelsebudget</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentBudget" xml:space="preserve">
+    <value>Tillåter att hantera budgetposter, utgiftsdelegeringar, finansieringskoder och kostnadsgrupper. Utan sparad regel får endast avdelningsadministratörer göra detta. Kräver att Incident Business är aktiverat och ett aktivt Incident Back Office-tillägg.</value>
+  </data>
+  <data name="Permission.AuthorizeIncidentFunding" xml:space="preserve">
+    <value>Bevilja finansiering för händelser</value>
+  </data>
+  <data name="PermissionHelp.AuthorizeIncidentFunding" xml:space="preserve">
+    <value>Tillåter att godkänna finansieringsbeslut för händelsens budget. Utan sparad regel får endast avdelningsadministratörer göra detta. Kräver att Incident Business är aktiverat och ett aktivt Incident Back Office-tillägg.</value>
+  </data>
+  <data name="Permission.EnterIncidentTime" xml:space="preserve">
+    <value>Registrera tid vid händelser</value>
+  </data>
+  <data name="PermissionHelp.EnterIncidentTime" xml:space="preserve">
+    <value>Tillåter att registrera tid, utrustningsanvändning och utgifter. Rutan Endast grupp begränsar den till personer i användarens egen grupp. Utan sparad regel får avdelnings- och gruppadministratörer göra detta. Kräver att Incident Business är aktiverat och ett aktivt Incident Back Office-tillägg.</value>
+  </data>
+  <data name="Permission.CertifyIncidentTime" xml:space="preserve">
+    <value>Attestera tid vid händelser</value>
+  </data>
+  <data name="PermissionHelp.CertifyIncidentTime" xml:space="preserve">
+    <value>Tillåter arbetsledare att attestera registrerad tid före godkännande. Rutan Endast grupp begränsar den till personer i användarens egen grupp. Utan sparad regel får avdelnings- och gruppadministratörer göra detta. Kräver att Incident Business är aktiverat och ett aktivt Incident Back Office-tillägg.</value>
+  </data>
+  <data name="Permission.ApproveIncidentTime" xml:space="preserve">
+    <value>Godkänn tid vid händelser</value>
+  </data>
+  <data name="PermissionHelp.ApproveIncidentTime" xml:space="preserve">
+    <value>Tillåter att godkänna attesterad tid för kostnadsberäkning och betalning. Rutan Endast grupp begränsar den till personer i användarens egen grupp. Utan sparad regel får endast avdelningsadministratörer göra detta. Kräver att Incident Business är aktiverat och ett aktivt Incident Back Office-tillägg.</value>
+  </data>
+  <data name="Permission.ViewIncidentCost" xml:space="preserve">
+    <value>Visa händelsekostnader</value>
+  </data>
+  <data name="PermissionHelp.ViewIncidentCost" xml:space="preserve">
+    <value>Tillåter att se kostnadstransaktioner, periodiseringar och dagliga kostnadsprognoser. Utan sparad regel får endast avdelningsadministratörer göra detta. Kräver att Incident Business är aktiverat och ett aktivt Incident Back Office-tillägg.</value>
+  </data>
+  <data name="Permission.ManageIncidentCost" xml:space="preserve">
+    <value>Hantera händelsekostnader</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentCost" xml:space="preserve">
+    <value>Tillåter att redigera kostnadsposter, avtal om kostnadsdelning och fördelningskörningar samt exportera kostnadsrapporter. Utan sparad regel får endast avdelningsadministratörer göra detta. Kräver att Incident Business är aktiverat och ett aktivt Incident Back Office-tillägg.</value>
+  </data>
+  <data name="Permission.ManageIncidentClaims" xml:space="preserve">
+    <value>Hantera skadeanspråk vid händelser</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentClaims" xml:space="preserve">
+    <value>Tillåter att öppna och handlägga anspråk för personskada, sakskada eller förlust. Utan sparad regel får endast avdelningsadministratörer göra detta. Kräver att Incident Business är aktiverat och ett aktivt Incident Back Office-tillägg.</value>
+  </data>
+  <data name="Permission.ViewClaimProtected" xml:space="preserve">
+    <value>Visa skyddade uppgifter om skadeanspråk</value>
+  </data>
+  <data name="PermissionHelp.ViewClaimProtected" xml:space="preserve">
+    <value>Tillåter att se ekonomiska uppgifter och ärendeanteckningar för skadeanspråk. Utan sparad regel får endast avdelningsadministratörer göra detta. Kräver att Incident Business är aktiverat och ett aktivt Incident Back Office-tillägg.</value>
+  </data>
+  <data name="Permission.AssembleIncidentIap" xml:space="preserve">
+    <value>Sammanställ handlingsplaner för händelser</value>
+  </data>
+  <data name="PermissionHelp.AssembleIncidentIap" xml:space="preserve">
+    <value>Tillåter att sammanställa händelsens handlingsplan: dess sidor, sidordning, sändlista och utskriftsjobb. Godkännande och slutförande av planens rapport använder behörigheterna för Rapporter. Utan sparad regel får endast avdelningsadministratörer göra detta. Kräver att Incident Back Office är aktiverat och ett aktivt Incident Back Office-tillägg.</value>
+  </data>
+  <data name="Permission.ViewCoordinationBoards" xml:space="preserve">
+    <value>Visa samordningstavlor</value>
+  </data>
+  <data name="PermissionHelp.ViewCoordinationBoards" xml:space="preserve">
+    <value>Tillåter att läsa samordningstavlor och lägespanelen. Rutan Endast grupp begränsar den till tavlor i användarens egen grupp. Utan sparad regel får alla medlemmar göra detta. Kräver att Incident Coordination är aktiverat och ett aktivt Incident Back Office-tillägg.</value>
+  </data>
+  <data name="Permission.ManageCoordinationBoards" xml:space="preserve">
+    <value>Hantera samordningstavlor</value>
+  </data>
+  <data name="PermissionHelp.ManageCoordinationBoards" xml:space="preserve">
+    <value>Tillåter att skapa och redigera samordningstavlor, deras objekt och lägespanelen. Rutan Endast grupp begränsar den till tavlor i användarens egen grupp. Utan sparad regel får avdelnings- och gruppadministratörer göra detta. Kräver att Incident Coordination är aktiverat och ett aktivt Incident Back Office-tillägg.</value>
+  </data>
+  <data name="Permission.ShareCoordinationBoards" xml:space="preserve">
+    <value>Dela samordningstavlor</value>
+  </data>
+  <data name="PermissionHelp.ShareCoordinationBoards" xml:space="preserve">
+    <value>Tillåter att dela en samordningstavla med samverkansparter. Utan sparad regel får endast avdelningsadministratörer göra detta. Kräver att Incident Coordination är aktiverat och ett aktivt Incident Back Office-tillägg.</value>
+  </data>
 </root>

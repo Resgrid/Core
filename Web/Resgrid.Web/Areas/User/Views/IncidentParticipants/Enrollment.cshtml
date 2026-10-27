@@ -1,0 +1,72 @@
+@model Resgrid.Web.Areas.User.Models.IncidentBackOffice.IncidentEnrollmentView
+@using Resgrid.Web.Areas.User.Models.IncidentBackOffice
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.IncidentBackOffice.IncidentBackOffice> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["EnrollmentQueue"];
+    ViewData["Title"] = localizer["EnrollmentQueue"].Value;
+    ViewData["Subtitle"] = localizer["EnrollmentQueueIntro"].Value;
+    var time = ViewData["IboTime"] as IncidentTime;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/IncidentBackOffice/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("~/Areas/User/Views/IncidentBackOffice/_Message.cshtml", (IncidentDeskView)Model)
+    <div class="ibox float-e-margins">
+        <div class="ibox-content">
+            <form method="post" asp-action="Enroll" class="ibo-action">
+                @Html.AntiForgeryToken()
+                <div class="table-responsive">
+                    <table class="table table-striped rgw-table">
+                        <thead>
+                            <tr>
+                                @if (Model.CanEnroll)
+                                {
+                                    <th scope="col"><span class="sr-only">@localizer["Select"]</span></th>
+                                }
+                                <th scope="col">@localizer["Field.DisplayName"]</th>
+                                <th scope="col">@localizer["Field.Kind"]</th>
+                                <th scope="col">@localizer["Field.Source"]</th>
+                                <th scope="col">@localizer["SeenSince"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var candidate in Model.Candidates)
+                            {
+                                var id = "ibo-c-" + candidate.Key.Replace(":", "-");
+                                <tr>
+                                    @if (Model.CanEnroll)
+                                    {
+                                        <td><input id="@id" type="checkbox" name="keys" value="@candidate.Key" aria-label="@candidate.Name" /></td>
+                                    }
+                                    <td><label for="@id" class="m-b-none">@candidate.Name</label></td>
+                                    <td>@(localizer["Candidate." + candidate.Kind] is { ResourceNotFound: false } k ? k.Value : candidate.Kind)</td>
+                                    <td>@(localizer["CandidateSource." + candidate.Source] is { ResourceNotFound: false } s ? s.Value : candidate.Source)</td>
+                                    <td>@time?.Format(candidate.SeenSince)</td>
+                                </tr>
+                            }
+                            @if (Model.Candidates.Count == 0)
+                            {
+                                <tr><td colspan="5" class="text-muted">@localizer["EnrollmentQueueEmpty"]</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                @if (Model.CanEnroll && Model.Candidates.Count > 0)
+                {
+                    <div class="checkbox"><label><input type="checkbox" name="asDraft" value="true" /> @localizer["EnrollAsDraft"]</label></div>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-user-plus" aria-hidden="true"></i> @localizer["EnrollSelected"]</button>
+                }
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/incident-back-office.css" asp-append-version="true" />
+}
+@section Scripts {
+    <script src="~/js/app/internal/incidentbackoffice/incident-back-office.js" asp-append-version="true"></script>
+}

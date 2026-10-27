@@ -1,0 +1,145 @@
+@model Resgrid.Web.Areas.User.Models.IncidentBackOffice.IncidentActivationView
+@using Resgrid.Model.IncidentLogistics
+@using Resgrid.Web.Areas.User.Models.IncidentBackOffice
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.IncidentBackOffice.IncidentBackOffice> localizer
+@{
+    var activation = Model.Activation;
+    ViewBag.Title = "Resgrid | " + activation.Name;
+    ViewData["Title"] = localizer["ActivationRecord"].Value;
+    var time = ViewData["IboTime"] as IncidentTime;
+    string Person(string id) => string.IsNullOrWhiteSpace(id) ? null : Model.People.TryGetValue(id, out var name) ? name : id;
+    var kindLabel = LedgerText.Status(localizer, typeof(IncidentActivationKinds), activation.Kind);
+    var statusLabel = LedgerText.Status(localizer, typeof(IncidentActivationStatuses), activation.Status);
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/IncidentBackOffice/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("~/Areas/User/Views/IncidentBackOffice/_Message.cshtml", (IncidentDeskView)Model)
+    <div class="row">
+        <div class="col-lg-7">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@activation.Name <small>@activation.ShortCode</small></h5></div>
+                <div class="ibox-content">
+                    <dl class="rgw-review">
+                        <div class="rgw-review-row"><dt>@localizer["Field.Kind"]</dt><dd>@kindLabel</dd></div>
+                        <div class="rgw-review-row"><dt>@localizer["Field.Status"]</dt><dd><span class="label @LedgerText.StatusClass(typeof(IncidentActivationStatuses), activation.Status)">@statusLabel</span></dd></div>
+                        @if (activation.ComplexityType.HasValue)
+                        {
+                            <div class="rgw-review-row"><dt>@localizer["Field.ComplexityType"]</dt><dd>@localizer["ComplexityTypeN", activation.ComplexityType.Value]</dd></div>
+                        }
+                        <div class="rgw-review-row"><dt>@localizer["Field.CallId"]</dt><dd>@(Model.CallLabel ?? "—")</dd></div>
+                        <div class="rgw-review-row"><dt>@localizer["Field.TimeZoneId"]</dt><dd>@activation.TimeZoneId</dd></div>
+                        <div class="rgw-review-row"><dt>@localizer["Field.Currency"]</dt><dd>@activation.Currency · @activation.MeasurementSystem</dd></div>
+                        <div class="rgw-review-row"><dt>@localizer["Field.IsExercise"]</dt><dd>@(activation.IsExercise ? localizer["Yes"] : localizer["No"])</dd></div>
+                        <div class="rgw-review-row"><dt>@localizer["Field.OpenedOn"]</dt><dd>@time?.Format(activation.OpenedOn) @Person(activation.OpenedByUserId)</dd></div>
+                        @if (activation.ClosedOn.HasValue)
+                        {
+                            <div class="rgw-review-row"><dt>@localizer["Field.ClosedOn"]</dt><dd>@time?.Format(activation.ClosedOn) @Person(activation.ClosedByUserId)</dd></div>
+                        }
+                        @if (activation.SealedOn.HasValue)
+                        {
+                            <div class="rgw-review-row"><dt>@localizer["Field.SealedOn"]</dt><dd>@time?.Format(activation.SealedOn) @Person(activation.SealedByUserId)</dd></div>
+                        }
+                        @if (activation.ReopenedOn.HasValue)
+                        {
+                            <div class="rgw-review-row"><dt>@localizer["Field.ReopenedOn"]</dt><dd>@time?.Format(activation.ReopenedOn) @Person(activation.ReopenedByUserId) — @activation.ReopenReason</dd></div>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(activation.Description))
+                        {
+                            <div class="rgw-review-row"><dt>@localizer["Field.Description"]</dt><dd>@activation.Description</dd></div>
+                        }
+                    </dl>
+                    @if (Model.Context?.Members.Count > 0)
+                    {
+                        <h4 class="m-t-md">@localizer["ComplexMembers"]</h4>
+                        <ul>
+                            @foreach (var member in Model.Context.Members)
+                            {
+                                <li><a asp-action="Activation" asp-route-aid="@member.IncidentActivationId">@member.Name</a> <span class="label label-default">@member.ShortCode</span></li>
+                            }
+                        </ul>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            @if (Model.CanChangeStatus && Model.NextStatuses.Count > 0)
+            {
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@localizer["Lifecycle"]</h5></div>
+                    <div class="ibox-content">
+                        <form method="post" asp-action="ChangeStatus" asp-route-aid="@activation.IncidentActivationId" class="ibo-transition">
+                            @Html.AntiForgeryToken()
+                            <div class="form-group">
+                                <label for="ibo-status">@localizer["MoveTo"]</label>
+                                <select id="ibo-status" name="status" class="form-control">
+                                    @foreach (var next in Model.NextStatuses)
+                                    {
+                                        <option value="@next">@LedgerText.Status(localizer, typeof(IncidentActivationStatuses), next)</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="ibo-reason">@localizer["Reason"]</label>
+                                <textarea id="ibo-reason" name="reason" rows="2" maxlength="2000" class="form-control"></textarea>
+                                <span class="help-block">@localizer["ActivationStatusHelp"]</span>
+                            </div>
+                            <button type="submit" class="btn btn-sm btn-primary">@localizer["ChangeStatus"]</button>
+                        </form>
+                    </div>
+                </div>
+            }
+            @if (Model.CanManage)
+            {
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@localizer["StepLinks"]</h5></div>
+                    <div class="ibox-content">
+                        <form method="post" asp-action="Link" asp-route-aid="@activation.IncidentActivationId" class="ibo-action">
+                            @Html.AntiForgeryToken()
+                            <div class="form-group">
+                                <label for="ibo-call">@localizer["Field.CallId"]</label>
+                                <select id="ibo-call" name="callId" class="form-control">
+                                    <option value="">—</option>
+                                    @foreach (var call in Model.Calls)
+                                    {
+                                        <option value="@call.Value" selected="@(activation.CallId?.ToString(System.Globalization.CultureInfo.InvariantCulture) == call.Value)">@call.Text</option>
+                                    }
+                                </select>
+                                <span class="help-block">@localizer["Help.IncidentActivation.CallId"]</span>
+                            </div>
+                            <button type="submit" class="btn btn-sm btn-default">@localizer["Save"]</button>
+                        </form>
+                        @if (activation.Kind != (int)IncidentActivationKinds.Complex)
+                        {
+                            <hr />
+                            <form method="post" asp-action="Complex" asp-route-aid="@activation.IncidentActivationId" class="ibo-action">
+                                @Html.AntiForgeryToken()
+                                <div class="form-group">
+                                    <label for="ibo-parent">@localizer["Field.ParentActivationId"]</label>
+                                    <select id="ibo-parent" name="parentActivationId" class="form-control">
+                                        <option value="">—</option>
+                                        @foreach (var parent in Model.Parents)
+                                        {
+                                            <option value="@parent.Value" selected="@(activation.ParentActivationId == parent.Value)">@parent.Text</option>
+                                        }
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-sm btn-default">@localizer["Save"]</button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/incident-back-office.css" asp-append-version="true" />
+}
+@section Scripts {
+    <script src="~/js/app/internal/incidentbackoffice/incident-back-office.js" asp-append-version="true"></script>
+}

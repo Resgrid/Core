@@ -82,10 +82,12 @@ namespace Resgrid.Config
 		/// Workflow renders, and the Web and API "run now" export), invoicing (the customer contact on invoice and bid
 		/// delivery), workforce-costing and pay-data-reporting (Web workforce costing and CA pay-data runs), and
 		/// protected-workflow (an approved Protected Workflow release sending its allow-listed fields to its pinned
-		/// destination). Empty disables the lane; callers fail closed with workload_purpose_denied. Each host's
+		/// destination), and incident-logistics, incident-costing and incident-self-service (Incident Back Office rooming
+		/// lists, cost runs and the token-scoped self-service pages). Empty disables the lane; callers fail closed with
+		/// workload_purpose_denied. Each host's
 		/// credential (<see cref="BrokerClientCredentials"/>) narrows this list further.
 		/// </summary>
-		public static string BrokerWorkloadPurposes = "neris-submission,records-export,invoicing,workforce-costing,pay-data-reporting,protected-workflow";
+		public static string BrokerWorkloadPurposes = "neris-submission,records-export,invoicing,workforce-costing,pay-data-reporting,protected-workflow,incident-logistics,incident-costing,incident-self-service";
 
 		/// <summary>
 		/// Days an approved Protected Workflow release stays Active before it expires and must be renewed with a

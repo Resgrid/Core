@@ -58,6 +58,11 @@ namespace Resgrid.Config
 		// USD 95/month (price_0UJZXtqJFDZJcnkVbvetyYlx) is seeded on PlanAddons by M0238; the test-mode ids are still empty.
 		public static string PaddleEnhancedAiAddon = "pri_01m3cdhy94qbcmdvjhqk3nkppt";
 		public static string PaddleEnhancedAiAddonTest = "";
+
+		// Incident Back Office: EUR 350/month, Paddle product pro_01m5z2ex50evcfvdfw0h0sq6d4 (large-incident-logistics-finance-plan.md
+		// §2.0f, D6). Stripe USD 250/month (price_0UVD6mqJFDZJcnkVqBlHZD0w) is seeded on PlanAddons by M0291; the test-mode ids are still empty.
+		public static string PaddleIncidentBackOfficeAddon = "pri_01m5z2fz6wr1msc1s1nwdpeg38";
+		public static string PaddleIncidentBackOfficeAddonTest = "";
 		public static string PaddleProductionEnvironment = "production";
 		public static string PaddleTestEnvironment = "sandbox";
 		public static string PaddleProductionClientToken = "";
@@ -182,6 +187,11 @@ namespace Resgrid.Config
 		public static string GetPaddleEnhancedAiAddonPriceId()
 		{
 			return NormalizeConfigValue(IsTestMode ? PaddleEnhancedAiAddonTest : PaddleEnhancedAiAddon);
+		}
+
+		public static string GetPaddleIncidentBackOfficeAddonPriceId()
+		{
+			return NormalizeConfigValue(IsTestMode ? PaddleIncidentBackOfficeAddonTest : PaddleIncidentBackOfficeAddon);
 		}
 
 		public static string GetPaddleEnvironment()

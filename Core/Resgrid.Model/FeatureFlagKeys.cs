@@ -178,5 +178,18 @@ namespace Resgrid.Model
 		/// plan section 17.2). Child of Onboarding.MigrationWizard. Seeded off and permanent by M0277.
 		/// </summary>
 		public const string OnboardingManagedMigration = "Onboarding.ManagedMigration";
+
+		/// <summary>
+		/// Operator master toggle for the paid Incident Back Office add-on (large-incident-logistics-finance-plan.md LI-A and LI-B).
+		/// Prerequisite of Incident.Business and Incident.Coordination; the purchase itself is PlanAddonTypes.IncidentBackOffice.
+		/// Seeded off and permanent by M0291.
+		/// </summary>
+		public const string IncidentBackOffice = "Incident.BackOffice";
+
+		/// <summary>Incident Back Office LI-C business (procurement, budget, time, cost, claims, recovery, intake, closeout). Child of Incident.BackOffice. Seeded off by M0291.</summary>
+		public const string IncidentBusiness = "Incident.Business";
+
+		/// <summary>Incident Back Office LI-D coordination boards. Child of Incident.BackOffice. Seeded off by M0291.</summary>
+		public const string IncidentCoordination = "Incident.Coordination";
 	}
 }

@@ -1126,6 +1126,228 @@
   <data name="ApiKeyScopeUnitsRead" xml:space="preserve">
     <value>Leer unidades y sus estados</value>
   </data>
+  <data name="PermIncidentBackOfficeSectionHeader" xml:space="preserve">
+    <value>Incident Back Office</value>
+  </data>
+  <data name="PermIncidentBackOfficeSectionNote" xml:space="preserve">
+    <value>Estos permisos solo se aplican con un complemento Incident Back Office activo. Las filas de finanzas también necesitan Incident Business activado, y las filas de tableros de coordinación necesitan Incident Coordination. Los registros del incidente en sí usan los permisos de Registros indicados arriba.</value>
+  </data>
+  <data name="PermRecordsViewIncidentBackOfficeLabel" xml:space="preserve">
+    <value>Ver Incident Back Office</value>
+  </data>
+  <data name="PermRecordsViewIncidentBackOfficeNote" xml:space="preserve">
+    <value>Permite abrir las mesas de Incident Back Office y consultar activaciones, períodos, organización y logística. Los cambios en cada mesa requieren el permiso propio de esa mesa.</value>
+  </data>
+  <data name="PermRecordsManageIncidentActivationLabel" xml:space="preserve">
+    <value>Gestionar activación de incidentes</value>
+  </data>
+  <data name="PermRecordsManageIncidentActivationNote" xml:space="preserve">
+    <value>Permite abrir activaciones, agregarlas a un complejo, y cerrarlas, sellarlas o reabrirlas.</value>
+  </data>
+  <data name="PermRecordsManageIncidentPeriodsLabel" xml:space="preserve">
+    <value>Gestionar períodos operacionales</value>
+  </data>
+  <data name="PermRecordsManageIncidentPeriodsNote" xml:space="preserve">
+    <value>Permite crear y editar períodos operacionales y aprobar sus versiones del plan.</value>
+  </data>
+  <data name="PermRecordsManageIncidentPositionsLabel" xml:space="preserve">
+    <value>Gestionar puestos del incidente</value>
+  </data>
+  <data name="PermRecordsManageIncidentPositionsNote" xml:space="preserve">
+    <value>Permite editar el catálogo de puestos, las asignaciones a puestos y las listas de equipos.</value>
+  </data>
+  <data name="PermRecordsManageIncidentParticipantsLabel" xml:space="preserve">
+    <value>Gestionar participantes del incidente</value>
+  </data>
+  <data name="PermRecordsManageIncidentParticipantsNote" xml:space="preserve">
+    <value>Permite inscribir y editar participantes y enviarles sus enlaces de autoservicio. La casilla Solo grupo lo limita a los participantes de su propio grupo.</value>
+  </data>
+  <data name="PermRecordsViewParticipantSensitiveLabel" xml:space="preserve">
+    <value>Ver datos sensibles de participantes</value>
+  </data>
+  <data name="PermRecordsViewParticipantSensitiveNote" xml:space="preserve">
+    <value>Permite ver los contactos de emergencia de los participantes y sus datos médicos, de accesibilidad, de alérgenos y de dieta.</value>
+  </data>
+  <data name="PermRecordsCreateIncidentRequestLabel" xml:space="preserve">
+    <value>Crear solicitudes de recursos</value>
+  </data>
+  <data name="PermRecordsCreateIncidentRequestNote" xml:space="preserve">
+    <value>Permite crear solicitudes de recursos y paquetes de misión. La casilla Solo grupo lo limita a las solicitudes para su propio grupo.</value>
+  </data>
+  <data name="PermRecordsApproveIncidentRequestLabel" xml:space="preserve">
+    <value>Aprobar solicitudes de recursos</value>
+  </data>
+  <data name="PermRecordsApproveIncidentRequestNote" xml:space="preserve">
+    <value>Permite aprobar o rechazar solicitudes de recursos. La casilla Solo grupo lo limita a las solicitudes de su propio grupo.</value>
+  </data>
+  <data name="PermRecordsOrderIncidentRequestLabel" xml:space="preserve">
+    <value>Pedir solicitudes de recursos</value>
+  </data>
+  <data name="PermRecordsOrderIncidentRequestNote" xml:space="preserve">
+    <value>Permite hacer el pedido que atiende una solicitud de recursos aprobada, incluidos los pedidos con cargo a acuerdos con proveedores.</value>
+  </data>
+  <data name="PermRecordsReceiveIncidentRequestLabel" xml:space="preserve">
+    <value>Recibir solicitudes de recursos</value>
+  </data>
+  <data name="PermRecordsReceiveIncidentRequestNote" xml:space="preserve">
+    <value>Permite registrar llegadas y recepciones de solicitudes atendidas. La casilla Solo grupo lo limita a su propio grupo.</value>
+  </data>
+  <data name="PermRecordsManageIncidentFacilitiesLabel" xml:space="preserve">
+    <value>Gestionar instalaciones del incidente</value>
+  </data>
+  <data name="PermRecordsManageIncidentFacilitiesNote" xml:space="preserve">
+    <value>Permite gestionar las instalaciones del incidente, su capacidad, acuerdos y servicios.</value>
+  </data>
+  <data name="PermRecordsManageIncidentLodgingLabel" xml:space="preserve">
+    <value>Gestionar alojamiento del incidente</value>
+  </data>
+  <data name="PermRecordsManageIncidentLodgingNote" xml:space="preserve">
+    <value>Permite gestionar establecimientos de alojamiento, bloques de habitaciones, inventario por noche y asignaciones de camas.</value>
+  </data>
+  <data name="PermRecordsViewLodgingAssignmentDetailLabel" xml:space="preserve">
+    <value>Ver detalles de asignación de alojamiento</value>
+  </data>
+  <data name="PermRecordsViewLodgingAssignmentDetailNote" xml:space="preserve">
+    <value>Permite ver números de habitación y restricciones de alojamiento en las asignaciones de camas y las listas de habitaciones.</value>
+  </data>
+  <data name="PermRecordsManageIncidentFeedingLabel" xml:space="preserve">
+    <value>Gestionar alimentación del incidente</value>
+  </data>
+  <data name="PermRecordsManageIncidentFeedingNote" xml:space="preserve">
+    <value>Permite gestionar planes de comidas, demanda, pedidos de comidas y comidas servidas.</value>
+  </data>
+  <data name="PermRecordsManageIncidentServicesLabel" xml:space="preserve">
+    <value>Gestionar servicios de apoyo</value>
+  </data>
+  <data name="PermRecordsManageIncidentServicesNote" xml:space="preserve">
+    <value>Permite solicitar y registrar servicios de apoyo como lavandería o duchas. La casilla Solo grupo lo limita a su propio grupo.</value>
+  </data>
+  <data name="PermRecordsManageIncidentGroundSupportLabel" xml:space="preserve">
+    <value>Gestionar apoyo terrestre</value>
+  </data>
+  <data name="PermRecordsManageIncidentGroundSupportNote" xml:space="preserve">
+    <value>Permite gestionar solicitudes y movimientos de transporte, itinerarios de viaje y combustible.</value>
+  </data>
+  <data name="PermRecordsManageIncidentCommsLabel" xml:space="preserve">
+    <value>Gestionar comunicaciones del incidente</value>
+  </data>
+  <data name="PermRecordsManageIncidentCommsNote" xml:space="preserve">
+    <value>Permite gestionar el plan de comunicaciones y las asignaciones de radios y dispositivos.</value>
+  </data>
+  <data name="PermRecordsManageVendorCatalogLabel" xml:space="preserve">
+    <value>Gestionar catálogo de proveedores</value>
+  </data>
+  <data name="PermRecordsManageVendorCatalogNote" xml:space="preserve">
+    <value>Permite agregar y editar proveedores, sus ubicaciones, capacidades, disponibilidad y documentos de cumplimiento.</value>
+  </data>
+  <data name="PermRecordsViewVendorProtectedLabel" xml:space="preserve">
+    <value>Ver datos protegidos de proveedores</value>
+  </data>
+  <data name="PermRecordsViewVendorProtectedNote" xml:space="preserve">
+    <value>Permite ver los identificadores fiscales y los datos de pago de los proveedores.</value>
+  </data>
+  <data name="PermRecordsEngageVendorLabel" xml:space="preserve">
+    <value>Contratar proveedores</value>
+  </data>
+  <data name="PermRecordsEngageVendorNote" xml:space="preserve">
+    <value>Permite contratar proveedores para una activación, registrar compromisos de capacidad y cotizaciones, y enviar enlaces a proveedores.</value>
+  </data>
+  <data name="PermRecordsManageIncidentProcurementLabel" xml:space="preserve">
+    <value>Gestionar adquisiciones del incidente</value>
+  </data>
+  <data name="PermRecordsManageIncidentProcurementNote" xml:space="preserve">
+    <value>Permite gestionar acuerdos con proveedores, requisiciones, recepciones, facturas de proveedores y paquetes de pago.</value>
+  </data>
+  <data name="PermRecordsCommitIncidentPurchaseLabel" xml:space="preserve">
+    <value>Comprometer compras del incidente</value>
+  </data>
+  <data name="PermRecordsCommitIncidentPurchaseNote" xml:space="preserve">
+    <value>Permite registrar un compromiso financiero para una compra; este es el control de comprador autorizado.</value>
+  </data>
+  <data name="PermRecordsAcceptVendorInvoiceLabel" xml:space="preserve">
+    <value>Aceptar facturas de proveedores</value>
+  </data>
+  <data name="PermRecordsAcceptVendorInvoiceNote" xml:space="preserve">
+    <value>Permite aceptar facturas de proveedores para pago después de conciliarlas con las recepciones.</value>
+  </data>
+  <data name="PermRecordsManageIncidentBudgetLabel" xml:space="preserve">
+    <value>Gestionar presupuesto del incidente</value>
+  </data>
+  <data name="PermRecordsManageIncidentBudgetNote" xml:space="preserve">
+    <value>Permite gestionar partidas presupuestarias, delegaciones de gasto, códigos de financiamiento y grupos de costos.</value>
+  </data>
+  <data name="PermRecordsAuthorizeIncidentFundingLabel" xml:space="preserve">
+    <value>Autorizar financiamiento del incidente</value>
+  </data>
+  <data name="PermRecordsAuthorizeIncidentFundingNote" xml:space="preserve">
+    <value>Permite aprobar autorizaciones de financiamiento para el presupuesto del incidente.</value>
+  </data>
+  <data name="PermRecordsEnterIncidentTimeLabel" xml:space="preserve">
+    <value>Ingresar tiempo del incidente</value>
+  </data>
+  <data name="PermRecordsEnterIncidentTimeNote" xml:space="preserve">
+    <value>Permite ingresar tiempo, uso de equipos y gastos. La casilla Solo grupo lo limita a las personas de su propio grupo.</value>
+  </data>
+  <data name="PermRecordsCertifyIncidentTimeLabel" xml:space="preserve">
+    <value>Certificar tiempo del incidente</value>
+  </data>
+  <data name="PermRecordsCertifyIncidentTimeNote" xml:space="preserve">
+    <value>Permite a los supervisores certificar el tiempo ingresado antes de su aprobación. La casilla Solo grupo lo limita a las personas de su propio grupo.</value>
+  </data>
+  <data name="PermRecordsApproveIncidentTimeLabel" xml:space="preserve">
+    <value>Aprobar tiempo del incidente</value>
+  </data>
+  <data name="PermRecordsApproveIncidentTimeNote" xml:space="preserve">
+    <value>Permite aprobar el tiempo certificado para el costeo y el pago. La casilla Solo grupo lo limita a las personas de su propio grupo.</value>
+  </data>
+  <data name="PermRecordsViewIncidentCostLabel" xml:space="preserve">
+    <value>Ver costos del incidente</value>
+  </data>
+  <data name="PermRecordsViewIncidentCostNote" xml:space="preserve">
+    <value>Permite ver transacciones de costos, devengos y proyecciones diarias de costos.</value>
+  </data>
+  <data name="PermRecordsManageIncidentCostLabel" xml:space="preserve">
+    <value>Gestionar costos del incidente</value>
+  </data>
+  <data name="PermRecordsManageIncidentCostNote" xml:space="preserve">
+    <value>Permite editar registros de costos, acuerdos de costos compartidos y ejecuciones de prorrateo, y exportar informes de costos.</value>
+  </data>
+  <data name="PermRecordsManageIncidentClaimsLabel" xml:space="preserve">
+    <value>Gestionar reclamaciones del incidente</value>
+  </data>
+  <data name="PermRecordsManageIncidentClaimsNote" xml:space="preserve">
+    <value>Permite abrir y tramitar reclamaciones por lesiones, daños o pérdidas.</value>
+  </data>
+  <data name="PermRecordsViewClaimProtectedLabel" xml:space="preserve">
+    <value>Ver datos protegidos de reclamaciones</value>
+  </data>
+  <data name="PermRecordsViewClaimProtectedNote" xml:space="preserve">
+    <value>Permite ver la información financiera y las notas del caso de las reclamaciones.</value>
+  </data>
+  <data name="PermRecordsAssembleIncidentIapLabel" xml:space="preserve">
+    <value>Armar planes de acción del incidente</value>
+  </data>
+  <data name="PermRecordsAssembleIncidentIapNote" xml:space="preserve">
+    <value>Permite armar el plan de acción del incidente: sus páginas, el orden de las páginas, la lista de distribución y el trabajo de impresión. La aprobación y finalización del registro del plan usan los permisos de Registros.</value>
+  </data>
+  <data name="PermRecordsViewCoordinationBoardsLabel" xml:space="preserve">
+    <value>Ver tableros de coordinación</value>
+  </data>
+  <data name="PermRecordsViewCoordinationBoardsNote" xml:space="preserve">
+    <value>Permite consultar los tableros de coordinación y la mesa de situación. La casilla Solo grupo lo limita a los tableros de su propio grupo.</value>
+  </data>
+  <data name="PermRecordsManageCoordinationBoardsLabel" xml:space="preserve">
+    <value>Gestionar tableros de coordinación</value>
+  </data>
+  <data name="PermRecordsManageCoordinationBoardsNote" xml:space="preserve">
+    <value>Permite crear y editar tableros de coordinación, sus elementos y la mesa de situación. La casilla Solo grupo lo limita a los tableros de su propio grupo.</value>
+  </data>
+  <data name="PermRecordsShareCoordinationBoardsLabel" xml:space="preserve">
+    <value>Compartir tableros de coordinación</value>
+  </data>
+  <data name="PermRecordsShareCoordinationBoardsNote" xml:space="preserve">
+    <value>Permite compartir un tablero de coordinación con agencias asociadas.</value>
+  </data>
 </root>
 
 

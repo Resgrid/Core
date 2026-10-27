@@ -42,17 +42,18 @@ namespace Resgrid.Model
 
 		/// <summary>
 		/// Add-ons sold through their own monthly Billing API checkout (not the legacy PTT quantity flow), each with a
-		/// dedicated backend, billing-account table and live/test price pair: Readiness Pro, Business Operations, Enhanced AI.
+		/// dedicated backend, billing-account table and live/test price pair: Readiness Pro, Business Operations, Enhanced AI,
+		/// Incident Back Office.
 		/// </summary>
 		public static bool IsDedicatedMonthlyAddon(int addonType) =>
 			addonType == (int)PlanAddonTypes.ReadinessPro || addonType == (int)PlanAddonTypes.BusinessOperations ||
-			addonType == (int)PlanAddonTypes.EnhancedAi;
+			addonType == (int)PlanAddonTypes.EnhancedAi || addonType == (int)PlanAddonTypes.IncidentBackOffice;
 
 		public string GetExternalKey()
 		{
 			if (IsDedicatedMonthlyAddon(AddonType))
 			{
-				// Readiness Pro, Business Operations and Enhanced AI have separate live/test prices; never use a live price in test mode.
+				// Dedicated monthly add-ons have separate live/test prices; never use a live price in test mode.
 				var priceId = Config.PaymentProviderConfig.IsTestMode ? TestExternalId : ExternalId;
 				return string.IsNullOrWhiteSpace(priceId) ? null : priceId.Trim();
 			}
@@ -88,7 +89,7 @@ namespace Resgrid.Model
 
 		public DateTime GetEndDateFromNow()
 		{
-			// Readiness Pro, Business Operations and Enhanced AI have their own monthly interval, even on an annual base plan.
+			// Dedicated monthly add-ons have their own monthly interval, even on an annual base plan.
 			// Actual paid access uses the reconciled PaymentAddon interval, never this estimate.
 			if (IsDedicatedMonthlyAddon(AddonType))
 				return DateTime.UtcNow.AddMonths(1);

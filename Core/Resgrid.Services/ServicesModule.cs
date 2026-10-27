@@ -99,6 +99,8 @@ namespace Resgrid.Services
 					return (Func<RestClient>)(() => scope.ResolveNamed<RestClient>("business-operations-billing-client"));
 				}).InstancePerLifetimeScope();
 			builder.RegisterType<BusinessOperationsAccessService>().As<IBusinessOperationsAccessService>().InstancePerLifetimeScope();
+			// Incident Back Office (large-incident-logistics-finance-plan.md rev 4.1): add-on gate, ledger services, rules and lifecycles.
+			IncidentLogistics.IncidentBackOfficeRegistrations.Register(builder);
 			// Enhanced AI add-on (enhanced-ai-addon-plan.md): billing proxy and paid entitlement gate, cloned from Business Operations.
 			builder.Register(_ => new RestClient(new RestClientOptions(SystemBehaviorConfig.BillingApiBaseUrl) { Timeout = TimeSpan.FromSeconds(10) },
 				configureSerialization: serializer => serializer.UseNewtonsoftJson())).Named<RestClient>("ai-billing-client").SingleInstance();
@@ -248,7 +250,6 @@ namespace Resgrid.Services
 			builder.RegisterType<MappingService>().As<IMappingService>().InstancePerLifetimeScope();
 			builder.RegisterType<InventoryService>().As<IInventoryService>().InstancePerLifetimeScope();
 			//builder.RegisterType<DepartmentProfileService>().As<IDepartmentProfileService>().InstancePerLifetimeScope();
-			//builder.RegisterType<IncidentService>().As<IIncidentService>().InstancePerLifetimeScope();
 			builder.RegisterType<FileService>().As<IFileService>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentLinksService>().As<IDepartmentLinksService>().InstancePerLifetimeScope();
 			builder.RegisterType<ResourceOrdersService>().As<IResourceOrdersService>().InstancePerLifetimeScope();

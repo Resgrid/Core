@@ -1,0 +1,103 @@
+@model Resgrid.Model.IncidentLogistics.IncidentSelfServicePage
+@using Resgrid.Model.IncidentLogistics
+@using Resgrid.Web.Areas.User.Models.IncidentBackOffice
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.IncidentBackOffice.IncidentBackOffice> localizer
+@{
+    Layout = "_RecoveryLayout";
+    ViewData["Title"] = localizer["SelfServiceTitle"].Value;
+    var token = (string)ViewData["SelfServiceToken"];
+    var message = ViewData["SelfServiceMessage"] as string;
+    var time = new IncidentTime(Model.TimeZoneId, Model.TimeZoneId);
+}
+<div class="panel panel-default" style="margin-top: 20px;">
+    <div class="panel-body" style="padding: 30px;">
+        @if (!Model.Available)
+        {
+            <h2 style="margin-top: 0;">@localizer["SelfServiceTitle"]</h2>
+            <p class="lead">@localizer["SelfServiceUnavailable"]</p>
+        }
+        else
+        {
+            @if (Model.IsExercise)
+            {
+                <div class="alert alert-danger text-center"><strong>@localizer["ExerciseBanner"]</strong></div>
+            }
+            <h2 style="margin-top: 0;">@Model.ParticipantName</h2>
+            <p class="lead">@Model.IncidentName <span class="label label-default">@Model.ShortCode</span>@(string.IsNullOrWhiteSpace(Model.DepartmentName) ? null : " — " + Model.DepartmentName)</p>
+            @if (!string.IsNullOrWhiteSpace(message))
+            {
+                <div class="alert alert-info" role="status">@message</div>
+            }
+            <dl class="dl-horizontal">
+                <dt>@localizer["Field.SupportStatus"]</dt>
+                <dd>@LedgerText.Status(localizer, typeof(IncidentSupportStatuses), Model.SupportStatus)</dd>
+                @if (!string.IsNullOrWhiteSpace(Model.CheckInCode))
+                {
+                    <dt>@localizer["Field.CheckInCode"]</dt>
+                    <dd><span class="ibo-checkin-code" style="font-family: monospace; font-size: 18px; letter-spacing: 2px;">@Model.CheckInCode</span><br /><small class="text-muted">@localizer["SelfServiceCheckInHelp"]</small></dd>
+                }
+                @if (Model.CheckedInOn.HasValue)
+                {
+                    <dt>@localizer["Field.CheckedInOn"]</dt>
+                    <dd>@time.Format(Model.CheckedInOn) (@time.ZoneId)</dd>
+                }
+                else if (Model.ExpectedArrivalOn.HasValue)
+                {
+                    <dt>@localizer["Field.ExpectedArrivalOn"]</dt>
+                    <dd>@time.Format(Model.ExpectedArrivalOn) (@time.ZoneId)</dd>
+                }
+                @if (Model.Positions.Count > 0)
+                {
+                    <dt>@localizer["PositionHeld"]</dt>
+                    <dd>@string.Join(", ", Model.Positions)</dd>
+                }
+            </dl>
+
+            @if (Model.Meals.Count > 0)
+            {
+                <h4>@localizer["SelfServiceMeals"]</h4>
+                <ul>
+                    @foreach (var meal in Model.Meals)
+                    {
+                        <li>@LedgerText.Status(localizer, typeof(IncidentMealTypes), meal.MealType) — @meal.SiteName — @time.Format(meal.WindowStart)–@time.Time(meal.WindowEnd)</li>
+                    }
+                </ul>
+            }
+
+            @if (Model.LodgingAllowed && Model.Lodging.Count > 0)
+            {
+                <h4>@localizer["SelfServiceLodging"]</h4>
+                <ul>
+                    @foreach (var stay in Model.Lodging)
+                    {
+                        <li><strong>@stay.PropertyName</strong>@(string.IsNullOrWhiteSpace(stay.Address) ? null : ", " + stay.Address) — @IncidentTime.Date(stay.FirstNight) → @IncidentTime.Date(stay.LastNight)@(string.IsNullOrWhiteSpace(stay.CheckInHours) ? null : " (" + stay.CheckInHours + ")")</li>
+                    }
+                </ul>
+            }
+            else if (Model.LodgingNeedsCode)
+            {
+                <h4>@localizer["SelfServiceLodging"]</h4>
+                <p>@localizer["SelfServiceLodgingNeedsCode"]</p>
+                @if (Model.CanSendCode)
+                {
+                    <form method="post" action="@Url.Action("SendCode", "IncidentSelfService", new { token })" class="m-b-sm">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-default">@localizer["SelfServiceSendCode"]</button>
+                    </form>
+                    <form method="post" action="@Url.Action("Verify", "IncidentSelfService", new { token })" class="form-inline">
+                        @Html.AntiForgeryToken()
+                        <label for="ibo-code" class="sr-only">@localizer["SelfServiceCode"]</label>
+                        <input id="ibo-code" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" class="form-control" placeholder="@localizer["SelfServiceCode"]" />
+                        <button type="submit" class="btn btn-primary">@localizer["SelfServiceVerify"]</button>
+                    </form>
+                }
+                else
+                {
+                    <p class="text-muted">@localizer["SelfServiceCodeUnavailable"]</p>
+                }
+            }
+
+            <p class="text-muted small m-t-md">@localizer["SelfServiceExpires", time.Format(Model.ExpiresOn)]</p>
+        }
+    </div>
+</div>

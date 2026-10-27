@@ -1,0 +1,98 @@
+@model Resgrid.Web.Areas.User.Models.IncidentBackOffice.IncidentRosterImportView
+@using Resgrid.Web.Areas.User.Models.IncidentBackOffice
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.IncidentBackOffice.IncidentBackOffice> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["RosterImport"];
+    ViewData["Title"] = localizer["RosterImport"].Value;
+    ViewData["Subtitle"] = localizer["RosterImportIntro"].Value;
+    var stage = Model.Stage;
+    var columns = stage?.Rows.SelectMany(r => r.Values.Keys).Distinct(StringComparer.OrdinalIgnoreCase).Take(12).ToList() ?? new List<string>();
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/IncidentBackOffice/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("~/Areas/User/Views/IncidentBackOffice/_Message.cshtml", (IncidentDeskView)Model)
+    @if (stage == null)
+    {
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <form method="post" asp-action="Import" enctype="multipart/form-data" class="ibo-action">
+                    @Html.AntiForgeryToken()
+                    <div class="form-group">
+                        <label for="ibo-roster-file">@localizer["RosterFile"]</label>
+                        <input id="ibo-roster-file" type="file" name="file" accept=".csv,text/csv" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="ibo-roster-text">@localizer["RosterPaste"]</label>
+                        <textarea id="ibo-roster-text" name="csv" rows="10" class="form-control">@Model.Csv</textarea>
+                        <span class="help-block">@localizer["RosterFormatHelp"]</span>
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-search" aria-hidden="true"></i> @localizer["StageRoster"]</button>
+                </form>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5>@localizer["RosterReview", stage.Valid, stage.Rows.Count]</h5></div>
+            <div class="ibox-content">
+                <div class="table-responsive">
+                    <table class="table table-condensed rgw-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">@localizer["Line"]</th>
+                                @foreach (var column in columns)
+                                {
+                                    <th scope="col">@column</th>
+                                }
+                                <th scope="col">@localizer["Problems"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var row in stage.Rows)
+                            {
+                                <tr class="@(row.Errors.Count > 0 ? "danger" : row.IsDuplicate ? "warning" : null)">
+                                    <td>@row.Line</td>
+                                    @foreach (var column in columns)
+                                    {
+                                        <td>@(row.Values.TryGetValue(column, out var v) ? v : null)</td>
+                                    }
+                                    <td>
+                                        @foreach (var error in row.Errors)
+                                        {
+                                            <div>@(localizer["Error." + error] is { ResourceNotFound: false } e ? e.Value : error)</div>
+                                        }
+                                        @if (row.IsDuplicate)
+                                        {
+                                            <div class="text-muted">@localizer["RosterDuplicate"]</div>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <form method="post" asp-action="CommitImport" class="ibo-action">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="csv" value="@Model.Csv" />
+                    @if (stage.Valid > 0)
+                    {
+                        <button type="submit" class="btn btn-primary"><i class="fa fa-check" aria-hidden="true"></i> @localizer["CommitRoster", stage.Valid]</button>
+                    }
+                    <a asp-action="Import" class="btn btn-default">@localizer["StartOver"]</a>
+                </form>
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/incident-back-office.css" asp-append-version="true" />
+}
+@section Scripts {
+    <script src="~/js/app/internal/incidentbackoffice/incident-back-office.js" asp-append-version="true"></script>
+}

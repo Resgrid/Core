@@ -1,0 +1,102 @@
+@model Resgrid.Web.Areas.User.Models.IncidentBackOffice.IncidentCheckInDeskView
+@using Resgrid.Model.IncidentLogistics
+@using Resgrid.Web.Areas.User.Models.IncidentBackOffice
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.IncidentBackOffice.IncidentBackOffice> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Nav.CheckIn"];
+    ViewData["Title"] = localizer["Nav.CheckIn"].Value;
+    ViewData["Subtitle"] = localizer["CheckInIntro"].Value;
+    var participant = Model.Participant;
+    var resources = IncidentLedgerCatalog.All.Values.Where(k => k.Controller == "IncidentCheckIn" && k.CanRead()).ToList();
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/IncidentBackOffice/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("~/Areas/User/Views/IncidentBackOffice/_Message.cshtml", (IncidentDeskView)Model)
+    <div class="rgw-toolbar">
+        @foreach (var kind in resources)
+        {
+            <a asp-action="List" asp-route-kind="@kind.Key" class="btn btn-sm btn-default">@LedgerText.Kind(localizer, kind)</a>
+        }
+    </div>
+    <div class="row">
+        <div class="col-lg-5">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["CheckInByCode"]</h5></div>
+                <div class="ibox-content">
+                    <form method="post" asp-action="Find" class="ibo-action" role="search">
+                        @Html.AntiForgeryToken()
+                        <div class="input-group">
+                            <label for="ibo-code" class="sr-only">@localizer["Field.CheckInCode"]</label>
+                            <input id="ibo-code" name="code" value="@Model.Code" maxlength="32" autocomplete="off" autofocus class="form-control ibo-checkin-code" placeholder="@localizer["Field.CheckInCode"]" />
+                            <span class="input-group-btn"><button type="submit" class="btn btn-primary"><i class="fa fa-search" aria-hidden="true"></i> @localizer["Find"]</button></span>
+                        </div>
+                    </form>
+                    @if (Model.NotFound)
+                    {
+                        <p class="alert alert-warning m-t-sm" role="alert">@localizer["CheckInCodeNotFound"]</p>
+                    }
+                    @if (participant != null)
+                    {
+                        <div class="m-t-md">
+                            <h3>@participant.DisplayName</h3>
+                            <p><span class="label @LedgerText.StatusClass(typeof(IncidentSupportStatuses), participant.SupportStatus)">@LedgerText.Status(localizer, typeof(IncidentSupportStatuses), participant.SupportStatus)</span></p>
+                            @if (participant.CheckedInOn.HasValue)
+                            {
+                                <p class="text-navy"><i class="fa fa-check" aria-hidden="true"></i> @localizer["AlreadyCheckedIn", (ViewData["IboTime"] as IncidentTime)?.Format(participant.CheckedInOn)]</p>
+                            }
+                            else if (Model.CanCheckIn)
+                            {
+                                <form method="post" asp-action="CheckIn" class="ibo-action">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="participantId" value="@participant.IncidentParticipantId" />
+                                    <button type="submit" class="btn btn-primary btn-lg"><i class="fa fa-sign-in" aria-hidden="true"></i> @localizer["CheckIn"]</button>
+                                </form>
+                            }
+                            <a asp-controller="IncidentParticipants" asp-action="Edit" asp-route-kind="IncidentParticipant" asp-route-id="@participant.IncidentParticipantId" class="btn btn-xs btn-default m-t-sm">@localizer["Open"]</a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-7">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["ExpectedArrivals"]</h5></div>
+                <div class="ibox-content">
+                    <table class="table table-striped rgw-table">
+                        <thead><tr><th scope="col">@localizer["Field.DisplayName"]</th><th scope="col">@localizer["Field.SupportStatus"]</th><th scope="col"><span class="sr-only">@localizer["Actions"]</span></th></tr></thead>
+                        <tbody>
+                            @foreach (var row in Model.Expected)
+                            {
+                                <tr>
+                                    <td>@row.DisplayName</td>
+                                    <td><span class="label @LedgerText.StatusClass(typeof(IncidentSupportStatuses), row.SupportStatus)">@LedgerText.Status(localizer, typeof(IncidentSupportStatuses), row.SupportStatus)</span></td>
+                                    <td class="text-right rgw-row-actions">
+                                        @if (Model.CanCheckIn)
+                                        {
+                                            <form method="post" asp-action="CheckIn" class="ibo-action">@Html.AntiForgeryToken()<input type="hidden" name="participantId" value="@row.IncidentParticipantId" /><button type="submit" class="btn btn-xs btn-primary">@localizer["CheckIn"]</button></form>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                            @if (Model.Expected.Count == 0)
+                            {
+                                <tr><td colspan="3" class="text-muted">@localizer["NoExpectedArrivals"]</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/incident-back-office.css" asp-append-version="true" />
+}
+@section Scripts {
+    <script src="~/js/app/internal/incidentbackoffice/incident-back-office.js" asp-append-version="true"></script>
+}

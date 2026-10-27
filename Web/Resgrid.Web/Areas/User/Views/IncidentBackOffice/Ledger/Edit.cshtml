@@ -1,0 +1,279 @@
+@model Resgrid.Web.Areas.User.Models.IncidentBackOffice.LedgerEditView
+@using Resgrid.Web.Areas.User.Models.IncidentBackOffice
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.IncidentBackOffice.IncidentBackOffice> localizer
+@*
+    The generic editor of one Incident Back Office row (plan §14.7): form-horizontal fields with field-level messages, incident-zone
+    times, the row's lifecycle transitions (reason where the status needs one), protected fields behind reveal, and the child tables.
+*@
+@{
+    var kind = Model.Kind;
+    var kindLabel = LedgerText.Kind(localizer, kind);
+    var title = Model.IsNew ? localizer["NewOf", kindLabel].Value : localizer["EditOf", kindLabel].Value;
+    ViewBag.Title = "Resgrid | " + kindLabel;
+    ViewData["Title"] = title;
+    ViewData["Subtitle"] = localizer["KindIntro." + kind.Key] is { ResourceNotFound: false } intro ? intro.Value : null;
+    var time = ViewData["IboTime"] as IncidentTime;
+    var editable = Model.KindCanWrite;
+    var canSeeProtected = kind.CanSeeProtected();
+    var listRoute = new Dictionary<string, string> { ["kind"] = kind.Key };
+    if (!string.IsNullOrWhiteSpace(Model.ParentField)) { listRoute["pf"] = Model.ParentField; listRoute["pv"] = Model.ParentValue; }
+    var revealRoute = new Dictionary<string, string>(listRoute) { ["id"] = Model.Id, ["reveal"] = "true" };
+    string OptionText(LedgerField field, string value) =>
+        value == null ? null : Model.Options.TryGetValue(field.Name, out var options) ? options.FirstOrDefault(o => o.Value == value)?.Text ?? value : value;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/IncidentBackOffice/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("~/Areas/User/Views/IncidentBackOffice/_Message.cshtml", (IncidentDeskView)Model)
+    @if (Model.Errors.TryGetValue("", out var formError))
+    {
+        <div class="alert alert-danger" role="alert">@formError</div>
+    }
+
+    <div class="rgw-toolbar">
+        <a asp-action="List" asp-all-route-data="listRoute" class="btn btn-sm btn-default"><i class="fa fa-arrow-left" aria-hidden="true"></i> @kindLabel</a>
+        <span class="rgw-toolbar-spacer"></span>
+        @if (Model.Status.HasValue)
+        {
+            <span class="label @LedgerText.StatusClass(Model.StatusEnum, Model.Status.Value)">@LedgerText.Status(localizer, Model.StatusEnum, Model.Status.Value)</span>
+        }
+        @if (!Model.IsNew && canSeeProtected && !Model.ShowProtected && kind.Fields.Any(f => f.Protected))
+        {
+            <a asp-action="Edit" asp-all-route-data="revealRoute" class="btn btn-sm btn-default"><i class="fa fa-eye" aria-hidden="true"></i> @localizer["RevealProtected"]</a>
+        }
+    </div>
+
+    <div class="row">
+        <div class="@(Model.IsNew || (Model.NextStatuses.Count == 0 && Model.Children.Count == 0 && Model.RowActions.Count == 0) ? "col-lg-12" : "col-lg-8")">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@title</h5></div>
+                <div class="ibox-content">
+                    <form method="post" asp-action="Save" asp-route-kind="@kind.Key" class="form-horizontal ibo-ledger-form" novalidate>
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="Id" value="@Model.Id" />
+                        <input type="hidden" name="RowVersion" value="@Model.RowVersion" />
+                        <input type="hidden" name="ParentField" value="@Model.ParentField" />
+                        <input type="hidden" name="ParentValue" value="@Model.ParentValue" />
+                        @if (kind.Scope == LedgerScope.DepartmentOrActivation && Model.IsNew && Model.ActivationId != null)
+                        {
+                            <div class="form-group">
+                                <div class="col-sm-offset-3 col-sm-9">
+                                    <div class="checkbox"><label><input type="checkbox" name="ForIncident" value="true" checked /> @localizer["ForThisIncident"]</label></div>
+                                    <span class="help-block">@localizer["ForThisIncidentHelp"]</span>
+                                </div>
+                            </div>
+                        }
+                        @foreach (var field in kind.Fields)
+                        {
+                            if (field.Protected && !canSeeProtected)
+                            {
+                                continue;
+                            }
+                            var id = "ibo-" + field.Name;
+                            var value = Model.Values.TryGetValue(field.Name, out var v) ? v : null;
+                            var error = Model.Errors.TryGetValue(field.Name, out var e) ? e : null;
+                            var help = LedgerText.Help(localizer, kind, field.Name);
+                            var isParent = field.Name == Model.ParentField && !string.IsNullOrWhiteSpace(Model.ParentValue);
+                            var readOnly = !editable || field.ReadOnly || field.Input == LedgerInput.ReadOnly || isParent;
+                            var sealedValue = field.Protected && !Model.ShowProtected && !string.IsNullOrEmpty(value) && ProtectedDataEnvelope.SafeDisplay(value) == ProtectedDataEnvelope.RedactionValue;
+                            var wide = field.Input == LedgerInput.TextArea;
+                            <div class="form-group @(error != null ? "has-error" : null)">
+                                <label class="col-sm-3 control-label" for="@id">
+                                    @LedgerText.Field(localizer, kind, field.Name)
+                                    @if (field.Required && !readOnly)
+                                    {
+                                        <span class="text-danger" aria-hidden="true">*</span>
+                                    }
+                                    @if (field.Protected)
+                                    {
+                                        <i class="fa fa-lock text-muted" title="@localizer["ProtectedField"]" aria-label="@localizer["ProtectedField"]"></i>
+                                    }
+                                </label>
+                                <div class="col-sm-@(wide ? 9 : 6)">
+                                    @if (sealedValue)
+                                    {
+                                        <p class="form-control-static text-muted" id="@id">••••••</p>
+                                        <input type="hidden" name="@field.Name" value="@ProtectedDataEnvelope.RedactionValue" />
+                                    }
+                                    else if (readOnly)
+                                    {
+                                        var display = field.Input switch
+                                        {
+                                            LedgerInput.Bool => value == "true" ? localizer["Yes"].Value : localizer["No"].Value,
+                                            LedgerInput.Enum => value == null ? null : LedgerText.Status(localizer, field.EnumType, int.Parse(value, System.Globalization.CultureInfo.InvariantCulture)),
+                                            LedgerInput.DateTime => value == null ? null : value.Replace('T', ' ') + " (" + time?.ZoneId + ")",
+                                            LedgerInput.Ref or LedgerInput.User or LedgerInput.Contact or LedgerInput.Unit or LedgerInput.Group or LedgerInput.Vendor => OptionText(field, value),
+                                            _ => value
+                                        };
+                                        <p class="form-control-static" id="@id">@(string.IsNullOrEmpty(display) ? "—" : display)</p>
+                                        @if (isParent)
+                                        {
+                                            <input type="hidden" name="@field.Name" value="@value" />
+                                        }
+                                    }
+                                    else
+                                    {
+                                        switch (field.Input)
+                                        {
+                                            case LedgerInput.TextArea:
+                                                <textarea id="@id" name="@field.Name" class="form-control" rows="4" maxlength="@(field.MaxLength > 0 ? field.MaxLength : 8000)" required="@field.Required">@value</textarea>
+                                                break;
+                                            case LedgerInput.Int:
+                                                <input id="@id" type="number" step="1" name="@field.Name" value="@value" class="form-control" required="@field.Required" />
+                                                break;
+                                            case LedgerInput.Decimal:
+                                                <input id="@id" type="number" step="any" name="@field.Name" value="@value" class="form-control" required="@field.Required" />
+                                                break;
+                                            case LedgerInput.Money:
+                                                <input id="@id" type="number" step="0.01" name="@field.Name" value="@value" class="form-control" required="@field.Required" />
+                                                break;
+                                            case LedgerInput.Bool:
+                                                <div class="checkbox"><label><input id="@id" type="checkbox" name="@field.Name" value="true" checked="@(value == "true")" /> @localizer["Yes"]</label></div>
+                                                break;
+                                            case LedgerInput.Date:
+                                                <input id="@id" type="date" name="@field.Name" value="@value" class="form-control" required="@field.Required" />
+                                                break;
+                                            case LedgerInput.DateTime:
+                                                <div class="input-group">
+                                                    <input id="@id" type="datetime-local" name="@field.Name" value="@value" class="form-control" required="@field.Required" />
+                                                    <span class="input-group-addon">@time?.ZoneId</span>
+                                                </div>
+                                                break;
+                                            case LedgerInput.Enum:
+                                            case LedgerInput.Ref:
+                                            case LedgerInput.User:
+                                            case LedgerInput.Contact:
+                                            case LedgerInput.Unit:
+                                            case LedgerInput.Group:
+                                            case LedgerInput.Vendor:
+                                                var options = Model.Options.TryGetValue(field.Name, out var o) ? o : new List<LedgerOption>();
+                                                <select id="@id" name="@field.Name" class="form-control" required="@field.Required">
+                                                    @if (!field.Required || field.Nullable || value == null)
+                                                    {
+                                                        <option value="">—</option>
+                                                    }
+                                                    @foreach (var option in options)
+                                                    {
+                                                        <option value="@option.Value" selected="@(option.Value == value)">@option.Text</option>
+                                                    }
+                                                    @if (value != null && options.All(x => x.Value != value))
+                                                    {
+                                                        <option value="@value" selected>@value</option>
+                                                    }
+                                                </select>
+                                                break;
+                                            default:
+                                                <input id="@id" type="text" name="@field.Name" value="@value" class="form-control" maxlength="@(field.MaxLength > 0 ? field.MaxLength : 4000)" required="@field.Required" />
+                                                break;
+                                        }
+                                    }
+                                    @if (error != null)
+                                    {
+                                        <span class="help-block" role="alert">@error</span>
+                                    }
+                                    else if (help != null && !readOnly)
+                                    {
+                                        <span class="help-block">@help</span>
+                                    }
+                                </div>
+                            </div>
+                        }
+                        @if (editable)
+                        {
+                            <div class="form-group">
+                                <div class="col-sm-offset-3 col-sm-9">
+                                    <button type="submit" class="btn btn-primary"><i class="fa fa-save" aria-hidden="true"></i> @localizer["Save"]</button>
+                                    <a asp-action="List" asp-all-route-data="listRoute" class="btn btn-default">@localizer["Cancel"]</a>
+                                </div>
+                            </div>
+                        }
+                    </form>
+                    @if (editable && !Model.IsNew && kind.CanDelete)
+                    {
+                        <form method="post" asp-action="Delete" asp-route-kind="@kind.Key" asp-route-id="@Model.Id" class="ibo-confirm text-right" data-confirm="@localizer["ConfirmDelete"]">
+                            @Html.AntiForgeryToken()
+                            @if (!string.IsNullOrWhiteSpace(Model.ParentField))
+                            {
+                                <input type="hidden" name="returnUrl" value="@Url.Action("List", listRoute)" />
+                            }
+                            <button type="submit" class="btn btn-sm btn-danger"><i class="fa fa-trash" aria-hidden="true"></i> @localizer["Delete"]</button>
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+
+        @if (!Model.IsNew && (Model.NextStatuses.Count > 0 || Model.Children.Count > 0 || Model.RowActions.Count > 0))
+        {
+            <div class="col-lg-4">
+                @if (Model.RowActions.Count > 0)
+                {
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title"><h5>@localizer["Actions"]</h5></div>
+                        <div class="ibox-content">
+                            @foreach (var action in Model.RowActions)
+                            {
+                                <form method="post" asp-action="@action.Action" asp-route-id="@Model.Id" class="m-b-xs @(action.ConfirmKey != null ? "ibo-confirm" : "ibo-action")" data-confirm="@(action.ConfirmKey != null ? localizer[action.ConfirmKey].Value : null)">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm btn-block @(action.Primary ? "btn-primary" : "btn-default")"><i class="fa @action.Icon" aria-hidden="true"></i> @localizer[action.LabelKey]</button>
+                                </form>
+                            }
+                        </div>
+                    </div>
+                }
+                @if (Model.NextStatuses.Count > 0 && Model.CanWrite)
+                {
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title"><h5>@localizer["Lifecycle"]</h5></div>
+                        <div class="ibox-content">
+                            <p>@localizer["CurrentStatus"]: <span class="label @LedgerText.StatusClass(Model.StatusEnum, Model.Status.Value)">@LedgerText.Status(localizer, Model.StatusEnum, Model.Status.Value)</span></p>
+                            <form method="post" asp-action="Transition" asp-route-kind="@kind.Key" asp-route-id="@Model.Id" class="ibo-transition">
+                                @Html.AntiForgeryToken()
+                                <div class="form-group">
+                                    <label for="ibo-transition-status">@localizer["MoveTo"]</label>
+                                    <select id="ibo-transition-status" name="status" class="form-control">
+                                        @foreach (var next in Model.NextStatuses)
+                                        {
+                                            <option value="@next">@LedgerText.Status(localizer, Model.StatusEnum, next)</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="ibo-transition-reason">@localizer["Reason"]</label>
+                                    <textarea id="ibo-transition-reason" name="reason" class="form-control" rows="2" maxlength="2000"></textarea>
+                                    <span class="help-block">@localizer["ReasonHelp"]</span>
+                                </div>
+                                <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-exchange" aria-hidden="true"></i> @localizer["ChangeStatus"]</button>
+                            </form>
+                        </div>
+                    </div>
+                }
+                @if (Model.Children.Count > 0)
+                {
+                    var parentField = kind.EntityType.Name + "Id";
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title"><h5>@localizer["Related"]</h5></div>
+                        <div class="ibox-content">
+                            <ul class="list-unstyled">
+                                @foreach (var child in Model.Children)
+                                {
+                                    <li class="m-b-xs"><a asp-action="List" asp-route-kind="@child.Key" asp-route-pf="@parentField" asp-route-pv="@Model.Id"><i class="fa fa-angle-right" aria-hidden="true"></i> @LedgerText.Kind(localizer, child)</a></li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/incident-back-office.css" asp-append-version="true" />
+}
+@section Scripts {
+    <script src="~/js/app/internal/incidentbackoffice/incident-back-office.js" asp-append-version="true"></script>
+}

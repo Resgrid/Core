@@ -17,6 +17,10 @@ namespace Resgrid.Model
 		InventoryValuation = 12,
 		ControlledSubstanceLog = 13,
 		/// <summary>Workforce &amp; Business Operations plan Phase D (registry 14): person × type and unit × type certification compliance.</summary>
-		CertificationCompliance = 14
+		CertificationCompliance = 14,
+		/// <summary>Incident Back Office (registry 15, plan §9.29): the scheduled situation report of each open activation.</summary>
+		IncidentSituationReport = 15,
+		/// <summary>Incident Back Office (registry 16, plan §9.29): the daily cost report of each open activation (LI-C).</summary>
+		IncidentDailyCost = 16
 	}
 }

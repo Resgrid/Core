@@ -46,9 +46,13 @@ namespace Resgrid.Tests.Services
 		public void Catalog_27_keeps_only_internal_fields_and_binds_no_customer_facing_table()
 		{
 			var catalog = new ProtectedFieldCatalog();
-			catalog.Version.Should().Be(33, "Phase D rides 26, the completion pass 27, Phase E 28, the Protected Workflows subject identifiers 29 " +
+			catalog.Version.Should().Be(36, "Phase D rides 26, the completion pass 27, Phase E 28, the Protected Workflows subject identifiers 29 " +
 				"(nothing on 26-29 is deployed yet), Admin Assist findings and dispatch traces 30, shared AI generations 31, Admin Assist " +
-				"diagnostic runs 32 and Admin Assist change plans 33 (registry §4G, §4I)");
+				"diagnostic runs 32, Admin Assist change plans 33 (registry §4G, §4I) and the Incident Back Office 34-36 (registry §4C)");
+			foreach (var version in new[] { 34, 35, 36 })
+				catalog.GetAll().Where(f => f.AddedInCatalogVersion == version).Select(f => f.FieldId).Should().BeEquivalentTo(
+					Resgrid.Model.IncidentLogistics.IncidentBackOfficeProtectedFields.All().Where(f => f.CatalogVersion == version)
+						.Select(f => f.Table.ToLowerInvariant() + "." + f.Column.ToLowerInvariant()));
 			catalog.GetAll().Where(f => f.AddedInCatalogVersion == 33).Select(f => f.FieldId).Should().BeEquivalentTo(new[] { "adminassistplans.content" });
 			catalog.GetAll().Where(f => f.AddedInCatalogVersion == 32).Select(f => f.FieldId).Should().BeEquivalentTo(new[] { "adminassistdiagnosticruns.content" });
 			catalog.GetAll().Where(f => f.AddedInCatalogVersion == 31).Select(f => f.FieldId).Should().BeEquivalentTo(new[] { "aigenerations.content" });

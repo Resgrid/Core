@@ -1,0 +1,29 @@
+/* Incident Back Office (large-incident-logistics-finance-plan.md §14.5): the incident context bar under the module heading. */
+.ibo-context-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 22px;
+    margin: 0 -15px 0 -15px;
+    padding: 10px 25px;
+    background: #ffffff;
+    border-bottom: 1px solid #e7eaec;
+}
+.ibo-context-bar .ibo-context-item { display: flex; align-items: center; gap: 6px; }
+.ibo-context-bar .ibo-context-switch { margin-left: auto; }
+.ibo-context-bar .label-inverse { background-color: #262626; color: #ffffff; }
+
+.ibo-board { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; }
+.ibo-board .ibo-tile { border: 1px solid #e7eaec; border-radius: 3px; padding: 12px 15px; background: #ffffff; }
+.ibo-board .ibo-tile h4 { margin: 0 0 6px 0; font-size: 13px; color: #676a6c; }
+.ibo-board .ibo-tile .ibo-value { font-size: 24px; font-weight: 600; }
+.ibo-board .ibo-tile .ibo-sub { color: #a7b1c2; }
+
+.ibo-selector .ibo-activation-row td { vertical-align: middle; }
+.ibo-notice-text { word-break: break-all; user-select: all; }
+.ibo-checkin-code { font-family: monospace; font-size: 18px; letter-spacing: 2px; }
+
+@media (max-width: 767px) {
+    .ibo-context-bar { margin: 0; padding: 10px 15px; }
+    .ibo-context-bar .ibo-context-switch { margin-left: 0; }
+}

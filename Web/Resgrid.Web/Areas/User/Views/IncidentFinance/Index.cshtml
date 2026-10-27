@@ -1,0 +1,68 @@
+@model Resgrid.Web.Areas.User.Models.IncidentBackOffice.IncidentFinanceDeskView
+@using Resgrid.Web.Areas.User.Models.IncidentBackOffice
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.IncidentBackOffice.IncidentBackOffice> localizer
+@*
+    The finance desk (plan §9.14, §9.17.3): budget lines against committed spend, the latest daily-cost projection and the queues
+    finance works. Amounts are budget-level totals; no per-person rate or cost appears here.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Nav.FinanceDesk"];
+    ViewData["Title"] = localizer["Nav.FinanceDesk"].Value;
+    ViewData["Subtitle"] = localizer["FinanceIntro"].Value;
+    var currency = Model.Context?.Activation?.Currency;
+    string Money(decimal value) => value.ToString("N2", System.Globalization.CultureInfo.CurrentCulture) + (currency == null ? string.Empty : " " + currency);
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/IncidentBackOffice/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("~/Areas/User/Views/IncidentBackOffice/_Message.cshtml", (IncidentDeskView)Model)
+    <div class="ibo-board m-b-md">
+        <div class="ibo-tile"><h4>@localizer["Metric.finance.committed"]</h4><div class="ibo-value">@Money(Model.Committed)</div><div class="ibo-sub">@localizer["OpenCommitments", Model.OpenCommitments]</div></div>
+        @if (Model.Projection != null)
+        {
+            <div class="ibo-tile"><h4>@localizer["Metric.finance.daily_burn"]</h4><div class="ibo-value">@Money(Model.Projection.DailyBurn)</div></div>
+            <div class="ibo-tile"><h4>@localizer["Metric.finance.cumulative"]</h4><div class="ibo-value">@Money(Model.Projection.CumulativeToDate)</div></div>
+        }
+        @if (Model.TimeAwaitingCertification.HasValue)
+        {
+            <div class="ibo-tile"><h4>@localizer["Metric.finance.time_to_certify"]</h4><div class="ibo-value">@Model.TimeAwaitingCertification</div></div>
+            <div class="ibo-tile"><h4>@localizer["Metric.finance.time_to_approve"]</h4><div class="ibo-value">@Model.TimeAwaitingApproval</div></div>
+        }
+        @if (Model.InvoiceExceptions.HasValue)
+        {
+            <div class="ibo-tile"><h4>@localizer["Metric.finance.invoice_exceptions"]</h4><div class="ibo-value">@Model.InvoiceExceptions</div></div>
+        }
+    </div>
+    @if (Model.Lines.Count > 0)
+    {
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5>@LedgerText.Kind(localizer, IncidentLedgerCatalog.For<Resgrid.Model.IncidentLogistics.IncidentBudgetLine>())</h5></div>
+            <div class="ibox-content">
+                <div class="table-responsive">
+                    <table class="table table-striped rgw-table">
+                        <thead><tr><th scope="col">@localizer["Field.Name"]</th><th scope="col" class="text-right">@localizer["Field.RevisedAmount"]</th><th scope="col" class="text-right">@localizer["Committed"]</th><th scope="col" class="text-right">%</th></tr></thead>
+                        <tbody>
+                            @foreach (var row in Model.Lines)
+                            {
+                                var over = row.Line.ThresholdPercent.HasValue && row.Percent >= row.Line.ThresholdPercent.Value;
+                                <tr class="@(over ? "warning" : null)">
+                                    <td><a asp-controller="IncidentBudget" asp-action="Edit" asp-route-kind="IncidentBudgetLine" asp-route-id="@row.Line.IncidentBudgetLineId">@row.Line.Name</a></td>
+                                    <td class="text-right">@Money(row.Line.RevisedAmount)</td>
+                                    <td class="text-right">@Money(row.Committed)</td>
+                                    <td class="text-right">@row.Percent.ToString("0.#", System.Globalization.CultureInfo.CurrentCulture)@(over ? " " + localizer["OverThreshold"].Value : null)</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/incident-back-office.css" asp-append-version="true" />
+}

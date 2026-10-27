@@ -1,0 +1,163 @@
+@model Resgrid.Web.Areas.User.Models.IncidentBackOffice.IncidentOpenView
+@using Resgrid.Model.IncidentLogistics
+@using Resgrid.Web.Areas.User.Models.IncidentBackOffice
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.IncidentBackOffice.IncidentBackOffice> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["OpenActivation"];
+    ViewData["Title"] = localizer["OpenActivation"].Value;
+    ViewData["Subtitle"] = localizer["OpenActivationIntro"].Value;
+    var input = Model.Input;
+    string Error(string field) => Model.Errors.TryGetValue(field, out var e) ? e : null;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/IncidentBackOffice/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("~/Areas/User/Views/IncidentBackOffice/_Message.cshtml", (IncidentDeskView)Model)
+    <div class="ibox float-e-margins">
+        <div class="ibox-content">
+            <form method="post" asp-action="Open" class="form-horizontal ibo-ledger-form" novalidate>
+                @Html.AntiForgeryToken()
+                <h4>@localizer["StepIdentity"]</h4>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" for="Kind">@localizer["Field.Kind"]</label>
+                    <div class="col-sm-6">
+                        <select id="Kind" name="Kind" class="form-control">
+                            @foreach (var kind in Enum.GetValues(typeof(IncidentActivationKinds)).Cast<IncidentActivationKinds>())
+                            {
+                                <option value="@((int)kind)" selected="@(input.Kind == kind)">@LedgerText.Status(localizer, typeof(IncidentActivationKinds), (int)kind)</option>
+                            }
+                        </select>
+                        <span class="help-block">@localizer["Help.IncidentActivation.Kind"]</span>
+                    </div>
+                </div>
+                <div class="form-group @(Error("Name") != null ? "has-error" : null)">
+                    <label class="col-sm-3 control-label" for="Name">@localizer["Field.Name"] <span class="text-danger" aria-hidden="true">*</span></label>
+                    <div class="col-sm-6">
+                        <input id="Name" name="Name" value="@input.Name" maxlength="256" class="form-control" required />
+                        @if (Error("Name") != null) { <span class="help-block" role="alert">@Error("Name")</span> }
+                    </div>
+                </div>
+                <div class="form-group @(Error("ShortCode") != null ? "has-error" : null)">
+                    <label class="col-sm-3 control-label" for="ShortCode">@localizer["Field.ShortCode"] <span class="text-danger" aria-hidden="true">*</span></label>
+                    <div class="col-sm-3">
+                        <input id="ShortCode" name="ShortCode" value="@input.ShortCode" maxlength="32" pattern="^[A-Za-z0-9][A-Za-z0-9_-]{1,31}$" class="form-control" required />
+                        <span class="help-block">@(Error("ShortCode") ?? localizer["Help.IncidentActivation.ShortCode"].Value)</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" for="ComplexityType">@localizer["Field.ComplexityType"]</label>
+                    <div class="col-sm-3">
+                        <select id="ComplexityType" name="ComplexityType" class="form-control">
+                            <option value="">—</option>
+                            @for (var type = 1; type <= 5; type++)
+                            {
+                                <option value="@type" selected="@(input.ComplexityType == type)">@localizer["ComplexityTypeN", type]</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-3 col-sm-9">
+                        <div class="checkbox"><label><input type="checkbox" name="IsExercise" value="true" checked="@input.IsExercise" /> @localizer["Field.IsExercise"]</label></div><input type="hidden" name="IsExercise" value="false" />
+                        <span class="help-block">@localizer["Help.IncidentActivation.IsExercise"]</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" for="Description">@localizer["Field.Description"]</label>
+                    <div class="col-sm-9"><textarea id="Description" name="Description" rows="3" maxlength="4000" class="form-control">@input.Description</textarea></div>
+                </div>
+
+                <h4>@localizer["StepLinks"]</h4>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" for="CallId">@localizer["Field.CallId"]</label>
+                    <div class="col-sm-6">
+                        <select id="CallId" name="CallId" class="form-control">
+                            <option value="">—</option>
+                            @foreach (var call in Model.Calls)
+                            {
+                                <option value="@call.Value" selected="@(input.CallId?.ToString(System.Globalization.CultureInfo.InvariantCulture) == call.Value)">@call.Text</option>
+                            }
+                        </select>
+                        <span class="help-block">@localizer["Help.IncidentActivation.CallId"]</span>
+                    </div>
+                </div>
+                @if (Model.Parents.Count > 0)
+                {
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="ParentActivationId">@localizer["Field.ParentActivationId"]</label>
+                        <div class="col-sm-6">
+                            <select id="ParentActivationId" name="ParentActivationId" class="form-control">
+                                <option value="">—</option>
+                                @foreach (var parent in Model.Parents)
+                                {
+                                    <option value="@parent.Value" selected="@(input.ParentActivationId == parent.Value)">@parent.Text</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                }
+
+                <h4>@localizer["StepLocale"]</h4>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" for="TimeZoneId">@localizer["Field.TimeZoneId"]</label>
+                    <div class="col-sm-6">
+                        <select id="TimeZoneId" name="TimeZoneId" class="form-control">
+                            @foreach (var zone in Model.TimeZones)
+                            {
+                                <option value="@zone.Value" selected="@(input.TimeZoneId == zone.Value)">@zone.Text</option>
+                            }
+                        </select>
+                        <span class="help-block">@localizer["Help.IncidentActivation.TimeZoneId"]</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" for="Currency">@localizer["Field.Currency"]</label>
+                    <div class="col-sm-2"><input id="Currency" name="Currency" value="@input.Currency" maxlength="3" pattern="^[A-Za-z]{3}$" class="form-control" /></div>
+                    <label class="col-sm-2 control-label" for="MeasurementSystem">@localizer["Field.MeasurementSystem"]</label>
+                    <div class="col-sm-2">
+                        <select id="MeasurementSystem" name="MeasurementSystem" class="form-control">
+                            <option value="">@localizer["FromDepartment"]</option>
+                            <option value="metric" selected="@(input.MeasurementSystem == "metric")">@localizer["Metric"]</option>
+                            <option value="customary" selected="@(input.MeasurementSystem == "customary")">@localizer["Customary"]</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" for="AuthorityProfileId">@localizer["Field.AuthorityProfileId"]</label>
+                    <div class="col-sm-6">
+                        <select id="AuthorityProfileId" name="AuthorityProfileId" class="form-control">
+                            <option value="">@localizer["DefaultProfile"]</option>
+                            @foreach (var profile in Model.Profiles)
+                            {
+                                <option value="@profile.Value" selected="@(input.AuthorityProfileId == profile.Value)">@profile.Text</option>
+                            }
+                        </select>
+                        <span class="help-block">@localizer["Help.IncidentActivation.AuthorityProfileId"]</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-3 col-sm-9">
+                        <div class="checkbox"><label><input type="checkbox" name="StartActive" value="true" checked="@input.StartActive" /> @localizer["StartActive"]</label></div><input type="hidden" name="StartActive" value="false" />
+                        <div class="checkbox"><label><input type="checkbox" name="CreateFirstPeriod" value="true" checked="@input.CreateFirstPeriod" /> @localizer["CreateFirstPeriod"]</label></div><input type="hidden" name="CreateFirstPeriod" value="false" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-3 col-sm-9">
+                        <button type="submit" class="btn btn-primary"><i class="fa fa-flag" aria-hidden="true"></i> @localizer["OpenActivation"]</button>
+                        <a asp-action="Index" class="btn btn-default">@localizer["Cancel"]</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/incident-back-office.css" asp-append-version="true" />
+}
+@section Scripts {
+    <script src="~/js/app/internal/incidentbackoffice/incident-back-office.js" asp-append-version="true"></script>
+}

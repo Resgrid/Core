@@ -1,0 +1,14 @@
+@model Resgrid.Web.Areas.User.Models.IncidentBackOffice.IncidentDeskView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.IncidentBackOffice.IncidentBackOffice> localizer
+@if (Model.Saved)
+{
+    <div class="alert alert-success" role="status">@localizer["Saved"]</div>
+}
+@if (!string.IsNullOrWhiteSpace(Model.Notice))
+{
+    <div class="alert alert-info" role="status"><span class="ibo-notice-text">@Model.Notice</span></div>
+}
+@if (!string.IsNullOrWhiteSpace(Model.Message))
+{
+    <div class="alert alert-danger" role="alert">@Model.Message</div>
+}

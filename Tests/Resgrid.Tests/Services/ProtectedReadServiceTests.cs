@@ -405,6 +405,9 @@ namespace Resgrid.Tests.Services
 				// by AdminAssistPlanProtection.
 				"AdminAssistFindings", "AdminAssistDispatchTraces", "AiGenerations", "AdminAssistDiagnosticRuns", "AdminAssistPlans"
 			};
+			// Incident Back Office, catalogs v34-v36: read through IncidentProtectionSeam with the generated
+			// IncidentBackOfficeProtectedFields accessor map of each table (IIncidentLedgerService<T>.GetAsync with reveal).
+			covered = covered.Concat(Resgrid.Model.IncidentLogistics.IncidentBackOfficeProtectedFields.All().Select(f => f.Table).Distinct()).ToArray();
 
 			AdpTableBindings.V1.Select(b => b.TableName)
 				.Should().BeEquivalentTo(covered.Concat(withoutReadAccessors),

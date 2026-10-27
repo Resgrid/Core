@@ -119,7 +119,8 @@ namespace Resgrid.Web.Areas.User.Models.Security
 		public static readonly IReadOnlyList<IReadOnlyList<RecordPermissionDescriptor>> RecordCatalogs = new[]
 		{
 			RecordPermissionCatalog.All, ChecklistPermissionCatalog.All, WorkOrderPermissionCatalog.All, InventoryPermissionCatalog.All,
-			InvoicingPermissionCatalog.All, CertificationPermissionCatalog.All, DeploymentPermissionCatalog.All, WorkforcePermissionCatalog.All
+			InvoicingPermissionCatalog.All, CertificationPermissionCatalog.All, DeploymentPermissionCatalog.All, WorkforcePermissionCatalog.All,
+			Resgrid.Model.IncidentLogistics.IncidentBackOfficePermissionCatalog.All
 		};
 
 		public static readonly IReadOnlyList<PermissionScreenEntry> All = Fixed

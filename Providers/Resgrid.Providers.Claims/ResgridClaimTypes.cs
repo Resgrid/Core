@@ -28,6 +28,12 @@ namespace Resgrid.Providers.Claims
 			public const string Setup = "Setup";
 			/// <summary>Reconcile an external system's invoice / payment against local records (Cal OES MARS, Phase C-M3).</summary>
 			public const string Reconcile = "Reconcile";
+			/// <summary>Incident Back Office (registry §4C): place a resource order or agreement call.</summary>
+			public const string Order = "Order";
+			/// <summary>Incident Back Office (registry §4C): record a financial obligation.</summary>
+			public const string Commit = "Commit";
+			/// <summary>Incident Back Office (registry §4C): supervisor certification of time.</summary>
+			public const string Certify = "Certify";
 		}
 
 		public static class Memberships
@@ -82,6 +88,29 @@ namespace Resgrid.Providers.Claims
 			public const string PayDataReporting = "PayDataReporting";
 			public const string Checklist = "Checklist";
 			public const string ChecklistResults = "ChecklistResults";
+			// Incident Back Office (permissions 80-110 and 120-124, registry §4C). No IncidentRecord resource: records are RMS's.
+			public const string IncidentBackOffice = "IncidentBackOffice";
+			public const string IncidentPosition = "IncidentPosition";
+			public const string IncidentParticipant = "IncidentParticipant";
+			public const string IncidentParticipantSensitive = "IncidentParticipantSensitive";
+			public const string IncidentRequest = "IncidentRequest";
+			public const string IncidentFacility = "IncidentFacility";
+			public const string IncidentLodging = "IncidentLodging";
+			public const string IncidentLodgingDetail = "IncidentLodgingDetail";
+			public const string IncidentFeeding = "IncidentFeeding";
+			public const string IncidentService = "IncidentService";
+			public const string IncidentGroundSupport = "IncidentGroundSupport";
+			public const string IncidentComms = "IncidentComms";
+			public const string Vendor = "Vendor";
+			public const string VendorProtected = "VendorProtected";
+			public const string IncidentProcurement = "IncidentProcurement";
+			public const string IncidentBudget = "IncidentBudget";
+			public const string IncidentTime = "IncidentTime";
+			public const string IncidentCost = "IncidentCost";
+			public const string IncidentClaim = "IncidentClaim";
+			public const string IncidentClaimProtected = "IncidentClaimProtected";
+			public const string IncidentIap = "IncidentIap";
+			public const string CoordinationBoard = "CoordinationBoard";
 			// Resources
 			public const string Department = "Department";
 			public const string Personnel = "Personnel";

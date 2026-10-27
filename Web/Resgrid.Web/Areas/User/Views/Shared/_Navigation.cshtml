@@ -10,6 +10,8 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.CalOesMars.CalOesMars> calOesLocalizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Workforce.Workforce> workforceLocalizer
 @inject Resgrid.Model.Services.IBusinessOperationsAccessService businessOperationsAccess
+@inject Resgrid.Model.Services.IIncidentBackOfficeAccessService incidentBackOfficeAccess
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.IncidentBackOffice.IncidentBackOffice> incidentBackOfficeLocalizer
 @{
 	// Chat.System flag gates every chat surface (chat, assistant, moderation). When it is off
 	// the nav items are hidden entirely; the API 404s the endpoints regardless.
@@ -36,6 +38,15 @@
 	var showWorkforce = (workforceEnabled || payDataEnabled) && workforceManager;
 	var showMyDemographics = payDataEnabled && !showWorkforce;
 	var onWorkforceBusinessPage = Html.IsController("Certifications", "Workforce", "Invoicing", "Deployments", "DeploymentOrders", "RecordDeploymentConnectors", "Bids", "Contracts", "CalOesMars");
+	// Incident Back Office (large-incident plan rev 4.1 §14.5): flag + module switch only, never a billing call from the
+	// navigation; the desks themselves enforce the add-on (a lapsed add-on is read-only, an unbought one lands on its page).
+	var incidentBackOfficeEnabled = await incidentBackOfficeAccess.IsEnabledAsync(ClaimsAuthorizationHelper.GetDepartmentId());
+	var incidentBusinessEnabled = incidentBackOfficeEnabled && await incidentBackOfficeAccess.IsBusinessEnabledAsync(ClaimsAuthorizationHelper.GetDepartmentId());
+	var incidentCoordinationEnabled = incidentBackOfficeEnabled && await incidentBackOfficeAccess.IsCoordinationEnabledAsync(ClaimsAuthorizationHelper.GetDepartmentId());
+	var showIncidentBackOffice = incidentBackOfficeEnabled && (ClaimsAuthorizationHelper.CanViewIncidentBackOffice() || (incidentCoordinationEnabled && ClaimsAuthorizationHelper.CanViewCoordinationBoard()));
+	var incidentSections = Resgrid.Web.Areas.User.Models.IncidentBackOffice.IncidentBackOfficeNavigation.Sections;
+	var incidentNavAccess = new Resgrid.Model.IncidentBackOfficeAccess { Enabled = incidentBackOfficeEnabled, BusinessEnabled = incidentBusinessEnabled, CoordinationEnabled = incidentCoordinationEnabled };
+	var onIncidentBackOfficePage = Html.IsController(incidentSections.SelectMany(s => s.Items).Select(i => i.Controller).Distinct().Append("IncidentBackOfficeBilling").ToArray());
 	var onReadinessPage = Html.IsController("WorkOrders", "WorkOrderMaintenance", "WorkOrderOperations", "WorkOrderReporting",
 		"Checklists", "ChecklistsScheduling", "ChecklistReports", "ChecklistReporting", "ChecklistReminders");
 }
@@ -324,6 +335,27 @@
 							@* Workforce & Business Operations plan, Phase C-M3: Cal OES MARS needs the CostRecovery.CalOesMars entitlement; managers see the department queue, rostered members their own drafts. *@
 							<li class="@Html.IsSelected(controller: "CalOesMars")">
 								<a asp-controller="CalOesMars" asp-action="@((ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || ClaimsAuthorizationHelper.CanViewMutualAidReimbursement()) ? "Index" : "Queue")" asp-route-area="User"><i class="fa fa-balance-scale"></i> <span class="nav-label">@calOesLocalizer["CalOesMars"]</span></a>
+							</li>
+						}
+					</ul>
+				</li>
+			}
+			@if (showIncidentBackOffice)
+			{
+				<li class="sidebar-module-group @(onIncidentBackOfficePage ? "active mm-active" : null)">
+					<a href="#" aria-label="@incidentBackOfficeLocalizer["IncidentBackOffice"]" aria-controls="incident-back-office-menu" aria-expanded="@(onIncidentBackOfficePage ? "true" : "false")">
+						<i class="fa fa-fire-extinguisher" aria-hidden="true"></i>
+						<span class="nav-label">@incidentBackOfficeLocalizer["IncidentBackOffice"]</span>
+						<span class="fa arrow" aria-hidden="true"></span>
+					</a>
+					<ul class="nav nav-second-level" id="incident-back-office-menu">
+						@foreach (var incidentSection in incidentSections)
+						{
+							var canSee = incidentSection.Key == "Coordination" ? ClaimsAuthorizationHelper.CanViewCoordinationBoard() || ClaimsAuthorizationHelper.CanViewIncidentBackOffice() : ClaimsAuthorizationHelper.CanViewIncidentBackOffice();
+							var first = canSee ? incidentSection.Items.FirstOrDefault(i => Resgrid.Web.Areas.User.Models.IncidentBackOffice.IncidentBackOfficeNavigation.Allowed(i, incidentNavAccess)) : null;
+							if (first == null) { continue; }
+							<li class="@(onIncidentBackOfficePage && ViewData["IboSection"] as string == incidentSection.Key ? "active" : null)">
+								<a asp-controller="@first.Controller" asp-action="@first.Action" asp-route-area="User"><i class="fa @incidentSection.Icon"></i> <span class="nav-label">@incidentBackOfficeLocalizer[incidentSection.LabelKey]</span></a>
 							</li>
 						}
 					</ul>

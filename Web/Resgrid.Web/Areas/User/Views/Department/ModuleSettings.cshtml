@@ -3,6 +3,7 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> localizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> checklistLocalizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Invoicing.Invoicing> invoicingLocalizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.IncidentBackOffice.IncidentBackOffice> incidentLocalizer
 @{
     ViewBag.Title = "Resgrid | " + @localizer["DispatchSettingsModuleHeader"];
 }
@@ -266,6 +267,60 @@
                                         </div>
                                     </admin-assist-help-after>
                                     <span class="help-block m-b-none">@invoicingLocalizer["BusinessOperationsModuleNote"]</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label" for="IncidentBackOfficeEnabled">@incidentLocalizer["IncidentBackOffice"]</label>
+                                <div class="col-sm-9">
+                                    <admin-assist-help-after>
+                                        <div class="switch">
+                                            <div class="onoffswitch">
+                                                <input type="checkbox" class="onoffswitch-checkbox" asp-for="IncidentBackOfficeEnabled">
+                                                <label class="onoffswitch-label" for="IncidentBackOfficeEnabled">
+                                                    <span class="onoffswitch-inner"></span>
+                                                    <span class="onoffswitch-switch"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </admin-assist-help-after>
+                                    <span class="help-block m-b-none">@incidentLocalizer["ModuleNote.IncidentBackOffice"]</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label" for="IncidentBusinessEnabled">@incidentLocalizer["ModuleIncidentBusiness"]</label>
+                                <div class="col-sm-9">
+                                    <admin-assist-help-after>
+                                        <div class="switch">
+                                            <div class="onoffswitch">
+                                                <input type="checkbox" class="onoffswitch-checkbox" asp-for="IncidentBusinessEnabled">
+                                                <label class="onoffswitch-label" for="IncidentBusinessEnabled">
+                                                    <span class="onoffswitch-inner"></span>
+                                                    <span class="onoffswitch-switch"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </admin-assist-help-after>
+                                    <span class="help-block m-b-none">@incidentLocalizer["ModuleNote.IncidentBusiness"]</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label" for="IncidentCoordinationEnabled">@incidentLocalizer["ModuleIncidentCoordination"]</label>
+                                <div class="col-sm-9">
+                                    <admin-assist-help-after>
+                                        <div class="switch">
+                                            <div class="onoffswitch">
+                                                <input type="checkbox" class="onoffswitch-checkbox" asp-for="IncidentCoordinationEnabled">
+                                                <label class="onoffswitch-label" for="IncidentCoordinationEnabled">
+                                                    <span class="onoffswitch-inner"></span>
+                                                    <span class="onoffswitch-switch"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </admin-assist-help-after>
+                                    <span class="help-block m-b-none">@incidentLocalizer["ModuleNote.IncidentCoordination"]</span>
                                 </div>
                             </div>
 

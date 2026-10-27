@@ -773,6 +773,21 @@ namespace Resgrid.Services
 			list.Add(new ProtectedFieldDefinition("calls.subjectidentifiers", CallsFamily, "Calls", "SubjectIdentifiers",
 				ProtectedFieldStorageKind.Text, ProtectedFieldClassification.Pii, PermissionTypes.ViewProtectedCallData,
 				PermissionTypes.EditProtectedCallData, SubjectIdentifiersCatalogVersion));
+
+			// Incident Back Office (large-incident plan §15.3a; catalogs 34 LI-A, 35 LI-B, 36 LI-C, registered with M0290-M0296):
+			// the fields that identify, locate, price or describe the health of a person, or carry a financial identifier.
+			// Statuses, dates, counts, codes and budget-level totals stay operational metadata.
+			foreach (var (table, column, classification, family, version) in Resgrid.Model.IncidentLogistics.IncidentBackOfficeProtectedFields.All())
+			{
+				var (view, edit, familyName) = family switch
+				{
+					"Personnel" => (PermissionTypes.ViewProtectedPersonnelData, PermissionTypes.ViewProtectedPersonnelData, PersonnelFamily),
+					"Contacts" => (PermissionTypes.ViewProtectedContactData, PermissionTypes.ViewProtectedContactData, ContactsFamily),
+					_ => (PermissionTypes.ViewProtectedOperationalData, PermissionTypes.EditProtectedCallData, OperationalFamily)
+				};
+				list.Add(new ProtectedFieldDefinition($"{table.ToLowerInvariant()}.{column.ToLowerInvariant()}", familyName, table, column, ProtectedFieldStorageKind.Text,
+					Enum.Parse<ProtectedFieldClassification>(classification), view, edit, version));
+			}
 			return list;
 		}
 	}

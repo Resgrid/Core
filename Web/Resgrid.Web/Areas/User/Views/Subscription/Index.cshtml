@@ -5,6 +5,7 @@
 @model Resgrid.Web.Areas.User.Models.Subscription.SubscriptionView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Subscription.Subscription> localizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.EnhancedAi.EnhancedAi> aiLocalizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.IncidentBackOffice.IncidentBackOffice> incidentLocalizer
 @{
     ViewBag.Title = "Resgrid | " + @localizer["SubscriptionHeader"];
 
@@ -583,6 +584,47 @@
                                                 <div class="col-sm-5 col-md-5">
                                                     <p style="color: #676a6c; padding-top: 10px;">@aiLocalizer["SubscriptionCardText"]</p>
                                                     <a asp-controller="AiBilling" asp-action="Index" asp-route-area="User" class="btn btn-sm btn-primary">@aiLocalizer["ManageEnhancedAi"]</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    @*
+                        Incident Back Office addon (large-incident plan rev 4.1 §17, D6). One link for both states: the add-on page
+                        offers the purchase to the managing member when the department does not hold it.
+                    *@
+                    <div class="row">
+                        <div class='col-sm-12'>
+                            <div class="pricing-tables">
+                                <div class='row'>
+                                    <div class="col-sm-8 col-md-8 col-sm-offset-2">
+                                        <div class="plan" style="margin: 0; padding-bottom: 0;">
+                                            <div class="head">
+                                                <h2>@incidentLocalizer["SubscriptionCardHeader"]</h2>
+                                            </div>
+                                            <div class="row" style="margin-left: 0;">
+                                                <div class="col-sm-4 col-md-4">
+                                                    <div style="padding-top: 10px;">
+                                                        <ul class="item-list" style="padding: 0;">
+                                                            <li>@incidentLocalizer["AddonFeatureFoundation"]</li>
+                                                            <li>@incidentLocalizer["AddonFeatureLogistics"]</li>
+                                                            <li>@incidentLocalizer["AddonFeatureFinance"]</li>
+                                                            <li>@incidentLocalizer["AddonFeatureCoordination"]</li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3 col-md-3" style="text-align: center;">
+                                                    <span class="price" style="border-top: 0; margin-bottom: 5px; padding-top: 25px">
+                                                        <h3 style="font-size: 36px;"><span class="symbol" style="font-size: 36px; vertical-align: top;">@currencySymbol</span>@((isEU ? Resgrid.Config.IncidentBackOfficeAddonConfig.PaddleMonthlyAmount : Resgrid.Config.IncidentBackOfficeAddonConfig.StripeMonthlyAmount).ToString("N0"))<small>/mo</small></h3><span style="font-size: 12px;">@incidentLocalizer["PerDepartment"]</span>
+                                                    </span>
+                                                </div>
+                                                <div class="col-sm-5 col-md-5">
+                                                    <p style="color: #676a6c; padding-top: 10px;">@incidentLocalizer["SubscriptionCardText"]</p>
+                                                    <a asp-controller="IncidentBackOfficeBilling" asp-action="Index" asp-route-area="User" class="btn btn-sm btn-primary">@incidentLocalizer["ManageIncidentBackOffice"]</a>
                                                 </div>
                                             </div>
                                         </div>

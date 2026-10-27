@@ -84,10 +84,12 @@ namespace Resgrid.Tests.Web.User
 			["Department/Terminology"] = "editors are built per term, not asp-for",
 			["Department/TextSettings"] = "the catalog's text-to-call editors are inside a Razor comment",
 			["Security/Index"] = "permission editors are built per permission, not asp-for",
+			["IncidentBackOffice/Settings"] = "policy editors are built per policy field from IncidentPolicyForm, not asp-for; Field is the policy form's anchor",
 		};
 
 		private static readonly string[] SwitchFields = { "MessagingEnabled", "MappingEnabled", "ShiftsEnabled", "LogsEnabled", "ReportsEnabled", "DocumentsEnabled",
-			"CalendarEnabled", "NotesEnabled", "TrainingEnabled", "InventoryEnabled", "ChecklistsEnabled", "MaintenanceEnabled", "BusinessOperationsEnabled" };
+			"CalendarEnabled", "NotesEnabled", "TrainingEnabled", "InventoryEnabled", "ChecklistsEnabled", "MaintenanceEnabled", "BusinessOperationsEnabled",
+			"IncidentBackOfficeEnabled", "IncidentBusinessEnabled", "IncidentCoordinationEnabled" };
 
 		private readonly Resgrid.AdminAssist.ConfigurationCatalog _catalog = new();
 		private WebApplication _app;

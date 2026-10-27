@@ -1,0 +1,2441 @@
+{
+  "Version": "2026.09.25.2",
+  "Areas": [
+    {
+      "Id": "incidents",
+      "LabelKey": "Area.incidents",
+      "PurposeKey": "AreaPurpose.incidents",
+      "Order": 21,
+      "Archetypes": [],
+      "Tier": "AddOn",
+      "Addon": "IncidentBackOffice",
+      "Global": false,
+      "ValueKey": "AreaValue.incidents",
+      "ExampleKey": "AreaExample.incidents",
+      "AdoptionKey": "ModuleAdoption.incidents",
+      "MinimumMinutes": 60,
+      "MaximumMinutes": 240,
+      "DocsPath": "/web-app/incident-back-office/overview/"
+    }
+  ],
+  "Settings": [
+    {
+      "Id": "module.IncidentBackOfficeDisabled",
+      "AreaId": "incidents",
+      "LabelKey": "Module.IncidentBackOfficeDisabled",
+      "HelpKey": "ModuleHelp.IncidentBackOfficeDisabled",
+      "Binding": "DepartmentModuleSettings.IncidentBackOfficeDisabled",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "ModuleSettings",
+        "Field": "IncidentBackOfficeEnabled"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z",
+      "Impact": {
+        "Risk": "High",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.incidents",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.ModuleSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "module.IncidentBackOfficeDisabled",
+      "DefaultValue": "false",
+      "AllowedValues": "true or false",
+      "EvidenceSource": "DepartmentSettingsService.GetDepartmentModuleSettingsAsync",
+      "Availability": "available"
+    },
+    {
+      "Id": "module.IncidentBusinessDisabled",
+      "AreaId": "incidents",
+      "LabelKey": "Module.IncidentBusinessDisabled",
+      "HelpKey": "ModuleHelp.IncidentBusinessDisabled",
+      "Binding": "DepartmentModuleSettings.IncidentBusinessDisabled",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "ModuleSettings",
+        "Field": "IncidentBusinessEnabled"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z",
+      "Impact": {
+        "Risk": "High",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.incidents",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.ModuleSettings",
+        "module.IncidentBackOfficeDisabled"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "module.IncidentBusinessDisabled",
+      "DefaultValue": "false",
+      "AllowedValues": "true or false",
+      "EvidenceSource": "DepartmentSettingsService.GetDepartmentModuleSettingsAsync",
+      "Availability": "available"
+    },
+    {
+      "Id": "module.IncidentCoordinationDisabled",
+      "AreaId": "incidents",
+      "LabelKey": "Module.IncidentCoordinationDisabled",
+      "HelpKey": "ModuleHelp.IncidentCoordinationDisabled",
+      "Binding": "DepartmentModuleSettings.IncidentCoordinationDisabled",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "ModuleSettings",
+        "Field": "IncidentCoordinationEnabled"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z",
+      "Impact": {
+        "Risk": "High",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.incidents",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.ModuleSettings",
+        "module.IncidentBackOfficeDisabled"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "module.IncidentCoordinationDisabled",
+      "DefaultValue": "false",
+      "AllowedValues": "true or false",
+      "EvidenceSource": "DepartmentSettingsService.GetDepartmentModuleSettingsAsync",
+      "Availability": "available"
+    },
+    {
+      "Id": "setting.IncidentBackOfficeDefaults",
+      "AreaId": "incidents",
+      "LabelKey": "Setting.IncidentBackOfficeDefaults",
+      "HelpKey": "SettingHelp.IncidentBackOfficeDefaults",
+      "Binding": "DepartmentSettingTypes.IncidentBackOfficeDefaults",
+      "ValueType": "structured",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "IncidentBackOffice",
+        "Action": "Settings",
+        "Field": "IncidentBackOfficeDefaults"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.incidents",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "module.IncidentBackOfficeDisabled"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.IncidentBackOfficeDefaults",
+      "DefaultValue": "missing = 15-minute staleness, currency and measurement system from the department's country, 12-hour operational periods, exercises never notify external participants or vendors",
+      "AllowedValues": "Validated by the Incident Back Office Settings page (IncidentPolicyForm) and IIncidentBackOfficeSettingsService; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "setting.IncidentEnrollmentPolicy",
+      "AreaId": "incidents",
+      "LabelKey": "Setting.IncidentEnrollmentPolicy",
+      "HelpKey": "SettingHelp.IncidentEnrollmentPolicy",
+      "Binding": "DepartmentSettingTypes.IncidentEnrollmentPolicy",
+      "ValueType": "structured",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "IncidentBackOffice",
+        "Action": "Settings",
+        "Field": "IncidentEnrollmentPolicy"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.incidents",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "module.IncidentBackOfficeDisabled"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.IncidentEnrollmentPolicy",
+      "DefaultValue": "missing = Suggest mode, unregistered forecast band on, alert at 25 waiting or 120 minutes",
+      "AllowedValues": "Validated by the Incident Back Office Settings page (IncidentPolicyForm) and IIncidentBackOfficeSettingsService; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "setting.IncidentNotificationRouting",
+      "AreaId": "incidents",
+      "LabelKey": "Setting.IncidentNotificationRouting",
+      "HelpKey": "SettingHelp.IncidentNotificationRouting",
+      "Binding": "DepartmentSettingTypes.IncidentNotificationRouting",
+      "ValueType": "structured",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "IncidentBackOffice",
+        "Action": "Settings",
+        "Field": "IncidentNotificationRoutingPolicy"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z",
+      "Impact": {
+        "Risk": "High",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.incidents",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "module.IncidentBackOfficeDisabled"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.IncidentNotificationRouting",
+      "DefaultValue": "missing = built-in default positions for each notice (IncidentNotificationRoutingPolicy.Defaults)",
+      "AllowedValues": "Validated by the Incident Back Office Settings page (IncidentPolicyForm) and IIncidentBackOfficeSettingsService; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "setting.IncidentForecastPolicy",
+      "AreaId": "incidents",
+      "LabelKey": "Setting.IncidentForecastPolicy",
+      "HelpKey": "SettingHelp.IncidentForecastPolicy",
+      "Binding": "DepartmentSettingTypes.IncidentForecastPolicy",
+      "ValueType": "structured",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "IncidentBackOffice",
+        "Action": "Settings",
+        "Field": "IncidentForecastPolicy"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.incidents",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "module.IncidentBackOfficeDisabled"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.IncidentForecastPolicy",
+      "DefaultValue": "missing = 10% meal and 15% water contingency, 7.5 litres per person per day, 5% bed reserve, timeouts do not reduce forecasts, 3-day replacement lead, 120-minute arrival, 3-day timeout and 180-minute meal cutoff windows, 90% facility and 2-day water thresholds",
+      "AllowedValues": "Validated by the Incident Back Office Settings page (IncidentPolicyForm) and IIncidentBackOfficeSettingsService; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "setting.IncidentAssignmentRulePolicy",
+      "AreaId": "incidents",
+      "LabelKey": "Setting.IncidentAssignmentRulePolicy",
+      "HelpKey": "SettingHelp.IncidentAssignmentRulePolicy",
+      "Binding": "DepartmentSettingTypes.IncidentAssignmentRulePolicy",
+      "ValueType": "structured",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "IncidentBackOffice",
+        "Action": "Settings",
+        "Field": "IncidentAssignmentRulePolicy"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z",
+      "Impact": {
+        "Risk": "High",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.incidents",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "module.IncidentBackOfficeDisabled"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.IncidentAssignmentRulePolicy",
+      "DefaultValue": "missing = federal-14-plus-travel pack: 14 assignment days, 2 travel days, 7 extension days, 16 work hours per shift, 1 hour of rest per 2 hours worked",
+      "AllowedValues": "Validated by the Incident Back Office Settings page (IncidentPolicyForm) and IIncidentBackOfficeSettingsService; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "setting.IncidentVendorPolicy",
+      "AreaId": "incidents",
+      "LabelKey": "Setting.IncidentVendorPolicy",
+      "HelpKey": "SettingHelp.IncidentVendorPolicy",
+      "Binding": "DepartmentSettingTypes.IncidentVendorPolicy",
+      "ValueType": "structured",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "IncidentBackOffice",
+        "Action": "Settings",
+        "Field": "IncidentVendorPolicy"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.incidents",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "module.IncidentBackOfficeDisabled"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.IncidentVendorPolicy",
+      "DefaultValue": "missing = verify every 365 days, holds expire after 24 hours, compliance flagged 30 days and holds 6 hours ahead",
+      "AllowedValues": "Validated by the Incident Back Office Settings page (IncidentPolicyForm) and IIncidentBackOfficeSettingsService; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "setting.IncidentSelfServicePolicy",
+      "AreaId": "incidents",
+      "LabelKey": "Setting.IncidentSelfServicePolicy",
+      "HelpKey": "SettingHelp.IncidentSelfServicePolicy",
+      "Binding": "DepartmentSettingTypes.IncidentSelfServicePolicy",
+      "ValueType": "structured",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "IncidentBackOffice",
+        "Action": "Settings",
+        "Field": "IncidentSelfServicePolicy"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z",
+      "Impact": {
+        "Risk": "High",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.incidents",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "module.IncidentBackOfficeDisabled"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.IncidentSelfServicePolicy",
+      "DefaultValue": "missing = links outlive the assignment by 14 days, one-time code required for lodging, verified vendor contact not required",
+      "AllowedValues": "Validated by the Incident Back Office Settings page (IncidentPolicyForm) and IIncidentBackOfficeSettingsService; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "setting.IncidentFinancePolicy",
+      "AreaId": "incidents",
+      "LabelKey": "Setting.IncidentFinancePolicy",
+      "HelpKey": "SettingHelp.IncidentFinancePolicy",
+      "Binding": "DepartmentSettingTypes.IncidentFinancePolicy",
+      "ValueType": "structured",
+      "Classification": "Restricted",
+      "Secret": false,
+      "Location": {
+        "Controller": "IncidentBackOffice",
+        "Action": "Settings",
+        "Field": "IncidentFinancePolicy"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.incidents",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "module.IncidentBusinessDisabled"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.IncidentFinancePolicy",
+      "DefaultValue": "missing = separation of duties enforced, no extra intake domains, 80% budget and 85% agreement ceiling thresholds, no daily burn threshold, intake backlog 50 items or 24 hours, claim deadlines 7 and recovery deadlines 14 days ahead, 3-day split-purchase window, 10,000 micro-purchase threshold",
+      "AllowedValues": "Validated by the Incident Back Office Settings page (IncidentPolicyForm) and IIncidentBackOfficeSettingsService; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "setting.IncidentRetentionPolicy",
+      "AreaId": "incidents",
+      "LabelKey": "Setting.IncidentRetentionPolicy",
+      "HelpKey": "SettingHelp.IncidentRetentionPolicy",
+      "Binding": "DepartmentSettingTypes.IncidentRetentionPolicy",
+      "ValueType": "structured",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "IncidentBackOffice",
+        "Action": "Settings",
+        "Field": "IncidentRetentionPolicy"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z",
+      "Impact": {
+        "Risk": "High",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.incidents",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "module.IncidentBusinessDisabled"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.IncidentRetentionPolicy",
+      "DefaultValue": "missing = snapshots 90 days after close, ledger 7 years after close, expired self-service links 30 days",
+      "AllowedValues": "Validated by the Incident Back Office Settings page (IncidentPolicyForm) and IIncidentBackOfficeSettingsService; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "setting.CoordinationBoardDefaults",
+      "AreaId": "incidents",
+      "LabelKey": "Setting.CoordinationBoardDefaults",
+      "HelpKey": "SettingHelp.CoordinationBoardDefaults",
+      "Binding": "DepartmentSettingTypes.CoordinationBoardDefaults",
+      "ValueType": "structured",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "IncidentBackOffice",
+        "Action": "Settings",
+        "Field": "CoordinationBoardDefaults"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.incidents",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "module.IncidentCoordinationDisabled"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.CoordinationBoardDefaults",
+      "DefaultValue": "missing = items stale after 60 minutes, road closure and shelter capacity alarms on, shares last 14 days, due items flagged 60 minutes ahead",
+      "AllowedValues": "Validated by the Incident Back Office Settings page (IncidentPolicyForm) and IIncidentBackOfficeSettingsService; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    }
+  ],
+  "Capabilities": [
+    {
+      "Id": "incident-activation",
+      "AreaId": "incidents",
+      "LabelKey": "Feature.incident-activation",
+      "PurposeKey": "FeaturePurpose.incident-activation",
+      "ValueKey": "AreaValue.incidents",
+      "ExampleKey": "AreaExample.incidents",
+      "AdoptionKey": "FeatureSetup.incident-activation",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "IncidentBackOffice",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Incident.BackOffice"
+        },
+        {
+          "Kind": "module",
+          "Id": "IncidentBackOffice"
+        },
+        {
+          "Kind": "addon",
+          "Id": "IncidentBackOffice"
+        }
+      ],
+      "SettingIds": [
+        "module.IncidentBackOfficeDisabled",
+        "setting.IncidentBackOfficeDefaults",
+        "setting.IncidentEnrollmentPolicy",
+        "setting.IncidentNotificationRouting"
+      ],
+      "RuleIds": [],
+      "Prominence": "Key",
+      "DocsPath": "/web-app/incident-back-office/activation/"
+    },
+    {
+      "Id": "incident-planning",
+      "AreaId": "incidents",
+      "LabelKey": "Feature.incident-planning",
+      "PurposeKey": "FeaturePurpose.incident-planning",
+      "ValueKey": "AreaValue.incidents",
+      "ExampleKey": "AreaExample.incidents",
+      "AdoptionKey": "FeatureSetup.incident-planning",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "IncidentPeriods",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Incident.BackOffice"
+        },
+        {
+          "Kind": "module",
+          "Id": "IncidentBackOffice"
+        },
+        {
+          "Kind": "addon",
+          "Id": "IncidentBackOffice"
+        }
+      ],
+      "SettingIds": [
+        "module.IncidentBackOfficeDisabled",
+        "setting.IncidentAssignmentRulePolicy"
+      ],
+      "RuleIds": [],
+      "Prominence": "Key",
+      "DocsPath": "/web-app/incident-back-office/activation/"
+    },
+    {
+      "Id": "incident-logistics",
+      "AreaId": "incidents",
+      "LabelKey": "Feature.incident-logistics",
+      "PurposeKey": "FeaturePurpose.incident-logistics",
+      "ValueKey": "AreaValue.incidents",
+      "ExampleKey": "AreaExample.incidents",
+      "AdoptionKey": "FeatureSetup.incident-logistics",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "IncidentLogistics",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Incident.BackOffice"
+        },
+        {
+          "Kind": "module",
+          "Id": "IncidentBackOffice"
+        },
+        {
+          "Kind": "addon",
+          "Id": "IncidentBackOffice"
+        }
+      ],
+      "SettingIds": [
+        "module.IncidentBackOfficeDisabled",
+        "setting.IncidentForecastPolicy",
+        "setting.IncidentVendorPolicy",
+        "setting.IncidentSelfServicePolicy"
+      ],
+      "RuleIds": [],
+      "Prominence": "Key",
+      "DocsPath": "/web-app/incident-back-office/logistics/"
+    },
+    {
+      "Id": "incident-finance",
+      "AreaId": "incidents",
+      "LabelKey": "Feature.incident-finance",
+      "PurposeKey": "FeaturePurpose.incident-finance",
+      "ValueKey": "AreaValue.incidents",
+      "ExampleKey": "AreaExample.incidents",
+      "AdoptionKey": "FeatureSetup.incident-finance",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "IncidentFinance",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Incident.BackOffice"
+        },
+        {
+          "Kind": "flag",
+          "Id": "Incident.Business"
+        },
+        {
+          "Kind": "module",
+          "Id": "IncidentBackOffice"
+        },
+        {
+          "Kind": "module",
+          "Id": "IncidentBusiness"
+        },
+        {
+          "Kind": "addon",
+          "Id": "IncidentBackOffice"
+        }
+      ],
+      "SettingIds": [
+        "module.IncidentBusinessDisabled",
+        "setting.IncidentFinancePolicy",
+        "setting.IncidentRetentionPolicy"
+      ],
+      "RuleIds": [],
+      "Prominence": "Key",
+      "DocsPath": "/web-app/incident-back-office/finance/"
+    },
+    {
+      "Id": "coordination-boards",
+      "AreaId": "incidents",
+      "LabelKey": "Feature.coordination-boards",
+      "PurposeKey": "FeaturePurpose.coordination-boards",
+      "ValueKey": "AreaValue.incidents",
+      "ExampleKey": "AreaExample.incidents",
+      "AdoptionKey": "FeatureSetup.coordination-boards",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "CoordinationBoards",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Incident.BackOffice"
+        },
+        {
+          "Kind": "flag",
+          "Id": "Incident.Coordination"
+        },
+        {
+          "Kind": "module",
+          "Id": "IncidentBackOffice"
+        },
+        {
+          "Kind": "module",
+          "Id": "IncidentCoordination"
+        },
+        {
+          "Kind": "addon",
+          "Id": "IncidentBackOffice"
+        }
+      ],
+      "SettingIds": [
+        "module.IncidentCoordinationDisabled",
+        "setting.CoordinationBoardDefaults"
+      ],
+      "RuleIds": [],
+      "Prominence": "Key",
+      "DocsPath": "/web-app/incident-back-office/coordination/"
+    },
+    {
+      "Id": "incident-open",
+      "AreaId": "incidents",
+      "LabelKey": "Feature.incident-open",
+      "PurposeKey": "FeaturePurpose.incident-open",
+      "ValueKey": "AreaValue.incidents",
+      "ExampleKey": "AreaExample.incidents",
+      "AdoptionKey": "ModuleAdoption.incidents",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "IncidentBackOffice",
+        "Action": "Open"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Incident.BackOffice"
+        },
+        {
+          "Kind": "module",
+          "Id": "IncidentBackOffice"
+        },
+        {
+          "Kind": "addon",
+          "Id": "IncidentBackOffice"
+        }
+      ],
+      "SettingIds": [
+        "module.IncidentBackOfficeDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/incident-back-office/activation/"
+    },
+    {
+      "Id": "incident-command-desk",
+      "AreaId": "incidents",
+      "LabelKey": "Feature.incident-command-desk",
+      "PurposeKey": "FeaturePurpose.incident-command-desk",
+      "ValueKey": "AreaValue.incidents",
+      "ExampleKey": "AreaExample.incidents",
+      "AdoptionKey": "ModuleAdoption.incidents",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "IncidentBackOffice",
+        "Action": "Command"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Incident.BackOffice"
+        },
+        {
+          "Kind": "module",
+          "Id": "IncidentBackOffice"
+        },
+        {
+          "Kind": "addon",
+          "Id": "IncidentBackOffice"
+        }
+      ],
+      "SettingIds": [
+        "module.IncidentBackOfficeDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/incident-back-office/activation/"
+    },
+    {
+      "Id": "incident-operations",
+      "AreaId": "incidents",
+      "LabelKey": "Feature.incident-operations",
+      "PurposeKey": "FeaturePurpose.incident-operations",
+      "ValueKey": "AreaValue.incidents",
+      "ExampleKey": "AreaExample.incidents",
+      "AdoptionKey": "ModuleAdoption.incidents",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "IncidentOperations",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Incident.BackOffice"
+        },
+        {
+          "Kind": "module",
+          "Id": "IncidentBackOffice"
+        },
+        {
+          "Kind": "addon",
+          "Id": "IncidentBackOffice"
+        }
+      ],
+      "SettingIds": [
+        "module.IncidentBackOfficeDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/incident-back-office/activation/"
+    },
+    {
+      "Id": "incident-settings",
+      "AreaId": "incidents",
+      "LabelKey": "Feature.incident-settings",
+      "PurposeKey": "FeaturePurpose.incident-settings",
+      "ValueKey": "AreaValue.incidents",
+      "ExampleKey": "AreaExample.incidents",
+      "AdoptionKey": "ModuleAdoption.incidents",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "IncidentBackOffice",
+        "Action": "Settings"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Incident.BackOffice"
+        },
+        {
+          "Kind": "module",
+          "Id": "IncidentBackOffice"
+        },
+        {
+          "Kind": "addon",
+          "Id": "IncidentBackOffice"
+        }
+      ],
+      "SettingIds": [
+        "module.IncidentBackOfficeDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/incident-back-office/settings/"
+    },
+    {
+      "Id": "incident-organization",
+      "AreaId": "incidents",
+      "LabelKey": "Feature.incident-organization",
+      "PurposeKey": "FeaturePurpose.incident-organization",
+      "ValueKey": "AreaValue.incidents",
+      "ExampleKey": "AreaExample.incidents",
+      "AdoptionKey": "ModuleAdoption.incidents",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "IncidentOrganization",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Incident.BackOffice"
+        },
+        {
+          "Kind": "module",
+          "Id": "IncidentBackOffice"
+        },
+        {
+          "Kind": "addon",
+          "Id": "IncidentBackOffice"
+        }
+      ],
+      "SettingIds": [
+        "module.IncidentBackOfficeDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/incident-back-office/activation/"
+    },
+    {
+      "Id": "incident-positions",
+      "AreaId": "incidents",
+      "LabelKey": "Feature.incident-positions",
+      "PurposeKey": "FeaturePurpose.incident-positions",
+      "ValueKey": "AreaValue.incidents",
+      "ExampleKey": "AreaExample.incidents",
+      "AdoptionKey": "ModuleAdoption.incidents",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "IncidentPositions",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Incident.BackOffice"
+        },
+        {
+          "Kind": "module",
+          "Id": "IncidentBackOffice"
+        },
+        {
+          "Kind": "addon",
+          "Id": "IncidentBackOffice"
+        }
+      ],
+      "SettingIds": [
+        "module.IncidentBackOfficeDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/incident-back-office/activation/"
+    },
+    {
+      "Id": "incident-teams",
+      "AreaId": "incidents",
+      "LabelKey": "Feature.incident-teams",
+      "PurposeKey": "FeaturePurpose.incident-teams",
+      "ValueKey": "AreaValue.incidents",
+      "ExampleKey": "AreaExample.incidents",
+      "AdoptionKey": "ModuleAdoption.incidents",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "IncidentTeams",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Incident.BackOffice"
+        },
+        {
+          "Kind": "module",
+          "Id": "IncidentBackOffice"
+        },
+        {
+          "Kind": "addon",
+          "Id": "IncidentBackOffice"
+        }
+      ],
+      "SettingIds": [
+        "module.IncidentBackOfficeDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/incident-back-office/activation/"
+    },
+    {
+      "Id": "incident-participants",
+      "AreaId": "incidents",
+      "LabelKey": "Feature.incident-participants",
+      "PurposeKey": "FeaturePurpose.incident-participants",
+      "ValueKey": "AreaValue.incidents",
+      "ExampleKey": "AreaExample.incidents",
+      "AdoptionKey": "ModuleAdoption.incidents",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "IncidentParticipants",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Incident.BackOffice"
+        },
+        {
+          "Kind": "module",
+          "Id": "IncidentBackOffice"
+        },
+        {
+          "Kind": "addon",
+          "Id": "IncidentBackOffice"
+        }
+      ],
+      "SettingIds": [
+        "module.IncidentBackOfficeDisabled",
+        "setting.IncidentEnrollmentPolicy"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/incident-back-office/activation/"
+    },
+    {
+      "Id": "incident-check-in",
+      "AreaId": "incidents",
+      "LabelKey": "Feature.incident-check-in",
+      "PurposeKey": "FeaturePurpose.incident-check-in",
+      "ValueKey": "AreaValue.incidents",
+      "ExampleKey": "AreaExample.incidents",
+      "AdoptionKey": "ModuleAdoption.incidents",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "IncidentCheckIn",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Incident.BackOffice"
+        },
+        {
+          "Kind": "module",
+          "Id": "IncidentBackOffice"
+        },
+        {
+          "Kind": "addon",
+          "Id": "IncidentBackOffice"
+        }
+      ],
+      "SettingIds": [
+        "module.IncidentBackOfficeDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/incident-back-office/activation/"
+    },
+    {
+      "Id": "incident-iap",
+      "AreaId": "incidents",
+      "LabelKey": "Feature.incident-iap",
+      "PurposeKey": "FeaturePurpose.incident-iap",
+      "ValueKey": "AreaValue.incidents",
+      "ExampleKey": "AreaExample.incidents",
+      "AdoptionKey": "ModuleAdoption.incidents",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "IncidentIap",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Incident.BackOffice"
+        },
+        {
+          "Kind": "module",
+          "Id": "IncidentBackOffice"
+        },
+        {
+          "Kind": "addon",
+          "Id": "IncidentBackOffice"
+        }
+      ],
+      "SettingIds": [
+        "module.IncidentBackOfficeDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/incident-back-office/activation/"
+    },
+    {
+      "Id": "incident-authority",
+      "AreaId": "incidents",
+      "LabelKey": "Feature.incident-authority",
+      "PurposeKey": "FeaturePurpose.incident-authority",
+      "ValueKey": "AreaValue.incidents",
+      "ExampleKey": "AreaExample.incidents",
+      "AdoptionKey": "ModuleAdoption.incidents",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "IncidentAuthority",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Incident.BackOffice"
+        },
+        {
+          "Kind": "module",
+          "Id": "IncidentBackOffice"
+        },
+        {
+          "Kind": "addon",
+          "Id": "IncidentBackOffice"
+        }
+      ],
+      "SettingIds": [
+        "module.IncidentBackOfficeDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/incident-back-office/activation/"
+    },
+    {
+      "Id": "incident-demob",
+      "AreaId": "incidents",
+      "LabelKey": "Feature.incident-demob",
+      "PurposeKey": "FeaturePurpose.incident-demob",
+      "ValueKey": "AreaValue.incidents",
+      "ExampleKey": "AreaExample.incidents",
+      "AdoptionKey": "ModuleAdoption.incidents",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "IncidentDemob",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Incident.BackOffice"
+        },
+        {
+          "Kind": "module",
+          "Id": "IncidentBackOffice"
+        },
+        {
+          "Kind": "addon",
+          "Id": "IncidentBackOffice"
+        }
+      ],
+      "SettingIds": [
+        "module.IncidentBackOfficeDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/incident-back-office/activation/"
+    },
+    {
+      "Id": "support-plan",
+      "AreaId": "incidents",
+      "LabelKey": "Feature.support-plan",
+      "PurposeKey": "FeaturePurpose.support-plan",
+      "ValueKey": "AreaValue.incidents",
+      "ExampleKey": "AreaExample.incidents",
+      "AdoptionKey": "ModuleAdoption.incidents",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "SupportPlan",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Incident.BackOffice"
+        },
+        {
+          "Kind": "module",
+          "Id": "IncidentBackOffice"
+        },
+        {
+          "Kind": "addon",
+          "Id": "IncidentBackOffice"
+        }
+      ],
+      "SettingIds": [
+        "module.IncidentBackOfficeDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/incident-back-office/logistics/"
+    },
+    {
+      "Id": "incident-requests",
+      "AreaId": "incidents",
+      "LabelKey": "Feature.incident-requests",
+      "PurposeKey": "FeaturePurpose.incident-requests",
+      "ValueKey": "AreaValue.incidents",
+      "ExampleKey": "AreaExample.incidents",
+      "AdoptionKey": "ModuleAdoption.incidents",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "IncidentRequests",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Incident.BackOffice"
+        },
+        {
+          "Kind": "module",
+          "Id": "IncidentBackOffice"
+        },
+        {
+          "Kind": "addon",
+          "Id": "IncidentBackOffice"
+        }
+      ],
+      "SettingIds": [
+        "module.IncidentBackOfficeDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/incident-back-office/logistics/"
+    },
+    {
+      "Id": "incident-facilities",
+      "AreaId": "incidents",
+      "LabelKey": "Feature.incident-facilities",
+      "PurposeKey": "FeaturePurpose.incident-facilities",
+      "ValueKey": "AreaValue.incidents",
+      "ExampleKey": "AreaExample.incidents",
+      "AdoptionKey": "ModuleAdoption.incidents",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "IncidentFacilities",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Incident.BackOffice"
+        },
+        {
+          "Kind": "module",
+          "Id": "IncidentBackOffice"
+        },
+        {
+          "Kind": "addon",
+          "Id": "IncidentBackOffice"
+        }
+      ],
+      "SettingIds": [
+        "module.IncidentBackOfficeDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/incident-back-office/logistics/"
+    },
+    {
+      "Id": "incident-lodging",
+      "AreaId": "incidents",
+      "LabelKey": "Feature.incident-lodging",
+      "PurposeKey": "FeaturePurpose.incident-lodging",
+      "ValueKey": "AreaValue.incidents",
+      "ExampleKey": "AreaExample.incidents",
+      "AdoptionKey": "ModuleAdoption.incidents",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "IncidentLodging",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Incident.BackOffice"
+        },
+        {
+          "Kind": "module",
+          "Id": "IncidentBackOffice"
+        },
+        {
+          "Kind": "addon",
+          "Id": "IncidentBackOffice"
+        }
+      ],
+      "SettingIds": [
+        "module.IncidentBackOfficeDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/incident-back-office/logistics/"
+    },
+    {
+      "Id": "incident-feeding",
+      "AreaId": "incidents",
+      "LabelKey": "Feature.incident-feeding",
+      "PurposeKey": "FeaturePurpose.incident-feeding",
+      "ValueKey": "AreaValue.incidents",
+      "ExampleKey": "AreaExample.incidents",
+      "AdoptionKey": "ModuleAdoption.incidents",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "IncidentFeeding",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Incident.BackOffice"
+        },
+        {
+          "Kind": "module",
+          "Id": "IncidentBackOffice"
+        },
+        {
+          "Kind": "addon",
+          "Id": "IncidentBackOffice"
+        }
+      ],
+      "SettingIds": [
+        "module.IncidentBackOfficeDisabled",
+        "setting.IncidentForecastPolicy"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/incident-back-office/logistics/"
+    },
+    {
+      "Id": "incident-water",
+      "AreaId": "incidents",
+      "LabelKey": "Feature.incident-water",
+      "PurposeKey": "FeaturePurpose.incident-water",
+      "ValueKey": "AreaValue.incidents",
+      "ExampleKey": "AreaExample.incidents",
+      "AdoptionKey": "ModuleAdoption.incidents",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "IncidentWater",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Incident.BackOffice"
+        },
+        {
+          "Kind": "module",
+          "Id": "IncidentBackOffice"
+        },
+        {
+          "Kind": "addon",
+          "Id": "IncidentBackOffice"
+        }
+      ],
+      "SettingIds": [
+        "module.IncidentBackOfficeDisabled",
+        "setting.IncidentForecastPolicy"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/incident-back-office/logistics/"
+    },
+    {
+      "Id": "incident-services",
+      "AreaId": "incidents",
+      "LabelKey": "Feature.incident-services",
+      "PurposeKey": "FeaturePurpose.incident-services",
+      "ValueKey": "AreaValue.incidents",
+      "ExampleKey": "AreaExample.incidents",
+      "AdoptionKey": "ModuleAdoption.incidents",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "IncidentServices",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Incident.BackOffice"
+        },
+        {
+          "Kind": "module",
+          "Id": "IncidentBackOffice"
+        },
+        {
+          "Kind": "addon",
+          "Id": "IncidentBackOffice"
+        }
+      ],
+      "SettingIds": [
+        "module.IncidentBackOfficeDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/incident-back-office/logistics/"
+    },
+    {
+      "Id": "incident-ground-support",
+      "AreaId": "incidents",
+      "LabelKey": "Feature.incident-ground-support",
+      "PurposeKey": "FeaturePurpose.incident-ground-support",
+      "ValueKey": "AreaValue.incidents",
+      "ExampleKey": "AreaExample.incidents",
+      "AdoptionKey": "ModuleAdoption.incidents",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "IncidentGroundSupport",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Incident.BackOffice"
+        },
+        {
+          "Kind": "module",
+          "Id": "IncidentBackOffice"
+        },
+        {
+          "Kind": "addon",
+          "Id": "IncidentBackOffice"
+        }
+      ],
+      "SettingIds": [
+        "module.IncidentBackOfficeDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/incident-back-office/logistics/"
+    },
+    {
+      "Id": "incident-communications",
+      "AreaId": "incidents",
+      "LabelKey": "Feature.incident-communications",
+      "PurposeKey": "FeaturePurpose.incident-communications",
+      "ValueKey": "AreaValue.incidents",
+      "ExampleKey": "AreaExample.incidents",
+      "AdoptionKey": "ModuleAdoption.incidents",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "IncidentCommunications",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Incident.BackOffice"
+        },
+        {
+          "Kind": "module",
+          "Id": "IncidentBackOffice"
+        },
+        {
+          "Kind": "addon",
+          "Id": "IncidentBackOffice"
+        }
+      ],
+      "SettingIds": [
+        "module.IncidentBackOfficeDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/incident-back-office/logistics/"
+    },
+    {
+      "Id": "vendor-catalog",
+      "AreaId": "incidents",
+      "LabelKey": "Feature.vendor-catalog",
+      "PurposeKey": "FeaturePurpose.vendor-catalog",
+      "ValueKey": "AreaValue.incidents",
+      "ExampleKey": "AreaExample.incidents",
+      "AdoptionKey": "ModuleAdoption.incidents",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Vendors",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Incident.BackOffice"
+        },
+        {
+          "Kind": "module",
+          "Id": "IncidentBackOffice"
+        },
+        {
+          "Kind": "addon",
+          "Id": "IncidentBackOffice"
+        }
+      ],
+      "SettingIds": [
+        "module.IncidentBackOfficeDisabled",
+        "setting.IncidentVendorPolicy"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/incident-back-office/logistics/"
+    },
+    {
+      "Id": "incident-vendors",
+      "AreaId": "incidents",
+      "LabelKey": "Feature.incident-vendors",
+      "PurposeKey": "FeaturePurpose.incident-vendors",
+      "ValueKey": "AreaValue.incidents",
+      "ExampleKey": "AreaExample.incidents",
+      "AdoptionKey": "ModuleAdoption.incidents",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "IncidentVendors",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Incident.BackOffice"
+        },
+        {
+          "Kind": "module",
+          "Id": "IncidentBackOffice"
+        },
+        {
+          "Kind": "addon",
+          "Id": "IncidentBackOffice"
+        }
+      ],
+      "SettingIds": [
+        "module.IncidentBackOfficeDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/incident-back-office/logistics/"
+    },
+    {
+      "Id": "incident-procurement",
+      "AreaId": "incidents",
+      "LabelKey": "Feature.incident-procurement",
+      "PurposeKey": "FeaturePurpose.incident-procurement",
+      "ValueKey": "AreaValue.incidents",
+      "ExampleKey": "AreaExample.incidents",
+      "AdoptionKey": "ModuleAdoption.incidents",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "IncidentProcurement",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Incident.BackOffice"
+        },
+        {
+          "Kind": "flag",
+          "Id": "Incident.Business"
+        },
+        {
+          "Kind": "module",
+          "Id": "IncidentBackOffice"
+        },
+        {
+          "Kind": "module",
+          "Id": "IncidentBusiness"
+        },
+        {
+          "Kind": "addon",
+          "Id": "IncidentBackOffice"
+        }
+      ],
+      "SettingIds": [
+        "module.IncidentBusinessDisabled",
+        "setting.IncidentFinancePolicy"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/incident-back-office/finance/"
+    },
+    {
+      "Id": "incident-budget",
+      "AreaId": "incidents",
+      "LabelKey": "Feature.incident-budget",
+      "PurposeKey": "FeaturePurpose.incident-budget",
+      "ValueKey": "AreaValue.incidents",
+      "ExampleKey": "AreaExample.incidents",
+      "AdoptionKey": "ModuleAdoption.incidents",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "IncidentBudget",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Incident.BackOffice"
+        },
+        {
+          "Kind": "flag",
+          "Id": "Incident.Business"
+        },
+        {
+          "Kind": "module",
+          "Id": "IncidentBackOffice"
+        },
+        {
+          "Kind": "module",
+          "Id": "IncidentBusiness"
+        },
+        {
+          "Kind": "addon",
+          "Id": "IncidentBackOffice"
+        }
+      ],
+      "SettingIds": [
+        "module.IncidentBusinessDisabled",
+        "setting.IncidentFinancePolicy"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/incident-back-office/finance/"
+    },
+    {
+      "Id": "incident-time",
+      "AreaId": "incidents",
+      "LabelKey": "Feature.incident-time",
+      "PurposeKey": "FeaturePurpose.incident-time",
+      "ValueKey": "AreaValue.incidents",
+      "ExampleKey": "AreaExample.incidents",
+      "AdoptionKey": "ModuleAdoption.incidents",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "IncidentTime",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Incident.BackOffice"
+        },
+        {
+          "Kind": "flag",
+          "Id": "Incident.Business"
+        },
+        {
+          "Kind": "module",
+          "Id": "IncidentBackOffice"
+        },
+        {
+          "Kind": "module",
+          "Id": "IncidentBusiness"
+        },
+        {
+          "Kind": "addon",
+          "Id": "IncidentBackOffice"
+        }
+      ],
+      "SettingIds": [
+        "module.IncidentBusinessDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/incident-back-office/finance/"
+    },
+    {
+      "Id": "incident-cost",
+      "AreaId": "incidents",
+      "LabelKey": "Feature.incident-cost",
+      "PurposeKey": "FeaturePurpose.incident-cost",
+      "ValueKey": "AreaValue.incidents",
+      "ExampleKey": "AreaExample.incidents",
+      "AdoptionKey": "ModuleAdoption.incidents",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "IncidentCost",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Incident.BackOffice"
+        },
+        {
+          "Kind": "flag",
+          "Id": "Incident.Business"
+        },
+        {
+          "Kind": "module",
+          "Id": "IncidentBackOffice"
+        },
+        {
+          "Kind": "module",
+          "Id": "IncidentBusiness"
+        },
+        {
+          "Kind": "addon",
+          "Id": "IncidentBackOffice"
+        }
+      ],
+      "SettingIds": [
+        "module.IncidentBusinessDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/incident-back-office/finance/"
+    },
+    {
+      "Id": "incident-claims",
+      "AreaId": "incidents",
+      "LabelKey": "Feature.incident-claims",
+      "PurposeKey": "FeaturePurpose.incident-claims",
+      "ValueKey": "AreaValue.incidents",
+      "ExampleKey": "AreaExample.incidents",
+      "AdoptionKey": "ModuleAdoption.incidents",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "IncidentClaims",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Incident.BackOffice"
+        },
+        {
+          "Kind": "flag",
+          "Id": "Incident.Business"
+        },
+        {
+          "Kind": "module",
+          "Id": "IncidentBackOffice"
+        },
+        {
+          "Kind": "module",
+          "Id": "IncidentBusiness"
+        },
+        {
+          "Kind": "addon",
+          "Id": "IncidentBackOffice"
+        }
+      ],
+      "SettingIds": [
+        "module.IncidentBusinessDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/incident-back-office/finance/"
+    },
+    {
+      "Id": "incident-recovery",
+      "AreaId": "incidents",
+      "LabelKey": "Feature.incident-recovery",
+      "PurposeKey": "FeaturePurpose.incident-recovery",
+      "ValueKey": "AreaValue.incidents",
+      "ExampleKey": "AreaExample.incidents",
+      "AdoptionKey": "ModuleAdoption.incidents",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "IncidentRecovery",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Incident.BackOffice"
+        },
+        {
+          "Kind": "flag",
+          "Id": "Incident.Business"
+        },
+        {
+          "Kind": "module",
+          "Id": "IncidentBackOffice"
+        },
+        {
+          "Kind": "module",
+          "Id": "IncidentBusiness"
+        },
+        {
+          "Kind": "addon",
+          "Id": "IncidentBackOffice"
+        }
+      ],
+      "SettingIds": [
+        "module.IncidentBusinessDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/incident-back-office/finance/"
+    },
+    {
+      "Id": "incident-intake",
+      "AreaId": "incidents",
+      "LabelKey": "Feature.incident-intake",
+      "PurposeKey": "FeaturePurpose.incident-intake",
+      "ValueKey": "AreaValue.incidents",
+      "ExampleKey": "AreaExample.incidents",
+      "AdoptionKey": "ModuleAdoption.incidents",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "IncidentIntake",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Incident.BackOffice"
+        },
+        {
+          "Kind": "flag",
+          "Id": "Incident.Business"
+        },
+        {
+          "Kind": "module",
+          "Id": "IncidentBackOffice"
+        },
+        {
+          "Kind": "module",
+          "Id": "IncidentBusiness"
+        },
+        {
+          "Kind": "addon",
+          "Id": "IncidentBackOffice"
+        }
+      ],
+      "SettingIds": [
+        "module.IncidentBusinessDisabled",
+        "setting.IncidentFinancePolicy"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/incident-back-office/finance/"
+    },
+    {
+      "Id": "incident-closeout",
+      "AreaId": "incidents",
+      "LabelKey": "Feature.incident-closeout",
+      "PurposeKey": "FeaturePurpose.incident-closeout",
+      "ValueKey": "AreaValue.incidents",
+      "ExampleKey": "AreaExample.incidents",
+      "AdoptionKey": "ModuleAdoption.incidents",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "IncidentCloseout",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Incident.BackOffice"
+        },
+        {
+          "Kind": "flag",
+          "Id": "Incident.Business"
+        },
+        {
+          "Kind": "module",
+          "Id": "IncidentBackOffice"
+        },
+        {
+          "Kind": "module",
+          "Id": "IncidentBusiness"
+        },
+        {
+          "Kind": "addon",
+          "Id": "IncidentBackOffice"
+        }
+      ],
+      "SettingIds": [
+        "module.IncidentBusinessDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/incident-back-office/finance/"
+    },
+    {
+      "Id": "incident-situation",
+      "AreaId": "incidents",
+      "LabelKey": "Feature.incident-situation",
+      "PurposeKey": "FeaturePurpose.incident-situation",
+      "ValueKey": "AreaValue.incidents",
+      "ExampleKey": "AreaExample.incidents",
+      "AdoptionKey": "ModuleAdoption.incidents",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "IncidentSituation",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Incident.BackOffice"
+        },
+        {
+          "Kind": "flag",
+          "Id": "Incident.Coordination"
+        },
+        {
+          "Kind": "module",
+          "Id": "IncidentBackOffice"
+        },
+        {
+          "Kind": "module",
+          "Id": "IncidentCoordination"
+        },
+        {
+          "Kind": "addon",
+          "Id": "IncidentBackOffice"
+        }
+      ],
+      "SettingIds": [
+        "module.IncidentCoordinationDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/incident-back-office/coordination/"
+    },
+    {
+      "Id": "addon-incidents",
+      "AreaId": "incidents",
+      "LabelKey": "Feature.addon-incidents",
+      "PurposeKey": "FeaturePurpose.addon-incidents",
+      "ValueKey": "FeatureValue.addon-incidents",
+      "ExampleKey": "FeatureExample.addon-incidents",
+      "AdoptionKey": "FeatureAdoption.addon-incidents",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Subscription",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "addon",
+          "Id": "IncidentBackOffice"
+        }
+      ],
+      "SettingIds": [
+        "setting.BrainTreeCustomerId",
+        "setting.PaddleCustomerId",
+        "setting.StripeCustomerId"
+      ],
+      "RuleIds": [
+        "personnel-limit",
+        "unit-limit"
+      ],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/incident-back-office/overview/"
+    }
+  ],
+  "Rules": [],
+  "Packs": [],
+  "Articles": [
+    {
+      "Id": "module.IncidentBackOfficeDisabled",
+      "Locale": "en",
+      "TitleKey": "Module.IncidentBackOfficeDisabled",
+      "Body": "Incident Back Office availability. Controls availability of the Incident Back Office desks. Disabling this module removes them from navigation and blocks their operations; it does not delete activations or their records. Turning it on still requires the Incident Back Office add-on, rollout and permissions.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "module-incidentbackofficedisabled",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "module.IncidentBusinessDisabled",
+      "Locale": "en",
+      "TitleKey": "Module.IncidentBusinessDisabled",
+      "Body": "Incident finance availability. Controls the incident finance desks: procurement, budget, time, cost, claims, recovery, intake and closeout. Disabling it hides those desks and blocks their operations without deleting their records. It only applies while the Incident Back Office is on, and turning it on still requires the Incident Business rollout and permissions.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "module-incidentbusinessdisabled",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "module.IncidentCoordinationDisabled",
+      "Locale": "en",
+      "TitleKey": "Module.IncidentCoordinationDisabled",
+      "Body": "Coordination boards availability. Controls coordination boards and the situation desk. Disabling it hides them and blocks their operations without deleting boards or their items. It only applies while the Incident Back Office is on, and turning it on still requires the Incident Coordination rollout and permissions.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "module-incidentcoordinationdisabled",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "setting.IncidentBackOfficeDefaults",
+      "Locale": "en",
+      "TitleKey": "Setting.IncidentBackOfficeDefaults",
+      "Body": "Incident Back Office defaults. Defaults for new activations: how old an incident command or dispatch source may get before its tiles grey out, the currency and measurement system (blank uses the department's country), the length of an operational period, and whether exercises may notify external participants and vendors.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-incidentbackofficedefaults",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "setting.IncidentEnrollmentPolicy",
+      "Locale": "en",
+      "TitleKey": "Setting.IncidentEnrollmentPolicy",
+      "Body": "Incident enrollment policy. How people and units seen on an incident become participants (the enrollment mode), whether people not yet enrolled are counted as a separate band in feeding, sleeping and water forecasts, and how long or old the enrollment queue may get before an alert is raised.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-incidentenrollmentpolicy",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "setting.IncidentNotificationRouting",
+      "Locale": "en",
+      "TitleKey": "Setting.IncidentNotificationRouting",
+      "Body": "Incident notification routing. Which incident positions receive each Incident Back Office notice. Positions are resolved to their current holders when the notice is sent; a notice with no positions configured uses its built-in default positions.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-incidentnotificationrouting",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "setting.IncidentForecastPolicy",
+      "Locale": "en",
+      "TitleKey": "Setting.IncidentForecastPolicy",
+      "Body": "Incident forecast policy. Coefficients and alert windows for logistics forecasts: meal and water contingency, drinking water per person per day, bed reserve, whether predicted timeouts reduce forecasts, replacement lead time, the arrival, timeout and meal cutoff lead windows, and the facility capacity and water days-of-supply thresholds.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-incidentforecastpolicy",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "setting.IncidentAssignmentRulePolicy",
+      "Locale": "en",
+      "TitleKey": "Setting.IncidentAssignmentRulePolicy",
+      "Body": "Incident assignment rules. The work/rest rule pack and assignment limits used to flag people who are reaching their limits: maximum assignment days, travel days, maximum extension, maximum work hours per shift and the rest required per hour worked.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-incidentassignmentrulepolicy",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "setting.IncidentVendorPolicy",
+      "Locale": "en",
+      "TitleKey": "Setting.IncidentVendorPolicy",
+      "Body": "Incident vendor policy. How often vendors must be verified again, how long a capacity hold lasts, and how far ahead expiring compliance documents and capacity holds are flagged.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-incidentvendorpolicy",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "setting.IncidentSelfServicePolicy",
+      "Locale": "en",
+      "TitleKey": "Setting.IncidentSelfServicePolicy",
+      "Body": "Incident self-service policy. Self-service links for participants and vendors: how many days a link stays valid after the assignment or engagement ends, whether a one-time code is required before lodging or travel details are shown, and whether vendor links need a verified vendor contact.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-incidentselfservicepolicy",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "setting.IncidentFinancePolicy",
+      "Locale": "en",
+      "TitleKey": "Setting.IncidentFinancePolicy",
+      "Body": "Incident finance policy. Finance controls: single-person operation (one person may request, approve, commit, receive and accept only with a recorded acknowledgment), extra sender domains for the intake inbox, the budget, agreement ceiling and daily burn thresholds, intake backlog limits, claim and recovery deadline warnings, the split-purchase window and the micro-purchase threshold.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-incidentfinancepolicy",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "setting.IncidentRetentionPolicy",
+      "Locale": "en",
+      "TitleKey": "Setting.IncidentRetentionPolicy",
+      "Body": "Incident retention policy. How long operational snapshots are kept after an incident closes, how many years ledger entries are kept, and how long expired self-service links are kept. Incident records follow Records retention instead.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-incidentretentionpolicy",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "setting.CoordinationBoardDefaults",
+      "Locale": "en",
+      "TitleKey": "Setting.CoordinationBoardDefaults",
+      "Body": "Coordination board defaults. Defaults for coordination boards: when an item counts as stale, whether road closures and shelter capacity raise alarms, how many days a board share lasts, and how far ahead a due item is flagged.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-coordinationboarddefaults",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "incident-activation",
+      "Locale": "en",
+      "TitleKey": "Feature.incident-activation",
+      "Body": "Incident activation and command Open an activation for a large incident, planned event or exercise and follow it from the command desk. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Review the Incident Back Office settings, then open an exercise activation.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "incident-activation",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "incident-planning",
+      "Locale": "en",
+      "TitleKey": "Feature.incident-planning",
+      "Body": "Planning, organization and check-in Operational periods and plan versions, the incident organization and positions, participants and check-in. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Build your position catalog and team rosters, then check participants in during an exercise.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "incident-planning",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "incident-logistics",
+      "Locale": "en",
+      "TitleKey": "Feature.incident-logistics",
+      "Body": "Incident logistics Resource requests, facilities, lodging, feeding, water and support services, with vendors and the support plan. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Add your lodging, feeding, water and transport vendors, then review the forecast policy.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "incident-logistics",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "incident-finance",
+      "Locale": "en",
+      "TitleKey": "Feature.incident-finance",
+      "Body": "Incident finance Procurement, budget, time, cost and claims for an incident, with separation of duties. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Turn on Incident Business, review the finance policy, then enter the incident budget.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "incident-finance",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "coordination-boards",
+      "Locale": "en",
+      "TitleKey": "Feature.coordination-boards",
+      "Body": "Coordination boards Shared boards for road closures, shelters and other items coordinated with partner agencies. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Turn on Incident Coordination, review the board defaults, then create a board.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "coordination-boards",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "incident-open",
+      "Locale": "en",
+      "TitleKey": "Feature.incident-open",
+      "Body": "Open an Incident Start an activation for an incident, planned event or exercise, optionally linked to a call or a parent complex. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "incident-open",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "incident-command-desk",
+      "Locale": "en",
+      "TitleKey": "Feature.incident-command-desk",
+      "Body": "Command Desk One activation's status, operational picture, data freshness and open work in one place. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "incident-command-desk",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "incident-operations",
+      "Locale": "en",
+      "TitleKey": "Feature.incident-operations",
+      "Body": "Operations Desk Who is on the incident, their support status and position, and the resources by support status. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "incident-operations",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "incident-settings",
+      "Locale": "en",
+      "TitleKey": "Feature.incident-settings",
+      "Body": "Incident Back Office Settings Department policies for activations, enrollment, notice routing, forecasts, assignments, vendors, self-service links, finance, retention and boards. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "incident-settings",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "incident-organization",
+      "Locale": "en",
+      "TitleKey": "Feature.incident-organization",
+      "Body": "Incident Organization The organization chart of an activation and who is assigned to each position. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "incident-organization",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "incident-positions",
+      "Locale": "en",
+      "TitleKey": "Feature.incident-positions",
+      "Body": "Position Catalog The incident positions your department fills and the capabilities each one needs. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "incident-positions",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "incident-teams",
+      "Locale": "en",
+      "TitleKey": "Feature.incident-teams",
+      "Body": "Incident Teams Standing team rosters with rotations, slots and qualified candidates. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "incident-teams",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "incident-participants",
+      "Locale": "en",
+      "TitleKey": "Feature.incident-participants",
+      "Body": "Participants The people supporting an activation, with their qualifications, home organizations and self-service links. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "incident-participants",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "incident-check-in",
+      "Locale": "en",
+      "TitleKey": "Feature.incident-check-in",
+      "Body": "Check-In Check people and resources in and out, and track their status, movements and assignment extensions. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "incident-check-in",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "incident-iap",
+      "Locale": "en",
+      "TitleKey": "Feature.incident-iap",
+      "Body": "Incident Action Plan Assemble the incident action plan for each operational period. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "incident-iap",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "incident-authority",
+      "Locale": "en",
+      "TitleKey": "Feature.incident-authority",
+      "Body": "Incident Authority Delegations of authority by domain, the authority profile copied into each activation and the items left to reconcile. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "incident-authority",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "incident-demob",
+      "Locale": "en",
+      "TitleKey": "Feature.incident-demob",
+      "Body": "Demobilization Demobilization plans and checklists for releasing people and resources. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "incident-demob",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "support-plan",
+      "Locale": "en",
+      "TitleKey": "Feature.support-plan",
+      "Body": "Emergency Support Plan Your department's emergency support plan: support areas and preferred vendors, copied into each activation. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "support-plan",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "incident-requests",
+      "Locale": "en",
+      "TitleKey": "Feature.incident-requests",
+      "Body": "Resource Requests Mission packages and resource requests from approval through fill, arrival and receipt. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "incident-requests",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "incident-facilities",
+      "Locale": "en",
+      "TitleKey": "Feature.incident-facilities",
+      "Body": "Incident Facilities Base camps, staging areas and other incident facilities, with capacity, agreements and services. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "incident-facilities",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "incident-lodging",
+      "Locale": "en",
+      "TitleKey": "Feature.incident-lodging",
+      "Body": "Lodging Lodging properties, room blocks, nightly inventory, bed assignments and rooming lists. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "incident-lodging",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "incident-feeding",
+      "Locale": "en",
+      "TitleKey": "Feature.incident-feeding",
+      "Body": "Feeding Meal plans, forecast demand, meal orders and the meals actually served. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "incident-feeding",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "incident-water",
+      "Locale": "en",
+      "TitleKey": "Feature.incident-water",
+      "Body": "Water Drinking water plans, stock on hand and deliveries. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "incident-water",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "incident-services",
+      "Locale": "en",
+      "TitleKey": "Feature.incident-services",
+      "Body": "Support Services Support services such as laundry, showers or sanitation, with their requests, activity and assets. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "incident-services",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "incident-ground-support",
+      "Locale": "en",
+      "TitleKey": "Feature.incident-ground-support",
+      "Body": "Ground Support Transport requests and movements, travel itineraries and fuel. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "incident-ground-support",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "incident-communications",
+      "Locale": "en",
+      "TitleKey": "Feature.incident-communications",
+      "Body": "Incident Communications The communications plan of an activation and its radio and device assignments. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "incident-communications",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "vendor-catalog",
+      "Locale": "en",
+      "TitleKey": "Feature.vendor-catalog",
+      "Body": "Vendor Catalog Vendors with their locations, capabilities, availability windows and compliance documents. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "vendor-catalog",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "incident-vendors",
+      "Locale": "en",
+      "TitleKey": "Feature.incident-vendors",
+      "Body": "Vendor Engagements Vendors engaged on an activation, with their capacity commitments and quotes. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "incident-vendors",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "incident-procurement",
+      "Locale": "en",
+      "TitleKey": "Feature.incident-procurement",
+      "Body": "Incident Procurement Vendor agreements, requisitions and approvals, commitments, receipts, vendor invoices and payment packages. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "incident-procurement",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "incident-budget",
+      "Locale": "en",
+      "TitleKey": "Feature.incident-budget",
+      "Body": "Incident Budget Budget lines, funding authorizations, spending delegations, funding codes and cost groups. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "incident-budget",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "incident-time",
+      "Locale": "en",
+      "TitleKey": "Feature.incident-time",
+      "Body": "Incident Time Time records and adjustments, equipment use and expenses, with certification and approval. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "incident-time",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "incident-cost",
+      "Locale": "en",
+      "TitleKey": "Feature.incident-cost",
+      "Body": "Incident Cost Cost transactions, accruals, daily cost projections and cost-share apportionment. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "incident-cost",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "incident-claims",
+      "Locale": "en",
+      "TitleKey": "Feature.incident-claims",
+      "Body": "Incident Claims Claims for injury, damage or loss arising from an incident. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "incident-claims",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "incident-recovery",
+      "Locale": "en",
+      "TitleKey": "Feature.incident-recovery",
+      "Body": "Disaster Recovery Disaster declarations, recovery projects and their deadlines. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "incident-recovery",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "incident-intake",
+      "Locale": "en",
+      "TitleKey": "Feature.incident-intake",
+      "Body": "Incident Intake Documents and receipts sent to the incident's intake inbox, waiting to be filed. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "incident-intake",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "incident-closeout",
+      "Locale": "en",
+      "TitleKey": "Feature.incident-closeout",
+      "Body": "Incident Closeout The closeout checklist that finishes an incident's books. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "incident-closeout",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "incident-situation",
+      "Locale": "en",
+      "TitleKey": "Feature.incident-situation",
+      "Body": "Situation Desk Lifeline status, open actions, decisions and mapped situation features. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "incident-situation",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    },
+    {
+      "Id": "addon-incidents",
+      "Locale": "en",
+      "TitleKey": "Feature.addon-incidents",
+      "Body": "Incident Back Office The Incident Back Office add-on: activation, planning, logistics, finance and coordination boards for large incidents. Keep the support side of a long incident in one place instead of spreadsheets, radio notes and email. Book lodging and meals for arriving crews and track each purchase against the incident budget. Incident finance and coordination boards are turned on separately. Incident records stay in Records and follow its permissions. No reimbursement is guaranteed.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "addon-incidents",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-26T00:00:00Z"
+    }
+  ]
+}

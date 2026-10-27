@@ -393,6 +393,14 @@ namespace Resgrid.Model
 		{
 			var list = GetCommon();
 
+			// Incident Back Office triggers (plan §13.7): the common incident variables plus the trigger's own, from one catalog.
+			if (IncidentLogistics.IncidentBackOfficeWorkflowPayload.IsIncident((int)eventType))
+			{
+				foreach (var (variable, type, description) in IncidentLogistics.IncidentBackOfficeWorkflowPayload.For(eventType))
+					list.Add(new TemplateVariableDescriptor(variable, description, type, false));
+				return list.AsReadOnly();
+			}
+
 			switch (eventType)
 			{
 				case WorkflowTriggerEventType.InvoiceCreated:

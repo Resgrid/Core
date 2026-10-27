@@ -7125,4 +7125,568 @@
   <data name="FieldHelp.DepartmentTermOverride.Singular" xml:space="preserve">
     <value>للوحدة، كلمة الإدارة الدالة على عنصر واحد، مثل الفريق للوحدات المعاد تسميتها الفرق، وتُستخدم على الأزرار والعناوين مثل «فريق جديد»؛ 50 حرفًا كحد أقصى. إذا تُركت فارغة تُستنتج من الاسم. لا تحتوي أنواع السجلات عليها.</value>
   </data>
+  <data name="Area.incidents" xml:space="preserve">
+    <value>Incident Back Office</value>
+  </data>
+  <data name="AreaPurpose.incidents" xml:space="preserve">
+    <value>التفعيل والتخطيط واللوجستيات والشؤون المالية ولوحات التنسيق للحوادث الكبيرة أو الممتدة والفعاليات المخطط لها والتمارين.</value>
+  </data>
+  <data name="AreaValue.incidents" xml:space="preserve">
+    <value>أدِر جانب الدعم في حادث كبير من عملية تفعيل واحدة: من يشارك فيه، وأين ينامون ويأكلون، وما الذي طُلب وكم كلّف.</value>
+  </data>
+  <data name="AreaExample.incidents" xml:space="preserve">
+    <value>في عملية تفعيل لحريق غابات، يُسجَّل وصول فرق التدخل، وتُحجز لها الإقامة والوجبات، وتُتابَع كل عملية شراء مقابل ميزانية الحادث.</value>
+  </data>
+  <data name="ModuleAdoption.incidents" xml:space="preserve">
+    <value>يتطلب إضافة Incident Back Office. تحتاج مكاتب الشؤون المالية أيضًا إلى تفعيل Incident Business، وتحتاج لوحات التنسيق إلى Incident Coordination. نفّذ عملية تفعيل تدريبية قبل أول حادث حقيقي.</value>
+  </data>
+  <data name="Ui.AddonRequired.IncidentBackOffice" xml:space="preserve">
+    <value>يتطلب Incident Back Office</value>
+  </data>
+  <data name="Module.IncidentBackOfficeDisabled" xml:space="preserve">
+    <value>توفر Incident Back Office</value>
+  </data>
+  <data name="ModuleHelp.IncidentBackOfficeDisabled" xml:space="preserve">
+    <value>يتحكم في توفر مكاتب Incident Back Office. يؤدي تعطيل هذه الوحدة إلى إزالتها من التنقل وحظر عملياتها؛ ولا يحذف عمليات التفعيل أو سجلاتها. ويظل تشغيلها يتطلب إضافة Incident Back Office والطرح والصلاحيات.</value>
+  </data>
+  <data name="Module.IncidentBusinessDisabled" xml:space="preserve">
+    <value>توفر الشؤون المالية للحوادث</value>
+  </data>
+  <data name="ModuleHelp.IncidentBusinessDisabled" xml:space="preserve">
+    <value>يتحكم في مكاتب الشؤون المالية للحوادث: المشتريات والميزانية والوقت والتكلفة والمطالبات والتعافي والوارد والإغلاق. يؤدي تعطيل هذه الوحدة إلى إخفاء تلك المكاتب وحظر عملياتها دون حذف سجلاتها. ولا تسري إلا عندما يكون Incident Back Office مفعّلًا، ويظل تشغيلها يتطلب طرح Incident Business والصلاحيات.</value>
+  </data>
+  <data name="Module.IncidentCoordinationDisabled" xml:space="preserve">
+    <value>توفر لوحات التنسيق</value>
+  </data>
+  <data name="ModuleHelp.IncidentCoordinationDisabled" xml:space="preserve">
+    <value>يتحكم في لوحات التنسيق ومكتب الوضع. يؤدي تعطيل هذه الوحدة إلى إخفائها وحظر عملياتها دون حذف اللوحات أو عناصرها. ولا تسري إلا عندما يكون Incident Back Office مفعّلًا، ويظل تشغيلها يتطلب طرح Incident Coordination والصلاحيات.</value>
+  </data>
+  <data name="Setting.IncidentBackOfficeDefaults" xml:space="preserve">
+    <value>الإعدادات الافتراضية لـ Incident Back Office</value>
+  </data>
+  <data name="SettingHelp.IncidentBackOfficeDefaults" xml:space="preserve">
+    <value>القيم الافتراضية لعمليات التفعيل الجديدة: المدة التي يمكن أن يتقادم خلالها مصدر قيادة الحادث أو مصدر الإرسال قبل أن تصبح بلاطاته رمادية، والعملة ونظام القياس (يُستخدم بلد القسم عند تركهما فارغين)، وطول الفترة العملياتية، وما إذا كان يُسمح للتمارين بإشعار المشاركين الخارجيين والموردين.</value>
+  </data>
+  <data name="Setting.IncidentEnrollmentPolicy" xml:space="preserve">
+    <value>سياسة التسجيل في الحادث</value>
+  </data>
+  <data name="SettingHelp.IncidentEnrollmentPolicy" xml:space="preserve">
+    <value>كيف يصبح الأشخاص والوحدات الذين يُرصدون في حادث مشاركين (وضع التسجيل)، وما إذا كان الأشخاص غير المسجلين بعد يُحتسبون فئةً منفصلة في توقعات الإطعام والمبيت والمياه، وإلى أي حد يمكن أن تطول قائمة انتظار التسجيل أو تتقادم قبل إطلاق تنبيه.</value>
+  </data>
+  <data name="Setting.IncidentNotificationRouting" xml:space="preserve">
+    <value>توجيه إشعارات الحادث</value>
+  </data>
+  <data name="SettingHelp.IncidentNotificationRouting" xml:space="preserve">
+    <value>المناصب في الحادث التي تتلقى كل إشعار من Incident Back Office. تُربط المناصب بشاغليها الحاليين عند إرسال الإشعار؛ والإشعار الذي لم تُضبط له مناصب يستخدم مناصبه الافتراضية المضمّنة.</value>
+  </data>
+  <data name="Setting.IncidentForecastPolicy" xml:space="preserve">
+    <value>سياسة توقعات الحادث</value>
+  </data>
+  <data name="SettingHelp.IncidentForecastPolicy" xml:space="preserve">
+    <value>المعاملات ونوافذ التنبيه لتوقعات اللوجستيات: احتياطي الوجبات والمياه، ومياه الشرب لكل شخص يوميًا، واحتياطي الأسرّة، وما إذا كانت حالات انتهاء مدة الخدمة المتوقعة تُخفّض التوقعات، ومهلة الاستبدال، ونوافذ التنبيه المسبق للوصول وانتهاء مدة الخدمة والموعد النهائي لطلب الوجبات، وحدود سعة المرافق وعدد أيام إمداد المياه.</value>
+  </data>
+  <data name="Setting.IncidentAssignmentRulePolicy" xml:space="preserve">
+    <value>قواعد التكليف في الحادث</value>
+  </data>
+  <data name="SettingHelp.IncidentAssignmentRulePolicy" xml:space="preserve">
+    <value>حزمة قواعد العمل والراحة وحدود التكليف المستخدمة لتمييز الأشخاص الذين يقتربون من حدودهم: الحد الأقصى لأيام التكليف، وأيام السفر، والحد الأقصى للتمديد، والحد الأقصى لساعات العمل في كل نوبة، والراحة المطلوبة لكل ساعة عمل.</value>
+  </data>
+  <data name="Setting.IncidentVendorPolicy" xml:space="preserve">
+    <value>سياسة موردي الحادث</value>
+  </data>
+  <data name="SettingHelp.IncidentVendorPolicy" xml:space="preserve">
+    <value>عدد المرات التي يجب فيها إعادة التحقق من الموردين، ومدة حجز السعة، ومدى التبكير في تمييز مستندات الامتثال وحجوزات السعة التي يقترب انتهاؤها.</value>
+  </data>
+  <data name="Setting.IncidentSelfServicePolicy" xml:space="preserve">
+    <value>سياسة الخدمة الذاتية للحادث</value>
+  </data>
+  <data name="SettingHelp.IncidentSelfServicePolicy" xml:space="preserve">
+    <value>روابط الخدمة الذاتية للمشاركين والموردين: عدد الأيام التي يظل فيها الرابط صالحًا بعد انتهاء التكليف أو التعاقد، وما إذا كان يلزم رمز لمرة واحدة قبل عرض تفاصيل الإقامة أو السفر، وما إذا كانت روابط الموردين تحتاج إلى جهة اتصال موثّقة لدى المورد.</value>
+  </data>
+  <data name="Setting.IncidentFinancePolicy" xml:space="preserve">
+    <value>السياسة المالية للحادث</value>
+  </data>
+  <data name="SettingHelp.IncidentFinancePolicy" xml:space="preserve">
+    <value>الضوابط المالية: التشغيل بشخص واحد (يمكن لشخص واحد أن يطلب ويعتمد ويلتزم ويستلم ويقبل فقط مع إقرار مسجّل)، ونطاقات مرسلين إضافية لصندوق الوارد، وحدود الميزانية وسقف الاتفاقية والإنفاق اليومي، وحدود تراكم الوارد، وتحذيرات المواعيد النهائية للمطالبات والتعافي، ونافذة تجزئة المشتريات، وحد المشتريات الصغيرة.</value>
+  </data>
+  <data name="Setting.IncidentRetentionPolicy" xml:space="preserve">
+    <value>سياسة الاحتفاظ ببيانات الحادث</value>
+  </data>
+  <data name="SettingHelp.IncidentRetentionPolicy" xml:space="preserve">
+    <value>مدة الاحتفاظ باللقطات التشغيلية بعد إغلاق الحادث، وعدد سنوات الاحتفاظ بقيود دفتر الأستاذ، ومدة الاحتفاظ بروابط الخدمة الذاتية المنتهية الصلاحية. أما سجلات الحوادث فتتبع بدلًا من ذلك سياسة الاحتفاظ في السجلات.</value>
+  </data>
+  <data name="Setting.CoordinationBoardDefaults" xml:space="preserve">
+    <value>الإعدادات الافتراضية للوحات التنسيق</value>
+  </data>
+  <data name="SettingHelp.CoordinationBoardDefaults" xml:space="preserve">
+    <value>القيم الافتراضية للوحات التنسيق: متى يُعدّ العنصر قديمًا، وما إذا كانت إغلاقات الطرق وسعة الملاجئ تُطلق إنذارات، وعدد الأيام التي تدوم فيها مشاركة اللوحة، ومدى التبكير في تمييز العنصر المستحق.</value>
+  </data>
+  <data name="Feature.incident-activation" xml:space="preserve">
+    <value>تفعيل الحادث والقيادة</value>
+  </data>
+  <data name="FeaturePurpose.incident-activation" xml:space="preserve">
+    <value>افتح عملية تفعيل لحادث كبير أو فعالية مخطط لها أو تمرين، وتابعها من مكتب القيادة.</value>
+  </data>
+  <data name="FeatureSetup.incident-activation" xml:space="preserve">
+    <value>راجع إعدادات Incident Back Office، ثم افتح عملية تفعيل تدريبية.</value>
+  </data>
+  <data name="Feature.incident-planning" xml:space="preserve">
+    <value>التخطيط والتنظيم وتسجيل الوصول</value>
+  </data>
+  <data name="FeaturePurpose.incident-planning" xml:space="preserve">
+    <value>الفترات العملياتية وإصدارات الخطط، وتنظيم الحادث ومناصبه، والمشاركون وتسجيل الوصول.</value>
+  </data>
+  <data name="FeatureSetup.incident-planning" xml:space="preserve">
+    <value>أنشئ كتالوج المناصب وتشكيلات الفرق، ثم سجّل وصول المشاركين أثناء تمرين.</value>
+  </data>
+  <data name="Feature.incident-logistics" xml:space="preserve">
+    <value>لوجستيات الحادث</value>
+  </data>
+  <data name="FeaturePurpose.incident-logistics" xml:space="preserve">
+    <value>طلبات الموارد والمرافق والإقامة والإطعام والمياه وخدمات الدعم، مع الموردين وخطة الدعم.</value>
+  </data>
+  <data name="FeatureSetup.incident-logistics" xml:space="preserve">
+    <value>أضف موردي الإقامة والإطعام والمياه والنقل لديك، ثم راجع سياسة التوقعات.</value>
+  </data>
+  <data name="Feature.incident-finance" xml:space="preserve">
+    <value>الشؤون المالية للحادث</value>
+  </data>
+  <data name="FeaturePurpose.incident-finance" xml:space="preserve">
+    <value>المشتريات والميزانية والوقت والتكلفة والمطالبات الخاصة بالحادث، مع الفصل بين المهام.</value>
+  </data>
+  <data name="FeatureSetup.incident-finance" xml:space="preserve">
+    <value>فعّل Incident Business، وراجع السياسة المالية، ثم أدخل ميزانية الحادث.</value>
+  </data>
+  <data name="Feature.coordination-boards" xml:space="preserve">
+    <value>لوحات التنسيق</value>
+  </data>
+  <data name="FeaturePurpose.coordination-boards" xml:space="preserve">
+    <value>لوحات مشتركة لإغلاقات الطرق والملاجئ والعناصر الأخرى التي يجري تنسيقها مع الجهات الشريكة.</value>
+  </data>
+  <data name="FeatureSetup.coordination-boards" xml:space="preserve">
+    <value>فعّل Incident Coordination، وراجع الإعدادات الافتراضية للوحات، ثم أنشئ لوحة.</value>
+  </data>
+  <data name="Feature.incident-open" xml:space="preserve">
+    <value>فتح حادث</value>
+  </data>
+  <data name="FeaturePurpose.incident-open" xml:space="preserve">
+    <value>ابدأ عملية تفعيل لحادث أو فعالية مخطط لها أو تمرين، مع ربطها اختياريًا ببلاغ أو بمجمّع حوادث رئيسي.</value>
+  </data>
+  <data name="Feature.incident-command-desk" xml:space="preserve">
+    <value>مكتب القيادة</value>
+  </data>
+  <data name="FeaturePurpose.incident-command-desk" xml:space="preserve">
+    <value>حالة عملية التفعيل وصورتها العملياتية وحداثة بياناتها والأعمال المفتوحة في مكان واحد.</value>
+  </data>
+  <data name="Feature.incident-operations" xml:space="preserve">
+    <value>مكتب العمليات</value>
+  </data>
+  <data name="FeaturePurpose.incident-operations" xml:space="preserve">
+    <value>من يشارك في الحادث، وحالة الدعم والمنصب لكل منهم، والموارد حسب حالة الدعم.</value>
+  </data>
+  <data name="Feature.incident-settings" xml:space="preserve">
+    <value>إعدادات Incident Back Office</value>
+  </data>
+  <data name="FeaturePurpose.incident-settings" xml:space="preserve">
+    <value>سياسات القسم لعمليات التفعيل والتسجيل وتوجيه الإشعارات والتوقعات والتكليفات والموردين وروابط الخدمة الذاتية والشؤون المالية والاحتفاظ واللوحات.</value>
+  </data>
+  <data name="Feature.incident-organization" xml:space="preserve">
+    <value>تنظيم الحادث</value>
+  </data>
+  <data name="FeaturePurpose.incident-organization" xml:space="preserve">
+    <value>الهيكل التنظيمي لعملية التفعيل ومن كُلّف بكل منصب.</value>
+  </data>
+  <data name="Feature.incident-positions" xml:space="preserve">
+    <value>كتالوج المناصب</value>
+  </data>
+  <data name="FeaturePurpose.incident-positions" xml:space="preserve">
+    <value>مناصب الحوادث التي يشغلها قسمك والقدرات التي يحتاجها كل منصب.</value>
+  </data>
+  <data name="Feature.incident-teams" xml:space="preserve">
+    <value>فرق الحوادث</value>
+  </data>
+  <data name="FeaturePurpose.incident-teams" xml:space="preserve">
+    <value>تشكيلات دائمة للفرق مع التناوبات والخانات والمرشحين المؤهلين.</value>
+  </data>
+  <data name="Feature.incident-participants" xml:space="preserve">
+    <value>المشاركون</value>
+  </data>
+  <data name="FeaturePurpose.incident-participants" xml:space="preserve">
+    <value>الأشخاص الذين يدعمون عملية التفعيل، مع مؤهلاتهم وجهاتهم الأصلية وروابط الخدمة الذاتية الخاصة بهم.</value>
+  </data>
+  <data name="Feature.incident-check-in" xml:space="preserve">
+    <value>تسجيل الوصول</value>
+  </data>
+  <data name="FeaturePurpose.incident-check-in" xml:space="preserve">
+    <value>سجّل وصول الأشخاص والموارد ومغادرتهم، وتابع حالتهم وتحركاتهم وتمديدات تكليفهم.</value>
+  </data>
+  <data name="Feature.incident-iap" xml:space="preserve">
+    <value>خطة عمل الحادث</value>
+  </data>
+  <data name="FeaturePurpose.incident-iap" xml:space="preserve">
+    <value>أعِدّ خطة عمل الحادث لكل فترة عملياتية.</value>
+  </data>
+  <data name="Feature.incident-authority" xml:space="preserve">
+    <value>سلطة الحادث</value>
+  </data>
+  <data name="FeaturePurpose.incident-authority" xml:space="preserve">
+    <value>تفويضات السلطة حسب المجال، وملف السلطة الذي يُنسخ إلى كل عملية تفعيل، والبنود المتبقية للمطابقة.</value>
+  </data>
+  <data name="Feature.incident-demob" xml:space="preserve">
+    <value>إنهاء التعبئة</value>
+  </data>
+  <data name="FeaturePurpose.incident-demob" xml:space="preserve">
+    <value>خطط إنهاء التعبئة وقوائم التحقق الخاصة بها لتسريح الأشخاص والموارد.</value>
+  </data>
+  <data name="Feature.support-plan" xml:space="preserve">
+    <value>خطة دعم الطوارئ</value>
+  </data>
+  <data name="FeaturePurpose.support-plan" xml:space="preserve">
+    <value>خطة دعم الطوارئ لقسمك: مجالات الدعم والموردون المفضلون، وتُنسخ إلى كل عملية تفعيل.</value>
+  </data>
+  <data name="Feature.incident-requests" xml:space="preserve">
+    <value>طلبات الموارد</value>
+  </data>
+  <data name="FeaturePurpose.incident-requests" xml:space="preserve">
+    <value>حزم المهام وطلبات الموارد من الاعتماد مرورًا بالتلبية والوصول وحتى الاستلام.</value>
+  </data>
+  <data name="Feature.incident-facilities" xml:space="preserve">
+    <value>مرافق الحادث</value>
+  </data>
+  <data name="FeaturePurpose.incident-facilities" xml:space="preserve">
+    <value>المعسكرات الأساسية ومناطق التجميع ومرافق الحادث الأخرى، مع السعة والاتفاقيات والخدمات.</value>
+  </data>
+  <data name="Feature.incident-lodging" xml:space="preserve">
+    <value>الإقامة</value>
+  </data>
+  <data name="FeaturePurpose.incident-lodging" xml:space="preserve">
+    <value>منشآت الإقامة وكتل الغرف والمخزون الليلي وتخصيص الأسرّة وقوائم توزيع الغرف.</value>
+  </data>
+  <data name="Feature.incident-feeding" xml:space="preserve">
+    <value>الإطعام</value>
+  </data>
+  <data name="FeaturePurpose.incident-feeding" xml:space="preserve">
+    <value>خطط الوجبات والطلب المتوقع وطلبيات الوجبات والوجبات المقدَّمة فعليًا.</value>
+  </data>
+  <data name="Feature.incident-water" xml:space="preserve">
+    <value>المياه</value>
+  </data>
+  <data name="FeaturePurpose.incident-water" xml:space="preserve">
+    <value>خطط مياه الشرب والمخزون المتوفر وعمليات التسليم.</value>
+  </data>
+  <data name="Feature.incident-services" xml:space="preserve">
+    <value>خدمات الدعم</value>
+  </data>
+  <data name="FeaturePurpose.incident-services" xml:space="preserve">
+    <value>خدمات الدعم مثل الغسيل أو الاستحمام أو الصرف الصحي، مع طلباتها ونشاطها وأصولها.</value>
+  </data>
+  <data name="Feature.incident-ground-support" xml:space="preserve">
+    <value>الدعم الأرضي</value>
+  </data>
+  <data name="FeaturePurpose.incident-ground-support" xml:space="preserve">
+    <value>طلبات النقل والتحركات، وخطط مسارات السفر، والوقود.</value>
+  </data>
+  <data name="Feature.incident-communications" xml:space="preserve">
+    <value>اتصالات الحادث</value>
+  </data>
+  <data name="FeaturePurpose.incident-communications" xml:space="preserve">
+    <value>خطة الاتصالات لعملية التفعيل وتخصيصات أجهزة الراديو والأجهزة الأخرى.</value>
+  </data>
+  <data name="Feature.vendor-catalog" xml:space="preserve">
+    <value>كتالوج الموردين</value>
+  </data>
+  <data name="FeaturePurpose.vendor-catalog" xml:space="preserve">
+    <value>الموردون مع مواقعهم وقدراتهم وفترات توفرهم ومستندات الامتثال الخاصة بهم.</value>
+  </data>
+  <data name="Feature.incident-vendors" xml:space="preserve">
+    <value>التعاقد مع الموردين</value>
+  </data>
+  <data name="FeaturePurpose.incident-vendors" xml:space="preserve">
+    <value>الموردون المتعاقد معهم في عملية تفعيل، مع التزامات السعة وعروض الأسعار الخاصة بهم.</value>
+  </data>
+  <data name="Feature.incident-procurement" xml:space="preserve">
+    <value>مشتريات الحادث</value>
+  </data>
+  <data name="FeaturePurpose.incident-procurement" xml:space="preserve">
+    <value>اتفاقيات الموردين وطلبات الشراء والموافقات عليها، والالتزامات، والاستلامات، وفواتير الموردين، وحزم الدفع.</value>
+  </data>
+  <data name="Feature.incident-budget" xml:space="preserve">
+    <value>ميزانية الحادث</value>
+  </data>
+  <data name="FeaturePurpose.incident-budget" xml:space="preserve">
+    <value>بنود الميزانية واعتمادات التمويل وتفويضات الإنفاق ورموز التمويل ومجموعات التكلفة.</value>
+  </data>
+  <data name="Feature.incident-time" xml:space="preserve">
+    <value>وقت الحادث</value>
+  </data>
+  <data name="FeaturePurpose.incident-time" xml:space="preserve">
+    <value>سجلات الوقت وتعديلاتها، واستخدام المعدات والمصروفات، مع المصادقة والاعتماد.</value>
+  </data>
+  <data name="Feature.incident-cost" xml:space="preserve">
+    <value>تكلفة الحادث</value>
+  </data>
+  <data name="FeaturePurpose.incident-cost" xml:space="preserve">
+    <value>معاملات التكلفة والمستحقات وتوقعات التكلفة اليومية وتوزيع حصص التكاليف المشتركة.</value>
+  </data>
+  <data name="Feature.incident-claims" xml:space="preserve">
+    <value>مطالبات الحادث</value>
+  </data>
+  <data name="FeaturePurpose.incident-claims" xml:space="preserve">
+    <value>المطالبات المتعلقة بالإصابة أو الضرر أو الخسارة الناشئة عن حادث.</value>
+  </data>
+  <data name="Feature.incident-recovery" xml:space="preserve">
+    <value>التعافي من الكوارث</value>
+  </data>
+  <data name="FeaturePurpose.incident-recovery" xml:space="preserve">
+    <value>إعلانات الكوارث ومشروعات التعافي ومواعيدها النهائية.</value>
+  </data>
+  <data name="Feature.incident-intake" xml:space="preserve">
+    <value>وارد الحادث</value>
+  </data>
+  <data name="FeaturePurpose.incident-intake" xml:space="preserve">
+    <value>المستندات والإيصالات المرسلة إلى صندوق وارد الحادث والتي تنتظر الحفظ.</value>
+  </data>
+  <data name="Feature.incident-closeout" xml:space="preserve">
+    <value>إغلاق الحادث</value>
+  </data>
+  <data name="FeaturePurpose.incident-closeout" xml:space="preserve">
+    <value>قائمة التحقق الخاصة بالإغلاق التي تُنهي الحسابات المالية للحادث.</value>
+  </data>
+  <data name="Feature.incident-situation" xml:space="preserve">
+    <value>مكتب الوضع</value>
+  </data>
+  <data name="FeaturePurpose.incident-situation" xml:space="preserve">
+    <value>حالة شرايين الحياة والإجراءات المفتوحة والقرارات وعناصر الوضع المعروضة على الخريطة.</value>
+  </data>
+  <data name="Feature.addon-incidents" xml:space="preserve">
+    <value>Incident Back Office</value>
+  </data>
+  <data name="FeaturePurpose.addon-incidents" xml:space="preserve">
+    <value>إضافة Incident Back Office: التفعيل والتخطيط واللوجستيات والشؤون المالية ولوحات التنسيق للحوادث الكبيرة.</value>
+  </data>
+  <data name="FeatureValue.addon-incidents" xml:space="preserve">
+    <value>احتفظ بجانب الدعم في الحادث الطويل في مكان واحد بدلًا من جداول البيانات وملاحظات الراديو والبريد الإلكتروني.</value>
+  </data>
+  <data name="FeatureExample.addon-incidents" xml:space="preserve">
+    <value>احجز الإقامة والوجبات للطواقم القادمة وتابع كل عملية شراء مقابل ميزانية الحادث.</value>
+  </data>
+  <data name="FeatureAdoption.addon-incidents" xml:space="preserve">
+    <value>تُفعَّل الشؤون المالية للحوادث ولوحات التنسيق بشكل منفصل. تبقى سجلات الحوادث في السجلات وتتبع صلاحياتها. لا يُضمَن أي استرداد.</value>
+  </data>
+  <data name="Permission.ViewIncidentBackOffice" xml:space="preserve">
+    <value>عرض Incident Back Office</value>
+  </data>
+  <data name="PermissionHelp.ViewIncidentBackOffice" xml:space="preserve">
+    <value>يسمح بفتح مكاتب Incident Back Office وقراءة عمليات التفعيل والفترات والتنظيم واللوجستيات. تتطلب التغييرات في كل مكتب الصلاحية الخاصة بذلك المكتب. عند عدم وجود قاعدة محفوظة، يُسمح بذلك لجميع الأعضاء. يتطلب تفعيل Incident Back Office وإضافة Incident Back Office نشطة.</value>
+  </data>
+  <data name="Permission.ManageIncidentActivation" xml:space="preserve">
+    <value>إدارة تفعيل الحادث</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentActivation" xml:space="preserve">
+    <value>يسمح بفتح عمليات التفعيل وإضافتها إلى مجمّع حوادث، وإغلاقها أو ختمها أو إعادة فتحها. عند عدم وجود قاعدة محفوظة، يقتصر ذلك على مدراء القسم. يتطلب تفعيل Incident Back Office وإضافة Incident Back Office نشطة.</value>
+  </data>
+  <data name="Permission.ManageIncidentPeriods" xml:space="preserve">
+    <value>إدارة الفترات العملياتية</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentPeriods" xml:space="preserve">
+    <value>يسمح بإنشاء الفترات العملياتية وتعديلها واعتماد إصدارات خططها. عند عدم وجود قاعدة محفوظة، يُسمح بذلك لمدراء القسم والمجموعات. يتطلب تفعيل Incident Back Office وإضافة Incident Back Office نشطة.</value>
+  </data>
+  <data name="Permission.ManageIncidentPositions" xml:space="preserve">
+    <value>إدارة مناصب الحادث</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentPositions" xml:space="preserve">
+    <value>يسمح بتعديل كتالوج المناصب والتكليفات بالمناصب وتشكيلات الفرق. عند عدم وجود قاعدة محفوظة، يُسمح بذلك لمدراء القسم والمجموعات. يتطلب تفعيل Incident Back Office وإضافة Incident Back Office نشطة.</value>
+  </data>
+  <data name="Permission.ManageIncidentParticipants" xml:space="preserve">
+    <value>إدارة مشاركي الحادث</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentParticipants" xml:space="preserve">
+    <value>يسمح بتسجيل المشاركين وتعديلهم وإرسال روابط الخدمة الذاتية الخاصة بهم. يقصره خيار «المجموعة فقط» على المشاركين من مجموعة المستخدم نفسه. عند عدم وجود قاعدة محفوظة، يُسمح بذلك لمدراء القسم والمجموعات. يتطلب تفعيل Incident Back Office وإضافة Incident Back Office نشطة.</value>
+  </data>
+  <data name="Permission.ViewParticipantSensitive" xml:space="preserve">
+    <value>عرض التفاصيل الحساسة للمشاركين</value>
+  </data>
+  <data name="PermissionHelp.ViewParticipantSensitive" xml:space="preserve">
+    <value>يسمح برؤية جهات اتصال الطوارئ للمشاركين وتفاصيلهم الطبية واحتياجات إمكانية الوصول ومسببات الحساسية والاحتياجات الغذائية. عند عدم وجود قاعدة محفوظة، يقتصر ذلك على مدراء القسم. يتطلب تفعيل Incident Back Office وإضافة Incident Back Office نشطة.</value>
+  </data>
+  <data name="Permission.CreateIncidentRequest" xml:space="preserve">
+    <value>إنشاء طلبات الموارد</value>
+  </data>
+  <data name="PermissionHelp.CreateIncidentRequest" xml:space="preserve">
+    <value>يسمح بإنشاء طلبات الموارد وحزم المهام. يقصره خيار «المجموعة فقط» على الطلبات الخاصة بمجموعة المستخدم نفسه. عند عدم وجود قاعدة محفوظة، يُسمح بذلك لمدراء القسم والمجموعات. يتطلب تفعيل Incident Back Office وإضافة Incident Back Office نشطة.</value>
+  </data>
+  <data name="Permission.ApproveIncidentRequest" xml:space="preserve">
+    <value>اعتماد طلبات الموارد</value>
+  </data>
+  <data name="PermissionHelp.ApproveIncidentRequest" xml:space="preserve">
+    <value>يسمح باعتماد طلبات الموارد أو رفضها. يقصره خيار «المجموعة فقط» على الطلبات الواردة من مجموعة المستخدم نفسه. عند عدم وجود قاعدة محفوظة، يقتصر ذلك على مدراء القسم. يتطلب تفعيل Incident Back Office وإضافة Incident Back Office نشطة.</value>
+  </data>
+  <data name="Permission.OrderIncidentRequest" xml:space="preserve">
+    <value>إصدار أوامر الشراء لطلبات الموارد</value>
+  </data>
+  <data name="PermissionHelp.OrderIncidentRequest" xml:space="preserve">
+    <value>يسمح بإصدار الأمر الذي يلبّي طلب موارد معتمدًا، بما في ذلك الطلبيات المستندة إلى اتفاقيات الموردين. عند عدم وجود قاعدة محفوظة، يقتصر ذلك على مدراء القسم. يتطلب تفعيل Incident Back Office وإضافة Incident Back Office نشطة.</value>
+  </data>
+  <data name="Permission.ReceiveIncidentRequest" xml:space="preserve">
+    <value>استلام طلبات الموارد</value>
+  </data>
+  <data name="PermissionHelp.ReceiveIncidentRequest" xml:space="preserve">
+    <value>يسمح بتسجيل حالات الوصول والاستلام مقابل الطلبات التي تمت تلبيتها. يقصره خيار «المجموعة فقط» على مجموعة المستخدم نفسه. عند عدم وجود قاعدة محفوظة، يُسمح بذلك لمدراء القسم والمجموعات. يتطلب تفعيل Incident Back Office وإضافة Incident Back Office نشطة.</value>
+  </data>
+  <data name="Permission.ManageIncidentFacilities" xml:space="preserve">
+    <value>إدارة مرافق الحادث</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentFacilities" xml:space="preserve">
+    <value>يسمح بإدارة مرافق الحادث وسعتها واتفاقياتها وخدماتها. عند عدم وجود قاعدة محفوظة، يُسمح بذلك لمدراء القسم والمجموعات. يتطلب تفعيل Incident Back Office وإضافة Incident Back Office نشطة.</value>
+  </data>
+  <data name="Permission.ManageIncidentLodging" xml:space="preserve">
+    <value>إدارة إقامة الحادث</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentLodging" xml:space="preserve">
+    <value>يسمح بإدارة منشآت الإقامة وكتل الغرف والمخزون الليلي وتخصيص الأسرّة. عند عدم وجود قاعدة محفوظة، يقتصر ذلك على مدراء القسم. يتطلب تفعيل Incident Back Office وإضافة Incident Back Office نشطة.</value>
+  </data>
+  <data name="Permission.ViewLodgingAssignmentDetail" xml:space="preserve">
+    <value>عرض تفاصيل تخصيص الإقامة</value>
+  </data>
+  <data name="PermissionHelp.ViewLodgingAssignmentDetail" xml:space="preserve">
+    <value>يسمح برؤية أرقام الغرف وقيود الإقامة في تخصيصات الأسرّة وقوائم توزيع الغرف. عند عدم وجود قاعدة محفوظة، يقتصر ذلك على مدراء القسم. يتطلب تفعيل Incident Back Office وإضافة Incident Back Office نشطة.</value>
+  </data>
+  <data name="Permission.ManageIncidentFeeding" xml:space="preserve">
+    <value>إدارة إطعام الحادث</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentFeeding" xml:space="preserve">
+    <value>يسمح بإدارة خطط الوجبات والطلب المتوقع وطلبيات الوجبات والوجبات المقدَّمة. عند عدم وجود قاعدة محفوظة، يُسمح بذلك لمدراء القسم والمجموعات. يتطلب تفعيل Incident Back Office وإضافة Incident Back Office نشطة.</value>
+  </data>
+  <data name="Permission.ManageIncidentServices" xml:space="preserve">
+    <value>إدارة خدمات الدعم</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentServices" xml:space="preserve">
+    <value>يسمح بطلب خدمات الدعم مثل الغسيل أو الاستحمام وتسجيلها. يقصره خيار «المجموعة فقط» على مجموعة المستخدم نفسه. عند عدم وجود قاعدة محفوظة، يُسمح بذلك لجميع الأعضاء. يتطلب تفعيل Incident Back Office وإضافة Incident Back Office نشطة.</value>
+  </data>
+  <data name="Permission.ManageIncidentGroundSupport" xml:space="preserve">
+    <value>إدارة الدعم الأرضي</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentGroundSupport" xml:space="preserve">
+    <value>يسمح بإدارة طلبات النقل والتحركات وخطط مسارات السفر والوقود. عند عدم وجود قاعدة محفوظة، يُسمح بذلك لمدراء القسم والمجموعات. يتطلب تفعيل Incident Back Office وإضافة Incident Back Office نشطة.</value>
+  </data>
+  <data name="Permission.ManageIncidentComms" xml:space="preserve">
+    <value>إدارة اتصالات الحادث</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentComms" xml:space="preserve">
+    <value>يسمح بإدارة خطة الاتصالات وتخصيصات أجهزة الراديو والأجهزة الأخرى. عند عدم وجود قاعدة محفوظة، يُسمح بذلك لمدراء القسم والمجموعات. يتطلب تفعيل Incident Back Office وإضافة Incident Back Office نشطة.</value>
+  </data>
+  <data name="Permission.ManageVendorCatalog" xml:space="preserve">
+    <value>إدارة كتالوج الموردين</value>
+  </data>
+  <data name="PermissionHelp.ManageVendorCatalog" xml:space="preserve">
+    <value>يسمح بإضافة الموردين وتعديلهم، وكذلك مواقعهم وقدراتهم وتوفرهم ومستندات الامتثال الخاصة بهم. عند عدم وجود قاعدة محفوظة، يُسمح بذلك لمدراء القسم والمجموعات. يتطلب تفعيل Incident Back Office وإضافة Incident Back Office نشطة.</value>
+  </data>
+  <data name="Permission.ViewVendorProtected" xml:space="preserve">
+    <value>عرض التفاصيل المحمية للموردين</value>
+  </data>
+  <data name="PermissionHelp.ViewVendorProtected" xml:space="preserve">
+    <value>يسمح برؤية المعرّفات الضريبية للموردين وتفاصيل التحويلات المالية إليهم. عند عدم وجود قاعدة محفوظة، يقتصر ذلك على مدراء القسم. يتطلب تفعيل Incident Back Office وإضافة Incident Back Office نشطة.</value>
+  </data>
+  <data name="Permission.EngageVendor" xml:space="preserve">
+    <value>التعاقد مع الموردين</value>
+  </data>
+  <data name="PermissionHelp.EngageVendor" xml:space="preserve">
+    <value>يسمح بالتعاقد مع الموردين في عملية تفعيل، وتسجيل التزامات السعة وعروض الأسعار، وإرسال روابط الموردين. عند عدم وجود قاعدة محفوظة، يقتصر ذلك على مدراء القسم. يتطلب تفعيل Incident Back Office وإضافة Incident Back Office نشطة.</value>
+  </data>
+  <data name="Permission.ManageIncidentProcurement" xml:space="preserve">
+    <value>إدارة مشتريات الحادث</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentProcurement" xml:space="preserve">
+    <value>يسمح بإدارة اتفاقيات الموردين وطلبات الشراء والاستلامات وفواتير الموردين وحزم الدفع. عند عدم وجود قاعدة محفوظة، يقتصر ذلك على مدراء القسم. يتطلب تفعيل Incident Business وإضافة Incident Back Office نشطة.</value>
+  </data>
+  <data name="Permission.CommitIncidentPurchase" xml:space="preserve">
+    <value>الالتزام بمشتريات الحادث</value>
+  </data>
+  <data name="PermissionHelp.CommitIncidentPurchase" xml:space="preserve">
+    <value>يسمح بتسجيل التزام مالي لعملية شراء؛ وهذا هو ضابط المشتري المفوَّض. عند عدم وجود قاعدة محفوظة، يقتصر ذلك على مدراء القسم. يتطلب تفعيل Incident Business وإضافة Incident Back Office نشطة.</value>
+  </data>
+  <data name="Permission.AcceptVendorInvoice" xml:space="preserve">
+    <value>قبول فواتير الموردين</value>
+  </data>
+  <data name="PermissionHelp.AcceptVendorInvoice" xml:space="preserve">
+    <value>يسمح بقبول فواتير الموردين للدفع بعد مطابقتها مع الاستلامات. عند عدم وجود قاعدة محفوظة، يقتصر ذلك على مدراء القسم. يتطلب تفعيل Incident Business وإضافة Incident Back Office نشطة.</value>
+  </data>
+  <data name="Permission.ManageIncidentBudget" xml:space="preserve">
+    <value>إدارة ميزانية الحادث</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentBudget" xml:space="preserve">
+    <value>يسمح بإدارة بنود الميزانية وتفويضات الإنفاق ورموز التمويل ومجموعات التكلفة. عند عدم وجود قاعدة محفوظة، يقتصر ذلك على مدراء القسم. يتطلب تفعيل Incident Business وإضافة Incident Back Office نشطة.</value>
+  </data>
+  <data name="Permission.AuthorizeIncidentFunding" xml:space="preserve">
+    <value>اعتماد تمويل الحادث</value>
+  </data>
+  <data name="PermissionHelp.AuthorizeIncidentFunding" xml:space="preserve">
+    <value>يسمح بالموافقة على اعتمادات التمويل لميزانية الحادث. عند عدم وجود قاعدة محفوظة، يقتصر ذلك على مدراء القسم. يتطلب تفعيل Incident Business وإضافة Incident Back Office نشطة.</value>
+  </data>
+  <data name="Permission.EnterIncidentTime" xml:space="preserve">
+    <value>إدخال وقت الحادث</value>
+  </data>
+  <data name="PermissionHelp.EnterIncidentTime" xml:space="preserve">
+    <value>يسمح بإدخال الوقت واستخدام المعدات والمصروفات. يقصره خيار «المجموعة فقط» على الأشخاص من مجموعة المستخدم نفسه. عند عدم وجود قاعدة محفوظة، يُسمح بذلك لمدراء القسم والمجموعات. يتطلب تفعيل Incident Business وإضافة Incident Back Office نشطة.</value>
+  </data>
+  <data name="Permission.CertifyIncidentTime" xml:space="preserve">
+    <value>المصادقة على وقت الحادث</value>
+  </data>
+  <data name="PermissionHelp.CertifyIncidentTime" xml:space="preserve">
+    <value>يسمح للمشرفين بالمصادقة على الوقت المُدخل قبل الاعتماد. يقصره خيار «المجموعة فقط» على الأشخاص من مجموعة المستخدم نفسه. عند عدم وجود قاعدة محفوظة، يُسمح بذلك لمدراء القسم والمجموعات. يتطلب تفعيل Incident Business وإضافة Incident Back Office نشطة.</value>
+  </data>
+  <data name="Permission.ApproveIncidentTime" xml:space="preserve">
+    <value>اعتماد وقت الحادث</value>
+  </data>
+  <data name="PermissionHelp.ApproveIncidentTime" xml:space="preserve">
+    <value>يسمح باعتماد الوقت المصادق عليه لاحتساب التكاليف والدفع. يقصره خيار «المجموعة فقط» على الأشخاص من مجموعة المستخدم نفسه. عند عدم وجود قاعدة محفوظة، يقتصر ذلك على مدراء القسم. يتطلب تفعيل Incident Business وإضافة Incident Back Office نشطة.</value>
+  </data>
+  <data name="Permission.ViewIncidentCost" xml:space="preserve">
+    <value>عرض تكلفة الحادث</value>
+  </data>
+  <data name="PermissionHelp.ViewIncidentCost" xml:space="preserve">
+    <value>يسمح برؤية معاملات التكلفة والمستحقات وتوقعات التكلفة اليومية. عند عدم وجود قاعدة محفوظة، يقتصر ذلك على مدراء القسم. يتطلب تفعيل Incident Business وإضافة Incident Back Office نشطة.</value>
+  </data>
+  <data name="Permission.ManageIncidentCost" xml:space="preserve">
+    <value>إدارة تكلفة الحادث</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentCost" xml:space="preserve">
+    <value>يسمح بتعديل سجلات التكلفة واتفاقيات تقاسم التكاليف وعمليات التوزيع، وتصدير تقارير التكلفة. عند عدم وجود قاعدة محفوظة، يقتصر ذلك على مدراء القسم. يتطلب تفعيل Incident Business وإضافة Incident Back Office نشطة.</value>
+  </data>
+  <data name="Permission.ManageIncidentClaims" xml:space="preserve">
+    <value>إدارة مطالبات الحادث</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentClaims" xml:space="preserve">
+    <value>يسمح بفتح المطالبات المتعلقة بالإصابة أو الضرر أو الخسارة ومعالجتها. عند عدم وجود قاعدة محفوظة، يقتصر ذلك على مدراء القسم. يتطلب تفعيل Incident Business وإضافة Incident Back Office نشطة.</value>
+  </data>
+  <data name="Permission.ViewClaimProtected" xml:space="preserve">
+    <value>عرض التفاصيل المحمية للمطالبات</value>
+  </data>
+  <data name="PermissionHelp.ViewClaimProtected" xml:space="preserve">
+    <value>يسمح برؤية البيانات المالية للمطالبات وملاحظات القضايا. عند عدم وجود قاعدة محفوظة، يقتصر ذلك على مدراء القسم. يتطلب تفعيل Incident Business وإضافة Incident Back Office نشطة.</value>
+  </data>
+  <data name="Permission.AssembleIncidentIap" xml:space="preserve">
+    <value>إعداد خطط عمل الحادث</value>
+  </data>
+  <data name="PermissionHelp.AssembleIncidentIap" xml:space="preserve">
+    <value>يسمح بإعداد خطة عمل الحادث: صفحاتها وترتيب الصفحات وقائمة التوزيع ومهمة الطباعة. يخضع اعتماد سجل الخطة وإنهاؤه لصلاحيات السجلات. عند عدم وجود قاعدة محفوظة، يقتصر ذلك على مدراء القسم. يتطلب تفعيل Incident Back Office وإضافة Incident Back Office نشطة.</value>
+  </data>
+  <data name="Permission.ViewCoordinationBoards" xml:space="preserve">
+    <value>عرض لوحات التنسيق</value>
+  </data>
+  <data name="PermissionHelp.ViewCoordinationBoards" xml:space="preserve">
+    <value>يسمح بقراءة لوحات التنسيق ومكتب الوضع. يقصره خيار «المجموعة فقط» على لوحات مجموعة المستخدم نفسه. عند عدم وجود قاعدة محفوظة، يُسمح بذلك لجميع الأعضاء. يتطلب تفعيل Incident Coordination وإضافة Incident Back Office نشطة.</value>
+  </data>
+  <data name="Permission.ManageCoordinationBoards" xml:space="preserve">
+    <value>إدارة لوحات التنسيق</value>
+  </data>
+  <data name="PermissionHelp.ManageCoordinationBoards" xml:space="preserve">
+    <value>يسمح بإنشاء لوحات التنسيق وتعديلها، وكذلك عناصرها ومكتب الوضع. يقصره خيار «المجموعة فقط» على لوحات مجموعة المستخدم نفسه. عند عدم وجود قاعدة محفوظة، يُسمح بذلك لمدراء القسم والمجموعات. يتطلب تفعيل Incident Coordination وإضافة Incident Back Office نشطة.</value>
+  </data>
+  <data name="Permission.ShareCoordinationBoards" xml:space="preserve">
+    <value>مشاركة لوحات التنسيق</value>
+  </data>
+  <data name="PermissionHelp.ShareCoordinationBoards" xml:space="preserve">
+    <value>يسمح بمشاركة لوحة تنسيق مع الجهات الشريكة. عند عدم وجود قاعدة محفوظة، يقتصر ذلك على مدراء القسم. يتطلب تفعيل Incident Coordination وإضافة Incident Back Office نشطة.</value>
+  </data>
 </root>

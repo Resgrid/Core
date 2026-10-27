@@ -715,6 +715,14 @@ namespace Resgrid.Services
 				}
 			}
 
+			// Incident Back Office triggers carry flat dotted variables (plan §13.7); nest the catalogued ones for the template.
+			if (Resgrid.Model.IncidentLogistics.IncidentBackOfficeWorkflowPayload.IsIncident((int)eventType))
+			{
+				var incidentEvent = TryDeserialize<RecordsWorkflowEvent>(eventPayloadJson);
+				var incidentPayload = incidentEvent?.Payload ?? new JObject();
+				IncidentLogistics.IncidentWorkflowContext.Apply(scriptObject, eventType, (variable, _) => incidentPayload[variable] is JToken token ? ToScriptValue(token) : null);
+			}
+
 			await AddCommonUserVariablesAsync(scriptObject, departmentId, triggeringUserId);
 
 			return scriptObject;

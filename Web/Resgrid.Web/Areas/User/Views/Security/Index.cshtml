@@ -461,6 +461,7 @@
                                         if (row.Type == PermissionTypes.ManageBids) { <tr><td colspan="5"><strong>@contractorLocalizer["ContractorBilling"]</strong></td></tr> }
                                         if (row.Type == PermissionTypes.ManageMutualAidReimbursement) { <tr><td colspan="5"><strong>@calOesLocalizer["CalOesMars"]</strong></td></tr> }
                                         if (row.Type == PermissionTypes.ViewInternalCosts) { <tr><td colspan="5"><strong>@workforceLocalizer["Workforce"]</strong></td></tr> }
+                                        if (row.Type == PermissionTypes.ViewIncidentBackOffice) { <tr><td colspan="5"><strong>@localizer["PermIncidentBackOfficeSectionHeader"]</strong><br /><small>@localizer["PermIncidentBackOfficeSectionNote"]</small></td></tr> }
                                         <tr data-record-perm="@row.PermissionType" data-record-el="@row.ElementId">
                                             <td>@RecordsPermissionLabel(row)</td>
                                             <td style="max-width: 350px">@RecordsPermissionNote(row)</td>

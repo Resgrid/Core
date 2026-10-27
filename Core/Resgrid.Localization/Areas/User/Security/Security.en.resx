@@ -1160,6 +1160,228 @@
   <data name="ApiKeyScopeUnitsRead" xml:space="preserve">
     <value>Read units and their statuses</value>
   </data>
+  <data name="PermIncidentBackOfficeSectionHeader" xml:space="preserve">
+    <value>Incident Back Office</value>
+  </data>
+  <data name="PermIncidentBackOfficeSectionNote" xml:space="preserve">
+    <value>These permissions apply only with an active Incident Back Office add-on. The finance rows also need Incident Business turned on, and the coordination board rows need Incident Coordination. Incident records themselves use the Records permissions above.</value>
+  </data>
+  <data name="PermRecordsViewIncidentBackOfficeLabel" xml:space="preserve">
+    <value>View Incident Back Office</value>
+  </data>
+  <data name="PermRecordsViewIncidentBackOfficeNote" xml:space="preserve">
+    <value>Allows opening the Incident Back Office desks and reading activations, periods, organization and logistics. Changes on each desk need that desk's own permission.</value>
+  </data>
+  <data name="PermRecordsManageIncidentActivationLabel" xml:space="preserve">
+    <value>Manage Incident Activation</value>
+  </data>
+  <data name="PermRecordsManageIncidentActivationNote" xml:space="preserve">
+    <value>Allows opening activations, adding them to a complex, and closing, sealing or reopening them.</value>
+  </data>
+  <data name="PermRecordsManageIncidentPeriodsLabel" xml:space="preserve">
+    <value>Manage Operational Periods</value>
+  </data>
+  <data name="PermRecordsManageIncidentPeriodsNote" xml:space="preserve">
+    <value>Allows creating and editing operational periods and approving their plan versions.</value>
+  </data>
+  <data name="PermRecordsManageIncidentPositionsLabel" xml:space="preserve">
+    <value>Manage Incident Positions</value>
+  </data>
+  <data name="PermRecordsManageIncidentPositionsNote" xml:space="preserve">
+    <value>Allows editing the position catalog, position assignments and team rosters.</value>
+  </data>
+  <data name="PermRecordsManageIncidentParticipantsLabel" xml:space="preserve">
+    <value>Manage Incident Participants</value>
+  </data>
+  <data name="PermRecordsManageIncidentParticipantsNote" xml:space="preserve">
+    <value>Allows enrolling and editing participants and sending their self-service links. The group-only box limits it to participants from the person's own group.</value>
+  </data>
+  <data name="PermRecordsViewParticipantSensitiveLabel" xml:space="preserve">
+    <value>View Participant Sensitive Details</value>
+  </data>
+  <data name="PermRecordsViewParticipantSensitiveNote" xml:space="preserve">
+    <value>Allows seeing participants' emergency contacts and their medical, accessibility, allergen and dietary details.</value>
+  </data>
+  <data name="PermRecordsCreateIncidentRequestLabel" xml:space="preserve">
+    <value>Create Resource Requests</value>
+  </data>
+  <data name="PermRecordsCreateIncidentRequestNote" xml:space="preserve">
+    <value>Allows creating resource requests and mission packages. The group-only box limits it to requests for the person's own group.</value>
+  </data>
+  <data name="PermRecordsApproveIncidentRequestLabel" xml:space="preserve">
+    <value>Approve Resource Requests</value>
+  </data>
+  <data name="PermRecordsApproveIncidentRequestNote" xml:space="preserve">
+    <value>Allows approving or rejecting resource requests. The group-only box limits it to requests from the person's own group.</value>
+  </data>
+  <data name="PermRecordsOrderIncidentRequestLabel" xml:space="preserve">
+    <value>Order Resource Requests</value>
+  </data>
+  <data name="PermRecordsOrderIncidentRequestNote" xml:space="preserve">
+    <value>Allows placing the order that fills an approved resource request, including calls against vendor agreements.</value>
+  </data>
+  <data name="PermRecordsReceiveIncidentRequestLabel" xml:space="preserve">
+    <value>Receive Resource Requests</value>
+  </data>
+  <data name="PermRecordsReceiveIncidentRequestNote" xml:space="preserve">
+    <value>Allows recording arrivals and receipts against filled requests. The group-only box limits it to the person's own group.</value>
+  </data>
+  <data name="PermRecordsManageIncidentFacilitiesLabel" xml:space="preserve">
+    <value>Manage Incident Facilities</value>
+  </data>
+  <data name="PermRecordsManageIncidentFacilitiesNote" xml:space="preserve">
+    <value>Allows managing incident facilities, their capacity, agreements and services.</value>
+  </data>
+  <data name="PermRecordsManageIncidentLodgingLabel" xml:space="preserve">
+    <value>Manage Incident Lodging</value>
+  </data>
+  <data name="PermRecordsManageIncidentLodgingNote" xml:space="preserve">
+    <value>Allows managing lodging properties, room blocks, nightly inventory and bed assignments.</value>
+  </data>
+  <data name="PermRecordsViewLodgingAssignmentDetailLabel" xml:space="preserve">
+    <value>View Lodging Assignment Details</value>
+  </data>
+  <data name="PermRecordsViewLodgingAssignmentDetailNote" xml:space="preserve">
+    <value>Allows seeing room numbers and lodging restrictions on bed assignments and rooming lists.</value>
+  </data>
+  <data name="PermRecordsManageIncidentFeedingLabel" xml:space="preserve">
+    <value>Manage Incident Feeding</value>
+  </data>
+  <data name="PermRecordsManageIncidentFeedingNote" xml:space="preserve">
+    <value>Allows managing meal plans, demand, meal orders and meals served.</value>
+  </data>
+  <data name="PermRecordsManageIncidentServicesLabel" xml:space="preserve">
+    <value>Manage Support Services</value>
+  </data>
+  <data name="PermRecordsManageIncidentServicesNote" xml:space="preserve">
+    <value>Allows requesting and recording support services such as laundry or showers. The group-only box limits it to the person's own group.</value>
+  </data>
+  <data name="PermRecordsManageIncidentGroundSupportLabel" xml:space="preserve">
+    <value>Manage Ground Support</value>
+  </data>
+  <data name="PermRecordsManageIncidentGroundSupportNote" xml:space="preserve">
+    <value>Allows managing transport requests and movements, travel itineraries and fuel.</value>
+  </data>
+  <data name="PermRecordsManageIncidentCommsLabel" xml:space="preserve">
+    <value>Manage Incident Communications</value>
+  </data>
+  <data name="PermRecordsManageIncidentCommsNote" xml:space="preserve">
+    <value>Allows managing the communications plan and radio and device assignments.</value>
+  </data>
+  <data name="PermRecordsManageVendorCatalogLabel" xml:space="preserve">
+    <value>Manage Vendor Catalog</value>
+  </data>
+  <data name="PermRecordsManageVendorCatalogNote" xml:space="preserve">
+    <value>Allows adding and editing vendors, their locations, capabilities, availability and compliance documents.</value>
+  </data>
+  <data name="PermRecordsViewVendorProtectedLabel" xml:space="preserve">
+    <value>View Vendor Protected Details</value>
+  </data>
+  <data name="PermRecordsViewVendorProtectedNote" xml:space="preserve">
+    <value>Allows seeing vendors' tax identifiers and remittance details.</value>
+  </data>
+  <data name="PermRecordsEngageVendorLabel" xml:space="preserve">
+    <value>Engage Vendors</value>
+  </data>
+  <data name="PermRecordsEngageVendorNote" xml:space="preserve">
+    <value>Allows engaging vendors on an activation, recording capacity commitments and quotes, and sending vendor links.</value>
+  </data>
+  <data name="PermRecordsManageIncidentProcurementLabel" xml:space="preserve">
+    <value>Manage Incident Procurement</value>
+  </data>
+  <data name="PermRecordsManageIncidentProcurementNote" xml:space="preserve">
+    <value>Allows managing vendor agreements, requisitions, receipts, vendor invoices and payment packages.</value>
+  </data>
+  <data name="PermRecordsCommitIncidentPurchaseLabel" xml:space="preserve">
+    <value>Commit Incident Purchases</value>
+  </data>
+  <data name="PermRecordsCommitIncidentPurchaseNote" xml:space="preserve">
+    <value>Allows recording a financial commitment for a purchase; this is the warranted-purchaser control.</value>
+  </data>
+  <data name="PermRecordsAcceptVendorInvoiceLabel" xml:space="preserve">
+    <value>Accept Vendor Invoices</value>
+  </data>
+  <data name="PermRecordsAcceptVendorInvoiceNote" xml:space="preserve">
+    <value>Allows accepting vendor invoices for payment after they are matched to receipts.</value>
+  </data>
+  <data name="PermRecordsManageIncidentBudgetLabel" xml:space="preserve">
+    <value>Manage Incident Budget</value>
+  </data>
+  <data name="PermRecordsManageIncidentBudgetNote" xml:space="preserve">
+    <value>Allows managing budget lines, spending delegations, funding codes and cost groups.</value>
+  </data>
+  <data name="PermRecordsAuthorizeIncidentFundingLabel" xml:space="preserve">
+    <value>Authorize Incident Funding</value>
+  </data>
+  <data name="PermRecordsAuthorizeIncidentFundingNote" xml:space="preserve">
+    <value>Allows approving funding authorizations for the incident budget.</value>
+  </data>
+  <data name="PermRecordsEnterIncidentTimeLabel" xml:space="preserve">
+    <value>Enter Incident Time</value>
+  </data>
+  <data name="PermRecordsEnterIncidentTimeNote" xml:space="preserve">
+    <value>Allows entering time, equipment use and expenses. The group-only box limits it to people from the person's own group.</value>
+  </data>
+  <data name="PermRecordsCertifyIncidentTimeLabel" xml:space="preserve">
+    <value>Certify Incident Time</value>
+  </data>
+  <data name="PermRecordsCertifyIncidentTimeNote" xml:space="preserve">
+    <value>Allows supervisors to certify entered time before approval. The group-only box limits it to people from the person's own group.</value>
+  </data>
+  <data name="PermRecordsApproveIncidentTimeLabel" xml:space="preserve">
+    <value>Approve Incident Time</value>
+  </data>
+  <data name="PermRecordsApproveIncidentTimeNote" xml:space="preserve">
+    <value>Allows approving certified time for costing and payment. The group-only box limits it to people from the person's own group.</value>
+  </data>
+  <data name="PermRecordsViewIncidentCostLabel" xml:space="preserve">
+    <value>View Incident Cost</value>
+  </data>
+  <data name="PermRecordsViewIncidentCostNote" xml:space="preserve">
+    <value>Allows seeing cost transactions, accruals and daily cost projections.</value>
+  </data>
+  <data name="PermRecordsManageIncidentCostLabel" xml:space="preserve">
+    <value>Manage Incident Cost</value>
+  </data>
+  <data name="PermRecordsManageIncidentCostNote" xml:space="preserve">
+    <value>Allows editing cost records, cost-share agreements and apportionment runs, and exporting cost reports.</value>
+  </data>
+  <data name="PermRecordsManageIncidentClaimsLabel" xml:space="preserve">
+    <value>Manage Incident Claims</value>
+  </data>
+  <data name="PermRecordsManageIncidentClaimsNote" xml:space="preserve">
+    <value>Allows opening and working claims for injury, damage or loss.</value>
+  </data>
+  <data name="PermRecordsViewClaimProtectedLabel" xml:space="preserve">
+    <value>View Claim Protected Details</value>
+  </data>
+  <data name="PermRecordsViewClaimProtectedNote" xml:space="preserve">
+    <value>Allows seeing claim financials and case notes.</value>
+  </data>
+  <data name="PermRecordsAssembleIncidentIapLabel" xml:space="preserve">
+    <value>Assemble Incident Action Plans</value>
+  </data>
+  <data name="PermRecordsAssembleIncidentIapNote" xml:space="preserve">
+    <value>Allows assembling the incident action plan: its pages, page order, distribution list and print job. Approving and finalizing the plan record uses the Records permissions.</value>
+  </data>
+  <data name="PermRecordsViewCoordinationBoardsLabel" xml:space="preserve">
+    <value>View Coordination Boards</value>
+  </data>
+  <data name="PermRecordsViewCoordinationBoardsNote" xml:space="preserve">
+    <value>Allows reading coordination boards and the situation desk. The group-only box limits it to boards of the person's own group.</value>
+  </data>
+  <data name="PermRecordsManageCoordinationBoardsLabel" xml:space="preserve">
+    <value>Manage Coordination Boards</value>
+  </data>
+  <data name="PermRecordsManageCoordinationBoardsNote" xml:space="preserve">
+    <value>Allows creating and editing coordination boards, their items and the situation desk. The group-only box limits it to boards of the person's own group.</value>
+  </data>
+  <data name="PermRecordsShareCoordinationBoardsLabel" xml:space="preserve">
+    <value>Share Coordination Boards</value>
+  </data>
+  <data name="PermRecordsShareCoordinationBoardsNote" xml:space="preserve">
+    <value>Allows sharing a coordination board with partner agencies.</value>
+  </data>
 </root>
 
 

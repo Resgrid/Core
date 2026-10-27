@@ -1,0 +1,64 @@
+@model Resgrid.Model.IncidentLogistics.IncidentActivationContext
+@using Resgrid.Model.IncidentLogistics
+@using Resgrid.Web.Areas.User.Models.IncidentBackOffice
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.IncidentBackOffice.IncidentBackOffice> localizer
+@*
+    The incident context bar (plan §14.5): the selected activation and short code, complex membership, the current operational period in
+    the incident's own zone, the authority badge, EXERCISE where it applies, and snapshot freshness in words, not only colour.
+*@
+@{
+    var time = ViewData["IboTime"] as IncidentTime;
+    var activation = Model.Activation;
+    var status = (IncidentActivationStatuses)activation.Status;
+}
+@if (activation.IsExercise)
+{
+    <div class="alert alert-danger m-t-sm m-b-none text-center" role="status"><strong><i class="fa fa-flask" aria-hidden="true"></i> @localizer["ExerciseBanner"]</strong></div>
+}
+<div class="ibo-context-bar" role="region" aria-label="@localizer["IncidentContext"]">
+    <div class="ibo-context-item">
+        <a asp-controller="IncidentBackOffice" asp-action="Activation" asp-route-area="User" asp-route-id="@activation.IncidentActivationId"><strong>@activation.Name</strong></a>
+        <span class="label label-default">@activation.ShortCode</span>
+        <span class="label @(status switch { IncidentActivationStatuses.Active => "label-primary", IncidentActivationStatuses.Demobilizing => "label-warning", IncidentActivationStatuses.Closed => "label-success", IncidentActivationStatuses.Sealed => "label-inverse", _ => "label-default" })">@localizer["Enum.IncidentActivationStatuses." + status]</span>
+        @if (activation.IsExercise)
+        {
+            <span class="label label-danger">@localizer["Exercise"]</span>
+        }
+    </div>
+    @if (Model.Parent != null)
+    {
+        <div class="ibo-context-item"><i class="fa fa-object-group" aria-hidden="true"></i> @localizer["ComplexMember"]: <a asp-controller="IncidentBackOffice" asp-action="Command" asp-route-area="User" asp-route-aid="@Model.Parent.IncidentActivationId">@Model.Parent.Name</a></div>
+    }
+    else if (Model.Members.Count > 0)
+    {
+        <div class="ibo-context-item"><i class="fa fa-object-group" aria-hidden="true"></i> @localizer["ComplexOf", Model.Members.Count]</div>
+    }
+    <div class="ibo-context-item">
+        <i class="fa fa-clock-o" aria-hidden="true"></i>
+        @if (Model.CurrentPeriod != null)
+        {
+            <span>@localizer["PeriodShort", Model.CurrentPeriod.Number]: @time?.Format(Model.CurrentPeriod.StartOn) – @time?.Time(Model.CurrentPeriod.EndOn)</span>
+        }
+        else
+        {
+            <span class="text-muted">@localizer["NoCurrentPeriod"]</span>
+        }
+        <span class="text-muted small">(@time?.ZoneId)</span>
+    </div>
+    <div class="ibo-context-item">
+        <i class="fa fa-gavel" aria-hidden="true"></i> @(Model.Authority?.Name ?? localizer["AuthorityResgrid"].Value)
+    </div>
+    <div class="ibo-context-item">
+        @if (Model.IsStale)
+        {
+            <span class="text-warning"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @(Model.SnapshotOn.HasValue ? localizer["SnapshotStale", time?.Format(Model.SnapshotOn)].Value : localizer["SnapshotPending"].Value)</span>
+        }
+        else
+        {
+            <span class="text-muted"><i class="fa fa-refresh" aria-hidden="true"></i> @localizer["SnapshotAsOf", time?.Format(Model.SnapshotOn)]</span>
+        }
+    </div>
+    <div class="ibo-context-item ibo-context-switch">
+        <a asp-controller="IncidentBackOffice" asp-action="Index" asp-route-area="User" class="btn btn-xs btn-default"><i class="fa fa-exchange" aria-hidden="true"></i> @localizer["SwitchIncident"]</a>
+    </div>
+</div>

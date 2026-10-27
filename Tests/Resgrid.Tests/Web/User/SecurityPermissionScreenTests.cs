@@ -531,6 +531,49 @@ namespace Resgrid.Tests.Web.User
 		}
 
 		[Test]
+		public async Task Index_offers_every_Incident_Back_Office_permission_at_its_catalog_default()
+		{
+			// Thirty-six permissions (80-110, 120-124): the screen row, SetPermission's allow-list and ClaimsLogic must agree
+			// on the no-row default, the Everyone offer and whether the group-only box means anything.
+			var model = await IndexModel();
+
+			Resgrid.Model.IncidentLogistics.IncidentBackOfficePermissionCatalog.All.Should().HaveCount(36);
+			foreach (var descriptor in Resgrid.Model.IncidentLogistics.IncidentBackOfficePermissionCatalog.All)
+			{
+				var name = descriptor.Type.ToString();
+				var entry = PermissionScreenCatalog.Get(descriptor.Type);
+				entry.Should().NotBeNull(name);
+				entry.NoRowValue.Should().Be((int)descriptor.NoRowDefault, name);
+				entry.LockToGroupOffered.Should().Be(descriptor.LockToGroupMeaningful, name);
+				entry.Actions.Contains((int)PermissionActions.Everyone).Should().Be(descriptor.EveryoneOffered, name);
+				entry.Actions.Should().Contain((int)PermissionActions.DepartmentAndGroupAdminsAndSelectRoles, name);
+
+				var row = model.RecordsPermissions.Single(r => r.Type == descriptor.Type);
+				row.HasRow.Should().BeFalse(name);
+				row.Value.Should().Be((int)descriptor.NoRowDefault, name);
+				row.ShowLockToGroup.Should().Be(descriptor.LockToGroupMeaningful, name);
+			}
+		}
+
+		[TestCase(PermissionTypes.CommitIncidentPurchase, (int)PermissionActions.Everyone)]
+		[TestCase(PermissionTypes.ViewParticipantSensitive, (int)PermissionActions.Everyone)]
+		[TestCase(PermissionTypes.ShareCoordinationBoards, (int)PermissionActions.Everyone)]
+		public async Task Incident_Back_Office_admin_anchored_rows_refuse_Everyone(PermissionTypes type, int action)
+		{
+			StatusOf(await _controller.SetPermission((int)type, action, null)).Should().Be(400);
+			VerifyNothingSaved();
+		}
+
+		[Test]
+		public async Task Incident_Back_Office_group_lock_saves_only_where_it_is_evaluated()
+		{
+			StatusOf(await _controller.SetPermission((int)PermissionTypes.ManageIncidentParticipants, (int)PermissionActions.DepartmentAndGroupAdmins, true)).Should().Be(200);
+			VerifySaved(PermissionTypes.ManageIncidentParticipants, (int)PermissionActions.DepartmentAndGroupAdmins, null, true);
+
+			StatusOf(await _controller.SetPermission((int)PermissionTypes.ManageIncidentLodging, (int)PermissionActions.DepartmentAndGroupAdmins, true)).Should().Be(400);
+		}
+
+		[Test]
 		public async Task Every_action_the_screen_offers_is_accepted()
 		{
 			foreach (var entry in PermissionScreenCatalog.All)

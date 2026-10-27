@@ -1,0 +1,34 @@
+@model Resgrid.Web.Areas.User.Models.IncidentBackOffice.IncidentSeedView
+@using Resgrid.Web.Areas.User.Models.IncidentBackOffice
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.IncidentBackOffice.IncidentBackOffice> localizer
+@{
+    var title = localizer["SeedCatalog." + Model.Catalog].Value;
+    ViewBag.Title = "Resgrid | " + title;
+    ViewData["Title"] = title;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/IncidentBackOffice/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("~/Areas/User/Views/IncidentBackOffice/_Message.cshtml", (IncidentDeskView)Model)
+    <div class="ibox float-e-margins">
+        <div class="ibox-content">
+            <p>@localizer["SeedCatalogIntro"]</p>
+            <form method="post" asp-action="Seed" class="ibo-action">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="catalog" value="@((int)Model.Catalog)" />
+                <button type="submit" class="btn btn-primary"><i class="fa fa-download" aria-hidden="true"></i> @title</button>
+                <a asp-action="Index" class="btn btn-default">@localizer["Cancel"]</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/incident-back-office.css" asp-append-version="true" />
+}
+@section Scripts {
+    <script src="~/js/app/internal/incidentbackoffice/incident-back-office.js" asp-append-version="true"></script>
+}

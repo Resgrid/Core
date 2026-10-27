@@ -1,0 +1,67 @@
+@model Resgrid.Web.Areas.User.Models.IncidentBackOffice.IncidentTeamReadinessView
+@using Resgrid.Model.IncidentLogistics
+@using Resgrid.Web.Areas.User.Models.IncidentBackOffice
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.IncidentBackOffice.IncidentBackOffice> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["ProposeActivation"];
+    ViewData["Title"] = localizer["ProposeActivation"].Value;
+    ViewData["Subtitle"] = localizer["ProposeActivationIntro"].Value;
+    var bySlot = Model.Proposals.GroupBy(p => p.Slot?.DepartmentIncidentTeamSlotId ?? string.Empty).ToList();
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/IncidentBackOffice/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("~/Areas/User/Views/IncidentBackOffice/_Message.cshtml", (IncidentDeskView)Model)
+    <div class="ibox float-e-margins">
+        <div class="ibox-content">
+            <form method="post" asp-action="Activate" class="ibo-action">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="teamId" value="@Model.TeamId" />
+                <input type="hidden" name="activationId" value="@Model.ActivationId" />
+                <table class="table table-striped rgw-table">
+                    <thead><tr><th scope="col">@localizer["Field.IncidentPositionDefinitionId"]</th><th scope="col">@localizer["Candidate"]</th></tr></thead>
+                    <tbody>
+                        @foreach (var slot in bySlot)
+                        {
+                            var first = slot.First();
+                            var id = "ibo-slot-" + slot.Key;
+                            var preferred = slot.FirstOrDefault(p => p.Candidate != null && p.ConflictActivationName == null && p.Readiness is IncidentSlotReadiness.Qualified or IncidentSlotReadiness.QualifiedAsTrainee);
+                            <tr>
+                                <td><label for="@id" class="m-b-none">@(first.Position != null ? first.Position.Code + " · " + first.Position.Name : slot.Key)</label></td>
+                                <td>
+                                    <select id="@id" name="slot_@slot.Key" class="form-control input-sm">
+                                        <option value="">@localizer["LeaveGap"]</option>
+                                        @foreach (var proposal in slot.Where(p => p.Candidate != null))
+                                        {
+                                            var text = proposal.CandidateName + " — " + LedgerText.Status(localizer, typeof(IncidentSlotReadiness), (int)proposal.Readiness) + (proposal.ConflictActivationName != null ? " — " + localizer["ConflictWith", proposal.ConflictActivationName].Value : string.Empty);
+                                            <option value="@proposal.Candidate.DepartmentIncidentTeamCandidateId" selected="@(proposal == preferred)">@text</option>
+                                        }
+                                    </select>
+                                </td>
+                            </tr>
+                        }
+                        @if (bySlot.Count == 0)
+                        {
+                            <tr><td colspan="2" class="text-muted">@localizer["NoRows"]</td></tr>
+                        }
+                    </tbody>
+                </table>
+                @if (bySlot.Count > 0)
+                {
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-users" aria-hidden="true"></i> @localizer["ActivateTeam"]</button>
+                }
+                <a asp-action="Readiness" asp-route-teamId="@Model.TeamId" class="btn btn-default">@localizer["Cancel"]</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/incident-back-office.css" asp-append-version="true" />
+}
+@section Scripts {
+    <script src="~/js/app/internal/incidentbackoffice/incident-back-office.js" asp-append-version="true"></script>
+}

@@ -178,6 +178,32 @@ namespace Resgrid.Tests.Rms
 		}
 
 		[Test]
+		public void SecurityResx_CarriesLabelAndNoteForEveryIncidentBackOfficeRowInEveryLanguage()
+		{
+			// The Incident Back Office rows render through the view's default branch (Security resources), so a missing key
+			// would show the raw PermRecords* name; the section header introduces the block (it is the add-on's product name, which
+			// stays in English like Workforce and Business Operations, so only the rows and the note must differ from English).
+			var root = LocalizationRoot();
+			var rows = RecordsPermissionRows.Build(null, Resgrid.Model.IncidentLogistics.IncidentBackOfficePermissionCatalog.All);
+			var english = Load(Path.Combine(root, "Areas", "User", "Security", "Security.en.resx"));
+
+			rows.Should().HaveCount(36);
+			foreach (var language in Languages)
+			{
+				var entries = Load(Path.Combine(root, "Areas", "User", "Security", $"Security.{language}.resx"));
+
+				foreach (var key in new[] { "PermIncidentBackOfficeSectionHeader", "PermIncidentBackOfficeSectionNote" }
+					.Concat(rows.SelectMany(r => new[] { r.LabelKey, r.NoteKey })))
+				{
+					entries.Should().ContainKey(key, $"{language} must carry {key}");
+					entries[key].Should().NotBeNullOrWhiteSpace($"{language} {key}");
+					if (language != "en" && key != "PermIncidentBackOfficeSectionHeader")
+						entries[key].Should().NotBe(english[key], $"{language} {key} must be translated, not an English copy");
+				}
+			}
+		}
+
+		[Test]
 		public void SecurityResx_CarriesEveryPermissionOptionLabelInEveryLanguage()
 		{
 			var root = LocalizationRoot();

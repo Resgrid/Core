@@ -1,0 +1,63 @@
+@using Resgrid.Web.Areas.User.Models.IncidentBackOffice
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.IncidentBackOffice.IncidentBackOffice> localizer
+@*
+    Page heading shared by every Incident Back Office desk (plan §14.7): title, breadcrumb (Home → Incident Back Office → section →
+    page), the permission-gated header actions, the section's tabs, then the incident context bar on every incident-scoped page.
+
+    ViewData["Title"]     heading and last crumb      ViewData["Subtitle"]  optional line under the breadcrumb
+    ViewData["IboTab"]    the active tab's controller ViewData["IboSection"] set by the controller base
+*@
+@{
+    var title = (string)ViewData["Title"] ?? localizer["IncidentBackOffice"].Value;
+    var subtitle = (string)ViewData["Subtitle"];
+    var sectionKey = (string)ViewData["IboSection"] ?? "Command";
+    var section = IncidentBackOfficeNavigation.For(sectionKey);
+    var access = ViewData["IboAccess"] as Resgrid.Model.IncidentBackOfficeAccess ?? Resgrid.Model.IncidentBackOfficeAccess.Denied;
+    var context = ViewData["IboContext"] as Resgrid.Model.IncidentLogistics.IncidentActivationContext;
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+    var activeTab = (string)ViewData["IboTab"] ?? currentController;
+}
+<div class="row wrapper border-bottom white-bg page-heading rgw-page-heading">
+    <div class="col-sm-12">
+        <h2>@title</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            <li><a asp-controller="IncidentBackOffice" asp-action="Index" asp-route-area="User">@localizer["IncidentBackOffice"]</a></li>
+            <li>@localizer[section.LabelKey]</li>
+            <li class="active"><strong>@title</strong></li>
+        </ol>
+        @if (!string.IsNullOrEmpty(subtitle))
+        {
+            <small class="text-muted">@subtitle</small>
+        }
+    </div>
+    @await Html.PartialAsync("_WorkspaceHeaderActions")
+    <div class="col-sm-12 rgw-module-navigation">
+        <ul class="nav nav-pills rgw-module-tabs" role="tablist" aria-label="@localizer[section.LabelKey]">
+            @foreach (var item in section.Items.Where(i => IncidentBackOfficeNavigation.Allowed(i, access)))
+            {
+                var active = item.Controller == activeTab && (item.Action == "Index" || item.Action == currentAction);
+                <li class="nav-item @(active ? "active" : null)">
+                    <a asp-controller="@item.Controller" asp-action="@item.Action" asp-route-area="User" aria-current="@(active ? "page" : "false")">
+                        <i class="fa @item.Icon" aria-hidden="true"></i> @localizer[item.LabelKey]
+                    </a>
+                </li>
+            }
+        </ul>
+    </div>
+</div>
+@if (access.IsLapsed)
+{
+    <div class="alert alert-warning m-t-sm m-b-none" role="status">
+        <i class="fa fa-lock" aria-hidden="true"></i> @localizer["LapsedBanner"]
+        @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+        {
+            <a asp-controller="IncidentBackOfficeBilling" asp-action="Index" asp-route-area="User" class="alert-link">@localizer["RenewAddon"]</a>
+        }
+    </div>
+}
+@if (context?.Activation != null)
+{
+    @await Html.PartialAsync("~/Areas/User/Views/IncidentBackOffice/_ContextBar.cshtml", context)
+}

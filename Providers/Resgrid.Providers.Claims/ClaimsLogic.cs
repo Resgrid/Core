@@ -1670,7 +1670,7 @@ namespace Resgrid.Providers.Claims
 		{
 			AddClaimOnce(identity, ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.View);
 
-			foreach (var descriptor in RecordPermissionCatalog.All.Concat(ChecklistPermissionCatalog.All).Concat(WorkOrderPermissionCatalog.All).Concat(InvoicingPermissionCatalog.All).Concat(CertificationPermissionCatalog.All).Concat(DeploymentPermissionCatalog.All).Concat(WorkforcePermissionCatalog.All).Concat(Model.Onboarding.DepartmentImportPermissionCatalog.All))
+			foreach (var descriptor in RecordPermissionCatalog.All.Concat(ChecklistPermissionCatalog.All).Concat(WorkOrderPermissionCatalog.All).Concat(InvoicingPermissionCatalog.All).Concat(CertificationPermissionCatalog.All).Concat(DeploymentPermissionCatalog.All).Concat(WorkforcePermissionCatalog.All).Concat(Model.Onboarding.DepartmentImportPermissionCatalog.All).Concat(Model.IncidentLogistics.IncidentBackOfficePermissionCatalog.All))
 			{
 				var grants = RecordClaimGrants(descriptor.Type);
 				if (grants.Length == 0)
@@ -1797,6 +1797,203 @@ namespace Resgrid.Providers.Claims
 						new RecordClaimGrant(ResgridClaimTypes.Resources.MutualAidReimbursement, ResgridClaimTypes.Actions.Update),
 						new RecordClaimGrant(ResgridClaimTypes.Resources.MutualAidReimbursement, ResgridClaimTypes.Actions.Submit),
 						new RecordClaimGrant(ResgridClaimTypes.Resources.MutualAidReimbursement, ResgridClaimTypes.Actions.Reconcile)
+					};
+				// Incident Back Office (registry §4C, plan §15.1): ledger, catalog, dashboard and board claims. Reading the desks needs
+				// IncidentBackOffice:View; each Manage* permission adds its resource's write verbs. Record authorization stays RMS 50-67.
+				case PermissionTypes.ViewIncidentBackOffice:
+					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentBackOffice, ResgridClaimTypes.Actions.View) };
+				case PermissionTypes.ManageIncidentActivation:
+					return new[]
+					{
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentBackOffice, ResgridClaimTypes.Actions.View),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentBackOffice, ResgridClaimTypes.Actions.Create),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentBackOffice, ResgridClaimTypes.Actions.Approve)
+					};
+				case PermissionTypes.ManageIncidentPeriods:
+					return new[]
+					{
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentBackOffice, ResgridClaimTypes.Actions.View),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentBackOffice, ResgridClaimTypes.Actions.Update)
+					};
+				case PermissionTypes.ManageIncidentPositions:
+					return new[]
+					{
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentPosition, ResgridClaimTypes.Actions.View),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentPosition, ResgridClaimTypes.Actions.Create),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentPosition, ResgridClaimTypes.Actions.Update)
+					};
+				case PermissionTypes.ManageIncidentParticipants:
+					return new[]
+					{
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentParticipant, ResgridClaimTypes.Actions.View),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentParticipant, ResgridClaimTypes.Actions.Create),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentParticipant, ResgridClaimTypes.Actions.Update)
+					};
+				case PermissionTypes.ViewParticipantSensitive:
+					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentParticipantSensitive, ResgridClaimTypes.Actions.View) };
+				case PermissionTypes.CreateIncidentRequest:
+					return new[]
+					{
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentRequest, ResgridClaimTypes.Actions.View),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentRequest, ResgridClaimTypes.Actions.Create)
+					};
+				case PermissionTypes.ApproveIncidentRequest:
+					return new[]
+					{
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentRequest, ResgridClaimTypes.Actions.View),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentRequest, ResgridClaimTypes.Actions.Approve)
+					};
+				case PermissionTypes.OrderIncidentRequest:
+					return new[]
+					{
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentRequest, ResgridClaimTypes.Actions.View),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentRequest, ResgridClaimTypes.Actions.Order)
+					};
+				case PermissionTypes.ReceiveIncidentRequest:
+					return new[]
+					{
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentRequest, ResgridClaimTypes.Actions.View),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentRequest, ResgridClaimTypes.Actions.Update)
+					};
+				case PermissionTypes.ManageIncidentFacilities:
+					return new[]
+					{
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentFacility, ResgridClaimTypes.Actions.View),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentFacility, ResgridClaimTypes.Actions.Update)
+					};
+				case PermissionTypes.ManageIncidentLodging:
+					return new[]
+					{
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentLodging, ResgridClaimTypes.Actions.View),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentLodging, ResgridClaimTypes.Actions.Update)
+					};
+				case PermissionTypes.ViewLodgingAssignmentDetail:
+					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentLodgingDetail, ResgridClaimTypes.Actions.View) };
+				case PermissionTypes.ManageIncidentFeeding:
+					return new[]
+					{
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentFeeding, ResgridClaimTypes.Actions.View),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentFeeding, ResgridClaimTypes.Actions.Update)
+					};
+				case PermissionTypes.ManageIncidentServices:
+					return new[]
+					{
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentService, ResgridClaimTypes.Actions.View),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentService, ResgridClaimTypes.Actions.Update)
+					};
+				case PermissionTypes.ManageIncidentGroundSupport:
+					return new[]
+					{
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentGroundSupport, ResgridClaimTypes.Actions.View),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentGroundSupport, ResgridClaimTypes.Actions.Update)
+					};
+				case PermissionTypes.ManageIncidentComms:
+					return new[]
+					{
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentComms, ResgridClaimTypes.Actions.View),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentComms, ResgridClaimTypes.Actions.Update)
+					};
+				case PermissionTypes.ManageVendorCatalog:
+					return new[]
+					{
+						new RecordClaimGrant(ResgridClaimTypes.Resources.Vendor, ResgridClaimTypes.Actions.View),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.Vendor, ResgridClaimTypes.Actions.Create),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.Vendor, ResgridClaimTypes.Actions.Update)
+					};
+				case PermissionTypes.ViewVendorProtected:
+					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.VendorProtected, ResgridClaimTypes.Actions.View) };
+				case PermissionTypes.EngageVendor:
+					return new[]
+					{
+						new RecordClaimGrant(ResgridClaimTypes.Resources.Vendor, ResgridClaimTypes.Actions.View),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.Vendor, ResgridClaimTypes.Actions.Order)
+					};
+				case PermissionTypes.ManageIncidentProcurement:
+					return new[]
+					{
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentProcurement, ResgridClaimTypes.Actions.View),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentProcurement, ResgridClaimTypes.Actions.Create),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentProcurement, ResgridClaimTypes.Actions.Update)
+					};
+				case PermissionTypes.CommitIncidentPurchase:
+					return new[]
+					{
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentProcurement, ResgridClaimTypes.Actions.View),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentProcurement, ResgridClaimTypes.Actions.Commit)
+					};
+				case PermissionTypes.AcceptVendorInvoice:
+					return new[]
+					{
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentProcurement, ResgridClaimTypes.Actions.View),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentProcurement, ResgridClaimTypes.Actions.Approve)
+					};
+				case PermissionTypes.ManageIncidentBudget:
+					return new[]
+					{
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentBudget, ResgridClaimTypes.Actions.View),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentBudget, ResgridClaimTypes.Actions.Update)
+					};
+				case PermissionTypes.AuthorizeIncidentFunding:
+					return new[]
+					{
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentBudget, ResgridClaimTypes.Actions.View),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentBudget, ResgridClaimTypes.Actions.Approve)
+					};
+				case PermissionTypes.EnterIncidentTime:
+					return new[]
+					{
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentTime, ResgridClaimTypes.Actions.View),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentTime, ResgridClaimTypes.Actions.Create)
+					};
+				case PermissionTypes.CertifyIncidentTime:
+					return new[]
+					{
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentTime, ResgridClaimTypes.Actions.View),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentTime, ResgridClaimTypes.Actions.Certify)
+					};
+				case PermissionTypes.ApproveIncidentTime:
+					return new[]
+					{
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentTime, ResgridClaimTypes.Actions.View),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentTime, ResgridClaimTypes.Actions.Approve)
+					};
+				case PermissionTypes.ViewIncidentCost:
+					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentCost, ResgridClaimTypes.Actions.View) };
+				case PermissionTypes.ManageIncidentCost:
+					return new[]
+					{
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentCost, ResgridClaimTypes.Actions.View),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentCost, ResgridClaimTypes.Actions.Update),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentCost, ResgridClaimTypes.Actions.Export)
+					};
+				case PermissionTypes.ManageIncidentClaims:
+					return new[]
+					{
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentClaim, ResgridClaimTypes.Actions.View),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentClaim, ResgridClaimTypes.Actions.Update)
+					};
+				case PermissionTypes.ViewClaimProtected:
+					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentClaimProtected, ResgridClaimTypes.Actions.View) };
+				case PermissionTypes.AssembleIncidentIap:
+					return new[]
+					{
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentIap, ResgridClaimTypes.Actions.View),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.IncidentIap, ResgridClaimTypes.Actions.Update)
+					};
+				case PermissionTypes.ViewCoordinationBoards:
+					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.CoordinationBoard, ResgridClaimTypes.Actions.View) };
+				case PermissionTypes.ManageCoordinationBoards:
+					return new[]
+					{
+						new RecordClaimGrant(ResgridClaimTypes.Resources.CoordinationBoard, ResgridClaimTypes.Actions.View),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.CoordinationBoard, ResgridClaimTypes.Actions.Create),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.CoordinationBoard, ResgridClaimTypes.Actions.Update)
+					};
+				case PermissionTypes.ShareCoordinationBoards:
+					return new[]
+					{
+						new RecordClaimGrant(ResgridClaimTypes.Resources.CoordinationBoard, ResgridClaimTypes.Actions.View),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.CoordinationBoard, ResgridClaimTypes.Actions.Share)
 					};
 				// Department Import (registry 72-73): department administrators only, never offered on the Security screen.
 				case PermissionTypes.ManageDepartmentImport:

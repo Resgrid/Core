@@ -7125,4 +7125,568 @@
   <data name="FieldHelp.DepartmentTermOverride.Singular" xml:space="preserve">
     <value>Dla modułu słowo jednostki oznaczające jeden element, np. Zespół dla Jednostek przemianowanych na Zespoły, używane na przyciskach i w nagłówkach, takich jak Nowy zespół; najwyżej 50 znaków. Puste jest wyprowadzane z nazwy. Typy rejestrów go nie mają.</value>
   </data>
+  <data name="Area.incidents" xml:space="preserve">
+    <value>Incident Back Office</value>
+  </data>
+  <data name="AreaPurpose.incidents" xml:space="preserve">
+    <value>Aktywacja, planowanie, logistyka, finanse i tablice koordynacyjne dla dużych lub długotrwałych zdarzeń, planowanych wydarzeń i ćwiczeń.</value>
+  </data>
+  <data name="AreaValue.incidents" xml:space="preserve">
+    <value>Prowadź zaplecze dużego zdarzenia w ramach jednej aktywacji: kto w nim uczestniczy, gdzie śpi i je, co zamówiono i ile to kosztowało.</value>
+  </data>
+  <data name="AreaExample.incidents" xml:space="preserve">
+    <value>Aktywacja do pożaru lasu melduje przybywające zespoły gaśnicze, rezerwuje dla nich noclegi i posiłki oraz rozlicza każdy zakup względem budżetu zdarzenia.</value>
+  </data>
+  <data name="ModuleAdoption.incidents" xml:space="preserve">
+    <value>Wymaga dodatku Incident Back Office. Stanowiska finansowe wymagają też włączenia Incident Business, a tablice koordynacyjne – Incident Coordination. Przed pierwszym rzeczywistym zdarzeniem przeprowadź aktywację ćwiczebną.</value>
+  </data>
+  <data name="Ui.AddonRequired.IncidentBackOffice" xml:space="preserve">
+    <value>Wymaga Incident Back Office</value>
+  </data>
+  <data name="Module.IncidentBackOfficeDisabled" xml:space="preserve">
+    <value>Dostępność Incident Back Office</value>
+  </data>
+  <data name="ModuleHelp.IncidentBackOfficeDisabled" xml:space="preserve">
+    <value>Kontroluje dostępność stanowisk Incident Back Office. Wyłączenie tego modułu usuwa je z nawigacji i blokuje ich działanie; nie usuwa to aktywacji ani ich rekordów. Włączenie nadal wymaga dodatku Incident Back Office, wdrożenia i uprawnień.</value>
+  </data>
+  <data name="Module.IncidentBusinessDisabled" xml:space="preserve">
+    <value>Dostępność finansów zdarzenia</value>
+  </data>
+  <data name="ModuleHelp.IncidentBusinessDisabled" xml:space="preserve">
+    <value>Kontroluje stanowiska finansowe zdarzenia: zakupy, budżet, czas pracy, koszty, roszczenia, odbudowę, przyjmowanie dokumentów i zamknięcie. Wyłączenie ukrywa te stanowiska i blokuje ich działanie bez usuwania ich rekordów. Ma zastosowanie tylko przy włączonym Incident Back Office, a włączenie nadal wymaga wdrożenia Incident Business i uprawnień.</value>
+  </data>
+  <data name="Module.IncidentCoordinationDisabled" xml:space="preserve">
+    <value>Dostępność tablic koordynacyjnych</value>
+  </data>
+  <data name="ModuleHelp.IncidentCoordinationDisabled" xml:space="preserve">
+    <value>Kontroluje tablice koordynacyjne i stanowisko sytuacyjne. Wyłączenie ukrywa je i blokuje ich działanie bez usuwania tablic ani ich elementów. Ma zastosowanie tylko przy włączonym Incident Back Office, a włączenie nadal wymaga wdrożenia Incident Coordination i uprawnień.</value>
+  </data>
+  <data name="Setting.IncidentBackOfficeDefaults" xml:space="preserve">
+    <value>Ustawienia domyślne Incident Back Office</value>
+  </data>
+  <data name="SettingHelp.IncidentBackOfficeDefaults" xml:space="preserve">
+    <value>Wartości domyślne dla nowych aktywacji: jak stare mogą być dane ze źródła dowodzenia zdarzeniem lub dyspozytorni, zanim ich kafelki zostaną wyszarzone, waluta i system miar (puste pole oznacza użycie kraju działu), długość okresu operacyjnego oraz to, czy ćwiczenia mogą powiadamiać zewnętrznych uczestników i dostawców.</value>
+  </data>
+  <data name="Setting.IncidentEnrollmentPolicy" xml:space="preserve">
+    <value>Zasady rejestracji w zdarzeniu</value>
+  </data>
+  <data name="SettingHelp.IncidentEnrollmentPolicy" xml:space="preserve">
+    <value>W jaki sposób osoby i jednostki zauważone przy zdarzeniu stają się uczestnikami (tryb rejestracji), czy osoby jeszcze niezarejestrowane są liczone jako osobna grupa w prognozach wyżywienia, noclegów i wody oraz jak długa lub jak stara może być kolejka rejestracji, zanim zostanie zgłoszony alert.</value>
+  </data>
+  <data name="Setting.IncidentNotificationRouting" xml:space="preserve">
+    <value>Kierowanie powiadomień zdarzenia</value>
+  </data>
+  <data name="SettingHelp.IncidentNotificationRouting" xml:space="preserve">
+    <value>Które funkcje w zdarzeniu otrzymują poszczególne powiadomienia Incident Back Office. W chwili wysłania powiadomienia funkcje są przypisywane do osób, które aktualnie je pełnią; powiadomienie bez skonfigurowanych funkcji trafia do swoich wbudowanych funkcji domyślnych.</value>
+  </data>
+  <data name="Setting.IncidentForecastPolicy" xml:space="preserve">
+    <value>Zasady prognozowania zdarzenia</value>
+  </data>
+  <data name="SettingHelp.IncidentForecastPolicy" xml:space="preserve">
+    <value>Współczynniki i okna alertów dla prognoz logistycznych: rezerwa posiłków i wody, woda pitna na osobę dziennie, rezerwa miejsc noclegowych, czy przewidywane upływy limitów czasu przydziału obniżają prognozy, czas realizacji zastępstw, okna wyprzedzenia dla przybyć, upływu limitów czasu i terminów zamówień posiłków oraz progi pojemności obiektów i liczby dni zapasu wody.</value>
+  </data>
+  <data name="Setting.IncidentAssignmentRulePolicy" xml:space="preserve">
+    <value>Zasady przydziałów w zdarzeniu</value>
+  </data>
+  <data name="SettingHelp.IncidentAssignmentRulePolicy" xml:space="preserve">
+    <value>Pakiet zasad pracy i odpoczynku oraz limity przydziałów używane do oznaczania osób zbliżających się do swoich limitów: maksymalna liczba dni przydziału, dni podróży, maksymalne przedłużenie, maksymalna liczba godzin pracy na zmianę i wymagany odpoczynek za każdą przepracowaną godzinę.</value>
+  </data>
+  <data name="Setting.IncidentVendorPolicy" xml:space="preserve">
+    <value>Zasady dotyczące dostawców zdarzenia</value>
+  </data>
+  <data name="SettingHelp.IncidentVendorPolicy" xml:space="preserve">
+    <value>Jak często dostawcy muszą być ponownie weryfikowani, jak długo trwa rezerwacja zdolności dostawczych oraz z jakim wyprzedzeniem oznaczane są wygasające dokumenty zgodności i rezerwacje zdolności dostawczych.</value>
+  </data>
+  <data name="Setting.IncidentSelfServicePolicy" xml:space="preserve">
+    <value>Zasady samoobsługi w zdarzeniu</value>
+  </data>
+  <data name="SettingHelp.IncidentSelfServicePolicy" xml:space="preserve">
+    <value>Linki samoobsługowe dla uczestników i dostawców: przez ile dni link pozostaje ważny po zakończeniu przydziału lub zaangażowania dostawcy, czy przed wyświetleniem szczegółów noclegu lub podróży wymagany jest kod jednorazowy oraz czy linki dla dostawców wymagają zweryfikowanego kontaktu dostawcy.</value>
+  </data>
+  <data name="Setting.IncidentFinancePolicy" xml:space="preserve">
+    <value>Zasady finansowe zdarzenia</value>
+  </data>
+  <data name="SettingHelp.IncidentFinancePolicy" xml:space="preserve">
+    <value>Mechanizmy kontroli finansowej: obsługa jednoosobowa (jedna osoba może wnioskować, zatwierdzać, zaciągać zobowiązania, przyjmować i akceptować tylko po zarejestrowanym potwierdzeniu), dodatkowe domeny nadawców dla skrzynki przyjęć, progi budżetu, pułapu umów i dziennych wydatków, limity zaległości w przyjmowaniu dokumentów, ostrzeżenia o terminach roszczeń i odbudowy, okno wykrywania dzielenia zakupów oraz próg mikrozakupów.</value>
+  </data>
+  <data name="Setting.IncidentRetentionPolicy" xml:space="preserve">
+    <value>Zasady przechowywania danych zdarzenia</value>
+  </data>
+  <data name="SettingHelp.IncidentRetentionPolicy" xml:space="preserve">
+    <value>Jak długo migawki operacyjne są przechowywane po zamknięciu zdarzenia, przez ile lat przechowywane są zapisy księgowe i jak długo przechowywane są wygasłe linki samoobsługowe. Raporty zdarzenia podlegają natomiast zasadom przechowywania modułu Raporty.</value>
+  </data>
+  <data name="Setting.CoordinationBoardDefaults" xml:space="preserve">
+    <value>Ustawienia domyślne tablic koordynacyjnych</value>
+  </data>
+  <data name="SettingHelp.CoordinationBoardDefaults" xml:space="preserve">
+    <value>Wartości domyślne dla tablic koordynacyjnych: kiedy element uznaje się za nieaktualny, czy zamknięcia dróg i pojemność punktów schronienia wywołują alarmy, przez ile dni obowiązuje udostępnienie tablicy oraz z jakim wyprzedzeniem oznaczany jest element z nadchodzącym terminem.</value>
+  </data>
+  <data name="Feature.incident-activation" xml:space="preserve">
+    <value>Aktywacja zdarzenia i dowodzenie</value>
+  </data>
+  <data name="FeaturePurpose.incident-activation" xml:space="preserve">
+    <value>Otwórz aktywację dla dużego zdarzenia, planowanego wydarzenia lub ćwiczeń i śledź ją ze stanowiska dowodzenia.</value>
+  </data>
+  <data name="FeatureSetup.incident-activation" xml:space="preserve">
+    <value>Przejrzyj ustawienia Incident Back Office, a następnie otwórz aktywację ćwiczebną.</value>
+  </data>
+  <data name="Feature.incident-planning" xml:space="preserve">
+    <value>Planowanie, organizacja i meldowanie</value>
+  </data>
+  <data name="FeaturePurpose.incident-planning" xml:space="preserve">
+    <value>Okresy operacyjne i wersje planu, struktura organizacyjna zdarzenia i funkcje, uczestnicy oraz meldowanie.</value>
+  </data>
+  <data name="FeatureSetup.incident-planning" xml:space="preserve">
+    <value>Utwórz katalog funkcji i obsady zespołów, a następnie zamelduj uczestników podczas ćwiczeń.</value>
+  </data>
+  <data name="Feature.incident-logistics" xml:space="preserve">
+    <value>Logistyka zdarzenia</value>
+  </data>
+  <data name="FeaturePurpose.incident-logistics" xml:space="preserve">
+    <value>Zapotrzebowania na zasoby, obiekty, zakwaterowanie, wyżywienie, woda i usługi wsparcia wraz z dostawcami i planem wsparcia.</value>
+  </data>
+  <data name="FeatureSetup.incident-logistics" xml:space="preserve">
+    <value>Dodaj dostawców zakwaterowania, wyżywienia, wody i transportu, a następnie przejrzyj zasady prognozowania.</value>
+  </data>
+  <data name="Feature.incident-finance" xml:space="preserve">
+    <value>Finanse zdarzenia</value>
+  </data>
+  <data name="FeaturePurpose.incident-finance" xml:space="preserve">
+    <value>Zakupy, budżet, czas pracy, koszty i roszczenia związane ze zdarzeniem, z rozdziałem obowiązków.</value>
+  </data>
+  <data name="FeatureSetup.incident-finance" xml:space="preserve">
+    <value>Włącz Incident Business, przejrzyj zasady finansowe, a następnie wprowadź budżet zdarzenia.</value>
+  </data>
+  <data name="Feature.coordination-boards" xml:space="preserve">
+    <value>Tablice koordynacyjne</value>
+  </data>
+  <data name="FeaturePurpose.coordination-boards" xml:space="preserve">
+    <value>Wspólne tablice dla zamknięć dróg, punktów schronienia i innych elementów koordynowanych z instytucjami partnerskimi.</value>
+  </data>
+  <data name="FeatureSetup.coordination-boards" xml:space="preserve">
+    <value>Włącz Incident Coordination, przejrzyj ustawienia domyślne tablic, a następnie utwórz tablicę.</value>
+  </data>
+  <data name="Feature.incident-open" xml:space="preserve">
+    <value>Otwórz zdarzenie</value>
+  </data>
+  <data name="FeaturePurpose.incident-open" xml:space="preserve">
+    <value>Rozpocznij aktywację dla zdarzenia, planowanego wydarzenia lub ćwiczeń, opcjonalnie powiązaną ze zgłoszeniem lub nadrzędnym kompleksem zdarzeń.</value>
+  </data>
+  <data name="Feature.incident-command-desk" xml:space="preserve">
+    <value>Stanowisko dowodzenia</value>
+  </data>
+  <data name="FeaturePurpose.incident-command-desk" xml:space="preserve">
+    <value>Status jednej aktywacji, obraz operacyjny, aktualność danych i otwarte zadania w jednym miejscu.</value>
+  </data>
+  <data name="Feature.incident-operations" xml:space="preserve">
+    <value>Stanowisko operacyjne</value>
+  </data>
+  <data name="FeaturePurpose.incident-operations" xml:space="preserve">
+    <value>Kto uczestniczy w zdarzeniu, jaki ma status wsparcia i funkcję oraz zasoby według statusu wsparcia.</value>
+  </data>
+  <data name="Feature.incident-settings" xml:space="preserve">
+    <value>Ustawienia Incident Back Office</value>
+  </data>
+  <data name="FeaturePurpose.incident-settings" xml:space="preserve">
+    <value>Zasady działu dotyczące aktywacji, rejestracji, kierowania powiadomień, prognoz, przydziałów, dostawców, linków samoobsługowych, finansów, przechowywania danych i tablic.</value>
+  </data>
+  <data name="Feature.incident-organization" xml:space="preserve">
+    <value>Struktura organizacyjna zdarzenia</value>
+  </data>
+  <data name="FeaturePurpose.incident-organization" xml:space="preserve">
+    <value>Schemat organizacyjny aktywacji i osoby przypisane do poszczególnych funkcji.</value>
+  </data>
+  <data name="Feature.incident-positions" xml:space="preserve">
+    <value>Katalog funkcji</value>
+  </data>
+  <data name="FeaturePurpose.incident-positions" xml:space="preserve">
+    <value>Funkcje w zdarzeniu obsadzane przez Twój dział oraz kompetencje wymagane dla każdej z nich.</value>
+  </data>
+  <data name="Feature.incident-teams" xml:space="preserve">
+    <value>Zespoły zdarzenia</value>
+  </data>
+  <data name="FeaturePurpose.incident-teams" xml:space="preserve">
+    <value>Stałe obsady zespołów z rotacjami, miejscami i kwalifikującymi się kandydatami.</value>
+  </data>
+  <data name="Feature.incident-participants" xml:space="preserve">
+    <value>Uczestnicy</value>
+  </data>
+  <data name="FeaturePurpose.incident-participants" xml:space="preserve">
+    <value>Osoby wspierające aktywację wraz z ich kwalifikacjami, macierzystymi organizacjami i linkami samoobsługowymi.</value>
+  </data>
+  <data name="Feature.incident-check-in" xml:space="preserve">
+    <value>Meldowanie</value>
+  </data>
+  <data name="FeaturePurpose.incident-check-in" xml:space="preserve">
+    <value>Meldowanie i wymeldowywanie osób i zasobów oraz śledzenie ich statusu, przemieszczeń i przedłużeń przydziałów.</value>
+  </data>
+  <data name="Feature.incident-iap" xml:space="preserve">
+    <value>Plan działań w zdarzeniu</value>
+  </data>
+  <data name="FeaturePurpose.incident-iap" xml:space="preserve">
+    <value>Kompletuj plan działań w zdarzeniu dla każdego okresu operacyjnego.</value>
+  </data>
+  <data name="Feature.incident-authority" xml:space="preserve">
+    <value>Pełnomocnictwa w zdarzeniu</value>
+  </data>
+  <data name="FeaturePurpose.incident-authority" xml:space="preserve">
+    <value>Pełnomocnictwa według obszarów, profil uprawnień kopiowany do każdej aktywacji oraz elementy pozostające do uzgodnienia.</value>
+  </data>
+  <data name="Feature.incident-demob" xml:space="preserve">
+    <value>Demobilizacja</value>
+  </data>
+  <data name="FeaturePurpose.incident-demob" xml:space="preserve">
+    <value>Plany i listy kontrolne demobilizacji przy zwalnianiu osób i zasobów.</value>
+  </data>
+  <data name="Feature.support-plan" xml:space="preserve">
+    <value>Plan wsparcia kryzysowego</value>
+  </data>
+  <data name="FeaturePurpose.support-plan" xml:space="preserve">
+    <value>Plan wsparcia kryzysowego Twojego działu: obszary wsparcia i preferowani dostawcy, kopiowane do każdej aktywacji.</value>
+  </data>
+  <data name="Feature.incident-requests" xml:space="preserve">
+    <value>Zapotrzebowania na zasoby</value>
+  </data>
+  <data name="FeaturePurpose.incident-requests" xml:space="preserve">
+    <value>Pakiety misji i zapotrzebowania na zasoby od zatwierdzenia przez realizację i przybycie aż po przyjęcie.</value>
+  </data>
+  <data name="Feature.incident-facilities" xml:space="preserve">
+    <value>Obiekty zdarzenia</value>
+  </data>
+  <data name="FeaturePurpose.incident-facilities" xml:space="preserve">
+    <value>Bazy, obszary koncentracji i inne obiekty zdarzenia wraz z pojemnością, umowami i usługami.</value>
+  </data>
+  <data name="Feature.incident-lodging" xml:space="preserve">
+    <value>Zakwaterowanie</value>
+  </data>
+  <data name="FeaturePurpose.incident-lodging" xml:space="preserve">
+    <value>Obiekty noclegowe, pule pokoi, dostępność na poszczególne noce, przydziały miejsc noclegowych i listy zakwaterowania.</value>
+  </data>
+  <data name="Feature.incident-feeding" xml:space="preserve">
+    <value>Wyżywienie</value>
+  </data>
+  <data name="FeaturePurpose.incident-feeding" xml:space="preserve">
+    <value>Plany posiłków, prognozowane zapotrzebowanie, zamówienia posiłków i faktycznie wydane posiłki.</value>
+  </data>
+  <data name="Feature.incident-water" xml:space="preserve">
+    <value>Woda</value>
+  </data>
+  <data name="FeaturePurpose.incident-water" xml:space="preserve">
+    <value>Plany zaopatrzenia w wodę pitną, bieżące zapasy i dostawy.</value>
+  </data>
+  <data name="Feature.incident-services" xml:space="preserve">
+    <value>Usługi wsparcia</value>
+  </data>
+  <data name="FeaturePurpose.incident-services" xml:space="preserve">
+    <value>Usługi wsparcia, takie jak pralnia, prysznice czy sanitariaty, wraz z ich zamówieniami, działaniami i zasobami.</value>
+  </data>
+  <data name="Feature.incident-ground-support" xml:space="preserve">
+    <value>Wsparcie transportowe</value>
+  </data>
+  <data name="FeaturePurpose.incident-ground-support" xml:space="preserve">
+    <value>Zlecenia i przejazdy transportowe, plany podróży i paliwo.</value>
+  </data>
+  <data name="Feature.incident-communications" xml:space="preserve">
+    <value>Łączność w zdarzeniu</value>
+  </data>
+  <data name="FeaturePurpose.incident-communications" xml:space="preserve">
+    <value>Plan łączności aktywacji oraz przydziały radiotelefonów i urządzeń.</value>
+  </data>
+  <data name="Feature.vendor-catalog" xml:space="preserve">
+    <value>Katalog dostawców</value>
+  </data>
+  <data name="FeaturePurpose.vendor-catalog" xml:space="preserve">
+    <value>Dostawcy wraz z lokalizacjami, możliwościami, okresami dostępności i dokumentami zgodności.</value>
+  </data>
+  <data name="Feature.incident-vendors" xml:space="preserve">
+    <value>Zaangażowanie dostawców</value>
+  </data>
+  <data name="FeaturePurpose.incident-vendors" xml:space="preserve">
+    <value>Dostawcy zaangażowani w aktywację wraz z ich zobowiązaniami dotyczącymi zdolności dostawczych i wycenami.</value>
+  </data>
+  <data name="Feature.incident-procurement" xml:space="preserve">
+    <value>Zakupy w zdarzeniu</value>
+  </data>
+  <data name="FeaturePurpose.incident-procurement" xml:space="preserve">
+    <value>Umowy z dostawcami, zapotrzebowania zakupowe i zatwierdzenia, zobowiązania, przyjęcia, faktury dostawców i pakiety płatności.</value>
+  </data>
+  <data name="Feature.incident-budget" xml:space="preserve">
+    <value>Budżet zdarzenia</value>
+  </data>
+  <data name="FeaturePurpose.incident-budget" xml:space="preserve">
+    <value>Pozycje budżetowe, autoryzacje finansowania, delegacje uprawnień do wydatków, kody finansowania i grupy kosztów.</value>
+  </data>
+  <data name="Feature.incident-time" xml:space="preserve">
+    <value>Czas pracy w zdarzeniu</value>
+  </data>
+  <data name="FeaturePurpose.incident-time" xml:space="preserve">
+    <value>Ewidencja czasu pracy i korekty, użycie sprzętu i wydatki, z poświadczaniem i zatwierdzaniem.</value>
+  </data>
+  <data name="Feature.incident-cost" xml:space="preserve">
+    <value>Koszty zdarzenia</value>
+  </data>
+  <data name="FeaturePurpose.incident-cost" xml:space="preserve">
+    <value>Transakcje kosztowe, naliczenia, dzienne prognozy kosztów i podział kosztów współdzielonych.</value>
+  </data>
+  <data name="Feature.incident-claims" xml:space="preserve">
+    <value>Roszczenia w zdarzeniu</value>
+  </data>
+  <data name="FeaturePurpose.incident-claims" xml:space="preserve">
+    <value>Roszczenia z tytułu obrażeń, szkód lub strat wynikających ze zdarzenia.</value>
+  </data>
+  <data name="Feature.incident-recovery" xml:space="preserve">
+    <value>Odbudowa po katastrofie</value>
+  </data>
+  <data name="FeaturePurpose.incident-recovery" xml:space="preserve">
+    <value>Ogłoszenia stanu klęski, projekty odbudowy i ich terminy.</value>
+  </data>
+  <data name="Feature.incident-intake" xml:space="preserve">
+    <value>Przyjmowanie dokumentów zdarzenia</value>
+  </data>
+  <data name="FeaturePurpose.incident-intake" xml:space="preserve">
+    <value>Dokumenty i paragony wysłane do skrzynki przyjęć zdarzenia, oczekujące na zarchiwizowanie.</value>
+  </data>
+  <data name="Feature.incident-closeout" xml:space="preserve">
+    <value>Zamknięcie zdarzenia</value>
+  </data>
+  <data name="FeaturePurpose.incident-closeout" xml:space="preserve">
+    <value>Lista kontrolna zamknięcia, która finalizuje rozliczenia zdarzenia.</value>
+  </data>
+  <data name="Feature.incident-situation" xml:space="preserve">
+    <value>Stanowisko sytuacyjne</value>
+  </data>
+  <data name="FeaturePurpose.incident-situation" xml:space="preserve">
+    <value>Stan infrastruktury krytycznej, otwarte działania, decyzje i elementy sytuacji naniesione na mapę.</value>
+  </data>
+  <data name="Feature.addon-incidents" xml:space="preserve">
+    <value>Incident Back Office</value>
+  </data>
+  <data name="FeaturePurpose.addon-incidents" xml:space="preserve">
+    <value>Dodatek Incident Back Office: aktywacja, planowanie, logistyka, finanse i tablice koordynacyjne dla dużych zdarzeń.</value>
+  </data>
+  <data name="FeatureValue.addon-incidents" xml:space="preserve">
+    <value>Prowadź zaplecze długotrwałego zdarzenia w jednym miejscu zamiast w arkuszach kalkulacyjnych, notatkach z łączności radiowej i e-mailach.</value>
+  </data>
+  <data name="FeatureExample.addon-incidents" xml:space="preserve">
+    <value>Rezerwuj noclegi i posiłki dla przybywających załóg i rozliczaj każdy zakup względem budżetu zdarzenia.</value>
+  </data>
+  <data name="FeatureAdoption.addon-incidents" xml:space="preserve">
+    <value>Finanse zdarzenia i tablice koordynacyjne włącza się osobno. Raporty zdarzenia pozostają w module Raporty i podlegają jego uprawnieniom. Nie gwarantuje się żadnego zwrotu kosztów.</value>
+  </data>
+  <data name="Permission.ViewIncidentBackOffice" xml:space="preserve">
+    <value>Przeglądanie Incident Back Office</value>
+  </data>
+  <data name="PermissionHelp.ViewIncidentBackOffice" xml:space="preserve">
+    <value>Umożliwia otwieranie stanowisk Incident Back Office i odczyt aktywacji, okresów, struktury organizacyjnej i logistyki. Zmiany na każdym stanowisku wymagają osobnego uprawnienia tego stanowiska. Bez zapisanej zasady mogą to robić wszyscy członkowie. Wymaga włączenia Incident Back Office i aktywnego dodatku Incident Back Office.</value>
+  </data>
+  <data name="Permission.ManageIncidentActivation" xml:space="preserve">
+    <value>Zarządzanie aktywacją zdarzenia</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentActivation" xml:space="preserve">
+    <value>Umożliwia otwieranie aktywacji, dodawanie ich do kompleksu zdarzeń oraz ich zamykanie, pieczętowanie i ponowne otwieranie. Bez zapisanej zasady mogą to robić tylko administratorzy działu. Wymaga włączenia Incident Back Office i aktywnego dodatku Incident Back Office.</value>
+  </data>
+  <data name="Permission.ManageIncidentPeriods" xml:space="preserve">
+    <value>Zarządzanie okresami operacyjnymi</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentPeriods" xml:space="preserve">
+    <value>Umożliwia tworzenie i edytowanie okresów operacyjnych oraz zatwierdzanie wersji ich planów. Bez zapisanej zasady mogą to robić administratorzy działu i grup. Wymaga włączenia Incident Back Office i aktywnego dodatku Incident Back Office.</value>
+  </data>
+  <data name="Permission.ManageIncidentPositions" xml:space="preserve">
+    <value>Zarządzanie funkcjami w zdarzeniu</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentPositions" xml:space="preserve">
+    <value>Umożliwia edytowanie katalogu funkcji, przydziałów do funkcji i obsad zespołów. Bez zapisanej zasady mogą to robić administratorzy działu i grup. Wymaga włączenia Incident Back Office i aktywnego dodatku Incident Back Office.</value>
+  </data>
+  <data name="Permission.ManageIncidentParticipants" xml:space="preserve">
+    <value>Zarządzanie uczestnikami zdarzenia</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentParticipants" xml:space="preserve">
+    <value>Umożliwia rejestrowanie i edytowanie uczestników oraz wysyłanie im linków samoobsługowych. Pole Tylko grupa ogranicza to do uczestników z własnej grupy użytkownika. Bez zapisanej zasady mogą to robić administratorzy działu i grup. Wymaga włączenia Incident Back Office i aktywnego dodatku Incident Back Office.</value>
+  </data>
+  <data name="Permission.ViewParticipantSensitive" xml:space="preserve">
+    <value>Przeglądanie danych wrażliwych uczestników</value>
+  </data>
+  <data name="PermissionHelp.ViewParticipantSensitive" xml:space="preserve">
+    <value>Umożliwia wgląd w kontakty alarmowe uczestników oraz ich dane medyczne, dotyczące dostępności, alergenów i diety. Bez zapisanej zasady mogą to robić tylko administratorzy działu. Wymaga włączenia Incident Back Office i aktywnego dodatku Incident Back Office.</value>
+  </data>
+  <data name="Permission.CreateIncidentRequest" xml:space="preserve">
+    <value>Tworzenie zapotrzebowań na zasoby</value>
+  </data>
+  <data name="PermissionHelp.CreateIncidentRequest" xml:space="preserve">
+    <value>Umożliwia tworzenie zapotrzebowań na zasoby i pakietów misji. Pole Tylko grupa ogranicza to do zapotrzebowań dla własnej grupy użytkownika. Bez zapisanej zasady mogą to robić administratorzy działu i grup. Wymaga włączenia Incident Back Office i aktywnego dodatku Incident Back Office.</value>
+  </data>
+  <data name="Permission.ApproveIncidentRequest" xml:space="preserve">
+    <value>Zatwierdzanie zapotrzebowań na zasoby</value>
+  </data>
+  <data name="PermissionHelp.ApproveIncidentRequest" xml:space="preserve">
+    <value>Umożliwia zatwierdzanie lub odrzucanie zapotrzebowań na zasoby. Pole Tylko grupa ogranicza to do zapotrzebowań z własnej grupy użytkownika. Bez zapisanej zasady mogą to robić tylko administratorzy działu. Wymaga włączenia Incident Back Office i aktywnego dodatku Incident Back Office.</value>
+  </data>
+  <data name="Permission.OrderIncidentRequest" xml:space="preserve">
+    <value>Zamawianie zasobów z zapotrzebowań</value>
+  </data>
+  <data name="PermissionHelp.OrderIncidentRequest" xml:space="preserve">
+    <value>Umożliwia złożenie zamówienia realizującego zatwierdzone zapotrzebowanie na zasoby, w tym zamówień w ramach umów z dostawcami. Bez zapisanej zasady mogą to robić tylko administratorzy działu. Wymaga włączenia Incident Back Office i aktywnego dodatku Incident Back Office.</value>
+  </data>
+  <data name="Permission.ReceiveIncidentRequest" xml:space="preserve">
+    <value>Przyjmowanie zasobów z zapotrzebowań</value>
+  </data>
+  <data name="PermissionHelp.ReceiveIncidentRequest" xml:space="preserve">
+    <value>Umożliwia rejestrowanie przybyć i przyjęć dla zrealizowanych zapotrzebowań. Pole Tylko grupa ogranicza to do własnej grupy użytkownika. Bez zapisanej zasady mogą to robić administratorzy działu i grup. Wymaga włączenia Incident Back Office i aktywnego dodatku Incident Back Office.</value>
+  </data>
+  <data name="Permission.ManageIncidentFacilities" xml:space="preserve">
+    <value>Zarządzanie obiektami zdarzenia</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentFacilities" xml:space="preserve">
+    <value>Umożliwia zarządzanie obiektami zdarzenia, ich pojemnością, umowami i usługami. Bez zapisanej zasady mogą to robić administratorzy działu i grup. Wymaga włączenia Incident Back Office i aktywnego dodatku Incident Back Office.</value>
+  </data>
+  <data name="Permission.ManageIncidentLodging" xml:space="preserve">
+    <value>Zarządzanie zakwaterowaniem w zdarzeniu</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentLodging" xml:space="preserve">
+    <value>Umożliwia zarządzanie obiektami noclegowymi, pulami pokoi, dostępnością na poszczególne noce i przydziałami miejsc noclegowych. Bez zapisanej zasady mogą to robić tylko administratorzy działu. Wymaga włączenia Incident Back Office i aktywnego dodatku Incident Back Office.</value>
+  </data>
+  <data name="Permission.ViewLodgingAssignmentDetail" xml:space="preserve">
+    <value>Przeglądanie szczegółów przydziałów zakwaterowania</value>
+  </data>
+  <data name="PermissionHelp.ViewLodgingAssignmentDetail" xml:space="preserve">
+    <value>Umożliwia wgląd w numery pokoi i ograniczenia dotyczące zakwaterowania w przydziałach miejsc noclegowych i listach zakwaterowania. Bez zapisanej zasady mogą to robić tylko administratorzy działu. Wymaga włączenia Incident Back Office i aktywnego dodatku Incident Back Office.</value>
+  </data>
+  <data name="Permission.ManageIncidentFeeding" xml:space="preserve">
+    <value>Zarządzanie wyżywieniem w zdarzeniu</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentFeeding" xml:space="preserve">
+    <value>Umożliwia zarządzanie planami posiłków, zapotrzebowaniem, zamówieniami posiłków i wydanymi posiłkami. Bez zapisanej zasady mogą to robić administratorzy działu i grup. Wymaga włączenia Incident Back Office i aktywnego dodatku Incident Back Office.</value>
+  </data>
+  <data name="Permission.ManageIncidentServices" xml:space="preserve">
+    <value>Zarządzanie usługami wsparcia</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentServices" xml:space="preserve">
+    <value>Umożliwia zamawianie i rejestrowanie usług wsparcia, takich jak pralnia czy prysznice. Pole Tylko grupa ogranicza to do własnej grupy użytkownika. Bez zapisanej zasady mogą to robić wszyscy członkowie. Wymaga włączenia Incident Back Office i aktywnego dodatku Incident Back Office.</value>
+  </data>
+  <data name="Permission.ManageIncidentGroundSupport" xml:space="preserve">
+    <value>Zarządzanie wsparciem transportowym</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentGroundSupport" xml:space="preserve">
+    <value>Umożliwia zarządzanie zleceniami i przejazdami transportowymi, planami podróży i paliwem. Bez zapisanej zasady mogą to robić administratorzy działu i grup. Wymaga włączenia Incident Back Office i aktywnego dodatku Incident Back Office.</value>
+  </data>
+  <data name="Permission.ManageIncidentComms" xml:space="preserve">
+    <value>Zarządzanie łącznością w zdarzeniu</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentComms" xml:space="preserve">
+    <value>Umożliwia zarządzanie planem łączności oraz przydziałami radiotelefonów i urządzeń. Bez zapisanej zasady mogą to robić administratorzy działu i grup. Wymaga włączenia Incident Back Office i aktywnego dodatku Incident Back Office.</value>
+  </data>
+  <data name="Permission.ManageVendorCatalog" xml:space="preserve">
+    <value>Zarządzanie katalogiem dostawców</value>
+  </data>
+  <data name="PermissionHelp.ManageVendorCatalog" xml:space="preserve">
+    <value>Umożliwia dodawanie i edytowanie dostawców, ich lokalizacji, możliwości, dostępności i dokumentów zgodności. Bez zapisanej zasady mogą to robić administratorzy działu i grup. Wymaga włączenia Incident Back Office i aktywnego dodatku Incident Back Office.</value>
+  </data>
+  <data name="Permission.ViewVendorProtected" xml:space="preserve">
+    <value>Przeglądanie chronionych danych dostawców</value>
+  </data>
+  <data name="PermissionHelp.ViewVendorProtected" xml:space="preserve">
+    <value>Umożliwia wgląd w identyfikatory podatkowe dostawców i ich dane do przelewu. Bez zapisanej zasady mogą to robić tylko administratorzy działu. Wymaga włączenia Incident Back Office i aktywnego dodatku Incident Back Office.</value>
+  </data>
+  <data name="Permission.EngageVendor" xml:space="preserve">
+    <value>Angażowanie dostawców</value>
+  </data>
+  <data name="PermissionHelp.EngageVendor" xml:space="preserve">
+    <value>Umożliwia angażowanie dostawców w aktywację, rejestrowanie zobowiązań dotyczących zdolności dostawczych i wycen oraz wysyłanie linków dla dostawców. Bez zapisanej zasady mogą to robić tylko administratorzy działu. Wymaga włączenia Incident Back Office i aktywnego dodatku Incident Back Office.</value>
+  </data>
+  <data name="Permission.ManageIncidentProcurement" xml:space="preserve">
+    <value>Zarządzanie zakupami w zdarzeniu</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentProcurement" xml:space="preserve">
+    <value>Umożliwia zarządzanie umowami z dostawcami, zapotrzebowaniami zakupowymi, przyjęciami, fakturami dostawców i pakietami płatności. Bez zapisanej zasady mogą to robić tylko administratorzy działu. Wymaga włączenia Incident Business i aktywnego dodatku Incident Back Office.</value>
+  </data>
+  <data name="Permission.CommitIncidentPurchase" xml:space="preserve">
+    <value>Zaciąganie zobowiązań zakupowych w zdarzeniu</value>
+  </data>
+  <data name="PermissionHelp.CommitIncidentPurchase" xml:space="preserve">
+    <value>Umożliwia rejestrowanie zobowiązania finansowego dla zakupu; jest to kontrola osoby upoważnionej do dokonywania zakupów. Bez zapisanej zasady mogą to robić tylko administratorzy działu. Wymaga włączenia Incident Business i aktywnego dodatku Incident Back Office.</value>
+  </data>
+  <data name="Permission.AcceptVendorInvoice" xml:space="preserve">
+    <value>Akceptowanie faktur dostawców</value>
+  </data>
+  <data name="PermissionHelp.AcceptVendorInvoice" xml:space="preserve">
+    <value>Umożliwia akceptowanie faktur dostawców do zapłaty po ich dopasowaniu do przyjęć. Bez zapisanej zasady mogą to robić tylko administratorzy działu. Wymaga włączenia Incident Business i aktywnego dodatku Incident Back Office.</value>
+  </data>
+  <data name="Permission.ManageIncidentBudget" xml:space="preserve">
+    <value>Zarządzanie budżetem zdarzenia</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentBudget" xml:space="preserve">
+    <value>Umożliwia zarządzanie pozycjami budżetowymi, delegacjami uprawnień do wydatków, kodami finansowania i grupami kosztów. Bez zapisanej zasady mogą to robić tylko administratorzy działu. Wymaga włączenia Incident Business i aktywnego dodatku Incident Back Office.</value>
+  </data>
+  <data name="Permission.AuthorizeIncidentFunding" xml:space="preserve">
+    <value>Autoryzowanie finansowania zdarzenia</value>
+  </data>
+  <data name="PermissionHelp.AuthorizeIncidentFunding" xml:space="preserve">
+    <value>Umożliwia zatwierdzanie autoryzacji finansowania dla budżetu zdarzenia. Bez zapisanej zasady mogą to robić tylko administratorzy działu. Wymaga włączenia Incident Business i aktywnego dodatku Incident Back Office.</value>
+  </data>
+  <data name="Permission.EnterIncidentTime" xml:space="preserve">
+    <value>Wprowadzanie czasu pracy w zdarzeniu</value>
+  </data>
+  <data name="PermissionHelp.EnterIncidentTime" xml:space="preserve">
+    <value>Umożliwia wprowadzanie czasu pracy, użycia sprzętu i wydatków. Pole Tylko grupa ogranicza to do osób z własnej grupy użytkownika. Bez zapisanej zasady mogą to robić administratorzy działu i grup. Wymaga włączenia Incident Business i aktywnego dodatku Incident Back Office.</value>
+  </data>
+  <data name="Permission.CertifyIncidentTime" xml:space="preserve">
+    <value>Poświadczanie czasu pracy w zdarzeniu</value>
+  </data>
+  <data name="PermissionHelp.CertifyIncidentTime" xml:space="preserve">
+    <value>Umożliwia przełożonym poświadczanie wprowadzonego czasu pracy przed zatwierdzeniem. Pole Tylko grupa ogranicza to do osób z własnej grupy użytkownika. Bez zapisanej zasady mogą to robić administratorzy działu i grup. Wymaga włączenia Incident Business i aktywnego dodatku Incident Back Office.</value>
+  </data>
+  <data name="Permission.ApproveIncidentTime" xml:space="preserve">
+    <value>Zatwierdzanie czasu pracy w zdarzeniu</value>
+  </data>
+  <data name="PermissionHelp.ApproveIncidentTime" xml:space="preserve">
+    <value>Umożliwia zatwierdzanie poświadczonego czasu pracy do rozliczenia kosztów i wypłaty. Pole Tylko grupa ogranicza to do osób z własnej grupy użytkownika. Bez zapisanej zasady mogą to robić tylko administratorzy działu. Wymaga włączenia Incident Business i aktywnego dodatku Incident Back Office.</value>
+  </data>
+  <data name="Permission.ViewIncidentCost" xml:space="preserve">
+    <value>Przeglądanie kosztów zdarzenia</value>
+  </data>
+  <data name="PermissionHelp.ViewIncidentCost" xml:space="preserve">
+    <value>Umożliwia wgląd w transakcje kosztowe, naliczenia i dzienne prognozy kosztów. Bez zapisanej zasady mogą to robić tylko administratorzy działu. Wymaga włączenia Incident Business i aktywnego dodatku Incident Back Office.</value>
+  </data>
+  <data name="Permission.ManageIncidentCost" xml:space="preserve">
+    <value>Zarządzanie kosztami zdarzenia</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentCost" xml:space="preserve">
+    <value>Umożliwia edytowanie rekordów kosztów, umów o podziale kosztów i przebiegów podziału kosztów oraz eksportowanie raportów kosztów. Bez zapisanej zasady mogą to robić tylko administratorzy działu. Wymaga włączenia Incident Business i aktywnego dodatku Incident Back Office.</value>
+  </data>
+  <data name="Permission.ManageIncidentClaims" xml:space="preserve">
+    <value>Zarządzanie roszczeniami w zdarzeniu</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentClaims" xml:space="preserve">
+    <value>Umożliwia otwieranie i prowadzenie roszczeń z tytułu obrażeń, szkód lub strat. Bez zapisanej zasady mogą to robić tylko administratorzy działu. Wymaga włączenia Incident Business i aktywnego dodatku Incident Back Office.</value>
+  </data>
+  <data name="Permission.ViewClaimProtected" xml:space="preserve">
+    <value>Przeglądanie chronionych danych roszczeń</value>
+  </data>
+  <data name="PermissionHelp.ViewClaimProtected" xml:space="preserve">
+    <value>Umożliwia wgląd w dane finansowe roszczeń i notatki ze spraw. Bez zapisanej zasady mogą to robić tylko administratorzy działu. Wymaga włączenia Incident Business i aktywnego dodatku Incident Back Office.</value>
+  </data>
+  <data name="Permission.AssembleIncidentIap" xml:space="preserve">
+    <value>Kompletowanie planów działań w zdarzeniu</value>
+  </data>
+  <data name="PermissionHelp.AssembleIncidentIap" xml:space="preserve">
+    <value>Umożliwia kompletowanie planu działań w zdarzeniu: jego stron, kolejności stron, listy dystrybucyjnej i zadania drukowania. Zatwierdzanie i finalizowanie raportu planu podlega uprawnieniom modułu Raporty. Bez zapisanej zasady mogą to robić tylko administratorzy działu. Wymaga włączenia Incident Back Office i aktywnego dodatku Incident Back Office.</value>
+  </data>
+  <data name="Permission.ViewCoordinationBoards" xml:space="preserve">
+    <value>Przeglądanie tablic koordynacyjnych</value>
+  </data>
+  <data name="PermissionHelp.ViewCoordinationBoards" xml:space="preserve">
+    <value>Umożliwia odczyt tablic koordynacyjnych i stanowiska sytuacyjnego. Pole Tylko grupa ogranicza to do tablic własnej grupy użytkownika. Bez zapisanej zasady mogą to robić wszyscy członkowie. Wymaga włączenia Incident Coordination i aktywnego dodatku Incident Back Office.</value>
+  </data>
+  <data name="Permission.ManageCoordinationBoards" xml:space="preserve">
+    <value>Zarządzanie tablicami koordynacyjnymi</value>
+  </data>
+  <data name="PermissionHelp.ManageCoordinationBoards" xml:space="preserve">
+    <value>Umożliwia tworzenie i edytowanie tablic koordynacyjnych, ich elementów oraz stanowiska sytuacyjnego. Pole Tylko grupa ogranicza to do tablic własnej grupy użytkownika. Bez zapisanej zasady mogą to robić administratorzy działu i grup. Wymaga włączenia Incident Coordination i aktywnego dodatku Incident Back Office.</value>
+  </data>
+  <data name="Permission.ShareCoordinationBoards" xml:space="preserve">
+    <value>Udostępnianie tablic koordynacyjnych</value>
+  </data>
+  <data name="PermissionHelp.ShareCoordinationBoards" xml:space="preserve">
+    <value>Umożliwia udostępnianie tablicy koordynacyjnej instytucjom partnerskim. Bez zapisanej zasady mogą to robić tylko administratorzy działu. Wymaga włączenia Incident Coordination i aktywnego dodatku Incident Back Office.</value>
+  </data>
 </root>

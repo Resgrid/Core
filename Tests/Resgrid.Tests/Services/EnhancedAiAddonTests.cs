@@ -90,6 +90,7 @@ namespace Resgrid.Tests.Services
 		[TestCase(PlanAddonTypes.ReadinessPro, true)]
 		[TestCase(PlanAddonTypes.BusinessOperations, true)]
 		[TestCase(PlanAddonTypes.EnhancedAi, true)]
+		[TestCase(PlanAddonTypes.IncidentBackOffice, true)]
 		[TestCase(PlanAddonTypes.PTT, false)]
 		[TestCase(PlanAddonTypes.ADP, false)]
 		public void Only_the_monthly_add_ons_with_their_own_checkout_are_dedicated(PlanAddonTypes type, bool dedicated)

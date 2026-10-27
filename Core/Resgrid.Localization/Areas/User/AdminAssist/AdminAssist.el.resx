@@ -7125,4 +7125,568 @@
   <data name="FieldHelp.DepartmentTermOverride.Singular" xml:space="preserve">
     <value>Για μια ενότητα, η λέξη του τμήματος για ένα στοιχείο, όπως Ομάδα για Μονάδες που μετονομάστηκαν σε Ομάδες, που χρησιμοποιείται σε κουμπιά και επικεφαλίδες όπως Νέα ομάδα· έως 50 χαρακτήρες. Αν μείνει κενή, προκύπτει από το όνομα. Οι τύποι αρχείων δεν έχουν.</value>
   </data>
+  <data name="Area.incidents" xml:space="preserve">
+    <value>Incident Back Office</value>
+  </data>
+  <data name="AreaPurpose.incidents" xml:space="preserve">
+    <value>Ενεργοποίηση, σχεδιασμός, εφοδιαστική, οικονομικά και πίνακες συντονισμού για μεγάλα ή μακροχρόνια συμβάντα, προγραμματισμένες εκδηλώσεις και ασκήσεις.</value>
+  </data>
+  <data name="AreaValue.incidents" xml:space="preserve">
+    <value>Διαχειριστείτε την υποστηρικτική πλευρά ενός μεγάλου συμβάντος από μία ενεργοποίηση: ποιος συμμετέχει, πού κοιμούνται και πού τρώνε, τι παραγγέλθηκε και πόσο κόστισε.</value>
+  </data>
+  <data name="AreaExample.incidents" xml:space="preserve">
+    <value>Μια ενεργοποίηση για δασική πυρκαγιά καταγράφει την άφιξη των ομάδων επέμβασης, κλείνει διαμονή και γεύματα για αυτές και παρακολουθεί κάθε αγορά σε σχέση με τον προϋπολογισμό του συμβάντος.</value>
+  </data>
+  <data name="ModuleAdoption.incidents" xml:space="preserve">
+    <value>Απαιτεί το πρόσθετο Incident Back Office. Τα γραφεία οικονομικών απαιτούν επίσης ενεργοποιημένο το Incident Business και οι πίνακες συντονισμού το Incident Coordination. Πραγματοποιήστε μια ενεργοποίηση άσκησης πριν από το πρώτο πραγματικό συμβάν.</value>
+  </data>
+  <data name="Ui.AddonRequired.IncidentBackOffice" xml:space="preserve">
+    <value>Απαιτεί Incident Back Office</value>
+  </data>
+  <data name="Module.IncidentBackOfficeDisabled" xml:space="preserve">
+    <value>Διαθεσιμότητα Incident Back Office</value>
+  </data>
+  <data name="ModuleHelp.IncidentBackOfficeDisabled" xml:space="preserve">
+    <value>Ελέγχει τη διαθεσιμότητα των γραφείων του Incident Back Office. Η απενεργοποίηση αυτής της ενότητας τα αφαιρεί από την πλοήγηση και αποκλείει τις λειτουργίες τους· δεν διαγράφει τις ενεργοποιήσεις ούτε τις εγγραφές τους. Η ενεργοποίησή της εξακολουθεί να απαιτεί το πρόσθετο Incident Back Office, διάθεση και δικαιώματα.</value>
+  </data>
+  <data name="Module.IncidentBusinessDisabled" xml:space="preserve">
+    <value>Διαθεσιμότητα οικονομικών συμβάντος</value>
+  </data>
+  <data name="ModuleHelp.IncidentBusinessDisabled" xml:space="preserve">
+    <value>Ελέγχει τα γραφεία οικονομικών συμβάντος: προμήθειες, προϋπολογισμό, χρόνο, κόστος, αξιώσεις, αποκατάσταση, εισερχόμενα και κλείσιμο. Η απενεργοποίησή της αποκρύπτει αυτά τα γραφεία και αποκλείει τις λειτουργίες τους χωρίς να διαγράφει τις εγγραφές τους. Ισχύει μόνο όσο το Incident Back Office είναι ενεργοποιημένο, και η ενεργοποίησή της εξακολουθεί να απαιτεί διάθεση του Incident Business και δικαιώματα.</value>
+  </data>
+  <data name="Module.IncidentCoordinationDisabled" xml:space="preserve">
+    <value>Διαθεσιμότητα πινάκων συντονισμού</value>
+  </data>
+  <data name="ModuleHelp.IncidentCoordinationDisabled" xml:space="preserve">
+    <value>Ελέγχει τους πίνακες συντονισμού και το γραφείο κατάστασης. Η απενεργοποίησή της τα αποκρύπτει και αποκλείει τις λειτουργίες τους χωρίς να διαγράφει πίνακες ή τα στοιχεία τους. Ισχύει μόνο όσο το Incident Back Office είναι ενεργοποιημένο, και η ενεργοποίησή της εξακολουθεί να απαιτεί διάθεση του Incident Coordination και δικαιώματα.</value>
+  </data>
+  <data name="Setting.IncidentBackOfficeDefaults" xml:space="preserve">
+    <value>Προεπιλογές Incident Back Office</value>
+  </data>
+  <data name="SettingHelp.IncidentBackOfficeDefaults" xml:space="preserve">
+    <value>Προεπιλογές για νέες ενεργοποιήσεις: πόσο παλιά μπορεί να γίνει μια πηγή διοίκησης συμβάντος ή διάθεσης δυνάμεων πριν τα πλακίδιά της γίνουν γκρι, το νόμισμα και το σύστημα μέτρησης (αν μείνει κενό, χρησιμοποιείται η χώρα του τμήματος), η διάρκεια μιας επιχειρησιακής περιόδου και αν οι ασκήσεις μπορούν να ειδοποιούν εξωτερικούς συμμετέχοντες και προμηθευτές.</value>
+  </data>
+  <data name="Setting.IncidentEnrollmentPolicy" xml:space="preserve">
+    <value>Πολιτική ένταξης συμβάντος</value>
+  </data>
+  <data name="SettingHelp.IncidentEnrollmentPolicy" xml:space="preserve">
+    <value>Πώς τα άτομα και οι μονάδες που εμφανίζονται σε ένα συμβάν γίνονται συμμετέχοντες (ο τρόπος ένταξης), αν τα άτομα που δεν έχουν ακόμη ενταχθεί υπολογίζονται ως ξεχωριστή ζώνη στις προβλέψεις σίτισης, ύπνου και νερού, και πόσο μεγάλη ή παλιά μπορεί να γίνει η ουρά ένταξης πριν σημάνει ειδοποίηση.</value>
+  </data>
+  <data name="Setting.IncidentNotificationRouting" xml:space="preserve">
+    <value>Δρομολόγηση ειδοποιήσεων συμβάντος</value>
+  </data>
+  <data name="SettingHelp.IncidentNotificationRouting" xml:space="preserve">
+    <value>Ποιες θέσεις του συμβάντος λαμβάνουν κάθε ειδοποίηση του Incident Back Office. Οι θέσεις αντιστοιχίζονται στους τρέχοντες κατόχους τους τη στιγμή που αποστέλλεται η ειδοποίηση· μια ειδοποίηση χωρίς ρυθμισμένες θέσεις χρησιμοποιεί τις ενσωματωμένες προεπιλεγμένες θέσεις της.</value>
+  </data>
+  <data name="Setting.IncidentForecastPolicy" xml:space="preserve">
+    <value>Πολιτική προβλέψεων συμβάντος</value>
+  </data>
+  <data name="SettingHelp.IncidentForecastPolicy" xml:space="preserve">
+    <value>Συντελεστές και παράθυρα ειδοποίησης για τις προβλέψεις εφοδιαστικής: απόθεμα ασφαλείας γευμάτων και νερού, πόσιμο νερό ανά άτομο ανά ημέρα, εφεδρεία κλινών, αν οι προβλεπόμενες λήξεις χρόνου απασχόλησης μειώνουν τις προβλέψεις, χρόνος αναπλήρωσης, τα παράθυρα έγκαιρης ειδοποίησης για αφίξεις, λήξεις χρόνου απασχόλησης και προθεσμίες παραγγελίας γευμάτων, καθώς και τα όρια χωρητικότητας εγκαταστάσεων και ημερών αποθέματος νερού.</value>
+  </data>
+  <data name="Setting.IncidentAssignmentRulePolicy" xml:space="preserve">
+    <value>Κανόνες ανάθεσης συμβάντος</value>
+  </data>
+  <data name="SettingHelp.IncidentAssignmentRulePolicy" xml:space="preserve">
+    <value>Το πακέτο κανόνων εργασίας και ανάπαυσης και τα όρια ανάθεσης που χρησιμοποιούνται για τη σήμανση ατόμων που πλησιάζουν τα όριά τους: μέγιστες ημέρες ανάθεσης, ημέρες μετακίνησης, μέγιστη παράταση, μέγιστες ώρες εργασίας ανά βάρδια και η απαιτούμενη ανάπαυση ανά ώρα εργασίας.</value>
+  </data>
+  <data name="Setting.IncidentVendorPolicy" xml:space="preserve">
+    <value>Πολιτική προμηθευτών συμβάντος</value>
+  </data>
+  <data name="SettingHelp.IncidentVendorPolicy" xml:space="preserve">
+    <value>Πόσο συχνά πρέπει να επαληθεύονται ξανά οι προμηθευτές, πόσο διαρκεί μια δέσμευση χωρητικότητας και πόσο νωρίτερα επισημαίνονται τα έγγραφα συμμόρφωσης και οι δεσμεύσεις χωρητικότητας που λήγουν.</value>
+  </data>
+  <data name="Setting.IncidentSelfServicePolicy" xml:space="preserve">
+    <value>Πολιτική αυτοεξυπηρέτησης συμβάντος</value>
+  </data>
+  <data name="SettingHelp.IncidentSelfServicePolicy" xml:space="preserve">
+    <value>Σύνδεσμοι αυτοεξυπηρέτησης για συμμετέχοντες και προμηθευτές: για πόσες ημέρες παραμένει έγκυρος ένας σύνδεσμος μετά τη λήξη της ανάθεσης ή της συνεργασίας, αν απαιτείται κωδικός μίας χρήσης πριν εμφανιστούν στοιχεία διαμονής ή ταξιδιού, και αν οι σύνδεσμοι προμηθευτών χρειάζονται επαληθευμένη επαφή του προμηθευτή.</value>
+  </data>
+  <data name="Setting.IncidentFinancePolicy" xml:space="preserve">
+    <value>Οικονομική πολιτική συμβάντος</value>
+  </data>
+  <data name="SettingHelp.IncidentFinancePolicy" xml:space="preserve">
+    <value>Οικονομικοί έλεγχοι: λειτουργία από ένα άτομο (ένα άτομο μπορεί να αιτηθεί, να εγκρίνει, να δεσμεύσει, να παραλάβει και να αποδεχθεί μόνο με καταγεγραμμένη επιβεβαίωση), πρόσθετοι τομείς αποστολέων για τη θυρίδα εισερχομένων, τα όρια προϋπολογισμού, ανώτατου ποσού συμφωνίας και ημερήσιας δαπάνης, τα όρια εκκρεμοτήτων εισερχομένων, οι προειδοποιήσεις προθεσμιών για αξιώσεις και αποκατάσταση, το χρονικό παράθυρο κατατμημένων αγορών και το όριο μικροαγορών.</value>
+  </data>
+  <data name="Setting.IncidentRetentionPolicy" xml:space="preserve">
+    <value>Πολιτική διατήρησης συμβάντος</value>
+  </data>
+  <data name="SettingHelp.IncidentRetentionPolicy" xml:space="preserve">
+    <value>Πόσο καιρό διατηρούνται τα επιχειρησιακά στιγμιότυπα μετά το κλείσιμο ενός συμβάντος, πόσα χρόνια διατηρούνται οι εγγραφές καθολικού και πόσο καιρό διατηρούνται οι ληγμένοι σύνδεσμοι αυτοεξυπηρέτησης. Οι αναφορές συμβάντος ακολουθούν αντί αυτού τη διατήρηση των Αναφορών.</value>
+  </data>
+  <data name="Setting.CoordinationBoardDefaults" xml:space="preserve">
+    <value>Προεπιλογές πινάκων συντονισμού</value>
+  </data>
+  <data name="SettingHelp.CoordinationBoardDefaults" xml:space="preserve">
+    <value>Προεπιλογές για τους πίνακες συντονισμού: πότε ένα στοιχείο θεωρείται παρωχημένο, αν τα κλεισίματα δρόμων και η χωρητικότητα καταφυγίων ενεργοποιούν συναγερμούς, πόσες ημέρες διαρκεί η κοινή χρήση ενός πίνακα και πόσο νωρίτερα επισημαίνεται ένα στοιχείο με προθεσμία.</value>
+  </data>
+  <data name="Feature.incident-activation" xml:space="preserve">
+    <value>Ενεργοποίηση και διοίκηση συμβάντος</value>
+  </data>
+  <data name="FeaturePurpose.incident-activation" xml:space="preserve">
+    <value>Ανοίξτε μια ενεργοποίηση για ένα μεγάλο συμβάν, μια προγραμματισμένη εκδήλωση ή μια άσκηση και παρακολουθήστε την από το γραφείο διοίκησης.</value>
+  </data>
+  <data name="FeatureSetup.incident-activation" xml:space="preserve">
+    <value>Εξετάστε τις ρυθμίσεις του Incident Back Office και, στη συνέχεια, ανοίξτε μια ενεργοποίηση άσκησης.</value>
+  </data>
+  <data name="Feature.incident-planning" xml:space="preserve">
+    <value>Σχεδιασμός, οργάνωση και καταγραφή άφιξης</value>
+  </data>
+  <data name="FeaturePurpose.incident-planning" xml:space="preserve">
+    <value>Επιχειρησιακές περίοδοι και εκδόσεις σχεδίων, η οργάνωση και οι θέσεις του συμβάντος, οι συμμετέχοντες και η καταγραφή άφιξης.</value>
+  </data>
+  <data name="FeatureSetup.incident-planning" xml:space="preserve">
+    <value>Δημιουργήστε τον κατάλογο θέσεων και τις συνθέσεις ομάδων σας και, στη συνέχεια, καταγράψτε την άφιξη των συμμετεχόντων κατά τη διάρκεια μιας άσκησης.</value>
+  </data>
+  <data name="Feature.incident-logistics" xml:space="preserve">
+    <value>Εφοδιαστική συμβάντος</value>
+  </data>
+  <data name="FeaturePurpose.incident-logistics" xml:space="preserve">
+    <value>Αιτήματα πόρων, εγκαταστάσεις, διαμονή, σίτιση, νερό και υπηρεσίες υποστήριξης, μαζί με τους προμηθευτές και το σχέδιο υποστήριξης.</value>
+  </data>
+  <data name="FeatureSetup.incident-logistics" xml:space="preserve">
+    <value>Προσθέστε τους προμηθευτές διαμονής, σίτισης, νερού και μεταφορών σας και, στη συνέχεια, εξετάστε την πολιτική προβλέψεων.</value>
+  </data>
+  <data name="Feature.incident-finance" xml:space="preserve">
+    <value>Οικονομικά συμβάντος</value>
+  </data>
+  <data name="FeaturePurpose.incident-finance" xml:space="preserve">
+    <value>Προμήθειες, προϋπολογισμός, χρόνος, κόστος και αξιώσεις για ένα συμβάν, με διαχωρισμό καθηκόντων.</value>
+  </data>
+  <data name="FeatureSetup.incident-finance" xml:space="preserve">
+    <value>Ενεργοποιήστε το Incident Business, εξετάστε την οικονομική πολιτική και, στη συνέχεια, καταχωρίστε τον προϋπολογισμό του συμβάντος.</value>
+  </data>
+  <data name="Feature.coordination-boards" xml:space="preserve">
+    <value>Πίνακες συντονισμού</value>
+  </data>
+  <data name="FeaturePurpose.coordination-boards" xml:space="preserve">
+    <value>Κοινόχρηστοι πίνακες για κλεισίματα δρόμων, καταφύγια και άλλα στοιχεία που συντονίζονται με συνεργαζόμενους φορείς.</value>
+  </data>
+  <data name="FeatureSetup.coordination-boards" xml:space="preserve">
+    <value>Ενεργοποιήστε το Incident Coordination, εξετάστε τις προεπιλογές πινάκων και, στη συνέχεια, δημιουργήστε έναν πίνακα.</value>
+  </data>
+  <data name="Feature.incident-open" xml:space="preserve">
+    <value>Άνοιγμα συμβάντος</value>
+  </data>
+  <data name="FeaturePurpose.incident-open" xml:space="preserve">
+    <value>Ξεκινήστε μια ενεργοποίηση για ένα συμβάν, μια προγραμματισμένη εκδήλωση ή μια άσκηση, προαιρετικά συνδεδεμένη με μια κλήση ή ένα γονικό σύμπλεγμα.</value>
+  </data>
+  <data name="Feature.incident-command-desk" xml:space="preserve">
+    <value>Γραφείο διοίκησης</value>
+  </data>
+  <data name="FeaturePurpose.incident-command-desk" xml:space="preserve">
+    <value>Η κατάσταση, η επιχειρησιακή εικόνα, η επικαιρότητα δεδομένων και οι ανοιχτές εργασίες μιας ενεργοποίησης σε ένα σημείο.</value>
+  </data>
+  <data name="Feature.incident-operations" xml:space="preserve">
+    <value>Γραφείο επιχειρήσεων</value>
+  </data>
+  <data name="FeaturePurpose.incident-operations" xml:space="preserve">
+    <value>Ποιος συμμετέχει στο συμβάν, η κατάσταση υποστήριξης και η θέση του, και οι πόροι ανά κατάσταση υποστήριξης.</value>
+  </data>
+  <data name="Feature.incident-settings" xml:space="preserve">
+    <value>Ρυθμίσεις Incident Back Office</value>
+  </data>
+  <data name="FeaturePurpose.incident-settings" xml:space="preserve">
+    <value>Πολιτικές τμήματος για ενεργοποιήσεις, ένταξη, δρομολόγηση ειδοποιήσεων, προβλέψεις, αναθέσεις, προμηθευτές, συνδέσμους αυτοεξυπηρέτησης, οικονομικά, διατήρηση και πίνακες.</value>
+  </data>
+  <data name="Feature.incident-organization" xml:space="preserve">
+    <value>Οργάνωση συμβάντος</value>
+  </data>
+  <data name="FeaturePurpose.incident-organization" xml:space="preserve">
+    <value>Το οργανόγραμμα μιας ενεργοποίησης και ποιος έχει ανατεθεί σε κάθε θέση.</value>
+  </data>
+  <data name="Feature.incident-positions" xml:space="preserve">
+    <value>Κατάλογος θέσεων</value>
+  </data>
+  <data name="FeaturePurpose.incident-positions" xml:space="preserve">
+    <value>Οι θέσεις συμβάντος που στελεχώνει το τμήμα σας και οι ικανότητες που απαιτεί η καθεμία.</value>
+  </data>
+  <data name="Feature.incident-teams" xml:space="preserve">
+    <value>Ομάδες συμβάντος</value>
+  </data>
+  <data name="FeaturePurpose.incident-teams" xml:space="preserve">
+    <value>Μόνιμες συνθέσεις ομάδων με εναλλαγές, θέσεις κάλυψης και κατάλληλους υποψηφίους.</value>
+  </data>
+  <data name="Feature.incident-participants" xml:space="preserve">
+    <value>Συμμετέχοντες</value>
+  </data>
+  <data name="FeaturePurpose.incident-participants" xml:space="preserve">
+    <value>Τα άτομα που υποστηρίζουν μια ενεργοποίηση, με τα προσόντα τους, τους φορείς προέλευσής τους και τους συνδέσμους αυτοεξυπηρέτησης.</value>
+  </data>
+  <data name="Feature.incident-check-in" xml:space="preserve">
+    <value>Καταγραφή άφιξης</value>
+  </data>
+  <data name="FeaturePurpose.incident-check-in" xml:space="preserve">
+    <value>Καταγράψτε την άφιξη και την αποχώρηση ατόμων και πόρων και παρακολουθήστε την κατάσταση, τις μετακινήσεις και τις παρατάσεις ανάθεσής τους.</value>
+  </data>
+  <data name="Feature.incident-iap" xml:space="preserve">
+    <value>Σχέδιο δράσης συμβάντος</value>
+  </data>
+  <data name="FeaturePurpose.incident-iap" xml:space="preserve">
+    <value>Συντάξτε το σχέδιο δράσης συμβάντος για κάθε επιχειρησιακή περίοδο.</value>
+  </data>
+  <data name="Feature.incident-authority" xml:space="preserve">
+    <value>Αρμοδιότητες συμβάντος</value>
+  </data>
+  <data name="FeaturePurpose.incident-authority" xml:space="preserve">
+    <value>Εκχωρήσεις αρμοδιοτήτων ανά τομέα, το προφίλ αρμοδιοτήτων που αντιγράφεται σε κάθε ενεργοποίηση και τα στοιχεία που απομένει να συμφωνηθούν.</value>
+  </data>
+  <data name="Feature.incident-demob" xml:space="preserve">
+    <value>Αποκινητοποίηση</value>
+  </data>
+  <data name="FeaturePurpose.incident-demob" xml:space="preserve">
+    <value>Σχέδια και λίστες ελέγχου αποκινητοποίησης για την αποδέσμευση ατόμων και πόρων.</value>
+  </data>
+  <data name="Feature.support-plan" xml:space="preserve">
+    <value>Σχέδιο υποστήριξης έκτακτης ανάγκης</value>
+  </data>
+  <data name="FeaturePurpose.support-plan" xml:space="preserve">
+    <value>Το σχέδιο υποστήριξης έκτακτης ανάγκης του τμήματός σας: τομείς υποστήριξης και προτιμώμενοι προμηθευτές, που αντιγράφονται σε κάθε ενεργοποίηση.</value>
+  </data>
+  <data name="Feature.incident-requests" xml:space="preserve">
+    <value>Αιτήματα πόρων</value>
+  </data>
+  <data name="FeaturePurpose.incident-requests" xml:space="preserve">
+    <value>Πακέτα αποστολής και αιτήματα πόρων από την έγκριση έως την κάλυψη, την άφιξη και την παραλαβή.</value>
+  </data>
+  <data name="Feature.incident-facilities" xml:space="preserve">
+    <value>Εγκαταστάσεις συμβάντος</value>
+  </data>
+  <data name="FeaturePurpose.incident-facilities" xml:space="preserve">
+    <value>Βάσεις καταυλισμού, χώροι συγκέντρωσης και άλλες εγκαταστάσεις συμβάντος, με χωρητικότητα, συμφωνίες και υπηρεσίες.</value>
+  </data>
+  <data name="Feature.incident-lodging" xml:space="preserve">
+    <value>Διαμονή</value>
+  </data>
+  <data name="FeaturePurpose.incident-lodging" xml:space="preserve">
+    <value>Καταλύματα, μπλοκ δωματίων, νυχτερινή διαθεσιμότητα, αναθέσεις κλινών και λίστες κατανομής δωματίων.</value>
+  </data>
+  <data name="Feature.incident-feeding" xml:space="preserve">
+    <value>Σίτιση</value>
+  </data>
+  <data name="FeaturePurpose.incident-feeding" xml:space="preserve">
+    <value>Προγράμματα γευμάτων, προβλεπόμενη ζήτηση, παραγγελίες γευμάτων και τα γεύματα που σερβιρίστηκαν πράγματι.</value>
+  </data>
+  <data name="Feature.incident-water" xml:space="preserve">
+    <value>Νερό</value>
+  </data>
+  <data name="FeaturePurpose.incident-water" xml:space="preserve">
+    <value>Σχέδια πόσιμου νερού, διαθέσιμο απόθεμα και παραδόσεις.</value>
+  </data>
+  <data name="Feature.incident-services" xml:space="preserve">
+    <value>Υπηρεσίες υποστήριξης</value>
+  </data>
+  <data name="FeaturePurpose.incident-services" xml:space="preserve">
+    <value>Υπηρεσίες υποστήριξης όπως πλυντήριο, ντους ή υγιεινή, με τα αιτήματα, τη δραστηριότητα και τον εξοπλισμό τους.</value>
+  </data>
+  <data name="Feature.incident-ground-support" xml:space="preserve">
+    <value>Επίγεια υποστήριξη</value>
+  </data>
+  <data name="FeaturePurpose.incident-ground-support" xml:space="preserve">
+    <value>Αιτήματα μεταφοράς και μετακινήσεις, δρομολόγια ταξιδιών και καύσιμα.</value>
+  </data>
+  <data name="Feature.incident-communications" xml:space="preserve">
+    <value>Επικοινωνίες συμβάντος</value>
+  </data>
+  <data name="FeaturePurpose.incident-communications" xml:space="preserve">
+    <value>Το σχέδιο επικοινωνιών μιας ενεργοποίησης και οι αναθέσεις ασυρμάτων και συσκευών της.</value>
+  </data>
+  <data name="Feature.vendor-catalog" xml:space="preserve">
+    <value>Κατάλογος προμηθευτών</value>
+  </data>
+  <data name="FeaturePurpose.vendor-catalog" xml:space="preserve">
+    <value>Προμηθευτές με τις τοποθεσίες, τις δυνατότητες, τα χρονικά παράθυρα διαθεσιμότητας και τα έγγραφα συμμόρφωσής τους.</value>
+  </data>
+  <data name="Feature.incident-vendors" xml:space="preserve">
+    <value>Συνεργασίες με προμηθευτές</value>
+  </data>
+  <data name="FeaturePurpose.incident-vendors" xml:space="preserve">
+    <value>Προμηθευτές που συνεργάζονται σε μια ενεργοποίηση, με τις δεσμεύσεις χωρητικότητας και τις προσφορές τους.</value>
+  </data>
+  <data name="Feature.incident-procurement" xml:space="preserve">
+    <value>Προμήθειες συμβάντος</value>
+  </data>
+  <data name="FeaturePurpose.incident-procurement" xml:space="preserve">
+    <value>Συμφωνίες με προμηθευτές, αιτήσεις προμήθειας και εγκρίσεις, δεσμεύσεις, παραλαβές, τιμολόγια προμηθευτών και πακέτα πληρωμών.</value>
+  </data>
+  <data name="Feature.incident-budget" xml:space="preserve">
+    <value>Προϋπολογισμός συμβάντος</value>
+  </data>
+  <data name="FeaturePurpose.incident-budget" xml:space="preserve">
+    <value>Γραμμές προϋπολογισμού, εξουσιοδοτήσεις χρηματοδότησης, εκχωρήσεις δαπανών, κωδικοί χρηματοδότησης και ομάδες κόστους.</value>
+  </data>
+  <data name="Feature.incident-time" xml:space="preserve">
+    <value>Χρόνος συμβάντος</value>
+  </data>
+  <data name="FeaturePurpose.incident-time" xml:space="preserve">
+    <value>Εγγραφές χρόνου και προσαρμογές, χρήση εξοπλισμού και έξοδα, με πιστοποίηση και έγκριση.</value>
+  </data>
+  <data name="Feature.incident-cost" xml:space="preserve">
+    <value>Κόστος συμβάντος</value>
+  </data>
+  <data name="FeaturePurpose.incident-cost" xml:space="preserve">
+    <value>Συναλλαγές κόστους, δεδουλευμένα, ημερήσιες προβλέψεις κόστους και επιμερισμός κοινού κόστους.</value>
+  </data>
+  <data name="Feature.incident-claims" xml:space="preserve">
+    <value>Αξιώσεις συμβάντος</value>
+  </data>
+  <data name="FeaturePurpose.incident-claims" xml:space="preserve">
+    <value>Αξιώσεις για τραυματισμό, ζημία ή απώλεια που προκύπτουν από ένα συμβάν.</value>
+  </data>
+  <data name="Feature.incident-recovery" xml:space="preserve">
+    <value>Αποκατάσταση από καταστροφές</value>
+  </data>
+  <data name="FeaturePurpose.incident-recovery" xml:space="preserve">
+    <value>Κηρύξεις καταστροφής, έργα αποκατάστασης και οι προθεσμίες τους.</value>
+  </data>
+  <data name="Feature.incident-intake" xml:space="preserve">
+    <value>Εισερχόμενα συμβάντος</value>
+  </data>
+  <data name="FeaturePurpose.incident-intake" xml:space="preserve">
+    <value>Έγγραφα και αποδείξεις που στάλθηκαν στη θυρίδα εισερχομένων του συμβάντος και αναμένουν αρχειοθέτηση.</value>
+  </data>
+  <data name="Feature.incident-closeout" xml:space="preserve">
+    <value>Κλείσιμο συμβάντος</value>
+  </data>
+  <data name="FeaturePurpose.incident-closeout" xml:space="preserve">
+    <value>Η λίστα ελέγχου κλεισίματος που ολοκληρώνει τα βιβλία ενός συμβάντος.</value>
+  </data>
+  <data name="Feature.incident-situation" xml:space="preserve">
+    <value>Γραφείο κατάστασης</value>
+  </data>
+  <data name="FeaturePurpose.incident-situation" xml:space="preserve">
+    <value>Κατάσταση ζωτικών υποδομών, ανοιχτές ενέργειες, αποφάσεις και χαρτογραφημένα στοιχεία κατάστασης.</value>
+  </data>
+  <data name="Feature.addon-incidents" xml:space="preserve">
+    <value>Incident Back Office</value>
+  </data>
+  <data name="FeaturePurpose.addon-incidents" xml:space="preserve">
+    <value>Το πρόσθετο Incident Back Office: ενεργοποίηση, σχεδιασμός, εφοδιαστική, οικονομικά και πίνακες συντονισμού για μεγάλα συμβάντα.</value>
+  </data>
+  <data name="FeatureValue.addon-incidents" xml:space="preserve">
+    <value>Κρατήστε την υποστηρικτική πλευρά ενός μακροχρόνιου συμβάντος σε ένα σημείο αντί για υπολογιστικά φύλλα, σημειώσεις ασυρμάτου και email.</value>
+  </data>
+  <data name="FeatureExample.addon-incidents" xml:space="preserve">
+    <value>Κλείστε διαμονή και γεύματα για τα πληρώματα που φθάνουν και παρακολουθήστε κάθε αγορά σε σχέση με τον προϋπολογισμό του συμβάντος.</value>
+  </data>
+  <data name="FeatureAdoption.addon-incidents" xml:space="preserve">
+    <value>Τα οικονομικά συμβάντος και οι πίνακες συντονισμού ενεργοποιούνται ξεχωριστά. Οι αναφορές συμβάντος παραμένουν στις Αναφορές και ακολουθούν τα δικαιώματά τους. Δεν εγγυάται καμία αποζημίωση.</value>
+  </data>
+  <data name="Permission.ViewIncidentBackOffice" xml:space="preserve">
+    <value>Προβολή Incident Back Office</value>
+  </data>
+  <data name="PermissionHelp.ViewIncidentBackOffice" xml:space="preserve">
+    <value>Επιτρέπει το άνοιγμα των γραφείων του Incident Back Office και την ανάγνωση ενεργοποιήσεων, περιόδων, οργάνωσης και εφοδιαστικής. Οι αλλαγές σε κάθε γραφείο απαιτούν το δικό του δικαίωμα του συγκεκριμένου γραφείου. Χωρίς αποθηκευμένο κανόνα, αυτό επιτρέπεται σε κάθε μέλος. Απαιτεί ενεργοποιημένο το Incident Back Office και ενεργό πρόσθετο Incident Back Office.</value>
+  </data>
+  <data name="Permission.ManageIncidentActivation" xml:space="preserve">
+    <value>Διαχείριση ενεργοποίησης συμβάντος</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentActivation" xml:space="preserve">
+    <value>Επιτρέπει το άνοιγμα ενεργοποιήσεων, την προσθήκη τους σε σύμπλεγμα, καθώς και το κλείσιμο, τη σφράγιση ή το επανάνοιγμά τους. Χωρίς αποθηκευμένο κανόνα, αυτό επιτρέπεται μόνο στους διαχειριστές τμήματος. Απαιτεί ενεργοποιημένο το Incident Back Office και ενεργό πρόσθετο Incident Back Office.</value>
+  </data>
+  <data name="Permission.ManageIncidentPeriods" xml:space="preserve">
+    <value>Διαχείριση επιχειρησιακών περιόδων</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentPeriods" xml:space="preserve">
+    <value>Επιτρέπει τη δημιουργία και την επεξεργασία επιχειρησιακών περιόδων και την έγκριση των εκδόσεων των σχεδίων τους. Χωρίς αποθηκευμένο κανόνα, αυτό επιτρέπεται στους διαχειριστές τμήματος και ομάδας. Απαιτεί ενεργοποιημένο το Incident Back Office και ενεργό πρόσθετο Incident Back Office.</value>
+  </data>
+  <data name="Permission.ManageIncidentPositions" xml:space="preserve">
+    <value>Διαχείριση θέσεων συμβάντος</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentPositions" xml:space="preserve">
+    <value>Επιτρέπει την επεξεργασία του καταλόγου θέσεων, των αναθέσεων θέσεων και των συνθέσεων ομάδων. Χωρίς αποθηκευμένο κανόνα, αυτό επιτρέπεται στους διαχειριστές τμήματος και ομάδας. Απαιτεί ενεργοποιημένο το Incident Back Office και ενεργό πρόσθετο Incident Back Office.</value>
+  </data>
+  <data name="Permission.ManageIncidentParticipants" xml:space="preserve">
+    <value>Διαχείριση συμμετεχόντων συμβάντος</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentParticipants" xml:space="preserve">
+    <value>Επιτρέπει την ένταξη και την επεξεργασία συμμετεχόντων και την αποστολή των συνδέσμων αυτοεξυπηρέτησής τους. Το πλαίσιο «Μόνο ομάδα» το περιορίζει σε συμμετέχοντες της ομάδας του χρήστη. Χωρίς αποθηκευμένο κανόνα, αυτό επιτρέπεται στους διαχειριστές τμήματος και ομάδας. Απαιτεί ενεργοποιημένο το Incident Back Office και ενεργό πρόσθετο Incident Back Office.</value>
+  </data>
+  <data name="Permission.ViewParticipantSensitive" xml:space="preserve">
+    <value>Προβολή ευαίσθητων στοιχείων συμμετεχόντων</value>
+  </data>
+  <data name="PermissionHelp.ViewParticipantSensitive" xml:space="preserve">
+    <value>Επιτρέπει την προβολή των επαφών έκτακτης ανάγκης των συμμετεχόντων και των στοιχείων τους σχετικά με ιατρικά θέματα, προσβασιμότητα, αλλεργιογόνα και διατροφή. Χωρίς αποθηκευμένο κανόνα, αυτό επιτρέπεται μόνο στους διαχειριστές τμήματος. Απαιτεί ενεργοποιημένο το Incident Back Office και ενεργό πρόσθετο Incident Back Office.</value>
+  </data>
+  <data name="Permission.CreateIncidentRequest" xml:space="preserve">
+    <value>Δημιουργία αιτημάτων πόρων</value>
+  </data>
+  <data name="PermissionHelp.CreateIncidentRequest" xml:space="preserve">
+    <value>Επιτρέπει τη δημιουργία αιτημάτων πόρων και πακέτων αποστολής. Το πλαίσιο «Μόνο ομάδα» το περιορίζει σε αιτήματα για την ομάδα του χρήστη. Χωρίς αποθηκευμένο κανόνα, αυτό επιτρέπεται στους διαχειριστές τμήματος και ομάδας. Απαιτεί ενεργοποιημένο το Incident Back Office και ενεργό πρόσθετο Incident Back Office.</value>
+  </data>
+  <data name="Permission.ApproveIncidentRequest" xml:space="preserve">
+    <value>Έγκριση αιτημάτων πόρων</value>
+  </data>
+  <data name="PermissionHelp.ApproveIncidentRequest" xml:space="preserve">
+    <value>Επιτρέπει την έγκριση ή την απόρριψη αιτημάτων πόρων. Το πλαίσιο «Μόνο ομάδα» το περιορίζει σε αιτήματα από την ομάδα του χρήστη. Χωρίς αποθηκευμένο κανόνα, αυτό επιτρέπεται μόνο στους διαχειριστές τμήματος. Απαιτεί ενεργοποιημένο το Incident Back Office και ενεργό πρόσθετο Incident Back Office.</value>
+  </data>
+  <data name="Permission.OrderIncidentRequest" xml:space="preserve">
+    <value>Παραγγελία αιτημάτων πόρων</value>
+  </data>
+  <data name="PermissionHelp.OrderIncidentRequest" xml:space="preserve">
+    <value>Επιτρέπει την υποβολή της παραγγελίας που καλύπτει ένα εγκεκριμένο αίτημα πόρων, συμπεριλαμβανομένων παραγγελιών βάσει συμφωνιών με προμηθευτές. Χωρίς αποθηκευμένο κανόνα, αυτό επιτρέπεται μόνο στους διαχειριστές τμήματος. Απαιτεί ενεργοποιημένο το Incident Back Office και ενεργό πρόσθετο Incident Back Office.</value>
+  </data>
+  <data name="Permission.ReceiveIncidentRequest" xml:space="preserve">
+    <value>Παραλαβή αιτημάτων πόρων</value>
+  </data>
+  <data name="PermissionHelp.ReceiveIncidentRequest" xml:space="preserve">
+    <value>Επιτρέπει την καταγραφή αφίξεων και παραλαβών για αιτήματα που έχουν καλυφθεί. Το πλαίσιο «Μόνο ομάδα» το περιορίζει στην ομάδα του χρήστη. Χωρίς αποθηκευμένο κανόνα, αυτό επιτρέπεται στους διαχειριστές τμήματος και ομάδας. Απαιτεί ενεργοποιημένο το Incident Back Office και ενεργό πρόσθετο Incident Back Office.</value>
+  </data>
+  <data name="Permission.ManageIncidentFacilities" xml:space="preserve">
+    <value>Διαχείριση εγκαταστάσεων συμβάντος</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentFacilities" xml:space="preserve">
+    <value>Επιτρέπει τη διαχείριση των εγκαταστάσεων συμβάντος, της χωρητικότητας, των συμφωνιών και των υπηρεσιών τους. Χωρίς αποθηκευμένο κανόνα, αυτό επιτρέπεται στους διαχειριστές τμήματος και ομάδας. Απαιτεί ενεργοποιημένο το Incident Back Office και ενεργό πρόσθετο Incident Back Office.</value>
+  </data>
+  <data name="Permission.ManageIncidentLodging" xml:space="preserve">
+    <value>Διαχείριση διαμονής συμβάντος</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentLodging" xml:space="preserve">
+    <value>Επιτρέπει τη διαχείριση καταλυμάτων, μπλοκ δωματίων, νυχτερινής διαθεσιμότητας και αναθέσεων κλινών. Χωρίς αποθηκευμένο κανόνα, αυτό επιτρέπεται μόνο στους διαχειριστές τμήματος. Απαιτεί ενεργοποιημένο το Incident Back Office και ενεργό πρόσθετο Incident Back Office.</value>
+  </data>
+  <data name="Permission.ViewLodgingAssignmentDetail" xml:space="preserve">
+    <value>Προβολή στοιχείων ανάθεσης διαμονής</value>
+  </data>
+  <data name="PermissionHelp.ViewLodgingAssignmentDetail" xml:space="preserve">
+    <value>Επιτρέπει την προβολή αριθμών δωματίων και περιορισμών διαμονής στις αναθέσεις κλινών και στις λίστες κατανομής δωματίων. Χωρίς αποθηκευμένο κανόνα, αυτό επιτρέπεται μόνο στους διαχειριστές τμήματος. Απαιτεί ενεργοποιημένο το Incident Back Office και ενεργό πρόσθετο Incident Back Office.</value>
+  </data>
+  <data name="Permission.ManageIncidentFeeding" xml:space="preserve">
+    <value>Διαχείριση σίτισης συμβάντος</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentFeeding" xml:space="preserve">
+    <value>Επιτρέπει τη διαχείριση προγραμμάτων γευμάτων, ζήτησης, παραγγελιών γευμάτων και γευμάτων που σερβιρίστηκαν. Χωρίς αποθηκευμένο κανόνα, αυτό επιτρέπεται στους διαχειριστές τμήματος και ομάδας. Απαιτεί ενεργοποιημένο το Incident Back Office και ενεργό πρόσθετο Incident Back Office.</value>
+  </data>
+  <data name="Permission.ManageIncidentServices" xml:space="preserve">
+    <value>Διαχείριση υπηρεσιών υποστήριξης</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentServices" xml:space="preserve">
+    <value>Επιτρέπει την αίτηση και την καταγραφή υπηρεσιών υποστήριξης όπως πλυντήριο ή ντους. Το πλαίσιο «Μόνο ομάδα» το περιορίζει στην ομάδα του χρήστη. Χωρίς αποθηκευμένο κανόνα, αυτό επιτρέπεται σε κάθε μέλος. Απαιτεί ενεργοποιημένο το Incident Back Office και ενεργό πρόσθετο Incident Back Office.</value>
+  </data>
+  <data name="Permission.ManageIncidentGroundSupport" xml:space="preserve">
+    <value>Διαχείριση επίγειας υποστήριξης</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentGroundSupport" xml:space="preserve">
+    <value>Επιτρέπει τη διαχείριση αιτημάτων μεταφοράς και μετακινήσεων, δρομολογίων ταξιδιών και καυσίμων. Χωρίς αποθηκευμένο κανόνα, αυτό επιτρέπεται στους διαχειριστές τμήματος και ομάδας. Απαιτεί ενεργοποιημένο το Incident Back Office και ενεργό πρόσθετο Incident Back Office.</value>
+  </data>
+  <data name="Permission.ManageIncidentComms" xml:space="preserve">
+    <value>Διαχείριση επικοινωνιών συμβάντος</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentComms" xml:space="preserve">
+    <value>Επιτρέπει τη διαχείριση του σχεδίου επικοινωνιών και των αναθέσεων ασυρμάτων και συσκευών. Χωρίς αποθηκευμένο κανόνα, αυτό επιτρέπεται στους διαχειριστές τμήματος και ομάδας. Απαιτεί ενεργοποιημένο το Incident Back Office και ενεργό πρόσθετο Incident Back Office.</value>
+  </data>
+  <data name="Permission.ManageVendorCatalog" xml:space="preserve">
+    <value>Διαχείριση καταλόγου προμηθευτών</value>
+  </data>
+  <data name="PermissionHelp.ManageVendorCatalog" xml:space="preserve">
+    <value>Επιτρέπει την προσθήκη και την επεξεργασία προμηθευτών, των τοποθεσιών, των δυνατοτήτων, της διαθεσιμότητας και των εγγράφων συμμόρφωσής τους. Χωρίς αποθηκευμένο κανόνα, αυτό επιτρέπεται στους διαχειριστές τμήματος και ομάδας. Απαιτεί ενεργοποιημένο το Incident Back Office και ενεργό πρόσθετο Incident Back Office.</value>
+  </data>
+  <data name="Permission.ViewVendorProtected" xml:space="preserve">
+    <value>Προβολή προστατευμένων στοιχείων προμηθευτών</value>
+  </data>
+  <data name="PermissionHelp.ViewVendorProtected" xml:space="preserve">
+    <value>Επιτρέπει την προβολή των φορολογικών αναγνωριστικών και των στοιχείων πληρωμής των προμηθευτών. Χωρίς αποθηκευμένο κανόνα, αυτό επιτρέπεται μόνο στους διαχειριστές τμήματος. Απαιτεί ενεργοποιημένο το Incident Back Office και ενεργό πρόσθετο Incident Back Office.</value>
+  </data>
+  <data name="Permission.EngageVendor" xml:space="preserve">
+    <value>Συνεργασία με προμηθευτές</value>
+  </data>
+  <data name="PermissionHelp.EngageVendor" xml:space="preserve">
+    <value>Επιτρέπει τη σύναψη συνεργασίας με προμηθευτές σε μια ενεργοποίηση, την καταγραφή δεσμεύσεων χωρητικότητας και προσφορών και την αποστολή συνδέσμων προμηθευτών. Χωρίς αποθηκευμένο κανόνα, αυτό επιτρέπεται μόνο στους διαχειριστές τμήματος. Απαιτεί ενεργοποιημένο το Incident Back Office και ενεργό πρόσθετο Incident Back Office.</value>
+  </data>
+  <data name="Permission.ManageIncidentProcurement" xml:space="preserve">
+    <value>Διαχείριση προμηθειών συμβάντος</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentProcurement" xml:space="preserve">
+    <value>Επιτρέπει τη διαχείριση συμφωνιών με προμηθευτές, αιτήσεων προμήθειας, παραλαβών, τιμολογίων προμηθευτών και πακέτων πληρωμών. Χωρίς αποθηκευμένο κανόνα, αυτό επιτρέπεται μόνο στους διαχειριστές τμήματος. Απαιτεί ενεργοποιημένο το Incident Business και ενεργό πρόσθετο Incident Back Office.</value>
+  </data>
+  <data name="Permission.CommitIncidentPurchase" xml:space="preserve">
+    <value>Δέσμευση αγορών συμβάντος</value>
+  </data>
+  <data name="PermissionHelp.CommitIncidentPurchase" xml:space="preserve">
+    <value>Επιτρέπει την καταγραφή οικονομικής δέσμευσης για μια αγορά· αυτός είναι ο έλεγχος εξουσιοδοτημένου αγοραστή. Χωρίς αποθηκευμένο κανόνα, αυτό επιτρέπεται μόνο στους διαχειριστές τμήματος. Απαιτεί ενεργοποιημένο το Incident Business και ενεργό πρόσθετο Incident Back Office.</value>
+  </data>
+  <data name="Permission.AcceptVendorInvoice" xml:space="preserve">
+    <value>Αποδοχή τιμολογίων προμηθευτών</value>
+  </data>
+  <data name="PermissionHelp.AcceptVendorInvoice" xml:space="preserve">
+    <value>Επιτρέπει την αποδοχή τιμολογίων προμηθευτών για πληρωμή αφού αντιστοιχιστούν με παραλαβές. Χωρίς αποθηκευμένο κανόνα, αυτό επιτρέπεται μόνο στους διαχειριστές τμήματος. Απαιτεί ενεργοποιημένο το Incident Business και ενεργό πρόσθετο Incident Back Office.</value>
+  </data>
+  <data name="Permission.ManageIncidentBudget" xml:space="preserve">
+    <value>Διαχείριση προϋπολογισμού συμβάντος</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentBudget" xml:space="preserve">
+    <value>Επιτρέπει τη διαχείριση γραμμών προϋπολογισμού, εκχωρήσεων δαπανών, κωδικών χρηματοδότησης και ομάδων κόστους. Χωρίς αποθηκευμένο κανόνα, αυτό επιτρέπεται μόνο στους διαχειριστές τμήματος. Απαιτεί ενεργοποιημένο το Incident Business και ενεργό πρόσθετο Incident Back Office.</value>
+  </data>
+  <data name="Permission.AuthorizeIncidentFunding" xml:space="preserve">
+    <value>Εξουσιοδότηση χρηματοδότησης συμβάντος</value>
+  </data>
+  <data name="PermissionHelp.AuthorizeIncidentFunding" xml:space="preserve">
+    <value>Επιτρέπει την έγκριση εξουσιοδοτήσεων χρηματοδότησης για τον προϋπολογισμό του συμβάντος. Χωρίς αποθηκευμένο κανόνα, αυτό επιτρέπεται μόνο στους διαχειριστές τμήματος. Απαιτεί ενεργοποιημένο το Incident Business και ενεργό πρόσθετο Incident Back Office.</value>
+  </data>
+  <data name="Permission.EnterIncidentTime" xml:space="preserve">
+    <value>Καταχώριση χρόνου συμβάντος</value>
+  </data>
+  <data name="PermissionHelp.EnterIncidentTime" xml:space="preserve">
+    <value>Επιτρέπει την καταχώριση χρόνου, χρήσης εξοπλισμού και εξόδων. Το πλαίσιο «Μόνο ομάδα» το περιορίζει σε άτομα της ομάδας του χρήστη. Χωρίς αποθηκευμένο κανόνα, αυτό επιτρέπεται στους διαχειριστές τμήματος και ομάδας. Απαιτεί ενεργοποιημένο το Incident Business και ενεργό πρόσθετο Incident Back Office.</value>
+  </data>
+  <data name="Permission.CertifyIncidentTime" xml:space="preserve">
+    <value>Πιστοποίηση χρόνου συμβάντος</value>
+  </data>
+  <data name="PermissionHelp.CertifyIncidentTime" xml:space="preserve">
+    <value>Επιτρέπει στους επόπτες να πιστοποιούν τον καταχωρισμένο χρόνο πριν από την έγκριση. Το πλαίσιο «Μόνο ομάδα» το περιορίζει σε άτομα της ομάδας του χρήστη. Χωρίς αποθηκευμένο κανόνα, αυτό επιτρέπεται στους διαχειριστές τμήματος και ομάδας. Απαιτεί ενεργοποιημένο το Incident Business και ενεργό πρόσθετο Incident Back Office.</value>
+  </data>
+  <data name="Permission.ApproveIncidentTime" xml:space="preserve">
+    <value>Έγκριση χρόνου συμβάντος</value>
+  </data>
+  <data name="PermissionHelp.ApproveIncidentTime" xml:space="preserve">
+    <value>Επιτρέπει την έγκριση πιστοποιημένου χρόνου για κοστολόγηση και πληρωμή. Το πλαίσιο «Μόνο ομάδα» το περιορίζει σε άτομα της ομάδας του χρήστη. Χωρίς αποθηκευμένο κανόνα, αυτό επιτρέπεται μόνο στους διαχειριστές τμήματος. Απαιτεί ενεργοποιημένο το Incident Business και ενεργό πρόσθετο Incident Back Office.</value>
+  </data>
+  <data name="Permission.ViewIncidentCost" xml:space="preserve">
+    <value>Προβολή κόστους συμβάντος</value>
+  </data>
+  <data name="PermissionHelp.ViewIncidentCost" xml:space="preserve">
+    <value>Επιτρέπει την προβολή συναλλαγών κόστους, δεδουλευμένων και ημερήσιων προβλέψεων κόστους. Χωρίς αποθηκευμένο κανόνα, αυτό επιτρέπεται μόνο στους διαχειριστές τμήματος. Απαιτεί ενεργοποιημένο το Incident Business και ενεργό πρόσθετο Incident Back Office.</value>
+  </data>
+  <data name="Permission.ManageIncidentCost" xml:space="preserve">
+    <value>Διαχείριση κόστους συμβάντος</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentCost" xml:space="preserve">
+    <value>Επιτρέπει την επεξεργασία εγγραφών κόστους, συμφωνιών επιμερισμού κόστους και εκτελέσεων επιμερισμού, καθώς και την εξαγωγή εκθέσεων κόστους. Χωρίς αποθηκευμένο κανόνα, αυτό επιτρέπεται μόνο στους διαχειριστές τμήματος. Απαιτεί ενεργοποιημένο το Incident Business και ενεργό πρόσθετο Incident Back Office.</value>
+  </data>
+  <data name="Permission.ManageIncidentClaims" xml:space="preserve">
+    <value>Διαχείριση αξιώσεων συμβάντος</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentClaims" xml:space="preserve">
+    <value>Επιτρέπει το άνοιγμα και τον χειρισμό αξιώσεων για τραυματισμό, ζημία ή απώλεια. Χωρίς αποθηκευμένο κανόνα, αυτό επιτρέπεται μόνο στους διαχειριστές τμήματος. Απαιτεί ενεργοποιημένο το Incident Business και ενεργό πρόσθετο Incident Back Office.</value>
+  </data>
+  <data name="Permission.ViewClaimProtected" xml:space="preserve">
+    <value>Προβολή προστατευμένων στοιχείων αξιώσεων</value>
+  </data>
+  <data name="PermissionHelp.ViewClaimProtected" xml:space="preserve">
+    <value>Επιτρέπει την προβολή των οικονομικών στοιχείων και των σημειώσεων υπόθεσης των αξιώσεων. Χωρίς αποθηκευμένο κανόνα, αυτό επιτρέπεται μόνο στους διαχειριστές τμήματος. Απαιτεί ενεργοποιημένο το Incident Business και ενεργό πρόσθετο Incident Back Office.</value>
+  </data>
+  <data name="Permission.AssembleIncidentIap" xml:space="preserve">
+    <value>Σύνταξη σχεδίων δράσης συμβάντος</value>
+  </data>
+  <data name="PermissionHelp.AssembleIncidentIap" xml:space="preserve">
+    <value>Επιτρέπει τη σύνταξη του σχεδίου δράσης συμβάντος: των σελίδων του, της σειράς των σελίδων, της λίστας διανομής και της εργασίας εκτύπωσης. Η έγκριση και η οριστικοποίηση της αναφοράς του σχεδίου χρησιμοποιούν τα δικαιώματα των Αναφορών. Χωρίς αποθηκευμένο κανόνα, αυτό επιτρέπεται μόνο στους διαχειριστές τμήματος. Απαιτεί ενεργοποιημένο το Incident Back Office και ενεργό πρόσθετο Incident Back Office.</value>
+  </data>
+  <data name="Permission.ViewCoordinationBoards" xml:space="preserve">
+    <value>Προβολή πινάκων συντονισμού</value>
+  </data>
+  <data name="PermissionHelp.ViewCoordinationBoards" xml:space="preserve">
+    <value>Επιτρέπει την ανάγνωση των πινάκων συντονισμού και του γραφείου κατάστασης. Το πλαίσιο «Μόνο ομάδα» το περιορίζει σε πίνακες της ομάδας του χρήστη. Χωρίς αποθηκευμένο κανόνα, αυτό επιτρέπεται σε κάθε μέλος. Απαιτεί ενεργοποιημένο το Incident Coordination και ενεργό πρόσθετο Incident Back Office.</value>
+  </data>
+  <data name="Permission.ManageCoordinationBoards" xml:space="preserve">
+    <value>Διαχείριση πινάκων συντονισμού</value>
+  </data>
+  <data name="PermissionHelp.ManageCoordinationBoards" xml:space="preserve">
+    <value>Επιτρέπει τη δημιουργία και την επεξεργασία πινάκων συντονισμού, των στοιχείων τους και του γραφείου κατάστασης. Το πλαίσιο «Μόνο ομάδα» το περιορίζει σε πίνακες της ομάδας του χρήστη. Χωρίς αποθηκευμένο κανόνα, αυτό επιτρέπεται στους διαχειριστές τμήματος και ομάδας. Απαιτεί ενεργοποιημένο το Incident Coordination και ενεργό πρόσθετο Incident Back Office.</value>
+  </data>
+  <data name="Permission.ShareCoordinationBoards" xml:space="preserve">
+    <value>Κοινή χρήση πινάκων συντονισμού</value>
+  </data>
+  <data name="PermissionHelp.ShareCoordinationBoards" xml:space="preserve">
+    <value>Επιτρέπει την κοινή χρήση ενός πίνακα συντονισμού με συνεργαζόμενους φορείς. Χωρίς αποθηκευμένο κανόνα, αυτό επιτρέπεται μόνο στους διαχειριστές τμήματος. Απαιτεί ενεργοποιημένο το Incident Coordination και ενεργό πρόσθετο Incident Back Office.</value>
+  </data>
 </root>

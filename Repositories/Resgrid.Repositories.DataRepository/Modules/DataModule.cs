@@ -18,6 +18,7 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<AdminAssistRepository>().As<Resgrid.Model.AdminAssist.IAdminAssistRepository>().As<Resgrid.Model.AdminAssist.IAdminAssistMaintenanceStore>().As<Resgrid.Model.AdminAssist.IAdminAssistTraceStore>().As<Resgrid.Model.AdminAssist.IRetentionImpactStore>().As<Resgrid.Model.AdminAssist.INotificationImpactStore>().As<Resgrid.Model.AdminAssist.ISecurityImpactStore>().As<Resgrid.Model.AdminAssist.IModuleImpactStore>().As<Resgrid.Model.AdminAssist.IAdministrativeReferenceStore>().As<Resgrid.Model.AdminAssist.IAiUsageMeter>().As<Resgrid.Model.AdminAssist.IAdminAssistConversationStore>().As<Resgrid.Model.AdminAssist.IAiFreeAllowanceStore>().As<Resgrid.Model.AiDispatch.IAiBackgroundAdmission>().As<Resgrid.Model.AdminAssist.IAdminAssistDiagnosticStore>().As<Resgrid.Model.AdminAssist.IAdminAssistPlanStore>().InstancePerLifetimeScope();
 			builder.RegisterType<ReadinessProBillingRepository>().As<IReadinessProBillingRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<BusinessOperationsBillingRepository>().As<IBusinessOperationsBillingRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<IncidentBackOfficeBillingRepository>().As<IIncidentBackOfficeBillingRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<AiBillingRepository>().As<IAiBillingRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<AiDispatchAuditRepository>().As<Resgrid.Model.AiDispatch.IAiDispatchAuditRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<AiDispatchConfigRepository>().As<Resgrid.Model.AiDispatch.IAiDispatchConfigRepository>().InstancePerLifetimeScope();
@@ -252,6 +253,10 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<UnitCertificationRepository>().As<IUnitCertificationRepository>().InstancePerLifetimeScope();
 			// Workforce & Business Operations plan Phase C (M0218): the free deployment core (deployments, roster, time reports, expenses, attachments).
 			builder.RegisterType<DeploymentRepository>().As<IDeploymentRepository>().InstancePerLifetimeScope();
+			// Incident Back Office (large-incident-logistics-finance-plan.md §11.2; M0290-M0297): one open-generic ledger repository
+			// for every table; the invariant-bearing tables (bed-nights, vendor capacity, time immutability) are enforced in their services.
+			builder.RegisterGeneric(typeof(IncidentLogistics.IncidentLedgerRepository<>)).As(typeof(IIncidentLedgerRepository<>)).InstancePerLifetimeScope();
+			builder.RegisterType<IncidentLogistics.IncidentLookupRepository>().As<IIncidentLookupRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DeploymentUnitRepository>().As<IDeploymentUnitRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DeploymentPersonnelRepository>().As<IDeploymentPersonnelRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DeploymentEquipmentRepository>().As<IDeploymentEquipmentRepository>().InstancePerLifetimeScope();

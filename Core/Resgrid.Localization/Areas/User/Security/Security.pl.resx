@@ -2508,4 +2508,226 @@
   <data name="ApiKeyScopeUnitsRead" xml:space="preserve">
     <value>Odczyt jednostek i ich statusów</value>
   </data>
+  <data name="PermIncidentBackOfficeSectionHeader" xml:space="preserve">
+    <value>Incident Back Office</value>
+  </data>
+  <data name="PermIncidentBackOfficeSectionNote" xml:space="preserve">
+    <value>Te uprawnienia obowiązują tylko przy aktywnym dodatku Incident Back Office. Wiersze finansowe wymagają też włączenia Incident Business, a wiersze tablic koordynacyjnych – Incident Coordination. Same raporty zdarzeń korzystają z uprawnień modułu Raporty podanych wyżej.</value>
+  </data>
+  <data name="PermRecordsViewIncidentBackOfficeLabel" xml:space="preserve">
+    <value>Przeglądanie Incident Back Office</value>
+  </data>
+  <data name="PermRecordsViewIncidentBackOfficeNote" xml:space="preserve">
+    <value>Umożliwia otwieranie stanowisk Incident Back Office i odczyt aktywacji, okresów, struktury organizacyjnej i logistyki. Zmiany na każdym stanowisku wymagają osobnego uprawnienia tego stanowiska.</value>
+  </data>
+  <data name="PermRecordsManageIncidentActivationLabel" xml:space="preserve">
+    <value>Zarządzanie aktywacją zdarzenia</value>
+  </data>
+  <data name="PermRecordsManageIncidentActivationNote" xml:space="preserve">
+    <value>Umożliwia otwieranie aktywacji, dodawanie ich do kompleksu zdarzeń oraz ich zamykanie, pieczętowanie i ponowne otwieranie.</value>
+  </data>
+  <data name="PermRecordsManageIncidentPeriodsLabel" xml:space="preserve">
+    <value>Zarządzanie okresami operacyjnymi</value>
+  </data>
+  <data name="PermRecordsManageIncidentPeriodsNote" xml:space="preserve">
+    <value>Umożliwia tworzenie i edytowanie okresów operacyjnych oraz zatwierdzanie wersji ich planów.</value>
+  </data>
+  <data name="PermRecordsManageIncidentPositionsLabel" xml:space="preserve">
+    <value>Zarządzanie funkcjami w zdarzeniu</value>
+  </data>
+  <data name="PermRecordsManageIncidentPositionsNote" xml:space="preserve">
+    <value>Umożliwia edytowanie katalogu funkcji, przydziałów do funkcji i obsad zespołów.</value>
+  </data>
+  <data name="PermRecordsManageIncidentParticipantsLabel" xml:space="preserve">
+    <value>Zarządzanie uczestnikami zdarzenia</value>
+  </data>
+  <data name="PermRecordsManageIncidentParticipantsNote" xml:space="preserve">
+    <value>Umożliwia rejestrowanie i edytowanie uczestników oraz wysyłanie im linków samoobsługowych. Pole Tylko grupa ogranicza to do uczestników z własnej grupy użytkownika.</value>
+  </data>
+  <data name="PermRecordsViewParticipantSensitiveLabel" xml:space="preserve">
+    <value>Przeglądanie danych wrażliwych uczestników</value>
+  </data>
+  <data name="PermRecordsViewParticipantSensitiveNote" xml:space="preserve">
+    <value>Umożliwia wgląd w kontakty alarmowe uczestników oraz ich dane medyczne, dotyczące dostępności, alergenów i diety.</value>
+  </data>
+  <data name="PermRecordsCreateIncidentRequestLabel" xml:space="preserve">
+    <value>Tworzenie zapotrzebowań na zasoby</value>
+  </data>
+  <data name="PermRecordsCreateIncidentRequestNote" xml:space="preserve">
+    <value>Umożliwia tworzenie zapotrzebowań na zasoby i pakietów misji. Pole Tylko grupa ogranicza to do zapotrzebowań dla własnej grupy użytkownika.</value>
+  </data>
+  <data name="PermRecordsApproveIncidentRequestLabel" xml:space="preserve">
+    <value>Zatwierdzanie zapotrzebowań na zasoby</value>
+  </data>
+  <data name="PermRecordsApproveIncidentRequestNote" xml:space="preserve">
+    <value>Umożliwia zatwierdzanie lub odrzucanie zapotrzebowań na zasoby. Pole Tylko grupa ogranicza to do zapotrzebowań z własnej grupy użytkownika.</value>
+  </data>
+  <data name="PermRecordsOrderIncidentRequestLabel" xml:space="preserve">
+    <value>Zamawianie zasobów z zapotrzebowań</value>
+  </data>
+  <data name="PermRecordsOrderIncidentRequestNote" xml:space="preserve">
+    <value>Umożliwia złożenie zamówienia realizującego zatwierdzone zapotrzebowanie na zasoby, w tym zamówień w ramach umów z dostawcami.</value>
+  </data>
+  <data name="PermRecordsReceiveIncidentRequestLabel" xml:space="preserve">
+    <value>Przyjmowanie zasobów z zapotrzebowań</value>
+  </data>
+  <data name="PermRecordsReceiveIncidentRequestNote" xml:space="preserve">
+    <value>Umożliwia rejestrowanie przybyć i przyjęć dla zrealizowanych zapotrzebowań. Pole Tylko grupa ogranicza to do własnej grupy użytkownika.</value>
+  </data>
+  <data name="PermRecordsManageIncidentFacilitiesLabel" xml:space="preserve">
+    <value>Zarządzanie obiektami zdarzenia</value>
+  </data>
+  <data name="PermRecordsManageIncidentFacilitiesNote" xml:space="preserve">
+    <value>Umożliwia zarządzanie obiektami zdarzenia, ich pojemnością, umowami i usługami.</value>
+  </data>
+  <data name="PermRecordsManageIncidentLodgingLabel" xml:space="preserve">
+    <value>Zarządzanie zakwaterowaniem w zdarzeniu</value>
+  </data>
+  <data name="PermRecordsManageIncidentLodgingNote" xml:space="preserve">
+    <value>Umożliwia zarządzanie obiektami noclegowymi, pulami pokoi, dostępnością na poszczególne noce i przydziałami miejsc noclegowych.</value>
+  </data>
+  <data name="PermRecordsViewLodgingAssignmentDetailLabel" xml:space="preserve">
+    <value>Przeglądanie szczegółów przydziałów zakwaterowania</value>
+  </data>
+  <data name="PermRecordsViewLodgingAssignmentDetailNote" xml:space="preserve">
+    <value>Umożliwia wgląd w numery pokoi i ograniczenia dotyczące zakwaterowania w przydziałach miejsc noclegowych i listach zakwaterowania.</value>
+  </data>
+  <data name="PermRecordsManageIncidentFeedingLabel" xml:space="preserve">
+    <value>Zarządzanie wyżywieniem w zdarzeniu</value>
+  </data>
+  <data name="PermRecordsManageIncidentFeedingNote" xml:space="preserve">
+    <value>Umożliwia zarządzanie planami posiłków, zapotrzebowaniem, zamówieniami posiłków i wydanymi posiłkami.</value>
+  </data>
+  <data name="PermRecordsManageIncidentServicesLabel" xml:space="preserve">
+    <value>Zarządzanie usługami wsparcia</value>
+  </data>
+  <data name="PermRecordsManageIncidentServicesNote" xml:space="preserve">
+    <value>Umożliwia zamawianie i rejestrowanie usług wsparcia, takich jak pralnia czy prysznice. Pole Tylko grupa ogranicza to do własnej grupy użytkownika.</value>
+  </data>
+  <data name="PermRecordsManageIncidentGroundSupportLabel" xml:space="preserve">
+    <value>Zarządzanie wsparciem transportowym</value>
+  </data>
+  <data name="PermRecordsManageIncidentGroundSupportNote" xml:space="preserve">
+    <value>Umożliwia zarządzanie zleceniami i przejazdami transportowymi, planami podróży i paliwem.</value>
+  </data>
+  <data name="PermRecordsManageIncidentCommsLabel" xml:space="preserve">
+    <value>Zarządzanie łącznością w zdarzeniu</value>
+  </data>
+  <data name="PermRecordsManageIncidentCommsNote" xml:space="preserve">
+    <value>Umożliwia zarządzanie planem łączności oraz przydziałami radiotelefonów i urządzeń.</value>
+  </data>
+  <data name="PermRecordsManageVendorCatalogLabel" xml:space="preserve">
+    <value>Zarządzanie katalogiem dostawców</value>
+  </data>
+  <data name="PermRecordsManageVendorCatalogNote" xml:space="preserve">
+    <value>Umożliwia dodawanie i edytowanie dostawców, ich lokalizacji, możliwości, dostępności i dokumentów zgodności.</value>
+  </data>
+  <data name="PermRecordsViewVendorProtectedLabel" xml:space="preserve">
+    <value>Przeglądanie chronionych danych dostawców</value>
+  </data>
+  <data name="PermRecordsViewVendorProtectedNote" xml:space="preserve">
+    <value>Umożliwia wgląd w identyfikatory podatkowe dostawców i ich dane do przelewu.</value>
+  </data>
+  <data name="PermRecordsEngageVendorLabel" xml:space="preserve">
+    <value>Angażowanie dostawców</value>
+  </data>
+  <data name="PermRecordsEngageVendorNote" xml:space="preserve">
+    <value>Umożliwia angażowanie dostawców w aktywację, rejestrowanie zobowiązań dotyczących zdolności dostawczych i wycen oraz wysyłanie linków dla dostawców.</value>
+  </data>
+  <data name="PermRecordsManageIncidentProcurementLabel" xml:space="preserve">
+    <value>Zarządzanie zakupami w zdarzeniu</value>
+  </data>
+  <data name="PermRecordsManageIncidentProcurementNote" xml:space="preserve">
+    <value>Umożliwia zarządzanie umowami z dostawcami, zapotrzebowaniami zakupowymi, przyjęciami, fakturami dostawców i pakietami płatności.</value>
+  </data>
+  <data name="PermRecordsCommitIncidentPurchaseLabel" xml:space="preserve">
+    <value>Zaciąganie zobowiązań zakupowych w zdarzeniu</value>
+  </data>
+  <data name="PermRecordsCommitIncidentPurchaseNote" xml:space="preserve">
+    <value>Umożliwia rejestrowanie zobowiązania finansowego dla zakupu; jest to kontrola osoby upoważnionej do dokonywania zakupów.</value>
+  </data>
+  <data name="PermRecordsAcceptVendorInvoiceLabel" xml:space="preserve">
+    <value>Akceptowanie faktur dostawców</value>
+  </data>
+  <data name="PermRecordsAcceptVendorInvoiceNote" xml:space="preserve">
+    <value>Umożliwia akceptowanie faktur dostawców do zapłaty po ich dopasowaniu do przyjęć.</value>
+  </data>
+  <data name="PermRecordsManageIncidentBudgetLabel" xml:space="preserve">
+    <value>Zarządzanie budżetem zdarzenia</value>
+  </data>
+  <data name="PermRecordsManageIncidentBudgetNote" xml:space="preserve">
+    <value>Umożliwia zarządzanie pozycjami budżetowymi, delegacjami uprawnień do wydatków, kodami finansowania i grupami kosztów.</value>
+  </data>
+  <data name="PermRecordsAuthorizeIncidentFundingLabel" xml:space="preserve">
+    <value>Autoryzowanie finansowania zdarzenia</value>
+  </data>
+  <data name="PermRecordsAuthorizeIncidentFundingNote" xml:space="preserve">
+    <value>Umożliwia zatwierdzanie autoryzacji finansowania dla budżetu zdarzenia.</value>
+  </data>
+  <data name="PermRecordsEnterIncidentTimeLabel" xml:space="preserve">
+    <value>Wprowadzanie czasu pracy w zdarzeniu</value>
+  </data>
+  <data name="PermRecordsEnterIncidentTimeNote" xml:space="preserve">
+    <value>Umożliwia wprowadzanie czasu pracy, użycia sprzętu i wydatków. Pole Tylko grupa ogranicza to do osób z własnej grupy użytkownika.</value>
+  </data>
+  <data name="PermRecordsCertifyIncidentTimeLabel" xml:space="preserve">
+    <value>Poświadczanie czasu pracy w zdarzeniu</value>
+  </data>
+  <data name="PermRecordsCertifyIncidentTimeNote" xml:space="preserve">
+    <value>Umożliwia przełożonym poświadczanie wprowadzonego czasu pracy przed zatwierdzeniem. Pole Tylko grupa ogranicza to do osób z własnej grupy użytkownika.</value>
+  </data>
+  <data name="PermRecordsApproveIncidentTimeLabel" xml:space="preserve">
+    <value>Zatwierdzanie czasu pracy w zdarzeniu</value>
+  </data>
+  <data name="PermRecordsApproveIncidentTimeNote" xml:space="preserve">
+    <value>Umożliwia zatwierdzanie poświadczonego czasu pracy do rozliczenia kosztów i wypłaty. Pole Tylko grupa ogranicza to do osób z własnej grupy użytkownika.</value>
+  </data>
+  <data name="PermRecordsViewIncidentCostLabel" xml:space="preserve">
+    <value>Przeglądanie kosztów zdarzenia</value>
+  </data>
+  <data name="PermRecordsViewIncidentCostNote" xml:space="preserve">
+    <value>Umożliwia wgląd w transakcje kosztowe, naliczenia i dzienne prognozy kosztów.</value>
+  </data>
+  <data name="PermRecordsManageIncidentCostLabel" xml:space="preserve">
+    <value>Zarządzanie kosztami zdarzenia</value>
+  </data>
+  <data name="PermRecordsManageIncidentCostNote" xml:space="preserve">
+    <value>Umożliwia edytowanie rekordów kosztów, umów o podziale kosztów i przebiegów podziału kosztów oraz eksportowanie raportów kosztów.</value>
+  </data>
+  <data name="PermRecordsManageIncidentClaimsLabel" xml:space="preserve">
+    <value>Zarządzanie roszczeniami w zdarzeniu</value>
+  </data>
+  <data name="PermRecordsManageIncidentClaimsNote" xml:space="preserve">
+    <value>Umożliwia otwieranie i prowadzenie roszczeń z tytułu obrażeń, szkód lub strat.</value>
+  </data>
+  <data name="PermRecordsViewClaimProtectedLabel" xml:space="preserve">
+    <value>Przeglądanie chronionych danych roszczeń</value>
+  </data>
+  <data name="PermRecordsViewClaimProtectedNote" xml:space="preserve">
+    <value>Umożliwia wgląd w dane finansowe roszczeń i notatki ze spraw.</value>
+  </data>
+  <data name="PermRecordsAssembleIncidentIapLabel" xml:space="preserve">
+    <value>Kompletowanie planów działań w zdarzeniu</value>
+  </data>
+  <data name="PermRecordsAssembleIncidentIapNote" xml:space="preserve">
+    <value>Umożliwia kompletowanie planu działań w zdarzeniu: jego stron, kolejności stron, listy dystrybucyjnej i zadania drukowania. Zatwierdzanie i finalizowanie raportu planu podlega uprawnieniom modułu Raporty.</value>
+  </data>
+  <data name="PermRecordsViewCoordinationBoardsLabel" xml:space="preserve">
+    <value>Przeglądanie tablic koordynacyjnych</value>
+  </data>
+  <data name="PermRecordsViewCoordinationBoardsNote" xml:space="preserve">
+    <value>Umożliwia odczyt tablic koordynacyjnych i stanowiska sytuacyjnego. Pole Tylko grupa ogranicza to do tablic własnej grupy użytkownika.</value>
+  </data>
+  <data name="PermRecordsManageCoordinationBoardsLabel" xml:space="preserve">
+    <value>Zarządzanie tablicami koordynacyjnymi</value>
+  </data>
+  <data name="PermRecordsManageCoordinationBoardsNote" xml:space="preserve">
+    <value>Umożliwia tworzenie i edytowanie tablic koordynacyjnych, ich elementów oraz stanowiska sytuacyjnego. Pole Tylko grupa ogranicza to do tablic własnej grupy użytkownika.</value>
+  </data>
+  <data name="PermRecordsShareCoordinationBoardsLabel" xml:space="preserve">
+    <value>Udostępnianie tablic koordynacyjnych</value>
+  </data>
+  <data name="PermRecordsShareCoordinationBoardsNote" xml:space="preserve">
+    <value>Umożliwia udostępnianie tablicy koordynacyjnej instytucjom partnerskim.</value>
+  </data>
 </root>

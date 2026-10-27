@@ -562,6 +562,56 @@ namespace Resgrid.Workers.Console
 					Cron.Daily(5, 15),
 					stoppingToken);
 
+				// Incident Back Office (registry §4C): workers 74/75 (snapshots), 52-55 (logistics), 57-58 (business). Each pass
+				// skips departments with the module switched off and emits evaluated triggers once per edge.
+				_logger.Log(LogLevel.Information, "Scheduling Incident Snapshot Projection");
+				await Client.ScheduleAsync("Incident Snapshot Projection",
+					new Commands.IncidentSnapshotProjectionCommand(74),
+					Cron.MinuteIntervals(1),
+					stoppingToken);
+
+				_logger.Log(LogLevel.Information, "Scheduling Incident Snapshot Reconciliation");
+				await Client.ScheduleAsync("Incident Snapshot Reconciliation",
+					new Commands.IncidentSnapshotReconciliationCommand(75),
+					Cron.MinuteIntervals(30),
+					stoppingToken);
+
+				_logger.Log(LogLevel.Information, "Scheduling Incident Demand Forecast");
+				await Client.ScheduleAsync("Incident Demand Forecast",
+					new Commands.IncidentDemandForecastCommand(52),
+					Cron.MinuteIntervals(15),
+					stoppingToken);
+
+				_logger.Log(LogLevel.Information, "Scheduling Incident Vendor Validation");
+				await Client.ScheduleAsync("Incident Vendor Validation",
+					new Commands.IncidentVendorValidationCommand(53),
+					Cron.MinuteIntervals(60),
+					stoppingToken);
+
+				_logger.Log(LogLevel.Information, "Scheduling Incident Hold Expiry");
+				await Client.ScheduleAsync("Incident Hold Expiry",
+					new Commands.IncidentHoldExpiryCommand(54),
+					Cron.MinuteIntervals(5),
+					stoppingToken);
+
+				_logger.Log(LogLevel.Information, "Scheduling Incident Alert Evaluation");
+				await Client.ScheduleAsync("Incident Alert Evaluation",
+					new Commands.IncidentAlertEvaluationCommand(55),
+					Cron.MinuteIntervals(2),
+					stoppingToken);
+
+				_logger.Log(LogLevel.Information, "Scheduling Incident Daily Cost");
+				await Client.ScheduleAsync("Incident Daily Cost",
+					new Commands.IncidentDailyCostCommand(57),
+					Cron.Daily(2, 15),
+					stoppingToken);
+
+				_logger.Log(LogLevel.Information, "Scheduling Incident Retention");
+				await Client.ScheduleAsync("Incident Retention",
+					new Commands.IncidentRetentionCommand(58),
+					Cron.Daily(3, 45),
+					stoppingToken);
+
 				_logger.Log(LogLevel.Information, "Scheduling Compliance Expiry");
 				await Client.ScheduleAsync("Compliance Expiry",
 					new Commands.ComplianceExpiryCommand(33),

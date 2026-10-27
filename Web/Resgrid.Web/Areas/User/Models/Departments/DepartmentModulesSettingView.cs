@@ -22,6 +22,10 @@ namespace Resgrid.Web.Areas.User.Models.Departments
 		public bool ChecklistsEnabled { get; set; } = true;
 		public bool AiEnabled { get; set; } = true;
 		public bool BusinessOperationsEnabled { get; set; } = true;
+		// Incident Back Office switches (DepartmentModuleSettings 26-28): the module, its finance desks and coordination boards.
+		public bool IncidentBackOfficeEnabled { get; set; } = true;
+		public bool IncidentBusinessEnabled { get; set; } = true;
+		public bool IncidentCoordinationEnabled { get; set; } = true;
 
 		public DepartmentModulesSettingView()
 		{

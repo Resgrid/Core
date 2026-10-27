@@ -2508,4 +2508,226 @@
   <data name="ApiKeyScopeUnitsRead" xml:space="preserve">
     <value>Lire les unités et leurs statuts</value>
   </data>
+  <data name="PermIncidentBackOfficeSectionHeader" xml:space="preserve">
+    <value>Incident Back Office</value>
+  </data>
+  <data name="PermIncidentBackOfficeSectionNote" xml:space="preserve">
+    <value>Ces autorisations ne s'appliquent qu'avec un module complémentaire Incident Back Office actif. Les lignes financières nécessitent également l'activation d'Incident Business, et les lignes des tableaux de coordination celle d'Incident Coordination. Les rapports d'incident eux-mêmes utilisent les autorisations Rapports ci-dessus.</value>
+  </data>
+  <data name="PermRecordsViewIncidentBackOfficeLabel" xml:space="preserve">
+    <value>Afficher l'Incident Back Office</value>
+  </data>
+  <data name="PermRecordsViewIncidentBackOfficeNote" xml:space="preserve">
+    <value>Permet d'ouvrir les bureaux de l'Incident Back Office et de consulter les activations, les périodes, l'organisation et la logistique. Les modifications sur chaque bureau nécessitent l'autorisation propre à ce bureau.</value>
+  </data>
+  <data name="PermRecordsManageIncidentActivationLabel" xml:space="preserve">
+    <value>Gérer l'activation des incidents</value>
+  </data>
+  <data name="PermRecordsManageIncidentActivationNote" xml:space="preserve">
+    <value>Permet d'ouvrir des activations, de les ajouter à un complexe, ainsi que de les clôturer, de les sceller ou de les rouvrir.</value>
+  </data>
+  <data name="PermRecordsManageIncidentPeriodsLabel" xml:space="preserve">
+    <value>Gérer les périodes opérationnelles</value>
+  </data>
+  <data name="PermRecordsManageIncidentPeriodsNote" xml:space="preserve">
+    <value>Permet de créer et de modifier des périodes opérationnelles et d'approuver leurs versions du plan.</value>
+  </data>
+  <data name="PermRecordsManageIncidentPositionsLabel" xml:space="preserve">
+    <value>Gérer les postes d'incident</value>
+  </data>
+  <data name="PermRecordsManageIncidentPositionsNote" xml:space="preserve">
+    <value>Permet de modifier le catalogue des postes, les affectations aux postes et les listes d'équipe.</value>
+  </data>
+  <data name="PermRecordsManageIncidentParticipantsLabel" xml:space="preserve">
+    <value>Gérer les participants de l'incident</value>
+  </data>
+  <data name="PermRecordsManageIncidentParticipantsNote" xml:space="preserve">
+    <value>Permet d'inscrire et de modifier des participants et de leur envoyer leurs liens libre-service. La case Groupe uniquement la limite aux participants de son propre groupe.</value>
+  </data>
+  <data name="PermRecordsViewParticipantSensitiveLabel" xml:space="preserve">
+    <value>Afficher les données sensibles des participants</value>
+  </data>
+  <data name="PermRecordsViewParticipantSensitiveNote" xml:space="preserve">
+    <value>Permet de voir les contacts d'urgence des participants ainsi que leurs informations médicales, d'accessibilité, d'allergènes et d'alimentation.</value>
+  </data>
+  <data name="PermRecordsCreateIncidentRequestLabel" xml:space="preserve">
+    <value>Créer des demandes de ressources</value>
+  </data>
+  <data name="PermRecordsCreateIncidentRequestNote" xml:space="preserve">
+    <value>Permet de créer des demandes de ressources et des ensembles de mission. La case Groupe uniquement la limite aux demandes pour son propre groupe.</value>
+  </data>
+  <data name="PermRecordsApproveIncidentRequestLabel" xml:space="preserve">
+    <value>Approuver les demandes de ressources</value>
+  </data>
+  <data name="PermRecordsApproveIncidentRequestNote" xml:space="preserve">
+    <value>Permet d'approuver ou de rejeter des demandes de ressources. La case Groupe uniquement la limite aux demandes provenant de son propre groupe.</value>
+  </data>
+  <data name="PermRecordsOrderIncidentRequestLabel" xml:space="preserve">
+    <value>Commander les demandes de ressources</value>
+  </data>
+  <data name="PermRecordsOrderIncidentRequestNote" xml:space="preserve">
+    <value>Permet de passer la commande qui satisfait une demande de ressources approuvée, y compris les commandes passées dans le cadre d'accords avec les fournisseurs.</value>
+  </data>
+  <data name="PermRecordsReceiveIncidentRequestLabel" xml:space="preserve">
+    <value>Réceptionner les demandes de ressources</value>
+  </data>
+  <data name="PermRecordsReceiveIncidentRequestNote" xml:space="preserve">
+    <value>Permet d'enregistrer les arrivées et les réceptions relatives aux demandes satisfaites. La case Groupe uniquement la limite à son propre groupe.</value>
+  </data>
+  <data name="PermRecordsManageIncidentFacilitiesLabel" xml:space="preserve">
+    <value>Gérer les installations de l'incident</value>
+  </data>
+  <data name="PermRecordsManageIncidentFacilitiesNote" xml:space="preserve">
+    <value>Permet de gérer les installations de l'incident, leur capacité, leurs accords et leurs services.</value>
+  </data>
+  <data name="PermRecordsManageIncidentLodgingLabel" xml:space="preserve">
+    <value>Gérer l'hébergement de l'incident</value>
+  </data>
+  <data name="PermRecordsManageIncidentLodgingNote" xml:space="preserve">
+    <value>Permet de gérer les établissements d'hébergement, les blocs de chambres, les disponibilités par nuit et les attributions de lits.</value>
+  </data>
+  <data name="PermRecordsViewLodgingAssignmentDetailLabel" xml:space="preserve">
+    <value>Afficher les détails d'attribution d'hébergement</value>
+  </data>
+  <data name="PermRecordsViewLodgingAssignmentDetailNote" xml:space="preserve">
+    <value>Permet de voir les numéros de chambre et les restrictions d'hébergement sur les attributions de lits et les listes de répartition des chambres.</value>
+  </data>
+  <data name="PermRecordsManageIncidentFeedingLabel" xml:space="preserve">
+    <value>Gérer la restauration de l'incident</value>
+  </data>
+  <data name="PermRecordsManageIncidentFeedingNote" xml:space="preserve">
+    <value>Permet de gérer les plans de repas, la demande, les commandes de repas et les repas servis.</value>
+  </data>
+  <data name="PermRecordsManageIncidentServicesLabel" xml:space="preserve">
+    <value>Gérer les services de soutien</value>
+  </data>
+  <data name="PermRecordsManageIncidentServicesNote" xml:space="preserve">
+    <value>Permet de demander et d'enregistrer des services de soutien tels que la blanchisserie ou les douches. La case Groupe uniquement la limite à son propre groupe.</value>
+  </data>
+  <data name="PermRecordsManageIncidentGroundSupportLabel" xml:space="preserve">
+    <value>Gérer le soutien au sol</value>
+  </data>
+  <data name="PermRecordsManageIncidentGroundSupportNote" xml:space="preserve">
+    <value>Permet de gérer les demandes et mouvements de transport, les itinéraires de déplacement et le carburant.</value>
+  </data>
+  <data name="PermRecordsManageIncidentCommsLabel" xml:space="preserve">
+    <value>Gérer les communications de l'incident</value>
+  </data>
+  <data name="PermRecordsManageIncidentCommsNote" xml:space="preserve">
+    <value>Permet de gérer le plan de communication ainsi que les affectations de radios et d'appareils.</value>
+  </data>
+  <data name="PermRecordsManageVendorCatalogLabel" xml:space="preserve">
+    <value>Gérer le catalogue des fournisseurs</value>
+  </data>
+  <data name="PermRecordsManageVendorCatalogNote" xml:space="preserve">
+    <value>Permet d'ajouter et de modifier des fournisseurs, leurs sites, compétences, disponibilités et documents de conformité.</value>
+  </data>
+  <data name="PermRecordsViewVendorProtectedLabel" xml:space="preserve">
+    <value>Afficher les données protégées des fournisseurs</value>
+  </data>
+  <data name="PermRecordsViewVendorProtectedNote" xml:space="preserve">
+    <value>Permet de voir les identifiants fiscaux et les coordonnées de paiement des fournisseurs.</value>
+  </data>
+  <data name="PermRecordsEngageVendorLabel" xml:space="preserve">
+    <value>Engager des fournisseurs</value>
+  </data>
+  <data name="PermRecordsEngageVendorNote" xml:space="preserve">
+    <value>Permet d'engager des fournisseurs sur une activation, d'enregistrer des engagements de capacité et des devis, et d'envoyer des liens fournisseurs.</value>
+  </data>
+  <data name="PermRecordsManageIncidentProcurementLabel" xml:space="preserve">
+    <value>Gérer les achats de l'incident</value>
+  </data>
+  <data name="PermRecordsManageIncidentProcurementNote" xml:space="preserve">
+    <value>Permet de gérer les accords avec les fournisseurs, les demandes d'achat, les réceptions, les factures fournisseurs et les dossiers de paiement.</value>
+  </data>
+  <data name="PermRecordsCommitIncidentPurchaseLabel" xml:space="preserve">
+    <value>Engager les achats de l'incident</value>
+  </data>
+  <data name="PermRecordsCommitIncidentPurchaseNote" xml:space="preserve">
+    <value>Permet d'enregistrer un engagement financier pour un achat ; il s'agit du contrôle d'acheteur habilité.</value>
+  </data>
+  <data name="PermRecordsAcceptVendorInvoiceLabel" xml:space="preserve">
+    <value>Accepter les factures fournisseurs</value>
+  </data>
+  <data name="PermRecordsAcceptVendorInvoiceNote" xml:space="preserve">
+    <value>Permet d'accepter des factures fournisseurs pour paiement une fois qu'elles ont été rapprochées des réceptions.</value>
+  </data>
+  <data name="PermRecordsManageIncidentBudgetLabel" xml:space="preserve">
+    <value>Gérer le budget de l'incident</value>
+  </data>
+  <data name="PermRecordsManageIncidentBudgetNote" xml:space="preserve">
+    <value>Permet de gérer les lignes budgétaires, les délégations de dépenses, les codes de financement et les groupes de coûts.</value>
+  </data>
+  <data name="PermRecordsAuthorizeIncidentFundingLabel" xml:space="preserve">
+    <value>Autoriser le financement de l'incident</value>
+  </data>
+  <data name="PermRecordsAuthorizeIncidentFundingNote" xml:space="preserve">
+    <value>Permet d'approuver les autorisations de financement du budget de l'incident.</value>
+  </data>
+  <data name="PermRecordsEnterIncidentTimeLabel" xml:space="preserve">
+    <value>Saisir le temps de l'incident</value>
+  </data>
+  <data name="PermRecordsEnterIncidentTimeNote" xml:space="preserve">
+    <value>Permet de saisir le temps, l'utilisation des équipements et les dépenses. La case Groupe uniquement la limite aux personnes de son propre groupe.</value>
+  </data>
+  <data name="PermRecordsCertifyIncidentTimeLabel" xml:space="preserve">
+    <value>Certifier le temps de l'incident</value>
+  </data>
+  <data name="PermRecordsCertifyIncidentTimeNote" xml:space="preserve">
+    <value>Permet aux superviseurs de certifier le temps saisi avant son approbation. La case Groupe uniquement la limite aux personnes de son propre groupe.</value>
+  </data>
+  <data name="PermRecordsApproveIncidentTimeLabel" xml:space="preserve">
+    <value>Approuver le temps de l'incident</value>
+  </data>
+  <data name="PermRecordsApproveIncidentTimeNote" xml:space="preserve">
+    <value>Permet d'approuver le temps certifié pour le calcul des coûts et le paiement. La case Groupe uniquement la limite aux personnes de son propre groupe.</value>
+  </data>
+  <data name="PermRecordsViewIncidentCostLabel" xml:space="preserve">
+    <value>Afficher les coûts de l'incident</value>
+  </data>
+  <data name="PermRecordsViewIncidentCostNote" xml:space="preserve">
+    <value>Permet de voir les transactions de coûts, les charges à payer et les projections quotidiennes des coûts.</value>
+  </data>
+  <data name="PermRecordsManageIncidentCostLabel" xml:space="preserve">
+    <value>Gérer les coûts de l'incident</value>
+  </data>
+  <data name="PermRecordsManageIncidentCostNote" xml:space="preserve">
+    <value>Permet de modifier les enregistrements de coûts, les accords de partage des coûts et les calculs de répartition, et d'exporter des rapports de coûts.</value>
+  </data>
+  <data name="PermRecordsManageIncidentClaimsLabel" xml:space="preserve">
+    <value>Gérer les réclamations liées à l'incident</value>
+  </data>
+  <data name="PermRecordsManageIncidentClaimsNote" xml:space="preserve">
+    <value>Permet d'ouvrir et de traiter des réclamations pour blessure, dommage ou perte.</value>
+  </data>
+  <data name="PermRecordsViewClaimProtectedLabel" xml:space="preserve">
+    <value>Afficher les données protégées des réclamations</value>
+  </data>
+  <data name="PermRecordsViewClaimProtectedNote" xml:space="preserve">
+    <value>Permet de voir les données financières et les notes de dossier des réclamations.</value>
+  </data>
+  <data name="PermRecordsAssembleIncidentIapLabel" xml:space="preserve">
+    <value>Constituer les plans d'action de l'incident</value>
+  </data>
+  <data name="PermRecordsAssembleIncidentIapNote" xml:space="preserve">
+    <value>Permet de constituer le plan d'action de l'incident : ses pages, l'ordre des pages, la liste de diffusion et la tâche d'impression. L'approbation et la finalisation du rapport du plan relèvent des autorisations Rapports.</value>
+  </data>
+  <data name="PermRecordsViewCoordinationBoardsLabel" xml:space="preserve">
+    <value>Afficher les tableaux de coordination</value>
+  </data>
+  <data name="PermRecordsViewCoordinationBoardsNote" xml:space="preserve">
+    <value>Permet de consulter les tableaux de coordination et le bureau de situation. La case Groupe uniquement la limite aux tableaux de son propre groupe.</value>
+  </data>
+  <data name="PermRecordsManageCoordinationBoardsLabel" xml:space="preserve">
+    <value>Gérer les tableaux de coordination</value>
+  </data>
+  <data name="PermRecordsManageCoordinationBoardsNote" xml:space="preserve">
+    <value>Permet de créer et de modifier des tableaux de coordination, leurs éléments et le bureau de situation. La case Groupe uniquement la limite aux tableaux de son propre groupe.</value>
+  </data>
+  <data name="PermRecordsShareCoordinationBoardsLabel" xml:space="preserve">
+    <value>Partager les tableaux de coordination</value>
+  </data>
+  <data name="PermRecordsShareCoordinationBoardsNote" xml:space="preserve">
+    <value>Permet de partager un tableau de coordination avec des organismes partenaires.</value>
+  </data>
 </root>

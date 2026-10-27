@@ -17,6 +17,7 @@ namespace Resgrid.Repositories.DataRepository
 		{
 			builder.RegisterType<ReadinessProBillingRepository>().As<IReadinessProBillingRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<BusinessOperationsBillingRepository>().As<IBusinessOperationsBillingRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<IncidentBackOfficeBillingRepository>().As<IIncidentBackOfficeBillingRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<AiBillingRepository>().As<IAiBillingRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<CustomerBillingProfileRepository>().As<ICustomerBillingProfileRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RateCardRepository>().As<IRateCardRepository>().InstancePerLifetimeScope();
@@ -35,6 +36,10 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<UnitCertificationRepository>().As<IUnitCertificationRepository>().InstancePerLifetimeScope();
 			// Workforce & Business Operations plan Phase C (M0218): the free deployment core (deployments, roster, time reports, expenses, attachments).
 			builder.RegisterType<DeploymentRepository>().As<IDeploymentRepository>().InstancePerLifetimeScope();
+			// Incident Back Office (large-incident-logistics-finance-plan.md §11.2; M0290-M0297): one open-generic ledger repository
+			// for every table; the invariant-bearing tables (bed-nights, vendor capacity, time immutability) are enforced in their services.
+			builder.RegisterGeneric(typeof(IncidentLogistics.IncidentLedgerRepository<>)).As(typeof(IIncidentLedgerRepository<>)).InstancePerLifetimeScope();
+			builder.RegisterType<IncidentLogistics.IncidentLookupRepository>().As<IIncidentLookupRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DeploymentUnitRepository>().As<IDeploymentUnitRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DeploymentPersonnelRepository>().As<IDeploymentPersonnelRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DeploymentEquipmentRepository>().As<IDeploymentEquipmentRepository>().InstancePerLifetimeScope();

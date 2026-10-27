@@ -1,0 +1,138 @@
+@model Resgrid.Web.Areas.User.Models.IncidentBackOffice.IncidentAssignView
+@using Resgrid.Model.IncidentLogistics
+@using Resgrid.Web.Areas.User.Models.IncidentBackOffice
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.IncidentBackOffice.IncidentBackOffice> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["AssignPosition"];
+    ViewData["Title"] = localizer["AssignPosition"].Value;
+    ViewData["Subtitle"] = localizer["AssignPositionIntro"].Value;
+    var time = ViewData["IboTime"] as IncidentTime;
+    var a = Model.Assignment;
+    string Error(string field) => Model.Errors.TryGetValue(field, out var e) ? e : null;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/IncidentBackOffice/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("~/Areas/User/Views/IncidentBackOffice/_Message.cshtml", (IncidentDeskView)Model)
+    <div class="ibox float-e-margins">
+        <div class="ibox-content">
+            <form method="post" asp-action="Assign" class="form-horizontal ibo-ledger-form" novalidate>
+                @Html.AntiForgeryToken()
+                <div class="form-group @(Error("IncidentPositionDefinitionId") != null ? "has-error" : null)">
+                    <label class="col-sm-3 control-label" for="ibo-position">@localizer["Field.IncidentPositionDefinitionId"] <span class="text-danger" aria-hidden="true">*</span></label>
+                    <div class="col-sm-6">
+                        <select id="ibo-position" name="incidentPositionDefinitionId" class="form-control" required>
+                            <option value="">—</option>
+                            @foreach (var option in Model.Positions)
+                            {
+                                <option value="@option.Value" selected="@(a.IncidentPositionDefinitionId == option.Value)">@option.Text</option>
+                            }
+                        </select>
+                        @if (Error("IncidentPositionDefinitionId") != null) { <span class="help-block" role="alert">@Error("IncidentPositionDefinitionId")</span> }
+                    </div>
+                </div>
+                <div class="form-group @(Error("UserId") != null ? "has-error" : null)">
+                    <label class="col-sm-3 control-label" for="ibo-user">@localizer["Field.UserId"]</label>
+                    <div class="col-sm-6">
+                        <select id="ibo-user" name="userId" class="form-control">
+                            <option value="">—</option>
+                            @foreach (var option in Model.People)
+                            {
+                                <option value="@option.Value" selected="@(a.UserId == option.Value)">@option.Text</option>
+                            }
+                        </select>
+                        <span class="help-block">@(Error("UserId") ?? localizer["AssignUserHelp"].Value)</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" for="ibo-placeholder">@localizer["Field.PlaceholderLabel"]</label>
+                    <div class="col-sm-6"><input id="ibo-placeholder" name="placeholderLabel" value="@a.PlaceholderLabel" maxlength="200" class="form-control" /></div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" for="ibo-kind">@localizer["Field.AssignmentKind"]</label>
+                    <div class="col-sm-3">
+                        <select id="ibo-kind" name="assignmentKind" class="form-control">
+                            @foreach (var kind in Enum.GetValues(typeof(IncidentAssignmentKinds)).Cast<int>())
+                            {
+                                <option value="@kind" selected="@(a.AssignmentKind == kind)">@LedgerText.Status(localizer, typeof(IncidentAssignmentKinds), kind)</option>
+                            }
+                        </select>
+                    </div>
+                    <label class="col-sm-1 control-label" for="ibo-shift">@localizer["Field.Shift"]</label>
+                    <div class="col-sm-2">
+                        <select id="ibo-shift" name="shift" class="form-control">
+                            @foreach (var shift in Enum.GetValues(typeof(IncidentShiftPatterns)).Cast<int>())
+                            {
+                                <option value="@shift" selected="@(a.Shift == shift)">@LedgerText.Status(localizer, typeof(IncidentShiftPatterns), shift)</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group @(Error("StartOn") != null ? "has-error" : null)">
+                    <label class="col-sm-3 control-label" for="ibo-start">@localizer["Field.StartOn"]</label>
+                    <div class="col-sm-4">
+                        <div class="input-group"><input id="ibo-start" type="datetime-local" name="startOn" value="@Model.StartOn" class="form-control" required /><span class="input-group-addon">@time?.ZoneId</span></div>
+                        @if (Error("StartOn") != null) { <span class="help-block" role="alert">@Error("StartOn")</span> }
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" for="ibo-period">@localizer["Field.IncidentOperationalPeriodId"]</label>
+                    <div class="col-sm-4">
+                        <select id="ibo-period" name="incidentOperationalPeriodId" class="form-control">
+                            <option value="">—</option>
+                            @foreach (var option in Model.Periods)
+                            {
+                                <option value="@option.Value" selected="@(a.IncidentOperationalPeriodId == option.Value)">@option.Text</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                @if (Model.Nodes.Count > 0)
+                {
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="ibo-node">@localizer["Field.IncidentOrganizationNodeId"]</label>
+                        <div class="col-sm-4">
+                            <select id="ibo-node" name="incidentOrganizationNodeId" class="form-control">
+                                <option value="">—</option>
+                                @foreach (var option in Model.Nodes)
+                                {
+                                    <option value="@option.Value" selected="@(a.IncidentOrganizationNodeId == option.Value)">@option.Text</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                }
+                <div class="form-group">
+                    <div class="col-sm-offset-3 col-sm-9">
+                        <div class="checkbox"><label><input type="checkbox" name="isTrainee" value="true" checked="@a.IsTrainee" /> @localizer["Field.IsTrainee"]</label></div>
+                        @if (Model.CanOverride)
+                        {
+                            <div class="checkbox"><label><input type="checkbox" name="overrideQualification" value="true" /> @localizer["OverrideQualification"]</label></div>
+                            <span class="help-block">@localizer["OverrideQualificationHelp"]</span>
+                        }
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" for="ibo-note">@localizer["Field.QualificationNote"]</label>
+                    <div class="col-sm-6"><textarea id="ibo-note" name="qualificationNote" rows="2" maxlength="500" class="form-control">@a.QualificationNote</textarea></div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-3 col-sm-9">
+                        <button type="submit" class="btn btn-primary"><i class="fa fa-user-plus" aria-hidden="true"></i> @localizer["AssignPosition"]</button>
+                        <a asp-action="Index" class="btn btn-default">@localizer["Cancel"]</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/incident-back-office.css" asp-append-version="true" />
+}
+@section Scripts {
+    <script src="~/js/app/internal/incidentbackoffice/incident-back-office.js" asp-append-version="true"></script>
+}

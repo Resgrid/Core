@@ -1115,4 +1115,226 @@
   <data name="ApiKeyScopeUnitsRead" xml:space="preserve">
     <value>قراءة الوحدات وحالاتها</value>
   </data>
+  <data name="PermIncidentBackOfficeSectionHeader" xml:space="preserve">
+    <value>Incident Back Office</value>
+  </data>
+  <data name="PermIncidentBackOfficeSectionNote" xml:space="preserve">
+    <value>لا تسري هذه الصلاحيات إلا مع إضافة Incident Back Office نشطة. تحتاج صفوف الشؤون المالية أيضًا إلى تفعيل Incident Business، وتحتاج صفوف لوحات التنسيق إلى Incident Coordination. أما سجلات الحوادث نفسها فتستخدم صلاحيات السجلات الواردة أعلاه.</value>
+  </data>
+  <data name="PermRecordsViewIncidentBackOfficeLabel" xml:space="preserve">
+    <value>عرض Incident Back Office</value>
+  </data>
+  <data name="PermRecordsViewIncidentBackOfficeNote" xml:space="preserve">
+    <value>يسمح بفتح مكاتب Incident Back Office وقراءة عمليات التفعيل والفترات والتنظيم واللوجستيات. تتطلب التغييرات في كل مكتب الصلاحية الخاصة بذلك المكتب.</value>
+  </data>
+  <data name="PermRecordsManageIncidentActivationLabel" xml:space="preserve">
+    <value>إدارة تفعيل الحادث</value>
+  </data>
+  <data name="PermRecordsManageIncidentActivationNote" xml:space="preserve">
+    <value>يسمح بفتح عمليات التفعيل وإضافتها إلى مجمّع حوادث، وإغلاقها أو ختمها أو إعادة فتحها.</value>
+  </data>
+  <data name="PermRecordsManageIncidentPeriodsLabel" xml:space="preserve">
+    <value>إدارة الفترات العملياتية</value>
+  </data>
+  <data name="PermRecordsManageIncidentPeriodsNote" xml:space="preserve">
+    <value>يسمح بإنشاء الفترات العملياتية وتعديلها واعتماد إصدارات خططها.</value>
+  </data>
+  <data name="PermRecordsManageIncidentPositionsLabel" xml:space="preserve">
+    <value>إدارة مناصب الحادث</value>
+  </data>
+  <data name="PermRecordsManageIncidentPositionsNote" xml:space="preserve">
+    <value>يسمح بتعديل كتالوج المناصب والتكليفات بالمناصب وتشكيلات الفرق.</value>
+  </data>
+  <data name="PermRecordsManageIncidentParticipantsLabel" xml:space="preserve">
+    <value>إدارة مشاركي الحادث</value>
+  </data>
+  <data name="PermRecordsManageIncidentParticipantsNote" xml:space="preserve">
+    <value>يسمح بتسجيل المشاركين وتعديلهم وإرسال روابط الخدمة الذاتية الخاصة بهم. يقصره خيار «المجموعة فقط» على المشاركين من مجموعة المستخدم نفسه.</value>
+  </data>
+  <data name="PermRecordsViewParticipantSensitiveLabel" xml:space="preserve">
+    <value>عرض التفاصيل الحساسة للمشاركين</value>
+  </data>
+  <data name="PermRecordsViewParticipantSensitiveNote" xml:space="preserve">
+    <value>يسمح برؤية جهات اتصال الطوارئ للمشاركين وتفاصيلهم الطبية واحتياجات إمكانية الوصول ومسببات الحساسية والاحتياجات الغذائية.</value>
+  </data>
+  <data name="PermRecordsCreateIncidentRequestLabel" xml:space="preserve">
+    <value>إنشاء طلبات الموارد</value>
+  </data>
+  <data name="PermRecordsCreateIncidentRequestNote" xml:space="preserve">
+    <value>يسمح بإنشاء طلبات الموارد وحزم المهام. يقصره خيار «المجموعة فقط» على الطلبات الخاصة بمجموعة المستخدم نفسه.</value>
+  </data>
+  <data name="PermRecordsApproveIncidentRequestLabel" xml:space="preserve">
+    <value>اعتماد طلبات الموارد</value>
+  </data>
+  <data name="PermRecordsApproveIncidentRequestNote" xml:space="preserve">
+    <value>يسمح باعتماد طلبات الموارد أو رفضها. يقصره خيار «المجموعة فقط» على الطلبات الواردة من مجموعة المستخدم نفسه.</value>
+  </data>
+  <data name="PermRecordsOrderIncidentRequestLabel" xml:space="preserve">
+    <value>إصدار أوامر الشراء لطلبات الموارد</value>
+  </data>
+  <data name="PermRecordsOrderIncidentRequestNote" xml:space="preserve">
+    <value>يسمح بإصدار الأمر الذي يلبّي طلب موارد معتمدًا، بما في ذلك الطلبيات المستندة إلى اتفاقيات الموردين.</value>
+  </data>
+  <data name="PermRecordsReceiveIncidentRequestLabel" xml:space="preserve">
+    <value>استلام طلبات الموارد</value>
+  </data>
+  <data name="PermRecordsReceiveIncidentRequestNote" xml:space="preserve">
+    <value>يسمح بتسجيل حالات الوصول والاستلام مقابل الطلبات التي تمت تلبيتها. يقصره خيار «المجموعة فقط» على مجموعة المستخدم نفسه.</value>
+  </data>
+  <data name="PermRecordsManageIncidentFacilitiesLabel" xml:space="preserve">
+    <value>إدارة مرافق الحادث</value>
+  </data>
+  <data name="PermRecordsManageIncidentFacilitiesNote" xml:space="preserve">
+    <value>يسمح بإدارة مرافق الحادث وسعتها واتفاقياتها وخدماتها.</value>
+  </data>
+  <data name="PermRecordsManageIncidentLodgingLabel" xml:space="preserve">
+    <value>إدارة إقامة الحادث</value>
+  </data>
+  <data name="PermRecordsManageIncidentLodgingNote" xml:space="preserve">
+    <value>يسمح بإدارة منشآت الإقامة وكتل الغرف والمخزون الليلي وتخصيص الأسرّة.</value>
+  </data>
+  <data name="PermRecordsViewLodgingAssignmentDetailLabel" xml:space="preserve">
+    <value>عرض تفاصيل تخصيص الإقامة</value>
+  </data>
+  <data name="PermRecordsViewLodgingAssignmentDetailNote" xml:space="preserve">
+    <value>يسمح برؤية أرقام الغرف وقيود الإقامة في تخصيصات الأسرّة وقوائم توزيع الغرف.</value>
+  </data>
+  <data name="PermRecordsManageIncidentFeedingLabel" xml:space="preserve">
+    <value>إدارة إطعام الحادث</value>
+  </data>
+  <data name="PermRecordsManageIncidentFeedingNote" xml:space="preserve">
+    <value>يسمح بإدارة خطط الوجبات والطلب المتوقع وطلبيات الوجبات والوجبات المقدَّمة.</value>
+  </data>
+  <data name="PermRecordsManageIncidentServicesLabel" xml:space="preserve">
+    <value>إدارة خدمات الدعم</value>
+  </data>
+  <data name="PermRecordsManageIncidentServicesNote" xml:space="preserve">
+    <value>يسمح بطلب خدمات الدعم مثل الغسيل أو الاستحمام وتسجيلها. يقصره خيار «المجموعة فقط» على مجموعة المستخدم نفسه.</value>
+  </data>
+  <data name="PermRecordsManageIncidentGroundSupportLabel" xml:space="preserve">
+    <value>إدارة الدعم الأرضي</value>
+  </data>
+  <data name="PermRecordsManageIncidentGroundSupportNote" xml:space="preserve">
+    <value>يسمح بإدارة طلبات النقل والتحركات وخطط مسارات السفر والوقود.</value>
+  </data>
+  <data name="PermRecordsManageIncidentCommsLabel" xml:space="preserve">
+    <value>إدارة اتصالات الحادث</value>
+  </data>
+  <data name="PermRecordsManageIncidentCommsNote" xml:space="preserve">
+    <value>يسمح بإدارة خطة الاتصالات وتخصيصات أجهزة الراديو والأجهزة الأخرى.</value>
+  </data>
+  <data name="PermRecordsManageVendorCatalogLabel" xml:space="preserve">
+    <value>إدارة كتالوج الموردين</value>
+  </data>
+  <data name="PermRecordsManageVendorCatalogNote" xml:space="preserve">
+    <value>يسمح بإضافة الموردين وتعديلهم، وكذلك مواقعهم وقدراتهم وتوفرهم ومستندات الامتثال الخاصة بهم.</value>
+  </data>
+  <data name="PermRecordsViewVendorProtectedLabel" xml:space="preserve">
+    <value>عرض التفاصيل المحمية للموردين</value>
+  </data>
+  <data name="PermRecordsViewVendorProtectedNote" xml:space="preserve">
+    <value>يسمح برؤية المعرّفات الضريبية للموردين وتفاصيل التحويلات المالية إليهم.</value>
+  </data>
+  <data name="PermRecordsEngageVendorLabel" xml:space="preserve">
+    <value>التعاقد مع الموردين</value>
+  </data>
+  <data name="PermRecordsEngageVendorNote" xml:space="preserve">
+    <value>يسمح بالتعاقد مع الموردين في عملية تفعيل، وتسجيل التزامات السعة وعروض الأسعار، وإرسال روابط الموردين.</value>
+  </data>
+  <data name="PermRecordsManageIncidentProcurementLabel" xml:space="preserve">
+    <value>إدارة مشتريات الحادث</value>
+  </data>
+  <data name="PermRecordsManageIncidentProcurementNote" xml:space="preserve">
+    <value>يسمح بإدارة اتفاقيات الموردين وطلبات الشراء والاستلامات وفواتير الموردين وحزم الدفع.</value>
+  </data>
+  <data name="PermRecordsCommitIncidentPurchaseLabel" xml:space="preserve">
+    <value>الالتزام بمشتريات الحادث</value>
+  </data>
+  <data name="PermRecordsCommitIncidentPurchaseNote" xml:space="preserve">
+    <value>يسمح بتسجيل التزام مالي لعملية شراء؛ وهذا هو ضابط المشتري المفوَّض.</value>
+  </data>
+  <data name="PermRecordsAcceptVendorInvoiceLabel" xml:space="preserve">
+    <value>قبول فواتير الموردين</value>
+  </data>
+  <data name="PermRecordsAcceptVendorInvoiceNote" xml:space="preserve">
+    <value>يسمح بقبول فواتير الموردين للدفع بعد مطابقتها مع الاستلامات.</value>
+  </data>
+  <data name="PermRecordsManageIncidentBudgetLabel" xml:space="preserve">
+    <value>إدارة ميزانية الحادث</value>
+  </data>
+  <data name="PermRecordsManageIncidentBudgetNote" xml:space="preserve">
+    <value>يسمح بإدارة بنود الميزانية وتفويضات الإنفاق ورموز التمويل ومجموعات التكلفة.</value>
+  </data>
+  <data name="PermRecordsAuthorizeIncidentFundingLabel" xml:space="preserve">
+    <value>اعتماد تمويل الحادث</value>
+  </data>
+  <data name="PermRecordsAuthorizeIncidentFundingNote" xml:space="preserve">
+    <value>يسمح بالموافقة على اعتمادات التمويل لميزانية الحادث.</value>
+  </data>
+  <data name="PermRecordsEnterIncidentTimeLabel" xml:space="preserve">
+    <value>إدخال وقت الحادث</value>
+  </data>
+  <data name="PermRecordsEnterIncidentTimeNote" xml:space="preserve">
+    <value>يسمح بإدخال الوقت واستخدام المعدات والمصروفات. يقصره خيار «المجموعة فقط» على الأشخاص من مجموعة المستخدم نفسه.</value>
+  </data>
+  <data name="PermRecordsCertifyIncidentTimeLabel" xml:space="preserve">
+    <value>المصادقة على وقت الحادث</value>
+  </data>
+  <data name="PermRecordsCertifyIncidentTimeNote" xml:space="preserve">
+    <value>يسمح للمشرفين بالمصادقة على الوقت المُدخل قبل الاعتماد. يقصره خيار «المجموعة فقط» على الأشخاص من مجموعة المستخدم نفسه.</value>
+  </data>
+  <data name="PermRecordsApproveIncidentTimeLabel" xml:space="preserve">
+    <value>اعتماد وقت الحادث</value>
+  </data>
+  <data name="PermRecordsApproveIncidentTimeNote" xml:space="preserve">
+    <value>يسمح باعتماد الوقت المصادق عليه لاحتساب التكاليف والدفع. يقصره خيار «المجموعة فقط» على الأشخاص من مجموعة المستخدم نفسه.</value>
+  </data>
+  <data name="PermRecordsViewIncidentCostLabel" xml:space="preserve">
+    <value>عرض تكلفة الحادث</value>
+  </data>
+  <data name="PermRecordsViewIncidentCostNote" xml:space="preserve">
+    <value>يسمح برؤية معاملات التكلفة والمستحقات وتوقعات التكلفة اليومية.</value>
+  </data>
+  <data name="PermRecordsManageIncidentCostLabel" xml:space="preserve">
+    <value>إدارة تكلفة الحادث</value>
+  </data>
+  <data name="PermRecordsManageIncidentCostNote" xml:space="preserve">
+    <value>يسمح بتعديل سجلات التكلفة واتفاقيات تقاسم التكاليف وعمليات التوزيع، وتصدير تقارير التكلفة.</value>
+  </data>
+  <data name="PermRecordsManageIncidentClaimsLabel" xml:space="preserve">
+    <value>إدارة مطالبات الحادث</value>
+  </data>
+  <data name="PermRecordsManageIncidentClaimsNote" xml:space="preserve">
+    <value>يسمح بفتح المطالبات المتعلقة بالإصابة أو الضرر أو الخسارة ومعالجتها.</value>
+  </data>
+  <data name="PermRecordsViewClaimProtectedLabel" xml:space="preserve">
+    <value>عرض التفاصيل المحمية للمطالبات</value>
+  </data>
+  <data name="PermRecordsViewClaimProtectedNote" xml:space="preserve">
+    <value>يسمح برؤية البيانات المالية للمطالبات وملاحظات القضايا.</value>
+  </data>
+  <data name="PermRecordsAssembleIncidentIapLabel" xml:space="preserve">
+    <value>إعداد خطط عمل الحادث</value>
+  </data>
+  <data name="PermRecordsAssembleIncidentIapNote" xml:space="preserve">
+    <value>يسمح بإعداد خطة عمل الحادث: صفحاتها وترتيب الصفحات وقائمة التوزيع ومهمة الطباعة. يخضع اعتماد سجل الخطة وإنهاؤه لصلاحيات السجلات.</value>
+  </data>
+  <data name="PermRecordsViewCoordinationBoardsLabel" xml:space="preserve">
+    <value>عرض لوحات التنسيق</value>
+  </data>
+  <data name="PermRecordsViewCoordinationBoardsNote" xml:space="preserve">
+    <value>يسمح بقراءة لوحات التنسيق ومكتب الوضع. يقصره خيار «المجموعة فقط» على لوحات مجموعة المستخدم نفسه.</value>
+  </data>
+  <data name="PermRecordsManageCoordinationBoardsLabel" xml:space="preserve">
+    <value>إدارة لوحات التنسيق</value>
+  </data>
+  <data name="PermRecordsManageCoordinationBoardsNote" xml:space="preserve">
+    <value>يسمح بإنشاء لوحات التنسيق وتعديلها، وكذلك عناصرها ومكتب الوضع. يقصره خيار «المجموعة فقط» على لوحات مجموعة المستخدم نفسه.</value>
+  </data>
+  <data name="PermRecordsShareCoordinationBoardsLabel" xml:space="preserve">
+    <value>مشاركة لوحات التنسيق</value>
+  </data>
+  <data name="PermRecordsShareCoordinationBoardsNote" xml:space="preserve">
+    <value>يسمح بمشاركة لوحة تنسيق مع الجهات الشريكة.</value>
+  </data>
 </root>

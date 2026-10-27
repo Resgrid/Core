@@ -846,6 +846,258 @@ Export Pay Data Reporting. Allows freezing, exporting and downloading California
 
 Default: No permission row: department admins only; no group lock. Source: PermissionTypes.ExportPayDataReporting.
 
+<a id="permission-viewincidentbackoffice"></a>
+## View Incident Back Office
+
+View Incident Back Office. Allows opening the Incident Back Office desks and reading activations, periods, organization and logistics. Changes on each desk need that desk's own permission. With no saved rule every member may. Needs the Incident Back Office turned on and an active Incident Back Office add-on.
+
+Default: No permission row: every member; no group lock. Source: PermissionTypes.ViewIncidentBackOffice.
+
+<a id="permission-manageincidentactivation"></a>
+## Manage Incident Activation
+
+Manage Incident Activation. Allows opening activations, adding them to a complex, and closing, sealing or reopening them. With no saved rule only department administrators may. Needs the Incident Back Office turned on and an active Incident Back Office add-on.
+
+Default: No permission row: department admins only; no group lock. Source: PermissionTypes.ManageIncidentActivation.
+
+<a id="permission-manageincidentperiods"></a>
+## Manage Operational Periods
+
+Manage Operational Periods. Allows creating and editing operational periods and approving their plan versions. With no saved rule department and group administrators may. Needs the Incident Back Office turned on and an active Incident Back Office add-on.
+
+Default: No permission row: department and group admins; no group lock. Source: PermissionTypes.ManageIncidentPeriods.
+
+<a id="permission-manageincidentpositions"></a>
+## Manage Incident Positions
+
+Manage Incident Positions. Allows editing the position catalog, position assignments and team rosters. With no saved rule department and group administrators may. Needs the Incident Back Office turned on and an active Incident Back Office add-on.
+
+Default: No permission row: department and group admins; no group lock. Source: PermissionTypes.ManageIncidentPositions.
+
+<a id="permission-manageincidentparticipants"></a>
+## Manage Incident Participants
+
+Manage Incident Participants. Allows enrolling and editing participants and sending their self-service links. The group-only box limits it to participants from the person's own group. With no saved rule department and group administrators may. Needs the Incident Back Office turned on and an active Incident Back Office add-on.
+
+Default: No permission row: department and group admins; no group lock. Source: PermissionTypes.ManageIncidentParticipants.
+
+<a id="permission-viewparticipantsensitive"></a>
+## View Participant Sensitive Details
+
+View Participant Sensitive Details. Allows seeing participants' emergency contacts and their medical, accessibility, allergen and dietary details. With no saved rule only department administrators may. Needs the Incident Back Office turned on and an active Incident Back Office add-on.
+
+Default: No permission row: department admins only; no group lock. Source: PermissionTypes.ViewParticipantSensitive.
+
+<a id="permission-createincidentrequest"></a>
+## Create Resource Requests
+
+Create Resource Requests. Allows creating resource requests and mission packages. The group-only box limits it to requests for the person's own group. With no saved rule department and group administrators may. Needs the Incident Back Office turned on and an active Incident Back Office add-on.
+
+Default: No permission row: department and group admins; no group lock. Source: PermissionTypes.CreateIncidentRequest.
+
+<a id="permission-approveincidentrequest"></a>
+## Approve Resource Requests
+
+Approve Resource Requests. Allows approving or rejecting resource requests. The group-only box limits it to requests from the person's own group. With no saved rule only department administrators may. Needs the Incident Back Office turned on and an active Incident Back Office add-on.
+
+Default: No permission row: department admins only; no group lock. Source: PermissionTypes.ApproveIncidentRequest.
+
+<a id="permission-orderincidentrequest"></a>
+## Order Resource Requests
+
+Order Resource Requests. Allows placing the order that fills an approved resource request, including calls against vendor agreements. With no saved rule only department administrators may. Needs the Incident Back Office turned on and an active Incident Back Office add-on.
+
+Default: No permission row: department admins only; no group lock. Source: PermissionTypes.OrderIncidentRequest.
+
+<a id="permission-receiveincidentrequest"></a>
+## Receive Resource Requests
+
+Receive Resource Requests. Allows recording arrivals and receipts against filled requests. The group-only box limits it to the person's own group. With no saved rule department and group administrators may. Needs the Incident Back Office turned on and an active Incident Back Office add-on.
+
+Default: No permission row: department and group admins; no group lock. Source: PermissionTypes.ReceiveIncidentRequest.
+
+<a id="permission-manageincidentfacilities"></a>
+## Manage Incident Facilities
+
+Manage Incident Facilities. Allows managing incident facilities, their capacity, agreements and services. With no saved rule department and group administrators may. Needs the Incident Back Office turned on and an active Incident Back Office add-on.
+
+Default: No permission row: department and group admins; no group lock. Source: PermissionTypes.ManageIncidentFacilities.
+
+<a id="permission-manageincidentlodging"></a>
+## Manage Incident Lodging
+
+Manage Incident Lodging. Allows managing lodging properties, room blocks, nightly inventory and bed assignments. With no saved rule only department administrators may. Needs the Incident Back Office turned on and an active Incident Back Office add-on.
+
+Default: No permission row: department admins only; no group lock. Source: PermissionTypes.ManageIncidentLodging.
+
+<a id="permission-viewlodgingassignmentdetail"></a>
+## View Lodging Assignment Details
+
+View Lodging Assignment Details. Allows seeing room numbers and lodging restrictions on bed assignments and rooming lists. With no saved rule only department administrators may. Needs the Incident Back Office turned on and an active Incident Back Office add-on.
+
+Default: No permission row: department admins only; no group lock. Source: PermissionTypes.ViewLodgingAssignmentDetail.
+
+<a id="permission-manageincidentfeeding"></a>
+## Manage Incident Feeding
+
+Manage Incident Feeding. Allows managing meal plans, demand, meal orders and meals served. With no saved rule department and group administrators may. Needs the Incident Back Office turned on and an active Incident Back Office add-on.
+
+Default: No permission row: department and group admins; no group lock. Source: PermissionTypes.ManageIncidentFeeding.
+
+<a id="permission-manageincidentservices"></a>
+## Manage Support Services
+
+Manage Support Services. Allows requesting and recording support services such as laundry or showers. The group-only box limits it to the person's own group. With no saved rule every member may. Needs the Incident Back Office turned on and an active Incident Back Office add-on.
+
+Default: No permission row: every member; no group lock. Source: PermissionTypes.ManageIncidentServices.
+
+<a id="permission-manageincidentgroundsupport"></a>
+## Manage Ground Support
+
+Manage Ground Support. Allows managing transport requests and movements, travel itineraries and fuel. With no saved rule department and group administrators may. Needs the Incident Back Office turned on and an active Incident Back Office add-on.
+
+Default: No permission row: department and group admins; no group lock. Source: PermissionTypes.ManageIncidentGroundSupport.
+
+<a id="permission-manageincidentcomms"></a>
+## Manage Incident Communications
+
+Manage Incident Communications. Allows managing the communications plan and radio and device assignments. With no saved rule department and group administrators may. Needs the Incident Back Office turned on and an active Incident Back Office add-on.
+
+Default: No permission row: department and group admins; no group lock. Source: PermissionTypes.ManageIncidentComms.
+
+<a id="permission-managevendorcatalog"></a>
+## Manage Vendor Catalog
+
+Manage Vendor Catalog. Allows adding and editing vendors, their locations, capabilities, availability and compliance documents. With no saved rule department and group administrators may. Needs the Incident Back Office turned on and an active Incident Back Office add-on.
+
+Default: No permission row: department and group admins; no group lock. Source: PermissionTypes.ManageVendorCatalog.
+
+<a id="permission-viewvendorprotected"></a>
+## View Vendor Protected Details
+
+View Vendor Protected Details. Allows seeing vendors' tax identifiers and remittance details. With no saved rule only department administrators may. Needs the Incident Back Office turned on and an active Incident Back Office add-on.
+
+Default: No permission row: department admins only; no group lock. Source: PermissionTypes.ViewVendorProtected.
+
+<a id="permission-engagevendor"></a>
+## Engage Vendors
+
+Engage Vendors. Allows engaging vendors on an activation, recording capacity commitments and quotes, and sending vendor links. With no saved rule only department administrators may. Needs the Incident Back Office turned on and an active Incident Back Office add-on.
+
+Default: No permission row: department admins only; no group lock. Source: PermissionTypes.EngageVendor.
+
+<a id="permission-manageincidentprocurement"></a>
+## Manage Incident Procurement
+
+Manage Incident Procurement. Allows managing vendor agreements, requisitions, receipts, vendor invoices and payment packages. With no saved rule only department administrators may. Needs Incident Business turned on and an active Incident Back Office add-on.
+
+Default: No permission row: department admins only; no group lock. Source: PermissionTypes.ManageIncidentProcurement.
+
+<a id="permission-commitincidentpurchase"></a>
+## Commit Incident Purchases
+
+Commit Incident Purchases. Allows recording a financial commitment for a purchase; this is the warranted-purchaser control. With no saved rule only department administrators may. Needs Incident Business turned on and an active Incident Back Office add-on.
+
+Default: No permission row: department admins only; no group lock. Source: PermissionTypes.CommitIncidentPurchase.
+
+<a id="permission-acceptvendorinvoice"></a>
+## Accept Vendor Invoices
+
+Accept Vendor Invoices. Allows accepting vendor invoices for payment after they are matched to receipts. With no saved rule only department administrators may. Needs Incident Business turned on and an active Incident Back Office add-on.
+
+Default: No permission row: department admins only; no group lock. Source: PermissionTypes.AcceptVendorInvoice.
+
+<a id="permission-manageincidentbudget"></a>
+## Manage Incident Budget
+
+Manage Incident Budget. Allows managing budget lines, spending delegations, funding codes and cost groups. With no saved rule only department administrators may. Needs Incident Business turned on and an active Incident Back Office add-on.
+
+Default: No permission row: department admins only; no group lock. Source: PermissionTypes.ManageIncidentBudget.
+
+<a id="permission-authorizeincidentfunding"></a>
+## Authorize Incident Funding
+
+Authorize Incident Funding. Allows approving funding authorizations for the incident budget. With no saved rule only department administrators may. Needs Incident Business turned on and an active Incident Back Office add-on.
+
+Default: No permission row: department admins only; no group lock. Source: PermissionTypes.AuthorizeIncidentFunding.
+
+<a id="permission-enterincidenttime"></a>
+## Enter Incident Time
+
+Enter Incident Time. Allows entering time, equipment use and expenses. The group-only box limits it to people from the person's own group. With no saved rule department and group administrators may. Needs Incident Business turned on and an active Incident Back Office add-on.
+
+Default: No permission row: department and group admins; no group lock. Source: PermissionTypes.EnterIncidentTime.
+
+<a id="permission-certifyincidenttime"></a>
+## Certify Incident Time
+
+Certify Incident Time. Allows supervisors to certify entered time before approval. The group-only box limits it to people from the person's own group. With no saved rule department and group administrators may. Needs Incident Business turned on and an active Incident Back Office add-on.
+
+Default: No permission row: department and group admins; no group lock. Source: PermissionTypes.CertifyIncidentTime.
+
+<a id="permission-approveincidenttime"></a>
+## Approve Incident Time
+
+Approve Incident Time. Allows approving certified time for costing and payment. The group-only box limits it to people from the person's own group. With no saved rule only department administrators may. Needs Incident Business turned on and an active Incident Back Office add-on.
+
+Default: No permission row: department admins only; no group lock. Source: PermissionTypes.ApproveIncidentTime.
+
+<a id="permission-viewincidentcost"></a>
+## View Incident Cost
+
+View Incident Cost. Allows seeing cost transactions, accruals and daily cost projections. With no saved rule only department administrators may. Needs Incident Business turned on and an active Incident Back Office add-on.
+
+Default: No permission row: department admins only; no group lock. Source: PermissionTypes.ViewIncidentCost.
+
+<a id="permission-manageincidentcost"></a>
+## Manage Incident Cost
+
+Manage Incident Cost. Allows editing cost records, cost-share agreements and apportionment runs, and exporting cost reports. With no saved rule only department administrators may. Needs Incident Business turned on and an active Incident Back Office add-on.
+
+Default: No permission row: department admins only; no group lock. Source: PermissionTypes.ManageIncidentCost.
+
+<a id="permission-manageincidentclaims"></a>
+## Manage Incident Claims
+
+Manage Incident Claims. Allows opening and working claims for injury, damage or loss. With no saved rule only department administrators may. Needs Incident Business turned on and an active Incident Back Office add-on.
+
+Default: No permission row: department admins only; no group lock. Source: PermissionTypes.ManageIncidentClaims.
+
+<a id="permission-viewclaimprotected"></a>
+## View Claim Protected Details
+
+View Claim Protected Details. Allows seeing claim financials and case notes. With no saved rule only department administrators may. Needs Incident Business turned on and an active Incident Back Office add-on.
+
+Default: No permission row: department admins only; no group lock. Source: PermissionTypes.ViewClaimProtected.
+
+<a id="permission-assembleincidentiap"></a>
+## Assemble Incident Action Plans
+
+Assemble Incident Action Plans. Allows assembling the incident action plan: its pages, page order, distribution list and print job. Approving and finalizing the plan record uses the Records permissions. With no saved rule only department administrators may. Needs the Incident Back Office turned on and an active Incident Back Office add-on.
+
+Default: No permission row: department admins only; no group lock. Source: PermissionTypes.AssembleIncidentIap.
+
+<a id="permission-viewcoordinationboards"></a>
+## View Coordination Boards
+
+View Coordination Boards. Allows reading coordination boards and the situation desk. The group-only box limits it to boards of the person's own group. With no saved rule every member may. Needs Incident Coordination turned on and an active Incident Back Office add-on.
+
+Default: No permission row: every member; no group lock. Source: PermissionTypes.ViewCoordinationBoards.
+
+<a id="permission-managecoordinationboards"></a>
+## Manage Coordination Boards
+
+Manage Coordination Boards. Allows creating and editing coordination boards, their items and the situation desk. The group-only box limits it to boards of the person's own group. With no saved rule department and group administrators may. Needs Incident Coordination turned on and an active Incident Back Office add-on.
+
+Default: No permission row: department and group admins; no group lock. Source: PermissionTypes.ManageCoordinationBoards.
+
+<a id="permission-sharecoordinationboards"></a>
+## Share Coordination Boards
+
+Share Coordination Boards. Allows sharing a coordination board with partner agencies. With no saved rule only department administrators may. Needs Incident Coordination turned on and an active Incident Back Office add-on.
+
+Default: No permission row: department admins only; no group lock. Source: PermissionTypes.ShareCoordinationBoards.
+
 <a id="table-department-name"></a>
 ## Department / Name
 
@@ -3495,3 +3747,284 @@ Default: unset (Resgrid's name). Source: DepartmentTermOverride.Text.
 Department Term / One Item. For a module, the department's word for one item, such as Team for Units renamed Teams, used on buttons and headings like New Team; at most 50 characters. Empty works it out from the name. Record types have none.
 
 Default: unset (worked out from the name). Source: DepartmentTermOverride.Singular.
+
+<a id="module-incidentbackofficedisabled"></a>
+## Incident Back Office availability
+
+Incident Back Office availability. Controls availability of the Incident Back Office desks. Disabling this module removes them from navigation and blocks their operations; it does not delete activations or their records. Turning it on still requires the Incident Back Office add-on, rollout and permissions.
+
+Default: false. Source: DepartmentModuleSettings.IncidentBackOfficeDisabled.
+
+<a id="module-incidentbusinessdisabled"></a>
+## Incident finance availability
+
+Incident finance availability. Controls the incident finance desks: procurement, budget, time, cost, claims, recovery, intake and closeout. Disabling it hides those desks and blocks their operations without deleting their records. It only applies while the Incident Back Office is on, and turning it on still requires the Incident Business rollout and permissions.
+
+Default: false. Source: DepartmentModuleSettings.IncidentBusinessDisabled.
+
+<a id="module-incidentcoordinationdisabled"></a>
+## Coordination boards availability
+
+Coordination boards availability. Controls coordination boards and the situation desk. Disabling it hides them and blocks their operations without deleting boards or their items. It only applies while the Incident Back Office is on, and turning it on still requires the Incident Coordination rollout and permissions.
+
+Default: false. Source: DepartmentModuleSettings.IncidentCoordinationDisabled.
+
+<a id="setting-incidentbackofficedefaults"></a>
+## Incident Back Office defaults
+
+Incident Back Office defaults. Defaults for new activations: how old an incident command or dispatch source may get before its tiles grey out, the currency and measurement system (blank uses the department's country), the length of an operational period, and whether exercises may notify external participants and vendors.
+
+Default: missing = 15-minute staleness, currency and measurement system from the department's country, 12-hour operational periods, exercises never notify external participants or vendors. Source: DepartmentSettingTypes.IncidentBackOfficeDefaults.
+
+<a id="setting-incidentenrollmentpolicy"></a>
+## Incident enrollment policy
+
+Incident enrollment policy. How people and units seen on an incident become participants (the enrollment mode), whether people not yet enrolled are counted as a separate band in feeding, sleeping and water forecasts, and how long or old the enrollment queue may get before an alert is raised.
+
+Default: missing = Suggest mode, unregistered forecast band on, alert at 25 waiting or 120 minutes. Source: DepartmentSettingTypes.IncidentEnrollmentPolicy.
+
+<a id="setting-incidentnotificationrouting"></a>
+## Incident notification routing
+
+Incident notification routing. Which incident positions receive each Incident Back Office notice. Positions are resolved to their current holders when the notice is sent; a notice with no positions configured uses its built-in default positions.
+
+Default: missing = built-in default positions for each notice (IncidentNotificationRoutingPolicy.Defaults). Source: DepartmentSettingTypes.IncidentNotificationRouting.
+
+<a id="setting-incidentforecastpolicy"></a>
+## Incident forecast policy
+
+Incident forecast policy. Coefficients and alert windows for logistics forecasts: meal and water contingency, drinking water per person per day, bed reserve, whether predicted timeouts reduce forecasts, replacement lead time, the arrival, timeout and meal cutoff lead windows, and the facility capacity and water days-of-supply thresholds.
+
+Default: missing = 10% meal and 15% water contingency, 7.5 litres per person per day, 5% bed reserve, timeouts do not reduce forecasts, 3-day replacement lead, 120-minute arrival, 3-day timeout and 180-minute meal cutoff windows, 90% facility and 2-day water thresholds. Source: DepartmentSettingTypes.IncidentForecastPolicy.
+
+<a id="setting-incidentassignmentrulepolicy"></a>
+## Incident assignment rules
+
+Incident assignment rules. The work/rest rule pack and assignment limits used to flag people who are reaching their limits: maximum assignment days, travel days, maximum extension, maximum work hours per shift and the rest required per hour worked.
+
+Default: missing = federal-14-plus-travel pack: 14 assignment days, 2 travel days, 7 extension days, 16 work hours per shift, 1 hour of rest per 2 hours worked. Source: DepartmentSettingTypes.IncidentAssignmentRulePolicy.
+
+<a id="setting-incidentvendorpolicy"></a>
+## Incident vendor policy
+
+Incident vendor policy. How often vendors must be verified again, how long a capacity hold lasts, and how far ahead expiring compliance documents and capacity holds are flagged.
+
+Default: missing = verify every 365 days, holds expire after 24 hours, compliance flagged 30 days and holds 6 hours ahead. Source: DepartmentSettingTypes.IncidentVendorPolicy.
+
+<a id="setting-incidentselfservicepolicy"></a>
+## Incident self-service policy
+
+Incident self-service policy. Self-service links for participants and vendors: how many days a link stays valid after the assignment or engagement ends, whether a one-time code is required before lodging or travel details are shown, and whether vendor links need a verified vendor contact.
+
+Default: missing = links outlive the assignment by 14 days, one-time code required for lodging, verified vendor contact not required. Source: DepartmentSettingTypes.IncidentSelfServicePolicy.
+
+<a id="setting-incidentfinancepolicy"></a>
+## Incident finance policy
+
+Incident finance policy. Finance controls: single-person operation (one person may request, approve, commit, receive and accept only with a recorded acknowledgment), extra sender domains for the intake inbox, the budget, agreement ceiling and daily burn thresholds, intake backlog limits, claim and recovery deadline warnings, the split-purchase window and the micro-purchase threshold.
+
+Default: missing = separation of duties enforced, no extra intake domains, 80% budget and 85% agreement ceiling thresholds, no daily burn threshold, intake backlog 50 items or 24 hours, claim deadlines 7 and recovery deadlines 14 days ahead, 3-day split-purchase window, 10,000 micro-purchase threshold. Source: DepartmentSettingTypes.IncidentFinancePolicy.
+
+<a id="setting-incidentretentionpolicy"></a>
+## Incident retention policy
+
+Incident retention policy. How long operational snapshots are kept after an incident closes, how many years ledger entries are kept, and how long expired self-service links are kept. Incident records follow Records retention instead.
+
+Default: missing = snapshots 90 days after close, ledger 7 years after close, expired self-service links 30 days. Source: DepartmentSettingTypes.IncidentRetentionPolicy.
+
+<a id="setting-coordinationboarddefaults"></a>
+## Coordination board defaults
+
+Coordination board defaults. Defaults for coordination boards: when an item counts as stale, whether road closures and shelter capacity raise alarms, how many days a board share lasts, and how far ahead a due item is flagged.
+
+Default: missing = items stale after 60 minutes, road closure and shelter capacity alarms on, shares last 14 days, due items flagged 60 minutes ahead. Source: DepartmentSettingTypes.CoordinationBoardDefaults.
+
+<a id="incident-activation"></a>
+## Incident activation and command
+
+Incident activation and command Open an activation for a large incident, planned event or exercise and follow it from the command desk. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Review the Incident Back Office settings, then open an exercise activation.
+
+<a id="incident-planning"></a>
+## Planning, organization and check-in
+
+Planning, organization and check-in Operational periods and plan versions, the incident organization and positions, participants and check-in. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Build your position catalog and team rosters, then check participants in during an exercise.
+
+<a id="incident-logistics"></a>
+## Incident logistics
+
+Incident logistics Resource requests, facilities, lodging, feeding, water and support services, with vendors and the support plan. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Add your lodging, feeding, water and transport vendors, then review the forecast policy.
+
+<a id="incident-finance"></a>
+## Incident finance
+
+Incident finance Procurement, budget, time, cost and claims for an incident, with separation of duties. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Turn on Incident Business, review the finance policy, then enter the incident budget.
+
+<a id="coordination-boards"></a>
+## Coordination boards
+
+Coordination boards Shared boards for road closures, shelters and other items coordinated with partner agencies. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Turn on Incident Coordination, review the board defaults, then create a board.
+
+<a id="incident-open"></a>
+## Open an Incident
+
+Open an Incident Start an activation for an incident, planned event or exercise, optionally linked to a call or a parent complex. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.
+
+<a id="incident-command-desk"></a>
+## Command Desk
+
+Command Desk One activation's status, operational picture, data freshness and open work in one place. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.
+
+<a id="incident-operations"></a>
+## Operations Desk
+
+Operations Desk Who is on the incident, their support status and position, and the resources by support status. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.
+
+<a id="incident-settings"></a>
+## Incident Back Office Settings
+
+Incident Back Office Settings Department policies for activations, enrollment, notice routing, forecasts, assignments, vendors, self-service links, finance, retention and boards. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.
+
+<a id="incident-organization"></a>
+## Incident Organization
+
+Incident Organization The organization chart of an activation and who is assigned to each position. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.
+
+<a id="incident-positions"></a>
+## Position Catalog
+
+Position Catalog The incident positions your department fills and the capabilities each one needs. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.
+
+<a id="incident-teams"></a>
+## Incident Teams
+
+Incident Teams Standing team rosters with rotations, slots and qualified candidates. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.
+
+<a id="incident-participants"></a>
+## Participants
+
+Participants The people supporting an activation, with their qualifications, home organizations and self-service links. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.
+
+<a id="incident-check-in"></a>
+## Check-In
+
+Check-In Check people and resources in and out, and track their status, movements and assignment extensions. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.
+
+<a id="incident-iap"></a>
+## Incident Action Plan
+
+Incident Action Plan Assemble the incident action plan for each operational period. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.
+
+<a id="incident-authority"></a>
+## Incident Authority
+
+Incident Authority Delegations of authority by domain, the authority profile copied into each activation and the items left to reconcile. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.
+
+<a id="incident-demob"></a>
+## Demobilization
+
+Demobilization Demobilization plans and checklists for releasing people and resources. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.
+
+<a id="support-plan"></a>
+## Emergency Support Plan
+
+Emergency Support Plan Your department's emergency support plan: support areas and preferred vendors, copied into each activation. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.
+
+<a id="incident-requests"></a>
+## Resource Requests
+
+Resource Requests Mission packages and resource requests from approval through fill, arrival and receipt. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.
+
+<a id="incident-facilities"></a>
+## Incident Facilities
+
+Incident Facilities Base camps, staging areas and other incident facilities, with capacity, agreements and services. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.
+
+<a id="incident-lodging"></a>
+## Lodging
+
+Lodging Lodging properties, room blocks, nightly inventory, bed assignments and rooming lists. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.
+
+<a id="incident-feeding"></a>
+## Feeding
+
+Feeding Meal plans, forecast demand, meal orders and the meals actually served. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.
+
+<a id="incident-water"></a>
+## Water
+
+Water Drinking water plans, stock on hand and deliveries. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.
+
+<a id="incident-services"></a>
+## Support Services
+
+Support Services Support services such as laundry, showers or sanitation, with their requests, activity and assets. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.
+
+<a id="incident-ground-support"></a>
+## Ground Support
+
+Ground Support Transport requests and movements, travel itineraries and fuel. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.
+
+<a id="incident-communications"></a>
+## Incident Communications
+
+Incident Communications The communications plan of an activation and its radio and device assignments. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.
+
+<a id="vendor-catalog"></a>
+## Vendor Catalog
+
+Vendor Catalog Vendors with their locations, capabilities, availability windows and compliance documents. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.
+
+<a id="incident-vendors"></a>
+## Vendor Engagements
+
+Vendor Engagements Vendors engaged on an activation, with their capacity commitments and quotes. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.
+
+<a id="incident-procurement"></a>
+## Incident Procurement
+
+Incident Procurement Vendor agreements, requisitions and approvals, commitments, receipts, vendor invoices and payment packages. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.
+
+<a id="incident-budget"></a>
+## Incident Budget
+
+Incident Budget Budget lines, funding authorizations, spending delegations, funding codes and cost groups. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.
+
+<a id="incident-time"></a>
+## Incident Time
+
+Incident Time Time records and adjustments, equipment use and expenses, with certification and approval. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.
+
+<a id="incident-cost"></a>
+## Incident Cost
+
+Incident Cost Cost transactions, accruals, daily cost projections and cost-share apportionment. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.
+
+<a id="incident-claims"></a>
+## Incident Claims
+
+Incident Claims Claims for injury, damage or loss arising from an incident. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.
+
+<a id="incident-recovery"></a>
+## Disaster Recovery
+
+Disaster Recovery Disaster declarations, recovery projects and their deadlines. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.
+
+<a id="incident-intake"></a>
+## Incident Intake
+
+Incident Intake Documents and receipts sent to the incident's intake inbox, waiting to be filed. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.
+
+<a id="incident-closeout"></a>
+## Incident Closeout
+
+Incident Closeout The closeout checklist that finishes an incident's books. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.
+
+<a id="incident-situation"></a>
+## Situation Desk
+
+Situation Desk Lifeline status, open actions, decisions and mapped situation features. Run the support side of a large incident from one activation: who is on it, where they sleep and eat, what was ordered and what it cost. A wildfire activation checks in arriving strike teams, books their lodging and meals, and tracks every purchase against the incident budget. Requires the Incident Back Office add-on. The finance desks also need Incident Business turned on, and coordination boards need Incident Coordination. Run an exercise activation before the first real incident.
+
+<a id="addon-incidents"></a>
+## Incident Back Office
+
+Incident Back Office The Incident Back Office add-on: activation, planning, logistics, finance and coordination boards for large incidents. Keep the support side of a long incident in one place instead of spreadsheets, radio notes and email. Book lodging and meals for arriving crews and track each purchase against the incident budget. Incident finance and coordination boards are turned on separately. Incident records stay in Records and follow its permissions. No reimbursement is guaranteed.

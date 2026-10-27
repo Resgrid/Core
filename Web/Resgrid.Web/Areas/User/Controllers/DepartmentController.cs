@@ -3648,6 +3648,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.MaintenanceEnabled = !model.Modules.MaintenanceDisabled;
 			model.ChecklistsEnabled = !model.Modules.ChecklistsDisabled;
 			model.BusinessOperationsEnabled = !model.Modules.BusinessOperationsDisabled;
+			model.IncidentBackOfficeEnabled = !model.Modules.IncidentBackOfficeDisabled;
+			model.IncidentBusinessEnabled = !model.Modules.IncidentBusinessDisabled;
+			model.IncidentCoordinationEnabled = !model.Modules.IncidentCoordinationDisabled;
 			model.AiEnabled = !model.Modules.AiDisabled;
 
 			return View(model);
@@ -3678,6 +3681,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				modules.MaintenanceDisabled = !model.MaintenanceEnabled;
 				modules.ChecklistsDisabled = !model.ChecklistsEnabled;
 				modules.BusinessOperationsDisabled = !model.BusinessOperationsEnabled;
+				modules.IncidentBackOfficeDisabled = !model.IncidentBackOfficeEnabled;
+				modules.IncidentBusinessDisabled = !model.IncidentBusinessEnabled;
+				modules.IncidentCoordinationDisabled = !model.IncidentCoordinationEnabled;
 				modules.AiDisabled = !model.AiEnabled;
 
 				await _departmentSettingsService.SetDepartmentModuleSettingsAsync(DepartmentId, modules, cancellationToken);

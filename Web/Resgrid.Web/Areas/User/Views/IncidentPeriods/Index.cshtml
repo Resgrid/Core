@@ -1,0 +1,140 @@
+@model Resgrid.Web.Areas.User.Models.IncidentBackOffice.IncidentPeriodsView
+@using Resgrid.Model.IncidentLogistics
+@using Resgrid.Web.Areas.User.Models.IncidentBackOffice
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.IncidentBackOffice.IncidentBackOffice> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Nav.Periods"];
+    ViewData["Title"] = localizer["Nav.Periods"].Value;
+    ViewData["Subtitle"] = localizer["PeriodsIntro"].Value;
+    var time = ViewData["IboTime"] as IncidentTime;
+    string Person(string id) => string.IsNullOrWhiteSpace(id) ? null : Model.People.TryGetValue(id, out var name) ? name : id;
+    var periodNumbers = Model.Periods.ToDictionary(p => p.IncidentOperationalPeriodId, p => p.Number);
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/IncidentBackOffice/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("~/Areas/User/Views/IncidentBackOffice/_Message.cshtml", (IncidentDeskView)Model)
+    <div class="rgw-toolbar">
+        <a asp-action="List" asp-route-kind="IncidentObjective" class="btn btn-sm btn-default"><i class="fa fa-bullseye" aria-hidden="true"></i> @LedgerText.Kind(localizer, IncidentLedgerCatalog.For<IncidentObjective>())</a>
+        <a asp-action="List" asp-route-kind="IncidentPlanWeatherBlock" class="btn btn-sm btn-default"><i class="fa fa-cloud" aria-hidden="true"></i> @LedgerText.Kind(localizer, IncidentLedgerCatalog.For<IncidentPlanWeatherBlock>())</a>
+    </div>
+    <div class="row">
+        <div class="@(Model.CanManage ? "col-lg-8" : "col-lg-12")">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["Nav.Periods"]</h5></div>
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-striped rgw-table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">@localizer["Field.StartOn"]</th>
+                                    <th scope="col">@localizer["Field.EndOn"]</th>
+                                    <th scope="col">@localizer["Field.Status"]</th>
+                                    <th scope="col">@localizer["Field.ApprovedOn"]</th>
+                                    <th scope="col"><span class="sr-only">@localizer["Actions"]</span></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var period in Model.Periods)
+                                {
+                                    <tr>
+                                        <td><a asp-action="Edit" asp-route-kind="IncidentOperationalPeriod" asp-route-id="@period.IncidentOperationalPeriodId">@period.Number</a></td>
+                                        <td>@time?.Format(period.StartOn)</td>
+                                        <td>@time?.Format(period.EndOn)</td>
+                                        <td>
+                                            <span class="label @LedgerText.StatusClass(typeof(IncidentPeriodStatuses), period.Status)">@LedgerText.Status(localizer, typeof(IncidentPeriodStatuses), period.Status)</span>
+                                            @if (period.IsFrozen)
+                                            {
+                                                <span class="label label-inverse"><i class="fa fa-snowflake-o" aria-hidden="true"></i> @localizer["Frozen"]</span>
+                                            }
+                                        </td>
+                                        <td>@time?.Format(period.ApprovedOn) @Person(period.ApprovedByUserId)</td>
+                                        <td class="text-right rgw-row-actions">
+                                            @if (Model.CanManage)
+                                            {
+                                                if (period.Status == (int)IncidentPeriodStatuses.Planned)
+                                                {
+                                                    <form method="post" asp-action="Start" asp-route-id="@period.IncidentOperationalPeriodId" class="ibo-action">@Html.AntiForgeryToken()<button type="submit" class="btn btn-xs btn-primary">@localizer["StartPeriod"]</button></form>
+                                                }
+                                                <form method="post" asp-action="CopyForward" asp-route-id="@period.IncidentOperationalPeriodId" class="ibo-action">@Html.AntiForgeryToken()<button type="submit" class="btn btn-xs btn-default">@localizer["CopyForward"]</button></form>
+                                                if (!period.IsFrozen)
+                                                {
+                                                    <form method="post" asp-action="Freeze" asp-route-id="@period.IncidentOperationalPeriodId" class="ibo-action">@Html.AntiForgeryToken()<input type="hidden" name="approve" value="true" /><button type="submit" class="btn btn-xs btn-default">@localizer["FreezeApprove"]</button></form>
+                                                }
+                                            }
+                                            @if (Model.CanPlan)
+                                            {
+                                                <form method="post" asp-action="Assemble" asp-route-id="@period.IncidentOperationalPeriodId" class="ibo-action">@Html.AntiForgeryToken()<button type="submit" class="btn btn-xs btn-default"><i class="fa fa-book" aria-hidden="true"></i> @localizer["AssemblePlan"]</button></form>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                                @if (Model.Periods.Count == 0)
+                                {
+                                    <tr><td colspan="6" class="text-muted">@localizer["NoRows"]</td></tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@LedgerText.Kind(localizer, IncidentLedgerCatalog.For<IncidentPlanVersion>())</h5></div>
+                <div class="ibox-content">
+                    <table class="table table-striped rgw-table">
+                        <thead><tr><th scope="col">@localizer["Field.VersionNumber"]</th><th scope="col">@localizer["Field.IncidentOperationalPeriodId"]</th><th scope="col">@localizer["Field.Status"]</th><th scope="col">@localizer["Field.ApprovedOn"]</th><th scope="col"><span class="sr-only">@localizer["Actions"]</span></th></tr></thead>
+                        <tbody>
+                            @foreach (var plan in Model.Plans)
+                            {
+                                <tr>
+                                    <td><a asp-action="Edit" asp-route-kind="IncidentPlanVersion" asp-route-id="@plan.IncidentPlanVersionId">@plan.VersionNumber</a></td>
+                                    <td>@(plan.IncidentOperationalPeriodId != null && periodNumbers.TryGetValue(plan.IncidentOperationalPeriodId, out var number) ? number.ToString() : "—")</td>
+                                    <td><span class="label @LedgerText.StatusClass(typeof(IncidentPlanVersionStatuses), plan.Status)">@LedgerText.Status(localizer, typeof(IncidentPlanVersionStatuses), plan.Status)</span></td>
+                                    <td>@time?.Format(plan.ApprovedOn) @Person(plan.ApprovedByUserId)</td>
+                                    <td class="text-right rgw-row-actions">
+                                        @if (Model.CanPlan && plan.Status == (int)IncidentPlanVersionStatuses.Assembled)
+                                        {
+                                            <form method="post" asp-action="Approve" asp-route-planVersionId="@plan.IncidentPlanVersionId" class="ibo-action">@Html.AntiForgeryToken()<button type="submit" class="btn btn-xs btn-primary">@localizer["ApprovePlan"]</button></form>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                            @if (Model.Plans.Count == 0)
+                            {
+                                <tr><td colspan="5" class="text-muted">@localizer["NoRows"]</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        @if (Model.CanManage)
+        {
+            <div class="col-lg-4">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@localizer["NewPeriod"]</h5></div>
+                    <div class="ibox-content">
+                        <form method="post" asp-action="Create" class="ibo-action">
+                            @Html.AntiForgeryToken()
+                            <div class="form-group"><label for="ibo-start">@localizer["Field.StartOn"] (@time?.ZoneId)</label><input id="ibo-start" type="datetime-local" name="startOn" value="@Model.NextStart" class="form-control" required /></div>
+                            <div class="form-group"><label for="ibo-end">@localizer["Field.EndOn"] (@time?.ZoneId)</label><input id="ibo-end" type="datetime-local" name="endOn" value="@Model.NextEnd" class="form-control" required /></div>
+                            <div class="form-group"><label for="ibo-briefing">@localizer["Field.BriefingOn"]</label><input id="ibo-briefing" type="datetime-local" name="briefingOn" class="form-control" /></div>
+                            <button type="submit" class="btn btn-primary"><i class="fa fa-plus" aria-hidden="true"></i> @localizer["NewPeriod"]</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/incident-back-office.css" asp-append-version="true" />
+}
+@section Scripts {
+    <script src="~/js/app/internal/incidentbackoffice/incident-back-office.js" asp-append-version="true"></script>
+}

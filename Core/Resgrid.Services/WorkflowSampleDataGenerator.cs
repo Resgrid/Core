@@ -26,6 +26,8 @@ namespace Resgrid.Services
 			AddSampleTimestamp(obj);
 			AddSampleUser(obj);
 			AddEventSpecificSamples(obj, eventType);
+			if (Resgrid.Model.IncidentLogistics.IncidentBackOfficeWorkflowPayload.IsIncident((int)eventType))
+				IncidentLogistics.IncidentWorkflowContext.Apply(obj, eventType, IncidentLogistics.IncidentWorkflowContext.Sample);
 			return obj;
 		}
 

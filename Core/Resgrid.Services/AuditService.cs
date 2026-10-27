@@ -102,6 +102,40 @@ namespace Resgrid.Services
 					return "Department Import Artifact Downloaded";
 				case AuditLogTypes.DepartmentImportArtifactsPurged:
 					return "Department Import Artifacts Purged";
+				case AuditLogTypes.IncidentActivationOpened:
+					return "Incident Activation Opened";
+				case AuditLogTypes.IncidentActivationUpdated:
+					return "Incident Activation Updated";
+				case AuditLogTypes.IncidentActivationStatusChanged:
+					return "Incident Activation Status Changed";
+				case AuditLogTypes.IncidentRecordCreated:
+					return "Incident Back Office Record Created";
+				case AuditLogTypes.IncidentRecordUpdated:
+					return "Incident Back Office Record Updated";
+				case AuditLogTypes.IncidentRecordDeleted:
+					return "Incident Back Office Record Deleted";
+				case AuditLogTypes.IncidentStatusTransition:
+					return "Incident Back Office Status Transition";
+				case AuditLogTypes.IncidentTeamActivated:
+					return "Incident Team Activated";
+				case AuditLogTypes.IncidentFinancialCommitment:
+					return "Incident Financial Commitment";
+				case AuditLogTypes.IncidentSelfServiceLinkIssued:
+					return "Incident Self-Service Link Issued";
+				case AuditLogTypes.IncidentSelfServiceLinkRevoked:
+					return "Incident Self-Service Link Revoked";
+				case AuditLogTypes.IncidentSelfServiceAccessed:
+					return "Incident Self-Service Accessed";
+				case AuditLogTypes.CoordinationBoardShared:
+					return "Coordination Board Shared";
+				case AuditLogTypes.CoordinationBoardShareRevoked:
+					return "Coordination Board Share Revoked";
+				case AuditLogTypes.CoordinationBoardShareAccessed:
+					return "Coordination Board Share Accessed";
+				case AuditLogTypes.IncidentProtectedAccessDenied:
+					return "Incident Protected Access Denied";
+				case AuditLogTypes.IncidentBackOfficeSettingsChanged:
+					return "Incident Back Office Settings Changed";
 				case AuditLogTypes.AdminAssistReviewChanged:
 					return "Admin Assist Review Changed";
 				case AuditLogTypes.DepartmentSettingsChanged:

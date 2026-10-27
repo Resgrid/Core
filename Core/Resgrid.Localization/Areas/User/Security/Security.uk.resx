@@ -2508,4 +2508,226 @@
   <data name="ApiKeyScopeUnitsRead" xml:space="preserve">
     <value>Читання підрозділів та їхніх станів</value>
   </data>
+  <data name="PermIncidentBackOfficeSectionHeader" xml:space="preserve">
+    <value>Incident Back Office</value>
+  </data>
+  <data name="PermIncidentBackOfficeSectionNote" xml:space="preserve">
+    <value>Ці дозволи діють лише за активного доповнення Incident Back Office. Фінансовим рядкам також потрібно ввімкнути Incident Business, а рядкам дошок координації — Incident Coordination. Самі звіти інцидентів використовують дозволи модуля Звіти, наведені вище.</value>
+  </data>
+  <data name="PermRecordsViewIncidentBackOfficeLabel" xml:space="preserve">
+    <value>Перегляд Incident Back Office</value>
+  </data>
+  <data name="PermRecordsViewIncidentBackOfficeNote" xml:space="preserve">
+    <value>Дозволяє відкривати робочі панелі Incident Back Office і переглядати активації, періоди, організацію та логістику. Для змін на кожній панелі потрібен окремий дозвіл цієї панелі.</value>
+  </data>
+  <data name="PermRecordsManageIncidentActivationLabel" xml:space="preserve">
+    <value>Керування активацією інциденту</value>
+  </data>
+  <data name="PermRecordsManageIncidentActivationNote" xml:space="preserve">
+    <value>Дозволяє відкривати активації, додавати їх до комплексу, а також закривати, запечатувати чи повторно відкривати їх.</value>
+  </data>
+  <data name="PermRecordsManageIncidentPeriodsLabel" xml:space="preserve">
+    <value>Керування операційними періодами</value>
+  </data>
+  <data name="PermRecordsManageIncidentPeriodsNote" xml:space="preserve">
+    <value>Дозволяє створювати й редагувати операційні періоди та затверджувати версії їхніх планів.</value>
+  </data>
+  <data name="PermRecordsManageIncidentPositionsLabel" xml:space="preserve">
+    <value>Керування посадами інциденту</value>
+  </data>
+  <data name="PermRecordsManageIncidentPositionsNote" xml:space="preserve">
+    <value>Дозволяє редагувати каталог посад, призначення на посади та склади команд.</value>
+  </data>
+  <data name="PermRecordsManageIncidentParticipantsLabel" xml:space="preserve">
+    <value>Керування учасниками інциденту</value>
+  </data>
+  <data name="PermRecordsManageIncidentParticipantsNote" xml:space="preserve">
+    <value>Дозволяє зараховувати й редагувати учасників і надсилати їм посилання самообслуговування. Позначка «Лише група» обмежує його учасниками з групи самого користувача.</value>
+  </data>
+  <data name="PermRecordsViewParticipantSensitiveLabel" xml:space="preserve">
+    <value>Перегляд конфіденційних відомостей учасників</value>
+  </data>
+  <data name="PermRecordsViewParticipantSensitiveNote" xml:space="preserve">
+    <value>Дозволяє бачити екстрені контакти учасників, їхні медичні відомості, потреби в доступності, алергени та харчові обмеження.</value>
+  </data>
+  <data name="PermRecordsCreateIncidentRequestLabel" xml:space="preserve">
+    <value>Створення запитів на ресурси</value>
+  </data>
+  <data name="PermRecordsCreateIncidentRequestNote" xml:space="preserve">
+    <value>Дозволяє створювати запити на ресурси та пакети завдань. Позначка «Лише група» обмежує його запитами для групи самого користувача.</value>
+  </data>
+  <data name="PermRecordsApproveIncidentRequestLabel" xml:space="preserve">
+    <value>Затвердження запитів на ресурси</value>
+  </data>
+  <data name="PermRecordsApproveIncidentRequestNote" xml:space="preserve">
+    <value>Дозволяє затверджувати або відхиляти запити на ресурси. Позначка «Лише група» обмежує його запитами від групи самого користувача.</value>
+  </data>
+  <data name="PermRecordsOrderIncidentRequestLabel" xml:space="preserve">
+    <value>Замовлення за запитами на ресурси</value>
+  </data>
+  <data name="PermRecordsOrderIncidentRequestNote" xml:space="preserve">
+    <value>Дозволяє розміщувати замовлення, яке виконує затверджений запит на ресурси, зокрема замовлення в межах угод із постачальниками.</value>
+  </data>
+  <data name="PermRecordsReceiveIncidentRequestLabel" xml:space="preserve">
+    <value>Приймання за запитами на ресурси</value>
+  </data>
+  <data name="PermRecordsReceiveIncidentRequestNote" xml:space="preserve">
+    <value>Дозволяє фіксувати прибуття та приймання за виконаними запитами. Позначка «Лише група» обмежує його групою самого користувача.</value>
+  </data>
+  <data name="PermRecordsManageIncidentFacilitiesLabel" xml:space="preserve">
+    <value>Керування об'єктами інциденту</value>
+  </data>
+  <data name="PermRecordsManageIncidentFacilitiesNote" xml:space="preserve">
+    <value>Дозволяє керувати об'єктами інциденту, їхньою місткістю, угодами та послугами.</value>
+  </data>
+  <data name="PermRecordsManageIncidentLodgingLabel" xml:space="preserve">
+    <value>Керування проживанням на інциденті</value>
+  </data>
+  <data name="PermRecordsManageIncidentLodgingNote" xml:space="preserve">
+    <value>Дозволяє керувати об'єктами проживання, блоками номерів, щоденним обліком наявних місць і розподілом ліжок.</value>
+  </data>
+  <data name="PermRecordsViewLodgingAssignmentDetailLabel" xml:space="preserve">
+    <value>Перегляд деталей розселення</value>
+  </data>
+  <data name="PermRecordsViewLodgingAssignmentDetailNote" xml:space="preserve">
+    <value>Дозволяє бачити номери кімнат і обмеження щодо проживання в розподілі ліжок і списках розселення.</value>
+  </data>
+  <data name="PermRecordsManageIncidentFeedingLabel" xml:space="preserve">
+    <value>Керування харчуванням на інциденті</value>
+  </data>
+  <data name="PermRecordsManageIncidentFeedingNote" xml:space="preserve">
+    <value>Дозволяє керувати планами харчування, попитом, замовленнями їжі та виданими порціями.</value>
+  </data>
+  <data name="PermRecordsManageIncidentServicesLabel" xml:space="preserve">
+    <value>Керування допоміжними службами</value>
+  </data>
+  <data name="PermRecordsManageIncidentServicesNote" xml:space="preserve">
+    <value>Дозволяє запитувати й фіксувати допоміжні послуги, як-от прання чи душові. Позначка «Лише група» обмежує його групою самого користувача.</value>
+  </data>
+  <data name="PermRecordsManageIncidentGroundSupportLabel" xml:space="preserve">
+    <value>Керування наземним забезпеченням</value>
+  </data>
+  <data name="PermRecordsManageIncidentGroundSupportNote" xml:space="preserve">
+    <value>Дозволяє керувати запитами на транспорт і перевезеннями, маршрутами поїздок і пальним.</value>
+  </data>
+  <data name="PermRecordsManageIncidentCommsLabel" xml:space="preserve">
+    <value>Керування зв'язком інциденту</value>
+  </data>
+  <data name="PermRecordsManageIncidentCommsNote" xml:space="preserve">
+    <value>Дозволяє керувати планом зв'язку та закріпленням радіостанцій і пристроїв.</value>
+  </data>
+  <data name="PermRecordsManageVendorCatalogLabel" xml:space="preserve">
+    <value>Керування каталогом постачальників</value>
+  </data>
+  <data name="PermRecordsManageVendorCatalogNote" xml:space="preserve">
+    <value>Дозволяє додавати й редагувати постачальників, їхні локації, можливості, доступність і документи відповідності.</value>
+  </data>
+  <data name="PermRecordsViewVendorProtectedLabel" xml:space="preserve">
+    <value>Перегляд захищених відомостей постачальників</value>
+  </data>
+  <data name="PermRecordsViewVendorProtectedNote" xml:space="preserve">
+    <value>Дозволяє бачити податкові ідентифікатори та платіжні реквізити постачальників.</value>
+  </data>
+  <data name="PermRecordsEngageVendorLabel" xml:space="preserve">
+    <value>Залучення постачальників</value>
+  </data>
+  <data name="PermRecordsEngageVendorNote" xml:space="preserve">
+    <value>Дозволяє залучати постачальників до активації, фіксувати зобов'язання щодо потужностей і комерційні пропозиції, а також надсилати посилання для постачальників.</value>
+  </data>
+  <data name="PermRecordsManageIncidentProcurementLabel" xml:space="preserve">
+    <value>Керування закупівлями інциденту</value>
+  </data>
+  <data name="PermRecordsManageIncidentProcurementNote" xml:space="preserve">
+    <value>Дозволяє керувати угодами з постачальниками, заявками на закупівлю, прийманням, рахунками постачальників і пакетами платежів.</value>
+  </data>
+  <data name="PermRecordsCommitIncidentPurchaseLabel" xml:space="preserve">
+    <value>Фінансові зобов'язання щодо закупівель</value>
+  </data>
+  <data name="PermRecordsCommitIncidentPurchaseNote" xml:space="preserve">
+    <value>Дозволяє фіксувати фінансове зобов'язання щодо закупівлі; це контроль уповноваженого закупівельника.</value>
+  </data>
+  <data name="PermRecordsAcceptVendorInvoiceLabel" xml:space="preserve">
+    <value>Прийняття рахунків постачальників</value>
+  </data>
+  <data name="PermRecordsAcceptVendorInvoiceNote" xml:space="preserve">
+    <value>Дозволяє приймати рахунки постачальників до оплати після їх зіставлення з прийманням.</value>
+  </data>
+  <data name="PermRecordsManageIncidentBudgetLabel" xml:space="preserve">
+    <value>Керування бюджетом інциденту</value>
+  </data>
+  <data name="PermRecordsManageIncidentBudgetNote" xml:space="preserve">
+    <value>Дозволяє керувати статтями бюджету, делегуванням повноважень на витрати, кодами фінансування та групами витрат.</value>
+  </data>
+  <data name="PermRecordsAuthorizeIncidentFundingLabel" xml:space="preserve">
+    <value>Санкціонування фінансування інциденту</value>
+  </data>
+  <data name="PermRecordsAuthorizeIncidentFundingNote" xml:space="preserve">
+    <value>Дозволяє затверджувати санкціонування фінансування для бюджету інциденту.</value>
+  </data>
+  <data name="PermRecordsEnterIncidentTimeLabel" xml:space="preserve">
+    <value>Внесення часу інциденту</value>
+  </data>
+  <data name="PermRecordsEnterIncidentTimeNote" xml:space="preserve">
+    <value>Дозволяє вносити робочий час, використання обладнання та видатки. Позначка «Лише група» обмежує його людьми з групи самого користувача.</value>
+  </data>
+  <data name="PermRecordsCertifyIncidentTimeLabel" xml:space="preserve">
+    <value>Засвідчення часу інциденту</value>
+  </data>
+  <data name="PermRecordsCertifyIncidentTimeNote" xml:space="preserve">
+    <value>Дозволяє керівникам засвідчувати внесений час перед затвердженням. Позначка «Лише група» обмежує його людьми з групи самого користувача.</value>
+  </data>
+  <data name="PermRecordsApproveIncidentTimeLabel" xml:space="preserve">
+    <value>Затвердження часу інциденту</value>
+  </data>
+  <data name="PermRecordsApproveIncidentTimeNote" xml:space="preserve">
+    <value>Дозволяє затверджувати засвідчений час для розрахунку витрат і оплати. Позначка «Лише група» обмежує його людьми з групи самого користувача.</value>
+  </data>
+  <data name="PermRecordsViewIncidentCostLabel" xml:space="preserve">
+    <value>Перегляд витрат інциденту</value>
+  </data>
+  <data name="PermRecordsViewIncidentCostNote" xml:space="preserve">
+    <value>Дозволяє бачити операції з витратами, нарахування та щоденні прогнози витрат.</value>
+  </data>
+  <data name="PermRecordsManageIncidentCostLabel" xml:space="preserve">
+    <value>Керування витратами інциденту</value>
+  </data>
+  <data name="PermRecordsManageIncidentCostNote" xml:space="preserve">
+    <value>Дозволяє редагувати записи про витрати, угоди про розподіл витрат і запуски розподілу, а також експортувати звіти про витрати.</value>
+  </data>
+  <data name="PermRecordsManageIncidentClaimsLabel" xml:space="preserve">
+    <value>Керування претензіями інциденту</value>
+  </data>
+  <data name="PermRecordsManageIncidentClaimsNote" xml:space="preserve">
+    <value>Дозволяє відкривати й опрацьовувати претензії щодо травм, пошкоджень або втрат.</value>
+  </data>
+  <data name="PermRecordsViewClaimProtectedLabel" xml:space="preserve">
+    <value>Перегляд захищених відомостей претензій</value>
+  </data>
+  <data name="PermRecordsViewClaimProtectedNote" xml:space="preserve">
+    <value>Дозволяє бачити фінансові дані претензій і нотатки справи.</value>
+  </data>
+  <data name="PermRecordsAssembleIncidentIapLabel" xml:space="preserve">
+    <value>Складання планів дій щодо інциденту</value>
+  </data>
+  <data name="PermRecordsAssembleIncidentIapNote" xml:space="preserve">
+    <value>Дозволяє складати план дій щодо інциденту: його сторінки, порядок сторінок, список розсилки та завдання друку. Затвердження й остаточне оформлення звіту з планом регулюються дозволами модуля Звіти.</value>
+  </data>
+  <data name="PermRecordsViewCoordinationBoardsLabel" xml:space="preserve">
+    <value>Перегляд дошок координації</value>
+  </data>
+  <data name="PermRecordsViewCoordinationBoardsNote" xml:space="preserve">
+    <value>Дозволяє переглядати дошки координації та панель ситуації. Позначка «Лише група» обмежує його дошками групи самого користувача.</value>
+  </data>
+  <data name="PermRecordsManageCoordinationBoardsLabel" xml:space="preserve">
+    <value>Керування дошками координації</value>
+  </data>
+  <data name="PermRecordsManageCoordinationBoardsNote" xml:space="preserve">
+    <value>Дозволяє створювати й редагувати дошки координації, їхні елементи та панель ситуації. Позначка «Лише група» обмежує його дошками групи самого користувача.</value>
+  </data>
+  <data name="PermRecordsShareCoordinationBoardsLabel" xml:space="preserve">
+    <value>Спільний доступ до дошок координації</value>
+  </data>
+  <data name="PermRecordsShareCoordinationBoardsNote" xml:space="preserve">
+    <value>Дозволяє надавати партнерським організаціям спільний доступ до дошки координації.</value>
+  </data>
 </root>

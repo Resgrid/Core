@@ -1,0 +1,114 @@
+@model Resgrid.Web.Areas.User.Models.IncidentBackOffice.IncidentSettingsView
+@using Resgrid.Web.Areas.User.Models.IncidentBackOffice
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.IncidentBackOffice.IncidentBackOffice> localizer
+@*
+    The module's department policies (registry §4C settings 85-91, 96-97, 120): one form per policy so a save touches one setting.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Nav.Settings"];
+    ViewData["Title"] = localizer["Nav.Settings"].Value;
+    ViewData["Subtitle"] = localizer["SettingsIntro"].Value;
+    string Text(string key, string fallback) => localizer[key] is { ResourceNotFound: false } t ? t.Value : fallback;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/IncidentBackOffice/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("~/Areas/User/Views/IncidentBackOffice/_Message.cshtml", (IncidentDeskView)Model)
+    @foreach (var policy in Model.Sections)
+    {
+        <div class="ibox float-e-margins" id="@policy.Key">
+            <div class="ibox-title"><h5>@Text("Policy." + policy.Key, LedgerText.Humanize(policy.Key))</h5></div>
+            <div class="ibox-content">
+                @if (localizer["PolicyIntro." + policy.Key] is { ResourceNotFound: false } intro)
+                {
+                    <p class="text-muted">@intro.Value</p>
+                }
+                <form method="post" asp-action="Settings" asp-route-section="@policy.Key" class="form-horizontal ibo-ledger-form" novalidate>
+                    @Html.AntiForgeryToken()
+                    @foreach (var field in policy.Fields)
+                    {
+                        var id = policy.Key + "-" + field.Name;
+                        var label = Text("PolicyField." + policy.Key + "." + field.Name, LedgerText.Humanize(field.Name));
+                        var help = localizer["PolicyHelp." + policy.Key + "." + field.Name] is { ResourceNotFound: false } h ? h.Value : null;
+                        var error = policy.Errors.TryGetValue(field.Name, out var e) ? e : null;
+                        <div class="form-group @(error != null ? "has-error" : null)">
+                            <label class="col-sm-4 control-label" for="@id">@label</label>
+                            <div class="col-sm-6">
+                                @switch (field.Input)
+                                {
+                                    case IncidentPolicyInput.Bool:
+                                        <div class="checkbox"><label><input id="@id" type="checkbox" name="@field.Name" value="true" checked="@(field.Value == "true")" /> @localizer["Yes"]</label></div>
+                                        break;
+                                    case IncidentPolicyInput.Int:
+                                        <input id="@id" type="number" min="0" step="1" name="@field.Name" value="@field.Value" class="form-control" />
+                                        break;
+                                    case IncidentPolicyInput.Decimal:
+                                        <input id="@id" type="number" min="0" step="any" name="@field.Name" value="@field.Value" class="form-control" />
+                                        break;
+                                    case IncidentPolicyInput.Enum:
+                                        <select id="@id" name="@field.Name" class="form-control">
+                                            @foreach (var value in Enum.GetValues(field.EnumType).Cast<object>().Select(o => Convert.ToInt32(o)))
+                                            {
+                                                var text = value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                                                <option value="@text" selected="@(field.Value == text)">@LedgerText.Status(localizer, field.EnumType, value)</option>
+                                            }
+                                        </select>
+                                        break;
+                                    case IncidentPolicyInput.List:
+                                        <input id="@id" type="text" name="@field.Name" value="@field.Value" class="form-control" />
+                                        <span class="help-block">@localizer["CommaSeparated"]</span>
+                                        break;
+                                    case IncidentPolicyInput.ReadOnly:
+                                        <p class="form-control-static" id="@id">@(string.IsNullOrEmpty(field.Value) ? "—" : field.Value)</p>
+                                        break;
+                                    case IncidentPolicyInput.PositionMap:
+                                        <table class="table table-condensed rgw-table" id="@id">
+                                            <thead><tr><th scope="col">@localizer["Notice"]</th><th scope="col">@localizer["PositionCodes"]</th></tr></thead>
+                                            <tbody>
+                                                @foreach (var row in field.Map)
+                                                {
+                                                    var rowId = id + "-" + row.Notice;
+                                                    <tr>
+                                                        <td><label for="@rowId">@Text("Notice." + row.Notice, row.Notice.ToString(System.Globalization.CultureInfo.InvariantCulture))</label></td>
+                                                        <td><input id="@rowId" type="text" name="@(field.Name + "_" + row.Notice)" value="@row.Value" placeholder="@row.Default" maxlength="200" class="form-control input-sm" /></td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                        <span class="help-block">@localizer["PositionMapHelp"]</span>
+                                        break;
+                                    default:
+                                        <input id="@id" type="text" name="@field.Name" value="@field.Value" maxlength="100" class="form-control" />
+                                        break;
+                                }
+                                @if (error != null)
+                                {
+                                    <span class="help-block" role="alert">@error</span>
+                                }
+                                else if (help != null)
+                                {
+                                    <span class="help-block">@help</span>
+                                }
+                            </div>
+                        </div>
+                    }
+                    <div class="form-group">
+                        <div class="col-sm-offset-4 col-sm-8">
+                            <button type="submit" class="btn btn-primary"><i class="fa fa-save" aria-hidden="true"></i> @localizer["Save"]</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/incident-back-office.css" asp-append-version="true" />
+}
+@section Scripts {
+    <script src="~/js/app/internal/incidentbackoffice/incident-back-office.js" asp-append-version="true"></script>
+}

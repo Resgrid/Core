@@ -1,0 +1,49 @@
+@model Resgrid.Web.Areas.User.Models.IncidentBackOffice.IncidentCommandDeskView
+@using Resgrid.Web.Areas.User.Models.IncidentBackOffice
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.IncidentBackOffice.IncidentBackOffice> localizer
+@*
+    The logistics desk (plan §9.17.1): the section's numbers with their as-of time and the inbound arrivals by window.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Nav.LogisticsDesk"];
+    ViewData["Title"] = localizer["Nav.LogisticsDesk"].Value;
+    ViewData["Subtitle"] = localizer["LogisticsIntro"].Value;
+    var time = ViewData["IboTime"] as IncidentTime;
+    var summary = Model.Summary;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/IncidentBackOffice/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("~/Areas/User/Views/IncidentBackOffice/_Message.cshtml", (IncidentDeskView)Model)
+    @if (summary != null)
+    {
+        <p class="text-muted small"><i class="fa fa-clock-o" aria-hidden="true"></i> @localizer["AsOf", time?.Format(summary.AsOf)]</p>
+        <div class="ibo-board m-b-md">
+            @foreach (var key in new[] { "requests.open", "requests.critical_unfilled", "requests.overdue", "fills.en_route", "lodging.needed", "lodging.beds_held_tonight", "lodging.beds_available_tonight", "service.open" })
+            {
+                <div class="ibo-tile"><h4>@localizer["Metric." + key]</h4><div class="ibo-value">@summary[key].ToString("#,0", System.Globalization.CultureInfo.CurrentCulture)</div></div>
+            }
+        </div>
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5>@localizer["Inbound"]</h5></div>
+            <div class="ibox-content">
+                <table class="table table-condensed rgw-table">
+                    <thead><tr><th scope="col">@localizer["Window"]</th><th scope="col">@localizer["Arrivals"]</th><th scope="col">@localizer["Apparatus"]</th><th scope="col">@localizer["Personnel"]</th></tr></thead>
+                    <tbody>
+                        @foreach (var bucket in summary.Inbound)
+                        {
+                            <tr><td>@localizer["Window." + bucket.Window]</td><td>@bucket.Count</td><td>@bucket.Apparatus</td><td>@bucket.Personnel</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/incident-back-office.css" asp-append-version="true" />
+}

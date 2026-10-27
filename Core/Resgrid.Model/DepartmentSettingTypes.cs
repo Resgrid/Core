@@ -184,5 +184,30 @@
 		/// no codes; the feature is invisible.
 		/// </summary>
 		DispatchResponseCodes = 119,
+
+		// -- Incident Back Office (registry section 4C; plan §16) -- 85-87 LI-A, 88-95 LI-B, 96-102 LI-C (unnamed values
+		// stay reserved), and LI-D at 120 because 114-119 were taken by other work. Each holds a JSON policy object read
+		// through IIncidentBackOfficeSettingsService; missing = the documented defaults.
+
+		/// <summary>LI-A: <see cref="IncidentLogistics.IncidentBackOfficeDefaults"/> — staleness window, default currency and measurement, exercise defaults.</summary>
+		IncidentBackOfficeDefaults = 85,
+		/// <summary>LI-A: <see cref="IncidentLogistics.IncidentEnrollmentPolicy"/> — Off / Suggest / AutoDraft and the unregistered forecast band.</summary>
+		IncidentEnrollmentPolicy = 86,
+		/// <summary>LI-A: <see cref="IncidentLogistics.IncidentNotificationRoutingPolicy"/> — default position codes per notice 35-44 and 49.</summary>
+		IncidentNotificationRouting = 87,
+		/// <summary>LI-B: <see cref="IncidentLogistics.IncidentForecastPolicy"/> — contingency, coefficients, predicted-timeout policy, replacement lead time.</summary>
+		IncidentForecastPolicy = 88,
+		/// <summary>LI-B: <see cref="IncidentLogistics.IncidentAssignmentRulePolicy"/> — maximum time allowance and work/rest rule pack.</summary>
+		IncidentAssignmentRulePolicy = 89,
+		/// <summary>LI-B: <see cref="IncidentLogistics.IncidentVendorPolicy"/> — verification interval and capacity-hold expiry window.</summary>
+		IncidentVendorPolicy = 90,
+		/// <summary>LI-B: <see cref="IncidentLogistics.IncidentSelfServicePolicy"/> — link lifetime and the one-time-code rule.</summary>
+		IncidentSelfServicePolicy = 91,
+		/// <summary>LI-C: <see cref="IncidentLogistics.IncidentFinancePolicy"/> — intake sender policy, single-person operation, cost thresholds.</summary>
+		IncidentFinancePolicy = 96,
+		/// <summary>LI-C: <see cref="IncidentLogistics.IncidentRetentionPolicy"/> — retention windows per entity class (plan §18).</summary>
+		IncidentRetentionPolicy = 97,
+		/// <summary>LI-D (registry 120; 114 was taken): <see cref="IncidentLogistics.CoordinationBoardDefaults"/> — default lane staleness and alarm policy.</summary>
+		CoordinationBoardDefaults = 120,
 	}
 }

@@ -1,0 +1,94 @@
+@model Resgrid.Web.Areas.User.Models.IncidentBackOffice.IncidentOperationsDeskView
+@using Resgrid.Model.IncidentLogistics
+@using Resgrid.Web.Areas.User.Models.IncidentBackOffice
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.IncidentBackOffice.IncidentBackOffice> localizer
+@*
+    The operations desk (plan §9.5): support status (owned here) and position held stay in separate columns; operational status
+    belongs to Dispatch and is never inferred from support status.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Nav.OperationsDesk"];
+    ViewData["Title"] = localizer["Nav.OperationsDesk"].Value;
+    ViewData["Subtitle"] = localizer["OperationsIntro"].Value;
+    var time = ViewData["IboTime"] as IncidentTime;
+    var summary = Model.Summary;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/IncidentBackOffice/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("~/Areas/User/Views/IncidentBackOffice/_Message.cshtml", (IncidentDeskView)Model)
+    @if (summary != null)
+    {
+        <p class="text-muted small"><i class="fa fa-clock-o" aria-hidden="true"></i> @localizer["AsOf", time?.Format(summary.AsOf)]</p>
+        <div class="ibo-board m-b-md">
+            @foreach (var key in new[] { "participants.on_incident", "participants.inbound", "resources.on_incident", "resources.inbound", "resources.personnel", "demob.pending" })
+            {
+                <div class="ibo-tile"><h4>@localizer["Metric." + key]</h4><div class="ibo-value">@summary[key].ToString("#,0", System.Globalization.CultureInfo.CurrentCulture)</div></div>
+            }
+        </div>
+    }
+    <div class="row">
+        @if (Model.People.Count > 0)
+        {
+            <div class="col-lg-7">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@localizer["PersonnelPicture"]</h5></div>
+                    <div class="ibox-content">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-condensed rgw-table">
+                                <thead><tr><th scope="col">@localizer["Field.DisplayName"]</th><th scope="col">@localizer["Field.Agency"]</th><th scope="col">@localizer["Field.SupportStatus"]</th><th scope="col">@localizer["PositionHeld"]</th></tr></thead>
+                                <tbody>
+                                    @foreach (var person in Model.People)
+                                    {
+                                        <tr>
+                                            <td><a asp-controller="IncidentParticipants" asp-action="Edit" asp-route-kind="IncidentParticipant" asp-route-id="@person.ParticipantId">@person.Name</a>
+                                                @if (person.IsUnmatched)
+                                                {
+                                                    <span class="label label-default" title="@localizer["UnmatchedHelp"]">@localizer["Unmatched"]</span>
+                                                }
+                                            </td>
+                                            <td>@person.Agency</td>
+                                            <td><span class="label @LedgerText.StatusClass(typeof(IncidentSupportStatuses), (int)person.SupportStatus)">@LedgerText.Status(localizer, typeof(IncidentSupportStatuses), (int)person.SupportStatus)</span></td>
+                                            <td>@(person.Position ?? "—")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        <div class="@(Model.People.Count > 0 ? "col-lg-5" : "col-lg-12")">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@LedgerText.Kind(localizer, IncidentLedgerCatalog.For<IncidentResource>())</h5></div>
+                <div class="ibox-content">
+                    <table class="table table-striped table-condensed rgw-table">
+                        <thead><tr><th scope="col">@localizer["Field.Name"]</th><th scope="col">@localizer["Field.Kind"]</th><th scope="col">@localizer["Field.SupportStatus"]</th></tr></thead>
+                        <tbody>
+                            @foreach (var resource in Model.Resources)
+                            {
+                                <tr>
+                                    <td><a asp-controller="IncidentCheckIn" asp-action="Edit" asp-route-kind="IncidentResource" asp-route-id="@resource.IncidentResourceId">@resource.Name</a></td>
+                                    <td>@LedgerText.Status(localizer, typeof(IncidentResourceKinds), resource.Kind)</td>
+                                    <td><span class="label @LedgerText.StatusClass(typeof(IncidentSupportStatuses), resource.SupportStatus)">@LedgerText.Status(localizer, typeof(IncidentSupportStatuses), resource.SupportStatus)</span></td>
+                                </tr>
+                            }
+                            @if (Model.Resources.Count == 0)
+                            {
+                                <tr><td colspan="3" class="text-muted">@localizer["NoRows"]</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/incident-back-office.css" asp-append-version="true" />
+}

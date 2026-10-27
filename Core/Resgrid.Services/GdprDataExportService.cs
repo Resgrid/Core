@@ -39,6 +39,8 @@ namespace Resgrid.Services
 		private readonly IChecklistReminderRepository _checklistReminders;
 		private readonly Lazy<IReadinessHistoryProtectionService> _checklistProtection;
 
+		private readonly IncidentLogistics.IIncidentBackOfficeGdprExport _incidentBackOffice;
+
 		public GdprDataExportService(
 			IGdprDataExportRequestRepository repository,
 			IUserProfileService userProfileService,
@@ -53,8 +55,10 @@ namespace Resgrid.Services
 			ICertificationService certificationService,
 			ITrainingService trainingService,
 			IShiftsService shiftsService,
-			IEmailService emailService, IChecklistRepository checklists, Lazy<IReadinessHistoryProtectionService> checklistProtection, IChecklistReminderRepository checklistReminders, IWorkOrderRepository workOrders, IInventoryStore inventoryStore, IWorkOrderMaintenanceRepository maintenance)
+			IEmailService emailService, IChecklistRepository checklists, Lazy<IReadinessHistoryProtectionService> checklistProtection, IChecklistReminderRepository checklistReminders, IWorkOrderRepository workOrders, IInventoryStore inventoryStore, IWorkOrderMaintenanceRepository maintenance,
+			IncidentLogistics.IIncidentBackOfficeGdprExport incidentBackOffice = null)
 		{
+			_incidentBackOffice = incidentBackOffice;
 			_repository = repository;
 			_workOrderMaintenance = maintenance ?? throw new ArgumentNullException(nameof(maintenance));
             _workOrders = workOrders ?? throw new ArgumentNullException(nameof(workOrders));
@@ -193,6 +197,8 @@ namespace Resgrid.Services
 				await AddJsonEntry(archive, "workorders.json", await BuildWorkOrderDataAsync(userId, departmentId), ledger);
                 await AddJsonEntry(archive, "maintenance.json", await BuildMaintenanceDataAsync(userId, departmentId), ledger);
 				await AddJsonEntry(archive, "inventory.json", await BuildInventoryDataAsync(userId, departmentId), ledger);
+				if (_incidentBackOffice != null)
+					await AddJsonEntry(archive, "incident_back_office.json", await _incidentBackOffice.BuildAsync(userId, departmentId), ledger);
 
 				// Written last, so it can report what every other entry withheld. Only present when
 				// something actually was: a member of an unprotected department gets the archive they

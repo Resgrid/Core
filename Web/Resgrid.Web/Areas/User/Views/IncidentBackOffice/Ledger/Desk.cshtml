@@ -1,0 +1,53 @@
+@model Resgrid.Web.Areas.User.Models.IncidentBackOffice.LedgerDeskView
+@using Resgrid.Web.Areas.User.Models.IncidentBackOffice
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.IncidentBackOffice.IncidentBackOffice> localizer
+@{
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+    var title = localizer["Desk." + controller] is { ResourceNotFound: false } t ? t.Value : LedgerText.Humanize(controller);
+    ViewBag.Title = "Resgrid | " + title;
+    ViewData["Title"] = title;
+    ViewData["Subtitle"] = localizer["DeskIntro." + controller] is { ResourceNotFound: false } s ? s.Value : null;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/IncidentBackOffice/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("~/Areas/User/Views/IncidentBackOffice/_Message.cshtml", (IncidentDeskView)Model)
+    @if (Model.Actions.Count > 0)
+    {
+        <div class="rgw-toolbar">
+            @foreach (var action in Model.Actions)
+            {
+                <a asp-action="@action.Action" class="btn btn-sm @(action.Primary ? "btn-primary" : "btn-default")"><i class="fa @action.Icon" aria-hidden="true"></i> @localizer[action.LabelKey]</a>
+            }
+        </div>
+    }
+    <div class="row">
+        @foreach (var entry in Model.Entries)
+        {
+            var label = LedgerText.Kind(localizer, entry.Kind);
+            <div class="col-lg-4 col-md-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@label</h5><span class="label label-default pull-right" aria-label="@localizer["RowCount"]">@entry.Count</span></div>
+                    <div class="ibox-content">
+                        @if (localizer["KindIntro." + entry.Kind.Key] is { ResourceNotFound: false } intro)
+                        {
+                            <p class="text-muted">@intro.Value</p>
+                        }
+                        <a asp-action="List" asp-route-kind="@entry.Kind.Key" class="btn btn-sm btn-default"><i class="fa fa-list" aria-hidden="true"></i> @localizer["Open"]</a>
+                        @if (entry.CanWrite)
+                        {
+                            <a asp-action="Edit" asp-route-kind="@entry.Kind.Key" class="btn btn-sm btn-primary"><i class="fa fa-plus" aria-hidden="true"></i> @localizer["New"]</a>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/incident-back-office.css" asp-append-version="true" />
+}

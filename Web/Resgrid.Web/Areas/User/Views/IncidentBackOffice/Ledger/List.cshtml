@@ -1,0 +1,172 @@
+@model Resgrid.Web.Areas.User.Models.IncidentBackOffice.LedgerListView
+@using Resgrid.Web.Areas.User.Models.IncidentBackOffice
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.IncidentBackOffice.IncidentBackOffice> localizer
+@*
+    The generic list of one Incident Back Office table (plan §14.7): filter block, rgw-table, pager and the export of exactly these rows.
+    Protected columns never appear in a list; status text always accompanies its colour.
+*@
+@{
+    var kind = Model.Kind;
+    var label = LedgerText.Kind(localizer, kind);
+    ViewBag.Title = "Resgrid | " + label;
+    ViewData["Title"] = label;
+    ViewData["Subtitle"] = Model.ParentLabel != null ? localizer["ForParent", Model.ParentLabel].Value : (localizer["KindIntro." + kind.Key] is { ResourceNotFound: false } intro ? intro.Value : null);
+    var filterFields = kind.Fields.Where(f => f.Filter && f.Name != Model.ParentField).ToList();
+    var route = new Dictionary<string, string> { ["kind"] = kind.Key };
+    if (!string.IsNullOrWhiteSpace(Model.Search)) route["search"] = Model.Search;
+    if (!string.IsNullOrWhiteSpace(Model.ParentField)) { route["pf"] = Model.ParentField; route["pv"] = Model.ParentValue; }
+    foreach (var (name, value) in Model.Filters) route["f_" + name] = value;
+    Dictionary<string, string> Page(int page) { var r = new Dictionary<string, string>(route) { ["page"] = page.ToString(System.Globalization.CultureInfo.InvariantCulture) }; return r; }
+    var editRoute = new Dictionary<string, string> { ["kind"] = kind.Key };
+    if (!string.IsNullOrWhiteSpace(Model.ParentField)) { editRoute["pf"] = Model.ParentField; editRoute["pv"] = Model.ParentValue; }
+    var statusEnum = kind.StatusField == null ? null : kind.Fields.FirstOrDefault(f => f.Name == kind.StatusField)?.EnumType;
+    var parentTable = string.IsNullOrWhiteSpace(Model.ParentField) ? null : kind.Fields.FirstOrDefault(f => f.Name == Model.ParentField)?.RefTable;
+    var parentKind = parentTable == null ? null : Model.Siblings.FirstOrDefault(s => s.Table == parentTable);
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/IncidentBackOffice/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("~/Areas/User/Views/IncidentBackOffice/_Message.cshtml", (IncidentDeskView)Model)
+
+    @if (Model.Siblings.Count > 1 && string.IsNullOrWhiteSpace(Model.ParentField))
+    {
+        <ul class="nav nav-tabs m-b-md" aria-label="@localizer["Tables"]">
+            @foreach (var sibling in Model.Siblings)
+            {
+                var active = sibling.Key == kind.Key;
+                <li class="@(active ? "active" : null)"><a asp-action="List" asp-route-kind="@sibling.Key" aria-current="@(active ? "page" : "false")">@LedgerText.Kind(localizer, sibling)</a></li>
+            }
+        </ul>
+    }
+
+    <div class="rgw-toolbar">
+        @if (parentKind != null)
+        {
+            <a asp-action="Edit" asp-route-kind="@parentKind.Key" asp-route-id="@Model.ParentValue" class="btn btn-sm btn-default"><i class="fa fa-arrow-left" aria-hidden="true"></i> @(Model.ParentLabel ?? LedgerText.Kind(localizer, parentKind))</a>
+        }
+        <span class="rgw-toolbar-spacer"></span>
+        <a asp-action="Export" asp-all-route-data="route" class="btn btn-sm btn-default"><i class="fa fa-download" aria-hidden="true"></i> @localizer["ExportCsv"]</a>
+        @if (Model.KindCanWrite)
+        {
+            <a asp-action="Edit" asp-all-route-data="editRoute" class="btn btn-sm btn-primary"><i class="fa fa-plus" aria-hidden="true"></i> @localizer["New"]</a>
+        }
+    </div>
+
+    @if (filterFields.Count > 0 || kind.SearchColumns.Count > 0)
+    {
+        <form method="get" asp-action="List" class="rgw-filter" role="search">
+            <input type="hidden" name="kind" value="@kind.Key" />
+            @if (!string.IsNullOrWhiteSpace(Model.ParentField))
+            {
+                <input type="hidden" name="pf" value="@Model.ParentField" />
+                <input type="hidden" name="pv" value="@Model.ParentValue" />
+            }
+            <div class="rgw-grid">
+                @if (kind.SearchColumns.Count > 0)
+                {
+                    <div class="form-group">
+                        <label for="ibo-search">@localizer["Search"]</label>
+                        <input id="ibo-search" type="search" name="search" value="@Model.Search" maxlength="100" class="form-control" />
+                    </div>
+                }
+                @foreach (var field in filterFields)
+                {
+                    var current = Model.Filters.TryGetValue(field.Name, out var v) ? v : null;
+                    <div class="form-group">
+                        <label for="ibo-f-@field.Name">@LedgerText.Field(localizer, kind, field.Name)</label>
+                        <select id="ibo-f-@field.Name" name="f_@field.Name" class="form-control">
+                            <option value="">@localizer["Any"]</option>
+                            @if (field.Input == LedgerInput.Bool)
+                            {
+                                <option value="true" selected="@(current == "true")">@localizer["Yes"]</option>
+                                <option value="false" selected="@(current == "false")">@localizer["No"]</option>
+                            }
+                            else if (field.EnumType != null)
+                            {
+                                foreach (var value in Enum.GetValues(field.EnumType).Cast<object>().Select(o => Convert.ToInt32(o)))
+                                {
+                                    var text = value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                                    <option value="@text" selected="@(current == text)">@LedgerText.Status(localizer, field.EnumType, value)</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                }
+            </div>
+            <div class="rgw-filter-actions">
+                <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-filter" aria-hidden="true"></i> @localizer["Filter"]</button>
+                <a asp-action="List" asp-route-kind="@kind.Key" asp-route-pf="@Model.ParentField" asp-route-pv="@Model.ParentValue" class="btn btn-sm btn-default">@localizer["Clear"]</a>
+            </div>
+        </form>
+    }
+
+    <div class="ibox float-e-margins">
+        <div class="ibox-content">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover rgw-table">
+                    <thead>
+                        <tr>
+                            @foreach (var column in Model.Columns)
+                            {
+                                <th scope="col">@LedgerText.Field(localizer, kind, column.Name)</th>
+                            }
+                            <th scope="col"><span class="sr-only">@localizer["Actions"]</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var row in Model.Rows)
+                        {
+                            var rowRoute = new Dictionary<string, string>(editRoute) { ["id"] = row.Id };
+                            <tr>
+                                @foreach (var column in Model.Columns)
+                                {
+                                    var cell = row.Cells.TryGetValue(column.Name, out var c) ? c : string.Empty;
+                                    if (column.Name == kind.StatusField && row.Status.HasValue)
+                                    {
+                                        <td><span class="label @LedgerText.StatusClass(statusEnum, row.Status.Value)">@cell</span></td>
+                                    }
+                                    else if (column.Name == kind.LabelField)
+                                    {
+                                        <td><a asp-action="Edit" asp-all-route-data="rowRoute">@(string.IsNullOrEmpty(cell) ? localizer["Untitled"].Value : cell)</a></td>
+                                    }
+                                    else
+                                    {
+                                        <td>@cell</td>
+                                    }
+                                }
+                                <td class="text-right rgw-row-actions">
+                                    <a asp-action="Edit" asp-all-route-data="rowRoute" class="btn btn-xs btn-default" title="@localizer["Open"]"><i class="fa fa-folder-open" aria-hidden="true"></i><span class="sr-only">@localizer["Open"]</span></a>
+                                </td>
+                            </tr>
+                        }
+                        @if (Model.Rows.Count == 0)
+                        {
+                            <tr><td colspan="@(Model.Columns.Count + 1)" class="text-muted">@localizer["NoRows"]</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            @if (Model.Page > 0 || Model.HasMore)
+            {
+                <div class="rgw-pager">
+                    @if (Model.Page > 0)
+                    {
+                        <a class="btn btn-default btn-sm" asp-action="List" asp-all-route-data="Page(Model.Page - 1)"><i class="fa fa-chevron-left" aria-hidden="true"></i> @localizer["Previous"]</a>
+                    }
+                    @if (Model.HasMore)
+                    {
+                        <a class="btn btn-default btn-sm" asp-action="List" asp-all-route-data="Page(Model.Page + 1)">@localizer["Next"] <i class="fa fa-chevron-right" aria-hidden="true"></i></a>
+                    }
+                    <span class="text-muted">@(Model.Page + 1)</span>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/incident-back-office.css" asp-append-version="true" />
+}

@@ -7125,4 +7125,568 @@
   <data name="FieldHelp.DepartmentTermOverride.Singular" xml:space="preserve">
     <value>Для модуля — слово підрозділу для одного елемента, наприклад «Команда» для «Одиниць», перейменованих на «Команди», що використовується на кнопках і в заголовках, як-от «Нова команда»; щонайбільше 50 символів. Порожнє значення виводиться з назви. Типи записів його не мають.</value>
   </data>
+  <data name="Area.incidents" xml:space="preserve">
+    <value>Incident Back Office</value>
+  </data>
+  <data name="AreaPurpose.incidents" xml:space="preserve">
+    <value>Активація, планування, логістика, фінанси та дошки координації для великих або тривалих інцидентів, запланованих заходів і навчань.</value>
+  </data>
+  <data name="AreaValue.incidents" xml:space="preserve">
+    <value>Керуйте забезпеченням великого інциденту в межах однієї активації: хто залучений, де люди ночують і харчуються, що замовлено і скільки це коштувало.</value>
+  </data>
+  <data name="AreaExample.incidents" xml:space="preserve">
+    <value>Під час активації через лісову пожежу реєструють прибуття оперативних груп, бронюють для них проживання й харчування та відстежують кожну закупівлю відносно бюджету інциденту.</value>
+  </data>
+  <data name="ModuleAdoption.incidents" xml:space="preserve">
+    <value>Потребує доповнення Incident Back Office. Фінансовим панелям також потрібно ввімкнути Incident Business, а дошкам координації — Incident Coordination. Перед першим реальним інцидентом проведіть навчальну активацію.</value>
+  </data>
+  <data name="Ui.AddonRequired.IncidentBackOffice" xml:space="preserve">
+    <value>Потребує Incident Back Office</value>
+  </data>
+  <data name="Module.IncidentBackOfficeDisabled" xml:space="preserve">
+    <value>Доступність Incident Back Office</value>
+  </data>
+  <data name="ModuleHelp.IncidentBackOfficeDisabled" xml:space="preserve">
+    <value>Керує доступністю робочих панелей Incident Back Office. Вимкнення цього модуля прибирає їх із навігації та блокує їхні операції; це не видаляє активації та їхні записи. Увімкнення все ще потребує доповнення Incident Back Office, розгортання та дозволів.</value>
+  </data>
+  <data name="Module.IncidentBusinessDisabled" xml:space="preserve">
+    <value>Доступність фінансів інцидентів</value>
+  </data>
+  <data name="ModuleHelp.IncidentBusinessDisabled" xml:space="preserve">
+    <value>Керує фінансовими панелями інцидентів: закупівлі, бюджет, облік часу, витрати, претензії, відновлення, вхідні документи та закриття. Вимкнення приховує ці панелі та блокує їхні операції без видалення їхніх записів. Діє лише тоді, коли Incident Back Office увімкнено, а увімкнення все ще потребує розгортання Incident Business і дозволів.</value>
+  </data>
+  <data name="Module.IncidentCoordinationDisabled" xml:space="preserve">
+    <value>Доступність дошок координації</value>
+  </data>
+  <data name="ModuleHelp.IncidentCoordinationDisabled" xml:space="preserve">
+    <value>Керує дошками координації та панеллю ситуації. Вимкнення приховує їх і блокує їхні операції без видалення дошок або їхніх елементів. Діє лише тоді, коли Incident Back Office увімкнено, а увімкнення все ще потребує розгортання Incident Coordination і дозволів.</value>
+  </data>
+  <data name="Setting.IncidentBackOfficeDefaults" xml:space="preserve">
+    <value>Типові налаштування Incident Back Office</value>
+  </data>
+  <data name="SettingHelp.IncidentBackOfficeDefaults" xml:space="preserve">
+    <value>Типові значення для нових активацій: наскільки застарілими можуть стати дані джерела командування інцидентом або диспетчеризації, перш ніж їхні плитки стануть сірими, валюта й система вимірювання (якщо не вказано, використовується країна підрозділу), тривалість операційного періоду, а також чи можуть навчання надсилати сповіщення зовнішнім учасникам і постачальникам.</value>
+  </data>
+  <data name="Setting.IncidentEnrollmentPolicy" xml:space="preserve">
+    <value>Політика зарахування на інцидент</value>
+  </data>
+  <data name="SettingHelp.IncidentEnrollmentPolicy" xml:space="preserve">
+    <value>Як люди та підрозділи, помічені на інциденті, стають учасниками (режим зарахування), чи враховуються ще не зараховані люди окремою групою в прогнозах харчування, ночівлі та води, а також якої довжини або давності може досягти черга зарахування, перш ніж буде згенеровано попередження.</value>
+  </data>
+  <data name="Setting.IncidentNotificationRouting" xml:space="preserve">
+    <value>Маршрутизація сповіщень інциденту</value>
+  </data>
+  <data name="SettingHelp.IncidentNotificationRouting" xml:space="preserve">
+    <value>Які посади інциденту отримують кожне сповіщення Incident Back Office. Посади зіставляються з особами, які їх обіймають на момент надсилання сповіщення; сповіщення без налаштованих посад використовує свої вбудовані типові посади.</value>
+  </data>
+  <data name="Setting.IncidentForecastPolicy" xml:space="preserve">
+    <value>Політика прогнозування інциденту</value>
+  </data>
+  <data name="SettingHelp.IncidentForecastPolicy" xml:space="preserve">
+    <value>Коефіцієнти та вікна попереджень для логістичних прогнозів: резерв їжі та води, питна вода на особу на добу, резерв ліжок, чи зменшують прогнози очікувані вибуття через вичерпання лімітів, час на заміну, вікна завчасного попередження про прибуття, вибуття через вичерпання лімітів і граничний час замовлення їжі, а також пороги місткості об'єктів і запасу води в днях.</value>
+  </data>
+  <data name="Setting.IncidentAssignmentRulePolicy" xml:space="preserve">
+    <value>Правила призначень на інцидент</value>
+  </data>
+  <data name="SettingHelp.IncidentAssignmentRulePolicy" xml:space="preserve">
+    <value>Набір правил роботи й відпочинку та обмеження призначень, за якими позначаються люди, що наближаються до своїх лімітів: максимальна кількість днів призначення, дні на дорогу, максимальне продовження, максимальна кількість робочих годин за зміну та відпочинок, потрібний на кожну відпрацьовану годину.</value>
+  </data>
+  <data name="Setting.IncidentVendorPolicy" xml:space="preserve">
+    <value>Політика щодо постачальників інциденту</value>
+  </data>
+  <data name="SettingHelp.IncidentVendorPolicy" xml:space="preserve">
+    <value>Як часто постачальників потрібно повторно перевіряти, скільки триває резервування потужностей і наскільки заздалегідь позначаються документи відповідності та резервування потужностей, строк дії яких спливає.</value>
+  </data>
+  <data name="Setting.IncidentSelfServicePolicy" xml:space="preserve">
+    <value>Політика самообслуговування інциденту</value>
+  </data>
+  <data name="SettingHelp.IncidentSelfServicePolicy" xml:space="preserve">
+    <value>Посилання самообслуговування для учасників і постачальників: скільки днів посилання залишається дійсним після завершення призначення або залучення, чи потрібен одноразовий код перед показом відомостей про проживання чи поїздку, а також чи потребують посилання для постачальників перевіреної контактної особи постачальника.</value>
+  </data>
+  <data name="Setting.IncidentFinancePolicy" xml:space="preserve">
+    <value>Фінансова політика інциденту</value>
+  </data>
+  <data name="SettingHelp.IncidentFinancePolicy" xml:space="preserve">
+    <value>Фінансові засоби контролю: робота однієї особи (одна людина може запитувати, затверджувати, брати зобов'язання, приймати поставки та рахунки лише із записаним підтвердженням), додаткові домени відправників для вхідної скриньки, пороги бюджету, граничної суми угоди та щоденних витрат, ліміти черги вхідних документів, попередження про строки претензій і відновлення, вікно виявлення роздроблених закупівель і поріг мікрозакупівель.</value>
+  </data>
+  <data name="Setting.IncidentRetentionPolicy" xml:space="preserve">
+    <value>Політика зберігання даних інциденту</value>
+  </data>
+  <data name="SettingHelp.IncidentRetentionPolicy" xml:space="preserve">
+    <value>Як довго операційні знімки зберігаються після закриття інциденту, скільки років зберігаються записи облікової книги і як довго зберігаються прострочені посилання самообслуговування. Звіти інцидентів натомість підпорядковуються правилам зберігання модуля Звіти.</value>
+  </data>
+  <data name="Setting.CoordinationBoardDefaults" xml:space="preserve">
+    <value>Типові налаштування дошок координації</value>
+  </data>
+  <data name="SettingHelp.CoordinationBoardDefaults" xml:space="preserve">
+    <value>Типові значення для дошок координації: коли елемент вважається застарілим, чи викликають тривоги закриття доріг і місткість укриттів, скільки днів діє спільний доступ до дошки та наскільки заздалегідь позначається елемент, строк якого наближається.</value>
+  </data>
+  <data name="Feature.incident-activation" xml:space="preserve">
+    <value>Активація інциденту та командування</value>
+  </data>
+  <data name="FeaturePurpose.incident-activation" xml:space="preserve">
+    <value>Відкрийте активацію для великого інциденту, запланованого заходу чи навчань і стежте за нею з командної панелі.</value>
+  </data>
+  <data name="FeatureSetup.incident-activation" xml:space="preserve">
+    <value>Перегляньте налаштування Incident Back Office, а потім відкрийте навчальну активацію.</value>
+  </data>
+  <data name="Feature.incident-planning" xml:space="preserve">
+    <value>Планування, організація та реєстрація прибуття</value>
+  </data>
+  <data name="FeaturePurpose.incident-planning" xml:space="preserve">
+    <value>Операційні періоди та версії планів, організаційна структура інциденту й посади, учасники та реєстрація прибуття.</value>
+  </data>
+  <data name="FeatureSetup.incident-planning" xml:space="preserve">
+    <value>Сформуйте каталог посад і склади команд, а потім зареєструйте прибуття учасників під час навчань.</value>
+  </data>
+  <data name="Feature.incident-logistics" xml:space="preserve">
+    <value>Логістика інциденту</value>
+  </data>
+  <data name="FeaturePurpose.incident-logistics" xml:space="preserve">
+    <value>Запити на ресурси, об'єкти, проживання, харчування, вода та допоміжні служби разом із постачальниками й планом забезпечення.</value>
+  </data>
+  <data name="FeatureSetup.incident-logistics" xml:space="preserve">
+    <value>Додайте своїх постачальників проживання, харчування, води та транспорту, а потім перегляньте політику прогнозування.</value>
+  </data>
+  <data name="Feature.incident-finance" xml:space="preserve">
+    <value>Фінанси інциденту</value>
+  </data>
+  <data name="FeaturePurpose.incident-finance" xml:space="preserve">
+    <value>Закупівлі, бюджет, облік часу, витрати та претензії інциденту з розподілом обов'язків.</value>
+  </data>
+  <data name="FeatureSetup.incident-finance" xml:space="preserve">
+    <value>Увімкніть Incident Business, перегляньте фінансову політику, а потім внесіть бюджет інциденту.</value>
+  </data>
+  <data name="Feature.coordination-boards" xml:space="preserve">
+    <value>Дошки координації</value>
+  </data>
+  <data name="FeaturePurpose.coordination-boards" xml:space="preserve">
+    <value>Спільні дошки для закриття доріг, укриттів та інших питань, які координуються з партнерськими організаціями.</value>
+  </data>
+  <data name="FeatureSetup.coordination-boards" xml:space="preserve">
+    <value>Увімкніть Incident Coordination, перегляньте типові налаштування дошок, а потім створіть дошку.</value>
+  </data>
+  <data name="Feature.incident-open" xml:space="preserve">
+    <value>Відкрити інцидент</value>
+  </data>
+  <data name="FeaturePurpose.incident-open" xml:space="preserve">
+    <value>Розпочніть активацію для інциденту, запланованого заходу чи навчань, за потреби пов'язавши її з викликом або батьківським комплексом.</value>
+  </data>
+  <data name="Feature.incident-command-desk" xml:space="preserve">
+    <value>Командна панель</value>
+  </data>
+  <data name="FeaturePurpose.incident-command-desk" xml:space="preserve">
+    <value>Статус активації, оперативна картина, актуальність даних і незавершена робота в одному місці.</value>
+  </data>
+  <data name="Feature.incident-operations" xml:space="preserve">
+    <value>Панель операцій</value>
+  </data>
+  <data name="FeaturePurpose.incident-operations" xml:space="preserve">
+    <value>Хто залучений до інциденту, їхній статус забезпечення й посада, а також ресурси за статусом забезпечення.</value>
+  </data>
+  <data name="Feature.incident-settings" xml:space="preserve">
+    <value>Налаштування Incident Back Office</value>
+  </data>
+  <data name="FeaturePurpose.incident-settings" xml:space="preserve">
+    <value>Політики підрозділу щодо активацій, зарахування, маршрутизації сповіщень, прогнозів, призначень, постачальників, посилань самообслуговування, фінансів, зберігання даних і дошок.</value>
+  </data>
+  <data name="Feature.incident-organization" xml:space="preserve">
+    <value>Організація інциденту</value>
+  </data>
+  <data name="FeaturePurpose.incident-organization" xml:space="preserve">
+    <value>Організаційна схема активації та хто призначений на кожну посаду.</value>
+  </data>
+  <data name="Feature.incident-positions" xml:space="preserve">
+    <value>Каталог посад</value>
+  </data>
+  <data name="FeaturePurpose.incident-positions" xml:space="preserve">
+    <value>Посади на інцидентах, які заповнює ваш підрозділ, і компетенції, потрібні для кожної з них.</value>
+  </data>
+  <data name="Feature.incident-teams" xml:space="preserve">
+    <value>Команди інцидентів</value>
+  </data>
+  <data name="FeaturePurpose.incident-teams" xml:space="preserve">
+    <value>Постійні склади команд із ротаціями, місцями та кваліфікованими кандидатами.</value>
+  </data>
+  <data name="Feature.incident-participants" xml:space="preserve">
+    <value>Учасники</value>
+  </data>
+  <data name="FeaturePurpose.incident-participants" xml:space="preserve">
+    <value>Люди, які забезпечують активацію, з їхніми кваліфікаціями, базовими організаціями та посиланнями самообслуговування.</value>
+  </data>
+  <data name="Feature.incident-check-in" xml:space="preserve">
+    <value>Реєстрація прибуття</value>
+  </data>
+  <data name="FeaturePurpose.incident-check-in" xml:space="preserve">
+    <value>Реєструйте прибуття та вибуття людей і ресурсів, відстежуйте їхній статус, переміщення та продовження призначень.</value>
+  </data>
+  <data name="Feature.incident-iap" xml:space="preserve">
+    <value>План дій щодо інциденту</value>
+  </data>
+  <data name="FeaturePurpose.incident-iap" xml:space="preserve">
+    <value>Складайте план дій щодо інциденту для кожного операційного періоду.</value>
+  </data>
+  <data name="Feature.incident-authority" xml:space="preserve">
+    <value>Повноваження на інциденті</value>
+  </data>
+  <data name="FeaturePurpose.incident-authority" xml:space="preserve">
+    <value>Делегування повноважень за сферами, профіль повноважень, що копіюється в кожну активацію, і пункти, які залишилося узгодити.</value>
+  </data>
+  <data name="Feature.incident-demob" xml:space="preserve">
+    <value>Демобілізація</value>
+  </data>
+  <data name="FeaturePurpose.incident-demob" xml:space="preserve">
+    <value>Плани демобілізації та контрольні списки для вивільнення людей і ресурсів.</value>
+  </data>
+  <data name="Feature.support-plan" xml:space="preserve">
+    <value>План забезпечення під час надзвичайних ситуацій</value>
+  </data>
+  <data name="FeaturePurpose.support-plan" xml:space="preserve">
+    <value>План забезпечення вашого підрозділу під час надзвичайних ситуацій: сфери забезпечення та пріоритетні постачальники, що копіюються в кожну активацію.</value>
+  </data>
+  <data name="Feature.incident-requests" xml:space="preserve">
+    <value>Запити на ресурси</value>
+  </data>
+  <data name="FeaturePurpose.incident-requests" xml:space="preserve">
+    <value>Пакети завдань і запити на ресурси від затвердження до виконання, прибуття та приймання.</value>
+  </data>
+  <data name="Feature.incident-facilities" xml:space="preserve">
+    <value>Об'єкти інциденту</value>
+  </data>
+  <data name="FeaturePurpose.incident-facilities" xml:space="preserve">
+    <value>Базові табори, зони зосередження та інші об'єкти інциденту з місткістю, угодами й послугами.</value>
+  </data>
+  <data name="Feature.incident-lodging" xml:space="preserve">
+    <value>Проживання</value>
+  </data>
+  <data name="FeaturePurpose.incident-lodging" xml:space="preserve">
+    <value>Об'єкти проживання, блоки номерів, щоденний облік наявних місць, розподіл ліжок і списки розселення.</value>
+  </data>
+  <data name="Feature.incident-feeding" xml:space="preserve">
+    <value>Харчування</value>
+  </data>
+  <data name="FeaturePurpose.incident-feeding" xml:space="preserve">
+    <value>Плани харчування, прогнозований попит, замовлення їжі та фактично видані порції.</value>
+  </data>
+  <data name="Feature.incident-water" xml:space="preserve">
+    <value>Вода</value>
+  </data>
+  <data name="FeaturePurpose.incident-water" xml:space="preserve">
+    <value>Плани забезпечення питною водою, наявні запаси та доставки.</value>
+  </data>
+  <data name="Feature.incident-services" xml:space="preserve">
+    <value>Допоміжні служби</value>
+  </data>
+  <data name="FeaturePurpose.incident-services" xml:space="preserve">
+    <value>Допоміжні служби, як-от пральня, душові чи санітарія, з їхніми запитами, діяльністю та майном.</value>
+  </data>
+  <data name="Feature.incident-ground-support" xml:space="preserve">
+    <value>Наземне забезпечення</value>
+  </data>
+  <data name="FeaturePurpose.incident-ground-support" xml:space="preserve">
+    <value>Запити на транспорт і перевезення, маршрути поїздок і пальне.</value>
+  </data>
+  <data name="Feature.incident-communications" xml:space="preserve">
+    <value>Зв'язок інциденту</value>
+  </data>
+  <data name="FeaturePurpose.incident-communications" xml:space="preserve">
+    <value>План зв'язку активації та закріплення радіостанцій і пристроїв.</value>
+  </data>
+  <data name="Feature.vendor-catalog" xml:space="preserve">
+    <value>Каталог постачальників</value>
+  </data>
+  <data name="FeaturePurpose.vendor-catalog" xml:space="preserve">
+    <value>Постачальники з їхніми локаціями, можливостями, періодами доступності та документами відповідності.</value>
+  </data>
+  <data name="Feature.incident-vendors" xml:space="preserve">
+    <value>Залучення постачальників</value>
+  </data>
+  <data name="FeaturePurpose.incident-vendors" xml:space="preserve">
+    <value>Постачальники, залучені до активації, з їхніми зобов'язаннями щодо потужностей і комерційними пропозиціями.</value>
+  </data>
+  <data name="Feature.incident-procurement" xml:space="preserve">
+    <value>Закупівлі інциденту</value>
+  </data>
+  <data name="FeaturePurpose.incident-procurement" xml:space="preserve">
+    <value>Угоди з постачальниками, заявки на закупівлю та їх затвердження, зобов'язання, приймання, рахунки постачальників і пакети платежів.</value>
+  </data>
+  <data name="Feature.incident-budget" xml:space="preserve">
+    <value>Бюджет інциденту</value>
+  </data>
+  <data name="FeaturePurpose.incident-budget" xml:space="preserve">
+    <value>Статті бюджету, санкціонування фінансування, делегування повноважень на витрати, коди фінансування та групи витрат.</value>
+  </data>
+  <data name="Feature.incident-time" xml:space="preserve">
+    <value>Облік часу інциденту</value>
+  </data>
+  <data name="FeaturePurpose.incident-time" xml:space="preserve">
+    <value>Записи робочого часу та їх коригування, використання обладнання й видатки із засвідченням і затвердженням.</value>
+  </data>
+  <data name="Feature.incident-cost" xml:space="preserve">
+    <value>Витрати інциденту</value>
+  </data>
+  <data name="FeaturePurpose.incident-cost" xml:space="preserve">
+    <value>Операції з витратами, нарахування, щоденні прогнози витрат і розподіл спільних витрат.</value>
+  </data>
+  <data name="Feature.incident-claims" xml:space="preserve">
+    <value>Претензії інциденту</value>
+  </data>
+  <data name="FeaturePurpose.incident-claims" xml:space="preserve">
+    <value>Претензії щодо травм, пошкоджень або втрат, що виникли внаслідок інциденту.</value>
+  </data>
+  <data name="Feature.incident-recovery" xml:space="preserve">
+    <value>Відновлення після катастроф</value>
+  </data>
+  <data name="FeaturePurpose.incident-recovery" xml:space="preserve">
+    <value>Оголошення стану лиха, проєкти відновлення та їхні строки.</value>
+  </data>
+  <data name="Feature.incident-intake" xml:space="preserve">
+    <value>Вхідні документи інциденту</value>
+  </data>
+  <data name="FeaturePurpose.incident-intake" xml:space="preserve">
+    <value>Документи та чеки, надіслані до вхідної скриньки інциденту, що очікують на облік.</value>
+  </data>
+  <data name="Feature.incident-closeout" xml:space="preserve">
+    <value>Закриття інциденту</value>
+  </data>
+  <data name="FeaturePurpose.incident-closeout" xml:space="preserve">
+    <value>Контрольний список закриття, який завершує фінансовий облік інциденту.</value>
+  </data>
+  <data name="Feature.incident-situation" xml:space="preserve">
+    <value>Панель ситуації</value>
+  </data>
+  <data name="FeaturePurpose.incident-situation" xml:space="preserve">
+    <value>Стан життєво важливих систем, відкриті дії, рішення та об'єкти ситуації на мапі.</value>
+  </data>
+  <data name="Feature.addon-incidents" xml:space="preserve">
+    <value>Incident Back Office</value>
+  </data>
+  <data name="FeaturePurpose.addon-incidents" xml:space="preserve">
+    <value>Доповнення Incident Back Office: активація, планування, логістика, фінанси та дошки координації для великих інцидентів.</value>
+  </data>
+  <data name="FeatureValue.addon-incidents" xml:space="preserve">
+    <value>Тримайте забезпечення тривалого інциденту в одному місці замість електронних таблиць, радіонотаток і електронної пошти.</value>
+  </data>
+  <data name="FeatureExample.addon-incidents" xml:space="preserve">
+    <value>Бронюйте проживання й харчування для екіпажів, що прибувають, і відстежуйте кожну закупівлю відносно бюджету інциденту.</value>
+  </data>
+  <data name="FeatureAdoption.addon-incidents" xml:space="preserve">
+    <value>Фінанси інцидентів і дошки координації вмикаються окремо. Звіти інцидентів залишаються в модулі Звіти й підпорядковуються його дозволам. Відшкодування не гарантується.</value>
+  </data>
+  <data name="Permission.ViewIncidentBackOffice" xml:space="preserve">
+    <value>Перегляд Incident Back Office</value>
+  </data>
+  <data name="PermissionHelp.ViewIncidentBackOffice" xml:space="preserve">
+    <value>Дозволяє відкривати робочі панелі Incident Back Office і переглядати активації, періоди, організацію та логістику. Для змін на кожній панелі потрібен окремий дозвіл цієї панелі. Якщо правило не збережено, це можуть робити всі члени підрозділу. Потрібно ввімкнути Incident Back Office і мати активне доповнення Incident Back Office.</value>
+  </data>
+  <data name="Permission.ManageIncidentActivation" xml:space="preserve">
+    <value>Керування активацією інциденту</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentActivation" xml:space="preserve">
+    <value>Дозволяє відкривати активації, додавати їх до комплексу, а також закривати, запечатувати чи повторно відкривати їх. Якщо правило не збережено, це можуть робити лише адміністратори підрозділу. Потрібно ввімкнути Incident Back Office і мати активне доповнення Incident Back Office.</value>
+  </data>
+  <data name="Permission.ManageIncidentPeriods" xml:space="preserve">
+    <value>Керування операційними періодами</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentPeriods" xml:space="preserve">
+    <value>Дозволяє створювати й редагувати операційні періоди та затверджувати версії їхніх планів. Якщо правило не збережено, це можуть робити адміністратори підрозділу та груп. Потрібно ввімкнути Incident Back Office і мати активне доповнення Incident Back Office.</value>
+  </data>
+  <data name="Permission.ManageIncidentPositions" xml:space="preserve">
+    <value>Керування посадами інциденту</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentPositions" xml:space="preserve">
+    <value>Дозволяє редагувати каталог посад, призначення на посади та склади команд. Якщо правило не збережено, це можуть робити адміністратори підрозділу та груп. Потрібно ввімкнути Incident Back Office і мати активне доповнення Incident Back Office.</value>
+  </data>
+  <data name="Permission.ManageIncidentParticipants" xml:space="preserve">
+    <value>Керування учасниками інциденту</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentParticipants" xml:space="preserve">
+    <value>Дозволяє зараховувати й редагувати учасників і надсилати їм посилання самообслуговування. Позначка «Лише група» обмежує його учасниками з групи самого користувача. Якщо правило не збережено, це можуть робити адміністратори підрозділу та груп. Потрібно ввімкнути Incident Back Office і мати активне доповнення Incident Back Office.</value>
+  </data>
+  <data name="Permission.ViewParticipantSensitive" xml:space="preserve">
+    <value>Перегляд конфіденційних відомостей учасників</value>
+  </data>
+  <data name="PermissionHelp.ViewParticipantSensitive" xml:space="preserve">
+    <value>Дозволяє бачити екстрені контакти учасників, їхні медичні відомості, потреби в доступності, алергени та харчові обмеження. Якщо правило не збережено, це можуть робити лише адміністратори підрозділу. Потрібно ввімкнути Incident Back Office і мати активне доповнення Incident Back Office.</value>
+  </data>
+  <data name="Permission.CreateIncidentRequest" xml:space="preserve">
+    <value>Створення запитів на ресурси</value>
+  </data>
+  <data name="PermissionHelp.CreateIncidentRequest" xml:space="preserve">
+    <value>Дозволяє створювати запити на ресурси та пакети завдань. Позначка «Лише група» обмежує його запитами для групи самого користувача. Якщо правило не збережено, це можуть робити адміністратори підрозділу та груп. Потрібно ввімкнути Incident Back Office і мати активне доповнення Incident Back Office.</value>
+  </data>
+  <data name="Permission.ApproveIncidentRequest" xml:space="preserve">
+    <value>Затвердження запитів на ресурси</value>
+  </data>
+  <data name="PermissionHelp.ApproveIncidentRequest" xml:space="preserve">
+    <value>Дозволяє затверджувати або відхиляти запити на ресурси. Позначка «Лише група» обмежує його запитами від групи самого користувача. Якщо правило не збережено, це можуть робити лише адміністратори підрозділу. Потрібно ввімкнути Incident Back Office і мати активне доповнення Incident Back Office.</value>
+  </data>
+  <data name="Permission.OrderIncidentRequest" xml:space="preserve">
+    <value>Замовлення за запитами на ресурси</value>
+  </data>
+  <data name="PermissionHelp.OrderIncidentRequest" xml:space="preserve">
+    <value>Дозволяє розміщувати замовлення, яке виконує затверджений запит на ресурси, зокрема замовлення в межах угод із постачальниками. Якщо правило не збережено, це можуть робити лише адміністратори підрозділу. Потрібно ввімкнути Incident Back Office і мати активне доповнення Incident Back Office.</value>
+  </data>
+  <data name="Permission.ReceiveIncidentRequest" xml:space="preserve">
+    <value>Приймання за запитами на ресурси</value>
+  </data>
+  <data name="PermissionHelp.ReceiveIncidentRequest" xml:space="preserve">
+    <value>Дозволяє фіксувати прибуття та приймання за виконаними запитами. Позначка «Лише група» обмежує його групою самого користувача. Якщо правило не збережено, це можуть робити адміністратори підрозділу та груп. Потрібно ввімкнути Incident Back Office і мати активне доповнення Incident Back Office.</value>
+  </data>
+  <data name="Permission.ManageIncidentFacilities" xml:space="preserve">
+    <value>Керування об'єктами інциденту</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentFacilities" xml:space="preserve">
+    <value>Дозволяє керувати об'єктами інциденту, їхньою місткістю, угодами та послугами. Якщо правило не збережено, це можуть робити адміністратори підрозділу та груп. Потрібно ввімкнути Incident Back Office і мати активне доповнення Incident Back Office.</value>
+  </data>
+  <data name="Permission.ManageIncidentLodging" xml:space="preserve">
+    <value>Керування проживанням на інциденті</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentLodging" xml:space="preserve">
+    <value>Дозволяє керувати об'єктами проживання, блоками номерів, щоденним обліком наявних місць і розподілом ліжок. Якщо правило не збережено, це можуть робити лише адміністратори підрозділу. Потрібно ввімкнути Incident Back Office і мати активне доповнення Incident Back Office.</value>
+  </data>
+  <data name="Permission.ViewLodgingAssignmentDetail" xml:space="preserve">
+    <value>Перегляд деталей розселення</value>
+  </data>
+  <data name="PermissionHelp.ViewLodgingAssignmentDetail" xml:space="preserve">
+    <value>Дозволяє бачити номери кімнат і обмеження щодо проживання в розподілі ліжок і списках розселення. Якщо правило не збережено, це можуть робити лише адміністратори підрозділу. Потрібно ввімкнути Incident Back Office і мати активне доповнення Incident Back Office.</value>
+  </data>
+  <data name="Permission.ManageIncidentFeeding" xml:space="preserve">
+    <value>Керування харчуванням на інциденті</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentFeeding" xml:space="preserve">
+    <value>Дозволяє керувати планами харчування, попитом, замовленнями їжі та виданими порціями. Якщо правило не збережено, це можуть робити адміністратори підрозділу та груп. Потрібно ввімкнути Incident Back Office і мати активне доповнення Incident Back Office.</value>
+  </data>
+  <data name="Permission.ManageIncidentServices" xml:space="preserve">
+    <value>Керування допоміжними службами</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentServices" xml:space="preserve">
+    <value>Дозволяє запитувати й фіксувати допоміжні послуги, як-от прання чи душові. Позначка «Лише група» обмежує його групою самого користувача. Якщо правило не збережено, це можуть робити всі члени підрозділу. Потрібно ввімкнути Incident Back Office і мати активне доповнення Incident Back Office.</value>
+  </data>
+  <data name="Permission.ManageIncidentGroundSupport" xml:space="preserve">
+    <value>Керування наземним забезпеченням</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentGroundSupport" xml:space="preserve">
+    <value>Дозволяє керувати запитами на транспорт і перевезеннями, маршрутами поїздок і пальним. Якщо правило не збережено, це можуть робити адміністратори підрозділу та груп. Потрібно ввімкнути Incident Back Office і мати активне доповнення Incident Back Office.</value>
+  </data>
+  <data name="Permission.ManageIncidentComms" xml:space="preserve">
+    <value>Керування зв'язком інциденту</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentComms" xml:space="preserve">
+    <value>Дозволяє керувати планом зв'язку та закріпленням радіостанцій і пристроїв. Якщо правило не збережено, це можуть робити адміністратори підрозділу та груп. Потрібно ввімкнути Incident Back Office і мати активне доповнення Incident Back Office.</value>
+  </data>
+  <data name="Permission.ManageVendorCatalog" xml:space="preserve">
+    <value>Керування каталогом постачальників</value>
+  </data>
+  <data name="PermissionHelp.ManageVendorCatalog" xml:space="preserve">
+    <value>Дозволяє додавати й редагувати постачальників, їхні локації, можливості, доступність і документи відповідності. Якщо правило не збережено, це можуть робити адміністратори підрозділу та груп. Потрібно ввімкнути Incident Back Office і мати активне доповнення Incident Back Office.</value>
+  </data>
+  <data name="Permission.ViewVendorProtected" xml:space="preserve">
+    <value>Перегляд захищених відомостей постачальників</value>
+  </data>
+  <data name="PermissionHelp.ViewVendorProtected" xml:space="preserve">
+    <value>Дозволяє бачити податкові ідентифікатори та платіжні реквізити постачальників. Якщо правило не збережено, це можуть робити лише адміністратори підрозділу. Потрібно ввімкнути Incident Back Office і мати активне доповнення Incident Back Office.</value>
+  </data>
+  <data name="Permission.EngageVendor" xml:space="preserve">
+    <value>Залучення постачальників</value>
+  </data>
+  <data name="PermissionHelp.EngageVendor" xml:space="preserve">
+    <value>Дозволяє залучати постачальників до активації, фіксувати зобов'язання щодо потужностей і комерційні пропозиції, а також надсилати посилання для постачальників. Якщо правило не збережено, це можуть робити лише адміністратори підрозділу. Потрібно ввімкнути Incident Back Office і мати активне доповнення Incident Back Office.</value>
+  </data>
+  <data name="Permission.ManageIncidentProcurement" xml:space="preserve">
+    <value>Керування закупівлями інциденту</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentProcurement" xml:space="preserve">
+    <value>Дозволяє керувати угодами з постачальниками, заявками на закупівлю, прийманням, рахунками постачальників і пакетами платежів. Якщо правило не збережено, це можуть робити лише адміністратори підрозділу. Потрібно ввімкнути Incident Business і мати активне доповнення Incident Back Office.</value>
+  </data>
+  <data name="Permission.CommitIncidentPurchase" xml:space="preserve">
+    <value>Фінансові зобов'язання щодо закупівель</value>
+  </data>
+  <data name="PermissionHelp.CommitIncidentPurchase" xml:space="preserve">
+    <value>Дозволяє фіксувати фінансове зобов'язання щодо закупівлі; це контроль уповноваженого закупівельника. Якщо правило не збережено, це можуть робити лише адміністратори підрозділу. Потрібно ввімкнути Incident Business і мати активне доповнення Incident Back Office.</value>
+  </data>
+  <data name="Permission.AcceptVendorInvoice" xml:space="preserve">
+    <value>Прийняття рахунків постачальників</value>
+  </data>
+  <data name="PermissionHelp.AcceptVendorInvoice" xml:space="preserve">
+    <value>Дозволяє приймати рахунки постачальників до оплати після їх зіставлення з прийманням. Якщо правило не збережено, це можуть робити лише адміністратори підрозділу. Потрібно ввімкнути Incident Business і мати активне доповнення Incident Back Office.</value>
+  </data>
+  <data name="Permission.ManageIncidentBudget" xml:space="preserve">
+    <value>Керування бюджетом інциденту</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentBudget" xml:space="preserve">
+    <value>Дозволяє керувати статтями бюджету, делегуванням повноважень на витрати, кодами фінансування та групами витрат. Якщо правило не збережено, це можуть робити лише адміністратори підрозділу. Потрібно ввімкнути Incident Business і мати активне доповнення Incident Back Office.</value>
+  </data>
+  <data name="Permission.AuthorizeIncidentFunding" xml:space="preserve">
+    <value>Санкціонування фінансування інциденту</value>
+  </data>
+  <data name="PermissionHelp.AuthorizeIncidentFunding" xml:space="preserve">
+    <value>Дозволяє затверджувати санкціонування фінансування для бюджету інциденту. Якщо правило не збережено, це можуть робити лише адміністратори підрозділу. Потрібно ввімкнути Incident Business і мати активне доповнення Incident Back Office.</value>
+  </data>
+  <data name="Permission.EnterIncidentTime" xml:space="preserve">
+    <value>Внесення часу інциденту</value>
+  </data>
+  <data name="PermissionHelp.EnterIncidentTime" xml:space="preserve">
+    <value>Дозволяє вносити робочий час, використання обладнання та видатки. Позначка «Лише група» обмежує його людьми з групи самого користувача. Якщо правило не збережено, це можуть робити адміністратори підрозділу та груп. Потрібно ввімкнути Incident Business і мати активне доповнення Incident Back Office.</value>
+  </data>
+  <data name="Permission.CertifyIncidentTime" xml:space="preserve">
+    <value>Засвідчення часу інциденту</value>
+  </data>
+  <data name="PermissionHelp.CertifyIncidentTime" xml:space="preserve">
+    <value>Дозволяє керівникам засвідчувати внесений час перед затвердженням. Позначка «Лише група» обмежує його людьми з групи самого користувача. Якщо правило не збережено, це можуть робити адміністратори підрозділу та груп. Потрібно ввімкнути Incident Business і мати активне доповнення Incident Back Office.</value>
+  </data>
+  <data name="Permission.ApproveIncidentTime" xml:space="preserve">
+    <value>Затвердження часу інциденту</value>
+  </data>
+  <data name="PermissionHelp.ApproveIncidentTime" xml:space="preserve">
+    <value>Дозволяє затверджувати засвідчений час для розрахунку витрат і оплати. Позначка «Лише група» обмежує його людьми з групи самого користувача. Якщо правило не збережено, це можуть робити лише адміністратори підрозділу. Потрібно ввімкнути Incident Business і мати активне доповнення Incident Back Office.</value>
+  </data>
+  <data name="Permission.ViewIncidentCost" xml:space="preserve">
+    <value>Перегляд витрат інциденту</value>
+  </data>
+  <data name="PermissionHelp.ViewIncidentCost" xml:space="preserve">
+    <value>Дозволяє бачити операції з витратами, нарахування та щоденні прогнози витрат. Якщо правило не збережено, це можуть робити лише адміністратори підрозділу. Потрібно ввімкнути Incident Business і мати активне доповнення Incident Back Office.</value>
+  </data>
+  <data name="Permission.ManageIncidentCost" xml:space="preserve">
+    <value>Керування витратами інциденту</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentCost" xml:space="preserve">
+    <value>Дозволяє редагувати записи про витрати, угоди про розподіл витрат і запуски розподілу, а також експортувати звіти про витрати. Якщо правило не збережено, це можуть робити лише адміністратори підрозділу. Потрібно ввімкнути Incident Business і мати активне доповнення Incident Back Office.</value>
+  </data>
+  <data name="Permission.ManageIncidentClaims" xml:space="preserve">
+    <value>Керування претензіями інциденту</value>
+  </data>
+  <data name="PermissionHelp.ManageIncidentClaims" xml:space="preserve">
+    <value>Дозволяє відкривати й опрацьовувати претензії щодо травм, пошкоджень або втрат. Якщо правило не збережено, це можуть робити лише адміністратори підрозділу. Потрібно ввімкнути Incident Business і мати активне доповнення Incident Back Office.</value>
+  </data>
+  <data name="Permission.ViewClaimProtected" xml:space="preserve">
+    <value>Перегляд захищених відомостей претензій</value>
+  </data>
+  <data name="PermissionHelp.ViewClaimProtected" xml:space="preserve">
+    <value>Дозволяє бачити фінансові дані претензій і нотатки справи. Якщо правило не збережено, це можуть робити лише адміністратори підрозділу. Потрібно ввімкнути Incident Business і мати активне доповнення Incident Back Office.</value>
+  </data>
+  <data name="Permission.AssembleIncidentIap" xml:space="preserve">
+    <value>Складання планів дій щодо інциденту</value>
+  </data>
+  <data name="PermissionHelp.AssembleIncidentIap" xml:space="preserve">
+    <value>Дозволяє складати план дій щодо інциденту: його сторінки, порядок сторінок, список розсилки та завдання друку. Затвердження й остаточне оформлення звіту з планом регулюються дозволами модуля Звіти. Якщо правило не збережено, це можуть робити лише адміністратори підрозділу. Потрібно ввімкнути Incident Back Office і мати активне доповнення Incident Back Office.</value>
+  </data>
+  <data name="Permission.ViewCoordinationBoards" xml:space="preserve">
+    <value>Перегляд дошок координації</value>
+  </data>
+  <data name="PermissionHelp.ViewCoordinationBoards" xml:space="preserve">
+    <value>Дозволяє переглядати дошки координації та панель ситуації. Позначка «Лише група» обмежує його дошками групи самого користувача. Якщо правило не збережено, це можуть робити всі члени підрозділу. Потрібно ввімкнути Incident Coordination і мати активне доповнення Incident Back Office.</value>
+  </data>
+  <data name="Permission.ManageCoordinationBoards" xml:space="preserve">
+    <value>Керування дошками координації</value>
+  </data>
+  <data name="PermissionHelp.ManageCoordinationBoards" xml:space="preserve">
+    <value>Дозволяє створювати й редагувати дошки координації, їхні елементи та панель ситуації. Позначка «Лише група» обмежує його дошками групи самого користувача. Якщо правило не збережено, це можуть робити адміністратори підрозділу та груп. Потрібно ввімкнути Incident Coordination і мати активне доповнення Incident Back Office.</value>
+  </data>
+  <data name="Permission.ShareCoordinationBoards" xml:space="preserve">
+    <value>Спільний доступ до дошок координації</value>
+  </data>
+  <data name="PermissionHelp.ShareCoordinationBoards" xml:space="preserve">
+    <value>Дозволяє надавати партнерським організаціям спільний доступ до дошки координації. Якщо правило не збережено, це можуть робити лише адміністратори підрозділу. Потрібно ввімкнути Incident Coordination і мати активне доповнення Incident Back Office.</value>
+  </data>
 </root>

@@ -126,7 +126,57 @@ namespace Resgrid.Model.Events
 
 		/// <summary>Resgrid support posted a message, suggestion or support-request status change on an import workspace.</summary>
 		[NotMapped]
-		DepartmentImportSupportMessage = 51
+		DepartmentImportSupportMessage = 51,
+
+		// -- Incident Back Office block 35-44 and 49 -- Identifier Allocation Registry section 4C (plan §13.8). Built-in
+		// operational notices addressed to whoever currently holds an incident position, resolved at send time by
+		// IIncidentNotificationRoutingService and delivered through the shipped stack. NotMapped like 31-33: they are
+		// position-targeted, not department broadcasts the notification settings UI offers. 45 is AI Dispatch's, 46-48
+		// Enhanced AI's. Payloads carry counts, kinds, ETAs, numbers, property names and dates, never a protected field.
+
+		/// <summary>A position assignment was created, changed or relieved (LI-A). To the holder and their supervisor position.</summary>
+		[NotMapped]
+		IncidentPositionNotification = 35,
+
+		/// <summary>A subscribed scheduled situation report was generated (LI-A).</summary>
+		[NotMapped]
+		IncidentSituationReport = 36,
+
+		/// <summary>A fill was accepted: ordered resources assigned with counts and ETA (LI-B). To LSC, OSC, FDUL, FCUL by default.</summary>
+		[NotMapped]
+		IncidentResourcesAssigned = 37,
+
+		/// <summary>An inbound fill's ETA changed materially, arrival confirmed, or the resource is late (LI-B).</summary>
+		[NotMapped]
+		IncidentArrivalUpdate = 38,
+
+		/// <summary>A person's own lodging assignment was confirmed or changed (LI-B). To that person only; never other occupants.</summary>
+		[NotMapped]
+		IncidentLodgingAssignment = 39,
+
+		/// <summary>A release was approved or travel arranged (LI-B). To the released person and their supervisor position.</summary>
+		[NotMapped]
+		IncidentDemobNotification = 40,
+
+		/// <summary>An item entered an approval queue (LI-C). To holders of the approving position or permission.</summary>
+		[NotMapped]
+		IncidentApprovalRequired = 41,
+
+		/// <summary>An unapproved-spend, invoice or match exception posted (LI-C). To the Finance Section Chief and Procurement Unit Leader.</summary>
+		[NotMapped]
+		IncidentFinanceException = 42,
+
+		/// <summary>A claim case was opened or its deadline entered the lead window (LI-C). To the Compensation/Claims Unit Leader.</summary>
+		[NotMapped]
+		IncidentClaimNotice = 43,
+
+		/// <summary>A closeout milestone blocked or the final package generated (LI-C). To Command, DOCL and the Finance Section Chief.</summary>
+		[NotMapped]
+		IncidentCloseoutNotice = 44,
+
+		/// <summary>The aggregate outbound projection changed materially (LI-B, rebased from 45). To LSC, OSC, RESL and DMOB.</summary>
+		[NotMapped]
+		IncidentReleaseProjection = 49
 	}
 
 	public static class EventOptions

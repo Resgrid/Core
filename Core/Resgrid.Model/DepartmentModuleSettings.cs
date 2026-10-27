@@ -70,5 +70,15 @@ namespace Resgrid.Model
 		public bool BusinessOperationsDisabled { get; set; }
 		[ProtoMember(25)]
 		public bool AiDisabled { get; set; }
+
+		/// <summary>Incident Back Office LI-A + LI-B department switch (registry §4C). Default enabled: the add-on purchase is the opt-in (plan rev 4.1 §17).</summary>
+		[ProtoMember(26)]
+		public bool IncidentBackOfficeDisabled { get; set; }
+		/// <summary>Incident Back Office LI-C switch; also requires the back office to be enabled.</summary>
+		[ProtoMember(27)]
+		public bool IncidentBusinessDisabled { get; set; }
+		/// <summary>Incident Back Office LI-D coordination boards switch. Next free tag after this is 29.</summary>
+		[ProtoMember(28)]
+		public bool IncidentCoordinationDisabled { get; set; }
 	}
 }

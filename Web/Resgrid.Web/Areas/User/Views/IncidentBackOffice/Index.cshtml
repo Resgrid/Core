@@ -1,0 +1,86 @@
+@model Resgrid.Web.Areas.User.Models.IncidentBackOffice.IncidentSelectorView
+@using Resgrid.Model.IncidentLogistics
+@using Resgrid.Web.Areas.User.Models.IncidentBackOffice
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.IncidentBackOffice.IncidentBackOffice> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["IncidentBackOffice"];
+    ViewData["Title"] = localizer["Incidents"].Value;
+    ViewData["Subtitle"] = localizer["SelectorIntro"].Value;
+    var time = ViewData["IboTime"] as IncidentTime;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/IncidentBackOffice/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page ibo-selector">
+    @await Html.PartialAsync("~/Areas/User/Views/IncidentBackOffice/_Message.cshtml", (IncidentDeskView)Model)
+    <div class="rgw-toolbar">
+        @if (Model.IncludeClosed)
+        {
+            <a asp-action="Selector" asp-route-closed="false" class="btn btn-sm btn-default"><i class="fa fa-filter" aria-hidden="true"></i> @localizer["OpenOnly"]</a>
+        }
+        else
+        {
+            <a asp-action="Selector" asp-route-closed="true" class="btn btn-sm btn-default"><i class="fa fa-history" aria-hidden="true"></i> @localizer["IncludeClosed"]</a>
+        }
+        <span class="rgw-toolbar-spacer"></span>
+        @if (Model.CanOpen)
+        {
+            <a asp-action="Open" class="btn btn-sm btn-primary"><i class="fa fa-plus" aria-hidden="true"></i> @localizer["OpenActivation"]</a>
+        }
+    </div>
+    <div class="ibox float-e-margins">
+        <div class="ibox-content">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover rgw-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">@localizer["Field.Name"]</th>
+                            <th scope="col">@localizer["Field.ShortCode"]</th>
+                            <th scope="col">@localizer["Field.Kind"]</th>
+                            <th scope="col">@localizer["Field.Status"]</th>
+                            <th scope="col">@localizer["Field.OpenedOn"]</th>
+                            <th scope="col"><span class="sr-only">@localizer["Actions"]</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var activation in Model.Activations)
+                        {
+                            var selected = activation.IncidentActivationId == Model.SelectedId;
+                            <tr class="ibo-activation-row @(selected ? "info" : null)">
+                                <td>
+                                    <a asp-action="Select" asp-route-aid="@activation.IncidentActivationId"><strong>@activation.Name</strong></a>
+                                    @if (activation.IsExercise)
+                                    {
+                                        <span class="label label-danger">@localizer["Exercise"]</span>
+                                    }
+                                    @if (selected)
+                                    {
+                                        <span class="sr-only">@localizer["Selected"]</span>
+                                    }
+                                </td>
+                                <td>@activation.ShortCode</td>
+                                <td>@LedgerText.Status(localizer, typeof(IncidentActivationKinds), activation.Kind)</td>
+                                <td><span class="label @LedgerText.StatusClass(typeof(IncidentActivationStatuses), activation.Status)">@LedgerText.Status(localizer, typeof(IncidentActivationStatuses), activation.Status)</span></td>
+                                <td>@time?.Format(activation.OpenedOn ?? activation.AddedOn)</td>
+                                <td class="text-right rgw-row-actions">
+                                    <a asp-action="Select" asp-route-aid="@activation.IncidentActivationId" class="btn btn-xs btn-primary">@localizer["OpenDesk"]</a>
+                                    <a asp-action="Activation" asp-route-aid="@activation.IncidentActivationId" class="btn btn-xs btn-default" title="@localizer["ActivationRecord"]"><i class="fa fa-info-circle" aria-hidden="true"></i><span class="sr-only">@localizer["ActivationRecord"]</span></a>
+                                </td>
+                            </tr>
+                        }
+                        @if (Model.Activations.Count == 0)
+                        {
+                            <tr><td colspan="6" class="text-muted">@localizer["NoActivations"]</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/incident-back-office.css" asp-append-version="true" />
+}

@@ -310,8 +310,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(view);
 		}
 
+		// The form posts each policy property under its own name; section comes from ?section= and must never be taken from a
+		// posted field (the generic ledger's Kind/kind collision, see IncidentBackOfficeControllerBase.Save).
 		[HttpPost, ValidateAntiForgeryToken]
-		public async Task<IActionResult> Settings(string section)
+		public async Task<IActionResult> Settings([FromQuery] string section)
 		{
 			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin()) return Forbid();
 			var policies = Policies();

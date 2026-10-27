@@ -36,14 +36,21 @@ namespace Resgrid.Web.Helpers
         public string ZoneId => _zone.Id;
         public DateTime Now => Local(DateTime.UtcNow);
         public DateTime Today => Now.Date;
-        public DateTime Local(DateTime utc) => Instant.FromDateTimeUtc(DateTime.SpecifyKind(utc, DateTimeKind.Utc)).InZone(_zone).ToDateTimeUnspecified();
+        /// <summary>MinValue/MaxValue come back unshifted: in a zone west of UTC the shifted value would fall before year 1 and throw.</summary>
+        public DateTime Local(DateTime utc) => DateTimeHelpers.IsZoneShiftSentinel(utc) ? DateTime.SpecifyKind(utc, DateTimeKind.Unspecified)
+            : Instant.FromDateTimeUtc(DateTime.SpecifyKind(utc, DateTimeKind.Utc)).InZone(_zone).ToDateTimeUnspecified();
         public DateTime? Local(DateTime? utc) => utc.HasValue ? Local(utc.Value) : null;
-        public string Format(DateTime? utc) => utc.HasValue ? Local(utc.Value).FormatForDepartment(_department) : null;
-        public string Date(DateTime? utc) => utc.HasValue ? Local(utc.Value).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) : null;
-        public string Input(DateTime? utc) => utc.HasValue ? Local(utc.Value).ToString("yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture) : null;
+        // default(DateTime) is a non-nullable value nobody has filled in yet (a blank filter, a new row), so it renders as blank
+        // rather than as 0001-01-01.
+        public string Format(DateTime? utc) => IsSet(utc) ? Local(utc.Value).FormatForDepartment(_department) : null;
+        public string Date(DateTime? utc) => IsSet(utc) ? Local(utc.Value).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) : null;
+        public string Input(DateTime? utc) => IsSet(utc) ? Local(utc.Value).ToString("yyyy-MM-ddTHH:mm:ss.fff", CultureInfo.InvariantCulture) : null;
+        /// <summary>A blank non-nullable field binds as MinValue; in a zone east of UTC shifting it would fall before year 1, so it passes through.</summary>
         public DateTime ToUtc(DateTime local) => local.Kind == DateTimeKind.Utc ? local
             : local.Kind == DateTimeKind.Local ? local.ToUniversalTime()
+            : DateTimeHelpers.IsZoneShiftSentinel(local) ? DateTime.SpecifyKind(local, DateTimeKind.Utc)
             : LocalDateTime.FromDateTime(local).InZoneLeniently(_zone).ToDateTimeUtc();
+        private static bool IsSet(DateTime? value) => value.HasValue && value.Value != default;
         public DateTime? ToUtc(DateTime? local) => local.HasValue ? ToUtc(local.Value) : null;
         public DateTime? Parse(string value) => string.IsNullOrWhiteSpace(value) ? null
             : DateTime.TryParse(value, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out var date) ? ToUtc(date) : null;

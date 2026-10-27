@@ -245,8 +245,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return Kinds.Select(k => k.Descriptor).Where(d => d != parent && d.CanRead() && d.Fields.Any(f => f.Name == key && f.RefTable == parent.Table)).ToList();
 		}
 
+		// The table key always travels in the query string (?kind=). It is bound from there explicitly because form values win MVC's
+		// binding order, and 23 tables (resources, requests, budget lines...) post a column named Kind, which would replace the key
+		// with the column's enum value and turn every save of those tables into a 404.
 		[HttpPost, ValidateAntiForgeryToken]
-		public virtual async Task<IActionResult> Save(string kind, CancellationToken cancellationToken = default)
+		public virtual async Task<IActionResult> Save([FromQuery] string kind, CancellationToken cancellationToken = default)
 		{
 			var ledger = Kind(kind);
 			if (ledger == null) return NotFound();
@@ -283,7 +286,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost, ValidateAntiForgeryToken]
-		public virtual async Task<IActionResult> Delete(string kind, string id, CancellationToken cancellationToken = default)
+		public virtual async Task<IActionResult> Delete([FromQuery] string kind, string id, CancellationToken cancellationToken = default)
 		{
 			var ledger = Kind(kind);
 			if (ledger == null) return NotFound();
@@ -301,7 +304,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost, ValidateAntiForgeryToken]
-		public virtual async Task<IActionResult> Transition(string kind, string id, int status, string reason = null, CancellationToken cancellationToken = default)
+		public virtual async Task<IActionResult> Transition([FromQuery] string kind, string id, int status, string reason = null, CancellationToken cancellationToken = default)
 		{
 			var ledger = Kind(kind);
 			if (ledger == null) return NotFound();

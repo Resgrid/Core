@@ -16,6 +16,10 @@ namespace Resgrid.Model.Helpers
 			if (department == null)
 				return timestamp;
 
+			// An unset date (MinValue) would throw in any zone west of UTC and land in the error log on every render.
+			if (DateTimeHelpers.IsZoneShiftSentinel(timestamp))
+				return timestamp;
+
 			try
 			{
 				string timeZone = "Pacific Standard Time"; // Default to Pacific as it's better then UTC
@@ -52,6 +56,8 @@ namespace Resgrid.Model.Helpers
 		{
 			if (local.Kind == DateTimeKind.Utc) return local;
 			if (local.Kind == DateTimeKind.Local) return local.ToUniversalTime();
+			// A blank non-nullable form field binds as MinValue, which a zone east of UTC would shift before year 1.
+			if (DateTimeHelpers.IsZoneShiftSentinel(local)) return DateTime.SpecifyKind(local, DateTimeKind.Utc);
 			var timeZone = string.IsNullOrEmpty(department?.TimeZone) ? "Pacific Standard Time" : department.TimeZone;
 			var id = DateTimeHelpers.ConvertTimeZoneString(timeZone);
 			var zone = DateTimeZoneProviders.Tzdb.GetZoneOrNull(id) ?? DateTimeZoneProviders.Tzdb[TZConvert.WindowsToIana(id)];

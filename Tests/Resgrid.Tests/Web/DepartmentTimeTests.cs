@@ -40,6 +40,26 @@ namespace Resgrid.Tests.Web
             new DepartmentTime(department).Format(utc).Should().Be("07/15/2026 13:05:06");
         }
 
+        [TestCase("Pacific Standard Time")]
+        [TestCase("Eastern Standard Time")]
+        [TestCase("Tokyo Standard Time")]
+        [TestCase("New Zealand Standard Time")]
+        [TestCase(null)]
+        public void An_unset_date_renders_blank_and_round_trips_without_throwing(string zone)
+        {
+            // A blank non-nullable filter (a report's FromUtc) binds as default(DateTime). Shifting 0001-01-01 west of UTC, or
+            // converting it to UTC from east of UTC, used to throw "LocalDateTime out of range of DateTime".
+            var time = new DepartmentTime(new Department { TimeZone = zone });
+
+            time.Format(default(DateTime)).Should().BeNull();
+            time.Date(default(DateTime)).Should().BeNull();
+            time.Input(default(DateTime)).Should().BeNull();
+            time.Invoking(t => t.Local(DateTime.MinValue)).Should().NotThrow();
+            time.Invoking(t => t.Local(DateTime.MaxValue)).Should().NotThrow();
+            time.ToUtc(default(DateTime)).Should().Be(DateTime.MinValue);
+            time.Invoking(t => t.ToUtc(DateTime.MaxValue)).Should().NotThrow();
+        }
+
         [Test]
         public void Explicit_offset_and_hidden_UTC_values_are_not_converted_twice()
         {

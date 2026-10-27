@@ -116,12 +116,22 @@ namespace Resgrid.Framework
 		}
 
 		/// <summary>
+		/// True within a day of DateTime.MinValue or MaxValue: an unset non-nullable date (a blank form field, a new row before
+		/// its first save) or an "open ended" marker. Shifting one of those into a zone on the far side of UTC lands outside
+		/// years 1-9999, which DateTime cannot hold, so time-zone conversions pass them through unshifted instead of throwing.
+		/// </summary>
+		public static bool IsZoneShiftSentinel(DateTime value) => value <= DateTime.MinValue.AddDays(1) || value >= DateTime.MaxValue.AddDays(-1);
+
+		/// <summary>
 		/// Converts a local (department) time into UTC. When lenient is set, local times that are
 		/// ambiguous or skipped by a DST transition are resolved instead of throwing, which matters
 		/// for user typed timestamps (i.e. a 0130 log entry on the fall back day).
 		/// </summary>
 		public static DateTime ConvertToUtc(DateTime dateTime, string timeZone, bool lenient = false)
 		{
+			if (IsZoneShiftSentinel(dateTime))
+				return DateTime.SpecifyKind(dateTime, DateTimeKind.Utc);
+
 			//var tzdbSource = NodaTime.TimeZones.TzdbDateTimeZoneSource.Default;
 			//var tzi = TimeZoneInfo.FindSystemTimeZoneById(IanaToWindows(timeZone));
 
@@ -148,7 +158,7 @@ namespace Resgrid.Framework
 
 		public static DateTime GetLocalDateTime(DateTime dateTime, string timeZone)
 		{
-			if (!String.IsNullOrWhiteSpace(timeZone))
+			if (!String.IsNullOrWhiteSpace(timeZone) && !IsZoneShiftSentinel(dateTime))
 			{
 				var ianaTz = TZConvert.WindowsToIana(timeZone);
 

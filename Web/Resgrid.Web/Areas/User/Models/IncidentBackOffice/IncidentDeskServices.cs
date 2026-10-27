@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Localization;
 using NodaTime;
+using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Helpers;
 using Resgrid.Model.IncidentLogistics;
@@ -28,14 +29,28 @@ namespace Resgrid.Web.Areas.User.Models.IncidentBackOffice
 		}
 
 		public string ZoneId => _zone.Id;
-		public DateTime Local(DateTime utc) => Instant.FromDateTimeUtc(DateTime.SpecifyKind(utc, DateTimeKind.Utc)).InZone(_zone).ToDateTimeUnspecified();
-		public string Format(DateTime? utc) => utc.HasValue ? Local(utc.Value).ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture) : null;
-		public string Input(DateTime? utc) => utc.HasValue ? Local(utc.Value).ToString("yyyy-MM-ddTHH:mm", CultureInfo.InvariantCulture) : null;
-		public string Time(DateTime? utc) => utc.HasValue ? Local(utc.Value).ToString("HH:mm", CultureInfo.InvariantCulture) : null;
-		public DateTime ToUtc(DateTime local) => local.Kind == DateTimeKind.Utc ? local : LocalDateTime.FromDateTime(local).InZoneLeniently(_zone).ToDateTimeUtc();
+
+		/// <summary>
+		/// DateTime.MinValue and MaxValue cannot be shifted into a zone on the far side of UTC (the result falls outside years
+		/// 1-9999), so the sentinels come back unshifted instead of throwing.
+		/// </summary>
+		public DateTime Local(DateTime utc) => DateTimeHelpers.IsZoneShiftSentinel(utc)
+			? DateTime.SpecifyKind(utc, DateTimeKind.Unspecified)
+			: Instant.FromDateTimeUtc(DateTime.SpecifyKind(utc, DateTimeKind.Utc)).InZone(_zone).ToDateTimeUnspecified();
+
+		// default(DateTime) is a non-nullable column that has not been filled in yet (every new ledger row before its first save),
+		// so it renders as blank rather than as 0001-01-01.
+		public string Format(DateTime? utc) => IsSet(utc) ? Local(utc.Value).ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture) : null;
+		public string Input(DateTime? utc) => IsSet(utc) ? Local(utc.Value).ToString("yyyy-MM-ddTHH:mm", CultureInfo.InvariantCulture) : null;
+		public string Time(DateTime? utc) => IsSet(utc) ? Local(utc.Value).ToString("HH:mm", CultureInfo.InvariantCulture) : null;
+		public DateTime ToUtc(DateTime local) => local.Kind == DateTimeKind.Utc ? local
+			: DateTimeHelpers.IsZoneShiftSentinel(local) ? DateTime.SpecifyKind(local, DateTimeKind.Utc)
+			: LocalDateTime.FromDateTime(local).InZoneLeniently(_zone).ToDateTimeUtc();
 		public DateTime? Parse(string value) => string.IsNullOrWhiteSpace(value) ? null
 			: DateTime.TryParse(value, CultureInfo.InvariantCulture, DateTimeStyles.None, out var local) ? ToUtc(DateTime.SpecifyKind(local, DateTimeKind.Unspecified)) : null;
-		public static string Date(DateTime? date) => date?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+		public static string Date(DateTime? date) => IsSet(date) ? date.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) : null;
+
+		private static bool IsSet(DateTime? value) => value.HasValue && value.Value != default;
 	}
 
 	/// <summary>Services every Incident Back Office desk needs, injected once so each desk controller lists only its own.</summary>

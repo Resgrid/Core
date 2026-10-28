@@ -139,6 +139,19 @@ namespace Resgrid.Model.Search
 		public string FileName { get; }
 	}
 
+	/// <summary>
+	/// The object store rejected this process's credentials (wrong secret key, unknown access key, no grant on the bucket,
+	/// or a proxy in front of the endpoint that alters the signed request). A configuration fault, not an outage: retrying
+	/// will not clear it. The message names the settings in effect; never the secret.
+	/// </summary>
+	public class SearchIndexStoreAccessException : Exception
+	{
+		public SearchIndexStoreAccessException(string message, Exception innerException)
+			: base(message, innerException)
+		{
+		}
+	}
+
 	/// <summary>Outcome of one maintenance sweep of the global index (worker 70).</summary>
 	public class SearchIndexSweepResult
 	{

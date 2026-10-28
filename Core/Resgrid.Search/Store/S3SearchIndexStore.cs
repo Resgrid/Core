@@ -71,7 +71,21 @@ namespace Resgrid.Search
 			"SignatureDoesNotMatch", "InvalidAccessKeyId", "AccessDenied", "AuthorizationHeaderMalformed"
 		};
 
-		private static bool IsAccessFailure(AmazonS3Exception ex) => ex.StatusCode == HttpStatusCode.Forbidden || AccessErrorCodes.Contains(ex.ErrorCode ?? string.Empty);
+		/// <summary>
+		/// The credential fault code of a rejection, or null. A multi-object delete the store answers 200 with per-key errors
+		/// surfaces as DeleteObjectsException with no status or error code of its own, so a missing delete grant only shows
+		/// in Response.DeleteErrors.
+		/// </summary>
+		private static string AccessErrorCode(AmazonS3Exception ex)
+		{
+			if (AccessErrorCodes.Contains(ex.ErrorCode ?? string.Empty))
+				return ex.ErrorCode;
+			if (ex is DeleteObjectsException deleteFailure)
+				return deleteFailure.Response?.DeleteErrors?.Select(e => e.Code).FirstOrDefault(c => AccessErrorCodes.Contains(c ?? string.Empty));
+			return null;
+		}
+
+		private static bool IsAccessFailure(AmazonS3Exception ex) => ex.StatusCode == HttpStatusCode.Forbidden || AccessErrorCode(ex) != null;
 
 		/// <summary>
 		/// Rethrows a credential rejection with the settings this process actually signed with. The settings live in a
@@ -86,18 +100,29 @@ namespace Resgrid.Search
 			var accessKeyHint = accessKey.Length == 0 ? "(empty)" : accessKey.Length <= 4 ? "(set)" : accessKey.Substring(0, 4) + "...";
 			var region = string.IsNullOrWhiteSpace(SearchConfig.S3Region) ? "us-east-1" : SearchConfig.S3Region;
 
+			// Every per-key code is listed, so a delete that also failed for another reason keeps that diagnostic too.
+			var deleteErrors = (ex as DeleteObjectsException)?.Response?.DeleteErrors;
+			var rejected = deleteErrors?.Count > 0
+				? $"delete of {deleteErrors.Count} object(s): {string.Join(", ", deleteErrors.GroupBy(e => e.Code ?? "(no code)", StringComparer.OrdinalIgnoreCase).Select(g => $"{g.Count()} {g.Key}"))}"
+				: $"{(int)ex.StatusCode} {ex.ErrorCode}";
+
+			var code = AccessErrorCode(ex) ?? ex.ErrorCode;
 			string cause;
-			if (string.Equals(ex.ErrorCode, "SignatureDoesNotMatch", StringComparison.OrdinalIgnoreCase))
+			if (string.Equals(code, "SignatureDoesNotMatch", StringComparison.OrdinalIgnoreCase))
 				cause = "The store knows the access key but computed a different signature: S3SecretKey does not match the secret it holds for that key, or a proxy in front of the endpoint rewrites the Host header, path or signed headers.";
-			else if (string.Equals(ex.ErrorCode, "InvalidAccessKeyId", StringComparison.OrdinalIgnoreCase))
+			else if (string.Equals(code, "InvalidAccessKeyId", StringComparison.OrdinalIgnoreCase))
 				cause = "The store has no such access key: S3AccessKey is wrong or the endpoint is a different store than the one the key was created on.";
-			else if (string.Equals(ex.ErrorCode, "AuthorizationHeaderMalformed", StringComparison.OrdinalIgnoreCase))
+			else if (string.Equals(code, "AuthorizationHeaderMalformed", StringComparison.OrdinalIgnoreCase))
 				cause = "The store rejected the signing scope: check S3Region against the store's region.";
+			else if (string.Equals(code, "AccessDenied", StringComparison.OrdinalIgnoreCase))
+				cause = "The credentials were accepted but have no grant for this operation on this bucket or prefix.";
+			// Other 403 codes (InvalidSecurity, RequestTimeTooSkewed, AccountProblem, ...) are not a missing grant; the store's
+			// own code in the message is the diagnosis.
 			else
-				cause = "The credentials were accepted but have no grant on this bucket or prefix.";
+				cause ="The store's error code is not one of the credential faults recognized here; look it up in the store's error reference.";
 
 			return new SearchIndexStoreAccessException(
-				$"Search object store rejected the request ({(int)ex.StatusCode} {ex.ErrorCode}). {cause} " +
+				$"Search object store rejected the request ({rejected}). {cause} " +
 				$"Settings in effect: endpoint '{SearchConfig.S3Endpoint}', bucket '{SearchConfig.S3Bucket}', prefix '{SearchConfig.S3Prefix}', region '{region}', " +
 				$"path-style {SearchConfig.S3ForcePathStyle}, access key '{accessKeyHint}', secret key {secretLength} chars.", ex);
 		}

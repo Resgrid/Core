@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -98,6 +99,65 @@ namespace Resgrid.Tests.Search
 			(await list.Should().ThrowAsync<SearchIndexStoreAccessException>()).Which.Message.Should().Contain("InvalidAccessKeyId");
 			(await upload.Should().ThrowAsync<SearchIndexStoreAccessException>()).Which.Message.Should().Contain("AccessDenied");
 			await manifest.Should().ThrowAsync<SearchIndexStoreAccessException>();
+		}
+
+		[Test]
+		public async Task Denied_per_object_deletes_are_access_failures_and_keep_every_code()
+		{
+			// The store answers a multi-object delete 200 with per-key errors; the SDK raises DeleteObjectsException with no
+			// status or error code of its own.
+			var response = new DeleteObjectsResponse
+			{
+				DeleteErrors = new List<DeleteError>
+				{
+					new DeleteError { Key = "search/global/_0.cfs", Code = "AccessDenied" },
+					new DeleteError { Key = "search/global/_1.cfs", Code = "AccessDenied" },
+					new DeleteError { Key = "search/global/_2.cfs", Code = "InternalError" }
+				}
+			};
+			var client = new Mock<IAmazonS3>();
+			client.Setup(c => c.DeleteObjectsAsync(It.IsAny<DeleteObjectsRequest>(), It.IsAny<CancellationToken>()))
+				.ThrowsAsync(new DeleteObjectsException(response));
+			var store = new S3SearchIndexStore(client.Object);
+
+			Func<Task> act = () => store.DeleteFilesAsync(SearchIndexNames.Global, new[] { "_0.cfs", "_1.cfs", "_2.cfs" });
+
+			var thrown = (await act.Should().ThrowAsync<SearchIndexStoreAccessException>()).Which;
+			thrown.InnerException.Should().BeOfType<DeleteObjectsException>().Which.Response.Should().BeSameAs(response);
+			thrown.Message.Should().Contain("delete of 3 object(s): 2 AccessDenied, 1 InternalError")
+				.And.Contain("no grant for this operation")
+				.And.Contain("bucket 'resgrid-search'");
+			thrown.Message.Should().NotContain(Secret);
+		}
+
+		[Test]
+		public async Task Per_object_delete_errors_without_an_access_code_keep_their_own_exception()
+		{
+			var response = new DeleteObjectsResponse { DeleteErrors = new List<DeleteError> { new DeleteError { Key = "search/global/_0.cfs", Code = "InternalError" } } };
+			var client = new Mock<IAmazonS3>();
+			client.Setup(c => c.DeleteObjectsAsync(It.IsAny<DeleteObjectsRequest>(), It.IsAny<CancellationToken>()))
+				.ThrowsAsync(new DeleteObjectsException(response));
+			var store = new S3SearchIndexStore(client.Object);
+
+			Func<Task> act = () => store.DeleteFilesAsync(SearchIndexNames.Global, new[] { "_0.cfs" });
+
+			await act.Should().ThrowAsync<DeleteObjectsException>();
+		}
+
+		[Test]
+		public async Task Unrecognized_forbidden_codes_are_not_reported_as_a_missing_grant()
+		{
+			var client = new Mock<IAmazonS3>();
+			client.Setup(c => c.GetObjectAsync(It.IsAny<GetObjectRequest>(), It.IsAny<CancellationToken>()))
+				.ThrowsAsync(S3Error(HttpStatusCode.Forbidden, "InvalidSecurity"));
+			var store = new S3SearchIndexStore(client.Object);
+
+			Func<Task> act = () => store.GetManifestAsync(SearchIndexNames.Global);
+
+			var thrown = (await act.Should().ThrowAsync<SearchIndexStoreAccessException>()).Which;
+			thrown.Message.Should().Contain("403 InvalidSecurity")
+				.And.Contain("not one of the credential faults recognized here")
+				.And.NotContain("credentials were accepted");
 		}
 
 		[Test]

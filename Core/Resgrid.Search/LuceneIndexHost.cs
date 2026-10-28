@@ -30,6 +30,7 @@ namespace Resgrid.Search
 		private const string LockFileName = "write.lock";
 		private static readonly TimeSpan OrphanedTempAge = TimeSpan.FromHours(1);
 		private static readonly TimeSpan MaxPullBackoff = TimeSpan.FromMinutes(10);
+		private static readonly TimeSpan PullFailureReportInterval = TimeSpan.FromHours(6);
 		private const int MaxSupersededPullRestarts = 3;
 
 		private readonly object _sync = new object();
@@ -58,6 +59,7 @@ namespace Resgrid.Search
 		private string _manifestETag;
 		private DateTime _lastPullAttemptUtc = DateTime.MinValue;
 		private int _consecutivePullFailures;
+		private DateTime _lastPullFailureReportUtc = DateTime.MinValue;
 		private Task _pullTask;
 
 		/// <summary>Production constructor: the configured local path under SearchConfig.IndexPath.</summary>
@@ -465,7 +467,19 @@ namespace Resgrid.Search
 					// not from the attempt: a request that hangs until the client timeout would otherwise have used it all up.
 					var failures = ++_consecutivePullFailures;
 					_lastPullAttemptUtc = DateTime.UtcNow;
-					Logging.LogError(ex, $"Search index '{IndexName}' pull from the object store failed ({failures} in a row); next attempt in {PullInterval().TotalSeconds:0}s at the earliest.");
+					var message = $"Search index '{IndexName}' pull from the object store failed ({failures} in a row); next attempt in {PullInterval().TotalSeconds:0}s at the earliest.";
+					// The first failure of a run always reaches Sentry; a run that persists (a misconfigured store fails every
+					// attempt, on every pod, for every index) reports again at most every PullFailureReportInterval, and the
+					// attempts in between become breadcrumbs. Reporting every attempt sent ~144 events a day per pod per index.
+					if (failures == 1 || DateTime.UtcNow - _lastPullFailureReportUtc >= PullFailureReportInterval)
+					{
+						_lastPullFailureReportUtc = DateTime.UtcNow;
+						Logging.LogError(ex, message);
+					}
+					else
+					{
+						Logging.LogWarning($"{message} {ex.GetType().Name}: {ex.Message}");
+					}
 				}
 			});
 		}

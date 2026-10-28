@@ -66,11 +66,84 @@ namespace Resgrid.Search
 
 		private static string Key(string indexName, string fileName) => Prefix(indexName) + fileName;
 
+		private static readonly HashSet<string> AccessErrorCodes = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+		{
+			"SignatureDoesNotMatch", "InvalidAccessKeyId", "AccessDenied", "AuthorizationHeaderMalformed"
+		};
+
+		/// <summary>
+		/// The credential fault code of a rejection, or null. A multi-object delete the store answers 200 with per-key errors
+		/// surfaces as DeleteObjectsException with no status or error code of its own, so a missing delete grant only shows
+		/// in Response.DeleteErrors.
+		/// </summary>
+		private static string AccessErrorCode(AmazonS3Exception ex)
+		{
+			if (AccessErrorCodes.Contains(ex.ErrorCode ?? string.Empty))
+				return ex.ErrorCode;
+			if (ex is DeleteObjectsException deleteFailure)
+				return deleteFailure.Response?.DeleteErrors?.Select(e => e.Code).FirstOrDefault(c => AccessErrorCodes.Contains(c ?? string.Empty));
+			return null;
+		}
+
+		private static bool IsAccessFailure(AmazonS3Exception ex) => ex.StatusCode == HttpStatusCode.Forbidden || AccessErrorCode(ex) != null;
+
+		/// <summary>
+		/// Rethrows a credential rejection with the settings this process actually signed with. The settings live in a
+		/// per-environment ConfigMap, so the logged event is often the only place an operator can see which endpoint, bucket,
+		/// region and access key a pod is using. The secret key is described by length only (a pasted value wrapped in quotes
+		/// or cut short shows up there); it is never included.
+		/// </summary>
+		private static SearchIndexStoreAccessException AccessFailure(AmazonS3Exception ex)
+		{
+			var accessKey = (SearchConfig.S3AccessKey ?? string.Empty).Trim();
+			var secretLength = (SearchConfig.S3SecretKey ?? string.Empty).Trim().Length;
+			var accessKeyHint = accessKey.Length == 0 ? "(empty)" : accessKey.Length <= 4 ? "(set)" : accessKey.Substring(0, 4) + "...";
+			var region = string.IsNullOrWhiteSpace(SearchConfig.S3Region) ? "us-east-1" : SearchConfig.S3Region;
+
+			// Every per-key code is listed, so a delete that also failed for another reason keeps that diagnostic too.
+			var deleteErrors = (ex as DeleteObjectsException)?.Response?.DeleteErrors;
+			var rejected = deleteErrors?.Count > 0
+				? $"delete of {deleteErrors.Count} object(s): {string.Join(", ", deleteErrors.GroupBy(e => e.Code ?? "(no code)", StringComparer.OrdinalIgnoreCase).Select(g => $"{g.Count()} {g.Key}"))}"
+				: $"{(int)ex.StatusCode} {ex.ErrorCode}";
+
+			var code = AccessErrorCode(ex) ?? ex.ErrorCode;
+			string cause;
+			if (string.Equals(code, "SignatureDoesNotMatch", StringComparison.OrdinalIgnoreCase))
+				cause = "The store knows the access key but computed a different signature: S3SecretKey does not match the secret it holds for that key, or a proxy in front of the endpoint rewrites the Host header, path or signed headers.";
+			else if (string.Equals(code, "InvalidAccessKeyId", StringComparison.OrdinalIgnoreCase))
+				cause = "The store has no such access key: S3AccessKey is wrong or the endpoint is a different store than the one the key was created on.";
+			else if (string.Equals(code, "AuthorizationHeaderMalformed", StringComparison.OrdinalIgnoreCase))
+				cause = "The store rejected the signing scope: check S3Region against the store's region.";
+			else if (string.Equals(code, "AccessDenied", StringComparison.OrdinalIgnoreCase))
+				cause = "The credentials were accepted but have no grant for this operation on this bucket or prefix.";
+			// Other 403 codes (InvalidSecurity, RequestTimeTooSkewed, AccountProblem, ...) are not a missing grant; the store's
+			// own code in the message is the diagnosis.
+			else
+				cause ="The store's error code is not one of the credential faults recognized here; look it up in the store's error reference.";
+
+			return new SearchIndexStoreAccessException(
+				$"Search object store rejected the request ({rejected}). {cause} " +
+				$"Settings in effect: endpoint '{SearchConfig.S3Endpoint}', bucket '{SearchConfig.S3Bucket}', prefix '{SearchConfig.S3Prefix}', region '{region}', " +
+				$"path-style {SearchConfig.S3ForcePathStyle}, access key '{accessKeyHint}', secret key {secretLength} chars.", ex);
+		}
+
+		private async Task<T> CallAsync<T>(Func<IAmazonS3, Task<T>> call)
+		{
+			try
+			{
+				return await call(_client.Value);
+			}
+			catch (AmazonS3Exception ex) when (IsAccessFailure(ex))
+			{
+				throw AccessFailure(ex);
+			}
+		}
+
 		public async Task<SearchIndexManifest> GetManifestAsync(string indexName, CancellationToken cancellationToken = default)
 		{
 			try
 			{
-				using var response = await _client.Value.GetObjectAsync(new GetObjectRequest { BucketName = SearchConfig.S3Bucket, Key = Key(indexName, ManifestName) }, cancellationToken);
+				using var response = await CallAsync(c => c.GetObjectAsync(new GetObjectRequest { BucketName = SearchConfig.S3Bucket, Key = Key(indexName, ManifestName) }, cancellationToken));
 				using var reader = new StreamReader(response.ResponseStream);
 				var json = await reader.ReadToEndAsync();
 				var manifest = JsonConvert.DeserializeObject<SearchIndexManifest>(json) ?? new SearchIndexManifest { IndexName = indexName };
@@ -90,7 +163,7 @@ namespace Resgrid.Search
 			string token = null;
 			do
 			{
-				var response = await _client.Value.ListObjectsV2Async(new ListObjectsV2Request { BucketName = SearchConfig.S3Bucket, Prefix = prefix, ContinuationToken = token }, cancellationToken);
+				var response = await CallAsync(c => c.ListObjectsV2Async(new ListObjectsV2Request { BucketName = SearchConfig.S3Bucket, Prefix = prefix, ContinuationToken = token }, cancellationToken));
 				foreach (var obj in response.S3Objects ?? new List<S3Object>())
 				{
 					var name = obj.Key.Substring(prefix.Length);
@@ -106,14 +179,14 @@ namespace Resgrid.Search
 
 		public Task UploadFileAsync(string indexName, string fileName, string localPath, CancellationToken cancellationToken = default)
 		{
-			return _client.Value.PutObjectAsync(new PutObjectRequest
+			return CallAsync(c => c.PutObjectAsync(new PutObjectRequest
 			{
 				BucketName = SearchConfig.S3Bucket,
 				Key = Key(indexName, fileName),
 				FilePath = localPath,
 				ContentType = "application/octet-stream",
 				DisablePayloadSigning = false
-			}, cancellationToken);
+			}, cancellationToken));
 		}
 
 		public async Task DownloadFileAsync(string indexName, string fileName, string localPath, CancellationToken cancellationToken = default)
@@ -121,7 +194,7 @@ namespace Resgrid.Search
 			GetObjectResponse response;
 			try
 			{
-				response = await _client.Value.GetObjectAsync(new GetObjectRequest { BucketName = SearchConfig.S3Bucket, Key = Key(indexName, fileName) }, cancellationToken);
+				response = await CallAsync(c => c.GetObjectAsync(new GetObjectRequest { BucketName = SearchConfig.S3Bucket, Key = Key(indexName, fileName) }, cancellationToken));
 			}
 			catch (AmazonS3Exception ex) when (ex.StatusCode == HttpStatusCode.NotFound || string.Equals(ex.ErrorCode, "NoSuchKey", StringComparison.OrdinalIgnoreCase))
 			{
@@ -136,12 +209,12 @@ namespace Resgrid.Search
 		{
 			foreach (var batch in (fileNames ?? Enumerable.Empty<string>()).Distinct().Chunk(1000))
 			{
-				await _client.Value.DeleteObjectsAsync(new DeleteObjectsRequest
+				await CallAsync(c => c.DeleteObjectsAsync(new DeleteObjectsRequest
 				{
 					BucketName = SearchConfig.S3Bucket,
 					Objects = batch.Select(n => new KeyVersion { Key = Key(indexName, n) }).ToList(),
 					Quiet = true
-				}, cancellationToken);
+				}, cancellationToken));
 			}
 		}
 
@@ -161,7 +234,7 @@ namespace Resgrid.Search
 
 			try
 			{
-				var response = await _client.Value.PutObjectAsync(request, cancellationToken);
+				var response = await CallAsync(c => c.PutObjectAsync(request, cancellationToken));
 				manifest.ETag = response.ETag;
 				return manifest;
 			}

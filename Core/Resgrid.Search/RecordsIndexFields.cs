@@ -38,6 +38,11 @@ namespace Resgrid.Search
 		public const string Narrative = "Narrative";
 		public const string IsLegacy = "IsLegacy";
 		public const string Generation = "Generation";
+		/// <summary>
+		/// Stored only, never queried, so it needs no schema bump: a document indexed before it existed reads as held at an
+		/// unknown version and is re-indexed the first time the catch-up overlap window re-reads its row.
+		/// </summary>
+		public const string RowVersion = "RowVersion";
 
 		public static string BuildKey(int departmentId, int sourceType, string sourceId)
 		{

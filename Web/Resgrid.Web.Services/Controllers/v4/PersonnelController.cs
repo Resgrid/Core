@@ -111,9 +111,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return result;
 			}
 
+			// A hidden or disabled person only for department admins, the admins of their group, and themselves (GitHub #311).
+			var member = await _departmentsService.GetDepartmentMemberAsync(user.UserId, DepartmentId);
+			var group = await _departmentGroupsService.GetGroupForUserAsync(user.UserId, DepartmentId);
+			if (!PersonnelListVisibilityHelper.CanViewMemberProfile(member, department, group, UserId))
+			{
+				ResponseHelper.PopulateV4ResponseNotFound(result);
+
+				return result;
+			}
+
 			var profile = await _userProfileService.GetProfileByUserIdAsync(user.UserId);
 			await ApplyMemberIdentificationNumberAsync(profile);
-			var group = await _departmentGroupsService.GetGroupForUserAsync(user.UserId, DepartmentId);
 			var roles = await _personnelRolesService.GetRolesForUserAsync(user.UserId, DepartmentId);
 			var action = await _actionLogsService.GetLastActionLogForUserAsync(user.UserId, DepartmentId);
 			var userState = await _userStateService.GetLastUserStateByUserIdAsync(user.UserId);
@@ -191,17 +200,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 				if (!await _authorizationService.CanUserViewPersonViaMatrixAsync(u.UserId, UserId, DepartmentId))
 					continue;
 
-				// Skip hidden/disabled users unless current user is dept admin or group admin of their group
+				// Hidden and disabled people: department admins, and the admins of their group, only (GitHub #311). The
+				// within-limits user list already leaves them out (the apps also pick dispatch targets from this list), so this
+				// holds the web personnel list's rule should that list ever widen.
 				var member = departmentMembers.FirstOrDefault(x => x.UserId == u.UserId);
-				if (member != null && ((member.IsDisabled.HasValue && member.IsDisabled.Value) || (member.IsHidden.HasValue && member.IsHidden.Value)))
-				{
-					if (!department.IsUserAnAdmin(UserId))
-					{
-						var userGroup = await _departmentGroupsService.GetGroupForUserAsync(u.UserId, DepartmentId);
-						if (userGroup == null || !userGroup.IsUserGroupAdmin(UserId))
-							continue;
-					}
-				}
+				var group = await _departmentGroupsService.GetGroupForUserAsync(u.UserId, DepartmentId);
+				if (!PersonnelListVisibilityHelper.CanViewMember(member, department, group, UserId))
+					continue;
 
 				var log = (from l in actionLogs
 						   where l.UserId == u.UserId
@@ -212,7 +217,6 @@ namespace Resgrid.Web.Services.Controllers.v4
 							 select l).FirstOrDefault();
 
 				var name = await UserHelper.GetFullNameForUser(personnelNames, u.UserName, u.UserId);
-				var group = await _departmentGroupsService.GetGroupForUserAsync(u.UserId, DepartmentId);
 				var roles = await _personnelRolesService.GetRolesForUserAsync(u.UserId, DepartmentId);
 				var profile = await _userProfileService.GetProfileByUserIdAsync(u.UserId);
 

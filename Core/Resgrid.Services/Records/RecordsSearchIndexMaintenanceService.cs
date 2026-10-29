@@ -79,6 +79,8 @@ namespace Resgrid.Services.Records
 
 			var active = (await _cutovers.GetActiveAsync())?.ToList() ?? new List<RmsDepartmentCutover>();
 			var rebuilds = 0;
+			// Catch-up checkpoints wait for the sweep's single commit: a checkpoint must never lead the committed segments.
+			var pending = new List<(RmsSearchIndexState State, DateTime? Checkpoint)>();
 
 			foreach (var cutover in active)
 			{
@@ -105,7 +107,9 @@ namespace Resgrid.Services.Records
 					}
 					else
 					{
-						await CatchUpAsync(cutover.DepartmentId, generation, state, result, cancellationToken);
+						var (changed, checkpoint) = await CatchUpAsync(cutover.DepartmentId, generation, state, result, cancellationToken);
+						if (changed)
+							pending.Add((state, checkpoint));
 					}
 				}
 				catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -118,6 +122,8 @@ namespace Resgrid.Services.Records
 					Logging.LogException(ex, $"Records search index maintenance failed for department {cutover.DepartmentId}.");
 				}
 			}
+
+			await CommitCatchUpsAsync(pending, result, cancellationToken);
 
 			result.Message = $"Checked {result.DepartmentsChecked} department(s); rebuilt {result.DepartmentsRebuilt}; indexed {result.DocumentsIndexed}; deleted {result.DocumentsDeleted}; committed erasures {result.SearchErasuresCompleted}; deleted departments erased {result.DeletedDepartmentsErased}; errors {result.Errors}.";
 			return result;
@@ -295,13 +301,65 @@ namespace Resgrid.Services.Records
 			}
 		}
 
-		private async Task CatchUpAsync(int departmentId, string generation, RmsSearchIndexState state, RecordsSearchIndexSweepResult result, CancellationToken cancellationToken)
+		/// <summary>
+		/// One commit-and-publish per sweep, not one per department: each publish lists the bucket, uploads the new segments
+		/// and conditionally replaces the manifest. A failed commit advances no checkpoint, so the next sweep re-reads the rows.
+		/// </summary>
+		private async Task CommitCatchUpsAsync(List<(RmsSearchIndexState State, DateTime? Checkpoint)> pending, RecordsSearchIndexSweepResult result, CancellationToken cancellationToken)
 		{
-			var includeNarrative = await NarrativeAllowedAsync(departmentId);
+			if (pending.Count == 0)
+				return;
+
+			try
+			{
+				await _indexer.CommitAsync(cancellationToken);
+			}
+			catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+			{
+				throw;
+			}
+			catch (Exception ex)
+			{
+				result.Errors++;
+				Logging.LogException(ex, $"Records search index commit failed; {pending.Count} department checkpoint(s) were not advanced and the next sweep re-reads their rows.");
+				return;
+			}
+
+			foreach (var (state, checkpoint) in pending)
+			{
+				try
+				{
+					state.LastIndexedModifiedOn = checkpoint;
+					state.DocumentCount = await _indexer.CountDocumentsAsync(state.DepartmentId);
+					state.ModifiedOn = DateTime.UtcNow;
+					await _states.SaveOrUpdateAsync(state, cancellationToken, true);
+				}
+				catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+				{
+					throw;
+				}
+				catch (Exception ex)
+				{
+					result.Errors++;
+					Logging.LogException(ex, $"Records search index checkpoint could not be saved for department {state.DepartmentId}; the next sweep re-reads its rows.");
+				}
+			}
+		}
+
+		/// <summary>
+		/// Writes the rows modified since the department's checkpoint into the index without committing. Returns whether the
+		/// index changed and the checkpoint to save once the sweep's commit has succeeded.
+		/// </summary>
+		private async Task<(bool Changed, DateTime? Checkpoint)> CatchUpAsync(int departmentId, string generation, RmsSearchIndexState state, RecordsSearchIndexSweepResult result, CancellationToken cancellationToken)
+		{
+			bool? includeNarrative = null;
+			var stored = state.LastIndexedModifiedOn;
+			var checkpoint = stored;
 			// Replay the checkpoint's timestamp boundary to include rows committed at the same database timestamp
-			// after the preceding sweep drained it. Within a sweep use the repository's timestamp/id keyset.
-			var checkpoint = state.LastIndexedModifiedOn;
-			var since = checkpoint.HasValue && checkpoint.Value > DateTime.MinValue.AddSeconds(1) ? checkpoint.Value.AddSeconds(-1) : checkpoint;
+			// after the preceding sweep drained it. Within a sweep use the repository's timestamp/id keyset. Rows the replay
+			// re-reads unchanged are skipped below: re-indexing them made every quiet sweep commit and publish once per
+			// department, which kept the object store busy every minute with nothing to publish.
+			var since = stored.HasValue && stored.Value > DateTime.MinValue.AddSeconds(1) ? stored.Value.AddSeconds(-1) : stored;
 			string sinceId = null;
 			var batch = Math.Max(50, Math.Min(5000, SearchConfig.IndexBatchSize));
 			var touched = false;
@@ -313,16 +371,20 @@ namespace Resgrid.Services.Records
 				if (page.Count == 0)
 					break;
 
-				var deleted = page.Where(p => p.DeletedOn.HasValue).ToList();
-				var live = page.Where(p => !p.DeletedOn.HasValue).ToList();
+				var changed = await WithoutUnchangedOverlapAsync(departmentId, page, stored);
+				var deleted = changed.Where(p => p.DeletedOn.HasValue).ToList();
+				var live = changed.Where(p => !p.DeletedOn.HasValue).ToList();
 
 				foreach (var gone in deleted)
 					await _indexer.DeleteAsync(departmentId, gone.SourceType, gone.SourceId, cancellationToken);
 
-				var indexed = await _indexer.IndexAsync(await BuildSourcesAsync(departmentId, live, generation, includeNarrative), cancellationToken);
-				result.DocumentsIndexed += indexed;
+				if (live.Count > 0)
+				{
+					includeNarrative ??= await NarrativeAllowedAsync(departmentId);
+					result.DocumentsIndexed += await _indexer.IndexAsync(await BuildSourcesAsync(departmentId, live, generation, includeNarrative.Value), cancellationToken);
+				}
 				result.DocumentsDeleted += deleted.Count;
-				touched = true;
+				touched |= changed.Count > 0;
 
 				var last = page[page.Count - 1];
 				if (since.HasValue && (last.ModifiedOn < since.Value || last.ModifiedOn == since.Value && string.Equals(last.RmsRecordSearchProjectionId, sinceId, StringComparison.Ordinal)))
@@ -335,14 +397,30 @@ namespace Resgrid.Services.Records
 					break;
 			}
 
-			if (touched)
+			return (touched, checkpoint);
+		}
+
+		/// <summary>
+		/// Drops the rows of the overlap window (stamped at or before the stored checkpoint) that the index already holds at
+		/// the same RowVersion, and deleted rows the index no longer holds. Rows past the checkpoint are always kept.
+		/// </summary>
+		private async Task<List<RmsRecordSearchProjection>> WithoutUnchangedOverlapAsync(int departmentId, List<RmsRecordSearchProjection> page, DateTime? stored)
+		{
+			if (!stored.HasValue)
+				return page;
+
+			var overlap = page.Where(p => p.ModifiedOn <= stored.Value).ToList();
+			if (overlap.Count == 0)
+				return page;
+
+			var indexed = await _indexer.GetIndexedRowVersionsAsync(departmentId, overlap) ?? new Dictionary<string, long>();
+			return page.Where(p =>
 			{
-				await _indexer.CommitAsync(cancellationToken);
-				state.LastIndexedModifiedOn = checkpoint;
-				state.DocumentCount = await _indexer.CountDocumentsAsync(departmentId);
-				state.ModifiedOn = DateTime.UtcNow;
-				await _states.SaveOrUpdateAsync(state, cancellationToken, true);
-			}
+				if (p.ModifiedOn > stored.Value)
+					return true;
+				var present = indexed.TryGetValue(p.RmsRecordSearchProjectionId ?? string.Empty, out var version);
+				return p.DeletedOn.HasValue ? present : !present || version != p.RowVersion;
+			}).ToList();
 		}
 
 		private async Task<List<RecordsSearchDocumentSource>> BuildSourcesAsync(int departmentId, List<RmsRecordSearchProjection> projections, string generation, bool includeNarrative)

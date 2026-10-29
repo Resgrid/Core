@@ -28,6 +28,7 @@ namespace Resgrid.Tests.Rms
 		private Mock<IDepartmentSettingsService> _settings;
 		private Mock<IRmsRetentionRepository> _retention;
 		private List<RecordsSearchDocumentSource> _indexed;
+		private Dictionary<string, long> _indexedVersions;
 		private List<RmsSearchIndexState> _savedStates;
 		private RecordsSearchIndexMaintenanceService _service;
 
@@ -36,6 +37,7 @@ namespace Resgrid.Tests.Rms
 		{
 			SearchConfig.Enabled = true;
 			_indexed = new List<RecordsSearchDocumentSource>();
+			_indexedVersions = new Dictionary<string, long>();
 			_savedStates = new List<RmsSearchIndexState>();
 
 			_cutovers = new Mock<IRmsDepartmentCutoversRepository>();
@@ -53,6 +55,9 @@ namespace Resgrid.Tests.Rms
 			_indexer.Setup(i => i.IndexAsync(It.IsAny<IEnumerable<RecordsSearchDocumentSource>>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync((IEnumerable<RecordsSearchDocumentSource> docs, CancellationToken c) => { var list = docs.ToList(); _indexed.AddRange(list); return list.Count; });
 			_indexer.Setup(i => i.CountDocumentsAsync(Dept)).ReturnsAsync(() => _indexed.Count);
+			_indexer.Setup(i => i.GetIndexedRowVersionsAsync(It.IsAny<int>(), It.IsAny<IEnumerable<RmsRecordSearchProjection>>()))
+				.ReturnsAsync((int _, IEnumerable<RmsRecordSearchProjection> rows) => (IDictionary<string, long>)rows
+					.Where(r => _indexedVersions.ContainsKey(r.RmsRecordSearchProjectionId)).ToDictionary(r => r.RmsRecordSearchProjectionId, r => _indexedVersions[r.RmsRecordSearchProjectionId]));
 
 			_adp = new Mock<IDepartmentDataProtectionService>();
 			_adp.Setup(a => a.IsProtectionEnforcedAsync(Dept)).ReturnsAsync(false);
@@ -176,6 +181,8 @@ namespace Resgrid.Tests.Rms
 				{ DepartmentId = Dept, IndexName = RmsSearchIndexState.RecordsIndexName, Generation = RecordsSearchGeneration.Compute(3, 7), State = (int)RmsSearchIndexBuildState.Ready, LastIndexedModifiedOn = stamp });
 				var rows = Enumerable.Range(0, 101).Select(i => Projection("rec-" + i.ToString("D3"), stamp)).ToList();
 				rows.Last().DeletedOn = stamp;
+				// The late tombstone's document is still in the index; the live rows at the boundary were never indexed.
+				_indexedVersions["rec-100"] = 0;
 				_projections.Setup(p => p.GetModifiedSinceAsync(Dept, It.IsAny<DateTime?>(), It.IsAny<int>(), It.IsAny<string>()))
 					.ReturnsAsync((int department, DateTime? since, int take, string id) => rows.Where(row => !since.HasValue || row.ModifiedOn > since.Value || row.ModifiedOn == since.Value && id != null && string.CompareOrdinal(row.RmsRecordSearchProjectionId, id) > 0).Take(take).ToList());
 				var result = await _service.SweepAsync();
@@ -208,6 +215,95 @@ namespace Resgrid.Tests.Rms
 			(await _service.SweepAsync()).Errors.Should().Be(0);
 			_indexer.Verify(i => i.DeleteAsync(Dept, (int)RmsSearchSourceType.Record, "purged", It.IsAny<CancellationToken>()), Times.Exactly(2));
 			_savedStates.Single().LastIndexedModifiedOn.Should().Be(deleted.ModifiedOn);
+		}
+
+		[Test]
+		public async Task A_quiet_sweep_commits_nothing_when_the_overlap_window_only_re_reads_indexed_rows()
+		{
+			// The read re-covers the second before the checkpoint; this row is already indexed at the same version. Before the
+			// overlap was filtered every quiet sweep re-indexed it and committed and published once per department (QA:
+			// RESGRID-WEBJOBS, ~15 publishes a minute and one Sentry event per department while the object store timed out).
+			var stamp = new DateTime(2026, 9, 2);
+			_states.Setup(s => s.GetAsync(Dept, RmsSearchIndexState.RecordsIndexName)).ReturnsAsync(ReadyState(Dept, stamp));
+			var reRead = Projection("rec-1", stamp, rowVersion: 4);
+			_indexedVersions[reRead.RmsRecordSearchProjectionId] = 4;
+			_projections.Setup(p => p.GetModifiedSinceAsync(Dept, stamp.AddSeconds(-1), It.IsAny<int>(), null)).ReturnsAsync(new[] { reRead });
+
+			var result = await _service.SweepAsync();
+
+			result.Errors.Should().Be(0);
+			result.DocumentsIndexed.Should().Be(0);
+			_indexer.Verify(i => i.IndexAsync(It.IsAny<IEnumerable<RecordsSearchDocumentSource>>(), It.IsAny<CancellationToken>()), Times.Never);
+			_indexer.Verify(i => i.CommitAsync(It.IsAny<CancellationToken>()), Times.Never, "nothing changed: no commit, so no publish");
+			_savedStates.Should().BeEmpty();
+		}
+
+		[Test]
+		public async Task An_overlap_row_the_index_lacks_or_holds_at_an_older_version_is_still_indexed()
+		{
+			var stamp = new DateTime(2026, 9, 2);
+			_states.Setup(s => s.GetAsync(Dept, RmsSearchIndexState.RecordsIndexName)).ReturnsAsync(ReadyState(Dept, stamp));
+			var late = Projection("rec-1", stamp.AddMilliseconds(-300), rowVersion: 1);
+			var updated = Projection("rec-2", stamp, rowVersion: 3);
+			var unchanged = Projection("rec-3", stamp, rowVersion: 5);
+			_indexedVersions[updated.RmsRecordSearchProjectionId] = 2;
+			_indexedVersions[unchanged.RmsRecordSearchProjectionId] = 5;
+			var goneAlready = Projection("rec-4", stamp, rowVersion: 2);
+			goneAlready.DeletedOn = stamp;
+			_projections.Setup(p => p.GetModifiedSinceAsync(Dept, stamp.AddSeconds(-1), It.IsAny<int>(), null)).ReturnsAsync(new[] { late, updated, unchanged, goneAlready });
+
+			var result = await _service.SweepAsync();
+
+			result.Errors.Should().Be(0);
+			_indexed.Select(d => d.Projection.SourceId).Should().Equal("rec-1", "rec-2");
+			_indexer.Verify(i => i.DeleteAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never, "the index no longer holds the deleted row");
+			_indexer.Verify(i => i.CommitAsync(It.IsAny<CancellationToken>()), Times.Once);
+			_savedStates.Single().LastIndexedModifiedOn.Should().Be(stamp);
+		}
+
+		[TestCase(false)]
+		[TestCase(true)]
+		public async Task Catch_ups_share_one_commit_per_sweep_and_no_checkpoint_is_saved_before_it(bool failCommit)
+		{
+			const int other = 4;
+			var stamp = new DateTime(2026, 9, 2);
+			_cutovers.Setup(c => c.GetActiveAsync()).ReturnsAsync(new[]
+			{
+				new RmsDepartmentCutover { DepartmentId = Dept, State = (int)RmsDepartmentCutoverState.Active },
+				new RmsDepartmentCutover { DepartmentId = other, State = (int)RmsDepartmentCutoverState.Active }
+			});
+			_adp.Setup(a => a.GetPinnedCatalogVersionAsync(other)).ReturnsAsync(3);
+			_adp.Setup(a => a.GetPolicyByDepartmentIdAsync(other, It.IsAny<bool>())).ReturnsAsync(new DepartmentDataProtectionPolicy { DepartmentId = other, PolicyEpoch = 7 });
+			foreach (var department in new[] { Dept, other })
+			{
+				_states.Setup(s => s.GetAsync(department, RmsSearchIndexState.RecordsIndexName)).ReturnsAsync(ReadyState(department, stamp));
+				_projections.Setup(p => p.GetModifiedSinceAsync(department, stamp.AddSeconds(-1), It.IsAny<int>(), null))
+					.ReturnsAsync(new[] { Projection("rec-" + department, stamp.AddMinutes(department), departmentId: department) });
+			}
+
+			var commits = 0;
+			_indexer.Setup(i => i.CommitAsync(It.IsAny<CancellationToken>())).Returns(() =>
+			{
+				commits++;
+				return failCommit ? Task.FromException(new InvalidOperationException("Io error: timeout")) : Task.CompletedTask;
+			});
+			_states.Setup(s => s.SaveOrUpdateAsync(It.IsAny<RmsSearchIndexState>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((RmsSearchIndexState st, CancellationToken c, bool b) => { commits.Should().Be(1, "a checkpoint must never lead the committed segments"); _savedStates.Add(Clone(st)); return st; });
+
+			var result = await _service.SweepAsync();
+
+			commits.Should().Be(1, "one commit-and-publish per sweep, not one per department");
+			result.DocumentsIndexed.Should().Be(2);
+			if (failCommit)
+			{
+				result.Errors.Should().Be(1, "an object store outage is one failure per sweep, not one per department");
+				_savedStates.Should().BeEmpty();
+			}
+			else
+			{
+				result.Errors.Should().Be(0);
+				_savedStates.Select(s => (s.DepartmentId, s.LastIndexedModifiedOn)).Should().Equal((Dept, stamp.AddMinutes(Dept)), (other, stamp.AddMinutes(other)));
+			}
 		}
 
 		[Test]
@@ -310,13 +406,22 @@ namespace Resgrid.Tests.Rms
 			(await _service.SweepAsync()).Skipped.Should().BeFalse("the gate is released when the running sweep ends");
 		}
 
-		private static RmsRecordSearchProjection Projection(string id, DateTime modifiedOn)
+		private static RmsRecordSearchProjection Projection(string id, DateTime modifiedOn, long rowVersion = 0, int departmentId = Dept)
 		{
 			return new RmsRecordSearchProjection
 			{
-				RmsRecordSearchProjectionId = id, DepartmentId = Dept, SourceType = (int)RmsSearchSourceType.Record, SourceId = id,
+				RmsRecordSearchProjectionId = id, DepartmentId = departmentId, SourceType = (int)RmsSearchSourceType.Record, SourceId = id,
 				RecordNumber = "TRN-2026-0001", DefinitionKey = RmsDefinitionKeys.Training, State = (int)RmsRecordState.Finalized,
-				RecordCreatedOn = modifiedOn, ModifiedOn = modifiedOn, DisplaySummary = "x"
+				RecordCreatedOn = modifiedOn, ModifiedOn = modifiedOn, DisplaySummary = "x", RowVersion = rowVersion
+			};
+		}
+
+		private static RmsSearchIndexState ReadyState(int departmentId, DateTime checkpoint)
+		{
+			return new RmsSearchIndexState
+			{
+				DepartmentId = departmentId, IndexName = RmsSearchIndexState.RecordsIndexName, Generation = RecordsSearchGeneration.Compute(3, 7),
+				State = (int)RmsSearchIndexBuildState.Ready, LastIndexedModifiedOn = checkpoint
 			};
 		}
 

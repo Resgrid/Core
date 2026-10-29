@@ -133,14 +133,6 @@ namespace Resgrid.Web.Areas.User.Models.IncidentBackOffice
 		public List<LedgerDeskAction> RowActions { get; set; } = new List<LedgerDeskAction>();
 	}
 
-	/// <summary>The add-on page: what it covers for everyone, price and checkout for the managing member only.</summary>
-	public sealed class IncidentBackOfficeBillingView
-	{
-		public IncidentBackOfficeAccess Access { get; set; } = IncidentBackOfficeAccess.Denied;
-		public bool IsOwner { get; set; }
-		public IncidentBackOfficeBillingStatus Status { get; set; }
-	}
-
 	/// <summary>A desk's landing page: each table it hosts with its row count in the selected incident.</summary>
 	public sealed class LedgerDeskView : IncidentDeskView
 	{

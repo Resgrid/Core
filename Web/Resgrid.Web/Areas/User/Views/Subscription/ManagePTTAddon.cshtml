@@ -2,12 +2,17 @@
 @using Resgrid.Model
 @model Resgrid.Web.Areas.User.Models.Subscription.BuyAddonView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Subscription.Subscription> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Addons.Addons> addonLocalizer
 @{
     ViewBag.Title = "Resgrid | " + @localizer["BuyAddonHeader"];
+    var pttAddon = Resgrid.Web.Areas.User.Models.Subscription.AddonCatalog.Get(PlanAddonTypes.PTT);
+    // Paddle departments change their packs through ManagePaddlePTTAddon; posting them to the Stripe action would always fail.
+    var postAction = ViewBag.PttPostAction as string ?? "BuyAddon";
 }
 
 @section Styles
 {
+    <link rel="stylesheet" href="~/css/addons.css" asp-append-version="true" />
     <style>
         .up,
         .down {
@@ -40,10 +45,24 @@
 
 <div class="row">
     <div class="col-xs-12">
-        <div class="wrapper wrapper-content">
+        <div class="wrapper wrapper-content rg-addon-page addon-ptt">
+            <div class="rg-addon-hero">
+                <div class="rg-addon-hero-main">
+                    <span class="rg-addon-icon rg-addon-icon-lg" aria-hidden="true"><i class="fa @pttAddon.Icon"></i></span>
+                    <div>
+                        <h2>@addonLocalizer[pttAddon.TitleKey]</h2>
+                        <p class="rg-addon-tagline">@addonLocalizer[pttAddon.TaglineKey]</p>
+                        <p class="rg-addon-hero-note">@addonLocalizer[pttAddon.NoteKey] <a href="@pttAddon.LearnMoreUrl" target="_blank" rel="noopener">@addonLocalizer["LearnMore"] <i class="fa fa-external-link" aria-hidden="true"></i></a></p>
+                    </div>
+                </div>
+                <div class="rg-addon-hero-price">
+                    <div class="rg-addon-price"><span class="rg-addon-currency">@Resgrid.Web.Areas.User.Models.Subscription.AddonCatalog.CurrencySymbol</span>@pttAddon.Price.ToString("N0")<span class="rg-addon-period">@addonLocalizer["PerMonth"]</span></div>
+                    <div class="rg-addon-unit">@addonLocalizer["PerUserPack"]</div>
+                </div>
+            </div>
             <div class="ibox float-e-margins">
                 <div class="ibox-content">
-                    <form class="form-horizontal" role="form" asp-controller="Subscription" asp-action="BuyAddon" asp-route-area="User" method="post" id="payment-form" name="payment-form">
+                    <form class="form-horizontal" role="form" asp-controller="Subscription" asp-action="@postAction" asp-route-area="User" method="post" id="payment-form" name="payment-form">
                         <div class="row">
                             <div class="col-sm-12">
                                 <strong>@localizer["BuyPTTAddonInfo1"]</strong>
@@ -75,7 +94,7 @@
                         <div class="row">
                             <div class="col-md-8 col-md-offset-1 col-md-pull-1">
                                 <p class="text-info">
-                                    <b><span id="packCount">x</span></b> Ten Concurrent Push to Talk User Packs for a total <b><span id="packUserTotal">x</span></b> users costing $<b><span id="packCost">10</span></b> a month
+                                    <b><span id="packCount">x</span></b> Ten Concurrent Push to Talk User Packs for a total <b><span id="packUserTotal">x</span></b> users costing @Resgrid.Web.Areas.User.Models.Subscription.AddonCatalog.CurrencySymbol<b><span id="packCost">10</span></b> a month
                                 </p>
                             </div>
                         </div>
@@ -135,7 +154,7 @@
             let packCount = Number($('input[name=Quantity]').val())
             $('#packCount').text(packCount)
             $('#packUserTotal').text(packCount * 10)
-            $('#packCost').text(packCount * 35)
+            $('#packCost').text(packCount * @pttAddon.Price.ToString(System.Globalization.CultureInfo.InvariantCulture))
         }
 	</script>
 }

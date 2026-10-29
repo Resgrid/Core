@@ -252,6 +252,12 @@ namespace Resgrid.Model.Services
 
 		Task<CreatePaddleCheckoutData> CreatePaddleCheckoutForSub(int departmentId, string paddleCustomerId, string paddleProductId, int planId, string email, string departmentName, int count, string discountCode = null);
 
+		/// <summary>
+		/// Applies a discount code a department entered after signup to its active subscription (Billing API resolves the Stripe
+		/// promotion code or Paddle discount). Never null: <see cref="DiscountCodeOutcomes.Unavailable"/> when billing is unreachable.
+		/// </summary>
+		Task<ApplyDiscountCodeData> ApplyDiscountCodeToDepartmentAsync(int departmentId, string code);
+
 		Task<CreatePaddleCheckoutData> CreatePaddleCheckoutForUpdate(int departmentId, string paddleCustomerId, string email, string departmentName);
 
 		Task<GetActivePaddleSubscriptionData> GetActivePaddleSubscriptionAsync(string paddleCustomerId);

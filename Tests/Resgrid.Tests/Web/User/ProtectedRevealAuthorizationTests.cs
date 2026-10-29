@@ -52,7 +52,11 @@ namespace Resgrid.Tests.Web.User
 			"CanUserViewUnitAsync",
 			"CanUserViewMessageAsync",
 			"CanReachCertificationsForAsync",
-			"GetAuthorizedCertificationAsync"
+			"GetAuthorizedCertificationAsync",
+
+			// PersonnelController: CanUserViewUserAsync and the View Group Users matrix, plus the hidden/disabled rule the
+			// person's profile page applies (GitHub #311).
+			"CanViewPersonPageAsync"
 		};
 
 		private static DirectoryInfo RepositoryRoot()

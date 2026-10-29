@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="AddonsHeader" xml:space="preserve"><value>Add-ons</value></data>
+  <data name="AddonsIntro" xml:space="preserve"><value>Spezialpakete, die Ihre Abteilung bei Bedarf hinzufügen kann. Jedes Add-on wird getrennt von Ihrem Resgrid-Tarif abgerechnet.</value></data>
+  <data name="AddonsPaidPlanRequired" xml:space="preserve"><value>Add-ons sind in kostenpflichtigen Tarifen verfügbar. Wählen Sie oben einen Tarif, um sie Ihrer Abteilung hinzuzufügen.</value></data>
+  <data name="LearnMore" xml:space="preserve"><value>Mehr erfahren</value></data>
+  <data name="BuyAddon" xml:space="preserve"><value>Add-on kaufen</value></data>
+  <data name="ManageAddon" xml:space="preserve"><value>Verwalten</value></data>
+  <data name="StatusActive" xml:space="preserve"><value>Aktiv</value></data>
+  <data name="StatusEnds" xml:space="preserve"><value>Endet am {0}</value></data>
+  <data name="PerMonth" xml:space="preserve"><value>/Monat</value></data>
+  <data name="PerYear" xml:space="preserve"><value>/Jahr</value></data>
+  <data name="PerDepartment" xml:space="preserve"><value>pro Abteilung</value></data>
+  <data name="PerUserPack" xml:space="preserve"><value>pro 10-Benutzer-Paket</value></data>
+  <data name="WhatsIncluded" xml:space="preserve"><value>Enthaltene Leistungen</value></data>
+  <data name="BillingStatusActive" xml:space="preserve"><value>Für Ihre Abteilung aktiv</value></data>
+  <data name="BillingStatusCancelled" xml:space="preserve"><value>Verlängerung gekündigt. Das Add-on bleibt bis {0} aktiv.</value></data>
+  <data name="BillingStatusNone" xml:space="preserve"><value>Ihre Abteilung hat dieses Add-on noch nicht.</value></data>
+  <data name="BillingPaidThrough" xml:space="preserve"><value>Bezahlt bis {0}</value></data>
+  <data name="BillingBuy" xml:space="preserve"><value>{0} kaufen</value></data>
+  <data name="BillingCancelRenewal" xml:space="preserve"><value>Verlängerung kündigen</value></data>
+  <data name="BillingCancelConfirm" xml:space="preserve"><value>Verlängerung kündigen? Das Add-on bleibt bis zum Ende des bereits bezahlten Zeitraums aktiv.</value></data>
+  <data name="BillingOwnerOnly" xml:space="preserve"><value>Nur das verwaltende Mitglied Ihrer Abteilung kann Add-ons kaufen oder kündigen.</value></data>
+  <data name="BillingCheckoutUnavailable" xml:space="preserve"><value>Der Online-Kauf dieses Add-ons ist vorübergehend nicht verfügbar. Bitte versuchen Sie es später erneut oder kontaktieren Sie uns.</value></data>
+  <data name="BillingUnavailable" xml:space="preserve"><value>Die Abrechnung ist derzeit nicht verfügbar. Bitte versuchen Sie es später erneut.</value></data>
+  <data name="BillingCheckoutFailed" xml:space="preserve"><value>Der Kauf konnte nicht gestartet werden. Bitte versuchen Sie es erneut oder kontaktieren Sie uns, wenn das Problem bestehen bleibt.</value></data>
+  <data name="BillingCheckoutComplete" xml:space="preserve"><value>Zahlung erhalten. Ihr Add-on wird aktiviert und diese Seite wird automatisch aktualisiert.</value></data>
+  <data name="BillingCheckoutCancelled" xml:space="preserve"><value>Der Kauf wurde abgebrochen. Es wurde nichts berechnet.</value></data>
+  <data name="BillingSecureCheckout" xml:space="preserve"><value>Sicherer Bezahlvorgang über {0}</value></data>
+  <data name="BillingBackToSubscription" xml:space="preserve"><value>Zurück zum Abonnement</value></data>
+  <data name="BillingLinks" xml:space="preserve"><value>Links</value></data>
+  <data name="BillingFeatureOff" xml:space="preserve"><value>Dieses Add-on ist für Ihre Abteilung ausgeschaltet. Sie können das Abonnement hier weiterhin verwalten oder kündigen.</value></data>
+  <data name="ContactUs" xml:space="preserve"><value>Kontakt</value></data>
+  <data name="BillingBilledMonthly" xml:space="preserve"><value>Monatliche Abrechnung, getrennt von Ihrem Resgrid-Tarif.</value></data>
+  <data name="BillingBilledYearly" xml:space="preserve"><value>Jährliche Abrechnung, getrennt von Ihrem Resgrid-Tarif.</value></data>
+  <data name="PttTitle" xml:space="preserve"><value>Push-To-Talk</value></data>
+  <data name="PttTagline" xml:space="preserve"><value>Sprechfunk für Ihr gesamtes Team</value></data>
+  <data name="PttFeature1" xml:space="preserve"><value>Zweiwege-Sprachkommunikation über IP</value></data>
+  <data name="PttFeature2" xml:space="preserve"><value>Bis zu 50 Kanäle</value></data>
+  <data name="PttFeature3" xml:space="preserve"><value>Funkgeräte mit weltweiter Reichweite</value></data>
+  <data name="PttFeature4" xml:space="preserve"><value>Sprache in Echtzeit per Push-to-Talk</value></data>
+  <data name="PttFeature5" xml:space="preserve"><value>Android, iOS und Web</value></data>
+  <data name="PttNote" xml:space="preserve"><value>Monatliche Abrechnung pro 10-Benutzer-Paket. Pakete jederzeit hinzufügen oder entfernen, ohne Ihr Hauptabonnement zu ändern.</value></data>
+  <data name="ReadinessProTitle" xml:space="preserve"><value>Readiness Pro</value></data>
+  <data name="ReadinessProTagline" xml:space="preserve"><value>Wartung und Arbeitsaufträge</value></data>
+  <data name="ReadinessProFeature1" xml:space="preserve"><value>Planung vorbeugender Wartung</value></data>
+  <data name="ReadinessProFeature2" xml:space="preserve"><value>Zuweisung und Verfolgung von Arbeitsaufträgen</value></data>
+  <data name="ReadinessProFeature3" xml:space="preserve"><value>Erfassung von Teile-, Arbeits- und Lieferantenkosten</value></data>
+  <data name="ReadinessProFeature4" xml:space="preserve"><value>Ausgabenfreigaben und Servicefristen</value></data>
+  <data name="ReadinessProFeature5" xml:space="preserve"><value>Einsatzbereitschaftsberichte und Workflow-Automatisierung</value></data>
+  <data name="ReadinessProNote" xml:space="preserve"><value>Monatliche Abrechnung pro Abteilung, auch bei einem Jahrestarif. Checklisten sind kostenlos und erfordern kein Readiness Pro.</value></data>
+  <data name="BusinessOpsTitle" xml:space="preserve"><value>Business Ops</value></data>
+  <data name="BusinessOpsTagline" xml:space="preserve"><value>Rechnungsstellung, Auftragnehmerabrechnung und Kostenerstattung</value></data>
+  <data name="BusinessOpsFeature1" xml:space="preserve"><value>Kundenrechnungen aus Einsätzen mit Preislisten, PDF und E-Mail</value></data>
+  <data name="BusinessOpsFeature2" xml:space="preserve"><value>Online-Zahlungen direkt auf Ihr eigenes Stripe-Konto, ohne Resgrid-Gebühr</value></data>
+  <data name="BusinessOpsFeature3" xml:space="preserve"><value>Vertragspreislisten, Angebote und tägliche Einsatzrechnungen</value></data>
+  <data name="BusinessOpsFeature4" xml:space="preserve"><value>Vorbereitung und Abgleich der Kostenerstattung nach Cal OES MARS</value></data>
+  <data name="BusinessOpsFeature5" xml:space="preserve"><value>Berichte zu Vollkosten für Personal und Ausrüstung, Marge und Lohndaten</value></data>
+  <data name="BusinessOpsNote" xml:space="preserve"><value>Monatliche Abrechnung pro Abteilung, auch bei einem Jahrestarif. Kontakte, Einsatzvorplanungen, Zertifizierungen und Einsatzzeiterfassung bleiben kostenlos.</value></data>
+  <data name="IncidentBackOfficeTitle" xml:space="preserve"><value>Incident Back Office</value></data>
+  <data name="IncidentBackOfficeTagline" xml:space="preserve"><value>Logistik, Finanzen und Lagezentrumskoordination für Großschadenslagen</value></data>
+  <data name="IncidentBackOfficeFeature1" xml:space="preserve"><value>Aktivierung von Lagen, ICS-Funktionen, Teamlisten und Check-in</value></data>
+  <data name="IncidentBackOfficeFeature2" xml:space="preserve"><value>Ressourcenanforderungen und -zuteilungen, Demobilisierung und Transport</value></data>
+  <data name="IncidentBackOfficeFeature3" xml:space="preserve"><value>Unterkunft und Betten, Verpflegung, Trinkwasser und Unterstützungsaufträge</value></data>
+  <data name="IncidentBackOfficeFeature4" xml:space="preserve"><value>Lieferanten, Beschaffung, Budgets, Zeit- und Schichtnachweise</value></data>
+  <data name="IncidentBackOfficeFeature5" xml:space="preserve"><value>Tageskosten, Kostenteilung, Erstattungsanträge und Fristen der Katastrophenhilfe</value></data>
+  <data name="IncidentBackOfficeFeature6" xml:space="preserve"><value>Zusammenstellung des Einsatzaktionsplans, Abschluss und Versiegelung sowie Koordinationstafeln für das Lagezentrum</value></data>
+  <data name="IncidentBackOfficeNote" xml:space="preserve"><value>Monatliche Abrechnung pro Abteilung, auch bei einem Jahrestarif. Unabhängig von Business Ops: Keines der beiden Add-ons enthält das andere.</value></data>
+  <data name="EnhancedAiTitle" xml:space="preserve"><value>Enhanced AI</value></data>
+  <data name="EnhancedAiTagline" xml:space="preserve"><value>Private KI-Antworten und -Entwürfe</value></data>
+  <data name="EnhancedAiFeature1" xml:space="preserve"><value>Admin Assist mit KI ohne Fragenbegrenzung</value></data>
+  <data name="EnhancedAiFeature2" xml:space="preserve"><value>Fragen an den Assistenten und zur Einsatzführungstafel</value></data>
+  <data name="EnhancedAiFeature3" xml:space="preserve"><value>Entwürfe für Berichtstexte und Lagebesprechungen zu Ihrer Prüfung</value></data>
+  <data name="EnhancedAiFeature4" xml:space="preserve"><value>Einsatzübersichten, Zusammenfassungen zum Aufholen und Wissensantworten mit Quellen</value></data>
+  <data name="EnhancedAiFeature5" xml:space="preserve"><value>Nur Open-Weight-Modelle; private Daten gehen nie an Cloud-KI</value></data>
+  <data name="EnhancedAiFeature6" xml:space="preserve"><value>Oder nutzen Sie Ihr eigenes Abonnement eines KI-Anbieters</value></data>
+  <data name="EnhancedAiNote" xml:space="preserve"><value>Monatliche Abrechnung pro Abteilung. Enthält ein monatliches KI-Budget ohne Mehrkosten. Jede Abteilung erhält auch ohne Add-on kostenlose Admin-Assist-Fragen.</value></data>
+  <data name="AdpTitle" xml:space="preserve"><value>Advanced Data Protection</value></data>
+  <data name="AdpTagline" xml:space="preserve"><value>Verschlüsselung und abgesicherter Zugriff für sensible Daten</value></data>
+  <data name="AdpFeature1" xml:space="preserve"><value>Verschlüsselung auf Feldebene für Gesundheits- und personenbezogene Daten</value></data>
+  <data name="AdpFeature2" xml:space="preserve"><value>Schlüssel pro Abteilung, außerhalb der Datenbank verwahrt</value></data>
+  <data name="AdpFeature3" xml:space="preserve"><value>Zusätzliche MFA zum Anzeigen geschützter Daten erforderlich</value></data>
+  <data name="AdpFeature4" xml:space="preserve"><value>Geschwärzte Workflows, Benachrichtigungen und BigBoard</value></data>
+  <data name="AdpFeature5" xml:space="preserve"><value>Voraussetzung für eine HIPAA-BAA mit Resgrid</value></data>
+  <data name="AdpNote" xml:space="preserve"><value>Jährliche Abrechnung, auch wenn Ihre Abteilung einen Monatstarif hat. Die Aktivierung erfolgt selbstständig, sobald das Add-on aktiv ist.</value></data>
+  <data name="CodesHeader" xml:space="preserve"><value>Rabatt- und Empfehlungscodes</value></data>
+  <data name="CodesIntro" xml:space="preserve"><value>Sie haben einen Rabattcode oder wurden von einem Resgrid-Partner empfohlen? Sie können ihn hier jederzeit eingeben, nicht nur bei der Registrierung.</value></data>
+  <data name="DiscountCodeLabel" xml:space="preserve"><value>Rabattcode</value></data>
+  <data name="DiscountCodePlaceholder" xml:space="preserve"><value>Rabattcode eingeben</value></data>
+  <data name="DiscountCodeApply" xml:space="preserve"><value>Anwenden</value></data>
+  <data name="DiscountCodeHelpActive" xml:space="preserve"><value>Wird sofort auf Ihr aktuelles Abonnement angewendet.</value></data>
+  <data name="DiscountCodeHelpCheckout" xml:space="preserve"><value>Wird angewendet, wenn Sie oben einen Tarif kaufen.</value></data>
+  <data name="DiscountPendingNotice" xml:space="preserve"><value>Der Rabattcode {0} wird beim Bezahlen angewendet.</value></data>
+  <data name="MessageDiscountApplied" xml:space="preserve"><value>Der Rabattcode wurde auf Ihr Abonnement angewendet. Er erscheint auf Ihrer nächsten Rechnung.</value></data>
+  <data name="MessageDiscountPending" xml:space="preserve"><value>Der Rabattcode ist gültig und wird angewendet, wenn Sie oben einen Tarif kaufen.</value></data>
+  <data name="MessageDiscountInvalid" xml:space="preserve"><value>Dieser Rabattcode ist ungültig, abgelaufen oder für Ihre Abteilung nicht verwendbar.</value></data>
+  <data name="MessageDiscountUnavailable" xml:space="preserve"><value>Rabattcodes können derzeit nicht geprüft werden. Bitte versuchen Sie es später erneut.</value></data>
+  <data name="AffiliateCodeLabel" xml:space="preserve"><value>Partner- (Empfehlungs-)Code</value></data>
+  <data name="AffiliateCodePlaceholder" xml:space="preserve"><value>Partnercode eingeben</value></data>
+  <data name="AffiliateCodeSave" xml:space="preserve"><value>Speichern</value></data>
+  <data name="AffiliateCodeSetHelp" xml:space="preserve"><value>Kann einmal hinzugefügt werden. Kontaktieren Sie uns, falls er geändert werden muss.</value></data>
+  <data name="AffiliateCodeCurrent" xml:space="preserve"><value>Empfohlen über Partnercode {0}</value></data>
+  <data name="MessageAffiliateApplied" xml:space="preserve"><value>Der Partnercode wurde für Ihre Abteilung gespeichert.</value></data>
+  <data name="MessageAffiliateInvalid" xml:space="preserve"><value>Dieser Partnercode ist ungültig oder nicht mehr aktiv.</value></data>
+  <data name="MessageAffiliateAlreadySet" xml:space="preserve"><value>Ihre Abteilung hat bereits einen Partnercode. Kontaktieren Sie uns, falls er geändert werden muss.</value></data>
+</root>

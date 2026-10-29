@@ -31,6 +31,7 @@ namespace Resgrid.Search
 				new StringField(RecordsIndexFields.State, p.State.ToString(), Field.Store.YES),
 				new StringField(RecordsIndexFields.IsLegacy, p.IsLegacy ? "1" : "0", Field.Store.YES),
 				new StringField(RecordsIndexFields.Generation, source.Generation ?? string.Empty, Field.Store.YES),
+				new StoredField(RecordsIndexFields.RowVersion, p.RowVersion),
 				new StringField(RecordsIndexFields.AuthorUserId, p.AuthorUserId ?? string.Empty, Field.Store.YES),
 				new StringField(RecordsIndexFields.OwnerUserId, p.OwnerUserId ?? string.Empty, Field.Store.YES),
 				new StringField(RecordsIndexFields.ReviewerUserId, p.ReviewerUserId ?? string.Empty, Field.Store.YES)

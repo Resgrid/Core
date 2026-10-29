@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="AddonsHeader" xml:space="preserve"><value>Πρόσθετα</value></data>
+  <data name="AddonsIntro" xml:space="preserve"><value>Εξειδικευμένα πακέτα που μπορεί να προσθέσει το τμήμα σας όταν τα χρειάζεται. Κάθε πρόσθετο χρεώνεται ξεχωριστά από το πρόγραμμα Resgrid σας.</value></data>
+  <data name="AddonsPaidPlanRequired" xml:space="preserve"><value>Τα πρόσθετα είναι διαθέσιμα στα επί πληρωμή προγράμματα. Επιλέξτε ένα πρόγραμμα παραπάνω για να τα προσθέσετε στο τμήμα σας.</value></data>
+  <data name="LearnMore" xml:space="preserve"><value>Μάθετε περισσότερα</value></data>
+  <data name="BuyAddon" xml:space="preserve"><value>Αγορά πρόσθετου</value></data>
+  <data name="ManageAddon" xml:space="preserve"><value>Διαχείριση</value></data>
+  <data name="StatusActive" xml:space="preserve"><value>Ενεργό</value></data>
+  <data name="StatusEnds" xml:space="preserve"><value>Λήγει {0}</value></data>
+  <data name="PerMonth" xml:space="preserve"><value>/μήνα</value></data>
+  <data name="PerYear" xml:space="preserve"><value>/έτος</value></data>
+  <data name="PerDepartment" xml:space="preserve"><value>ανά τμήμα</value></data>
+  <data name="PerUserPack" xml:space="preserve"><value>ανά πακέτο 10 χρηστών</value></data>
+  <data name="WhatsIncluded" xml:space="preserve"><value>Τι περιλαμβάνεται</value></data>
+  <data name="BillingStatusActive" xml:space="preserve"><value>Ενεργό για το τμήμα σας</value></data>
+  <data name="BillingStatusCancelled" xml:space="preserve"><value>Η ανανέωση ακυρώθηκε. Το πρόσθετο παραμένει ενεργό έως {0}.</value></data>
+  <data name="BillingStatusNone" xml:space="preserve"><value>Το τμήμα σας δεν έχει ακόμη αυτό το πρόσθετο.</value></data>
+  <data name="BillingPaidThrough" xml:space="preserve"><value>Πληρωμένο έως {0}</value></data>
+  <data name="BillingBuy" xml:space="preserve"><value>Αγορά {0}</value></data>
+  <data name="BillingCancelRenewal" xml:space="preserve"><value>Ακύρωση ανανέωσης</value></data>
+  <data name="BillingCancelConfirm" xml:space="preserve"><value>Ακύρωση ανανέωσης; Το πρόσθετο παραμένει ενεργό έως το τέλος της περιόδου που έχετε ήδη πληρώσει.</value></data>
+  <data name="BillingOwnerOnly" xml:space="preserve"><value>Μόνο το διαχειριστικό μέλος του τμήματός σας μπορεί να αγοράσει ή να ακυρώσει πρόσθετα.</value></data>
+  <data name="BillingCheckoutUnavailable" xml:space="preserve"><value>Η ηλεκτρονική αγορά αυτού του πρόσθετου δεν είναι προσωρινά διαθέσιμη. Δοκιμάστε ξανά αργότερα ή επικοινωνήστε μαζί μας.</value></data>
+  <data name="BillingUnavailable" xml:space="preserve"><value>Η χρέωση δεν είναι διαθέσιμη αυτή τη στιγμή. Δοκιμάστε ξανά αργότερα.</value></data>
+  <data name="BillingCheckoutFailed" xml:space="preserve"><value>Δεν ήταν δυνατή η έναρξη της αγοράς. Δοκιμάστε ξανά ή επικοινωνήστε μαζί μας αν συνεχίσει να συμβαίνει.</value></data>
+  <data name="BillingCheckoutComplete" xml:space="preserve"><value>Η πληρωμή ελήφθη. Το πρόσθετο ενεργοποιείται και η σελίδα θα ανανεωθεί αυτόματα.</value></data>
+  <data name="BillingCheckoutCancelled" xml:space="preserve"><value>Η αγορά ακυρώθηκε. Δεν έγινε καμία χρέωση.</value></data>
+  <data name="BillingSecureCheckout" xml:space="preserve"><value>Ασφαλής πληρωμή μέσω {0}</value></data>
+  <data name="BillingBackToSubscription" xml:space="preserve"><value>Επιστροφή στη συνδρομή</value></data>
+  <data name="BillingLinks" xml:space="preserve"><value>Σύνδεσμοι</value></data>
+  <data name="BillingFeatureOff" xml:space="preserve"><value>Αυτό το πρόσθετο είναι απενεργοποιημένο για το τμήμα σας. Μπορείτε ακόμη να διαχειριστείτε ή να ακυρώσετε τη συνδρομή του εδώ.</value></data>
+  <data name="ContactUs" xml:space="preserve"><value>Επικοινωνία</value></data>
+  <data name="BillingBilledMonthly" xml:space="preserve"><value>Χρεώνεται μηνιαία, ξεχωριστά από το πρόγραμμα Resgrid σας.</value></data>
+  <data name="BillingBilledYearly" xml:space="preserve"><value>Χρεώνεται ετήσια, ξεχωριστά από το πρόγραμμα Resgrid σας.</value></data>
+  <data name="PttTitle" xml:space="preserve"><value>Push-To-Talk</value></data>
+  <data name="PttTagline" xml:space="preserve"><value>Αμφίδρομη φωνή για όλη την ομάδα σας</value></data>
+  <data name="PttFeature1" xml:space="preserve"><value>Αμφίδρομες φωνητικές επικοινωνίες μέσω IP</value></data>
+  <data name="PttFeature2" xml:space="preserve"><value>Έως 50 κανάλια</value></data>
+  <data name="PttFeature3" xml:space="preserve"><value>Ασύρματοι με παγκόσμια εμβέλεια</value></data>
+  <data name="PttFeature4" xml:space="preserve"><value>Φωνή σε πραγματικό χρόνο, push-to-talk</value></data>
+  <data name="PttFeature5" xml:space="preserve"><value>Android, iOS και web</value></data>
+  <data name="PttNote" xml:space="preserve"><value>Χρεώνεται μηνιαία ανά πακέτο 10 χρηστών. Προσθέστε ή αφαιρέστε πακέτα οποτεδήποτε χωρίς αλλαγή στην κύρια συνδρομή σας.</value></data>
+  <data name="ReadinessProTitle" xml:space="preserve"><value>Readiness Pro</value></data>
+  <data name="ReadinessProTagline" xml:space="preserve"><value>Συντήρηση και εντολές εργασίας</value></data>
+  <data name="ReadinessProFeature1" xml:space="preserve"><value>Προγραμματισμός προληπτικής συντήρησης</value></data>
+  <data name="ReadinessProFeature2" xml:space="preserve"><value>Ανάθεση και παρακολούθηση εντολών εργασίας</value></data>
+  <data name="ReadinessProFeature3" xml:space="preserve"><value>Παρακολούθηση κόστους ανταλλακτικών, εργασίας και προμηθευτών</value></data>
+  <data name="ReadinessProFeature4" xml:space="preserve"><value>Εγκρίσεις δαπανών και προθεσμίες σέρβις</value></data>
+  <data name="ReadinessProFeature5" xml:space="preserve"><value>Αναφορές ετοιμότητας και αυτοματοποίηση ροών εργασίας</value></data>
+  <data name="ReadinessProNote" xml:space="preserve"><value>Χρεώνεται μηνιαία ανά τμήμα, ακόμη και σε ετήσιο πρόγραμμα. Οι λίστες ελέγχου είναι δωρεάν και δεν απαιτούν Readiness Pro.</value></data>
+  <data name="BusinessOpsTitle" xml:space="preserve"><value>Business Ops</value></data>
+  <data name="BusinessOpsTagline" xml:space="preserve"><value>Τιμολόγηση, χρέωση εργολάβων και ανάκτηση κόστους</value></data>
+  <data name="BusinessOpsFeature1" xml:space="preserve"><value>Τιμολόγηση πελατών από συμβάντα με τιμοκαταλόγους, PDF και e-mail</value></data>
+  <data name="BusinessOpsFeature2" xml:space="preserve"><value>Ηλεκτρονικές πληρωμές απευθείας στον δικό σας λογαριασμό Stripe, χωρίς χρέωση Resgrid</value></data>
+  <data name="BusinessOpsFeature3" xml:space="preserve"><value>Τιμολόγια συμβάσεων, προσφορές και ημερήσια τιμολόγια αποστολών</value></data>
+  <data name="BusinessOpsFeature4" xml:space="preserve"><value>Προετοιμασία και συμφωνία ανάκτησης κόστους Cal OES MARS</value></data>
+  <data name="BusinessOpsFeature5" xml:space="preserve"><value>Αναφορές πλήρους κόστους εργασίας και εξοπλισμού, περιθωρίου και μισθολογικών δεδομένων</value></data>
+  <data name="BusinessOpsNote" xml:space="preserve"><value>Χρεώνεται μηνιαία ανά τμήμα, ακόμη και σε ετήσιο πρόγραμμα. Οι επαφές, τα προσχέδια, οι πιστοποιήσεις και η καταγραφή χρόνου αποστολών παραμένουν δωρεάν.</value></data>
+  <data name="IncidentBackOfficeTitle" xml:space="preserve"><value>Incident Back Office</value></data>
+  <data name="IncidentBackOfficeTagline" xml:space="preserve"><value>Εφοδιαστική, οικονομικά και συντονισμός ΚΕΠΙΧ για μεγάλα συμβάντα</value></data>
+  <data name="IncidentBackOfficeFeature1" xml:space="preserve"><value>Ενεργοποίηση συμβάντος, θέσεις ICS, κατάλογοι ομάδων και καταγραφή άφιξης</value></data>
+  <data name="IncidentBackOfficeFeature2" xml:space="preserve"><value>Αιτήματα και καλύψεις πόρων, αποστράτευση και μεταφορά</value></data>
+  <data name="IncidentBackOfficeFeature3" xml:space="preserve"><value>Διαμονή και κλίνες, σίτιση, πόσιμο νερό και αιτήματα υπηρεσιών υποστήριξης</value></data>
+  <data name="IncidentBackOfficeFeature4" xml:space="preserve"><value>Προμηθευτές, προμήθειες, προϋπολογισμοί, χρόνος και δελτία βαρδιών</value></data>
+  <data name="IncidentBackOfficeFeature5" xml:space="preserve"><value>Ημερήσιο κόστος, επιμερισμός κόστους, αξιώσεις και προθεσμίες ανάκαμψης από καταστροφές</value></data>
+  <data name="IncidentBackOfficeFeature6" xml:space="preserve"><value>Σύνταξη IAP, κλείσιμο και σφράγιση, και πίνακες συντονισμού ΚΕΠΙΧ</value></data>
+  <data name="IncidentBackOfficeNote" xml:space="preserve"><value>Χρεώνεται μηνιαία ανά τμήμα, ακόμη και σε ετήσιο πρόγραμμα. Ξεχωριστό από το Business Ops: κανένα πρόσθετο δεν περιλαμβάνει το άλλο.</value></data>
+  <data name="EnhancedAiTitle" xml:space="preserve"><value>Enhanced AI</value></data>
+  <data name="EnhancedAiTagline" xml:space="preserve"><value>Ιδιωτικές απαντήσεις και προσχέδια με τεχνητή νοημοσύνη</value></data>
+  <data name="EnhancedAiFeature1" xml:space="preserve"><value>Admin Assist με τεχνητή νοημοσύνη χωρίς όριο ερωτήσεων</value></data>
+  <data name="EnhancedAiFeature2" xml:space="preserve"><value>Ερωτήσεις στον βοηθό και στον πίνακα διοίκησης συμβάντος</value></data>
+  <data name="EnhancedAiFeature3" xml:space="preserve"><value>Προσχέδια αφηγήσεων αναφορών και ενημερώσεων για έλεγχο από εσάς</value></data>
+  <data name="EnhancedAiFeature4" xml:space="preserve"><value>Συνόψεις συμβάντων, περιλήψεις ενημέρωσης και απαντήσεις γνώσης με παραπομπές</value></data>
+  <data name="EnhancedAiFeature5" xml:space="preserve"><value>Μόνο μοντέλα ανοιχτών βαρών· τα ιδιωτικά δεδομένα δεν αποστέλλονται ποτέ σε AI νέφους</value></data>
+  <data name="EnhancedAiFeature6" xml:space="preserve"><value>Ή χρησιμοποιήστε τη δική σας συνδρομή σε πάροχο AI</value></data>
+  <data name="EnhancedAiNote" xml:space="preserve"><value>Χρεώνεται μηνιαία ανά τμήμα. Περιλαμβάνει μηνιαίο προϋπολογισμό AI χωρίς επιπλέον χρεώσεις. Κάθε τμήμα έχει δωρεάν ερωτήσεις Admin Assist και χωρίς αυτό.</value></data>
+  <data name="AdpTitle" xml:space="preserve"><value>Advanced Data Protection</value></data>
+  <data name="AdpTagline" xml:space="preserve"><value>Κρυπτογράφηση και ενισχυμένη πρόσβαση για ευαίσθητα δεδομένα</value></data>
+  <data name="AdpFeature1" xml:space="preserve"><value>Κρυπτογράφηση σε επίπεδο πεδίου για δεδομένα υγείας και προσωπικά δεδομένα</value></data>
+  <data name="AdpFeature2" xml:space="preserve"><value>Κλειδιά ανά τμήμα που φυλάσσονται εκτός της βάσης δεδομένων</value></data>
+  <data name="AdpFeature3" xml:space="preserve"><value>Απαιτείται επιπλέον MFA για την εμφάνιση προστατευμένων δεδομένων</value></data>
+  <data name="AdpFeature4" xml:space="preserve"><value>Αποκρυμμένα δεδομένα σε ροές εργασίας, ειδοποιήσεις και BigBoard</value></data>
+  <data name="AdpFeature5" xml:space="preserve"><value>Απαιτείται για σύμβαση HIPAA BAA με τη Resgrid</value></data>
+  <data name="AdpNote" xml:space="preserve"><value>Χρεώνεται ετήσια, ακόμη κι αν το τμήμα σας έχει μηνιαίο πρόγραμμα. Η ένταξη γίνεται αυτόνομα μόλις ενεργοποιηθεί το πρόσθετο.</value></data>
+  <data name="CodesHeader" xml:space="preserve"><value>Κωδικοί έκπτωσης και παραπομπής</value></data>
+  <data name="CodesIntro" xml:space="preserve"><value>Έχετε κωδικό έκπτωσης ή σας παρέπεμψε συνεργάτης της Resgrid; Μπορείτε να τον εισαγάγετε εδώ οποιαδήποτε στιγμή, όχι μόνο κατά την εγγραφή.</value></data>
+  <data name="DiscountCodeLabel" xml:space="preserve"><value>Κωδικός έκπτωσης</value></data>
+  <data name="DiscountCodePlaceholder" xml:space="preserve"><value>Εισαγάγετε κωδικό έκπτωσης</value></data>
+  <data name="DiscountCodeApply" xml:space="preserve"><value>Εφαρμογή</value></data>
+  <data name="DiscountCodeHelpActive" xml:space="preserve"><value>Εφαρμόζεται αμέσως στην τρέχουσα συνδρομή σας.</value></data>
+  <data name="DiscountCodeHelpCheckout" xml:space="preserve"><value>Εφαρμόζεται όταν αγοράσετε ένα πρόγραμμα παραπάνω.</value></data>
+  <data name="DiscountPendingNotice" xml:space="preserve"><value>Ο κωδικός έκπτωσης {0} θα εφαρμοστεί κατά την πληρωμή.</value></data>
+  <data name="MessageDiscountApplied" xml:space="preserve"><value>Ο κωδικός έκπτωσης εφαρμόστηκε στη συνδρομή σας. Θα εμφανιστεί στο επόμενο τιμολόγιό σας.</value></data>
+  <data name="MessageDiscountPending" xml:space="preserve"><value>Ο κωδικός έκπτωσης είναι έγκυρος και θα εφαρμοστεί όταν αγοράσετε ένα πρόγραμμα παραπάνω.</value></data>
+  <data name="MessageDiscountInvalid" xml:space="preserve"><value>Αυτός ο κωδικός έκπτωσης δεν είναι έγκυρος, έχει λήξει ή δεν μπορεί να χρησιμοποιηθεί από το τμήμα σας.</value></data>
+  <data name="MessageDiscountUnavailable" xml:space="preserve"><value>Οι κωδικοί έκπτωσης δεν μπορούν να ελεγχθούν αυτή τη στιγμή. Δοκιμάστε ξανά αργότερα.</value></data>
+  <data name="AffiliateCodeLabel" xml:space="preserve"><value>Κωδικός συνεργάτη (παραπομπής)</value></data>
+  <data name="AffiliateCodePlaceholder" xml:space="preserve"><value>Εισαγάγετε κωδικό συνεργάτη</value></data>
+  <data name="AffiliateCodeSave" xml:space="preserve"><value>Αποθήκευση</value></data>
+  <data name="AffiliateCodeSetHelp" xml:space="preserve"><value>Μπορεί να προστεθεί μία φορά. Επικοινωνήστε μαζί μας αν χρειαστεί να αλλάξει.</value></data>
+  <data name="AffiliateCodeCurrent" xml:space="preserve"><value>Παραπομπή με κωδικό συνεργάτη {0}</value></data>
+  <data name="MessageAffiliateApplied" xml:space="preserve"><value>Ο κωδικός συνεργάτη αποθηκεύτηκε για το τμήμα σας.</value></data>
+  <data name="MessageAffiliateInvalid" xml:space="preserve"><value>Αυτός ο κωδικός συνεργάτη δεν είναι έγκυρος ή δεν είναι πλέον ενεργός.</value></data>
+  <data name="MessageAffiliateAlreadySet" xml:space="preserve"><value>Το τμήμα σας έχει ήδη κωδικό συνεργάτη. Επικοινωνήστε μαζί μας αν χρειάζεται αλλαγή.</value></data>
+</root>

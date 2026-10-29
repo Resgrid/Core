@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -25,14 +26,16 @@ namespace Resgrid.Tests.Web.User
 		private const int DepartmentId = 10;
 		private const string UserId = "subscription-admin";
 
+		private Mock<ISubscriptionsService> _subscriptionsService;
+		private Mock<IFeatureToggleService> _flags;
+
 		[TearDown]
 		public void TearDown()
 		{
 			Resgrid.Web.Helpers.ClaimsAuthorizationHelper._httpContextAccessor = null;
 		}
 
-		[Test]
-		public async Task Index_TreatsSerializedMaxDateAsNeverExpiring()
+		private SubscriptionController BuildController()
 		{
 			var department = new Department
 			{
@@ -52,11 +55,11 @@ namespace Resgrid.Tests.Web.User
 			departmentsService.Setup(x => x.GetAllUsersForDepartmentUnlimitedMinusDisabledAsync(DepartmentId, false))
 				.ReturnsAsync(new List<IdentityUser>());
 
-			var subscriptionsService = new Mock<ISubscriptionsService>();
-			subscriptionsService.Setup(x => x.GetCurrentPlanForDepartmentAsync(DepartmentId, false))
+			_subscriptionsService = new Mock<ISubscriptionsService>();
+			_subscriptionsService.Setup(x => x.GetCurrentPlanForDepartmentAsync(DepartmentId, false))
 				.ReturnsAsync(new Plan { PlanId = 1, Name = "Forever Free", Frequency = (int)PlanFrequency.Never });
-			subscriptionsService.Setup(x => x.GetCurrentPaymentForDepartmentAsync(DepartmentId, true)).ReturnsAsync(payment);
-			subscriptionsService.Setup(x => x.GetAllPaymentsForDepartmentAsync(DepartmentId))
+			_subscriptionsService.Setup(x => x.GetCurrentPaymentForDepartmentAsync(DepartmentId, true)).ReturnsAsync(payment);
+			_subscriptionsService.Setup(x => x.GetAllPaymentsForDepartmentAsync(DepartmentId))
 				.ReturnsAsync(new List<Payment> { payment });
 
 			var authorizationService = new Mock<Resgrid.Model.Services.IAuthorizationService>();
@@ -69,6 +72,8 @@ namespace Resgrid.Tests.Web.User
 			departmentSettingsService.Setup(x => x.GetPaddleCustomerIdForDepartmentAsync(DepartmentId))
 				.ReturnsAsync("paddle-customer");
 
+			_flags = new Mock<IFeatureToggleService>();
+
 			var httpContext = new DefaultHttpContext
 			{
 				User = new ClaimsPrincipal(new ClaimsIdentity(new[]
@@ -80,12 +85,12 @@ namespace Resgrid.Tests.Web.User
 			Resgrid.Web.Helpers.ClaimsAuthorizationHelper._httpContextAccessor =
 				new HttpContextAccessor { HttpContext = httpContext };
 
-			var controller = new SubscriptionController(
+			return new SubscriptionController(
 				departmentsService.Object,
 				Mock.Of<IUsersService>(),
 				Mock.Of<IDepartmentGroupsService>(),
 				authorizationService.Object,
-				subscriptionsService.Object,
+				_subscriptionsService.Object,
 				Mock.Of<IPersonnelRolesService>(),
 				unitsService.Object,
 				departmentSettingsService.Object,
@@ -94,16 +99,79 @@ namespace Resgrid.Tests.Web.User
 				Mock.Of<IUserProfileService>(),
 				Options.Create(new AppOptions()),
 				Mock.Of<IEventAggregator>(),
-				Mock.Of<IDepartmentDataProtectionService>())
+				Mock.Of<IDepartmentDataProtectionService>(),
+				_flags.Object,
+				Mock.Of<IAdpBillingService>())
 			{
-				ControllerContext = new ControllerContext { HttpContext = httpContext }
+				ControllerContext = new ControllerContext { HttpContext = httpContext },
+				TempData = new Microsoft.AspNetCore.Mvc.ViewFeatures.TempDataDictionary(httpContext, Mock.Of<Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataProvider>())
 			};
+		}
 
-			var result = await controller.Index();
+		private void Toggle(string key, bool enabled) =>
+			_flags.Setup(x => x.EvaluateFreshAsync(key, DepartmentId)).ReturnsAsync(new FeatureFlagEvaluation { Key = key, IsEnabled = enabled });
 
-			var model = result.Should().BeOfType<ViewResult>().Subject.Model
-				.Should().BeOfType<SubscriptionView>().Subject;
+		private static async Task<SubscriptionView> IndexModelAsync(SubscriptionController controller) =>
+			(await controller.Index()).Should().BeOfType<ViewResult>().Subject.Model.Should().BeOfType<SubscriptionView>().Subject;
+
+		[Test]
+		public async Task Index_TreatsSerializedMaxDateAsNeverExpiring()
+		{
+			var model = await IndexModelAsync(BuildController());
+
 			model.Expires.Should().Be("Never");
+		}
+
+		[Test]
+		public async Task Index_offers_an_addon_only_while_its_toggle_is_on()
+		{
+			var controller = BuildController();
+			_subscriptionsService.Setup(x => x.HasActiveSubForDepartmentFromStripeAsync(DepartmentId)).ReturnsAsync(true);
+			Toggle(FeatureFlagKeys.AiEnhanced, true);
+			Toggle(FeatureFlagKeys.BusinessOperations, false);
+
+			var model = await IndexModelAsync(controller);
+			var visible = model.Addons.Where(a => a.IsVisible(model.HasActiveSubscription)).Select(a => a.Definition.Type).ToList();
+
+			visible.Should().Contain(PlanAddonTypes.EnhancedAi);
+			visible.Should().Contain(PlanAddonTypes.PTT, "Push-To-Talk has no toggle and is always offered on a paid plan");
+			visible.Should().NotContain(PlanAddonTypes.BusinessOperations, "its toggle is off and the department does not hold it");
+			visible.Should().NotContain(PlanAddonTypes.ReadinessPro, "an unseeded or unevaluated toggle counts as off");
+		}
+
+		[Test]
+		public async Task Index_keeps_a_held_addon_listed_after_its_toggle_goes_off()
+		{
+			var controller = BuildController();
+			_subscriptionsService.Setup(x => x.HasActiveSubForDepartmentFromStripeAsync(DepartmentId)).ReturnsAsync(true);
+			Toggle(FeatureFlagKeys.IncidentBackOffice, false);
+			_subscriptionsService.Setup(x => x.GetAllAddonPlansAsync()).ReturnsAsync(new List<PlanAddon>
+			{
+				new PlanAddon { PlanAddonId = "ibo", AddonType = (int)PlanAddonTypes.IncidentBackOffice }
+			});
+			var endsOn = DateTime.UtcNow.AddDays(9);
+			_subscriptionsService.Setup(x => x.GetCurrentPaymentAddonsForDepartmentAsync(DepartmentId, It.Is<List<string>>(ids => ids.Contains("ibo"))))
+				.ReturnsAsync(new List<PaymentAddon> { new PaymentAddon { PlanAddonId = "ibo", IsCancelled = true, EndingOn = endsOn } });
+
+			var model = await IndexModelAsync(controller);
+			var ibo = model.Addons.Single(a => a.Definition.Type == PlanAddonTypes.IncidentBackOffice);
+
+			ibo.Offered.Should().BeFalse();
+			ibo.IsVisible(model.HasActiveSubscription).Should().BeTrue("a held add-on must stay manageable so it can be cancelled");
+			ibo.Cancelled.Should().BeTrue();
+			ibo.EndsOn.Should().Be(endsOn);
+		}
+
+		[Test]
+		public async Task Index_shows_no_addon_to_buy_without_a_paid_plan()
+		{
+			var controller = BuildController();
+			_subscriptionsService.Setup(x => x.HasActiveSubForDepartmentFromStripeAsync(DepartmentId)).ReturnsAsync(false);
+			Toggle(FeatureFlagKeys.AiEnhanced, true);
+
+			var model = await IndexModelAsync(controller);
+
+			model.Addons.Where(a => a.IsVisible(model.HasActiveSubscription)).Should().BeEmpty();
 		}
 	}
 }

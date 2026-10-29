@@ -1,0 +1,132 @@
+/* Add-on cards (Subscription page) and the add-on billing pages. Each add-on sets its accent through its .addon-{key} class. */
+
+.addon-ptt { --addon-accent: #f8ac59; --addon-tint: #fef4e8; }
+.addon-readinesspro { --addon-accent: #1c84c6; --addon-tint: #e6f1f9; }
+.addon-businessops { --addon-accent: #23c6c8; --addon-tint: #e6f8f8; }
+.addon-incidentbackoffice { --addon-accent: #ed5565; --addon-tint: #fdecee; }
+.addon-enhancedai { --addon-accent: #7b5cc4; --addon-tint: #f1edf9; }
+.addon-adp { --addon-accent: #1ab394; --addon-tint: #e6f6f3; }
+
+/* Section header */
+.rg-addons { margin-top: 10px; }
+.rg-addons-header { margin-bottom: 18px; }
+.rg-addons-header h3 { margin: 0 0 4px; font-size: 22px; font-weight: 600; color: #2f4050; }
+.rg-addons-header p { margin: 0; color: #676a6c; max-width: 760px; }
+
+/* Card grid: three across on wide screens, two on tablets, one on phones */
+.rg-addon-grid { display: flex; flex-wrap: wrap; margin: 0 -10px; }
+.rg-addon-col { width: 33.3333%; padding: 0 10px 20px; display: flex; }
+@media (max-width: 1199px) { .rg-addon-col { width: 50%; } }
+@media (max-width: 767px) { .rg-addon-col { width: 100%; } }
+
+.rg-addon-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background: #fff;
+    border: 1px solid #e7eaec;
+    border-top: 4px solid var(--addon-accent, #1ab394);
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+.rg-addon-card:hover { box-shadow: 0 8px 22px rgba(0, 0, 0, 0.09); transform: translateY(-2px); }
+.rg-addon-card.is-owned { border-color: var(--addon-accent, #1ab394); }
+
+.rg-addon-card-head { display: flex; align-items: flex-start; gap: 12px; padding: 18px 20px 0; }
+.rg-addon-card-head h4 { margin: 2px 0 2px; font-size: 17px; font-weight: 600; color: #2f4050; }
+.rg-addon-tagline { margin: 0; color: #676a6c; font-size: 13px; line-height: 1.35; }
+
+.rg-addon-icon {
+    flex: 0 0 44px;
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: var(--addon-accent, #1ab394);
+    background: var(--addon-tint, #e6f6f3);
+}
+.rg-addon-icon-lg { flex-basis: 64px; width: 64px; height: 64px; border-radius: 14px; font-size: 30px; }
+
+.rg-addon-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 3px 9px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: #fff;
+    background: #1ab394;
+}
+.rg-addon-badge.is-ending { background: #f8ac59; }
+.rg-addon-card.has-badge .rg-addon-card-head { padding-right: 92px; }
+
+.rg-addon-price-row { padding: 14px 20px 4px; }
+.rg-addon-price { font-size: 34px; font-weight: 700; line-height: 1.1; color: #2f4050; white-space: nowrap; }
+.rg-addon-currency { font-size: 20px; font-weight: 600; vertical-align: top; margin-right: 1px; position: relative; top: 4px; }
+.rg-addon-period { font-size: 15px; font-weight: 400; color: #676a6c; margin-left: 2px; }
+.rg-addon-unit { font-size: 12px; color: #8a8f94; }
+
+.rg-addon-features { list-style: none; margin: 0; padding: 0; }
+.rg-addon-features li { position: relative; padding: 4px 0 4px 24px; color: #4a4f54; line-height: 1.4; }
+.rg-addon-features li .fa { position: absolute; left: 0; top: 7px; color: var(--addon-accent, #1ab394); }
+.rg-addon-card .rg-addon-features { padding: 10px 20px 0; }
+@media (min-width: 992px) { .rg-addon-features-columns { columns: 2; column-gap: 28px; } .rg-addon-features-columns li { break-inside: avoid; } }
+
+.rg-addon-card-note { margin: 12px 20px 0; padding-top: 10px; border-top: 1px dashed #e7eaec; color: #8a8f94; font-size: 12px; line-height: 1.45; }
+
+.rg-addon-actions { margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 16px 20px 18px; }
+.rg-addon-actions .btn-addon { background: var(--addon-accent, #1ab394); border-color: var(--addon-accent, #1ab394); color: #fff; font-weight: 600; }
+.rg-addon-actions .btn-addon:hover, .rg-addon-actions .btn-addon:focus { color: #fff; filter: brightness(0.93); }
+.rg-addon-actions .btn-addon-outline { background: #fff; border-color: var(--addon-accent, #1ab394); color: var(--addon-accent, #1ab394); font-weight: 600; }
+.rg-addon-actions .btn-addon-outline:hover, .rg-addon-actions .btn-addon-outline:focus { background: var(--addon-tint, #e6f6f3); color: var(--addon-accent, #1ab394); }
+.rg-addon-learn { color: #676a6c; font-size: 13px; white-space: nowrap; }
+.rg-addon-learn:hover { color: var(--addon-accent, #1ab394); }
+
+.rg-addons-paid-note { margin-top: 4px; }
+
+/* Billing page */
+.rg-addon-hero {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 20px;
+    padding: 24px 28px;
+    background: linear-gradient(135deg, var(--addon-tint, #e6f6f3) 0%, #fff 70%);
+    border: 1px solid #e7eaec;
+    border-left: 5px solid var(--addon-accent, #1ab394);
+    border-radius: 8px;
+}
+.rg-addon-hero-main { display: flex; align-items: flex-start; gap: 18px; flex: 1 1 420px; }
+.rg-addon-hero-main h2 { margin: 0 0 4px; font-size: 26px; font-weight: 600; color: #2f4050; }
+.rg-addon-hero-main .rg-addon-tagline { font-size: 15px; }
+.rg-addon-hero-note { margin: 10px 0 0; color: #676a6c; max-width: 640px; }
+.rg-addon-hero-price { flex: 0 0 auto; text-align: right; }
+.rg-addon-hero-price .rg-addon-price { font-size: 42px; }
+@media (max-width: 767px) { .rg-addon-hero-price { text-align: left; } }
+
+.rg-addon-note { margin: 12px 0 0; }
+.rg-addon-status .ibox-content { border-top: 3px solid var(--addon-accent, #1ab394); }
+.rg-addon-state { font-size: 15px; font-weight: 600; color: #4a4f54; }
+.rg-addon-state-active { color: #1ab394; }
+.rg-addon-buy { background: var(--addon-accent, #1ab394); border-color: var(--addon-accent, #1ab394); font-weight: 600; }
+.rg-addon-buy:hover, .rg-addon-buy:focus { background: var(--addon-accent, #1ab394); border-color: var(--addon-accent, #1ab394); filter: brightness(0.93); }
+.rg-addon-secure { margin: 8px 0 0; font-size: 12px; }
+.rg-addon-links { list-style: none; margin: 0; padding: 0; }
+.rg-addon-links li { padding: 4px 0; }
+
+/* Discount and affiliate code panel (Subscription page) */
+.rg-codes { margin-top: 10px; }
+.rg-code-form label, .rg-codes > .row label { font-weight: 600; color: #2f4050; }
+.rg-code-form .help-block { margin-bottom: 0; }
+
+/* The page footer is fixed; keep the last block of a page clear of it */
+.rg-addon-page-end { height: 50px; }

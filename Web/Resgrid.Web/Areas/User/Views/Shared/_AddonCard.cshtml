@@ -1,0 +1,81 @@
+@model Resgrid.Web.Areas.User.Models.Subscription.AddonAvailability
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Subscription
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Addons.Addons> addonLocalizer
+@*
+    One Subscription page add-on card. Copy and prices come from AddonCatalog and the Addons resource, so the card, the add-on's
+    billing page and resgrid.com/pricing say the same thing.
+*@
+@{
+    var addon = Model.Definition;
+    var isPaddleDepartment = ViewData["IsPaddleDepartment"] as bool? == true;
+    string actionUrl;
+    switch (addon.Type)
+    {
+        case PlanAddonTypes.PTT:
+            actionUrl = Url.Action(isPaddleDepartment ? "ManagePaddlePTTAddon" : "ManagePTTAddon", "Subscription", new { Area = "User" });
+            break;
+        case PlanAddonTypes.ADP:
+            actionUrl = Url.Action(Model.Owned ? "ManageAdpAddon" : "BuyAdpAddon", "Subscription", new { Area = "User" });
+            break;
+        case PlanAddonTypes.ReadinessPro:
+            actionUrl = Url.Action("Index", "ReadinessProBilling", new { Area = "User" });
+            break;
+        case PlanAddonTypes.BusinessOperations:
+            actionUrl = Url.Action("Index", "BusinessOperationsBilling", new { Area = "User" });
+            break;
+        case PlanAddonTypes.IncidentBackOffice:
+            actionUrl = Url.Action("Index", "IncidentBackOfficeBilling", new { Area = "User" });
+            break;
+        default:
+            actionUrl = Url.Action("Index", "AiBilling", new { Area = "User" });
+            break;
+    }
+    var period = addon.Period == AddonBillingPeriod.Yearly ? addonLocalizer["PerYear"] : addonLocalizer["PerMonth"];
+    var hasBadge = Model.Owned;
+    var title = addonLocalizer[addon.TitleKey];
+}
+<div class="rg-addon-col">
+    <div class="rg-addon-card addon-@addon.Key.ToLowerInvariant()@(Model.Owned ? " is-owned" : "")@(hasBadge ? " has-badge" : "")" data-addon="@addon.Key">
+        @if (Model.Owned)
+        {
+            if (Model.Cancelled && Model.EndsOn.HasValue)
+            {
+                <span class="rg-addon-badge is-ending">@string.Format(addonLocalizer["StatusEnds"].Value, Model.EndsOn.Value.ToString("d"))</span>
+            }
+            else
+            {
+                <span class="rg-addon-badge"><i class="fa fa-check" aria-hidden="true"></i> @addonLocalizer["StatusActive"]</span>
+            }
+        }
+        <div class="rg-addon-card-head">
+            <span class="rg-addon-icon" aria-hidden="true"><i class="fa @addon.Icon"></i></span>
+            <div>
+                <h4>@title</h4>
+                <p class="rg-addon-tagline">@addonLocalizer[addon.TaglineKey]</p>
+            </div>
+        </div>
+        <div class="rg-addon-price-row">
+            <div class="rg-addon-price"><span class="rg-addon-currency">@AddonCatalog.CurrencySymbol</span>@addon.Price.ToString("N0")<span class="rg-addon-period">@period</span></div>
+            <div class="rg-addon-unit">@(addon.PerUserPack ? addonLocalizer["PerUserPack"] : addonLocalizer["PerDepartment"])</div>
+        </div>
+        <ul class="rg-addon-features">
+            @foreach (var key in addon.FeatureKeys)
+            {
+                <li><i class="fa fa-check" aria-hidden="true"></i> @addonLocalizer[key]</li>
+            }
+        </ul>
+        <p class="rg-addon-card-note">@addonLocalizer[addon.NoteKey]</p>
+        <div class="rg-addon-actions">
+            @if (Model.Owned)
+            {
+                <a href="@actionUrl" class="btn btn-addon-outline">@addonLocalizer["ManageAddon"]</a>
+            }
+            else
+            {
+                <a href="@actionUrl" class="btn btn-addon">@addonLocalizer["BuyAddon"]</a>
+            }
+            <a href="@addon.LearnMoreUrl" class="rg-addon-learn" target="_blank" rel="noopener" aria-label="@addonLocalizer["LearnMore"]: @title">@addonLocalizer["LearnMore"] <i class="fa fa-external-link" aria-hidden="true"></i></a>
+        </div>
+    </div>
+</div>

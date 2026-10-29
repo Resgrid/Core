@@ -183,24 +183,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (!await _authorizationService.CanUserViewPersonViaMatrixAsync(user.UserId, UserId, DepartmentId))
 					continue;
 
+				var member = departmentMembers.FirstOrDefault(x => x.UserId == user.UserId);
+				var group = await _departmentGroupsService.GetGroupForUserAsync(user.UserId, DepartmentId);
+
+				// Hidden and disabled people: department admins, and the admins of their group, only (GitHub #311).
+				if (!PersonnelListVisibilityHelper.CanViewMember(member, department, group, UserId))
+					continue;
+
 				var person = new PersonnelForListJson();
 				person.UserId = user.UserId.ToString();
 
-				var member = departmentMembers.FirstOrDefault(x => x.UserId == user.UserId);
 				var externalState = await _externalIdentityLinkService.GetSsoManagementStateAsync(user.UserId);
 				person.IsSsoManaged = externalState.IsSsoManaged ||
 					(member != null && (!string.IsNullOrWhiteSpace(member.ExternalSsoId) || member.SsoLinkedOn.HasValue));
-
-				// Skip hidden/disabled users unless current user is dept admin or group admin of their group
-				if (member != null && ((member.IsDisabled.HasValue && member.IsDisabled.Value) || (member.IsHidden.HasValue && member.IsHidden.Value)))
-				{
-					if (!department.IsUserAnAdmin(UserId))
-					{
-						var userGroup = await _departmentGroupsService.GetGroupForUserAsync(user.UserId, DepartmentId);
-						if (userGroup == null || !userGroup.IsUserGroupAdmin(UserId))
-							continue;
-					}
-				}
 
 				var actionLog = actionLogs.FirstOrDefault(x => x.UserId == user.UserId);
 				var staffing = staffings.FirstOrDefault(x => x.UserId == user.UserId);
@@ -222,7 +217,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 				else
 					person.EmailAddress = "";
 
-				var group = await _departmentGroupsService.GetGroupForUserAsync(user.UserId, DepartmentId);
 				if (group != null)
 				{
 					person.Group = group.Name;
@@ -404,9 +398,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Personnel_View)]
 		public async Task<IActionResult> ViewPerson(string userId)
 		{
-			// Same department, and one of the people the personnel list shows (Security > View Group Users).
-			if (!await _authorizationService.CanUserViewUserAsync(UserId, userId) ||
-			    !await _authorizationService.CanUserViewPersonViaMatrixAsync(userId, UserId, DepartmentId))
+			if (!await CanViewPersonPageAsync(userId))
 				return Unauthorized();
 
 			ViewPersonView model = new ViewPersonView();
@@ -480,6 +472,26 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		/// <summary>
+		/// The pages about one person (profile, its reveal, events): same department, one of the people the personnel list
+		/// shows (Security > View Group Users), and a hidden or disabled person only for department admins, the admins of
+		/// their group, and themselves (GitHub #311).
+		/// </summary>
+		private async Task<bool> CanViewPersonPageAsync(string userId)
+		{
+			if (!await _authorizationService.CanUserViewUserAsync(UserId, userId) ||
+			    !await _authorizationService.CanUserViewPersonViaMatrixAsync(userId, UserId, DepartmentId))
+				return false;
+
+			var member = await _departmentsService.GetDepartmentMemberAsync(userId, DepartmentId);
+			if (!PersonnelListVisibilityHelper.IsHiddenOrDisabled(member))
+				return true;
+
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			var group = await _departmentGroupsService.GetGroupForUserAsync(userId, DepartmentId);
+			return PersonnelListVisibilityHelper.CanViewMemberProfile(member, department, group, UserId);
+		}
+
+		/// <summary>
 		/// ADP client-side reveal (plan 7.2). A grant proves the CALLER stepped up; it is never an
 		/// authorization decision about the target, so the subject is authorized exactly as the page
 		/// that hosts the reveal authorizes it.
@@ -492,8 +504,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (String.IsNullOrWhiteSpace(userId))
 				return BadRequest();
 
-			if (!await _authorizationService.CanUserViewUserAsync(UserId, userId) ||
-			    !await _authorizationService.CanUserViewPersonViaMatrixAsync(userId, UserId, DepartmentId))
+			if (!await CanViewPersonPageAsync(userId))
 				return Unauthorized();
 
 			var fields = new Dictionary<string, string>();
@@ -1079,17 +1090,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 					continue;
 
 				var member = departmentMembers.FirstOrDefault(x => x.UserId == user.UserId);
+				var group = await _departmentGroupsService.GetGroupForUserAsync(user.UserId, DepartmentId);
 
-				// Skip hidden/disabled users unless current user is dept admin or group admin of their group
-				if (member != null && ((member.IsDisabled.HasValue && member.IsDisabled.Value) || (member.IsHidden.HasValue && member.IsHidden.Value)))
-				{
-					if (!department.IsUserAnAdmin(UserId))
-					{
-						var userGroup = await _departmentGroupsService.GetGroupForUserAsync(user.UserId, DepartmentId);
-						if (userGroup == null || !userGroup.IsUserGroupAdmin(UserId))
-							continue;
-					}
-				}
+				// Hidden and disabled people: department admins, and the admins of their group, only (GitHub #311).
+				if (!PersonnelListVisibilityHelper.CanViewMember(member, department, group, UserId))
+					continue;
 
 				var person = new PersonnelForListJson();
 				person.UserId = user.UserId.ToString();
@@ -1117,7 +1122,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 				else
 					person.EmailAddress = "";
 
-				var group = await _departmentGroupsService.GetGroupForUserAsync(user.UserId, DepartmentId);
 				if (group != null)
 				{
 					person.Group = group.Name;
@@ -1236,17 +1240,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 					continue;
 
 				var member = departmentMembers.FirstOrDefault(x => x.UserId == user.UserId);
+				var group = await _departmentGroupsService.GetGroupForUserAsync(user.UserId, DepartmentId);
 
-				// Skip hidden/disabled users unless current user is dept admin or group admin of their group
-				if (member != null && ((member.IsDisabled.HasValue && member.IsDisabled.Value) || (member.IsHidden.HasValue && member.IsHidden.Value)))
-				{
-					if (!department.IsUserAnAdmin(UserId))
-					{
-						var userGroup = await _departmentGroupsService.GetGroupForUserAsync(user.UserId, DepartmentId);
-						if (userGroup == null || !userGroup.IsUserGroupAdmin(UserId))
-							continue;
-					}
-				}
+				// Hidden and disabled people: department admins, and the admins of their group, only (GitHub #311).
+				if (!PersonnelListVisibilityHelper.CanViewMember(member, department, group, UserId))
+					continue;
 
 				var person = new PersonnelForListJson();
 				person.UserId = user.UserId.ToString();
@@ -1274,7 +1272,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 				else
 					person.EmailAddress = "";
 
-				var group = await _departmentGroupsService.GetGroupForUserAsync(user.UserId, DepartmentId);
 				if (group != null)
 				{
 					person.Group = group.Name;
@@ -2399,8 +2396,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Personnel_View)]
 		public async Task<IActionResult> ViewEvents(string userId)
 		{
-			if (!await _authorizationService.CanUserViewUserAsync(UserId, userId) ||
-			    !await _authorizationService.CanUserViewPersonViaMatrixAsync(userId, UserId, DepartmentId))
+			if (!await CanViewPersonPageAsync(userId))
 				return Unauthorized();
 
 			var model = new ViewPersonEventsView();
@@ -2517,6 +2513,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var pois = await _mappingService.GetPOIsForDepartmentAsync(DepartmentId);
 
 			var actionLogs = new List<ActionLog>();
+			var personVisible = new Dictionary<string, bool>(StringComparer.Ordinal);
 			foreach (var eventId in eventIds)
 			{
 				var actionLog = await _actionLogsService.GetActionLogByIdAsync(eventId);
@@ -2527,6 +2524,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 					continue;
 
 				if (!await _authorizationService.CanUserViewPersonAsync(UserId, actionLog.UserId, DepartmentId))
+					continue;
+
+				// The events page's own rule, so a hidden or disabled person's events cannot be reached by posting their ids (GitHub #311).
+				if (!personVisible.TryGetValue(actionLog.UserId ?? string.Empty, out var canViewPerson))
+					personVisible[actionLog.UserId ?? string.Empty] = canViewPerson = await CanViewPersonPageAsync(actionLog.UserId);
+				if (!canViewPerson)
 					continue;
 
 				actionLogs.Add(actionLog);
@@ -2581,8 +2584,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 		public async Task<IActionResult> GetPersonnelEvents(string userId)
 		{
-			if (!await _authorizationService.CanUserViewUserAsync(UserId, userId) ||
-			    !await _authorizationService.CanUserViewPersonViaMatrixAsync(userId, UserId, DepartmentId))
+			if (!await CanViewPersonPageAsync(userId))
 				return Unauthorized();
 
 			// Security > See Personnel Locations decides whether the status positions are shown.

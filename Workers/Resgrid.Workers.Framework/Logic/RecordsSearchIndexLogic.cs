@@ -23,8 +23,10 @@ namespace Resgrid.Workers.Framework.Logic
 				var maintenance = scope.Resolve<IRecordsSearchIndexMaintenanceService>();
 				var result = await maintenance.SweepAsync(cancellationToken);
 
+				// A warning, so it rides along as a breadcrumb: the sweep logs every error it counts as an exception of its own,
+				// and the summary at Error level was one more Sentry event per failing sweep with no stack to diagnose from.
 				if (result.Errors > 0)
-					Logging.LogError($"Records search index sweep finished with {result.Errors} error(s): {result.Message}");
+					Logging.LogWarning($"Records search index sweep finished with {result.Errors} error(s): {result.Message}");
 
 				return new Tuple<bool, string>(result.Errors == 0, result.Message);
 			}

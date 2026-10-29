@@ -1,0 +1,28 @@
+@model Resgrid.Web.Areas.User.Models.Subscription.AdpAddonView
+@using Resgrid.Config
+@using Newtonsoft.Json
+@using Resgrid.Web.Areas.User.Models.Subscription
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Addons.Addons> addonLocalizer
+@*
+    The ADP yearly checkout uses the shared add-on billing script (addon-billing.js): a Stripe Checkout URL or a Paddle transaction
+    from SubscriptionController.AdpCheckout, then back to ManageAdpAddon, which refreshes itself until the webhook activates the addon.
+*@
+@{
+    var paddle = Model.CheckoutProvider == "Paddle";
+    var manageUrl = Url.Action("ManageAdpAddon", "Subscription", new { Area = "User" }, Context.Request.Scheme);
+}
+@if (paddle && Model.CanPurchaseOnline)
+{
+    <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+}
+<script type="application/json" id="addon-billing-config">@Html.Raw(JsonConvert.SerializeObject(new
+{
+    provider = Model.CheckoutProvider,
+    token = paddle && Model.CanPurchaseOnline ? PaymentProviderConfig.GetPaddleClientToken() : null,
+    environment = PaymentProviderConfig.GetPaddleEnvironment(),
+    error = addonLocalizer["BillingCheckoutFailed"].Value,
+    completeUrl = manageUrl + "?result=" + AddonBillingResults.Complete,
+    pending = Model.AwaitingActivation,
+    attempt = Model.Attempt
+}, new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml }))</script>
+<script src="~/js/app/internal/subscription/addon-billing.js" asp-append-version="true"></script>

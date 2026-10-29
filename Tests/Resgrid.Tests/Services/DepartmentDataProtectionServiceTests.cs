@@ -146,6 +146,39 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task A_running_yearly_checkout_interval_counts_as_the_addon()
+		{
+			_subscriptionsService.Setup(x => x.GetCurrentPlanAddonsForDepartmentFromStripeAsync(DeptId))
+				.ReturnsAsync(new List<PlanAddon>());
+			_subscriptionsService.Setup(x => x.GetAllAddonPlansByTypeAsync(PlanAddonTypes.ADP, It.IsAny<bool>()))
+				.ReturnsAsync(new List<PlanAddon> { new PlanAddon { PlanAddonId = Resgrid.Config.AdpAddonConfig.YearlyPlanAddonId, AddonType = (int)PlanAddonTypes.ADP } });
+			_subscriptionsService.Setup(x => x.GetCurrentPaymentAddonsForDepartmentAsync(DeptId, It.Is<List<string>>(ids => ids.Contains(Resgrid.Config.AdpAddonConfig.YearlyPlanAddonId))))
+				.ReturnsAsync(new List<PaymentAddon> { new PaymentAddon { PlanAddonId = Resgrid.Config.AdpAddonConfig.YearlyPlanAddonId, EffectiveOn = DateTime.UtcNow.AddDays(-1), EndingOn = DateTime.UtcNow.AddYears(1) } });
+
+			(await _service.QueueEnrollmentAsync(DeptId, ManagingUserId, Acks, "22:00", "06:00", "America/New_York"))
+				.Should().Be(DepartmentDataProtectionEnrollmentResult.Queued);
+		}
+
+		[Test]
+		public async Task Without_a_billing_api_the_placeholder_addon_rows_never_count_as_the_addon()
+		{
+			// SubscriptionsService with no Billing API: one id-less placeholder plan (AddonType 1), and an "Addon Forever" row for
+			// every id it is asked about.
+			_subscriptionsService.Setup(x => x.GetCurrentPlanAddonsForDepartmentFromStripeAsync(DeptId))
+				.ReturnsAsync(new List<PlanAddon> { new PlanAddon { AddonType = 1, Cost = 0 } });
+			_subscriptionsService.Setup(x => x.GetAllAddonPlansByTypeAsync(PlanAddonTypes.ADP, It.IsAny<bool>()))
+				.ReturnsAsync(new List<PlanAddon> { new PlanAddon { AddonType = 1, Cost = 0 } });
+			_subscriptionsService.Setup(x => x.GetCurrentPaymentAddonsForDepartmentAsync(DeptId, It.IsAny<List<string>>()))
+				.ReturnsAsync((int _, List<string> ids) => ids.Select(id => new PaymentAddon
+				{
+					PlanAddonId = id, TransactionId = "SYSTEM", Description = "Addon Forever", EffectiveOn = DateTime.UtcNow.AddDays(-1), EndingOn = DateTime.MaxValue
+				}).ToList());
+
+			(await _service.QueueEnrollmentAsync(DeptId, ManagingUserId, Acks, "22:00", "06:00", "America/New_York"))
+				.Should().Be(DepartmentDataProtectionEnrollmentResult.AddonRequired);
+		}
+
+		[Test]
 		public async Task Closed_missing_archived_or_erroring_gate_denies_fail_closed()
 		{
 			_featureToggleService.Setup(x => x.GetFlagByKeyAsync(FeatureFlagKeys.DepartmentProtectedDataEnrollment, true))

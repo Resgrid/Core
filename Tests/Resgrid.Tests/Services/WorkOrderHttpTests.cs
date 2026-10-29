@@ -79,6 +79,9 @@ namespace Resgrid.Tests.Services
             var billing=new Mock<IReadinessProBillingService>();billing.Setup(b=>b.GetAsync(77)).ReturnsAsync(new ReadinessProBillingStatus {Provider="Stripe",Currency="USD",MonthlyAmount=150,CheckoutAvailable=true});
             billing.Setup(b=>b.BeginCheckoutAsync(77)).ReturnsAsync(new ReadinessProCheckout {Provider="Stripe",Url="https://checkout.stripe.com/synthetic"});
             builder.Services.AddSingleton(departments.Object);builder.Services.AddSingleton(billing.Object);
+            // The shared add-on billing page offers Readiness Pro only while its toggle is on, and shows billing status to subscription managers.
+            var flags=new Mock<IFeatureToggleService>();flags.Setup(f=>f.EvaluateFreshAsync(FeatureFlagKeys.MaintenanceWorkOrders,77)).ReturnsAsync(new FeatureFlagEvaluation {Key=FeatureFlagKeys.MaintenanceWorkOrders,IsEnabled=true});
+            builder.Services.AddSingleton(flags.Object);builder.Services.AddSingleton(Mock.Of<Resgrid.Model.Services.IAuthorizationService>());
             builder.Services.AddSingleton(Mock.Of<IProtectedGrantContext>()); builder.Services.AddSingleton(Mock.Of<IDepartmentDataProtectionService>());
             await using var app=builder.Build(); var previous=ClaimsAuthorizationHelper._httpContextAccessor; var previousApi=ApiClaims._httpContextAccessor;
             ClaimsAuthorizationHelper._httpContextAccessor=ApiClaims._httpContextAccessor=app.Services.GetRequiredService<IHttpContextAccessor>();
@@ -115,7 +118,11 @@ namespace Resgrid.Tests.Services
                 response=await client.PostAsync("/User/ReadinessProBilling/Checkout",new FormUrlEncodedContent(new Dictionary<string,string>{["__RequestVerificationToken"]=csrf,["DepartmentId"]="88"}));
                 response.StatusCode.Should().Be(HttpStatusCode.OK,await response.Content.ReadAsStringAsync());billing.Verify(b=>b.BeginCheckoutAsync(77),Times.Once);billing.Verify(b=>b.BeginCheckoutAsync(88),Times.Never);
                 client.DefaultRequestHeaders.Remove("Test-Member");client.DefaultRequestHeaders.Add("Test-Member","crew");
-                (await client.GetAsync("/User/ReadinessProBilling")).StatusCode.Should().Be(HttpStatusCode.Forbidden);
+                // A member who is not the managing member reads what the add-on covers but gets no checkout, and the POST is refused.
+                response=await client.GetAsync("/User/ReadinessProBilling");html=await response.Content.ReadAsStringAsync();
+                response.StatusCode.Should().Be(HttpStatusCode.OK,html);html.Should().NotContain("id=\"addon-checkout\"");
+                (await client.PostAsync("/User/ReadinessProBilling/Checkout",new FormUrlEncodedContent(new Dictionary<string,string>{["__RequestVerificationToken"]=csrf}))).StatusCode.Should().NotBe(HttpStatusCode.OK);
+                billing.Verify(b=>b.BeginCheckoutAsync(77),Times.Once,"only the managing member's earlier checkout reached the Billing API");
                 client.DefaultRequestHeaders.Remove("Test-Member");client.DefaultRequestHeaders.Add("Test-Member","manager");
                 response=await client.PostAsync("/api/v4/WorkOrders/NewWorkOrder",new StringContent("{\"Priority\":\"SYNTHETIC-PHI-CANARY\"}",Encoding.UTF8,"application/json"));
                 response.StatusCode.Should().Be(HttpStatusCode.BadRequest);(await response.Content.ReadAsStringAsync()).Should().NotContain("CANARY");

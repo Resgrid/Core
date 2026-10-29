@@ -1109,8 +1109,12 @@ namespace Resgrid.Services
 			{
 				// The yearly checkout (AdpAddonConfig) is its own Stripe or Paddle subscription, which the base-subscription read below
 				// never sees, so its reconciled interval rows count first. Same rule as the item: running and not cancelled.
+				// Without a Billing API the plan read answers one id-less placeholder and the payment read answers an "Addon Forever"
+				// row for every id it is given, so only real ADP catalog rows are looked up.
 				var adpPlans = await _subscriptionsService.GetAllAddonPlansByTypeAsync(PlanAddonTypes.ADP);
-				var adpPlanIds = (adpPlans ?? new System.Collections.Generic.List<PlanAddon>()).Where(p => p != null).Select(p => p.PlanAddonId).ToList();
+				var adpPlanIds = (adpPlans ?? new System.Collections.Generic.List<PlanAddon>())
+					.Where(p => p != null && p.AddonType == (int)PlanAddonTypes.ADP && !string.IsNullOrWhiteSpace(p.PlanAddonId))
+					.Select(p => p.PlanAddonId).ToList();
 				if (adpPlanIds.Any())
 				{
 					var rows = await _subscriptionsService.GetCurrentPaymentAddonsForDepartmentAsync(departmentId, adpPlanIds);

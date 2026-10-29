@@ -9,12 +9,14 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Primitives;
 using Moq;
 using NUnit.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Services;
 using Resgrid.Web.Areas.User.Controllers;
 using Resgrid.Web.Areas.User.Models.Personnel;
+using Resgrid.Web.Areas.User.Models.Reports.Personnel;
 using Resgrid.Web.Services.Models.v4.Personnel;
 using IdentityUser = Resgrid.Model.Identity.IdentityUser;
 using MvcClaims = Resgrid.Web.Helpers.ClaimsAuthorizationHelper;
@@ -93,6 +95,16 @@ namespace Resgrid.Tests.Web.User
 			var authorization = new Mock<Resgrid.Model.Services.IAuthorizationService>();
 			authorization.Setup(x => x.CanUserViewUserAsync(caller, It.IsAny<string>())).ReturnsAsync(true);
 			authorization.Setup(x => x.CanUserViewPersonViaMatrixAsync(It.IsAny<string>(), caller, DepartmentId)).ReturnsAsync(true);
+			authorization.Setup(x => x.CanUserViewPersonAsync(caller, It.IsAny<string>(), DepartmentId)).ReturnsAsync(true);
+
+			// Event 1 is the hidden person's, event 2 the disabled person's.
+			var actionLogs = new Mock<IActionLogsService>();
+			actionLogs.Setup(x => x.GetActionLogByIdAsync(It.IsAny<int>())).ReturnsAsync((int id) => id switch
+			{
+				1 => new ActionLog { ActionLogId = 1, DepartmentId = DepartmentId, UserId = HiddenPerson },
+				2 => new ActionLog { ActionLogId = 2, DepartmentId = DepartmentId, UserId = DisabledPerson },
+				_ => null
+			});
 
 			var users = new Mock<IUsersService>();
 			users.Setup(x => x.GetUserById(It.IsAny<string>(), It.IsAny<bool>())).Returns((string userId, bool _) => new IdentityUser { Id = userId, UserName = userId });
@@ -107,6 +119,7 @@ namespace Resgrid.Tests.Web.User
 				[typeof(Resgrid.Model.Services.IAuthorizationService)] = authorization.Object,
 				[typeof(IUsersService)] = users.Object,
 				[typeof(IUserProfileService)] = profiles.Object,
+				[typeof(IActionLogsService)] = actionLogs.Object,
 				[typeof(UserManager<IdentityUser>)] = new Mock<UserManager<IdentityUser>>(Mock.Of<IUserStore<IdentityUser>>(), null, null, null, null, null, null, null, null).Object
 			};
 
@@ -157,6 +170,17 @@ namespace Resgrid.Tests.Web.User
 			IsRefused(await Build<PersonnelController>(StationMember).ViewEvents(HiddenPerson));
 			IsRefused(await Build<PersonnelController>(StationMember).GetPersonnelEvents(DisabledPerson));
 			(await Build<PersonnelController>(StationAdmin).ViewEvents(HiddenPerson)).Should().BeOfType<ViewResult>();
+		}
+
+		[Test]
+		public async Task The_events_report_leaves_out_events_of_people_whose_events_page_is_refused()
+		{
+			var form = new FormCollection(new Dictionary<string, StringValues> { ["selectEvent_1"] = "on", ["selectEvent_2"] = "on" });
+
+			var result = await Build<PersonnelController>(StationMember).GeneratePersonnelEventsReport(form);
+
+			result.Should().BeOfType<ViewResult>().Which.Model.Should().BeOfType<PersonnelEventsReportView>()
+				.Which.Rows.Should().BeEmpty("posting a hidden or disabled person's event ids must not reach what their events page refuses");
 		}
 
 		/// <summary>SecureBaseController.Unauthorized sends the browser to the unauthorized page.</summary>

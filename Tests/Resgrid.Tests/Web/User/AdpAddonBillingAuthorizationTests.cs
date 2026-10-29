@@ -205,6 +205,30 @@ namespace Resgrid.Tests.Web.User
 		}
 
 		[Test]
+		public async Task A_department_that_holds_the_legacy_item_cannot_start_a_yearly_checkout()
+		{
+			// The Billing API refuses a second yearly checkout itself, but never sees the base-subscription item.
+			var controller = BuildController(ManagingUserId, holdsAddon: true);
+
+			(await controller.AdpCheckout()).Should().BeOfType<StatusCodeResult>().Which.StatusCode.Should().Be(409);
+			_adpBilling.Verify(x => x.BeginCheckoutAsync(It.IsAny<int>()), Times.Never, "the department would pay for ADP twice");
+		}
+
+		[Test]
+		public async Task A_cancelled_addon_can_be_bought_again_and_an_unreadable_one_cannot()
+		{
+			var controller = BuildController(ManagingUserId);
+			_subscriptionsService.Setup(x => x.GetCurrentPaymentAddonsForDepartmentAsync(DepartmentId, It.IsAny<List<string>>()))
+				.ReturnsAsync(new List<PaymentAddon> { new PaymentAddon { PlanAddonId = "adp-addon", IsCancelled = true, EndingOn = DateTime.UtcNow.AddMonths(1) } });
+			(await controller.AdpCheckout()).Should().BeOfType<JsonResult>("the purchase page offers it again once the held one is cancelled");
+
+			_subscriptionsService.Setup(x => x.GetCurrentPaymentAddonsForDepartmentAsync(DepartmentId, It.IsAny<List<string>>()))
+				.ReturnsAsync((List<PaymentAddon>)null);
+			(await controller.AdpCheckout()).Should().BeOfType<StatusCodeResult>().Which.StatusCode.Should().Be(503);
+			_adpBilling.Verify(x => x.BeginCheckoutAsync(DepartmentId), Times.Once, "only the readable, cancelled case reached the Billing API");
+		}
+
+		[Test]
 		public async Task Buying_the_addon_never_touches_protection_state()
 		{
 			var controller = BuildController(ManagingUserId, holdsAddon: false);

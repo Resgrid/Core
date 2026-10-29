@@ -2513,6 +2513,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var pois = await _mappingService.GetPOIsForDepartmentAsync(DepartmentId);
 
 			var actionLogs = new List<ActionLog>();
+			var personVisible = new Dictionary<string, bool>(StringComparer.Ordinal);
 			foreach (var eventId in eventIds)
 			{
 				var actionLog = await _actionLogsService.GetActionLogByIdAsync(eventId);
@@ -2523,6 +2524,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 					continue;
 
 				if (!await _authorizationService.CanUserViewPersonAsync(UserId, actionLog.UserId, DepartmentId))
+					continue;
+
+				// The events page's own rule, so a hidden or disabled person's events cannot be reached by posting their ids (GitHub #311).
+				if (!personVisible.TryGetValue(actionLog.UserId ?? string.Empty, out var canViewPerson))
+					personVisible[actionLog.UserId ?? string.Empty] = canViewPerson = await CanViewPersonPageAsync(actionLog.UserId);
+				if (!canViewPerson)
 					continue;
 
 				actionLogs.Add(actionLog);

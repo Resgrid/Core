@@ -112,6 +112,32 @@ namespace Resgrid.Tests.Web.User
 			controller.TempData.ContainsKey("SubscriptionPendingDiscountCode").Should().BeFalse();
 		}
 
+		[TestCase(DiscountCodeOutcomes.Applied)]
+		[TestCase(DiscountCodeOutcomes.InvalidCode)]
+		[TestCase(DiscountCodeOutcomes.Unavailable)]
+		public async Task A_new_entry_drops_the_code_that_was_waiting_for_checkout(DiscountCodeOutcomes outcome)
+		{
+			var controller = Build();
+			controller.TempData["SubscriptionPendingDiscountCode"] = "WINTER10";
+			DiscountOutcome(outcome);
+
+			await controller.ApplyDiscountCode("SPRING25");
+
+			controller.TempData.ContainsKey("SubscriptionPendingDiscountCode").Should().BeFalse("a replaced code must not be carried into a later checkout");
+		}
+
+		[Test]
+		public async Task A_new_pending_code_replaces_the_one_that_was_waiting()
+		{
+			var controller = Build();
+			controller.TempData["SubscriptionPendingDiscountCode"] = "WINTER10";
+			DiscountOutcome(DiscountCodeOutcomes.NoActiveSubscription);
+
+			await controller.ApplyDiscountCode("SPRING25");
+
+			controller.TempData["SubscriptionPendingDiscountCode"].Should().Be("SPRING25");
+		}
+
 		[Test]
 		public async Task A_member_who_cannot_manage_the_subscription_cannot_enter_codes()
 		{

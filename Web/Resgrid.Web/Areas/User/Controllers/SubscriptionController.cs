@@ -241,6 +241,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (currentPlan == null || currentPlan.Cost <= 0 || !await IsAdpOfferedAsync())
 				return StatusCode(StatusCodes.Status409Conflict);
 
+			// A department that holds the add-on is sent to the management page by the GET, and refused here. The Billing API refuses a
+			// second yearly checkout itself, but it never sees the legacy subscription item (M0126), which would then be paid twice. An
+			// unreadable answer refuses too: this is a purchase, and it can be retried.
+			var plans = await GetAdpAddonPlansAsync();
+			var held = await _subscriptionsService.GetCurrentPaymentAddonsForDepartmentAsync(DepartmentId, plans.Select(p => p.PlanAddonId).ToList());
+			if (held == null)
+				return StatusCode(StatusCodes.Status503ServiceUnavailable);
+			if (held.Any(r => r != null && !r.IsCancelled))
+				return StatusCode(StatusCodes.Status409Conflict);
+
 			AdpCheckout checkout = null;
 			try
 			{
@@ -760,6 +770,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			if (!await _authorizationService.CanUserManageSubscriptionAsync(UserId, DepartmentId))
 				return Unauthorized();
+
+			// A new entry replaces the code waiting for checkout, whatever its outcome: only a code still pending is carried forward.
+			TempData.Remove(PendingDiscountCodeKey);
 
 			var code = discountCode?.Trim();
 			if (string.IsNullOrWhiteSpace(code) || code.Length > 64)

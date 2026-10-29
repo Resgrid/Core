@@ -20,9 +20,14 @@
         });
     }
 
-    if (config.pending && config.attempt < maxAttempts) {
+    // The server builds completeUrl as this page's absolute URL; the refresh follows nothing else. The host is compared rather than
+    // the origin because the server can see plain http behind a TLS-terminating proxy.
+    var next = null;
+    try { next = new URL(config.completeUrl, window.location.href); } catch (_) { next = null; }
+    if (config.pending && config.attempt < maxAttempts && next && (next.protocol === 'https:' || next.protocol === 'http:') && next.host === window.location.host) {
+        next.searchParams.set('attempt', String(config.attempt + 1));
         window.setTimeout(function () {
-            window.location.replace(config.completeUrl + '&attempt=' + (config.attempt + 1));
+            window.location.replace(next.href);
         }, 5000);
     }
 

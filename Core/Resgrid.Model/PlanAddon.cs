@@ -49,11 +49,27 @@ namespace Resgrid.Model
 			addonType == (int)PlanAddonTypes.ReadinessPro || addonType == (int)PlanAddonTypes.BusinessOperations ||
 			addonType == (int)PlanAddonTypes.EnhancedAi || addonType == (int)PlanAddonTypes.IncidentBackOffice;
 
+		/// <summary>
+		/// The Advanced Data Protection yearly checkout row (M0298). ADP has two catalog rows: the legacy item on the base Stripe
+		/// subscription (M0126), which the shared plan/addon paths still own for departments that bought it, and this one, whose
+		/// own yearly subscription is reconciled by the Billing API's ADP backend.
+		/// </summary>
+		[NotMapped]
+		[JsonIgnore]
+		public bool IsAdpYearlyCheckout => string.Equals(PlanAddonId, Config.AdpAddonConfig.YearlyPlanAddonId, StringComparison.OrdinalIgnoreCase);
+
+		/// <summary>
+		/// A catalog row whose intervals a dedicated Billing API backend owns: every dedicated monthly add-on, and the ADP yearly
+		/// checkout. The shared plan/addon paths must never write, cancel or emit for these rows. Decided per row, not per type,
+		/// because ADP's legacy row stays on the shared paths.
+		/// </summary>
+		public static bool IsDedicatedAddon(PlanAddon plan) => plan != null && (IsDedicatedMonthlyAddon(plan.AddonType) || plan.IsAdpYearlyCheckout);
+
 		public string GetExternalKey()
 		{
-			if (IsDedicatedMonthlyAddon(AddonType))
+			if (IsDedicatedAddon(this))
 			{
-				// Dedicated monthly add-ons have separate live/test prices; never use a live price in test mode.
+				// Dedicated add-ons have separate live/test prices; never use a live price in test mode.
 				var priceId = Config.PaymentProviderConfig.IsTestMode ? TestExternalId : ExternalId;
 				return string.IsNullOrWhiteSpace(priceId) ? null : priceId.Trim();
 			}
@@ -85,7 +101,7 @@ namespace Resgrid.Model
 		public int IdType => 1;
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Plan", "IsCancelled", "EndingOn", "Quantity" };
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Plan", "IsCancelled", "EndingOn", "Quantity", "IsAdpYearlyCheckout" };
 
 		public DateTime GetEndDateFromNow()
 		{
@@ -93,6 +109,8 @@ namespace Resgrid.Model
 			// Actual paid access uses the reconciled PaymentAddon interval, never this estimate.
 			if (IsDedicatedMonthlyAddon(AddonType))
 				return DateTime.UtcNow.AddMonths(1);
+			if (IsAdpYearlyCheckout)
+				return DateTime.UtcNow.AddYears(1);
 
 			if (Plan != null)
 			{

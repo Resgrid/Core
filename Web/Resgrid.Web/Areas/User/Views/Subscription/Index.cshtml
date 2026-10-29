@@ -4,8 +4,7 @@
 @using Resgrid.Config
 @model Resgrid.Web.Areas.User.Models.Subscription.SubscriptionView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Subscription.Subscription> localizer
-@inject IStringLocalizer<Resgrid.Localization.Areas.User.EnhancedAi.EnhancedAi> aiLocalizer
-@inject IStringLocalizer<Resgrid.Localization.Areas.User.IncidentBackOffice.IncidentBackOffice> incidentLocalizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Addons.Addons> addonLocalizer
 @{
     ViewBag.Title = "Resgrid | " + @localizer["SubscriptionHeader"];
 
@@ -18,11 +17,13 @@
     var paddleClientTokenJson = Html.Raw(JsonConvert.SerializeObject(Model.PaddleClientToken ?? "", jsStringSettings));
     var paddleCustomerJson = Html.Raw(JsonConvert.SerializeObject(Model.PaddleCustomer ?? "", jsStringSettings));
     var paddleConfigurationErrorJson = Html.Raw(JsonConvert.SerializeObject(Model.PaddleConfigurationError ?? "", jsStringSettings));
+    var pendingDiscountCodeJson = Html.Raw(JsonConvert.SerializeObject(Model.PendingDiscountCode ?? "", jsStringSettings));
 }
 
 @section Styles
 {
     <link rel="stylesheet" href="~/css/pricing/pricing-tables-internal.css">
+    <link rel="stylesheet" href="~/css/addons.css" asp-append-version="true" />
 
     <style>
         .price-box {
@@ -458,194 +459,99 @@
                     </div>
                 </div>
 
-                @if (Model.HasActiveSubscription)
+                @{
+                    var codesMessageIsError = Model.CodesMessage is "DiscountInvalid" or "DiscountUnavailable" or "AffiliateInvalid" or "AffiliateAlreadySet";
+                }
+                <hr />
+                <div class="rg-codes" id="codes">
+                    <div class="rg-addons-header">
+                        <h3>@addonLocalizer["CodesHeader"]</h3>
+                        <p>@addonLocalizer["CodesIntro"]</p>
+                    </div>
+                    @if (!string.IsNullOrWhiteSpace(Model.CodesMessage))
+                    {
+                        <div class="alert @(codesMessageIsError ? "alert-warning" : "alert-success")" role="status">@addonLocalizer["Message" + Model.CodesMessage]</div>
+                    }
+                    <div class="row">
+                        <div class="col-md-6">
+                            <form asp-controller="Subscription" asp-action="ApplyDiscountCode" asp-route-area="User" method="post" class="rg-code-form">
+                                @Html.AntiForgeryToken()
+                                <label for="discountCode">@addonLocalizer["DiscountCodeLabel"]</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="discountCode" name="discountCode" maxlength="64" autocomplete="off" required
+                                           placeholder="@addonLocalizer["DiscountCodePlaceholder"]" value="@Model.PendingDiscountCode" />
+                                    <span class="input-group-btn"><button type="submit" class="btn btn-primary">@addonLocalizer["DiscountCodeApply"]</button></span>
+                                </div>
+                                <p class="help-block">@(Model.HasActiveSubscription ? addonLocalizer["DiscountCodeHelpActive"] : addonLocalizer["DiscountCodeHelpCheckout"])</p>
+                                @if (!string.IsNullOrWhiteSpace(Model.PendingDiscountCode))
+                                {
+                                    <p class="text-success"><i class="fa fa-tag" aria-hidden="true"></i> @string.Format(addonLocalizer["DiscountPendingNotice"].Value, Model.PendingDiscountCode)</p>
+                                }
+                            </form>
+                        </div>
+                        <div class="col-md-6">
+                            @if (string.IsNullOrWhiteSpace(Model.AffiliateCode))
+                            {
+                                <form asp-controller="Subscription" asp-action="ApplyAffiliateCode" asp-route-area="User" method="post" class="rg-code-form">
+                                    @Html.AntiForgeryToken()
+                                    <label for="affiliateCode">@addonLocalizer["AffiliateCodeLabel"]</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="affiliateCode" name="affiliateCode" maxlength="64" autocomplete="off" required
+                                               placeholder="@addonLocalizer["AffiliateCodePlaceholder"]" />
+                                        <span class="input-group-btn"><button type="submit" class="btn btn-default">@addonLocalizer["AffiliateCodeSave"]</button></span>
+                                    </div>
+                                    <p class="help-block">@addonLocalizer["AffiliateCodeSetHelp"]</p>
+                                </form>
+                            }
+                            else
+                            {
+                                <label>@addonLocalizer["AffiliateCodeLabel"]</label>
+                                <p class="form-control-static"><i class="fa fa-handshake-o" aria-hidden="true"></i> @string.Format(addonLocalizer["AffiliateCodeCurrent"].Value, Model.AffiliateCode)</p>
+                                <p class="help-block">@addonLocalizer["AffiliateCodeSetHelp"]</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                @{
+                    // Toggle-aware add-on cards: offered add-ons on paid plans, plus anything the department already holds.
+                    var visibleAddons = Model.Addons.Where(a => a.IsVisible(Model.HasActiveSubscription)).ToList();
+                    var addonsNeedPaidPlan = !Model.HasActiveSubscription && Model.Addons.Any(a => a.Offered && !a.Owned);
+                    ViewData["IsPaddleDepartment"] = Model.IsPaddleDepartment;
+                }
+                @if (visibleAddons.Any() || addonsNeedPaidPlan)
                 {
-                    <div class="row">
-                        <div class='col-sm-12'>
-                            <div class="pricing-tables">
-                                <div class='row'>
-                                    <div class="col-sm-8 col-md-8 col-sm-offset-2">
-                                        <div class="plan" style="margin: 0; padding-bottom: 0;">
-                                            <div class="head">
-                                                <h2>Push-To-Talk Addon</h2>
-                                            </div>
-                                            <div class="row" style="margin-left: 0;">
-                                                <div class="col-sm-4 col-md-4">
-                                                    <div style="padding-top: 10px;">
-                                                        <ul class="item-list" style="padding: 0;">
-                                                            <li>Two-Way IP Voice Communications</li>
-                                                            <li>Up to 50 Channels</li>
-                                                            <li>Radios with worldwide reach</li>
-                                                            <li>Real-Time Voice, Push-To-Talk</li>
-                                                            <li>Android, iOS and Web</li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-3 col-md-3" style="text-align: center;">
-                                                    <span class="price" style="border-top: 0; margin-bottom: 5px; padding-top: 25px">
-                                                        <h3 style="font-size: 36px;"><span class="symbol" style="font-size: 36px; vertical-align: top;">$</span>35<small>/mo</small></h3><span style="font-size: 12px;">per 10 user pack</span>
-                                                    </span>
-                                                </div>
-                                                <div class="col-sm-5 col-md-5">
-                                                    <p style="color: #676a6c; padding-top: 10px;">The Push-To-Talk Addon is only available on paid plans. You can buy as many 10 user packs as you wish, and they are billed monthly separately from your Resgrid bill. Allowing you to size up and down as you need. You can have up to 50 active people per channel. Push-To-Talk requires devices with an active Internet (data) connection and uses VOIP technology.</p>
-                                                    @if (Model.IsPaddleDepartment)
-                                                    {
-                                                        <a asp-controller="Subscription" asp-action="ManagePaddlePTTAddon" asp-route-area="User" class="btn btn-sm btn-primary">Manage PTT</a>
-                                                    }
-                                                    else
-                                                    {
-                                                        <a asp-controller="Subscription" asp-action="ManagePTTAddon" asp-route-area="User" class="btn btn-sm btn-primary">Manage PTT</a>
-                                                    }
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                    <hr />
+                    <div class="rg-addons" id="addons">
+                        <div class="rg-addons-header">
+                            <h3>@addonLocalizer["AddonsHeader"]</h3>
+                            <p>@addonLocalizer["AddonsIntro"]</p>
                         </div>
-                    </div>
-
-                    @*
-                        Advanced Data Protection addon (ADP plan 17.1). One link for both states: the
-                        manage page offers the purchase when the department does not hold the addon
-                        yet, so this card does not need to know which state it is in.
-                    *@
-                    <div class="row">
-                        <div class='col-sm-12'>
-                            <div class="pricing-tables">
-                                <div class='row'>
-                                    <div class="col-sm-8 col-md-8 col-sm-offset-2">
-                                        <div class="plan" style="margin: 0; padding-bottom: 0;">
-                                            <div class="head">
-                                                <h2>Advanced Data Protection Addon</h2>
-                                            </div>
-                                            <div class="row" style="margin-left: 0;">
-                                                <div class="col-sm-4 col-md-4">
-                                                    <div style="padding-top: 10px;">
-                                                        <ul class="item-list" style="padding: 0;">
-                                                            <li>Per-department field encryption</li>
-                                                            <li>Second-factor reveal of protected values</li>
-                                                            <li>Email, SMS and push egress controls</li>
-                                                            <li>Value-free audit of protected reads</li>
-                                                            <li>Overnight, resumable enrollment</li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-3 col-md-3" style="text-align: center;">
-                                                    <span class="price" style="border-top: 0; margin-bottom: 5px; padding-top: 25px">
-                                                        <h3 style="font-size: 36px;"><span class="symbol" style="font-size: 36px; vertical-align: top;">@currencySymbol</span>999<small>/yr</small></h3><span style="font-size: 12px;">per department</span>
-                                                    </span>
-                                                </div>
-                                                <div class="col-sm-5 col-md-5">
-                                                    <p style="color: #676a6c; padding-top: 10px;">Advanced Data Protection encrypts your department's sensitive fields with a key held only for your department, and hides them behind a second-factor check. It is available on paid plans, billed yearly, and only your department's managing member can buy or cancel it. Buying the addon does not encrypt anything on its own — you enroll afterwards, from the Data Protection settings page, at a time you choose.</p>
-                                                    <a asp-controller="Subscription" asp-action="ManageAdpAddon" asp-route-area="User" class="btn btn-sm btn-primary">Manage Data Protection</a>
-                                                    <a asp-controller="ReadinessProBilling" asp-action="Index" asp-route-area="User" class="btn btn-sm btn-primary">Readiness Pro</a>
-                                                    <a asp-controller="BusinessOperationsBilling" asp-action="Index" asp-route-area="User" class="btn btn-sm btn-primary">Business Operations</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    @*
-                        Enhanced AI addon (enhanced-ai-addon-plan.md). One link for both states, like ADP: the manage page
-                        offers the purchase when the department does not hold the add-on, and says when it is being enabled.
-                    *@
-                    <div class="row">
-                        <div class='col-sm-12'>
-                            <div class="pricing-tables">
-                                <div class='row'>
-                                    <div class="col-sm-8 col-md-8 col-sm-offset-2">
-                                        <div class="plan" style="margin: 0; padding-bottom: 0;">
-                                            <div class="head">
-                                                <h2>@aiLocalizer["SubscriptionCardHeader"]</h2>
-                                            </div>
-                                            <div class="row" style="margin-left: 0;">
-                                                <div class="col-sm-4 col-md-4">
-                                                    <div style="padding-top: 10px;">
-                                                        <ul class="item-list" style="padding: 0;">
-                                                            <li>@aiLocalizer["CardBulletAdminAssist"]</li>
-                                                            <li>@aiLocalizer["CardBulletIncident"]</li>
-                                                            <li>@aiLocalizer["CardBulletDrafts"]</li>
-                                                            <li>@aiLocalizer["CardBulletCallBrief"]</li>
-                                                            <li>@aiLocalizer["CardBulletPrivate"]</li>
-                                                            <li>@aiLocalizer["CardBulletOwnProvider"]</li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-3 col-md-3" style="text-align: center;">
-                                                    <span class="price" style="border-top: 0; margin-bottom: 5px; padding-top: 25px">
-                                                        <h3 style="font-size: 36px;"><span class="symbol" style="font-size: 36px; vertical-align: top;">@currencySymbol</span>@((isEU ? AiAddonConfig.PaddleMonthlyAmount : AiAddonConfig.StripeMonthlyAmount).ToString("N0"))<small>/mo</small></h3><span style="font-size: 12px;">@aiLocalizer["PerDepartment"]</span>
-                                                    </span>
-                                                </div>
-                                                <div class="col-sm-5 col-md-5">
-                                                    <p style="color: #676a6c; padding-top: 10px;">@aiLocalizer["SubscriptionCardText"]</p>
-                                                    <a asp-controller="AiBilling" asp-action="Index" asp-route-area="User" class="btn btn-sm btn-primary">@aiLocalizer["ManageEnhancedAi"]</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    @*
-                        Incident Back Office addon (large-incident plan rev 4.1 §17, D6). One link for both states: the add-on page
-                        offers the purchase to the managing member when the department does not hold it.
-                    *@
-                    <div class="row">
-                        <div class='col-sm-12'>
-                            <div class="pricing-tables">
-                                <div class='row'>
-                                    <div class="col-sm-8 col-md-8 col-sm-offset-2">
-                                        <div class="plan" style="margin: 0; padding-bottom: 0;">
-                                            <div class="head">
-                                                <h2>@incidentLocalizer["SubscriptionCardHeader"]</h2>
-                                            </div>
-                                            <div class="row" style="margin-left: 0;">
-                                                <div class="col-sm-4 col-md-4">
-                                                    <div style="padding-top: 10px;">
-                                                        <ul class="item-list" style="padding: 0;">
-                                                            <li>@incidentLocalizer["AddonFeatureFoundation"]</li>
-                                                            <li>@incidentLocalizer["AddonFeatureLogistics"]</li>
-                                                            <li>@incidentLocalizer["AddonFeatureFinance"]</li>
-                                                            <li>@incidentLocalizer["AddonFeatureCoordination"]</li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-3 col-md-3" style="text-align: center;">
-                                                    <span class="price" style="border-top: 0; margin-bottom: 5px; padding-top: 25px">
-                                                        <h3 style="font-size: 36px;"><span class="symbol" style="font-size: 36px; vertical-align: top;">@currencySymbol</span>@((isEU ? Resgrid.Config.IncidentBackOfficeAddonConfig.PaddleMonthlyAmount : Resgrid.Config.IncidentBackOfficeAddonConfig.StripeMonthlyAmount).ToString("N0"))<small>/mo</small></h3><span style="font-size: 12px;">@incidentLocalizer["PerDepartment"]</span>
-                                                    </span>
-                                                </div>
-                                                <div class="col-sm-5 col-md-5">
-                                                    <p style="color: #676a6c; padding-top: 10px;">@incidentLocalizer["SubscriptionCardText"]</p>
-                                                    <a asp-controller="IncidentBackOfficeBilling" asp-action="Index" asp-route-area="User" class="btn btn-sm btn-primary">@incidentLocalizer["ManageIncidentBackOffice"]</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                        @if (addonsNeedPaidPlan)
+                        {
+                            <div class="alert alert-info rg-addons-paid-note">@addonLocalizer["AddonsPaidPlanRequired"]</div>
+                        }
+                        <div class="rg-addon-grid">
+                            @foreach (var addonCard in visibleAddons)
+                            {
+                                <partial name="_AddonCard" model="addonCard" />
+                            }
                         </div>
                     </div>
                 }
+
+                <div class="alert alert-success m-t-md m-b-none">
+                    <strong>
+                        @localizer["BuyNowContact1"] <a href="@Url.Action("Contact", "Home", new { area = "" })">@localizer["ContactUs"]</a> @localizer["BuyNowContact2"]
+                    </strong>
+                </div>
 
             </div>
         </div>
     </div>
 </div>
 </div>
-
-        <div class="alert alert-success">
-            <strong>
-                @localizer["BuyNowContact1"] <a href="@Url.Action("Contact", "Home", new { area = "" })">@localizer["ContactUs"]</a> @localizer["BuyNowContact2"]
-            </strong>
-        </div>
+<div class="rg-addon-page-end"></div>
 
         @section Scripts
         {
@@ -662,6 +568,9 @@
                 var paddleClientToken = @paddleClientTokenJson;
                 var paddleCustomerId = @paddleCustomerJson;
                 var paddleConfigurationError = @paddleConfigurationErrorJson;
+                // A discount code validated in the codes panel before the department had a subscription; the Billing API pre-applies it.
+                var pendingDiscountCode = @pendingDiscountCodeJson;
+                var discountQuery = pendingDiscountCode ? '&discountCode=' + encodeURIComponent(pendingDiscountCode) : '';
                 var paddleInitializationPromise = null;
 
                 function getAjaxErrorMessage(xhr, fallbackMessage) {
@@ -741,7 +650,7 @@
                         const packs = IS_EU ? (amount / 10) : (amount / 10) - 1;
 
                         $.ajax({
-                            url: resgrid.absoluteBaseUrl + '/User/Subscription/GetStripeSession?id=' + id + '&count=' + packs,
+                            url: resgrid.absoluteBaseUrl + '/User/Subscription/GetStripeSession?id=' + id + '&count=' + packs + discountQuery,
                             contentType: 'application/json',
                             type: 'GET'
                         }).done(function (data) {
@@ -797,7 +706,7 @@
                         const packs = IS_EU ? (amount / 10) : (amount / 10) - 1;
 
                         $.ajax({
-                            url: resgrid.absoluteBaseUrl + '/User/Subscription/GetPaddleCheckout?id=' + id + '&count=' + packs,
+                            url: resgrid.absoluteBaseUrl + '/User/Subscription/GetPaddleCheckout?id=' + id + '&count=' + packs + discountQuery,
                             contentType: 'application/json',
                             type: 'GET'
                         }).done(function (data) {

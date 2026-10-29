@@ -1,12 +1,19 @@
 @using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Subscription
 @model Resgrid.Web.Areas.User.Models.Subscription.AdpAddonView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.DataProtection.DataProtection> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Addons.Addons> addonLocalizer
 @{
     ViewBag.Title = "Resgrid | " + @localizer["AddonPageTitle"];
 
     // Both conditions are re-checked server-side in the POST. Hiding the button is a courtesy, not
     // the control: plan 17.1 restricts every ADP billing action to the managing member.
-    var canPurchase = Model.IsManagingMember && Model.HasPaidPlan;
+    var canPurchase = Model.IsManagingMember && Model.HasPaidPlan && Model.Offered && Model.CanPurchaseOnline;
+    var addon = AddonCatalog.Get(PlanAddonTypes.ADP);
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/addons.css" asp-append-version="true" />
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
@@ -26,52 +33,84 @@
     </div>
 </div>
 
-<div class="wrapper wrapper-content animated fadeInRight">
+<div class="wrapper wrapper-content rg-addon-page addon-adp">
+    <div class="rg-addon-hero">
+        <div class="rg-addon-hero-main">
+            <span class="rg-addon-icon rg-addon-icon-lg" aria-hidden="true"><i class="fa @addon.Icon"></i></span>
+            <div>
+                <h2>@addonLocalizer[addon.TitleKey]</h2>
+                <p class="rg-addon-tagline">@addonLocalizer[addon.TaglineKey]</p>
+                <p class="rg-addon-hero-note">@localizer["AddonSummary"]</p>
+            </div>
+        </div>
+        <div class="rg-addon-hero-price">
+            <div class="rg-addon-price">@Model.Price<span class="rg-addon-period">@addonLocalizer["PerYear"]</span></div>
+            <div class="rg-addon-unit">@addonLocalizer["PerDepartment"]</div>
+            <div class="rg-addon-unit">@addonLocalizer["BillingBilledYearly"]</div>
+        </div>
+    </div>
+
     <div class="row">
-        <div class="col-lg-10 col-lg-offset-1">
-            <div class="ibox float-e-margins">
-                <div class="ibox-title">
-                    <h5><i class="fa fa-shield"></i> @localizer["AddonPageTitle"]</h5>
-                </div>
+        <div class="col-lg-8">
+            <div class="ibox">
+                <div class="ibox-title"><h5>@addonLocalizer["WhatsIncluded"]</h5></div>
                 <div class="ibox-content">
-                    <div class="row">
-                        <div class="col-md-7">
-                            <p>@localizer["AddonSummary"]</p>
-                            <ul class="item-list" style="padding-left: 18px;">
-                                <li>@localizer["AddonFeatureEncryption"]</li>
-                                <li>@localizer["AddonFeatureStepUp"]</li>
-                                <li>@localizer["AddonFeatureEgress"]</li>
-                                <li>@localizer["AddonFeatureAudit"]</li>
-                            </ul>
-                            <div class="alert alert-info" style="margin-top: 15px;">
-                                @localizer["AddonPurchaseSeparateFromEnrollment"]
-                            </div>
+                    <ul class="rg-addon-features rg-addon-features-columns">
+                        @foreach (var key in addon.FeatureKeys)
+                        {
+                            <li><i class="fa fa-check" aria-hidden="true"></i> @addonLocalizer[key]</li>
+                        }
+                    </ul>
+                    <p class="text-muted rg-addon-note">@addonLocalizer[addon.NoteKey]</p>
+                    <div class="alert alert-info m-t-md m-b-none">@localizer["AddonPurchaseSeparateFromEnrollment"]</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="ibox rg-addon-status">
+                <div class="ibox-content">
+                    <p class="rg-addon-state">@addonLocalizer["BillingStatusNone"]</p>
+                    @if (!Model.HasPaidPlan)
+                    {
+                        <div class="alert alert-warning">@localizer["AddonPaidPlanRequired"]</div>
+                    }
+                    else if (!Model.IsManagingMember)
+                    {
+                        <div class="alert alert-warning">@localizer["AddonManagingMemberOnly"]</div>
+                    }
+                    else if (!Model.CanPurchaseOnline)
+                    {
+                        <div class="alert alert-warning">
+                            @addonLocalizer["BillingCheckoutUnavailable"]
+                            <a href="@Url.Action("Contact", "Home", new { area = "" })">@addonLocalizer["ContactUs"]</a>
                         </div>
-                        <div class="col-md-5" style="text-align: center;">
-                            <h1 style="font-size: 42px; margin-bottom: 0;">@Model.Price</h1>
-                            <p style="color: #676a6c;">@localizer["AddonPerYear"]</p>
+                    }
 
-                            @if (!Model.HasPaidPlan)
-                            {
-                                <div class="alert alert-warning">@localizer["AddonPaidPlanRequired"]</div>
-                            }
-                            else if (!Model.IsManagingMember)
-                            {
-                                <div class="alert alert-warning">@localizer["AddonManagingMemberOnly"]</div>
-                            }
-
-                            @if (canPurchase)
-                            {
-                                <form asp-controller="Subscription" asp-action="BuyAdpAddon" asp-route-area="User" method="post">
-                                    @Html.AntiForgeryToken()
-                                    <input type="hidden" asp-for="PlanAddonId" />
-                                    <button type="submit" class="btn btn-primary btn-lg">@localizer["AddonBuyButton"]</button>
-                                </form>
-                            }
-                        </div>
-                    </div>
+                    @if (canPurchase)
+                    {
+                        @* The yearly checkout: its own Stripe or Paddle subscription (AdpAddonConfig), opened by the shared add-on script. *@
+                        <form asp-controller="Subscription" asp-action="AdpCheckout" asp-route-area="User" method="post" id="addon-checkout">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-primary btn-lg btn-block rg-addon-buy"><i class="fa fa-lock" aria-hidden="true"></i> @localizer["AddonBuyButton"]</button>
+                        </form>
+                        <p class="text-muted text-center rg-addon-secure">@string.Format(addonLocalizer["BillingSecureCheckout"].Value, Model.CheckoutProvider)</p>
+                    }
+                    <p class="alert alert-danger m-t-sm" id="addon-billing-error" role="alert" hidden></p>
+                </div>
+            </div>
+            <div class="ibox">
+                <div class="ibox-title"><h5>@addonLocalizer["BillingLinks"]</h5></div>
+                <div class="ibox-content">
+                    <ul class="rg-addon-links">
+                        <li><a href="@addon.LearnMoreUrl" target="_blank" rel="noopener">@addonLocalizer["LearnMore"] <i class="fa fa-external-link" aria-hidden="true"></i></a></li>
+                        <li><a asp-controller="Subscription" asp-action="Index" asp-route-area="User">@addonLocalizer["BillingBackToSubscription"]</a></li>
+                    </ul>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <partial name="_AdpCheckoutScripts" model="Model" />
+}

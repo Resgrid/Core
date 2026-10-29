@@ -22,5 +22,12 @@ namespace Resgrid.Model.Services
 		Task ExpungeDeletesAsync(CancellationToken cancellationToken = default);
 
 		Task<int> CountDocumentsAsync(int departmentId);
+
+		/// <summary>
+		/// The RowVersion each of these projections currently carries in the index, keyed by projection id; rows that are
+		/// not indexed are absent, and a document indexed before the index stored versions reports -1. The catch-up sweep
+		/// uses it to skip rows its overlap window re-reads unchanged.
+		/// </summary>
+		Task<IDictionary<string, long>> GetIndexedRowVersionsAsync(int departmentId, IEnumerable<RmsRecordSearchProjection> projections);
 	}
 }

@@ -37,9 +37,13 @@ namespace Resgrid.Config
 		public static string PaddlePTT10UserAddonPackage = "";
 		public static string PaddlePTT10UserAddonPackageTest = "";
 
-		// Advanced Data Protection yearly addon (Paddle product pro_01m11vjn9cjmgmwzgv2kt8wndk).
-		// The Stripe side lives on the PlanAddons row (M0126); Paddle price ids follow the PTT
-		// precedent and live here.
+		// Push-To-Talk display prices per 10-user pack per month (resgrid.com/pricing): USD 35 through Stripe, EUR 45 through Paddle.
+		public static decimal PttAddonStripeMonthlyAmount = 35m;
+		public static decimal PttAddonPaddleMonthlyAmount = 45m;
+
+		// Advanced Data Protection yearly addon (Paddle product pro_01m11vjn9cjmgmwzgv2kt8wndk), sold through the Billing API's
+		// AdpBilling checkout (AdpAddonConfig). The Stripe price lives on the yearly PlanAddons row (M0298); this Paddle price must be
+		// EUR 2,550 per year or the Billing API refuses to open a checkout. A missing sandbox price never falls back to production.
 		public static string PaddleAdpAddon = "pri_01m11vm50c17z0rxcgy4fppf80";
 		public static string PaddleAdpAddonTest = "";
 
@@ -168,10 +172,7 @@ namespace Resgrid.Config
 
 		public static string GetPaddleAdpAddonPriceId()
 		{
-			if (IsTestMode)
-				return PaddleAdpAddonTest;
-			else
-				return PaddleAdpAddon;
+			return NormalizeConfigValue(IsTestMode ? PaddleAdpAddonTest : PaddleAdpAddon);
 		}
 
 		public static string GetPaddleReadinessProAddonPriceId()

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="AddonsHeader" xml:space="preserve"><value>Modules complémentaires</value></data>
+  <data name="AddonsIntro" xml:space="preserve"><value>Des suites spécialisées que votre service peut ajouter quand il en a besoin. Chaque module est facturé séparément de votre forfait Resgrid.</value></data>
+  <data name="AddonsPaidPlanRequired" xml:space="preserve"><value>Les modules sont disponibles avec les forfaits payants. Choisissez un forfait ci-dessus pour les ajouter à votre service.</value></data>
+  <data name="LearnMore" xml:space="preserve"><value>En savoir plus</value></data>
+  <data name="BuyAddon" xml:space="preserve"><value>Acheter le module</value></data>
+  <data name="ManageAddon" xml:space="preserve"><value>Gérer</value></data>
+  <data name="StatusActive" xml:space="preserve"><value>Actif</value></data>
+  <data name="StatusEnds" xml:space="preserve"><value>Se termine le {0}</value></data>
+  <data name="PerMonth" xml:space="preserve"><value>/mois</value></data>
+  <data name="PerYear" xml:space="preserve"><value>/an</value></data>
+  <data name="PerDepartment" xml:space="preserve"><value>par service</value></data>
+  <data name="PerUserPack" xml:space="preserve"><value>par pack de 10 utilisateurs</value></data>
+  <data name="WhatsIncluded" xml:space="preserve"><value>Ce qui est inclus</value></data>
+  <data name="BillingStatusActive" xml:space="preserve"><value>Actif pour votre service</value></data>
+  <data name="BillingStatusCancelled" xml:space="preserve"><value>Renouvellement annulé. Le module reste actif jusqu'au {0}.</value></data>
+  <data name="BillingStatusNone" xml:space="preserve"><value>Votre service ne dispose pas encore de ce module.</value></data>
+  <data name="BillingPaidThrough" xml:space="preserve"><value>Payé jusqu'au {0}</value></data>
+  <data name="BillingBuy" xml:space="preserve"><value>Acheter {0}</value></data>
+  <data name="BillingCancelRenewal" xml:space="preserve"><value>Annuler le renouvellement</value></data>
+  <data name="BillingCancelConfirm" xml:space="preserve"><value>Annuler le renouvellement ? Le module reste actif jusqu'à la fin de la période déjà payée.</value></data>
+  <data name="BillingOwnerOnly" xml:space="preserve"><value>Seul le membre gestionnaire de votre service peut acheter ou annuler des modules.</value></data>
+  <data name="BillingCheckoutUnavailable" xml:space="preserve"><value>Le paiement en ligne de ce module est temporairement indisponible. Réessayez plus tard ou contactez-nous.</value></data>
+  <data name="BillingUnavailable" xml:space="preserve"><value>La facturation est indisponible pour le moment. Réessayez plus tard.</value></data>
+  <data name="BillingCheckoutFailed" xml:space="preserve"><value>Le paiement n'a pas pu démarrer. Réessayez ou contactez-nous si le problème persiste.</value></data>
+  <data name="BillingCheckoutComplete" xml:space="preserve"><value>Paiement reçu. Votre module est en cours d'activation et cette page s'actualisera automatiquement.</value></data>
+  <data name="BillingCheckoutCancelled" xml:space="preserve"><value>Le paiement a été annulé. Aucun montant n'a été débité.</value></data>
+  <data name="BillingSecureCheckout" xml:space="preserve"><value>Paiement sécurisé par {0}</value></data>
+  <data name="BillingBackToSubscription" xml:space="preserve"><value>Retour à l'abonnement</value></data>
+  <data name="BillingLinks" xml:space="preserve"><value>Liens</value></data>
+  <data name="BillingFeatureOff" xml:space="preserve"><value>Ce module est désactivé pour votre service. Vous pouvez toujours gérer ou annuler son abonnement ici.</value></data>
+  <data name="ContactUs" xml:space="preserve"><value>Nous contacter</value></data>
+  <data name="BillingBilledMonthly" xml:space="preserve"><value>Facturé chaque mois, séparément de votre forfait Resgrid.</value></data>
+  <data name="BillingBilledYearly" xml:space="preserve"><value>Facturé chaque année, séparément de votre forfait Resgrid.</value></data>
+  <data name="PttTitle" xml:space="preserve"><value>Push-To-Talk</value></data>
+  <data name="PttTagline" xml:space="preserve"><value>La voix bidirectionnelle pour toute votre équipe</value></data>
+  <data name="PttFeature1" xml:space="preserve"><value>Communications vocales IP bidirectionnelles</value></data>
+  <data name="PttFeature2" xml:space="preserve"><value>Jusqu'à 50 canaux</value></data>
+  <data name="PttFeature3" xml:space="preserve"><value>Des radios à portée mondiale</value></data>
+  <data name="PttFeature4" xml:space="preserve"><value>Voix en temps réel, appuyer pour parler</value></data>
+  <data name="PttFeature5" xml:space="preserve"><value>Android, iOS et web</value></data>
+  <data name="PttNote" xml:space="preserve"><value>Facturé chaque mois par pack de 10 utilisateurs. Ajoutez ou retirez des packs à tout moment sans modifier votre abonnement principal.</value></data>
+  <data name="ReadinessProTitle" xml:space="preserve"><value>Readiness Pro</value></data>
+  <data name="ReadinessProTagline" xml:space="preserve"><value>Maintenance et bons de travail</value></data>
+  <data name="ReadinessProFeature1" xml:space="preserve"><value>Planification de la maintenance préventive</value></data>
+  <data name="ReadinessProFeature2" xml:space="preserve"><value>Attribution et suivi des bons de travail</value></data>
+  <data name="ReadinessProFeature3" xml:space="preserve"><value>Suivi des coûts de pièces, de main-d'œuvre et de fournisseurs</value></data>
+  <data name="ReadinessProFeature4" xml:space="preserve"><value>Approbations de dépenses et échéances d'entretien</value></data>
+  <data name="ReadinessProFeature5" xml:space="preserve"><value>Rapports de disponibilité et automatisation des flux de travail</value></data>
+  <data name="ReadinessProNote" xml:space="preserve"><value>Facturé chaque mois par service, même avec un forfait annuel. Les listes de contrôle sont gratuites et ne nécessitent pas Readiness Pro.</value></data>
+  <data name="BusinessOpsTitle" xml:space="preserve"><value>Business Ops</value></data>
+  <data name="BusinessOpsTagline" xml:space="preserve"><value>Facturation, facturation des prestataires et recouvrement des coûts</value></data>
+  <data name="BusinessOpsFeature1" xml:space="preserve"><value>Facturation des clients à partir des interventions avec grilles tarifaires, PDF et e-mail</value></data>
+  <data name="BusinessOpsFeature2" xml:space="preserve"><value>Paiements en ligne directement sur votre propre compte Stripe, sans frais Resgrid</value></data>
+  <data name="BusinessOpsFeature3" xml:space="preserve"><value>Barèmes contractuels, offres et factures de déploiement journalières</value></data>
+  <data name="BusinessOpsFeature4" xml:space="preserve"><value>Préparation et rapprochement du recouvrement des coûts Cal OES MARS</value></data>
+  <data name="BusinessOpsFeature5" xml:space="preserve"><value>Rapports sur le coût complet du personnel et du matériel, la marge et les données de paie</value></data>
+  <data name="BusinessOpsNote" xml:space="preserve"><value>Facturé chaque mois par service, même avec un forfait annuel. Les contacts, les plans d'intervention, les certifications et la saisie du temps de déploiement restent gratuits.</value></data>
+  <data name="IncidentBackOfficeTitle" xml:space="preserve"><value>Incident Back Office</value></data>
+  <data name="IncidentBackOfficeTagline" xml:space="preserve"><value>Logistique, finances et coordination du centre opérationnel pour les incidents majeurs</value></data>
+  <data name="IncidentBackOfficeFeature1" xml:space="preserve"><value>Activation d'incident, postes ICS, listes d'équipes et enregistrement</value></data>
+  <data name="IncidentBackOfficeFeature2" xml:space="preserve"><value>Demandes et affectations de ressources, démobilisation et transport</value></data>
+  <data name="IncidentBackOfficeFeature3" xml:space="preserve"><value>Hébergement et lits, restauration, eau potable et demandes de services de soutien</value></data>
+  <data name="IncidentBackOfficeFeature4" xml:space="preserve"><value>Fournisseurs, achats, budgets, temps et feuilles de service</value></data>
+  <data name="IncidentBackOfficeFeature5" xml:space="preserve"><value>Coût journalier, partage des coûts, réclamations et échéances de rétablissement après sinistre</value></data>
+  <data name="IncidentBackOfficeFeature6" xml:space="preserve"><value>Assemblage de l'IAP, clôture et scellement, et tableaux de coordination du centre opérationnel</value></data>
+  <data name="IncidentBackOfficeNote" xml:space="preserve"><value>Facturé chaque mois par service, même avec un forfait annuel. Distinct de Business Ops : aucun des deux modules n'inclut l'autre.</value></data>
+  <data name="EnhancedAiTitle" xml:space="preserve"><value>Enhanced AI</value></data>
+  <data name="EnhancedAiTagline" xml:space="preserve"><value>Réponses et brouillons d'IA privés</value></data>
+  <data name="EnhancedAiFeature1" xml:space="preserve"><value>Admin Assist avec IA, sans limite de questions</value></data>
+  <data name="EnhancedAiFeature2" xml:space="preserve"><value>Questions à l'assistant et au tableau de commandement de l'incident</value></data>
+  <data name="EnhancedAiFeature3" xml:space="preserve"><value>Brouillons de rapports narratifs et de points de situation à relire</value></data>
+  <data name="EnhancedAiFeature4" xml:space="preserve"><value>Synthèses d'intervention, résumés de rattrapage et réponses documentées avec sources</value></data>
+  <data name="EnhancedAiFeature5" xml:space="preserve"><value>Modèles à poids ouverts uniquement ; les données privées ne sont jamais envoyées à une IA dans le cloud</value></data>
+  <data name="EnhancedAiFeature6" xml:space="preserve"><value>Ou utilisez votre propre abonnement auprès d'un fournisseur d'IA</value></data>
+  <data name="EnhancedAiNote" xml:space="preserve"><value>Facturé chaque mois par service. Comprend un budget IA mensuel sans frais de dépassement. Chaque service dispose de questions Admin Assist gratuites même sans ce module.</value></data>
+  <data name="AdpTitle" xml:space="preserve"><value>Advanced Data Protection</value></data>
+  <data name="AdpTagline" xml:space="preserve"><value>Chiffrement et accès renforcé pour les données sensibles</value></data>
+  <data name="AdpFeature1" xml:space="preserve"><value>Chiffrement au niveau des champs pour les données de santé et personnelles</value></data>
+  <data name="AdpFeature2" xml:space="preserve"><value>Clés propres à chaque service, conservées hors de la base de données</value></data>
+  <data name="AdpFeature3" xml:space="preserve"><value>MFA renforcée obligatoire pour afficher les données protégées</value></data>
+  <data name="AdpFeature4" xml:space="preserve"><value>Flux de travail, notifications et BigBoard expurgés</value></data>
+  <data name="AdpFeature5" xml:space="preserve"><value>Requis pour un accord BAA HIPAA avec Resgrid</value></data>
+  <data name="AdpNote" xml:space="preserve"><value>Facturé chaque année, même si votre service a un forfait mensuel. L'activation se fait en libre-service dès que le module est actif.</value></data>
+  <data name="CodesHeader" xml:space="preserve"><value>Codes de réduction et de parrainage</value></data>
+  <data name="CodesIntro" xml:space="preserve"><value>Vous avez un code de réduction ou un partenaire Resgrid vous a recommandé ? Vous pouvez le saisir ici à tout moment, pas seulement à l'inscription.</value></data>
+  <data name="DiscountCodeLabel" xml:space="preserve"><value>Code de réduction</value></data>
+  <data name="DiscountCodePlaceholder" xml:space="preserve"><value>Saisissez un code de réduction</value></data>
+  <data name="DiscountCodeApply" xml:space="preserve"><value>Appliquer</value></data>
+  <data name="DiscountCodeHelpActive" xml:space="preserve"><value>Appliqué immédiatement à votre abonnement actuel.</value></data>
+  <data name="DiscountCodeHelpCheckout" xml:space="preserve"><value>Appliqué lorsque vous achetez un forfait ci-dessus.</value></data>
+  <data name="DiscountPendingNotice" xml:space="preserve"><value>Le code de réduction {0} sera appliqué lors du paiement.</value></data>
+  <data name="MessageDiscountApplied" xml:space="preserve"><value>Le code de réduction a été appliqué à votre abonnement. Il apparaîtra sur votre prochaine facture.</value></data>
+  <data name="MessageDiscountPending" xml:space="preserve"><value>Le code de réduction est valide et sera appliqué lorsque vous achèterez un forfait ci-dessus.</value></data>
+  <data name="MessageDiscountInvalid" xml:space="preserve"><value>Ce code de réduction n'est pas valide, a expiré ou ne peut pas être utilisé par votre service.</value></data>
+  <data name="MessageDiscountUnavailable" xml:space="preserve"><value>Les codes de réduction ne peuvent pas être vérifiés pour le moment. Réessayez plus tard.</value></data>
+  <data name="AffiliateCodeLabel" xml:space="preserve"><value>Code d'affilié (parrainage)</value></data>
+  <data name="AffiliateCodePlaceholder" xml:space="preserve"><value>Saisissez un code d'affilié</value></data>
+  <data name="AffiliateCodeSave" xml:space="preserve"><value>Enregistrer</value></data>
+  <data name="AffiliateCodeSetHelp" xml:space="preserve"><value>Peut être ajouté une seule fois. Contactez-nous s'il doit être modifié.</value></data>
+  <data name="AffiliateCodeCurrent" xml:space="preserve"><value>Parrainé avec le code d'affilié {0}</value></data>
+  <data name="MessageAffiliateApplied" xml:space="preserve"><value>Le code d'affilié a été enregistré pour votre service.</value></data>
+  <data name="MessageAffiliateInvalid" xml:space="preserve"><value>Ce code d'affilié n'est pas valide ou n'est plus actif.</value></data>
+  <data name="MessageAffiliateAlreadySet" xml:space="preserve"><value>Votre service a déjà un code d'affilié. Contactez-nous s'il doit être modifié.</value></data>
+</root>

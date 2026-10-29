@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Lucene.Net.Index;
@@ -88,6 +89,42 @@ namespace Resgrid.Search
 		{
 			cancellationToken.ThrowIfCancellationRequested();
 			return SearchIndexPublishCoordinator.ExpungeAndPublishAsync(_host, _leases, cancellationToken);
+		}
+
+		public Task<IDictionary<string, long>> GetIndexedRowVersionsAsync(int departmentId, IEnumerable<RmsRecordSearchProjection> projections)
+		{
+			IDictionary<string, long> versions = new Dictionary<string, long>(StringComparer.Ordinal);
+			var rows = (projections ?? Array.Empty<RmsRecordSearchProjection>())
+				.Where(p => p != null && p.DepartmentId == departmentId && !string.IsNullOrWhiteSpace(p.RmsRecordSearchProjectionId) && !string.IsNullOrWhiteSpace(p.SourceId))
+				.ToList();
+			if (rows.Count == 0)
+				return Task.FromResult(versions);
+
+			var manager = _host.GetSearcherManager();
+			if (manager == null)
+				return Task.FromResult(versions);
+
+			_host.MaybeRefresh();
+			var searcher = manager.Acquire();
+			try
+			{
+				foreach (var row in rows)
+				{
+					var hit = searcher.Search(new TermQuery(new Term(RecordsIndexFields.Key, RecordsIndexFields.BuildKey(row.DepartmentId, row.SourceType, row.SourceId))), 1);
+					if (hit.TotalHits == 0)
+						continue;
+					// Held without a stored version (indexed before the field existed): present, so a late tombstone still
+					// deletes it, at a version no row carries, so a live row is re-indexed once and gains the field.
+					var doc = searcher.Doc(hit.ScoreDocs[0].Doc);
+					versions[row.RmsRecordSearchProjectionId] = long.TryParse(doc.Get(RecordsIndexFields.RowVersion), out var version) ? version : -1;
+				}
+			}
+			finally
+			{
+				manager.Release(searcher);
+			}
+
+			return Task.FromResult(versions);
 		}
 
 		public Task<int> CountDocumentsAsync(int departmentId)

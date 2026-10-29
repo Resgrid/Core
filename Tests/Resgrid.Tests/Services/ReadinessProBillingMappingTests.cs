@@ -95,7 +95,7 @@ namespace Resgrid.Tests.Services
 				Mock.Of<IDepartmentGroupsService>(), Mock.Of<Resgrid.Model.Services.IAuthorizationService>(), billing.Object,
 				Mock.Of<IPersonnelRolesService>(), Mock.Of<IUnitsService>(), Mock.Of<IDepartmentSettingsService>(),
 				Mock.Of<IEmailService>(), Mock.Of<IAffiliateService>(), Mock.Of<IUserProfileService>(),
-				Options.Create(new AppOptions()), Mock.Of<IEventAggregator>(), Mock.Of<IDepartmentDataProtectionService>());
+				Options.Create(new AppOptions()), Mock.Of<IEventAggregator>(), Mock.Of<IDepartmentDataProtectionService>(), Mock.Of<IFeatureToggleService>(), Mock.Of<IAdpBillingService>());
 
 			var result = post
 				? await controller.BuyAddon(new BuyAddonView { PlanAddonId = "readiness", Quantity = 1 }, CancellationToken.None)

@@ -1,70 +1,53 @@
-using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
+using Resgrid.Model;
 using Resgrid.Model.Services;
+using Resgrid.Web.Areas.User.Models.Subscription;
+using Resgrid.Web.Helpers;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
 	/// <summary>
-	/// Business Operations add-on purchase and renewal page (Workforce &amp; Business Operations plan, decision 42; clone of
-	/// ReadinessProBillingController). Only the department's managing member may buy or cancel; checkout runs in the
-	/// Billing API and the page only relays a validated Stripe Checkout URL or Paddle transaction id.
+	/// Business Ops add-on purchase and renewal page (Workforce &amp; Business Operations plan, decision 42); the shared flow lives in
+	/// <see cref="AddonBillingControllerBase"/>.
 	/// </summary>
 	[Area("User"), Authorize, ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 	[Resgrid.Web.Filters.AllowDuringDepartmentLock]
-	public sealed class BusinessOperationsBillingController : SecureBaseController
+	public sealed class BusinessOperationsBillingController : AddonBillingControllerBase
 	{
 		private readonly IBusinessOperationsBillingService _billing;
-		private readonly IDepartmentsService _departments;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Invoicing.Invoicing> _strings;
 
 		public BusinessOperationsBillingController(IBusinessOperationsBillingService billing, IDepartmentsService departments,
+			Model.Services.IAuthorizationService authorization, IFeatureToggleService flags,
+			IStringLocalizer<Resgrid.Localization.Areas.User.Addons.Addons> addonStrings,
 			IStringLocalizer<Resgrid.Localization.Areas.User.Invoicing.Invoicing> strings)
+			: base(departments, authorization, flags, addonStrings)
 		{
 			_billing = billing;
-			_departments = departments;
 			_strings = strings;
 		}
 
-		private async Task<bool> OwnerAsync()
-		{
-			var member = await _departments.GetDepartmentMemberAsync(UserId, DepartmentId, true);
-			var department = await _departments.GetDepartmentByIdAsync(DepartmentId, true);
-			return member?.DepartmentId == DepartmentId && !member.IsDeleted && member.IsDisabled != true && department?.ManagingUserId == UserId;
-		}
+		protected override PlanAddonTypes AddonType => PlanAddonTypes.BusinessOperations;
 
-		[HttpGet]
-		public async Task<IActionResult> Index()
-		{
-			if (!await OwnerAsync())
-				return Forbid();
-			return View(await _billing.GetAsync(DepartmentId));
-		}
+		protected override async Task<AddonBillingStatusView> GetStatusAsync() => AddonBillingStatusView.From(await _billing.GetAsync(DepartmentId));
 
-		[HttpPost, ValidateAntiForgeryToken]
-		public async Task<IActionResult> Checkout()
+		protected override async Task<AddonCheckoutStart> BeginCheckoutAsync()
 		{
-			if (!await OwnerAsync())
-				return Forbid();
 			var checkout = await _billing.BeginCheckoutAsync(DepartmentId);
-			if (checkout?.Provider == "Stripe" && Uri.TryCreate(checkout.Url, UriKind.Absolute, out var url) &&
-				url.Scheme == "https" && url.Host == "checkout.stripe.com" && string.IsNullOrEmpty(url.UserInfo))
-				return Json(new { url = checkout.Url });
-			if (checkout?.Provider == "Paddle" && System.Text.RegularExpressions.Regex.IsMatch(checkout.TransactionId ?? "", "^txn_[a-z0-9]{26}$"))
-				return Json(new { transactionId = checkout.TransactionId });
-			return StatusCode(503, new { message = _strings["BillingUnavailable"].Value });
+			return checkout == null ? null : new AddonCheckoutStart(checkout.Provider, checkout.Url, checkout.TransactionId);
 		}
 
-		[HttpPost, ValidateAntiForgeryToken]
-		public async Task<IActionResult> CancelRenewal()
+		protected override Task<bool> CancelRenewalAsync() => _billing.CancelRenewalAsync(DepartmentId);
+
+		protected override Task DecorateAsync(AddonBillingView view)
 		{
-			if (!await OwnerAsync())
-				return Forbid();
-			if (!await _billing.CancelRenewalAsync(DepartmentId))
-				return StatusCode(503, new { message = _strings["BillingUnavailable"].Value });
-			return RedirectToAction(nameof(Index));
+			view.Links.Add(new AddonLink(_strings["Invoicing"], Url.Action("Index", "Invoicing", new { Area = "User" })));
+			if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				view.Links.Add(new AddonLink(_strings["ModuleSettings"], Url.Action("ModuleSettings", "Department", new { Area = "User" })));
+			return Task.CompletedTask;
 		}
 	}
 }

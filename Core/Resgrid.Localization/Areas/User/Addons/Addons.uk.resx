@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="AddonsHeader" xml:space="preserve"><value>Доповнення</value></data>
+  <data name="AddonsIntro" xml:space="preserve"><value>Спеціалізовані пакети, які ваш підрозділ може додати, коли вони потрібні. Кожне доповнення оплачується окремо від тарифу Resgrid.</value></data>
+  <data name="AddonsPaidPlanRequired" xml:space="preserve"><value>Доповнення доступні в платних тарифах. Оберіть тариф вище, щоб додати їх до підрозділу.</value></data>
+  <data name="LearnMore" xml:space="preserve"><value>Докладніше</value></data>
+  <data name="BuyAddon" xml:space="preserve"><value>Придбати доповнення</value></data>
+  <data name="ManageAddon" xml:space="preserve"><value>Керувати</value></data>
+  <data name="StatusActive" xml:space="preserve"><value>Активне</value></data>
+  <data name="StatusEnds" xml:space="preserve"><value>Завершується {0}</value></data>
+  <data name="PerMonth" xml:space="preserve"><value>/міс.</value></data>
+  <data name="PerYear" xml:space="preserve"><value>/рік</value></data>
+  <data name="PerDepartment" xml:space="preserve"><value>за підрозділ</value></data>
+  <data name="PerUserPack" xml:space="preserve"><value>за пакет на 10 користувачів</value></data>
+  <data name="WhatsIncluded" xml:space="preserve"><value>Що входить</value></data>
+  <data name="BillingStatusActive" xml:space="preserve"><value>Активне для вашого підрозділу</value></data>
+  <data name="BillingStatusCancelled" xml:space="preserve"><value>Поновлення скасовано. Доповнення діє до {0}.</value></data>
+  <data name="BillingStatusNone" xml:space="preserve"><value>Ваш підрозділ ще не має цього доповнення.</value></data>
+  <data name="BillingPaidThrough" xml:space="preserve"><value>Оплачено до {0}</value></data>
+  <data name="BillingBuy" xml:space="preserve"><value>Придбати {0}</value></data>
+  <data name="BillingCancelRenewal" xml:space="preserve"><value>Скасувати поновлення</value></data>
+  <data name="BillingCancelConfirm" xml:space="preserve"><value>Скасувати поновлення? Доповнення діятиме до кінця вже оплаченого періоду.</value></data>
+  <data name="BillingOwnerOnly" xml:space="preserve"><value>Лише керівний учасник вашого підрозділу може купувати або скасовувати доповнення.</value></data>
+  <data name="BillingCheckoutUnavailable" xml:space="preserve"><value>Онлайн-оплата цього доповнення тимчасово недоступна. Спробуйте пізніше або зв'яжіться з нами.</value></data>
+  <data name="BillingUnavailable" xml:space="preserve"><value>Оплата наразі недоступна. Спробуйте пізніше.</value></data>
+  <data name="BillingCheckoutFailed" xml:space="preserve"><value>Не вдалося розпочати оплату. Спробуйте ще раз або зв'яжіться з нами, якщо це повторюється.</value></data>
+  <data name="BillingCheckoutComplete" xml:space="preserve"><value>Оплату отримано. Доповнення активується, і сторінка оновиться автоматично.</value></data>
+  <data name="BillingCheckoutCancelled" xml:space="preserve"><value>Оплату скасовано. Кошти не списано.</value></data>
+  <data name="BillingSecureCheckout" xml:space="preserve"><value>Безпечна оплата через {0}</value></data>
+  <data name="BillingBackToSubscription" xml:space="preserve"><value>Назад до підписки</value></data>
+  <data name="BillingLinks" xml:space="preserve"><value>Посилання</value></data>
+  <data name="BillingFeatureOff" xml:space="preserve"><value>Це доповнення вимкнено для вашого підрозділу. Ви все ще можете керувати підпискою або скасувати її тут.</value></data>
+  <data name="ContactUs" xml:space="preserve"><value>Зв'язатися з нами</value></data>
+  <data name="BillingBilledMonthly" xml:space="preserve"><value>Оплата щомісяця, окремо від тарифу Resgrid.</value></data>
+  <data name="BillingBilledYearly" xml:space="preserve"><value>Оплата щороку, окремо від тарифу Resgrid.</value></data>
+  <data name="PttTitle" xml:space="preserve"><value>Push-To-Talk</value></data>
+  <data name="PttTagline" xml:space="preserve"><value>Двосторонній голосовий зв'язок для всієї команди</value></data>
+  <data name="PttFeature1" xml:space="preserve"><value>Двосторонній голосовий IP-зв'язок</value></data>
+  <data name="PttFeature2" xml:space="preserve"><value>До 50 каналів</value></data>
+  <data name="PttFeature3" xml:space="preserve"><value>Рації з усесвітнім покриттям</value></data>
+  <data name="PttFeature4" xml:space="preserve"><value>Голос у реальному часі, натисни й говори</value></data>
+  <data name="PttFeature5" xml:space="preserve"><value>Android, iOS і веб</value></data>
+  <data name="PttNote" xml:space="preserve"><value>Оплата щомісяця за пакет на 10 користувачів. Додавайте чи видаляйте пакети будь-коли без зміни основної підписки.</value></data>
+  <data name="ReadinessProTitle" xml:space="preserve"><value>Readiness Pro</value></data>
+  <data name="ReadinessProTagline" xml:space="preserve"><value>Обслуговування та наряди на роботи</value></data>
+  <data name="ReadinessProFeature1" xml:space="preserve"><value>Планування профілактичного обслуговування</value></data>
+  <data name="ReadinessProFeature2" xml:space="preserve"><value>Призначення та відстеження нарядів</value></data>
+  <data name="ReadinessProFeature3" xml:space="preserve"><value>Облік вартості запчастин, робіт і постачальників</value></data>
+  <data name="ReadinessProFeature4" xml:space="preserve"><value>Погодження витрат і терміни обслуговування</value></data>
+  <data name="ReadinessProFeature5" xml:space="preserve"><value>Звіти про готовність і автоматизація робочих процесів</value></data>
+  <data name="ReadinessProNote" xml:space="preserve"><value>Оплата щомісяця за підрозділ, навіть на річному тарифі. Контрольні списки безкоштовні й не потребують Readiness Pro.</value></data>
+  <data name="BusinessOpsTitle" xml:space="preserve"><value>Business Ops</value></data>
+  <data name="BusinessOpsTagline" xml:space="preserve"><value>Виставлення рахунків, розрахунки з підрядниками та відшкодування витрат</value></data>
+  <data name="BusinessOpsFeature1" xml:space="preserve"><value>Рахунки клієнтам за викликами з тарифами, PDF і e-mail</value></data>
+  <data name="BusinessOpsFeature2" xml:space="preserve"><value>Онлайн-платежі прямо на ваш власний рахунок Stripe, без комісії Resgrid</value></data>
+  <data name="BusinessOpsFeature3" xml:space="preserve"><value>Договірні тарифи, пропозиції та щоденні рахунки за розгортання</value></data>
+  <data name="BusinessOpsFeature4" xml:space="preserve"><value>Підготовка та звірка відшкодування витрат Cal OES MARS</value></data>
+  <data name="BusinessOpsFeature5" xml:space="preserve"><value>Звіти про повну вартість праці та обладнання, маржу й дані про оплату</value></data>
+  <data name="BusinessOpsNote" xml:space="preserve"><value>Оплата щомісяця за підрозділ, навіть на річному тарифі. Контакти, попередні плани, сертифікати та облік часу розгортання залишаються безкоштовними.</value></data>
+  <data name="IncidentBackOfficeTitle" xml:space="preserve"><value>Incident Back Office</value></data>
+  <data name="IncidentBackOfficeTagline" xml:space="preserve"><value>Логістика, фінанси та координація оперативного центру для великих інцидентів</value></data>
+  <data name="IncidentBackOfficeFeature1" xml:space="preserve"><value>Активація інциденту, посади ICS, склади команд і реєстрація прибуття</value></data>
+  <data name="IncidentBackOfficeFeature2" xml:space="preserve"><value>Запити на ресурси та їх виконання, демобілізація і транспорт</value></data>
+  <data name="IncidentBackOfficeFeature3" xml:space="preserve"><value>Проживання та ліжка, харчування, питна вода і заявки на послуги підтримки</value></data>
+  <data name="IncidentBackOfficeFeature4" xml:space="preserve"><value>Постачальники, закупівлі, бюджети, облік часу та змін</value></data>
+  <data name="IncidentBackOfficeFeature5" xml:space="preserve"><value>Щоденні витрати, розподіл витрат, вимоги та строки відновлення після катастроф</value></data>
+  <data name="IncidentBackOfficeFeature6" xml:space="preserve"><value>Складання IAP, закриття та опечатування, а також дошки координації оперативного центру</value></data>
+  <data name="IncidentBackOfficeNote" xml:space="preserve"><value>Оплата щомісяця за підрозділ, навіть на річному тарифі. Окремо від Business Ops: жодне доповнення не включає інше.</value></data>
+  <data name="EnhancedAiTitle" xml:space="preserve"><value>Enhanced AI</value></data>
+  <data name="EnhancedAiTagline" xml:space="preserve"><value>Приватні відповіді та чернетки ШІ</value></data>
+  <data name="EnhancedAiFeature1" xml:space="preserve"><value>Admin Assist зі ШІ без ліміту запитань</value></data>
+  <data name="EnhancedAiFeature2" xml:space="preserve"><value>Запитання до асистента та дошки керування інцидентом</value></data>
+  <data name="EnhancedAiFeature3" xml:space="preserve"><value>Чернетки описів звітів і брифінгів для вашої перевірки</value></data>
+  <data name="EnhancedAiFeature4" xml:space="preserve"><value>Стислі описи викликів, підсумки для наздоганяння та відповіді з посиланнями на джерела</value></data>
+  <data name="EnhancedAiFeature5" xml:space="preserve"><value>Лише моделі з відкритими вагами; приватні дані ніколи не надсилаються хмарному ШІ</value></data>
+  <data name="EnhancedAiFeature6" xml:space="preserve"><value>Або використовуйте власну підписку постачальника ШІ</value></data>
+  <data name="EnhancedAiNote" xml:space="preserve"><value>Оплата щомісяця за підрозділ. Містить місячний бюджет ШІ без доплат за перевищення. Кожен підрозділ отримує безкоштовні запитання Admin Assist і без нього.</value></data>
+  <data name="AdpTitle" xml:space="preserve"><value>Advanced Data Protection</value></data>
+  <data name="AdpTagline" xml:space="preserve"><value>Шифрування та посилений доступ для чутливих даних</value></data>
+  <data name="AdpFeature1" xml:space="preserve"><value>Шифрування на рівні полів для медичних і персональних даних</value></data>
+  <data name="AdpFeature2" xml:space="preserve"><value>Ключі для кожного підрозділу зберігаються поза базою даних</value></data>
+  <data name="AdpFeature3" xml:space="preserve"><value>Для показу захищених даних потрібна додаткова MFA</value></data>
+  <data name="AdpFeature4" xml:space="preserve"><value>Приховані дані в робочих процесах, сповіщеннях і BigBoard</value></data>
+  <data name="AdpFeature5" xml:space="preserve"><value>Потрібно для угоди HIPAA BAA з Resgrid</value></data>
+  <data name="AdpNote" xml:space="preserve"><value>Оплата щороку, навіть якщо підрозділ на місячному тарифі. Підключення самостійне після активації доповнення.</value></data>
+  <data name="CodesHeader" xml:space="preserve"><value>Коди знижки та реферальні коди</value></data>
+  <data name="CodesIntro" xml:space="preserve"><value>Маєте код знижки або вас порекомендував партнер Resgrid? Його можна ввести тут будь-коли, не лише під час реєстрації.</value></data>
+  <data name="DiscountCodeLabel" xml:space="preserve"><value>Код знижки</value></data>
+  <data name="DiscountCodePlaceholder" xml:space="preserve"><value>Введіть код знижки</value></data>
+  <data name="DiscountCodeApply" xml:space="preserve"><value>Застосувати</value></data>
+  <data name="DiscountCodeHelpActive" xml:space="preserve"><value>Одразу застосовується до вашої поточної підписки.</value></data>
+  <data name="DiscountCodeHelpCheckout" xml:space="preserve"><value>Застосовується під час купівлі тарифу вище.</value></data>
+  <data name="DiscountPendingNotice" xml:space="preserve"><value>Код знижки {0} буде застосовано під час оплати.</value></data>
+  <data name="MessageDiscountApplied" xml:space="preserve"><value>Код знижки застосовано до вашої підписки. Він з'явиться в наступному рахунку.</value></data>
+  <data name="MessageDiscountPending" xml:space="preserve"><value>Код знижки дійсний і буде застосований під час купівлі тарифу вище.</value></data>
+  <data name="MessageDiscountInvalid" xml:space="preserve"><value>Цей код знижки недійсний, прострочений або не може бути використаний вашим підрозділом.</value></data>
+  <data name="MessageDiscountUnavailable" xml:space="preserve"><value>Зараз неможливо перевірити коди знижки. Спробуйте пізніше.</value></data>
+  <data name="AffiliateCodeLabel" xml:space="preserve"><value>Партнерський (реферальний) код</value></data>
+  <data name="AffiliateCodePlaceholder" xml:space="preserve"><value>Введіть партнерський код</value></data>
+  <data name="AffiliateCodeSave" xml:space="preserve"><value>Зберегти</value></data>
+  <data name="AffiliateCodeSetHelp" xml:space="preserve"><value>Можна додати один раз. Зв'яжіться з нами, якщо його потрібно змінити.</value></data>
+  <data name="AffiliateCodeCurrent" xml:space="preserve"><value>Рекомендовано за партнерським кодом {0}</value></data>
+  <data name="MessageAffiliateApplied" xml:space="preserve"><value>Партнерський код збережено для вашого підрозділу.</value></data>
+  <data name="MessageAffiliateInvalid" xml:space="preserve"><value>Цей партнерський код недійсний або більше не активний.</value></data>
+  <data name="MessageAffiliateAlreadySet" xml:space="preserve"><value>Ваш підрозділ уже має партнерський код. Зв'яжіться з нами, якщо його потрібно змінити.</value></data>
+</root>

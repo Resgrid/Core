@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Resgrid.Model;
+using Resgrid.Model.Billing.Api;
 using Resgrid.Model.Helpers;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Claims;
@@ -49,14 +50,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IOptions<AppOptions> _appOptionsAccessor;
 		private readonly IEventAggregator _eventAggregator;
 		private readonly IDepartmentDataProtectionService _dataProtectionService;
+		private readonly IFeatureToggleService _featureToggleService;
+		private readonly IAdpBillingService _adpBillingService;
 
 		public SubscriptionController(IDepartmentsService departmentsService, IUsersService usersService, IDepartmentGroupsService departmentGroupsService,
 			Model.Services.IAuthorizationService authorizationService, ISubscriptionsService subscriptionsService, IPersonnelRolesService personnelRolesService, IUnitsService unitsService,
 			IDepartmentSettingsService departmentSettingsService, IEmailService emailService, IAffiliateService affiliateService,
 			IUserProfileService userProfileService, IOptions<AppOptions> appOptionsAccessor, IEventAggregator eventAggregator,
-			IDepartmentDataProtectionService dataProtectionService)
+			IDepartmentDataProtectionService dataProtectionService, IFeatureToggleService featureToggleService, IAdpBillingService adpBillingService)
 		{
 			_dataProtectionService = dataProtectionService;
+			_featureToggleService = featureToggleService;
+			_adpBillingService = adpBillingService;
 			_departmentsService = departmentsService;
 			_usersService = usersService;
 			_departmentGroupsService = departmentGroupsService;
@@ -77,15 +82,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		#region Advanced Data Protection addon
 
 		/// <summary>
-		/// The ADP addon plan for this data center. Resolved by TYPE rather than by a hardcoded id
-		/// like the PTT pages use: the addon is seeded once per data center with its own id, and a
-		/// literal here would work in one region and quietly fail in the other.
+		/// Every ADP catalog row for this data center. Resolved by TYPE rather than by a hardcoded id like the PTT pages use: there are
+		/// two, the yearly checkout (AdpAddonConfig, M0298) and the legacy subscription item (M0126) that departments which bought it
+		/// keep, and holding either one is holding the add-on.
 		/// </summary>
-		private async Task<PlanAddon> GetAdpAddonPlanAsync()
-		{
-			var plans = await _subscriptionsService.GetAllAddonPlansByTypeAsync(PlanAddonTypes.ADP);
-			return plans?.FirstOrDefault();
-		}
+		private async Task<List<PlanAddon>> GetAdpAddonPlansAsync() =>
+			(await _subscriptionsService.GetAllAddonPlansByTypeAsync(PlanAddonTypes.ADP) ?? new List<PlanAddon>()).Where(p => p != null).ToList();
 
 		/// <summary>
 		/// Plan 17.1: every ADP billing action is restricted to the department's managing member,
@@ -100,15 +102,29 @@ namespace Resgrid.Web.Areas.User.Controllers
 				&& string.Equals(department.ManagingUserId, UserId, StringComparison.OrdinalIgnoreCase);
 		}
 
+		private async Task<AdpBillingStatus> GetAdpCheckoutStatusAsync()
+		{
+			try
+			{
+				return await _adpBillingService.GetAsync(DepartmentId);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"ADP billing status failed for DepartmentId: {DepartmentId}");
+				return null;
+			}
+		}
+
 		/// <summary>
 		/// Loads everything both ADP addon pages render. Billing facts come from the addon rows and
 		/// protection facts from the policy, and they are kept apart on purpose — see AdpAddonView.
 		/// </summary>
-		private async Task<AdpAddonView> BuildAdpAddonViewAsync()
+		private async Task<AdpAddonView> BuildAdpAddonViewAsync(string result = null)
 		{
 			var model = new AdpAddonView();
 
-			model.PlanAddon = await GetAdpAddonPlanAsync();
+			var plans = await GetAdpAddonPlansAsync();
+			model.PlanAddon = plans.FirstOrDefault(p => p.IsAdpYearlyCheckout) ?? plans.FirstOrDefault();
 			if (model.PlanAddon == null)
 				return null;
 
@@ -118,13 +134,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 				&& !string.IsNullOrWhiteSpace(model.Department.ManagingUserId)
 				&& string.Equals(model.Department.ManagingUserId, UserId, StringComparison.OrdinalIgnoreCase);
 
-			model.Price = model.PlanAddon.Cost.ToString("C0", Cultures.UnitedStates);
+			model.Price = AddonCatalog.CurrencySymbol + AddonCatalog.Get(PlanAddonTypes.ADP).Price.ToString("N0", Cultures.UnitedStates);
 
 			var currentPlan = await _subscriptionsService.GetCurrentPlanForDepartmentAsync(DepartmentId);
 			model.HasPaidPlan = currentPlan != null && currentPlan.Cost > 0;
+			model.Offered = await IsAdpOfferedAsync();
 
 			var addons = await _subscriptionsService.GetCurrentPaymentAddonsForDepartmentAsync(DepartmentId,
-				new List<string> { model.PlanAddon.PlanAddonId });
+				plans.Select(p => p.PlanAddonId).ToList());
 
 			var addon = addons?.OrderByDescending(x => x.EndingOn).FirstOrDefault();
 			if (addon != null)
@@ -132,7 +149,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.HasAddon = true;
 				model.IsCancelled = addon.IsCancelled;
 				model.EndingOn = addon.EndingOn;
+				model.IsLegacyItem = !plans.Any(p => p.IsAdpYearlyCheckout && p.PlanAddonId == addon.PlanAddonId);
 			}
+
+			// The yearly checkout's own status: whether a checkout can open right now, and whether its subscription can be cancelled.
+			var status = await GetAdpCheckoutStatusAsync();
+			model.CheckoutProvider = status?.Provider;
+			model.CanPurchaseOnline = status?.CheckoutAvailable == true;
+			model.CanCancelYearly = status?.CanCancel == true && status.Cancelled != true;
+			model.Result = result is AddonBillingResults.Complete or AddonBillingResults.Cancelled ? result : null;
 
 			// Protection state is read fresh: a member who has just enrolled or cancelled is looking
 			// at this page precisely to see whether it took effect.
@@ -145,6 +170,35 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.OffboardingEffectiveOn = policy?.OffboardingEffectiveOn;
 
 			return model;
+		}
+
+		/// <summary>ADP is offered while its enrollment toggle is on for the department: without enrollment the add-on buys nothing.</summary>
+		private async Task<bool> IsAdpOfferedAsync()
+		{
+			try
+			{
+				return (await _featureToggleService.EvaluateFreshAsync(FeatureFlagKeys.DepartmentProtectedDataEnrollment, DepartmentId))?.IsEnabled == true;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Unable to evaluate the ADP enrollment toggle for DepartmentId: {DepartmentId}");
+				return false;
+			}
+		}
+
+		private void AuditAdp(string after, bool successful)
+		{
+			var auditEvent = new AuditEvent();
+			auditEvent.Before = null;
+			auditEvent.DepartmentId = DepartmentId;
+			auditEvent.UserId = UserId;
+			auditEvent.Type = AuditLogTypes.AddonSubscriptionModified;
+			auditEvent.After = after;
+			auditEvent.Successful = successful;
+			auditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
+			auditEvent.ServerName = Environment.MachineName;
+			auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
+			_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 		}
 
 		/// <summary>Purchase page for the ADP addon (plan 17.1).</summary>
@@ -161,73 +215,67 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (model.HasAddon && !model.IsCancelled)
 				return RedirectToAction("ManageAdpAddon", "Subscription", new { Area = "User" });
 
+			// Not offered while the enrollment toggle is off; the Subscription page hides the card for the same reason.
+			if (!model.Offered && !model.HasAddon)
+				return RedirectToAction("Index", "Subscription", new { Area = "User" });
+
 			return View(model);
 		}
 
+		/// <summary>
+		/// Starts the ADP yearly checkout: its own Stripe or Paddle subscription through the Billing API, whatever the base plan's
+		/// interval. Returns only a validated Stripe Checkout URL or Paddle transaction id. The provider's webhook is what activates
+		/// the addon; nothing about protection changes here — the department enrolls afterwards, from the Data Protection page.
+		/// </summary>
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		[RequiresRecentTwoFactor]
-		public async Task<IActionResult> BuyAdpAddon(AdpAddonView postedModel, CancellationToken cancellationToken)
+		public async Task<IActionResult> AdpCheckout()
 		{
+			// Re-checked here rather than trusted from the page: the GET only decides what to draw.
+			if (!await IsAdpManagingMemberAsync())
+				return Forbid();
+
+			var currentPlan = await _subscriptionsService.GetCurrentPlanForDepartmentAsync(DepartmentId);
+			if (currentPlan == null || currentPlan.Cost <= 0 || !await IsAdpOfferedAsync())
+				return StatusCode(StatusCodes.Status409Conflict);
+
+			AdpCheckout checkout = null;
 			try
 			{
-				// Re-checked here rather than trusted from the page: the GET only decides what to draw.
-				if (!await IsAdpManagingMemberAsync())
-					return Unauthorized();
-
-				var addonPlan = await GetAdpAddonPlanAsync();
-				if (addonPlan == null || !addonPlan.PlanId.HasValue)
-					return StatusCode(StatusCodes.Status500InternalServerError, "Unable to load the Advanced Data Protection add-on. Please try again.");
-
-				var currentPlan = await _subscriptionsService.GetCurrentPlanForDepartmentAsync(DepartmentId);
-				if (currentPlan == null || currentPlan.Cost <= 0)
-					return RedirectToAction("BuyAdpAddon", "Subscription", new { Area = "User" });
-
-				var plan = await _subscriptionsService.GetPlanByIdAsync(addonPlan.PlanId.Value);
-				if (plan == null)
-					return StatusCode(StatusCodes.Status500InternalServerError, "Unable to load the Advanced Data Protection plan. Please try again.");
-
-				// Audited AFTER the provider call, with the provider's own answer. Recorded first it
-				// claimed success for a purchase the billing API may then have refused, which is the
-				// one thing an addon audit trail must never do.
-				var purchased = await _subscriptionsService.AddAddonAddedToExistingSub(DepartmentId, plan, addonPlan);
-
-				var auditEvent = new AuditEvent();
-				auditEvent.Before = null;
-				auditEvent.DepartmentId = DepartmentId;
-				auditEvent.UserId = UserId;
-				auditEvent.Type = AuditLogTypes.AddonSubscriptionModified;
-				auditEvent.After = $"ADP addon purchased ({addonPlan.PlanAddonId})";
-				auditEvent.Successful = purchased != null;
-				auditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
-				auditEvent.ServerName = Environment.MachineName;
-				auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
-				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
-
-				// The provider's webhook is what actually activates the addon in Core; this page only
-				// starts the purchase. Nothing about protection changes here either way - the
-				// department enrolls afterwards, from the Data Protection page, when it chooses to.
-				return RedirectToAction("PaymentComplete", "Subscription", new { Area = "User", planId = plan.PlanId });
+				checkout = await _adpBillingService.BeginCheckoutAsync(DepartmentId);
 			}
 			catch (Exception ex)
 			{
-				Logging.SendExceptionEmail(ex, "BuyAdpAddon", DepartmentId, UserName);
-
-				return RedirectToAction("PaymentFailed", "Subscription",
-					new { Area = "User", chargeId = "", errorMessage = ex.Message });
+				Logging.LogException(ex, $"ADP checkout failed for DepartmentId: {DepartmentId}");
 			}
+
+			// Audited AFTER the provider call, with the provider's own answer: recorded first it would claim a purchase the
+			// Billing API may then have refused, which is the one thing an addon audit trail must never do.
+			var valid = false;
+			if (checkout?.Provider == "Stripe" && Uri.TryCreate(checkout.Url, UriKind.Absolute, out var url) &&
+				url.Scheme == "https" && url.Host == "checkout.stripe.com" && string.IsNullOrEmpty(url.UserInfo))
+				valid = true;
+			else if (checkout?.Provider == "Paddle" && System.Text.RegularExpressions.Regex.IsMatch(checkout.TransactionId ?? "", "^txn_[a-z0-9]{26}$"))
+				valid = true;
+			AuditAdp($"ADP yearly checkout started ({checkout?.Provider ?? "none"})", valid);
+
+			if (!valid)
+				return StatusCode(StatusCodes.Status503ServiceUnavailable);
+			return checkout.Provider == "Stripe" ? Json(new { url = checkout.Url }) : Json(new { transactionId = checkout.TransactionId });
 		}
 
 		/// <summary>Management page for an ADP addon the department already holds (plan 17.1).</summary>
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public async Task<IActionResult> ManageAdpAddon()
+		public async Task<IActionResult> ManageAdpAddon(string result = null, int attempt = 0)
 		{
-			var model = await BuildAdpAddonViewAsync();
+			var model = await BuildAdpAddonViewAsync(result);
 			if (model == null)
 				return StatusCode(StatusCodes.Status500InternalServerError, "Unable to load the Advanced Data Protection add-on. Please try again.");
 
+			model.Attempt = Math.Clamp(attempt, 0, 100);
 			return View(model);
 		}
 
@@ -246,21 +294,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 				// cancellation event reaches Core and the offboarding migration it schedules actually
 				// runs; nothing here touches a key or a ciphertext.
 				//
+				// The yearly checkout's subscription stops renewing at the end of the paid year; a legacy subscription item is removed
+				// from the base subscription as before.
+				var status = await GetAdpCheckoutStatusAsync();
+				var cancelled = status?.CanCancel == true
+					? await _adpBillingService.CancelRenewalAsync(DepartmentId)
+					: await _subscriptionsService.CancelPlanAddonByTypeFromStripeAsync(DepartmentId, (int)PlanAddonTypes.ADP);
+
 				// Audited AFTER the call, with the provider's own answer: recorded first it claimed a
 				// cancellation the billing API may then have refused.
-				var cancelled = await _subscriptionsService.CancelPlanAddonByTypeFromStripeAsync(DepartmentId, (int)PlanAddonTypes.ADP);
-
-				var auditEvent = new AuditEvent();
-				auditEvent.Before = null;
-				auditEvent.DepartmentId = DepartmentId;
-				auditEvent.UserId = UserId;
-				auditEvent.Type = AuditLogTypes.AddonSubscriptionModified;
-				auditEvent.After = "ADP addon cancelled";
-				auditEvent.Successful = cancelled;
-				auditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
-				auditEvent.ServerName = Environment.MachineName;
-				auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
-				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
+				AuditAdp(status?.CanCancel == true ? "ADP yearly renewal cancelled" : "ADP addon cancelled", cancelled);
 
 				return RedirectToAction("ManageAdpAddon", "Subscription", new { Area = "User" });
 			}
@@ -274,6 +317,69 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		#endregion Advanced Data Protection addon
+
+		/// <summary>
+		/// What the add-on cards show. An add-on is offered only while its operator toggle is on for the department; one the department
+		/// already holds stays listed after its toggle goes off, so it can still be managed or cancelled. A single Billing API read
+		/// covers every held add-on except Push-To-Talk, whose per-pack subscription item is read from Stripe by the caller.
+		/// </summary>
+		private async Task<List<AddonAvailability>> GetAddonAvailabilityAsync(PlanAddon pttAddon)
+		{
+			var plans = new List<PlanAddon>();
+			var held = new List<PaymentAddon>();
+			try
+			{
+				plans = await _subscriptionsService.GetAllAddonPlansAsync() ?? new List<PlanAddon>();
+				var planIds = plans.Where(x => x.AddonType != (int)PlanAddonTypes.PTT).Select(x => x.PlanAddonId).ToList();
+				held = await _subscriptionsService.GetCurrentPaymentAddonsForDepartmentAsync(DepartmentId, planIds) ?? new List<PaymentAddon>();
+			}
+			catch (Exception ex)
+			{
+				// The plan section of the page must still render; held add-ons are then simply not listed.
+				Logging.LogException(ex, $"Unable to load add-on payments for DepartmentId: {DepartmentId}");
+			}
+
+			var result = new List<AddonAvailability>();
+			foreach (var definition in AddonCatalog.All)
+			{
+				var offered = true;
+				if (definition.FeatureFlag != null)
+				{
+					try
+					{
+						offered = (await _featureToggleService.EvaluateFreshAsync(definition.FeatureFlag, DepartmentId))?.IsEnabled == true;
+					}
+					catch (Exception ex)
+					{
+						Logging.LogException(ex, $"Unable to evaluate {definition.FeatureFlag} for DepartmentId: {DepartmentId}");
+						offered = false;
+					}
+				}
+
+				if (definition.Type == PlanAddonTypes.PTT)
+				{
+					result.Add(new AddonAvailability
+					{
+						Definition = definition, Offered = offered, Owned = pttAddon != null, Cancelled = pttAddon?.IsCancelled == true,
+						EndsOn = pttAddon?.IsCancelled == true ? pttAddon.EndingOn : null
+					});
+					continue;
+				}
+
+				var typePlanIds = plans.Where(x => x.AddonType == (int)definition.Type).Select(x => x.PlanAddonId).ToHashSet();
+				var rows = held.Where(x => x != null && typePlanIds.Contains(x.PlanAddonId)).ToList();
+				var cancelled = rows.Any() && rows.All(x => x.IsCancelled);
+				var endsOn = rows.Any() ? rows.Max(x => x.EndingOn) : (DateTime?)null;
+				result.Add(new AddonAvailability
+				{
+					Definition = definition, Offered = offered, Owned = rows.Any(), Cancelled = cancelled,
+					// A manual or invoiced grant runs on the DateTime.MaxValue sentinel; it has no end date to show.
+					EndsOn = cancelled && endsOn.HasValue && endsOn.Value.Date != DateTime.MaxValue.Date ? endsOn : null
+				});
+			}
+
+			return result;
+		}
 
 		private static bool ShouldUsePaddleForSubscriptionFlow(Payment currentPayment, string paddleCustomerId)
 		{
@@ -502,6 +608,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 			else
 				model.AddonCost = "0";
 
+			model.Addons = await GetAddonAvailabilityAsync(addon);
+
+			// Discount / affiliate code panel: the outcome of the last post, and a valid code still waiting for a checkout. Peek keeps the
+			// pending code for the checkout request that follows; it lives only in this browser's TempData.
+			model.AffiliateCode = department?.AffiliateCode;
+			model.CodesMessage = TempData[CodesMessageKey] as string;
+			model.PendingDiscountCode = TempData.Peek(PendingDiscountCodeKey) as string;
+
 			var paddleCustomerId = await _departmentSettingsService.GetPaddleCustomerIdForDepartmentAsync(DepartmentId);
 			bool isPaddleDepartment = ShouldUsePaddleForSubscriptionFlow(model.Payment, paddleCustomerId);
 			model.IsPaddleDepartment = isPaddleDepartment;
@@ -633,6 +747,112 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			return new EmptyResult();
 		}
+
+		/// <summary>
+		/// A discount code entered after signup. Applied to the active subscription right away; with no active subscription yet it is
+		/// held for this browser session and carried into checkout (the Billing API pre-applies it to the Stripe session or Paddle
+		/// transaction). The Billing API resolves Stripe promotion codes and Paddle discount codes, so no provider key is needed here.
+		/// </summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> ApplyDiscountCode(string discountCode)
+		{
+			if (!await _authorizationService.CanUserManageSubscriptionAsync(UserId, DepartmentId))
+				return Unauthorized();
+
+			var code = discountCode?.Trim();
+			if (string.IsNullOrWhiteSpace(code) || code.Length > 64)
+			{
+				TempData[CodesMessageKey] = "DiscountInvalid";
+				return RedirectToAction("Index", "Subscription", new { Area = "User" });
+			}
+
+			var result = await _subscriptionsService.ApplyDiscountCodeToDepartmentAsync(DepartmentId, code);
+
+			var auditEvent = new AuditEvent();
+			auditEvent.DepartmentId = DepartmentId;
+			auditEvent.UserId = UserId;
+			auditEvent.Type = AuditLogTypes.SubscriptionUpdated;
+			auditEvent.After = $"Discount code entered: {result.Outcome}";
+			auditEvent.Successful = result.Outcome == DiscountCodeOutcomes.Applied || result.Outcome == DiscountCodeOutcomes.NoActiveSubscription;
+			auditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
+			auditEvent.ServerName = Environment.MachineName;
+			auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
+			_eventAggregator.SendMessage<AuditEvent>(auditEvent);
+
+			switch (result.Outcome)
+			{
+				case DiscountCodeOutcomes.Applied:
+					TempData[CodesMessageKey] = "DiscountApplied";
+					break;
+				case DiscountCodeOutcomes.NoActiveSubscription:
+					TempData[CodesMessageKey] = "DiscountPending";
+					TempData[PendingDiscountCodeKey] = code;
+					break;
+				case DiscountCodeOutcomes.InvalidCode:
+					TempData[CodesMessageKey] = "DiscountInvalid";
+					break;
+				default:
+					TempData[CodesMessageKey] = "DiscountUnavailable";
+					break;
+			}
+
+			return RedirectToAction("Index", "Subscription", new { Area = "User" });
+		}
+
+		/// <summary>
+		/// Records the affiliate (referral) code for a department that did not enter one at signup. Set once: an attribution already on
+		/// the department is never replaced from here, so a referral cannot be moved to another affiliate after the fact.
+		/// </summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> ApplyAffiliateCode(string affiliateCode, CancellationToken cancellationToken)
+		{
+			if (!await _authorizationService.CanUserManageSubscriptionAsync(UserId, DepartmentId))
+				return Unauthorized();
+
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, true);
+			if (department == null)
+				return RedirectToAction("Index", "Subscription", new { Area = "User" });
+
+			if (!string.IsNullOrWhiteSpace(department.AffiliateCode))
+			{
+				TempData[CodesMessageKey] = "AffiliateAlreadySet";
+				return RedirectToAction("Index", "Subscription", new { Area = "User" });
+			}
+
+			var code = affiliateCode?.Trim();
+			var affiliate = string.IsNullOrWhiteSpace(code) || code.Length > 64 ? null : await _affiliateService.GetActiveAffiliateByCodeAsync(code);
+			if (affiliate == null)
+			{
+				TempData[CodesMessageKey] = "AffiliateInvalid";
+				return RedirectToAction("Index", "Subscription", new { Area = "User" });
+			}
+
+			department.AffiliateCode = affiliate.AffiliateCode;
+			await _departmentsService.SaveDepartmentAsync(department, cancellationToken);
+			await _departmentsService.InvalidateAllDepartmentsCache(DepartmentId);
+
+			var auditEvent = new AuditEvent();
+			auditEvent.DepartmentId = DepartmentId;
+			auditEvent.UserId = UserId;
+			auditEvent.Type = AuditLogTypes.SubscriptionUpdated;
+			auditEvent.Before = null;
+			auditEvent.After = $"Affiliate code set: {affiliate.AffiliateCode}";
+			auditEvent.Successful = true;
+			auditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
+			auditEvent.ServerName = Environment.MachineName;
+			auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
+			_eventAggregator.SendMessage<AuditEvent>(auditEvent);
+
+			TempData[CodesMessageKey] = "AffiliateApplied";
+			return RedirectToAction("Index", "Subscription", new { Area = "User" });
+		}
+
+		private const string CodesMessageKey = "SubscriptionCodesMessage";
+		private const string PendingDiscountCodeKey = "SubscriptionPendingDiscountCode";
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_Update)]
@@ -818,7 +1038,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return NotFound();
 
 			// Readiness Pro, Business Operations and Enhanced AI use a dedicated monthly checkout, not the legacy PTT quantity flow.
-			if (PlanAddon.IsDedicatedMonthlyAddon(model.PlanAddon.AddonType))
+			if (PlanAddon.IsDedicatedAddon(model.PlanAddon))
 				return NotFound();
 
 			model.PlanAddonId = model.PlanAddon.PlanAddonId;
@@ -931,7 +1151,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			try
 			{
 				var addonPlan = await _subscriptionsService.GetPlanAddonByIdAsync(model.PlanAddonId);
-				if (addonPlan != null && PlanAddon.IsDedicatedMonthlyAddon(addonPlan.AddonType))
+				if (addonPlan != null && PlanAddon.IsDedicatedAddon(addonPlan))
 					return NotFound();
 
 				var user = _usersService.GetUserById(UserId);
@@ -1106,7 +1326,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> ManagePaddlePTTAddon()
 		{
 			var model = new BuyAddonView();
-			model.PlanAddon = await _subscriptionsService.GetPlanAddonByIdAsync(Config.PaymentProviderConfig.GetPaddlePTT10UserAddonPackageId());
+			var paddleAddonId = Config.PaymentProviderConfig.GetPaddlePTT10UserAddonPackageId();
+			model.PlanAddon = string.IsNullOrWhiteSpace(paddleAddonId) ? null : await _subscriptionsService.GetPlanAddonByIdAsync(paddleAddonId);
+			// An unconfigured Paddle PTT package (or an unreachable Billing API) used to NRE here.
+			if (model.PlanAddon == null)
+				return StatusCode(StatusCodes.Status500InternalServerError, "Unable to load the PTT add-on. Please try again.");
+
 			model.PlanAddonId = model.PlanAddon.PlanAddonId;
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 
@@ -1119,6 +1344,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.Quantity = addon.TotalQuantity;
 			}
 
+			// The shared view posts to the Stripe BuyAddon action by default; Paddle pack changes go to ManagePaddlePTTAddon.
+			ViewBag.PttPostAction = nameof(ManagePaddlePTTAddon);
 			return View("ManagePTTAddon", model);
 		}
 

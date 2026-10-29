@@ -1,82 +1,58 @@
-using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Resgrid.Model;
 using Resgrid.Model.Services;
-using Resgrid.Web.Areas.User.Models.IncidentBackOffice;
+using Resgrid.Web.Areas.User.Models.Subscription;
+using Resgrid.Web.Helpers;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
 	/// <summary>
-	/// Incident Back Office add-on page (large-incident-logistics-finance-plan.md rev 4.1 §17, decision D6; clone of
-	/// BusinessOperationsBillingController). Every member of a department with the module switched on sees what the add-on
-	/// covers; only the managing member may buy or cancel. Checkout runs in the Billing API and the page only relays a validated
-	/// Stripe Checkout URL or Paddle transaction id.
+	/// Incident Back Office add-on page (large-incident-logistics-finance-plan.md rev 4.1 §17, decision D6); the shared flow lives in
+	/// <see cref="AddonBillingControllerBase"/>. Every member may read what the add-on covers; only the managing member may buy or cancel.
 	/// </summary>
 	[Area("User"), Authorize, ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 	[Resgrid.Web.Filters.AllowDuringDepartmentLock]
-	public sealed class IncidentBackOfficeBillingController : SecureBaseController
+	public sealed class IncidentBackOfficeBillingController : AddonBillingControllerBase
 	{
 		private readonly IIncidentBackOfficeBillingService _billing;
 		private readonly IIncidentBackOfficeAccessService _access;
-		private readonly IDepartmentsService _departments;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.IncidentBackOffice.IncidentBackOffice> _strings;
 
 		public IncidentBackOfficeBillingController(IIncidentBackOfficeBillingService billing, IIncidentBackOfficeAccessService access, IDepartmentsService departments,
+			Model.Services.IAuthorizationService authorization, IFeatureToggleService flags,
+			IStringLocalizer<Resgrid.Localization.Areas.User.Addons.Addons> addonStrings,
 			IStringLocalizer<Resgrid.Localization.Areas.User.IncidentBackOffice.IncidentBackOffice> strings)
+			: base(departments, authorization, flags, addonStrings)
 		{
 			_billing = billing;
 			_access = access;
-			_departments = departments;
 			_strings = strings;
 		}
 
-		private async Task<bool> OwnerAsync()
-		{
-			var member = await _departments.GetDepartmentMemberAsync(UserId, DepartmentId, true);
-			var department = await _departments.GetDepartmentByIdAsync(DepartmentId, true);
-			return member?.DepartmentId == DepartmentId && !member.IsDeleted && member.IsDisabled != true && department?.ManagingUserId == UserId;
-		}
+		protected override PlanAddonTypes AddonType => PlanAddonTypes.IncidentBackOffice;
 
-		[HttpGet]
-		public async Task<IActionResult> Index()
-		{
-			if (!await _access.IsEnabledAsync(DepartmentId))
-				return NotFound();
-			var access = await _access.GetAccessAsync(DepartmentId);
-			var owner = await OwnerAsync();
-			return View(new IncidentBackOfficeBillingView
-			{
-				Access = access,
-				IsOwner = owner,
-				Status = owner ? await _billing.GetAsync(DepartmentId) : null
-			});
-		}
+		protected override async Task<AddonBillingStatusView> GetStatusAsync() => AddonBillingStatusView.From(await _billing.GetAsync(DepartmentId));
 
-		[HttpPost, ValidateAntiForgeryToken]
-		public async Task<IActionResult> Checkout()
+		protected override async Task<AddonCheckoutStart> BeginCheckoutAsync()
 		{
-			if (!await _access.IsEnabledAsync(DepartmentId) || !await OwnerAsync())
-				return Forbid();
 			var checkout = await _billing.BeginCheckoutAsync(DepartmentId);
-			if (checkout?.Provider == "Stripe" && Uri.TryCreate(checkout.Url, UriKind.Absolute, out var url) &&
-				url.Scheme == "https" && url.Host == "checkout.stripe.com" && string.IsNullOrEmpty(url.UserInfo))
-				return Json(new { url = checkout.Url });
-			if (checkout?.Provider == "Paddle" && System.Text.RegularExpressions.Regex.IsMatch(checkout.TransactionId ?? "", "^txn_[a-z0-9]{26}$"))
-				return Json(new { transactionId = checkout.TransactionId });
-			return StatusCode(503, new { message = _strings["BillingUnavailable"].Value });
+			return checkout == null ? null : new AddonCheckoutStart(checkout.Provider, checkout.Url, checkout.TransactionId);
 		}
 
-		[HttpPost, ValidateAntiForgeryToken]
-		public async Task<IActionResult> CancelRenewal()
+		protected override Task<bool> CancelRenewalAsync() => _billing.CancelRenewalAsync(DepartmentId);
+
+		protected override async Task DecorateAsync(AddonBillingView view)
 		{
-			if (!await _access.IsEnabledAsync(DepartmentId) || !await OwnerAsync())
-				return Forbid();
-			if (!await _billing.CancelRenewalAsync(DepartmentId))
-				return StatusCode(503, new { message = _strings["BillingUnavailable"].Value });
-			return RedirectToAction(nameof(Index));
+			var access = await _access.GetAccessAsync(DepartmentId);
+			if (access.IsLapsed)
+				view.Notices.Add(_strings["LapsedBanner"]);
+			if (access.CanRead)
+				view.Links.Add(new AddonLink(_strings["IncidentBackOffice"], Url.Action("Index", "IncidentBackOffice", new { Area = "User" })));
+			if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				view.Links.Add(new AddonLink(_strings["ModuleSettings"], Url.Action("ModuleSettings", "Department", new { Area = "User" })));
 		}
 	}
 }

@@ -1107,6 +1107,17 @@ namespace Resgrid.Services
 			// reads as "no addon" — fail closed for enrollment.
 			try
 			{
+				// The yearly checkout (AdpAddonConfig) is its own Stripe or Paddle subscription, which the base-subscription read below
+				// never sees, so its reconciled interval rows count first. Same rule as the item: running and not cancelled.
+				var adpPlans = await _subscriptionsService.GetAllAddonPlansByTypeAsync(PlanAddonTypes.ADP);
+				var adpPlanIds = (adpPlans ?? new System.Collections.Generic.List<PlanAddon>()).Where(p => p != null).Select(p => p.PlanAddonId).ToList();
+				if (adpPlanIds.Any())
+				{
+					var rows = await _subscriptionsService.GetCurrentPaymentAddonsForDepartmentAsync(departmentId, adpPlanIds);
+					if (rows != null && rows.Any(r => r != null && !r.IsCancelled && r.EffectiveOn <= DateTime.UtcNow && r.EndingOn > DateTime.UtcNow))
+						return true;
+				}
+
 				var addons = await _subscriptionsService.GetCurrentPlanAddonsForDepartmentFromStripeAsync(departmentId);
 				if (addons == null)
 					return false;

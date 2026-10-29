@@ -216,6 +216,29 @@ namespace Resgrid.Tests.Rms
 			doc.Fields.Count(f => f.Name == RecordsIndexFields.ParticipantUserIds).Should().Be(2);
 		}
 
+		[Test]
+		public async Task Indexed_row_versions_report_what_the_index_holds_and_a_document_without_one_as_unknown()
+		{
+			var indexed = Projection(1, "rec-5", "TRN-2026-0005", "Hose testing", RmsRecordState.Finalized, "a1", groups: "11", participants: "", occurred: new DateTime(2026, 6, 1), definition: RmsDefinitionKeys.Training);
+			indexed.RowVersion = 7;
+			var unversioned = Projection(1, "rec-6", "TRN-2026-0006", "Ladder testing", RmsRecordState.Finalized, "a1", groups: "11", participants: "", occurred: new DateTime(2026, 6, 2), definition: RmsDefinitionKeys.Training);
+			unversioned.RowVersion = 3;
+			var missing = Projection(1, "rec-7", "TRN-2026-0007", "Never indexed", RmsRecordState.Finalized, "a1", groups: "11", participants: "", occurred: new DateTime(2026, 6, 3), definition: RmsDefinitionKeys.Training);
+			await _indexer.IndexAsync(new[] { Source(indexed) });
+			// A document written before the index stored row versions.
+			var legacy = RecordsSearchDocumentBuilder.Build(Source(unversioned));
+			legacy.RemoveField(RecordsIndexFields.RowVersion);
+			_host.Write(writer => { writer.UpdateDocument(new Lucene.Net.Index.Term(RecordsIndexFields.Key, RecordsIndexFields.BuildKey(1, unversioned.SourceType, unversioned.SourceId)), legacy); return 0; });
+			await _indexer.CommitAsync();
+
+			var versions = await _indexer.GetIndexedRowVersionsAsync(1, new[] { indexed, unversioned, missing });
+
+			versions.Should().ContainKey(indexed.RmsRecordSearchProjectionId).WhoseValue.Should().Be(7);
+			versions.Should().ContainKey(unversioned.RmsRecordSearchProjectionId).WhoseValue.Should().Be(-1, "held, so a late tombstone still deletes it, at a version no row carries, so a live row is re-indexed");
+			versions.Should().NotContainKey(missing.RmsRecordSearchProjectionId);
+			(await _indexer.GetIndexedRowVersionsAsync(2, new[] { indexed })).Should().BeEmpty("another department's rows are never looked up");
+		}
+
 		[Test, NonParallelizable]
 		public void Constructing_the_configured_host_does_not_touch_the_search_volume()
 		{

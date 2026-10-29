@@ -1,0 +1,175 @@
+@model Resgrid.Web.Areas.User.Models.Subscription.AddonBillingView
+@using Resgrid.Web.Areas.User.Models.Subscription
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Addons.Addons> addonLocalizer
+@*
+    Shared body of every add-on billing page (AddonBillingControllerBase). The billing state comes from the Billing API; this view
+    only decides what to draw, and every action is re-checked server-side.
+*@
+@{
+    var status = Model.Status;
+    var addon = Model.Addon;
+    var amount = status?.Amount ?? addon.Price;
+    var symbol = status == null ? AddonCatalog.CurrencySymbol : string.Equals(status.Currency, "EUR", StringComparison.OrdinalIgnoreCase) ? "€" : "$";
+    var period = addon.Period == AddonBillingPeriod.Yearly ? addonLocalizer["PerYear"] : addonLocalizer["PerMonth"];
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-12">
+        <h2>@Model.Title</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            @if (Model.CanViewBilling)
+            {
+                <li><a asp-controller="Subscription" asp-action="Index" asp-route-area="User">@commonLocalizer["SubAndBilling"]</a></li>
+            }
+            <li class="active"><strong>@Model.Title</strong></li>
+        </ol>
+    </div>
+</div>
+
+<div class="wrapper wrapper-content rg-addon-page addon-@addon.Key.ToLowerInvariant()">
+    @if (Model.Result == AddonBillingResults.Complete)
+    {
+        <div class="alert @(status?.Active == true ? "alert-success" : "alert-info")" role="status">
+            <i class="fa @(status?.Active == true ? "fa-check-circle" : "fa-spinner fa-spin")" aria-hidden="true"></i>
+            @(status?.Active == true ? addonLocalizer["BillingStatusActive"] : addonLocalizer["BillingCheckoutComplete"])
+        </div>
+    }
+    else if (Model.Result == AddonBillingResults.Cancelled)
+    {
+        <div class="alert alert-warning" role="status"><i class="fa fa-info-circle" aria-hidden="true"></i> @addonLocalizer["BillingCheckoutCancelled"]</div>
+    }
+    else if (Model.Result == AddonBillingResults.RenewalFailed)
+    {
+        <div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @addonLocalizer["BillingUnavailable"]</div>
+    }
+    @foreach (var notice in Model.Notices)
+    {
+        <div class="alert alert-warning" role="status"><i class="fa fa-info-circle" aria-hidden="true"></i> @notice</div>
+    }
+
+    <div class="rg-addon-hero">
+        <div class="rg-addon-hero-main">
+            <span class="rg-addon-icon rg-addon-icon-lg" aria-hidden="true"><i class="fa @addon.Icon"></i></span>
+            <div>
+                <h2>@Model.Title</h2>
+                <p class="rg-addon-tagline">@Model.Tagline</p>
+                <p class="rg-addon-hero-note">@Model.Note</p>
+            </div>
+        </div>
+        <div class="rg-addon-hero-price">
+            <div class="rg-addon-price"><span class="rg-addon-currency">@symbol</span>@amount.ToString("N0")<span class="rg-addon-period">@period</span></div>
+            <div class="rg-addon-unit">@(addon.PerUserPack ? addonLocalizer["PerUserPack"] : addonLocalizer["PerDepartment"])</div>
+            <div class="rg-addon-unit">@(addon.Period == AddonBillingPeriod.Yearly ? addonLocalizer["BillingBilledYearly"] : addonLocalizer["BillingBilledMonthly"])</div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="ibox">
+                <div class="ibox-title"><h5>@addonLocalizer["WhatsIncluded"]</h5></div>
+                <div class="ibox-content">
+                    <ul class="rg-addon-features rg-addon-features-columns">
+                        @foreach (var feature in Model.Features)
+                        {
+                            <li><i class="fa fa-check" aria-hidden="true"></i> @feature</li>
+                        }
+                    </ul>
+                    @foreach (var note in Model.Notes)
+                    {
+                        <p class="text-muted rg-addon-note">@note</p>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="ibox rg-addon-status">
+                <div class="ibox-content">
+                    @if (!Model.CanViewBilling)
+                    {
+                        <p class="alert alert-info">@addonLocalizer["BillingOwnerOnly"]</p>
+                    }
+                    else if (status == null)
+                    {
+                        <p class="alert alert-warning">@addonLocalizer["BillingUnavailable"]</p>
+                    }
+                    else
+                    {
+                        @if (status.Active)
+                        {
+                            <p class="rg-addon-state rg-addon-state-active"><i class="fa fa-check-circle" aria-hidden="true"></i> @addonLocalizer["BillingStatusActive"]</p>
+                            @if (status.Cancelled && status.PaidThroughUtc.HasValue)
+                            {
+                                <p class="text-warning">@string.Format(addonLocalizer["BillingStatusCancelled"].Value, status.PaidThroughUtc.Value.ToString("D"))</p>
+                            }
+                            else if (status.PaidThroughUtc.HasValue)
+                            {
+                                <p class="text-muted">@string.Format(addonLocalizer["BillingPaidThrough"].Value, status.PaidThroughUtc.Value.ToString("D"))</p>
+                            }
+                        }
+                        else if (!Model.AwaitingActivation)
+                        {
+                            <p class="rg-addon-state">@addonLocalizer["BillingStatusNone"]</p>
+                        }
+
+                        @if (Model.CanBuy)
+                        {
+                            <form method="post" asp-action="Checkout" id="addon-checkout">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-primary btn-lg btn-block rg-addon-buy">
+                                    <i class="fa fa-lock" aria-hidden="true"></i> @string.Format(addonLocalizer["BillingBuy"].Value, Model.Title)
+                                </button>
+                            </form>
+                            <p class="text-muted text-center rg-addon-secure">@string.Format(addonLocalizer["BillingSecureCheckout"].Value, status.Provider)</p>
+                        }
+                        else if (Model.IsOwner && Model.Offered && !status.Active && !status.CheckoutAvailable && !Model.AwaitingActivation)
+                        {
+                            <p class="alert alert-warning">
+                                @addonLocalizer["BillingCheckoutUnavailable"]
+                                <a href="@Url.Action("Contact", "Home", new { area = "" })">@addonLocalizer["ContactUs"]</a>
+                            </p>
+                        }
+                        else if (!Model.IsOwner && !status.Active)
+                        {
+                            <p class="alert alert-info">@addonLocalizer["BillingOwnerOnly"]</p>
+                        }
+
+                        @if (Model.CanCancel)
+                        {
+                            <form method="post" asp-action="CancelRenewal" class="m-t-md" id="addon-cancel-renewal" data-confirm="@addonLocalizer["BillingCancelConfirm"]">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-default btn-block">@addonLocalizer["BillingCancelRenewal"]</button>
+                            </form>
+                        }
+                    }
+                    <p class="alert alert-danger m-t-sm" id="addon-billing-error" role="alert" hidden></p>
+                </div>
+            </div>
+            @foreach (var side in Model.SideNotes)
+            {
+                <div class="ibox">
+                    <div class="ibox-title"><h5>@side.Title</h5></div>
+                    <div class="ibox-content"><p>@side.Text</p></div>
+                </div>
+            }
+            <div class="ibox">
+                <div class="ibox-title"><h5>@addonLocalizer["BillingLinks"]</h5></div>
+                <div class="ibox-content">
+                    <ul class="rg-addon-links">
+                        @foreach (var link in Model.Links)
+                        {
+                            @if (link.External)
+                            {
+                                <li><a href="@link.Url" target="_blank" rel="noopener">@link.Label <i class="fa fa-external-link" aria-hidden="true"></i></a></li>
+                            }
+                            else
+                            {
+                                <li><a href="@link.Url">@link.Label</a></li>
+                            }
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

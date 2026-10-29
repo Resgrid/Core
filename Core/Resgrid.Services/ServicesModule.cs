@@ -111,6 +111,15 @@ namespace Resgrid.Services
 					return (Func<RestClient>)(() => scope.ResolveNamed<RestClient>("ai-billing-client"));
 				}).InstancePerLifetimeScope();
 			builder.RegisterType<EnhancedAiAccessService>().As<IEnhancedAiAccessService>().InstancePerLifetimeScope();
+			// Advanced Data Protection yearly checkout (AdpAddonConfig): billing proxy, cloned from Enhanced AI.
+			builder.Register(_ => new RestClient(new RestClientOptions(SystemBehaviorConfig.BillingApiBaseUrl) { Timeout = TimeSpan.FromSeconds(10) },
+				configureSerialization: serializer => serializer.UseNewtonsoftJson())).Named<RestClient>("adp-billing-client").SingleInstance();
+			builder.RegisterType<AdpBillingService>().As<IAdpBillingService>()
+				.WithParameter((parameter, _) => parameter.ParameterType == typeof(Func<RestClient>), (_, context) =>
+				{
+					var scope = context.Resolve<ILifetimeScope>();
+					return (Func<RestClient>)(() => scope.ResolveNamed<RestClient>("adp-billing-client"));
+				}).InstancePerLifetimeScope();
 			// Enhanced AI base-type suggestions for department list names (decision model, DepartmentConfiguration requests only).
 			builder.RegisterType<BaseTypeAiSuggestionService>().As<IBaseTypeAiSuggestionService>().InstancePerLifetimeScope();
 			// AI dispatch, Enrich mode (enhanced-ai-addon-plan.md §4): worker-side enrichment of calls created from AI-format dispatch email.

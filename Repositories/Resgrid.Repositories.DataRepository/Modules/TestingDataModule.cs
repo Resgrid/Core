@@ -24,6 +24,7 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<BusinessOperationsBillingRepository>().As<IBusinessOperationsBillingRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<IncidentBackOfficeBillingRepository>().As<IIncidentBackOfficeBillingRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<AiBillingRepository>().As<IAiBillingRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<AdpBillingRepository>().As<IAdpBillingRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<CustomerBillingProfileRepository>().As<ICustomerBillingProfileRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RateCardRepository>().As<IRateCardRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RateCardItemRepository>().As<IRateCardItemRepository>().InstancePerLifetimeScope();

@@ -1166,7 +1166,7 @@ namespace Resgrid.Services
 
 		public async Task<bool> ModifyPTTAddonSubscriptionAsync(string stripeCustomerId, long quantity, PlanAddon planAddon)
 		{
-			if (planAddon != null && PlanAddon.IsDedicatedMonthlyAddon(planAddon.AddonType))
+			if (planAddon != null && PlanAddon.IsDedicatedAddon(planAddon))
 				return false;
 
 			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
@@ -1363,6 +1363,31 @@ namespace Resgrid.Services
 			return null;
 		}
 
+		public async Task<ApplyDiscountCodeData> ApplyDiscountCodeToDepartmentAsync(int departmentId, string code)
+		{
+			var unavailable = new ApplyDiscountCodeData { Outcome = DiscountCodeOutcomes.Unavailable };
+			if (String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) || String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
+				return unavailable;
+
+			try
+			{
+				var options = new RestClientOptions(Config.SystemBehaviorConfig.BillingApiBaseUrl) { Timeout = TimeSpan.FromMilliseconds(BillingApiTimeoutMs) };
+				using var client = new RestClient(options, configureSerialization: s => s.UseNewtonsoftJson());
+				var request = new RestRequest("/api/Billing/ApplyDiscountCodeToDepartment", Method.Post);
+				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
+				request.AddHeader("Content-Type", "application/json; charset=utf-8");
+				request.AddBody(new ApplyDiscountCodeInput { DepartmentId = departmentId, Code = code?.Trim() });
+
+				var response = await client.ExecuteAsync<ApplyDiscountCodeResult>(request);
+				return response.Data?.Data ?? unavailable;
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex, $"Applying a discount code failed for DepartmentId: {departmentId}");
+				return unavailable;
+			}
+		}
+
 		public async Task<CreatePaddleCheckoutData> CreatePaddleCheckoutForUpdate(int departmentId, string paddleCustomerId, string email, string departmentName)
 		{
 			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
@@ -1477,7 +1502,7 @@ namespace Resgrid.Services
 
 		public async Task<bool> ModifyPaddlePTTAddonSubscriptionAsync(string paddleCustomerId, long quantity, PlanAddon planAddon)
 		{
-			if (planAddon != null && PlanAddon.IsDedicatedMonthlyAddon(planAddon.AddonType))
+			if (planAddon != null && PlanAddon.IsDedicatedAddon(planAddon))
 				return false;
 
 			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))

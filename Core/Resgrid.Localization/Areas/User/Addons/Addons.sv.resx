@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="AddonsHeader" xml:space="preserve"><value>Tillägg</value></data>
+  <data name="AddonsIntro" xml:space="preserve"><value>Specialpaket som din avdelning kan lägga till när den behöver dem. Varje tillägg faktureras separat från din Resgrid-plan.</value></data>
+  <data name="AddonsPaidPlanRequired" xml:space="preserve"><value>Tillägg finns i betalda planer. Välj en plan ovan för att lägga till dem i din avdelning.</value></data>
+  <data name="LearnMore" xml:space="preserve"><value>Läs mer</value></data>
+  <data name="BuyAddon" xml:space="preserve"><value>Köp tillägg</value></data>
+  <data name="ManageAddon" xml:space="preserve"><value>Hantera</value></data>
+  <data name="StatusActive" xml:space="preserve"><value>Aktiv</value></data>
+  <data name="StatusEnds" xml:space="preserve"><value>Upphör {0}</value></data>
+  <data name="PerMonth" xml:space="preserve"><value>/mån</value></data>
+  <data name="PerYear" xml:space="preserve"><value>/år</value></data>
+  <data name="PerDepartment" xml:space="preserve"><value>per avdelning</value></data>
+  <data name="PerUserPack" xml:space="preserve"><value>per paket om 10 användare</value></data>
+  <data name="WhatsIncluded" xml:space="preserve"><value>Det här ingår</value></data>
+  <data name="BillingStatusActive" xml:space="preserve"><value>Aktivt för din avdelning</value></data>
+  <data name="BillingStatusCancelled" xml:space="preserve"><value>Förnyelsen är avbruten. Tillägget är aktivt till och med {0}.</value></data>
+  <data name="BillingStatusNone" xml:space="preserve"><value>Din avdelning har inte det här tillägget ännu.</value></data>
+  <data name="BillingPaidThrough" xml:space="preserve"><value>Betalt till och med {0}</value></data>
+  <data name="BillingBuy" xml:space="preserve"><value>Köp {0}</value></data>
+  <data name="BillingCancelRenewal" xml:space="preserve"><value>Avbryt förnyelse</value></data>
+  <data name="BillingCancelConfirm" xml:space="preserve"><value>Avbryta förnyelsen? Tillägget är aktivt till slutet av den period du redan har betalat för.</value></data>
+  <data name="BillingOwnerOnly" xml:space="preserve"><value>Endast avdelningens ansvariga medlem kan köpa eller avbryta tillägg.</value></data>
+  <data name="BillingCheckoutUnavailable" xml:space="preserve"><value>Onlineköp av det här tillägget är tillfälligt otillgängligt. Försök igen senare eller kontakta oss.</value></data>
+  <data name="BillingUnavailable" xml:space="preserve"><value>Fakturering är inte tillgänglig just nu. Försök igen senare.</value></data>
+  <data name="BillingCheckoutFailed" xml:space="preserve"><value>Köpet kunde inte startas. Försök igen eller kontakta oss om det fortsätter.</value></data>
+  <data name="BillingCheckoutComplete" xml:space="preserve"><value>Betalningen är mottagen. Tillägget aktiveras och sidan uppdateras automatiskt.</value></data>
+  <data name="BillingCheckoutCancelled" xml:space="preserve"><value>Köpet avbröts. Du har inte debiterats.</value></data>
+  <data name="BillingSecureCheckout" xml:space="preserve"><value>Säker betalning via {0}</value></data>
+  <data name="BillingBackToSubscription" xml:space="preserve"><value>Tillbaka till prenumerationen</value></data>
+  <data name="BillingLinks" xml:space="preserve"><value>Länkar</value></data>
+  <data name="BillingFeatureOff" xml:space="preserve"><value>Det här tillägget är avstängt för din avdelning. Du kan fortfarande hantera eller avbryta prenumerationen här.</value></data>
+  <data name="ContactUs" xml:space="preserve"><value>Kontakta oss</value></data>
+  <data name="BillingBilledMonthly" xml:space="preserve"><value>Faktureras månadsvis, separat från din Resgrid-plan.</value></data>
+  <data name="BillingBilledYearly" xml:space="preserve"><value>Faktureras årsvis, separat från din Resgrid-plan.</value></data>
+  <data name="PttTitle" xml:space="preserve"><value>Push-To-Talk</value></data>
+  <data name="PttTagline" xml:space="preserve"><value>Tvåvägsröst för hela teamet</value></data>
+  <data name="PttFeature1" xml:space="preserve"><value>Tvåvägs IP-röstkommunikation</value></data>
+  <data name="PttFeature2" xml:space="preserve"><value>Upp till 50 kanaler</value></data>
+  <data name="PttFeature3" xml:space="preserve"><value>Radio med global räckvidd</value></data>
+  <data name="PttFeature4" xml:space="preserve"><value>Röst i realtid, tryck för att tala</value></data>
+  <data name="PttFeature5" xml:space="preserve"><value>Android, iOS och webb</value></data>
+  <data name="PttNote" xml:space="preserve"><value>Faktureras månadsvis per paket om 10 användare. Lägg till eller ta bort paket när som helst utan att ändra huvudprenumerationen.</value></data>
+  <data name="ReadinessProTitle" xml:space="preserve"><value>Readiness Pro</value></data>
+  <data name="ReadinessProTagline" xml:space="preserve"><value>Underhåll och arbetsordrar</value></data>
+  <data name="ReadinessProFeature1" xml:space="preserve"><value>Schemaläggning av förebyggande underhåll</value></data>
+  <data name="ReadinessProFeature2" xml:space="preserve"><value>Tilldelning och uppföljning av arbetsordrar</value></data>
+  <data name="ReadinessProFeature3" xml:space="preserve"><value>Uppföljning av kostnader för delar, arbete och leverantörer</value></data>
+  <data name="ReadinessProFeature4" xml:space="preserve"><value>Utgiftsgodkännanden och servicetidsfrister</value></data>
+  <data name="ReadinessProFeature5" xml:space="preserve"><value>Beredskapsrapporter och automatiserade arbetsflöden</value></data>
+  <data name="ReadinessProNote" xml:space="preserve"><value>Faktureras månadsvis per avdelning, även med en årsplan. Checklistor är gratis och kräver inte Readiness Pro.</value></data>
+  <data name="BusinessOpsTitle" xml:space="preserve"><value>Business Ops</value></data>
+  <data name="BusinessOpsTagline" xml:space="preserve"><value>Fakturering, entreprenörsfakturering och kostnadsåtervinning</value></data>
+  <data name="BusinessOpsFeature1" xml:space="preserve"><value>Kundfakturering från larm med prislistor, PDF och e-post</value></data>
+  <data name="BusinessOpsFeature2" xml:space="preserve"><value>Onlinebetalningar direkt till ert eget Stripe-konto, utan avgift till Resgrid</value></data>
+  <data name="BusinessOpsFeature3" xml:space="preserve"><value>Avtalade prislistor, anbud och dagliga fakturor för insatser</value></data>
+  <data name="BusinessOpsFeature4" xml:space="preserve"><value>Förberedelse och avstämning av kostnadsåtervinning enligt Cal OES MARS</value></data>
+  <data name="BusinessOpsFeature5" xml:space="preserve"><value>Rapporter om fullkostnad för personal och utrustning, marginal och lönedata</value></data>
+  <data name="BusinessOpsNote" xml:space="preserve"><value>Faktureras månadsvis per avdelning, även med en årsplan. Kontakter, insatsplaner, certifieringar och tidsregistrering för insatser förblir gratis.</value></data>
+  <data name="IncidentBackOfficeTitle" xml:space="preserve"><value>Incident Back Office</value></data>
+  <data name="IncidentBackOfficeTagline" xml:space="preserve"><value>Logistik, ekonomi och samordning i ledningscentral vid stora händelser</value></data>
+  <data name="IncidentBackOfficeFeature1" xml:space="preserve"><value>Aktivering av händelser, ICS-befattningar, teamlistor och incheckning</value></data>
+  <data name="IncidentBackOfficeFeature2" xml:space="preserve"><value>Resursbeställningar och tillsättningar, avveckling och transport</value></data>
+  <data name="IncidentBackOfficeFeature3" xml:space="preserve"><value>Logi och sängar, förplägnad, dricksvatten och ärenden för stödtjänster</value></data>
+  <data name="IncidentBackOfficeFeature4" xml:space="preserve"><value>Leverantörer, upphandling, budgetar, tid och skiftrapporter</value></data>
+  <data name="IncidentBackOfficeFeature5" xml:space="preserve"><value>Dagskostnad, kostnadsdelning, ersättningsanspråk och tidsfrister för katastrofåterställning</value></data>
+  <data name="IncidentBackOfficeFeature6" xml:space="preserve"><value>Sammanställning av IAP, avslut och försegling samt samordningstavlor för ledningscentralen</value></data>
+  <data name="IncidentBackOfficeNote" xml:space="preserve"><value>Faktureras månadsvis per avdelning, även med en årsplan. Separat från Business Ops: inget av tilläggen ingår i det andra.</value></data>
+  <data name="EnhancedAiTitle" xml:space="preserve"><value>Enhanced AI</value></data>
+  <data name="EnhancedAiTagline" xml:space="preserve"><value>Privata AI-svar och utkast</value></data>
+  <data name="EnhancedAiFeature1" xml:space="preserve"><value>Admin Assist med AI utan frågetak</value></data>
+  <data name="EnhancedAiFeature2" xml:space="preserve"><value>Frågor till assistenten och insatsledningstavlan</value></data>
+  <data name="EnhancedAiFeature3" xml:space="preserve"><value>Utkast till rapporttexter och genomgångar för granskning</value></data>
+  <data name="EnhancedAiFeature4" xml:space="preserve"><value>Larmsammanfattningar, ikappsammanfattningar och kunskapssvar med källor</value></data>
+  <data name="EnhancedAiFeature5" xml:space="preserve"><value>Endast modeller med öppna vikter; privata data skickas aldrig till moln-AI</value></data>
+  <data name="EnhancedAiFeature6" xml:space="preserve"><value>Eller använd ert eget abonnemang hos en AI-leverantör</value></data>
+  <data name="EnhancedAiNote" xml:space="preserve"><value>Faktureras månadsvis per avdelning. Inkluderar en månatlig AI-budget utan överdebitering. Alla avdelningar får gratis Admin Assist-frågor även utan tillägget.</value></data>
+  <data name="AdpTitle" xml:space="preserve"><value>Advanced Data Protection</value></data>
+  <data name="AdpTagline" xml:space="preserve"><value>Kryptering och förstärkt åtkomst för känsliga uppgifter</value></data>
+  <data name="AdpFeature1" xml:space="preserve"><value>Kryptering på fältnivå för hälso- och personuppgifter</value></data>
+  <data name="AdpFeature2" xml:space="preserve"><value>Nycklar per avdelning som förvaras utanför databasen</value></data>
+  <data name="AdpFeature3" xml:space="preserve"><value>Förstärkt MFA krävs för att visa skyddade uppgifter</value></data>
+  <data name="AdpFeature4" xml:space="preserve"><value>Maskerade arbetsflöden, aviseringar och BigBoard</value></data>
+  <data name="AdpFeature5" xml:space="preserve"><value>Krävs för ett HIPAA BAA med Resgrid</value></data>
+  <data name="AdpNote" xml:space="preserve"><value>Faktureras årsvis, även om din avdelning har en månadsplan. Anslutningen sker på egen hand när tillägget är aktivt.</value></data>
+  <data name="CodesHeader" xml:space="preserve"><value>Rabatt- och värvningskoder</value></data>
+  <data name="CodesIntro" xml:space="preserve"><value>Har du en rabattkod eller blev du värvad av en Resgrid-partner? Du kan ange den här när som helst, inte bara vid registreringen.</value></data>
+  <data name="DiscountCodeLabel" xml:space="preserve"><value>Rabattkod</value></data>
+  <data name="DiscountCodePlaceholder" xml:space="preserve"><value>Ange en rabattkod</value></data>
+  <data name="DiscountCodeApply" xml:space="preserve"><value>Använd</value></data>
+  <data name="DiscountCodeHelpActive" xml:space="preserve"><value>Tillämpas direkt på din nuvarande prenumeration.</value></data>
+  <data name="DiscountCodeHelpCheckout" xml:space="preserve"><value>Tillämpas när du köper en plan ovan.</value></data>
+  <data name="DiscountPendingNotice" xml:space="preserve"><value>Rabattkoden {0} tillämpas i kassan.</value></data>
+  <data name="MessageDiscountApplied" xml:space="preserve"><value>Rabattkoden har tillämpats på din prenumeration. Den syns på nästa faktura.</value></data>
+  <data name="MessageDiscountPending" xml:space="preserve"><value>Rabattkoden är giltig och tillämpas när du köper en plan ovan.</value></data>
+  <data name="MessageDiscountInvalid" xml:space="preserve"><value>Rabattkoden är ogiltig, har gått ut eller kan inte användas av din avdelning.</value></data>
+  <data name="MessageDiscountUnavailable" xml:space="preserve"><value>Rabattkoder kan inte kontrolleras just nu. Försök igen senare.</value></data>
+  <data name="AffiliateCodeLabel" xml:space="preserve"><value>Partnerkod (värvningskod)</value></data>
+  <data name="AffiliateCodePlaceholder" xml:space="preserve"><value>Ange en partnerkod</value></data>
+  <data name="AffiliateCodeSave" xml:space="preserve"><value>Spara</value></data>
+  <data name="AffiliateCodeSetHelp" xml:space="preserve"><value>Kan läggas till en gång. Kontakta oss om den behöver ändras.</value></data>
+  <data name="AffiliateCodeCurrent" xml:space="preserve"><value>Värvad med partnerkod {0}</value></data>
+  <data name="MessageAffiliateApplied" xml:space="preserve"><value>Partnerkoden har sparats för din avdelning.</value></data>
+  <data name="MessageAffiliateInvalid" xml:space="preserve"><value>Partnerkoden är ogiltig eller inte längre aktiv.</value></data>
+  <data name="MessageAffiliateAlreadySet" xml:space="preserve"><value>Din avdelning har redan en partnerkod. Kontakta oss om den behöver ändras.</value></data>
+</root>

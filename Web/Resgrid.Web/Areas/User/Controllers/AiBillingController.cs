@@ -1,82 +1,56 @@
-using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Resgrid.Config;
+using Resgrid.Model;
 using Resgrid.Model.Services;
-using Resgrid.Web.Areas.User.Models.AiBilling;
+using Resgrid.Web.Areas.User.Models.Subscription;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
 	/// <summary>
-	/// Enhanced AI add-on purchase and renewal page (enhanced-ai-addon-plan.md; clone of BusinessOperationsBillingController).
-	/// Only the department's managing member may buy or cancel; checkout runs in the Billing API and the page only relays a
-	/// validated Stripe Checkout URL or Paddle transaction id. The purchase is separate from the Ai.Enhanced rollout flag.
+	/// Enhanced AI add-on purchase and renewal page (enhanced-ai-addon-plan.md). The shared flow lives in
+	/// <see cref="AddonBillingControllerBase"/>; this adds the AI budget, model and free-allowance notes.
 	/// </summary>
 	[Area("User"), Authorize, ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 	[Resgrid.Web.Filters.AllowDuringDepartmentLock]
-	public sealed class AiBillingController : SecureBaseController
+	public sealed class AiBillingController : AddonBillingControllerBase
 	{
 		private readonly IAiBillingService _billing;
-		private readonly IEnhancedAiAccessService _access;
-		private readonly IDepartmentsService _departments;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.EnhancedAi.EnhancedAi> _strings;
 
-		public AiBillingController(IAiBillingService billing, IEnhancedAiAccessService access, IDepartmentsService departments,
+		public AiBillingController(IAiBillingService billing, IDepartmentsService departments, Model.Services.IAuthorizationService authorization,
+			IFeatureToggleService flags, IStringLocalizer<Resgrid.Localization.Areas.User.Addons.Addons> addonStrings,
 			IStringLocalizer<Resgrid.Localization.Areas.User.EnhancedAi.EnhancedAi> strings)
+			: base(departments, authorization, flags, addonStrings)
 		{
 			_billing = billing;
-			_access = access;
-			_departments = departments;
 			_strings = strings;
 		}
 
-		private async Task<bool> OwnerAsync()
-		{
-			var member = await _departments.GetDepartmentMemberAsync(UserId, DepartmentId, true);
-			var department = await _departments.GetDepartmentByIdAsync(DepartmentId, true);
-			return member?.DepartmentId == DepartmentId && !member.IsDeleted && member.IsDisabled != true && department?.ManagingUserId == UserId;
-		}
+		protected override PlanAddonTypes AddonType => PlanAddonTypes.EnhancedAi;
 
-		[HttpGet]
-		public async Task<IActionResult> Index()
-		{
-			if (!await OwnerAsync())
-				return Forbid();
-			return View(new AiBillingView
-			{
-				Status = await _billing.GetAsync(DepartmentId),
-				RolledOut = await _access.IsEnabledAsync(DepartmentId),
-				FreeAllowanceEnabled = AiAddonConfig.AdminAssistFreeEnabled,
-				FreeStarterQuestions = AiAddonConfig.AdminAssistFreeStarterQuestions,
-				FreeStarterDays = AiAddonConfig.AdminAssistFreeStarterDays,
-				FreeMonthlyQuestions = AiAddonConfig.AdminAssistFreeMonthlyQuestions
-			});
-		}
+		protected override async Task<AddonBillingStatusView> GetStatusAsync() => AddonBillingStatusView.From(await _billing.GetAsync(DepartmentId));
 
-		[HttpPost, ValidateAntiForgeryToken]
-		public async Task<IActionResult> Checkout()
+		protected override async Task<AddonCheckoutStart> BeginCheckoutAsync()
 		{
-			if (!await OwnerAsync())
-				return Forbid();
 			var checkout = await _billing.BeginCheckoutAsync(DepartmentId);
-			if (checkout?.Provider == "Stripe" && Uri.TryCreate(checkout.Url, UriKind.Absolute, out var url) &&
-				url.Scheme == "https" && url.Host == "checkout.stripe.com" && string.IsNullOrEmpty(url.UserInfo))
-				return Json(new { url = checkout.Url });
-			if (checkout?.Provider == "Paddle" && System.Text.RegularExpressions.Regex.IsMatch(checkout.TransactionId ?? "", "^txn_[a-z0-9]{26}$"))
-				return Json(new { transactionId = checkout.TransactionId });
-			return StatusCode(503, new { message = _strings["BillingUnavailable"].Value });
+			return checkout == null ? null : new AddonCheckoutStart(checkout.Provider, checkout.Url, checkout.TransactionId);
 		}
 
-		[HttpPost, ValidateAntiForgeryToken]
-		public async Task<IActionResult> CancelRenewal()
+		protected override Task<bool> CancelRenewalAsync() => _billing.CancelRenewalAsync(DepartmentId);
+
+		protected override Task DecorateAsync(AddonBillingView view)
 		{
-			if (!await OwnerAsync())
-				return Forbid();
-			if (!await _billing.CancelRenewalAsync(DepartmentId))
-				return StatusCode(503, new { message = _strings["BillingUnavailable"].Value });
-			return RedirectToAction(nameof(Index));
+			view.Notes.Add(_strings["BudgetNote"]);
+			view.Notes.Add(_strings["ModelsNote"] + " " + _strings["DataNote"]);
+			view.Notes.Add(_strings["ComingLater"]);
+			if (AiAddonConfig.AdminAssistFreeEnabled)
+				view.SideNotes.Add(new AddonSideNote(_strings["FreeAllowance"], string.Format(_strings["FreeAllowanceText"].Value,
+					AiAddonConfig.AdminAssistFreeStarterQuestions, AiAddonConfig.AdminAssistFreeStarterDays, AiAddonConfig.AdminAssistFreeMonthlyQuestions)));
+			view.Links.Add(new AddonLink(_strings["FeatureOwnProvider"], Url.Action("Index", "ChatbotSettings", new { Area = "User" })));
+			return Task.CompletedTask;
 		}
 	}
 }

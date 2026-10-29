@@ -61,5 +61,32 @@ namespace Resgrid.Web.Areas.User.Models.Subscription
 		public bool IsInGrace => GraceEndsOn.HasValue && GraceEndsOn.Value > DateTime.UtcNow;
 
 		public string ErrorMessage { get; set; }
+
+		/// <summary>The ADP enrollment toggle is on for the department, so the add-on is offered to buy.</summary>
+		public bool Offered { get; set; }
+
+		/// <summary>
+		/// The yearly checkout can open right now (Billing API: toggle on, provider price configured and valid, nothing held). When it
+		/// cannot, the page points at sales instead of drawing a button the checkout would refuse.
+		/// </summary>
+		public bool CanPurchaseOnline { get; set; }
+
+		/// <summary>Stripe or Paddle: which checkout the page's script opens.</summary>
+		public string CheckoutProvider { get; set; }
+
+		/// <summary>The held add-on is the legacy item on the base Stripe subscription (M0126), not the yearly checkout.</summary>
+		public bool IsLegacyItem { get; set; }
+
+		/// <summary>The yearly checkout's own subscription is renewing and may be cancelled at the end of its paid year.</summary>
+		public bool CanCancelYearly { get; set; }
+
+		/// <summary>The provider return outcome (<c>complete</c> / <c>cancelled</c>), as on the other add-on billing pages.</summary>
+		public string Result { get; set; }
+
+		/// <summary>How many times the page has refreshed itself while a completed checkout waits for its webhook.</summary>
+		public int Attempt { get; set; }
+
+		/// <summary>A completed checkout returned but the provider webhook has not activated the add-on yet.</summary>
+		public bool AwaitingActivation => Result == AddonBillingResults.Complete && !HasAddon;
 	}
 }

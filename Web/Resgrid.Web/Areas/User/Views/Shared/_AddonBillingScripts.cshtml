@@ -1,0 +1,25 @@
+@model Resgrid.Web.Areas.User.Models.Subscription.AddonBillingView
+@using Resgrid.Config
+@using Newtonsoft.Json
+@using Resgrid.Web.Areas.User.Models.Subscription
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Addons.Addons> addonLocalizer
+@{
+    var status = Model.Status;
+    var paddle = status?.Provider == "Paddle";
+    var pageUrl = Url.Action("Index", null, new { Area = "User" }, Context.Request.Scheme);
+}
+@if (paddle && Model.CanBuy)
+{
+    <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+}
+<script type="application/json" id="addon-billing-config">@Html.Raw(JsonConvert.SerializeObject(new
+{
+    provider = status?.Provider,
+    token = paddle && Model.CanBuy ? PaymentProviderConfig.GetPaddleClientToken() : null,
+    environment = PaymentProviderConfig.GetPaddleEnvironment(),
+    error = addonLocalizer["BillingCheckoutFailed"].Value,
+    completeUrl = pageUrl + "?result=" + AddonBillingResults.Complete,
+    pending = Model.AwaitingActivation,
+    attempt = Model.Attempt
+}, new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml }))</script>
+<script src="~/js/app/internal/subscription/addon-billing.js" asp-append-version="true"></script>

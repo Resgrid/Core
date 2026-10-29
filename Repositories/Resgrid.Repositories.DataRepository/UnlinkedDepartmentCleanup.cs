@@ -31,7 +31,7 @@ namespace Resgrid.Repositories.DataRepository
 		{
 			"CallLocationIndexStates", "CallNumberSequences", "DocumentNumberSequences", "DepartmentApiKeys", "ScheduledTasks", "UserStates",
 			"UdfDefinitions", "ChatbotSessions", "ChatbotMessageLog", "ChatbotDepartmentConfigs", "AiDispatchAudits", "DepartmentAiDispatchConfigs",
-			"AiBillingAccounts", "ContactPreplanHazards", "ContactPreplans", "ContactAttachments", "DepartmentProfileMedia", "TypeIcons", "MapVisualizations", "RunCardActivations",
+			"AiBillingAccounts", "AdpBillingAccounts", "ContactPreplanHazards", "ContactPreplans", "ContactAttachments", "DepartmentProfileMedia", "TypeIcons", "MapVisualizations", "RunCardActivations",
 			"RunCards", "StationCoverageRequirements", "ModerationActions", "ModerationReports", "ModerationRequests", "MessageRecipients", "Messages",
 			"DepartmentMemberSensitiveData", "DepartmentMemberEmergencyContacts", "UserExternalIdentityLinks", "DepartmentSecurityPolicies",
 			"DepartmentSsoConfigs", "GdprDataExportRequests", "Autofills", "DomainEventOutbox", "ReportingDailyRollup", "SearchProjections",
@@ -66,8 +66,8 @@ namespace Resgrid.Repositories.DataRepository
 			await DeleteChild("UdfFields", false, ("UdfDefinitions", "UdfDefinitionId", "UdfDefinitionId"));
 			await Delete("UdfDefinitions");
 
-			// Chatbot, AI dispatch triage and the AI add-on billing account
-			await Delete("ChatbotSessions", "ChatbotMessageLog", "ChatbotDepartmentConfigs", "AiDispatchAudits", "DepartmentAiDispatchConfigs", "AiBillingAccounts");
+			// Chatbot, AI dispatch triage and the AI and ADP add-on billing accounts
+			await Delete("ChatbotSessions", "ChatbotMessageLog", "ChatbotDepartmentConfigs", "AiDispatchAudits", "DepartmentAiDispatchConfigs", "AiBillingAccounts", "AdpBillingAccounts");
 
 			// Contact preplans, their hazards and contact attachments; profile media and type icons are keyed by department
 			await Delete("ContactPreplanHazards", "ContactPreplans", "ContactAttachments", "DepartmentProfileMedia", "TypeIcons");

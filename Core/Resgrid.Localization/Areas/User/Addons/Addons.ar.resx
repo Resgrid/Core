@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="AddonsHeader" xml:space="preserve"><value>الإضافات</value></data>
+  <data name="AddonsIntro" xml:space="preserve"><value>حزم متخصصة يمكن لقسمك إضافتها عند الحاجة. تُفوتر كل إضافة بشكل منفصل عن خطة Resgrid الخاصة بك.</value></data>
+  <data name="AddonsPaidPlanRequired" xml:space="preserve"><value>الإضافات متاحة في الخطط المدفوعة. اختر خطة أعلاه لإضافتها إلى قسمك.</value></data>
+  <data name="LearnMore" xml:space="preserve"><value>اعرف المزيد</value></data>
+  <data name="BuyAddon" xml:space="preserve"><value>شراء الإضافة</value></data>
+  <data name="ManageAddon" xml:space="preserve"><value>إدارة</value></data>
+  <data name="StatusActive" xml:space="preserve"><value>نشطة</value></data>
+  <data name="StatusEnds" xml:space="preserve"><value>ينتهي في {0}</value></data>
+  <data name="PerMonth" xml:space="preserve"><value>/شهر</value></data>
+  <data name="PerYear" xml:space="preserve"><value>/سنة</value></data>
+  <data name="PerDepartment" xml:space="preserve"><value>لكل قسم</value></data>
+  <data name="PerUserPack" xml:space="preserve"><value>لكل حزمة من 10 مستخدمين</value></data>
+  <data name="WhatsIncluded" xml:space="preserve"><value>ما الذي تتضمنه</value></data>
+  <data name="BillingStatusActive" xml:space="preserve"><value>نشطة لقسمك</value></data>
+  <data name="BillingStatusCancelled" xml:space="preserve"><value>تم إلغاء التجديد. تبقى الإضافة نشطة حتى {0}.</value></data>
+  <data name="BillingStatusNone" xml:space="preserve"><value>لا يملك قسمك هذه الإضافة بعد.</value></data>
+  <data name="BillingPaidThrough" xml:space="preserve"><value>مدفوع حتى {0}</value></data>
+  <data name="BillingBuy" xml:space="preserve"><value>شراء {0}</value></data>
+  <data name="BillingCancelRenewal" xml:space="preserve"><value>إلغاء التجديد</value></data>
+  <data name="BillingCancelConfirm" xml:space="preserve"><value>هل تريد إلغاء التجديد؟ تبقى الإضافة نشطة حتى نهاية الفترة التي دفعت ثمنها.</value></data>
+  <data name="BillingOwnerOnly" xml:space="preserve"><value>يمكن للعضو المسؤول عن إدارة قسمك فقط شراء الإضافات أو إلغاؤها.</value></data>
+  <data name="BillingCheckoutUnavailable" xml:space="preserve"><value>الدفع عبر الإنترنت لهذه الإضافة غير متاح مؤقتًا. يرجى المحاولة لاحقًا أو التواصل معنا.</value></data>
+  <data name="BillingUnavailable" xml:space="preserve"><value>الفوترة غير متاحة الآن. يرجى المحاولة لاحقًا.</value></data>
+  <data name="BillingCheckoutFailed" xml:space="preserve"><value>تعذر بدء عملية الدفع. يرجى المحاولة مرة أخرى، أو التواصل معنا إذا تكرر ذلك.</value></data>
+  <data name="BillingCheckoutComplete" xml:space="preserve"><value>تم استلام الدفعة. يجري تفعيل الإضافة وسيتم تحديث هذه الصفحة تلقائيًا.</value></data>
+  <data name="BillingCheckoutCancelled" xml:space="preserve"><value>تم إلغاء عملية الدفع. لم يتم تحصيل أي مبلغ منك.</value></data>
+  <data name="BillingSecureCheckout" xml:space="preserve"><value>دفع آمن عبر {0}</value></data>
+  <data name="BillingBackToSubscription" xml:space="preserve"><value>العودة إلى الاشتراك</value></data>
+  <data name="BillingLinks" xml:space="preserve"><value>روابط</value></data>
+  <data name="BillingFeatureOff" xml:space="preserve"><value>هذه الإضافة متوقفة لقسمك. لا يزال بإمكانك إدارة اشتراكها أو إلغاؤه من هنا.</value></data>
+  <data name="ContactUs" xml:space="preserve"><value>تواصل معنا</value></data>
+  <data name="BillingBilledMonthly" xml:space="preserve"><value>تُفوتر شهريًا بشكل منفصل عن خطة Resgrid الخاصة بك.</value></data>
+  <data name="BillingBilledYearly" xml:space="preserve"><value>تُفوتر سنويًا بشكل منفصل عن خطة Resgrid الخاصة بك.</value></data>
+  <data name="PttTitle" xml:space="preserve"><value>Push-To-Talk</value></data>
+  <data name="PttTagline" xml:space="preserve"><value>اتصال صوتي ثنائي الاتجاه لفريقك بالكامل</value></data>
+  <data name="PttFeature1" xml:space="preserve"><value>اتصالات صوتية ثنائية الاتجاه عبر IP</value></data>
+  <data name="PttFeature2" xml:space="preserve"><value>حتى 50 قناة</value></data>
+  <data name="PttFeature3" xml:space="preserve"><value>أجهزة لاسلكية بتغطية عالمية</value></data>
+  <data name="PttFeature4" xml:space="preserve"><value>صوت فوري بخاصية الضغط للتحدث</value></data>
+  <data name="PttFeature5" xml:space="preserve"><value>Android وiOS والويب</value></data>
+  <data name="PttNote" xml:space="preserve"><value>تُفوتر شهريًا لكل حزمة من 10 مستخدمين. أضف الحزم أو أزلها في أي وقت دون تغيير اشتراكك الرئيسي.</value></data>
+  <data name="ReadinessProTitle" xml:space="preserve"><value>Readiness Pro</value></data>
+  <data name="ReadinessProTagline" xml:space="preserve"><value>الصيانة وأوامر العمل</value></data>
+  <data name="ReadinessProFeature1" xml:space="preserve"><value>جدولة الصيانة الوقائية</value></data>
+  <data name="ReadinessProFeature2" xml:space="preserve"><value>إسناد أوامر العمل ومتابعتها</value></data>
+  <data name="ReadinessProFeature3" xml:space="preserve"><value>تتبع تكاليف القطع والعمالة والموردين</value></data>
+  <data name="ReadinessProFeature4" xml:space="preserve"><value>اعتمادات الإنفاق ومواعيد الخدمة النهائية</value></data>
+  <data name="ReadinessProFeature5" xml:space="preserve"><value>تقارير الجاهزية وأتمتة سير العمل</value></data>
+  <data name="ReadinessProNote" xml:space="preserve"><value>تُفوتر شهريًا لكل قسم، حتى مع الخطة السنوية. قوائم التحقق مجانية ولا تتطلب Readiness Pro.</value></data>
+  <data name="BusinessOpsTitle" xml:space="preserve"><value>Business Ops</value></data>
+  <data name="BusinessOpsTagline" xml:space="preserve"><value>الفوترة وفوترة المتعاقدين واسترداد التكاليف</value></data>
+  <data name="BusinessOpsFeature1" xml:space="preserve"><value>فوترة العملاء من البلاغات باستخدام جداول الأسعار وملفات PDF والبريد الإلكتروني</value></data>
+  <data name="BusinessOpsFeature2" xml:space="preserve"><value>مدفوعات عبر الإنترنت مباشرة إلى حساب Stripe الخاص بك، دون رسوم من Resgrid</value></data>
+  <data name="BusinessOpsFeature3" xml:space="preserve"><value>جداول أسعار العقود والعطاءات وفواتير الانتشار اليومية</value></data>
+  <data name="BusinessOpsFeature4" xml:space="preserve"><value>إعداد ومطابقة استرداد التكاليف عبر Cal OES MARS</value></data>
+  <data name="BusinessOpsFeature5" xml:space="preserve"><value>تقارير تكلفة العمالة والمعدات الكاملة والهامش وبيانات الأجور</value></data>
+  <data name="BusinessOpsNote" xml:space="preserve"><value>تُفوتر شهريًا لكل قسم، حتى مع الخطة السنوية. تبقى جهات الاتصال والخطط المسبقة والشهادات وتسجيل وقت الانتشار مجانية.</value></data>
+  <data name="IncidentBackOfficeTitle" xml:space="preserve"><value>Incident Back Office</value></data>
+  <data name="IncidentBackOfficeTagline" xml:space="preserve"><value>لوجستيات الحوادث الكبرى والشؤون المالية وتنسيق مركز عمليات الطوارئ</value></data>
+  <data name="IncidentBackOfficeFeature1" xml:space="preserve"><value>تفعيل الحادث ومناصب نظام قيادة الحوادث وقوائم الفرق وتسجيل الوصول</value></data>
+  <data name="IncidentBackOfficeFeature2" xml:space="preserve"><value>طلبات الموارد وتلبيتها وإنهاء التعبئة والنقل</value></data>
+  <data name="IncidentBackOfficeFeature3" xml:space="preserve"><value>الإيواء والأسرّة والتغذية ومياه الشرب وطلبات خدمات الدعم</value></data>
+  <data name="IncidentBackOfficeFeature4" xml:space="preserve"><value>الموردون والمشتريات والميزانيات وبطاقات الوقت والمناوبات</value></data>
+  <data name="IncidentBackOfficeFeature5" xml:space="preserve"><value>التكلفة اليومية وتقاسم التكاليف والمطالبات ومواعيد التعافي من الكوارث</value></data>
+  <data name="IncidentBackOfficeFeature6" xml:space="preserve"><value>إعداد خطة عمل الحادث والإغلاق والختم ولوحات تنسيق مركز عمليات الطوارئ</value></data>
+  <data name="IncidentBackOfficeNote" xml:space="preserve"><value>تُفوتر شهريًا لكل قسم، حتى مع الخطة السنوية. منفصلة عن Business Ops: لا تتضمن أي من الإضافتين الأخرى.</value></data>
+  <data name="EnhancedAiTitle" xml:space="preserve"><value>Enhanced AI</value></data>
+  <data name="EnhancedAiTagline" xml:space="preserve"><value>إجابات ومسودات خاصة بالذكاء الاصطناعي</value></data>
+  <data name="EnhancedAiFeature1" xml:space="preserve"><value>Admin Assist بالذكاء الاصطناعي دون حد للأسئلة</value></data>
+  <data name="EnhancedAiFeature2" xml:space="preserve"><value>أسئلة المساعد ولوحة قيادة الحادث</value></data>
+  <data name="EnhancedAiFeature3" xml:space="preserve"><value>مسودات سرد التقارير والإحاطات لمراجعتك</value></data>
+  <data name="EnhancedAiFeature4" xml:space="preserve"><value>ملخصات البلاغات وملخصات المتابعة وإجابات معرفية موثقة بالمصادر</value></data>
+  <data name="EnhancedAiFeature5" xml:space="preserve"><value>نماذج مفتوحة الأوزان فقط؛ لا تُرسل البيانات الخاصة أبدًا إلى ذكاء اصطناعي سحابي</value></data>
+  <data name="EnhancedAiFeature6" xml:space="preserve"><value>أو استخدم اشتراكك الخاص لدى مزوّد ذكاء اصطناعي</value></data>
+  <data name="EnhancedAiNote" xml:space="preserve"><value>تُفوتر شهريًا لكل قسم. تتضمن ميزانية شهرية للذكاء الاصطناعي دون رسوم تجاوز. يحصل كل قسم على أسئلة Admin Assist مجانية بدونها.</value></data>
+  <data name="AdpTitle" xml:space="preserve"><value>Advanced Data Protection</value></data>
+  <data name="AdpTagline" xml:space="preserve"><value>تشفير ووصول بتحقق إضافي للبيانات الحساسة</value></data>
+  <data name="AdpFeature1" xml:space="preserve"><value>تشفير على مستوى الحقول للمعلومات الصحية والشخصية</value></data>
+  <data name="AdpFeature2" xml:space="preserve"><value>مفاتيح خاصة بكل قسم محفوظة خارج قاعدة البيانات</value></data>
+  <data name="AdpFeature3" xml:space="preserve"><value>يلزم التحقق الإضافي متعدد العوامل لكشف البيانات المحمية</value></data>
+  <data name="AdpFeature4" xml:space="preserve"><value>حجب البيانات في سير العمل والإشعارات وBigBoard</value></data>
+  <data name="AdpFeature5" xml:space="preserve"><value>مطلوبة لإبرام اتفاقية شريك أعمال HIPAA مع Resgrid</value></data>
+  <data name="AdpNote" xml:space="preserve"><value>تُفوتر سنويًا، حتى لو كان قسمك على خطة شهرية. يتم التسجيل ذاتيًا بمجرد تفعيل الإضافة.</value></data>
+  <data name="CodesHeader" xml:space="preserve"><value>رموز الخصم والإحالة</value></data>
+  <data name="CodesIntro" xml:space="preserve"><value>هل لديك رمز خصم، أو تمت إحالتك من شريك لـ Resgrid؟ يمكنك إدخاله هنا في أي وقت، وليس عند التسجيل فقط.</value></data>
+  <data name="DiscountCodeLabel" xml:space="preserve"><value>رمز الخصم</value></data>
+  <data name="DiscountCodePlaceholder" xml:space="preserve"><value>أدخل رمز الخصم</value></data>
+  <data name="DiscountCodeApply" xml:space="preserve"><value>تطبيق</value></data>
+  <data name="DiscountCodeHelpActive" xml:space="preserve"><value>يُطبَّق على اشتراكك الحالي فورًا.</value></data>
+  <data name="DiscountCodeHelpCheckout" xml:space="preserve"><value>يُطبَّق عند شراء خطة أعلاه.</value></data>
+  <data name="DiscountPendingNotice" xml:space="preserve"><value>سيُطبَّق رمز الخصم {0} عند الدفع.</value></data>
+  <data name="MessageDiscountApplied" xml:space="preserve"><value>تم تطبيق رمز الخصم على اشتراكك. سيظهر في فاتورتك التالية.</value></data>
+  <data name="MessageDiscountPending" xml:space="preserve"><value>رمز الخصم صالح وسيُطبَّق عند شراء خطة أعلاه.</value></data>
+  <data name="MessageDiscountInvalid" xml:space="preserve"><value>رمز الخصم هذا غير صالح أو منتهي الصلاحية أو لا يمكن لقسمك استخدامه.</value></data>
+  <data name="MessageDiscountUnavailable" xml:space="preserve"><value>لا يمكن التحقق من رموز الخصم الآن. يرجى المحاولة لاحقًا.</value></data>
+  <data name="AffiliateCodeLabel" xml:space="preserve"><value>رمز الشريك (الإحالة)</value></data>
+  <data name="AffiliateCodePlaceholder" xml:space="preserve"><value>أدخل رمز الشريك</value></data>
+  <data name="AffiliateCodeSave" xml:space="preserve"><value>حفظ</value></data>
+  <data name="AffiliateCodeSetHelp" xml:space="preserve"><value>يمكن إضافته مرة واحدة. تواصل معنا إذا احتاج إلى تغيير.</value></data>
+  <data name="AffiliateCodeCurrent" xml:space="preserve"><value>تمت الإحالة برمز الشريك {0}</value></data>
+  <data name="MessageAffiliateApplied" xml:space="preserve"><value>تم حفظ رمز الشريك لقسمك.</value></data>
+  <data name="MessageAffiliateInvalid" xml:space="preserve"><value>رمز الشريك هذا غير صالح أو لم يعد نشطًا.</value></data>
+  <data name="MessageAffiliateAlreadySet" xml:space="preserve"><value>لدى قسمك رمز شريك بالفعل. تواصل معنا إذا احتاج إلى تغيير.</value></data>
+</root>

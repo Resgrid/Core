@@ -1,9 +1,12 @@
 ﻿@using Newtonsoft.Json
 @using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Subscription
 @model Resgrid.Web.Areas.User.Models.Subscription.AdpAddonView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.DataProtection.DataProtection> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Addons.Addons> addonLocalizer
 @{
     ViewBag.Title = "Resgrid | " + @localizer["AddonPageTitle"];
+    var adpAddon = Resgrid.Web.Areas.User.Models.Subscription.AddonCatalog.Get(PlanAddonTypes.ADP);
 
     // Billing status and protection status are shown as two separate lines throughout this page.
     // They genuinely can disagree - a cancelled addon still protects until its offboarding
@@ -17,6 +20,10 @@
     // uses for the values it hands to script.
     var cancelConfirmJson = Html.Raw(JsonConvert.SerializeObject(localizer["AddonCancelConfirm"].Value,
         new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml }));
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/addons.css" asp-append-version="true" />
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
@@ -36,7 +43,21 @@
     </div>
 </div>
 
-<div class="wrapper wrapper-content animated fadeInRight">
+<div class="wrapper wrapper-content animated fadeInRight rg-addon-page addon-adp">
+    <div class="rg-addon-hero">
+        <div class="rg-addon-hero-main">
+            <span class="rg-addon-icon rg-addon-icon-lg" aria-hidden="true"><i class="fa @adpAddon.Icon"></i></span>
+            <div>
+                <h2>@addonLocalizer[adpAddon.TitleKey]</h2>
+                <p class="rg-addon-tagline">@addonLocalizer[adpAddon.TaglineKey]</p>
+                <p class="rg-addon-hero-note">@addonLocalizer[adpAddon.NoteKey] <a href="@adpAddon.LearnMoreUrl" target="_blank" rel="noopener">@addonLocalizer["LearnMore"] <i class="fa fa-external-link" aria-hidden="true"></i></a></p>
+            </div>
+        </div>
+        <div class="rg-addon-hero-price">
+            <div class="rg-addon-price">@Model.Price<span class="rg-addon-period">@addonLocalizer["PerYear"]</span></div>
+            <div class="rg-addon-unit">@addonLocalizer["PerDepartment"]</div>
+        </div>
+    </div>
     <div class="row">
         <div class="col-lg-10 col-lg-offset-1">
             <div class="ibox float-e-margins">
@@ -44,10 +65,26 @@
                     <h5><i class="fa fa-shield"></i> @localizer["AddonPageTitle"]</h5>
                 </div>
                 <div class="ibox-content">
+                    @if (Model.AwaitingActivation)
+                    {
+                        <div class="alert alert-info" role="status"><i class="fa fa-spinner fa-spin" aria-hidden="true"></i> @addonLocalizer["BillingCheckoutComplete"]</div>
+                    }
+                    else if (Model.Result == AddonBillingResults.Complete)
+                    {
+                        <div class="alert alert-success" role="status"><i class="fa fa-check-circle" aria-hidden="true"></i> @addonLocalizer["BillingStatusActive"]</div>
+                    }
+                    else if (Model.Result == AddonBillingResults.Cancelled)
+                    {
+                        <div class="alert alert-warning" role="status"><i class="fa fa-info-circle" aria-hidden="true"></i> @addonLocalizer["BillingCheckoutCancelled"]</div>
+                    }
                     @if (!Model.HasAddon)
                     {
-                        <div class="alert alert-info">@localizer["AddonNotPurchased"]</div>
-                        <a asp-controller="Subscription" asp-action="BuyAdpAddon" asp-route-area="User" class="btn btn-primary">@localizer["AddonBuyButton"]</a>
+                        // While a completed checkout waits for its webhook the page refreshes itself; offering another purchase then would be wrong.
+                        if (!Model.AwaitingActivation)
+                        {
+                            <div class="alert alert-info">@localizer["AddonNotPurchased"]</div>
+                            <a asp-controller="Subscription" asp-action="BuyAdpAddon" asp-route-area="User" class="btn btn-primary">@localizer["AddonBuyButton"]</a>
+                        }
                     }
                     else
                     {
@@ -117,3 +154,7 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <partial name="_AdpCheckoutScripts" model="Model" />
+}

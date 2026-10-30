@@ -6735,6 +6735,12 @@
   <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.MobileTurnoutSeconds">
     <value>Δευτερόλεπτα που χρειάζεται μια μονάδα ήδη εκτός και διαθέσιμη μέχρι να κινηθεί· ισχύει για μονάδες που κατατάσσονται με βάση το GPS. Προστίθεται στον χρόνο μετάβασης κατά την κατάταξη των πλησιέστερων μονάδων· το μηδέν σημαίνει κανένας.</value>
   </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.ClosestUnitRanking">
+    <value>Διαμόρφωση συστάσεων αποστολής / Κατάταξη πλησιέστερων μονάδων</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.ClosestUnitRanking">
+    <value>Πώς οι προτάσεις πλησιέστερης μονάδας και η λίστα πλησιέστερων μονάδων ταξινομούν τους υποψηφίους: ταχύτερη άφιξη (χρόνος εξόδου συν διαδρομή, με υπολογισμένους χρόνους οδήγησης όταν είναι ενεργοί· προεπιλογή) ή μικρότερη απόσταση σε ευθεία γραμμή.</value>
+  </data>
   <data xml:space="preserve" name="Setting.StatusHoldToConfirm">
     <value>Παρατεταμένο πάτημα για ορισμό κατάστασης</value>
   </data>

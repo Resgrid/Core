@@ -1465,6 +1465,9 @@ namespace Resgrid.Services
 			if (config.UnitMinimumStaffingLevel < 0)
 				config.UnitMinimumStaffingLevel = 0;
 
+			if (!Enum.IsDefined(typeof(ClosestUnitRankingModes), config.ClosestUnitRanking))
+				config.ClosestUnitRanking = ClosestUnitRankingModes.FastestResponse;
+
 			return config;
 		}
 

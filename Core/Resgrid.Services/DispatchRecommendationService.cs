@@ -1166,9 +1166,10 @@ namespace Resgrid.Services
 				located = fresh;
 			}
 
-			// Ranked on response time rather than distance: the turnout for where the unit is plus estimated travel.
-			// With no turnout configured this orders exactly as distance did; with one, a unit already out can beat a
-			// nearer unit that still has to leave its station.
+			// Ranked on response time by default: the turnout for where the unit is plus estimated travel. With no turnout
+			// configured this orders exactly as distance does; with one, a unit already out can beat a nearer unit that
+			// still has to leave its station. A department that ranks by distance gets the nearest unit whatever its turnout.
+			var byDistance = context.Config.RanksByDistance;
 			var ranked = located
 				.Select(c =>
 				{
@@ -1183,14 +1184,15 @@ namespace Resgrid.Services
 				})
 				.Where(x => context.Config.MaxRadiusMeters <= 0 || x.Distance <= context.Config.MaxRadiusMeters)
 				.OrderBy(x => IsUnitInRestPeriod(context, x.Candidate.Unit.UnitId) ? 1 : 0)
-				.ThenBy(x => x.EstimatedResponse)
-				.ThenBy(x => x.Distance)
+				.ThenBy(x => byDistance ? x.Distance : x.EstimatedResponse)
+				.ThenBy(x => byDistance ? x.EstimatedResponse : x.Distance)
 				.ToList();
 
 			var outsideRadius = located.Count - ranked.Count;
 
+			// Drive times only re-rank, so ranking by distance makes no lookups.
 			var etaByUnitId = new Dictionary<int, double>();
-			if (context.Config.UseRoutedEta && ranked.Any())
+			if (context.Config.UseRoutedEta && !byDistance && ranked.Any())
 			{
 				var shortlistSize = Math.Max(1, context.Config.EtaShortlistSize);
 				var shortlist = ranked.Take(Math.Max(shortlistSize, requirement.RequiredCount)).ToList();
@@ -1306,7 +1308,7 @@ namespace Resgrid.Services
 			var outsideRadius = located.Count - ranked.Count;
 
 			var etaByUserId = new Dictionary<string, double>(StringComparer.OrdinalIgnoreCase);
-			if (context.Config.UseRoutedEta && ranked.Any())
+			if (context.Config.UseRoutedEta && !context.Config.RanksByDistance && ranked.Any())
 			{
 				var shortlistSize = Math.Max(1, context.Config.EtaShortlistSize);
 				var shortlist = ranked.Take(Math.Max(shortlistSize, requirement.RequiredCount)).ToList();

@@ -356,6 +356,36 @@
   <data name="CallUnitTimesLegend" xml:space="preserve">
     <value>Lié automatiquement : un statut envoyé sans appel que Resgrid a lié d'après le statut précédent de l'unité ou son envoi. Déduit : un statut défini sans destination par l'unité alors qu'elle était envoyée sur l'appel. Envoi seulement : l'unité a été envoyée mais n'a signalé aucun statut sur l'appel.</value>
   </data>
+  <data name="CallUnitTimesInServiceHeader" xml:space="preserve">
+    <value>De nouveau disponible</value>
+  </data>
+  <data name="CallUnitTimesCommittedHeader" xml:space="preserve">
+    <value>Engagée</value>
+  </data>
+  <data name="CallUnitTimesHistoryHeader" xml:space="preserve">
+    <value>Historique des statuts</value>
+  </data>
+  <data name="CallUnitTimesStatusHeader" xml:space="preserve">
+    <value>Statut</value>
+  </data>
+  <data name="CallUnitTimesTimeHeader" xml:space="preserve">
+    <value>Heure</value>
+  </data>
+  <data name="CallUnitTimesDurationHeader" xml:space="preserve">
+    <value>Durée</value>
+  </data>
+  <data name="CallUnitTimesSourceFollowOn" xml:space="preserve">
+    <value>Historique de l'unité</value>
+  </data>
+  <data name="CallUnitTimesSetByResgrid" xml:space="preserve">
+    <value>défini par Resgrid</value>
+  </data>
+  <data name="CallUnitTimesHistoryLegend" xml:space="preserve">
+    <value>Historique des statuts : chaque statut défini par l'unité depuis son envoi jusqu'à son retour en service ou sa mise hors service, y compris les statuts hors de l'appel (hôpital, caserne) et après la clôture de l'appel. « Historique de l'unité » signale un statut qui ne figure pas au dossier de l'appel ; l'historique s'arrête quand l'unité est envoyée sur un autre appel, ou 12 heures après l'appel. Une libération appliquée par Resgrid à la clôture de l'appel ne le termine que si le statut suivant de l'équipage le confirme.</value>
+  </data>
+  <data name="CallUnitTimesDownloadHistoryCsv" xml:space="preserve">
+    <value>Télécharger l'historique des statuts (CSV)</value>
+  </data>
 
   <!-- ==================== Call Summary: group filter, pies, period statistics ==================== -->
   <data name="AllGroups" xml:space="preserve">

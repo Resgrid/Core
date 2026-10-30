@@ -356,6 +356,36 @@
   <data name="CallUnitTimesLegend" xml:space="preserve">
     <value>Пов’язано автоматично: статус, надісланий без виклику, який Resgrid пов’язав за попереднім статусом підрозділу або його направленням. Виведено: статус, який підрозділ встановив без пункту призначення, будучи направленим на виклик. Лише направлення: підрозділ було направлено, але він не повідомив жодного статусу на виклику.</value>
   </data>
+  <data name="CallUnitTimesInServiceHeader" xml:space="preserve">
+    <value>Знову в строю</value>
+  </data>
+  <data name="CallUnitTimesCommittedHeader" xml:space="preserve">
+    <value>Задіяно</value>
+  </data>
+  <data name="CallUnitTimesHistoryHeader" xml:space="preserve">
+    <value>Історія статусів</value>
+  </data>
+  <data name="CallUnitTimesStatusHeader" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="CallUnitTimesTimeHeader" xml:space="preserve">
+    <value>Час</value>
+  </data>
+  <data name="CallUnitTimesDurationHeader" xml:space="preserve">
+    <value>Тривалість</value>
+  </data>
+  <data name="CallUnitTimesSourceFollowOn" xml:space="preserve">
+    <value>Історія підрозділу</value>
+  </data>
+  <data name="CallUnitTimesSetByResgrid" xml:space="preserve">
+    <value>встановлено Resgrid</value>
+  </data>
+  <data name="CallUnitTimesHistoryLegend" xml:space="preserve">
+    <value>Історія статусів: кожен статус, який підрозділ встановив від направлення до повернення в строй або виведення зі строю, зокрема статуси поза викликом (лікарня, станція) і після закриття виклику. «Історія підрозділу» позначає статус, якого немає в записі виклику; історія закінчується, коли підрозділ направляють на інший виклик, або через 12 годин після виклику. Звільнення, яке Resgrid застосував під час закриття виклику, завершує її лише тоді, коли наступний статус екіпажу це підтверджує.</value>
+  </data>
+  <data name="CallUnitTimesDownloadHistoryCsv" xml:space="preserve">
+    <value>Завантажити історію статусів (CSV)</value>
+  </data>
 
   <!-- ==================== Call Summary: group filter, pies, period statistics ==================== -->
   <data name="AllGroups" xml:space="preserve">

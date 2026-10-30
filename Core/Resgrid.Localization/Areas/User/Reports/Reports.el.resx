@@ -785,6 +785,36 @@
   <data name="CallUnitTimesLegend" xml:space="preserve">
     <value>Αυτόματη σύνδεση: κατάσταση που στάλθηκε χωρίς κλήση και το Resgrid τη συνέδεσε βάσει της προηγούμενης κατάστασης της μονάδας ή της αποστολής της. Συναγόμενο: κατάσταση που όρισε η μονάδα χωρίς προορισμό ενώ είχε σταλεί στην κλήση. Μόνο αποστολή: η μονάδα στάλθηκε αλλά δεν ανέφερε καμία κατάσταση στην κλήση.</value>
   </data>
+  <data name="CallUnitTimesInServiceHeader" xml:space="preserve">
+    <value>Ξανά σε υπηρεσία</value>
+  </data>
+  <data name="CallUnitTimesCommittedHeader" xml:space="preserve">
+    <value>Δεσμευμένη</value>
+  </data>
+  <data name="CallUnitTimesHistoryHeader" xml:space="preserve">
+    <value>Ιστορικό καταστάσεων</value>
+  </data>
+  <data name="CallUnitTimesStatusHeader" xml:space="preserve">
+    <value>Κατάσταση</value>
+  </data>
+  <data name="CallUnitTimesTimeHeader" xml:space="preserve">
+    <value>Ώρα</value>
+  </data>
+  <data name="CallUnitTimesDurationHeader" xml:space="preserve">
+    <value>Διάρκεια</value>
+  </data>
+  <data name="CallUnitTimesSourceFollowOn" xml:space="preserve">
+    <value>Ιστορικό μονάδας</value>
+  </data>
+  <data name="CallUnitTimesSetByResgrid" xml:space="preserve">
+    <value>ορίστηκε από το Resgrid</value>
+  </data>
+  <data name="CallUnitTimesHistoryLegend" xml:space="preserve">
+    <value>Ιστορικό καταστάσεων: κάθε κατάσταση που όρισε η μονάδα από την αποστολή μέχρι να επιστρέψει σε υπηρεσία ή να τεθεί εκτός υπηρεσίας, μαζί με καταστάσεις εκτός της κλήσης (νοσοκομείο, σταθμός) και μετά το κλείσιμο της κλήσης. Το «Ιστορικό μονάδας» σημειώνει κατάσταση που δεν υπάρχει στο αρχείο της κλήσης· το ιστορικό σταματά όταν η μονάδα σταλεί σε άλλη κλήση ή 12 ώρες μετά την κλήση. Μια αποδέσμευση που εφάρμοσε το Resgrid στο κλείσιμο της κλήσης το τερματίζει μόνο αν η επόμενη κατάσταση του πληρώματος το επιβεβαιώνει.</value>
+  </data>
+  <data name="CallUnitTimesDownloadHistoryCsv" xml:space="preserve">
+    <value>Λήψη ιστορικού καταστάσεων (CSV)</value>
+  </data>
 
   <!-- ==================== Call Summary: group filter, pies, period statistics ==================== -->
   <data name="AllGroups" xml:space="preserve">

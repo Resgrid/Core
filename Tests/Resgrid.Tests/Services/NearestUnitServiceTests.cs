@@ -512,22 +512,84 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
-		public async Task road_etas_go_to_the_closest_available_units_first_and_failures_keep_the_estimate()
+		public async Task road_etas_go_to_each_unit_types_fastest_units_then_the_closest_responders_and_failures_keep_the_estimate()
 		{
-			_config.EtaShortlistSize = 2;
+			_config.EtaShortlistSize = 1;
 			_geoService.Setup(x => x.GetEtaInSecondsAsync("34.059,-118.25", "34.05,-118.25")).ReturnsAsync(180);
 			_geoService.Setup(x => x.GetEtaInSecondsAsync(It.Is<string>(s => s != "34.059,-118.25"), "34.05,-118.25")).ReturnsAsync(-1);
 
 			var board = await GetBoardAsync(useRoadEta: true);
 
-			// The two closest available units (the team, then the individual at station D), not the responders.
+			// One per type: the nearer crisis team (not the far one) and the individual at station D; then the closest
+			// responder. The ambulance is on scene, so it is not shortlisted.
 			_geoService.Verify(x => x.GetEtaInSecondsAsync("34.059,-118.25", "34.05,-118.25"), Times.Once);
 			_geoService.Verify(x => x.GetEtaInSecondsAsync("34.15,-118.25", "34.05,-118.25"), Times.Once);
-			_geoService.Verify(x => x.GetEtaInSecondsAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Exactly(2));
+			_geoService.Verify(x => x.GetEtaInSecondsAsync("34.068,-118.25", "34.05,-118.25"), Times.Once);
+			_geoService.Verify(x => x.GetEtaInSecondsAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Exactly(3));
 
 			UnitRow(board, TeamUnit).EtaSeconds.Should().Be(180);
 			UnitRow(board, TeamUnit).EtaSource.Should().Be(EtaSources.Road);
-			UnitRow(board, IndividualUnit).EtaSource.Should().Be(EtaSources.Estimated);
+			UnitRow(board, IndividualUnit).EtaSource.Should().Be(EtaSources.Estimated, "its lookup failed");
+			UnitRow(board, FarTeamUnit).EtaSource.Should().Be(EtaSources.Estimated, "it is not its type's fastest");
+		}
+
+		[Test]
+		public async Task a_types_looked_up_units_rank_ahead_of_its_estimates_as_a_run_card_shortlist_does()
+		{
+			// The near team's drive time (50 min) is worse than the far team's straight-line estimate (~39 min): a run card
+			// for a crisis team re-ranks only its shortlist, so it still sends the near team, and the board agrees.
+			_config.EtaShortlistSize = 1;
+			_geoService.Setup(x => x.GetEtaInSecondsAsync("34.059,-118.25", "34.05,-118.25")).ReturnsAsync(3000);
+			_geoService.Setup(x => x.GetEtaInSecondsAsync("34.15,-118.25", "34.05,-118.25")).ReturnsAsync(1500);
+			_geoService.Setup(x => x.GetEtaInSecondsAsync("34.068,-118.25", "34.05,-118.25")).ReturnsAsync(-1);
+
+			var board = await GetBoardAsync(useRoadEta: true);
+
+			UnitRow(board, FarTeamUnit).ResponseSeconds.Should().BeLessThan(3000);
+			// Types merge on their next unit's response: the individual (25 min) leads, then the crisis teams in their own order.
+			board.Units.Select(u => u.UnitId).Should().Equal(IndividualUnit, TeamUnit, FarTeamUnit, ApparatusUnit);
+		}
+
+		[Test]
+		public async Task units_at_the_same_position_share_one_drive_time_lookup()
+		{
+			var now = DateTime.UtcNow;
+			_unitsService.Setup(x => x.GetUnitsForDepartmentUnlimitedAsync(DepartmentId)).ReturnsAsync(new List<Unit>
+			{
+				new Unit { UnitId = TeamUnit, DepartmentId = DepartmentId, Name = "PMRT A1", Type = "Crisis Team", StationGroupId = StationA },
+				new Unit { UnitId = IndividualUnit, DepartmentId = DepartmentId, Name = "Dr. Diaz", Type = "Individual", StationGroupId = StationD },
+				new Unit { UnitId = 5, DepartmentId = DepartmentId, Name = "Medic D1", Type = "Ambulance", StationGroupId = StationD }
+			});
+			_unitsService.Setup(x => x.GetAllLatestStatusForUnitsByDepartmentIdAsync(DepartmentId)).ReturnsAsync(new List<UnitState>
+			{
+				new UnitState { UnitId = TeamUnit, State = (int)UnitStateTypes.Available, Timestamp = now },
+				new UnitState { UnitId = IndividualUnit, State = (int)UnitStateTypes.Available, Timestamp = now },
+				new UnitState { UnitId = 5, State = (int)UnitStateTypes.Available, Timestamp = now }
+			});
+			_geoService.Setup(x => x.GetEtaInSecondsAsync(It.IsAny<string>(), "34.05,-118.25")).ReturnsAsync(600);
+
+			var board = await GetBoardAsync(useRoadEta: true);
+
+			// Both station D units are their type's fastest; the station is looked up once and both take its drive time.
+			_geoService.Verify(x => x.GetEtaInSecondsAsync("34.15,-118.25", "34.05,-118.25"), Times.Once);
+			UnitRow(board, IndividualUnit).EtaSource.Should().Be(EtaSources.Road);
+			UnitRow(board, 5).EtaSource.Should().Be(EtaSources.Road);
+			UnitRow(board, 5).EtaSeconds.Should().Be(600);
+		}
+
+		[Test]
+		public async Task a_department_ranking_by_distance_gets_the_nearest_units_first_whatever_their_turnout()
+		{
+			// The turnouts of the_board_ranks_on_turnout_plus_travel, where the far team that is already out beats the
+			// individual sitting at station D: by distance the individual (~11 km) comes before the far team (~20 km).
+			_config.InQuartersTurnoutSeconds = 1200;
+			_config.MobileTurnoutSeconds = 30;
+			_config.ClosestUnitRanking = ClosestUnitRankingModes.ShortestDistance;
+
+			var board = await GetBoardAsync();
+
+			board.Units.Select(u => u.UnitId).Should().Equal(TeamUnit, IndividualUnit, FarTeamUnit, ApparatusUnit);
+			UnitRow(board, IndividualUnit).TurnoutSeconds.Should().Be(1200, "the turnout is still shown");
 		}
 
 		[Test]

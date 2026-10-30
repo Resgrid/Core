@@ -356,6 +356,36 @@
   <data name="CallUnitTimesLegend" xml:space="preserve">
     <value>Powiązane automatycznie: status wysłany bez zgłoszenia, który Resgrid powiązał na podstawie poprzedniego statusu jednostki lub jej zadysponowania. Wywnioskowane: status ustawiony przez jednostkę bez celu, gdy była zadysponowana do zgłoszenia. Tylko zadysponowanie: jednostka została zadysponowana, ale nie zgłosiła żadnego statusu w zgłoszeniu.</value>
   </data>
+  <data name="CallUnitTimesInServiceHeader" xml:space="preserve">
+    <value>Ponownie w gotowości</value>
+  </data>
+  <data name="CallUnitTimesCommittedHeader" xml:space="preserve">
+    <value>Zaangażowana</value>
+  </data>
+  <data name="CallUnitTimesHistoryHeader" xml:space="preserve">
+    <value>Historia statusów</value>
+  </data>
+  <data name="CallUnitTimesStatusHeader" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="CallUnitTimesTimeHeader" xml:space="preserve">
+    <value>Czas</value>
+  </data>
+  <data name="CallUnitTimesDurationHeader" xml:space="preserve">
+    <value>Czas trwania</value>
+  </data>
+  <data name="CallUnitTimesSourceFollowOn" xml:space="preserve">
+    <value>Historia jednostki</value>
+  </data>
+  <data name="CallUnitTimesSetByResgrid" xml:space="preserve">
+    <value>ustawione przez Resgrid</value>
+  </data>
+  <data name="CallUnitTimesHistoryLegend" xml:space="preserve">
+    <value>Historia statusów: każdy status ustawiony przez jednostkę od zadysponowania do powrotu do gotowości lub wyłączenia z eksploatacji, w tym statusy poza zgłoszeniem (szpital, baza) i po zamknięciu zgłoszenia. „Historia jednostki” oznacza status, którego nie ma w rejestrze zgłoszenia; historia kończy się, gdy jednostka zostanie zadysponowana do innego zgłoszenia, lub 12 godzin po zgłoszeniu. Zwolnienie zastosowane przez Resgrid przy zamknięciu zgłoszenia kończy ją tylko wtedy, gdy następny status załogi to potwierdza.</value>
+  </data>
+  <data name="CallUnitTimesDownloadHistoryCsv" xml:space="preserve">
+    <value>Pobierz historię statusów (CSV)</value>
+  </data>
 
   <!-- ==================== Call Summary: group filter, pies, period statistics ==================== -->
   <data name="AllGroups" xml:space="preserve">

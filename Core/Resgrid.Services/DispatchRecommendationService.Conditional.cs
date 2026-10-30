@@ -66,6 +66,8 @@ namespace Resgrid.Services
 		private sealed class ConditionalState
 		{
 			public DispatchRecommendationModes Mode { get; set; }
+			/// <summary>The department ranks closest resources by straight-line distance rather than by response time.</summary>
+			public bool ByDistance { get; set; }
 			public GeoMath.GeoPoint? Anchor { get; set; }
 			public List<StationDistanceResult> Stations { get; set; } = new List<StationDistanceResult>();
 			public Dictionary<int, HashSet<string>> Rosters { get; set; } = new Dictionary<int, HashSet<string>>();
@@ -113,6 +115,7 @@ namespace Resgrid.Services
 			var state = new ConditionalState
 			{
 				Mode = mode,
+				ByDistance = context.Config.RanksByDistance,
 				Decision = new RunCardDecisionExplanation
 				{
 					LevelHasGraph = RunCardDecisionGraph.HasGraph(level),
@@ -801,6 +804,14 @@ namespace Resgrid.Services
 			if (state.Mode == DispatchRecommendationModes.StationBased)
 				ordered = ordered.ThenBy(e => e.CascadeDepth);
 
+			if (state.ByDistance)
+				return ordered
+					.ThenBy(e => e.Distance.HasValue ? 0 : 1)
+					.ThenBy(e => e.Distance ?? 0)
+					.ThenBy(e => e.ResponseSeconds ?? double.MaxValue)
+					.ThenBy(e => e.SortName, StringComparer.OrdinalIgnoreCase)
+					.ToList();
+
 			return ordered
 				.ThenBy(e => e.ResponseSeconds.HasValue ? 0 : 1)
 				.ThenBy(e => e.ResponseSeconds ?? 0)
@@ -816,7 +827,8 @@ namespace Resgrid.Services
 		/// </summary>
 		private async Task EnsureRoutedAsync(RecommendationContext context, ConditionalState state, ResourceRanking ranking, int needed)
 		{
-			if (!context.Config.UseRoutedEta || !state.Anchor.HasValue || ranking.Ranked.Count == 0)
+			// Drive times only re-rank, so ranking by distance makes no lookups.
+			if (!context.Config.UseRoutedEta || state.ByDistance || !state.Anchor.HasValue || ranking.Ranked.Count == 0)
 				return;
 
 			var shortlist = Math.Min(ranking.Ranked.Count, Math.Max(Math.Max(1, context.Config.EtaShortlistSize), needed));

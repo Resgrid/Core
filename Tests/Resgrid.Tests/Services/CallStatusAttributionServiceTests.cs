@@ -360,6 +360,31 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task a_units_timeline_carries_on_past_the_calls_record_until_it_is_back_in_service()
+		{
+			// Closed six minutes in, when Resgrid released the unit; the crew kept working (returning) and was available at 40.
+			var call = new Call { CallId = 42, DepartmentId = DepartmentId, State = (int)CallStates.Closed, LoggedOn = T0, ClosedOn = T0.AddMinutes(6) };
+			_unitDispatches.Setup(x => x.GetCallUnitDispatchesForCallsInRangeAsync(DepartmentId, It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+				.ReturnsAsync(new[] { new CallDispatchUnit { CallId = 42, UnitId = UnitId, DispatchedOn = T0 } });
+			_unitStates.Setup(x => x.GetAllUnitStatesForUnitInDateRangeAsync(UnitId, It.IsAny<DateTime>(), It.IsAny<DateTime>())).ReturnsAsync(() => new[]
+			{
+				new UnitState { UnitStateId = 1, UnitId = UnitId, State = (int)UnitStateTypes.Responding, Timestamp = T0.AddMinutes(2), DestinationId = 42, DestinationType = (int)DestinationEntityTypes.Call },
+				new UnitState { UnitStateId = 2, UnitId = UnitId, State = (int)UnitStateTypes.Available, Timestamp = T0.AddMinutes(6), DestinationId = 42, DestinationType = (int)DestinationEntityTypes.Call,
+					SetByOrigin = (int)StatusSetOrigins.DispatchAutomation },
+				new UnitState { UnitStateId = 3, UnitId = UnitId, State = (int)UnitStateTypes.Returning, Timestamp = T0.AddMinutes(25) },
+				new UnitState { UnitStateId = 4, UnitId = UnitId, State = (int)UnitStateTypes.Available, Timestamp = T0.AddMinutes(40) },
+				new UnitState { UnitStateId = 5, UnitId = UnitId, State = (int)UnitStateTypes.Responding, Timestamp = T0.AddMinutes(90) }
+			});
+
+			var record = (await _service.GetUnitStatesForCallsAsync(DepartmentId, new[] { call }))[42];
+			var timeline = (await _service.GetUnitTimelinesForCallsAsync(DepartmentId, new[] { call }))[42];
+
+			record.Select(x => x.UnitStateId).Should().Equal(1, 2);
+			timeline.Select(x => x.UnitStateId).Should().Equal(1, 2, 3, 4);
+			timeline.Where(x => x.UnitStateId > 2).Should().OnlyContain(x => x.DestinationSource == (int)StatusDestinationSources.FollowOn);
+		}
+
+		[Test]
 		public async Task a_call_from_another_department_infers_nothing()
 		{
 			Call(42, departmentId: 99);

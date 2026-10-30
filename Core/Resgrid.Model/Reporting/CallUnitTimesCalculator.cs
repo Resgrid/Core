@@ -30,6 +30,41 @@ namespace Resgrid.Model.Reporting
 		public DateTime? StagingOn { get; set; }
 		public DateTime? ClearedOn { get; set; }
 		public CallUnitTimesSources Source { get; set; }
+
+		/// <summary>Every status from dispatch until the unit was back in service (<see cref="CallUnitTimeline"/>), oldest first.</summary>
+		public List<CallUnitTimelineEntry> Timeline { get; set; } = new List<CallUnitTimelineEntry>();
+
+		/// <summary>When the timeline ends with the unit back in service (or out of service); null while it is still on the call.</summary>
+		public DateTime? InServiceOn { get; set; }
+
+		/// <summary>From dispatch (or its first status) to <see cref="InServiceOn"/>.</summary>
+		public double? CommittedSeconds { get; set; }
+	}
+
+	/// <summary>One status on a unit's call timeline.</summary>
+	public class CallUnitTimelineEntry
+	{
+		public int UnitStateId { get; set; }
+
+		/// <summary>The raw state: a built-in <see cref="UnitStateTypes"/> value or a custom status detail id.</summary>
+		public int State { get; set; }
+
+		public DateTime Timestamp { get; set; }
+
+		/// <summary>Until the next status on the timeline; null for the last one.</summary>
+		public double? DurationSeconds { get; set; }
+
+		/// <summary>How the status is tied to the call (<see cref="StatusDestinationSources"/>); FollowOn when it is only on the timeline.</summary>
+		public int? DestinationSource { get; set; }
+
+		public int? DestinationId { get; set; }
+
+		public int? DestinationType { get; set; }
+
+		/// <summary>Resgrid set it (the call's dispatch or release statuses) rather than a person.</summary>
+		public bool SetByAutomation { get; set; }
+
+		public bool IsFollowOn => DestinationSource == (int)StatusDestinationSources.FollowOn;
 	}
 
 	/// <summary>
@@ -40,10 +75,18 @@ namespace Resgrid.Model.Reporting
 	/// </summary>
 	public static class CallUnitTimesCalculator
 	{
-		public static List<CallUnitTimesRow> Compute(IEnumerable<CallDispatchUnit> dispatches, IEnumerable<UnitState> states, IReadOnlyDictionary<int, int> customBaseTypes)
+		/// <param name="timeline">
+		/// The call's unit timelines (<see cref="CallUnitTimeline"/>), all units together; null leaves every row's timeline
+		/// empty. Its statuses on the call's record (every one that isn't FollowOn) are the ones the key times come from, so
+		/// <paramref name="states"/> may be null when it is given.
+		/// </param>
+		public static List<CallUnitTimesRow> Compute(IEnumerable<CallDispatchUnit> dispatches, IEnumerable<UnitState> states, IReadOnlyDictionary<int, int> customBaseTypes,
+			IEnumerable<UnitState> timeline = null)
 		{
 			var dispatchList = (dispatches ?? Enumerable.Empty<CallDispatchUnit>()).Where(x => x != null).ToList();
-			var stateList = (states ?? Enumerable.Empty<UnitState>()).Where(x => x != null).ToList();
+			var timelineList = timeline?.Where(x => x != null).ToList();
+			var stateList = (states ?? timelineList?.Where(x => x.DestinationSource != (int)StatusDestinationSources.FollowOn) ?? Enumerable.Empty<UnitState>())
+				.Where(x => x != null).ToList();
 
 			var unitIds = dispatchList.Select(x => x.UnitId).Concat(stateList.Select(x => x.UnitId)).Distinct();
 			var rows = new List<CallUnitTimesRow>();
@@ -82,10 +125,45 @@ namespace Resgrid.Model.Reporting
 				else
 					row.Source = CallUnitTimesSources.Explicit;
 
+				if (timelineList != null)
+					FillTimeline(row, timelineList.Where(x => x.UnitId == unitId), customBaseTypes);
+
 				rows.Add(row);
 			}
 
 			return rows;
+		}
+
+		private static void FillTimeline(CallUnitTimesRow row, IEnumerable<UnitState> states, IReadOnlyDictionary<int, int> customBaseTypes)
+		{
+			var ordered = states.OrderBy(x => x.Timestamp).ThenBy(x => x.UnitStateId).ToList();
+
+			for (var i = 0; i < ordered.Count; i++)
+			{
+				var state = ordered[i];
+
+				row.Timeline.Add(new CallUnitTimelineEntry
+				{
+					UnitStateId = state.UnitStateId,
+					State = state.State,
+					Timestamp = state.Timestamp,
+					DurationSeconds = i + 1 < ordered.Count ? (ordered[i + 1].Timestamp - state.Timestamp).TotalSeconds : (double?)null,
+					DestinationSource = state.DestinationSource,
+					DestinationId = state.DestinationId,
+					DestinationType = state.DestinationType,
+					SetByAutomation = state.SetByOrigin == (int)StatusSetOrigins.DispatchAutomation
+				});
+			}
+
+			var last = ordered.LastOrDefault();
+			if (last == null || !UnitCallInvolvement.HasFinishedCall(last.State, customBaseTypes))
+				return;
+
+			row.InServiceOn = last.Timestamp;
+
+			var from = row.DispatchedOn ?? ordered[0].Timestamp;
+			if (row.InServiceOn.Value >= from)
+				row.CommittedSeconds = (row.InServiceOn.Value - from).TotalSeconds;
 		}
 	}
 }

@@ -356,6 +356,36 @@
   <data name="CallUnitTimesLegend" xml:space="preserve">
     <value>Automatisch verknüpft: ein ohne Einsatz gesendeter Status, den Resgrid anhand des vorherigen Status der Einheit oder ihrer Alarmierung verknüpft hat. Abgeleitet: ein Status, den die Einheit ohne Ziel gesetzt hat, während sie zum Einsatz alarmiert war. Nur Alarmierung: die Einheit wurde alarmiert, hat aber keinen Status zum Einsatz gemeldet.</value>
   </data>
+  <data name="CallUnitTimesInServiceHeader" xml:space="preserve">
+    <value>Wieder einsatzbereit</value>
+  </data>
+  <data name="CallUnitTimesCommittedHeader" xml:space="preserve">
+    <value>Gebunden</value>
+  </data>
+  <data name="CallUnitTimesHistoryHeader" xml:space="preserve">
+    <value>Statusverlauf</value>
+  </data>
+  <data name="CallUnitTimesStatusHeader" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="CallUnitTimesTimeHeader" xml:space="preserve">
+    <value>Zeit</value>
+  </data>
+  <data name="CallUnitTimesDurationHeader" xml:space="preserve">
+    <value>Dauer</value>
+  </data>
+  <data name="CallUnitTimesSourceFollowOn" xml:space="preserve">
+    <value>Einheitenverlauf</value>
+  </data>
+  <data name="CallUnitTimesSetByResgrid" xml:space="preserve">
+    <value>von Resgrid gesetzt</value>
+  </data>
+  <data name="CallUnitTimesHistoryLegend" xml:space="preserve">
+    <value>Statusverlauf: jeder Status, den die Einheit von der Alarmierung bis zur Wiederherstellung der Einsatzbereitschaft oder Außerdienststellung gesetzt hat, einschließlich Status außerhalb des Einsatzes (Krankenhaus, Wache) und nach Abschluss des Einsatzes. „Einheitenverlauf“ kennzeichnet einen Status, der nicht im Einsatzprotokoll steht; der Verlauf endet, wenn die Einheit zu einem anderen Einsatz alarmiert wird, oder 12 Stunden nach dem Einsatz. Eine Freigabe, die Resgrid beim Abschluss des Einsatzes gesetzt hat, beendet ihn nur, wenn der nächste Status der Besatzung dies bestätigt.</value>
+  </data>
+  <data name="CallUnitTimesDownloadHistoryCsv" xml:space="preserve">
+    <value>Statusverlauf als CSV herunterladen</value>
+  </data>
 
   <!-- ==================== Call Summary: group filter, pies, period statistics ==================== -->
   <data name="AllGroups" xml:space="preserve">

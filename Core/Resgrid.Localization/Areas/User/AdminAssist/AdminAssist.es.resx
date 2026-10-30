@@ -6735,6 +6735,12 @@
   <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.MobileTurnoutSeconds">
     <value>Segundos que necesita una unidad que ya está fuera y disponible antes de ponerse en marcha; se aplica a las unidades ordenadas por GPS. Se suma al tiempo de viaje al ordenar las unidades más cercanas; cero significa ninguno.</value>
   </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.ClosestUnitRanking">
+    <value>Configuración de recomendaciones de despacho / Clasificación de unidades más cercanas</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.ClosestUnitRanking">
+    <value>Cómo ordenan los candidatos las recomendaciones de la unidad más cercana y la lista de unidades más cercanas: respuesta más rápida (tiempo de salida más viaje, con tiempos de conducción calculados cuando están activados; predeterminado) o distancia en línea recta más corta.</value>
+  </data>
   <data xml:space="preserve" name="Setting.StatusHoldToConfirm">
     <value>Mantener pulsado para establecer el estado</value>
   </data>

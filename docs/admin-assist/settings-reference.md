@@ -1802,6 +1802,13 @@ Dispatch Recommendation Config / Use Routed ETA. Re-rank shortlisted candidates 
 
 Default: false. Source: DispatchRecommendationConfig.UseRoutedEta.
 
+<a id="field-dispatchrecommendationconfig-closestunitranking"></a>
+## Dispatch Recommendation Config / Closest Unit Ranking
+
+Dispatch Recommendation Config / Closest Unit Ranking. How closest-unit picks and the nearest-unit board order candidates: fastest response (turnout plus travel, with routed drive times when enabled; the default) or shortest straight-line distance. Ranking by distance makes no routed lookups for run card picks; the nearest-unit board still shows drive times when routed ETAs are on.
+
+Default: FastestResponse. Source: DispatchRecommendationConfig.ClosestUnitRanking.
+
 <a id="field-dispatchrecommendationconfig-etashortlistsize"></a>
 ## Dispatch Recommendation Config / ETA Shortlist Size
 

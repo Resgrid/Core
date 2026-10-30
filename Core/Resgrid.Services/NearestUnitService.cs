@@ -126,28 +126,94 @@ namespace Resgrid.Services
 			foreach (var candidate in unitCandidates)
 				await AttachCrewAsync(request, candidate, crewByUnit, people);
 
-			// Fastest response first among the available units. A stale fix is flagged on the row rather than ranked
-			// down: sorting it below every fresh unit put a unit two minutes out in the middle of the list.
-			board.Units = unitCandidates
+			var byDistance = config.RanksByDistance;
+
+			board.Units = RankUnits(unitCandidates, byDistance)
 				.Select(c => c.ToResult(groups, groupsById, boundaryGroupIds))
-				.OrderBy(u => !u.IsAvailable)
-				.ThenBy(u => u.PositionSource == UnitPositionSources.None)
-				.ThenBy(u => u.ResponseSeconds ?? double.MaxValue)
-				.ThenBy(u => u.DistanceMeters ?? double.MaxValue)
-				.ThenBy(u => u.Name, StringComparer.OrdinalIgnoreCase)
 				.ToList();
 
+			// A responder whose drive time was looked up comes before one left on a straight-line estimate, as a run card's
+			// shortlist does: the estimate is the cheaper guess, not a comparable time.
 			board.Personnel = personnelCandidates
-				.Select(c => c.ToResult())
 				.OrderBy(p => !p.IsAvailable)
 				.ThenBy(p => !p.DistanceMeters.HasValue)
 				.ThenBy(p => p.LocationIsStale)
-				.ThenBy(p => p.EtaSeconds ?? double.MaxValue)
+				.ThenBy(p => byDistance || p.DriveTimeLookedUp ? 0 : 1)
+				.ThenBy(p => byDistance ? p.DistanceMeters ?? double.MaxValue : p.EtaSeconds ?? double.MaxValue)
 				.ThenBy(p => p.DistanceMeters ?? double.MaxValue)
-				.ThenBy(p => p.Name, StringComparer.OrdinalIgnoreCase)
+				.ThenBy(p => p.Person.Name, StringComparer.OrdinalIgnoreCase)
+				.Select(c => c.ToResult())
 				.ToList();
 
 			return board;
+		}
+
+		/// <summary>
+		/// The board's unit order. Available units with a distance come first, each unit type in the order a closest-unit
+		/// run card ranks that type: fastest response (drive time first for the type's shortlist when routed ETAs are on,
+		/// then the straight-line estimates), or nearest when the department ranks by distance. The types are then merged
+		/// by taking whichever type's next unit is fastest (or nearest), so a type's own order is never broken: the unit a
+		/// run card picks for a type is always that type's first row. A stale fix is flagged on the row rather than ranked
+		/// down: sorting it below every fresh unit put a unit two minutes out in the middle of the list. Available units with
+		/// no distance (no position, or one hidden from the viewer) follow, then the units that aren't available.
+		/// </summary>
+		private static List<UnitCandidate> RankUnits(List<UnitCandidate> units, bool byDistance)
+		{
+			double Key(UnitCandidate c) => byDistance ? c.DistanceMeters ?? double.MaxValue : c.ResponseSeconds ?? double.MaxValue;
+
+			var queues = units
+				.Where(c => c.IsAvailable && c.DistanceMeters.HasValue)
+				.GroupBy(UnitTypeKey, StringComparer.OrdinalIgnoreCase)
+				.Select(g => new Queue<UnitCandidate>(g
+					.OrderBy(c => byDistance || c.DriveTimeLookedUp ? 0 : 1)
+					.ThenBy(Key)
+					.ThenBy(c => c.DistanceMeters.Value)
+					.ThenBy(c => c.Unit.Name, StringComparer.OrdinalIgnoreCase)))
+				.ToList();
+
+			var ranked = new List<UnitCandidate>();
+			while (true)
+			{
+				Queue<UnitCandidate> next = null;
+
+				foreach (var queue in queues.Where(q => q.Count > 0))
+				{
+					if (next == null || CompareHeads(queue.Peek(), next.Peek(), Key) < 0)
+						next = queue;
+				}
+
+				if (next == null)
+					break;
+
+				ranked.Add(next.Dequeue());
+			}
+
+			ranked.AddRange(units
+				.Where(c => !(c.IsAvailable && c.DistanceMeters.HasValue))
+				.OrderBy(c => !c.IsAvailable)
+				.ThenBy(c => c.PositionSource == UnitPositionSources.None)
+				.ThenBy(Key)
+				.ThenBy(c => c.DistanceMeters ?? double.MaxValue)
+				.ThenBy(c => c.Unit.Name, StringComparer.OrdinalIgnoreCase));
+
+			return ranked;
+		}
+
+		private static int CompareHeads(UnitCandidate left, UnitCandidate right, Func<UnitCandidate, double> key)
+		{
+			var result = key(left).CompareTo(key(right));
+			if (result == 0)
+				result = (left.DistanceMeters ?? double.MaxValue).CompareTo(right.DistanceMeters ?? double.MaxValue);
+			if (result == 0)
+				result = StringComparer.OrdinalIgnoreCase.Compare(left.Unit.Name, right.Unit.Name);
+
+			return result;
+		}
+
+		/// <summary>The unit type a run card requirement would match the unit on (types are matched by name on the board).</summary>
+		private static string UnitTypeKey(UnitCandidate candidate)
+		{
+			return (candidate.Unit.Type ?? string.Empty).Trim();
 		}
 
 		#region Candidates
@@ -170,6 +236,12 @@ namespace Resgrid.Services
 			public double? EtaSeconds { get; set; }
 
 			public EtaSources EtaSource { get; set; }
+
+			/// <summary>A drive time was looked up for this position (it may have failed and left the estimate).</summary>
+			public bool DriveTimeLookedUp { get; set; }
+
+			/// <summary>The position as the mapping provider is asked for it; set only once the row is measured.</summary>
+			public string Origin => Latitude.HasValue && Longitude.HasValue ? FormatPoint(Latitude.Value, Longitude.Value) : null;
 		}
 
 		private sealed class UnitCandidate : Candidate
@@ -584,33 +656,60 @@ namespace Resgrid.Services
 		private async Task ApplyRoadEtasAsync(NearestUnitRequest request, DispatchRecommendationConfig config, List<UnitCandidate> units,
 			List<PersonnelCandidate> personnel, NearestUnitBoard board, CancellationToken cancellationToken)
 		{
-			// Each lookup is a mapping-provider call made while the dispatcher waits, so the count is
-			// bounded by the department's ETA shortlist size (itself capped).
-			var budget = config.EtaShortlistSize > 0
+			var perGroup = config.EtaShortlistSize > 0
 				? Math.Min(config.EtaShortlistSize, DispatchRecommendationConfig.MaximumEtaShortlistSize)
 				: DispatchRecommendationConfig.DefaultEtaShortlistSize;
 
-			// Units are what gets dispatched, so they take the budget first; individual responders get what's left.
-			// Units are shortlisted on their estimated response (turnout included) so the lookups go to the units
-			// most likely to be fastest, not merely the nearest.
-			var shortlist = units
-				.Where(c => c.IsAvailable && c.DistanceMeters.HasValue && !c.LocationIsStale)
-				.OrderBy(c => c.ResponseSeconds ?? double.MaxValue)
-				.ThenBy(c => c.DistanceMeters.Value)
-				.Cast<Candidate>()
-				.Concat(personnel
-					.Where(c => c.IsAvailable && c.DistanceMeters.HasValue && !c.LocationIsStale)
-					.OrderBy(c => c.DistanceMeters.Value))
-				.Take(budget)
+			bool Routable(Candidate c) => c.IsAvailable && c.DistanceMeters.HasValue && !c.LocationIsStale;
+
+			// Each unit type is shortlisted the way a run card requirement shortlists its type (on estimated response, or
+			// on distance when the department ranks by distance), so the drive times on the board are the ones the run card
+			// ranked on. One shortlist shared by every unit gave the drive times to the nearest few units overall and left the
+			// rest of a type on straight-line estimates, sorted against drive times they can't be compared with: a unit that
+			// a run card rightly picked could sit far down the board behind estimates. Responders are one more group.
+			var groups = units.Where(Routable)
+				.GroupBy(UnitTypeKey, StringComparer.OrdinalIgnoreCase)
+				.Select(g => g
+					.OrderBy(c => config.RanksByDistance ? c.DistanceMeters.Value : c.ResponseSeconds ?? double.MaxValue)
+					.ThenBy(c => c.DistanceMeters.Value)
+					.Take(perGroup)
+					.Cast<Candidate>()
+					.ToList())
+				.OrderBy(g => g[0].DistanceMeters.Value)
 				.ToList();
+			groups.Add(personnel.Where(Routable).OrderBy(c => c.DistanceMeters.Value).Take(perGroup).Cast<Candidate>().ToList());
+
+			// One lookup per position, a rank at a time across the groups (every type's best first) and units before
+			// responders, up to the cap on what one board may ask of the mapping provider while the dispatcher waits. Units
+			// parked at the same station share its drive time.
+			var origins = new List<string>();
+			var depth = groups.Max(g => g.Count);
+			for (var rank = 0; rank < depth; rank++)
+			{
+				foreach (var group in groups.Where(g => rank < g.Count))
+				{
+					var origin = group[rank].Origin;
+					if (origins.Count < DispatchRecommendationConfig.MaximumEtaShortlistSize && !origins.Contains(origin))
+						origins.Add(origin);
+				}
+			}
+
+			if (origins.Count == 0)
+				return;
+
+			cancellationToken.ThrowIfCancellationRequested();
 
 			var destination = FormatPoint(request.Latitude, request.Longitude);
+			var lookups = await Task.WhenAll(origins.Select(async origin => (Origin: origin, Eta: await _geoService.GetEtaInSecondsAsync(origin, destination))));
+			var etaByOrigin = lookups.ToDictionary(x => x.Origin, x => x.Eta, StringComparer.Ordinal);
 
-			foreach (var candidate in shortlist)
+			foreach (var candidate in units.Cast<Candidate>().Concat(personnel).Where(Routable))
 			{
-				cancellationToken.ThrowIfCancellationRequested();
+				if (!etaByOrigin.TryGetValue(candidate.Origin, out var eta))
+					continue;
 
-				var eta = await _geoService.GetEtaInSecondsAsync(FormatPoint(candidate.Latitude.Value, candidate.Longitude.Value), destination);
+				// A failed lookup keeps the estimate but still counts as looked up, as it does in a run card's shortlist.
+				candidate.DriveTimeLookedUp = true;
 
 				if (eta >= 0)
 				{
@@ -619,8 +718,11 @@ namespace Resgrid.Services
 				}
 			}
 
-			if (shortlist.Any())
-				board.Notes.Add($"Drive times were looked up for the {shortlist.Count} closest available units and responders; the rest are straight-line estimates.");
+			board.Notes.Add($"Drive times were looked up for {origins.Count} position(s): the {perGroup} {(config.RanksByDistance ? "closest" : "fastest")} " +
+				"available units of each unit type and the closest responders (units at the same position share one). " +
+				(config.RanksByDistance
+					? "The rest are straight-line estimates. Units are ranked by distance, so drive times don't change the order."
+					: "The rest are straight-line estimates, listed after the looked-up units of their type."));
 		}
 
 		public static double EstimateEtaSeconds(double distanceMeters)

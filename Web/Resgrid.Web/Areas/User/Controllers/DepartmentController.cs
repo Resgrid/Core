@@ -2354,6 +2354,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 						IncludeStaleLocations = model.RecommendationIncludeStaleLocations,
 						PersonnelMaxLocationAgeSeconds = Math.Max(0, model.RecommendationPersonnelMaxLocationAgeSeconds),
 						UseRoutedEta = model.RecommendationUseRoutedEta,
+						ClosestUnitRanking = Enum.IsDefined(typeof(ClosestUnitRankingModes), model.RecommendationClosestUnitRanking)
+							? (ClosestUnitRankingModes)model.RecommendationClosestUnitRanking
+							: ClosestUnitRankingModes.FastestResponse,
 						EtaShortlistSize = model.RecommendationEtaShortlistSize > 0 ? model.RecommendationEtaShortlistSize : DispatchRecommendationConfig.DefaultEtaShortlistSize,
 						RestPeriodMinutes = Math.Max(0, model.RecommendationRestPeriodMinutes),
 						UnitMinimumStaffingLevel = Math.Max(0, model.RecommendationUnitMinimumStaffingLevel),
@@ -2484,6 +2487,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.RecommendationIncludeStaleLocations = config.IncludeStaleLocations;
 				model.RecommendationPersonnelMaxLocationAgeSeconds = config.PersonnelMaxLocationAgeSeconds;
 				model.RecommendationUseRoutedEta = config.UseRoutedEta;
+				model.RecommendationClosestUnitRanking = (int)config.ClosestUnitRanking;
 				model.RecommendationEtaShortlistSize = config.EtaShortlistSize;
 				model.RecommendationRestPeriodMinutes = config.RestPeriodMinutes;
 				model.RecommendationUnitMinimumStaffingLevel = config.UnitMinimumStaffingLevel;

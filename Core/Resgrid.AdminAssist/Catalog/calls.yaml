@@ -1623,6 +1623,41 @@
       "Availability": "reference-only"
     },
     {
+      "Id": "field.DispatchRecommendationConfig.ClosestUnitRanking",
+      "AreaId": "calls",
+      "LabelKey": "Field.DispatchRecommendationConfig.ClosestUnitRanking",
+      "HelpKey": "FieldHelp.DispatchRecommendationConfig.ClosestUnitRanking",
+      "Binding": "DispatchRecommendationConfig.ClosestUnitRanking",
+      "ValueType": "enum",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-29T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.DispatchRecommendationConfig"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.DispatchRecommendationConfig.ClosestUnitRanking",
+      "DefaultValue": "FastestResponse",
+      "AllowedValues": "FastestResponse, ShortestDistance",
+      "EvidenceSource": "DispatchRecommendationConfig",
+      "Availability": "reference-only"
+    },
+    {
       "Id": "field.DispatchRecommendationConfig.PersonnelTurnoutSeconds",
       "AreaId": "calls",
       "LabelKey": "Field.DispatchRecommendationConfig.PersonnelTurnoutSeconds",
@@ -2357,6 +2392,7 @@
       },
       "Requirements": [],
       "SettingIds": [
+        "field.DispatchRecommendationConfig.ClosestUnitRanking",
         "field.DispatchRecommendationConfig.EtaShortlistSize",
         "field.DispatchRecommendationConfig.IncludeStaleLocations",
         "field.DispatchRecommendationConfig.InQuartersTurnoutSeconds",
@@ -2617,6 +2653,7 @@
       },
       "Requirements": [],
       "SettingIds": [
+        "field.DispatchRecommendationConfig.ClosestUnitRanking",
         "field.DispatchRecommendationConfig.EtaShortlistSize",
         "field.DispatchRecommendationConfig.IncludeStaleLocations",
         "field.DispatchRecommendationConfig.InQuartersTurnoutSeconds",
@@ -3507,6 +3544,17 @@
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-10-06T00:00:00Z"
+    },
+    {
+      "Id": "field.DispatchRecommendationConfig.ClosestUnitRanking",
+      "Locale": "en",
+      "TitleKey": "Field.DispatchRecommendationConfig.ClosestUnitRanking",
+      "Body": "Dispatch Recommendation Config / Closest Unit Ranking. How closest-unit picks and the nearest-unit board order candidates: fastest response (turnout plus travel, with routed drive times when enabled; the default) or shortest straight-line distance.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-dispatchrecommendationconfig-closestunitranking",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-29T00:00:00Z"
     },
     {
       "Id": "field.DispatchRecommendationConfig.PersonnelTurnoutSeconds",

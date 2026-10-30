@@ -6735,6 +6735,12 @@
   <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.MobileTurnoutSeconds">
     <value>Sekunder som en enhet som redan är ute och tillgänglig behöver innan den är i rörelse; gäller enheter som rangordnas efter GPS. Läggs till restiden när de närmaste enheterna rangordnas; noll betyder ingen.</value>
   </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.ClosestUnitRanking">
+    <value>Inställningar för utlarmningsrekommendationer / Rangordning av närmaste enheter</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.ClosestUnitRanking">
+    <value>Hur rekommendationer av närmaste enhet och listan över närmaste enheter ordnar kandidater: snabbaste insats (utryckningstid plus restid, med beräknade körtider när de är på; standard) eller kortaste avstånd fågelvägen.</value>
+  </data>
   <data xml:space="preserve" name="Setting.StatusHoldToConfirm">
     <value>Håll in för att sätta status</value>
   </data>

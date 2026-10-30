@@ -828,6 +828,18 @@
   <data name="EtaShortlistSizeLabel" xml:space="preserve">
     <value>ETA shortlist size</value>
   </data>
+  <data name="ClosestUnitRankingLabel" xml:space="preserve">
+    <value>Rank closest units by</value>
+  </data>
+  <data name="ClosestUnitRankingFastest" xml:space="preserve">
+    <value>Fastest response (turnout + travel time)</value>
+  </data>
+  <data name="ClosestUnitRankingDistance" xml:space="preserve">
+    <value>Shortest distance</value>
+  </data>
+  <data name="ClosestUnitRankingHelp" xml:space="preserve">
+    <value>Used for closest-unit recommendations and the nearest units list. Fastest response adds the turnout time to the travel time, using drive times when routed ETAs are on. Shortest distance picks the unit nearest the call in a straight line, whatever its turnout or drive time.</value>
+  </data>
   <data name="StationCoverageHeader" xml:space="preserve">
     <value>Station Coverage Minimums</value>
   </data>

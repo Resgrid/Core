@@ -165,6 +165,27 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task conditional_rows_rank_by_distance_when_the_department_does()
+		{
+			var card = BuildCard();
+			card.AlarmLevels.First().ResponsePackageId = EnginePackageId;
+			EnableConditions(Package(EnginePackageId, "Engine", PackageRow(9002, "Engine", 1, UnitTypeTarget(EngineTypeId))));
+
+			// Engine 1 sits in its station on the call; Engine 2 is out ~500 m away. Leaving the station takes 2 minutes.
+			_config.InQuartersTurnoutSeconds = 120;
+			_config.MobileTurnoutSeconds = 30;
+			PlaceUnits((2, 39.7545, -104.95));
+
+			var fastest = await _service.GetRecommendationAsync(BuildRequest());
+			fastest.Units.Should().ContainSingle(u => u.UnitId == 2);
+
+			_config.ClosestUnitRanking = ClosestUnitRankingModes.ShortestDistance;
+
+			var nearest = await _service.GetRecommendationAsync(BuildRequest());
+			nearest.Units.Should().ContainSingle(u => u.UnitId == 1);
+		}
+
+		[Test]
 		public async Task conditional_substitute_fills_a_short_row_and_keeps_it_outstanding()
 		{
 			var card = BuildCard();

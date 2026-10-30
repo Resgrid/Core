@@ -69,6 +69,7 @@ namespace Resgrid.Web.Areas.User.Models.Departments
 		public bool RecommendationIncludeStaleLocations { get; set; }
 		public int RecommendationPersonnelMaxLocationAgeSeconds { get; set; }
 		public bool RecommendationUseRoutedEta { get; set; }
+		public int RecommendationClosestUnitRanking { get; set; }
 		public int RecommendationEtaShortlistSize { get; set; }
 		public int RecommendationRestPeriodMinutes { get; set; }
 		public int RecommendationUnitMinimumStaffingLevel { get; set; }

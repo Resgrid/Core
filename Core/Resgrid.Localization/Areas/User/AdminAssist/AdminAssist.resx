@@ -6681,6 +6681,12 @@
   <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.MobileTurnoutSeconds">
     <value>Seconds a unit that is already out and available needs before it is moving; applies to units ranked from GPS. Added to travel time when ranking closest units; zero means none.</value>
   </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.ClosestUnitRanking">
+    <value>Dispatch Recommendation Config / Closest Unit Ranking</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.ClosestUnitRanking">
+    <value>How closest-unit picks and the nearest-unit board order candidates: fastest response (turnout plus travel, with routed drive times when enabled; the default) or shortest straight-line distance.</value>
+  </data>
   <data xml:space="preserve" name="Setting.StatusHoldToConfirm">
     <value>Hold to Set Status</value>
   </data>

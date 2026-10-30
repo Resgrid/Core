@@ -737,6 +737,18 @@
   <data name="EtaShortlistSizeLabel" xml:space="preserve">
     <value>Storlek på ETA-urvalslista</value>
   </data>
+  <data name="ClosestUnitRankingLabel" xml:space="preserve">
+    <value>Rangordna närmaste enheter efter</value>
+  </data>
+  <data name="ClosestUnitRankingFastest" xml:space="preserve">
+    <value>Snabbaste insats (utryckningstid + restid)</value>
+  </data>
+  <data name="ClosestUnitRankingDistance" xml:space="preserve">
+    <value>Kortaste avstånd</value>
+  </data>
+  <data name="ClosestUnitRankingHelp" xml:space="preserve">
+    <value>Gäller rekommendationer av närmaste enhet och listan över närmaste enheter. ”Snabbaste insats” lägger utryckningstiden till restiden och använder körtider när sortering efter beräknad körtid är på. ”Kortaste avstånd” väljer den enhet som ligger närmast händelsen fågelvägen, oavsett utryckningstid eller körtid.</value>
+  </data>
   <data name="StationCoverageHeader" xml:space="preserve">
     <value>Stationernas minimitäckning</value>
   </data>

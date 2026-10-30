@@ -737,6 +737,18 @@
   <data name="EtaShortlistSizeLabel" xml:space="preserve">
     <value>Розмір короткого списку для ETA</value>
   </data>
+  <data name="ClosestUnitRankingLabel" xml:space="preserve">
+    <value>Ранжувати найближчі підрозділи за</value>
+  </data>
+  <data name="ClosestUnitRankingFastest" xml:space="preserve">
+    <value>Найшвидше прибуття (час виїзду + час у дорозі)</value>
+  </data>
+  <data name="ClosestUnitRankingDistance" xml:space="preserve">
+    <value>Найменша відстань</value>
+  </data>
+  <data name="ClosestUnitRankingHelp" xml:space="preserve">
+    <value>Застосовується до рекомендацій найближчого підрозділу та до списку найближчих підрозділів. «Найшвидше прибуття» додає час виїзду до часу в дорозі й використовує час руху маршрутом, коли ввімкнено сортування за розрахунковим часом у дорозі. «Найменша відстань» обирає підрозділ, найближчий до місця виклику по прямій, незалежно від часу виїзду чи руху.</value>
+  </data>
   <data name="StationCoverageHeader" xml:space="preserve">
     <value>Мінімальне покриття станцій</value>
   </data>

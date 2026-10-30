@@ -6735,6 +6735,12 @@
   <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.MobileTurnoutSeconds">
     <value>Секунди, потрібні підрозділу, який уже поза станцією та доступний, щоб рушити; застосовується до підрозділів, ранжованих за GPS. Додається до часу в дорозі під час ранжування найближчих підрозділів; нуль означає відсутність.</value>
   </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.ClosestUnitRanking">
+    <value>Налаштування рекомендацій диспетчеризації / Ранжування найближчих підрозділів</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.ClosestUnitRanking">
+    <value>Як рекомендації найближчого підрозділу та список найближчих підрозділів упорядковують кандидатів: найшвидше прибуття (час виїзду плюс дорога, з розрахованим часом руху маршрутом, якщо його ввімкнено; типово) або найменша відстань по прямій.</value>
+  </data>
   <data xml:space="preserve" name="Setting.StatusHoldToConfirm">
     <value>Утримуйте, щоб встановити статус</value>
   </data>

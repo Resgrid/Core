@@ -46,6 +46,14 @@ namespace Resgrid.Model.Services
 		Task<Dictionary<int, List<UnitState>>> GetUnitStatesForCallsAsync(int departmentId, IReadOnlyCollection<Call> calls);
 
 		/// <summary>
+		/// For unit time reports: each call's unit timelines (<see cref="Reporting.CallUnitTimeline"/>), every status a
+		/// dispatched unit set from its dispatch until it was back in service. That is the call's record (as
+		/// <see cref="GetUnitStatesForCallsAsync"/>) plus FollowOn copies of what the unit set after leaving it. Read the same
+		/// way, in one pass over each unit's history.
+		/// </summary>
+		Task<Dictionary<int, List<UnitState>>> GetUnitTimelinesForCallsAsync(int departmentId, IReadOnlyCollection<Call> calls);
+
+		/// <summary>
 		/// For reports over many calls: each call's personnel statuses, linked and inferred, from one read of the
 		/// department's statuses and dispatches for the period instead of per-call queries.
 		/// </summary>

@@ -23,6 +23,13 @@ namespace Resgrid.Model
 		/// Read-only, never stored: a status with no destination that a unit or person dispatched to the call set while
 		/// working it, shown on the call's record as inferred.
 		/// </summary>
-		Inferred = 5
+		Inferred = 5,
+
+		/// <summary>
+		/// Read-only, never stored: a status a unit set after it left the call's record (at a hospital or station, or after
+		/// the call closed) and before it was back in service or on another call. Shown only on the unit's call timeline
+		/// (<see cref="Reporting.CallUnitTimeline"/>), never on the call's record.
+		/// </summary>
+		FollowOn = 6
 	}
 }

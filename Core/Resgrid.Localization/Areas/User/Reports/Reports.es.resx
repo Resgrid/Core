@@ -356,6 +356,36 @@
   <data name="CallUnitTimesLegend" xml:space="preserve">
     <value>Vinculado automáticamente: un estado enviado sin llamada que Resgrid vinculó a partir del estado anterior de la unidad o de su despacho. Deducido: un estado que la unidad estableció sin destino mientras estaba despachada a la llamada. Solo despacho: la unidad fue despachada pero no informó ningún estado en la llamada.</value>
   </data>
+  <data name="CallUnitTimesInServiceHeader" xml:space="preserve">
+    <value>De nuevo en servicio</value>
+  </data>
+  <data name="CallUnitTimesCommittedHeader" xml:space="preserve">
+    <value>Comprometida</value>
+  </data>
+  <data name="CallUnitTimesHistoryHeader" xml:space="preserve">
+    <value>Historial de estados</value>
+  </data>
+  <data name="CallUnitTimesStatusHeader" xml:space="preserve">
+    <value>Estado</value>
+  </data>
+  <data name="CallUnitTimesTimeHeader" xml:space="preserve">
+    <value>Hora</value>
+  </data>
+  <data name="CallUnitTimesDurationHeader" xml:space="preserve">
+    <value>Duración</value>
+  </data>
+  <data name="CallUnitTimesSourceFollowOn" xml:space="preserve">
+    <value>Historial de la unidad</value>
+  </data>
+  <data name="CallUnitTimesSetByResgrid" xml:space="preserve">
+    <value>establecido por Resgrid</value>
+  </data>
+  <data name="CallUnitTimesHistoryLegend" xml:space="preserve">
+    <value>Historial de estados: cada estado que la unidad estableció desde el despacho hasta volver a estar en servicio o fuera de servicio, incluidos los estados fuera de la llamada (hospital, estación) y después del cierre de la llamada. «Historial de la unidad» marca un estado que no está en el registro de la llamada; el historial termina cuando la unidad es despachada a otra llamada, o 12 horas después de la llamada. Una liberación que Resgrid aplicó al cerrar la llamada solo lo termina si el siguiente estado de la dotación lo confirma.</value>
+  </data>
+  <data name="CallUnitTimesDownloadHistoryCsv" xml:space="preserve">
+    <value>Descargar historial de estados (CSV)</value>
+  </data>
 
   <!-- ==================== Call Summary: group filter, pies, period statistics ==================== -->
   <data name="AllGroups" xml:space="preserve">

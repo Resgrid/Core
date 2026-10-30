@@ -881,4 +881,160 @@
   <data name="YourStatusHeader" xml:space="preserve">
     <value>Votre statut</value>
   </data>
+  <data name="StaffingSavedFormat" xml:space="preserve">
+    <value>Effectif approuvé. Ajoutés au tableau du jour : {0}. Retirés du tableau du jour : {1}.</value>
+  </data>
+  <data name="StaffingSavedWithErrorsFormat" xml:space="preserve">
+    <value>Effectif approuvé. Ajoutés au tableau du jour : {0}. Retirés du tableau du jour : {1}. Impossible de modifier : {2}</value>
+  </data>
+  <data name="StaffingWorkshiftSavedFormat" xml:space="preserve">
+    <value>Effectif approuvé : {0} postes d'unité pourvus.</value>
+  </data>
+  <data name="StaffingSelectStaticShift" xml:space="preserve">
+    <value>Vous devez sélectionner un quart statique</value>
+  </data>
+  <data name="StaffingCleared" xml:space="preserve">
+    <value>L'effectif approuvé a été supprimé ; le jour est de nouveau pourvu automatiquement.</value>
+  </data>
+  <data name="StaffingSourceManual" xml:space="preserve">
+    <value>Approuvé</value>
+  </data>
+  <data name="StaffingSourceAutomatic" xml:space="preserve">
+    <value>Automatique</value>
+  </data>
+  <data name="StaffingTypeStaticShift" xml:space="preserve">
+    <value>Quart statique</value>
+  </data>
+  <data name="StaffingSourceTrade" xml:space="preserve">
+    <value>Échange</value>
+  </data>
+  <data name="StaffingOverviewHeader" xml:space="preserve">
+    <value>Effectif par jour</value>
+  </data>
+  <data name="StaffingOverviewHelp" xml:space="preserve">
+    <value>Tous les jours de quart et de quart statique de la période, jours passés compris, avec leur effectif. Sélectionnez un jour pour voir ou définir son effectif.</value>
+  </data>
+  <data name="StaffingOverviewFrom" xml:space="preserve">
+    <value>Du</value>
+  </data>
+  <data name="StaffingOverviewTo" xml:space="preserve">
+    <value>Au</value>
+  </data>
+  <data name="StaffingOverviewAllTypes" xml:space="preserve">
+    <value>Tous les types de quart</value>
+  </data>
+  <data name="StaffingOverviewShow" xml:space="preserve">
+    <value>Afficher</value>
+  </data>
+  <data name="StaffingColumnDay" xml:space="preserve">
+    <value>Jour</value>
+  </data>
+  <data name="StaffingColumnShift" xml:space="preserve">
+    <value>Quart</value>
+  </data>
+  <data name="StaffingColumnType" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="StaffingColumnTime" xml:space="preserve">
+    <value>Horaire</value>
+  </data>
+  <data name="StaffingColumnHours" xml:space="preserve">
+    <value>Heures</value>
+  </data>
+  <data name="StaffingColumnPeople" xml:space="preserve">
+    <value>Personnes</value>
+  </data>
+  <data name="StaffingColumnSource" xml:space="preserve">
+    <value>Effectif</value>
+  </data>
+  <data name="StaffingColumnSetBy" xml:space="preserve">
+    <value>Approuvé par</value>
+  </data>
+  <data name="StaffingLoading" xml:space="preserve">
+    <value>Chargement...</value>
+  </data>
+  <data name="StaffingEditorHeader" xml:space="preserve">
+    <value>Définir l'effectif</value>
+  </data>
+  <data name="StaffingKindLabel" xml:space="preserve">
+    <value>Type de quart</value>
+  </data>
+  <data name="StaffingKindShift" xml:space="preserve">
+    <value>Quart assigné ou sur inscription</value>
+  </data>
+  <data name="StaticShiftSelectHelp" xml:space="preserve">
+    <value>Les quarts statiques planifient des unités sur une période fixe. Indiquez qui armait chaque unité ce jour-là.</value>
+  </data>
+  <data name="StaffingDayHelp" xml:space="preserve">
+    <value>Sélectionnez le jour dont vous voulez voir ou définir l'effectif. Les jours passés peuvent être pourvus pour enregistrer qui a travaillé.</value>
+  </data>
+  <data name="StaffingCurrentHeader" xml:space="preserve">
+    <value>Effectif actuel</value>
+  </data>
+  <data name="StaffingSelectDayFirst" xml:space="preserve">
+    <value>Choisissez un quart et un jour pour voir son effectif.</value>
+  </data>
+  <data name="StaffingClearButton" xml:space="preserve">
+    <value>Revenir à l'automatique</value>
+  </data>
+  <data name="StaffingUnitCrewHelp" xml:space="preserve">
+    <value>Chaque unité part de l'effectif en vigueur ; sans effectif approuvé, c'est l'équipage actuel de l'unité.</value>
+  </data>
+  <data name="StaffingAppliesHelp" xml:space="preserve">
+    <value>Enregistrer approuve l'effectif : il remplace l'effectif automatique de ce jour, y compris dans les rapports. Tant que le jour n'est pas terminé, les personnes ajoutées sont placées sur le jour et celles que vous retirez en sont retirées.</value>
+  </data>
+  <data name="StaffingApproveButton" xml:space="preserve">
+    <value>Approuver l'effectif</value>
+  </data>
+  <data name="StaffingOverviewEmpty" xml:space="preserve">
+    <value>Aucun jour de quart sur cette période.</value>
+  </data>
+  <data name="StaffingSelectButton" xml:space="preserve">
+    <value>Sélectionner</value>
+  </data>
+  <data name="StaffingSourceAutomaticHelp" xml:space="preserve">
+    <value>Déduit des affectations fixes du quart, des inscriptions approuvées, des modifications d'un jour et des échanges. Approuver l'effectif ci-dessous le remplace pour ce jour.</value>
+  </data>
+  <data name="StaffingSourceManualFormat" xml:space="preserve">
+    <value>Approuvé par {0} le {1}</value>
+  </data>
+  <data name="StaffingAutomaticHeader" xml:space="preserve">
+    <value>Du quart (automatique)</value>
+  </data>
+  <data name="StaffingApprovedHeader" xml:space="preserve">
+    <value>Effectif approuvé</value>
+  </data>
+  <data name="StaffingAddedFormat" xml:space="preserve">
+    <value>Dans l'effectif approuvé mais pas dans le quart : {0}</value>
+  </data>
+  <data name="StaffingRemovedFormat" xml:space="preserve">
+    <value>Dans le quart mais absent de l'effectif approuvé : {0}</value>
+  </data>
+  <data name="StaffingNobody" xml:space="preserve">
+    <value>Personne</value>
+  </data>
+  <data name="StaffingDayOver" xml:space="preserve">
+    <value>Ce jour est terminé : approuver enregistre qui a travaillé sans modifier le tableau du jour.</value>
+  </data>
+  <data name="StaffingInProgress" xml:space="preserve">
+    <value>En cours</value>
+  </data>
+  <data name="StaffingClearConfirm" xml:space="preserve">
+    <value>Supprimer l'effectif approuvé de ce jour et revenir à l'effectif automatique ?</value>
+  </data>
+  <data name="StaffingNoUnits" xml:space="preserve">
+    <value>Ce quart statique n'a aucune unité.</value>
+  </data>
+  <data name="StaffingOtherSupervisor" xml:space="preserve">
+    <value>Pourvu par un autre superviseur ; conservé tel quel.</value>
+  </data>
+  <data name="StaffingUnitCrewFormat" xml:space="preserve">
+    <value>Équipage actuel : {0}</value>
+  </data>
+  <data name="StaffingChangesFormat" xml:space="preserve">
+    <value>+{0} / -{1}</value>
+  </data>
+  <data name="StaffingSourceAutomaticStaticHelp" xml:space="preserve">
+    <value>Déduit de l'équipage actuel de chaque unité. Approuver l'effectif ci-dessous le remplace pour ce jour.</value>
+  </data>
 </root>

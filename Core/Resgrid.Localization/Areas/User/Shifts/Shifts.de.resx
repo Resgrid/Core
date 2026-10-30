@@ -881,4 +881,160 @@
   <data name="YourStatusHeader" xml:space="preserve">
     <value>Ihr Status</value>
   </data>
+  <data name="StaffingSavedFormat" xml:space="preserve">
+    <value>Besetzung genehmigt. Zum Dienstplan des Tages hinzugefügt: {0}. Vom Dienstplan des Tages entfernt: {1}.</value>
+  </data>
+  <data name="StaffingSavedWithErrorsFormat" xml:space="preserve">
+    <value>Besetzung genehmigt. Zum Dienstplan des Tages hinzugefügt: {0}. Vom Dienstplan des Tages entfernt: {1}. Nicht geändert werden konnte: {2}</value>
+  </data>
+  <data name="StaffingWorkshiftSavedFormat" xml:space="preserve">
+    <value>Besetzung genehmigt: {0} Positionen auf Einheiten besetzt.</value>
+  </data>
+  <data name="StaffingSelectStaticShift" xml:space="preserve">
+    <value>Sie müssen eine statische Schicht auswählen</value>
+  </data>
+  <data name="StaffingCleared" xml:space="preserve">
+    <value>Die genehmigte Besetzung wurde entfernt; der Tag wird wieder automatisch besetzt.</value>
+  </data>
+  <data name="StaffingSourceManual" xml:space="preserve">
+    <value>Genehmigt</value>
+  </data>
+  <data name="StaffingSourceAutomatic" xml:space="preserve">
+    <value>Automatisch</value>
+  </data>
+  <data name="StaffingTypeStaticShift" xml:space="preserve">
+    <value>Statische Schicht</value>
+  </data>
+  <data name="StaffingSourceTrade" xml:space="preserve">
+    <value>Tausch</value>
+  </data>
+  <data name="StaffingOverviewHeader" xml:space="preserve">
+    <value>Besetzung nach Tag</value>
+  </data>
+  <data name="StaffingOverviewHelp" xml:space="preserve">
+    <value>Alle Schicht- und statischen Schichttage im Zeitraum, auch vergangene, mit ihrer Besetzung. Wählen Sie einen Tag, um seine Besetzung anzuzeigen oder festzulegen.</value>
+  </data>
+  <data name="StaffingOverviewFrom" xml:space="preserve">
+    <value>Von</value>
+  </data>
+  <data name="StaffingOverviewTo" xml:space="preserve">
+    <value>Bis</value>
+  </data>
+  <data name="StaffingOverviewAllTypes" xml:space="preserve">
+    <value>Alle Schichtarten</value>
+  </data>
+  <data name="StaffingOverviewShow" xml:space="preserve">
+    <value>Anzeigen</value>
+  </data>
+  <data name="StaffingColumnDay" xml:space="preserve">
+    <value>Tag</value>
+  </data>
+  <data name="StaffingColumnShift" xml:space="preserve">
+    <value>Schicht</value>
+  </data>
+  <data name="StaffingColumnType" xml:space="preserve">
+    <value>Art</value>
+  </data>
+  <data name="StaffingColumnTime" xml:space="preserve">
+    <value>Zeit</value>
+  </data>
+  <data name="StaffingColumnHours" xml:space="preserve">
+    <value>Stunden</value>
+  </data>
+  <data name="StaffingColumnPeople" xml:space="preserve">
+    <value>Personen</value>
+  </data>
+  <data name="StaffingColumnSource" xml:space="preserve">
+    <value>Besetzung</value>
+  </data>
+  <data name="StaffingColumnSetBy" xml:space="preserve">
+    <value>Genehmigt von</value>
+  </data>
+  <data name="StaffingLoading" xml:space="preserve">
+    <value>Wird geladen...</value>
+  </data>
+  <data name="StaffingEditorHeader" xml:space="preserve">
+    <value>Besetzung festlegen</value>
+  </data>
+  <data name="StaffingKindLabel" xml:space="preserve">
+    <value>Schichtart</value>
+  </data>
+  <data name="StaffingKindShift" xml:space="preserve">
+    <value>Zugewiesene oder Anmelde-Schicht</value>
+  </data>
+  <data name="StaticShiftSelectHelp" xml:space="preserve">
+    <value>Statische Schichten planen Einheiten für einen festen Zeitraum. Legen Sie fest, wer jede Einheit an dem Tag besetzt hat.</value>
+  </data>
+  <data name="StaffingDayHelp" xml:space="preserve">
+    <value>Wählen Sie den Tag, dessen Besetzung Sie anzeigen oder festlegen möchten. Vergangene Tage können besetzt werden, um festzuhalten, wer gearbeitet hat.</value>
+  </data>
+  <data name="StaffingCurrentHeader" xml:space="preserve">
+    <value>Aktuelle Besetzung</value>
+  </data>
+  <data name="StaffingSelectDayFirst" xml:space="preserve">
+    <value>Wählen Sie eine Schicht und einen Tag, um die Besetzung zu sehen.</value>
+  </data>
+  <data name="StaffingClearButton" xml:space="preserve">
+    <value>Auf automatisch zurücksetzen</value>
+  </data>
+  <data name="StaffingUnitCrewHelp" xml:space="preserve">
+    <value>Jede Einheit beginnt mit der geltenden Besetzung; ohne genehmigte Besetzung ist das die aktuelle Besatzung der Einheit.</value>
+  </data>
+  <data name="StaffingAppliesHelp" xml:space="preserve">
+    <value>Speichern genehmigt die Besetzung: Sie ersetzt die automatische Besetzung dieses Tages, auch in Berichten. Bis der Tag vorbei ist, werden hinzugefügte Personen auf den Tag gesetzt und entfernte Personen von ihm genommen.</value>
+  </data>
+  <data name="StaffingApproveButton" xml:space="preserve">
+    <value>Besetzung genehmigen</value>
+  </data>
+  <data name="StaffingOverviewEmpty" xml:space="preserve">
+    <value>Keine Schichttage in diesem Zeitraum.</value>
+  </data>
+  <data name="StaffingSelectButton" xml:space="preserve">
+    <value>Auswählen</value>
+  </data>
+  <data name="StaffingSourceAutomaticHelp" xml:space="preserve">
+    <value>Ermittelt aus den festen Zuweisungen der Schicht, genehmigten Anmeldungen, Änderungen für einzelne Tage und Tauschen. Wenn Sie die Besetzung unten genehmigen, ersetzt sie diese für den Tag.</value>
+  </data>
+  <data name="StaffingSourceManualFormat" xml:space="preserve">
+    <value>Genehmigt von {0} am {1}</value>
+  </data>
+  <data name="StaffingAutomaticHeader" xml:space="preserve">
+    <value>Aus der Schicht (automatisch)</value>
+  </data>
+  <data name="StaffingApprovedHeader" xml:space="preserve">
+    <value>Genehmigte Besetzung</value>
+  </data>
+  <data name="StaffingAddedFormat" xml:space="preserve">
+    <value>In der genehmigten Besetzung, aber nicht in der Schicht: {0}</value>
+  </data>
+  <data name="StaffingRemovedFormat" xml:space="preserve">
+    <value>In der Schicht, aber nicht in der genehmigten Besetzung: {0}</value>
+  </data>
+  <data name="StaffingNobody" xml:space="preserve">
+    <value>Niemand</value>
+  </data>
+  <data name="StaffingDayOver" xml:space="preserve">
+    <value>Dieser Tag ist vorbei: Die Genehmigung hält fest, wer gearbeitet hat, und ändert den Dienstplan des Tages nicht.</value>
+  </data>
+  <data name="StaffingInProgress" xml:space="preserve">
+    <value>Läuft gerade</value>
+  </data>
+  <data name="StaffingClearConfirm" xml:space="preserve">
+    <value>Genehmigte Besetzung für diesen Tag entfernen und zur automatischen Besetzung zurückkehren?</value>
+  </data>
+  <data name="StaffingNoUnits" xml:space="preserve">
+    <value>Diese statische Schicht hat keine Einheiten.</value>
+  </data>
+  <data name="StaffingOtherSupervisor" xml:space="preserve">
+    <value>Von einem anderen Vorgesetzten besetzt; bleibt unverändert.</value>
+  </data>
+  <data name="StaffingUnitCrewFormat" xml:space="preserve">
+    <value>Aktuelle Besatzung: {0}</value>
+  </data>
+  <data name="StaffingChangesFormat" xml:space="preserve">
+    <value>+{0} / -{1}</value>
+  </data>
+  <data name="StaffingSourceAutomaticStaticHelp" xml:space="preserve">
+    <value>Ermittelt aus der aktuellen Besatzung jeder Einheit. Wenn Sie die Besetzung unten genehmigen, ersetzt sie diese für den Tag.</value>
+  </data>
 </root>

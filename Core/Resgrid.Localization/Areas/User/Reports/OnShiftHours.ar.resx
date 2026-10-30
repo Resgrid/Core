@@ -1,0 +1,253 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ReportName" xml:space="preserve">
+    <value>تقرير ساعات الوردية</value>
+  </data>
+  <data name="ReportDescription" xml:space="preserve">
+    <value>الساعات التي قضاها كل شخص في الوردية خلال فترة عبر الورديات المُكلَّفة وورديات التسجيل والورديات الثابتة، للإدارة أو لمجموعة أو لوردية، مع بيان الساعات المأخوذة من تأمين معتمد.</value>
+  </data>
+  <data name="ParamsHelp" xml:space="preserve">
+    <value>يحتسب كل يوم وردية ويوم وردية ثابتة يتداخل مع الفترة. يكون تأمين اليوم تلقائيًا (من تكليفات الوردية وتسجيلاتها وتبديلاتها) ما لم يعتمده مشرف في صفحة تأمين الوردية.</value>
+  </data>
+  <data name="EndHelp" xml:space="preserve">
+    <value>يُحتسب الوقت حتى هذه اللحظة؛ ولا تُحتسب النهاية نفسها.</value>
+  </data>
+  <data name="ScopeLabel" xml:space="preserve">
+    <value>التقرير لـ</value>
+  </data>
+  <data name="ScopeDepartment" xml:space="preserve">
+    <value>الإدارة بأكملها</value>
+  </data>
+  <data name="ScopeGroup" xml:space="preserve">
+    <value>مجموعة</value>
+  </data>
+  <data name="ScopeShift" xml:space="preserve">
+    <value>وردية</value>
+  </data>
+  <data name="GroupHelp" xml:space="preserve">
+    <value>يحتسب من يشغلون مكانًا لهذه المجموعة أو مجموعاتها الفرعية، وأعضاء المجموعة في أماكن بلا مجموعة.</value>
+  </data>
+  <data name="ShiftLabel" xml:space="preserve">
+    <value>الوردية</value>
+  </data>
+  <data name="ShiftHelp" xml:space="preserve">
+    <value>وردية واحدة مُكلَّفة أو بالتسجيل أو ثابتة.</value>
+  </data>
+  <data name="ShiftGroupAssigned" xml:space="preserve">
+    <value>الورديات المُكلَّفة</value>
+  </data>
+  <data name="ShiftGroupSignup" xml:space="preserve">
+    <value>ورديات التسجيل</value>
+  </data>
+  <data name="ShiftGroupStatic" xml:space="preserve">
+    <value>الورديات الثابتة</value>
+  </data>
+  <data name="ScopeDepartmentFormat" xml:space="preserve">
+    <value>الإدارة: {0}</value>
+  </data>
+  <data name="ScopeGroupFormat" xml:space="preserve">
+    <value>المجموعة: {0}</value>
+  </data>
+  <data name="ScopeShiftFormat" xml:space="preserve">
+    <value>الوردية: {0}</value>
+  </data>
+  <data name="RunOnFormat" xml:space="preserve">
+    <value>أُنشئ في {0}</value>
+  </data>
+  <data name="DownloadCsv" xml:space="preserve">
+    <value>تنزيل CSV</value>
+  </data>
+  <data name="TotalHours" xml:space="preserve">
+    <value>إجمالي الساعات</value>
+  </data>
+  <data name="ApprovedHours" xml:space="preserve">
+    <value>الساعات المعتمدة</value>
+  </data>
+  <data name="AutomaticHours" xml:space="preserve">
+    <value>الساعات التلقائية</value>
+  </data>
+  <data name="PeopleCount" xml:space="preserve">
+    <value>الأشخاص</value>
+  </data>
+  <data name="ShiftDaysCount" xml:space="preserve">
+    <value>أيام الورديات</value>
+  </data>
+  <data name="ApprovedShiftDaysCount" xml:space="preserve">
+    <value>أيام الورديات المعتمدة</value>
+  </data>
+  <data name="SourceManual" xml:space="preserve">
+    <value>معتمد</value>
+  </data>
+  <data name="SourceAutomatic" xml:space="preserve">
+    <value>تلقائي</value>
+  </data>
+  <data name="SourceManualHelp" xml:space="preserve">
+    <value>عيّن مشرف التأمين في صفحة تأمين الوردية.</value>
+  </data>
+  <data name="SourceAutomaticHelp" xml:space="preserve">
+    <value>يُحسب من التكليفات الثابتة للوردية وتسجيلاتها وتبديلاتها، أو من أطقم وحدات الوردية الثابتة.</value>
+  </data>
+  <data name="PersonnelHeader" xml:space="preserve">
+    <value>الأفراد</value>
+  </data>
+  <data name="NoHours" xml:space="preserve">
+    <value>لم يكن أحد في وردية خلال هذه الفترة.</value>
+  </data>
+  <data name="IdHeader" xml:space="preserve">
+    <value>المعرف</value>
+  </data>
+  <data name="NameHeader" xml:space="preserve">
+    <value>الاسم</value>
+  </data>
+  <data name="GroupHeader" xml:space="preserve">
+    <value>المجموعة</value>
+  </data>
+  <data name="ShiftsHeader" xml:space="preserve">
+    <value>الورديات</value>
+  </data>
+  <data name="TotalHoursHeader" xml:space="preserve">
+    <value>الإجمالي</value>
+  </data>
+  <data name="ApprovedHoursHeader" xml:space="preserve">
+    <value>معتمدة</value>
+  </data>
+  <data name="AutomaticHoursHeader" xml:space="preserve">
+    <value>تلقائية</value>
+  </data>
+  <data name="AssignedHoursHeader" xml:space="preserve">
+    <value>مُكلَّفة</value>
+  </data>
+  <data name="SignupHoursHeader" xml:space="preserve">
+    <value>تسجيل</value>
+  </data>
+  <data name="StaticHoursHeader" xml:space="preserve">
+    <value>ثابتة</value>
+  </data>
+  <data name="StaffingHeader" xml:space="preserve">
+    <value>التأمين</value>
+  </data>
+  <data name="MixedFormat" xml:space="preserve">
+    <value>{0} من {1} معتمدة</value>
+  </data>
+  <data name="TotalsRow" xml:space="preserve">
+    <value>المجاميع</value>
+  </data>
+  <data name="ShiftDaysHeader" xml:space="preserve">
+    <value>أيام الورديات</value>
+  </data>
+  <data name="NoShiftDays" xml:space="preserve">
+    <value>لا توجد أيام ورديات في هذه الفترة.</value>
+  </data>
+  <data name="DayHeader" xml:space="preserve">
+    <value>اليوم</value>
+  </data>
+  <data name="ShiftHeader" xml:space="preserve">
+    <value>الوردية</value>
+  </data>
+  <data name="TypeHeader" xml:space="preserve">
+    <value>النوع</value>
+  </data>
+  <data name="StartHeader" xml:space="preserve">
+    <value>البداية</value>
+  </data>
+  <data name="EndHeader" xml:space="preserve">
+    <value>النهاية</value>
+  </data>
+  <data name="HoursHeader" xml:space="preserve">
+    <value>الساعات</value>
+  </data>
+  <data name="PeopleHeader" xml:space="preserve">
+    <value>الأشخاص</value>
+  </data>
+  <data name="SetByHeader" xml:space="preserve">
+    <value>اعتمده</value>
+  </data>
+  <data name="ChangesFormat" xml:space="preserve">
+    <value>(+{0} أُضيفوا / -{1} استُبعدوا)</value>
+  </data>
+  <data name="OpenStaffing" xml:space="preserve">
+    <value>فتح</value>
+  </data>
+  <data name="DetailHeader" xml:space="preserve">
+    <value>التفاصيل حسب الشخص</value>
+  </data>
+  <data name="PersonTotalFormat" xml:space="preserve">
+    <value>{0} ساعة في {1} وردية</value>
+  </data>
+  <data name="AssignmentHeader" xml:space="preserve">
+    <value>المجموعة / الوحدة</value>
+  </data>
+  <data name="PartialHelp" xml:space="preserve">
+    <value>يُحتسب فقط جزء الوردية الواقع ضمن فترة التقرير.</value>
+  </data>
+  <data name="TypeAssigned" xml:space="preserve">
+    <value>مُكلَّفة</value>
+  </data>
+  <data name="TypeSignup" xml:space="preserve">
+    <value>تسجيل</value>
+  </data>
+  <data name="TypeStatic" xml:space="preserve">
+    <value>وردية ثابتة</value>
+  </data>
+  <data name="UnknownPerson" xml:space="preserve">
+    <value>غير معروف</value>
+  </data>
+</root>

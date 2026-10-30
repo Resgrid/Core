@@ -7695,4 +7695,22 @@
   <data name="PermissionHelp.ShareCoordinationBoards" xml:space="preserve">
     <value>يسمح بمشاركة لوحة تنسيق مع الجهات الشريكة. عند عدم وجود قاعدة محفوظة، يقتصر ذلك على مدراء القسم. يتطلب تفعيل Incident Coordination وإضافة Incident Back Office نشطة.</value>
   </data>
+  <data xml:space="preserve" name="Feature.shift-staffing">
+    <value>تأمين الوردية</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.shift-staffing">
+    <value>من عمل فعلًا في كل يوم وردية، بموافقة مشرف، للورديات المُكلَّفة وورديات التسجيل والورديات الثابتة؛ واليوم الذي لا يعتمده أحد يُؤمَّن تلقائيًا من الوردية.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.shift-staffing">
+    <value>افتح الورديات ثم تأمين الوردية. اختر يومًا في التأمين حسب اليوم، بما فيها الأيام الماضية، وراجع التأمين التلقائي، وغيّر الأشخاص إن لزم، ثم اختر اعتماد التأمين. يؤدي العودة إلى التلقائي إلى إزالة التأمين المعتمد.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.on-shift-hours-report">
+    <value>تقرير ساعات الوردية</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.on-shift-hours-report">
+    <value>ساعات الوردية لكل شخص خلال فترة عبر الورديات المُكلَّفة وورديات التسجيل والورديات الثابتة، للإدارة أو لمجموعة أو لوردية واحدة، مقسّمة إلى ساعات معتمدة وتلقائية.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.on-shift-hours-report">
+    <value>افتح التقارير ثم تقرير ساعات الوردية. اختر الفترة وما إذا كان يشمل الإدارة أو مجموعة أو وردية. اعتمد في صفحة تأمين الوردية تأمين الأيام التي تحتاج إلى سجل دقيق قبل تشغيله لأغراض الرواتب أو الامتثال.</value>
+  </data>
 </root>

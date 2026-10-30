@@ -760,6 +760,11 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					FROM %SCHEMA%.%SHIFTSTAFFINGSTABLE%
 					LEFT JOIN %SCHEMA%.%SHIFTSTAFFINGPERSONSTABLE% ON %SCHEMA%.%SHIFTSTAFFINGPERSONSTABLE%.ShiftStaffingId =  %SCHEMA%.%SHIFTSTAFFINGSTABLE%.ShiftStaffingId
 					WHERE ShiftId = %SHIFTID% AND ShiftDay = %SHIFTDAY%";
+			SelectShiftStaffingsByDepartmentIdAndDateRangeQuery = @"
+					SELECT ss.*, ssp.*
+					FROM %SCHEMA%.%SHIFTSTAFFINGSTABLE% ss
+					LEFT JOIN %SCHEMA%.%SHIFTSTAFFINGPERSONSTABLE% ssp ON ssp.ShiftStaffingId = ss.ShiftStaffingId
+					WHERE ss.DepartmentId = %DID% AND ss.ShiftDay >= %STARTDATE% AND ss.ShiftDay < %ENDDATE%";
 			SelectShiftGroupByGroupQuery = @"
 					SELECT %SCHEMA%.%SHIFTGROUPSTABLE%.*, %SCHEMA%.%SHIFTGROUPROLESTABLE%.*
 					FROM %SCHEMA%.%SHIFTGROUPSTABLE%

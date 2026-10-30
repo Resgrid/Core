@@ -8,6 +8,7 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Reports.FlaggedReport> flaggedReportLocalizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Reports.Reports> localizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Certifications.Certifications> certificationLocalizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Reports.OnShiftHours> onShiftHoursLocalizer
 @{
     var moduleTitle = await departmentTerms.NameAsync(DepartmentTerms.Reports, localizer["ReportingTitle"]);
     ViewBag.Title = "Resgrid | " + moduleTitle;
@@ -122,6 +123,17 @@
                                 </td>
                                 <td>
                                     <a href="@Url.Action("UpcomingShiftReadinessReport", "Reports", new { Area = "User" })" class=" btn btn-primary btn-sm"><i class="icon-eye-open"></i> @localizer["ViewReport"]</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <a href="@Url.Action("OnShiftHoursReportParams", "Reports", new { Area = "User" })">@onShiftHoursLocalizer["ReportName"]</a>
+                                </td>
+                                <td>
+                                    @onShiftHoursLocalizer["ReportDescription"]
+                                </td>
+                                <td>
+                                    <a href="@Url.Action("OnShiftHoursReportParams", "Reports", new { Area = "User" })" class=" btn btn-primary btn-sm"><i class="icon-eye-open"></i> @localizer["ViewReport"]</a>
                                 </td>
                             </tr>
                             <tr>

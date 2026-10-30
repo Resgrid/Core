@@ -920,4 +920,160 @@
   <data name="YourStatusHeader" xml:space="preserve">
     <value>Su estado</value>
   </data>
+  <data name="StaffingSavedFormat" xml:space="preserve">
+    <value>Dotación aprobada. Añadidos a la plantilla del día: {0}. Retirados de la plantilla del día: {1}.</value>
+  </data>
+  <data name="StaffingSavedWithErrorsFormat" xml:space="preserve">
+    <value>Dotación aprobada. Añadidos a la plantilla del día: {0}. Retirados de la plantilla del día: {1}. No se pudo cambiar: {2}</value>
+  </data>
+  <data name="StaffingWorkshiftSavedFormat" xml:space="preserve">
+    <value>Dotación aprobada: {0} puestos de unidad cubiertos.</value>
+  </data>
+  <data name="StaffingSelectStaticShift" xml:space="preserve">
+    <value>Debe seleccionar un turno estático</value>
+  </data>
+  <data name="StaffingCleared" xml:space="preserve">
+    <value>Se quitó la dotación aprobada; el día vuelve a dotarse automáticamente.</value>
+  </data>
+  <data name="StaffingSourceManual" xml:space="preserve">
+    <value>Aprobada</value>
+  </data>
+  <data name="StaffingSourceAutomatic" xml:space="preserve">
+    <value>Automática</value>
+  </data>
+  <data name="StaffingTypeStaticShift" xml:space="preserve">
+    <value>Turno estático</value>
+  </data>
+  <data name="StaffingSourceTrade" xml:space="preserve">
+    <value>Intercambio</value>
+  </data>
+  <data name="StaffingOverviewHeader" xml:space="preserve">
+    <value>Dotación por día</value>
+  </data>
+  <data name="StaffingOverviewHelp" xml:space="preserve">
+    <value>Todos los días de turno y de turno estático del rango, incluidos los pasados, con su dotación. Seleccione un día para ver o establecer su dotación.</value>
+  </data>
+  <data name="StaffingOverviewFrom" xml:space="preserve">
+    <value>Desde</value>
+  </data>
+  <data name="StaffingOverviewTo" xml:space="preserve">
+    <value>Hasta</value>
+  </data>
+  <data name="StaffingOverviewAllTypes" xml:space="preserve">
+    <value>Todos los tipos de turno</value>
+  </data>
+  <data name="StaffingOverviewShow" xml:space="preserve">
+    <value>Mostrar</value>
+  </data>
+  <data name="StaffingColumnDay" xml:space="preserve">
+    <value>Día</value>
+  </data>
+  <data name="StaffingColumnShift" xml:space="preserve">
+    <value>Turno</value>
+  </data>
+  <data name="StaffingColumnType" xml:space="preserve">
+    <value>Tipo</value>
+  </data>
+  <data name="StaffingColumnTime" xml:space="preserve">
+    <value>Horario</value>
+  </data>
+  <data name="StaffingColumnHours" xml:space="preserve">
+    <value>Horas</value>
+  </data>
+  <data name="StaffingColumnPeople" xml:space="preserve">
+    <value>Personas</value>
+  </data>
+  <data name="StaffingColumnSource" xml:space="preserve">
+    <value>Dotación</value>
+  </data>
+  <data name="StaffingColumnSetBy" xml:space="preserve">
+    <value>Aprobado por</value>
+  </data>
+  <data name="StaffingLoading" xml:space="preserve">
+    <value>Cargando...</value>
+  </data>
+  <data name="StaffingEditorHeader" xml:space="preserve">
+    <value>Establecer dotación</value>
+  </data>
+  <data name="StaffingKindLabel" xml:space="preserve">
+    <value>Tipo de turno</value>
+  </data>
+  <data name="StaffingKindShift" xml:space="preserve">
+    <value>Turno asignado o de inscripción</value>
+  </data>
+  <data name="StaticShiftSelectHelp" xml:space="preserve">
+    <value>Los turnos estáticos programan unidades durante un periodo fijo. Indique quién tripuló cada unidad ese día.</value>
+  </data>
+  <data name="StaffingDayHelp" xml:space="preserve">
+    <value>Seleccione el día cuya dotación desea ver o establecer. Los días pasados pueden dotarse para registrar quién trabajó.</value>
+  </data>
+  <data name="StaffingCurrentHeader" xml:space="preserve">
+    <value>Dotación actual</value>
+  </data>
+  <data name="StaffingSelectDayFirst" xml:space="preserve">
+    <value>Elija un turno y un día para ver su dotación.</value>
+  </data>
+  <data name="StaffingClearButton" xml:space="preserve">
+    <value>Volver a automática</value>
+  </data>
+  <data name="StaffingUnitCrewHelp" xml:space="preserve">
+    <value>Cada unidad parte de la dotación vigente; sin dotación aprobada, es la tripulación actual de la unidad.</value>
+  </data>
+  <data name="StaffingAppliesHelp" xml:space="preserve">
+    <value>Guardar aprueba la dotación: sustituye a la dotación automática de este día, también en los informes. Hasta que termine el día, las personas añadidas se ponen en el día y las que quite se retiran de él.</value>
+  </data>
+  <data name="StaffingApproveButton" xml:space="preserve">
+    <value>Aprobar dotación</value>
+  </data>
+  <data name="StaffingOverviewEmpty" xml:space="preserve">
+    <value>No hay días de turno en este rango.</value>
+  </data>
+  <data name="StaffingSelectButton" xml:space="preserve">
+    <value>Seleccionar</value>
+  </data>
+  <data name="StaffingSourceAutomaticHelp" xml:space="preserve">
+    <value>Calculada a partir de las asignaciones fijas del turno, las inscripciones aprobadas, los cambios de un solo día y los intercambios. Aprobar la dotación abajo la sustituye para este día.</value>
+  </data>
+  <data name="StaffingSourceManualFormat" xml:space="preserve">
+    <value>Aprobada por {0} el {1}</value>
+  </data>
+  <data name="StaffingAutomaticHeader" xml:space="preserve">
+    <value>Del turno (automática)</value>
+  </data>
+  <data name="StaffingApprovedHeader" xml:space="preserve">
+    <value>Dotación aprobada</value>
+  </data>
+  <data name="StaffingAddedFormat" xml:space="preserve">
+    <value>En la dotación aprobada pero no en el turno: {0}</value>
+  </data>
+  <data name="StaffingRemovedFormat" xml:space="preserve">
+    <value>En el turno pero fuera de la dotación aprobada: {0}</value>
+  </data>
+  <data name="StaffingNobody" xml:space="preserve">
+    <value>Nadie</value>
+  </data>
+  <data name="StaffingDayOver" xml:space="preserve">
+    <value>Este día ha terminado: aprobar registra quién trabajó y no cambia la plantilla del día.</value>
+  </data>
+  <data name="StaffingInProgress" xml:space="preserve">
+    <value>En curso</value>
+  </data>
+  <data name="StaffingClearConfirm" xml:space="preserve">
+    <value>¿Quitar la dotación aprobada de este día y volver a la dotación automática?</value>
+  </data>
+  <data name="StaffingNoUnits" xml:space="preserve">
+    <value>Este turno estático no tiene unidades.</value>
+  </data>
+  <data name="StaffingOtherSupervisor" xml:space="preserve">
+    <value>Dotado por otro supervisor; se mantiene igual.</value>
+  </data>
+  <data name="StaffingUnitCrewFormat" xml:space="preserve">
+    <value>Tripulación actual: {0}</value>
+  </data>
+  <data name="StaffingChangesFormat" xml:space="preserve">
+    <value>+{0} / -{1}</value>
+  </data>
+  <data name="StaffingSourceAutomaticStaticHelp" xml:space="preserve">
+    <value>Calculada a partir de la tripulación actual de cada unidad. Aprobar la dotación abajo la sustituye para este día.</value>
+  </data>
 </root>

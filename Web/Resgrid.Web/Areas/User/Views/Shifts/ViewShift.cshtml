@@ -33,6 +33,11 @@
 		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
 			<a class="btn btn-primary top-button" asp-controller="Shifts" asp-action="YourShifts" asp-route-area="User">@localizer["YourShiftsButton"]</a>
 			<a class="btn btn-success top-button" asp-controller="Shifts" asp-action="OnDuty" asp-route-area="User">@localizer["OnDutyButton"]</a>
+			@if (Model.CanSupervise)
+			{
+				<a class="btn btn-info top-button" asp-controller="Shifts" asp-action="ShiftStaffing" asp-route-area="User" asp-route-shiftId="@Model.ShiftId"
+				   asp-route-day="@Model.Start.ToString("MM/dd/yyyy", System.Globalization.CultureInfo.InvariantCulture)">@localizer["ShiftStaffingButton"]</a>
+			}
 		</div>
 	</div>
 </div>

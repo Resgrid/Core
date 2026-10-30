@@ -7695,4 +7695,22 @@
   <data name="PermissionHelp.ShareCoordinationBoards" xml:space="preserve">
     <value>Consente di condividere una bacheca di coordinamento con gli enti partner. Senza una regola salvata, possono farlo solo gli amministratori del dipartimento. Richiede l'attivazione di Incident Coordination e un componente aggiuntivo Incident Back Office attivo.</value>
   </data>
+  <data xml:space="preserve" name="Feature.shift-staffing">
+    <value>Personale del turno</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.shift-staffing">
+    <value>Chi ha lavorato davvero in ogni giorno di turno, approvato da un supervisore, per turni assegnati, su iscrizione e statici; un giorno che nessuno approva viene coperto automaticamente dal turno.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.shift-staffing">
+    <value>Apri Turni, poi Personale del turno. Scegli un giorno in Personale per giorno, compresi quelli passati, controlla il personale automatico, cambia le persone se serve e scegli Approva personale. Torna ad automatico rimuove un personale approvato.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.on-shift-hours-report">
+    <value>Report ore di turno</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.on-shift-hours-report">
+    <value>Le ore di turno di ogni persona in un periodo nei turni assegnati, su iscrizione e statici, per il dipartimento, un gruppo o un turno, divise in ore approvate e automatiche.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.on-shift-hours-report">
+    <value>Apri Report, poi Report ore di turno. Scegli il periodo e se copre il dipartimento, un gruppo o un turno. Approva nella pagina Personale del turno il personale dei giorni che richiedono una registrazione esatta prima di eseguirlo per paghe o conformità.</value>
+  </data>
 </root>

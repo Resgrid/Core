@@ -881,4 +881,160 @@
   <data name="YourStatusHeader" xml:space="preserve">
     <value>Il tuo stato</value>
   </data>
+  <data name="StaffingSavedFormat" xml:space="preserve">
+    <value>Personale approvato. Aggiunti al turno del giorno: {0}. Rimossi dal turno del giorno: {1}.</value>
+  </data>
+  <data name="StaffingSavedWithErrorsFormat" xml:space="preserve">
+    <value>Personale approvato. Aggiunti al turno del giorno: {0}. Rimossi dal turno del giorno: {1}. Impossibile modificare: {2}</value>
+  </data>
+  <data name="StaffingWorkshiftSavedFormat" xml:space="preserve">
+    <value>Personale approvato: {0} posti di unità coperti.</value>
+  </data>
+  <data name="StaffingSelectStaticShift" xml:space="preserve">
+    <value>Devi selezionare un turno statico</value>
+  </data>
+  <data name="StaffingCleared" xml:space="preserve">
+    <value>Il personale approvato è stato rimosso; il giorno torna a essere coperto automaticamente.</value>
+  </data>
+  <data name="StaffingSourceManual" xml:space="preserve">
+    <value>Approvato</value>
+  </data>
+  <data name="StaffingSourceAutomatic" xml:space="preserve">
+    <value>Automatico</value>
+  </data>
+  <data name="StaffingTypeStaticShift" xml:space="preserve">
+    <value>Turno statico</value>
+  </data>
+  <data name="StaffingSourceTrade" xml:space="preserve">
+    <value>Scambio</value>
+  </data>
+  <data name="StaffingOverviewHeader" xml:space="preserve">
+    <value>Personale per giorno</value>
+  </data>
+  <data name="StaffingOverviewHelp" xml:space="preserve">
+    <value>Tutti i giorni di turno e di turno statico nell'intervallo, compresi quelli passati, con il relativo personale. Seleziona un giorno per vedere o impostare il personale.</value>
+  </data>
+  <data name="StaffingOverviewFrom" xml:space="preserve">
+    <value>Dal</value>
+  </data>
+  <data name="StaffingOverviewTo" xml:space="preserve">
+    <value>Al</value>
+  </data>
+  <data name="StaffingOverviewAllTypes" xml:space="preserve">
+    <value>Tutti i tipi di turno</value>
+  </data>
+  <data name="StaffingOverviewShow" xml:space="preserve">
+    <value>Mostra</value>
+  </data>
+  <data name="StaffingColumnDay" xml:space="preserve">
+    <value>Giorno</value>
+  </data>
+  <data name="StaffingColumnShift" xml:space="preserve">
+    <value>Turno</value>
+  </data>
+  <data name="StaffingColumnType" xml:space="preserve">
+    <value>Tipo</value>
+  </data>
+  <data name="StaffingColumnTime" xml:space="preserve">
+    <value>Orario</value>
+  </data>
+  <data name="StaffingColumnHours" xml:space="preserve">
+    <value>Ore</value>
+  </data>
+  <data name="StaffingColumnPeople" xml:space="preserve">
+    <value>Persone</value>
+  </data>
+  <data name="StaffingColumnSource" xml:space="preserve">
+    <value>Personale</value>
+  </data>
+  <data name="StaffingColumnSetBy" xml:space="preserve">
+    <value>Approvato da</value>
+  </data>
+  <data name="StaffingLoading" xml:space="preserve">
+    <value>Caricamento...</value>
+  </data>
+  <data name="StaffingEditorHeader" xml:space="preserve">
+    <value>Imposta personale</value>
+  </data>
+  <data name="StaffingKindLabel" xml:space="preserve">
+    <value>Tipo di turno</value>
+  </data>
+  <data name="StaffingKindShift" xml:space="preserve">
+    <value>Turno assegnato o su iscrizione</value>
+  </data>
+  <data name="StaticShiftSelectHelp" xml:space="preserve">
+    <value>I turni statici pianificano le unità per un periodo fisso. Indica chi ha composto l'equipaggio di ogni unità quel giorno.</value>
+  </data>
+  <data name="StaffingDayHelp" xml:space="preserve">
+    <value>Seleziona il giorno di cui vedere o impostare il personale. I giorni passati possono essere impostati per registrare chi ha lavorato.</value>
+  </data>
+  <data name="StaffingCurrentHeader" xml:space="preserve">
+    <value>Personale attuale</value>
+  </data>
+  <data name="StaffingSelectDayFirst" xml:space="preserve">
+    <value>Scegli un turno e un giorno per vederne il personale.</value>
+  </data>
+  <data name="StaffingClearButton" xml:space="preserve">
+    <value>Torna ad automatico</value>
+  </data>
+  <data name="StaffingUnitCrewHelp" xml:space="preserve">
+    <value>Ogni unità parte dal personale in vigore; senza personale approvato è l'equipaggio attuale dell'unità.</value>
+  </data>
+  <data name="StaffingAppliesHelp" xml:space="preserve">
+    <value>Salvare approva il personale: sostituisce quello automatico per questo giorno, anche nei report. Finché il giorno non è finito, le persone aggiunte vengono messe nel giorno e quelle rimosse vengono tolte.</value>
+  </data>
+  <data name="StaffingApproveButton" xml:space="preserve">
+    <value>Approva personale</value>
+  </data>
+  <data name="StaffingOverviewEmpty" xml:space="preserve">
+    <value>Nessun giorno di turno in questo intervallo.</value>
+  </data>
+  <data name="StaffingSelectButton" xml:space="preserve">
+    <value>Seleziona</value>
+  </data>
+  <data name="StaffingSourceAutomaticHelp" xml:space="preserve">
+    <value>Ricavato dalle assegnazioni fisse del turno, dalle iscrizioni approvate, dalle modifiche di un singolo giorno e dagli scambi. Approvare il personale qui sotto lo sostituisce per questo giorno.</value>
+  </data>
+  <data name="StaffingSourceManualFormat" xml:space="preserve">
+    <value>Approvato da {0} il {1}</value>
+  </data>
+  <data name="StaffingAutomaticHeader" xml:space="preserve">
+    <value>Dal turno (automatico)</value>
+  </data>
+  <data name="StaffingApprovedHeader" xml:space="preserve">
+    <value>Personale approvato</value>
+  </data>
+  <data name="StaffingAddedFormat" xml:space="preserve">
+    <value>Nel personale approvato ma non nel turno: {0}</value>
+  </data>
+  <data name="StaffingRemovedFormat" xml:space="preserve">
+    <value>Nel turno ma escluso dal personale approvato: {0}</value>
+  </data>
+  <data name="StaffingNobody" xml:space="preserve">
+    <value>Nessuno</value>
+  </data>
+  <data name="StaffingDayOver" xml:space="preserve">
+    <value>Questo giorno è finito: approvare registra chi ha lavorato e non modifica il turno del giorno.</value>
+  </data>
+  <data name="StaffingInProgress" xml:space="preserve">
+    <value>In corso</value>
+  </data>
+  <data name="StaffingClearConfirm" xml:space="preserve">
+    <value>Rimuovere il personale approvato per questo giorno e tornare a quello automatico?</value>
+  </data>
+  <data name="StaffingNoUnits" xml:space="preserve">
+    <value>Questo turno statico non ha unità.</value>
+  </data>
+  <data name="StaffingOtherSupervisor" xml:space="preserve">
+    <value>Gestito da un altro supervisore; resta invariato.</value>
+  </data>
+  <data name="StaffingUnitCrewFormat" xml:space="preserve">
+    <value>Equipaggio attuale: {0}</value>
+  </data>
+  <data name="StaffingChangesFormat" xml:space="preserve">
+    <value>+{0} / -{1}</value>
+  </data>
+  <data name="StaffingSourceAutomaticStaticHelp" xml:space="preserve">
+    <value>Ricavato dall'equipaggio attuale di ogni unità. Approvare il personale qui sotto lo sostituisce per questo giorno.</value>
+  </data>
 </root>

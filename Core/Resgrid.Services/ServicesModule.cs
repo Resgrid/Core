@@ -388,6 +388,7 @@ namespace Resgrid.Services
 			//builder.RegisterType<InternalCacheService>().As<IInternalCacheService>().SingleInstance();
 			builder.RegisterType<CoreEventService>().As<ICoreEventService>().SingleInstance();
 			builder.RegisterType<WorkShiftsService>().As<IWorkShiftsService>().SingleInstance();
+			builder.RegisterType<ShiftStaffingService>().As<IShiftStaffingService>().SingleInstance();
 			builder.RegisterType<ContactsService>().As<IContactsService>().SingleInstance();
 			builder.RegisterType<IndoorMapService>().As<IIndoorMapService>().SingleInstance();
 			builder.RegisterType<CustomMapService>().As<ICustomMapService>().SingleInstance();

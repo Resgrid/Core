@@ -18,5 +18,11 @@ namespace Resgrid.Model.Repositories
 		/// <param name="shiftDay">The shift day.</param>
 		/// <returns>Task&lt;IEnumerable&lt;ShiftStaffing&gt;&gt;.</returns>
 		Task<ShiftStaffing> GetShiftStaffingByShiftDayAsync(int shiftId, DateTime shiftDay);
+
+		/// <summary>
+		/// Every staffing record (with its personnel) in the department whose ShiftDay is within [startDate, endDate).
+		/// Throws on a failed read so a report never mistakes a database error for "nothing was set".
+		/// </summary>
+		Task<IEnumerable<ShiftStaffing>> GetShiftStaffingsByDepartmentIdAndDateRangeAsync(int departmentId, DateTime startDate, DateTime endDate);
 	}
 }

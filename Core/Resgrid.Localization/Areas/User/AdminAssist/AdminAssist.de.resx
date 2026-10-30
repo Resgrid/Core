@@ -7695,4 +7695,22 @@
   <data name="PermissionHelp.ShareCoordinationBoards" xml:space="preserve">
     <value>Ermöglicht das Freigeben einer Koordinationstafel für Partnerbehörden. Ohne gespeicherte Regel dürfen dies nur Abteilungsadministratoren. Erfordert das aktivierte Incident Coordination und die aktive Erweiterung Incident Back Office.</value>
   </data>
+  <data xml:space="preserve" name="Feature.shift-staffing">
+    <value>Schichtbesetzung</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.shift-staffing">
+    <value>Wer an jedem Schichttag tatsächlich gearbeitet hat, von einem Vorgesetzten genehmigt, für zugewiesene, Anmelde- und statische Schichten; ein Tag ohne Genehmigung wird automatisch aus der Schicht besetzt.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.shift-staffing">
+    <value>Öffnen Sie Schichten und dann Schichtbesetzung. Wählen Sie unter Besetzung nach Tag einen Tag, auch vergangene, prüfen Sie die automatische Besetzung, ändern Sie bei Bedarf die Personen und wählen Sie Besetzung genehmigen. Auf automatisch zurücksetzen entfernt eine genehmigte Besetzung.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.on-shift-hours-report">
+    <value>Bericht Schichtstunden</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.on-shift-hours-report">
+    <value>Die Schichtstunden jeder Person in einem Zeitraum über zugewiesene, Anmelde- und statische Schichten, für die Abteilung, eine Gruppe oder eine Schicht, aufgeteilt in genehmigte und automatische Stunden.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.on-shift-hours-report">
+    <value>Öffnen Sie Berichte und dann Bericht Schichtstunden. Wählen Sie den Zeitraum und ob er die Abteilung, eine Gruppe oder eine Schicht abdeckt. Genehmigen Sie auf der Seite Schichtbesetzung die Besetzung der Tage, die einen genauen Nachweis brauchen, bevor Sie ihn für Lohnabrechnung oder Compliance ausführen.</value>
+  </data>
 </root>

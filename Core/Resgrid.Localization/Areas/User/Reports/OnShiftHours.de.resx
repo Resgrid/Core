@@ -1,0 +1,253 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ReportName" xml:space="preserve">
+    <value>Bericht Schichtstunden</value>
+  </data>
+  <data name="ReportDescription" xml:space="preserve">
+    <value>Stunden, die jede Person in einem Zeitraum in zugewiesenen, Anmelde- und statischen Schichten im Dienst war, für die Abteilung, eine Gruppe oder eine Schicht, mit Kennzeichnung der Stunden aus genehmigter Besetzung.</value>
+  </data>
+  <data name="ParamsHelp" xml:space="preserve">
+    <value>Zählt jeden Schichttag und statischen Schichttag, der den Zeitraum überschneidet. Die Besetzung eines Tages ist automatisch (aus Zuweisungen, Anmeldungen und Tauschen der Schicht), sofern sie kein Vorgesetzter auf der Seite Schichtbesetzung genehmigt hat.</value>
+  </data>
+  <data name="EndHelp" xml:space="preserve">
+    <value>Die Zeit wird bis zu diesem Zeitpunkt gezählt; das Ende selbst ist nicht enthalten.</value>
+  </data>
+  <data name="ScopeLabel" xml:space="preserve">
+    <value>Bericht für</value>
+  </data>
+  <data name="ScopeDepartment" xml:space="preserve">
+    <value>Gesamte Abteilung</value>
+  </data>
+  <data name="ScopeGroup" xml:space="preserve">
+    <value>Eine Gruppe</value>
+  </data>
+  <data name="ScopeShift" xml:space="preserve">
+    <value>Eine Schicht</value>
+  </data>
+  <data name="GroupHelp" xml:space="preserve">
+    <value>Zählt Personen auf Plätzen dieser Gruppe oder ihrer Untergruppen sowie Gruppenmitglieder auf Plätzen ohne Gruppe.</value>
+  </data>
+  <data name="ShiftLabel" xml:space="preserve">
+    <value>Schicht</value>
+  </data>
+  <data name="ShiftHelp" xml:space="preserve">
+    <value>Eine zugewiesene, Anmelde- oder statische Schicht.</value>
+  </data>
+  <data name="ShiftGroupAssigned" xml:space="preserve">
+    <value>Zugewiesene Schichten</value>
+  </data>
+  <data name="ShiftGroupSignup" xml:space="preserve">
+    <value>Anmelde-Schichten</value>
+  </data>
+  <data name="ShiftGroupStatic" xml:space="preserve">
+    <value>Statische Schichten</value>
+  </data>
+  <data name="ScopeDepartmentFormat" xml:space="preserve">
+    <value>Abteilung: {0}</value>
+  </data>
+  <data name="ScopeGroupFormat" xml:space="preserve">
+    <value>Gruppe: {0}</value>
+  </data>
+  <data name="ScopeShiftFormat" xml:space="preserve">
+    <value>Schicht: {0}</value>
+  </data>
+  <data name="RunOnFormat" xml:space="preserve">
+    <value>Erstellt am {0}</value>
+  </data>
+  <data name="DownloadCsv" xml:space="preserve">
+    <value>CSV herunterladen</value>
+  </data>
+  <data name="TotalHours" xml:space="preserve">
+    <value>Stunden gesamt</value>
+  </data>
+  <data name="ApprovedHours" xml:space="preserve">
+    <value>Genehmigte Stunden</value>
+  </data>
+  <data name="AutomaticHours" xml:space="preserve">
+    <value>Automatische Stunden</value>
+  </data>
+  <data name="PeopleCount" xml:space="preserve">
+    <value>Personen</value>
+  </data>
+  <data name="ShiftDaysCount" xml:space="preserve">
+    <value>Schichttage</value>
+  </data>
+  <data name="ApprovedShiftDaysCount" xml:space="preserve">
+    <value>Genehmigte Schichttage</value>
+  </data>
+  <data name="SourceManual" xml:space="preserve">
+    <value>Genehmigt</value>
+  </data>
+  <data name="SourceAutomatic" xml:space="preserve">
+    <value>Automatisch</value>
+  </data>
+  <data name="SourceManualHelp" xml:space="preserve">
+    <value>Ein Vorgesetzter hat die Besetzung auf der Seite Schichtbesetzung festgelegt.</value>
+  </data>
+  <data name="SourceAutomaticHelp" xml:space="preserve">
+    <value>Ermittelt aus festen Zuweisungen, Anmeldungen und Tauschen der Schicht bzw. aus den Besatzungen der Einheiten einer statischen Schicht.</value>
+  </data>
+  <data name="PersonnelHeader" xml:space="preserve">
+    <value>Personal</value>
+  </data>
+  <data name="NoHours" xml:space="preserve">
+    <value>In diesem Zeitraum war niemand im Schichtdienst.</value>
+  </data>
+  <data name="IdHeader" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="NameHeader" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="GroupHeader" xml:space="preserve">
+    <value>Gruppe</value>
+  </data>
+  <data name="ShiftsHeader" xml:space="preserve">
+    <value>Schichten</value>
+  </data>
+  <data name="TotalHoursHeader" xml:space="preserve">
+    <value>Gesamt</value>
+  </data>
+  <data name="ApprovedHoursHeader" xml:space="preserve">
+    <value>Genehmigt</value>
+  </data>
+  <data name="AutomaticHoursHeader" xml:space="preserve">
+    <value>Automatisch</value>
+  </data>
+  <data name="AssignedHoursHeader" xml:space="preserve">
+    <value>Zugewiesen</value>
+  </data>
+  <data name="SignupHoursHeader" xml:space="preserve">
+    <value>Anmeldung</value>
+  </data>
+  <data name="StaticHoursHeader" xml:space="preserve">
+    <value>Statisch</value>
+  </data>
+  <data name="StaffingHeader" xml:space="preserve">
+    <value>Besetzung</value>
+  </data>
+  <data name="MixedFormat" xml:space="preserve">
+    <value>{0} von {1} genehmigt</value>
+  </data>
+  <data name="TotalsRow" xml:space="preserve">
+    <value>Summen</value>
+  </data>
+  <data name="ShiftDaysHeader" xml:space="preserve">
+    <value>Schichttage</value>
+  </data>
+  <data name="NoShiftDays" xml:space="preserve">
+    <value>Keine Schichttage in diesem Zeitraum.</value>
+  </data>
+  <data name="DayHeader" xml:space="preserve">
+    <value>Tag</value>
+  </data>
+  <data name="ShiftHeader" xml:space="preserve">
+    <value>Schicht</value>
+  </data>
+  <data name="TypeHeader" xml:space="preserve">
+    <value>Art</value>
+  </data>
+  <data name="StartHeader" xml:space="preserve">
+    <value>Beginn</value>
+  </data>
+  <data name="EndHeader" xml:space="preserve">
+    <value>Ende</value>
+  </data>
+  <data name="HoursHeader" xml:space="preserve">
+    <value>Stunden</value>
+  </data>
+  <data name="PeopleHeader" xml:space="preserve">
+    <value>Personen</value>
+  </data>
+  <data name="SetByHeader" xml:space="preserve">
+    <value>Genehmigt von</value>
+  </data>
+  <data name="ChangesFormat" xml:space="preserve">
+    <value>(+{0} hinzugefügt / -{1} weggelassen)</value>
+  </data>
+  <data name="OpenStaffing" xml:space="preserve">
+    <value>Öffnen</value>
+  </data>
+  <data name="DetailHeader" xml:space="preserve">
+    <value>Details nach Person</value>
+  </data>
+  <data name="PersonTotalFormat" xml:space="preserve">
+    <value>{0} Stunden in {1} Schichten</value>
+  </data>
+  <data name="AssignmentHeader" xml:space="preserve">
+    <value>Gruppe / Einheit</value>
+  </data>
+  <data name="PartialHelp" xml:space="preserve">
+    <value>Nur der Teil der Schicht innerhalb des Berichtszeitraums wird gezählt.</value>
+  </data>
+  <data name="TypeAssigned" xml:space="preserve">
+    <value>Zugewiesen</value>
+  </data>
+  <data name="TypeSignup" xml:space="preserve">
+    <value>Anmeldung</value>
+  </data>
+  <data name="TypeStatic" xml:space="preserve">
+    <value>Statische Schicht</value>
+  </data>
+  <data name="UnknownPerson" xml:space="preserve">
+    <value>Unbekannt</value>
+  </data>
+</root>

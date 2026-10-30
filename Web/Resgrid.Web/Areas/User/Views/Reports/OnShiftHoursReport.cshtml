@@ -1,0 +1,362 @@
+@using System.Globalization
+@using Resgrid.Model
+@using Resgrid.Model.Helpers
+@using Resgrid.Web.Areas.User.Models.Reports.Shifts
+@using Microsoft.Extensions.Localization
+@model Resgrid.Web.Areas.User.Models.Reports.Shifts.OnShiftHoursView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Reports.OnShiftHours> localizer
+@{
+	Layout = null;
+
+	string Hours(double value) => value.ToString("0.##", CultureInfo.CurrentCulture);
+	string Time(DateTime value) => value.FormatForDepartment(Model.Department, true);
+
+	string ScopeText()
+	{
+		switch (Model.Scope)
+		{
+			case OnShiftHoursScopes.Group: return string.Format(localizer["ScopeGroupFormat"].Value, Model.ScopeName);
+			case OnShiftHoursScopes.Shift: return string.Format(localizer["ScopeShiftFormat"].Value, Model.ScopeName);
+			default: return string.Format(localizer["ScopeDepartmentFormat"].Value, Model.ScopeName);
+		}
+	}
+
+	var csvUrl = Url.Action("OnShiftHoursReportCsv", "Reports", new { Area = "User", start = Model.Start.ToString("o"), end = Model.End.ToString("o"), groupId = Model.GroupId, shift = Model.Shift });
+	var approvedDays = Model.Occurrences.Count(x => x.Source == ShiftStaffingSources.Manual);
+}
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<title>@localizer["ReportName"]</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="@localizer["ReportName"]">
+	<meta name="author" content="Resgrid">
+
+	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+				crossorigin="anonymous"
+				asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+				asp-fallback-test-class="hidden"
+				asp-fallback-test-property="visibility" asp-fallback-test-value="hidden" />
+
+	<style>
+		.table th, .table td {
+			padding: 6px 8px !important;
+			line-height: 20px !important;
+			text-align: left !important;
+			vertical-align: top !important;
+		}
+
+		.table td.num, .table th.num {
+			text-align: right !important;
+			white-space: nowrap;
+		}
+
+		.summary {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 12px;
+			margin: 10px 0 20px;
+		}
+
+		.summary .tile {
+			border: 1px solid #e5e5e5;
+			border-radius: 4px;
+			padding: 10px 14px;
+			min-width: 150px;
+		}
+
+		.summary .tile .value {
+			font-size: 22px;
+			font-weight: 600;
+		}
+
+		.summary .tile .caption {
+			color: #6b6b6b;
+			font-size: 12px;
+		}
+
+		.staffing-approved {
+			background-color: #1c7c54;
+		}
+
+		.staffing-automatic {
+			background-color: #6b6b6b;
+		}
+
+		.staffing-mixed {
+			background-color: #b86e00;
+		}
+
+		tr.row-approved td:first-child {
+			border-left: 4px solid #1c7c54;
+		}
+
+		.person-detail {
+			margin-bottom: 18px;
+			page-break-inside: avoid;
+		}
+
+		.person-detail h5 {
+			margin-bottom: 4px;
+			font-weight: 600;
+		}
+
+		.muted {
+			color: #6b6b6b;
+		}
+
+		@@media print {
+			.no-print {
+				display: none !important;
+			}
+		}
+	</style>
+
+	<link rel="shortcut icon" href="@Url.Content("~/favicon.ico")" />
+</head>
+<body>
+	<div class="content">
+		<div class="row">
+			<div class="col-md-4 col-md-offset-1">
+				<img src="@Url.Content("~/images/Resgrid_JustText_small.png")" title="Resgrid Logo" style="margin-top: 10px; margin-bottom: 5px;">
+			</div>
+			<div class="col-md-6" style="text-align: right;">
+				<h3 style="margin-top: 10px;">@localizer["ReportName"]</h3>
+				<div>@Time(Model.Start) - @Time(Model.End)</div>
+				<div>@ScopeText()</div>
+				<div class="muted">@string.Format(localizer["RunOnFormat"].Value, Time(Model.RunOn))</div>
+				<div class="no-print" style="margin-top: 6px;"><a href="@csvUrl" class="btn btn-default btn-xs">@localizer["DownloadCsv"]</a></div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-10 col-md-offset-1">
+				<div class="summary">
+					<div class="tile"><div class="value">@Hours(Model.TotalHours)</div><div class="caption">@localizer["TotalHours"]</div></div>
+					<div class="tile"><div class="value">@Hours(Model.ManualHours)</div><div class="caption">@localizer["ApprovedHours"]</div></div>
+					<div class="tile"><div class="value">@Hours(Model.AutomaticHours)</div><div class="caption">@localizer["AutomaticHours"]</div></div>
+					<div class="tile"><div class="value">@Model.People.Count</div><div class="caption">@localizer["PeopleCount"]</div></div>
+					<div class="tile"><div class="value">@Model.Occurrences.Count</div><div class="caption">@localizer["ShiftDaysCount"]</div></div>
+					<div class="tile"><div class="value">@approvedDays</div><div class="caption">@localizer["ApprovedShiftDaysCount"]</div></div>
+				</div>
+				<p class="muted">
+					<span class="label staffing-approved">@localizer["SourceManual"]</span> @localizer["SourceManualHelp"]
+					<br />
+					<span class="label staffing-automatic">@localizer["SourceAutomatic"]</span> @localizer["SourceAutomaticHelp"]
+				</p>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-10 col-md-offset-1">
+				<h4>@localizer["PersonnelHeader"]</h4>
+				@if (!Model.People.Any())
+				{
+					<p class="muted">@localizer["NoHours"]</p>
+				}
+				else
+				{
+					<table class="table table-condensed">
+						<thead>
+							<tr>
+								<th>@localizer["IdHeader"]</th>
+								<th>@localizer["NameHeader"]</th>
+								<th>@localizer["GroupHeader"]</th>
+								<th class="num">@localizer["ShiftsHeader"]</th>
+								<th class="num">@localizer["TotalHoursHeader"]</th>
+								<th class="num">@localizer["ApprovedHoursHeader"]</th>
+								<th class="num">@localizer["AutomaticHoursHeader"]</th>
+								<th class="num">@localizer["AssignedHoursHeader"]</th>
+								<th class="num">@localizer["SignupHoursHeader"]</th>
+								<th class="num">@localizer["StaticHoursHeader"]</th>
+								<th>@localizer["StaffingHeader"]</th>
+							</tr>
+						</thead>
+						<tbody>
+							@foreach (var person in Model.People)
+							{
+								<tr class="@(person.ManualShiftCount > 0 ? "row-approved" : "")">
+									<td>@person.ID</td>
+									<td>@person.Name</td>
+									<td>@person.Group</td>
+									<td class="num">@person.ShiftCount</td>
+									<td class="num"><strong>@Hours(person.TotalHours)</strong></td>
+									<td class="num">@Hours(person.ManualHours)</td>
+									<td class="num">@Hours(person.AutomaticHours)</td>
+									<td class="num">@Hours(person.AssignedHours)</td>
+									<td class="num">@Hours(person.SignupHours)</td>
+									<td class="num">@Hours(person.StaticHours)</td>
+									<td>
+										@if (person.AllManual)
+										{
+											<span class="label staffing-approved">@localizer["SourceManual"]</span>
+										}
+										else if (person.Mixed)
+										{
+											<span class="label staffing-mixed">@string.Format(localizer["MixedFormat"].Value, person.ManualShiftCount, person.ShiftCount)</span>
+										}
+										else
+										{
+											<span class="label staffing-automatic">@localizer["SourceAutomatic"]</span>
+										}
+									</td>
+								</tr>
+							}
+						</tbody>
+						<tfoot>
+							<tr>
+								<th colspan="3">@localizer["TotalsRow"]</th>
+								<th class="num">@Model.People.Sum(x => x.ShiftCount)</th>
+								<th class="num">@Hours(Model.TotalHours)</th>
+								<th class="num">@Hours(Model.ManualHours)</th>
+								<th class="num">@Hours(Model.AutomaticHours)</th>
+								<th class="num">@Hours(Model.People.Sum(x => x.AssignedHours))</th>
+								<th class="num">@Hours(Model.People.Sum(x => x.SignupHours))</th>
+								<th class="num">@Hours(Model.People.Sum(x => x.StaticHours))</th>
+								<th></th>
+							</tr>
+						</tfoot>
+					</table>
+				}
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-10 col-md-offset-1">
+				<h4>@localizer["ShiftDaysHeader"]</h4>
+				@if (!Model.Occurrences.Any())
+				{
+					<p class="muted">@localizer["NoShiftDays"]</p>
+				}
+				else
+				{
+					<table class="table table-condensed">
+						<thead>
+							<tr>
+								<th>@localizer["DayHeader"]</th>
+								<th>@localizer["ShiftHeader"]</th>
+								<th>@localizer["TypeHeader"]</th>
+								<th>@localizer["StartHeader"]</th>
+								<th>@localizer["EndHeader"]</th>
+								<th class="num">@localizer["HoursHeader"]</th>
+								<th class="num">@localizer["PeopleHeader"]</th>
+								<th>@localizer["StaffingHeader"]</th>
+								<th>@localizer["SetByHeader"]</th>
+								<th class="no-print"></th>
+							</tr>
+						</thead>
+						<tbody>
+							@foreach (var day in Model.Occurrences)
+							{
+								<tr class="@(day.Source == ShiftStaffingSources.Manual ? "row-approved" : "")">
+									<td>@day.Day.ToString("d", CultureInfo.CurrentCulture)</td>
+									<td>@day.Name</td>
+									<td>@day.TypeName</td>
+									<td>@Time(day.Start)</td>
+									<td>@Time(day.End)</td>
+									<td class="num">@Hours(day.Hours)</td>
+									<td class="num">@day.People</td>
+									<td>
+										@if (day.Source == ShiftStaffingSources.Manual)
+										{
+											<span class="label staffing-approved">@localizer["SourceManual"]</span>
+											@if (day.Added > 0 || day.Removed > 0)
+											{
+												<span class="muted">@string.Format(localizer["ChangesFormat"].Value, day.Added, day.Removed)</span>
+											}
+										}
+										else
+										{
+											<span class="label staffing-automatic">@localizer["SourceAutomatic"]</span>
+										}
+									</td>
+									<td>
+										@if (day.Source == ShiftStaffingSources.Manual)
+										{
+											@day.SetBy
+											@if (day.SetOn.HasValue)
+											{
+												<br /><span class="muted">@Time(day.SetOn.Value)</span>
+											}
+										}
+									</td>
+									<td class="no-print">
+										@if (day.ShiftType == StaffedShiftTypes.Workshift)
+										{
+											<a href="@Url.Action("ShiftStaffing", "Shifts", new { Area = "User", workshiftId = day.WorkshiftId, day = day.Day.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture) })" target="_blank">@localizer["OpenStaffing"]</a>
+										}
+										else
+										{
+											<a href="@Url.Action("ShiftStaffing", "Shifts", new { Area = "User", shiftId = day.ShiftId, day = day.Day.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture) })" target="_blank">@localizer["OpenStaffing"]</a>
+										}
+									</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+				}
+			</div>
+		</div>
+
+		@if (Model.People.Any())
+		{
+			<div class="row">
+				<div class="col-md-10 col-md-offset-1">
+					<h4>@localizer["DetailHeader"]</h4>
+					@foreach (var person in Model.People)
+					{
+						<div class="person-detail">
+							<h5>@person.Name <span class="muted">@string.Format(localizer["PersonTotalFormat"].Value, Hours(person.TotalHours), person.ShiftCount)</span></h5>
+							<table class="table table-condensed">
+								<thead>
+									<tr>
+										<th>@localizer["ShiftHeader"]</th>
+										<th>@localizer["TypeHeader"]</th>
+										<th>@localizer["AssignmentHeader"]</th>
+										<th>@localizer["StartHeader"]</th>
+										<th>@localizer["EndHeader"]</th>
+										<th class="num">@localizer["HoursHeader"]</th>
+										<th>@localizer["StaffingHeader"]</th>
+									</tr>
+								</thead>
+								<tbody>
+									@foreach (var entry in person.Entries)
+									{
+										<tr class="@(entry.Source == ShiftStaffingSources.Manual ? "row-approved" : "")">
+											<td>@entry.ShiftName</td>
+											<td>@entry.TypeName</td>
+											<td>@entry.Assignment</td>
+											<td>@Time(entry.Start)</td>
+											<td>@Time(entry.End)</td>
+											<td class="num">
+												@Hours(entry.Hours)
+												@if (entry.IsPartial)
+												{
+													<span class="muted" title="@localizer["PartialHelp"]">*</span>
+												}
+											</td>
+											<td>
+												@if (entry.Source == ShiftStaffingSources.Manual)
+												{
+													<span class="label staffing-approved">@localizer["SourceManual"]</span>
+												}
+												else
+												{
+													<span class="label staffing-automatic">@localizer["SourceAutomatic"]</span>
+												}
+											</td>
+										</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+					}
+					<p class="muted">* @localizer["PartialHelp"]</p>
+				</div>
+			</div>
+		}
+	</div>
+</body>
+</html>

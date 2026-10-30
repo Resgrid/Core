@@ -2771,6 +2771,16 @@ New Calendar Event Add an event to the department calendar. Shifts show who is o
 
 Workshifts Repeating work schedules for staff. Review schedule ownership and local time separately from dispatch eligibility. A career department sets up A, B and C shifts, and a volunteer department uses shift sign-ups for weekend duty crews. Have your rotation or duty schedule, and decide whether dispatch should follow shifts.
 
+<a id="shift-staffing"></a>
+## Shift staffing
+
+Shift staffing Who actually worked each shift day, approved by a supervisor, for assigned, signup and static shifts; a day nobody approves is staffed automatically from the shift. Shifts show who is on duty and can drive dispatch, so calls page the people who are actually working. Open Shifts, then Shift Staffing. Pick a day in Staffing by Day, past days included, check the automatic staffing, change the people if needed and choose Approve Staffing. Revert to Automatic drops an approved staffing.
+
+<a id="on-shift-hours-report"></a>
+## On-Shift Hours report
+
+On-Shift Hours report Each person's hours on shift for a period across assigned, signup and static shifts, for the department, a group or one shift, split into approved and automatic hours. Shifts show who is on duty and can drive dispatch, so calls page the people who are actually working. Open Reports, then On-Shift Hours Report. Choose the period and whether it covers the department, a group or a shift. Approve the staffing of the days that need an exact record on the Shift Staffing page before running it for payroll or compliance.
+
 <a id="module-trainingdisabled"></a>
 ## Training availability
 

@@ -881,4 +881,160 @@
   <data name="YourStatusHeader" xml:space="preserve">
     <value>Ваш статус</value>
   </data>
+  <data name="StaffingSavedFormat" xml:space="preserve">
+    <value>Укомплектування затверджено. Додано до розкладу дня: {0}. Знято з розкладу дня: {1}.</value>
+  </data>
+  <data name="StaffingSavedWithErrorsFormat" xml:space="preserve">
+    <value>Укомплектування затверджено. Додано до розкладу дня: {0}. Знято з розкладу дня: {1}. Не вдалося змінити: {2}</value>
+  </data>
+  <data name="StaffingWorkshiftSavedFormat" xml:space="preserve">
+    <value>Укомплектування затверджено: заповнено місць у підрозділах: {0}.</value>
+  </data>
+  <data name="StaffingSelectStaticShift" xml:space="preserve">
+    <value>Потрібно вибрати статичну зміну</value>
+  </data>
+  <data name="StaffingCleared" xml:space="preserve">
+    <value>Затверджене укомплектування видалено; день знову укомплектовується автоматично.</value>
+  </data>
+  <data name="StaffingSourceManual" xml:space="preserve">
+    <value>Затверджено</value>
+  </data>
+  <data name="StaffingSourceAutomatic" xml:space="preserve">
+    <value>Автоматично</value>
+  </data>
+  <data name="StaffingTypeStaticShift" xml:space="preserve">
+    <value>Статична зміна</value>
+  </data>
+  <data name="StaffingSourceTrade" xml:space="preserve">
+    <value>Обмін</value>
+  </data>
+  <data name="StaffingOverviewHeader" xml:space="preserve">
+    <value>Укомплектування за днями</value>
+  </data>
+  <data name="StaffingOverviewHelp" xml:space="preserve">
+    <value>Усі дні змін і статичних змін у діапазоні, включно з минулими, з їхнім укомплектуванням. Виберіть день, щоб переглянути або встановити укомплектування.</value>
+  </data>
+  <data name="StaffingOverviewFrom" xml:space="preserve">
+    <value>З</value>
+  </data>
+  <data name="StaffingOverviewTo" xml:space="preserve">
+    <value>По</value>
+  </data>
+  <data name="StaffingOverviewAllTypes" xml:space="preserve">
+    <value>Усі типи змін</value>
+  </data>
+  <data name="StaffingOverviewShow" xml:space="preserve">
+    <value>Показати</value>
+  </data>
+  <data name="StaffingColumnDay" xml:space="preserve">
+    <value>День</value>
+  </data>
+  <data name="StaffingColumnShift" xml:space="preserve">
+    <value>Зміна</value>
+  </data>
+  <data name="StaffingColumnType" xml:space="preserve">
+    <value>Тип</value>
+  </data>
+  <data name="StaffingColumnTime" xml:space="preserve">
+    <value>Час</value>
+  </data>
+  <data name="StaffingColumnHours" xml:space="preserve">
+    <value>Години</value>
+  </data>
+  <data name="StaffingColumnPeople" xml:space="preserve">
+    <value>Люди</value>
+  </data>
+  <data name="StaffingColumnSource" xml:space="preserve">
+    <value>Укомплектування</value>
+  </data>
+  <data name="StaffingColumnSetBy" xml:space="preserve">
+    <value>Затвердив</value>
+  </data>
+  <data name="StaffingLoading" xml:space="preserve">
+    <value>Завантаження...</value>
+  </data>
+  <data name="StaffingEditorHeader" xml:space="preserve">
+    <value>Встановити укомплектування</value>
+  </data>
+  <data name="StaffingKindLabel" xml:space="preserve">
+    <value>Тип зміни</value>
+  </data>
+  <data name="StaffingKindShift" xml:space="preserve">
+    <value>Призначена зміна або зміна з реєстрацією</value>
+  </data>
+  <data name="StaticShiftSelectHelp" xml:space="preserve">
+    <value>Статичні зміни планують підрозділи на визначений період. Укажіть, хто був в екіпажі кожного підрозділу того дня.</value>
+  </data>
+  <data name="StaffingDayHelp" xml:space="preserve">
+    <value>Виберіть день, укомплектування якого потрібно переглянути або встановити. Для минулих днів можна встановити укомплектування, щоб записати, хто працював.</value>
+  </data>
+  <data name="StaffingCurrentHeader" xml:space="preserve">
+    <value>Поточне укомплектування</value>
+  </data>
+  <data name="StaffingSelectDayFirst" xml:space="preserve">
+    <value>Виберіть зміну та день, щоб побачити укомплектування.</value>
+  </data>
+  <data name="StaffingClearButton" xml:space="preserve">
+    <value>Повернути автоматичне</value>
+  </data>
+  <data name="StaffingUnitCrewHelp" xml:space="preserve">
+    <value>Кожен підрозділ починає з чинного укомплектування; без затвердженого це поточний екіпаж підрозділу.</value>
+  </data>
+  <data name="StaffingAppliesHelp" xml:space="preserve">
+    <value>Збереження затверджує укомплектування: воно замінює автоматичне укомплектування цього дня, зокрема у звітах. Доки день не закінчився, додані люди ставляться на день, а вилучені знімаються з нього.</value>
+  </data>
+  <data name="StaffingApproveButton" xml:space="preserve">
+    <value>Затвердити укомплектування</value>
+  </data>
+  <data name="StaffingOverviewEmpty" xml:space="preserve">
+    <value>У цьому діапазоні немає днів змін.</value>
+  </data>
+  <data name="StaffingSelectButton" xml:space="preserve">
+    <value>Вибрати</value>
+  </data>
+  <data name="StaffingSourceAutomaticHelp" xml:space="preserve">
+    <value>Визначається з постійних призначень зміни, затверджених реєстрацій, змін на один день та обмінів. Затвердження укомплектування нижче замінює його для цього дня.</value>
+  </data>
+  <data name="StaffingSourceManualFormat" xml:space="preserve">
+    <value>Затвердив(ла) {0} {1}</value>
+  </data>
+  <data name="StaffingAutomaticHeader" xml:space="preserve">
+    <value>Зі зміни (автоматично)</value>
+  </data>
+  <data name="StaffingApprovedHeader" xml:space="preserve">
+    <value>Затверджене укомплектування</value>
+  </data>
+  <data name="StaffingAddedFormat" xml:space="preserve">
+    <value>У затвердженому укомплектуванні, але не на зміні: {0}</value>
+  </data>
+  <data name="StaffingRemovedFormat" xml:space="preserve">
+    <value>На зміні, але поза затвердженим укомплектуванням: {0}</value>
+  </data>
+  <data name="StaffingNobody" xml:space="preserve">
+    <value>Нікого</value>
+  </data>
+  <data name="StaffingDayOver" xml:space="preserve">
+    <value>Цей день завершився: затвердження записує, хто працював, і не змінює розклад дня.</value>
+  </data>
+  <data name="StaffingInProgress" xml:space="preserve">
+    <value>Триває</value>
+  </data>
+  <data name="StaffingClearConfirm" xml:space="preserve">
+    <value>Видалити затверджене укомплектування цього дня та повернутися до автоматичного?</value>
+  </data>
+  <data name="StaffingNoUnits" xml:space="preserve">
+    <value>Ця статична зміна не має підрозділів.</value>
+  </data>
+  <data name="StaffingOtherSupervisor" xml:space="preserve">
+    <value>Укомплектовує інший керівник; залишається без змін.</value>
+  </data>
+  <data name="StaffingUnitCrewFormat" xml:space="preserve">
+    <value>Поточний екіпаж: {0}</value>
+  </data>
+  <data name="StaffingChangesFormat" xml:space="preserve">
+    <value>+{0} / -{1}</value>
+  </data>
+  <data name="StaffingSourceAutomaticStaticHelp" xml:space="preserve">
+    <value>Визначається з поточного екіпажу кожного підрозділу. Затвердження укомплектування нижче замінює його для цього дня.</value>
+  </data>
 </root>

@@ -45,6 +45,22 @@ namespace Resgrid.Tests.Repositories
 		}
 
 		[Test]
+		public void Department_staffing_records_come_with_their_personnel_for_the_date_range()
+		{
+			var query = new SelectShiftStaffingsByDepartmentIdAndDateRangeQuery(new SqlServerConfiguration()).GetQuery();
+
+			query.Should().Contain("SELECT ss.*, ssp.*");
+			query.Should().Contain("LEFT JOIN [dbo].ShiftStaffingPersons ssp ON ssp.[ShiftStaffingId] = ss.[ShiftStaffingId]");
+			query.Should().Contain("ss.[DepartmentId] = @DepartmentId AND ss.[ShiftDay] >= @StartDate AND ss.[ShiftDay] < @EndDate");
+			query.Should().NotContain("%");
+
+			var postgres = new SelectShiftStaffingsByDepartmentIdAndDateRangeQuery(new PostgreSqlConfiguration()).GetQuery();
+
+			postgres.Should().Contain("ss.DepartmentId = @DepartmentId AND ss.ShiftDay >= @StartDate AND ss.ShiftDay < @EndDate");
+			postgres.Should().NotContain("%");
+		}
+
+		[Test]
 		public void Offered_trade_days_are_found_by_signup()
 		{
 			var query = new SelectShiftSignupTradeUserShiftsBySignupIdQuery(new SqlServerConfiguration()).GetQuery();

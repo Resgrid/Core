@@ -18,8 +18,9 @@ namespace Resgrid.Framework
 
 		/// <summary>
 		/// False for anything that is not a routable public address: loopback, private, link-local (the cloud metadata
-		/// address), carrier-grade NAT, benchmarking, multicast and reserved ranges, and an IPv6 address that only carries one
-		/// of them (IPv4-mapped, or NAT64, which a NAT64 gateway would connect to).
+		/// address), carrier-grade NAT, benchmarking, documentation, multicast and reserved ranges, IPv6 outside global
+		/// unicast, and an IPv6 address that only carries one of them (IPv4-mapped, or NAT64, which a NAT64 gateway would
+		/// connect to).
 		/// </summary>
 		public static bool IsPublic(IPAddress address)
 		{
@@ -44,10 +45,24 @@ namespace Resgrid.Framework
 				if (StartsWith(b, LocalUseNat64Prefix))
 					return false;
 
-				return true;
+				return IsPublicIPv6(b);
 			}
 
 			return false;
+		}
+
+		/// <summary>
+		/// Global unicast (2000::/3, where every public allocation sits) minus its special-purpose blocks; everything outside
+		/// it (IPv4-compatible ::/96, discard 100::/64, unique-local, link-local, multicast) is not public either.
+		/// </summary>
+		private static bool IsPublicIPv6(byte[] b)
+		{
+			if ((b[0] & 0xE0) != 0x20) return false;                                      // outside 2000::/3
+			if (b[0] == 0x20 && b[1] == 0x01 && b[2] <= 0x01) return false;               // 2001::/23, IETF protocol assignments (Teredo, benchmarking, ORCHID)
+			if (b[0] == 0x20 && b[1] == 0x01 && b[2] == 0x0d && b[3] == 0xb8) return false; // 2001:db8::/32, documentation
+			if (b[0] == 0x20 && b[1] == 0x02) return false;                               // 2002::/16, 6to4: carries an IPv4 address
+			if (b[0] == 0x3f && b[1] == 0xff && (b[2] & 0xF0) == 0) return false;         // 3fff::/20, documentation
+			return true;
 		}
 
 		private static bool IsPublicIPv4(byte[] b)

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -161,6 +162,9 @@ namespace Resgrid.Tests.Web
 			var body = System.Text.Json.JsonDocument.Parse(context.Response.Body).RootElement;
 			body.GetProperty("error").GetString().Should().Be("mfa_enrollment_required");
 			body.GetProperty("redirect").GetString().Should().Be("/rg/User/TwoFactor/Enable2FA?enforced=1");
+			// The pages it lets through stay put when their own calls get this answer: Reauthenticate sent back to setup would loop.
+			body.GetProperty("allowedPaths").EnumerateArray().Select(x => x.GetString()).Should()
+				.Contain(new[] { "/rg/User/TwoFactor", "/rg/User/AccountSecurity/Reauthenticate", "/rg/SharedSession/" });
 		}
 
 		[Test]

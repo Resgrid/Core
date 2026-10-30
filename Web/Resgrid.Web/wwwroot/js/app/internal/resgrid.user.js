@@ -31,8 +31,8 @@ var resgrid;
             };
         }
 
-        // The enrollment address from a 403 mfa_enrollment_required answer, or null. A .load() call asks for HTML, so
-        // jQuery leaves responseJSON unset and the body is parsed here.
+        // From a 403 mfa_enrollment_required answer: the enrollment address and the paths the middleware lets through, or
+        // null. A .load() call asks for HTML, so jQuery leaves responseJSON unset and the body is parsed here.
         function enrollmentRedirect(jqxhr) {
             if (!jqxhr || jqxhr.status !== 403) {
                 return null;
@@ -47,7 +47,14 @@ var resgrid;
                 return null;
             }
 
-            try { return new URL(body.redirect, window.location.origin); } catch (e) { return null; }
+            var url;
+            try { url = new URL(body.redirect, window.location.origin); } catch (e) { return null; }
+
+            // The setup page itself is always one of them, whatever the answer lists.
+            var allowedPaths = (Array.isArray(body.allowedPaths) ? body.allowedPaths : []).filter(function (p) { return typeof p === 'string' && p.length > 0; });
+            allowedPaths.push(url.pathname);
+
+            return { url: url, allowedPaths: allowedPaths };
         }
 
         $(document).ajaxError(function (event, jqxhr) {
@@ -65,12 +72,15 @@ var resgrid;
             }
 
             // Two-factor setup is required before anything else (Require2FAEnrollmentMiddleware). It sends no step-up header,
-            // because the setup page's own calls get this answer too and must not reload it, so only a page that isn't the
-            // setup page (one left open when enforcement started) goes there.
-            var enrollUrl = enrollmentRedirect(jqxhr);
-            if (enrollUrl) {
-                if (enrollUrl.origin === window.location.origin && enrollUrl.pathname.toLowerCase() !== window.location.pathname.toLowerCase()) {
-                    window.location.assign(enrollUrl.href);
+            // because the pages it lets through (setup, reauthentication, sign-in, the shared-workstation lock) get this
+            // answer for their own calls too and must stay put: Reauthenticate sent back to setup would loop. Only a page
+            // the middleware would have redirected (one left open when enforcement started) goes there.
+            var enrollment = enrollmentRedirect(jqxhr);
+            if (enrollment) {
+                var page = window.location.pathname.toLowerCase();
+                var allowed = enrollment.allowedPaths.some(function (p) { return page.indexOf(p.toLowerCase()) === 0; });
+                if (!allowed && enrollment.url.origin === window.location.origin) {
+                    window.location.assign(enrollment.url.href);
                 }
                 return;
             }

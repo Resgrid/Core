@@ -28,7 +28,13 @@ function xhr(status, { body, header, contentType = 'application/json; charset=ut
     };
 }
 
-const enrollment = { success: false, error: 'mfa_enrollment_required', redirect: '/User/TwoFactor/Enable2FA?enforced=1' };
+// As Require2FAEnrollmentMiddleware answers: the setup address and the paths it lets through.
+const enrollment = {
+    success: false,
+    error: 'mfa_enrollment_required',
+    redirect: '/User/TwoFactor/Enable2FA?enforced=1',
+    allowedPaths: ['/User/TwoFactor', '/User/AccountSecurity/Reauthenticate', '/Account/SsoReturn', '/SharedSession/', '/Account/LogOn', '/js/']
+};
 
 // A page left open when enforcement started goes to the setup page, whether the call parsed the body or not.
 for (const parsed of [false, true]) {
@@ -37,10 +43,18 @@ for (const parsed of [false, true]) {
     assert.deepEqual(page.visits, ['https://resgrid.test/User/TwoFactor/Enable2FA?enforced=1']);
 }
 
-// The setup page's own calls get the same answer and must not reload it (each load stages a new authenticator key).
-const setup = load('/User/TwoFactor/Enable2FA');
-setup.fail(xhr(403, { body: enrollment }));
-assert.deepEqual(setup.visits, []);
+// A page the middleware lets through stays put: the setup page (each load stages a new authenticator key), the password
+// confirmation Enable2FA sends a stale session to (going back to setup would loop), the SSO return and the lock screen.
+for (const pathname of ['/User/TwoFactor/Enable2FA', '/user/twofactor/enable2fa', '/User/AccountSecurity/Reauthenticate', '/Account/SsoReturn', '/SharedSession/Lock']) {
+    const page = load(pathname);
+    page.fail(xhr(403, { body: enrollment }));
+    assert.deepEqual(page.visits, [], pathname);
+}
+
+// An answer that lists nothing still keeps the setup page where it is.
+const unlisted = load('/User/TwoFactor/Enable2FA');
+unlisted.fail(xhr(403, { body: { success: false, error: 'mfa_enrollment_required', redirect: '/User/TwoFactor/Enable2FA?enforced=1' } }));
+assert.deepEqual(unlisted.visits, []);
 
 // Only ever a page on this site.
 const elsewhere = load('/User/Home/Dashboard');

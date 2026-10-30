@@ -12,6 +12,11 @@ namespace Resgrid.Tests.Framework
 		[TestCase("198.17.255.255")]
 		[TestCase("198.20.0.1")]
 		[TestCase("2001:4860:4860::8888")]
+		[TestCase("2001:200::1", Description = "first allocation after the IETF block")]
+		[TestCase("2a00:1450:4001::1")]
+		[TestCase("2606:4700::1111")]
+		[TestCase("3ffe::1", Description = "global unicast below the documentation block")]
+		[TestCase("3fff:1000::1", Description = "global unicast just past the documentation block")]
 		[TestCase("64:ff9b::808:808", Description = "NAT64 of a public IPv4 address")]
 		public void A_routable_public_address_is_public(string address)
 		{
@@ -35,6 +40,16 @@ namespace Resgrid.Tests.Framework
 		[TestCase("fc00::1")]
 		[TestCase("ff02::1")]
 		[TestCase("::ffff:10.0.0.1")]
+		[TestCase("::a00:1", Description = "IPv4-compatible")]
+		[TestCase("100::1", Description = "discard")]
+		[TestCase("2001::1", Description = "Teredo")]
+		[TestCase("2001:2::1", Description = "benchmarking")]
+		[TestCase("2001:1ff::1", Description = "end of the IETF protocol block")]
+		[TestCase("2001:db8::1", Description = "documentation")]
+		[TestCase("2002:a00:1::1", Description = "6to4 of 10.0.0.1")]
+		[TestCase("3fff::1", Description = "documentation")]
+		[TestCase("3fff:fff::1", Description = "end of the documentation block")]
+		[TestCase("4000::1", Description = "outside global unicast")]
 		public void An_internal_or_reserved_address_is_not_public(string address)
 		{
 			PublicNetworkAddress.IsPublic(IPAddress.Parse(address)).Should().BeFalse();

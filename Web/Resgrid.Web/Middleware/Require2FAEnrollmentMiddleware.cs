@@ -144,10 +144,18 @@ namespace Resgrid.Web.Middleware
 					// $('#top-icons-area').load() put it, scripts and all, inside the setup page, whose scripts loaded it
 					// again (the page went blank), and every load staged a new authenticator key, so the QR code on screen
 					// stopped matching. No step-up header either: the setup page's ajaxError handler would reload it. The
-					// handler reads mfa_enrollment_required instead and navigates only from a page that isn't the setup page
-					// (one left open when enforcement started).
+					// handler reads mfa_enrollment_required instead and navigates only from a page this middleware would have
+					// redirected (one left open when enforcement started), never from one it lets through: from Reauthenticate,
+					// which Enable2FA sends a stale session to, going back to setup would loop.
+					var pathBase = context.Request.PathBase.Value ?? string.Empty;
 					context.Response.StatusCode = StatusCodes.Status403Forbidden;
-					await context.Response.WriteAsJsonAsync(new { success = false, error = "mfa_enrollment_required", redirect = $"{context.Request.PathBase}{EnrollmentPath}" });
+					await context.Response.WriteAsJsonAsync(new
+					{
+						success = false,
+						error = "mfa_enrollment_required",
+						redirect = $"{pathBase}{EnrollmentPath}",
+						allowedPaths = AllowedPaths.Select(p => pathBase + p)
+					});
 					return;
 				}
 

@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Config;
+using Resgrid.Framework;
 
 namespace Resgrid.Services.Records.Connectors
 {
@@ -73,41 +74,18 @@ namespace Resgrid.Services.Records.Connectors
 				: string.Equals(host, entry, StringComparison.OrdinalIgnoreCase));
 		}
 
-		/// <summary>False for anything that is not a routable public address, unless the local-development switch is on.</summary>
+		/// <summary>
+		/// False for anything that is not a routable public address (<see cref="PublicNetworkAddress"/>, shared with KML
+		/// NetworkLinks), unless the local-development switch is on. The switch is the connectors' own: it never opens KML.
+		/// </summary>
 		public static bool IsAddressAllowed(IPAddress address)
 		{
 			if (address == null)
 				return false;
 			if (RecordsConnectorConfig.AllowPrivateNetworkFeeds)
 				return true;
-			if (address.IsIPv4MappedToIPv6)
-				address = address.MapToIPv4();
-			if (IPAddress.IsLoopback(address) || address.Equals(IPAddress.Any) || address.Equals(IPAddress.IPv6Any))
-				return false;
 
-			if (address.AddressFamily == AddressFamily.InterNetwork)
-			{
-				var b = address.GetAddressBytes();
-				if (b[0] == 0) return false;                                     // 0.0.0.0/8, "this network"
-				if (b[0] == 10) return false;                                    // 10.0.0.0/8
-				if (b[0] == 127) return false;                                   // loopback
-				if (b[0] == 169 && b[1] == 254) return false;                    // link-local, including the cloud metadata address
-				if (b[0] == 172 && b[1] >= 16 && b[1] <= 31) return false;        // 172.16.0.0/12
-				if (b[0] == 192 && b[1] == 168) return false;                    // 192.168.0.0/16
-				if (b[0] == 192 && b[1] == 0 && b[2] == 0) return false;          // IETF protocol assignments
-				if (b[0] == 100 && b[1] >= 64 && b[1] <= 127) return false;       // carrier-grade NAT
-				if (b[0] >= 224) return false;                                   // multicast and reserved
-				return true;
-			}
-
-			if (address.AddressFamily == AddressFamily.InterNetworkV6)
-			{
-				if (address.IsIPv6LinkLocal || address.IsIPv6SiteLocal || address.IsIPv6Multicast || address.IsIPv6UniqueLocal)
-					return false;
-				return true;
-			}
-
-			return false;
+			return PublicNetworkAddress.IsPublic(address);
 		}
 
 		private static List<string> Hosts()

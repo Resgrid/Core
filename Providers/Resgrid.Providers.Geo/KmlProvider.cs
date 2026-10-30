@@ -167,7 +167,7 @@ namespace Resgrid.Providers.GeoLocationProvider
 			var addresses = await Dns.GetHostAddressesAsync(context.DnsEndPoint.Host, cancellationToken);
 
 			// Every address has to pass: a name that answers with one public and one internal address is refused rather than raced.
-			if (addresses.Length == 0 || addresses.Any(a => !IsPublicAddress(a)))
+			if (addresses.Length == 0 || addresses.Any(a => !PublicNetworkAddress.IsPublic(a)))
 				throw new HttpRequestException($"NetworkLink host '{context.DnsEndPoint.Host}' does not resolve to a public address.");
 
 			var socket = new Socket(SocketType.Stream, ProtocolType.Tcp) { NoDelay = true };
@@ -181,35 +181,6 @@ namespace Resgrid.Providers.GeoLocationProvider
 				socket.Dispose();
 				throw;
 			}
-		}
-
-		/// <summary>False for anything that is not a routable public address (same ranges as ExternalFeedDestination).</summary>
-		private static bool IsPublicAddress(IPAddress address)
-		{
-			if (address.IsIPv4MappedToIPv6)
-				address = address.MapToIPv4();
-			if (IPAddress.IsLoopback(address) || address.Equals(IPAddress.Any) || address.Equals(IPAddress.IPv6Any))
-				return false;
-
-			if (address.AddressFamily == AddressFamily.InterNetwork)
-			{
-				var b = address.GetAddressBytes();
-				if (b[0] == 0) return false;                                     // 0.0.0.0/8, "this network"
-				if (b[0] == 10) return false;                                    // 10.0.0.0/8
-				if (b[0] == 127) return false;                                   // loopback
-				if (b[0] == 169 && b[1] == 254) return false;                    // link-local, including the cloud metadata address
-				if (b[0] == 172 && b[1] >= 16 && b[1] <= 31) return false;        // 172.16.0.0/12
-				if (b[0] == 192 && b[1] == 168) return false;                    // 192.168.0.0/16
-				if (b[0] == 192 && b[1] == 0 && b[2] == 0) return false;          // IETF protocol assignments
-				if (b[0] == 100 && b[1] >= 64 && b[1] <= 127) return false;       // carrier-grade NAT
-				if (b[0] >= 224) return false;                                   // multicast and reserved
-				return true;
-			}
-
-			if (address.AddressFamily == AddressFamily.InterNetworkV6)
-				return !(address.IsIPv6LinkLocal || address.IsIPv6SiteLocal || address.IsIPv6Multicast || address.IsIPv6UniqueLocal);
-
-			return false;
 		}
 	}
 }

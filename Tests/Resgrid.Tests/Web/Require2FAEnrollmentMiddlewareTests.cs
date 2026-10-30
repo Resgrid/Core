@@ -144,6 +144,26 @@ namespace Resgrid.Tests.Web
 		}
 
 		[Test]
+		public async Task unenrolled_in_scope_admin_script_call_is_told_where_enrollment_is()
+		{
+			// The layout's ajaxError handler reads mfa_enrollment_required to send a page left open elsewhere to the setup page.
+			_departmentSettingsService.Setup(x => x.GetRequire2FAForAdminsAsync(DepartmentId)).ReturnsAsync(1);
+			var context = CreateContext();
+			context.Request.PathBase = "/rg";
+			context.Request.Path = "/User/Department/TopIconsArea";
+			context.Request.Headers["X-Requested-With"] = "XMLHttpRequest";
+			context.Response.Body = new System.IO.MemoryStream();
+			var middleware = new Require2FAEnrollmentMiddleware(_ => Task.CompletedTask);
+
+			await middleware.InvokeAsync(context);
+
+			context.Response.Body.Position = 0;
+			var body = System.Text.Json.JsonDocument.Parse(context.Response.Body).RootElement;
+			body.GetProperty("error").GetString().Should().Be("mfa_enrollment_required");
+			body.GetProperty("redirect").GetString().Should().Be("/rg/User/TwoFactor/Enable2FA?enforced=1");
+		}
+
+		[Test]
 		public async Task unenrolled_in_scope_admin_page_load_is_redirected_even_from_a_script_capable_browser()
 		{
 			_departmentSettingsService.Setup(x => x.GetRequire2FAForAdminsAsync(DepartmentId)).ReturnsAsync(1);

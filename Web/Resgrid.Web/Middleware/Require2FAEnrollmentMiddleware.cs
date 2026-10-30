@@ -143,9 +143,11 @@ namespace Resgrid.Web.Middleware
 					// A script would follow the redirect and get the whole setup page as its answer: the layout's
 					// $('#top-icons-area').load() put it, scripts and all, inside the setup page, whose scripts loaded it
 					// again (the page went blank), and every load staged a new authenticator key, so the QR code on screen
-					// stopped matching. No step-up header either: the setup page's ajaxError handler would reload it.
+					// stopped matching. No step-up header either: the setup page's ajaxError handler would reload it. The
+					// handler reads mfa_enrollment_required instead and navigates only from a page that isn't the setup page
+					// (one left open when enforcement started).
 					context.Response.StatusCode = StatusCodes.Status403Forbidden;
-					await context.Response.WriteAsJsonAsync(new { success = false, error = "mfa_enrollment_required", redirect = EnrollmentPath });
+					await context.Response.WriteAsJsonAsync(new { success = false, error = "mfa_enrollment_required", redirect = $"{context.Request.PathBase}{EnrollmentPath}" });
 					return;
 				}
 

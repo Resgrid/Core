@@ -31,6 +31,25 @@ var resgrid;
             };
         }
 
+        // The enrollment address from a 403 mfa_enrollment_required answer, or null. A .load() call asks for HTML, so
+        // jQuery leaves responseJSON unset and the body is parsed here.
+        function enrollmentRedirect(jqxhr) {
+            if (!jqxhr || jqxhr.status !== 403) {
+                return null;
+            }
+
+            var body = jqxhr.responseJSON;
+            if (!body && /json/i.test(jqxhr.getResponseHeader('Content-Type') || '')) {
+                try { body = JSON.parse(jqxhr.responseText); } catch (e) { body = null; }
+            }
+
+            if (!body || body.error !== 'mfa_enrollment_required' || typeof body.redirect !== 'string') {
+                return null;
+            }
+
+            try { return new URL(body.redirect, window.location.origin); } catch (e) { return null; }
+        }
+
         $(document).ajaxError(function (event, jqxhr) {
             // A change that needs a recent second factor: the server is holding it, and verifying finishes it
             // (RequiresRecentTwoFactorAttribute answers a script call with where to go instead of a redirect).
@@ -42,6 +61,17 @@ var resgrid;
             }
             if (stepUpUrl && stepUpUrl.origin === window.location.origin) {
                 window.location.assign(stepUpUrl.href);
+                return;
+            }
+
+            // Two-factor setup is required before anything else (Require2FAEnrollmentMiddleware). It sends no step-up header,
+            // because the setup page's own calls get this answer too and must not reload it, so only a page that isn't the
+            // setup page (one left open when enforcement started) goes there.
+            var enrollUrl = enrollmentRedirect(jqxhr);
+            if (enrollUrl) {
+                if (enrollUrl.origin === window.location.origin && enrollUrl.pathname.toLowerCase() !== window.location.pathname.toLowerCase()) {
+                    window.location.assign(enrollUrl.href);
+                }
                 return;
             }
 

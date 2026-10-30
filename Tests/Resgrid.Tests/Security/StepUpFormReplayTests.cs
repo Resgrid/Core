@@ -65,12 +65,12 @@ namespace Resgrid.Tests.Security
 				new Claim(ClaimTypes.PrimaryGroupSid, departmentId.ToString())
 			}, "test"));
 
-		private IServiceProvider Services(ICacheProvider cache = null)
+		private IServiceProvider Services(ICacheProvider cache = null, bool enrolled = true)
 		{
 			var user = new IdentityUser { Id = UserId, UserName = "user1", AuthenticationGeneration = 4 };
 			var users = new Mock<UserManager<IdentityUser>>(Mock.Of<IUserStore<IdentityUser>>(), null, null, null, null, null, null, null, null);
 			users.Setup(m => m.GetUserAsync(It.IsAny<ClaimsPrincipal>())).ReturnsAsync(user);
-			users.Setup(m => m.GetTwoFactorEnabledAsync(user)).ReturnsAsync(true);
+			users.Setup(m => m.GetTwoFactorEnabledAsync(user)).ReturnsAsync(enrolled);
 			users.Setup(m => m.GetUserId(It.IsAny<ClaimsPrincipal>()))
 				.Returns((ClaimsPrincipal p) => p.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
@@ -256,6 +256,37 @@ namespace Resgrid.Tests.Security
 			var held = await StepUpFormReplay.PeekAsync(_cache, _protection, QueryHelpers(resume)["id"]);
 			held.Script.Should().BeTrue();
 			held.Target.Should().Be("/User/Security/SetPermission?type=0&perm=1", "the query carries a script call's arguments");
+		}
+
+		[TestCase("X-Requested-With", "XMLHttpRequest")]
+		[TestCase("Sec-Fetch-Mode", "cors")]
+		public async Task An_unenrolled_script_call_is_told_to_enroll_instead_of_following_a_redirect(string header, string value)
+		{
+			// Every load of the setup page stages a new authenticator key: a script that followed the redirect replaced the key
+			// behind the QR code on screen, and read the setup page as its answer.
+			var http = Post("/User/Security/SetPermission", new Dictionary<string, StringValues>());
+			http.RequestServices = Services(enrolled: false);
+			http.Request.Headers[header] = value;
+
+			var (context, passed) = await Guard(http);
+
+			passed.Should().BeFalse();
+			context.Result.Should().BeOfType<JsonResult>().Which.StatusCode.Should().Be(StatusCodes.Status403Forbidden);
+			http.Response.Headers[RequiresRecentTwoFactorAttribute.StepUpRedirectHeader].ToString()
+				.Should().Be("/User/TwoFactor/Enable2FA?enforced=1");
+		}
+
+		[Test]
+		public async Task An_unenrolled_page_request_is_still_sent_to_enroll()
+		{
+			var http = Post(SettingsPath, new Dictionary<string, StringValues>());
+			http.Request.Method = "GET";
+			http.RequestServices = Services(enrolled: false);
+
+			var (context, passed) = await Guard(http);
+
+			passed.Should().BeFalse();
+			context.Result.Should().BeOfType<RedirectResult>().Which.Url.Should().Be("/User/TwoFactor/Enable2FA?enforced=1");
 		}
 
 		[Test]

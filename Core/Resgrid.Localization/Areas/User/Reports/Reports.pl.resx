@@ -357,7 +357,7 @@
     <value>Powiązane automatycznie: status wysłany bez zgłoszenia, który Resgrid powiązał na podstawie poprzedniego statusu jednostki lub jej zadysponowania. Wywnioskowane: status ustawiony przez jednostkę bez celu, gdy była zadysponowana do zgłoszenia. Tylko zadysponowanie: jednostka została zadysponowana, ale nie zgłosiła żadnego statusu w zgłoszeniu.</value>
   </data>
   <data name="CallUnitTimesInServiceHeader" xml:space="preserve">
-    <value>Ponownie w gotowości</value>
+    <value>Koniec zaangażowania</value>
   </data>
   <data name="CallUnitTimesCommittedHeader" xml:space="preserve">
     <value>Zaangażowana</value>

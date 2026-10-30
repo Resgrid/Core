@@ -357,7 +357,7 @@
     <value>Vinculado automáticamente: un estado enviado sin llamada que Resgrid vinculó a partir del estado anterior de la unidad o de su despacho. Deducido: un estado que la unidad estableció sin destino mientras estaba despachada a la llamada. Solo despacho: la unidad fue despachada pero no informó ningún estado en la llamada.</value>
   </data>
   <data name="CallUnitTimesInServiceHeader" xml:space="preserve">
-    <value>De nuevo en servicio</value>
+    <value>Fin del compromiso</value>
   </data>
   <data name="CallUnitTimesCommittedHeader" xml:space="preserve">
     <value>Comprometida</value>

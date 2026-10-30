@@ -186,6 +186,72 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task conditional_station_based_rows_keep_the_response_order_when_the_department_ranks_by_distance()
+		{
+			var card = BuildCard();
+			card.AlarmLevels.First().ResponsePackageId = EnginePackageId;
+			EnableConditions(Package(EnginePackageId, "Engine", PackageRow(9002, "Engine", 1, UnitTypeTarget(EngineTypeId))));
+			_departmentSettingsService.Setup(x => x.GetDispatchRecommendationModeAsync(DepartmentId, It.IsAny<bool>()))
+				.ReturnsAsync(DispatchRecommendationModes.StationBased);
+
+			// Both engines run from Station 1: Engine 1 in quarters on the call, Engine 2 out ~500 m away and quicker to arrive.
+			_unitsService.Setup(x => x.GetUnitsForDepartmentUnlimitedAsync(DepartmentId))
+				.ReturnsAsync(new List<Unit>
+				{
+					new Unit { UnitId = 1, DepartmentId = DepartmentId, Name = "Engine 1", Type = "Engine", StationGroupId = StationAId, StationGroup = _stationA },
+					new Unit { UnitId = 2, DepartmentId = DepartmentId, Name = "Engine 2", Type = "Engine", StationGroupId = StationAId, StationGroup = _stationA }
+				});
+			_config.InQuartersTurnoutSeconds = 120;
+			_config.MobileTurnoutSeconds = 30;
+			_config.ClosestUnitRanking = ClosestUnitRankingModes.ShortestDistance;
+			PlaceUnits((2, 39.7545, -104.95));
+
+			var result = await _service.GetRecommendationAsync(BuildRequest());
+
+			result.ModeUsed.Should().Be(DispatchRecommendationModes.StationBased);
+			result.Units.Should().ContainSingle(u => u.UnitId == 2, "the distance ranking only covers closest-unit picks");
+		}
+
+		[Test]
+		public async Task conditional_time_conditions_use_routed_etas_when_the_department_ranks_by_distance()
+		{
+			var card = BuildCard();
+			card.AlarmLevels.First().DecisionNodes = new List<RunCardDecisionNode>
+			{
+				new RunCardDecisionNode
+				{
+					NodeKey = "quick", IsRoot = true, NodeKind = (int)RunCardDecisionNodeKinds.Condition, Label = "Engine within 5 minutes?",
+					ConditionType = (int)RunCardConditionTypes.AvailableWithin, ThresholdSeconds = 300, RequiredCount = 1,
+					SubjectTargets = new List<RunCardTarget> { UnitTypeTarget(EngineTypeId) }, YesNodeKey = "ok", NoNodeKey = "more"
+				},
+				new RunCardDecisionNode { NodeKey = "ok", NodeKind = (int)RunCardDecisionNodeKinds.Outcome, Label = "Engine", ResponsePackageId = EnginePackageId },
+				new RunCardDecisionNode { NodeKey = "more", NodeKind = (int)RunCardDecisionNodeKinds.Outcome, Label = "Add the ladder", ResponsePackageId = LadderPackageId }
+			};
+			EnableConditions(
+				Package(LadderPackageId, "Engine and ladder", PackageRow(9003, "Engine", 1, UnitTypeTarget(EngineTypeId)), PackageRow(9001, "Ladder", 1, UnitTypeTarget(LadderTypeId))),
+				Package(EnginePackageId, "Engine", PackageRow(9002, "Engine", 1, UnitTypeTarget(EngineTypeId))));
+			_config.ClosestUnitRanking = ClosestUnitRankingModes.ShortestDistance;
+			_config.UseRoutedEta = true;
+
+			// Engine 1 is on the call in a straight line, but the road takes 7 minutes; Engine 2 is far away.
+			PlaceUnits((1, 39.7501, -104.9501), (2, 40.5, -105.5), (3, 40.5, -105.5));
+			_geoService.Setup(x => x.GetEtaInSecondsAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(-1);
+			_geoService.Setup(x => x.GetEtaInSecondsAsync("39.7501,-104.9501", It.IsAny<string>())).ReturnsAsync(420);
+
+			var result = await _service.GetRecommendationAsync(BuildRequest());
+
+			var condition = result.Decision.Path.Single();
+			condition.TimeSource.Should().Be(ResponseTimeSources.Routed);
+			condition.Result.Should().Be(RunCardConditionResults.No);
+			result.Decision.OutcomeNodeKey.Should().Be("more");
+
+			var engine = result.Units.Should().ContainSingle(u => u.UnitTypeId == EngineTypeId).Subject;
+			engine.UnitId.Should().Be(1);
+			engine.EtaSeconds.Should().Be(420);
+			engine.SelectionReason.Should().Be(RecommendationSelectionReasons.ClosestByDistance);
+		}
+
+		[Test]
 		public async Task conditional_substitute_fills_a_short_row_and_keeps_it_outstanding()
 		{
 			var card = BuildCard();

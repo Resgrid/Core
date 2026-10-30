@@ -656,7 +656,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var csv = new StringBuilder();
 			csv.AppendLine(string.Join(",", new[] { "Call Number", "Call Name", "Call Type", "Logged On", "Closed On", "Unit", "Unit Type", "Group",
-				"Dispatched", "En Route", "On Scene", "Staging", "Cleared", "Back in Service", "Committed Minutes", "Linked By" }
+				"Dispatched", "En Route", "On Scene", "Staging", "Cleared", "End of Commitment", "Committed Minutes", "Linked By" }
 				.Select(h => CsvCell(HttpContext.WithDepartmentTerms(h, "Reports")))));
 
 			foreach (var call in model.Calls)

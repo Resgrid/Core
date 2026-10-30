@@ -117,6 +117,53 @@ namespace Resgrid.Tests.Web
 			context.Response.Headers.Location.ToString().Should().Be("/User/TwoFactor/Enable2FA?enforced=1");
 		}
 
+		[TestCase("X-Requested-With", "XMLHttpRequest")]
+		[TestCase("Sec-Fetch-Mode", "cors")]
+		[TestCase("Sec-Fetch-Mode", "same-origin")]
+		public async Task unenrolled_in_scope_admin_script_call_is_refused_not_redirected(string header, string value)
+		{
+			// The layout's $('#top-icons-area').load() followed the redirect and injected the whole setup page, scripts and all,
+			// into the setup page, which loaded it again: the page went blank, and each load staged a new authenticator key.
+			_departmentSettingsService.Setup(x => x.GetRequire2FAForAdminsAsync(DepartmentId)).ReturnsAsync(1);
+			var context = CreateContext();
+			context.Request.Path = "/User/Department/TopIconsArea";
+			context.Request.Headers[header] = value;
+			var invocations = 0;
+			var middleware = new Require2FAEnrollmentMiddleware(_ =>
+			{
+				invocations++;
+				return Task.CompletedTask;
+			});
+
+			await middleware.InvokeAsync(context);
+
+			invocations.Should().Be(0);
+			context.Response.StatusCode.Should().Be(StatusCodes.Status403Forbidden);
+			context.Response.Headers.Location.ToString().Should().BeEmpty();
+			context.Response.Headers.ContainsKey("X-Resgrid-Step-Up").Should().BeFalse("the setup page's ajaxError handler would reload it");
+		}
+
+		[Test]
+		public async Task unenrolled_in_scope_admin_page_load_is_redirected_even_from_a_script_capable_browser()
+		{
+			_departmentSettingsService.Setup(x => x.GetRequire2FAForAdminsAsync(DepartmentId)).ReturnsAsync(1);
+			var context = CreateContext();
+			context.Request.Path = "/User/Home/Dashboard";
+			context.Request.Headers["Sec-Fetch-Mode"] = "navigate";
+			var invocations = 0;
+			var middleware = new Require2FAEnrollmentMiddleware(_ =>
+			{
+				invocations++;
+				return Task.CompletedTask;
+			});
+
+			await middleware.InvokeAsync(context);
+
+			invocations.Should().Be(0);
+			context.Response.StatusCode.Should().Be(StatusCodes.Status302Found);
+			context.Response.Headers.Location.ToString().Should().Be("/User/TwoFactor/Enable2FA?enforced=1");
+		}
+
 		[Test]
 		public async Task unenrolled_in_scope_admin_can_reach_password_reauthentication()
 		{

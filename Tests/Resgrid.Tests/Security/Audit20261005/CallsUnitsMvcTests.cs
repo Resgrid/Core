@@ -683,6 +683,45 @@ namespace Resgrid.Tests.Security.Audit20261005
 			M<IMappingService>().Verify(x => x.SavePOIAsync(It.IsAny<Poi>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
 
+		[Test]
+		public async Task ImportPOIs_shows_why_the_file_could_not_be_read_and_saves_nothing()
+		{
+			M<IMappingService>().Setup(x => x.GetTypeByIdAsync(5)).ReturnsAsync(new PoiType { PoiTypeId = 5, DepartmentId = DepartmentId });
+			M<IKmlProvider>().Setup(x => x.ImportFile(It.IsAny<System.IO.Stream>(), false)).Returns(new KmlImportResult { Error = "The file is not valid KML: bad entity." });
+			var controller = Build<MappingController>(MapAdmin);
+
+			var result = await controller.ImportPOIs(new ImportPOIsView { TypeId = 5 }, PoiUpload("hydrants.kml"), CancellationToken.None);
+
+			result.Should().BeOfType<ViewResult>();
+			controller.ModelState["fileToUpload"].Errors.Single().ErrorMessage.Should().Be("The file is not valid KML: bad entity.");
+			M<IMappingService>().Verify(x => x.SavePOIAsync(It.IsAny<Poi>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public async Task ImportPOIs_fits_long_names_to_the_column_and_reports_skipped_placemarks()
+		{
+			M<IMappingService>().Setup(x => x.GetTypeByIdAsync(5)).ReturnsAsync(new PoiType { PoiTypeId = 5, DepartmentId = DepartmentId });
+			M<IKmlProvider>().Setup(x => x.ImportFile(It.IsAny<System.IO.Stream>(), true)).Returns(new KmlImportResult
+			{
+				Coordinates = new List<Coordinates> { new Coordinates { Name = new string('x', 300), Latitude = 37.42, Longitude = -122.08 } },
+				SkippedCount = 2
+			});
+			var controller = Build<MappingController>(MapAdmin);
+			controller.TempData = new Microsoft.AspNetCore.Mvc.ViewFeatures.TempDataDictionary(controller.HttpContext, Mock.Of<Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataProvider>());
+
+			var result = await controller.ImportPOIs(new ImportPOIsView { TypeId = 5 }, PoiUpload("hydrants.kmz"), CancellationToken.None);
+
+			result.Should().BeOfType<RedirectToActionResult>().Which.ActionName.Should().Be("POIs");
+			M<IMappingService>().Verify(x => x.SavePOIAsync(It.Is<Poi>(p => p.PoiTypeId == 5 && p.Name.Length == 250), It.IsAny<CancellationToken>()), Times.Once);
+			controller.TempData["ImportPOIsMessage"].Should().Be("Successfully imported 1 POI(s). 2 placemark(s) were skipped because they have no valid coordinates.");
+		}
+
+		private static IFormFile PoiUpload(string fileName)
+		{
+			var bytes = new byte[] { 1, 2, 3 };
+			return new FormFile(new System.IO.MemoryStream(bytes), 0, bytes.Length, "fileToUpload", fileName) { Headers = new HeaderDictionary() };
+		}
+
 		#endregion Mapping (1.4 sweep, 3.3, 3.5)
 	}
 }

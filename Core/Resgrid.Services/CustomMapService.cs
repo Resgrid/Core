@@ -374,33 +374,37 @@ namespace Resgrid.Services
 
 			try
 			{
-				SharpKml.Engine.KmlFile kmlFile;
+				// The lenient reader: KmlFile.Load returns nothing for legacy-namespace KML, which used to finish "Complete" with no regions.
+				var root = Resgrid.Providers.GeoLocationProvider.KmlDocumentReader.ReadRoot(kmlStream);
 
-				if (isKmz)
+				int imported = 0;
+				if (root != null)
 				{
-					using (var kmz = SharpKml.Engine.KmzFile.Open(kmlStream))
-					{
-						kmlFile = kmz.GetDefaultKmlFile();
-					}
-				}
-				else
-				{
-					kmlFile = SharpKml.Engine.KmlFile.Load(kmlStream);
-				}
-
-				if (kmlFile?.Root != null)
-				{
-					var placemarks = kmlFile.Root.Flatten().OfType<SharpKml.Dom.Placemark>();
+					var placemarks = root.Flatten().OfType<SharpKml.Dom.Placemark>();
 
 					foreach (var placemark in placemarks)
 					{
 						var zone = CreateZoneFromKmlPlacemark(placemark, layerId);
 						if (zone != null)
+						{
 							await _indoorMapZonesRepository.SaveOrUpdateAsync(zone, cancellationToken);
+							imported++;
+						}
 					}
 				}
 
-				import.Status = (int)CustomMapImportStatus.Complete;
+				if (imported > 0)
+				{
+					import.Status = (int)CustomMapImportStatus.Complete;
+				}
+				else
+				{
+					import.Status = (int)CustomMapImportStatus.Failed;
+					import.ErrorMessage = root == null
+						? "The file does not contain any KML."
+						: "No placemarks with a point, line or polygon were found in the file.";
+				}
+
 				await _customMapImportsRepository.SaveOrUpdateAsync(import, cancellationToken);
 			}
 			catch (Exception ex)

@@ -300,7 +300,7 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="col-sm-3 control-label">@localizer["ClosestUnitRankingLabel"]</label>
+                                <label class="col-sm-3 control-label" asp-for="RecommendationClosestUnitRanking">@localizer["ClosestUnitRankingLabel"]</label>
                                 <div class="col-sm-9">
                                     <select asp-for="RecommendationClosestUnitRanking" class="form-control" style="width: 50%">
                                         <option value="@((int)Resgrid.Model.ClosestUnitRankingModes.FastestResponse)">@localizer["ClosestUnitRankingFastest"]</option>

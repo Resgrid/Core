@@ -654,7 +654,7 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
-		public async Task closest_unit_ranked_by_distance_makes_no_routed_lookups()
+		public async Task closest_unit_ranked_by_distance_shows_routed_etas_without_reranking_on_them()
 		{
 			BuildCard(engineCount: 1);
 			_departmentSettingsService.Setup(x => x.GetDispatchRecommendationModeAsync(DepartmentId, It.IsAny<bool>()))
@@ -667,13 +667,45 @@ namespace Resgrid.Tests.Services
 				{
 					new UnitsLocation { UnitId = 2, Latitude = 39.76m, Longitude = -104.95m, Timestamp = DateTime.UtcNow }
 				});
+			// Engine 2 drives faster, which would move it first when ranking by response.
 			_geoService.Setup(x => x.GetEtaInSecondsAsync("39.75,-104.95", It.IsAny<string>())).ReturnsAsync(600);
 			_geoService.Setup(x => x.GetEtaInSecondsAsync("39.76,-104.95", It.IsAny<string>())).ReturnsAsync(60);
 
 			var result = await _service.GetRecommendationAsync(BuildRequest());
 
-			result.Units.Should().ContainSingle(u => u.UnitId == 1 && u.EtaSeconds == null);
-			_geoService.Verify(x => x.GetEtaInSecondsAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+			var engine = result.Units.Should().ContainSingle().Subject;
+			engine.UnitId.Should().Be(1);
+			engine.EtaSeconds.Should().Be(600, "the drive time is still shown");
+			engine.ResponseSeconds.Should().Be(600);
+			engine.SelectionReason.Should().Be(RecommendationSelectionReasons.ClosestByDistance);
+		}
+
+		[Test]
+		public async Task closest_role_ranked_by_distance_shows_routed_etas_without_reranking_on_them()
+		{
+			BuildCard(roleCount: 1);
+			_departmentSettingsService.Setup(x => x.GetDispatchRecommendationModeAsync(DepartmentId, It.IsAny<bool>()))
+				.ReturnsAsync(DispatchRecommendationModes.ClosestUnit);
+			_config.ClosestUnitRanking = ClosestUnitRankingModes.ShortestDistance;
+			_config.UseRoutedEta = true;
+
+			var now = DateTime.UtcNow;
+			_personnelLocationResolver.Setup(x => x.GetLatestLocationsAsync(DepartmentId, It.IsAny<int>(), It.IsAny<DateTime?>()))
+				.ReturnsAsync(new Dictionary<string, ResolvedPersonnelLocation>
+				{
+					{ "user-1", new ResolvedPersonnelLocation { UserId = "user-1", Latitude = 39.751, Longitude = -104.95, Timestamp = now } },
+					{ "user-2", new ResolvedPersonnelLocation { UserId = "user-2", Latitude = 39.76, Longitude = -104.95, Timestamp = now } }
+				});
+			// user-2 drives faster, which would move them first when ranking by response.
+			_geoService.Setup(x => x.GetEtaInSecondsAsync("39.751,-104.95", It.IsAny<string>())).ReturnsAsync(600);
+			_geoService.Setup(x => x.GetEtaInSecondsAsync("39.76,-104.95", It.IsAny<string>())).ReturnsAsync(60);
+
+			var result = await _service.GetRecommendationAsync(BuildRequest());
+
+			var person = result.Personnel.Should().ContainSingle().Subject;
+			person.UserId.Should().Be("user-1");
+			person.EtaSeconds.Should().Be(600);
+			person.SelectionReason.Should().Be(RecommendationSelectionReasons.ClosestByDistance);
 		}
 
 		[Test]

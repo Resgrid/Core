@@ -66,7 +66,10 @@ namespace Resgrid.Services
 		private sealed class ConditionalState
 		{
 			public DispatchRecommendationModes Mode { get; set; }
-			/// <summary>The department ranks closest resources by straight-line distance rather than by response time.</summary>
+			/// <summary>
+			/// Closest-unit mode in a department that ranks by straight-line distance rather than by response time. Station-based
+			/// cards keep the response order within a station, as the setting only covers closest-unit picks.
+			/// </summary>
 			public bool ByDistance { get; set; }
 			public GeoMath.GeoPoint? Anchor { get; set; }
 			public List<StationDistanceResult> Stations { get; set; } = new List<StationDistanceResult>();
@@ -115,7 +118,7 @@ namespace Resgrid.Services
 			var state = new ConditionalState
 			{
 				Mode = mode,
-				ByDistance = context.Config.RanksByDistance,
+				ByDistance = mode == DispatchRecommendationModes.ClosestUnit && context.Config.RanksByDistance,
 				Decision = new RunCardDecisionExplanation
 				{
 					LevelHasGraph = RunCardDecisionGraph.HasGraph(level),
@@ -823,12 +826,12 @@ namespace Resgrid.Services
 		/// <summary>
 		/// Routed lookups for the leading entries (at least the department's shortlist size, more when a row needs more),
 		/// cached per resource so overlapping target sets share them, then the looked-up head is re-ranked. A failed
-		/// lookup keeps its estimate.
+		/// lookup keeps its estimate. Ranking by distance still looks them up, since conditions and first-arriving rows time
+		/// the picks on them and they are shown, but the re-rank orders on distance first, so they never change the order.
 		/// </summary>
 		private async Task EnsureRoutedAsync(RecommendationContext context, ConditionalState state, ResourceRanking ranking, int needed)
 		{
-			// Drive times only re-rank, so ranking by distance makes no lookups.
-			if (!context.Config.UseRoutedEta || state.ByDistance || !state.Anchor.HasValue || ranking.Ranked.Count == 0)
+			if (!context.Config.UseRoutedEta || !state.Anchor.HasValue || ranking.Ranked.Count == 0)
 				return;
 
 			var shortlist = Math.Min(ranking.Ranked.Count, Math.Max(Math.Max(1, context.Config.EtaShortlistSize), needed));
@@ -1244,7 +1247,7 @@ namespace Resgrid.Services
 			if (state.Mode == DispatchRecommendationModes.StationBased)
 				return entry.InContainingStation && entry.CascadeDepth == 0 ? RecommendationSelectionReasons.InGeofence : RecommendationSelectionReasons.CascadeStation;
 
-			return entry.RoutedEtaSeconds.HasValue ? RecommendationSelectionReasons.ClosestByEta : RecommendationSelectionReasons.ClosestByDistance;
+			return entry.RoutedEtaSeconds.HasValue && !state.ByDistance ? RecommendationSelectionReasons.ClosestByEta : RecommendationSelectionReasons.ClosestByDistance;
 		}
 
 		private RequirementShortfallReasons ShortfallReason(RecommendationContext context, ConditionalState state, ResolvedRequirementRow row, ResourceRanking ranking)

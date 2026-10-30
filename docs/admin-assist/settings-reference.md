@@ -1805,7 +1805,7 @@ Default: false. Source: DispatchRecommendationConfig.UseRoutedEta.
 <a id="field-dispatchrecommendationconfig-closestunitranking"></a>
 ## Dispatch Recommendation Config / Closest Unit Ranking
 
-Dispatch Recommendation Config / Closest Unit Ranking. How closest-unit picks and the nearest-unit board order candidates: fastest response (turnout plus travel, with routed drive times when enabled; the default) or shortest straight-line distance. Ranking by distance makes no routed lookups for run card picks; the nearest-unit board still shows drive times when routed ETAs are on.
+Dispatch Recommendation Config / Closest Unit Ranking. How closest-unit picks and the nearest-unit board order candidates: fastest response (turnout plus travel, with routed drive times when enabled; the default) or shortest straight-line distance. Ranking by distance applies to closest-unit run cards only (station-based cards keep their order) and still looks up drive times when routed ETAs are on: run card picks and the nearest-unit board show them, and conditional run card time conditions measure the picks on them, but they never change the order.
 
 Default: FastestResponse. Source: DispatchRecommendationConfig.ClosestUnitRanking.
 

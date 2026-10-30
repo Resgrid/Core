@@ -786,7 +786,7 @@
     <value>Αυτόματη σύνδεση: κατάσταση που στάλθηκε χωρίς κλήση και το Resgrid τη συνέδεσε βάσει της προηγούμενης κατάστασης της μονάδας ή της αποστολής της. Συναγόμενο: κατάσταση που όρισε η μονάδα χωρίς προορισμό ενώ είχε σταλεί στην κλήση. Μόνο αποστολή: η μονάδα στάλθηκε αλλά δεν ανέφερε καμία κατάσταση στην κλήση.</value>
   </data>
   <data name="CallUnitTimesInServiceHeader" xml:space="preserve">
-    <value>Ξανά σε υπηρεσία</value>
+    <value>Τέλος δέσμευσης</value>
   </data>
   <data name="CallUnitTimesCommittedHeader" xml:space="preserve">
     <value>Δεσμευμένη</value>

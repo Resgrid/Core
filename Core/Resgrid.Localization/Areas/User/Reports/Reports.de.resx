@@ -357,7 +357,7 @@
     <value>Automatisch verknüpft: ein ohne Einsatz gesendeter Status, den Resgrid anhand des vorherigen Status der Einheit oder ihrer Alarmierung verknüpft hat. Abgeleitet: ein Status, den die Einheit ohne Ziel gesetzt hat, während sie zum Einsatz alarmiert war. Nur Alarmierung: die Einheit wurde alarmiert, hat aber keinen Status zum Einsatz gemeldet.</value>
   </data>
   <data name="CallUnitTimesInServiceHeader" xml:space="preserve">
-    <value>Wieder einsatzbereit</value>
+    <value>Ende der Bindung</value>
   </data>
   <data name="CallUnitTimesCommittedHeader" xml:space="preserve">
     <value>Gebunden</value>

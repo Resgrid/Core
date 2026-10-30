@@ -357,7 +357,7 @@
     <value>Collegato automaticamente: uno stato inviato senza chiamata che Resgrid ha collegato in base allo stato precedente dell'unità o al suo invio. Dedotto: uno stato impostato dall'unità senza destinazione mentre era inviata alla chiamata. Solo invio: l'unità è stata inviata ma non ha segnalato alcuno stato sulla chiamata.</value>
   </data>
   <data name="CallUnitTimesInServiceHeader" xml:space="preserve">
-    <value>Di nuovo in servizio</value>
+    <value>Fine dell'impegno</value>
   </data>
   <data name="CallUnitTimesCommittedHeader" xml:space="preserve">
     <value>Impegnata</value>

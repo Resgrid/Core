@@ -34,7 +34,10 @@ namespace Resgrid.Model.Reporting
 		/// <summary>Every status from dispatch until the unit was back in service (<see cref="CallUnitTimeline"/>), oldest first.</summary>
 		public List<CallUnitTimelineEntry> Timeline { get; set; } = new List<CallUnitTimelineEntry>();
 
-		/// <summary>When the timeline ends with the unit back in service (or out of service); null while it is still on the call.</summary>
+		/// <summary>
+		/// When the timeline ends with the unit back in service or out of service (so the report calls it the end of the
+		/// commitment, not "in service"); null while it is still on the call.
+		/// </summary>
 		public DateTime? InServiceOn { get; set; }
 
 		/// <summary>From dispatch (or its first status) to <see cref="InServiceOn"/>.</summary>

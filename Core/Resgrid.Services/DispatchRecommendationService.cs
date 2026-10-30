@@ -1190,9 +1190,10 @@ namespace Resgrid.Services
 
 			var outsideRadius = located.Count - ranked.Count;
 
-			// Drive times only re-rank, so ranking by distance makes no lookups.
+			// Drive times re-rank the shortlist on response time. Ranking by distance still looks them up so they are shown,
+			// but keeps the nearest first.
 			var etaByUnitId = new Dictionary<int, double>();
-			if (context.Config.UseRoutedEta && !byDistance && ranked.Any())
+			if (context.Config.UseRoutedEta && ranked.Any())
 			{
 				var shortlistSize = Math.Max(1, context.Config.EtaShortlistSize);
 				var shortlist = ranked.Take(Math.Max(shortlistSize, requirement.RequiredCount)).ToList();
@@ -1209,7 +1210,7 @@ namespace Resgrid.Services
 						etaByUnitId[entry.Candidate.Unit.UnitId] = eta;
 				}
 
-				if (etaByUnitId.Any())
+				if (etaByUnitId.Any() && !byDistance)
 				{
 					// A unit whose lookup failed keeps its estimate (the ResponseSeconds it reports) rather than
 					// dropping to the end of the shortlist, where it would lose to slower units with a route.
@@ -1243,7 +1244,7 @@ namespace Resgrid.Services
 					StationGroupName = entry.Candidate.Unit.StationGroup?.Name,
 					SelectionReason = inRest
 						? RecommendationSelectionReasons.RestPeriodOverridden
-						: (hasEta ? RecommendationSelectionReasons.ClosestByEta : RecommendationSelectionReasons.ClosestByDistance),
+						: (hasEta && !byDistance ? RecommendationSelectionReasons.ClosestByEta : RecommendationSelectionReasons.ClosestByDistance),
 					DistanceMeters = entry.Distance,
 					EtaSeconds = hasEta ? etaSeconds : (double?)null,
 					PositionSource = entry.Candidate.PositionSource,
@@ -1307,8 +1308,10 @@ namespace Resgrid.Services
 
 			var outsideRadius = located.Count - ranked.Count;
 
+			// As for units: ranking by distance looks drive times up to show them but doesn't re-rank on them.
+			var byDistance = context.Config.RanksByDistance;
 			var etaByUserId = new Dictionary<string, double>(StringComparer.OrdinalIgnoreCase);
-			if (context.Config.UseRoutedEta && !context.Config.RanksByDistance && ranked.Any())
+			if (context.Config.UseRoutedEta && ranked.Any())
 			{
 				var shortlistSize = Math.Max(1, context.Config.EtaShortlistSize);
 				var shortlist = ranked.Take(Math.Max(shortlistSize, requirement.RequiredCount)).ToList();
@@ -1325,7 +1328,7 @@ namespace Resgrid.Services
 						etaByUserId[entry.Candidate.UserId] = eta;
 				}
 
-				if (etaByUserId.Any())
+				if (etaByUserId.Any() && !byDistance)
 				{
 					// Same as units: a failed lookup ranks on the straight-line estimate, in seconds like the routed ETAs.
 					var reranked = shortlist
@@ -1356,7 +1359,7 @@ namespace Resgrid.Services
 					StationGroupName = entry.Candidate.StationGroupName,
 					SelectionReason = inRest
 						? RecommendationSelectionReasons.RestPeriodOverridden
-						: (hasEta ? RecommendationSelectionReasons.ClosestByEta : RecommendationSelectionReasons.ClosestByDistance),
+						: (hasEta && !byDistance ? RecommendationSelectionReasons.ClosestByEta : RecommendationSelectionReasons.ClosestByDistance),
 					DistanceMeters = entry.Distance,
 					EtaSeconds = hasEta ? etaSeconds : (double?)null,
 					LocationTimestamp = entry.Candidate.LocationTimestamp,

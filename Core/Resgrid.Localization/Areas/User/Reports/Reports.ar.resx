@@ -357,7 +357,7 @@
     <value>مرتبط تلقائيًا: حالة أُرسلت دون بلاغ وربطها Resgrid استنادًا إلى الحالة السابقة للوحدة أو إرسالها. مستنتج: حالة حدّدتها الوحدة دون وجهة أثناء إرسالها إلى البلاغ. الإرسال فقط: أُرسلت الوحدة لكنها لم تُبلغ عن أي حالة في البلاغ.</value>
   </data>
   <data name="CallUnitTimesInServiceHeader" xml:space="preserve">
-    <value>العودة إلى الخدمة</value>
+    <value>نهاية الالتزام</value>
   </data>
   <data name="CallUnitTimesCommittedHeader" xml:space="preserve">
     <value>مدة الالتزام</value>

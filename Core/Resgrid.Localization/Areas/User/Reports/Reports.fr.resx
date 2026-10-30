@@ -357,7 +357,7 @@
     <value>Lié automatiquement : un statut envoyé sans appel que Resgrid a lié d'après le statut précédent de l'unité ou son envoi. Déduit : un statut défini sans destination par l'unité alors qu'elle était envoyée sur l'appel. Envoi seulement : l'unité a été envoyée mais n'a signalé aucun statut sur l'appel.</value>
   </data>
   <data name="CallUnitTimesInServiceHeader" xml:space="preserve">
-    <value>De nouveau disponible</value>
+    <value>Fin de l'engagement</value>
   </data>
   <data name="CallUnitTimesCommittedHeader" xml:space="preserve">
     <value>Engagée</value>

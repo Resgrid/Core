@@ -14,7 +14,7 @@ namespace Resgrid.Web.Middleware
 	/// <c>Require2FAForAdmins</c> enabled, and for every member when the department's security policy has
 	/// <c>RequireMfa</c> and its rollout gate is on (passkey plan section 7.6 rows 1 and 5). A user who must
 	/// enroll is redirected to the 2FA setup page and cannot reach any other page, or the Web API bridge, until
-	/// enrolled: the restricted setup of plan section 6.2.
+	/// enrolled: the restricted setup of plan section 6.2. A script call is answered 403 instead of redirected.
 	/// </summary>
 	public class Require2FAEnrollmentMiddleware
 	{
@@ -138,12 +138,38 @@ namespace Resgrid.Web.Middleware
 
 			if (redirectToEnrollment)
 			{
+				if (IsScriptRequest(context.Request))
+				{
+					// A script would follow the redirect and get the whole setup page as its answer: the layout's
+					// $('#top-icons-area').load() put it, scripts and all, inside the setup page, whose scripts loaded it
+					// again (the page went blank), and every load staged a new authenticator key, so the QR code on screen
+					// stopped matching. No step-up header either: the setup page's ajaxError handler would reload it.
+					context.Response.StatusCode = StatusCodes.Status403Forbidden;
+					await context.Response.WriteAsJsonAsync(new { success = false, error = "mfa_enrollment_required", redirect = EnrollmentPath });
+					return;
+				}
+
 				// Admin has not enrolled — redirect to setup
-				context.Response.Redirect("/User/TwoFactor/Enable2FA?enforced=1");
+				context.Response.Redirect(EnrollmentPath);
 				return;
 			}
 
 			await _next(context);
+		}
+
+		internal const string EnrollmentPath = "/User/TwoFactor/Enable2FA?enforced=1";
+
+		/// <summary>
+		/// A jQuery or fetch() call from a page rather than a page load. Only a positive signal counts, so a request that says
+		/// nothing about itself still gets the redirect.
+		/// </summary>
+		internal static bool IsScriptRequest(HttpRequest request)
+		{
+			var mode = request.Headers["Sec-Fetch-Mode"].ToString();
+			if (!string.IsNullOrWhiteSpace(mode))
+				return !string.Equals(mode, "navigate", StringComparison.OrdinalIgnoreCase);
+
+			return Resgrid.Web.Helpers.StepUpFormReplay.IsScriptRequest(request);
 		}
 	}
 }

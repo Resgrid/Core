@@ -352,12 +352,14 @@ namespace Resgrid.Services
 
 		public async Task<Dictionary<int, List<UnitState>>> GetUnitStatesForCallsAsync(int departmentId, IReadOnlyCollection<Call> calls)
 		{
-			return (await ReadUnitStatesForCallsAsync(departmentId, calls)).StatesByCall;
+			return (await ReadUnitStatesForCallsAsync(departmentId, calls, TimeSpan.Zero)).StatesByCall;
 		}
 
 		public async Task<Dictionary<int, List<UnitState>>> GetUnitTimelinesForCallsAsync(int departmentId, IReadOnlyCollection<Call> calls)
 		{
-			var read = await ReadUnitStatesForCallsAsync(departmentId, calls);
+			// A timeline follows a unit for MaxFollowOn past its last status on the record, which can be the last moment of
+			// the record's read window, so the histories (and the next dispatches that stop them) are read that much further.
+			var read = await ReadUnitStatesForCallsAsync(departmentId, calls, CallUnitTimeline.MaxFollowOn);
 			var result = new Dictionary<int, List<UnitState>>();
 			var now = DateTime.UtcNow;
 
@@ -397,7 +399,8 @@ namespace Resgrid.Services
 		}
 
 		/// <summary>The calls' unit states (linked and inferred), with the per-unit histories and dispatches they were read from.</summary>
-		private async Task<CallUnitStatesRead> ReadUnitStatesForCallsAsync(int departmentId, IReadOnlyCollection<Call> calls)
+		/// <param name="historyAfter">How much further than the calls' records the unit histories and dispatch windows are read.</param>
+		private async Task<CallUnitStatesRead> ReadUnitStatesForCallsAsync(int departmentId, IReadOnlyCollection<Call> calls, TimeSpan historyAfter)
 		{
 			var read = new CallUnitStatesRead();
 			var result = read.StatesByCall;
@@ -415,9 +418,11 @@ namespace Resgrid.Services
 			// Past calls keep the units that worked them, deleted or not.
 			var units = (await _unitsRepository.GetAllUnitsByDepartmentIdIncludingDeletedAsync(departmentId))?.ToList() ?? new List<Unit>();
 
-			// States can trail a call (a status set against it after it closed), hence the extra day on the read window.
+			// States can trail a call (a status set against it after it closed), hence the extra day on the record's window.
+			// Only that window feeds the records, so reading further for the histories changes none of them.
 			var windowStart = departmentCalls.Min(x => x.LoggedOn);
-			var windowEnd = departmentCalls.Max(CallEnd).AddDays(1);
+			var recordEnd = departmentCalls.Max(CallEnd).AddDays(1);
+			var windowEnd = recordEnd.Add(historyAfter);
 
 			var (statusLookup, baseTypes) = await GetStatusRulesAsync(departmentId, CustomStateTypes.Unit);
 			var windowsByUnit = await GetUnitDispatchWindowsAsync(departmentId, windowStart, windowEnd);
@@ -437,7 +442,7 @@ namespace Resgrid.Services
 				foreach (var state in states)
 				{
 					var linkedCallId = CallStatusLinkage.LinkedCallId(state.DestinationId, state.DestinationType);
-					if (linkedCallId.HasValue && result.TryGetValue(linkedCallId.Value, out var callStates) && state.BelongsToCall(statusLookup))
+					if (state.Timestamp <= recordEnd && linkedCallId.HasValue && result.TryGetValue(linkedCallId.Value, out var callStates) && state.BelongsToCall(statusLookup))
 						callStates.Add(state);
 				}
 			}

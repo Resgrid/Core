@@ -357,7 +357,7 @@
     <value>Automatiskt kopplad: en status skickad utan larm som Resgrid kopplade utifrån enhetens föregående status eller dess utlarmning. Härledd: en status som enheten satte utan destination medan den var larmad till larmet. Endast larm: enheten larmades men rapporterade ingen status på larmet.</value>
   </data>
   <data name="CallUnitTimesInServiceHeader" xml:space="preserve">
-    <value>Åter i tjänst</value>
+    <value>Uppdraget avslutat</value>
   </data>
   <data name="CallUnitTimesCommittedHeader" xml:space="preserve">
     <value>Upptagen</value>

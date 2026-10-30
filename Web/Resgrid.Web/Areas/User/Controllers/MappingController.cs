@@ -458,14 +458,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (type == null || type.DepartmentId != DepartmentId)
 					return Unauthorized();
 
-				var coordinates = _kmlProvider.ImportFile(fileToUpload.OpenReadStream(), Path.GetExtension(fileToUpload.FileName).ToLower() == ".kmz");
+				var import = _kmlProvider.ImportFile(fileToUpload.OpenReadStream(), Path.GetExtension(fileToUpload.FileName).ToLower() == ".kmz");
+
+				if (!string.IsNullOrEmpty(import.Error))
+				{
+					ModelState.AddModelError("fileToUpload", import.Error);
+					return View(modal);
+				}
 
 				int importedCount = 0;
-				foreach (var coordinate in coordinates)
+				foreach (var coordinate in import.Coordinates)
 				{
 					var poi = new Poi();
 					poi.PoiTypeId = modal.TypeId;
-					poi.Name = coordinate.Name;
+					// Pois.Name is nvarchar(250); a longer placemark name would fail the whole import.
+					poi.Name = coordinate.Name?.Truncate(250);
 
 					if (coordinate.Latitude.HasValue && coordinate.Longitude.HasValue)
 					{
@@ -478,7 +485,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 				}
 
 				if (importedCount > 0)
-					TempData["ImportPOIsMessage"] = string.Format("Successfully imported {0} POI(s).", importedCount);
+					TempData["ImportPOIsMessage"] = import.SkippedCount > 0
+						? string.Format("Successfully imported {0} POI(s). {1} placemark(s) were skipped because they have no valid coordinates.", importedCount, import.SkippedCount)
+						: string.Format("Successfully imported {0} POI(s).", importedCount);
+				else if (import.SkippedCount > 0)
+					TempData["ImportPOIsError"] = string.Format("No POIs were imported: none of the {0} placemark(s) in the file have valid coordinates (check that latitude and longitude are not swapped or blank).", import.SkippedCount);
 				else
 					TempData["ImportPOIsError"] = "No valid placemarks with coordinates could be found in the uploaded file.";
 

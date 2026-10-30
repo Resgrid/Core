@@ -33,7 +33,7 @@ namespace Resgrid.Web.Attributes
 	/// <para>
 	/// A submission stopped for step-up is not lost: it is held (<see cref="StepUpFormReplay"/>), Verify2FA returns to a page that
 	/// posts it back, and the global <see cref="Filters.HeldSubmissionReplayFilter"/> puts the held form in place before model
-	/// binding. A script call is answered 403 with the Verify2FA address instead of a redirect it cannot follow.
+	/// binding. A script call is answered 403 with the Verify2FA (or enrollment) address instead of a redirect it cannot follow.
 	/// </para>
 	/// </summary>
 	[AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = false)]
@@ -180,7 +180,20 @@ namespace Resgrid.Web.Attributes
 					return;
 
 				case TwoFactorEnforcementOutcome.EnrollmentRequired:
-					context.Result = new RedirectResult("/User/TwoFactor/Enable2FA?enforced=1");
+					if (Middleware.Require2FAEnrollmentMiddleware.IsScriptRequest(context.HttpContext.Request))
+					{
+						// A script would follow the redirect and read the setup page as its answer, and every load of that page
+						// stages a new authenticator key. Tell it where the user must go; the page's ajaxError handler navigates there.
+						var enrollUrl = $"{context.HttpContext.Request.PathBase}{Middleware.Require2FAEnrollmentMiddleware.EnrollmentPath}";
+						context.HttpContext.Response.Headers[StepUpRedirectHeader] = enrollUrl;
+						context.Result = new JsonResult(new { success = false, error = "mfa_enrollment_required", redirect = enrollUrl })
+						{
+							StatusCode = StatusCodes.Status403Forbidden
+						};
+						return;
+					}
+
+					context.Result = new RedirectResult(Middleware.Require2FAEnrollmentMiddleware.EnrollmentPath);
 					return;
 
 				case TwoFactorEnforcementOutcome.StepUpRequired:

@@ -66,6 +66,11 @@ namespace Resgrid.Services
 		private sealed class ConditionalState
 		{
 			public DispatchRecommendationModes Mode { get; set; }
+			/// <summary>
+			/// Closest-unit mode in a department that ranks by straight-line distance rather than by response time. Station-based
+			/// cards keep the response order within a station, as the setting only covers closest-unit picks.
+			/// </summary>
+			public bool ByDistance { get; set; }
 			public GeoMath.GeoPoint? Anchor { get; set; }
 			public List<StationDistanceResult> Stations { get; set; } = new List<StationDistanceResult>();
 			public Dictionary<int, HashSet<string>> Rosters { get; set; } = new Dictionary<int, HashSet<string>>();
@@ -113,6 +118,7 @@ namespace Resgrid.Services
 			var state = new ConditionalState
 			{
 				Mode = mode,
+				ByDistance = mode == DispatchRecommendationModes.ClosestUnit && context.Config.RanksByDistance,
 				Decision = new RunCardDecisionExplanation
 				{
 					LevelHasGraph = RunCardDecisionGraph.HasGraph(level),
@@ -801,6 +807,14 @@ namespace Resgrid.Services
 			if (state.Mode == DispatchRecommendationModes.StationBased)
 				ordered = ordered.ThenBy(e => e.CascadeDepth);
 
+			if (state.ByDistance)
+				return ordered
+					.ThenBy(e => e.Distance.HasValue ? 0 : 1)
+					.ThenBy(e => e.Distance ?? 0)
+					.ThenBy(e => e.ResponseSeconds ?? double.MaxValue)
+					.ThenBy(e => e.SortName, StringComparer.OrdinalIgnoreCase)
+					.ToList();
+
 			return ordered
 				.ThenBy(e => e.ResponseSeconds.HasValue ? 0 : 1)
 				.ThenBy(e => e.ResponseSeconds ?? 0)
@@ -812,7 +826,8 @@ namespace Resgrid.Services
 		/// <summary>
 		/// Routed lookups for the leading entries (at least the department's shortlist size, more when a row needs more),
 		/// cached per resource so overlapping target sets share them, then the looked-up head is re-ranked. A failed
-		/// lookup keeps its estimate.
+		/// lookup keeps its estimate. Ranking by distance still looks them up, since conditions and first-arriving rows time
+		/// the picks on them and they are shown, but the re-rank orders on distance first, so they never change the order.
 		/// </summary>
 		private async Task EnsureRoutedAsync(RecommendationContext context, ConditionalState state, ResourceRanking ranking, int needed)
 		{
@@ -1232,7 +1247,7 @@ namespace Resgrid.Services
 			if (state.Mode == DispatchRecommendationModes.StationBased)
 				return entry.InContainingStation && entry.CascadeDepth == 0 ? RecommendationSelectionReasons.InGeofence : RecommendationSelectionReasons.CascadeStation;
 
-			return entry.RoutedEtaSeconds.HasValue ? RecommendationSelectionReasons.ClosestByEta : RecommendationSelectionReasons.ClosestByDistance;
+			return entry.RoutedEtaSeconds.HasValue && !state.ByDistance ? RecommendationSelectionReasons.ClosestByEta : RecommendationSelectionReasons.ClosestByDistance;
 		}
 
 		private RequirementShortfallReasons ShortfallReason(RecommendationContext context, ConditionalState state, ResolvedRequirementRow row, ResourceRanking ranking)

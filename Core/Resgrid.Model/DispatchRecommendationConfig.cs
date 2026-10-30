@@ -130,5 +130,15 @@ namespace Resgrid.Model
 		/// </summary>
 		[ProtoMember(14)]
 		public int WaitingCallMaxResponseSeconds { get; set; }
+
+		/// <summary>
+		/// Closest-unit mode and the nearest-unit board: rank candidates by the fastest response (turnout plus travel, routed
+		/// when UseRoutedEta is on; the default) or by the shortest straight-line distance.
+		/// </summary>
+		[ProtoMember(15)]
+		public ClosestUnitRankingModes ClosestUnitRanking { get; set; }
+
+		/// <summary>True when candidates are ranked on distance alone, so routed drive times can't change the order.</summary>
+		public bool RanksByDistance => ClosestUnitRanking == ClosestUnitRankingModes.ShortestDistance;
 	}
 }

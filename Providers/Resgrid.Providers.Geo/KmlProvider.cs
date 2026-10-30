@@ -2,9 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
+using System.Net.Sockets;
+using System.Xml;
+using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
+using SharpKml.Base;
 using SharpKml.Dom;
 using SharpKml.Engine;
 
@@ -12,146 +17,169 @@ namespace Resgrid.Providers.GeoLocationProvider
 {
 	public class KmlProvider: IKmlProvider
 	{
-		public List<Coordinates> ImportFile(Stream input, bool isKmz)
+		// A NetworkLink is fetched by the server while the upload waits, so only the first few are followed.
+		private const int MaxNetworkLinks = 5;
+
+		// ogr2ogr and QGIS leave <name> empty and carry the name column in ExtendedData unless told which field is the name.
+		private static readonly string[] ExtendedDataNameKeys = { "name", "title", "label" };
+
+		// NetworkLink targets come from the uploaded file, so every connection (redirects included) must land on a public address.
+		private static readonly HttpClient NetworkLinkClient = new HttpClient(new SocketsHttpHandler
 		{
-			var coordinates = new List<Coordinates>();
+			UseProxy = false,
+			MaxAutomaticRedirections = 3,
+			ConnectCallback = ConnectToPublicAddressAsync
+		})
+		{
+			Timeout = System.TimeSpan.FromSeconds(30),
+			MaxResponseContentBufferSize = 10 * 1024 * 1024
+		};
+
+		public KmlImportResult ImportFile(Stream input, bool isKmz)
+		{
+			var result = new KmlImportResult();
 
 			if (input == null)
-				return coordinates;
+				return result;
 
 			try
 			{
-				KmlFile file;
-				if (isKmz)
+				var root = KmlDocumentReader.ReadRoot(input);
+				if (root == null)
 				{
-					var kmz = KmzFile.Open(input);
-					file = kmz?.GetDefaultKmlFile();
+					result.Error = "The file does not contain any KML.";
+					return result;
 				}
-				else
-					file = KmlFile.Load(input);
 
-				if (file?.Root is Kml kml)
+				ExtractCoordinates(root, result);
+
+				// Resolve NetworkLinks to external KML/KMZ resources
+				foreach (var networkLink in root.Flatten().OfType<NetworkLink>().Take(MaxNetworkLinks).ToList())
 				{
-					ExtractCoordinates(kml, coordinates);
-
-					// Resolve NetworkLinks to external KML/KMZ resources
-					var networkLinks = kml.Flatten().OfType<NetworkLink>().ToList();
-					foreach (var networkLink in networkLinks)
+					try
 					{
-						try
-						{
-							ResolveNetworkLink(networkLink, coordinates);
-						}
-						catch
-						{
-							// Skip failed network link resolution
-						}
+						ResolveNetworkLink(networkLink, result);
+					}
+					catch
+					{
+						// Skip failed network link resolution
 					}
 				}
+			}
+			catch (XmlException ex)
+			{
+				result.Error = $"The file is not valid KML: {ex.Message}";
+			}
+			catch (InvalidDataException)
+			{
+				result.Error = "The KMZ file is damaged or is not a zip archive.";
 			}
 			catch (Exception ex)
 			{
-				System.Diagnostics.Debug.WriteLine($"KmlProvider.ImportFile error: {ex.Message}");
+				Logging.LogException(ex, "KmlProvider.ImportFile could not read an uploaded file.");
+				result.Error = "The file could not be read as KML or KMZ.";
 			}
 
-			return coordinates;
+			return result;
 		}
 
-		private static void ExtractCoordinates(Kml kml, List<Coordinates> coordinates)
+		private static void ExtractCoordinates(Element root, KmlImportResult result)
 		{
-			foreach (var placemark in kml.Flatten().OfType<Placemark>())
+			foreach (var placemark in root.Flatten().OfType<Placemark>())
 			{
-				var coords = new Coordinates();
-				coords.Name = placemark.Name;
+				Vector center = null;
 
 				try
 				{
-					var bounds = placemark.CalculateBounds();
-					if (bounds != null)
-					{
-						coords.Latitude = bounds.Center.Latitude;
-						coords.Longitude = bounds.Center.Longitude;
-					}
+					center = placemark.CalculateBounds()?.Center;
 				}
 				catch
 				{
 					// Skip placemarks that fail bounds calculation
 				}
 
-				if (coords.Latitude.HasValue && coords.Longitude.HasValue)
-					coordinates.Add(coords);
+				if (center == null || !IsValidPosition(center.Latitude, center.Longitude))
+				{
+					result.SkippedCount++;
+					continue;
+				}
+
+				result.Coordinates.Add(new Coordinates { Name = NameOf(placemark), Latitude = center.Latitude, Longitude = center.Longitude });
 			}
 		}
 
-		private static void ResolveNetworkLink(NetworkLink networkLink, List<Coordinates> coordinates)
-		{
-			if (networkLink?.Link?.Href == null)
-				return;
+		/// <summary>
+		/// Out-of-range values are usually latitude and longitude written the wrong way round; 0,0 is a converter's
+		/// placeholder for a row it could not geocode.
+		/// </summary>
+		private static bool IsValidPosition(double latitude, double longitude) =>
+			!double.IsNaN(latitude) && !double.IsNaN(longitude) &&
+			latitude >= -90 && latitude <= 90 && longitude >= -180 && longitude <= 180 &&
+			!(latitude == 0 && longitude == 0);
 
-			var href = networkLink.Link.Href.OriginalString;
+		private static string NameOf(Placemark placemark)
+		{
+			if (!string.IsNullOrWhiteSpace(placemark.Name))
+				return placemark.Name.Trim();
+
+			var data = placemark.ExtendedData;
+			if (data == null)
+				return null;
+
+			var values = data.Data.Select(d => new KeyValuePair<string, string>(d.Name, d.Value))
+				.Concat(data.SchemaData.SelectMany(s => s.SimpleData).Select(d => new KeyValuePair<string, string>(d.Name, d.Text)))
+				.Where(v => !string.IsNullOrWhiteSpace(v.Value))
+				.ToList();
+
+			foreach (var key in ExtendedDataNameKeys)
+			{
+				var value = values.FirstOrDefault(v => string.Equals(v.Key?.Trim(), key, StringComparison.OrdinalIgnoreCase)).Value;
+				if (value != null)
+					return value.Trim();
+			}
+
+			return null;
+		}
+
+		private static void ResolveNetworkLink(NetworkLink networkLink, KmlImportResult result)
+		{
+			var href = networkLink?.Link?.Href?.OriginalString;
 			if (string.IsNullOrWhiteSpace(href))
 				return;
 
-			// Step 1: URI-based detection — check AbsolutePath for .kmz/.kml suffix
-			bool? isKmzFromUri = null;
-			if (Uri.TryCreate(href, UriKind.Absolute, out Uri uri))
-			{
-				var path = uri.AbsolutePath;
-				if (path.EndsWith(".kmz", StringComparison.OrdinalIgnoreCase))
-					isKmzFromUri = true;
-				else if (path.EndsWith(".kml", StringComparison.OrdinalIgnoreCase))
-					isKmzFromUri = false;
-			}
+			if (!Uri.TryCreate(href.Trim(), UriKind.Absolute, out Uri uri) || (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps))
+				return;
 
-			using (var httpClient = new HttpClient { Timeout = System.TimeSpan.FromSeconds(30) })
-			using (var response = httpClient.GetAsync(href).GetAwaiter().GetResult())
+			using (var response = NetworkLinkClient.GetAsync(uri).GetAwaiter().GetResult())
 			{
 				if (!response.IsSuccessStatusCode)
 					return;
 
-				// Step 2: Content-Type detection — fallback when URI is inconclusive
-				bool? isKmzFromContentType = null;
-				var contentType = response.Content.Headers.ContentType?.MediaType;
-				if (string.Equals(contentType, "application/vnd.google-earth.kmz", StringComparison.OrdinalIgnoreCase))
-					isKmzFromContentType = true;
-				else if (string.Equals(contentType, "application/vnd.google-earth.kml+xml", StringComparison.OrdinalIgnoreCase))
-					isKmzFromContentType = false;
+				// The content decides KML or KMZ, as for the upload itself.
+				var root = KmlDocumentReader.ReadRoot(response.Content.ReadAsByteArrayAsync().GetAwaiter().GetResult());
+				if (root != null)
+					ExtractCoordinates(root, result);
+			}
+		}
 
-				// Download into memory so we can peek bytes and re-read for parsing
-				var contentBytes = response.Content.ReadAsByteArrayAsync().GetAwaiter().GetResult();
+		private static async System.Threading.Tasks.ValueTask<Stream> ConnectToPublicAddressAsync(SocketsHttpConnectionContext context, System.Threading.CancellationToken cancellationToken)
+		{
+			var addresses = await Dns.GetHostAddressesAsync(context.DnsEndPoint.Host, cancellationToken);
 
-				// Step 3: ZIP magic-byte detection — final fallback
-				bool? isKmzFromMagic = null;
-				if (contentBytes.Length >= 4)
-				{
-					// PK\x03\x04 is the ZIP magic number
-					isKmzFromMagic = contentBytes[0] == 0x50 && contentBytes[1] == 0x4B
-					              && contentBytes[2] == 0x03 && contentBytes[3] == 0x04;
-				}
+			// Every address has to pass: a name that answers with one public and one internal address is refused rather than raced.
+			if (addresses.Length == 0 || addresses.Any(a => !PublicNetworkAddress.IsPublic(a)))
+				throw new HttpRequestException($"NetworkLink host '{context.DnsEndPoint.Host}' does not resolve to a public address.");
 
-				// Precedence: URI suffix > Content-Type header > magic bytes; default to false
-				bool isKmz = isKmzFromUri ?? isKmzFromContentType ?? isKmzFromMagic ?? false;
-
-				using (var ms = new MemoryStream(contentBytes))
-				{
-					KmlFile file;
-					if (isKmz)
-					{
-						var kmz = KmzFile.Open(ms);
-						file = kmz?.GetDefaultKmlFile();
-						if (file == null)
-							return;
-					}
-					else
-					{
-						file = KmlFile.Load(ms);
-					}
-
-					if (file?.Root is Kml kml)
-					{
-						ExtractCoordinates(kml, coordinates);
-					}
-				}
+			var socket = new Socket(SocketType.Stream, ProtocolType.Tcp) { NoDelay = true };
+			try
+			{
+				await socket.ConnectAsync(addresses, context.DnsEndPoint.Port, cancellationToken);
+				return new NetworkStream(socket, ownsSocket: true);
+			}
+			catch
+			{
+				socket.Dispose();
+				throw;
 			}
 		}
 	}

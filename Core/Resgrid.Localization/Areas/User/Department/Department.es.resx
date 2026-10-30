@@ -828,6 +828,18 @@
   <data name="EtaShortlistSizeLabel" xml:space="preserve">
     <value>Tamaño de la lista corta para ETA</value>
   </data>
+  <data name="ClosestUnitRankingLabel" xml:space="preserve">
+    <value>Clasificar las unidades más cercanas por</value>
+  </data>
+  <data name="ClosestUnitRankingFastest" xml:space="preserve">
+    <value>Respuesta más rápida (tiempo de salida + tiempo de viaje)</value>
+  </data>
+  <data name="ClosestUnitRankingDistance" xml:space="preserve">
+    <value>Distancia más corta</value>
+  </data>
+  <data name="ClosestUnitRankingHelp" xml:space="preserve">
+    <value>Se aplica a las recomendaciones de la unidad más cercana y a la lista de unidades más cercanas. «Respuesta más rápida» suma el tiempo de salida al tiempo de viaje y usa tiempos de conducción cuando está activado ordenar por tiempo estimado de conducción. «Distancia más corta» elige la unidad más cercana al incidente en línea recta, sin importar su tiempo de salida o de conducción.</value>
+  </data>
   <data name="StationCoverageHeader" xml:space="preserve">
     <value>Mínimos de cobertura de estaciones</value>
   </data>

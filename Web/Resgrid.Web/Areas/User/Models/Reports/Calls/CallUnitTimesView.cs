@@ -21,6 +21,7 @@ namespace Resgrid.Web.Areas.User.Models.Reports.Calls
 
 		public bool AnyAutoLinked { get; set; }
 		public bool AnyInferred { get; set; }
+		public bool AnyHistory { get; set; }
 	}
 
 	public class CallUnitTimesCall
@@ -37,7 +38,39 @@ namespace Resgrid.Web.Areas.User.Models.Reports.Calls
 	public class CallUnitTimesUnit
 	{
 		public string UnitName { get; set; }
+		public string UnitType { get; set; }
 		public string Group { get; set; }
 		public CallUnitTimesRow Times { get; set; }
+
+		/// <summary>The unit's status history on the call, in Times.Timeline order, with each status as the department named it.</summary>
+		public List<CallUnitTimesStatus> History { get; set; } = new List<CallUnitTimesStatus>();
+	}
+
+	public class CallUnitTimesStatus
+	{
+		public CallUnitTimelineEntry Entry { get; set; }
+
+		/// <summary>The status as the department named it.</summary>
+		public string Text { get; set; }
+
+		/// <summary>Hex colours, or null for a status with none.</summary>
+		public string Color { get; set; }
+		public string TextColor { get; set; }
+
+		/// <summary>What the status means (its base type), for comparing across status sets; empty when it has none.</summary>
+		public string Meaning { get; set; }
+
+		/// <summary>How it is tied to the call, as the report's Linked By column shows it.</summary>
+		public CallUnitTimesStatusSources Source { get; set; }
+	}
+
+	public enum CallUnitTimesStatusSources
+	{
+		Explicit = 0,
+		AutoLinked = 1,
+		Inferred = 2,
+
+		/// <summary>Not on the call's record: set after the unit left it (<see cref="StatusDestinationSources.FollowOn"/>).</summary>
+		FollowOn = 3
 	}
 }

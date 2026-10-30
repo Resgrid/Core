@@ -737,6 +737,18 @@
   <data name="EtaShortlistSizeLabel" xml:space="preserve">
     <value>Größe der ETA-Auswahlliste</value>
   </data>
+  <data name="ClosestUnitRankingLabel" xml:space="preserve">
+    <value>Nächste Einheiten einstufen nach</value>
+  </data>
+  <data name="ClosestUnitRankingFastest" xml:space="preserve">
+    <value>Schnellstes Eintreffen (Ausrückzeit + Fahrzeit)</value>
+  </data>
+  <data name="ClosestUnitRankingDistance" xml:space="preserve">
+    <value>Kürzeste Entfernung</value>
+  </data>
+  <data name="ClosestUnitRankingHelp" xml:space="preserve">
+    <value>Gilt für Empfehlungen der nächsten Einheit und die Liste der nächsten Einheiten. „Schnellstes Eintreffen“ addiert die Ausrückzeit zur Fahrzeit und nutzt Fahrzeiten, wenn die Sortierung nach Fahrzeit-ETA aktiv ist. „Kürzeste Entfernung“ wählt die Einheit, die in Luftlinie am nächsten am Einsatzort ist, unabhängig von Ausrückzeit oder Fahrzeit.</value>
+  </data>
   <data name="StationCoverageHeader" xml:space="preserve">
     <value>Mindestabdeckung der Wachen</value>
   </data>

@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -216,5 +219,80 @@ namespace Resgrid.Tests.Services
 		}
 
 		#endregion GeoJSON Import
+
+		#region KML Import
+
+		private void SetupSaves()
+		{
+			_importsRepo.Setup(x => x.SaveOrUpdateAsync(It.IsAny<CustomMapImport>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((CustomMapImport i, CancellationToken c, bool f) => i);
+			_zonesRepo.Setup(x => x.SaveOrUpdateAsync(It.IsAny<IndoorMapZone>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((IndoorMapZone z, CancellationToken c, bool f) => z);
+		}
+
+		private static MemoryStream Utf8(string text) => new MemoryStream(new UTF8Encoding(false).GetBytes(text));
+
+		private const string DistrictPlacemark =
+			"<Placemark><name>District A</name><Polygon><outerBoundaryIs><LinearRing>" +
+			"<coordinates>-104,39 -104,40 -103,40 -103,39 -104,39</coordinates>" +
+			"</LinearRing></outerBoundaryIs></Polygon></Placemark>";
+
+		// KmlFile.Load is namespace-aware: these files used to finish "Complete" with no regions at all.
+		[TestCase("http://www.opengis.net/kml/2.2")]
+		[TestCase("http://earth.google.com/kml/2.1")]
+		[TestCase(null)]
+		public async Task ImportKml_ReadsRegionsWhateverTheKmlNamespace(string ns)
+		{
+			SetupSaves();
+			var kml = "\n<?xml version=\"1.0\" encoding=\"UTF-8\"?><kml" + (ns == null ? "" : " xmlns=\"" + ns + "\"") + "><Document>" + DistrictPlacemark + "</Document></kml>";
+
+			var result = await _service.ImportKmlAsync("m1", "l1", Utf8(kml), false, "user1");
+
+			result.Status.Should().Be((int)CustomMapImportStatus.Complete);
+			_zonesRepo.Verify(x => x.SaveOrUpdateAsync(
+				It.Is<IndoorMapZone>(z => z.Name == "District A" && z.IndoorMapFloorId == "l1" && z.CenterLatitude == 39.4m),
+				It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Once);
+		}
+
+		[Test]
+		public async Task ImportKml_ReadsKmzByContent()
+		{
+			SetupSaves();
+			var kmz = new MemoryStream();
+			using (var zip = new ZipArchive(kmz, ZipArchiveMode.Create, true))
+			using (var writer = new StreamWriter(zip.CreateEntry("doc.kml").Open(), new UTF8Encoding(false)))
+				writer.Write("<kml xmlns=\"http://earth.google.com/kml/2.2\">" + DistrictPlacemark + "</kml>");
+			kmz.Position = 0;
+
+			var result = await _service.ImportKmlAsync("m1", "l1", kmz, false, "user1");
+
+			result.Status.Should().Be((int)CustomMapImportStatus.Complete);
+			_zonesRepo.Verify(x => x.SaveOrUpdateAsync(It.IsAny<IndoorMapZone>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Once);
+		}
+
+		[Test]
+		public async Task ImportKml_WithNoRegions_ShouldFailWithErrorMessage()
+		{
+			SetupSaves();
+
+			var result = await _service.ImportKmlAsync("m1", "l1", Utf8("<kml xmlns=\"http://www.opengis.net/kml/2.2\"><Document><name>Empty</name></Document></kml>"), false, "user1");
+
+			result.Status.Should().Be((int)CustomMapImportStatus.Failed);
+			result.ErrorMessage.Should().Be("No placemarks with a point, line or polygon were found in the file.");
+			_zonesRepo.Verify(x => x.SaveOrUpdateAsync(It.IsAny<IndoorMapZone>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Never);
+		}
+
+		[Test]
+		public async Task ImportKml_MalformedXml_ShouldFailWithErrorMessage()
+		{
+			SetupSaves();
+
+			var result = await _service.ImportKmlAsync("m1", "l1", Utf8("<kml><Placemark><name>Fire & Rescue</name></Placemark></kml>"), false, "user1");
+
+			result.Status.Should().Be((int)CustomMapImportStatus.Failed);
+			result.ErrorMessage.Should().NotBeNullOrEmpty();
+		}
+
+		#endregion KML Import
 	}
 }

@@ -737,6 +737,18 @@
   <data name="EtaShortlistSizeLabel" xml:space="preserve">
     <value>Taille de la liste restreinte ETA</value>
   </data>
+  <data name="ClosestUnitRankingLabel" xml:space="preserve">
+    <value>Classer les unités les plus proches par</value>
+  </data>
+  <data name="ClosestUnitRankingFastest" xml:space="preserve">
+    <value>Arrivée la plus rapide (délai de départ + temps de trajet)</value>
+  </data>
+  <data name="ClosestUnitRankingDistance" xml:space="preserve">
+    <value>Distance la plus courte</value>
+  </data>
+  <data name="ClosestUnitRankingHelp" xml:space="preserve">
+    <value>S'applique aux recommandations d'unité la plus proche et à la liste des unités les plus proches. « Arrivée la plus rapide » ajoute le délai de départ au temps de trajet, avec les temps de conduite lorsque le tri par temps de trajet estimé est activé. « Distance la plus courte » choisit l'unité la plus proche de l'intervention à vol d'oiseau, quels que soient son délai de départ ou son temps de conduite.</value>
+  </data>
   <data name="StationCoverageHeader" xml:space="preserve">
     <value>Minimums de couverture des casernes</value>
   </data>

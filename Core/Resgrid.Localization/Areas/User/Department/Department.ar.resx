@@ -795,6 +795,18 @@
   <data name="EtaShortlistSizeLabel" xml:space="preserve">
     <value>حجم القائمة المختصرة لوقت الوصول</value>
   </data>
+  <data name="ClosestUnitRankingLabel" xml:space="preserve">
+    <value>ترتيب أقرب الوحدات حسب</value>
+  </data>
+  <data name="ClosestUnitRankingFastest" xml:space="preserve">
+    <value>أسرع استجابة (زمن الانطلاق + زمن الطريق)</value>
+  </data>
+  <data name="ClosestUnitRankingDistance" xml:space="preserve">
+    <value>أقصر مسافة</value>
+  </data>
+  <data name="ClosestUnitRankingHelp" xml:space="preserve">
+    <value>ينطبق على توصيات أقرب وحدة وعلى قائمة أقرب الوحدات. يضيف خيار «أسرع استجابة» زمن الانطلاق إلى زمن الطريق، مستخدمًا أزمنة القيادة عند تفعيل الترتيب حسب وقت الوصول المقدر بالقيادة. ويختار خيار «أقصر مسافة» الوحدة الأقرب إلى موقع البلاغ في خط مستقيم، بغض النظر عن زمن الانطلاق أو القيادة.</value>
+  </data>
   <data name="StationCoverageHeader" xml:space="preserve">
     <value>الحد الأدنى لتغطية المحطات</value>
   </data>

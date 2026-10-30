@@ -356,6 +356,36 @@
   <data name="CallUnitTimesLegend" xml:space="preserve">
     <value>Collegato automaticamente: uno stato inviato senza chiamata che Resgrid ha collegato in base allo stato precedente dell'unità o al suo invio. Dedotto: uno stato impostato dall'unità senza destinazione mentre era inviata alla chiamata. Solo invio: l'unità è stata inviata ma non ha segnalato alcuno stato sulla chiamata.</value>
   </data>
+  <data name="CallUnitTimesInServiceHeader" xml:space="preserve">
+    <value>Fine dell'impegno</value>
+  </data>
+  <data name="CallUnitTimesCommittedHeader" xml:space="preserve">
+    <value>Impegnata</value>
+  </data>
+  <data name="CallUnitTimesHistoryHeader" xml:space="preserve">
+    <value>Cronologia degli stati</value>
+  </data>
+  <data name="CallUnitTimesStatusHeader" xml:space="preserve">
+    <value>Stato</value>
+  </data>
+  <data name="CallUnitTimesTimeHeader" xml:space="preserve">
+    <value>Ora</value>
+  </data>
+  <data name="CallUnitTimesDurationHeader" xml:space="preserve">
+    <value>Durata</value>
+  </data>
+  <data name="CallUnitTimesSourceFollowOn" xml:space="preserve">
+    <value>Cronologia dell'unità</value>
+  </data>
+  <data name="CallUnitTimesSetByResgrid" xml:space="preserve">
+    <value>impostato da Resgrid</value>
+  </data>
+  <data name="CallUnitTimesHistoryLegend" xml:space="preserve">
+    <value>Cronologia degli stati: ogni stato impostato dall'unità dall'invio fino al ritorno in servizio o alla messa fuori servizio, compresi gli stati fuori dalla chiamata (ospedale, sede) e dopo la chiusura della chiamata. «Cronologia dell'unità» indica uno stato che non è nel registro della chiamata; la cronologia termina quando l'unità viene inviata a un'altra chiamata, o 12 ore dopo la chiamata. Un rilascio applicato da Resgrid alla chiusura della chiamata la termina solo se lo stato successivo dell'equipaggio lo conferma.</value>
+  </data>
+  <data name="CallUnitTimesDownloadHistoryCsv" xml:space="preserve">
+    <value>Scarica la cronologia degli stati (CSV)</value>
+  </data>
 
   <!-- ==================== Call Summary: group filter, pies, period statistics ==================== -->
   <data name="AllGroups" xml:space="preserve">

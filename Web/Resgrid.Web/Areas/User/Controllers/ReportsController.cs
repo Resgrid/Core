@@ -655,8 +655,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			string Time(DateTime? value) => value.HasValue ? value.Value.TimeConverterToString(model.Department) : string.Empty;
 
 			var csv = new StringBuilder();
-			csv.AppendLine(string.Join(",", new[] { "Call Number", "Call Name", "Call Type", "Logged On", "Closed On", "Unit", "Group",
-				"Dispatched", "En Route", "On Scene", "Staging", "Cleared", "Linked By" }.Select(h => CsvCell(HttpContext.WithDepartmentTerms(h, "Reports")))));
+			csv.AppendLine(string.Join(",", new[] { "Call Number", "Call Name", "Call Type", "Logged On", "Closed On", "Unit", "Unit Type", "Group",
+				"Dispatched", "En Route", "On Scene", "Staging", "Cleared", "End of Commitment", "Committed Minutes", "Linked By" }
+				.Select(h => CsvCell(HttpContext.WithDepartmentTerms(h, "Reports")))));
 
 			foreach (var call in model.Calls)
 			{
@@ -664,9 +665,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				{
 					csv.AppendLine(string.Join(",", new[]
 					{
-						call.Number, call.Name, call.Type, Time(call.LoggedOn), Time(call.ClosedOn), unit.UnitName, unit.Group,
+						call.Number, call.Name, call.Type, Time(call.LoggedOn), Time(call.ClosedOn), unit.UnitName, unit.UnitType, unit.Group,
 						Time(unit.Times.DispatchedOn), Time(unit.Times.EnrouteOn), Time(unit.Times.OnSceneOn), Time(unit.Times.StagingOn),
-						Time(unit.Times.ClearedOn), unit.Times.Source.ToString()
+						Time(unit.Times.ClearedOn), Time(unit.Times.InServiceOn), Minutes(unit.Times.CommittedSeconds), unit.Times.Source.ToString()
 					}.Select(CsvCell)));
 				}
 			}
@@ -674,6 +675,54 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var fileName = callId.HasValue && callId.Value > 0 ? $"call-unit-times-{callId.Value}.csv" : "call-unit-times.csv";
 			return File(new UTF8Encoding(true).GetBytes(csv.ToString()), "text/csv", fileName);
 		}
+
+		/// <summary>
+		/// Every unit's status history per call, one row per status, for utilisation analysis (time committed by unit type,
+		/// call type or area, hospital turnaround): status, meaning, start, end and minutes in it.
+		/// </summary>
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Reports_View)]
+		public async Task<IActionResult> CallUnitTimesHistoryCsv(DateTime? start, DateTime? end, int? callId)
+		{
+			if (callId.HasValue && callId.Value > 0 && !await _authorizationService.CanUserViewCallAsync(UserId, callId.Value))
+				return Unauthorized();
+
+			var model = await CallUnitTimesReportModel(DepartmentId, start, end, callId);
+			if (model == null)
+				return NotFound();
+
+			string Time(DateTime? value) => value.HasValue ? value.Value.TimeConverterToString(model.Department) : string.Empty;
+
+			var csv = new StringBuilder();
+			csv.AppendLine(string.Join(",", new[] { "Call Number", "Call Name", "Call Type", "Logged On", "Closed On", "Unit", "Unit Type", "Group",
+				"Status", "Meaning", "Started", "Ended", "Minutes", "Linked By", "Set By Resgrid" }
+				.Select(h => CsvCell(HttpContext.WithDepartmentTerms(h, "Reports")))));
+
+			foreach (var call in model.Calls)
+			{
+				foreach (var unit in call.Units)
+				{
+					for (var i = 0; i < unit.History.Count; i++)
+					{
+						var status = unit.History[i];
+						var next = i + 1 < unit.History.Count ? unit.History[i + 1].Entry.Timestamp : (DateTime?)null;
+
+						csv.AppendLine(string.Join(",", new[]
+						{
+							call.Number, call.Name, call.Type, Time(call.LoggedOn), Time(call.ClosedOn), unit.UnitName, unit.UnitType, unit.Group,
+							status.Text, status.Meaning, Time(status.Entry.Timestamp), Time(next), Minutes(status.Entry.DurationSeconds),
+							status.Source.ToString(), status.Entry.SetByAutomation ? "Yes" : "No"
+						}.Select(CsvCell)));
+					}
+				}
+			}
+
+			var fileName = callId.HasValue && callId.Value > 0 ? $"call-unit-status-history-{callId.Value}.csv" : "call-unit-status-history.csv";
+			return File(new UTF8Encoding(true).GetBytes(csv.ToString()), "text/csv", fileName);
+		}
+
+		private static string Minutes(double? seconds) =>
+			seconds.HasValue ? Math.Round(seconds.Value / 60d, 1).ToString("0.0", CultureInfo.InvariantCulture) : string.Empty;
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Reports_View)]
@@ -2044,12 +2093,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (calls.Count == 0)
 				return model;
 
-			var statesByCall = await _callStatusAttributionService.GetUnitStatesForCallsAsync(departmentId, calls);
+			// Each unit's whole part in the call: the call's record plus what it set after leaving it, until back in service.
+			var timelinesByCall = await _callStatusAttributionService.GetUnitTimelinesForCallsAsync(departmentId, calls);
 			var dispatchesByCall = await _callStatusAttributionService.GetUnitDispatchesForCallsAsync(departmentId, calls);
 			var customBaseTypes = await _unitsService.GetCustomUnitStateBaseTypesAsync(departmentId);
 			// Past calls: the units that worked them, deleted ones included.
 			var units = (await _unitsService.GetUnitsForDepartmentIncludingDeletedAsync(departmentId) ?? new List<Unit>()).ToDictionary(x => x.UnitId);
 			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(departmentId) ?? new List<DepartmentGroup>();
+			var describeStatus = UnitStatusDescriber(await _customStateService.GetAllCustomStatesForDepartmentAsync(departmentId),
+				_customStateService.GetDefaultUnitStatuses());
 
 			foreach (var call in calls.OrderBy(x => x.LoggedOn))
 			{
@@ -2063,18 +2115,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 					ClosedOn = call.ClosedOn
 				};
 
-				statesByCall.TryGetValue(call.CallId, out var states);
+				timelinesByCall.TryGetValue(call.CallId, out var timeline);
 				dispatchesByCall.TryGetValue(call.CallId, out var dispatches);
 
-				foreach (var row in CallUnitTimesCalculator.Compute(dispatches, states, customBaseTypes))
+				foreach (var row in CallUnitTimesCalculator.Compute(dispatches, null, customBaseTypes, timeline ?? new List<UnitState>()))
 				{
 					units.TryGetValue(row.UnitId, out var unit);
 					var group = unit?.StationGroupId != null ? groups.FirstOrDefault(g => g.DepartmentGroupId == unit.StationGroupId.Value) : null;
 
-					callModel.Units.Add(new CallUnitTimesUnit { UnitName = unit?.Name ?? $"#{row.UnitId}", Group = group?.Name, Times = row });
+					var unitModel = new CallUnitTimesUnit { UnitName = unit?.Name ?? $"#{row.UnitId}", UnitType = unit?.Type, Group = group?.Name, Times = row };
+					unitModel.History = row.Timeline.Select(entry => describeStatus(entry)).ToList();
+					callModel.Units.Add(unitModel);
 
 					model.AnyAutoLinked |= row.Source == CallUnitTimesSources.AutoLinked;
 					model.AnyInferred |= row.Source == CallUnitTimesSources.Inferred;
+					model.AnyHistory |= unitModel.History.Count > 0;
 				}
 
 				callModel.Units = callModel.Units.OrderBy(x => x.Times.DispatchedOn ?? x.Times.EnrouteOn ?? x.Times.OnSceneOn ?? DateTime.MaxValue).ThenBy(x => x.UnitName).ToList();
@@ -2082,6 +2137,54 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			return model;
+		}
+
+		/// <summary>
+		/// Names and colours a timeline status the way the department set it up: its own option (deleted ones included, since
+		/// the report is history), else the built-in option, else the legacy built-in name.
+		/// </summary>
+		private static Func<CallUnitTimelineEntry, CallUnitTimesStatus> UnitStatusDescriber(IEnumerable<CustomState> customStates, IEnumerable<CustomStateDetail> defaultStatuses)
+		{
+			var customList = customStates?.ToList() ?? new List<CustomState>();
+			var defaults = UnitStatusColors.BuildDefaultMap(defaultStatuses);
+
+			return entry =>
+			{
+				var detail = StatusOptionIds.FindCustom(customList, CustomStateTypes.Unit, entry.State);
+				if (detail == null && entry.State <= CallStatusLinkage.MaxBuiltInStatusId)
+					defaults.TryGetValue(entry.State, out detail);
+
+				var baseType = detail != null ? (ActionBaseTypes)detail.BaseType : BuiltInStatusBaseTypes.ForUnitState(entry.State);
+
+				CallUnitTimesStatusSources source;
+				if (entry.IsFollowOn)
+					source = CallUnitTimesStatusSources.FollowOn;
+				else if (CallStatusAttribution.IsInferred(entry.DestinationSource))
+					source = CallUnitTimesStatusSources.Inferred;
+				else if (CallStatusAttribution.IsAutoLinked(entry.DestinationSource))
+					source = CallUnitTimesStatusSources.AutoLinked;
+				else
+					source = CallUnitTimesStatusSources.Explicit;
+
+				return new CallUnitTimesStatus
+				{
+					Entry = entry,
+					Text = !string.IsNullOrWhiteSpace(detail?.ButtonText) ? detail.ButtonText : new UnitState { State = entry.State }.ToStateDisplayText(),
+					Color = detail != null ? UnitStatusColors.ToHexColor(detail.ButtonClassToColor()) : null,
+					TextColor = detail != null ? UnitStatusColors.ToHexColor(detail.TextColor) : null,
+					Meaning = Enum.IsDefined(typeof(ActionBaseTypes), baseType) && baseType != ActionBaseTypes.None ? BaseTypeName(baseType) : string.Empty,
+					Source = source
+				};
+			};
+		}
+
+		private static string BaseTypeName(ActionBaseTypes baseType)
+		{
+			var member = typeof(ActionBaseTypes).GetMember(baseType.ToString()).FirstOrDefault();
+			var display = member?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.DisplayAttribute), false)
+				.OfType<System.ComponentModel.DataAnnotations.DisplayAttribute>().FirstOrDefault();
+
+			return display?.Name ?? baseType.ToString();
 		}
 
 		/// <summary>Quotes a CSV cell and neutralises spreadsheet formula prefixes in user-entered text (the shared Framework helper).</summary>

@@ -31,6 +31,32 @@ var resgrid;
             };
         }
 
+        // From a 403 mfa_enrollment_required answer: the enrollment address and the paths the middleware lets through, or
+        // null. A .load() call asks for HTML, so jQuery leaves responseJSON unset and the body is parsed here.
+        function enrollmentRedirect(jqxhr) {
+            if (!jqxhr || jqxhr.status !== 403) {
+                return null;
+            }
+
+            var body = jqxhr.responseJSON;
+            if (!body && /json/i.test(jqxhr.getResponseHeader('Content-Type') || '')) {
+                try { body = JSON.parse(jqxhr.responseText); } catch (e) { body = null; }
+            }
+
+            if (!body || body.error !== 'mfa_enrollment_required' || typeof body.redirect !== 'string') {
+                return null;
+            }
+
+            var url;
+            try { url = new URL(body.redirect, window.location.origin); } catch (e) { return null; }
+
+            // The setup page itself is always one of them, whatever the answer lists.
+            var allowedPaths = (Array.isArray(body.allowedPaths) ? body.allowedPaths : []).filter(function (p) { return typeof p === 'string' && p.length > 0; });
+            allowedPaths.push(url.pathname);
+
+            return { url: url, allowedPaths: allowedPaths };
+        }
+
         $(document).ajaxError(function (event, jqxhr) {
             // A change that needs a recent second factor: the server is holding it, and verifying finishes it
             // (RequiresRecentTwoFactorAttribute answers a script call with where to go instead of a redirect).
@@ -42,6 +68,20 @@ var resgrid;
             }
             if (stepUpUrl && stepUpUrl.origin === window.location.origin) {
                 window.location.assign(stepUpUrl.href);
+                return;
+            }
+
+            // Two-factor setup is required before anything else (Require2FAEnrollmentMiddleware). It sends no step-up header,
+            // because the pages it lets through (setup, reauthentication, sign-in, the shared-workstation lock) get this
+            // answer for their own calls too and must stay put: Reauthenticate sent back to setup would loop. Only a page
+            // the middleware would have redirected (one left open when enforcement started) goes there.
+            var enrollment = enrollmentRedirect(jqxhr);
+            if (enrollment) {
+                var page = window.location.pathname.toLowerCase();
+                var allowed = enrollment.allowedPaths.some(function (p) { return page.indexOf(p.toLowerCase()) === 0; });
+                if (!allowed && enrollment.url.origin === window.location.origin) {
+                    window.location.assign(enrollment.url.href);
+                }
                 return;
             }
 

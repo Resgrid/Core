@@ -737,6 +737,18 @@
   <data name="EtaShortlistSizeLabel" xml:space="preserve">
     <value>Dimensione della rosa per ETA</value>
   </data>
+  <data name="ClosestUnitRankingLabel" xml:space="preserve">
+    <value>Classifica le unità più vicine per</value>
+  </data>
+  <data name="ClosestUnitRankingFastest" xml:space="preserve">
+    <value>Risposta più rapida (tempo di uscita + tempo di viaggio)</value>
+  </data>
+  <data name="ClosestUnitRankingDistance" xml:space="preserve">
+    <value>Distanza più breve</value>
+  </data>
+  <data name="ClosestUnitRankingHelp" xml:space="preserve">
+    <value>Si applica ai suggerimenti dell'unità più vicina e all'elenco delle unità più vicine. «Risposta più rapida» somma il tempo di uscita al tempo di viaggio, usando i tempi di guida quando l'ordinamento per tempo di guida stimato è attivo. «Distanza più breve» sceglie l'unità più vicina all'intervento in linea d'aria, indipendentemente dal tempo di uscita o di guida.</value>
+  </data>
   <data name="StationCoverageHeader" xml:space="preserve">
     <value>Minimi di copertura delle stazioni</value>
   </data>

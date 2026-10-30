@@ -1,5 +1,6 @@
 @using Resgrid.Model.Helpers
 @using Resgrid.Model.Reporting
+@using Resgrid.Web.Areas.User.Models.Reports.Calls
 @using Resgrid.Web
 @using Resgrid.Web.Helpers
 @using Microsoft.Extensions.Localization
@@ -19,6 +20,29 @@
 			case CallUnitTimesSources.DispatchOnly: return localizer["CallUnitTimesSourceDispatchOnly"];
 			default: return localizer["CallUnitTimesSourceExplicit"];
 		}
+	}
+
+	string StatusSourceText(CallUnitTimesStatusSources source)
+	{
+		switch (source)
+		{
+			case CallUnitTimesStatusSources.AutoLinked: return localizer["CallUnitTimesSourceAuto"];
+			case CallUnitTimesStatusSources.Inferred: return localizer["CallUnitTimesSourceInferred"];
+			case CallUnitTimesStatusSources.FollowOn: return localizer["CallUnitTimesSourceFollowOn"];
+			default: return localizer["CallUnitTimesSourceExplicit"];
+		}
+	}
+
+	// h:mm:ss, or m:ss under an hour: the same in every language.
+	string Duration(double? seconds)
+	{
+		if (!seconds.HasValue || seconds.Value < 0)
+			return "";
+
+		var span = TimeSpan.FromSeconds(Math.Round(seconds.Value));
+		return span.TotalHours >= 1
+			? string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0}:{1:00}:{2:00}", (int)span.TotalHours, span.Minutes, span.Seconds)
+			: string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0}:{1:00}", span.Minutes, span.Seconds);
 	}
 }
 
@@ -49,6 +73,33 @@
 			margin-top: 18px;
 		}
 
+		.unit-history td {
+			border-top: none !important;
+			padding-top: 0 !important;
+		}
+
+		.unit-history table {
+			margin: 0 0 6px 0;
+			width: auto;
+		}
+
+		.unit-history .table th, .unit-history .table td {
+			padding: 2px 12px 2px 0 !important;
+			font-size: 12px;
+			border-top: none !important;
+		}
+
+		.status-label {
+			display: inline-block;
+			padding: 1px 6px;
+			border-radius: 3px;
+			border: 1px solid rgba(0, 0, 0, 0.15);
+		}
+
+		.follow-on {
+			color: #6b7280;
+		}
+
 		@@media print {
 			.no-print {
 				display: none !important;
@@ -71,6 +122,9 @@
 					<a class="btn btn-default btn-xs" asp-controller="Reports" asp-action="CallUnitTimesReportCsv" asp-route-area="User"
 					   asp-route-start="@(Model.CallId.HasValue ? null : Model.Start.ToString("s"))" asp-route-end="@(Model.CallId.HasValue ? null : Model.End.ToString("s"))"
 					   asp-route-callId="@Model.CallId">@localizer["CallUnitTimesDownloadCsv"]</a>
+					<a class="btn btn-default btn-xs" asp-controller="Reports" asp-action="CallUnitTimesHistoryCsv" asp-route-area="User"
+					   asp-route-start="@(Model.CallId.HasValue ? null : Model.Start.ToString("s"))" asp-route-end="@(Model.CallId.HasValue ? null : Model.End.ToString("s"))"
+					   asp-route-callId="@Model.CallId">@localizer["CallUnitTimesDownloadHistoryCsv"]</a>
 				</div>
 			</div>
 		</div>
@@ -102,7 +156,7 @@
 					}
 					else
 					{
-						<table class="table table-condensed table-striped">
+						<table class="table table-condensed">
 							<thead>
 								<tr>
 									<th>@localizer["CallUnitTimesUnitHeader"]</th>
@@ -111,6 +165,8 @@
 									<th>@localizer["CallUnitTimesOnSceneHeader"]</th>
 									<th>@localizer["CallUnitTimesStagingHeader"]</th>
 									<th>@localizer["CallUnitTimesClearedHeader"]</th>
+									<th>@localizer["CallUnitTimesInServiceHeader"]</th>
+									<th>@localizer["CallUnitTimesCommittedHeader"]</th>
 									<th>@localizer["CallUnitTimesSourceHeader"]</th>
 								</tr>
 							</thead>
@@ -130,8 +186,48 @@
 										<td>@Time(unit.Times.OnSceneOn)</td>
 										<td>@Time(unit.Times.StagingOn)</td>
 										<td>@Time(unit.Times.ClearedOn)</td>
+										<td>@Time(unit.Times.InServiceOn)</td>
+										<td>@Duration(unit.Times.CommittedSeconds)</td>
 										<td>@SourceText(unit.Times.Source)</td>
 									</tr>
+									@if (unit.History.Any())
+									{
+										<tr class="unit-history">
+											<td></td>
+											<td colspan="8">
+												<table class="table table-condensed">
+													<thead>
+														<tr>
+															<th>@localizer["CallUnitTimesStatusHeader"]</th>
+															<th>@localizer["CallUnitTimesTimeHeader"]</th>
+															<th>@localizer["CallUnitTimesDurationHeader"]</th>
+															<th>@localizer["CallUnitTimesSourceHeader"]</th>
+														</tr>
+													</thead>
+													<tbody>
+														@foreach (var status in unit.History)
+														{
+															var style = !string.IsNullOrWhiteSpace(status.Color)
+																? "background-color:" + status.Color + ";" + (!string.IsNullOrWhiteSpace(status.TextColor) ? "color:" + status.TextColor + ";" : "")
+																: null;
+															<tr class="@(status.Source == CallUnitTimesStatusSources.FollowOn ? "follow-on" : null)">
+																<td><span class="status-label" style="@style">@status.Text</span></td>
+																<td>@Time(status.Entry.Timestamp)</td>
+																<td>@Duration(status.Entry.DurationSeconds)</td>
+																<td>
+																	@StatusSourceText(status.Source)
+																	@if (status.Entry.SetByAutomation)
+																	{
+																		<small class="text-muted">(@localizer["CallUnitTimesSetByResgrid"])</small>
+																	}
+																</td>
+															</tr>
+														}
+													</tbody>
+												</table>
+											</td>
+										</tr>
+									}
 								}
 							</tbody>
 						</table>
@@ -145,6 +241,15 @@
 			<div class="row">
 				<div class="col-md-10 col-md-offset-1">
 					<p class="small text-muted">@localizer["CallUnitTimesLegend"]</p>
+				</div>
+			</div>
+		}
+
+		@if (Model.AnyHistory)
+		{
+			<div class="row">
+				<div class="col-md-10 col-md-offset-1">
+					<p class="small text-muted">@localizer["CallUnitTimesHistoryLegend"]</p>
 				</div>
 			</div>
 		}

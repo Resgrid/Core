@@ -356,6 +356,36 @@
   <data name="CallUnitTimesLegend" xml:space="preserve">
     <value>Automatiskt kopplad: en status skickad utan larm som Resgrid kopplade utifrån enhetens föregående status eller dess utlarmning. Härledd: en status som enheten satte utan destination medan den var larmad till larmet. Endast larm: enheten larmades men rapporterade ingen status på larmet.</value>
   </data>
+  <data name="CallUnitTimesInServiceHeader" xml:space="preserve">
+    <value>Uppdraget avslutat</value>
+  </data>
+  <data name="CallUnitTimesCommittedHeader" xml:space="preserve">
+    <value>Upptagen</value>
+  </data>
+  <data name="CallUnitTimesHistoryHeader" xml:space="preserve">
+    <value>Statushistorik</value>
+  </data>
+  <data name="CallUnitTimesStatusHeader" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="CallUnitTimesTimeHeader" xml:space="preserve">
+    <value>Tid</value>
+  </data>
+  <data name="CallUnitTimesDurationHeader" xml:space="preserve">
+    <value>Varaktighet</value>
+  </data>
+  <data name="CallUnitTimesSourceFollowOn" xml:space="preserve">
+    <value>Enhetshistorik</value>
+  </data>
+  <data name="CallUnitTimesSetByResgrid" xml:space="preserve">
+    <value>satt av Resgrid</value>
+  </data>
+  <data name="CallUnitTimesHistoryLegend" xml:space="preserve">
+    <value>Statushistorik: varje status som enheten satte från utlarmning tills den var i tjänst igen eller ur tjänst, inklusive statusar utanför larmet (sjukhus, station) och efter att larmet avslutats. ”Enhetshistorik” markerar en status som inte finns i larmets register; historiken slutar när enheten larmas till ett annat larm, eller 12 timmar efter larmet. En frisläppning som Resgrid satte när larmet avslutades avslutar den bara om besättningens nästa status bekräftar det.</value>
+  </data>
+  <data name="CallUnitTimesDownloadHistoryCsv" xml:space="preserve">
+    <value>Ladda ned statushistorik (CSV)</value>
+  </data>
 
   <!-- ==================== Call Summary: group filter, pies, period statistics ==================== -->
   <data name="AllGroups" xml:space="preserve">

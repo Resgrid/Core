@@ -6735,6 +6735,12 @@
   <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.MobileTurnoutSeconds">
     <value>الثواني التي تحتاجها وحدة موجودة خارج المحطة ومتاحة قبل أن تتحرك؛ ينطبق على الوحدات المرتبة حسب GPS. يُضاف إلى زمن التنقل عند ترتيب أقرب الوحدات؛ الصفر يعني لا شيء.</value>
   </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.ClosestUnitRanking">
+    <value>إعداد توصيات الإرسال / ترتيب أقرب الوحدات</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.ClosestUnitRanking">
+    <value>طريقة ترتيب المرشحين في توصيات أقرب وحدة وقائمة أقرب الوحدات: أسرع استجابة (زمن الانطلاق مضافًا إلى زمن الطريق، مع أزمنة القيادة المحسوبة عند تفعيلها؛ الافتراضي) أو أقصر مسافة في خط مستقيم.</value>
+  </data>
   <data xml:space="preserve" name="Setting.StatusHoldToConfirm">
     <value>الضغط المطوّل لتعيين الحالة</value>
   </data>

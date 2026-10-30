@@ -356,6 +356,36 @@
   <data name="CallUnitTimesLegend" xml:space="preserve">
     <value>مرتبط تلقائيًا: حالة أُرسلت دون بلاغ وربطها Resgrid استنادًا إلى الحالة السابقة للوحدة أو إرسالها. مستنتج: حالة حدّدتها الوحدة دون وجهة أثناء إرسالها إلى البلاغ. الإرسال فقط: أُرسلت الوحدة لكنها لم تُبلغ عن أي حالة في البلاغ.</value>
   </data>
+  <data name="CallUnitTimesInServiceHeader" xml:space="preserve">
+    <value>نهاية الالتزام</value>
+  </data>
+  <data name="CallUnitTimesCommittedHeader" xml:space="preserve">
+    <value>مدة الالتزام</value>
+  </data>
+  <data name="CallUnitTimesHistoryHeader" xml:space="preserve">
+    <value>سجل الحالات</value>
+  </data>
+  <data name="CallUnitTimesStatusHeader" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="CallUnitTimesTimeHeader" xml:space="preserve">
+    <value>الوقت</value>
+  </data>
+  <data name="CallUnitTimesDurationHeader" xml:space="preserve">
+    <value>المدة</value>
+  </data>
+  <data name="CallUnitTimesSourceFollowOn" xml:space="preserve">
+    <value>سجل الوحدة</value>
+  </data>
+  <data name="CallUnitTimesSetByResgrid" xml:space="preserve">
+    <value>عيّنها Resgrid</value>
+  </data>
+  <data name="CallUnitTimesHistoryLegend" xml:space="preserve">
+    <value>سجل الحالات: كل حالة حدّدتها الوحدة منذ إرسالها حتى عودتها إلى الخدمة أو خروجها من الخدمة، بما في ذلك الحالات خارج البلاغ (المستشفى، المحطة) وبعد إغلاق البلاغ. يشير «سجل الوحدة» إلى حالة غير موجودة في سجل البلاغ؛ وينتهي السجل عند إرسال الوحدة إلى بلاغ آخر، أو بعد 12 ساعة من البلاغ. ولا يُنهيه الإفراج الذي طبّقه Resgrid عند إغلاق البلاغ إلا إذا أكدته الحالة التالية للطاقم.</value>
+  </data>
+  <data name="CallUnitTimesDownloadHistoryCsv" xml:space="preserve">
+    <value>تنزيل سجل الحالات (CSV)</value>
+  </data>
 
   <!-- ==================== Call Summary: group filter, pies, period statistics ==================== -->
   <data name="AllGroups" xml:space="preserve">

@@ -629,6 +629,86 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task closest_unit_ranked_by_distance_picks_the_nearest_unit_whatever_its_turnout()
+		{
+			BuildCard(engineCount: 1);
+			_departmentSettingsService.Setup(x => x.GetDispatchRecommendationModeAsync(DepartmentId, It.IsAny<bool>()))
+				.ReturnsAsync(DispatchRecommendationModes.ClosestUnit);
+			_config.ClosestUnitRanking = ClosestUnitRankingModes.ShortestDistance;
+			_config.InQuartersTurnoutSeconds = 120;
+			_config.MobileTurnoutSeconds = 30;
+
+			// The same two engines as closest_unit_ranks_on_turnout_plus_travel, where the response ranking sends Engine 2.
+			_unitsService.Setup(x => x.GetLatestUnitLocationsAsync(DepartmentId))
+				.ReturnsAsync(new List<UnitsLocation>
+				{
+					new UnitsLocation { UnitId = 2, Latitude = 39.7545m, Longitude = -104.95m, Timestamp = DateTime.UtcNow }
+				});
+
+			var result = await _service.GetRecommendationAsync(BuildRequest());
+
+			var engine = result.Units.Should().ContainSingle().Subject;
+			engine.UnitId.Should().Be(1);
+			engine.SelectionReason.Should().Be(RecommendationSelectionReasons.ClosestByDistance);
+			engine.TurnoutSeconds.Should().Be(120, "the turnout is still reported, it just doesn't rank");
+		}
+
+		[Test]
+		public async Task closest_unit_ranked_by_distance_shows_routed_etas_without_reranking_on_them()
+		{
+			BuildCard(engineCount: 1);
+			_departmentSettingsService.Setup(x => x.GetDispatchRecommendationModeAsync(DepartmentId, It.IsAny<bool>()))
+				.ReturnsAsync(DispatchRecommendationModes.ClosestUnit);
+			_config.ClosestUnitRanking = ClosestUnitRankingModes.ShortestDistance;
+			_config.UseRoutedEta = true;
+
+			_unitsService.Setup(x => x.GetLatestUnitLocationsAsync(DepartmentId))
+				.ReturnsAsync(new List<UnitsLocation>
+				{
+					new UnitsLocation { UnitId = 2, Latitude = 39.76m, Longitude = -104.95m, Timestamp = DateTime.UtcNow }
+				});
+			// Engine 2 drives faster, which would move it first when ranking by response.
+			_geoService.Setup(x => x.GetEtaInSecondsAsync("39.75,-104.95", It.IsAny<string>())).ReturnsAsync(600);
+			_geoService.Setup(x => x.GetEtaInSecondsAsync("39.76,-104.95", It.IsAny<string>())).ReturnsAsync(60);
+
+			var result = await _service.GetRecommendationAsync(BuildRequest());
+
+			var engine = result.Units.Should().ContainSingle().Subject;
+			engine.UnitId.Should().Be(1);
+			engine.EtaSeconds.Should().Be(600, "the drive time is still shown");
+			engine.ResponseSeconds.Should().Be(600);
+			engine.SelectionReason.Should().Be(RecommendationSelectionReasons.ClosestByDistance);
+		}
+
+		[Test]
+		public async Task closest_role_ranked_by_distance_shows_routed_etas_without_reranking_on_them()
+		{
+			BuildCard(roleCount: 1);
+			_departmentSettingsService.Setup(x => x.GetDispatchRecommendationModeAsync(DepartmentId, It.IsAny<bool>()))
+				.ReturnsAsync(DispatchRecommendationModes.ClosestUnit);
+			_config.ClosestUnitRanking = ClosestUnitRankingModes.ShortestDistance;
+			_config.UseRoutedEta = true;
+
+			var now = DateTime.UtcNow;
+			_personnelLocationResolver.Setup(x => x.GetLatestLocationsAsync(DepartmentId, It.IsAny<int>(), It.IsAny<DateTime?>()))
+				.ReturnsAsync(new Dictionary<string, ResolvedPersonnelLocation>
+				{
+					{ "user-1", new ResolvedPersonnelLocation { UserId = "user-1", Latitude = 39.751, Longitude = -104.95, Timestamp = now } },
+					{ "user-2", new ResolvedPersonnelLocation { UserId = "user-2", Latitude = 39.76, Longitude = -104.95, Timestamp = now } }
+				});
+			// user-2 drives faster, which would move them first when ranking by response.
+			_geoService.Setup(x => x.GetEtaInSecondsAsync("39.751,-104.95", It.IsAny<string>())).ReturnsAsync(600);
+			_geoService.Setup(x => x.GetEtaInSecondsAsync("39.76,-104.95", It.IsAny<string>())).ReturnsAsync(60);
+
+			var result = await _service.GetRecommendationAsync(BuildRequest());
+
+			var person = result.Personnel.Should().ContainSingle().Subject;
+			person.UserId.Should().Be("user-1");
+			person.EtaSeconds.Should().Be(600);
+			person.SelectionReason.Should().Be(RecommendationSelectionReasons.ClosestByDistance);
+		}
+
+		[Test]
 		public async Task closest_unit_ranks_a_unit_whose_routed_eta_failed_on_its_estimate()
 		{
 			BuildCard(engineCount: 1);

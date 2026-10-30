@@ -1166,9 +1166,10 @@ namespace Resgrid.Services
 				located = fresh;
 			}
 
-			// Ranked on response time rather than distance: the turnout for where the unit is plus estimated travel.
-			// With no turnout configured this orders exactly as distance did; with one, a unit already out can beat a
-			// nearer unit that still has to leave its station.
+			// Ranked on response time by default: the turnout for where the unit is plus estimated travel. With no turnout
+			// configured this orders exactly as distance does; with one, a unit already out can beat a nearer unit that
+			// still has to leave its station. A department that ranks by distance gets the nearest unit whatever its turnout.
+			var byDistance = context.Config.RanksByDistance;
 			var ranked = located
 				.Select(c =>
 				{
@@ -1183,12 +1184,14 @@ namespace Resgrid.Services
 				})
 				.Where(x => context.Config.MaxRadiusMeters <= 0 || x.Distance <= context.Config.MaxRadiusMeters)
 				.OrderBy(x => IsUnitInRestPeriod(context, x.Candidate.Unit.UnitId) ? 1 : 0)
-				.ThenBy(x => x.EstimatedResponse)
-				.ThenBy(x => x.Distance)
+				.ThenBy(x => byDistance ? x.Distance : x.EstimatedResponse)
+				.ThenBy(x => byDistance ? x.EstimatedResponse : x.Distance)
 				.ToList();
 
 			var outsideRadius = located.Count - ranked.Count;
 
+			// Drive times re-rank the shortlist on response time. Ranking by distance still looks them up so they are shown,
+			// but keeps the nearest first.
 			var etaByUnitId = new Dictionary<int, double>();
 			if (context.Config.UseRoutedEta && ranked.Any())
 			{
@@ -1207,7 +1210,7 @@ namespace Resgrid.Services
 						etaByUnitId[entry.Candidate.Unit.UnitId] = eta;
 				}
 
-				if (etaByUnitId.Any())
+				if (etaByUnitId.Any() && !byDistance)
 				{
 					// A unit whose lookup failed keeps its estimate (the ResponseSeconds it reports) rather than
 					// dropping to the end of the shortlist, where it would lose to slower units with a route.
@@ -1241,7 +1244,7 @@ namespace Resgrid.Services
 					StationGroupName = entry.Candidate.Unit.StationGroup?.Name,
 					SelectionReason = inRest
 						? RecommendationSelectionReasons.RestPeriodOverridden
-						: (hasEta ? RecommendationSelectionReasons.ClosestByEta : RecommendationSelectionReasons.ClosestByDistance),
+						: (hasEta && !byDistance ? RecommendationSelectionReasons.ClosestByEta : RecommendationSelectionReasons.ClosestByDistance),
 					DistanceMeters = entry.Distance,
 					EtaSeconds = hasEta ? etaSeconds : (double?)null,
 					PositionSource = entry.Candidate.PositionSource,
@@ -1305,6 +1308,8 @@ namespace Resgrid.Services
 
 			var outsideRadius = located.Count - ranked.Count;
 
+			// As for units: ranking by distance looks drive times up to show them but doesn't re-rank on them.
+			var byDistance = context.Config.RanksByDistance;
 			var etaByUserId = new Dictionary<string, double>(StringComparer.OrdinalIgnoreCase);
 			if (context.Config.UseRoutedEta && ranked.Any())
 			{
@@ -1323,7 +1328,7 @@ namespace Resgrid.Services
 						etaByUserId[entry.Candidate.UserId] = eta;
 				}
 
-				if (etaByUserId.Any())
+				if (etaByUserId.Any() && !byDistance)
 				{
 					// Same as units: a failed lookup ranks on the straight-line estimate, in seconds like the routed ETAs.
 					var reranked = shortlist
@@ -1354,7 +1359,7 @@ namespace Resgrid.Services
 					StationGroupName = entry.Candidate.StationGroupName,
 					SelectionReason = inRest
 						? RecommendationSelectionReasons.RestPeriodOverridden
-						: (hasEta ? RecommendationSelectionReasons.ClosestByEta : RecommendationSelectionReasons.ClosestByDistance),
+						: (hasEta && !byDistance ? RecommendationSelectionReasons.ClosestByEta : RecommendationSelectionReasons.ClosestByDistance),
 					DistanceMeters = entry.Distance,
 					EtaSeconds = hasEta ? etaSeconds : (double?)null,
 					LocationTimestamp = entry.Candidate.LocationTimestamp,

@@ -6735,6 +6735,12 @@
   <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.MobileTurnoutSeconds">
     <value>Secondes nécessaires à une unité déjà sortie et disponible avant de se mettre en route ; s'applique aux unités classées d'après le GPS. Ajouté au temps de trajet pour classer les unités les plus proches ; zéro signifie aucun.</value>
   </data>
+  <data xml:space="preserve" name="Field.DispatchRecommendationConfig.ClosestUnitRanking">
+    <value>Configuration des recommandations de régulation / Classement des unités les plus proches</value>
+  </data>
+  <data xml:space="preserve" name="FieldHelp.DispatchRecommendationConfig.ClosestUnitRanking">
+    <value>Façon dont les recommandations d'unité la plus proche et la liste des unités les plus proches ordonnent les candidats : arrivée la plus rapide (délai de départ plus trajet, avec les temps de conduite calculés lorsqu'ils sont activés ; par défaut) ou distance à vol d'oiseau la plus courte.</value>
+  </data>
   <data xml:space="preserve" name="Setting.StatusHoldToConfirm">
     <value>Maintenir appuyé pour définir le statut</value>
   </data>

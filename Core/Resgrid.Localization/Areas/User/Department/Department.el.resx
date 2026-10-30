@@ -828,6 +828,18 @@
   <data name="EtaShortlistSizeLabel" xml:space="preserve">
     <value>Μέγεθος βραχείας λίστας εκτιμώμενου χρόνου άφιξης</value>
   </data>
+  <data name="ClosestUnitRankingLabel" xml:space="preserve">
+    <value>Κατάταξη των πλησιέστερων μονάδων κατά</value>
+  </data>
+  <data name="ClosestUnitRankingFastest" xml:space="preserve">
+    <value>Ταχύτερη άφιξη (χρόνος εξόδου + χρόνος διαδρομής)</value>
+  </data>
+  <data name="ClosestUnitRankingDistance" xml:space="preserve">
+    <value>Μικρότερη απόσταση</value>
+  </data>
+  <data name="ClosestUnitRankingHelp" xml:space="preserve">
+    <value>Ισχύει για τις προτάσεις πλησιέστερης μονάδας και τη λίστα πλησιέστερων μονάδων. Η «Ταχύτερη άφιξη» προσθέτει τον χρόνο εξόδου στον χρόνο διαδρομής και χρησιμοποιεί χρόνους οδήγησης όταν είναι ενεργή η ταξινόμηση κατά εκτιμώμενο χρόνο οδήγησης. Η «Μικρότερη απόσταση» επιλέγει τη μονάδα που βρίσκεται πιο κοντά στο συμβάν σε ευθεία γραμμή, ανεξάρτητα από τον χρόνο εξόδου ή οδήγησης.</value>
+  </data>
   <data name="StationCoverageHeader" xml:space="preserve">
     <value>Ελάχιστα Όρια Κάλυψης Σταθμών</value>
   </data>

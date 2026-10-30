@@ -737,6 +737,18 @@
   <data name="EtaShortlistSizeLabel" xml:space="preserve">
     <value>Rozmiar krótkiej listy ETA</value>
   </data>
+  <data name="ClosestUnitRankingLabel" xml:space="preserve">
+    <value>Klasyfikuj najbliższe jednostki według</value>
+  </data>
+  <data name="ClosestUnitRankingFastest" xml:space="preserve">
+    <value>Najszybsze przybycie (czas wyjazdu + czas dojazdu)</value>
+  </data>
+  <data name="ClosestUnitRankingDistance" xml:space="preserve">
+    <value>Najkrótsza odległość</value>
+  </data>
+  <data name="ClosestUnitRankingHelp" xml:space="preserve">
+    <value>Dotyczy rekomendacji najbliższej jednostki i listy najbliższych jednostek. „Najszybsze przybycie” dodaje czas wyjazdu do czasu dojazdu i korzysta z czasów przejazdu, gdy włączone jest sortowanie według szacowanego czasu dojazdu. „Najkrótsza odległość” wybiera jednostkę najbliższą miejsca zdarzenia w linii prostej, niezależnie od czasu wyjazdu i dojazdu.</value>
+  </data>
   <data name="StationCoverageHeader" xml:space="preserve">
     <value>Minimalne pokrycie stacji</value>
   </data>

@@ -785,6 +785,36 @@
   <data name="CallUnitTimesLegend" xml:space="preserve">
     <value>Auto-linked: a status sent without a call that Resgrid linked from the unit's previous status or its dispatch. Inferred: a status the unit set with no destination while dispatched to the call. Dispatch only: the unit was dispatched but reported no status on the call.</value>
   </data>
+  <data name="CallUnitTimesInServiceHeader" xml:space="preserve">
+    <value>End of Commitment</value>
+  </data>
+  <data name="CallUnitTimesCommittedHeader" xml:space="preserve">
+    <value>Committed</value>
+  </data>
+  <data name="CallUnitTimesHistoryHeader" xml:space="preserve">
+    <value>Status history</value>
+  </data>
+  <data name="CallUnitTimesStatusHeader" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="CallUnitTimesTimeHeader" xml:space="preserve">
+    <value>Time</value>
+  </data>
+  <data name="CallUnitTimesDurationHeader" xml:space="preserve">
+    <value>Duration</value>
+  </data>
+  <data name="CallUnitTimesSourceFollowOn" xml:space="preserve">
+    <value>Unit history</value>
+  </data>
+  <data name="CallUnitTimesSetByResgrid" xml:space="preserve">
+    <value>set by Resgrid</value>
+  </data>
+  <data name="CallUnitTimesHistoryLegend" xml:space="preserve">
+    <value>Status history: every status the unit set from dispatch until it was back in service or out of service, including statuses away from the call (hospital, station) and after the call closed. Unit history marks a status that is not on the call's record; history stops when the unit is dispatched to another call, or 12 hours after the call. A release Resgrid applied when the call closed only ends it if the crew's next status agrees.</value>
+  </data>
+  <data name="CallUnitTimesDownloadHistoryCsv" xml:space="preserve">
+    <value>Download status history CSV</value>
+  </data>
 
   <!-- ==================== Call Summary: group filter, pies, period statistics ==================== -->
   <data name="AllGroups" xml:space="preserve">

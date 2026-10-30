@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Resgrid.Framework;
 using Resgrid.Model;
+using Resgrid.Model.Reporting;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 
@@ -351,26 +352,84 @@ namespace Resgrid.Services
 
 		public async Task<Dictionary<int, List<UnitState>>> GetUnitStatesForCallsAsync(int departmentId, IReadOnlyCollection<Call> calls)
 		{
+			return (await ReadUnitStatesForCallsAsync(departmentId, calls, TimeSpan.Zero)).StatesByCall;
+		}
+
+		public async Task<Dictionary<int, List<UnitState>>> GetUnitTimelinesForCallsAsync(int departmentId, IReadOnlyCollection<Call> calls)
+		{
+			// A timeline follows a unit for MaxFollowOn past its last status on the record, which can be the last moment of
+			// the record's read window, so the histories (and the next dispatches that stop them) are read that much further.
+			var read = await ReadUnitStatesForCallsAsync(departmentId, calls, CallUnitTimeline.MaxFollowOn);
 			var result = new Dictionary<int, List<UnitState>>();
+			var now = DateTime.UtcNow;
+
+			foreach (var call in read.Calls)
+			{
+				var callStates = read.StatesByCall[call.CallId];
+				var dispatchStarts = EarliestPerUnit(read.DispatchesByCall[call.CallId])
+					.ToDictionary(x => x.UnitId, x => DispatchStart(x.DispatchedOn, call));
+
+				var timeline = new List<UnitState>();
+				foreach (var unitId in dispatchStarts.Keys.Concat(callStates.Select(x => x.UnitId)).Distinct())
+				{
+					var unitCallStates = callStates.Where(x => x.UnitId == unitId).ToList();
+					DateTime? dispatchedOn = dispatchStarts.TryGetValue(unitId, out var dispatchStart) ? dispatchStart : (DateTime?)null;
+					var start = dispatchedOn ?? unitCallStates.Min(x => x.Timestamp);
+
+					read.StatesByUnit.TryGetValue(unitId, out var unitStates);
+					timeline.AddRange(CallUnitTimeline.Build(call.CallId, dispatchedOn, CallEnd(call), unitCallStates, unitStates,
+						NextDispatch(read.WindowsByUnit, unitId, call.CallId, start, now),
+						s => UnitCallInvolvement.HasFinishedCall(s.State, read.BaseTypes)));
+				}
+
+				result[call.CallId] = timeline;
+			}
+
+			return result;
+		}
+
+		private sealed class CallUnitStatesRead
+		{
+			public List<Call> Calls { get; set; } = new List<Call>();
+			public Dictionary<int, List<UnitState>> StatesByCall { get; set; } = new Dictionary<int, List<UnitState>>();
+			public Dictionary<int, List<CallDispatchUnit>> DispatchesByCall { get; set; } = new Dictionary<int, List<CallDispatchUnit>>();
+			public Dictionary<int, List<UnitState>> StatesByUnit { get; set; } = new Dictionary<int, List<UnitState>>();
+			public Dictionary<int, List<CallDispatchWindow>> WindowsByUnit { get; set; } = new Dictionary<int, List<CallDispatchWindow>>();
+			public Dictionary<int, int> BaseTypes { get; set; } = new Dictionary<int, int>();
+		}
+
+		/// <summary>The calls' unit states (linked and inferred), with the per-unit histories and dispatches they were read from.</summary>
+		/// <param name="historyAfter">How much further than the calls' records the unit histories and dispatch windows are read.</param>
+		private async Task<CallUnitStatesRead> ReadUnitStatesForCallsAsync(int departmentId, IReadOnlyCollection<Call> calls, TimeSpan historyAfter)
+		{
+			var read = new CallUnitStatesRead();
+			var result = read.StatesByCall;
 			var departmentCalls = calls?.Where(x => x != null && x.DepartmentId == departmentId).GroupBy(x => x.CallId).Select(g => g.First()).ToList() ?? new List<Call>();
 			if (departmentCalls.Count == 0)
-				return result;
+				return read;
+
+			read.Calls = departmentCalls;
 
 			foreach (var call in departmentCalls)
 				result[call.CallId] = new List<UnitState>();
 
 			var dispatchesByCall = await GetUnitDispatchesForCallsAsync(departmentId, departmentCalls);
+			read.DispatchesByCall = dispatchesByCall;
 			// Past calls keep the units that worked them, deleted or not.
 			var units = (await _unitsRepository.GetAllUnitsByDepartmentIdIncludingDeletedAsync(departmentId))?.ToList() ?? new List<Unit>();
 
-			// States can trail a call (a status set against it after it closed), hence the extra day on the read window.
+			// States can trail a call (a status set against it after it closed), hence the extra day on the record's window.
+			// Only that window feeds the records, so reading further for the histories changes none of them.
 			var windowStart = departmentCalls.Min(x => x.LoggedOn);
-			var windowEnd = departmentCalls.Max(CallEnd).AddDays(1);
+			var recordEnd = departmentCalls.Max(CallEnd).AddDays(1);
+			var windowEnd = recordEnd.Add(historyAfter);
 
 			var (statusLookup, baseTypes) = await GetStatusRulesAsync(departmentId, CustomStateTypes.Unit);
 			var windowsByUnit = await GetUnitDispatchWindowsAsync(departmentId, windowStart, windowEnd);
+			read.BaseTypes = baseTypes;
+			read.WindowsByUnit = windowsByUnit;
 
-			var statesByUnit = new Dictionary<int, List<UnitState>>();
+			var statesByUnit = read.StatesByUnit;
 			foreach (var unit in units)
 			{
 				var statesFrom = Earliest(windowStart, EarliestDispatch(windowsByUnit, new[] { unit.UnitId }));
@@ -383,7 +442,7 @@ namespace Resgrid.Services
 				foreach (var state in states)
 				{
 					var linkedCallId = CallStatusLinkage.LinkedCallId(state.DestinationId, state.DestinationType);
-					if (linkedCallId.HasValue && result.TryGetValue(linkedCallId.Value, out var callStates) && state.BelongsToCall(statusLookup))
+					if (state.Timestamp <= recordEnd && linkedCallId.HasValue && result.TryGetValue(linkedCallId.Value, out var callStates) && state.BelongsToCall(statusLookup))
 						callStates.Add(state);
 				}
 			}
@@ -406,7 +465,7 @@ namespace Resgrid.Services
 				}
 			}
 
-			return result;
+			return read;
 		}
 		#endregion Read-time inference
 
@@ -559,6 +618,18 @@ namespace Resgrid.Services
 				.Where(x => x.Start >= from && x.Start <= end && x.End >= start).ToList();
 
 			return others.Count > 0 ? others : null;
+		}
+
+		/// <summary>When the unit was next dispatched to a call other than this one, after <paramref name="start"/>; null when it wasn't.</summary>
+		private static DateTime? NextDispatch(Dictionary<int, List<CallDispatchWindow>> windows, int unitId, int callId, DateTime start, DateTime now)
+		{
+			if (!windows.TryGetValue(unitId, out var unitWindows))
+				return null;
+
+			return CallStatusAttribution.DispatchSpans(unitWindows.Where(x => x.CallId != callId), now)
+				.Where(x => x.Start > start)
+				.Select(x => (DateTime?)x.Start)
+				.Min();
 		}
 
 		/// <summary>The earliest dispatch among the given units'/people's windows, or null when they have none.</summary>

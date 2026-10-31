@@ -476,7 +476,7 @@ namespace Resgrid.Services
 		}
 
 		/// <summary>
-		/// A static shift day's staffing: its fills when a supervisor set them, otherwise the active crews of its units.
+		/// A static shift day's staffing: its approved fills when a supervisor set them, otherwise the active crews of its units.
 		/// A person's group is the unit's station.
 		/// </summary>
 		public static ShiftDayStaffing FromWorkshiftDay(Workshift workshift, WorkshiftDay day, IEnumerable<WorkshiftEntity> entities, IEnumerable<WorkshiftFill> fills,
@@ -502,7 +502,7 @@ namespace Resgrid.Services
 			}
 
 			var dayFills = (fills ?? Enumerable.Empty<WorkshiftFill>())
-				.Where(x => x != null && x.WorkshiftDayId == day.WorkshiftDayId && !String.IsNullOrWhiteSpace(x.FilledById))
+				.Where(x => x != null && x.WorkshiftDayId == day.WorkshiftDayId && x.Approved && !String.IsNullOrWhiteSpace(x.FilledById))
 				.ToList();
 
 			var staffing = new ShiftDayStaffing

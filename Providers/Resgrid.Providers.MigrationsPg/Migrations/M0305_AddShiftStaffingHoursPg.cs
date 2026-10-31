@@ -29,6 +29,9 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 		{
 			Execute.Sql("DROP INDEX IF EXISTS \"IX_WorkshiftFills_WorkshiftDayId\";");
 			Execute.Sql("DROP INDEX IF EXISTS \"IX_ShiftStaffings_Department_ShiftDay\";");
+
+			// filledbyid stays citext: the model has always been a string, and narrowing back to integer would fail on every
+			// user id saved since. Intentionally irreversible.
 		}
 	}
 }

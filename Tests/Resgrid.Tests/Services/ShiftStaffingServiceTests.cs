@@ -198,6 +198,8 @@ namespace Resgrid.Tests.Services
 				},
 				Fills = new List<WorkshiftFill>
 				{
+					// Not approved, so d1 stays on its units' crews.
+					new WorkshiftFill { WorkshiftFillId = "f0", WorkshiftId = "ws", WorkshiftDayId = "d1", WorkshiftEntityId = "e4", FilledById = Late, Approved = false, AddedById = Colleague, AddedOn = start },
 					new WorkshiftFill { WorkshiftFillId = "f1", WorkshiftId = "ws", WorkshiftDayId = "d2", WorkshiftEntityId = "e3", FilledById = Supervisor, Approved = true, AddedById = Colleague, AddedOn = start }
 				}
 			};

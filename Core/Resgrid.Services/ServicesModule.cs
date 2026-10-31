@@ -187,7 +187,8 @@ namespace Resgrid.Services
 			builder.RegisterType<NullChatbotOutboundService>().As<IChatbotOutboundService>().InstancePerLifetimeScope().PreserveExistingDefaults();
 			builder.RegisterType<SmsService>().As<ISmsService>().InstancePerLifetimeScope();
 			builder.RegisterType<PushLogsService>().As<IPushLogsService>().InstancePerLifetimeScope();
-			builder.RegisterType<PushService>().As<IPushService>().SingleInstance();
+			// Per scope: its push-log, profile, settings and units services are per scope (the decorator below follows).
+			builder.RegisterType<PushService>().As<IPushService>().InstancePerLifetimeScope();
 			// ADP outbound net (plan 7.5): a push title or subtitle carrying an envelope would land
 			// on a lock screen and in the OS notification log.
 			builder.RegisterDecorator<ProtectedPushServiceDecorator, IPushService>();
@@ -387,12 +388,14 @@ namespace Resgrid.Services
 
 			//builder.RegisterType<InternalCacheService>().As<IInternalCacheService>().SingleInstance();
 			builder.RegisterType<CoreEventService>().As<ICoreEventService>().SingleInstance();
-			builder.RegisterType<WorkShiftsService>().As<IWorkShiftsService>().SingleInstance();
-			builder.RegisterType<ShiftStaffingService>().As<IShiftStaffingService>().SingleInstance();
-			builder.RegisterType<ContactsService>().As<IContactsService>().SingleInstance();
-			builder.RegisterType<IndoorMapService>().As<IIndoorMapService>().SingleInstance();
-			builder.RegisterType<CustomMapService>().As<ICustomMapService>().SingleInstance();
-			builder.RegisterType<RouteService>().As<IRouteService>().SingleInstance();
+			// Per scope, not SingleInstance: a singleton's repositories are resolved from the root scope, so every request
+			// would share one root IUnitOfWork and never join the caller's transaction.
+			builder.RegisterType<WorkShiftsService>().As<IWorkShiftsService>().InstancePerLifetimeScope();
+			builder.RegisterType<ShiftStaffingService>().As<IShiftStaffingService>().InstancePerLifetimeScope();
+			builder.RegisterType<ContactsService>().As<IContactsService>().InstancePerLifetimeScope();
+			builder.RegisterType<IndoorMapService>().As<IIndoorMapService>().InstancePerLifetimeScope();
+			builder.RegisterType<CustomMapService>().As<ICustomMapService>().InstancePerLifetimeScope();
+			builder.RegisterType<RouteService>().As<IRouteService>().InstancePerLifetimeScope();
 			builder.RegisterType<CheckInTimerService>().As<ICheckInTimerService>().InstancePerLifetimeScope();
 			builder.RegisterType<UnitStatusAlertsService>().As<IUnitStatusAlertsService>().InstancePerLifetimeScope();
 			builder.RegisterType<CallLocationHistoryService>().As<ICallLocationHistoryService>().InstancePerLifetimeScope();

@@ -2,6 +2,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Autofac;
+using Autofac.Core;
+using Autofac.Core.Activators.Reflection;
+using Autofac.Core.Lifetime;
 using NUnit.Framework;
 
 namespace Resgrid.Tests
@@ -62,6 +66,48 @@ namespace Resgrid.Tests
 
 			Assert.That(offenders, Is.Empty,
 				"Inject these through the constructor (Lazy<T> to break a cycle; ILifetimeScope with a child scope per operation in a singleton)");
+		}
+
+		/// <summary>
+		/// The same sharing through the constructor: Autofac resolves a SingleInstance component's dependencies from the root,
+		/// so a singleton that takes a repository or a per-scope service holds root-scoped instances (and the root unit of
+		/// work) for the life of the process, and never joins the caller's transaction.
+		/// </summary>
+		[Test]
+		public void Singletons_do_not_take_per_scope_dependencies()
+		{
+			var registry = Bootstrapper.GetKernel().ComponentRegistry;
+
+			var offenders = registry.Registrations
+				.Where(x => x.Lifetime is RootScopeLifetime && x.Sharing == InstanceSharing.Shared)
+				.Select(x => x.Activator)
+				.OfType<ReflectionActivator>()
+				.Select(x => x.LimitType)
+				.Distinct()
+				.SelectMany(type => type.GetConstructors()
+					.SelectMany(x => x.GetParameters())
+					.Select(x => ResolvedType(x.ParameterType))
+					.Where(x => x != typeof(ILifetimeScope) && x != typeof(IComponentContext))
+					.Where(x => registry.TryGetRegistration(new TypedService(x), out var registration) &&
+					            registration.Lifetime is CurrentScopeLifetime && registration.Sharing == InstanceSharing.Shared)
+					.Select(x => $"{type.FullName} takes {x.Name}"))
+				.Distinct()
+				.ToList();
+
+			Assert.That(offenders, Is.Empty,
+				"Register these InstancePerLifetimeScope, or inject ILifetimeScope and begin a child scope per operation");
+		}
+
+		/// <summary>Lazy&lt;T&gt;, Func&lt;T&gt; and IEnumerable&lt;T&gt; resolve T from the same (root) scope as the singleton.</summary>
+		private static System.Type ResolvedType(System.Type type)
+		{
+			if (!type.IsGenericType)
+				return type;
+
+			var definition = type.GetGenericTypeDefinition();
+			return definition == typeof(System.Lazy<>) || definition == typeof(System.Func<>) || definition == typeof(IEnumerable<>)
+				? type.GetGenericArguments()[0]
+				: type;
 		}
 
 		private static List<string> Offenders(string root, IEnumerable<string> directories, System.Func<string, bool> isOffending, ICollection<string> allowedFiles = null)

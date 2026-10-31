@@ -265,6 +265,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			model.People = model.People.OrderByDescending(x => x.TotalHours).ThenBy(x => x.Name).ToList();
 
+			// An approver's name follows the same personnel visibility as the people rows.
+			var hiddenApprovers = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+			foreach (var approverId in report.Occurrences
+				         .Where(x => x.Source == ShiftStaffingSources.Manual && !String.IsNullOrWhiteSpace(x.SetByUserId))
+				         .Select(x => x.SetByUserId)
+				         .Distinct(StringComparer.OrdinalIgnoreCase))
+			{
+				if (!await _authorizationService.CanUserViewPersonViaMatrixAsync(approverId, UserId, DepartmentId))
+					hiddenApprovers.Add(approverId);
+			}
+
 			model.Occurrences = report.Occurrences.Select(x => new OnShiftHoursOccurrenceRow
 			{
 				Day = x.Day,
@@ -276,7 +287,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				Hours = x.Hours,
 				People = x.UserIds().Count,
 				Source = x.Source,
-				SetBy = x.Source == ShiftStaffingSources.Manual ? NameFor(x.SetByUserId) : null,
+				SetBy = x.Source == ShiftStaffingSources.Manual && (x.SetByUserId == null || !hiddenApprovers.Contains(x.SetByUserId)) ? NameFor(x.SetByUserId) : null,
 				SetOn = x.SetOn.HasValue ? x.SetOn.Value.TimeConverter(model.Department) : (DateTime?)null,
 				Added = x.AddedUserIds().Count,
 				Removed = x.RemovedUserIds().Count,

@@ -107,13 +107,13 @@ namespace Resgrid.Tests.Web.User
 			return controller;
 		}
 
-		private static OnShiftHoursReport Report()
+		private static OnShiftHoursReport Report(string approver = Visible)
 		{
 			var day = new DateTime(2026, 10, 1);
 			var manual = new ShiftDayStaffing
 			{
 				ShiftType = StaffedShiftTypes.Signup, Source = ShiftStaffingSources.Manual, ShiftId = 5, Name = "A Shift", Day = day,
-				Start = day.AddHours(7), End = day.AddHours(19), SetByUserId = Visible, SetOn = day,
+				Start = day.AddHours(7), End = day.AddHours(19), SetByUserId = approver, SetOn = day,
 				Personnel = new List<ShiftDayStaffingPerson> { new ShiftDayStaffingPerson { UserId = Visible }, new ShiftDayStaffingPerson { UserId = Hidden } }
 			};
 			var automatic = new ShiftDayStaffing
@@ -156,6 +156,17 @@ namespace Resgrid.Tests.Web.User
 			model.Occurrences.Should().HaveCount(2);
 			model.Occurrences.First().People.Should().Be(2);
 			model.Occurrences.First().SetBy.Should().Be("Vis Ible");
+		}
+
+		[Test]
+		public async Task An_approver_the_caller_may_not_see_is_not_named()
+		{
+			var result = await Controller(Report(approver: Hidden)).OnShiftHoursReport(new DateTime(2026, 10, 1), new DateTime(2026, 10, 7, 23, 59, 59));
+
+			var model = (OnShiftHoursView)((ViewResult)result).Model;
+			var approved = model.Occurrences.Single(x => x.Source == ShiftStaffingSources.Manual);
+			approved.SetBy.Should().BeNull();
+			approved.SetOn.Should().NotBeNull();
 		}
 
 		[Test]

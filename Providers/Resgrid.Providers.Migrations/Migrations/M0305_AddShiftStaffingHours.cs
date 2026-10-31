@@ -29,6 +29,9 @@ namespace Resgrid.Providers.Migrations.Migrations
 
 			if (Schema.Table("ShiftStaffings").Index("IX_ShiftStaffings_Department_ShiftDay").Exists())
 				Delete.Index("IX_ShiftStaffings_Department_ShiftDay").OnTable("ShiftStaffings");
+
+			// FilledById stays nvarchar(128): the model has always been a string, and narrowing back to int would fail on every
+			// user id saved since. Intentionally irreversible.
 		}
 	}
 }

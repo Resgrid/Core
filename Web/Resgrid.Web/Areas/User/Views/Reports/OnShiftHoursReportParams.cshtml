@@ -1,0 +1,114 @@
+@using Resgrid.Web.Areas.User.Models.Reports.Shifts
+@using Microsoft.Extensions.Localization
+@model Resgrid.Web.Areas.User.Models.Reports.Shifts.OnShiftHoursReportParams
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Reports.Reports> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Reports.OnShiftHours> hoursLocalizer
+@{
+	ViewBag.Title = "Resgrid | " + hoursLocalizer["ReportName"];
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>@hoursLocalizer["ReportName"]</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["Home"]</a>
+			</li>
+			<li>
+				<a asp-controller="Reports" asp-action="Index" asp-route-area="User">@localizer["Reports"]</a>
+			</li>
+			<li class="active">
+				<strong>@hoursLocalizer["ReportName"]</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<form class="form-horizontal" role="form" asp-controller="Reports" asp-action="OnShiftHoursReportParams" asp-route-area="User" method="post">
+
+						<div class="row">
+							<div class="col-md-8 col-md-offset-1">
+								@Html.AntiForgeryToken()
+								<div asp-validation-summary="All" class="text-danger"></div>
+								<p>@hoursLocalizer["ParamsHelp"]</p>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-2 control-label required">@localizer["ReportStartTime"]</label>
+							<div class="col-sm-10">
+								@Html.TextBoxFor(m => m.Start, new { style = "width:250px;", onkeydown = "javascript:return false;" })
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label required">@localizer["ReportEndTime"]</label>
+							<div class="col-sm-10">
+								@Html.TextBoxFor(m => m.End, new { style = "width:250px;", onkeydown = "javascript:return false;" })
+								<span class="help-block">@hoursLocalizer["EndHelp"]</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">@hoursLocalizer["ScopeLabel"]</label>
+							<div class="col-sm-10">
+								<div class="radio">
+									<label><input type="radio" asp-for="Scope" value="@OnShiftHoursScopes.Department" class="on-shift-scope" /> @hoursLocalizer["ScopeDepartment"]</label>
+								</div>
+								<div class="radio">
+									<label><input type="radio" asp-for="Scope" value="@OnShiftHoursScopes.Group" class="on-shift-scope" /> @hoursLocalizer["ScopeGroup"]</label>
+								</div>
+								<div class="radio">
+									<label><input type="radio" asp-for="Scope" value="@OnShiftHoursScopes.Shift" class="on-shift-scope" /> @hoursLocalizer["ScopeShift"]</label>
+								</div>
+							</div>
+						</div>
+						<div class="form-group" id="onShiftGroup">
+							<label class="col-sm-2 control-label">@localizer["GroupLabel"]</label>
+							<div class="col-sm-10">
+								@Html.DropDownListFor(m => m.GroupId, Model.Groups, new { style = "width:450px;" })
+								<span class="help-block">@hoursLocalizer["GroupHelp"]</span>
+							</div>
+						</div>
+						<div class="form-group" id="onShiftShift">
+							<label class="col-sm-2 control-label">@hoursLocalizer["ShiftLabel"]</label>
+							<div class="col-sm-10">
+								@Html.DropDownListFor(m => m.Shift, Model.Shifts, new { style = "width:450px;" })
+								<span class="help-block">@hoursLocalizer["ShiftHelp"]</span>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<div class="col-sm-4 col-sm-offset-2">
+								<a class="btn btn-white" asp-controller="Reports" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+								<button class="btn btn-primary" type="submit">@localizer["RunReport"]</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+	<script>
+		$(document).ready(function () {
+			$("#Start").datetimepicker({ step: 30 });
+			$("#End").datetimepicker({ step: 30 });
+
+			function showScope() {
+				var scope = $('.on-shift-scope:checked').val();
+				$('#onShiftGroup').toggle(scope === '@OnShiftHoursScopes.Group');
+				$('#onShiftShift').toggle(scope === '@OnShiftHoursScopes.Shift');
+			}
+
+			$('.on-shift-scope').on('change', showScope);
+			showScope();
+		});
+	</script>
+}

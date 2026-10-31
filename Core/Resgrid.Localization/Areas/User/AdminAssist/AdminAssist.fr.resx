@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version='1.0' encoding='utf-8'?>
 <root>
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
@@ -7694,5 +7694,29 @@
   </data>
   <data name="PermissionHelp.ShareCoordinationBoards" xml:space="preserve">
     <value>Permet de partager un tableau de coordination avec des organismes partenaires. Sans règle enregistrée, seuls les administrateurs du département le peuvent. Nécessite l'activation d'Incident Coordination et un module complémentaire Incident Back Office actif.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.shift-staffing">
+    <value>Effectif du quart</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.shift-staffing">
+    <value>Qui a réellement travaillé chaque jour de quart, approuvé par un superviseur, pour les quarts assignés, sur inscription et statiques ; un jour que personne n'approuve est pourvu automatiquement à partir du quart.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.shift-staffing">
+    <value>Ouvrez Quarts, puis Effectif du quart. Choisissez un jour dans Effectif par jour, jours passés compris, vérifiez l'effectif automatique, modifiez les personnes si besoin et choisissez Approuver l'effectif. Revenir à l'automatique supprime un effectif approuvé.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.on-shift-hours-report">
+    <value>Rapport des heures de quart</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.on-shift-hours-report">
+    <value>Les heures de quart de chaque personne sur une période, dans les quarts assignés, sur inscription et statiques, pour le service, un groupe ou un quart, réparties en heures approuvées et automatiques.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.on-shift-hours-report">
+    <value>Ouvrez Rapports, puis Rapport des heures de quart. Choisissez la période et s'il couvre le service, un groupe ou un quart. Approuvez sur la page Effectif du quart l'effectif des jours qui demandent un relevé exact avant de le lancer pour la paie ou la conformité.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.ShiftTradeApprovers">
+    <value>Approbateurs des échanges de garde</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.ShiftTradeApprovers">
+    <value>Qui choisit le candidat qui prend une demande d'échange de garde et approuve les échanges en attente. Les administrateurs du service le peuvent toujours ; les administrateurs de groupe, la personne qui cède sa garde et les membres de rôles choisis relèvent du choix du service.</value>
   </data>
 </root>

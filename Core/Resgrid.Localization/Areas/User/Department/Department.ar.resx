@@ -2217,4 +2217,28 @@
   <data name="RunCardSelectionsMore" xml:space="preserve">
     <value>+{0} أخرى</value>
   </data>
+  <data name="ShiftTradeSettingsHeader" xml:space="preserve">
+    <value>إعدادات تبديل المناوبات</value>
+  </data>
+  <data name="ShiftTradeApproversHelp" xml:space="preserve">
+    <value>من يمكنه اختيار المتقدم الذي يأخذ طلب تبديل المناوبة، والموافقة على التبديلات التي تحتاج إلى موافقة.</value>
+  </data>
+  <data name="ShiftTradeApproversDepartmentAdmins" xml:space="preserve">
+    <value>مسؤولو القسم</value>
+  </data>
+  <data name="ShiftTradeApproversDepartmentAdminsHelp" xml:space="preserve">
+    <value>يمكن لمسؤولي القسم (وأي شخص يمكنه إنشاء مناوبات على مستوى القسم) البت في التبديلات دائمًا.</value>
+  </data>
+  <data name="ShiftTradeApproversGroupAdmins" xml:space="preserve">
+    <value>مسؤولو المجموعات</value>
+  </data>
+  <data name="ShiftTradeApproversRequester" xml:space="preserve">
+    <value>المستخدم مقدم الطلب</value>
+  </data>
+  <data name="ShiftTradeApproversRequesterHelp" xml:space="preserve">
+    <value>يختار الشخص الذي يتنازل عن مناوبته من يأخذها. في المناوبات التي تتطلب موافقة، يظل اختياره بحاجة إلى موافق.</value>
+  </data>
+  <data name="ShiftTradeApproversRoles" xml:space="preserve">
+    <value>أعضاء هذه الأدوار</value>
+  </data>
 </root>

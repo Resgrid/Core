@@ -1800,4 +1800,28 @@
   <data name="RunCardSelectionsMore" xml:space="preserve">
     <value>+{0} more</value>
   </data>
+  <data name="ShiftTradeSettingsHeader" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ShiftTradeApproversHelp" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ShiftTradeApproversDepartmentAdmins" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ShiftTradeApproversDepartmentAdminsHelp" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ShiftTradeApproversGroupAdmins" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ShiftTradeApproversRequester" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ShiftTradeApproversRequesterHelp" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ShiftTradeApproversRoles" xml:space="preserve">
+    <value />
+  </data>
 </root>

@@ -151,7 +151,7 @@
 											{
 												<a href="@Url.Action("RequestTrade", "Shifts", new {area = "User", shiftSignupId = s.ShiftSignupId})" class="btn btn-xs btn-primary"><i class='icon-refresh'></i> @localizer["RequestTrade"]</a>
 											}
-											@if (ownSignup && trade != null && trade.SourceShiftSignupId == s.ShiftSignupId && (!trade.HasSelection() || trade.Denied))
+											@if (Model.CanPickOwnTrades && ownSignup && trade != null && trade.SourceShiftSignupId == s.ShiftSignupId && trade.IsOpenForOffers())
 											{
 												<a href="@Url.Action("FinishTrade", "Shifts", new { area = "User", shiftSignupTradeId = trade.ShiftSignupTradeId })" class="btn btn-xs btn-info"><i class='icon-ok'></i> @localizer["FinishTrade"]</a>
 											}

@@ -19,6 +19,12 @@ namespace Resgrid.Web.Areas.User.Models.Shifts
 		/// <summary>Trades the caller was asked to take.</summary>
 		public List<ShiftSignupTrade> Trades { get; set; }
 
+		/// <summary>
+		/// The caller picks who takes their own traded days: the department lets requesters decide, or they approve every
+		/// trade in it.
+		/// </summary>
+		public bool CanPickOwnTrades { get; set; }
+
 		/// <summary>Shift signup id to the id of its shift day, for linking to the day page.</summary>
 		public Dictionary<int, int> ShiftDayIds { get; set; } = new Dictionary<int, int>();
 

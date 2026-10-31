@@ -61,6 +61,21 @@ namespace Resgrid.Model.Helpers
 			return (start, end);
 		}
 
+		/// <summary>
+		/// The [start, end) window of one day of a static shift (workshift). A workshift covers one continuous period and
+		/// its days are that period cut into 24-hour pieces from its start, so a day runs from its own Day for 24 hours,
+		/// cut short by the workshift's End. Times are as the workshift stores them (UTC); convert the result for display.
+		/// </summary>
+		public static (DateTime Start, DateTime End) GetWorkshiftDayWindow(DateTime workshiftEnd, DateTime day)
+		{
+			var end = day.AddDays(1);
+
+			if (workshiftEnd > day && workshiftEnd < end)
+				end = workshiftEnd;
+
+			return (day, end);
+		}
+
 		/// <summary>Whether <paramref name="localNow"/> falls inside the shift day's window.</summary>
 		public static bool IsActive(DateTime localNow, DateTime shiftDay, string startTime, string endTime, int? hours)
 		{

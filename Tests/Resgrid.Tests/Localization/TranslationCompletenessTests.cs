@@ -43,6 +43,8 @@ namespace Resgrid.Tests.Localization
 			"Areas/User/DepartmentImport/DepartmentImport",
 			// Map Icon Legend and the status / priority map icon pages (2026-10-24) shipped fully translated.
 			"Areas/User/Mapping/MapIconLegend",
+			// On-Shift Hours report (2026-10-30) shipped fully translated.
+			"Areas/User/Reports/OnShiftHours",
 		};
 
 		private static string LocalizationRoot()
@@ -75,6 +77,13 @@ namespace Resgrid.Tests.Localization
 		/// </summary>
 		private static readonly HashSet<string> KnownIdentical = new HashSet<string>(StringComparer.Ordinal)
 		{
+			// On-Shift Hours report (2026-10-30): "ID" is the column abbreviation in these languages (the Reports area uses it
+			// too), "Name" is German, "Total" Spanish and French, "Type" and "Personnel" French.
+			"OnShiftHours|de|IdHeader", "OnShiftHours|es|IdHeader", "OnShiftHours|fr|IdHeader", "OnShiftHours|it|IdHeader",
+			"OnShiftHours|pl|IdHeader", "OnShiftHours|sv|IdHeader", "OnShiftHours|uk|IdHeader",
+			"OnShiftHours|de|NameHeader",
+			"OnShiftHours|es|TotalHoursHeader", "OnShiftHours|fr|TotalHoursHeader",
+			"OnShiftHours|fr|TypeHeader", "OnShiftHours|fr|PersonnelHeader",
 			// Map Icon Legend (2026-10-24): the same word in the target language, checked side by side.
 			"MapIconLegend|de|StatusColumn", "MapIconLegend|pl|StatusColumn", "MapIconLegend|sv|StatusColumn", // "Status"
 			"MapIconLegend|de|Hydrant", "MapIconLegend|pl|Hydrant",  // "Hydrant"

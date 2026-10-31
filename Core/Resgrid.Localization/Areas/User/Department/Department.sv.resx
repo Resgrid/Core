@@ -2159,4 +2159,28 @@
   <data name="RunCardSelectionsMore" xml:space="preserve">
     <value>+{0} till</value>
   </data>
+  <data name="ShiftTradeSettingsHeader" xml:space="preserve">
+    <value>Inställningar för passbyten</value>
+  </data>
+  <data name="ShiftTradeApproversHelp" xml:space="preserve">
+    <value>Vem som får välja vilken sökande som tar en bytesförfrågan och godkänna byten som kräver godkännande.</value>
+  </data>
+  <data name="ShiftTradeApproversDepartmentAdmins" xml:space="preserve">
+    <value>Avdelningsadministratörer</value>
+  </data>
+  <data name="ShiftTradeApproversDepartmentAdminsHelp" xml:space="preserve">
+    <value>Avdelningsadministratörer (och alla som får skapa pass för hela avdelningen) kan alltid besluta om byten.</value>
+  </data>
+  <data name="ShiftTradeApproversGroupAdmins" xml:space="preserve">
+    <value>Gruppadministratörer</value>
+  </data>
+  <data name="ShiftTradeApproversRequester" xml:space="preserve">
+    <value>Användaren som frågar</value>
+  </data>
+  <data name="ShiftTradeApproversRequesterHelp" xml:space="preserve">
+    <value>Den som byter bort sitt pass väljer vem som tar det. På pass som kräver godkännande behöver valet fortfarande godkännas.</value>
+  </data>
+  <data name="ShiftTradeApproversRoles" xml:space="preserve">
+    <value>Medlemmar i dessa roller</value>
+  </data>
 </root>

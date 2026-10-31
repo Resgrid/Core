@@ -1,0 +1,253 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ReportName" xml:space="preserve">
+    <value>Rapport över skifttimmar</value>
+  </data>
+  <data name="ReportDescription" xml:space="preserve">
+    <value>Timmar som varje person var i tjänst under en period i tilldelade skift, anmälningsskift och statiska skift, för avdelningen, en grupp eller ett skift, med markering av timmar från godkänd bemanning.</value>
+  </data>
+  <data name="ParamsHelp" xml:space="preserve">
+    <value>Räknar varje skiftdag och statisk skiftdag som överlappar perioden. En dags bemanning är automatisk (från skiftets tilldelningar, anmälningar och byten) om inte en arbetsledare har godkänt den på sidan Skiftbemanning.</value>
+  </data>
+  <data name="EndHelp" xml:space="preserve">
+    <value>Tiden räknas fram till denna tidpunkt; själva slutet ingår inte.</value>
+  </data>
+  <data name="ScopeLabel" xml:space="preserve">
+    <value>Rapport för</value>
+  </data>
+  <data name="ScopeDepartment" xml:space="preserve">
+    <value>Hela avdelningen</value>
+  </data>
+  <data name="ScopeGroup" xml:space="preserve">
+    <value>En grupp</value>
+  </data>
+  <data name="ScopeShift" xml:space="preserve">
+    <value>Ett skift</value>
+  </data>
+  <data name="GroupHelp" xml:space="preserve">
+    <value>Räknar personer på platser för gruppen eller dess undergrupper, och gruppens medlemmar på platser utan grupp.</value>
+  </data>
+  <data name="ShiftLabel" xml:space="preserve">
+    <value>Skift</value>
+  </data>
+  <data name="ShiftHelp" xml:space="preserve">
+    <value>Ett tilldelat skift, anmälningsskift eller statiskt skift.</value>
+  </data>
+  <data name="ShiftGroupAssigned" xml:space="preserve">
+    <value>Tilldelade skift</value>
+  </data>
+  <data name="ShiftGroupSignup" xml:space="preserve">
+    <value>Anmälningsskift</value>
+  </data>
+  <data name="ShiftGroupStatic" xml:space="preserve">
+    <value>Statiska skift</value>
+  </data>
+  <data name="ScopeDepartmentFormat" xml:space="preserve">
+    <value>Avdelning: {0}</value>
+  </data>
+  <data name="ScopeGroupFormat" xml:space="preserve">
+    <value>Grupp: {0}</value>
+  </data>
+  <data name="ScopeShiftFormat" xml:space="preserve">
+    <value>Skift: {0}</value>
+  </data>
+  <data name="RunOnFormat" xml:space="preserve">
+    <value>Skapad {0}</value>
+  </data>
+  <data name="DownloadCsv" xml:space="preserve">
+    <value>Ladda ned CSV</value>
+  </data>
+  <data name="TotalHours" xml:space="preserve">
+    <value>Totalt antal timmar</value>
+  </data>
+  <data name="ApprovedHours" xml:space="preserve">
+    <value>Godkända timmar</value>
+  </data>
+  <data name="AutomaticHours" xml:space="preserve">
+    <value>Automatiska timmar</value>
+  </data>
+  <data name="PeopleCount" xml:space="preserve">
+    <value>Personer</value>
+  </data>
+  <data name="ShiftDaysCount" xml:space="preserve">
+    <value>Skiftdagar</value>
+  </data>
+  <data name="ApprovedShiftDaysCount" xml:space="preserve">
+    <value>Godkända skiftdagar</value>
+  </data>
+  <data name="SourceManual" xml:space="preserve">
+    <value>Godkänd</value>
+  </data>
+  <data name="SourceAutomatic" xml:space="preserve">
+    <value>Automatisk</value>
+  </data>
+  <data name="SourceManualHelp" xml:space="preserve">
+    <value>En arbetsledare angav bemanningen på sidan Skiftbemanning.</value>
+  </data>
+  <data name="SourceAutomaticHelp" xml:space="preserve">
+    <value>Beräknas från skiftets fasta tilldelningar, anmälningar och byten, eller från enheternas besättningar på ett statiskt skift.</value>
+  </data>
+  <data name="PersonnelHeader" xml:space="preserve">
+    <value>Personal</value>
+  </data>
+  <data name="NoHours" xml:space="preserve">
+    <value>Ingen var i tjänst under perioden.</value>
+  </data>
+  <data name="IdHeader" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="NameHeader" xml:space="preserve">
+    <value>Namn</value>
+  </data>
+  <data name="GroupHeader" xml:space="preserve">
+    <value>Grupp</value>
+  </data>
+  <data name="ShiftsHeader" xml:space="preserve">
+    <value>Skift</value>
+  </data>
+  <data name="TotalHoursHeader" xml:space="preserve">
+    <value>Totalt</value>
+  </data>
+  <data name="ApprovedHoursHeader" xml:space="preserve">
+    <value>Godkända</value>
+  </data>
+  <data name="AutomaticHoursHeader" xml:space="preserve">
+    <value>Automatiska</value>
+  </data>
+  <data name="AssignedHoursHeader" xml:space="preserve">
+    <value>Tilldelade</value>
+  </data>
+  <data name="SignupHoursHeader" xml:space="preserve">
+    <value>Anmälan</value>
+  </data>
+  <data name="StaticHoursHeader" xml:space="preserve">
+    <value>Statiska</value>
+  </data>
+  <data name="StaffingHeader" xml:space="preserve">
+    <value>Bemanning</value>
+  </data>
+  <data name="MixedFormat" xml:space="preserve">
+    <value>{0} av {1} godkända</value>
+  </data>
+  <data name="TotalsRow" xml:space="preserve">
+    <value>Summor</value>
+  </data>
+  <data name="ShiftDaysHeader" xml:space="preserve">
+    <value>Skiftdagar</value>
+  </data>
+  <data name="NoShiftDays" xml:space="preserve">
+    <value>Inga skiftdagar under perioden.</value>
+  </data>
+  <data name="DayHeader" xml:space="preserve">
+    <value>Dag</value>
+  </data>
+  <data name="ShiftHeader" xml:space="preserve">
+    <value>Skift</value>
+  </data>
+  <data name="TypeHeader" xml:space="preserve">
+    <value>Typ</value>
+  </data>
+  <data name="StartHeader" xml:space="preserve">
+    <value>Början</value>
+  </data>
+  <data name="EndHeader" xml:space="preserve">
+    <value>Slut</value>
+  </data>
+  <data name="HoursHeader" xml:space="preserve">
+    <value>Timmar</value>
+  </data>
+  <data name="PeopleHeader" xml:space="preserve">
+    <value>Personer</value>
+  </data>
+  <data name="SetByHeader" xml:space="preserve">
+    <value>Godkänd av</value>
+  </data>
+  <data name="ChangesFormat" xml:space="preserve">
+    <value>(+{0} tillagda / -{1} utelämnade)</value>
+  </data>
+  <data name="OpenStaffing" xml:space="preserve">
+    <value>Öppna</value>
+  </data>
+  <data name="DetailHeader" xml:space="preserve">
+    <value>Detaljer per person</value>
+  </data>
+  <data name="PersonTotalFormat" xml:space="preserve">
+    <value>{0} timmar på {1} skift</value>
+  </data>
+  <data name="AssignmentHeader" xml:space="preserve">
+    <value>Grupp / Enhet</value>
+  </data>
+  <data name="PartialHelp" xml:space="preserve">
+    <value>Endast den del av skiftet som ligger inom rapportperioden räknas.</value>
+  </data>
+  <data name="TypeAssigned" xml:space="preserve">
+    <value>Tilldelat</value>
+  </data>
+  <data name="TypeSignup" xml:space="preserve">
+    <value>Anmälan</value>
+  </data>
+  <data name="TypeStatic" xml:space="preserve">
+    <value>Statiskt skift</value>
+  </data>
+  <data name="UnknownPerson" xml:space="preserve">
+    <value>Okänd</value>
+  </data>
+</root>

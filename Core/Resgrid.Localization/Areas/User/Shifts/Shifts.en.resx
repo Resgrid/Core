@@ -954,4 +954,193 @@
   <data name="YourStatusHeader" xml:space="preserve">
     <value>Your Status</value>
   </data>
+  <data name="StaffingSavedFormat" xml:space="preserve">
+    <value>Staffing approved. Added to the day's roster: {0}. Taken off the day's roster: {1}.</value>
+  </data>
+  <data name="StaffingSavedWithErrorsFormat" xml:space="preserve">
+    <value>Staffing approved. Added to the day's roster: {0}. Taken off the day's roster: {1}. Could not change: {2}</value>
+  </data>
+  <data name="StaffingWorkshiftSavedFormat" xml:space="preserve">
+    <value>Staffing approved: {0} unit positions filled.</value>
+  </data>
+  <data name="StaffingSelectStaticShift" xml:space="preserve">
+    <value>You must select a static shift</value>
+  </data>
+  <data name="StaffingCleared" xml:space="preserve">
+    <value>The approved staffing was removed; the day is staffed automatically again.</value>
+  </data>
+  <data name="StaffingSourceManual" xml:space="preserve">
+    <value>Approved</value>
+  </data>
+  <data name="StaffingSourceAutomatic" xml:space="preserve">
+    <value>Automatic</value>
+  </data>
+  <data name="StaffingTypeStaticShift" xml:space="preserve">
+    <value>Static Shift</value>
+  </data>
+  <data name="StaffingSourceTrade" xml:space="preserve">
+    <value>Trade</value>
+  </data>
+  <data name="StaffingOverviewHeader" xml:space="preserve">
+    <value>Staffing by Day</value>
+  </data>
+  <data name="StaffingOverviewHelp" xml:space="preserve">
+    <value>Every shift and static shift day in the range, past days included, with how it is staffed. Select a day to view or set its staffing.</value>
+  </data>
+  <data name="StaffingOverviewFrom" xml:space="preserve">
+    <value>From</value>
+  </data>
+  <data name="StaffingOverviewTo" xml:space="preserve">
+    <value>To</value>
+  </data>
+  <data name="StaffingOverviewAllTypes" xml:space="preserve">
+    <value>All shift types</value>
+  </data>
+  <data name="StaffingOverviewShow" xml:space="preserve">
+    <value>Show</value>
+  </data>
+  <data name="StaffingColumnDay" xml:space="preserve">
+    <value>Day</value>
+  </data>
+  <data name="StaffingColumnShift" xml:space="preserve">
+    <value>Shift</value>
+  </data>
+  <data name="StaffingColumnType" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="StaffingColumnTime" xml:space="preserve">
+    <value>Time</value>
+  </data>
+  <data name="StaffingColumnHours" xml:space="preserve">
+    <value>Hours</value>
+  </data>
+  <data name="StaffingColumnPeople" xml:space="preserve">
+    <value>People</value>
+  </data>
+  <data name="StaffingColumnSource" xml:space="preserve">
+    <value>Staffing</value>
+  </data>
+  <data name="StaffingColumnSetBy" xml:space="preserve">
+    <value>Approved By</value>
+  </data>
+  <data name="StaffingLoading" xml:space="preserve">
+    <value>Loading...</value>
+  </data>
+  <data name="StaffingEditorHeader" xml:space="preserve">
+    <value>Set Staffing</value>
+  </data>
+  <data name="StaffingKindLabel" xml:space="preserve">
+    <value>Shift Type</value>
+  </data>
+  <data name="StaffingKindShift" xml:space="preserve">
+    <value>Assigned or Signup Shift</value>
+  </data>
+  <data name="StaticShiftSelectHelp" xml:space="preserve">
+    <value>Static shifts schedule units for a set period. Set who crewed each unit on the day.</value>
+  </data>
+  <data name="StaffingDayHelp" xml:space="preserve">
+    <value>Select the day to view or set the staffing for. Past days can be staffed to record who worked them.</value>
+  </data>
+  <data name="StaffingCurrentHeader" xml:space="preserve">
+    <value>Current Staffing</value>
+  </data>
+  <data name="StaffingSelectDayFirst" xml:space="preserve">
+    <value>Pick a shift and a day to see its staffing.</value>
+  </data>
+  <data name="StaffingClearButton" xml:space="preserve">
+    <value>Revert to Automatic</value>
+  </data>
+  <data name="StaffingUnitCrewHelp" xml:space="preserve">
+    <value>Each unit starts from the staffing in effect; with no approved staffing that is the unit's current crew.</value>
+  </data>
+  <data name="StaffingAppliesHelp" xml:space="preserve">
+    <value>Saving approves the staffing: it replaces the automatic staffing for this day, including in reports. Until the day is over, people added are put on the day and people you remove are taken off it.</value>
+  </data>
+  <data name="StaffingApproveButton" xml:space="preserve">
+    <value>Approve Staffing</value>
+  </data>
+  <data name="StaffingOverviewEmpty" xml:space="preserve">
+    <value>No shift days in this range.</value>
+  </data>
+  <data name="StaffingSelectButton" xml:space="preserve">
+    <value>Select</value>
+  </data>
+  <data name="StaffingSourceAutomaticHelp" xml:space="preserve">
+    <value>Worked out from the shift's static assignments, approved signups, single-day changes and trades. Approving the staffing below replaces it for this day.</value>
+  </data>
+  <data name="StaffingSourceManualFormat" xml:space="preserve">
+    <value>Approved by {0} on {1}</value>
+  </data>
+  <data name="StaffingAutomaticHeader" xml:space="preserve">
+    <value>From the shift (automatic)</value>
+  </data>
+  <data name="StaffingApprovedHeader" xml:space="preserve">
+    <value>Approved staffing</value>
+  </data>
+  <data name="StaffingAddedFormat" xml:space="preserve">
+    <value>On the approved staffing but not on the shift: {0}</value>
+  </data>
+  <data name="StaffingRemovedFormat" xml:space="preserve">
+    <value>On the shift but left off the approved staffing: {0}</value>
+  </data>
+  <data name="StaffingNobody" xml:space="preserve">
+    <value>Nobody</value>
+  </data>
+  <data name="StaffingDayOver" xml:space="preserve">
+    <value>This day is over: approving records who worked it and does not change the day's roster.</value>
+  </data>
+  <data name="StaffingInProgress" xml:space="preserve">
+    <value>In progress</value>
+  </data>
+  <data name="StaffingClearConfirm" xml:space="preserve">
+    <value>Remove the approved staffing for this day and go back to the automatic staffing?</value>
+  </data>
+  <data name="StaffingNoUnits" xml:space="preserve">
+    <value>This static shift has no units.</value>
+  </data>
+  <data name="StaffingOtherSupervisor" xml:space="preserve">
+    <value>Staffed by another supervisor; kept as it is.</value>
+  </data>
+  <data name="StaffingUnitCrewFormat" xml:space="preserve">
+    <value>Current crew: {0}</value>
+  </data>
+  <data name="StaffingChangesFormat" xml:space="preserve">
+    <value>+{0} / -{1}</value>
+  </data>
+  <data name="StaffingSourceAutomaticStaticHelp" xml:space="preserve">
+    <value>Worked out from each unit's current crew. Approving the staffing below replaces it for this day.</value>
+  </data>
+  <data name="OpenTradeRequestsHeader" xml:space="preserve">
+    <value>Open Trade Requests</value>
+  </data>
+  <data name="OpenTradeRequestsHelp" xml:space="preserve">
+    <value>Trade requests in groups you supervise that have not taken effect yet. Cancelling one tells the requester and everyone who applied.</value>
+  </data>
+  <data name="NoOpenTradeRequests" xml:space="preserve">
+    <value>There are no open trade requests.</value>
+  </data>
+  <data name="PendingApprovalLabel" xml:space="preserve">
+    <value>Pending approval</value>
+  </data>
+  <data name="OpenRequestLabel" xml:space="preserve">
+    <value>Open to all</value>
+  </data>
+  <data name="ApplicantsFormat" xml:space="preserve">
+    <value>Applicants: {0}</value>
+  </data>
+  <data name="NoApplicants" xml:space="preserve">
+    <value>none yet</value>
+  </data>
+  <data name="CancelTradeConfirm" xml:space="preserve">
+    <value>Cancel this trade request? The requester and everyone who applied will be told.</value>
+  </data>
+  <data name="CancelTradeButton" xml:space="preserve">
+    <value>Cancel Request</value>
+  </data>
+  <data name="TradeCancelled" xml:space="preserve">
+    <value>The trade request was cancelled.</value>
+  </data>
+  <data name="ShiftErrorNotEligible" xml:space="preserve">
+    <value>That person does not meet the requirements for this slot.</value>
+  </data>
 </root>

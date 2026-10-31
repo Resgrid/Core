@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version='1.0' encoding='utf-8'?>
 <root>
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
@@ -7694,5 +7694,29 @@
   </data>
   <data name="PermissionHelp.ShareCoordinationBoards" xml:space="preserve">
     <value>Permite compartir un tablero de coordinación con agencias asociadas. Sin una regla guardada, solo los administradores del departamento pueden hacerlo. Requiere Incident Coordination activado y un complemento Incident Back Office activo.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.shift-staffing">
+    <value>Dotación de turno</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.shift-staffing">
+    <value>Quién trabajó realmente cada día de turno, aprobado por un supervisor, en turnos asignados, de inscripción y estáticos; un día que nadie aprueba se dota automáticamente a partir del turno.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.shift-staffing">
+    <value>Abra Turnos y luego Dotación de turno. Elija un día en Dotación por día, incluidos los pasados, revise la dotación automática, cambie las personas si hace falta y elija Aprobar dotación. Volver a automática quita una dotación aprobada.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.on-shift-hours-report">
+    <value>Informe de horas de turno</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.on-shift-hours-report">
+    <value>Las horas de turno de cada persona en un periodo en turnos asignados, de inscripción y estáticos, para el departamento, un grupo o un turno, separadas en horas aprobadas y automáticas.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.on-shift-hours-report">
+    <value>Abra Informes y luego Informe de horas de turno. Elija el periodo y si abarca el departamento, un grupo o un turno. Apruebe en la página Dotación de turno la dotación de los días que necesitan un registro exacto antes de generarlo para nóminas o cumplimiento.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.ShiftTradeApprovers">
+    <value>Aprobadores de intercambios de turno</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.ShiftTradeApprovers">
+    <value>Quién elige qué candidato se queda con una solicitud de intercambio de turno y aprueba los intercambios pendientes. Los administradores del departamento siempre pueden; los administradores de grupo, quien cede el turno y los miembros de roles elegidos los decide el departamento.</value>
   </data>
 </root>

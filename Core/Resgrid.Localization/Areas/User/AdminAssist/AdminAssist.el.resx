@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version='1.0' encoding='utf-8'?>
 <root>
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
@@ -7694,5 +7694,29 @@
   </data>
   <data name="PermissionHelp.ShareCoordinationBoards" xml:space="preserve">
     <value>Επιτρέπει την κοινή χρήση ενός πίνακα συντονισμού με συνεργαζόμενους φορείς. Χωρίς αποθηκευμένο κανόνα, αυτό επιτρέπεται μόνο στους διαχειριστές τμήματος. Απαιτεί ενεργοποιημένο το Incident Coordination και ενεργό πρόσθετο Incident Back Office.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.shift-staffing">
+    <value>Στελέχωση βάρδιας</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.shift-staffing">
+    <value>Ποιος εργάστηκε πραγματικά κάθε ημέρα βάρδιας, με έγκριση επόπτη, για ανατεθειμένες βάρδιες, βάρδιες με δήλωση συμμετοχής και στατικές βάρδιες· μια ημέρα που κανείς δεν εγκρίνει στελεχώνεται αυτόματα από τη βάρδια.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.shift-staffing">
+    <value>Ανοίξτε Βάρδιες και μετά Στελέχωση Βάρδιας. Επιλέξτε μια ημέρα στη Στελέχωση ανά ημέρα, μαζί με τις περασμένες, ελέγξτε την αυτόματη στελέχωση, αλλάξτε τα άτομα αν χρειάζεται και επιλέξτε Έγκριση στελέχωσης. Η Επαναφορά σε αυτόματη αφαιρεί μια εγκεκριμένη στελέχωση.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.on-shift-hours-report">
+    <value>Αναφορά ωρών βάρδιας</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.on-shift-hours-report">
+    <value>Οι ώρες βάρδιας κάθε ατόμου σε μια περίοδο, σε ανατεθειμένες βάρδιες, βάρδιες με δήλωση συμμετοχής και στατικές βάρδιες, για την υπηρεσία, μια ομάδα ή μία βάρδια, χωρισμένες σε εγκεκριμένες και αυτόματες ώρες.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.on-shift-hours-report">
+    <value>Ανοίξτε Αναφορές και μετά Αναφορά ωρών βάρδιας. Επιλέξτε την περίοδο και αν καλύπτει την υπηρεσία, μια ομάδα ή μια βάρδια. Εγκρίνετε στη σελίδα Στελέχωση Βάρδιας τη στελέχωση των ημερών που χρειάζονται ακριβή καταγραφή πριν την εκτελέσετε για μισθοδοσία ή συμμόρφωση.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.ShiftTradeApprovers">
+    <value>Εγκρίνοντες ανταλλαγών βαρδιών</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.ShiftTradeApprovers">
+    <value>Ποιος επιλέγει ποιος αιτών αναλαμβάνει ένα αίτημα ανταλλαγής βάρδιας και εγκρίνει ανταλλαγές σε αναμονή. Οι διαχειριστές τμήματος μπορούν πάντα· οι διαχειριστές ομάδων, ο αιτών και τα μέλη επιλεγμένων ρόλων είναι επιλογή του τμήματος.</value>
   </data>
 </root>

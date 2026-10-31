@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version='1.0' encoding='utf-8'?>
 <root>
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
@@ -7694,5 +7694,29 @@
   </data>
   <data name="PermissionHelp.ShareCoordinationBoards" xml:space="preserve">
     <value>Allows sharing a coordination board with partner agencies. With no saved rule only department administrators may. Needs Incident Coordination turned on and an active Incident Back Office add-on.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.shift-staffing">
+    <value>Shift staffing</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.shift-staffing">
+    <value>Who actually worked each shift day, approved by a supervisor, for assigned, signup and static shifts; a day nobody approves is staffed automatically from the shift.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.shift-staffing">
+    <value>Open Shifts, then Shift Staffing. Pick a day in Staffing by Day, past days included, check the automatic staffing, change the people if needed and choose Approve Staffing. Revert to Automatic drops an approved staffing.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.on-shift-hours-report">
+    <value>On-Shift Hours report</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.on-shift-hours-report">
+    <value>Each person's hours on shift for a period across assigned, signup and static shifts, for the department, a group or one shift, split into approved and automatic hours.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.on-shift-hours-report">
+    <value>Open Reports, then On-Shift Hours Report. Choose the period and whether it covers the department, a group or a shift. Approve the staffing of the days that need an exact record on the Shift Staffing page before running it for payroll or compliance.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.ShiftTradeApprovers">
+    <value>Shift trade approvers</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.ShiftTradeApprovers">
+    <value>Who may pick which applicant takes a shift trade request and approve trades waiting for approval. Department admins always may; group admins, the person trading out and members of chosen roles are the department’s choice.</value>
   </data>
 </root>

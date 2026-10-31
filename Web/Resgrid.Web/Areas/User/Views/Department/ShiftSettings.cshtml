@@ -49,6 +49,40 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <h3>@localizer["ShiftTradeSettingsHeader"]</h3>
+                            <p class="text-muted">@localizer["ShiftTradeApproversHelp"]</p>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">@localizer["ShiftTradeApproversDepartmentAdmins"]</label>
+                                <div class="col-sm-9">
+                                    <input type="checkbox" checked="checked" disabled="disabled" aria-describedby="tradeAdminsHelp">
+                                    <span id="tradeAdminsHelp" class="help-block m-b-none">@localizer["ShiftTradeApproversDepartmentAdminsHelp"]</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label" for="TradeApproversGroupAdmins">@localizer["ShiftTradeApproversGroupAdmins"]</label>
+                                <div class="col-sm-9">
+                                    <input type="checkbox" asp-for="TradeApproversGroupAdmins">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label" for="TradeApproversRequester">@localizer["ShiftTradeApproversRequester"]</label>
+                                <div class="col-sm-9">
+                                    <input type="checkbox" asp-for="TradeApproversRequester">
+                                    <span class="help-block m-b-none">@localizer["ShiftTradeApproversRequesterHelp"]</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label" for="TradeApproverRoleIds">@localizer["ShiftTradeApproversRoles"]</label>
+                                <div class="col-sm-9">
+                                    <select asp-for="TradeApproverRoleIds" multiple class="form-control trade-approver-roles" style="width:100%;">
+                                        @foreach (var role in Model.Roles.OrderBy(x => x.Name))
+                                        {
+                                            <option value="@role.PersonnelRoleId" selected="@(Model.TradeApproverRoleIds.Contains(role.PersonnelRoleId))">@role.Name</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
                             <div class="form-group">
                                 <div class="col-sm-4 col-sm-offset-2">
                                     <a class="btn btn-white" asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["Cancel"]</a>
@@ -65,5 +99,11 @@
 
 @section Scripts
 {
-
+    <script>
+        $(function () {
+            if ($.fn.select2) {
+                $('.trade-approver-roles').select2();
+            }
+        });
+    </script>
 }

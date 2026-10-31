@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version='1.0' encoding='utf-8'?>
 <root>
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
@@ -7694,5 +7694,29 @@
   </data>
   <data name="PermissionHelp.ShareCoordinationBoards" xml:space="preserve">
     <value>Дозволяє надавати партнерським організаціям спільний доступ до дошки координації. Якщо правило не збережено, це можуть робити лише адміністратори підрозділу. Потрібно ввімкнути Incident Coordination і мати активне доповнення Incident Back Office.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.shift-staffing">
+    <value>Укомплектування зміни</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.shift-staffing">
+    <value>Хто насправді працював у кожен день зміни, затверджено керівником, для призначених змін, змін із реєстрацією та статичних змін; день, який ніхто не затвердив, укомплектовується автоматично зі зміни.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.shift-staffing">
+    <value>Відкрийте «Зміни», потім «Укомплектування зміни». Виберіть день в «Укомплектування за днями», зокрема минулий, перевірте автоматичне укомплектування, за потреби змініть людей і виберіть «Затвердити укомплектування». «Повернути автоматичне» видаляє затверджене укомплектування.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.on-shift-hours-report">
+    <value>Звіт про години на зміні</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.on-shift-hours-report">
+    <value>Години на зміні кожної людини за період у призначених змінах, змінах із реєстрацією та статичних змінах, для підрозділу, групи або однієї зміни, з поділом на затверджені та автоматичні години.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.on-shift-hours-report">
+    <value>Відкрийте «Звіти», потім «Звіт про години на зміні». Виберіть період і чи охоплює він підрозділ, групу або зміну. Перш ніж запускати його для нарахування оплати чи перевірок, затвердьте на сторінці «Укомплектування зміни» укомплектування днів, яким потрібен точний запис.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.ShiftTradeApprovers">
+    <value>Затверджувачі обміну змінами</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.ShiftTradeApprovers">
+    <value>Хто обирає кандидата, який бере запит на обмін зміною, і схвалює обміни в очікуванні. Адміністратори підрозділу можуть завжди; адміністратори груп, особа, що віддає зміну, та учасники обраних ролей — на вибір підрозділу.</value>
   </data>
 </root>

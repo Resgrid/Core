@@ -79,6 +79,53 @@ namespace Resgrid.Repositories.DataRepository
 			}
 		}
 
+		public async Task<IEnumerable<ShiftStaffing>> GetShiftStaffingsByDepartmentIdAndDateRangeAsync(int departmentId, DateTime startDate, DateTime endDate)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<ShiftStaffing>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParametersExtension();
+					dynamicParameters.Add("DepartmentId", departmentId);
+					dynamicParameters.Add("StartDate", startDate);
+					dynamicParameters.Add("EndDate", endDate);
+
+					var query = _queryFactory.GetQuery<SelectShiftStaffingsByDepartmentIdAndDateRangeQuery>();
+
+					var dictionary = new Dictionary<int, ShiftStaffing>();
+					await x.QueryAsync<ShiftStaffing, ShiftStaffingPerson, ShiftStaffing>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction,
+						map: ShiftStaffingMapping(dictionary),
+						splitOn: "ShiftStaffingPersonId");
+
+					return dictionary.Values.ToList();
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
+		}
+
 		private static Func<ShiftStaffing, ShiftStaffingPerson, ShiftStaffing> ShiftStaffingMapping(Dictionary<int, ShiftStaffing> dictionary)
 		{
 			return new Func<ShiftStaffing, ShiftStaffingPerson, ShiftStaffing>((shiftStaffing, shiftStaffingPerson) =>

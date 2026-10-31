@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -880,5 +880,194 @@
   </data>
   <data name="YourStatusHeader" xml:space="preserve">
     <value>Twój status</value>
+  </data>
+  <data name="StaffingSavedFormat" xml:space="preserve">
+    <value>Obsada zatwierdzona. Dodano do grafiku dnia: {0}. Usunięto z grafiku dnia: {1}.</value>
+  </data>
+  <data name="StaffingSavedWithErrorsFormat" xml:space="preserve">
+    <value>Obsada zatwierdzona. Dodano do grafiku dnia: {0}. Usunięto z grafiku dnia: {1}. Nie udało się zmienić: {2}</value>
+  </data>
+  <data name="StaffingWorkshiftSavedFormat" xml:space="preserve">
+    <value>Obsada zatwierdzona: obsadzono {0} stanowisk w jednostkach.</value>
+  </data>
+  <data name="StaffingSelectStaticShift" xml:space="preserve">
+    <value>Musisz wybrać statyczną zmianę</value>
+  </data>
+  <data name="StaffingCleared" xml:space="preserve">
+    <value>Zatwierdzona obsada została usunięta; dzień jest znów obsadzany automatycznie.</value>
+  </data>
+  <data name="StaffingSourceManual" xml:space="preserve">
+    <value>Zatwierdzona</value>
+  </data>
+  <data name="StaffingSourceAutomatic" xml:space="preserve">
+    <value>Automatyczna</value>
+  </data>
+  <data name="StaffingTypeStaticShift" xml:space="preserve">
+    <value>Statyczna zmiana</value>
+  </data>
+  <data name="StaffingSourceTrade" xml:space="preserve">
+    <value>Zamiana</value>
+  </data>
+  <data name="StaffingOverviewHeader" xml:space="preserve">
+    <value>Obsada według dnia</value>
+  </data>
+  <data name="StaffingOverviewHelp" xml:space="preserve">
+    <value>Wszystkie dni zmian i zmian statycznych w zakresie, także minione, wraz z obsadą. Wybierz dzień, aby zobaczyć lub ustawić jego obsadę.</value>
+  </data>
+  <data name="StaffingOverviewFrom" xml:space="preserve">
+    <value>Od</value>
+  </data>
+  <data name="StaffingOverviewTo" xml:space="preserve">
+    <value>Do</value>
+  </data>
+  <data name="StaffingOverviewAllTypes" xml:space="preserve">
+    <value>Wszystkie rodzaje zmian</value>
+  </data>
+  <data name="StaffingOverviewShow" xml:space="preserve">
+    <value>Pokaż</value>
+  </data>
+  <data name="StaffingColumnDay" xml:space="preserve">
+    <value>Dzień</value>
+  </data>
+  <data name="StaffingColumnShift" xml:space="preserve">
+    <value>Zmiana</value>
+  </data>
+  <data name="StaffingColumnType" xml:space="preserve">
+    <value>Rodzaj</value>
+  </data>
+  <data name="StaffingColumnTime" xml:space="preserve">
+    <value>Czas</value>
+  </data>
+  <data name="StaffingColumnHours" xml:space="preserve">
+    <value>Godziny</value>
+  </data>
+  <data name="StaffingColumnPeople" xml:space="preserve">
+    <value>Osoby</value>
+  </data>
+  <data name="StaffingColumnSource" xml:space="preserve">
+    <value>Obsada</value>
+  </data>
+  <data name="StaffingColumnSetBy" xml:space="preserve">
+    <value>Zatwierdził</value>
+  </data>
+  <data name="StaffingLoading" xml:space="preserve">
+    <value>Ładowanie...</value>
+  </data>
+  <data name="StaffingEditorHeader" xml:space="preserve">
+    <value>Ustaw obsadę</value>
+  </data>
+  <data name="StaffingKindLabel" xml:space="preserve">
+    <value>Rodzaj zmiany</value>
+  </data>
+  <data name="StaffingKindShift" xml:space="preserve">
+    <value>Zmiana przypisana lub z zapisami</value>
+  </data>
+  <data name="StaticShiftSelectHelp" xml:space="preserve">
+    <value>Zmiany statyczne planują jednostki na stały okres. Ustaw, kto obsadzał każdą jednostkę tego dnia.</value>
+  </data>
+  <data name="StaffingDayHelp" xml:space="preserve">
+    <value>Wybierz dzień, którego obsadę chcesz zobaczyć lub ustawić. Minione dni można obsadzić, aby zapisać, kto pracował.</value>
+  </data>
+  <data name="StaffingCurrentHeader" xml:space="preserve">
+    <value>Bieżąca obsada</value>
+  </data>
+  <data name="StaffingSelectDayFirst" xml:space="preserve">
+    <value>Wybierz zmianę i dzień, aby zobaczyć obsadę.</value>
+  </data>
+  <data name="StaffingClearButton" xml:space="preserve">
+    <value>Przywróć automatyczną</value>
+  </data>
+  <data name="StaffingUnitCrewHelp" xml:space="preserve">
+    <value>Każda jednostka zaczyna od obowiązującej obsady; bez zatwierdzonej obsady jest to obecna załoga jednostki.</value>
+  </data>
+  <data name="StaffingAppliesHelp" xml:space="preserve">
+    <value>Zapisanie zatwierdza obsadę: zastępuje ona obsadę automatyczną tego dnia, także w raportach. Dopóki dzień się nie skończy, dodane osoby trafiają na ten dzień, a usunięte są z niego zdejmowane.</value>
+  </data>
+  <data name="StaffingApproveButton" xml:space="preserve">
+    <value>Zatwierdź obsadę</value>
+  </data>
+  <data name="StaffingOverviewEmpty" xml:space="preserve">
+    <value>Brak dni zmian w tym zakresie.</value>
+  </data>
+  <data name="StaffingSelectButton" xml:space="preserve">
+    <value>Wybierz</value>
+  </data>
+  <data name="StaffingSourceAutomaticHelp" xml:space="preserve">
+    <value>Wyliczona ze stałych przydziałów zmiany, zatwierdzonych zapisów, zmian na pojedyncze dni i zamian. Zatwierdzenie obsady poniżej zastępuje ją dla tego dnia.</value>
+  </data>
+  <data name="StaffingSourceManualFormat" xml:space="preserve">
+    <value>Zatwierdził(a) {0}, {1}</value>
+  </data>
+  <data name="StaffingAutomaticHeader" xml:space="preserve">
+    <value>Ze zmiany (automatycznie)</value>
+  </data>
+  <data name="StaffingApprovedHeader" xml:space="preserve">
+    <value>Zatwierdzona obsada</value>
+  </data>
+  <data name="StaffingAddedFormat" xml:space="preserve">
+    <value>W zatwierdzonej obsadzie, ale nie na zmianie: {0}</value>
+  </data>
+  <data name="StaffingRemovedFormat" xml:space="preserve">
+    <value>Na zmianie, ale poza zatwierdzoną obsadą: {0}</value>
+  </data>
+  <data name="StaffingNobody" xml:space="preserve">
+    <value>Nikt</value>
+  </data>
+  <data name="StaffingDayOver" xml:space="preserve">
+    <value>Ten dzień się skończył: zatwierdzenie zapisuje, kto pracował, i nie zmienia grafiku dnia.</value>
+  </data>
+  <data name="StaffingInProgress" xml:space="preserve">
+    <value>W trakcie</value>
+  </data>
+  <data name="StaffingClearConfirm" xml:space="preserve">
+    <value>Usunąć zatwierdzoną obsadę tego dnia i wrócić do obsady automatycznej?</value>
+  </data>
+  <data name="StaffingNoUnits" xml:space="preserve">
+    <value>Ta statyczna zmiana nie ma jednostek.</value>
+  </data>
+  <data name="StaffingOtherSupervisor" xml:space="preserve">
+    <value>Obsadzane przez innego przełożonego; pozostaje bez zmian.</value>
+  </data>
+  <data name="StaffingUnitCrewFormat" xml:space="preserve">
+    <value>Obecna załoga: {0}</value>
+  </data>
+  <data name="StaffingChangesFormat" xml:space="preserve">
+    <value>+{0} / -{1}</value>
+  </data>
+  <data name="StaffingSourceAutomaticStaticHelp" xml:space="preserve">
+    <value>Wyliczona z obecnej załogi każdej jednostki. Zatwierdzenie obsady poniżej zastępuje ją dla tego dnia.</value>
+  </data>
+  <data name="OpenTradeRequestsHeader" xml:space="preserve">
+    <value>Otwarte prośby o zamianę</value>
+  </data>
+  <data name="OpenTradeRequestsHelp" xml:space="preserve">
+    <value>Prośby o zamianę w nadzorowanych przez Ciebie grupach, które jeszcze nie weszły w życie. Anulowanie powiadamia wnioskodawcę i wszystkich zgłoszonych.</value>
+  </data>
+  <data name="NoOpenTradeRequests" xml:space="preserve">
+    <value>Brak otwartych próśb o zamianę.</value>
+  </data>
+  <data name="PendingApprovalLabel" xml:space="preserve">
+    <value>Oczekuje na zatwierdzenie</value>
+  </data>
+  <data name="OpenRequestLabel" xml:space="preserve">
+    <value>Otwarta dla wszystkich</value>
+  </data>
+  <data name="ApplicantsFormat" xml:space="preserve">
+    <value>Zgłoszeni: {0}</value>
+  </data>
+  <data name="NoApplicants" xml:space="preserve">
+    <value>jeszcze nikt</value>
+  </data>
+  <data name="CancelTradeConfirm" xml:space="preserve">
+    <value>Anulować tę prośbę o zamianę? Wnioskodawca i wszyscy zgłoszeni zostaną powiadomieni.</value>
+  </data>
+  <data name="CancelTradeButton" xml:space="preserve">
+    <value>Anuluj prośbę</value>
+  </data>
+  <data name="TradeCancelled" xml:space="preserve">
+    <value>Prośba o zamianę została anulowana.</value>
+  </data>
+  <data name="ShiftErrorNotEligible" xml:space="preserve">
+    <value>Ta osoba nie spełnia wymagań dla tego miejsca.</value>
   </data>
 </root>

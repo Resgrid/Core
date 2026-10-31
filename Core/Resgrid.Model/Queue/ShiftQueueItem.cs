@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using ProtoBuf;
 
 namespace Resgrid.Model.Queue
@@ -26,6 +27,18 @@ namespace Resgrid.Model.Queue
 
 		[ProtoMember(7)]
 		public int ShiftSignupId { get; set; }
+
+		/// <summary>Cancelled static shift (workshift) day trades: the day, since the trade row is deleted.</summary>
+		[ProtoMember(8)]
+		public string WorkshiftDayId { get; set; }
+
+		/// <summary>Cancelled trades: the requester and applicants to tell, since the trade row is deleted.</summary>
+		[ProtoMember(9)]
+		public List<string> UserIds { get; set; }
+
+		/// <summary>Cancelled trades: who cancelled it (the requester or a supervisor).</summary>
+		[ProtoMember(10)]
+		public string ActingUserId { get; set; }
 	}
 
 	public enum ShiftQueueTypes
@@ -42,6 +55,7 @@ namespace Resgrid.Model.Queue
 		TradePendingApproval = 9,
 		TradeReviewed = 10,
 		DayAssigned = 11,
-		DayRemoved = 12
+		DayRemoved = 12,
+		TradeCancelled = 13
 	}
 }

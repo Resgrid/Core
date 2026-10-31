@@ -7,8 +7,11 @@ namespace Resgrid.Web.Areas.User.Models.Shifts
 	{
 		public List<Shift> Shifts { get; set; }
 
-		/// <summary>Supervises at least one group (or all of them): gets staffing and approvals.</summary>
+		/// <summary>Supervises at least one group (or all of them): gets staffing.</summary>
 		public bool IsUserAdminOrGroupAdmin { get; set; }
+
+		/// <summary>Supervises a group or holds a shift trade approver role: gets the approvals queue.</summary>
+		public bool HasApprovals { get; set; }
 
 		/// <summary>Shifts whose every group the caller manages, so may edit or delete.</summary>
 		public HashSet<int> ManageableShiftIds { get; set; } = new HashSet<int>();

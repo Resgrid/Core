@@ -1,4 +1,4 @@
-using Resgrid.Config;
+﻿using Resgrid.Config;
 using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Queue;
@@ -554,6 +554,15 @@ namespace Resgrid.Providers.Bus
 			item.ShiftSignupId = message.ShiftSignupId;
 			item.ShiftSignupTradeId = message.ShiftSignupTradeId;
 			item.SourceUserId = message.UserId;
+			item.WorkshiftDayId = message.WorkshiftDayId;
+			item.UserIds = message.UserIds;
+
+			// A cancelled trade is deleted before the worker runs: it needs the requester apart from who cancelled it.
+			if (message.ChangeType == ShiftQueueTypes.TradeCancelled)
+			{
+				item.SourceUserId = message.SourceUserId;
+				item.ActingUserId = message.UserId;
+			}
 
 			await _outboundQueueProvider.EnqueueShiftNotification(item);
 		};

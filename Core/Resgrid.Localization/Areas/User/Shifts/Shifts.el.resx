@@ -954,4 +954,193 @@
   <data name="YourStatusHeader" xml:space="preserve">
     <value>Η κατάστασή σας</value>
   </data>
+  <data name="StaffingSavedFormat" xml:space="preserve">
+    <value>Η στελέχωση εγκρίθηκε. Προστέθηκαν στο πρόγραμμα της ημέρας: {0}. Αφαιρέθηκαν από το πρόγραμμα της ημέρας: {1}.</value>
+  </data>
+  <data name="StaffingSavedWithErrorsFormat" xml:space="preserve">
+    <value>Η στελέχωση εγκρίθηκε. Προστέθηκαν στο πρόγραμμα της ημέρας: {0}. Αφαιρέθηκαν από το πρόγραμμα της ημέρας: {1}. Δεν ήταν δυνατή η αλλαγή: {2}</value>
+  </data>
+  <data name="StaffingWorkshiftSavedFormat" xml:space="preserve">
+    <value>Η στελέχωση εγκρίθηκε: καλύφθηκαν {0} θέσεις μονάδων.</value>
+  </data>
+  <data name="StaffingSelectStaticShift" xml:space="preserve">
+    <value>Πρέπει να επιλέξετε μια στατική βάρδια</value>
+  </data>
+  <data name="StaffingCleared" xml:space="preserve">
+    <value>Η εγκεκριμένη στελέχωση αφαιρέθηκε· η ημέρα στελεχώνεται ξανά αυτόματα.</value>
+  </data>
+  <data name="StaffingSourceManual" xml:space="preserve">
+    <value>Εγκεκριμένη</value>
+  </data>
+  <data name="StaffingSourceAutomatic" xml:space="preserve">
+    <value>Αυτόματη</value>
+  </data>
+  <data name="StaffingTypeStaticShift" xml:space="preserve">
+    <value>Στατική Βάρδια</value>
+  </data>
+  <data name="StaffingSourceTrade" xml:space="preserve">
+    <value>Ανταλλαγή</value>
+  </data>
+  <data name="StaffingOverviewHeader" xml:space="preserve">
+    <value>Στελέχωση ανά ημέρα</value>
+  </data>
+  <data name="StaffingOverviewHelp" xml:space="preserve">
+    <value>Όλες οι ημέρες βαρδιών και στατικών βαρδιών στο διάστημα, μαζί με τις περασμένες, με τη στελέχωσή τους. Επιλέξτε μια ημέρα για να δείτε ή να ορίσετε τη στελέχωσή της.</value>
+  </data>
+  <data name="StaffingOverviewFrom" xml:space="preserve">
+    <value>Από</value>
+  </data>
+  <data name="StaffingOverviewTo" xml:space="preserve">
+    <value>Έως</value>
+  </data>
+  <data name="StaffingOverviewAllTypes" xml:space="preserve">
+    <value>Όλοι οι τύποι βάρδιας</value>
+  </data>
+  <data name="StaffingOverviewShow" xml:space="preserve">
+    <value>Εμφάνιση</value>
+  </data>
+  <data name="StaffingColumnDay" xml:space="preserve">
+    <value>Ημέρα</value>
+  </data>
+  <data name="StaffingColumnShift" xml:space="preserve">
+    <value>Βάρδια</value>
+  </data>
+  <data name="StaffingColumnType" xml:space="preserve">
+    <value>Τύπος</value>
+  </data>
+  <data name="StaffingColumnTime" xml:space="preserve">
+    <value>Ώρα</value>
+  </data>
+  <data name="StaffingColumnHours" xml:space="preserve">
+    <value>Ώρες</value>
+  </data>
+  <data name="StaffingColumnPeople" xml:space="preserve">
+    <value>Άτομα</value>
+  </data>
+  <data name="StaffingColumnSource" xml:space="preserve">
+    <value>Στελέχωση</value>
+  </data>
+  <data name="StaffingColumnSetBy" xml:space="preserve">
+    <value>Εγκρίθηκε από</value>
+  </data>
+  <data name="StaffingLoading" xml:space="preserve">
+    <value>Φόρτωση...</value>
+  </data>
+  <data name="StaffingEditorHeader" xml:space="preserve">
+    <value>Ορισμός στελέχωσης</value>
+  </data>
+  <data name="StaffingKindLabel" xml:space="preserve">
+    <value>Τύπος βάρδιας</value>
+  </data>
+  <data name="StaffingKindShift" xml:space="preserve">
+    <value>Ανατεθειμένη βάρδια ή βάρδια με δήλωση συμμετοχής</value>
+  </data>
+  <data name="StaticShiftSelectHelp" xml:space="preserve">
+    <value>Οι στατικές βάρδιες προγραμματίζουν μονάδες για ορισμένη περίοδο. Ορίστε ποιοι επάνδρωσαν κάθε μονάδα εκείνη την ημέρα.</value>
+  </data>
+  <data name="StaffingDayHelp" xml:space="preserve">
+    <value>Επιλέξτε την ημέρα για την οποία θα δείτε ή θα ορίσετε τη στελέχωση. Οι περασμένες ημέρες μπορούν να στελεχωθούν για να καταγραφεί ποιος εργάστηκε.</value>
+  </data>
+  <data name="StaffingCurrentHeader" xml:space="preserve">
+    <value>Τρέχουσα στελέχωση</value>
+  </data>
+  <data name="StaffingSelectDayFirst" xml:space="preserve">
+    <value>Επιλέξτε βάρδια και ημέρα για να δείτε τη στελέχωση.</value>
+  </data>
+  <data name="StaffingClearButton" xml:space="preserve">
+    <value>Επαναφορά σε αυτόματη</value>
+  </data>
+  <data name="StaffingUnitCrewHelp" xml:space="preserve">
+    <value>Κάθε μονάδα ξεκινά από την ισχύουσα στελέχωση· χωρίς εγκεκριμένη στελέχωση, είναι το τρέχον πλήρωμα της μονάδας.</value>
+  </data>
+  <data name="StaffingAppliesHelp" xml:space="preserve">
+    <value>Η αποθήκευση εγκρίνει τη στελέχωση: αντικαθιστά την αυτόματη στελέχωση της ημέρας, και στις αναφορές. Μέχρι να τελειώσει η ημέρα, όσοι προστίθενται μπαίνουν στην ημέρα και όσοι αφαιρείτε βγαίνουν από αυτήν.</value>
+  </data>
+  <data name="StaffingApproveButton" xml:space="preserve">
+    <value>Έγκριση στελέχωσης</value>
+  </data>
+  <data name="StaffingOverviewEmpty" xml:space="preserve">
+    <value>Δεν υπάρχουν ημέρες βάρδιας σε αυτό το διάστημα.</value>
+  </data>
+  <data name="StaffingSelectButton" xml:space="preserve">
+    <value>Επιλογή</value>
+  </data>
+  <data name="StaffingSourceAutomaticHelp" xml:space="preserve">
+    <value>Προκύπτει από τις μόνιμες αναθέσεις της βάρδιας, τις εγκεκριμένες δηλώσεις συμμετοχής, τις αλλαγές μίας ημέρας και τις ανταλλαγές. Η έγκριση της στελέχωσης παρακάτω την αντικαθιστά για αυτήν την ημέρα.</value>
+  </data>
+  <data name="StaffingSourceManualFormat" xml:space="preserve">
+    <value>Εγκρίθηκε από {0} στις {1}</value>
+  </data>
+  <data name="StaffingAutomaticHeader" xml:space="preserve">
+    <value>Από τη βάρδια (αυτόματα)</value>
+  </data>
+  <data name="StaffingApprovedHeader" xml:space="preserve">
+    <value>Εγκεκριμένη στελέχωση</value>
+  </data>
+  <data name="StaffingAddedFormat" xml:space="preserve">
+    <value>Στην εγκεκριμένη στελέχωση αλλά όχι στη βάρδια: {0}</value>
+  </data>
+  <data name="StaffingRemovedFormat" xml:space="preserve">
+    <value>Στη βάρδια αλλά εκτός της εγκεκριμένης στελέχωσης: {0}</value>
+  </data>
+  <data name="StaffingNobody" xml:space="preserve">
+    <value>Κανείς</value>
+  </data>
+  <data name="StaffingDayOver" xml:space="preserve">
+    <value>Αυτή η ημέρα έχει τελειώσει: η έγκριση καταγράφει ποιος εργάστηκε και δεν αλλάζει το πρόγραμμα της ημέρας.</value>
+  </data>
+  <data name="StaffingInProgress" xml:space="preserve">
+    <value>Σε εξέλιξη</value>
+  </data>
+  <data name="StaffingClearConfirm" xml:space="preserve">
+    <value>Να αφαιρεθεί η εγκεκριμένη στελέχωση αυτής της ημέρας και να επιστρέψει στην αυτόματη;</value>
+  </data>
+  <data name="StaffingNoUnits" xml:space="preserve">
+    <value>Αυτή η στατική βάρδια δεν έχει μονάδες.</value>
+  </data>
+  <data name="StaffingOtherSupervisor" xml:space="preserve">
+    <value>Στελεχώνεται από άλλον επόπτη· παραμένει ως έχει.</value>
+  </data>
+  <data name="StaffingUnitCrewFormat" xml:space="preserve">
+    <value>Τρέχον πλήρωμα: {0}</value>
+  </data>
+  <data name="StaffingChangesFormat" xml:space="preserve">
+    <value>+{0} / -{1}</value>
+  </data>
+  <data name="StaffingSourceAutomaticStaticHelp" xml:space="preserve">
+    <value>Προκύπτει από το τρέχον πλήρωμα κάθε μονάδας. Η έγκριση της στελέχωσης παρακάτω την αντικαθιστά για αυτήν την ημέρα.</value>
+  </data>
+  <data name="OpenTradeRequestsHeader" xml:space="preserve">
+    <value>Ανοιχτά αιτήματα ανταλλαγής</value>
+  </data>
+  <data name="OpenTradeRequestsHelp" xml:space="preserve">
+    <value>Αιτήματα ανταλλαγής σε ομάδες που επιβλέπετε που δεν έχουν ισχύσει ακόμη. Η ακύρωση ενημερώνει τον αιτούντα και όσους έκαναν αίτηση.</value>
+  </data>
+  <data name="NoOpenTradeRequests" xml:space="preserve">
+    <value>Δεν υπάρχουν ανοιχτά αιτήματα ανταλλαγής.</value>
+  </data>
+  <data name="PendingApprovalLabel" xml:space="preserve">
+    <value>Εκκρεμεί έγκριση</value>
+  </data>
+  <data name="OpenRequestLabel" xml:space="preserve">
+    <value>Ανοιχτό σε όλους</value>
+  </data>
+  <data name="ApplicantsFormat" xml:space="preserve">
+    <value>Αιτούντες: {0}</value>
+  </data>
+  <data name="NoApplicants" xml:space="preserve">
+    <value>κανείς ακόμη</value>
+  </data>
+  <data name="CancelTradeConfirm" xml:space="preserve">
+    <value>Ακύρωση αυτού του αιτήματος ανταλλαγής; Θα ενημερωθούν ο αιτών και όσοι έκαναν αίτηση.</value>
+  </data>
+  <data name="CancelTradeButton" xml:space="preserve">
+    <value>Ακύρωση αιτήματος</value>
+  </data>
+  <data name="TradeCancelled" xml:space="preserve">
+    <value>Το αίτημα ανταλλαγής ακυρώθηκε.</value>
+  </data>
+  <data name="ShiftErrorNotEligible" xml:space="preserve">
+    <value>Αυτό το άτομο δεν πληροί τις απαιτήσεις για αυτή τη θέση.</value>
+  </data>
 </root>

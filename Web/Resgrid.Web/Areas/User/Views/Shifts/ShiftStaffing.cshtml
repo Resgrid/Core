@@ -1,13 +1,30 @@
 ﻿@using Resgrid.Framework
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Shifts
 @model Resgrid.Web.Areas.User.Models.Shifts.ShiftStaffingView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Shifts.Shifts> localizer
 @{
 	ViewBag.Title = "Resgrid | " + localizer["ShiftStaffingHeader"];
 	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+
+	var assignedShifts = Model.Shifts.Where(x => x.AssignmentType != (int)ShiftAssignmentTypes.Signup).OrderBy(x => x.Name).ToList();
+	var signupShifts = Model.Shifts.Where(x => x.AssignmentType == (int)ShiftAssignmentTypes.Signup).OrderBy(x => x.Name).ToList();
+	var isWorkshift = Model.StaffingKind == ShiftStaffingView.WorkshiftKind;
 }
 @section Styles
 {
-
+	<style>
+		#staffingOverview td, #staffingOverview th { vertical-align: middle; }
+		#staffingOverview tr.staffing-selected td { background-color: #eef5fb; }
+		.staffing-swatch { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; }
+		.staffing-approved { background-color: #1c7c54; }
+		.staffing-automatic { background-color: #6b6b6b; }
+		.staffing-status { border: 1px solid #e7eaec; border-radius: 4px; padding: 10px 14px; margin-bottom: 10px; }
+		.staffing-status ul { margin-bottom: 4px; padding-left: 18px; }
+		.staffing-diff-added { color: #1c7c54; }
+		.staffing-diff-removed { color: #b52f2f; }
+		.staffing-readonly { color: #6b6b6b; }
+	</style>
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
@@ -30,7 +47,57 @@
 <div class="row">
 	<div class="col-xs-12">
 		<div class="wrapper wrapper-content">
+			<partial name="_ShiftsMessage" />
+
 			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+					<h5>@localizer["StaffingOverviewHeader"]</h5>
+				</div>
+				<div class="ibox-content">
+					<p>@localizer["StaffingOverviewHelp"]</p>
+					<div class="form-inline" style="margin-bottom: 10px;">
+						<label for="overviewStart">@localizer["StaffingOverviewFrom"]</label>
+						<input id="overviewStart" class="form-control" style="width: 130px;" onkeydown="return false;" />
+						<label for="overviewEnd">@localizer["StaffingOverviewTo"]</label>
+						<input id="overviewEnd" class="form-control" style="width: 130px;" onkeydown="return false;" />
+						<select id="overviewType" class="form-control">
+							<option value="">@localizer["StaffingOverviewAllTypes"]</option>
+							<option value="@((int)StaffedShiftTypes.Assigned)">@localizer["AssignedType"]</option>
+							<option value="@((int)StaffedShiftTypes.Signup)">@localizer["SignupType"]</option>
+							@if (Model.CanStaffWorkshifts)
+							{
+								<option value="@((int)StaffedShiftTypes.Workshift)">@localizer["StaffingTypeStaticShift"]</option>
+							}
+						</select>
+						<button id="overviewLoad" type="button" class="btn btn-default">@localizer["StaffingOverviewShow"]</button>
+					</div>
+					<div class="table-responsive">
+						<table id="staffingOverview" class="table table-striped table-condensed">
+							<thead>
+								<tr>
+									<th>@localizer["StaffingColumnDay"]</th>
+									<th>@localizer["StaffingColumnShift"]</th>
+									<th>@localizer["StaffingColumnType"]</th>
+									<th>@localizer["StaffingColumnTime"]</th>
+									<th>@localizer["StaffingColumnHours"]</th>
+									<th>@localizer["StaffingColumnPeople"]</th>
+									<th>@localizer["StaffingColumnSource"]</th>
+									<th>@localizer["StaffingColumnSetBy"]</th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr><td colspan="9">@localizer["StaffingLoading"]</td></tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+
+			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+					<h5>@localizer["StaffingEditorHeader"]</h5>
+				</div>
 				<div class="ibox-content">
 					<form class="form-horizontal" role="form" asp-controller="Shifts" asp-action="ShiftStaffing" asp-route-area="User" method="post">
 
@@ -41,30 +108,81 @@
 							</div>
 						</div>
 
-						<div class="form-group">
+						@if (Model.CanStaffWorkshifts)
+						{
+							<div class="form-group">
+								<label class="col-sm-2 control-label">@localizer["StaffingKindLabel"]</label>
+								<div class="col-sm-10">
+									<label class="radio-inline"><input type="radio" name="StaffingKind" value="@ShiftStaffingView.ShiftKind" @(isWorkshift ? "" : "checked") /> @localizer["StaffingKindShift"]</label>
+									<label class="radio-inline"><input type="radio" name="StaffingKind" value="@ShiftStaffingView.WorkshiftKind" @(isWorkshift ? "checked" : "") /> @localizer["StaffingTypeStaticShift"]</label>
+								</div>
+							</div>
+						}
+						else
+						{
+							<input type="hidden" name="StaffingKind" value="@ShiftStaffingView.ShiftKind" />
+						}
+
+						<div class="form-group staffing-shift-only">
 							<label class="col-sm-2 control-label">@localizer["ShiftLabel"]</label>
 							<div class="col-sm-10">
-								@Html.DropDownListFor(m => m.ShiftId, new SelectList(Model.Shifts, "ShiftId", "Name"), new { @class = "sl2", style="width:100%;max-width:400px;" })
+								<select id="ShiftId" name="ShiftId" class="sl2" style="width:100%;max-width:400px;">
+									@if (assignedShifts.Any())
+									{
+										<optgroup label="@localizer["AssignedType"]">
+											@foreach (var shift in assignedShifts)
+											{
+												<option value="@shift.ShiftId" selected="@(shift.ShiftId == Model.ShiftId)">@shift.Name</option>
+											}
+										</optgroup>
+									}
+									@if (signupShifts.Any())
+									{
+										<optgroup label="@localizer["SignupType"]">
+											@foreach (var shift in signupShifts)
+											{
+												<option value="@shift.ShiftId" selected="@(shift.ShiftId == Model.ShiftId)">@shift.Name</option>
+											}
+										</optgroup>
+									}
+								</select>
 								<span class="help-block m-b-none">@localizer["ShiftSelectHelp"]</span>
-								<span class="help-block m-b-none">@localizer["ShiftStaffingAppliesHelp"]</span>
 							</div>
 						</div>
+
+						@if (Model.CanStaffWorkshifts)
+						{
+							<div class="form-group staffing-workshift-only">
+								<label class="col-sm-2 control-label">@localizer["StaffingTypeStaticShift"]</label>
+								<div class="col-sm-10">
+									<select id="WorkshiftId" name="WorkshiftId" class="sl2" style="width:100%;max-width:400px;">
+										@foreach (var workshift in Model.Workshifts)
+										{
+											<option value="@workshift.WorkshiftId" selected="@(workshift.WorkshiftId == Model.WorkshiftId)">@workshift.Name</option>
+										}
+									</select>
+									<span class="help-block m-b-none">@localizer["StaticShiftSelectHelp"]</span>
+								</div>
+							</div>
+						}
+
 						<div class="form-group">
 							<label class="col-sm-2 control-label">@localizer["ShiftDayLabel"]</label>
 							<div class="col-sm-10">
 								<input id="shiftDayPicker" name="shiftDayPicker" onkeydown="return false;">
-								<span class="help-block m-b-none">@localizer["ShiftDayHelp"]</span>
+								<span class="help-block m-b-none">@localizer["StaffingDayHelp"]</span>
 							</div>
 						</div>
 
 						<div class="form-group">
-							<label class="col-sm-2 control-label">@localizer["NoteLabel"]</label>
+							<label class="col-sm-2 control-label">@localizer["StaffingCurrentHeader"]</label>
 							<div class="col-sm-10">
-								<textarea cols="30" rows="10" class="form-control" placeholder="@localizer["NotePlaceholder"]" asp-for="Note"></textarea>
+								<div id="staffingStatus" class="staffing-status">@localizer["StaffingSelectDayFirst"]</div>
+								<button id="clearStaffingButton" type="button" class="btn btn-warning btn-sm" style="display:none;">@localizer["StaffingClearButton"]</button>
 							</div>
 						</div>
 
-						<div class="form-group">
+						<div class="form-group staffing-shift-only">
 							<label class="col-sm-2 control-label">@localizer["AssignmentsLabel"]</label>
 							<div class="col-sm-10">
 								<div id="groupStaffing">
@@ -73,21 +191,43 @@
 							</div>
 						</div>
 
-						<div class="form-group">
-						  <label class="col-sm-2 control-label">@localizer["UnitsLabel"]</label>
-						  <div class="col-sm-10">
-						    <div id="unitsStaffing">
+						<div class="form-group staffing-workshift-only">
+							<label class="col-sm-2 control-label">@localizer["UnitsLabel"]</label>
+							<div class="col-sm-10">
+								<div id="unitsStaffing">
 
-						    </div>
-						  </div>
+								</div>
+								<span class="help-block m-b-none">@localizer["StaffingUnitCrewHelp"]</span>
+							</div>
+						</div>
+
+						<div class="form-group staffing-shift-only">
+							<label class="col-sm-2 control-label">@localizer["NoteLabel"]</label>
+							<div class="col-sm-10">
+								<textarea cols="30" rows="4" class="form-control" placeholder="@localizer["NotePlaceholder"]" asp-for="Note"></textarea>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<div class="col-sm-10 col-sm-offset-2">
+								<span class="help-block m-b-none">@localizer["StaffingAppliesHelp"]</span>
+							</div>
 						</div>
 
 						<div class="form-group">
 							<div class="col-sm-4 col-sm-offset-2">
 								<a class="btn btn-white" asp-controller="Shifts" asp-action="Index" asp-route-area="User">@localizer["CancelButton"]</a>
-								<button class="btn btn-primary" type="submit">@localizer["SetShiftDayStaffingButton"]</button>
+								<button class="btn btn-primary" type="submit">@localizer["StaffingApproveButton"]</button>
 							</div>
 						</div>
+					</form>
+
+					<form id="clearStaffingForm" asp-controller="Shifts" asp-action="ClearShiftStaffing" asp-route-area="User" method="post" style="display:none;">
+						@Html.AntiForgeryToken()
+						<input type="hidden" name="staffingKind" id="clearStaffingKind" />
+						<input type="hidden" name="shiftId" id="clearShiftId" value="0" />
+						<input type="hidden" name="workshiftId" id="clearWorkshiftId" />
+						<input type="hidden" name="day" id="clearDay" />
 					</form>
 				</div>
 			</div>
@@ -98,14 +238,40 @@
 @section Scripts
 {
 	<script>
-		// Department-wide supervisors also set the non-group personnel; group supervisors only get their own groups
-		// (GetShiftGroups flags which ones).
+		// Department-wide supervisors also set the non-group personnel and staff static shifts; group supervisors only get
+		// their own groups (GetShiftDayStaffing flags which ones).
 		var isAdmin = @(Model.IsDepartmentAdmin ? "true" : "false");
+		var resgridShiftStaffingState = {
+			day: '@JsEncoder.Encode(Model.Day ?? "")'
+		};
 		var resgridShiftsI18n = {
 			selectNonGroupPersonnel: '@JsEncoder.Encode(localizer["SelectNonGroupPersonnel"])',
 			selectPersonnelForGroup: '@JsEncoder.Encode(localizer["SelectPersonnelForGroup"])',
 			selectPerson: '@JsEncoder.Encode(localizer["SelectPerson"])',
-			nonGroupPersonnel: '@JsEncoder.Encode(localizer["NonGroupPersonnelStaffing"])'
+			nonGroupPersonnel: '@JsEncoder.Encode(localizer["NonGroupPersonnelStaffing"])',
+			loading: '@JsEncoder.Encode(localizer["StaffingLoading"])',
+			selectDayFirst: '@JsEncoder.Encode(localizer["StaffingSelectDayFirst"])',
+			noDays: '@JsEncoder.Encode(localizer["StaffingOverviewEmpty"])',
+			select: '@JsEncoder.Encode(localizer["StaffingSelectButton"])',
+			automatic: '@JsEncoder.Encode(localizer["StaffingSourceAutomatic"])',
+			approved: '@JsEncoder.Encode(localizer["StaffingSourceManual"])',
+			automaticHelp: '@JsEncoder.Encode(localizer["StaffingSourceAutomaticHelp"])',
+			automaticStaticHelp: '@JsEncoder.Encode(localizer["StaffingSourceAutomaticStaticHelp"])',
+			approvedByFormat: '@JsEncoder.Encode(localizer["StaffingSourceManualFormat"])',
+			automaticHeader: '@JsEncoder.Encode(localizer["StaffingAutomaticHeader"])',
+			approvedHeader: '@JsEncoder.Encode(localizer["StaffingApprovedHeader"])',
+			addedFormat: '@JsEncoder.Encode(localizer["StaffingAddedFormat"])',
+			removedFormat: '@JsEncoder.Encode(localizer["StaffingRemovedFormat"])',
+			nobody: '@JsEncoder.Encode(localizer["StaffingNobody"])',
+			dayOver: '@JsEncoder.Encode(localizer["StaffingDayOver"])',
+			inProgress: '@JsEncoder.Encode(localizer["StaffingInProgress"])',
+			clearConfirm: '@JsEncoder.Encode(localizer["StaffingClearConfirm"])',
+			notFound: '@JsEncoder.Encode(localizer["ShiftStaffingSelectDay"])',
+			noUnits: '@JsEncoder.Encode(localizer["StaffingNoUnits"])',
+			otherSupervisor: '@JsEncoder.Encode(localizer["StaffingOtherSupervisor"])',
+			unitCrewFormat: '@JsEncoder.Encode(localizer["StaffingUnitCrewFormat"])',
+			noteLabel: '@JsEncoder.Encode(localizer["NoteLabel"])',
+			changesFormat: '@JsEncoder.Encode(localizer["StaffingChangesFormat"])'
 		};
 	</script>
 

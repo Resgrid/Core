@@ -1,4 +1,4 @@
-using FluentAssertions;
+﻿using FluentAssertions;
 using NUnit.Framework;
 using Resgrid.Repositories.DataRepository.Queries.Shifts;
 using Resgrid.Repositories.DataRepository.Servers.PostgreSql;
@@ -35,6 +35,29 @@ namespace Resgrid.Tests.Repositories
 		}
 
 		[Test]
+		public void Department_trades_include_static_shift_day_trades_without_a_source_signup()
+		{
+			var query = new SelectShiftSignupTradesByDepartmentIdQuery(new SqlServerConfiguration()).GetQuery();
+
+			query.Should().Contain("LEFT JOIN [dbo].ShiftSignups ss ON ss.[ShiftSignupId] = sst.[SourceShiftSignupId]");
+			query.Should().Contain("sst.[SourceShiftSignupId] IS NULL AND sst.[DepartmentId] = @DepartmentId AND sst.[SourceDay] >= @StartDate");
+
+			var postgres = new SelectShiftSignupTradesByDepartmentIdQuery(new PostgreSqlConfiguration()).GetQuery();
+
+			postgres.Should().Contain("sst.SourceShiftSignupId IS NULL AND sst.DepartmentId = @DepartmentId AND sst.SourceDay >= @StartDate");
+			postgres.Should().NotContain("%");
+		}
+
+		[Test]
+		public void Open_trade_requests_include_static_shift_day_trades()
+		{
+			var query = new SelectOpenShiftSignupTradesByUserIdQuery(new SqlServerConfiguration()).GetQuery();
+
+			query.Should().Contain("LEFT JOIN [dbo].ShiftSignups ss");
+			query.Should().Contain("sst.[SourceShiftSignupId] IS NULL AND sst.[SourceDay] >= DATEADD(day, -1, GETUTCDATE())");
+		}
+
+		[Test]
 		public void Department_signups_are_bounded_by_the_date_range()
 		{
 			var query = new SelectShiftSignupsByDepartmentIdAndDateRangeQuery(new SqlServerConfiguration()).GetQuery();
@@ -42,6 +65,22 @@ namespace Resgrid.Tests.Repositories
 			query.Should().Contain("ss.[ShiftDay] >= @StartDate AND ss.[ShiftDay] < @EndDate");
 			query.Should().Contain("s.[DepartmentId] = @DepartmentId");
 			query.Should().NotContain("%");
+		}
+
+		[Test]
+		public void Department_staffing_records_come_with_their_personnel_for_the_date_range()
+		{
+			var query = new SelectShiftStaffingsByDepartmentIdAndDateRangeQuery(new SqlServerConfiguration()).GetQuery();
+
+			query.Should().Contain("SELECT ss.*, ssp.*");
+			query.Should().Contain("LEFT JOIN [dbo].ShiftStaffingPersons ssp ON ssp.[ShiftStaffingId] = ss.[ShiftStaffingId]");
+			query.Should().Contain("ss.[DepartmentId] = @DepartmentId AND ss.[ShiftDay] >= @StartDate AND ss.[ShiftDay] < @EndDate");
+			query.Should().NotContain("%");
+
+			var postgres = new SelectShiftStaffingsByDepartmentIdAndDateRangeQuery(new PostgreSqlConfiguration()).GetQuery();
+
+			postgres.Should().Contain("ss.DepartmentId = @DepartmentId AND ss.ShiftDay >= @StartDate AND ss.ShiftDay < @EndDate");
+			postgres.Should().NotContain("%");
 		}
 
 		[Test]

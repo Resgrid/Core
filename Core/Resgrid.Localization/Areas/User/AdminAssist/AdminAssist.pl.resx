@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version='1.0' encoding='utf-8'?>
 <root>
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
@@ -7694,5 +7694,29 @@
   </data>
   <data name="PermissionHelp.ShareCoordinationBoards" xml:space="preserve">
     <value>Umożliwia udostępnianie tablicy koordynacyjnej instytucjom partnerskim. Bez zapisanej zasady mogą to robić tylko administratorzy działu. Wymaga włączenia Incident Coordination i aktywnego dodatku Incident Back Office.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.shift-staffing">
+    <value>Obsada zmiany</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.shift-staffing">
+    <value>Kto faktycznie pracował w każdym dniu zmiany, zatwierdzone przez przełożonego, dla zmian przypisanych, z zapisami i statycznych; dzień, którego nikt nie zatwierdzi, jest obsadzany automatycznie ze zmiany.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.shift-staffing">
+    <value>Otwórz Zmiany, a następnie Obsada zmiany. Wybierz dzień w Obsada według dnia, także miniony, sprawdź obsadę automatyczną, w razie potrzeby zmień osoby i wybierz Zatwierdź obsadę. Przywróć automatyczną usuwa zatwierdzoną obsadę.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.on-shift-hours-report">
+    <value>Raport godzin na zmianie</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.on-shift-hours-report">
+    <value>Godziny na zmianie każdej osoby w danym okresie w zmianach przypisanych, z zapisami i statycznych, dla jednostki, grupy lub jednej zmiany, z podziałem na godziny zatwierdzone i automatyczne.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.on-shift-hours-report">
+    <value>Otwórz Raporty, a następnie Raport godzin na zmianie. Wybierz okres oraz czy obejmuje jednostkę, grupę czy zmianę. Przed uruchomieniem na potrzeby płac lub zgodności zatwierdź na stronie Obsada zmiany obsadę dni, które wymagają dokładnego zapisu.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.ShiftTradeApprovers">
+    <value>Zatwierdzający zamiany zmian</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.ShiftTradeApprovers">
+    <value>Kto wybiera, który zgłoszony przejmuje prośbę o zamianę zmiany, i zatwierdza oczekujące zamiany. Administratorzy jednostki zawsze mogą; administratorzy grup, osoba oddająca zmianę i członkowie wybranych ról zależą od wyboru jednostki.</value>
   </data>
 </root>

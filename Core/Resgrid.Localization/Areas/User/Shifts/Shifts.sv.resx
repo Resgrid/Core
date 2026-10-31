@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -880,5 +880,194 @@
   </data>
   <data name="YourStatusHeader" xml:space="preserve">
     <value>Din status</value>
+  </data>
+  <data name="StaffingSavedFormat" xml:space="preserve">
+    <value>Bemanning godkänd. Tillagda på dagens schema: {0}. Borttagna från dagens schema: {1}.</value>
+  </data>
+  <data name="StaffingSavedWithErrorsFormat" xml:space="preserve">
+    <value>Bemanning godkänd. Tillagda på dagens schema: {0}. Borttagna från dagens schema: {1}. Kunde inte ändras: {2}</value>
+  </data>
+  <data name="StaffingWorkshiftSavedFormat" xml:space="preserve">
+    <value>Bemanning godkänd: {0} enhetsplatser bemannade.</value>
+  </data>
+  <data name="StaffingSelectStaticShift" xml:space="preserve">
+    <value>Du måste välja ett statiskt skift</value>
+  </data>
+  <data name="StaffingCleared" xml:space="preserve">
+    <value>Den godkända bemanningen togs bort; dagen bemannas automatiskt igen.</value>
+  </data>
+  <data name="StaffingSourceManual" xml:space="preserve">
+    <value>Godkänd</value>
+  </data>
+  <data name="StaffingSourceAutomatic" xml:space="preserve">
+    <value>Automatisk</value>
+  </data>
+  <data name="StaffingTypeStaticShift" xml:space="preserve">
+    <value>Statiskt skift</value>
+  </data>
+  <data name="StaffingSourceTrade" xml:space="preserve">
+    <value>Byte</value>
+  </data>
+  <data name="StaffingOverviewHeader" xml:space="preserve">
+    <value>Bemanning per dag</value>
+  </data>
+  <data name="StaffingOverviewHelp" xml:space="preserve">
+    <value>Alla skiftdagar och statiska skiftdagar i intervallet, även tidigare dagar, med deras bemanning. Välj en dag för att visa eller ange dess bemanning.</value>
+  </data>
+  <data name="StaffingOverviewFrom" xml:space="preserve">
+    <value>Från</value>
+  </data>
+  <data name="StaffingOverviewTo" xml:space="preserve">
+    <value>Till</value>
+  </data>
+  <data name="StaffingOverviewAllTypes" xml:space="preserve">
+    <value>Alla skifttyper</value>
+  </data>
+  <data name="StaffingOverviewShow" xml:space="preserve">
+    <value>Visa</value>
+  </data>
+  <data name="StaffingColumnDay" xml:space="preserve">
+    <value>Dag</value>
+  </data>
+  <data name="StaffingColumnShift" xml:space="preserve">
+    <value>Skift</value>
+  </data>
+  <data name="StaffingColumnType" xml:space="preserve">
+    <value>Typ</value>
+  </data>
+  <data name="StaffingColumnTime" xml:space="preserve">
+    <value>Tid</value>
+  </data>
+  <data name="StaffingColumnHours" xml:space="preserve">
+    <value>Timmar</value>
+  </data>
+  <data name="StaffingColumnPeople" xml:space="preserve">
+    <value>Personer</value>
+  </data>
+  <data name="StaffingColumnSource" xml:space="preserve">
+    <value>Bemanning</value>
+  </data>
+  <data name="StaffingColumnSetBy" xml:space="preserve">
+    <value>Godkänd av</value>
+  </data>
+  <data name="StaffingLoading" xml:space="preserve">
+    <value>Läser in...</value>
+  </data>
+  <data name="StaffingEditorHeader" xml:space="preserve">
+    <value>Ange bemanning</value>
+  </data>
+  <data name="StaffingKindLabel" xml:space="preserve">
+    <value>Skifttyp</value>
+  </data>
+  <data name="StaffingKindShift" xml:space="preserve">
+    <value>Tilldelat skift eller anmälningsskift</value>
+  </data>
+  <data name="StaticShiftSelectHelp" xml:space="preserve">
+    <value>Statiska skift schemalägger enheter för en fast period. Ange vem som bemannade varje enhet den dagen.</value>
+  </data>
+  <data name="StaffingDayHelp" xml:space="preserve">
+    <value>Välj dagen att visa eller ange bemanning för. Tidigare dagar kan bemannas för att registrera vem som arbetade.</value>
+  </data>
+  <data name="StaffingCurrentHeader" xml:space="preserve">
+    <value>Nuvarande bemanning</value>
+  </data>
+  <data name="StaffingSelectDayFirst" xml:space="preserve">
+    <value>Välj ett skift och en dag för att se bemanningen.</value>
+  </data>
+  <data name="StaffingClearButton" xml:space="preserve">
+    <value>Återgå till automatisk</value>
+  </data>
+  <data name="StaffingUnitCrewHelp" xml:space="preserve">
+    <value>Varje enhet utgår från den gällande bemanningen; utan godkänd bemanning är det enhetens nuvarande besättning.</value>
+  </data>
+  <data name="StaffingAppliesHelp" xml:space="preserve">
+    <value>Att spara godkänner bemanningen: den ersätter den automatiska bemanningen för dagen, även i rapporter. Tills dagen är slut läggs tillagda personer på dagen och de du tar bort tas bort från den.</value>
+  </data>
+  <data name="StaffingApproveButton" xml:space="preserve">
+    <value>Godkänn bemanning</value>
+  </data>
+  <data name="StaffingOverviewEmpty" xml:space="preserve">
+    <value>Inga skiftdagar i det här intervallet.</value>
+  </data>
+  <data name="StaffingSelectButton" xml:space="preserve">
+    <value>Välj</value>
+  </data>
+  <data name="StaffingSourceAutomaticHelp" xml:space="preserve">
+    <value>Beräknas från skiftets fasta tilldelningar, godkända anmälningar, ändringar för enskilda dagar och byten. Att godkänna bemanningen nedan ersätter den för dagen.</value>
+  </data>
+  <data name="StaffingSourceManualFormat" xml:space="preserve">
+    <value>Godkänd av {0} den {1}</value>
+  </data>
+  <data name="StaffingAutomaticHeader" xml:space="preserve">
+    <value>Från skiftet (automatisk)</value>
+  </data>
+  <data name="StaffingApprovedHeader" xml:space="preserve">
+    <value>Godkänd bemanning</value>
+  </data>
+  <data name="StaffingAddedFormat" xml:space="preserve">
+    <value>I den godkända bemanningen men inte på skiftet: {0}</value>
+  </data>
+  <data name="StaffingRemovedFormat" xml:space="preserve">
+    <value>På skiftet men utanför den godkända bemanningen: {0}</value>
+  </data>
+  <data name="StaffingNobody" xml:space="preserve">
+    <value>Ingen</value>
+  </data>
+  <data name="StaffingDayOver" xml:space="preserve">
+    <value>Den här dagen är slut: att godkänna registrerar vem som arbetade och ändrar inte dagens schema.</value>
+  </data>
+  <data name="StaffingInProgress" xml:space="preserve">
+    <value>Pågår</value>
+  </data>
+  <data name="StaffingClearConfirm" xml:space="preserve">
+    <value>Ta bort den godkända bemanningen för dagen och gå tillbaka till automatisk bemanning?</value>
+  </data>
+  <data name="StaffingNoUnits" xml:space="preserve">
+    <value>Det här statiska skiftet har inga enheter.</value>
+  </data>
+  <data name="StaffingOtherSupervisor" xml:space="preserve">
+    <value>Bemannas av en annan arbetsledare; lämnas som det är.</value>
+  </data>
+  <data name="StaffingUnitCrewFormat" xml:space="preserve">
+    <value>Nuvarande besättning: {0}</value>
+  </data>
+  <data name="StaffingChangesFormat" xml:space="preserve">
+    <value>+{0} / -{1}</value>
+  </data>
+  <data name="StaffingSourceAutomaticStaticHelp" xml:space="preserve">
+    <value>Beräknas från varje enhets nuvarande besättning. Att godkänna bemanningen nedan ersätter den för dagen.</value>
+  </data>
+  <data name="OpenTradeRequestsHeader" xml:space="preserve">
+    <value>Öppna bytesförfrågningar</value>
+  </data>
+  <data name="OpenTradeRequestsHelp" xml:space="preserve">
+    <value>Bytesförfrågningar i grupper du övervakar som ännu inte trätt i kraft. Om du avbryter en meddelas den som frågade och alla som anmält sig.</value>
+  </data>
+  <data name="NoOpenTradeRequests" xml:space="preserve">
+    <value>Det finns inga öppna bytesförfrågningar.</value>
+  </data>
+  <data name="PendingApprovalLabel" xml:space="preserve">
+    <value>Väntar på godkännande</value>
+  </data>
+  <data name="OpenRequestLabel" xml:space="preserve">
+    <value>Öppen för alla</value>
+  </data>
+  <data name="ApplicantsFormat" xml:space="preserve">
+    <value>Sökande: {0}</value>
+  </data>
+  <data name="NoApplicants" xml:space="preserve">
+    <value>inga ännu</value>
+  </data>
+  <data name="CancelTradeConfirm" xml:space="preserve">
+    <value>Avbryta den här bytesförfrågan? Den som frågade och alla som anmält sig meddelas.</value>
+  </data>
+  <data name="CancelTradeButton" xml:space="preserve">
+    <value>Avbryt förfrågan</value>
+  </data>
+  <data name="TradeCancelled" xml:space="preserve">
+    <value>Bytesförfrågan avbröts.</value>
+  </data>
+  <data name="ShiftErrorNotEligible" xml:space="preserve">
+    <value>Den personen uppfyller inte kraven för den här platsen.</value>
   </data>
 </root>

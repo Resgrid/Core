@@ -68,6 +68,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.Shift.DepartmentId = DepartmentId;
 				model.Shift.AddedOn = DateTime.UtcNow;
 				model.Shift.AddedById = UserId;
+				await ToUtcAsync(model.Shift);
 
 				if (model.UnitsAssigned != null && model.UnitsAssigned.Any())
 				{
@@ -125,6 +126,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.Shift.DepartmentId = DepartmentId;
 				model.Shift.AddedOn = DateTime.UtcNow;
 				model.Shift.AddedById = UserId;
+				await ToUtcAsync(model.Shift);
 
 				if (model.UnitsAssigned != null && model.UnitsAssigned.Any())
 				{
@@ -169,7 +171,25 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Units = await _unitsService.GetUnitsForDepartmentIncludingDeletedAsync(DepartmentId);
 			model.Personnel = await _usersService.GetUserGroupAndRolesByDepartmentIdInLimitAsync(DepartmentId, false, false, false);
 
+			// Stored in UTC, shown in department time like the editor and the shift calendar.
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			model.Day.Day = model.Day.Day.TimeConverter(department);
+			model.Shift.Start = model.Shift.Start.TimeConverter(department);
+			model.Shift.End = model.Shift.End.TimeConverter(department);
+
 			return View(model);
+		}
+
+		/// <summary>
+		/// The editor posts department-local times; static shifts store UTC (the service's ToUniversalTime used the server's
+		/// zone, which on a UTC host left the department time in place).
+		/// </summary>
+		private async Task ToUtcAsync(Workshift shift)
+		{
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+
+			shift.Start = DateTime.SpecifyKind(shift.Start, DateTimeKind.Unspecified).DepartmentLocalToUtc(department);
+			shift.End = DateTime.SpecifyKind(shift.End, DateTimeKind.Unspecified).DepartmentLocalToUtc(department);
 		}
 
 		[HttpGet]

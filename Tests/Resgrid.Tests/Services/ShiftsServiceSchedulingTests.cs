@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -396,14 +396,184 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
-		public async Task Requesting_a_trade_with_nobody_to_ask_fails()
+		public async Task Requesting_a_trade_naming_nobody_opens_it_to_everyone_eligible()
 		{
 			_personnel.Add(new ShiftPerson { ShiftId = ShiftId, UserId = "alice", GroupId = CrisisTeam });
+			ShiftSignupTrade saved = null;
+			_shiftSignupTradeRepository.Setup(x => x.SaveOrUpdateAsync(It.IsAny<ShiftSignupTrade>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((ShiftSignupTrade t, CancellationToken _, bool __) => { t.ShiftSignupTradeId = 78; saved = t; return t; });
+			_shiftSignupRepository.Setup(x => x.SaveOrUpdateAsync(It.IsAny<ShiftSignup>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((ShiftSignup x, CancellationToken _, bool __) => { x.ShiftSignupId = 902; _signups.Add(x); return x; });
 
-			var result = await _service.RequestTradeAsync(ShiftDayId, "alice", new List<string> { "alice" }, null);
+			// Naming only yourself is naming nobody.
+			var result = await _service.RequestTradeAsync(ShiftDayId, "alice", new List<string> { "alice" }, "vacation");
 
-			result.Error.Should().Be(ShiftActionErrors.NoUsers);
-			_signups.Should().BeEmpty();
+			result.Success.Should().BeTrue();
+			saved.IsOpen.Should().BeTrue();
+			saved.Users.Should().BeEmpty();
+			saved.SourceUserId.Should().Be("alice");
+			saved.DepartmentId.Should().Be(DepartmentId);
+			saved.SourceDay.Should().Be(_day.Day.Date);
+			saved.RequestedOn.Should().NotBeNull();
+			_eventAggregator.Verify(x => x.SendMessage(It.Is<ShiftTradeRequestedEvent>(e => e.ShiftSignupTradeId == 78)), Times.Once);
+		}
+
+		[Test]
+		public async Task Eligibility_requires_the_slot_roles_the_requester_holds_and_not_being_on_the_day()
+		{
+			var source = new ShiftSignup { ShiftSignupId = 5, ShiftId = ShiftId, UserId = "clinician", ShiftDay = _day.Day, DepartmentGroupId = CrisisTeam };
+			_signups.Add(source);
+			_signups.Add(new ShiftSignup { ShiftSignupId = 6, ShiftId = ShiftId, UserId = "busy", ShiftDay = _day.Day, DepartmentGroupId = PeerTeam });
+			SetupMembers("clinician", "nurse", "busy", "other-clinician");
+			_personnelRolesService.Setup(x => x.GetAllRolesForUsersInDepartmentAsync(DepartmentId))
+				.ReturnsAsync(new Dictionary<string, List<PersonnelRole>>
+				{
+					{ "clinician", new List<PersonnelRole> { new PersonnelRole { PersonnelRoleId = Clinician } } },
+					{ "other-clinician", new List<PersonnelRole> { new PersonnelRole { PersonnelRoleId = Clinician } } }
+				});
+			var trade = new ShiftSignupTrade { ShiftSignupTradeId = 50, SourceShiftSignupId = 5, IsOpen = true };
+			SetupTrade(trade);
+
+			var eligibility = await _service.GetTradeEligibilityAsync(await _service.GetShiftTradeByIdAsync(50));
+
+			eligibility.Check("other-clinician").Should().Be(ShiftActionErrors.None);
+			eligibility.Check("nurse").Should().Be(ShiftActionErrors.NotEligible);
+			eligibility.Check("busy").Should().Be(ShiftActionErrors.AlreadyOnRoster);
+			eligibility.Check("clinician").Should().Be(ShiftActionErrors.NotAllowed);
+			eligibility.Check("stranger").Should().Be(ShiftActionErrors.NotAllowed);
+			eligibility.EligibleUserIds().Should().BeEquivalentTo(new[] { "other-clinician" });
+		}
+
+		[Test]
+		public async Task Applying_to_an_open_trade_adds_the_applicant_with_an_offer()
+		{
+			_signups.Add(new ShiftSignup { ShiftSignupId = 5, ShiftId = ShiftId, UserId = "alice", ShiftDay = _day.Day, DepartmentGroupId = PeerTeam });
+			SetupMembers("alice", "bob");
+			var trade = new ShiftSignupTrade { ShiftSignupTradeId = 50, SourceShiftSignupId = 5, IsOpen = true };
+			var users = new List<ShiftSignupTradeUser>();
+			SetupTrade(trade);
+			_shiftSignupTradeUserRepository.Setup(x => x.GetShiftSignupTradeUsersByTradeIdAsync(50)).ReturnsAsync(() => users.ToList());
+			_shiftSignupTradeUserRepository.Setup(x => x.SaveOrUpdateAsync(It.IsAny<ShiftSignupTradeUser>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((ShiftSignupTradeUser u, CancellationToken _, bool __) => { if (!users.Contains(u)) users.Add(u); return u; });
+
+			var result = await _service.RespondToTradeAsync(50, "bob", true, "happy to", null);
+
+			result.Success.Should().BeTrue();
+			users.Should().ContainSingle(x => x.UserId == "bob" && x.Offered && !x.Declined && x.Reason == "happy to" && x.RespondedOn.HasValue);
+			_eventAggregator.Verify(x => x.SendMessage(It.Is<ShiftTradeProposedEvent>(e => e.UserId == "bob")), Times.Once);
+		}
+
+		[Test]
+		public async Task Applying_to_an_open_trade_is_refused_for_someone_already_on_the_day()
+		{
+			_signups.Add(new ShiftSignup { ShiftSignupId = 5, ShiftId = ShiftId, UserId = "alice", ShiftDay = _day.Day, DepartmentGroupId = PeerTeam });
+			_signups.Add(new ShiftSignup { ShiftSignupId = 6, ShiftId = ShiftId, UserId = "bob", ShiftDay = _day.Day, DepartmentGroupId = PeerTeam });
+			SetupMembers("alice", "bob");
+			SetupTrade(new ShiftSignupTrade { ShiftSignupTradeId = 50, SourceShiftSignupId = 5, IsOpen = true });
+
+			var result = await _service.RespondToTradeAsync(50, "bob", true, null, null);
+
+			result.Error.Should().Be(ShiftActionErrors.AlreadyOnRoster);
+			_shiftSignupTradeUserRepository.Verify(x => x.SaveOrUpdateAsync(It.IsAny<ShiftSignupTradeUser>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Never);
+		}
+
+		[Test]
+		public async Task Applying_to_a_targeted_trade_you_were_not_asked_to_take_is_not_allowed()
+		{
+			_signups.Add(new ShiftSignup { ShiftSignupId = 5, ShiftId = ShiftId, UserId = "alice", ShiftDay = _day.Day });
+			SetupMembers("alice", "bob", "carol");
+			SetupTrade(new ShiftSignupTrade { ShiftSignupTradeId = 50, SourceShiftSignupId = 5 }, new ShiftSignupTradeUser { ShiftSignupTradeId = 50, UserId = "bob" });
+
+			(await _service.RespondToTradeAsync(50, "carol", true, null, null)).Error.Should().Be(ShiftActionErrors.NotAllowed);
+		}
+
+		[Test]
+		public async Task An_approvers_pick_takes_effect_without_waiting_for_approval()
+		{
+			_shift.RequireApproval = true;
+			_signups.Add(new ShiftSignup { ShiftSignupId = 5, ShiftId = ShiftId, UserId = "alice", ShiftDay = _day.Day, DepartmentGroupId = CrisisTeam });
+			var trade = new ShiftSignupTrade { ShiftSignupTradeId = 50, SourceShiftSignupId = 5, IsOpen = true };
+			SetupTrade(trade, new ShiftSignupTradeUser { ShiftSignupTradeId = 50, UserId = "bob", Offered = true });
+
+			var result = await _service.PickTradeOfferAsync(50, "captain", true, "bob", null);
+
+			result.Success.Should().BeTrue();
+			trade.UserId.Should().Be("bob");
+			trade.ApprovalPending.Should().BeFalse();
+			trade.ReviewedByUserId.Should().Be("captain");
+			trade.IsTradeComplete().Should().BeTrue();
+			_eventAggregator.Verify(x => x.SendMessage(It.Is<ShiftTradeFilledEvent>(e => e.UserId == "bob")), Times.Once);
+		}
+
+		[Test]
+		public async Task Someone_else_cannot_pick_unless_they_decide_as_an_approver()
+		{
+			_signups.Add(new ShiftSignup { ShiftSignupId = 5, ShiftId = ShiftId, UserId = "alice", ShiftDay = _day.Day });
+			SetupTrade(new ShiftSignupTrade { ShiftSignupTradeId = 50, SourceShiftSignupId = 5 }, new ShiftSignupTradeUser { ShiftSignupTradeId = 50, UserId = "bob", Offered = true });
+
+			(await _service.PickTradeOfferAsync(50, "mallory", false, "bob", null)).Error.Should().Be(ShiftActionErrors.NotAllowed);
+		}
+
+		[Test]
+		public async Task Cancelling_a_trade_tells_the_requester_and_everyone_who_applied()
+		{
+			_signups.Add(new ShiftSignup { ShiftSignupId = 5, ShiftId = ShiftId, UserId = "alice", ShiftDay = _day.Day });
+			var trade = new ShiftSignupTrade { ShiftSignupTradeId = 50, SourceShiftSignupId = 5, IsOpen = true };
+			SetupTrade(trade,
+				new ShiftSignupTradeUser { ShiftSignupTradeId = 50, UserId = "bob", Offered = true },
+				new ShiftSignupTradeUser { ShiftSignupTradeId = 50, UserId = "carol", Offered = true },
+				new ShiftSignupTradeUser { ShiftSignupTradeId = 50, UserId = "dave", Offered = false, Declined = true });
+
+			var result = await _service.CancelTradeAsync(50, "captain", true);
+
+			result.Success.Should().BeTrue();
+			_shiftSignupTradeRepository.Verify(x => x.DeleteAsync(trade, It.IsAny<CancellationToken>()), Times.Once);
+			_eventAggregator.Verify(x => x.SendMessage(It.Is<ShiftRosterChangedEvent>(e =>
+				e.ChangeType == ShiftQueueTypes.TradeCancelled && e.SourceUserId == "alice" && e.UserId == "captain" && e.ShiftSignupId == 5 &&
+				e.UserIds.Count == 2 && e.UserIds.Contains("bob") && e.UserIds.Contains("carol"))), Times.Once);
+		}
+
+		[Test]
+		public async Task Only_the_requester_cancels_without_supervising_the_slot()
+		{
+			_signups.Add(new ShiftSignup { ShiftSignupId = 5, ShiftId = ShiftId, UserId = "alice", ShiftDay = _day.Day });
+			SetupTrade(new ShiftSignupTrade { ShiftSignupTradeId = 50, SourceShiftSignupId = 5, IsOpen = true });
+
+			(await _service.CancelTradeAsync(50, "mallory", false)).Error.Should().Be(ShiftActionErrors.NotAllowed);
+			(await _service.CancelTradeAsync(50, "ALICE")).Success.Should().BeTrue();
+		}
+
+		[Test]
+		public async Task A_completed_trade_cannot_be_cancelled()
+		{
+			_signups.Add(new ShiftSignup { ShiftSignupId = 5, ShiftId = ShiftId, UserId = "alice", ShiftDay = _day.Day });
+			SetupTrade(new ShiftSignupTrade { ShiftSignupTradeId = 50, SourceShiftSignupId = 5, UserId = "bob" });
+
+			(await _service.CancelTradeAsync(50, "captain", true)).Error.Should().Be(ShiftActionErrors.InvalidRequest);
+			_eventAggregator.Verify(x => x.SendMessage(It.IsAny<ShiftRosterChangedEvent>()), Times.Never);
+		}
+
+		[Test]
+		public async Task Open_trades_are_the_open_requests_still_taking_offers()
+		{
+			_signups.Add(new ShiftSignup { ShiftSignupId = 5, ShiftId = ShiftId, UserId = "alice", ShiftDay = _day.Day });
+			var open = new ShiftSignupTrade { ShiftSignupTradeId = 50, SourceShiftSignupId = 5, IsOpen = true };
+			var targeted = new ShiftSignupTrade { ShiftSignupTradeId = 51, SourceShiftSignupId = 5 };
+			var filled = new ShiftSignupTrade { ShiftSignupTradeId = 52, SourceShiftSignupId = 5, IsOpen = true, UserId = "bob" };
+			_trades.AddRange(new[] { open, targeted, filled });
+			SetupTrade(open);
+			SetupTrade(targeted);
+			SetupTrade(filled);
+
+			var trades = await _service.GetOpenTradesAsync(DepartmentId);
+
+			trades.Select(x => x.ShiftSignupTradeId).Should().BeEquivalentTo(new[] { 50 });
+		}
+
+		private void SetupMembers(params string[] userIds)
+		{
+			_departmentsService.Setup(x => x.GetAllMembersForDepartmentAsync(DepartmentId))
+				.ReturnsAsync(userIds.Select(x => new DepartmentMember { UserId = x, DepartmentId = DepartmentId }).ToList());
 		}
 
 		private void SetupTrade(ShiftSignupTrade trade, params ShiftSignupTradeUser[] users)

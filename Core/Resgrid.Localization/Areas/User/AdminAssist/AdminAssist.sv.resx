@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version='1.0' encoding='utf-8'?>
 <root>
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
@@ -7694,5 +7694,29 @@
   </data>
   <data name="PermissionHelp.ShareCoordinationBoards" xml:space="preserve">
     <value>Tillåter att dela en samordningstavla med samverkansparter. Utan sparad regel får endast avdelningsadministratörer göra detta. Kräver att Incident Coordination är aktiverat och ett aktivt Incident Back Office-tillägg.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.shift-staffing">
+    <value>Skiftbemanning</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.shift-staffing">
+    <value>Vem som faktiskt arbetade varje skiftdag, godkänt av en arbetsledare, för tilldelade skift, anmälningsskift och statiska skift; en dag som ingen godkänner bemannas automatiskt från skiftet.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.shift-staffing">
+    <value>Öppna Skift och sedan Skiftbemanning. Välj en dag i Bemanning per dag, även tidigare dagar, kontrollera den automatiska bemanningen, ändra personerna vid behov och välj Godkänn bemanning. Återgå till automatisk tar bort en godkänd bemanning.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.on-shift-hours-report">
+    <value>Rapport över skifttimmar</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.on-shift-hours-report">
+    <value>Varje persons timmar i tjänst under en period i tilldelade skift, anmälningsskift och statiska skift, för avdelningen, en grupp eller ett skift, uppdelade i godkända och automatiska timmar.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.on-shift-hours-report">
+    <value>Öppna Rapporter och sedan Rapport över skifttimmar. Välj perioden och om den gäller avdelningen, en grupp eller ett skift. Godkänn bemanningen för de dagar som behöver en exakt uppgift på sidan Skiftbemanning innan du kör den för lön eller regelefterlevnad.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.ShiftTradeApprovers">
+    <value>Godkännare av passbyten</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.ShiftTradeApprovers">
+    <value>Vem som väljer vilken sökande som tar en bytesförfrågan och godkänner väntande byten. Avdelningsadministratörer får alltid; gruppadministratörer, den som byter bort sitt pass och medlemmar i valda roller bestämmer avdelningen.</value>
   </data>
 </root>

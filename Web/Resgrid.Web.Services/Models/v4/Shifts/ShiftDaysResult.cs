@@ -100,6 +100,26 @@ namespace Resgrid.Web.Services.Models.v4.Shifts
 		/// <summary>An open or pending trade on the caller's slot for the day</summary>
 		public string MyTradeId { get; set; }
 
+		/// <summary>Start in UTC, for adding the day to a device calendar (Start and End are department wall-clock times)</summary>
+		public DateTime StartUtc { get; set; }
+
+		/// <summary>End in UTC</summary>
+		public DateTime EndUtc { get; set; }
+
+		/// <summary>Static shift (workshift, ShiftType 2) days: the static shift; ShiftId carries the same value</summary>
+		public string WorkshiftId { get; set; }
+
+		/// <summary>Static shift (workshift) days: the day; ShiftDayId carries the same value</summary>
+		public string WorkshiftDayId { get; set; }
+
+		/// <summary>Static shift (workshift) days: the unit the caller crews that day</summary>
+		public string MyUnitId { get; set; }
+
+		public string MyUnitName { get; set; }
+
+		/// <summary>The caller can ask to trade out of this day</summary>
+		public bool CanTrade { get; set; }
+
 		/// <summary>Who is on the day after assignments, signups, single-day edits and trades</summary>
 		public List<ShiftDayRosterResultData> Roster { get; set; }
 

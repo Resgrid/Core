@@ -66,6 +66,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly ICallStatusAttributionService _callStatusAttributionService;
 		private readonly ICallGroupAssignmentService _callGroupAssignmentService;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Reports.Reports> _reportsLocalizer;
+		private readonly IShiftStaffingService _shiftStaffingService;
+		private readonly IWorkShiftsService _workshiftsService;
+		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Reports.OnShiftHours> _onShiftHoursLocalizer;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Units.Units> _unitsLocalizer;
 
 		public ReportsController(IDepartmentsService departmentsService, IUsersService usersService,
@@ -82,8 +85,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 			IProtectedReadService protectedReadService, IRecordsReportingService recordsReporting,
 			IBusinessOperationsAccessService businessOperationsAccess, ICallStatusAttributionService callStatusAttributionService,
 			IStringLocalizer<Resgrid.Localization.Areas.User.Units.Units> unitsLocalizer, ICallGroupAssignmentService callGroupAssignmentService,
-			IStringLocalizer<Resgrid.Localization.Areas.User.Reports.Reports> reportsLocalizer)
+			IStringLocalizer<Resgrid.Localization.Areas.User.Reports.Reports> reportsLocalizer, IShiftStaffingService shiftStaffingService, IWorkShiftsService workshiftsService,
+			IStringLocalizer<Resgrid.Localization.Areas.User.Reports.OnShiftHours> onShiftHoursLocalizer)
 		{
+			_shiftStaffingService = shiftStaffingService;
+			_workshiftsService = workshiftsService;
+			_onShiftHoursLocalizer = onShiftHoursLocalizer;
 			_unitsLocalizer = unitsLocalizer;
 			_departmentsService = departmentsService;
 			_usersService = usersService;

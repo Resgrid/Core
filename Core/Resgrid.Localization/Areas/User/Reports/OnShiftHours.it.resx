@@ -1,0 +1,253 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ReportName" xml:space="preserve">
+    <value>Report ore di turno</value>
+  </data>
+  <data name="ReportDescription" xml:space="preserve">
+    <value>Ore di turno di ogni persona in un periodo nei turni assegnati, su iscrizione e statici, per il dipartimento, un gruppo o un turno, indicando quali ore provengono da personale approvato.</value>
+  </data>
+  <data name="ParamsHelp" xml:space="preserve">
+    <value>Conta ogni giorno di turno e di turno statico che si sovrappone al periodo. Il personale di un giorno è automatico (dalle assegnazioni, iscrizioni e scambi del turno) a meno che un supervisore non lo abbia approvato nella pagina Personale del turno.</value>
+  </data>
+  <data name="EndHelp" xml:space="preserve">
+    <value>Il tempo viene contato fino a questo momento; la fine stessa non è inclusa.</value>
+  </data>
+  <data name="ScopeLabel" xml:space="preserve">
+    <value>Report per</value>
+  </data>
+  <data name="ScopeDepartment" xml:space="preserve">
+    <value>Intero dipartimento</value>
+  </data>
+  <data name="ScopeGroup" xml:space="preserve">
+    <value>Un gruppo</value>
+  </data>
+  <data name="ScopeShift" xml:space="preserve">
+    <value>Un turno</value>
+  </data>
+  <data name="GroupHelp" xml:space="preserve">
+    <value>Conta le persone che coprono un posto di questo gruppo o dei suoi sottogruppi e i membri del gruppo su posti senza gruppo.</value>
+  </data>
+  <data name="ShiftLabel" xml:space="preserve">
+    <value>Turno</value>
+  </data>
+  <data name="ShiftHelp" xml:space="preserve">
+    <value>Un turno assegnato, su iscrizione o statico.</value>
+  </data>
+  <data name="ShiftGroupAssigned" xml:space="preserve">
+    <value>Turni assegnati</value>
+  </data>
+  <data name="ShiftGroupSignup" xml:space="preserve">
+    <value>Turni su iscrizione</value>
+  </data>
+  <data name="ShiftGroupStatic" xml:space="preserve">
+    <value>Turni statici</value>
+  </data>
+  <data name="ScopeDepartmentFormat" xml:space="preserve">
+    <value>Dipartimento: {0}</value>
+  </data>
+  <data name="ScopeGroupFormat" xml:space="preserve">
+    <value>Gruppo: {0}</value>
+  </data>
+  <data name="ScopeShiftFormat" xml:space="preserve">
+    <value>Turno: {0}</value>
+  </data>
+  <data name="RunOnFormat" xml:space="preserve">
+    <value>Generato il {0}</value>
+  </data>
+  <data name="DownloadCsv" xml:space="preserve">
+    <value>Scarica CSV</value>
+  </data>
+  <data name="TotalHours" xml:space="preserve">
+    <value>Ore totali</value>
+  </data>
+  <data name="ApprovedHours" xml:space="preserve">
+    <value>Ore approvate</value>
+  </data>
+  <data name="AutomaticHours" xml:space="preserve">
+    <value>Ore automatiche</value>
+  </data>
+  <data name="PeopleCount" xml:space="preserve">
+    <value>Persone</value>
+  </data>
+  <data name="ShiftDaysCount" xml:space="preserve">
+    <value>Giorni di turno</value>
+  </data>
+  <data name="ApprovedShiftDaysCount" xml:space="preserve">
+    <value>Giorni di turno approvati</value>
+  </data>
+  <data name="SourceManual" xml:space="preserve">
+    <value>Approvato</value>
+  </data>
+  <data name="SourceAutomatic" xml:space="preserve">
+    <value>Automatico</value>
+  </data>
+  <data name="SourceManualHelp" xml:space="preserve">
+    <value>Un supervisore ha impostato il personale nella pagina Personale del turno.</value>
+  </data>
+  <data name="SourceAutomaticHelp" xml:space="preserve">
+    <value>Ricavato da assegnazioni fisse, iscrizioni e scambi del turno, oppure dagli equipaggi delle unità di un turno statico.</value>
+  </data>
+  <data name="PersonnelHeader" xml:space="preserve">
+    <value>Personale</value>
+  </data>
+  <data name="NoHours" xml:space="preserve">
+    <value>Nessuno era di turno in questo periodo.</value>
+  </data>
+  <data name="IdHeader" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="NameHeader" xml:space="preserve">
+    <value>Nome</value>
+  </data>
+  <data name="GroupHeader" xml:space="preserve">
+    <value>Gruppo</value>
+  </data>
+  <data name="ShiftsHeader" xml:space="preserve">
+    <value>Turni</value>
+  </data>
+  <data name="TotalHoursHeader" xml:space="preserve">
+    <value>Totale</value>
+  </data>
+  <data name="ApprovedHoursHeader" xml:space="preserve">
+    <value>Approvate</value>
+  </data>
+  <data name="AutomaticHoursHeader" xml:space="preserve">
+    <value>Automatiche</value>
+  </data>
+  <data name="AssignedHoursHeader" xml:space="preserve">
+    <value>Assegnato</value>
+  </data>
+  <data name="SignupHoursHeader" xml:space="preserve">
+    <value>Iscrizione</value>
+  </data>
+  <data name="StaticHoursHeader" xml:space="preserve">
+    <value>Statico</value>
+  </data>
+  <data name="StaffingHeader" xml:space="preserve">
+    <value>Personale</value>
+  </data>
+  <data name="MixedFormat" xml:space="preserve">
+    <value>{0} su {1} approvati</value>
+  </data>
+  <data name="TotalsRow" xml:space="preserve">
+    <value>Totali</value>
+  </data>
+  <data name="ShiftDaysHeader" xml:space="preserve">
+    <value>Giorni di turno</value>
+  </data>
+  <data name="NoShiftDays" xml:space="preserve">
+    <value>Nessun giorno di turno in questo periodo.</value>
+  </data>
+  <data name="DayHeader" xml:space="preserve">
+    <value>Giorno</value>
+  </data>
+  <data name="ShiftHeader" xml:space="preserve">
+    <value>Turno</value>
+  </data>
+  <data name="TypeHeader" xml:space="preserve">
+    <value>Tipo</value>
+  </data>
+  <data name="StartHeader" xml:space="preserve">
+    <value>Inizio</value>
+  </data>
+  <data name="EndHeader" xml:space="preserve">
+    <value>Fine</value>
+  </data>
+  <data name="HoursHeader" xml:space="preserve">
+    <value>Ore</value>
+  </data>
+  <data name="PeopleHeader" xml:space="preserve">
+    <value>Persone</value>
+  </data>
+  <data name="SetByHeader" xml:space="preserve">
+    <value>Approvato da</value>
+  </data>
+  <data name="ChangesFormat" xml:space="preserve">
+    <value>(+{0} aggiunti / -{1} esclusi)</value>
+  </data>
+  <data name="OpenStaffing" xml:space="preserve">
+    <value>Apri</value>
+  </data>
+  <data name="DetailHeader" xml:space="preserve">
+    <value>Dettaglio per persona</value>
+  </data>
+  <data name="PersonTotalFormat" xml:space="preserve">
+    <value>{0} ore in {1} turni</value>
+  </data>
+  <data name="AssignmentHeader" xml:space="preserve">
+    <value>Gruppo / Unità</value>
+  </data>
+  <data name="PartialHelp" xml:space="preserve">
+    <value>Viene conteggiata solo la parte del turno che rientra nel periodo del report.</value>
+  </data>
+  <data name="TypeAssigned" xml:space="preserve">
+    <value>Assegnato</value>
+  </data>
+  <data name="TypeSignup" xml:space="preserve">
+    <value>Iscrizione</value>
+  </data>
+  <data name="TypeStatic" xml:space="preserve">
+    <value>Turno statico</value>
+  </data>
+  <data name="UnknownPerson" xml:space="preserve">
+    <value>Sconosciuto</value>
+  </data>
+</root>

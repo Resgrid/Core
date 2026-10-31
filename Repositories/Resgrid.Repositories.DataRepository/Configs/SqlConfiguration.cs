@@ -271,6 +271,7 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string ShiftStaffingPersonsTable { get; set; }
 		public string ShiftGroupAssignmentsTable { get; set; }
 		public string SelectShiftStaffingByDayQuery { get; set; }
+		public string SelectShiftStaffingsByDepartmentIdAndDateRangeQuery { get; set; }
 		public string SelectShiftGroupByGroupQuery { get; set; }
 		public string SelectShiftAssignmentByGroupQuery { get; set; }
 		public string SelectShiftSignupTradeUsersByTradeIdQuery { get; set; }

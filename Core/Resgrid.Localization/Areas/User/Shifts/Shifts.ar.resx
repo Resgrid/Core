@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
@@ -279,4 +279,193 @@
   <data name="WithdrawConfirm" xml:space="preserve"><value>هل تريد الانسحاب من يوم الوردية هذا؟</value></data>
   <data name="YouBadge" xml:space="preserve"><value>أنت</value></data>
   <data name="YourStatusHeader" xml:space="preserve"><value>حالتك</value></data>
+  <data name="StaffingSavedFormat" xml:space="preserve">
+    <value>تمت الموافقة على التأمين. أُضيف إلى جدول اليوم: {0}. أُزيل من جدول اليوم: {1}.</value>
+  </data>
+  <data name="StaffingSavedWithErrorsFormat" xml:space="preserve">
+    <value>تمت الموافقة على التأمين. أُضيف إلى جدول اليوم: {0}. أُزيل من جدول اليوم: {1}. تعذّر التغيير: {2}</value>
+  </data>
+  <data name="StaffingWorkshiftSavedFormat" xml:space="preserve">
+    <value>تمت الموافقة على التأمين: شُغل {0} من مواقع الوحدات.</value>
+  </data>
+  <data name="StaffingSelectStaticShift" xml:space="preserve">
+    <value>يجب اختيار وردية ثابتة</value>
+  </data>
+  <data name="StaffingCleared" xml:space="preserve">
+    <value>أُزيل التأمين المعتمد؛ يُؤمَّن اليوم تلقائيًا مرة أخرى.</value>
+  </data>
+  <data name="StaffingSourceManual" xml:space="preserve">
+    <value>معتمد</value>
+  </data>
+  <data name="StaffingSourceAutomatic" xml:space="preserve">
+    <value>تلقائي</value>
+  </data>
+  <data name="StaffingTypeStaticShift" xml:space="preserve">
+    <value>وردية ثابتة</value>
+  </data>
+  <data name="StaffingSourceTrade" xml:space="preserve">
+    <value>تبديل</value>
+  </data>
+  <data name="StaffingOverviewHeader" xml:space="preserve">
+    <value>التأمين حسب اليوم</value>
+  </data>
+  <data name="StaffingOverviewHelp" xml:space="preserve">
+    <value>كل أيام الورديات والورديات الثابتة في النطاق، بما فيها الأيام الماضية، مع طريقة تأمينها. اختر يومًا لعرض تأمينه أو تعيينه.</value>
+  </data>
+  <data name="StaffingOverviewFrom" xml:space="preserve">
+    <value>من</value>
+  </data>
+  <data name="StaffingOverviewTo" xml:space="preserve">
+    <value>إلى</value>
+  </data>
+  <data name="StaffingOverviewAllTypes" xml:space="preserve">
+    <value>كل أنواع الورديات</value>
+  </data>
+  <data name="StaffingOverviewShow" xml:space="preserve">
+    <value>عرض</value>
+  </data>
+  <data name="StaffingColumnDay" xml:space="preserve">
+    <value>اليوم</value>
+  </data>
+  <data name="StaffingColumnShift" xml:space="preserve">
+    <value>الوردية</value>
+  </data>
+  <data name="StaffingColumnType" xml:space="preserve">
+    <value>النوع</value>
+  </data>
+  <data name="StaffingColumnTime" xml:space="preserve">
+    <value>الوقت</value>
+  </data>
+  <data name="StaffingColumnHours" xml:space="preserve">
+    <value>الساعات</value>
+  </data>
+  <data name="StaffingColumnPeople" xml:space="preserve">
+    <value>الأشخاص</value>
+  </data>
+  <data name="StaffingColumnSource" xml:space="preserve">
+    <value>التأمين</value>
+  </data>
+  <data name="StaffingColumnSetBy" xml:space="preserve">
+    <value>اعتمده</value>
+  </data>
+  <data name="StaffingLoading" xml:space="preserve">
+    <value>جارٍ التحميل...</value>
+  </data>
+  <data name="StaffingEditorHeader" xml:space="preserve">
+    <value>تعيين التأمين</value>
+  </data>
+  <data name="StaffingKindLabel" xml:space="preserve">
+    <value>نوع الوردية</value>
+  </data>
+  <data name="StaffingKindShift" xml:space="preserve">
+    <value>وردية مُكلَّفة أو وردية بالتسجيل</value>
+  </data>
+  <data name="StaticShiftSelectHelp" xml:space="preserve">
+    <value>تُجدول الورديات الثابتة الوحدات لفترة محددة. حدّد من كان ضمن طاقم كل وحدة في ذلك اليوم.</value>
+  </data>
+  <data name="StaffingDayHelp" xml:space="preserve">
+    <value>اختر اليوم لعرض تأمينه أو تعيينه. يمكن تأمين الأيام الماضية لتسجيل من عمل فيها.</value>
+  </data>
+  <data name="StaffingCurrentHeader" xml:space="preserve">
+    <value>التأمين الحالي</value>
+  </data>
+  <data name="StaffingSelectDayFirst" xml:space="preserve">
+    <value>اختر وردية ويومًا لعرض التأمين.</value>
+  </data>
+  <data name="StaffingClearButton" xml:space="preserve">
+    <value>العودة إلى التلقائي</value>
+  </data>
+  <data name="StaffingUnitCrewHelp" xml:space="preserve">
+    <value>تبدأ كل وحدة من التأمين الساري؛ ومن دون تأمين معتمد يكون ذلك طاقم الوحدة الحالي.</value>
+  </data>
+  <data name="StaffingAppliesHelp" xml:space="preserve">
+    <value>يؤدي الحفظ إلى اعتماد التأمين: فهو يحل محل التأمين التلقائي لهذا اليوم، بما في ذلك في التقارير. وإلى أن ينتهي اليوم، يُضاف من تضيفهم إلى اليوم ويُزال من تزيلهم منه.</value>
+  </data>
+  <data name="StaffingApproveButton" xml:space="preserve">
+    <value>اعتماد التأمين</value>
+  </data>
+  <data name="StaffingOverviewEmpty" xml:space="preserve">
+    <value>لا توجد أيام ورديات في هذا النطاق.</value>
+  </data>
+  <data name="StaffingSelectButton" xml:space="preserve">
+    <value>اختيار</value>
+  </data>
+  <data name="StaffingSourceAutomaticHelp" xml:space="preserve">
+    <value>يُحسب من التكليفات الثابتة للوردية والتسجيلات المعتمدة وتغييرات اليوم الواحد والتبديلات. يؤدي اعتماد التأمين أدناه إلى استبداله لهذا اليوم.</value>
+  </data>
+  <data name="StaffingSourceManualFormat" xml:space="preserve">
+    <value>اعتمده {0} في {1}</value>
+  </data>
+  <data name="StaffingAutomaticHeader" xml:space="preserve">
+    <value>من الوردية (تلقائي)</value>
+  </data>
+  <data name="StaffingApprovedHeader" xml:space="preserve">
+    <value>التأمين المعتمد</value>
+  </data>
+  <data name="StaffingAddedFormat" xml:space="preserve">
+    <value>ضمن التأمين المعتمد وليس في الوردية: {0}</value>
+  </data>
+  <data name="StaffingRemovedFormat" xml:space="preserve">
+    <value>في الوردية لكنه خارج التأمين المعتمد: {0}</value>
+  </data>
+  <data name="StaffingNobody" xml:space="preserve">
+    <value>لا أحد</value>
+  </data>
+  <data name="StaffingDayOver" xml:space="preserve">
+    <value>انتهى هذا اليوم: يسجّل الاعتماد من عمل فيه ولا يغيّر جدول اليوم.</value>
+  </data>
+  <data name="StaffingInProgress" xml:space="preserve">
+    <value>قيد التنفيذ</value>
+  </data>
+  <data name="StaffingClearConfirm" xml:space="preserve">
+    <value>هل تريد إزالة التأمين المعتمد لهذا اليوم والعودة إلى التأمين التلقائي؟</value>
+  </data>
+  <data name="StaffingNoUnits" xml:space="preserve">
+    <value>لا تحتوي هذه الوردية الثابتة على وحدات.</value>
+  </data>
+  <data name="StaffingOtherSupervisor" xml:space="preserve">
+    <value>يؤمّنه مشرف آخر؛ يبقى كما هو.</value>
+  </data>
+  <data name="StaffingUnitCrewFormat" xml:space="preserve">
+    <value>الطاقم الحالي: {0}</value>
+  </data>
+  <data name="StaffingChangesFormat" xml:space="preserve">
+    <value>+{0} / -{1}</value>
+  </data>
+  <data name="StaffingSourceAutomaticStaticHelp" xml:space="preserve">
+    <value>يُحسب من الطاقم الحالي لكل وحدة. يؤدي اعتماد التأمين أدناه إلى استبداله لهذا اليوم.</value>
+  </data>
+  <data name="OpenTradeRequestsHeader" xml:space="preserve">
+    <value>طلبات التبديل المفتوحة</value>
+  </data>
+  <data name="OpenTradeRequestsHelp" xml:space="preserve">
+    <value>طلبات التبديل في المجموعات التي تشرف عليها والتي لم تدخل حيز التنفيذ بعد. يؤدي إلغاء أحدها إلى إبلاغ مقدم الطلب وكل من تقدم.</value>
+  </data>
+  <data name="NoOpenTradeRequests" xml:space="preserve">
+    <value>لا توجد طلبات تبديل مفتوحة.</value>
+  </data>
+  <data name="PendingApprovalLabel" xml:space="preserve">
+    <value>بانتظار الموافقة</value>
+  </data>
+  <data name="OpenRequestLabel" xml:space="preserve">
+    <value>مفتوح للجميع</value>
+  </data>
+  <data name="ApplicantsFormat" xml:space="preserve">
+    <value>المتقدمون: {0}</value>
+  </data>
+  <data name="NoApplicants" xml:space="preserve">
+    <value>لا أحد بعد</value>
+  </data>
+  <data name="CancelTradeConfirm" xml:space="preserve">
+    <value>هل تريد إلغاء طلب التبديل هذا؟ سيتم إبلاغ مقدم الطلب وكل من تقدم.</value>
+  </data>
+  <data name="CancelTradeButton" xml:space="preserve">
+    <value>إلغاء الطلب</value>
+  </data>
+  <data name="TradeCancelled" xml:space="preserve">
+    <value>تم إلغاء طلب التبديل.</value>
+  </data>
+  <data name="ShiftErrorNotEligible" xml:space="preserve">
+    <value>هذا الشخص لا يستوفي متطلبات هذا المكان.</value>
+  </data>
 </root>

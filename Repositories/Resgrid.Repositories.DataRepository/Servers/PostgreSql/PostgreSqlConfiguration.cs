@@ -760,6 +760,11 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					FROM %SCHEMA%.%SHIFTSTAFFINGSTABLE%
 					LEFT JOIN %SCHEMA%.%SHIFTSTAFFINGPERSONSTABLE% ON %SCHEMA%.%SHIFTSTAFFINGPERSONSTABLE%.ShiftStaffingId =  %SCHEMA%.%SHIFTSTAFFINGSTABLE%.ShiftStaffingId
 					WHERE ShiftId = %SHIFTID% AND ShiftDay = %SHIFTDAY%";
+			SelectShiftStaffingsByDepartmentIdAndDateRangeQuery = @"
+					SELECT ss.*, ssp.*
+					FROM %SCHEMA%.%SHIFTSTAFFINGSTABLE% ss
+					LEFT JOIN %SCHEMA%.%SHIFTSTAFFINGPERSONSTABLE% ssp ON ssp.ShiftStaffingId = ss.ShiftStaffingId
+					WHERE ss.DepartmentId = %DID% AND ss.ShiftDay >= %STARTDATE% AND ss.ShiftDay < %ENDDATE%";
 			SelectShiftGroupByGroupQuery = @"
 					SELECT %SCHEMA%.%SHIFTGROUPSTABLE%.*, %SCHEMA%.%SHIFTGROUPROLESTABLE%.*
 					FROM %SCHEMA%.%SHIFTGROUPSTABLE%
@@ -972,8 +977,9 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					SELECT sst.*
 					FROM %SCHEMA%.%SHIFTSIGNUPTRADESTABLE% sst
 					INNER JOIN %SCHEMA%.%SHIFTSIGNUPTRADEUSERSTABLE% sstu ON sstu.ShiftSignupTradeId = sst.ShiftSignupTradeId
-					INNER JOIN %SCHEMA%.%SHIFTSIGNUPSTABLE% ss ON ss.ShiftSignupId = sst.SourceShiftSignupId
-					WHERE sstu.UserId = %USERID% AND ss.ShiftDay >= (now() at time zone 'utc') - interval '1 day'";
+					LEFT JOIN %SCHEMA%.%SHIFTSIGNUPSTABLE% ss ON ss.ShiftSignupId = sst.SourceShiftSignupId
+					WHERE sstu.UserId = %USERID% AND (ss.ShiftDay >= (now() at time zone 'utc') - interval '1 day'
+						OR (sst.SourceShiftSignupId IS NULL AND sst.SourceDay >= (now() at time zone 'utc') - interval '1 day'))";
 			SelectShiftAndDaysByDIdQuery = @"
 					SELECT s.*, sd.*
 					FROM %SCHEMA%.%SHIFTSTABLE% s
@@ -1179,10 +1185,11 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			SelectShiftSignupTradesByDepartmentIdQuery = @"
 					SELECT sst.*, ss.*, ts.*
 					FROM %SCHEMA%.%SHIFTSIGNUPTRADESTABLE% sst
-					INNER JOIN %SCHEMA%.%SHIFTSIGNUPSTABLE% ss ON ss.ShiftSignupId = sst.SourceShiftSignupId
-					INNER JOIN %SCHEMA%.%SHIFTSTABLE% s ON s.ShiftId = ss.ShiftId
+					LEFT JOIN %SCHEMA%.%SHIFTSIGNUPSTABLE% ss ON ss.ShiftSignupId = sst.SourceShiftSignupId
+					LEFT JOIN %SCHEMA%.%SHIFTSTABLE% s ON s.ShiftId = ss.ShiftId
 					LEFT JOIN %SCHEMA%.%SHIFTSIGNUPSTABLE% ts ON ts.ShiftSignupId = sst.TargetShiftSignupId
-					WHERE s.DepartmentId = %DID% AND (ss.ShiftDay >= %STARTDATE% OR ts.ShiftDay >= %STARTDATE%)";
+					WHERE (s.DepartmentId = %DID% AND (ss.ShiftDay >= %STARTDATE% OR ts.ShiftDay >= %STARTDATE%))
+						OR (sst.SourceShiftSignupId IS NULL AND sst.DepartmentId = %DID% AND sst.SourceDay >= %STARTDATE%)";
 			SelectShiftSignupsByDepartmentIdAndDateRangeQuery = @"
 					SELECT ss.*
 					FROM %SCHEMA%.%SHIFTSIGNUPSTABLE% ss

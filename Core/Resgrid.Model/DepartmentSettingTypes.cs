@@ -209,5 +209,7 @@
 		IncidentRetentionPolicy = 97,
 		/// <summary>LI-D (registry 120; 114 was taken): <see cref="IncidentLogistics.CoordinationBoardDefaults"/> — default lane staleness and alarm policy.</summary>
 		CoordinationBoardDefaults = 120,
+		/// <summary><see cref="ShiftTradeApproverSettings"/> — who may pick the applicant for (and approve) a shift trade request.</summary>
+		ShiftTradeApprovers = 121,
 	}
 }

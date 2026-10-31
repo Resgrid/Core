@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
@@ -31,6 +31,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private const int CalendarDaysBack = 60;
 		private const int CalendarDaysAhead = 180;
 		private const int MaxCalendarRangeDays = 400;
+		private const int MaxStaffingOverviewDays = 62;
 
 		private const string MessageKey = "ShiftsMessage";
 		private const string MessageTypeKey = "ShiftsMessageType";
@@ -45,13 +46,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly Model.Services.IAuthorizationService _authorizationService;
 		private readonly IWorkShiftsService _workshiftsService;
+		private readonly IShiftStaffingService _shiftStaffingService;
+		private readonly IUnitsService _unitsService;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Shifts.Shifts> _localizer;
 
 		public ShiftsController(IShiftsService shiftsService, IDepartmentGroupsService departmentGroupsService, IDepartmentsService departmentService,
 			IPersonnelRolesService personnelRolesService, IEventAggregator eventAggregator, IDepartmentSettingsService departmentSettingsService,
-			Model.Services.IAuthorizationService authorizationService, IWorkShiftsService workshiftsService,
-			IStringLocalizer<Resgrid.Localization.Areas.User.Shifts.Shifts> localizer)
+			Model.Services.IAuthorizationService authorizationService, IWorkShiftsService workshiftsService, IShiftStaffingService shiftStaffingService,
+			IUnitsService unitsService, IStringLocalizer<Resgrid.Localization.Areas.User.Shifts.Shifts> localizer)
 		{
+			_shiftStaffingService = shiftStaffingService;
+			_unitsService = unitsService;
 			_shiftsService = shiftsService;
 			_departmentGroupsService = departmentGroupsService;
 			_departmentService = departmentService;
@@ -79,9 +84,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.CanDeleteShifts = User.HasClaim(ResgridClaimTypes.Resources.Shift, ResgridClaimTypes.Actions.Delete);
 			model.ManageableShiftIds = new HashSet<int>(model.Shifts.Where(x => x != null && scope.CanManageShift(x)).Select(x => x.ShiftId));
 
-			if (scope.IsSupervisor)
+			var authority = await GetTradeAuthorityAsync(scope);
+			model.HasApprovals = authority.HasApprovals;
+
+			if (authority.HasApprovals)
 			{
-				var pending = await GetPendingApprovalsAsync(scope, model.Shifts);
+				var pending = await GetPendingApprovalsAsync(scope, model.Shifts, authority);
 				model.PendingApprovalsCount = pending.Signups.Count + pending.Trades.Count;
 			}
 
@@ -650,13 +658,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> Approvals()
 		{
 			var lookups = await GetLookupsAsync();
+			var authority = await GetTradeAuthorityAsync(lookups.Scope);
 
-			if (!lookups.Scope.IsSupervisor)
+			// Members of a trade approver role decide trades here without supervising a group.
+			if (!authority.HasApprovals)
 				return Unauthorized();
 
 			var model = new ApprovalsView { Department = lookups.Department };
 			var shifts = await _shiftsService.GetAllShiftsByDepartmentAsync(DepartmentId) ?? new List<Shift>();
-			var pending = await GetPendingApprovalsAsync(lookups.Scope, shifts);
+			var pending = await GetPendingApprovalsAsync(lookups.Scope, shifts, authority);
 
 			foreach (var signup in pending.Signups)
 			{
@@ -701,10 +711,141 @@ namespace Resgrid.Web.Areas.User.Controllers
 				});
 			}
 
+			// Every request that has not taken effect in a slot this user supervises or decides, so it can be withdrawn or
+			// an applicant picked here.
+			var openTrades = (await _shiftsService.GetOpenTradesAsync(DepartmentId) ?? new List<ShiftSignupTrade>())
+				.Concat(pending.Trades)
+				.GroupBy(x => x.ShiftSignupTradeId)
+				.Select(x => x.First());
+
+			foreach (var trade in openTrades)
+			{
+				var row = await BuildOpenTradeRowAsync(trade, lookups, shifts, authority);
+
+				if (row != null)
+					model.OpenTrades.Add(row);
+			}
+
 			model.Signups = model.Signups.OrderBy(x => x.Start).ToList();
 			model.Trades = model.Trades.OrderBy(x => x.Start).ToList();
+			model.OpenTrades = model.OpenTrades.OrderBy(x => x.Start).ToList();
 
 			return View(model);
+		}
+
+		/// <summary>
+		/// A supervisor withdraws a trade request that has not taken effect (open, or waiting for approval). The requester
+		/// and everyone who applied are told.
+		/// </summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Shift_View)]
+		public async Task<IActionResult> CancelTrade(int shiftSignupTradeId, int? shiftDayId, CancellationToken cancellationToken)
+		{
+			var trade = await _shiftsService.GetShiftTradeByIdAsync(shiftSignupTradeId);
+
+			if (trade == null)
+			{
+				SetError(ShiftActionErrors.NotFound);
+				return ReturnAfterReview(shiftDayId);
+			}
+
+			if (trade.GetDepartmentId() != DepartmentId)
+				return Unauthorized();
+
+			var scope = await GetScopeAsync();
+			var isRequester = SameUser(trade.GetSourceUserId(), UserId);
+
+			if (!isRequester && !CanSuperviseTrade(scope, trade))
+				return Unauthorized();
+
+			var result = await _shiftsService.CancelTradeAsync(shiftSignupTradeId, UserId, !isRequester, cancellationToken);
+
+			if (result.Success)
+				SetMessage(_localizer["TradeCancelled"]);
+			else
+				SetError(result.Error);
+
+			return ReturnAfterReview(shiftDayId);
+		}
+
+		private static bool CanSuperviseTrade(ShiftManagementScope scope, ShiftSignupTrade trade)
+		{
+			if (scope == null || trade == null)
+				return false;
+
+			if (trade.IsWorkshiftTrade())
+				return scope.AllGroups || scope.CanManageGroup(trade.DepartmentGroupId);
+
+			var shift = trade.SourceShiftSignup?.Shift;
+
+			return shift != null && scope.CanManageShiftGroup(shift, trade.SourceShiftSignup.DepartmentGroupId);
+		}
+
+		/// <summary>
+		/// A trade request for the approvals page: one the user supervises can be withdrawn, and one they decide as an
+		/// approver can have its applicant picked. Neither, and it is not listed.
+		/// </summary>
+		private async Task<OpenTradeRow> BuildOpenTradeRowAsync(ShiftSignupTrade trade, ShiftLookups lookups, List<Shift> shifts, ShiftTradeAuthority authority)
+		{
+			if (trade == null || trade.IsTradeComplete())
+				return null;
+
+			var row = new OpenTradeRow
+			{
+				ShiftSignupTradeId = trade.ShiftSignupTradeId,
+				GroupName = lookups.GroupNameFor(trade.GetDepartmentGroupId()),
+				RequesterName = lookups.NameFor(trade.GetSourceUserId()),
+				ApplicantNames = (trade.Users ?? new List<ShiftSignupTradeUser>()).Where(x => x.Offered && !x.Declined).Select(x => lookups.NameFor(x.UserId)).ToList(),
+				IsOpen = trade.IsOpen,
+				ApprovalPending = trade.ApprovalPending && !trade.Denied,
+				Note = trade.Note
+			};
+
+			if (trade.IsWorkshiftTrade())
+			{
+				// Static shift day applicants are picked in the apps; the web pick page is for shift signups.
+				if (!lookups.Scope.AllGroups && !lookups.Scope.CanManageGroup(trade.DepartmentGroupId))
+					return null;
+
+				row.CanCancel = true;
+
+				var staffing = await _shiftStaffingService.GetWorkshiftDayStaffingAsync(trade.WorkshiftDayId);
+
+				if (staffing == null || staffing.IsOver)
+					return null;
+
+				row.ShiftName = staffing.Name;
+				row.Start = staffing.Start;
+				row.End = staffing.End;
+
+				return row;
+			}
+
+			var source = trade.SourceShiftSignup;
+			var shift = source != null ? shifts.FirstOrDefault(x => x.ShiftId == source.ShiftId) ?? source.Shift : null;
+
+			if (shift == null)
+				return null;
+
+			row.CanCancel = lookups.Scope.CanManageShiftGroup(shift, source.DepartmentGroupId);
+			row.CanPick = trade.IsOpenForOffers() && row.ApplicantNames.Any() && authority.IsApprover(shift, source.DepartmentGroupId);
+
+			if (!row.CanCancel && !row.CanPick)
+				return null;
+
+			var day = FindDay(shift, source.ShiftDay);
+			var window = ShiftTimeWindow.GetWindow(source.ShiftDay, shift.StartTime, shift.EndTime, shift.Hours);
+
+			if (lookups.Department != null && DateTime.UtcNow.TimeConverter(lookups.Department) >= window.End)
+				return null;
+
+			row.ShiftDayId = day?.ShiftDayId;
+			row.ShiftName = shift.Name;
+			row.Start = window.Start;
+			row.End = window.End;
+
+			return row;
 		}
 
 		[HttpPost]
@@ -755,7 +896,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (shift.DepartmentId != DepartmentId)
 				return Unauthorized();
 
-			if (!(await GetScopeAsync()).CanManageShiftGroup(shift, source.DepartmentGroupId))
+			// Who may approve a trade is the department's trade approver setting, not only group supervision.
+			if (!(await GetTradeAuthorityAsync()).IsApprover(shift, source.DepartmentGroupId))
 				return Unauthorized();
 
 			var result = await _shiftsService.ReviewTradeAsync(shiftSignupTradeId, approve, UserId, note, cancellationToken);
@@ -855,6 +997,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				Names = lookups.Names,
 				GroupNames = lookups.GroupNames
 			};
+
+			// When only approvers decide trades, a requester who isn't one has nothing to pick (FinishTrade refuses them).
+			var authority = await GetTradeAuthorityAsync();
+			model.CanPickOwnTrades = authority.Settings?.Requester == true || authority.IsDepartmentApprover;
 
 			// A member of several departments has signups in each; this page is for the active one.
 			model.Signups = (await _shiftsService.GetShiftSignupsForUserAsync(UserId) ?? new List<ShiftSignup>())
@@ -1102,7 +1248,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (trade == null)
 				return RedirectToAction("YourShifts");
 
-			if (!await CanUserFinishTradeAsync(trade))
+			if (!(await CanUserFinishTradeAsync(trade)).Allowed)
 				return Unauthorized();
 
 			return View(await BuildFinishTradeViewAsync(trade));
@@ -1122,7 +1268,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return RedirectToAction("YourShifts");
 
 			// Authorize against the trade loaded from the database, never the one posted in the form.
-			if (!await CanUserFinishTradeAsync(trade))
+			var access = await CanUserFinishTradeAsync(trade);
+
+			if (!access.Allowed)
 				return Unauthorized();
 
 			if (String.IsNullOrWhiteSpace(acceptedUserId) && !(targetShiftSignupId > 0))
@@ -1132,8 +1280,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return View(view);
 			}
 
-			// The service checks the pick against the offers actually made on this trade.
-			var result = await _shiftsService.FinishTradeAsync(trade.ShiftSignupTradeId, UserId,
+			// The service checks the pick against the offers actually made on this trade. An approver's pick is the approval.
+			var result = await _shiftsService.PickTradeOfferAsync(trade.ShiftSignupTradeId, UserId, access.AsApprover,
 				targetShiftSignupId > 0 ? null : acceptedUserId, targetShiftSignupId > 0 ? targetShiftSignupId : null, cancellationToken);
 
 			if (!result.Success)
@@ -1148,7 +1296,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			else
 				SetMessage(_localizer["TradeCompleted"]);
 
-			return RedirectToAction("YourShifts");
+			// An approver picking for someone else came from the approvals page.
+			return access.AsApprover && !SameUser(trade.GetSourceUserId(), UserId) ? RedirectToAction("Approvals") : RedirectToAction("YourShifts");
 		}
 
 		#endregion Your shifts and trades
@@ -1157,7 +1306,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Shift_View)]
-		public async Task<IActionResult> ShiftStaffing()
+		public async Task<IActionResult> ShiftStaffing(int? shiftId = null, string workshiftId = null, string day = null)
 		{
 			var scope = await GetScopeAsync();
 
@@ -1166,6 +1315,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var model = new ShiftStaffingView();
 			await SetShiftStaffingModel(model, scope);
+
+			// A link (or the redirect after saving) can open the page on a day; one the caller can't staff is ignored.
+			if (!String.IsNullOrWhiteSpace(workshiftId) && model.CanStaffWorkshifts && model.Workshifts.Any(x => x.WorkshiftId == workshiftId))
+			{
+				model.StaffingKind = ShiftStaffingView.WorkshiftKind;
+				model.WorkshiftId = workshiftId;
+			}
+			else if (shiftId.HasValue && model.Shifts.Any(x => x.ShiftId == shiftId.Value))
+			{
+				model.ShiftId = shiftId.Value;
+			}
+
+			if (TryParseShiftDate(day, out var date))
+				model.Day = date.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture);
 
 			return View(model);
 		}
@@ -1181,6 +1344,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return Unauthorized();
 
 			model = model ?? new ShiftStaffingView();
+
+			if (model.StaffingKind == ShiftStaffingView.WorkshiftKind)
+				return await SetWorkshiftStaffingAsync(model, form, scope, cancellationToken);
 
 			var shift = model.ShiftId > 0 ? await _shiftsService.GetShiftByIdAsync(model.ShiftId) : null;
 
@@ -1217,69 +1383,293 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (ModelState.IsValid && shift != null && shiftDay != null)
 			{
-				var names = await GetNamesAsync();
-				var members = await _departmentService.GetAllMembersForDepartmentAsync(DepartmentId) ?? new List<DepartmentMember>();
-				var memberIds = members
-					.Where(x => x != null && !x.IsDeleted && !String.IsNullOrWhiteSpace(x.UserId))
-					.GroupBy(x => x.UserId, StringComparer.OrdinalIgnoreCase)
-					.ToDictionary(x => x.Key, x => x.First().UserId, StringComparer.OrdinalIgnoreCase);
+				var personnel = selections.Select(x => new ShiftDayStaffingPerson { UserId = x.UserId, DepartmentGroupId = x.GroupId }).ToList();
 
-				var staffing = new ShiftStaffing
+				// The service keeps the slots outside the caller's groups as they are and brings the day's roster in line
+				// until the day is over; an ended day just records who worked it.
+				var result = await _shiftStaffingService.SetShiftDayStaffingAsync(DepartmentId, shiftDay.ShiftDayId, personnel, model.Note, UserId, scope,
+					cancellationToken);
+
+				if (!result.Success)
 				{
-					ShiftId = shift.ShiftId,
-					DepartmentId = DepartmentId,
-					Note = model.Note,
-					AddedByUserId = UserId,
-					AddedOn = DateTime.UtcNow,
-					ShiftDay = shiftDay.Day,
-					Personnel = new Collection<ShiftStaffingPerson>()
-				};
+					if (result.Error == ShiftActionErrors.NotAllowed)
+						return Unauthorized();
 
-				var schedule = await _shiftsService.GetShiftDayScheduleAsync(shiftDay.ShiftDayId);
-				var added = 0;
-				var errors = new List<string>();
-
-				foreach (var selection in selections)
+					ModelState.AddModelError("", ErrorText(result.Error));
+				}
+				else
 				{
-					if (!memberIds.TryGetValue(selection.UserId, out var userId))
-						continue;
+					var saved = result.Item;
 
-					var person = new ShiftStaffingPerson { UserId = userId, GroupId = selection.GroupId };
-					staffing.Personnel.Add(person);
-
-					// Already working the day: nothing to change.
-					if (schedule != null && schedule.Roster.Any(x => SameUser(x.UserId, userId) && x.IsOnDuty()))
+					if (saved.RosterErrors.Any())
 					{
-						person.Assigned = true;
-						continue;
-					}
+						var names = await GetNamesAsync();
+						var errors = saved.RosterErrors.Select(x => $"{NameFor(names, x.Key)}: {ErrorText(x.Value)}");
 
-					var result = await _shiftsService.AssignUserToShiftDayAsync(shiftDay.ShiftDayId, userId, selection.GroupId, UserId, cancellationToken);
-
-					if (result.Success)
-					{
-						person.Assigned = true;
-						added++;
+						SetMessage(String.Format(_localizer["StaffingSavedWithErrorsFormat"].Value, saved.RosterAdded, saved.RosterRemoved, String.Join("; ", errors)), "warning");
 					}
 					else
 					{
-						errors.Add($"{NameFor(names, userId)}: {ErrorText(result.Error)}");
+						SetMessage(String.Format(_localizer["StaffingSavedFormat"].Value, saved.RosterAdded, saved.RosterRemoved));
 					}
+
+					return RedirectToAction("ShiftStaffing", new { shiftId = shift.ShiftId, day = shiftDay.Day.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture) });
 				}
-
-				await _shiftsService.SaveShiftStaffingAsync(staffing, cancellationToken);
-
-				if (errors.Any())
-					SetMessage(String.Format(_localizer["ShiftStaffingSavedWithErrors"].Value, added, String.Join("; ", errors)), "warning");
-				else
-					SetMessage(String.Format(_localizer["ShiftStaffingSaved"].Value, added));
-
-				return RedirectToAction("ViewShift", new { shiftDayId = shiftDay.ShiftDayId });
 			}
 
 			await SetShiftStaffingModel(model, scope);
 
 			return View(model);
+		}
+
+		/// <summary>
+		/// Static shift (workshift) staffing posts unitPersonnel_{unitId} for each of its units. Static shifts are a
+		/// department-wide schedule, so only department-wide supervisors staff them.
+		/// </summary>
+		private async Task<IActionResult> SetWorkshiftStaffingAsync(ShiftStaffingView model, IFormCollection form, ShiftManagementScope scope,
+			CancellationToken cancellationToken)
+		{
+			if (!scope.AllGroups)
+				return Unauthorized();
+
+			var workshift = !String.IsNullOrWhiteSpace(model.WorkshiftId) ? await _workshiftsService.GetWorkshiftByIdAsync(model.WorkshiftId) : null;
+
+			if (workshift != null && workshift.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			if (workshift == null || workshift.DeletedOn != null)
+				ModelState.AddModelError("WorkshiftId", _localizer["StaffingSelectStaticShift"]);
+
+			WorkshiftDay workshiftDay = null;
+
+			if (!TryParseShiftDate(form["shiftDayPicker"], out var date))
+				ModelState.AddModelError("shiftDayPicker", _localizer["ShiftStaffingSelectDay"]);
+			else if (workshift != null)
+			{
+				workshiftDay = await FindWorkshiftDayAsync(workshift, date);
+
+				if (workshiftDay == null)
+					ModelState.AddModelError("shiftDayPicker", _localizer["ShiftStaffingSelectDay"]);
+			}
+
+			if (ModelState.IsValid && workshiftDay != null)
+			{
+				var result = await _shiftStaffingService.SetWorkshiftDayStaffingAsync(DepartmentId, workshiftDay.WorkshiftDayId, ReadUnitPersonnel(form), UserId,
+					cancellationToken);
+
+				if (result.Success)
+				{
+					SetMessage(String.Format(_localizer["StaffingWorkshiftSavedFormat"].Value, result.Item));
+
+					return RedirectToAction("ShiftStaffing", new { workshiftId = workshift.WorkshiftId, day = date.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture) });
+				}
+
+				if (result.Error == ShiftActionErrors.NotAllowed)
+					return Unauthorized();
+
+				ModelState.AddModelError("", ErrorText(result.Error));
+			}
+
+			await SetShiftStaffingModel(model, scope);
+
+			return View("ShiftStaffing", model);
+		}
+
+		/// <summary>
+		/// Drops the approved staffing of a shift day (kind "shift") or static shift day (kind "workshift") so it is
+		/// staffed automatically again.
+		/// </summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Shift_View)]
+		public async Task<IActionResult> ClearShiftStaffing(string staffingKind, int shiftId, string workshiftId, string day, CancellationToken cancellationToken)
+		{
+			var scope = await GetScopeAsync();
+
+			if (!scope.IsSupervisor || !TryParseShiftDate(day, out var date))
+				return Unauthorized();
+
+			var dayText = date.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture);
+			ShiftActionErrors error;
+
+			if (staffingKind == ShiftStaffingView.WorkshiftKind)
+			{
+				if (!scope.AllGroups)
+					return Unauthorized();
+
+				var workshift = !String.IsNullOrWhiteSpace(workshiftId) ? await _workshiftsService.GetWorkshiftByIdAsync(workshiftId) : null;
+
+				if (workshift == null || workshift.DepartmentId != DepartmentId)
+					return Unauthorized();
+
+				var workshiftDay = await FindWorkshiftDayAsync(workshift, date);
+				error = workshiftDay == null
+					? ShiftActionErrors.NotFound
+					: (await _shiftStaffingService.ClearWorkshiftDayStaffingAsync(DepartmentId, workshiftDay.WorkshiftDayId, cancellationToken)).Error;
+
+				SetClearMessage(error);
+
+				return RedirectToAction("ShiftStaffing", new { workshiftId, day = dayText });
+			}
+
+			var shift = await _shiftsService.GetShiftByIdAsync(shiftId);
+
+			if (shift == null || shift.DepartmentId != DepartmentId || !scope.CanManageShift(shift))
+				return Unauthorized();
+
+			var shiftDay = FindDay(shift, date);
+			error = shiftDay == null
+				? ShiftActionErrors.NotFound
+				: (await _shiftStaffingService.ClearShiftDayStaffingAsync(DepartmentId, shiftDay.ShiftDayId, scope, cancellationToken)).Error;
+
+			if (error == ShiftActionErrors.NotAllowed)
+				return Unauthorized();
+
+			SetClearMessage(error);
+
+			return RedirectToAction("ShiftStaffing", new { shiftId, day = dayText });
+		}
+
+		/// <summary>
+		/// Every shift and static shift day between start and end (MM/dd/yyyy, inclusive, at most 62 days) with how it is
+		/// staffed, for the staffing page's day list. Only shifts the caller supervises; static shifts for department-wide
+		/// supervisors.
+		/// </summary>
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Shift_View)]
+		public async Task<IActionResult> GetStaffingOverview(string start = null, string end = null)
+		{
+			var scope = await GetScopeAsync();
+
+			if (!scope.IsSupervisor)
+				return Unauthorized();
+
+			var lookups = await GetLookupsAsync(includeScope: false);
+			var startDate = TryParseShiftDate(start, out var parsedStart) ? parsedStart : lookups.LocalNow.Date.AddDays(-7);
+			var endDate = TryParseShiftDate(end, out var parsedEnd) ? parsedEnd : lookups.LocalNow.Date.AddDays(7);
+
+			if (endDate < startDate)
+				(startDate, endDate) = (endDate, startDate);
+
+			if ((endDate - startDate).TotalDays > MaxStaffingOverviewDays)
+				endDate = startDate.AddDays(MaxStaffingOverviewDays);
+
+			var shifts = (await _shiftsService.GetAllShiftsByDepartmentAsync(DepartmentId) ?? new List<Shift>()).Where(x => x != null).ToDictionary(x => x.ShiftId);
+			var occurrences = await _shiftStaffingService.GetStaffingForRangeAsync(DepartmentId, startDate, endDate.AddDays(1)) ?? new List<ShiftDayStaffing>();
+
+			var rows = occurrences
+				.Where(x => x.ShiftType == StaffedShiftTypes.Workshift
+					? scope.AllGroups
+					: x.ShiftId.HasValue && shifts.TryGetValue(x.ShiftId.Value, out var shift) && scope.CanSuperviseShift(shift))
+				// A night shift that started the evening before the range overlaps it but belongs to the day before.
+				.Where(x => x.Day >= startDate && x.Day <= endDate)
+				.Select(x => ToStaffingSummaryJson(x, lookups))
+				.ToList();
+
+			return Json(rows);
+		}
+
+		/// <summary>One shift day's staffing (automatic and approved) for the staffing editor.</summary>
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Shift_View)]
+		public async Task<IActionResult> GetShiftDayStaffing(int shiftId, string day)
+		{
+			var scope = await GetScopeAsync();
+			var shift = await _shiftsService.GetShiftByIdAsync(shiftId);
+
+			if (shift == null || shift.DepartmentId != DepartmentId || !scope.CanSuperviseShift(shift))
+				return Unauthorized();
+
+			var shiftDay = TryParseShiftDate(day, out var date) ? FindDay(shift, date) : null;
+			var staffing = shiftDay != null ? await _shiftStaffingService.GetShiftDayStaffingAsync(shiftDay.ShiftDayId) : null;
+
+			if (staffing == null)
+				return Json(new { Found = false });
+
+			var lookups = await GetLookupsAsync(includeScope: false);
+			var groups = (shift.Groups ?? new List<ShiftGroup>()).Where(x => x != null)
+				.Select(x => new { Id = x.DepartmentGroupId, Name = lookups.GroupNameFor(x.DepartmentGroupId), CanManage = scope.CanManageGroup(x.DepartmentGroupId) })
+				.ToList();
+
+			return Json(new
+			{
+				Found = true,
+				Summary = ToStaffingSummaryJson(staffing, lookups),
+				Note = staffing.Note,
+				CanClear = staffing.Source == ShiftStaffingSources.Manual && scope.CanManageShift(shift),
+				CanSetNonGroup = scope.CanManageShift(shift),
+				Groups = groups,
+				Automatic = staffing.AutomaticPersonnel.Select(x => ToStaffingPersonJson(x, lookups)).ToList(),
+				Personnel = staffing.Personnel.Select(x => ToStaffingPersonJson(x, lookups)).ToList(),
+				Added = staffing.AddedUserIds().Select(x => lookups.NameFor(x)).ToList(),
+				Removed = staffing.RemovedUserIds().Select(x => lookups.NameFor(x)).ToList()
+			});
+		}
+
+		/// <summary>The days of a static shift, for the staffing page's date picker.</summary>
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Shift_View)]
+		public async Task<IActionResult> GetWorkshiftDays(string workshiftId)
+		{
+			var scope = await GetScopeAsync();
+			var workshift = !String.IsNullOrWhiteSpace(workshiftId) ? await _workshiftsService.GetWorkshiftByIdAsync(workshiftId) : null;
+
+			if (!scope.AllGroups || workshift == null || workshift.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			var department = await _departmentService.GetDepartmentByIdAsync(DepartmentId, false);
+			var days = (await LoadWorkshiftDaysAsync(workshift))
+				.Select(x => new { Day = LocalWorkshiftDate(x, department).ToString("MM/dd/yyyy", CultureInfo.InvariantCulture) })
+				.ToList();
+
+			return Json(days);
+		}
+
+		/// <summary>One static shift day's staffing per unit (automatic crew and approved) for the staffing editor.</summary>
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Shift_View)]
+		public async Task<IActionResult> GetWorkshiftDayStaffing(string workshiftId, string day)
+		{
+			var scope = await GetScopeAsync();
+			var workshift = !String.IsNullOrWhiteSpace(workshiftId) ? await _workshiftsService.GetWorkshiftByIdAsync(workshiftId) : null;
+
+			if (!scope.AllGroups || workshift == null || workshift.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			var workshiftDay = TryParseShiftDate(day, out var date) ? await FindWorkshiftDayAsync(workshift, date) : null;
+			var staffing = workshiftDay != null ? await _shiftStaffingService.GetWorkshiftDayStaffingAsync(workshiftDay.WorkshiftDayId) : null;
+
+			if (staffing == null)
+				return Json(new { Found = false });
+
+			var lookups = await GetLookupsAsync(includeScope: false);
+			var unitNames = (await _unitsService.GetUnitsForDepartmentIncludingDeletedAsync(DepartmentId) ?? new List<Unit>())
+				.Where(x => x != null)
+				.GroupBy(x => x.UnitId)
+				.ToDictionary(x => x.Key, x => x.First().Name);
+
+			var units = (workshift.Entities ?? new List<WorkshiftEntity>())
+				.Select(x => int.TryParse(x?.BackingId, out var unitId) ? unitId : 0)
+				.Where(x => x > 0)
+				.Distinct()
+				.Select(unitId => new
+				{
+					UnitId = unitId,
+					Name = unitNames.TryGetValue(unitId, out var name) ? name : lookups.UnknownName,
+					Automatic = staffing.AutomaticPersonnel.Where(x => x.UnitId == unitId).Select(x => ToStaffingPersonJson(x, lookups)).ToList(),
+					Personnel = staffing.Personnel.Where(x => x.UnitId == unitId).Select(x => ToStaffingPersonJson(x, lookups)).ToList()
+				})
+				.ToList();
+
+			return Json(new
+			{
+				Found = true,
+				Summary = ToStaffingSummaryJson(staffing, lookups),
+				CanClear = staffing.Source == ShiftStaffingSources.Manual,
+				Units = units,
+				Added = staffing.AddedUserIds().Select(x => lookups.NameFor(x)).ToList(),
+				Removed = staffing.RemovedUserIds().Select(x => lookups.NameFor(x)).ToList()
+			});
 		}
 
 		private async Task SetShiftStaffingModel(ShiftStaffingView model, ShiftManagementScope scope)
@@ -1288,9 +1678,135 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			model.Shifts = shifts.Where(x => x != null && scope.CanSuperviseShift(x)).ToList();
 			model.IsDepartmentAdmin = scope.AllGroups;
+			model.CanStaffWorkshifts = scope.AllGroups;
 			model.ManageableGroupIds = scope.AllGroups ? new List<int>() : scope.GroupIds.ToList();
 			model.GroupId = scope.AllGroups ? 0 : scope.GroupIds.FirstOrDefault();
 			model.CurrentUnitRoles = new Dictionary<int, List<UnitStateRole>>();
+			model.Workshifts = scope.AllGroups
+				? (await _workshiftsService.GetAllWorkshiftsByDepartmentAsync(DepartmentId) ?? new List<Workshift>()).Where(x => x != null && x.DeletedOn == null).OrderBy(x => x.Name).ToList()
+				: new List<Workshift>();
+
+			if (model.StaffingKind != ShiftStaffingView.WorkshiftKind)
+				model.StaffingKind = ShiftStaffingView.ShiftKind;
+		}
+
+		private void SetClearMessage(ShiftActionErrors error)
+		{
+			if (error == ShiftActionErrors.None)
+				SetMessage(_localizer["StaffingCleared"]);
+			else
+				SetMessage(ErrorText(error), "warning");
+		}
+
+		private object ToStaffingSummaryJson(ShiftDayStaffing staffing, ShiftLookups lookups)
+		{
+			var department = lookups.Department ?? new Department();
+
+			return new
+			{
+				Key = staffing.Key,
+				Kind = staffing.ShiftType == StaffedShiftTypes.Workshift ? ShiftStaffingView.WorkshiftKind : ShiftStaffingView.ShiftKind,
+				ShiftType = (int)staffing.ShiftType,
+				TypeName = StaffedShiftTypeText(staffing.ShiftType),
+				ShiftId = staffing.ShiftId,
+				ShiftDayId = staffing.ShiftDayId,
+				WorkshiftId = staffing.WorkshiftId,
+				WorkshiftDayId = staffing.WorkshiftDayId,
+				Name = staffing.Name,
+				Color = staffing.Color,
+				Day = staffing.Day.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture),
+				Start = staffing.Start.FormatForDepartment(department, true),
+				End = staffing.End.FormatForDepartment(department, true),
+				Hours = Math.Round(staffing.Hours, 2),
+				Source = (int)staffing.Source,
+				SourceName = staffing.Source == ShiftStaffingSources.Manual ? _localizer["StaffingSourceManual"].Value : _localizer["StaffingSourceAutomatic"].Value,
+				People = staffing.UserIds().Count,
+				SetBy = staffing.Source == ShiftStaffingSources.Manual ? lookups.NameFor(staffing.SetByUserId) : null,
+				SetOn = staffing.SetOn.HasValue ? staffing.SetOn.Value.TimeConverter(department).FormatForDepartment(department, true) : null,
+				AddedCount = staffing.AddedUserIds().Count,
+				RemovedCount = staffing.RemovedUserIds().Count,
+				IsOver = staffing.IsOver,
+				IsActive = staffing.IsActive
+			};
+		}
+
+		private object ToStaffingPersonJson(ShiftDayStaffingPerson person, ShiftLookups lookups)
+		{
+			return new
+			{
+				UserId = person.UserId,
+				Name = lookups.NameFor(person.UserId),
+				GroupId = person.DepartmentGroupId,
+				GroupName = lookups.GroupNameFor(person.DepartmentGroupId),
+				UnitId = person.UnitId,
+				Source = person.RosterSource.HasValue ? RosterSourceText(person.RosterSource.Value) : null
+			};
+		}
+
+		private string StaffedShiftTypeText(StaffedShiftTypes type)
+		{
+			switch (type)
+			{
+				case StaffedShiftTypes.Signup: return _localizer["SignupType"].Value;
+				case StaffedShiftTypes.Workshift: return _localizer["StaffingTypeStaticShift"].Value;
+				default: return _localizer["AssignedType"].Value;
+			}
+		}
+
+		private string RosterSourceText(ShiftRosterSources source)
+		{
+			switch (source)
+			{
+				case ShiftRosterSources.Signup: return _localizer["SourceSignup"].Value;
+				case ShiftRosterSources.SupervisorAssigned: return _localizer["SourceSupervisorAssigned"].Value;
+				case ShiftRosterSources.Trade: return _localizer["StaffingSourceTrade"].Value;
+				default: return _localizer["SourceAssigned"].Value;
+			}
+		}
+
+		/// <summary>A static shift's days; the department list carries them when the by-id read does not.</summary>
+		private async Task<List<WorkshiftDay>> LoadWorkshiftDaysAsync(Workshift workshift)
+		{
+			if (workshift.Days != null && workshift.Days.Any())
+				return workshift.Days.Where(x => x != null).OrderBy(x => x.Day).ToList();
+
+			var listed = (await _workshiftsService.GetAllWorkshiftsByDepartmentAsync(DepartmentId) ?? new List<Workshift>())
+				.FirstOrDefault(x => x != null && x.WorkshiftId == workshift.WorkshiftId);
+
+			return (listed?.Days ?? new List<WorkshiftDay>()).Where(x => x != null).OrderBy(x => x.Day).ToList();
+		}
+
+		/// <summary>The static shift day on a department-local date (static shift days are stored in UTC).</summary>
+		private async Task<WorkshiftDay> FindWorkshiftDayAsync(Workshift workshift, DateTime date)
+		{
+			var department = await _departmentService.GetDepartmentByIdAsync(DepartmentId, false);
+
+			return (await LoadWorkshiftDaysAsync(workshift)).FirstOrDefault(x => LocalWorkshiftDate(x, department) == date.Date);
+		}
+
+		private static DateTime LocalWorkshiftDate(WorkshiftDay day, Department department)
+		{
+			return (department != null ? day.Day.TimeConverter(department) : day.Day).Date;
+		}
+
+		/// <summary>The static shift staffing pickers: unitPersonnel_{unitId} holds the people crewing that unit.</summary>
+		private static List<ShiftDayStaffingPerson> ReadUnitPersonnel(IFormCollection form)
+		{
+			var personnel = new List<ShiftDayStaffingPerson>();
+
+			foreach (var key in form.Keys.Where(x => x.StartsWith("unitPersonnel_", StringComparison.OrdinalIgnoreCase)).ToList())
+			{
+				if (!int.TryParse(key.Substring("unitPersonnel_".Length), out var unitId) || unitId <= 0)
+					continue;
+
+				foreach (var userId in SplitValues(form[key]))
+				{
+					if (!personnel.Any(x => SameUser(x.UserId, userId) && x.UnitId == unitId))
+						personnel.Add(new ShiftDayStaffingPerson { UserId = userId, UnitId = unitId });
+				}
+			}
+
+			return personnel;
 		}
 
 		#endregion Shift staffing
@@ -1712,6 +2228,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return await _authorizationService.GetShiftManagementScopeAsync(UserId, DepartmentId) ?? ShiftManagementScope.None();
 		}
 
+		/// <summary>What the user may decide about shift trades under the department's trade approver settings.</summary>
+		private async Task<ShiftTradeAuthority> GetTradeAuthorityAsync(ShiftManagementScope scope = null)
+		{
+			var roles = await _personnelRolesService.GetRolesForUserAsync(UserId, DepartmentId) ?? new List<PersonnelRole>();
+
+			return new ShiftTradeAuthority
+			{
+				UserId = UserId,
+				Scope = scope ?? await GetScopeAsync(),
+				Settings = await _departmentSettingsService.GetShiftTradeApproverSettingsAsync(DepartmentId) ?? ShiftTradeApproverSettings.Default(),
+				RoleIds = roles.Select(x => x.PersonnelRoleId).Distinct().ToList()
+			};
+		}
+
 		private async Task<ShiftDayView> BuildShiftDayViewAsync(ShiftDaySchedule schedule, ShiftLookups lookups)
 		{
 			var shift = schedule.Shift;
@@ -1950,21 +2480,32 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return null;
 		}
 
-		// Finishing a trade is the source signup owner picking which offer to accept. GetShiftTradeByIdAsync loads the
-		// source signup and its shift; the fallbacks cover a trade loaded without them.
-		private async Task<bool> CanUserFinishTradeAsync(ShiftSignupTrade trade)
+		// Finishing a trade is picking which offer to accept: an approver for the slot may (as the v4 FinishShiftTrade does),
+		// and so may the source signup owner when the department lets requesters decide. GetShiftTradeByIdAsync loads the
+		// source signup; the fallback covers a trade loaded without it. The full shift (with its groups) is what a group
+		// admin's approval is checked against.
+		private async Task<(bool Allowed, bool AsApprover)> CanUserFinishTradeAsync(ShiftSignupTrade trade)
 		{
 			if (trade == null)
-				return false;
+				return (false, false);
 
-			var sourceSignup = trade.SourceShiftSignup ?? await _shiftsService.GetShiftSignupByIdAsync(trade.SourceShiftSignupId);
+			var sourceSignup = trade.SourceShiftSignup ?? (trade.SourceShiftSignupId.HasValue ? await _shiftsService.GetShiftSignupByIdAsync(trade.SourceShiftSignupId.Value) : null);
 
-			if (sourceSignup == null || !SameUser(sourceSignup.UserId, UserId))
-				return false;
+			if (sourceSignup == null)
+				return (false, false);
 
-			var sourceShift = sourceSignup.Shift ?? await _shiftsService.GetShiftByIdAsync(sourceSignup.ShiftId);
+			var sourceShift = await _shiftsService.GetShiftByIdAsync(sourceSignup.ShiftId) ?? sourceSignup.Shift;
 
-			return sourceShift != null && sourceShift.DepartmentId == DepartmentId;
+			if (sourceShift == null || sourceShift.DepartmentId != DepartmentId)
+				return (false, false);
+
+			var authority = await GetTradeAuthorityAsync();
+
+			if (authority.IsApprover(sourceShift, sourceSignup.DepartmentGroupId))
+				return (true, true);
+
+			// A department can leave the choice to its approvers; the requester then cannot pick either.
+			return (authority.Settings?.Requester == true && SameUser(sourceSignup.UserId, UserId), false);
 		}
 
 		private async Task<ProcessTradeView> BuildProcessTradeViewAsync(ShiftSignupTrade trade)
@@ -2031,7 +2572,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return model;
 		}
 
-		private async Task<(List<ShiftSignup> Signups, List<ShiftSignupTrade> Trades)> GetPendingApprovalsAsync(ShiftManagementScope scope, List<Shift> shifts)
+		private async Task<(List<ShiftSignup> Signups, List<ShiftSignupTrade> Trades)> GetPendingApprovalsAsync(ShiftManagementScope scope, List<Shift> shifts,
+			ShiftTradeAuthority authority)
 		{
 			// Full shifts (with groups) so a slot with no group can be checked against the whole shift.
 			var shiftsById = (shifts ?? new List<Shift>()).Where(x => x != null).GroupBy(x => x.ShiftId).ToDictionary(x => x.Key, x => x.First());
@@ -2051,7 +2593,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				var source = trade?.SourceShiftSignup;
 
-				if (source == null || !shiftsById.TryGetValue(source.ShiftId, out var shift) || !scope.CanManageShiftGroup(shift, source.DepartmentGroupId))
+				// Static shift day trades never wait for approval; they have no source signup to show here.
+				if (source == null || !shiftsById.TryGetValue(source.ShiftId, out var shift) || !authority.IsApprover(shift, source.DepartmentGroupId))
 					continue;
 
 				source.Shift = shift;

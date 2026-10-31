@@ -40,6 +40,8 @@ namespace Resgrid.Tests.Web.User
 		private Mock<IDepartmentSettingsService> _settings;
 		private Mock<Resgrid.Model.Services.IAuthorizationService> _authorization;
 		private Mock<IWorkShiftsService> _workshifts;
+		private Mock<IShiftStaffingService> _staffing;
+		private Mock<IUnitsService> _units;
 		private ShiftManagementScope _scope;
 		private ShiftsController _controller;
 
@@ -65,6 +67,8 @@ namespace Resgrid.Tests.Web.User
 			_settings = new Mock<IDepartmentSettingsService>();
 			_authorization = new Mock<Resgrid.Model.Services.IAuthorizationService>();
 			_workshifts = new Mock<IWorkShiftsService>();
+			_staffing = new Mock<IShiftStaffingService>();
+			_units = new Mock<IUnitsService>();
 
 			_scope = new ShiftManagementScope { AllGroups = true };
 			_authorization.Setup(x => x.GetShiftManagementScopeAsync(Me, DepartmentId)).ReturnsAsync(() => _scope);
@@ -80,7 +84,7 @@ namespace Resgrid.Tests.Web.User
 			strings.Setup(x => x[It.IsAny<string>()]).Returns((string key) => new LocalizedString(key, key));
 
 			_controller = new ShiftsController(_shifts.Object, _groups.Object, _departments.Object, _roles.Object, _events.Object,
-				_settings.Object, _authorization.Object, _workshifts.Object, strings.Object)
+				_settings.Object, _authorization.Object, _workshifts.Object, _staffing.Object, _units.Object, strings.Object)
 			{
 				ControllerContext = new ControllerContext { HttpContext = _http },
 				TempData = new TempDataDictionary(_http, Mock.Of<ITempDataProvider>())
@@ -372,11 +376,43 @@ namespace Resgrid.Tests.Web.User
 		}
 
 		[Test]
-		public async Task Approvals_is_for_supervisors_only()
+		public async Task Approvals_is_for_supervisors_and_trade_approvers_only()
 		{
 			_scope = ShiftManagementScope.None();
 
 			AssertUnauthorized(await _controller.Approvals());
+		}
+
+		[Test]
+		public async Task Approvals_lets_a_trade_approver_role_pick_applicants_without_supervising()
+		{
+			_scope = ShiftManagementScope.None();
+			_settings.Setup(x => x.GetShiftTradeApproverSettingsAsync(DepartmentId)).ReturnsAsync(new ShiftTradeApproverSettings { RoleIds = new List<int> { 300 } });
+			_roles.Setup(x => x.GetRolesForUserAsync(Me, DepartmentId)).ReturnsAsync(new List<PersonnelRole> { new PersonnelRole { PersonnelRoleId = 300 } });
+			var shift = new Shift { ShiftId = 5, DepartmentId = DepartmentId, Name = "A", Groups = new List<ShiftGroup> { new ShiftGroup { DepartmentGroupId = 10 } } };
+			_shifts.Setup(x => x.GetAllShiftsByDepartmentAsync(DepartmentId)).ReturnsAsync(new List<Shift> { shift });
+			_shifts.Setup(x => x.GetOpenTradesAsync(DepartmentId)).ReturnsAsync(new List<ShiftSignupTrade>
+			{
+				new ShiftSignupTrade
+				{
+					ShiftSignupTradeId = 8, IsOpen = true,
+					SourceShiftSignup = new ShiftSignup { ShiftId = 5, DepartmentGroupId = 10, UserId = Colleague, ShiftDay = new DateTime(2030, 1, 10) },
+					Users = new List<ShiftSignupTradeUser> { new ShiftSignupTradeUser { UserId = Other, Offered = true } }
+				},
+				new ShiftSignupTrade
+				{
+					ShiftSignupTradeId = 9, IsOpen = true,
+					SourceShiftSignup = new ShiftSignup { ShiftId = 5, DepartmentGroupId = 10, UserId = Colleague, ShiftDay = new DateTime(2030, 1, 11) },
+					Users = new List<ShiftSignupTradeUser>()
+				}
+			});
+
+			var model = (await _controller.Approvals()).Should().BeOfType<ViewResult>().Which.Model.Should().BeOfType<ApprovalsView>().Subject;
+
+			var row = model.OpenTrades.Should().ContainSingle("a request nobody applied for has nothing to pick").Subject;
+			row.ShiftSignupTradeId.Should().Be(8);
+			row.CanPick.Should().BeTrue();
+			row.CanCancel.Should().BeFalse("withdrawing a request is for supervisors");
 		}
 
 		[Test]
@@ -533,16 +569,59 @@ namespace Resgrid.Tests.Web.User
 		[Test]
 		public async Task FinishTrade_passes_the_pick_to_the_service_and_reports_pending_approval()
 		{
+			_scope = ShiftManagementScope.None();
 			var trade = SetupTrade(60, DepartmentId, Other);
 			trade.SourceShiftSignup.UserId = Me;
-			_shifts.Setup(x => x.FinishTradeAsync(60, Me, null, 77, It.IsAny<CancellationToken>()))
+			_shifts.Setup(x => x.PickTradeOfferAsync(60, Me, false, null, 77, It.IsAny<CancellationToken>()))
 				.ReturnsAsync(ShiftActionResult<ShiftSignupTrade>.Ok(new ShiftSignupTrade { ApprovalPending = true }));
 
 			var result = await _controller.FinishTrade(new FinishTradeView { Trade = new ShiftSignupTrade { ShiftSignupTradeId = 60 } }, Other, 77, CancellationToken.None);
 
-			result.Should().BeOfType<RedirectToActionResult>();
+			result.Should().BeOfType<RedirectToActionResult>().Which.ActionName.Should().Be("YourShifts");
 			Message.Should().Be("TradeWaitingForApproval");
 			_events.VerifyNoOtherCalls();
+		}
+
+		[Test]
+		public async Task FinishTrade_lets_a_group_admin_pick_as_the_approver_when_requesters_do_not_decide()
+		{
+			_scope = new ShiftManagementScope { GroupIds = new HashSet<int> { 10 } };
+			_settings.Setup(x => x.GetShiftTradeApproverSettingsAsync(DepartmentId)).ReturnsAsync(new ShiftTradeApproverSettings { Requester = false });
+			SetupShift(5, DepartmentId, 10);
+			var trade = SetupTrade(60, DepartmentId, Other);
+			trade.SourceShiftSignup.DepartmentGroupId = 10;
+			_shifts.Setup(x => x.PickTradeOfferAsync(60, Me, true, Other, null, It.IsAny<CancellationToken>()))
+				.ReturnsAsync(ShiftActionResult<ShiftSignupTrade>.Ok(new ShiftSignupTrade()));
+
+			(await _controller.FinishTrade(60)).Should().BeOfType<ViewResult>();
+			var result = await _controller.FinishTrade(new FinishTradeView { Trade = new ShiftSignupTrade { ShiftSignupTradeId = 60 } }, Other, null, CancellationToken.None);
+
+			result.Should().BeOfType<RedirectToActionResult>().Which.ActionName.Should().Be("Approvals");
+			Message.Should().Be("TradeCompleted");
+		}
+
+		[Test]
+		public async Task FinishTrade_refuses_the_requester_when_only_approvers_decide()
+		{
+			_scope = ShiftManagementScope.None();
+			_settings.Setup(x => x.GetShiftTradeApproverSettingsAsync(DepartmentId)).ReturnsAsync(new ShiftTradeApproverSettings { Requester = false });
+			var trade = SetupTrade(60, DepartmentId, Other);
+			trade.SourceShiftSignup.UserId = Me;
+
+			AssertUnauthorized(await _controller.FinishTrade(60));
+			AssertUnauthorized(await _controller.FinishTrade(new FinishTradeView { Trade = new ShiftSignupTrade { ShiftSignupTradeId = 60 } }, Other, null, CancellationToken.None));
+			_shifts.Verify(x => x.PickTradeOfferAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<int?>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public async Task FinishTrade_refuses_someone_who_neither_asked_nor_approves()
+		{
+			_scope = new ShiftManagementScope { GroupIds = new HashSet<int> { 11 } };
+			SetupShift(5, DepartmentId, 10, 11);
+			var trade = SetupTrade(60, DepartmentId, Other);
+			trade.SourceShiftSignup.DepartmentGroupId = 10;
+
+			AssertUnauthorized(await _controller.FinishTrade(60));
 		}
 
 		[Test]
@@ -572,26 +651,14 @@ namespace Resgrid.Tests.Web.User
 		#region Staffing and calendar
 
 		[Test]
-		public async Task ShiftStaffing_adds_people_not_already_working_the_day()
+		public async Task ShiftStaffing_approves_the_picked_people_for_the_day_and_returns_to_it()
 		{
 			_scope = new ShiftManagementScope { GroupIds = new HashSet<int> { 10 } };
-			var shift = SetupShift(5, DepartmentId, 10);
-			_shifts.Setup(x => x.GetShiftDayScheduleAsync(70)).ReturnsAsync(new ShiftDaySchedule
-			{
-				Shift = shift,
-				Day = shift.Days.First(),
-				Roster = new List<ShiftDayRosterEntry> { new ShiftDayRosterEntry { UserId = Colleague, DepartmentGroupId = 10 } }
-			});
-			_departments.Setup(x => x.GetAllMembersForDepartmentAsync(DepartmentId)).ReturnsAsync(new List<DepartmentMember>
-			{
-				new DepartmentMember { UserId = Colleague }, new DepartmentMember { UserId = Other }
-			});
-			_shifts.Setup(x => x.AssignUserToShiftDayAsync(70, Other, 10, Me, It.IsAny<CancellationToken>()))
-				.ReturnsAsync(ShiftActionResult<ShiftSignup>.Ok(new ShiftSignup()));
-			ShiftStaffing saved = null;
-			_shifts.Setup(x => x.SaveShiftStaffingAsync(It.IsAny<ShiftStaffing>(), It.IsAny<CancellationToken>()))
-				.Callback((ShiftStaffing staffing, CancellationToken _) => saved = staffing)
-				.ReturnsAsync((ShiftStaffing staffing, CancellationToken _) => staffing);
+			SetupShift(5, DepartmentId, 10);
+			List<ShiftDayStaffingPerson> posted = null;
+			_staffing.Setup(x => x.SetShiftDayStaffingAsync(DepartmentId, 70, It.IsAny<List<ShiftDayStaffingPerson>>(), "Short a medic", Me, _scope, It.IsAny<CancellationToken>()))
+				.Callback((int _, int __, List<ShiftDayStaffingPerson> people, string ___, string ____, ShiftManagementScope _____, CancellationToken ______) => posted = people)
+				.ReturnsAsync(ShiftActionResult<ShiftStaffingSaveResult>.Ok(new ShiftStaffingSaveResult { RosterAdded = 1, RosterRemoved = 2 }));
 
 			var form = Form(new Dictionary<string, StringValues>
 			{
@@ -599,13 +666,83 @@ namespace Resgrid.Tests.Web.User
 				{ "groupPersonnel_10", new StringValues(new[] { Colleague, Other }) }
 			});
 
-			var result = await _controller.ShiftStaffing(new ShiftStaffingView { ShiftId = 5 }, form, CancellationToken.None);
+			var result = await _controller.ShiftStaffing(new ShiftStaffingView { ShiftId = 5, Note = "Short a medic" }, form, CancellationToken.None);
 
-			result.Should().BeOfType<RedirectToActionResult>().Which.RouteValues["shiftDayId"].Should().Be(70);
-			_shifts.Verify(x => x.AssignUserToShiftDayAsync(70, Other, 10, Me, It.IsAny<CancellationToken>()), Times.Once);
-			_shifts.Verify(x => x.AssignUserToShiftDayAsync(70, Colleague, It.IsAny<int?>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
-			saved.ShiftDay.Should().Be(new DateTime(2026, 10, 1));
-			saved.Personnel.Should().OnlyContain(x => x.Assigned);
+			var redirect = result.Should().BeOfType<RedirectToActionResult>().Subject;
+			redirect.ActionName.Should().Be("ShiftStaffing");
+			redirect.RouteValues["shiftId"].Should().Be(5);
+			redirect.RouteValues["day"].Should().Be("10/01/2026");
+			posted.Select(x => (x.UserId, x.DepartmentGroupId)).Should().BeEquivalentTo(new[] { (Colleague, (int?)10), (Other, (int?)10) });
+			Message.Should().Be("StaffingSavedFormat");
+			// The page no longer writes the roster itself; the staffing service does, in line with the approved staffing.
+			_shifts.Verify(x => x.AssignUserToShiftDayAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int?>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public async Task ShiftStaffing_for_a_static_shift_needs_a_department_wide_supervisor()
+		{
+			_scope = new ShiftManagementScope { GroupIds = new HashSet<int> { 10 } };
+			var form = Form(new Dictionary<string, StringValues> { { "shiftDayPicker", "10/01/2026" }, { "unitPersonnel_3", Other } });
+
+			AssertUnauthorized(await _controller.ShiftStaffing(new ShiftStaffingView { StaffingKind = ShiftStaffingView.WorkshiftKind, WorkshiftId = "ws" }, form, CancellationToken.None));
+
+			_staffing.Verify(x => x.SetWorkshiftDayStaffingAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<ShiftDayStaffingPerson>>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public async Task ShiftStaffing_for_a_static_shift_posts_the_unit_crews_for_the_picked_day()
+		{
+			var workshift = new Workshift
+			{
+				WorkshiftId = "ws",
+				DepartmentId = DepartmentId,
+				Name = "Engine Week",
+				Days = new List<WorkshiftDay>
+				{
+					new WorkshiftDay { WorkshiftDayId = "d1", WorkshiftId = "ws", Day = new DateTime(2026, 10, 1, 7, 0, 0) },
+					new WorkshiftDay { WorkshiftDayId = "d2", WorkshiftId = "ws", Day = new DateTime(2026, 10, 2, 7, 0, 0) }
+				}
+			};
+			_workshifts.Setup(x => x.GetWorkshiftByIdAsync("ws")).ReturnsAsync(workshift);
+			List<ShiftDayStaffingPerson> posted = null;
+			_staffing.Setup(x => x.SetWorkshiftDayStaffingAsync(DepartmentId, "d2", It.IsAny<List<ShiftDayStaffingPerson>>(), Me, It.IsAny<CancellationToken>()))
+				.Callback((int _, string __, List<ShiftDayStaffingPerson> people, string ___, CancellationToken ____) => posted = people)
+				.ReturnsAsync(ShiftActionResult<int>.Ok(2));
+
+			var form = Form(new Dictionary<string, StringValues>
+			{
+				{ "shiftDayPicker", "10/02/2026" },
+				{ "unitPersonnel_3", new StringValues(new[] { Colleague, Other }) },
+				{ "unitPersonnel_bad", Me }
+			});
+
+			var result = await _controller.ShiftStaffing(new ShiftStaffingView { StaffingKind = ShiftStaffingView.WorkshiftKind, WorkshiftId = "ws" }, form, CancellationToken.None);
+
+			result.Should().BeOfType<RedirectToActionResult>().Which.RouteValues["workshiftId"].Should().Be("ws");
+			posted.Select(x => (x.UserId, x.UnitId)).Should().BeEquivalentTo(new[] { (Colleague, (int?)3), (Other, (int?)3) });
+		}
+
+		[Test]
+		public async Task ClearShiftStaffing_needs_the_whole_shift()
+		{
+			_scope = new ShiftManagementScope { GroupIds = new HashSet<int> { 10 } };
+			SetupShift(6, DepartmentId, 10, 11);
+
+			AssertUnauthorized(await _controller.ClearShiftStaffing(ShiftStaffingView.ShiftKind, 6, null, "10/01/2026", CancellationToken.None));
+
+			_staffing.Verify(x => x.ClearShiftDayStaffingAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<ShiftManagementScope>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public async Task ClearShiftStaffing_reverts_the_day_to_automatic()
+		{
+			SetupShift(5, DepartmentId, 10);
+			_staffing.Setup(x => x.ClearShiftDayStaffingAsync(DepartmentId, 70, _scope, It.IsAny<CancellationToken>())).ReturnsAsync(ShiftActionResult<bool>.Ok(true));
+
+			var result = await _controller.ClearShiftStaffing(ShiftStaffingView.ShiftKind, 5, null, "10/01/2026", CancellationToken.None);
+
+			result.Should().BeOfType<RedirectToActionResult>().Which.ActionName.Should().Be("ShiftStaffing");
+			Message.Should().Be("StaffingCleared");
 		}
 
 		[Test]
@@ -621,7 +758,8 @@ namespace Resgrid.Tests.Web.User
 				{ "shiftDayPicker", "10/01/2026" }, { "groupPersonnel_11", Other }
 			}), CancellationToken.None));
 
-			_shifts.Verify(x => x.SaveShiftStaffingAsync(It.IsAny<ShiftStaffing>(), It.IsAny<CancellationToken>()), Times.Never);
+			_staffing.Verify(x => x.SetShiftDayStaffingAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<List<ShiftDayStaffingPerson>>(), It.IsAny<string>(),
+				It.IsAny<string>(), It.IsAny<ShiftManagementScope>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
 
 		[Test]

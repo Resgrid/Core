@@ -1,4 +1,4 @@
-@using Resgrid.Model
+﻿@using Resgrid.Model
 @model Resgrid.Web.Areas.User.Models.Shifts.ApprovalsView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Shifts.Shifts> localizer
 @{
@@ -161,6 +161,85 @@
 													<button type="submit" name="approve" value="true" class="btn btn-xs btn-primary">@localizer["ApproveButton"]</button>
 													<button type="submit" name="approve" value="false" class="btn btn-xs btn-danger">@localizer["DenyButton"]</button>
 												</form>
+											</td>
+										</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+					}
+				</div>
+			</div>
+
+			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+					<h5>@localizer["OpenTradeRequestsHeader"] <span class="badge">@Model.OpenTrades.Count</span></h5>
+				</div>
+				<div class="ibox-content">
+					<p class="text-muted">@localizer["OpenTradeRequestsHelp"]</p>
+					@if (!Model.OpenTrades.Any())
+					{
+						<p class="text-muted">@localizer["NoOpenTradeRequests"]</p>
+					}
+					else
+					{
+						<div class="table-responsive">
+							<table class="table table-striped">
+								<thead>
+									<tr>
+										<th>@localizer["TradeColumn"]</th>
+										<th>@localizer["ShiftColumn"]</th>
+										<th>@localizer["GroupColumn"]</th>
+										<th>@localizer["DayColumn"]</th>
+										<th></th>
+									</tr>
+								</thead>
+								<tbody>
+									@foreach (var trade in Model.OpenTrades)
+									{
+										<tr>
+											<td>
+												@trade.RequesterName
+												@if (trade.ApprovalPending)
+												{
+													<span class="label label-warning">@localizer["PendingApprovalLabel"]</span>
+												}
+												else if (trade.IsOpen)
+												{
+													<span class="label label-info">@localizer["OpenRequestLabel"]</span>
+												}
+												<br /><small class="text-muted">@String.Format(localizer["ApplicantsFormat"].Value, trade.ApplicantNames.Any() ? String.Join(", ", trade.ApplicantNames) : localizer["NoApplicants"].Value)</small>
+												@if (!String.IsNullOrWhiteSpace(trade.Note))
+												{
+													<br /><small class="text-muted">@trade.Note</small>
+												}
+											</td>
+											<td>@trade.ShiftName</td>
+											<td>@trade.GroupName</td>
+											<td>
+												@if (trade.ShiftDayId.HasValue)
+												{
+													<a asp-controller="Shifts" asp-action="ViewShift" asp-route-area="User" asp-route-shiftDayId="@trade.ShiftDayId">@FormatTime(trade.Start)</a>
+												}
+												else
+												{
+													@FormatTime(trade.Start)
+												}
+												<br /><small class="text-muted">@localizer["EndLabel"] @FormatTime(trade.End)</small>
+											</td>
+											<td>
+												@if (trade.CanPick)
+												{
+													<a class="btn btn-xs btn-info" asp-controller="Shifts" asp-action="FinishTrade" asp-route-area="User" asp-route-shiftSignupTradeId="@trade.ShiftSignupTradeId"><i class='icon-ok'></i> @localizer["FinishTrade"]</a>
+												}
+												@if (trade.CanCancel)
+												{
+													<form method="post" asp-controller="Shifts" asp-action="CancelTrade" asp-route-area="User" class="form-inline" style="display:inline;"
+													      data-confirm="@localizer["CancelTradeConfirm"]" onsubmit="return confirm(this.getAttribute('data-confirm'));">
+														<input type="hidden" name="shiftSignupTradeId" value="@trade.ShiftSignupTradeId" />
+														<button type="submit" class="btn btn-xs btn-danger">@localizer["CancelTradeButton"]</button>
+													</form>
+												}
 											</td>
 										</tr>
 									}

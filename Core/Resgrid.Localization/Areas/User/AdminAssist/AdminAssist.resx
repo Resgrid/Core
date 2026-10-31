@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version='1.0' encoding='utf-8'?>
 <root>
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
@@ -7634,5 +7634,11 @@
   </data>
   <data name="PermissionHelp.ShareCoordinationBoards" xml:space="preserve">
     <value>Allows sharing a coordination board with partner agencies. With no saved rule only department administrators may. Needs Incident Coordination turned on and an active Incident Back Office add-on.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.ShiftTradeApprovers">
+    <value>Shift trade approvers</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.ShiftTradeApprovers">
+    <value>Who may pick which applicant takes a shift trade request and approve trades waiting for approval. Department admins always may; group admins, the person trading out and members of chosen roles are the department’s choice.</value>
   </data>
 </root>

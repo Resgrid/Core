@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Globalization;
@@ -2207,6 +2207,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var model = new ShiftSettingsView();
 			model.AllowSignupsForMultipleShiftGroups = await _departmentSettingsService.GetAllowSignupsForMultipleShiftGroupsAsync(DepartmentId);
 
+			var approvers = await _departmentSettingsService.GetShiftTradeApproverSettingsAsync(DepartmentId) ?? ShiftTradeApproverSettings.Default();
+			model.TradeApproversGroupAdmins = approvers.GroupAdmins;
+			model.TradeApproversRequester = approvers.Requester;
+			model.TradeApproverRoleIds = approvers.RoleIds ?? new List<int>();
+			model.Roles = await _personnelRolesService.GetRolesForDepartmentAsync(DepartmentId) ?? new List<PersonnelRole>();
+
 			return View(model);
 		}
 
@@ -2223,10 +2229,23 @@ namespace Resgrid.Web.Areas.User.Controllers
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.AllowSignupsForMultipleShiftGroups.ToString(),
 					DepartmentSettingTypes.AllowSignupsForMultipleShiftGroups, cancellationToken);
 
+				// Only this department's roles can approve its trades.
+				var roles = await _personnelRolesService.GetRolesForDepartmentAsync(DepartmentId) ?? new List<PersonnelRole>();
+				var roleIds = new HashSet<int>(roles.Select(x => x.PersonnelRoleId));
+
+				await _departmentSettingsService.SaveShiftTradeApproverSettingsAsync(DepartmentId, new ShiftTradeApproverSettings
+				{
+					GroupAdmins = model.TradeApproversGroupAdmins,
+					Requester = model.TradeApproversRequester,
+					RoleIds = (model.TradeApproverRoleIds ?? new List<int>()).Where(roleIds.Contains).Distinct().ToList()
+				}, cancellationToken);
+
+				model.Roles = roles;
 				model.SaveSuccess = true;
 				return View(model);
 			}
 
+			model.Roles = await _personnelRolesService.GetRolesForDepartmentAsync(DepartmentId) ?? new List<PersonnelRole>();
 			model.SaveSuccess = false;
 			return View(model);
 		}

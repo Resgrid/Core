@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Resgrid.Model;
 
@@ -12,6 +12,36 @@ namespace Resgrid.Web.Areas.User.Models.Shifts
 		public Department Department { get; set; }
 		public List<PendingSignupRow> Signups { get; set; } = new List<PendingSignupRow>();
 		public List<PendingTradeRow> Trades { get; set; } = new List<PendingTradeRow>();
+
+		/// <summary>
+		/// Trade requests that have not taken effect in slots the user supervises (which they may cancel) or decides as a
+		/// trade approver (where they may pick an applicant).
+		/// </summary>
+		public List<OpenTradeRow> OpenTrades { get; set; } = new List<OpenTradeRow>();
+	}
+
+	public class OpenTradeRow
+	{
+		public int ShiftSignupTradeId { get; set; }
+		public int? ShiftDayId { get; set; }
+		public string ShiftName { get; set; }
+		public string GroupName { get; set; }
+		public DateTime Start { get; set; }
+		public DateTime End { get; set; }
+		public string RequesterName { get; set; }
+
+		/// <summary>People who applied (or were asked and offered) and have not withdrawn.</summary>
+		public List<string> ApplicantNames { get; set; } = new List<string>();
+
+		public bool IsOpen { get; set; }
+		public bool ApprovalPending { get; set; }
+		public string Note { get; set; }
+
+		/// <summary>The user supervises the slot and may withdraw the request.</summary>
+		public bool CanCancel { get; set; }
+
+		/// <summary>The user decides the slot as a trade approver and may pick which applicant takes it.</summary>
+		public bool CanPick { get; set; }
 	}
 
 	public class PendingSignupRow

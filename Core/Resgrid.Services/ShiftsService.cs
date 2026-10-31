@@ -34,6 +34,9 @@ namespace Resgrid.Services
 		private readonly IEventAggregator _eventAggregator;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly Lazy<ISearchProjectionService> _searchProjections;
+		// Lazy: the staffing service reads shifts through this service, so a direct dependency would be circular.
+		private readonly Lazy<IShiftStaffingService> _shiftStaffingService;
+		private readonly Lazy<IWorkShiftsService> _workShiftsService;
 
 		public ShiftsService(IShiftsRepository shiftsRepository, IShiftPersonRepository shiftPersonRepository,
 			IShiftDaysRepository shiftDaysRepository, IShiftGroupsRepository shiftGroupsRepository,
@@ -41,7 +44,8 @@ namespace Resgrid.Services
 			IShiftSignupTradeUserRepository shiftSignupTradeUserRepository, IShiftSignupTradeUserShiftsRepository shiftSignupTradeUserShiftsRepository,
 			IShiftStaffingRepository shiftStaffingRepository, IShiftStaffingPersonRepository shiftStaffingPersonRepository, IDepartmentsService departmentsService,
 			IDepartmentGroupsService departmentGroupsService, IShiftGroupAssignmentsRepository shiftGroupAssignmentsRepository, IShiftGroupRolesRepository shiftGroupRolesRepositor,
-			IEventAggregator eventAggregator, IDepartmentSettingsService departmentSettingsService, Lazy<ISearchProjectionService> searchProjections = null)
+			IEventAggregator eventAggregator, IDepartmentSettingsService departmentSettingsService, Lazy<ISearchProjectionService> searchProjections = null,
+			Lazy<IShiftStaffingService> shiftStaffingService = null, Lazy<IWorkShiftsService> workShiftsService = null)
 		{
 			_searchProjections = searchProjections;
 			_shiftsRepository = shiftsRepository;
@@ -61,6 +65,8 @@ namespace Resgrid.Services
 			_shiftGroupRolesRepository = shiftGroupRolesRepositor;
 			_eventAggregator = eventAggregator;
 			_departmentSettingsService = departmentSettingsService;
+			_shiftStaffingService = shiftStaffingService;
+			_workShiftsService = workShiftsService;
 		}
 
 		public async Task<List<Shift>> GetAllShiftsByDepartmentAsync(int departmentId)
@@ -298,6 +304,7 @@ namespace Resgrid.Services
 				userTradeRequest.Declined = true;
 				userTradeRequest.Offered = false;
 				userTradeRequest.Reason = reason;
+				userTradeRequest.RespondedOn = DateTime.UtcNow;
 
 				await _shiftSignupTradeUserRepository.SaveOrUpdateAsync(userTradeRequest, cancellationToken, true);
 
@@ -321,6 +328,7 @@ namespace Resgrid.Services
 				userTradeRequest.Reason = reason;
 				userTradeRequest.Offered = true;
 				userTradeRequest.Declined = false;
+				userTradeRequest.RespondedOn = DateTime.UtcNow;
 
 				await _shiftSignupTradeUserRepository.SaveOrUpdateAsync(userTradeRequest, cancellationToken, true);
 
@@ -730,7 +738,7 @@ namespace Resgrid.Services
 
 			// The notification worker, trade pages and API all read the two signups and their shift; the base
 			// GetByIdAsync populates no navigation properties.
-			trade.SourceShiftSignup = await _shiftSignupRepository.GetByIdAsync(trade.SourceShiftSignupId);
+			trade.SourceShiftSignup = trade.SourceShiftSignupId.HasValue ? await _shiftSignupRepository.GetByIdAsync(trade.SourceShiftSignupId.Value) : null;
 
 			if (trade.SourceShiftSignup != null)
 				trade.SourceShiftSignup.Shift = await _shiftsRepository.GetByIdAsync(trade.SourceShiftSignup.ShiftId);

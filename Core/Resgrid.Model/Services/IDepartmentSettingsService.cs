@@ -331,6 +331,11 @@ namespace Resgrid.Model.Services
 
 		Task<bool> GetAllowSignupsForMultipleShiftGroupsAsync(int departmentId);
 
+		/// <summary>Who may decide shift trade requests; the default when the department has not set it.</summary>
+		Task<ShiftTradeApproverSettings> GetShiftTradeApproverSettingsAsync(int departmentId);
+
+		Task<DepartmentSetting> SaveShiftTradeApproverSettingsAsync(int departmentId, ShiftTradeApproverSettings settings, CancellationToken cancellationToken = default(CancellationToken));
+
 		Task<DepartmentSuppressStaffingInfo> GetDepartmentStaffingSuppressInfoAsync(int departmentId, bool bypassCache = false);
 
 		Task<int> GetMappingPersonnelLocationTTLAsync(int departmentId);

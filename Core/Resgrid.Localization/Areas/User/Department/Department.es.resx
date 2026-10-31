@@ -2217,4 +2217,28 @@
   <data name="RunCardSelectionsMore" xml:space="preserve">
     <value>+{0} más</value>
   </data>
+  <data name="ShiftTradeSettingsHeader" xml:space="preserve">
+    <value>Ajustes de intercambio de turnos</value>
+  </data>
+  <data name="ShiftTradeApproversHelp" xml:space="preserve">
+    <value>Quién puede elegir qué candidato se queda con una solicitud de intercambio de turno y aprobar los intercambios que requieren aprobación.</value>
+  </data>
+  <data name="ShiftTradeApproversDepartmentAdmins" xml:space="preserve">
+    <value>Administradores del departamento</value>
+  </data>
+  <data name="ShiftTradeApproversDepartmentAdminsHelp" xml:space="preserve">
+    <value>Los administradores del departamento (y quien pueda crear turnos en todo el departamento) siempre pueden decidir los intercambios.</value>
+  </data>
+  <data name="ShiftTradeApproversGroupAdmins" xml:space="preserve">
+    <value>Administradores de grupo</value>
+  </data>
+  <data name="ShiftTradeApproversRequester" xml:space="preserve">
+    <value>Usuario solicitante</value>
+  </data>
+  <data name="ShiftTradeApproversRequesterHelp" xml:space="preserve">
+    <value>Quien cede el turno elige quién se lo queda. En turnos que requieren aprobación, su elección aún necesita un aprobador.</value>
+  </data>
+  <data name="ShiftTradeApproversRoles" xml:space="preserve">
+    <value>Miembros de estos roles</value>
+  </data>
 </root>

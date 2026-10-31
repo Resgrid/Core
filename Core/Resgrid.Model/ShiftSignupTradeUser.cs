@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
@@ -32,6 +33,9 @@ namespace Resgrid.Model
 		public bool Offered { get; set; }
 
 		public string Reason { get; set; }
+
+		/// <summary>When the person applied for (or answered) the trade (UTC). Null on older rows.</summary>
+		public DateTime? RespondedOn { get; set; }
 
 		public virtual ICollection<ShiftSignupTradeUserShift> Shifts { get; set; }
 

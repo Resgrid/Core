@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version='1.0' encoding='utf-8'?>
 <root>
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
@@ -7712,5 +7712,11 @@
   </data>
   <data xml:space="preserve" name="FeatureSetup.on-shift-hours-report">
     <value>Öffnen Sie Berichte und dann Bericht Schichtstunden. Wählen Sie den Zeitraum und ob er die Abteilung, eine Gruppe oder eine Schicht abdeckt. Genehmigen Sie auf der Seite Schichtbesetzung die Besetzung der Tage, die einen genauen Nachweis brauchen, bevor Sie ihn für Lohnabrechnung oder Compliance ausführen.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.ShiftTradeApprovers">
+    <value>Genehmiger für Schichttausch</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.ShiftTradeApprovers">
+    <value>Wer auswählt, welcher Bewerber eine Schichttauschanfrage übernimmt, und wartende Tausche genehmigt. Abteilungsadministratoren dürfen das immer; Gruppenadministratoren, die tauschende Person und Mitglieder ausgewählter Rollen legt die Abteilung fest.</value>
   </data>
 </root>

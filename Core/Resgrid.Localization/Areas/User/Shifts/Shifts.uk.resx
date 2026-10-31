@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -1036,5 +1036,38 @@
   </data>
   <data name="StaffingSourceAutomaticStaticHelp" xml:space="preserve">
     <value>Визначається з поточного екіпажу кожного підрозділу. Затвердження укомплектування нижче замінює його для цього дня.</value>
+  </data>
+  <data name="OpenTradeRequestsHeader" xml:space="preserve">
+    <value>Відкриті запити на обмін</value>
+  </data>
+  <data name="OpenTradeRequestsHelp" xml:space="preserve">
+    <value>Запити на обмін у групах, які ви контролюєте, що ще не набули чинності. Скасування повідомляє автора запиту та всіх, хто відгукнувся.</value>
+  </data>
+  <data name="NoOpenTradeRequests" xml:space="preserve">
+    <value>Немає відкритих запитів на обмін.</value>
+  </data>
+  <data name="PendingApprovalLabel" xml:space="preserve">
+    <value>Очікує на схвалення</value>
+  </data>
+  <data name="OpenRequestLabel" xml:space="preserve">
+    <value>Відкрито для всіх</value>
+  </data>
+  <data name="ApplicantsFormat" xml:space="preserve">
+    <value>Кандидати: {0}</value>
+  </data>
+  <data name="NoApplicants" xml:space="preserve">
+    <value>поки немає</value>
+  </data>
+  <data name="CancelTradeConfirm" xml:space="preserve">
+    <value>Скасувати цей запит на обмін? Автора запиту та всіх, хто відгукнувся, буде повідомлено.</value>
+  </data>
+  <data name="CancelTradeButton" xml:space="preserve">
+    <value>Скасувати запит</value>
+  </data>
+  <data name="TradeCancelled" xml:space="preserve">
+    <value>Запит на обмін скасовано.</value>
+  </data>
+  <data name="ShiftErrorNotEligible" xml:space="preserve">
+    <value>Ця особа не відповідає вимогам для цього місця.</value>
   </data>
 </root>

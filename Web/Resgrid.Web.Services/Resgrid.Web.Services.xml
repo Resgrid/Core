@@ -4800,7 +4800,8 @@
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ShiftsController.RequestShiftTrade(Resgrid.Web.Services.Models.v4.Shifts.RequestShiftTradeInput,System.Threading.CancellationToken)">
             <summary>
-            Asks colleagues to take the caller's slot on a shift day
+            Asks to trade out of the caller's slot on a shift day. With no UserIds the request is open: everyone eligible for
+            the slot is told and may apply. With UserIds only those people are asked.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ShiftsController.RespondToShiftTrade(Resgrid.Web.Services.Models.v4.Shifts.RespondToShiftTradeInput,System.Threading.CancellationToken)">
@@ -4810,12 +4811,50 @@
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ShiftsController.FinishShiftTrade(Resgrid.Web.Services.Models.v4.Shifts.FinishShiftTradeInput,System.Threading.CancellationToken)">
             <summary>
-            The caller picks who takes their slot: a user taking it outright, or one of the offered swap-back days
+            Picks who takes the slot: a user taking it outright, or one of the offered swap-back days. The requester may pick
+            when the department lets requesters decide; department admins, group admins (when allowed) and members of the
+            department's approver roles may pick for anyone, and their pick needs no further approval.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ShiftsController.CancelShiftTrade(Resgrid.Web.Services.Models.v4.Shifts.CancelShiftTradeInput,System.Threading.CancellationToken)">
             <summary>
-            The caller withdraws a trade that has not taken effect
+            Withdraws a trade that has not taken effect: the requester's own, or one in a slot the caller supervises. The
+            requester and everyone who applied are told.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ShiftsController.GetOpenShiftTrades">
+            <summary>
+            Open trade requests in the department that are still taking applicants, with whether the caller may apply
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ShiftsController.GetShiftTrade(System.Int32)">
+            <summary>
+            One trade. The requester and the people who may decide it also get what they need to choose between applicants:
+            each applicant's group, roles, current certifications, whether they still qualify, how much they are working in
+            the week either side, and any shift they are already on that overlaps.
+            </summary>
+            <param name="id">Shift signup trade id</param>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ShiftsController.GetWorkshiftDays(System.String,System.String,System.Boolean)">
+            <summary>
+            Static shift (workshift) days in a date range (department local dates, inclusive, at most 62 days; default today
+            to 30 days out), in the same shape as shift days with ShiftType 2. <paramref name="mine"/> keeps only the days the
+            caller is staffing.
+            </summary>
+            <param name="start">First day, yyyy-MM-dd</param>
+            <param name="end">Last day, yyyy-MM-dd</param>
+            <param name="mine">Only days the caller works</param>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ShiftsController.GetWorkshiftDay(System.String)">
+            <summary>
+            One static shift (workshift) day with who is staffing it
+            </summary>
+            <param name="id">Workshift day id</param>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ShiftsController.RequestWorkshiftTrade(Resgrid.Web.Services.Models.v4.Shifts.RequestWorkshiftTradeInput,System.Threading.CancellationToken)">
+            <summary>
+            Asks to trade out of a static shift (workshift) day the caller is staffing. The request is open: everyone eligible
+            is told and may apply.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ShiftsController.GetPendingApprovals">
@@ -4852,6 +4891,21 @@
             <summary>
             Everyone on duty right now: approved roster entries on every running shift day, trades applied
             </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ShiftsController.AddApplicantDetailsAsync(Resgrid.Web.Services.Models.v4.Shifts.ShiftTradeResultData,Resgrid.Model.ShiftSignupTrade,Resgrid.Model.ShiftTradeEligibility,Resgrid.Web.Services.Controllers.v4.ShiftsController.Lookups)">
+            <summary>
+            What a decision between applicants needs: whether each still qualifies, their certifications, how much they work
+            in the week either side of the traded day, and any overlapping shift they are already on.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ShiftsController.GetMyOpenWorkshiftTradesAsync">
+            <summary>The caller's own static shift day trades that are still open or waiting, to show on their days.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ShiftsController.GetTradeShiftAsync(Resgrid.Model.ShiftSignupTrade,Resgrid.Web.Services.Controllers.v4.ShiftsController.Lookups)">
+            <summary>The shift a trade is on (with its groups, for supervision checks); null for a static shift day trade.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ShiftsController.GetDepartmentTradeAsync(System.Int32)">
+            <summary>The trade, when it belongs to the caller's department (shift trades by their shift, static shift trades by their row).</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ShiftsController.ToErrorCode(Resgrid.Model.ShiftActionErrors)">
             <summary>
@@ -17308,6 +17362,24 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Shifts.ShiftDayResultData.MyTradeId">
             <summary>An open or pending trade on the caller's slot for the day</summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Shifts.ShiftDayResultData.StartUtc">
+            <summary>Start in UTC, for adding the day to a device calendar (Start and End are department wall-clock times)</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Shifts.ShiftDayResultData.EndUtc">
+            <summary>End in UTC</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Shifts.ShiftDayResultData.WorkshiftId">
+            <summary>Static shift (workshift, ShiftType 2) days: the static shift; ShiftId carries the same value</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Shifts.ShiftDayResultData.WorkshiftDayId">
+            <summary>Static shift (workshift) days: the day; ShiftDayId carries the same value</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Shifts.ShiftDayResultData.MyUnitId">
+            <summary>Static shift (workshift) days: the unit the caller crews that day</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Shifts.ShiftDayResultData.CanTrade">
+            <summary>The caller can ask to trade out of this day</summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Shifts.ShiftDayResultData.Roster">
             <summary>Who is on the day after assignments, signups, single-day edits and trades</summary>
         </member>
@@ -17422,11 +17494,38 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Shifts.ShiftDayRosterResultData.ApprovalPending">
             <summary>Waiting for supervisor approval; not on duty yet</summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Shifts.ShiftDayRosterResultData.UnitId">
+            <summary>Static shift (workshift) days: the unit the person crews</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Shifts.ShiftTradeOfferedShiftResultData">
             <summary>A day offered back in exchange for a trade</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Shifts.ShiftTradeUserResultData">
             <summary>Someone asked to take a trade</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Shifts.ShiftTradeUserResultData.RespondedOn">
+            <summary>When they applied or answered (UTC), when known</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Shifts.ShiftTradeUserResultData.IsEligible">
+            <summary>Detail only (GetShiftTrade): still meets the slot's requirements</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Shifts.ShiftTradeUserResultData.IneligibleReason">
+            <summary>Detail only: why not, as an error code (already_on_roster, not_eligible), when not eligible</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Shifts.ShiftTradeUserResultData.Certifications">
+            <summary>Detail only: current certifications ("Name" or "Name (expires yyyy-MM-dd)")</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Shifts.ShiftTradeUserResultData.NearbyShiftCount">
+            <summary>Detail only: shift and static shift days they work in the 7 days either side of the trade day</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Shifts.ShiftTradeUserResultData.NearbyShiftHours">
+            <summary>Detail only: hours of those days</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Shifts.ShiftTradeUserResultData.HasConflict">
+            <summary>Detail only: they are already working another shift that overlaps the traded day</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Shifts.ShiftTradeUserResultData.ConflictName">
+            <summary>Detail only: the shift that overlaps, when they have one</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Shifts.ShiftTradeResultData">
             <summary>A shift trade</summary>
@@ -17442,6 +17541,39 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Shifts.ShiftTradeResultData.CanReview">
             <summary>The caller can approve or deny it now</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Shifts.ShiftTradeResultData.IsOpen">
+            <summary>Open to everyone eligible (who apply) rather than only the people asked</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Shifts.ShiftTradeResultData.ShiftType">
+            <summary>0 assigned (static) shift, 1 signup shift, 2 static shift (workshift) day</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Shifts.ShiftTradeResultData.RequestedOn">
+            <summary>When it was requested (UTC), when known</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Shifts.ShiftTradeResultData.ApplicantCount">
+            <summary>Offers made and not withdrawn</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Shifts.ShiftTradeResultData.CanApply">
+            <summary>The caller can apply to take the slot now</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Shifts.ShiftTradeResultData.IsEligible">
+            <summary>The caller meets the slot's requirements (open requests; computed for GetOpenShiftTrades and GetShiftTrade)</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Shifts.ShiftTradeResultData.IneligibleReason">
+            <summary>Why the caller cannot apply, as an error code, when they cannot</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Shifts.ShiftTradeResultData.CanPick">
+            <summary>The caller can pick which applicant takes the slot</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Shifts.ShiftTradeResultData.PickIsApproval">
+            <summary>The caller's pick takes effect at once (they decide as an approver, not only as the requester)</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Shifts.ShiftTradeResultData.CanCancel">
+            <summary>The caller can cancel it</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Shifts.ShiftTradeResultData.IsOver">
+            <summary>The traded day has ended</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Shifts.ShiftTradesResult">
             <summary>Trades for the caller</summary>

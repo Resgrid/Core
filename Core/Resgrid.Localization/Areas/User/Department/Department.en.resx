@@ -2217,4 +2217,28 @@
   <data name="RunCardSelectionsMore" xml:space="preserve">
     <value>+{0} more</value>
   </data>
+  <data name="ShiftTradeSettingsHeader" xml:space="preserve">
+    <value>Shift Trade Settings</value>
+  </data>
+  <data name="ShiftTradeApproversHelp" xml:space="preserve">
+    <value>Who can pick which applicant takes a shift trade request, and approve trades that need approval.</value>
+  </data>
+  <data name="ShiftTradeApproversDepartmentAdmins" xml:space="preserve">
+    <value>Department Admins</value>
+  </data>
+  <data name="ShiftTradeApproversDepartmentAdminsHelp" xml:space="preserve">
+    <value>Department admins (and anyone who can create shifts department-wide) can always decide trades.</value>
+  </data>
+  <data name="ShiftTradeApproversGroupAdmins" xml:space="preserve">
+    <value>Group Admins</value>
+  </data>
+  <data name="ShiftTradeApproversRequester" xml:space="preserve">
+    <value>Requesting User</value>
+  </data>
+  <data name="ShiftTradeApproversRequesterHelp" xml:space="preserve">
+    <value>The person trading out picks who takes their shift. On shifts that require approval their pick still needs an approver.</value>
+  </data>
+  <data name="ShiftTradeApproversRoles" xml:space="preserve">
+    <value>Members of These Roles</value>
+  </data>
 </root>

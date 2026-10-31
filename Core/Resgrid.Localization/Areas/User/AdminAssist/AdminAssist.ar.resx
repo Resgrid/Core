@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version='1.0' encoding='utf-8'?>
 <root>
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
@@ -7712,5 +7712,11 @@
   </data>
   <data xml:space="preserve" name="FeatureSetup.on-shift-hours-report">
     <value>افتح التقارير ثم تقرير ساعات الوردية. اختر الفترة وما إذا كان يشمل الإدارة أو مجموعة أو وردية. اعتمد في صفحة تأمين الوردية تأمين الأيام التي تحتاج إلى سجل دقيق قبل تشغيله لأغراض الرواتب أو الامتثال.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.ShiftTradeApprovers">
+    <value>موافقو تبديل المناوبات</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.ShiftTradeApprovers">
+    <value>من يمكنه اختيار المتقدم الذي يأخذ طلب تبديل المناوبة والموافقة على التبديلات المنتظرة. يمكن لمسؤولي القسم ذلك دائمًا؛ أما مسؤولو المجموعات والشخص المتنازل وأعضاء الأدوار المختارة فهم اختيار القسم.</value>
   </data>
 </root>

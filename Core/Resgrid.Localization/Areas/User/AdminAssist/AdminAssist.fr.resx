@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version='1.0' encoding='utf-8'?>
 <root>
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
@@ -7712,5 +7712,11 @@
   </data>
   <data xml:space="preserve" name="FeatureSetup.on-shift-hours-report">
     <value>Ouvrez Rapports, puis Rapport des heures de quart. Choisissez la période et s'il couvre le service, un groupe ou un quart. Approuvez sur la page Effectif du quart l'effectif des jours qui demandent un relevé exact avant de le lancer pour la paie ou la conformité.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.ShiftTradeApprovers">
+    <value>Approbateurs des échanges de garde</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.ShiftTradeApprovers">
+    <value>Qui choisit le candidat qui prend une demande d'échange de garde et approuve les échanges en attente. Les administrateurs du service le peuvent toujours ; les administrateurs de groupe, la personne qui cède sa garde et les membres de rôles choisis relèvent du choix du service.</value>
   </data>
 </root>

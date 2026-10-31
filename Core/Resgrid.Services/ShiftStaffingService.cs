@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -49,7 +49,7 @@ namespace Resgrid.Services
 		#region Reads
 
 		public async Task<List<ShiftDayStaffing>> GetStaffingForRangeAsync(int departmentId, DateTime localStart, DateTime localEnd, int? shiftId = null,
-			string workshiftId = null)
+			string workshiftId = null, bool workshiftsOnly = false)
 		{
 			if (localEnd < localStart)
 				(localStart, localEnd) = (localEnd, localStart);
@@ -61,7 +61,7 @@ namespace Resgrid.Services
 			var onlyWorkshift = !String.IsNullOrWhiteSpace(workshiftId);
 			var onlyShift = shiftId.HasValue && shiftId.Value > 0;
 
-			if (!onlyWorkshift)
+			if (!onlyWorkshift && !workshiftsOnly)
 			{
 				var schedules = await _shiftsService.GetShiftDaySchedulesForDateRangeAsync(departmentId, localStart.Date.AddDays(-LookBackDays), localEnd.Date,
 					onlyShift ? shiftId : null) ?? new List<ShiftDaySchedule>();
@@ -96,13 +96,14 @@ namespace Resgrid.Services
 				if (candidates.Any())
 				{
 					var lookups = await LoadUnitLookupsAsync(departmentId);
+					var trades = await _shiftsService.GetCompletedWorkshiftTradesAsync(departmentId, localStart.Date.AddDays(-LookBackDays)) ?? new List<ShiftSignupTrade>();
 
 					foreach (var candidate in candidates)
 					{
 						var full = await _workShiftsService.GetWorkshiftByIdAsync(candidate.Workshift.WorkshiftId) ?? candidate.Workshift;
 
 						foreach (var day in candidate.Days)
-							occurrences.Add(FromWorkshiftDay(candidate.Workshift, day, full.Entities, full.Fills, lookups, department, localNow));
+							occurrences.Add(FromWorkshiftDay(candidate.Workshift, day, full.Entities, full.Fills, lookups, department, localNow, trades));
 					}
 				}
 			}
@@ -142,8 +143,10 @@ namespace Resgrid.Services
 			var department = await _departmentsService.GetDepartmentByIdAsync(workshift.DepartmentId, false);
 			var localNow = department != null ? DateTime.UtcNow.TimeConverter(department) : (DateTime?)null;
 			var lookups = await LoadUnitLookupsAsync(workshift.DepartmentId);
+			var window = WorkshiftDayWindow(workshift, day, department);
+			var trades = await _shiftsService.GetCompletedWorkshiftTradesAsync(workshift.DepartmentId, window.Start.Date) ?? new List<ShiftSignupTrade>();
 
-			return FromWorkshiftDay(workshift, day, workshift.Entities, workshift.Fills, lookups, department, localNow);
+			return FromWorkshiftDay(workshift, day, workshift.Entities, workshift.Fills, lookups, department, localNow, trades);
 		}
 
 		public async Task<OnShiftHoursReport> GetOnShiftHoursAsync(int departmentId, DateTime localStart, DateTime localEnd, int? groupId = null,
@@ -462,6 +465,43 @@ namespace Resgrid.Services
 		}
 
 		/// <summary>
+		/// A completed trade of a static shift day puts the taker in the requester's place on that day (on the same unit),
+		/// in both the effective and the automatic staffing, so a manual override compares like for like.
+		/// </summary>
+		public static void ApplyWorkshiftTrades(ShiftDayStaffing staffing, IEnumerable<ShiftSignupTrade> trades)
+		{
+			if (staffing == null || trades == null)
+				return;
+
+			foreach (var trade in trades.Where(x => x != null && x.IsWorkshiftTrade() && x.IsTradeComplete() &&
+			                                        String.Equals(x.WorkshiftDayId, staffing.WorkshiftDayId, StringComparison.OrdinalIgnoreCase)))
+			{
+				var taker = trade.GetPickedUserId();
+
+				if (String.IsNullOrWhiteSpace(taker))
+					continue;
+
+				foreach (var list in new[] { staffing.Personnel, staffing.AutomaticPersonnel })
+				{
+					if (list == null)
+						continue;
+
+					foreach (var person in list.Where(x => SameUser(x.UserId, trade.SourceUserId) && (!trade.UnitId.HasValue || x.UnitId == trade.UnitId)))
+					{
+						person.UserId = taker;
+						person.TradedFromUserId = trade.SourceUserId;
+						person.RosterSource = ShiftRosterSources.Trade;
+					}
+
+					// The taker may already have been on the day (on another unit); keep one entry per person and unit.
+					var duplicates = list.GroupBy(x => (User: (x.UserId ?? "").ToLowerInvariant(), x.UnitId)).Where(g => g.Count() > 1).SelectMany(g => g.Skip(1)).ToList();
+					foreach (var duplicate in duplicates)
+						list.Remove(duplicate);
+				}
+			}
+		}
+
+		/// <summary>
 		/// A static shift day's department-local window. Static shifts store Start, End and their days in UTC (the editor and
 		/// the shift calendar convert them the same way); without a department they are used as stored.
 		/// </summary>
@@ -480,7 +520,7 @@ namespace Resgrid.Services
 		/// A person's group is the unit's station.
 		/// </summary>
 		public static ShiftDayStaffing FromWorkshiftDay(Workshift workshift, WorkshiftDay day, IEnumerable<WorkshiftEntity> entities, IEnumerable<WorkshiftFill> fills,
-			UnitLookups lookups, Department department, DateTime? localNow)
+			UnitLookups lookups, Department department, DateTime? localNow, IEnumerable<ShiftSignupTrade> trades = null)
 		{
 			var window = WorkshiftDayWindow(workshift, day, department);
 			var unitByEntity = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
@@ -547,6 +587,8 @@ namespace Resgrid.Services
 				staffing.Source = ShiftStaffingSources.Automatic;
 				staffing.Personnel = automatic.Select(Copy).ToList();
 			}
+
+			ApplyWorkshiftTrades(staffing, trades);
 
 			return staffing;
 		}
@@ -711,7 +753,8 @@ namespace Resgrid.Services
 				UserId = person.UserId,
 				DepartmentGroupId = person.DepartmentGroupId,
 				UnitId = person.UnitId,
-				RosterSource = person.RosterSource
+				RosterSource = person.RosterSource,
+				TradedFromUserId = person.TradedFromUserId
 			};
 		}
 

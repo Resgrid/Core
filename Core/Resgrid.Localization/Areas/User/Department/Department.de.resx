@@ -2159,4 +2159,28 @@
   <data name="RunCardSelectionsMore" xml:space="preserve">
     <value>+{0} weitere</value>
   </data>
+  <data name="ShiftTradeSettingsHeader" xml:space="preserve">
+    <value>Einstellungen für Schichttausch</value>
+  </data>
+  <data name="ShiftTradeApproversHelp" xml:space="preserve">
+    <value>Wer auswählen darf, welcher Bewerber eine Schichttauschanfrage übernimmt, und genehmigungspflichtige Tausche genehmigen darf.</value>
+  </data>
+  <data name="ShiftTradeApproversDepartmentAdmins" xml:space="preserve">
+    <value>Abteilungsadministratoren</value>
+  </data>
+  <data name="ShiftTradeApproversDepartmentAdminsHelp" xml:space="preserve">
+    <value>Abteilungsadministratoren (und alle, die abteilungsweit Schichten erstellen dürfen) können Tausche immer entscheiden.</value>
+  </data>
+  <data name="ShiftTradeApproversGroupAdmins" xml:space="preserve">
+    <value>Gruppenadministratoren</value>
+  </data>
+  <data name="ShiftTradeApproversRequester" xml:space="preserve">
+    <value>Anfragender Benutzer</value>
+  </data>
+  <data name="ShiftTradeApproversRequesterHelp" xml:space="preserve">
+    <value>Die Person, die tauscht, wählt aus, wer ihre Schicht übernimmt. Bei genehmigungspflichtigen Schichten braucht die Auswahl trotzdem eine Genehmigung.</value>
+  </data>
+  <data name="ShiftTradeApproversRoles" xml:space="preserve">
+    <value>Mitglieder dieser Rollen</value>
+  </data>
 </root>

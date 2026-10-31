@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Resgrid.Web.Services.Models.v4.Shifts
@@ -64,6 +64,11 @@ namespace Resgrid.Web.Services.Models.v4.Shifts
 		public string TradedFromUserId { get; set; }
 
 		public string TradedFromName { get; set; }
+
+		/// <summary>Static shift (workshift) days: the unit the person crews</summary>
+		public string UnitId { get; set; }
+
+		public string UnitName { get; set; }
 	}
 
 	/// <summary>A day offered back in exchange for a trade</summary>
@@ -90,6 +95,34 @@ namespace Resgrid.Web.Services.Models.v4.Shifts
 		public string Reason { get; set; }
 
 		public List<ShiftTradeOfferedShiftResultData> OfferedShifts { get; set; } = new List<ShiftTradeOfferedShiftResultData>();
+
+		/// <summary>When they applied or answered (UTC), when known</summary>
+		public DateTime? RespondedOn { get; set; }
+
+		public string GroupName { get; set; }
+
+		public List<string> Roles { get; set; } = new List<string>();
+
+		/// <summary>Detail only (GetShiftTrade): still meets the slot's requirements</summary>
+		public bool IsEligible { get; set; }
+
+		/// <summary>Detail only: why not, as an error code (already_on_roster, not_eligible), when not eligible</summary>
+		public string IneligibleReason { get; set; }
+
+		/// <summary>Detail only: current certifications ("Name" or "Name (expires yyyy-MM-dd)")</summary>
+		public List<string> Certifications { get; set; } = new List<string>();
+
+		/// <summary>Detail only: shift and static shift days they work in the 7 days either side of the trade day</summary>
+		public int NearbyShiftCount { get; set; }
+
+		/// <summary>Detail only: hours of those days</summary>
+		public double NearbyShiftHours { get; set; }
+
+		/// <summary>Detail only: they are already working another shift that overlaps the traded day</summary>
+		public bool HasConflict { get; set; }
+
+		/// <summary>Detail only: the shift that overlaps, when they have one</summary>
+		public string ConflictName { get; set; }
 	}
 
 	/// <summary>A shift trade</summary>
@@ -148,6 +181,59 @@ namespace Resgrid.Web.Services.Models.v4.Shifts
 
 		/// <summary>The caller can approve or deny it now</summary>
 		public bool CanReview { get; set; }
+
+		/// <summary>Open to everyone eligible (who apply) rather than only the people asked</summary>
+		public bool IsOpen { get; set; }
+
+		/// <summary>0 assigned (static) shift, 1 signup shift, 2 static shift (workshift) day</summary>
+		public int ShiftType { get; set; }
+
+		public string WorkshiftId { get; set; }
+
+		public string WorkshiftDayId { get; set; }
+
+		public string UnitId { get; set; }
+
+		public string UnitName { get; set; }
+
+		/// <summary>When it was requested (UTC), when known</summary>
+		public DateTime? RequestedOn { get; set; }
+
+		/// <summary>Offers made and not withdrawn</summary>
+		public int ApplicantCount { get; set; }
+
+		/// <summary>The caller can apply to take the slot now</summary>
+		public bool CanApply { get; set; }
+
+		/// <summary>The caller meets the slot's requirements (open requests; computed for GetOpenShiftTrades and GetShiftTrade)</summary>
+		public bool IsEligible { get; set; }
+
+		/// <summary>Why the caller cannot apply, as an error code, when they cannot</summary>
+		public string IneligibleReason { get; set; }
+
+		/// <summary>The caller can pick which applicant takes the slot</summary>
+		public bool CanPick { get; set; }
+
+		/// <summary>The caller's pick takes effect at once (they decide as an approver, not only as the requester)</summary>
+		public bool PickIsApproval { get; set; }
+
+		/// <summary>The caller can cancel it</summary>
+		public bool CanCancel { get; set; }
+
+		/// <summary>The traded day has ended</summary>
+		public bool IsOver { get; set; }
+	}
+
+	public class ShiftTradeResult : StandardApiResponseV4Base
+	{
+		public ShiftTradeResultData Data { get; set; }
+	}
+
+	public class RequestWorkshiftTradeInput
+	{
+		public string WorkshiftDayId { get; set; }
+
+		public string Note { get; set; }
 	}
 
 	/// <summary>Trades for the caller</summary>

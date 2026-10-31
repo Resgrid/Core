@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,10 +17,11 @@ namespace Resgrid.Model.Services
 		/// <summary>
 		/// Every shift day and static shift day in the department whose time overlaps [localStart, localEnd) (department
 		/// local), with its effective staffing. <paramref name="shiftId"/> limits it to one shift and
-		/// <paramref name="workshiftId"/> to one static shift; with neither every shift type is included.
+		/// <paramref name="workshiftId"/> to one static shift; with neither every shift type is included, unless
+		/// <paramref name="workshiftsOnly"/> asks for static shift days alone.
 		/// </summary>
 		Task<List<ShiftDayStaffing>> GetStaffingForRangeAsync(int departmentId, DateTime localStart, DateTime localEnd, int? shiftId = null,
-			string workshiftId = null);
+			string workshiftId = null, bool workshiftsOnly = false);
 
 		/// <summary>The staffing of one shift day, or null for an unknown day.</summary>
 		Task<ShiftDayStaffing> GetShiftDayStaffingAsync(int shiftDayId);

@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version='1.0' encoding='utf-8'?>
 <root>
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
@@ -7712,5 +7712,11 @@
   </data>
   <data xml:space="preserve" name="FeatureSetup.on-shift-hours-report">
     <value>Otwórz Raporty, a następnie Raport godzin na zmianie. Wybierz okres oraz czy obejmuje jednostkę, grupę czy zmianę. Przed uruchomieniem na potrzeby płac lub zgodności zatwierdź na stronie Obsada zmiany obsadę dni, które wymagają dokładnego zapisu.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.ShiftTradeApprovers">
+    <value>Zatwierdzający zamiany zmian</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.ShiftTradeApprovers">
+    <value>Kto wybiera, który zgłoszony przejmuje prośbę o zamianę zmiany, i zatwierdza oczekujące zamiany. Administratorzy jednostki zawsze mogą; administratorzy grup, osoba oddająca zmianę i członkowie wybranych ról zależą od wyboru jednostki.</value>
   </data>
 </root>

@@ -726,6 +726,39 @@ namespace Resgrid.Services
 
 			return false;
 		}
+
+		public async Task<ShiftTradeApproverSettings> GetShiftTradeApproverSettingsAsync(int departmentId)
+		{
+			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.ShiftTradeApprovers);
+
+			if (settingValue != null && !String.IsNullOrWhiteSpace(settingValue.Setting))
+			{
+				try
+				{
+					var setting = ObjectSerialization.Deserialize<ShiftTradeApproverSettings>(settingValue.Setting);
+
+					if (setting != null)
+					{
+						setting.RoleIds = setting.RoleIds ?? new List<int>();
+						return setting;
+					}
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex, $"DepartmentId:{departmentId}");
+				}
+			}
+
+			return ShiftTradeApproverSettings.Default();
+		}
+
+		public async Task<DepartmentSetting> SaveShiftTradeApproverSettingsAsync(int departmentId, ShiftTradeApproverSettings settings, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var value = settings ?? ShiftTradeApproverSettings.Default();
+			value.RoleIds = (value.RoleIds ?? new List<int>()).Where(x => x > 0).Distinct().ToList();
+
+			return await SaveOrUpdateSettingAsync(departmentId, ObjectSerialization.Serialize(value), DepartmentSettingTypes.ShiftTradeApprovers, cancellationToken);
+		}
 		#endregion Shift Group Dispatch Settings
 
 		#region Department Mapping Settings

@@ -2159,4 +2159,28 @@
   <data name="RunCardSelectionsMore" xml:space="preserve">
     <value>+{0} de plus</value>
   </data>
+  <data name="ShiftTradeSettingsHeader" xml:space="preserve">
+    <value>Paramètres d'échange de gardes</value>
+  </data>
+  <data name="ShiftTradeApproversHelp" xml:space="preserve">
+    <value>Qui peut choisir le candidat qui prend une demande d'échange de garde et approuver les échanges qui nécessitent une approbation.</value>
+  </data>
+  <data name="ShiftTradeApproversDepartmentAdmins" xml:space="preserve">
+    <value>Administrateurs du service</value>
+  </data>
+  <data name="ShiftTradeApproversDepartmentAdminsHelp" xml:space="preserve">
+    <value>Les administrateurs du service (et toute personne pouvant créer des gardes pour tout le service) peuvent toujours décider des échanges.</value>
+  </data>
+  <data name="ShiftTradeApproversGroupAdmins" xml:space="preserve">
+    <value>Administrateurs de groupe</value>
+  </data>
+  <data name="ShiftTradeApproversRequester" xml:space="preserve">
+    <value>Utilisateur demandeur</value>
+  </data>
+  <data name="ShiftTradeApproversRequesterHelp" xml:space="preserve">
+    <value>La personne qui cède sa garde choisit qui la prend. Pour les gardes soumises à approbation, son choix doit encore être approuvé.</value>
+  </data>
+  <data name="ShiftTradeApproversRoles" xml:space="preserve">
+    <value>Membres de ces rôles</value>
+  </data>
 </root>

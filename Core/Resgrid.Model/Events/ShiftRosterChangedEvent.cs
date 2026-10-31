@@ -1,3 +1,4 @@
+﻿using System.Collections.Generic;
 using Resgrid.Model.Queue;
 
 namespace Resgrid.Model.Events
@@ -23,5 +24,17 @@ namespace Resgrid.Model.Events
 
 		/// <summary>The person who acted (supervisor, requester).</summary>
 		public string UserId { get; set; }
+
+		/// <summary>
+		/// Trade changes whose trade row is gone by the time the worker runs (a cancelled trade): the static shift day
+		/// it was for. Shift trades keep <see cref="ShiftSignupId"/>.
+		/// </summary>
+		public string WorkshiftDayId { get; set; }
+
+		/// <summary>Cancelled trades: the person who asked to trade out.</summary>
+		public string SourceUserId { get; set; }
+
+		/// <summary>Cancelled trades: everyone who applied or was asked, to be told it was withdrawn.</summary>
+		public List<string> UserIds { get; set; }
 	}
 }

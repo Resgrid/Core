@@ -2159,4 +2159,28 @@
   <data name="RunCardSelectionsMore" xml:space="preserve">
     <value>+{0} ще</value>
   </data>
+  <data name="ShiftTradeSettingsHeader" xml:space="preserve">
+    <value>Налаштування обміну змінами</value>
+  </data>
+  <data name="ShiftTradeApproversHelp" xml:space="preserve">
+    <value>Хто може обирати кандидата, який бере запит на обмін зміною, і схвалювати обміни, що потребують схвалення.</value>
+  </data>
+  <data name="ShiftTradeApproversDepartmentAdmins" xml:space="preserve">
+    <value>Адміністратори підрозділу</value>
+  </data>
+  <data name="ShiftTradeApproversDepartmentAdminsHelp" xml:space="preserve">
+    <value>Адміністратори підрозділу (та всі, хто може створювати зміни для всього підрозділу) завжди можуть вирішувати щодо обмінів.</value>
+  </data>
+  <data name="ShiftTradeApproversGroupAdmins" xml:space="preserve">
+    <value>Адміністратори груп</value>
+  </data>
+  <data name="ShiftTradeApproversRequester" xml:space="preserve">
+    <value>Автор запиту</value>
+  </data>
+  <data name="ShiftTradeApproversRequesterHelp" xml:space="preserve">
+    <value>Особа, яка віддає зміну, обирає, хто її візьме. На змінах, що потребують схвалення, її вибір все одно потребує схвалення.</value>
+  </data>
+  <data name="ShiftTradeApproversRoles" xml:space="preserve">
+    <value>Учасники цих ролей</value>
+  </data>
 </root>

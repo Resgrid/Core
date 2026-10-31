@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -1036,5 +1036,38 @@
   </data>
   <data name="StaffingSourceAutomaticStaticHelp" xml:space="preserve">
     <value>Ricavato dall'equipaggio attuale di ogni unità. Approvare il personale qui sotto lo sostituisce per questo giorno.</value>
+  </data>
+  <data name="OpenTradeRequestsHeader" xml:space="preserve">
+    <value>Richieste di scambio aperte</value>
+  </data>
+  <data name="OpenTradeRequestsHelp" xml:space="preserve">
+    <value>Richieste di scambio nei gruppi che supervisioni non ancora in vigore. Annullandone una vengono avvisati il richiedente e tutti i candidati.</value>
+  </data>
+  <data name="NoOpenTradeRequests" xml:space="preserve">
+    <value>Non ci sono richieste di scambio aperte.</value>
+  </data>
+  <data name="PendingApprovalLabel" xml:space="preserve">
+    <value>In attesa di approvazione</value>
+  </data>
+  <data name="OpenRequestLabel" xml:space="preserve">
+    <value>Aperta a tutti</value>
+  </data>
+  <data name="ApplicantsFormat" xml:space="preserve">
+    <value>Candidati: {0}</value>
+  </data>
+  <data name="NoApplicants" xml:space="preserve">
+    <value>ancora nessuno</value>
+  </data>
+  <data name="CancelTradeConfirm" xml:space="preserve">
+    <value>Annullare questa richiesta di scambio? Il richiedente e tutti i candidati verranno avvisati.</value>
+  </data>
+  <data name="CancelTradeButton" xml:space="preserve">
+    <value>Annulla richiesta</value>
+  </data>
+  <data name="TradeCancelled" xml:space="preserve">
+    <value>La richiesta di scambio è stata annullata.</value>
+  </data>
+  <data name="ShiftErrorNotEligible" xml:space="preserve">
+    <value>Questa persona non soddisfa i requisiti per questo posto.</value>
   </data>
 </root>

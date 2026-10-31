@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version='1.0' encoding='utf-8'?>
 <root>
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
@@ -7712,5 +7712,11 @@
   </data>
   <data xml:space="preserve" name="FeatureSetup.on-shift-hours-report">
     <value>Öppna Rapporter och sedan Rapport över skifttimmar. Välj perioden och om den gäller avdelningen, en grupp eller ett skift. Godkänn bemanningen för de dagar som behöver en exakt uppgift på sidan Skiftbemanning innan du kör den för lön eller regelefterlevnad.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.ShiftTradeApprovers">
+    <value>Godkännare av passbyten</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.ShiftTradeApprovers">
+    <value>Vem som väljer vilken sökande som tar en bytesförfrågan och godkänner väntande byten. Avdelningsadministratörer får alltid; gruppadministratörer, den som byter bort sitt pass och medlemmar i valda roller bestämmer avdelningen.</value>
   </data>
 </root>

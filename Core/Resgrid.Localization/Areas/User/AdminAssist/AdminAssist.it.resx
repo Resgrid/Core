@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version='1.0' encoding='utf-8'?>
 <root>
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
@@ -7712,5 +7712,11 @@
   </data>
   <data xml:space="preserve" name="FeatureSetup.on-shift-hours-report">
     <value>Apri Report, poi Report ore di turno. Scegli il periodo e se copre il dipartimento, un gruppo o un turno. Approva nella pagina Personale del turno il personale dei giorni che richiedono una registrazione esatta prima di eseguirlo per paghe o conformità.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.ShiftTradeApprovers">
+    <value>Approvatori degli scambi di turno</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.ShiftTradeApprovers">
+    <value>Chi sceglie quale candidato prende una richiesta di scambio turno e approva gli scambi in attesa. Gli amministratori del dipartimento possono sempre; amministratori di gruppo, chi cede il turno e membri dei ruoli scelti sono a scelta del dipartimento.</value>
   </data>
 </root>

@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version='1.0' encoding='utf-8'?>
 <root>
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
@@ -7712,5 +7712,11 @@
   </data>
   <data xml:space="preserve" name="FeatureSetup.on-shift-hours-report">
     <value>Відкрийте «Звіти», потім «Звіт про години на зміні». Виберіть період і чи охоплює він підрозділ, групу або зміну. Перш ніж запускати його для нарахування оплати чи перевірок, затвердьте на сторінці «Укомплектування зміни» укомплектування днів, яким потрібен точний запис.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.ShiftTradeApprovers">
+    <value>Затверджувачі обміну змінами</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.ShiftTradeApprovers">
+    <value>Хто обирає кандидата, який бере запит на обмін зміною, і схвалює обміни в очікуванні. Адміністратори підрозділу можуть завжди; адміністратори груп, особа, що віддає зміну, та учасники обраних ролей — на вибір підрозділу.</value>
   </data>
 </root>

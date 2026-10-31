@@ -1,4 +1,4 @@
-{
+﻿{
   "Version": "2026.09.25.2",
   "Areas": [
     {
@@ -49,6 +49,39 @@
       "DocumentationId": "setting.AllowSignupsForMultipleShiftGroups",
       "DefaultValue": "false",
       "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "setting.ShiftTradeApprovers",
+      "AreaId": "shifts",
+      "LabelKey": "Setting.ShiftTradeApprovers",
+      "HelpKey": "SettingHelp.ShiftTradeApprovers",
+      "Binding": "DepartmentSettingTypes.ShiftTradeApprovers",
+      "ValueType": "structured",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "ShiftSettings",
+        "Field": "TradeApproversGroupAdmins"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-30T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.shifts",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.ShiftTradeApprovers",
+      "DefaultValue": "missing = department admins, group admins and the person who asked for the trade",
+      "AllowedValues": "Validated by the Shift Settings page and IDepartmentSettingsService; Admin Assist never saves a proposed value.",
       "EvidenceSource": "DepartmentSettings",
       "Availability": "available"
     },
@@ -462,6 +495,17 @@
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "setting.ShiftTradeApprovers",
+      "Locale": "en",
+      "TitleKey": "Setting.ShiftTradeApprovers",
+      "Body": "Shift trade approvers. Who may pick which applicant takes a shift trade request and approve trades waiting for approval. Department admins always may; group admins, the person trading out and members of chosen roles are the department's choice.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-shifttradeapprovers",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-10-30T00:00:00Z"
     },
     {
       "Id": "module.ShiftsDisabled",

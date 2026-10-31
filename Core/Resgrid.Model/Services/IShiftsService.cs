@@ -440,5 +440,38 @@ namespace Resgrid.Model.Services
 		/// Trades the user started or was asked to take whose day has not long passed, fully loaded.
 		/// </summary>
 		Task<List<ShiftSignupTrade>> GetTradesForUserAsync(int departmentId, string userId);
+
+		/// <summary>
+		/// Asks to trade out of a static shift (workshift) day the user is staffing. Static shift trades are always open
+		/// requests: everyone eligible is told and may apply.
+		/// </summary>
+		Task<ShiftActionResult<ShiftSignupTrade>> RequestWorkshiftTradeAsync(int departmentId, string workshiftDayId, string userId, string note,
+			CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>Who may take the trade's slot (and why someone may not).</summary>
+		Task<ShiftTradeEligibility> GetTradeEligibilityAsync(ShiftSignupTrade trade);
+
+		/// <summary>Everyone who may take the trade's slot: who an open request is sent to.</summary>
+		Task<List<string>> GetTradeEligibleUserIdsAsync(ShiftSignupTrade trade);
+
+		/// <summary>
+		/// Picks who takes the slot. The requester's pick waits for approval on a shift that requires it; an approver's pick
+		/// (<paramref name="asApprover"/>, decided by the caller from the department's trade approver settings) takes effect.
+		/// </summary>
+		Task<ShiftActionResult<ShiftSignupTrade>> PickTradeOfferAsync(int shiftSignupTradeId, string actingUserId, bool asApprover, string acceptedUserId,
+			int? targetShiftSignupId, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
+		/// Withdraws a trade that has not taken effect, as the requester or (<paramref name="asSupervisor"/>) a supervisor of
+		/// its slot. The requester and everyone who applied are told.
+		/// </summary>
+		Task<ShiftActionResult<bool>> CancelTradeAsync(int shiftSignupTradeId, string actingUserId, bool asSupervisor,
+			CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>Open requests in the department that are still taking applicants.</summary>
+		Task<List<ShiftSignupTrade>> GetOpenTradesAsync(int departmentId);
+
+		/// <summary>Static shift day trades that have taken effect, for applying to the day's staffing.</summary>
+		Task<List<ShiftSignupTrade>> GetCompletedWorkshiftTradesAsync(int departmentId, DateTime startDate);
 	}
 }

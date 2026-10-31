@@ -1,4 +1,4 @@
-using FluentAssertions;
+﻿using FluentAssertions;
 using NUnit.Framework;
 using Resgrid.Repositories.DataRepository.Queries.Shifts;
 using Resgrid.Repositories.DataRepository.Servers.PostgreSql;
@@ -32,6 +32,29 @@ namespace Resgrid.Tests.Repositories
 			query.Should().Contain("s.[DepartmentId] = @DepartmentId");
 			query.Should().Contain("@StartDate");
 			query.Should().NotContain("%");
+		}
+
+		[Test]
+		public void Department_trades_include_static_shift_day_trades_without_a_source_signup()
+		{
+			var query = new SelectShiftSignupTradesByDepartmentIdQuery(new SqlServerConfiguration()).GetQuery();
+
+			query.Should().Contain("LEFT JOIN [dbo].ShiftSignups ss ON ss.[ShiftSignupId] = sst.[SourceShiftSignupId]");
+			query.Should().Contain("sst.[SourceShiftSignupId] IS NULL AND sst.[DepartmentId] = @DepartmentId AND sst.[SourceDay] >= @StartDate");
+
+			var postgres = new SelectShiftSignupTradesByDepartmentIdQuery(new PostgreSqlConfiguration()).GetQuery();
+
+			postgres.Should().Contain("sst.SourceShiftSignupId IS NULL AND sst.DepartmentId = @DepartmentId AND sst.SourceDay >= @StartDate");
+			postgres.Should().NotContain("%");
+		}
+
+		[Test]
+		public void Open_trade_requests_include_static_shift_day_trades()
+		{
+			var query = new SelectOpenShiftSignupTradesByUserIdQuery(new SqlServerConfiguration()).GetQuery();
+
+			query.Should().Contain("LEFT JOIN [dbo].ShiftSignups ss");
+			query.Should().Contain("sst.[SourceShiftSignupId] IS NULL AND sst.[SourceDay] >= DATEADD(day, -1, GETUTCDATE())");
 		}
 
 		[Test]

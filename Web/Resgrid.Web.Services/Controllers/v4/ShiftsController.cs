@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -35,13 +35,23 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IDepartmentGroupsService _departmentGroupsService;
 		private readonly IAuthorizationService _authorizationService;
+		private readonly IShiftStaffingService _shiftStaffingService;
+		private readonly IWorkShiftsService _workShiftsService;
+		private readonly IDepartmentSettingsService _departmentSettingsService;
+		private readonly IUnitsService _unitsService;
+		private readonly ICertificationService _certificationService;
 
 		public ShiftsController(
 			IShiftsService shiftsService,
 			IDepartmentsService departmentsService,
 			IPersonnelRolesService personnelRolesService,
 			IDepartmentGroupsService departmentGroupsService,
-			IAuthorizationService authorizationService
+			IAuthorizationService authorizationService,
+			IShiftStaffingService shiftStaffingService,
+			IWorkShiftsService workShiftsService,
+			IDepartmentSettingsService departmentSettingsService,
+			IUnitsService unitsService,
+			ICertificationService certificationService
 		)
 		{
 			_shiftsService = shiftsService;
@@ -49,6 +59,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_personnelRolesService = personnelRolesService;
 			_departmentGroupsService = departmentGroupsService;
 			_authorizationService = authorizationService;
+			_shiftStaffingService = shiftStaffingService;
+			_workShiftsService = workShiftsService;
+			_departmentSettingsService = departmentSettingsService;
+			_unitsService = unitsService;
+			_certificationService = certificationService;
 		}
 		#endregion Members and Constructors
 
@@ -391,7 +406,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		}
 
 		/// <summary>
-		/// Asks colleagues to take the caller's slot on a shift day
+		/// Asks to trade out of the caller's slot on a shift day. With no UserIds the request is open: everyone eligible for
+		/// the slot is told and may apply. With UserIds only those people are asked.
 		/// </summary>
 		[HttpPost("RequestShiftTrade")]
 		[Consumes(MediaTypeNames.Application.Json)]
@@ -435,7 +451,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		}
 
 		/// <summary>
-		/// The caller picks who takes their slot: a user taking it outright, or one of the offered swap-back days
+		/// Picks who takes the slot: a user taking it outright, or one of the offered swap-back days. The requester may pick
+		/// when the department lets requesters decide; department admins, group admins (when allowed) and members of the
+		/// department's approver roles may pick for anyone, and their pick needs no further approval.
 		/// </summary>
 		[HttpPost("FinishShiftTrade")]
 		[Consumes(MediaTypeNames.Application.Json)]
@@ -446,18 +464,31 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (input == null)
 				return BadRequest();
 
-			if (!await IsDepartmentTradeAsync(input.ShiftSignupTradeId))
+			var trade = await GetDepartmentTradeAsync(input.ShiftSignupTradeId);
+
+			if (trade == null)
 				return OperationResult(ShiftActionErrors.NotFound);
 
-			var trade = await _shiftsService.FinishTradeAsync(input.ShiftSignupTradeId, UserId, input.AcceptedUserId, input.TargetShiftSignupId, cancellationToken);
+			if (!trade.IsOpenForOffers())
+				return OperationResult(ShiftActionErrors.InvalidRequest);
 
-			return trade.Success
-				? OperationResult(ShiftActionErrors.None, input.ShiftSignupTradeId.ToString(), trade.Item?.ApprovalPending ?? false, ResponseHelper.Updated)
-				: OperationResult(trade.Error);
+			var lookups = await GetLookupsAsync();
+			var shift = await GetTradeShiftAsync(trade, lookups);
+
+			if (!lookups.Authority.CanPick(trade, shift))
+				return OperationResult(ShiftActionErrors.NotAllowed);
+
+			var asApprover = lookups.Authority.IsApprover(shift, trade.GetDepartmentGroupId());
+			var picked = await _shiftsService.PickTradeOfferAsync(input.ShiftSignupTradeId, UserId, asApprover, input.AcceptedUserId, input.TargetShiftSignupId, cancellationToken);
+
+			return picked.Success
+				? OperationResult(ShiftActionErrors.None, input.ShiftSignupTradeId.ToString(), picked.Item?.ApprovalPending ?? false, ResponseHelper.Updated)
+				: OperationResult(picked.Error);
 		}
 
 		/// <summary>
-		/// The caller withdraws a trade that has not taken effect
+		/// Withdraws a trade that has not taken effect: the requester's own, or one in a slot the caller supervises. The
+		/// requester and everyone who applied are told.
 		/// </summary>
 		[HttpPost("CancelShiftTrade")]
 		[Consumes(MediaTypeNames.Application.Json)]
@@ -468,14 +499,185 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (input == null)
 				return BadRequest();
 
-			if (!await IsDepartmentTradeAsync(input.ShiftSignupTradeId))
+			var trade = await GetDepartmentTradeAsync(input.ShiftSignupTradeId);
+
+			if (trade == null)
 				return OperationResult(ShiftActionErrors.NotFound);
 
-			var cancelled = await _shiftsService.CancelTradeAsync(input.ShiftSignupTradeId, UserId, cancellationToken);
+			if (trade.IsTradeComplete())
+				return OperationResult(ShiftActionErrors.InvalidRequest);
+
+			var lookups = await GetLookupsAsync();
+			var shift = await GetTradeShiftAsync(trade, lookups);
+
+			if (!lookups.Authority.CanCancel(trade, shift))
+				return OperationResult(ShiftActionErrors.NotAllowed);
+
+			var cancelled = await _shiftsService.CancelTradeAsync(input.ShiftSignupTradeId, UserId, !lookups.Authority.IsRequester(trade), cancellationToken);
 
 			return cancelled.Success
 				? OperationResult(ShiftActionErrors.None, input.ShiftSignupTradeId.ToString(), status: ResponseHelper.Deleted)
 				: OperationResult(cancelled.Error);
+		}
+
+		/// <summary>
+		/// Open trade requests in the department that are still taking applicants, with whether the caller may apply
+		/// </summary>
+		[HttpGet("GetOpenShiftTrades")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Shift_View)]
+		public async Task<ActionResult<ShiftTradesResult>> GetOpenShiftTrades()
+		{
+			var result = new ShiftTradesResult();
+			var lookups = await GetLookupsAsync();
+
+			foreach (var trade in await _shiftsService.GetOpenTradesAsync(DepartmentId))
+			{
+				var eligibility = lookups.Authority.IsRequester(trade) ? null : await _shiftsService.GetTradeEligibilityAsync(trade);
+				var converted = await ConvertTradeAsync(trade, lookups, eligibility);
+
+				if (!converted.IsOver)
+					result.Data.Add(converted);
+			}
+
+			result.Data = result.Data.OrderBy(x => x.Start).ToList();
+			result.PageSize = result.Data.Count;
+			result.Status = result.Data.Any() ? ResponseHelper.Success : ResponseHelper.NotFound;
+
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return result;
+		}
+
+		/// <summary>
+		/// One trade. The requester and the people who may decide it also get what they need to choose between applicants:
+		/// each applicant's group, roles, current certifications, whether they still qualify, how much they are working in
+		/// the week either side, and any shift they are already on that overlaps.
+		/// </summary>
+		/// <param name="id">Shift signup trade id</param>
+		[HttpGet("GetShiftTrade")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Shift_View)]
+		public async Task<ActionResult<ShiftTradeResult>> GetShiftTrade(int id)
+		{
+			var result = new ShiftTradeResult();
+			var trade = await GetDepartmentTradeAsync(id);
+
+			if (trade == null)
+			{
+				result.Status = ResponseHelper.NotFound;
+				ResponseHelper.PopulateV4ResponseData(result);
+				return result;
+			}
+
+			var lookups = await GetLookupsAsync();
+			var eligibility = await _shiftsService.GetTradeEligibilityAsync(trade);
+			var data = await ConvertTradeAsync(trade, lookups, lookups.Authority.IsRequester(trade) ? null : eligibility);
+			var shift = await GetTradeShiftAsync(trade, lookups);
+			var mayDecide = lookups.Authority.IsRequester(trade) || lookups.Authority.IsSupervisor(trade, shift);
+
+			if (mayDecide && data.Users.Any())
+				await AddApplicantDetailsAsync(data, trade, eligibility, lookups);
+
+			result.Data = data;
+			result.PageSize = 1;
+			result.Status = ResponseHelper.Success;
+
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return result;
+		}
+
+		/// <summary>
+		/// Static shift (workshift) days in a date range (department local dates, inclusive, at most 62 days; default today
+		/// to 30 days out), in the same shape as shift days with ShiftType 2. <paramref name="mine"/> keeps only the days the
+		/// caller is staffing.
+		/// </summary>
+		/// <param name="start">First day, yyyy-MM-dd</param>
+		/// <param name="end">Last day, yyyy-MM-dd</param>
+		/// <param name="mine">Only days the caller works</param>
+		[HttpGet("GetWorkshiftDays")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Shift_View)]
+		public async Task<ActionResult<ShiftDaysResult>> GetWorkshiftDays(string start = null, string end = null, bool mine = false)
+		{
+			var result = new ShiftDaysResult();
+			var lookups = await GetLookupsAsync();
+
+			if (!TryGetRange(start, end, lookups.LocalNow.Date, 30, out var startDate, out var endDate))
+			{
+				result.Status = ResponseHelper.Failure;
+				ResponseHelper.PopulateV4ResponseData(result);
+				return result;
+			}
+
+			var occurrences = await _shiftStaffingService.GetStaffingForRangeAsync(DepartmentId, startDate, endDate.AddDays(1), workshiftsOnly: true) ?? new List<ShiftDayStaffing>();
+			var myTrades = await GetMyOpenWorkshiftTradesAsync();
+
+			foreach (var occurrence in occurrences.Where(x => x.ShiftType == StaffedShiftTypes.Workshift))
+			{
+				if (mine && !occurrence.Personnel.Any(x => SameUser(x.UserId, UserId)))
+					continue;
+
+				result.Data.Add(ConvertWorkshiftDay(occurrence, lookups, myTrades));
+			}
+
+			result.PageSize = result.Data.Count;
+			result.Status = result.Data.Any() ? ResponseHelper.Success : ResponseHelper.NotFound;
+
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return result;
+		}
+
+		/// <summary>
+		/// One static shift (workshift) day with who is staffing it
+		/// </summary>
+		/// <param name="id">Workshift day id</param>
+		[HttpGet("GetWorkshiftDay")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Shift_View)]
+		public async Task<ActionResult<GetShiftDayResult>> GetWorkshiftDay(string id)
+		{
+			var result = new GetShiftDayResult();
+			var staffing = await _shiftStaffingService.GetWorkshiftDayStaffingAsync(id);
+			var workshift = staffing != null ? await _workShiftsService.GetWorkshiftByIdAsync(staffing.WorkshiftId) : null;
+
+			if (workshift == null || workshift.DepartmentId != DepartmentId)
+			{
+				result.PageSize = 0;
+				result.Status = ResponseHelper.NotFound;
+				ResponseHelper.PopulateV4ResponseData(result);
+				return result;
+			}
+
+			result.Data = ConvertWorkshiftDay(staffing, await GetLookupsAsync(), await GetMyOpenWorkshiftTradesAsync());
+			result.PageSize = 1;
+			result.Status = ResponseHelper.Success;
+
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return result;
+		}
+
+		/// <summary>
+		/// Asks to trade out of a static shift (workshift) day the caller is staffing. The request is open: everyone eligible
+		/// is told and may apply.
+		/// </summary>
+		[HttpPost("RequestWorkshiftTrade")]
+		[Consumes(MediaTypeNames.Application.Json)]
+		[ProducesResponseType(StatusCodes.Status201Created)]
+		[Authorize(Policy = ResgridResources.Shift_View)]
+		public async Task<ActionResult<ShiftOperationResult>> RequestWorkshiftTrade(RequestWorkshiftTradeInput input, CancellationToken cancellationToken)
+		{
+			if (input == null || String.IsNullOrWhiteSpace(input.WorkshiftDayId))
+				return BadRequest();
+
+			var trade = await _shiftsService.RequestWorkshiftTradeAsync(DepartmentId, input.WorkshiftDayId, UserId, input.Note, cancellationToken);
+
+			return trade.Success
+				? OperationResult(ShiftActionErrors.None, trade.Item.ShiftSignupTradeId.ToString(), status: ResponseHelper.Created)
+				: OperationResult(trade.Error);
 		}
 
 		/// <summary>
@@ -489,7 +691,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var result = new PendingShiftApprovalsResult();
 			var lookups = await GetLookupsAsync();
 
-			result.Data.IsSupervisor = lookups.Scope.IsSupervisor;
+			result.Data.IsSupervisor = lookups.Authority.HasApprovals;
 
 			if (lookups.Scope.IsSupervisor)
 			{
@@ -519,12 +721,27 @@ namespace Resgrid.Web.Services.Controllers.v4
 						Roles = lookups.RoleNamesFor(signup.UserId)
 					});
 				}
+			}
 
+			if (lookups.Authority.HasApprovals)
+			{
 				foreach (var trade in await _shiftsService.GetPendingTradesAsync(DepartmentId))
 				{
 					var converted = await ConvertTradeAsync(trade, lookups);
 
 					if (converted.CanReview)
+						result.Data.Trades.Add(converted);
+				}
+
+				// Open requests with applicants that the caller decides as an approver (requesters see their own under Trades).
+				foreach (var trade in await _shiftsService.GetOpenTradesAsync(DepartmentId))
+				{
+					if (lookups.Authority.IsRequester(trade) || !(trade.Users ?? new List<ShiftSignupTradeUser>()).Any(x => x.Offered && !x.Declined))
+						continue;
+
+					var converted = await ConvertTradeAsync(trade, lookups);
+
+					if (converted.CanPick && converted.PickIsApproval && !converted.IsOver && result.Data.Trades.All(x => x.ShiftSignupTradeId != converted.ShiftSignupTradeId))
 						result.Data.Trades.Add(converted);
 				}
 			}
@@ -579,16 +796,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (input == null)
 				return BadRequest();
 
-			var trade = await _shiftsService.GetShiftTradeByIdAsync(input.ShiftSignupTradeId);
-			var source = trade?.SourceShiftSignup;
-			var shift = source != null ? await _shiftsService.GetShiftByIdAsync(source.ShiftId) : null;
+			var trade = await GetDepartmentTradeAsync(input.ShiftSignupTradeId);
 
-			if (shift == null || shift.DepartmentId != DepartmentId)
+			if (trade == null)
 				return OperationResult(ShiftActionErrors.NotFound);
 
-			var scope = await _authorizationService.GetShiftManagementScopeAsync(UserId, DepartmentId);
+			var lookups = await GetLookupsAsync();
+			var shift = await GetTradeShiftAsync(trade, lookups);
 
-			if (!scope.CanManageShiftGroup(shift, source.DepartmentGroupId))
+			if (!lookups.Authority.IsApprover(shift, trade.GetDepartmentGroupId()))
 				return OperationResult(ShiftActionErrors.NotAllowed);
 
 			var reviewed = await _shiftsService.ReviewTradeAsync(input.ShiftSignupTradeId, input.Approve, UserId, input.Note, cancellationToken);
@@ -752,6 +968,19 @@ namespace Resgrid.Web.Services.Controllers.v4
 			public Dictionary<int, PersonnelRole> Roles { get; set; }
 			public Dictionary<string, List<PersonnelRole>> RolesByUser { get; set; }
 			public List<Shift> Shifts { get; set; }
+			public ShiftTradeAuthority Authority { get; set; }
+			public Dictionary<int, string> UnitNames { get; set; }
+			public Dictionary<string, ShiftDayStaffing> WorkshiftDays { get; set; } = new Dictionary<string, ShiftDayStaffing>(StringComparer.OrdinalIgnoreCase);
+
+			public string UnitNameFor(int? unitId)
+			{
+				return unitId.HasValue && UnitNames != null && UnitNames.TryGetValue(unitId.Value, out var name) ? name : "";
+			}
+
+			public DateTime ToUtc(DateTime local)
+			{
+				return Department != null ? local.DepartmentLocalToUtc(Department) : DateTime.SpecifyKind(local, DateTimeKind.Utc);
+			}
 
 			public string NameFor(string userId)
 			{
@@ -799,6 +1028,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			foreach (var pair in rolesByUser.Where(x => x.Key != null))
 				lookups.RolesByUser[pair.Key] = pair.Value ?? new List<PersonnelRole>();
+
+			lookups.Authority = new ShiftTradeAuthority
+			{
+				UserId = UserId,
+				Scope = lookups.Scope,
+				Settings = await _departmentSettingsService.GetShiftTradeApproverSettingsAsync(DepartmentId) ?? ShiftTradeApproverSettings.Default(),
+				RoleIds = lookups.RoleIdsFor(UserId)
+			};
+
+			var units = await _unitsService.GetUnitsForDepartmentIncludingDeletedAsync(DepartmentId) ?? new List<Unit>();
+			lookups.UnitNames = units.Where(x => x != null).GroupBy(x => x.UnitId).ToDictionary(x => x.Key, x => x.First().Name);
 
 			return lookups;
 		}
@@ -931,6 +1171,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 				MySignupId = mySignupId?.ToString() ?? "",
 				MyGroupId = myEntry?.DepartmentGroupId?.ToString() ?? "",
 				MyTradeId = myTrade?.ShiftSignupTradeId.ToString() ?? "",
+				StartUtc = lookups.ToUtc(day.Start),
+				EndUtc = lookups.ToUtc(day.End),
+				CanTrade = !isOver && myActive != null && myActive.Source != ShiftRosterSources.Trade && myTrade == null,
 				Signups = new List<ShiftDaySignupResultData>(),
 				Needs = new List<ShiftDayGroupNeedsResultData>(),
 				Roster = new List<ShiftDayRosterResultData>()
@@ -989,13 +1232,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return data;
 		}
 
-		private async Task<ShiftTradeResultData> ConvertTradeAsync(ShiftSignupTrade trade, Lookups lookups)
+		private async Task<ShiftTradeResultData> ConvertTradeAsync(ShiftSignupTrade trade, Lookups lookups, ShiftTradeEligibility eligibility = null)
 		{
 			var source = trade.SourceShiftSignup;
 			var shifts = await GetShiftsAsync(lookups);
-			var shift = shifts.FirstOrDefault(x => x.ShiftId == source?.ShiftId) ?? source?.Shift;
+			var shift = await GetTradeShiftAsync(trade, lookups);
 			var day = source != null ? FindDay(lookups, source.ShiftId, source.ShiftDay) : null;
-			var acceptedUserId = !String.IsNullOrWhiteSpace(trade.UserId) ? trade.UserId : trade.TargetShiftSignup?.UserId;
+			var workshiftDay = trade.IsWorkshiftTrade() ? await GetWorkshiftDayAsync(lookups, trade.WorkshiftDayId) : null;
+			var acceptedUserId = trade.GetPickedUserId();
+			var sourceUserId = trade.GetSourceUserId();
+			var groupId = trade.GetDepartmentGroupId();
+			var authority = lookups.Authority;
 
 			var status = 0;
 			if (trade.Denied)
@@ -1005,23 +1252,27 @@ namespace Resgrid.Web.Services.Controllers.v4
 			else if (trade.IsTradeComplete())
 				status = 2;
 
+			var start = day?.Start ?? workshiftDay?.Start ?? source?.ShiftDay ?? trade.SourceDay ?? DateTime.MinValue;
+			var end = day?.End ?? workshiftDay?.End ?? source?.ShiftDay ?? trade.SourceDay ?? DateTime.MinValue;
+			var isOver = workshiftDay != null ? workshiftDay.IsOver : (day != null && lookups.LocalNow >= day.End);
+
 			var data = new ShiftTradeResultData
 			{
 				ShiftSignupTradeId = trade.ShiftSignupTradeId.ToString(),
-				Direction = SameUser(source?.UserId, lookups.UserId) ? 0 : 1,
+				Direction = authority.IsRequester(trade) ? 0 : 1,
 				Status = status,
 				MyState = (int)trade.GetState(lookups.UserId),
-				SourceShiftSignupId = trade.SourceShiftSignupId.ToString(),
-				SourceUserId = source?.UserId ?? "",
-				SourceUserName = lookups.NameFor(source?.UserId),
-				ShiftId = source?.ShiftId.ToString() ?? "",
-				ShiftName = shift?.Name ?? "",
-				ShiftDayId = day?.ShiftDayId.ToString() ?? "",
-				ShiftDay = source?.ShiftDay ?? DateTime.MinValue,
-				Start = day?.Start ?? source?.ShiftDay ?? DateTime.MinValue,
-				End = day?.End ?? source?.ShiftDay ?? DateTime.MinValue,
-				GroupId = source?.DepartmentGroupId?.ToString() ?? "",
-				GroupName = lookups.GroupNameFor(source?.DepartmentGroupId),
+				SourceShiftSignupId = trade.SourceShiftSignupId?.ToString() ?? "",
+				SourceUserId = sourceUserId ?? "",
+				SourceUserName = lookups.NameFor(sourceUserId),
+				ShiftId = trade.IsWorkshiftTrade() ? trade.WorkshiftId ?? "" : source?.ShiftId.ToString() ?? "",
+				ShiftName = shift?.Name ?? workshiftDay?.Name ?? "",
+				ShiftDayId = trade.IsWorkshiftTrade() ? trade.WorkshiftDayId ?? "" : day?.ShiftDayId.ToString() ?? "",
+				ShiftDay = source?.ShiftDay ?? workshiftDay?.Day ?? trade.SourceDay ?? DateTime.MinValue,
+				Start = start,
+				End = end,
+				GroupId = groupId?.ToString() ?? "",
+				GroupName = lookups.GroupNameFor(groupId),
 				Note = trade.Note ?? "",
 				AcceptedUserId = acceptedUserId ?? "",
 				AcceptedUserName = lookups.NameFor(acceptedUserId),
@@ -1030,18 +1281,46 @@ namespace Resgrid.Web.Services.Controllers.v4
 				ReviewNote = trade.ReviewNote ?? "",
 				ReviewedByName = lookups.NameFor(trade.ReviewedByUserId),
 				RequireApproval = shift?.RequireApproval == true,
-				CanReview = trade.ApprovalPending && !trade.Denied && shift != null && lookups.Scope.CanManageShiftGroup(shift, source?.DepartmentGroupId)
+				CanReview = authority.CanReview(trade, shift),
+				IsOpen = trade.IsOpen,
+				ShiftType = trade.IsWorkshiftTrade() ? (int)StaffedShiftTypes.Workshift : shift?.AssignmentType ?? 0,
+				WorkshiftId = trade.WorkshiftId ?? "",
+				WorkshiftDayId = trade.WorkshiftDayId ?? "",
+				UnitId = trade.UnitId?.ToString() ?? "",
+				UnitName = lookups.UnitNameFor(trade.UnitId),
+				RequestedOn = trade.RequestedOn,
+				ApplicantCount = (trade.Users ?? new List<ShiftSignupTradeUser>()).Count(x => x.Offered && !x.Declined),
+				CanPick = !isOver && authority.CanPick(trade, shift),
+				PickIsApproval = authority.IsApprover(shift, groupId),
+				CanCancel = !isOver && authority.CanCancel(trade, shift),
+				IsOver = isOver
 			};
+
+			var me = (trade.Users ?? new List<ShiftSignupTradeUser>()).FirstOrDefault(x => SameUser(x.UserId, lookups.UserId));
+
+			if (eligibility != null && trade.IsOpen && !authority.IsRequester(trade))
+			{
+				var check = eligibility.Check(lookups.UserId);
+
+				data.IsEligible = check == ShiftActionErrors.None;
+				data.IneligibleReason = data.IsEligible ? "" : ToErrorCode(check);
+				// Someone who withdrew may apply again; someone with a live offer has nothing more to apply for.
+				data.CanApply = !isOver && trade.IsOpenForOffers() && data.IsEligible && (me == null || !me.Offered || me.Declined);
+			}
 
 			foreach (var user in trade.Users ?? new List<ShiftSignupTradeUser>())
 			{
+				var group = lookups.Groups.Values.FirstOrDefault(g => g.Members != null && g.Members.Any(m => SameUser(m.UserId, user.UserId)));
 				var userData = new ShiftTradeUserResultData
 				{
 					UserId = user.UserId,
 					Name = lookups.NameFor(user.UserId),
 					Declined = user.Declined,
 					Offered = user.Offered,
-					Reason = user.Reason ?? ""
+					Reason = user.Reason ?? "",
+					RespondedOn = user.RespondedOn,
+					GroupName = group?.Name ?? "",
+					Roles = lookups.RoleNamesFor(user.UserId)
 				};
 
 				foreach (var offer in (user.Shifts ?? new List<ShiftSignupTradeUserShift>()).Where(x => x.ShiftSignupId.HasValue))
@@ -1063,6 +1342,145 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 
 			return data;
+		}
+
+		/// <summary>
+		/// What a decision between applicants needs: whether each still qualifies, their certifications, how much they work
+		/// in the week either side of the traded day, and any overlapping shift they are already on.
+		/// </summary>
+		private async Task AddApplicantDetailsAsync(ShiftTradeResultData data, ShiftSignupTrade trade, ShiftTradeEligibility eligibility, Lookups lookups)
+		{
+			var userIds = data.Users.Select(x => x.UserId).Where(x => !String.IsNullOrWhiteSpace(x)).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+			var today = lookups.LocalNow.Date;
+			var tradedKey = trade.IsWorkshiftTrade() ? $"w:{trade.WorkshiftDayId}" : $"s:{data.ShiftDayId}";
+
+			var certifications = (await _certificationService.GetCertificationsForDepartmentAsync(DepartmentId, userIds) ?? new List<PersonnelCertification>())
+				.Where(x => x != null && !x.IsDeleted && x.Status == (int)PersonnelCertificationStatuses.Active && (!x.ExpiresOn.HasValue || x.ExpiresOn.Value.Date >= today))
+				.ToList();
+
+			var occurrences = data.Start > DateTime.MinValue
+				? await _shiftStaffingService.GetStaffingForRangeAsync(DepartmentId, data.Start.Date.AddDays(-7), data.End.Date.AddDays(8)) ?? new List<ShiftDayStaffing>()
+				: new List<ShiftDayStaffing>();
+
+			foreach (var user in data.Users)
+			{
+				var check = eligibility?.Check(user.UserId) ?? ShiftActionErrors.None;
+				user.IsEligible = check == ShiftActionErrors.None;
+				user.IneligibleReason = user.IsEligible ? "" : ToErrorCode(check);
+
+				user.Certifications = certifications
+					.Where(x => SameUser(x.UserId, user.UserId))
+					.OrderBy(x => x.Name)
+					.Select(x => x.ExpiresOn.HasValue ? $"{x.Name} (expires {x.ExpiresOn.Value:yyyy-MM-dd})" : x.Name)
+					.Distinct()
+					.ToList();
+
+				var working = occurrences
+					.Where(x => x.Key != tradedKey && x.Personnel.Any(p => SameUser(p.UserId, user.UserId)))
+					.ToList();
+
+				user.NearbyShiftCount = working.Count;
+				user.NearbyShiftHours = Math.Round(working.Sum(x => x.Hours), 1);
+
+				var conflict = working.FirstOrDefault(x => x.Start < data.End && x.End > data.Start);
+				user.HasConflict = conflict != null;
+				user.ConflictName = conflict?.Name ?? "";
+			}
+		}
+
+		private ShiftDayResultData ConvertWorkshiftDay(ShiftDayStaffing staffing, Lookups lookups, List<ShiftSignupTrade> myTrades)
+		{
+			var mine = staffing.Personnel.FirstOrDefault(x => SameUser(x.UserId, lookups.UserId));
+			var myTrade = (myTrades ?? new List<ShiftSignupTrade>()).FirstOrDefault(x => String.Equals(x.WorkshiftDayId, staffing.WorkshiftDayId, StringComparison.OrdinalIgnoreCase));
+
+			var data = new ShiftDayResultData
+			{
+				ShiftId = staffing.WorkshiftId,
+				ShiftDayId = staffing.WorkshiftDayId,
+				WorkshiftId = staffing.WorkshiftId,
+				WorkshiftDayId = staffing.WorkshiftDayId,
+				ShiftName = staffing.Name,
+				ShiftDay = staffing.Day,
+				Start = staffing.Start,
+				End = staffing.End,
+				StartUtc = lookups.ToUtc(staffing.Start),
+				EndUtc = lookups.ToUtc(staffing.End),
+				ShiftType = (int)StaffedShiftTypes.Workshift,
+				Color = staffing.Color,
+				RequireApproval = false,
+				SignedUp = mine != null,
+				Filled = true,
+				OpenSlots = 0,
+				IsActive = staffing.IsActive,
+				CanManage = lookups.Scope.AllGroups,
+				CanSignup = false,
+				MyStatus = mine != null ? 1 : 0,
+				MySignupId = "",
+				MyGroupId = mine?.DepartmentGroupId?.ToString() ?? "",
+				MyTradeId = myTrade?.ShiftSignupTradeId.ToString() ?? "",
+				MyUnitId = mine?.UnitId?.ToString() ?? "",
+				MyUnitName = lookups.UnitNameFor(mine?.UnitId),
+				CanTrade = mine != null && !staffing.IsOver && mine.RosterSource != ShiftRosterSources.Trade && myTrade == null,
+				Signups = new List<ShiftDaySignupResultData>(),
+				Needs = new List<ShiftDayGroupNeedsResultData>(),
+				Roster = new List<ShiftDayRosterResultData>()
+			};
+
+			foreach (var person in staffing.Personnel.OrderBy(x => lookups.UnitNameFor(x.UnitId)).ThenBy(x => lookups.NameFor(x.UserId)))
+			{
+				data.Roster.Add(new ShiftDayRosterResultData
+				{
+					UserId = person.UserId,
+					Name = lookups.NameFor(person.UserId),
+					GroupId = person.DepartmentGroupId?.ToString() ?? "",
+					GroupName = lookups.GroupNameFor(person.DepartmentGroupId),
+					RoleIds = lookups.RoleIdsFor(person.UserId),
+					Roles = lookups.RoleNamesFor(person.UserId),
+					Source = person.RosterSource == ShiftRosterSources.Trade ? (int)ShiftRosterSources.Trade : (int)ShiftRosterSources.Assigned,
+					ShiftSignupId = "",
+					ApprovalPending = false,
+					TradedFromUserId = person.TradedFromUserId ?? "",
+					TradedFromName = lookups.NameFor(person.TradedFromUserId),
+					UnitId = person.UnitId?.ToString() ?? "",
+					UnitName = lookups.UnitNameFor(person.UnitId)
+				});
+			}
+
+			return data;
+		}
+
+		/// <summary>The caller's own static shift day trades that are still open or waiting, to show on their days.</summary>
+		private async Task<List<ShiftSignupTrade>> GetMyOpenWorkshiftTradesAsync()
+		{
+			var trades = await _shiftsService.GetTradesForUserAsync(DepartmentId, UserId) ?? new List<ShiftSignupTrade>();
+
+			return trades.Where(x => x.IsWorkshiftTrade() && SameUser(x.GetSourceUserId(), UserId) && !x.Denied && !x.IsTradeComplete()).ToList();
+		}
+
+		private async Task<ShiftDayStaffing> GetWorkshiftDayAsync(Lookups lookups, string workshiftDayId)
+		{
+			if (String.IsNullOrWhiteSpace(workshiftDayId))
+				return null;
+
+			if (!lookups.WorkshiftDays.TryGetValue(workshiftDayId, out var staffing))
+			{
+				staffing = await _shiftStaffingService.GetWorkshiftDayStaffingAsync(workshiftDayId);
+				lookups.WorkshiftDays[workshiftDayId] = staffing;
+			}
+
+			return staffing;
+		}
+
+		/// <summary>The shift a trade is on (with its groups, for supervision checks); null for a static shift day trade.</summary>
+		private async Task<Shift> GetTradeShiftAsync(ShiftSignupTrade trade, Lookups lookups)
+		{
+			if (trade == null || trade.IsWorkshiftTrade())
+				return null;
+
+			var source = trade.SourceShiftSignup;
+			var shifts = await GetShiftsAsync(lookups);
+
+			return shifts.FirstOrDefault(x => x.ShiftId == source?.ShiftId) ?? source?.Shift;
 		}
 
 		private async Task<List<ShiftPersonOptionResultData>> GetPersonnelOptionsAsync(ShiftDaySchedule schedule, Lookups lookups)
@@ -1111,9 +1529,21 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 		private async Task<bool> IsDepartmentTradeAsync(int shiftSignupTradeId)
 		{
+			return await GetDepartmentTradeAsync(shiftSignupTradeId) != null;
+		}
+
+		/// <summary>The trade, when it belongs to the caller's department (shift trades by their shift, static shift trades by their row).</summary>
+		private async Task<ShiftSignupTrade> GetDepartmentTradeAsync(int shiftSignupTradeId)
+		{
 			var trade = await _shiftsService.GetShiftTradeByIdAsync(shiftSignupTradeId);
 
-			return trade?.SourceShiftSignup?.Shift != null && trade.SourceShiftSignup.Shift.DepartmentId == DepartmentId;
+			if (trade == null)
+				return null;
+
+			if (trade.IsWorkshiftTrade())
+				return trade.DepartmentId == DepartmentId ? trade : null;
+
+			return trade.SourceShiftSignup?.Shift != null && trade.SourceShiftSignup.Shift.DepartmentId == DepartmentId ? trade : null;
 		}
 
 		private static bool TryGetRange(string start, string end, DateTime today, int defaultDays, out DateTime startDate, out DateTime endDate)
@@ -1181,6 +1611,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				case ShiftActionErrors.InvalidOffer: return "invalid_offer";
 				case ShiftActionErrors.NotPending: return "not_pending";
 				case ShiftActionErrors.AlreadyOnRoster: return "already_on_roster";
+				case ShiftActionErrors.NotEligible: return "not_eligible";
 				default: return "invalid_request";
 			}
 		}

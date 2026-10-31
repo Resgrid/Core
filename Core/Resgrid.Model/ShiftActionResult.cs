@@ -1,4 +1,4 @@
-namespace Resgrid.Model
+﻿namespace Resgrid.Model
 {
 	/// <summary>
 	/// Why a shift signup, trade or roster change was refused. Serialized to API clients as snake_case codes.
@@ -17,7 +17,10 @@ namespace Resgrid.Model
 		InvalidOffer,
 		NotPending,
 		AlreadyOnRoster,
-		InvalidRequest
+		InvalidRequest,
+
+		/// <summary>The caller does not meet the requirements to take the slot (roles, already on the day).</summary>
+		NotEligible
 	}
 
 	public class ShiftActionResult<T>

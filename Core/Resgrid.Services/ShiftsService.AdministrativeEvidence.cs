@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -20,6 +20,8 @@ namespace Resgrid.Services
 			var shifts = (await _shiftsRepository.GetShiftAndDaysByDepartmentIdAsync(departmentId))?.ToList() ?? throw new InvalidOperationException("Schedules unavailable.");
 			var signups = (await _shiftSignupRepository.GetShiftSignupsByDepartmentIdAndDateRangeAsync(departmentId, localStart.Date, localEnd.Date.AddDays(1)))?.ToList() ?? throw new InvalidOperationException("Signups unavailable.");
 			var trades = (await _shiftSignupTradeRepository.GetShiftSignupTradesByDepartmentIdAsync(departmentId, localStart.Date))?.ToList() ?? throw new InvalidOperationException("Trades unavailable.");
+			// Static shift (workshift) day trades have no source signup and are not part of the shift schedule evidence.
+			trades = trades.Where(t => !t.IsWorkshiftTrade()).ToList();
 			// This owning getter reads membership, role and role-user repositories; it does not use Redis.
 			var roles = await _personnelRolesService.GetAllRolesForUsersInDepartmentAsync(departmentId) ?? throw new InvalidOperationException("Roles unavailable.");
 			cancellationToken.ThrowIfCancellationRequested();

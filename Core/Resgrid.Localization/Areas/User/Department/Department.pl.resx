@@ -2159,4 +2159,28 @@
   <data name="RunCardSelectionsMore" xml:space="preserve">
     <value>+{0} więcej</value>
   </data>
+  <data name="ShiftTradeSettingsHeader" xml:space="preserve">
+    <value>Ustawienia zamiany zmian</value>
+  </data>
+  <data name="ShiftTradeApproversHelp" xml:space="preserve">
+    <value>Kto może wybrać, który zgłoszony przejmuje prośbę o zamianę zmiany, i zatwierdzać zamiany wymagające zatwierdzenia.</value>
+  </data>
+  <data name="ShiftTradeApproversDepartmentAdmins" xml:space="preserve">
+    <value>Administratorzy jednostki</value>
+  </data>
+  <data name="ShiftTradeApproversDepartmentAdminsHelp" xml:space="preserve">
+    <value>Administratorzy jednostki (i każdy, kto może tworzyć zmiany w całej jednostce) zawsze mogą decydować o zamianach.</value>
+  </data>
+  <data name="ShiftTradeApproversGroupAdmins" xml:space="preserve">
+    <value>Administratorzy grup</value>
+  </data>
+  <data name="ShiftTradeApproversRequester" xml:space="preserve">
+    <value>Użytkownik zgłaszający</value>
+  </data>
+  <data name="ShiftTradeApproversRequesterHelp" xml:space="preserve">
+    <value>Osoba oddająca zmianę wybiera, kto ją przejmie. Na zmianach wymagających zatwierdzenia jej wybór nadal wymaga zatwierdzenia.</value>
+  </data>
+  <data name="ShiftTradeApproversRoles" xml:space="preserve">
+    <value>Członkowie tych ról</value>
+  </data>
 </root>

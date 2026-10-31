@@ -1110,4 +1110,37 @@
   <data name="StaffingSourceAutomaticStaticHelp" xml:space="preserve">
     <value>Worked out from each unit's current crew. Approving the staffing below replaces it for this day.</value>
   </data>
+  <data name="OpenTradeRequestsHeader" xml:space="preserve">
+    <value>Open Trade Requests</value>
+  </data>
+  <data name="OpenTradeRequestsHelp" xml:space="preserve">
+    <value>Trade requests in groups you supervise that have not taken effect yet. Cancelling one tells the requester and everyone who applied.</value>
+  </data>
+  <data name="NoOpenTradeRequests" xml:space="preserve">
+    <value>There are no open trade requests.</value>
+  </data>
+  <data name="PendingApprovalLabel" xml:space="preserve">
+    <value>Pending approval</value>
+  </data>
+  <data name="OpenRequestLabel" xml:space="preserve">
+    <value>Open to all</value>
+  </data>
+  <data name="ApplicantsFormat" xml:space="preserve">
+    <value>Applicants: {0}</value>
+  </data>
+  <data name="NoApplicants" xml:space="preserve">
+    <value>none yet</value>
+  </data>
+  <data name="CancelTradeConfirm" xml:space="preserve">
+    <value>Cancel this trade request? The requester and everyone who applied will be told.</value>
+  </data>
+  <data name="CancelTradeButton" xml:space="preserve">
+    <value>Cancel Request</value>
+  </data>
+  <data name="TradeCancelled" xml:space="preserve">
+    <value>The trade request was cancelled.</value>
+  </data>
+  <data name="ShiftErrorNotEligible" xml:space="preserve">
+    <value>That person does not meet the requirements for this slot.</value>
+  </data>
 </root>

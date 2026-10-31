@@ -1,4 +1,4 @@
-# Admin Assist settings reference
+﻿# Admin Assist settings reference
 
 Catalog release: 2026.09.25.2
 
@@ -2722,6 +2722,13 @@ Routes Planned routes, such as patrols, and who is assigned to them. Prepare rec
 Allow Signups For Multiple Shift Groups. Allow a member to sign up for multiple shift groups. Review overlaps and local coverage rules separately.
 
 Default: false. Source: DepartmentSettingTypes.AllowSignupsForMultipleShiftGroups.
+
+<a id="setting-shifttradeapprovers"></a>
+## Shift trade approvers
+
+Shift trade approvers. Who may pick which applicant takes a shift trade request and approve trades waiting for approval. Department admins always may; group admins, the person trading out and members of chosen roles are the department's choice.
+
+Default: missing = department admins, group admins and the person who asked for the trade. Source: DepartmentSettingTypes.ShiftTradeApprovers.
 
 <a id="module-shiftsdisabled"></a>
 ## Shifts availability

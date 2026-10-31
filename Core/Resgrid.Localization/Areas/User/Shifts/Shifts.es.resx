@@ -1076,4 +1076,37 @@
   <data name="StaffingSourceAutomaticStaticHelp" xml:space="preserve">
     <value>Calculada a partir de la tripulación actual de cada unidad. Aprobar la dotación abajo la sustituye para este día.</value>
   </data>
+  <data name="OpenTradeRequestsHeader" xml:space="preserve">
+    <value>Solicitudes de intercambio abiertas</value>
+  </data>
+  <data name="OpenTradeRequestsHelp" xml:space="preserve">
+    <value>Solicitudes de intercambio en grupos que supervisa que aún no han entrado en vigor. Al cancelar una se avisa al solicitante y a todos los que se postularon.</value>
+  </data>
+  <data name="NoOpenTradeRequests" xml:space="preserve">
+    <value>No hay solicitudes de intercambio abiertas.</value>
+  </data>
+  <data name="PendingApprovalLabel" xml:space="preserve">
+    <value>Pendiente de aprobación</value>
+  </data>
+  <data name="OpenRequestLabel" xml:space="preserve">
+    <value>Abierta a todos</value>
+  </data>
+  <data name="ApplicantsFormat" xml:space="preserve">
+    <value>Candidatos: {0}</value>
+  </data>
+  <data name="NoApplicants" xml:space="preserve">
+    <value>ninguno todavía</value>
+  </data>
+  <data name="CancelTradeConfirm" xml:space="preserve">
+    <value>¿Cancelar esta solicitud de intercambio? Se avisará al solicitante y a todos los que se postularon.</value>
+  </data>
+  <data name="CancelTradeButton" xml:space="preserve">
+    <value>Cancelar solicitud</value>
+  </data>
+  <data name="TradeCancelled" xml:space="preserve">
+    <value>La solicitud de intercambio se canceló.</value>
+  </data>
+  <data name="ShiftErrorNotEligible" xml:space="preserve">
+    <value>Esa persona no cumple los requisitos para este puesto.</value>
+  </data>
 </root>

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -41,6 +41,9 @@ namespace Resgrid.Model
 
 		/// <summary>Automatic shift staffing: how the roster put the person on the day.</summary>
 		public ShiftRosterSources? RosterSource { get; set; }
+
+		/// <summary>The person took this slot in a trade from this user.</summary>
+		public string TradedFromUserId { get; set; }
 	}
 
 	/// <summary>

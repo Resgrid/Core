@@ -941,8 +941,9 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					SELECT sst.*
 					FROM %SCHEMA%.%SHIFTSIGNUPTRADESTABLE% sst
 					INNER JOIN %SCHEMA%.%SHIFTSIGNUPTRADEUSERSTABLE% sstu ON sstu.[ShiftSignupTradeId] = sst.[ShiftSignupTradeId]
-					INNER JOIN %SCHEMA%.%SHIFTSIGNUPSTABLE% ss ON ss.[ShiftSignupId] = sst.[SourceShiftSignupId]
-					WHERE sstu.[UserId] = %USERID% AND ss.[ShiftDay] >= DATEADD(day, -1, GETUTCDATE())";
+					LEFT JOIN %SCHEMA%.%SHIFTSIGNUPSTABLE% ss ON ss.[ShiftSignupId] = sst.[SourceShiftSignupId]
+					WHERE sstu.[UserId] = %USERID% AND (ss.[ShiftDay] >= DATEADD(day, -1, GETUTCDATE())
+						OR (sst.[SourceShiftSignupId] IS NULL AND sst.[SourceDay] >= DATEADD(day, -1, GETUTCDATE())))";
 			SelectShiftAndDaysByDIdQuery = @"
 					SELECT s.*, sd.*
 					FROM %SCHEMA%.%SHIFTSTABLE% s
@@ -1115,10 +1116,11 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			SelectShiftSignupTradesByDepartmentIdQuery = @"
 					SELECT sst.*, ss.*, ts.*
 					FROM %SCHEMA%.%SHIFTSIGNUPTRADESTABLE% sst
-					INNER JOIN %SCHEMA%.%SHIFTSIGNUPSTABLE% ss ON ss.[ShiftSignupId] = sst.[SourceShiftSignupId]
-					INNER JOIN %SCHEMA%.%SHIFTSTABLE% s ON s.[ShiftId] = ss.[ShiftId]
+					LEFT JOIN %SCHEMA%.%SHIFTSIGNUPSTABLE% ss ON ss.[ShiftSignupId] = sst.[SourceShiftSignupId]
+					LEFT JOIN %SCHEMA%.%SHIFTSTABLE% s ON s.[ShiftId] = ss.[ShiftId]
 					LEFT JOIN %SCHEMA%.%SHIFTSIGNUPSTABLE% ts ON ts.[ShiftSignupId] = sst.[TargetShiftSignupId]
-					WHERE s.[DepartmentId] = %DID% AND (ss.[ShiftDay] >= %STARTDATE% OR ts.[ShiftDay] >= %STARTDATE%)";
+					WHERE (s.[DepartmentId] = %DID% AND (ss.[ShiftDay] >= %STARTDATE% OR ts.[ShiftDay] >= %STARTDATE%))
+						OR (sst.[SourceShiftSignupId] IS NULL AND sst.[DepartmentId] = %DID% AND sst.[SourceDay] >= %STARTDATE%)";
 			SelectShiftSignupsByDepartmentIdAndDateRangeQuery = @"
 					SELECT ss.*
 					FROM %SCHEMA%.%SHIFTSIGNUPSTABLE% ss

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -1036,5 +1036,38 @@
   </data>
   <data name="StaffingSourceAutomaticStaticHelp" xml:space="preserve">
     <value>Beräknas från varje enhets nuvarande besättning. Att godkänna bemanningen nedan ersätter den för dagen.</value>
+  </data>
+  <data name="OpenTradeRequestsHeader" xml:space="preserve">
+    <value>Öppna bytesförfrågningar</value>
+  </data>
+  <data name="OpenTradeRequestsHelp" xml:space="preserve">
+    <value>Bytesförfrågningar i grupper du övervakar som ännu inte trätt i kraft. Om du avbryter en meddelas den som frågade och alla som anmält sig.</value>
+  </data>
+  <data name="NoOpenTradeRequests" xml:space="preserve">
+    <value>Det finns inga öppna bytesförfrågningar.</value>
+  </data>
+  <data name="PendingApprovalLabel" xml:space="preserve">
+    <value>Väntar på godkännande</value>
+  </data>
+  <data name="OpenRequestLabel" xml:space="preserve">
+    <value>Öppen för alla</value>
+  </data>
+  <data name="ApplicantsFormat" xml:space="preserve">
+    <value>Sökande: {0}</value>
+  </data>
+  <data name="NoApplicants" xml:space="preserve">
+    <value>inga ännu</value>
+  </data>
+  <data name="CancelTradeConfirm" xml:space="preserve">
+    <value>Avbryta den här bytesförfrågan? Den som frågade och alla som anmält sig meddelas.</value>
+  </data>
+  <data name="CancelTradeButton" xml:space="preserve">
+    <value>Avbryt förfrågan</value>
+  </data>
+  <data name="TradeCancelled" xml:space="preserve">
+    <value>Bytesförfrågan avbröts.</value>
+  </data>
+  <data name="ShiftErrorNotEligible" xml:space="preserve">
+    <value>Den personen uppfyller inte kraven för den här platsen.</value>
   </data>
 </root>

@@ -2217,4 +2217,28 @@
   <data name="RunCardSelectionsMore" xml:space="preserve">
     <value>+{0} ακόμη</value>
   </data>
+  <data name="ShiftTradeSettingsHeader" xml:space="preserve">
+    <value>Ρυθμίσεις ανταλλαγής βαρδιών</value>
+  </data>
+  <data name="ShiftTradeApproversHelp" xml:space="preserve">
+    <value>Ποιος μπορεί να επιλέξει ποιος αιτών αναλαμβάνει ένα αίτημα ανταλλαγής βάρδιας και να εγκρίνει ανταλλαγές που χρειάζονται έγκριση.</value>
+  </data>
+  <data name="ShiftTradeApproversDepartmentAdmins" xml:space="preserve">
+    <value>Διαχειριστές τμήματος</value>
+  </data>
+  <data name="ShiftTradeApproversDepartmentAdminsHelp" xml:space="preserve">
+    <value>Οι διαχειριστές τμήματος (και όποιος μπορεί να δημιουργεί βάρδιες σε όλο το τμήμα) μπορούν πάντα να αποφασίζουν για ανταλλαγές.</value>
+  </data>
+  <data name="ShiftTradeApproversGroupAdmins" xml:space="preserve">
+    <value>Διαχειριστές ομάδων</value>
+  </data>
+  <data name="ShiftTradeApproversRequester" xml:space="preserve">
+    <value>Χρήστης που υπέβαλε το αίτημα</value>
+  </data>
+  <data name="ShiftTradeApproversRequesterHelp" xml:space="preserve">
+    <value>Το άτομο που ανταλλάσσει επιλέγει ποιος παίρνει τη βάρδιά του. Σε βάρδιες που απαιτούν έγκριση, η επιλογή χρειάζεται ακόμη έγκριση.</value>
+  </data>
+  <data name="ShiftTradeApproversRoles" xml:space="preserve">
+    <value>Μέλη αυτών των ρόλων</value>
+  </data>
 </root>

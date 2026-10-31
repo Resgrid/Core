@@ -376,11 +376,43 @@ namespace Resgrid.Tests.Web.User
 		}
 
 		[Test]
-		public async Task Approvals_is_for_supervisors_only()
+		public async Task Approvals_is_for_supervisors_and_trade_approvers_only()
 		{
 			_scope = ShiftManagementScope.None();
 
 			AssertUnauthorized(await _controller.Approvals());
+		}
+
+		[Test]
+		public async Task Approvals_lets_a_trade_approver_role_pick_applicants_without_supervising()
+		{
+			_scope = ShiftManagementScope.None();
+			_settings.Setup(x => x.GetShiftTradeApproverSettingsAsync(DepartmentId)).ReturnsAsync(new ShiftTradeApproverSettings { RoleIds = new List<int> { 300 } });
+			_roles.Setup(x => x.GetRolesForUserAsync(Me, DepartmentId)).ReturnsAsync(new List<PersonnelRole> { new PersonnelRole { PersonnelRoleId = 300 } });
+			var shift = new Shift { ShiftId = 5, DepartmentId = DepartmentId, Name = "A", Groups = new List<ShiftGroup> { new ShiftGroup { DepartmentGroupId = 10 } } };
+			_shifts.Setup(x => x.GetAllShiftsByDepartmentAsync(DepartmentId)).ReturnsAsync(new List<Shift> { shift });
+			_shifts.Setup(x => x.GetOpenTradesAsync(DepartmentId)).ReturnsAsync(new List<ShiftSignupTrade>
+			{
+				new ShiftSignupTrade
+				{
+					ShiftSignupTradeId = 8, IsOpen = true,
+					SourceShiftSignup = new ShiftSignup { ShiftId = 5, DepartmentGroupId = 10, UserId = Colleague, ShiftDay = new DateTime(2030, 1, 10) },
+					Users = new List<ShiftSignupTradeUser> { new ShiftSignupTradeUser { UserId = Other, Offered = true } }
+				},
+				new ShiftSignupTrade
+				{
+					ShiftSignupTradeId = 9, IsOpen = true,
+					SourceShiftSignup = new ShiftSignup { ShiftId = 5, DepartmentGroupId = 10, UserId = Colleague, ShiftDay = new DateTime(2030, 1, 11) },
+					Users = new List<ShiftSignupTradeUser>()
+				}
+			});
+
+			var model = (await _controller.Approvals()).Should().BeOfType<ViewResult>().Which.Model.Should().BeOfType<ApprovalsView>().Subject;
+
+			var row = model.OpenTrades.Should().ContainSingle("a request nobody applied for has nothing to pick").Subject;
+			row.ShiftSignupTradeId.Should().Be(8);
+			row.CanPick.Should().BeTrue();
+			row.CanCancel.Should().BeFalse("withdrawing a request is for supervisors");
 		}
 
 		[Test]
@@ -537,16 +569,59 @@ namespace Resgrid.Tests.Web.User
 		[Test]
 		public async Task FinishTrade_passes_the_pick_to_the_service_and_reports_pending_approval()
 		{
+			_scope = ShiftManagementScope.None();
 			var trade = SetupTrade(60, DepartmentId, Other);
 			trade.SourceShiftSignup.UserId = Me;
-			_shifts.Setup(x => x.FinishTradeAsync(60, Me, null, 77, It.IsAny<CancellationToken>()))
+			_shifts.Setup(x => x.PickTradeOfferAsync(60, Me, false, null, 77, It.IsAny<CancellationToken>()))
 				.ReturnsAsync(ShiftActionResult<ShiftSignupTrade>.Ok(new ShiftSignupTrade { ApprovalPending = true }));
 
 			var result = await _controller.FinishTrade(new FinishTradeView { Trade = new ShiftSignupTrade { ShiftSignupTradeId = 60 } }, Other, 77, CancellationToken.None);
 
-			result.Should().BeOfType<RedirectToActionResult>();
+			result.Should().BeOfType<RedirectToActionResult>().Which.ActionName.Should().Be("YourShifts");
 			Message.Should().Be("TradeWaitingForApproval");
 			_events.VerifyNoOtherCalls();
+		}
+
+		[Test]
+		public async Task FinishTrade_lets_a_group_admin_pick_as_the_approver_when_requesters_do_not_decide()
+		{
+			_scope = new ShiftManagementScope { GroupIds = new HashSet<int> { 10 } };
+			_settings.Setup(x => x.GetShiftTradeApproverSettingsAsync(DepartmentId)).ReturnsAsync(new ShiftTradeApproverSettings { Requester = false });
+			SetupShift(5, DepartmentId, 10);
+			var trade = SetupTrade(60, DepartmentId, Other);
+			trade.SourceShiftSignup.DepartmentGroupId = 10;
+			_shifts.Setup(x => x.PickTradeOfferAsync(60, Me, true, Other, null, It.IsAny<CancellationToken>()))
+				.ReturnsAsync(ShiftActionResult<ShiftSignupTrade>.Ok(new ShiftSignupTrade()));
+
+			(await _controller.FinishTrade(60)).Should().BeOfType<ViewResult>();
+			var result = await _controller.FinishTrade(new FinishTradeView { Trade = new ShiftSignupTrade { ShiftSignupTradeId = 60 } }, Other, null, CancellationToken.None);
+
+			result.Should().BeOfType<RedirectToActionResult>().Which.ActionName.Should().Be("Approvals");
+			Message.Should().Be("TradeCompleted");
+		}
+
+		[Test]
+		public async Task FinishTrade_refuses_the_requester_when_only_approvers_decide()
+		{
+			_scope = ShiftManagementScope.None();
+			_settings.Setup(x => x.GetShiftTradeApproverSettingsAsync(DepartmentId)).ReturnsAsync(new ShiftTradeApproverSettings { Requester = false });
+			var trade = SetupTrade(60, DepartmentId, Other);
+			trade.SourceShiftSignup.UserId = Me;
+
+			AssertUnauthorized(await _controller.FinishTrade(60));
+			AssertUnauthorized(await _controller.FinishTrade(new FinishTradeView { Trade = new ShiftSignupTrade { ShiftSignupTradeId = 60 } }, Other, null, CancellationToken.None));
+			_shifts.Verify(x => x.PickTradeOfferAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<int?>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public async Task FinishTrade_refuses_someone_who_neither_asked_nor_approves()
+		{
+			_scope = new ShiftManagementScope { GroupIds = new HashSet<int> { 11 } };
+			SetupShift(5, DepartmentId, 10, 11);
+			var trade = SetupTrade(60, DepartmentId, Other);
+			trade.SourceShiftSignup.DepartmentGroupId = 10;
+
+			AssertUnauthorized(await _controller.FinishTrade(60));
 		}
 
 		[Test]

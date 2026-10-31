@@ -13,7 +13,10 @@ namespace Resgrid.Web.Areas.User.Models.Shifts
 		public List<PendingSignupRow> Signups { get; set; } = new List<PendingSignupRow>();
 		public List<PendingTradeRow> Trades { get; set; } = new List<PendingTradeRow>();
 
-		/// <summary>Trade requests in slots the user supervises that have not taken effect, which they may cancel.</summary>
+		/// <summary>
+		/// Trade requests that have not taken effect in slots the user supervises (which they may cancel) or decides as a
+		/// trade approver (where they may pick an applicant).
+		/// </summary>
 		public List<OpenTradeRow> OpenTrades { get; set; } = new List<OpenTradeRow>();
 	}
 
@@ -33,6 +36,12 @@ namespace Resgrid.Web.Areas.User.Models.Shifts
 		public bool IsOpen { get; set; }
 		public bool ApprovalPending { get; set; }
 		public string Note { get; set; }
+
+		/// <summary>The user supervises the slot and may withdraw the request.</summary>
+		public bool CanCancel { get; set; }
+
+		/// <summary>The user decides the slot as a trade approver and may pick which applicant takes it.</summary>
+		public bool CanPick { get; set; }
 	}
 
 	public class PendingSignupRow

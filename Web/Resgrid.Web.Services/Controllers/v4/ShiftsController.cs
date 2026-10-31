@@ -536,8 +536,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 				var eligibility = lookups.Authority.IsRequester(trade) ? null : await _shiftsService.GetTradeEligibilityAsync(trade);
 				var converted = await ConvertTradeAsync(trade, lookups, eligibility);
 
-				if (!converted.IsOver)
-					result.Data.Add(converted);
+				if (converted.IsOver)
+					continue;
+
+				if (!await MayDecideTradeAsync(trade, lookups))
+					HideDecisionNotes(converted, trade, lookups.UserId);
+
+				result.Data.Add(converted);
 			}
 
 			result.Data = result.Data.OrderBy(x => x.Start).ToList();
@@ -552,7 +557,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>
 		/// One trade. The requester and the people who may decide it also get what they need to choose between applicants:
 		/// each applicant's group, roles, current certifications, whether they still qualify, how much they are working in
-		/// the week either side, and any shift they are already on that overlaps.
+		/// the week either side, and any shift they are already on that overlaps. Anyone else sees an open request, or one
+		/// they were asked to take, without other applicants' notes.
 		/// </summary>
 		/// <param name="id">Shift signup trade id</param>
 		[HttpGet("GetShiftTrade")]
@@ -571,12 +577,22 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 
 			var lookups = await GetLookupsAsync();
+			var mayDecide = await MayDecideTradeAsync(trade, lookups);
+
+			// A request offered to particular people is only theirs to see (as on the web); an open one is on the board.
+			if (!mayDecide && !trade.IsOpen && !IsTradeParticipant(trade, lookups.UserId))
+			{
+				result.Status = ResponseHelper.NotFound;
+				ResponseHelper.PopulateV4ResponseData(result);
+				return result;
+			}
+
 			var eligibility = await _shiftsService.GetTradeEligibilityAsync(trade);
 			var data = await ConvertTradeAsync(trade, lookups, lookups.Authority.IsRequester(trade) ? null : eligibility);
-			var shift = await GetTradeShiftAsync(trade, lookups);
-			var mayDecide = lookups.Authority.IsRequester(trade) || lookups.Authority.IsSupervisor(trade, shift);
 
-			if (mayDecide && data.Users.Any())
+			if (!mayDecide)
+				HideDecisionNotes(data, trade, lookups.UserId);
+			else if (data.Users.Any())
 				await AddApplicantDetailsAsync(data, trade, eligibility, lookups);
 
 			result.Data = data;
@@ -1481,6 +1497,31 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var shifts = await GetShiftsAsync(lookups);
 
 			return shifts.FirstOrDefault(x => x.ShiftId == source?.ShiftId) ?? source?.Shift;
+		}
+
+		/// <summary>The requester, or someone who supervises or approves the trade's slot.</summary>
+		private async Task<bool> MayDecideTradeAsync(ShiftSignupTrade trade, Lookups lookups)
+		{
+			return lookups.Authority.IsRequester(trade) || lookups.Authority.IsSupervisor(trade, await GetTradeShiftAsync(trade, lookups));
+		}
+
+		/// <summary>Asked to take the trade, or applied for it.</summary>
+		private static bool IsTradeParticipant(ShiftSignupTrade trade, string userId)
+		{
+			return (trade?.Users ?? new List<ShiftSignupTradeUser>()).Any(x => x != null && SameUser(x.UserId, userId));
+		}
+
+		/// <summary>
+		/// What someone who can't decide a trade sees of it: their own note but nobody else's, and the approver's note only
+		/// when they are part of the trade.
+		/// </summary>
+		private static void HideDecisionNotes(ShiftTradeResultData data, ShiftSignupTrade trade, string userId)
+		{
+			if (!IsTradeParticipant(trade, userId))
+				data.ReviewNote = "";
+
+			foreach (var user in data.Users.Where(x => !SameUser(x.UserId, userId)))
+				user.Reason = "";
 		}
 
 		private async Task<List<ShiftPersonOptionResultData>> GetPersonnelOptionsAsync(ShiftDaySchedule schedule, Lookups lookups)

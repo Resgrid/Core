@@ -4831,7 +4831,8 @@
             <summary>
             One trade. The requester and the people who may decide it also get what they need to choose between applicants:
             each applicant's group, roles, current certifications, whether they still qualify, how much they are working in
-            the week either side, and any shift they are already on that overlaps.
+            the week either side, and any shift they are already on that overlaps. Anyone else sees an open request, or one
+            they were asked to take, without other applicants' notes.
             </summary>
             <param name="id">Shift signup trade id</param>
         </member>
@@ -4903,6 +4904,18 @@
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ShiftsController.GetTradeShiftAsync(Resgrid.Model.ShiftSignupTrade,Resgrid.Web.Services.Controllers.v4.ShiftsController.Lookups)">
             <summary>The shift a trade is on (with its groups, for supervision checks); null for a static shift day trade.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ShiftsController.MayDecideTradeAsync(Resgrid.Model.ShiftSignupTrade,Resgrid.Web.Services.Controllers.v4.ShiftsController.Lookups)">
+            <summary>The requester, or someone who supervises or approves the trade's slot.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ShiftsController.IsTradeParticipant(Resgrid.Model.ShiftSignupTrade,System.String)">
+            <summary>Asked to take the trade, or applied for it.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ShiftsController.HideDecisionNotes(Resgrid.Web.Services.Models.v4.Shifts.ShiftTradeResultData,Resgrid.Model.ShiftSignupTrade,System.String)">
+            <summary>
+            What someone who can't decide a trade sees of it: their own note but nobody else's, and the approver's note only
+            when they are part of the trade.
+            </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ShiftsController.GetDepartmentTradeAsync(System.Int32)">
             <summary>The trade, when it belongs to the caller's department (shift trades by their shift, static shift trades by their row).</summary>
@@ -17503,6 +17516,9 @@
         <member name="T:Resgrid.Web.Services.Models.v4.Shifts.ShiftTradeUserResultData">
             <summary>Someone asked to take a trade</summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Shifts.ShiftTradeUserResultData.Reason">
+            <summary>Their note when applying or declining; empty unless it is the caller's own or the caller may decide the trade</summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Shifts.ShiftTradeUserResultData.RespondedOn">
             <summary>When they applied or answered (UTC), when known</summary>
         </member>
@@ -17539,6 +17555,9 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Shifts.ShiftTradeResultData.MyState">
             <summary>The caller's own state as an invited user (ShiftSignupTradeStates)</summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Shifts.ShiftTradeResultData.ReviewNote">
+            <summary>The approver's note; empty for a caller who is neither part of the trade nor able to decide it</summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Shifts.ShiftTradeResultData.CanReview">
             <summary>The caller can approve or deny it now</summary>
         </member>
@@ -17567,7 +17586,7 @@
             <summary>The caller can pick which applicant takes the slot</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Shifts.ShiftTradeResultData.PickIsApproval">
-            <summary>The caller's pick takes effect at once (they decide as an approver, not only as the requester)</summary>
+            <summary>The caller picks as an approver, so the pick is also the approval (a requester's pick may still wait for one)</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Shifts.ShiftTradeResultData.CanCancel">
             <summary>The caller can cancel it</summary>

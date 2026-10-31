@@ -92,6 +92,7 @@ namespace Resgrid.Web.Services.Models.v4.Shifts
 
 		public bool Offered { get; set; }
 
+		/// <summary>Their note when applying or declining; empty unless it is the caller's own or the caller may decide the trade</summary>
 		public string Reason { get; set; }
 
 		public List<ShiftTradeOfferedShiftResultData> OfferedShifts { get; set; } = new List<ShiftTradeOfferedShiftResultData>();
@@ -173,6 +174,7 @@ namespace Resgrid.Web.Services.Models.v4.Shifts
 
 		public DateTime? TargetShiftDay { get; set; }
 
+		/// <summary>The approver's note; empty for a caller who is neither part of the trade nor able to decide it</summary>
 		public string ReviewNote { get; set; }
 
 		public string ReviewedByName { get; set; }
@@ -214,7 +216,7 @@ namespace Resgrid.Web.Services.Models.v4.Shifts
 		/// <summary>The caller can pick which applicant takes the slot</summary>
 		public bool CanPick { get; set; }
 
-		/// <summary>The caller's pick takes effect at once (they decide as an approver, not only as the requester)</summary>
+		/// <summary>The caller picks as an approver, so the pick is also the approval (a requester's pick may still wait for one)</summary>
 		public bool PickIsApproval { get; set; }
 
 		/// <summary>The caller can cancel it</summary>

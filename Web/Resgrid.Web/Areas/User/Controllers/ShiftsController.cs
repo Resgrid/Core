@@ -84,9 +84,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.CanDeleteShifts = User.HasClaim(ResgridClaimTypes.Resources.Shift, ResgridClaimTypes.Actions.Delete);
 			model.ManageableShiftIds = new HashSet<int>(model.Shifts.Where(x => x != null && scope.CanManageShift(x)).Select(x => x.ShiftId));
 
-			if (scope.IsSupervisor)
+			var authority = await GetTradeAuthorityAsync(scope);
+			model.HasApprovals = authority.HasApprovals;
+
+			if (authority.HasApprovals)
 			{
-				var pending = await GetPendingApprovalsAsync(scope, model.Shifts);
+				var pending = await GetPendingApprovalsAsync(scope, model.Shifts, authority);
 				model.PendingApprovalsCount = pending.Signups.Count + pending.Trades.Count;
 			}
 
@@ -655,13 +658,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> Approvals()
 		{
 			var lookups = await GetLookupsAsync();
+			var authority = await GetTradeAuthorityAsync(lookups.Scope);
 
-			if (!lookups.Scope.IsSupervisor)
+			// Members of a trade approver role decide trades here without supervising a group.
+			if (!authority.HasApprovals)
 				return Unauthorized();
 
 			var model = new ApprovalsView { Department = lookups.Department };
 			var shifts = await _shiftsService.GetAllShiftsByDepartmentAsync(DepartmentId) ?? new List<Shift>();
-			var pending = await GetPendingApprovalsAsync(lookups.Scope, shifts);
+			var pending = await GetPendingApprovalsAsync(lookups.Scope, shifts, authority);
 
 			foreach (var signup in pending.Signups)
 			{
@@ -706,15 +711,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 				});
 			}
 
-			// Every request that has not taken effect in a slot this supervisor manages, so it can be withdrawn here.
-			var cancellable = (await _shiftsService.GetOpenTradesAsync(DepartmentId) ?? new List<ShiftSignupTrade>())
+			// Every request that has not taken effect in a slot this user supervises or decides, so it can be withdrawn or
+			// an applicant picked here.
+			var openTrades = (await _shiftsService.GetOpenTradesAsync(DepartmentId) ?? new List<ShiftSignupTrade>())
 				.Concat(pending.Trades)
 				.GroupBy(x => x.ShiftSignupTradeId)
 				.Select(x => x.First());
 
-			foreach (var trade in cancellable)
+			foreach (var trade in openTrades)
 			{
-				var row = await BuildOpenTradeRowAsync(trade, lookups, shifts);
+				var row = await BuildOpenTradeRowAsync(trade, lookups, shifts, authority);
 
 				if (row != null)
 					model.OpenTrades.Add(row);
@@ -776,7 +782,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return shift != null && scope.CanManageShiftGroup(shift, trade.SourceShiftSignup.DepartmentGroupId);
 		}
 
-		private async Task<OpenTradeRow> BuildOpenTradeRowAsync(ShiftSignupTrade trade, ShiftLookups lookups, List<Shift> shifts)
+		/// <summary>
+		/// A trade request for the approvals page: one the user supervises can be withdrawn, and one they decide as an
+		/// approver can have its applicant picked. Neither, and it is not listed.
+		/// </summary>
+		private async Task<OpenTradeRow> BuildOpenTradeRowAsync(ShiftSignupTrade trade, ShiftLookups lookups, List<Shift> shifts, ShiftTradeAuthority authority)
 		{
 			if (trade == null || trade.IsTradeComplete())
 				return null;
@@ -794,8 +804,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (trade.IsWorkshiftTrade())
 			{
+				// Static shift day applicants are picked in the apps; the web pick page is for shift signups.
 				if (!lookups.Scope.AllGroups && !lookups.Scope.CanManageGroup(trade.DepartmentGroupId))
 					return null;
+
+				row.CanCancel = true;
 
 				var staffing = await _shiftStaffingService.GetWorkshiftDayStaffingAsync(trade.WorkshiftDayId);
 
@@ -812,7 +825,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var source = trade.SourceShiftSignup;
 			var shift = source != null ? shifts.FirstOrDefault(x => x.ShiftId == source.ShiftId) ?? source.Shift : null;
 
-			if (shift == null || !lookups.Scope.CanManageShiftGroup(shift, source.DepartmentGroupId))
+			if (shift == null)
+				return null;
+
+			row.CanCancel = lookups.Scope.CanManageShiftGroup(shift, source.DepartmentGroupId);
+			row.CanPick = trade.IsOpenForOffers() && row.ApplicantNames.Any() && authority.IsApprover(shift, source.DepartmentGroupId);
+
+			if (!row.CanCancel && !row.CanPick)
 				return null;
 
 			var day = FindDay(shift, source.ShiftDay);
@@ -978,6 +997,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				Names = lookups.Names,
 				GroupNames = lookups.GroupNames
 			};
+
+			// When only approvers decide trades, a requester who isn't one has nothing to pick (FinishTrade refuses them).
+			var authority = await GetTradeAuthorityAsync();
+			model.CanPickOwnTrades = authority.Settings?.Requester == true || authority.IsDepartmentApprover;
 
 			// A member of several departments has signups in each; this page is for the active one.
 			model.Signups = (await _shiftsService.GetShiftSignupsForUserAsync(UserId) ?? new List<ShiftSignup>())
@@ -1225,7 +1248,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (trade == null)
 				return RedirectToAction("YourShifts");
 
-			if (!await CanUserFinishTradeAsync(trade))
+			if (!(await CanUserFinishTradeAsync(trade)).Allowed)
 				return Unauthorized();
 
 			return View(await BuildFinishTradeViewAsync(trade));
@@ -1245,7 +1268,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return RedirectToAction("YourShifts");
 
 			// Authorize against the trade loaded from the database, never the one posted in the form.
-			if (!await CanUserFinishTradeAsync(trade))
+			var access = await CanUserFinishTradeAsync(trade);
+
+			if (!access.Allowed)
 				return Unauthorized();
 
 			if (String.IsNullOrWhiteSpace(acceptedUserId) && !(targetShiftSignupId > 0))
@@ -1255,8 +1280,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return View(view);
 			}
 
-			// The service checks the pick against the offers actually made on this trade.
-			var result = await _shiftsService.FinishTradeAsync(trade.ShiftSignupTradeId, UserId,
+			// The service checks the pick against the offers actually made on this trade. An approver's pick is the approval.
+			var result = await _shiftsService.PickTradeOfferAsync(trade.ShiftSignupTradeId, UserId, access.AsApprover,
 				targetShiftSignupId > 0 ? null : acceptedUserId, targetShiftSignupId > 0 ? targetShiftSignupId : null, cancellationToken);
 
 			if (!result.Success)
@@ -1271,7 +1296,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			else
 				SetMessage(_localizer["TradeCompleted"]);
 
-			return RedirectToAction("YourShifts");
+			// An approver picking for someone else came from the approvals page.
+			return access.AsApprover && !SameUser(trade.GetSourceUserId(), UserId) ? RedirectToAction("Approvals") : RedirectToAction("YourShifts");
 		}
 
 		#endregion Your shifts and trades
@@ -2454,27 +2480,32 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return null;
 		}
 
-		// Finishing a trade is the source signup owner picking which offer to accept. GetShiftTradeByIdAsync loads the
-		// source signup and its shift; the fallbacks cover a trade loaded without them.
-		private async Task<bool> CanUserFinishTradeAsync(ShiftSignupTrade trade)
+		// Finishing a trade is picking which offer to accept: an approver for the slot may (as the v4 FinishShiftTrade does),
+		// and so may the source signup owner when the department lets requesters decide. GetShiftTradeByIdAsync loads the
+		// source signup; the fallback covers a trade loaded without it. The full shift (with its groups) is what a group
+		// admin's approval is checked against.
+		private async Task<(bool Allowed, bool AsApprover)> CanUserFinishTradeAsync(ShiftSignupTrade trade)
 		{
 			if (trade == null)
-				return false;
+				return (false, false);
 
 			var sourceSignup = trade.SourceShiftSignup ?? (trade.SourceShiftSignupId.HasValue ? await _shiftsService.GetShiftSignupByIdAsync(trade.SourceShiftSignupId.Value) : null);
 
-			if (sourceSignup == null || !SameUser(sourceSignup.UserId, UserId))
-				return false;
+			if (sourceSignup == null)
+				return (false, false);
 
-			var sourceShift = sourceSignup.Shift ?? await _shiftsService.GetShiftByIdAsync(sourceSignup.ShiftId);
+			var sourceShift = await _shiftsService.GetShiftByIdAsync(sourceSignup.ShiftId) ?? sourceSignup.Shift;
 
 			if (sourceShift == null || sourceShift.DepartmentId != DepartmentId)
-				return false;
+				return (false, false);
 
-			// A department can leave the choice to its approvers; the requester then cannot pick here either.
-			var settings = await _departmentSettingsService.GetShiftTradeApproverSettingsAsync(DepartmentId) ?? ShiftTradeApproverSettings.Default();
+			var authority = await GetTradeAuthorityAsync();
 
-			return settings.Requester;
+			if (authority.IsApprover(sourceShift, sourceSignup.DepartmentGroupId))
+				return (true, true);
+
+			// A department can leave the choice to its approvers; the requester then cannot pick either.
+			return (authority.Settings?.Requester == true && SameUser(sourceSignup.UserId, UserId), false);
 		}
 
 		private async Task<ProcessTradeView> BuildProcessTradeViewAsync(ShiftSignupTrade trade)
@@ -2541,7 +2572,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return model;
 		}
 
-		private async Task<(List<ShiftSignup> Signups, List<ShiftSignupTrade> Trades)> GetPendingApprovalsAsync(ShiftManagementScope scope, List<Shift> shifts)
+		private async Task<(List<ShiftSignup> Signups, List<ShiftSignupTrade> Trades)> GetPendingApprovalsAsync(ShiftManagementScope scope, List<Shift> shifts,
+			ShiftTradeAuthority authority)
 		{
 			// Full shifts (with groups) so a slot with no group can be checked against the whole shift.
 			var shiftsById = (shifts ?? new List<Shift>()).Where(x => x != null).GroupBy(x => x.ShiftId).ToDictionary(x => x.Key, x => x.First());
@@ -2556,8 +2588,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 				signup.Shift = shift;
 				signups.Add(signup);
 			}
-
-			var authority = await GetTradeAuthorityAsync(scope);
 
 			foreach (var trade in await _shiftsService.GetPendingTradesAsync(DepartmentId) ?? new List<ShiftSignupTrade>())
 			{

@@ -228,11 +228,18 @@
 												<br /><small class="text-muted">@localizer["EndLabel"] @FormatTime(trade.End)</small>
 											</td>
 											<td>
-												<form method="post" asp-controller="Shifts" asp-action="CancelTrade" asp-route-area="User" class="form-inline"
-												      data-confirm="@localizer["CancelTradeConfirm"]" onsubmit="return confirm(this.getAttribute('data-confirm'));">
-													<input type="hidden" name="shiftSignupTradeId" value="@trade.ShiftSignupTradeId" />
-													<button type="submit" class="btn btn-xs btn-danger">@localizer["CancelTradeButton"]</button>
-												</form>
+												@if (trade.CanPick)
+												{
+													<a class="btn btn-xs btn-info" asp-controller="Shifts" asp-action="FinishTrade" asp-route-area="User" asp-route-shiftSignupTradeId="@trade.ShiftSignupTradeId"><i class='icon-ok'></i> @localizer["FinishTrade"]</a>
+												}
+												@if (trade.CanCancel)
+												{
+													<form method="post" asp-controller="Shifts" asp-action="CancelTrade" asp-route-area="User" class="form-inline" style="display:inline;"
+													      data-confirm="@localizer["CancelTradeConfirm"]" onsubmit="return confirm(this.getAttribute('data-confirm'));">
+														<input type="hidden" name="shiftSignupTradeId" value="@trade.ShiftSignupTradeId" />
+														<button type="submit" class="btn btn-xs btn-danger">@localizer["CancelTradeButton"]</button>
+													</form>
+												}
 											</td>
 										</tr>
 									}

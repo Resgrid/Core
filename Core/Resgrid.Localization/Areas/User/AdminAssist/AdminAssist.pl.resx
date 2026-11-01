@@ -7719,4 +7719,49 @@
   <data xml:space="preserve" name="SettingHelp.ShiftTradeApprovers">
     <value>Kto wybiera, który zgłoszony przejmuje prośbę o zamianę zmiany, i zatwierdza oczekujące zamiany. Administratorzy jednostki zawsze mogą; administratorzy grup, osoba oddająca zmianę i członkowie wybranych ról zależą od wyboru jednostki.</value>
   </data>
+  <data xml:space="preserve" name="Feature.home-dashboard">
+    <value>Konfigurowalny pulpit startowy</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.home-dashboard">
+    <value>Strona startowa z widżetami na żywo, które każdy członek układa sam, zapisana na jego koncie.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureValue.home-dashboard">
+    <value>Członkowie widzą na jednym ekranie wszystko, co wymaga ich uwagi we wszystkich modułach, a ich układ jest dostępny w każdej przeglądarce.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureExample.home-dashboard">
+    <value>Dyspozytorzy zaczynają od aktywnych zgłoszeń, statusu jednostek i mapy; członkowie od swojego statusu, zmian i zaległych list kontrolnych.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.home-dashboard">
+    <value>Włącz nowy pulpit, a następnie sprawdź domyślną tablicę, którą widzi każda rola, zanim członkowie ją dostosują.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.dashboard-templates">
+    <value>Szablony pulpitu</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.dashboard-templates">
+    <value>Domyślne pulpity oddziału dla wszystkich, jednej roli personelu lub jednej grupy.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureValue.dashboard-templates">
+    <value>Członkowie, którzy niczego nie dostosowali, zaczynają od tablicy dobranej do ich zadań zamiast wbudowanej domyślnej.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureExample.dashboard-templates">
+    <value>Szablon dla roli Dyspozytor ze zgłoszeniami, jednostkami i mapą oraz domyślny szablon oddziału ze statusem, zmianami i listami kontrolnymi.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.dashboard-templates">
+    <value>Utwórz domyślny szablon oddziału, a następnie dodaj szablony dla ról lub grup tam, gdzie dane zadanie wymaga innej tablicy.</value>
+  </data>
+  <data xml:space="preserve" name="Topic.dashboard-customize">
+    <value>Dostosowywanie pulpitu startowego</value>
+  </data>
+  <data xml:space="preserve" name="Topic.dashboard-defaults">
+    <value>Który pulpit widzi członek</value>
+  </data>
+  <data xml:space="preserve" name="Topic.dashboard-addon-widgets">
+    <value>Widżety dodatków i zablokowane karty</value>
+  </data>
+  <data xml:space="preserve" name="Topic.dashboard-data-protection">
+    <value>Dane chronione na pulpicie</value>
+  </data>
+  <data xml:space="preserve" name="Topic.dashboard-classic">
+    <value>Włączanie nowego pulpitu i powrót do klasycznego</value>
+  </data>
 </root>

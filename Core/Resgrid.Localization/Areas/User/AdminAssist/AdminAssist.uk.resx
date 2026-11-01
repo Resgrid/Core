@@ -7719,4 +7719,49 @@
   <data xml:space="preserve" name="SettingHelp.ShiftTradeApprovers">
     <value>Хто обирає кандидата, який бере запит на обмін зміною, і схвалює обміни в очікуванні. Адміністратори підрозділу можуть завжди; адміністратори груп, особа, що віддає зміну, та учасники обраних ролей — на вибір підрозділу.</value>
   </data>
+  <data xml:space="preserve" name="Feature.home-dashboard">
+    <value>Настроювана головна панель огляду</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.home-dashboard">
+    <value>Головна сторінка з віджетами в реальному часі, які кожен учасник упорядковує сам; зберігається в його обліковому записі.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureValue.home-dashboard">
+    <value>Учасники бачать на одному екрані все, що потребує їхньої уваги в усіх модулях, а їхнє розташування доступне в будь-якому браузері.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureExample.home-dashboard">
+    <value>Диспетчери бачать активні виклики, статус підрозділів і карту; учасники — свій статус, зміни та контрольні списки, які треба виконати.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.home-dashboard">
+    <value>Увімкніть нову панель огляду, а потім перевірте типову дошку, яку бачить кожна роль, перш ніж учасники її налаштують.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.dashboard-templates">
+    <value>Шаблони панелі огляду</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.dashboard-templates">
+    <value>Типові панелі огляду підрозділу для всіх, для ролі персоналу або для групи.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureValue.dashboard-templates">
+    <value>Учасники, які нічого не налаштовували, починають із дошки, підібраної для їхньої роботи, замість вбудованої типової.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureExample.dashboard-templates">
+    <value>Шаблон для ролі «Диспетчер» із викликами, підрозділами та картою, і типовий шаблон підрозділу зі статусом, змінами та контрольними списками.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.dashboard-templates">
+    <value>Створіть типовий шаблон підрозділу, а потім додайте шаблони для ролей чи груп там, де роботі потрібна інша дошка.</value>
+  </data>
+  <data xml:space="preserve" name="Topic.dashboard-customize">
+    <value>Налаштування головної панелі огляду</value>
+  </data>
+  <data xml:space="preserve" name="Topic.dashboard-defaults">
+    <value>Яку панель огляду бачить учасник</value>
+  </data>
+  <data xml:space="preserve" name="Topic.dashboard-addon-widgets">
+    <value>Віджети доповнень і заблоковані картки</value>
+  </data>
+  <data xml:space="preserve" name="Topic.dashboard-data-protection">
+    <value>Захищені дані на панелі огляду</value>
+  </data>
+  <data xml:space="preserve" name="Topic.dashboard-classic">
+    <value>Увімкнення нової панелі огляду та повернення до класичної</value>
+  </data>
 </root>

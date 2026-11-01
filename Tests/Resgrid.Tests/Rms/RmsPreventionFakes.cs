@@ -177,6 +177,8 @@ namespace Resgrid.Tests.Rms
 		public Task<int> CountLiveAsync(int departmentId) => Task.FromResult(Live(departmentId).Count());
 		public Task<int> CountOutOfServiceAsync(int departmentId) => Task.FromResult(Live(departmentId).Count(h => !h.InService));
 		public Task<int> CountTestDueAsync(int departmentId, DateTime cutoffUtc) => Task.FromResult(Live(departmentId).Count(h => h.InService && (h.LastTestedOn == null || h.LastTestedOn < cutoffUtc)));
+		public Task<IEnumerable<RmsHydrant>> GetOutOfServiceAsync(int departmentId, int take) => Task.FromResult<IEnumerable<RmsHydrant>>(Live(departmentId).Where(h => !h.InService)
+			.OrderBy(h => h.OutOfServiceSince.HasValue ? 0 : 1).ThenBy(h => h.OutOfServiceSince).ThenBy(h => h.HydrantNumber).Take(take).ToList());
 	}
 
 	public class FakeFlowTests : InMemoryRepo<RmsHydrantFlowTest>, IRmsHydrantFlowTestsRepository

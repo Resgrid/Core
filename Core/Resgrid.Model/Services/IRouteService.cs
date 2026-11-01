@@ -36,6 +36,9 @@ namespace Resgrid.Model.Services
 		Task<RouteInstance> GetActiveInstanceForUnitAsync(int unitId);
 		Task<RouteInstance> GetInstanceByIdAsync(string routeInstanceId);
 		Task<List<RouteInstance>> GetInstancesForDepartmentAsync(int departmentId);
+
+		/// <summary>In-progress and paused instances only, without geometry or notes (the home dashboard's route widget).</summary>
+		Task<List<RouteInstance>> GetActiveInstancesForDepartmentAsync(int departmentId);
 		Task<List<RouteInstance>> GetInstancesByDateRangeAsync(int departmentId, DateTime startDate, DateTime endDate);
 
 		// Stop Check-in/Check-out

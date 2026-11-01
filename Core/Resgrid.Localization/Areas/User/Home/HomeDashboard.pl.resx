@@ -113,4 +113,601 @@
   <data name="ToggleCollapseGroupsOnce" xml:space="preserve">
     <value>Zwiń/rozwiń grupy (zapisywane)</value>
   </data>
+  <data name="DashboardPageTitle" xml:space="preserve">
+    <value>Pulpit</value>
+  </data>
+  <data name="Category.Operations" xml:space="preserve">
+    <value>Operacje</value>
+  </data>
+  <data name="Category.Personnel" xml:space="preserve">
+    <value>Personel</value>
+  </data>
+  <data name="Category.Awareness" xml:space="preserve">
+    <value>Mapa i pogoda</value>
+  </data>
+  <data name="Category.Communications" xml:space="preserve">
+    <value>Łączność</value>
+  </data>
+  <data name="Category.Planning" xml:space="preserve">
+    <value>Planowanie</value>
+  </data>
+  <data name="Category.Readiness" xml:space="preserve">
+    <value>Gotowość</value>
+  </data>
+  <data name="Category.Records" xml:space="preserve">
+    <value>Rejestry</value>
+  </data>
+  <data name="Category.Business" xml:space="preserve">
+    <value>Kadry i biznes</value>
+  </data>
+  <data name="Category.IncidentBackOffice" xml:space="preserve">
+    <value>Incident Back Office</value>
+  </data>
+  <data name="Category.Intelligence" xml:space="preserve">
+    <value>Analizy</value>
+  </data>
+  <data name="Category.Administration" xml:space="preserve">
+    <value>Administracja</value>
+  </data>
+  <data name="WidgetErrorFailed" xml:space="preserve">
+    <value>Nie udało się załadować tego widżetu. Spróbuj ponownie za chwilę.</value>
+  </data>
+  <data name="WidgetErrorForbidden" xml:space="preserve">
+    <value>Nie masz już dostępu do tego widżetu.</value>
+  </data>
+  <data name="WidgetErrorNotFound" xml:space="preserve">
+    <value>Ten widżet nie jest już dostępny.</value>
+  </data>
+  <data name="WidgetErrorProtected" xml:space="preserve">
+    <value>Dane chronione. Zweryfikuj tożsamość, aby wyświetlić.</value>
+  </data>
+  <data name="SaveErrorConflict" xml:space="preserve">
+    <value>Twój pulpit został zmieniony w innym oknie.</value>
+  </data>
+  <data name="SaveErrorInvalid" xml:space="preserve">
+    <value>Nie udało się zapisać tego układu.</value>
+  </data>
+  <data name="SaveErrorTooLarge" xml:space="preserve">
+    <value>Ten układ jest zbyt duży, aby go zapisać. Usuń kilka widżetów i spróbuj ponownie.</value>
+  </data>
+  <data name="SaveErrorLimitReached" xml:space="preserve">
+    <value>Osiągnięto limit.</value>
+  </data>
+  <data name="SaveErrorNotFound" xml:space="preserve">
+    <value>Ta tablica już nie istnieje.</value>
+  </data>
+  <data name="Pulse.OpenCalls" xml:space="preserve">
+    <value>aktywne zgłoszenia</value>
+  </data>
+  <data name="Pulse.Unread" xml:space="preserve">
+    <value>nieprzeczytane wiadomości</value>
+  </data>
+  <data name="Pulse.Pending" xml:space="preserve">
+    <value>oczekujące zgłoszenia</value>
+  </data>
+  <data name="Pulse.Awaiting" xml:space="preserve">
+    <value>oczekujące na zasoby</value>
+  </data>
+  <data name="BoardHome" xml:space="preserve">
+    <value>Strona główna</value>
+  </data>
+  <data name="TemplatesTitle" xml:space="preserve">
+    <value>Szablony pulpitu</value>
+  </data>
+  <data name="TemplatesIntro" xml:space="preserve">
+    <value>Szablony określają pulpit widoczny dla członków, dopóki nie dostosują własnego. Przypisz szablon do roli personelu lub grupy albo ustaw go jako domyślny dla oddziału.</value>
+  </data>
+  <data name="TemplateAudienceEveryone" xml:space="preserve">
+    <value>Wszyscy</value>
+  </data>
+  <data name="TemplateAudienceRole" xml:space="preserve">
+    <value>Rola personelu</value>
+  </data>
+  <data name="TemplateAudienceGroup" xml:space="preserve">
+    <value>Grupa</value>
+  </data>
+  <data name="UseClassicDashboard" xml:space="preserve">
+    <value>Użyj klasycznego pulpitu</value>
+  </data>
+  <data name="TryNewDashboard" xml:space="preserve">
+    <value>Wypróbuj nowy pulpit</value>
+  </data>
+  <data name="ClassicDashboardBanner" xml:space="preserve">
+    <value>Dla Twojego oddziału dostępny jest nowy, konfigurowalny pulpit.</value>
+  </data>
+  <data name="NoScriptClassic" xml:space="preserve">
+    <value>Ten pulpit wymaga JavaScriptu. Otwórz zamiast tego klasyczny pulpit.</value>
+  </data>
+  <data name="TemplateNew" xml:space="preserve">
+    <value>Nowy szablon</value>
+  </data>
+  <data name="TemplatesEmpty" xml:space="preserve">
+    <value>Brak szablonów. Członkowie widzą wbudowany pulpit domyślny dla swojej roli, dopóki nie dodasz szablonu.</value>
+  </data>
+  <data name="TemplateName" xml:space="preserve">
+    <value>Nazwa</value>
+  </data>
+  <data name="TemplateAudience" xml:space="preserve">
+    <value>Dla</value>
+  </data>
+  <data name="TemplatePriority" xml:space="preserve">
+    <value>Priorytet</value>
+  </data>
+  <data name="TemplateWidgets" xml:space="preserve">
+    <value>Widżety</value>
+  </data>
+  <data name="TemplateDefault" xml:space="preserve">
+    <value>Domyślny dla oddziału</value>
+  </data>
+  <data name="TemplateEdit" xml:space="preserve">
+    <value>Edytuj</value>
+  </data>
+  <data name="TemplateDelete" xml:space="preserve">
+    <value>Usuń</value>
+  </data>
+  <data name="TemplateDeleteConfirm" xml:space="preserve">
+    <value>Usunąć ten szablon? Członkowie, którzy nie dostosowali swojego pulpitu, zobaczą kolejny pasujący szablon lub wbudowany pulpit domyślny.</value>
+  </data>
+  <data name="SaveErrorNotAllowed" xml:space="preserve">
+    <value>Nie masz uprawnień do wprowadzenia tej zmiany.</value>
+  </data>
+  <data name="Dash.Add" xml:space="preserve">
+    <value>Dodaj</value>
+  </data>
+  <data name="Dash.AddBoard" xml:space="preserve">
+    <value>Dodaj tablicę</value>
+  </data>
+  <data name="Dash.AddNamed" xml:space="preserve">
+    <value>Dodaj: {0}</value>
+  </data>
+  <data name="Dash.AddWidget" xml:space="preserve">
+    <value>Dodaj widżet</value>
+  </data>
+  <data name="Dash.Added" xml:space="preserve">
+    <value>Dodano</value>
+  </data>
+  <data name="Dash.AdpConceal" xml:space="preserve">
+    <value>Ukryj</value>
+  </data>
+  <data name="Dash.AdpConcealedToast" xml:space="preserve">
+    <value>Dane chronione zostały ukryte</value>
+  </data>
+  <data name="Dash.AdpHidden" xml:space="preserve">
+    <value>Dane chronione są ukryte</value>
+  </data>
+  <data name="Dash.AdpProtectedAria" xml:space="preserve">
+    <value>{0}, zweryfikuj tożsamość, aby odkryć</value>
+  </data>
+  <data name="Dash.AdpRevealed" xml:space="preserve">
+    <value>Dane chronione są widoczne</value>
+  </data>
+  <data name="Dash.AdpRevealedToast" xml:space="preserve">
+    <value>Dane chronione zostały odkryte. Każde odkrycie jest rejestrowane w dzienniku audytu oddziału.</value>
+  </data>
+  <data name="Dash.AdpRoleCannotView" xml:space="preserve">
+    <value>Twoja rola nie może tego wyświetlić</value>
+  </data>
+  <data name="Dash.AdpVerifyToReveal" xml:space="preserve">
+    <value>Zweryfikuj, aby odkryć</value>
+  </data>
+  <data name="Dash.AdpWallHidden" xml:space="preserve">
+    <value>Dane chronione pozostają ukryte na ekranie ściennym.</value>
+  </data>
+  <data name="Dash.AdpVerifyTooltip" xml:space="preserve">
+    <value>Zweryfikuj, aby odkryć</value>
+  </data>
+  <data name="Dash.AgeHours" xml:space="preserve">
+    <value>{0} godz. temu</value>
+  </data>
+  <data name="Dash.AgeJustNow" xml:space="preserve">
+    <value>przed chwilą</value>
+  </data>
+  <data name="Dash.AgeLoading" xml:space="preserve">
+    <value>ładowanie</value>
+  </data>
+  <data name="Dash.AgeMinutes" xml:space="preserve">
+    <value>{0} min temu</value>
+  </data>
+  <data name="Dash.AgeReconnecting" xml:space="preserve">
+    <value>ponowne łączenie</value>
+  </data>
+  <data name="Dash.AgeSeconds" xml:space="preserve">
+    <value>{0} s temu</value>
+  </data>
+  <data name="Dash.AgeUpdateFailed" xml:space="preserve">
+    <value>aktualizacja nie powiodła się</value>
+  </data>
+  <data name="Dash.AllCategories" xml:space="preserve">
+    <value>Wszystkie</value>
+  </data>
+  <data name="Dash.Apply" xml:space="preserve">
+    <value>Zastosuj</value>
+  </data>
+  <data name="Dash.AvailableWith" xml:space="preserve">
+    <value>Dostępne w ramach: {0}</value>
+  </data>
+  <data name="Dash.BackToTemplates" xml:space="preserve">
+    <value>Powrót do szablonów</value>
+  </data>
+  <data name="Dash.BadgeAria" xml:space="preserve">
+    <value>Liczba elementów: {0}</value>
+  </data>
+  <data name="Dash.BoardAdded" xml:space="preserve">
+    <value>Dodano tablicę „{0}”</value>
+  </data>
+  <data name="Dash.BoardDeleted" xml:space="preserve">
+    <value>Usunięto tablicę „{0}”</value>
+  </data>
+  <data name="Dash.BoardLoadFailed" xml:space="preserve">
+    <value>Nie udało się załadować tej tablicy. Spróbuj ponownie za chwilę.</value>
+  </data>
+  <data name="Dash.BoardName" xml:space="preserve">
+    <value>Nazwa tablicy</value>
+  </data>
+  <data name="Dash.BoardRenamed" xml:space="preserve">
+    <value>Zmieniono nazwę tablicy na „{0}”</value>
+  </data>
+  <data name="Dash.Boards" xml:space="preserve">
+    <value>Pulpity</value>
+  </data>
+  <data name="Dash.BootstrapFailed" xml:space="preserve">
+    <value>Nie udało się załadować pulpitu.</value>
+  </data>
+  <data name="Dash.Cancel" xml:space="preserve">
+    <value>Anuluj</value>
+  </data>
+  <data name="Dash.Categories" xml:space="preserve">
+    <value>Kategorie widżetów</value>
+  </data>
+  <data name="Dash.ChangesDiscarded" xml:space="preserve">
+    <value>Zmiany zostały odrzucone</value>
+  </data>
+  <data name="Dash.Close" xml:space="preserve">
+    <value>Zamknij</value>
+  </data>
+  <data name="Dash.CoachDismiss" xml:space="preserve">
+    <value>Rozumiem</value>
+  </data>
+  <data name="Dash.CoachText" xml:space="preserve">
+    <value>Użyj opcji Dostosuj, aby dodawać, usuwać, zmieniać rozmiar i kolejność widżetów. Układ jest zapisywany na Twoim koncie, więc będzie dostępny w każdej przeglądarce.</value>
+  </data>
+  <data name="Dash.CoachTitle" xml:space="preserve">
+    <value>Witamy w nowym pulpicie</value>
+  </data>
+  <data name="Dash.ConflictText" xml:space="preserve">
+    <value>Zachować układ z tego ekranu czy wczytać ostatnio zapisany?</value>
+  </data>
+  <data name="Dash.CouldNotLoad" xml:space="preserve">
+    <value>Nie udało się załadować: {0}</value>
+  </data>
+  <data name="Dash.Customize" xml:space="preserve">
+    <value>Dostosuj</value>
+  </data>
+  <data name="Dash.CustomizeRegion" xml:space="preserve">
+    <value>Dostosuj pulpit</value>
+  </data>
+  <data name="Dash.Delete" xml:space="preserve">
+    <value>Usuń</value>
+  </data>
+  <data name="Dash.DeleteBoard" xml:space="preserve">
+    <value>Usuń tablicę</value>
+  </data>
+  <data name="Dash.DeleteBoardConfirm" xml:space="preserve">
+    <value>Usunąć tablicę „{0}”? Jej widżety i ustawienia zostaną usunięte. Pozostałe tablice nie zostaną zmienione.</value>
+  </data>
+  <data name="Dash.Density" xml:space="preserve">
+    <value>Gęstość</value>
+  </data>
+  <data name="Dash.DensityComfortable" xml:space="preserve">
+    <value>Komfortowa</value>
+  </data>
+  <data name="Dash.DensityCompact" xml:space="preserve">
+    <value>Kompaktowa</value>
+  </data>
+  <data name="Dash.DepartmentCodeMeta" xml:space="preserve">
+    <value>Kod: {0}</value>
+  </data>
+  <data name="Dash.DepartmentTime" xml:space="preserve">
+    <value>Czas oddziału</value>
+  </data>
+  <data name="Dash.Dismiss" xml:space="preserve">
+    <value>Odrzuć</value>
+  </data>
+  <data name="Dash.Done" xml:space="preserve">
+    <value>Gotowe</value>
+  </data>
+  <data name="Dash.DragCancelled" xml:space="preserve">
+    <value>Przenoszenie anulowane.</value>
+  </data>
+  <data name="Dash.DragEnded" xml:space="preserve">
+    <value>Widżet został upuszczony.</value>
+  </data>
+  <data name="Dash.DragStarted" xml:space="preserve">
+    <value>Chwycono widżet. Przesuń go nad inny widżet i puść, aby upuścić go przed lub za nim.</value>
+  </data>
+  <data name="Dash.DurationDays" xml:space="preserve">
+    <value>{0} d</value>
+  </data>
+  <data name="Dash.DurationHours" xml:space="preserve">
+    <value>{0} godz. {1} min</value>
+  </data>
+  <data name="Dash.DurationMinutes" xml:space="preserve">
+    <value>{0} min</value>
+  </data>
+  <data name="Dash.EditBarText" xml:space="preserve">
+    <value>Przeciągaj widżety (lub zaznacz jeden i użyj klawiszy strzałek), aby zmienić ich kolejność, wybierz rozmiar, usuń je lub dodaj kolejne. Zapisywane na Twoim koncie, więc dostępne w każdej przeglądarce.</value>
+  </data>
+  <data name="Dash.EditBarTitle" xml:space="preserve">
+    <value>Dostosowywanie pulpitu.</value>
+  </data>
+  <data name="Dash.EditModeAnnounce" xml:space="preserve">
+    <value>Tryb dostosowywania. Użyj klawiszy strzałek na wybranym widżecie, aby go przenieść, plusa i minusa, aby zmienić rozmiar, a klawisza Delete, aby go usunąć.</value>
+  </data>
+  <data name="Dash.EmptyBoard" xml:space="preserve">
+    <value>Ta tablica nie ma jeszcze żadnych widżetów.</value>
+  </data>
+  <data name="Dash.EmptyBoardEditing" xml:space="preserve">
+    <value>Dodaj widżety, aby zbudować tę tablicę.</value>
+  </data>
+  <data name="Dash.EmptyDefault" xml:space="preserve">
+    <value>Brak danych do wyświetlenia.</value>
+  </data>
+  <data name="Dash.ExitWall" xml:space="preserve">
+    <value>Zamknij ekran ścienny</value>
+  </data>
+  <data name="Dash.GreetAfternoon" xml:space="preserve">
+    <value>Dzień dobry, {0}</value>
+  </data>
+  <data name="Dash.GreetAfternoonNoName" xml:space="preserve">
+    <value>Dzień dobry</value>
+  </data>
+  <data name="Dash.GreetEvening" xml:space="preserve">
+    <value>Dobry wieczór, {0}</value>
+  </data>
+  <data name="Dash.GreetEveningNoName" xml:space="preserve">
+    <value>Dobry wieczór</value>
+  </data>
+  <data name="Dash.GreetMorning" xml:space="preserve">
+    <value>Dzień dobry, {0}</value>
+  </data>
+  <data name="Dash.GreetMorningNoName" xml:space="preserve">
+    <value>Dzień dobry</value>
+  </data>
+  <data name="Dash.KeepMine" xml:space="preserve">
+    <value>Zachowaj mój</value>
+  </data>
+  <data name="Dash.KeyboardHelp" xml:space="preserve">
+    <value>Użyj klawiszy strzałek, aby przenieść ten widżet, plusa i minusa, aby zmienić jego rozmiar, a klawisza Delete, aby go usunąć.</value>
+  </data>
+  <data name="Dash.LatestLoaded" xml:space="preserve">
+    <value>Wczytano ostatnio zapisany układ</value>
+  </data>
+  <data name="Dash.Live" xml:space="preserve">
+    <value>na żywo</value>
+  </data>
+  <data name="Dash.LiveTooltip" xml:space="preserve">
+    <value>Aktualizacja na żywo</value>
+  </data>
+  <data name="Dash.LoadLatest" xml:space="preserve">
+    <value>Wczytaj najnowszy</value>
+  </data>
+  <data name="Dash.Loading" xml:space="preserve">
+    <value>Ładowanie</value>
+  </data>
+  <data name="Dash.Locked" xml:space="preserve">
+    <value>Zablokowane</value>
+  </data>
+  <data name="Dash.MaxWidgets" xml:space="preserve">
+    <value>Tablica może zawierać maksymalnie {0} widżetów. Usuń jeden, aby dodać kolejny.</value>
+  </data>
+  <data name="Dash.Message" xml:space="preserve">
+    <value>Wiadomość</value>
+  </data>
+  <data name="Dash.MoreOptions" xml:space="preserve">
+    <value>Więcej opcji pulpitu</value>
+  </data>
+  <data name="Dash.MovableWidget" xml:space="preserve">
+    <value>przesuwalny widżet</value>
+  </data>
+  <data name="Dash.MultiSelectHint" xml:space="preserve">
+    <value>Nie wybieraj żadnych, aby uwzględnić wszystkie.</value>
+  </data>
+  <data name="Dash.MultipleInstances" xml:space="preserve">
+    <value>można dodać więcej niż jeden</value>
+  </data>
+  <data name="Dash.NewCall" xml:space="preserve">
+    <value>Nowe zgłoszenie</value>
+  </data>
+  <data name="Dash.NoOptions" xml:space="preserve">
+    <value>Brak opcji do wyboru.</value>
+  </data>
+  <data name="Dash.NoWidgetsMatch" xml:space="preserve">
+    <value>Brak pasujących widżetów.</value>
+  </data>
+  <data name="Dash.OpenModule" xml:space="preserve">
+    <value>Otwórz moduł</value>
+  </data>
+  <data name="Dash.Protected" xml:space="preserve">
+    <value>Chronione</value>
+  </data>
+  <data name="Dash.PulseLabel" xml:space="preserve">
+    <value>Oddział w skrócie</value>
+  </data>
+  <data name="Dash.Refresh" xml:space="preserve">
+    <value>Odśwież</value>
+  </data>
+  <data name="Dash.Remove" xml:space="preserve">
+    <value>Usuń</value>
+  </data>
+  <data name="Dash.RemoveFromDashboard" xml:space="preserve">
+    <value>Usuń z pulpitu</value>
+  </data>
+  <data name="Dash.RemoveWidget" xml:space="preserve">
+    <value>Usuń: {0}</value>
+  </data>
+  <data name="Dash.Rename" xml:space="preserve">
+    <value>Zmień nazwę</value>
+  </data>
+  <data name="Dash.RenameBoard" xml:space="preserve">
+    <value>Zmień nazwę tablicy</value>
+  </data>
+  <data name="Dash.ResetDone" xml:space="preserve">
+    <value>Przywrócono ustawienia domyślne oddziału</value>
+  </data>
+  <data name="Dash.ResetToDefault" xml:space="preserve">
+    <value>Przywróć ustawienia domyślne oddziału</value>
+  </data>
+  <data name="Dash.Retry" xml:space="preserve">
+    <value>Spróbuj ponownie</value>
+  </data>
+  <data name="Dash.RevealedBadge" xml:space="preserve">
+    <value>Odkryte</value>
+  </data>
+  <data name="Dash.RevealedBadgeTooltip" xml:space="preserve">
+    <value>W tym widżecie wyświetlane są dane chronione</value>
+  </data>
+  <data name="Dash.RevealedRefreshDeferred" xml:space="preserve">
+    <value>Widżety wyświetlające dane chronione odświeżają się najwyżej co 2 minuty. Ten zostanie odświeżony za chwilę.</value>
+  </data>
+  <data name="Dash.SaveFailed" xml:space="preserve">
+    <value>Nie udało się zapisać pulpitu. Sprawdź połączenie i spróbuj ponownie.</value>
+  </data>
+  <data name="Dash.SaveTemplate" xml:space="preserve">
+    <value>Zapisz szablon</value>
+  </data>
+  <data name="Dash.SavedToast" xml:space="preserve">
+    <value>Pulpit zapisany. Będzie dostępny w każdej przeglądarce, w której się zalogujesz.</value>
+  </data>
+  <data name="Dash.SearchWidgets" xml:space="preserve">
+    <value>Szukaj widżetów</value>
+  </data>
+  <data name="Dash.SelectNone" xml:space="preserve">
+    <value>(brak)</value>
+  </data>
+  <data name="Dash.SettingRange" xml:space="preserve">
+    <value>Od {0} do {1}</value>
+  </data>
+  <data name="Dash.Settings" xml:space="preserve">
+    <value>Ustawienia</value>
+  </data>
+  <data name="Dash.SettingsFor" xml:space="preserve">
+    <value>Ustawienia: {0}</value>
+  </data>
+  <data name="Dash.SettingsLive" xml:space="preserve">
+    <value>Ten widżet aktualizuje się na żywo.</value>
+  </data>
+  <data name="Dash.SettingsRefreshHours" xml:space="preserve">
+    <value>Ten widżet odświeża się co {0} godz.</value>
+  </data>
+  <data name="Dash.SettingsRefreshMinutes" xml:space="preserve">
+    <value>Ten widżet odświeża się co {0} min.</value>
+  </data>
+  <data name="Dash.SettingsSaved" xml:space="preserve">
+    <value>Ustawienia zostały zapisane</value>
+  </data>
+  <data name="Dash.SettingsTitle" xml:space="preserve">
+    <value>Ustawienia: {0}</value>
+  </data>
+  <data name="Dash.Size" xml:space="preserve">
+    <value>Rozmiar</value>
+  </data>
+  <data name="Dash.Size.full" xml:space="preserve">
+    <value>Pełny</value>
+  </data>
+  <data name="Dash.Size.l" xml:space="preserve">
+    <value>L</value>
+  </data>
+  <data name="Dash.Size.m" xml:space="preserve">
+    <value>M</value>
+  </data>
+  <data name="Dash.Size.s" xml:space="preserve">
+    <value>S</value>
+  </data>
+  <data name="Dash.Size.xl" xml:space="preserve">
+    <value>XL</value>
+  </data>
+  <data name="Dash.Size.xs" xml:space="preserve">
+    <value>XS</value>
+  </data>
+  <data name="Dash.SizeAria" xml:space="preserve">
+    <value>Rozmiar: {0}</value>
+  </data>
+  <data name="Dash.SizeChanged" xml:space="preserve">
+    <value>{0}: rozmiar {1}</value>
+  </data>
+  <data name="Dash.StaleTooltip" xml:space="preserve">
+    <value>Trwa ponowne łączenie z aktualizacjami w czasie rzeczywistym. Do czasu ich powrotu widżet odświeża się cyklicznie.</value>
+  </data>
+  <data name="Dash.TemplateDefaultHint" xml:space="preserve">
+    <value>Członkowie niepasujący do szablonu roli ani grupy widzą ten szablon.</value>
+  </data>
+  <data name="Dash.TemplateDescription" xml:space="preserve">
+    <value>Opis</value>
+  </data>
+  <data name="Dash.TemplateEditBarText" xml:space="preserve">
+    <value>Członkowie, którzy nie dostosowali swojego pulpitu, widzą ten układ. Dodawaj widżety, zmieniaj ich rozmiar i kolejność, a następnie zapisz.</value>
+  </data>
+  <data name="Dash.TemplateEditBarTitle" xml:space="preserve">
+    <value>Edytowanie szablonu pulpitu.</value>
+  </data>
+  <data name="Dash.TemplateEditTitle" xml:space="preserve">
+    <value>Edytuj szablon pulpitu</value>
+  </data>
+  <data name="Dash.TemplateGroupRequired" xml:space="preserve">
+    <value>Wybierz grupę, dla której jest ten szablon.</value>
+  </data>
+  <data name="Dash.TemplateIntro" xml:space="preserve">
+    <value>Podglądy widżetów pokazują dane takie, jakie widzisz Ty. Każdy członek widzi tylko to, na co pozwalają jego uprawnienia.</value>
+  </data>
+  <data name="Dash.TemplateNameRequired" xml:space="preserve">
+    <value>Nadaj szablonowi nazwę.</value>
+  </data>
+  <data name="Dash.TemplateNewTitle" xml:space="preserve">
+    <value>Nowy szablon pulpitu</value>
+  </data>
+  <data name="Dash.TemplatePriorityHint" xml:space="preserve">
+    <value>Gdy członek pasuje do kilku szablonów, wygrywa niższy numer.</value>
+  </data>
+  <data name="Dash.TemplateRoleRequired" xml:space="preserve">
+    <value>Wybierz rolę personelu, dla której jest ten szablon.</value>
+  </data>
+  <data name="Dash.TemplateSaved" xml:space="preserve">
+    <value>Szablon został zapisany</value>
+  </data>
+  <data name="Dash.TemplateTargetsFailed" xml:space="preserve">
+    <value>Nie udało się załadować ról i grup.</value>
+  </data>
+  <data name="Dash.Undo" xml:space="preserve">
+    <value>Cofnij</value>
+  </data>
+  <data name="Dash.UntitledBoard" xml:space="preserve">
+    <value>Tablica bez nazwy</value>
+  </data>
+  <data name="Dash.UpdateFailedTooltip" xml:space="preserve">
+    <value>Ostatnie odświeżenie nie powiodło się. Wyświetlane są wcześniejsze dane.</value>
+  </data>
+  <data name="Dash.VerifyToView" xml:space="preserve">
+    <value>Zweryfikuj, aby wyświetlić</value>
+  </data>
+  <data name="Dash.ViewAddon" xml:space="preserve">
+    <value>Zobacz dodatek</value>
+  </data>
+  <data name="Dash.WallDisplay" xml:space="preserve">
+    <value>Ekran ścienny</value>
+  </data>
+  <data name="Dash.WidgetAdded" xml:space="preserve">
+    <value>Dodano: {0}</value>
+  </data>
+  <data name="Dash.WidgetMoved" xml:space="preserve">
+    <value>Przeniesiono {0} na pozycję {1}</value>
+  </data>
+  <data name="Dash.WidgetNotAvailable" xml:space="preserve">
+    <value>Ten widżet nie jest jeszcze dostępny.</value>
+  </data>
+  <data name="Dash.WidgetOptions" xml:space="preserve">
+    <value>Opcje: {0}</value>
+  </data>
+  <data name="Dash.WidgetRemoved" xml:space="preserve">
+    <value>Usunięto: {0}</value>
+  </data>
 </root>

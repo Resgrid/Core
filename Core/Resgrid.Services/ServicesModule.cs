@@ -199,6 +199,7 @@ namespace Resgrid.Services
 			builder.RegisterType<DepartmentsService>().As<IDepartmentsService>().InstancePerLifetimeScope();
 			builder.RegisterType<UsersService>().As<IUsersService>().InstancePerLifetimeScope();
 			builder.RegisterType<ActionLogsService>().As<IActionLogsService>().InstancePerLifetimeScope();
+			builder.RegisterType<PersonnelStatusBoardService>().As<IPersonnelStatusBoardService>().InstancePerLifetimeScope();
 			builder.RegisterType<EmailService>().As<IEmailService>().InstancePerLifetimeScope();
 			builder.RegisterType<EmailMarketingService>().As<IEmailMarketingService>().InstancePerLifetimeScope();
 			builder.RegisterType<CallsService>().As<ICallsService>().InstancePerLifetimeScope();
@@ -579,6 +580,32 @@ namespace Resgrid.Services
 			builder.RegisterType<MapIconsService>().As<IMapIconsService>().InstancePerLifetimeScope();
 			builder.RegisterType<MapVisualizationService>().As<IMapVisualizationService>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.RecordsPrintLayoutService>().As<IRecordsPrintLayoutService>().InstancePerLifetimeScope();
+
+			// Home dashboard (home-dashboard-redesign-plan.md). Widget providers and option sources register themselves by
+			// attribute, keyed by widget key / source name, so adding one never touches this module.
+			builder.RegisterType<Dashboard.DashboardService>().As<IDashboardService>().InstancePerLifetimeScope();
+			builder.RegisterType<Dashboard.DashboardEntitlementService>().As<IDashboardEntitlementService>().InstancePerLifetimeScope();
+			builder.RegisterType<Dashboard.DashboardWidgetDataService>().As<IDashboardWidgetDataService>().InstancePerLifetimeScope();
+			RegisterDashboardParts(builder, typeof(ServicesModule).Assembly);
+		}
+
+		/// <summary>
+		/// Registers every [DashboardWidget] provider and [DashboardOptionSource] in <paramref name="assembly"/> keyed by its key.
+		/// Public so another composition root can scan its own assembly the same way.
+		/// </summary>
+		public static void RegisterDashboardParts(ContainerBuilder builder, System.Reflection.Assembly assembly)
+		{
+			builder.RegisterAssemblyTypes(assembly)
+				.Where(t => typeof(IDashboardWidgetDataProvider).IsAssignableFrom(t) && !t.IsAbstract &&
+					System.Reflection.CustomAttributeExtensions.GetCustomAttribute<Resgrid.Model.Dashboard.DashboardWidgetAttribute>(t) != null)
+				.Keyed<IDashboardWidgetDataProvider>(t => System.Reflection.CustomAttributeExtensions.GetCustomAttribute<Resgrid.Model.Dashboard.DashboardWidgetAttribute>(t).Key)
+				.InstancePerLifetimeScope();
+
+			builder.RegisterAssemblyTypes(assembly)
+				.Where(t => typeof(IDashboardOptionSource).IsAssignableFrom(t) && !t.IsAbstract &&
+					System.Reflection.CustomAttributeExtensions.GetCustomAttribute<Resgrid.Model.Dashboard.DashboardOptionSourceAttribute>(t) != null)
+				.Keyed<IDashboardOptionSource>(t => System.Reflection.CustomAttributeExtensions.GetCustomAttribute<Resgrid.Model.Dashboard.DashboardOptionSourceAttribute>(t).Name)
+				.InstancePerLifetimeScope();
 		}
 	}
 }

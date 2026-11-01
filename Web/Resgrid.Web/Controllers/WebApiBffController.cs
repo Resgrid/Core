@@ -45,7 +45,11 @@ namespace Resgrid.Web.Controllers
 			"api/v4/Avatars/",
 			"api/v4/Messages/",
 			// Browser push: the page registers its own FCM web token and takes it off again on sign-out.
-			"api/v4/Devices/"
+			"api/v4/Devices/",
+			// Home dashboard (home-dashboard-redesign-plan.md §7.2): the unit status alerts widget acknowledges, mutes and clears
+			// alerts, and the route deviations widget acknowledges a deviation. Both exist only in v4, which re-checks permissions.
+			"api/v4/UnitStatusAlerts/",
+			"api/v4/Routes/AcknowledgeDeviation/"
 		};
 
 		private readonly IHttpClientFactory _httpClientFactory;

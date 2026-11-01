@@ -1,0 +1,4014 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="W.department.info.Title" xml:space="preserve">
+    <value>معلومات القسم</value>
+  </data>
+  <data name="W.department.info.Description" xml:space="preserve">
+    <value>معرّف القسم ورمزه ورقم الرسائل النصية لإنشاء البلاغات.</value>
+  </data>
+  <data name="W.department.info.DepartmentId" xml:space="preserve">
+    <value>معرّف القسم</value>
+  </data>
+  <data name="W.department.info.DepartmentCode" xml:space="preserve">
+    <value>رمز القسم</value>
+  </data>
+  <data name="W.department.info.TextToCall" xml:space="preserve">
+    <value>رقم إنشاء البلاغ بالرسائل النصية</value>
+  </data>
+  <data name="W.department.info.NotSet" xml:space="preserve">
+    <value>غير محدد</value>
+  </data>
+  <data name="W.map.operations.Title" xml:space="preserve">
+    <value>خريطة العمليات</value>
+  </data>
+  <data name="W.map.operations.Description" xml:space="preserve">
+    <value>خريطة مباشرة للبلاغات النشطة والوحدات والأفراد والمحطات، مع نقاط الاهتمام وطبقات الخريطة.</value>
+  </data>
+  <data name="W.map.operations.Setting.showCalls" xml:space="preserve">
+    <value>إظهار البلاغات</value>
+  </data>
+  <data name="W.map.operations.Setting.showUnits" xml:space="preserve">
+    <value>إظهار الوحدات</value>
+  </data>
+  <data name="W.map.operations.Setting.showPersonnel" xml:space="preserve">
+    <value>إظهار الأفراد</value>
+  </data>
+  <data name="W.map.operations.Setting.showStations" xml:space="preserve">
+    <value>إظهار المحطات</value>
+  </data>
+  <data name="W.map.operations.Setting.showPois" xml:space="preserve">
+    <value>إظهار نقاط الاهتمام</value>
+  </data>
+  <data name="W.map.operations.Setting.showLayers" xml:space="preserve">
+    <value>إظهار طبقات خريطة القسم</value>
+  </data>
+  <data name="W.map.operations.Setting.zoom" xml:space="preserve">
+    <value>مستوى التكبير (0 = الافتراضي للقسم)</value>
+  </data>
+  <data name="W.map.operations.Empty" xml:space="preserve">
+    <value>لا شيء لعرضه على الخريطة حاليًا.</value>
+  </data>
+  <data name="W.map.operations.Legend" xml:space="preserve">
+    <value>دليل الرموز</value>
+  </data>
+  <data name="W.map.operations.Recenter" xml:space="preserve">
+    <value>إعادة توسيط الخريطة</value>
+  </data>
+  <data name="W.map.visualization.Title" xml:space="preserve">
+    <value>التصور المرئي المحفوظ</value>
+  </data>
+  <data name="W.map.visualization.Description" xml:space="preserve">
+    <value>أحد التصورات المرئية المحفوظة للخريطة، مثل خريطة حرارية للبلاغات أو طبقة التغطية.</value>
+  </data>
+  <data name="W.map.visualization.Setting.visualization" xml:space="preserve">
+    <value>التصور المرئي</value>
+  </data>
+  <data name="W.map.visualization.NotConfigured" xml:space="preserve">
+    <value>اختر تصورًا مرئيًا محفوظًا في إعدادات هذه الأداة.</value>
+  </data>
+  <data name="W.map.visualization.NotFound" xml:space="preserve">
+    <value>تم حذف هذا التصور المرئي أو لم يعد مشاركًا معك.</value>
+  </data>
+  <data name="W.map.visualization.Shared" xml:space="preserve">
+    <value>مشترك</value>
+  </data>
+  <data name="W.map.visualization.Truncated" xml:space="preserve">
+    <value>يتم عرض جزء من البيانات. افتح التصور المرئي لعرضها كاملة.</value>
+  </data>
+  <data name="W.weather.current.Title" xml:space="preserve">
+    <value>الطقس</value>
+  </data>
+  <data name="W.weather.current.Description" xml:space="preserve">
+    <value>الأحوال الحالية وتوقعات الأيام القليلة القادمة لقسمك.</value>
+  </data>
+  <data name="W.weather.current.Setting.units" xml:space="preserve">
+    <value>الوحدات</value>
+  </data>
+  <data name="W.weather.current.Option.imperial" xml:space="preserve">
+    <value>النظام الإمبراطوري (°F، ميل/س)</value>
+  </data>
+  <data name="W.weather.current.Option.metric" xml:space="preserve">
+    <value>النظام المتري (°C، م/ث)</value>
+  </data>
+  <data name="W.weather.current.Unavailable" xml:space="preserve">
+    <value>الطقس غير متاح. حدّد مركز الخريطة أو عنوان القسم لعرضه.</value>
+  </data>
+  <data name="W.weather.current.FeelsLike" xml:space="preserve">
+    <value>درجة الحرارة المحسوسة: {0}</value>
+  </data>
+  <data name="W.weather.current.Humidity" xml:space="preserve">
+    <value>الرطوبة</value>
+  </data>
+  <data name="W.weather.current.Wind" xml:space="preserve">
+    <value>الرياح</value>
+  </data>
+  <data name="W.weather.current.Today" xml:space="preserve">
+    <value>اليوم</value>
+  </data>
+  <data name="W.weather.current.Precipitation" xml:space="preserve">
+    <value>احتمال الهطول: {0}%</value>
+  </data>
+  <data name="W.weather.current.UpdatedAt" xml:space="preserve">
+    <value>آخر تحديث: {0}</value>
+  </data>
+  <data name="W.weather.current.Condition.Clear" xml:space="preserve">
+    <value>صافٍ</value>
+  </data>
+  <data name="W.weather.current.Condition.Clouds" xml:space="preserve">
+    <value>غائم</value>
+  </data>
+  <data name="W.weather.current.Condition.Rain" xml:space="preserve">
+    <value>مطر</value>
+  </data>
+  <data name="W.weather.current.Condition.Drizzle" xml:space="preserve">
+    <value>رذاذ</value>
+  </data>
+  <data name="W.weather.current.Condition.Thunderstorm" xml:space="preserve">
+    <value>عاصفة رعدية</value>
+  </data>
+  <data name="W.weather.current.Condition.Snow" xml:space="preserve">
+    <value>ثلج</value>
+  </data>
+  <data name="W.weather.current.Condition.Mist" xml:space="preserve">
+    <value>ضباب خفيف</value>
+  </data>
+  <data name="W.weather.current.Condition.Fog" xml:space="preserve">
+    <value>ضباب</value>
+  </data>
+  <data name="W.weather.current.Condition.Haze" xml:space="preserve">
+    <value>غشاوة</value>
+  </data>
+  <data name="W.weather.current.Condition.Smoke" xml:space="preserve">
+    <value>دخان</value>
+  </data>
+  <data name="W.weather.current.Condition.Dust" xml:space="preserve">
+    <value>غبار</value>
+  </data>
+  <data name="W.weather.current.Condition.Unknown" xml:space="preserve">
+    <value>غير معروف</value>
+  </data>
+  <data name="W.weather.alerts.Title" xml:space="preserve">
+    <value>تنبيهات الطقس</value>
+  </data>
+  <data name="W.weather.alerts.Description" xml:space="preserve">
+    <value>تنبيهات الطقس النشطة لمناطق قسمك، الأشد خطورة أولًا.</value>
+  </data>
+  <data name="W.weather.alerts.Setting.minSeverity" xml:space="preserve">
+    <value>إظهار التنبيهات</value>
+  </data>
+  <data name="W.weather.alerts.Setting.maxItems" xml:space="preserve">
+    <value>الحد الأقصى للتنبيهات المعروضة</value>
+  </data>
+  <data name="W.weather.alerts.Option.all" xml:space="preserve">
+    <value>جميع مستويات الخطورة</value>
+  </data>
+  <data name="W.weather.alerts.Option.extreme" xml:space="preserve">
+    <value>الشديدة للغاية فقط</value>
+  </data>
+  <data name="W.weather.alerts.Option.severe" xml:space="preserve">
+    <value>الشديدة فما فوق</value>
+  </data>
+  <data name="W.weather.alerts.Option.moderate" xml:space="preserve">
+    <value>المعتدلة فما فوق</value>
+  </data>
+  <data name="W.weather.alerts.Empty" xml:space="preserve">
+    <value>لا توجد تنبيهات طقس نشطة.</value>
+  </data>
+  <data name="W.weather.alerts.Severity.extreme" xml:space="preserve">
+    <value>شديدة للغاية</value>
+  </data>
+  <data name="W.weather.alerts.Severity.severe" xml:space="preserve">
+    <value>شديدة</value>
+  </data>
+  <data name="W.weather.alerts.Severity.moderate" xml:space="preserve">
+    <value>معتدلة</value>
+  </data>
+  <data name="W.weather.alerts.Severity.minor" xml:space="preserve">
+    <value>طفيفة</value>
+  </data>
+  <data name="W.weather.alerts.Severity.unknown" xml:space="preserve">
+    <value>غير معروفة</value>
+  </data>
+  <data name="W.weather.alerts.Expires" xml:space="preserve">
+    <value>تنتهي: {0}</value>
+  </data>
+  <data name="W.weather.alerts.More" xml:space="preserve">
+    <value>المزيد: {0}</value>
+  </data>
+  <data name="W.general.clock.Title" xml:space="preserve">
+    <value>الساعة</value>
+  </data>
+  <data name="W.general.clock.Description" xml:space="preserve">
+    <value>وقت القسم وتوقيت UTC ووقتك المحلي.</value>
+  </data>
+  <data name="W.general.clock.Setting.format" xml:space="preserve">
+    <value>تنسيق الوقت</value>
+  </data>
+  <data name="W.general.clock.Setting.showSeconds" xml:space="preserve">
+    <value>إظهار الثواني</value>
+  </data>
+  <data name="W.general.clock.Setting.showUtc" xml:space="preserve">
+    <value>إظهار UTC</value>
+  </data>
+  <data name="W.general.clock.Setting.showLocal" xml:space="preserve">
+    <value>إظهار وقتي المحلي</value>
+  </data>
+  <data name="W.general.clock.Option.auto" xml:space="preserve">
+    <value>تلقائي</value>
+  </data>
+  <data name="W.general.clock.Option.12h" xml:space="preserve">
+    <value>نظام 12 ساعة</value>
+  </data>
+  <data name="W.general.clock.Option.24h" xml:space="preserve">
+    <value>نظام 24 ساعة</value>
+  </data>
+  <data name="W.general.clock.Department" xml:space="preserve">
+    <value>القسم</value>
+  </data>
+  <data name="W.general.clock.Utc" xml:space="preserve">
+    <value>UTC</value>
+  </data>
+  <data name="W.general.clock.Local" xml:space="preserve">
+    <value>وقتي</value>
+  </data>
+  <data name="W.messages.inbox.Title" xml:space="preserve">
+    <value>صندوق الوارد</value>
+  </data>
+  <data name="W.messages.inbox.Description" xml:space="preserve">
+    <value>رسائلك غير المقروءة، الأحدث أولًا.</value>
+  </data>
+  <data name="W.messages.inbox.Setting.maxItems" xml:space="preserve">
+    <value>الحد الأقصى للرسائل المعروضة</value>
+  </data>
+  <data name="W.messages.inbox.Unread" xml:space="preserve">
+    <value>غير مقروءة</value>
+  </data>
+  <data name="W.messages.inbox.Empty" xml:space="preserve">
+    <value>لا توجد رسائل غير مقروءة.</value>
+  </data>
+  <data name="W.messages.inbox.Compose" xml:space="preserve">
+    <value>إنشاء رسالة</value>
+  </data>
+  <data name="W.messages.inbox.System" xml:space="preserve">
+    <value>النظام</value>
+  </data>
+  <data name="W.messages.inbox.ProtectedSubject" xml:space="preserve">
+    <value>رسالة محمية</value>
+  </data>
+  <data name="W.messages.inbox.Callback" xml:space="preserve">
+    <value>معاودة الاتصال</value>
+  </data>
+  <data name="W.messages.inbox.Poll" xml:space="preserve">
+    <value>استطلاع</value>
+  </data>
+  <data name="W.chat.unread.Title" xml:space="preserve">
+    <value>المحادثة</value>
+  </data>
+  <data name="W.chat.unread.Description" xml:space="preserve">
+    <value>قنوات المحادثة التي تحتوي رسائل غير مقروءة والرسائل العاجلة التي تنتظر إقرارك.</value>
+  </data>
+  <data name="W.chat.unread.Setting.maxItems" xml:space="preserve">
+    <value>الحد الأقصى للقنوات المعروضة</value>
+  </data>
+  <data name="W.chat.unread.Empty" xml:space="preserve">
+    <value>اطلعت على كل شيء.</value>
+  </data>
+  <data name="W.chat.unread.UnreadTotal" xml:space="preserve">
+    <value>الرسائل غير المقروءة</value>
+  </data>
+  <data name="W.chat.unread.PendingAcks" xml:space="preserve">
+    <value>بانتظار الإقرار</value>
+  </data>
+  <data name="W.chat.unread.DirectMessage" xml:space="preserve">
+    <value>رسالة مباشرة</value>
+  </data>
+  <data name="W.chat.unread.OpenChat" xml:space="preserve">
+    <value>فتح المحادثة</value>
+  </data>
+  <data name="W.chat.moderation.Title" xml:space="preserve">
+    <value>قائمة مراجعة المحتوى</value>
+  </data>
+  <data name="W.chat.moderation.Description" xml:space="preserve">
+    <value>الإبلاغات المفتوحة عن المحادثة بانتظار المراجعة.</value>
+  </data>
+  <data name="W.chat.moderation.Setting.maxItems" xml:space="preserve">
+    <value>الحد الأقصى للإبلاغات المعروضة</value>
+  </data>
+  <data name="W.chat.moderation.Empty" xml:space="preserve">
+    <value>لا توجد إبلاغات مفتوحة.</value>
+  </data>
+  <data name="W.chat.moderation.OpenFlags" xml:space="preserve">
+    <value>الإبلاغات المفتوحة</value>
+  </data>
+  <data name="W.chat.moderation.Oldest" xml:space="preserve">
+    <value>الأقدم: {0}</value>
+  </data>
+  <data name="W.chat.moderation.CountCapped" xml:space="preserve">
+    <value>{0}+</value>
+  </data>
+  <data name="W.chat.moderation.UnknownChannel" xml:space="preserve">
+    <value>قناة غير معروفة</value>
+  </data>
+  <data name="W.chat.moderation.Reason.other" xml:space="preserve">
+    <value>أخرى</value>
+  </data>
+  <data name="W.chat.moderation.Reason.inappropriate" xml:space="preserve">
+    <value>غير لائق</value>
+  </data>
+  <data name="W.chat.moderation.Reason.harassment" xml:space="preserve">
+    <value>مضايقة</value>
+  </data>
+  <data name="W.chat.moderation.Reason.spam" xml:space="preserve">
+    <value>محتوى غير مرغوب فيه</value>
+  </data>
+  <data name="W.chat.moderation.Reason.sensitiveInformation" xml:space="preserve">
+    <value>معلومات حساسة</value>
+  </data>
+  <data name="W.chat.moderation.Reason.policyViolation" xml:space="preserve">
+    <value>مخالفة السياسة</value>
+  </data>
+  <data name="W.comms.tests.Title" xml:space="preserve">
+    <value>اختبارات الاتصال</value>
+  </data>
+  <data name="W.comms.tests.Description" xml:space="preserve">
+    <value>أحدث عمليات اختبار الاتصال مع معدلات التسليم والاستجابة حسب القناة.</value>
+  </data>
+  <data name="W.comms.tests.Setting.maxRuns" xml:space="preserve">
+    <value>الحد الأقصى لعمليات الاختبار المعروضة</value>
+  </data>
+  <data name="W.comms.tests.Empty" xml:space="preserve">
+    <value>لم يتم إجراء أي اختبار اتصال بعد.</value>
+  </data>
+  <data name="W.comms.tests.Tested" xml:space="preserve">
+    <value>تم اختبارهم</value>
+  </data>
+  <data name="W.comms.tests.Responses" xml:space="preserve">
+    <value>الردود</value>
+  </data>
+  <data name="W.comms.tests.ResponseRate" xml:space="preserve">
+    <value>معدل الاستجابة</value>
+  </data>
+  <data name="W.comms.tests.DeliveryRate" xml:space="preserve">
+    <value>معدل التسليم</value>
+  </data>
+  <data name="W.comms.tests.LatestRun" xml:space="preserve">
+    <value>آخر اختبار حسب القناة</value>
+  </data>
+  <data name="W.comms.tests.Suppressed" xml:space="preserve">
+    <value>مكتومة</value>
+  </data>
+  <data name="W.comms.tests.Status.pending" xml:space="preserve">
+    <value>معلّق</value>
+  </data>
+  <data name="W.comms.tests.Status.running" xml:space="preserve">
+    <value>قيد التشغيل</value>
+  </data>
+  <data name="W.comms.tests.Status.awaitingResponses" xml:space="preserve">
+    <value>بانتظار الردود</value>
+  </data>
+  <data name="W.comms.tests.Status.completed" xml:space="preserve">
+    <value>مكتمل</value>
+  </data>
+  <data name="W.comms.tests.Status.failed" xml:space="preserve">
+    <value>فشل</value>
+  </data>
+  <data name="W.comms.tests.Channel.sms" xml:space="preserve">
+    <value>رسالة نصية</value>
+  </data>
+  <data name="W.comms.tests.Channel.email" xml:space="preserve">
+    <value>البريد الإلكتروني</value>
+  </data>
+  <data name="W.comms.tests.Channel.voice" xml:space="preserve">
+    <value>مكالمة صوتية</value>
+  </data>
+  <data name="W.comms.tests.Channel.push" xml:space="preserve">
+    <value>إشعار فوري</value>
+  </data>
+  <data name="W.comms.tests.Channel.other" xml:space="preserve">
+    <value>أخرى</value>
+  </data>
+  <data name="W.voice.ptt.Title" xml:space="preserve">
+    <value>Push-To-Talk</value>
+  </data>
+  <data name="W.voice.ptt.Description" xml:space="preserve">
+    <value>قنوات Push-To-Talk في قسمك وعدد المقاعد المستخدمة.</value>
+  </data>
+  <data name="W.voice.ptt.Empty" xml:space="preserve">
+    <value>لم يتم إعداد أي قنوات Push-To-Talk.</value>
+  </data>
+  <data name="W.voice.ptt.Seats" xml:space="preserve">
+    <value>المقاعد المستخدمة: {0} من {1}</value>
+  </data>
+  <data name="W.voice.ptt.UtilizationUnavailable" xml:space="preserve">
+    <value>استخدام المقاعد غير متاح حاليًا.</value>
+  </data>
+  <data name="W.voice.ptt.Default" xml:space="preserve">
+    <value>افتراضية</value>
+  </data>
+  <data name="W.voice.ptt.Incident" xml:space="preserve">
+    <value>قناة الحادث</value>
+  </data>
+  <data name="W.calendar.agenda.Title" xml:space="preserve">
+    <value>الفعاليات القادمة</value>
+  </data>
+  <data name="W.calendar.agenda.Description" xml:space="preserve">
+    <value>الأيام القادمة من تقويم قسمك، مع حالة تسجيلك وتسجيل وصولك.</value>
+  </data>
+  <data name="W.calendar.agenda.Setting.days" xml:space="preserve">
+    <value>عدد الأيام القادمة</value>
+  </data>
+  <data name="W.calendar.agenda.Setting.types" xml:space="preserve">
+    <value>أنواع الفعاليات</value>
+  </data>
+  <data name="W.calendar.agenda.Setting.maxItems" xml:space="preserve">
+    <value>الحد الأقصى للفعاليات المعروضة</value>
+  </data>
+  <data name="W.calendar.agenda.Empty" xml:space="preserve">
+    <value>لا توجد فعاليات قادمة.</value>
+  </data>
+  <data name="W.calendar.agenda.AllDay" xml:space="preserve">
+    <value>طوال اليوم</value>
+  </data>
+  <data name="W.calendar.agenda.Attending" xml:space="preserve">
+    <value>سأحضر</value>
+  </data>
+  <data name="W.calendar.agenda.Required" xml:space="preserve">
+    <value>إلزامي</value>
+  </data>
+  <data name="W.calendar.agenda.Optional" xml:space="preserve">
+    <value>اختياري</value>
+  </data>
+  <data name="W.calendar.agenda.NotAttending" xml:space="preserve">
+    <value>لن أحضر</value>
+  </data>
+  <data name="W.calendar.agenda.SignUp" xml:space="preserve">
+    <value>تسجيل</value>
+  </data>
+  <data name="W.calendar.agenda.CheckedIn" xml:space="preserve">
+    <value>تم تسجيل الوصول</value>
+  </data>
+  <data name="W.calendar.agenda.CheckedOut" xml:space="preserve">
+    <value>تم تسجيل الانصراف</value>
+  </data>
+  <data name="W.calendar.agenda.Today" xml:space="preserve">
+    <value>اليوم</value>
+  </data>
+  <data name="W.calendar.agenda.Tomorrow" xml:space="preserve">
+    <value>غدًا</value>
+  </data>
+  <data name="W.shifts.today.Title" xml:space="preserve">
+    <value>ورديات اليوم</value>
+  </data>
+  <data name="W.shifts.today.Description" xml:space="preserve">
+    <value>ورديات اليوم مع التأمين مقابل المتطلبات ومن في الخدمة حسب المجموعة.</value>
+  </data>
+  <data name="W.shifts.today.Empty" xml:space="preserve">
+    <value>لا توجد ورديات اليوم.</value>
+  </data>
+  <data name="W.shifts.today.OnDuty" xml:space="preserve">
+    <value>في الخدمة: {0}</value>
+  </data>
+  <data name="W.shifts.today.OpenSlots" xml:space="preserve">
+    <value>شاغرة: {0}</value>
+  </data>
+  <data name="W.shifts.today.Filled" xml:space="preserve">
+    <value>مغطاة</value>
+  </data>
+  <data name="W.shifts.today.Active" xml:space="preserve">
+    <value>نشطة الآن</value>
+  </data>
+  <data name="W.shifts.today.Ended" xml:space="preserve">
+    <value>انتهت</value>
+  </data>
+  <data name="W.shifts.today.NoGroup" xml:space="preserve">
+    <value>بلا مجموعة</value>
+  </data>
+  <data name="W.shifts.mine.Title" xml:space="preserve">
+    <value>ورديّاتي وتبديلاتها</value>
+  </data>
+  <data name="W.shifts.mine.Description" xml:space="preserve">
+    <value>ورديّاتك القادمة وطلبات التبديل المرسلة إليك.</value>
+  </data>
+  <data name="W.shifts.mine.Setting.days" xml:space="preserve">
+    <value>عدد الأيام القادمة</value>
+  </data>
+  <data name="W.shifts.mine.Setting.maxItems" xml:space="preserve">
+    <value>الحد الأقصى للعناصر في كل قائمة</value>
+  </data>
+  <data name="W.shifts.mine.Empty" xml:space="preserve">
+    <value>لا توجد ورديات قادمة.</value>
+  </data>
+  <data name="W.shifts.mine.Upcoming" xml:space="preserve">
+    <value>الورديات القادمة</value>
+  </data>
+  <data name="W.shifts.mine.TradeRequests" xml:space="preserve">
+    <value>طلبات التبديل</value>
+  </data>
+  <data name="W.shifts.mine.AwaitingApproval" xml:space="preserve">
+    <value>بانتظار الاعتماد</value>
+  </data>
+  <data name="W.shifts.mine.TradeRequested" xml:space="preserve">
+    <value>تم طلب التبديل</value>
+  </data>
+  <data name="W.shifts.mine.From" xml:space="preserve">
+    <value>من {0}</value>
+  </data>
+  <data name="W.shifts.approvals.Title" xml:space="preserve">
+    <value>اعتمادات الورديات</value>
+  </data>
+  <data name="W.shifts.approvals.Description" xml:space="preserve">
+    <value>تسجيلات الورديات وتبديلاتها بانتظار اعتمادك.</value>
+  </data>
+  <data name="W.shifts.approvals.Setting.maxItems" xml:space="preserve">
+    <value>الحد الأقصى للعناصر المعروضة</value>
+  </data>
+  <data name="W.shifts.approvals.Empty" xml:space="preserve">
+    <value>لا شيء بانتظار اعتمادك.</value>
+  </data>
+  <data name="W.shifts.approvals.NotApprover" xml:space="preserve">
+    <value>أنت لست من يعتمد تسجيلات الورديات أو تبديلاتها.</value>
+  </data>
+  <data name="W.shifts.approvals.Signups" xml:space="preserve">
+    <value>التسجيلات</value>
+  </data>
+  <data name="W.shifts.approvals.Trades" xml:space="preserve">
+    <value>التبديلات</value>
+  </data>
+  <data name="W.shifts.approvals.Signup" xml:space="preserve">
+    <value>تسجيل</value>
+  </data>
+  <data name="W.shifts.approvals.Trade" xml:space="preserve">
+    <value>تبديل</value>
+  </data>
+  <data name="W.shifts.approvals.TradeFromTo" xml:space="preserve">
+    <value>{0} إلى {1}</value>
+  </data>
+  <data name="W.shifts.approvals.Review" xml:space="preserve">
+    <value>مراجعة</value>
+  </data>
+  <data name="W.shifts.coverage.Title" xml:space="preserve">
+    <value>تغطية التأمين</value>
+  </data>
+  <data name="W.shifts.coverage.Description" xml:space="preserve">
+    <value>تأمين الورديات للأيام القادمة، المعتمد أو التلقائي، مع تمييز الورديات غير المغطاة.</value>
+  </data>
+  <data name="W.shifts.coverage.Setting.days" xml:space="preserve">
+    <value>عدد الأيام القادمة</value>
+  </data>
+  <data name="W.shifts.coverage.Setting.gapsOnly" xml:space="preserve">
+    <value>إظهار الورديات غير المغطاة فقط</value>
+  </data>
+  <data name="W.shifts.coverage.Empty" xml:space="preserve">
+    <value>لا توجد ورديات في هذه الفترة.</value>
+  </data>
+  <data name="W.shifts.coverage.NotSupervisor" xml:space="preserve">
+    <value>تغطية التأمين مخصصة لمشرفي الورديات.</value>
+  </data>
+  <data name="W.shifts.coverage.Gaps" xml:space="preserve">
+    <value>غير مغطاة: {0}</value>
+  </data>
+  <data name="W.shifts.coverage.Manual" xml:space="preserve">
+    <value>معتمد</value>
+  </data>
+  <data name="W.shifts.coverage.Automatic" xml:space="preserve">
+    <value>تلقائي</value>
+  </data>
+  <data name="W.shifts.coverage.People" xml:space="preserve">
+    <value>الأفراد: {0}</value>
+  </data>
+  <data name="W.shifts.coverage.Changes" xml:space="preserve">
+    <value>+{0} / -{1}</value>
+  </data>
+  <data name="W.shifts.coverage.StaticShift" xml:space="preserve">
+    <value>وردية ثابتة</value>
+  </data>
+  <data name="W.trainings.mine.Title" xml:space="preserve">
+    <value>تدريباتي</value>
+  </data>
+  <data name="W.trainings.mine.Description" xml:space="preserve">
+    <value>التدريبات المسندة إليك والتي لم تكملها بعد.</value>
+  </data>
+  <data name="W.trainings.mine.Setting.maxItems" xml:space="preserve">
+    <value>الحد الأقصى للتدريبات المعروضة</value>
+  </data>
+  <data name="W.trainings.mine.Empty" xml:space="preserve">
+    <value>لا توجد تدريبات معلقة.</value>
+  </data>
+  <data name="W.trainings.mine.Outstanding" xml:space="preserve">
+    <value>معلّقة</value>
+  </data>
+  <data name="W.trainings.mine.Overdue" xml:space="preserve">
+    <value>متأخرة</value>
+  </data>
+  <data name="W.trainings.mine.Due" xml:space="preserve">
+    <value>الاستحقاق: {0}</value>
+  </data>
+  <data name="W.trainings.mine.NotStarted" xml:space="preserve">
+    <value>لم تبدأ</value>
+  </data>
+  <data name="W.trainings.mine.InProgress" xml:space="preserve">
+    <value>قيد التنفيذ</value>
+  </data>
+  <data name="W.trainings.mine.QuizFailed" xml:space="preserve">
+    <value>لم يتم اجتياز الاختبار</value>
+  </data>
+  <data name="W.documents.recent.Title" xml:space="preserve">
+    <value>المستندات الحديثة</value>
+  </data>
+  <data name="W.documents.recent.Description" xml:space="preserve">
+    <value>أحدث المستندات في مكتبة قسمك.</value>
+  </data>
+  <data name="W.documents.recent.Setting.category" xml:space="preserve">
+    <value>الفئة</value>
+  </data>
+  <data name="W.documents.recent.Setting.maxItems" xml:space="preserve">
+    <value>الحد الأقصى للمستندات المعروضة</value>
+  </data>
+  <data name="W.documents.recent.Empty" xml:space="preserve">
+    <value>لا توجد مستندات بعد.</value>
+  </data>
+  <data name="W.documents.recent.AdminsOnly" xml:space="preserve">
+    <value>للمسؤولين فقط</value>
+  </data>
+  <data name="W.documents.recent.AllCategories" xml:space="preserve">
+    <value>كل الفئات</value>
+  </data>
+  <data name="W.notes.board.Title" xml:space="preserve">
+    <value>ملاحظات القسم</value>
+  </data>
+  <data name="W.notes.board.Description" xml:space="preserve">
+    <value>أحدث ملاحظات القسم.</value>
+  </data>
+  <data name="W.notes.board.Setting.category" xml:space="preserve">
+    <value>الفئة</value>
+  </data>
+  <data name="W.notes.board.Setting.maxItems" xml:space="preserve">
+    <value>الحد الأقصى للملاحظات المعروضة</value>
+  </data>
+  <data name="W.notes.board.Setting.hideExpired" xml:space="preserve">
+    <value>إخفاء الملاحظات المنتهية</value>
+  </data>
+  <data name="W.notes.board.Empty" xml:space="preserve">
+    <value>لا توجد ملاحظات.</value>
+  </data>
+  <data name="W.notes.board.AdminOnly" xml:space="preserve">
+    <value>للمسؤولين فقط</value>
+  </data>
+  <data name="W.notes.board.Expires" xml:space="preserve">
+    <value>تنتهي: {0}</value>
+  </data>
+  <data name="W.notes.board.AllCategories" xml:space="preserve">
+    <value>كل الفئات</value>
+  </data>
+  <data name="W.contacts.preplans.Title" xml:space="preserve">
+    <value>الخطط المسبقة المستحقة للمراجعة</value>
+  </data>
+  <data name="W.contacts.preplans.Description" xml:space="preserve">
+    <value>جهات الاتصال التي انقضى موعد مراجعة خطتها المسبقة.</value>
+  </data>
+  <data name="W.contacts.preplans.Setting.maxItems" xml:space="preserve">
+    <value>الحد الأقصى لجهات الاتصال المعروضة</value>
+  </data>
+  <data name="W.contacts.preplans.Empty" xml:space="preserve">
+    <value>لا توجد خطط مسبقة مستحقة للمراجعة.</value>
+  </data>
+  <data name="W.contacts.preplans.DaysOverdue" xml:space="preserve">
+    <value>متأخرة (أيام): {0}</value>
+  </data>
+  <data name="W.contacts.preplans.DueToday" xml:space="preserve">
+    <value>مستحقة اليوم</value>
+  </data>
+  <data name="W.contacts.preplans.ProtectedContact" xml:space="preserve">
+    <value>جهة اتصال محمية</value>
+  </data>
+  <data name="W.links.quick.Title" xml:space="preserve">
+    <value>روابط سريعة</value>
+  </data>
+  <data name="W.links.quick.Description" xml:space="preserve">
+    <value>الأقسام التي تشارك بياناتها مع قسمك، بالإضافة إلى روابطك الخاصة.</value>
+  </data>
+  <data name="W.links.quick.Setting.showDepartmentLinks" xml:space="preserve">
+    <value>إظهار روابط الأقسام</value>
+  </data>
+  <data name="W.links.quick.Setting.links" xml:space="preserve">
+    <value>روابطي (رابط واحد في كل سطر: التسمية | https://…)</value>
+  </data>
+  <data name="W.links.quick.Empty" xml:space="preserve">
+    <value>لا توجد روابط بعد. أضف روابطك في إعدادات هذه الأداة.</value>
+  </data>
+  <data name="W.links.quick.DepartmentLinks" xml:space="preserve">
+    <value>الأقسام المرتبطة</value>
+  </data>
+  <data name="W.links.quick.MyLinks" xml:space="preserve">
+    <value>روابطي</value>
+  </data>
+  <data name="W.links.quick.InvalidLinks" xml:space="preserve">
+    <value>تم تخطي بعض الأسطر ({0}). يُسمح فقط بعناوين http وhttps.</value>
+  </data>
+  <data name="W.links.quick.Shares.calls" xml:space="preserve">
+    <value>البلاغات</value>
+  </data>
+  <data name="W.links.quick.Shares.units" xml:space="preserve">
+    <value>الوحدات</value>
+  </data>
+  <data name="W.links.quick.Shares.personnel" xml:space="preserve">
+    <value>الأفراد</value>
+  </data>
+  <data name="W.general.stickyNote.Title" xml:space="preserve">
+    <value>ملاحظتي</value>
+  </data>
+  <data name="W.general.stickyNote.Description" xml:space="preserve">
+    <value>ملاحظة شخصية لا يراها غيرك.</value>
+  </data>
+  <data name="W.general.stickyNote.Setting.text" xml:space="preserve">
+    <value>الملاحظة</value>
+  </data>
+  <data name="W.general.stickyNote.Empty" xml:space="preserve">
+    <value>ملاحظتك فارغة. عدّل إعدادات هذه الأداة لكتابة ملاحظة.</value>
+  </data>
+  <data name="W.general.stickyNote.Edit" xml:space="preserve">
+    <value>تعديل الملاحظة</value>
+  </data>
+  <data name="W.map.operations.LoadError" xml:space="preserve">
+    <value>تعذّر تحميل الخريطة. حاول مرة أخرى بعد قليل.</value>
+  </data>
+  <data name="W.map.operations.Layer.calls" xml:space="preserve">
+    <value>البلاغات</value>
+  </data>
+  <data name="W.map.operations.Layer.units" xml:space="preserve">
+    <value>الوحدات</value>
+  </data>
+  <data name="W.map.operations.Layer.personnel" xml:space="preserve">
+    <value>الأفراد</value>
+  </data>
+  <data name="W.map.operations.Layer.stations" xml:space="preserve">
+    <value>المحطات</value>
+  </data>
+  <data name="W.map.operations.Layer.pois" xml:space="preserve">
+    <value>نقاط الاهتمام</value>
+  </data>
+  <data name="W.map.visualization.Choose" xml:space="preserve">
+    <value>اختر تصورًا مرئيًا</value>
+  </data>
+  <data name="W.map.visualization.Rows" xml:space="preserve">
+    <value>السجلات: {0}</value>
+  </data>
+  <data name="W.map.visualization.Partial" xml:space="preserve">
+    <value>جزئي</value>
+  </data>
+  <data name="W.weather.current.Tomorrow" xml:space="preserve">
+    <value>غدًا</value>
+  </data>
+  <data name="W.weather.current.Compass.N" xml:space="preserve">
+    <value>ش</value>
+  </data>
+  <data name="W.weather.current.Compass.NE" xml:space="preserve">
+    <value>ش ق</value>
+  </data>
+  <data name="W.weather.current.Compass.E" xml:space="preserve">
+    <value>ق</value>
+  </data>
+  <data name="W.weather.current.Compass.SE" xml:space="preserve">
+    <value>ج ق</value>
+  </data>
+  <data name="W.weather.current.Compass.S" xml:space="preserve">
+    <value>ج</value>
+  </data>
+  <data name="W.weather.current.Compass.SW" xml:space="preserve">
+    <value>ج غ</value>
+  </data>
+  <data name="W.weather.current.Compass.W" xml:space="preserve">
+    <value>غ</value>
+  </data>
+  <data name="W.weather.current.Compass.NW" xml:space="preserve">
+    <value>ش غ</value>
+  </data>
+  <data name="W.messages.inbox.Open" xml:space="preserve">
+    <value>فتح الرسالة</value>
+  </data>
+  <data name="W.chat.unread.Channel" xml:space="preserve">
+    <value>القناة</value>
+  </data>
+  <data name="W.chat.unread.PendingAckCount" xml:space="preserve">
+    <value>بانتظار إقرارك: {0}</value>
+  </data>
+  <data name="W.chat.moderation.OldestLabel" xml:space="preserve">
+    <value>أقدم إبلاغ</value>
+  </data>
+  <data name="W.comms.tests.RecentRuns" xml:space="preserve">
+    <value>آخر عمليات التشغيل</value>
+  </data>
+  <data name="W.comms.tests.Untitled" xml:space="preserve">
+    <value>اختبار اتصال</value>
+  </data>
+  <data name="W.comms.tests.NotDelivered" xml:space="preserve">
+    <value>لم يتم تسليم أي شيء</value>
+  </data>
+  <data name="W.comms.tests.DeliveredShort" xml:space="preserve">
+    <value>تم تسليم: {0}</value>
+  </data>
+  <data name="W.comms.tests.RespondedOf" xml:space="preserve">
+    <value>المستجيبون: {0} من {1}</value>
+  </data>
+  <data name="W.voice.ptt.Open" xml:space="preserve">
+    <value>فتح Push-To-Talk</value>
+  </data>
+  <data name="W.voice.ptt.Channel" xml:space="preserve">
+    <value>القناة</value>
+  </data>
+  <data name="W.voice.ptt.MoreChannels" xml:space="preserve">
+    <value>+{0} أخرى</value>
+  </data>
+  <data name="W.calendar.agenda.OpenCalendar" xml:space="preserve">
+    <value>فتح التقويم</value>
+  </data>
+  <data name="W.calendar.agenda.Untitled" xml:space="preserve">
+    <value>فعالية بلا عنوان</value>
+  </data>
+  <data name="W.shifts.today.OpenShifts" xml:space="preserve">
+    <value>فتح الورديات</value>
+  </data>
+  <data name="W.shifts.today.Shift" xml:space="preserve">
+    <value>الوردية</value>
+  </data>
+  <data name="W.shifts.mine.OpenYourShifts" xml:space="preserve">
+    <value>فتح ورديّاتك</value>
+  </data>
+  <data name="W.shifts.mine.Shift" xml:space="preserve">
+    <value>الوردية</value>
+  </data>
+  <data name="W.shifts.mine.Today" xml:space="preserve">
+    <value>اليوم</value>
+  </data>
+  <data name="W.shifts.mine.Tomorrow" xml:space="preserve">
+    <value>غدًا</value>
+  </data>
+  <data name="W.shifts.mine.Respond" xml:space="preserve">
+    <value>رد</value>
+  </data>
+  <data name="W.shifts.approvals.Today" xml:space="preserve">
+    <value>اليوم</value>
+  </data>
+  <data name="W.shifts.approvals.Tomorrow" xml:space="preserve">
+    <value>غدًا</value>
+  </data>
+  <data name="W.shifts.coverage.OpenStaffing" xml:space="preserve">
+    <value>فتح تأمين الورديات</value>
+  </data>
+  <data name="W.shifts.coverage.Shift" xml:space="preserve">
+    <value>الوردية</value>
+  </data>
+  <data name="W.shifts.coverage.Time" xml:space="preserve">
+    <value>الوقت</value>
+  </data>
+  <data name="W.shifts.coverage.Staffed" xml:space="preserve">
+    <value>مغطاة</value>
+  </data>
+  <data name="W.shifts.coverage.Source" xml:space="preserve">
+    <value>التأمين</value>
+  </data>
+  <data name="W.shifts.coverage.Unstaffed" xml:space="preserve">
+    <value>غير مغطاة</value>
+  </data>
+  <data name="W.shifts.coverage.Today" xml:space="preserve">
+    <value>اليوم</value>
+  </data>
+  <data name="W.shifts.coverage.Tomorrow" xml:space="preserve">
+    <value>غدًا</value>
+  </data>
+  <data name="W.trainings.mine.Training" xml:space="preserve">
+    <value>التدريب</value>
+  </data>
+  <data name="W.trainings.mine.OverdueCount" xml:space="preserve">
+    <value>المتأخرة: {0}</value>
+  </data>
+  <data name="W.trainings.mine.OverdueSince" xml:space="preserve">
+    <value>كان مستحقًا: {0}</value>
+  </data>
+  <data name="W.documents.recent.OpenDocuments" xml:space="preserve">
+    <value>فتح المستندات</value>
+  </data>
+  <data name="W.documents.recent.Untitled" xml:space="preserve">
+    <value>مستند بلا عنوان</value>
+  </data>
+  <data name="W.notes.board.OpenNotes" xml:space="preserve">
+    <value>فتح الملاحظات</value>
+  </data>
+  <data name="W.notes.board.Untitled" xml:space="preserve">
+    <value>ملاحظة بلا عنوان</value>
+  </data>
+  <data name="W.contacts.preplans.ReviewDue" xml:space="preserve">
+    <value>موعد المراجعة: {0}</value>
+  </data>
+  <data name="W.contacts.preplans.Open" xml:space="preserve">
+    <value>فتح جهة الاتصال</value>
+  </data>
+  <data name="W.links.quick.AddLinks" xml:space="preserve">
+    <value>إضافة روابط</value>
+  </data>
+  <data name="W.links.quick.LinkedDepartment" xml:space="preserve">
+    <value>قسم مرتبط</value>
+  </data>
+  <data name="W.general.stickyNote.Placeholder" xml:space="preserve">
+    <value>دوّن شيئًا. لا يراه غيرك.</value>
+  </data>
+  <data name="W.general.stickyNote.Remaining" xml:space="preserve">
+    <value>الأحرف المتبقية: {0}</value>
+  </data>
+  <data name="W.shifts.today.GroupCount" xml:space="preserve">
+    <value>{0}: {1}</value>
+  </data>
+  <data name="W.map.operations.Layer.layer" xml:space="preserve">
+    <value>طبقة الخريطة</value>
+  </data>
+  <data name="W.checklists.due.Title" xml:space="preserve">
+    <value>قوائم التحقق المستحقة</value>
+  </data>
+  <data name="W.checklists.due.Description" xml:space="preserve">
+    <value>قوائم التحقق المجدولة المستحقة خلال الأيام السبعة القادمة: المتأخرة والمستحقة الآن والقادمة، مع رابط لبدء كل منها.</value>
+  </data>
+  <data name="W.checklists.due.Setting.maxRows" xml:space="preserve">
+    <value>عدد قوائم التحقق المعروضة</value>
+  </data>
+  <data name="W.checklists.due.Setting.assignedOnly" xml:space="preserve">
+    <value>قوائم التحقق المسندة إليّ فقط</value>
+  </data>
+  <data name="W.checklists.compliance.Title" xml:space="preserve">
+    <value>الالتزام بقوائم التحقق</value>
+  </data>
+  <data name="W.checklists.compliance.Description" xml:space="preserve">
+    <value>معدل إكمال قوائم التحقق خلال الأيام الأخيرة، والوحدات والمجموعات والأفراد الأكثر تأخرًا، وعمليات الفحص الفائتة حسب اليوم.</value>
+  </data>
+  <data name="W.checklists.compliance.Setting.days" xml:space="preserve">
+    <value>عدد الأيام المشمولة</value>
+  </data>
+  <data name="W.checklists.compliance.Setting.maxRows" xml:space="preserve">
+    <value>عدد الأهداف المعروضة</value>
+  </data>
+  <data name="W.workOrders.stats.Title" xml:space="preserve">
+    <value>أوامر العمل</value>
+  </data>
+  <data name="W.workOrders.stats.Description" xml:space="preserve">
+    <value>أوامر العمل المفتوحة والمتأخرة، والصيانة الوقائية المنجزة في موعدها، ومتوسط وقت الإصلاح، ووقت التعطل.</value>
+  </data>
+  <data name="W.workOrders.stats.Setting.days" xml:space="preserve">
+    <value>عدد الأيام المشمولة</value>
+  </data>
+  <data name="W.workOrders.mine.Title" xml:space="preserve">
+    <value>أوامر العمل الخاصة بي</value>
+  </data>
+  <data name="W.workOrders.mine.Description" xml:space="preserve">
+    <value>أوامر العمل المفتوحة المسندة إليك، الأكثر إلحاحًا أولًا.</value>
+  </data>
+  <data name="W.workOrders.mine.Setting.maxRows" xml:space="preserve">
+    <value>عدد أوامر العمل المعروضة</value>
+  </data>
+  <data name="W.inventory.alerts.Title" xml:space="preserve">
+    <value>تنبيهات المخزون</value>
+  </data>
+  <data name="W.inventory.alerts.Description" xml:space="preserve">
+    <value>المخزون المنخفض والعناصر التي توشك على الانتهاء أو المنتهية الصلاحية، والإرجاعات المتأخرة، والعناصر التي بحوزة أعضاء غادروا، مع أكثر العناصر إلحاحًا.</value>
+  </data>
+  <data name="W.inventory.alerts.Setting.maxRows" xml:space="preserve">
+    <value>عدد العناصر المعروضة</value>
+  </data>
+  <data name="W.inventory.valuation.Title" xml:space="preserve">
+    <value>تقييم المخزون</value>
+  </data>
+  <data name="W.inventory.valuation.Description" xml:space="preserve">
+    <value>قيمة المخزون المتاح حسب العملة والمواقع التي تحتفظ بأكبر قيمة.</value>
+  </data>
+  <data name="W.inventory.valuation.Setting.maxRows" xml:space="preserve">
+    <value>عدد المواقع المعروضة</value>
+  </data>
+  <data name="W.certifications.expiry.Title" xml:space="preserve">
+    <value>انتهاء الشهادات</value>
+  </data>
+  <data name="W.certifications.expiry.Description" xml:space="preserve">
+    <value>الشهادات المنتهية والتي توشك على الانتهاء والموقوفة وبانتظار التحقق في القسم، مع الأكثر إلحاحًا.</value>
+  </data>
+  <data name="W.certifications.expiry.Setting.maxRows" xml:space="preserve">
+    <value>عدد الشهادات المعروضة</value>
+  </data>
+  <data name="W.certifications.mine.Title" xml:space="preserve">
+    <value>شهاداتي</value>
+  </data>
+  <data name="W.certifications.mine.Description" xml:space="preserve">
+    <value>شهاداتك المنتهية أو التي ستنتهي قريبًا.</value>
+  </data>
+  <data name="W.certifications.mine.Setting.maxRows" xml:space="preserve">
+    <value>عدد الشهادات المعروضة</value>
+  </data>
+  <data name="W.records.overview.Title" xml:space="preserve">
+    <value>نظرة عامة على السجلات</value>
+  </data>
+  <data name="W.records.overview.Description" xml:space="preserve">
+    <value>المسودات والسجلات بانتظار المراجعة والسجلات المُعادة والالتزامات المتأخرة وطلبات السجلات العامة المفتوحة.</value>
+  </data>
+  <data name="W.records.myWork.Title" xml:space="preserve">
+    <value>أعمال السجلات الخاصة بي</value>
+  </data>
+  <data name="W.records.myWork.Description" xml:space="preserve">
+    <value>السجلات غير المكتملة التي تملكها وأعمال السجلات المسندة إليك.</value>
+  </data>
+  <data name="W.records.myWork.Setting.maxRows" xml:space="preserve">
+    <value>عدد العناصر المعروضة</value>
+  </data>
+  <data name="W.records.neris.Title" xml:space="preserve">
+    <value>تقارير NERIS</value>
+  </data>
+  <data name="W.records.neris.Description" xml:space="preserve">
+    <value>تقارير الحوادث حسب مرحلة الإيداع: غير مكتملة، بانتظار المراجعة، مُقدَّمة، مقبولة ومرفوضة.</value>
+  </data>
+  <data name="W.records.qualityReview.Title" xml:space="preserve">
+    <value>مراجعة الجودة</value>
+  </data>
+  <data name="W.records.qualityReview.Description" xml:space="preserve">
+    <value>السجلات بانتظار مراجعة الجودة، وسجلاتك أولًا.</value>
+  </data>
+  <data name="W.records.qualityReview.Setting.maxRows" xml:space="preserve">
+    <value>عدد المراجعات المعروضة</value>
+  </data>
+  <data name="W.records.prevention.Title" xml:space="preserve">
+    <value>الوقاية</value>
+  </data>
+  <data name="W.records.prevention.Description" xml:space="preserve">
+    <value>مراجعات المنشآت وعمليات التفتيش والمخالفات وصنابير الإطفاء والتصاريح والحد من مخاطر المجتمع والتحقيقات لوحدات الوقاية التي تستخدمها.</value>
+  </data>
+  <data name="W.records.hydrants.Title" xml:space="preserve">
+    <value>صنابير الإطفاء</value>
+  </data>
+  <data name="W.records.hydrants.Description" xml:space="preserve">
+    <value>صنابير الإطفاء الخارجة عن الخدمة والمستحقة للاختبار، مع عرض الخارجة عن الخدمة على الخريطة.</value>
+  </data>
+  <data name="W.records.hydrants.Setting.maxRows" xml:space="preserve">
+    <value>عدد الصنابير المعروضة على الخريطة</value>
+  </data>
+  <data name="W.records.crr.Title" xml:space="preserve">
+    <value>الحد من مخاطر المجتمع</value>
+  </data>
+  <data name="W.records.crr.Description" xml:space="preserve">
+    <value>أنشطة الحد من مخاطر المجتمع وأجهزة إنذار الدخان وأجهزة CO والأجهزة المدمجة المركّبة هذا العام، وطلبات أجهزة الإنذار المفتوحة.</value>
+  </data>
+  <data name="W.records.investigations.Title" xml:space="preserve">
+    <value>تحقيقاتي</value>
+  </data>
+  <data name="W.records.investigations.Description" xml:space="preserve">
+    <value>قضايا التحقيق المفتوحة التي تعمل عليها، حسب رقم القضية والحالة.</value>
+  </data>
+  <data name="W.records.investigations.Setting.maxRows" xml:space="preserve">
+    <value>عدد القضايا المعروضة</value>
+  </data>
+  <data name="W.records.analytics.Title" xml:space="preserve">
+    <value>مؤشرات أداء السجلات</value>
+  </data>
+  <data name="W.records.analytics.Description" xml:space="preserve">
+    <value>السجلات المتأخرة، والوقت الوسيط للإنهاء والمراجعة، ومعدل الإعادة، والسجلات حسب الشهر.</value>
+  </data>
+  <data name="W.records.analytics.Setting.days" xml:space="preserve">
+    <value>عدد الأيام المشمولة</value>
+  </data>
+  <data name="W.records.legalHolds.Title" xml:space="preserve">
+    <value>الحجز القانوني</value>
+  </data>
+  <data name="W.records.legalHolds.Description" xml:space="preserve">
+    <value>حجوزات الحفظ النشطة على السجلات وأحدثها.</value>
+  </data>
+  <data name="W.records.legalHolds.Setting.maxRows" xml:space="preserve">
+    <value>عدد الحجوزات المعروضة</value>
+  </data>
+  <data name="W.records.deployments.Title" xml:space="preserve">
+    <value>تقارير الانتشار</value>
+  </data>
+  <data name="W.records.deployments.Description" xml:space="preserve">
+    <value>سجلات الانتشار المفتوحة من طلبات الموارد الخارجية.</value>
+  </data>
+  <data name="W.records.deployments.Setting.maxRows" xml:space="preserve">
+    <value>عدد عمليات الانتشار المعروضة</value>
+  </data>
+  <data name="W.logs.recent.Title" xml:space="preserve">
+    <value>سجلات التشغيل الحديثة</value>
+  </data>
+  <data name="W.logs.recent.Description" xml:space="preserve">
+    <value>سجلات التشغيل المكتوبة في الأيام الأخيرة، حسب النوع، مع أحدث الإدخالات.</value>
+  </data>
+  <data name="W.logs.recent.Setting.days" xml:space="preserve">
+    <value>عدد الأيام المشمولة</value>
+  </data>
+  <data name="W.logs.recent.Setting.maxRows" xml:space="preserve">
+    <value>عدد سجلات التشغيل المعروضة</value>
+  </data>
+  <data name="W.checklists.due.Empty" xml:space="preserve">
+    <value>لا شيء مستحق خلال الأيام السبعة القادمة.</value>
+  </data>
+  <data name="W.checklists.due.OpenDue" xml:space="preserve">
+    <value>فتح قوائم التحقق المستحقة</value>
+  </data>
+  <data name="W.checklists.due.OverdueSince" xml:space="preserve">
+    <value>متأخرة · انتهت المهلة: {0}</value>
+  </data>
+  <data name="W.checklists.due.DueBy" xml:space="preserve">
+    <value>تستحق قبل: {0}</value>
+  </data>
+  <data name="W.checklists.due.Opens" xml:space="preserve">
+    <value>تُفتح: {0}</value>
+  </data>
+  <data name="W.checklists.due.Overdue" xml:space="preserve">
+    <value>متأخرة</value>
+  </data>
+  <data name="W.checklists.due.DueNow" xml:space="preserve">
+    <value>مستحقة الآن</value>
+  </data>
+  <data name="W.checklists.due.Upcoming" xml:space="preserve">
+    <value>قادمة</value>
+  </data>
+  <data name="W.checklists.due.Unnamed" xml:space="preserve">
+    <value>قائمة تحقق</value>
+  </data>
+  <data name="W.checklists.due.Start" xml:space="preserve">
+    <value>بدء</value>
+  </data>
+  <data name="W.checklists.due.SeeAll" xml:space="preserve">
+    <value>عرض كل قوائم التحقق المستحقة</value>
+  </data>
+  <data name="W.checklists.due.NextDue" xml:space="preserve">
+    <value>تُفتح التالية: {0}</value>
+  </data>
+  <data name="W.checklists.compliance.Empty" xml:space="preserve">
+    <value>لا توجد قوائم تحقق مستحقة خلال آخر {0} يوم.</value>
+  </data>
+  <data name="W.checklists.compliance.OpenCompliance" xml:space="preserve">
+    <value>فتح الالتزام بقوائم التحقق</value>
+  </data>
+  <data name="W.checklists.compliance.CompletedLastDays" xml:space="preserve">
+    <value>مكتملة خلال آخر {0} يوم</value>
+  </data>
+  <data name="W.checklists.compliance.Completed" xml:space="preserve">
+    <value>مكتملة</value>
+  </data>
+  <data name="W.checklists.compliance.OnTime" xml:space="preserve">
+    <value>في الموعد</value>
+  </data>
+  <data name="W.checklists.compliance.Missed" xml:space="preserve">
+    <value>فائتة</value>
+  </data>
+  <data name="W.checklists.compliance.Skipped" xml:space="preserve">
+    <value>متخطاة</value>
+  </data>
+  <data name="W.checklists.compliance.FurthestBehind" xml:space="preserve">
+    <value>الأكثر تأخرًا</value>
+  </data>
+  <data name="W.checklists.compliance.UnknownTarget" xml:space="preserve">
+    <value>هدف غير معروف</value>
+  </data>
+  <data name="W.checklists.compliance.RateOf" xml:space="preserve">
+    <value>{0} · {1}/{2}</value>
+  </data>
+  <data name="W.checklists.compliance.MissedPerDay" xml:space="preserve">
+    <value>الفائتة يوميًا</value>
+  </data>
+  <data name="W.checklists.compliance.TrendAria" xml:space="preserve">
+    <value>الفحوصات الفائتة يوميًا: {0} فائتة خلال {1} يوم</value>
+  </data>
+  <data name="W.checklists.compliance.MissedValue" xml:space="preserve">
+    <value>فائتة: {0}</value>
+  </data>
+  <data name="W.checklists.compliance.Restricted" xml:space="preserve">
+    <value>بعض النتائج خارج نطاق صلاحياتك ولم تُحتسب.</value>
+  </data>
+  <data name="W.workOrders.stats.Empty" xml:space="preserve">
+    <value>لا توجد أوامر عمل في هذه الفترة.</value>
+  </data>
+  <data name="W.workOrders.stats.OpenWorkOrders" xml:space="preserve">
+    <value>أوامر العمل المفتوحة</value>
+  </data>
+  <data name="W.workOrders.stats.Open" xml:space="preserve">
+    <value>مفتوحة</value>
+  </data>
+  <data name="W.workOrders.stats.Overdue" xml:space="preserve">
+    <value>متأخرة</value>
+  </data>
+  <data name="W.workOrders.stats.PreventiveOnTime" xml:space="preserve">
+    <value>PM في الموعد</value>
+  </data>
+  <data name="W.workOrders.stats.PreventiveOfDue" xml:space="preserve">
+    <value>أوامر العمل الوقائية المنجزة في الموعد: {0} من {1}</value>
+  </data>
+  <data name="W.workOrders.stats.Mttr" xml:space="preserve">
+    <value>متوسط وقت الإصلاح</value>
+  </data>
+  <data name="W.workOrders.stats.OpenByPriority" xml:space="preserve">
+    <value>المفتوحة حسب الأولوية</value>
+  </data>
+  <data name="W.workOrders.stats.Priority0" xml:space="preserve">
+    <value>منخفضة</value>
+  </data>
+  <data name="W.workOrders.stats.Priority1" xml:space="preserve">
+    <value>عادية</value>
+  </data>
+  <data name="W.workOrders.stats.Priority2" xml:space="preserve">
+    <value>عالية</value>
+  </data>
+  <data name="W.workOrders.stats.Priority3" xml:space="preserve">
+    <value>طارئة</value>
+  </data>
+  <data name="W.workOrders.stats.Downtime" xml:space="preserve">
+    <value>وقت التعطل: {0}</value>
+  </data>
+  <data name="W.workOrders.stats.SlaBreaches" xml:space="preserve">
+    <value>خروقات SLA: {0}</value>
+  </data>
+  <data name="W.workOrders.stats.LastDays" xml:space="preserve">
+    <value>آخر {0} يوم</value>
+  </data>
+  <data name="W.workOrders.stats.OpenReports" xml:space="preserve">
+    <value>التقارير</value>
+  </data>
+  <data name="W.workOrders.mine.Empty" xml:space="preserve">
+    <value>لا توجد أوامر عمل مفتوحة مسندة إليك.</value>
+  </data>
+  <data name="W.workOrders.mine.OpenWorkOrders" xml:space="preserve">
+    <value>أوامر العمل المفتوحة</value>
+  </data>
+  <data name="W.workOrders.mine.Untitled" xml:space="preserve">
+    <value>أمر عمل</value>
+  </data>
+  <data name="W.workOrders.mine.Priority0" xml:space="preserve">
+    <value>منخفضة</value>
+  </data>
+  <data name="W.workOrders.mine.Priority1" xml:space="preserve">
+    <value>عادية</value>
+  </data>
+  <data name="W.workOrders.mine.Priority2" xml:space="preserve">
+    <value>عالية</value>
+  </data>
+  <data name="W.workOrders.mine.Priority3" xml:space="preserve">
+    <value>طارئة</value>
+  </data>
+  <data name="W.workOrders.mine.Status0" xml:space="preserve">
+    <value>مطلوب</value>
+  </data>
+  <data name="W.workOrders.mine.Status1" xml:space="preserve">
+    <value>مقبول</value>
+  </data>
+  <data name="W.workOrders.mine.Status2" xml:space="preserve">
+    <value>مسند</value>
+  </data>
+  <data name="W.workOrders.mine.Status3" xml:space="preserve">
+    <value>قيد التنفيذ</value>
+  </data>
+  <data name="W.workOrders.mine.Status4" xml:space="preserve">
+    <value>معلّق</value>
+  </data>
+  <data name="W.workOrders.mine.Status5" xml:space="preserve">
+    <value>مكتمل</value>
+  </data>
+  <data name="W.workOrders.mine.Status6" xml:space="preserve">
+    <value>مغلق</value>
+  </data>
+  <data name="W.workOrders.mine.Status7" xml:space="preserve">
+    <value>مرفوض</value>
+  </data>
+  <data name="W.workOrders.mine.Status8" xml:space="preserve">
+    <value>مكرر</value>
+  </data>
+  <data name="W.workOrders.mine.Status9" xml:space="preserve">
+    <value>ملغى</value>
+  </data>
+  <data name="W.workOrders.mine.OverdueOn" xml:space="preserve">
+    <value>متأخر · {0}</value>
+  </data>
+  <data name="W.workOrders.mine.DueOn" xml:space="preserve">
+    <value>الاستحقاق: {0}</value>
+  </data>
+  <data name="W.workOrders.mine.SeeAll" xml:space="preserve">
+    <value>كل أوامر العمل الخاصة بي</value>
+  </data>
+  <data name="W.inventory.alerts.UnknownItem" xml:space="preserve">
+    <value>عنصر</value>
+  </data>
+  <data name="W.inventory.alerts.Type0" xml:space="preserve">
+    <value>مخزون منخفض</value>
+  </data>
+  <data name="W.inventory.alerts.Type1" xml:space="preserve">
+    <value>ينتهي قريبًا</value>
+  </data>
+  <data name="W.inventory.alerts.Type2" xml:space="preserve">
+    <value>منتهي الصلاحية</value>
+  </data>
+  <data name="W.inventory.alerts.Type3" xml:space="preserve">
+    <value>إرجاعات متأخرة</value>
+  </data>
+  <data name="W.inventory.alerts.Type4" xml:space="preserve">
+    <value>حائزون غادروا</value>
+  </data>
+  <data name="W.inventory.alerts.ExpiresOn" xml:space="preserve">
+    <value>تنتهي: {0}</value>
+  </data>
+  <data name="W.inventory.alerts.DueOn" xml:space="preserve">
+    <value>الاستحقاق: {0}</value>
+  </data>
+  <data name="W.inventory.alerts.Quantity" xml:space="preserve">
+    <value>الكمية: {0}</value>
+  </data>
+  <data name="W.inventory.alerts.TimesCount" xml:space="preserve">
+    <value>×{0}</value>
+  </data>
+  <data name="W.inventory.alerts.LegacyEmpty" xml:space="preserve">
+    <value>لا توجد عناصر نافدة من المخزون.</value>
+  </data>
+  <data name="W.inventory.alerts.OpenInventory" xml:space="preserve">
+    <value>فتح المخزون</value>
+  </data>
+  <data name="W.inventory.alerts.OutOfStock" xml:space="preserve">
+    <value>نافد من المخزون</value>
+  </data>
+  <data name="W.inventory.alerts.LegacyNote" xml:space="preserve">
+    <value>هيّئ المخزون لتفعيل تنبيهات انتهاء الصلاحية والإرجاع</value>
+  </data>
+  <data name="W.inventory.alerts.Empty" xml:space="preserve">
+    <value>لا توجد تنبيهات مخزون مفتوحة.</value>
+  </data>
+  <data name="W.inventory.alerts.OpenAlerts" xml:space="preserve">
+    <value>فتح التنبيهات</value>
+  </data>
+  <data name="W.inventory.alerts.Truncated" xml:space="preserve">
+    <value>الأعداد جزئية: افتح صفحة التنبيهات للاطلاع على القائمة الكاملة.</value>
+  </data>
+  <data name="W.inventory.valuation.NotInitialized" xml:space="preserve">
+    <value>هيّئ المخزون لعرض قيمته.</value>
+  </data>
+  <data name="W.inventory.valuation.OpenInventory" xml:space="preserve">
+    <value>فتح المخزون</value>
+  </data>
+  <data name="W.inventory.valuation.Empty" xml:space="preserve">
+    <value>لا يوجد مخزون متاح.</value>
+  </data>
+  <data name="W.inventory.valuation.OpenValuation" xml:space="preserve">
+    <value>فتح التقييم</value>
+  </data>
+  <data name="W.inventory.valuation.OnHand" xml:space="preserve">
+    <value>متاح</value>
+  </data>
+  <data name="W.inventory.valuation.ByLocation" xml:space="preserve">
+    <value>حسب الموقع</value>
+  </data>
+  <data name="W.inventory.valuation.UnnamedLocation" xml:space="preserve">
+    <value>الموقع</value>
+  </data>
+  <data name="W.inventory.valuation.NegativeStock" xml:space="preserve">
+    <value>بعض المخزون أقل من صفر؛ وقد تكون القيم أقل من الواقع.</value>
+  </data>
+  <data name="W.inventory.valuation.Uncosted" xml:space="preserve">
+    <value>بنود بلا تكلفة وغير مشمولة: {0}</value>
+  </data>
+  <data name="W.inventory.valuation.AsOf" xml:space="preserve">
+    <value>حتى {0}</value>
+  </data>
+  <data name="W.certifications.expiry.Empty" xml:space="preserve">
+    <value>لا توجد شهادات تحتاج إلى متابعة خلال {0} يوم قادمة.</value>
+  </data>
+  <data name="W.certifications.expiry.OpenCertifications" xml:space="preserve">
+    <value>فتح الشهادات</value>
+  </data>
+  <data name="W.certifications.expiry.Expired" xml:space="preserve">
+    <value>منتهية</value>
+  </data>
+  <data name="W.certifications.expiry.ExpiringWithin" xml:space="preserve">
+    <value>تنتهي خلال {0} يوم</value>
+  </data>
+  <data name="W.certifications.expiry.Suspended" xml:space="preserve">
+    <value>موقوفة</value>
+  </data>
+  <data name="W.certifications.expiry.ToVerify" xml:space="preserve">
+    <value>بانتظار التحقق</value>
+  </data>
+  <data name="W.certifications.expiry.UnknownType" xml:space="preserve">
+    <value>شهادة</value>
+  </data>
+  <data name="W.certifications.expiry.UnknownSubject" xml:space="preserve">
+    <value>غير معروف</value>
+  </data>
+  <data name="W.certifications.expiry.NoExpiry" xml:space="preserve">
+    <value>لا يوجد تاريخ انتهاء</value>
+  </data>
+  <data name="W.certifications.expiry.ExpiredDaysAgo" xml:space="preserve">
+    <value>انتهت منذ {0} يوم</value>
+  </data>
+  <data name="W.certifications.expiry.ExpiresToday" xml:space="preserve">
+    <value>تنتهي اليوم</value>
+  </data>
+  <data name="W.certifications.expiry.ExpiresInDays" xml:space="preserve">
+    <value>تنتهي خلال {0} يوم</value>
+  </data>
+  <data name="W.certifications.mine.Empty" xml:space="preserve">
+    <value>لا تنتهي أي من شهاداتك خلال {0} يوم قادمة.</value>
+  </data>
+  <data name="W.certifications.mine.OpenMine" xml:space="preserve">
+    <value>شهاداتي</value>
+  </data>
+  <data name="W.certifications.mine.Unnamed" xml:space="preserve">
+    <value>شهادة</value>
+  </data>
+  <data name="W.certifications.mine.SeeAll" xml:space="preserve">
+    <value>كل شهاداتي</value>
+  </data>
+  <data name="W.certifications.mine.ExpiredDaysAgo" xml:space="preserve">
+    <value>انتهت منذ {0} يوم</value>
+  </data>
+  <data name="W.certifications.mine.ExpiresToday" xml:space="preserve">
+    <value>تنتهي اليوم</value>
+  </data>
+  <data name="W.certifications.mine.ExpiresInDays" xml:space="preserve">
+    <value>تنتهي خلال {0} يوم</value>
+  </data>
+  <data name="W.records.overview.Drafts" xml:space="preserve">
+    <value>مسودات</value>
+  </data>
+  <data name="W.records.overview.AwaitingReview" xml:space="preserve">
+    <value>بانتظار المراجعة</value>
+  </data>
+  <data name="W.records.overview.Returned" xml:space="preserve">
+    <value>مُعادة</value>
+  </data>
+  <data name="W.records.overview.Overdue" xml:space="preserve">
+    <value>متأخرة</value>
+  </data>
+  <data name="W.records.overview.IncidentIncomplete" xml:space="preserve">
+    <value>تقارير حوادث غير مكتملة</value>
+  </data>
+  <data name="W.records.overview.IncidentAwaitingReview" xml:space="preserve">
+    <value>تقارير حوادث للمراجعة</value>
+  </data>
+  <data name="W.records.overview.DisclosuresOpen" xml:space="preserve">
+    <value>طلبات سجلات مفتوحة</value>
+  </data>
+  <data name="W.records.overview.DisclosuresOverdue" xml:space="preserve">
+    <value>طلبات سجلات متأخرة</value>
+  </data>
+  <data name="W.records.overview.Warnings" xml:space="preserve">
+    <value>بعض الأعداد غير متاحة ({0})؛ راجع لوحة معلومات السجلات.</value>
+  </data>
+  <data name="W.records.myWork.Empty" xml:space="preserve">
+    <value>لا توجد سجلات تنتظر إجراءً منك.</value>
+  </data>
+  <data name="W.records.myWork.OpenRecords" xml:space="preserve">
+    <value>فتح السجلات</value>
+  </data>
+  <data name="W.records.myWork.AssignedToMe" xml:space="preserve">
+    <value>المسندة إليّ ({0})</value>
+  </data>
+  <data name="W.records.myWork.PurposeComplete" xml:space="preserve">
+    <value>أكمل السجل</value>
+  </data>
+  <data name="W.records.myWork.PurposeReview" xml:space="preserve">
+    <value>راجع السجل</value>
+  </data>
+  <data name="W.records.myWork.PurposeCorrect" xml:space="preserve">
+    <value>صحّح السجل</value>
+  </data>
+  <data name="W.records.myWork.PurposeAttach" xml:space="preserve">
+    <value>أرفق المستندات</value>
+  </data>
+  <data name="W.records.myWork.PurposeAcknowledge" xml:space="preserve">
+    <value>أقرّ بالسجل</value>
+  </data>
+  <data name="W.records.myWork.PurposeOther" xml:space="preserve">
+    <value>عمل على السجل</value>
+  </data>
+  <data name="W.records.myWork.Via2" xml:space="preserve">
+    <value>عبر وحدتك</value>
+  </data>
+  <data name="W.records.myWork.Via3" xml:space="preserve">
+    <value>عبر مجموعتك</value>
+  </data>
+  <data name="W.records.myWork.Via4" xml:space="preserve">
+    <value>عبر دورك القيادي</value>
+  </data>
+  <data name="W.records.myWork.Via5" xml:space="preserve">
+    <value>عبر الإرسال</value>
+  </data>
+  <data name="W.records.myWork.Acknowledged" xml:space="preserve">
+    <value>تم الإقرار</value>
+  </data>
+  <data name="W.records.myWork.OverdueSince" xml:space="preserve">
+    <value>متأخر منذ {0}</value>
+  </data>
+  <data name="W.records.myWork.DueOn" xml:space="preserve">
+    <value>الاستحقاق: {0}</value>
+  </data>
+  <data name="W.records.myWork.MyRecords" xml:space="preserve">
+    <value>سجلاتي غير المكتملة ({0})</value>
+  </data>
+  <data name="W.records.myWork.NoNumber" xml:space="preserve">
+    <value>مسودة</value>
+  </data>
+  <data name="W.records.myWork.State1" xml:space="preserve">
+    <value>مسودة</value>
+  </data>
+  <data name="W.records.myWork.State2" xml:space="preserve">
+    <value>جاهز للمراجعة</value>
+  </data>
+  <data name="W.records.myWork.State3" xml:space="preserve">
+    <value>مُعاد</value>
+  </data>
+  <data name="W.records.myWork.State4" xml:space="preserve">
+    <value>معتمد</value>
+  </data>
+  <data name="W.records.myWork.ReviewDue" xml:space="preserve">
+    <value>موعد المراجعة: {0}</value>
+  </data>
+  <data name="W.records.myWork.Started" xml:space="preserve">
+    <value>بدأ: {0}</value>
+  </data>
+  <data name="W.records.neris.Empty" xml:space="preserve">
+    <value>لا توجد تقارير حوادث في مسار الإيداع.</value>
+  </data>
+  <data name="W.records.neris.OpenRecords" xml:space="preserve">
+    <value>فتح لوحة معلومات السجلات</value>
+  </data>
+  <data name="W.records.neris.Incomplete" xml:space="preserve">
+    <value>غير مكتملة</value>
+  </data>
+  <data name="W.records.neris.AwaitingReview" xml:space="preserve">
+    <value>بانتظار المراجعة</value>
+  </data>
+  <data name="W.records.neris.Submitted" xml:space="preserve">
+    <value>مُقدَّمة</value>
+  </data>
+  <data name="W.records.neris.Accepted" xml:space="preserve">
+    <value>مقبولة</value>
+  </data>
+  <data name="W.records.neris.Rejected" xml:space="preserve">
+    <value>مرفوضة</value>
+  </data>
+  <data name="W.records.qualityReview.Empty" xml:space="preserve">
+    <value>لا توجد سجلات بانتظار مراجعة الجودة.</value>
+  </data>
+  <data name="W.records.qualityReview.OpenQuality" xml:space="preserve">
+    <value>فتح مراجعة الجودة</value>
+  </data>
+  <data name="W.records.qualityReview.Pending" xml:space="preserve">
+    <value>معلّقة</value>
+  </data>
+  <data name="W.records.qualityReview.AssignedToMe" xml:space="preserve">
+    <value>مسندة إليّ</value>
+  </data>
+  <data name="W.records.qualityReview.NoNumber" xml:space="preserve">
+    <value>سجل</value>
+  </data>
+  <data name="W.records.qualityReview.Sampled" xml:space="preserve">
+    <value>تاريخ أخذ العينة: {0}</value>
+  </data>
+  <data name="W.records.qualityReview.Yours" xml:space="preserve">
+    <value>الخاصة بك</value>
+  </data>
+  <data name="W.records.qualityReview.SeeAll" xml:space="preserve">
+    <value>كل المراجعات المعلقة</value>
+  </data>
+  <data name="W.records.prevention.Occupancies" xml:space="preserve">
+    <value>المنشآت</value>
+  </data>
+  <data name="W.records.prevention.OccupanciesCount" xml:space="preserve">
+    <value>منشآت</value>
+  </data>
+  <data name="W.records.prevention.ReviewsOverdue" xml:space="preserve">
+    <value>مراجعات متأخرة</value>
+  </data>
+  <data name="W.records.prevention.Inspections" xml:space="preserve">
+    <value>عمليات التفتيش</value>
+  </data>
+  <data name="W.records.prevention.InspectionsDue" xml:space="preserve">
+    <value>عمليات تفتيش مستحقة</value>
+  </data>
+  <data name="W.records.prevention.InspectionsScheduled" xml:space="preserve">
+    <value>مجدولة</value>
+  </data>
+  <data name="W.records.prevention.ViolationsOpen" xml:space="preserve">
+    <value>مخالفات مفتوحة</value>
+  </data>
+  <data name="W.records.prevention.ViolationsOverdue" xml:space="preserve">
+    <value>مخالفات متأخرة</value>
+  </data>
+  <data name="W.records.prevention.Hydrants" xml:space="preserve">
+    <value>صنابير الإطفاء</value>
+  </data>
+  <data name="W.records.prevention.OutOfService" xml:space="preserve">
+    <value>خارج الخدمة</value>
+  </data>
+  <data name="W.records.prevention.TestDue" xml:space="preserve">
+    <value>اختبار مستحق</value>
+  </data>
+  <data name="W.records.prevention.HydrantsCount" xml:space="preserve">
+    <value>صنابير</value>
+  </data>
+  <data name="W.records.prevention.Permits" xml:space="preserve">
+    <value>التصاريح</value>
+  </data>
+  <data name="W.records.prevention.AwaitingReview" xml:space="preserve">
+    <value>بانتظار المراجعة</value>
+  </data>
+  <data name="W.records.prevention.ExpiringSoon" xml:space="preserve">
+    <value>تنتهي قريبًا</value>
+  </data>
+  <data name="W.records.prevention.PermitsActive" xml:space="preserve">
+    <value>تصاريح نشطة</value>
+  </data>
+  <data name="W.records.prevention.Crr" xml:space="preserve">
+    <value>الحد من مخاطر المجتمع</value>
+  </data>
+  <data name="W.records.prevention.Activities90" xml:space="preserve">
+    <value>أنشطة (90 يومًا)</value>
+  </data>
+  <data name="W.records.prevention.Alarms90" xml:space="preserve">
+    <value>أجهزة إنذار مركّبة (90 يومًا)</value>
+  </data>
+  <data name="W.records.prevention.Investigations" xml:space="preserve">
+    <value>التحقيقات</value>
+  </data>
+  <data name="W.records.prevention.CasesOpen" xml:space="preserve">
+    <value>قضايا مفتوحة</value>
+  </data>
+  <data name="W.records.prevention.NoModules" xml:space="preserve">
+    <value>لا توجد وحدات وقاية مفعّلة.</value>
+  </data>
+  <data name="W.records.prevention.OpenRecords" xml:space="preserve">
+    <value>فتح السجلات</value>
+  </data>
+  <data name="W.records.hydrants.MarkerSince" xml:space="preserve">
+    <value>صنبور الإطفاء {0} · خارج الخدمة منذ {1}</value>
+  </data>
+  <data name="W.records.hydrants.NoNumber" xml:space="preserve">
+    <value>(بلا رقم)</value>
+  </data>
+  <data name="W.records.hydrants.Marker" xml:space="preserve">
+    <value>صنبور الإطفاء {0} · خارج الخدمة</value>
+  </data>
+  <data name="W.records.hydrants.OutOfService" xml:space="preserve">
+    <value>خارج الخدمة</value>
+  </data>
+  <data name="W.records.hydrants.TestDue" xml:space="preserve">
+    <value>اختبار مستحق</value>
+  </data>
+  <data name="W.records.hydrants.AllInService" xml:space="preserve">
+    <value>جميع صنابير الإطفاء في الخدمة.</value>
+  </data>
+  <data name="W.records.hydrants.OpenHydrants" xml:space="preserve">
+    <value>فتح صنابير الإطفاء</value>
+  </data>
+  <data name="W.records.hydrants.MapAria" xml:space="preserve">
+    <value>خريطة صنابير الإطفاء الخارجة عن الخدمة: {0}</value>
+  </data>
+  <data name="W.records.hydrants.NoPositions" xml:space="preserve">
+    <value>لا يوجد موضع على الخريطة لصنابير الإطفاء الخارجة عن الخدمة.</value>
+  </data>
+  <data name="W.records.hydrants.MappedOf" xml:space="preserve">
+    <value>المعروض على الخريطة: {0} من {1}.</value>
+  </data>
+  <data name="W.records.crr.Empty" xml:space="preserve">
+    <value>لا يوجد نشاط للحد من مخاطر المجتمع هذا العام.</value>
+  </data>
+  <data name="W.records.crr.OpenCrr" xml:space="preserve">
+    <value>فتح الحد من مخاطر المجتمع</value>
+  </data>
+  <data name="W.records.crr.AlarmsThisYear" xml:space="preserve">
+    <value>أجهزة إنذار مركّبة هذا العام</value>
+  </data>
+  <data name="W.records.crr.Activities" xml:space="preserve">
+    <value>أنشطة</value>
+  </data>
+  <data name="W.records.crr.OpenRequests" xml:space="preserve">
+    <value>طلبات أجهزة إنذار مفتوحة</value>
+  </data>
+  <data name="W.records.crr.Smoke" xml:space="preserve">
+    <value>دخان</value>
+  </data>
+  <data name="W.records.crr.Co" xml:space="preserve">
+    <value>CO</value>
+  </data>
+  <data name="W.records.crr.Combo" xml:space="preserve">
+    <value>مدمج (دخان/CO)</value>
+  </data>
+  <data name="W.records.investigations.Empty" xml:space="preserve">
+    <value>ليس لديك قضايا تحقيق مفتوحة.</value>
+  </data>
+  <data name="W.records.investigations.OpenCases" xml:space="preserve">
+    <value>فتح التحقيقات</value>
+  </data>
+  <data name="W.records.investigations.NoNumber" xml:space="preserve">
+    <value>قضية</value>
+  </data>
+  <data name="W.records.investigations.State1" xml:space="preserve">
+    <value>مفتوحة</value>
+  </data>
+  <data name="W.records.investigations.State2" xml:space="preserve">
+    <value>نشطة</value>
+  </data>
+  <data name="W.records.investigations.State3" xml:space="preserve">
+    <value>بانتظار المراجعة</value>
+  </data>
+  <data name="W.records.investigations.State4" xml:space="preserve">
+    <value>مغلقة</value>
+  </data>
+  <data name="W.records.investigations.Opened" xml:space="preserve">
+    <value>تاريخ الفتح: {0}</value>
+  </data>
+  <data name="W.records.investigations.SeeAll" xml:space="preserve">
+    <value>كل القضايا المفتوحة ({0})</value>
+  </data>
+  <data name="W.records.analytics.OverdueNow" xml:space="preserve">
+    <value>متأخرة الآن</value>
+  </data>
+  <data name="W.records.analytics.MedianToFinalize" xml:space="preserve">
+    <value>الوسيط للإنهاء</value>
+  </data>
+  <data name="W.records.analytics.MedianReview" xml:space="preserve">
+    <value>الوسيط للمراجعة</value>
+  </data>
+  <data name="W.records.analytics.ReturnRate" xml:space="preserve">
+    <value>معدل الإعادة</value>
+  </data>
+  <data name="W.records.analytics.OpenDrafts" xml:space="preserve">
+    <value>مسودات مفتوحة</value>
+  </data>
+  <data name="W.records.analytics.AwaitingReview" xml:space="preserve">
+    <value>بانتظار المراجعة</value>
+  </data>
+  <data name="W.records.analytics.WentOverdue" xml:space="preserve">
+    <value>تأخرت</value>
+  </data>
+  <data name="W.records.analytics.RecordsPerMonth" xml:space="preserve">
+    <value>السجلات حسب الشهر</value>
+  </data>
+  <data name="W.records.analytics.TrendAria" xml:space="preserve">
+    <value>السجلات حسب الشهر: {0} سجل خلال {1} شهر</value>
+  </data>
+  <data name="W.records.analytics.GroupScoped" xml:space="preserve">
+    <value>تشمل الأرقام السجلات التي يمكنك فتحها فقط.</value>
+  </data>
+  <data name="W.records.analytics.Truncated" xml:space="preserve">
+    <value>عدد السجلات كبير جدًا للقراءة دفعة واحدة؛ قلّص الفترة.</value>
+  </data>
+  <data name="W.records.legalHolds.Empty" xml:space="preserve">
+    <value>لا توجد حجوزات قانونية نشطة.</value>
+  </data>
+  <data name="W.records.legalHolds.OpenHolds" xml:space="preserve">
+    <value>فتح الحجز القانوني</value>
+  </data>
+  <data name="W.records.legalHolds.Period" xml:space="preserve">
+    <value>{0} – {1}</value>
+  </data>
+  <data name="W.records.legalHolds.ActiveHolds" xml:space="preserve">
+    <value>حجوزات نشطة</value>
+  </data>
+  <data name="W.records.legalHolds.OnRecords" xml:space="preserve">
+    <value>على سجلات فردية: {0}</value>
+  </data>
+  <data name="W.records.legalHolds.Newest" xml:space="preserve">
+    <value>الأحدث: {0}</value>
+  </data>
+  <data name="W.records.legalHolds.RecordHold" xml:space="preserve">
+    <value>حجز على سجل</value>
+  </data>
+  <data name="W.records.legalHolds.ScopeHold" xml:space="preserve">
+    <value>حجز حسب النوع أو الفترة</value>
+  </data>
+  <data name="W.records.legalHolds.Placed" xml:space="preserve">
+    <value>تاريخ الوضع: {0}</value>
+  </data>
+  <data name="W.records.deployments.Empty" xml:space="preserve">
+    <value>لا توجد عمليات انتشار مفتوحة.</value>
+  </data>
+  <data name="W.records.deployments.OpenDeployments" xml:space="preserve">
+    <value>فتح تقارير الانتشار</value>
+  </data>
+  <data name="W.records.deployments.NoNumber" xml:space="preserve">
+    <value>انتشار</value>
+  </data>
+  <data name="W.records.deployments.Status1" xml:space="preserve">
+    <value>مفتوح</value>
+  </data>
+  <data name="W.records.deployments.Status2" xml:space="preserve">
+    <value>تمت التعبئة</value>
+  </data>
+  <data name="W.records.deployments.Status3" xml:space="preserve">
+    <value>مُسرَّح</value>
+  </data>
+  <data name="W.records.deployments.Status4" xml:space="preserve">
+    <value>تم الإغلاق</value>
+  </data>
+  <data name="W.records.deployments.Incident" xml:space="preserve">
+    <value>الحادث {0}</value>
+  </data>
+  <data name="W.records.deployments.Mobilized" xml:space="preserve">
+    <value>تاريخ التعبئة: {0}</value>
+  </data>
+  <data name="W.records.deployments.Created" xml:space="preserve">
+    <value>تاريخ الإنشاء: {0}</value>
+  </data>
+  <data name="W.records.deployments.SeeAll" xml:space="preserve">
+    <value>كل عمليات الانتشار المفتوحة ({0})</value>
+  </data>
+  <data name="W.logs.recent.Type0" xml:space="preserve">
+    <value>أخرى</value>
+  </data>
+  <data name="W.logs.recent.Type1" xml:space="preserve">
+    <value>استجابة لبلاغ</value>
+  </data>
+  <data name="W.logs.recent.Type2" xml:space="preserve">
+    <value>تدريب</value>
+  </data>
+  <data name="W.logs.recent.Type4" xml:space="preserve">
+    <value>عمل</value>
+  </data>
+  <data name="W.logs.recent.Type5" xml:space="preserve">
+    <value>اجتماع</value>
+  </data>
+  <data name="W.logs.recent.Type6" xml:space="preserve">
+    <value>الطب الشرعي</value>
+  </data>
+  <data name="W.logs.recent.Type7" xml:space="preserve">
+    <value>معاودة الاتصال</value>
+  </data>
+  <data name="W.logs.recent.Empty" xml:space="preserve">
+    <value>لا توجد سجلات تشغيل في آخر {0} يوم.</value>
+  </data>
+  <data name="W.logs.recent.OpenLogs" xml:space="preserve">
+    <value>فتح سجلات التشغيل</value>
+  </data>
+  <data name="W.logs.recent.Newest" xml:space="preserve">
+    <value>الأحدث</value>
+  </data>
+  <data name="W.logs.recent.Started" xml:space="preserve">
+    <value>بدأ: {0}</value>
+  </data>
+  <data name="W.logs.recent.Total" xml:space="preserve">
+    <value>سجلات التشغيل في آخر {1} يوم: {0}</value>
+  </data>
+  <data name="W.logs.recent.TotalTruncated" xml:space="preserve">
+    <value>سجلات التشغيل في آخر {1} يوم: أكثر من {0}</value>
+  </data>
+  <data name="W.checklists.compliance.MissedTotal" xml:space="preserve">
+    <value>الفائتة في هذه الفترة: {0}</value>
+  </data>
+  <data name="W.deployments.active.Title" xml:space="preserve">
+    <value>عمليات الانتشار</value>
+  </data>
+  <data name="W.deployments.active.Description" xml:space="preserve">
+    <value>عمليات الانتشار المفتوحة، وتلك المسجّل اسمك فيها أولًا، مع الحالة وأيام الانتشار.</value>
+  </data>
+  <data name="W.deployments.active.Setting.maxRows" xml:space="preserve">
+    <value>عدد عمليات الانتشار المعروضة</value>
+  </data>
+  <data name="W.deployments.active.Open" xml:space="preserve">
+    <value>مفتوحة</value>
+  </data>
+  <data name="W.deployments.active.Mine" xml:space="preserve">
+    <value>الخاصة بي</value>
+  </data>
+  <data name="W.deployments.active.Empty" xml:space="preserve">
+    <value>لا توجد عمليات انتشار مفتوحة.</value>
+  </data>
+  <data name="W.deployments.active.Status.Planned" xml:space="preserve">
+    <value>مخطط</value>
+  </data>
+  <data name="W.deployments.active.Status.Standby" xml:space="preserve">
+    <value>استعداد</value>
+  </data>
+  <data name="W.deployments.active.Status.Active" xml:space="preserve">
+    <value>نشط</value>
+  </data>
+  <data name="W.deployments.active.Status.Demobilizing" xml:space="preserve">
+    <value>قيد إنهاء التعبئة</value>
+  </data>
+  <data name="W.deployments.timeReports.Title" xml:space="preserve">
+    <value>تقارير الوقت</value>
+  </data>
+  <data name="W.deployments.timeReports.Description" xml:space="preserve">
+    <value>تقارير الوقت اليومية بانتظار الاعتماد، والتقارير المعتمدة التي لم تُفوتر بعد.</value>
+  </data>
+  <data name="W.deployments.timeReports.AwaitingApproval" xml:space="preserve">
+    <value>بانتظار الاعتماد</value>
+  </data>
+  <data name="W.deployments.timeReports.ApprovedUnbilled" xml:space="preserve">
+    <value>معتمد، غير مفوتر</value>
+  </data>
+  <data name="W.deployments.timeReports.OldestSince" xml:space="preserve">
+    <value>الأقدم منذ {0}</value>
+  </data>
+  <data name="W.invoicing.receivables.Title" xml:space="preserve">
+    <value>الذمم المدينة</value>
+  </data>
+  <data name="W.invoicing.receivables.Description" xml:space="preserve">
+    <value>أرصدة الفواتير المفتوحة حسب العمر، وإجمالي المتأخرات حسب العملة، والمسودات التي لم تُرسل بعد.</value>
+  </data>
+  <data name="W.invoicing.receivables.Outstanding" xml:space="preserve">
+    <value>المستحقة</value>
+  </data>
+  <data name="W.invoicing.receivables.Overdue" xml:space="preserve">
+    <value>المتأخرة</value>
+  </data>
+  <data name="W.invoicing.receivables.OverdueCount" xml:space="preserve">
+    <value>الفواتير المتأخرة</value>
+  </data>
+  <data name="W.invoicing.receivables.Drafts" xml:space="preserve">
+    <value>المسودات</value>
+  </data>
+  <data name="W.invoicing.receivables.ReadOnly" xml:space="preserve">
+    <value>للقراءة فقط: انتهت صلاحية إضافة Business Operations.</value>
+  </data>
+  <data name="W.invoicing.receivables.Bucket.Current" xml:space="preserve">
+    <value>الحالية</value>
+  </data>
+  <data name="W.invoicing.receivables.Bucket.1-30" xml:space="preserve">
+    <value>1-30 يومًا</value>
+  </data>
+  <data name="W.invoicing.receivables.Bucket.31-60" xml:space="preserve">
+    <value>31-60 يومًا</value>
+  </data>
+  <data name="W.invoicing.receivables.Bucket.61-90" xml:space="preserve">
+    <value>61-90 يومًا</value>
+  </data>
+  <data name="W.invoicing.receivables.Bucket.90+" xml:space="preserve">
+    <value>90+ يومًا</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Title" xml:space="preserve">
+    <value>المدفوعات عبر الإنترنت</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Description" xml:space="preserve">
+    <value>ما إذا كان بإمكان العملاء دفع الفواتير عبر الإنترنت حاليًا، وحالة حساب الدفع المرتبط.</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Collecting" xml:space="preserve">
+    <value>تُقبل المدفوعات عبر الإنترنت</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.NotCollecting" xml:space="preserve">
+    <value>لا تُقبل المدفوعات عبر الإنترنت</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Connected" xml:space="preserve">
+    <value>الحساب المرتبط</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.LastVerified" xml:space="preserve">
+    <value>آخر تحقق</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.ConnectionError" xml:space="preserve">
+    <value>أبلغ مزوّد الدفع عن مشكلة. افتح الإعدادات لمعرفة التفاصيل.</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Charges" xml:space="preserve">
+    <value>الرسوم</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Payouts" xml:space="preserve">
+    <value>التحويلات</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Blocked.payments_not_available_in_region" xml:space="preserve">
+    <value>المدفوعات عبر الإنترنت غير متاحة في هذه المنطقة.</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Blocked.payments_flag_off" xml:space="preserve">
+    <value>المدفوعات عبر الإنترنت غير مفعّلة لقسمك.</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Blocked.payments_addon_required" xml:space="preserve">
+    <value>تتطلب المدفوعات عبر الإنترنت إضافة Business Operations.</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Blocked.payments_not_enabled_for_department" xml:space="preserve">
+    <value>المدفوعات عبر الإنترنت متوقفة في إعدادات الفوترة.</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Blocked.payments_no_connection" xml:space="preserve">
+    <value>لا يوجد حساب دفع مرتبط.</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Blocked.payments_connection_not_ready" xml:space="preserve">
+    <value>حساب الدفع المرتبط غير جاهز لاستقبال المدفوعات.</value>
+  </data>
+  <data name="W.bids.pipeline.Title" xml:space="preserve">
+    <value>العروض</value>
+  </data>
+  <data name="W.bids.pipeline.Description" xml:space="preserve">
+    <value>العروض حسب الحالة، والعروض المُقدَّمة التي توشك على الانتهاء.</value>
+  </data>
+  <data name="W.bids.pipeline.Setting.expiringDays" xml:space="preserve">
+    <value>تنتهي خلال (أيام)</value>
+  </data>
+  <data name="W.bids.pipeline.Draft" xml:space="preserve">
+    <value>مسودة</value>
+  </data>
+  <data name="W.bids.pipeline.Submitted" xml:space="preserve">
+    <value>مرسل</value>
+  </data>
+  <data name="W.bids.pipeline.Accepted" xml:space="preserve">
+    <value>تمت الترسية</value>
+  </data>
+  <data name="W.bids.pipeline.Declined" xml:space="preserve">
+    <value>مرفوض</value>
+  </data>
+  <data name="W.bids.pipeline.Expired" xml:space="preserve">
+    <value>منتهي</value>
+  </data>
+  <data name="W.bids.pipeline.Withdrawn" xml:space="preserve">
+    <value>مسحوب</value>
+  </data>
+  <data name="W.contracts.expiring.Title" xml:space="preserve">
+    <value>العقود</value>
+  </data>
+  <data name="W.contracts.expiring.Description" xml:space="preserve">
+    <value>عقود الخدمة النشطة، وتلك التي توشك على الانتهاء، ومستندات الامتثال المنتهية أو التي توشك على الانتهاء.</value>
+  </data>
+  <data name="W.contracts.expiring.Setting.days" xml:space="preserve">
+    <value>تنتهي خلال (أيام)</value>
+  </data>
+  <data name="W.contracts.expiring.Setting.maxRows" xml:space="preserve">
+    <value>عدد العقود المعروضة</value>
+  </data>
+  <data name="W.contracts.expiring.Active" xml:space="preserve">
+    <value>نشطة</value>
+  </data>
+  <data name="W.contracts.expiring.Expiring" xml:space="preserve">
+    <value>تنتهي قريبًا</value>
+  </data>
+  <data name="W.contracts.expiring.DocumentsExpired" xml:space="preserve">
+    <value>مستندات امتثال منتهية</value>
+  </data>
+  <data name="W.contracts.expiring.DocumentsExpiring" xml:space="preserve">
+    <value>مستندات امتثال توشك على الانتهاء</value>
+  </data>
+  <data name="W.costRecovery.queue.Title" xml:space="preserve">
+    <value>Cal OES MARS</value>
+  </data>
+  <data name="W.costRecovery.queue.Description" xml:space="preserve">
+    <value>عناصر Cal OES MARS بانتظار الإجراء، الأقدم أولًا، وفحص جاهزية الجهة للمديرين.</value>
+  </data>
+  <data name="W.costRecovery.queue.Setting.maxRows" xml:space="preserve">
+    <value>عدد العناصر المعروضة</value>
+  </data>
+  <data name="W.costRecovery.queue.Total" xml:space="preserve">
+    <value>في قائمة الانتظار</value>
+  </data>
+  <data name="W.costRecovery.queue.Mine" xml:space="preserve">
+    <value>الخاصة بي</value>
+  </data>
+  <data name="W.costRecovery.queue.WithErrors" xml:space="preserve">
+    <value>بها أخطاء</value>
+  </data>
+  <data name="W.costRecovery.queue.Ready" xml:space="preserve">
+    <value>الجهة جاهزة</value>
+  </data>
+  <data name="W.costRecovery.queue.NotReady" xml:space="preserve">
+    <value>الجهة غير جاهزة</value>
+  </data>
+  <data name="W.costRecovery.queue.Blockers" xml:space="preserve">
+    <value>العوائق</value>
+  </data>
+  <data name="W.costRecovery.queue.Warnings" xml:space="preserve">
+    <value>التحذيرات</value>
+  </data>
+  <data name="W.costRecovery.queue.Returned" xml:space="preserve">
+    <value>المُعادة</value>
+  </data>
+  <data name="W.costRecovery.queue.AwaitingLocalApproval" xml:space="preserve">
+    <value>فواتير بانتظار الموافقة المحلية</value>
+  </data>
+  <data name="W.costRecovery.queue.Empty" xml:space="preserve">
+    <value>لا شيء بانتظار إجراء.</value>
+  </data>
+  <data name="W.workforce.fieldCosting.Title" xml:space="preserve">
+    <value>حساب التكاليف الميدانية</value>
+  </data>
+  <data name="W.workforce.fieldCosting.Description" xml:space="preserve">
+    <value>أحدث عمليات حساب التكاليف الميدانية مع التكلفة الكاملة وهامش المساهمة والمدخلات الناقصة.</value>
+  </data>
+  <data name="W.workforce.fieldCosting.Setting.maxRows" xml:space="preserve">
+    <value>عدد العمليات المعروضة</value>
+  </data>
+  <data name="W.workforce.fieldCosting.LoadedCost" xml:space="preserve">
+    <value>التكلفة الكاملة</value>
+  </data>
+  <data name="W.workforce.fieldCosting.Margin" xml:space="preserve">
+    <value>الهامش</value>
+  </data>
+  <data name="W.workforce.fieldCosting.MissingInputs" xml:space="preserve">
+    <value>مدخلات ناقصة</value>
+  </data>
+  <data name="W.workforce.fieldCosting.Context.Bid" xml:space="preserve">
+    <value>عرض</value>
+  </data>
+  <data name="W.workforce.fieldCosting.Context.Call" xml:space="preserve">
+    <value>بلاغ</value>
+  </data>
+  <data name="W.workforce.fieldCosting.Context.Deployment" xml:space="preserve">
+    <value>انتشار</value>
+  </data>
+  <data name="W.workforce.fieldCosting.Status.Draft" xml:space="preserve">
+    <value>مسودة</value>
+  </data>
+  <data name="W.workforce.fieldCosting.Status.NeedsReview" xml:space="preserve">
+    <value>يحتاج مراجعة</value>
+  </data>
+  <data name="W.workforce.fieldCosting.Status.Frozen" xml:space="preserve">
+    <value>مجمّد</value>
+  </data>
+  <data name="W.workforce.fieldCosting.Status.Superseded" xml:space="preserve">
+    <value>مستبدل</value>
+  </data>
+  <data name="W.workforce.fieldCosting.Empty" xml:space="preserve">
+    <value>لا توجد عمليات حساب تكلفة بعد.</value>
+  </data>
+  <data name="W.workforce.payData.Title" xml:space="preserve">
+    <value>اكتمال بيانات الأجور</value>
+  </data>
+  <data name="W.workforce.payData.Description" xml:space="preserve">
+    <value>مدى اكتمال تقارير بيانات الأجور في كاليفورنيا لآخر سنة إبلاغ: الردود المجمّعة والعمليات المفتوحة والاستثناءات.</value>
+  </data>
+  <data name="W.workforce.payData.ReportingYear" xml:space="preserve">
+    <value>سنة الإبلاغ: {0}</value>
+  </data>
+  <data name="W.workforce.payData.Responses" xml:space="preserve">
+    <value>الردود: {0} من أصل {1} من العاملين</value>
+  </data>
+  <data name="W.workforce.payData.Due" xml:space="preserve">
+    <value>الاستحقاق: {0}</value>
+  </data>
+  <data name="W.workforce.payData.OpenRuns" xml:space="preserve">
+    <value>عمليات مفتوحة</value>
+  </data>
+  <data name="W.workforce.payData.Exceptions" xml:space="preserve">
+    <value>استثناءات غير محلولة</value>
+  </data>
+  <data name="W.workforce.payData.AnnualFactsMissing" xml:space="preserve">
+    <value>بيانات سنوية ناقصة</value>
+  </data>
+  <data name="W.workforce.payData.Certified" xml:space="preserve">
+    <value>مصدّق</value>
+  </data>
+  <data name="W.ibo.Status.Preparing" xml:space="preserve">
+    <value>قيد الإعداد</value>
+  </data>
+  <data name="W.ibo.Status.Active" xml:space="preserve">
+    <value>نشط</value>
+  </data>
+  <data name="W.ibo.Status.Demobilizing" xml:space="preserve">
+    <value>قيد إنهاء التعبئة</value>
+  </data>
+  <data name="W.ibo.Status.Closed" xml:space="preserve">
+    <value>مغلق</value>
+  </data>
+  <data name="W.ibo.Status.Sealed" xml:space="preserve">
+    <value>مختوم</value>
+  </data>
+  <data name="W.ibo.Kind.Incident" xml:space="preserve">
+    <value>حادث</value>
+  </data>
+  <data name="W.ibo.Kind.Complex" xml:space="preserve">
+    <value>مجمع</value>
+  </data>
+  <data name="W.ibo.Kind.PlannedEvent" xml:space="preserve">
+    <value>حدث مخطط</value>
+  </data>
+  <data name="W.ibo.Kind.EocActivation" xml:space="preserve">
+    <value>تفعيل EOC</value>
+  </data>
+  <data name="W.ibo.ReadOnly" xml:space="preserve">
+    <value>للقراءة فقط: انتهت صلاحية إضافة Incident Back Office.</value>
+  </data>
+  <data name="W.ibo.NoActivation" xml:space="preserve">
+    <value>لا يوجد حادث مفتوح.</value>
+  </data>
+  <data name="W.ibo.Exercise" xml:space="preserve">
+    <value>تمرين</value>
+  </data>
+  <data name="W.ibo.activations.Title" xml:space="preserve">
+    <value>الحوادث النشطة</value>
+  </data>
+  <data name="W.ibo.activations.Description" xml:space="preserve">
+    <value>الحوادث المفتوحة مع فترة العمليات الحالية والمنصب الذي تشغله.</value>
+  </data>
+  <data name="W.ibo.activations.Setting.maxRows" xml:space="preserve">
+    <value>عدد الحوادث المعروضة</value>
+  </data>
+  <data name="W.ibo.activations.Period" xml:space="preserve">
+    <value>الفترة {0}</value>
+  </data>
+  <data name="W.ibo.activations.MyPosition" xml:space="preserve">
+    <value>منصبي</value>
+  </data>
+  <data name="W.ibo.activations.Empty" xml:space="preserve">
+    <value>لا توجد حوادث مفتوحة.</value>
+  </data>
+  <data name="W.ibo.desk.Title" xml:space="preserve">
+    <value>مكتب الحادث</value>
+  </data>
+  <data name="W.ibo.desk.Description" xml:space="preserve">
+    <value>نظرة سريعة على مكتب العمليات أو اللوجستيات أو الشؤون المالية لحادث واحد، مع الوصول والمغادرة حسب النافذة الزمنية.</value>
+  </data>
+  <data name="W.ibo.desk.Setting.activation" xml:space="preserve">
+    <value>الحادث</value>
+  </data>
+  <data name="W.ibo.desk.Setting.desk" xml:space="preserve">
+    <value>المكتب</value>
+  </data>
+  <data name="W.ibo.desk.Option.recent" xml:space="preserve">
+    <value>أحدث حادث</value>
+  </data>
+  <data name="W.ibo.desk.Option.operations" xml:space="preserve">
+    <value>العمليات</value>
+  </data>
+  <data name="W.ibo.desk.Option.logistics" xml:space="preserve">
+    <value>اللوجستيات</value>
+  </data>
+  <data name="W.ibo.desk.Option.finance" xml:space="preserve">
+    <value>الشؤون المالية</value>
+  </data>
+  <data name="W.ibo.desk.Inbound" xml:space="preserve">
+    <value>القادمون</value>
+  </data>
+  <data name="W.ibo.desk.Outbound" xml:space="preserve">
+    <value>المغادرون</value>
+  </data>
+  <data name="W.ibo.desk.Predicted" xml:space="preserve">
+    <value>متوقع</value>
+  </data>
+  <data name="W.ibo.desk.DeskUnavailable" xml:space="preserve">
+    <value>هذا المكتب غير متاح لك.</value>
+  </data>
+  <data name="W.ibo.desk.Value.participants.total" xml:space="preserve">
+    <value>المشاركون</value>
+  </data>
+  <data name="W.ibo.desk.Value.participants.on_incident" xml:space="preserve">
+    <value>في الحادث</value>
+  </data>
+  <data name="W.ibo.desk.Value.participants.inbound" xml:space="preserve">
+    <value>قادمون</value>
+  </data>
+  <data name="W.ibo.desk.Value.resources.on_incident" xml:space="preserve">
+    <value>الموارد في الحادث</value>
+  </data>
+  <data name="W.ibo.desk.Value.resources.inbound" xml:space="preserve">
+    <value>الموارد القادمة</value>
+  </data>
+  <data name="W.ibo.desk.Value.resources.personnel" xml:space="preserve">
+    <value>الأفراد مع الموارد</value>
+  </data>
+  <data name="W.ibo.desk.Value.requests.open" xml:space="preserve">
+    <value>الطلبات المفتوحة</value>
+  </data>
+  <data name="W.ibo.desk.Value.requests.critical_unfilled" xml:space="preserve">
+    <value>حرجة غير ملباة</value>
+  </data>
+  <data name="W.ibo.desk.Value.requests.overdue" xml:space="preserve">
+    <value>الطلبات المتأخرة</value>
+  </data>
+  <data name="W.ibo.desk.Value.fills.en_route" xml:space="preserve">
+    <value>التلبيات في الطريق</value>
+  </data>
+  <data name="W.ibo.desk.Value.demob.pending" xml:space="preserve">
+    <value>إنهاء التعبئة قيد الانتظار</value>
+  </data>
+  <data name="W.ibo.desk.Value.lodging.beds_held_tonight" xml:space="preserve">
+    <value>الأسرّة المحجوزة الليلة</value>
+  </data>
+  <data name="W.ibo.desk.Value.lodging.beds_available_tonight" xml:space="preserve">
+    <value>الأسرّة المتاحة الليلة</value>
+  </data>
+  <data name="W.ibo.desk.Value.lodging.needed" xml:space="preserve">
+    <value>بحاجة إلى إقامة</value>
+  </data>
+  <data name="W.ibo.desk.Value.service.open" xml:space="preserve">
+    <value>طلبات الخدمة المفتوحة</value>
+  </data>
+  <data name="W.ibo.desk.Value.finance.committed" xml:space="preserve">
+    <value>ملتزم به</value>
+  </data>
+  <data name="W.ibo.desk.Value.finance.open_commitments" xml:space="preserve">
+    <value>الالتزامات المفتوحة</value>
+  </data>
+  <data name="W.ibo.desk.Value.finance.budget" xml:space="preserve">
+    <value>الميزانية</value>
+  </data>
+  <data name="W.ibo.desk.Value.finance.cost_to_date" xml:space="preserve">
+    <value>التكلفة حتى الآن</value>
+  </data>
+  <data name="W.ibo.desk.Value.finance.daily_burn" xml:space="preserve">
+    <value>المعدل اليومي للاستهلاك</value>
+  </data>
+  <data name="W.ibo.desk.Value.finance.forecast_at_completion" xml:space="preserve">
+    <value>التوقع عند الإنجاز</value>
+  </data>
+  <data name="W.ibo.desk.Value.finance.time_awaiting_certification" xml:space="preserve">
+    <value>وقت بانتظار التصديق</value>
+  </data>
+  <data name="W.ibo.desk.Value.finance.time_awaiting_approval" xml:space="preserve">
+    <value>وقت بانتظار الاعتماد</value>
+  </data>
+  <data name="W.ibo.desk.Value.finance.invoice_exceptions" xml:space="preserve">
+    <value>استثناءات الفواتير</value>
+  </data>
+  <data name="W.ibo.resources.Title" xml:space="preserve">
+    <value>موارد الحادث</value>
+  </data>
+  <data name="W.ibo.resources.Description" xml:space="preserve">
+    <value>موارد الحادث حسب النوع وحالة الدعم.</value>
+  </data>
+  <data name="W.ibo.resources.Setting.activation" xml:space="preserve">
+    <value>الحادث</value>
+  </data>
+  <data name="W.ibo.resources.Option.recent" xml:space="preserve">
+    <value>أحدث حادث</value>
+  </data>
+  <data name="W.ibo.resources.Total" xml:space="preserve">
+    <value>الموارد</value>
+  </data>
+  <data name="W.ibo.resources.OnIncident" xml:space="preserve">
+    <value>في الحادث</value>
+  </data>
+  <data name="W.ibo.resources.Inbound" xml:space="preserve">
+    <value>قادمة</value>
+  </data>
+  <data name="W.ibo.resources.Personnel" xml:space="preserve">
+    <value>الأفراد</value>
+  </data>
+  <data name="W.ibo.ResourceKind.Personnel" xml:space="preserve">
+    <value>أفراد</value>
+  </data>
+  <data name="W.ibo.ResourceKind.Crew" xml:space="preserve">
+    <value>طاقم</value>
+  </data>
+  <data name="W.ibo.ResourceKind.Team" xml:space="preserve">
+    <value>فريق</value>
+  </data>
+  <data name="W.ibo.ResourceKind.Equipment" xml:space="preserve">
+    <value>معدات</value>
+  </data>
+  <data name="W.ibo.ResourceKind.Aircraft" xml:space="preserve">
+    <value>طائرة</value>
+  </data>
+  <data name="W.ibo.ResourceKind.Supply" xml:space="preserve">
+    <value>إمدادات</value>
+  </data>
+  <data name="W.ibo.ResourceKind.Service" xml:space="preserve">
+    <value>خدمة</value>
+  </data>
+  <data name="W.ibo.ResourceKind.Facility" xml:space="preserve">
+    <value>مرفق</value>
+  </data>
+  <data name="W.ibo.ResourceKind.MissionPackage" xml:space="preserve">
+    <value>حزمة المهمة</value>
+  </data>
+  <data name="W.ibo.ResourceKind.Overhead" xml:space="preserve">
+    <value>الكادر الإشرافي</value>
+  </data>
+  <data name="W.ibo.SupportStatus.Ordered" xml:space="preserve">
+    <value>تم الطلب</value>
+  </data>
+  <data name="W.ibo.SupportStatus.Mobilizing" xml:space="preserve">
+    <value>قيد التعبئة</value>
+  </data>
+  <data name="W.ibo.SupportStatus.EnRoute" xml:space="preserve">
+    <value>في الطريق</value>
+  </data>
+  <data name="W.ibo.SupportStatus.Arrived" xml:space="preserve">
+    <value>وصل</value>
+  </data>
+  <data name="W.ibo.SupportStatus.Supported" xml:space="preserve">
+    <value>مدعوم</value>
+  </data>
+  <data name="W.ibo.SupportStatus.PendingDemob" xml:space="preserve">
+    <value>إنهاء التعبئة قيد الانتظار</value>
+  </data>
+  <data name="W.ibo.SupportStatus.Released" xml:space="preserve">
+    <value>مُسرَّح</value>
+  </data>
+  <data name="W.ibo.SupportStatus.Returned" xml:space="preserve">
+    <value>مُعاد</value>
+  </data>
+  <data name="W.ibo.SupportStatus.Closed" xml:space="preserve">
+    <value>مغلق</value>
+  </data>
+  <data name="W.ibo.checkIn.Title" xml:space="preserve">
+    <value>قائمة انتظار تسجيل الوصول</value>
+  </data>
+  <data name="W.ibo.checkIn.Description" xml:space="preserve">
+    <value>الأشخاص بانتظار تسجيلهم في حادث، والمشاركون المسجلون الذين لم يسجلوا وصولهم بعد.</value>
+  </data>
+  <data name="W.ibo.checkIn.Setting.activation" xml:space="preserve">
+    <value>الحادث</value>
+  </data>
+  <data name="W.ibo.checkIn.Setting.maxRows" xml:space="preserve">
+    <value>عدد الأشخاص المعروضين</value>
+  </data>
+  <data name="W.ibo.checkIn.Option.recent" xml:space="preserve">
+    <value>أحدث حادث</value>
+  </data>
+  <data name="W.ibo.checkIn.Queue" xml:space="preserve">
+    <value>بانتظار التسجيل</value>
+  </data>
+  <data name="W.ibo.checkIn.AwaitingCheckIn" xml:space="preserve">
+    <value>لم يسجلوا الوصول</value>
+  </data>
+  <data name="W.ibo.checkIn.Drafts" xml:space="preserve">
+    <value>المسودات</value>
+  </data>
+  <data name="W.ibo.checkIn.Waiting" xml:space="preserve">
+    <value>بانتظار منذ {0}</value>
+  </data>
+  <data name="W.ibo.checkIn.Empty" xml:space="preserve">
+    <value>لا أحد بانتظار.</value>
+  </data>
+  <data name="W.ibo.finance.Title" xml:space="preserve">
+    <value>تكاليف الحادث</value>
+  </data>
+  <data name="W.ibo.finance.Description" xml:space="preserve">
+    <value>تكلفة الحادث حتى الآن مقابل ميزانيته، ومعدل الاستهلاك اليومي، والتوقع عند الإنجاز.</value>
+  </data>
+  <data name="W.ibo.finance.Setting.activation" xml:space="preserve">
+    <value>الحادث</value>
+  </data>
+  <data name="W.ibo.finance.Option.recent" xml:space="preserve">
+    <value>أحدث حادث</value>
+  </data>
+  <data name="W.ibo.finance.CostToDate" xml:space="preserve">
+    <value>التكلفة حتى الآن</value>
+  </data>
+  <data name="W.ibo.finance.Budget" xml:space="preserve">
+    <value>الميزانية</value>
+  </data>
+  <data name="W.ibo.finance.DailyBurn" xml:space="preserve">
+    <value>المعدل اليومي للاستهلاك</value>
+  </data>
+  <data name="W.ibo.finance.Forecast" xml:space="preserve">
+    <value>التوقع عند الإنجاز</value>
+  </data>
+  <data name="W.ibo.finance.ProjectedEnd" xml:space="preserve">
+    <value>الانتهاء المتوقع</value>
+  </data>
+  <data name="W.ibo.finance.NoProjection" xml:space="preserve">
+    <value>لا يوجد إسقاط للتكلفة بعد.</value>
+  </data>
+  <data name="W.ibo.coordination.Title" xml:space="preserve">
+    <value>لوحات التنسيق</value>
+  </data>
+  <data name="W.ibo.coordination.Description" xml:space="preserve">
+    <value>لوحات التنسيق الخاصة بك مع المسارات القديمة ومشاركات الشركاء النشطة، الأحدث تحديثًا أولًا.</value>
+  </data>
+  <data name="W.ibo.coordination.Setting.maxRows" xml:space="preserve">
+    <value>عدد اللوحات المعروضة</value>
+  </data>
+  <data name="W.ibo.coordination.Boards" xml:space="preserve">
+    <value>اللوحات</value>
+  </data>
+  <data name="W.ibo.coordination.ActiveShares" xml:space="preserve">
+    <value>المشاركات النشطة</value>
+  </data>
+  <data name="W.ibo.coordination.StaleLanes" xml:space="preserve">
+    <value>المسارات القديمة</value>
+  </data>
+  <data name="W.ibo.coordination.Lanes" xml:space="preserve">
+    <value>المسارات: {0}</value>
+  </data>
+  <data name="W.ibo.coordination.Frozen" xml:space="preserve">
+    <value>مجمّد</value>
+  </data>
+  <data name="W.ibo.coordination.Updated" xml:space="preserve">
+    <value>آخر تحديث: {0}</value>
+  </data>
+  <data name="W.ibo.coordination.Empty" xml:space="preserve">
+    <value>لا توجد لوحات تنسيق.</value>
+  </data>
+  <data name="W.ai.assistant.Title" xml:space="preserve">
+    <value>المساعد</value>
+  </data>
+  <data name="W.ai.assistant.Description" xml:space="preserve">
+    <value>اسأل مساعد Resgrid عن قسمك دون مغادرة لوحة المعلومات.</value>
+  </data>
+  <data name="W.aiDispatch.triage.Title" xml:space="preserve">
+    <value>فرز الإرسال بالذكاء الاصطناعي</value>
+  </data>
+  <data name="W.aiDispatch.triage.Description" xml:space="preserve">
+    <value>البلاغات المنشأة من رسائل البريد الإلكتروني والرسائل النصية الواردة التي ما زالت بحاجة إلى مراجعة المُرسِل، مع درجة ثقة الذكاء الاصطناعي وعمرها.</value>
+  </data>
+  <data name="W.aiDispatch.triage.Setting.hours" xml:space="preserve">
+    <value>عدد الساعات المشمولة</value>
+  </data>
+  <data name="W.aiDispatch.triage.Setting.maxRows" xml:space="preserve">
+    <value>عدد البلاغات المعروضة</value>
+  </data>
+  <data name="W.aiDispatch.triage.NeedsReview" xml:space="preserve">
+    <value>يحتاج مراجعة</value>
+  </data>
+  <data name="W.aiDispatch.triage.InProgress" xml:space="preserve">
+    <value>قيد التنفيذ</value>
+  </data>
+  <data name="W.aiDispatch.triage.Applied" xml:space="preserve">
+    <value>مُطبَّق</value>
+  </data>
+  <data name="W.aiDispatch.triage.Total" xml:space="preserve">
+    <value>الرسائل</value>
+  </data>
+  <data name="W.aiDispatch.triage.Confidence" xml:space="preserve">
+    <value>درجة الثقة: {0}%</value>
+  </data>
+  <data name="W.aiDispatch.triage.Related" xml:space="preserve">
+    <value>قد يكرر: {0}</value>
+  </data>
+  <data name="W.aiDispatch.triage.Empty" xml:space="preserve">
+    <value>لا شيء للمراجعة.</value>
+  </data>
+  <data name="W.aiDispatch.triage.Outcome.Applied" xml:space="preserve">
+    <value>مُطبَّق</value>
+  </data>
+  <data name="W.aiDispatch.triage.Outcome.InProgress" xml:space="preserve">
+    <value>قيد التنفيذ</value>
+  </data>
+  <data name="W.aiDispatch.triage.Outcome.NoChange" xml:space="preserve">
+    <value>لا تغيير</value>
+  </data>
+  <data name="W.aiDispatch.triage.Outcome.LowConfidence" xml:space="preserve">
+    <value>ثقة منخفضة</value>
+  </data>
+  <data name="W.aiDispatch.triage.Outcome.InvalidOutput" xml:space="preserve">
+    <value>إجابة غير صالحة</value>
+  </data>
+  <data name="W.aiDispatch.triage.Outcome.Unavailable" xml:space="preserve">
+    <value>الذكاء الاصطناعي غير متاح</value>
+  </data>
+  <data name="W.aiDispatch.triage.Outcome.Busy" xml:space="preserve">
+    <value>الذكاء الاصطناعي مشغول</value>
+  </data>
+  <data name="W.aiDispatch.triage.Outcome.BudgetExhausted" xml:space="preserve">
+    <value>نفدت ميزانية الذكاء الاصطناعي</value>
+  </data>
+  <data name="W.aiDispatch.triage.Outcome.ProtectionUnsupported" xml:space="preserve">
+    <value>غير متاح مع حماية البيانات</value>
+  </data>
+  <data name="W.aiDispatch.triage.Outcome.CallNotActive" xml:space="preserve">
+    <value>البلاغ لم يعد نشطًا</value>
+  </data>
+  <data name="W.aiDispatch.triage.Outcome.SenderNotAllowed" xml:space="preserve">
+    <value>المرسل غير مسموح به</value>
+  </data>
+  <data name="W.aiDispatch.triage.Outcome.DispatchCapReached" xml:space="preserve">
+    <value>تم بلوغ الحد الشهري للإرسال بالذكاء الاصطناعي</value>
+  </data>
+  <data name="W.admin.setup.Title" xml:space="preserve">
+    <value>تقدّم الإعداد</value>
+  </data>
+  <data name="W.admin.setup.Description" xml:space="preserve">
+    <value>تقدّم إعداد Admin Assist: الفحوصات التي تم التحقق منها ومهام الإعداد المنجزة والمهمة التالية.</value>
+  </data>
+  <data name="W.admin.setup.ChecksVerified" xml:space="preserve">
+    <value>الفحوصات التي تم التحقق منها: {0} من {1}</value>
+  </data>
+  <data name="W.admin.setup.ChecksFailed" xml:space="preserve">
+    <value>فاشلة</value>
+  </data>
+  <data name="W.admin.setup.ChecksUnknown" xml:space="preserve">
+    <value>لم تُفحص</value>
+  </data>
+  <data name="W.admin.setup.TasksDone" xml:space="preserve">
+    <value>المهام المنجزة: {0} من {1}</value>
+  </data>
+  <data name="W.admin.setup.NeedsAttention" xml:space="preserve">
+    <value>تحتاج إلى اهتمام</value>
+  </data>
+  <data name="W.admin.setup.Next" xml:space="preserve">
+    <value>التالي</value>
+  </data>
+  <data name="W.admin.setup.Continue" xml:space="preserve">
+    <value>متابعة الإعداد</value>
+  </data>
+  <data name="W.admin.setup.RevisitDue" xml:space="preserve">
+    <value>حان موعد مراجعة الإعداد.</value>
+  </data>
+  <data name="W.admin.setup.Done" xml:space="preserve">
+    <value>اكتمل الإعداد.</value>
+  </data>
+  <data name="W.admin.plan.Title" xml:space="preserve">
+    <value>الخطة والإضافات</value>
+  </data>
+  <data name="W.admin.plan.Description" xml:space="preserve">
+    <value>خطة اشتراكك، ومقدار ما تستخدمه من حدودها، والإضافات التي تملكها أو يمكنك إضافتها، وتاريخ التجديد.</value>
+  </data>
+  <data name="W.admin.plan.FreePlan" xml:space="preserve">
+    <value>الخطة المجانية</value>
+  </data>
+  <data name="W.admin.plan.PlanUnavailable" xml:space="preserve">
+    <value>تفاصيل الخطة غير متاحة حاليًا.</value>
+  </data>
+  <data name="W.admin.plan.Personnel" xml:space="preserve">
+    <value>الأفراد</value>
+  </data>
+  <data name="W.admin.plan.Units" xml:space="preserve">
+    <value>الوحدات</value>
+  </data>
+  <data name="W.admin.plan.Entities" xml:space="preserve">
+    <value>الأفراد والوحدات</value>
+  </data>
+  <data name="W.admin.plan.Unlimited" xml:space="preserve">
+    <value>غير محدود</value>
+  </data>
+  <data name="W.admin.plan.Renews" xml:space="preserve">
+    <value>يتجدد: {0}</value>
+  </data>
+  <data name="W.admin.plan.Ends" xml:space="preserve">
+    <value>ينتهي: {0}</value>
+  </data>
+  <data name="W.admin.plan.NeverExpires" xml:space="preserve">
+    <value>لا ينتهي</value>
+  </data>
+  <data name="W.admin.plan.Held" xml:space="preserve">
+    <value>نشطة</value>
+  </data>
+  <data name="W.admin.plan.Available" xml:space="preserve">
+    <value>متاحة</value>
+  </data>
+  <data name="W.admin.plan.Cancelled" xml:space="preserve">
+    <value>ملغاة</value>
+  </data>
+  <data name="W.admin.plan.Addon.PTT" xml:space="preserve">
+    <value>Push-To-Talk</value>
+  </data>
+  <data name="W.admin.plan.Addon.ADP" xml:space="preserve">
+    <value>Advanced Data Protection</value>
+  </data>
+  <data name="W.admin.plan.Addon.ReadinessPro" xml:space="preserve">
+    <value>Readiness Pro</value>
+  </data>
+  <data name="W.admin.plan.Addon.BusinessOperations" xml:space="preserve">
+    <value>Business Operations</value>
+  </data>
+  <data name="W.admin.plan.Addon.EnhancedAi" xml:space="preserve">
+    <value>Enhanced AI</value>
+  </data>
+  <data name="W.admin.plan.Addon.IncidentBackOffice" xml:space="preserve">
+    <value>Incident Back Office</value>
+  </data>
+  <data name="W.admin.workflows.Title" xml:space="preserve">
+    <value>سلامة سير العمل</value>
+  </data>
+  <data name="W.admin.workflows.Description" xml:space="preserve">
+    <value>تشغيلات سير العمل خلال آخر يوم: التشغيلات المعلقة وقيد التشغيل والفاشلة، وعمليات سير العمل الأكثر فشلًا.</value>
+  </data>
+  <data name="W.admin.workflows.Setting.maxRows" xml:space="preserve">
+    <value>عدد عمليات سير العمل المعروضة</value>
+  </data>
+  <data name="W.admin.workflows.Pending" xml:space="preserve">
+    <value>معلّقة</value>
+  </data>
+  <data name="W.admin.workflows.Running" xml:space="preserve">
+    <value>قيد التشغيل</value>
+  </data>
+  <data name="W.admin.workflows.Retrying" xml:space="preserve">
+    <value>جارٍ إعادة المحاولة</value>
+  </data>
+  <data name="W.admin.workflows.Failed" xml:space="preserve">
+    <value>فاشلة (24 س)</value>
+  </data>
+  <data name="W.admin.workflows.Success" xml:space="preserve">
+    <value>نسبة النجاح: {0}%</value>
+  </data>
+  <data name="W.admin.workflows.Active" xml:space="preserve">
+    <value>سير العمل المفعّل: {0} من {1}</value>
+  </data>
+  <data name="W.admin.workflows.ErrorDetailsProtected" xml:space="preserve">
+    <value>تفاصيل الخطأ محمية</value>
+  </data>
+  <data name="W.admin.workflows.SeeDetails" xml:space="preserve">
+    <value>عرض التفاصيل</value>
+  </data>
+  <data name="W.admin.workflows.Empty" xml:space="preserve">
+    <value>لا توجد تشغيلات فاشلة خلال آخر يوم.</value>
+  </data>
+  <data name="W.admin.dataProtection.Title" xml:space="preserve">
+    <value>حماية البيانات</value>
+  </data>
+  <data name="W.admin.dataProtection.Description" xml:space="preserve">
+    <value>حالة Advanced Data Protection ونافذة التحقق الإضافي وتقدّم الترحيل.</value>
+  </data>
+  <data name="W.admin.dataProtection.StepUpWindow" xml:space="preserve">
+    <value>مدة التحقق (بالدقائق): {0}</value>
+  </data>
+  <data name="W.admin.dataProtection.Migration" xml:space="preserve">
+    <value>الترحيل</value>
+  </data>
+  <data name="W.admin.dataProtection.Progress" xml:space="preserve">
+    <value>نسبة الإكمال: {0}%</value>
+  </data>
+  <data name="W.admin.dataProtection.Anomalies" xml:space="preserve">
+    <value>صفوف تحتاج إلى اهتمام</value>
+  </data>
+  <data name="W.admin.dataProtection.CatalogUpgrade" xml:space="preserve">
+    <value>ترقية كتالوج الحقول المحمية بانتظار التنفيذ.</value>
+  </data>
+  <data name="W.admin.dataProtection.Offboarding" xml:space="preserve">
+    <value>تنتهي الحماية: {0}</value>
+  </data>
+  <data name="W.admin.dataProtection.State.Disabled" xml:space="preserve">
+    <value>غير مفعّل</value>
+  </data>
+  <data name="W.admin.dataProtection.State.EnrollmentQueued" xml:space="preserve">
+    <value>التسجيل في قائمة الانتظار</value>
+  </data>
+  <data name="W.admin.dataProtection.State.ProvisioningKey" xml:space="preserve">
+    <value>جارٍ إنشاء المفتاح</value>
+  </data>
+  <data name="W.admin.dataProtection.State.Encrypting" xml:space="preserve">
+    <value>جارٍ التشفير</value>
+  </data>
+  <data name="W.admin.dataProtection.State.Verifying" xml:space="preserve">
+    <value>جارٍ التحقق</value>
+  </data>
+  <data name="W.admin.dataProtection.State.Enabled" xml:space="preserve">
+    <value>مفعّل</value>
+  </data>
+  <data name="W.admin.dataProtection.State.Rotating" xml:space="preserve">
+    <value>جارٍ تدوير المفتاح</value>
+  </data>
+  <data name="W.admin.dataProtection.State.OffboardingScheduled" xml:space="preserve">
+    <value>إنهاء التفعيل مجدول</value>
+  </data>
+  <data name="W.admin.dataProtection.State.DisableRequested" xml:space="preserve">
+    <value>تم طلب التعطيل</value>
+  </data>
+  <data name="W.admin.dataProtection.State.Decrypting" xml:space="preserve">
+    <value>جارٍ فك التشفير</value>
+  </data>
+  <data name="W.admin.dataProtection.State.Failed" xml:space="preserve">
+    <value>فشل</value>
+  </data>
+  <data name="W.admin.import.Title" xml:space="preserve">
+    <value>الاستيراد والترحيل</value>
+  </data>
+  <data name="W.admin.import.Description" xml:space="preserve">
+    <value>تقدّم استيراد القسم: مساحات العمل المفتوحة ومجموعات البيانات التي تحتاج مراجعة وعمليات الاستيراد الجارية.</value>
+  </data>
+  <data name="W.admin.import.OpenWorkspaces" xml:space="preserve">
+    <value>عمليات الاستيراد المفتوحة</value>
+  </data>
+  <data name="W.admin.import.Activated" xml:space="preserve">
+    <value>مفعّلة</value>
+  </data>
+  <data name="W.admin.import.NeedingReview" xml:space="preserve">
+    <value>تحتاج مراجعة</value>
+  </data>
+  <data name="W.admin.import.Ready" xml:space="preserve">
+    <value>جاهزة</value>
+  </data>
+  <data name="W.admin.import.Imported" xml:space="preserve">
+    <value>مستوردة</value>
+  </data>
+  <data name="W.admin.import.Failed" xml:space="preserve">
+    <value>فاشلة</value>
+  </data>
+  <data name="W.admin.import.Rows" xml:space="preserve">
+    <value>الصفوف المستوردة: {0} من {1}</value>
+  </data>
+  <data name="W.admin.import.Warnings" xml:space="preserve">
+    <value>صفوف بها تحذيرات</value>
+  </data>
+  <data name="W.admin.import.Blocked" xml:space="preserve">
+    <value>صفوف محظورة</value>
+  </data>
+  <data name="W.admin.import.RunsActive" xml:space="preserve">
+    <value>قيد التشغيل</value>
+  </data>
+  <data name="W.admin.import.Target" xml:space="preserve">
+    <value>الهدف: {0}</value>
+  </data>
+  <data name="W.admin.import.Empty" xml:space="preserve">
+    <value>لا توجد عملية استيراد جارية.</value>
+  </data>
+  <data name="W.admin.import.Status.Draft" xml:space="preserve">
+    <value>مسودة</value>
+  </data>
+  <data name="W.admin.import.Status.Collecting" xml:space="preserve">
+    <value>جارٍ جمع الملفات</value>
+  </data>
+  <data name="W.admin.import.Status.Reviewing" xml:space="preserve">
+    <value>قيد المراجعة</value>
+  </data>
+  <data name="W.admin.import.Status.Importing" xml:space="preserve">
+    <value>جارٍ الاستيراد</value>
+  </data>
+  <data name="W.admin.import.Status.Verifying" xml:space="preserve">
+    <value>جارٍ التحقق</value>
+  </data>
+  <data name="W.admin.import.Status.ReadyToActivate" xml:space="preserve">
+    <value>جاهز للتفعيل</value>
+  </data>
+  <data name="W.admin.security.Title" xml:space="preserve">
+    <value>الوضع الأمني</value>
+  </data>
+  <data name="W.admin.security.Description" xml:space="preserve">
+    <value>عدد الأعضاء الذين يستخدمون تطبيق مصادقة أو مفتاح مرور، وحالة الدخول الموحد وSCIM، والجلسات النشطة.</value>
+  </data>
+  <data name="W.admin.security.StrongAuthentication" xml:space="preserve">
+    <value>أعضاء لديهم MFA أو مفتاح مرور</value>
+  </data>
+  <data name="W.admin.security.Mfa" xml:space="preserve">
+    <value>تطبيق المصادقة</value>
+  </data>
+  <data name="W.admin.security.Passkeys" xml:space="preserve">
+    <value>مفاتيح المرور</value>
+  </data>
+  <data name="W.admin.security.Sessions" xml:space="preserve">
+    <value>الجلسات النشطة</value>
+  </data>
+  <data name="W.admin.security.SessionUsers" xml:space="preserve">
+    <value>الأعضاء الذين سجلوا الدخول: {0}</value>
+  </data>
+  <data name="W.admin.security.Sso" xml:space="preserve">
+    <value>الدخول الموحد</value>
+  </data>
+  <data name="W.admin.security.Scim" xml:space="preserve">
+    <value>إدارة هويات SCIM</value>
+  </data>
+  <data name="W.admin.security.RequireMfa" xml:space="preserve">
+    <value>MFA مطلوبة</value>
+  </data>
+  <data name="W.admin.security.RequireSso" xml:space="preserve">
+    <value>SSO مطلوب</value>
+  </data>
+  <data name="W.admin.security.On" xml:space="preserve">
+    <value>مفعّل</value>
+  </data>
+  <data name="W.admin.security.Off" xml:space="preserve">
+    <value>معطّل</value>
+  </data>
+  <data name="W.deployments.active.OpenDeployments" xml:space="preserve">
+    <value>فتح عمليات الانتشار</value>
+  </data>
+  <data name="W.deployments.active.Rostered" xml:space="preserve">
+    <value>اسمك مسجّل</value>
+  </data>
+  <data name="W.deployments.active.Starts" xml:space="preserve">
+    <value>يبدأ: {0}</value>
+  </data>
+  <data name="W.deployments.timeReports.Empty" xml:space="preserve">
+    <value>لا توجد تقارير وقت بانتظار.</value>
+  </data>
+  <data name="W.deployments.timeReports.OpenDeployments" xml:space="preserve">
+    <value>فتح عمليات الانتشار</value>
+  </data>
+  <data name="W.invoicing.receivables.Empty" xml:space="preserve">
+    <value>لا توجد فواتير مفتوحة.</value>
+  </data>
+  <data name="W.invoicing.receivables.OpenInvoicing" xml:space="preserve">
+    <value>فتح الفوترة</value>
+  </data>
+  <data name="W.invoicing.receivables.OpenInvoices" xml:space="preserve">
+    <value>فواتير مفتوحة</value>
+  </data>
+  <data name="W.invoicing.receivables.OutstandingCount" xml:space="preserve">
+    <value>مستحقة · الفواتير المفتوحة: {0}</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.On" xml:space="preserve">
+    <value>مفعّل</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Off" xml:space="preserve">
+    <value>معطّل</value>
+  </data>
+  <data name="W.bids.pipeline.Empty" xml:space="preserve">
+    <value>لا توجد عروض بعد.</value>
+  </data>
+  <data name="W.bids.pipeline.OpenBids" xml:space="preserve">
+    <value>فتح العروض</value>
+  </data>
+  <data name="W.bids.pipeline.NoneExpiring" xml:space="preserve">
+    <value>لا توجد عروض مرسلة تنتهي خلال {0} يوم قادمة.</value>
+  </data>
+  <data name="W.contracts.expiring.NoActive" xml:space="preserve">
+    <value>لا توجد عقود نشطة.</value>
+  </data>
+  <data name="W.contracts.expiring.OpenContracts" xml:space="preserve">
+    <value>فتح العقود</value>
+  </data>
+  <data name="W.costRecovery.queue.OpenQueue" xml:space="preserve">
+    <value>فتح قائمة الانتظار</value>
+  </data>
+  <data name="W.costRecovery.queue.Readiness" xml:space="preserve">
+    <value>جاهزية الجهة</value>
+  </data>
+  <data name="W.costRecovery.queue.RecordType.AgencyProfile" xml:space="preserve">
+    <value>ملف الوكالة</value>
+  </data>
+  <data name="W.costRecovery.queue.RecordType.ResourceInventoryF5" xml:space="preserve">
+    <value>جرد الموارد (F-5)</value>
+  </data>
+  <data name="W.costRecovery.queue.RecordType.SalarySurvey" xml:space="preserve">
+    <value>استبيان الرواتب</value>
+  </data>
+  <data name="W.costRecovery.queue.RecordType.AdministrativeRate" xml:space="preserve">
+    <value>المعدل الإداري</value>
+  </data>
+  <data name="W.costRecovery.queue.RecordType.AttachmentA" xml:space="preserve">
+    <value>المرفق A</value>
+  </data>
+  <data name="W.costRecovery.queue.RecordType.SpecialEquipment" xml:space="preserve">
+    <value>معدات خاصة</value>
+  </data>
+  <data name="W.costRecovery.queue.RecordType.Agreement" xml:space="preserve">
+    <value>اتفاقية</value>
+  </data>
+  <data name="W.costRecovery.queue.RecordType.F42" xml:space="preserve">
+    <value>F-42</value>
+  </data>
+  <data name="W.costRecovery.queue.RecordType.ExpenseClaim" xml:space="preserve">
+    <value>مطالبة مصروفات</value>
+  </data>
+  <data name="W.costRecovery.queue.RecordType.GeneratedInvoice" xml:space="preserve">
+    <value>فاتورة</value>
+  </data>
+  <data name="W.costRecovery.queue.State.Draft" xml:space="preserve">
+    <value>مسودة</value>
+  </data>
+  <data name="W.costRecovery.queue.State.NeedsReview" xml:space="preserve">
+    <value>يحتاج مراجعة</value>
+  </data>
+  <data name="W.costRecovery.queue.State.ReadyForPortal" xml:space="preserve">
+    <value>جاهز لـ MARS</value>
+  </data>
+  <data name="W.costRecovery.queue.State.SubmittedExternal" xml:space="preserve">
+    <value>مُقدَّم</value>
+  </data>
+  <data name="W.costRecovery.queue.State.ReturnedForAgencyReview" xml:space="preserve">
+    <value>مُعاد للمراجعة</value>
+  </data>
+  <data name="W.costRecovery.queue.State.Approved" xml:space="preserve">
+    <value>معتمد</value>
+  </data>
+  <data name="W.costRecovery.queue.State.DocumentationOnly" xml:space="preserve">
+    <value>توثيق فقط</value>
+  </data>
+  <data name="W.costRecovery.queue.State.PendingLocalAgencyApproval" xml:space="preserve">
+    <value>بانتظار الموافقة المحلية</value>
+  </data>
+  <data name="W.costRecovery.queue.State.LocalAgencyRejected" xml:space="preserve">
+    <value>مرفوض محليًا</value>
+  </data>
+  <data name="W.costRecovery.queue.State.PendingPayingEntityApproval" xml:space="preserve">
+    <value>بانتظار الجهة الدافعة</value>
+  </data>
+  <data name="W.costRecovery.queue.State.Paid" xml:space="preserve">
+    <value>مدفوع</value>
+  </data>
+  <data name="W.costRecovery.queue.State.Closed" xml:space="preserve">
+    <value>مغلق</value>
+  </data>
+  <data name="W.workforce.fieldCosting.OpenRuns" xml:space="preserve">
+    <value>عمليات حساب التكلفة المفتوحة</value>
+  </data>
+  <data name="W.workforce.fieldCosting.OpenRunsNote" xml:space="preserve">
+    <value>عمليات مفتوحة للمراجعة: {0}</value>
+  </data>
+  <data name="W.workforce.payData.NoProfile" xml:space="preserve">
+    <value>لا يوجد ملف إبلاغ لهذا العام</value>
+  </data>
+  <data name="W.ibo.Option.recent" xml:space="preserve">
+    <value>أحدث حادث</value>
+  </data>
+  <data name="W.ibo.OpenIncidents" xml:space="preserve">
+    <value>فتح Incident Back Office</value>
+  </data>
+  <data name="W.ibo.activations.OpenedOn" xml:space="preserve">
+    <value>تاريخ الفتح: {0}</value>
+  </data>
+  <data name="W.ibo.desk.NoValues" xml:space="preserve">
+    <value>لا شيء للعرض في هذا المكتب بعد.</value>
+  </data>
+  <data name="W.ibo.desk.PersonnelShort" xml:space="preserve">
+    <value>الأفراد: {0}</value>
+  </data>
+  <data name="W.ibo.resources.Empty" xml:space="preserve">
+    <value>لا توجد موارد في هذا الحادث بعد.</value>
+  </data>
+  <data name="W.ibo.resources.OpenDesk" xml:space="preserve">
+    <value>فتح مكتب العمليات</value>
+  </data>
+  <data name="W.ibo.resources.ByKind" xml:space="preserve">
+    <value>حسب النوع</value>
+  </data>
+  <data name="W.ibo.resources.ByStatus" xml:space="preserve">
+    <value>حسب حالة الدعم</value>
+  </data>
+  <data name="W.ibo.finance.ProjectionAsOf" xml:space="preserve">
+    <value>الإسقاط حتى {0}</value>
+  </data>
+  <data name="W.ibo.coordination.OpenBoards" xml:space="preserve">
+    <value>فتح لوحات التنسيق</value>
+  </data>
+  <data name="W.ibo.coordination.Shares" xml:space="preserve">
+    <value>المشاركات: {0}</value>
+  </data>
+  <data name="W.ibo.coordination.StaleCount" xml:space="preserve">
+    <value>قديمة: {0}</value>
+  </data>
+  <data name="W.ai.assistant.Unavailable" xml:space="preserve">
+    <value>المساعد غير متاح حاليًا.</value>
+  </data>
+  <data name="W.aiDispatch.triage.Window" xml:space="preserve">
+    <value>آخر {0} س · الرسائل: {1}</value>
+  </data>
+  <data name="W.admin.setup.ChecksLabel" xml:space="preserve">
+    <value>فحوصات الإعداد التي تم التحقق منها</value>
+  </data>
+  <data name="W.admin.setup.Progress" xml:space="preserve">
+    <value>تقدّم الإعداد</value>
+  </data>
+  <data name="W.admin.setup.ChecksFailedCount" xml:space="preserve">
+    <value>الفحوصات الفاشلة: {0}</value>
+  </data>
+  <data name="W.admin.setup.NeedsAttentionCount" xml:space="preserve">
+    <value>الميزات التي تحتاج إلى اهتمام: {0}</value>
+  </data>
+  <data name="W.admin.plan.Addons" xml:space="preserve">
+    <value>الإضافات</value>
+  </data>
+  <data name="W.admin.plan.CostPer" xml:space="preserve">
+    <value>{0} / {1}</value>
+  </data>
+  <data name="W.admin.plan.Frequency.Never" xml:space="preserve">
+    <value>مرة واحدة</value>
+  </data>
+  <data name="W.admin.plan.Frequency.Monthly" xml:space="preserve">
+    <value>شهر</value>
+  </data>
+  <data name="W.admin.plan.Frequency.Yearly" xml:space="preserve">
+    <value>سنة</value>
+  </data>
+  <data name="W.admin.plan.Frequency.BiYearly" xml:space="preserve">
+    <value>سنتان</value>
+  </data>
+  <data name="W.admin.plan.Frequency.ThreeYear" xml:space="preserve">
+    <value>3 سنوات</value>
+  </data>
+  <data name="W.admin.plan.Frequency.FourYear" xml:space="preserve">
+    <value>4 سنوات</value>
+  </data>
+  <data name="W.admin.plan.Frequency.FiveYear" xml:space="preserve">
+    <value>5 سنوات</value>
+  </data>
+  <data name="W.admin.workflows.NoWorkflows" xml:space="preserve">
+    <value>لا يوجد سير عمل بعد.</value>
+  </data>
+  <data name="W.admin.workflows.OpenWorkflows" xml:space="preserve">
+    <value>فتح سير العمل</value>
+  </data>
+  <data name="W.admin.workflows.FailedOf" xml:space="preserve">
+    <value>الفاشلة: {0} من {1} تشغيل</value>
+  </data>
+  <data name="W.admin.workflows.Off" xml:space="preserve">
+    <value>معطّل</value>
+  </data>
+  <data name="W.admin.workflows.ErrorDetailsProtectedHint" xml:space="preserve">
+    <value>تفاصيل الخطأ محمية. افتح صفحة سلامة سير العمل لعرض التشغيل.</value>
+  </data>
+  <data name="W.admin.dataProtection.MigrationKind" xml:space="preserve">
+    <value>الترحيل: {0}</value>
+  </data>
+  <data name="W.admin.dataProtection.Rows" xml:space="preserve">
+    <value>الصفوف: {0} من {1}</value>
+  </data>
+  <data name="W.admin.import.OpenImport" xml:space="preserve">
+    <value>فتح استيراد القسم</value>
+  </data>
+  <data name="W.admin.import.ActivatedCount" xml:space="preserve">
+    <value>عمليات الاستيراد المفعّلة: {0}</value>
+  </data>
+  <data name="W.admin.import.Untitled" xml:space="preserve">
+    <value>استيراد بلا عنوان</value>
+  </data>
+  <data name="W.admin.import.LastActivity" xml:space="preserve">
+    <value>آخر نشاط: {0}</value>
+  </data>
+  <data name="W.admin.security.StrongAuthenticationOf" xml:space="preserve">
+    <value>أعضاء لديهم MFA أو مفتاح مرور: {0} من {1}</value>
+  </data>
+  <data name="W.bids.pipeline.WithdrawnCount" xml:space="preserve">
+    <value>المسحوبة: {0}</value>
+  </data>
+  <data name="W.contracts.expiring.DocumentsSummary" xml:space="preserve">
+    <value>مستندات الامتثال: منتهية {0}، توشك على الانتهاء {1}</value>
+  </data>
+  <data name="W.invoicing.receivables.DraftsCount" xml:space="preserve">
+    <value>المسودات: {0}</value>
+  </data>
+  <data name="W.invoicing.receivables.OverdueSummary" xml:space="preserve">
+    <value>المتأخرة: {0} ({1})</value>
+  </data>
+  <data name="W.invoicing.receivables.ReadOnlyShort" xml:space="preserve">
+    <value>للقراءة فقط</value>
+  </data>
+  <data name="W.deployments.active.Day" xml:space="preserve">
+    <value>اليوم {0}</value>
+  </data>
+  <data name="W.contracts.expiring.EndsIn" xml:space="preserve">
+    <value>ينتهي خلال {0}</value>
+  </data>
+  <data name="W.contracts.expiring.NoneEnding" xml:space="preserve">
+    <value>لا توجد عقود تنتهي خلال الفترة القادمة: {0}.</value>
+  </data>
+  <data name="W.costRecovery.queue.Age" xml:space="preserve">
+    <value>العمر</value>
+  </data>
+  <data name="W.bids.pipeline.ExpiringWithin" xml:space="preserve">
+    <value>تنتهي خلال {0}</value>
+  </data>
+  <data name="W.ibo.finance.OfBudget" xml:space="preserve">
+    <value>المستخدم من ميزانية {0}</value>
+  </data>
+  <data name="W.calls.active.Title" xml:space="preserve">
+    <value>البلاغات النشطة</value>
+  </data>
+  <data name="W.calls.active.Description" xml:space="preserve">
+    <value>البلاغات النشطة المُرسَلة في منطقة الإرسال الخاصة بك، الأحدث أولًا، مع الأولوية والوحدات والأفراد المُرسَلين وقيادة الحادث.</value>
+  </data>
+  <data name="W.calls.active.Setting.maxRows" xml:space="preserve">
+    <value>عدد البلاغات المعروضة</value>
+  </data>
+  <data name="W.calls.active.Setting.priorities" xml:space="preserve">
+    <value>الأولويات</value>
+  </data>
+  <data name="W.calls.active.Setting.group" xml:space="preserve">
+    <value>المجموعة الرئيسية</value>
+  </data>
+  <data name="W.calls.kpis.Title" xml:space="preserve">
+    <value>نشاط البلاغات</value>
+  </data>
+  <data name="W.calls.kpis.Description" xml:space="preserve">
+    <value>أعداد البلاغات النشطة وبلاغات اليوم والمعلّقة والمجدولة وتلك التي في انتظار الموارد، مع مخطط آخر سبعة أيام.</value>
+  </data>
+  <data name="W.calls.pending.Title" xml:space="preserve">
+    <value>المعلّقة والمجدولة</value>
+  </data>
+  <data name="W.calls.pending.Description" xml:space="preserve">
+    <value>البلاغات المحفوظة التي لم تُرسَل بعد والبلاغات المجدولة التي تنتظر وقت إرسالها.</value>
+  </data>
+  <data name="W.calls.pending.Setting.maxRows" xml:space="preserve">
+    <value>عدد البلاغات المعروضة</value>
+  </data>
+  <data name="W.calls.pending.Setting.show" xml:space="preserve">
+    <value>عرض</value>
+  </data>
+  <data name="W.calls.pending.Option.all" xml:space="preserve">
+    <value>المعلّقة والمجدولة</value>
+  </data>
+  <data name="W.calls.pending.Option.pending" xml:space="preserve">
+    <value>المعلّقة فقط</value>
+  </data>
+  <data name="W.calls.pending.Option.scheduled" xml:space="preserve">
+    <value>المجدولة فقط</value>
+  </data>
+  <data name="W.calls.awaitingResources.Title" xml:space="preserve">
+    <value>في انتظار الموارد</value>
+  </data>
+  <data name="W.calls.awaitingResources.Description" xml:space="preserve">
+    <value>البلاغات النشطة التي لا تزال تنتظر موردًا من خطة الاستجابة، وما ينقصها، والوحدات المتاحة الآن.</value>
+  </data>
+  <data name="W.calls.awaitingResources.Setting.maxRows" xml:space="preserve">
+    <value>عدد البلاغات المعروضة</value>
+  </data>
+  <data name="W.calls.myCheckIns.Title" xml:space="preserve">
+    <value>مؤقتات تسجيل الوصول الخاصة بي</value>
+  </data>
+  <data name="W.calls.myCheckIns.Description" xml:space="preserve">
+    <value>مؤقتات تسجيل الوصول الخاصة بك في البلاغات التي أُرسلت إليها، مع الوقت المتبقي حتى تسجيل الوصول التالي.</value>
+  </data>
+  <data name="W.calls.volume.Title" xml:space="preserve">
+    <value>حجم البلاغات</value>
+  </data>
+  <data name="W.calls.volume.Description" xml:space="preserve">
+    <value>البلاغات يوميًا حسب النوع والأولوية، مع الوسيط لزمن الاستجابة.</value>
+  </data>
+  <data name="W.calls.volume.Setting.days" xml:space="preserve">
+    <value>الفترة</value>
+  </data>
+  <data name="W.calls.volume.Option.7" xml:space="preserve">
+    <value>آخر 7 أيام</value>
+  </data>
+  <data name="W.calls.volume.Option.30" xml:space="preserve">
+    <value>آخر 30 يومًا</value>
+  </data>
+  <data name="W.calls.volume.Option.90" xml:space="preserve">
+    <value>آخر 90 يومًا</value>
+  </data>
+  <data name="W.incidentCommand.active.Title" xml:space="preserve">
+    <value>قيادات الحوادث النشطة</value>
+  </data>
+  <data name="W.incidentCommand.active.Description" xml:space="preserve">
+    <value>عمليات قيادة الحادث المفتوحة مع بلاغها وقائد الحادث والموارد المعيّنة.</value>
+  </data>
+  <data name="W.incidentCommand.active.Setting.maxRows" xml:space="preserve">
+    <value>عدد القيادات المعروضة</value>
+  </data>
+  <data name="W.units.status.Title" xml:space="preserve">
+    <value>لوحة حالات الوحدات</value>
+  </data>
+  <data name="W.units.status.Description" xml:space="preserve">
+    <value>الوحدات حسب المحطة أو النوع مع حالتها والمدة في الحالة والوجهة والطاقم وملاحظة الحالة.</value>
+  </data>
+  <data name="W.units.status.Setting.station" xml:space="preserve">
+    <value>المحطة</value>
+  </data>
+  <data name="W.units.status.Setting.unitTypes" xml:space="preserve">
+    <value>أنواع الوحدات</value>
+  </data>
+  <data name="W.units.status.Setting.hideAvailable" xml:space="preserve">
+    <value>إخفاء الوحدات المتاحة</value>
+  </data>
+  <data name="W.units.status.Setting.groupBy" xml:space="preserve">
+    <value>تجميع حسب</value>
+  </data>
+  <data name="W.units.status.Option.station" xml:space="preserve">
+    <value>المحطة</value>
+  </data>
+  <data name="W.units.status.Option.type" xml:space="preserve">
+    <value>نوع الوحدة</value>
+  </data>
+  <data name="W.units.status.Option.none" xml:space="preserve">
+    <value>بدون تجميع</value>
+  </data>
+  <data name="W.units.summary.Title" xml:space="preserve">
+    <value>ملخص الوحدات</value>
+  </data>
+  <data name="W.units.summary.Description" xml:space="preserve">
+    <value>عدد الوحدات المتاحة أو المشغولة أو الخارجة عن الخدمة.</value>
+  </data>
+  <data name="W.units.alerts.Title" xml:space="preserve">
+    <value>تنبيهات حالات الوحدات</value>
+  </data>
+  <data name="W.units.alerts.Description" xml:space="preserve">
+    <value>الوحدات التي بقيت في حالة معيّنة لمدة تتجاوز ما تسمح به مؤقتات الحالة في القسم.</value>
+  </data>
+  <data name="W.units.alerts.Setting.showMuted" xml:space="preserve">
+    <value>عرض التنبيهات المكتومة</value>
+  </data>
+  <data name="W.units.routes.Title" xml:space="preserve">
+    <value>الانحرافات عن المسار</value>
+  </data>
+  <data name="W.units.routes.Description" xml:space="preserve">
+    <value>المسارات الجارية وانحرافات المسار التي لم يتم الإقرار بها بعد.</value>
+  </data>
+  <data name="W.personnel.myStatus.Title" xml:space="preserve">
+    <value>حالتي</value>
+  </data>
+  <data name="W.personnel.myStatus.Description" xml:space="preserve">
+    <value>عيّن حالتك ومستوى التوظيف، أو استجب لبلاغ أو لمحطة.</value>
+  </data>
+  <data name="W.personnel.board.Title" xml:space="preserve">
+    <value>لوحة حالات الأفراد</value>
+  </data>
+  <data name="W.personnel.board.Description" xml:space="preserve">
+    <value>حالة الجميع والتوظيف حسب المجموعة، مع ملاحظات التوظيف.</value>
+  </data>
+  <data name="W.personnel.board.Setting.groups" xml:space="preserve">
+    <value>المجموعات</value>
+  </data>
+  <data name="W.personnel.board.Setting.hideUnavailable" xml:space="preserve">
+    <value>إخفاء الأفراد غير المتاحين</value>
+  </data>
+  <data name="W.personnel.board.Setting.sort" xml:space="preserve">
+    <value>الترتيب</value>
+  </data>
+  <data name="W.personnel.board.Option.department" xml:space="preserve">
+    <value>ترتيب القسم</value>
+  </data>
+  <data name="W.personnel.board.Option.name" xml:space="preserve">
+    <value>الاسم</value>
+  </data>
+  <data name="W.personnel.board.Option.status" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="W.personnel.statusSummary.Title" xml:space="preserve">
+    <value>ملخص حالات الأفراد</value>
+  </data>
+  <data name="W.personnel.statusSummary.Description" xml:space="preserve">
+    <value>عدد الأفراد المستجيبين أو في الموقع أو المتاحين أو غير المتاحين.</value>
+  </data>
+  <data name="W.personnel.staffingSummary.Title" xml:space="preserve">
+    <value>ملخص التوظيف</value>
+  </data>
+  <data name="W.personnel.staffingSummary.Description" xml:space="preserve">
+    <value>مستويات التوظيف في القسم وحسب المجموعة، مع بيان من هم في الخدمة.</value>
+  </data>
+  <data name="W.calls.active.Empty" xml:space="preserve">
+    <value>لا توجد بلاغات نشطة</value>
+  </data>
+  <data name="W.calls.active.GroupFilterIgnored" xml:space="preserve">
+    <value>المجموعة الرئيسية المحددة في إعدادات هذه الأداة لم تعد موجودة، لذلك تُعرض جميع البلاغات.</value>
+  </data>
+  <data name="W.calls.active.IncidentCommand" xml:space="preserve">
+    <value>IC</value>
+  </data>
+  <data name="W.calls.active.IncidentCommandTitle" xml:space="preserve">
+    <value>تم تأسيس قيادة الحادث</value>
+  </data>
+  <data name="W.calls.active.NewCall" xml:space="preserve">
+    <value>إنشاء بلاغ</value>
+  </data>
+  <data name="W.calls.active.Personnel" xml:space="preserve">
+    <value>الأفراد: {0}</value>
+  </data>
+  <data name="W.calls.active.ShowingOf" xml:space="preserve">
+    <value>عرض {0} من أصل {1} من البلاغات</value>
+  </data>
+  <data name="W.calls.active.Units" xml:space="preserve">
+    <value>الوحدات: {0}</value>
+  </data>
+  <data name="W.calls.active.Untitled" xml:space="preserve">
+    <value>بلاغ</value>
+  </data>
+  <data name="W.calls.awaitingResources.Empty" xml:space="preserve">
+    <value>لا توجد بلاغات في انتظار الموارد</value>
+  </data>
+  <data name="W.calls.awaitingResources.EtaTitle" xml:space="preserve">
+    <value>الوصول خلال حوالي {0}</value>
+  </data>
+  <data name="W.calls.awaitingResources.Needs" xml:space="preserve">
+    <value>المطلوب: {0} × {1}</value>
+  </data>
+  <data name="W.calls.awaitingResources.OpenList" xml:space="preserve">
+    <value>فتح «في انتظار الموارد»</value>
+  </data>
+  <data name="W.calls.awaitingResources.Send" xml:space="preserve">
+    <value>إرسال {0}</value>
+  </data>
+  <data name="W.calls.awaitingResources.SendFailed" xml:space="preserve">
+    <value>تعذّر إرسال الوحدة.</value>
+  </data>
+  <data name="W.calls.awaitingResources.Sent" xml:space="preserve">
+    <value>تم إرسال {0} إلى {1}</value>
+  </data>
+  <data name="W.calls.awaitingResources.SentInstead" xml:space="preserve">
+    <value>تم إرسال {0} بدلًا من ذلك</value>
+  </data>
+  <data name="W.calls.awaitingResources.ShowingOf" xml:space="preserve">
+    <value>عرض {0} من أصل {1} من البلاغات</value>
+  </data>
+  <data name="W.calls.awaitingResources.Untitled" xml:space="preserve">
+    <value>بلاغ</value>
+  </data>
+  <data name="W.calls.kpis.ActiveCalls" xml:space="preserve">
+    <value>بلاغات نشطة</value>
+  </data>
+  <data name="W.calls.kpis.Awaiting" xml:space="preserve">
+    <value>في انتظار الموارد</value>
+  </data>
+  <data name="W.calls.kpis.CallsCount" xml:space="preserve">
+    <value>البلاغات: {0}</value>
+  </data>
+  <data name="W.calls.kpis.Pending" xml:space="preserve">
+    <value>معلّقة</value>
+  </data>
+  <data name="W.calls.kpis.Scheduled" xml:space="preserve">
+    <value>مجدولة</value>
+  </data>
+  <data name="W.calls.kpis.SparkAria" xml:space="preserve">
+    <value>البلاغات يوميًا، آخر 7 أيام: {0}</value>
+  </data>
+  <data name="W.calls.kpis.Today" xml:space="preserve">
+    <value>اليوم</value>
+  </data>
+  <data name="W.calls.kpis.TodayLine" xml:space="preserve">
+    <value>اليوم: {0}</value>
+  </data>
+  <data name="W.calls.myCheckIns.CheckIn" xml:space="preserve">
+    <value>تسجيل الوصول</value>
+  </data>
+  <data name="W.calls.myCheckIns.CheckInFailed" xml:space="preserve">
+    <value>تعذّر حفظ تسجيل الوصول الخاص بك.</value>
+  </data>
+  <data name="W.calls.myCheckIns.CheckedIn" xml:space="preserve">
+    <value>تم تسجيل الوصول: {0}</value>
+  </data>
+  <data name="W.calls.myCheckIns.DueIn" xml:space="preserve">
+    <value>مستحق خلال {0} (كل {1})</value>
+  </data>
+  <data name="W.calls.myCheckIns.Empty" xml:space="preserve">
+    <value>لا توجد لديك مؤقتات تسجيل وصول في بلاغاتك</value>
+  </data>
+  <data name="W.calls.myCheckIns.NoTimer" xml:space="preserve">
+    <value>لا يوجد مؤقت تسجيل وصول للأفراد في هذا البلاغ</value>
+  </data>
+  <data name="W.calls.myCheckIns.Overdue" xml:space="preserve">
+    <value>متأخر بمقدار {0} (كل {1})</value>
+  </data>
+  <data name="W.calls.myCheckIns.Untitled" xml:space="preserve">
+    <value>بلاغ</value>
+  </data>
+  <data name="W.calls.pending.DispatchFailed" xml:space="preserve">
+    <value>تعذّر إرسال البلاغ.</value>
+  </data>
+  <data name="W.calls.pending.DispatchNow" xml:space="preserve">
+    <value>إرسال الآن</value>
+  </data>
+  <data name="W.calls.pending.Dispatched" xml:space="preserve">
+    <value>تم إرسال {0}</value>
+  </data>
+  <data name="W.calls.pending.DispatchesAt" xml:space="preserve">
+    <value>يُرسل {0}</value>
+  </data>
+  <data name="W.calls.pending.Empty" xml:space="preserve">
+    <value>لا توجد بلاغات بانتظار الإرسال</value>
+  </data>
+  <data name="W.calls.pending.OpenPending" xml:space="preserve">
+    <value>فتح البلاغات المعلقة</value>
+  </data>
+  <data name="W.calls.pending.Pending" xml:space="preserve">
+    <value>معلّق</value>
+  </data>
+  <data name="W.calls.pending.PendingCount" xml:space="preserve">
+    <value>معلّقة: {0}</value>
+  </data>
+  <data name="W.calls.pending.SavedAgo" xml:space="preserve">
+    <value>حُفظ {0}</value>
+  </data>
+  <data name="W.calls.pending.Scheduled" xml:space="preserve">
+    <value>مجدول</value>
+  </data>
+  <data name="W.calls.pending.ScheduledCount" xml:space="preserve">
+    <value>مجدولة: {0}</value>
+  </data>
+  <data name="W.calls.pending.Untitled" xml:space="preserve">
+    <value>بلاغ</value>
+  </data>
+  <data name="W.calls.volume.ByPriority" xml:space="preserve">
+    <value>حسب الأولوية</value>
+  </data>
+  <data name="W.calls.volume.ByType" xml:space="preserve">
+    <value>حسب النوع</value>
+  </data>
+  <data name="W.calls.volume.CallsCount" xml:space="preserve">
+    <value>البلاغات: {0}</value>
+  </data>
+  <data name="W.calls.volume.Empty" xml:space="preserve">
+    <value>لا توجد بلاغات خلال آخر {0} من الأيام</value>
+  </data>
+  <data name="W.calls.volume.MedianResponse" xml:space="preserve">
+    <value>الوسيط لزمن الاستجابة</value>
+  </data>
+  <data name="W.calls.volume.OpenReports" xml:space="preserve">
+    <value>فتح التقارير</value>
+  </data>
+  <data name="W.calls.volume.OtherTypes" xml:space="preserve">
+    <value>أنواع أخرى</value>
+  </data>
+  <data name="W.calls.volume.P90Title" xml:space="preserve">
+    <value>المئين 90: {0} · الاستجابات: {1}</value>
+  </data>
+  <data name="W.calls.volume.PerDay" xml:space="preserve">
+    <value>يوميًا</value>
+  </data>
+  <data name="W.calls.volume.PerDayHeading" xml:space="preserve">
+    <value>البلاغات يوميًا</value>
+  </data>
+  <data name="W.calls.volume.ResponseNote" xml:space="preserve">
+    <value>زمن الاستجابة من الإنذار حتى الوصول، عدد الاستجابات: {0}.</value>
+  </data>
+  <data name="W.calls.volume.SparkAria" xml:space="preserve">
+    <value>البلاغات يوميًا، آخر {0} من الأيام: {1}</value>
+  </data>
+  <data name="W.calls.volume.TotalCalls" xml:space="preserve">
+    <value>البلاغات، آخر {0} من الأيام</value>
+  </data>
+  <data name="W.calls.volume.Untyped" xml:space="preserve">
+    <value>بدون نوع</value>
+  </data>
+  <data name="W.incidentCommand.active.Assigned" xml:space="preserve">
+    <value>الوحدات المعيّنة: {0} · الأفراد المعيّنون: {1}</value>
+  </data>
+  <data name="W.incidentCommand.active.Commander" xml:space="preserve">
+    <value>IC {0}</value>
+  </data>
+  <data name="W.incidentCommand.active.Empty" xml:space="preserve">
+    <value>لا توجد عمليات قيادة حادث مفتوحة</value>
+  </data>
+  <data name="W.incidentCommand.active.EstablishedAt" xml:space="preserve">
+    <value>تأسست {0}</value>
+  </data>
+  <data name="W.incidentCommand.active.NoCommander" xml:space="preserve">
+    <value>لا يوجد قائد للحادث</value>
+  </data>
+  <data name="W.incidentCommand.active.Untitled" xml:space="preserve">
+    <value>قيادة الحادث</value>
+  </data>
+  <data name="W.personnel.board.CallNumber" xml:space="preserve">
+    <value>بلاغ رقم {0}</value>
+  </data>
+  <data name="W.personnel.board.Cancel" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="W.personnel.board.Caption" xml:space="preserve">
+    <value>حالة الأفراد حسب المجموعة</value>
+  </data>
+  <data name="W.personnel.board.ChangeSettings" xml:space="preserve">
+    <value>تغيير الإعدادات</value>
+  </data>
+  <data name="W.personnel.board.ColFor" xml:space="preserve">
+    <value>المدة</value>
+  </data>
+  <data name="W.personnel.board.ColName" xml:space="preserve">
+    <value>الاسم</value>
+  </data>
+  <data name="W.personnel.board.ColNote" xml:space="preserve">
+    <value>ملاحظة التوظيف</value>
+  </data>
+  <data name="W.personnel.board.ColRoles" xml:space="preserve">
+    <value>الأدوار</value>
+  </data>
+  <data name="W.personnel.board.ColStaffing" xml:space="preserve">
+    <value>التوظيف</value>
+  </data>
+  <data name="W.personnel.board.ColStatus" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="W.personnel.board.ConfirmReset" xml:space="preserve">
+    <value>إعادة تعيين</value>
+  </data>
+  <data name="W.personnel.board.ConfirmResetAll" xml:space="preserve">
+    <value>هل تريد تعيين الجميع على حالة «متاح» الخاصة بالقسم؟</value>
+  </data>
+  <data name="W.personnel.board.ConfirmResetGroup" xml:space="preserve">
+    <value>هل تريد تعيين جميع أفراد {0} على حالة «متاح» الخاصة بالقسم؟</value>
+  </data>
+  <data name="W.personnel.board.Empty" xml:space="preserve">
+    <value>لا يوجد أفراد للعرض</value>
+  </data>
+  <data name="W.personnel.board.GroupFilterIgnored" xml:space="preserve">
+    <value>بعض المجموعات في إعدادات هذه الأداة لم تعد موجودة وتم تجاهلها.</value>
+  </data>
+  <data name="W.personnel.board.GroupMeta" xml:space="preserve">
+    <value>الأفراد: {0} · الملتزمون: {1}</value>
+  </data>
+  <data name="W.personnel.board.ProtectedNote" xml:space="preserve">
+    <value>ملاحظة محمية</value>
+  </data>
+  <data name="W.personnel.board.Reset" xml:space="preserve">
+    <value>إعادة تعيين</value>
+  </data>
+  <data name="W.personnel.board.ResetAllDone" xml:space="preserve">
+    <value>تم تعيين الجميع إلى «متاح»</value>
+  </data>
+  <data name="W.personnel.board.ResetAllOption" xml:space="preserve">
+    <value>الجميع</value>
+  </data>
+  <data name="W.personnel.board.ResetFailed" xml:space="preserve">
+    <value>تعذّرت إعادة تعيين الحالات.</value>
+  </data>
+  <data name="W.personnel.board.ResetGroupDone" xml:space="preserve">
+    <value>تم تعيين {0} إلى «متاح»</value>
+  </data>
+  <data name="W.personnel.board.ResetLabel" xml:space="preserve">
+    <value>إعادة تعيين الحالات لـ</value>
+  </data>
+  <data name="W.personnel.board.ResetPlaceholder" xml:space="preserve">
+    <value>إعادة تعيين الحالات…</value>
+  </data>
+  <data name="W.personnel.board.Ungrouped" xml:space="preserve">
+    <value>بدون مجموعة</value>
+  </data>
+  <data name="W.personnel.board.YourGroup" xml:space="preserve">
+    <value>مجموعتك</value>
+  </data>
+  <data name="W.personnel.myStatus.Calls" xml:space="preserve">
+    <value>البلاغات</value>
+  </data>
+  <data name="W.personnel.myStatus.Failed" xml:space="preserve">
+    <value>تعذّر الحفظ. حاول مرة أخرى.</value>
+  </data>
+  <data name="W.personnel.myStatus.NoteRequired" xml:space="preserve">
+    <value>{0} يتطلب ملاحظة.</value>
+  </data>
+  <data name="W.personnel.myStatus.Respond" xml:space="preserve">
+    <value>استجابة</value>
+  </data>
+  <data name="W.personnel.myStatus.RespondLabel" xml:space="preserve">
+    <value>الاستجابة لبلاغ أو محطة</value>
+  </data>
+  <data name="W.personnel.myStatus.RespondPlaceholder" xml:space="preserve">
+    <value>الاستجابة لبلاغ أو محطة…</value>
+  </data>
+  <data name="W.personnel.myStatus.Responding" xml:space="preserve">
+    <value>يستجيب لـ {0}</value>
+  </data>
+  <data name="W.personnel.myStatus.Set" xml:space="preserve">
+    <value>تعيين</value>
+  </data>
+  <data name="W.personnel.myStatus.Staffing" xml:space="preserve">
+    <value>التوظيف</value>
+  </data>
+  <data name="W.personnel.myStatus.StaffingLabel" xml:space="preserve">
+    <value>مستوى التوظيف</value>
+  </data>
+  <data name="W.personnel.myStatus.StaffingNoteEncrypted" xml:space="preserve">
+    <value>ملاحظة (تُحفظ مشفّرة)</value>
+  </data>
+  <data name="W.personnel.myStatus.StaffingNoteLabel" xml:space="preserve">
+    <value>ملاحظة التوظيف</value>
+  </data>
+  <data name="W.personnel.myStatus.StaffingNotePlaceholder" xml:space="preserve">
+    <value>ملاحظة (اختيارية)</value>
+  </data>
+  <data name="W.personnel.myStatus.StaffingSet" xml:space="preserve">
+    <value>تم تعيين مستوى التوظيف إلى {0}</value>
+  </data>
+  <data name="W.personnel.myStatus.Stations" xml:space="preserve">
+    <value>المحطات</value>
+  </data>
+  <data name="W.personnel.myStatus.StatusButtons" xml:space="preserve">
+    <value>عيّن حالتك</value>
+  </data>
+  <data name="W.personnel.myStatus.StatusNoteLabel" xml:space="preserve">
+    <value>ملاحظة الحالة</value>
+  </data>
+  <data name="W.personnel.myStatus.StatusNotePlaceholder" xml:space="preserve">
+    <value>ملاحظة الحالة (اختيارية)</value>
+  </data>
+  <data name="W.personnel.myStatus.StatusSet" xml:space="preserve">
+    <value>تم تعيين الحالة إلى {0}</value>
+  </data>
+  <data name="W.personnel.staffingSummary.AvailableOf" xml:space="preserve">
+    <value>متاح من أصل {0} من الأعضاء</value>
+  </data>
+  <data name="W.personnel.staffingSummary.ByGroup" xml:space="preserve">
+    <value>حسب المجموعة</value>
+  </data>
+  <data name="W.personnel.staffingSummary.Empty" xml:space="preserve">
+    <value>لا يوجد أفراد للعرض</value>
+  </data>
+  <data name="W.personnel.staffingSummary.GroupAvailable" xml:space="preserve">
+    <value>{0}/{1}</value>
+  </data>
+  <data name="W.personnel.staffingSummary.GroupOnDuty" xml:space="preserve">
+    <value>{0}/{1} · في الخدمة: {2}</value>
+  </data>
+  <data name="W.personnel.staffingSummary.OnDutyOf" xml:space="preserve">
+    <value>في الخدمة من أصل {0} من الأعضاء</value>
+  </data>
+  <data name="W.personnel.staffingSummary.StackAria" xml:space="preserve">
+    <value>الأفراد حسب مستوى التوظيف: {0}</value>
+  </data>
+  <data name="W.personnel.statusSummary.Available" xml:space="preserve">
+    <value>متاحون</value>
+  </data>
+  <data name="W.personnel.statusSummary.Committed" xml:space="preserve">
+    <value>ملتزمون</value>
+  </data>
+  <data name="W.personnel.statusSummary.CommittedOf" xml:space="preserve">
+    <value>ملتزمون من أصل {0} من الأعضاء</value>
+  </data>
+  <data name="W.personnel.statusSummary.Empty" xml:space="preserve">
+    <value>لا يوجد أفراد للعرض</value>
+  </data>
+  <data name="W.personnel.statusSummary.StackAria" xml:space="preserve">
+    <value>الأفراد حسب الحالة: {0}</value>
+  </data>
+  <data name="W.personnel.statusSummary.Unavailable" xml:space="preserve">
+    <value>غير متاحين</value>
+  </data>
+  <data name="W.units.alerts.Acknowledge" xml:space="preserve">
+    <value>إقرار</value>
+  </data>
+  <data name="W.units.alerts.AcknowledgeTitle" xml:space="preserve">
+    <value>إقرار {0}</value>
+  </data>
+  <data name="W.units.alerts.Acknowledged" xml:space="preserve">
+    <value>تم الإقرار بـ {0}</value>
+  </data>
+  <data name="W.units.alerts.AcknowledgedBy" xml:space="preserve">
+    <value>تم الإقرار بواسطة {0} {1}</value>
+  </data>
+  <data name="W.units.alerts.Cancel" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="W.units.alerts.Clear" xml:space="preserve">
+    <value>إزالة</value>
+  </data>
+  <data name="W.units.alerts.ClearTitle" xml:space="preserve">
+    <value>سحب الإقرار</value>
+  </data>
+  <data name="W.units.alerts.Cleared" xml:space="preserve">
+    <value>تم سحب الإقرار عن {0}</value>
+  </data>
+  <data name="W.units.alerts.Empty" xml:space="preserve">
+    <value>جميع الوحدات ضمن مؤقتات الحالة</value>
+  </data>
+  <data name="W.units.alerts.ForMinutes" xml:space="preserve">
+    <value>لمدة {0}</value>
+  </data>
+  <data name="W.units.alerts.Mute" xml:space="preserve">
+    <value>كتم</value>
+  </data>
+  <data name="W.units.alerts.MuteFor" xml:space="preserve">
+    <value>كتم لمدة</value>
+  </data>
+  <data name="W.units.alerts.MuteTitle" xml:space="preserve">
+    <value>كتم {0}</value>
+  </data>
+  <data name="W.units.alerts.Muted" xml:space="preserve">
+    <value>تم كتم {0}</value>
+  </data>
+  <data name="W.units.alerts.MutedByUntilChange" xml:space="preserve">
+    <value>تم الكتم بواسطة {0} حتى تتغير الحالة</value>
+  </data>
+  <data name="W.units.alerts.MutedUntilBy" xml:space="preserve">
+    <value>تم الكتم بواسطة {0} حتى {1}</value>
+  </data>
+  <data name="W.units.alerts.NoTimers" xml:space="preserve">
+    <value>لم يتم إعداد أي مؤقتات للحالة</value>
+  </data>
+  <data name="W.units.alerts.NoteLabel" xml:space="preserve">
+    <value>ملاحظة</value>
+  </data>
+  <data name="W.units.alerts.NotePlaceholder" xml:space="preserve">
+    <value>ملاحظة (اختيارية)</value>
+  </data>
+  <data name="W.units.alerts.NotePlaceholderRequired" xml:space="preserve">
+    <value>السبب (مطلوب)</value>
+  </data>
+  <data name="W.units.alerts.NoteRequired" xml:space="preserve">
+    <value>يلزم ذكر سبب لإقرار هذا التنبيه.</value>
+  </data>
+  <data name="W.units.alerts.OnlyMuted" xml:space="preserve">
+    <value>لا توجد تنبيهات مفتوحة · مكتومة: {0}</value>
+  </data>
+  <data name="W.units.alerts.OverTimer" xml:space="preserve">
+    <value>تجاوز مؤقت الحالة {0}</value>
+  </data>
+  <data name="W.units.alerts.SaveFailed" xml:space="preserve">
+    <value>تعذّر الحفظ. حاول مرة أخرى.</value>
+  </data>
+  <data name="W.units.alerts.SetUpTimers" xml:space="preserve">
+    <value>إعداد مؤقتات الحالة</value>
+  </data>
+  <data name="W.units.alerts.ShowMuted" xml:space="preserve">
+    <value>عرض التنبيهات المكتومة</value>
+  </data>
+  <data name="W.units.alerts.Someone" xml:space="preserve">
+    <value>شخص ما</value>
+  </data>
+  <data name="W.units.alerts.StatusChanged" xml:space="preserve">
+    <value>تغيرت حالة الوحدة؛ تم تحديث التنبيه.</value>
+  </data>
+  <data name="W.units.alerts.UntilStatusChanges" xml:space="preserve">
+    <value>حتى تتغير الحالة</value>
+  </data>
+  <data name="W.units.routes.Acknowledge" xml:space="preserve">
+    <value>إقرار</value>
+  </data>
+  <data name="W.units.routes.AcknowledgeFailed" xml:space="preserve">
+    <value>تعذّر الإقرار بالانحراف.</value>
+  </data>
+  <data name="W.units.routes.Acknowledged" xml:space="preserve">
+    <value>تم الإقرار بالانحراف</value>
+  </data>
+  <data name="W.units.routes.DeviationCount" xml:space="preserve">
+    <value>الانحرافات: {0}</value>
+  </data>
+  <data name="W.units.routes.Deviations" xml:space="preserve">
+    <value>الانحرافات ({0})</value>
+  </data>
+  <data name="W.units.routes.Empty" xml:space="preserve">
+    <value>لا توجد مسارات نشطة</value>
+  </data>
+  <data name="W.units.routes.InProgress" xml:space="preserve">
+    <value>نشطة ({0})</value>
+  </data>
+  <data name="W.units.routes.Kilometres" xml:space="preserve">
+    <value>{0} كم</value>
+  </data>
+  <data name="W.units.routes.Metres" xml:space="preserve">
+    <value>{0} م</value>
+  </data>
+  <data name="W.units.routes.OffRoute" xml:space="preserve">
+    <value>{0} · خارج المسار: {1}</value>
+  </data>
+  <data name="W.units.routes.OpenRoutes" xml:space="preserve">
+    <value>فتح المسارات النشطة</value>
+  </data>
+  <data name="W.units.routes.Paused" xml:space="preserve">
+    <value>متوقف مؤقتًا</value>
+  </data>
+  <data name="W.units.routes.Route" xml:space="preserve">
+    <value>المسار</value>
+  </data>
+  <data name="W.units.routes.Started" xml:space="preserve">
+    <value>بدأ {0}</value>
+  </data>
+  <data name="W.units.routes.Stops" xml:space="preserve">
+    <value>المحطات: {0}/{1}</value>
+  </data>
+  <data name="W.units.status.AllAvailable" xml:space="preserve">
+    <value>جميع الوحدات متاحة</value>
+  </data>
+  <data name="W.units.status.AllUnits" xml:space="preserve">
+    <value>جميع الوحدات</value>
+  </data>
+  <data name="W.units.status.Caption" xml:space="preserve">
+    <value>حالة الوحدات</value>
+  </data>
+  <data name="W.units.status.ChangeSettings" xml:space="preserve">
+    <value>تغيير الإعدادات</value>
+  </data>
+  <data name="W.units.status.ColCrew" xml:space="preserve">
+    <value>الطاقم</value>
+  </data>
+  <data name="W.units.status.ColDestination" xml:space="preserve">
+    <value>الوجهة</value>
+  </data>
+  <data name="W.units.status.ColFor" xml:space="preserve">
+    <value>المدة</value>
+  </data>
+  <data name="W.units.status.ColNote" xml:space="preserve">
+    <value>ملاحظة</value>
+  </data>
+  <data name="W.units.status.ColStation" xml:space="preserve">
+    <value>المحطة</value>
+  </data>
+  <data name="W.units.status.ColStatus" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="W.units.status.ColUnit" xml:space="preserve">
+    <value>الوحدة</value>
+  </data>
+  <data name="W.units.status.CrewTitle" xml:space="preserve">
+    <value>المعيّنون: {0}</value>
+  </data>
+  <data name="W.units.status.Empty" xml:space="preserve">
+    <value>لا توجد وحدات للعرض</value>
+  </data>
+  <data name="W.units.status.GroupMeta" xml:space="preserve">
+    <value>الوحدات: {0} · المتاحة: {1}</value>
+  </data>
+  <data name="W.units.status.HiddenAvailable" xml:space="preserve">
+    <value>الوحدات المتاحة المخفية: {0}</value>
+  </data>
+  <data name="W.units.status.NoStation" xml:space="preserve">
+    <value>بدون محطة</value>
+  </data>
+  <data name="W.units.status.NoStatus" xml:space="preserve">
+    <value>بدون حالة</value>
+  </data>
+  <data name="W.units.status.NoType" xml:space="preserve">
+    <value>بدون نوع</value>
+  </data>
+  <data name="W.units.status.OpenUnits" xml:space="preserve">
+    <value>فتح الوحدات</value>
+  </data>
+  <data name="W.units.status.ProtectedNote" xml:space="preserve">
+    <value>ملاحظة محمية</value>
+  </data>
+  <data name="W.units.status.StationFilterIgnored" xml:space="preserve">
+    <value>المحطة المحددة في إعدادات هذه الأداة لم تعد موجودة، لذلك تُعرض جميع الوحدات.</value>
+  </data>
+  <data name="W.units.summary.Available" xml:space="preserve">
+    <value>متاحة</value>
+  </data>
+  <data name="W.units.summary.AvailableOf" xml:space="preserve">
+    <value>وحدات متاحة</value>
+  </data>
+  <data name="W.units.summary.Committed" xml:space="preserve">
+    <value>مشغولة</value>
+  </data>
+  <data name="W.units.summary.DonutAria" xml:space="preserve">
+    <value>الوحدات حسب الحالة: {0}</value>
+  </data>
+  <data name="W.units.summary.Empty" xml:space="preserve">
+    <value>لا توجد وحدات للعرض</value>
+  </data>
+  <data name="W.units.summary.NoStatus" xml:space="preserve">
+    <value>بدون حالة</value>
+  </data>
+  <data name="W.units.summary.OpenUnits" xml:space="preserve">
+    <value>فتح الوحدات</value>
+  </data>
+  <data name="W.units.summary.OutOfService" xml:space="preserve">
+    <value>خارج الخدمة</value>
+  </data>
+  <data name="W.units.summary.Units" xml:space="preserve">
+    <value>وحدات</value>
+  </data>
+  <data name="W.units.summary.InServiceLine" xml:space="preserve">
+    <value>في الخدمة: {0} · خارج الخدمة: {1}</value>
+  </data>
+  <data name="W.personnel.statusSummary.AvailableLine" xml:space="preserve">
+    <value>المتاحون: {0} · غير المتاحين: {1}</value>
+  </data>
+  <data name="W.personnel.myStatus.RespondTo" xml:space="preserve">
+    <value>استجابة…</value>
+  </data>
+  <data name="W.personnel.myStatus.Since" xml:space="preserve">
+    <value>منذ {0}</value>
+  </data>
+</root>

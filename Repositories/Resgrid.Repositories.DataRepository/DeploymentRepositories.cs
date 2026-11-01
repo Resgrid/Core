@@ -126,6 +126,21 @@ namespace Resgrid.Repositories.DataRepository
 				(deploymentId != null ? $" AND {Col("DeploymentId")} = {P}DeploymentId" : string.Empty) + $" ORDER BY {Col("DeploymentId")}, {Col("ReportDate")}",
 				new { DepartmentId = departmentId, Approved = (int)DeploymentTimeReportStatuses.Approved, DeploymentId = deploymentId ?? string.Empty });
 
+		public async Task<DeploymentTimeReportCounts> GetStatusCountsAsync(int departmentId)
+		{
+			// One aggregate over the department's live Submitted and Approved reports (home dashboard Time Reports widget).
+			var awaiting = $"{Col("Status")} = {P}Submitted";
+			var unbilled = $"{Col("Status")} = {P}Approved AND {Col("InvoiceId")} IS NULL";
+			return await QueryFirstOrDefaultAsync<DeploymentTimeReportCounts>(
+				$"SELECT CAST(COALESCE(SUM(CASE WHEN {awaiting} THEN 1 ELSE 0 END), 0) AS INT) AS {Col("AwaitingApproval")}, " +
+				$"CAST(COALESCE(SUM(CASE WHEN {unbilled} THEN 1 ELSE 0 END), 0) AS INT) AS {Col("ApprovedUnbilled")}, " +
+				$"MIN(CASE WHEN {awaiting} THEN {Col("SubmittedOn")} END) AS {Col("OldestAwaitingOn")}, " +
+				$"MIN(CASE WHEN {unbilled} THEN {Col("ApprovedOn")} END) AS {Col("OldestUnbilledApprovedOn")} " +
+				$"FROM {Tbl("DeploymentTimeReports")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("IsDeleted")} = {False} AND {Col("Status")} IN ({P}Submitted, {P}Approved)",
+				new { DepartmentId = departmentId, Submitted = (int)DeploymentTimeReportStatuses.Submitted, Approved = (int)DeploymentTimeReportStatuses.Approved })
+				?? new DeploymentTimeReportCounts();
+		}
+
 		public Task<IEnumerable<DeploymentTimeReport>> GetUnbilledApprovedBeforeAsync(DateTime approvedBeforeUtc) =>
 			QueryAsync<DeploymentTimeReport>(
 				$"SELECT * FROM {Tbl("DeploymentTimeReports")} WHERE {Col("IsDeleted")} = {False} AND {Col("Status")} = {P}Approved AND {Col("InvoiceId")} IS NULL AND {Col("ApprovedOn")} IS NOT NULL AND {Col("ApprovedOn")} <= {P}Before ORDER BY {Col("DepartmentId")}, {Col("DeploymentId")}, {Col("ReportDate")}",

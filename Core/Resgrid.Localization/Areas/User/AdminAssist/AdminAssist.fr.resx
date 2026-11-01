@@ -7719,4 +7719,49 @@
   <data xml:space="preserve" name="SettingHelp.ShiftTradeApprovers">
     <value>Qui choisit le candidat qui prend une demande d'échange de garde et approuve les échanges en attente. Les administrateurs du service le peuvent toujours ; les administrateurs de groupe, la personne qui cède sa garde et les membres de rôles choisis relèvent du choix du service.</value>
   </data>
+  <data xml:space="preserve" name="Feature.home-dashboard">
+    <value>Tableau de bord d'accueil personnalisable</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.home-dashboard">
+    <value>Une page d'accueil de widgets en direct que chaque membre organise, enregistrée dans son compte.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureValue.home-dashboard">
+    <value>Les membres voient sur un seul écran ce qui demande leur attention dans tous les modules, et leur disposition les suit dans n'importe quel navigateur.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureExample.home-dashboard">
+    <value>Les répartiteurs arrivent sur les appels actifs, le statut des unités et la carte ; les membres sur leur statut, leurs gardes et les listes de contrôle à faire.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.home-dashboard">
+    <value>Activez le nouveau tableau de bord, puis vérifiez le tableau par défaut que voit chaque rôle avant que les membres ne le personnalisent.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.dashboard-templates">
+    <value>Modèles de tableau de bord</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.dashboard-templates">
+    <value>Tableaux de bord par défaut du département pour tous, un rôle du personnel ou un groupe.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureValue.dashboard-templates">
+    <value>Les membres qui n'ont rien personnalisé partent d'un tableau choisi pour leur fonction plutôt que du tableau intégré par défaut.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureExample.dashboard-templates">
+    <value>Un modèle pour le rôle Répartiteur avec les appels, les unités et la carte, et un modèle par défaut du département avec le statut, les gardes et les listes de contrôle.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.dashboard-templates">
+    <value>Créez un modèle par défaut du département, puis ajoutez des modèles par rôle ou par groupe là où une fonction a besoin d'un autre tableau.</value>
+  </data>
+  <data xml:space="preserve" name="Topic.dashboard-customize">
+    <value>Personnaliser le tableau de bord d'accueil</value>
+  </data>
+  <data xml:space="preserve" name="Topic.dashboard-defaults">
+    <value>Quel tableau de bord voit un membre</value>
+  </data>
+  <data xml:space="preserve" name="Topic.dashboard-addon-widgets">
+    <value>Widgets des modules complémentaires et cartes verrouillées</value>
+  </data>
+  <data xml:space="preserve" name="Topic.dashboard-data-protection">
+    <value>Données protégées sur le tableau de bord</value>
+  </data>
+  <data xml:space="preserve" name="Topic.dashboard-classic">
+    <value>Activer le nouveau tableau de bord et revenir au classique</value>
+  </data>
 </root>

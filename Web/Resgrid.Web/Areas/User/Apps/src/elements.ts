@@ -115,6 +115,19 @@ defineReactElement<import('./components/mapViz/MapVisualizerElement').MapVisuali
   ],
 );
 
+defineReactElement<import('./components/dashboard/DashboardElement').DashboardElementProps>(
+  'rg-dashboard',
+  () => import('./components/dashboard/DashboardElement'),
+  [
+    { attribute: 'mode', property: 'mode', type: 'string', defaultValue: 'board' },
+    { attribute: 'templateid', property: 'templateId', type: 'string', defaultValue: '' },
+    { attribute: 'firstrun', property: 'firstRun', type: 'boolean', defaultValue: false },
+    { attribute: 'adpreveal', property: 'adpReveal', type: 'boolean', defaultValue: false },
+    { attribute: 'strings', property: 'strings', type: 'json', defaultValue: {} },
+    { attribute: 'culture', property: 'culture', type: 'string', defaultValue: '' },
+  ],
+);
+
 defineReactElement<import('./components/adminAssist/AdminAssistElement').AdminAssistElementProps>(
   'rg-admin-assist',
   () => import('./components/adminAssist/AdminAssistElement'),

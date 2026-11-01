@@ -435,6 +435,14 @@ namespace Resgrid.Repositories.DataRepository
 
 		public Task<int> CountTestDueAsync(int departmentId, DateTime cutoffUtc)
 			=> ScalarAsync<int>($"SELECT COUNT(1) FROM {Tbl("RmsHydrants")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("DeletedOn")} IS NULL AND {Col("InService")} = {P}On AND ({Col("LastTestedOn")} IS NULL OR {Col("LastTestedOn")} < {P}Cutoff)", new { DepartmentId = departmentId, On = true, Cutoff = cutoffUtc });
+
+		public Task<IEnumerable<RmsHydrant>> GetOutOfServiceAsync(int departmentId, int take)
+		{
+			var p = RmsPreventionSql.Paged(departmentId, 0, take, 200);
+			p.Add("Off", false);
+			// NULL ordering differs by dialect (SQL Server first, PostgreSQL last), so an unknown start date is placed explicitly.
+			return QueryAsync<RmsHydrant>($"SELECT * FROM {Tbl("RmsHydrants")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("DeletedOn")} IS NULL AND {Col("InService")} = {P}Off ORDER BY CASE WHEN {Col("OutOfServiceSince")} IS NULL THEN 1 ELSE 0 END, {Col("OutOfServiceSince")}, {Col("HydrantNumber")}, {Col("RmsHydrantId")} {Paging()}", p);
+		}
 	}
 
 	public class RmsHydrantFlowTestsRepository : RmsRepositoryBase<RmsHydrantFlowTest>, IRmsHydrantFlowTestsRepository

@@ -372,6 +372,13 @@ namespace Resgrid.Services
 				cancellationToken) == 1;
 		}
 
+		public async Task<DepartmentSecurityPosture> GetDepartmentSecurityPostureAsync(int departmentId, CancellationToken cancellationToken = default)
+		{
+			if (departmentId <= 0)
+				return new DepartmentSecurityPosture();
+			return await _sessionsRepository.GetDepartmentSecurityPostureAsync(departmentId, _time.GetUtcNow().UtcDateTime, cancellationToken) ?? new DepartmentSecurityPosture();
+		}
+
 		public async Task<IReadOnlyList<UserSessionSummary>> GetActiveForUserAsync(string userId, CancellationToken cancellationToken = default)
 		{
 			var sessions = await _sessionsRepository.GetActiveByUserAsync(userId, DateTime.UtcNow);

@@ -146,7 +146,8 @@ namespace Resgrid.Providers.GeoLocationProvider
 		{
 			async Task<RouteInformation> getRoute()
 			{
-				var info = new RouteInformation();
+				// Stamped up front so a failure is cached briefly (RouteLookupCache), not for the success length.
+				var info = new RouteInformation { ProcessedOn = DateTime.UtcNow };
 
 				try
 				{
@@ -161,25 +162,27 @@ namespace Resgrid.Providers.GeoLocationProvider
 					if (directions != null && directions.Status == DirectionsStatusCodes.OK)
 					{
 						var route = directions.Routes.FirstOrDefault();
+						var leg = route?.Legs.FirstOrDefault();
 
-						if (route != null)
+						if (leg != null)
 						{
 							info.Name = route.Summary;
-							info.ProcessedOn = DateTime.UtcNow;
 							info.Successful = true;
+							info.TimeString = leg.Duration.Text;
+							info.Seconds = leg.Duration.Value.TotalSeconds;
+							info.DistanceInMeters = leg.Distance.Value;
 						}
 					}
 				}
 				catch
 				{
-					info.ProcessedOn = DateTime.UtcNow;
 					info.Successful = false;
 				}
 
 				return info;
 			};
 
-			return await _cacheProvider.RetrieveAsync<RouteInformation>(GeoLocationCacheKeys.Route(startLat, startLon, endLat, endLon), getRoute, CacheLength);
+			return await RouteLookupCache.GetAsync(_cacheProvider, GeoLocationCacheKeys.Route(startLat, startLon, endLat, endLon), getRoute);
 		}
 
 		public async Task<RouteInformation> GetRoute(string start, string end)
@@ -189,7 +192,8 @@ namespace Resgrid.Providers.GeoLocationProvider
 
 			async Task<RouteInformation> getRoute()
 			{
-				var info = new RouteInformation();
+				// Stamped up front so a failure is cached briefly (RouteLookupCache), not for the success length.
+				var info = new RouteInformation { ProcessedOn = DateTime.UtcNow };
 
 				try
 				{
@@ -213,7 +217,6 @@ namespace Resgrid.Providers.GeoLocationProvider
 							if (leg != null)
 							{
 								info.Name = route.Summary;
-								info.ProcessedOn = DateTime.UtcNow;
 								info.Successful = true;
 								info.TimeString = leg.Duration.Text;
 								info.Seconds = leg.Duration.Value.TotalSeconds;
@@ -224,14 +227,13 @@ namespace Resgrid.Providers.GeoLocationProvider
 				}
 				catch
 				{
-					info.ProcessedOn = DateTime.UtcNow;
 					info.Successful = false;
 				}
 
 				return info;
 			};
 
-			return await _cacheProvider.RetrieveAsync<RouteInformation>(GeoLocationCacheKeys.Route(start, end), getRoute, CacheLength);
+			return await RouteLookupCache.GetAsync(_cacheProvider, GeoLocationCacheKeys.Route(start, end), getRoute);
 		}
 
 		public async Task<Coordinates> GetCoordinatesFromW3W(string words)

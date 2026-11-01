@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Resgrid.Model.Repositories
@@ -16,5 +17,11 @@ namespace Resgrid.Model.Repositories
 		/// <summary>The initial run for a (WorkflowId, EventId) pair, or null; plan section 5.6 dedup (retries reuse it).</summary>
 		Task<WorkflowRun> GetByWorkflowAndEventAsync(string workflowId, string eventId);
 		Task<List<WorkflowRun>> GetByWorkflowsAndEventAsync(int departmentId, IReadOnlyCollection<string> workflowIds, string eventId);
+
+		/// <summary>
+		/// Run counts per workflow and status for runs started at or after <paramref name="sinceUtc"/>, plus every pending, running or
+		/// retrying run whenever it started (home dashboard Workflow Health). Aggregates only; never the payload or error text.
+		/// </summary>
+		Task<IEnumerable<WorkflowRunStatusCount>> GetStatusCountsAsync(int departmentId, DateTime sinceUtc);
 	}
 }

@@ -1,0 +1,10 @@
+/* ai.assistant: the embedded conversation fills the widget body (the drawer's body layout, sized to the frame). */
+.rg-assistant-embed {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 320px;
+  border: 1px solid var(--rg-border);
+  border-radius: 3px;
+  overflow: hidden;
+}

@@ -20,6 +20,7 @@ namespace Resgrid.Repositories.DataRepository
 		private readonly IConnectionProvider _connectionProvider;
 		private readonly IUnitOfWork _unitOfWork;
 		private readonly string _table;
+		private readonly string _schema;
 		private readonly bool _isPostgres;
 
 		public UserSessionsRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration,
@@ -29,6 +30,7 @@ namespace Resgrid.Repositories.DataRepository
 			_connectionProvider = connectionProvider;
 			_unitOfWork = unitOfWork;
 			_isPostgres = DataConfig.DatabaseType == DatabaseTypes.Postgres;
+			_schema = sqlConfiguration.SchemaName;
 			_table = _isPostgres
 				? $"{sqlConfiguration.SchemaName}.usersessions"
 				: $"{sqlConfiguration.SchemaName}.[UserSessions]";
@@ -43,6 +45,35 @@ namespace Resgrid.Repositories.DataRepository
 			var sessions = await WithConnectionAsync(connection => connection.QueryAsync<UserSession>(
 				sql, new { UserId = userId, State = (int)UserSessionState.Active, UtcNow = utcNow }, _unitOfWork?.Transaction));
 			return sessions.ToList();
+		}
+
+		/// <summary>
+		/// One read for the home dashboard Security Posture widget. Current members are the department's rows that are not deleted
+		/// and not disabled; sessions count only when their user is such a member. SQL Server forbids a subquery inside an aggregate,
+		/// so the per-member flags are computed in a derived table first.
+		/// </summary>
+		public async Task<DepartmentSecurityPosture> GetDepartmentSecurityPostureAsync(int departmentId, DateTime utcNow, CancellationToken cancellationToken = default)
+		{
+			string T(string name) => _isPostgres ? $"{_schema}.{name.ToLowerInvariant()}" : $"{_schema}.[{name}]";
+			string C(string name) => _isPostgres ? name.ToLowerInvariant() : $"[{name}]";
+
+			var current = $"m.{C("DepartmentId")} = @DepartmentId AND m.{C("IsDeleted")} = @False AND (m.{C("IsDisabled")} IS NULL OR m.{C("IsDisabled")} = @False)";
+			var sessions = $"FROM {T("UserSessions")} s WHERE s.{C("DepartmentId")} = @DepartmentId AND s.{C("State")} = @Active AND s.{C("ExpiresOn")} > @UtcNow " +
+				$"AND EXISTS (SELECT 1 FROM {T("DepartmentMembers")} m WHERE m.{C("UserId")} = s.{C("UserId")} AND {current})";
+			var sql =
+				$"SELECT CAST(COUNT(*) AS INT) AS {C("Members")}, " +
+				$"CAST(COALESCE(SUM(x.{C("Mfa")}), 0) AS INT) AS {C("MfaEnabled")}, " +
+				$"CAST(COALESCE(SUM(x.{C("Pk")}), 0) AS INT) AS {C("PasskeyUsers")}, " +
+				$"CAST(COALESCE(SUM(CASE WHEN x.{C("Mfa")} = 1 OR x.{C("Pk")} = 1 THEN 1 ELSE 0 END), 0) AS INT) AS {C("StrongAuthentication")}, " +
+				$"(SELECT CAST(COUNT(*) AS INT) {sessions}) AS {C("ActiveSessions")}, " +
+				$"(SELECT CAST(COUNT(DISTINCT s.{C("UserId")}) AS INT) {sessions}) AS {C("UsersWithSessions")} " +
+				$"FROM (SELECT m.{C("UserId")}, CASE WHEN u.{C("TwoFactorEnabled")} = @True THEN 1 ELSE 0 END AS {C("Mfa")}, " +
+				$"CASE WHEN EXISTS (SELECT 1 FROM {T("UserPasskeys")} p WHERE p.{C("UserId")} = m.{C("UserId")} AND p.{C("RevokedOnUtc")} IS NULL) THEN 1 ELSE 0 END AS {C("Pk")} " +
+				$"FROM {T("DepartmentMembers")} m LEFT JOIN {T("AspNetUsers")} u ON u.{C("Id")} = m.{C("UserId")} WHERE {current}) x";
+
+			return await WithConnectionAsync(connection => connection.QueryFirstOrDefaultAsync<DepartmentSecurityPosture>(new Dapper.CommandDefinition(sql,
+				new { DepartmentId = departmentId, False = false, True = true, Active = (int)UserSessionState.Active, UtcNow = utcNow }, _unitOfWork?.Transaction,
+				cancellationToken: cancellationToken))) ?? new DepartmentSecurityPosture();
 		}
 
 		public Task<UserSession> GetByAuthorizationIdAsync(string authorizationId)

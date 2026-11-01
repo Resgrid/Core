@@ -23,6 +23,13 @@ namespace Resgrid.Model.Services
 		Task<List<Document>> GetFilteredDocumentsByDepartmentIdAsync(int departmentId, string type, string category);
 
 		/// <summary>
+		/// The department's newest documents, metadata only (no file bytes, no description or file name — ADP-catalogued),
+		/// newest first. Admins-only documents only when <paramref name="includeAdminsOnly"/> (the Documents page shows them
+		/// to department admins); <paramref name="category"/> narrows to one category when given.
+		/// </summary>
+		Task<List<Document>> GetRecentDocumentsByDepartmentIdAsync(int departmentId, int take, bool includeAdminsOnly, string category = null);
+
+		/// <summary>
 		/// Saves the document asynchronous.
 		/// </summary>
 		/// <param name="document">The document.</param>

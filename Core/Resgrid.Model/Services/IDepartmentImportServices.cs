@@ -47,6 +47,12 @@ namespace Resgrid.Model.Services
 	{
 		Task<List<ImportWorkspace>> GetWorkspacesAsync(int departmentId, CancellationToken cancellationToken = default);
 
+		/// <summary>
+		/// Workspace counts plus the data sets and runs of the open workspace with the newest activity, in at most three reads (home
+		/// dashboard Import &amp; Migration widget). Counts only; never null.
+		/// </summary>
+		Task<DepartmentImportSummary> GetImportSummaryAsync(int departmentId, CancellationToken cancellationToken = default);
+
 		/// <summary>The workspace with this id in this department, or null.</summary>
 		Task<ImportWorkspace> GetWorkspaceAsync(int departmentId, string workspaceId, CancellationToken cancellationToken = default);
 

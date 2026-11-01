@@ -72,6 +72,16 @@ namespace Resgrid.Repositories.DataRepository
 				new { DepartmentId = departmentId, Skip = skip, Take = PageSize })).ToList();
 		}
 
+		public async Task<List<InventoryAlertGroupCount>> OpenAlertGroupCountsAsync(int departmentId, int take)
+		{
+			if (take <= 0) throw new ArgumentOutOfRangeException(nameof(take));
+			var keys = $"{Col("AlertType")},{Col("ItemId")},{Col("LocationId")}";
+			return (await QueryAsync<InventoryAlertGroupCount>($@"SELECT {keys},CAST(COUNT(1) AS int) AS {Col("AlertCount")},SUM({Col("Quantity")}) AS {Col("Quantity")},
+MIN({Col("DueOn")}) AS {Col("EarliestDueOn")},MAX({Col("OpenedOn")}) AS {Col("LatestOpenedOn")}
+FROM {Tbl("InventoryAlerts")} WHERE {Col("DepartmentId")}={P}DepartmentId AND {Col("Status")}=0
+GROUP BY {keys} ORDER BY {keys} {Paging()}", new { DepartmentId = departmentId, Skip = 0, Take = take })).ToList();
+		}
+
 		public Task<T> GetAsync<T>(int departmentId, string id) where T : InventoryRow => QueryFirstOrDefaultAsync<T>(
 			$"SELECT {Cols(Columns<T>())} FROM {Tbl(Table<T>())} WHERE {Col("DepartmentId")}={P}DepartmentId AND {Col("Id")}={P}Id",
 			new { DepartmentId = departmentId, Id = id });

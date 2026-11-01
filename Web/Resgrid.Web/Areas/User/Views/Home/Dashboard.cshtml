@@ -39,6 +39,14 @@
 
 <div class="wrapper wrapper-content">
   @await Component.InvokeAsync("AdminAssistSetupPrompt")
+  @if (Model.ModernAvailable)
+  {
+    <div class="alert alert-info" id="modernDashboardOffer">
+      <i class="fa fa-th-large"></i> @localizer["ClassicDashboardBanner"]
+      <button type="button" class="btn btn-primary btn-xs pull-right" id="tryModernDashboard"
+              data-url="@Url.Action("SetClassic", "Dashboard", new { area = "User" })">@localizer["TryNewDashboard"]</button>
+    </div>
+  }
   <div class="row">
 	<div class="col-xs-12 col-sm-9">
 	  <div class="ibox float-e-margins">

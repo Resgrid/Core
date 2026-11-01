@@ -284,6 +284,12 @@ namespace Resgrid.Services
 			return instances?.ToList() ?? new List<RouteInstance>();
 		}
 
+		public async Task<List<RouteInstance>> GetActiveInstancesForDepartmentAsync(int departmentId)
+		{
+			var instances = await _routeInstancesRepository.GetActiveInstancesByDepartmentIdAsync(departmentId);
+			return instances?.Where(i => i != null && i.DepartmentId == departmentId).ToList() ?? new List<RouteInstance>();
+		}
+
 		public async Task<List<RouteInstance>> GetInstancesByDateRangeAsync(int departmentId, DateTime startDate, DateTime endDate)
 		{
 			var instances = await _routeInstancesRepository.GetInstancesByDateRangeAsync(departmentId, startDate, endDate);

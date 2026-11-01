@@ -60,6 +60,8 @@ namespace Resgrid.Model.Checklists
 		public ChecklistTarget Target { get; set; }
 		public bool CanStart { get; set; }
 		public bool CanSkip { get; set; }
+		/// <summary>The actor is one of the schedule's assignees (CanStart additionally needs the period to have begun).</summary>
+		public bool Assigned { get; set; }
 	}
 	public sealed class ChecklistScheduleSweepResult { public int Generated { get; set; } public int Missed { get; set; } public int Errors { get; set; } }
 }

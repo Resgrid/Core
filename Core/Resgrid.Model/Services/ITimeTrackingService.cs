@@ -21,6 +21,8 @@ namespace Resgrid.Model.Services
 		/// <summary>Every live report of the deployment with its entries, in two reads (report + entries per report would be N+1).</summary>
 		Task<List<DeploymentTimeReport>> GetTimeReportsWithEntriesAsync(string deploymentId, int departmentId);
 		Task<List<DeploymentTimeReport>> GetUnbilledApprovedReportsAsync(int departmentId, string deploymentId = null);
+		/// <summary>Department-wide awaiting-approval and approved-unbilled report counts (home dashboard Time Reports widget); never null.</summary>
+		Task<DeploymentTimeReportCounts> GetTimeReportCountsAsync(int departmentId);
 
 		/// <summary>Allocates the next report number, copies the deployment's agency identifiers and prefills one Deployment entry per active roster subject (prior report's times when one exists).</summary>
 		Task<DeploymentTimeReport> CreateTimeReportAsync(string deploymentId, int departmentId, DateTime reportDate, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default);

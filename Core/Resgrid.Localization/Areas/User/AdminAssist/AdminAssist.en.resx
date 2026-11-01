@@ -7719,4 +7719,49 @@
   <data xml:space="preserve" name="SettingHelp.ShiftTradeApprovers">
     <value>Who may pick which applicant takes a shift trade request and approve trades waiting for approval. Department admins always may; group admins, the person trading out and members of chosen roles are the department’s choice.</value>
   </data>
+  <data xml:space="preserve" name="Feature.home-dashboard">
+    <value>Customizable home dashboard</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.home-dashboard">
+    <value>A home page of live widgets that each member arranges, saved to their account.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureValue.home-dashboard">
+    <value>Members see what needs their attention across every module on one screen, and their layout follows them to any browser.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureExample.home-dashboard">
+    <value>Dispatchers open to active calls, unit status and the map; members open to their status, shifts and checklists due.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.home-dashboard">
+    <value>Turn on the new dashboard, then check the default board each role sees before members customize.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.dashboard-templates">
+    <value>Dashboard templates</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.dashboard-templates">
+    <value>Department default dashboards for everyone, a personnel role or a group.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureValue.dashboard-templates">
+    <value>Members who have not customized start from a board chosen for their job instead of the built-in default.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureExample.dashboard-templates">
+    <value>A Dispatcher role template with calls, units and the map, and a department default with status, shifts and checklists.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.dashboard-templates">
+    <value>Create a department default template, then add role or group templates where a job needs a different board.</value>
+  </data>
+  <data xml:space="preserve" name="Topic.dashboard-customize">
+    <value>Customizing the home dashboard</value>
+  </data>
+  <data xml:space="preserve" name="Topic.dashboard-defaults">
+    <value>Which dashboard a member sees</value>
+  </data>
+  <data xml:space="preserve" name="Topic.dashboard-addon-widgets">
+    <value>Add-on widgets and locked cards</value>
+  </data>
+  <data xml:space="preserve" name="Topic.dashboard-data-protection">
+    <value>Protected data on the dashboard</value>
+  </data>
+  <data xml:space="preserve" name="Topic.dashboard-classic">
+    <value>Turning on the new dashboard and returning to classic</value>
+  </data>
 </root>

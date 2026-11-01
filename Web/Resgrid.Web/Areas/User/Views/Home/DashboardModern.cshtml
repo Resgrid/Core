@@ -1,0 +1,56 @@
+@model Resgrid.Web.Areas.User.Models.Dashboard.DashboardModernView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Home.HomeDashboard> localizer
+@{
+	ViewBag.Title = "Resgrid | " + localizer["DashboardPageTitle"];
+	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+
+	// The element reaches the existing ADP step-up through these hidden buttons (plan §9A.3); the reveal module binds them.
+	var adpReveal = new Resgrid.Web.Areas.User.Models.AdpRevealView { BannerTitle = localizer["DashboardPageTitle"] };
+}
+
+@section Styles
+{
+	<style>
+		/* Static skeleton shown until the element chunk loads (plan §4.1), so the page never flashes empty. */
+		.rg-dash-skeleton { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); grid-auto-rows: 120px; gap: 16px; }
+		.rg-dash-skeleton > div { background: #fff; border: 1px solid #e7eaec; border-top: 3px solid #e7eaec; border-radius: 4px; }
+		.rg-dash-skeleton .s { grid-column: span 3; grid-row: span 2; }
+		.rg-dash-skeleton .l { grid-column: span 6; grid-row: span 3; }
+		.rg-dash-skeleton .full { grid-column: span 12; grid-row: span 3; }
+		@@media (max-width: 767px) { .rg-dash-skeleton > div { grid-column: 1 / -1 !important; } }
+		#adpDashboardControls { display: none; }
+	</style>
+}
+
+<div class="wrapper wrapper-content">
+	@if (Model.Mode == "board")
+	{
+		@await Component.InvokeAsync("AdminAssistSetupPrompt")
+	}
+	<rg-dashboard mode="@Model.Mode" templateid="@Model.TemplateId" firstrun="@(Model.FirstRun ? "true" : "false")" adpreveal="@(Model.ShowAdpReveal ? "true" : "false")" culture="@Model.Culture"
+				  strings="@System.Text.Json.JsonSerializer.Serialize(Model.Strings)">
+		<div class="rg-dash-skeleton" aria-busy="true">
+			<div class="s"></div><div class="s"></div><div class="s"></div><div class="s"></div>
+			<div class="l"></div><div class="l"></div>
+			<div class="full"></div>
+		</div>
+	</rg-dashboard>
+	<noscript>
+		<div class="alert alert-warning"><a href="@Url.Action("Dashboard", "Home", new { area = "User", classic = true })">@localizer["NoScriptClassic"]</a></div>
+	</noscript>
+	@if (Model.ShowAdpReveal)
+	{
+		<div id="adpDashboardControls" aria-hidden="true">
+			<button type="button" id="adpRevealButton" tabindex="-1"></button>
+			<button type="button" id="adpConcealButton" tabindex="-1"></button>
+		</div>
+	}
+</div>
+
+@section Scripts
+{
+	@if (Model.ShowAdpReveal)
+	{
+		<partial name="_AdpRevealScripts" model="adpReveal" />
+	}
+}

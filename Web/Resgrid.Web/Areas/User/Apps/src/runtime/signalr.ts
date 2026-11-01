@@ -38,6 +38,16 @@ export interface EventingHandlers {
   onPersonnelStatusUpdated?: (actionLogId: string) => void;
   /** A call was added, changed or closed; the id is the call id. */
   onCallsChanged?: (callId: string) => void;
+  /** A personnel staffing level was saved (EventingTypes 4); the id is the event's item id. */
+  onPersonnelStaffingUpdated?: (id: string) => void;
+  /** A unit status timer acknowledgement changed (EventingTypes 13); the id is the unit id. */
+  onUnitStatusAlertUpdated?: (unitId: string) => void;
+  /** A checklist changed (EventingTypes 11); the id is the event's item id. */
+  onChecklistUpdated?: (id: string) => void;
+  /** Calls awaiting resources changed (EventingTypes 14); the id is the call id, or "0" when several changed. */
+  onOutstandingRequirementsUpdated?: (callId: string) => void;
+  /** Incident command changed on a call (EventingTypes 9); the id is the event's item id. */
+  onIncidentCommandUpdated?: (id: string) => void;
   /** Called after an automatic reconnect has re-joined the department group. Events sent while offline were missed. */
   onResubscribed?: () => void;
 }
@@ -109,6 +119,23 @@ export async function connectEventingHub(departmentId: number, handlers: Eventin
   connection.on('callsUpdated', (id: unknown) => handlers.onCallsChanged?.(asId(id)));
   connection.on('callAdded', (id: unknown) => handlers.onCallsChanged?.(asId(id)));
   connection.on('callClosed', (id: unknown) => handlers.onCallsChanged?.(asId(id)));
+
+  // Registered only when asked for, so elements that predate these events see no change in hub traffic handling.
+  if (handlers.onPersonnelStaffingUpdated) {
+    connection.on('personnelStaffingUpdated', (id: unknown) => handlers.onPersonnelStaffingUpdated?.(asId(id)));
+  }
+  if (handlers.onUnitStatusAlertUpdated) {
+    connection.on('unitStatusAlertUpdated', (id: unknown) => handlers.onUnitStatusAlertUpdated?.(asId(id)));
+  }
+  if (handlers.onChecklistUpdated) {
+    connection.on('checklistUpdated', (id: unknown) => handlers.onChecklistUpdated?.(asId(id)));
+  }
+  if (handlers.onOutstandingRequirementsUpdated) {
+    connection.on('outstandingRequirementsUpdated', (id: unknown) => handlers.onOutstandingRequirementsUpdated?.(asId(id)));
+  }
+  if (handlers.onIncidentCommandUpdated) {
+    connection.on('incidentCommandUpdated', (id: unknown) => handlers.onIncidentCommandUpdated?.(asId(id)));
+  }
 
   // As with the geolocation hub, a reconnect gets a new connection id that is in no group yet.
   connection.onreconnected(async () => {

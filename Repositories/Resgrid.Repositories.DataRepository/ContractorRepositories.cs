@@ -177,6 +177,13 @@ namespace Resgrid.Repositories.DataRepository
 		public Task<IEnumerable<Bid>> GetByContractAsync(string serviceContractId) =>
 			QueryAsync<Bid>($"SELECT * FROM {Tbl("Bids")} WHERE {Col("ServiceContractId")} = {P}Id AND {Col("IsDeleted")} = {False} ORDER BY {Col("BidNumber")} DESC", new { Id = serviceContractId });
 
+		public Task<IEnumerable<BidStatusCount>> GetStatusCountsAsync(int departmentId, DateTime nowUtc, DateTime expiringBeforeUtc) =>
+			QueryAsync<BidStatusCount>(
+				$"SELECT {Col("Status")}, CAST(COUNT(*) AS INT) AS {Col("Total")}, " +
+				$"CAST(COALESCE(SUM(CASE WHEN {Col("ValidUntil")} IS NOT NULL AND {Col("ValidUntil")} >= {P}Now AND {Col("ValidUntil")} < {P}Before THEN 1 ELSE 0 END), 0) AS INT) AS {Col("Expiring")} " +
+				$"FROM {Tbl("Bids")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("IsDeleted")} = {False} GROUP BY {Col("Status")}",
+				new { DepartmentId = departmentId, Now = DatabaseTimestamp(nowUtc), Before = DatabaseTimestamp(expiringBeforeUtc) });
+
 		public Task<IEnumerable<Bid>> GetExpiryCandidatesAsync(DateTime asOfUtc) =>
 			QueryAsync<Bid>($"SELECT * FROM {Tbl("Bids")} WHERE {Col("Status")} = {(int)BidStatuses.Submitted} AND {Col("IsDeleted")} = {False} AND {Col("ValidUntil")} IS NOT NULL AND {Col("ValidUntil")} < {P}AsOf", new { AsOf = DatabaseTimestamp(asOfUtc) });
 	}

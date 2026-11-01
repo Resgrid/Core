@@ -2059,7 +2059,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				LastMessageSeq = channel.LastMessageSeq,
 				LastMessageOn = channel.LastMessageOn,
 				CreatedOn = channel.CreatedOn,
-				UnreadCount = Math.Max(0, channel.LastMessageSeq - (member?.LastReadSeq ?? 0)),
+				UnreadCount = ChatReadState.UnreadCount(channel, member),
 				NotificationPreference = member?.NotificationPreference ?? 0,
 				MyLastReadSeq = member?.LastReadSeq ?? 0
 			};

@@ -68,6 +68,8 @@ namespace Resgrid.Model.Repositories
 		Task<IEnumerable<Bid>> GetByContractAsync(string serviceContractId);
 		/// <summary>Submitted bids (all departments) whose <c>ValidUntil</c> is behind <paramref name="asOfUtc"/>.</summary>
 		Task<IEnumerable<Bid>> GetExpiryCandidatesAsync(DateTime asOfUtc);
+		/// <summary>Live bids per status, each with how many have ValidUntil in [<paramref name="nowUtc"/>, <paramref name="expiringBeforeUtc"/>).</summary>
+		Task<IEnumerable<BidStatusCount>> GetStatusCountsAsync(int departmentId, DateTime nowUtc, DateTime expiringBeforeUtc);
 	}
 
 	public interface IBidLineItemRepository : IRepository<BidLineItem>

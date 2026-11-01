@@ -22,6 +22,8 @@ namespace Resgrid.Model.Services
 		Task<bool> MoveSessionToDepartmentAsync(string userId, string sessionId, int departmentId,
 			CancellationToken cancellationToken = default);
 		Task<IReadOnlyList<UserSessionSummary>> GetActiveForUserAsync(string userId, CancellationToken cancellationToken = default);
+		/// <summary>MFA / passkey adoption and active-session counts for the department's current members (home dashboard Security Posture); never null.</summary>
+		Task<DepartmentSecurityPosture> GetDepartmentSecurityPostureAsync(int departmentId, CancellationToken cancellationToken = default);
 		Task<RevocationResult> RevokeSessionAsync(string actorUserId, string targetUserId, string sessionId, UserSessionRevocationReason reason, CancellationToken cancellationToken = default);
 		Task<RevocationResult> RevokeOtherSessionsAsync(string userId, string currentSessionId, UserSessionRevocationReason reason, CancellationToken cancellationToken = default);
 		Task<RevocationResult> RevokeAllAsync(string actorUserId, string targetUserId, UserSessionRevocationReason reason, DateTime validAfterUtc, CancellationToken cancellationToken = default);

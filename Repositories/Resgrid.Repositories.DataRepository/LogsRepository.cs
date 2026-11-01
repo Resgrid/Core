@@ -29,6 +29,44 @@ namespace Resgrid.Repositories.DataRepository
 			_unitOfWork = unitOfWork;
 		}
 
+		public async Task<IEnumerable<WorkLogHeader>> GetLogHeadersSinceAsync(int departmentId, DateTime sinceUtc, int take)
+		{
+			if (take <= 0) throw new ArgumentOutOfRangeException(nameof(take));
+			var postgres = Resgrid.Config.DataConfig.DatabaseType == Resgrid.Config.DatabaseTypes.Postgres;
+			// Header columns only: the narrative, contact and cause columns are never read for a count.
+			string Col(string name) => postgres ? name.ToLowerInvariant() : $"[{name}]";
+			var table = postgres ? $"{_sqlConfiguration.SchemaName}.{_sqlConfiguration.LogsTable.ToLowerInvariant()}" : $"{_sqlConfiguration.SchemaName}.[{_sqlConfiguration.LogsTable}]";
+			var p = _sqlConfiguration.ParameterNotation;
+			var sql = $"SELECT {Col("LogId")}, {Col("LogType")}, {Col("StationGroupId")}, {Col("CallId")}, {Col("StartedOn")}, {Col("LoggedOn")} FROM {table} " +
+				$"WHERE {Col("DepartmentId")} = {p}DepartmentId AND {Col("LoggedOn")} >= {p}Since ORDER BY {Col("LoggedOn")} DESC, {Col("LogId")} DESC " +
+				(postgres ? $"LIMIT {p}Take" : $"OFFSET 0 ROWS FETCH NEXT {p}Take ROWS ONLY");
+
+			var parameters = new DynamicParameters();
+			parameters.Add("DepartmentId", departmentId);
+			// PostgreSQL stores these as timestamp without time zone; Npgsql wants an Unspecified kind for them.
+			parameters.Add("Since", postgres ? DateTime.SpecifyKind(sinceUtc, DateTimeKind.Unspecified) : sinceUtc);
+			parameters.Add("Take", take);
+
+			try
+			{
+				if (_unitOfWork?.Connection == null)
+				{
+					using (var conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+						return await conn.QueryAsync<WorkLogHeader>(sql, parameters);
+					}
+				}
+
+				return await _unitOfWork.CreateOrGetConnection().QueryAsync<WorkLogHeader>(sql, parameters, _unitOfWork.Transaction);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				throw;
+			}
+		}
+
 		public async Task<IEnumerable<Log>> GetLogsForUserAsync(string userId)
 		{
 			try

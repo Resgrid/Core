@@ -65,9 +65,20 @@ namespace Resgrid.Model.Services
 		public List<RmsPreventionAttachment> Attachments { get; set; } = new List<RmsPreventionAttachment>();
 	}
 
+	/// <summary>Service-state counts plus the newest out-of-service hydrants (home dashboard widget): numbers, types, positions and dates only.</summary>
+	public class HydrantSummary
+	{
+		public DateTime AsOfUtc { get; set; }
+		public int OutOfService { get; set; }
+		public int TestDue { get; set; }
+		public List<RmsHydrant> OutOfServiceHydrants { get; set; } = new List<RmsHydrant>();
+	}
+
 	/// <summary>Hydrants and water sources, flow tests, maintenance, service state, JSON/CSV import and the response-map layer.</summary>
 	public interface IRecordsHydrantsService
 	{
+		/// <summary>Out-of-service and test-due counts and the <paramref name="take"/> longest out-of-service hydrants (three queries).</summary>
+		Task<HydrantSummary> GetSummaryAsync(int departmentId, string userId, DateTime utcNow, int take);
 		Task<bool> IsModuleEnabledAsync(int departmentId);
 		Task<List<RmsHydrant>> ListAsync(int departmentId, string userId);
 		Task<HydrantAggregate> GetAsync(int departmentId, string userId, string hydrantId);

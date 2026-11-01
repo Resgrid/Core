@@ -79,7 +79,8 @@ namespace Resgrid.Tests.Web.User
 				securityPinService: null, encryptionService: null, externalIdentityLinkService: links.Object, userSessionService: null,
 				emergencyContactService: null, protectedReadService: null, memberSensitiveDataService: null, dataProtectionService: null,
 				editProfileLocalizer: strings.Object, dispatchScopeService: Mock.Of<IDispatchScopeService>(),
-				emailMarketingService: Mock.Of<IEmailMarketingService>())
+				emailMarketingService: Mock.Of<IEmailMarketingService>(),
+				featureToggleService: Mock.Of<IFeatureToggleService>(), dashboardService: Mock.Of<IDashboardService>(), dashboardLocalizer: null, dashboardWidgetsLocalizer: null)
 			{
 				ControllerContext = new ControllerContext { HttpContext = _http },
 				TempData = new TempDataDictionary(_http, Mock.Of<ITempDataProvider>())

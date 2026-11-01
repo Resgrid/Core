@@ -171,4 +171,601 @@
   <data name="ToggleCollapseGroupsOnce" xml:space="preserve">
     <value>Εναλλαγή Σύμπτυξης Ομάδων (Αποθηκεύεται)</value>
   </data>
+  <data name="DashboardPageTitle" xml:space="preserve">
+    <value>Πίνακας ελέγχου</value>
+  </data>
+  <data name="Category.Operations" xml:space="preserve">
+    <value>Λειτουργίες</value>
+  </data>
+  <data name="Category.Personnel" xml:space="preserve">
+    <value>Προσωπικό</value>
+  </data>
+  <data name="Category.Awareness" xml:space="preserve">
+    <value>Χάρτης και καιρός</value>
+  </data>
+  <data name="Category.Communications" xml:space="preserve">
+    <value>Επικοινωνίες</value>
+  </data>
+  <data name="Category.Planning" xml:space="preserve">
+    <value>Σχεδιασμός</value>
+  </data>
+  <data name="Category.Readiness" xml:space="preserve">
+    <value>Ετοιμότητα</value>
+  </data>
+  <data name="Category.Records" xml:space="preserve">
+    <value>Αρχεία</value>
+  </data>
+  <data name="Category.Business" xml:space="preserve">
+    <value>Ανθρώπινο δυναμικό και διοίκηση</value>
+  </data>
+  <data name="Category.IncidentBackOffice" xml:space="preserve">
+    <value>Incident Back Office</value>
+  </data>
+  <data name="Category.Intelligence" xml:space="preserve">
+    <value>Αναλύσεις</value>
+  </data>
+  <data name="Category.Administration" xml:space="preserve">
+    <value>Διαχείριση</value>
+  </data>
+  <data name="WidgetErrorFailed" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η φόρτωση αυτού του γραφικού στοιχείου. Δοκιμάστε ξανά σε λίγο.</value>
+  </data>
+  <data name="WidgetErrorForbidden" xml:space="preserve">
+    <value>Δεν έχετε πλέον πρόσβαση σε αυτό το γραφικό στοιχείο.</value>
+  </data>
+  <data name="WidgetErrorNotFound" xml:space="preserve">
+    <value>Αυτό το γραφικό στοιχείο δεν είναι πλέον διαθέσιμο.</value>
+  </data>
+  <data name="WidgetErrorProtected" xml:space="preserve">
+    <value>Προστατευμένα δεδομένα. Επαληθεύστε για προβολή.</value>
+  </data>
+  <data name="SaveErrorConflict" xml:space="preserve">
+    <value>Ο πίνακας ελέγχου σας άλλαξε σε άλλο παράθυρο.</value>
+  </data>
+  <data name="SaveErrorInvalid" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η αποθήκευση αυτής της διάταξης.</value>
+  </data>
+  <data name="SaveErrorTooLarge" xml:space="preserve">
+    <value>Αυτή η διάταξη είναι πολύ μεγάλη για αποθήκευση. Αφαιρέστε μερικά γραφικά στοιχεία και δοκιμάστε ξανά.</value>
+  </data>
+  <data name="SaveErrorLimitReached" xml:space="preserve">
+    <value>Έχετε φτάσει στο όριο.</value>
+  </data>
+  <data name="SaveErrorNotFound" xml:space="preserve">
+    <value>Αυτός ο πίνακας δεν υπάρχει πλέον.</value>
+  </data>
+  <data name="Pulse.OpenCalls" xml:space="preserve">
+    <value>ενεργές κλήσεις</value>
+  </data>
+  <data name="Pulse.Unread" xml:space="preserve">
+    <value>μη αναγνωσμένα μηνύματα</value>
+  </data>
+  <data name="Pulse.Pending" xml:space="preserve">
+    <value>εκκρεμείς κλήσεις</value>
+  </data>
+  <data name="Pulse.Awaiting" xml:space="preserve">
+    <value>σε αναμονή πόρων</value>
+  </data>
+  <data name="BoardHome" xml:space="preserve">
+    <value>Αρχική</value>
+  </data>
+  <data name="TemplatesTitle" xml:space="preserve">
+    <value>Πρότυπα πίνακα ελέγχου</value>
+  </data>
+  <data name="TemplatesIntro" xml:space="preserve">
+    <value>Τα πρότυπα ορίζουν τον πίνακα ελέγχου που βλέπουν τα μέλη μέχρι να προσαρμόσουν τον δικό τους. Στοχεύστε ένα πρότυπο σε ρόλο προσωπικού ή ομάδα, ή ορίστε ένα ως προεπιλογή του τμήματος.</value>
+  </data>
+  <data name="TemplateAudienceEveryone" xml:space="preserve">
+    <value>Όλοι</value>
+  </data>
+  <data name="TemplateAudienceRole" xml:space="preserve">
+    <value>Ρόλος προσωπικού</value>
+  </data>
+  <data name="TemplateAudienceGroup" xml:space="preserve">
+    <value>Ομάδα</value>
+  </data>
+  <data name="UseClassicDashboard" xml:space="preserve">
+    <value>Χρήση του κλασικού πίνακα ελέγχου</value>
+  </data>
+  <data name="TryNewDashboard" xml:space="preserve">
+    <value>Δοκιμάστε τον νέο πίνακα ελέγχου</value>
+  </data>
+  <data name="ClassicDashboardBanner" xml:space="preserve">
+    <value>Διατίθεται νέος, προσαρμόσιμος πίνακας ελέγχου για το τμήμα σας.</value>
+  </data>
+  <data name="NoScriptClassic" xml:space="preserve">
+    <value>Αυτός ο πίνακας ελέγχου απαιτεί JavaScript. Ανοίξτε τον κλασικό πίνακα ελέγχου.</value>
+  </data>
+  <data name="TemplateNew" xml:space="preserve">
+    <value>Νέο πρότυπο</value>
+  </data>
+  <data name="TemplatesEmpty" xml:space="preserve">
+    <value>Δεν υπάρχουν ακόμη πρότυπα. Τα μέλη βλέπουν την ενσωματωμένη προεπιλογή για τον ρόλο τους μέχρι να προσθέσετε ένα.</value>
+  </data>
+  <data name="TemplateName" xml:space="preserve">
+    <value>Όνομα</value>
+  </data>
+  <data name="TemplateAudience" xml:space="preserve">
+    <value>Για</value>
+  </data>
+  <data name="TemplatePriority" xml:space="preserve">
+    <value>Προτεραιότητα</value>
+  </data>
+  <data name="TemplateWidgets" xml:space="preserve">
+    <value>Γραφικά στοιχεία</value>
+  </data>
+  <data name="TemplateDefault" xml:space="preserve">
+    <value>Προεπιλογή τμήματος</value>
+  </data>
+  <data name="TemplateEdit" xml:space="preserve">
+    <value>Επεξεργασία</value>
+  </data>
+  <data name="TemplateDelete" xml:space="preserve">
+    <value>Διαγραφή</value>
+  </data>
+  <data name="TemplateDeleteConfirm" xml:space="preserve">
+    <value>Να διαγραφεί αυτό το πρότυπο; Τα μέλη που δεν έχουν προσαρμόσει τον πίνακα ελέγχου τους θα βλέπουν το επόμενο αντίστοιχο πρότυπο ή την ενσωματωμένη προεπιλογή.</value>
+  </data>
+  <data name="SaveErrorNotAllowed" xml:space="preserve">
+    <value>Δεν επιτρέπεται να κάνετε αυτή την αλλαγή.</value>
+  </data>
+  <data name="Dash.Add" xml:space="preserve">
+    <value>Προσθήκη</value>
+  </data>
+  <data name="Dash.AddBoard" xml:space="preserve">
+    <value>Προσθήκη πίνακα</value>
+  </data>
+  <data name="Dash.AddNamed" xml:space="preserve">
+    <value>Προσθήκη: {0}</value>
+  </data>
+  <data name="Dash.AddWidget" xml:space="preserve">
+    <value>Προσθήκη γραφικού στοιχείου</value>
+  </data>
+  <data name="Dash.Added" xml:space="preserve">
+    <value>Προστέθηκε</value>
+  </data>
+  <data name="Dash.AdpConceal" xml:space="preserve">
+    <value>Απόκρυψη</value>
+  </data>
+  <data name="Dash.AdpConcealedToast" xml:space="preserve">
+    <value>Τα προστατευμένα δεδομένα αποκρύφθηκαν</value>
+  </data>
+  <data name="Dash.AdpHidden" xml:space="preserve">
+    <value>Τα προστατευμένα δεδομένα είναι κρυφά</value>
+  </data>
+  <data name="Dash.AdpProtectedAria" xml:space="preserve">
+    <value>{0}, επαληθεύστε για εμφάνιση</value>
+  </data>
+  <data name="Dash.AdpRevealed" xml:space="preserve">
+    <value>Τα προστατευμένα δεδομένα εμφανίζονται</value>
+  </data>
+  <data name="Dash.AdpRevealedToast" xml:space="preserve">
+    <value>Τα προστατευμένα δεδομένα εμφανίστηκαν. Κάθε εμφάνιση καταγράφεται στο αρχείο ελέγχου του τμήματος.</value>
+  </data>
+  <data name="Dash.AdpRoleCannotView" xml:space="preserve">
+    <value>Ο ρόλος σας δεν επιτρέπει την προβολή αυτού</value>
+  </data>
+  <data name="Dash.AdpVerifyToReveal" xml:space="preserve">
+    <value>Επαληθεύστε για εμφάνιση</value>
+  </data>
+  <data name="Dash.AdpWallHidden" xml:space="preserve">
+    <value>Τα προστατευμένα δεδομένα παραμένουν κρυφά σε οθόνη τοίχου.</value>
+  </data>
+  <data name="Dash.AdpVerifyTooltip" xml:space="preserve">
+    <value>Επαληθεύστε για εμφάνιση</value>
+  </data>
+  <data name="Dash.AgeHours" xml:space="preserve">
+    <value>πριν από {0} ώ.</value>
+  </data>
+  <data name="Dash.AgeJustNow" xml:space="preserve">
+    <value>μόλις τώρα</value>
+  </data>
+  <data name="Dash.AgeLoading" xml:space="preserve">
+    <value>φόρτωση</value>
+  </data>
+  <data name="Dash.AgeMinutes" xml:space="preserve">
+    <value>πριν από {0} λ.</value>
+  </data>
+  <data name="Dash.AgeReconnecting" xml:space="preserve">
+    <value>επανασύνδεση</value>
+  </data>
+  <data name="Dash.AgeSeconds" xml:space="preserve">
+    <value>πριν από {0} δλ.</value>
+  </data>
+  <data name="Dash.AgeUpdateFailed" xml:space="preserve">
+    <value>αποτυχία ενημέρωσης</value>
+  </data>
+  <data name="Dash.AllCategories" xml:space="preserve">
+    <value>Όλα</value>
+  </data>
+  <data name="Dash.Apply" xml:space="preserve">
+    <value>Εφαρμογή</value>
+  </data>
+  <data name="Dash.AvailableWith" xml:space="preserve">
+    <value>Διαθέσιμο με {0}</value>
+  </data>
+  <data name="Dash.BackToTemplates" xml:space="preserve">
+    <value>Επιστροφή στα πρότυπα</value>
+  </data>
+  <data name="Dash.BadgeAria" xml:space="preserve">
+    <value>Στοιχεία: {0}</value>
+  </data>
+  <data name="Dash.BoardAdded" xml:space="preserve">
+    <value>Ο πίνακας «{0}» προστέθηκε</value>
+  </data>
+  <data name="Dash.BoardDeleted" xml:space="preserve">
+    <value>Ο πίνακας «{0}» διαγράφηκε</value>
+  </data>
+  <data name="Dash.BoardLoadFailed" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η φόρτωση αυτού του πίνακα. Δοκιμάστε ξανά σε λίγο.</value>
+  </data>
+  <data name="Dash.BoardName" xml:space="preserve">
+    <value>Όνομα πίνακα</value>
+  </data>
+  <data name="Dash.BoardRenamed" xml:space="preserve">
+    <value>Ο πίνακας μετονομάστηκε σε «{0}»</value>
+  </data>
+  <data name="Dash.Boards" xml:space="preserve">
+    <value>Πίνακες ελέγχου</value>
+  </data>
+  <data name="Dash.BootstrapFailed" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η φόρτωση του πίνακα ελέγχου σας.</value>
+  </data>
+  <data name="Dash.Cancel" xml:space="preserve">
+    <value>Ακύρωση</value>
+  </data>
+  <data name="Dash.Categories" xml:space="preserve">
+    <value>Κατηγορίες γραφικών στοιχείων</value>
+  </data>
+  <data name="Dash.ChangesDiscarded" xml:space="preserve">
+    <value>Οι αλλαγές απορρίφθηκαν</value>
+  </data>
+  <data name="Dash.Close" xml:space="preserve">
+    <value>Κλείσιμο</value>
+  </data>
+  <data name="Dash.CoachDismiss" xml:space="preserve">
+    <value>Κατάλαβα</value>
+  </data>
+  <data name="Dash.CoachText" xml:space="preserve">
+    <value>Χρησιμοποιήστε την «Προσαρμογή» για να προσθέσετε, να αφαιρέσετε, να αλλάξετε το μέγεθος και να αναδιατάξετε γραφικά στοιχεία. Η διάταξή σας αποθηκεύεται στον λογαριασμό σας, οπότε σας ακολουθεί σε οποιοδήποτε πρόγραμμα περιήγησης.</value>
+  </data>
+  <data name="Dash.CoachTitle" xml:space="preserve">
+    <value>Καλώς ήρθατε στον νέο σας πίνακα ελέγχου</value>
+  </data>
+  <data name="Dash.ConflictText" xml:space="preserve">
+    <value>Να διατηρηθεί η διάταξη σε αυτή την οθόνη ή να φορτωθεί η πιο πρόσφατη αποθηκευμένη;</value>
+  </data>
+  <data name="Dash.CouldNotLoad" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η φόρτωση: {0}</value>
+  </data>
+  <data name="Dash.Customize" xml:space="preserve">
+    <value>Προσαρμογή</value>
+  </data>
+  <data name="Dash.CustomizeRegion" xml:space="preserve">
+    <value>Προσαρμογή πίνακα ελέγχου</value>
+  </data>
+  <data name="Dash.Delete" xml:space="preserve">
+    <value>Διαγραφή</value>
+  </data>
+  <data name="Dash.DeleteBoard" xml:space="preserve">
+    <value>Διαγραφή πίνακα</value>
+  </data>
+  <data name="Dash.DeleteBoardConfirm" xml:space="preserve">
+    <value>Να διαγραφεί ο πίνακας «{0}»; Τα γραφικά στοιχεία και οι ρυθμίσεις του θα αφαιρεθούν. Οι υπόλοιποι πίνακές σας δεν επηρεάζονται.</value>
+  </data>
+  <data name="Dash.Density" xml:space="preserve">
+    <value>Πυκνότητα</value>
+  </data>
+  <data name="Dash.DensityComfortable" xml:space="preserve">
+    <value>Άνετη</value>
+  </data>
+  <data name="Dash.DensityCompact" xml:space="preserve">
+    <value>Συμπαγής</value>
+  </data>
+  <data name="Dash.DepartmentCodeMeta" xml:space="preserve">
+    <value>Κωδικός {0}</value>
+  </data>
+  <data name="Dash.DepartmentTime" xml:space="preserve">
+    <value>Ώρα τμήματος</value>
+  </data>
+  <data name="Dash.Dismiss" xml:space="preserve">
+    <value>Παράβλεψη</value>
+  </data>
+  <data name="Dash.Done" xml:space="preserve">
+    <value>Τέλος</value>
+  </data>
+  <data name="Dash.DragCancelled" xml:space="preserve">
+    <value>Η μετακίνηση ακυρώθηκε.</value>
+  </data>
+  <data name="Dash.DragEnded" xml:space="preserve">
+    <value>Το γραφικό στοιχείο τοποθετήθηκε.</value>
+  </data>
+  <data name="Dash.DragStarted" xml:space="preserve">
+    <value>Επιλέχθηκε ένα γραφικό στοιχείο. Μετακινήστε το πάνω από άλλο γραφικό στοιχείο και αφήστε το για να τοποθετηθεί πριν ή μετά.</value>
+  </data>
+  <data name="Dash.DurationDays" xml:space="preserve">
+    <value>{0} ημ</value>
+  </data>
+  <data name="Dash.DurationHours" xml:space="preserve">
+    <value>{0} ώ {1} λ</value>
+  </data>
+  <data name="Dash.DurationMinutes" xml:space="preserve">
+    <value>{0} λ</value>
+  </data>
+  <data name="Dash.EditBarText" xml:space="preserve">
+    <value>Σύρετε γραφικά στοιχεία (ή εστιάστε σε ένα και χρησιμοποιήστε τα πλήκτρα βέλους) για αναδιάταξη, επιλέξτε μέγεθος, αφαιρέστε ή προσθέστε περισσότερα. Αποθηκεύεται στον λογαριασμό σας, οπότε σας ακολουθεί σε οποιοδήποτε πρόγραμμα περιήγησης.</value>
+  </data>
+  <data name="Dash.EditBarTitle" xml:space="preserve">
+    <value>Προσαρμογή του πίνακα ελέγχου σας.</value>
+  </data>
+  <data name="Dash.EditModeAnnounce" xml:space="preserve">
+    <value>Λειτουργία προσαρμογής. Χρησιμοποιήστε τα πλήκτρα βέλους σε ένα εστιασμένο γραφικό στοιχείο για να το μετακινήσετε, το συν και το πλην για αλλαγή μεγέθους, το Delete για αφαίρεση.</value>
+  </data>
+  <data name="Dash.EmptyBoard" xml:space="preserve">
+    <value>Αυτός ο πίνακας δεν έχει ακόμη γραφικά στοιχεία.</value>
+  </data>
+  <data name="Dash.EmptyBoardEditing" xml:space="preserve">
+    <value>Προσθέστε γραφικά στοιχεία για να δημιουργήσετε αυτόν τον πίνακα.</value>
+  </data>
+  <data name="Dash.EmptyDefault" xml:space="preserve">
+    <value>Δεν υπάρχει τίποτα για εμφάνιση αυτή τη στιγμή.</value>
+  </data>
+  <data name="Dash.ExitWall" xml:space="preserve">
+    <value>Έξοδος από την οθόνη τοίχου</value>
+  </data>
+  <data name="Dash.GreetAfternoon" xml:space="preserve">
+    <value>Καλό απόγευμα, {0}</value>
+  </data>
+  <data name="Dash.GreetAfternoonNoName" xml:space="preserve">
+    <value>Καλό απόγευμα</value>
+  </data>
+  <data name="Dash.GreetEvening" xml:space="preserve">
+    <value>Καλησπέρα, {0}</value>
+  </data>
+  <data name="Dash.GreetEveningNoName" xml:space="preserve">
+    <value>Καλησπέρα</value>
+  </data>
+  <data name="Dash.GreetMorning" xml:space="preserve">
+    <value>Καλημέρα, {0}</value>
+  </data>
+  <data name="Dash.GreetMorningNoName" xml:space="preserve">
+    <value>Καλημέρα</value>
+  </data>
+  <data name="Dash.KeepMine" xml:space="preserve">
+    <value>Διατήρηση της δικής μου</value>
+  </data>
+  <data name="Dash.KeyboardHelp" xml:space="preserve">
+    <value>Χρησιμοποιήστε τα πλήκτρα βέλους για να μετακινήσετε αυτό το γραφικό στοιχείο, το συν και το πλην για να αλλάξετε το μέγεθός του και το Delete για να το αφαιρέσετε.</value>
+  </data>
+  <data name="Dash.LatestLoaded" xml:space="preserve">
+    <value>Φορτώθηκε η πιο πρόσφατη αποθηκευμένη διάταξη</value>
+  </data>
+  <data name="Dash.Live" xml:space="preserve">
+    <value>ζωντανά</value>
+  </data>
+  <data name="Dash.LiveTooltip" xml:space="preserve">
+    <value>Ενημερώνεται ζωντανά</value>
+  </data>
+  <data name="Dash.LoadLatest" xml:space="preserve">
+    <value>Φόρτωση της πιο πρόσφατης</value>
+  </data>
+  <data name="Dash.Loading" xml:space="preserve">
+    <value>Φόρτωση</value>
+  </data>
+  <data name="Dash.Locked" xml:space="preserve">
+    <value>Κλειδωμένο</value>
+  </data>
+  <data name="Dash.MaxWidgets" xml:space="preserve">
+    <value>Ένας πίνακας μπορεί να περιέχει έως {0} γραφικά στοιχεία. Αφαιρέστε ένα για να προσθέσετε άλλο.</value>
+  </data>
+  <data name="Dash.Message" xml:space="preserve">
+    <value>Μήνυμα</value>
+  </data>
+  <data name="Dash.MoreOptions" xml:space="preserve">
+    <value>Περισσότερες επιλογές πίνακα ελέγχου</value>
+  </data>
+  <data name="Dash.MovableWidget" xml:space="preserve">
+    <value>μετακινούμενο γραφικό στοιχείο</value>
+  </data>
+  <data name="Dash.MultiSelectHint" xml:space="preserve">
+    <value>Μην επιλέξετε τίποτα για να συμπεριληφθούν όλα.</value>
+  </data>
+  <data name="Dash.MultipleInstances" xml:space="preserve">
+    <value>μπορείτε να προσθέσετε περισσότερα από ένα</value>
+  </data>
+  <data name="Dash.NewCall" xml:space="preserve">
+    <value>Νέα κλήση</value>
+  </data>
+  <data name="Dash.NoOptions" xml:space="preserve">
+    <value>Δεν υπάρχει ακόμη τίποτα για επιλογή.</value>
+  </data>
+  <data name="Dash.NoWidgetsMatch" xml:space="preserve">
+    <value>Κανένα γραφικό στοιχείο δεν ταιριάζει.</value>
+  </data>
+  <data name="Dash.OpenModule" xml:space="preserve">
+    <value>Άνοιγμα ενότητας</value>
+  </data>
+  <data name="Dash.Protected" xml:space="preserve">
+    <value>Προστατευμένο</value>
+  </data>
+  <data name="Dash.PulseLabel" xml:space="preserve">
+    <value>Το τμήμα με μια ματιά</value>
+  </data>
+  <data name="Dash.Refresh" xml:space="preserve">
+    <value>Ανανέωση</value>
+  </data>
+  <data name="Dash.Remove" xml:space="preserve">
+    <value>Αφαίρεση</value>
+  </data>
+  <data name="Dash.RemoveFromDashboard" xml:space="preserve">
+    <value>Αφαίρεση από τον πίνακα ελέγχου</value>
+  </data>
+  <data name="Dash.RemoveWidget" xml:space="preserve">
+    <value>Αφαίρεση: {0}</value>
+  </data>
+  <data name="Dash.Rename" xml:space="preserve">
+    <value>Μετονομασία</value>
+  </data>
+  <data name="Dash.RenameBoard" xml:space="preserve">
+    <value>Μετονομασία πίνακα</value>
+  </data>
+  <data name="Dash.ResetDone" xml:space="preserve">
+    <value>Έγινε επαναφορά στην προεπιλογή του τμήματος</value>
+  </data>
+  <data name="Dash.ResetToDefault" xml:space="preserve">
+    <value>Επαναφορά στην προεπιλογή του τμήματος</value>
+  </data>
+  <data name="Dash.Retry" xml:space="preserve">
+    <value>Επανάληψη</value>
+  </data>
+  <data name="Dash.RevealedBadge" xml:space="preserve">
+    <value>Εμφανίζεται</value>
+  </data>
+  <data name="Dash.RevealedBadgeTooltip" xml:space="preserve">
+    <value>Σε αυτό το γραφικό στοιχείο εμφανίζονται προστατευμένα δεδομένα</value>
+  </data>
+  <data name="Dash.RevealedRefreshDeferred" xml:space="preserve">
+    <value>Τα γραφικά στοιχεία που εμφανίζουν προστατευμένα δεδομένα ανανεώνονται το πολύ κάθε 2 λεπτά. Αυτό θα ανανεωθεί σύντομα.</value>
+  </data>
+  <data name="Dash.SaveFailed" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η αποθήκευση του πίνακα ελέγχου σας. Ελέγξτε τη σύνδεσή σας και δοκιμάστε ξανά.</value>
+  </data>
+  <data name="Dash.SaveTemplate" xml:space="preserve">
+    <value>Αποθήκευση προτύπου</value>
+  </data>
+  <data name="Dash.SavedToast" xml:space="preserve">
+    <value>Ο πίνακας ελέγχου αποθηκεύτηκε. Σας ακολουθεί σε οποιοδήποτε πρόγραμμα περιήγησης όπου συνδέεστε.</value>
+  </data>
+  <data name="Dash.SearchWidgets" xml:space="preserve">
+    <value>Αναζήτηση γραφικών στοιχείων</value>
+  </data>
+  <data name="Dash.SelectNone" xml:space="preserve">
+    <value>(κανένα)</value>
+  </data>
+  <data name="Dash.SettingRange" xml:space="preserve">
+    <value>Από {0} έως {1}</value>
+  </data>
+  <data name="Dash.Settings" xml:space="preserve">
+    <value>Ρυθμίσεις</value>
+  </data>
+  <data name="Dash.SettingsFor" xml:space="preserve">
+    <value>Ρυθμίσεις: {0}</value>
+  </data>
+  <data name="Dash.SettingsLive" xml:space="preserve">
+    <value>Αυτό το γραφικό στοιχείο ενημερώνεται ζωντανά.</value>
+  </data>
+  <data name="Dash.SettingsRefreshHours" xml:space="preserve">
+    <value>Αυτό το γραφικό στοιχείο ανανεώνεται κάθε {0} ώρ.</value>
+  </data>
+  <data name="Dash.SettingsRefreshMinutes" xml:space="preserve">
+    <value>Αυτό το γραφικό στοιχείο ανανεώνεται κάθε {0} λεπτ.</value>
+  </data>
+  <data name="Dash.SettingsSaved" xml:space="preserve">
+    <value>Οι ρυθμίσεις αποθηκεύτηκαν</value>
+  </data>
+  <data name="Dash.SettingsTitle" xml:space="preserve">
+    <value>Ρυθμίσεις: {0}</value>
+  </data>
+  <data name="Dash.Size" xml:space="preserve">
+    <value>Μέγεθος</value>
+  </data>
+  <data name="Dash.Size.full" xml:space="preserve">
+    <value>Πλήρες</value>
+  </data>
+  <data name="Dash.Size.l" xml:space="preserve">
+    <value>L</value>
+  </data>
+  <data name="Dash.Size.m" xml:space="preserve">
+    <value>M</value>
+  </data>
+  <data name="Dash.Size.s" xml:space="preserve">
+    <value>S</value>
+  </data>
+  <data name="Dash.Size.xl" xml:space="preserve">
+    <value>XL</value>
+  </data>
+  <data name="Dash.Size.xs" xml:space="preserve">
+    <value>XS</value>
+  </data>
+  <data name="Dash.SizeAria" xml:space="preserve">
+    <value>Μέγεθος {0}</value>
+  </data>
+  <data name="Dash.SizeChanged" xml:space="preserve">
+    <value>{0}: μέγεθος {1}</value>
+  </data>
+  <data name="Dash.StaleTooltip" xml:space="preserve">
+    <value>Οι ενημερώσεις σε πραγματικό χρόνο επανασυνδέονται. Μέχρι να επιστρέψουν, αυτό το γραφικό στοιχείο ανανεώνεται με χρονόμετρο.</value>
+  </data>
+  <data name="Dash.TemplateDefaultHint" xml:space="preserve">
+    <value>Τα μέλη που δεν ταιριάζουν σε πρότυπο ρόλου ή ομάδας βλέπουν αυτό.</value>
+  </data>
+  <data name="Dash.TemplateDescription" xml:space="preserve">
+    <value>Περιγραφή</value>
+  </data>
+  <data name="Dash.TemplateEditBarText" xml:space="preserve">
+    <value>Τα μέλη που δεν έχουν προσαρμόσει τον πίνακα ελέγχου τους βλέπουν αυτή τη διάταξη. Προσθέστε γραφικά στοιχεία, ορίστε το μέγεθός τους και αναδιατάξτε τα, και μετά αποθηκεύστε.</value>
+  </data>
+  <data name="Dash.TemplateEditBarTitle" xml:space="preserve">
+    <value>Επεξεργασία προτύπου πίνακα ελέγχου.</value>
+  </data>
+  <data name="Dash.TemplateEditTitle" xml:space="preserve">
+    <value>Επεξεργασία προτύπου πίνακα ελέγχου</value>
+  </data>
+  <data name="Dash.TemplateGroupRequired" xml:space="preserve">
+    <value>Επιλέξτε την ομάδα για την οποία προορίζεται αυτό το πρότυπο.</value>
+  </data>
+  <data name="Dash.TemplateIntro" xml:space="preserve">
+    <value>Οι προεπισκοπήσεις γραφικών στοιχείων εμφανίζουν τη δική σας προβολή των δεδομένων. Κάθε μέλος βλέπει μόνο όσα επιτρέπουν τα δικαιώματά του.</value>
+  </data>
+  <data name="Dash.TemplateNameRequired" xml:space="preserve">
+    <value>Δώστε ένα όνομα στο πρότυπο.</value>
+  </data>
+  <data name="Dash.TemplateNewTitle" xml:space="preserve">
+    <value>Νέο πρότυπο πίνακα ελέγχου</value>
+  </data>
+  <data name="Dash.TemplatePriorityHint" xml:space="preserve">
+    <value>Όταν ένα μέλος ταιριάζει με πολλά πρότυπα, υπερισχύει ο χαμηλότερος αριθμός.</value>
+  </data>
+  <data name="Dash.TemplateRoleRequired" xml:space="preserve">
+    <value>Επιλέξτε τον ρόλο προσωπικού για τον οποίο προορίζεται αυτό το πρότυπο.</value>
+  </data>
+  <data name="Dash.TemplateSaved" xml:space="preserve">
+    <value>Το πρότυπο αποθηκεύτηκε</value>
+  </data>
+  <data name="Dash.TemplateTargetsFailed" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η φόρτωση των ρόλων και των ομάδων.</value>
+  </data>
+  <data name="Dash.Undo" xml:space="preserve">
+    <value>Αναίρεση</value>
+  </data>
+  <data name="Dash.UntitledBoard" xml:space="preserve">
+    <value>Πίνακας χωρίς τίτλο</value>
+  </data>
+  <data name="Dash.UpdateFailedTooltip" xml:space="preserve">
+    <value>Η τελευταία ανανέωση απέτυχε. Εμφανίζονται προηγούμενα δεδομένα.</value>
+  </data>
+  <data name="Dash.VerifyToView" xml:space="preserve">
+    <value>Επαληθεύστε για προβολή</value>
+  </data>
+  <data name="Dash.ViewAddon" xml:space="preserve">
+    <value>Προβολή πρόσθετου</value>
+  </data>
+  <data name="Dash.WallDisplay" xml:space="preserve">
+    <value>Οθόνη τοίχου</value>
+  </data>
+  <data name="Dash.WidgetAdded" xml:space="preserve">
+    <value>Προστέθηκε: {0}</value>
+  </data>
+  <data name="Dash.WidgetMoved" xml:space="preserve">
+    <value>{0}: μετακινήθηκε στη θέση {1}</value>
+  </data>
+  <data name="Dash.WidgetNotAvailable" xml:space="preserve">
+    <value>Αυτό το γραφικό στοιχείο δεν είναι ακόμη διαθέσιμο.</value>
+  </data>
+  <data name="Dash.WidgetOptions" xml:space="preserve">
+    <value>Επιλογές: {0}</value>
+  </data>
+  <data name="Dash.WidgetRemoved" xml:space="preserve">
+    <value>Αφαιρέθηκε: {0}</value>
+  </data>
 </root>

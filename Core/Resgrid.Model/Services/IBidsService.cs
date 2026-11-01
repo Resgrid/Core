@@ -19,6 +19,8 @@ namespace Resgrid.Model.Services
 		/// <summary>The bid list filtered by part of the bid number as issued (IdentifierSearchKeys.ContainsParts); null or blank lists every bid.</summary>
 		Task<List<Bid>> GetBidsForDepartmentAsync(int departmentId, BidStatuses? status, string number, int skip, int take);
 		Task<int> CountBidsForDepartmentAsync(int departmentId, BidStatuses? status, string number);
+		/// <summary>Counts per status plus submitted bids expiring before <paramref name="expiringBeforeUtc"/>, in one read (home dashboard Bids widget); never null.</summary>
+		Task<BidPipelineSummary> GetBidPipelineAsync(int departmentId, DateTime nowUtc, DateTime expiringBeforeUtc);
 		Task<List<Bid>> GetBidsByContactIdAsync(string contactId, int departmentId, int skip = 0, int take = 100);
 		/// <summary>The department's bids raised under one contract (the contract detail page), newest first.</summary>
 		Task<List<Bid>> GetBidsForContractAsync(string serviceContractId, int departmentId);

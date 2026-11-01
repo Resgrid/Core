@@ -46,6 +46,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 	{
 		#region Private Members and Constructors
 		private readonly IStringLocalizer _localizer;
+		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Home.HomeDashboard> _dashboardLocalizer;
+		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Home.DashboardWidgets> _dashboardWidgetsLocalizer;
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IUsersService _usersService;
 		private readonly IActionLogsService _actionLogsService;
@@ -85,6 +87,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Home.EditProfile> _editProfileLocalizer;
 		private readonly IDispatchScopeService _dispatchScopeService;
 		private readonly IEmailMarketingService _emailMarketingService;
+		private readonly IFeatureToggleService _featureToggleService;
+		private readonly IDashboardService _dashboardService;
+		private readonly IPersonnelStatusBoardService _personnelStatusBoardService;
 
 		public HomeController(IDepartmentsService departmentsService, IUsersService usersService, IActionLogsService actionLogsService,
 			IUserStateService userStateService, IDepartmentGroupsService departmentGroupsService, Resgrid.Model.Services.IAuthorizationService authorizationService,
@@ -101,10 +106,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 			IDepartmentMemberSensitiveDataService memberSensitiveDataService,
 			IDepartmentDataProtectionService dataProtectionService,
 			IStringLocalizer<Resgrid.Localization.Areas.User.Home.EditProfile> editProfileLocalizer,
-			IDispatchScopeService dispatchScopeService, IEmailMarketingService emailMarketingService)
+			IDispatchScopeService dispatchScopeService, IEmailMarketingService emailMarketingService,
+			IFeatureToggleService featureToggleService, IDashboardService dashboardService,
+			IStringLocalizer<Resgrid.Localization.Areas.User.Home.HomeDashboard> dashboardLocalizer,
+			IStringLocalizer<Resgrid.Localization.Areas.User.Home.DashboardWidgets> dashboardWidgetsLocalizer,
+			IPersonnelStatusBoardService personnelStatusBoardService = null)
 		{
+			_personnelStatusBoardService = personnelStatusBoardService;
 			_dispatchScopeService = dispatchScopeService;
 			_emailMarketingService = emailMarketingService;
+			_featureToggleService = featureToggleService;
+			_dashboardService = dashboardService;
+			_dashboardLocalizer = dashboardLocalizer;
+			_dashboardWidgetsLocalizer = dashboardWidgetsLocalizer;
 			_departmentsService = departmentsService;
 			_usersService = usersService;
 			_actionLogsService = actionLogsService;
@@ -161,9 +175,24 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[Authorize(Policy = ResgridResources.Department_View)]
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-		public async Task<IActionResult> Dashboard(bool firstRun = false)
+		public async Task<IActionResult> Dashboard(bool firstRun = false, bool classic = false)
 		{
+			// The widget-based dashboard (home-dashboard-redesign-plan.md D10): behind Dashboard.Modern, unless the member chose
+			// the classic page (or asked for it once with ?classic=true).
+			var modernEnabled = await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.DashboardModern, DepartmentId);
+			if (modernEnabled && !classic && !await _dashboardService.GetUseClassicAsync(DepartmentId, UserId))
+			{
+				return View("DashboardModern", new Resgrid.Web.Areas.User.Models.Dashboard.DashboardModernView
+				{
+					FirstRun = firstRun,
+					Strings = DashboardStrings.Collect(_dashboardLocalizer, _dashboardWidgetsLocalizer),
+					ShowAdpReveal = await _dataProtectionService.IsProtectionEnforcedAsync(DepartmentId),
+					Culture = System.Globalization.CultureInfo.CurrentUICulture.Name
+				});
+			}
+
 			var model = new DashboardModel();
+			model.ModernAvailable = modernEnabled;
 
 			var staffingLevel = await _userStateService.GetLastUserStateByUserIdAsync(UserId);
 			model.UserState = staffingLevel.State;
@@ -196,178 +225,34 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 		public async Task<IActionResult> GetUserStatusTable()
 		{
+			// The grouping, visibility and sort rules live in IPersonnelStatusBoardService, shared with the home dashboard's
+			// personnel.board widget; this partial renders the same board it always did.
+			var board = await _personnelStatusBoardService.GetBoardAsync(DepartmentId, UserId);
+
 			var model = new UserStatusTableModel();
-			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
-			model.LastUserActionlogs = await _actionLogsService.GetLastActionLogsForDepartmentAsync(DepartmentId);
+			model.Department = board.Department;
+			model.LastUserActionlogs = board.LastUserActionlogs;
 			model.UserStates = new List<UserState>();
-			model.DepartmentGroups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
-			model.Stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
-			model.UsersGroup = await _departmentGroupsService.GetGroupForUserAsync(UserId, DepartmentId);
-			model.States = await _customStateService.GetActivePersonnelStateForDepartmentAsync(DepartmentId);
-			model.StaffingLevels = await _customStateService.GetActiveStaffingLevelsForDepartmentAsync(DepartmentId);
-			model.DefaultStatus = await _customStateService.GetDefaultPersonnelStatusAsync(DepartmentId);
-
-			var personnelSortOrder = await _departmentSettingsService.GetDepartmentPersonnelSortOrderAsync(DepartmentId);
-			var personnelStatusSortOrder = await _departmentSettingsService.GetDepartmentPersonnelListStatusSortOrderAsync(DepartmentId);
-
-			var userStates = await _userStateService.GetLatestStatesForDepartmentAsync(DepartmentId);
-			var allUsers = await _usersService.GetUserGroupAndRolesByDepartmentIdInLimitAsync(DepartmentId, false, false, false);
-			model.ExcludedUsers = await _departmentsService.GetAllDisabledOrHiddenUsersAsync(DepartmentId);
-
-			List<string> groupedUserIds = new List<string>();
-
-			foreach (var dg in model.DepartmentGroups)
+			model.DepartmentGroups = board.DepartmentGroups;
+			model.Stations = board.Stations;
+			model.UsersGroup = board.UsersGroup;
+			model.States = board.States;
+			model.StaffingLevels = board.StaffingLevels;
+			model.DefaultStatus = board.DefaultStatus;
+			model.ExcludedUsers = board.ExcludedUsers;
+			model.DepartmentUserStates = board.DepartmentUserStates;
+			model.UnGroupedUsers = board.UnGroupedUsers;
+			model.UserStatusGroups = board.Groups.Select(g => new UserStatusGroup
 			{
-				UserStatusGroup group = new UserStatusGroup();
-				group.Group = dg;
-
-				var membersToProcess = from member in dg.Members
-									   where !(model.ExcludedUsers.Any(item2 => item2 == member.UserId))
-									   select member;
-
-				foreach (var u in membersToProcess)
+				Group = g.Group,
+				UserStatuses = g.Entries.Select(e => new UserStatus
 				{
-					if (!await _authorizationService.CanUserViewPersonViaMatrixAsync(u.UserId, UserId, DepartmentId))
-						continue;
-
-					if (allUsers.Any(x => x.UserId == u.UserId))
-					{
-						groupedUserIds.Add(u.UserId);
-						var userInfo = allUsers.FirstOrDefault(x => x.UserId == u.UserId);
-
-						UserState state = userStates.FirstOrDefault(x => x.UserId == u.UserId);
-
-						if (state == null)
-						{
-							state = new UserState();
-							state.UserId = u.UserId;
-							state.AutoGenerated = true;
-							state.Timestamp = DateTime.UtcNow;
-							state.State = (int)UserStateTypes.Available;
-						}
-
-						if (!model.DepartmentUserStates.ContainsKey(u.UserId))
-							model.DepartmentUserStates.Add(u.UserId, state);
-
-						var al = model.LastUserActionlogs.FirstOrDefault(x => x.UserId == u.UserId);
-
-						UserStatus userStatus = new UserStatus();
-						userStatus.UserInfo = userInfo;
-						userStatus.CurrentStatus = al;
-						userStatus.CurrentStaffing = state;
-
-						if (al != null)
-						{
-							if (personnelStatusSortOrder != null && personnelStatusSortOrder.Any())
-							{
-								var statusSorting = personnelStatusSortOrder.FirstOrDefault(x => x.StatusId == al.ActionTypeId);
-								if (statusSorting != null)
-									userStatus.Weight = statusSorting.Weight;
-								else
-									userStatus.Weight = 9000;
-							}
-							else
-							{
-								userStatus.Weight = 9000;
-							}
-						}
-						else
-							userStatus.Weight = 9000;
-
-						group.UserStatuses.Add(userStatus);
-					}
-				}
-
-				switch (personnelSortOrder)
-				{
-					case PersonnelSortOrders.Default:
-						group.UserStatuses = group.UserStatuses.OrderBy(x => x.Weight).ToList();
-						break;
-					case PersonnelSortOrders.FirstName:
-						group.UserStatuses = group.UserStatuses.OrderBy(x => x.Weight).ThenBy(x => x.UserInfo.FirstName).ToList();
-						break;
-					case PersonnelSortOrders.LastName:
-						group.UserStatuses = group.UserStatuses.OrderBy(x => x.Weight).ThenBy(x => x.UserInfo.LastName).ToList();
-						break;
-					default:
-						group.UserStatuses = group.UserStatuses.OrderBy(x => x.Weight).ToList();
-						break;
-				}
-
-				model.UserStatusGroups.Add(group);
-
-				var allGroupMembers = new List<DepartmentGroupMember>(dg.Members);
-			}
-
-			var ungroupedUsers = from u in allUsers
-								 where !(groupedUserIds.Contains(u.UserId)) && !(model.ExcludedUsers.Any(item2 => item2 == u.UserId))
-								 select u;
-
-			UserStatusGroup unGroupedUsersGroup = new UserStatusGroup();
-			unGroupedUsersGroup.Group = null;
-			foreach (var u in ungroupedUsers)
-			{
-				if (!await _authorizationService.CanUserViewPersonViaMatrixAsync(u.UserId, UserId, DepartmentId))
-					continue;
-
-				model.UnGroupedUsers.Add(u.UserId);
-
-				UserState state = userStates.FirstOrDefault(x => x.UserId == u.UserId);
-				var userInfo = allUsers.FirstOrDefault(x => x.UserId == u.UserId);
-
-				if (state == null)
-				{
-					state = new UserState();
-					state.UserId = u.UserId;
-					state.AutoGenerated = true;
-					state.Timestamp = DateTime.UtcNow;
-					state.State = (int)UserStateTypes.Available;
-				}
-
-				var al = model.LastUserActionlogs.FirstOrDefault(x => x.UserId == u.UserId);
-
-				UserStatus userStatus = new UserStatus();
-				userStatus.UserInfo = userInfo;
-				userStatus.CurrentStatus = al;
-				userStatus.CurrentStaffing = state;
-
-				if (al != null)
-				{
-					if (personnelStatusSortOrder != null && personnelStatusSortOrder.Any())
-					{
-						var statusSorting = personnelStatusSortOrder.FirstOrDefault(x => x.StatusId == al.ActionTypeId);
-						if (statusSorting != null)
-							userStatus.Weight = statusSorting.Weight;
-						else
-							userStatus.Weight = 9000;
-					}
-					else
-					{
-						userStatus.Weight = 9000;
-					}
-				}
-				else
-					userStatus.Weight = 9000;
-
-				unGroupedUsersGroup.UserStatuses.Add(userStatus);
-			}
-
-			switch (personnelSortOrder)
-			{
-				case PersonnelSortOrders.Default:
-					unGroupedUsersGroup.UserStatuses = unGroupedUsersGroup.UserStatuses.OrderBy(x => x.Weight).ToList();
-					break;
-				case PersonnelSortOrders.FirstName:
-					unGroupedUsersGroup.UserStatuses = unGroupedUsersGroup.UserStatuses.OrderBy(x => x.Weight).ThenBy(x => x.UserInfo.FirstName).ToList();
-					break;
-				case PersonnelSortOrders.LastName:
-					unGroupedUsersGroup.UserStatuses = unGroupedUsersGroup.UserStatuses.OrderBy(x => x.Weight).ThenBy(x => x.UserInfo.LastName).ToList();
-					break;
-				default:
-					unGroupedUsersGroup.UserStatuses = unGroupedUsersGroup.UserStatuses.OrderBy(x => x.Weight).ToList();
-					break;
-			}
-			model.UserStatusGroups.Add(unGroupedUsersGroup);
+					Weight = e.Weight,
+					UserInfo = e.UserInfo,
+					CurrentStatus = e.CurrentStatus,
+					CurrentStaffing = e.CurrentStaffing
+				}).ToList()
+			}).ToList();
 
 			return PartialView("_UserStatusTablePartial", model);
 		}

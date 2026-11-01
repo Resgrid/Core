@@ -1,0 +1,117 @@
+/* Personnel widgets (agent A). Every class is rg-<widget>- prefixed; colours come from the DTO or the dashboard tokens. */
+
+.rg-mystatus-btns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.rg-mystatus-btns.rg-mystatus-wide {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.rg-mystatus-btns button {
+  border: 0;
+  border-radius: 3px;
+  padding: 7px 6px;
+  font-weight: 500;
+  font-size: 12.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rg-mystatus-btns .rg-mystatus-respond {
+  background: var(--rg-sec-bg);
+  color: var(--rg-sec-text);
+  box-shadow: inset 0 0 0 1px var(--rg-sec-border);
+}
+
+.rg-mystatus-btns .rg-mystatus-respond[aria-expanded='true'] {
+  background: var(--rg-primary);
+  color: #fff;
+  box-shadow: none;
+}
+
+.rg-mystatus-btns button[aria-pressed='true'] {
+  box-shadow:
+    0 0 0 2px #fff,
+    0 0 0 4px var(--rg-heading);
+}
+
+.rg-mystatus-btns button:hover:not([disabled]) {
+  filter: brightness(1.08);
+}
+
+.rg-mystatus-btns button[disabled] {
+  cursor: progress;
+  opacity: 0.75;
+}
+
+.rg-mystatus-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+  align-items: center;
+}
+
+.rg-mystatus-row .rg-input {
+  flex: 1 1 auto;
+  width: auto;
+}
+
+/* The choice must stay readable at size S ("Unavailable"): the select keeps its own width and the note box gives way. */
+.rg-mystatus-staffing select.rg-input {
+  flex: 0 1 auto;
+  max-width: 60%;
+}
+
+.rg-mystatus-staffing input.rg-input {
+  flex: 1 1 0;
+  min-width: 4em;
+}
+
+.rg-mystatus-row .rg-btn-xs {
+  flex: none;
+  height: 30px;
+}
+
+.rg-mystatus-now {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  margin-bottom: 6px;
+  font-size: 12px;
+  color: var(--rg-muted);
+}
+
+.rg-pboard-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  margin-bottom: 6px;
+  font-size: 12px;
+}
+
+.rg-pboard-tools select.rg-input {
+  width: auto;
+  flex: 0 1 200px;
+  height: 26px;
+}
+
+.rg-pboard-confirm {
+  color: var(--rg-heading);
+}
+
+.rg-pboard-dest {
+  color: var(--rg-muted);
+  margin-inline-start: 6px;
+  font-size: 11.5px;
+}
+
+.rg-pboard-name {
+  color: var(--rg-heading);
+}

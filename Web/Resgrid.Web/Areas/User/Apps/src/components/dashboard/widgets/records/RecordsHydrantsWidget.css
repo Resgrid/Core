@@ -1,0 +1,17 @@
+/* records.hydrants: KPI strip above a map that fills the rest of the body. */
+.rg-records-hydrants-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 100%;
+  min-height: 0;
+}
+
+.rg-records-hydrants-map {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 110px;
+  border: 1px solid var(--rg-hair);
+  border-radius: 3px;
+  overflow: hidden;
+}

@@ -842,6 +842,10 @@ namespace Resgrid.Tests.Services
 			public Task<InventoryAlert> OpenAlertAsync(int departmentId, string dedupKey) => Task.FromResult(All<InventoryAlert>().SingleOrDefault(a => a.DepartmentId == departmentId && a.DedupKey == dedupKey && a.Status == 0));
 			public Task<InventoryAlertDelivery> AlertDeliveryAsync(int departmentId, string alertId, string userId) => Task.FromResult(All<InventoryAlertDelivery>().SingleOrDefault(d => d.DepartmentId == departmentId && d.AlertId == alertId && d.UserId == userId));
 			public Task<List<InventoryAlert>> OpenAlertsAsync(int departmentId, int skip = 0) => Task.FromResult(All<InventoryAlert>().Where(a => a.DepartmentId == departmentId && a.Status == 0).OrderBy(a => a.OpenedOn).ThenBy(a => a.Id).Skip(skip).Take(501).ToList());
+			public Task<List<InventoryAlertGroupCount>> OpenAlertGroupCountsAsync(int departmentId, int take) => Task.FromResult(All<InventoryAlert>().Where(a => a.DepartmentId == departmentId && a.Status == 0)
+				.GroupBy(a => (a.AlertType, a.ItemId, a.LocationId)).Select(g => new InventoryAlertGroupCount { AlertType = g.Key.AlertType, ItemId = g.Key.ItemId, LocationId = g.Key.LocationId,
+					AlertCount = g.Count(), Quantity = g.Sum(a => a.Quantity), EarliestDueOn = g.Min(a => a.DueOn), LatestOpenedOn = g.Max(a => a.OpenedOn) })
+				.OrderBy(g => g.AlertType).ThenBy(g => g.ItemId, StringComparer.Ordinal).ThenBy(g => g.LocationId, StringComparer.Ordinal).Take(take).ToList());
 			public Task<List<InventoryAlert>> ClaimableAlertsAsync(int departmentId, string userId, DateTime now, int skip = 0) => Task.FromResult(All<InventoryAlert>()
 				.Where(a => a.DepartmentId == departmentId && a.Status == 0 && !All<InventoryAlertDelivery>().Any(d => d.DepartmentId == departmentId && d.AlertId == a.Id && d.UserId == userId
 					&& (d.State is 2 or 3 || d.NextAttemptOn > now || d.LeaseUntil > now))).OrderBy(a => a.OpenedOn).ThenBy(a => a.Id).Skip(skip).Take(501).ToList());

@@ -47,6 +47,16 @@ namespace Resgrid.Tests.Security
 					.OrderByDescending(r => r.LastActiveOn).Select(Copy).ToList());
 		}
 
+		/// <summary>Sessions only: the fake holds no members, so member and authenticator counts stay zero.</summary>
+		public Task<DepartmentSecurityPosture> GetDepartmentSecurityPostureAsync(int departmentId, DateTime utcNow, CancellationToken cancellationToken = default)
+		{
+			lock (_gate)
+			{
+				var active = Rows.Where(r => r.DepartmentId == departmentId && r.State == (int)UserSessionState.Active && r.ExpiresOn > utcNow).ToList();
+				return Task.FromResult(new DepartmentSecurityPosture { ActiveSessions = active.Count, UsersWithSessions = active.Select(r => r.UserId).Distinct().Count() });
+			}
+		}
+
 		public Task<UserSession> GetByAuthorizationIdAsync(string authorizationId)
 		{
 			lock (_gate) return Task.FromResult(Copy(Rows.SingleOrDefault(r => r.OpenIddictAuthorizationId == authorizationId)));

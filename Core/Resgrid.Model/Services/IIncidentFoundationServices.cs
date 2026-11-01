@@ -96,6 +96,11 @@ namespace Resgrid.Model.Services
 	{
 		Task<IncidentDeskSummary> GetDeskSummaryAsync(IncidentActor actor, string activationId, CancellationToken cancellationToken = default);
 		Task<IReadOnlyList<IncidentPersonnelPictureRow>> GetPersonnelPictureAsync(IncidentActor actor, string activationId, CancellationToken cancellationToken = default);
+		/// <summary>
+		/// The department's coordination boards (not archived), newest activity first, with lane, stale-lane and active share counts:
+		/// three reads (home dashboard Coordination Boards widget). <paramref name="take"/> bounds the listed rows, not the totals.
+		/// </summary>
+		Task<Resgrid.Model.IncidentLogistics.IncidentCoordinationSummary> GetCoordinationSummaryAsync(IncidentActor actor, int take, CancellationToken cancellationToken = default);
 		/// <summary>Worker 74: one incremental snapshot per open activation.</summary>
 		Task<IncidentOperationalSnapshot> ProjectSnapshotAsync(IncidentActor actor, string activationId, IncidentSnapshotKinds kind, CancellationToken cancellationToken = default);
 	}

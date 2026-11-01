@@ -73,6 +73,17 @@ namespace Resgrid.Services.AiDispatch
 		public Task<Dictionary<string, int>> GetRecentOutcomeCountsAsync(int departmentId, int days, CancellationToken cancellationToken) =>
 			_audits.GetOutcomeCountsAsync(departmentId, _clock.GetUtcNow().UtcDateTime.AddDays(-days), cancellationToken);
 
+		public async Task<AiDispatchTriageSummary> GetTriageSummaryAsync(int departmentId, int hours, int take, CancellationToken cancellationToken)
+		{
+			var since = _clock.GetUtcNow().UtcDateTime.AddHours(-Math.Clamp(hours, 1, 24 * 7));
+			return new AiDispatchTriageSummary
+			{
+				SinceUtc = since,
+				OutcomeCounts = await _audits.GetOutcomeCountsAsync(departmentId, since, cancellationToken) ?? new Dictionary<string, int>(),
+				ActiveCalls = await _audits.GetActiveCallTriageAsync(departmentId, since, Math.Clamp(take, 1, 200), cancellationToken) ?? new List<AiDispatchTriageItem>()
+			};
+		}
+
 		public Task<long> GetMonthlyUsageAsync(int departmentId, CancellationToken cancellationToken) =>
 			_admission.GetFeatureUsageAsync(departmentId, AiDispatchEnrichmentService.Feature, _clock.GetUtcNow().UtcDateTime, cancellationToken);
 

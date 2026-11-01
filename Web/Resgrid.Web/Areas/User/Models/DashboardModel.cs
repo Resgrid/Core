@@ -23,6 +23,8 @@ namespace Resgrid.Web.Areas.User.Models
 		public UserStateTypes UserStateEnum { get; set; }
 		public bool CustomStaffingActive { get; set; }
 		public CustomState States { get; set; }
+		/// <summary>Dashboard.Modern is on for the department, so the classic page offers a switch back (plan D10).</summary>
+		public bool ModernAvailable { get; set; }
 		public DashboardModel()
 		{
 			//UserStatusTable = new UserStatusTableModel();

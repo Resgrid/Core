@@ -1,0 +1,116 @@
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using FluentAssertions;
+using Moq;
+using NUnit.Framework;
+using Resgrid.Model;
+using Resgrid.Model.Services;
+using Resgrid.Services;
+using static Resgrid.Tests.Dashboard.Widgets.OperationsWidgetTestSupport;
+
+namespace Resgrid.Tests.Dashboard.Widgets
+{
+	/// <summary>
+	/// The status table logic moved out of HomeController.GetUserStatusTable (2026-10-31): the classic partial and
+	/// personnel.board both read it, so its grouping, exclusions, visibility and order are pinned here.
+	/// </summary>
+	[TestFixture]
+	public class PersonnelStatusBoardServiceTests
+	{
+		private Mock<IDepartmentsService> _departments;
+		private Mock<IActionLogsService> _logs;
+		private Mock<IDepartmentGroupsService> _groups;
+		private Mock<ICustomStateService> _customStates;
+		private Mock<IDepartmentSettingsService> _settings;
+		private Mock<IUserStateService> _states;
+		private Mock<IUsersService> _users;
+
+		[SetUp]
+		public void SetUp()
+		{
+			var alpha = Group(1, "Alpha", members: new[]
+			{
+				new DepartmentGroupMember { UserId = "zed" }, new DepartmentGroupMember { UserId = "amy" }, new DepartmentGroupMember { UserId = "off" },
+				new DepartmentGroupMember { UserId = "secret" }, new DepartmentGroupMember { UserId = "ghost" }
+			});
+			var bravo = Group(2, "Bravo", members: new[] { new DepartmentGroupMember { UserId = "bob" } });
+
+			_departments = new Mock<IDepartmentsService>();
+			_departments.Setup(d => d.GetDepartmentByIdAsync(Dept, false)).ReturnsAsync(new Department { DepartmentId = Dept });
+			_departments.Setup(d => d.GetAllDisabledOrHiddenUsersAsync(Dept)).ReturnsAsync(new List<string> { "off" });
+
+			_logs = new Mock<IActionLogsService>();
+			_logs.Setup(l => l.GetLastActionLogsForDepartmentAsync(Dept, false, false, false)).ReturnsAsync(new List<ActionLog>
+			{
+				new ActionLog { UserId = "zed", ActionTypeId = (int)ActionTypes.Responding },
+				new ActionLog { UserId = "amy", ActionTypeId = (int)ActionTypes.StandingBy }
+			});
+
+			_groups = new Mock<IDepartmentGroupsService>();
+			_groups.Setup(g => g.GetAllGroupsForDepartmentAsync(Dept)).ReturnsAsync(new List<DepartmentGroup> { alpha, bravo });
+			_groups.Setup(g => g.GetAllStationGroupsForDepartmentAsync(Dept)).ReturnsAsync(new List<DepartmentGroup>());
+			_groups.Setup(g => g.GetGroupForUserAsync(Viewer, Dept)).ReturnsAsync(alpha);
+
+			_customStates = new Mock<ICustomStateService>();
+			_customStates.Setup(c => c.GetDefaultPersonnelStatusAsync(Dept)).ReturnsAsync(new CustomStateDetail { CustomStateDetailId = 0 });
+
+			_settings = new Mock<IDepartmentSettingsService>();
+			_settings.Setup(s => s.GetDepartmentPersonnelSortOrderAsync(Dept)).ReturnsAsync(PersonnelSortOrders.FirstName);
+			_settings.Setup(s => s.GetDepartmentPersonnelListStatusSortOrderAsync(Dept)).ReturnsAsync(new List<PersonnelListStatusOrder>
+			{
+				new PersonnelListStatusOrder { StatusId = (int)ActionTypes.Responding, Weight = 1 },
+				new PersonnelListStatusOrder { StatusId = (int)ActionTypes.StandingBy, Weight = 5 }
+			});
+
+			_states = new Mock<IUserStateService>();
+			_states.Setup(s => s.GetLatestStatesForDepartmentAsync(Dept, false)).ReturnsAsync(new List<UserState>
+			{
+				new UserState { UserStateId = 3, UserId = "bob", State = (int)UserStateTypes.Committed }
+			});
+
+			_users = new Mock<IUsersService>();
+			_users.Setup(u => u.GetUserGroupAndRolesByDepartmentIdInLimitAsync(Dept, false, false, false)).ReturnsAsync(new List<UserGroupRole>
+			{
+				Member("zed", "Zed", "Z", 1), Member("amy", "Amy", "A", 1), Member("secret", "Sam", "S", 1), Member("bob", "Bob", "B", 2),
+				Member("una", "Una", "U"), Member("off", "Off", "O", 1)
+			});
+		}
+
+		private PersonnelStatusBoardService Service(Mock<IAuthorizationService> matrix) =>
+			new PersonnelStatusBoardService(_departments.Object, _logs.Object, _groups.Object, _customStates.Object, _settings.Object, _states.Object,
+				_users.Object, matrix.Object);
+
+		[Test]
+		public async Task Groups_people_in_department_order_with_weights_then_the_department_sort()
+		{
+			var board = await Service(Matrix(hiddenPeople: new[] { "secret" })).GetBoardAsync(Dept, Viewer);
+
+			board.Groups.Select(g => g.Group?.Name).Should().Equal("Alpha", "Bravo", null);
+			board.Groups[0].Entries.Select(e => e.UserInfo.UserId).Should().Equal(new[] { "zed", "amy" },
+				"Responding weighs 1 and Standing By 5; disabled/hidden, matrix-hidden and people outside the roster are left out");
+			board.Groups[0].Entries.Select(e => e.Weight).Should().Equal(1, 5);
+			board.Groups[1].Entries.Single().CurrentStaffing.State.Should().Be((int)UserStateTypes.Committed);
+			board.Groups[2].Entries.Select(e => e.UserInfo.UserId).Should().Equal("una");
+			board.UnGroupedUsers.Should().Equal("una");
+			board.ExcludedUsers.Should().Equal("off");
+			board.UsersGroup.Name.Should().Be("Alpha");
+
+			var amy = board.Groups[0].Entries[1];
+			amy.CurrentStaffing.AutoGenerated.Should().BeTrue("no staffing row reads as an auto-generated Available");
+			amy.CurrentStaffing.State.Should().Be((int)UserStateTypes.Available);
+			board.DepartmentUserStates.Keys.Should().BeEquivalentTo(new[] { "zed", "amy", "bob" }, "only grouped people are recorded, as before");
+		}
+
+		[Test]
+		public async Task Unweighted_statuses_sort_by_name_after_the_weighted_ones()
+		{
+			_settings.Setup(s => s.GetDepartmentPersonnelListStatusSortOrderAsync(Dept)).ReturnsAsync(new List<PersonnelListStatusOrder>());
+
+			var board = await Service(Matrix()).GetBoardAsync(Dept, Viewer);
+
+			board.Groups[0].Entries.Select(e => e.UserInfo.UserId).Should().Equal("amy", "secret", "zed");
+			board.Groups[0].Entries.Should().OnlyContain(e => e.Weight == PersonnelStatusBoardService.UnweightedStatus);
+		}
+	}
+}

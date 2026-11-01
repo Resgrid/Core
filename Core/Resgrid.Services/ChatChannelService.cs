@@ -528,6 +528,89 @@ namespace Resgrid.Services
 			return members?.ToList() ?? new List<ChatChannelMember>();
 		}
 
+		public async Task<List<ChatChannelUnread>> GetUnreadChannelsForUserAsync(int departmentId, string userId, bool includeRead = false)
+		{
+			// The same reads as the v4 channel list for a personal (not acting as a unit) caller: the access-checked channel
+			// list, then the member's own rows for the read pointers (first row per channel wins, as there).
+			var channels = await GetChannelsForUserAsync(departmentId, userId, null);
+			if (channels == null || channels.Count == 0)
+				return new List<ChatChannelUnread>();
+
+			var membersByChannel = new Dictionary<string, ChatChannelMember>(StringComparer.OrdinalIgnoreCase);
+			foreach (var member in await GetActiveMembershipsForUserAsync(departmentId, userId))
+			{
+				if (member?.ChatChannelId != null && !membersByChannel.ContainsKey(member.ChatChannelId))
+					membersByChannel.Add(member.ChatChannelId, member);
+			}
+
+			var result = new List<ChatChannelUnread>();
+			foreach (var channel in channels.Where(c => c != null && c.DepartmentId == departmentId && !c.IsArchived))
+			{
+				membersByChannel.TryGetValue(channel.ChatChannelId, out var member);
+				var unread = ChatReadState.UnreadCount(channel, member);
+
+				if (unread <= 0 && !includeRead)
+					continue;
+
+				result.Add(new ChatChannelUnread { Channel = channel, Member = member, UnreadCount = unread, DisplayName = channel.Name });
+			}
+
+			await LabelDirectMessagesAsync(result, userId);
+
+			return result
+				.OrderByDescending(x => x.Channel.LastMessageOn ?? DateTime.MinValue)
+				.ThenBy(x => x.DisplayName, StringComparer.OrdinalIgnoreCase)
+				.ToList();
+		}
+
+		/// <summary>Names an unnamed direct message after its counterpart (display-name override, else profile name), as the v4 list does.</summary>
+		private async Task LabelDirectMessagesAsync(List<ChatChannelUnread> channels, string userId)
+		{
+			var directMessages = channels
+				.Where(c => c.Channel.ChannelType == (int)ChatChannelType.DirectMessage && string.IsNullOrWhiteSpace(c.Channel.Name))
+				.ToList();
+
+			if (directMessages.Count == 0)
+				return;
+
+			var counterparts = new Dictionary<string, ChatChannelMember>(StringComparer.OrdinalIgnoreCase);
+			foreach (var member in await GetActiveMembersForChannelsAsync(directMessages.Select(c => c.Channel.ChatChannelId).ToList()))
+			{
+				if (member?.ChatChannelId == null || (member.UserId != null && string.Equals(member.UserId, userId, StringComparison.OrdinalIgnoreCase)))
+					continue;
+
+				if (!counterparts.ContainsKey(member.ChatChannelId))
+					counterparts.Add(member.ChatChannelId, member);
+			}
+
+			var userIds = counterparts.Values
+				.Where(m => string.IsNullOrWhiteSpace(m.DisplayNameOverride) && !string.IsNullOrWhiteSpace(m.UserId))
+				.Select(m => m.UserId)
+				.Distinct(StringComparer.OrdinalIgnoreCase)
+				.ToList();
+
+			var namesByUserId = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+			if (userIds.Count > 0)
+			{
+				foreach (var profile in await _userProfileService.GetSelectedUserProfilesAsync(userIds) ?? new List<UserProfile>())
+				{
+					if (profile?.UserId != null && !namesByUserId.ContainsKey(profile.UserId))
+						namesByUserId.Add(profile.UserId, profile.FullName?.AsFirstNameLastName);
+				}
+			}
+
+			foreach (var channel in directMessages)
+			{
+				if (!counterparts.TryGetValue(channel.Channel.ChatChannelId, out var counterpart))
+					continue;
+
+				if (!string.IsNullOrWhiteSpace(counterpart.DisplayNameOverride))
+					channel.DisplayName = counterpart.DisplayNameOverride;
+				else if (counterpart.UserId != null && namesByUserId.TryGetValue(counterpart.UserId, out var name) && !string.IsNullOrWhiteSpace(name))
+					channel.DisplayName = name;
+			}
+		}
+
 		public async Task<List<ChatChannelMember>> GetActiveMembershipsForUnitAsync(int departmentId, int unitId)
 		{
 			var members = await _chatChannelMemberRepository.GetActiveByUnitIdAsync(departmentId, unitId);

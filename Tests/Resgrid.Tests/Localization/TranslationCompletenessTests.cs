@@ -45,6 +45,9 @@ namespace Resgrid.Tests.Localization
 			"Areas/User/Mapping/MapIconLegend",
 			// On-Shift Hours report (2026-10-30) shipped fully translated.
 			"Areas/User/Reports/OnShiftHours",
+			// Home dashboard chrome and widgets (2026-10-31) shipped fully translated.
+			"Areas/User/Home/HomeDashboard",
+			"Areas/User/Home/DashboardWidgets",
 		};
 
 		private static string LocalizationRoot()
@@ -75,8 +78,114 @@ namespace Resgrid.Tests.Localization
 		/// "Description" would also wave through a real missed translation of the same length.
 		/// Every entry here was checked by reading the two values side by side.
 		/// </summary>
+		/// <summary>
+		/// "Area|Key" pairs identical in every language: product and add-on names (Incident Back Office, Push-To-Talk, Cal OES
+		/// MARS), abbreviations (IC, UTC, SMS, XS–XL) and format-only strings ("{0}/{1}"). Checked side by side.
+		/// </summary>
+		private static readonly HashSet<string> KnownIdenticalEverywhere = new HashSet<string>(StringComparer.Ordinal)
+		{
+			"HomeDashboard|Category.IncidentBackOffice", "HomeDashboard|Dash.Size.l", "HomeDashboard|Dash.Size.m", "HomeDashboard|Dash.Size.s",
+			"HomeDashboard|Dash.Size.xl", "HomeDashboard|Dash.Size.xs", "DashboardWidgets|W.admin.plan.Addon.ADP",
+			"DashboardWidgets|W.admin.plan.Addon.EnhancedAi", "DashboardWidgets|W.admin.plan.Addon.IncidentBackOffice",
+			"DashboardWidgets|W.admin.plan.Addon.PTT", "DashboardWidgets|W.admin.plan.Addon.ReadinessPro", "DashboardWidgets|W.admin.plan.CostPer",
+			"DashboardWidgets|W.calls.active.IncidentCommand", "DashboardWidgets|W.chat.moderation.CountCapped",
+			"DashboardWidgets|W.checklists.compliance.RateOf", "DashboardWidgets|W.costRecovery.queue.RecordType.F42",
+			"DashboardWidgets|W.costRecovery.queue.Title", "DashboardWidgets|W.general.clock.Utc",
+			"DashboardWidgets|W.incidentCommand.active.Commander", "DashboardWidgets|W.inventory.alerts.TimesCount",
+			"DashboardWidgets|W.personnel.staffingSummary.GroupAvailable", "DashboardWidgets|W.records.legalHolds.Period",
+			"DashboardWidgets|W.shifts.coverage.Changes", "DashboardWidgets|W.voice.ptt.Title",
+		};
+
 		private static readonly HashSet<string> KnownIdentical = new HashSet<string>(StringComparer.Ordinal)
 		{
+			// Home dashboard (2026-10-31), checked side by side: the same word in that language (Status, Budget, Personnel,
+			// Normal, Chat, Spam, compass letters), the module's own wording (Messages it "Inbox", sv "Poll"), or a proper name
+			// (Cal OES Attachment A). Product names, sizes and format-only strings are in KnownIdenticalEverywhere.
+			"HomeDashboard|fr|Actions", "HomeDashboard|it|BoardHome", "HomeDashboard|de|Category.Administration",
+			"HomeDashboard|fr|Category.Administration", "HomeDashboard|sv|Category.Administration", "HomeDashboard|fr|Category.Communications",
+			"HomeDashboard|fr|Category.Personnel", "HomeDashboard|de|Dash.Boards", "HomeDashboard|de|Dash.DepartmentCodeMeta",
+			"HomeDashboard|fr|Dash.DepartmentCodeMeta", "HomeDashboard|de|Dash.Live", "HomeDashboard|it|Dash.Live", "HomeDashboard|sv|Dash.Live",
+			"HomeDashboard|fr|Dash.Message", "HomeDashboard|fr|Dash.TemplateDescription", "HomeDashboard|de|TemplateName",
+			"HomeDashboard|de|TemplateWidgets", "HomeDashboard|es|TemplateWidgets", "HomeDashboard|fr|TemplateWidgets",
+			"DashboardWidgets|de|W.admin.dataProtection.Migration", "DashboardWidgets|fr|W.admin.dataProtection.Migration",
+			"DashboardWidgets|de|W.admin.dataProtection.MigrationKind", "DashboardWidgets|de|W.admin.import.Title",
+			"DashboardWidgets|de|W.admin.plan.Addon.BusinessOperations", "DashboardWidgets|es|W.admin.plan.Addon.BusinessOperations",
+			"DashboardWidgets|fr|W.admin.plan.Addon.BusinessOperations", "DashboardWidgets|pl|W.admin.plan.Addon.BusinessOperations",
+			"DashboardWidgets|sv|W.admin.plan.Addon.BusinessOperations", "DashboardWidgets|uk|W.admin.plan.Addon.BusinessOperations",
+			"DashboardWidgets|el|W.admin.plan.Addon.BusinessOperations", "DashboardWidgets|ar|W.admin.plan.Addon.BusinessOperations",
+			"DashboardWidgets|de|W.admin.plan.Addons", "DashboardWidgets|fr|W.admin.plan.Personnel", "DashboardWidgets|de|W.admin.security.Mfa",
+			"DashboardWidgets|de|W.admin.security.Passkeys", "DashboardWidgets|it|W.admin.security.Sso", "DashboardWidgets|fr|W.ai.assistant.Title",
+			"DashboardWidgets|fr|W.aiDispatch.triage.Total", "DashboardWidgets|de|W.calendar.agenda.Optional",
+			"DashboardWidgets|sv|W.calls.volume.Setting.days", "DashboardWidgets|fr|W.certifications.expiry.UnknownType",
+			"DashboardWidgets|fr|W.certifications.mine.Unnamed", "DashboardWidgets|de|W.chat.moderation.Reason.spam",
+			"DashboardWidgets|es|W.chat.moderation.Reason.spam", "DashboardWidgets|it|W.chat.moderation.Reason.spam",
+			"DashboardWidgets|el|W.chat.moderation.Reason.spam", "DashboardWidgets|de|W.chat.unread.Title",
+			"DashboardWidgets|es|W.chat.unread.Title", "DashboardWidgets|it|W.chat.unread.Title", "DashboardWidgets|el|W.comms.tests.Channel.email",
+			"DashboardWidgets|de|W.comms.tests.Channel.push", "DashboardWidgets|es|W.comms.tests.Channel.push",
+			"DashboardWidgets|fr|W.comms.tests.Channel.push", "DashboardWidgets|it|W.comms.tests.Channel.push",
+			"DashboardWidgets|pl|W.comms.tests.Channel.push", "DashboardWidgets|sv|W.comms.tests.Channel.push",
+			"DashboardWidgets|uk|W.comms.tests.Channel.push", "DashboardWidgets|el|W.comms.tests.Channel.push",
+			"DashboardWidgets|de|W.comms.tests.Channel.sms", "DashboardWidgets|es|W.comms.tests.Channel.sms",
+			"DashboardWidgets|fr|W.comms.tests.Channel.sms", "DashboardWidgets|it|W.comms.tests.Channel.sms",
+			"DashboardWidgets|pl|W.comms.tests.Channel.sms", "DashboardWidgets|sv|W.comms.tests.Channel.sms",
+			"DashboardWidgets|uk|W.comms.tests.Channel.sms", "DashboardWidgets|el|W.comms.tests.Channel.sms",
+			"DashboardWidgets|fr|W.costRecovery.queue.RecordType.AttachmentA", "DashboardWidgets|fr|W.general.stickyNote.Setting.text",
+			"DashboardWidgets|fr|W.ibo.Kind.Incident", "DashboardWidgets|fr|W.ibo.ResourceKind.Personnel",
+			"DashboardWidgets|fr|W.ibo.ResourceKind.Service", "DashboardWidgets|de|W.ibo.ResourceKind.Team",
+			"DashboardWidgets|sv|W.ibo.ResourceKind.Team", "DashboardWidgets|fr|W.ibo.SupportStatus.EnRoute",
+			"DashboardWidgets|sv|W.ibo.activations.Period", "DashboardWidgets|fr|W.ibo.checkIn.Setting.activation",
+			"DashboardWidgets|fr|W.ibo.desk.Setting.activation", "DashboardWidgets|de|W.ibo.desk.Setting.desk",
+			"DashboardWidgets|de|W.ibo.desk.Value.finance.budget", "DashboardWidgets|fr|W.ibo.desk.Value.finance.budget",
+			"DashboardWidgets|it|W.ibo.desk.Value.finance.budget", "DashboardWidgets|sv|W.ibo.desk.Value.finance.budget",
+			"DashboardWidgets|fr|W.ibo.desk.Value.participants.total", "DashboardWidgets|de|W.ibo.finance.Budget",
+			"DashboardWidgets|fr|W.ibo.finance.Budget", "DashboardWidgets|it|W.ibo.finance.Budget", "DashboardWidgets|sv|W.ibo.finance.Budget",
+			"DashboardWidgets|fr|W.ibo.finance.Setting.activation", "DashboardWidgets|fr|W.ibo.resources.Personnel",
+			"DashboardWidgets|fr|W.ibo.resources.Setting.activation", "DashboardWidgets|fr|W.links.quick.Shares.personnel",
+			"DashboardWidgets|fr|W.map.operations.Layer.personnel", "DashboardWidgets|sv|W.messages.inbox.Poll",
+			"DashboardWidgets|de|W.messages.inbox.System", "DashboardWidgets|pl|W.messages.inbox.System",
+			"DashboardWidgets|sv|W.messages.inbox.System", "DashboardWidgets|it|W.messages.inbox.Title",
+			"DashboardWidgets|de|W.personnel.board.ColName", "DashboardWidgets|es|W.personnel.board.ColRoles",
+			"DashboardWidgets|de|W.personnel.board.ColStatus", "DashboardWidgets|pl|W.personnel.board.ColStatus",
+			"DashboardWidgets|sv|W.personnel.board.ColStatus", "DashboardWidgets|de|W.personnel.board.Option.name",
+			"DashboardWidgets|de|W.personnel.board.Option.status", "DashboardWidgets|pl|W.personnel.board.Option.status",
+			"DashboardWidgets|sv|W.personnel.board.Option.status", "DashboardWidgets|de|W.records.crr.Co", "DashboardWidgets|es|W.records.crr.Co",
+			"DashboardWidgets|fr|W.records.crr.Co", "DashboardWidgets|it|W.records.crr.Co", "DashboardWidgets|pl|W.records.crr.Co",
+			"DashboardWidgets|uk|W.records.crr.Co", "DashboardWidgets|el|W.records.crr.Co", "DashboardWidgets|ar|W.records.crr.Co",
+			"DashboardWidgets|fr|W.records.deployments.Incident", "DashboardWidgets|fr|W.records.investigations.State2",
+			"DashboardWidgets|fr|W.records.prevention.Inspections", "DashboardWidgets|de|W.shifts.today.GroupCount",
+			"DashboardWidgets|es|W.shifts.today.GroupCount", "DashboardWidgets|it|W.shifts.today.GroupCount",
+			"DashboardWidgets|pl|W.shifts.today.GroupCount", "DashboardWidgets|sv|W.shifts.today.GroupCount",
+			"DashboardWidgets|uk|W.shifts.today.GroupCount", "DashboardWidgets|el|W.shifts.today.GroupCount",
+			"DashboardWidgets|ar|W.shifts.today.GroupCount", "DashboardWidgets|fr|W.units.alerts.NoteLabel",
+			"DashboardWidgets|de|W.units.routes.Kilometres", "DashboardWidgets|es|W.units.routes.Kilometres",
+			"DashboardWidgets|it|W.units.routes.Kilometres", "DashboardWidgets|pl|W.units.routes.Kilometres",
+			"DashboardWidgets|sv|W.units.routes.Kilometres", "DashboardWidgets|de|W.units.routes.Metres",
+			"DashboardWidgets|es|W.units.routes.Metres", "DashboardWidgets|it|W.units.routes.Metres", "DashboardWidgets|pl|W.units.routes.Metres",
+			"DashboardWidgets|sv|W.units.routes.Metres", "DashboardWidgets|de|W.units.routes.Route",
+			"DashboardWidgets|fr|W.units.status.ColDestination", "DashboardWidgets|sv|W.units.status.ColDestination",
+			"DashboardWidgets|fr|W.units.status.ColNote", "DashboardWidgets|sv|W.units.status.ColStation",
+			"DashboardWidgets|de|W.units.status.ColStatus", "DashboardWidgets|pl|W.units.status.ColStatus",
+			"DashboardWidgets|sv|W.units.status.ColStatus", "DashboardWidgets|sv|W.units.status.Option.station",
+			"DashboardWidgets|sv|W.units.status.Setting.station", "DashboardWidgets|es|W.weather.current.Compass.E",
+			"DashboardWidgets|fr|W.weather.current.Compass.E", "DashboardWidgets|it|W.weather.current.Compass.E",
+			"DashboardWidgets|pl|W.weather.current.Compass.E", "DashboardWidgets|de|W.weather.current.Compass.N",
+			"DashboardWidgets|es|W.weather.current.Compass.N", "DashboardWidgets|fr|W.weather.current.Compass.N",
+			"DashboardWidgets|it|W.weather.current.Compass.N", "DashboardWidgets|pl|W.weather.current.Compass.N",
+			"DashboardWidgets|sv|W.weather.current.Compass.N", "DashboardWidgets|es|W.weather.current.Compass.NE",
+			"DashboardWidgets|fr|W.weather.current.Compass.NE", "DashboardWidgets|it|W.weather.current.Compass.NE",
+			"DashboardWidgets|pl|W.weather.current.Compass.NE", "DashboardWidgets|de|W.weather.current.Compass.NW",
+			"DashboardWidgets|pl|W.weather.current.Compass.NW", "DashboardWidgets|de|W.weather.current.Compass.S",
+			"DashboardWidgets|es|W.weather.current.Compass.S", "DashboardWidgets|fr|W.weather.current.Compass.S",
+			"DashboardWidgets|it|W.weather.current.Compass.S", "DashboardWidgets|pl|W.weather.current.Compass.S",
+			"DashboardWidgets|sv|W.weather.current.Compass.S", "DashboardWidgets|es|W.weather.current.Compass.SE",
+			"DashboardWidgets|fr|W.weather.current.Compass.SE", "DashboardWidgets|it|W.weather.current.Compass.SE",
+			"DashboardWidgets|pl|W.weather.current.Compass.SE", "DashboardWidgets|de|W.weather.current.Compass.SW",
+			"DashboardWidgets|pl|W.weather.current.Compass.SW", "DashboardWidgets|de|W.weather.current.Compass.W",
+			"DashboardWidgets|pl|W.weather.current.Compass.W", "DashboardWidgets|de|W.weather.current.Option.imperial",
+			"DashboardWidgets|es|W.weather.current.Option.imperial", "DashboardWidgets|de|W.weather.current.Wind",
+			"DashboardWidgets|de|W.workOrders.mine.Priority1", "DashboardWidgets|es|W.workOrders.mine.Priority1",
+			"DashboardWidgets|sv|W.workOrders.mine.Priority1", "DashboardWidgets|de|W.workOrders.stats.Priority1",
+			"DashboardWidgets|es|W.workOrders.stats.Priority1", "DashboardWidgets|sv|W.workOrders.stats.Priority1",
 			// On-Shift Hours report (2026-10-30): "ID" is the column abbreviation in these languages (the Reports area uses it
 			// too), "Name" is German, "Total" Spanish and French, "Type" and "Personnel" French.
 			"OnShiftHours|de|IdHeader", "OnShiftHours|es|IdHeader", "OnShiftHours|fr|IdHeader", "OnShiftHours|it|IdHeader",
@@ -323,7 +432,8 @@ namespace Resgrid.Tests.Localization
 					var untranslated = english
 						.Where(pair => translated.TryGetValue(pair.Key, out var value)
 							&& value == pair.Value
-							&& !KnownIdentical.Contains($"{areaName}|{language}|{pair.Key}"))
+							&& !KnownIdentical.Contains($"{areaName}|{language}|{pair.Key}")
+							&& !KnownIdenticalEverywhere.Contains($"{areaName}|{pair.Key}"))
 						.Select(pair => pair.Key)
 						.ToList();
 

@@ -29,6 +29,14 @@ namespace Resgrid.Model.Services
 		Task<List<ChatChannel>> GetChannelsForUserAsync(int departmentId, string userId, int? activeUnitId, bool includeArchived = false);
 
 		/// <summary>
+		/// The member's own (personal, not acting as a unit) non-archived channels with their member rows and unread counts
+		/// (<see cref="ChatReadState.UnreadCount"/>, the v4 channel list's arithmetic). Only channels with unread messages
+		/// unless <paramref name="includeRead"/>; direct messages are labelled with the counterpart's name like the v4 list.
+		/// Newest activity first.
+		/// </summary>
+		Task<List<ChatChannelUnread>> GetUnreadChannelsForUserAsync(int departmentId, string userId, bool includeRead = false);
+
+		/// <summary>
 		/// Finds or creates the 1:1 channel between the creator and a user or unit (DmKey dedup).
 		/// Enforces cross-tenant rules: the creator and target user/unit must belong to the department
 		/// (UnauthorizedAccessException otherwise). The CALLER must verify the creator may open DMs.

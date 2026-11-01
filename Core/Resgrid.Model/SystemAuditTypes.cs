@@ -48,6 +48,8 @@
 		SharedSessionEnded = 43,
 		MfaActivityReported = 44,
 		ApprovalInstallationsDisabled = 45,
-		FederatedMfaMappingChanged = 46
+		FederatedMfaMappingChanged = 46,
+		/// <summary>A department dashboard template was saved or deleted (home-dashboard-redesign-plan.md §9.8).</summary>
+		DashboardTemplateChanged = 47
 	}
 }

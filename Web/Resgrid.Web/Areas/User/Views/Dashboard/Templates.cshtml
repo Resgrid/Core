@@ -1,0 +1,78 @@
+@model Resgrid.Web.Areas.User.Models.Dashboard.DashboardTemplatesIndexView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Home.HomeDashboard> localizer
+@{
+	ViewBag.Title = "Resgrid | " + localizer["TemplatesTitle"];
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@localizer["TemplatesTitle"]</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li class="active"><strong>@localizer["TemplatesTitle"]</strong></li>
+		</ol>
+	</div>
+	<div class="col-sm-4">
+		<div class="title-action">
+			<a class="btn btn-primary" asp-controller="Dashboard" asp-action="EditTemplate" asp-route-area="User"><i class="fa fa-plus"></i> @localizer["TemplateNew"]</a>
+		</div>
+	</div>
+</div>
+
+<div class="wrapper wrapper-content">
+	<div class="ibox float-e-margins">
+		<div class="ibox-content">
+			<p class="text-muted">@localizer["TemplatesIntro"]</p>
+			@if (Model.Templates.Count == 0)
+			{
+				<p>@localizer["TemplatesEmpty"]</p>
+			}
+			else
+			{
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>@localizer["TemplateName"]</th>
+							<th>@localizer["TemplateAudience"]</th>
+							<th>@localizer["TemplatePriority"]</th>
+							<th>@localizer["TemplateWidgets"]</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach (var template in Model.Templates)
+						{
+							<tr>
+								<td>
+									<strong>@template.Name</strong>
+									@if (template.IsDefault)
+									{
+										<span class="label label-primary">@localizer["TemplateDefault"]</span>
+									}
+									@if (!string.IsNullOrWhiteSpace(template.Description))
+									{
+										<div class="text-muted small">@template.Description</div>
+									}
+								</td>
+								<td>@template.AudienceText</td>
+								<td>@template.Priority</td>
+								<td>@template.WidgetCount</td>
+								<td class="text-right">
+									<a class="btn btn-xs btn-default" asp-controller="Dashboard" asp-action="EditTemplate" asp-route-area="User" asp-route-id="@template.TemplateId">@localizer["TemplateEdit"]</a>
+									<button type="button" class="btn btn-xs btn-danger" data-delete-template="@template.TemplateId">@localizer["TemplateDelete"]</button>
+								</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			}
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+	<script src="~/js/app/internal/home/resgrid.dashboard.templates.js" asp-append-version="true"
+			data-confirm="@localizer["TemplateDeleteConfirm"]"
+			data-delete-url="@Url.Action("DeleteTemplate", "Dashboard", new { area = "User" })"></script>
+}

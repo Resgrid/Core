@@ -59,6 +59,8 @@ namespace Resgrid.Model.Repositories
 		Task<IEnumerable<DeploymentTimeReport>> GetUnbilledApprovedAsync(int departmentId, string deploymentId = null);
 		/// <summary>All departments: Approved, unbilled reports approved on or before <paramref name="approvedBeforeUtc"/> (finance reminder sweep, worker 32).</summary>
 		Task<IEnumerable<DeploymentTimeReport>> GetUnbilledApprovedBeforeAsync(DateTime approvedBeforeUtc);
+		/// <summary>Awaiting-approval and approved-unbilled counts for the department in one aggregate read (home dashboard).</summary>
+		Task<DeploymentTimeReportCounts> GetStatusCountsAsync(int departmentId);
 	}
 
 	public interface IDeploymentTimeEntryRepository : IRepository<DeploymentTimeEntry>

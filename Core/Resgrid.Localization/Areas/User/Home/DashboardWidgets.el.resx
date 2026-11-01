@@ -1,0 +1,4014 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="W.department.info.Title" xml:space="preserve">
+    <value>Στοιχεία τμήματος</value>
+  </data>
+  <data name="W.department.info.Description" xml:space="preserve">
+    <value>Το αναγνωριστικό, ο κωδικός και ο αριθμός κλήσης μέσω κειμένου του τμήματός σας.</value>
+  </data>
+  <data name="W.department.info.DepartmentId" xml:space="preserve">
+    <value>Αναγνωριστικό τμήματος</value>
+  </data>
+  <data name="W.department.info.DepartmentCode" xml:space="preserve">
+    <value>Κωδικός τμήματος</value>
+  </data>
+  <data name="W.department.info.TextToCall" xml:space="preserve">
+    <value>Αριθμός κλήσης μέσω κειμένου</value>
+  </data>
+  <data name="W.department.info.NotSet" xml:space="preserve">
+    <value>Δεν έχει οριστεί</value>
+  </data>
+  <data name="W.map.operations.Title" xml:space="preserve">
+    <value>Χάρτης επιχειρήσεων</value>
+  </data>
+  <data name="W.map.operations.Description" xml:space="preserve">
+    <value>Ζωντανός χάρτης ενεργών κλήσεων, μονάδων, προσωπικού και σταθμών, με σημεία ενδιαφέροντος και επίπεδα χάρτη.</value>
+  </data>
+  <data name="W.map.operations.Setting.showCalls" xml:space="preserve">
+    <value>Εμφάνιση κλήσεων</value>
+  </data>
+  <data name="W.map.operations.Setting.showUnits" xml:space="preserve">
+    <value>Εμφάνιση μονάδων</value>
+  </data>
+  <data name="W.map.operations.Setting.showPersonnel" xml:space="preserve">
+    <value>Εμφάνιση προσωπικού</value>
+  </data>
+  <data name="W.map.operations.Setting.showStations" xml:space="preserve">
+    <value>Εμφάνιση σταθμών</value>
+  </data>
+  <data name="W.map.operations.Setting.showPois" xml:space="preserve">
+    <value>Εμφάνιση σημείων ενδιαφέροντος</value>
+  </data>
+  <data name="W.map.operations.Setting.showLayers" xml:space="preserve">
+    <value>Εμφάνιση επιπέδων χάρτη του τμήματος</value>
+  </data>
+  <data name="W.map.operations.Setting.zoom" xml:space="preserve">
+    <value>Επίπεδο ζουμ (0 = προεπιλογή τμήματος)</value>
+  </data>
+  <data name="W.map.operations.Empty" xml:space="preserve">
+    <value>Δεν υπάρχει τίποτα για εμφάνιση στον χάρτη αυτή τη στιγμή.</value>
+  </data>
+  <data name="W.map.operations.Legend" xml:space="preserve">
+    <value>Υπόμνημα</value>
+  </data>
+  <data name="W.map.operations.Recenter" xml:space="preserve">
+    <value>Επανακέντρωση χάρτη</value>
+  </data>
+  <data name="W.map.visualization.Title" xml:space="preserve">
+    <value>Αποθηκευμένη απεικόνιση</value>
+  </data>
+  <data name="W.map.visualization.Description" xml:space="preserve">
+    <value>Μία από τις αποθηκευμένες απεικονίσεις χάρτη σας, όπως χάρτης θερμότητας κλήσεων ή επικάλυψη κάλυψης.</value>
+  </data>
+  <data name="W.map.visualization.Setting.visualization" xml:space="preserve">
+    <value>Απεικόνιση</value>
+  </data>
+  <data name="W.map.visualization.NotConfigured" xml:space="preserve">
+    <value>Επιλέξτε μια αποθηκευμένη απεικόνιση στις ρυθμίσεις αυτού του γραφικού στοιχείου.</value>
+  </data>
+  <data name="W.map.visualization.NotFound" xml:space="preserve">
+    <value>Αυτή η απεικόνιση διαγράφηκε ή δεν μοιράζεται πλέον μαζί σας.</value>
+  </data>
+  <data name="W.map.visualization.Shared" xml:space="preserve">
+    <value>Κοινόχρηστη</value>
+  </data>
+  <data name="W.map.visualization.Truncated" xml:space="preserve">
+    <value>Εμφανίζεται μέρος των δεδομένων. Ανοίξτε την απεικόνιση για να τα δείτε όλα.</value>
+  </data>
+  <data name="W.weather.current.Title" xml:space="preserve">
+    <value>Καιρός</value>
+  </data>
+  <data name="W.weather.current.Description" xml:space="preserve">
+    <value>Οι τρέχουσες συνθήκες και η πρόγνωση των επόμενων ημερών για το τμήμα σας.</value>
+  </data>
+  <data name="W.weather.current.Setting.units" xml:space="preserve">
+    <value>Μονάδες μέτρησης</value>
+  </data>
+  <data name="W.weather.current.Option.imperial" xml:space="preserve">
+    <value>Αγγλοσαξονικό (°F, mph)</value>
+  </data>
+  <data name="W.weather.current.Option.metric" xml:space="preserve">
+    <value>Μετρικό (°C, m/s)</value>
+  </data>
+  <data name="W.weather.current.Unavailable" xml:space="preserve">
+    <value>Ο καιρός δεν είναι διαθέσιμος. Ορίστε το κέντρο χάρτη ή τη διεύθυνση του τμήματός σας για να τον δείτε.</value>
+  </data>
+  <data name="W.weather.current.FeelsLike" xml:space="preserve">
+    <value>Αίσθηση {0}</value>
+  </data>
+  <data name="W.weather.current.Humidity" xml:space="preserve">
+    <value>Υγρασία</value>
+  </data>
+  <data name="W.weather.current.Wind" xml:space="preserve">
+    <value>Άνεμος</value>
+  </data>
+  <data name="W.weather.current.Today" xml:space="preserve">
+    <value>Σήμερα</value>
+  </data>
+  <data name="W.weather.current.Precipitation" xml:space="preserve">
+    <value>{0}% πιθανότητα υετού</value>
+  </data>
+  <data name="W.weather.current.UpdatedAt" xml:space="preserve">
+    <value>Ενημερώθηκε {0}</value>
+  </data>
+  <data name="W.weather.current.Condition.Clear" xml:space="preserve">
+    <value>Αίθριος</value>
+  </data>
+  <data name="W.weather.current.Condition.Clouds" xml:space="preserve">
+    <value>Συννεφιά</value>
+  </data>
+  <data name="W.weather.current.Condition.Rain" xml:space="preserve">
+    <value>Βροχή</value>
+  </data>
+  <data name="W.weather.current.Condition.Drizzle" xml:space="preserve">
+    <value>Ψιλόβροχο</value>
+  </data>
+  <data name="W.weather.current.Condition.Thunderstorm" xml:space="preserve">
+    <value>Καταιγίδα</value>
+  </data>
+  <data name="W.weather.current.Condition.Snow" xml:space="preserve">
+    <value>Χιόνι</value>
+  </data>
+  <data name="W.weather.current.Condition.Mist" xml:space="preserve">
+    <value>Αραιή ομίχλη</value>
+  </data>
+  <data name="W.weather.current.Condition.Fog" xml:space="preserve">
+    <value>Ομίχλη</value>
+  </data>
+  <data name="W.weather.current.Condition.Haze" xml:space="preserve">
+    <value>Καταχνιά</value>
+  </data>
+  <data name="W.weather.current.Condition.Smoke" xml:space="preserve">
+    <value>Καπνός</value>
+  </data>
+  <data name="W.weather.current.Condition.Dust" xml:space="preserve">
+    <value>Σκόνη</value>
+  </data>
+  <data name="W.weather.current.Condition.Unknown" xml:space="preserve">
+    <value>Άγνωστο</value>
+  </data>
+  <data name="W.weather.alerts.Title" xml:space="preserve">
+    <value>Καιρικές ειδοποιήσεις</value>
+  </data>
+  <data name="W.weather.alerts.Description" xml:space="preserve">
+    <value>Ενεργές καιρικές ειδοποιήσεις για τις περιοχές του τμήματός σας, με πρώτες τις πιο σοβαρές.</value>
+  </data>
+  <data name="W.weather.alerts.Setting.minSeverity" xml:space="preserve">
+    <value>Εμφάνιση ειδοποιήσεων</value>
+  </data>
+  <data name="W.weather.alerts.Setting.maxItems" xml:space="preserve">
+    <value>Μέγιστος αριθμός ειδοποιήσεων στη λίστα</value>
+  </data>
+  <data name="W.weather.alerts.Option.all" xml:space="preserve">
+    <value>Όλες οι σοβαρότητες</value>
+  </data>
+  <data name="W.weather.alerts.Option.extreme" xml:space="preserve">
+    <value>Μόνο ακραίες</value>
+  </data>
+  <data name="W.weather.alerts.Option.severe" xml:space="preserve">
+    <value>Σοβαρές και πάνω</value>
+  </data>
+  <data name="W.weather.alerts.Option.moderate" xml:space="preserve">
+    <value>Μέτριες και πάνω</value>
+  </data>
+  <data name="W.weather.alerts.Empty" xml:space="preserve">
+    <value>Καμία ενεργή καιρική ειδοποίηση.</value>
+  </data>
+  <data name="W.weather.alerts.Severity.extreme" xml:space="preserve">
+    <value>Ακραία</value>
+  </data>
+  <data name="W.weather.alerts.Severity.severe" xml:space="preserve">
+    <value>Σοβαρή</value>
+  </data>
+  <data name="W.weather.alerts.Severity.moderate" xml:space="preserve">
+    <value>Μέτρια</value>
+  </data>
+  <data name="W.weather.alerts.Severity.minor" xml:space="preserve">
+    <value>Ήπια</value>
+  </data>
+  <data name="W.weather.alerts.Severity.unknown" xml:space="preserve">
+    <value>Άγνωστη</value>
+  </data>
+  <data name="W.weather.alerts.Expires" xml:space="preserve">
+    <value>Λήγει {0}</value>
+  </data>
+  <data name="W.weather.alerts.More" xml:space="preserve">
+    <value>{0} ακόμη</value>
+  </data>
+  <data name="W.general.clock.Title" xml:space="preserve">
+    <value>Ρολόι</value>
+  </data>
+  <data name="W.general.clock.Description" xml:space="preserve">
+    <value>Η ώρα του τμήματος, η ώρα UTC και η τοπική σας ώρα.</value>
+  </data>
+  <data name="W.general.clock.Setting.format" xml:space="preserve">
+    <value>Μορφή ώρας</value>
+  </data>
+  <data name="W.general.clock.Setting.showSeconds" xml:space="preserve">
+    <value>Εμφάνιση δευτερολέπτων</value>
+  </data>
+  <data name="W.general.clock.Setting.showUtc" xml:space="preserve">
+    <value>Εμφάνιση UTC</value>
+  </data>
+  <data name="W.general.clock.Setting.showLocal" xml:space="preserve">
+    <value>Εμφάνιση της τοπικής μου ώρας</value>
+  </data>
+  <data name="W.general.clock.Option.auto" xml:space="preserve">
+    <value>Αυτόματη</value>
+  </data>
+  <data name="W.general.clock.Option.12h" xml:space="preserve">
+    <value>12ωρη</value>
+  </data>
+  <data name="W.general.clock.Option.24h" xml:space="preserve">
+    <value>24ωρη</value>
+  </data>
+  <data name="W.general.clock.Department" xml:space="preserve">
+    <value>Τμήμα</value>
+  </data>
+  <data name="W.general.clock.Utc" xml:space="preserve">
+    <value>UTC</value>
+  </data>
+  <data name="W.general.clock.Local" xml:space="preserve">
+    <value>Η ώρα μου</value>
+  </data>
+  <data name="W.messages.inbox.Title" xml:space="preserve">
+    <value>Εισερχόμενα</value>
+  </data>
+  <data name="W.messages.inbox.Description" xml:space="preserve">
+    <value>Τα μη αναγνωσμένα μηνύματά σας, με τα πιο πρόσφατα πρώτα.</value>
+  </data>
+  <data name="W.messages.inbox.Setting.maxItems" xml:space="preserve">
+    <value>Μέγιστος αριθμός μηνυμάτων στη λίστα</value>
+  </data>
+  <data name="W.messages.inbox.Unread" xml:space="preserve">
+    <value>Μη αναγνωσμένα</value>
+  </data>
+  <data name="W.messages.inbox.Empty" xml:space="preserve">
+    <value>Κανένα μη αναγνωσμένο μήνυμα.</value>
+  </data>
+  <data name="W.messages.inbox.Compose" xml:space="preserve">
+    <value>Σύνταξη</value>
+  </data>
+  <data name="W.messages.inbox.System" xml:space="preserve">
+    <value>Σύστημα</value>
+  </data>
+  <data name="W.messages.inbox.ProtectedSubject" xml:space="preserve">
+    <value>Προστατευμένο μήνυμα</value>
+  </data>
+  <data name="W.messages.inbox.Callback" xml:space="preserve">
+    <value>Επανάκληση</value>
+  </data>
+  <data name="W.messages.inbox.Poll" xml:space="preserve">
+    <value>Ψηφοφορία</value>
+  </data>
+  <data name="W.chat.unread.Title" xml:space="preserve">
+    <value>Συνομιλία</value>
+  </data>
+  <data name="W.chat.unread.Description" xml:space="preserve">
+    <value>Κανάλια συνομιλίας με μη αναγνωσμένα μηνύματα και επείγοντα μηνύματα που περιμένουν την επιβεβαίωσή σας.</value>
+  </data>
+  <data name="W.chat.unread.Setting.maxItems" xml:space="preserve">
+    <value>Μέγιστος αριθμός καναλιών στη λίστα</value>
+  </data>
+  <data name="W.chat.unread.Empty" xml:space="preserve">
+    <value>Είστε ενημερωμένοι για όλα.</value>
+  </data>
+  <data name="W.chat.unread.UnreadTotal" xml:space="preserve">
+    <value>Μη αναγνωσμένα μηνύματα</value>
+  </data>
+  <data name="W.chat.unread.PendingAcks" xml:space="preserve">
+    <value>Σε αναμονή επιβεβαίωσης</value>
+  </data>
+  <data name="W.chat.unread.DirectMessage" xml:space="preserve">
+    <value>Προσωπικό μήνυμα</value>
+  </data>
+  <data name="W.chat.unread.OpenChat" xml:space="preserve">
+    <value>Άνοιγμα συνομιλίας</value>
+  </data>
+  <data name="W.chat.moderation.Title" xml:space="preserve">
+    <value>Ουρά εποπτείας</value>
+  </data>
+  <data name="W.chat.moderation.Description" xml:space="preserve">
+    <value>Ανοιχτές σημάνσεις συνομιλίας που περιμένουν έλεγχο.</value>
+  </data>
+  <data name="W.chat.moderation.Setting.maxItems" xml:space="preserve">
+    <value>Μέγιστος αριθμός σημάνσεων στη λίστα</value>
+  </data>
+  <data name="W.chat.moderation.Empty" xml:space="preserve">
+    <value>Καμία ανοιχτή σήμανση.</value>
+  </data>
+  <data name="W.chat.moderation.OpenFlags" xml:space="preserve">
+    <value>Ανοιχτές σημάνσεις</value>
+  </data>
+  <data name="W.chat.moderation.Oldest" xml:space="preserve">
+    <value>Παλαιότερη {0}</value>
+  </data>
+  <data name="W.chat.moderation.CountCapped" xml:space="preserve">
+    <value>{0}+</value>
+  </data>
+  <data name="W.chat.moderation.UnknownChannel" xml:space="preserve">
+    <value>Άγνωστο κανάλι</value>
+  </data>
+  <data name="W.chat.moderation.Reason.other" xml:space="preserve">
+    <value>Άλλο</value>
+  </data>
+  <data name="W.chat.moderation.Reason.inappropriate" xml:space="preserve">
+    <value>Ακατάλληλο</value>
+  </data>
+  <data name="W.chat.moderation.Reason.harassment" xml:space="preserve">
+    <value>Παρενόχληση</value>
+  </data>
+  <data name="W.chat.moderation.Reason.spam" xml:space="preserve">
+    <value>Spam</value>
+  </data>
+  <data name="W.chat.moderation.Reason.sensitiveInformation" xml:space="preserve">
+    <value>Ευαίσθητες πληροφορίες</value>
+  </data>
+  <data name="W.chat.moderation.Reason.policyViolation" xml:space="preserve">
+    <value>Παραβίαση πολιτικής</value>
+  </data>
+  <data name="W.comms.tests.Title" xml:space="preserve">
+    <value>Δοκιμές επικοινωνίας</value>
+  </data>
+  <data name="W.comms.tests.Description" xml:space="preserve">
+    <value>Πρόσφατες εκτελέσεις δοκιμών επικοινωνίας με ποσοστά παράδοσης και απόκρισης ανά κανάλι.</value>
+  </data>
+  <data name="W.comms.tests.Setting.maxRuns" xml:space="preserve">
+    <value>Μέγιστος αριθμός εκτελέσεων στη λίστα</value>
+  </data>
+  <data name="W.comms.tests.Empty" xml:space="preserve">
+    <value>Δεν έχει εκτελεστεί ακόμη καμία δοκιμή επικοινωνίας.</value>
+  </data>
+  <data name="W.comms.tests.Tested" xml:space="preserve">
+    <value>Δοκιμάστηκαν</value>
+  </data>
+  <data name="W.comms.tests.Responses" xml:space="preserve">
+    <value>Απαντήσεις</value>
+  </data>
+  <data name="W.comms.tests.ResponseRate" xml:space="preserve">
+    <value>Ποσοστό απόκρισης</value>
+  </data>
+  <data name="W.comms.tests.DeliveryRate" xml:space="preserve">
+    <value>Ποσοστό παράδοσης</value>
+  </data>
+  <data name="W.comms.tests.LatestRun" xml:space="preserve">
+    <value>Τελευταία εκτέλεση ανά κανάλι</value>
+  </data>
+  <data name="W.comms.tests.Suppressed" xml:space="preserve">
+    <value>Σε σίγαση</value>
+  </data>
+  <data name="W.comms.tests.Status.pending" xml:space="preserve">
+    <value>Εκκρεμεί</value>
+  </data>
+  <data name="W.comms.tests.Status.running" xml:space="preserve">
+    <value>Σε εξέλιξη</value>
+  </data>
+  <data name="W.comms.tests.Status.awaitingResponses" xml:space="preserve">
+    <value>Αναμονή απαντήσεων</value>
+  </data>
+  <data name="W.comms.tests.Status.completed" xml:space="preserve">
+    <value>Ολοκληρώθηκε</value>
+  </data>
+  <data name="W.comms.tests.Status.failed" xml:space="preserve">
+    <value>Απέτυχε</value>
+  </data>
+  <data name="W.comms.tests.Channel.sms" xml:space="preserve">
+    <value>SMS</value>
+  </data>
+  <data name="W.comms.tests.Channel.email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="W.comms.tests.Channel.voice" xml:space="preserve">
+    <value>Φωνή</value>
+  </data>
+  <data name="W.comms.tests.Channel.push" xml:space="preserve">
+    <value>Push</value>
+  </data>
+  <data name="W.comms.tests.Channel.other" xml:space="preserve">
+    <value>Άλλο</value>
+  </data>
+  <data name="W.voice.ptt.Title" xml:space="preserve">
+    <value>Push-To-Talk</value>
+  </data>
+  <data name="W.voice.ptt.Description" xml:space="preserve">
+    <value>Τα κανάλια Push-To-Talk του τμήματός σας και πόσες θέσεις χρησιμοποιούνται.</value>
+  </data>
+  <data name="W.voice.ptt.Empty" xml:space="preserve">
+    <value>Δεν έχουν ρυθμιστεί κανάλια Push-To-Talk.</value>
+  </data>
+  <data name="W.voice.ptt.Seats" xml:space="preserve">
+    <value>{0} από {1} θέσεις σε χρήση</value>
+  </data>
+  <data name="W.voice.ptt.UtilizationUnavailable" xml:space="preserve">
+    <value>Η χρήση θέσεων δεν είναι διαθέσιμη αυτή τη στιγμή.</value>
+  </data>
+  <data name="W.voice.ptt.Default" xml:space="preserve">
+    <value>Προεπιλογή</value>
+  </data>
+  <data name="W.voice.ptt.Incident" xml:space="preserve">
+    <value>Κανάλι συμβάντος</value>
+  </data>
+  <data name="W.calendar.agenda.Title" xml:space="preserve">
+    <value>Προσεχή συμβάντα</value>
+  </data>
+  <data name="W.calendar.agenda.Description" xml:space="preserve">
+    <value>Οι επόμενες ημέρες του ημερολογίου του τμήματός σας, με την κατάσταση δήλωσης συμμετοχής και άφιξης.</value>
+  </data>
+  <data name="W.calendar.agenda.Setting.days" xml:space="preserve">
+    <value>Επόμενες ημέρες</value>
+  </data>
+  <data name="W.calendar.agenda.Setting.types" xml:space="preserve">
+    <value>Τύποι συμβάντων</value>
+  </data>
+  <data name="W.calendar.agenda.Setting.maxItems" xml:space="preserve">
+    <value>Μέγιστος αριθμός συμβάντων στη λίστα</value>
+  </data>
+  <data name="W.calendar.agenda.Empty" xml:space="preserve">
+    <value>Κανένα προσεχές συμβάν.</value>
+  </data>
+  <data name="W.calendar.agenda.AllDay" xml:space="preserve">
+    <value>Ολοήμερο</value>
+  </data>
+  <data name="W.calendar.agenda.Attending" xml:space="preserve">
+    <value>Θα συμμετάσχω</value>
+  </data>
+  <data name="W.calendar.agenda.Required" xml:space="preserve">
+    <value>Υποχρεωτικό</value>
+  </data>
+  <data name="W.calendar.agenda.Optional" xml:space="preserve">
+    <value>Προαιρετικό</value>
+  </data>
+  <data name="W.calendar.agenda.NotAttending" xml:space="preserve">
+    <value>Δεν θα συμμετάσχω</value>
+  </data>
+  <data name="W.calendar.agenda.SignUp" xml:space="preserve">
+    <value>Δήλωση συμμετοχής</value>
+  </data>
+  <data name="W.calendar.agenda.CheckedIn" xml:space="preserve">
+    <value>Δηλώθηκε άφιξη</value>
+  </data>
+  <data name="W.calendar.agenda.CheckedOut" xml:space="preserve">
+    <value>Δηλώθηκε αναχώρηση</value>
+  </data>
+  <data name="W.calendar.agenda.Today" xml:space="preserve">
+    <value>Σήμερα</value>
+  </data>
+  <data name="W.calendar.agenda.Tomorrow" xml:space="preserve">
+    <value>Αύριο</value>
+  </data>
+  <data name="W.shifts.today.Title" xml:space="preserve">
+    <value>Βάρδιες σήμερα</value>
+  </data>
+  <data name="W.shifts.today.Description" xml:space="preserve">
+    <value>Οι βάρδιες της ημέρας με στελέχωση έναντι απαιτήσεων και ποιος είναι σε υπηρεσία ανά ομάδα.</value>
+  </data>
+  <data name="W.shifts.today.Empty" xml:space="preserve">
+    <value>Καμία βάρδια σήμερα.</value>
+  </data>
+  <data name="W.shifts.today.OnDuty" xml:space="preserve">
+    <value>{0} σε υπηρεσία</value>
+  </data>
+  <data name="W.shifts.today.OpenSlots" xml:space="preserve">
+    <value>{0} κενές θέσεις</value>
+  </data>
+  <data name="W.shifts.today.Filled" xml:space="preserve">
+    <value>Καλυμμένη</value>
+  </data>
+  <data name="W.shifts.today.Active" xml:space="preserve">
+    <value>Σε εξέλιξη τώρα</value>
+  </data>
+  <data name="W.shifts.today.Ended" xml:space="preserve">
+    <value>Έληξε</value>
+  </data>
+  <data name="W.shifts.today.NoGroup" xml:space="preserve">
+    <value>Χωρίς ομάδα</value>
+  </data>
+  <data name="W.shifts.mine.Title" xml:space="preserve">
+    <value>Οι βάρδιες και ανταλλαγές μου</value>
+  </data>
+  <data name="W.shifts.mine.Description" xml:space="preserve">
+    <value>Οι προσεχείς βάρδιές σας και τα αιτήματα ανταλλαγής που σας έχουν σταλεί.</value>
+  </data>
+  <data name="W.shifts.mine.Setting.days" xml:space="preserve">
+    <value>Επόμενες ημέρες</value>
+  </data>
+  <data name="W.shifts.mine.Setting.maxItems" xml:space="preserve">
+    <value>Μέγιστος αριθμός στοιχείων ανά λίστα</value>
+  </data>
+  <data name="W.shifts.mine.Empty" xml:space="preserve">
+    <value>Καμία προσεχής βάρδια.</value>
+  </data>
+  <data name="W.shifts.mine.Upcoming" xml:space="preserve">
+    <value>Προσεχείς βάρδιες</value>
+  </data>
+  <data name="W.shifts.mine.TradeRequests" xml:space="preserve">
+    <value>Αιτήματα ανταλλαγής</value>
+  </data>
+  <data name="W.shifts.mine.AwaitingApproval" xml:space="preserve">
+    <value>Αναμένει έγκριση</value>
+  </data>
+  <data name="W.shifts.mine.TradeRequested" xml:space="preserve">
+    <value>Ζητήθηκε ανταλλαγή</value>
+  </data>
+  <data name="W.shifts.mine.From" xml:space="preserve">
+    <value>Από {0}</value>
+  </data>
+  <data name="W.shifts.approvals.Title" xml:space="preserve">
+    <value>Εγκρίσεις βαρδιών</value>
+  </data>
+  <data name="W.shifts.approvals.Description" xml:space="preserve">
+    <value>Δηλώσεις συμμετοχής και ανταλλαγές βαρδιών που περιμένουν την έγκρισή σας.</value>
+  </data>
+  <data name="W.shifts.approvals.Setting.maxItems" xml:space="preserve">
+    <value>Μέγιστος αριθμός στοιχείων στη λίστα</value>
+  </data>
+  <data name="W.shifts.approvals.Empty" xml:space="preserve">
+    <value>Τίποτα δεν περιμένει την έγκρισή σας.</value>
+  </data>
+  <data name="W.shifts.approvals.NotApprover" xml:space="preserve">
+    <value>Δεν εγκρίνετε δηλώσεις συμμετοχής ή ανταλλαγές βαρδιών.</value>
+  </data>
+  <data name="W.shifts.approvals.Signups" xml:space="preserve">
+    <value>Δηλώσεις συμμετοχής</value>
+  </data>
+  <data name="W.shifts.approvals.Trades" xml:space="preserve">
+    <value>Ανταλλαγές</value>
+  </data>
+  <data name="W.shifts.approvals.Signup" xml:space="preserve">
+    <value>Δήλωση συμμετοχής</value>
+  </data>
+  <data name="W.shifts.approvals.Trade" xml:space="preserve">
+    <value>Ανταλλαγή</value>
+  </data>
+  <data name="W.shifts.approvals.TradeFromTo" xml:space="preserve">
+    <value>{0} προς {1}</value>
+  </data>
+  <data name="W.shifts.approvals.Review" xml:space="preserve">
+    <value>Έλεγχος</value>
+  </data>
+  <data name="W.shifts.coverage.Title" xml:space="preserve">
+    <value>Κάλυψη στελέχωσης</value>
+  </data>
+  <data name="W.shifts.coverage.Description" xml:space="preserve">
+    <value>Η στελέχωση βαρδιών των επόμενων ημερών, εγκεκριμένη ή αυτόματη, με επισήμανση των βαρδιών χωρίς στελέχωση.</value>
+  </data>
+  <data name="W.shifts.coverage.Setting.days" xml:space="preserve">
+    <value>Επόμενες ημέρες</value>
+  </data>
+  <data name="W.shifts.coverage.Setting.gapsOnly" xml:space="preserve">
+    <value>Εμφάνιση μόνο βαρδιών χωρίς στελέχωση</value>
+  </data>
+  <data name="W.shifts.coverage.Empty" xml:space="preserve">
+    <value>Καμία βάρδια σε αυτή την περίοδο.</value>
+  </data>
+  <data name="W.shifts.coverage.NotSupervisor" xml:space="preserve">
+    <value>Η κάλυψη στελέχωσης προορίζεται για προϊσταμένους βαρδιών.</value>
+  </data>
+  <data name="W.shifts.coverage.Gaps" xml:space="preserve">
+    <value>{0} χωρίς στελέχωση</value>
+  </data>
+  <data name="W.shifts.coverage.Manual" xml:space="preserve">
+    <value>Εγκεκριμένη</value>
+  </data>
+  <data name="W.shifts.coverage.Automatic" xml:space="preserve">
+    <value>Αυτόματη</value>
+  </data>
+  <data name="W.shifts.coverage.People" xml:space="preserve">
+    <value>{0} άτομα</value>
+  </data>
+  <data name="W.shifts.coverage.Changes" xml:space="preserve">
+    <value>+{0} / -{1}</value>
+  </data>
+  <data name="W.shifts.coverage.StaticShift" xml:space="preserve">
+    <value>Στατική βάρδια</value>
+  </data>
+  <data name="W.trainings.mine.Title" xml:space="preserve">
+    <value>Οι εκπαιδεύσεις μου</value>
+  </data>
+  <data name="W.trainings.mine.Description" xml:space="preserve">
+    <value>Εκπαιδεύσεις που σας έχουν ανατεθεί και δεν έχετε ολοκληρώσει ακόμη.</value>
+  </data>
+  <data name="W.trainings.mine.Setting.maxItems" xml:space="preserve">
+    <value>Μέγιστος αριθμός εκπαιδεύσεων στη λίστα</value>
+  </data>
+  <data name="W.trainings.mine.Empty" xml:space="preserve">
+    <value>Καμία εκκρεμής εκπαίδευση.</value>
+  </data>
+  <data name="W.trainings.mine.Outstanding" xml:space="preserve">
+    <value>Εκκρεμείς</value>
+  </data>
+  <data name="W.trainings.mine.Overdue" xml:space="preserve">
+    <value>Εκπρόθεσμες</value>
+  </data>
+  <data name="W.trainings.mine.Due" xml:space="preserve">
+    <value>Προθεσμία {0}</value>
+  </data>
+  <data name="W.trainings.mine.NotStarted" xml:space="preserve">
+    <value>Δεν έχει ξεκινήσει</value>
+  </data>
+  <data name="W.trainings.mine.InProgress" xml:space="preserve">
+    <value>Σε εξέλιξη</value>
+  </data>
+  <data name="W.trainings.mine.QuizFailed" xml:space="preserve">
+    <value>Δεν περάσατε το κουίζ</value>
+  </data>
+  <data name="W.documents.recent.Title" xml:space="preserve">
+    <value>Πρόσφατα έγγραφα</value>
+  </data>
+  <data name="W.documents.recent.Description" xml:space="preserve">
+    <value>Τα πιο πρόσφατα έγγραφα στη βιβλιοθήκη του τμήματός σας.</value>
+  </data>
+  <data name="W.documents.recent.Setting.category" xml:space="preserve">
+    <value>Κατηγορία</value>
+  </data>
+  <data name="W.documents.recent.Setting.maxItems" xml:space="preserve">
+    <value>Μέγιστος αριθμός εγγράφων στη λίστα</value>
+  </data>
+  <data name="W.documents.recent.Empty" xml:space="preserve">
+    <value>Δεν υπάρχουν ακόμη έγγραφα.</value>
+  </data>
+  <data name="W.documents.recent.AdminsOnly" xml:space="preserve">
+    <value>Μόνο διαχειριστές</value>
+  </data>
+  <data name="W.documents.recent.AllCategories" xml:space="preserve">
+    <value>Όλες οι κατηγορίες</value>
+  </data>
+  <data name="W.notes.board.Title" xml:space="preserve">
+    <value>Σημειώσεις τμήματος</value>
+  </data>
+  <data name="W.notes.board.Description" xml:space="preserve">
+    <value>Οι πιο πρόσφατες σημειώσεις του τμήματος.</value>
+  </data>
+  <data name="W.notes.board.Setting.category" xml:space="preserve">
+    <value>Κατηγορία</value>
+  </data>
+  <data name="W.notes.board.Setting.maxItems" xml:space="preserve">
+    <value>Μέγιστος αριθμός σημειώσεων στη λίστα</value>
+  </data>
+  <data name="W.notes.board.Setting.hideExpired" xml:space="preserve">
+    <value>Απόκρυψη ληγμένων σημειώσεων</value>
+  </data>
+  <data name="W.notes.board.Empty" xml:space="preserve">
+    <value>Δεν υπάρχουν σημειώσεις.</value>
+  </data>
+  <data name="W.notes.board.AdminOnly" xml:space="preserve">
+    <value>Μόνο διαχειριστές</value>
+  </data>
+  <data name="W.notes.board.Expires" xml:space="preserve">
+    <value>Λήγει {0}</value>
+  </data>
+  <data name="W.notes.board.AllCategories" xml:space="preserve">
+    <value>Όλες οι κατηγορίες</value>
+  </data>
+  <data name="W.contacts.preplans.Title" xml:space="preserve">
+    <value>Προσχέδια επέμβασης προς αναθεώρηση</value>
+  </data>
+  <data name="W.contacts.preplans.Description" xml:space="preserve">
+    <value>Επαφές των οποίων η ημερομηνία αναθεώρησης του προσχεδίου επέμβασης έχει παρέλθει.</value>
+  </data>
+  <data name="W.contacts.preplans.Setting.maxItems" xml:space="preserve">
+    <value>Μέγιστος αριθμός επαφών στη λίστα</value>
+  </data>
+  <data name="W.contacts.preplans.Empty" xml:space="preserve">
+    <value>Κανένα προσχέδιο επέμβασης δεν χρειάζεται αναθεώρηση.</value>
+  </data>
+  <data name="W.contacts.preplans.DaysOverdue" xml:space="preserve">
+    <value>Καθυστέρηση {0} ημερών</value>
+  </data>
+  <data name="W.contacts.preplans.DueToday" xml:space="preserve">
+    <value>Προθεσμία σήμερα</value>
+  </data>
+  <data name="W.contacts.preplans.ProtectedContact" xml:space="preserve">
+    <value>Προστατευμένη επαφή</value>
+  </data>
+  <data name="W.links.quick.Title" xml:space="preserve">
+    <value>Γρήγοροι σύνδεσμοι</value>
+  </data>
+  <data name="W.links.quick.Description" xml:space="preserve">
+    <value>Τμήματα που μοιράζονται δεδομένα με το δικό σας, καθώς και οι δικοί σας σύνδεσμοι.</value>
+  </data>
+  <data name="W.links.quick.Setting.showDepartmentLinks" xml:space="preserve">
+    <value>Εμφάνιση συνδέσμων τμημάτων</value>
+  </data>
+  <data name="W.links.quick.Setting.links" xml:space="preserve">
+    <value>Οι σύνδεσμοί μου (ένας ανά γραμμή: Ετικέτα | https://…)</value>
+  </data>
+  <data name="W.links.quick.Empty" xml:space="preserve">
+    <value>Δεν υπάρχουν ακόμη σύνδεσμοι. Προσθέστε δικούς σας στις ρυθμίσεις αυτού του γραφικού στοιχείου.</value>
+  </data>
+  <data name="W.links.quick.DepartmentLinks" xml:space="preserve">
+    <value>Συνδεδεμένα τμήματα</value>
+  </data>
+  <data name="W.links.quick.MyLinks" xml:space="preserve">
+    <value>Οι σύνδεσμοί μου</value>
+  </data>
+  <data name="W.links.quick.InvalidLinks" xml:space="preserve">
+    <value>Ορισμένες γραμμές παραλείφθηκαν ({0}). Επιτρέπονται μόνο διευθύνσεις http και https.</value>
+  </data>
+  <data name="W.links.quick.Shares.calls" xml:space="preserve">
+    <value>Κλήσεις</value>
+  </data>
+  <data name="W.links.quick.Shares.units" xml:space="preserve">
+    <value>Μονάδες</value>
+  </data>
+  <data name="W.links.quick.Shares.personnel" xml:space="preserve">
+    <value>Προσωπικό</value>
+  </data>
+  <data name="W.general.stickyNote.Title" xml:space="preserve">
+    <value>Η σημείωσή μου</value>
+  </data>
+  <data name="W.general.stickyNote.Description" xml:space="preserve">
+    <value>Μια προσωπική σημείωση που μπορείτε να δείτε μόνο εσείς.</value>
+  </data>
+  <data name="W.general.stickyNote.Setting.text" xml:space="preserve">
+    <value>Σημείωση</value>
+  </data>
+  <data name="W.general.stickyNote.Empty" xml:space="preserve">
+    <value>Η σημείωσή σας είναι κενή. Επεξεργαστείτε τις ρυθμίσεις αυτού του γραφικού στοιχείου για να γράψετε μία.</value>
+  </data>
+  <data name="W.general.stickyNote.Edit" xml:space="preserve">
+    <value>Επεξεργασία σημείωσης</value>
+  </data>
+  <data name="W.map.operations.LoadError" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η φόρτωση του χάρτη. Δοκιμάστε ξανά σε λίγο.</value>
+  </data>
+  <data name="W.map.operations.Layer.calls" xml:space="preserve">
+    <value>Κλήσεις</value>
+  </data>
+  <data name="W.map.operations.Layer.units" xml:space="preserve">
+    <value>Μονάδες</value>
+  </data>
+  <data name="W.map.operations.Layer.personnel" xml:space="preserve">
+    <value>Προσωπικό</value>
+  </data>
+  <data name="W.map.operations.Layer.stations" xml:space="preserve">
+    <value>Σταθμοί</value>
+  </data>
+  <data name="W.map.operations.Layer.pois" xml:space="preserve">
+    <value>Σημεία ενδιαφέροντος</value>
+  </data>
+  <data name="W.map.visualization.Choose" xml:space="preserve">
+    <value>Επιλέξτε απεικόνιση</value>
+  </data>
+  <data name="W.map.visualization.Rows" xml:space="preserve">
+    <value>{0} εγγραφές</value>
+  </data>
+  <data name="W.map.visualization.Partial" xml:space="preserve">
+    <value>μερικό</value>
+  </data>
+  <data name="W.weather.current.Tomorrow" xml:space="preserve">
+    <value>Αύριο</value>
+  </data>
+  <data name="W.weather.current.Compass.N" xml:space="preserve">
+    <value>Β</value>
+  </data>
+  <data name="W.weather.current.Compass.NE" xml:space="preserve">
+    <value>ΒΑ</value>
+  </data>
+  <data name="W.weather.current.Compass.E" xml:space="preserve">
+    <value>Α</value>
+  </data>
+  <data name="W.weather.current.Compass.SE" xml:space="preserve">
+    <value>ΝΑ</value>
+  </data>
+  <data name="W.weather.current.Compass.S" xml:space="preserve">
+    <value>Ν</value>
+  </data>
+  <data name="W.weather.current.Compass.SW" xml:space="preserve">
+    <value>ΝΔ</value>
+  </data>
+  <data name="W.weather.current.Compass.W" xml:space="preserve">
+    <value>Δ</value>
+  </data>
+  <data name="W.weather.current.Compass.NW" xml:space="preserve">
+    <value>ΒΔ</value>
+  </data>
+  <data name="W.messages.inbox.Open" xml:space="preserve">
+    <value>Άνοιγμα μηνύματος</value>
+  </data>
+  <data name="W.chat.unread.Channel" xml:space="preserve">
+    <value>Κανάλι</value>
+  </data>
+  <data name="W.chat.unread.PendingAckCount" xml:space="preserve">
+    <value>{0} περιμένουν την επιβεβαίωσή σας</value>
+  </data>
+  <data name="W.chat.moderation.OldestLabel" xml:space="preserve">
+    <value>παλαιότερη σήμανση</value>
+  </data>
+  <data name="W.comms.tests.RecentRuns" xml:space="preserve">
+    <value>Πρόσφατες εκτελέσεις</value>
+  </data>
+  <data name="W.comms.tests.Untitled" xml:space="preserve">
+    <value>Δοκιμή επικοινωνίας</value>
+  </data>
+  <data name="W.comms.tests.NotDelivered" xml:space="preserve">
+    <value>Δεν παραδόθηκε τίποτα</value>
+  </data>
+  <data name="W.comms.tests.DeliveredShort" xml:space="preserve">
+    <value>{0} παραδόθηκαν</value>
+  </data>
+  <data name="W.comms.tests.RespondedOf" xml:space="preserve">
+    <value>Απάντησαν {0} από {1}</value>
+  </data>
+  <data name="W.voice.ptt.Open" xml:space="preserve">
+    <value>Άνοιγμα Push-To-Talk</value>
+  </data>
+  <data name="W.voice.ptt.Channel" xml:space="preserve">
+    <value>Κανάλι</value>
+  </data>
+  <data name="W.voice.ptt.MoreChannels" xml:space="preserve">
+    <value>+{0} ακόμη</value>
+  </data>
+  <data name="W.calendar.agenda.OpenCalendar" xml:space="preserve">
+    <value>Άνοιγμα ημερολογίου</value>
+  </data>
+  <data name="W.calendar.agenda.Untitled" xml:space="preserve">
+    <value>Συμβάν χωρίς τίτλο</value>
+  </data>
+  <data name="W.shifts.today.OpenShifts" xml:space="preserve">
+    <value>Άνοιγμα βαρδιών</value>
+  </data>
+  <data name="W.shifts.today.Shift" xml:space="preserve">
+    <value>Βάρδια</value>
+  </data>
+  <data name="W.shifts.mine.OpenYourShifts" xml:space="preserve">
+    <value>Άνοιγμα των βαρδιών σας</value>
+  </data>
+  <data name="W.shifts.mine.Shift" xml:space="preserve">
+    <value>Βάρδια</value>
+  </data>
+  <data name="W.shifts.mine.Today" xml:space="preserve">
+    <value>Σήμερα</value>
+  </data>
+  <data name="W.shifts.mine.Tomorrow" xml:space="preserve">
+    <value>Αύριο</value>
+  </data>
+  <data name="W.shifts.mine.Respond" xml:space="preserve">
+    <value>Απάντηση</value>
+  </data>
+  <data name="W.shifts.approvals.Today" xml:space="preserve">
+    <value>Σήμερα</value>
+  </data>
+  <data name="W.shifts.approvals.Tomorrow" xml:space="preserve">
+    <value>Αύριο</value>
+  </data>
+  <data name="W.shifts.coverage.OpenStaffing" xml:space="preserve">
+    <value>Άνοιγμα στελέχωσης βαρδιών</value>
+  </data>
+  <data name="W.shifts.coverage.Shift" xml:space="preserve">
+    <value>Βάρδια</value>
+  </data>
+  <data name="W.shifts.coverage.Time" xml:space="preserve">
+    <value>Ώρα</value>
+  </data>
+  <data name="W.shifts.coverage.Staffed" xml:space="preserve">
+    <value>Στελεχωμένη</value>
+  </data>
+  <data name="W.shifts.coverage.Source" xml:space="preserve">
+    <value>Στελέχωση</value>
+  </data>
+  <data name="W.shifts.coverage.Unstaffed" xml:space="preserve">
+    <value>Χωρίς στελέχωση</value>
+  </data>
+  <data name="W.shifts.coverage.Today" xml:space="preserve">
+    <value>Σήμερα</value>
+  </data>
+  <data name="W.shifts.coverage.Tomorrow" xml:space="preserve">
+    <value>Αύριο</value>
+  </data>
+  <data name="W.trainings.mine.Training" xml:space="preserve">
+    <value>Εκπαίδευση</value>
+  </data>
+  <data name="W.trainings.mine.OverdueCount" xml:space="preserve">
+    <value>{0} εκπρόθεσμες</value>
+  </data>
+  <data name="W.trainings.mine.OverdueSince" xml:space="preserve">
+    <value>Έπρεπε να ολοκληρωθεί {0}</value>
+  </data>
+  <data name="W.documents.recent.OpenDocuments" xml:space="preserve">
+    <value>Άνοιγμα εγγράφων</value>
+  </data>
+  <data name="W.documents.recent.Untitled" xml:space="preserve">
+    <value>Έγγραφο χωρίς τίτλο</value>
+  </data>
+  <data name="W.notes.board.OpenNotes" xml:space="preserve">
+    <value>Άνοιγμα σημειώσεων</value>
+  </data>
+  <data name="W.notes.board.Untitled" xml:space="preserve">
+    <value>Σημείωση χωρίς τίτλο</value>
+  </data>
+  <data name="W.contacts.preplans.ReviewDue" xml:space="preserve">
+    <value>Αναθεώρηση έως {0}</value>
+  </data>
+  <data name="W.contacts.preplans.Open" xml:space="preserve">
+    <value>Άνοιγμα επαφής</value>
+  </data>
+  <data name="W.links.quick.AddLinks" xml:space="preserve">
+    <value>Προσθήκη συνδέσμων</value>
+  </data>
+  <data name="W.links.quick.LinkedDepartment" xml:space="preserve">
+    <value>Συνδεδεμένο τμήμα</value>
+  </data>
+  <data name="W.general.stickyNote.Placeholder" xml:space="preserve">
+    <value>Σημειώστε κάτι. Μόνο εσείς μπορείτε να το δείτε.</value>
+  </data>
+  <data name="W.general.stickyNote.Remaining" xml:space="preserve">
+    <value>Απομένουν {0} χαρακτήρες</value>
+  </data>
+  <data name="W.shifts.today.GroupCount" xml:space="preserve">
+    <value>{0}: {1}</value>
+  </data>
+  <data name="W.map.operations.Layer.layer" xml:space="preserve">
+    <value>Επίπεδο χάρτη</value>
+  </data>
+  <data name="W.checklists.due.Title" xml:space="preserve">
+    <value>Λίστες ελέγχου προς εκτέλεση</value>
+  </data>
+  <data name="W.checklists.due.Description" xml:space="preserve">
+    <value>Προγραμματισμένες λίστες ελέγχου που λήγουν τις επόμενες επτά ημέρες: εκπρόθεσμες, προς εκτέλεση τώρα και προσεχείς, με σύνδεσμο για την έναρξη κάθε μίας.</value>
+  </data>
+  <data name="W.checklists.due.Setting.maxRows" xml:space="preserve">
+    <value>Λίστες ελέγχου προς εμφάνιση</value>
+  </data>
+  <data name="W.checklists.due.Setting.assignedOnly" xml:space="preserve">
+    <value>Μόνο λίστες ελέγχου που μου έχουν ανατεθεί</value>
+  </data>
+  <data name="W.checklists.compliance.Title" xml:space="preserve">
+    <value>Συμμόρφωση λιστών ελέγχου</value>
+  </data>
+  <data name="W.checklists.compliance.Description" xml:space="preserve">
+    <value>Ποσοστό ολοκλήρωσης λιστών ελέγχου τις τελευταίες ημέρες, οι μονάδες, οι ομάδες και τα άτομα με τη μεγαλύτερη καθυστέρηση, και οι χαμένοι έλεγχοι ανά ημέρα.</value>
+  </data>
+  <data name="W.checklists.compliance.Setting.days" xml:space="preserve">
+    <value>Ημέρες προς συμπερίληψη</value>
+  </data>
+  <data name="W.checklists.compliance.Setting.maxRows" xml:space="preserve">
+    <value>Στοιχεία προς εμφάνιση</value>
+  </data>
+  <data name="W.workOrders.stats.Title" xml:space="preserve">
+    <value>Εντολές εργασίας</value>
+  </data>
+  <data name="W.workOrders.stats.Description" xml:space="preserve">
+    <value>Ανοιχτές και εκπρόθεσμες εντολές εργασίας, προληπτική συντήρηση που ολοκληρώθηκε εγκαίρως, μέσος χρόνος επισκευής και χρόνος ακινησίας.</value>
+  </data>
+  <data name="W.workOrders.stats.Setting.days" xml:space="preserve">
+    <value>Ημέρες προς συμπερίληψη</value>
+  </data>
+  <data name="W.workOrders.mine.Title" xml:space="preserve">
+    <value>Οι εντολές εργασίας μου</value>
+  </data>
+  <data name="W.workOrders.mine.Description" xml:space="preserve">
+    <value>Ανοιχτές εντολές εργασίας που σας έχουν ανατεθεί, με τις πιο επείγουσες πρώτες.</value>
+  </data>
+  <data name="W.workOrders.mine.Setting.maxRows" xml:space="preserve">
+    <value>Εντολές εργασίας προς εμφάνιση</value>
+  </data>
+  <data name="W.inventory.alerts.Title" xml:space="preserve">
+    <value>Ειδοποιήσεις αποθέματος</value>
+  </data>
+  <data name="W.inventory.alerts.Description" xml:space="preserve">
+    <value>Χαμηλό απόθεμα, είδη που λήγουν ή έχουν λήξει, εκπρόθεσμες επιστροφές και είδη στα χέρια μελών που αποχώρησαν, με τα πιο επείγοντα είδη.</value>
+  </data>
+  <data name="W.inventory.alerts.Setting.maxRows" xml:space="preserve">
+    <value>Είδη προς εμφάνιση</value>
+  </data>
+  <data name="W.inventory.valuation.Title" xml:space="preserve">
+    <value>Αποτίμηση αποθέματος</value>
+  </data>
+  <data name="W.inventory.valuation.Description" xml:space="preserve">
+    <value>Αξία του διαθέσιμου αποθέματος ανά νόμισμα και οι τοποθεσίες με τη μεγαλύτερη αξία.</value>
+  </data>
+  <data name="W.inventory.valuation.Setting.maxRows" xml:space="preserve">
+    <value>Τοποθεσίες προς εμφάνιση</value>
+  </data>
+  <data name="W.certifications.expiry.Title" xml:space="preserve">
+    <value>Λήξη πιστοποιήσεων</value>
+  </data>
+  <data name="W.certifications.expiry.Description" xml:space="preserve">
+    <value>Ληγμένες, προς λήξη, σε αναστολή και εκκρεμείς προς επαλήθευση πιστοποιήσεις σε όλο το τμήμα, με τις πιο επείγουσες.</value>
+  </data>
+  <data name="W.certifications.expiry.Setting.maxRows" xml:space="preserve">
+    <value>Πιστοποιήσεις προς εμφάνιση</value>
+  </data>
+  <data name="W.certifications.mine.Title" xml:space="preserve">
+    <value>Οι πιστοποιήσεις μου</value>
+  </data>
+  <data name="W.certifications.mine.Description" xml:space="preserve">
+    <value>Οι πιστοποιήσεις σας που έχουν λήξει ή θα λήξουν σύντομα.</value>
+  </data>
+  <data name="W.certifications.mine.Setting.maxRows" xml:space="preserve">
+    <value>Πιστοποιήσεις προς εμφάνιση</value>
+  </data>
+  <data name="W.records.overview.Title" xml:space="preserve">
+    <value>Επισκόπηση αρχείων</value>
+  </data>
+  <data name="W.records.overview.Description" xml:space="preserve">
+    <value>Πρόχειρα, αρχεία σε αναμονή ελέγχου, επιστραμμένα αρχεία, εκπρόθεσμες υποχρεώσεις και ανοιχτά αιτήματα πρόσβασης σε δημόσια αρχεία.</value>
+  </data>
+  <data name="W.records.myWork.Title" xml:space="preserve">
+    <value>Η εργασία μου στα αρχεία</value>
+  </data>
+  <data name="W.records.myWork.Description" xml:space="preserve">
+    <value>Ημιτελή αρχεία που σας ανήκουν και εργασίες αρχείων που σας έχουν ανατεθεί.</value>
+  </data>
+  <data name="W.records.myWork.Setting.maxRows" xml:space="preserve">
+    <value>Στοιχεία προς εμφάνιση</value>
+  </data>
+  <data name="W.records.neris.Title" xml:space="preserve">
+    <value>Αναφορές NERIS</value>
+  </data>
+  <data name="W.records.neris.Description" xml:space="preserve">
+    <value>Αναφορές συμβάντων ανά στάδιο υποβολής: ελλιπείς, σε αναμονή ελέγχου, υποβληθείσες, αποδεκτές και απορριφθείσες.</value>
+  </data>
+  <data name="W.records.qualityReview.Title" xml:space="preserve">
+    <value>Έλεγχος ποιότητας</value>
+  </data>
+  <data name="W.records.qualityReview.Description" xml:space="preserve">
+    <value>Αρχεία που περιμένουν έλεγχο ποιότητας, με τα δικά σας πρώτα.</value>
+  </data>
+  <data name="W.records.qualityReview.Setting.maxRows" xml:space="preserve">
+    <value>Έλεγχοι προς εμφάνιση</value>
+  </data>
+  <data name="W.records.prevention.Title" xml:space="preserve">
+    <value>Πρόληψη</value>
+  </data>
+  <data name="W.records.prevention.Description" xml:space="preserve">
+    <value>Αναθεωρήσεις κτιρίων, επιθεωρήσεις, παραβάσεις, κρουνοί, άδειες, μείωση κοινοτικού κινδύνου και έρευνες για τις ενότητες πρόληψης που χρησιμοποιείτε.</value>
+  </data>
+  <data name="W.records.hydrants.Title" xml:space="preserve">
+    <value>Πυροσβεστικοί κρουνοί</value>
+  </data>
+  <data name="W.records.hydrants.Description" xml:space="preserve">
+    <value>Κρουνοί εκτός λειτουργίας και προς δοκιμή, με τους κρουνούς εκτός λειτουργίας σε χάρτη.</value>
+  </data>
+  <data name="W.records.hydrants.Setting.maxRows" xml:space="preserve">
+    <value>Κρουνοί προς απεικόνιση στον χάρτη</value>
+  </data>
+  <data name="W.records.crr.Title" xml:space="preserve">
+    <value>Μείωση κοινοτικού κινδύνου</value>
+  </data>
+  <data name="W.records.crr.Description" xml:space="preserve">
+    <value>Δραστηριότητες μείωσης κοινοτικού κινδύνου και ανιχνευτές καπνού, CO και συνδυαστικοί που εγκαταστάθηκαν φέτος, καθώς και ανοιχτά αιτήματα ανιχνευτών.</value>
+  </data>
+  <data name="W.records.investigations.Title" xml:space="preserve">
+    <value>Οι έρευνές μου</value>
+  </data>
+  <data name="W.records.investigations.Description" xml:space="preserve">
+    <value>Ανοιχτές υποθέσεις έρευνας στις οποίες εργάζεστε, ανά αριθμό υπόθεσης και κατάσταση.</value>
+  </data>
+  <data name="W.records.investigations.Setting.maxRows" xml:space="preserve">
+    <value>Υποθέσεις προς εμφάνιση</value>
+  </data>
+  <data name="W.records.analytics.Title" xml:space="preserve">
+    <value>KPI αρχείων</value>
+  </data>
+  <data name="W.records.analytics.Description" xml:space="preserve">
+    <value>Εκπρόθεσμα αρχεία, διάμεσος χρόνος οριστικοποίησης και ελέγχου, ποσοστό επιστροφής και αρχεία ανά μήνα.</value>
+  </data>
+  <data name="W.records.analytics.Setting.days" xml:space="preserve">
+    <value>Ημέρες προς συμπερίληψη</value>
+  </data>
+  <data name="W.records.legalHolds.Title" xml:space="preserve">
+    <value>Δεσμεύσεις διατήρησης αρχείων</value>
+  </data>
+  <data name="W.records.legalHolds.Description" xml:space="preserve">
+    <value>Ενεργές δεσμεύσεις διατήρησης αρχείων και οι πιο πρόσφατες που επιβλήθηκαν.</value>
+  </data>
+  <data name="W.records.legalHolds.Setting.maxRows" xml:space="preserve">
+    <value>Δεσμεύσεις προς εμφάνιση</value>
+  </data>
+  <data name="W.records.deployments.Title" xml:space="preserve">
+    <value>Αναφορές αποστολών</value>
+  </data>
+  <data name="W.records.deployments.Description" xml:space="preserve">
+    <value>Ανοιχτά αρχεία αποστολών από εξωτερικές εντολές πόρων.</value>
+  </data>
+  <data name="W.records.deployments.Setting.maxRows" xml:space="preserve">
+    <value>Αποστολές προς εμφάνιση</value>
+  </data>
+  <data name="W.logs.recent.Title" xml:space="preserve">
+    <value>Πρόσφατες καταγραφές</value>
+  </data>
+  <data name="W.logs.recent.Description" xml:space="preserve">
+    <value>Καταγραφές που έγιναν τις τελευταίες ημέρες, ανά τύπο, με τις πιο πρόσφατες εγγραφές.</value>
+  </data>
+  <data name="W.logs.recent.Setting.days" xml:space="preserve">
+    <value>Ημέρες προς συμπερίληψη</value>
+  </data>
+  <data name="W.logs.recent.Setting.maxRows" xml:space="preserve">
+    <value>Καταγραφές προς εμφάνιση</value>
+  </data>
+  <data name="W.checklists.due.Empty" xml:space="preserve">
+    <value>Τίποτα δεν λήγει τις επόμενες επτά ημέρες.</value>
+  </data>
+  <data name="W.checklists.due.OpenDue" xml:space="preserve">
+    <value>Άνοιγμα λιστών ελέγχου προς εκτέλεση</value>
+  </data>
+  <data name="W.checklists.due.OverdueSince" xml:space="preserve">
+    <value>Εκπρόθεσμη · το περιθώριο έληξε {0}</value>
+  </data>
+  <data name="W.checklists.due.DueBy" xml:space="preserve">
+    <value>Προθεσμία έως {0}</value>
+  </data>
+  <data name="W.checklists.due.Opens" xml:space="preserve">
+    <value>Ανοίγει {0}</value>
+  </data>
+  <data name="W.checklists.due.Overdue" xml:space="preserve">
+    <value>εκπρόθεσμες</value>
+  </data>
+  <data name="W.checklists.due.DueNow" xml:space="preserve">
+    <value>προς εκτέλεση τώρα</value>
+  </data>
+  <data name="W.checklists.due.Upcoming" xml:space="preserve">
+    <value>προσεχείς</value>
+  </data>
+  <data name="W.checklists.due.Unnamed" xml:space="preserve">
+    <value>Λίστα ελέγχου</value>
+  </data>
+  <data name="W.checklists.due.Start" xml:space="preserve">
+    <value>Έναρξη</value>
+  </data>
+  <data name="W.checklists.due.SeeAll" xml:space="preserve">
+    <value>Προβολή όλων των λιστών ελέγχου προς εκτέλεση</value>
+  </data>
+  <data name="W.checklists.due.NextDue" xml:space="preserve">
+    <value>Επόμενο άνοιγμα {0}</value>
+  </data>
+  <data name="W.checklists.compliance.Empty" xml:space="preserve">
+    <value>Καμία λίστα ελέγχου δεν είχε προθεσμία τις τελευταίες {0} ημέρες.</value>
+  </data>
+  <data name="W.checklists.compliance.OpenCompliance" xml:space="preserve">
+    <value>Άνοιγμα συμμόρφωσης</value>
+  </data>
+  <data name="W.checklists.compliance.CompletedLastDays" xml:space="preserve">
+    <value>ολοκληρώθηκαν τις τελευταίες {0} ημέρες</value>
+  </data>
+  <data name="W.checklists.compliance.Completed" xml:space="preserve">
+    <value>ολοκληρώθηκαν</value>
+  </data>
+  <data name="W.checklists.compliance.OnTime" xml:space="preserve">
+    <value>εγκαίρως</value>
+  </data>
+  <data name="W.checklists.compliance.Missed" xml:space="preserve">
+    <value>δεν εκτελέστηκαν</value>
+  </data>
+  <data name="W.checklists.compliance.Skipped" xml:space="preserve">
+    <value>παραλείφθηκαν</value>
+  </data>
+  <data name="W.checklists.compliance.FurthestBehind" xml:space="preserve">
+    <value>Μεγαλύτερη καθυστέρηση</value>
+  </data>
+  <data name="W.checklists.compliance.UnknownTarget" xml:space="preserve">
+    <value>Άγνωστο στοιχείο</value>
+  </data>
+  <data name="W.checklists.compliance.RateOf" xml:space="preserve">
+    <value>{0} · {1}/{2}</value>
+  </data>
+  <data name="W.checklists.compliance.MissedPerDay" xml:space="preserve">
+    <value>Χαμένοι έλεγχοι ανά ημέρα</value>
+  </data>
+  <data name="W.checklists.compliance.TrendAria" xml:space="preserve">
+    <value>Χαμένοι έλεγχοι ανά ημέρα: {0} χαμένοι σε {1} ημέρες</value>
+  </data>
+  <data name="W.checklists.compliance.MissedValue" xml:space="preserve">
+    <value>{0} δεν εκτελέστηκαν</value>
+  </data>
+  <data name="W.checklists.compliance.Restricted" xml:space="preserve">
+    <value>Ορισμένα αποτελέσματα βρίσκονται εκτός της πρόσβασής σας και δεν υπολογίζονται.</value>
+  </data>
+  <data name="W.workOrders.stats.Empty" xml:space="preserve">
+    <value>Καμία εντολή εργασίας σε αυτή την περίοδο.</value>
+  </data>
+  <data name="W.workOrders.stats.OpenWorkOrders" xml:space="preserve">
+    <value>Ανοιχτές εντολές εργασίας</value>
+  </data>
+  <data name="W.workOrders.stats.Open" xml:space="preserve">
+    <value>ανοιχτές</value>
+  </data>
+  <data name="W.workOrders.stats.Overdue" xml:space="preserve">
+    <value>εκπρόθεσμες</value>
+  </data>
+  <data name="W.workOrders.stats.PreventiveOnTime" xml:space="preserve">
+    <value>PM εγκαίρως</value>
+  </data>
+  <data name="W.workOrders.stats.PreventiveOfDue" xml:space="preserve">
+    <value>{0} από {1} εντολές προληπτικής συντήρησης ολοκληρώθηκαν εγκαίρως</value>
+  </data>
+  <data name="W.workOrders.stats.Mttr" xml:space="preserve">
+    <value>μέσος χρόνος επισκευής</value>
+  </data>
+  <data name="W.workOrders.stats.OpenByPriority" xml:space="preserve">
+    <value>Ανοιχτές ανά προτεραιότητα</value>
+  </data>
+  <data name="W.workOrders.stats.Priority0" xml:space="preserve">
+    <value>Χαμηλή</value>
+  </data>
+  <data name="W.workOrders.stats.Priority1" xml:space="preserve">
+    <value>Κανονική</value>
+  </data>
+  <data name="W.workOrders.stats.Priority2" xml:space="preserve">
+    <value>Υψηλή</value>
+  </data>
+  <data name="W.workOrders.stats.Priority3" xml:space="preserve">
+    <value>Έκτακτη ανάγκη</value>
+  </data>
+  <data name="W.workOrders.stats.Downtime" xml:space="preserve">
+    <value>Χρόνος ακινησίας {0}</value>
+  </data>
+  <data name="W.workOrders.stats.SlaBreaches" xml:space="preserve">
+    <value>{0} παραβιάσεις SLA</value>
+  </data>
+  <data name="W.workOrders.stats.LastDays" xml:space="preserve">
+    <value>Τελευταίες {0} ημέρες</value>
+  </data>
+  <data name="W.workOrders.stats.OpenReports" xml:space="preserve">
+    <value>Αναφορές</value>
+  </data>
+  <data name="W.workOrders.mine.Empty" xml:space="preserve">
+    <value>Καμία ανοιχτή εντολή εργασίας δεν σας έχει ανατεθεί.</value>
+  </data>
+  <data name="W.workOrders.mine.OpenWorkOrders" xml:space="preserve">
+    <value>Ανοιχτές εντολές εργασίας</value>
+  </data>
+  <data name="W.workOrders.mine.Untitled" xml:space="preserve">
+    <value>Εντολή εργασίας</value>
+  </data>
+  <data name="W.workOrders.mine.Priority0" xml:space="preserve">
+    <value>Χαμηλή</value>
+  </data>
+  <data name="W.workOrders.mine.Priority1" xml:space="preserve">
+    <value>Κανονική</value>
+  </data>
+  <data name="W.workOrders.mine.Priority2" xml:space="preserve">
+    <value>Υψηλή</value>
+  </data>
+  <data name="W.workOrders.mine.Priority3" xml:space="preserve">
+    <value>Έκτακτη ανάγκη</value>
+  </data>
+  <data name="W.workOrders.mine.Status0" xml:space="preserve">
+    <value>Ζητήθηκε</value>
+  </data>
+  <data name="W.workOrders.mine.Status1" xml:space="preserve">
+    <value>Αποδεκτή</value>
+  </data>
+  <data name="W.workOrders.mine.Status2" xml:space="preserve">
+    <value>Ανατεθειμένη</value>
+  </data>
+  <data name="W.workOrders.mine.Status3" xml:space="preserve">
+    <value>Σε εξέλιξη</value>
+  </data>
+  <data name="W.workOrders.mine.Status4" xml:space="preserve">
+    <value>Σε αναστολή</value>
+  </data>
+  <data name="W.workOrders.mine.Status5" xml:space="preserve">
+    <value>Ολοκληρωμένη</value>
+  </data>
+  <data name="W.workOrders.mine.Status6" xml:space="preserve">
+    <value>Κλειστή</value>
+  </data>
+  <data name="W.workOrders.mine.Status7" xml:space="preserve">
+    <value>Απορριφθείσα</value>
+  </data>
+  <data name="W.workOrders.mine.Status8" xml:space="preserve">
+    <value>Διπλότυπη</value>
+  </data>
+  <data name="W.workOrders.mine.Status9" xml:space="preserve">
+    <value>Ακυρωμένη</value>
+  </data>
+  <data name="W.workOrders.mine.OverdueOn" xml:space="preserve">
+    <value>Εκπρόθεσμη · {0}</value>
+  </data>
+  <data name="W.workOrders.mine.DueOn" xml:space="preserve">
+    <value>Προθεσμία {0}</value>
+  </data>
+  <data name="W.workOrders.mine.SeeAll" xml:space="preserve">
+    <value>Όλες οι εντολές εργασίας μου</value>
+  </data>
+  <data name="W.inventory.alerts.UnknownItem" xml:space="preserve">
+    <value>Είδος</value>
+  </data>
+  <data name="W.inventory.alerts.Type0" xml:space="preserve">
+    <value>Χαμηλό απόθεμα</value>
+  </data>
+  <data name="W.inventory.alerts.Type1" xml:space="preserve">
+    <value>Λήγει σύντομα</value>
+  </data>
+  <data name="W.inventory.alerts.Type2" xml:space="preserve">
+    <value>Ληγμένο</value>
+  </data>
+  <data name="W.inventory.alerts.Type3" xml:space="preserve">
+    <value>Εκπρόθεσμες επιστροφές</value>
+  </data>
+  <data name="W.inventory.alerts.Type4" xml:space="preserve">
+    <value>Αποχωρήσαντες κάτοχοι</value>
+  </data>
+  <data name="W.inventory.alerts.ExpiresOn" xml:space="preserve">
+    <value>Λήγει {0}</value>
+  </data>
+  <data name="W.inventory.alerts.DueOn" xml:space="preserve">
+    <value>Προθεσμία {0}</value>
+  </data>
+  <data name="W.inventory.alerts.Quantity" xml:space="preserve">
+    <value>Ποσότ. {0}</value>
+  </data>
+  <data name="W.inventory.alerts.TimesCount" xml:space="preserve">
+    <value>×{0}</value>
+  </data>
+  <data name="W.inventory.alerts.LegacyEmpty" xml:space="preserve">
+    <value>Κανένα είδος δεν έχει εξαντληθεί.</value>
+  </data>
+  <data name="W.inventory.alerts.OpenInventory" xml:space="preserve">
+    <value>Άνοιγμα αποθεμάτων</value>
+  </data>
+  <data name="W.inventory.alerts.OutOfStock" xml:space="preserve">
+    <value>εξαντλημένα</value>
+  </data>
+  <data name="W.inventory.alerts.LegacyNote" xml:space="preserve">
+    <value>Αρχικοποιήστε τα αποθέματα για ειδοποιήσεις λήξης και επιστροφής</value>
+  </data>
+  <data name="W.inventory.alerts.Empty" xml:space="preserve">
+    <value>Καμία ανοιχτή ειδοποίηση αποθέματος.</value>
+  </data>
+  <data name="W.inventory.alerts.OpenAlerts" xml:space="preserve">
+    <value>Ανοιχτές ειδοποιήσεις</value>
+  </data>
+  <data name="W.inventory.alerts.Truncated" xml:space="preserve">
+    <value>Οι μετρήσεις είναι μερικές: ανοίξτε τη σελίδα ειδοποιήσεων για την πλήρη λίστα.</value>
+  </data>
+  <data name="W.inventory.valuation.NotInitialized" xml:space="preserve">
+    <value>Αρχικοποιήστε τα αποθέματα για να δείτε την αξία τους.</value>
+  </data>
+  <data name="W.inventory.valuation.OpenInventory" xml:space="preserve">
+    <value>Άνοιγμα αποθεμάτων</value>
+  </data>
+  <data name="W.inventory.valuation.Empty" xml:space="preserve">
+    <value>Δεν υπάρχει διαθέσιμο απόθεμα.</value>
+  </data>
+  <data name="W.inventory.valuation.OpenValuation" xml:space="preserve">
+    <value>Άνοιγμα αποτίμησης</value>
+  </data>
+  <data name="W.inventory.valuation.OnHand" xml:space="preserve">
+    <value>διαθέσιμο</value>
+  </data>
+  <data name="W.inventory.valuation.ByLocation" xml:space="preserve">
+    <value>Ανά τοποθεσία</value>
+  </data>
+  <data name="W.inventory.valuation.UnnamedLocation" xml:space="preserve">
+    <value>Τοποθεσία</value>
+  </data>
+  <data name="W.inventory.valuation.NegativeStock" xml:space="preserve">
+    <value>Ορισμένα αποθέματα είναι κάτω από το μηδέν· οι αξίες μπορεί να είναι υποεκτιμημένες.</value>
+  </data>
+  <data name="W.inventory.valuation.Uncosted" xml:space="preserve">
+    <value>{0} γραμμές δεν έχουν κόστος και δεν περιλαμβάνονται.</value>
+  </data>
+  <data name="W.inventory.valuation.AsOf" xml:space="preserve">
+    <value>Στις {0}</value>
+  </data>
+  <data name="W.certifications.expiry.Empty" xml:space="preserve">
+    <value>Καμία πιστοποίηση δεν χρειάζεται προσοχή τις επόμενες {0} ημέρες.</value>
+  </data>
+  <data name="W.certifications.expiry.OpenCertifications" xml:space="preserve">
+    <value>Άνοιγμα πιστοποιήσεων</value>
+  </data>
+  <data name="W.certifications.expiry.Expired" xml:space="preserve">
+    <value>ληγμένες</value>
+  </data>
+  <data name="W.certifications.expiry.ExpiringWithin" xml:space="preserve">
+    <value>λήγουν σε {0} ημέρες</value>
+  </data>
+  <data name="W.certifications.expiry.Suspended" xml:space="preserve">
+    <value>σε αναστολή</value>
+  </data>
+  <data name="W.certifications.expiry.ToVerify" xml:space="preserve">
+    <value>προς επαλήθευση</value>
+  </data>
+  <data name="W.certifications.expiry.UnknownType" xml:space="preserve">
+    <value>Πιστοποίηση</value>
+  </data>
+  <data name="W.certifications.expiry.UnknownSubject" xml:space="preserve">
+    <value>Άγνωστο</value>
+  </data>
+  <data name="W.certifications.expiry.NoExpiry" xml:space="preserve">
+    <value>Χωρίς ημερομηνία λήξης</value>
+  </data>
+  <data name="W.certifications.expiry.ExpiredDaysAgo" xml:space="preserve">
+    <value>Έληξε πριν από {0} ημέρες</value>
+  </data>
+  <data name="W.certifications.expiry.ExpiresToday" xml:space="preserve">
+    <value>Λήγει σήμερα</value>
+  </data>
+  <data name="W.certifications.expiry.ExpiresInDays" xml:space="preserve">
+    <value>Λήγει σε {0} ημέρες</value>
+  </data>
+  <data name="W.certifications.mine.Empty" xml:space="preserve">
+    <value>Καμία από τις πιστοποιήσεις σας δεν λήγει τις επόμενες {0} ημέρες.</value>
+  </data>
+  <data name="W.certifications.mine.OpenMine" xml:space="preserve">
+    <value>Οι πιστοποιήσεις μου</value>
+  </data>
+  <data name="W.certifications.mine.Unnamed" xml:space="preserve">
+    <value>Πιστοποίηση</value>
+  </data>
+  <data name="W.certifications.mine.SeeAll" xml:space="preserve">
+    <value>Όλες οι πιστοποιήσεις μου</value>
+  </data>
+  <data name="W.certifications.mine.ExpiredDaysAgo" xml:space="preserve">
+    <value>Έληξε πριν από {0} ημέρες</value>
+  </data>
+  <data name="W.certifications.mine.ExpiresToday" xml:space="preserve">
+    <value>Λήγει σήμερα</value>
+  </data>
+  <data name="W.certifications.mine.ExpiresInDays" xml:space="preserve">
+    <value>Λήγει σε {0} ημέρες</value>
+  </data>
+  <data name="W.records.overview.Drafts" xml:space="preserve">
+    <value>πρόχειρα</value>
+  </data>
+  <data name="W.records.overview.AwaitingReview" xml:space="preserve">
+    <value>σε αναμονή ελέγχου</value>
+  </data>
+  <data name="W.records.overview.Returned" xml:space="preserve">
+    <value>επιστραμμένα</value>
+  </data>
+  <data name="W.records.overview.Overdue" xml:space="preserve">
+    <value>εκπρόθεσμα</value>
+  </data>
+  <data name="W.records.overview.IncidentIncomplete" xml:space="preserve">
+    <value>ελλιπείς αναφορές συμβάντων</value>
+  </data>
+  <data name="W.records.overview.IncidentAwaitingReview" xml:space="preserve">
+    <value>αναφορές συμβάντων προς έλεγχο</value>
+  </data>
+  <data name="W.records.overview.DisclosuresOpen" xml:space="preserve">
+    <value>ανοιχτά αιτήματα πρόσβασης</value>
+  </data>
+  <data name="W.records.overview.DisclosuresOverdue" xml:space="preserve">
+    <value>εκπρόθεσμα αιτήματα πρόσβασης</value>
+  </data>
+  <data name="W.records.overview.Warnings" xml:space="preserve">
+    <value>Ορισμένες μετρήσεις δεν είναι διαθέσιμες ({0})· δείτε τον πίνακα Αρχείων.</value>
+  </data>
+  <data name="W.records.myWork.Empty" xml:space="preserve">
+    <value>Κανένα αρχείο δεν περιμένει εσάς.</value>
+  </data>
+  <data name="W.records.myWork.OpenRecords" xml:space="preserve">
+    <value>Άνοιγμα αρχείων</value>
+  </data>
+  <data name="W.records.myWork.AssignedToMe" xml:space="preserve">
+    <value>Ανατεθειμένα σε εμένα ({0})</value>
+  </data>
+  <data name="W.records.myWork.PurposeComplete" xml:space="preserve">
+    <value>Ολοκληρώστε το αρχείο</value>
+  </data>
+  <data name="W.records.myWork.PurposeReview" xml:space="preserve">
+    <value>Ελέγξτε το αρχείο</value>
+  </data>
+  <data name="W.records.myWork.PurposeCorrect" xml:space="preserve">
+    <value>Διορθώστε το αρχείο</value>
+  </data>
+  <data name="W.records.myWork.PurposeAttach" xml:space="preserve">
+    <value>Επισυνάψτε έγγραφα</value>
+  </data>
+  <data name="W.records.myWork.PurposeAcknowledge" xml:space="preserve">
+    <value>Επιβεβαιώστε το αρχείο</value>
+  </data>
+  <data name="W.records.myWork.PurposeOther" xml:space="preserve">
+    <value>Εργασία αρχείου</value>
+  </data>
+  <data name="W.records.myWork.Via2" xml:space="preserve">
+    <value>μέσω της μονάδας σας</value>
+  </data>
+  <data name="W.records.myWork.Via3" xml:space="preserve">
+    <value>μέσω της ομάδας σας</value>
+  </data>
+  <data name="W.records.myWork.Via4" xml:space="preserve">
+    <value>μέσω του ρόλου διοίκησής σας</value>
+  </data>
+  <data name="W.records.myWork.Via5" xml:space="preserve">
+    <value>μέσω του κέντρου αποστολής</value>
+  </data>
+  <data name="W.records.myWork.Acknowledged" xml:space="preserve">
+    <value>επιβεβαιώθηκε</value>
+  </data>
+  <data name="W.records.myWork.OverdueSince" xml:space="preserve">
+    <value>Εκπρόθεσμο από {0}</value>
+  </data>
+  <data name="W.records.myWork.DueOn" xml:space="preserve">
+    <value>Προθεσμία {0}</value>
+  </data>
+  <data name="W.records.myWork.MyRecords" xml:space="preserve">
+    <value>Τα ημιτελή αρχεία μου ({0})</value>
+  </data>
+  <data name="W.records.myWork.NoNumber" xml:space="preserve">
+    <value>Πρόχειρο</value>
+  </data>
+  <data name="W.records.myWork.State1" xml:space="preserve">
+    <value>Πρόχειρο</value>
+  </data>
+  <data name="W.records.myWork.State2" xml:space="preserve">
+    <value>Έτοιμο για έλεγχο</value>
+  </data>
+  <data name="W.records.myWork.State3" xml:space="preserve">
+    <value>Επιστράφηκε</value>
+  </data>
+  <data name="W.records.myWork.State4" xml:space="preserve">
+    <value>Εγκρίθηκε</value>
+  </data>
+  <data name="W.records.myWork.ReviewDue" xml:space="preserve">
+    <value>Έλεγχος έως {0}</value>
+  </data>
+  <data name="W.records.myWork.Started" xml:space="preserve">
+    <value>Ξεκίνησε {0}</value>
+  </data>
+  <data name="W.records.neris.Empty" xml:space="preserve">
+    <value>Καμία αναφορά συμβάντος δεν βρίσκεται στη διαδικασία υποβολής.</value>
+  </data>
+  <data name="W.records.neris.OpenRecords" xml:space="preserve">
+    <value>Άνοιγμα πίνακα Αρχείων</value>
+  </data>
+  <data name="W.records.neris.Incomplete" xml:space="preserve">
+    <value>ελλιπείς</value>
+  </data>
+  <data name="W.records.neris.AwaitingReview" xml:space="preserve">
+    <value>σε αναμονή ελέγχου</value>
+  </data>
+  <data name="W.records.neris.Submitted" xml:space="preserve">
+    <value>υποβλήθηκαν</value>
+  </data>
+  <data name="W.records.neris.Accepted" xml:space="preserve">
+    <value>έγιναν αποδεκτές</value>
+  </data>
+  <data name="W.records.neris.Rejected" xml:space="preserve">
+    <value>απορρίφθηκαν</value>
+  </data>
+  <data name="W.records.qualityReview.Empty" xml:space="preserve">
+    <value>Κανένα αρχείο δεν περιμένει έλεγχο ποιότητας.</value>
+  </data>
+  <data name="W.records.qualityReview.OpenQuality" xml:space="preserve">
+    <value>Άνοιγμα ελέγχου ποιότητας</value>
+  </data>
+  <data name="W.records.qualityReview.Pending" xml:space="preserve">
+    <value>σε εκκρεμότητα</value>
+  </data>
+  <data name="W.records.qualityReview.AssignedToMe" xml:space="preserve">
+    <value>ανατεθειμένα σε εμένα</value>
+  </data>
+  <data name="W.records.qualityReview.NoNumber" xml:space="preserve">
+    <value>Αρχείο</value>
+  </data>
+  <data name="W.records.qualityReview.Sampled" xml:space="preserve">
+    <value>Δειγματοληψία {0}</value>
+  </data>
+  <data name="W.records.qualityReview.Yours" xml:space="preserve">
+    <value>δικό σας</value>
+  </data>
+  <data name="W.records.qualityReview.SeeAll" xml:space="preserve">
+    <value>Όλοι οι εκκρεμείς έλεγχοι</value>
+  </data>
+  <data name="W.records.prevention.Occupancies" xml:space="preserve">
+    <value>Κτίρια</value>
+  </data>
+  <data name="W.records.prevention.OccupanciesCount" xml:space="preserve">
+    <value>κτίρια</value>
+  </data>
+  <data name="W.records.prevention.ReviewsOverdue" xml:space="preserve">
+    <value>εκπρόθεσμες αναθεωρήσεις</value>
+  </data>
+  <data name="W.records.prevention.Inspections" xml:space="preserve">
+    <value>Επιθεωρήσεις</value>
+  </data>
+  <data name="W.records.prevention.InspectionsDue" xml:space="preserve">
+    <value>επιθεωρήσεις προς εκτέλεση</value>
+  </data>
+  <data name="W.records.prevention.InspectionsScheduled" xml:space="preserve">
+    <value>προγραμματισμένες</value>
+  </data>
+  <data name="W.records.prevention.ViolationsOpen" xml:space="preserve">
+    <value>ανοιχτές παραβάσεις</value>
+  </data>
+  <data name="W.records.prevention.ViolationsOverdue" xml:space="preserve">
+    <value>εκπρόθεσμες παραβάσεις</value>
+  </data>
+  <data name="W.records.prevention.Hydrants" xml:space="preserve">
+    <value>Πυροσβεστικοί κρουνοί</value>
+  </data>
+  <data name="W.records.prevention.OutOfService" xml:space="preserve">
+    <value>εκτός λειτουργίας</value>
+  </data>
+  <data name="W.records.prevention.TestDue" xml:space="preserve">
+    <value>προς δοκιμή</value>
+  </data>
+  <data name="W.records.prevention.HydrantsCount" xml:space="preserve">
+    <value>κρουνοί</value>
+  </data>
+  <data name="W.records.prevention.Permits" xml:space="preserve">
+    <value>Άδειες</value>
+  </data>
+  <data name="W.records.prevention.AwaitingReview" xml:space="preserve">
+    <value>σε αναμονή ελέγχου</value>
+  </data>
+  <data name="W.records.prevention.ExpiringSoon" xml:space="preserve">
+    <value>λήγουν σύντομα</value>
+  </data>
+  <data name="W.records.prevention.PermitsActive" xml:space="preserve">
+    <value>ενεργές άδειες</value>
+  </data>
+  <data name="W.records.prevention.Crr" xml:space="preserve">
+    <value>Μείωση κοινοτικού κινδύνου</value>
+  </data>
+  <data name="W.records.prevention.Activities90" xml:space="preserve">
+    <value>δραστηριότητες (90 ημέρες)</value>
+  </data>
+  <data name="W.records.prevention.Alarms90" xml:space="preserve">
+    <value>ανιχνευτές που εγκαταστάθηκαν (90 ημέρες)</value>
+  </data>
+  <data name="W.records.prevention.Investigations" xml:space="preserve">
+    <value>Έρευνες</value>
+  </data>
+  <data name="W.records.prevention.CasesOpen" xml:space="preserve">
+    <value>ανοιχτές υποθέσεις</value>
+  </data>
+  <data name="W.records.prevention.NoModules" xml:space="preserve">
+    <value>Καμία ενότητα πρόληψης δεν είναι ενεργοποιημένη.</value>
+  </data>
+  <data name="W.records.prevention.OpenRecords" xml:space="preserve">
+    <value>Άνοιγμα Αρχείων</value>
+  </data>
+  <data name="W.records.hydrants.MarkerSince" xml:space="preserve">
+    <value>Κρουνός {0} · εκτός λειτουργίας από {1}</value>
+  </data>
+  <data name="W.records.hydrants.NoNumber" xml:space="preserve">
+    <value>(χωρίς αριθμό)</value>
+  </data>
+  <data name="W.records.hydrants.Marker" xml:space="preserve">
+    <value>Κρουνός {0} · εκτός λειτουργίας</value>
+  </data>
+  <data name="W.records.hydrants.OutOfService" xml:space="preserve">
+    <value>εκτός λειτουργίας</value>
+  </data>
+  <data name="W.records.hydrants.TestDue" xml:space="preserve">
+    <value>προς δοκιμή</value>
+  </data>
+  <data name="W.records.hydrants.AllInService" xml:space="preserve">
+    <value>Όλοι οι κρουνοί λειτουργούν.</value>
+  </data>
+  <data name="W.records.hydrants.OpenHydrants" xml:space="preserve">
+    <value>Άνοιγμα κρουνών</value>
+  </data>
+  <data name="W.records.hydrants.MapAria" xml:space="preserve">
+    <value>Χάρτης με {0} κρουνούς εκτός λειτουργίας</value>
+  </data>
+  <data name="W.records.hydrants.NoPositions" xml:space="preserve">
+    <value>Οι κρουνοί εκτός λειτουργίας δεν έχουν θέση στον χάρτη.</value>
+  </data>
+  <data name="W.records.hydrants.MappedOf" xml:space="preserve">
+    <value>Εμφανίζονται {0} από {1} στον χάρτη.</value>
+  </data>
+  <data name="W.records.crr.Empty" xml:space="preserve">
+    <value>Καμία δραστηριότητα μείωσης κοινοτικού κινδύνου φέτος.</value>
+  </data>
+  <data name="W.records.crr.OpenCrr" xml:space="preserve">
+    <value>Άνοιγμα μείωσης κοινοτικού κινδύνου</value>
+  </data>
+  <data name="W.records.crr.AlarmsThisYear" xml:space="preserve">
+    <value>ανιχνευτές που εγκαταστάθηκαν φέτος</value>
+  </data>
+  <data name="W.records.crr.Activities" xml:space="preserve">
+    <value>δραστηριότητες</value>
+  </data>
+  <data name="W.records.crr.OpenRequests" xml:space="preserve">
+    <value>ανοιχτά αιτήματα ανιχνευτών</value>
+  </data>
+  <data name="W.records.crr.Smoke" xml:space="preserve">
+    <value>Καπνός</value>
+  </data>
+  <data name="W.records.crr.Co" xml:space="preserve">
+    <value>CO</value>
+  </data>
+  <data name="W.records.crr.Combo" xml:space="preserve">
+    <value>Συνδυαστικός καπνού/CO</value>
+  </data>
+  <data name="W.records.investigations.Empty" xml:space="preserve">
+    <value>Δεν έχετε ανοιχτές υποθέσεις έρευνας.</value>
+  </data>
+  <data name="W.records.investigations.OpenCases" xml:space="preserve">
+    <value>Ανοιχτές έρευνες</value>
+  </data>
+  <data name="W.records.investigations.NoNumber" xml:space="preserve">
+    <value>Υπόθεση</value>
+  </data>
+  <data name="W.records.investigations.State1" xml:space="preserve">
+    <value>Ανοιχτή</value>
+  </data>
+  <data name="W.records.investigations.State2" xml:space="preserve">
+    <value>Ενεργή</value>
+  </data>
+  <data name="W.records.investigations.State3" xml:space="preserve">
+    <value>Σε αναμονή ελέγχου</value>
+  </data>
+  <data name="W.records.investigations.State4" xml:space="preserve">
+    <value>Κλειστή</value>
+  </data>
+  <data name="W.records.investigations.Opened" xml:space="preserve">
+    <value>Άνοιξε {0}</value>
+  </data>
+  <data name="W.records.investigations.SeeAll" xml:space="preserve">
+    <value>Όλες οι {0} ανοιχτές υποθέσεις</value>
+  </data>
+  <data name="W.records.analytics.OverdueNow" xml:space="preserve">
+    <value>εκπρόθεσμα τώρα</value>
+  </data>
+  <data name="W.records.analytics.MedianToFinalize" xml:space="preserve">
+    <value>διάμεσος χρόνος οριστικοποίησης</value>
+  </data>
+  <data name="W.records.analytics.MedianReview" xml:space="preserve">
+    <value>διάμεσος χρόνος ελέγχου</value>
+  </data>
+  <data name="W.records.analytics.ReturnRate" xml:space="preserve">
+    <value>ποσοστό επιστροφής</value>
+  </data>
+  <data name="W.records.analytics.OpenDrafts" xml:space="preserve">
+    <value>ανοιχτά πρόχειρα</value>
+  </data>
+  <data name="W.records.analytics.AwaitingReview" xml:space="preserve">
+    <value>σε αναμονή ελέγχου</value>
+  </data>
+  <data name="W.records.analytics.WentOverdue" xml:space="preserve">
+    <value>έγιναν εκπρόθεσμα</value>
+  </data>
+  <data name="W.records.analytics.RecordsPerMonth" xml:space="preserve">
+    <value>Αρχεία ανά μήνα</value>
+  </data>
+  <data name="W.records.analytics.TrendAria" xml:space="preserve">
+    <value>Αρχεία ανά μήνα: {0} αρχεία σε {1} μήνες</value>
+  </data>
+  <data name="W.records.analytics.GroupScoped" xml:space="preserve">
+    <value>Τα στοιχεία καλύπτουν μόνο τα αρχεία που μπορείτε να ανοίξετε.</value>
+  </data>
+  <data name="W.records.analytics.Truncated" xml:space="preserve">
+    <value>Πάρα πολλά αρχεία για μία ανάγνωση· περιορίστε την περίοδο.</value>
+  </data>
+  <data name="W.records.legalHolds.Empty" xml:space="preserve">
+    <value>Δεν υπάρχουν ενεργές δεσμεύσεις διατήρησης.</value>
+  </data>
+  <data name="W.records.legalHolds.OpenHolds" xml:space="preserve">
+    <value>Άνοιγμα δεσμεύσεων διατήρησης</value>
+  </data>
+  <data name="W.records.legalHolds.Period" xml:space="preserve">
+    <value>{0} – {1}</value>
+  </data>
+  <data name="W.records.legalHolds.ActiveHolds" xml:space="preserve">
+    <value>ενεργές δεσμεύσεις</value>
+  </data>
+  <data name="W.records.legalHolds.OnRecords" xml:space="preserve">
+    <value>{0} σε μεμονωμένα αρχεία</value>
+  </data>
+  <data name="W.records.legalHolds.Newest" xml:space="preserve">
+    <value>νεότερη {0}</value>
+  </data>
+  <data name="W.records.legalHolds.RecordHold" xml:space="preserve">
+    <value>Δέσμευση σε αρχείο</value>
+  </data>
+  <data name="W.records.legalHolds.ScopeHold" xml:space="preserve">
+    <value>Δέσμευση ανά τύπο ή περίοδο</value>
+  </data>
+  <data name="W.records.legalHolds.Placed" xml:space="preserve">
+    <value>Επιβλήθηκε {0}</value>
+  </data>
+  <data name="W.records.deployments.Empty" xml:space="preserve">
+    <value>Δεν υπάρχουν ανοιχτές αποστολές.</value>
+  </data>
+  <data name="W.records.deployments.OpenDeployments" xml:space="preserve">
+    <value>Άνοιγμα αναφορών αποστολών</value>
+  </data>
+  <data name="W.records.deployments.NoNumber" xml:space="preserve">
+    <value>Αποστολή</value>
+  </data>
+  <data name="W.records.deployments.Status1" xml:space="preserve">
+    <value>Ανοιχτή</value>
+  </data>
+  <data name="W.records.deployments.Status2" xml:space="preserve">
+    <value>Κινητοποιήθηκε</value>
+  </data>
+  <data name="W.records.deployments.Status3" xml:space="preserve">
+    <value>Αποδεσμεύτηκε</value>
+  </data>
+  <data name="W.records.deployments.Status4" xml:space="preserve">
+    <value>Έκλεισε</value>
+  </data>
+  <data name="W.records.deployments.Incident" xml:space="preserve">
+    <value>Συμβάν {0}</value>
+  </data>
+  <data name="W.records.deployments.Mobilized" xml:space="preserve">
+    <value>Κινητοποιήθηκε {0}</value>
+  </data>
+  <data name="W.records.deployments.Created" xml:space="preserve">
+    <value>Δημιουργήθηκε {0}</value>
+  </data>
+  <data name="W.records.deployments.SeeAll" xml:space="preserve">
+    <value>Όλες οι {0} ανοιχτές αποστολές</value>
+  </data>
+  <data name="W.logs.recent.Type0" xml:space="preserve">
+    <value>Άλλο</value>
+  </data>
+  <data name="W.logs.recent.Type1" xml:space="preserve">
+    <value>Επέμβαση</value>
+  </data>
+  <data name="W.logs.recent.Type2" xml:space="preserve">
+    <value>Εκπαίδευση</value>
+  </data>
+  <data name="W.logs.recent.Type4" xml:space="preserve">
+    <value>Εργασία</value>
+  </data>
+  <data name="W.logs.recent.Type5" xml:space="preserve">
+    <value>Σύσκεψη</value>
+  </data>
+  <data name="W.logs.recent.Type6" xml:space="preserve">
+    <value>Ιατροδικαστής</value>
+  </data>
+  <data name="W.logs.recent.Type7" xml:space="preserve">
+    <value>Επανάκληση</value>
+  </data>
+  <data name="W.logs.recent.Empty" xml:space="preserve">
+    <value>Καμία καταγραφή τις τελευταίες {0} ημέρες.</value>
+  </data>
+  <data name="W.logs.recent.OpenLogs" xml:space="preserve">
+    <value>Άνοιγμα καταγραφών</value>
+  </data>
+  <data name="W.logs.recent.Newest" xml:space="preserve">
+    <value>Πιο πρόσφατες</value>
+  </data>
+  <data name="W.logs.recent.Started" xml:space="preserve">
+    <value>Ξεκίνησε {0}</value>
+  </data>
+  <data name="W.logs.recent.Total" xml:space="preserve">
+    <value>{0} καταγραφές τις τελευταίες {1} ημέρες</value>
+  </data>
+  <data name="W.logs.recent.TotalTruncated" xml:space="preserve">
+    <value>Περισσότερες από {0} καταγραφές τις τελευταίες {1} ημέρες</value>
+  </data>
+  <data name="W.checklists.compliance.MissedTotal" xml:space="preserve">
+    <value>{0} δεν εκτελέστηκαν σε αυτή την περίοδο</value>
+  </data>
+  <data name="W.deployments.active.Title" xml:space="preserve">
+    <value>Αποστολές</value>
+  </data>
+  <data name="W.deployments.active.Description" xml:space="preserve">
+    <value>Ανοιχτές αποστολές, με πρώτες όσες σας έχουν στη σύνθεση, μαζί με την κατάσταση και τις ημέρες αποστολής.</value>
+  </data>
+  <data name="W.deployments.active.Setting.maxRows" xml:space="preserve">
+    <value>Αποστολές προς εμφάνιση</value>
+  </data>
+  <data name="W.deployments.active.Open" xml:space="preserve">
+    <value>Ανοιχτές</value>
+  </data>
+  <data name="W.deployments.active.Mine" xml:space="preserve">
+    <value>Δικές μου</value>
+  </data>
+  <data name="W.deployments.active.Empty" xml:space="preserve">
+    <value>Δεν υπάρχουν ανοιχτές αποστολές.</value>
+  </data>
+  <data name="W.deployments.active.Status.Planned" xml:space="preserve">
+    <value>Προγραμματισμένη</value>
+  </data>
+  <data name="W.deployments.active.Status.Standby" xml:space="preserve">
+    <value>Σε επιφυλακή</value>
+  </data>
+  <data name="W.deployments.active.Status.Active" xml:space="preserve">
+    <value>Ενεργή</value>
+  </data>
+  <data name="W.deployments.active.Status.Demobilizing" xml:space="preserve">
+    <value>Σε αποκινητοποίηση</value>
+  </data>
+  <data name="W.deployments.timeReports.Title" xml:space="preserve">
+    <value>Αναφορές χρόνου</value>
+  </data>
+  <data name="W.deployments.timeReports.Description" xml:space="preserve">
+    <value>Ημερήσιες αναφορές χρόνου που περιμένουν έγκριση και εγκεκριμένες αναφορές που δεν έχουν ακόμη τιμολογηθεί.</value>
+  </data>
+  <data name="W.deployments.timeReports.AwaitingApproval" xml:space="preserve">
+    <value>Αναμένουν έγκριση</value>
+  </data>
+  <data name="W.deployments.timeReports.ApprovedUnbilled" xml:space="preserve">
+    <value>Εγκεκριμένες, χωρίς τιμολόγηση</value>
+  </data>
+  <data name="W.deployments.timeReports.OldestSince" xml:space="preserve">
+    <value>Παλαιότερη από {0}</value>
+  </data>
+  <data name="W.invoicing.receivables.Title" xml:space="preserve">
+    <value>Απαιτήσεις</value>
+  </data>
+  <data name="W.invoicing.receivables.Description" xml:space="preserve">
+    <value>Ανοιχτά υπόλοιπα τιμολογίων ανά ηλικία, ληξιπρόθεσμα σύνολα ανά νόμισμα και πρόχειρα που δεν έχουν σταλεί ακόμη.</value>
+  </data>
+  <data name="W.invoicing.receivables.Outstanding" xml:space="preserve">
+    <value>Ανεξόφλητα</value>
+  </data>
+  <data name="W.invoicing.receivables.Overdue" xml:space="preserve">
+    <value>Ληξιπρόθεσμα</value>
+  </data>
+  <data name="W.invoicing.receivables.OverdueCount" xml:space="preserve">
+    <value>Ληξιπρόθεσμα τιμολόγια</value>
+  </data>
+  <data name="W.invoicing.receivables.Drafts" xml:space="preserve">
+    <value>Πρόχειρα</value>
+  </data>
+  <data name="W.invoicing.receivables.ReadOnly" xml:space="preserve">
+    <value>Μόνο ανάγνωση: το πρόσθετο Business Operations δεν είναι πλέον ενεργό.</value>
+  </data>
+  <data name="W.invoicing.receivables.Bucket.Current" xml:space="preserve">
+    <value>Τρέχοντα</value>
+  </data>
+  <data name="W.invoicing.receivables.Bucket.1-30" xml:space="preserve">
+    <value>1-30 ημέρες</value>
+  </data>
+  <data name="W.invoicing.receivables.Bucket.31-60" xml:space="preserve">
+    <value>31-60 ημέρες</value>
+  </data>
+  <data name="W.invoicing.receivables.Bucket.61-90" xml:space="preserve">
+    <value>61-90 ημέρες</value>
+  </data>
+  <data name="W.invoicing.receivables.Bucket.90+" xml:space="preserve">
+    <value>90+ ημέρες</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Title" xml:space="preserve">
+    <value>Διαδικτυακές πληρωμές</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Description" xml:space="preserve">
+    <value>Αν οι πελάτες μπορούν να πληρώνουν τιμολόγια διαδικτυακά αυτή τη στιγμή και η κατάσταση του συνδεδεμένου λογαριασμού πληρωμών.</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Collecting" xml:space="preserve">
+    <value>Δέχεται διαδικτυακές πληρωμές</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.NotCollecting" xml:space="preserve">
+    <value>Δεν δέχεται διαδικτυακές πληρωμές</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Connected" xml:space="preserve">
+    <value>Συνδεδεμένος λογαριασμός</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.LastVerified" xml:space="preserve">
+    <value>Τελευταία επαλήθευση</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.ConnectionError" xml:space="preserve">
+    <value>Ο πάροχος πληρωμών ανέφερε πρόβλημα. Ανοίξτε τις ρυθμίσεις για λεπτομέρειες.</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Charges" xml:space="preserve">
+    <value>Χρεώσεις</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Payouts" xml:space="preserve">
+    <value>Εκταμιεύσεις</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Blocked.payments_not_available_in_region" xml:space="preserve">
+    <value>Οι διαδικτυακές πληρωμές δεν είναι διαθέσιμες σε αυτή την περιοχή.</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Blocked.payments_flag_off" xml:space="preserve">
+    <value>Οι διαδικτυακές πληρωμές δεν είναι ενεργοποιημένες για το τμήμα σας.</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Blocked.payments_addon_required" xml:space="preserve">
+    <value>Οι διαδικτυακές πληρωμές απαιτούν το πρόσθετο Business Operations.</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Blocked.payments_not_enabled_for_department" xml:space="preserve">
+    <value>Οι διαδικτυακές πληρωμές είναι απενεργοποιημένες στις ρυθμίσεις Τιμολόγησης.</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Blocked.payments_no_connection" xml:space="preserve">
+    <value>Δεν έχει συνδεθεί λογαριασμός πληρωμών.</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Blocked.payments_connection_not_ready" xml:space="preserve">
+    <value>Ο συνδεδεμένος λογαριασμός πληρωμών δεν είναι έτοιμος να δεχτεί πληρωμές.</value>
+  </data>
+  <data name="W.bids.pipeline.Title" xml:space="preserve">
+    <value>Προσφορές</value>
+  </data>
+  <data name="W.bids.pipeline.Description" xml:space="preserve">
+    <value>Προσφορές ανά κατάσταση και απεσταλμένες προσφορές που πρόκειται να λήξουν.</value>
+  </data>
+  <data name="W.bids.pipeline.Setting.expiringDays" xml:space="preserve">
+    <value>Λήγουν εντός (ημέρες)</value>
+  </data>
+  <data name="W.bids.pipeline.Draft" xml:space="preserve">
+    <value>Πρόχειρες</value>
+  </data>
+  <data name="W.bids.pipeline.Submitted" xml:space="preserve">
+    <value>Απεσταλμένες</value>
+  </data>
+  <data name="W.bids.pipeline.Accepted" xml:space="preserve">
+    <value>Ανατεθειμένες</value>
+  </data>
+  <data name="W.bids.pipeline.Declined" xml:space="preserve">
+    <value>Απορριφθείσες</value>
+  </data>
+  <data name="W.bids.pipeline.Expired" xml:space="preserve">
+    <value>Ληγμένες</value>
+  </data>
+  <data name="W.bids.pipeline.Withdrawn" xml:space="preserve">
+    <value>Αποσυρμένες</value>
+  </data>
+  <data name="W.contracts.expiring.Title" xml:space="preserve">
+    <value>Συμβάσεις</value>
+  </data>
+  <data name="W.contracts.expiring.Description" xml:space="preserve">
+    <value>Ενεργές συμβάσεις υπηρεσιών, όσες λήγουν σύντομα και έγγραφα συμμόρφωσης που έχουν λήξει ή πρόκειται να λήξουν.</value>
+  </data>
+  <data name="W.contracts.expiring.Setting.days" xml:space="preserve">
+    <value>Λήγουν εντός (ημέρες)</value>
+  </data>
+  <data name="W.contracts.expiring.Setting.maxRows" xml:space="preserve">
+    <value>Συμβάσεις προς εμφάνιση</value>
+  </data>
+  <data name="W.contracts.expiring.Active" xml:space="preserve">
+    <value>Ενεργές</value>
+  </data>
+  <data name="W.contracts.expiring.Expiring" xml:space="preserve">
+    <value>Λήγουν σύντομα</value>
+  </data>
+  <data name="W.contracts.expiring.DocumentsExpired" xml:space="preserve">
+    <value>Ληγμένα έγγραφα συμμόρφωσης</value>
+  </data>
+  <data name="W.contracts.expiring.DocumentsExpiring" xml:space="preserve">
+    <value>Έγγραφα συμμόρφωσης προς λήξη</value>
+  </data>
+  <data name="W.costRecovery.queue.Title" xml:space="preserve">
+    <value>Cal OES MARS</value>
+  </data>
+  <data name="W.costRecovery.queue.Description" xml:space="preserve">
+    <value>Στοιχεία Cal OES MARS που περιμένουν ενέργεια, με τα παλαιότερα πρώτα, και έλεγχος ετοιμότητας της υπηρεσίας για διαχειριστές.</value>
+  </data>
+  <data name="W.costRecovery.queue.Setting.maxRows" xml:space="preserve">
+    <value>Στοιχεία προς εμφάνιση</value>
+  </data>
+  <data name="W.costRecovery.queue.Total" xml:space="preserve">
+    <value>Στην ουρά</value>
+  </data>
+  <data name="W.costRecovery.queue.Mine" xml:space="preserve">
+    <value>Δικά μου</value>
+  </data>
+  <data name="W.costRecovery.queue.WithErrors" xml:space="preserve">
+    <value>Με σφάλματα</value>
+  </data>
+  <data name="W.costRecovery.queue.Ready" xml:space="preserve">
+    <value>Η υπηρεσία είναι έτοιμη</value>
+  </data>
+  <data name="W.costRecovery.queue.NotReady" xml:space="preserve">
+    <value>Η υπηρεσία δεν είναι έτοιμη</value>
+  </data>
+  <data name="W.costRecovery.queue.Blockers" xml:space="preserve">
+    <value>Εμπόδια</value>
+  </data>
+  <data name="W.costRecovery.queue.Warnings" xml:space="preserve">
+    <value>Προειδοποιήσεις</value>
+  </data>
+  <data name="W.costRecovery.queue.Returned" xml:space="preserve">
+    <value>Επιστράφηκαν</value>
+  </data>
+  <data name="W.costRecovery.queue.AwaitingLocalApproval" xml:space="preserve">
+    <value>Τιμολόγια σε αναμονή τοπικής έγκρισης</value>
+  </data>
+  <data name="W.costRecovery.queue.Empty" xml:space="preserve">
+    <value>Τίποτα δεν περιμένει ενέργεια.</value>
+  </data>
+  <data name="W.workforce.fieldCosting.Title" xml:space="preserve">
+    <value>Κόστος πεδίου</value>
+  </data>
+  <data name="W.workforce.fieldCosting.Description" xml:space="preserve">
+    <value>Οι τελευταίοι υπολογισμοί κόστους πεδίου με το πλήρες κόστος, το περιθώριο συνεισφοράς και τις ελλείπουσες εισόδους.</value>
+  </data>
+  <data name="W.workforce.fieldCosting.Setting.maxRows" xml:space="preserve">
+    <value>Υπολογισμοί προς εμφάνιση</value>
+  </data>
+  <data name="W.workforce.fieldCosting.LoadedCost" xml:space="preserve">
+    <value>Πλήρες κόστος</value>
+  </data>
+  <data name="W.workforce.fieldCosting.Margin" xml:space="preserve">
+    <value>Περιθώριο</value>
+  </data>
+  <data name="W.workforce.fieldCosting.MissingInputs" xml:space="preserve">
+    <value>Ελλείπουσες είσοδοι</value>
+  </data>
+  <data name="W.workforce.fieldCosting.Context.Bid" xml:space="preserve">
+    <value>Προσφορά</value>
+  </data>
+  <data name="W.workforce.fieldCosting.Context.Call" xml:space="preserve">
+    <value>Κλήση</value>
+  </data>
+  <data name="W.workforce.fieldCosting.Context.Deployment" xml:space="preserve">
+    <value>Αποστολή</value>
+  </data>
+  <data name="W.workforce.fieldCosting.Status.Draft" xml:space="preserve">
+    <value>Πρόχειρο</value>
+  </data>
+  <data name="W.workforce.fieldCosting.Status.NeedsReview" xml:space="preserve">
+    <value>Χρειάζεται έλεγχο</value>
+  </data>
+  <data name="W.workforce.fieldCosting.Status.Frozen" xml:space="preserve">
+    <value>Παγωμένο</value>
+  </data>
+  <data name="W.workforce.fieldCosting.Status.Superseded" xml:space="preserve">
+    <value>Αντικατεστημένο</value>
+  </data>
+  <data name="W.workforce.fieldCosting.Empty" xml:space="preserve">
+    <value>Δεν υπάρχουν ακόμη υπολογισμοί κόστους.</value>
+  </data>
+  <data name="W.workforce.payData.Title" xml:space="preserve">
+    <value>Πληρότητα δεδομένων αμοιβών</value>
+  </data>
+  <data name="W.workforce.payData.Description" xml:space="preserve">
+    <value>Πόσο πλήρης είναι η αναφορά δεδομένων αμοιβών Καλιφόρνιας για το τελευταίο έτος αναφοράς: απαντήσεις που συλλέχθηκαν, ανοιχτές εκτελέσεις και εξαιρέσεις.</value>
+  </data>
+  <data name="W.workforce.payData.ReportingYear" xml:space="preserve">
+    <value>Έτος αναφοράς {0}</value>
+  </data>
+  <data name="W.workforce.payData.Responses" xml:space="preserve">
+    <value>Απαντήσεις: {0} από {1} εργαζόμενους</value>
+  </data>
+  <data name="W.workforce.payData.Due" xml:space="preserve">
+    <value>Προθεσμία {0}</value>
+  </data>
+  <data name="W.workforce.payData.OpenRuns" xml:space="preserve">
+    <value>Ανοιχτές εκτελέσεις</value>
+  </data>
+  <data name="W.workforce.payData.Exceptions" xml:space="preserve">
+    <value>Ανεπίλυτες εξαιρέσεις</value>
+  </data>
+  <data name="W.workforce.payData.AnnualFactsMissing" xml:space="preserve">
+    <value>Ελλείποντα ετήσια στοιχεία</value>
+  </data>
+  <data name="W.workforce.payData.Certified" xml:space="preserve">
+    <value>Πιστοποιημένο</value>
+  </data>
+  <data name="W.ibo.Status.Preparing" xml:space="preserve">
+    <value>Σε προετοιμασία</value>
+  </data>
+  <data name="W.ibo.Status.Active" xml:space="preserve">
+    <value>Ενεργό</value>
+  </data>
+  <data name="W.ibo.Status.Demobilizing" xml:space="preserve">
+    <value>Σε αποκινητοποίηση</value>
+  </data>
+  <data name="W.ibo.Status.Closed" xml:space="preserve">
+    <value>Κλειστό</value>
+  </data>
+  <data name="W.ibo.Status.Sealed" xml:space="preserve">
+    <value>Σφραγισμένο</value>
+  </data>
+  <data name="W.ibo.Kind.Incident" xml:space="preserve">
+    <value>Συμβάν</value>
+  </data>
+  <data name="W.ibo.Kind.Complex" xml:space="preserve">
+    <value>Σύμπλεγμα</value>
+  </data>
+  <data name="W.ibo.Kind.PlannedEvent" xml:space="preserve">
+    <value>Προγραμματισμένη εκδήλωση</value>
+  </data>
+  <data name="W.ibo.Kind.EocActivation" xml:space="preserve">
+    <value>Ενεργοποίηση EOC</value>
+  </data>
+  <data name="W.ibo.ReadOnly" xml:space="preserve">
+    <value>Μόνο ανάγνωση: το πρόσθετο Incident Back Office δεν είναι πλέον ενεργό.</value>
+  </data>
+  <data name="W.ibo.NoActivation" xml:space="preserve">
+    <value>Κανένα ανοιχτό συμβάν.</value>
+  </data>
+  <data name="W.ibo.Exercise" xml:space="preserve">
+    <value>Άσκηση</value>
+  </data>
+  <data name="W.ibo.activations.Title" xml:space="preserve">
+    <value>Ενεργά συμβάντα</value>
+  </data>
+  <data name="W.ibo.activations.Description" xml:space="preserve">
+    <value>Ανοιχτά συμβάντα με την τρέχουσα περίοδο επιχειρήσεων και τη θέση που κατέχετε.</value>
+  </data>
+  <data name="W.ibo.activations.Setting.maxRows" xml:space="preserve">
+    <value>Συμβάντα προς εμφάνιση</value>
+  </data>
+  <data name="W.ibo.activations.Period" xml:space="preserve">
+    <value>Περίοδος {0}</value>
+  </data>
+  <data name="W.ibo.activations.MyPosition" xml:space="preserve">
+    <value>Η θέση μου</value>
+  </data>
+  <data name="W.ibo.activations.Empty" xml:space="preserve">
+    <value>Κανένα ανοιχτό συμβάν.</value>
+  </data>
+  <data name="W.ibo.desk.Title" xml:space="preserve">
+    <value>Γραφείο συμβάντος</value>
+  </data>
+  <data name="W.ibo.desk.Description" xml:space="preserve">
+    <value>Το γραφείο επιχειρήσεων, υλικοτεχνικής υποστήριξης ή οικονομικών ενός συμβάντος με μια ματιά, με αφίξεις και αναχωρήσεις ανά χρονικό παράθυρο.</value>
+  </data>
+  <data name="W.ibo.desk.Setting.activation" xml:space="preserve">
+    <value>Συμβάν</value>
+  </data>
+  <data name="W.ibo.desk.Setting.desk" xml:space="preserve">
+    <value>Γραφείο</value>
+  </data>
+  <data name="W.ibo.desk.Option.recent" xml:space="preserve">
+    <value>Πιο πρόσφατο συμβάν</value>
+  </data>
+  <data name="W.ibo.desk.Option.operations" xml:space="preserve">
+    <value>Επιχειρήσεις</value>
+  </data>
+  <data name="W.ibo.desk.Option.logistics" xml:space="preserve">
+    <value>Υλικοτεχνική υποστήριξη</value>
+  </data>
+  <data name="W.ibo.desk.Option.finance" xml:space="preserve">
+    <value>Οικονομικά</value>
+  </data>
+  <data name="W.ibo.desk.Inbound" xml:space="preserve">
+    <value>Αφίξεις</value>
+  </data>
+  <data name="W.ibo.desk.Outbound" xml:space="preserve">
+    <value>Αναχωρήσεις</value>
+  </data>
+  <data name="W.ibo.desk.Predicted" xml:space="preserve">
+    <value>προβλεπόμενα</value>
+  </data>
+  <data name="W.ibo.desk.DeskUnavailable" xml:space="preserve">
+    <value>Αυτό το γραφείο δεν είναι διαθέσιμο σε εσάς.</value>
+  </data>
+  <data name="W.ibo.desk.Value.participants.total" xml:space="preserve">
+    <value>Συμμετέχοντες</value>
+  </data>
+  <data name="W.ibo.desk.Value.participants.on_incident" xml:space="preserve">
+    <value>Στο συμβάν</value>
+  </data>
+  <data name="W.ibo.desk.Value.participants.inbound" xml:space="preserve">
+    <value>Προσερχόμενοι</value>
+  </data>
+  <data name="W.ibo.desk.Value.resources.on_incident" xml:space="preserve">
+    <value>Πόροι στο συμβάν</value>
+  </data>
+  <data name="W.ibo.desk.Value.resources.inbound" xml:space="preserve">
+    <value>Προσερχόμενοι πόροι</value>
+  </data>
+  <data name="W.ibo.desk.Value.resources.personnel" xml:space="preserve">
+    <value>Προσωπικό με πόρους</value>
+  </data>
+  <data name="W.ibo.desk.Value.requests.open" xml:space="preserve">
+    <value>Ανοιχτά αιτήματα</value>
+  </data>
+  <data name="W.ibo.desk.Value.requests.critical_unfilled" xml:space="preserve">
+    <value>Κρίσιμα ακάλυπτα</value>
+  </data>
+  <data name="W.ibo.desk.Value.requests.overdue" xml:space="preserve">
+    <value>Εκπρόθεσμα αιτήματα</value>
+  </data>
+  <data name="W.ibo.desk.Value.fills.en_route" xml:space="preserve">
+    <value>Καλύψεις καθ' οδόν</value>
+  </data>
+  <data name="W.ibo.desk.Value.demob.pending" xml:space="preserve">
+    <value>Εκκρεμεί αποκινητοποίηση</value>
+  </data>
+  <data name="W.ibo.desk.Value.lodging.beds_held_tonight" xml:space="preserve">
+    <value>Κρατημένα κρεβάτια απόψε</value>
+  </data>
+  <data name="W.ibo.desk.Value.lodging.beds_available_tonight" xml:space="preserve">
+    <value>Διαθέσιμα κρεβάτια απόψε</value>
+  </data>
+  <data name="W.ibo.desk.Value.lodging.needed" xml:space="preserve">
+    <value>Χρειάζονται διαμονή</value>
+  </data>
+  <data name="W.ibo.desk.Value.service.open" xml:space="preserve">
+    <value>Ανοιχτά αιτήματα υπηρεσιών</value>
+  </data>
+  <data name="W.ibo.desk.Value.finance.committed" xml:space="preserve">
+    <value>Δεσμευμένα</value>
+  </data>
+  <data name="W.ibo.desk.Value.finance.open_commitments" xml:space="preserve">
+    <value>Ανοιχτές δεσμεύσεις</value>
+  </data>
+  <data name="W.ibo.desk.Value.finance.budget" xml:space="preserve">
+    <value>Προϋπολογισμός</value>
+  </data>
+  <data name="W.ibo.desk.Value.finance.cost_to_date" xml:space="preserve">
+    <value>Κόστος μέχρι σήμερα</value>
+  </data>
+  <data name="W.ibo.desk.Value.finance.daily_burn" xml:space="preserve">
+    <value>Ημερήσιος ρυθμός δαπανών</value>
+  </data>
+  <data name="W.ibo.desk.Value.finance.forecast_at_completion" xml:space="preserve">
+    <value>Πρόβλεψη κατά την ολοκλήρωση</value>
+  </data>
+  <data name="W.ibo.desk.Value.finance.time_awaiting_certification" xml:space="preserve">
+    <value>Χρόνος σε αναμονή πιστοποίησης</value>
+  </data>
+  <data name="W.ibo.desk.Value.finance.time_awaiting_approval" xml:space="preserve">
+    <value>Χρόνος σε αναμονή έγκρισης</value>
+  </data>
+  <data name="W.ibo.desk.Value.finance.invoice_exceptions" xml:space="preserve">
+    <value>Εξαιρέσεις τιμολογίων</value>
+  </data>
+  <data name="W.ibo.resources.Title" xml:space="preserve">
+    <value>Πόροι συμβάντος</value>
+  </data>
+  <data name="W.ibo.resources.Description" xml:space="preserve">
+    <value>Οι πόροι ενός συμβάντος ανά είδος και κατάσταση υποστήριξης.</value>
+  </data>
+  <data name="W.ibo.resources.Setting.activation" xml:space="preserve">
+    <value>Συμβάν</value>
+  </data>
+  <data name="W.ibo.resources.Option.recent" xml:space="preserve">
+    <value>Πιο πρόσφατο συμβάν</value>
+  </data>
+  <data name="W.ibo.resources.Total" xml:space="preserve">
+    <value>Πόροι</value>
+  </data>
+  <data name="W.ibo.resources.OnIncident" xml:space="preserve">
+    <value>Στο συμβάν</value>
+  </data>
+  <data name="W.ibo.resources.Inbound" xml:space="preserve">
+    <value>Προσερχόμενοι</value>
+  </data>
+  <data name="W.ibo.resources.Personnel" xml:space="preserve">
+    <value>Προσωπικό</value>
+  </data>
+  <data name="W.ibo.ResourceKind.Personnel" xml:space="preserve">
+    <value>Προσωπικό</value>
+  </data>
+  <data name="W.ibo.ResourceKind.Crew" xml:space="preserve">
+    <value>Πλήρωμα</value>
+  </data>
+  <data name="W.ibo.ResourceKind.Team" xml:space="preserve">
+    <value>Ομάδα</value>
+  </data>
+  <data name="W.ibo.ResourceKind.Equipment" xml:space="preserve">
+    <value>Εξοπλισμός</value>
+  </data>
+  <data name="W.ibo.ResourceKind.Aircraft" xml:space="preserve">
+    <value>Αεροσκάφος</value>
+  </data>
+  <data name="W.ibo.ResourceKind.Supply" xml:space="preserve">
+    <value>Εφόδια</value>
+  </data>
+  <data name="W.ibo.ResourceKind.Service" xml:space="preserve">
+    <value>Υπηρεσία</value>
+  </data>
+  <data name="W.ibo.ResourceKind.Facility" xml:space="preserve">
+    <value>Εγκατάσταση</value>
+  </data>
+  <data name="W.ibo.ResourceKind.MissionPackage" xml:space="preserve">
+    <value>Πακέτο αποστολής</value>
+  </data>
+  <data name="W.ibo.ResourceKind.Overhead" xml:space="preserve">
+    <value>Διοικητικό προσωπικό</value>
+  </data>
+  <data name="W.ibo.SupportStatus.Ordered" xml:space="preserve">
+    <value>Παραγγελμένο</value>
+  </data>
+  <data name="W.ibo.SupportStatus.Mobilizing" xml:space="preserve">
+    <value>Σε κινητοποίηση</value>
+  </data>
+  <data name="W.ibo.SupportStatus.EnRoute" xml:space="preserve">
+    <value>Καθ' οδόν</value>
+  </data>
+  <data name="W.ibo.SupportStatus.Arrived" xml:space="preserve">
+    <value>Έφτασε</value>
+  </data>
+  <data name="W.ibo.SupportStatus.Supported" xml:space="preserve">
+    <value>Υποστηρίζεται</value>
+  </data>
+  <data name="W.ibo.SupportStatus.PendingDemob" xml:space="preserve">
+    <value>Αναμένει αποκινητοποίηση</value>
+  </data>
+  <data name="W.ibo.SupportStatus.Released" xml:space="preserve">
+    <value>Αποδεσμευμένο</value>
+  </data>
+  <data name="W.ibo.SupportStatus.Returned" xml:space="preserve">
+    <value>Επέστρεψε</value>
+  </data>
+  <data name="W.ibo.SupportStatus.Closed" xml:space="preserve">
+    <value>Κλειστό</value>
+  </data>
+  <data name="W.ibo.checkIn.Title" xml:space="preserve">
+    <value>Ουρά δήλωσης άφιξης</value>
+  </data>
+  <data name="W.ibo.checkIn.Description" xml:space="preserve">
+    <value>Άτομα που περιμένουν εγγραφή σε συμβάν και εγγεγραμμένοι συμμετέχοντες που δεν έχουν δηλώσει ακόμη άφιξη.</value>
+  </data>
+  <data name="W.ibo.checkIn.Setting.activation" xml:space="preserve">
+    <value>Συμβάν</value>
+  </data>
+  <data name="W.ibo.checkIn.Setting.maxRows" xml:space="preserve">
+    <value>Άτομα προς εμφάνιση</value>
+  </data>
+  <data name="W.ibo.checkIn.Option.recent" xml:space="preserve">
+    <value>Πιο πρόσφατο συμβάν</value>
+  </data>
+  <data name="W.ibo.checkIn.Queue" xml:space="preserve">
+    <value>Αναμένουν εγγραφή</value>
+  </data>
+  <data name="W.ibo.checkIn.AwaitingCheckIn" xml:space="preserve">
+    <value>Χωρίς δήλωση άφιξης</value>
+  </data>
+  <data name="W.ibo.checkIn.Drafts" xml:space="preserve">
+    <value>Πρόχειρα</value>
+  </data>
+  <data name="W.ibo.checkIn.Waiting" xml:space="preserve">
+    <value>Αναμονή από {0}</value>
+  </data>
+  <data name="W.ibo.checkIn.Empty" xml:space="preserve">
+    <value>Κανείς δεν περιμένει.</value>
+  </data>
+  <data name="W.ibo.finance.Title" xml:space="preserve">
+    <value>Κόστη συμβάντος</value>
+  </data>
+  <data name="W.ibo.finance.Description" xml:space="preserve">
+    <value>Το κόστος ενός συμβάντος μέχρι σήμερα έναντι του προϋπολογισμού του, ο ημερήσιος ρυθμός δαπανών και η πρόβλεψη κατά την ολοκλήρωση.</value>
+  </data>
+  <data name="W.ibo.finance.Setting.activation" xml:space="preserve">
+    <value>Συμβάν</value>
+  </data>
+  <data name="W.ibo.finance.Option.recent" xml:space="preserve">
+    <value>Πιο πρόσφατο συμβάν</value>
+  </data>
+  <data name="W.ibo.finance.CostToDate" xml:space="preserve">
+    <value>Κόστος μέχρι σήμερα</value>
+  </data>
+  <data name="W.ibo.finance.Budget" xml:space="preserve">
+    <value>Προϋπολογισμός</value>
+  </data>
+  <data name="W.ibo.finance.DailyBurn" xml:space="preserve">
+    <value>Ημερήσιος ρυθμός δαπανών</value>
+  </data>
+  <data name="W.ibo.finance.Forecast" xml:space="preserve">
+    <value>Πρόβλεψη κατά την ολοκλήρωση</value>
+  </data>
+  <data name="W.ibo.finance.ProjectedEnd" xml:space="preserve">
+    <value>Προβλεπόμενο τέλος</value>
+  </data>
+  <data name="W.ibo.finance.NoProjection" xml:space="preserve">
+    <value>Δεν υπάρχει ακόμη πρόβλεψη κόστους.</value>
+  </data>
+  <data name="W.ibo.coordination.Title" xml:space="preserve">
+    <value>Πίνακες συντονισμού</value>
+  </data>
+  <data name="W.ibo.coordination.Description" xml:space="preserve">
+    <value>Οι πίνακες συντονισμού σας με μη ενημερωμένες λωρίδες και ενεργές κοινοποιήσεις σε συνεργάτες, με τους πιο πρόσφατα ενημερωμένους πρώτους.</value>
+  </data>
+  <data name="W.ibo.coordination.Setting.maxRows" xml:space="preserve">
+    <value>Πίνακες προς εμφάνιση</value>
+  </data>
+  <data name="W.ibo.coordination.Boards" xml:space="preserve">
+    <value>Πίνακες</value>
+  </data>
+  <data name="W.ibo.coordination.ActiveShares" xml:space="preserve">
+    <value>Ενεργές κοινοποιήσεις</value>
+  </data>
+  <data name="W.ibo.coordination.StaleLanes" xml:space="preserve">
+    <value>Μη ενημερωμένες λωρίδες</value>
+  </data>
+  <data name="W.ibo.coordination.Lanes" xml:space="preserve">
+    <value>Λωρίδες: {0}</value>
+  </data>
+  <data name="W.ibo.coordination.Frozen" xml:space="preserve">
+    <value>Παγωμένος</value>
+  </data>
+  <data name="W.ibo.coordination.Updated" xml:space="preserve">
+    <value>Ενημερώθηκε {0}</value>
+  </data>
+  <data name="W.ibo.coordination.Empty" xml:space="preserve">
+    <value>Δεν υπάρχουν πίνακες συντονισμού.</value>
+  </data>
+  <data name="W.ai.assistant.Title" xml:space="preserve">
+    <value>Βοηθός</value>
+  </data>
+  <data name="W.ai.assistant.Description" xml:space="preserve">
+    <value>Ρωτήστε τον βοηθό του Resgrid για το τμήμα σας χωρίς να φύγετε από τον πίνακα ελέγχου.</value>
+  </data>
+  <data name="W.aiDispatch.triage.Title" xml:space="preserve">
+    <value>Διαλογή διάθεσης με τεχνητή νοημοσύνη</value>
+  </data>
+  <data name="W.aiDispatch.triage.Description" xml:space="preserve">
+    <value>Κλήσεις που δημιουργήθηκαν από εισερχόμενα email και μηνύματα κειμένου και χρειάζονται ακόμη έλεγχο από τον χειριστή αποστολών, με τη βεβαιότητα της ΤΝ και την ηλικία τους.</value>
+  </data>
+  <data name="W.aiDispatch.triage.Setting.hours" xml:space="preserve">
+    <value>Ώρες προς συμπερίληψη</value>
+  </data>
+  <data name="W.aiDispatch.triage.Setting.maxRows" xml:space="preserve">
+    <value>Κλήσεις προς εμφάνιση</value>
+  </data>
+  <data name="W.aiDispatch.triage.NeedsReview" xml:space="preserve">
+    <value>Χρειάζονται έλεγχο</value>
+  </data>
+  <data name="W.aiDispatch.triage.InProgress" xml:space="preserve">
+    <value>Σε εξέλιξη</value>
+  </data>
+  <data name="W.aiDispatch.triage.Applied" xml:space="preserve">
+    <value>Εφαρμόστηκαν</value>
+  </data>
+  <data name="W.aiDispatch.triage.Total" xml:space="preserve">
+    <value>Μηνύματα</value>
+  </data>
+  <data name="W.aiDispatch.triage.Confidence" xml:space="preserve">
+    <value>{0}% βεβαιότητα</value>
+  </data>
+  <data name="W.aiDispatch.triage.Related" xml:space="preserve">
+    <value>Μπορεί να διπλασιάζει την κλήση {0}</value>
+  </data>
+  <data name="W.aiDispatch.triage.Empty" xml:space="preserve">
+    <value>Δεν υπάρχει τίποτα προς έλεγχο.</value>
+  </data>
+  <data name="W.aiDispatch.triage.Outcome.Applied" xml:space="preserve">
+    <value>Εφαρμόστηκε</value>
+  </data>
+  <data name="W.aiDispatch.triage.Outcome.InProgress" xml:space="preserve">
+    <value>Σε εξέλιξη</value>
+  </data>
+  <data name="W.aiDispatch.triage.Outcome.NoChange" xml:space="preserve">
+    <value>Χωρίς αλλαγή</value>
+  </data>
+  <data name="W.aiDispatch.triage.Outcome.LowConfidence" xml:space="preserve">
+    <value>Χαμηλή βεβαιότητα</value>
+  </data>
+  <data name="W.aiDispatch.triage.Outcome.InvalidOutput" xml:space="preserve">
+    <value>Μη έγκυρη απάντηση</value>
+  </data>
+  <data name="W.aiDispatch.triage.Outcome.Unavailable" xml:space="preserve">
+    <value>ΤΝ μη διαθέσιμη</value>
+  </data>
+  <data name="W.aiDispatch.triage.Outcome.Busy" xml:space="preserve">
+    <value>ΤΝ απασχολημένη</value>
+  </data>
+  <data name="W.aiDispatch.triage.Outcome.BudgetExhausted" xml:space="preserve">
+    <value>Εξαντλήθηκε ο προϋπολογισμός ΤΝ</value>
+  </data>
+  <data name="W.aiDispatch.triage.Outcome.ProtectionUnsupported" xml:space="preserve">
+    <value>Μη διαθέσιμο με προστασία δεδομένων</value>
+  </data>
+  <data name="W.aiDispatch.triage.Outcome.CallNotActive" xml:space="preserve">
+    <value>Η κλήση δεν είναι πλέον ενεργή</value>
+  </data>
+  <data name="W.aiDispatch.triage.Outcome.SenderNotAllowed" xml:space="preserve">
+    <value>Μη επιτρεπόμενος αποστολέας</value>
+  </data>
+  <data name="W.aiDispatch.triage.Outcome.DispatchCapReached" xml:space="preserve">
+    <value>Επιτεύχθηκε το μηνιαίο όριο διάθεσης με ΤΝ</value>
+  </data>
+  <data name="W.admin.setup.Title" xml:space="preserve">
+    <value>Πρόοδος ρύθμισης</value>
+  </data>
+  <data name="W.admin.setup.Description" xml:space="preserve">
+    <value>Πρόοδος ρύθμισης του Admin Assist: επαληθευμένοι έλεγχοι, ολοκληρωμένες εργασίες ρύθμισης και η επόμενη εργασία.</value>
+  </data>
+  <data name="W.admin.setup.ChecksVerified" xml:space="preserve">
+    <value>{0} από {1} έλεγχοι επαληθεύτηκαν</value>
+  </data>
+  <data name="W.admin.setup.ChecksFailed" xml:space="preserve">
+    <value>Αποτυγχάνουν</value>
+  </data>
+  <data name="W.admin.setup.ChecksUnknown" xml:space="preserve">
+    <value>Δεν έχουν ελεγχθεί</value>
+  </data>
+  <data name="W.admin.setup.TasksDone" xml:space="preserve">
+    <value>Ολοκληρωμένες εργασίες: {0} από {1}</value>
+  </data>
+  <data name="W.admin.setup.NeedsAttention" xml:space="preserve">
+    <value>Χρειάζονται προσοχή</value>
+  </data>
+  <data name="W.admin.setup.Next" xml:space="preserve">
+    <value>Επόμενο</value>
+  </data>
+  <data name="W.admin.setup.Continue" xml:space="preserve">
+    <value>Συνέχιση της ρύθμισης</value>
+  </data>
+  <data name="W.admin.setup.RevisitDue" xml:space="preserve">
+    <value>Έφτασε η ώρα για την αναθεώρηση της ρύθμισής σας.</value>
+  </data>
+  <data name="W.admin.setup.Done" xml:space="preserve">
+    <value>Η ρύθμιση ολοκληρώθηκε.</value>
+  </data>
+  <data name="W.admin.plan.Title" xml:space="preserve">
+    <value>Πακέτο και πρόσθετα</value>
+  </data>
+  <data name="W.admin.plan.Description" xml:space="preserve">
+    <value>Το πακέτο συνδρομής σας, πόσο από τα όριά του χρησιμοποιείτε, τα πρόσθετα που διαθέτετε ή μπορείτε να προσθέσετε και η ημερομηνία ανανέωσης.</value>
+  </data>
+  <data name="W.admin.plan.FreePlan" xml:space="preserve">
+    <value>Δωρεάν πακέτο</value>
+  </data>
+  <data name="W.admin.plan.PlanUnavailable" xml:space="preserve">
+    <value>Τα στοιχεία του πακέτου δεν είναι διαθέσιμα αυτή τη στιγμή.</value>
+  </data>
+  <data name="W.admin.plan.Personnel" xml:space="preserve">
+    <value>Προσωπικό</value>
+  </data>
+  <data name="W.admin.plan.Units" xml:space="preserve">
+    <value>Μονάδες</value>
+  </data>
+  <data name="W.admin.plan.Entities" xml:space="preserve">
+    <value>Προσωπικό και μονάδες</value>
+  </data>
+  <data name="W.admin.plan.Unlimited" xml:space="preserve">
+    <value>Απεριόριστα</value>
+  </data>
+  <data name="W.admin.plan.Renews" xml:space="preserve">
+    <value>Ανανεώνεται {0}</value>
+  </data>
+  <data name="W.admin.plan.Ends" xml:space="preserve">
+    <value>Λήγει {0}</value>
+  </data>
+  <data name="W.admin.plan.NeverExpires" xml:space="preserve">
+    <value>Δεν λήγει</value>
+  </data>
+  <data name="W.admin.plan.Held" xml:space="preserve">
+    <value>Ενεργό</value>
+  </data>
+  <data name="W.admin.plan.Available" xml:space="preserve">
+    <value>Διαθέσιμο</value>
+  </data>
+  <data name="W.admin.plan.Cancelled" xml:space="preserve">
+    <value>Ακυρωμένο</value>
+  </data>
+  <data name="W.admin.plan.Addon.PTT" xml:space="preserve">
+    <value>Push-To-Talk</value>
+  </data>
+  <data name="W.admin.plan.Addon.ADP" xml:space="preserve">
+    <value>Advanced Data Protection</value>
+  </data>
+  <data name="W.admin.plan.Addon.ReadinessPro" xml:space="preserve">
+    <value>Readiness Pro</value>
+  </data>
+  <data name="W.admin.plan.Addon.BusinessOperations" xml:space="preserve">
+    <value>Business Operations</value>
+  </data>
+  <data name="W.admin.plan.Addon.EnhancedAi" xml:space="preserve">
+    <value>Enhanced AI</value>
+  </data>
+  <data name="W.admin.plan.Addon.IncidentBackOffice" xml:space="preserve">
+    <value>Incident Back Office</value>
+  </data>
+  <data name="W.admin.workflows.Title" xml:space="preserve">
+    <value>Υγεία ροών εργασίας</value>
+  </data>
+  <data name="W.admin.workflows.Description" xml:space="preserve">
+    <value>Εκτελέσεις ροών εργασίας την τελευταία ημέρα: εκκρεμείς, σε εξέλιξη και αποτυχημένες, και οι ροές εργασίας με τις περισσότερες αποτυχίες.</value>
+  </data>
+  <data name="W.admin.workflows.Setting.maxRows" xml:space="preserve">
+    <value>Ροές εργασίας προς εμφάνιση</value>
+  </data>
+  <data name="W.admin.workflows.Pending" xml:space="preserve">
+    <value>Εκκρεμείς</value>
+  </data>
+  <data name="W.admin.workflows.Running" xml:space="preserve">
+    <value>Σε εξέλιξη</value>
+  </data>
+  <data name="W.admin.workflows.Retrying" xml:space="preserve">
+    <value>Νέα προσπάθεια</value>
+  </data>
+  <data name="W.admin.workflows.Failed" xml:space="preserve">
+    <value>Αποτυχημένες (24 ώρες)</value>
+  </data>
+  <data name="W.admin.workflows.Success" xml:space="preserve">
+    <value>{0}% επιτυχημένες</value>
+  </data>
+  <data name="W.admin.workflows.Active" xml:space="preserve">
+    <value>Ροές εργασίας σε λειτουργία: {0} από {1}</value>
+  </data>
+  <data name="W.admin.workflows.ErrorDetailsProtected" xml:space="preserve">
+    <value>Τα στοιχεία σφάλματος είναι προστατευμένα</value>
+  </data>
+  <data name="W.admin.workflows.SeeDetails" xml:space="preserve">
+    <value>Προβολή λεπτομερειών</value>
+  </data>
+  <data name="W.admin.workflows.Empty" xml:space="preserve">
+    <value>Καμία αποτυχημένη εκτέλεση την τελευταία ημέρα.</value>
+  </data>
+  <data name="W.admin.dataProtection.Title" xml:space="preserve">
+    <value>Προστασία δεδομένων</value>
+  </data>
+  <data name="W.admin.dataProtection.Description" xml:space="preserve">
+    <value>Κατάσταση του Advanced Data Protection, το παράθυρο ενισχυμένης επαλήθευσης και η πρόοδος της μετάπτωσης.</value>
+  </data>
+  <data name="W.admin.dataProtection.StepUpWindow" xml:space="preserve">
+    <value>Η επαλήθευση ισχύει για {0} λεπτά</value>
+  </data>
+  <data name="W.admin.dataProtection.Migration" xml:space="preserve">
+    <value>Μετάπτωση</value>
+  </data>
+  <data name="W.admin.dataProtection.Progress" xml:space="preserve">
+    <value>{0}% ολοκληρώθηκε</value>
+  </data>
+  <data name="W.admin.dataProtection.Anomalies" xml:space="preserve">
+    <value>Γραμμές που χρειάζονται προσοχή</value>
+  </data>
+  <data name="W.admin.dataProtection.CatalogUpgrade" xml:space="preserve">
+    <value>Αναμένεται αναβάθμιση του καταλόγου προστατευμένων πεδίων.</value>
+  </data>
+  <data name="W.admin.dataProtection.Offboarding" xml:space="preserve">
+    <value>Η προστασία λήγει {0}</value>
+  </data>
+  <data name="W.admin.dataProtection.State.Disabled" xml:space="preserve">
+    <value>Μη ενεργοποιημένο</value>
+  </data>
+  <data name="W.admin.dataProtection.State.EnrollmentQueued" xml:space="preserve">
+    <value>Η εγγραφή βρίσκεται στην ουρά</value>
+  </data>
+  <data name="W.admin.dataProtection.State.ProvisioningKey" xml:space="preserve">
+    <value>Δημιουργία κλειδιού</value>
+  </data>
+  <data name="W.admin.dataProtection.State.Encrypting" xml:space="preserve">
+    <value>Κρυπτογράφηση</value>
+  </data>
+  <data name="W.admin.dataProtection.State.Verifying" xml:space="preserve">
+    <value>Σε επαλήθευση</value>
+  </data>
+  <data name="W.admin.dataProtection.State.Enabled" xml:space="preserve">
+    <value>Ενεργοποιημένο</value>
+  </data>
+  <data name="W.admin.dataProtection.State.Rotating" xml:space="preserve">
+    <value>Εναλλαγή κλειδιού</value>
+  </data>
+  <data name="W.admin.dataProtection.State.OffboardingScheduled" xml:space="preserve">
+    <value>Προγραμματισμένη αποχώρηση</value>
+  </data>
+  <data name="W.admin.dataProtection.State.DisableRequested" xml:space="preserve">
+    <value>Ζητήθηκε απενεργοποίηση</value>
+  </data>
+  <data name="W.admin.dataProtection.State.Decrypting" xml:space="preserve">
+    <value>Αποκρυπτογράφηση</value>
+  </data>
+  <data name="W.admin.dataProtection.State.Failed" xml:space="preserve">
+    <value>Απέτυχε</value>
+  </data>
+  <data name="W.admin.import.Title" xml:space="preserve">
+    <value>Εισαγωγή και μετάπτωση</value>
+  </data>
+  <data name="W.admin.import.Description" xml:space="preserve">
+    <value>Πρόοδος της εισαγωγής τμήματος: ανοιχτοί χώροι εργασίας, σύνολα δεδομένων που χρειάζονται έλεγχο και εισαγωγές σε εξέλιξη.</value>
+  </data>
+  <data name="W.admin.import.OpenWorkspaces" xml:space="preserve">
+    <value>Ανοιχτές εισαγωγές</value>
+  </data>
+  <data name="W.admin.import.Activated" xml:space="preserve">
+    <value>Ενεργοποιημένες</value>
+  </data>
+  <data name="W.admin.import.NeedingReview" xml:space="preserve">
+    <value>Χρειάζονται έλεγχο</value>
+  </data>
+  <data name="W.admin.import.Ready" xml:space="preserve">
+    <value>Έτοιμες</value>
+  </data>
+  <data name="W.admin.import.Imported" xml:space="preserve">
+    <value>Εισήχθησαν</value>
+  </data>
+  <data name="W.admin.import.Failed" xml:space="preserve">
+    <value>Απέτυχαν</value>
+  </data>
+  <data name="W.admin.import.Rows" xml:space="preserve">
+    <value>Γραμμές που εισήχθησαν: {0} από {1}</value>
+  </data>
+  <data name="W.admin.import.Warnings" xml:space="preserve">
+    <value>Γραμμές με προειδοποιήσεις</value>
+  </data>
+  <data name="W.admin.import.Blocked" xml:space="preserve">
+    <value>Αποκλεισμένες γραμμές</value>
+  </data>
+  <data name="W.admin.import.RunsActive" xml:space="preserve">
+    <value>Σε εξέλιξη</value>
+  </data>
+  <data name="W.admin.import.Target" xml:space="preserve">
+    <value>Προορισμός {0}</value>
+  </data>
+  <data name="W.admin.import.Empty" xml:space="preserve">
+    <value>Καμία εισαγωγή σε εξέλιξη.</value>
+  </data>
+  <data name="W.admin.import.Status.Draft" xml:space="preserve">
+    <value>Πρόχειρο</value>
+  </data>
+  <data name="W.admin.import.Status.Collecting" xml:space="preserve">
+    <value>Συλλογή αρχείων</value>
+  </data>
+  <data name="W.admin.import.Status.Reviewing" xml:space="preserve">
+    <value>Σε έλεγχο</value>
+  </data>
+  <data name="W.admin.import.Status.Importing" xml:space="preserve">
+    <value>Εισαγωγή σε εξέλιξη</value>
+  </data>
+  <data name="W.admin.import.Status.Verifying" xml:space="preserve">
+    <value>Σε επαλήθευση</value>
+  </data>
+  <data name="W.admin.import.Status.ReadyToActivate" xml:space="preserve">
+    <value>Έτοιμο για ενεργοποίηση</value>
+  </data>
+  <data name="W.admin.security.Title" xml:space="preserve">
+    <value>Κατάσταση ασφάλειας</value>
+  </data>
+  <data name="W.admin.security.Description" xml:space="preserve">
+    <value>Πόσα μέλη χρησιμοποιούν εφαρμογή ελέγχου ταυτότητας ή κλειδί πρόσβασης, η κατάσταση της ενιαίας σύνδεσης και του SCIM, και οι ενεργές συνεδρίες.</value>
+  </data>
+  <data name="W.admin.security.StrongAuthentication" xml:space="preserve">
+    <value>Μέλη με MFA ή κλειδί πρόσβασης</value>
+  </data>
+  <data name="W.admin.security.Mfa" xml:space="preserve">
+    <value>Εφαρμογή ελέγχου ταυτότητας</value>
+  </data>
+  <data name="W.admin.security.Passkeys" xml:space="preserve">
+    <value>Κλειδιά πρόσβασης</value>
+  </data>
+  <data name="W.admin.security.Sessions" xml:space="preserve">
+    <value>Ενεργές συνεδρίες</value>
+  </data>
+  <data name="W.admin.security.SessionUsers" xml:space="preserve">
+    <value>Συνδεδεμένα μέλη: {0}</value>
+  </data>
+  <data name="W.admin.security.Sso" xml:space="preserve">
+    <value>Ενιαία σύνδεση</value>
+  </data>
+  <data name="W.admin.security.Scim" xml:space="preserve">
+    <value>Παροχή SCIM</value>
+  </data>
+  <data name="W.admin.security.RequireMfa" xml:space="preserve">
+    <value>Απαιτείται MFA</value>
+  </data>
+  <data name="W.admin.security.RequireSso" xml:space="preserve">
+    <value>Απαιτείται SSO</value>
+  </data>
+  <data name="W.admin.security.On" xml:space="preserve">
+    <value>Ενεργό</value>
+  </data>
+  <data name="W.admin.security.Off" xml:space="preserve">
+    <value>Ανενεργό</value>
+  </data>
+  <data name="W.deployments.active.OpenDeployments" xml:space="preserve">
+    <value>Άνοιγμα αποστολών</value>
+  </data>
+  <data name="W.deployments.active.Rostered" xml:space="preserve">
+    <value>Είστε στη σύνθεση</value>
+  </data>
+  <data name="W.deployments.active.Starts" xml:space="preserve">
+    <value>Ξεκινά {0}</value>
+  </data>
+  <data name="W.deployments.timeReports.Empty" xml:space="preserve">
+    <value>Δεν υπάρχουν αναφορές χρόνου σε αναμονή.</value>
+  </data>
+  <data name="W.deployments.timeReports.OpenDeployments" xml:space="preserve">
+    <value>Άνοιγμα αποστολών</value>
+  </data>
+  <data name="W.invoicing.receivables.Empty" xml:space="preserve">
+    <value>Δεν υπάρχουν ανοιχτά τιμολόγια.</value>
+  </data>
+  <data name="W.invoicing.receivables.OpenInvoicing" xml:space="preserve">
+    <value>Άνοιγμα Τιμολόγησης</value>
+  </data>
+  <data name="W.invoicing.receivables.OpenInvoices" xml:space="preserve">
+    <value>ανοιχτά τιμολόγια</value>
+  </data>
+  <data name="W.invoicing.receivables.OutstandingCount" xml:space="preserve">
+    <value>ανεξόφλητα · ανοιχτά τιμολόγια: {0}</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.On" xml:space="preserve">
+    <value>Ενεργό</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Off" xml:space="preserve">
+    <value>Ανενεργό</value>
+  </data>
+  <data name="W.bids.pipeline.Empty" xml:space="preserve">
+    <value>Δεν υπάρχουν ακόμη προσφορές.</value>
+  </data>
+  <data name="W.bids.pipeline.OpenBids" xml:space="preserve">
+    <value>Άνοιγμα προσφορών</value>
+  </data>
+  <data name="W.bids.pipeline.NoneExpiring" xml:space="preserve">
+    <value>Καμία απεσταλμένη προσφορά δεν λήγει τις επόμενες {0} ημέρες.</value>
+  </data>
+  <data name="W.contracts.expiring.NoActive" xml:space="preserve">
+    <value>Δεν υπάρχουν ενεργές συμβάσεις.</value>
+  </data>
+  <data name="W.contracts.expiring.OpenContracts" xml:space="preserve">
+    <value>Άνοιγμα συμβάσεων</value>
+  </data>
+  <data name="W.costRecovery.queue.OpenQueue" xml:space="preserve">
+    <value>Άνοιγμα της ουράς</value>
+  </data>
+  <data name="W.costRecovery.queue.Readiness" xml:space="preserve">
+    <value>Ετοιμότητα υπηρεσίας</value>
+  </data>
+  <data name="W.costRecovery.queue.RecordType.AgencyProfile" xml:space="preserve">
+    <value>Προφίλ υπηρεσίας</value>
+  </data>
+  <data name="W.costRecovery.queue.RecordType.ResourceInventoryF5" xml:space="preserve">
+    <value>Απογραφή πόρων (F-5)</value>
+  </data>
+  <data name="W.costRecovery.queue.RecordType.SalarySurvey" xml:space="preserve">
+    <value>Έρευνα μισθών</value>
+  </data>
+  <data name="W.costRecovery.queue.RecordType.AdministrativeRate" xml:space="preserve">
+    <value>Διοικητικό ποσοστό</value>
+  </data>
+  <data name="W.costRecovery.queue.RecordType.AttachmentA" xml:space="preserve">
+    <value>Παράρτημα Α</value>
+  </data>
+  <data name="W.costRecovery.queue.RecordType.SpecialEquipment" xml:space="preserve">
+    <value>Ειδικός εξοπλισμός</value>
+  </data>
+  <data name="W.costRecovery.queue.RecordType.Agreement" xml:space="preserve">
+    <value>Συμφωνία</value>
+  </data>
+  <data name="W.costRecovery.queue.RecordType.F42" xml:space="preserve">
+    <value>F-42</value>
+  </data>
+  <data name="W.costRecovery.queue.RecordType.ExpenseClaim" xml:space="preserve">
+    <value>Αίτημα δαπανών</value>
+  </data>
+  <data name="W.costRecovery.queue.RecordType.GeneratedInvoice" xml:space="preserve">
+    <value>Τιμολόγιο</value>
+  </data>
+  <data name="W.costRecovery.queue.State.Draft" xml:space="preserve">
+    <value>Πρόχειρο</value>
+  </data>
+  <data name="W.costRecovery.queue.State.NeedsReview" xml:space="preserve">
+    <value>Χρειάζεται έλεγχο</value>
+  </data>
+  <data name="W.costRecovery.queue.State.ReadyForPortal" xml:space="preserve">
+    <value>Έτοιμο για MARS</value>
+  </data>
+  <data name="W.costRecovery.queue.State.SubmittedExternal" xml:space="preserve">
+    <value>Υποβλήθηκε</value>
+  </data>
+  <data name="W.costRecovery.queue.State.ReturnedForAgencyReview" xml:space="preserve">
+    <value>Επιστράφηκε για έλεγχο</value>
+  </data>
+  <data name="W.costRecovery.queue.State.Approved" xml:space="preserve">
+    <value>Εγκρίθηκε</value>
+  </data>
+  <data name="W.costRecovery.queue.State.DocumentationOnly" xml:space="preserve">
+    <value>Μόνο τεκμηρίωση</value>
+  </data>
+  <data name="W.costRecovery.queue.State.PendingLocalAgencyApproval" xml:space="preserve">
+    <value>Αναμένει τοπική έγκριση</value>
+  </data>
+  <data name="W.costRecovery.queue.State.LocalAgencyRejected" xml:space="preserve">
+    <value>Απορρίφθηκε τοπικά</value>
+  </data>
+  <data name="W.costRecovery.queue.State.PendingPayingEntityApproval" xml:space="preserve">
+    <value>Αναμένει φορέα πληρωμής</value>
+  </data>
+  <data name="W.costRecovery.queue.State.Paid" xml:space="preserve">
+    <value>Πληρώθηκε</value>
+  </data>
+  <data name="W.costRecovery.queue.State.Closed" xml:space="preserve">
+    <value>Έκλεισε</value>
+  </data>
+  <data name="W.workforce.fieldCosting.OpenRuns" xml:space="preserve">
+    <value>Άνοιγμα υπολογισμών κόστους</value>
+  </data>
+  <data name="W.workforce.fieldCosting.OpenRunsNote" xml:space="preserve">
+    <value>Υπολογισμοί ανοιχτοί για έλεγχο: {0}</value>
+  </data>
+  <data name="W.workforce.payData.NoProfile" xml:space="preserve">
+    <value>Δεν υπάρχει προφίλ αναφοράς για αυτό το έτος</value>
+  </data>
+  <data name="W.ibo.Option.recent" xml:space="preserve">
+    <value>Πιο πρόσφατο συμβάν</value>
+  </data>
+  <data name="W.ibo.OpenIncidents" xml:space="preserve">
+    <value>Άνοιγμα Incident Back Office</value>
+  </data>
+  <data name="W.ibo.activations.OpenedOn" xml:space="preserve">
+    <value>Άνοιξε {0}</value>
+  </data>
+  <data name="W.ibo.desk.NoValues" xml:space="preserve">
+    <value>Δεν υπάρχει ακόμη τίποτα για εμφάνιση σε αυτό το γραφείο.</value>
+  </data>
+  <data name="W.ibo.desk.PersonnelShort" xml:space="preserve">
+    <value>προσωπικό: {0}</value>
+  </data>
+  <data name="W.ibo.resources.Empty" xml:space="preserve">
+    <value>Δεν υπάρχουν ακόμη πόροι σε αυτό το συμβάν.</value>
+  </data>
+  <data name="W.ibo.resources.OpenDesk" xml:space="preserve">
+    <value>Άνοιγμα γραφείου επιχειρήσεων</value>
+  </data>
+  <data name="W.ibo.resources.ByKind" xml:space="preserve">
+    <value>Ανά είδος</value>
+  </data>
+  <data name="W.ibo.resources.ByStatus" xml:space="preserve">
+    <value>Ανά κατάσταση υποστήριξης</value>
+  </data>
+  <data name="W.ibo.finance.ProjectionAsOf" xml:space="preserve">
+    <value>Πρόβλεψη στις {0}</value>
+  </data>
+  <data name="W.ibo.coordination.OpenBoards" xml:space="preserve">
+    <value>Άνοιγμα πινάκων συντονισμού</value>
+  </data>
+  <data name="W.ibo.coordination.Shares" xml:space="preserve">
+    <value>Κοινοποιήσεις: {0}</value>
+  </data>
+  <data name="W.ibo.coordination.StaleCount" xml:space="preserve">
+    <value>μη ενημερωμένες: {0}</value>
+  </data>
+  <data name="W.ai.assistant.Unavailable" xml:space="preserve">
+    <value>Ο βοηθός δεν είναι διαθέσιμος αυτή τη στιγμή.</value>
+  </data>
+  <data name="W.aiDispatch.triage.Window" xml:space="preserve">
+    <value>Τελευταίες {0} ώρες · μηνύματα: {1}</value>
+  </data>
+  <data name="W.admin.setup.ChecksLabel" xml:space="preserve">
+    <value>επαληθευμένοι έλεγχοι ρύθμισης</value>
+  </data>
+  <data name="W.admin.setup.Progress" xml:space="preserve">
+    <value>Πρόοδος ρύθμισης</value>
+  </data>
+  <data name="W.admin.setup.ChecksFailedCount" xml:space="preserve">
+    <value>Έλεγχοι που αποτυγχάνουν: {0}</value>
+  </data>
+  <data name="W.admin.setup.NeedsAttentionCount" xml:space="preserve">
+    <value>Λειτουργίες που χρειάζονται προσοχή: {0}</value>
+  </data>
+  <data name="W.admin.plan.Addons" xml:space="preserve">
+    <value>Πρόσθετα</value>
+  </data>
+  <data name="W.admin.plan.CostPer" xml:space="preserve">
+    <value>{0} / {1}</value>
+  </data>
+  <data name="W.admin.plan.Frequency.Never" xml:space="preserve">
+    <value>εφάπαξ</value>
+  </data>
+  <data name="W.admin.plan.Frequency.Monthly" xml:space="preserve">
+    <value>μήνα</value>
+  </data>
+  <data name="W.admin.plan.Frequency.Yearly" xml:space="preserve">
+    <value>έτος</value>
+  </data>
+  <data name="W.admin.plan.Frequency.BiYearly" xml:space="preserve">
+    <value>2 έτη</value>
+  </data>
+  <data name="W.admin.plan.Frequency.ThreeYear" xml:space="preserve">
+    <value>3 έτη</value>
+  </data>
+  <data name="W.admin.plan.Frequency.FourYear" xml:space="preserve">
+    <value>4 έτη</value>
+  </data>
+  <data name="W.admin.plan.Frequency.FiveYear" xml:space="preserve">
+    <value>5 έτη</value>
+  </data>
+  <data name="W.admin.workflows.NoWorkflows" xml:space="preserve">
+    <value>Δεν υπάρχουν ακόμη ροές εργασίας.</value>
+  </data>
+  <data name="W.admin.workflows.OpenWorkflows" xml:space="preserve">
+    <value>Άνοιγμα ροών εργασίας</value>
+  </data>
+  <data name="W.admin.workflows.FailedOf" xml:space="preserve">
+    <value>Αποτυχίες: {0} από {1} εκτελέσεις</value>
+  </data>
+  <data name="W.admin.workflows.Off" xml:space="preserve">
+    <value>Απενεργοποιημένη</value>
+  </data>
+  <data name="W.admin.workflows.ErrorDetailsProtectedHint" xml:space="preserve">
+    <value>Τα στοιχεία σφάλματος είναι προστατευμένα. Ανοίξτε τη σελίδα υγείας της ροής εργασίας για να δείτε την εκτέλεση.</value>
+  </data>
+  <data name="W.admin.dataProtection.MigrationKind" xml:space="preserve">
+    <value>Μετάπτωση: {0}</value>
+  </data>
+  <data name="W.admin.dataProtection.Rows" xml:space="preserve">
+    <value>Γραμμές: {0} από {1}</value>
+  </data>
+  <data name="W.admin.import.OpenImport" xml:space="preserve">
+    <value>Άνοιγμα Εισαγωγής &amp; μετάπτωσης</value>
+  </data>
+  <data name="W.admin.import.ActivatedCount" xml:space="preserve">
+    <value>Ενεργοποιημένες εισαγωγές: {0}</value>
+  </data>
+  <data name="W.admin.import.Untitled" xml:space="preserve">
+    <value>Εισαγωγή χωρίς τίτλο</value>
+  </data>
+  <data name="W.admin.import.LastActivity" xml:space="preserve">
+    <value>Τελευταία δραστηριότητα {0}</value>
+  </data>
+  <data name="W.admin.security.StrongAuthenticationOf" xml:space="preserve">
+    <value>Μέλη με MFA ή κλειδί πρόσβασης: {0} από {1}</value>
+  </data>
+  <data name="W.bids.pipeline.WithdrawnCount" xml:space="preserve">
+    <value>Αποσυρμένες: {0}</value>
+  </data>
+  <data name="W.contracts.expiring.DocumentsSummary" xml:space="preserve">
+    <value>Έγγραφα συμμόρφωσης: {0} ληγμένα, {1} προς λήξη</value>
+  </data>
+  <data name="W.invoicing.receivables.DraftsCount" xml:space="preserve">
+    <value>πρόχειρα: {0}</value>
+  </data>
+  <data name="W.invoicing.receivables.OverdueSummary" xml:space="preserve">
+    <value>ληξιπρόθεσμα: {0} ({1})</value>
+  </data>
+  <data name="W.invoicing.receivables.ReadOnlyShort" xml:space="preserve">
+    <value>μόνο ανάγνωση</value>
+  </data>
+  <data name="W.deployments.active.Day" xml:space="preserve">
+    <value>Ημέρα {0}</value>
+  </data>
+  <data name="W.contracts.expiring.EndsIn" xml:space="preserve">
+    <value>Λήγει σε {0}</value>
+  </data>
+  <data name="W.contracts.expiring.NoneEnding" xml:space="preserve">
+    <value>Καμία σύμβαση δεν λήγει τις επόμενες {0}.</value>
+  </data>
+  <data name="W.costRecovery.queue.Age" xml:space="preserve">
+    <value>Ηλικία</value>
+  </data>
+  <data name="W.bids.pipeline.ExpiringWithin" xml:space="preserve">
+    <value>Λήγουν εντός {0}</value>
+  </data>
+  <data name="W.ibo.finance.OfBudget" xml:space="preserve">
+    <value>Χρήση από προϋπολογισμό {0}</value>
+  </data>
+  <data name="W.calls.active.Title" xml:space="preserve">
+    <value>Ενεργές κλήσεις</value>
+  </data>
+  <data name="W.calls.active.Description" xml:space="preserve">
+    <value>Ενεργές κλήσεις που έχουν αποσταλεί στην περιοχή αποστολής σας, οι πιο πρόσφατες πρώτες, με προτεραιότητα, μονάδες και προσωπικό που στάλθηκε, και διοίκηση συμβάντος.</value>
+  </data>
+  <data name="W.calls.active.Setting.maxRows" xml:space="preserve">
+    <value>Κλήσεις προς εμφάνιση</value>
+  </data>
+  <data name="W.calls.active.Setting.priorities" xml:space="preserve">
+    <value>Προτεραιότητες</value>
+  </data>
+  <data name="W.calls.active.Setting.group" xml:space="preserve">
+    <value>Κύρια ομάδα</value>
+  </data>
+  <data name="W.calls.kpis.Title" xml:space="preserve">
+    <value>Δραστηριότητα κλήσεων</value>
+  </data>
+  <data name="W.calls.kpis.Description" xml:space="preserve">
+    <value>Αριθμοί ενεργών, σημερινών, εκκρεμών, προγραμματισμένων κλήσεων και κλήσεων σε αναμονή πόρων, με τις τελευταίες επτά ημέρες.</value>
+  </data>
+  <data name="W.calls.pending.Title" xml:space="preserve">
+    <value>Εκκρεμείς και προγραμματισμένες</value>
+  </data>
+  <data name="W.calls.pending.Description" xml:space="preserve">
+    <value>Κλήσεις που έχουν αποθηκευτεί αλλά δεν έχουν αποσταλεί ακόμη και προγραμματισμένες κλήσεις που περιμένουν την ώρα αποστολής τους.</value>
+  </data>
+  <data name="W.calls.pending.Setting.maxRows" xml:space="preserve">
+    <value>Κλήσεις προς εμφάνιση</value>
+  </data>
+  <data name="W.calls.pending.Setting.show" xml:space="preserve">
+    <value>Εμφάνιση</value>
+  </data>
+  <data name="W.calls.pending.Option.all" xml:space="preserve">
+    <value>Εκκρεμείς και προγραμματισμένες</value>
+  </data>
+  <data name="W.calls.pending.Option.pending" xml:space="preserve">
+    <value>Μόνο εκκρεμείς</value>
+  </data>
+  <data name="W.calls.pending.Option.scheduled" xml:space="preserve">
+    <value>Μόνο προγραμματισμένες</value>
+  </data>
+  <data name="W.calls.awaitingResources.Title" xml:space="preserve">
+    <value>Σε αναμονή πόρων</value>
+  </data>
+  <data name="W.calls.awaitingResources.Description" xml:space="preserve">
+    <value>Ενεργές κλήσεις που περιμένουν ακόμη έναν πόρο του σχεδίου απόκρισης, τι λείπει και ποιες μονάδες είναι διαθέσιμες τώρα.</value>
+  </data>
+  <data name="W.calls.awaitingResources.Setting.maxRows" xml:space="preserve">
+    <value>Κλήσεις προς εμφάνιση</value>
+  </data>
+  <data name="W.calls.myCheckIns.Title" xml:space="preserve">
+    <value>Τα χρονόμετρα παρουσίας μου</value>
+  </data>
+  <data name="W.calls.myCheckIns.Description" xml:space="preserve">
+    <value>Τα χρονόμετρα παρουσίας σας στις κλήσεις στις οποίες έχετε σταλεί, με τον χρόνο που απομένει μέχρι την επόμενη δήλωση παρουσίας.</value>
+  </data>
+  <data name="W.calls.volume.Title" xml:space="preserve">
+    <value>Όγκος κλήσεων</value>
+  </data>
+  <data name="W.calls.volume.Description" xml:space="preserve">
+    <value>Κλήσεις ανά ημέρα ανά τύπο και προτεραιότητα, με τον διάμεσο χρόνο απόκρισης.</value>
+  </data>
+  <data name="W.calls.volume.Setting.days" xml:space="preserve">
+    <value>Περίοδος</value>
+  </data>
+  <data name="W.calls.volume.Option.7" xml:space="preserve">
+    <value>Τελευταίες 7 ημέρες</value>
+  </data>
+  <data name="W.calls.volume.Option.30" xml:space="preserve">
+    <value>Τελευταίες 30 ημέρες</value>
+  </data>
+  <data name="W.calls.volume.Option.90" xml:space="preserve">
+    <value>Τελευταίες 90 ημέρες</value>
+  </data>
+  <data name="W.incidentCommand.active.Title" xml:space="preserve">
+    <value>Ενεργές διοικήσεις συμβάντων</value>
+  </data>
+  <data name="W.incidentCommand.active.Description" xml:space="preserve">
+    <value>Ανοιχτές διοικήσεις συμβάντων με την κλήση τους, τον διοικητή συμβάντος και τους πόρους που έχουν ανατεθεί.</value>
+  </data>
+  <data name="W.incidentCommand.active.Setting.maxRows" xml:space="preserve">
+    <value>Διοικήσεις προς εμφάνιση</value>
+  </data>
+  <data name="W.units.status.Title" xml:space="preserve">
+    <value>Πίνακας κατάστασης μονάδων</value>
+  </data>
+  <data name="W.units.status.Description" xml:space="preserve">
+    <value>Μονάδες ανά σταθμό ή τύπο με την κατάστασή τους, τον χρόνο στην κατάσταση, τον προορισμό, το πλήρωμα και τη σημείωση κατάστασης.</value>
+  </data>
+  <data name="W.units.status.Setting.station" xml:space="preserve">
+    <value>Σταθμός</value>
+  </data>
+  <data name="W.units.status.Setting.unitTypes" xml:space="preserve">
+    <value>Τύποι μονάδων</value>
+  </data>
+  <data name="W.units.status.Setting.hideAvailable" xml:space="preserve">
+    <value>Απόκρυψη διαθέσιμων μονάδων</value>
+  </data>
+  <data name="W.units.status.Setting.groupBy" xml:space="preserve">
+    <value>Ομαδοποίηση κατά</value>
+  </data>
+  <data name="W.units.status.Option.station" xml:space="preserve">
+    <value>Σταθμός</value>
+  </data>
+  <data name="W.units.status.Option.type" xml:space="preserve">
+    <value>Τύπος μονάδας</value>
+  </data>
+  <data name="W.units.status.Option.none" xml:space="preserve">
+    <value>Χωρίς ομαδοποίηση</value>
+  </data>
+  <data name="W.units.summary.Title" xml:space="preserve">
+    <value>Σύνοψη μονάδων</value>
+  </data>
+  <data name="W.units.summary.Description" xml:space="preserve">
+    <value>Πόσες μονάδες είναι διαθέσιμες, δεσμευμένες ή εκτός υπηρεσίας.</value>
+  </data>
+  <data name="W.units.alerts.Title" xml:space="preserve">
+    <value>Ειδοποιήσεις κατάστασης μονάδων</value>
+  </data>
+  <data name="W.units.alerts.Description" xml:space="preserve">
+    <value>Μονάδες που βρίσκονται σε κατάσταση περισσότερο από όσο επιτρέπουν τα χρονόμετρα κατάστασης του τμήματος.</value>
+  </data>
+  <data name="W.units.alerts.Setting.showMuted" xml:space="preserve">
+    <value>Εμφάνιση σιγασμένων ειδοποιήσεων</value>
+  </data>
+  <data name="W.units.routes.Title" xml:space="preserve">
+    <value>Αποκλίσεις διαδρομής</value>
+  </data>
+  <data name="W.units.routes.Description" xml:space="preserve">
+    <value>Διαδρομές σε εξέλιξη και αποκλίσεις διαδρομής που δεν έχουν επιβεβαιωθεί ακόμη.</value>
+  </data>
+  <data name="W.personnel.myStatus.Title" xml:space="preserve">
+    <value>Η κατάστασή μου</value>
+  </data>
+  <data name="W.personnel.myStatus.Description" xml:space="preserve">
+    <value>Ορίστε την κατάστασή σας και το επίπεδο στελέχωσης, ή ανταποκριθείτε σε μια κλήση ή έναν σταθμό.</value>
+  </data>
+  <data name="W.personnel.board.Title" xml:space="preserve">
+    <value>Πίνακας κατάστασης προσωπικού</value>
+  </data>
+  <data name="W.personnel.board.Description" xml:space="preserve">
+    <value>Κατάσταση και στελέχωση όλων ανά ομάδα, με σημειώσεις στελέχωσης.</value>
+  </data>
+  <data name="W.personnel.board.Setting.groups" xml:space="preserve">
+    <value>Ομάδες</value>
+  </data>
+  <data name="W.personnel.board.Setting.hideUnavailable" xml:space="preserve">
+    <value>Απόκρυψη μη διαθέσιμου προσωπικού</value>
+  </data>
+  <data name="W.personnel.board.Setting.sort" xml:space="preserve">
+    <value>Ταξινόμηση</value>
+  </data>
+  <data name="W.personnel.board.Option.department" xml:space="preserve">
+    <value>Σειρά τμήματος</value>
+  </data>
+  <data name="W.personnel.board.Option.name" xml:space="preserve">
+    <value>Όνομα</value>
+  </data>
+  <data name="W.personnel.board.Option.status" xml:space="preserve">
+    <value>Κατάσταση</value>
+  </data>
+  <data name="W.personnel.statusSummary.Title" xml:space="preserve">
+    <value>Σύνοψη κατάστασης προσωπικού</value>
+  </data>
+  <data name="W.personnel.statusSummary.Description" xml:space="preserve">
+    <value>Πόσα άτομα ανταποκρίνονται, είναι στο σημείο, διαθέσιμα ή μη διαθέσιμα.</value>
+  </data>
+  <data name="W.personnel.staffingSummary.Title" xml:space="preserve">
+    <value>Σύνοψη στελέχωσης</value>
+  </data>
+  <data name="W.personnel.staffingSummary.Description" xml:space="preserve">
+    <value>Επίπεδα στελέχωσης σε όλο το τμήμα και ανά ομάδα, με τα άτομα που είναι σε υπηρεσία.</value>
+  </data>
+  <data name="W.calls.active.Empty" xml:space="preserve">
+    <value>Δεν υπάρχουν ενεργές κλήσεις</value>
+  </data>
+  <data name="W.calls.active.GroupFilterIgnored" xml:space="preserve">
+    <value>Η κύρια ομάδα στις ρυθμίσεις αυτού του γραφικού στοιχείου δεν υπάρχει πλέον, οπότε εμφανίζονται όλες οι κλήσεις.</value>
+  </data>
+  <data name="W.calls.active.IncidentCommand" xml:space="preserve">
+    <value>IC</value>
+  </data>
+  <data name="W.calls.active.IncidentCommandTitle" xml:space="preserve">
+    <value>Η διοίκηση συμβάντος έχει δημιουργηθεί</value>
+  </data>
+  <data name="W.calls.active.NewCall" xml:space="preserve">
+    <value>Δημιουργία κλήσης</value>
+  </data>
+  <data name="W.calls.active.Personnel" xml:space="preserve">
+    <value>Προσωπικό: {0}</value>
+  </data>
+  <data name="W.calls.active.ShowingOf" xml:space="preserve">
+    <value>Εμφάνιση {0} από {1} κλήσεις</value>
+  </data>
+  <data name="W.calls.active.Units" xml:space="preserve">
+    <value>Μονάδες: {0}</value>
+  </data>
+  <data name="W.calls.active.Untitled" xml:space="preserve">
+    <value>Κλήση</value>
+  </data>
+  <data name="W.calls.awaitingResources.Empty" xml:space="preserve">
+    <value>Καμία κλήση δεν περιμένει πόρους</value>
+  </data>
+  <data name="W.calls.awaitingResources.EtaTitle" xml:space="preserve">
+    <value>Άφιξη σε περίπου {0}</value>
+  </data>
+  <data name="W.calls.awaitingResources.Needs" xml:space="preserve">
+    <value>Απαιτούνται: {0} × {1}</value>
+  </data>
+  <data name="W.calls.awaitingResources.OpenList" xml:space="preserve">
+    <value>Άνοιγμα «Σε αναμονή πόρων»</value>
+  </data>
+  <data name="W.calls.awaitingResources.Send" xml:space="preserve">
+    <value>Αποστολή {0}</value>
+  </data>
+  <data name="W.calls.awaitingResources.SendFailed" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η αποστολή της μονάδας.</value>
+  </data>
+  <data name="W.calls.awaitingResources.Sent" xml:space="preserve">
+    <value>Στάλθηκε {0} προς {1}</value>
+  </data>
+  <data name="W.calls.awaitingResources.SentInstead" xml:space="preserve">
+    <value>Στάλθηκε {0} αντί αυτού</value>
+  </data>
+  <data name="W.calls.awaitingResources.ShowingOf" xml:space="preserve">
+    <value>Εμφάνιση {0} από {1} κλήσεις</value>
+  </data>
+  <data name="W.calls.awaitingResources.Untitled" xml:space="preserve">
+    <value>Κλήση</value>
+  </data>
+  <data name="W.calls.kpis.ActiveCalls" xml:space="preserve">
+    <value>ενεργές κλήσεις</value>
+  </data>
+  <data name="W.calls.kpis.Awaiting" xml:space="preserve">
+    <value>Σε αναμονή πόρων</value>
+  </data>
+  <data name="W.calls.kpis.CallsCount" xml:space="preserve">
+    <value>Κλήσεις: {0}</value>
+  </data>
+  <data name="W.calls.kpis.Pending" xml:space="preserve">
+    <value>Εκκρεμείς</value>
+  </data>
+  <data name="W.calls.kpis.Scheduled" xml:space="preserve">
+    <value>Προγραμματισμένες</value>
+  </data>
+  <data name="W.calls.kpis.SparkAria" xml:space="preserve">
+    <value>Κλήσεις ανά ημέρα, τελευταίες 7 ημέρες: {0}</value>
+  </data>
+  <data name="W.calls.kpis.Today" xml:space="preserve">
+    <value>Σήμερα</value>
+  </data>
+  <data name="W.calls.kpis.TodayLine" xml:space="preserve">
+    <value>Σήμερα: {0}</value>
+  </data>
+  <data name="W.calls.myCheckIns.CheckIn" xml:space="preserve">
+    <value>Δήλωση παρουσίας</value>
+  </data>
+  <data name="W.calls.myCheckIns.CheckInFailed" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η αποθήκευση της δήλωσης παρουσίας σας.</value>
+  </data>
+  <data name="W.calls.myCheckIns.CheckedIn" xml:space="preserve">
+    <value>Δήλωση παρουσίας: {0}</value>
+  </data>
+  <data name="W.calls.myCheckIns.DueIn" xml:space="preserve">
+    <value>Σε {0} (κάθε {1})</value>
+  </data>
+  <data name="W.calls.myCheckIns.Empty" xml:space="preserve">
+    <value>Δεν έχετε χρονόμετρα παρουσίας στις κλήσεις σας</value>
+  </data>
+  <data name="W.calls.myCheckIns.NoTimer" xml:space="preserve">
+    <value>Δεν υπάρχει χρονόμετρο παρουσίας προσωπικού σε αυτή την κλήση</value>
+  </data>
+  <data name="W.calls.myCheckIns.Overdue" xml:space="preserve">
+    <value>Εκπρόθεσμο κατά {0} (κάθε {1})</value>
+  </data>
+  <data name="W.calls.myCheckIns.Untitled" xml:space="preserve">
+    <value>Κλήση</value>
+  </data>
+  <data name="W.calls.pending.DispatchFailed" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η αποστολή της κλήσης.</value>
+  </data>
+  <data name="W.calls.pending.DispatchNow" xml:space="preserve">
+    <value>Αποστολή τώρα</value>
+  </data>
+  <data name="W.calls.pending.Dispatched" xml:space="preserve">
+    <value>Στάλθηκε {0}</value>
+  </data>
+  <data name="W.calls.pending.DispatchesAt" xml:space="preserve">
+    <value>αποστέλλεται {0}</value>
+  </data>
+  <data name="W.calls.pending.Empty" xml:space="preserve">
+    <value>Δεν υπάρχουν κλήσεις σε αναμονή αποστολής</value>
+  </data>
+  <data name="W.calls.pending.OpenPending" xml:space="preserve">
+    <value>Άνοιγμα εκκρεμών κλήσεων</value>
+  </data>
+  <data name="W.calls.pending.Pending" xml:space="preserve">
+    <value>Εκκρεμής</value>
+  </data>
+  <data name="W.calls.pending.PendingCount" xml:space="preserve">
+    <value>Εκκρεμείς: {0}</value>
+  </data>
+  <data name="W.calls.pending.SavedAgo" xml:space="preserve">
+    <value>αποθηκεύτηκε {0}</value>
+  </data>
+  <data name="W.calls.pending.Scheduled" xml:space="preserve">
+    <value>Προγραμματισμένη</value>
+  </data>
+  <data name="W.calls.pending.ScheduledCount" xml:space="preserve">
+    <value>Προγραμματισμένες: {0}</value>
+  </data>
+  <data name="W.calls.pending.Untitled" xml:space="preserve">
+    <value>Κλήση</value>
+  </data>
+  <data name="W.calls.volume.ByPriority" xml:space="preserve">
+    <value>Ανά προτεραιότητα</value>
+  </data>
+  <data name="W.calls.volume.ByType" xml:space="preserve">
+    <value>Ανά τύπο</value>
+  </data>
+  <data name="W.calls.volume.CallsCount" xml:space="preserve">
+    <value>Κλήσεις: {0}</value>
+  </data>
+  <data name="W.calls.volume.Empty" xml:space="preserve">
+    <value>Καμία κλήση τις τελευταίες {0} ημέρες</value>
+  </data>
+  <data name="W.calls.volume.MedianResponse" xml:space="preserve">
+    <value>Διάμεσος χρόνος απόκρισης</value>
+  </data>
+  <data name="W.calls.volume.OpenReports" xml:space="preserve">
+    <value>Άνοιγμα αναφορών</value>
+  </data>
+  <data name="W.calls.volume.OtherTypes" xml:space="preserve">
+    <value>Άλλοι τύποι</value>
+  </data>
+  <data name="W.calls.volume.P90Title" xml:space="preserve">
+    <value>90ό εκατοστημόριο: {0} · αποκρίσεις: {1}</value>
+  </data>
+  <data name="W.calls.volume.PerDay" xml:space="preserve">
+    <value>Ανά ημέρα</value>
+  </data>
+  <data name="W.calls.volume.PerDayHeading" xml:space="preserve">
+    <value>Κλήσεις ανά ημέρα</value>
+  </data>
+  <data name="W.calls.volume.ResponseNote" xml:space="preserve">
+    <value>Χρόνος απόκρισης από τον συναγερμό έως την άφιξη, αποκρίσεις: {0}.</value>
+  </data>
+  <data name="W.calls.volume.SparkAria" xml:space="preserve">
+    <value>Κλήσεις ανά ημέρα, τελευταίες {0} ημέρες: {1}</value>
+  </data>
+  <data name="W.calls.volume.TotalCalls" xml:space="preserve">
+    <value>Κλήσεις, τελευταίες {0} ημέρες</value>
+  </data>
+  <data name="W.calls.volume.Untyped" xml:space="preserve">
+    <value>Χωρίς τύπο</value>
+  </data>
+  <data name="W.incidentCommand.active.Assigned" xml:space="preserve">
+    <value>Ανατεθειμένες μονάδες: {0} · ανατεθειμένο προσωπικό: {1}</value>
+  </data>
+  <data name="W.incidentCommand.active.Commander" xml:space="preserve">
+    <value>IC {0}</value>
+  </data>
+  <data name="W.incidentCommand.active.Empty" xml:space="preserve">
+    <value>Δεν υπάρχουν ανοιχτές διοικήσεις συμβάντων</value>
+  </data>
+  <data name="W.incidentCommand.active.EstablishedAt" xml:space="preserve">
+    <value>Δημιουργήθηκε {0}</value>
+  </data>
+  <data name="W.incidentCommand.active.NoCommander" xml:space="preserve">
+    <value>Δεν υπάρχει διοικητής συμβάντος</value>
+  </data>
+  <data name="W.incidentCommand.active.Untitled" xml:space="preserve">
+    <value>Διοίκηση συμβάντος</value>
+  </data>
+  <data name="W.personnel.board.CallNumber" xml:space="preserve">
+    <value>Κλήση #{0}</value>
+  </data>
+  <data name="W.personnel.board.Cancel" xml:space="preserve">
+    <value>Ακύρωση</value>
+  </data>
+  <data name="W.personnel.board.Caption" xml:space="preserve">
+    <value>Κατάσταση προσωπικού ανά ομάδα</value>
+  </data>
+  <data name="W.personnel.board.ChangeSettings" xml:space="preserve">
+    <value>Αλλαγή ρυθμίσεων</value>
+  </data>
+  <data name="W.personnel.board.ColFor" xml:space="preserve">
+    <value>Διάρκεια</value>
+  </data>
+  <data name="W.personnel.board.ColName" xml:space="preserve">
+    <value>Όνομα</value>
+  </data>
+  <data name="W.personnel.board.ColNote" xml:space="preserve">
+    <value>Σημείωση στελέχωσης</value>
+  </data>
+  <data name="W.personnel.board.ColRoles" xml:space="preserve">
+    <value>Ρόλοι</value>
+  </data>
+  <data name="W.personnel.board.ColStaffing" xml:space="preserve">
+    <value>Στελέχωση</value>
+  </data>
+  <data name="W.personnel.board.ColStatus" xml:space="preserve">
+    <value>Κατάσταση</value>
+  </data>
+  <data name="W.personnel.board.ConfirmReset" xml:space="preserve">
+    <value>Επαναφορά</value>
+  </data>
+  <data name="W.personnel.board.ConfirmResetAll" xml:space="preserve">
+    <value>Να οριστεί σε όλους η κατάσταση «διαθέσιμος» του τμήματος;</value>
+  </data>
+  <data name="W.personnel.board.ConfirmResetGroup" xml:space="preserve">
+    <value>Να οριστεί σε όλους στην ομάδα {0} η κατάσταση «διαθέσιμος» του τμήματος;</value>
+  </data>
+  <data name="W.personnel.board.Empty" xml:space="preserve">
+    <value>Δεν υπάρχει προσωπικό για εμφάνιση</value>
+  </data>
+  <data name="W.personnel.board.GroupFilterIgnored" xml:space="preserve">
+    <value>Ορισμένες ομάδες στις ρυθμίσεις αυτού του γραφικού στοιχείου δεν υπάρχουν πλέον και αγνοήθηκαν.</value>
+  </data>
+  <data name="W.personnel.board.GroupMeta" xml:space="preserve">
+    <value>Προσωπικό: {0} · δεσμευμένοι: {1}</value>
+  </data>
+  <data name="W.personnel.board.ProtectedNote" xml:space="preserve">
+    <value>Προστατευμένη σημείωση</value>
+  </data>
+  <data name="W.personnel.board.Reset" xml:space="preserve">
+    <value>Επαναφορά</value>
+  </data>
+  <data name="W.personnel.board.ResetAllDone" xml:space="preserve">
+    <value>Όλοι ορίστηκαν ως διαθέσιμοι</value>
+  </data>
+  <data name="W.personnel.board.ResetAllOption" xml:space="preserve">
+    <value>Όλοι</value>
+  </data>
+  <data name="W.personnel.board.ResetFailed" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η επαναφορά των καταστάσεων.</value>
+  </data>
+  <data name="W.personnel.board.ResetGroupDone" xml:space="preserve">
+    <value>Ορίστηκε ως διαθέσιμο: {0}</value>
+  </data>
+  <data name="W.personnel.board.ResetLabel" xml:space="preserve">
+    <value>Επαναφορά καταστάσεων για</value>
+  </data>
+  <data name="W.personnel.board.ResetPlaceholder" xml:space="preserve">
+    <value>Επαναφορά καταστάσεων…</value>
+  </data>
+  <data name="W.personnel.board.Ungrouped" xml:space="preserve">
+    <value>Εκτός ομάδας</value>
+  </data>
+  <data name="W.personnel.board.YourGroup" xml:space="preserve">
+    <value>Η ομάδα σας</value>
+  </data>
+  <data name="W.personnel.myStatus.Calls" xml:space="preserve">
+    <value>Κλήσεις</value>
+  </data>
+  <data name="W.personnel.myStatus.Failed" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η αποθήκευση. Δοκιμάστε ξανά.</value>
+  </data>
+  <data name="W.personnel.myStatus.NoteRequired" xml:space="preserve">
+    <value>Το {0} απαιτεί σημείωση.</value>
+  </data>
+  <data name="W.personnel.myStatus.Respond" xml:space="preserve">
+    <value>Ανταπόκριση</value>
+  </data>
+  <data name="W.personnel.myStatus.RespondLabel" xml:space="preserve">
+    <value>Ανταπόκριση σε κλήση ή σταθμό</value>
+  </data>
+  <data name="W.personnel.myStatus.RespondPlaceholder" xml:space="preserve">
+    <value>Ανταπόκριση σε κλήση ή σταθμό…</value>
+  </data>
+  <data name="W.personnel.myStatus.Responding" xml:space="preserve">
+    <value>Ανταπόκριση σε: {0}</value>
+  </data>
+  <data name="W.personnel.myStatus.Set" xml:space="preserve">
+    <value>Ορισμός</value>
+  </data>
+  <data name="W.personnel.myStatus.Staffing" xml:space="preserve">
+    <value>Στελέχωση</value>
+  </data>
+  <data name="W.personnel.myStatus.StaffingLabel" xml:space="preserve">
+    <value>Επίπεδο στελέχωσης</value>
+  </data>
+  <data name="W.personnel.myStatus.StaffingNoteEncrypted" xml:space="preserve">
+    <value>Σημείωση (αποθηκεύεται κρυπτογραφημένη)</value>
+  </data>
+  <data name="W.personnel.myStatus.StaffingNoteLabel" xml:space="preserve">
+    <value>Σημείωση στελέχωσης</value>
+  </data>
+  <data name="W.personnel.myStatus.StaffingNotePlaceholder" xml:space="preserve">
+    <value>Σημείωση (προαιρετική)</value>
+  </data>
+  <data name="W.personnel.myStatus.StaffingSet" xml:space="preserve">
+    <value>Το επίπεδο στελέχωσης ορίστηκε σε {0}</value>
+  </data>
+  <data name="W.personnel.myStatus.Stations" xml:space="preserve">
+    <value>Σταθμοί</value>
+  </data>
+  <data name="W.personnel.myStatus.StatusButtons" xml:space="preserve">
+    <value>Ορίστε την κατάστασή σας</value>
+  </data>
+  <data name="W.personnel.myStatus.StatusNoteLabel" xml:space="preserve">
+    <value>Σημείωση κατάστασης</value>
+  </data>
+  <data name="W.personnel.myStatus.StatusNotePlaceholder" xml:space="preserve">
+    <value>Σημείωση κατάστασης (προαιρετική)</value>
+  </data>
+  <data name="W.personnel.myStatus.StatusSet" xml:space="preserve">
+    <value>Η κατάσταση ορίστηκε σε {0}</value>
+  </data>
+  <data name="W.personnel.staffingSummary.AvailableOf" xml:space="preserve">
+    <value>διαθέσιμα από {0} μέλη</value>
+  </data>
+  <data name="W.personnel.staffingSummary.ByGroup" xml:space="preserve">
+    <value>Ανά ομάδα</value>
+  </data>
+  <data name="W.personnel.staffingSummary.Empty" xml:space="preserve">
+    <value>Δεν υπάρχει προσωπικό για εμφάνιση</value>
+  </data>
+  <data name="W.personnel.staffingSummary.GroupAvailable" xml:space="preserve">
+    <value>{0}/{1}</value>
+  </data>
+  <data name="W.personnel.staffingSummary.GroupOnDuty" xml:space="preserve">
+    <value>{0}/{1} · σε υπηρεσία: {2}</value>
+  </data>
+  <data name="W.personnel.staffingSummary.OnDutyOf" xml:space="preserve">
+    <value>σε υπηρεσία από {0} μέλη</value>
+  </data>
+  <data name="W.personnel.staffingSummary.StackAria" xml:space="preserve">
+    <value>Προσωπικό ανά επίπεδο στελέχωσης: {0}</value>
+  </data>
+  <data name="W.personnel.statusSummary.Available" xml:space="preserve">
+    <value>Διαθέσιμοι</value>
+  </data>
+  <data name="W.personnel.statusSummary.Committed" xml:space="preserve">
+    <value>Δεσμευμένοι</value>
+  </data>
+  <data name="W.personnel.statusSummary.CommittedOf" xml:space="preserve">
+    <value>δεσμευμένοι από {0} μέλη</value>
+  </data>
+  <data name="W.personnel.statusSummary.Empty" xml:space="preserve">
+    <value>Δεν υπάρχει προσωπικό για εμφάνιση</value>
+  </data>
+  <data name="W.personnel.statusSummary.StackAria" xml:space="preserve">
+    <value>Προσωπικό ανά κατάσταση: {0}</value>
+  </data>
+  <data name="W.personnel.statusSummary.Unavailable" xml:space="preserve">
+    <value>Μη διαθέσιμοι</value>
+  </data>
+  <data name="W.units.alerts.Acknowledge" xml:space="preserve">
+    <value>Επιβεβαίωση</value>
+  </data>
+  <data name="W.units.alerts.AcknowledgeTitle" xml:space="preserve">
+    <value>Επιβεβαίωση: {0}</value>
+  </data>
+  <data name="W.units.alerts.Acknowledged" xml:space="preserve">
+    <value>Επιβεβαιώθηκε: {0}</value>
+  </data>
+  <data name="W.units.alerts.AcknowledgedBy" xml:space="preserve">
+    <value>Επιβεβαιώθηκε από {0} {1}</value>
+  </data>
+  <data name="W.units.alerts.Cancel" xml:space="preserve">
+    <value>Ακύρωση</value>
+  </data>
+  <data name="W.units.alerts.Clear" xml:space="preserve">
+    <value>Εκκαθάριση</value>
+  </data>
+  <data name="W.units.alerts.ClearTitle" xml:space="preserve">
+    <value>Ανάκληση της επιβεβαίωσης</value>
+  </data>
+  <data name="W.units.alerts.Cleared" xml:space="preserve">
+    <value>Η επιβεβαίωση για {0} ανακλήθηκε</value>
+  </data>
+  <data name="W.units.alerts.Empty" xml:space="preserve">
+    <value>Όλες οι μονάδες είναι εντός των χρονομέτρων κατάστασης</value>
+  </data>
+  <data name="W.units.alerts.ForMinutes" xml:space="preserve">
+    <value>Για {0}</value>
+  </data>
+  <data name="W.units.alerts.Mute" xml:space="preserve">
+    <value>Σίγαση</value>
+  </data>
+  <data name="W.units.alerts.MuteFor" xml:space="preserve">
+    <value>Σίγαση για</value>
+  </data>
+  <data name="W.units.alerts.MuteTitle" xml:space="preserve">
+    <value>Σίγαση: {0}</value>
+  </data>
+  <data name="W.units.alerts.Muted" xml:space="preserve">
+    <value>Σιγάστηκε: {0}</value>
+  </data>
+  <data name="W.units.alerts.MutedByUntilChange" xml:space="preserve">
+    <value>Σιγάστηκε από {0} μέχρι να αλλάξει η κατάσταση</value>
+  </data>
+  <data name="W.units.alerts.MutedUntilBy" xml:space="preserve">
+    <value>Σιγάστηκε από {0} έως {1}</value>
+  </data>
+  <data name="W.units.alerts.NoTimers" xml:space="preserve">
+    <value>Δεν έχουν ρυθμιστεί χρονόμετρα κατάστασης</value>
+  </data>
+  <data name="W.units.alerts.NoteLabel" xml:space="preserve">
+    <value>Σημείωση</value>
+  </data>
+  <data name="W.units.alerts.NotePlaceholder" xml:space="preserve">
+    <value>Σημείωση (προαιρετική)</value>
+  </data>
+  <data name="W.units.alerts.NotePlaceholderRequired" xml:space="preserve">
+    <value>Λόγος (υποχρεωτικό)</value>
+  </data>
+  <data name="W.units.alerts.NoteRequired" xml:space="preserve">
+    <value>Απαιτείται αιτιολογία για την επιβεβαίωση αυτής της ειδοποίησης.</value>
+  </data>
+  <data name="W.units.alerts.OnlyMuted" xml:space="preserve">
+    <value>Καμία ανοιχτή ειδοποίηση · σε σίγαση: {0}</value>
+  </data>
+  <data name="W.units.alerts.OverTimer" xml:space="preserve">
+    <value>Υπέρβαση χρονομέτρου κατάστασης {0}</value>
+  </data>
+  <data name="W.units.alerts.SaveFailed" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η αποθήκευση. Δοκιμάστε ξανά.</value>
+  </data>
+  <data name="W.units.alerts.SetUpTimers" xml:space="preserve">
+    <value>Ρύθμιση χρονομέτρων κατάστασης</value>
+  </data>
+  <data name="W.units.alerts.ShowMuted" xml:space="preserve">
+    <value>Εμφάνιση σιγασμένων ειδοποιήσεων</value>
+  </data>
+  <data name="W.units.alerts.Someone" xml:space="preserve">
+    <value>κάποιος</value>
+  </data>
+  <data name="W.units.alerts.StatusChanged" xml:space="preserve">
+    <value>Η κατάσταση της μονάδας άλλαξε· η ειδοποίηση ανανεώθηκε.</value>
+  </data>
+  <data name="W.units.alerts.UntilStatusChanges" xml:space="preserve">
+    <value>Μέχρι να αλλάξει η κατάσταση</value>
+  </data>
+  <data name="W.units.routes.Acknowledge" xml:space="preserve">
+    <value>Επιβεβαίωση</value>
+  </data>
+  <data name="W.units.routes.AcknowledgeFailed" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η επιβεβαίωση της απόκλισης.</value>
+  </data>
+  <data name="W.units.routes.Acknowledged" xml:space="preserve">
+    <value>Η απόκλιση επιβεβαιώθηκε</value>
+  </data>
+  <data name="W.units.routes.DeviationCount" xml:space="preserve">
+    <value>Αποκλίσεις: {0}</value>
+  </data>
+  <data name="W.units.routes.Deviations" xml:space="preserve">
+    <value>Αποκλίσεις ({0})</value>
+  </data>
+  <data name="W.units.routes.Empty" xml:space="preserve">
+    <value>Δεν υπάρχουν διαδρομές σε εξέλιξη</value>
+  </data>
+  <data name="W.units.routes.InProgress" xml:space="preserve">
+    <value>Σε εξέλιξη ({0})</value>
+  </data>
+  <data name="W.units.routes.Kilometres" xml:space="preserve">
+    <value>{0} χλμ</value>
+  </data>
+  <data name="W.units.routes.Metres" xml:space="preserve">
+    <value>{0} μ</value>
+  </data>
+  <data name="W.units.routes.OffRoute" xml:space="preserve">
+    <value>{0} · εκτός διαδρομής: {1}</value>
+  </data>
+  <data name="W.units.routes.OpenRoutes" xml:space="preserve">
+    <value>Άνοιγμα ενεργών διαδρομών</value>
+  </data>
+  <data name="W.units.routes.Paused" xml:space="preserve">
+    <value>Σε παύση</value>
+  </data>
+  <data name="W.units.routes.Route" xml:space="preserve">
+    <value>Διαδρομή</value>
+  </data>
+  <data name="W.units.routes.Started" xml:space="preserve">
+    <value>ξεκίνησε {0}</value>
+  </data>
+  <data name="W.units.routes.Stops" xml:space="preserve">
+    <value>Στάσεις: {0}/{1}</value>
+  </data>
+  <data name="W.units.status.AllAvailable" xml:space="preserve">
+    <value>Όλες οι μονάδες είναι διαθέσιμες</value>
+  </data>
+  <data name="W.units.status.AllUnits" xml:space="preserve">
+    <value>Όλες οι μονάδες</value>
+  </data>
+  <data name="W.units.status.Caption" xml:space="preserve">
+    <value>Κατάσταση μονάδων</value>
+  </data>
+  <data name="W.units.status.ChangeSettings" xml:space="preserve">
+    <value>Αλλαγή ρυθμίσεων</value>
+  </data>
+  <data name="W.units.status.ColCrew" xml:space="preserve">
+    <value>Πλήρωμα</value>
+  </data>
+  <data name="W.units.status.ColDestination" xml:space="preserve">
+    <value>Προορισμός</value>
+  </data>
+  <data name="W.units.status.ColFor" xml:space="preserve">
+    <value>Διάρκεια</value>
+  </data>
+  <data name="W.units.status.ColNote" xml:space="preserve">
+    <value>Σημείωση</value>
+  </data>
+  <data name="W.units.status.ColStation" xml:space="preserve">
+    <value>Σταθμός</value>
+  </data>
+  <data name="W.units.status.ColStatus" xml:space="preserve">
+    <value>Κατάσταση</value>
+  </data>
+  <data name="W.units.status.ColUnit" xml:space="preserve">
+    <value>Μονάδα</value>
+  </data>
+  <data name="W.units.status.CrewTitle" xml:space="preserve">
+    <value>Τοποθετημένοι: {0}</value>
+  </data>
+  <data name="W.units.status.Empty" xml:space="preserve">
+    <value>Δεν υπάρχουν μονάδες για εμφάνιση</value>
+  </data>
+  <data name="W.units.status.GroupMeta" xml:space="preserve">
+    <value>Μονάδες: {0} · διαθέσιμες: {1}</value>
+  </data>
+  <data name="W.units.status.HiddenAvailable" xml:space="preserve">
+    <value>Κρυφές διαθέσιμες μονάδες: {0}</value>
+  </data>
+  <data name="W.units.status.NoStation" xml:space="preserve">
+    <value>Χωρίς σταθμό</value>
+  </data>
+  <data name="W.units.status.NoStatus" xml:space="preserve">
+    <value>Χωρίς κατάσταση</value>
+  </data>
+  <data name="W.units.status.NoType" xml:space="preserve">
+    <value>Χωρίς τύπο</value>
+  </data>
+  <data name="W.units.status.OpenUnits" xml:space="preserve">
+    <value>Άνοιγμα μονάδων</value>
+  </data>
+  <data name="W.units.status.ProtectedNote" xml:space="preserve">
+    <value>Προστατευμένη σημείωση</value>
+  </data>
+  <data name="W.units.status.StationFilterIgnored" xml:space="preserve">
+    <value>Ο σταθμός στις ρυθμίσεις αυτού του γραφικού στοιχείου δεν υπάρχει πλέον, οπότε εμφανίζονται όλες οι μονάδες.</value>
+  </data>
+  <data name="W.units.summary.Available" xml:space="preserve">
+    <value>Διαθέσιμες</value>
+  </data>
+  <data name="W.units.summary.AvailableOf" xml:space="preserve">
+    <value>διαθέσιμες μονάδες</value>
+  </data>
+  <data name="W.units.summary.Committed" xml:space="preserve">
+    <value>Δεσμευμένες</value>
+  </data>
+  <data name="W.units.summary.DonutAria" xml:space="preserve">
+    <value>Μονάδες ανά κατάσταση: {0}</value>
+  </data>
+  <data name="W.units.summary.Empty" xml:space="preserve">
+    <value>Δεν υπάρχουν μονάδες για εμφάνιση</value>
+  </data>
+  <data name="W.units.summary.NoStatus" xml:space="preserve">
+    <value>Χωρίς κατάσταση</value>
+  </data>
+  <data name="W.units.summary.OpenUnits" xml:space="preserve">
+    <value>Άνοιγμα μονάδων</value>
+  </data>
+  <data name="W.units.summary.OutOfService" xml:space="preserve">
+    <value>Εκτός υπηρεσίας</value>
+  </data>
+  <data name="W.units.summary.Units" xml:space="preserve">
+    <value>μονάδες</value>
+  </data>
+  <data name="W.units.summary.InServiceLine" xml:space="preserve">
+    <value>Σε υπηρεσία: {0} · εκτός υπηρεσίας: {1}</value>
+  </data>
+  <data name="W.personnel.statusSummary.AvailableLine" xml:space="preserve">
+    <value>Διαθέσιμοι: {0} · μη διαθέσιμοι: {1}</value>
+  </data>
+  <data name="W.personnel.myStatus.RespondTo" xml:space="preserve">
+    <value>Ανταπόκριση…</value>
+  </data>
+  <data name="W.personnel.myStatus.Since" xml:space="preserve">
+    <value>από {0}</value>
+  </data>
+</root>

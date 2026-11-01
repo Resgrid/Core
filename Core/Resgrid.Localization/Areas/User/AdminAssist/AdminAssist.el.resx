@@ -7719,4 +7719,49 @@
   <data xml:space="preserve" name="SettingHelp.ShiftTradeApprovers">
     <value>Ποιος επιλέγει ποιος αιτών αναλαμβάνει ένα αίτημα ανταλλαγής βάρδιας και εγκρίνει ανταλλαγές σε αναμονή. Οι διαχειριστές τμήματος μπορούν πάντα· οι διαχειριστές ομάδων, ο αιτών και τα μέλη επιλεγμένων ρόλων είναι επιλογή του τμήματος.</value>
   </data>
+  <data xml:space="preserve" name="Feature.home-dashboard">
+    <value>Προσαρμόσιμος αρχικός πίνακας ελέγχου</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.home-dashboard">
+    <value>Μια αρχική σελίδα με ζωντανά γραφικά στοιχεία που κάθε μέλος οργανώνει μόνο του, αποθηκευμένη στον λογαριασμό του.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureValue.home-dashboard">
+    <value>Τα μέλη βλέπουν σε μία οθόνη ό,τι χρειάζεται την προσοχή τους σε κάθε λειτουργική ενότητα, και η διάταξή τους τα ακολουθεί σε οποιοδήποτε πρόγραμμα περιήγησης.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureExample.home-dashboard">
+    <value>Οι διανομείς ξεκινούν από τις ενεργές κλήσεις, την κατάσταση των μονάδων και τον χάρτη· τα μέλη από την κατάστασή τους, τις βάρδιες και τις λίστες ελέγχου που οφείλονται.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.home-dashboard">
+    <value>Ενεργοποιήστε τον νέο πίνακα ελέγχου και, στη συνέχεια, ελέγξτε τον προεπιλεγμένο πίνακα που βλέπει κάθε ρόλος πριν τον προσαρμόσουν τα μέλη.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.dashboard-templates">
+    <value>Πρότυπα πίνακα ελέγχου</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.dashboard-templates">
+    <value>Προεπιλεγμένοι πίνακες ελέγχου του τμήματος για όλους, για έναν ρόλο προσωπικού ή για μια ομάδα.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureValue.dashboard-templates">
+    <value>Τα μέλη που δεν έχουν κάνει προσαρμογή ξεκινούν από έναν πίνακα επιλεγμένο για τη θέση τους αντί για τον ενσωματωμένο προεπιλεγμένο.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureExample.dashboard-templates">
+    <value>Ένα πρότυπο για τον ρόλο «Διανομέας» με κλήσεις, μονάδες και χάρτη, και ένα προεπιλεγμένο του τμήματος με κατάσταση, βάρδιες και λίστες ελέγχου.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.dashboard-templates">
+    <value>Δημιουργήστε ένα προεπιλεγμένο πρότυπο του τμήματος και, στη συνέχεια, προσθέστε πρότυπα για ρόλους ή ομάδες όπου μια θέση χρειάζεται διαφορετικό πίνακα.</value>
+  </data>
+  <data xml:space="preserve" name="Topic.dashboard-customize">
+    <value>Προσαρμογή του αρχικού πίνακα ελέγχου</value>
+  </data>
+  <data xml:space="preserve" name="Topic.dashboard-defaults">
+    <value>Ποιον πίνακα ελέγχου βλέπει ένα μέλος</value>
+  </data>
+  <data xml:space="preserve" name="Topic.dashboard-addon-widgets">
+    <value>Γραφικά στοιχεία πρόσθετων και κλειδωμένες κάρτες</value>
+  </data>
+  <data xml:space="preserve" name="Topic.dashboard-data-protection">
+    <value>Προστατευμένα δεδομένα στον πίνακα ελέγχου</value>
+  </data>
+  <data xml:space="preserve" name="Topic.dashboard-classic">
+    <value>Ενεργοποίηση του νέου πίνακα ελέγχου και επιστροφή στον κλασικό</value>
+  </data>
 </root>

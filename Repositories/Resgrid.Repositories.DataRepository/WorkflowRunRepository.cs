@@ -121,6 +121,13 @@ namespace Resgrid.Repositories.DataRepository
 			return result;
 		}
 
+		public Task<IEnumerable<WorkflowRunStatusCount>> GetStatusCountsAsync(int departmentId, DateTime sinceUtc) =>
+			QueryAsync<WorkflowRunStatusCount>(
+				$"SELECT {Col("WorkflowId")}, {Col("Status")}, CAST(COUNT(*) AS INT) AS {Col("Total")}, MAX({Col("StartedOn")}) AS {Col("LastOn")} " +
+				$"FROM {Tbl("WorkflowRuns")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND ({Col("StartedOn")} >= {P}Since OR {Col("Status")} IN ({P}Pending, {P}Running, {P}Retrying)) " +
+				$"GROUP BY {Col("WorkflowId")}, {Col("Status")}",
+				new { DepartmentId = departmentId, Since = DatabaseTimestamp(sinceUtc), Pending = (int)WorkflowRunStatus.Pending, Running = (int)WorkflowRunStatus.Running, Retrying = (int)WorkflowRunStatus.Retrying });
+
 		public async Task<IEnumerable<WorkflowRun>> GetPendingAndRunningByDepartmentIdAsync(int departmentId)
 		{
 			try

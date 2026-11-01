@@ -31,7 +31,7 @@ namespace Resgrid.Repositories.DataRepository
 		{
 			"CallLocationIndexStates", "CallNumberSequences", "DocumentNumberSequences", "DepartmentApiKeys", "ScheduledTasks", "UserStates",
 			"UdfDefinitions", "ChatbotSessions", "ChatbotMessageLog", "ChatbotDepartmentConfigs", "AiDispatchAudits", "DepartmentAiDispatchConfigs",
-			"AiBillingAccounts", "AdpBillingAccounts", "ContactPreplanHazards", "ContactPreplans", "ContactAttachments", "DepartmentProfileMedia", "TypeIcons", "MapVisualizations", "RunCardActivations",
+			"AiBillingAccounts", "AdpBillingAccounts", "ContactPreplanHazards", "ContactPreplans", "ContactAttachments", "DepartmentProfileMedia", "TypeIcons", "MapVisualizations", "UserDashboards", "DepartmentDashboardTemplates", "RunCardActivations",
 			"RunCards", "StationCoverageRequirements", "ModerationActions", "ModerationReports", "ModerationRequests", "MessageRecipients", "Messages",
 			"DepartmentMemberSensitiveData", "DepartmentMemberEmergencyContacts", "UserExternalIdentityLinks", "DepartmentSecurityPolicies",
 			"DepartmentSsoConfigs", "GdprDataExportRequests", "Autofills", "DomainEventOutbox", "ReportingDailyRollup", "SearchProjections",
@@ -74,6 +74,9 @@ namespace Resgrid.Repositories.DataRepository
 
 			// Saved map visualizations (definitions only; the data they show is never stored)
 			await Delete("MapVisualizations");
+
+			// Home dashboard boards and department templates (layouts only)
+			await Delete("UserDashboards", "DepartmentDashboardTemplates");
 
 			// Run cards: requirements hang off alarm levels, the other children off the run card
 			foreach (var requirement in new[] { "RunCardRoleRequirements", "RunCardUnitRequirements" })

@@ -17,6 +17,9 @@ namespace Resgrid.Model.Repositories
 		/// <returns>Task&lt;IEnumerable&lt;Log&gt;&gt;.</returns>
 		Task<IEnumerable<Log>> GetLogsForUserAsync(string userId);
 
+		/// <summary>Header columns of the department's logs written at or after <paramref name="sinceUtc"/>, newest first, at most <paramref name="take"/>.</summary>
+		Task<IEnumerable<WorkLogHeader>> GetLogHeadersSinceAsync(int departmentId, System.DateTime sinceUtc, int take);
+
 		/// <summary>
 		/// Gets the logs for call asynchronous.
 		/// </summary>

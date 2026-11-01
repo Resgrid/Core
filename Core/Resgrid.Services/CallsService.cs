@@ -1284,5 +1284,19 @@ namespace Resgrid.Services
 			var calls = await _callsRepository.GetActiveCallsWithCheckInTimersForUserAsync(userId, departmentId);
 			return calls?.ToList() ?? new List<Call>();
 		}
+
+		public async Task<Dictionary<int, CallDispatchCounts>> GetActiveCallDispatchCountsAsync(int departmentId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var counts = await _callsRepository.GetActiveCallDispatchCountsAsync(departmentId, DateTime.UtcNow, cancellationToken);
+
+			var result = new Dictionary<int, CallDispatchCounts>();
+			foreach (var count in counts ?? Enumerable.Empty<CallDispatchCounts>())
+			{
+				if (count != null)
+					result[count.CallId] = count;
+			}
+
+			return result;
+		}
 	}
 }

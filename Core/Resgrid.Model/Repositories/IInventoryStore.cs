@@ -13,6 +13,8 @@ namespace Resgrid.Model.Repositories
 		Task<InventoryAlert> OpenAlertAsync(int departmentId, string dedupKey);
 		Task<InventoryAlertDelivery> AlertDeliveryAsync(int departmentId, string alertId, string userId);
 		Task<List<InventoryAlert>> OpenAlertsAsync(int departmentId, int skip = 0);
+		/// <summary>Open alerts grouped by type, item and holder (one query; at most <paramref name="take"/> buckets, ordered).</summary>
+		Task<List<InventoryAlertGroupCount>> OpenAlertGroupCountsAsync(int departmentId, int take);
 		Task<List<InventoryAlert>> ClaimableAlertsAsync(int departmentId, string userId, System.DateTime now, int skip = 0);
 		Task<T> GetAsync<T>(int departmentId, string id) where T : InventoryRow;
 		Task<List<T>> ListAsync<T>(int departmentId, int skip = 0) where T : InventoryRow;

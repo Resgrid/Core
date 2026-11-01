@@ -977,6 +977,12 @@ namespace Resgrid.Services
 			return logs;
 		}
 
+		public async Task<List<WorkflowRunStatusCount>> GetDepartmentRunStatusCountsAsync(int departmentId, DateTime sinceUtc, CancellationToken cancellationToken = default)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			return (await _runRepository.GetStatusCountsAsync(departmentId, sinceUtc))?.ToList() ?? new List<WorkflowRunStatusCount>();
+		}
+
 		public async Task<WorkflowHealthSummary> GetWorkflowHealthAsync(string workflowId, CancellationToken cancellationToken = default)
 		{
 			var workflow = await _workflowRepository.GetByIdAsync(workflowId);

@@ -1,0 +1,154 @@
+/* Awareness widget extras (map.visualization, general.clock). Tokens only; every class rg-<widget>- prefixed. */
+
+.rg-mapviz-wrap {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.rg-mapviz-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 6px 12px;
+  min-width: 0;
+  border-block-end: 1px solid var(--rg-hair);
+}
+
+.rg-mapviz-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-weight: 600;
+  color: var(--rg-heading);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rg-mapviz-meta {
+  flex: none;
+  white-space: nowrap;
+  font-size: 12px;
+}
+
+.rg-mapviz-map {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.rg-legend.rg-mapviz-key {
+  flex: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 12px;
+  margin: 0;
+  padding: 4px 12px;
+  font-size: 11px;
+}
+
+.rg-clock {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100%;
+  gap: 2px;
+}
+
+.rg-clock-time {
+  font-size: 34px;
+  line-height: 1.1;
+  font-weight: 600;
+  color: var(--rg-heading);
+  letter-spacing: 0.5px;
+}
+
+.rg-clock-xs .rg-clock-time {
+  font-size: 24px;
+}
+
+.rg-clock-meta {
+  color: var(--rg-muted);
+  font-size: 12px;
+}
+
+.rg-clock-others {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin-top: 6px;
+  color: var(--rg-text);
+  font-size: 12px;
+}
+
+.rg-clock-others b {
+  color: var(--rg-heading);
+  font-weight: 600;
+}
+
+/* map.operations layer toggles: compact so the key never hides most of a small map. */
+.rg-map-legend .rg-mapops-layer {
+  font-size: 11px;
+  padding: 2px 6px;
+}
+
+.rg-map-legend .rg-mapops-layer input {
+  margin: 0;
+}
+
+.rg-mapops-swatch {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex: none;
+}
+
+/* weather.current outlook: one compact column per day. */
+.rg-weather-days {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rg-weather-days li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 2px;
+  border: 1px solid var(--rg-hair);
+  border-radius: 4px;
+  font-size: 12px;
+  color: var(--rg-text);
+  min-width: 0;
+}
+
+.rg-weather-days .fa {
+  color: var(--rg-muted);
+  font-size: 15px;
+}
+
+.rg-weather-days b {
+  color: var(--rg-heading);
+}
+
+.rg-weather-day {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--rg-muted);
+  font-size: 11px;
+}
+
+/* Phones: the saved-visualization card is short, so the map keeps the room and the key goes. */
+@media (max-width: 767px) {
+  .rg-legend.rg-mapviz-key {
+    display: none;
+  }
+}

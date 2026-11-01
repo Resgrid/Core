@@ -1,0 +1,51 @@
+/* Planning widget extras (notes.board, general.stickyNote). Tokens only; every class rg-<widget>- prefixed. */
+
+.rg-notes-preview {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  white-space: normal;
+  color: var(--rg-text);
+}
+
+.rg-notes-wide .rg-notes-preview {
+  -webkit-line-clamp: 2;
+}
+
+.rg-notes-meta {
+  display: block;
+  color: var(--rg-muted);
+}
+
+.rg-sticky {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.rg-sticky-text {
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: 0;
+  resize: none;
+  border: 0;
+  padding: 10px 12px;
+  background: var(--rg-surface);
+  color: var(--rg-heading);
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.rg-sticky-text:focus {
+  outline: 2px solid var(--rg-focus);
+  outline-offset: -2px;
+}
+
+.rg-sticky-count {
+  padding: 2px 12px 6px;
+  font-size: 11px;
+  text-align: end;
+}

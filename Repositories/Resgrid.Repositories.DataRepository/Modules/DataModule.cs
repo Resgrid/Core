@@ -334,6 +334,8 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<DepartmentApiKeysRepository>().As<IDepartmentApiKeysRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<TypeIconsRepository>().As<ITypeIconsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<MapVisualizationsRepository>().As<IMapVisualizationsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<UserDashboardsRepository>().As<IUserDashboardsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DepartmentDashboardTemplatesRepository>().As<IDepartmentDashboardTemplatesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<SystemOperationRequestsRepository>().As<ISystemOperationRequestsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<InboundEmailReceiptsRepository>().As<IInboundEmailReceiptsRepository>().InstancePerLifetimeScope();
 			// Department Import (Import & Migration, M0273-M0276, M0281)

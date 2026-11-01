@@ -7719,4 +7719,49 @@
   <data xml:space="preserve" name="SettingHelp.ShiftTradeApprovers">
     <value>Chi sceglie quale candidato prende una richiesta di scambio turno e approva gli scambi in attesa. Gli amministratori del dipartimento possono sempre; amministratori di gruppo, chi cede il turno e membri dei ruoli scelti sono a scelta del dipartimento.</value>
   </data>
+  <data xml:space="preserve" name="Feature.home-dashboard">
+    <value>Dashboard iniziale personalizzabile</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.home-dashboard">
+    <value>Una pagina iniziale di widget in tempo reale che ogni membro organizza, salvata nel proprio account.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureValue.home-dashboard">
+    <value>I membri vedono in un'unica schermata ciò che richiede la loro attenzione in ogni modulo, e il loro layout li segue in qualsiasi browser.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureExample.home-dashboard">
+    <value>I dispatcher partono da chiamate attive, stato delle unità e mappa; i membri dal proprio stato, dai turni e dalle checklist in scadenza.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.home-dashboard">
+    <value>Attiva la nuova dashboard, poi controlla la bacheca predefinita che vede ogni ruolo prima che i membri la personalizzino.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.dashboard-templates">
+    <value>Modelli di dashboard</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.dashboard-templates">
+    <value>Dashboard predefinite del dipartimento per tutti, per un ruolo del personale o per un gruppo.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureValue.dashboard-templates">
+    <value>I membri che non hanno personalizzato partono da una bacheca scelta per il loro ruolo invece che da quella predefinita integrata.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureExample.dashboard-templates">
+    <value>Un modello per il ruolo Dispatcher con chiamate, unità e mappa, e un predefinito del dipartimento con stato, turni e checklist.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.dashboard-templates">
+    <value>Crea un modello predefinito del dipartimento, poi aggiungi modelli per ruolo o gruppo dove un incarico richiede una bacheca diversa.</value>
+  </data>
+  <data xml:space="preserve" name="Topic.dashboard-customize">
+    <value>Personalizzare la dashboard iniziale</value>
+  </data>
+  <data xml:space="preserve" name="Topic.dashboard-defaults">
+    <value>Quale dashboard vede un membro</value>
+  </data>
+  <data xml:space="preserve" name="Topic.dashboard-addon-widgets">
+    <value>Widget dei componenti aggiuntivi e schede bloccate</value>
+  </data>
+  <data xml:space="preserve" name="Topic.dashboard-data-protection">
+    <value>Dati protetti nella dashboard</value>
+  </data>
+  <data xml:space="preserve" name="Topic.dashboard-classic">
+    <value>Attivare la nuova dashboard e tornare a quella classica</value>
+  </data>
 </root>

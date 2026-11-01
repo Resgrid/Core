@@ -1,0 +1,142 @@
+/* Operations widgets (agent A). Every class is rg-<widget>- prefixed; colours use the dashboard tokens. */
+
+.rg-ops-num {
+  color: var(--rg-muted);
+  font-weight: 400;
+  margin-inline-start: 6px;
+  font-variant-numeric: tabular-nums;
+}
+
+.rg-ops-actions {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-content: flex-end;
+}
+
+.rg-ops-actions .rg-btn-xs[disabled] {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.rg-ops-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--rg-muted);
+}
+
+.rg-ops-footer a {
+  color: var(--rg-sec-text);
+}
+
+.rg-awaiting-req {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  margin-top: 3px;
+}
+
+.rg-volume-cols {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 4px 20px;
+}
+
+.rg-ualerts-editor {
+  margin-top: 8px;
+  padding: 8px 10px;
+  border: 1px solid var(--rg-border);
+  border-radius: 3px;
+  background: #fafbfc;
+}
+
+.rg-ualerts-editor-title {
+  font-size: 12.5px;
+  color: var(--rg-heading);
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.rg-ualerts-editor-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.rg-ualerts-editor-row .rg-input {
+  flex: 1 1 160px;
+  width: auto;
+}
+
+.rg-ualerts-editor-row select.rg-input {
+  flex: 0 1 170px;
+}
+
+.rg-ualerts-muted {
+  opacity: 0.75;
+}
+
+.rg-ustatus-unit {
+  color: var(--rg-heading);
+  font-weight: 500;
+}
+
+.rg-ustatus-type {
+  color: var(--rg-muted);
+  margin-inline-start: 5px;
+  font-size: 11.5px;
+}
+
+.rg-ops-herolink,
+.rg-ops-herolink:hover,
+.rg-ops-herolink:focus {
+  color: inherit;
+  text-decoration: none;
+}
+
+.rg-ops-gap {
+  margin-top: 8px;
+}
+
+.rg-ops-legend2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 14px;
+  margin-top: 6px;
+}
+
+.rg-ops-legend2 a {
+  color: var(--rg-heading);
+}
+
+.rg-ops-split {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 4px 16px;
+  align-items: start;
+}
+
+.rg-ops-line {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--rg-muted);
+}
+
+.rg-ops-donutrow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.rg-ops-donutrow > .rg-legend {
+  flex: 1 1 auto;
+}
+
+.rg-ops-grow {
+  flex: 1 1 auto;
+  min-width: 0;
+}

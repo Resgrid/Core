@@ -113,4 +113,601 @@
   <data name="ToggleCollapseGroupsOnce" xml:space="preserve">
     <value>Fäll ihop/ut grupper (sparas)</value>
   </data>
+  <data name="DashboardPageTitle" xml:space="preserve">
+    <value>Översikt</value>
+  </data>
+  <data name="Category.Operations" xml:space="preserve">
+    <value>Operationer</value>
+  </data>
+  <data name="Category.Personnel" xml:space="preserve">
+    <value>Personal</value>
+  </data>
+  <data name="Category.Awareness" xml:space="preserve">
+    <value>Karta och väder</value>
+  </data>
+  <data name="Category.Communications" xml:space="preserve">
+    <value>Kommunikation</value>
+  </data>
+  <data name="Category.Planning" xml:space="preserve">
+    <value>Planering</value>
+  </data>
+  <data name="Category.Readiness" xml:space="preserve">
+    <value>Beredskap</value>
+  </data>
+  <data name="Category.Records" xml:space="preserve">
+    <value>Journaler</value>
+  </data>
+  <data name="Category.Business" xml:space="preserve">
+    <value>Personal och verksamhet</value>
+  </data>
+  <data name="Category.IncidentBackOffice" xml:space="preserve">
+    <value>Incident Back Office</value>
+  </data>
+  <data name="Category.Intelligence" xml:space="preserve">
+    <value>Analys</value>
+  </data>
+  <data name="Category.Administration" xml:space="preserve">
+    <value>Administration</value>
+  </data>
+  <data name="WidgetErrorFailed" xml:space="preserve">
+    <value>Widgeten kunde inte läsas in. Försök igen om en stund.</value>
+  </data>
+  <data name="WidgetErrorForbidden" xml:space="preserve">
+    <value>Du har inte längre åtkomst till den här widgeten.</value>
+  </data>
+  <data name="WidgetErrorNotFound" xml:space="preserve">
+    <value>Den här widgeten finns inte längre.</value>
+  </data>
+  <data name="WidgetErrorProtected" xml:space="preserve">
+    <value>Skyddade uppgifter. Verifiera för att visa.</value>
+  </data>
+  <data name="SaveErrorConflict" xml:space="preserve">
+    <value>Din översikt har ändrats i ett annat fönster.</value>
+  </data>
+  <data name="SaveErrorInvalid" xml:space="preserve">
+    <value>Layouten kunde inte sparas.</value>
+  </data>
+  <data name="SaveErrorTooLarge" xml:space="preserve">
+    <value>Layouten är för stor för att sparas. Ta bort några widgetar och försök igen.</value>
+  </data>
+  <data name="SaveErrorLimitReached" xml:space="preserve">
+    <value>Du har nått gränsen.</value>
+  </data>
+  <data name="SaveErrorNotFound" xml:space="preserve">
+    <value>Den tavlan finns inte längre.</value>
+  </data>
+  <data name="Pulse.OpenCalls" xml:space="preserve">
+    <value>aktiva larm</value>
+  </data>
+  <data name="Pulse.Unread" xml:space="preserve">
+    <value>olästa meddelanden</value>
+  </data>
+  <data name="Pulse.Pending" xml:space="preserve">
+    <value>väntande larm</value>
+  </data>
+  <data name="Pulse.Awaiting" xml:space="preserve">
+    <value>väntar på resurser</value>
+  </data>
+  <data name="BoardHome" xml:space="preserve">
+    <value>Hem</value>
+  </data>
+  <data name="TemplatesTitle" xml:space="preserve">
+    <value>Översiktsmallar</value>
+  </data>
+  <data name="TemplatesIntro" xml:space="preserve">
+    <value>Mallar styr vilken översikt medlemmarna ser tills de anpassar sin egen. Rikta en mall till en personalroll eller en grupp, eller gör en till avdelningens standard.</value>
+  </data>
+  <data name="TemplateAudienceEveryone" xml:space="preserve">
+    <value>Alla</value>
+  </data>
+  <data name="TemplateAudienceRole" xml:space="preserve">
+    <value>Personalroll</value>
+  </data>
+  <data name="TemplateAudienceGroup" xml:space="preserve">
+    <value>Grupp</value>
+  </data>
+  <data name="UseClassicDashboard" xml:space="preserve">
+    <value>Använd den klassiska översikten</value>
+  </data>
+  <data name="TryNewDashboard" xml:space="preserve">
+    <value>Prova den nya översikten</value>
+  </data>
+  <data name="ClassicDashboardBanner" xml:space="preserve">
+    <value>En ny, anpassningsbar översikt finns tillgänglig för din avdelning.</value>
+  </data>
+  <data name="NoScriptClassic" xml:space="preserve">
+    <value>Den här översikten kräver JavaScript. Öppna den klassiska översikten i stället.</value>
+  </data>
+  <data name="TemplateNew" xml:space="preserve">
+    <value>Ny mall</value>
+  </data>
+  <data name="TemplatesEmpty" xml:space="preserve">
+    <value>Inga mallar än. Medlemmarna ser den inbyggda standardöversikten för sin roll tills du lägger till en mall.</value>
+  </data>
+  <data name="TemplateName" xml:space="preserve">
+    <value>Namn</value>
+  </data>
+  <data name="TemplateAudience" xml:space="preserve">
+    <value>För</value>
+  </data>
+  <data name="TemplatePriority" xml:space="preserve">
+    <value>Prioritet</value>
+  </data>
+  <data name="TemplateWidgets" xml:space="preserve">
+    <value>Widgetar</value>
+  </data>
+  <data name="TemplateDefault" xml:space="preserve">
+    <value>Avdelningens standard</value>
+  </data>
+  <data name="TemplateEdit" xml:space="preserve">
+    <value>Redigera</value>
+  </data>
+  <data name="TemplateDelete" xml:space="preserve">
+    <value>Ta bort</value>
+  </data>
+  <data name="TemplateDeleteConfirm" xml:space="preserve">
+    <value>Vill du ta bort mallen? Medlemmar som inte har anpassat sin översikt ser nästa matchande mall eller den inbyggda standardöversikten.</value>
+  </data>
+  <data name="SaveErrorNotAllowed" xml:space="preserve">
+    <value>Du har inte behörighet att göra den ändringen.</value>
+  </data>
+  <data name="Dash.Add" xml:space="preserve">
+    <value>Lägg till</value>
+  </data>
+  <data name="Dash.AddBoard" xml:space="preserve">
+    <value>Lägg till tavla</value>
+  </data>
+  <data name="Dash.AddNamed" xml:space="preserve">
+    <value>Lägg till {0}</value>
+  </data>
+  <data name="Dash.AddWidget" xml:space="preserve">
+    <value>Lägg till widget</value>
+  </data>
+  <data name="Dash.Added" xml:space="preserve">
+    <value>Tillagd</value>
+  </data>
+  <data name="Dash.AdpConceal" xml:space="preserve">
+    <value>Dölj</value>
+  </data>
+  <data name="Dash.AdpConcealedToast" xml:space="preserve">
+    <value>Skyddade uppgifter dolda</value>
+  </data>
+  <data name="Dash.AdpHidden" xml:space="preserve">
+    <value>Skyddade uppgifter dolda</value>
+  </data>
+  <data name="Dash.AdpProtectedAria" xml:space="preserve">
+    <value>{0}, verifiera för att visa</value>
+  </data>
+  <data name="Dash.AdpRevealed" xml:space="preserve">
+    <value>Skyddade uppgifter visas</value>
+  </data>
+  <data name="Dash.AdpRevealedToast" xml:space="preserve">
+    <value>Skyddade uppgifter visas. Varje visning loggas i avdelningens granskningslogg.</value>
+  </data>
+  <data name="Dash.AdpRoleCannotView" xml:space="preserve">
+    <value>Din roll har inte behörighet att se detta</value>
+  </data>
+  <data name="Dash.AdpVerifyToReveal" xml:space="preserve">
+    <value>Verifiera för att visa</value>
+  </data>
+  <data name="Dash.AdpWallHidden" xml:space="preserve">
+    <value>Skyddade uppgifter förblir dolda på en väggskärm.</value>
+  </data>
+  <data name="Dash.AdpVerifyTooltip" xml:space="preserve">
+    <value>Verifiera för att visa</value>
+  </data>
+  <data name="Dash.AgeHours" xml:space="preserve">
+    <value>för {0} h sedan</value>
+  </data>
+  <data name="Dash.AgeJustNow" xml:space="preserve">
+    <value>nyss</value>
+  </data>
+  <data name="Dash.AgeLoading" xml:space="preserve">
+    <value>läser in</value>
+  </data>
+  <data name="Dash.AgeMinutes" xml:space="preserve">
+    <value>för {0} min sedan</value>
+  </data>
+  <data name="Dash.AgeReconnecting" xml:space="preserve">
+    <value>återansluter</value>
+  </data>
+  <data name="Dash.AgeSeconds" xml:space="preserve">
+    <value>för {0} s sedan</value>
+  </data>
+  <data name="Dash.AgeUpdateFailed" xml:space="preserve">
+    <value>uppdateringen misslyckades</value>
+  </data>
+  <data name="Dash.AllCategories" xml:space="preserve">
+    <value>Alla</value>
+  </data>
+  <data name="Dash.Apply" xml:space="preserve">
+    <value>Tillämpa</value>
+  </data>
+  <data name="Dash.AvailableWith" xml:space="preserve">
+    <value>Tillgängligt med {0}</value>
+  </data>
+  <data name="Dash.BackToTemplates" xml:space="preserve">
+    <value>Tillbaka till mallarna</value>
+  </data>
+  <data name="Dash.BadgeAria" xml:space="preserve">
+    <value>{0} objekt</value>
+  </data>
+  <data name="Dash.BoardAdded" xml:space="preserve">
+    <value>Tavlan ”{0}” har lagts till</value>
+  </data>
+  <data name="Dash.BoardDeleted" xml:space="preserve">
+    <value>Tavlan ”{0}” har tagits bort</value>
+  </data>
+  <data name="Dash.BoardLoadFailed" xml:space="preserve">
+    <value>Tavlan kunde inte läsas in. Försök igen om en stund.</value>
+  </data>
+  <data name="Dash.BoardName" xml:space="preserve">
+    <value>Tavlans namn</value>
+  </data>
+  <data name="Dash.BoardRenamed" xml:space="preserve">
+    <value>Tavlan har bytt namn till ”{0}”</value>
+  </data>
+  <data name="Dash.Boards" xml:space="preserve">
+    <value>Översikter</value>
+  </data>
+  <data name="Dash.BootstrapFailed" xml:space="preserve">
+    <value>Din översikt kunde inte läsas in.</value>
+  </data>
+  <data name="Dash.Cancel" xml:space="preserve">
+    <value>Avbryt</value>
+  </data>
+  <data name="Dash.Categories" xml:space="preserve">
+    <value>Widgetkategorier</value>
+  </data>
+  <data name="Dash.ChangesDiscarded" xml:space="preserve">
+    <value>Ändringarna har förkastats</value>
+  </data>
+  <data name="Dash.Close" xml:space="preserve">
+    <value>Stäng</value>
+  </data>
+  <data name="Dash.CoachDismiss" xml:space="preserve">
+    <value>Uppfattat</value>
+  </data>
+  <data name="Dash.CoachText" xml:space="preserve">
+    <value>Använd Anpassa för att lägga till, ta bort, ändra storlek på och ordna om widgetar. Din layout sparas på ditt konto och följer med till alla webbläsare.</value>
+  </data>
+  <data name="Dash.CoachTitle" xml:space="preserve">
+    <value>Välkommen till din nya översikt</value>
+  </data>
+  <data name="Dash.ConflictText" xml:space="preserve">
+    <value>Vill du behålla layouten på den här skärmen eller läsa in den senast sparade?</value>
+  </data>
+  <data name="Dash.CouldNotLoad" xml:space="preserve">
+    <value>Kunde inte läsa in {0}</value>
+  </data>
+  <data name="Dash.Customize" xml:space="preserve">
+    <value>Anpassa</value>
+  </data>
+  <data name="Dash.CustomizeRegion" xml:space="preserve">
+    <value>Anpassa översikten</value>
+  </data>
+  <data name="Dash.Delete" xml:space="preserve">
+    <value>Ta bort</value>
+  </data>
+  <data name="Dash.DeleteBoard" xml:space="preserve">
+    <value>Ta bort tavla</value>
+  </data>
+  <data name="Dash.DeleteBoardConfirm" xml:space="preserve">
+    <value>Vill du ta bort tavlan ”{0}”? Dess widgetar och inställningar tas bort. Dina andra tavlor påverkas inte.</value>
+  </data>
+  <data name="Dash.Density" xml:space="preserve">
+    <value>Täthet</value>
+  </data>
+  <data name="Dash.DensityComfortable" xml:space="preserve">
+    <value>Luftig</value>
+  </data>
+  <data name="Dash.DensityCompact" xml:space="preserve">
+    <value>Kompakt</value>
+  </data>
+  <data name="Dash.DepartmentCodeMeta" xml:space="preserve">
+    <value>Kod {0}</value>
+  </data>
+  <data name="Dash.DepartmentTime" xml:space="preserve">
+    <value>Avdelningens tid</value>
+  </data>
+  <data name="Dash.Dismiss" xml:space="preserve">
+    <value>Avfärda</value>
+  </data>
+  <data name="Dash.Done" xml:space="preserve">
+    <value>Klar</value>
+  </data>
+  <data name="Dash.DragCancelled" xml:space="preserve">
+    <value>Flytten avbröts.</value>
+  </data>
+  <data name="Dash.DragEnded" xml:space="preserve">
+    <value>Widgeten släpptes.</value>
+  </data>
+  <data name="Dash.DragStarted" xml:space="preserve">
+    <value>Du har plockat upp en widget. Flytta den över en annan widget och släpp för att placera den före eller efter.</value>
+  </data>
+  <data name="Dash.DurationDays" xml:space="preserve">
+    <value>{0} d</value>
+  </data>
+  <data name="Dash.DurationHours" xml:space="preserve">
+    <value>{0} h {1} min</value>
+  </data>
+  <data name="Dash.DurationMinutes" xml:space="preserve">
+    <value>{0} min</value>
+  </data>
+  <data name="Dash.EditBarText" xml:space="preserve">
+    <value>Dra widgetar (eller fokusera en och använd piltangenterna) för att ändra ordning, välj storlek, ta bort eller lägg till fler. Sparas på ditt konto och följer med till alla webbläsare.</value>
+  </data>
+  <data name="Dash.EditBarTitle" xml:space="preserve">
+    <value>Du anpassar din översikt.</value>
+  </data>
+  <data name="Dash.EditModeAnnounce" xml:space="preserve">
+    <value>Anpassningsläge. Använd piltangenterna på en fokuserad widget för att flytta den, plus och minus för att ändra storlek och Delete för att ta bort den.</value>
+  </data>
+  <data name="Dash.EmptyBoard" xml:space="preserve">
+    <value>Den här tavlan har inga widgetar än.</value>
+  </data>
+  <data name="Dash.EmptyBoardEditing" xml:space="preserve">
+    <value>Lägg till widgetar för att bygga upp tavlan.</value>
+  </data>
+  <data name="Dash.EmptyDefault" xml:space="preserve">
+    <value>Inget att visa just nu.</value>
+  </data>
+  <data name="Dash.ExitWall" xml:space="preserve">
+    <value>Avsluta väggskärmen</value>
+  </data>
+  <data name="Dash.GreetAfternoon" xml:space="preserve">
+    <value>God eftermiddag, {0}</value>
+  </data>
+  <data name="Dash.GreetAfternoonNoName" xml:space="preserve">
+    <value>God eftermiddag</value>
+  </data>
+  <data name="Dash.GreetEvening" xml:space="preserve">
+    <value>God kväll, {0}</value>
+  </data>
+  <data name="Dash.GreetEveningNoName" xml:space="preserve">
+    <value>God kväll</value>
+  </data>
+  <data name="Dash.GreetMorning" xml:space="preserve">
+    <value>God morgon, {0}</value>
+  </data>
+  <data name="Dash.GreetMorningNoName" xml:space="preserve">
+    <value>God morgon</value>
+  </data>
+  <data name="Dash.KeepMine" xml:space="preserve">
+    <value>Behåll min</value>
+  </data>
+  <data name="Dash.KeyboardHelp" xml:space="preserve">
+    <value>Använd piltangenterna för att flytta widgeten, plus och minus för att ändra storlek och Delete för att ta bort den.</value>
+  </data>
+  <data name="Dash.LatestLoaded" xml:space="preserve">
+    <value>Den senast sparade layouten har lästs in</value>
+  </data>
+  <data name="Dash.Live" xml:space="preserve">
+    <value>live</value>
+  </data>
+  <data name="Dash.LiveTooltip" xml:space="preserve">
+    <value>Uppdateras live</value>
+  </data>
+  <data name="Dash.LoadLatest" xml:space="preserve">
+    <value>Läs in senaste</value>
+  </data>
+  <data name="Dash.Loading" xml:space="preserve">
+    <value>Läser in</value>
+  </data>
+  <data name="Dash.Locked" xml:space="preserve">
+    <value>Låst</value>
+  </data>
+  <data name="Dash.MaxWidgets" xml:space="preserve">
+    <value>En tavla kan innehålla upp till {0} widgetar. Ta bort en för att lägga till en annan.</value>
+  </data>
+  <data name="Dash.Message" xml:space="preserve">
+    <value>Meddelande</value>
+  </data>
+  <data name="Dash.MoreOptions" xml:space="preserve">
+    <value>Fler alternativ för översikten</value>
+  </data>
+  <data name="Dash.MovableWidget" xml:space="preserve">
+    <value>flyttbar widget</value>
+  </data>
+  <data name="Dash.MultiSelectHint" xml:space="preserve">
+    <value>Välj inga för att ta med alla.</value>
+  </data>
+  <data name="Dash.MultipleInstances" xml:space="preserve">
+    <value>kan läggas till flera</value>
+  </data>
+  <data name="Dash.NewCall" xml:space="preserve">
+    <value>Nytt larm</value>
+  </data>
+  <data name="Dash.NoOptions" xml:space="preserve">
+    <value>Inget att välja bland än.</value>
+  </data>
+  <data name="Dash.NoWidgetsMatch" xml:space="preserve">
+    <value>Inga widgetar matchar.</value>
+  </data>
+  <data name="Dash.OpenModule" xml:space="preserve">
+    <value>Öppna modulen</value>
+  </data>
+  <data name="Dash.Protected" xml:space="preserve">
+    <value>Skyddad</value>
+  </data>
+  <data name="Dash.PulseLabel" xml:space="preserve">
+    <value>Avdelningen i korthet</value>
+  </data>
+  <data name="Dash.Refresh" xml:space="preserve">
+    <value>Uppdatera</value>
+  </data>
+  <data name="Dash.Remove" xml:space="preserve">
+    <value>Ta bort</value>
+  </data>
+  <data name="Dash.RemoveFromDashboard" xml:space="preserve">
+    <value>Ta bort från översikten</value>
+  </data>
+  <data name="Dash.RemoveWidget" xml:space="preserve">
+    <value>Ta bort {0}</value>
+  </data>
+  <data name="Dash.Rename" xml:space="preserve">
+    <value>Byt namn</value>
+  </data>
+  <data name="Dash.RenameBoard" xml:space="preserve">
+    <value>Byt namn på tavla</value>
+  </data>
+  <data name="Dash.ResetDone" xml:space="preserve">
+    <value>Återställd till avdelningens standard</value>
+  </data>
+  <data name="Dash.ResetToDefault" xml:space="preserve">
+    <value>Återställ till avdelningens standard</value>
+  </data>
+  <data name="Dash.Retry" xml:space="preserve">
+    <value>Försök igen</value>
+  </data>
+  <data name="Dash.RevealedBadge" xml:space="preserve">
+    <value>Visas</value>
+  </data>
+  <data name="Dash.RevealedBadgeTooltip" xml:space="preserve">
+    <value>Den här widgeten visar skyddade uppgifter</value>
+  </data>
+  <data name="Dash.RevealedRefreshDeferred" xml:space="preserve">
+    <value>Widgetar som visar skyddade uppgifter uppdateras högst en gång per 2 minuter. Den här uppdateras snart.</value>
+  </data>
+  <data name="Dash.SaveFailed" xml:space="preserve">
+    <value>Din översikt kunde inte sparas. Kontrollera anslutningen och försök igen.</value>
+  </data>
+  <data name="Dash.SaveTemplate" xml:space="preserve">
+    <value>Spara mall</value>
+  </data>
+  <data name="Dash.SavedToast" xml:space="preserve">
+    <value>Översikten har sparats. Den följer med dig till alla webbläsare där du loggar in.</value>
+  </data>
+  <data name="Dash.SearchWidgets" xml:space="preserve">
+    <value>Sök widgetar</value>
+  </data>
+  <data name="Dash.SelectNone" xml:space="preserve">
+    <value>(ingen)</value>
+  </data>
+  <data name="Dash.SettingRange" xml:space="preserve">
+    <value>Mellan {0} och {1}</value>
+  </data>
+  <data name="Dash.Settings" xml:space="preserve">
+    <value>Inställningar</value>
+  </data>
+  <data name="Dash.SettingsFor" xml:space="preserve">
+    <value>Inställningar för {0}</value>
+  </data>
+  <data name="Dash.SettingsLive" xml:space="preserve">
+    <value>Den här widgeten uppdateras live.</value>
+  </data>
+  <data name="Dash.SettingsRefreshHours" xml:space="preserve">
+    <value>Den här widgeten uppdateras var {0} h.</value>
+  </data>
+  <data name="Dash.SettingsRefreshMinutes" xml:space="preserve">
+    <value>Den här widgeten uppdateras var {0} min.</value>
+  </data>
+  <data name="Dash.SettingsSaved" xml:space="preserve">
+    <value>Inställningarna har sparats</value>
+  </data>
+  <data name="Dash.SettingsTitle" xml:space="preserve">
+    <value>Inställningar för {0}</value>
+  </data>
+  <data name="Dash.Size" xml:space="preserve">
+    <value>Storlek</value>
+  </data>
+  <data name="Dash.Size.full" xml:space="preserve">
+    <value>Hel</value>
+  </data>
+  <data name="Dash.Size.l" xml:space="preserve">
+    <value>L</value>
+  </data>
+  <data name="Dash.Size.m" xml:space="preserve">
+    <value>M</value>
+  </data>
+  <data name="Dash.Size.s" xml:space="preserve">
+    <value>S</value>
+  </data>
+  <data name="Dash.Size.xl" xml:space="preserve">
+    <value>XL</value>
+  </data>
+  <data name="Dash.Size.xs" xml:space="preserve">
+    <value>XS</value>
+  </data>
+  <data name="Dash.SizeAria" xml:space="preserve">
+    <value>Storlek {0}</value>
+  </data>
+  <data name="Dash.SizeChanged" xml:space="preserve">
+    <value>Storlek för {0}: {1}</value>
+  </data>
+  <data name="Dash.StaleTooltip" xml:space="preserve">
+    <value>Realtidsuppdateringarna återansluter. Den här widgeten uppdateras med en timer tills de är tillbaka.</value>
+  </data>
+  <data name="Dash.TemplateDefaultHint" xml:space="preserve">
+    <value>Medlemmar som inte matchas av en roll- eller gruppmall ser den här.</value>
+  </data>
+  <data name="Dash.TemplateDescription" xml:space="preserve">
+    <value>Beskrivning</value>
+  </data>
+  <data name="Dash.TemplateEditBarText" xml:space="preserve">
+    <value>Medlemmar som inte har anpassat sin översikt ser den här layouten. Lägg till widgetar, ändra storlek och ordning och spara sedan.</value>
+  </data>
+  <data name="Dash.TemplateEditBarTitle" xml:space="preserve">
+    <value>Du redigerar en översiktsmall.</value>
+  </data>
+  <data name="Dash.TemplateEditTitle" xml:space="preserve">
+    <value>Redigera översiktsmall</value>
+  </data>
+  <data name="Dash.TemplateGroupRequired" xml:space="preserve">
+    <value>Välj vilken grupp mallen gäller för.</value>
+  </data>
+  <data name="Dash.TemplateIntro" xml:space="preserve">
+    <value>Förhandsvisningarna av widgetar visar din egen vy av uppgifterna. Varje medlem ser bara det som deras behörigheter tillåter.</value>
+  </data>
+  <data name="Dash.TemplateNameRequired" xml:space="preserve">
+    <value>Ge mallen ett namn.</value>
+  </data>
+  <data name="Dash.TemplateNewTitle" xml:space="preserve">
+    <value>Ny översiktsmall</value>
+  </data>
+  <data name="Dash.TemplatePriorityHint" xml:space="preserve">
+    <value>Lägre nummer har företräde när en medlem matchar flera mallar.</value>
+  </data>
+  <data name="Dash.TemplateRoleRequired" xml:space="preserve">
+    <value>Välj vilken personalroll mallen gäller för.</value>
+  </data>
+  <data name="Dash.TemplateSaved" xml:space="preserve">
+    <value>Mallen har sparats</value>
+  </data>
+  <data name="Dash.TemplateTargetsFailed" xml:space="preserve">
+    <value>Roller och grupper kunde inte läsas in.</value>
+  </data>
+  <data name="Dash.Undo" xml:space="preserve">
+    <value>Ångra</value>
+  </data>
+  <data name="Dash.UntitledBoard" xml:space="preserve">
+    <value>Namnlös tavla</value>
+  </data>
+  <data name="Dash.UpdateFailedTooltip" xml:space="preserve">
+    <value>Den senaste uppdateringen misslyckades. Tidigare uppgifter visas.</value>
+  </data>
+  <data name="Dash.VerifyToView" xml:space="preserve">
+    <value>Verifiera för att visa</value>
+  </data>
+  <data name="Dash.ViewAddon" xml:space="preserve">
+    <value>Visa tillägg</value>
+  </data>
+  <data name="Dash.WallDisplay" xml:space="preserve">
+    <value>Väggskärm</value>
+  </data>
+  <data name="Dash.WidgetAdded" xml:space="preserve">
+    <value>{0} har lagts till</value>
+  </data>
+  <data name="Dash.WidgetMoved" xml:space="preserve">
+    <value>{0} flyttades till position {1}</value>
+  </data>
+  <data name="Dash.WidgetNotAvailable" xml:space="preserve">
+    <value>Den här widgeten är inte tillgänglig än.</value>
+  </data>
+  <data name="Dash.WidgetOptions" xml:space="preserve">
+    <value>Alternativ för {0}</value>
+  </data>
+  <data name="Dash.WidgetRemoved" xml:space="preserve">
+    <value>{0} har tagits bort</value>
+  </data>
 </root>

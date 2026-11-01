@@ -127,5 +127,12 @@ namespace Resgrid.Model.Repositories
 		/// <summary>Ends the claim taken at <paramref name="claimedOn"/> once its broadcast is queued; the call stays marked sent.</summary>
 		Task<bool> CompleteCallDispatchClaimAsync(int callId, int departmentId, DateTime claimedOn,
 			System.Threading.CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Unit and personnel dispatch counts for every dispatched active call of the department (the same calls as the open
+		/// call lists: State 0, not deleted, and not a scheduled call still waiting for its dispatch time). One grouped query.
+		/// </summary>
+		Task<IEnumerable<CallDispatchCounts>> GetActiveCallDispatchCountsAsync(int departmentId, DateTime nowUtc,
+			System.Threading.CancellationToken cancellationToken = default);
 	}
 }

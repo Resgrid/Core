@@ -1,0 +1,4014 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="W.department.info.Title" xml:space="preserve">
+    <value>Avdelningsinformation</value>
+  </data>
+  <data name="W.department.info.Description" xml:space="preserve">
+    <value>Avdelningens ID, kod och nummer för SMS-larm.</value>
+  </data>
+  <data name="W.department.info.DepartmentId" xml:space="preserve">
+    <value>Avdelnings-ID</value>
+  </data>
+  <data name="W.department.info.DepartmentCode" xml:space="preserve">
+    <value>Avdelningskod</value>
+  </data>
+  <data name="W.department.info.TextToCall" xml:space="preserve">
+    <value>Nummer för SMS-larm</value>
+  </data>
+  <data name="W.department.info.NotSet" xml:space="preserve">
+    <value>Ej angivet</value>
+  </data>
+  <data name="W.map.operations.Title" xml:space="preserve">
+    <value>Operationskarta</value>
+  </data>
+  <data name="W.map.operations.Description" xml:space="preserve">
+    <value>Livekarta över aktiva larm, enheter, personal och stationer, med intressepunkter och kartlager.</value>
+  </data>
+  <data name="W.map.operations.Setting.showCalls" xml:space="preserve">
+    <value>Visa larm</value>
+  </data>
+  <data name="W.map.operations.Setting.showUnits" xml:space="preserve">
+    <value>Visa enheter</value>
+  </data>
+  <data name="W.map.operations.Setting.showPersonnel" xml:space="preserve">
+    <value>Visa personal</value>
+  </data>
+  <data name="W.map.operations.Setting.showStations" xml:space="preserve">
+    <value>Visa stationer</value>
+  </data>
+  <data name="W.map.operations.Setting.showPois" xml:space="preserve">
+    <value>Visa intressepunkter</value>
+  </data>
+  <data name="W.map.operations.Setting.showLayers" xml:space="preserve">
+    <value>Visa avdelningens kartlager</value>
+  </data>
+  <data name="W.map.operations.Setting.zoom" xml:space="preserve">
+    <value>Zoomnivå (0 = avdelningens standard)</value>
+  </data>
+  <data name="W.map.operations.Empty" xml:space="preserve">
+    <value>Inget att visa på kartan just nu.</value>
+  </data>
+  <data name="W.map.operations.Legend" xml:space="preserve">
+    <value>Teckenförklaring</value>
+  </data>
+  <data name="W.map.operations.Recenter" xml:space="preserve">
+    <value>Centrera kartan igen</value>
+  </data>
+  <data name="W.map.visualization.Title" xml:space="preserve">
+    <value>Sparad visualisering</value>
+  </data>
+  <data name="W.map.visualization.Description" xml:space="preserve">
+    <value>En av dina sparade kartvisualiseringar, till exempel en värmekarta över larm eller ett täckningslager.</value>
+  </data>
+  <data name="W.map.visualization.Setting.visualization" xml:space="preserve">
+    <value>Visualisering</value>
+  </data>
+  <data name="W.map.visualization.NotConfigured" xml:space="preserve">
+    <value>Välj en sparad visualisering i widgetens inställningar.</value>
+  </data>
+  <data name="W.map.visualization.NotFound" xml:space="preserve">
+    <value>Visualiseringen har tagits bort eller delas inte längre med dig.</value>
+  </data>
+  <data name="W.map.visualization.Shared" xml:space="preserve">
+    <value>Delad</value>
+  </data>
+  <data name="W.map.visualization.Truncated" xml:space="preserve">
+    <value>Visar en del av data. Öppna visualiseringen för att se allt.</value>
+  </data>
+  <data name="W.weather.current.Title" xml:space="preserve">
+    <value>Väder</value>
+  </data>
+  <data name="W.weather.current.Description" xml:space="preserve">
+    <value>Aktuellt väder och utsikter för de närmaste dagarna för din avdelning.</value>
+  </data>
+  <data name="W.weather.current.Setting.units" xml:space="preserve">
+    <value>Måttenheter</value>
+  </data>
+  <data name="W.weather.current.Option.imperial" xml:space="preserve">
+    <value>Imperiella (°F, mph)</value>
+  </data>
+  <data name="W.weather.current.Option.metric" xml:space="preserve">
+    <value>Metriska (°C, m/s)</value>
+  </data>
+  <data name="W.weather.current.Unavailable" xml:space="preserve">
+    <value>Vädret är inte tillgängligt. Ange avdelningens kartcentrum eller adress för att se det.</value>
+  </data>
+  <data name="W.weather.current.FeelsLike" xml:space="preserve">
+    <value>Känns som {0}</value>
+  </data>
+  <data name="W.weather.current.Humidity" xml:space="preserve">
+    <value>Luftfuktighet</value>
+  </data>
+  <data name="W.weather.current.Wind" xml:space="preserve">
+    <value>Vind</value>
+  </data>
+  <data name="W.weather.current.Today" xml:space="preserve">
+    <value>Idag</value>
+  </data>
+  <data name="W.weather.current.Precipitation" xml:space="preserve">
+    <value>{0} % risk för nederbörd</value>
+  </data>
+  <data name="W.weather.current.UpdatedAt" xml:space="preserve">
+    <value>Uppdaterad {0}</value>
+  </data>
+  <data name="W.weather.current.Condition.Clear" xml:space="preserve">
+    <value>Klart</value>
+  </data>
+  <data name="W.weather.current.Condition.Clouds" xml:space="preserve">
+    <value>Molnigt</value>
+  </data>
+  <data name="W.weather.current.Condition.Rain" xml:space="preserve">
+    <value>Regn</value>
+  </data>
+  <data name="W.weather.current.Condition.Drizzle" xml:space="preserve">
+    <value>Duggregn</value>
+  </data>
+  <data name="W.weather.current.Condition.Thunderstorm" xml:space="preserve">
+    <value>Åska</value>
+  </data>
+  <data name="W.weather.current.Condition.Snow" xml:space="preserve">
+    <value>Snö</value>
+  </data>
+  <data name="W.weather.current.Condition.Mist" xml:space="preserve">
+    <value>Lätt dimma</value>
+  </data>
+  <data name="W.weather.current.Condition.Fog" xml:space="preserve">
+    <value>Dimma</value>
+  </data>
+  <data name="W.weather.current.Condition.Haze" xml:space="preserve">
+    <value>Dis</value>
+  </data>
+  <data name="W.weather.current.Condition.Smoke" xml:space="preserve">
+    <value>Rök</value>
+  </data>
+  <data name="W.weather.current.Condition.Dust" xml:space="preserve">
+    <value>Damm</value>
+  </data>
+  <data name="W.weather.current.Condition.Unknown" xml:space="preserve">
+    <value>Okänt</value>
+  </data>
+  <data name="W.weather.alerts.Title" xml:space="preserve">
+    <value>Vädervarningar</value>
+  </data>
+  <data name="W.weather.alerts.Description" xml:space="preserve">
+    <value>Aktiva vädervarningar för avdelningens områden, de allvarligaste först.</value>
+  </data>
+  <data name="W.weather.alerts.Setting.minSeverity" xml:space="preserve">
+    <value>Visa varningar</value>
+  </data>
+  <data name="W.weather.alerts.Setting.maxItems" xml:space="preserve">
+    <value>Högsta antal varningar i listan</value>
+  </data>
+  <data name="W.weather.alerts.Option.all" xml:space="preserve">
+    <value>Alla allvarlighetsgrader</value>
+  </data>
+  <data name="W.weather.alerts.Option.extreme" xml:space="preserve">
+    <value>Endast extrema</value>
+  </data>
+  <data name="W.weather.alerts.Option.severe" xml:space="preserve">
+    <value>Allvarliga och högre</value>
+  </data>
+  <data name="W.weather.alerts.Option.moderate" xml:space="preserve">
+    <value>Måttliga och högre</value>
+  </data>
+  <data name="W.weather.alerts.Empty" xml:space="preserve">
+    <value>Inga aktiva vädervarningar.</value>
+  </data>
+  <data name="W.weather.alerts.Severity.extreme" xml:space="preserve">
+    <value>Extrem</value>
+  </data>
+  <data name="W.weather.alerts.Severity.severe" xml:space="preserve">
+    <value>Allvarlig</value>
+  </data>
+  <data name="W.weather.alerts.Severity.moderate" xml:space="preserve">
+    <value>Måttlig</value>
+  </data>
+  <data name="W.weather.alerts.Severity.minor" xml:space="preserve">
+    <value>Lindrig</value>
+  </data>
+  <data name="W.weather.alerts.Severity.unknown" xml:space="preserve">
+    <value>Okänd</value>
+  </data>
+  <data name="W.weather.alerts.Expires" xml:space="preserve">
+    <value>Går ut {0}</value>
+  </data>
+  <data name="W.weather.alerts.More" xml:space="preserve">
+    <value>{0} till</value>
+  </data>
+  <data name="W.general.clock.Title" xml:space="preserve">
+    <value>Klocka</value>
+  </data>
+  <data name="W.general.clock.Description" xml:space="preserve">
+    <value>Avdelningens tid, UTC och din lokala tid.</value>
+  </data>
+  <data name="W.general.clock.Setting.format" xml:space="preserve">
+    <value>Tidsformat</value>
+  </data>
+  <data name="W.general.clock.Setting.showSeconds" xml:space="preserve">
+    <value>Visa sekunder</value>
+  </data>
+  <data name="W.general.clock.Setting.showUtc" xml:space="preserve">
+    <value>Visa UTC</value>
+  </data>
+  <data name="W.general.clock.Setting.showLocal" xml:space="preserve">
+    <value>Visa min lokala tid</value>
+  </data>
+  <data name="W.general.clock.Option.auto" xml:space="preserve">
+    <value>Automatiskt</value>
+  </data>
+  <data name="W.general.clock.Option.12h" xml:space="preserve">
+    <value>12-timmars</value>
+  </data>
+  <data name="W.general.clock.Option.24h" xml:space="preserve">
+    <value>24-timmars</value>
+  </data>
+  <data name="W.general.clock.Department" xml:space="preserve">
+    <value>Avdelning</value>
+  </data>
+  <data name="W.general.clock.Utc" xml:space="preserve">
+    <value>UTC</value>
+  </data>
+  <data name="W.general.clock.Local" xml:space="preserve">
+    <value>Min tid</value>
+  </data>
+  <data name="W.messages.inbox.Title" xml:space="preserve">
+    <value>Inkorg</value>
+  </data>
+  <data name="W.messages.inbox.Description" xml:space="preserve">
+    <value>Dina olästa meddelanden, de nyaste först.</value>
+  </data>
+  <data name="W.messages.inbox.Setting.maxItems" xml:space="preserve">
+    <value>Högsta antal meddelanden i listan</value>
+  </data>
+  <data name="W.messages.inbox.Unread" xml:space="preserve">
+    <value>Olästa</value>
+  </data>
+  <data name="W.messages.inbox.Empty" xml:space="preserve">
+    <value>Inga olästa meddelanden.</value>
+  </data>
+  <data name="W.messages.inbox.Compose" xml:space="preserve">
+    <value>Skriv meddelande</value>
+  </data>
+  <data name="W.messages.inbox.System" xml:space="preserve">
+    <value>System</value>
+  </data>
+  <data name="W.messages.inbox.ProtectedSubject" xml:space="preserve">
+    <value>Skyddat meddelande</value>
+  </data>
+  <data name="W.messages.inbox.Callback" xml:space="preserve">
+    <value>Återuppringning</value>
+  </data>
+  <data name="W.messages.inbox.Poll" xml:space="preserve">
+    <value>Poll</value>
+  </data>
+  <data name="W.chat.unread.Title" xml:space="preserve">
+    <value>Chatt</value>
+  </data>
+  <data name="W.chat.unread.Description" xml:space="preserve">
+    <value>Chattkanaler med olästa meddelanden och brådskande meddelanden som väntar på din bekräftelse.</value>
+  </data>
+  <data name="W.chat.unread.Setting.maxItems" xml:space="preserve">
+    <value>Högsta antal kanaler i listan</value>
+  </data>
+  <data name="W.chat.unread.Empty" xml:space="preserve">
+    <value>Du är ikapp.</value>
+  </data>
+  <data name="W.chat.unread.UnreadTotal" xml:space="preserve">
+    <value>Olästa meddelanden</value>
+  </data>
+  <data name="W.chat.unread.PendingAcks" xml:space="preserve">
+    <value>Väntar på bekräftelse</value>
+  </data>
+  <data name="W.chat.unread.DirectMessage" xml:space="preserve">
+    <value>Direktmeddelande</value>
+  </data>
+  <data name="W.chat.unread.OpenChat" xml:space="preserve">
+    <value>Öppna chatten</value>
+  </data>
+  <data name="W.chat.moderation.Title" xml:space="preserve">
+    <value>Modereringskö</value>
+  </data>
+  <data name="W.chat.moderation.Description" xml:space="preserve">
+    <value>Öppna chattrapporter som väntar på granskning.</value>
+  </data>
+  <data name="W.chat.moderation.Setting.maxItems" xml:space="preserve">
+    <value>Högsta antal rapporter i listan</value>
+  </data>
+  <data name="W.chat.moderation.Empty" xml:space="preserve">
+    <value>Inga öppna rapporter.</value>
+  </data>
+  <data name="W.chat.moderation.OpenFlags" xml:space="preserve">
+    <value>Öppna rapporter</value>
+  </data>
+  <data name="W.chat.moderation.Oldest" xml:space="preserve">
+    <value>Äldsta {0}</value>
+  </data>
+  <data name="W.chat.moderation.CountCapped" xml:space="preserve">
+    <value>{0}+</value>
+  </data>
+  <data name="W.chat.moderation.UnknownChannel" xml:space="preserve">
+    <value>Okänd kanal</value>
+  </data>
+  <data name="W.chat.moderation.Reason.other" xml:space="preserve">
+    <value>Övrigt</value>
+  </data>
+  <data name="W.chat.moderation.Reason.inappropriate" xml:space="preserve">
+    <value>Olämpligt</value>
+  </data>
+  <data name="W.chat.moderation.Reason.harassment" xml:space="preserve">
+    <value>Trakasserier</value>
+  </data>
+  <data name="W.chat.moderation.Reason.spam" xml:space="preserve">
+    <value>Skräppost</value>
+  </data>
+  <data name="W.chat.moderation.Reason.sensitiveInformation" xml:space="preserve">
+    <value>Känslig information</value>
+  </data>
+  <data name="W.chat.moderation.Reason.policyViolation" xml:space="preserve">
+    <value>Regelbrott</value>
+  </data>
+  <data name="W.comms.tests.Title" xml:space="preserve">
+    <value>Kommunikationstester</value>
+  </data>
+  <data name="W.comms.tests.Description" xml:space="preserve">
+    <value>Senaste kommunikationstester med leverans- och svarsfrekvens per kanal.</value>
+  </data>
+  <data name="W.comms.tests.Setting.maxRuns" xml:space="preserve">
+    <value>Högsta antal körningar i listan</value>
+  </data>
+  <data name="W.comms.tests.Empty" xml:space="preserve">
+    <value>Inga kommunikationstester har körts ännu.</value>
+  </data>
+  <data name="W.comms.tests.Tested" xml:space="preserve">
+    <value>Testade</value>
+  </data>
+  <data name="W.comms.tests.Responses" xml:space="preserve">
+    <value>Svar</value>
+  </data>
+  <data name="W.comms.tests.ResponseRate" xml:space="preserve">
+    <value>Svarsfrekvens</value>
+  </data>
+  <data name="W.comms.tests.DeliveryRate" xml:space="preserve">
+    <value>Leveransfrekvens</value>
+  </data>
+  <data name="W.comms.tests.LatestRun" xml:space="preserve">
+    <value>Senaste körning per kanal</value>
+  </data>
+  <data name="W.comms.tests.Suppressed" xml:space="preserve">
+    <value>Tystade</value>
+  </data>
+  <data name="W.comms.tests.Status.pending" xml:space="preserve">
+    <value>Väntar</value>
+  </data>
+  <data name="W.comms.tests.Status.running" xml:space="preserve">
+    <value>Pågår</value>
+  </data>
+  <data name="W.comms.tests.Status.awaitingResponses" xml:space="preserve">
+    <value>Väntar på svar</value>
+  </data>
+  <data name="W.comms.tests.Status.completed" xml:space="preserve">
+    <value>Slutförd</value>
+  </data>
+  <data name="W.comms.tests.Status.failed" xml:space="preserve">
+    <value>Misslyckad</value>
+  </data>
+  <data name="W.comms.tests.Channel.sms" xml:space="preserve">
+    <value>SMS</value>
+  </data>
+  <data name="W.comms.tests.Channel.email" xml:space="preserve">
+    <value>E-post</value>
+  </data>
+  <data name="W.comms.tests.Channel.voice" xml:space="preserve">
+    <value>Röst</value>
+  </data>
+  <data name="W.comms.tests.Channel.push" xml:space="preserve">
+    <value>Push</value>
+  </data>
+  <data name="W.comms.tests.Channel.other" xml:space="preserve">
+    <value>Övrigt</value>
+  </data>
+  <data name="W.voice.ptt.Title" xml:space="preserve">
+    <value>Push-To-Talk</value>
+  </data>
+  <data name="W.voice.ptt.Description" xml:space="preserve">
+    <value>Avdelningens Push-To-Talk-kanaler och hur många platser som används.</value>
+  </data>
+  <data name="W.voice.ptt.Empty" xml:space="preserve">
+    <value>Inga Push-To-Talk-kanaler är konfigurerade.</value>
+  </data>
+  <data name="W.voice.ptt.Seats" xml:space="preserve">
+    <value>{0} av {1} platser används</value>
+  </data>
+  <data name="W.voice.ptt.UtilizationUnavailable" xml:space="preserve">
+    <value>Platsanvändningen är inte tillgänglig just nu.</value>
+  </data>
+  <data name="W.voice.ptt.Default" xml:space="preserve">
+    <value>Standard</value>
+  </data>
+  <data name="W.voice.ptt.Incident" xml:space="preserve">
+    <value>Händelsekanal</value>
+  </data>
+  <data name="W.calendar.agenda.Title" xml:space="preserve">
+    <value>Kommande evenemang</value>
+  </data>
+  <data name="W.calendar.agenda.Description" xml:space="preserve">
+    <value>De närmaste dagarna i avdelningens kalender, med din anmälnings- och incheckningsstatus.</value>
+  </data>
+  <data name="W.calendar.agenda.Setting.days" xml:space="preserve">
+    <value>Antal dagar framåt</value>
+  </data>
+  <data name="W.calendar.agenda.Setting.types" xml:space="preserve">
+    <value>Evenemangstyper</value>
+  </data>
+  <data name="W.calendar.agenda.Setting.maxItems" xml:space="preserve">
+    <value>Högsta antal evenemang i listan</value>
+  </data>
+  <data name="W.calendar.agenda.Empty" xml:space="preserve">
+    <value>Inga kommande evenemang.</value>
+  </data>
+  <data name="W.calendar.agenda.AllDay" xml:space="preserve">
+    <value>Hela dagen</value>
+  </data>
+  <data name="W.calendar.agenda.Attending" xml:space="preserve">
+    <value>Deltar</value>
+  </data>
+  <data name="W.calendar.agenda.Required" xml:space="preserve">
+    <value>Krävs</value>
+  </data>
+  <data name="W.calendar.agenda.Optional" xml:space="preserve">
+    <value>Valfritt</value>
+  </data>
+  <data name="W.calendar.agenda.NotAttending" xml:space="preserve">
+    <value>Deltar inte</value>
+  </data>
+  <data name="W.calendar.agenda.SignUp" xml:space="preserve">
+    <value>Anmäl dig</value>
+  </data>
+  <data name="W.calendar.agenda.CheckedIn" xml:space="preserve">
+    <value>Incheckad</value>
+  </data>
+  <data name="W.calendar.agenda.CheckedOut" xml:space="preserve">
+    <value>Utcheckad</value>
+  </data>
+  <data name="W.calendar.agenda.Today" xml:space="preserve">
+    <value>Idag</value>
+  </data>
+  <data name="W.calendar.agenda.Tomorrow" xml:space="preserve">
+    <value>Imorgon</value>
+  </data>
+  <data name="W.shifts.today.Title" xml:space="preserve">
+    <value>Dagens skift</value>
+  </data>
+  <data name="W.shifts.today.Description" xml:space="preserve">
+    <value>Dagens skift med bemanning mot krav och vem som är i tjänst per grupp.</value>
+  </data>
+  <data name="W.shifts.today.Empty" xml:space="preserve">
+    <value>Inga skift idag.</value>
+  </data>
+  <data name="W.shifts.today.OnDuty" xml:space="preserve">
+    <value>{0} i tjänst</value>
+  </data>
+  <data name="W.shifts.today.OpenSlots" xml:space="preserve">
+    <value>{0} lediga</value>
+  </data>
+  <data name="W.shifts.today.Filled" xml:space="preserve">
+    <value>Bemannat</value>
+  </data>
+  <data name="W.shifts.today.Active" xml:space="preserve">
+    <value>Pågår nu</value>
+  </data>
+  <data name="W.shifts.today.Ended" xml:space="preserve">
+    <value>Avslutat</value>
+  </data>
+  <data name="W.shifts.today.NoGroup" xml:space="preserve">
+    <value>Ingen grupp</value>
+  </data>
+  <data name="W.shifts.mine.Title" xml:space="preserve">
+    <value>Mina skift och byten</value>
+  </data>
+  <data name="W.shifts.mine.Description" xml:space="preserve">
+    <value>Dina kommande skift och bytesbegäranden som skickats till dig.</value>
+  </data>
+  <data name="W.shifts.mine.Setting.days" xml:space="preserve">
+    <value>Antal dagar framåt</value>
+  </data>
+  <data name="W.shifts.mine.Setting.maxItems" xml:space="preserve">
+    <value>Högsta antal poster per lista</value>
+  </data>
+  <data name="W.shifts.mine.Empty" xml:space="preserve">
+    <value>Inga kommande skift.</value>
+  </data>
+  <data name="W.shifts.mine.Upcoming" xml:space="preserve">
+    <value>Kommande skift</value>
+  </data>
+  <data name="W.shifts.mine.TradeRequests" xml:space="preserve">
+    <value>Bytesbegäranden</value>
+  </data>
+  <data name="W.shifts.mine.AwaitingApproval" xml:space="preserve">
+    <value>Väntar på godkännande</value>
+  </data>
+  <data name="W.shifts.mine.TradeRequested" xml:space="preserve">
+    <value>Byte begärt</value>
+  </data>
+  <data name="W.shifts.mine.From" xml:space="preserve">
+    <value>Från {0}</value>
+  </data>
+  <data name="W.shifts.approvals.Title" xml:space="preserve">
+    <value>Skiftgodkännanden</value>
+  </data>
+  <data name="W.shifts.approvals.Description" xml:space="preserve">
+    <value>Skiftanmälningar och byten som väntar på ditt godkännande.</value>
+  </data>
+  <data name="W.shifts.approvals.Setting.maxItems" xml:space="preserve">
+    <value>Högsta antal poster i listan</value>
+  </data>
+  <data name="W.shifts.approvals.Empty" xml:space="preserve">
+    <value>Inget väntar på ditt godkännande.</value>
+  </data>
+  <data name="W.shifts.approvals.NotApprover" xml:space="preserve">
+    <value>Du godkänner inte skiftanmälningar eller byten.</value>
+  </data>
+  <data name="W.shifts.approvals.Signups" xml:space="preserve">
+    <value>Anmälningar</value>
+  </data>
+  <data name="W.shifts.approvals.Trades" xml:space="preserve">
+    <value>Byten</value>
+  </data>
+  <data name="W.shifts.approvals.Signup" xml:space="preserve">
+    <value>Anmälan</value>
+  </data>
+  <data name="W.shifts.approvals.Trade" xml:space="preserve">
+    <value>Byte</value>
+  </data>
+  <data name="W.shifts.approvals.TradeFromTo" xml:space="preserve">
+    <value>{0} till {1}</value>
+  </data>
+  <data name="W.shifts.approvals.Review" xml:space="preserve">
+    <value>Granska</value>
+  </data>
+  <data name="W.shifts.coverage.Title" xml:space="preserve">
+    <value>Bemanningstäckning</value>
+  </data>
+  <data name="W.shifts.coverage.Description" xml:space="preserve">
+    <value>Skiftbemanningen de kommande dagarna, godkänd eller automatisk, med obemannade skift markerade.</value>
+  </data>
+  <data name="W.shifts.coverage.Setting.days" xml:space="preserve">
+    <value>Antal dagar framåt</value>
+  </data>
+  <data name="W.shifts.coverage.Setting.gapsOnly" xml:space="preserve">
+    <value>Visa endast obemannade skift</value>
+  </data>
+  <data name="W.shifts.coverage.Empty" xml:space="preserve">
+    <value>Inga skift under perioden.</value>
+  </data>
+  <data name="W.shifts.coverage.NotSupervisor" xml:space="preserve">
+    <value>Bemanningstäckning är till för arbetsledare.</value>
+  </data>
+  <data name="W.shifts.coverage.Gaps" xml:space="preserve">
+    <value>{0} obemannade</value>
+  </data>
+  <data name="W.shifts.coverage.Manual" xml:space="preserve">
+    <value>Godkänd</value>
+  </data>
+  <data name="W.shifts.coverage.Automatic" xml:space="preserve">
+    <value>Automatisk</value>
+  </data>
+  <data name="W.shifts.coverage.People" xml:space="preserve">
+    <value>{0} personer</value>
+  </data>
+  <data name="W.shifts.coverage.Changes" xml:space="preserve">
+    <value>+{0} / -{1}</value>
+  </data>
+  <data name="W.shifts.coverage.StaticShift" xml:space="preserve">
+    <value>Fast skift</value>
+  </data>
+  <data name="W.trainings.mine.Title" xml:space="preserve">
+    <value>Mina utbildningar</value>
+  </data>
+  <data name="W.trainings.mine.Description" xml:space="preserve">
+    <value>Utbildningar som tilldelats dig och som du ännu inte har slutfört.</value>
+  </data>
+  <data name="W.trainings.mine.Setting.maxItems" xml:space="preserve">
+    <value>Högsta antal utbildningar i listan</value>
+  </data>
+  <data name="W.trainings.mine.Empty" xml:space="preserve">
+    <value>Inga utestående utbildningar.</value>
+  </data>
+  <data name="W.trainings.mine.Outstanding" xml:space="preserve">
+    <value>Utestående</value>
+  </data>
+  <data name="W.trainings.mine.Overdue" xml:space="preserve">
+    <value>Försenade</value>
+  </data>
+  <data name="W.trainings.mine.Due" xml:space="preserve">
+    <value>Förfaller {0}</value>
+  </data>
+  <data name="W.trainings.mine.NotStarted" xml:space="preserve">
+    <value>Ej påbörjad</value>
+  </data>
+  <data name="W.trainings.mine.InProgress" xml:space="preserve">
+    <value>Pågår</value>
+  </data>
+  <data name="W.trainings.mine.QuizFailed" xml:space="preserve">
+    <value>Quizet ej godkänt</value>
+  </data>
+  <data name="W.documents.recent.Title" xml:space="preserve">
+    <value>Senaste dokument</value>
+  </data>
+  <data name="W.documents.recent.Description" xml:space="preserve">
+    <value>De nyaste dokumenten i avdelningens bibliotek.</value>
+  </data>
+  <data name="W.documents.recent.Setting.category" xml:space="preserve">
+    <value>Kategori</value>
+  </data>
+  <data name="W.documents.recent.Setting.maxItems" xml:space="preserve">
+    <value>Högsta antal dokument i listan</value>
+  </data>
+  <data name="W.documents.recent.Empty" xml:space="preserve">
+    <value>Inga dokument ännu.</value>
+  </data>
+  <data name="W.documents.recent.AdminsOnly" xml:space="preserve">
+    <value>Endast administratörer</value>
+  </data>
+  <data name="W.documents.recent.AllCategories" xml:space="preserve">
+    <value>Alla kategorier</value>
+  </data>
+  <data name="W.notes.board.Title" xml:space="preserve">
+    <value>Avdelningsanteckningar</value>
+  </data>
+  <data name="W.notes.board.Description" xml:space="preserve">
+    <value>De nyaste avdelningsanteckningarna.</value>
+  </data>
+  <data name="W.notes.board.Setting.category" xml:space="preserve">
+    <value>Kategori</value>
+  </data>
+  <data name="W.notes.board.Setting.maxItems" xml:space="preserve">
+    <value>Högsta antal anteckningar i listan</value>
+  </data>
+  <data name="W.notes.board.Setting.hideExpired" xml:space="preserve">
+    <value>Dölj utgångna anteckningar</value>
+  </data>
+  <data name="W.notes.board.Empty" xml:space="preserve">
+    <value>Inga anteckningar.</value>
+  </data>
+  <data name="W.notes.board.AdminOnly" xml:space="preserve">
+    <value>Endast administratörer</value>
+  </data>
+  <data name="W.notes.board.Expires" xml:space="preserve">
+    <value>Går ut {0}</value>
+  </data>
+  <data name="W.notes.board.AllCategories" xml:space="preserve">
+    <value>Alla kategorier</value>
+  </data>
+  <data name="W.contacts.preplans.Title" xml:space="preserve">
+    <value>Insatsplaner att granska</value>
+  </data>
+  <data name="W.contacts.preplans.Description" xml:space="preserve">
+    <value>Kontakter vars granskningsdatum för insatsplanen har passerat.</value>
+  </data>
+  <data name="W.contacts.preplans.Setting.maxItems" xml:space="preserve">
+    <value>Högsta antal kontakter i listan</value>
+  </data>
+  <data name="W.contacts.preplans.Empty" xml:space="preserve">
+    <value>Inga insatsplaner behöver granskas.</value>
+  </data>
+  <data name="W.contacts.preplans.DaysOverdue" xml:space="preserve">
+    <value>{0} dagar försenad</value>
+  </data>
+  <data name="W.contacts.preplans.DueToday" xml:space="preserve">
+    <value>Ska granskas idag</value>
+  </data>
+  <data name="W.contacts.preplans.ProtectedContact" xml:space="preserve">
+    <value>Skyddad kontakt</value>
+  </data>
+  <data name="W.links.quick.Title" xml:space="preserve">
+    <value>Snabblänkar</value>
+  </data>
+  <data name="W.links.quick.Description" xml:space="preserve">
+    <value>Avdelningar som delar data med din, samt dina egna länkar.</value>
+  </data>
+  <data name="W.links.quick.Setting.showDepartmentLinks" xml:space="preserve">
+    <value>Visa avdelningslänkar</value>
+  </data>
+  <data name="W.links.quick.Setting.links" xml:space="preserve">
+    <value>Mina länkar (en per rad: Namn | https://…)</value>
+  </data>
+  <data name="W.links.quick.Empty" xml:space="preserve">
+    <value>Inga länkar ännu. Lägg till egna i widgetens inställningar.</value>
+  </data>
+  <data name="W.links.quick.DepartmentLinks" xml:space="preserve">
+    <value>Länkade avdelningar</value>
+  </data>
+  <data name="W.links.quick.MyLinks" xml:space="preserve">
+    <value>Mina länkar</value>
+  </data>
+  <data name="W.links.quick.InvalidLinks" xml:space="preserve">
+    <value>Vissa rader hoppades över ({0}). Endast http- och https-adresser är tillåtna.</value>
+  </data>
+  <data name="W.links.quick.Shares.calls" xml:space="preserve">
+    <value>Larm</value>
+  </data>
+  <data name="W.links.quick.Shares.units" xml:space="preserve">
+    <value>Enheter</value>
+  </data>
+  <data name="W.links.quick.Shares.personnel" xml:space="preserve">
+    <value>Personal</value>
+  </data>
+  <data name="W.general.stickyNote.Title" xml:space="preserve">
+    <value>Min anteckning</value>
+  </data>
+  <data name="W.general.stickyNote.Description" xml:space="preserve">
+    <value>En personlig anteckning som bara du kan se.</value>
+  </data>
+  <data name="W.general.stickyNote.Setting.text" xml:space="preserve">
+    <value>Anteckning</value>
+  </data>
+  <data name="W.general.stickyNote.Empty" xml:space="preserve">
+    <value>Din anteckning är tom. Ändra widgetens inställningar för att skriva en.</value>
+  </data>
+  <data name="W.general.stickyNote.Edit" xml:space="preserve">
+    <value>Redigera anteckning</value>
+  </data>
+  <data name="W.map.operations.LoadError" xml:space="preserve">
+    <value>Kartan kunde inte läsas in. Försök igen om en stund.</value>
+  </data>
+  <data name="W.map.operations.Layer.calls" xml:space="preserve">
+    <value>Larm</value>
+  </data>
+  <data name="W.map.operations.Layer.units" xml:space="preserve">
+    <value>Enheter</value>
+  </data>
+  <data name="W.map.operations.Layer.personnel" xml:space="preserve">
+    <value>Personal</value>
+  </data>
+  <data name="W.map.operations.Layer.stations" xml:space="preserve">
+    <value>Stationer</value>
+  </data>
+  <data name="W.map.operations.Layer.pois" xml:space="preserve">
+    <value>Intressepunkter</value>
+  </data>
+  <data name="W.map.visualization.Choose" xml:space="preserve">
+    <value>Välj en visualisering</value>
+  </data>
+  <data name="W.map.visualization.Rows" xml:space="preserve">
+    <value>{0} poster</value>
+  </data>
+  <data name="W.map.visualization.Partial" xml:space="preserve">
+    <value>delvis</value>
+  </data>
+  <data name="W.weather.current.Tomorrow" xml:space="preserve">
+    <value>Imorgon</value>
+  </data>
+  <data name="W.weather.current.Compass.N" xml:space="preserve">
+    <value>N</value>
+  </data>
+  <data name="W.weather.current.Compass.NE" xml:space="preserve">
+    <value>NO</value>
+  </data>
+  <data name="W.weather.current.Compass.E" xml:space="preserve">
+    <value>O</value>
+  </data>
+  <data name="W.weather.current.Compass.SE" xml:space="preserve">
+    <value>SO</value>
+  </data>
+  <data name="W.weather.current.Compass.S" xml:space="preserve">
+    <value>S</value>
+  </data>
+  <data name="W.weather.current.Compass.SW" xml:space="preserve">
+    <value>SV</value>
+  </data>
+  <data name="W.weather.current.Compass.W" xml:space="preserve">
+    <value>V</value>
+  </data>
+  <data name="W.weather.current.Compass.NW" xml:space="preserve">
+    <value>NV</value>
+  </data>
+  <data name="W.messages.inbox.Open" xml:space="preserve">
+    <value>Öppna meddelandet</value>
+  </data>
+  <data name="W.chat.unread.Channel" xml:space="preserve">
+    <value>Kanal</value>
+  </data>
+  <data name="W.chat.unread.PendingAckCount" xml:space="preserve">
+    <value>{0} väntar på din bekräftelse</value>
+  </data>
+  <data name="W.chat.moderation.OldestLabel" xml:space="preserve">
+    <value>äldsta rapporten</value>
+  </data>
+  <data name="W.comms.tests.RecentRuns" xml:space="preserve">
+    <value>Senaste körningar</value>
+  </data>
+  <data name="W.comms.tests.Untitled" xml:space="preserve">
+    <value>Kommunikationstest</value>
+  </data>
+  <data name="W.comms.tests.NotDelivered" xml:space="preserve">
+    <value>Inget levererat</value>
+  </data>
+  <data name="W.comms.tests.DeliveredShort" xml:space="preserve">
+    <value>{0} levererade</value>
+  </data>
+  <data name="W.comms.tests.RespondedOf" xml:space="preserve">
+    <value>{0} av {1} har svarat</value>
+  </data>
+  <data name="W.voice.ptt.Open" xml:space="preserve">
+    <value>Öppna Push-To-Talk</value>
+  </data>
+  <data name="W.voice.ptt.Channel" xml:space="preserve">
+    <value>Kanal</value>
+  </data>
+  <data name="W.voice.ptt.MoreChannels" xml:space="preserve">
+    <value>+{0} till</value>
+  </data>
+  <data name="W.calendar.agenda.OpenCalendar" xml:space="preserve">
+    <value>Öppna kalendern</value>
+  </data>
+  <data name="W.calendar.agenda.Untitled" xml:space="preserve">
+    <value>Namnlöst evenemang</value>
+  </data>
+  <data name="W.shifts.today.OpenShifts" xml:space="preserve">
+    <value>Öppna skiften</value>
+  </data>
+  <data name="W.shifts.today.Shift" xml:space="preserve">
+    <value>Skift</value>
+  </data>
+  <data name="W.shifts.mine.OpenYourShifts" xml:space="preserve">
+    <value>Öppna dina skift</value>
+  </data>
+  <data name="W.shifts.mine.Shift" xml:space="preserve">
+    <value>Skift</value>
+  </data>
+  <data name="W.shifts.mine.Today" xml:space="preserve">
+    <value>Idag</value>
+  </data>
+  <data name="W.shifts.mine.Tomorrow" xml:space="preserve">
+    <value>Imorgon</value>
+  </data>
+  <data name="W.shifts.mine.Respond" xml:space="preserve">
+    <value>Svara</value>
+  </data>
+  <data name="W.shifts.approvals.Today" xml:space="preserve">
+    <value>Idag</value>
+  </data>
+  <data name="W.shifts.approvals.Tomorrow" xml:space="preserve">
+    <value>Imorgon</value>
+  </data>
+  <data name="W.shifts.coverage.OpenStaffing" xml:space="preserve">
+    <value>Öppna skiftbemanning</value>
+  </data>
+  <data name="W.shifts.coverage.Shift" xml:space="preserve">
+    <value>Skift</value>
+  </data>
+  <data name="W.shifts.coverage.Time" xml:space="preserve">
+    <value>Tid</value>
+  </data>
+  <data name="W.shifts.coverage.Staffed" xml:space="preserve">
+    <value>Bemannat</value>
+  </data>
+  <data name="W.shifts.coverage.Source" xml:space="preserve">
+    <value>Bemanning</value>
+  </data>
+  <data name="W.shifts.coverage.Unstaffed" xml:space="preserve">
+    <value>Obemannat</value>
+  </data>
+  <data name="W.shifts.coverage.Today" xml:space="preserve">
+    <value>Idag</value>
+  </data>
+  <data name="W.shifts.coverage.Tomorrow" xml:space="preserve">
+    <value>Imorgon</value>
+  </data>
+  <data name="W.trainings.mine.Training" xml:space="preserve">
+    <value>Utbildning</value>
+  </data>
+  <data name="W.trainings.mine.OverdueCount" xml:space="preserve">
+    <value>{0} försenade</value>
+  </data>
+  <data name="W.trainings.mine.OverdueSince" xml:space="preserve">
+    <value>Skulle ha varit klar {0}</value>
+  </data>
+  <data name="W.documents.recent.OpenDocuments" xml:space="preserve">
+    <value>Öppna dokument</value>
+  </data>
+  <data name="W.documents.recent.Untitled" xml:space="preserve">
+    <value>Namnlöst dokument</value>
+  </data>
+  <data name="W.notes.board.OpenNotes" xml:space="preserve">
+    <value>Öppna anteckningar</value>
+  </data>
+  <data name="W.notes.board.Untitled" xml:space="preserve">
+    <value>Namnlös anteckning</value>
+  </data>
+  <data name="W.contacts.preplans.ReviewDue" xml:space="preserve">
+    <value>Granskning senast {0}</value>
+  </data>
+  <data name="W.contacts.preplans.Open" xml:space="preserve">
+    <value>Öppna kontakten</value>
+  </data>
+  <data name="W.links.quick.AddLinks" xml:space="preserve">
+    <value>Lägg till länkar</value>
+  </data>
+  <data name="W.links.quick.LinkedDepartment" xml:space="preserve">
+    <value>Länkad avdelning</value>
+  </data>
+  <data name="W.general.stickyNote.Placeholder" xml:space="preserve">
+    <value>Skriv ner något. Bara du kan se det här.</value>
+  </data>
+  <data name="W.general.stickyNote.Remaining" xml:space="preserve">
+    <value>{0} tecken kvar</value>
+  </data>
+  <data name="W.shifts.today.GroupCount" xml:space="preserve">
+    <value>{0}: {1}</value>
+  </data>
+  <data name="W.map.operations.Layer.layer" xml:space="preserve">
+    <value>Kartlager</value>
+  </data>
+  <data name="W.checklists.due.Title" xml:space="preserve">
+    <value>Checklistor att utföra</value>
+  </data>
+  <data name="W.checklists.due.Description" xml:space="preserve">
+    <value>Schemalagda checklistor som ska utföras de närmaste sju dagarna: försenade, aktuella nu och kommande, med en länk för att starta var och en.</value>
+  </data>
+  <data name="W.checklists.due.Setting.maxRows" xml:space="preserve">
+    <value>Antal checklistor att visa</value>
+  </data>
+  <data name="W.checklists.due.Setting.assignedOnly" xml:space="preserve">
+    <value>Endast checklistor som tilldelats mig</value>
+  </data>
+  <data name="W.checklists.compliance.Title" xml:space="preserve">
+    <value>Efterlevnad av checklistor</value>
+  </data>
+  <data name="W.checklists.compliance.Description" xml:space="preserve">
+    <value>Andel slutförda checklistor de senaste dagarna, de enheter, grupper och personer som ligger längst efter samt missade kontroller per dag.</value>
+  </data>
+  <data name="W.checklists.compliance.Setting.days" xml:space="preserve">
+    <value>Antal dagar att ta med</value>
+  </data>
+  <data name="W.checklists.compliance.Setting.maxRows" xml:space="preserve">
+    <value>Antal mål att visa</value>
+  </data>
+  <data name="W.workOrders.stats.Title" xml:space="preserve">
+    <value>Arbetsorder</value>
+  </data>
+  <data name="W.workOrders.stats.Description" xml:space="preserve">
+    <value>Öppna och försenade arbetsorder, förebyggande underhåll som utförts i tid, genomsnittlig reparationstid och stilleståndstid.</value>
+  </data>
+  <data name="W.workOrders.stats.Setting.days" xml:space="preserve">
+    <value>Antal dagar att ta med</value>
+  </data>
+  <data name="W.workOrders.mine.Title" xml:space="preserve">
+    <value>Mina arbetsorder</value>
+  </data>
+  <data name="W.workOrders.mine.Description" xml:space="preserve">
+    <value>Öppna arbetsorder som tilldelats dig, de mest brådskande först.</value>
+  </data>
+  <data name="W.workOrders.mine.Setting.maxRows" xml:space="preserve">
+    <value>Antal arbetsorder att visa</value>
+  </data>
+  <data name="W.inventory.alerts.Title" xml:space="preserve">
+    <value>Lagervarningar</value>
+  </data>
+  <data name="W.inventory.alerts.Description" xml:space="preserve">
+    <value>Låga lagernivåer, artiklar som snart går ut eller har gått ut, försenade återlämningar och artiklar hos avgångna medlemmar, med de mest brådskande artiklarna.</value>
+  </data>
+  <data name="W.inventory.alerts.Setting.maxRows" xml:space="preserve">
+    <value>Antal artiklar att visa</value>
+  </data>
+  <data name="W.inventory.valuation.Title" xml:space="preserve">
+    <value>Lagervärdering</value>
+  </data>
+  <data name="W.inventory.valuation.Description" xml:space="preserve">
+    <value>Värdet av lagersaldot per valuta och de lagerplatser som innehåller mest.</value>
+  </data>
+  <data name="W.inventory.valuation.Setting.maxRows" xml:space="preserve">
+    <value>Antal lagerplatser att visa</value>
+  </data>
+  <data name="W.certifications.expiry.Title" xml:space="preserve">
+    <value>Certifieringar som går ut</value>
+  </data>
+  <data name="W.certifications.expiry.Description" xml:space="preserve">
+    <value>Utgångna, snart utgående, avstängda och ej verifierade certifieringar i hela avdelningen, med de mest brådskande.</value>
+  </data>
+  <data name="W.certifications.expiry.Setting.maxRows" xml:space="preserve">
+    <value>Antal certifieringar att visa</value>
+  </data>
+  <data name="W.certifications.mine.Title" xml:space="preserve">
+    <value>Mina certifieringar</value>
+  </data>
+  <data name="W.certifications.mine.Description" xml:space="preserve">
+    <value>Dina certifieringar som har gått ut eller snart går ut.</value>
+  </data>
+  <data name="W.certifications.mine.Setting.maxRows" xml:space="preserve">
+    <value>Antal certifieringar att visa</value>
+  </data>
+  <data name="W.records.overview.Title" xml:space="preserve">
+    <value>Journalöversikt</value>
+  </data>
+  <data name="W.records.overview.Description" xml:space="preserve">
+    <value>Utkast, journaler som väntar på granskning, återsända journaler, försenade skyldigheter och öppna begäranden om allmän handling.</value>
+  </data>
+  <data name="W.records.myWork.Title" xml:space="preserve">
+    <value>Mitt journalarbete</value>
+  </data>
+  <data name="W.records.myWork.Description" xml:space="preserve">
+    <value>Ofärdiga journaler som du äger och journalarbete som tilldelats dig.</value>
+  </data>
+  <data name="W.records.myWork.Setting.maxRows" xml:space="preserve">
+    <value>Antal poster att visa</value>
+  </data>
+  <data name="W.records.neris.Title" xml:space="preserve">
+    <value>NERIS-rapporter</value>
+  </data>
+  <data name="W.records.neris.Description" xml:space="preserve">
+    <value>Händelserapporter per inlämningssteg: ofullständiga, väntar på granskning, inlämnade, accepterade och avvisade.</value>
+  </data>
+  <data name="W.records.qualityReview.Title" xml:space="preserve">
+    <value>Kvalitetsgranskning</value>
+  </data>
+  <data name="W.records.qualityReview.Description" xml:space="preserve">
+    <value>Journaler som väntar på kvalitetsgranskning, dina först.</value>
+  </data>
+  <data name="W.records.qualityReview.Setting.maxRows" xml:space="preserve">
+    <value>Antal granskningar att visa</value>
+  </data>
+  <data name="W.records.prevention.Title" xml:space="preserve">
+    <value>Förebyggande</value>
+  </data>
+  <data name="W.records.prevention.Description" xml:space="preserve">
+    <value>Objektsgranskningar, tillsyner, överträdelser, brandposter, tillstånd, riskminskning i samhället och utredningar för de förebyggande moduler du använder.</value>
+  </data>
+  <data name="W.records.hydrants.Title" xml:space="preserve">
+    <value>Brandposter</value>
+  </data>
+  <data name="W.records.hydrants.Description" xml:space="preserve">
+    <value>Brandposter som är ur drift eller ska provas, med de brandposter som är ur drift på en karta.</value>
+  </data>
+  <data name="W.records.hydrants.Setting.maxRows" xml:space="preserve">
+    <value>Antal brandposter på kartan</value>
+  </data>
+  <data name="W.records.crr.Title" xml:space="preserve">
+    <value>Riskminskning i samhället</value>
+  </data>
+  <data name="W.records.crr.Description" xml:space="preserve">
+    <value>Riskminskande aktiviteter samt brandvarnare, CO-varnare och kombinationsvarnare som installerats i år, och öppna varnarbegäranden.</value>
+  </data>
+  <data name="W.records.investigations.Title" xml:space="preserve">
+    <value>Mina utredningar</value>
+  </data>
+  <data name="W.records.investigations.Description" xml:space="preserve">
+    <value>Öppna utredningsärenden som du arbetar med, efter ärendenummer och status.</value>
+  </data>
+  <data name="W.records.investigations.Setting.maxRows" xml:space="preserve">
+    <value>Antal ärenden att visa</value>
+  </data>
+  <data name="W.records.analytics.Title" xml:space="preserve">
+    <value>Journalnyckeltal</value>
+  </data>
+  <data name="W.records.analytics.Description" xml:space="preserve">
+    <value>Försenade journaler, mediantid till slutförande och granskning, andel återsända och journaler per månad.</value>
+  </data>
+  <data name="W.records.analytics.Setting.days" xml:space="preserve">
+    <value>Antal dagar att ta med</value>
+  </data>
+  <data name="W.records.legalHolds.Title" xml:space="preserve">
+    <value>Rättsliga spärrar</value>
+  </data>
+  <data name="W.records.legalHolds.Description" xml:space="preserve">
+    <value>Aktiva bevarandespärrar på journaler och de nyaste som lagts.</value>
+  </data>
+  <data name="W.records.legalHolds.Setting.maxRows" xml:space="preserve">
+    <value>Antal spärrar att visa</value>
+  </data>
+  <data name="W.records.deployments.Title" xml:space="preserve">
+    <value>Insatsrapporter</value>
+  </data>
+  <data name="W.records.deployments.Description" xml:space="preserve">
+    <value>Öppna insatsposter från externa resursbeställningar.</value>
+  </data>
+  <data name="W.records.deployments.Setting.maxRows" xml:space="preserve">
+    <value>Antal insatser att visa</value>
+  </data>
+  <data name="W.logs.recent.Title" xml:space="preserve">
+    <value>Senaste loggar</value>
+  </data>
+  <data name="W.logs.recent.Description" xml:space="preserve">
+    <value>Loggar som skrivits de senaste dagarna, per typ, med de nyaste posterna.</value>
+  </data>
+  <data name="W.logs.recent.Setting.days" xml:space="preserve">
+    <value>Antal dagar att ta med</value>
+  </data>
+  <data name="W.logs.recent.Setting.maxRows" xml:space="preserve">
+    <value>Antal loggar att visa</value>
+  </data>
+  <data name="W.checklists.due.Empty" xml:space="preserve">
+    <value>Inget ska utföras de närmaste sju dagarna.</value>
+  </data>
+  <data name="W.checklists.due.OpenDue" xml:space="preserve">
+    <value>Öppna checklistor att utföra</value>
+  </data>
+  <data name="W.checklists.due.OverdueSince" xml:space="preserve">
+    <value>Försenad · tidsfristen löpte ut {0}</value>
+  </data>
+  <data name="W.checklists.due.DueBy" xml:space="preserve">
+    <value>Senast {0}</value>
+  </data>
+  <data name="W.checklists.due.Opens" xml:space="preserve">
+    <value>Öppnar {0}</value>
+  </data>
+  <data name="W.checklists.due.Overdue" xml:space="preserve">
+    <value>försenade</value>
+  </data>
+  <data name="W.checklists.due.DueNow" xml:space="preserve">
+    <value>ska utföras nu</value>
+  </data>
+  <data name="W.checklists.due.Upcoming" xml:space="preserve">
+    <value>kommande</value>
+  </data>
+  <data name="W.checklists.due.Unnamed" xml:space="preserve">
+    <value>Checklista</value>
+  </data>
+  <data name="W.checklists.due.Start" xml:space="preserve">
+    <value>Starta</value>
+  </data>
+  <data name="W.checklists.due.SeeAll" xml:space="preserve">
+    <value>Visa alla checklistor att utföra</value>
+  </data>
+  <data name="W.checklists.due.NextDue" xml:space="preserve">
+    <value>Nästa öppnar {0}</value>
+  </data>
+  <data name="W.checklists.compliance.Empty" xml:space="preserve">
+    <value>Inga checklistor skulle utföras under de senaste {0} dagarna.</value>
+  </data>
+  <data name="W.checklists.compliance.OpenCompliance" xml:space="preserve">
+    <value>Öppna efterlevnad</value>
+  </data>
+  <data name="W.checklists.compliance.CompletedLastDays" xml:space="preserve">
+    <value>slutförda under de senaste {0} dagarna</value>
+  </data>
+  <data name="W.checklists.compliance.Completed" xml:space="preserve">
+    <value>slutförda</value>
+  </data>
+  <data name="W.checklists.compliance.OnTime" xml:space="preserve">
+    <value>i tid</value>
+  </data>
+  <data name="W.checklists.compliance.Missed" xml:space="preserve">
+    <value>missade</value>
+  </data>
+  <data name="W.checklists.compliance.Skipped" xml:space="preserve">
+    <value>överhoppade</value>
+  </data>
+  <data name="W.checklists.compliance.FurthestBehind" xml:space="preserve">
+    <value>Längst efter</value>
+  </data>
+  <data name="W.checklists.compliance.UnknownTarget" xml:space="preserve">
+    <value>Okänt mål</value>
+  </data>
+  <data name="W.checklists.compliance.RateOf" xml:space="preserve">
+    <value>{0} · {1}/{2}</value>
+  </data>
+  <data name="W.checklists.compliance.MissedPerDay" xml:space="preserve">
+    <value>Missade per dag</value>
+  </data>
+  <data name="W.checklists.compliance.TrendAria" xml:space="preserve">
+    <value>Missade kontroller per dag: {0} missade under {1} dagar</value>
+  </data>
+  <data name="W.checklists.compliance.MissedValue" xml:space="preserve">
+    <value>{0} missade</value>
+  </data>
+  <data name="W.checklists.compliance.Restricted" xml:space="preserve">
+    <value>Vissa resultat ligger utanför din åtkomst och räknas inte med.</value>
+  </data>
+  <data name="W.workOrders.stats.Empty" xml:space="preserve">
+    <value>Inga arbetsorder under perioden.</value>
+  </data>
+  <data name="W.workOrders.stats.OpenWorkOrders" xml:space="preserve">
+    <value>Öppna arbetsorder</value>
+  </data>
+  <data name="W.workOrders.stats.Open" xml:space="preserve">
+    <value>öppna</value>
+  </data>
+  <data name="W.workOrders.stats.Overdue" xml:space="preserve">
+    <value>försenade</value>
+  </data>
+  <data name="W.workOrders.stats.PreventiveOnTime" xml:space="preserve">
+    <value>PM i tid</value>
+  </data>
+  <data name="W.workOrders.stats.PreventiveOfDue" xml:space="preserve">
+    <value>{0} av {1} förebyggande arbetsorder utförda i tid</value>
+  </data>
+  <data name="W.workOrders.stats.Mttr" xml:space="preserve">
+    <value>genomsnittlig reparationstid</value>
+  </data>
+  <data name="W.workOrders.stats.OpenByPriority" xml:space="preserve">
+    <value>Öppna per prioritet</value>
+  </data>
+  <data name="W.workOrders.stats.Priority0" xml:space="preserve">
+    <value>Låg</value>
+  </data>
+  <data name="W.workOrders.stats.Priority1" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="W.workOrders.stats.Priority2" xml:space="preserve">
+    <value>Hög</value>
+  </data>
+  <data name="W.workOrders.stats.Priority3" xml:space="preserve">
+    <value>Akut</value>
+  </data>
+  <data name="W.workOrders.stats.Downtime" xml:space="preserve">
+    <value>Stillestånd {0}</value>
+  </data>
+  <data name="W.workOrders.stats.SlaBreaches" xml:space="preserve">
+    <value>{0} SLA-överträdelser</value>
+  </data>
+  <data name="W.workOrders.stats.LastDays" xml:space="preserve">
+    <value>Senaste {0} dagarna</value>
+  </data>
+  <data name="W.workOrders.stats.OpenReports" xml:space="preserve">
+    <value>Rapporter</value>
+  </data>
+  <data name="W.workOrders.mine.Empty" xml:space="preserve">
+    <value>Inga öppna arbetsorder är tilldelade dig.</value>
+  </data>
+  <data name="W.workOrders.mine.OpenWorkOrders" xml:space="preserve">
+    <value>Öppna arbetsorder</value>
+  </data>
+  <data name="W.workOrders.mine.Untitled" xml:space="preserve">
+    <value>Arbetsorder</value>
+  </data>
+  <data name="W.workOrders.mine.Priority0" xml:space="preserve">
+    <value>Låg</value>
+  </data>
+  <data name="W.workOrders.mine.Priority1" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="W.workOrders.mine.Priority2" xml:space="preserve">
+    <value>Hög</value>
+  </data>
+  <data name="W.workOrders.mine.Priority3" xml:space="preserve">
+    <value>Akut</value>
+  </data>
+  <data name="W.workOrders.mine.Status0" xml:space="preserve">
+    <value>Begärd</value>
+  </data>
+  <data name="W.workOrders.mine.Status1" xml:space="preserve">
+    <value>Accepterad</value>
+  </data>
+  <data name="W.workOrders.mine.Status2" xml:space="preserve">
+    <value>Tilldelad</value>
+  </data>
+  <data name="W.workOrders.mine.Status3" xml:space="preserve">
+    <value>Pågår</value>
+  </data>
+  <data name="W.workOrders.mine.Status4" xml:space="preserve">
+    <value>Pausad</value>
+  </data>
+  <data name="W.workOrders.mine.Status5" xml:space="preserve">
+    <value>Slutförd</value>
+  </data>
+  <data name="W.workOrders.mine.Status6" xml:space="preserve">
+    <value>Stängd</value>
+  </data>
+  <data name="W.workOrders.mine.Status7" xml:space="preserve">
+    <value>Avvisad</value>
+  </data>
+  <data name="W.workOrders.mine.Status8" xml:space="preserve">
+    <value>Dubblett</value>
+  </data>
+  <data name="W.workOrders.mine.Status9" xml:space="preserve">
+    <value>Avbruten</value>
+  </data>
+  <data name="W.workOrders.mine.OverdueOn" xml:space="preserve">
+    <value>Försenad · {0}</value>
+  </data>
+  <data name="W.workOrders.mine.DueOn" xml:space="preserve">
+    <value>Förfaller {0}</value>
+  </data>
+  <data name="W.workOrders.mine.SeeAll" xml:space="preserve">
+    <value>Alla mina arbetsorder</value>
+  </data>
+  <data name="W.inventory.alerts.UnknownItem" xml:space="preserve">
+    <value>Artikel</value>
+  </data>
+  <data name="W.inventory.alerts.Type0" xml:space="preserve">
+    <value>Låg lagernivå</value>
+  </data>
+  <data name="W.inventory.alerts.Type1" xml:space="preserve">
+    <value>Går snart ut</value>
+  </data>
+  <data name="W.inventory.alerts.Type2" xml:space="preserve">
+    <value>Utgånget</value>
+  </data>
+  <data name="W.inventory.alerts.Type3" xml:space="preserve">
+    <value>Försenade återlämningar</value>
+  </data>
+  <data name="W.inventory.alerts.Type4" xml:space="preserve">
+    <value>Hos avgångna medlemmar</value>
+  </data>
+  <data name="W.inventory.alerts.ExpiresOn" xml:space="preserve">
+    <value>Går ut {0}</value>
+  </data>
+  <data name="W.inventory.alerts.DueOn" xml:space="preserve">
+    <value>Förfaller {0}</value>
+  </data>
+  <data name="W.inventory.alerts.Quantity" xml:space="preserve">
+    <value>Antal {0}</value>
+  </data>
+  <data name="W.inventory.alerts.TimesCount" xml:space="preserve">
+    <value>×{0}</value>
+  </data>
+  <data name="W.inventory.alerts.LegacyEmpty" xml:space="preserve">
+    <value>Inga artiklar är slut i lager.</value>
+  </data>
+  <data name="W.inventory.alerts.OpenInventory" xml:space="preserve">
+    <value>Öppna inventarier</value>
+  </data>
+  <data name="W.inventory.alerts.OutOfStock" xml:space="preserve">
+    <value>slut i lager</value>
+  </data>
+  <data name="W.inventory.alerts.LegacyNote" xml:space="preserve">
+    <value>Initiera inventarier för varningar om utgångsdatum och återlämning</value>
+  </data>
+  <data name="W.inventory.alerts.Empty" xml:space="preserve">
+    <value>Inga öppna lagervarningar.</value>
+  </data>
+  <data name="W.inventory.alerts.OpenAlerts" xml:space="preserve">
+    <value>Öppna varningar</value>
+  </data>
+  <data name="W.inventory.alerts.Truncated" xml:space="preserve">
+    <value>Antalen är ofullständiga: öppna sidan Varningar för hela listan.</value>
+  </data>
+  <data name="W.inventory.valuation.NotInitialized" xml:space="preserve">
+    <value>Initiera inventarier för att se deras värde.</value>
+  </data>
+  <data name="W.inventory.valuation.OpenInventory" xml:space="preserve">
+    <value>Öppna inventarier</value>
+  </data>
+  <data name="W.inventory.valuation.Empty" xml:space="preserve">
+    <value>Inget lagersaldo.</value>
+  </data>
+  <data name="W.inventory.valuation.OpenValuation" xml:space="preserve">
+    <value>Öppna värdering</value>
+  </data>
+  <data name="W.inventory.valuation.OnHand" xml:space="preserve">
+    <value>i lager</value>
+  </data>
+  <data name="W.inventory.valuation.ByLocation" xml:space="preserve">
+    <value>Per lagerplats</value>
+  </data>
+  <data name="W.inventory.valuation.UnnamedLocation" xml:space="preserve">
+    <value>Lagerplats</value>
+  </data>
+  <data name="W.inventory.valuation.NegativeStock" xml:space="preserve">
+    <value>Vissa lagersaldon är under noll; värdena kan vara för låga.</value>
+  </data>
+  <data name="W.inventory.valuation.Uncosted" xml:space="preserve">
+    <value>{0} rader saknar kostnad och ingår inte.</value>
+  </data>
+  <data name="W.inventory.valuation.AsOf" xml:space="preserve">
+    <value>Per {0}</value>
+  </data>
+  <data name="W.certifications.expiry.Empty" xml:space="preserve">
+    <value>Inga certifieringar kräver åtgärd de kommande {0} dagarna.</value>
+  </data>
+  <data name="W.certifications.expiry.OpenCertifications" xml:space="preserve">
+    <value>Öppna certifieringar</value>
+  </data>
+  <data name="W.certifications.expiry.Expired" xml:space="preserve">
+    <value>utgångna</value>
+  </data>
+  <data name="W.certifications.expiry.ExpiringWithin" xml:space="preserve">
+    <value>går ut inom {0} dagar</value>
+  </data>
+  <data name="W.certifications.expiry.Suspended" xml:space="preserve">
+    <value>avstängda</value>
+  </data>
+  <data name="W.certifications.expiry.ToVerify" xml:space="preserve">
+    <value>att verifiera</value>
+  </data>
+  <data name="W.certifications.expiry.UnknownType" xml:space="preserve">
+    <value>Certifiering</value>
+  </data>
+  <data name="W.certifications.expiry.UnknownSubject" xml:space="preserve">
+    <value>Okänd</value>
+  </data>
+  <data name="W.certifications.expiry.NoExpiry" xml:space="preserve">
+    <value>Inget utgångsdatum</value>
+  </data>
+  <data name="W.certifications.expiry.ExpiredDaysAgo" xml:space="preserve">
+    <value>Gick ut för {0} dagar sedan</value>
+  </data>
+  <data name="W.certifications.expiry.ExpiresToday" xml:space="preserve">
+    <value>Går ut idag</value>
+  </data>
+  <data name="W.certifications.expiry.ExpiresInDays" xml:space="preserve">
+    <value>Går ut om {0} dagar</value>
+  </data>
+  <data name="W.certifications.mine.Empty" xml:space="preserve">
+    <value>Inga av dina certifieringar går ut de kommande {0} dagarna.</value>
+  </data>
+  <data name="W.certifications.mine.OpenMine" xml:space="preserve">
+    <value>Mina certifieringar</value>
+  </data>
+  <data name="W.certifications.mine.Unnamed" xml:space="preserve">
+    <value>Certifiering</value>
+  </data>
+  <data name="W.certifications.mine.SeeAll" xml:space="preserve">
+    <value>Alla mina certifieringar</value>
+  </data>
+  <data name="W.certifications.mine.ExpiredDaysAgo" xml:space="preserve">
+    <value>Gick ut för {0} dagar sedan</value>
+  </data>
+  <data name="W.certifications.mine.ExpiresToday" xml:space="preserve">
+    <value>Går ut idag</value>
+  </data>
+  <data name="W.certifications.mine.ExpiresInDays" xml:space="preserve">
+    <value>Går ut om {0} dagar</value>
+  </data>
+  <data name="W.records.overview.Drafts" xml:space="preserve">
+    <value>utkast</value>
+  </data>
+  <data name="W.records.overview.AwaitingReview" xml:space="preserve">
+    <value>väntar på granskning</value>
+  </data>
+  <data name="W.records.overview.Returned" xml:space="preserve">
+    <value>återsända</value>
+  </data>
+  <data name="W.records.overview.Overdue" xml:space="preserve">
+    <value>försenade</value>
+  </data>
+  <data name="W.records.overview.IncidentIncomplete" xml:space="preserve">
+    <value>ofullständiga händelserapporter</value>
+  </data>
+  <data name="W.records.overview.IncidentAwaitingReview" xml:space="preserve">
+    <value>händelserapporter att granska</value>
+  </data>
+  <data name="W.records.overview.DisclosuresOpen" xml:space="preserve">
+    <value>öppna begäranden om allmän handling</value>
+  </data>
+  <data name="W.records.overview.DisclosuresOverdue" xml:space="preserve">
+    <value>försenade begäranden om allmän handling</value>
+  </data>
+  <data name="W.records.overview.Warnings" xml:space="preserve">
+    <value>Vissa antal är inte tillgängliga ({0}); se journalöversikten.</value>
+  </data>
+  <data name="W.records.myWork.Empty" xml:space="preserve">
+    <value>Inga journaler väntar på dig.</value>
+  </data>
+  <data name="W.records.myWork.OpenRecords" xml:space="preserve">
+    <value>Öppna journaler</value>
+  </data>
+  <data name="W.records.myWork.AssignedToMe" xml:space="preserve">
+    <value>Tilldelade mig ({0})</value>
+  </data>
+  <data name="W.records.myWork.PurposeComplete" xml:space="preserve">
+    <value>Slutför journalen</value>
+  </data>
+  <data name="W.records.myWork.PurposeReview" xml:space="preserve">
+    <value>Granska journalen</value>
+  </data>
+  <data name="W.records.myWork.PurposeCorrect" xml:space="preserve">
+    <value>Rätta journalen</value>
+  </data>
+  <data name="W.records.myWork.PurposeAttach" xml:space="preserve">
+    <value>Bifoga dokument</value>
+  </data>
+  <data name="W.records.myWork.PurposeAcknowledge" xml:space="preserve">
+    <value>Bekräfta journalen</value>
+  </data>
+  <data name="W.records.myWork.PurposeOther" xml:space="preserve">
+    <value>Journalarbete</value>
+  </data>
+  <data name="W.records.myWork.Via2" xml:space="preserve">
+    <value>via din enhet</value>
+  </data>
+  <data name="W.records.myWork.Via3" xml:space="preserve">
+    <value>via din grupp</value>
+  </data>
+  <data name="W.records.myWork.Via4" xml:space="preserve">
+    <value>via din ledningsroll</value>
+  </data>
+  <data name="W.records.myWork.Via5" xml:space="preserve">
+    <value>via larmcentralen</value>
+  </data>
+  <data name="W.records.myWork.Acknowledged" xml:space="preserve">
+    <value>bekräftad</value>
+  </data>
+  <data name="W.records.myWork.OverdueSince" xml:space="preserve">
+    <value>Försenad sedan {0}</value>
+  </data>
+  <data name="W.records.myWork.DueOn" xml:space="preserve">
+    <value>Förfaller {0}</value>
+  </data>
+  <data name="W.records.myWork.MyRecords" xml:space="preserve">
+    <value>Mina ofärdiga journaler ({0})</value>
+  </data>
+  <data name="W.records.myWork.NoNumber" xml:space="preserve">
+    <value>Utkast</value>
+  </data>
+  <data name="W.records.myWork.State1" xml:space="preserve">
+    <value>Utkast</value>
+  </data>
+  <data name="W.records.myWork.State2" xml:space="preserve">
+    <value>Redo för granskning</value>
+  </data>
+  <data name="W.records.myWork.State3" xml:space="preserve">
+    <value>Återsänd</value>
+  </data>
+  <data name="W.records.myWork.State4" xml:space="preserve">
+    <value>Godkänd</value>
+  </data>
+  <data name="W.records.myWork.ReviewDue" xml:space="preserve">
+    <value>Granskning senast {0}</value>
+  </data>
+  <data name="W.records.myWork.Started" xml:space="preserve">
+    <value>Påbörjad {0}</value>
+  </data>
+  <data name="W.records.neris.Empty" xml:space="preserve">
+    <value>Inga händelserapporter finns i inlämningsflödet.</value>
+  </data>
+  <data name="W.records.neris.OpenRecords" xml:space="preserve">
+    <value>Öppna journalöversikten</value>
+  </data>
+  <data name="W.records.neris.Incomplete" xml:space="preserve">
+    <value>ofullständiga</value>
+  </data>
+  <data name="W.records.neris.AwaitingReview" xml:space="preserve">
+    <value>väntar på granskning</value>
+  </data>
+  <data name="W.records.neris.Submitted" xml:space="preserve">
+    <value>inlämnade</value>
+  </data>
+  <data name="W.records.neris.Accepted" xml:space="preserve">
+    <value>accepterade</value>
+  </data>
+  <data name="W.records.neris.Rejected" xml:space="preserve">
+    <value>avvisade</value>
+  </data>
+  <data name="W.records.qualityReview.Empty" xml:space="preserve">
+    <value>Inga journaler väntar på kvalitetsgranskning.</value>
+  </data>
+  <data name="W.records.qualityReview.OpenQuality" xml:space="preserve">
+    <value>Öppna kvalitetsgranskning</value>
+  </data>
+  <data name="W.records.qualityReview.Pending" xml:space="preserve">
+    <value>väntande</value>
+  </data>
+  <data name="W.records.qualityReview.AssignedToMe" xml:space="preserve">
+    <value>tilldelade mig</value>
+  </data>
+  <data name="W.records.qualityReview.NoNumber" xml:space="preserve">
+    <value>Journal</value>
+  </data>
+  <data name="W.records.qualityReview.Sampled" xml:space="preserve">
+    <value>Utvald {0}</value>
+  </data>
+  <data name="W.records.qualityReview.Yours" xml:space="preserve">
+    <value>dina</value>
+  </data>
+  <data name="W.records.qualityReview.SeeAll" xml:space="preserve">
+    <value>Alla väntande granskningar</value>
+  </data>
+  <data name="W.records.prevention.Occupancies" xml:space="preserve">
+    <value>Objekt</value>
+  </data>
+  <data name="W.records.prevention.OccupanciesCount" xml:space="preserve">
+    <value>objekt</value>
+  </data>
+  <data name="W.records.prevention.ReviewsOverdue" xml:space="preserve">
+    <value>försenade granskningar</value>
+  </data>
+  <data name="W.records.prevention.Inspections" xml:space="preserve">
+    <value>Tillsyner</value>
+  </data>
+  <data name="W.records.prevention.InspectionsDue" xml:space="preserve">
+    <value>tillsyner att utföra</value>
+  </data>
+  <data name="W.records.prevention.InspectionsScheduled" xml:space="preserve">
+    <value>planerade</value>
+  </data>
+  <data name="W.records.prevention.ViolationsOpen" xml:space="preserve">
+    <value>öppna överträdelser</value>
+  </data>
+  <data name="W.records.prevention.ViolationsOverdue" xml:space="preserve">
+    <value>försenade överträdelser</value>
+  </data>
+  <data name="W.records.prevention.Hydrants" xml:space="preserve">
+    <value>Brandposter</value>
+  </data>
+  <data name="W.records.prevention.OutOfService" xml:space="preserve">
+    <value>ur drift</value>
+  </data>
+  <data name="W.records.prevention.TestDue" xml:space="preserve">
+    <value>ska provas</value>
+  </data>
+  <data name="W.records.prevention.HydrantsCount" xml:space="preserve">
+    <value>brandposter</value>
+  </data>
+  <data name="W.records.prevention.Permits" xml:space="preserve">
+    <value>Tillstånd</value>
+  </data>
+  <data name="W.records.prevention.AwaitingReview" xml:space="preserve">
+    <value>väntar på granskning</value>
+  </data>
+  <data name="W.records.prevention.ExpiringSoon" xml:space="preserve">
+    <value>går snart ut</value>
+  </data>
+  <data name="W.records.prevention.PermitsActive" xml:space="preserve">
+    <value>aktiva tillstånd</value>
+  </data>
+  <data name="W.records.prevention.Crr" xml:space="preserve">
+    <value>Riskminskning i samhället</value>
+  </data>
+  <data name="W.records.prevention.Activities90" xml:space="preserve">
+    <value>aktiviteter (90 dagar)</value>
+  </data>
+  <data name="W.records.prevention.Alarms90" xml:space="preserve">
+    <value>installerade varnare (90 dagar)</value>
+  </data>
+  <data name="W.records.prevention.Investigations" xml:space="preserve">
+    <value>Utredningar</value>
+  </data>
+  <data name="W.records.prevention.CasesOpen" xml:space="preserve">
+    <value>öppna ärenden</value>
+  </data>
+  <data name="W.records.prevention.NoModules" xml:space="preserve">
+    <value>Inga förebyggande moduler är aktiverade.</value>
+  </data>
+  <data name="W.records.prevention.OpenRecords" xml:space="preserve">
+    <value>Öppna journaler</value>
+  </data>
+  <data name="W.records.hydrants.MarkerSince" xml:space="preserve">
+    <value>Brandpost {0} · ur drift sedan {1}</value>
+  </data>
+  <data name="W.records.hydrants.NoNumber" xml:space="preserve">
+    <value>(inget nummer)</value>
+  </data>
+  <data name="W.records.hydrants.Marker" xml:space="preserve">
+    <value>Brandpost {0} · ur drift</value>
+  </data>
+  <data name="W.records.hydrants.OutOfService" xml:space="preserve">
+    <value>ur drift</value>
+  </data>
+  <data name="W.records.hydrants.TestDue" xml:space="preserve">
+    <value>ska provas</value>
+  </data>
+  <data name="W.records.hydrants.AllInService" xml:space="preserve">
+    <value>Alla brandposter är i drift.</value>
+  </data>
+  <data name="W.records.hydrants.OpenHydrants" xml:space="preserve">
+    <value>Öppna brandposter</value>
+  </data>
+  <data name="W.records.hydrants.MapAria" xml:space="preserve">
+    <value>Karta över {0} brandposter som är ur drift</value>
+  </data>
+  <data name="W.records.hydrants.NoPositions" xml:space="preserve">
+    <value>Brandposterna som är ur drift saknar kartposition.</value>
+  </data>
+  <data name="W.records.hydrants.MappedOf" xml:space="preserve">
+    <value>Visar {0} av {1} på kartan.</value>
+  </data>
+  <data name="W.records.crr.Empty" xml:space="preserve">
+    <value>Ingen riskminskande verksamhet i år.</value>
+  </data>
+  <data name="W.records.crr.OpenCrr" xml:space="preserve">
+    <value>Öppna riskminskning i samhället</value>
+  </data>
+  <data name="W.records.crr.AlarmsThisYear" xml:space="preserve">
+    <value>varnare installerade i år</value>
+  </data>
+  <data name="W.records.crr.Activities" xml:space="preserve">
+    <value>aktiviteter</value>
+  </data>
+  <data name="W.records.crr.OpenRequests" xml:space="preserve">
+    <value>öppna varnarbegäranden</value>
+  </data>
+  <data name="W.records.crr.Smoke" xml:space="preserve">
+    <value>Brandvarnare</value>
+  </data>
+  <data name="W.records.crr.Co" xml:space="preserve">
+    <value>CO-varnare</value>
+  </data>
+  <data name="W.records.crr.Combo" xml:space="preserve">
+    <value>Kombination rök/CO</value>
+  </data>
+  <data name="W.records.investigations.Empty" xml:space="preserve">
+    <value>Du har inga öppna utredningsärenden.</value>
+  </data>
+  <data name="W.records.investigations.OpenCases" xml:space="preserve">
+    <value>Öppna utredningar</value>
+  </data>
+  <data name="W.records.investigations.NoNumber" xml:space="preserve">
+    <value>Ärende</value>
+  </data>
+  <data name="W.records.investigations.State1" xml:space="preserve">
+    <value>Öppet</value>
+  </data>
+  <data name="W.records.investigations.State2" xml:space="preserve">
+    <value>Aktivt</value>
+  </data>
+  <data name="W.records.investigations.State3" xml:space="preserve">
+    <value>Väntar på granskning</value>
+  </data>
+  <data name="W.records.investigations.State4" xml:space="preserve">
+    <value>Stängt</value>
+  </data>
+  <data name="W.records.investigations.Opened" xml:space="preserve">
+    <value>Öppnat {0}</value>
+  </data>
+  <data name="W.records.investigations.SeeAll" xml:space="preserve">
+    <value>Alla {0} öppna ärenden</value>
+  </data>
+  <data name="W.records.analytics.OverdueNow" xml:space="preserve">
+    <value>försenade nu</value>
+  </data>
+  <data name="W.records.analytics.MedianToFinalize" xml:space="preserve">
+    <value>median till slutförande</value>
+  </data>
+  <data name="W.records.analytics.MedianReview" xml:space="preserve">
+    <value>median för granskning</value>
+  </data>
+  <data name="W.records.analytics.ReturnRate" xml:space="preserve">
+    <value>andel återsända</value>
+  </data>
+  <data name="W.records.analytics.OpenDrafts" xml:space="preserve">
+    <value>öppna utkast</value>
+  </data>
+  <data name="W.records.analytics.AwaitingReview" xml:space="preserve">
+    <value>väntar på granskning</value>
+  </data>
+  <data name="W.records.analytics.WentOverdue" xml:space="preserve">
+    <value>blev försenade</value>
+  </data>
+  <data name="W.records.analytics.RecordsPerMonth" xml:space="preserve">
+    <value>Journaler per månad</value>
+  </data>
+  <data name="W.records.analytics.TrendAria" xml:space="preserve">
+    <value>Journaler per månad: {0} journaler under {1} månader</value>
+  </data>
+  <data name="W.records.analytics.GroupScoped" xml:space="preserve">
+    <value>Siffrorna omfattar bara de journaler du kan öppna.</value>
+  </data>
+  <data name="W.records.analytics.Truncated" xml:space="preserve">
+    <value>För många journaler för en enda läsning; begränsa perioden.</value>
+  </data>
+  <data name="W.records.legalHolds.Empty" xml:space="preserve">
+    <value>Inga aktiva rättsliga spärrar.</value>
+  </data>
+  <data name="W.records.legalHolds.OpenHolds" xml:space="preserve">
+    <value>Öppna rättsliga spärrar</value>
+  </data>
+  <data name="W.records.legalHolds.Period" xml:space="preserve">
+    <value>{0} – {1}</value>
+  </data>
+  <data name="W.records.legalHolds.ActiveHolds" xml:space="preserve">
+    <value>aktiva spärrar</value>
+  </data>
+  <data name="W.records.legalHolds.OnRecords" xml:space="preserve">
+    <value>{0} på enskilda journaler</value>
+  </data>
+  <data name="W.records.legalHolds.Newest" xml:space="preserve">
+    <value>nyaste {0}</value>
+  </data>
+  <data name="W.records.legalHolds.RecordHold" xml:space="preserve">
+    <value>Spärr på en journal</value>
+  </data>
+  <data name="W.records.legalHolds.ScopeHold" xml:space="preserve">
+    <value>Spärr per typ eller period</value>
+  </data>
+  <data name="W.records.legalHolds.Placed" xml:space="preserve">
+    <value>Lagd {0}</value>
+  </data>
+  <data name="W.records.deployments.Empty" xml:space="preserve">
+    <value>Inga öppna insatser.</value>
+  </data>
+  <data name="W.records.deployments.OpenDeployments" xml:space="preserve">
+    <value>Öppna insatsrapporter</value>
+  </data>
+  <data name="W.records.deployments.NoNumber" xml:space="preserve">
+    <value>Insats</value>
+  </data>
+  <data name="W.records.deployments.Status1" xml:space="preserve">
+    <value>Öppen</value>
+  </data>
+  <data name="W.records.deployments.Status2" xml:space="preserve">
+    <value>Mobiliserad</value>
+  </data>
+  <data name="W.records.deployments.Status3" xml:space="preserve">
+    <value>Frigjord</value>
+  </data>
+  <data name="W.records.deployments.Status4" xml:space="preserve">
+    <value>Avslutad</value>
+  </data>
+  <data name="W.records.deployments.Incident" xml:space="preserve">
+    <value>Händelse {0}</value>
+  </data>
+  <data name="W.records.deployments.Mobilized" xml:space="preserve">
+    <value>Mobiliserad {0}</value>
+  </data>
+  <data name="W.records.deployments.Created" xml:space="preserve">
+    <value>Skapad {0}</value>
+  </data>
+  <data name="W.records.deployments.SeeAll" xml:space="preserve">
+    <value>Alla {0} öppna insatser</value>
+  </data>
+  <data name="W.logs.recent.Type0" xml:space="preserve">
+    <value>Övrigt</value>
+  </data>
+  <data name="W.logs.recent.Type1" xml:space="preserve">
+    <value>Utryckning</value>
+  </data>
+  <data name="W.logs.recent.Type2" xml:space="preserve">
+    <value>Utbildning</value>
+  </data>
+  <data name="W.logs.recent.Type4" xml:space="preserve">
+    <value>Arbete</value>
+  </data>
+  <data name="W.logs.recent.Type5" xml:space="preserve">
+    <value>Möte</value>
+  </data>
+  <data name="W.logs.recent.Type6" xml:space="preserve">
+    <value>Rättsläkare</value>
+  </data>
+  <data name="W.logs.recent.Type7" xml:space="preserve">
+    <value>Återinkallning</value>
+  </data>
+  <data name="W.logs.recent.Empty" xml:space="preserve">
+    <value>Inga loggar under de senaste {0} dagarna.</value>
+  </data>
+  <data name="W.logs.recent.OpenLogs" xml:space="preserve">
+    <value>Öppna loggar</value>
+  </data>
+  <data name="W.logs.recent.Newest" xml:space="preserve">
+    <value>Nyaste</value>
+  </data>
+  <data name="W.logs.recent.Started" xml:space="preserve">
+    <value>Påbörjad {0}</value>
+  </data>
+  <data name="W.logs.recent.Total" xml:space="preserve">
+    <value>{0} loggar under de senaste {1} dagarna</value>
+  </data>
+  <data name="W.logs.recent.TotalTruncated" xml:space="preserve">
+    <value>Fler än {0} loggar under de senaste {1} dagarna</value>
+  </data>
+  <data name="W.checklists.compliance.MissedTotal" xml:space="preserve">
+    <value>{0} missade under perioden</value>
+  </data>
+  <data name="W.deployments.active.Title" xml:space="preserve">
+    <value>Insatser</value>
+  </data>
+  <data name="W.deployments.active.Description" xml:space="preserve">
+    <value>Öppna insatser, de du är bemannad på först, med status och antal insatsdagar.</value>
+  </data>
+  <data name="W.deployments.active.Setting.maxRows" xml:space="preserve">
+    <value>Antal insatser att visa</value>
+  </data>
+  <data name="W.deployments.active.Open" xml:space="preserve">
+    <value>Öppna</value>
+  </data>
+  <data name="W.deployments.active.Mine" xml:space="preserve">
+    <value>Mina</value>
+  </data>
+  <data name="W.deployments.active.Empty" xml:space="preserve">
+    <value>Inga öppna insatser.</value>
+  </data>
+  <data name="W.deployments.active.Status.Planned" xml:space="preserve">
+    <value>Planerad</value>
+  </data>
+  <data name="W.deployments.active.Status.Standby" xml:space="preserve">
+    <value>Beredskap</value>
+  </data>
+  <data name="W.deployments.active.Status.Active" xml:space="preserve">
+    <value>Aktiv</value>
+  </data>
+  <data name="W.deployments.active.Status.Demobilizing" xml:space="preserve">
+    <value>Demobilisering</value>
+  </data>
+  <data name="W.deployments.timeReports.Title" xml:space="preserve">
+    <value>Tidrapporter</value>
+  </data>
+  <data name="W.deployments.timeReports.Description" xml:space="preserve">
+    <value>Dagliga tidrapporter som väntar på godkännande och godkända rapporter som ännu inte fakturerats.</value>
+  </data>
+  <data name="W.deployments.timeReports.AwaitingApproval" xml:space="preserve">
+    <value>Väntar på godkännande</value>
+  </data>
+  <data name="W.deployments.timeReports.ApprovedUnbilled" xml:space="preserve">
+    <value>Godkända, ej fakturerade</value>
+  </data>
+  <data name="W.deployments.timeReports.OldestSince" xml:space="preserve">
+    <value>Äldsta sedan {0}</value>
+  </data>
+  <data name="W.invoicing.receivables.Title" xml:space="preserve">
+    <value>Kundfordringar</value>
+  </data>
+  <data name="W.invoicing.receivables.Description" xml:space="preserve">
+    <value>Öppna fakturasaldon efter ålder, förfallna summor per valuta och utkast som ännu inte skickats.</value>
+  </data>
+  <data name="W.invoicing.receivables.Outstanding" xml:space="preserve">
+    <value>Utestående</value>
+  </data>
+  <data name="W.invoicing.receivables.Overdue" xml:space="preserve">
+    <value>Förfallet</value>
+  </data>
+  <data name="W.invoicing.receivables.OverdueCount" xml:space="preserve">
+    <value>Förfallna fakturor</value>
+  </data>
+  <data name="W.invoicing.receivables.Drafts" xml:space="preserve">
+    <value>Utkast</value>
+  </data>
+  <data name="W.invoicing.receivables.ReadOnly" xml:space="preserve">
+    <value>Skrivskyddat: tillägget Business Operations har upphört.</value>
+  </data>
+  <data name="W.invoicing.receivables.Bucket.Current" xml:space="preserve">
+    <value>Ej förfallet</value>
+  </data>
+  <data name="W.invoicing.receivables.Bucket.1-30" xml:space="preserve">
+    <value>1-30 dagar</value>
+  </data>
+  <data name="W.invoicing.receivables.Bucket.31-60" xml:space="preserve">
+    <value>31-60 dagar</value>
+  </data>
+  <data name="W.invoicing.receivables.Bucket.61-90" xml:space="preserve">
+    <value>61-90 dagar</value>
+  </data>
+  <data name="W.invoicing.receivables.Bucket.90+" xml:space="preserve">
+    <value>90+ dagar</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Title" xml:space="preserve">
+    <value>Onlinebetalningar</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Description" xml:space="preserve">
+    <value>Om kunder kan betala fakturor online just nu och status för det anslutna betalkontot.</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Collecting" xml:space="preserve">
+    <value>Tar emot onlinebetalningar</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.NotCollecting" xml:space="preserve">
+    <value>Tar inte emot onlinebetalningar</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Connected" xml:space="preserve">
+    <value>Anslutet konto</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.LastVerified" xml:space="preserve">
+    <value>Senast verifierat</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.ConnectionError" xml:space="preserve">
+    <value>Betalningsleverantören rapporterade ett problem. Öppna inställningarna för mer information.</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Charges" xml:space="preserve">
+    <value>Debiteringar</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Payouts" xml:space="preserve">
+    <value>Utbetalningar</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Blocked.payments_not_available_in_region" xml:space="preserve">
+    <value>Onlinebetalningar är inte tillgängliga i den här regionen.</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Blocked.payments_flag_off" xml:space="preserve">
+    <value>Onlinebetalningar är inte aktiverade för din avdelning.</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Blocked.payments_addon_required" xml:space="preserve">
+    <value>Onlinebetalningar kräver tillägget Business Operations.</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Blocked.payments_not_enabled_for_department" xml:space="preserve">
+    <value>Onlinebetalningar är avstängda i faktureringsinställningarna.</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Blocked.payments_no_connection" xml:space="preserve">
+    <value>Inget betalkonto är anslutet.</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Blocked.payments_connection_not_ready" xml:space="preserve">
+    <value>Det anslutna betalkontot är inte redo att ta emot betalningar.</value>
+  </data>
+  <data name="W.bids.pipeline.Title" xml:space="preserve">
+    <value>Anbud</value>
+  </data>
+  <data name="W.bids.pipeline.Description" xml:space="preserve">
+    <value>Anbud per status och skickade anbud som snart går ut.</value>
+  </data>
+  <data name="W.bids.pipeline.Setting.expiringDays" xml:space="preserve">
+    <value>Går ut inom (dagar)</value>
+  </data>
+  <data name="W.bids.pipeline.Draft" xml:space="preserve">
+    <value>Utkast</value>
+  </data>
+  <data name="W.bids.pipeline.Submitted" xml:space="preserve">
+    <value>Skickade</value>
+  </data>
+  <data name="W.bids.pipeline.Accepted" xml:space="preserve">
+    <value>Tilldelade</value>
+  </data>
+  <data name="W.bids.pipeline.Declined" xml:space="preserve">
+    <value>Avböjda</value>
+  </data>
+  <data name="W.bids.pipeline.Expired" xml:space="preserve">
+    <value>Utgångna</value>
+  </data>
+  <data name="W.bids.pipeline.Withdrawn" xml:space="preserve">
+    <value>Tillbakadragna</value>
+  </data>
+  <data name="W.contracts.expiring.Title" xml:space="preserve">
+    <value>Avtal</value>
+  </data>
+  <data name="W.contracts.expiring.Description" xml:space="preserve">
+    <value>Aktiva serviceavtal, de som snart upphör och efterlevnadsdokument som har gått ut eller snart går ut.</value>
+  </data>
+  <data name="W.contracts.expiring.Setting.days" xml:space="preserve">
+    <value>Upphör inom (dagar)</value>
+  </data>
+  <data name="W.contracts.expiring.Setting.maxRows" xml:space="preserve">
+    <value>Antal avtal att visa</value>
+  </data>
+  <data name="W.contracts.expiring.Active" xml:space="preserve">
+    <value>Aktiva</value>
+  </data>
+  <data name="W.contracts.expiring.Expiring" xml:space="preserve">
+    <value>Upphör snart</value>
+  </data>
+  <data name="W.contracts.expiring.DocumentsExpired" xml:space="preserve">
+    <value>Utgångna efterlevnadsdokument</value>
+  </data>
+  <data name="W.contracts.expiring.DocumentsExpiring" xml:space="preserve">
+    <value>Efterlevnadsdokument som snart går ut</value>
+  </data>
+  <data name="W.costRecovery.queue.Title" xml:space="preserve">
+    <value>Cal OES MARS</value>
+  </data>
+  <data name="W.costRecovery.queue.Description" xml:space="preserve">
+    <value>Cal OES MARS-poster som väntar på åtgärd, de äldsta först, och myndighetens beredskapskontroll för chefer.</value>
+  </data>
+  <data name="W.costRecovery.queue.Setting.maxRows" xml:space="preserve">
+    <value>Antal poster att visa</value>
+  </data>
+  <data name="W.costRecovery.queue.Total" xml:space="preserve">
+    <value>I kö</value>
+  </data>
+  <data name="W.costRecovery.queue.Mine" xml:space="preserve">
+    <value>Mina</value>
+  </data>
+  <data name="W.costRecovery.queue.WithErrors" xml:space="preserve">
+    <value>Med fel</value>
+  </data>
+  <data name="W.costRecovery.queue.Ready" xml:space="preserve">
+    <value>Myndigheten redo</value>
+  </data>
+  <data name="W.costRecovery.queue.NotReady" xml:space="preserve">
+    <value>Myndigheten inte redo</value>
+  </data>
+  <data name="W.costRecovery.queue.Blockers" xml:space="preserve">
+    <value>Blockerande</value>
+  </data>
+  <data name="W.costRecovery.queue.Warnings" xml:space="preserve">
+    <value>Varningar</value>
+  </data>
+  <data name="W.costRecovery.queue.Returned" xml:space="preserve">
+    <value>Återsända</value>
+  </data>
+  <data name="W.costRecovery.queue.AwaitingLocalApproval" xml:space="preserve">
+    <value>Fakturor som väntar på lokalt godkännande</value>
+  </data>
+  <data name="W.costRecovery.queue.Empty" xml:space="preserve">
+    <value>Inget väntar på åtgärd.</value>
+  </data>
+  <data name="W.workforce.fieldCosting.Title" xml:space="preserve">
+    <value>Fältkostnader</value>
+  </data>
+  <data name="W.workforce.fieldCosting.Description" xml:space="preserve">
+    <value>De senaste kostnadskörningarna för fält med total kostnad, täckningsbidrag och saknade indata.</value>
+  </data>
+  <data name="W.workforce.fieldCosting.Setting.maxRows" xml:space="preserve">
+    <value>Antal körningar att visa</value>
+  </data>
+  <data name="W.workforce.fieldCosting.LoadedCost" xml:space="preserve">
+    <value>Total kostnad</value>
+  </data>
+  <data name="W.workforce.fieldCosting.Margin" xml:space="preserve">
+    <value>Marginal</value>
+  </data>
+  <data name="W.workforce.fieldCosting.MissingInputs" xml:space="preserve">
+    <value>Saknade indata</value>
+  </data>
+  <data name="W.workforce.fieldCosting.Context.Bid" xml:space="preserve">
+    <value>Anbud</value>
+  </data>
+  <data name="W.workforce.fieldCosting.Context.Call" xml:space="preserve">
+    <value>Larm</value>
+  </data>
+  <data name="W.workforce.fieldCosting.Context.Deployment" xml:space="preserve">
+    <value>Insats</value>
+  </data>
+  <data name="W.workforce.fieldCosting.Status.Draft" xml:space="preserve">
+    <value>Utkast</value>
+  </data>
+  <data name="W.workforce.fieldCosting.Status.NeedsReview" xml:space="preserve">
+    <value>Behöver granskas</value>
+  </data>
+  <data name="W.workforce.fieldCosting.Status.Frozen" xml:space="preserve">
+    <value>Fryst</value>
+  </data>
+  <data name="W.workforce.fieldCosting.Status.Superseded" xml:space="preserve">
+    <value>Ersatt</value>
+  </data>
+  <data name="W.workforce.fieldCosting.Empty" xml:space="preserve">
+    <value>Inga kostnadskörningar ännu.</value>
+  </data>
+  <data name="W.workforce.payData.Title" xml:space="preserve">
+    <value>Fullständighet i lönedata</value>
+  </data>
+  <data name="W.workforce.payData.Description" xml:space="preserve">
+    <value>Hur komplett Kaliforniens lönedatarapportering är för det senaste rapportåret: insamlade svar, öppna körningar och undantag.</value>
+  </data>
+  <data name="W.workforce.payData.ReportingYear" xml:space="preserve">
+    <value>Rapportår {0}</value>
+  </data>
+  <data name="W.workforce.payData.Responses" xml:space="preserve">
+    <value>Svar: {0} av {1} arbetstagare</value>
+  </data>
+  <data name="W.workforce.payData.Due" xml:space="preserve">
+    <value>Förfaller {0}</value>
+  </data>
+  <data name="W.workforce.payData.OpenRuns" xml:space="preserve">
+    <value>Öppna körningar</value>
+  </data>
+  <data name="W.workforce.payData.Exceptions" xml:space="preserve">
+    <value>Olösta undantag</value>
+  </data>
+  <data name="W.workforce.payData.AnnualFactsMissing" xml:space="preserve">
+    <value>Saknade årliga fakta</value>
+  </data>
+  <data name="W.workforce.payData.Certified" xml:space="preserve">
+    <value>Certifierad</value>
+  </data>
+  <data name="W.ibo.Status.Preparing" xml:space="preserve">
+    <value>Förbereds</value>
+  </data>
+  <data name="W.ibo.Status.Active" xml:space="preserve">
+    <value>Aktiv</value>
+  </data>
+  <data name="W.ibo.Status.Demobilizing" xml:space="preserve">
+    <value>Demobiliseras</value>
+  </data>
+  <data name="W.ibo.Status.Closed" xml:space="preserve">
+    <value>Stängd</value>
+  </data>
+  <data name="W.ibo.Status.Sealed" xml:space="preserve">
+    <value>Förseglad</value>
+  </data>
+  <data name="W.ibo.Kind.Incident" xml:space="preserve">
+    <value>Händelse</value>
+  </data>
+  <data name="W.ibo.Kind.Complex" xml:space="preserve">
+    <value>Komplex</value>
+  </data>
+  <data name="W.ibo.Kind.PlannedEvent" xml:space="preserve">
+    <value>Planerad händelse</value>
+  </data>
+  <data name="W.ibo.Kind.EocActivation" xml:space="preserve">
+    <value>EOC-aktivering</value>
+  </data>
+  <data name="W.ibo.ReadOnly" xml:space="preserve">
+    <value>Skrivskyddat: tillägget Incident Back Office har upphört.</value>
+  </data>
+  <data name="W.ibo.NoActivation" xml:space="preserve">
+    <value>Ingen öppen händelse.</value>
+  </data>
+  <data name="W.ibo.Exercise" xml:space="preserve">
+    <value>Övning</value>
+  </data>
+  <data name="W.ibo.activations.Title" xml:space="preserve">
+    <value>Aktiva händelser</value>
+  </data>
+  <data name="W.ibo.activations.Description" xml:space="preserve">
+    <value>Öppna händelser med aktuell operativ period och den befattning du har.</value>
+  </data>
+  <data name="W.ibo.activations.Setting.maxRows" xml:space="preserve">
+    <value>Antal händelser att visa</value>
+  </data>
+  <data name="W.ibo.activations.Period" xml:space="preserve">
+    <value>Period {0}</value>
+  </data>
+  <data name="W.ibo.activations.MyPosition" xml:space="preserve">
+    <value>Min befattning</value>
+  </data>
+  <data name="W.ibo.activations.Empty" xml:space="preserve">
+    <value>Inga öppna händelser.</value>
+  </data>
+  <data name="W.ibo.desk.Title" xml:space="preserve">
+    <value>Händelsepanel</value>
+  </data>
+  <data name="W.ibo.desk.Description" xml:space="preserve">
+    <value>En händelses operations-, logistik- eller ekonomipanel i korthet, med ankomster och avgångar per tidsfönster.</value>
+  </data>
+  <data name="W.ibo.desk.Setting.activation" xml:space="preserve">
+    <value>Händelse</value>
+  </data>
+  <data name="W.ibo.desk.Setting.desk" xml:space="preserve">
+    <value>Panel</value>
+  </data>
+  <data name="W.ibo.desk.Option.recent" xml:space="preserve">
+    <value>Senaste händelsen</value>
+  </data>
+  <data name="W.ibo.desk.Option.operations" xml:space="preserve">
+    <value>Operationer</value>
+  </data>
+  <data name="W.ibo.desk.Option.logistics" xml:space="preserve">
+    <value>Logistik</value>
+  </data>
+  <data name="W.ibo.desk.Option.finance" xml:space="preserve">
+    <value>Ekonomi</value>
+  </data>
+  <data name="W.ibo.desk.Inbound" xml:space="preserve">
+    <value>Ankommande</value>
+  </data>
+  <data name="W.ibo.desk.Outbound" xml:space="preserve">
+    <value>Avgående</value>
+  </data>
+  <data name="W.ibo.desk.Predicted" xml:space="preserve">
+    <value>prognostiserade</value>
+  </data>
+  <data name="W.ibo.desk.DeskUnavailable" xml:space="preserve">
+    <value>Den här panelen är inte tillgänglig för dig.</value>
+  </data>
+  <data name="W.ibo.desk.Value.participants.total" xml:space="preserve">
+    <value>Deltagare</value>
+  </data>
+  <data name="W.ibo.desk.Value.participants.on_incident" xml:space="preserve">
+    <value>I händelsen</value>
+  </data>
+  <data name="W.ibo.desk.Value.participants.inbound" xml:space="preserve">
+    <value>På väg in</value>
+  </data>
+  <data name="W.ibo.desk.Value.resources.on_incident" xml:space="preserve">
+    <value>Resurser i händelsen</value>
+  </data>
+  <data name="W.ibo.desk.Value.resources.inbound" xml:space="preserve">
+    <value>Resurser på väg in</value>
+  </data>
+  <data name="W.ibo.desk.Value.resources.personnel" xml:space="preserve">
+    <value>Personal med resurser</value>
+  </data>
+  <data name="W.ibo.desk.Value.requests.open" xml:space="preserve">
+    <value>Öppna begäranden</value>
+  </data>
+  <data name="W.ibo.desk.Value.requests.critical_unfilled" xml:space="preserve">
+    <value>Ouppfyllda kritiska</value>
+  </data>
+  <data name="W.ibo.desk.Value.requests.overdue" xml:space="preserve">
+    <value>Försenade begäranden</value>
+  </data>
+  <data name="W.ibo.desk.Value.fills.en_route" xml:space="preserve">
+    <value>Tillsättningar på väg</value>
+  </data>
+  <data name="W.ibo.desk.Value.demob.pending" xml:space="preserve">
+    <value>Demobilisering väntar</value>
+  </data>
+  <data name="W.ibo.desk.Value.lodging.beds_held_tonight" xml:space="preserve">
+    <value>Reserverade sängar i natt</value>
+  </data>
+  <data name="W.ibo.desk.Value.lodging.beds_available_tonight" xml:space="preserve">
+    <value>Lediga sängar i natt</value>
+  </data>
+  <data name="W.ibo.desk.Value.lodging.needed" xml:space="preserve">
+    <value>Behöver logi</value>
+  </data>
+  <data name="W.ibo.desk.Value.service.open" xml:space="preserve">
+    <value>Öppna serviceärenden</value>
+  </data>
+  <data name="W.ibo.desk.Value.finance.committed" xml:space="preserve">
+    <value>Åtaget</value>
+  </data>
+  <data name="W.ibo.desk.Value.finance.open_commitments" xml:space="preserve">
+    <value>Öppna åtaganden</value>
+  </data>
+  <data name="W.ibo.desk.Value.finance.budget" xml:space="preserve">
+    <value>Budget</value>
+  </data>
+  <data name="W.ibo.desk.Value.finance.cost_to_date" xml:space="preserve">
+    <value>Kostnad hittills</value>
+  </data>
+  <data name="W.ibo.desk.Value.finance.daily_burn" xml:space="preserve">
+    <value>Daglig förbrukning</value>
+  </data>
+  <data name="W.ibo.desk.Value.finance.forecast_at_completion" xml:space="preserve">
+    <value>Prognos vid slutförande</value>
+  </data>
+  <data name="W.ibo.desk.Value.finance.time_awaiting_certification" xml:space="preserve">
+    <value>Tid som väntar på intygande</value>
+  </data>
+  <data name="W.ibo.desk.Value.finance.time_awaiting_approval" xml:space="preserve">
+    <value>Tid som väntar på godkännande</value>
+  </data>
+  <data name="W.ibo.desk.Value.finance.invoice_exceptions" xml:space="preserve">
+    <value>Fakturaundantag</value>
+  </data>
+  <data name="W.ibo.resources.Title" xml:space="preserve">
+    <value>Händelseresurser</value>
+  </data>
+  <data name="W.ibo.resources.Description" xml:space="preserve">
+    <value>En händelses resurser per slag och stödstatus.</value>
+  </data>
+  <data name="W.ibo.resources.Setting.activation" xml:space="preserve">
+    <value>Händelse</value>
+  </data>
+  <data name="W.ibo.resources.Option.recent" xml:space="preserve">
+    <value>Senaste händelsen</value>
+  </data>
+  <data name="W.ibo.resources.Total" xml:space="preserve">
+    <value>Resurser</value>
+  </data>
+  <data name="W.ibo.resources.OnIncident" xml:space="preserve">
+    <value>I händelsen</value>
+  </data>
+  <data name="W.ibo.resources.Inbound" xml:space="preserve">
+    <value>På väg in</value>
+  </data>
+  <data name="W.ibo.resources.Personnel" xml:space="preserve">
+    <value>Personal</value>
+  </data>
+  <data name="W.ibo.ResourceKind.Personnel" xml:space="preserve">
+    <value>Personal</value>
+  </data>
+  <data name="W.ibo.ResourceKind.Crew" xml:space="preserve">
+    <value>Arbetslag</value>
+  </data>
+  <data name="W.ibo.ResourceKind.Team" xml:space="preserve">
+    <value>Team</value>
+  </data>
+  <data name="W.ibo.ResourceKind.Equipment" xml:space="preserve">
+    <value>Utrustning</value>
+  </data>
+  <data name="W.ibo.ResourceKind.Aircraft" xml:space="preserve">
+    <value>Luftfartyg</value>
+  </data>
+  <data name="W.ibo.ResourceKind.Supply" xml:space="preserve">
+    <value>Förnödenheter</value>
+  </data>
+  <data name="W.ibo.ResourceKind.Service" xml:space="preserve">
+    <value>Tjänst</value>
+  </data>
+  <data name="W.ibo.ResourceKind.Facility" xml:space="preserve">
+    <value>Anläggning</value>
+  </data>
+  <data name="W.ibo.ResourceKind.MissionPackage" xml:space="preserve">
+    <value>Uppdragspaket</value>
+  </data>
+  <data name="W.ibo.ResourceKind.Overhead" xml:space="preserve">
+    <value>Funktionspersonal</value>
+  </data>
+  <data name="W.ibo.SupportStatus.Ordered" xml:space="preserve">
+    <value>Beställd</value>
+  </data>
+  <data name="W.ibo.SupportStatus.Mobilizing" xml:space="preserve">
+    <value>Mobiliseras</value>
+  </data>
+  <data name="W.ibo.SupportStatus.EnRoute" xml:space="preserve">
+    <value>På väg</value>
+  </data>
+  <data name="W.ibo.SupportStatus.Arrived" xml:space="preserve">
+    <value>Anlänt</value>
+  </data>
+  <data name="W.ibo.SupportStatus.Supported" xml:space="preserve">
+    <value>Understödd</value>
+  </data>
+  <data name="W.ibo.SupportStatus.PendingDemob" xml:space="preserve">
+    <value>Väntar på demobilisering</value>
+  </data>
+  <data name="W.ibo.SupportStatus.Released" xml:space="preserve">
+    <value>Frisläppt</value>
+  </data>
+  <data name="W.ibo.SupportStatus.Returned" xml:space="preserve">
+    <value>Återlämnad</value>
+  </data>
+  <data name="W.ibo.SupportStatus.Closed" xml:space="preserve">
+    <value>Stängd</value>
+  </data>
+  <data name="W.ibo.checkIn.Title" xml:space="preserve">
+    <value>Incheckningskö</value>
+  </data>
+  <data name="W.ibo.checkIn.Description" xml:space="preserve">
+    <value>Personer som väntar på att registreras i en händelse och registrerade deltagare som ännu inte har checkat in.</value>
+  </data>
+  <data name="W.ibo.checkIn.Setting.activation" xml:space="preserve">
+    <value>Händelse</value>
+  </data>
+  <data name="W.ibo.checkIn.Setting.maxRows" xml:space="preserve">
+    <value>Antal personer att visa</value>
+  </data>
+  <data name="W.ibo.checkIn.Option.recent" xml:space="preserve">
+    <value>Senaste händelsen</value>
+  </data>
+  <data name="W.ibo.checkIn.Queue" xml:space="preserve">
+    <value>Väntar på registrering</value>
+  </data>
+  <data name="W.ibo.checkIn.AwaitingCheckIn" xml:space="preserve">
+    <value>Ej incheckade</value>
+  </data>
+  <data name="W.ibo.checkIn.Drafts" xml:space="preserve">
+    <value>Utkast</value>
+  </data>
+  <data name="W.ibo.checkIn.Waiting" xml:space="preserve">
+    <value>Väntar sedan {0}</value>
+  </data>
+  <data name="W.ibo.checkIn.Empty" xml:space="preserve">
+    <value>Ingen väntar.</value>
+  </data>
+  <data name="W.ibo.finance.Title" xml:space="preserve">
+    <value>Händelsekostnader</value>
+  </data>
+  <data name="W.ibo.finance.Description" xml:space="preserve">
+    <value>En händelses kostnad hittills mot budget, daglig förbrukningstakt och prognos vid slutförande.</value>
+  </data>
+  <data name="W.ibo.finance.Setting.activation" xml:space="preserve">
+    <value>Händelse</value>
+  </data>
+  <data name="W.ibo.finance.Option.recent" xml:space="preserve">
+    <value>Senaste händelsen</value>
+  </data>
+  <data name="W.ibo.finance.CostToDate" xml:space="preserve">
+    <value>Kostnad hittills</value>
+  </data>
+  <data name="W.ibo.finance.Budget" xml:space="preserve">
+    <value>Budget</value>
+  </data>
+  <data name="W.ibo.finance.DailyBurn" xml:space="preserve">
+    <value>Daglig förbrukning</value>
+  </data>
+  <data name="W.ibo.finance.Forecast" xml:space="preserve">
+    <value>Prognos vid slutförande</value>
+  </data>
+  <data name="W.ibo.finance.ProjectedEnd" xml:space="preserve">
+    <value>Beräknat slut</value>
+  </data>
+  <data name="W.ibo.finance.NoProjection" xml:space="preserve">
+    <value>Ingen kostnadsprognos ännu.</value>
+  </data>
+  <data name="W.ibo.coordination.Title" xml:space="preserve">
+    <value>Samordningstavlor</value>
+  </data>
+  <data name="W.ibo.coordination.Description" xml:space="preserve">
+    <value>Dina samordningstavlor med inaktuella banor och aktiva partnerdelningar, senast uppdaterade först.</value>
+  </data>
+  <data name="W.ibo.coordination.Setting.maxRows" xml:space="preserve">
+    <value>Antal tavlor att visa</value>
+  </data>
+  <data name="W.ibo.coordination.Boards" xml:space="preserve">
+    <value>Tavlor</value>
+  </data>
+  <data name="W.ibo.coordination.ActiveShares" xml:space="preserve">
+    <value>Aktiva delningar</value>
+  </data>
+  <data name="W.ibo.coordination.StaleLanes" xml:space="preserve">
+    <value>Inaktuella banor</value>
+  </data>
+  <data name="W.ibo.coordination.Lanes" xml:space="preserve">
+    <value>Banor: {0}</value>
+  </data>
+  <data name="W.ibo.coordination.Frozen" xml:space="preserve">
+    <value>Fryst</value>
+  </data>
+  <data name="W.ibo.coordination.Updated" xml:space="preserve">
+    <value>Uppdaterad {0}</value>
+  </data>
+  <data name="W.ibo.coordination.Empty" xml:space="preserve">
+    <value>Inga samordningstavlor.</value>
+  </data>
+  <data name="W.ai.assistant.Title" xml:space="preserve">
+    <value>Assistent</value>
+  </data>
+  <data name="W.ai.assistant.Description" xml:space="preserve">
+    <value>Fråga Resgrid-assistenten om din avdelning utan att lämna översikten.</value>
+  </data>
+  <data name="W.aiDispatch.triage.Title" xml:space="preserve">
+    <value>Triage för AI-larmhantering</value>
+  </data>
+  <data name="W.aiDispatch.triage.Description" xml:space="preserve">
+    <value>Larm som skapats från inkommande e-post och sms och som fortfarande behöver granskas av en utalarmerare, med AI:ns säkerhet och ålder.</value>
+  </data>
+  <data name="W.aiDispatch.triage.Setting.hours" xml:space="preserve">
+    <value>Antal timmar att ta med</value>
+  </data>
+  <data name="W.aiDispatch.triage.Setting.maxRows" xml:space="preserve">
+    <value>Antal larm att visa</value>
+  </data>
+  <data name="W.aiDispatch.triage.NeedsReview" xml:space="preserve">
+    <value>Behöver granskas</value>
+  </data>
+  <data name="W.aiDispatch.triage.InProgress" xml:space="preserve">
+    <value>Pågår</value>
+  </data>
+  <data name="W.aiDispatch.triage.Applied" xml:space="preserve">
+    <value>Tillämpade</value>
+  </data>
+  <data name="W.aiDispatch.triage.Total" xml:space="preserve">
+    <value>Meddelanden</value>
+  </data>
+  <data name="W.aiDispatch.triage.Confidence" xml:space="preserve">
+    <value>{0} % säkerhet</value>
+  </data>
+  <data name="W.aiDispatch.triage.Related" xml:space="preserve">
+    <value>Kan vara dubblett av {0}</value>
+  </data>
+  <data name="W.aiDispatch.triage.Empty" xml:space="preserve">
+    <value>Inget att granska.</value>
+  </data>
+  <data name="W.aiDispatch.triage.Outcome.Applied" xml:space="preserve">
+    <value>Tillämpad</value>
+  </data>
+  <data name="W.aiDispatch.triage.Outcome.InProgress" xml:space="preserve">
+    <value>Pågår</value>
+  </data>
+  <data name="W.aiDispatch.triage.Outcome.NoChange" xml:space="preserve">
+    <value>Ingen ändring</value>
+  </data>
+  <data name="W.aiDispatch.triage.Outcome.LowConfidence" xml:space="preserve">
+    <value>Låg säkerhet</value>
+  </data>
+  <data name="W.aiDispatch.triage.Outcome.InvalidOutput" xml:space="preserve">
+    <value>Ogiltigt svar</value>
+  </data>
+  <data name="W.aiDispatch.triage.Outcome.Unavailable" xml:space="preserve">
+    <value>AI inte tillgänglig</value>
+  </data>
+  <data name="W.aiDispatch.triage.Outcome.Busy" xml:space="preserve">
+    <value>AI upptagen</value>
+  </data>
+  <data name="W.aiDispatch.triage.Outcome.BudgetExhausted" xml:space="preserve">
+    <value>AI-budgeten förbrukad</value>
+  </data>
+  <data name="W.aiDispatch.triage.Outcome.ProtectionUnsupported" xml:space="preserve">
+    <value>Inte tillgängligt med dataskydd</value>
+  </data>
+  <data name="W.aiDispatch.triage.Outcome.CallNotActive" xml:space="preserve">
+    <value>Larmet är inte längre aktivt</value>
+  </data>
+  <data name="W.aiDispatch.triage.Outcome.SenderNotAllowed" xml:space="preserve">
+    <value>Avsändaren är inte tillåten</value>
+  </data>
+  <data name="W.aiDispatch.triage.Outcome.DispatchCapReached" xml:space="preserve">
+    <value>Månadsgränsen för AI-larmhantering nådd</value>
+  </data>
+  <data name="W.admin.setup.Title" xml:space="preserve">
+    <value>Konfigurationsförlopp</value>
+  </data>
+  <data name="W.admin.setup.Description" xml:space="preserve">
+    <value>Förlopp för konfiguration i Admin Assist: verifierade kontroller, slutförda konfigurationsuppgifter och nästa uppgift.</value>
+  </data>
+  <data name="W.admin.setup.ChecksVerified" xml:space="preserve">
+    <value>{0} av {1} kontroller verifierade</value>
+  </data>
+  <data name="W.admin.setup.ChecksFailed" xml:space="preserve">
+    <value>Misslyckas</value>
+  </data>
+  <data name="W.admin.setup.ChecksUnknown" xml:space="preserve">
+    <value>Ej kontrollerade</value>
+  </data>
+  <data name="W.admin.setup.TasksDone" xml:space="preserve">
+    <value>Slutförda uppgifter: {0} av {1}</value>
+  </data>
+  <data name="W.admin.setup.NeedsAttention" xml:space="preserve">
+    <value>Kräver åtgärd</value>
+  </data>
+  <data name="W.admin.setup.Next" xml:space="preserve">
+    <value>Nästa</value>
+  </data>
+  <data name="W.admin.setup.Continue" xml:space="preserve">
+    <value>Fortsätt konfigurationen</value>
+  </data>
+  <data name="W.admin.setup.RevisitDue" xml:space="preserve">
+    <value>Det är dags att se över din konfiguration.</value>
+  </data>
+  <data name="W.admin.setup.Done" xml:space="preserve">
+    <value>Konfigurationen är klar.</value>
+  </data>
+  <data name="W.admin.plan.Title" xml:space="preserve">
+    <value>Plan och tillägg</value>
+  </data>
+  <data name="W.admin.plan.Description" xml:space="preserve">
+    <value>Din prenumerationsplan, hur mycket av dess gränser du använder, de tillägg du har eller kan lägga till samt förnyelsedatum.</value>
+  </data>
+  <data name="W.admin.plan.FreePlan" xml:space="preserve">
+    <value>Gratisplan</value>
+  </data>
+  <data name="W.admin.plan.PlanUnavailable" xml:space="preserve">
+    <value>Plandetaljer är inte tillgängliga just nu.</value>
+  </data>
+  <data name="W.admin.plan.Personnel" xml:space="preserve">
+    <value>Personal</value>
+  </data>
+  <data name="W.admin.plan.Units" xml:space="preserve">
+    <value>Enheter</value>
+  </data>
+  <data name="W.admin.plan.Entities" xml:space="preserve">
+    <value>Personal och enheter</value>
+  </data>
+  <data name="W.admin.plan.Unlimited" xml:space="preserve">
+    <value>Obegränsat</value>
+  </data>
+  <data name="W.admin.plan.Renews" xml:space="preserve">
+    <value>Förnyas {0}</value>
+  </data>
+  <data name="W.admin.plan.Ends" xml:space="preserve">
+    <value>Upphör {0}</value>
+  </data>
+  <data name="W.admin.plan.NeverExpires" xml:space="preserve">
+    <value>Upphör aldrig</value>
+  </data>
+  <data name="W.admin.plan.Held" xml:space="preserve">
+    <value>Aktivt</value>
+  </data>
+  <data name="W.admin.plan.Available" xml:space="preserve">
+    <value>Tillgängligt</value>
+  </data>
+  <data name="W.admin.plan.Cancelled" xml:space="preserve">
+    <value>Avbrutet</value>
+  </data>
+  <data name="W.admin.plan.Addon.PTT" xml:space="preserve">
+    <value>Push-To-Talk</value>
+  </data>
+  <data name="W.admin.plan.Addon.ADP" xml:space="preserve">
+    <value>Advanced Data Protection</value>
+  </data>
+  <data name="W.admin.plan.Addon.ReadinessPro" xml:space="preserve">
+    <value>Readiness Pro</value>
+  </data>
+  <data name="W.admin.plan.Addon.BusinessOperations" xml:space="preserve">
+    <value>Business Operations</value>
+  </data>
+  <data name="W.admin.plan.Addon.EnhancedAi" xml:space="preserve">
+    <value>Enhanced AI</value>
+  </data>
+  <data name="W.admin.plan.Addon.IncidentBackOffice" xml:space="preserve">
+    <value>Incident Back Office</value>
+  </data>
+  <data name="W.admin.workflows.Title" xml:space="preserve">
+    <value>Status för arbetsflöden</value>
+  </data>
+  <data name="W.admin.workflows.Description" xml:space="preserve">
+    <value>Arbetsflödeskörningar senaste dygnet: väntande, pågående och misslyckade körningar samt de arbetsflöden som misslyckas mest.</value>
+  </data>
+  <data name="W.admin.workflows.Setting.maxRows" xml:space="preserve">
+    <value>Antal arbetsflöden att visa</value>
+  </data>
+  <data name="W.admin.workflows.Pending" xml:space="preserve">
+    <value>Väntande</value>
+  </data>
+  <data name="W.admin.workflows.Running" xml:space="preserve">
+    <value>Pågår</value>
+  </data>
+  <data name="W.admin.workflows.Retrying" xml:space="preserve">
+    <value>Försöker igen</value>
+  </data>
+  <data name="W.admin.workflows.Failed" xml:space="preserve">
+    <value>Misslyckade (24 h)</value>
+  </data>
+  <data name="W.admin.workflows.Success" xml:space="preserve">
+    <value>{0} % lyckades</value>
+  </data>
+  <data name="W.admin.workflows.Active" xml:space="preserve">
+    <value>Aktiva arbetsflöden: {0} av {1}</value>
+  </data>
+  <data name="W.admin.workflows.ErrorDetailsProtected" xml:space="preserve">
+    <value>Felinformation skyddad</value>
+  </data>
+  <data name="W.admin.workflows.SeeDetails" xml:space="preserve">
+    <value>Visa detaljer</value>
+  </data>
+  <data name="W.admin.workflows.Empty" xml:space="preserve">
+    <value>Inga misslyckade körningar senaste dygnet.</value>
+  </data>
+  <data name="W.admin.dataProtection.Title" xml:space="preserve">
+    <value>Dataskydd</value>
+  </data>
+  <data name="W.admin.dataProtection.Description" xml:space="preserve">
+    <value>Status för Advanced Data Protection, verifieringsfönstret och migreringsförlopp.</value>
+  </data>
+  <data name="W.admin.dataProtection.StepUpWindow" xml:space="preserve">
+    <value>Verifieringen gäller i {0} minuter</value>
+  </data>
+  <data name="W.admin.dataProtection.Migration" xml:space="preserve">
+    <value>Migrering</value>
+  </data>
+  <data name="W.admin.dataProtection.Progress" xml:space="preserve">
+    <value>{0} % klart</value>
+  </data>
+  <data name="W.admin.dataProtection.Anomalies" xml:space="preserve">
+    <value>Rader som kräver åtgärd</value>
+  </data>
+  <data name="W.admin.dataProtection.CatalogUpgrade" xml:space="preserve">
+    <value>En uppgradering av katalogen över skyddade fält väntar.</value>
+  </data>
+  <data name="W.admin.dataProtection.Offboarding" xml:space="preserve">
+    <value>Skyddet upphör {0}</value>
+  </data>
+  <data name="W.admin.dataProtection.State.Disabled" xml:space="preserve">
+    <value>Inte aktiverat</value>
+  </data>
+  <data name="W.admin.dataProtection.State.EnrollmentQueued" xml:space="preserve">
+    <value>Registrering köad</value>
+  </data>
+  <data name="W.admin.dataProtection.State.ProvisioningKey" xml:space="preserve">
+    <value>Skapar nyckel</value>
+  </data>
+  <data name="W.admin.dataProtection.State.Encrypting" xml:space="preserve">
+    <value>Krypterar</value>
+  </data>
+  <data name="W.admin.dataProtection.State.Verifying" xml:space="preserve">
+    <value>Verifierar</value>
+  </data>
+  <data name="W.admin.dataProtection.State.Enabled" xml:space="preserve">
+    <value>Aktiverat</value>
+  </data>
+  <data name="W.admin.dataProtection.State.Rotating" xml:space="preserve">
+    <value>Roterar nyckel</value>
+  </data>
+  <data name="W.admin.dataProtection.State.OffboardingScheduled" xml:space="preserve">
+    <value>Avregistrering schemalagd</value>
+  </data>
+  <data name="W.admin.dataProtection.State.DisableRequested" xml:space="preserve">
+    <value>Avaktivering begärd</value>
+  </data>
+  <data name="W.admin.dataProtection.State.Decrypting" xml:space="preserve">
+    <value>Dekrypterar</value>
+  </data>
+  <data name="W.admin.dataProtection.State.Failed" xml:space="preserve">
+    <value>Misslyckades</value>
+  </data>
+  <data name="W.admin.import.Title" xml:space="preserve">
+    <value>Import och migrering</value>
+  </data>
+  <data name="W.admin.import.Description" xml:space="preserve">
+    <value>Förlopp för avdelningsimport: öppna arbetsytor, datamängder som behöver granskas och pågående importer.</value>
+  </data>
+  <data name="W.admin.import.OpenWorkspaces" xml:space="preserve">
+    <value>Öppna importer</value>
+  </data>
+  <data name="W.admin.import.Activated" xml:space="preserve">
+    <value>Aktiverade</value>
+  </data>
+  <data name="W.admin.import.NeedingReview" xml:space="preserve">
+    <value>Behöver granskas</value>
+  </data>
+  <data name="W.admin.import.Ready" xml:space="preserve">
+    <value>Redo</value>
+  </data>
+  <data name="W.admin.import.Imported" xml:space="preserve">
+    <value>Importerade</value>
+  </data>
+  <data name="W.admin.import.Failed" xml:space="preserve">
+    <value>Misslyckade</value>
+  </data>
+  <data name="W.admin.import.Rows" xml:space="preserve">
+    <value>Importerade rader: {0} av {1}</value>
+  </data>
+  <data name="W.admin.import.Warnings" xml:space="preserve">
+    <value>Rader med varningar</value>
+  </data>
+  <data name="W.admin.import.Blocked" xml:space="preserve">
+    <value>Blockerade rader</value>
+  </data>
+  <data name="W.admin.import.RunsActive" xml:space="preserve">
+    <value>Pågående</value>
+  </data>
+  <data name="W.admin.import.Target" xml:space="preserve">
+    <value>Mål {0}</value>
+  </data>
+  <data name="W.admin.import.Empty" xml:space="preserve">
+    <value>Ingen import pågår.</value>
+  </data>
+  <data name="W.admin.import.Status.Draft" xml:space="preserve">
+    <value>Utkast</value>
+  </data>
+  <data name="W.admin.import.Status.Collecting" xml:space="preserve">
+    <value>Samlar in filer</value>
+  </data>
+  <data name="W.admin.import.Status.Reviewing" xml:space="preserve">
+    <value>Granskas</value>
+  </data>
+  <data name="W.admin.import.Status.Importing" xml:space="preserve">
+    <value>Importeras</value>
+  </data>
+  <data name="W.admin.import.Status.Verifying" xml:space="preserve">
+    <value>Verifieras</value>
+  </data>
+  <data name="W.admin.import.Status.ReadyToActivate" xml:space="preserve">
+    <value>Redo att aktivera</value>
+  </data>
+  <data name="W.admin.security.Title" xml:space="preserve">
+    <value>Säkerhetsstatus</value>
+  </data>
+  <data name="W.admin.security.Description" xml:space="preserve">
+    <value>Hur många medlemmar som använder en autentiseringsapp eller nyckel (passkey), status för enkel inloggning och SCIM samt aktiva sessioner.</value>
+  </data>
+  <data name="W.admin.security.StrongAuthentication" xml:space="preserve">
+    <value>Medlemmar med MFA eller nyckel (passkey)</value>
+  </data>
+  <data name="W.admin.security.Mfa" xml:space="preserve">
+    <value>Autentiseringsapp</value>
+  </data>
+  <data name="W.admin.security.Passkeys" xml:space="preserve">
+    <value>Nycklar (passkeys)</value>
+  </data>
+  <data name="W.admin.security.Sessions" xml:space="preserve">
+    <value>Aktiva sessioner</value>
+  </data>
+  <data name="W.admin.security.SessionUsers" xml:space="preserve">
+    <value>Inloggade medlemmar: {0}</value>
+  </data>
+  <data name="W.admin.security.Sso" xml:space="preserve">
+    <value>Enkel inloggning</value>
+  </data>
+  <data name="W.admin.security.Scim" xml:space="preserve">
+    <value>SCIM-etablering</value>
+  </data>
+  <data name="W.admin.security.RequireMfa" xml:space="preserve">
+    <value>MFA krävs</value>
+  </data>
+  <data name="W.admin.security.RequireSso" xml:space="preserve">
+    <value>SSO krävs</value>
+  </data>
+  <data name="W.admin.security.On" xml:space="preserve">
+    <value>På</value>
+  </data>
+  <data name="W.admin.security.Off" xml:space="preserve">
+    <value>Av</value>
+  </data>
+  <data name="W.deployments.active.OpenDeployments" xml:space="preserve">
+    <value>Öppna insatser</value>
+  </data>
+  <data name="W.deployments.active.Rostered" xml:space="preserve">
+    <value>Du är bemannad</value>
+  </data>
+  <data name="W.deployments.active.Starts" xml:space="preserve">
+    <value>Startar {0}</value>
+  </data>
+  <data name="W.deployments.timeReports.Empty" xml:space="preserve">
+    <value>Inga tidrapporter väntar.</value>
+  </data>
+  <data name="W.deployments.timeReports.OpenDeployments" xml:space="preserve">
+    <value>Öppna insatser</value>
+  </data>
+  <data name="W.invoicing.receivables.Empty" xml:space="preserve">
+    <value>Inga öppna fakturor.</value>
+  </data>
+  <data name="W.invoicing.receivables.OpenInvoicing" xml:space="preserve">
+    <value>Öppna fakturering</value>
+  </data>
+  <data name="W.invoicing.receivables.OpenInvoices" xml:space="preserve">
+    <value>öppna fakturor</value>
+  </data>
+  <data name="W.invoicing.receivables.OutstandingCount" xml:space="preserve">
+    <value>utestående · öppna fakturor: {0}</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.On" xml:space="preserve">
+    <value>På</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Off" xml:space="preserve">
+    <value>Av</value>
+  </data>
+  <data name="W.bids.pipeline.Empty" xml:space="preserve">
+    <value>Inga anbud ännu.</value>
+  </data>
+  <data name="W.bids.pipeline.OpenBids" xml:space="preserve">
+    <value>Öppna anbud</value>
+  </data>
+  <data name="W.bids.pipeline.NoneExpiring" xml:space="preserve">
+    <value>Inga skickade anbud går ut de kommande {0} dagarna.</value>
+  </data>
+  <data name="W.contracts.expiring.NoActive" xml:space="preserve">
+    <value>Inga aktiva avtal.</value>
+  </data>
+  <data name="W.contracts.expiring.OpenContracts" xml:space="preserve">
+    <value>Öppna avtal</value>
+  </data>
+  <data name="W.costRecovery.queue.OpenQueue" xml:space="preserve">
+    <value>Öppna kön</value>
+  </data>
+  <data name="W.costRecovery.queue.Readiness" xml:space="preserve">
+    <value>Myndighetens beredskap</value>
+  </data>
+  <data name="W.costRecovery.queue.RecordType.AgencyProfile" xml:space="preserve">
+    <value>Myndighetsprofil</value>
+  </data>
+  <data name="W.costRecovery.queue.RecordType.ResourceInventoryF5" xml:space="preserve">
+    <value>Resursförteckning (F-5)</value>
+  </data>
+  <data name="W.costRecovery.queue.RecordType.SalarySurvey" xml:space="preserve">
+    <value>Lönekartläggning</value>
+  </data>
+  <data name="W.costRecovery.queue.RecordType.AdministrativeRate" xml:space="preserve">
+    <value>Administrativ taxa</value>
+  </data>
+  <data name="W.costRecovery.queue.RecordType.AttachmentA" xml:space="preserve">
+    <value>Bilaga A</value>
+  </data>
+  <data name="W.costRecovery.queue.RecordType.SpecialEquipment" xml:space="preserve">
+    <value>Specialutrustning</value>
+  </data>
+  <data name="W.costRecovery.queue.RecordType.Agreement" xml:space="preserve">
+    <value>Avtal</value>
+  </data>
+  <data name="W.costRecovery.queue.RecordType.F42" xml:space="preserve">
+    <value>F-42</value>
+  </data>
+  <data name="W.costRecovery.queue.RecordType.ExpenseClaim" xml:space="preserve">
+    <value>Utgiftsanspråk</value>
+  </data>
+  <data name="W.costRecovery.queue.RecordType.GeneratedInvoice" xml:space="preserve">
+    <value>Faktura</value>
+  </data>
+  <data name="W.costRecovery.queue.State.Draft" xml:space="preserve">
+    <value>Utkast</value>
+  </data>
+  <data name="W.costRecovery.queue.State.NeedsReview" xml:space="preserve">
+    <value>Behöver granskas</value>
+  </data>
+  <data name="W.costRecovery.queue.State.ReadyForPortal" xml:space="preserve">
+    <value>Klar för MARS</value>
+  </data>
+  <data name="W.costRecovery.queue.State.SubmittedExternal" xml:space="preserve">
+    <value>Inlämnad</value>
+  </data>
+  <data name="W.costRecovery.queue.State.ReturnedForAgencyReview" xml:space="preserve">
+    <value>Återsänd för granskning</value>
+  </data>
+  <data name="W.costRecovery.queue.State.Approved" xml:space="preserve">
+    <value>Godkänd</value>
+  </data>
+  <data name="W.costRecovery.queue.State.DocumentationOnly" xml:space="preserve">
+    <value>Endast dokumentation</value>
+  </data>
+  <data name="W.costRecovery.queue.State.PendingLocalAgencyApproval" xml:space="preserve">
+    <value>Väntar på lokalt godkännande</value>
+  </data>
+  <data name="W.costRecovery.queue.State.LocalAgencyRejected" xml:space="preserve">
+    <value>Avvisad lokalt</value>
+  </data>
+  <data name="W.costRecovery.queue.State.PendingPayingEntityApproval" xml:space="preserve">
+    <value>Väntar på betalande enhet</value>
+  </data>
+  <data name="W.costRecovery.queue.State.Paid" xml:space="preserve">
+    <value>Betald</value>
+  </data>
+  <data name="W.costRecovery.queue.State.Closed" xml:space="preserve">
+    <value>Stängd</value>
+  </data>
+  <data name="W.workforce.fieldCosting.OpenRuns" xml:space="preserve">
+    <value>Öppna kostnadskörningar</value>
+  </data>
+  <data name="W.workforce.fieldCosting.OpenRunsNote" xml:space="preserve">
+    <value>Körningar öppna för granskning: {0}</value>
+  </data>
+  <data name="W.workforce.payData.NoProfile" xml:space="preserve">
+    <value>Ingen rapportprofil för det här året</value>
+  </data>
+  <data name="W.ibo.Option.recent" xml:space="preserve">
+    <value>Senaste händelsen</value>
+  </data>
+  <data name="W.ibo.OpenIncidents" xml:space="preserve">
+    <value>Öppna Incident Back Office</value>
+  </data>
+  <data name="W.ibo.activations.OpenedOn" xml:space="preserve">
+    <value>Öppnad {0}</value>
+  </data>
+  <data name="W.ibo.desk.NoValues" xml:space="preserve">
+    <value>Inget att visa på den här panelen ännu.</value>
+  </data>
+  <data name="W.ibo.desk.PersonnelShort" xml:space="preserve">
+    <value>personal: {0}</value>
+  </data>
+  <data name="W.ibo.resources.Empty" xml:space="preserve">
+    <value>Inga resurser i den här händelsen ännu.</value>
+  </data>
+  <data name="W.ibo.resources.OpenDesk" xml:space="preserve">
+    <value>Öppna operationspanelen</value>
+  </data>
+  <data name="W.ibo.resources.ByKind" xml:space="preserve">
+    <value>Per slag</value>
+  </data>
+  <data name="W.ibo.resources.ByStatus" xml:space="preserve">
+    <value>Per stödstatus</value>
+  </data>
+  <data name="W.ibo.finance.ProjectionAsOf" xml:space="preserve">
+    <value>Prognos per {0}</value>
+  </data>
+  <data name="W.ibo.coordination.OpenBoards" xml:space="preserve">
+    <value>Öppna samordningstavlor</value>
+  </data>
+  <data name="W.ibo.coordination.Shares" xml:space="preserve">
+    <value>Delningar: {0}</value>
+  </data>
+  <data name="W.ibo.coordination.StaleCount" xml:space="preserve">
+    <value>inaktuella: {0}</value>
+  </data>
+  <data name="W.ai.assistant.Unavailable" xml:space="preserve">
+    <value>Assistenten är inte tillgänglig just nu.</value>
+  </data>
+  <data name="W.aiDispatch.triage.Window" xml:space="preserve">
+    <value>Senaste {0} h · meddelanden: {1}</value>
+  </data>
+  <data name="W.admin.setup.ChecksLabel" xml:space="preserve">
+    <value>verifierade konfigurationskontroller</value>
+  </data>
+  <data name="W.admin.setup.Progress" xml:space="preserve">
+    <value>Konfigurationsförlopp</value>
+  </data>
+  <data name="W.admin.setup.ChecksFailedCount" xml:space="preserve">
+    <value>Misslyckade kontroller: {0}</value>
+  </data>
+  <data name="W.admin.setup.NeedsAttentionCount" xml:space="preserve">
+    <value>Funktioner som kräver åtgärd: {0}</value>
+  </data>
+  <data name="W.admin.plan.Addons" xml:space="preserve">
+    <value>Tillägg</value>
+  </data>
+  <data name="W.admin.plan.CostPer" xml:space="preserve">
+    <value>{0} / {1}</value>
+  </data>
+  <data name="W.admin.plan.Frequency.Never" xml:space="preserve">
+    <value>engångs</value>
+  </data>
+  <data name="W.admin.plan.Frequency.Monthly" xml:space="preserve">
+    <value>månad</value>
+  </data>
+  <data name="W.admin.plan.Frequency.Yearly" xml:space="preserve">
+    <value>år</value>
+  </data>
+  <data name="W.admin.plan.Frequency.BiYearly" xml:space="preserve">
+    <value>2 år</value>
+  </data>
+  <data name="W.admin.plan.Frequency.ThreeYear" xml:space="preserve">
+    <value>3 år</value>
+  </data>
+  <data name="W.admin.plan.Frequency.FourYear" xml:space="preserve">
+    <value>4 år</value>
+  </data>
+  <data name="W.admin.plan.Frequency.FiveYear" xml:space="preserve">
+    <value>5 år</value>
+  </data>
+  <data name="W.admin.workflows.NoWorkflows" xml:space="preserve">
+    <value>Inga arbetsflöden ännu.</value>
+  </data>
+  <data name="W.admin.workflows.OpenWorkflows" xml:space="preserve">
+    <value>Öppna arbetsflöden</value>
+  </data>
+  <data name="W.admin.workflows.FailedOf" xml:space="preserve">
+    <value>Misslyckade: {0} av {1} körningar</value>
+  </data>
+  <data name="W.admin.workflows.Off" xml:space="preserve">
+    <value>Avstängt</value>
+  </data>
+  <data name="W.admin.workflows.ErrorDetailsProtectedHint" xml:space="preserve">
+    <value>Felinformationen är skyddad. Öppna arbetsflödets statussida för att se körningen.</value>
+  </data>
+  <data name="W.admin.dataProtection.MigrationKind" xml:space="preserve">
+    <value>Migrering: {0}</value>
+  </data>
+  <data name="W.admin.dataProtection.Rows" xml:space="preserve">
+    <value>Rader: {0} av {1}</value>
+  </data>
+  <data name="W.admin.import.OpenImport" xml:space="preserve">
+    <value>Öppna avdelningsimport</value>
+  </data>
+  <data name="W.admin.import.ActivatedCount" xml:space="preserve">
+    <value>Aktiverade importer: {0}</value>
+  </data>
+  <data name="W.admin.import.Untitled" xml:space="preserve">
+    <value>Namnlös import</value>
+  </data>
+  <data name="W.admin.import.LastActivity" xml:space="preserve">
+    <value>Senaste aktivitet {0}</value>
+  </data>
+  <data name="W.admin.security.StrongAuthenticationOf" xml:space="preserve">
+    <value>Medlemmar med MFA eller nyckel (passkey): {0} av {1}</value>
+  </data>
+  <data name="W.bids.pipeline.WithdrawnCount" xml:space="preserve">
+    <value>Tillbakadragna: {0}</value>
+  </data>
+  <data name="W.contracts.expiring.DocumentsSummary" xml:space="preserve">
+    <value>Efterlevnadsdokument: {0} utgångna, {1} går snart ut</value>
+  </data>
+  <data name="W.invoicing.receivables.DraftsCount" xml:space="preserve">
+    <value>utkast: {0}</value>
+  </data>
+  <data name="W.invoicing.receivables.OverdueSummary" xml:space="preserve">
+    <value>förfallna: {0} ({1})</value>
+  </data>
+  <data name="W.invoicing.receivables.ReadOnlyShort" xml:space="preserve">
+    <value>skrivskyddat</value>
+  </data>
+  <data name="W.deployments.active.Day" xml:space="preserve">
+    <value>Dag {0}</value>
+  </data>
+  <data name="W.contracts.expiring.EndsIn" xml:space="preserve">
+    <value>Upphör om {0}</value>
+  </data>
+  <data name="W.contracts.expiring.NoneEnding" xml:space="preserve">
+    <value>Inga avtal upphör de kommande {0}.</value>
+  </data>
+  <data name="W.costRecovery.queue.Age" xml:space="preserve">
+    <value>Ålder</value>
+  </data>
+  <data name="W.bids.pipeline.ExpiringWithin" xml:space="preserve">
+    <value>Går ut inom {0}</value>
+  </data>
+  <data name="W.ibo.finance.OfBudget" xml:space="preserve">
+    <value>Förbrukat av budget på {0}</value>
+  </data>
+  <data name="W.calls.active.Title" xml:space="preserve">
+    <value>Aktiva larm</value>
+  </data>
+  <data name="W.calls.active.Description" xml:space="preserve">
+    <value>Aktiva larm som har larmats ut i ditt utlarmningsområde, nyaste först, med prioritet, utskickade enheter och personal samt insatsledning.</value>
+  </data>
+  <data name="W.calls.active.Setting.maxRows" xml:space="preserve">
+    <value>Antal larm att visa</value>
+  </data>
+  <data name="W.calls.active.Setting.priorities" xml:space="preserve">
+    <value>Prioriteter</value>
+  </data>
+  <data name="W.calls.active.Setting.group" xml:space="preserve">
+    <value>Hemgrupp</value>
+  </data>
+  <data name="W.calls.kpis.Title" xml:space="preserve">
+    <value>Larmaktivitet</value>
+  </data>
+  <data name="W.calls.kpis.Description" xml:space="preserve">
+    <value>Antal aktiva larm, larm idag, väntande och schemalagda larm samt larm som väntar på resurser, med de senaste sju dagarna.</value>
+  </data>
+  <data name="W.calls.pending.Title" xml:space="preserve">
+    <value>Väntande och schemalagda</value>
+  </data>
+  <data name="W.calls.pending.Description" xml:space="preserve">
+    <value>Sparade larm som inte har larmats ut än och schemalagda larm som väntar på sin utlarmningstid.</value>
+  </data>
+  <data name="W.calls.pending.Setting.maxRows" xml:space="preserve">
+    <value>Antal larm att visa</value>
+  </data>
+  <data name="W.calls.pending.Setting.show" xml:space="preserve">
+    <value>Visa</value>
+  </data>
+  <data name="W.calls.pending.Option.all" xml:space="preserve">
+    <value>Väntande och schemalagda</value>
+  </data>
+  <data name="W.calls.pending.Option.pending" xml:space="preserve">
+    <value>Endast väntande</value>
+  </data>
+  <data name="W.calls.pending.Option.scheduled" xml:space="preserve">
+    <value>Endast schemalagda</value>
+  </data>
+  <data name="W.calls.awaitingResources.Title" xml:space="preserve">
+    <value>Väntar på resurser</value>
+  </data>
+  <data name="W.calls.awaitingResources.Description" xml:space="preserve">
+    <value>Aktiva larm som fortfarande väntar på en resurs enligt insatsplanen, vad som saknas och vilka enheter som är tillgängliga just nu.</value>
+  </data>
+  <data name="W.calls.awaitingResources.Setting.maxRows" xml:space="preserve">
+    <value>Antal larm att visa</value>
+  </data>
+  <data name="W.calls.myCheckIns.Title" xml:space="preserve">
+    <value>Mina incheckningstimers</value>
+  </data>
+  <data name="W.calls.myCheckIns.Description" xml:space="preserve">
+    <value>Dina incheckningstimers för larm som du har larmats ut till, med tid kvar till nästa incheckning.</value>
+  </data>
+  <data name="W.calls.volume.Title" xml:space="preserve">
+    <value>Larmvolym</value>
+  </data>
+  <data name="W.calls.volume.Description" xml:space="preserve">
+    <value>Larm per dag efter typ och prioritet, med median insatstid.</value>
+  </data>
+  <data name="W.calls.volume.Setting.days" xml:space="preserve">
+    <value>Period</value>
+  </data>
+  <data name="W.calls.volume.Option.7" xml:space="preserve">
+    <value>Senaste 7 dagarna</value>
+  </data>
+  <data name="W.calls.volume.Option.30" xml:space="preserve">
+    <value>Senaste 30 dagarna</value>
+  </data>
+  <data name="W.calls.volume.Option.90" xml:space="preserve">
+    <value>Senaste 90 dagarna</value>
+  </data>
+  <data name="W.incidentCommand.active.Title" xml:space="preserve">
+    <value>Aktiva insatsledningar</value>
+  </data>
+  <data name="W.incidentCommand.active.Description" xml:space="preserve">
+    <value>Öppna insatsledningar med tillhörande larm, insatsledare och tilldelade resurser.</value>
+  </data>
+  <data name="W.incidentCommand.active.Setting.maxRows" xml:space="preserve">
+    <value>Antal insatsledningar att visa</value>
+  </data>
+  <data name="W.units.status.Title" xml:space="preserve">
+    <value>Statustavla för enheter</value>
+  </data>
+  <data name="W.units.status.Description" xml:space="preserve">
+    <value>Enheter per station eller typ med status, tid i status, destination, besättning och statusanteckning.</value>
+  </data>
+  <data name="W.units.status.Setting.station" xml:space="preserve">
+    <value>Station</value>
+  </data>
+  <data name="W.units.status.Setting.unitTypes" xml:space="preserve">
+    <value>Enhetstyper</value>
+  </data>
+  <data name="W.units.status.Setting.hideAvailable" xml:space="preserve">
+    <value>Dölj tillgängliga enheter</value>
+  </data>
+  <data name="W.units.status.Setting.groupBy" xml:space="preserve">
+    <value>Gruppera efter</value>
+  </data>
+  <data name="W.units.status.Option.station" xml:space="preserve">
+    <value>Station</value>
+  </data>
+  <data name="W.units.status.Option.type" xml:space="preserve">
+    <value>Enhetstyp</value>
+  </data>
+  <data name="W.units.status.Option.none" xml:space="preserve">
+    <value>Ingen gruppering</value>
+  </data>
+  <data name="W.units.summary.Title" xml:space="preserve">
+    <value>Sammanfattning av enheter</value>
+  </data>
+  <data name="W.units.summary.Description" xml:space="preserve">
+    <value>Hur många enheter som är tillgängliga, engagerade eller ur drift.</value>
+  </data>
+  <data name="W.units.alerts.Title" xml:space="preserve">
+    <value>Statusvarningar för enheter</value>
+  </data>
+  <data name="W.units.alerts.Description" xml:space="preserve">
+    <value>Enheter som har varit i en status längre än avdelningens tidsgränser för status tillåter.</value>
+  </data>
+  <data name="W.units.alerts.Setting.showMuted" xml:space="preserve">
+    <value>Visa tystade varningar</value>
+  </data>
+  <data name="W.units.routes.Title" xml:space="preserve">
+    <value>Ruttavvikelser</value>
+  </data>
+  <data name="W.units.routes.Description" xml:space="preserve">
+    <value>Pågående rutter och ruttavvikelser som ännu inte har kvitterats.</value>
+  </data>
+  <data name="W.personnel.myStatus.Title" xml:space="preserve">
+    <value>Min status</value>
+  </data>
+  <data name="W.personnel.myStatus.Description" xml:space="preserve">
+    <value>Ange din status och beredskapsnivå, eller ryck ut till ett larm eller en station.</value>
+  </data>
+  <data name="W.personnel.board.Title" xml:space="preserve">
+    <value>Statustavla för personal</value>
+  </data>
+  <data name="W.personnel.board.Description" xml:space="preserve">
+    <value>Allas status och bemanning per grupp, med bemanningsanteckningar.</value>
+  </data>
+  <data name="W.personnel.board.Setting.groups" xml:space="preserve">
+    <value>Grupper</value>
+  </data>
+  <data name="W.personnel.board.Setting.hideUnavailable" xml:space="preserve">
+    <value>Dölj ej tillgänglig personal</value>
+  </data>
+  <data name="W.personnel.board.Setting.sort" xml:space="preserve">
+    <value>Sortera</value>
+  </data>
+  <data name="W.personnel.board.Option.department" xml:space="preserve">
+    <value>Avdelningens ordning</value>
+  </data>
+  <data name="W.personnel.board.Option.name" xml:space="preserve">
+    <value>Namn</value>
+  </data>
+  <data name="W.personnel.board.Option.status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="W.personnel.statusSummary.Title" xml:space="preserve">
+    <value>Statussammanfattning för personal</value>
+  </data>
+  <data name="W.personnel.statusSummary.Description" xml:space="preserve">
+    <value>Hur många som rycker ut, är på plats, är tillgängliga eller ej tillgängliga.</value>
+  </data>
+  <data name="W.personnel.staffingSummary.Title" xml:space="preserve">
+    <value>Sammanfattning av bemanning</value>
+  </data>
+  <data name="W.personnel.staffingSummary.Description" xml:space="preserve">
+    <value>Bemanningsnivåer för hela avdelningen och per grupp, med vem som är i tjänst.</value>
+  </data>
+  <data name="W.calls.active.Empty" xml:space="preserve">
+    <value>Inga aktiva larm</value>
+  </data>
+  <data name="W.calls.active.GroupFilterIgnored" xml:space="preserve">
+    <value>Hemgruppen i den här widgetens inställningar finns inte längre, så alla larm visas.</value>
+  </data>
+  <data name="W.calls.active.IncidentCommand" xml:space="preserve">
+    <value>IC</value>
+  </data>
+  <data name="W.calls.active.IncidentCommandTitle" xml:space="preserve">
+    <value>Insatsledning upprättad</value>
+  </data>
+  <data name="W.calls.active.NewCall" xml:space="preserve">
+    <value>Skapa ett larm</value>
+  </data>
+  <data name="W.calls.active.Personnel" xml:space="preserve">
+    <value>{0} personal</value>
+  </data>
+  <data name="W.calls.active.ShowingOf" xml:space="preserve">
+    <value>Visar {0} av {1} larm</value>
+  </data>
+  <data name="W.calls.active.Units" xml:space="preserve">
+    <value>{0} enheter</value>
+  </data>
+  <data name="W.calls.active.Untitled" xml:space="preserve">
+    <value>Larm</value>
+  </data>
+  <data name="W.calls.awaitingResources.Empty" xml:space="preserve">
+    <value>Inga larm väntar på resurser</value>
+  </data>
+  <data name="W.calls.awaitingResources.EtaTitle" xml:space="preserve">
+    <value>Cirka {0} bort</value>
+  </data>
+  <data name="W.calls.awaitingResources.Needs" xml:space="preserve">
+    <value>Behöver {0} × {1}</value>
+  </data>
+  <data name="W.calls.awaitingResources.OpenList" xml:space="preserve">
+    <value>Öppna larm som väntar på resurser</value>
+  </data>
+  <data name="W.calls.awaitingResources.Send" xml:space="preserve">
+    <value>Skicka {0}</value>
+  </data>
+  <data name="W.calls.awaitingResources.SendFailed" xml:space="preserve">
+    <value>Enheten kunde inte larmas ut.</value>
+  </data>
+  <data name="W.calls.awaitingResources.Sent" xml:space="preserve">
+    <value>{0} har larmats ut till {1}</value>
+  </data>
+  <data name="W.calls.awaitingResources.SentInstead" xml:space="preserve">
+    <value>{0} skickades i stället</value>
+  </data>
+  <data name="W.calls.awaitingResources.ShowingOf" xml:space="preserve">
+    <value>Visar {0} av {1} larm</value>
+  </data>
+  <data name="W.calls.awaitingResources.Untitled" xml:space="preserve">
+    <value>Larm</value>
+  </data>
+  <data name="W.calls.kpis.ActiveCalls" xml:space="preserve">
+    <value>aktiva larm</value>
+  </data>
+  <data name="W.calls.kpis.Awaiting" xml:space="preserve">
+    <value>Väntar på resurser</value>
+  </data>
+  <data name="W.calls.kpis.CallsCount" xml:space="preserve">
+    <value>{0} larm</value>
+  </data>
+  <data name="W.calls.kpis.Pending" xml:space="preserve">
+    <value>Väntande</value>
+  </data>
+  <data name="W.calls.kpis.Scheduled" xml:space="preserve">
+    <value>Schemalagda</value>
+  </data>
+  <data name="W.calls.kpis.SparkAria" xml:space="preserve">
+    <value>Larm per dag, senaste 7 dagarna: {0}</value>
+  </data>
+  <data name="W.calls.kpis.Today" xml:space="preserve">
+    <value>Idag</value>
+  </data>
+  <data name="W.calls.kpis.TodayLine" xml:space="preserve">
+    <value>{0} idag</value>
+  </data>
+  <data name="W.calls.myCheckIns.CheckIn" xml:space="preserve">
+    <value>Checka in</value>
+  </data>
+  <data name="W.calls.myCheckIns.CheckInFailed" xml:space="preserve">
+    <value>Din incheckning kunde inte sparas.</value>
+  </data>
+  <data name="W.calls.myCheckIns.CheckedIn" xml:space="preserve">
+    <value>Incheckad på {0}</value>
+  </data>
+  <data name="W.calls.myCheckIns.DueIn" xml:space="preserve">
+    <value>Förfaller om {0} (var {1})</value>
+  </data>
+  <data name="W.calls.myCheckIns.Empty" xml:space="preserve">
+    <value>Du har inga incheckningstimers på dina larm</value>
+  </data>
+  <data name="W.calls.myCheckIns.NoTimer" xml:space="preserve">
+    <value>Ingen incheckningstimer för personal på det här larmet</value>
+  </data>
+  <data name="W.calls.myCheckIns.Overdue" xml:space="preserve">
+    <value>Försenad med {0} (var {1})</value>
+  </data>
+  <data name="W.calls.myCheckIns.Untitled" xml:space="preserve">
+    <value>Larm</value>
+  </data>
+  <data name="W.calls.pending.DispatchFailed" xml:space="preserve">
+    <value>Larmet kunde inte larmas ut.</value>
+  </data>
+  <data name="W.calls.pending.DispatchNow" xml:space="preserve">
+    <value>Larma ut nu</value>
+  </data>
+  <data name="W.calls.pending.Dispatched" xml:space="preserve">
+    <value>{0} har larmats ut</value>
+  </data>
+  <data name="W.calls.pending.DispatchesAt" xml:space="preserve">
+    <value>utlarmning {0}</value>
+  </data>
+  <data name="W.calls.pending.Empty" xml:space="preserve">
+    <value>Inga larm väntar på att larmas ut</value>
+  </data>
+  <data name="W.calls.pending.OpenPending" xml:space="preserve">
+    <value>Öppna väntande larm</value>
+  </data>
+  <data name="W.calls.pending.Pending" xml:space="preserve">
+    <value>Väntande</value>
+  </data>
+  <data name="W.calls.pending.PendingCount" xml:space="preserve">
+    <value>{0} väntande</value>
+  </data>
+  <data name="W.calls.pending.SavedAgo" xml:space="preserve">
+    <value>sparad {0}</value>
+  </data>
+  <data name="W.calls.pending.Scheduled" xml:space="preserve">
+    <value>Schemalagd</value>
+  </data>
+  <data name="W.calls.pending.ScheduledCount" xml:space="preserve">
+    <value>{0} schemalagda</value>
+  </data>
+  <data name="W.calls.pending.Untitled" xml:space="preserve">
+    <value>Larm</value>
+  </data>
+  <data name="W.calls.volume.ByPriority" xml:space="preserve">
+    <value>Efter prioritet</value>
+  </data>
+  <data name="W.calls.volume.ByType" xml:space="preserve">
+    <value>Efter typ</value>
+  </data>
+  <data name="W.calls.volume.CallsCount" xml:space="preserve">
+    <value>{0} larm</value>
+  </data>
+  <data name="W.calls.volume.Empty" xml:space="preserve">
+    <value>Inga larm de senaste {0} dagarna</value>
+  </data>
+  <data name="W.calls.volume.MedianResponse" xml:space="preserve">
+    <value>Median insatstid</value>
+  </data>
+  <data name="W.calls.volume.OpenReports" xml:space="preserve">
+    <value>Öppna rapporter</value>
+  </data>
+  <data name="W.calls.volume.OtherTypes" xml:space="preserve">
+    <value>Övriga typer</value>
+  </data>
+  <data name="W.calls.volume.P90Title" xml:space="preserve">
+    <value>90:e percentilen {0} · {1} utryckningar</value>
+  </data>
+  <data name="W.calls.volume.PerDay" xml:space="preserve">
+    <value>Per dag</value>
+  </data>
+  <data name="W.calls.volume.PerDayHeading" xml:space="preserve">
+    <value>Larm per dag</value>
+  </data>
+  <data name="W.calls.volume.ResponseNote" xml:space="preserve">
+    <value>Insatstid från larm till framkomst, {0} utryckningar.</value>
+  </data>
+  <data name="W.calls.volume.SparkAria" xml:space="preserve">
+    <value>Larm per dag, senaste {0} dagarna: {1}</value>
+  </data>
+  <data name="W.calls.volume.TotalCalls" xml:space="preserve">
+    <value>Larm, senaste {0} dagarna</value>
+  </data>
+  <data name="W.calls.volume.Untyped" xml:space="preserve">
+    <value>Ingen typ</value>
+  </data>
+  <data name="W.incidentCommand.active.Assigned" xml:space="preserve">
+    <value>{0} enheter · {1} personal tilldelade</value>
+  </data>
+  <data name="W.incidentCommand.active.Commander" xml:space="preserve">
+    <value>IC {0}</value>
+  </data>
+  <data name="W.incidentCommand.active.Empty" xml:space="preserve">
+    <value>Inga insatsledningar är öppna</value>
+  </data>
+  <data name="W.incidentCommand.active.EstablishedAt" xml:space="preserve">
+    <value>Upprättad {0}</value>
+  </data>
+  <data name="W.incidentCommand.active.NoCommander" xml:space="preserve">
+    <value>Ingen insatsledare</value>
+  </data>
+  <data name="W.incidentCommand.active.Untitled" xml:space="preserve">
+    <value>Insatsledning</value>
+  </data>
+  <data name="W.personnel.board.CallNumber" xml:space="preserve">
+    <value>Larm #{0}</value>
+  </data>
+  <data name="W.personnel.board.Cancel" xml:space="preserve">
+    <value>Avbryt</value>
+  </data>
+  <data name="W.personnel.board.Caption" xml:space="preserve">
+    <value>Personalstatus per grupp</value>
+  </data>
+  <data name="W.personnel.board.ChangeSettings" xml:space="preserve">
+    <value>Ändra inställningar</value>
+  </data>
+  <data name="W.personnel.board.ColFor" xml:space="preserve">
+    <value>Tid</value>
+  </data>
+  <data name="W.personnel.board.ColName" xml:space="preserve">
+    <value>Namn</value>
+  </data>
+  <data name="W.personnel.board.ColNote" xml:space="preserve">
+    <value>Bemanningsanteckning</value>
+  </data>
+  <data name="W.personnel.board.ColRoles" xml:space="preserve">
+    <value>Roller</value>
+  </data>
+  <data name="W.personnel.board.ColStaffing" xml:space="preserve">
+    <value>Bemanning</value>
+  </data>
+  <data name="W.personnel.board.ColStatus" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="W.personnel.board.ConfirmReset" xml:space="preserve">
+    <value>Återställ</value>
+  </data>
+  <data name="W.personnel.board.ConfirmResetAll" xml:space="preserve">
+    <value>Vill du ställa in alla på avdelningens status för tillgänglig?</value>
+  </data>
+  <data name="W.personnel.board.ConfirmResetGroup" xml:space="preserve">
+    <value>Vill du ställa in alla i {0} på avdelningens status för tillgänglig?</value>
+  </data>
+  <data name="W.personnel.board.Empty" xml:space="preserve">
+    <value>Ingen personal att visa</value>
+  </data>
+  <data name="W.personnel.board.GroupFilterIgnored" xml:space="preserve">
+    <value>Vissa grupper i den här widgetens inställningar finns inte längre och ignorerades.</value>
+  </data>
+  <data name="W.personnel.board.GroupMeta" xml:space="preserve">
+    <value>{0} personal · {1} upptagna</value>
+  </data>
+  <data name="W.personnel.board.ProtectedNote" xml:space="preserve">
+    <value>Skyddad anteckning</value>
+  </data>
+  <data name="W.personnel.board.Reset" xml:space="preserve">
+    <value>Återställ</value>
+  </data>
+  <data name="W.personnel.board.ResetAllDone" xml:space="preserve">
+    <value>Alla har ställts in som tillgängliga</value>
+  </data>
+  <data name="W.personnel.board.ResetAllOption" xml:space="preserve">
+    <value>Alla</value>
+  </data>
+  <data name="W.personnel.board.ResetFailed" xml:space="preserve">
+    <value>Statusarna kunde inte återställas.</value>
+  </data>
+  <data name="W.personnel.board.ResetGroupDone" xml:space="preserve">
+    <value>Alla i {0} har ställts in som tillgängliga</value>
+  </data>
+  <data name="W.personnel.board.ResetLabel" xml:space="preserve">
+    <value>Återställ status för</value>
+  </data>
+  <data name="W.personnel.board.ResetPlaceholder" xml:space="preserve">
+    <value>Återställ statusar…</value>
+  </data>
+  <data name="W.personnel.board.Ungrouped" xml:space="preserve">
+    <value>Utan grupp</value>
+  </data>
+  <data name="W.personnel.board.YourGroup" xml:space="preserve">
+    <value>Din grupp</value>
+  </data>
+  <data name="W.personnel.myStatus.Calls" xml:space="preserve">
+    <value>Larm</value>
+  </data>
+  <data name="W.personnel.myStatus.Failed" xml:space="preserve">
+    <value>Det gick inte att spara. Försök igen.</value>
+  </data>
+  <data name="W.personnel.myStatus.NoteRequired" xml:space="preserve">
+    <value>{0} kräver en anteckning.</value>
+  </data>
+  <data name="W.personnel.myStatus.Respond" xml:space="preserve">
+    <value>Ryck ut</value>
+  </data>
+  <data name="W.personnel.myStatus.RespondLabel" xml:space="preserve">
+    <value>Ryck ut till ett larm eller en station</value>
+  </data>
+  <data name="W.personnel.myStatus.RespondPlaceholder" xml:space="preserve">
+    <value>Ryck ut till ett larm eller en station…</value>
+  </data>
+  <data name="W.personnel.myStatus.Responding" xml:space="preserve">
+    <value>Rycker ut till {0}</value>
+  </data>
+  <data name="W.personnel.myStatus.Set" xml:space="preserve">
+    <value>Ange</value>
+  </data>
+  <data name="W.personnel.myStatus.Staffing" xml:space="preserve">
+    <value>Bemanning</value>
+  </data>
+  <data name="W.personnel.myStatus.StaffingLabel" xml:space="preserve">
+    <value>Beredskapsnivå</value>
+  </data>
+  <data name="W.personnel.myStatus.StaffingNoteEncrypted" xml:space="preserve">
+    <value>Anteckning (sparas krypterad)</value>
+  </data>
+  <data name="W.personnel.myStatus.StaffingNoteLabel" xml:space="preserve">
+    <value>Bemanningsanteckning</value>
+  </data>
+  <data name="W.personnel.myStatus.StaffingNotePlaceholder" xml:space="preserve">
+    <value>Anteckning (valfritt)</value>
+  </data>
+  <data name="W.personnel.myStatus.StaffingSet" xml:space="preserve">
+    <value>Beredskapsnivå ändrad till {0}</value>
+  </data>
+  <data name="W.personnel.myStatus.Stations" xml:space="preserve">
+    <value>Stationer</value>
+  </data>
+  <data name="W.personnel.myStatus.StatusButtons" xml:space="preserve">
+    <value>Ange din status</value>
+  </data>
+  <data name="W.personnel.myStatus.StatusNoteLabel" xml:space="preserve">
+    <value>Statusanteckning</value>
+  </data>
+  <data name="W.personnel.myStatus.StatusNotePlaceholder" xml:space="preserve">
+    <value>Statusanteckning (valfritt)</value>
+  </data>
+  <data name="W.personnel.myStatus.StatusSet" xml:space="preserve">
+    <value>Status ändrad till {0}</value>
+  </data>
+  <data name="W.personnel.staffingSummary.AvailableOf" xml:space="preserve">
+    <value>tillgängliga av {0} medlemmar</value>
+  </data>
+  <data name="W.personnel.staffingSummary.ByGroup" xml:space="preserve">
+    <value>Per grupp</value>
+  </data>
+  <data name="W.personnel.staffingSummary.Empty" xml:space="preserve">
+    <value>Ingen personal att visa</value>
+  </data>
+  <data name="W.personnel.staffingSummary.GroupAvailable" xml:space="preserve">
+    <value>{0}/{1}</value>
+  </data>
+  <data name="W.personnel.staffingSummary.GroupOnDuty" xml:space="preserve">
+    <value>{0}/{1} · {2} i tjänst</value>
+  </data>
+  <data name="W.personnel.staffingSummary.OnDutyOf" xml:space="preserve">
+    <value>i tjänst av {0} medlemmar</value>
+  </data>
+  <data name="W.personnel.staffingSummary.StackAria" xml:space="preserve">
+    <value>Personal per beredskapsnivå: {0}</value>
+  </data>
+  <data name="W.personnel.statusSummary.Available" xml:space="preserve">
+    <value>Tillgängliga</value>
+  </data>
+  <data name="W.personnel.statusSummary.Committed" xml:space="preserve">
+    <value>Upptagna</value>
+  </data>
+  <data name="W.personnel.statusSummary.CommittedOf" xml:space="preserve">
+    <value>upptagna av {0} medlemmar</value>
+  </data>
+  <data name="W.personnel.statusSummary.Empty" xml:space="preserve">
+    <value>Ingen personal att visa</value>
+  </data>
+  <data name="W.personnel.statusSummary.StackAria" xml:space="preserve">
+    <value>Personal per status: {0}</value>
+  </data>
+  <data name="W.personnel.statusSummary.Unavailable" xml:space="preserve">
+    <value>Ej tillgängliga</value>
+  </data>
+  <data name="W.units.alerts.Acknowledge" xml:space="preserve">
+    <value>Kvittera</value>
+  </data>
+  <data name="W.units.alerts.AcknowledgeTitle" xml:space="preserve">
+    <value>Kvittera {0}</value>
+  </data>
+  <data name="W.units.alerts.Acknowledged" xml:space="preserve">
+    <value>{0} har kvitterats</value>
+  </data>
+  <data name="W.units.alerts.AcknowledgedBy" xml:space="preserve">
+    <value>Kvitterad av {0} {1}</value>
+  </data>
+  <data name="W.units.alerts.Cancel" xml:space="preserve">
+    <value>Avbryt</value>
+  </data>
+  <data name="W.units.alerts.Clear" xml:space="preserve">
+    <value>Rensa</value>
+  </data>
+  <data name="W.units.alerts.ClearTitle" xml:space="preserve">
+    <value>Ta tillbaka kvitteringen</value>
+  </data>
+  <data name="W.units.alerts.Cleared" xml:space="preserve">
+    <value>Kvitteringen för {0} har tagits bort</value>
+  </data>
+  <data name="W.units.alerts.Empty" xml:space="preserve">
+    <value>Alla enheter ligger inom sina tidsgränser för status</value>
+  </data>
+  <data name="W.units.alerts.ForMinutes" xml:space="preserve">
+    <value>I {0}</value>
+  </data>
+  <data name="W.units.alerts.Mute" xml:space="preserve">
+    <value>Tysta</value>
+  </data>
+  <data name="W.units.alerts.MuteFor" xml:space="preserve">
+    <value>Tysta i</value>
+  </data>
+  <data name="W.units.alerts.MuteTitle" xml:space="preserve">
+    <value>Tysta {0}</value>
+  </data>
+  <data name="W.units.alerts.Muted" xml:space="preserve">
+    <value>{0} har tystats</value>
+  </data>
+  <data name="W.units.alerts.MutedByUntilChange" xml:space="preserve">
+    <value>Tystad av {0} tills statusen ändras</value>
+  </data>
+  <data name="W.units.alerts.MutedUntilBy" xml:space="preserve">
+    <value>Tystad av {0} till {1}</value>
+  </data>
+  <data name="W.units.alerts.NoTimers" xml:space="preserve">
+    <value>Inga tidsgränser för status har ställts in</value>
+  </data>
+  <data name="W.units.alerts.NoteLabel" xml:space="preserve">
+    <value>Anteckning</value>
+  </data>
+  <data name="W.units.alerts.NotePlaceholder" xml:space="preserve">
+    <value>Anteckning (valfritt)</value>
+  </data>
+  <data name="W.units.alerts.NotePlaceholderRequired" xml:space="preserve">
+    <value>Orsak (obligatorisk)</value>
+  </data>
+  <data name="W.units.alerts.NoteRequired" xml:space="preserve">
+    <value>En orsak krävs för att kvittera varningen.</value>
+  </data>
+  <data name="W.units.alerts.OnlyMuted" xml:space="preserve">
+    <value>Inga öppna varningar · {0} tystade</value>
+  </data>
+  <data name="W.units.alerts.OverTimer" xml:space="preserve">
+    <value>Över tidsgränsen för status på {0}</value>
+  </data>
+  <data name="W.units.alerts.SaveFailed" xml:space="preserve">
+    <value>Det gick inte att spara. Försök igen.</value>
+  </data>
+  <data name="W.units.alerts.SetUpTimers" xml:space="preserve">
+    <value>Ställ in tidsgränser för status</value>
+  </data>
+  <data name="W.units.alerts.ShowMuted" xml:space="preserve">
+    <value>Visa tystade varningar</value>
+  </data>
+  <data name="W.units.alerts.Someone" xml:space="preserve">
+    <value>någon</value>
+  </data>
+  <data name="W.units.alerts.StatusChanged" xml:space="preserve">
+    <value>Enhetens status ändrades; varningen uppdaterades.</value>
+  </data>
+  <data name="W.units.alerts.UntilStatusChanges" xml:space="preserve">
+    <value>Tills statusen ändras</value>
+  </data>
+  <data name="W.units.routes.Acknowledge" xml:space="preserve">
+    <value>Kvittera</value>
+  </data>
+  <data name="W.units.routes.AcknowledgeFailed" xml:space="preserve">
+    <value>Avvikelsen kunde inte kvitteras.</value>
+  </data>
+  <data name="W.units.routes.Acknowledged" xml:space="preserve">
+    <value>Avvikelse kvitterad</value>
+  </data>
+  <data name="W.units.routes.DeviationCount" xml:space="preserve">
+    <value>{0} avvikelser</value>
+  </data>
+  <data name="W.units.routes.Deviations" xml:space="preserve">
+    <value>Avvikelser ({0})</value>
+  </data>
+  <data name="W.units.routes.Empty" xml:space="preserve">
+    <value>Inga pågående rutter</value>
+  </data>
+  <data name="W.units.routes.InProgress" xml:space="preserve">
+    <value>Pågående ({0})</value>
+  </data>
+  <data name="W.units.routes.Kilometres" xml:space="preserve">
+    <value>{0} km</value>
+  </data>
+  <data name="W.units.routes.Metres" xml:space="preserve">
+    <value>{0} m</value>
+  </data>
+  <data name="W.units.routes.OffRoute" xml:space="preserve">
+    <value>{0} · utanför rutten {1}</value>
+  </data>
+  <data name="W.units.routes.OpenRoutes" xml:space="preserve">
+    <value>Öppna aktiva rutter</value>
+  </data>
+  <data name="W.units.routes.Paused" xml:space="preserve">
+    <value>Pausad</value>
+  </data>
+  <data name="W.units.routes.Route" xml:space="preserve">
+    <value>Rutt</value>
+  </data>
+  <data name="W.units.routes.Started" xml:space="preserve">
+    <value>startade {0}</value>
+  </data>
+  <data name="W.units.routes.Stops" xml:space="preserve">
+    <value>{0}/{1} stopp</value>
+  </data>
+  <data name="W.units.status.AllAvailable" xml:space="preserve">
+    <value>Alla enheter är tillgängliga</value>
+  </data>
+  <data name="W.units.status.AllUnits" xml:space="preserve">
+    <value>Alla enheter</value>
+  </data>
+  <data name="W.units.status.Caption" xml:space="preserve">
+    <value>Enhetsstatus</value>
+  </data>
+  <data name="W.units.status.ChangeSettings" xml:space="preserve">
+    <value>Ändra inställningar</value>
+  </data>
+  <data name="W.units.status.ColCrew" xml:space="preserve">
+    <value>Besättning</value>
+  </data>
+  <data name="W.units.status.ColDestination" xml:space="preserve">
+    <value>Destination</value>
+  </data>
+  <data name="W.units.status.ColFor" xml:space="preserve">
+    <value>Tid</value>
+  </data>
+  <data name="W.units.status.ColNote" xml:space="preserve">
+    <value>Anteckning</value>
+  </data>
+  <data name="W.units.status.ColStation" xml:space="preserve">
+    <value>Station</value>
+  </data>
+  <data name="W.units.status.ColStatus" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="W.units.status.ColUnit" xml:space="preserve">
+    <value>Enhet</value>
+  </data>
+  <data name="W.units.status.CrewTitle" xml:space="preserve">
+    <value>{0} placerade</value>
+  </data>
+  <data name="W.units.status.Empty" xml:space="preserve">
+    <value>Inga enheter att visa</value>
+  </data>
+  <data name="W.units.status.GroupMeta" xml:space="preserve">
+    <value>{0} enheter · {1} tillgängliga</value>
+  </data>
+  <data name="W.units.status.HiddenAvailable" xml:space="preserve">
+    <value>{0} tillgängliga enheter dolda</value>
+  </data>
+  <data name="W.units.status.NoStation" xml:space="preserve">
+    <value>Ingen station</value>
+  </data>
+  <data name="W.units.status.NoStatus" xml:space="preserve">
+    <value>Ingen status</value>
+  </data>
+  <data name="W.units.status.NoType" xml:space="preserve">
+    <value>Ingen typ</value>
+  </data>
+  <data name="W.units.status.OpenUnits" xml:space="preserve">
+    <value>Öppna enheter</value>
+  </data>
+  <data name="W.units.status.ProtectedNote" xml:space="preserve">
+    <value>Skyddad anteckning</value>
+  </data>
+  <data name="W.units.status.StationFilterIgnored" xml:space="preserve">
+    <value>Stationen i den här widgetens inställningar finns inte längre, så alla enheter visas.</value>
+  </data>
+  <data name="W.units.summary.Available" xml:space="preserve">
+    <value>Tillgängliga</value>
+  </data>
+  <data name="W.units.summary.AvailableOf" xml:space="preserve">
+    <value>tillgängliga enheter</value>
+  </data>
+  <data name="W.units.summary.Committed" xml:space="preserve">
+    <value>Engagerade</value>
+  </data>
+  <data name="W.units.summary.DonutAria" xml:space="preserve">
+    <value>Enheter per status: {0}</value>
+  </data>
+  <data name="W.units.summary.Empty" xml:space="preserve">
+    <value>Inga enheter att visa</value>
+  </data>
+  <data name="W.units.summary.NoStatus" xml:space="preserve">
+    <value>Ingen status</value>
+  </data>
+  <data name="W.units.summary.OpenUnits" xml:space="preserve">
+    <value>Öppna enheter</value>
+  </data>
+  <data name="W.units.summary.OutOfService" xml:space="preserve">
+    <value>Ur drift</value>
+  </data>
+  <data name="W.units.summary.Units" xml:space="preserve">
+    <value>enheter</value>
+  </data>
+  <data name="W.units.summary.InServiceLine" xml:space="preserve">
+    <value>{0} i drift · {1} ur drift</value>
+  </data>
+  <data name="W.personnel.statusSummary.AvailableLine" xml:space="preserve">
+    <value>{0} tillgängliga · {1} ej tillgängliga</value>
+  </data>
+  <data name="W.personnel.myStatus.RespondTo" xml:space="preserve">
+    <value>Ryck ut…</value>
+  </data>
+  <data name="W.personnel.myStatus.Since" xml:space="preserve">
+    <value>sedan {0}</value>
+  </data>
+</root>

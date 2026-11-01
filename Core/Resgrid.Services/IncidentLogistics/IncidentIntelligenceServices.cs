@@ -116,6 +116,9 @@ namespace Resgrid.Services.IncidentLogistics
 		private readonly IIncidentBackOfficeSettingsService _settings;
 		private readonly IIncidentEventPublisher _publisher;
 		private readonly IncidentAlertLatch _latch;
+		private readonly IIncidentLedgerRepository<CoordinationBoard> _boards;
+		private readonly IIncidentLedgerRepository<CoordinationBoardLane> _lanes;
+		private readonly IIncidentLedgerRepository<CoordinationShareGrant> _shares;
 
 		public IncidentOperationalIntelligenceService(IIncidentLedgerRepository<IncidentParticipant> participants, IIncidentLedgerRepository<IncidentResource> resources,
 			IIncidentLedgerRepository<IncidentResourceRequest> requests, IIncidentLedgerRepository<IncidentRequestFill> fills,
@@ -123,8 +126,12 @@ namespace Resgrid.Services.IncidentLogistics
 			IIncidentLedgerRepository<IncidentServiceRequest> services, IIncidentLedgerRepository<IncidentDemobPlan> demob,
 			IIncidentLedgerRepository<IncidentOperationalSnapshot> snapshots, IIncidentLedgerRepository<IncidentMetricValue> metrics,
 			IIncidentLedgerRepository<IncidentPositionAssignment> assignments, IIncidentLedgerRepository<IncidentPositionDefinition> positions,
-			IIncidentLedgerRepository<IncidentActivation> activations, IIncidentBackOfficeSettingsService settings, IIncidentEventPublisher publisher, IncidentAlertLatch latch)
+			IIncidentLedgerRepository<IncidentActivation> activations, IIncidentBackOfficeSettingsService settings, IIncidentEventPublisher publisher, IncidentAlertLatch latch,
+			IIncidentLedgerRepository<CoordinationBoard> boards, IIncidentLedgerRepository<CoordinationBoardLane> lanes, IIncidentLedgerRepository<CoordinationShareGrant> shares)
 		{
+			_boards = boards;
+			_lanes = lanes;
+			_shares = shares;
 			_participants = participants;
 			_resources = resources;
 			_requests = requests;
@@ -200,6 +207,45 @@ namespace Resgrid.Services.IncidentLogistics
 
 			summary.Values["service.open"] = await _services.CountAsync(departmentId, In(activationId).WhereIn("Status",
 				new[] { (int)IncidentServiceRequestStatuses.Open, (int)IncidentServiceRequestStatuses.Assigned, (int)IncidentServiceRequestStatuses.InProgress, (int)IncidentServiceRequestStatuses.OnHold }), cancellationToken);
+			return summary;
+		}
+
+		public async Task<IncidentCoordinationSummary> GetCoordinationSummaryAsync(IncidentActor actor, int take, CancellationToken cancellationToken = default)
+		{
+			var departmentId = actor.DepartmentId;
+			var boards = (await _boards.ListAsync(departmentId, new IncidentLedgerQuery { Take = 500 }.Where("IsArchived", false).Order("AddedOn", true), cancellationToken)).ToList();
+			var summary = new IncidentCoordinationSummary { Boards = boards.Count };
+			if (boards.Count == 0)
+				return summary;
+
+			var ids = boards.Select(b => b.CoordinationBoardId).ToList();
+			var now = DateTime.UtcNow;
+			var lanes = (await _lanes.ListAsync(departmentId, new IncidentLedgerQuery { Take = 5000 }.WhereIn("CoordinationBoardId", ids), cancellationToken))
+				.GroupBy(l => l.CoordinationBoardId, StringComparer.OrdinalIgnoreCase).ToDictionary(g => g.Key, g => g.ToList(), StringComparer.OrdinalIgnoreCase);
+			var shares = (await _shares.ListAsync(departmentId, new IncidentLedgerQuery { Take = 5000 }.WhereIn("CoordinationBoardId", ids).WhereNull("RevokedOn").Between("ExpiresOn", now, null), cancellationToken))
+				.GroupBy(s => s.CoordinationBoardId ?? string.Empty, StringComparer.OrdinalIgnoreCase).ToDictionary(g => g.Key, g => g.Count(), StringComparer.OrdinalIgnoreCase);
+
+			var rows = boards.Select(board =>
+			{
+				var boardLanes = lanes.TryGetValue(board.CoordinationBoardId, out var found) ? found : new List<CoordinationBoardLane>();
+				var updated = new[] { board.EditedOn ?? board.AddedOn }.Concat(boardLanes.Where(l => l.LastSourceOn.HasValue).Select(l => l.LastSourceOn.Value)).Max();
+				return new IncidentCoordinationBoardRow
+				{
+					CoordinationBoardId = board.CoordinationBoardId,
+					Name = board.Name,
+					IncidentActivationId = board.IncidentActivationId,
+					Scope = board.Scope,
+					IsFrozen = board.IsFrozen,
+					Lanes = boardLanes.Count,
+					StaleLanes = boardLanes.Count(l => l.StaleSince.HasValue),
+					ActiveShares = shares.TryGetValue(board.CoordinationBoardId, out var count) ? count : 0,
+					LastUpdateOn = updated
+				};
+			}).ToList();
+
+			summary.StaleLanes = rows.Sum(r => r.StaleLanes);
+			summary.ActiveShares = rows.Sum(r => r.ActiveShares);
+			summary.Recent = rows.OrderByDescending(r => r.LastUpdateOn).Take(Math.Clamp(take, 1, 50)).ToList();
 			return summary;
 		}
 

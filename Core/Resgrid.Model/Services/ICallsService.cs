@@ -504,5 +504,11 @@ namespace Resgrid.Model.Services
 		/// <param name="departmentId">The department to scope the search to.</param>
 		/// <returns>Active calls with check-in timers dispatched to the user.</returns>
 		Task<List<Call>> GetActiveCallsWithCheckInTimersForUserAsync(string userId, int departmentId);
+
+		/// <summary>
+		/// Unit and personnel dispatch counts for the department's dispatched active calls, keyed by call id, in one grouped
+		/// query (the home dashboard's Active Calls widget; no dispatch rows are loaded).
+		/// </summary>
+		Task<Dictionary<int, CallDispatchCounts>> GetActiveCallDispatchCountsAsync(int departmentId, CancellationToken cancellationToken = default(CancellationToken));
 	}
 }

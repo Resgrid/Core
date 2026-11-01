@@ -49,6 +49,19 @@ var resgrid;
                 resgrid.common.analytics.register(userId, departmentId, fullName, email, departmentName, createdOn);
                 resgrid.common.analytics.track('Dashboard');
                 resgrid.common.signalr.init(null, reloadPersonnelTable, reloadPersonnelTable, null);
+                // Switch to the widget dashboard (home-dashboard-redesign-plan.md D10); shown only when it is enabled.
+                $('#tryModernDashboard').on('click', function () {
+                    var url = $(this).data('url');
+                    $.ajax({
+                        url: url,
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ UseClassic: false }),
+                        headers: { 'RequestVerificationToken': getAntiForgeryToken() }
+                    }).done(function (result) {
+                        window.location.href = (result && result.Redirect) ? result.Redirect : '/User/Home/Dashboard';
+                    });
+                });
                 // Load content into Bootstrap modals
                 $('#respondToACallWindow').on('show.bs.modal', function () {
                     var $body = $(this).find('.modal-body');

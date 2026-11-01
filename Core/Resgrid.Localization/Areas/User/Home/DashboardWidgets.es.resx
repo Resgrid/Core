@@ -1,0 +1,4014 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="W.department.info.Title" xml:space="preserve">
+    <value>Información del departamento</value>
+  </data>
+  <data name="W.department.info.Description" xml:space="preserve">
+    <value>El ID, el código y el número para llamadas por texto de su departamento.</value>
+  </data>
+  <data name="W.department.info.DepartmentId" xml:space="preserve">
+    <value>ID del departamento</value>
+  </data>
+  <data name="W.department.info.DepartmentCode" xml:space="preserve">
+    <value>Código del departamento</value>
+  </data>
+  <data name="W.department.info.TextToCall" xml:space="preserve">
+    <value>Número para llamadas por texto</value>
+  </data>
+  <data name="W.department.info.NotSet" xml:space="preserve">
+    <value>Sin definir</value>
+  </data>
+  <data name="W.map.operations.Title" xml:space="preserve">
+    <value>Mapa de operaciones</value>
+  </data>
+  <data name="W.map.operations.Description" xml:space="preserve">
+    <value>Mapa en vivo de llamadas activas, unidades, personal y estaciones, con puntos de interés y capas del mapa.</value>
+  </data>
+  <data name="W.map.operations.Setting.showCalls" xml:space="preserve">
+    <value>Mostrar llamadas</value>
+  </data>
+  <data name="W.map.operations.Setting.showUnits" xml:space="preserve">
+    <value>Mostrar unidades</value>
+  </data>
+  <data name="W.map.operations.Setting.showPersonnel" xml:space="preserve">
+    <value>Mostrar personal</value>
+  </data>
+  <data name="W.map.operations.Setting.showStations" xml:space="preserve">
+    <value>Mostrar estaciones</value>
+  </data>
+  <data name="W.map.operations.Setting.showPois" xml:space="preserve">
+    <value>Mostrar puntos de interés</value>
+  </data>
+  <data name="W.map.operations.Setting.showLayers" xml:space="preserve">
+    <value>Mostrar las capas del mapa del departamento</value>
+  </data>
+  <data name="W.map.operations.Setting.zoom" xml:space="preserve">
+    <value>Nivel de zoom (0 = predeterminado del departamento)</value>
+  </data>
+  <data name="W.map.operations.Empty" xml:space="preserve">
+    <value>No hay nada para mostrar en el mapa por ahora.</value>
+  </data>
+  <data name="W.map.operations.Legend" xml:space="preserve">
+    <value>Leyenda</value>
+  </data>
+  <data name="W.map.operations.Recenter" xml:space="preserve">
+    <value>Recentrar mapa</value>
+  </data>
+  <data name="W.map.visualization.Title" xml:space="preserve">
+    <value>Visualización guardada</value>
+  </data>
+  <data name="W.map.visualization.Description" xml:space="preserve">
+    <value>Una de sus visualizaciones de mapa guardadas, como un mapa de calor de llamadas o una capa de cobertura.</value>
+  </data>
+  <data name="W.map.visualization.Setting.visualization" xml:space="preserve">
+    <value>Visualización</value>
+  </data>
+  <data name="W.map.visualization.NotConfigured" xml:space="preserve">
+    <value>Elija una visualización guardada en la configuración de este widget.</value>
+  </data>
+  <data name="W.map.visualization.NotFound" xml:space="preserve">
+    <value>Esta visualización se eliminó o ya no se comparte con usted.</value>
+  </data>
+  <data name="W.map.visualization.Shared" xml:space="preserve">
+    <value>Compartida</value>
+  </data>
+  <data name="W.map.visualization.Truncated" xml:space="preserve">
+    <value>Se muestra solo una parte de los datos. Abra la visualización para verlos todos.</value>
+  </data>
+  <data name="W.weather.current.Title" xml:space="preserve">
+    <value>Clima</value>
+  </data>
+  <data name="W.weather.current.Description" xml:space="preserve">
+    <value>Condiciones actuales y pronóstico de los próximos días para su departamento.</value>
+  </data>
+  <data name="W.weather.current.Setting.units" xml:space="preserve">
+    <value>Unidades</value>
+  </data>
+  <data name="W.weather.current.Option.imperial" xml:space="preserve">
+    <value>Imperial (°F, mph)</value>
+  </data>
+  <data name="W.weather.current.Option.metric" xml:space="preserve">
+    <value>Métrico (°C, m/s)</value>
+  </data>
+  <data name="W.weather.current.Unavailable" xml:space="preserve">
+    <value>El clima no está disponible. Defina el centro del mapa o la dirección de su departamento para verlo.</value>
+  </data>
+  <data name="W.weather.current.FeelsLike" xml:space="preserve">
+    <value>Sensación térmica de {0}</value>
+  </data>
+  <data name="W.weather.current.Humidity" xml:space="preserve">
+    <value>Humedad</value>
+  </data>
+  <data name="W.weather.current.Wind" xml:space="preserve">
+    <value>Viento</value>
+  </data>
+  <data name="W.weather.current.Today" xml:space="preserve">
+    <value>Hoy</value>
+  </data>
+  <data name="W.weather.current.Precipitation" xml:space="preserve">
+    <value>{0}% de probabilidad de precipitación</value>
+  </data>
+  <data name="W.weather.current.UpdatedAt" xml:space="preserve">
+    <value>Actualizado {0}</value>
+  </data>
+  <data name="W.weather.current.Condition.Clear" xml:space="preserve">
+    <value>Despejado</value>
+  </data>
+  <data name="W.weather.current.Condition.Clouds" xml:space="preserve">
+    <value>Nublado</value>
+  </data>
+  <data name="W.weather.current.Condition.Rain" xml:space="preserve">
+    <value>Lluvia</value>
+  </data>
+  <data name="W.weather.current.Condition.Drizzle" xml:space="preserve">
+    <value>Llovizna</value>
+  </data>
+  <data name="W.weather.current.Condition.Thunderstorm" xml:space="preserve">
+    <value>Tormenta eléctrica</value>
+  </data>
+  <data name="W.weather.current.Condition.Snow" xml:space="preserve">
+    <value>Nieve</value>
+  </data>
+  <data name="W.weather.current.Condition.Mist" xml:space="preserve">
+    <value>Neblina</value>
+  </data>
+  <data name="W.weather.current.Condition.Fog" xml:space="preserve">
+    <value>Niebla</value>
+  </data>
+  <data name="W.weather.current.Condition.Haze" xml:space="preserve">
+    <value>Bruma</value>
+  </data>
+  <data name="W.weather.current.Condition.Smoke" xml:space="preserve">
+    <value>Humo</value>
+  </data>
+  <data name="W.weather.current.Condition.Dust" xml:space="preserve">
+    <value>Polvo</value>
+  </data>
+  <data name="W.weather.current.Condition.Unknown" xml:space="preserve">
+    <value>Desconocido</value>
+  </data>
+  <data name="W.weather.alerts.Title" xml:space="preserve">
+    <value>Alertas meteorológicas</value>
+  </data>
+  <data name="W.weather.alerts.Description" xml:space="preserve">
+    <value>Alertas meteorológicas activas en las áreas de su departamento, las más graves primero.</value>
+  </data>
+  <data name="W.weather.alerts.Setting.minSeverity" xml:space="preserve">
+    <value>Mostrar alertas</value>
+  </data>
+  <data name="W.weather.alerts.Setting.maxItems" xml:space="preserve">
+    <value>Máximo de alertas en la lista</value>
+  </data>
+  <data name="W.weather.alerts.Option.all" xml:space="preserve">
+    <value>Todas las severidades</value>
+  </data>
+  <data name="W.weather.alerts.Option.extreme" xml:space="preserve">
+    <value>Solo extremas</value>
+  </data>
+  <data name="W.weather.alerts.Option.severe" xml:space="preserve">
+    <value>Graves o superiores</value>
+  </data>
+  <data name="W.weather.alerts.Option.moderate" xml:space="preserve">
+    <value>Moderadas o superiores</value>
+  </data>
+  <data name="W.weather.alerts.Empty" xml:space="preserve">
+    <value>No hay alertas meteorológicas activas.</value>
+  </data>
+  <data name="W.weather.alerts.Severity.extreme" xml:space="preserve">
+    <value>Extrema</value>
+  </data>
+  <data name="W.weather.alerts.Severity.severe" xml:space="preserve">
+    <value>Grave</value>
+  </data>
+  <data name="W.weather.alerts.Severity.moderate" xml:space="preserve">
+    <value>Moderada</value>
+  </data>
+  <data name="W.weather.alerts.Severity.minor" xml:space="preserve">
+    <value>Menor</value>
+  </data>
+  <data name="W.weather.alerts.Severity.unknown" xml:space="preserve">
+    <value>Desconocida</value>
+  </data>
+  <data name="W.weather.alerts.Expires" xml:space="preserve">
+    <value>Vence {0}</value>
+  </data>
+  <data name="W.weather.alerts.More" xml:space="preserve">
+    <value>{0} más</value>
+  </data>
+  <data name="W.general.clock.Title" xml:space="preserve">
+    <value>Reloj</value>
+  </data>
+  <data name="W.general.clock.Description" xml:space="preserve">
+    <value>La hora del departamento, la hora UTC y su hora local.</value>
+  </data>
+  <data name="W.general.clock.Setting.format" xml:space="preserve">
+    <value>Formato de hora</value>
+  </data>
+  <data name="W.general.clock.Setting.showSeconds" xml:space="preserve">
+    <value>Mostrar segundos</value>
+  </data>
+  <data name="W.general.clock.Setting.showUtc" xml:space="preserve">
+    <value>Mostrar UTC</value>
+  </data>
+  <data name="W.general.clock.Setting.showLocal" xml:space="preserve">
+    <value>Mostrar mi hora local</value>
+  </data>
+  <data name="W.general.clock.Option.auto" xml:space="preserve">
+    <value>Automático</value>
+  </data>
+  <data name="W.general.clock.Option.12h" xml:space="preserve">
+    <value>12 horas</value>
+  </data>
+  <data name="W.general.clock.Option.24h" xml:space="preserve">
+    <value>24 horas</value>
+  </data>
+  <data name="W.general.clock.Department" xml:space="preserve">
+    <value>Departamento</value>
+  </data>
+  <data name="W.general.clock.Utc" xml:space="preserve">
+    <value>UTC</value>
+  </data>
+  <data name="W.general.clock.Local" xml:space="preserve">
+    <value>Mi hora</value>
+  </data>
+  <data name="W.messages.inbox.Title" xml:space="preserve">
+    <value>Bandeja de entrada</value>
+  </data>
+  <data name="W.messages.inbox.Description" xml:space="preserve">
+    <value>Sus mensajes sin leer, los más recientes primero.</value>
+  </data>
+  <data name="W.messages.inbox.Setting.maxItems" xml:space="preserve">
+    <value>Máximo de mensajes en la lista</value>
+  </data>
+  <data name="W.messages.inbox.Unread" xml:space="preserve">
+    <value>Sin leer</value>
+  </data>
+  <data name="W.messages.inbox.Empty" xml:space="preserve">
+    <value>No hay mensajes sin leer.</value>
+  </data>
+  <data name="W.messages.inbox.Compose" xml:space="preserve">
+    <value>Redactar</value>
+  </data>
+  <data name="W.messages.inbox.System" xml:space="preserve">
+    <value>Sistema</value>
+  </data>
+  <data name="W.messages.inbox.ProtectedSubject" xml:space="preserve">
+    <value>Mensaje protegido</value>
+  </data>
+  <data name="W.messages.inbox.Callback" xml:space="preserve">
+    <value>Llamar de vuelta</value>
+  </data>
+  <data name="W.messages.inbox.Poll" xml:space="preserve">
+    <value>Encuesta</value>
+  </data>
+  <data name="W.chat.unread.Title" xml:space="preserve">
+    <value>Chat</value>
+  </data>
+  <data name="W.chat.unread.Description" xml:space="preserve">
+    <value>Canales de chat con mensajes sin leer y mensajes urgentes que esperan su acuse de recibo.</value>
+  </data>
+  <data name="W.chat.unread.Setting.maxItems" xml:space="preserve">
+    <value>Máximo de canales en la lista</value>
+  </data>
+  <data name="W.chat.unread.Empty" xml:space="preserve">
+    <value>Está al día.</value>
+  </data>
+  <data name="W.chat.unread.UnreadTotal" xml:space="preserve">
+    <value>Mensajes sin leer</value>
+  </data>
+  <data name="W.chat.unread.PendingAcks" xml:space="preserve">
+    <value>Esperando acuse de recibo</value>
+  </data>
+  <data name="W.chat.unread.DirectMessage" xml:space="preserve">
+    <value>Mensaje directo</value>
+  </data>
+  <data name="W.chat.unread.OpenChat" xml:space="preserve">
+    <value>Abrir chat</value>
+  </data>
+  <data name="W.chat.moderation.Title" xml:space="preserve">
+    <value>Cola de moderación</value>
+  </data>
+  <data name="W.chat.moderation.Description" xml:space="preserve">
+    <value>Reportes de chat abiertos en espera de revisión.</value>
+  </data>
+  <data name="W.chat.moderation.Setting.maxItems" xml:space="preserve">
+    <value>Máximo de reportes en la lista</value>
+  </data>
+  <data name="W.chat.moderation.Empty" xml:space="preserve">
+    <value>No hay reportes abiertos.</value>
+  </data>
+  <data name="W.chat.moderation.OpenFlags" xml:space="preserve">
+    <value>Reportes abiertos</value>
+  </data>
+  <data name="W.chat.moderation.Oldest" xml:space="preserve">
+    <value>El más antiguo: {0}</value>
+  </data>
+  <data name="W.chat.moderation.CountCapped" xml:space="preserve">
+    <value>{0}+</value>
+  </data>
+  <data name="W.chat.moderation.UnknownChannel" xml:space="preserve">
+    <value>Canal desconocido</value>
+  </data>
+  <data name="W.chat.moderation.Reason.other" xml:space="preserve">
+    <value>Otro</value>
+  </data>
+  <data name="W.chat.moderation.Reason.inappropriate" xml:space="preserve">
+    <value>Inapropiado</value>
+  </data>
+  <data name="W.chat.moderation.Reason.harassment" xml:space="preserve">
+    <value>Acoso</value>
+  </data>
+  <data name="W.chat.moderation.Reason.spam" xml:space="preserve">
+    <value>Spam</value>
+  </data>
+  <data name="W.chat.moderation.Reason.sensitiveInformation" xml:space="preserve">
+    <value>Información sensible</value>
+  </data>
+  <data name="W.chat.moderation.Reason.policyViolation" xml:space="preserve">
+    <value>Infracción de las políticas</value>
+  </data>
+  <data name="W.comms.tests.Title" xml:space="preserve">
+    <value>Pruebas de comunicación</value>
+  </data>
+  <data name="W.comms.tests.Description" xml:space="preserve">
+    <value>Ejecuciones recientes de pruebas de comunicación con las tasas de entrega y de respuesta por canal.</value>
+  </data>
+  <data name="W.comms.tests.Setting.maxRuns" xml:space="preserve">
+    <value>Máximo de ejecuciones en la lista</value>
+  </data>
+  <data name="W.comms.tests.Empty" xml:space="preserve">
+    <value>Aún no se ha ejecutado ninguna prueba de comunicación.</value>
+  </data>
+  <data name="W.comms.tests.Tested" xml:space="preserve">
+    <value>Probados</value>
+  </data>
+  <data name="W.comms.tests.Responses" xml:space="preserve">
+    <value>Respuestas</value>
+  </data>
+  <data name="W.comms.tests.ResponseRate" xml:space="preserve">
+    <value>Tasa de respuesta</value>
+  </data>
+  <data name="W.comms.tests.DeliveryRate" xml:space="preserve">
+    <value>Tasa de entrega</value>
+  </data>
+  <data name="W.comms.tests.LatestRun" xml:space="preserve">
+    <value>Última ejecución por canal</value>
+  </data>
+  <data name="W.comms.tests.Suppressed" xml:space="preserve">
+    <value>Suprimidos</value>
+  </data>
+  <data name="W.comms.tests.Status.pending" xml:space="preserve">
+    <value>Pendiente</value>
+  </data>
+  <data name="W.comms.tests.Status.running" xml:space="preserve">
+    <value>En ejecución</value>
+  </data>
+  <data name="W.comms.tests.Status.awaitingResponses" xml:space="preserve">
+    <value>Esperando respuestas</value>
+  </data>
+  <data name="W.comms.tests.Status.completed" xml:space="preserve">
+    <value>Completada</value>
+  </data>
+  <data name="W.comms.tests.Status.failed" xml:space="preserve">
+    <value>Fallida</value>
+  </data>
+  <data name="W.comms.tests.Channel.sms" xml:space="preserve">
+    <value>SMS</value>
+  </data>
+  <data name="W.comms.tests.Channel.email" xml:space="preserve">
+    <value>Correo electrónico</value>
+  </data>
+  <data name="W.comms.tests.Channel.voice" xml:space="preserve">
+    <value>Voz</value>
+  </data>
+  <data name="W.comms.tests.Channel.push" xml:space="preserve">
+    <value>Push</value>
+  </data>
+  <data name="W.comms.tests.Channel.other" xml:space="preserve">
+    <value>Otro</value>
+  </data>
+  <data name="W.voice.ptt.Title" xml:space="preserve">
+    <value>Push-To-Talk</value>
+  </data>
+  <data name="W.voice.ptt.Description" xml:space="preserve">
+    <value>Los canales Push-To-Talk de su departamento y cuántos puestos están en uso.</value>
+  </data>
+  <data name="W.voice.ptt.Empty" xml:space="preserve">
+    <value>No hay canales Push-To-Talk configurados.</value>
+  </data>
+  <data name="W.voice.ptt.Seats" xml:space="preserve">
+    <value>{0} de {1} puestos en uso</value>
+  </data>
+  <data name="W.voice.ptt.UtilizationUnavailable" xml:space="preserve">
+    <value>El uso de puestos no está disponible por ahora.</value>
+  </data>
+  <data name="W.voice.ptt.Default" xml:space="preserve">
+    <value>Predeterminado</value>
+  </data>
+  <data name="W.voice.ptt.Incident" xml:space="preserve">
+    <value>Canal de incidente</value>
+  </data>
+  <data name="W.calendar.agenda.Title" xml:space="preserve">
+    <value>Próximos eventos</value>
+  </data>
+  <data name="W.calendar.agenda.Description" xml:space="preserve">
+    <value>Los próximos días del calendario de su departamento, con su estado de inscripción y de registro de entrada.</value>
+  </data>
+  <data name="W.calendar.agenda.Setting.days" xml:space="preserve">
+    <value>Días por adelantado</value>
+  </data>
+  <data name="W.calendar.agenda.Setting.types" xml:space="preserve">
+    <value>Tipos de evento</value>
+  </data>
+  <data name="W.calendar.agenda.Setting.maxItems" xml:space="preserve">
+    <value>Máximo de eventos en la lista</value>
+  </data>
+  <data name="W.calendar.agenda.Empty" xml:space="preserve">
+    <value>No hay eventos próximos.</value>
+  </data>
+  <data name="W.calendar.agenda.AllDay" xml:space="preserve">
+    <value>Todo el día</value>
+  </data>
+  <data name="W.calendar.agenda.Attending" xml:space="preserve">
+    <value>Asistirá</value>
+  </data>
+  <data name="W.calendar.agenda.Required" xml:space="preserve">
+    <value>Obligatorio</value>
+  </data>
+  <data name="W.calendar.agenda.Optional" xml:space="preserve">
+    <value>Opcional</value>
+  </data>
+  <data name="W.calendar.agenda.NotAttending" xml:space="preserve">
+    <value>No asistirá</value>
+  </data>
+  <data name="W.calendar.agenda.SignUp" xml:space="preserve">
+    <value>Inscribirse</value>
+  </data>
+  <data name="W.calendar.agenda.CheckedIn" xml:space="preserve">
+    <value>Entrada registrada</value>
+  </data>
+  <data name="W.calendar.agenda.CheckedOut" xml:space="preserve">
+    <value>Salida registrada</value>
+  </data>
+  <data name="W.calendar.agenda.Today" xml:space="preserve">
+    <value>Hoy</value>
+  </data>
+  <data name="W.calendar.agenda.Tomorrow" xml:space="preserve">
+    <value>Mañana</value>
+  </data>
+  <data name="W.shifts.today.Title" xml:space="preserve">
+    <value>Turnos de hoy</value>
+  </data>
+  <data name="W.shifts.today.Description" xml:space="preserve">
+    <value>Los turnos de hoy con la dotación frente a los requisitos y quién está de servicio por grupo.</value>
+  </data>
+  <data name="W.shifts.today.Empty" xml:space="preserve">
+    <value>No hay turnos hoy.</value>
+  </data>
+  <data name="W.shifts.today.OnDuty" xml:space="preserve">
+    <value>{0} de servicio</value>
+  </data>
+  <data name="W.shifts.today.OpenSlots" xml:space="preserve">
+    <value>{0} vacantes</value>
+  </data>
+  <data name="W.shifts.today.Filled" xml:space="preserve">
+    <value>Cubierto</value>
+  </data>
+  <data name="W.shifts.today.Active" xml:space="preserve">
+    <value>Activo ahora</value>
+  </data>
+  <data name="W.shifts.today.Ended" xml:space="preserve">
+    <value>Finalizado</value>
+  </data>
+  <data name="W.shifts.today.NoGroup" xml:space="preserve">
+    <value>Sin grupo</value>
+  </data>
+  <data name="W.shifts.mine.Title" xml:space="preserve">
+    <value>Mis turnos e intercambios</value>
+  </data>
+  <data name="W.shifts.mine.Description" xml:space="preserve">
+    <value>Sus próximos turnos y las solicitudes de intercambio que le enviaron.</value>
+  </data>
+  <data name="W.shifts.mine.Setting.days" xml:space="preserve">
+    <value>Días por adelantado</value>
+  </data>
+  <data name="W.shifts.mine.Setting.maxItems" xml:space="preserve">
+    <value>Máximo de elementos por lista</value>
+  </data>
+  <data name="W.shifts.mine.Empty" xml:space="preserve">
+    <value>No hay turnos próximos.</value>
+  </data>
+  <data name="W.shifts.mine.Upcoming" xml:space="preserve">
+    <value>Próximos turnos</value>
+  </data>
+  <data name="W.shifts.mine.TradeRequests" xml:space="preserve">
+    <value>Solicitudes de intercambio</value>
+  </data>
+  <data name="W.shifts.mine.AwaitingApproval" xml:space="preserve">
+    <value>Pendiente de aprobación</value>
+  </data>
+  <data name="W.shifts.mine.TradeRequested" xml:space="preserve">
+    <value>Intercambio solicitado</value>
+  </data>
+  <data name="W.shifts.mine.From" xml:space="preserve">
+    <value>De {0}</value>
+  </data>
+  <data name="W.shifts.approvals.Title" xml:space="preserve">
+    <value>Aprobaciones de turnos</value>
+  </data>
+  <data name="W.shifts.approvals.Description" xml:space="preserve">
+    <value>Inscripciones e intercambios de turnos pendientes de su aprobación.</value>
+  </data>
+  <data name="W.shifts.approvals.Setting.maxItems" xml:space="preserve">
+    <value>Máximo de elementos en la lista</value>
+  </data>
+  <data name="W.shifts.approvals.Empty" xml:space="preserve">
+    <value>No hay nada pendiente de su aprobación.</value>
+  </data>
+  <data name="W.shifts.approvals.NotApprover" xml:space="preserve">
+    <value>Usted no aprueba inscripciones ni intercambios de turnos.</value>
+  </data>
+  <data name="W.shifts.approvals.Signups" xml:space="preserve">
+    <value>Inscripciones</value>
+  </data>
+  <data name="W.shifts.approvals.Trades" xml:space="preserve">
+    <value>Intercambios</value>
+  </data>
+  <data name="W.shifts.approvals.Signup" xml:space="preserve">
+    <value>Inscripción</value>
+  </data>
+  <data name="W.shifts.approvals.Trade" xml:space="preserve">
+    <value>Intercambio</value>
+  </data>
+  <data name="W.shifts.approvals.TradeFromTo" xml:space="preserve">
+    <value>{0} a {1}</value>
+  </data>
+  <data name="W.shifts.approvals.Review" xml:space="preserve">
+    <value>Revisar</value>
+  </data>
+  <data name="W.shifts.coverage.Title" xml:space="preserve">
+    <value>Cobertura de dotación</value>
+  </data>
+  <data name="W.shifts.coverage.Description" xml:space="preserve">
+    <value>La dotación de turnos de los próximos días, aprobada o automática, con los turnos sin cubrir resaltados.</value>
+  </data>
+  <data name="W.shifts.coverage.Setting.days" xml:space="preserve">
+    <value>Días por adelantado</value>
+  </data>
+  <data name="W.shifts.coverage.Setting.gapsOnly" xml:space="preserve">
+    <value>Mostrar solo los turnos sin cubrir</value>
+  </data>
+  <data name="W.shifts.coverage.Empty" xml:space="preserve">
+    <value>No hay turnos en este período.</value>
+  </data>
+  <data name="W.shifts.coverage.NotSupervisor" xml:space="preserve">
+    <value>La cobertura de dotación es para supervisores de turnos.</value>
+  </data>
+  <data name="W.shifts.coverage.Gaps" xml:space="preserve">
+    <value>{0} sin cubrir</value>
+  </data>
+  <data name="W.shifts.coverage.Manual" xml:space="preserve">
+    <value>Aprobada</value>
+  </data>
+  <data name="W.shifts.coverage.Automatic" xml:space="preserve">
+    <value>Automática</value>
+  </data>
+  <data name="W.shifts.coverage.People" xml:space="preserve">
+    <value>{0} personas</value>
+  </data>
+  <data name="W.shifts.coverage.Changes" xml:space="preserve">
+    <value>+{0} / -{1}</value>
+  </data>
+  <data name="W.shifts.coverage.StaticShift" xml:space="preserve">
+    <value>Turno estático</value>
+  </data>
+  <data name="W.trainings.mine.Title" xml:space="preserve">
+    <value>Mis capacitaciones</value>
+  </data>
+  <data name="W.trainings.mine.Description" xml:space="preserve">
+    <value>Capacitaciones que se le asignaron y que aún no ha completado.</value>
+  </data>
+  <data name="W.trainings.mine.Setting.maxItems" xml:space="preserve">
+    <value>Máximo de capacitaciones en la lista</value>
+  </data>
+  <data name="W.trainings.mine.Empty" xml:space="preserve">
+    <value>No hay capacitaciones pendientes.</value>
+  </data>
+  <data name="W.trainings.mine.Outstanding" xml:space="preserve">
+    <value>Pendientes</value>
+  </data>
+  <data name="W.trainings.mine.Overdue" xml:space="preserve">
+    <value>Vencidas</value>
+  </data>
+  <data name="W.trainings.mine.Due" xml:space="preserve">
+    <value>Vence {0}</value>
+  </data>
+  <data name="W.trainings.mine.NotStarted" xml:space="preserve">
+    <value>Sin iniciar</value>
+  </data>
+  <data name="W.trainings.mine.InProgress" xml:space="preserve">
+    <value>En curso</value>
+  </data>
+  <data name="W.trainings.mine.QuizFailed" xml:space="preserve">
+    <value>Cuestionario no aprobado</value>
+  </data>
+  <data name="W.documents.recent.Title" xml:space="preserve">
+    <value>Documentos recientes</value>
+  </data>
+  <data name="W.documents.recent.Description" xml:space="preserve">
+    <value>Los documentos más recientes de la biblioteca de su departamento.</value>
+  </data>
+  <data name="W.documents.recent.Setting.category" xml:space="preserve">
+    <value>Categoría</value>
+  </data>
+  <data name="W.documents.recent.Setting.maxItems" xml:space="preserve">
+    <value>Máximo de documentos en la lista</value>
+  </data>
+  <data name="W.documents.recent.Empty" xml:space="preserve">
+    <value>Aún no hay documentos.</value>
+  </data>
+  <data name="W.documents.recent.AdminsOnly" xml:space="preserve">
+    <value>Solo administradores</value>
+  </data>
+  <data name="W.documents.recent.AllCategories" xml:space="preserve">
+    <value>Todas las categorías</value>
+  </data>
+  <data name="W.notes.board.Title" xml:space="preserve">
+    <value>Notas del departamento</value>
+  </data>
+  <data name="W.notes.board.Description" xml:space="preserve">
+    <value>Las notas más recientes del departamento.</value>
+  </data>
+  <data name="W.notes.board.Setting.category" xml:space="preserve">
+    <value>Categoría</value>
+  </data>
+  <data name="W.notes.board.Setting.maxItems" xml:space="preserve">
+    <value>Máximo de notas en la lista</value>
+  </data>
+  <data name="W.notes.board.Setting.hideExpired" xml:space="preserve">
+    <value>Ocultar notas vencidas</value>
+  </data>
+  <data name="W.notes.board.Empty" xml:space="preserve">
+    <value>No hay notas.</value>
+  </data>
+  <data name="W.notes.board.AdminOnly" xml:space="preserve">
+    <value>Solo administradores</value>
+  </data>
+  <data name="W.notes.board.Expires" xml:space="preserve">
+    <value>Vence {0}</value>
+  </data>
+  <data name="W.notes.board.AllCategories" xml:space="preserve">
+    <value>Todas las categorías</value>
+  </data>
+  <data name="W.contacts.preplans.Title" xml:space="preserve">
+    <value>Planes previos por revisar</value>
+  </data>
+  <data name="W.contacts.preplans.Description" xml:space="preserve">
+    <value>Contactos cuya fecha de revisión del plan previo ya pasó.</value>
+  </data>
+  <data name="W.contacts.preplans.Setting.maxItems" xml:space="preserve">
+    <value>Máximo de contactos en la lista</value>
+  </data>
+  <data name="W.contacts.preplans.Empty" xml:space="preserve">
+    <value>No hay planes previos por revisar.</value>
+  </data>
+  <data name="W.contacts.preplans.DaysOverdue" xml:space="preserve">
+    <value>{0} días de atraso</value>
+  </data>
+  <data name="W.contacts.preplans.DueToday" xml:space="preserve">
+    <value>Vence hoy</value>
+  </data>
+  <data name="W.contacts.preplans.ProtectedContact" xml:space="preserve">
+    <value>Contacto protegido</value>
+  </data>
+  <data name="W.links.quick.Title" xml:space="preserve">
+    <value>Vínculos rápidos</value>
+  </data>
+  <data name="W.links.quick.Description" xml:space="preserve">
+    <value>Departamentos que comparten datos con el suyo, además de sus propios vínculos.</value>
+  </data>
+  <data name="W.links.quick.Setting.showDepartmentLinks" xml:space="preserve">
+    <value>Mostrar vínculos de departamentos</value>
+  </data>
+  <data name="W.links.quick.Setting.links" xml:space="preserve">
+    <value>Mis vínculos (uno por línea: Etiqueta | https://…)</value>
+  </data>
+  <data name="W.links.quick.Empty" xml:space="preserve">
+    <value>Aún no hay vínculos. Agregue los suyos en la configuración de este widget.</value>
+  </data>
+  <data name="W.links.quick.DepartmentLinks" xml:space="preserve">
+    <value>Departamentos vinculados</value>
+  </data>
+  <data name="W.links.quick.MyLinks" xml:space="preserve">
+    <value>Mis vínculos</value>
+  </data>
+  <data name="W.links.quick.InvalidLinks" xml:space="preserve">
+    <value>Se omitieron algunas líneas ({0}). Solo se permiten direcciones http y https.</value>
+  </data>
+  <data name="W.links.quick.Shares.calls" xml:space="preserve">
+    <value>Llamadas</value>
+  </data>
+  <data name="W.links.quick.Shares.units" xml:space="preserve">
+    <value>Unidades</value>
+  </data>
+  <data name="W.links.quick.Shares.personnel" xml:space="preserve">
+    <value>Personal</value>
+  </data>
+  <data name="W.general.stickyNote.Title" xml:space="preserve">
+    <value>Mi nota</value>
+  </data>
+  <data name="W.general.stickyNote.Description" xml:space="preserve">
+    <value>Una nota personal que solo usted puede ver.</value>
+  </data>
+  <data name="W.general.stickyNote.Setting.text" xml:space="preserve">
+    <value>Nota</value>
+  </data>
+  <data name="W.general.stickyNote.Empty" xml:space="preserve">
+    <value>Su nota está vacía. Edite la configuración de este widget para escribir una.</value>
+  </data>
+  <data name="W.general.stickyNote.Edit" xml:space="preserve">
+    <value>Editar nota</value>
+  </data>
+  <data name="W.map.operations.LoadError" xml:space="preserve">
+    <value>No se pudo cargar el mapa. Inténtelo de nuevo en un momento.</value>
+  </data>
+  <data name="W.map.operations.Layer.calls" xml:space="preserve">
+    <value>Llamadas</value>
+  </data>
+  <data name="W.map.operations.Layer.units" xml:space="preserve">
+    <value>Unidades</value>
+  </data>
+  <data name="W.map.operations.Layer.personnel" xml:space="preserve">
+    <value>Personal</value>
+  </data>
+  <data name="W.map.operations.Layer.stations" xml:space="preserve">
+    <value>Estaciones</value>
+  </data>
+  <data name="W.map.operations.Layer.pois" xml:space="preserve">
+    <value>Puntos de interés</value>
+  </data>
+  <data name="W.map.visualization.Choose" xml:space="preserve">
+    <value>Elija una visualización</value>
+  </data>
+  <data name="W.map.visualization.Rows" xml:space="preserve">
+    <value>{0} registros</value>
+  </data>
+  <data name="W.map.visualization.Partial" xml:space="preserve">
+    <value>parcial</value>
+  </data>
+  <data name="W.weather.current.Tomorrow" xml:space="preserve">
+    <value>Mañana</value>
+  </data>
+  <data name="W.weather.current.Compass.N" xml:space="preserve">
+    <value>N</value>
+  </data>
+  <data name="W.weather.current.Compass.NE" xml:space="preserve">
+    <value>NE</value>
+  </data>
+  <data name="W.weather.current.Compass.E" xml:space="preserve">
+    <value>E</value>
+  </data>
+  <data name="W.weather.current.Compass.SE" xml:space="preserve">
+    <value>SE</value>
+  </data>
+  <data name="W.weather.current.Compass.S" xml:space="preserve">
+    <value>S</value>
+  </data>
+  <data name="W.weather.current.Compass.SW" xml:space="preserve">
+    <value>SO</value>
+  </data>
+  <data name="W.weather.current.Compass.W" xml:space="preserve">
+    <value>O</value>
+  </data>
+  <data name="W.weather.current.Compass.NW" xml:space="preserve">
+    <value>NO</value>
+  </data>
+  <data name="W.messages.inbox.Open" xml:space="preserve">
+    <value>Abrir mensaje</value>
+  </data>
+  <data name="W.chat.unread.Channel" xml:space="preserve">
+    <value>Canal</value>
+  </data>
+  <data name="W.chat.unread.PendingAckCount" xml:space="preserve">
+    <value>{0} esperando su acuse de recibo</value>
+  </data>
+  <data name="W.chat.moderation.OldestLabel" xml:space="preserve">
+    <value>reporte más antiguo</value>
+  </data>
+  <data name="W.comms.tests.RecentRuns" xml:space="preserve">
+    <value>Ejecuciones recientes</value>
+  </data>
+  <data name="W.comms.tests.Untitled" xml:space="preserve">
+    <value>Prueba de comunicación</value>
+  </data>
+  <data name="W.comms.tests.NotDelivered" xml:space="preserve">
+    <value>Nada entregado</value>
+  </data>
+  <data name="W.comms.tests.DeliveredShort" xml:space="preserve">
+    <value>{0} entregados</value>
+  </data>
+  <data name="W.comms.tests.RespondedOf" xml:space="preserve">
+    <value>{0} de {1} respondieron</value>
+  </data>
+  <data name="W.voice.ptt.Open" xml:space="preserve">
+    <value>Abrir Push-To-Talk</value>
+  </data>
+  <data name="W.voice.ptt.Channel" xml:space="preserve">
+    <value>Canal</value>
+  </data>
+  <data name="W.voice.ptt.MoreChannels" xml:space="preserve">
+    <value>+{0} más</value>
+  </data>
+  <data name="W.calendar.agenda.OpenCalendar" xml:space="preserve">
+    <value>Abrir el calendario</value>
+  </data>
+  <data name="W.calendar.agenda.Untitled" xml:space="preserve">
+    <value>Evento sin título</value>
+  </data>
+  <data name="W.shifts.today.OpenShifts" xml:space="preserve">
+    <value>Abrir turnos</value>
+  </data>
+  <data name="W.shifts.today.Shift" xml:space="preserve">
+    <value>Turno</value>
+  </data>
+  <data name="W.shifts.mine.OpenYourShifts" xml:space="preserve">
+    <value>Abrir sus turnos</value>
+  </data>
+  <data name="W.shifts.mine.Shift" xml:space="preserve">
+    <value>Turno</value>
+  </data>
+  <data name="W.shifts.mine.Today" xml:space="preserve">
+    <value>Hoy</value>
+  </data>
+  <data name="W.shifts.mine.Tomorrow" xml:space="preserve">
+    <value>Mañana</value>
+  </data>
+  <data name="W.shifts.mine.Respond" xml:space="preserve">
+    <value>Responder</value>
+  </data>
+  <data name="W.shifts.approvals.Today" xml:space="preserve">
+    <value>Hoy</value>
+  </data>
+  <data name="W.shifts.approvals.Tomorrow" xml:space="preserve">
+    <value>Mañana</value>
+  </data>
+  <data name="W.shifts.coverage.OpenStaffing" xml:space="preserve">
+    <value>Abrir la dotación de turnos</value>
+  </data>
+  <data name="W.shifts.coverage.Shift" xml:space="preserve">
+    <value>Turno</value>
+  </data>
+  <data name="W.shifts.coverage.Time" xml:space="preserve">
+    <value>Hora</value>
+  </data>
+  <data name="W.shifts.coverage.Staffed" xml:space="preserve">
+    <value>Cubierto</value>
+  </data>
+  <data name="W.shifts.coverage.Source" xml:space="preserve">
+    <value>Dotación</value>
+  </data>
+  <data name="W.shifts.coverage.Unstaffed" xml:space="preserve">
+    <value>Sin cubrir</value>
+  </data>
+  <data name="W.shifts.coverage.Today" xml:space="preserve">
+    <value>Hoy</value>
+  </data>
+  <data name="W.shifts.coverage.Tomorrow" xml:space="preserve">
+    <value>Mañana</value>
+  </data>
+  <data name="W.trainings.mine.Training" xml:space="preserve">
+    <value>Capacitación</value>
+  </data>
+  <data name="W.trainings.mine.OverdueCount" xml:space="preserve">
+    <value>{0} vencidas</value>
+  </data>
+  <data name="W.trainings.mine.OverdueSince" xml:space="preserve">
+    <value>Venció {0}</value>
+  </data>
+  <data name="W.documents.recent.OpenDocuments" xml:space="preserve">
+    <value>Abrir documentos</value>
+  </data>
+  <data name="W.documents.recent.Untitled" xml:space="preserve">
+    <value>Documento sin título</value>
+  </data>
+  <data name="W.notes.board.OpenNotes" xml:space="preserve">
+    <value>Abrir notas</value>
+  </data>
+  <data name="W.notes.board.Untitled" xml:space="preserve">
+    <value>Nota sin título</value>
+  </data>
+  <data name="W.contacts.preplans.ReviewDue" xml:space="preserve">
+    <value>Revisión vence {0}</value>
+  </data>
+  <data name="W.contacts.preplans.Open" xml:space="preserve">
+    <value>Abrir contacto</value>
+  </data>
+  <data name="W.links.quick.AddLinks" xml:space="preserve">
+    <value>Agregar vínculos</value>
+  </data>
+  <data name="W.links.quick.LinkedDepartment" xml:space="preserve">
+    <value>Departamento vinculado</value>
+  </data>
+  <data name="W.general.stickyNote.Placeholder" xml:space="preserve">
+    <value>Anote algo. Solo usted puede verlo.</value>
+  </data>
+  <data name="W.general.stickyNote.Remaining" xml:space="preserve">
+    <value>Quedan {0} caracteres</value>
+  </data>
+  <data name="W.shifts.today.GroupCount" xml:space="preserve">
+    <value>{0}: {1}</value>
+  </data>
+  <data name="W.map.operations.Layer.layer" xml:space="preserve">
+    <value>Capa del mapa</value>
+  </data>
+  <data name="W.checklists.due.Title" xml:space="preserve">
+    <value>Listas de verificación pendientes</value>
+  </data>
+  <data name="W.checklists.due.Description" xml:space="preserve">
+    <value>Listas de verificación programadas para los próximos siete días: vencidas, para ahora y próximas, con un vínculo para iniciar cada una.</value>
+  </data>
+  <data name="W.checklists.due.Setting.maxRows" xml:space="preserve">
+    <value>Listas de verificación por mostrar</value>
+  </data>
+  <data name="W.checklists.due.Setting.assignedOnly" xml:space="preserve">
+    <value>Solo las listas de verificación asignadas a mí</value>
+  </data>
+  <data name="W.checklists.compliance.Title" xml:space="preserve">
+    <value>Cumplimiento de listas de verificación</value>
+  </data>
+  <data name="W.checklists.compliance.Description" xml:space="preserve">
+    <value>Tasa de finalización de las listas de verificación en los últimos días, las unidades, grupos y personas más atrasados, y las revisiones no realizadas por día.</value>
+  </data>
+  <data name="W.checklists.compliance.Setting.days" xml:space="preserve">
+    <value>Días por incluir</value>
+  </data>
+  <data name="W.checklists.compliance.Setting.maxRows" xml:space="preserve">
+    <value>Destinos por mostrar</value>
+  </data>
+  <data name="W.workOrders.stats.Title" xml:space="preserve">
+    <value>Órdenes de trabajo</value>
+  </data>
+  <data name="W.workOrders.stats.Description" xml:space="preserve">
+    <value>Órdenes de trabajo abiertas y vencidas, mantenimiento preventivo completado a tiempo, tiempo medio de reparación y tiempo de inactividad.</value>
+  </data>
+  <data name="W.workOrders.stats.Setting.days" xml:space="preserve">
+    <value>Días por incluir</value>
+  </data>
+  <data name="W.workOrders.mine.Title" xml:space="preserve">
+    <value>Mis órdenes de trabajo</value>
+  </data>
+  <data name="W.workOrders.mine.Description" xml:space="preserve">
+    <value>Órdenes de trabajo abiertas asignadas a usted, las más urgentes primero.</value>
+  </data>
+  <data name="W.workOrders.mine.Setting.maxRows" xml:space="preserve">
+    <value>Órdenes de trabajo por mostrar</value>
+  </data>
+  <data name="W.inventory.alerts.Title" xml:space="preserve">
+    <value>Alertas de inventario</value>
+  </data>
+  <data name="W.inventory.alerts.Description" xml:space="preserve">
+    <value>Artículos con existencias bajas, por vencer y vencidos, devoluciones atrasadas y artículos en poder de miembros que ya no están, con los más urgentes.</value>
+  </data>
+  <data name="W.inventory.alerts.Setting.maxRows" xml:space="preserve">
+    <value>Artículos por mostrar</value>
+  </data>
+  <data name="W.inventory.valuation.Title" xml:space="preserve">
+    <value>Valoración del inventario</value>
+  </data>
+  <data name="W.inventory.valuation.Description" xml:space="preserve">
+    <value>Valor del inventario disponible por moneda y las ubicaciones que más tienen.</value>
+  </data>
+  <data name="W.inventory.valuation.Setting.maxRows" xml:space="preserve">
+    <value>Ubicaciones por mostrar</value>
+  </data>
+  <data name="W.certifications.expiry.Title" xml:space="preserve">
+    <value>Vencimiento de certificaciones</value>
+  </data>
+  <data name="W.certifications.expiry.Description" xml:space="preserve">
+    <value>Certificaciones vencidas, por vencer, suspendidas y pendientes de verificación en todo el departamento, con las más urgentes.</value>
+  </data>
+  <data name="W.certifications.expiry.Setting.maxRows" xml:space="preserve">
+    <value>Certificaciones por mostrar</value>
+  </data>
+  <data name="W.certifications.mine.Title" xml:space="preserve">
+    <value>Mis certificaciones</value>
+  </data>
+  <data name="W.certifications.mine.Description" xml:space="preserve">
+    <value>Sus certificaciones que ya vencieron o vencerán pronto.</value>
+  </data>
+  <data name="W.certifications.mine.Setting.maxRows" xml:space="preserve">
+    <value>Certificaciones por mostrar</value>
+  </data>
+  <data name="W.records.overview.Title" xml:space="preserve">
+    <value>Resumen de registros</value>
+  </data>
+  <data name="W.records.overview.Description" xml:space="preserve">
+    <value>Borradores, registros pendientes de revisión, registros devueltos, obligaciones vencidas y solicitudes de registros públicos abiertas.</value>
+  </data>
+  <data name="W.records.myWork.Title" xml:space="preserve">
+    <value>Mi trabajo de registros</value>
+  </data>
+  <data name="W.records.myWork.Description" xml:space="preserve">
+    <value>Registros sin terminar que le pertenecen y trabajo de registros que se le asignó.</value>
+  </data>
+  <data name="W.records.myWork.Setting.maxRows" xml:space="preserve">
+    <value>Elementos por mostrar</value>
+  </data>
+  <data name="W.records.neris.Title" xml:space="preserve">
+    <value>Informes NERIS</value>
+  </data>
+  <data name="W.records.neris.Description" xml:space="preserve">
+    <value>Informes de incidente por etapa de presentación: incompletos, pendientes de revisión, enviados, aceptados y rechazados.</value>
+  </data>
+  <data name="W.records.qualityReview.Title" xml:space="preserve">
+    <value>Revisión de calidad</value>
+  </data>
+  <data name="W.records.qualityReview.Description" xml:space="preserve">
+    <value>Registros en espera de revisión de calidad, los suyos primero.</value>
+  </data>
+  <data name="W.records.qualityReview.Setting.maxRows" xml:space="preserve">
+    <value>Revisiones por mostrar</value>
+  </data>
+  <data name="W.records.prevention.Title" xml:space="preserve">
+    <value>Prevención</value>
+  </data>
+  <data name="W.records.prevention.Description" xml:space="preserve">
+    <value>Revisiones de ocupación, inspecciones, infracciones, hidrantes, permisos, reducción de riesgos comunitarios e investigaciones de los módulos de prevención que usa.</value>
+  </data>
+  <data name="W.records.hydrants.Title" xml:space="preserve">
+    <value>Hidrantes</value>
+  </data>
+  <data name="W.records.hydrants.Description" xml:space="preserve">
+    <value>Hidrantes fuera de servicio y con prueba pendiente, con los hidrantes fuera de servicio en un mapa.</value>
+  </data>
+  <data name="W.records.hydrants.Setting.maxRows" xml:space="preserve">
+    <value>Hidrantes por mostrar en el mapa</value>
+  </data>
+  <data name="W.records.crr.Title" xml:space="preserve">
+    <value>Reducción de riesgos comunitarios</value>
+  </data>
+  <data name="W.records.crr.Description" xml:space="preserve">
+    <value>Actividades de reducción de riesgos comunitarios, alarmas de humo, de CO y combinadas instaladas este año, y solicitudes de alarmas abiertas.</value>
+  </data>
+  <data name="W.records.investigations.Title" xml:space="preserve">
+    <value>Mis investigaciones</value>
+  </data>
+  <data name="W.records.investigations.Description" xml:space="preserve">
+    <value>Casos de investigación abiertos en los que trabaja, por número de caso y estado.</value>
+  </data>
+  <data name="W.records.investigations.Setting.maxRows" xml:space="preserve">
+    <value>Casos por mostrar</value>
+  </data>
+  <data name="W.records.analytics.Title" xml:space="preserve">
+    <value>KPI de registros</value>
+  </data>
+  <data name="W.records.analytics.Description" xml:space="preserve">
+    <value>Registros vencidos, mediana de tiempo para finalizar y revisar, tasa de devolución y registros por mes.</value>
+  </data>
+  <data name="W.records.analytics.Setting.days" xml:space="preserve">
+    <value>Días por incluir</value>
+  </data>
+  <data name="W.records.legalHolds.Title" xml:space="preserve">
+    <value>Retenciones legales</value>
+  </data>
+  <data name="W.records.legalHolds.Description" xml:space="preserve">
+    <value>Retenciones de conservación activas sobre registros y las más recientes.</value>
+  </data>
+  <data name="W.records.legalHolds.Setting.maxRows" xml:space="preserve">
+    <value>Retenciones por mostrar</value>
+  </data>
+  <data name="W.records.deployments.Title" xml:space="preserve">
+    <value>Informes de despliegue</value>
+  </data>
+  <data name="W.records.deployments.Description" xml:space="preserve">
+    <value>Registros de despliegue abiertos de órdenes de recursos externas.</value>
+  </data>
+  <data name="W.records.deployments.Setting.maxRows" xml:space="preserve">
+    <value>Despliegues por mostrar</value>
+  </data>
+  <data name="W.logs.recent.Title" xml:space="preserve">
+    <value>Bitácoras recientes</value>
+  </data>
+  <data name="W.logs.recent.Description" xml:space="preserve">
+    <value>Bitácoras escritas en los últimos días, por tipo, con las entradas más recientes.</value>
+  </data>
+  <data name="W.logs.recent.Setting.days" xml:space="preserve">
+    <value>Días por incluir</value>
+  </data>
+  <data name="W.logs.recent.Setting.maxRows" xml:space="preserve">
+    <value>Bitácoras por mostrar</value>
+  </data>
+  <data name="W.checklists.due.Empty" xml:space="preserve">
+    <value>No hay nada pendiente en los próximos siete días.</value>
+  </data>
+  <data name="W.checklists.due.OpenDue" xml:space="preserve">
+    <value>Abrir listas de verificación pendientes</value>
+  </data>
+  <data name="W.checklists.due.OverdueSince" xml:space="preserve">
+    <value>Vencida · la ventana terminó {0}</value>
+  </data>
+  <data name="W.checklists.due.DueBy" xml:space="preserve">
+    <value>Vence antes de {0}</value>
+  </data>
+  <data name="W.checklists.due.Opens" xml:space="preserve">
+    <value>Se abre {0}</value>
+  </data>
+  <data name="W.checklists.due.Overdue" xml:space="preserve">
+    <value>vencidas</value>
+  </data>
+  <data name="W.checklists.due.DueNow" xml:space="preserve">
+    <value>para ahora</value>
+  </data>
+  <data name="W.checklists.due.Upcoming" xml:space="preserve">
+    <value>próximas</value>
+  </data>
+  <data name="W.checklists.due.Unnamed" xml:space="preserve">
+    <value>Lista de verificación</value>
+  </data>
+  <data name="W.checklists.due.Start" xml:space="preserve">
+    <value>Iniciar</value>
+  </data>
+  <data name="W.checklists.due.SeeAll" xml:space="preserve">
+    <value>Ver todas las listas de verificación pendientes</value>
+  </data>
+  <data name="W.checklists.due.NextDue" xml:space="preserve">
+    <value>Próxima apertura {0}</value>
+  </data>
+  <data name="W.checklists.compliance.Empty" xml:space="preserve">
+    <value>No había listas de verificación pendientes en los últimos {0} días.</value>
+  </data>
+  <data name="W.checklists.compliance.OpenCompliance" xml:space="preserve">
+    <value>Abrir cumplimiento</value>
+  </data>
+  <data name="W.checklists.compliance.CompletedLastDays" xml:space="preserve">
+    <value>completadas en los últimos {0} días</value>
+  </data>
+  <data name="W.checklists.compliance.Completed" xml:space="preserve">
+    <value>completadas</value>
+  </data>
+  <data name="W.checklists.compliance.OnTime" xml:space="preserve">
+    <value>a tiempo</value>
+  </data>
+  <data name="W.checklists.compliance.Missed" xml:space="preserve">
+    <value>no realizadas</value>
+  </data>
+  <data name="W.checklists.compliance.Skipped" xml:space="preserve">
+    <value>omitidas</value>
+  </data>
+  <data name="W.checklists.compliance.FurthestBehind" xml:space="preserve">
+    <value>Más atrasados</value>
+  </data>
+  <data name="W.checklists.compliance.UnknownTarget" xml:space="preserve">
+    <value>Destino desconocido</value>
+  </data>
+  <data name="W.checklists.compliance.RateOf" xml:space="preserve">
+    <value>{0} · {1}/{2}</value>
+  </data>
+  <data name="W.checklists.compliance.MissedPerDay" xml:space="preserve">
+    <value>No realizadas por día</value>
+  </data>
+  <data name="W.checklists.compliance.TrendAria" xml:space="preserve">
+    <value>Revisiones no realizadas por día: {0} no realizadas en {1} días</value>
+  </data>
+  <data name="W.checklists.compliance.MissedValue" xml:space="preserve">
+    <value>{0} no realizadas</value>
+  </data>
+  <data name="W.checklists.compliance.Restricted" xml:space="preserve">
+    <value>Algunos resultados quedan fuera de su acceso y no se cuentan.</value>
+  </data>
+  <data name="W.workOrders.stats.Empty" xml:space="preserve">
+    <value>No hay órdenes de trabajo en este período.</value>
+  </data>
+  <data name="W.workOrders.stats.OpenWorkOrders" xml:space="preserve">
+    <value>Órdenes de trabajo abiertas</value>
+  </data>
+  <data name="W.workOrders.stats.Open" xml:space="preserve">
+    <value>abiertas</value>
+  </data>
+  <data name="W.workOrders.stats.Overdue" xml:space="preserve">
+    <value>vencidas</value>
+  </data>
+  <data name="W.workOrders.stats.PreventiveOnTime" xml:space="preserve">
+    <value>PM a tiempo</value>
+  </data>
+  <data name="W.workOrders.stats.PreventiveOfDue" xml:space="preserve">
+    <value>{0} de {1} órdenes de trabajo preventivas se completaron a tiempo</value>
+  </data>
+  <data name="W.workOrders.stats.Mttr" xml:space="preserve">
+    <value>tiempo medio de reparación</value>
+  </data>
+  <data name="W.workOrders.stats.OpenByPriority" xml:space="preserve">
+    <value>Abiertas por prioridad</value>
+  </data>
+  <data name="W.workOrders.stats.Priority0" xml:space="preserve">
+    <value>Baja</value>
+  </data>
+  <data name="W.workOrders.stats.Priority1" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="W.workOrders.stats.Priority2" xml:space="preserve">
+    <value>Alta</value>
+  </data>
+  <data name="W.workOrders.stats.Priority3" xml:space="preserve">
+    <value>Emergencia</value>
+  </data>
+  <data name="W.workOrders.stats.Downtime" xml:space="preserve">
+    <value>Inactividad {0}</value>
+  </data>
+  <data name="W.workOrders.stats.SlaBreaches" xml:space="preserve">
+    <value>{0} incumplimientos de SLA</value>
+  </data>
+  <data name="W.workOrders.stats.LastDays" xml:space="preserve">
+    <value>Últimos {0} días</value>
+  </data>
+  <data name="W.workOrders.stats.OpenReports" xml:space="preserve">
+    <value>Informes</value>
+  </data>
+  <data name="W.workOrders.mine.Empty" xml:space="preserve">
+    <value>No tiene órdenes de trabajo abiertas asignadas.</value>
+  </data>
+  <data name="W.workOrders.mine.OpenWorkOrders" xml:space="preserve">
+    <value>Órdenes de trabajo abiertas</value>
+  </data>
+  <data name="W.workOrders.mine.Untitled" xml:space="preserve">
+    <value>Orden de trabajo</value>
+  </data>
+  <data name="W.workOrders.mine.Priority0" xml:space="preserve">
+    <value>Baja</value>
+  </data>
+  <data name="W.workOrders.mine.Priority1" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="W.workOrders.mine.Priority2" xml:space="preserve">
+    <value>Alta</value>
+  </data>
+  <data name="W.workOrders.mine.Priority3" xml:space="preserve">
+    <value>Emergencia</value>
+  </data>
+  <data name="W.workOrders.mine.Status0" xml:space="preserve">
+    <value>Solicitada</value>
+  </data>
+  <data name="W.workOrders.mine.Status1" xml:space="preserve">
+    <value>Aceptada</value>
+  </data>
+  <data name="W.workOrders.mine.Status2" xml:space="preserve">
+    <value>Asignada</value>
+  </data>
+  <data name="W.workOrders.mine.Status3" xml:space="preserve">
+    <value>En curso</value>
+  </data>
+  <data name="W.workOrders.mine.Status4" xml:space="preserve">
+    <value>En espera</value>
+  </data>
+  <data name="W.workOrders.mine.Status5" xml:space="preserve">
+    <value>Completada</value>
+  </data>
+  <data name="W.workOrders.mine.Status6" xml:space="preserve">
+    <value>Cerrada</value>
+  </data>
+  <data name="W.workOrders.mine.Status7" xml:space="preserve">
+    <value>Rechazada</value>
+  </data>
+  <data name="W.workOrders.mine.Status8" xml:space="preserve">
+    <value>Duplicada</value>
+  </data>
+  <data name="W.workOrders.mine.Status9" xml:space="preserve">
+    <value>Cancelada</value>
+  </data>
+  <data name="W.workOrders.mine.OverdueOn" xml:space="preserve">
+    <value>Vencida · {0}</value>
+  </data>
+  <data name="W.workOrders.mine.DueOn" xml:space="preserve">
+    <value>Vence {0}</value>
+  </data>
+  <data name="W.workOrders.mine.SeeAll" xml:space="preserve">
+    <value>Todas mis órdenes de trabajo</value>
+  </data>
+  <data name="W.inventory.alerts.UnknownItem" xml:space="preserve">
+    <value>Artículo</value>
+  </data>
+  <data name="W.inventory.alerts.Type0" xml:space="preserve">
+    <value>Existencias bajas</value>
+  </data>
+  <data name="W.inventory.alerts.Type1" xml:space="preserve">
+    <value>Por vencer pronto</value>
+  </data>
+  <data name="W.inventory.alerts.Type2" xml:space="preserve">
+    <value>Vencidos</value>
+  </data>
+  <data name="W.inventory.alerts.Type3" xml:space="preserve">
+    <value>Devoluciones atrasadas</value>
+  </data>
+  <data name="W.inventory.alerts.Type4" xml:space="preserve">
+    <value>Titulares que ya no están</value>
+  </data>
+  <data name="W.inventory.alerts.ExpiresOn" xml:space="preserve">
+    <value>Vence {0}</value>
+  </data>
+  <data name="W.inventory.alerts.DueOn" xml:space="preserve">
+    <value>Vence {0}</value>
+  </data>
+  <data name="W.inventory.alerts.Quantity" xml:space="preserve">
+    <value>Cant. {0}</value>
+  </data>
+  <data name="W.inventory.alerts.TimesCount" xml:space="preserve">
+    <value>×{0}</value>
+  </data>
+  <data name="W.inventory.alerts.LegacyEmpty" xml:space="preserve">
+    <value>No hay artículos agotados.</value>
+  </data>
+  <data name="W.inventory.alerts.OpenInventory" xml:space="preserve">
+    <value>Abrir inventario</value>
+  </data>
+  <data name="W.inventory.alerts.OutOfStock" xml:space="preserve">
+    <value>agotados</value>
+  </data>
+  <data name="W.inventory.alerts.LegacyNote" xml:space="preserve">
+    <value>Inicialice el inventario para ver las alertas de vencimiento y de devolución</value>
+  </data>
+  <data name="W.inventory.alerts.Empty" xml:space="preserve">
+    <value>No hay alertas de inventario abiertas.</value>
+  </data>
+  <data name="W.inventory.alerts.OpenAlerts" xml:space="preserve">
+    <value>Alertas abiertas</value>
+  </data>
+  <data name="W.inventory.alerts.Truncated" xml:space="preserve">
+    <value>Los conteos son parciales: abra la página de Alertas para ver la lista completa.</value>
+  </data>
+  <data name="W.inventory.valuation.NotInitialized" xml:space="preserve">
+    <value>Inicialice el inventario para ver su valor.</value>
+  </data>
+  <data name="W.inventory.valuation.OpenInventory" xml:space="preserve">
+    <value>Abrir inventario</value>
+  </data>
+  <data name="W.inventory.valuation.Empty" xml:space="preserve">
+    <value>No hay inventario disponible.</value>
+  </data>
+  <data name="W.inventory.valuation.OpenValuation" xml:space="preserve">
+    <value>Abrir valoración</value>
+  </data>
+  <data name="W.inventory.valuation.OnHand" xml:space="preserve">
+    <value>disponible</value>
+  </data>
+  <data name="W.inventory.valuation.ByLocation" xml:space="preserve">
+    <value>Por ubicación</value>
+  </data>
+  <data name="W.inventory.valuation.UnnamedLocation" xml:space="preserve">
+    <value>Ubicación</value>
+  </data>
+  <data name="W.inventory.valuation.NegativeStock" xml:space="preserve">
+    <value>Algunas existencias están por debajo de cero; los valores pueden estar subestimados.</value>
+  </data>
+  <data name="W.inventory.valuation.Uncosted" xml:space="preserve">
+    <value>{0} líneas no tienen costo y no se incluyen.</value>
+  </data>
+  <data name="W.inventory.valuation.AsOf" xml:space="preserve">
+    <value>Al {0}</value>
+  </data>
+  <data name="W.certifications.expiry.Empty" xml:space="preserve">
+    <value>Ninguna certificación requiere atención en los próximos {0} días.</value>
+  </data>
+  <data name="W.certifications.expiry.OpenCertifications" xml:space="preserve">
+    <value>Abrir certificaciones</value>
+  </data>
+  <data name="W.certifications.expiry.Expired" xml:space="preserve">
+    <value>vencidas</value>
+  </data>
+  <data name="W.certifications.expiry.ExpiringWithin" xml:space="preserve">
+    <value>por vencer en {0} días</value>
+  </data>
+  <data name="W.certifications.expiry.Suspended" xml:space="preserve">
+    <value>suspendidas</value>
+  </data>
+  <data name="W.certifications.expiry.ToVerify" xml:space="preserve">
+    <value>por verificar</value>
+  </data>
+  <data name="W.certifications.expiry.UnknownType" xml:space="preserve">
+    <value>Certificación</value>
+  </data>
+  <data name="W.certifications.expiry.UnknownSubject" xml:space="preserve">
+    <value>Desconocido</value>
+  </data>
+  <data name="W.certifications.expiry.NoExpiry" xml:space="preserve">
+    <value>Sin fecha de vencimiento</value>
+  </data>
+  <data name="W.certifications.expiry.ExpiredDaysAgo" xml:space="preserve">
+    <value>Venció hace {0} días</value>
+  </data>
+  <data name="W.certifications.expiry.ExpiresToday" xml:space="preserve">
+    <value>Vence hoy</value>
+  </data>
+  <data name="W.certifications.expiry.ExpiresInDays" xml:space="preserve">
+    <value>Vence en {0} días</value>
+  </data>
+  <data name="W.certifications.mine.Empty" xml:space="preserve">
+    <value>Ninguna de sus certificaciones vence en los próximos {0} días.</value>
+  </data>
+  <data name="W.certifications.mine.OpenMine" xml:space="preserve">
+    <value>Mis certificaciones</value>
+  </data>
+  <data name="W.certifications.mine.Unnamed" xml:space="preserve">
+    <value>Certificación</value>
+  </data>
+  <data name="W.certifications.mine.SeeAll" xml:space="preserve">
+    <value>Todas mis certificaciones</value>
+  </data>
+  <data name="W.certifications.mine.ExpiredDaysAgo" xml:space="preserve">
+    <value>Venció hace {0} días</value>
+  </data>
+  <data name="W.certifications.mine.ExpiresToday" xml:space="preserve">
+    <value>Vence hoy</value>
+  </data>
+  <data name="W.certifications.mine.ExpiresInDays" xml:space="preserve">
+    <value>Vence en {0} días</value>
+  </data>
+  <data name="W.records.overview.Drafts" xml:space="preserve">
+    <value>borradores</value>
+  </data>
+  <data name="W.records.overview.AwaitingReview" xml:space="preserve">
+    <value>pendientes de revisión</value>
+  </data>
+  <data name="W.records.overview.Returned" xml:space="preserve">
+    <value>devueltos</value>
+  </data>
+  <data name="W.records.overview.Overdue" xml:space="preserve">
+    <value>vencidos</value>
+  </data>
+  <data name="W.records.overview.IncidentIncomplete" xml:space="preserve">
+    <value>informes de incidente incompletos</value>
+  </data>
+  <data name="W.records.overview.IncidentAwaitingReview" xml:space="preserve">
+    <value>informes de incidente por revisar</value>
+  </data>
+  <data name="W.records.overview.DisclosuresOpen" xml:space="preserve">
+    <value>solicitudes de registros abiertas</value>
+  </data>
+  <data name="W.records.overview.DisclosuresOverdue" xml:space="preserve">
+    <value>solicitudes de registros vencidas</value>
+  </data>
+  <data name="W.records.overview.Warnings" xml:space="preserve">
+    <value>Algunos conteos no están disponibles ({0}); consulte el panel de Registros.</value>
+  </data>
+  <data name="W.records.myWork.Empty" xml:space="preserve">
+    <value>Ningún registro está esperando su acción.</value>
+  </data>
+  <data name="W.records.myWork.OpenRecords" xml:space="preserve">
+    <value>Abrir registros</value>
+  </data>
+  <data name="W.records.myWork.AssignedToMe" xml:space="preserve">
+    <value>Asignados a mí ({0})</value>
+  </data>
+  <data name="W.records.myWork.PurposeComplete" xml:space="preserve">
+    <value>Complete el registro</value>
+  </data>
+  <data name="W.records.myWork.PurposeReview" xml:space="preserve">
+    <value>Revise el registro</value>
+  </data>
+  <data name="W.records.myWork.PurposeCorrect" xml:space="preserve">
+    <value>Corrija el registro</value>
+  </data>
+  <data name="W.records.myWork.PurposeAttach" xml:space="preserve">
+    <value>Adjunte documentos</value>
+  </data>
+  <data name="W.records.myWork.PurposeAcknowledge" xml:space="preserve">
+    <value>Dé acuse de recibo del registro</value>
+  </data>
+  <data name="W.records.myWork.PurposeOther" xml:space="preserve">
+    <value>Trabajo de registros</value>
+  </data>
+  <data name="W.records.myWork.Via2" xml:space="preserve">
+    <value>a través de su unidad</value>
+  </data>
+  <data name="W.records.myWork.Via3" xml:space="preserve">
+    <value>a través de su grupo</value>
+  </data>
+  <data name="W.records.myWork.Via4" xml:space="preserve">
+    <value>a través de su rol de comando</value>
+  </data>
+  <data name="W.records.myWork.Via5" xml:space="preserve">
+    <value>a través del despacho</value>
+  </data>
+  <data name="W.records.myWork.Acknowledged" xml:space="preserve">
+    <value>con acuse de recibo</value>
+  </data>
+  <data name="W.records.myWork.OverdueSince" xml:space="preserve">
+    <value>Vencido desde {0}</value>
+  </data>
+  <data name="W.records.myWork.DueOn" xml:space="preserve">
+    <value>Vence {0}</value>
+  </data>
+  <data name="W.records.myWork.MyRecords" xml:space="preserve">
+    <value>Mis registros sin terminar ({0})</value>
+  </data>
+  <data name="W.records.myWork.NoNumber" xml:space="preserve">
+    <value>Borrador</value>
+  </data>
+  <data name="W.records.myWork.State1" xml:space="preserve">
+    <value>Borrador</value>
+  </data>
+  <data name="W.records.myWork.State2" xml:space="preserve">
+    <value>Listo para revisión</value>
+  </data>
+  <data name="W.records.myWork.State3" xml:space="preserve">
+    <value>Devuelto</value>
+  </data>
+  <data name="W.records.myWork.State4" xml:space="preserve">
+    <value>Aprobado</value>
+  </data>
+  <data name="W.records.myWork.ReviewDue" xml:space="preserve">
+    <value>Revisión vence {0}</value>
+  </data>
+  <data name="W.records.myWork.Started" xml:space="preserve">
+    <value>Iniciado {0}</value>
+  </data>
+  <data name="W.records.neris.Empty" xml:space="preserve">
+    <value>No hay informes de incidente en el proceso de presentación.</value>
+  </data>
+  <data name="W.records.neris.OpenRecords" xml:space="preserve">
+    <value>Abrir el panel de Registros</value>
+  </data>
+  <data name="W.records.neris.Incomplete" xml:space="preserve">
+    <value>incompletos</value>
+  </data>
+  <data name="W.records.neris.AwaitingReview" xml:space="preserve">
+    <value>pendientes de revisión</value>
+  </data>
+  <data name="W.records.neris.Submitted" xml:space="preserve">
+    <value>enviados</value>
+  </data>
+  <data name="W.records.neris.Accepted" xml:space="preserve">
+    <value>aceptados</value>
+  </data>
+  <data name="W.records.neris.Rejected" xml:space="preserve">
+    <value>rechazados</value>
+  </data>
+  <data name="W.records.qualityReview.Empty" xml:space="preserve">
+    <value>Ningún registro está esperando revisión de calidad.</value>
+  </data>
+  <data name="W.records.qualityReview.OpenQuality" xml:space="preserve">
+    <value>Abrir revisión de calidad</value>
+  </data>
+  <data name="W.records.qualityReview.Pending" xml:space="preserve">
+    <value>pendientes</value>
+  </data>
+  <data name="W.records.qualityReview.AssignedToMe" xml:space="preserve">
+    <value>asignadas a mí</value>
+  </data>
+  <data name="W.records.qualityReview.NoNumber" xml:space="preserve">
+    <value>Registro</value>
+  </data>
+  <data name="W.records.qualityReview.Sampled" xml:space="preserve">
+    <value>Muestreado {0}</value>
+  </data>
+  <data name="W.records.qualityReview.Yours" xml:space="preserve">
+    <value>suyas</value>
+  </data>
+  <data name="W.records.qualityReview.SeeAll" xml:space="preserve">
+    <value>Todas las revisiones pendientes</value>
+  </data>
+  <data name="W.records.prevention.Occupancies" xml:space="preserve">
+    <value>Ocupaciones</value>
+  </data>
+  <data name="W.records.prevention.OccupanciesCount" xml:space="preserve">
+    <value>ocupaciones</value>
+  </data>
+  <data name="W.records.prevention.ReviewsOverdue" xml:space="preserve">
+    <value>revisiones vencidas</value>
+  </data>
+  <data name="W.records.prevention.Inspections" xml:space="preserve">
+    <value>Inspecciones</value>
+  </data>
+  <data name="W.records.prevention.InspectionsDue" xml:space="preserve">
+    <value>inspecciones pendientes</value>
+  </data>
+  <data name="W.records.prevention.InspectionsScheduled" xml:space="preserve">
+    <value>programadas</value>
+  </data>
+  <data name="W.records.prevention.ViolationsOpen" xml:space="preserve">
+    <value>infracciones abiertas</value>
+  </data>
+  <data name="W.records.prevention.ViolationsOverdue" xml:space="preserve">
+    <value>infracciones vencidas</value>
+  </data>
+  <data name="W.records.prevention.Hydrants" xml:space="preserve">
+    <value>Hidrantes</value>
+  </data>
+  <data name="W.records.prevention.OutOfService" xml:space="preserve">
+    <value>fuera de servicio</value>
+  </data>
+  <data name="W.records.prevention.TestDue" xml:space="preserve">
+    <value>prueba pendiente</value>
+  </data>
+  <data name="W.records.prevention.HydrantsCount" xml:space="preserve">
+    <value>hidrantes</value>
+  </data>
+  <data name="W.records.prevention.Permits" xml:space="preserve">
+    <value>Permisos</value>
+  </data>
+  <data name="W.records.prevention.AwaitingReview" xml:space="preserve">
+    <value>pendientes de revisión</value>
+  </data>
+  <data name="W.records.prevention.ExpiringSoon" xml:space="preserve">
+    <value>por vencer pronto</value>
+  </data>
+  <data name="W.records.prevention.PermitsActive" xml:space="preserve">
+    <value>permisos activos</value>
+  </data>
+  <data name="W.records.prevention.Crr" xml:space="preserve">
+    <value>Reducción de riesgos comunitarios</value>
+  </data>
+  <data name="W.records.prevention.Activities90" xml:space="preserve">
+    <value>actividades (90 días)</value>
+  </data>
+  <data name="W.records.prevention.Alarms90" xml:space="preserve">
+    <value>alarmas instaladas (90 días)</value>
+  </data>
+  <data name="W.records.prevention.Investigations" xml:space="preserve">
+    <value>Investigaciones</value>
+  </data>
+  <data name="W.records.prevention.CasesOpen" xml:space="preserve">
+    <value>casos abiertos</value>
+  </data>
+  <data name="W.records.prevention.NoModules" xml:space="preserve">
+    <value>No hay módulos de prevención activados.</value>
+  </data>
+  <data name="W.records.prevention.OpenRecords" xml:space="preserve">
+    <value>Abrir Registros</value>
+  </data>
+  <data name="W.records.hydrants.MarkerSince" xml:space="preserve">
+    <value>Hidrante {0} · fuera de servicio desde {1}</value>
+  </data>
+  <data name="W.records.hydrants.NoNumber" xml:space="preserve">
+    <value>(sin número)</value>
+  </data>
+  <data name="W.records.hydrants.Marker" xml:space="preserve">
+    <value>Hidrante {0} · fuera de servicio</value>
+  </data>
+  <data name="W.records.hydrants.OutOfService" xml:space="preserve">
+    <value>fuera de servicio</value>
+  </data>
+  <data name="W.records.hydrants.TestDue" xml:space="preserve">
+    <value>prueba pendiente</value>
+  </data>
+  <data name="W.records.hydrants.AllInService" xml:space="preserve">
+    <value>Todos los hidrantes están en servicio.</value>
+  </data>
+  <data name="W.records.hydrants.OpenHydrants" xml:space="preserve">
+    <value>Abrir hidrantes</value>
+  </data>
+  <data name="W.records.hydrants.MapAria" xml:space="preserve">
+    <value>Mapa de {0} hidrantes fuera de servicio</value>
+  </data>
+  <data name="W.records.hydrants.NoPositions" xml:space="preserve">
+    <value>Los hidrantes fuera de servicio no tienen posición en el mapa.</value>
+  </data>
+  <data name="W.records.hydrants.MappedOf" xml:space="preserve">
+    <value>Se muestran {0} de {1} en el mapa.</value>
+  </data>
+  <data name="W.records.crr.Empty" xml:space="preserve">
+    <value>No hay actividad de reducción de riesgos comunitarios este año.</value>
+  </data>
+  <data name="W.records.crr.OpenCrr" xml:space="preserve">
+    <value>Abrir reducción de riesgos comunitarios</value>
+  </data>
+  <data name="W.records.crr.AlarmsThisYear" xml:space="preserve">
+    <value>alarmas instaladas este año</value>
+  </data>
+  <data name="W.records.crr.Activities" xml:space="preserve">
+    <value>actividades</value>
+  </data>
+  <data name="W.records.crr.OpenRequests" xml:space="preserve">
+    <value>solicitudes de alarmas abiertas</value>
+  </data>
+  <data name="W.records.crr.Smoke" xml:space="preserve">
+    <value>Humo</value>
+  </data>
+  <data name="W.records.crr.Co" xml:space="preserve">
+    <value>CO</value>
+  </data>
+  <data name="W.records.crr.Combo" xml:space="preserve">
+    <value>Combinada de humo/CO</value>
+  </data>
+  <data name="W.records.investigations.Empty" xml:space="preserve">
+    <value>No tiene casos de investigación abiertos.</value>
+  </data>
+  <data name="W.records.investigations.OpenCases" xml:space="preserve">
+    <value>Investigaciones abiertas</value>
+  </data>
+  <data name="W.records.investigations.NoNumber" xml:space="preserve">
+    <value>Caso</value>
+  </data>
+  <data name="W.records.investigations.State1" xml:space="preserve">
+    <value>Abierto</value>
+  </data>
+  <data name="W.records.investigations.State2" xml:space="preserve">
+    <value>Activo</value>
+  </data>
+  <data name="W.records.investigations.State3" xml:space="preserve">
+    <value>Revisión pendiente</value>
+  </data>
+  <data name="W.records.investigations.State4" xml:space="preserve">
+    <value>Cerrado</value>
+  </data>
+  <data name="W.records.investigations.Opened" xml:space="preserve">
+    <value>Abierto {0}</value>
+  </data>
+  <data name="W.records.investigations.SeeAll" xml:space="preserve">
+    <value>Todos los {0} casos abiertos</value>
+  </data>
+  <data name="W.records.analytics.OverdueNow" xml:space="preserve">
+    <value>vencidos ahora</value>
+  </data>
+  <data name="W.records.analytics.MedianToFinalize" xml:space="preserve">
+    <value>mediana para finalizar</value>
+  </data>
+  <data name="W.records.analytics.MedianReview" xml:space="preserve">
+    <value>mediana de revisión</value>
+  </data>
+  <data name="W.records.analytics.ReturnRate" xml:space="preserve">
+    <value>tasa de devolución</value>
+  </data>
+  <data name="W.records.analytics.OpenDrafts" xml:space="preserve">
+    <value>borradores abiertos</value>
+  </data>
+  <data name="W.records.analytics.AwaitingReview" xml:space="preserve">
+    <value>pendientes de revisión</value>
+  </data>
+  <data name="W.records.analytics.WentOverdue" xml:space="preserve">
+    <value>pasaron a vencidos</value>
+  </data>
+  <data name="W.records.analytics.RecordsPerMonth" xml:space="preserve">
+    <value>Registros por mes</value>
+  </data>
+  <data name="W.records.analytics.TrendAria" xml:space="preserve">
+    <value>Registros por mes: {0} registros en {1} meses</value>
+  </data>
+  <data name="W.records.analytics.GroupScoped" xml:space="preserve">
+    <value>Las cifras incluyen solo los registros que usted puede abrir.</value>
+  </data>
+  <data name="W.records.analytics.Truncated" xml:space="preserve">
+    <value>Hay demasiados registros para una sola lectura; reduzca el período.</value>
+  </data>
+  <data name="W.records.legalHolds.Empty" xml:space="preserve">
+    <value>No hay retenciones legales activas.</value>
+  </data>
+  <data name="W.records.legalHolds.OpenHolds" xml:space="preserve">
+    <value>Abrir retenciones legales</value>
+  </data>
+  <data name="W.records.legalHolds.Period" xml:space="preserve">
+    <value>{0} – {1}</value>
+  </data>
+  <data name="W.records.legalHolds.ActiveHolds" xml:space="preserve">
+    <value>retenciones activas</value>
+  </data>
+  <data name="W.records.legalHolds.OnRecords" xml:space="preserve">
+    <value>{0} sobre registros individuales</value>
+  </data>
+  <data name="W.records.legalHolds.Newest" xml:space="preserve">
+    <value>la más reciente {0}</value>
+  </data>
+  <data name="W.records.legalHolds.RecordHold" xml:space="preserve">
+    <value>Retención sobre un registro</value>
+  </data>
+  <data name="W.records.legalHolds.ScopeHold" xml:space="preserve">
+    <value>Retención por tipo o período</value>
+  </data>
+  <data name="W.records.legalHolds.Placed" xml:space="preserve">
+    <value>Aplicada {0}</value>
+  </data>
+  <data name="W.records.deployments.Empty" xml:space="preserve">
+    <value>No hay despliegues abiertos.</value>
+  </data>
+  <data name="W.records.deployments.OpenDeployments" xml:space="preserve">
+    <value>Abrir informes de despliegue</value>
+  </data>
+  <data name="W.records.deployments.NoNumber" xml:space="preserve">
+    <value>Despliegue</value>
+  </data>
+  <data name="W.records.deployments.Status1" xml:space="preserve">
+    <value>Abierto</value>
+  </data>
+  <data name="W.records.deployments.Status2" xml:space="preserve">
+    <value>Movilizado</value>
+  </data>
+  <data name="W.records.deployments.Status3" xml:space="preserve">
+    <value>Liberado</value>
+  </data>
+  <data name="W.records.deployments.Status4" xml:space="preserve">
+    <value>Cierre definitivo</value>
+  </data>
+  <data name="W.records.deployments.Incident" xml:space="preserve">
+    <value>Incidente {0}</value>
+  </data>
+  <data name="W.records.deployments.Mobilized" xml:space="preserve">
+    <value>Movilizado {0}</value>
+  </data>
+  <data name="W.records.deployments.Created" xml:space="preserve">
+    <value>Creado {0}</value>
+  </data>
+  <data name="W.records.deployments.SeeAll" xml:space="preserve">
+    <value>Todos los {0} despliegues abiertos</value>
+  </data>
+  <data name="W.logs.recent.Type0" xml:space="preserve">
+    <value>Otro</value>
+  </data>
+  <data name="W.logs.recent.Type1" xml:space="preserve">
+    <value>Llamada</value>
+  </data>
+  <data name="W.logs.recent.Type2" xml:space="preserve">
+    <value>Capacitación</value>
+  </data>
+  <data name="W.logs.recent.Type4" xml:space="preserve">
+    <value>Trabajo</value>
+  </data>
+  <data name="W.logs.recent.Type5" xml:space="preserve">
+    <value>Reunión</value>
+  </data>
+  <data name="W.logs.recent.Type6" xml:space="preserve">
+    <value>Médico forense</value>
+  </data>
+  <data name="W.logs.recent.Type7" xml:space="preserve">
+    <value>Convocatoria</value>
+  </data>
+  <data name="W.logs.recent.Empty" xml:space="preserve">
+    <value>No hay bitácoras en los últimos {0} días.</value>
+  </data>
+  <data name="W.logs.recent.OpenLogs" xml:space="preserve">
+    <value>Abrir bitácoras</value>
+  </data>
+  <data name="W.logs.recent.Newest" xml:space="preserve">
+    <value>Más recientes</value>
+  </data>
+  <data name="W.logs.recent.Started" xml:space="preserve">
+    <value>Iniciada {0}</value>
+  </data>
+  <data name="W.logs.recent.Total" xml:space="preserve">
+    <value>{0} bitácoras en los últimos {1} días</value>
+  </data>
+  <data name="W.logs.recent.TotalTruncated" xml:space="preserve">
+    <value>Más de {0} bitácoras en los últimos {1} días</value>
+  </data>
+  <data name="W.checklists.compliance.MissedTotal" xml:space="preserve">
+    <value>{0} no realizadas en este período</value>
+  </data>
+  <data name="W.deployments.active.Title" xml:space="preserve">
+    <value>Despliegues</value>
+  </data>
+  <data name="W.deployments.active.Description" xml:space="preserve">
+    <value>Despliegues abiertos, primero aquellos en los que usted está en la dotación, con su estado y los días desplegados.</value>
+  </data>
+  <data name="W.deployments.active.Setting.maxRows" xml:space="preserve">
+    <value>Despliegues por mostrar</value>
+  </data>
+  <data name="W.deployments.active.Open" xml:space="preserve">
+    <value>Abiertos</value>
+  </data>
+  <data name="W.deployments.active.Mine" xml:space="preserve">
+    <value>Míos</value>
+  </data>
+  <data name="W.deployments.active.Empty" xml:space="preserve">
+    <value>No hay despliegues abiertos.</value>
+  </data>
+  <data name="W.deployments.active.Status.Planned" xml:space="preserve">
+    <value>Planificado</value>
+  </data>
+  <data name="W.deployments.active.Status.Standby" xml:space="preserve">
+    <value>En espera</value>
+  </data>
+  <data name="W.deployments.active.Status.Active" xml:space="preserve">
+    <value>Activo</value>
+  </data>
+  <data name="W.deployments.active.Status.Demobilizing" xml:space="preserve">
+    <value>En desmovilización</value>
+  </data>
+  <data name="W.deployments.timeReports.Title" xml:space="preserve">
+    <value>Partes de horas</value>
+  </data>
+  <data name="W.deployments.timeReports.Description" xml:space="preserve">
+    <value>Partes de horas diarios pendientes de aprobación y partes aprobados que aún no se han facturado.</value>
+  </data>
+  <data name="W.deployments.timeReports.AwaitingApproval" xml:space="preserve">
+    <value>Pendientes de aprobación</value>
+  </data>
+  <data name="W.deployments.timeReports.ApprovedUnbilled" xml:space="preserve">
+    <value>Aprobados, sin facturar</value>
+  </data>
+  <data name="W.deployments.timeReports.OldestSince" xml:space="preserve">
+    <value>El más antiguo desde {0}</value>
+  </data>
+  <data name="W.invoicing.receivables.Title" xml:space="preserve">
+    <value>Cuentas por cobrar</value>
+  </data>
+  <data name="W.invoicing.receivables.Description" xml:space="preserve">
+    <value>Saldos de facturas abiertas por antigüedad, totales vencidos por moneda y borradores aún sin enviar.</value>
+  </data>
+  <data name="W.invoicing.receivables.Outstanding" xml:space="preserve">
+    <value>Pendiente de cobro</value>
+  </data>
+  <data name="W.invoicing.receivables.Overdue" xml:space="preserve">
+    <value>Vencido</value>
+  </data>
+  <data name="W.invoicing.receivables.OverdueCount" xml:space="preserve">
+    <value>Facturas vencidas</value>
+  </data>
+  <data name="W.invoicing.receivables.Drafts" xml:space="preserve">
+    <value>Borradores</value>
+  </data>
+  <data name="W.invoicing.receivables.ReadOnly" xml:space="preserve">
+    <value>Solo lectura: el complemento Business Operations ha vencido.</value>
+  </data>
+  <data name="W.invoicing.receivables.Bucket.Current" xml:space="preserve">
+    <value>Al corriente</value>
+  </data>
+  <data name="W.invoicing.receivables.Bucket.1-30" xml:space="preserve">
+    <value>1-30 días</value>
+  </data>
+  <data name="W.invoicing.receivables.Bucket.31-60" xml:space="preserve">
+    <value>31-60 días</value>
+  </data>
+  <data name="W.invoicing.receivables.Bucket.61-90" xml:space="preserve">
+    <value>61-90 días</value>
+  </data>
+  <data name="W.invoicing.receivables.Bucket.90+" xml:space="preserve">
+    <value>90+ días</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Title" xml:space="preserve">
+    <value>Pagos en línea</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Description" xml:space="preserve">
+    <value>Si los clientes pueden pagar facturas en línea en este momento y el estado de la cuenta de pagos conectada.</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Collecting" xml:space="preserve">
+    <value>Acepta pagos en línea</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.NotCollecting" xml:space="preserve">
+    <value>No acepta pagos en línea</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Connected" xml:space="preserve">
+    <value>Cuenta conectada</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.LastVerified" xml:space="preserve">
+    <value>Última verificación</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.ConnectionError" xml:space="preserve">
+    <value>El proveedor de pagos informó un problema. Abra la configuración para ver los detalles.</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Charges" xml:space="preserve">
+    <value>Cobros</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Payouts" xml:space="preserve">
+    <value>Transferencias</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Blocked.payments_not_available_in_region" xml:space="preserve">
+    <value>Los pagos en línea no están disponibles en esta región.</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Blocked.payments_flag_off" xml:space="preserve">
+    <value>Los pagos en línea no están habilitados para su departamento.</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Blocked.payments_addon_required" xml:space="preserve">
+    <value>Los pagos en línea requieren el complemento Business Operations.</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Blocked.payments_not_enabled_for_department" xml:space="preserve">
+    <value>Los pagos en línea están desactivados en la configuración de facturación.</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Blocked.payments_no_connection" xml:space="preserve">
+    <value>No hay ninguna cuenta de pagos conectada.</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Blocked.payments_connection_not_ready" xml:space="preserve">
+    <value>La cuenta de pagos conectada no está lista para recibir pagos.</value>
+  </data>
+  <data name="W.bids.pipeline.Title" xml:space="preserve">
+    <value>Ofertas</value>
+  </data>
+  <data name="W.bids.pipeline.Description" xml:space="preserve">
+    <value>Ofertas por estado y ofertas enviadas a punto de vencer.</value>
+  </data>
+  <data name="W.bids.pipeline.Setting.expiringDays" xml:space="preserve">
+    <value>Vencen en (días)</value>
+  </data>
+  <data name="W.bids.pipeline.Draft" xml:space="preserve">
+    <value>Borradores</value>
+  </data>
+  <data name="W.bids.pipeline.Submitted" xml:space="preserve">
+    <value>Enviadas</value>
+  </data>
+  <data name="W.bids.pipeline.Accepted" xml:space="preserve">
+    <value>Adjudicadas</value>
+  </data>
+  <data name="W.bids.pipeline.Declined" xml:space="preserve">
+    <value>Rechazadas</value>
+  </data>
+  <data name="W.bids.pipeline.Expired" xml:space="preserve">
+    <value>Vencidas</value>
+  </data>
+  <data name="W.bids.pipeline.Withdrawn" xml:space="preserve">
+    <value>Retiradas</value>
+  </data>
+  <data name="W.contracts.expiring.Title" xml:space="preserve">
+    <value>Contratos</value>
+  </data>
+  <data name="W.contracts.expiring.Description" xml:space="preserve">
+    <value>Contratos de servicio activos, los que terminan pronto y documentos de cumplimiento que ya vencieron o están por vencer.</value>
+  </data>
+  <data name="W.contracts.expiring.Setting.days" xml:space="preserve">
+    <value>Terminan en (días)</value>
+  </data>
+  <data name="W.contracts.expiring.Setting.maxRows" xml:space="preserve">
+    <value>Contratos por mostrar</value>
+  </data>
+  <data name="W.contracts.expiring.Active" xml:space="preserve">
+    <value>Activos</value>
+  </data>
+  <data name="W.contracts.expiring.Expiring" xml:space="preserve">
+    <value>Terminan pronto</value>
+  </data>
+  <data name="W.contracts.expiring.DocumentsExpired" xml:space="preserve">
+    <value>Documentos de cumplimiento vencidos</value>
+  </data>
+  <data name="W.contracts.expiring.DocumentsExpiring" xml:space="preserve">
+    <value>Documentos de cumplimiento por vencer</value>
+  </data>
+  <data name="W.costRecovery.queue.Title" xml:space="preserve">
+    <value>Cal OES MARS</value>
+  </data>
+  <data name="W.costRecovery.queue.Description" xml:space="preserve">
+    <value>Elementos de Cal OES MARS en espera de acción, los más antiguos primero, y la verificación de preparación de la agencia para gerentes.</value>
+  </data>
+  <data name="W.costRecovery.queue.Setting.maxRows" xml:space="preserve">
+    <value>Elementos por mostrar</value>
+  </data>
+  <data name="W.costRecovery.queue.Total" xml:space="preserve">
+    <value>En cola</value>
+  </data>
+  <data name="W.costRecovery.queue.Mine" xml:space="preserve">
+    <value>Míos</value>
+  </data>
+  <data name="W.costRecovery.queue.WithErrors" xml:space="preserve">
+    <value>Con errores</value>
+  </data>
+  <data name="W.costRecovery.queue.Ready" xml:space="preserve">
+    <value>Agencia lista</value>
+  </data>
+  <data name="W.costRecovery.queue.NotReady" xml:space="preserve">
+    <value>Agencia no lista</value>
+  </data>
+  <data name="W.costRecovery.queue.Blockers" xml:space="preserve">
+    <value>Bloqueos</value>
+  </data>
+  <data name="W.costRecovery.queue.Warnings" xml:space="preserve">
+    <value>Advertencias</value>
+  </data>
+  <data name="W.costRecovery.queue.Returned" xml:space="preserve">
+    <value>Devueltos</value>
+  </data>
+  <data name="W.costRecovery.queue.AwaitingLocalApproval" xml:space="preserve">
+    <value>Facturas pendientes de aprobación local</value>
+  </data>
+  <data name="W.costRecovery.queue.Empty" xml:space="preserve">
+    <value>No hay nada en espera de acción.</value>
+  </data>
+  <data name="W.workforce.fieldCosting.Title" xml:space="preserve">
+    <value>Costeo de campo</value>
+  </data>
+  <data name="W.workforce.fieldCosting.Description" xml:space="preserve">
+    <value>Los cálculos de costos de campo más recientes con su costo cargado, margen de contribución y datos faltantes.</value>
+  </data>
+  <data name="W.workforce.fieldCosting.Setting.maxRows" xml:space="preserve">
+    <value>Cálculos por mostrar</value>
+  </data>
+  <data name="W.workforce.fieldCosting.LoadedCost" xml:space="preserve">
+    <value>Costo cargado</value>
+  </data>
+  <data name="W.workforce.fieldCosting.Margin" xml:space="preserve">
+    <value>Margen</value>
+  </data>
+  <data name="W.workforce.fieldCosting.MissingInputs" xml:space="preserve">
+    <value>Datos faltantes</value>
+  </data>
+  <data name="W.workforce.fieldCosting.Context.Bid" xml:space="preserve">
+    <value>Oferta</value>
+  </data>
+  <data name="W.workforce.fieldCosting.Context.Call" xml:space="preserve">
+    <value>Llamada</value>
+  </data>
+  <data name="W.workforce.fieldCosting.Context.Deployment" xml:space="preserve">
+    <value>Despliegue</value>
+  </data>
+  <data name="W.workforce.fieldCosting.Status.Draft" xml:space="preserve">
+    <value>Borrador</value>
+  </data>
+  <data name="W.workforce.fieldCosting.Status.NeedsReview" xml:space="preserve">
+    <value>Requiere revisión</value>
+  </data>
+  <data name="W.workforce.fieldCosting.Status.Frozen" xml:space="preserve">
+    <value>Congelado</value>
+  </data>
+  <data name="W.workforce.fieldCosting.Status.Superseded" xml:space="preserve">
+    <value>Reemplazado</value>
+  </data>
+  <data name="W.workforce.fieldCosting.Empty" xml:space="preserve">
+    <value>Aún no hay cálculos de costos.</value>
+  </data>
+  <data name="W.workforce.payData.Title" xml:space="preserve">
+    <value>Completitud de datos salariales</value>
+  </data>
+  <data name="W.workforce.payData.Description" xml:space="preserve">
+    <value>Qué tan completo está el informe de datos salariales de California del último año del informe: respuestas recopiladas, cálculos abiertos y excepciones.</value>
+  </data>
+  <data name="W.workforce.payData.ReportingYear" xml:space="preserve">
+    <value>Año del informe {0}</value>
+  </data>
+  <data name="W.workforce.payData.Responses" xml:space="preserve">
+    <value>Respuestas: {0} de {1} trabajadores</value>
+  </data>
+  <data name="W.workforce.payData.Due" xml:space="preserve">
+    <value>Vence {0}</value>
+  </data>
+  <data name="W.workforce.payData.OpenRuns" xml:space="preserve">
+    <value>Cálculos abiertos</value>
+  </data>
+  <data name="W.workforce.payData.Exceptions" xml:space="preserve">
+    <value>Excepciones sin resolver</value>
+  </data>
+  <data name="W.workforce.payData.AnnualFactsMissing" xml:space="preserve">
+    <value>Datos anuales de pago faltantes</value>
+  </data>
+  <data name="W.workforce.payData.Certified" xml:space="preserve">
+    <value>Certificado</value>
+  </data>
+  <data name="W.ibo.Status.Preparing" xml:space="preserve">
+    <value>En preparación</value>
+  </data>
+  <data name="W.ibo.Status.Active" xml:space="preserve">
+    <value>Activo</value>
+  </data>
+  <data name="W.ibo.Status.Demobilizing" xml:space="preserve">
+    <value>En desmovilización</value>
+  </data>
+  <data name="W.ibo.Status.Closed" xml:space="preserve">
+    <value>Cerrado</value>
+  </data>
+  <data name="W.ibo.Status.Sealed" xml:space="preserve">
+    <value>Sellado</value>
+  </data>
+  <data name="W.ibo.Kind.Incident" xml:space="preserve">
+    <value>Incidente</value>
+  </data>
+  <data name="W.ibo.Kind.Complex" xml:space="preserve">
+    <value>Complejo</value>
+  </data>
+  <data name="W.ibo.Kind.PlannedEvent" xml:space="preserve">
+    <value>Evento planificado</value>
+  </data>
+  <data name="W.ibo.Kind.EocActivation" xml:space="preserve">
+    <value>Activación del EOC</value>
+  </data>
+  <data name="W.ibo.ReadOnly" xml:space="preserve">
+    <value>Solo lectura: el complemento Incident Back Office ha vencido.</value>
+  </data>
+  <data name="W.ibo.NoActivation" xml:space="preserve">
+    <value>No hay ningún incidente abierto.</value>
+  </data>
+  <data name="W.ibo.Exercise" xml:space="preserve">
+    <value>Ejercicio</value>
+  </data>
+  <data name="W.ibo.activations.Title" xml:space="preserve">
+    <value>Incidentes activos</value>
+  </data>
+  <data name="W.ibo.activations.Description" xml:space="preserve">
+    <value>Incidentes abiertos con su período operativo actual y el puesto que usted ocupa.</value>
+  </data>
+  <data name="W.ibo.activations.Setting.maxRows" xml:space="preserve">
+    <value>Incidentes por mostrar</value>
+  </data>
+  <data name="W.ibo.activations.Period" xml:space="preserve">
+    <value>Período {0}</value>
+  </data>
+  <data name="W.ibo.activations.MyPosition" xml:space="preserve">
+    <value>Mi puesto</value>
+  </data>
+  <data name="W.ibo.activations.Empty" xml:space="preserve">
+    <value>No hay incidentes abiertos.</value>
+  </data>
+  <data name="W.ibo.desk.Title" xml:space="preserve">
+    <value>Mesa del incidente</value>
+  </data>
+  <data name="W.ibo.desk.Description" xml:space="preserve">
+    <value>La mesa de operaciones, logística o finanzas de un incidente de un vistazo, con llegadas y salidas por ventana de tiempo.</value>
+  </data>
+  <data name="W.ibo.desk.Setting.activation" xml:space="preserve">
+    <value>Incidente</value>
+  </data>
+  <data name="W.ibo.desk.Setting.desk" xml:space="preserve">
+    <value>Mesa</value>
+  </data>
+  <data name="W.ibo.desk.Option.recent" xml:space="preserve">
+    <value>Incidente más reciente</value>
+  </data>
+  <data name="W.ibo.desk.Option.operations" xml:space="preserve">
+    <value>Operaciones</value>
+  </data>
+  <data name="W.ibo.desk.Option.logistics" xml:space="preserve">
+    <value>Logística</value>
+  </data>
+  <data name="W.ibo.desk.Option.finance" xml:space="preserve">
+    <value>Finanzas</value>
+  </data>
+  <data name="W.ibo.desk.Inbound" xml:space="preserve">
+    <value>Llegadas</value>
+  </data>
+  <data name="W.ibo.desk.Outbound" xml:space="preserve">
+    <value>Salidas</value>
+  </data>
+  <data name="W.ibo.desk.Predicted" xml:space="preserve">
+    <value>previstas</value>
+  </data>
+  <data name="W.ibo.desk.DeskUnavailable" xml:space="preserve">
+    <value>Esta mesa no está disponible para usted.</value>
+  </data>
+  <data name="W.ibo.desk.Value.participants.total" xml:space="preserve">
+    <value>Participantes</value>
+  </data>
+  <data name="W.ibo.desk.Value.participants.on_incident" xml:space="preserve">
+    <value>En el incidente</value>
+  </data>
+  <data name="W.ibo.desk.Value.participants.inbound" xml:space="preserve">
+    <value>Entrantes</value>
+  </data>
+  <data name="W.ibo.desk.Value.resources.on_incident" xml:space="preserve">
+    <value>Recursos en el incidente</value>
+  </data>
+  <data name="W.ibo.desk.Value.resources.inbound" xml:space="preserve">
+    <value>Recursos entrantes</value>
+  </data>
+  <data name="W.ibo.desk.Value.resources.personnel" xml:space="preserve">
+    <value>Personal con recursos</value>
+  </data>
+  <data name="W.ibo.desk.Value.requests.open" xml:space="preserve">
+    <value>Solicitudes abiertas</value>
+  </data>
+  <data name="W.ibo.desk.Value.requests.critical_unfilled" xml:space="preserve">
+    <value>Críticas sin cubrir</value>
+  </data>
+  <data name="W.ibo.desk.Value.requests.overdue" xml:space="preserve">
+    <value>Solicitudes vencidas</value>
+  </data>
+  <data name="W.ibo.desk.Value.fills.en_route" xml:space="preserve">
+    <value>Asignaciones en camino</value>
+  </data>
+  <data name="W.ibo.desk.Value.demob.pending" xml:space="preserve">
+    <value>Desmovilización pendiente</value>
+  </data>
+  <data name="W.ibo.desk.Value.lodging.beds_held_tonight" xml:space="preserve">
+    <value>Camas reservadas esta noche</value>
+  </data>
+  <data name="W.ibo.desk.Value.lodging.beds_available_tonight" xml:space="preserve">
+    <value>Camas disponibles esta noche</value>
+  </data>
+  <data name="W.ibo.desk.Value.lodging.needed" xml:space="preserve">
+    <value>Necesitan alojamiento</value>
+  </data>
+  <data name="W.ibo.desk.Value.service.open" xml:space="preserve">
+    <value>Solicitudes de servicio abiertas</value>
+  </data>
+  <data name="W.ibo.desk.Value.finance.committed" xml:space="preserve">
+    <value>Comprometido</value>
+  </data>
+  <data name="W.ibo.desk.Value.finance.open_commitments" xml:space="preserve">
+    <value>Compromisos abiertos</value>
+  </data>
+  <data name="W.ibo.desk.Value.finance.budget" xml:space="preserve">
+    <value>Presupuesto</value>
+  </data>
+  <data name="W.ibo.desk.Value.finance.cost_to_date" xml:space="preserve">
+    <value>Costo a la fecha</value>
+  </data>
+  <data name="W.ibo.desk.Value.finance.daily_burn" xml:space="preserve">
+    <value>Gasto diario</value>
+  </data>
+  <data name="W.ibo.desk.Value.finance.forecast_at_completion" xml:space="preserve">
+    <value>Pronóstico al finalizar</value>
+  </data>
+  <data name="W.ibo.desk.Value.finance.time_awaiting_certification" xml:space="preserve">
+    <value>Tiempo pendiente de certificación</value>
+  </data>
+  <data name="W.ibo.desk.Value.finance.time_awaiting_approval" xml:space="preserve">
+    <value>Tiempo pendiente de aprobación</value>
+  </data>
+  <data name="W.ibo.desk.Value.finance.invoice_exceptions" xml:space="preserve">
+    <value>Excepciones de facturas</value>
+  </data>
+  <data name="W.ibo.resources.Title" xml:space="preserve">
+    <value>Recursos del incidente</value>
+  </data>
+  <data name="W.ibo.resources.Description" xml:space="preserve">
+    <value>Los recursos de un incidente por tipo y estado de apoyo.</value>
+  </data>
+  <data name="W.ibo.resources.Setting.activation" xml:space="preserve">
+    <value>Incidente</value>
+  </data>
+  <data name="W.ibo.resources.Option.recent" xml:space="preserve">
+    <value>Incidente más reciente</value>
+  </data>
+  <data name="W.ibo.resources.Total" xml:space="preserve">
+    <value>Recursos</value>
+  </data>
+  <data name="W.ibo.resources.OnIncident" xml:space="preserve">
+    <value>En el incidente</value>
+  </data>
+  <data name="W.ibo.resources.Inbound" xml:space="preserve">
+    <value>Entrantes</value>
+  </data>
+  <data name="W.ibo.resources.Personnel" xml:space="preserve">
+    <value>Personal</value>
+  </data>
+  <data name="W.ibo.ResourceKind.Personnel" xml:space="preserve">
+    <value>Personal</value>
+  </data>
+  <data name="W.ibo.ResourceKind.Crew" xml:space="preserve">
+    <value>Cuadrilla</value>
+  </data>
+  <data name="W.ibo.ResourceKind.Team" xml:space="preserve">
+    <value>Equipo de trabajo</value>
+  </data>
+  <data name="W.ibo.ResourceKind.Equipment" xml:space="preserve">
+    <value>Equipo</value>
+  </data>
+  <data name="W.ibo.ResourceKind.Aircraft" xml:space="preserve">
+    <value>Aeronave</value>
+  </data>
+  <data name="W.ibo.ResourceKind.Supply" xml:space="preserve">
+    <value>Suministros</value>
+  </data>
+  <data name="W.ibo.ResourceKind.Service" xml:space="preserve">
+    <value>Servicio</value>
+  </data>
+  <data name="W.ibo.ResourceKind.Facility" xml:space="preserve">
+    <value>Instalación</value>
+  </data>
+  <data name="W.ibo.ResourceKind.MissionPackage" xml:space="preserve">
+    <value>Paquete de misión</value>
+  </data>
+  <data name="W.ibo.ResourceKind.Overhead" xml:space="preserve">
+    <value>Personal de gestión</value>
+  </data>
+  <data name="W.ibo.SupportStatus.Ordered" xml:space="preserve">
+    <value>Pedido</value>
+  </data>
+  <data name="W.ibo.SupportStatus.Mobilizing" xml:space="preserve">
+    <value>Movilizando</value>
+  </data>
+  <data name="W.ibo.SupportStatus.EnRoute" xml:space="preserve">
+    <value>En camino</value>
+  </data>
+  <data name="W.ibo.SupportStatus.Arrived" xml:space="preserve">
+    <value>Llegó</value>
+  </data>
+  <data name="W.ibo.SupportStatus.Supported" xml:space="preserve">
+    <value>Con apoyo</value>
+  </data>
+  <data name="W.ibo.SupportStatus.PendingDemob" xml:space="preserve">
+    <value>Desmovilización pendiente</value>
+  </data>
+  <data name="W.ibo.SupportStatus.Released" xml:space="preserve">
+    <value>Liberado</value>
+  </data>
+  <data name="W.ibo.SupportStatus.Returned" xml:space="preserve">
+    <value>Devuelto</value>
+  </data>
+  <data name="W.ibo.SupportStatus.Closed" xml:space="preserve">
+    <value>Cerrado</value>
+  </data>
+  <data name="W.ibo.checkIn.Title" xml:space="preserve">
+    <value>Cola de registro de llegada</value>
+  </data>
+  <data name="W.ibo.checkIn.Description" xml:space="preserve">
+    <value>Personas en espera de inscribirse en un incidente y participantes inscritos que aún no han registrado su llegada.</value>
+  </data>
+  <data name="W.ibo.checkIn.Setting.activation" xml:space="preserve">
+    <value>Incidente</value>
+  </data>
+  <data name="W.ibo.checkIn.Setting.maxRows" xml:space="preserve">
+    <value>Personas por mostrar</value>
+  </data>
+  <data name="W.ibo.checkIn.Option.recent" xml:space="preserve">
+    <value>Incidente más reciente</value>
+  </data>
+  <data name="W.ibo.checkIn.Queue" xml:space="preserve">
+    <value>En espera de inscripción</value>
+  </data>
+  <data name="W.ibo.checkIn.AwaitingCheckIn" xml:space="preserve">
+    <value>Sin llegada registrada</value>
+  </data>
+  <data name="W.ibo.checkIn.Drafts" xml:space="preserve">
+    <value>Borradores</value>
+  </data>
+  <data name="W.ibo.checkIn.Waiting" xml:space="preserve">
+    <value>En espera desde {0}</value>
+  </data>
+  <data name="W.ibo.checkIn.Empty" xml:space="preserve">
+    <value>Nadie está en espera.</value>
+  </data>
+  <data name="W.ibo.finance.Title" xml:space="preserve">
+    <value>Costos del incidente</value>
+  </data>
+  <data name="W.ibo.finance.Description" xml:space="preserve">
+    <value>El costo a la fecha de un incidente frente a su presupuesto, el ritmo de gasto diario y el pronóstico al finalizar.</value>
+  </data>
+  <data name="W.ibo.finance.Setting.activation" xml:space="preserve">
+    <value>Incidente</value>
+  </data>
+  <data name="W.ibo.finance.Option.recent" xml:space="preserve">
+    <value>Incidente más reciente</value>
+  </data>
+  <data name="W.ibo.finance.CostToDate" xml:space="preserve">
+    <value>Costo a la fecha</value>
+  </data>
+  <data name="W.ibo.finance.Budget" xml:space="preserve">
+    <value>Presupuesto</value>
+  </data>
+  <data name="W.ibo.finance.DailyBurn" xml:space="preserve">
+    <value>Gasto diario</value>
+  </data>
+  <data name="W.ibo.finance.Forecast" xml:space="preserve">
+    <value>Pronóstico al finalizar</value>
+  </data>
+  <data name="W.ibo.finance.ProjectedEnd" xml:space="preserve">
+    <value>Fin proyectado</value>
+  </data>
+  <data name="W.ibo.finance.NoProjection" xml:space="preserve">
+    <value>Aún no hay proyección de costos.</value>
+  </data>
+  <data name="W.ibo.coordination.Title" xml:space="preserve">
+    <value>Tableros de coordinación</value>
+  </data>
+  <data name="W.ibo.coordination.Description" xml:space="preserve">
+    <value>Sus tableros de coordinación con carriles desactualizados y compartidos activos con socios, los actualizados más recientemente primero.</value>
+  </data>
+  <data name="W.ibo.coordination.Setting.maxRows" xml:space="preserve">
+    <value>Tableros por mostrar</value>
+  </data>
+  <data name="W.ibo.coordination.Boards" xml:space="preserve">
+    <value>Tableros</value>
+  </data>
+  <data name="W.ibo.coordination.ActiveShares" xml:space="preserve">
+    <value>Compartidos activos</value>
+  </data>
+  <data name="W.ibo.coordination.StaleLanes" xml:space="preserve">
+    <value>Carriles desactualizados</value>
+  </data>
+  <data name="W.ibo.coordination.Lanes" xml:space="preserve">
+    <value>Carriles: {0}</value>
+  </data>
+  <data name="W.ibo.coordination.Frozen" xml:space="preserve">
+    <value>Congelado</value>
+  </data>
+  <data name="W.ibo.coordination.Updated" xml:space="preserve">
+    <value>Actualizado {0}</value>
+  </data>
+  <data name="W.ibo.coordination.Empty" xml:space="preserve">
+    <value>No hay tableros de coordinación.</value>
+  </data>
+  <data name="W.ai.assistant.Title" xml:space="preserve">
+    <value>Asistente</value>
+  </data>
+  <data name="W.ai.assistant.Description" xml:space="preserve">
+    <value>Consulte al asistente de Resgrid sobre su departamento sin salir del panel.</value>
+  </data>
+  <data name="W.aiDispatch.triage.Title" xml:space="preserve">
+    <value>Clasificación de despacho con IA</value>
+  </data>
+  <data name="W.aiDispatch.triage.Description" xml:space="preserve">
+    <value>Llamadas creadas a partir de correos y mensajes de texto entrantes que aún necesitan la revisión de un despachador, con la confianza de la IA y la antigüedad.</value>
+  </data>
+  <data name="W.aiDispatch.triage.Setting.hours" xml:space="preserve">
+    <value>Horas por incluir</value>
+  </data>
+  <data name="W.aiDispatch.triage.Setting.maxRows" xml:space="preserve">
+    <value>Llamadas por mostrar</value>
+  </data>
+  <data name="W.aiDispatch.triage.NeedsReview" xml:space="preserve">
+    <value>Requieren revisión</value>
+  </data>
+  <data name="W.aiDispatch.triage.InProgress" xml:space="preserve">
+    <value>En curso</value>
+  </data>
+  <data name="W.aiDispatch.triage.Applied" xml:space="preserve">
+    <value>Aplicados</value>
+  </data>
+  <data name="W.aiDispatch.triage.Total" xml:space="preserve">
+    <value>Mensajes</value>
+  </data>
+  <data name="W.aiDispatch.triage.Confidence" xml:space="preserve">
+    <value>{0}% de confianza</value>
+  </data>
+  <data name="W.aiDispatch.triage.Related" xml:space="preserve">
+    <value>Posible duplicado de {0}</value>
+  </data>
+  <data name="W.aiDispatch.triage.Empty" xml:space="preserve">
+    <value>No hay nada por revisar.</value>
+  </data>
+  <data name="W.aiDispatch.triage.Outcome.Applied" xml:space="preserve">
+    <value>Aplicado</value>
+  </data>
+  <data name="W.aiDispatch.triage.Outcome.InProgress" xml:space="preserve">
+    <value>En curso</value>
+  </data>
+  <data name="W.aiDispatch.triage.Outcome.NoChange" xml:space="preserve">
+    <value>Sin cambios</value>
+  </data>
+  <data name="W.aiDispatch.triage.Outcome.LowConfidence" xml:space="preserve">
+    <value>Confianza baja</value>
+  </data>
+  <data name="W.aiDispatch.triage.Outcome.InvalidOutput" xml:space="preserve">
+    <value>Respuesta no válida</value>
+  </data>
+  <data name="W.aiDispatch.triage.Outcome.Unavailable" xml:space="preserve">
+    <value>IA no disponible</value>
+  </data>
+  <data name="W.aiDispatch.triage.Outcome.Busy" xml:space="preserve">
+    <value>IA ocupada</value>
+  </data>
+  <data name="W.aiDispatch.triage.Outcome.BudgetExhausted" xml:space="preserve">
+    <value>Presupuesto de IA agotado</value>
+  </data>
+  <data name="W.aiDispatch.triage.Outcome.ProtectionUnsupported" xml:space="preserve">
+    <value>No disponible con protección de datos</value>
+  </data>
+  <data name="W.aiDispatch.triage.Outcome.CallNotActive" xml:space="preserve">
+    <value>La llamada ya no está activa</value>
+  </data>
+  <data name="W.aiDispatch.triage.Outcome.SenderNotAllowed" xml:space="preserve">
+    <value>Remitente no permitido</value>
+  </data>
+  <data name="W.aiDispatch.triage.Outcome.DispatchCapReached" xml:space="preserve">
+    <value>Se alcanzó el límite mensual de despacho con IA</value>
+  </data>
+  <data name="W.admin.setup.Title" xml:space="preserve">
+    <value>Avance de la configuración</value>
+  </data>
+  <data name="W.admin.setup.Description" xml:space="preserve">
+    <value>Avance de la configuración de Admin Assist: verificaciones comprobadas, tareas de configuración hechas y la siguiente por hacer.</value>
+  </data>
+  <data name="W.admin.setup.ChecksVerified" xml:space="preserve">
+    <value>{0} de {1} verificaciones comprobadas</value>
+  </data>
+  <data name="W.admin.setup.ChecksFailed" xml:space="preserve">
+    <value>Con fallas</value>
+  </data>
+  <data name="W.admin.setup.ChecksUnknown" xml:space="preserve">
+    <value>Sin comprobar</value>
+  </data>
+  <data name="W.admin.setup.TasksDone" xml:space="preserve">
+    <value>Tareas hechas: {0} de {1}</value>
+  </data>
+  <data name="W.admin.setup.NeedsAttention" xml:space="preserve">
+    <value>Requieren atención</value>
+  </data>
+  <data name="W.admin.setup.Next" xml:space="preserve">
+    <value>Siguiente</value>
+  </data>
+  <data name="W.admin.setup.Continue" xml:space="preserve">
+    <value>Continuar la configuración</value>
+  </data>
+  <data name="W.admin.setup.RevisitDue" xml:space="preserve">
+    <value>Es momento de revisar su configuración.</value>
+  </data>
+  <data name="W.admin.setup.Done" xml:space="preserve">
+    <value>La configuración está completa.</value>
+  </data>
+  <data name="W.admin.plan.Title" xml:space="preserve">
+    <value>Plan y complementos</value>
+  </data>
+  <data name="W.admin.plan.Description" xml:space="preserve">
+    <value>Su plan de suscripción, cuánto usa de sus límites, los complementos que tiene o puede agregar y la fecha de renovación.</value>
+  </data>
+  <data name="W.admin.plan.FreePlan" xml:space="preserve">
+    <value>Plan gratuito</value>
+  </data>
+  <data name="W.admin.plan.PlanUnavailable" xml:space="preserve">
+    <value>Los detalles del plan no están disponibles por ahora.</value>
+  </data>
+  <data name="W.admin.plan.Personnel" xml:space="preserve">
+    <value>Personal</value>
+  </data>
+  <data name="W.admin.plan.Units" xml:space="preserve">
+    <value>Unidades</value>
+  </data>
+  <data name="W.admin.plan.Entities" xml:space="preserve">
+    <value>Personal y unidades</value>
+  </data>
+  <data name="W.admin.plan.Unlimited" xml:space="preserve">
+    <value>Ilimitado</value>
+  </data>
+  <data name="W.admin.plan.Renews" xml:space="preserve">
+    <value>Se renueva {0}</value>
+  </data>
+  <data name="W.admin.plan.Ends" xml:space="preserve">
+    <value>Finaliza {0}</value>
+  </data>
+  <data name="W.admin.plan.NeverExpires" xml:space="preserve">
+    <value>No vence</value>
+  </data>
+  <data name="W.admin.plan.Held" xml:space="preserve">
+    <value>Activo</value>
+  </data>
+  <data name="W.admin.plan.Available" xml:space="preserve">
+    <value>Disponible</value>
+  </data>
+  <data name="W.admin.plan.Cancelled" xml:space="preserve">
+    <value>Cancelado</value>
+  </data>
+  <data name="W.admin.plan.Addon.PTT" xml:space="preserve">
+    <value>Push-To-Talk</value>
+  </data>
+  <data name="W.admin.plan.Addon.ADP" xml:space="preserve">
+    <value>Advanced Data Protection</value>
+  </data>
+  <data name="W.admin.plan.Addon.ReadinessPro" xml:space="preserve">
+    <value>Readiness Pro</value>
+  </data>
+  <data name="W.admin.plan.Addon.BusinessOperations" xml:space="preserve">
+    <value>Business Operations</value>
+  </data>
+  <data name="W.admin.plan.Addon.EnhancedAi" xml:space="preserve">
+    <value>Enhanced AI</value>
+  </data>
+  <data name="W.admin.plan.Addon.IncidentBackOffice" xml:space="preserve">
+    <value>Incident Back Office</value>
+  </data>
+  <data name="W.admin.workflows.Title" xml:space="preserve">
+    <value>Salud de los flujos de trabajo</value>
+  </data>
+  <data name="W.admin.workflows.Description" xml:space="preserve">
+    <value>Ejecuciones de flujos de trabajo del último día: ejecuciones pendientes, en curso y fallidas, y los flujos de trabajo que más fallan.</value>
+  </data>
+  <data name="W.admin.workflows.Setting.maxRows" xml:space="preserve">
+    <value>Flujos de trabajo por mostrar</value>
+  </data>
+  <data name="W.admin.workflows.Pending" xml:space="preserve">
+    <value>Pendientes</value>
+  </data>
+  <data name="W.admin.workflows.Running" xml:space="preserve">
+    <value>En ejecución</value>
+  </data>
+  <data name="W.admin.workflows.Retrying" xml:space="preserve">
+    <value>Reintentando</value>
+  </data>
+  <data name="W.admin.workflows.Failed" xml:space="preserve">
+    <value>Fallidas (24 h)</value>
+  </data>
+  <data name="W.admin.workflows.Success" xml:space="preserve">
+    <value>{0}% exitosas</value>
+  </data>
+  <data name="W.admin.workflows.Active" xml:space="preserve">
+    <value>Flujos de trabajo activos: {0} de {1}</value>
+  </data>
+  <data name="W.admin.workflows.ErrorDetailsProtected" xml:space="preserve">
+    <value>Detalles del error protegidos</value>
+  </data>
+  <data name="W.admin.workflows.SeeDetails" xml:space="preserve">
+    <value>Ver detalles</value>
+  </data>
+  <data name="W.admin.workflows.Empty" xml:space="preserve">
+    <value>No hubo ejecuciones fallidas en el último día.</value>
+  </data>
+  <data name="W.admin.dataProtection.Title" xml:space="preserve">
+    <value>Protección de datos</value>
+  </data>
+  <data name="W.admin.dataProtection.Description" xml:space="preserve">
+    <value>Estado de Advanced Data Protection, la ventana de verificación adicional y el avance de la migración.</value>
+  </data>
+  <data name="W.admin.dataProtection.StepUpWindow" xml:space="preserve">
+    <value>La verificación dura {0} minutos</value>
+  </data>
+  <data name="W.admin.dataProtection.Migration" xml:space="preserve">
+    <value>Migración</value>
+  </data>
+  <data name="W.admin.dataProtection.Progress" xml:space="preserve">
+    <value>{0}% completado</value>
+  </data>
+  <data name="W.admin.dataProtection.Anomalies" xml:space="preserve">
+    <value>Filas que requieren atención</value>
+  </data>
+  <data name="W.admin.dataProtection.CatalogUpgrade" xml:space="preserve">
+    <value>Hay una actualización del catálogo de campos protegidos en espera.</value>
+  </data>
+  <data name="W.admin.dataProtection.Offboarding" xml:space="preserve">
+    <value>La protección termina {0}</value>
+  </data>
+  <data name="W.admin.dataProtection.State.Disabled" xml:space="preserve">
+    <value>No habilitado</value>
+  </data>
+  <data name="W.admin.dataProtection.State.EnrollmentQueued" xml:space="preserve">
+    <value>Inscripción en cola</value>
+  </data>
+  <data name="W.admin.dataProtection.State.ProvisioningKey" xml:space="preserve">
+    <value>Aprovisionando clave</value>
+  </data>
+  <data name="W.admin.dataProtection.State.Encrypting" xml:space="preserve">
+    <value>Cifrando</value>
+  </data>
+  <data name="W.admin.dataProtection.State.Verifying" xml:space="preserve">
+    <value>Verificando</value>
+  </data>
+  <data name="W.admin.dataProtection.State.Enabled" xml:space="preserve">
+    <value>Habilitado</value>
+  </data>
+  <data name="W.admin.dataProtection.State.Rotating" xml:space="preserve">
+    <value>Rotando clave</value>
+  </data>
+  <data name="W.admin.dataProtection.State.OffboardingScheduled" xml:space="preserve">
+    <value>Baja programada</value>
+  </data>
+  <data name="W.admin.dataProtection.State.DisableRequested" xml:space="preserve">
+    <value>Desactivación solicitada</value>
+  </data>
+  <data name="W.admin.dataProtection.State.Decrypting" xml:space="preserve">
+    <value>Descifrando</value>
+  </data>
+  <data name="W.admin.dataProtection.State.Failed" xml:space="preserve">
+    <value>Fallido</value>
+  </data>
+  <data name="W.admin.import.Title" xml:space="preserve">
+    <value>Importación y migración</value>
+  </data>
+  <data name="W.admin.import.Description" xml:space="preserve">
+    <value>Avance de la importación de departamento: espacios de trabajo abiertos, conjuntos de datos por revisar e importaciones en curso.</value>
+  </data>
+  <data name="W.admin.import.OpenWorkspaces" xml:space="preserve">
+    <value>Importaciones abiertas</value>
+  </data>
+  <data name="W.admin.import.Activated" xml:space="preserve">
+    <value>Activadas</value>
+  </data>
+  <data name="W.admin.import.NeedingReview" xml:space="preserve">
+    <value>Requieren revisión</value>
+  </data>
+  <data name="W.admin.import.Ready" xml:space="preserve">
+    <value>Listas</value>
+  </data>
+  <data name="W.admin.import.Imported" xml:space="preserve">
+    <value>Importadas</value>
+  </data>
+  <data name="W.admin.import.Failed" xml:space="preserve">
+    <value>Fallidas</value>
+  </data>
+  <data name="W.admin.import.Rows" xml:space="preserve">
+    <value>Filas importadas: {0} de {1}</value>
+  </data>
+  <data name="W.admin.import.Warnings" xml:space="preserve">
+    <value>Filas con advertencias</value>
+  </data>
+  <data name="W.admin.import.Blocked" xml:space="preserve">
+    <value>Filas bloqueadas</value>
+  </data>
+  <data name="W.admin.import.RunsActive" xml:space="preserve">
+    <value>En ejecución</value>
+  </data>
+  <data name="W.admin.import.Target" xml:space="preserve">
+    <value>Destino {0}</value>
+  </data>
+  <data name="W.admin.import.Empty" xml:space="preserve">
+    <value>No hay ninguna importación en curso.</value>
+  </data>
+  <data name="W.admin.import.Status.Draft" xml:space="preserve">
+    <value>Borrador</value>
+  </data>
+  <data name="W.admin.import.Status.Collecting" xml:space="preserve">
+    <value>Recopilando archivos</value>
+  </data>
+  <data name="W.admin.import.Status.Reviewing" xml:space="preserve">
+    <value>En revisión</value>
+  </data>
+  <data name="W.admin.import.Status.Importing" xml:space="preserve">
+    <value>Importando</value>
+  </data>
+  <data name="W.admin.import.Status.Verifying" xml:space="preserve">
+    <value>Verificando</value>
+  </data>
+  <data name="W.admin.import.Status.ReadyToActivate" xml:space="preserve">
+    <value>Listo para activar</value>
+  </data>
+  <data name="W.admin.security.Title" xml:space="preserve">
+    <value>Postura de seguridad</value>
+  </data>
+  <data name="W.admin.security.Description" xml:space="preserve">
+    <value>Cuántos miembros usan un autenticador o una clave de acceso, el estado del inicio de sesión único y de SCIM, y las sesiones activas.</value>
+  </data>
+  <data name="W.admin.security.StrongAuthentication" xml:space="preserve">
+    <value>Miembros con MFA o clave de acceso</value>
+  </data>
+  <data name="W.admin.security.Mfa" xml:space="preserve">
+    <value>Autenticador</value>
+  </data>
+  <data name="W.admin.security.Passkeys" xml:space="preserve">
+    <value>Claves de acceso</value>
+  </data>
+  <data name="W.admin.security.Sessions" xml:space="preserve">
+    <value>Sesiones activas</value>
+  </data>
+  <data name="W.admin.security.SessionUsers" xml:space="preserve">
+    <value>Miembros con sesión iniciada: {0}</value>
+  </data>
+  <data name="W.admin.security.Sso" xml:space="preserve">
+    <value>Inicio de sesión único</value>
+  </data>
+  <data name="W.admin.security.Scim" xml:space="preserve">
+    <value>Aprovisionamiento SCIM</value>
+  </data>
+  <data name="W.admin.security.RequireMfa" xml:space="preserve">
+    <value>MFA obligatoria</value>
+  </data>
+  <data name="W.admin.security.RequireSso" xml:space="preserve">
+    <value>SSO obligatorio</value>
+  </data>
+  <data name="W.admin.security.On" xml:space="preserve">
+    <value>Activado</value>
+  </data>
+  <data name="W.admin.security.Off" xml:space="preserve">
+    <value>Desactivado</value>
+  </data>
+  <data name="W.deployments.active.OpenDeployments" xml:space="preserve">
+    <value>Abrir despliegues</value>
+  </data>
+  <data name="W.deployments.active.Rostered" xml:space="preserve">
+    <value>Usted está en la dotación</value>
+  </data>
+  <data name="W.deployments.active.Starts" xml:space="preserve">
+    <value>Inicia {0}</value>
+  </data>
+  <data name="W.deployments.timeReports.Empty" xml:space="preserve">
+    <value>No hay partes de horas en espera.</value>
+  </data>
+  <data name="W.deployments.timeReports.OpenDeployments" xml:space="preserve">
+    <value>Abrir despliegues</value>
+  </data>
+  <data name="W.invoicing.receivables.Empty" xml:space="preserve">
+    <value>No hay facturas abiertas.</value>
+  </data>
+  <data name="W.invoicing.receivables.OpenInvoicing" xml:space="preserve">
+    <value>Abrir facturación</value>
+  </data>
+  <data name="W.invoicing.receivables.OpenInvoices" xml:space="preserve">
+    <value>facturas abiertas</value>
+  </data>
+  <data name="W.invoicing.receivables.OutstandingCount" xml:space="preserve">
+    <value>pendiente de cobro · facturas abiertas: {0}</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.On" xml:space="preserve">
+    <value>Activado</value>
+  </data>
+  <data name="W.invoicing.onlinePayments.Off" xml:space="preserve">
+    <value>Desactivado</value>
+  </data>
+  <data name="W.bids.pipeline.Empty" xml:space="preserve">
+    <value>Aún no hay ofertas.</value>
+  </data>
+  <data name="W.bids.pipeline.OpenBids" xml:space="preserve">
+    <value>Abrir ofertas</value>
+  </data>
+  <data name="W.bids.pipeline.NoneExpiring" xml:space="preserve">
+    <value>Ninguna oferta enviada vence en los próximos {0} días.</value>
+  </data>
+  <data name="W.contracts.expiring.NoActive" xml:space="preserve">
+    <value>No hay contratos activos.</value>
+  </data>
+  <data name="W.contracts.expiring.OpenContracts" xml:space="preserve">
+    <value>Abrir contratos</value>
+  </data>
+  <data name="W.costRecovery.queue.OpenQueue" xml:space="preserve">
+    <value>Abrir la cola</value>
+  </data>
+  <data name="W.costRecovery.queue.Readiness" xml:space="preserve">
+    <value>Preparación de la agencia</value>
+  </data>
+  <data name="W.costRecovery.queue.RecordType.AgencyProfile" xml:space="preserve">
+    <value>Perfil de agencia</value>
+  </data>
+  <data name="W.costRecovery.queue.RecordType.ResourceInventoryF5" xml:space="preserve">
+    <value>Inventario de recursos (F-5)</value>
+  </data>
+  <data name="W.costRecovery.queue.RecordType.SalarySurvey" xml:space="preserve">
+    <value>Encuesta salarial</value>
+  </data>
+  <data name="W.costRecovery.queue.RecordType.AdministrativeRate" xml:space="preserve">
+    <value>Tasa administrativa</value>
+  </data>
+  <data name="W.costRecovery.queue.RecordType.AttachmentA" xml:space="preserve">
+    <value>Anexo A</value>
+  </data>
+  <data name="W.costRecovery.queue.RecordType.SpecialEquipment" xml:space="preserve">
+    <value>Equipo especial</value>
+  </data>
+  <data name="W.costRecovery.queue.RecordType.Agreement" xml:space="preserve">
+    <value>Acuerdo</value>
+  </data>
+  <data name="W.costRecovery.queue.RecordType.F42" xml:space="preserve">
+    <value>F-42</value>
+  </data>
+  <data name="W.costRecovery.queue.RecordType.ExpenseClaim" xml:space="preserve">
+    <value>Reclamación de gastos</value>
+  </data>
+  <data name="W.costRecovery.queue.RecordType.GeneratedInvoice" xml:space="preserve">
+    <value>Factura</value>
+  </data>
+  <data name="W.costRecovery.queue.State.Draft" xml:space="preserve">
+    <value>Borrador</value>
+  </data>
+  <data name="W.costRecovery.queue.State.NeedsReview" xml:space="preserve">
+    <value>Requiere revisión</value>
+  </data>
+  <data name="W.costRecovery.queue.State.ReadyForPortal" xml:space="preserve">
+    <value>Listo para MARS</value>
+  </data>
+  <data name="W.costRecovery.queue.State.SubmittedExternal" xml:space="preserve">
+    <value>Enviado</value>
+  </data>
+  <data name="W.costRecovery.queue.State.ReturnedForAgencyReview" xml:space="preserve">
+    <value>Devuelto para revisión</value>
+  </data>
+  <data name="W.costRecovery.queue.State.Approved" xml:space="preserve">
+    <value>Aprobado</value>
+  </data>
+  <data name="W.costRecovery.queue.State.DocumentationOnly" xml:space="preserve">
+    <value>Solo documentación</value>
+  </data>
+  <data name="W.costRecovery.queue.State.PendingLocalAgencyApproval" xml:space="preserve">
+    <value>Pendiente de aprobación local</value>
+  </data>
+  <data name="W.costRecovery.queue.State.LocalAgencyRejected" xml:space="preserve">
+    <value>Rechazado localmente</value>
+  </data>
+  <data name="W.costRecovery.queue.State.PendingPayingEntityApproval" xml:space="preserve">
+    <value>Pendiente de la entidad pagadora</value>
+  </data>
+  <data name="W.costRecovery.queue.State.Paid" xml:space="preserve">
+    <value>Pagado</value>
+  </data>
+  <data name="W.costRecovery.queue.State.Closed" xml:space="preserve">
+    <value>Cerrado</value>
+  </data>
+  <data name="W.workforce.fieldCosting.OpenRuns" xml:space="preserve">
+    <value>Cálculos de costos abiertos</value>
+  </data>
+  <data name="W.workforce.fieldCosting.OpenRunsNote" xml:space="preserve">
+    <value>Cálculos abiertos para revisión: {0}</value>
+  </data>
+  <data name="W.workforce.payData.NoProfile" xml:space="preserve">
+    <value>No hay perfil de informe para este año</value>
+  </data>
+  <data name="W.ibo.Option.recent" xml:space="preserve">
+    <value>Incidente más reciente</value>
+  </data>
+  <data name="W.ibo.OpenIncidents" xml:space="preserve">
+    <value>Abrir Incident Back Office</value>
+  </data>
+  <data name="W.ibo.activations.OpenedOn" xml:space="preserve">
+    <value>Abierto {0}</value>
+  </data>
+  <data name="W.ibo.desk.NoValues" xml:space="preserve">
+    <value>Aún no hay nada para mostrar en esta mesa.</value>
+  </data>
+  <data name="W.ibo.desk.PersonnelShort" xml:space="preserve">
+    <value>personal: {0}</value>
+  </data>
+  <data name="W.ibo.resources.Empty" xml:space="preserve">
+    <value>Aún no hay recursos en este incidente.</value>
+  </data>
+  <data name="W.ibo.resources.OpenDesk" xml:space="preserve">
+    <value>Abrir la mesa de operaciones</value>
+  </data>
+  <data name="W.ibo.resources.ByKind" xml:space="preserve">
+    <value>Por tipo</value>
+  </data>
+  <data name="W.ibo.resources.ByStatus" xml:space="preserve">
+    <value>Por estado de apoyo</value>
+  </data>
+  <data name="W.ibo.finance.ProjectionAsOf" xml:space="preserve">
+    <value>Proyección al {0}</value>
+  </data>
+  <data name="W.ibo.coordination.OpenBoards" xml:space="preserve">
+    <value>Abrir tableros de coordinación</value>
+  </data>
+  <data name="W.ibo.coordination.Shares" xml:space="preserve">
+    <value>Compartidos: {0}</value>
+  </data>
+  <data name="W.ibo.coordination.StaleCount" xml:space="preserve">
+    <value>desactualizados: {0}</value>
+  </data>
+  <data name="W.ai.assistant.Unavailable" xml:space="preserve">
+    <value>El asistente no está disponible por ahora.</value>
+  </data>
+  <data name="W.aiDispatch.triage.Window" xml:space="preserve">
+    <value>Últimas {0} h · mensajes: {1}</value>
+  </data>
+  <data name="W.admin.setup.ChecksLabel" xml:space="preserve">
+    <value>verificaciones de configuración comprobadas</value>
+  </data>
+  <data name="W.admin.setup.Progress" xml:space="preserve">
+    <value>Avance de la configuración</value>
+  </data>
+  <data name="W.admin.setup.ChecksFailedCount" xml:space="preserve">
+    <value>Verificaciones con fallas: {0}</value>
+  </data>
+  <data name="W.admin.setup.NeedsAttentionCount" xml:space="preserve">
+    <value>Funciones que requieren atención: {0}</value>
+  </data>
+  <data name="W.admin.plan.Addons" xml:space="preserve">
+    <value>Complementos</value>
+  </data>
+  <data name="W.admin.plan.CostPer" xml:space="preserve">
+    <value>{0} / {1}</value>
+  </data>
+  <data name="W.admin.plan.Frequency.Never" xml:space="preserve">
+    <value>pago único</value>
+  </data>
+  <data name="W.admin.plan.Frequency.Monthly" xml:space="preserve">
+    <value>mes</value>
+  </data>
+  <data name="W.admin.plan.Frequency.Yearly" xml:space="preserve">
+    <value>año</value>
+  </data>
+  <data name="W.admin.plan.Frequency.BiYearly" xml:space="preserve">
+    <value>2 años</value>
+  </data>
+  <data name="W.admin.plan.Frequency.ThreeYear" xml:space="preserve">
+    <value>3 años</value>
+  </data>
+  <data name="W.admin.plan.Frequency.FourYear" xml:space="preserve">
+    <value>4 años</value>
+  </data>
+  <data name="W.admin.plan.Frequency.FiveYear" xml:space="preserve">
+    <value>5 años</value>
+  </data>
+  <data name="W.admin.workflows.NoWorkflows" xml:space="preserve">
+    <value>Aún no hay flujos de trabajo.</value>
+  </data>
+  <data name="W.admin.workflows.OpenWorkflows" xml:space="preserve">
+    <value>Abrir flujos de trabajo</value>
+  </data>
+  <data name="W.admin.workflows.FailedOf" xml:space="preserve">
+    <value>Fallidas: {0} de {1} ejecuciones</value>
+  </data>
+  <data name="W.admin.workflows.Off" xml:space="preserve">
+    <value>Desactivado</value>
+  </data>
+  <data name="W.admin.workflows.ErrorDetailsProtectedHint" xml:space="preserve">
+    <value>Los detalles del error están protegidos. Abra la página de salud del flujo de trabajo para ver la ejecución.</value>
+  </data>
+  <data name="W.admin.dataProtection.MigrationKind" xml:space="preserve">
+    <value>Migración: {0}</value>
+  </data>
+  <data name="W.admin.dataProtection.Rows" xml:space="preserve">
+    <value>Filas: {0} de {1}</value>
+  </data>
+  <data name="W.admin.import.OpenImport" xml:space="preserve">
+    <value>Abrir Importación de departamento</value>
+  </data>
+  <data name="W.admin.import.ActivatedCount" xml:space="preserve">
+    <value>Importaciones activadas: {0}</value>
+  </data>
+  <data name="W.admin.import.Untitled" xml:space="preserve">
+    <value>Importación sin título</value>
+  </data>
+  <data name="W.admin.import.LastActivity" xml:space="preserve">
+    <value>Última actividad {0}</value>
+  </data>
+  <data name="W.admin.security.StrongAuthenticationOf" xml:space="preserve">
+    <value>Miembros con MFA o clave de acceso: {0} de {1}</value>
+  </data>
+  <data name="W.bids.pipeline.WithdrawnCount" xml:space="preserve">
+    <value>Retiradas: {0}</value>
+  </data>
+  <data name="W.contracts.expiring.DocumentsSummary" xml:space="preserve">
+    <value>Documentos de cumplimiento: {0} vencidos, {1} por vencer</value>
+  </data>
+  <data name="W.invoicing.receivables.DraftsCount" xml:space="preserve">
+    <value>borradores: {0}</value>
+  </data>
+  <data name="W.invoicing.receivables.OverdueSummary" xml:space="preserve">
+    <value>vencido: {0} ({1})</value>
+  </data>
+  <data name="W.invoicing.receivables.ReadOnlyShort" xml:space="preserve">
+    <value>solo lectura</value>
+  </data>
+  <data name="W.deployments.active.Day" xml:space="preserve">
+    <value>Día {0}</value>
+  </data>
+  <data name="W.contracts.expiring.EndsIn" xml:space="preserve">
+    <value>Termina en {0}</value>
+  </data>
+  <data name="W.contracts.expiring.NoneEnding" xml:space="preserve">
+    <value>Ningún contrato termina en los próximos {0}.</value>
+  </data>
+  <data name="W.costRecovery.queue.Age" xml:space="preserve">
+    <value>Antigüedad</value>
+  </data>
+  <data name="W.bids.pipeline.ExpiringWithin" xml:space="preserve">
+    <value>Vencen en {0}</value>
+  </data>
+  <data name="W.ibo.finance.OfBudget" xml:space="preserve">
+    <value>Usado de un presupuesto de {0}</value>
+  </data>
+  <data name="W.calls.active.Title" xml:space="preserve">
+    <value>Llamadas activas</value>
+  </data>
+  <data name="W.calls.active.Description" xml:space="preserve">
+    <value>Llamadas activas despachadas en su área de despacho, las más recientes primero, con prioridad, unidades y personal enviados y comando del incidente.</value>
+  </data>
+  <data name="W.calls.active.Setting.maxRows" xml:space="preserve">
+    <value>Llamadas para mostrar</value>
+  </data>
+  <data name="W.calls.active.Setting.priorities" xml:space="preserve">
+    <value>Prioridades</value>
+  </data>
+  <data name="W.calls.active.Setting.group" xml:space="preserve">
+    <value>Grupo base</value>
+  </data>
+  <data name="W.calls.kpis.Title" xml:space="preserve">
+    <value>Actividad de llamadas</value>
+  </data>
+  <data name="W.calls.kpis.Description" xml:space="preserve">
+    <value>Cantidad de llamadas activas, de hoy, pendientes, programadas y en espera de recursos, con los últimos siete días.</value>
+  </data>
+  <data name="W.calls.pending.Title" xml:space="preserve">
+    <value>Pendientes y programadas</value>
+  </data>
+  <data name="W.calls.pending.Description" xml:space="preserve">
+    <value>Llamadas guardadas que aún no se han despachado y llamadas programadas que esperan su hora de despacho.</value>
+  </data>
+  <data name="W.calls.pending.Setting.maxRows" xml:space="preserve">
+    <value>Llamadas para mostrar</value>
+  </data>
+  <data name="W.calls.pending.Setting.show" xml:space="preserve">
+    <value>Mostrar</value>
+  </data>
+  <data name="W.calls.pending.Option.all" xml:space="preserve">
+    <value>Pendientes y programadas</value>
+  </data>
+  <data name="W.calls.pending.Option.pending" xml:space="preserve">
+    <value>Solo pendientes</value>
+  </data>
+  <data name="W.calls.pending.Option.scheduled" xml:space="preserve">
+    <value>Solo programadas</value>
+  </data>
+  <data name="W.calls.awaitingResources.Title" xml:space="preserve">
+    <value>En espera de recursos</value>
+  </data>
+  <data name="W.calls.awaitingResources.Description" xml:space="preserve">
+    <value>Llamadas activas que aún esperan un recurso del plan de respuesta, lo que falta y las unidades disponibles ahora.</value>
+  </data>
+  <data name="W.calls.awaitingResources.Setting.maxRows" xml:space="preserve">
+    <value>Llamadas para mostrar</value>
+  </data>
+  <data name="W.calls.myCheckIns.Title" xml:space="preserve">
+    <value>Mis temporizadores de registro</value>
+  </data>
+  <data name="W.calls.myCheckIns.Description" xml:space="preserve">
+    <value>Sus temporizadores de registro en las llamadas a las que se le despachó, con el tiempo restante para su próximo registro.</value>
+  </data>
+  <data name="W.calls.volume.Title" xml:space="preserve">
+    <value>Volumen de llamadas</value>
+  </data>
+  <data name="W.calls.volume.Description" xml:space="preserve">
+    <value>Llamadas por día según tipo y prioridad, con la mediana del tiempo de respuesta.</value>
+  </data>
+  <data name="W.calls.volume.Setting.days" xml:space="preserve">
+    <value>Período</value>
+  </data>
+  <data name="W.calls.volume.Option.7" xml:space="preserve">
+    <value>Últimos 7 días</value>
+  </data>
+  <data name="W.calls.volume.Option.30" xml:space="preserve">
+    <value>Últimos 30 días</value>
+  </data>
+  <data name="W.calls.volume.Option.90" xml:space="preserve">
+    <value>Últimos 90 días</value>
+  </data>
+  <data name="W.incidentCommand.active.Title" xml:space="preserve">
+    <value>Comandos de incidente activos</value>
+  </data>
+  <data name="W.incidentCommand.active.Description" xml:space="preserve">
+    <value>Comandos de incidente abiertos con su llamada, su comandante del incidente y los recursos asignados.</value>
+  </data>
+  <data name="W.incidentCommand.active.Setting.maxRows" xml:space="preserve">
+    <value>Comandos para mostrar</value>
+  </data>
+  <data name="W.units.status.Title" xml:space="preserve">
+    <value>Tablero de estado de unidades</value>
+  </data>
+  <data name="W.units.status.Description" xml:space="preserve">
+    <value>Unidades por estación o tipo con su estado, tiempo en ese estado, destino, tripulación y nota de estado.</value>
+  </data>
+  <data name="W.units.status.Setting.station" xml:space="preserve">
+    <value>Estación</value>
+  </data>
+  <data name="W.units.status.Setting.unitTypes" xml:space="preserve">
+    <value>Tipos de unidad</value>
+  </data>
+  <data name="W.units.status.Setting.hideAvailable" xml:space="preserve">
+    <value>Ocultar unidades disponibles</value>
+  </data>
+  <data name="W.units.status.Setting.groupBy" xml:space="preserve">
+    <value>Agrupar por</value>
+  </data>
+  <data name="W.units.status.Option.station" xml:space="preserve">
+    <value>Estación</value>
+  </data>
+  <data name="W.units.status.Option.type" xml:space="preserve">
+    <value>Tipo de unidad</value>
+  </data>
+  <data name="W.units.status.Option.none" xml:space="preserve">
+    <value>Sin agrupar</value>
+  </data>
+  <data name="W.units.summary.Title" xml:space="preserve">
+    <value>Resumen de unidades</value>
+  </data>
+  <data name="W.units.summary.Description" xml:space="preserve">
+    <value>Cuántas unidades están disponibles, comprometidas o fuera de servicio.</value>
+  </data>
+  <data name="W.units.alerts.Title" xml:space="preserve">
+    <value>Alertas de estado de unidades</value>
+  </data>
+  <data name="W.units.alerts.Description" xml:space="preserve">
+    <value>Unidades que llevan en un estado más tiempo del que permiten los temporizadores de estado del departamento.</value>
+  </data>
+  <data name="W.units.alerts.Setting.showMuted" xml:space="preserve">
+    <value>Mostrar alertas silenciadas</value>
+  </data>
+  <data name="W.units.routes.Title" xml:space="preserve">
+    <value>Desviaciones de ruta</value>
+  </data>
+  <data name="W.units.routes.Description" xml:space="preserve">
+    <value>Rutas en curso y desviaciones de ruta que aún no se han confirmado.</value>
+  </data>
+  <data name="W.personnel.myStatus.Title" xml:space="preserve">
+    <value>Mi estado</value>
+  </data>
+  <data name="W.personnel.myStatus.Description" xml:space="preserve">
+    <value>Establezca su estado y su nivel de personal, o responda a una llamada o estación.</value>
+  </data>
+  <data name="W.personnel.board.Title" xml:space="preserve">
+    <value>Tablero de estado del personal</value>
+  </data>
+  <data name="W.personnel.board.Description" xml:space="preserve">
+    <value>Estado y dotación de todos por grupo, con notas de dotación.</value>
+  </data>
+  <data name="W.personnel.board.Setting.groups" xml:space="preserve">
+    <value>Grupos</value>
+  </data>
+  <data name="W.personnel.board.Setting.hideUnavailable" xml:space="preserve">
+    <value>Ocultar personal no disponible</value>
+  </data>
+  <data name="W.personnel.board.Setting.sort" xml:space="preserve">
+    <value>Ordenar</value>
+  </data>
+  <data name="W.personnel.board.Option.department" xml:space="preserve">
+    <value>Orden del departamento</value>
+  </data>
+  <data name="W.personnel.board.Option.name" xml:space="preserve">
+    <value>Nombre</value>
+  </data>
+  <data name="W.personnel.board.Option.status" xml:space="preserve">
+    <value>Estado</value>
+  </data>
+  <data name="W.personnel.statusSummary.Title" xml:space="preserve">
+    <value>Resumen de estado del personal</value>
+  </data>
+  <data name="W.personnel.statusSummary.Description" xml:space="preserve">
+    <value>Cuántas personas están respondiendo, en el lugar, disponibles o no disponibles.</value>
+  </data>
+  <data name="W.personnel.staffingSummary.Title" xml:space="preserve">
+    <value>Resumen de dotación</value>
+  </data>
+  <data name="W.personnel.staffingSummary.Description" xml:space="preserve">
+    <value>Niveles de personal en todo el departamento y por grupo, con quién está en servicio.</value>
+  </data>
+  <data name="W.calls.active.Empty" xml:space="preserve">
+    <value>No hay llamadas activas</value>
+  </data>
+  <data name="W.calls.active.GroupFilterIgnored" xml:space="preserve">
+    <value>El grupo base de la configuración de este widget ya no existe, por lo que se muestran todas las llamadas.</value>
+  </data>
+  <data name="W.calls.active.IncidentCommand" xml:space="preserve">
+    <value>IC</value>
+  </data>
+  <data name="W.calls.active.IncidentCommandTitle" xml:space="preserve">
+    <value>Comando del incidente establecido</value>
+  </data>
+  <data name="W.calls.active.NewCall" xml:space="preserve">
+    <value>Crear una llamada</value>
+  </data>
+  <data name="W.calls.active.Personnel" xml:space="preserve">
+    <value>{0} personas</value>
+  </data>
+  <data name="W.calls.active.ShowingOf" xml:space="preserve">
+    <value>Mostrando {0} de {1} llamadas</value>
+  </data>
+  <data name="W.calls.active.Units" xml:space="preserve">
+    <value>{0} unidades</value>
+  </data>
+  <data name="W.calls.active.Untitled" xml:space="preserve">
+    <value>Llamada</value>
+  </data>
+  <data name="W.calls.awaitingResources.Empty" xml:space="preserve">
+    <value>Ninguna llamada espera recursos</value>
+  </data>
+  <data name="W.calls.awaitingResources.EtaTitle" xml:space="preserve">
+    <value>A unos {0}</value>
+  </data>
+  <data name="W.calls.awaitingResources.Needs" xml:space="preserve">
+    <value>Requiere {0} × {1}</value>
+  </data>
+  <data name="W.calls.awaitingResources.OpenList" xml:space="preserve">
+    <value>Abrir llamadas en espera de recursos</value>
+  </data>
+  <data name="W.calls.awaitingResources.Send" xml:space="preserve">
+    <value>Enviar {0}</value>
+  </data>
+  <data name="W.calls.awaitingResources.SendFailed" xml:space="preserve">
+    <value>No se pudo despachar la unidad.</value>
+  </data>
+  <data name="W.calls.awaitingResources.Sent" xml:space="preserve">
+    <value>Se despachó {0} a {1}</value>
+  </data>
+  <data name="W.calls.awaitingResources.SentInstead" xml:space="preserve">
+    <value>Se envió {0} en su lugar</value>
+  </data>
+  <data name="W.calls.awaitingResources.ShowingOf" xml:space="preserve">
+    <value>Mostrando {0} de {1} llamadas</value>
+  </data>
+  <data name="W.calls.awaitingResources.Untitled" xml:space="preserve">
+    <value>Llamada</value>
+  </data>
+  <data name="W.calls.kpis.ActiveCalls" xml:space="preserve">
+    <value>llamadas activas</value>
+  </data>
+  <data name="W.calls.kpis.Awaiting" xml:space="preserve">
+    <value>En espera de recursos</value>
+  </data>
+  <data name="W.calls.kpis.CallsCount" xml:space="preserve">
+    <value>{0} llamadas</value>
+  </data>
+  <data name="W.calls.kpis.Pending" xml:space="preserve">
+    <value>Pendientes</value>
+  </data>
+  <data name="W.calls.kpis.Scheduled" xml:space="preserve">
+    <value>Programadas</value>
+  </data>
+  <data name="W.calls.kpis.SparkAria" xml:space="preserve">
+    <value>Llamadas por día, últimos 7 días: {0}</value>
+  </data>
+  <data name="W.calls.kpis.Today" xml:space="preserve">
+    <value>Hoy</value>
+  </data>
+  <data name="W.calls.kpis.TodayLine" xml:space="preserve">
+    <value>{0} hoy</value>
+  </data>
+  <data name="W.calls.myCheckIns.CheckIn" xml:space="preserve">
+    <value>Registrarse</value>
+  </data>
+  <data name="W.calls.myCheckIns.CheckInFailed" xml:space="preserve">
+    <value>No se pudo guardar su registro.</value>
+  </data>
+  <data name="W.calls.myCheckIns.CheckedIn" xml:space="preserve">
+    <value>Registro realizado en {0}</value>
+  </data>
+  <data name="W.calls.myCheckIns.DueIn" xml:space="preserve">
+    <value>Vence en {0} (cada {1})</value>
+  </data>
+  <data name="W.calls.myCheckIns.Empty" xml:space="preserve">
+    <value>No tiene temporizadores de registro en sus llamadas</value>
+  </data>
+  <data name="W.calls.myCheckIns.NoTimer" xml:space="preserve">
+    <value>Esta llamada no tiene temporizador de registro para el personal</value>
+  </data>
+  <data name="W.calls.myCheckIns.Overdue" xml:space="preserve">
+    <value>Atrasado por {0} (cada {1})</value>
+  </data>
+  <data name="W.calls.myCheckIns.Untitled" xml:space="preserve">
+    <value>Llamada</value>
+  </data>
+  <data name="W.calls.pending.DispatchFailed" xml:space="preserve">
+    <value>No se pudo despachar la llamada.</value>
+  </data>
+  <data name="W.calls.pending.DispatchNow" xml:space="preserve">
+    <value>Despachar ahora</value>
+  </data>
+  <data name="W.calls.pending.Dispatched" xml:space="preserve">
+    <value>Se despachó {0}</value>
+  </data>
+  <data name="W.calls.pending.DispatchesAt" xml:space="preserve">
+    <value>despacho: {0}</value>
+  </data>
+  <data name="W.calls.pending.Empty" xml:space="preserve">
+    <value>Ninguna llamada espera ser despachada</value>
+  </data>
+  <data name="W.calls.pending.OpenPending" xml:space="preserve">
+    <value>Abrir llamadas pendientes</value>
+  </data>
+  <data name="W.calls.pending.Pending" xml:space="preserve">
+    <value>Pendiente</value>
+  </data>
+  <data name="W.calls.pending.PendingCount" xml:space="preserve">
+    <value>{0} pendientes</value>
+  </data>
+  <data name="W.calls.pending.SavedAgo" xml:space="preserve">
+    <value>guardada {0}</value>
+  </data>
+  <data name="W.calls.pending.Scheduled" xml:space="preserve">
+    <value>Programada</value>
+  </data>
+  <data name="W.calls.pending.ScheduledCount" xml:space="preserve">
+    <value>{0} programadas</value>
+  </data>
+  <data name="W.calls.pending.Untitled" xml:space="preserve">
+    <value>Llamada</value>
+  </data>
+  <data name="W.calls.volume.ByPriority" xml:space="preserve">
+    <value>Por prioridad</value>
+  </data>
+  <data name="W.calls.volume.ByType" xml:space="preserve">
+    <value>Por tipo</value>
+  </data>
+  <data name="W.calls.volume.CallsCount" xml:space="preserve">
+    <value>{0} llamadas</value>
+  </data>
+  <data name="W.calls.volume.Empty" xml:space="preserve">
+    <value>No hay llamadas en los últimos {0} días</value>
+  </data>
+  <data name="W.calls.volume.MedianResponse" xml:space="preserve">
+    <value>Mediana de respuesta</value>
+  </data>
+  <data name="W.calls.volume.OpenReports" xml:space="preserve">
+    <value>Abrir informes</value>
+  </data>
+  <data name="W.calls.volume.OtherTypes" xml:space="preserve">
+    <value>Otros tipos</value>
+  </data>
+  <data name="W.calls.volume.P90Title" xml:space="preserve">
+    <value>Percentil 90: {0} · {1} respuestas</value>
+  </data>
+  <data name="W.calls.volume.PerDay" xml:space="preserve">
+    <value>Por día</value>
+  </data>
+  <data name="W.calls.volume.PerDayHeading" xml:space="preserve">
+    <value>Llamadas por día</value>
+  </data>
+  <data name="W.calls.volume.ResponseNote" xml:space="preserve">
+    <value>Tiempo de respuesta desde la alarma hasta la llegada, {0} respuestas.</value>
+  </data>
+  <data name="W.calls.volume.SparkAria" xml:space="preserve">
+    <value>Llamadas por día, últimos {0} días: {1}</value>
+  </data>
+  <data name="W.calls.volume.TotalCalls" xml:space="preserve">
+    <value>Llamadas, últimos {0} días</value>
+  </data>
+  <data name="W.calls.volume.Untyped" xml:space="preserve">
+    <value>Sin tipo</value>
+  </data>
+  <data name="W.incidentCommand.active.Assigned" xml:space="preserve">
+    <value>{0} unidades · {1} personas asignadas</value>
+  </data>
+  <data name="W.incidentCommand.active.Commander" xml:space="preserve">
+    <value>IC {0}</value>
+  </data>
+  <data name="W.incidentCommand.active.Empty" xml:space="preserve">
+    <value>No hay comandos de incidente abiertos</value>
+  </data>
+  <data name="W.incidentCommand.active.EstablishedAt" xml:space="preserve">
+    <value>Establecido {0}</value>
+  </data>
+  <data name="W.incidentCommand.active.NoCommander" xml:space="preserve">
+    <value>Sin comandante del incidente</value>
+  </data>
+  <data name="W.incidentCommand.active.Untitled" xml:space="preserve">
+    <value>Comando del incidente</value>
+  </data>
+  <data name="W.personnel.board.CallNumber" xml:space="preserve">
+    <value>Llamada #{0}</value>
+  </data>
+  <data name="W.personnel.board.Cancel" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <data name="W.personnel.board.Caption" xml:space="preserve">
+    <value>Estado del personal por grupo</value>
+  </data>
+  <data name="W.personnel.board.ChangeSettings" xml:space="preserve">
+    <value>Cambiar configuración</value>
+  </data>
+  <data name="W.personnel.board.ColFor" xml:space="preserve">
+    <value>Tiempo</value>
+  </data>
+  <data name="W.personnel.board.ColName" xml:space="preserve">
+    <value>Nombre</value>
+  </data>
+  <data name="W.personnel.board.ColNote" xml:space="preserve">
+    <value>Nota de dotación</value>
+  </data>
+  <data name="W.personnel.board.ColRoles" xml:space="preserve">
+    <value>Roles</value>
+  </data>
+  <data name="W.personnel.board.ColStaffing" xml:space="preserve">
+    <value>Dotación</value>
+  </data>
+  <data name="W.personnel.board.ColStatus" xml:space="preserve">
+    <value>Estado</value>
+  </data>
+  <data name="W.personnel.board.ConfirmReset" xml:space="preserve">
+    <value>Restablecer</value>
+  </data>
+  <data name="W.personnel.board.ConfirmResetAll" xml:space="preserve">
+    <value>¿Establecer a todos en el estado de disponible del departamento?</value>
+  </data>
+  <data name="W.personnel.board.ConfirmResetGroup" xml:space="preserve">
+    <value>¿Establecer a todos los de {0} en el estado de disponible del departamento?</value>
+  </data>
+  <data name="W.personnel.board.Empty" xml:space="preserve">
+    <value>No hay personal para mostrar</value>
+  </data>
+  <data name="W.personnel.board.GroupFilterIgnored" xml:space="preserve">
+    <value>Algunos grupos de la configuración de este widget ya no existen y se omitieron.</value>
+  </data>
+  <data name="W.personnel.board.GroupMeta" xml:space="preserve">
+    <value>{0} personas · {1} comprometidas</value>
+  </data>
+  <data name="W.personnel.board.ProtectedNote" xml:space="preserve">
+    <value>Nota protegida</value>
+  </data>
+  <data name="W.personnel.board.Reset" xml:space="preserve">
+    <value>Restablecer</value>
+  </data>
+  <data name="W.personnel.board.ResetAllDone" xml:space="preserve">
+    <value>Todos quedaron como disponibles</value>
+  </data>
+  <data name="W.personnel.board.ResetAllOption" xml:space="preserve">
+    <value>Todos</value>
+  </data>
+  <data name="W.personnel.board.ResetFailed" xml:space="preserve">
+    <value>No se pudieron restablecer los estados.</value>
+  </data>
+  <data name="W.personnel.board.ResetGroupDone" xml:space="preserve">
+    <value>{0}: todos quedaron como disponibles</value>
+  </data>
+  <data name="W.personnel.board.ResetLabel" xml:space="preserve">
+    <value>Restablecer estados de</value>
+  </data>
+  <data name="W.personnel.board.ResetPlaceholder" xml:space="preserve">
+    <value>Restablecer estados…</value>
+  </data>
+  <data name="W.personnel.board.Ungrouped" xml:space="preserve">
+    <value>Sin grupo</value>
+  </data>
+  <data name="W.personnel.board.YourGroup" xml:space="preserve">
+    <value>Su grupo</value>
+  </data>
+  <data name="W.personnel.myStatus.Calls" xml:space="preserve">
+    <value>Llamadas</value>
+  </data>
+  <data name="W.personnel.myStatus.Failed" xml:space="preserve">
+    <value>No se pudo guardar. Inténtelo de nuevo.</value>
+  </data>
+  <data name="W.personnel.myStatus.NoteRequired" xml:space="preserve">
+    <value>{0} requiere una nota.</value>
+  </data>
+  <data name="W.personnel.myStatus.Respond" xml:space="preserve">
+    <value>Responder</value>
+  </data>
+  <data name="W.personnel.myStatus.RespondLabel" xml:space="preserve">
+    <value>Responder a una llamada o estación</value>
+  </data>
+  <data name="W.personnel.myStatus.RespondPlaceholder" xml:space="preserve">
+    <value>Responder a una llamada o estación…</value>
+  </data>
+  <data name="W.personnel.myStatus.Responding" xml:space="preserve">
+    <value>Respondiendo a {0}</value>
+  </data>
+  <data name="W.personnel.myStatus.Set" xml:space="preserve">
+    <value>Establecer</value>
+  </data>
+  <data name="W.personnel.myStatus.Staffing" xml:space="preserve">
+    <value>Dotación</value>
+  </data>
+  <data name="W.personnel.myStatus.StaffingLabel" xml:space="preserve">
+    <value>Nivel de personal</value>
+  </data>
+  <data name="W.personnel.myStatus.StaffingNoteEncrypted" xml:space="preserve">
+    <value>Nota (se guarda cifrada)</value>
+  </data>
+  <data name="W.personnel.myStatus.StaffingNoteLabel" xml:space="preserve">
+    <value>Nota de dotación</value>
+  </data>
+  <data name="W.personnel.myStatus.StaffingNotePlaceholder" xml:space="preserve">
+    <value>Nota (opcional)</value>
+  </data>
+  <data name="W.personnel.myStatus.StaffingSet" xml:space="preserve">
+    <value>Nivel de personal establecido en {0}</value>
+  </data>
+  <data name="W.personnel.myStatus.Stations" xml:space="preserve">
+    <value>Estaciones</value>
+  </data>
+  <data name="W.personnel.myStatus.StatusButtons" xml:space="preserve">
+    <value>Establezca su estado</value>
+  </data>
+  <data name="W.personnel.myStatus.StatusNoteLabel" xml:space="preserve">
+    <value>Nota de estado</value>
+  </data>
+  <data name="W.personnel.myStatus.StatusNotePlaceholder" xml:space="preserve">
+    <value>Nota de estado (opcional)</value>
+  </data>
+  <data name="W.personnel.myStatus.StatusSet" xml:space="preserve">
+    <value>Estado establecido en {0}</value>
+  </data>
+  <data name="W.personnel.staffingSummary.AvailableOf" xml:space="preserve">
+    <value>disponibles de {0} miembros</value>
+  </data>
+  <data name="W.personnel.staffingSummary.ByGroup" xml:space="preserve">
+    <value>Por grupo</value>
+  </data>
+  <data name="W.personnel.staffingSummary.Empty" xml:space="preserve">
+    <value>No hay personal para mostrar</value>
+  </data>
+  <data name="W.personnel.staffingSummary.GroupAvailable" xml:space="preserve">
+    <value>{0}/{1}</value>
+  </data>
+  <data name="W.personnel.staffingSummary.GroupOnDuty" xml:space="preserve">
+    <value>{0}/{1} · {2} en servicio</value>
+  </data>
+  <data name="W.personnel.staffingSummary.OnDutyOf" xml:space="preserve">
+    <value>en servicio de {0} miembros</value>
+  </data>
+  <data name="W.personnel.staffingSummary.StackAria" xml:space="preserve">
+    <value>Distribución del personal por nivel: {0}</value>
+  </data>
+  <data name="W.personnel.statusSummary.Available" xml:space="preserve">
+    <value>Disponibles</value>
+  </data>
+  <data name="W.personnel.statusSummary.Committed" xml:space="preserve">
+    <value>Comprometidos</value>
+  </data>
+  <data name="W.personnel.statusSummary.CommittedOf" xml:space="preserve">
+    <value>comprometidos de {0} miembros</value>
+  </data>
+  <data name="W.personnel.statusSummary.Empty" xml:space="preserve">
+    <value>No hay personal para mostrar</value>
+  </data>
+  <data name="W.personnel.statusSummary.StackAria" xml:space="preserve">
+    <value>Personal por estado: {0}</value>
+  </data>
+  <data name="W.personnel.statusSummary.Unavailable" xml:space="preserve">
+    <value>No disponibles</value>
+  </data>
+  <data name="W.units.alerts.Acknowledge" xml:space="preserve">
+    <value>Confirmar</value>
+  </data>
+  <data name="W.units.alerts.AcknowledgeTitle" xml:space="preserve">
+    <value>Confirmar {0}</value>
+  </data>
+  <data name="W.units.alerts.Acknowledged" xml:space="preserve">
+    <value>Se confirmó {0}</value>
+  </data>
+  <data name="W.units.alerts.AcknowledgedBy" xml:space="preserve">
+    <value>Confirmada por {0} {1}</value>
+  </data>
+  <data name="W.units.alerts.Cancel" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <data name="W.units.alerts.Clear" xml:space="preserve">
+    <value>Quitar</value>
+  </data>
+  <data name="W.units.alerts.ClearTitle" xml:space="preserve">
+    <value>Retirar la confirmación</value>
+  </data>
+  <data name="W.units.alerts.Cleared" xml:space="preserve">
+    <value>Se retiró la confirmación de {0}</value>
+  </data>
+  <data name="W.units.alerts.Empty" xml:space="preserve">
+    <value>Todas las unidades están dentro de sus temporizadores de estado</value>
+  </data>
+  <data name="W.units.alerts.ForMinutes" xml:space="preserve">
+    <value>Durante {0}</value>
+  </data>
+  <data name="W.units.alerts.Mute" xml:space="preserve">
+    <value>Silenciar</value>
+  </data>
+  <data name="W.units.alerts.MuteFor" xml:space="preserve">
+    <value>Silenciar durante</value>
+  </data>
+  <data name="W.units.alerts.MuteTitle" xml:space="preserve">
+    <value>Silenciar {0}</value>
+  </data>
+  <data name="W.units.alerts.Muted" xml:space="preserve">
+    <value>Se silenció {0}</value>
+  </data>
+  <data name="W.units.alerts.MutedByUntilChange" xml:space="preserve">
+    <value>Silenciada por {0} hasta que cambie el estado</value>
+  </data>
+  <data name="W.units.alerts.MutedUntilBy" xml:space="preserve">
+    <value>Silenciada por {0} hasta {1}</value>
+  </data>
+  <data name="W.units.alerts.NoTimers" xml:space="preserve">
+    <value>No hay temporizadores de estado configurados</value>
+  </data>
+  <data name="W.units.alerts.NoteLabel" xml:space="preserve">
+    <value>Nota</value>
+  </data>
+  <data name="W.units.alerts.NotePlaceholder" xml:space="preserve">
+    <value>Nota (opcional)</value>
+  </data>
+  <data name="W.units.alerts.NotePlaceholderRequired" xml:space="preserve">
+    <value>Motivo (obligatorio)</value>
+  </data>
+  <data name="W.units.alerts.NoteRequired" xml:space="preserve">
+    <value>Se requiere un motivo para confirmar esta alerta.</value>
+  </data>
+  <data name="W.units.alerts.OnlyMuted" xml:space="preserve">
+    <value>No hay alertas abiertas · {0} silenciadas</value>
+  </data>
+  <data name="W.units.alerts.OverTimer" xml:space="preserve">
+    <value>Supera el temporizador de estado de {0}</value>
+  </data>
+  <data name="W.units.alerts.SaveFailed" xml:space="preserve">
+    <value>No se pudo guardar. Inténtelo de nuevo.</value>
+  </data>
+  <data name="W.units.alerts.SetUpTimers" xml:space="preserve">
+    <value>Configurar temporizadores de estado</value>
+  </data>
+  <data name="W.units.alerts.ShowMuted" xml:space="preserve">
+    <value>Mostrar alertas silenciadas</value>
+  </data>
+  <data name="W.units.alerts.Someone" xml:space="preserve">
+    <value>alguien</value>
+  </data>
+  <data name="W.units.alerts.StatusChanged" xml:space="preserve">
+    <value>El estado de la unidad cambió; se actualizó la alerta.</value>
+  </data>
+  <data name="W.units.alerts.UntilStatusChanges" xml:space="preserve">
+    <value>Hasta que cambie el estado</value>
+  </data>
+  <data name="W.units.routes.Acknowledge" xml:space="preserve">
+    <value>Confirmar</value>
+  </data>
+  <data name="W.units.routes.AcknowledgeFailed" xml:space="preserve">
+    <value>No se pudo confirmar la desviación.</value>
+  </data>
+  <data name="W.units.routes.Acknowledged" xml:space="preserve">
+    <value>Desviación confirmada</value>
+  </data>
+  <data name="W.units.routes.DeviationCount" xml:space="preserve">
+    <value>{0} desviaciones</value>
+  </data>
+  <data name="W.units.routes.Deviations" xml:space="preserve">
+    <value>Desviaciones ({0})</value>
+  </data>
+  <data name="W.units.routes.Empty" xml:space="preserve">
+    <value>No hay rutas en curso</value>
+  </data>
+  <data name="W.units.routes.InProgress" xml:space="preserve">
+    <value>En curso ({0})</value>
+  </data>
+  <data name="W.units.routes.Kilometres" xml:space="preserve">
+    <value>{0} km</value>
+  </data>
+  <data name="W.units.routes.Metres" xml:space="preserve">
+    <value>{0} m</value>
+  </data>
+  <data name="W.units.routes.OffRoute" xml:space="preserve">
+    <value>{0} · fuera de ruta {1}</value>
+  </data>
+  <data name="W.units.routes.OpenRoutes" xml:space="preserve">
+    <value>Abrir rutas activas</value>
+  </data>
+  <data name="W.units.routes.Paused" xml:space="preserve">
+    <value>Pausada</value>
+  </data>
+  <data name="W.units.routes.Route" xml:space="preserve">
+    <value>Ruta</value>
+  </data>
+  <data name="W.units.routes.Started" xml:space="preserve">
+    <value>iniciada {0}</value>
+  </data>
+  <data name="W.units.routes.Stops" xml:space="preserve">
+    <value>{0}/{1} paradas</value>
+  </data>
+  <data name="W.units.status.AllAvailable" xml:space="preserve">
+    <value>Todas las unidades están disponibles</value>
+  </data>
+  <data name="W.units.status.AllUnits" xml:space="preserve">
+    <value>Todas las unidades</value>
+  </data>
+  <data name="W.units.status.Caption" xml:space="preserve">
+    <value>Estado de unidades</value>
+  </data>
+  <data name="W.units.status.ChangeSettings" xml:space="preserve">
+    <value>Cambiar configuración</value>
+  </data>
+  <data name="W.units.status.ColCrew" xml:space="preserve">
+    <value>Tripulación</value>
+  </data>
+  <data name="W.units.status.ColDestination" xml:space="preserve">
+    <value>Destino</value>
+  </data>
+  <data name="W.units.status.ColFor" xml:space="preserve">
+    <value>Tiempo</value>
+  </data>
+  <data name="W.units.status.ColNote" xml:space="preserve">
+    <value>Nota</value>
+  </data>
+  <data name="W.units.status.ColStation" xml:space="preserve">
+    <value>Estación</value>
+  </data>
+  <data name="W.units.status.ColStatus" xml:space="preserve">
+    <value>Estado</value>
+  </data>
+  <data name="W.units.status.ColUnit" xml:space="preserve">
+    <value>Unidad</value>
+  </data>
+  <data name="W.units.status.CrewTitle" xml:space="preserve">
+    <value>{0} a bordo</value>
+  </data>
+  <data name="W.units.status.Empty" xml:space="preserve">
+    <value>No hay unidades para mostrar</value>
+  </data>
+  <data name="W.units.status.GroupMeta" xml:space="preserve">
+    <value>{0} unidades · {1} disponibles</value>
+  </data>
+  <data name="W.units.status.HiddenAvailable" xml:space="preserve">
+    <value>{0} unidades disponibles ocultas</value>
+  </data>
+  <data name="W.units.status.NoStation" xml:space="preserve">
+    <value>Sin estación</value>
+  </data>
+  <data name="W.units.status.NoStatus" xml:space="preserve">
+    <value>Sin estado</value>
+  </data>
+  <data name="W.units.status.NoType" xml:space="preserve">
+    <value>Sin tipo</value>
+  </data>
+  <data name="W.units.status.OpenUnits" xml:space="preserve">
+    <value>Abrir unidades</value>
+  </data>
+  <data name="W.units.status.ProtectedNote" xml:space="preserve">
+    <value>Nota protegida</value>
+  </data>
+  <data name="W.units.status.StationFilterIgnored" xml:space="preserve">
+    <value>La estación de la configuración de este widget ya no existe, por lo que se muestran todas las unidades.</value>
+  </data>
+  <data name="W.units.summary.Available" xml:space="preserve">
+    <value>Disponibles</value>
+  </data>
+  <data name="W.units.summary.AvailableOf" xml:space="preserve">
+    <value>unidades disponibles</value>
+  </data>
+  <data name="W.units.summary.Committed" xml:space="preserve">
+    <value>Comprometidas</value>
+  </data>
+  <data name="W.units.summary.DonutAria" xml:space="preserve">
+    <value>Unidades por estado: {0}</value>
+  </data>
+  <data name="W.units.summary.Empty" xml:space="preserve">
+    <value>No hay unidades para mostrar</value>
+  </data>
+  <data name="W.units.summary.NoStatus" xml:space="preserve">
+    <value>Sin estado</value>
+  </data>
+  <data name="W.units.summary.OpenUnits" xml:space="preserve">
+    <value>Abrir unidades</value>
+  </data>
+  <data name="W.units.summary.OutOfService" xml:space="preserve">
+    <value>Fuera de servicio</value>
+  </data>
+  <data name="W.units.summary.Units" xml:space="preserve">
+    <value>unidades</value>
+  </data>
+  <data name="W.units.summary.InServiceLine" xml:space="preserve">
+    <value>{0} en servicio · {1} fuera de servicio</value>
+  </data>
+  <data name="W.personnel.statusSummary.AvailableLine" xml:space="preserve">
+    <value>{0} disponibles · {1} no disponibles</value>
+  </data>
+  <data name="W.personnel.myStatus.RespondTo" xml:space="preserve">
+    <value>Responder…</value>
+  </data>
+  <data name="W.personnel.myStatus.Since" xml:space="preserve">
+    <value>desde {0}</value>
+  </data>
+</root>

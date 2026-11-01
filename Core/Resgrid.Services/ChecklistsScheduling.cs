@@ -90,7 +90,7 @@ namespace Resgrid.Services
 					// The response omits stored Content/envelopes. Names come through the attended read boundary.
 					await RevealAsync(actor, schedule, display: true);
 					var metadata = JsonConvert.DeserializeObject<ChecklistOccurrence>(JsonConvert.SerializeObject(occurrence)); metadata.Content = null;
-					views.Add(new ChecklistOccurrenceView { Occurrence = metadata, Name = Decode<ChecklistScheduleContent>(schedule.Content).Name, Target = target,
+					views.Add(new ChecklistOccurrenceView { Occurrence = metadata, Name = Decode<ChecklistScheduleContent>(schedule.Content).Name, Target = target, Assigned = assigned,
 						CanStart = enabled && assigned && schedule.IsActive && !schedule.IsSuspended && occurrence.PeriodStartUtc <= _clock.GetUtcNow().UtcDateTime, CanSkip = enabled && manage && (occurrence.State == 3 || occurrence.State == 4) && await _store.GetAsync<ChecklistCompletion>(actor.DepartmentId, occurrence.CompletionId) == null });
 					if (views.Count == take) return views;
 				}

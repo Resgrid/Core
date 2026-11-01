@@ -58,6 +58,41 @@ namespace Resgrid.Services.Onboarding
 		public Task<List<ImportWorkspace>> GetWorkspacesAsync(int departmentId, CancellationToken cancellationToken = default) =>
 			_workspaces.GetAllForDepartmentAsync(departmentId, cancellationToken);
 
+		public async Task<DepartmentImportSummary> GetImportSummaryAsync(int departmentId, CancellationToken cancellationToken = default)
+		{
+			var workspaces = await _workspaces.GetAllForDepartmentAsync(departmentId, cancellationToken) ?? new List<ImportWorkspace>();
+			bool Open(ImportWorkspace w) => w.Status <= (int)ImportWorkspaceStatus.ReadyToActivate;
+			var summary = new DepartmentImportSummary
+			{
+				OpenWorkspaces = workspaces.Count(Open),
+				ActivatedWorkspaces = workspaces.Count(w => w.Status == (int)ImportWorkspaceStatus.Active),
+				FinishedWorkspaces = workspaces.Count(w => w.Status >= (int)ImportWorkspaceStatus.Closed),
+				Current = workspaces.Where(Open).OrderByDescending(w => w.LastActivityOn).FirstOrDefault(),
+				LastActivityOn = workspaces.Count == 0 ? null : workspaces.Max(w => w.LastActivityOn)
+			};
+			if (summary.Current == null)
+				return summary;
+
+			// Excluded and superseded data sets are no longer part of the import.
+			var datasets = (await _datasets.GetAllForWorkspaceAsync(departmentId, summary.Current.Id, cancellationToken) ?? new List<ImportDataset>())
+				.Where(d => d.Status != (int)ImportDatasetStatus.Excluded && d.Status != (int)ImportDatasetStatus.Superseded).ToList();
+			summary.Datasets = datasets.Count;
+			summary.DatasetsNeedingReview = datasets.Count(d => d.Status is (int)ImportDatasetStatus.NeedsMapping or (int)ImportDatasetStatus.NeedsAttention);
+			summary.DatasetsReady = datasets.Count(d => d.Status is (int)ImportDatasetStatus.Ready or (int)ImportDatasetStatus.Approved);
+			summary.DatasetsImported = datasets.Count(d => d.Status is (int)ImportDatasetStatus.Imported or (int)ImportDatasetStatus.Verified);
+			summary.DatasetsFailed = datasets.Count(d => d.Status == (int)ImportDatasetStatus.Failed);
+			summary.RowsTotal = datasets.Sum(d => d.RowCount);
+			summary.RowsWithWarnings = datasets.Sum(d => d.WarningCount);
+			summary.RowsBlocked = datasets.Sum(d => d.BlockedCount);
+			summary.RowsImported = datasets.Sum(d => d.CreatedCount + d.UpdatedCount + d.LinkedCount + d.UnchangedCount);
+
+			var runs = await _runs.GetAllForWorkspaceAsync(departmentId, summary.Current.Id, cancellationToken) ?? new List<ImportRun>();
+			summary.RunsActive = runs.Count(r => r.Status is (int)ImportRunStatus.Queued or (int)ImportRunStatus.Running or (int)ImportRunStatus.Paused
+				or (int)ImportRunStatus.Reconciling or (int)ImportRunStatus.AwaitingChecker);
+			summary.RunsFailed = runs.Count(r => r.Status == (int)ImportRunStatus.Failed);
+			return summary;
+		}
+
 		public Task<ImportWorkspace> GetWorkspaceAsync(int departmentId, string workspaceId, CancellationToken cancellationToken = default) =>
 			_workspaces.GetByIdAsync(departmentId, workspaceId, cancellationToken);
 

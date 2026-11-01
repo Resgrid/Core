@@ -91,6 +91,19 @@ namespace Resgrid.Services.Invoicing
 		public Task<int> CountBidsForDepartmentAsync(int departmentId, BidStatuses? status, string number) =>
 			_bids.CountForDepartmentAsync(departmentId, status.HasValue ? (int?)status.Value : null, IdentifierSearchKeys.FilterSearch(number));
 
+		public async Task<BidPipelineSummary> GetBidPipelineAsync(int departmentId, DateTime nowUtc, DateTime expiringBeforeUtc)
+		{
+			var summary = new BidPipelineSummary();
+			foreach (var row in await _bids.GetStatusCountsAsync(departmentId, nowUtc, expiringBeforeUtc) ?? Enumerable.Empty<BidStatusCount>())
+			{
+				summary.ByStatus[row.Status] = (summary.ByStatus.TryGetValue(row.Status, out var current) ? current : 0) + row.Total;
+				// Only a submitted bid can still lapse: drafts have not gone out and the rest are settled.
+				if (row.Status == (int)BidStatuses.Submitted)
+					summary.ExpiringSoon += row.Expiring;
+			}
+			return summary;
+		}
+
 		public async Task<List<Bid>> GetBidsByContactIdAsync(string contactId, int departmentId, int skip = 0, int take = 100)
 		{
 			if (string.IsNullOrWhiteSpace(contactId)) return new List<Bid>();

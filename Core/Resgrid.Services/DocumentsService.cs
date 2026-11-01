@@ -43,6 +43,17 @@ namespace Resgrid.Services
 			return documents.ToList();
 		}
 
+		public async Task<List<Document>> GetRecentDocumentsByDepartmentIdAsync(int departmentId, int take, bool includeAdminsOnly, string category = null)
+		{
+			if (departmentId <= 0 || take <= 0)
+				return new List<Document>();
+
+			var documents = await _documentRepository.GetRecentByDepartmentIdAsync(departmentId, take, includeAdminsOnly, category);
+			return (documents ?? Enumerable.Empty<Document>())
+				.Where(d => d != null && d.DepartmentId == departmentId && (includeAdminsOnly || !d.AdminsOnly))
+				.ToList();
+		}
+
 		public async Task<List<Document>> GetFilteredDocumentsByDepartmentIdAsync(int departmentId, string type, string category)
 		{
 			var result = await GetAllDocumentsByDepartmentIdAsync(departmentId);

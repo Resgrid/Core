@@ -172,6 +172,27 @@ namespace Resgrid.Services
 		}
 
 
+		/// <summary>Logs a summary reads at most; past it the counts are a lower bound.</summary>
+		private const int RecentLogSummaryCap = 1000;
+
+		public async Task<WorkLogSummary> GetRecentLogSummaryAsync(int departmentId, DateTime sinceUtc, int take)
+		{
+			var summary = new WorkLogSummary { SinceUtc = sinceUtc };
+			if (departmentId <= 0)
+				return summary;
+
+			var rows = (await _logsRepository.GetLogHeadersSinceAsync(departmentId, sinceUtc, RecentLogSummaryCap + 1))?.ToList() ?? new List<WorkLogHeader>();
+			summary.Truncated = rows.Count > RecentLogSummaryCap;
+			rows = rows.Take(RecentLogSummaryCap).ToList();
+
+			foreach (var group in rows.GroupBy(r => r.LogType ?? 0))
+				summary.CountsByType[group.Key] = group.Count();
+
+			summary.Total = rows.Count;
+			summary.Recent = rows.OrderByDescending(r => r.LoggedOn).ThenByDescending(r => r.LogId).Take(Math.Max(0, take)).ToList();
+			return summary;
+		}
+
 		public async Task<List<Log>> GetAllLogsByDepartmentDateRangeAsync(int departmentId, LogTypes logType, DateTime start, DateTime end)
 		{
 			var items = (from c in await _logsRepository.GetAllByDepartmentIdAsync(departmentId)

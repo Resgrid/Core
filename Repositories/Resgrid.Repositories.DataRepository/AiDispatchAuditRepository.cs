@@ -63,6 +63,25 @@ namespace Resgrid.Repositories.DataRepository
 			return rows.ToDictionary(r => r.Outcome ?? "", r => r.Total);
 		}
 
+		public async Task<List<AiDispatchTriageItem>> GetActiveCallTriageAsync(int departmentId, DateTime sinceUtc, int take, CancellationToken cancellationToken)
+		{
+			take = Math.Clamp(take, 1, 200);
+			// Call numbers only, like GetRecentAsync; the inner join keeps the rows whose call is still active and not deleted.
+			var select = $"a.{Col("AiDispatchAuditId")},a.{Col("CallId")},a.{Col("Outcome")},a.{Col("Confidence")},a.{Col("RelatedCallId")},a.{Col("CreatedOnUtc")}," +
+				$"c.{Col("Number")} AS {Col("CallNumber")},r.{Col("Number")} AS {Col("RelatedCallNumber")}";
+			var from = $"{Tbl("AiDispatchAudits")} a INNER JOIN {Tbl("Calls")} c ON c.{Col("CallId")}=a.{Col("CallId")} AND c.{Col("DepartmentId")}=a.{Col("DepartmentId")} " +
+				$"LEFT JOIN {Tbl("Calls")} r ON r.{Col("CallId")}=a.{Col("RelatedCallId")} AND r.{Col("DepartmentId")}=a.{Col("DepartmentId")} " +
+				$"WHERE a.{Col("DepartmentId")}={P}DepartmentId AND a.{Col("CreatedOnUtc")}>={P}Since AND c.{Col("State")}={P}Active AND c.{Col("IsDeleted")}={P}False";
+			var sql = IsPostgres
+				? $"SELECT {select} FROM {from} ORDER BY a.{Col("CreatedOnUtc")} DESC LIMIT {take}"
+				: $"SELECT TOP ({take}) {select} FROM {from} ORDER BY a.{Col("CreatedOnUtc")} DESC";
+			var rows = await QueryAsync<AiDispatchTriageItem>(sql, new { DepartmentId = departmentId, Since = DatabaseTimestamp(sinceUtc), Active = (int)Resgrid.Model.CallStates.Active, False = false }, cancellationToken);
+			var list = rows.ToList();
+			foreach (var row in list)
+				row.CreatedOnUtc = DateTime.SpecifyKind(row.CreatedOnUtc, DateTimeKind.Utc);
+			return list;
+		}
+
 		public Task<int> PruneAsync(int departmentId, DateTime cutoffUtc, CancellationToken cancellationToken) =>
 			ExecuteAsync($"DELETE FROM {Tbl("AiDispatchAudits")} WHERE {Col("DepartmentId")}={P}DepartmentId AND {Col("CreatedOnUtc")}<{P}Cutoff",
 				new { DepartmentId = departmentId, Cutoff = DatabaseTimestamp(cutoffUtc) }, cancellationToken);

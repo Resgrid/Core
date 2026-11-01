@@ -346,5 +346,42 @@ namespace Resgrid.Services
 
 			return new List<TrainingUser>();
 		}
+
+		public async Task<List<TrainingAssignmentStatus>> GetOutstandingTrainingsForUserAsync(int departmentId, string userId)
+		{
+			var result = new List<TrainingAssignmentStatus>();
+			if (departmentId <= 0 || string.IsNullOrWhiteSpace(userId))
+				return result;
+
+			var trainings = await _trainingRepository.GetTrainingsByDepartmentIdAsync(departmentId) ?? Enumerable.Empty<Training>();
+
+			foreach (var training in trainings.Where(t => t != null && t.DepartmentId == departmentId))
+			{
+				var assignment = training.Users?.FirstOrDefault(u => u != null && string.Equals(u.UserId, userId, StringComparison.OrdinalIgnoreCase));
+				if (assignment == null)
+					continue;
+
+				if (!assignment.Complete)
+				{
+					result.Add(new TrainingAssignmentStatus { Training = training, Assignment = assignment });
+					continue;
+				}
+
+				// The Trainings page shows a completed training as failed only when it has a quiz and the score is below the
+				// minimum; the questions are loaded for that case alone.
+				if (assignment.Score < training.MinimumScore)
+				{
+					var questions = await _trainingQuestionRepository.GetTrainingQuestionsByTrainingIdAsync(training.TrainingId);
+					if (questions != null && questions.Any())
+						result.Add(new TrainingAssignmentStatus { Training = training, Assignment = assignment, QuizFailed = true });
+				}
+			}
+
+			return result
+				.OrderBy(x => x.Training.ToBeCompletedBy.HasValue ? 0 : 1)
+				.ThenBy(x => x.Training.ToBeCompletedBy)
+				.ThenBy(x => x.Training.Name, StringComparer.OrdinalIgnoreCase)
+				.ToList();
+		}
 	}
 }

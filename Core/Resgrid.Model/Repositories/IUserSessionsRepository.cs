@@ -8,6 +8,8 @@ namespace Resgrid.Model.Repositories
 	public interface IUserSessionsRepository : IRepository<UserSession>
 	{
 		Task<IReadOnlyList<UserSession>> GetActiveByUserAsync(string userId, DateTime utcNow);
+		/// <summary>Counts for the department's current members (not deleted, not disabled): authenticator, passkey and active sessions.</summary>
+		Task<DepartmentSecurityPosture> GetDepartmentSecurityPostureAsync(int departmentId, DateTime utcNow, CancellationToken cancellationToken = default);
 		Task<UserSession> GetByAuthorizationIdAsync(string authorizationId);
 
 		/// <summary>

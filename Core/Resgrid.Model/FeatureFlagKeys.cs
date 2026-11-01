@@ -191,5 +191,11 @@ namespace Resgrid.Model
 
 		/// <summary>Incident Back Office LI-D coordination boards. Child of Incident.BackOffice. Seeded off by M0291.</summary>
 		public const string IncidentCoordination = "Incident.Coordination";
+
+		/// <summary>
+		/// The widget-based home dashboard (home-dashboard-redesign-plan.md, D10). Off: every member keeps the classic
+		/// dashboard. On: the new dashboard, unless the member chose classic. Seeded off by M0307.
+		/// </summary>
+		public const string DashboardModern = "Dashboard.Modern";
 	}
 }

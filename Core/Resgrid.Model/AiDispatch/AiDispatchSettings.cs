@@ -148,6 +148,11 @@ namespace Resgrid.Model.AiDispatch
 		Task<List<AiDispatchAuditListItem>> GetAuditAsync(int departmentId, int take, CancellationToken cancellationToken);
 		/// <summary>Audit row counts per outcome over the last <paramref name="days"/> days, independent of how many rows the activity list shows.</summary>
 		Task<Dictionary<string, int>> GetRecentOutcomeCountsAsync(int departmentId, int days, CancellationToken cancellationToken);
+		/// <summary>
+		/// The dispatcher triage view (home dashboard AI Dispatch Triage widget): outcome counts over the last <paramref name="hours"/> and
+		/// the enrichments on calls that are still active (at most <paramref name="take"/>). Call numbers only; never null.
+		/// </summary>
+		Task<AiDispatchTriageSummary> GetTriageSummaryAsync(int departmentId, int hours, int take, CancellationToken cancellationToken);
 		/// <summary>AI dispatch tokens used by the department this calendar month (UTC).</summary>
 		Task<long> GetMonthlyUsageAsync(int departmentId, CancellationToken cancellationToken);
 		/// <summary>Whether a message from <paramref name="sender"/> may be enriched (the call is created regardless).</summary>

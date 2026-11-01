@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Threading.Tasks;
 using Dapper;
+using Resgrid.Config;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Repositories.Connection;
@@ -168,6 +169,40 @@ namespace Resgrid.Repositories.DataRepository
 				{
 					conn = _unitOfWork.CreateOrGetConnection();
 					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				throw;
+			}
+		}
+
+		public async Task<IEnumerable<RouteInstance>> GetActiveInstancesByDepartmentIdAsync(int departmentId)
+		{
+			// In progress (1) and paused (5) only, without the recorded route geometry and notes: a summary read for the home
+			// dashboard, where loading every instance the department ever ran (GetInstancesByDepartmentIdAsync) would not scale.
+			var postgres = DataConfig.DatabaseType == DatabaseTypes.Postgres;
+			var schema = _sqlConfiguration.SchemaName;
+			var sql = postgres
+				? "SELECT routeinstanceid, routeplanid, routescheduleid, unitid, departmentid, status, startedbyuserid, scheduledstarton, actualstarton, " +
+				  "actualendon, endedbyuserid, totaldistancemeters, totaldurationseconds, stopscompleted, stopstotal, addedon " +
+				  $"FROM {schema}.routeinstances WHERE departmentid = @DepartmentId AND status = ANY(@Statuses) ORDER BY actualstarton DESC"
+				: "SELECT [RouteInstanceId], [RoutePlanId], [RouteScheduleId], [UnitId], [DepartmentId], [Status], [StartedByUserId], [ScheduledStartOn], " +
+				  "[ActualStartOn], [ActualEndOn], [EndedByUserId], [TotalDistanceMeters], [TotalDurationSeconds], [StopsCompleted], [StopsTotal], [AddedOn] " +
+				  $"FROM {schema}.[RouteInstances] WHERE [DepartmentId] = @DepartmentId AND [Status] IN @Statuses ORDER BY [ActualStartOn] DESC";
+
+			var parameters = new { DepartmentId = departmentId, Statuses = new[] { (int)RouteInstanceStatus.InProgress, (int)RouteInstanceStatus.Paused } };
+
+			try
+			{
+				if (_unitOfWork?.Connection != null)
+					return await _unitOfWork.CreateOrGetConnection().QueryAsync<RouteInstance>(sql, parameters, _unitOfWork.Transaction);
+
+				using (var conn = _connectionProvider.Create())
+				{
+					await conn.OpenAsync();
+					return await conn.QueryAsync<RouteInstance>(sql, parameters);
 				}
 			}
 			catch (Exception ex)

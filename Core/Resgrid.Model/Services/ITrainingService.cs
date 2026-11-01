@@ -95,5 +95,13 @@ namespace Resgrid.Model.Services
 		Task<Training> MarkAsNotifiedAsync(int trainingId, CancellationToken cancellationToken = default(CancellationToken));
 
 		Task<List<TrainingUser>> GetTrainingUsersForUserAsync(string userId);
+
+		/// <summary>
+		/// The department's trainings assigned to the user that are still outstanding, by the Trainings page's rule: not
+		/// complete, or complete with a quiz score below the training's minimum. Soonest due first (no due date last).
+		/// One department read (assignments ride along); quiz questions are counted only for the completed-below-minimum
+		/// rows that need it.
+		/// </summary>
+		Task<List<TrainingAssignmentStatus>> GetOutstandingTrainingsForUserAsync(int departmentId, string userId);
 	}
 }

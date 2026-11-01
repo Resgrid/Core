@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -49,6 +50,8 @@ Task<List<WorkflowRun>> GetRunsByWorkflowIdAsync(string workflowId, int page, in
 Task<List<WorkflowRun>> GetPendingAndRunningRunsByDepartmentIdAsync(int departmentId, CancellationToken cancellationToken = default);
 Task<List<WorkflowRunLog>> GetLogsForRunAsync(string workflowRunId, CancellationToken cancellationToken = default);
 Task<WorkflowHealthSummary> GetWorkflowHealthAsync(string workflowId, CancellationToken cancellationToken = default);
+/// <summary>Department-wide run counts per workflow and status since <paramref name="sinceUtc"/> plus open runs (home dashboard Workflow Health); never null.</summary>
+Task<List<WorkflowRunStatusCount>> GetDepartmentRunStatusCountsAsync(int departmentId, DateTime sinceUtc, CancellationToken cancellationToken = default);
 Task<bool> ClearPendingRunsAsync(int departmentId, CancellationToken cancellationToken = default);
 /// <summary>
 /// Protected Workflows "Send test with sample data": renders every enabled step with SYNTHETIC values in the protected.*

@@ -171,4 +171,601 @@
   <data name="ToggleCollapseGroupsOnce" xml:space="preserve">
     <value>تبديل طي المجموعات (يحفظ)</value>
   </data>
+  <data name="DashboardPageTitle" xml:space="preserve">
+    <value>لوحة المعلومات</value>
+  </data>
+  <data name="Category.Operations" xml:space="preserve">
+    <value>العمليات</value>
+  </data>
+  <data name="Category.Personnel" xml:space="preserve">
+    <value>الأفراد</value>
+  </data>
+  <data name="Category.Awareness" xml:space="preserve">
+    <value>الخريطة والطقس</value>
+  </data>
+  <data name="Category.Communications" xml:space="preserve">
+    <value>الاتصالات</value>
+  </data>
+  <data name="Category.Planning" xml:space="preserve">
+    <value>التخطيط</value>
+  </data>
+  <data name="Category.Readiness" xml:space="preserve">
+    <value>الجاهزية</value>
+  </data>
+  <data name="Category.Records" xml:space="preserve">
+    <value>السجلات</value>
+  </data>
+  <data name="Category.Business" xml:space="preserve">
+    <value>القوى العاملة والأعمال</value>
+  </data>
+  <data name="Category.IncidentBackOffice" xml:space="preserve">
+    <value>Incident Back Office</value>
+  </data>
+  <data name="Category.Intelligence" xml:space="preserve">
+    <value>التحليلات</value>
+  </data>
+  <data name="Category.Administration" xml:space="preserve">
+    <value>الإدارة</value>
+  </data>
+  <data name="WidgetErrorFailed" xml:space="preserve">
+    <value>تعذّر تحميل هذه الأداة. حاول مرة أخرى بعد قليل.</value>
+  </data>
+  <data name="WidgetErrorForbidden" xml:space="preserve">
+    <value>لم يعد لديك حق الوصول إلى هذه الأداة.</value>
+  </data>
+  <data name="WidgetErrorNotFound" xml:space="preserve">
+    <value>لم تعد هذه الأداة متاحة.</value>
+  </data>
+  <data name="WidgetErrorProtected" xml:space="preserve">
+    <value>بيانات محمية. تحقق للعرض.</value>
+  </data>
+  <data name="SaveErrorConflict" xml:space="preserve">
+    <value>تم تغيير لوحة المعلومات الخاصة بك في نافذة أخرى.</value>
+  </data>
+  <data name="SaveErrorInvalid" xml:space="preserve">
+    <value>تعذّر حفظ هذا التخطيط.</value>
+  </data>
+  <data name="SaveErrorTooLarge" xml:space="preserve">
+    <value>هذا التخطيط كبير جدًا للحفظ. أزل بعض الأدوات وحاول مرة أخرى.</value>
+  </data>
+  <data name="SaveErrorLimitReached" xml:space="preserve">
+    <value>لقد بلغت الحد الأقصى.</value>
+  </data>
+  <data name="SaveErrorNotFound" xml:space="preserve">
+    <value>هذه اللوحة لم تعد موجودة.</value>
+  </data>
+  <data name="Pulse.OpenCalls" xml:space="preserve">
+    <value>بلاغات نشطة</value>
+  </data>
+  <data name="Pulse.Unread" xml:space="preserve">
+    <value>رسائل غير مقروءة</value>
+  </data>
+  <data name="Pulse.Pending" xml:space="preserve">
+    <value>بلاغات معلقة</value>
+  </data>
+  <data name="Pulse.Awaiting" xml:space="preserve">
+    <value>في انتظار الموارد</value>
+  </data>
+  <data name="BoardHome" xml:space="preserve">
+    <value>الرئيسية</value>
+  </data>
+  <data name="TemplatesTitle" xml:space="preserve">
+    <value>قوالب لوحة المعلومات</value>
+  </data>
+  <data name="TemplatesIntro" xml:space="preserve">
+    <value>تحدد القوالب لوحة المعلومات التي يراها الأعضاء إلى أن يخصصوا لوحتهم الخاصة. وجّه القالب إلى دور من أدوار الأفراد أو إلى مجموعة، أو اجعل أحدها الافتراضي للقسم.</value>
+  </data>
+  <data name="TemplateAudienceEveryone" xml:space="preserve">
+    <value>الجميع</value>
+  </data>
+  <data name="TemplateAudienceRole" xml:space="preserve">
+    <value>دور الأفراد</value>
+  </data>
+  <data name="TemplateAudienceGroup" xml:space="preserve">
+    <value>مجموعة</value>
+  </data>
+  <data name="UseClassicDashboard" xml:space="preserve">
+    <value>استخدام لوحة المعلومات الكلاسيكية</value>
+  </data>
+  <data name="TryNewDashboard" xml:space="preserve">
+    <value>جرّب لوحة المعلومات الجديدة</value>
+  </data>
+  <data name="ClassicDashboardBanner" xml:space="preserve">
+    <value>تتوفر لوحة معلومات جديدة قابلة للتخصيص لقسمك.</value>
+  </data>
+  <data name="NoScriptClassic" xml:space="preserve">
+    <value>تتطلب لوحة المعلومات هذه JavaScript. افتح لوحة المعلومات الكلاسيكية بدلًا من ذلك.</value>
+  </data>
+  <data name="TemplateNew" xml:space="preserve">
+    <value>قالب جديد</value>
+  </data>
+  <data name="TemplatesEmpty" xml:space="preserve">
+    <value>لا توجد قوالب بعد. يرى الأعضاء الإعداد الافتراضي المدمج لدورهم إلى أن تضيف قالبًا.</value>
+  </data>
+  <data name="TemplateName" xml:space="preserve">
+    <value>الاسم</value>
+  </data>
+  <data name="TemplateAudience" xml:space="preserve">
+    <value>الفئة المستهدفة</value>
+  </data>
+  <data name="TemplatePriority" xml:space="preserve">
+    <value>الأولوية</value>
+  </data>
+  <data name="TemplateWidgets" xml:space="preserve">
+    <value>الأدوات</value>
+  </data>
+  <data name="TemplateDefault" xml:space="preserve">
+    <value>الافتراضي للقسم</value>
+  </data>
+  <data name="TemplateEdit" xml:space="preserve">
+    <value>تعديل</value>
+  </data>
+  <data name="TemplateDelete" xml:space="preserve">
+    <value>حذف</value>
+  </data>
+  <data name="TemplateDeleteConfirm" xml:space="preserve">
+    <value>هل تريد حذف هذا القالب؟ سيرى الأعضاء الذين لم يخصصوا لوحة المعلومات الخاصة بهم القالب المطابق التالي أو الإعداد الافتراضي المدمج.</value>
+  </data>
+  <data name="SaveErrorNotAllowed" xml:space="preserve">
+    <value>غير مسموح لك بإجراء هذا التغيير.</value>
+  </data>
+  <data name="Dash.Add" xml:space="preserve">
+    <value>إضافة</value>
+  </data>
+  <data name="Dash.AddBoard" xml:space="preserve">
+    <value>إضافة لوحة</value>
+  </data>
+  <data name="Dash.AddNamed" xml:space="preserve">
+    <value>إضافة {0}</value>
+  </data>
+  <data name="Dash.AddWidget" xml:space="preserve">
+    <value>إضافة أداة</value>
+  </data>
+  <data name="Dash.Added" xml:space="preserve">
+    <value>تمت الإضافة</value>
+  </data>
+  <data name="Dash.AdpConceal" xml:space="preserve">
+    <value>إخفاء</value>
+  </data>
+  <data name="Dash.AdpConcealedToast" xml:space="preserve">
+    <value>تم إخفاء البيانات المحمية</value>
+  </data>
+  <data name="Dash.AdpHidden" xml:space="preserve">
+    <value>البيانات المحمية مخفية</value>
+  </data>
+  <data name="Dash.AdpProtectedAria" xml:space="preserve">
+    <value>{0}، تحقق للكشف</value>
+  </data>
+  <data name="Dash.AdpRevealed" xml:space="preserve">
+    <value>البيانات المحمية ظاهرة</value>
+  </data>
+  <data name="Dash.AdpRevealedToast" xml:space="preserve">
+    <value>تم كشف البيانات المحمية. يُسجَّل كل كشف في سجل التدقيق الخاص بالقسم.</value>
+  </data>
+  <data name="Dash.AdpRoleCannotView" xml:space="preserve">
+    <value>دورك لا يسمح بعرض هذا</value>
+  </data>
+  <data name="Dash.AdpVerifyToReveal" xml:space="preserve">
+    <value>تحقق للكشف</value>
+  </data>
+  <data name="Dash.AdpWallHidden" xml:space="preserve">
+    <value>تبقى البيانات المحمية مخفية على شاشة العرض الجدارية.</value>
+  </data>
+  <data name="Dash.AdpVerifyTooltip" xml:space="preserve">
+    <value>تحقق للكشف</value>
+  </data>
+  <data name="Dash.AgeHours" xml:space="preserve">
+    <value>منذ {0} س</value>
+  </data>
+  <data name="Dash.AgeJustNow" xml:space="preserve">
+    <value>الآن</value>
+  </data>
+  <data name="Dash.AgeLoading" xml:space="preserve">
+    <value>جارٍ التحميل</value>
+  </data>
+  <data name="Dash.AgeMinutes" xml:space="preserve">
+    <value>منذ {0} د</value>
+  </data>
+  <data name="Dash.AgeReconnecting" xml:space="preserve">
+    <value>إعادة الاتصال</value>
+  </data>
+  <data name="Dash.AgeSeconds" xml:space="preserve">
+    <value>منذ {0} ث</value>
+  </data>
+  <data name="Dash.AgeUpdateFailed" xml:space="preserve">
+    <value>فشل التحديث</value>
+  </data>
+  <data name="Dash.AllCategories" xml:space="preserve">
+    <value>الكل</value>
+  </data>
+  <data name="Dash.Apply" xml:space="preserve">
+    <value>تطبيق</value>
+  </data>
+  <data name="Dash.AvailableWith" xml:space="preserve">
+    <value>متاح مع {0}</value>
+  </data>
+  <data name="Dash.BackToTemplates" xml:space="preserve">
+    <value>العودة إلى القوالب</value>
+  </data>
+  <data name="Dash.BadgeAria" xml:space="preserve">
+    <value>العناصر: {0}</value>
+  </data>
+  <data name="Dash.BoardAdded" xml:space="preserve">
+    <value>تمت إضافة اللوحة "{0}"</value>
+  </data>
+  <data name="Dash.BoardDeleted" xml:space="preserve">
+    <value>تم حذف اللوحة "{0}"</value>
+  </data>
+  <data name="Dash.BoardLoadFailed" xml:space="preserve">
+    <value>تعذّر تحميل هذه اللوحة. حاول مرة أخرى بعد قليل.</value>
+  </data>
+  <data name="Dash.BoardName" xml:space="preserve">
+    <value>اسم اللوحة</value>
+  </data>
+  <data name="Dash.BoardRenamed" xml:space="preserve">
+    <value>تمت إعادة تسمية اللوحة إلى "{0}"</value>
+  </data>
+  <data name="Dash.Boards" xml:space="preserve">
+    <value>لوحات المعلومات</value>
+  </data>
+  <data name="Dash.BootstrapFailed" xml:space="preserve">
+    <value>تعذّر تحميل لوحة المعلومات الخاصة بك.</value>
+  </data>
+  <data name="Dash.Cancel" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="Dash.Categories" xml:space="preserve">
+    <value>فئات الأدوات</value>
+  </data>
+  <data name="Dash.ChangesDiscarded" xml:space="preserve">
+    <value>تم تجاهل التغييرات</value>
+  </data>
+  <data name="Dash.Close" xml:space="preserve">
+    <value>إغلاق</value>
+  </data>
+  <data name="Dash.CoachDismiss" xml:space="preserve">
+    <value>حسنًا</value>
+  </data>
+  <data name="Dash.CoachText" xml:space="preserve">
+    <value>استخدم «تخصيص» لإضافة الأدوات وإزالتها وتغيير حجمها وإعادة ترتيبها. يُحفظ تخطيطك في حسابك، فيظهر لك في أي متصفح.</value>
+  </data>
+  <data name="Dash.CoachTitle" xml:space="preserve">
+    <value>مرحبًا بك في لوحة المعلومات الجديدة</value>
+  </data>
+  <data name="Dash.ConflictText" xml:space="preserve">
+    <value>هل تريد الاحتفاظ بالتخطيط المعروض على هذه الشاشة أم تحميل أحدث تخطيط محفوظ؟</value>
+  </data>
+  <data name="Dash.CouldNotLoad" xml:space="preserve">
+    <value>تعذّر تحميل {0}</value>
+  </data>
+  <data name="Dash.Customize" xml:space="preserve">
+    <value>تخصيص</value>
+  </data>
+  <data name="Dash.CustomizeRegion" xml:space="preserve">
+    <value>تخصيص لوحة المعلومات</value>
+  </data>
+  <data name="Dash.Delete" xml:space="preserve">
+    <value>حذف</value>
+  </data>
+  <data name="Dash.DeleteBoard" xml:space="preserve">
+    <value>حذف اللوحة</value>
+  </data>
+  <data name="Dash.DeleteBoardConfirm" xml:space="preserve">
+    <value>هل تريد حذف اللوحة "{0}"؟ ستُزال أدواتها وإعداداتها. لن تتأثر لوحاتك الأخرى.</value>
+  </data>
+  <data name="Dash.Density" xml:space="preserve">
+    <value>الكثافة</value>
+  </data>
+  <data name="Dash.DensityComfortable" xml:space="preserve">
+    <value>مريحة</value>
+  </data>
+  <data name="Dash.DensityCompact" xml:space="preserve">
+    <value>مضغوطة</value>
+  </data>
+  <data name="Dash.DepartmentCodeMeta" xml:space="preserve">
+    <value>الرمز {0}</value>
+  </data>
+  <data name="Dash.DepartmentTime" xml:space="preserve">
+    <value>وقت القسم</value>
+  </data>
+  <data name="Dash.Dismiss" xml:space="preserve">
+    <value>تجاهل</value>
+  </data>
+  <data name="Dash.Done" xml:space="preserve">
+    <value>تم</value>
+  </data>
+  <data name="Dash.DragCancelled" xml:space="preserve">
+    <value>تم إلغاء النقل.</value>
+  </data>
+  <data name="Dash.DragEnded" xml:space="preserve">
+    <value>تم إفلات الأداة.</value>
+  </data>
+  <data name="Dash.DragStarted" xml:space="preserve">
+    <value>تم التقاط الأداة. حرّكها فوق أداة أخرى ثم أفلتها لوضعها قبلها أو بعدها.</value>
+  </data>
+  <data name="Dash.DurationDays" xml:space="preserve">
+    <value>{0} ي</value>
+  </data>
+  <data name="Dash.DurationHours" xml:space="preserve">
+    <value>{0} س {1} د</value>
+  </data>
+  <data name="Dash.DurationMinutes" xml:space="preserve">
+    <value>{0} د</value>
+  </data>
+  <data name="Dash.EditBarText" xml:space="preserve">
+    <value>اسحب الأدوات (أو ركّز على إحداها واستخدم مفاتيح الأسهم) لإعادة ترتيبها، أو اختر حجمًا، أو أزلها، أو أضف المزيد. يُحفظ في حسابك، فيظهر لك في أي متصفح.</value>
+  </data>
+  <data name="Dash.EditBarTitle" xml:space="preserve">
+    <value>جارٍ تخصيص لوحة المعلومات.</value>
+  </data>
+  <data name="Dash.EditModeAnnounce" xml:space="preserve">
+    <value>وضع التخصيص. استخدم مفاتيح الأسهم على أداة محددة لنقلها، ومفتاحَي الزائد والناقص لتغيير حجمها، ومفتاح Delete لإزالتها.</value>
+  </data>
+  <data name="Dash.EmptyBoard" xml:space="preserve">
+    <value>لا توجد أدوات في هذه اللوحة بعد.</value>
+  </data>
+  <data name="Dash.EmptyBoardEditing" xml:space="preserve">
+    <value>أضف أدوات لبناء هذه اللوحة.</value>
+  </data>
+  <data name="Dash.EmptyDefault" xml:space="preserve">
+    <value>لا شيء للعرض حاليًا.</value>
+  </data>
+  <data name="Dash.ExitWall" xml:space="preserve">
+    <value>الخروج من الشاشة الجدارية</value>
+  </data>
+  <data name="Dash.GreetAfternoon" xml:space="preserve">
+    <value>طاب يومك، {0}</value>
+  </data>
+  <data name="Dash.GreetAfternoonNoName" xml:space="preserve">
+    <value>طاب يومك</value>
+  </data>
+  <data name="Dash.GreetEvening" xml:space="preserve">
+    <value>مساء الخير، {0}</value>
+  </data>
+  <data name="Dash.GreetEveningNoName" xml:space="preserve">
+    <value>مساء الخير</value>
+  </data>
+  <data name="Dash.GreetMorning" xml:space="preserve">
+    <value>صباح الخير، {0}</value>
+  </data>
+  <data name="Dash.GreetMorningNoName" xml:space="preserve">
+    <value>صباح الخير</value>
+  </data>
+  <data name="Dash.KeepMine" xml:space="preserve">
+    <value>الاحتفاظ بتخطيطي</value>
+  </data>
+  <data name="Dash.KeyboardHelp" xml:space="preserve">
+    <value>استخدم مفاتيح الأسهم لنقل هذه الأداة، ومفتاحَي الزائد والناقص لتغيير حجمها، ومفتاح Delete لإزالتها.</value>
+  </data>
+  <data name="Dash.LatestLoaded" xml:space="preserve">
+    <value>تم تحميل أحدث تخطيط محفوظ</value>
+  </data>
+  <data name="Dash.Live" xml:space="preserve">
+    <value>مباشر</value>
+  </data>
+  <data name="Dash.LiveTooltip" xml:space="preserve">
+    <value>يتحدّث مباشرة</value>
+  </data>
+  <data name="Dash.LoadLatest" xml:space="preserve">
+    <value>تحميل الأحدث</value>
+  </data>
+  <data name="Dash.Loading" xml:space="preserve">
+    <value>جارٍ التحميل</value>
+  </data>
+  <data name="Dash.Locked" xml:space="preserve">
+    <value>مقفل</value>
+  </data>
+  <data name="Dash.MaxWidgets" xml:space="preserve">
+    <value>يمكن أن تحتوي اللوحة على ما يصل إلى {0} أداة. أزل أداة لإضافة أخرى.</value>
+  </data>
+  <data name="Dash.Message" xml:space="preserve">
+    <value>رسالة</value>
+  </data>
+  <data name="Dash.MoreOptions" xml:space="preserve">
+    <value>مزيد من خيارات لوحة المعلومات</value>
+  </data>
+  <data name="Dash.MovableWidget" xml:space="preserve">
+    <value>أداة قابلة للنقل</value>
+  </data>
+  <data name="Dash.MultiSelectHint" xml:space="preserve">
+    <value>لا تحدد شيئًا لتضمين الكل.</value>
+  </data>
+  <data name="Dash.MultipleInstances" xml:space="preserve">
+    <value>يمكن إضافة أكثر من واحدة</value>
+  </data>
+  <data name="Dash.NewCall" xml:space="preserve">
+    <value>بلاغ جديد</value>
+  </data>
+  <data name="Dash.NoOptions" xml:space="preserve">
+    <value>لا توجد خيارات للاختيار بعد.</value>
+  </data>
+  <data name="Dash.NoWidgetsMatch" xml:space="preserve">
+    <value>لا توجد أدوات مطابقة.</value>
+  </data>
+  <data name="Dash.OpenModule" xml:space="preserve">
+    <value>فتح الوحدة</value>
+  </data>
+  <data name="Dash.Protected" xml:space="preserve">
+    <value>محمي</value>
+  </data>
+  <data name="Dash.PulseLabel" xml:space="preserve">
+    <value>نظرة سريعة على القسم</value>
+  </data>
+  <data name="Dash.Refresh" xml:space="preserve">
+    <value>تحديث</value>
+  </data>
+  <data name="Dash.Remove" xml:space="preserve">
+    <value>إزالة</value>
+  </data>
+  <data name="Dash.RemoveFromDashboard" xml:space="preserve">
+    <value>إزالة من لوحة المعلومات</value>
+  </data>
+  <data name="Dash.RemoveWidget" xml:space="preserve">
+    <value>إزالة {0}</value>
+  </data>
+  <data name="Dash.Rename" xml:space="preserve">
+    <value>إعادة تسمية</value>
+  </data>
+  <data name="Dash.RenameBoard" xml:space="preserve">
+    <value>إعادة تسمية اللوحة</value>
+  </data>
+  <data name="Dash.ResetDone" xml:space="preserve">
+    <value>تمت إعادة التعيين إلى الإعداد الافتراضي للقسم</value>
+  </data>
+  <data name="Dash.ResetToDefault" xml:space="preserve">
+    <value>إعادة التعيين إلى الإعداد الافتراضي للقسم</value>
+  </data>
+  <data name="Dash.Retry" xml:space="preserve">
+    <value>إعادة المحاولة</value>
+  </data>
+  <data name="Dash.RevealedBadge" xml:space="preserve">
+    <value>ظاهر</value>
+  </data>
+  <data name="Dash.RevealedBadgeTooltip" xml:space="preserve">
+    <value>تُعرض بيانات محمية في هذه الأداة</value>
+  </data>
+  <data name="Dash.RevealedRefreshDeferred" xml:space="preserve">
+    <value>تُحدَّث الأدوات التي تعرض بيانات محمية مرة كل دقيقتين على الأكثر. ستُحدَّث هذه الأداة قريبًا.</value>
+  </data>
+  <data name="Dash.SaveFailed" xml:space="preserve">
+    <value>تعذّر حفظ لوحة المعلومات الخاصة بك. تحقق من اتصالك وحاول مرة أخرى.</value>
+  </data>
+  <data name="Dash.SaveTemplate" xml:space="preserve">
+    <value>حفظ القالب</value>
+  </data>
+  <data name="Dash.SavedToast" xml:space="preserve">
+    <value>تم حفظ لوحة المعلومات. ستظهر لك في أي متصفح تسجّل الدخول منه.</value>
+  </data>
+  <data name="Dash.SearchWidgets" xml:space="preserve">
+    <value>البحث في الأدوات</value>
+  </data>
+  <data name="Dash.SelectNone" xml:space="preserve">
+    <value>(لا شيء)</value>
+  </data>
+  <data name="Dash.SettingRange" xml:space="preserve">
+    <value>بين {0} و{1}</value>
+  </data>
+  <data name="Dash.Settings" xml:space="preserve">
+    <value>الإعدادات</value>
+  </data>
+  <data name="Dash.SettingsFor" xml:space="preserve">
+    <value>إعدادات {0}</value>
+  </data>
+  <data name="Dash.SettingsLive" xml:space="preserve">
+    <value>تتحدّث هذه الأداة مباشرة.</value>
+  </data>
+  <data name="Dash.SettingsRefreshHours" xml:space="preserve">
+    <value>تُحدَّث هذه الأداة كل {0} ساعة.</value>
+  </data>
+  <data name="Dash.SettingsRefreshMinutes" xml:space="preserve">
+    <value>تُحدَّث هذه الأداة كل {0} دقيقة.</value>
+  </data>
+  <data name="Dash.SettingsSaved" xml:space="preserve">
+    <value>تم حفظ الإعدادات</value>
+  </data>
+  <data name="Dash.SettingsTitle" xml:space="preserve">
+    <value>إعدادات {0}</value>
+  </data>
+  <data name="Dash.Size" xml:space="preserve">
+    <value>الحجم</value>
+  </data>
+  <data name="Dash.Size.full" xml:space="preserve">
+    <value>كامل</value>
+  </data>
+  <data name="Dash.Size.l" xml:space="preserve">
+    <value>L</value>
+  </data>
+  <data name="Dash.Size.m" xml:space="preserve">
+    <value>M</value>
+  </data>
+  <data name="Dash.Size.s" xml:space="preserve">
+    <value>S</value>
+  </data>
+  <data name="Dash.Size.xl" xml:space="preserve">
+    <value>XL</value>
+  </data>
+  <data name="Dash.Size.xs" xml:space="preserve">
+    <value>XS</value>
+  </data>
+  <data name="Dash.SizeAria" xml:space="preserve">
+    <value>الحجم {0}</value>
+  </data>
+  <data name="Dash.SizeChanged" xml:space="preserve">
+    <value>{0}: الحجم {1}</value>
+  </data>
+  <data name="Dash.StaleTooltip" xml:space="preserve">
+    <value>يُعاد الاتصال بالتحديثات الفورية. تُحدَّث هذه الأداة بحسب مؤقّت إلى أن تعود.</value>
+  </data>
+  <data name="Dash.TemplateDefaultHint" xml:space="preserve">
+    <value>يرى هذا القالب الأعضاء الذين لا يطابقهم أي قالب دور أو مجموعة.</value>
+  </data>
+  <data name="Dash.TemplateDescription" xml:space="preserve">
+    <value>الوصف</value>
+  </data>
+  <data name="Dash.TemplateEditBarText" xml:space="preserve">
+    <value>يرى الأعضاء الذين لم يخصصوا لوحة المعلومات الخاصة بهم هذا التخطيط. أضف الأدوات وحدد أحجامها وأعد ترتيبها، ثم احفظ.</value>
+  </data>
+  <data name="Dash.TemplateEditBarTitle" xml:space="preserve">
+    <value>تعديل قالب لوحة المعلومات.</value>
+  </data>
+  <data name="Dash.TemplateEditTitle" xml:space="preserve">
+    <value>تعديل قالب لوحة المعلومات</value>
+  </data>
+  <data name="Dash.TemplateGroupRequired" xml:space="preserve">
+    <value>اختر المجموعة التي يخصّها هذا القالب.</value>
+  </data>
+  <data name="Dash.TemplateIntro" xml:space="preserve">
+    <value>تعرض معاينات الأدوات عرضك الخاص للبيانات. يرى كل عضو فقط ما تسمح به صلاحياته.</value>
+  </data>
+  <data name="Dash.TemplateNameRequired" xml:space="preserve">
+    <value>أدخل اسمًا للقالب.</value>
+  </data>
+  <data name="Dash.TemplateNewTitle" xml:space="preserve">
+    <value>قالب لوحة معلومات جديد</value>
+  </data>
+  <data name="Dash.TemplatePriorityHint" xml:space="preserve">
+    <value>عند مطابقة عضو لعدة قوالب، يُعتمد الرقم الأقل.</value>
+  </data>
+  <data name="Dash.TemplateRoleRequired" xml:space="preserve">
+    <value>اختر دور الأفراد الذي يخصّه هذا القالب.</value>
+  </data>
+  <data name="Dash.TemplateSaved" xml:space="preserve">
+    <value>تم حفظ القالب</value>
+  </data>
+  <data name="Dash.TemplateTargetsFailed" xml:space="preserve">
+    <value>تعذّر تحميل الأدوار والمجموعات.</value>
+  </data>
+  <data name="Dash.Undo" xml:space="preserve">
+    <value>تراجع</value>
+  </data>
+  <data name="Dash.UntitledBoard" xml:space="preserve">
+    <value>لوحة بلا عنوان</value>
+  </data>
+  <data name="Dash.UpdateFailedTooltip" xml:space="preserve">
+    <value>فشل آخر تحديث. يتم عرض بيانات سابقة.</value>
+  </data>
+  <data name="Dash.VerifyToView" xml:space="preserve">
+    <value>تحقق للعرض</value>
+  </data>
+  <data name="Dash.ViewAddon" xml:space="preserve">
+    <value>عرض الإضافة</value>
+  </data>
+  <data name="Dash.WallDisplay" xml:space="preserve">
+    <value>شاشة جدارية</value>
+  </data>
+  <data name="Dash.WidgetAdded" xml:space="preserve">
+    <value>تمت إضافة {0}</value>
+  </data>
+  <data name="Dash.WidgetMoved" xml:space="preserve">
+    <value>تم نقل {0} إلى الموضع {1}</value>
+  </data>
+  <data name="Dash.WidgetNotAvailable" xml:space="preserve">
+    <value>هذه الأداة غير متاحة بعد.</value>
+  </data>
+  <data name="Dash.WidgetOptions" xml:space="preserve">
+    <value>خيارات {0}</value>
+  </data>
+  <data name="Dash.WidgetRemoved" xml:space="preserve">
+    <value>تمت إزالة {0}</value>
+  </data>
 </root>

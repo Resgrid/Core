@@ -71,6 +71,12 @@ namespace Resgrid.Model.Services
 		Task<List<Log>> GetAllLogsByDepartmentDateRangeAsync(int departmentId, LogTypes logType, DateTime start, DateTime end);
 
 		/// <summary>
+		/// The department's logs written since <paramref name="sinceUtc"/>, counted by type, with the <paramref name="take"/> newest headers
+		/// (one bounded query of header columns; no narrative or other free text).
+		/// </summary>
+		Task<WorkLogSummary> GetRecentLogSummaryAsync(int departmentId, DateTime sinceUtc, int take);
+
+		/// <summary>
 		/// Saves the call log asynchronous.
 		/// </summary>
 		/// <param name="log">The log.</param>

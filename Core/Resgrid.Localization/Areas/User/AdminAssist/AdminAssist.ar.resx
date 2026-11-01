@@ -7719,4 +7719,49 @@
   <data xml:space="preserve" name="SettingHelp.ShiftTradeApprovers">
     <value>من يمكنه اختيار المتقدم الذي يأخذ طلب تبديل المناوبة والموافقة على التبديلات المنتظرة. يمكن لمسؤولي القسم ذلك دائمًا؛ أما مسؤولو المجموعات والشخص المتنازل وأعضاء الأدوار المختارة فهم اختيار القسم.</value>
   </data>
+  <data xml:space="preserve" name="Feature.home-dashboard">
+    <value>لوحة معلومات رئيسية قابلة للتخصيص</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.home-dashboard">
+    <value>صفحة رئيسية من الأدوات المباشرة يرتّبها كل عضو بنفسه، وتُحفظ في حسابه.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureValue.home-dashboard">
+    <value>يرى الأعضاء على شاشة واحدة ما يحتاج إلى انتباههم في كل الوحدات، ويتبعهم تخطيطهم إلى أي متصفح.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureExample.home-dashboard">
+    <value>يبدأ المرسلون بالمكالمات النشطة وحالة الوحدات والخريطة؛ ويبدأ الأعضاء بحالتهم ومناوباتهم وقوائم التحقق المستحقة.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.home-dashboard">
+    <value>فعّل لوحة المعلومات الجديدة، ثم راجع اللوحة الافتراضية التي يراها كل دور قبل أن يخصصها الأعضاء.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.dashboard-templates">
+    <value>قوالب لوحة المعلومات</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.dashboard-templates">
+    <value>لوحات معلومات افتراضية للقسم للجميع أو لدور من أدوار الأفراد أو لمجموعة.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureValue.dashboard-templates">
+    <value>يبدأ الأعضاء الذين لم يخصصوا لوحتهم من لوحة مختارة لعملهم بدلاً من اللوحة الافتراضية المدمجة.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureExample.dashboard-templates">
+    <value>قالب لدور المرسل يضم المكالمات والوحدات والخريطة، وقالب افتراضي للقسم يضم الحالة والمناوبات وقوائم التحقق.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.dashboard-templates">
+    <value>أنشئ قالباً افتراضياً للقسم، ثم أضف قوالب للأدوار أو المجموعات حيث يحتاج عمل ما إلى لوحة مختلفة.</value>
+  </data>
+  <data xml:space="preserve" name="Topic.dashboard-customize">
+    <value>تخصيص لوحة المعلومات الرئيسية</value>
+  </data>
+  <data xml:space="preserve" name="Topic.dashboard-defaults">
+    <value>أي لوحة معلومات يراها العضو</value>
+  </data>
+  <data xml:space="preserve" name="Topic.dashboard-addon-widgets">
+    <value>أدوات الإضافات والبطاقات المقفلة</value>
+  </data>
+  <data xml:space="preserve" name="Topic.dashboard-data-protection">
+    <value>البيانات المحمية في لوحة المعلومات</value>
+  </data>
+  <data xml:space="preserve" name="Topic.dashboard-classic">
+    <value>تفعيل لوحة المعلومات الجديدة والعودة إلى الكلاسيكية</value>
+  </data>
 </root>

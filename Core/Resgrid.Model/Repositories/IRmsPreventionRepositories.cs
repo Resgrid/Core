@@ -146,6 +146,8 @@ namespace Resgrid.Model.Repositories
 		Task<int> CountLiveAsync(int departmentId);
 		Task<int> CountOutOfServiceAsync(int departmentId);
 		Task<int> CountTestDueAsync(int departmentId, DateTime cutoffUtc);
+		/// <summary>Live out-of-service hydrants, longest out first, at most <paramref name="take"/>.</summary>
+		Task<IEnumerable<RmsHydrant>> GetOutOfServiceAsync(int departmentId, int take);
 	}
 
 	public interface IRmsHydrantFlowTestsRepository : IRepository<RmsHydrantFlowTest>

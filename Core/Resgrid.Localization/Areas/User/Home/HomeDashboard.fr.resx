@@ -113,4 +113,601 @@
   <data name="ToggleCollapseGroupsOnce" xml:space="preserve">
     <value>Réduire/développer les groupes (enregistré)</value>
   </data>
+  <data name="DashboardPageTitle" xml:space="preserve">
+    <value>Tableau de bord</value>
+  </data>
+  <data name="Category.Operations" xml:space="preserve">
+    <value>Opérations</value>
+  </data>
+  <data name="Category.Personnel" xml:space="preserve">
+    <value>Personnel</value>
+  </data>
+  <data name="Category.Awareness" xml:space="preserve">
+    <value>Carte et météo</value>
+  </data>
+  <data name="Category.Communications" xml:space="preserve">
+    <value>Communications</value>
+  </data>
+  <data name="Category.Planning" xml:space="preserve">
+    <value>Planification</value>
+  </data>
+  <data name="Category.Readiness" xml:space="preserve">
+    <value>Préparation opérationnelle</value>
+  </data>
+  <data name="Category.Records" xml:space="preserve">
+    <value>Dossiers</value>
+  </data>
+  <data name="Category.Business" xml:space="preserve">
+    <value>Effectifs et gestion</value>
+  </data>
+  <data name="Category.IncidentBackOffice" xml:space="preserve">
+    <value>Incident Back Office</value>
+  </data>
+  <data name="Category.Intelligence" xml:space="preserve">
+    <value>Analyses</value>
+  </data>
+  <data name="Category.Administration" xml:space="preserve">
+    <value>Administration</value>
+  </data>
+  <data name="WidgetErrorFailed" xml:space="preserve">
+    <value>Ce widget n'a pas pu être chargé. Réessayez dans un instant.</value>
+  </data>
+  <data name="WidgetErrorForbidden" xml:space="preserve">
+    <value>Vous n'avez plus accès à ce widget.</value>
+  </data>
+  <data name="WidgetErrorNotFound" xml:space="preserve">
+    <value>Ce widget n'est plus disponible.</value>
+  </data>
+  <data name="WidgetErrorProtected" xml:space="preserve">
+    <value>Données protégées. Vérifiez pour afficher.</value>
+  </data>
+  <data name="SaveErrorConflict" xml:space="preserve">
+    <value>Votre tableau de bord a été modifié dans une autre fenêtre.</value>
+  </data>
+  <data name="SaveErrorInvalid" xml:space="preserve">
+    <value>Cette disposition n'a pas pu être enregistrée.</value>
+  </data>
+  <data name="SaveErrorTooLarge" xml:space="preserve">
+    <value>Cette disposition est trop volumineuse pour être enregistrée. Supprimez quelques widgets et réessayez.</value>
+  </data>
+  <data name="SaveErrorLimitReached" xml:space="preserve">
+    <value>Vous avez atteint la limite.</value>
+  </data>
+  <data name="SaveErrorNotFound" xml:space="preserve">
+    <value>Ce tableau n'existe plus.</value>
+  </data>
+  <data name="Pulse.OpenCalls" xml:space="preserve">
+    <value>appels actifs</value>
+  </data>
+  <data name="Pulse.Unread" xml:space="preserve">
+    <value>messages non lus</value>
+  </data>
+  <data name="Pulse.Pending" xml:space="preserve">
+    <value>appels en attente</value>
+  </data>
+  <data name="Pulse.Awaiting" xml:space="preserve">
+    <value>en attente de ressources</value>
+  </data>
+  <data name="BoardHome" xml:space="preserve">
+    <value>Accueil</value>
+  </data>
+  <data name="TemplatesTitle" xml:space="preserve">
+    <value>Modèles de tableau de bord</value>
+  </data>
+  <data name="TemplatesIntro" xml:space="preserve">
+    <value>Les modèles définissent le tableau de bord que voient les membres tant qu'ils n'ont pas personnalisé le leur. Ciblez un modèle sur un rôle du personnel ou un groupe, ou faites-en le modèle par défaut du département.</value>
+  </data>
+  <data name="TemplateAudienceEveryone" xml:space="preserve">
+    <value>Tout le monde</value>
+  </data>
+  <data name="TemplateAudienceRole" xml:space="preserve">
+    <value>Rôle du personnel</value>
+  </data>
+  <data name="TemplateAudienceGroup" xml:space="preserve">
+    <value>Groupe</value>
+  </data>
+  <data name="UseClassicDashboard" xml:space="preserve">
+    <value>Utiliser le tableau de bord classique</value>
+  </data>
+  <data name="TryNewDashboard" xml:space="preserve">
+    <value>Essayer le nouveau tableau de bord</value>
+  </data>
+  <data name="ClassicDashboardBanner" xml:space="preserve">
+    <value>Un nouveau tableau de bord personnalisable est disponible pour votre département.</value>
+  </data>
+  <data name="NoScriptClassic" xml:space="preserve">
+    <value>Ce tableau de bord nécessite JavaScript. Ouvrez plutôt le tableau de bord classique.</value>
+  </data>
+  <data name="TemplateNew" xml:space="preserve">
+    <value>Nouveau modèle</value>
+  </data>
+  <data name="TemplatesEmpty" xml:space="preserve">
+    <value>Aucun modèle pour le moment. Les membres voient le modèle intégré par défaut pour leur rôle tant que vous n'en ajoutez pas.</value>
+  </data>
+  <data name="TemplateName" xml:space="preserve">
+    <value>Nom</value>
+  </data>
+  <data name="TemplateAudience" xml:space="preserve">
+    <value>Pour</value>
+  </data>
+  <data name="TemplatePriority" xml:space="preserve">
+    <value>Priorité</value>
+  </data>
+  <data name="TemplateWidgets" xml:space="preserve">
+    <value>Widgets</value>
+  </data>
+  <data name="TemplateDefault" xml:space="preserve">
+    <value>Par défaut du département</value>
+  </data>
+  <data name="TemplateEdit" xml:space="preserve">
+    <value>Modifier</value>
+  </data>
+  <data name="TemplateDelete" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
+  <data name="TemplateDeleteConfirm" xml:space="preserve">
+    <value>Supprimer ce modèle ? Les membres qui n'ont pas personnalisé leur tableau de bord verront le prochain modèle correspondant ou le modèle intégré par défaut.</value>
+  </data>
+  <data name="SaveErrorNotAllowed" xml:space="preserve">
+    <value>Vous n'êtes pas autorisé à effectuer cette modification.</value>
+  </data>
+  <data name="Dash.Add" xml:space="preserve">
+    <value>Ajouter</value>
+  </data>
+  <data name="Dash.AddBoard" xml:space="preserve">
+    <value>Ajouter un tableau</value>
+  </data>
+  <data name="Dash.AddNamed" xml:space="preserve">
+    <value>Ajouter {0}</value>
+  </data>
+  <data name="Dash.AddWidget" xml:space="preserve">
+    <value>Ajouter un widget</value>
+  </data>
+  <data name="Dash.Added" xml:space="preserve">
+    <value>Ajouté</value>
+  </data>
+  <data name="Dash.AdpConceal" xml:space="preserve">
+    <value>Masquer</value>
+  </data>
+  <data name="Dash.AdpConcealedToast" xml:space="preserve">
+    <value>Données protégées masquées</value>
+  </data>
+  <data name="Dash.AdpHidden" xml:space="preserve">
+    <value>Données protégées masquées</value>
+  </data>
+  <data name="Dash.AdpProtectedAria" xml:space="preserve">
+    <value>{0}, vérifier pour afficher</value>
+  </data>
+  <data name="Dash.AdpRevealed" xml:space="preserve">
+    <value>Données protégées affichées</value>
+  </data>
+  <data name="Dash.AdpRevealedToast" xml:space="preserve">
+    <value>Données protégées affichées. Chaque affichage est consigné dans le journal d'audit du département.</value>
+  </data>
+  <data name="Dash.AdpRoleCannotView" xml:space="preserve">
+    <value>Votre rôle ne permet pas de voir ceci</value>
+  </data>
+  <data name="Dash.AdpVerifyToReveal" xml:space="preserve">
+    <value>Vérifier pour afficher</value>
+  </data>
+  <data name="Dash.AdpWallHidden" xml:space="preserve">
+    <value>Les données protégées restent masquées sur un affichage mural.</value>
+  </data>
+  <data name="Dash.AdpVerifyTooltip" xml:space="preserve">
+    <value>Vérifier pour afficher</value>
+  </data>
+  <data name="Dash.AgeHours" xml:space="preserve">
+    <value>il y a {0} h</value>
+  </data>
+  <data name="Dash.AgeJustNow" xml:space="preserve">
+    <value>à l'instant</value>
+  </data>
+  <data name="Dash.AgeLoading" xml:space="preserve">
+    <value>chargement</value>
+  </data>
+  <data name="Dash.AgeMinutes" xml:space="preserve">
+    <value>il y a {0} min</value>
+  </data>
+  <data name="Dash.AgeReconnecting" xml:space="preserve">
+    <value>reconnexion</value>
+  </data>
+  <data name="Dash.AgeSeconds" xml:space="preserve">
+    <value>il y a {0} s</value>
+  </data>
+  <data name="Dash.AgeUpdateFailed" xml:space="preserve">
+    <value>échec de l'actualisation</value>
+  </data>
+  <data name="Dash.AllCategories" xml:space="preserve">
+    <value>Toutes</value>
+  </data>
+  <data name="Dash.Apply" xml:space="preserve">
+    <value>Appliquer</value>
+  </data>
+  <data name="Dash.AvailableWith" xml:space="preserve">
+    <value>Disponible avec {0}</value>
+  </data>
+  <data name="Dash.BackToTemplates" xml:space="preserve">
+    <value>Retour aux modèles</value>
+  </data>
+  <data name="Dash.BadgeAria" xml:space="preserve">
+    <value>{0} éléments</value>
+  </data>
+  <data name="Dash.BoardAdded" xml:space="preserve">
+    <value>Tableau « {0} » ajouté</value>
+  </data>
+  <data name="Dash.BoardDeleted" xml:space="preserve">
+    <value>Tableau « {0} » supprimé</value>
+  </data>
+  <data name="Dash.BoardLoadFailed" xml:space="preserve">
+    <value>Ce tableau n'a pas pu être chargé. Réessayez dans un instant.</value>
+  </data>
+  <data name="Dash.BoardName" xml:space="preserve">
+    <value>Nom du tableau</value>
+  </data>
+  <data name="Dash.BoardRenamed" xml:space="preserve">
+    <value>Tableau renommé en « {0} »</value>
+  </data>
+  <data name="Dash.Boards" xml:space="preserve">
+    <value>Tableaux de bord</value>
+  </data>
+  <data name="Dash.BootstrapFailed" xml:space="preserve">
+    <value>Votre tableau de bord n'a pas pu être chargé.</value>
+  </data>
+  <data name="Dash.Cancel" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+  <data name="Dash.Categories" xml:space="preserve">
+    <value>Catégories de widgets</value>
+  </data>
+  <data name="Dash.ChangesDiscarded" xml:space="preserve">
+    <value>Modifications abandonnées</value>
+  </data>
+  <data name="Dash.Close" xml:space="preserve">
+    <value>Fermer</value>
+  </data>
+  <data name="Dash.CoachDismiss" xml:space="preserve">
+    <value>Compris</value>
+  </data>
+  <data name="Dash.CoachText" xml:space="preserve">
+    <value>Utilisez Personnaliser pour ajouter, supprimer, redimensionner et réorganiser les widgets. Votre disposition est enregistrée dans votre compte et vous suit dans n'importe quel navigateur.</value>
+  </data>
+  <data name="Dash.CoachTitle" xml:space="preserve">
+    <value>Bienvenue dans votre nouveau tableau de bord</value>
+  </data>
+  <data name="Dash.ConflictText" xml:space="preserve">
+    <value>Conserver la disposition affichée à l'écran ou charger la plus récemment enregistrée ?</value>
+  </data>
+  <data name="Dash.CouldNotLoad" xml:space="preserve">
+    <value>Impossible de charger {0}</value>
+  </data>
+  <data name="Dash.Customize" xml:space="preserve">
+    <value>Personnaliser</value>
+  </data>
+  <data name="Dash.CustomizeRegion" xml:space="preserve">
+    <value>Personnaliser le tableau de bord</value>
+  </data>
+  <data name="Dash.Delete" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
+  <data name="Dash.DeleteBoard" xml:space="preserve">
+    <value>Supprimer le tableau</value>
+  </data>
+  <data name="Dash.DeleteBoardConfirm" xml:space="preserve">
+    <value>Supprimer le tableau « {0} » ? Ses widgets et ses paramètres seront supprimés. Vos autres tableaux ne sont pas concernés.</value>
+  </data>
+  <data name="Dash.Density" xml:space="preserve">
+    <value>Densité</value>
+  </data>
+  <data name="Dash.DensityComfortable" xml:space="preserve">
+    <value>Confortable</value>
+  </data>
+  <data name="Dash.DensityCompact" xml:space="preserve">
+    <value>Compacte</value>
+  </data>
+  <data name="Dash.DepartmentCodeMeta" xml:space="preserve">
+    <value>Code {0}</value>
+  </data>
+  <data name="Dash.DepartmentTime" xml:space="preserve">
+    <value>Heure du département</value>
+  </data>
+  <data name="Dash.Dismiss" xml:space="preserve">
+    <value>Ignorer</value>
+  </data>
+  <data name="Dash.Done" xml:space="preserve">
+    <value>Terminé</value>
+  </data>
+  <data name="Dash.DragCancelled" xml:space="preserve">
+    <value>Déplacement annulé.</value>
+  </data>
+  <data name="Dash.DragEnded" xml:space="preserve">
+    <value>Widget déposé.</value>
+  </data>
+  <data name="Dash.DragStarted" xml:space="preserve">
+    <value>Widget saisi. Déplacez-le sur un autre widget et relâchez pour le déposer avant ou après.</value>
+  </data>
+  <data name="Dash.DurationDays" xml:space="preserve">
+    <value>{0} j</value>
+  </data>
+  <data name="Dash.DurationHours" xml:space="preserve">
+    <value>{0} h {1} min</value>
+  </data>
+  <data name="Dash.DurationMinutes" xml:space="preserve">
+    <value>{0} min</value>
+  </data>
+  <data name="Dash.EditBarText" xml:space="preserve">
+    <value>Faites glisser les widgets (ou sélectionnez-en un et utilisez les touches fléchées) pour les réorganiser, choisir une taille, les supprimer ou en ajouter. Enregistré dans votre compte, il vous suit dans n'importe quel navigateur.</value>
+  </data>
+  <data name="Dash.EditBarTitle" xml:space="preserve">
+    <value>Personnalisation du tableau de bord.</value>
+  </data>
+  <data name="Dash.EditModeAnnounce" xml:space="preserve">
+    <value>Mode personnalisation. Sur un widget sélectionné, utilisez les touches fléchées pour le déplacer, plus et moins pour le redimensionner, Suppr pour le supprimer.</value>
+  </data>
+  <data name="Dash.EmptyBoard" xml:space="preserve">
+    <value>Ce tableau ne contient encore aucun widget.</value>
+  </data>
+  <data name="Dash.EmptyBoardEditing" xml:space="preserve">
+    <value>Ajoutez des widgets pour composer ce tableau.</value>
+  </data>
+  <data name="Dash.EmptyDefault" xml:space="preserve">
+    <value>Rien à afficher pour le moment.</value>
+  </data>
+  <data name="Dash.ExitWall" xml:space="preserve">
+    <value>Quitter l'affichage mural</value>
+  </data>
+  <data name="Dash.GreetAfternoon" xml:space="preserve">
+    <value>Bon après-midi, {0}</value>
+  </data>
+  <data name="Dash.GreetAfternoonNoName" xml:space="preserve">
+    <value>Bon après-midi</value>
+  </data>
+  <data name="Dash.GreetEvening" xml:space="preserve">
+    <value>Bonsoir, {0}</value>
+  </data>
+  <data name="Dash.GreetEveningNoName" xml:space="preserve">
+    <value>Bonsoir</value>
+  </data>
+  <data name="Dash.GreetMorning" xml:space="preserve">
+    <value>Bonjour, {0}</value>
+  </data>
+  <data name="Dash.GreetMorningNoName" xml:space="preserve">
+    <value>Bonjour</value>
+  </data>
+  <data name="Dash.KeepMine" xml:space="preserve">
+    <value>Garder la mienne</value>
+  </data>
+  <data name="Dash.KeyboardHelp" xml:space="preserve">
+    <value>Utilisez les touches fléchées pour déplacer ce widget, plus et moins pour modifier sa taille, et Suppr pour le supprimer.</value>
+  </data>
+  <data name="Dash.LatestLoaded" xml:space="preserve">
+    <value>Dernière disposition enregistrée chargée</value>
+  </data>
+  <data name="Dash.Live" xml:space="preserve">
+    <value>en direct</value>
+  </data>
+  <data name="Dash.LiveTooltip" xml:space="preserve">
+    <value>Mise à jour en direct</value>
+  </data>
+  <data name="Dash.LoadLatest" xml:space="preserve">
+    <value>Charger la plus récente</value>
+  </data>
+  <data name="Dash.Loading" xml:space="preserve">
+    <value>Chargement</value>
+  </data>
+  <data name="Dash.Locked" xml:space="preserve">
+    <value>Verrouillé</value>
+  </data>
+  <data name="Dash.MaxWidgets" xml:space="preserve">
+    <value>Un tableau peut contenir jusqu'à {0} widgets. Supprimez-en un pour en ajouter un autre.</value>
+  </data>
+  <data name="Dash.Message" xml:space="preserve">
+    <value>Message</value>
+  </data>
+  <data name="Dash.MoreOptions" xml:space="preserve">
+    <value>Plus d'options du tableau de bord</value>
+  </data>
+  <data name="Dash.MovableWidget" xml:space="preserve">
+    <value>widget déplaçable</value>
+  </data>
+  <data name="Dash.MultiSelectHint" xml:space="preserve">
+    <value>Ne sélectionnez rien pour tout inclure.</value>
+  </data>
+  <data name="Dash.MultipleInstances" xml:space="preserve">
+    <value>peut être ajouté plusieurs fois</value>
+  </data>
+  <data name="Dash.NewCall" xml:space="preserve">
+    <value>Nouvel appel</value>
+  </data>
+  <data name="Dash.NoOptions" xml:space="preserve">
+    <value>Aucun choix disponible pour le moment.</value>
+  </data>
+  <data name="Dash.NoWidgetsMatch" xml:space="preserve">
+    <value>Aucun widget correspondant.</value>
+  </data>
+  <data name="Dash.OpenModule" xml:space="preserve">
+    <value>Ouvrir le module</value>
+  </data>
+  <data name="Dash.Protected" xml:space="preserve">
+    <value>Protégé</value>
+  </data>
+  <data name="Dash.PulseLabel" xml:space="preserve">
+    <value>Aperçu du département</value>
+  </data>
+  <data name="Dash.Refresh" xml:space="preserve">
+    <value>Actualiser</value>
+  </data>
+  <data name="Dash.Remove" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
+  <data name="Dash.RemoveFromDashboard" xml:space="preserve">
+    <value>Retirer du tableau de bord</value>
+  </data>
+  <data name="Dash.RemoveWidget" xml:space="preserve">
+    <value>Supprimer {0}</value>
+  </data>
+  <data name="Dash.Rename" xml:space="preserve">
+    <value>Renommer</value>
+  </data>
+  <data name="Dash.RenameBoard" xml:space="preserve">
+    <value>Renommer le tableau</value>
+  </data>
+  <data name="Dash.ResetDone" xml:space="preserve">
+    <value>Réinitialisé aux valeurs par défaut du département</value>
+  </data>
+  <data name="Dash.ResetToDefault" xml:space="preserve">
+    <value>Réinitialiser aux valeurs par défaut du département</value>
+  </data>
+  <data name="Dash.Retry" xml:space="preserve">
+    <value>Réessayer</value>
+  </data>
+  <data name="Dash.RevealedBadge" xml:space="preserve">
+    <value>Affiché</value>
+  </data>
+  <data name="Dash.RevealedBadgeTooltip" xml:space="preserve">
+    <value>Des données protégées sont affichées dans ce widget</value>
+  </data>
+  <data name="Dash.RevealedRefreshDeferred" xml:space="preserve">
+    <value>Les widgets affichant des données protégées s'actualisent au plus toutes les 2 minutes. Celui-ci sera actualisé sous peu.</value>
+  </data>
+  <data name="Dash.SaveFailed" xml:space="preserve">
+    <value>Votre tableau de bord n'a pas pu être enregistré. Vérifiez votre connexion et réessayez.</value>
+  </data>
+  <data name="Dash.SaveTemplate" xml:space="preserve">
+    <value>Enregistrer le modèle</value>
+  </data>
+  <data name="Dash.SavedToast" xml:space="preserve">
+    <value>Tableau de bord enregistré. Il vous suit dans tous les navigateurs où vous vous connectez.</value>
+  </data>
+  <data name="Dash.SearchWidgets" xml:space="preserve">
+    <value>Rechercher des widgets</value>
+  </data>
+  <data name="Dash.SelectNone" xml:space="preserve">
+    <value>(aucun)</value>
+  </data>
+  <data name="Dash.SettingRange" xml:space="preserve">
+    <value>Entre {0} et {1}</value>
+  </data>
+  <data name="Dash.Settings" xml:space="preserve">
+    <value>Paramètres</value>
+  </data>
+  <data name="Dash.SettingsFor" xml:space="preserve">
+    <value>Paramètres de {0}</value>
+  </data>
+  <data name="Dash.SettingsLive" xml:space="preserve">
+    <value>Ce widget se met à jour en direct.</value>
+  </data>
+  <data name="Dash.SettingsRefreshHours" xml:space="preserve">
+    <value>Ce widget s'actualise toutes les {0} h.</value>
+  </data>
+  <data name="Dash.SettingsRefreshMinutes" xml:space="preserve">
+    <value>Ce widget s'actualise toutes les {0} min.</value>
+  </data>
+  <data name="Dash.SettingsSaved" xml:space="preserve">
+    <value>Paramètres enregistrés</value>
+  </data>
+  <data name="Dash.SettingsTitle" xml:space="preserve">
+    <value>Paramètres de {0}</value>
+  </data>
+  <data name="Dash.Size" xml:space="preserve">
+    <value>Taille</value>
+  </data>
+  <data name="Dash.Size.full" xml:space="preserve">
+    <value>Pleine largeur</value>
+  </data>
+  <data name="Dash.Size.l" xml:space="preserve">
+    <value>L</value>
+  </data>
+  <data name="Dash.Size.m" xml:space="preserve">
+    <value>M</value>
+  </data>
+  <data name="Dash.Size.s" xml:space="preserve">
+    <value>S</value>
+  </data>
+  <data name="Dash.Size.xl" xml:space="preserve">
+    <value>XL</value>
+  </data>
+  <data name="Dash.Size.xs" xml:space="preserve">
+    <value>XS</value>
+  </data>
+  <data name="Dash.SizeAria" xml:space="preserve">
+    <value>Taille {0}</value>
+  </data>
+  <data name="Dash.SizeChanged" xml:space="preserve">
+    <value>{0} : taille {1}</value>
+  </data>
+  <data name="Dash.StaleTooltip" xml:space="preserve">
+    <value>Les mises à jour en temps réel se reconnectent. Ce widget s'actualise à intervalle régulier jusqu'à leur retour.</value>
+  </data>
+  <data name="Dash.TemplateDefaultHint" xml:space="preserve">
+    <value>Les membres non couverts par un modèle de rôle ou de groupe voient celui-ci.</value>
+  </data>
+  <data name="Dash.TemplateDescription" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="Dash.TemplateEditBarText" xml:space="preserve">
+    <value>Les membres qui n'ont pas personnalisé leur tableau de bord voient cette disposition. Ajoutez, redimensionnez et réorganisez les widgets, puis enregistrez.</value>
+  </data>
+  <data name="Dash.TemplateEditBarTitle" xml:space="preserve">
+    <value>Modification d'un modèle de tableau de bord.</value>
+  </data>
+  <data name="Dash.TemplateEditTitle" xml:space="preserve">
+    <value>Modifier le modèle de tableau de bord</value>
+  </data>
+  <data name="Dash.TemplateGroupRequired" xml:space="preserve">
+    <value>Choisissez le groupe auquel ce modèle est destiné.</value>
+  </data>
+  <data name="Dash.TemplateIntro" xml:space="preserve">
+    <value>Les aperçus des widgets présentent votre propre vue des données. Chaque membre ne voit que ce que ses autorisations permettent.</value>
+  </data>
+  <data name="Dash.TemplateNameRequired" xml:space="preserve">
+    <value>Donnez un nom au modèle.</value>
+  </data>
+  <data name="Dash.TemplateNewTitle" xml:space="preserve">
+    <value>Nouveau modèle de tableau de bord</value>
+  </data>
+  <data name="Dash.TemplatePriorityHint" xml:space="preserve">
+    <value>En cas de correspondance avec plusieurs modèles, le plus petit nombre l'emporte.</value>
+  </data>
+  <data name="Dash.TemplateRoleRequired" xml:space="preserve">
+    <value>Choisissez le rôle du personnel auquel ce modèle est destiné.</value>
+  </data>
+  <data name="Dash.TemplateSaved" xml:space="preserve">
+    <value>Modèle enregistré</value>
+  </data>
+  <data name="Dash.TemplateTargetsFailed" xml:space="preserve">
+    <value>Les rôles et les groupes n'ont pas pu être chargés.</value>
+  </data>
+  <data name="Dash.Undo" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+  <data name="Dash.UntitledBoard" xml:space="preserve">
+    <value>Tableau sans titre</value>
+  </data>
+  <data name="Dash.UpdateFailedTooltip" xml:space="preserve">
+    <value>La dernière actualisation a échoué. Affichage des données précédentes.</value>
+  </data>
+  <data name="Dash.VerifyToView" xml:space="preserve">
+    <value>Vérifier pour consulter</value>
+  </data>
+  <data name="Dash.ViewAddon" xml:space="preserve">
+    <value>Voir le module</value>
+  </data>
+  <data name="Dash.WallDisplay" xml:space="preserve">
+    <value>Affichage mural</value>
+  </data>
+  <data name="Dash.WidgetAdded" xml:space="preserve">
+    <value>Widget ajouté : {0}</value>
+  </data>
+  <data name="Dash.WidgetMoved" xml:space="preserve">
+    <value>Widget déplacé : {0}, position {1}</value>
+  </data>
+  <data name="Dash.WidgetNotAvailable" xml:space="preserve">
+    <value>Ce widget n'est pas encore disponible.</value>
+  </data>
+  <data name="Dash.WidgetOptions" xml:space="preserve">
+    <value>Options de {0}</value>
+  </data>
+  <data name="Dash.WidgetRemoved" xml:space="preserve">
+    <value>Widget supprimé : {0}</value>
+  </data>
 </root>

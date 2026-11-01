@@ -10,5 +10,8 @@ namespace Resgrid.Model.Repositories
 		Task<IEnumerable<RouteInstance>> GetActiveInstancesByUnitIdAsync(int unitId);
 		Task<IEnumerable<RouteInstance>> GetInstancesByRoutePlanIdAsync(string routePlanId);
 		Task<IEnumerable<RouteInstance>> GetInstancesByDateRangeAsync(int departmentId, DateTime startDate, DateTime endDate);
+
+		/// <summary>The department's in-progress and paused instances, without route geometry or notes (summary read).</summary>
+		Task<IEnumerable<RouteInstance>> GetActiveInstancesByDepartmentIdAsync(int departmentId);
 	}
 }

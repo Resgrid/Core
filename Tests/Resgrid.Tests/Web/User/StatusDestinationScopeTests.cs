@@ -175,7 +175,8 @@ namespace Resgrid.Tests.Web.User
 				secLocalizer: null, gdprDataExportService: null, systemAuditsService: null, phoneNumberProcesser: null,
 				securityPinService: null, encryptionService: null, externalIdentityLinkService: null, userSessionService: null,
 				emergencyContactService: null, protectedReadService: null, memberSensitiveDataService: null, dataProtectionService: null,
-				editProfileLocalizer: null, dispatchScopeService: _scope.Object, emailMarketingService: Mock.Of<IEmailMarketingService>())
+				editProfileLocalizer: null, dispatchScopeService: _scope.Object, emailMarketingService: Mock.Of<IEmailMarketingService>(),
+				featureToggleService: Mock.Of<IFeatureToggleService>(), dashboardService: Mock.Of<IDashboardService>(), dashboardLocalizer: null, dashboardWidgetsLocalizer: null)
 			{ ControllerContext = new ControllerContext { HttpContext = _http } };
 
 			var result = await home.UserRespondingToCall(OutOfScopeCallId);

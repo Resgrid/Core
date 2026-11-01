@@ -14,6 +14,11 @@ namespace Resgrid.Model.Services
 		/// <summary>Never throws for a member: whether inventory is usable and what the caller may do, plus the unit's countable locations.</summary>
 		Task<InventoryFieldAccess> GetFieldAccessAsync(InventoryActor actor, int? unitId);
 		Task RefreshAlertsAsync(InventoryActor actor);
+		/// <summary>
+		/// Open alerts the actor may see (the Alerts tab's per-row rule, evaluated once per item and holder), counted by type,
+		/// with the <paramref name="take"/> most urgent buckets. Counts and item names only: alerts carry no protected content.
+		/// </summary>
+		Task<InventoryAlertSummary> GetAlertSummaryAsync(InventoryActor actor, int take);
 		Task<InventoryReport> BuildReportAsync(InventoryActor actor, InventoryReportInput input);
 	}
 	public interface IInventoryAlertService

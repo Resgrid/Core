@@ -122,6 +122,9 @@ namespace Resgrid.Services.Invoicing
 			return reports;
 		}
 
+		public async Task<DeploymentTimeReportCounts> GetTimeReportCountsAsync(int departmentId) =>
+			await _reports.GetStatusCountsAsync(departmentId) ?? new DeploymentTimeReportCounts();
+
 		public async Task<List<DeploymentTimeReport>> GetUnbilledApprovedReportsAsync(int departmentId, string deploymentId = null)
 		{
 			var reports = (await _reports.GetUnbilledApprovedAsync(departmentId, deploymentId))?.ToList() ?? new List<DeploymentTimeReport>();

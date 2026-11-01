@@ -7719,4 +7719,49 @@
   <data xml:space="preserve" name="SettingHelp.ShiftTradeApprovers">
     <value>Wer auswählt, welcher Bewerber eine Schichttauschanfrage übernimmt, und wartende Tausche genehmigt. Abteilungsadministratoren dürfen das immer; Gruppenadministratoren, die tauschende Person und Mitglieder ausgewählter Rollen legt die Abteilung fest.</value>
   </data>
+  <data xml:space="preserve" name="Feature.home-dashboard">
+    <value>Anpassbares Start-Dashboard</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.home-dashboard">
+    <value>Eine Startseite mit Live-Widgets, die jedes Mitglied selbst anordnet und die in seinem Konto gespeichert wird.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureValue.home-dashboard">
+    <value>Mitglieder sehen auf einem Bildschirm, was in allen Modulen ihre Aufmerksamkeit braucht, und ihr Layout folgt ihnen in jeden Browser.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureExample.home-dashboard">
+    <value>Disponenten sehen zuerst aktive Einsätze, Fahrzeugstatus und die Karte; Mitglieder ihren Status, ihre Schichten und fällige Checklisten.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.home-dashboard">
+    <value>Schalten Sie das neue Dashboard ein und prüfen Sie dann die Standardansicht, die jede Rolle sieht, bevor Mitglieder sie anpassen.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.dashboard-templates">
+    <value>Dashboard-Vorlagen</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.dashboard-templates">
+    <value>Standard-Dashboards der Abteilung für alle, eine Personalrolle oder eine Gruppe.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureValue.dashboard-templates">
+    <value>Mitglieder, die nichts angepasst haben, starten mit einer für ihre Aufgabe gewählten Ansicht statt mit dem integrierten Standard.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureExample.dashboard-templates">
+    <value>Eine Vorlage für die Rolle Disponent mit Einsätzen, Fahrzeugen und Karte sowie ein Abteilungsstandard mit Status, Schichten und Checklisten.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.dashboard-templates">
+    <value>Erstellen Sie eine Standardvorlage der Abteilung und fügen Sie dann Rollen- oder Gruppenvorlagen hinzu, wo eine Aufgabe eine andere Ansicht braucht.</value>
+  </data>
+  <data xml:space="preserve" name="Topic.dashboard-customize">
+    <value>Das Start-Dashboard anpassen</value>
+  </data>
+  <data xml:space="preserve" name="Topic.dashboard-defaults">
+    <value>Welches Dashboard ein Mitglied sieht</value>
+  </data>
+  <data xml:space="preserve" name="Topic.dashboard-addon-widgets">
+    <value>Add-on-Widgets und gesperrte Karten</value>
+  </data>
+  <data xml:space="preserve" name="Topic.dashboard-data-protection">
+    <value>Geschützte Daten im Dashboard</value>
+  </data>
+  <data xml:space="preserve" name="Topic.dashboard-classic">
+    <value>Das neue Dashboard einschalten und zum klassischen zurückkehren</value>
+  </data>
 </root>

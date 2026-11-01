@@ -264,6 +264,20 @@ namespace Resgrid.Services.Records
 
 		public Task<int> CountTestDueAsync(int departmentId, DateTime utcNow) => _hydrants.CountTestDueAsync(departmentId, utcNow.AddMonths(-TestIntervalMonths));
 
+		public async Task<HydrantSummary> GetSummaryAsync(int departmentId, string userId, DateTime utcNow, int take)
+		{
+			await RequireViewAsync(departmentId, userId);
+			var summary = new HydrantSummary
+			{
+				AsOfUtc = utcNow,
+				OutOfService = await _hydrants.CountOutOfServiceAsync(departmentId),
+				TestDue = await CountTestDueAsync(departmentId, utcNow)
+			};
+			if (take > 0 && summary.OutOfService > 0)
+				summary.OutOfServiceHydrants = (await _hydrants.GetOutOfServiceAsync(departmentId, Math.Min(take, 200)))?.Where(h => h.DepartmentId == departmentId && h.DeletedOn == null && !h.InService).ToList() ?? new List<RmsHydrant>();
+			return summary;
+		}
+
 		private async Task<RmsHydrant> LiveAsync(int departmentId, string hydrantId)
 		{
 			if (string.IsNullOrWhiteSpace(hydrantId)) return null;

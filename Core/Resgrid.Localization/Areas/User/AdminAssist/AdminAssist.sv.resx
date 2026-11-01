@@ -7719,4 +7719,49 @@
   <data xml:space="preserve" name="SettingHelp.ShiftTradeApprovers">
     <value>Vem som väljer vilken sökande som tar en bytesförfrågan och godkänner väntande byten. Avdelningsadministratörer får alltid; gruppadministratörer, den som byter bort sitt pass och medlemmar i valda roller bestämmer avdelningen.</value>
   </data>
+  <data xml:space="preserve" name="Feature.home-dashboard">
+    <value>Anpassningsbar startöversikt</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.home-dashboard">
+    <value>En startsida med live-widgetar som varje medlem ordnar själv, sparad på medlemmens konto.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureValue.home-dashboard">
+    <value>Medlemmarna ser på en skärm det som behöver deras uppmärksamhet i alla moduler, och deras layout följer med till alla webbläsare.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureExample.home-dashboard">
+    <value>Utlarmare möts av aktiva larm, enhetsstatus och kartan; medlemmar av sin status, sina pass och checklistor som ska göras.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.home-dashboard">
+    <value>Aktivera den nya översikten och kontrollera sedan standardtavlan som varje roll ser innan medlemmarna anpassar den.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.dashboard-templates">
+    <value>Översiktsmallar</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.dashboard-templates">
+    <value>Avdelningens standardöversikter för alla, en personalroll eller en grupp.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureValue.dashboard-templates">
+    <value>Medlemmar som inte har anpassat sin översikt utgår från en tavla vald för deras uppgift i stället för den inbyggda standarden.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureExample.dashboard-templates">
+    <value>En mall för rollen Utlarmare med larm, enheter och kartan, och en standard för avdelningen med status, pass och checklistor.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.dashboard-templates">
+    <value>Skapa en standardmall för avdelningen och lägg sedan till mallar för roller eller grupper där en uppgift behöver en annan tavla.</value>
+  </data>
+  <data xml:space="preserve" name="Topic.dashboard-customize">
+    <value>Anpassa startöversikten</value>
+  </data>
+  <data xml:space="preserve" name="Topic.dashboard-defaults">
+    <value>Vilken översikt en medlem ser</value>
+  </data>
+  <data xml:space="preserve" name="Topic.dashboard-addon-widgets">
+    <value>Widgetar för tillägg och låsta kort</value>
+  </data>
+  <data xml:space="preserve" name="Topic.dashboard-data-protection">
+    <value>Skyddade uppgifter på översikten</value>
+  </data>
+  <data xml:space="preserve" name="Topic.dashboard-classic">
+    <value>Aktivera den nya översikten och återgå till den klassiska</value>
+  </data>
 </root>

@@ -113,4 +113,601 @@
   <data name="ToggleCollapseGroupsOnce" xml:space="preserve">
     <value>Згорнути/розгорнути групи (зберігається)</value>
   </data>
+  <data name="DashboardPageTitle" xml:space="preserve">
+    <value>Панель огляду</value>
+  </data>
+  <data name="Category.Operations" xml:space="preserve">
+    <value>Операції</value>
+  </data>
+  <data name="Category.Personnel" xml:space="preserve">
+    <value>Персонал</value>
+  </data>
+  <data name="Category.Awareness" xml:space="preserve">
+    <value>Карта і погода</value>
+  </data>
+  <data name="Category.Communications" xml:space="preserve">
+    <value>Зв'язок</value>
+  </data>
+  <data name="Category.Planning" xml:space="preserve">
+    <value>Планування</value>
+  </data>
+  <data name="Category.Readiness" xml:space="preserve">
+    <value>Готовність</value>
+  </data>
+  <data name="Category.Records" xml:space="preserve">
+    <value>Записи</value>
+  </data>
+  <data name="Category.Business" xml:space="preserve">
+    <value>Персонал і бізнес</value>
+  </data>
+  <data name="Category.IncidentBackOffice" xml:space="preserve">
+    <value>Incident Back Office</value>
+  </data>
+  <data name="Category.Intelligence" xml:space="preserve">
+    <value>Аналітика</value>
+  </data>
+  <data name="Category.Administration" xml:space="preserve">
+    <value>Адміністрування</value>
+  </data>
+  <data name="WidgetErrorFailed" xml:space="preserve">
+    <value>Не вдалося завантажити цей віджет. Спробуйте ще раз за мить.</value>
+  </data>
+  <data name="WidgetErrorForbidden" xml:space="preserve">
+    <value>У вас більше немає доступу до цього віджета.</value>
+  </data>
+  <data name="WidgetErrorNotFound" xml:space="preserve">
+    <value>Цей віджет більше недоступний.</value>
+  </data>
+  <data name="WidgetErrorProtected" xml:space="preserve">
+    <value>Захищені дані. Підтвердьте, щоб переглянути.</value>
+  </data>
+  <data name="SaveErrorConflict" xml:space="preserve">
+    <value>Вашу панель огляду змінено в іншому вікні.</value>
+  </data>
+  <data name="SaveErrorInvalid" xml:space="preserve">
+    <value>Не вдалося зберегти цей макет.</value>
+  </data>
+  <data name="SaveErrorTooLarge" xml:space="preserve">
+    <value>Цей макет завеликий, щоб його зберегти. Видаліть кілька віджетів і спробуйте ще раз.</value>
+  </data>
+  <data name="SaveErrorLimitReached" xml:space="preserve">
+    <value>Ви досягли ліміту.</value>
+  </data>
+  <data name="SaveErrorNotFound" xml:space="preserve">
+    <value>Цієї панелі більше не існує.</value>
+  </data>
+  <data name="Pulse.OpenCalls" xml:space="preserve">
+    <value>активні виклики</value>
+  </data>
+  <data name="Pulse.Unread" xml:space="preserve">
+    <value>непрочитані повідомлення</value>
+  </data>
+  <data name="Pulse.Pending" xml:space="preserve">
+    <value>виклики в очікуванні</value>
+  </data>
+  <data name="Pulse.Awaiting" xml:space="preserve">
+    <value>очікують ресурси</value>
+  </data>
+  <data name="BoardHome" xml:space="preserve">
+    <value>Головна</value>
+  </data>
+  <data name="TemplatesTitle" xml:space="preserve">
+    <value>Шаблони панелі огляду</value>
+  </data>
+  <data name="TemplatesIntro" xml:space="preserve">
+    <value>Шаблони визначають панель огляду, яку бачать учасники, доки не налаштують власну. Призначте шаблон для ролі персоналу або групи чи зробіть один шаблон типовим для підрозділу.</value>
+  </data>
+  <data name="TemplateAudienceEveryone" xml:space="preserve">
+    <value>Усі</value>
+  </data>
+  <data name="TemplateAudienceRole" xml:space="preserve">
+    <value>Роль персоналу</value>
+  </data>
+  <data name="TemplateAudienceGroup" xml:space="preserve">
+    <value>Група</value>
+  </data>
+  <data name="UseClassicDashboard" xml:space="preserve">
+    <value>Використати класичну панель огляду</value>
+  </data>
+  <data name="TryNewDashboard" xml:space="preserve">
+    <value>Спробувати нову панель огляду</value>
+  </data>
+  <data name="ClassicDashboardBanner" xml:space="preserve">
+    <value>Для вашого підрозділу доступна нова панель огляду з можливістю налаштування.</value>
+  </data>
+  <data name="NoScriptClassic" xml:space="preserve">
+    <value>Ця панель огляду потребує JavaScript. Натомість відкрийте класичну панель огляду.</value>
+  </data>
+  <data name="TemplateNew" xml:space="preserve">
+    <value>Новий шаблон</value>
+  </data>
+  <data name="TemplatesEmpty" xml:space="preserve">
+    <value>Шаблонів поки немає. Учасники бачать вбудований типовий варіант для своєї ролі, доки ви не додасте шаблон.</value>
+  </data>
+  <data name="TemplateName" xml:space="preserve">
+    <value>Назва</value>
+  </data>
+  <data name="TemplateAudience" xml:space="preserve">
+    <value>Для</value>
+  </data>
+  <data name="TemplatePriority" xml:space="preserve">
+    <value>Пріоритет</value>
+  </data>
+  <data name="TemplateWidgets" xml:space="preserve">
+    <value>Віджети</value>
+  </data>
+  <data name="TemplateDefault" xml:space="preserve">
+    <value>Типовий для підрозділу</value>
+  </data>
+  <data name="TemplateEdit" xml:space="preserve">
+    <value>Редагувати</value>
+  </data>
+  <data name="TemplateDelete" xml:space="preserve">
+    <value>Видалити</value>
+  </data>
+  <data name="TemplateDeleteConfirm" xml:space="preserve">
+    <value>Видалити цей шаблон? Учасники, які не налаштували власну панель огляду, бачитимуть наступний відповідний шаблон або вбудований типовий.</value>
+  </data>
+  <data name="SaveErrorNotAllowed" xml:space="preserve">
+    <value>Ви не маєте дозволу вносити цю зміну.</value>
+  </data>
+  <data name="Dash.Add" xml:space="preserve">
+    <value>Додати</value>
+  </data>
+  <data name="Dash.AddBoard" xml:space="preserve">
+    <value>Додати панель</value>
+  </data>
+  <data name="Dash.AddNamed" xml:space="preserve">
+    <value>Додати: {0}</value>
+  </data>
+  <data name="Dash.AddWidget" xml:space="preserve">
+    <value>Додати віджет</value>
+  </data>
+  <data name="Dash.Added" xml:space="preserve">
+    <value>Додано</value>
+  </data>
+  <data name="Dash.AdpConceal" xml:space="preserve">
+    <value>Приховати</value>
+  </data>
+  <data name="Dash.AdpConcealedToast" xml:space="preserve">
+    <value>Захищені дані приховано</value>
+  </data>
+  <data name="Dash.AdpHidden" xml:space="preserve">
+    <value>Захищені дані приховано</value>
+  </data>
+  <data name="Dash.AdpProtectedAria" xml:space="preserve">
+    <value>{0}, підтвердьте, щоб показати</value>
+  </data>
+  <data name="Dash.AdpRevealed" xml:space="preserve">
+    <value>Захищені дані показано</value>
+  </data>
+  <data name="Dash.AdpRevealedToast" xml:space="preserve">
+    <value>Захищені дані показано. Кожен показ записується в журнал аудиту підрозділу.</value>
+  </data>
+  <data name="Dash.AdpRoleCannotView" xml:space="preserve">
+    <value>Ваша роль не дозволяє це переглядати</value>
+  </data>
+  <data name="Dash.AdpVerifyToReveal" xml:space="preserve">
+    <value>Підтвердьте, щоб показати</value>
+  </data>
+  <data name="Dash.AdpWallHidden" xml:space="preserve">
+    <value>Захищені дані залишаються прихованими на настінному екрані.</value>
+  </data>
+  <data name="Dash.AdpVerifyTooltip" xml:space="preserve">
+    <value>Підтвердьте, щоб показати</value>
+  </data>
+  <data name="Dash.AgeHours" xml:space="preserve">
+    <value>{0} год тому</value>
+  </data>
+  <data name="Dash.AgeJustNow" xml:space="preserve">
+    <value>щойно</value>
+  </data>
+  <data name="Dash.AgeLoading" xml:space="preserve">
+    <value>завантаження</value>
+  </data>
+  <data name="Dash.AgeMinutes" xml:space="preserve">
+    <value>{0} хв тому</value>
+  </data>
+  <data name="Dash.AgeReconnecting" xml:space="preserve">
+    <value>повторне підключення</value>
+  </data>
+  <data name="Dash.AgeSeconds" xml:space="preserve">
+    <value>{0} с тому</value>
+  </data>
+  <data name="Dash.AgeUpdateFailed" xml:space="preserve">
+    <value>помилка оновлення</value>
+  </data>
+  <data name="Dash.AllCategories" xml:space="preserve">
+    <value>Усі</value>
+  </data>
+  <data name="Dash.Apply" xml:space="preserve">
+    <value>Застосувати</value>
+  </data>
+  <data name="Dash.AvailableWith" xml:space="preserve">
+    <value>Доступно з {0}</value>
+  </data>
+  <data name="Dash.BackToTemplates" xml:space="preserve">
+    <value>Назад до шаблонів</value>
+  </data>
+  <data name="Dash.BadgeAria" xml:space="preserve">
+    <value>Елементів: {0}</value>
+  </data>
+  <data name="Dash.BoardAdded" xml:space="preserve">
+    <value>Панель «{0}» додано</value>
+  </data>
+  <data name="Dash.BoardDeleted" xml:space="preserve">
+    <value>Панель «{0}» видалено</value>
+  </data>
+  <data name="Dash.BoardLoadFailed" xml:space="preserve">
+    <value>Не вдалося завантажити цю панель. Спробуйте ще раз за мить.</value>
+  </data>
+  <data name="Dash.BoardName" xml:space="preserve">
+    <value>Назва панелі</value>
+  </data>
+  <data name="Dash.BoardRenamed" xml:space="preserve">
+    <value>Панель перейменовано на «{0}»</value>
+  </data>
+  <data name="Dash.Boards" xml:space="preserve">
+    <value>Панелі огляду</value>
+  </data>
+  <data name="Dash.BootstrapFailed" xml:space="preserve">
+    <value>Не вдалося завантажити вашу панель огляду.</value>
+  </data>
+  <data name="Dash.Cancel" xml:space="preserve">
+    <value>Скасувати</value>
+  </data>
+  <data name="Dash.Categories" xml:space="preserve">
+    <value>Категорії віджетів</value>
+  </data>
+  <data name="Dash.ChangesDiscarded" xml:space="preserve">
+    <value>Зміни відхилено</value>
+  </data>
+  <data name="Dash.Close" xml:space="preserve">
+    <value>Закрити</value>
+  </data>
+  <data name="Dash.CoachDismiss" xml:space="preserve">
+    <value>Зрозуміло</value>
+  </data>
+  <data name="Dash.CoachText" xml:space="preserve">
+    <value>Скористайтеся кнопкою «Налаштувати», щоб додавати, видаляти, змінювати розмір і порядок віджетів. Ваш макет зберігається в обліковому записі, тож він доступний у будь-якому браузері.</value>
+  </data>
+  <data name="Dash.CoachTitle" xml:space="preserve">
+    <value>Вітаємо на вашій новій панелі огляду</value>
+  </data>
+  <data name="Dash.ConflictText" xml:space="preserve">
+    <value>Залишити макет на цьому екрані чи завантажити останній збережений?</value>
+  </data>
+  <data name="Dash.CouldNotLoad" xml:space="preserve">
+    <value>Не вдалося завантажити: {0}</value>
+  </data>
+  <data name="Dash.Customize" xml:space="preserve">
+    <value>Налаштувати</value>
+  </data>
+  <data name="Dash.CustomizeRegion" xml:space="preserve">
+    <value>Налаштувати панель огляду</value>
+  </data>
+  <data name="Dash.Delete" xml:space="preserve">
+    <value>Видалити</value>
+  </data>
+  <data name="Dash.DeleteBoard" xml:space="preserve">
+    <value>Видалити панель</value>
+  </data>
+  <data name="Dash.DeleteBoardConfirm" xml:space="preserve">
+    <value>Видалити панель «{0}»? Її віджети та налаштування буде видалено. Інші ваші панелі не зміняться.</value>
+  </data>
+  <data name="Dash.Density" xml:space="preserve">
+    <value>Щільність</value>
+  </data>
+  <data name="Dash.DensityComfortable" xml:space="preserve">
+    <value>Зручна</value>
+  </data>
+  <data name="Dash.DensityCompact" xml:space="preserve">
+    <value>Компактна</value>
+  </data>
+  <data name="Dash.DepartmentCodeMeta" xml:space="preserve">
+    <value>Код {0}</value>
+  </data>
+  <data name="Dash.DepartmentTime" xml:space="preserve">
+    <value>Час підрозділу</value>
+  </data>
+  <data name="Dash.Dismiss" xml:space="preserve">
+    <value>Закрити</value>
+  </data>
+  <data name="Dash.Done" xml:space="preserve">
+    <value>Готово</value>
+  </data>
+  <data name="Dash.DragCancelled" xml:space="preserve">
+    <value>Переміщення скасовано.</value>
+  </data>
+  <data name="Dash.DragEnded" xml:space="preserve">
+    <value>Віджет розміщено.</value>
+  </data>
+  <data name="Dash.DragStarted" xml:space="preserve">
+    <value>Віджет захоплено. Перемістіть його на інший віджет і відпустіть, щоб розмістити його перед ним або після нього.</value>
+  </data>
+  <data name="Dash.DurationDays" xml:space="preserve">
+    <value>{0} дн</value>
+  </data>
+  <data name="Dash.DurationHours" xml:space="preserve">
+    <value>{0} год {1} хв</value>
+  </data>
+  <data name="Dash.DurationMinutes" xml:space="preserve">
+    <value>{0} хв</value>
+  </data>
+  <data name="Dash.EditBarText" xml:space="preserve">
+    <value>Перетягуйте віджети (або виберіть один і скористайтеся клавішами зі стрілками), щоб змінити порядок, виберіть розмір, видаліть або додайте інші. Зберігається в обліковому записі, тож доступне в будь-якому браузері.</value>
+  </data>
+  <data name="Dash.EditBarTitle" xml:space="preserve">
+    <value>Налаштування панелі огляду.</value>
+  </data>
+  <data name="Dash.EditModeAnnounce" xml:space="preserve">
+    <value>Режим налаштування. Клавіші зі стрілками переміщують віджет у фокусі, плюс і мінус змінюють розмір, Delete видаляє.</value>
+  </data>
+  <data name="Dash.EmptyBoard" xml:space="preserve">
+    <value>У цій панелі ще немає віджетів.</value>
+  </data>
+  <data name="Dash.EmptyBoardEditing" xml:space="preserve">
+    <value>Додайте віджети, щоб створити цю панель.</value>
+  </data>
+  <data name="Dash.EmptyDefault" xml:space="preserve">
+    <value>Наразі нічого показувати.</value>
+  </data>
+  <data name="Dash.ExitWall" xml:space="preserve">
+    <value>Вийти з настінного екрана</value>
+  </data>
+  <data name="Dash.GreetAfternoon" xml:space="preserve">
+    <value>Добрий день, {0}</value>
+  </data>
+  <data name="Dash.GreetAfternoonNoName" xml:space="preserve">
+    <value>Добрий день</value>
+  </data>
+  <data name="Dash.GreetEvening" xml:space="preserve">
+    <value>Добрий вечір, {0}</value>
+  </data>
+  <data name="Dash.GreetEveningNoName" xml:space="preserve">
+    <value>Добрий вечір</value>
+  </data>
+  <data name="Dash.GreetMorning" xml:space="preserve">
+    <value>Доброго ранку, {0}</value>
+  </data>
+  <data name="Dash.GreetMorningNoName" xml:space="preserve">
+    <value>Доброго ранку</value>
+  </data>
+  <data name="Dash.KeepMine" xml:space="preserve">
+    <value>Залишити мій</value>
+  </data>
+  <data name="Dash.KeyboardHelp" xml:space="preserve">
+    <value>Клавішами зі стрілками переміщуйте цей віджет, плюсом і мінусом змінюйте його розмір, а клавішею Delete видаліть його.</value>
+  </data>
+  <data name="Dash.LatestLoaded" xml:space="preserve">
+    <value>Завантажено останній збережений макет</value>
+  </data>
+  <data name="Dash.Live" xml:space="preserve">
+    <value>наживо</value>
+  </data>
+  <data name="Dash.LiveTooltip" xml:space="preserve">
+    <value>Оновлюється наживо</value>
+  </data>
+  <data name="Dash.LoadLatest" xml:space="preserve">
+    <value>Завантажити останній</value>
+  </data>
+  <data name="Dash.Loading" xml:space="preserve">
+    <value>Завантаження</value>
+  </data>
+  <data name="Dash.Locked" xml:space="preserve">
+    <value>Заблоковано</value>
+  </data>
+  <data name="Dash.MaxWidgets" xml:space="preserve">
+    <value>Панель може містити до {0} віджетів. Видаліть один, щоб додати інший.</value>
+  </data>
+  <data name="Dash.Message" xml:space="preserve">
+    <value>Повідомлення</value>
+  </data>
+  <data name="Dash.MoreOptions" xml:space="preserve">
+    <value>Додаткові параметри панелі огляду</value>
+  </data>
+  <data name="Dash.MovableWidget" xml:space="preserve">
+    <value>переміщуваний віджет</value>
+  </data>
+  <data name="Dash.MultiSelectHint" xml:space="preserve">
+    <value>Нічого не вибирайте, щоб включити все.</value>
+  </data>
+  <data name="Dash.MultipleInstances" xml:space="preserve">
+    <value>можна додати кілька</value>
+  </data>
+  <data name="Dash.NewCall" xml:space="preserve">
+    <value>Новий виклик</value>
+  </data>
+  <data name="Dash.NoOptions" xml:space="preserve">
+    <value>Поки немає з чого вибирати.</value>
+  </data>
+  <data name="Dash.NoWidgetsMatch" xml:space="preserve">
+    <value>Немає відповідних віджетів.</value>
+  </data>
+  <data name="Dash.OpenModule" xml:space="preserve">
+    <value>Відкрити модуль</value>
+  </data>
+  <data name="Dash.Protected" xml:space="preserve">
+    <value>Захищено</value>
+  </data>
+  <data name="Dash.PulseLabel" xml:space="preserve">
+    <value>Огляд підрозділу</value>
+  </data>
+  <data name="Dash.Refresh" xml:space="preserve">
+    <value>Оновити</value>
+  </data>
+  <data name="Dash.Remove" xml:space="preserve">
+    <value>Видалити</value>
+  </data>
+  <data name="Dash.RemoveFromDashboard" xml:space="preserve">
+    <value>Видалити з панелі огляду</value>
+  </data>
+  <data name="Dash.RemoveWidget" xml:space="preserve">
+    <value>Видалити: {0}</value>
+  </data>
+  <data name="Dash.Rename" xml:space="preserve">
+    <value>Перейменувати</value>
+  </data>
+  <data name="Dash.RenameBoard" xml:space="preserve">
+    <value>Перейменувати панель</value>
+  </data>
+  <data name="Dash.ResetDone" xml:space="preserve">
+    <value>Скинуто до типових налаштувань підрозділу</value>
+  </data>
+  <data name="Dash.ResetToDefault" xml:space="preserve">
+    <value>Скинути до типових налаштувань підрозділу</value>
+  </data>
+  <data name="Dash.Retry" xml:space="preserve">
+    <value>Повторити</value>
+  </data>
+  <data name="Dash.RevealedBadge" xml:space="preserve">
+    <value>Показано</value>
+  </data>
+  <data name="Dash.RevealedBadgeTooltip" xml:space="preserve">
+    <value>У цьому віджеті показано захищені дані</value>
+  </data>
+  <data name="Dash.RevealedRefreshDeferred" xml:space="preserve">
+    <value>Віджети із захищеними даними оновлюються не частіше ніж раз на 2 хвилини. Цей віджет оновиться найближчим часом.</value>
+  </data>
+  <data name="Dash.SaveFailed" xml:space="preserve">
+    <value>Не вдалося зберегти вашу панель огляду. Перевірте підключення й спробуйте ще раз.</value>
+  </data>
+  <data name="Dash.SaveTemplate" xml:space="preserve">
+    <value>Зберегти шаблон</value>
+  </data>
+  <data name="Dash.SavedToast" xml:space="preserve">
+    <value>Панель огляду збережено. Вона доступна в будь-якому браузері, у якому ви входите.</value>
+  </data>
+  <data name="Dash.SearchWidgets" xml:space="preserve">
+    <value>Пошук віджетів</value>
+  </data>
+  <data name="Dash.SelectNone" xml:space="preserve">
+    <value>(немає)</value>
+  </data>
+  <data name="Dash.SettingRange" xml:space="preserve">
+    <value>Від {0} до {1}</value>
+  </data>
+  <data name="Dash.Settings" xml:space="preserve">
+    <value>Налаштування</value>
+  </data>
+  <data name="Dash.SettingsFor" xml:space="preserve">
+    <value>Налаштування: {0}</value>
+  </data>
+  <data name="Dash.SettingsLive" xml:space="preserve">
+    <value>Цей віджет оновлюється наживо.</value>
+  </data>
+  <data name="Dash.SettingsRefreshHours" xml:space="preserve">
+    <value>Цей віджет оновлюється кожні {0} год.</value>
+  </data>
+  <data name="Dash.SettingsRefreshMinutes" xml:space="preserve">
+    <value>Цей віджет оновлюється кожні {0} хв.</value>
+  </data>
+  <data name="Dash.SettingsSaved" xml:space="preserve">
+    <value>Налаштування збережено</value>
+  </data>
+  <data name="Dash.SettingsTitle" xml:space="preserve">
+    <value>Налаштування: {0}</value>
+  </data>
+  <data name="Dash.Size" xml:space="preserve">
+    <value>Розмір</value>
+  </data>
+  <data name="Dash.Size.full" xml:space="preserve">
+    <value>Повний</value>
+  </data>
+  <data name="Dash.Size.l" xml:space="preserve">
+    <value>L</value>
+  </data>
+  <data name="Dash.Size.m" xml:space="preserve">
+    <value>M</value>
+  </data>
+  <data name="Dash.Size.s" xml:space="preserve">
+    <value>S</value>
+  </data>
+  <data name="Dash.Size.xl" xml:space="preserve">
+    <value>XL</value>
+  </data>
+  <data name="Dash.Size.xs" xml:space="preserve">
+    <value>XS</value>
+  </data>
+  <data name="Dash.SizeAria" xml:space="preserve">
+    <value>Розмір {0}</value>
+  </data>
+  <data name="Dash.SizeChanged" xml:space="preserve">
+    <value>{0}: розмір {1}</value>
+  </data>
+  <data name="Dash.StaleTooltip" xml:space="preserve">
+    <value>Оновлення в реальному часі відновлюють підключення. Доки вони не повернуться, цей віджет оновлюється за таймером.</value>
+  </data>
+  <data name="Dash.TemplateDefaultHint" xml:space="preserve">
+    <value>Учасники, яким не відповідає жоден шаблон ролі чи групи, бачать цей.</value>
+  </data>
+  <data name="Dash.TemplateDescription" xml:space="preserve">
+    <value>Опис</value>
+  </data>
+  <data name="Dash.TemplateEditBarText" xml:space="preserve">
+    <value>Учасники, які не налаштували власну панель огляду, бачать цей макет. Додайте віджети, змініть їхній розмір і порядок, а потім збережіть.</value>
+  </data>
+  <data name="Dash.TemplateEditBarTitle" xml:space="preserve">
+    <value>Редагування шаблону панелі огляду.</value>
+  </data>
+  <data name="Dash.TemplateEditTitle" xml:space="preserve">
+    <value>Редагувати шаблон панелі огляду</value>
+  </data>
+  <data name="Dash.TemplateGroupRequired" xml:space="preserve">
+    <value>Виберіть групу, для якої призначено цей шаблон.</value>
+  </data>
+  <data name="Dash.TemplateIntro" xml:space="preserve">
+    <value>Попередній перегляд віджетів показує ваш власний вигляд даних. Кожен учасник бачить лише те, що дозволяють його права доступу.</value>
+  </data>
+  <data name="Dash.TemplateNameRequired" xml:space="preserve">
+    <value>Вкажіть назву шаблону.</value>
+  </data>
+  <data name="Dash.TemplateNewTitle" xml:space="preserve">
+    <value>Новий шаблон панелі огляду</value>
+  </data>
+  <data name="Dash.TemplatePriorityHint" xml:space="preserve">
+    <value>Якщо учаснику відповідає кілька шаблонів, перемагає менше число.</value>
+  </data>
+  <data name="Dash.TemplateRoleRequired" xml:space="preserve">
+    <value>Виберіть роль персоналу, для якої призначено цей шаблон.</value>
+  </data>
+  <data name="Dash.TemplateSaved" xml:space="preserve">
+    <value>Шаблон збережено</value>
+  </data>
+  <data name="Dash.TemplateTargetsFailed" xml:space="preserve">
+    <value>Не вдалося завантажити ролі та групи.</value>
+  </data>
+  <data name="Dash.Undo" xml:space="preserve">
+    <value>Відмінити</value>
+  </data>
+  <data name="Dash.UntitledBoard" xml:space="preserve">
+    <value>Панель без назви</value>
+  </data>
+  <data name="Dash.UpdateFailedTooltip" xml:space="preserve">
+    <value>Останнє оновлення не вдалося. Показано попередні дані.</value>
+  </data>
+  <data name="Dash.VerifyToView" xml:space="preserve">
+    <value>Підтвердьте, щоб переглянути</value>
+  </data>
+  <data name="Dash.ViewAddon" xml:space="preserve">
+    <value>Переглянути доповнення</value>
+  </data>
+  <data name="Dash.WallDisplay" xml:space="preserve">
+    <value>Настінний екран</value>
+  </data>
+  <data name="Dash.WidgetAdded" xml:space="preserve">
+    <value>Додано: {0}</value>
+  </data>
+  <data name="Dash.WidgetMoved" xml:space="preserve">
+    <value>{0}: переміщено на позицію {1}</value>
+  </data>
+  <data name="Dash.WidgetNotAvailable" xml:space="preserve">
+    <value>Цей віджет ще недоступний.</value>
+  </data>
+  <data name="Dash.WidgetOptions" xml:space="preserve">
+    <value>Параметри: {0}</value>
+  </data>
+  <data name="Dash.WidgetRemoved" xml:space="preserve">
+    <value>Видалено: {0}</value>
+  </data>
 </root>

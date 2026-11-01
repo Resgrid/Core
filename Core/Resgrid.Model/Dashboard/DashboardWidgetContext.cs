@@ -102,8 +102,9 @@ namespace Resgrid.Model.Dashboard
 			return value switch
 			{
 				int i => i,
-				long l => (int)l,
-				double d => (int)d,
+				// Clamped like DashboardLayoutValidator.TryNumber: a context built outside the validator can still carry a long or double.
+				long l => (int)Math.Clamp(l, int.MinValue, int.MaxValue),
+				double d when !double.IsNaN(d) => (int)Math.Clamp(d, int.MinValue, int.MaxValue),
 				string s when int.TryParse(s, NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsed) => parsed,
 				_ => fallback
 			};

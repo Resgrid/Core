@@ -160,6 +160,28 @@ namespace Resgrid.Tests.Dashboard
 		}
 
 		[Test]
+		public void Context_GetInt_clamps_wide_numbers_and_ignores_NaN()
+		{
+			var context = new DashboardWidgetContext
+			{
+				Settings = new Dictionary<string, object>
+				{
+					["exact"] = 12L,
+					["big"] = long.MaxValue,
+					["small"] = long.MinValue,
+					["huge"] = 1e20,
+					["nan"] = double.NaN
+				}
+			};
+
+			context.GetInt("exact", 0).Should().Be(12);
+			context.GetInt("big", 0).Should().Be(int.MaxValue);
+			context.GetInt("small", 0).Should().Be(int.MinValue);
+			context.GetInt("huge", 0).Should().Be(int.MaxValue);
+			context.GetInt("nan", 7).Should().Be(7);
+		}
+
+		[Test]
 		public void Built_in_layouts_normalize_without_losing_known_widgets()
 		{
 			foreach (var audience in Enum.GetValues(typeof(DashboardAudiences)).Cast<DashboardAudiences>())

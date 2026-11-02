@@ -97,5 +97,6 @@
         var initialLat = @Model.Map.CenterLatitude.ToString("G", System.Globalization.CultureInfo.InvariantCulture);
         var initialLon = @Model.Map.CenterLongitude.ToString("G", System.Globalization.CultureInfo.InvariantCulture);
     </script>
+    <partial name="_MapKitConfig" />
     <script src="~/js/app/internal/custommaps/resgrid.custommaps.editor.js" asp-append-version="true"></script>
 }

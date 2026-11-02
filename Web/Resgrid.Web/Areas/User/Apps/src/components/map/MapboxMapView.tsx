@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import 'mapbox-gl/dist/mapbox-gl.css';
 import {
   getLayerColor,
   getMarkerIconUrl,
@@ -9,6 +8,7 @@ import {
   isPoiMarker,
   type MapMarkerInfo,
   type MapRendererProps,
+  type ResolvedMapConfig,
 } from './mapTypes';
 
 type MapboxGl = typeof import('mapbox-gl')['default'];
@@ -176,7 +176,35 @@ function addGeoJsonLayer(map: MapboxMap, layerId: string, layer: MapRendererProp
   };
 }
 
-export default function MapboxMapView({
+/**
+ * The GL map library a view renders with. mapbox-gl and maplibre-gl share every call made here (Map, Marker, Popup,
+ * LngLatBounds, NavigationControl, GeoJSON sources and layers), so one view serves both (maplibre plan §7.1).
+ */
+export interface GlMapLibrary {
+  name: string;
+  load(): Promise<MapboxGl>;
+  styleUrl(config: ResolvedMapConfig): string;
+  prepare?(library: MapboxGl, config: ResolvedMapConfig): void;
+}
+
+const mapboxLibrary: GlMapLibrary = {
+  name: 'Mapbox',
+  load: async () => {
+    await import('mapbox-gl/dist/mapbox-gl.css');
+    return (await import('mapbox-gl')).default;
+  },
+  styleUrl: (config) => config.styleUrl,
+  prepare: (library, config) => {
+    library.accessToken = config.accessToken;
+  },
+};
+
+export default function MapboxMapView(props: MapRendererProps) {
+  return <GlMapView {...props} library={mapboxLibrary} />;
+}
+
+export function GlMapView({
+  library,
   mapData,
   markers,
   layers,
@@ -186,7 +214,7 @@ export default function MapboxMapView({
   fitBoundsKey,
   fitMaxZoom,
   keepMarkersInView = false,
-}: MapRendererProps) {
+}: MapRendererProps & { library: GlMapLibrary }) {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<MapboxMap | null>(null);
   const mapboxRef = useRef<MapboxGl | null>(null);
@@ -209,18 +237,18 @@ export default function MapboxMapView({
         return;
       }
 
-      const mapboxgl = (await import('mapbox-gl')).default;
+      const mapboxgl = await library.load();
 
       if (cancelled) {
         return;
       }
 
-      mapboxgl.accessToken = resolvedMapConfig.accessToken;
+      library.prepare?.(mapboxgl, resolvedMapConfig);
       mapboxRef.current = mapboxgl;
 
       const map = new mapboxgl.Map({
         container: mapContainerRef.current,
-        style: resolvedMapConfig.styleUrl,
+        style: library.styleUrl(resolvedMapConfig),
         center: [mapData?.CenterLon ?? -98.5795, mapData?.CenterLat ?? 39.8283],
         zoom: mapData?.ZoomLevel ?? 4,
         doubleClickZoom: false,
@@ -236,10 +264,11 @@ export default function MapboxMapView({
       // than throwing, so without a listener a misconfigured department just gets a blank canvas.
       // Only pre-load failures are fatal: once the style is up, transient tile errors must not
       // replace a working map with an error overlay.
-      const handleMapError = (event: { error?: { message?: string } }) => {
-        console.error('Mapbox map error', event?.error ?? event);
+      const handleMapError = (event: { error?: { message?: string }; sourceId?: string }) => {
+        console.error(`${library.name} map error`, event?.error ?? event);
 
-        if (cancelled || styleLoaded) {
+        // A failing source or tile (a tileset the token may not read) leaves the rest of the map working.
+        if (cancelled || styleLoaded || event?.sourceId) {
           return;
         }
 
@@ -257,6 +286,27 @@ export default function MapboxMapView({
 
       map.on('load', handleStyleReady);
       map.on('style.load', handleStyleReady);
+
+      // Live traffic toggle on MapLibre maps that ask for one (§11.1); the URL and label come from _MapKitConfig.
+      const kitConfig = window.resgridMapConfig;
+      if (library.name === 'MapLibre' && (resolvedMapConfig.traffic === 'on' || resolvedMapConfig.traffic === 'off') && kitConfig?.trafficUrl) {
+        map.once('load', () => {
+          if (cancelled) {
+            return;
+          }
+          void import('../../maps/rgTraffic')
+            .then(({ addTrafficToggle }) =>
+              addTrafficToggle(map as unknown as import('maplibre-gl').Map, {
+                url: kitConfig.trafficUrl!,
+                refreshSeconds: kitConfig.trafficRefreshSeconds,
+                initial: resolvedMapConfig.traffic === 'on',
+                label: kitConfig.trafficLabel,
+              }),
+            )
+            // The toggle is optional: the map stays usable without it, so a failed chunk load is logged, not raised.
+            .catch((trafficError: unknown) => console.error('Failed to add the live traffic toggle', trafficError));
+        });
+      }
 
       const resizeMap = () => map.resize();
       window.addEventListener('resize', resizeMap);
@@ -294,7 +344,7 @@ export default function MapboxMapView({
         // likely to be in flight when the user navigates away or when a deploy rotates the
         // hashed chunk names. Without this catch the rejection escapes as an unhandled promise
         // rejection with no stack and no URL instead of a visible map error.
-        console.error('Failed to initialize the Mapbox map', mapInitError);
+        console.error(`Failed to initialize the ${library.name} map`, mapInitError);
 
         if (!cancelled) {
           setInitError(
@@ -314,9 +364,11 @@ export default function MapboxMapView({
     mapData?.CenterLat,
     mapData?.CenterLon,
     mapData?.ZoomLevel,
+    library,
     resolvedMapConfig.accessToken,
     resolvedMapConfig.attribution,
     resolvedMapConfig.styleUrl,
+    resolvedMapConfig.mapLibreStyleUrl,
   ]);
 
   useEffect(() => {

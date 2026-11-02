@@ -73,7 +73,7 @@
     <div class="col-lg-4">
       <div class="ibox float-e-margins">
         <div class="ibox-content">
-  <rg-map showbuttons="false" mapheight="330px" departmentId="@ClaimsAuthorizationHelper.GetDepartmentId()" leafletosmurl="@mapConfig.TileUrl" mapattribution="@mapConfig.Attribution" mapprovider="@mapConfig.MapProvider" mapstyleurl="@mapConfig.StyleUrl" mapaccesstoken="@mapConfig.AccessToken"></rg-map>
+  <rg-map showbuttons="false" mapheight="330px" departmentId="@ClaimsAuthorizationHelper.GetDepartmentId()" leafletosmurl="@mapConfig.TileUrl" mapattribution="@mapConfig.Attribution" mapprovider="@mapConfig.MapProvider" mapstyleurl="@mapConfig.StyleUrl" mapaccesstoken="@mapConfig.AccessToken" maprenderer="@SettingsHelper.GetMapLibreWebConfig().Renderer" maplibrestyleurl="@SettingsHelper.GetMapLibreWebConfig().StyleUrlDay" traffic="on"></rg-map>
           <br/>
         </div>
       </div>
@@ -124,6 +124,7 @@
 
 @section Scripts
   {
+  <partial name="_MapKitConfig" />
   <script>
 		var centerLat = '@Model.Latitude';
 		var centerLon = '@Model.Longitude';

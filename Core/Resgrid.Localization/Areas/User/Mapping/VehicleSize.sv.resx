@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Map Icon Legend and status / priority map icon pages -->
+    <data name="VehicleSizeHeader" xml:space="preserve">
+    <value>Fordonets storlek och vikt</value>
+  </data>
+  <data name="VehicleSizeHelp" xml:space="preserve">
+    <value>Vägvalet undviker vägar, broar, tunnlar och svängar som fordonet inte kan använda. Lämna ett fält tomt om det inte gäller.</value>
+  </data>
+  <data name="VehicleSizeUnitHelp" xml:space="preserve">
+    <value>Tomma fält använder enhetstypens värden (visas i grått).</value>
+  </data>
+  <data name="VehicleUnits" xml:space="preserve">
+    <value>Enheter</value>
+  </data>
+  <data name="VehicleUnitsImperial" xml:space="preserve">
+    <value>Fot och pund</value>
+  </data>
+  <data name="VehicleUnitsMetric" xml:space="preserve">
+    <value>Meter och kilogram</value>
+  </data>
+  <data name="VehicleHeight" xml:space="preserve">
+    <value>Höjd</value>
+  </data>
+  <data name="VehicleWidth" xml:space="preserve">
+    <value>Bredd</value>
+  </data>
+  <data name="VehicleLength" xml:space="preserve">
+    <value>Längd (inklusive släp)</value>
+  </data>
+  <data name="VehicleGrossWeight" xml:space="preserve">
+    <value>Totalvikt</value>
+  </data>
+  <data name="VehicleAxleLoad" xml:space="preserve">
+    <value>Tyngsta axeltryck</value>
+  </data>
+  <data name="VehicleAxleCount" xml:space="preserve">
+    <value>Axlar</value>
+  </data>
+  <data name="VehicleHazmat" xml:space="preserve">
+    <value>Farligt gods</value>
+  </data>
+  <data name="VehicleHazmatInherit" xml:space="preserve">
+    <value>Använd enhetstyp</value>
+  </data>
+  <data name="VehicleHazmatYes" xml:space="preserve">
+    <value>Ja</value>
+  </data>
+  <data name="VehicleHazmatNo" xml:space="preserve">
+    <value>Nej</value>
+  </data>
+  <data name="VehicleLimitsAll" xml:space="preserve">
+    <value>Din vägvalsleverantör tillämpar alla dessa begränsningar.</value>
+  </data>
+  <data name="VehicleLimitsSize" xml:space="preserve">
+    <value>Din vägvalsleverantör tillämpar endast höjd, bredd och vikt.</value>
+  </data>
+  <data name="VehicleLimitsNone" xml:space="preserve">
+    <value>Din vägvalsleverantör tillämpar inga fordonsbegränsningar; rutter kan använda vägar som fordonet inte kan köra på.</value>
+  </data>
+  <data name="VehicleDataCaveat" xml:space="preserve">
+    <value>Begränsningarna är bara så fullständiga som kartans vägdata; besättningen ansvarar fortfarande för skyltade gränser.</value>
+  </data>
+  <data name="VehicleRangeError" xml:space="preserve">
+    <value>{0} måste vara mellan {1} och {2}.</value>
+  </data>
+</root>

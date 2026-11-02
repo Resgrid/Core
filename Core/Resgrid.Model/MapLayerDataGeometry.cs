@@ -33,6 +33,12 @@ namespace Resgrid.Model
 		[JsonIgnore]
 		public GeoJsonPolygon<GeoJson2DGeographicCoordinates> Polygon { get; set; }
 
+		/// <summary>A shape cut into several parts (layer editor cut tool); readers without it see no geometry.</summary>
+		[BsonElement("multiPolygon")]
+		[BsonIgnoreIfNull]
+		[JsonIgnore]
+		public GeoJsonMultiPolygon<GeoJson2DGeographicCoordinates> MultiPolygon { get; set; }
+
 		public void AddPoint(double lon, double lat)
 		{
 			Point = new GeoJsonPoint<GeoJson2DGeographicCoordinates>(new GeoJson2DGeographicCoordinates(lon, lat));

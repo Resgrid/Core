@@ -21,7 +21,7 @@ namespace Resgrid.WebCore.Attributes
 
 		protected override ValidationResult IsValid(object value, ValidationContext validationContext)
 		{
-			Lazy<ValidationResult> errorResult = new Lazy<ValidationResult>(() => new ValidationResult("Google reCAPTCHA validation failed", new String[] { validationContext.MemberName }));
+			Lazy<ValidationResult> errorResult = new Lazy<ValidationResult>(() => new ValidationResult("Please complete the \"I'm not a robot\" check, then send the form again. If you already did, the check expired: tick it again.", new String[] { validationContext.MemberName }));
 
 			if (value == null || String.IsNullOrWhiteSpace(value.ToString()))
 			{

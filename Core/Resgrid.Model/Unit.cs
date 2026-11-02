@@ -58,6 +58,31 @@ namespace Resgrid.Model
 		[ProtoMember(12)]
 		public string DeletedByUserId { get; set; }
 
+		/// <summary>Vehicle size overrides, metric, all optional; null falls back to the unit type's value (M0308, <see cref="VehicleProfile"/>).</summary>
+		[ProtoMember(13)]
+		public double? VehicleHeightMeters { get; set; }
+
+		[ProtoMember(14)]
+		public double? VehicleWidthMeters { get; set; }
+
+		/// <summary>Overall length including any towed trailer.</summary>
+		[ProtoMember(15)]
+		public double? VehicleLengthMeters { get; set; }
+
+		[ProtoMember(16)]
+		public double? VehicleGrossWeightKg { get; set; }
+
+		/// <summary>Load on the heaviest axle.</summary>
+		[ProtoMember(17)]
+		public double? VehicleAxleLoadKg { get; set; }
+
+		[ProtoMember(18)]
+		public int? VehicleAxleCount { get; set; }
+
+		/// <summary>Carries hazardous materials.</summary>
+		[ProtoMember(19)]
+		public bool? VehicleHazmat { get; set; }
+
 		public virtual DepartmentGroup StationGroup { get; set; }
 
 		public virtual Department Department { get; set; }

@@ -4933,7 +4933,7 @@
     <value>Använd avdelningens kartleverantörsåsidosättning. Att stänga av den på tillhörande skärm tar bort den sparade stilen och token.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.MappingMapStyle">
-    <value>Mapbox-baskarta som varje karta för avdelningen visar i ljust läge, på webbplatsen och i alla appar. Automatiskt är Gator; webbplatsen kräver en Mapbox-token på servern och avdelningens Mapbox-åsidosättning ersätter den överallt.</value>
+    <value>Mapbox-baskarta som varje karta för avdelningen visar i ljust läge, på webbplatsen och i alla appar. Automatiskt är Gator; webbplatsen kräver en Mapbox-token på servern och avdelningens Mapbox-åsidosättning ersätter den överallt. På en server med egna kartor erbjuds bara de stilar den kan visa.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.MappingMapStyleNight">
     <value>Baskarta som apparna visar i mörkt läge. Automatiskt paras ihop med dagstilen (Mörk för vägkartor, Navigering natt för Navigering dag; Friluft och satellit oförändrade). Webbplatsen använder alltid dagstilen.</value>
@@ -7763,5 +7763,17 @@
   </data>
   <data xml:space="preserve" name="Topic.dashboard-classic">
     <value>Aktivera den nya översikten och återgå till den klassiska</value>
+  </data>
+  <data xml:space="preserve" name="Setting.MappingNavigationConfig">
+    <value>Standardval för navigering</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.MappingNavigationConfig">
+    <value>Standardval för sväng-för-sväng-navigering i Unit-appen (röst, avståndsenheter, ankomstradie, frågan På plats, vägar att undvika) och hur mycket försening eller överskridet stopp som registreras som ruttavvikelse.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.OfflineMapPacksConfig">
+    <value>Offlinekartor</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.OfflineMapPacksConfig">
+    <value>Vad apparna laddar ner för att fungera utan nätverk: det största insatsområdet (dess baskarta måste rymmas inom storleksgränsen), vilka kartdata som ingår, när nedladdningar sker och extra täckning för larm och rutter utanför området.</value>
   </data>
 </root>

@@ -122,6 +122,10 @@ export interface MapConfig {
   MapProvider?: string | null;
   StyleUrl?: string | null;
   AccessToken?: string | null;
+  /** "maplibre" when the department renders web maps with MapLibre GL (Maps.MapLibreWeb). */
+  Renderer?: string | null;
+  MapLibreStyleUrl?: string | null;
+  MapLibreStyleUrlNight?: string | null;
 }
 
 export interface TemplateInfo {

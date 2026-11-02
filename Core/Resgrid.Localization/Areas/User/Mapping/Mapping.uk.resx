@@ -284,4 +284,49 @@
   <data name="False" xml:space="preserve">
     <value>Ні</value>
   </data>
+  <data name="DrawToolPolygon" xml:space="preserve">
+    <value>Намалювати многокутник</value>
+  </data>
+  <data name="DrawToolRectangle" xml:space="preserve">
+    <value>Намалювати прямокутник</value>
+  </data>
+  <data name="DrawToolLine" xml:space="preserve">
+    <value>Намалювати лінію</value>
+  </data>
+  <data name="DrawToolPoint" xml:space="preserve">
+    <value>Поставити мітку</value>
+  </data>
+  <data name="DrawToolCircle" xml:space="preserve">
+    <value>Намалювати коло</value>
+  </data>
+  <data name="DrawToolText" xml:space="preserve">
+    <value>Додати текст</value>
+  </data>
+  <data name="DrawToolCut" xml:space="preserve">
+    <value>Вирізати з вибраної фігури (намалюйте частину, яку треба прибрати)</value>
+  </data>
+  <data name="DrawToolRotate" xml:space="preserve">
+    <value>Повернути вибрану фігуру (перетягніть на карті)</value>
+  </data>
+  <data name="DrawToolSelect" xml:space="preserve">
+    <value>Вибрати і редагувати</value>
+  </data>
+  <data name="DrawToolDelete" xml:space="preserve">
+    <value>Видалити вибрану фігуру</value>
+  </data>
+  <data name="DrawToolClear" xml:space="preserve">
+    <value>Прибрати всі фігури</value>
+  </data>
+  <data name="DrawTextPrompt" xml:space="preserve">
+    <value>Текст для показу</value>
+  </data>
+  <data name="DrawSelectShapeFirst" xml:space="preserve">
+    <value>Спочатку виберіть фігуру на карті.</value>
+  </data>
+  <data name="LayerElementsInvalid" xml:space="preserve">
+    <value>Не вдалося прочитати фігури шару. Оновіть сторінку та намалюйте їх знову.</value>
+  </data>
+  <data name="TrafficLayer" xml:space="preserve">
+    <value>Трафік наживо</value>
+  </data>
 </root>

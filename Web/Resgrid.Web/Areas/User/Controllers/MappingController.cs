@@ -51,6 +51,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IMapIconsService _mapIconsService;
 		private readonly ICustomStateService _customStateService;
 		private readonly Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.MapIconLegend> _legendLocalizer;
+		private readonly Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.Mapping> _localizer;
 
 		public MappingController(IDepartmentSettingsService departmentSettingsService,
 			IGeoLocationProvider geoLocationProvider, ICallsService callsService,
@@ -61,8 +62,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			Model.Services.IAuthorizationService authorizationService, ITypeIconsService typeIconsService,
 			Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.Icons.IconUpload> iconLocalizer,
 			IMapIconsService mapIconsService, ICustomStateService customStateService,
-			Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.MapIconLegend> legendLocalizer)
+			Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.MapIconLegend> legendLocalizer,
+			Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.Mapping> localizer)
 		{
+			_localizer = localizer;
 			_iconLocalizer = iconLocalizer;
 			_mapIconsService = mapIconsService;
 			_customStateService = customStateService;
@@ -256,6 +259,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return Unauthorized();
 
 			model.CenterCoordinates = await _departmentSettingsService.GetMapCenterCoordinatesAsync(model.Department);
+			var features = ParseLayerFeatures(model.GeoJson);
 
 			if (ModelState.IsValid)
 			{
@@ -266,9 +270,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				newLayer.IsOnByDefault = model.IsOnByDefault;
 				newLayer.IsSearchable = model.IsSearchable;
 
-				newLayer.Data = new MapLayerData();// JsonConvert.DeserializeObject<MapLayerData>(model.GeoJson);
-				var feature = JsonConvert.DeserializeObject<FeatureCollection>(model.GeoJson);
-				newLayer.Data.Hydrate(feature);
+				newLayer.Data = new MapLayerData();
+				newLayer.Data.Hydrate(features);
 
 				newLayer.AddedById = UserId;
 				newLayer.AddedOn = DateTime.UtcNow;
@@ -315,6 +318,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Id = layer.Id.ToString();
 			model.Name = layer.Name;
 			model.Color = layer.Color;
+			// Without these the edit form showed both unticked, and saving it switched them off.
+			model.IsOnByDefault = layer.IsOnByDefault;
+			model.IsSearchable = layer.IsSearchable;
 
 			return View(model);
 		}
@@ -328,6 +334,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			model.CenterCoordinates = await _departmentSettingsService.GetMapCenterCoordinatesAsync(model.Department);
+			var features = ParseLayerFeatures(model.GeoJson);
 
 			if (ModelState.IsValid)
 			{
@@ -344,9 +351,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				newLayer.IsOnByDefault = model.IsOnByDefault;
 				newLayer.IsSearchable = model.IsSearchable;
 
-				newLayer.Data = new MapLayerData();// JsonConvert.DeserializeObject<MapLayerData>(model.GeoJson);
-				var feature = JsonConvert.DeserializeObject<FeatureCollection>(model.GeoJson);
-				newLayer.Data.Hydrate(feature);
+				newLayer.Data = new MapLayerData();
+				newLayer.Data.Hydrate(features);
 
 				newLayer.UpdatedById = UserId;
 				newLayer.UpdatedOn = DateTime.UtcNow;
@@ -357,6 +363,27 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			return View(model);
+		}
+
+		/// <summary>The layer editor's FeatureCollection; a model error (not an exception) when the post is not one.</summary>
+		private FeatureCollection ParseLayerFeatures(string geoJson)
+		{
+			// Missing altogether is the [Required] message's job.
+			if (string.IsNullOrWhiteSpace(geoJson))
+				return null;
+
+			try
+			{
+				var features = JsonConvert.DeserializeObject<FeatureCollection>(geoJson);
+				if (features?.Features != null)
+					return features;
+			}
+			catch (Newtonsoft.Json.JsonException)
+			{
+			}
+
+			ModelState.AddModelError(nameof(NewLayerView.GeoJson), _localizer["LayerElementsInvalid"]);
+			return null;
 		}
 
 		[HttpPost]

@@ -316,6 +316,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var model = new NewUnitView();
 			model.Unit = new Unit();
 			model.Types = await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId);
+			model.VehicleSize = VehicleSizeInput.From(model.Unit, VehicleSizeInput.DefaultMetric());
+			model.VehicleSize.TypeDefaults = VehicleSizeInput.DefaultsFor(model.Types);
 
 			var states = new List<CustomState>();
 			states.Add(new CustomState
@@ -355,6 +357,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Types = await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId);
 			model.Stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
 
+			model.VehicleSize ??= new VehicleSizeInput();
+			model.VehicleSize.TypeDefaults = VehicleSizeInput.DefaultsFor(model.Types);
+			model.VehicleSize.AddErrorsTo(ModelState);
+
 			if ((await _unitsService.GetUnitByNameDepartmentIdAsync(DepartmentId, model.Unit.Name)) != null)
 				ModelState.AddModelError("Name", HttpContext.WithDepartmentTerms("Unit with that name already exists."));
 
@@ -382,6 +388,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (!await IsDepartmentGroupAsync(model.Unit.StationGroupId))
 					return Unauthorized();
+
+				// Vehicle limits come only from the converted size fields, never from posted Unit.Vehicle* values.
+				model.VehicleSize.ApplyTo(model.Unit);
 
 				model.Unit = await _unitsService.SaveUnitAsync(model.Unit, cancellationToken);
 
@@ -502,6 +511,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			model.UnitRoles = await _unitsService.GetRolesForUnitAsync(unitId);
 			model.PersonnelRoles = await _personnelRolesService.GetAllRolesForDepartmentAsync(DepartmentId);
+			model.VehicleSize = VehicleSizeInput.From(model.Unit, VehicleSizeInput.DefaultMetric());
+			model.VehicleSize.TypeDefaults = VehicleSizeInput.DefaultsFor(model.Types);
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			await _novuProvider.CreateUnitSubscriber(model.Unit.UnitId, department.Code, DepartmentId, model.Unit.Name, null);
@@ -605,6 +616,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!await _authorizationService.CanUserModifyUnitAsync(UserId, model.Unit.UnitId))
 				return Unauthorized();
 
+			model.VehicleSize ??= new VehicleSizeInput();
+			model.VehicleSize.TypeDefaults = VehicleSizeInput.DefaultsFor(model.Types);
+			model.VehicleSize.AddErrorsTo(ModelState);
+
 			var unitCheck = await _unitsService.GetUnitByNameDepartmentIdAsync(DepartmentId, model.Unit.Name);
 			if (unitCheck != null && unitCheck.UnitId != model.Unit.UnitId)
 				ModelState.AddModelError("Name", HttpContext.WithDepartmentTerms("Unit with that name already exists."));
@@ -648,6 +663,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				unit.StationGroupId = model.Unit.StationGroupId;
 			else
 				unit.StationGroupId = null;
+
+			// Legacy forms and scripted posts without the size section leave the stored limits alone.
+			if (Request.HasFormContentType && Request.Form.ContainsKey("VehicleSize.Metric"))
+				model.VehicleSize.ApplyTo(unit);
 
 			if (ModelState.IsValid)
 			{

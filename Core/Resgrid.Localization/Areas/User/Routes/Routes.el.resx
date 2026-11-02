@@ -524,4 +524,100 @@
   <data name="FindLocationVia" xml:space="preserve">
     <value>Εύρεση τοποθεσίας μέσω</value>
   </data>
+  <data name="ProfileTruck" xml:space="preserve">
+    <value>Φορτηγό (διαστάσεις οχήματος)</value>
+  </data>
+  <data name="ProfileTrafficUnavailable" xml:space="preserve">
+    <value>(χωρίς ζωντανή κίνηση σε αυτόν τον διακομιστή)</value>
+  </data>
+  <data name="AvoidLabel" xml:space="preserve">
+    <value>Αποφυγή</value>
+  </data>
+  <data name="AvoidTolls" xml:space="preserve">
+    <value>Διόδια</value>
+  </data>
+  <data name="AvoidHighways" xml:space="preserve">
+    <value>Αυτοκινητόδρομοι</value>
+  </data>
+  <data name="AvoidFerries" xml:space="preserve">
+    <value>Πορθμεία</value>
+  </data>
+  <data name="AvoidUnpaved" xml:space="preserve">
+    <value>Χωματόδρομοι</value>
+  </data>
+  <data name="StartStation" xml:space="preserve">
+    <value>Σταθμός αφετηρίας</value>
+  </data>
+  <data name="EndStation" xml:space="preserve">
+    <value>Σταθμός προορισμού</value>
+  </data>
+  <data name="UnitStationOption" xml:space="preserve">
+    <value>Ο σταθμός της μονάδας</value>
+  </data>
+  <data name="LegColumn" xml:space="preserve">
+    <value>Τμήμα</value>
+  </data>
+  <data name="ArrivalColumn" xml:space="preserve">
+    <value>Άφιξη</value>
+  </data>
+  <data name="StopGeofenceRadius" xml:space="preserve">
+    <value>Ακτίνα άφιξης (m)</value>
+  </data>
+  <data name="StopGeofenceRadiusHelp" xml:space="preserve">
+    <value>Αφήστε το κενό για να χρησιμοποιηθεί η ακτίνα της διαδρομής.</value>
+  </data>
+  <data name="OptimizeOrder" xml:space="preserve">
+    <value>Βελτιστοποίηση σειράς</value>
+  </data>
+  <data name="OptimizeTitle" xml:space="preserve">
+    <value>Βελτιστοποιημένη σειρά στάσεων</value>
+  </data>
+  <data name="OptimizeCurrent" xml:space="preserve">
+    <value>Τρέχουσα σειρά</value>
+  </data>
+  <data name="OptimizeProposed" xml:space="preserve">
+    <value>Προτεινόμενη σειρά</value>
+  </data>
+  <data name="OptimizeAccept" xml:space="preserve">
+    <value>Χρήση αυτής της σειράς</value>
+  </data>
+  <data name="RouteStart" xml:space="preserve">
+    <value>Αφετηρία</value>
+  </data>
+  <data name="RouteEnd" xml:space="preserve">
+    <value>Προορισμός</value>
+  </data>
+  <data name="RouteTotal" xml:space="preserve">
+    <value>Σύνολο</value>
+  </data>
+  <data name="RouteWithStops" xml:space="preserve">
+    <value>με στάσεις</value>
+  </data>
+  <data name="RouteEstimate" xml:space="preserve">
+    <value>εκτίμηση σε ευθεία γραμμή</value>
+  </data>
+  <data name="MoveUp" xml:space="preserve">
+    <value>Μετακίνηση πάνω</value>
+  </data>
+  <data name="MoveDown" xml:space="preserve">
+    <value>Μετακίνηση κάτω</value>
+  </data>
+  <data name="DeleteStop" xml:space="preserve">
+    <value>Διαγραφή στάσης</value>
+  </data>
+  <data name="TruckNoVehicle" xml:space="preserve">
+    <value>Δεν έχουν οριστεί διαστάσεις για αυτή τη μονάδα, οπότε το Φορτηγό δρομολογεί όπως η Οδήγηση.</value>
+  </data>
+  <data name="OptimizeFailed" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η βελτιστοποίηση της σειράς των στάσεων.</value>
+  </data>
+  <data name="OptimizeNoChange" xml:space="preserve">
+    <value>Οι στάσεις είναι ήδη στην καλύτερη σειρά.</value>
+  </data>
+  <data name="StopOrderFailed" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η αποθήκευση της νέας σειράς στάσεων. Η σελίδα θα φορτωθεί ξανά.</value>
+  </data>
+  <data name="StopMoveFailed" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η μετακίνηση της στάσης. Η σελίδα θα φορτωθεί ξανά.</value>
+  </data>
 </root>

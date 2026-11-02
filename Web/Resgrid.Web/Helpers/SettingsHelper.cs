@@ -6,6 +6,19 @@ using Resgrid.Model.Services;
 
 namespace Resgrid.Web.Helpers
 {
+	/// <summary>What rg-map needs to render with MapLibre (empty when the department has not been switched over).</summary>
+	public class MapLibreWebConfig
+	{
+		public string Renderer { get; set; } = string.Empty;
+		public string StyleUrlDay { get; set; } = string.Empty;
+		public string StyleUrlNight { get; set; } = string.Empty;
+
+		/// <summary>Live traffic vector tiles for the MapLibre maps' traffic toggle (plan §11.1); empty when the install has none.</summary>
+		public string TrafficTileUrl { get; set; } = string.Empty;
+
+		public int TrafficRefreshSeconds { get; set; }
+	}
+
 	public static class SettingsHelper
 	{
 		private const string DepartmentMapConfigCacheKeyFormat = "DepartmentMapConfig_{0}";
@@ -97,6 +110,48 @@ namespace Resgrid.Web.Helpers
 		public static bool IsBusinessOperationsEnabled()
 		{
 			return !GetModuleSettings().BusinessOperationsDisabled;
+		}
+
+		/// <summary>
+		/// The MapLibre web renderer for the department (maplibre-mapping-routing-navigation-plan.md §7): "maplibre" and the
+		/// signed day/night style URLs (API Mapping/GetStyle) when the Maps.MapLibreWeb flag is on, else empty values, which
+		/// leave rg-map on its Mapbox or Leaflet renderer exactly as before.
+		/// </summary>
+		public static MapLibreWebConfig GetMapLibreWebConfig(string key = null)
+		{
+			var requestedKey = string.IsNullOrWhiteSpace(key) ? InfoConfig.WebsiteKey : key;
+			var httpContext = GetHttpContextAccessor().HttpContext;
+			var cacheKey = "MapLibreWebConfig_" + requestedKey;
+
+			if (httpContext?.Items != null && httpContext.Items.ContainsKey(cacheKey))
+				return httpContext.Items[cacheKey] as MapLibreWebConfig;
+
+			var config = new MapLibreWebConfig();
+			var departmentId = ClaimsAuthorizationHelper.GetDepartmentId();
+
+			try
+			{
+				var flags = ServiceLocator.Current.GetInstance<IFeatureToggleService>();
+				if (departmentId > 0 && flags.IsEnabledAsync(FeatureFlagKeys.MapsMapLibreWeb, departmentId).GetAwaiter().GetResult())
+				{
+					var styles = ServiceLocator.Current.GetInstance<IMapStyleService>();
+					config.Renderer = "maplibre";
+					config.StyleUrlDay = styles.GetSignedStyleUrl(departmentId, requestedKey, false);
+					config.StyleUrlNight = styles.GetSignedStyleUrl(departmentId, requestedKey, true);
+					config.TrafficTileUrl = styles.GetTrafficTileUrl() ?? string.Empty;
+					config.TrafficRefreshSeconds = MappingConfig.TrafficRefreshSeconds;
+				}
+			}
+			catch (System.Exception ex)
+			{
+				// The page keeps its current renderer.
+				Framework.Logging.LogException(ex, "Resolving the MapLibre web map config");
+			}
+
+			if (httpContext?.Items != null)
+				httpContext.Items[cacheKey] = config;
+
+			return config;
 		}
 
 		public static ResolvedMapConfig GetDepartmentMapConfig(string key = null)

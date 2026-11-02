@@ -96,6 +96,11 @@ namespace Resgrid.Providers.Bus.Rabbit
 			Id = Guid.NewGuid(), Type = (int)EventingTypes.UnitActiveRolesUpdated, TimeStamp = DateTime.UtcNow, DepartmentId = departmentId, ItemId = unitId.ToString()
 		}.SerializeJson());
 
+		public Task<bool> UnitNavigationUpdated(int departmentId, int unitId, string payload) => SendMessage(Topics.EventingTopic, new EventingMessage
+		{
+			Id = Guid.NewGuid(), Type = (int)EventingTypes.UnitNavigationUpdated, TimeStamp = DateTime.UtcNow, DepartmentId = departmentId, ItemId = unitId.ToString(), Payload = payload
+		}.SerializeJson());
+
 		public Task<bool> OutstandingRequirementsUpdated(int departmentId, int callId, string payload) => SendMessage(Topics.EventingTopic, new EventingMessage
 		{
 			Id = Guid.NewGuid(), Type = (int)EventingTypes.OutstandingRequirementsUpdated, TimeStamp = DateTime.UtcNow, DepartmentId = departmentId, ItemId = callId.ToString(), Payload = payload

@@ -70,9 +70,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IMfaPolicyService mfaPolicyService,
 			IMfaEvidenceService mfaEvidenceService,
 			IMfaLoginTransactionService loginTransactions,
-			ISsoBrokerService ssoBroker
+			ISsoBrokerService ssoBroker,
+			ILoginThrottleService loginThrottle
 			)
 		{
+			_loginThrottle = loginThrottle;
 			_usersService = usersService;
 			_userProfileService = userProfileService;
 			_departmentsService = departmentsService;
@@ -91,6 +93,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		}
 
 		private readonly ISsoBrokerService _ssoBroker;
+		private readonly ILoginThrottleService _loginThrottle;
 
 		private readonly IMfaPolicyService _mfaPolicyService;
 		private readonly IMfaEvidenceService _mfaEvidenceService;
@@ -126,10 +129,20 @@ namespace Resgrid.Web.Services.Controllers.v4
 				audit.ServerName = Environment.MachineName;
 				audit.Data = $"V4 Token, {Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
 
+				// Too many failed sign-ins from this address across different accounts (spraying, stuffing): no password is checked
+				// until the pause ends. invalid_grant keeps every client's handling; the description says why.
+				if (await _loginThrottle.IsThrottledAsync(audit.IpAddress))
+				{
+					audit.Data += " (throttled)";
+					await _systemAuditsService.SaveSystemAuditAsync(audit);
+					return InvalidGrant($"Too many failed sign-in attempts have come from your network. Wait up to {_loginThrottle.Window.TotalMinutes:0} minutes, then try again.");
+				}
+
 				var user = await _userManager.FindByNameAsync(request.Username);
 				if (user == null)
 				{
 					await _systemAuditsService.SaveSystemAuditAsync(audit);
+					await _loginThrottle.RecordFailureAsync(audit.IpAddress, request.Username);
 
 					var properties = new AuthenticationProperties(new Dictionary<string, string>
 					{
@@ -146,6 +159,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				{
 					audit.UserId = user.Id;
 					await _systemAuditsService.SaveSystemAuditAsync(audit);
+					await _loginThrottle.RecordFailureAsync(audit.IpAddress, request.Username);
 					return InvalidGrant("The username or password is invalid.");
 				}
 				var activeMembership = await _departmentsService.GetDepartmentMemberAsync(user.Id,
@@ -154,6 +168,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				{
 					audit.UserId = user.Id;
 					await _systemAuditsService.SaveSystemAuditAsync(audit);
+					await _loginThrottle.RecordFailureAsync(audit.IpAddress, request.Username);
 					return InvalidGrant("The username or password is invalid.");
 				}
 
@@ -161,6 +176,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				{
 					audit.UserId = user.Id;
 					await _systemAuditsService.SaveSystemAuditAsync(audit);
+					await _loginThrottle.RecordFailureAsync(audit.IpAddress, request.Username);
 					var properties = new AuthenticationProperties(new Dictionary<string, string>
 					{
 						[OpenIddictServerAspNetCoreConstants.Properties.Error] = Errors.InvalidGrant,
@@ -179,6 +195,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 				if (!result.Succeeded)
 				{
+					await _loginThrottle.RecordFailureAsync(audit.IpAddress, request.Username);
+
 					var properties = new AuthenticationProperties(new Dictionary<string, string>
 					{
 						[OpenIddictServerAspNetCoreConstants.Properties.Error] = Errors.InvalidGrant,

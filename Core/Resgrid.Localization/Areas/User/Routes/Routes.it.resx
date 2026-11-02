@@ -181,4 +181,100 @@
   <data name="Latitude" xml:space="preserve"><value>Latitudine</value></data>
   <data name="Longitude" xml:space="preserve"><value>Longitudine</value></data>
   <data name="FindLocationVia" xml:space="preserve"><value>Trova posizione tramite</value></data>
+  <data name="ProfileTruck" xml:space="preserve">
+    <value>Camion (dimensioni del veicolo)</value>
+  </data>
+  <data name="ProfileTrafficUnavailable" xml:space="preserve">
+    <value>(nessun traffico in tempo reale su questo server)</value>
+  </data>
+  <data name="AvoidLabel" xml:space="preserve">
+    <value>Evita</value>
+  </data>
+  <data name="AvoidTolls" xml:space="preserve">
+    <value>Pedaggi</value>
+  </data>
+  <data name="AvoidHighways" xml:space="preserve">
+    <value>Autostrade</value>
+  </data>
+  <data name="AvoidFerries" xml:space="preserve">
+    <value>Traghetti</value>
+  </data>
+  <data name="AvoidUnpaved" xml:space="preserve">
+    <value>Strade sterrate</value>
+  </data>
+  <data name="StartStation" xml:space="preserve">
+    <value>Stazione di partenza</value>
+  </data>
+  <data name="EndStation" xml:space="preserve">
+    <value>Stazione di arrivo</value>
+  </data>
+  <data name="UnitStationOption" xml:space="preserve">
+    <value>La stazione dell'unità</value>
+  </data>
+  <data name="LegColumn" xml:space="preserve">
+    <value>Tratto</value>
+  </data>
+  <data name="ArrivalColumn" xml:space="preserve">
+    <value>Arrivo</value>
+  </data>
+  <data name="StopGeofenceRadius" xml:space="preserve">
+    <value>Raggio di arrivo (m)</value>
+  </data>
+  <data name="StopGeofenceRadiusHelp" xml:space="preserve">
+    <value>Lascia vuoto per usare il raggio del percorso.</value>
+  </data>
+  <data name="OptimizeOrder" xml:space="preserve">
+    <value>Ottimizza ordine</value>
+  </data>
+  <data name="OptimizeTitle" xml:space="preserve">
+    <value>Ordine delle fermate ottimizzato</value>
+  </data>
+  <data name="OptimizeCurrent" xml:space="preserve">
+    <value>Ordine attuale</value>
+  </data>
+  <data name="OptimizeProposed" xml:space="preserve">
+    <value>Ordine proposto</value>
+  </data>
+  <data name="OptimizeAccept" xml:space="preserve">
+    <value>Usa questo ordine</value>
+  </data>
+  <data name="RouteStart" xml:space="preserve">
+    <value>Partenza</value>
+  </data>
+  <data name="RouteEnd" xml:space="preserve">
+    <value>Arrivo</value>
+  </data>
+  <data name="RouteTotal" xml:space="preserve">
+    <value>Totale</value>
+  </data>
+  <data name="RouteWithStops" xml:space="preserve">
+    <value>con fermate</value>
+  </data>
+  <data name="RouteEstimate" xml:space="preserve">
+    <value>stima in linea d’aria</value>
+  </data>
+  <data name="MoveUp" xml:space="preserve">
+    <value>Sposta su</value>
+  </data>
+  <data name="MoveDown" xml:space="preserve">
+    <value>Sposta giù</value>
+  </data>
+  <data name="DeleteStop" xml:space="preserve">
+    <value>Elimina fermata</value>
+  </data>
+  <data name="TruckNoVehicle" xml:space="preserve">
+    <value>Per questa unità non è impostata alcuna dimensione, quindi Camion calcola come Auto.</value>
+  </data>
+  <data name="OptimizeFailed" xml:space="preserve">
+    <value>Impossibile ottimizzare l'ordine delle fermate.</value>
+  </data>
+  <data name="OptimizeNoChange" xml:space="preserve">
+    <value>Le fermate sono già nell'ordine migliore.</value>
+  </data>
+  <data name="StopOrderFailed" xml:space="preserve">
+    <value>Impossibile salvare il nuovo ordine delle fermate. La pagina verrà ricaricata.</value>
+  </data>
+  <data name="StopMoveFailed" xml:space="preserve">
+    <value>Impossibile spostare la fermata. La pagina verrà ricaricata.</value>
+  </data>
 </root>

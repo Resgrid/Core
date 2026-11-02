@@ -45,7 +45,8 @@
 		<div class="wrapper wrapper-content">
 			<div class="ibox float-e-margins">
 				<div class="ibox-content">
-					<rg-unit-map unitid="@Model.Unit.UnitId" departmentid="@ClaimsAuthorizationHelper.GetDepartmentId()" mapheight="650px" strings="@System.Text.Json.JsonSerializer.Serialize(unitMapStrings)" leafletosmurl="@mapConfig.TileUrl" mapattribution="@mapConfig.Attribution" mapprovider="@mapConfig.MapProvider" mapstyleurl="@mapConfig.StyleUrl" mapaccesstoken="@mapConfig.AccessToken"></rg-unit-map>
+					<rg-unit-map unitid="@Model.Unit.UnitId" departmentid="@ClaimsAuthorizationHelper.GetDepartmentId()" mapheight="650px" strings="@System.Text.Json.JsonSerializer.Serialize(unitMapStrings)" leafletosmurl="@mapConfig.TileUrl" mapattribution="@mapConfig.Attribution" mapprovider="@mapConfig.MapProvider" mapstyleurl="@mapConfig.StyleUrl" mapaccesstoken="@mapConfig.AccessToken" maprenderer="@SettingsHelper.GetMapLibreWebConfig().Renderer" maplibrestyleurl="@SettingsHelper.GetMapLibreWebConfig().StyleUrlDay" traffic="off"></rg-unit-map>
+					<partial name="_MapKitConfig" />
 				</div>
 			</div>
 		</div>

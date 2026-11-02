@@ -1,0 +1,27 @@
+@model Resgrid.Web.Areas.User.Models.Routes.IRouteEditorModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Routes.Routes> localizer
+@* Which station a station start or end uses; empty is the plan unit's own station (§10.3). Shown with the matching checkbox. *@
+<div class="form-group" id="startStationGroup" style="display:none;">
+    <label class="col-sm-2 control-label" asp-for="Plan.StartDepartmentGroupId">@localizer["StartStation"]</label>
+    <div class="col-sm-4">
+        <select class="form-control" asp-for="Plan.StartDepartmentGroupId">
+            <option value="">@localizer["UnitStationOption"]</option>
+            @foreach (var station in Model.Editor.Stations)
+            {
+                <option value="@station.Id">@station.Name</option>
+            }
+        </select>
+    </div>
+</div>
+<div class="form-group" id="endStationGroup" style="display:none;">
+    <label class="col-sm-2 control-label" asp-for="Plan.EndDepartmentGroupId">@localizer["EndStation"]</label>
+    <div class="col-sm-4">
+        <select class="form-control" asp-for="Plan.EndDepartmentGroupId">
+            <option value="">@localizer["UnitStationOption"]</option>
+            @foreach (var station in Model.Editor.Stations)
+            {
+                <option value="@station.Id">@station.Name</option>
+            }
+        </select>
+    </div>
+</div>

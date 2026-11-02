@@ -2566,7 +2566,7 @@ Default: unset. Source: DepartmentSettingTypes.MappingMapboxAccessToken.
 <a id="setting-mappingmapstyle"></a>
 ## Mapping Map Style
 
-Mapping Map Style. The Mapbox base map (Streets, Outdoors, Light, Dark, Satellite, Satellite with Streets, Navigation Day, Navigation Night, or one of the Mapbox gallery's community styles such as Blueprint, Frank, Moonlight or North Star) every department map shows in a light theme: the website and the Dispatch, Responder, Unit, IC and BigBoard apps. Automatic is Streets. The website uses it only when the server has a website Mapbox token. When the department Mapbox override is on, its custom style and token replace this on the website and in the apps.
+Mapping Map Style. The Mapbox base map (Streets, Outdoors, Light, Dark, Satellite, Satellite with Streets, Navigation Day, Navigation Night, or one of the Mapbox gallery's community styles such as Blueprint, Frank, Moonlight or North Star) every department map shows in a light theme: the website and the Dispatch, Responder, Unit, IC and BigBoard apps. Automatic is Streets. The website uses it only when the server has a website Mapbox token. When the department Mapbox override is on, its custom style and token replace this on the website and in the apps. On a server that draws its own maps (self-hosted tiles) the settings page offers only the styles that server can render: no community styles, and satellite only when the server provides it.
 
 Default: 0. Source: DepartmentSettingTypes.MappingMapStyle.
 

@@ -16,14 +16,17 @@ namespace Resgrid.Services
 		private readonly IDepartmentGroupsService _departmentGroupsService;
 		private readonly IAddressService _addressService;
 		private readonly IMappingService _mappingService;
+		private readonly IRoutingService _routingService;
 
-		public GeoService(IGeoLocationProvider geoLocationProvider, ICallsService callsService, IDepartmentGroupsService departmentGroupsService, IAddressService addressService, IMappingService mappingService)
+		public GeoService(IGeoLocationProvider geoLocationProvider, ICallsService callsService, IDepartmentGroupsService departmentGroupsService, IAddressService addressService, IMappingService mappingService,
+			IRoutingService routingService)
 		{
 			_geoLocationProvider = geoLocationProvider;
 			_callsService = callsService;
 			_departmentGroupsService = departmentGroupsService;
 			_addressService = addressService;
 			_mappingService = mappingService;
+			_routingService = routingService;
 		}
 
 		public async Task<double> GetPersonnelEtaInSecondsAsync(ActionLog log)
@@ -33,7 +36,7 @@ namespace Resgrid.Services
 
 			if (log.DestinationId.HasValue)
 			{
-				RouteInformation route = null;
+				string destination = null;
 				if (log.DestinationType.ToDestinationEntityType() == DestinationEntityTypes.Station || log.ActionTypeId == (int)ActionTypes.RespondingToStation) // Department Group
 				{
 					var group = await _departmentGroupsService.GetGroupByIdAsync(log.DestinationId.Value, false);
@@ -47,11 +50,11 @@ namespace Resgrid.Services
 						else
 							address = await _addressService.GetAddressByIdAsync(group.AddressId.Value);
 
-						route = await _geoLocationProvider.GetRoute(log.GeoLocationData, address.FormatAddress());
+						destination = address?.FormatAddress();
 					}
 					else if (group != null && !String.IsNullOrWhiteSpace(group.Latitude) && !String.IsNullOrWhiteSpace(group.Longitude))
 					{
-						route = await _geoLocationProvider.GetRoute(log.GeoLocationData, string.Format("{0},{1}", group.Latitude, group.Longitude));
+						destination = string.Format("{0},{1}", group.Latitude, group.Longitude);
 					}
 				}
 				else if (log.DestinationType.ToDestinationEntityType() == DestinationEntityTypes.Call || log.ActionTypeId == (int)ActionTypes.RespondingToScene) // Call
@@ -59,7 +62,7 @@ namespace Resgrid.Services
 					var call = await _callsService.GetCallByIdAsync(log.DestinationId.Value, false);
 
 					if (call != null && !String.IsNullOrWhiteSpace(call.GeoLocationData))
-						route = await _geoLocationProvider.GetRoute(log.GeoLocationData, call.GeoLocationData);
+						destination = call.GeoLocationData;
 				}
 				else if (log.DestinationType.ToDestinationEntityType() == DestinationEntityTypes.Poi)
 				{
@@ -68,16 +71,21 @@ namespace Resgrid.Services
 					if (poi != null)
 					{
 						if (!String.IsNullOrWhiteSpace(poi.Address))
-							route = await _geoLocationProvider.GetRoute(log.GeoLocationData, poi.Address);
+							destination = poi.Address;
 						else
-							route = await _geoLocationProvider.GetRoute(log.GeoLocationData, String.Format(CultureInfo.InvariantCulture, "{0},{1}", poi.Latitude, poi.Longitude));
+							destination = String.Format(CultureInfo.InvariantCulture, "{0},{1}", poi.Latitude, poi.Longitude);
 					}
 				}
 
+				var route = await GetRoutedTravelAsync(log.GeoLocationData, destination, null);
+
 				if (route != null)
 				{
-					var timeDiff = route.ProcessedOn - log.Timestamp;
-					var time = route.Seconds - timeDiff.Seconds;
+					// The route runs from where the log was written; subtract the time the responder has travelled since. Measured
+					// from now, not the route's ComputedOn: a cached route can be older than the log. TotalSeconds, never Seconds
+					// (the 0–59 component), or a log older than a minute barely moves the ETA.
+					var travelledSeconds = Math.Max(0, (DateTime.UtcNow - log.Timestamp).TotalSeconds);
+					var time = route.DurationSeconds - travelledSeconds;
 
 					if (time < 0)
 						return 0;
@@ -91,19 +99,111 @@ namespace Resgrid.Services
 
 		public async Task<double> GetEtaInSecondsAsync(string start, string destination)
 		{
-			if (String.IsNullOrWhiteSpace(start) || String.IsNullOrWhiteSpace(destination))
-				return -1;
+			return await GetEtaInSecondsAsync(start, destination, null);
+		}
 
-			RouteInformation route = await _geoLocationProvider.GetRoute(start, destination);
+		public async Task<double> GetEtaInSecondsAsync(string start, string destination, VehicleProfile vehicle)
+		{
+			var route = await GetRoutedTravelAsync(start, destination, vehicle);
 
-			// A failed lookup comes back (and is cached) with Seconds = 0; reporting that as a
-			// zero-second ETA ranked the failure ahead of every real route.
-			if (route != null && route.Successful)
+			return route?.DurationSeconds ?? -1;
+		}
+
+		public async Task<List<double>> GetEtasInSecondsAsync(IReadOnlyList<string> origins, string destination, VehicleProfile vehicle = null)
+		{
+			var etas = (origins ?? new List<string>()).Select(_ => -1d).ToList();
+			var target = await ResolvePointAsync(destination);
+
+			if (target == null || etas.Count == 0)
+				return etas;
+
+			var points = new List<RoutingWaypoint>();
+			var indexes = new List<int>();
+			for (var i = 0; i < origins.Count; i++)
 			{
-				return route.Seconds;
+				var point = await ResolvePointAsync(origins[i]);
+				if (point == null)
+					continue;
+
+				points.Add(point);
+				indexes.Add(i);
 			}
 
-			return -1;
+			if (points.Count == 0)
+				return etas;
+
+			var matrix = await _routingService.GetMatrixAsync(new RouteMatrixRequest
+			{
+				Origins = points,
+				Destinations = new List<RoutingWaypoint> { target },
+				Profile = DriveTimeProfile(vehicle),
+				Vehicle = vehicle
+			});
+
+			// A matrix that only the straight-line estimate answered is not a drive time; callers keep their own estimate.
+			if (matrix?.Durations == null || matrix.Provider == RoutingProviderNames.Estimate)
+				return etas;
+
+			for (var p = 0; p < indexes.Count; p++)
+			{
+				var seconds = p < matrix.Durations.Length && matrix.Durations[p] != null && matrix.Durations[p].Length > 0 ? matrix.Durations[p][0] : null;
+				if (seconds.HasValue && seconds.Value >= 0)
+					etas[indexes[p]] = seconds.Value;
+			}
+
+			return etas;
+		}
+
+		/// <summary>
+		/// A routed drive between two "lat,lon" strings or addresses through the install's routing provider; null when
+		/// only the straight-line estimate could answer (callers have their own estimate and label it as one).
+		/// </summary>
+		private async Task<RouteResult> GetRoutedTravelAsync(string start, string destination, VehicleProfile vehicle)
+		{
+			if (String.IsNullOrWhiteSpace(start) || String.IsNullOrWhiteSpace(destination))
+				return null;
+
+			var from = await ResolvePointAsync(start);
+			var to = await ResolvePointAsync(destination);
+
+			if (from == null || to == null)
+				return null;
+
+			var route = await _routingService.GetRouteAsync(new RouteRequest
+			{
+				Waypoints = new List<RoutingWaypoint> { from, to },
+				Profile = DriveTimeProfile(vehicle),
+				Vehicle = vehicle
+			});
+
+			if (route == null || !route.Successful || route.Provider == RoutingProviderNames.Estimate)
+				return null;
+
+			return route;
+		}
+
+		private static RoutingProfile DriveTimeProfile(VehicleProfile vehicle)
+		{
+			if (vehicle != null && vehicle.HasAny)
+				return RoutingProfile.Truck;
+
+			return Config.MappingConfig.RoutingTrafficAware ? RoutingProfile.DrivingTraffic : RoutingProfile.Driving;
+		}
+
+		/// <summary>A "lat,lon" string as a point, else the address geocoded through the install's geocoding chain.</summary>
+		private async Task<RoutingWaypoint> ResolvePointAsync(string location)
+		{
+			if (String.IsNullOrWhiteSpace(location))
+				return null;
+
+			var parsed = GeoMath.ParseLatLonString(location);
+			if (parsed.HasValue)
+				return new RoutingWaypoint(parsed.Value.Latitude, parsed.Value.Longitude);
+
+			var geocoded = await _geoLocationProvider.GetLatLonFromAddress(location);
+			parsed = GeoMath.ParseLatLonString(geocoded);
+
+			return parsed.HasValue ? new RoutingWaypoint(parsed.Value.Latitude, parsed.Value.Longitude) : null;
 		}
 
 		public async Task<GeoMath.GeoPoint?> GetStationCoordinatesAsync(DepartmentGroup group)

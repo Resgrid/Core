@@ -135,32 +135,26 @@ var resgrid;
                     // No map when GPS coordinates are hidden by the field policy.
                     if (result && document.getElementById('callMap')) {
                         var data = result;
-                        const tiles1 = L.tileLayer(
-                            osmTileUrl,
-                            {
-                                maxZoom: 19,
-                                attribution: osmTileAttribution
-                            }
-                        );
-
-                        map = L.map('callMap', {
-                            scrollWheelZoom: false
-                        }).setView([data.centerLat, data.centerLon], 11).addLayer(tiles1);
+                        // resgrid.maps: MapLibre or Leaflet by the department's Maps.MapLibreWeb flag (maplibre plan section 7).
+                        resgrid.maps.create('callMap', { center: [Number(data.centerLat), Number(data.centerLon)], zoom: 11, scrollZoom: false, traffic: 'on' }).then(function (created) {
+                        map = created;
 
                         resgrid.dispatch.nearestboard.drawBoundaries();
 
-                        map.on('click', function (e) {
+                        map.onClick(function (clicked) {
+                            var e = { latlng: { lat: clicked[0], lng: clicked[1] } };
                             resgrid.dispatch.nearestboard.keepView(e.latlng.lat, e.latlng.lng);
                             resgrid.dispatch.editcall.setMarkerLocation(e.latlng.lat.toString(), e.latlng.lng.toString());
 
                             $("#Latitude").val(e.latlng.lat.toString());
                             $("#Longitude").val(e.latlng.lng.toString());
-                            map.panTo(e.latlng);
+                            map.setView(clicked);
 
                             resgrid.dispatch.editcall.geocodeCoordinates(e.latlng.lat, e.latlng.lng);
                         });
 
                         resgrid.dispatch.editcall.setMarkerLocation(data.centerLat, data.centerLon);
+                        });
                     }
                 });
 
@@ -179,7 +173,7 @@ var resgrid;
                                 var lat = result.Data.Latitude;
                                 var lng = result.Data.Longitude;
                                 if (map) {
-                                    map.setView(new L.LatLng(lat, lng), 16);
+                                    map.setView([Number(lat), Number(lng)], 16);
                                 }
                                 $("#Latitude").val(lat.toString());
                                 $("#Longitude").val(lng.toString());
@@ -203,7 +197,7 @@ var resgrid;
                     }).done(function (data) {
                         if (data && data.Latitude && data.Longitude) {
                             if (map) {
-                                map.setView(new L.LatLng(data.Latitude, data.Longitude), 16);
+                                map.setView([Number(data.Latitude), Number(data.Longitude)], 16);
                             }
 
                             $("#Latitude").val(data.Latitude);
@@ -227,7 +221,9 @@ var resgrid;
                         alert(getText('invalidCoordinates', 'Please enter valid numeric latitude and longitude values.'));
                         return false;
                     }
-                    map.setView(new L.LatLng(lat, lng), 16);
+                    if (map) {
+                        map.setView([Number(lat), Number(lng)], 16);
+                    }
                     resgrid.dispatch.editcall.setMarkerLocation(lat.toString(), lng.toString());
                     evt.preventDefault();
                 });
@@ -707,14 +703,12 @@ var resgrid;
                 }
 
                 if (callMarker) {
-                    callMarker.setLatLng(new L.LatLng(lat, lng));
+                    callMarker.setLatLng([Number(lat), Number(lng)]);
                 } else {
-                    callMarker = new L.marker(new L.LatLng(lat, lng), { draggable: 'true' }).addTo(map);
-                    callMarker.on('dragend', function (event) {
-                        var marker = event.target;
-                        var position = marker.getLatLng();
-                        marker.setLatLng(new L.LatLng(position.lat, position.lng), { draggable: 'true' });
-                        map.panTo(new L.LatLng(position.lat, position.lng));
+                    callMarker = map.addMarker([Number(lat), Number(lng)], { draggable: true });
+                    callMarker.onDragEnd(function (moved) {
+                        var position = { lat: moved[0], lng: moved[1] };
+                        map.setView(moved);
 
                         $("#Latitude").val(position.lat);
                         $("#Longitude").val(position.lng);

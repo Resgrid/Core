@@ -64,7 +64,7 @@ namespace Resgrid.Tests.Security
 			_controller = new ConnectController(Mock.Of<IUsersService>(), Mock.Of<IUserProfileService>(), departments.Object, signIn.Object, _users.Object,
 				audits.Object, sso.Object, Mock.Of<IEncryptionService>(), Mock.Of<ICacheProvider>(), Mock.Of<IUserSessionService>(),
 				Mock.Of<IExternalIdentityLinkService>(), _mfaPolicy.Object, Mock.Of<IMfaEvidenceService>(),
-				Mock.Of<IMfaLoginTransactionService>(), _broker.Object)
+				Mock.Of<IMfaLoginTransactionService>(), _broker.Object, Mock.Of<ILoginThrottleService>())
 			{
 				ControllerContext = new ControllerContext { HttpContext = http }
 			};

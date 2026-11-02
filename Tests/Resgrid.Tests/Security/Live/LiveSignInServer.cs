@@ -680,6 +680,7 @@ namespace Resgrid.Tests.Security.Live
 			builder.Services.AddSingleton(sso.Object);
 			builder.Services.AddSingleton(encryption.Object);
 			builder.Services.AddSingleton<ICacheProvider>(cache);
+			builder.Services.AddSingleton<ILoginThrottleService>(new LoginThrottleService(cache));
 			builder.Services.AddSingleton<IUserSessionService>(userSessions);
 			builder.Services.AddSingleton<IUserSessionsRepository>(Sessions);
 			builder.Services.AddSingleton(links.Object);

@@ -1,5 +1,6 @@
 import './styles/base.css';
 import { defineReactElement, type PropDefinition } from './runtime/customElement';
+import { rgMaps } from './maps/rgMaps';
 import type { MapElementProps } from './components/map/MapElement';
 import type { UnitMapElementProps } from './components/unitMap/UnitMapElement';
 import type { ShiftsCalendarElementProps } from './components/shifts/ShiftsCalendarElement';
@@ -19,6 +20,9 @@ const mapProps: readonly PropDefinition[] = [
   { attribute: 'mapprovider', property: 'mapProvider', type: 'string', defaultValue: '' },
   { attribute: 'mapstyleurl', property: 'mapStyleUrl', type: 'string', defaultValue: '' },
   { attribute: 'mapaccesstoken', property: 'mapAccessToken', type: 'string', defaultValue: '' },
+  { attribute: 'maprenderer', property: 'mapRenderer', type: 'string', defaultValue: '' },
+  { attribute: 'maplibrestyleurl', property: 'mapLibreStyleUrl', type: 'string', defaultValue: '' },
+  { attribute: 'traffic', property: 'traffic', type: 'string', defaultValue: '' },
   { attribute: 'mapconfig', property: 'mapConfig', type: 'json' },
 ];
 
@@ -51,6 +55,9 @@ defineReactElement<UnitMapElementProps>(
     { attribute: 'mapprovider', property: 'mapProvider', type: 'string', defaultValue: '' },
     { attribute: 'mapstyleurl', property: 'mapStyleUrl', type: 'string', defaultValue: '' },
     { attribute: 'mapaccesstoken', property: 'mapAccessToken', type: 'string', defaultValue: '' },
+    { attribute: 'maprenderer', property: 'mapRenderer', type: 'string', defaultValue: '' },
+    { attribute: 'maplibrestyleurl', property: 'mapLibreStyleUrl', type: 'string', defaultValue: '' },
+    { attribute: 'traffic', property: 'traffic', type: 'string', defaultValue: '' },
     { attribute: 'mapconfig', property: 'mapConfig', type: 'json' },
   ],
 );
@@ -108,6 +115,8 @@ defineReactElement<import('./components/mapViz/MapVisualizerElement').MapVisuali
     { attribute: 'strings', property: 'strings', type: 'json', defaultValue: {} },
     { attribute: 'tileurl', property: 'tileUrl', type: 'string', defaultValue: '' },
     { attribute: 'attribution', property: 'attribution', type: 'string', defaultValue: '' },
+    { attribute: 'maprenderer', property: 'mapRenderer', type: 'string', defaultValue: '' },
+    { attribute: 'maplibrestyleurl', property: 'mapLibreStyleUrl', type: 'string', defaultValue: '' },
     { attribute: 'initialid', property: 'initialId', type: 'string', defaultValue: '' },
     { attribute: 'initialtemplate', property: 'initialTemplate', type: 'string', defaultValue: '' },
     { attribute: 'initialcallid', property: 'initialCallId', type: 'number', defaultValue: 0 },
@@ -149,4 +158,12 @@ if (window.rgWebPush) {
     refreshWebPush().catch((error: unknown) => console.warn('Web push: refresh failed', error));
     askForPermissionOnce();
   });
+}
+
+// The map kit for server-rendered pages (window.resgrid.maps, maplibre plan section 7.1). This module runs before
+// DOMContentLoaded, so page code in $(document).ready can use it; MapLibre itself loads on the first map.
+{
+  const host = window as unknown as { resgrid?: Record<string, unknown> };
+  host.resgrid = host.resgrid ?? {};
+  host.resgrid.maps = rgMaps;
 }

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Map Icon Legend and status / priority map icon pages -->
+    <data name="VehicleSizeHeader" xml:space="preserve">
+    <value>Vehicle size and weight</value>
+  </data>
+  <data name="VehicleSizeHelp" xml:space="preserve">
+    <value>Routing avoids roads, bridges, tunnels and turns this vehicle cannot use. Leave a field blank when it does not apply.</value>
+  </data>
+  <data name="VehicleSizeUnitHelp" xml:space="preserve">
+    <value>Blank fields use the unit type's values (shown in grey).</value>
+  </data>
+  <data name="VehicleUnits" xml:space="preserve">
+    <value>Units</value>
+  </data>
+  <data name="VehicleUnitsImperial" xml:space="preserve">
+    <value>Feet and pounds</value>
+  </data>
+  <data name="VehicleUnitsMetric" xml:space="preserve">
+    <value>Metres and kilograms</value>
+  </data>
+  <data name="VehicleHeight" xml:space="preserve">
+    <value>Height</value>
+  </data>
+  <data name="VehicleWidth" xml:space="preserve">
+    <value>Width</value>
+  </data>
+  <data name="VehicleLength" xml:space="preserve">
+    <value>Length (including trailer)</value>
+  </data>
+  <data name="VehicleGrossWeight" xml:space="preserve">
+    <value>Gross weight</value>
+  </data>
+  <data name="VehicleAxleLoad" xml:space="preserve">
+    <value>Heaviest axle load</value>
+  </data>
+  <data name="VehicleAxleCount" xml:space="preserve">
+    <value>Axles</value>
+  </data>
+  <data name="VehicleHazmat" xml:space="preserve">
+    <value>Hazardous materials</value>
+  </data>
+  <data name="VehicleHazmatInherit" xml:space="preserve">
+    <value>Use unit type</value>
+  </data>
+  <data name="VehicleHazmatYes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="VehicleHazmatNo" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="VehicleLimitsAll" xml:space="preserve">
+    <value>Your routing provider applies all of these limits.</value>
+  </data>
+  <data name="VehicleLimitsSize" xml:space="preserve">
+    <value>Your routing provider applies height, width and weight only.</value>
+  </data>
+  <data name="VehicleLimitsNone" xml:space="preserve">
+    <value>Your routing provider does not apply vehicle limits; routes may use roads this vehicle cannot.</value>
+  </data>
+  <data name="VehicleDataCaveat" xml:space="preserve">
+    <value>Restrictions are only as complete as the map's road data; crews remain responsible for posted limits.</value>
+  </data>
+  <data name="VehicleRangeError" xml:space="preserve">
+    <value>{0} must be between {1} and {2}.</value>
+  </data>
+</root>

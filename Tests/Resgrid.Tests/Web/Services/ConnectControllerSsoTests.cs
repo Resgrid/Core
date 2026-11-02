@@ -60,7 +60,7 @@ namespace Resgrid.Tests.Web.Services
 				Mock.Of<IUserSessionService>(),
 				Mock.Of<IExternalIdentityLinkService>(),
 				Mock.Of<IMfaPolicyService>(),
-				Mock.Of<IMfaEvidenceService>(), Mock.Of<IMfaLoginTransactionService>(), _broker.Object)
+				Mock.Of<IMfaEvidenceService>(), Mock.Of<IMfaLoginTransactionService>(), _broker.Object, Mock.Of<ILoginThrottleService>())
 			{
 				ControllerContext = new ControllerContext { HttpContext = httpContext }
 			};

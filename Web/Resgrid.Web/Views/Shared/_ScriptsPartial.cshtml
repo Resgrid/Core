@@ -1,8 +1,8 @@
-﻿<script src="~/lib/jquery/dist/jquery.min.js"
-        asp-fallback-src="lib/jquery/jquery-1.12.3.min.js"
-        asp-fallback-test="window.jQuery"
+﻿@* The integrity is the hash of this site's own jquery.min.js (2.2.4). It was the CDN 1.12.3 hash, so browsers refused the file and
+   every page using this partial ran with no jQuery or Bootstrap. AccountPageScriptsTests pins it to the file. *@
+<script src="~/lib/jquery/dist/jquery.min.js"
         crossorigin="anonymous"
-        integrity="sha384-ugqypGWrzPLdx2zEQTF17cVktjb01piRKaDNnbYGRSxyEoeAm+MKZVtbDUYjxfZ6">
+        integrity="sha384-rY/jv8mMhqDabXSo+UCggqKtdmBfd3qC2/KvyTDNQ6PcUJXaxK1tMepoQda4g5vB">
 </script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"
         asp-fallback-src="~/lib/bootstrap/js/bootstrap.min.js"

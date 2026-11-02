@@ -2183,4 +2183,223 @@
   <data name="ShiftTradeApproversRoles" xml:space="preserve">
     <value>Mitglieder dieser Rollen</value>
   </data>
+  <data name="NavigationHeader" xml:space="preserve">
+    <value>Navigation</value>
+  </data>
+  <data name="NavigationHelp" xml:space="preserve">
+    <value>Standardwerte für die Turn-by-Turn-Navigation in der Resgrid Unit App. Besatzungen können Sprachansagen und zu meidende Straßen auf ihrem Gerät weiterhin ändern.</value>
+  </data>
+  <data name="NavigationNotEnabled" xml:space="preserve">
+    <value>Die In-App-Navigation ist für Ihre Abteilung noch nicht aktiviert. Diese Standardwerte gelten, sobald sie aktiviert ist.</value>
+  </data>
+  <data name="NavigationVoiceGuidanceLabel" xml:space="preserve">
+    <value>Sprachansagen</value>
+  </data>
+  <data name="NavigationVoiceGuidanceHelp" xml:space="preserve">
+    <value>Wegbeschreibungen standardmäßig vorlesen.</value>
+  </data>
+  <data name="NavigationDistanceUnitsLabel" xml:space="preserve">
+    <value>Entfernungseinheiten</value>
+  </data>
+  <data name="NavigationDistanceUnits_Device" xml:space="preserve">
+    <value>Wie das Gerät</value>
+  </data>
+  <data name="NavigationDistanceUnits_Imperial" xml:space="preserve">
+    <value>Meilen und Fuß</value>
+  </data>
+  <data name="NavigationDistanceUnits_Metric" xml:space="preserve">
+    <value>Kilometer und Meter</value>
+  </data>
+  <data name="NavigationArrivalRadiusLabel" xml:space="preserve">
+    <value>Ankunftsradius (Meter)</value>
+  </data>
+  <data name="NavigationArrivalRadiusHelp" xml:space="preserve">
+    <value>Wie nah eine Einheit ihrem Ziel kommen muss, um als angekommen zu gelten. 10 bis 1000; Standard 50.</value>
+  </data>
+  <data name="NavigationOnScenePromptLabel" xml:space="preserve">
+    <value>Bei Ankunft „Am Einsatzort“ anbieten</value>
+  </data>
+  <data name="NavigationOnScenePromptHelp" xml:space="preserve">
+    <value>Wenn eine Einheit an einem Einsatz ankommt, bietet die Navigation an, ihren Status auf „Am Einsatzort“ zu setzen.</value>
+  </data>
+  <data name="NavigationAvoidLabel" xml:space="preserve">
+    <value>Standardmäßig meiden</value>
+  </data>
+  <data name="NavigationAvoid_Tolls" xml:space="preserve">
+    <value>Mautstraßen</value>
+  </data>
+  <data name="NavigationAvoid_Highways" xml:space="preserve">
+    <value>Autobahnen</value>
+  </data>
+  <data name="NavigationAvoid_Ferries" xml:space="preserve">
+    <value>Fähren</value>
+  </data>
+  <data name="NavigationAvoid_Unpaved" xml:space="preserve">
+    <value>Unbefestigte Straßen</value>
+  </data>
+  <data name="NavigationAvoidHelp" xml:space="preserve">
+    <value>Straßen, die die Navigation der Einheiten meidet, sofern die Besatzung es nicht ändert.</value>
+  </data>
+  <data name="RouteDeviationsHeader" xml:space="preserve">
+    <value>Routenabweichungen</value>
+  </data>
+  <data name="RouteTimeDeviationsLabel" xml:space="preserve">
+    <value>Verspätete Ankünfte und lange Stopps erfassen</value>
+  </data>
+  <data name="RouteTimeDeviationsHelp" xml:space="preserve">
+    <value>Erfasst eine Abweichung, wenn eine Einheit auf einer Route später als geplant an einem Stopp ankommt oder länger als geschätzt an einem Stopp bleibt.</value>
+  </data>
+  <data name="RouteDeviationThresholdLabel" xml:space="preserve">
+    <value>Abweichungsschwelle (Minuten)</value>
+  </data>
+  <data name="RouteDeviationThresholdHelp" xml:space="preserve">
+    <value>Wie viele Minuten Verspätung oder Überschreitung der geschätzten Stoppzeit, bevor eine Abweichung erfasst wird. 1 bis 1440; Standard 15.</value>
+  </data>
+  <data name="OfflineMapsHeader" xml:space="preserve">
+    <value>Offline-Karten</value>
+  </data>
+  <data name="OfflineMapsHelp" xml:space="preserve">
+    <value>Was die Resgrid-Apps herunterladen, damit ihre Karten auch ohne Netz funktionieren.</value>
+  </data>
+  <data name="OfflineMapsNotEnabled" xml:space="preserve">
+    <value>Offline-Karten sind für Ihre Abteilung noch nicht aktiviert. Diese Einstellungen gelten, sobald sie aktiviert sind.</value>
+  </data>
+  <data name="OfflineResponseAreaLabel" xml:space="preserve">
+    <value>Maximales Einsatzgebiet</value>
+  </data>
+  <data name="OfflineResponseAreaHelp" xml:space="preserve">
+    <value>Zeichnen Sie das Gebiet, das die Apps in voller Detailtiefe herunterladen; Sie können mehrere Formen zeichnen. Ohne gezeichnetes Gebiet laden die Apps einen Kreis von {0} km um den Kartenmittelpunkt der Abteilung herunter.</value>
+  </data>
+  <data name="OfflineResponseAreaClear" xml:space="preserve">
+    <value>Gebiet entfernen</value>
+  </data>
+  <data name="OfflineResponseAreaGeoJsonHelp" xml:space="preserve">
+    <value>Das Gebiet als GeoJSON. Statt zu zeichnen, können Sie hier ein Polygon oder MultiPolygon aus einem GIS-Programm einfügen.</value>
+  </data>
+  <data name="OfflineAreaMeasuring" xml:space="preserve">
+    <value>Downloadgröße wird gemessen...</value>
+  </data>
+  <data name="OfflineAreaMeasureFailed" xml:space="preserve">
+    <value>Die Downloadgröße konnte nicht gemessen werden. Sie wird beim Speichern erneut geprüft.</value>
+  </data>
+  <data name="OfflineAreaSize" xml:space="preserve">
+    <value>Downloadgröße: {0} von erlaubten {1}. Fläche: {2} km².</value>
+  </data>
+  <data name="OfflineAreaNotMeasured" xml:space="preserve">
+    <value>Fläche: {0} km². Die Downloadgröße kann erst gemessen werden, wenn auf dem Server eine Basiskarte eingerichtet ist.</value>
+  </data>
+  <data name="OfflineAreaTooLarge" xml:space="preserve">
+    <value>Der Download für dieses Gebiet wäre {0} groß und damit über den erlaubten {1}. Zeichnen Sie ein kleineres Gebiet.</value>
+  </data>
+  <data name="OfflineAreaTooLargeArea" xml:space="preserve">
+    <value>Dieses Gebiet ist zu groß zum Herunterladen. Zeichnen Sie ein kleineres Gebiet.</value>
+  </data>
+  <data name="OfflineAreaSelfIntersecting" xml:space="preserve">
+    <value>Der Umriss des Gebiets überschneidet sich selbst. Zeichnen Sie es neu.</value>
+  </data>
+  <data name="OfflineAreaNoLocation" xml:space="preserve">
+    <value>Die Abteilung hat keinen Kartenmittelpunkt, keine Adresse und keine Wache, um die das Standardgebiet gelegt werden kann. Zeichnen Sie ein Gebiet oder legen Sie einen Kartenmittelpunkt fest.</value>
+  </data>
+  <data name="OfflineAreaInvalid" xml:space="preserve">
+    <value>Das Gebiet ist kein gültiges GeoJSON-Polygon.</value>
+  </data>
+  <data name="OfflineIncludedDataLabel" xml:space="preserve">
+    <value>Enthaltene Daten</value>
+  </data>
+  <data name="OfflineInclude_CustomMaps" xml:space="preserve">
+    <value>Benutzerdefinierte Karten</value>
+  </data>
+  <data name="OfflineInclude_IndoorMaps" xml:space="preserve">
+    <value>Innenraumkarten</value>
+  </data>
+  <data name="OfflineInclude_Layers" xml:space="preserve">
+    <value>Kartenebenen</value>
+  </data>
+  <data name="OfflineInclude_Pois" xml:space="preserve">
+    <value>Interessante Orte</value>
+  </data>
+  <data name="OfflineInclude_Hydrants" xml:space="preserve">
+    <value>Hydranten</value>
+  </data>
+  <data name="OfflineDownloadPolicyLabel" xml:space="preserve">
+    <value>Downloads</value>
+  </data>
+  <data name="OfflineDownloadPolicy_WifiOnly" xml:space="preserve">
+    <value>Nur über WLAN</value>
+  </data>
+  <data name="OfflineDownloadPolicy_AnyNetwork" xml:space="preserve">
+    <value>Über jedes Netz</value>
+  </data>
+  <data name="OfflineDownloadPolicy_Manual" xml:space="preserve">
+    <value>Nur wenn der Benutzer sie startet</value>
+  </data>
+  <data name="OfflineDownloadPolicyHelp" xml:space="preserve">
+    <value>Wann die Apps Offline-Karten herunterladen und aktualisieren.</value>
+  </data>
+  <data name="OfflineIncidentPacksLabel" xml:space="preserve">
+    <value>Einsätze außerhalb des Gebiets</value>
+  </data>
+  <data name="OfflineIncidentPacksHelp" xml:space="preserve">
+    <value>Die Karte um einen Einsatz außerhalb des Einsatzgebiets herunterladen.</value>
+  </data>
+  <data name="OfflineIncidentRadiusLabel" xml:space="preserve">
+    <value>Radius um Einsätze (km)</value>
+  </data>
+  <data name="OfflineCorridorPacksLabel" xml:space="preserve">
+    <value>Routen außerhalb des Gebiets</value>
+  </data>
+  <data name="OfflineCorridorPacksHelp" xml:space="preserve">
+    <value>Die Karte entlang einer geplanten Route herunterladen, wo sie das Einsatzgebiet verlässt.</value>
+  </data>
+  <data name="OfflineCorridorBufferLabel" xml:space="preserve">
+    <value>Breite beiderseits der Route (Meter)</value>
+  </data>
+  <data name="OfflineRefreshHoursLabel" xml:space="preserve">
+    <value>Auf Aktualisierungen prüfen alle (Stunden)</value>
+  </data>
+  <data name="OfflineRefreshHoursHelp" xml:space="preserve">
+    <value>Wie oft die Apps nach geänderten Karten suchen. 1 bis 720; Standard 24.</value>
+  </data>
+  <data name="OfflineStaleDaysLabel" xml:space="preserve">
+    <value>Veraltet nach (Tagen)</value>
+  </data>
+  <data name="OfflineStaleDaysHelp" xml:space="preserve">
+    <value>Heruntergeladene Karten, die so lange nicht aktualisiert wurden, werden als veraltet angezeigt. 1 bis 365; Standard 7.</value>
+  </data>
+  <data name="OfflinePreferLocalLabel" xml:space="preserve">
+    <value>Heruntergeladene Karten auch online nutzen</value>
+  </data>
+  <data name="OfflinePreferLocalHelp" xml:space="preserve">
+    <value>Innerhalb des Einsatzgebiets nutzen die Apps die heruntergeladene Basiskarte auch mit Netz, was mobile Daten spart.</value>
+  </data>
+  <data name="MapProviderBaseMap" xml:space="preserve">
+    <value>Basiskarte</value>
+  </data>
+  <data name="MapProviderRouting" xml:space="preserve">
+    <value>Routing</value>
+  </data>
+  <data name="MapProviderTraffic" xml:space="preserve">
+    <value>Live-Verkehr</value>
+  </data>
+  <data name="MapProviderSelfHosted" xml:space="preserve">
+    <value>Eigene Karten dieses Servers (OpenStreetMap)</value>
+  </data>
+  <data name="MapProviderRoutingEstimate" xml:space="preserve">
+    <value>Luftlinien-Schätzung</value>
+  </data>
+  <data name="MapProviderTrafficOn" xml:space="preserve">
+    <value>Verfügbar</value>
+  </data>
+  <data name="MapProviderTrafficOff" xml:space="preserve">
+    <value>Nicht verfügbar</value>
+  </data>
+  <data name="MapStyleSelfHostedNote" xml:space="preserve">
+    <value>Dieser Server zeichnet eigene Karten, daher werden nur die Stile aufgeführt, die er darstellen kann. Community-Stile und Satellitenbilder (sofern der Server keine bereitstellt) benötigen Mapbox.</value>
+  </data>
+  <data name="MapStyleServerGroup" xml:space="preserve">
+    <value>Stile dieses Servers</value>
+  </data>
+  <data name="MapStyleNotAvailable" xml:space="preserve">
+    <value>(auf diesem Server nicht verfügbar)</value>
+  </data>
 </root>

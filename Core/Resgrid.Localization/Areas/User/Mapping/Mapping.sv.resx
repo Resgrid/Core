@@ -284,4 +284,49 @@
   <data name="False" xml:space="preserve">
     <value>Nej</value>
   </data>
+  <data name="DrawToolPolygon" xml:space="preserve">
+    <value>Rita en polygon</value>
+  </data>
+  <data name="DrawToolRectangle" xml:space="preserve">
+    <value>Rita en rektangel</value>
+  </data>
+  <data name="DrawToolLine" xml:space="preserve">
+    <value>Rita en linje</value>
+  </data>
+  <data name="DrawToolPoint" xml:space="preserve">
+    <value>Placera en markör</value>
+  </data>
+  <data name="DrawToolCircle" xml:space="preserve">
+    <value>Rita en cirkel</value>
+  </data>
+  <data name="DrawToolText" xml:space="preserve">
+    <value>Lägg till text</value>
+  </data>
+  <data name="DrawToolCut" xml:space="preserve">
+    <value>Klipp den markerade formen (rita delen som ska bort)</value>
+  </data>
+  <data name="DrawToolRotate" xml:space="preserve">
+    <value>Rotera den markerade formen (dra på kartan)</value>
+  </data>
+  <data name="DrawToolSelect" xml:space="preserve">
+    <value>Markera och redigera</value>
+  </data>
+  <data name="DrawToolDelete" xml:space="preserve">
+    <value>Ta bort den markerade formen</value>
+  </data>
+  <data name="DrawToolClear" xml:space="preserve">
+    <value>Ta bort alla former</value>
+  </data>
+  <data name="DrawTextPrompt" xml:space="preserve">
+    <value>Text att visa</value>
+  </data>
+  <data name="DrawSelectShapeFirst" xml:space="preserve">
+    <value>Markera först en form på kartan.</value>
+  </data>
+  <data name="LayerElementsInvalid" xml:space="preserve">
+    <value>Lagrets former kunde inte läsas. Ladda om sidan och rita dem igen.</value>
+  </data>
+  <data name="TrafficLayer" xml:space="preserve">
+    <value>Trafik i realtid</value>
+  </data>
 </root>

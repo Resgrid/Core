@@ -284,4 +284,49 @@
   <data name="False" xml:space="preserve">
     <value>Nie</value>
   </data>
+  <data name="DrawToolPolygon" xml:space="preserve">
+    <value>Narysuj wielokąt</value>
+  </data>
+  <data name="DrawToolRectangle" xml:space="preserve">
+    <value>Narysuj prostokąt</value>
+  </data>
+  <data name="DrawToolLine" xml:space="preserve">
+    <value>Narysuj linię</value>
+  </data>
+  <data name="DrawToolPoint" xml:space="preserve">
+    <value>Umieść znacznik</value>
+  </data>
+  <data name="DrawToolCircle" xml:space="preserve">
+    <value>Narysuj okrąg</value>
+  </data>
+  <data name="DrawToolText" xml:space="preserve">
+    <value>Dodaj tekst</value>
+  </data>
+  <data name="DrawToolCut" xml:space="preserve">
+    <value>Wytnij zaznaczony kształt (narysuj część do usunięcia)</value>
+  </data>
+  <data name="DrawToolRotate" xml:space="preserve">
+    <value>Obróć zaznaczony kształt (przeciągnij na mapie)</value>
+  </data>
+  <data name="DrawToolSelect" xml:space="preserve">
+    <value>Zaznacz i edytuj</value>
+  </data>
+  <data name="DrawToolDelete" xml:space="preserve">
+    <value>Usuń zaznaczony kształt</value>
+  </data>
+  <data name="DrawToolClear" xml:space="preserve">
+    <value>Usuń wszystkie kształty</value>
+  </data>
+  <data name="DrawTextPrompt" xml:space="preserve">
+    <value>Tekst do wyświetlenia</value>
+  </data>
+  <data name="DrawSelectShapeFirst" xml:space="preserve">
+    <value>Najpierw zaznacz kształt na mapie.</value>
+  </data>
+  <data name="LayerElementsInvalid" xml:space="preserve">
+    <value>Nie udało się odczytać kształtów warstwy. Odśwież stronę i narysuj je ponownie.</value>
+  </data>
+  <data name="TrafficLayer" xml:space="preserve">
+    <value>Ruch na żywo</value>
+  </data>
 </root>

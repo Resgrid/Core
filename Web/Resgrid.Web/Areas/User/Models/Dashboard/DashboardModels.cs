@@ -220,6 +220,14 @@ namespace Resgrid.Web.Areas.User.Models.Dashboard
 		public string StyleUrl { get; set; }
 
 		public string AccessToken { get; set; }
+
+		/// <summary>"maplibre" when the department renders web maps with MapLibre GL (Maps.MapLibreWeb); else empty.</summary>
+		public string Renderer { get; set; }
+
+		/// <summary>Signed MapLibre style URLs (API Mapping/GetStyle) for the MapLibre mini map.</summary>
+		public string MapLibreStyleUrl { get; set; }
+
+		public string MapLibreStyleUrlNight { get; set; }
 	}
 
 	public class DashboardTemplateResult

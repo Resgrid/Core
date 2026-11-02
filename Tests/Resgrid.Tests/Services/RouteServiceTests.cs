@@ -8,6 +8,7 @@ using Moq;
 using NUnit.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Services;
 using Resgrid.Services;
 
 namespace Resgrid.Tests.Services
@@ -21,6 +22,8 @@ namespace Resgrid.Tests.Services
 		private Mock<IRouteInstancesRepository> _instancesRepo;
 		private Mock<IRouteInstanceStopsRepository> _instanceStopsRepo;
 		private Mock<IRouteDeviationsRepository> _deviationsRepo;
+		private Mock<IUnitLocationsDocRepository> _locationsRepo;
+		private Mock<IDepartmentSettingsService> _settingsService;
 		private RouteService _service;
 
 		[SetUp]
@@ -32,9 +35,13 @@ namespace Resgrid.Tests.Services
 			_instancesRepo = new Mock<IRouteInstancesRepository>();
 			_instanceStopsRepo = new Mock<IRouteInstanceStopsRepository>();
 			_deviationsRepo = new Mock<IRouteDeviationsRepository>();
+			_locationsRepo = new Mock<IUnitLocationsDocRepository>();
+			_settingsService = new Mock<IDepartmentSettingsService>();
+			_settingsService.Setup(x => x.GetMappingNavigationConfigAsync(It.IsAny<int>(), It.IsAny<bool>())).ReturnsAsync(new MappingNavigationConfig());
 			_service = new RouteService(
 				_plansRepo.Object, _stopsRepo.Object, _schedulesRepo.Object,
-				_instancesRepo.Object, _instanceStopsRepo.Object, _deviationsRepo.Object);
+				_instancesRepo.Object, _instanceStopsRepo.Object, _deviationsRepo.Object,
+				_locationsRepo.Object, _settingsService.Object);
 		}
 
 		#region Route Plan CRUD
@@ -169,8 +176,9 @@ namespace Resgrid.Tests.Services
 			var result = await _service.ReorderRouteStopsAsync("rp1", new List<string> { "rs2", "rs1" });
 
 			result.Should().BeTrue();
-			stops.First(s => s.RouteStopId == "rs2").StopOrder.Should().Be(0);
-			stops.First(s => s.RouteStopId == "rs1").StopOrder.Should().Be(1);
+			// RD3: contiguous 1-based order.
+			stops.First(s => s.RouteStopId == "rs2").StopOrder.Should().Be(1);
+			stops.First(s => s.RouteStopId == "rs1").StopOrder.Should().Be(2);
 		}
 
 		[Test]

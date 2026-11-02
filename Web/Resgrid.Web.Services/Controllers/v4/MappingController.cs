@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Resgrid.Framework;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Web.Services.Helpers;
 using Resgrid.Web.Services.Models.v4.CallPriorities;
@@ -20,6 +21,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using GeoJSON.Net.Feature;
 using Resgrid.Model.Helpers;
+using Resgrid.Services;
 
 namespace Resgrid.Web.Services.Controllers.v4
 {
@@ -52,6 +54,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IDepartmentDataProtectionService _dataProtectionService;
 		private readonly IDispatchScopeService _dispatchScopeService;
 		private readonly IMapIconsService _mapIconsService;
+		private readonly IMapStyleService _mapStyleService;
+		private readonly IStaticMapService _staticMapService;
+		private readonly ICustomMapMercatorTileRenderer _mercatorTileRenderer;
+		private readonly IOfflineMapPackService _offlineMapPackService;
+		private readonly IOfflineMapPackStore _offlineMapPackStore;
+		private readonly Microsoft.AspNetCore.Authorization.IAuthorizationService _policyAuthorization;
 		private readonly Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.MapIconLegend> _legendStrings;
 
 		public MappingController(
@@ -75,9 +83,21 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IRecordsHydrantsService hydrantsService,
 			IDispatchScopeService dispatchScopeService,
 			IMapIconsService mapIconsService,
-			Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.MapIconLegend> legendStrings
+			Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.MapIconLegend> legendStrings,
+			IMapStyleService mapStyleService,
+			IStaticMapService staticMapService,
+			Microsoft.AspNetCore.Authorization.IAuthorizationService policyAuthorization,
+			ICustomMapMercatorTileRenderer mercatorTileRenderer,
+			IOfflineMapPackService offlineMapPackService,
+			IOfflineMapPackStore offlineMapPackStore
 			)
 		{
+			_offlineMapPackService = offlineMapPackService;
+			_offlineMapPackStore = offlineMapPackStore;
+			_mercatorTileRenderer = mercatorTileRenderer;
+			_mapStyleService = mapStyleService;
+			_staticMapService = staticMapService;
+			_policyAuthorization = policyAuthorization;
 			_dispatchScopeService = dispatchScopeService;
 			_mapIconsService = mapIconsService;
 			_legendStrings = legendStrings;
@@ -1114,10 +1134,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <returns>Floor image file</returns>
 		[HttpGet("GetIndoorMapFloorImage/{floorId}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		[Authorize(Policy = ResgridResources.Call_View)]
+		[AllowAnonymous]
 		public async Task<IActionResult> GetIndoorMapFloorImage(string floorId)
 		{
+			// Bearer callers are checked exactly as before; native map sources that cannot send a header use a signed URL (plan D12).
+			var departmentId = await ResolveMapResourceDepartmentAsync(MapResourceUrls.IndoorFloorScope(floorId));
+			if (departmentId == null)
+				return Unauthorized();
+
 			var floor = await _indoorMapService.GetFloorByIdAsync(floorId);
 
 			if (floor == null)
@@ -1125,7 +1151,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			var map = await _indoorMapService.GetIndoorMapByIdAsync(floor.IndoorMapId);
 
-			if (map == null || map.DepartmentId != DepartmentId)
+			if (map == null || map.DepartmentId != departmentId.Value)
 				return NotFound();
 
 			if (floor.ImageData == null || floor.ImageData.Length == 0)
@@ -1289,7 +1315,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 						BoundsNELon = l.BoundsNELon,
 						BoundsSWLat = l.BoundsSWLat,
 						BoundsSWLon = l.BoundsSWLon,
-						Opacity = l.Opacity
+						Opacity = l.Opacity,
+						MercatorTileUrl = await MercatorTileUrlAsync(l)
 					});
 				}
 			}
@@ -1338,6 +1365,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				BoundsSWLat = layer.BoundsSWLat,
 				BoundsSWLon = layer.BoundsSWLon,
 				Opacity = layer.Opacity,
+				MercatorTileUrl = await MercatorTileUrlAsync(layer),
 				Regions = new System.Collections.Generic.List<CustomMapRegionResultData>()
 			};
 
@@ -1384,10 +1412,21 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <returns>Tile image file</returns>
 		[HttpGet("GetCustomMapTile/{layerId}/{z}/{x}/{y}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		[Authorize(Policy = ResgridResources.Call_View)]
+		[AllowAnonymous]
 		public async Task<IActionResult> GetCustomMapTile(string layerId, int z, int x, int y)
 		{
+			var departmentId = await ResolveMapResourceDepartmentAsync(MapResourceUrls.CustomMapScope(layerId));
+			if (departmentId == null)
+				return Unauthorized();
+
+			// The layer must belong to the caller's department (the web's GetLayerTile always checked this).
+			var layer = await _customMapService.GetLayerByIdAsync(layerId);
+			var map = layer != null ? await _customMapService.GetCustomMapByIdAsync(layer.IndoorMapId) : null;
+			if (map == null || map.DepartmentId != departmentId.Value)
+				return NotFound();
+
 			var tile = await _customMapService.GetTileAsync(layerId, z, x, y);
 
 			if (tile == null)
@@ -1403,16 +1442,21 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <returns>Layer image file</returns>
 		[HttpGet("GetCustomMapLayerImage/{layerId}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		[Authorize(Policy = ResgridResources.Call_View)]
+		[AllowAnonymous]
 		public async Task<IActionResult> GetCustomMapLayerImage(string layerId)
 		{
+			var departmentId = await ResolveMapResourceDepartmentAsync(MapResourceUrls.CustomMapScope(layerId));
+			if (departmentId == null)
+				return Unauthorized();
+
 			var layer = await _customMapService.GetLayerByIdAsync(layerId);
 			if (layer == null)
 				return NotFound();
 
 			var map = await _customMapService.GetCustomMapByIdAsync(layer.IndoorMapId);
-			if (map == null || map.DepartmentId != DepartmentId)
+			if (map == null || map.DepartmentId != departmentId.Value)
 				return NotFound();
 
 			if (layer.ImageData == null || layer.ImageData.Length == 0)
@@ -1734,6 +1778,435 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			return JsonConvert.SerializeObject(new { type = "FeatureCollection", features });
 		}
+
+		#region MapLibre map resources (maplibre-mapping-routing-navigation-plan.md D6, D12, §6.5, §6.6)
+
+		/// <summary>
+		/// The department's base map as a MapLibre style (Mapbox styles with mapbox:// URLs rewritten, self-hosted
+		/// styles, or a raster style). Bearer callers, or a signed URL from the config API.
+		/// </summary>
+		/// <param name="key">App key (surface) the style is for; empty for the website.</param>
+		/// <param name="variant">"day" (default) or "night".</param>
+		[HttpGet("GetStyle")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+		[AllowAnonymous]
+		public async Task<IActionResult> GetStyle([FromQuery] string key, [FromQuery] string variant, System.Threading.CancellationToken cancellationToken)
+		{
+			var surface = string.IsNullOrWhiteSpace(key) ? Config.InfoConfig.WebsiteKey : key;
+			var night = string.Equals(variant, "night", StringComparison.OrdinalIgnoreCase);
+
+			var departmentId = await ResolveMapResourceDepartmentAsync(MapResourceUrls.StyleScope(surface, night));
+			if (departmentId == null)
+				return Unauthorized();
+
+			var json = await _mapStyleService.GetStyleJsonAsync(departmentId.Value, surface, night, cancellationToken);
+			Response.Headers["Cache-Control"] = "private, max-age=3600";
+			return Content(json, "application/json");
+		}
+
+		/// <summary>
+		/// A small map image centred on a point, in the department's style. The URL template the config API publishes
+		/// (StaticMapUrlTemplate) fills lat, lon, zoom (GL scale), width, height, scale (1|2) and scheme (day|night).
+		/// </summary>
+		[HttpGet("GetStaticMap")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+		[AllowAnonymous]
+		public async Task<IActionResult> GetStaticMap([FromQuery] string key, [FromQuery] double lat, [FromQuery] double lon, [FromQuery] double zoom,
+			[FromQuery] int width, [FromQuery] int height, [FromQuery] int scale, [FromQuery] string scheme, [FromQuery] int? marker,
+			[FromQuery] int? style, System.Threading.CancellationToken cancellationToken)
+		{
+			var departmentId = await ResolveMapResourceDepartmentAsync(MapResourceUrls.StaticMapScope);
+			if (departmentId == null)
+				return Unauthorized();
+
+			if (lat < -85 || lat > 85 || lon < -180 || lon > 180 || width <= 0 || height <= 0)
+				return BadRequest();
+
+			var night = string.Equals(scheme, "night", StringComparison.OrdinalIgnoreCase);
+
+			// style: a preset preview (Mapping Settings) instead of the department's own style; additive, Omni never sends it.
+			var image = style.HasValue && Enum.IsDefined(typeof(MapStyleTypes), style.Value)
+				? await _staticMapService.GetStylePreviewAsync((MapStyleTypes)style.Value, night, lat, lon, zoom <= 0 ? 15 : zoom, width, height, scale, cancellationToken)
+				: await _staticMapService.GetStaticMapAsync(departmentId.Value, key, lat, lon, zoom <= 0 ? 15 : zoom, width, height, scale, night, marker != 0, cancellationToken);
+
+			Response.Headers["Cache-Control"] = "private, max-age=86400";
+			return File(image.Bytes, image.ContentType);
+		}
+
+		/// <summary>
+		/// A georeferenced custom map layer as Web Mercator XYZ tiles for MapLibre (plan §6.7). Empty (204) outside the
+		/// layer; 404 for a pixel-only layer. Bearer callers, or the signed template from the layer results.
+		/// </summary>
+		[HttpGet("GetCustomMapMercatorTile/{layerId}/{z}/{x}/{y}")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status204NoContent)]
+		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[AllowAnonymous]
+		public async Task<IActionResult> GetCustomMapMercatorTile(string layerId, int z, int x, int y)
+		{
+			var departmentId = await ResolveMapResourceDepartmentAsync(MapResourceUrls.CustomMapScope(layerId));
+			if (departmentId == null)
+				return Unauthorized();
+
+			var layer = await _customMapService.GetLayerByIdAsync(layerId);
+			var map = layer != null ? await _customMapService.GetCustomMapByIdAsync(layer.IndoorMapId) : null;
+			if (map == null || map.DepartmentId != departmentId.Value)
+				return NotFound();
+
+			if (await _mercatorTileRenderer.GetBoundsAsync(layer) == null)
+				return NotFound();
+
+			var tile = await _mercatorTileRenderer.RenderTileAsync(layer, z, x, y);
+			Response.Headers["Cache-Control"] = "private, max-age=604800";
+
+			return tile == null ? NoContent() : File(tile, "image/png");
+		}
+
+		#region Offline map packs (maplibre-mapping-routing-navigation-plan.md section 19)
+
+		/// <summary>
+		/// The offline manifest the apps sync (§19.3): base-map cells over the department's response area, custom map
+		/// rasters, indoor/custom map images, the department data bundle, sprite and offline styles, each with a signed,
+		/// same-origin, Range-capable download URL. Bearer callers, or the signed URL from the config API.
+		/// </summary>
+		[HttpGet("GetOfflineManifest")]
+		[AllowAnonymous]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		public async Task<IActionResult> GetOfflineManifest(CancellationToken cancellationToken)
+		{
+			var departmentId = await ResolveMapResourceDepartmentAsync(MapResourceUrls.OfflineManifestScope);
+			if (!departmentId.HasValue)
+				return DeniedMapResource();
+
+			if (!await _offlineMapPackService.IsAvailableForDepartmentAsync(departmentId.Value))
+				return NotFound();
+
+			var manifest = await _offlineMapPackService.GetManifestAsync(departmentId.Value, cancellationToken);
+			var lifetime = TimeSpan.FromHours(Math.Max(1, Config.MappingConfig.SignedMapUrlTtlHours));
+			var expires = DateTime.UtcNow.Add(lifetime).ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture);
+			var api = $"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/v4/Mapping";
+
+			// Signed per request (the manifest itself is cached without URLs).
+			var signed = JsonConvert.DeserializeObject<OfflineManifest>(JsonConvert.SerializeObject(manifest));
+			signed.Sprite = manifest.Sprite == null ? null : JsonConvert.DeserializeObject<OfflineManifestSprite>(JsonConvert.SerializeObject(manifest.Sprite));
+
+			foreach (var pack in signed.Packs)
+			{
+				if (pack.Status != (int)OfflineMapPackStatus.Ready)
+					continue;
+
+				pack.DownloadUrl = MapResourceUrls.Sign($"{api}/GetOfflinePack/{pack.PackId}", departmentId.Value, MapResourceUrls.OfflinePackScope(pack.PackId), lifetime);
+				pack.ExpiresUtc = expires;
+			}
+
+			if (signed.Sprite != null && manifest.Sprite != null)
+			{
+				foreach (var file in signed.Sprite.Files)
+					file.Url = MapResourceUrls.Sign($"{api}/GetOfflinePack/{manifest.Sprite.PackId}?file={Uri.EscapeDataString(file.Name)}", departmentId.Value,
+						MapResourceUrls.OfflinePackScope(manifest.Sprite.PackId), lifetime);
+			}
+
+			if (signed.DepartmentData != null)
+				signed.DepartmentData.Url = MapResourceUrls.Sign($"{api}/GetOfflineDepartmentData", departmentId.Value, MapResourceUrls.OfflineDataScope, lifetime);
+
+			if (signed.Styles != null)
+			{
+				foreach (var (file, name) in new[] { (signed.Styles.Day, "day.json"), (signed.Styles.Night, "night.json"), (signed.Styles.Glyphs, "glyphs.zip") })
+				{
+					if (file != null)
+						file.Url = MapResourceUrls.Sign($"{api}/GetOfflineAsset/{name}", departmentId.Value, MapResourceUrls.OfflineAssetScope(name), lifetime);
+				}
+			}
+
+			for (var i = 0; i < signed.IndoorFloors.Count; i++)
+			{
+				var floor = signed.IndoorFloors[i];
+				floor.ImageUrl = manifest.IndoorFloors[i].IsCustomMapLayer
+					? MapResourceUrls.Sign($"{api}/GetCustomMapLayerImage/{floor.FloorId}", departmentId.Value, MapResourceUrls.CustomMapScope(floor.FloorId), lifetime)
+					: MapResourceUrls.Sign($"{api}/GetIndoorMapFloorImage/{floor.FloorId}", departmentId.Value, MapResourceUrls.IndoorFloorScope(floor.FloorId), lifetime);
+			}
+
+			Response.Headers["Cache-Control"] = "private, no-store";
+			return Content(JsonConvert.SerializeObject(new { Data = signed, Status = ResponseHelper.Success }), "application/json");
+		}
+
+		/// <summary>
+		/// Downloads a built offline pack (§19.3): PMTiles, or one sprite file (?file=). Supports HTTP Range; the ETag is the
+		/// SHA-256. An expired or invalid signature answers 410 so the app refetches the manifest.
+		/// </summary>
+		[HttpGet("GetOfflinePack/{packId}")]
+		[AllowAnonymous]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status206PartialContent)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[ProducesResponseType(StatusCodes.Status410Gone)]
+		public async Task<IActionResult> GetOfflinePack(string packId, [FromQuery] string file, CancellationToken cancellationToken)
+		{
+			var departmentId = await ResolveMapResourceDepartmentAsync(MapResourceUrls.OfflinePackScope(packId));
+			if (!departmentId.HasValue)
+				return DeniedMapResource();
+
+			var pack = await _offlineMapPackService.GetPackAsync(packId);
+
+			// Shared base-map cells serve every department; department packs only their own.
+			if (pack == null || pack.Status != (int)OfflineMapPackStatus.Ready || (pack.DepartmentId.HasValue && pack.DepartmentId.Value != departmentId.Value))
+				return NotFound();
+
+			string key, sha, contentType;
+			long size;
+
+			if (pack.Kind == (int)OfflineMapPackKind.Sprite)
+			{
+				var files = JsonConvert.DeserializeObject<List<OfflineMapPackFile>>(pack.FilesJson ?? "[]") ?? new List<OfflineMapPackFile>();
+				var entry = files.FirstOrDefault(f => f.Name == file);
+				if (entry == null)
+					return NotFound();
+
+				key = pack.StoragePath + "/" + entry.Name;
+				sha = entry.Sha256;
+				size = entry.SizeBytes;
+				contentType = entry.Name.EndsWith(".png", StringComparison.Ordinal) ? "image/png" : "application/json";
+			}
+			else
+			{
+				key = pack.StoragePath;
+				sha = pack.Sha256;
+				size = pack.SizeBytes;
+				contentType = "application/vnd.pmtiles";
+			}
+
+			return await ServeStoredFileAsync(key, size, sha, contentType, cancellationToken);
+		}
+
+		/// <summary>The department data bundle (gzip JSON of GeoJSON collections by section).</summary>
+		[HttpGet("GetOfflineDepartmentData")]
+		[AllowAnonymous]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[ProducesResponseType(StatusCodes.Status410Gone)]
+		public async Task<IActionResult> GetOfflineDepartmentData(CancellationToken cancellationToken)
+		{
+			var departmentId = await ResolveMapResourceDepartmentAsync(MapResourceUrls.OfflineDataScope);
+			if (!departmentId.HasValue)
+				return DeniedMapResource();
+
+			if (!await _offlineMapPackService.IsAvailableForDepartmentAsync(departmentId.Value))
+				return NotFound();
+
+			var data = await _offlineMapPackService.GetDepartmentDataAsync(departmentId.Value, cancellationToken);
+			Response.Headers["ETag"] = $"\"{data.Sha256}\"";
+			Response.Headers["Cache-Control"] = "private, no-cache";
+
+			// Served as the gzip file itself (no Content-Encoding), so the app checks the SHA-256 of exactly what it stores.
+			return File(data.Content, "application/gzip", enableRangeProcessing: true);
+		}
+
+		/// <summary>An offline style or glyph archive (day.json, night.json, glyphs.zip) mirrored into the pack store.</summary>
+		[HttpGet("GetOfflineAsset/{name}")]
+		[AllowAnonymous]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[ProducesResponseType(StatusCodes.Status410Gone)]
+		public async Task<IActionResult> GetOfflineAsset(string name, CancellationToken cancellationToken)
+		{
+			var departmentId = await ResolveMapResourceDepartmentAsync(MapResourceUrls.OfflineAssetScope(name));
+			if (!departmentId.HasValue)
+				return DeniedMapResource();
+
+			var key = Resgrid.Services.OfflineMapPackService.StyleStoreKey(name);
+			if (key == null)
+				return NotFound();
+
+			var manifest = await _offlineMapPackService.GetManifestAsync(departmentId.Value, cancellationToken);
+			var listed = name == "day.json" ? manifest.Styles?.Day : name == "night.json" ? manifest.Styles?.Night : manifest.Styles?.Glyphs;
+			if (listed == null)
+				return NotFound();
+
+			return await ServeStoredFileAsync(key, listed.SizeBytes ?? 0, listed.Sha256, name.EndsWith(".zip", StringComparison.Ordinal) ? "application/zip" : "application/json", cancellationToken);
+		}
+
+		/// <summary>
+		/// The base-map download size of a maximum response area while it is drawn (§19.3): size in bytes, cell count and
+		/// whether it fits the limit. An empty area measures the fallback circle.
+		/// </summary>
+		[HttpPost("EstimateResponseArea")]
+		[Authorize(Policy = ResgridResources.Department_View)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		public async Task<ActionResult<EstimateResponseAreaResult>> EstimateResponseArea([FromBody] EstimateResponseAreaInput input, CancellationToken cancellationToken)
+		{
+			var estimate = await _offlineMapPackService.EstimateResponseAreaAsync(DepartmentId, input?.GeoJson, cancellationToken);
+
+			var result = new EstimateResponseAreaResult { Data = estimate };
+			result.PageSize = 1;
+			result.Status = estimate.Valid ? ResponseHelper.Success : ResponseHelper.Failure;
+			ResponseHelper.PopulateV4ResponseData(result);
+			return Ok(result);
+		}
+
+		/// <summary>No bearer and no valid signature: 410 when a signature was sent (expired), else 401.</summary>
+		private IActionResult DeniedMapResource()
+		{
+			return string.IsNullOrWhiteSpace(Request.Query[MapResourceUrls.SignatureParameter]) ? Unauthorized() : StatusCode(StatusCodes.Status410Gone);
+		}
+
+		/// <summary>A stored file with Accept-Ranges, a single byte range when asked, and the SHA-256 as ETag.</summary>
+		private async Task<IActionResult> ServeStoredFileAsync(string key, long size, string sha, string contentType, CancellationToken cancellationToken)
+		{
+			if (size <= 0)
+				size = await _offlineMapPackStore.GetSizeAsync(key, cancellationToken) ?? 0;
+			if (size <= 0)
+				return NotFound();
+
+			Response.Headers["Accept-Ranges"] = "bytes";
+			if (!string.IsNullOrWhiteSpace(sha))
+				Response.Headers["ETag"] = $"\"{sha}\"";
+			Response.Headers["Cache-Control"] = "private, max-age=86400";
+
+			long start = 0, end = size - 1;
+			var ranged = false;
+			var range = Request.Headers["Range"].ToString();
+			if (!string.IsNullOrWhiteSpace(range) && range.StartsWith("bytes=", StringComparison.OrdinalIgnoreCase) && !range.Contains(','))
+			{
+				var parts = range.Substring(6).Split('-');
+				if (parts.Length == 2)
+				{
+					if (parts[0].Length == 0 && long.TryParse(parts[1], out var suffix) && suffix > 0)
+					{
+						start = Math.Max(0, size - suffix);
+						ranged = true;
+					}
+					else if (long.TryParse(parts[0], out var first))
+					{
+						start = first;
+						if (parts[1].Length > 0 && long.TryParse(parts[1], out var last))
+							end = Math.Min(last, size - 1);
+						ranged = true;
+					}
+				}
+
+				if (ranged && (start >= size || start > end))
+				{
+					Response.Headers["Content-Range"] = $"bytes */{size}";
+					return StatusCode(StatusCodes.Status416RangeNotSatisfiable);
+				}
+			}
+
+			var length = end - start + 1;
+			var stream = await _offlineMapPackStore.OpenReadAsync(key, start, length, cancellationToken);
+
+			Response.ContentLength = length;
+			if (ranged)
+			{
+				Response.StatusCode = StatusCodes.Status206PartialContent;
+				Response.Headers["Content-Range"] = $"bytes {start}-{end}/{size}";
+			}
+
+			return new FileStreamResult(stream, contentType);
+		}
+
+		#endregion Offline map packs
+
+		private async Task<string> MercatorTileUrlAsync(IndoorMapFloor layer)
+		{
+			if (layer == null || await _mercatorTileRenderer.GetBoundsAsync(layer) == null)
+				return null;
+
+			var url = $"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/v4/Mapping/GetCustomMapMercatorTile/{layer.IndoorMapFloorId}/{{z}}/{{x}}/{{y}}";
+			return MapResourceUrls.Sign(url, DepartmentId, MapResourceUrls.CustomMapScope(layer.IndoorMapFloorId));
+		}
+
+		/// <summary>
+		/// Signs custom map tile/image and indoor floor image URLs of the caller's department so native map sources, which
+		/// cannot send an Authorization header, can load them. Template URLs ({z}/{x}/{y}) stay valid after signing.
+		/// URLs for other resources or other departments come back null.
+		/// </summary>
+		[HttpPost("SignMapResourceUrls")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		public async Task<ActionResult<SignMapResourceUrlsResult>> SignMapResourceUrls([FromBody] SignMapResourceUrlsInput input)
+		{
+			var result = new SignMapResourceUrlsResult();
+
+			foreach (var url in (input?.Urls ?? new List<string>()).Take(200))
+				result.Data.Add(new SignedMapResourceUrl { Url = url, SignedUrl = await SignIfOwnedAsync(url) });
+
+			result.PageSize = result.Data.Count;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+			return Ok(result);
+		}
+
+		private async Task<string> SignIfOwnedAsync(string url)
+		{
+			if (string.IsNullOrWhiteSpace(url))
+				return null;
+
+			var path = url;
+			var queryStart = path.IndexOf('?');
+			if (queryStart >= 0)
+				path = path.Substring(0, queryStart);
+
+			var marker = "/Mapping/";
+			var index = path.IndexOf(marker, StringComparison.OrdinalIgnoreCase);
+			if (index < 0)
+				return null;
+
+			var segments = path.Substring(index + marker.Length).Split('/', StringSplitOptions.RemoveEmptyEntries);
+			if (segments.Length < 2)
+				return null;
+
+			string scope = null;
+			switch (segments[0].ToLowerInvariant())
+			{
+				case "getcustommaptile":
+				case "getcustommaplayerimage":
+				case "getcustommapmercatortile":
+				{
+					var layer = await _customMapService.GetLayerByIdAsync(segments[1]);
+					var map = layer != null ? await _customMapService.GetCustomMapByIdAsync(layer.IndoorMapId) : null;
+					if (map != null && map.DepartmentId == DepartmentId)
+						scope = MapResourceUrls.CustomMapScope(segments[1]);
+					break;
+				}
+				case "getindoormapfloorimage":
+				{
+					var floor = await _indoorMapService.GetFloorByIdAsync(segments[1]);
+					var map = floor != null ? await _indoorMapService.GetIndoorMapByIdAsync(floor.IndoorMapId) : null;
+					if (map != null && map.DepartmentId == DepartmentId)
+						scope = MapResourceUrls.IndoorFloorScope(segments[1]);
+					break;
+				}
+			}
+
+			return scope == null ? null : MapResourceUrls.Sign(url, DepartmentId, scope);
+		}
+
+		/// <summary>
+		/// The department a map resource request may read: a bearer caller with Call_View (exactly as these routes always
+		/// required), or a valid signed URL for this resource. Null means not allowed.
+		/// </summary>
+		private async Task<int?> ResolveMapResourceDepartmentAsync(string scope)
+		{
+			if (User?.Identity?.IsAuthenticated == true)
+			{
+				var authorized = await _policyAuthorization.AuthorizeAsync(User, ResgridResources.Call_View);
+				return authorized.Succeeded ? DepartmentId : (int?)null;
+			}
+
+			if (MapResourceUrls.TryValidate(Request.Query[MapResourceUrls.DepartmentParameter], Request.Query[MapResourceUrls.ExpiresParameter],
+				    Request.Query[MapResourceUrls.SignatureParameter], scope, out var signedDepartmentId))
+				return signedDepartmentId;
+
+			return null;
+		}
+
+		#endregion MapLibre map resources
 
 		private static bool IsPointNearBounds(double lat, double lon, double radiusMeters,
 			decimal boundsNELat, decimal boundsNELon, decimal boundsSWLat, decimal boundsSWLon)

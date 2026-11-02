@@ -284,4 +284,49 @@
   <data name="False" xml:space="preserve">
     <value>False</value>
   </data>
+  <data name="DrawToolPolygon" xml:space="preserve">
+    <value>Draw a polygon</value>
+  </data>
+  <data name="DrawToolRectangle" xml:space="preserve">
+    <value>Draw a rectangle</value>
+  </data>
+  <data name="DrawToolLine" xml:space="preserve">
+    <value>Draw a line</value>
+  </data>
+  <data name="DrawToolPoint" xml:space="preserve">
+    <value>Place a marker</value>
+  </data>
+  <data name="DrawToolCircle" xml:space="preserve">
+    <value>Draw a circle</value>
+  </data>
+  <data name="DrawToolText" xml:space="preserve">
+    <value>Add text</value>
+  </data>
+  <data name="DrawToolCut" xml:space="preserve">
+    <value>Cut the selected shape (draw the part to remove)</value>
+  </data>
+  <data name="DrawToolRotate" xml:space="preserve">
+    <value>Rotate the selected shape (drag on the map)</value>
+  </data>
+  <data name="DrawToolSelect" xml:space="preserve">
+    <value>Select and edit</value>
+  </data>
+  <data name="DrawToolDelete" xml:space="preserve">
+    <value>Delete the selected shape</value>
+  </data>
+  <data name="DrawToolClear" xml:space="preserve">
+    <value>Remove all shapes</value>
+  </data>
+  <data name="DrawTextPrompt" xml:space="preserve">
+    <value>Text to show</value>
+  </data>
+  <data name="DrawSelectShapeFirst" xml:space="preserve">
+    <value>Select a shape on the map first.</value>
+  </data>
+  <data name="LayerElementsInvalid" xml:space="preserve">
+    <value>The layer's shapes could not be read. Reload the page and draw them again.</value>
+  </data>
+  <data name="TrafficLayer" xml:space="preserve">
+    <value>Live traffic</value>
+  </data>
 </root>

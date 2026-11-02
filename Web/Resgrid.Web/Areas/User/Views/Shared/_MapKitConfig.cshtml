@@ -1,0 +1,21 @@
+@*
+    The base map config resgrid.maps reads (window.resgridMapConfig, maplibre plan section 7.1): MapLibre with the
+    department's signed style when Maps.MapLibreWeb is on, else the Leaflet raster tiles. Include before page map scripts.
+*@
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.Mapping> kitLocalizer
+@{
+    var kitTiles = SettingsHelper.GetDepartmentMapConfig(Resgrid.Config.InfoConfig.WebsiteKey);
+    var kitGl = SettingsHelper.GetMapLibreWebConfig();
+}
+<script type="text/javascript">
+    window.resgridMapConfig = @Html.ScriptJson(new
+    {
+        renderer = kitGl.Renderer,
+        styleUrl = kitGl.StyleUrlDay,
+        tileUrl = kitTiles.TileUrl,
+        attribution = kitTiles.Attribution,
+        trafficUrl = kitGl.TrafficTileUrl,
+        trafficRefreshSeconds = kitGl.TrafficRefreshSeconds,
+        trafficLabel = kitLocalizer["TrafficLayer"].Value
+    });
+</script>

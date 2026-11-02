@@ -151,6 +151,12 @@ namespace Resgrid.Model.Services
 		/// <returns>Task&lt;UnitType&gt;.</returns>
 		Task<UnitType> GetUnitTypeByNameAsync(int departmentId, string type);
 
+		/// <summary>The unit's effective vehicle size and weight (its own values, else its type's); null when it has none.</summary>
+		Task<VehicleProfile> GetUnitVehicleProfileAsync(Unit unit);
+
+		/// <summary>Effective vehicle profiles keyed by unit id; units without any limit are left out.</summary>
+		Task<Dictionary<int, VehicleProfile>> GetVehicleProfilesForUnitsAsync(int departmentId, IEnumerable<Unit> units);
+
 		/// <summary>
 		/// Adds the unit type asynchronous.
 		/// </summary>

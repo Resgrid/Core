@@ -41,5 +41,8 @@ namespace Resgrid.Model.Providers
 
 		/// <summary>Calls awaiting resources changed or a freed unit matches one (department id, call id, alert payload).</summary>
 		void RegisterForOutstandingRequirementsEvents(Func<int, string, string, Task> outstandingRequirementsEvent);
+
+		/// <summary>A navigating unit's live ETA changed or ended (department id, unit id, ids-and-state payload without the ETA).</summary>
+		void RegisterForUnitNavigationEvents(Func<int, string, string, Task> unitNavigationEvent);
 	}
 }

@@ -24,6 +24,9 @@ namespace Resgrid.Model
 		OutstandingRequirementsUpdated = 14,
 
 		/// <summary>Who holds a unit's active roles (its current crew) changed; item id = unit id (0 = several units).</summary>
-		UnitActiveRolesUpdated = 15
+		UnitActiveRolesUpdated = 15,
+
+		/// <summary>A navigating unit's live ETA changed or its navigation ended; item id = unit id, payload = ids and state (no ETA).</summary>
+		UnitNavigationUpdated = 16
 	}
 }

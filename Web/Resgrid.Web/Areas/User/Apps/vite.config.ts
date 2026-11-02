@@ -1,12 +1,40 @@
+import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+
+/**
+ * maplibre-gl 6 starts its web worker from maplibre-gl-worker.mjs beside its own module, a file this library build never
+ * writes. Emit the worker as an asset and expose its URL as a virtual module: Rollup turns the reference into a URL
+ * relative to whichever chunk imports it, and src/maps/maplibreLoader.ts hands it to maplibre.setWorkerUrl.
+ */
+function maplibreWorker() {
+  const id = 'virtual:maplibre-worker-url';
+  const resolvedId = '\0' + id;
+
+  return {
+    name: 'resgrid-maplibre-worker',
+    resolveId: (source: string) => (source === id ? resolvedId : null),
+    load(this: { emitFile: (file: { type: 'asset'; name: string; source: Uint8Array }) => string }, source: string) {
+      if (source !== resolvedId) {
+        return null;
+      }
+
+      const reference = this.emitFile({
+        type: 'asset',
+        name: 'maplibre-gl-worker.js',
+        source: readFileSync(resolve(__dirname, 'node_modules/maplibre-gl/dist/maplibre-gl-worker.mjs')),
+      });
+      return `export default import.meta.ROLLUP_FILE_URL_${reference};`;
+    },
+  };
+}
 
 export default defineConfig(({ mode }) => {
   const nodeEnv = mode === 'production' ? 'production' : 'development';
 
   return {
-    plugins: [react()],
+    plugins: [react(), maplibreWorker()],
     define: {
       'process.env.NODE_ENV': JSON.stringify(nodeEnv),
       'process.platform': JSON.stringify('browser'),

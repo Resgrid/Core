@@ -284,4 +284,49 @@
   <data name="False" xml:space="preserve">
     <value>Nein</value>
   </data>
+  <data name="DrawToolPolygon" xml:space="preserve">
+    <value>Polygon zeichnen</value>
+  </data>
+  <data name="DrawToolRectangle" xml:space="preserve">
+    <value>Rechteck zeichnen</value>
+  </data>
+  <data name="DrawToolLine" xml:space="preserve">
+    <value>Linie zeichnen</value>
+  </data>
+  <data name="DrawToolPoint" xml:space="preserve">
+    <value>Markierung setzen</value>
+  </data>
+  <data name="DrawToolCircle" xml:space="preserve">
+    <value>Kreis zeichnen</value>
+  </data>
+  <data name="DrawToolText" xml:space="preserve">
+    <value>Text hinzufügen</value>
+  </data>
+  <data name="DrawToolCut" xml:space="preserve">
+    <value>Ausgewählte Form schneiden (den zu entfernenden Teil zeichnen)</value>
+  </data>
+  <data name="DrawToolRotate" xml:space="preserve">
+    <value>Ausgewählte Form drehen (auf der Karte ziehen)</value>
+  </data>
+  <data name="DrawToolSelect" xml:space="preserve">
+    <value>Auswählen und bearbeiten</value>
+  </data>
+  <data name="DrawToolDelete" xml:space="preserve">
+    <value>Ausgewählte Form löschen</value>
+  </data>
+  <data name="DrawToolClear" xml:space="preserve">
+    <value>Alle Formen entfernen</value>
+  </data>
+  <data name="DrawTextPrompt" xml:space="preserve">
+    <value>Anzuzeigender Text</value>
+  </data>
+  <data name="DrawSelectShapeFirst" xml:space="preserve">
+    <value>Wählen Sie zuerst eine Form auf der Karte aus.</value>
+  </data>
+  <data name="LayerElementsInvalid" xml:space="preserve">
+    <value>Die Formen der Ebene konnten nicht gelesen werden. Laden Sie die Seite neu und zeichnen Sie sie erneut.</value>
+  </data>
+  <data name="TrafficLayer" xml:space="preserve">
+    <value>Live-Verkehr</value>
+  </data>
 </root>

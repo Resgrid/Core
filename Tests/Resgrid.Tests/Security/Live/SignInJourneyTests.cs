@@ -23,7 +23,7 @@ namespace Resgrid.Tests.Security.Live
 	/// server recorded and that the tokens work.
 	/// </summary>
 	[TestFixture, NonParallelizable]
-	public class SignInJourneyTests
+	public partial class SignInJourneyTests
 	{
 		private LiveSignInServer _server;
 

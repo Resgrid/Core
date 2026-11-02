@@ -8,71 +8,78 @@ $(document).ready(function () {
         return '';
     }
 
-    function escapeHtml(str) {
-        return String(str)
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#39;');
-    }
-
     // ── Main route map ────────────────────────────────────────────────────────
-    if (document.getElementById('routeMap')) {
-        var tiles = L.tileLayer(osmTileUrl, { maxZoom: 19, attribution: osmTileAttribution });
-        map = L.map('routeMap', { scrollWheelZoom: false })
-               .setView([39.8283, -98.5795], 4)
-               .addLayer(tiles);
+    var mapReady = document.getElementById('routeMap')
+        ? resgrid.maps.create('routeMap', { center: [39.8283, -98.5795], zoom: 4, scrollZoom: false, traffic: 'off' }).then(function (created) {
+            map = created;
+            return created;
+        })
+        : null;
 
-        if (typeof editStops !== 'undefined' && editStops.length > 0) {
-            var group = [];
-            editStops.forEach(function (stop, index) {
-                if (stop.lat != null && stop.lng != null && Number.isFinite(Number(stop.lat)) && Number.isFinite(Number(stop.lng))) {
-                    var m = L.marker([stop.lat, stop.lng]).addTo(map);
-                    m.bindTooltip((index + 1) + '. ' + escapeHtml(stop.Name), { permanent: true, direction: 'right' });
-                    m.bindPopup('<strong>' + (index + 1) + '. ' + escapeHtml(stop.Name) + '</strong>');
-                    group.push(m);
-                }
-            });
-            if (group.length > 0) {
-                map.fitBounds(L.featureGroup(group).getBounds(), { padding: [50, 50] });
+    // The stop list, stop markers and live route preview (resgrid.routes.editor.js). Stops here are saved: reorder,
+    // move and delete go to the server straight away, which regenerates the stored route.
+    var stopEditor = resgrid.routes.editor;
+    var editorSettings = window.routeEditorSettings || { labels: {} };
+    var orderTimer = null;
+
+    function saveOrder() {
+        $.ajax({
+            url: editorSettings.applyUrl,
+            type: 'POST',
+            traditional: true,
+            data: { __RequestVerificationToken: antiForgeryToken, id: routePlanId, stopIds: editStops.map(function (s) { return s.id; }) }
+        }).done(function (result) {
+            if (!result || !result.success) {
+                alert(editorSettings.labels.stopOrderFailed);
+                location.reload();
             }
-        }
-    }
-
-    // ── Stop picker map helpers ───────────────────────────────────────────────
-    function initStopPickerMap() {
-        if (stopPickerMap) {
-            stopPickerMap.invalidateSize();
-            return;
-        }
-        var pickerTiles = L.tileLayer(osmTileUrl, { maxZoom: 19, attribution: osmTileAttribution });
-        stopPickerMap = L.map('stopPickerMap', { scrollWheelZoom: false })
-                         .setView([39.8283, -98.5795], 4)
-                         .addLayer(pickerTiles);
-
-        stopPickerMap.on('click', function (e) {
-            setPickerLocation(e.latlng.lat, e.latlng.lng, true);
+        }).fail(function () {
+            alert(editorSettings.labels.stopOrderFailed);
+            location.reload();
         });
     }
 
+    // ── Stop picker map helpers (resgrid.maps: MapLibre or Leaflet by the department's Maps.MapLibreWeb flag) ──
+    var stopPickerReady = null, startPickerReady = null, endPickerReady = null;
+
+    function createPicker(id, onPick) {
+        return resgrid.maps.create(id, { center: [39.8283, -98.5795], zoom: 4, scrollZoom: false, hydrants: false }).then(function (created) {
+            created.onClick(function (position) { onPick(position[0], position[1]); });
+            return created;
+        });
+    }
+
+    function initStopPickerMap() {
+        if (stopPickerReady) {
+            stopPickerReady.then(function (pickerMap) { pickerMap.resize(); });
+            return stopPickerReady;
+        }
+        stopPickerReady = createPicker('stopPickerMap', function (lat, lng) { setPickerLocation(lat, lng, true); }).then(function (created) {
+            stopPickerMap = created;
+            return created;
+        });
+        return stopPickerReady;
+    }
+
     function setPickerLocation(lat, lng, reverseGeocode) {
+        lat = Number(lat);
+        lng = Number(lng);
         $('#stopLat').val(lat.toFixed(6));
         $('#stopLng').val(lng.toFixed(6));
-        if (pickerMarker) {
-            pickerMarker.setLatLng(new L.LatLng(lat, lng));
-        } else {
-            pickerMarker = new L.marker(new L.LatLng(lat, lng), { draggable: true }).addTo(stopPickerMap);
-            pickerMarker.on('dragend', function (event) {
-                var pos = event.target.getLatLng();
-                event.target.setLatLng(new L.LatLng(pos.lat, pos.lng));
-                stopPickerMap.panTo(new L.LatLng(pos.lat, pos.lng));
-                $('#stopLat').val(pos.lat.toFixed(6));
-                $('#stopLng').val(pos.lng.toFixed(6));
-                reverseGeocodeStop(pos.lat, pos.lng);
-            });
-        }
-        stopPickerMap.setView(new L.LatLng(lat, lng), 15);
+        initStopPickerMap().then(function (pickerMap) {
+            if (pickerMarker) {
+                pickerMarker.setLatLng([lat, lng]);
+            } else {
+                pickerMarker = pickerMap.addMarker([lat, lng], { draggable: true });
+                pickerMarker.onDragEnd(function (pos) {
+                    pickerMap.setView(pos);
+                    $('#stopLat').val(pos[0].toFixed(6));
+                    $('#stopLng').val(pos[1].toFixed(6));
+                    reverseGeocodeStop(pos[0], pos[1]);
+                });
+            }
+            pickerMap.setView([lat, lng], 15);
+        });
         if (reverseGeocode) {
             reverseGeocodeStop(lat, lng);
         }
@@ -95,18 +102,21 @@ $(document).ready(function () {
     }
 
     // ── Start/End location pickers ────────────────────────────────────────────
+    function hasPoint(lat, lng) {
+        return lat != null && lng != null && lat !== '' && lng !== '' && Number.isFinite(Number(lat)) && Number.isFinite(Number(lng));
+    }
+
     function initStartPickerMap(initialLat, initialLng) {
-        if (startPickerInitialized) {
-            setTimeout(function () { startPickerMap.invalidateSize(); }, 50);
+        if (startPickerReady) {
+            setTimeout(function () { startPickerReady.then(function (pickerMap) { pickerMap.resize(); }); }, 50);
             return;
         }
-        var tiles = L.tileLayer(osmTileUrl, { maxZoom: 19, attribution: osmTileAttribution });
-        startPickerMap = L.map('startPickerMap', { scrollWheelZoom: false })
-                          .setView([39.8283, -98.5795], 4)
-                          .addLayer(tiles);
-        startPickerMap.on('click', function (e) { setStartLocation(e.latlng.lat, e.latlng.lng); });
+        startPickerReady = createPicker('startPickerMap', setStartLocation).then(function (created) {
+            startPickerMap = created;
+            return created;
+        });
         startPickerInitialized = true;
-        if (initialLat != null && initialLng != null) { setStartLocation(initialLat, initialLng); }
+        if (hasPoint(initialLat, initialLng)) { setStartLocation(initialLat, initialLng); }
     }
 
     function setStartLocation(lat, lng) {
@@ -116,30 +126,33 @@ $(document).ready(function () {
         $('#startLng').val(lngStr);
         $('#startLatDisplay').val(latStr);
         $('#startLngDisplay').val(lngStr);
-        if (startMarker) {
-            startMarker.setLatLng(new L.LatLng(lat, lng));
-        } else {
-            startMarker = L.marker(new L.LatLng(lat, lng), { draggable: true }).addTo(startPickerMap);
-            startMarker.on('dragend', function (event) {
-                var pos = event.target.getLatLng();
-                setStartLocation(pos.lat, pos.lng);
-            });
+        stopEditor.refresh();
+        if (!startPickerReady) {
+            return;
         }
-        startPickerMap.setView(new L.LatLng(lat, lng), 15);
+        startPickerReady.then(function (pickerMap) {
+            var position = [Number(lat), Number(lng)];
+            if (startMarker) {
+                startMarker.setLatLng(position);
+            } else {
+                startMarker = pickerMap.addMarker(position, { draggable: true });
+                startMarker.onDragEnd(function (pos) { setStartLocation(pos[0], pos[1]); });
+            }
+            pickerMap.setView(position, 15);
+        });
     }
 
     function initEndPickerMap(initialLat, initialLng) {
-        if (endPickerInitialized) {
-            setTimeout(function () { endPickerMap.invalidateSize(); }, 50);
+        if (endPickerReady) {
+            setTimeout(function () { endPickerReady.then(function (pickerMap) { pickerMap.resize(); }); }, 50);
             return;
         }
-        var tiles = L.tileLayer(osmTileUrl, { maxZoom: 19, attribution: osmTileAttribution });
-        endPickerMap = L.map('endPickerMap', { scrollWheelZoom: false })
-                        .setView([39.8283, -98.5795], 4)
-                        .addLayer(tiles);
-        endPickerMap.on('click', function (e) { setEndLocation(e.latlng.lat, e.latlng.lng); });
+        endPickerReady = createPicker('endPickerMap', setEndLocation).then(function (created) {
+            endPickerMap = created;
+            return created;
+        });
         endPickerInitialized = true;
-        if (initialLat != null && initialLng != null) { setEndLocation(initialLat, initialLng); }
+        if (hasPoint(initialLat, initialLng)) { setEndLocation(initialLat, initialLng); }
     }
 
     function setEndLocation(lat, lng) {
@@ -149,16 +162,20 @@ $(document).ready(function () {
         $('#endLng').val(lngStr);
         $('#endLatDisplay').val(latStr);
         $('#endLngDisplay').val(lngStr);
-        if (endMarker) {
-            endMarker.setLatLng(new L.LatLng(lat, lng));
-        } else {
-            endMarker = L.marker(new L.LatLng(lat, lng), { draggable: true }).addTo(endPickerMap);
-            endMarker.on('dragend', function (event) {
-                var pos = event.target.getLatLng();
-                setEndLocation(pos.lat, pos.lng);
-            });
+        stopEditor.refresh();
+        if (!endPickerReady) {
+            return;
         }
-        endPickerMap.setView(new L.LatLng(lat, lng), 15);
+        endPickerReady.then(function (pickerMap) {
+            var position = [Number(lat), Number(lng)];
+            if (endMarker) {
+                endMarker.setLatLng(position);
+            } else {
+                endMarker = pickerMap.addMarker(position, { draggable: true });
+                endMarker.onDragEnd(function (pos) { setEndLocation(pos[0], pos[1]); });
+            }
+            pickerMap.setView(position, 15);
+        });
     }
 
     function updateLocationPickerVisibility() {
@@ -323,13 +340,14 @@ $(document).ready(function () {
         $('#stopPlannedArrival').val('');
         $('#stopPlannedDeparture').val('');
         $('#stopDwellMinutes').val('');
+        $('#stopGeofenceRadius').val('');
         $('#stopContactPicker').val('');
         $('#stopContactId').val('');
         $('#stopContactName').val('');
         $('#stopContactNumber').val('');
         $('#stopNotes').val('');
-        if (pickerMarker && stopPickerMap) {
-            stopPickerMap.removeLayer(pickerMarker);
+        if (pickerMarker) {
+            pickerMarker.remove();
             pickerMarker = null;
         }
     });
@@ -431,7 +449,7 @@ $(document).ready(function () {
                 longitude:        parseFloat(lng),
                 address:          $('#stopAddress').val(),
                 callId:           callId,
-                geofenceRadius:   null,
+                geofenceRadius:   $('#stopGeofenceRadius').val() || null,
                 plannedArrival:   $('#stopPlannedArrival').val(),
                 plannedDeparture: $('#stopPlannedDeparture').val(),
                 dwellMinutes:     $('#stopDwellMinutes').val() || null,
@@ -452,41 +470,64 @@ $(document).ready(function () {
         });
     });
 
-    // ── Delete stop ───────────────────────────────────────────────────────────
-    $(document).on('click', '.delete-stop-btn', function () {
-        if (!confirm('Delete this stop?')) return;
-        var stopId = $(this).data('stop-id');
-        var $row   = $('#stopRow_' + stopId);
-        $.ajax({
-            url: resgrid.absoluteBaseUrl + '/User/Routes/DeleteStop',
-            type: 'POST',
-            data: {
-                __RequestVerificationToken: antiForgeryToken,
-                stopId: stopId
-            },
-            success: function (result) {
-                if (result.success) {
-                    $row.remove();
-                    $('#stopCount').text($('#stopsTableBody tr').length);
-                    // Update main map: remove all markers and redraw remaining
-                    if (map) {
-                        map.eachLayer(function (layer) {
-                            if (layer instanceof L.Marker) map.removeLayer(layer);
-                        });
+    stopEditor.init({
+        mapReady: mapReady,
+        planId: routePlanId,
+        getStops: function () {
+            return editStops.map(function (s) {
+                return { key: s.id, name: s.name, stopType: s.stopType, priority: s.priority, address: s.address, lat: s.lat, lng: s.lng, dwellMinutes: s.dwellMinutes };
+            });
+        },
+        // Reordered locally at once; saved after a short pause so several moves make one save.
+        onReorder: function (keys) {
+            editStops = keys.map(function (key) {
+                return editStops.filter(function (s) { return s.id === key; })[0];
+            }).filter(Boolean);
+            stopEditor.refresh();
+            if (orderTimer) clearTimeout(orderTimer);
+            orderTimer = setTimeout(saveOrder, 800);
+        },
+        onDelete: function (stopId) {
+            if (!confirm('Delete this stop?')) return;
+            $.ajax({
+                url: resgrid.absoluteBaseUrl + '/User/Routes/DeleteStop',
+                type: 'POST',
+                data: {
+                    __RequestVerificationToken: antiForgeryToken,
+                    stopId: stopId
+                },
+                success: function (result) {
+                    if (result.success) {
                         editStops = editStops.filter(function (s) { return s.id !== stopId; });
-                        editStops.forEach(function (stop, index) {
-                            if (stop.lat != null && stop.lng != null && Number.isFinite(Number(stop.lat)) && Number.isFinite(Number(stop.lng))) {
-                                var m = L.marker([stop.lat, stop.lng]).addTo(map);
-                                m.bindTooltip((index + 1) + '. ' + escapeHtml(stop.Name), { permanent: true, direction: 'right' });
-                                m.bindPopup('<strong>' + (index + 1) + '. ' + escapeHtml(stop.Name) + '</strong>');
-                            }
-                        });
+                        stopEditor.refresh();
+                    } else {
+                        alert('Failed to delete stop.');
                     }
-                } else {
-                    alert('Failed to delete stop.');
+                },
+                error: function () { alert('Error deleting stop.'); }
+            });
+        },
+        onMove: function (stopId, lat, lng) {
+            editStops.forEach(function (s) {
+                if (s.id === stopId) {
+                    s.lat = lat;
+                    s.lng = lng;
                 }
-            },
-            error: function () { alert('Error deleting stop.'); }
-        });
+            });
+            stopEditor.refresh();
+            $.ajax({
+                url: editorSettings.moveUrl,
+                type: 'POST',
+                data: { __RequestVerificationToken: antiForgeryToken, stopId: stopId, latitude: lat.toFixed(6), longitude: lng.toFixed(6) }
+            }).done(function (result) {
+                if (!result || !result.success) {
+                    alert(editorSettings.labels.stopMoveFailed);
+                    location.reload();
+                }
+            }).fail(function () {
+                alert(editorSettings.labels.stopMoveFailed);
+                location.reload();
+            });
+        }
     });
 });

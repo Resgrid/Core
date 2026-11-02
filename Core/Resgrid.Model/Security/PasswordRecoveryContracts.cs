@@ -16,6 +16,11 @@ namespace Resgrid.Model.Security
 	{
 		public bool Issued { get; set; }
 		public bool RateLimited { get; set; }
+		/// <summary>
+		/// Refused for the requesting address's hourly limit (not the account's, nor an unavailable cache). Safe to tell the user: it
+		/// counts every request from the address, for accounts that exist or not, so it says nothing about any account.
+		/// </summary>
+		public bool IpRateLimited { get; set; }
 		public string Token { get; set; }
 	}
 

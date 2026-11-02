@@ -1202,7 +1202,7 @@ namespace Resgrid.Services
 				{
 					context.CancellationToken.ThrowIfCancellationRequested();
 
-					var eta = await _geoService.GetEtaInSecondsAsync(
+					var eta = await UnitEtaAsync(entry.Candidate.Unit,
 						FormatPoint(entry.Candidate.Latitude.Value, entry.Candidate.Longitude.Value),
 						FormatPoint(anchor.Latitude, anchor.Longitude));
 
@@ -1380,6 +1380,34 @@ namespace Resgrid.Services
 
 				AddRoleShortfall(context, requirement, picked, reason);
 			}
+		}
+
+		private readonly Dictionary<int, VehicleProfile> _vehicleProfiles = new Dictionary<int, VehicleProfile>();
+
+		/// <summary>
+		/// Routed drive time for a unit, with its vehicle size and weight when it has any (plan §10.3, owner Q2) so a
+		/// unit is never ranked on a road it cannot use.
+		/// </summary>
+		private async Task<double> UnitEtaAsync(Unit unit, string origin, string destination)
+		{
+			var vehicle = await VehicleProfileForAsync(unit);
+
+			return vehicle == null
+				? await _geoService.GetEtaInSecondsAsync(origin, destination)
+				: await _geoService.GetEtaInSecondsAsync(origin, destination, vehicle);
+		}
+
+		private async Task<VehicleProfile> VehicleProfileForAsync(Unit unit)
+		{
+			if (unit == null)
+				return null;
+
+			if (_vehicleProfiles.TryGetValue(unit.UnitId, out var profile))
+				return profile;
+
+			profile = await _unitsService.GetUnitVehicleProfileAsync(unit);
+			_vehicleProfiles[unit.UnitId] = profile;
+			return profile;
 		}
 
 		private static string FormatPoint(double latitude, double longitude)

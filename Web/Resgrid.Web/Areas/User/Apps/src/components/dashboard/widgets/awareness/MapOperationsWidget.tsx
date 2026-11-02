@@ -201,6 +201,7 @@ export default function MapOperationsWidget({ data, t }: WidgetProps<MapOperatio
       markers={mapped}
       geoJsonLayers={geoJsonLayers}
       tileUrl={night?.TileUrl ?? undefined}
+      dark={dark}
       attribution={night ? night.Attribution ?? undefined : undefined}
       center={mapCenter}
       zoom={zoom}

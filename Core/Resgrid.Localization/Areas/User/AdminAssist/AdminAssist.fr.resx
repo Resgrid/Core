@@ -4933,7 +4933,7 @@
     <value>Utiliser la substitution du prestataire de carte du département. La désactiver sur la page de configuration correspondante supprime le style et le jeton enregistrés.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.MappingMapStyle">
-    <value>Carte de fond Mapbox affichée par chaque carte du service en mode clair, sur le site web et dans toutes les applications. Automatique correspond à Rues ; le site web nécessite un jeton Mapbox du serveur et le remplacement Mapbox du service le remplace partout.</value>
+    <value>Carte de fond Mapbox affichée par chaque carte du service en mode clair, sur le site web et dans toutes les applications. Automatique correspond à Rues ; le site web nécessite un jeton Mapbox du serveur et le remplacement Mapbox du service le remplace partout. Sur un serveur qui dessine ses propres cartes, seuls les styles qu'il peut afficher sont proposés.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.MappingMapStyleNight">
     <value>Carte de fond affichée par les applications en mode sombre. Automatique s'associe au style de jour (Sombre pour les cartes routières, Navigation nuit pour Navigation jour ; Plein air et satellite inchangés). Le site web utilise toujours le style de jour.</value>
@@ -7763,5 +7763,17 @@
   </data>
   <data xml:space="preserve" name="Topic.dashboard-classic">
     <value>Activer le nouveau tableau de bord et revenir au classique</value>
+  </data>
+  <data xml:space="preserve" name="Setting.MappingNavigationConfig">
+    <value>Navigation par défaut</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.MappingNavigationConfig">
+    <value>Valeurs par défaut du guidage pas à pas dans l'application Unit (voix, unités de distance, rayon d'arrivée, invite Sur les lieux, routes à éviter) et le retard ou le dépassement d'arrêt au-delà duquel un écart de tournée est enregistré.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.OfflineMapPacksConfig">
+    <value>Cartes hors ligne</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.OfflineMapPacksConfig">
+    <value>Ce que les applications téléchargent pour fonctionner sans réseau : la zone d'intervention maximale (sa carte de base doit respecter la limite de taille), les données cartographiques incluses, quand les téléchargements ont lieu et la couverture supplémentaire pour les appels et tournées hors de la zone.</value>
   </data>
 </root>

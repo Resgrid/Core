@@ -679,18 +679,25 @@ namespace Resgrid.Services
 				.ToList();
 			groups.Add(personnel.Where(Routable).OrderBy(c => c.DistanceMeters.Value).Take(perGroup).Cast<Candidate>().ToList());
 
-			// One lookup per position, a rank at a time across the groups (every type's best first) and units before
-			// responders, up to the cap on what one board may ask of the mapping provider while the dispatcher waits. Units
-			// parked at the same station share its drive time.
-			var origins = new List<string>();
+			// A unit with a vehicle size and weight is routed with it (plan §10.3, owner Q2), so it is never ranked on a road it
+			// cannot use; units without limits and responders share plain driving times.
+			var vehicles = await _unitsService.GetVehicleProfilesForUnitsAsync(request.DepartmentId, units.Select(u => u.Unit)) ?? new Dictionary<int, VehicleProfile>();
+			VehicleProfile VehicleOf(Candidate candidate) =>
+				candidate is UnitCandidate unitCandidate && unitCandidate.Unit != null && vehicles.TryGetValue(unitCandidate.Unit.UnitId, out var profile) ? profile : null;
+			string LookupKey(Candidate candidate) => candidate.Origin + "|" + (VehicleOf(candidate)?.Key() ?? string.Empty);
+
+			// One lookup per position (and vehicle size), a rank at a time across the groups (every type's best first) and
+			// units before responders, up to the cap on what one board may ask of the mapping provider while the dispatcher
+			// waits. Units parked at the same station share its drive time.
+			var origins = new List<(string Key, string Origin, VehicleProfile Vehicle)>();
 			var depth = groups.Max(g => g.Count);
 			for (var rank = 0; rank < depth; rank++)
 			{
 				foreach (var group in groups.Where(g => rank < g.Count))
 				{
-					var origin = group[rank].Origin;
-					if (origins.Count < DispatchRecommendationConfig.MaximumEtaShortlistSize && !origins.Contains(origin))
-						origins.Add(origin);
+					var key = LookupKey(group[rank]);
+					if (origins.Count < DispatchRecommendationConfig.MaximumEtaShortlistSize && origins.All(o => o.Key != key))
+						origins.Add((key, group[rank].Origin, VehicleOf(group[rank])));
 				}
 			}
 
@@ -700,12 +707,14 @@ namespace Resgrid.Services
 			cancellationToken.ThrowIfCancellationRequested();
 
 			var destination = FormatPoint(request.Latitude, request.Longitude);
-			var lookups = await Task.WhenAll(origins.Select(async origin => (Origin: origin, Eta: await _geoService.GetEtaInSecondsAsync(origin, destination))));
-			var etaByOrigin = lookups.ToDictionary(x => x.Origin, x => x.Eta, StringComparer.Ordinal);
+			var lookups = await Task.WhenAll(origins.Select(async origin => (origin.Key, Eta: origin.Vehicle == null
+				? await _geoService.GetEtaInSecondsAsync(origin.Origin, destination)
+				: await _geoService.GetEtaInSecondsAsync(origin.Origin, destination, origin.Vehicle))));
+			var etaByOrigin = lookups.ToDictionary(x => x.Key, x => x.Eta, StringComparer.Ordinal);
 
 			foreach (var candidate in units.Cast<Candidate>().Concat(personnel).Where(Routable))
 			{
-				if (!etaByOrigin.TryGetValue(candidate.Origin, out var eta))
+				if (!etaByOrigin.TryGetValue(LookupKey(candidate), out var eta))
 					continue;
 
 				// A failed lookup keeps the estimate but still counts as looked up, as it does in a run card's shortlist.

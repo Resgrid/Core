@@ -268,6 +268,7 @@ namespace Resgrid.Tests.Security
 			encryption.Setup(e => e.Decrypt(It.IsAny<string>())).Returns((string value) => value.StartsWith("enc:") ? value[4..] : throw new CryptographicException());
 			builder.Services.AddSingleton(encryption.Object);
 			builder.Services.AddSingleton(Mock.Of<ICacheProvider>());
+			builder.Services.AddSingleton<ILoginThrottleService>(new LoginThrottleService(new Resgrid.Tests.Security.Live.InMemoryCacheProvider()));
 			builder.Services.AddSingleton(_sessions.Object);
 			builder.Services.AddSingleton(links.Object);
 			builder.Services.AddSingleton<IMfaPolicyService>(policy);

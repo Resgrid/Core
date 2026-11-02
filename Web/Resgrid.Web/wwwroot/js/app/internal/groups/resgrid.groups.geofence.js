@@ -6,6 +6,8 @@ var resgrid;
         var geofence;
         (function (geofence) {
             var map;
+            var kitMap = null;
+            var drawing = null;
             var drawnLayer = null;
 
             $(document).ready(function () {
@@ -24,12 +26,49 @@ var resgrid;
                     theme: 'bootstrap'
                 });
 
-                map = L.map('map_canvas').setView([parseFloat(latitude) || 39.7392, parseFloat(longitude) || -104.9903], 13);
-                L.tileLayer(osmTileUrl, {
-                    maxZoom: 22,
-                    attribution: osmTileAttribution
-                }).addTo(map);
+                // Stored outline: {lat, lng} points, or the old Google Maps {k, A} ones.
+                var latLngs = [];
+                if (polyCoordinates && polyCoordinates.length > 0) {
+                    latLngs = polyCoordinates.map(function (c) {
+                        if (c.lat !== undefined && c.lng !== undefined) {
+                            return [Number(c.lat), Number(c.lng)];
+                        } else if (c.k !== undefined && c.A !== undefined) {
+                            return [Number(c.k), Number(c.A)];
+                        }
+                        return null;
+                    }).filter(function (c) { return c !== null; });
+                }
 
+                // resgrid.maps: MapLibre (Terra Draw) or Leaflet (Geoman) by the department's Maps.MapLibreWeb flag.
+                resgrid.maps.create('map_canvas', { center: [parseFloat(latitude) || 39.7392, parseFloat(longitude) || -104.9903], zoom: 13, maxZoom: 22 }).then(function (created) {
+                    kitMap = created;
+                    if (created.engine === 'maplibre') {
+                        startMapLibreDrawing(created, latLngs);
+                    } else {
+                        map = created.native;
+                        startGeomanDrawing(latLngs);
+                    }
+                });
+            });
+
+            function startMapLibreDrawing(created, latLngs) {
+                var ring = latLngs.map(function (p) { return [p[1], p[0]]; });
+                if (ring.length > 2) {
+                    ring.push(ring[0]);
+                    created.fitBounds(latLngs);
+                }
+
+                created.startDrawing({
+                    modes: ['polygon'],
+                    single: true,
+                    color: $('#colorPicker').val() || '#f70c16',
+                    initial: ring.length > 3 ? { type: 'Polygon', coordinates: [ring] } : null
+                }).then(function (handle) {
+                    drawing = handle;
+                });
+            }
+
+            function startGeomanDrawing(latLngs) {
                 map.pm.addControls({
                     position: 'topleft',
                     drawMarker: false,
@@ -47,18 +86,8 @@ var resgrid;
                 });
 
                 // Load existing geofence
-                if (polyCoordinates && polyCoordinates.length > 0) {
+                if (latLngs.length > 0) {
                     try {
-                        var latLngs = polyCoordinates.map(function (c) {
-                            // Handle new format {lat, lng} or old Google Maps format {k, A}
-                            if (c.lat !== undefined && c.lng !== undefined) {
-                                return [c.lat, c.lng];
-                            } else if (c.k !== undefined && c.A !== undefined) {
-                                return [c.k, c.A];
-                            }
-                            return null;
-                        }).filter(function (c) { return c !== null; });
-
                         if (latLngs.length > 0) {
                             drawnLayer = L.polygon(latLngs, {
                                 color: $('#colorPicker').val() || '#f70c16',
@@ -83,16 +112,30 @@ var resgrid;
                         drawnLayer = null;
                     }
                 });
-            });
+            }
 
-            function saveGeofence() {
-                var coords = [];
+            /** The outline as {lat, lng} points (the stored format), from whichever editor the page has. */
+            function currentCoordinates() {
+                if (drawing) {
+                    var polygon = drawing.getFeatures().filter(function (f) { return f.geometry && f.geometry.type === 'Polygon'; })[0];
+                    if (!polygon) {
+                        return [];
+                    }
+                    var ring = polygon.geometry.coordinates[0].slice(0, -1);
+                    return ring.map(function (p) { return { lat: p[1], lng: p[0] }; });
+                }
+
                 if (drawnLayer) {
-                    var latLngs = drawnLayer.getLatLngs()[0];
-                    coords = latLngs.map(function (ll) {
+                    return drawnLayer.getLatLngs()[0].map(function (ll) {
                         return { lat: ll.lat, lng: ll.lng };
                     });
                 }
+
+                return [];
+            }
+
+            function saveGeofence() {
+                var coords = currentCoordinates();
 
                 var groupId = $('#Group_DepartmentGroupId').val();
                 if (!groupId) {
@@ -134,6 +177,9 @@ var resgrid;
             geofence.saveGeofence = saveGeofence;
 
             function resetGeofence() {
+                if (drawing) {
+                    drawing.clear();
+                }
                 if (drawnLayer) {
                     map.removeLayer(drawnLayer);
                     drawnLayer = null;

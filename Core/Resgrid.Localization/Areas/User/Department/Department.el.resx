@@ -2241,4 +2241,223 @@
   <data name="ShiftTradeApproversRoles" xml:space="preserve">
     <value>Μέλη αυτών των ρόλων</value>
   </data>
+  <data name="NavigationHeader" xml:space="preserve">
+    <value>Πλοήγηση</value>
+  </data>
+  <data name="NavigationHelp" xml:space="preserve">
+    <value>Προεπιλογές για την πλοήγηση βήμα προς βήμα στην εφαρμογή Resgrid Unit. Τα πληρώματα μπορούν ακόμη να αλλάξουν τη φωνητική καθοδήγηση και τους δρόμους προς αποφυγή στη συσκευή τους.</value>
+  </data>
+  <data name="NavigationNotEnabled" xml:space="preserve">
+    <value>Η πλοήγηση εντός εφαρμογής δεν είναι ακόμη ενεργή για το τμήμα σας. Αυτές οι προεπιλογές θα ισχύσουν μόλις ενεργοποιηθεί.</value>
+  </data>
+  <data name="NavigationVoiceGuidanceLabel" xml:space="preserve">
+    <value>Φωνητική καθοδήγηση</value>
+  </data>
+  <data name="NavigationVoiceGuidanceHelp" xml:space="preserve">
+    <value>Εκφώνηση των οδηγιών από προεπιλογή.</value>
+  </data>
+  <data name="NavigationDistanceUnitsLabel" xml:space="preserve">
+    <value>Μονάδες απόστασης</value>
+  </data>
+  <data name="NavigationDistanceUnits_Device" xml:space="preserve">
+    <value>Όπως η συσκευή</value>
+  </data>
+  <data name="NavigationDistanceUnits_Imperial" xml:space="preserve">
+    <value>Μίλια και πόδια</value>
+  </data>
+  <data name="NavigationDistanceUnits_Metric" xml:space="preserve">
+    <value>Χιλιόμετρα και μέτρα</value>
+  </data>
+  <data name="NavigationArrivalRadiusLabel" xml:space="preserve">
+    <value>Ακτίνα άφιξης (μέτρα)</value>
+  </data>
+  <data name="NavigationArrivalRadiusHelp" xml:space="preserve">
+    <value>Πόσο κοντά στον προορισμό πρέπει να φτάσει μια μονάδα για να θεωρηθεί ότι έφτασε. 10 έως 1000· προεπιλογή 50.</value>
+  </data>
+  <data name="NavigationOnScenePromptLabel" xml:space="preserve">
+    <value>Πρόταση «Στο Σημείο» κατά την άφιξη</value>
+  </data>
+  <data name="NavigationOnScenePromptHelp" xml:space="preserve">
+    <value>Όταν μια μονάδα φτάνει σε ένα συμβάν, η πλοήγηση προτείνει να οριστεί η κατάστασή της σε «Στο Σημείο».</value>
+  </data>
+  <data name="NavigationAvoidLabel" xml:space="preserve">
+    <value>Αποφυγή από προεπιλογή</value>
+  </data>
+  <data name="NavigationAvoid_Tolls" xml:space="preserve">
+    <value>Διόδια</value>
+  </data>
+  <data name="NavigationAvoid_Highways" xml:space="preserve">
+    <value>Αυτοκινητόδρομοι</value>
+  </data>
+  <data name="NavigationAvoid_Ferries" xml:space="preserve">
+    <value>Πορθμεία</value>
+  </data>
+  <data name="NavigationAvoid_Unpaved" xml:space="preserve">
+    <value>Χωματόδρομοι</value>
+  </data>
+  <data name="NavigationAvoidHelp" xml:space="preserve">
+    <value>Δρόμοι που αποφεύγει η πλοήγηση των μονάδων, εκτός αν το πλήρωμα το αλλάξει.</value>
+  </data>
+  <data name="RouteDeviationsHeader" xml:space="preserve">
+    <value>Αποκλίσεις διαδρομής</value>
+  </data>
+  <data name="RouteTimeDeviationsLabel" xml:space="preserve">
+    <value>Καταγραφή καθυστερημένων αφίξεων και μεγάλων στάσεων</value>
+  </data>
+  <data name="RouteTimeDeviationsHelp" xml:space="preserve">
+    <value>Καταγράφει απόκλιση όταν μια μονάδα σε διαδρομή φτάνει σε στάση αργότερα από το προγραμματισμένο ή παραμένει σε στάση περισσότερο από το εκτιμώμενο.</value>
+  </data>
+  <data name="RouteDeviationThresholdLabel" xml:space="preserve">
+    <value>Όριο απόκλισης (λεπτά)</value>
+  </data>
+  <data name="RouteDeviationThresholdHelp" xml:space="preserve">
+    <value>Πόσα λεπτά καθυστέρησης ή πέραν του εκτιμώμενου χρόνου στάσης πριν καταγραφεί απόκλιση. 1 έως 1440· προεπιλογή 15.</value>
+  </data>
+  <data name="OfflineMapsHeader" xml:space="preserve">
+    <value>Χάρτες εκτός σύνδεσης</value>
+  </data>
+  <data name="OfflineMapsHelp" xml:space="preserve">
+    <value>Τι κατεβάζουν οι εφαρμογές Resgrid ώστε οι χάρτες τους να λειτουργούν χωρίς δίκτυο.</value>
+  </data>
+  <data name="OfflineMapsNotEnabled" xml:space="preserve">
+    <value>Οι χάρτες εκτός σύνδεσης δεν είναι ακόμη ενεργοί για το τμήμα σας. Αυτές οι ρυθμίσεις θα ισχύσουν μόλις ενεργοποιηθούν.</value>
+  </data>
+  <data name="OfflineResponseAreaLabel" xml:space="preserve">
+    <value>Μέγιστη περιοχή απόκρισης</value>
+  </data>
+  <data name="OfflineResponseAreaHelp" xml:space="preserve">
+    <value>Σχεδιάστε την περιοχή που κατεβάζουν οι εφαρμογές με πλήρη λεπτομέρεια· μπορείτε να σχεδιάσετε πολλά σχήματα. Χωρίς σχεδιασμένη περιοχή, οι εφαρμογές κατεβάζουν κύκλο {0} km γύρω από το κέντρο χάρτη του τμήματος.</value>
+  </data>
+  <data name="OfflineResponseAreaClear" xml:space="preserve">
+    <value>Εκκαθάριση περιοχής</value>
+  </data>
+  <data name="OfflineResponseAreaGeoJsonHelp" xml:space="preserve">
+    <value>Η περιοχή σε μορφή GeoJSON. Αντί να τη σχεδιάσετε, μπορείτε να επικολλήσετε εδώ ένα Polygon ή MultiPolygon από εργαλείο GIS.</value>
+  </data>
+  <data name="OfflineAreaMeasuring" xml:space="preserve">
+    <value>Μέτρηση μεγέθους λήψης...</value>
+  </data>
+  <data name="OfflineAreaMeasureFailed" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η μέτρηση του μεγέθους λήψης. Θα ελεγχθεί ξανά κατά την αποθήκευση.</value>
+  </data>
+  <data name="OfflineAreaSize" xml:space="preserve">
+    <value>Μέγεθος λήψης: {0} από τα επιτρεπόμενα {1}. Έκταση: {2} km².</value>
+  </data>
+  <data name="OfflineAreaNotMeasured" xml:space="preserve">
+    <value>Έκταση: {0} km². Το μέγεθος λήψης δεν μπορεί να μετρηθεί μέχρι να ρυθμιστεί βασικός χάρτης στον διακομιστή.</value>
+  </data>
+  <data name="OfflineAreaTooLarge" xml:space="preserve">
+    <value>Η λήψη αυτής της περιοχής θα ήταν {0}, πάνω από τα επιτρεπόμενα {1}. Σχεδιάστε μικρότερη περιοχή.</value>
+  </data>
+  <data name="OfflineAreaTooLargeArea" xml:space="preserve">
+    <value>Η περιοχή είναι πολύ μεγάλη για λήψη. Σχεδιάστε μικρότερη περιοχή.</value>
+  </data>
+  <data name="OfflineAreaSelfIntersecting" xml:space="preserve">
+    <value>Το περίγραμμα της περιοχής τέμνει τον εαυτό του. Σχεδιάστε την ξανά.</value>
+  </data>
+  <data name="OfflineAreaNoLocation" xml:space="preserve">
+    <value>Το τμήμα δεν έχει κέντρο χάρτη, διεύθυνση ή σταθμό γύρω από τα οποία να τοποθετηθεί η προεπιλεγμένη περιοχή. Σχεδιάστε μια περιοχή ή ορίστε κέντρο χάρτη.</value>
+  </data>
+  <data name="OfflineAreaInvalid" xml:space="preserve">
+    <value>Η περιοχή δεν είναι έγκυρο πολύγωνο GeoJSON.</value>
+  </data>
+  <data name="OfflineIncludedDataLabel" xml:space="preserve">
+    <value>Περιλαμβανόμενα δεδομένα</value>
+  </data>
+  <data name="OfflineInclude_CustomMaps" xml:space="preserve">
+    <value>Προσαρμοσμένοι χάρτες</value>
+  </data>
+  <data name="OfflineInclude_IndoorMaps" xml:space="preserve">
+    <value>Χάρτες εσωτερικών χώρων</value>
+  </data>
+  <data name="OfflineInclude_Layers" xml:space="preserve">
+    <value>Επίπεδα χάρτη</value>
+  </data>
+  <data name="OfflineInclude_Pois" xml:space="preserve">
+    <value>Σημεία ενδιαφέροντος</value>
+  </data>
+  <data name="OfflineInclude_Hydrants" xml:space="preserve">
+    <value>Πυροσβεστικοί κρουνοί</value>
+  </data>
+  <data name="OfflineDownloadPolicyLabel" xml:space="preserve">
+    <value>Λήψεις</value>
+  </data>
+  <data name="OfflineDownloadPolicy_WifiOnly" xml:space="preserve">
+    <value>Μόνο μέσω Wi-Fi</value>
+  </data>
+  <data name="OfflineDownloadPolicy_AnyNetwork" xml:space="preserve">
+    <value>Μέσω οποιουδήποτε δικτύου</value>
+  </data>
+  <data name="OfflineDownloadPolicy_Manual" xml:space="preserve">
+    <value>Μόνο όταν τις ξεκινά ο χρήστης</value>
+  </data>
+  <data name="OfflineDownloadPolicyHelp" xml:space="preserve">
+    <value>Πότε οι εφαρμογές κατεβάζουν και ανανεώνουν τους χάρτες εκτός σύνδεσης.</value>
+  </data>
+  <data name="OfflineIncidentPacksLabel" xml:space="preserve">
+    <value>Συμβάντα εκτός περιοχής</value>
+  </data>
+  <data name="OfflineIncidentPacksHelp" xml:space="preserve">
+    <value>Λήψη του χάρτη γύρω από συμβάν εκτός της περιοχής απόκρισης.</value>
+  </data>
+  <data name="OfflineIncidentRadiusLabel" xml:space="preserve">
+    <value>Ακτίνα γύρω από συμβάντα (km)</value>
+  </data>
+  <data name="OfflineCorridorPacksLabel" xml:space="preserve">
+    <value>Διαδρομές εκτός περιοχής</value>
+  </data>
+  <data name="OfflineCorridorPacksHelp" xml:space="preserve">
+    <value>Λήψη του χάρτη κατά μήκος προγραμματισμένης διαδρομής εκεί όπου βγαίνει από την περιοχή απόκρισης.</value>
+  </data>
+  <data name="OfflineCorridorBufferLabel" xml:space="preserve">
+    <value>Πλάτος εκατέρωθεν των διαδρομών (μέτρα)</value>
+  </data>
+  <data name="OfflineRefreshHoursLabel" xml:space="preserve">
+    <value>Έλεγχος για ενημερώσεις κάθε (ώρες)</value>
+  </data>
+  <data name="OfflineRefreshHoursHelp" xml:space="preserve">
+    <value>Πόσο συχνά οι εφαρμογές ελέγχουν για αλλαγμένους χάρτες. 1 έως 720· προεπιλογή 24.</value>
+  </data>
+  <data name="OfflineStaleDaysLabel" xml:space="preserve">
+    <value>Παρωχημένοι μετά από (ημέρες)</value>
+  </data>
+  <data name="OfflineStaleDaysHelp" xml:space="preserve">
+    <value>Οι ληφθέντες χάρτες που δεν έχουν ανανεωθεί για τόσο διάστημα εμφανίζονται ως παρωχημένοι. 1 έως 365· προεπιλογή 7.</value>
+  </data>
+  <data name="OfflinePreferLocalLabel" xml:space="preserve">
+    <value>Χρήση ληφθέντων χαρτών όταν υπάρχει σύνδεση</value>
+  </data>
+  <data name="OfflinePreferLocalHelp" xml:space="preserve">
+    <value>Εντός της περιοχής απόκρισης, οι εφαρμογές χρησιμοποιούν τον ληφθέντα βασικό χάρτη ακόμη και με δίκτυο, εξοικονομώντας δεδομένα κινητής.</value>
+  </data>
+  <data name="MapProviderBaseMap" xml:space="preserve">
+    <value>Βασικός χάρτης</value>
+  </data>
+  <data name="MapProviderRouting" xml:space="preserve">
+    <value>Δρομολόγηση</value>
+  </data>
+  <data name="MapProviderTraffic" xml:space="preserve">
+    <value>Ζωντανή κίνηση</value>
+  </data>
+  <data name="MapProviderSelfHosted" xml:space="preserve">
+    <value>Χάρτες αυτού του διακομιστή (OpenStreetMap)</value>
+  </data>
+  <data name="MapProviderRoutingEstimate" xml:space="preserve">
+    <value>Εκτίμηση σε ευθεία γραμμή</value>
+  </data>
+  <data name="MapProviderTrafficOn" xml:space="preserve">
+    <value>Διαθέσιμη</value>
+  </data>
+  <data name="MapProviderTrafficOff" xml:space="preserve">
+    <value>Μη διαθέσιμη</value>
+  </data>
+  <data name="MapStyleSelfHostedNote" xml:space="preserve">
+    <value>Αυτός ο διακομιστής σχεδιάζει δικούς του χάρτες, οπότε εμφανίζονται μόνο τα στυλ που μπορεί να αποδώσει. Τα στυλ της κοινότητας, και οι δορυφορικές εικόνες αν δεν τις παρέχει ο διακομιστής, απαιτούν Mapbox.</value>
+  </data>
+  <data name="MapStyleServerGroup" xml:space="preserve">
+    <value>Στυλ αυτού του διακομιστή</value>
+  </data>
+  <data name="MapStyleNotAvailable" xml:space="preserve">
+    <value>(μη διαθέσιμο σε αυτόν τον διακομιστή)</value>
+  </data>
 </root>

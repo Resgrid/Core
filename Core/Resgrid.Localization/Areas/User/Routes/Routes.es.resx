@@ -181,4 +181,100 @@
   <data name="Latitude" xml:space="preserve"><value>Latitud</value></data>
   <data name="Longitude" xml:space="preserve"><value>Longitud</value></data>
   <data name="FindLocationVia" xml:space="preserve"><value>Buscar ubicación mediante</value></data>
+  <data name="ProfileTruck" xml:space="preserve">
+    <value>Camión (tamaño del vehículo)</value>
+  </data>
+  <data name="ProfileTrafficUnavailable" xml:space="preserve">
+    <value>(sin tráfico en vivo en este servidor)</value>
+  </data>
+  <data name="AvoidLabel" xml:space="preserve">
+    <value>Evitar</value>
+  </data>
+  <data name="AvoidTolls" xml:space="preserve">
+    <value>Peajes</value>
+  </data>
+  <data name="AvoidHighways" xml:space="preserve">
+    <value>Autopistas</value>
+  </data>
+  <data name="AvoidFerries" xml:space="preserve">
+    <value>Ferris</value>
+  </data>
+  <data name="AvoidUnpaved" xml:space="preserve">
+    <value>Caminos sin pavimentar</value>
+  </data>
+  <data name="StartStation" xml:space="preserve">
+    <value>Estación de inicio</value>
+  </data>
+  <data name="EndStation" xml:space="preserve">
+    <value>Estación final</value>
+  </data>
+  <data name="UnitStationOption" xml:space="preserve">
+    <value>La estación de la unidad</value>
+  </data>
+  <data name="LegColumn" xml:space="preserve">
+    <value>Tramo</value>
+  </data>
+  <data name="ArrivalColumn" xml:space="preserve">
+    <value>Llegada</value>
+  </data>
+  <data name="StopGeofenceRadius" xml:space="preserve">
+    <value>Radio de llegada (m)</value>
+  </data>
+  <data name="StopGeofenceRadiusHelp" xml:space="preserve">
+    <value>Déjelo en blanco para usar el radio de la ruta.</value>
+  </data>
+  <data name="OptimizeOrder" xml:space="preserve">
+    <value>Optimizar orden</value>
+  </data>
+  <data name="OptimizeTitle" xml:space="preserve">
+    <value>Orden de paradas optimizado</value>
+  </data>
+  <data name="OptimizeCurrent" xml:space="preserve">
+    <value>Orden actual</value>
+  </data>
+  <data name="OptimizeProposed" xml:space="preserve">
+    <value>Orden propuesto</value>
+  </data>
+  <data name="OptimizeAccept" xml:space="preserve">
+    <value>Usar este orden</value>
+  </data>
+  <data name="RouteStart" xml:space="preserve">
+    <value>Inicio</value>
+  </data>
+  <data name="RouteEnd" xml:space="preserve">
+    <value>Fin</value>
+  </data>
+  <data name="RouteTotal" xml:space="preserve">
+    <value>Total</value>
+  </data>
+  <data name="RouteWithStops" xml:space="preserve">
+    <value>con paradas</value>
+  </data>
+  <data name="RouteEstimate" xml:space="preserve">
+    <value>estimación en línea recta</value>
+  </data>
+  <data name="MoveUp" xml:space="preserve">
+    <value>Subir</value>
+  </data>
+  <data name="MoveDown" xml:space="preserve">
+    <value>Bajar</value>
+  </data>
+  <data name="DeleteStop" xml:space="preserve">
+    <value>Eliminar parada</value>
+  </data>
+  <data name="TruckNoVehicle" xml:space="preserve">
+    <value>Esta unidad no tiene tamaño de vehículo, así que Camión calcula como Conducción.</value>
+  </data>
+  <data name="OptimizeFailed" xml:space="preserve">
+    <value>No se pudo optimizar el orden de las paradas.</value>
+  </data>
+  <data name="OptimizeNoChange" xml:space="preserve">
+    <value>Las paradas ya están en el mejor orden.</value>
+  </data>
+  <data name="StopOrderFailed" xml:space="preserve">
+    <value>No se pudo guardar el nuevo orden de paradas. La página se recargará.</value>
+  </data>
+  <data name="StopMoveFailed" xml:space="preserve">
+    <value>No se pudo mover la parada. La página se recargará.</value>
+  </data>
 </root>

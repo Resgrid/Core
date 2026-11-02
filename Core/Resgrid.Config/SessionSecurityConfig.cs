@@ -15,6 +15,23 @@
 		public static int PublicResetLinkLifetimeMinutes = 30;
 		public static int PublicResetAccountLimitPerHour = 3;
 		public static int PublicResetIpLimitPerHour = 10;
+
+		// Password sign-ins (Web LogOn and the API password grant) from one address pause for the window once its failures there
+		// reach this many different usernames (password spraying, credential stuffing) or this many attempts in all. One account's
+		// own repeated failures are the Identity lockout's job, so a device stuck on an old password never blocks its whole network.
+		// 0 turns a limit off; both 0 turns the throttle off.
+		public static int LoginThrottleWindowMinutes = 15;
+		public static int LoginThrottleDistinctAccountLimit = 10;
+		public static int LoginThrottleAttemptLimit = 100;
+
+		// Per-address caps on the other signed-out account forms (PublicFormRateLimiter), each a fixed window; 0 turns one off.
+		// Forgot-password requests keep PublicResetIpLimitPerHour and PublicResetAccountLimitPerHour above. Generous for a station's
+		// shared network (a crew mistyping, a training class), tight for a script.
+		public static int RegisterIpLimitPerHour = 10;        // registration posts, valid or not (each also needs a reCAPTCHA)
+		public static int RegisterIpAccountsPerDay = 5;       // new accounts and departments actually created
+		public static int PasswordResetIpLimitPerHour = 20;   // posts using an emailed reset link
+		public static int FactorRecoveryIpLimitPerHour = 20;  // lost-authenticator recovery posts
+		public static int InviteIpLimitPerHour = 20;          // invitation posts and lookups of codes that don't exist
 		public static int WebBffAccessTokenLifetimeMinutes = 5;
 		// Eventing tokens are deliberately longer-lived than API tokens. Every hub sets
 		// CloseOnAuthenticationExpiration, so this value is how often each connected client tears the

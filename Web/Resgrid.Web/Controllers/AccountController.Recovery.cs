@@ -10,6 +10,7 @@ using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Security;
+using Resgrid.Model.Services;
 using Resgrid.Repositories.DataRepository.Stores;
 using Resgrid.Web.Helpers;
 using Resgrid.Web.Models.AccountViewModels;
@@ -185,6 +186,12 @@ namespace Resgrid.Web.Controllers
 			model.CanRecover = _recoveries.IsEnabled;
 			if (!model.CanRecover)
 				return View(model);
+			// Over the address's hourly cap, no recovery code is checked (or spent): the sign-in stays open for after the wait.
+			if (!await _formLimits.TryAcquireAsync(PublicFormLimit.FactorRecovery, ClientIp(), cancellationToken))
+			{
+				model.Code = null;
+				return FormLimited(model, FactorRecoveryLimitedMessage);
+			}
 			if (await _userManager.IsLockedOutAsync(user))
 				return RestartSignIn(MfaLoginTransactionOutcome.TooManyAttempts, model.ReturnUrl);
 			if (!await _userManager.GetTwoFactorEnabledAsync(user) || string.IsNullOrWhiteSpace(model.Code))
@@ -239,6 +246,9 @@ namespace Resgrid.Web.Controllers
 			});
 			return RedirectToAction(nameof(Recovery));
 		}
+
+		private string FactorRecoveryLimitedMessage =>
+			FormLimitedMessage(PublicFormLimit.FactorRecovery, "authenticator recovery attempts", "try again");
 
 		private async Task<(FactorRecoveryTransaction Recovery, IdentityUser User, FactorRecoveryOutcome Outcome)> OpenRecoveryAsync(CancellationToken cancellationToken)
 		{
@@ -300,6 +310,10 @@ namespace Resgrid.Web.Controllers
 				ModelState.AddModelError(nameof(model.Code), _twoFactorLocalizer["SetupExpired"]);
 				return View(await RecoveryModelAsync(user, model, null, cancellationToken));
 			}
+
+			// Over the address's hourly cap the code is not checked; the same staged key (the QR code already scanned) is shown again.
+			if (!await _formLimits.TryAcquireAsync(PublicFormLimit.FactorRecovery, ClientIp(), cancellationToken))
+				return FormLimited(await RecoveryModelAsync(user, model, stagedKey, cancellationToken), FactorRecoveryLimitedMessage);
 
 			// Only the user's own active passkeys can be chosen for removal.
 			var active = await _passkeyRows.GetActiveForUserAsync(user.Id, cancellationToken);

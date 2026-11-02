@@ -534,6 +534,25 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task a_unit_with_a_vehicle_size_is_routed_with_its_limits()
+		{
+			// Owner Q2 (MapLibre plan §10.3): an apparatus is never ranked on a road it cannot physically use.
+			_config.EtaShortlistSize = 1;
+			var apparatus = new VehicleProfile { HeightMeters = 3.9, GrossWeightKg = 30000 };
+			_unitsService.Setup(x => x.GetVehicleProfilesForUnitsAsync(DepartmentId, It.IsAny<IEnumerable<Unit>>()))
+				.ReturnsAsync(new Dictionary<int, VehicleProfile> { [TeamUnit] = apparatus });
+			_geoService.Setup(x => x.GetEtaInSecondsAsync("34.059,-118.25", "34.05,-118.25", apparatus)).ReturnsAsync(240);
+			_geoService.Setup(x => x.GetEtaInSecondsAsync(It.IsAny<string>(), "34.05,-118.25")).ReturnsAsync(-1);
+
+			var board = await GetBoardAsync(useRoadEta: true);
+
+			_geoService.Verify(x => x.GetEtaInSecondsAsync("34.059,-118.25", "34.05,-118.25", apparatus), Times.Once);
+			_geoService.Verify(x => x.GetEtaInSecondsAsync("34.059,-118.25", "34.05,-118.25"), Times.Never);
+			UnitRow(board, TeamUnit).EtaSeconds.Should().Be(240);
+			UnitRow(board, TeamUnit).EtaSource.Should().Be(EtaSources.Road);
+		}
+
+		[Test]
 		public async Task a_types_looked_up_units_rank_ahead_of_its_estimates_as_a_run_card_shortlist_does()
 		{
 			// The near team's drive time (50 min) is worse than the far team's straight-line estimate (~39 min): a run card

@@ -1773,6 +1773,12 @@
             caller or a failed lookup still gets the map every client showed before, on the app's built-in token.
             </summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ConfigController.PopulateMapLibreAsync(Resgrid.Web.Services.Models.v4.Configs.GetConfigResult,System.Int32,System.String)">
+            <summary>
+            The MapLibre fields (maplibre-mapping-routing-navigation-plan.md §5.4, names as Omni declares them). Additive:
+            nothing here changes a field the legacy apps read (§21). Only signed-in callers get signed URLs.
+            </summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ConfigController.PopulateMapCenterAsync(Resgrid.Web.Services.Models.v4.Configs.GetConfigResult,System.Int32)">
             <summary>
             Resolves the department's default map center. Always leaves the result populated: the
@@ -3387,6 +3393,70 @@
             </summary>
             <param name="layerId">Custom map layer id</param>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.GetStyle(System.String,System.String,System.Threading.CancellationToken)">
+            <summary>
+            The department's base map as a MapLibre style (Mapbox styles with mapbox:// URLs rewritten, self-hosted
+            styles, or a raster style). Bearer callers, or a signed URL from the config API.
+            </summary>
+            <param name="key">App key (surface) the style is for; empty for the website.</param>
+            <param name="variant">"day" (default) or "night".</param>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.GetStaticMap(System.String,System.Double,System.Double,System.Double,System.Int32,System.Int32,System.Int32,System.String,System.Nullable{System.Int32},System.Nullable{System.Int32},System.Threading.CancellationToken)">
+            <summary>
+            A small map image centred on a point, in the department's style. The URL template the config API publishes
+            (StaticMapUrlTemplate) fills lat, lon, zoom (GL scale), width, height, scale (1|2) and scheme (day|night).
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.GetCustomMapMercatorTile(System.String,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            A georeferenced custom map layer as Web Mercator XYZ tiles for MapLibre (plan §6.7). Empty (204) outside the
+            layer; 404 for a pixel-only layer. Bearer callers, or the signed template from the layer results.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.GetOfflineManifest(System.Threading.CancellationToken)">
+            <summary>
+            The offline manifest the apps sync (§19.3): base-map cells over the department's response area, custom map
+            rasters, indoor/custom map images, the department data bundle, sprite and offline styles, each with a signed,
+            same-origin, Range-capable download URL. Bearer callers, or the signed URL from the config API.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.GetOfflinePack(System.String,System.String,System.Threading.CancellationToken)">
+            <summary>
+            Downloads a built offline pack (§19.3): PMTiles, or one sprite file (?file=). Supports HTTP Range; the ETag is the
+            SHA-256. An expired or invalid signature answers 410 so the app refetches the manifest.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.GetOfflineDepartmentData(System.Threading.CancellationToken)">
+            <summary>The department data bundle (gzip JSON of GeoJSON collections by section).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.GetOfflineAsset(System.String,System.Threading.CancellationToken)">
+            <summary>An offline style or glyph archive (day.json, night.json, glyphs.zip) mirrored into the pack store.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.EstimateResponseArea(Resgrid.Web.Services.Models.v4.Mapping.EstimateResponseAreaInput,System.Threading.CancellationToken)">
+            <summary>
+            The base-map download size of a maximum response area while it is drawn (§19.3): size in bytes, cell count and
+            whether it fits the limit. An empty area measures the fallback circle.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.DeniedMapResource">
+            <summary>No bearer and no valid signature: 410 when a signature was sent (expired), else 401.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.ServeStoredFileAsync(System.String,System.Int64,System.String,System.String,System.Threading.CancellationToken)">
+            <summary>A stored file with Accept-Ranges, a single byte range when asked, and the SHA-256 as ETag.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.SignMapResourceUrls(Resgrid.Web.Services.Models.v4.Mapping.SignMapResourceUrlsInput)">
+            <summary>
+            Signs custom map tile/image and indoor floor image URLs of the caller's department so native map sources, which
+            cannot send an Authorization header, can load them. Template URLs ({z}/{x}/{y}) stay valid after signing.
+            URLs for other resources or other departments come back null.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.ResolveMapResourceDepartmentAsync(System.String)">
+            <summary>
+            The department a map resource request may read: a bearer caller with Call_View (exactly as these routes always
+            required), or a valid signed URL for this resource. Null means not allowed.
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.MessagesController">
             <summary>
             Messaging system interaction
@@ -4378,26 +4448,23 @@
             Gets route plans for a specific unit
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.GetRoutePlan(System.String)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.GetRoutePlan(System.String,System.Threading.CancellationToken)">
             <summary>
             Gets a single route plan with stops and schedules
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.CreateRoutePlan(Resgrid.Web.Services.Models.v4.Routes.NewRoutePlanInput)">
             <summary>
-            Creates a new route plan with stops
+            Creates a new route plan with stops, then generates its route through the install's routing provider
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.UpdateRoutePlan(Resgrid.Web.Services.Models.v4.Routes.UpdateRoutePlanInput)">
             <summary>
-            Updates an existing route plan with stops
+            Updates an existing route plan. Stops are replaced only when a Stops array is sent (entries with a RouteStopId
+            update that stop, others are added, and stops left out are removed); the route is then regenerated.
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.DeleteRoutePlan(System.String)">
-            <summary>
-            Soft-deletes a route plan
-            </summary>
-        </member>
+        <!-- Badly formed XML comment ignored for member "M:Resgrid.Web.Services.Controllers.v4.RoutesController.DeleteRoutePlan(System.String)" -->
         <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.StartRoute(Resgrid.Web.Services.Models.v4.Routes.StartRouteInput)">
             <summary>
             Starts a route instance
@@ -4423,16 +4490,13 @@
             Cancels a route instance
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.GetActiveRouteForUnit(System.Int32)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.GetActiveRouteForUnit(System.Int32,System.Boolean)">
             <summary>
-            Gets the active route instance for a unit
+            Gets the active route instance for a unit. Pass includePaused=true to also return a paused instance (the
+            in-progress one wins); without it only an in-progress instance is returned, as before.
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.GetActiveRoutes">
-            <summary>
-            Gets all active route instances for the department
-            </summary>
-        </member>
+        <!-- Badly formed XML comment ignored for member "M:Resgrid.Web.Services.Controllers.v4.RoutesController.GetActiveRoutes" -->
         <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.GetRouteHistory(System.String)">
             <summary>
             Gets route instance history for a plan
@@ -4450,7 +4514,7 @@
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.CheckOutFromStop(Resgrid.Web.Services.Models.v4.Routes.CheckOutInput)">
             <summary>
-            Check out from a stop
+            Check out from a stop. Latitude and longitude are optional.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.SkipStop(Resgrid.Web.Services.Models.v4.Routes.SkipStopInput)">
@@ -4463,11 +4527,12 @@
             Auto check-in from geofence proximity
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.GetUnacknowledgedDeviations">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.RecordDeviation(Resgrid.Web.Services.Models.v4.Routes.RecordRouteDeviationInput)">
             <summary>
-            Gets unacknowledged deviations for the department
+            Records a deviation for a running route instance (e.g. OffRoute from in-app navigation)
             </summary>
         </member>
+        <!-- Badly formed XML comment ignored for member "M:Resgrid.Web.Services.Controllers.v4.RoutesController.GetUnacknowledgedDeviations" -->
         <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.AcknowledgeDeviation(System.String)">
             <summary>
             Acknowledge a deviation
@@ -4488,23 +4553,35 @@
             Gets all unique contacts attached to stops on a route plan
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.GetDirections(System.String)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.GetDirections(System.String,System.Threading.CancellationToken)">
             <summary>
-            Gets the stored route geometry and waypoints for a route plan
+            Gets the route for a route plan: geometry (GeoJSON), waypoints and, appended, the provider, legs with planned
+            offsets, and the full route with turn-by-turn steps. A stale route is regenerated first.
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.GetInstanceDirections(System.String,System.Nullable{System.Decimal},System.Nullable{System.Decimal})">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.GetInstanceDirections(System.String,System.Nullable{System.Decimal},System.Nullable{System.Decimal},System.Nullable{System.Double},System.Boolean,System.String,System.Boolean,System.Threading.CancellationToken)">
             <summary>
-            Gets the route geometry and remaining waypoints for an active route instance.
-            Pass the unit's current latitude and longitude as query parameters to route from
-            the current position rather than the first remaining stop.
+            Gets the route geometry and remaining waypoints for an active route instance. With latitude and longitude the
+            route is computed live from that position through the remaining stops, with an ETA per stop (heading, navigation,
+            language and metric refine it); without them the stored plan route is returned, as before.
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.UpdateStopNotes(Resgrid.Web.Services.Models.v4.Routes.UpdateStopNotesInput)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.GenerateRoute(System.String)">
             <summary>
-            Updates notes on an active route instance stop
+            Generates (or regenerates) the plan's route through the install's routing provider and returns it
             </summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.PreviewOptimization(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Proposes the best stop order (start and end fixed) with the totals before and after; nothing is saved
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.ApplyStopOrder(System.String,Resgrid.Web.Services.Models.v4.Routes.ApplyStopOrderInput)">
+            <summary>
+            Saves a new stop order (every stop once; renumbered 1..n) and regenerates the route
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:Resgrid.Web.Services.Controllers.v4.RoutesController.UpdateStopNotes(Resgrid.Web.Services.Models.v4.Routes.UpdateStopNotesInput)" -->
         <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.GetActiveRouteInstances">
             <summary>
             Gets all active route instances across the department with progress details
@@ -4513,6 +4590,50 @@
         <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.GetScheduledRoutes">
             <summary>
             Gets all active schedules for the department's route plans
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.CurrentRouteAsync(System.String,System.Threading.CancellationToken)">
+            <summary>The plan's current route, regenerating when stale; null (and logged) when routing throws.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.RegenerateAsync(System.String)">
+            <summary>Regenerates after a save; a routing failure leaves the plan saved and stale (regenerated on read).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.ApplyProfile(Resgrid.Model.RoutePlan,Resgrid.Web.Services.Models.v4.Routes.NewRoutePlanInput)">
+            <summary>RoutingProfile when sent (the legacy string is written alongside), else the legacy string as before.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.PlanReferencesValidAsync(Resgrid.Web.Services.Models.v4.Routes.NewRoutePlanInput)">
+            <summary>The plan's unit and stations must be the caller's department's (never trust posted keys).</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.RoutingController">
+            <summary>
+            Routes and drive times through the install's routing provider (Valhalla, Mapbox, Google, OSRM or the straight-line
+            estimate). Provider keys never leave the server and every client gets the same route shape
+            (maplibre-mapping-routing-navigation-plan.md §6.3). New in the MapLibre plan: no existing app calls it.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutingController.GetCapabilities">
+            <summary>What the install's routing provider supports (traffic, incidents, navigation, vehicle limits).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutingController.GetRoute(Resgrid.Web.Services.Models.v4.Routing.GetRouteInput,System.Threading.CancellationToken)">
+            <summary>A route through two or more points.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutingController.GetCallRoute(System.Int32,System.Double,System.Double,System.Nullable{System.Double},System.Nullable{System.Int32},System.Boolean,System.String,System.Boolean,System.Threading.CancellationToken)">
+            <summary>
+            Route from the caller's position to a call (Unit navigation start and reroute). The destination is the call's
+            location; the unit's vehicle size and weight apply when <paramref name="unitId"/> is given.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutingController.ReportNavigationProgress(Resgrid.Web.Services.Models.v4.Routing.ReportNavigationProgressInput)">
+            <summary>
+            A navigating unit's progress toward a call or a route stop (plan section 9.4): sent on start, reroute, arrival and
+            end, and while navigating at most every 15 seconds. Dispatch and Big Board show the ETA live. Arrived and Ended
+            clear the unit's state.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutingController.GetActiveNavigations(System.Nullable{System.Int32},System.Nullable{System.Int32})">
+            <summary>
+            Units navigating now, with their live ETAs, for screens that open after navigation started. Each unit is listed
+            only when the caller may see its location, and a call navigation only when the caller can see the call.
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.RunCardsController">
@@ -12832,6 +12953,57 @@
             keep the token built into the app. Only signed-in callers get one.
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.MapRenderer">
+            <summary>
+            "maplibre" when the server serves MapLibre styles (maplibre-mapping-routing-navigation-plan.md §5.4). The
+            fields below are for MapLibre clients (Omni); the Mapbox fields above keep their meaning for older builds.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.MapLibreStyleUrlDay">
+            <summary>Signed GetStyle URL of the department's base map for a light theme (MapLibre style JSON).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.MapLibreStyleUrlNight">
+            <summary>Signed GetStyle URL of the department's base map for a dark theme.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.MapRasterTileUrl">
+            <summary>Raster XYZ tile template ({z}/{x}/{y}) usable as a fallback base map.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.StaticMapUrlTemplate">
+            <summary>Signed static map image template; placeholders {lat} {lon} {zoom} {width} {height} {scale} {scheme}.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.TrafficAvailable">
+            <summary>A live traffic overlay is available (TrafficTileUrl).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.TrafficTileUrl">
+            <summary>Mapbox Traffic v1 vector tile template (layer "traffic", congestion low/moderate/heavy/severe, closed).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.TrafficRefreshSeconds">
+            <summary>How often to reload traffic tiles, in seconds.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.RoutingProvider">
+            <summary>Routing provider: valhalla, mapbox, google, osrm or estimate.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.RoutingSupportsTraffic">
+            <summary>Drive times and routes reflect live traffic.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.RoutingSupportsIncidents">
+            <summary>Routes report incidents (accidents, closures, construction).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.RoutingSupportsVoice">
+            <summary>Routes can carry spoken and on-screen navigation instructions.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.NavigationAvailable">
+            <summary>Unit in-app navigation is available (Valhalla or Mapbox routing, enabled, Navigation.InApp flag on).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.OfflineMapsAvailable">
+            <summary>The department may download offline map packs (OfflineManifestUrl).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.OfflineManifestUrl">
+            <summary>Signed offline map manifest URL (same origin as the API).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.AmbientCacheMaxBytes">
+            <summary>Ambient tile cache budget for MapLibre on the device, in bytes.</summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.StatusHoldToConfirm">
             <summary>
             The department sets statuses in the Unit and Responder apps with a two-second press and hold
@@ -14630,6 +14802,12 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Invoicing.PaymentLinkData.PayUrl">
             <summary>The stable Resgrid pay page for the invoice (share this; it survives provider session expiry).</summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.CustomMapLayerResultData.MercatorTileUrl">
+            <summary>
+            Signed Web Mercator tile template ({z}/{x}/{y}) for MapLibre clients when the layer is georeferenced (it or its
+            map has bounds); null for pixel-only layers. The pixel-pyramid tiles above are unchanged.
+            </summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Mapping.GetCustomMapRegionsGeoJSONResult.GeoJson">
             <summary>
             GeoJSON FeatureCollection string ready for direct rnmapbox ShapeSource consumption
@@ -14948,6 +15126,15 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Mapping.UnitMapCrewMemberData.LocationTimestamp">
             <summary>UTC time of the fix or status the marker came from.</summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Mapping.EstimateResponseAreaInput">
+            <summary>A maximum response area to measure (§19.3).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.EstimateResponseAreaInput.GeoJson">
+            <summary>GeoJSON Polygon, MultiPolygon, Feature or FeatureCollection; empty measures the fallback area.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Mapping.EstimateResponseAreaResult">
+            <summary>Base-map download size of a response area.</summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Mapping.PoiTypeResultData.PoiImage">
             <summary>
             The POI-specific custom icon image name.
@@ -14976,6 +15163,18 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Mapping.MapFeatureResultData.FeatureType">
             <summary>"indoor_zone" or "custom_region"</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Mapping.SignMapResourceUrlsInput">
+            <summary>Body of POST Mapping/SignMapResourceUrls.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.SignMapResourceUrlsInput.Urls">
+            <summary>Custom map tile/image or indoor floor image URLs (templates with {z}/{x}/{y} allowed).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.SignedMapResourceUrl.Url">
+            <summary>The URL as sent.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.SignedMapResourceUrl.SignedUrl">
+            <summary>The URL with an expiring signature, or null when it is not a map resource of the caller's department.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Messages.DeleteMessageResult">
             <summary>
@@ -16856,6 +17055,39 @@
             Response Data
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routes.NewRoutePlanInput.RoutingProfile">
+            <summary>RoutingProfile (Driving=0, DrivingTraffic=1, Truck=2, Walking=3, Cycling=4); when omitted it follows MapboxRouteProfile.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routes.NewRoutePlanInput.AvoidOptions">
+            <summary>RouteAvoidOptions flags (Tolls=1, Highways=2, Ferries=4, Unpaved=8).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routes.NewRoutePlanInput.StartDepartmentGroupId">
+            <summary>Station to start at when UseStationAsStart is set; null uses the plan unit's station.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routes.NewRoutePlanInput.EndDepartmentGroupId">
+            <summary>Station to end at when UseStationAsEnd is set; null uses the plan unit's station.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routes.NewRouteStopInput.ContactId">
+            <summary>A department contact for the stop (RD14).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routes.NewRouteStopInput.RouteStopId">
+            <summary>On UpdateRoutePlan: the existing stop this entry updates; null adds a stop.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routes.CheckOutInput.Latitude">
+            <summary>Optional; a check-out without coordinates is stored as before (0,0).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routes.CheckOutInput.Longitude">
+            <summary>Optional; a check-out without coordinates is stored as before (0,0).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routes.ApplyStopOrderInput.StopIds">
+            <summary>Every stop of the plan, once each, in the new order.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routes.RecordRouteDeviationInput.DeviationType">
+            <summary>RouteDeviationTypes: OffRoute=0, MissedStop=1, OutOfOrder=2, LateArrival=3, LongDwell=4.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routes.RecordRouteDeviationInput.DistanceMeters">
+            <summary>Distance from the planned line (OffRoute).</summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Routes.RouteDirectionsResultData.RouteProfile">
             <summary>Route profile to use for turn-by-turn navigation: driving, walking, cycling, driving-traffic.</summary>
         </member>
@@ -16864,6 +17096,171 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Routes.RouteDirectionsResultData.OriginLongitude">
             <summary>Origin longitude supplied by the caller (unit's current location). Null means start from the first waypoint.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routes.RouteDirectionsResultData.Provider">
+            <summary>The routing provider that produced the route (valhalla, mapbox, google, osrm, estimate).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routes.RouteDirectionsResultData.Attribution">
+            <summary>Attribution the provider requires wherever the route is shown.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routes.RouteDirectionsResultData.IsEstimate">
+            <summary>True when only a straight-line estimate was available (no road route).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routes.RouteDirectionsResultData.VehicleRestricted">
+            <summary>True when the unit's size and weight limits were applied.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routes.RouteDirectionsResultData.IsLive">
+            <summary>True when the route was computed from the caller's position (live instance directions).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routes.RouteDirectionsResultData.EstimatedDurationWithDwellSeconds">
+            <summary>Travel time plus estimated dwell at the stops.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routes.RouteDirectionsResultData.Start">
+            <summary>The resolved route start (station or explicit point); null when the route starts at the first stop.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routes.RouteDirectionsResultData.End">
+            <summary>The resolved route end; null when the route ends at the last stop.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routes.RouteDirectionsResultData.Legs">
+            <summary>One leg per stop arrival (and one to the end), with planned offsets or live ETAs.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routes.RouteDirectionsResultData.Route">
+            <summary>The full route in the OSRM v5 / Mapbox Directions shape (polyline6 geometry, legs with steps); null when unavailable.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routes.RouteEndpointData.DepartmentGroupId">
+            <summary>The station the point is; null for an explicit point.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routes.RouteDirectionLegData.RouteStopId">
+            <summary>The stop this leg arrives at; null for the leg to the route end.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routes.RouteDirectionLegData.OffsetSeconds">
+            <summary>Seconds from the route start (or from now, for live directions) to arrival, including dwell before it.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routes.RouteDirectionLegData.EtaUtc">
+            <summary>Arrival time for live instance directions.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routes.RouteDirectionWaypointData.EtaUtc">
+            <summary>Live ETA (instance directions from a position) or the planned arrival of a running instance's stop.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routes.RoutePlanResultData.RoutingProfile">
+            <summary>RoutingProfile: Driving=0, DrivingTraffic=1, Truck=2, Walking=3, Cycling=4.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routes.RoutePlanResultData.AvoidOptions">
+            <summary>RouteAvoidOptions flags: Tolls=1, Highways=2, Ferries=4, Unpaved=8.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routes.RoutePlanResultData.RouteIsStale">
+            <summary>True when stops or options changed since the stored route was generated.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routes.RoutePlanDetailResultData.RoutingProfile">
+            <summary>RoutingProfile: Driving=0, DrivingTraffic=1, Truck=2, Walking=3, Cycling=4.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routes.RoutePlanDetailResultData.AvoidOptions">
+            <summary>RouteAvoidOptions flags: Tolls=1, Highways=2, Ferries=4, Unpaved=8.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routes.RoutePlanDetailResultData.EstimatedDurationWithDwellSeconds">
+            <summary>Travel time plus every stop's estimated dwell.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routes.RouteStopResultData.LegDistanceMeters">
+            <summary>Distance of the leg arriving at this stop.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routes.RouteStopResultData.LegDurationSeconds">
+            <summary>Travel time of the leg arriving at this stop.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routes.RouteStopResultData.PlannedOffsetSeconds">
+            <summary>Seconds from the route start to arrival here, including earlier stops' dwell.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Routing.RoutePointInput">
+            <summary>A point in a route request.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routing.RoutePointInput.Heading">
+            <summary>Direction of travel in degrees at this point (first point when rerouting).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routing.RoutePointInput.IsStop">
+            <summary>False for a pass-through point.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Routing.GetRouteInput">
+            <summary>Body of POST Routing/GetRoute.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routing.GetRouteInput.Points">
+            <summary>Two or more points in travel order.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routing.GetRouteInput.Profile">
+            <summary>RoutingProfile: 0 Driving, 1 Driving with traffic, 2 Truck, 3 Walking, 4 Cycling.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routing.GetRouteInput.Avoid">
+            <summary>RouteAvoidOptions flags: 1 tolls, 2 highways, 4 ferries, 8 unpaved.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routing.GetRouteInput.UnitId">
+            <summary>Apply this unit's vehicle size and weight (must be in the caller's department).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routing.GetRouteInput.Steps">
+            <summary>Return turn-by-turn steps.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routing.GetRouteInput.Navigation">
+            <summary>Return navigation (voice and banner) instructions; ignored when the provider cannot navigate.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routing.GetRouteInput.Metric">
+            <summary>True for metric instructions; false (default) for imperial.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routing.RouteResultData.Provider">
+            <summary>Provider that answered (valhalla, mapbox, google, osrm, estimate).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routing.RouteResultData.Attribution">
+            <summary>Attribution to show with the route.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routing.RouteResultData.TypicalDurationSeconds">
+            <summary>Duration without live traffic, when the provider reports it.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routing.RouteResultData.VehicleRestricted">
+            <summary>The vehicle's size and weight limits were applied.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routing.RouteResultData.VehicleLimitsEnforced">
+            <summary>Which vehicle limits the provider enforces: "all", "size" (height, width, weight) or "none".</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routing.RouteResultData.IsEstimate">
+            <summary>True when the route is a straight-line estimate, not a road route.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routing.RouteResultData.Geometry">
+            <summary>The route line as a GeoJSON LineString string, the same format the route screens already parse.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routing.RouteResultData.Route">
+            <summary>
+            The full route in the OSRM v5 / Mapbox Directions shape (polyline6 geometry, legs, steps, maneuvers, and
+            voiceInstructions / bannerInstructions when navigation was requested); null without steps.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routing.RouteResultData.NavigationAvailable">
+            <summary>In-app navigation may use this route (Valhalla or Mapbox, navigation enabled).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routing.RouteResultData.ExpiresUtc">
+            <summary>When a client should ask again (traffic-aware routes change).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routing.RoutingCapabilitiesData.VehicleLimitsEnforced">
+            <summary>"all", "size" or "none".</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routing.ReportNavigationProgressInput.CallId">
+            <summary>The call being navigated to; send either this or RouteInstanceId.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routing.ReportNavigationProgressInput.RouteInstanceId">
+            <summary>The route instance being navigated; send either this or CallId.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routing.ReportNavigationProgressInput.RouteInstanceStopId">
+            <summary>The route stop being navigated to (route navigation).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routing.ReportNavigationProgressInput.State">
+            <summary>UnitNavigationStates: Started=0, Progress=1, Rerouted=2, Arrived=3, Ended=4.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routing.ReportNavigationProgressInput.EtaUtc">
+            <summary>Estimated arrival (UTC); when omitted it is now + RemainingSeconds.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routing.ReportNavigationProgressInput.Provider">
+            <summary>The routing provider the app navigates with.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routing.UnitNavigationData.State">
+            <summary>UnitNavigationStates: Started=0, Progress=1, Rerouted=2, Arrived=3, Ended=4.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routing.UnitNavigationData.IsStale">
+            <summary>No report for more than 60 seconds; show the ETA as stale.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.RunCards.RunCardData">
             <summary>A run card (CAD-style response plan) with its full child graph.</summary>
@@ -19591,6 +19988,12 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Voice.VoiceSessionConnectionResultData.Token">
             <summary>
             Id used to connect to the session
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.WeatherAlerts.WeatherAlertResultData.GeoJson">
+            <summary>
+            The alert area as a GeoJSON geometry string whatever the source's format (NWS/MeteoAlarm GeoJSON or an
+            Environment Canada CAP "lat,lon lat,lon" polygon), for map clients; null when the alert has no area.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.WeatherAlerts.WeatherAlertResultData.EffectiveOnUtc">

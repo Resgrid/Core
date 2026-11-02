@@ -37,6 +37,15 @@ namespace Resgrid.Model
 
 		public int? EstimatedDwellMinutes { get; set; }
 
+		/// <summary>Distance of the generated route's leg that arrives at this stop (M0308).</summary>
+		public double? LegDistanceMeters { get; set; }
+
+		/// <summary>Travel time of the leg that arrives at this stop.</summary>
+		public double? LegDurationSeconds { get; set; }
+
+		/// <summary>Seconds from the route start to arrival here, including earlier stops' dwell.</summary>
+		public double? PlannedOffsetSeconds { get; set; }
+
 		public string ContactName { get; set; }
 
 		public string ContactNumber { get; set; }

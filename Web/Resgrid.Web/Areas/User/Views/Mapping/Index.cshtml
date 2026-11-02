@@ -66,7 +66,7 @@
 		<div class="wrapper wrapper-content">
 			<div class="ibox float-e-margins">
 				<div class="ibox-content">
-					<rg-map showbuttons="1" mapheight="750px" departmentId="@ClaimsAuthorizationHelper.GetDepartmentId()" leafletosmurl="@mapConfig.TileUrl" mapattribution="@mapConfig.Attribution" mapprovider="@mapConfig.MapProvider" mapstyleurl="@mapConfig.StyleUrl" mapaccesstoken="@mapConfig.AccessToken"></rg-map>
+					<rg-map showbuttons="1" mapheight="750px" departmentId="@ClaimsAuthorizationHelper.GetDepartmentId()" leafletosmurl="@mapConfig.TileUrl" mapattribution="@mapConfig.Attribution" mapprovider="@mapConfig.MapProvider" mapstyleurl="@mapConfig.StyleUrl" mapaccesstoken="@mapConfig.AccessToken" maprenderer="@SettingsHelper.GetMapLibreWebConfig().Renderer" maplibrestyleurl="@SettingsHelper.GetMapLibreWebConfig().StyleUrlDay" traffic="off"></rg-map>
 					<br/>
 				</div>
 			</div>
@@ -115,5 +115,5 @@
 
 @section Scripts
 {
-
+	<partial name="_MapKitConfig" />
 }

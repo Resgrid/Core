@@ -1,0 +1,45 @@
+@model (string GeoJson, Resgrid.Model.Coordinates Center)
+@using System.Globalization
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.Mapping> localizer
+@{
+	// Re-serialized rather than written as posted: a rejected post hands back the browser's own text.
+	object geoJson = null;
+	try
+	{
+		if (!string.IsNullOrWhiteSpace(Model.GeoJson))
+			geoJson = Newtonsoft.Json.Linq.JToken.Parse(Model.GeoJson);
+	}
+	catch (Newtonsoft.Json.JsonException)
+	{
+	}
+
+	var latitude = Model.Center?.Latitude ?? 39.7392;
+	var longitude = Model.Center?.Longitude ?? -104.9903;
+	var labels = new Dictionary<string, string>
+	{
+		["polygon"] = localizer["DrawToolPolygon"].Value,
+		["rectangle"] = localizer["DrawToolRectangle"].Value,
+		["linestring"] = localizer["DrawToolLine"].Value,
+		["point"] = localizer["DrawToolPoint"].Value,
+		["circle"] = localizer["DrawToolCircle"].Value,
+		["text"] = localizer["DrawToolText"].Value,
+		["cut"] = localizer["DrawToolCut"].Value,
+		["rotate"] = localizer["DrawToolRotate"].Value,
+		["select"] = localizer["DrawToolSelect"].Value,
+		["delete"] = localizer["DrawToolDelete"].Value,
+		["clear"] = localizer["DrawToolClear"].Value,
+		["textPrompt"] = localizer["DrawTextPrompt"].Value,
+		["selectFirst"] = localizer["DrawSelectShapeFirst"].Value
+	};
+}
+<script src="~/lib/geoman-io/leaflet-geoman-free/dist/leaflet-geoman.min.js"></script>
+<partial name="_MapKitConfig" />
+<script>
+	var layerEditorSettings = {
+		formId: 'newLayerForm',
+		center: [@latitude.ToString(CultureInfo.InvariantCulture), @longitude.ToString(CultureInfo.InvariantCulture)],
+		geoJson: @Html.ScriptJson(geoJson),
+		labels: @Html.ScriptJson(labels)
+	};
+</script>
+<script src="~/js/app/internal/mapping/resgrid.mapping.layereditor.js"></script>

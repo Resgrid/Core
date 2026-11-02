@@ -26,7 +26,7 @@
                 <p>@localizer["LoginTwoFactorDescription"]</p>
 
                 <div class="ibox-content">
-                    <form asp-action="LoginWith2fa" asp-controller="Account" method="post" class="m-t">
+                    <form asp-action="LoginWith2fa" asp-controller="Account" method="post" class="m-t" data-submit-once>
                         @Html.AntiForgeryToken()
                         <input type="hidden" asp-for="ReturnUrl" />
                         @if (!ViewData.ModelState.IsValid)
@@ -69,6 +69,7 @@
     </div>
 
     @Html.Partial("_ScriptsPartial")
+    <script src="~/js/app/public/resgrid.submit-once.js" asp-append-version="true"></script>
     <partial name="_ValidationScriptsPartial" />
 </body>
 </html>

@@ -255,6 +255,10 @@ namespace Resgrid.Services
 			builder.RegisterType<CommandsService>().As<ICommandsService>().InstancePerLifetimeScope();
 			builder.RegisterType<CustomStateService>().As<ICustomStateService>().InstancePerLifetimeScope();
 			builder.RegisterType<GeoService>().As<IGeoService>().InstancePerLifetimeScope();
+			builder.RegisterType<RoutingService>().As<IRoutingService>().InstancePerLifetimeScope();
+			builder.RegisterType<MapStyleService>().As<IMapStyleService>().InstancePerLifetimeScope();
+			builder.RegisterType<StaticMapService>().As<IStaticMapService>().InstancePerLifetimeScope();
+			builder.RegisterType<CustomMapMercatorTileRenderer>().As<ICustomMapMercatorTileRenderer>().InstancePerLifetimeScope();
 			builder.RegisterType<AuditService>().As<IAuditService>().InstancePerLifetimeScope();
 			builder.RegisterType<PermissionsService>().As<IPermissionsService>().InstancePerLifetimeScope();
 			builder.RegisterType<ImageService>().As<IImageService>().InstancePerLifetimeScope();
@@ -345,6 +349,8 @@ namespace Resgrid.Services
 			builder.RegisterType<LocalIpLocationProvider>().As<IIpLocationProvider>().SingleInstance();
 			builder.RegisterType<ExternalIdentityLinkService>().As<IExternalIdentityLinkService>().InstancePerLifetimeScope();
 			builder.RegisterType<PasswordRecoveryService>().As<IPasswordRecoveryService>().InstancePerLifetimeScope();
+			builder.RegisterType<LoginThrottleService>().As<ILoginThrottleService>().InstancePerLifetimeScope();
+			builder.RegisterType<PublicFormRateLimiter>().As<IPublicFormRateLimiter>().InstancePerLifetimeScope();
 
 			// Advanced Data Protection (ADP)
 			builder.RegisterType<AdpReleaseService>().As<IAdpReleaseService>().InstancePerLifetimeScope();
@@ -397,6 +403,9 @@ namespace Resgrid.Services
 			builder.RegisterType<IndoorMapService>().As<IIndoorMapService>().InstancePerLifetimeScope();
 			builder.RegisterType<CustomMapService>().As<ICustomMapService>().InstancePerLifetimeScope();
 			builder.RegisterType<RouteService>().As<IRouteService>().InstancePerLifetimeScope();
+			builder.RegisterType<RoutePlanRoutingService>().As<IRoutePlanRoutingService>().InstancePerLifetimeScope();
+			builder.RegisterType<UnitNavigationStateService>().As<IUnitNavigationStateService>().InstancePerLifetimeScope();
+			builder.RegisterType<OfflineMapPackService>().As<IOfflineMapPackService>().InstancePerLifetimeScope();
 			builder.RegisterType<CheckInTimerService>().As<ICheckInTimerService>().InstancePerLifetimeScope();
 			builder.RegisterType<UnitStatusAlertsService>().As<IUnitStatusAlertsService>().InstancePerLifetimeScope();
 			builder.RegisterType<CallLocationHistoryService>().As<ICallLocationHistoryService>().InstancePerLifetimeScope();

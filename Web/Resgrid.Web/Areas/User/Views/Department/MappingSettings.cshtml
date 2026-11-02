@@ -8,7 +8,23 @@
 
     // Lookup tables for the preview script, keyed by enum name because that is what the selects post.
     var jsonSettings = new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml };
-    var styleIds = MapStylePresets.SelectableStyles.ToDictionary(s => s.ToString(), s => MapStylePresets.GetStyleUrl(s).Replace("mapbox://styles/", string.Empty));
+    var styleValues = MapStylePresets.SelectableStyles.ToDictionary(s => s.ToString(), s => (int)s);
+
+    // Provider-aware pickers (plan §5.3): only the presets this install can render, plus the saved value if it is not one
+    // of them, so saving the page never silently changes it.
+    var available = Model.AvailableStyles ?? new List<MapStyleTypes>();
+    var selfHosted = Model.BaseMapProvider == Resgrid.Config.MappingConfig.SelfHostedMapProvider;
+    var listedMapbox = MapStylePresets.MapboxStyles.Where(available.Contains).ToList();
+    var listedCommunity = MapStylePresets.CommunityStyles.Where(available.Contains).ToList();
+    bool NotAvailable(MapStyleTypes style) => style != MapStyleTypes.Automatic && !available.Contains(style);
+    var routingName = Model.RoutingProvider switch
+    {
+        RoutingProviderNames.Valhalla => "Valhalla",
+        RoutingProviderNames.Mapbox => "Mapbox",
+        RoutingProviderNames.Google => "Google",
+        RoutingProviderNames.Osrm => "OSRM",
+        _ => localizer["MapProviderRoutingEstimate"].Value
+    };
     var styleNames = MapStylePresets.SelectableStyles.ToDictionary(s => s.ToString(), s => localizer["MapStyle_" + s].Value);
     var nightPairs = MapStylePresets.SelectableStyles.ToDictionary(s => s.ToString(), s => MapStylePresets.ResolveNightStyle(s, MapStyleTypes.Automatic).ToString());
 }
@@ -107,6 +123,15 @@
 							<div class="form-group">
 								<div class="col-sm-6 col-sm-offset-3">
 									<span class="help-block">@localizer["MapStyleHelp"]</span>
+									<ul class="list-unstyled small m-b-sm" id="mapProviders">
+										<li><strong>@localizer["MapProviderBaseMap"]:</strong> @(selfHosted ? localizer["MapProviderSelfHosted"].Value : "Mapbox")</li>
+										<li><strong>@localizer["MapProviderRouting"]:</strong> @routingName</li>
+										<li><strong>@localizer["MapProviderTraffic"]:</strong> @(Model.TrafficLayerAvailable ? localizer["MapProviderTrafficOn"] : localizer["MapProviderTrafficOff"])</li>
+									</ul>
+									@if (selfHosted)
+									{
+										<div class="alert alert-info">@localizer["MapStyleSelfHostedNote"]</div>
+									}
 									@if (!Model.WebsiteSupportsMapStyle)
 									{
 										<div class="alert alert-info">@localizer["MapStyleWebsiteUnavailable"]</div>
@@ -122,20 +147,30 @@
 								<div class="col-sm-6">
 									<select class="form-control" asp-for="MapStyle">
 										<option value="@MapStyleTypes.Automatic">@localizer["MapStyleAutomaticDay"]</option>
-										<optgroup label="@localizer["MapStyleMapboxGroup"]">
-											@foreach (var style in MapStylePresets.MapboxStyles)
-											{
-												<option value="@style">@localizer["MapStyle_" + style]</option>
-											}
-										</optgroup>
-										<optgroup label="@localizer["MapStyleCommunityGroup"]">
-											@foreach (var style in MapStylePresets.CommunityStyles)
-											{
-												<option value="@style">@localizer["MapStyle_" + style]</option>
-											}
-										</optgroup>
+										@if (NotAvailable(Model.MapStyle))
+										{
+											<option value="@Model.MapStyle">@localizer["MapStyle_" + Model.MapStyle] @localizer["MapStyleNotAvailable"]</option>
+										}
+										@if (listedMapbox.Any())
+										{
+											<optgroup label="@(selfHosted ? localizer["MapStyleServerGroup"] : localizer["MapStyleMapboxGroup"])">
+												@foreach (var style in listedMapbox)
+												{
+													<option value="@style">@localizer["MapStyle_" + style]</option>
+												}
+											</optgroup>
+										}
+										@if (listedCommunity.Any())
+										{
+											<optgroup label="@localizer["MapStyleCommunityGroup"]">
+												@foreach (var style in listedCommunity)
+												{
+													<option value="@style">@localizer["MapStyle_" + style]</option>
+												}
+											</optgroup>
+										}
 									</select>
-									<span class="help-block m-b-none">@localizer["MapStyleDayHelp"] @localizer["MapStyleCommunityHelp"]</span>
+									<span class="help-block m-b-none">@localizer["MapStyleDayHelp"]@if (listedCommunity.Any()) { <text> @localizer["MapStyleCommunityHelp"]</text> }</span>
 									<img id="mapStyleDayPreview" class="img-responsive m-t-sm" style="display: none; border-radius: 4px;" width="600" height="240" loading="lazy" alt="@localizer["MapStylePreviewAlt"]" />
 								</div>
 							</div>
@@ -144,18 +179,28 @@
 								<div class="col-sm-6">
 									<select class="form-control" asp-for="MapStyleNight">
 										<option value="@MapStyleTypes.Automatic">@string.Format(localizer["MapStyleAutomaticNight"].Value, localizer["MapStyle_" + MapStylePresets.ResolveNightStyle(Model.MapStyle, MapStyleTypes.Automatic)].Value)</option>
-										<optgroup label="@localizer["MapStyleMapboxGroup"]">
-											@foreach (var style in MapStylePresets.MapboxStyles)
-											{
-												<option value="@style">@localizer["MapStyle_" + style]</option>
-											}
-										</optgroup>
-										<optgroup label="@localizer["MapStyleCommunityGroup"]">
-											@foreach (var style in MapStylePresets.CommunityStyles)
-											{
-												<option value="@style">@localizer["MapStyle_" + style]</option>
-											}
-										</optgroup>
+										@if (NotAvailable(Model.MapStyleNight))
+										{
+											<option value="@Model.MapStyleNight">@localizer["MapStyle_" + Model.MapStyleNight] @localizer["MapStyleNotAvailable"]</option>
+										}
+										@if (listedMapbox.Any())
+										{
+											<optgroup label="@(selfHosted ? localizer["MapStyleServerGroup"] : localizer["MapStyleMapboxGroup"])">
+												@foreach (var style in listedMapbox)
+												{
+													<option value="@style">@localizer["MapStyle_" + style]</option>
+												}
+											</optgroup>
+										}
+										@if (listedCommunity.Any())
+										{
+											<optgroup label="@localizer["MapStyleCommunityGroup"]">
+												@foreach (var style in listedCommunity)
+												{
+													<option value="@style">@localizer["MapStyle_" + style]</option>
+												}
+											</optgroup>
+										}
 									</select>
 									<span class="help-block m-b-none">@localizer["MapStyleNightHelp"]</span>
 									<img id="mapStyleNightPreview" class="img-responsive m-t-sm" style="display: none; border-radius: 4px;" width="600" height="240" loading="lazy" alt="@localizer["MapStylePreviewAlt"]" />
@@ -246,6 +291,180 @@
 								</div>
 							</div>
 
+							<h3 id="navigation">@localizer["NavigationHeader"]</h3>
+							<div class="form-group">
+								<div class="col-sm-6 col-sm-offset-3">
+									<span class="help-block">@localizer["NavigationHelp"]</span>
+									@if (!Model.NavigationEnabled)
+									{
+										<div class="alert alert-info">@localizer["NavigationNotEnabled"]</div>
+									}
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label">@localizer["NavigationVoiceGuidanceLabel"]</label>
+								<div class="col-sm-6">
+									<admin-assist-help-after>
+										<input type="checkbox" asp-for="NavigationVoiceGuidance">
+									</admin-assist-help-after>
+									<span class="help-block m-b-none">@localizer["NavigationVoiceGuidanceHelp"]</span>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label" asp-for="NavigationDistanceUnits">@localizer["NavigationDistanceUnitsLabel"]</label>
+								<div class="col-sm-6">
+									<select class="form-control" asp-for="NavigationDistanceUnits">
+										<option value="@NavigationDistanceUnits.Device">@localizer["NavigationDistanceUnits_Device"]</option>
+										<option value="@NavigationDistanceUnits.Imperial">@localizer["NavigationDistanceUnits_Imperial"]</option>
+										<option value="@NavigationDistanceUnits.Metric">@localizer["NavigationDistanceUnits_Metric"]</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label" asp-for="NavigationArrivalRadiusMeters">@localizer["NavigationArrivalRadiusLabel"]</label>
+								<div class="col-sm-6">
+									<input type="number" class="form-control" asp-for="NavigationArrivalRadiusMeters" min="10" max="1000">
+									<span class="help-block m-b-none">@localizer["NavigationArrivalRadiusHelp"]</span>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label">@localizer["NavigationOnScenePromptLabel"]</label>
+								<div class="col-sm-6">
+									<admin-assist-help-after>
+										<input type="checkbox" asp-for="NavigationOnScenePrompt">
+									</admin-assist-help-after>
+									<span class="help-block m-b-none">@localizer["NavigationOnScenePromptHelp"]</span>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label">@localizer["NavigationAvoidLabel"]</label>
+								<div class="col-sm-6">
+									<admin-assist-help-after>
+										<label class="checkbox-inline"><input type="checkbox" asp-for="NavigationAvoidTolls"> @localizer["NavigationAvoid_Tolls"]</label>
+										<label class="checkbox-inline"><input type="checkbox" asp-for="NavigationAvoidHighways"> @localizer["NavigationAvoid_Highways"]</label>
+										<label class="checkbox-inline"><input type="checkbox" asp-for="NavigationAvoidFerries"> @localizer["NavigationAvoid_Ferries"]</label>
+										<label class="checkbox-inline"><input type="checkbox" asp-for="NavigationAvoidUnpaved"> @localizer["NavigationAvoid_Unpaved"]</label>
+									</admin-assist-help-after>
+									<span class="help-block m-b-none">@localizer["NavigationAvoidHelp"]</span>
+								</div>
+							</div>
+
+							<h3 id="route-deviations">@localizer["RouteDeviationsHeader"]</h3>
+							<div class="form-group">
+								<label class="col-sm-3 control-label">@localizer["RouteTimeDeviationsLabel"]</label>
+								<div class="col-sm-6">
+									<admin-assist-help-after>
+										<input type="checkbox" asp-for="RouteTimeDeviations">
+									</admin-assist-help-after>
+									<span class="help-block m-b-none">@localizer["RouteTimeDeviationsHelp"]</span>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label" asp-for="RouteDeviationThresholdMinutes">@localizer["RouteDeviationThresholdLabel"]</label>
+								<div class="col-sm-6">
+									<input type="number" class="form-control" asp-for="RouteDeviationThresholdMinutes" min="1" max="1440">
+									<span class="help-block m-b-none">@localizer["RouteDeviationThresholdHelp"]</span>
+								</div>
+							</div>
+
+							<h3 id="offline-maps">@localizer["OfflineMapsHeader"]</h3>
+							<div class="form-group">
+								<div class="col-sm-6 col-sm-offset-3">
+									<span class="help-block">@localizer["OfflineMapsHelp"]</span>
+									@if (!Model.OfflineMapsEnabled)
+									{
+										<div class="alert alert-info">@localizer["OfflineMapsNotEnabled"]</div>
+									}
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label" asp-for="OfflineResponseAreaGeoJson">@localizer["OfflineResponseAreaLabel"]</label>
+								<div class="col-sm-9">
+									<span class="help-block">@string.Format(localizer["OfflineResponseAreaHelp"].Value, Model.OfflineFallbackRadiusKm)</span>
+									<div id="offlineAreaMap" style="position: relative; width: 100%; height: 420px;"></div>
+									<div id="offlineAreaEstimate" class="alert alert-info m-t-sm m-b-sm" role="status" aria-live="polite" style="display: none;"></div>
+									<button type="button" class="btn btn-white btn-sm m-b-sm" id="offlineAreaClear">@localizer["OfflineResponseAreaClear"]</button>
+									<textarea class="form-control" asp-for="OfflineResponseAreaGeoJson" rows="3" spellcheck="false" style="font-family: monospace; font-size: 12px;"></textarea>
+									<span class="help-block m-b-none">@localizer["OfflineResponseAreaGeoJsonHelp"]</span>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label">@localizer["OfflineIncludedDataLabel"]</label>
+								<div class="col-sm-6">
+									<admin-assist-help-after>
+										<label class="checkbox-inline"><input type="checkbox" asp-for="OfflineIncludeCustomMaps"> @localizer["OfflineInclude_CustomMaps"]</label>
+										<label class="checkbox-inline"><input type="checkbox" asp-for="OfflineIncludeIndoorMaps"> @localizer["OfflineInclude_IndoorMaps"]</label>
+										<label class="checkbox-inline"><input type="checkbox" asp-for="OfflineIncludeLayers"> @localizer["OfflineInclude_Layers"]</label>
+										<label class="checkbox-inline"><input type="checkbox" asp-for="OfflineIncludePois"> @localizer["OfflineInclude_Pois"]</label>
+										<label class="checkbox-inline"><input type="checkbox" asp-for="OfflineIncludeHydrants"> @localizer["OfflineInclude_Hydrants"]</label>
+									</admin-assist-help-after>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label" asp-for="OfflineDownloadPolicy">@localizer["OfflineDownloadPolicyLabel"]</label>
+								<div class="col-sm-6">
+									<select class="form-control" asp-for="OfflineDownloadPolicy">
+										<option value="@OfflineDownloadPolicy.WifiOnly">@localizer["OfflineDownloadPolicy_WifiOnly"]</option>
+										<option value="@OfflineDownloadPolicy.AnyNetwork">@localizer["OfflineDownloadPolicy_AnyNetwork"]</option>
+										<option value="@OfflineDownloadPolicy.Manual">@localizer["OfflineDownloadPolicy_Manual"]</option>
+									</select>
+									<span class="help-block m-b-none">@localizer["OfflineDownloadPolicyHelp"]</span>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label">@localizer["OfflineIncidentPacksLabel"]</label>
+								<div class="col-sm-6">
+									<admin-assist-help-after>
+										<input type="checkbox" asp-for="OfflineIncidentPacks">
+									</admin-assist-help-after>
+									<span class="help-block m-b-none">@localizer["OfflineIncidentPacksHelp"]</span>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label" asp-for="OfflineIncidentRadiusKm">@localizer["OfflineIncidentRadiusLabel"]</label>
+								<div class="col-sm-6">
+									<input type="number" class="form-control" asp-for="OfflineIncidentRadiusKm" min="1" max="25">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label">@localizer["OfflineCorridorPacksLabel"]</label>
+								<div class="col-sm-6">
+									<admin-assist-help-after>
+										<input type="checkbox" asp-for="OfflineCorridorPacks">
+									</admin-assist-help-after>
+									<span class="help-block m-b-none">@localizer["OfflineCorridorPacksHelp"]</span>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label" asp-for="OfflineCorridorBufferMeters">@localizer["OfflineCorridorBufferLabel"]</label>
+								<div class="col-sm-6">
+									<input type="number" class="form-control" asp-for="OfflineCorridorBufferMeters" min="50" max="5000">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label" asp-for="OfflineRefreshHours">@localizer["OfflineRefreshHoursLabel"]</label>
+								<div class="col-sm-6">
+									<input type="number" class="form-control" asp-for="OfflineRefreshHours" min="1" max="720">
+									<span class="help-block m-b-none">@localizer["OfflineRefreshHoursHelp"]</span>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label" asp-for="OfflineStaleDays">@localizer["OfflineStaleDaysLabel"]</label>
+								<div class="col-sm-6">
+									<input type="number" class="form-control" asp-for="OfflineStaleDays" min="1" max="365">
+									<span class="help-block m-b-none">@localizer["OfflineStaleDaysHelp"]</span>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label">@localizer["OfflinePreferLocalLabel"]</label>
+								<div class="col-sm-6">
+									<admin-assist-help-after>
+										<input type="checkbox" asp-for="OfflinePreferLocalInArea">
+									</admin-assist-help-after>
+									<span class="help-block m-b-none">@localizer["OfflinePreferLocalHelp"]</span>
+								</div>
+							</div>
+
                             <div class="form-group">
                                 <div class="col-sm-4 col-sm-offset-2">
                                     <a class="btn btn-white" asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["Cancel"]</a>
@@ -260,13 +479,31 @@
     </div>
 </form>
 
+@section Styles
+{
+	<link rel="stylesheet" href="~/lib/geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css" />
+}
+
 @section Scripts
 {
+	<script src="~/lib/geoman-io/leaflet-geoman-free/dist/leaflet-geoman.min.js"></script>
+	<partial name="_MapKitConfig" />
+	<script>
+		var offlineAreaSettings = {
+			center: [@Model.PreviewLatitude.ToString(CultureInfo.InvariantCulture), @Model.PreviewLongitude.ToString(CultureInfo.InvariantCulture)],
+			estimateUrl: '@Url.Action("EstimateResponseArea", "Department", new { area = "User" })',
+			measuring: @Html.Raw(JsonConvert.SerializeObject(localizer["OfflineAreaMeasuring"].Value, jsonSettings)),
+			failed: @Html.Raw(JsonConvert.SerializeObject(localizer["OfflineAreaMeasureFailed"].Value, jsonSettings)),
+			invalidJson: @Html.Raw(JsonConvert.SerializeObject(localizer["OfflineAreaInvalid"].Value, jsonSettings))
+		};
+	</script>
+	<script src="~/js/app/internal/department/resgrid.department.offlinearea.js"></script>
 	<script>
 		(function () {
-			var token = @Html.Raw(JsonConvert.SerializeObject(Model.PreviewAccessToken ?? string.Empty, jsonSettings));
+			// Previews come from the server's signed GetStaticMap (plan §6.6), drawn the way this install renders the style.
+			var template = @Html.Raw(JsonConvert.SerializeObject(Model.PreviewUrlTemplate ?? string.Empty, jsonSettings));
 			var center = [@Model.PreviewLongitude.ToString(CultureInfo.InvariantCulture), @Model.PreviewLatitude.ToString(CultureInfo.InvariantCulture)];
-			var styleIds = @Html.Raw(JsonConvert.SerializeObject(styleIds, jsonSettings));
+			var styleValues = @Html.Raw(JsonConvert.SerializeObject(styleValues, jsonSettings));
 			var styleNames = @Html.Raw(JsonConvert.SerializeObject(styleNames, jsonSettings));
 			var nightPairs = @Html.Raw(JsonConvert.SerializeObject(nightPairs, jsonSettings));
 			var automaticNightFormat = @Html.Raw(JsonConvert.SerializeObject(localizer["MapStyleAutomaticNight"].Value, jsonSettings));
@@ -287,16 +524,19 @@
 				return nightValue === 'Automatic' ? nightPairs[resolveDay(dayValue)] : nightValue;
 			}
 
-			function showPreview(img, style) {
+			function showPreview(img, style, night) {
 				if (!img)
 					return;
 
-				if (!token || !styleIds[style]) {
+				if (!template || styleValues[style] === undefined) {
 					img.style.display = 'none';
 					return;
 				}
 
-				img.src = 'https://api.mapbox.com/styles/v1/' + styleIds[style] + '/static/' + center[0] + ',' + center[1] + ',11,0/600x240@2x?access_token=' + encodeURIComponent(token);
+				img.src = template
+					.replace('{lat}', center[1]).replace('{lon}', center[0]).replace('{zoom}', '11')
+					.replace('{width}', '600').replace('{height}', '240').replace('{scale}', '2')
+					.replace('{scheme}', night ? 'night' : 'day') + '&style=' + styleValues[style];
 				img.style.display = 'block';
 			}
 
@@ -307,8 +547,8 @@
 				if (nightAutomatic && pairedNight)
 					nightAutomatic.textContent = automaticNightFormat.replace('{0}', styleNames[pairedNight] || pairedNight);
 
-				showPreview(dayPreview, resolveDay(daySelect.value));
-				showPreview(nightPreview, resolveNight(daySelect.value, nightSelect.value));
+				showPreview(dayPreview, resolveDay(daySelect.value), false);
+				showPreview(nightPreview, resolveNight(daySelect.value, nightSelect.value), true);
 			}
 
 			daySelect.addEventListener('change', update);

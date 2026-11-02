@@ -4879,7 +4879,7 @@
     <value>Use the department map provider override. Turning it off on the owning screen removes the stored style and token.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.MappingMapStyle">
-    <value>Mapbox base map every department map shows in a light theme, on the website and in all apps. Automatic is Streets; the website needs a server Mapbox token, and the department Mapbox override replaces it everywhere.</value>
+    <value>Mapbox base map every department map shows in a light theme, on the website and in all apps. Automatic is Streets; the website needs a server Mapbox token, and the department Mapbox override replaces it everywhere. On a server that draws its own maps, only the styles it can render are offered.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.MappingMapStyleNight">
     <value>Base map the apps show in dark mode. Automatic pairs with the day style (Dark for road maps, Navigation Night for Navigation Day; Outdoors and satellite unchanged). The website always uses the day style.</value>
@@ -7685,5 +7685,17 @@
   </data>
   <data xml:space="preserve" name="Topic.dashboard-classic">
     <value>Turning on the new dashboard and returning to classic</value>
+  </data>
+  <data xml:space="preserve" name="Setting.MappingNavigationConfig">
+    <value>Navigation defaults</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.MappingNavigationConfig">
+    <value>Defaults for turn-by-turn navigation in the Unit app (voice, distance units, arrival radius, the On Scene prompt, roads to avoid) and how late an arrival or how long a stop runs over before a route deviation is recorded.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.OfflineMapPacksConfig">
+    <value>Offline maps</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.OfflineMapPacksConfig">
+    <value>What the apps download for use without a network: the maximum response area (its base map download must fit the size limit), which map data is included, when downloads run, and extra coverage for calls and routes outside the area.</value>
   </data>
 </root>

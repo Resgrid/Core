@@ -96,4 +96,49 @@
   <data name="TabList" xml:space="preserve"><value>قائمة</value></data>
   <data name="True" xml:space="preserve"><value>صحيح</value></data>
   <data name="False" xml:space="preserve"><value>خطأ</value></data>
+  <data name="DrawToolPolygon" xml:space="preserve">
+    <value>رسم مضلع</value>
+  </data>
+  <data name="DrawToolRectangle" xml:space="preserve">
+    <value>رسم مستطيل</value>
+  </data>
+  <data name="DrawToolLine" xml:space="preserve">
+    <value>رسم خط</value>
+  </data>
+  <data name="DrawToolPoint" xml:space="preserve">
+    <value>وضع علامة</value>
+  </data>
+  <data name="DrawToolCircle" xml:space="preserve">
+    <value>رسم دائرة</value>
+  </data>
+  <data name="DrawToolText" xml:space="preserve">
+    <value>إضافة نص</value>
+  </data>
+  <data name="DrawToolCut" xml:space="preserve">
+    <value>قص الشكل المحدد (ارسم الجزء المراد إزالته)</value>
+  </data>
+  <data name="DrawToolRotate" xml:space="preserve">
+    <value>تدوير الشكل المحدد (اسحب على الخريطة)</value>
+  </data>
+  <data name="DrawToolSelect" xml:space="preserve">
+    <value>تحديد وتحرير</value>
+  </data>
+  <data name="DrawToolDelete" xml:space="preserve">
+    <value>حذف الشكل المحدد</value>
+  </data>
+  <data name="DrawToolClear" xml:space="preserve">
+    <value>إزالة جميع الأشكال</value>
+  </data>
+  <data name="DrawTextPrompt" xml:space="preserve">
+    <value>النص المراد عرضه</value>
+  </data>
+  <data name="DrawSelectShapeFirst" xml:space="preserve">
+    <value>حدد شكلًا على الخريطة أولًا.</value>
+  </data>
+  <data name="LayerElementsInvalid" xml:space="preserve">
+    <value>تعذّرت قراءة أشكال الطبقة. أعد تحميل الصفحة وارسمها مرة أخرى.</value>
+  </data>
+  <data name="TrafficLayer" xml:space="preserve">
+    <value>حركة المرور المباشرة</value>
+  </data>
 </root>

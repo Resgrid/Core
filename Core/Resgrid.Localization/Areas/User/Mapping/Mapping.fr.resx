@@ -284,4 +284,49 @@
   <data name="False" xml:space="preserve">
     <value>Non</value>
   </data>
+  <data name="DrawToolPolygon" xml:space="preserve">
+    <value>Dessiner un polygone</value>
+  </data>
+  <data name="DrawToolRectangle" xml:space="preserve">
+    <value>Dessiner un rectangle</value>
+  </data>
+  <data name="DrawToolLine" xml:space="preserve">
+    <value>Dessiner une ligne</value>
+  </data>
+  <data name="DrawToolPoint" xml:space="preserve">
+    <value>Placer un marqueur</value>
+  </data>
+  <data name="DrawToolCircle" xml:space="preserve">
+    <value>Dessiner un cercle</value>
+  </data>
+  <data name="DrawToolText" xml:space="preserve">
+    <value>Ajouter du texte</value>
+  </data>
+  <data name="DrawToolCut" xml:space="preserve">
+    <value>Découper la forme sélectionnée (dessinez la partie à retirer)</value>
+  </data>
+  <data name="DrawToolRotate" xml:space="preserve">
+    <value>Faire pivoter la forme sélectionnée (glissez sur la carte)</value>
+  </data>
+  <data name="DrawToolSelect" xml:space="preserve">
+    <value>Sélectionner et modifier</value>
+  </data>
+  <data name="DrawToolDelete" xml:space="preserve">
+    <value>Supprimer la forme sélectionnée</value>
+  </data>
+  <data name="DrawToolClear" xml:space="preserve">
+    <value>Retirer toutes les formes</value>
+  </data>
+  <data name="DrawTextPrompt" xml:space="preserve">
+    <value>Texte à afficher</value>
+  </data>
+  <data name="DrawSelectShapeFirst" xml:space="preserve">
+    <value>Sélectionnez d'abord une forme sur la carte.</value>
+  </data>
+  <data name="LayerElementsInvalid" xml:space="preserve">
+    <value>Les formes du calque n’ont pas pu être lues. Rechargez la page et dessinez-les à nouveau.</value>
+  </data>
+  <data name="TrafficLayer" xml:space="preserve">
+    <value>Trafic en direct</value>
+  </data>
 </root>

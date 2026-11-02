@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Resgrid.Model;
 using Resgrid.Model.Services;
 using Resgrid.Web.Areas.User.Models.Types;
+using Resgrid.Web.Areas.User.Models.Units;
 using Microsoft.AspNetCore.Http;
 using Resgrid.Model.Providers;
 using System.IO;
@@ -84,6 +85,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var model = new EditUnitTypeView();
 			model.UnitType = new UnitType();
 			model.UnitType.MapIconType = -1;
+			model.VehicleSize = VehicleSizeInput.From((UnitType)null, VehicleSizeInput.DefaultMetric());
 
 			var states = new List<CustomState>();
 			states.Add(new CustomState
@@ -133,6 +135,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (String.IsNullOrWhiteSpace(model.UnitType.Type))
 				ModelState.AddModelError("NewUnitType", "You Must specify the new unit type.");
 
+			model.VehicleSize ??= new VehicleSizeInput();
+			model.VehicleSize.AddErrorsTo(ModelState);
+
 			var iconData = await ReadIconUploadAsync(model.IconFile, cancellationToken);
 
 			if (ModelState.IsValid)
@@ -164,16 +169,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var added = await _unitsService.AddUnitTypeAsync(DepartmentId, model.UnitType.Type, customStatesId, mapIconType, cancellationToken);
 
 				var unitClass = ValidClass<UnitTypeClasses>(model.UnitType.BaseType);
-				if (added != null && unitClass != (int)UnitTypeClasses.None)
+				if (added != null)
 				{
-					added.BaseType = unitClass;
-					await _unitsService.SaveUnitTypeAsync(added, cancellationToken);
+					if (unitClass != (int)UnitTypeClasses.None)
+						added.BaseType = unitClass;
+
+					model.VehicleSize.ApplyTo(added);
+
+					if (unitClass != (int)UnitTypeClasses.None || VehicleProfile.Resolve(null, added) != null)
+						await _unitsService.SaveUnitTypeAsync(added, cancellationToken);
 				}
 
 				if (added != null && iconData != null)
 					await _typeIconsService.UploadIconAsync(DepartmentId, TypeIconKinds.UnitType, added.UnitTypeId, UserId, iconData, cancellationToken);
 			}
-			else if (ModelState[IconFileField]?.Errors.Count > 0)
+			else if (ModelState[IconFileField]?.Errors.Count > 0 || ModelState.Keys.Any(k => k.StartsWith("VehicleSize.", StringComparison.Ordinal) && ModelState[k].Errors.Count > 0))
 			{
 				// A rejected icon comes back to the form with its reason; the name check keeps its old redirect.
 				model.States = await GetUnitTypeStatesAsync();
@@ -226,6 +236,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			// -1 = the Default option, so a type without an icon re-posts "no icon" rather than a value no option has.
 			model.UnitTypeIcon = model.UnitType.MapIconType ?? -1;
+			model.VehicleSize = VehicleSizeInput.From(model.UnitType, VehicleSizeInput.DefaultMetric());
 
 			return View(model);
 		}
@@ -250,6 +261,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (unitTypes.Any(x => x.Type == model.UnitType.Type && x.UnitTypeId != model.UnitType.UnitTypeId))
 				ModelState.AddModelError("Type", string.Format("A Unit Type of ({0}) already exists.", model.UnitType.Type));
 
+			model.VehicleSize ??= new VehicleSizeInput();
+			model.VehicleSize.AddErrorsTo(ModelState);
+
 			var iconData = await ReadIconUploadAsync(model.IconFile, cancellationToken);
 
 			if (ModelState.IsValid)
@@ -273,6 +287,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 					unitType.MapIconType = model.UnitTypeIcon;
 				else
 					unitType.MapIconType = null;
+
+				model.VehicleSize.ApplyTo(unitType);
 
 				auditEvent.DepartmentId = DepartmentId;
 				auditEvent.UserId = UserId;

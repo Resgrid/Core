@@ -61,21 +61,22 @@ var resgrid;
                     ]
                 });
 
-                map = L.map('map').setView([parseFloat(centerLat) || 39.7392, parseFloat(centerLon) || -104.9903], 9);
-                L.tileLayer(osmTileUrl, { maxZoom: 19, attribution: osmTileAttribution }).addTo(map);
-
-                initMap();
+                resgrid.maps.create('map', { center: [parseFloat(centerLat) || 39.7392, parseFloat(centerLon) || -104.9903], zoom: 9 }).then(function (created) {
+                    map = created;
+                    initMap();
+                });
             });
 
-            function createMarkerIcon(poi) {
-                var iconClass = poi.ImagePath || 'map-icon-map-pin';
-                var color = poi.Color || '#3388ff';
-                return L.divIcon({
-                    className: '',
+            function createMarkerOptions(poi) {
+                var iconClass = resgrid.escapeHtml(poi.ImagePath || 'map-icon-map-pin');
+                var color = resgrid.escapeHtml(poi.Color || '#3388ff');
+                return {
                     html: '<span class="map-icon ' + iconClass + '" style="color:' + color + '; font-size: 24px;"></span>',
                     iconSize: [24, 24],
-                    iconAnchor: [12, 24]
-                });
+                    iconAnchor: [12, 24],
+                    title: poi.Title || '',
+                    popupHtml: poi.InfoWindowContent ? resgrid.escapeHtml(poi.InfoWindowContent) : null
+                };
             }
 
             function initMap() {
@@ -84,28 +85,16 @@ var resgrid;
                     contentType: 'application/json; charset=utf-8',
                     type: 'GET'
                 }).done(function (data) {
-                    if (data && data.Pois) {
+                    if (data && data.Pois && map) {
+                        var positions = [];
                         data.Pois.forEach(function (poi) {
-                            var marker = L.marker([poi.Latitude, poi.Longitude], {
-                                icon: createMarkerIcon(poi)
-                            }).addTo(map);
-
-                            if (poi.InfoWindowContent) {
-                                marker.bindPopup(createSafeTextElement(poi.InfoWindowContent));
-                            }
-
-                            if (poi.Title) {
-                                marker.bindTooltip(createSafeTextElement(poi.Title), {
-                                    direction: 'bottom'
-                                });
-                            }
-
-                            markers.push(marker);
+                            var position = [Number(poi.Latitude), Number(poi.Longitude)];
+                            markers.push(map.addMarker(position, createMarkerOptions(poi)));
+                            positions.push(position);
                         });
 
-                        if (markers.length > 0) {
-                            var group = new L.featureGroup(markers);
-                            map.fitBounds(group.getBounds(), { padding: [20, 20] });
+                        if (positions.length > 0) {
+                            map.fitBounds(positions, { padding: 20 });
                         }
                     }
                 });

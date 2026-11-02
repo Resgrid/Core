@@ -12,6 +12,9 @@ using RestSharp;
 using System.Net;
 using System.Threading.Tasks;
 using Resgrid.Providers.Geo.Models.LocationIQ;
+using Resgrid.Providers.GeoLocationProvider.Geocoding;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace Resgrid.Providers.GeoLocationProvider
 {
@@ -22,9 +25,50 @@ namespace Resgrid.Providers.GeoLocationProvider
 		private static TimeSpan CacheLength = TimeSpan.FromDays(30);
 
 		private readonly ICacheProvider _cacheProvider;
+		private readonly IReadOnlyList<IGeocodingProvider> _geocoders;
+
 		public GeoLocationProvider(ICacheProvider cacheProvider)
+			: this(cacheProvider, DefaultGeocoders())
+		{
+		}
+
+		public GeoLocationProvider(ICacheProvider cacheProvider, IEnumerable<IGeocodingProvider> geocoders)
 		{
 			_cacheProvider = cacheProvider;
+			var registered = geocoders?.ToList();
+			_geocoders = registered != null && registered.Count > 0 ? registered : DefaultGeocoders().ToList();
+		}
+
+		private static IEnumerable<IGeocodingProvider> DefaultGeocoders()
+		{
+			return new IGeocodingProvider[]
+			{
+				new GoogleGeocodingProvider(), new LocationIqGeocodingProvider(), new BingGeocodingProvider(),
+				new NominatimGeocodingProvider(), new MapboxGeocodingProvider()
+			};
+		}
+
+		/// <summary>
+		/// The geocoders MappingConfig.GeocodingProviders lists, in that order (plan §6.4). The default
+		/// "google,locationiq,bing" is the order this provider always used.
+		/// </summary>
+		private List<IGeocodingProvider> GeocoderChain()
+		{
+			var names = (Config.MappingConfig.GeocodingProviders ?? string.Empty)
+				.Split(new[] { ',', ';', ' ' }, StringSplitOptions.RemoveEmptyEntries)
+				.Select(n => n.Trim().ToLowerInvariant())
+				.Distinct();
+
+			return names
+				.Select(name => _geocoders.FirstOrDefault(g => g.Name == name))
+				.Where(g => g != null && g.IsConfigured)
+				.ToList();
+		}
+
+		/// <summary>One geocoder call's timeout; the caller disposes it (with <c>using</c>) once the call returns.</summary>
+		private static CancellationTokenSource GeocodeTimeout()
+		{
+			return new CancellationTokenSource(TimeSpan.FromMilliseconds(Math.Max(1000, Config.MappingConfig.RoutingTimeoutMs)));
 		}
 
 		public async Task<string> GetAproxAddressFromLatLong(double lat, double lon)
@@ -36,48 +80,20 @@ namespace Resgrid.Providers.GeoLocationProvider
 		{
 			async Task<string> getAddressFromCords()
 			{
-				string address = null;
-
-				try
-				{
-					IGeocoder googleGeoCoder = new GoogleGeocoder()
-					{
-						ApiKey = Config.MappingConfig.GoogleMapsApiKey
-					};
-
-					var addresses = await googleGeoCoder.ReverseGeocodeAsync(lat, lon);
-
-					if (addresses != null && addresses.Any())
-						address = addresses.First().FormattedAddress;
-				}
-				catch { /* Don't report on GeoLocation failures */ }
-
-				if (string.IsNullOrWhiteSpace(address))
+				foreach (var geocoder in GeocoderChain())
 				{
 					try
 					{
-						var addressGeo = await GetAddressFromLatLonLocationIQ(GeoLocationCacheKeys.FormatCoordinate(lat), GeoLocationCacheKeys.FormatCoordinate(lon));
+						using var timeout = GeocodeTimeout();
+						var address = await geocoder.ReverseAsync(lat, lon, timeout.Token);
 
-						if (!String.IsNullOrWhiteSpace(addressGeo))
-							address = addressGeo;
+						if (!string.IsNullOrWhiteSpace(address))
+							return address;
 					}
-					catch { /* Don't report on GeoLocation failures */ }
+					catch { /* Don't report on GeoLocation failures; the next geocoder in the chain answers */ }
 				}
 
-				if (string.IsNullOrWhiteSpace(address))
-				{
-					try
-					{
-						IGeocoder bingGeoCoder = new BingMapsGeocoder(Config.MappingConfig.BingMapsApiKey);
-
-						var addresses = await bingGeoCoder.ReverseGeocodeAsync(lat, lon);
-
-						if (addresses != null && addresses.Count() > 0)
-							address = addresses.First().FormattedAddress;
-					}
-					catch { /* Don't report on GeoLocation failures */ }
-				}
-				return address;
+				return null;
 			}
 
 			return await _cacheProvider.RetrieveAsync<string>(GeoLocationCacheKeys.ReverseGeocode(lat, lon), getAddressFromCords, CacheLength);
@@ -90,53 +106,21 @@ namespace Resgrid.Providers.GeoLocationProvider
 
 			async Task<string> getCordsFromAddress()
 			{
-				string coordinates = null;
-
-				try
-				{
-					IGeocoder googleGeoCoder = new GoogleGeocoder()
-					{
-						ApiKey = Config.MappingConfig.GoogleMapsApiKey
-					};
-
-					var addresses = await googleGeoCoder.GeocodeAsync(address);
-
-					if (addresses != null && addresses.Any())
-					{
-						var firstAddress = addresses.First();
-
-						coordinates = string.Format(CultureInfo.InvariantCulture, "{0},{1}", firstAddress.Coordinates.Latitude, firstAddress.Coordinates.Longitude);
-					}
-				}
-				catch (Exception ex) { var test = ex; /* Don't report on GeoLocation failures */ }
-
-				if (string.IsNullOrWhiteSpace(coordinates))
+				foreach (var geocoder in GeocoderChain())
 				{
 					try
 					{
-						var coords = await GetLatLonFromAddressLocationIQ(address);
+						using var timeout = GeocodeTimeout();
+						var match = await geocoder.ForwardAsync(address, timeout.Token);
 
-						if (coords != null)
-							coordinates = string.Format(CultureInfo.InvariantCulture, "{0},{1}", coords.Latitude, coords.Longitude);
+						// Always invariant "lat,lon": many callers split and double.Parse it.
+						if (match != null)
+							return string.Format(CultureInfo.InvariantCulture, "{0},{1}", match.Latitude, match.Longitude);
 					}
-					catch { /* Don't report on GeoLocation failures */ }
+					catch { /* Don't report on GeoLocation failures; the next geocoder in the chain answers */ }
 				}
 
-				if (string.IsNullOrWhiteSpace(coordinates))
-				{
-					try
-					{
-						IGeocoder bingGeoCoder = new BingMapsGeocoder(Config.MappingConfig.BingMapsApiKey);
-
-						var addresses = await bingGeoCoder.GeocodeAsync(address);
-
-						if (addresses != null && addresses.Count() > 0)
-							coordinates = string.Format(CultureInfo.InvariantCulture, "{0},{1}", addresses.First().Coordinates.Latitude, addresses.First().Coordinates.Longitude);
-					}
-					catch { /* Don't report on GeoLocation failures */ }
-				}
-
-				return coordinates;
+				return null;
 			}
 
 			return await _cacheProvider.RetrieveAsync<string>(GeoLocationCacheKeys.ForwardGeocode(address), getCordsFromAddress, CacheLength);
@@ -321,31 +305,13 @@ namespace Resgrid.Providers.GeoLocationProvider
 
 		public async Task<Coordinates> GetLatLonFromAddressLocationIQ(string address)
 		{
-			Coordinates coordinates = new Coordinates();
-
 			try
 			{
-				var client = new RestClient("http://locationiq.org");
-				var request = new RestRequest($"/v1/search.php?key={Config.MappingConfig.LocationIQApiKey}&format=json&q={WebUtility.UrlEncode(address)}", Method.Get);
+				using var timeout = GeocodeTimeout();
+				var match = await new LocationIqGeocodingProvider().ForwardAsync(address, timeout.Token);
 
-				var response = await client.ExecuteAsync<dynamic>(request);
-
-				if (response.IsSuccessful && response.Data != null)
-				{
-					var geocode = response.Data[0];
-
-					double latitude = 0;
-					double longitude = 0;
-
-					if (double.TryParse(geocode["lat"], out latitude) &&
-							double.TryParse(geocode["lon"], out longitude))
-					{
-						coordinates.Latitude = latitude;
-						coordinates.Longitude = longitude;
-
-						return coordinates;
-					}
-				}
+				if (match != null)
+					return new Coordinates { Latitude = match.Latitude, Longitude = match.Longitude };
 			}
 			catch { }
 
@@ -356,17 +322,11 @@ namespace Resgrid.Providers.GeoLocationProvider
 		{
 			try
 			{
-				var client = new RestClient("http://locationiq.org");
-				var request = new RestRequest($"/v1/reverse.php?key={Config.MappingConfig.LocationIQApiKey}&format=json&lat={WebUtility.UrlEncode(lat)}&lon={WebUtility.UrlEncode(lon)}&zoom=18", Method.Get);
-
-				var response = await client.ExecuteAsync<LocationIQReverseResult>(request);
-
-				if (response.Data != null)
+				if (double.TryParse(lat, NumberStyles.Float, CultureInfo.InvariantCulture, out var latitude) &&
+					double.TryParse(lon, NumberStyles.Float, CultureInfo.InvariantCulture, out var longitude))
 				{
-					//var geocode = response.Data[0];
-
-					//return geocode["display_name"];
-					return response.Data.display_name;
+					using var timeout = GeocodeTimeout();
+					return await new LocationIqGeocodingProvider().ReverseAsync(latitude, longitude, timeout.Token);
 				}
 			}
 			catch { }

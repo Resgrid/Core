@@ -23,6 +23,16 @@ namespace Resgrid.Web.Services.Models.v4.Routes
 		public int GeofenceRadiusMeters { get; set; } = 100;
 		public List<NewRouteStopInput> Stops { get; set; }
 		public List<RouteScheduleInput> Schedules { get; set; }
+
+		// Optional, appended by the MapLibre routing plan (section 10.5). Omitted values keep today's behaviour.
+		/// <summary>RoutingProfile (Driving=0, DrivingTraffic=1, Truck=2, Walking=3, Cycling=4); when omitted it follows MapboxRouteProfile.</summary>
+		public int? RoutingProfile { get; set; }
+		/// <summary>RouteAvoidOptions flags (Tolls=1, Highways=2, Ferries=4, Unpaved=8).</summary>
+		public int? AvoidOptions { get; set; }
+		/// <summary>Station to start at when UseStationAsStart is set; null uses the plan unit's station.</summary>
+		public int? StartDepartmentGroupId { get; set; }
+		/// <summary>Station to end at when UseStationAsEnd is set; null uses the plan unit's station.</summary>
+		public int? EndDepartmentGroupId { get; set; }
 	}
 
 	public class UpdateRoutePlanInput : NewRoutePlanInput
@@ -51,6 +61,11 @@ namespace Resgrid.Web.Services.Models.v4.Routes
 		public string ContactName { get; set; }
 		public string ContactNumber { get; set; }
 		public string Notes { get; set; }
+
+		/// <summary>A department contact for the stop (RD14).</summary>
+		public string ContactId { get; set; }
+		/// <summary>On UpdateRoutePlan: the existing stop this entry updates; null adds a stop.</summary>
+		public string RouteStopId { get; set; }
 	}
 
 	public class RouteScheduleInput
@@ -110,7 +125,9 @@ namespace Resgrid.Web.Services.Models.v4.Routes
 	{
 		[Required]
 		public string RouteInstanceStopId { get; set; }
+		/// <summary>Optional; a check-out without coordinates is stored as before (0,0).</summary>
 		public decimal Latitude { get; set; }
+		/// <summary>Optional; a check-out without coordinates is stored as before (0,0).</summary>
 		public decimal Longitude { get; set; }
 	}
 
@@ -143,6 +160,26 @@ namespace Resgrid.Web.Services.Models.v4.Routes
 	{
 		[Required]
 		public string RouteInstanceStopId { get; set; }
+		public string Notes { get; set; }
+	}
+
+	public class ApplyStopOrderInput
+	{
+		/// <summary>Every stop of the plan, once each, in the new order.</summary>
+		[Required]
+		public List<string> StopIds { get; set; }
+	}
+
+	public class RecordRouteDeviationInput
+	{
+		[Required]
+		public string RouteInstanceId { get; set; }
+		/// <summary>RouteDeviationTypes: OffRoute=0, MissedStop=1, OutOfOrder=2, LateArrival=3, LongDwell=4.</summary>
+		public int DeviationType { get; set; }
+		public decimal Latitude { get; set; }
+		public decimal Longitude { get; set; }
+		/// <summary>Distance from the planned line (OffRoute).</summary>
+		public double DistanceMeters { get; set; }
 		public string Notes { get; set; }
 	}
 }

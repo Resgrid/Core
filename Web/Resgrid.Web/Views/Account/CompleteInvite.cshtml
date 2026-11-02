@@ -15,6 +15,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
     @Html.Partial("_StylePartial")
+    <link rel="stylesheet" href="~/clib/validate-password-requirements/jquery.passwordRequirements.css" />
 </head>
 <body class="gray-bg">
 
@@ -73,7 +74,7 @@
                     {
                         @if (Model.SignedIn)
                         {
-                            <form class="m-t" role="form" asp-controller="Account" asp-action="CompleteInvite" method="post">
+                            <form class="m-t" role="form" asp-controller="Account" asp-action="CompleteInvite" method="post" data-submit-once>
                                 @Html.HiddenFor(x => x.Code)
                                 <button type="submit" class="btn btn-primary block full-width m-b">@string.Format(localizer["ImportJoinAccept"].Value, Model.DepartmentName)</button>
                             </form>
@@ -86,7 +87,7 @@
                     }
                     else if (Model.ImportKind == (int)Resgrid.Model.InviteKinds.ImportAccount)
                     {
-                        <form class="m-t" role="form" asp-controller="Account" asp-action="CompleteInvite" method="post">
+                        <form class="m-t" role="form" asp-controller="Account" asp-action="CompleteInvite" method="post" data-submit-once>
                             <div class="form-group">
                                 <input type="email" class="form-control" placeholder="@localizer["EmailAddress"]" value="@Model.Email" disabled>
                             </div>
@@ -98,11 +99,11 @@
                                 <span>@localizer["PasswordHelp"]</span>
                             </div>
                             <div class="form-group">
-                                <input asp-for="Password" class="pr-password form-control" placeholder="@localizer["Password"]" required="" />
+                                <input asp-for="Password" class="pr-password form-control" placeholder="@localizer["Password"]" required="" data-min-length="@Model.MinPasswordLength" />
                                 <span asp-validation-for="Password" class="text-danger"></span>
                             </div>
                             <div class="form-group">
-                                <input asp-for="ConfirmPassword" class="pr-password form-control" placeholder="@localizer["ConfirmPassword"]" required="" />
+                                <input asp-for="ConfirmPassword" class="pr-password form-control" placeholder="@localizer["ConfirmPassword"]" required="" data-min-length="@Model.MinPasswordLength" />
                                 <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                             </div>
                             <button type="submit" class="btn btn-primary block full-width m-b">@localizer["ImportInviteSetPassword"]</button>
@@ -112,7 +113,7 @@
                     }
                     else
                     {
-                    <form class="m-t" role="form" asp-controller="Account" asp-action="CompleteInvite" method="post">
+                    <form class="m-t" role="form" asp-controller="Account" asp-action="CompleteInvite" method="post" data-submit-once>
                         <div class="form-group">
                             <input type="text" class="form-control" placeholder="@localizer["FirstName"]" asp-for="FirstName" required="">
                             <span asp-validation-for="FirstName" class="text-danger"></span>
@@ -132,11 +133,11 @@
                             <span>@localizer["PasswordHelp"]</span>
                         </div>
                         <div class="form-group">
-                            <input asp-for="Password" class="pr-password form-control" placeholder="@localizer["Password"]" required="" />
+                            <input asp-for="Password" class="pr-password form-control" placeholder="@localizer["Password"]" required="" data-min-length="@Model.MinPasswordLength" />
                             <span asp-validation-for="Password" class="text-danger"></span>
                         </div>
                         <div class="form-group">
-                            <input asp-for="ConfirmPassword" class="pr-password form-control" placeholder="@localizer["ConfirmPassword"]" required="" />
+                            <input asp-for="ConfirmPassword" class="pr-password form-control" placeholder="@localizer["ConfirmPassword"]" required="" data-min-length="@Model.MinPasswordLength" />
                             <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                         </div>
 
@@ -168,47 +169,24 @@
         </div>
     </div>
 
-    <script>
-        $(function() {
-            $(document).ready(function () {
-                $(".pr-password").passwordRequirements({
-                  numCharacters: 8,
-                  useLowercase: true,
-                  useUppercase: true,
-                  useNumbers: true,
-                  useSpecial: false
-                });
-
-              $(document).on('submit', '#registrationForm', function () {
-                var crep = $('#g-recaptcha-response').val();
-                $('#GoogleReCaptchaResponse').val(crep);
-
-                if ($(this).valid()) {
-                  // On submit disable form submit button
-                  $('#registerButton').prop('disabled', true);
-                }
-
-                return true;
-              });
-            });
-
-            deleteAllCookies();
-        });
-
-        function deleteAllCookies() {
-            var cookies = document.cookie.split(";");
-
-            for (var i = 0; i < cookies.length; i++) {
-                var cookie = cookies[i];
-                var eqPos = cookie.indexOf("=");
-                var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
-                document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
-            }
-        }
-    </script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/clib/validate-password-requirements/jquery.passwordRequirements.min.js"></script>
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-
+    <script src="~/js/app/public/resgrid.submit-once.js" asp-append-version="true"></script>
+    <script>
+        $(function () {
+            $(".pr-password").each(function () {
+                $(this).passwordRequirements({
+                    numCharacters: parseInt($(this).attr('data-min-length'), 10) || 8,
+                    useLowercase: true,
+                    useUppercase: true,
+                    useNumbers: true,
+                    useSpecial: false
+                });
+            });
+        });
+    </script>
 </body>
 </html>

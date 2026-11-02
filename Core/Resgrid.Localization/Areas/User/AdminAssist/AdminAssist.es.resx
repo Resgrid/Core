@@ -4933,7 +4933,7 @@
     <value>Usa la anulación del proveedor de mapas del departamento. Desactivarla en la pantalla correspondiente elimina el estilo y el token almacenados.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.MappingMapStyle">
-    <value>Mapa base de Mapbox que muestra cada mapa del departamento en modo claro, en el sitio web y en todas las aplicaciones. Automático es Calles; el sitio web necesita un token de Mapbox del servidor y la anulación de Mapbox del departamento lo reemplaza en todas partes.</value>
+    <value>Mapa base de Mapbox que muestra cada mapa del departamento en modo claro, en el sitio web y en todas las aplicaciones. Automático es Calles; el sitio web necesita un token de Mapbox del servidor y la anulación de Mapbox del departamento lo reemplaza en todas partes. En un servidor con mapas propios solo se ofrecen los estilos que puede representar.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.MappingMapStyleNight">
     <value>Mapa base que muestran las aplicaciones en modo oscuro. Automático se empareja con el estilo diurno (Oscuro para mapas de carreteras, Navegación nocturna para Navegación diurna; Exterior y satélite sin cambios). El sitio web siempre usa el estilo diurno.</value>
@@ -7763,5 +7763,17 @@
   </data>
   <data xml:space="preserve" name="Topic.dashboard-classic">
     <value>Activar el nuevo panel y volver al clásico</value>
+  </data>
+  <data xml:space="preserve" name="Setting.MappingNavigationConfig">
+    <value>Valores predeterminados de navegación</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.MappingNavigationConfig">
+    <value>Valores para la navegación paso a paso en la app Unit (voz, unidades de distancia, radio de llegada, aviso En escena, vías a evitar) y cuánto retraso o exceso en una parada se registra como desviación de ruta.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.OfflineMapPacksConfig">
+    <value>Mapas sin conexión</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.OfflineMapPacksConfig">
+    <value>Lo que las apps descargan para usarse sin red: el área de respuesta máxima (su mapa base debe caber en el límite de tamaño), qué datos de mapa se incluyen, cuándo se descargan y cobertura adicional para incidentes y rutas fuera del área.</value>
   </data>
 </root>

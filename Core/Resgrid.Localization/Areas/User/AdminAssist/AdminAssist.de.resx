@@ -4933,7 +4933,7 @@
     <value>Verwendet die Kartenanbieter-Überschreibung der Abteilung. Das Deaktivieren auf der zuständigen Seite entfernt den gespeicherten Stil und das Token.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.MappingMapStyle">
-    <value>Mapbox-Grundkarte, die jede Karte der Abteilung im hellen Modus zeigt, auf der Website und in allen Apps. Automatisch ist Straßen; die Website benötigt ein Mapbox-Token des Servers, und die Mapbox-Überschreibung der Abteilung ersetzt den Stil überall.</value>
+    <value>Mapbox-Grundkarte, die jede Karte der Abteilung im hellen Modus zeigt, auf der Website und in allen Apps. Automatisch ist Straßen; die Website benötigt ein Mapbox-Token des Servers, und die Mapbox-Überschreibung der Abteilung ersetzt den Stil überall. Auf einem Server mit eigenen Karten werden nur die Stile angeboten, die er darstellen kann.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.MappingMapStyleNight">
     <value>Grundkarte, die die Apps im dunklen Modus zeigen. Automatisch passt zum Tagesstil (Dunkel für Straßenkarten, Navigation Nacht für Navigation Tag; Outdoor und Satellit unverändert). Die Website verwendet immer den Tagesstil.</value>
@@ -7763,5 +7763,17 @@
   </data>
   <data xml:space="preserve" name="Topic.dashboard-classic">
     <value>Das neue Dashboard einschalten und zum klassischen zurückkehren</value>
+  </data>
+  <data xml:space="preserve" name="Setting.MappingNavigationConfig">
+    <value>Navigationsvorgaben</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.MappingNavigationConfig">
+    <value>Vorgaben für die Turn-by-Turn-Navigation in der Unit-App (Sprachausgabe, Entfernungseinheiten, Ankunftsradius, Abfrage „Vor Ort“, zu meidende Straßen) und wie viel Verspätung oder Überziehung eines Halts als Routenabweichung erfasst wird.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.OfflineMapPacksConfig">
+    <value>Offline-Karten</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.OfflineMapPacksConfig">
+    <value>Was die Apps für die Nutzung ohne Netz herunterladen: das maximale Einsatzgebiet (dessen Basiskarte die Größengrenze einhalten muss), welche Kartendaten enthalten sind, wann geladen wird und zusätzliche Abdeckung für Einsätze und Routen außerhalb des Gebiets.</value>
   </data>
 </root>

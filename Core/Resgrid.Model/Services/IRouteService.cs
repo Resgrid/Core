@@ -18,6 +18,7 @@ namespace Resgrid.Model.Services
 		Task<RouteStop> SaveRouteStopAsync(RouteStop routeStop, CancellationToken cancellationToken = default);
 		Task<List<RouteStop>> GetRouteStopsForPlanAsync(string routePlanId);
 		Task<List<RouteStop>> GetRouteStopsForContactAsync(string contactId, int departmentId);
+		/// <summary>Renumbers the plan's stops 1..n in the given order (stops not listed follow, in their current order).</summary>
 		Task<bool> ReorderRouteStopsAsync(string routePlanId, List<string> orderedStopIds, CancellationToken cancellationToken = default);
 		Task<bool> DeleteRouteStopAsync(string routeStopId, CancellationToken cancellationToken = default);
 
@@ -34,6 +35,9 @@ namespace Resgrid.Model.Services
 		Task<RouteInstance> PauseRouteAsync(string routeInstanceId, string userId, CancellationToken cancellationToken = default);
 		Task<RouteInstance> ResumeRouteAsync(string routeInstanceId, string userId, CancellationToken cancellationToken = default);
 		Task<RouteInstance> GetActiveInstanceForUnitAsync(int unitId);
+
+		/// <summary>The unit's in-progress instance, else its paused one (the legacy query returns in-progress only).</summary>
+		Task<RouteInstance> GetActiveOrPausedInstanceForUnitAsync(int departmentId, int unitId);
 		Task<RouteInstance> GetInstanceByIdAsync(string routeInstanceId);
 		Task<List<RouteInstance>> GetInstancesForDepartmentAsync(int departmentId);
 
@@ -51,9 +55,20 @@ namespace Resgrid.Model.Services
 		Task<RouteDeviation> RecordDeviationAsync(RouteDeviation deviation, CancellationToken cancellationToken = default);
 		Task<RouteDeviation> AcknowledgeDeviationAsync(string routeDeviationId, string userId, CancellationToken cancellationToken = default);
 		Task<List<RouteDeviation>> GetUnacknowledgedDeviationsAsync(int departmentId);
+		Task<List<RouteDeviation>> GetDeviationsForInstanceAsync(string routeInstanceId);
 
-		// Mapbox Integration
+		// Generated route storage
 		Task<RoutePlan> UpdateRouteGeometryAsync(string routePlanId, string geometry, double distance, double duration, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Writes a generated route (the plan's routing fields and each stop's leg values) without marking the plan stale.
+		/// </summary>
+		Task<RoutePlan> SaveGeneratedRouteAsync(RoutePlan plan, IEnumerable<RouteStop> stops, CancellationToken cancellationToken = default);
+
+		/// <summary>Flags the plan's stored route as out of date (stops or options changed).</summary>
+		Task MarkRoutePlanStaleAsync(string routePlanId, CancellationToken cancellationToken = default);
+
+		Task<RouteInstance> SetInstanceLastRoutedOnAsync(string routeInstanceId, DateTime routedOn, CancellationToken cancellationToken = default);
 
 		// Geofence
 		Task<RouteInstanceStop> CheckGeofenceProximityAsync(int unitId, decimal latitude, decimal longitude);

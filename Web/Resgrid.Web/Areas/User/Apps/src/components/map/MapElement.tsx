@@ -11,6 +11,7 @@ import {
 import {
   getPoiLayerId,
   isMapboxRendererEnabled,
+  isMapLibreRendererEnabled,
   isPoiMarker,
   mapMarkerTypes,
   normalizeMapLayers,
@@ -164,11 +165,15 @@ export default function MapElement(props: MapElementProps) {
   );
   const mapHeight = props.mapHeight || '600px';
   const showButtons = props.showButtons ?? false;
-  const useMapboxRenderer = useMemo(
-    () => isMapboxRendererEnabled(resolvedMapConfig),
+  const useMapLibreRenderer = useMemo(
+    () => isMapLibreRendererEnabled(resolvedMapConfig),
     [resolvedMapConfig],
   );
-  const hasMapSource = useMapboxRenderer || resolvedMapConfig.tileUrl.length > 0;
+  const useMapboxRenderer = useMemo(
+    () => !useMapLibreRenderer && isMapboxRendererEnabled(resolvedMapConfig),
+    [resolvedMapConfig, useMapLibreRenderer],
+  );
+  const hasMapSource = useMapLibreRenderer || useMapboxRenderer || resolvedMapConfig.tileUrl.length > 0;
   const poiLayers = useMemo(() => mapData?.PoiLayers ?? [], [mapData]);
 
   const visibleMarkers = useMemo(() => {
@@ -276,9 +281,11 @@ export default function MapElement(props: MapElementProps) {
 
     const loadRendererAsync = async () => {
       try {
-        const rendererModule = useMapboxRenderer
-          ? await import('./MapboxMapView')
-          : await import('./LeafletMapView');
+        const rendererModule = useMapLibreRenderer
+          ? await import('./MapLibreMapView')
+          : useMapboxRenderer
+            ? await import('./MapboxMapView')
+            : await import('./LeafletMapView');
 
         if (!cancelled) {
           setMapRenderer(() => rendererModule.default);

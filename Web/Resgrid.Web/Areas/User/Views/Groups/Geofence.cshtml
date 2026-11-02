@@ -87,5 +87,6 @@
         var osmTileAttribution = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(mapConfig.Attribution, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
     </script>
 
+    <partial name="_MapKitConfig" />
     <script src="~/js/app/internal/groups/resgrid.groups.geofence.js"></script>
 }

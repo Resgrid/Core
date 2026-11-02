@@ -61,37 +61,6 @@
                                 <div class="checkbox"><label><input type="checkbox" name="unsafeConditionsStandDown" value="true" checked="@r.UnsafeConditionsStandDown" disabled="@(!headerEditable)" /> @localizer["UnsafeStandDown"]</label></div>
                             </div>
                         </div>
-
-                        <h4 class="m-t-md">@localizer["TimeEntries"] <small>@localizer["TimesLocal"] (@Model.TimeZone)</small></h4>
-                        <table class="table table-condensed" id="entries">
-                            <thead><tr><th>@localizer["Subject"]</th><th>@localizer["EntryType"]</th><th>@localizer["Start"]</th><th>@localizer["End"]</th><th>@localizer["PaidBreak"]</th><th>@localizer["UnpaidBreak"]</th><th>@localizer["Km"]</th><th>@localizer["Notes"]</th><th></th></tr></thead>
-                            <tbody>
-                                @{ var postIndex = 0; }
-                                @for (var i = 0; i < entries.Count; i++)
-                                {
-                                    var e = entries[i];
-                                    // Another crew's row on a deployment-wide report is shown but never posted, so the server keeps it as stored.
-                                    var rowEditable = Model.CanEdit && Model.CanWriteSubject(e.SubjectId);
-                                    // Posted indices must be gapless: the binder stops at the first missing entries[n], so a read-only row takes none.
-                                    var n = rowEditable ? postIndex++ : -1;
-                                    <tr class="@(rowEditable ? null : "entry-readonly")">
-                                        <td><select name="entries[@n].SubjectId" class="form-control input-sm" disabled="@(!rowEditable)">@foreach (var s in Model.Subjects) { <option value="@s.Id" selected="@(s.Id == e.SubjectId)">@s.Name</option> }@if (Model.Subjects.All(s => s.Id != e.SubjectId)) { <option value="@e.SubjectId" selected>@SubjectName(e.SubjectId)</option> }</select></td>
-                                        <td><select name="entries[@n].EntryType" class="form-control input-sm" disabled="@(!rowEditable)">@foreach (Resgrid.Model.Invoicing.DeploymentTimeEntryTypes t in Enum.GetValues(typeof(Resgrid.Model.Invoicing.DeploymentTimeEntryTypes))) { <option value="@((int)t)" selected="@((int)t == e.EntryType)">@localizer["Entry" + t]</option> }</select></td>
-                                        <td><input type="datetime-local" step="0.001" name="entries[@n].Start" class="form-control input-sm" value="@departmentTime.Input(e.StartTime)" disabled="@(!rowEditable)" /></td>
-                                        <td><input type="datetime-local" step="0.001" name="entries[@n].End" class="form-control input-sm" value="@departmentTime.Input(e.EndTime)" disabled="@(!rowEditable)" /></td>
-                                        <td><input type="number" name="entries[@n].PaidBreakMinutes" class="form-control input-sm" value="@e.PaidBreakMinutes" min="0" disabled="@(!rowEditable)" /></td>
-                                        <td><input type="number" name="entries[@n].UnpaidBreakMinutes" class="form-control input-sm" value="@e.UnpaidBreakMinutes" min="0" disabled="@(!rowEditable)" /></td>
-                                        <td><input type="number" step="0.1" name="entries[@n].MileageKm" class="form-control input-sm" value="@e.MileageKm" min="0" disabled="@(!rowEditable)" /></td>
-                                        <td><input type="text" name="entries[@n].Notes" class="form-control input-sm" value="@e.Notes" maxlength="500" disabled="@(!rowEditable)" /><input type="hidden" name="entries[@n].CertificationCode" value="@e.CertificationCode" disabled="@(!rowEditable)" /><input type="hidden" name="entries[@n].Id" class="entry-id" value="@e.DeploymentTimeEntryId" disabled="@(!rowEditable)" /></td>
-                                        <td>@if (rowEditable) { <button type="button" class="btn btn-xs btn-danger remove-row"><i class="fa fa-times"></i></button> } <small class="text-muted">@e.Hours.ToString("0.00")h</small></td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                        @if (Model.CanEdit)
-                        {
-                            <button type="button" class="btn btn-sm btn-default" id="addRow"><i class="fa fa-plus"></i> @localizer["AddEntry"]</button>
-                        }
                         <div class="m-t-md">
                             <label>@localizer["Notes"]</label>
                             <textarea name="notes" class="form-control" rows="2" disabled="@(!headerEditable)">@r.Notes</textarea>
@@ -116,6 +85,54 @@
                             <dt>@localizer["Approved"]</dt><dd>@LocalStamp(r.ApprovedOn)</dd>
                             @if (!string.IsNullOrWhiteSpace(r.InvoiceId)) { <dt>@localizer["Invoice"]</dt><dd><a asp-controller="Invoicing" asp-action="View" asp-route-area="User" asp-route-id="@r.InvoiceId">@localizer["OpenInvoice"]</a></dd> }
                         </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @* Nine input columns need the full page width; narrower than the grid's minimum, the table scrolls inside its card. *@
+        <div class="row">
+            <div class="col-md-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@localizer["TimeEntries"] <small>@localizer["TimesLocal"] (@Model.TimeZone)</small></h5></div>
+                    <div class="ibox-content">
+                        <div class="table-responsive">
+                        <table class="table table-condensed" id="entries">
+                            <colgroup>
+                                <col /><col style="width:130px" />
+                                <col style="width:200px" /><col style="width:200px" />
+                                <col style="width:70px" /><col style="width:70px" /><col style="width:80px" />
+                                <col /><col style="width:75px" />
+                            </colgroup>
+                            <thead><tr><th>@localizer["Subject"]</th><th>@localizer["EntryType"]</th><th>@localizer["Start"]</th><th>@localizer["End"]</th><th>@localizer["PaidBreak"]</th><th>@localizer["UnpaidBreak"]</th><th>@localizer["Km"]</th><th>@localizer["Notes"]</th><th></th></tr></thead>
+                            <tbody>
+                                @{ var postIndex = 0; }
+                                @for (var i = 0; i < entries.Count; i++)
+                                {
+                                    var e = entries[i];
+                                    // Another crew's row on a deployment-wide report is shown but never posted, so the server keeps it as stored.
+                                    var rowEditable = Model.CanEdit && Model.CanWriteSubject(e.SubjectId);
+                                    // Posted indices must be gapless: the binder stops at the first missing entries[n], so a read-only row takes none.
+                                    var n = rowEditable ? postIndex++ : -1;
+                                    <tr class="@(rowEditable ? null : "entry-readonly")">
+                                        <td><select name="entries[@n].SubjectId" class="form-control input-sm" disabled="@(!rowEditable)">@foreach (var s in Model.Subjects) { <option value="@s.Id" selected="@(s.Id == e.SubjectId)">@s.Name</option> }@if (Model.Subjects.All(s => s.Id != e.SubjectId)) { <option value="@e.SubjectId" selected>@SubjectName(e.SubjectId)</option> }</select></td>
+                                        <td><select name="entries[@n].EntryType" class="form-control input-sm" disabled="@(!rowEditable)">@foreach (Resgrid.Model.Invoicing.DeploymentTimeEntryTypes t in Enum.GetValues(typeof(Resgrid.Model.Invoicing.DeploymentTimeEntryTypes))) { <option value="@((int)t)" selected="@((int)t == e.EntryType)">@localizer["Entry" + t]</option> }</select></td>
+                                        @* step="any" still accepts a stored time with seconds, but Chrome only draws the seconds and milliseconds fields when the value has them. *@
+                                        <td><input type="datetime-local" step="any" name="entries[@n].Start" class="form-control input-sm" value="@departmentTime.Input(e.StartTime)" disabled="@(!rowEditable)" /></td>
+                                        <td><input type="datetime-local" step="any" name="entries[@n].End" class="form-control input-sm" value="@departmentTime.Input(e.EndTime)" disabled="@(!rowEditable)" /></td>
+                                        <td><input type="number" name="entries[@n].PaidBreakMinutes" class="form-control input-sm" value="@e.PaidBreakMinutes" min="0" disabled="@(!rowEditable)" /></td>
+                                        <td><input type="number" name="entries[@n].UnpaidBreakMinutes" class="form-control input-sm" value="@e.UnpaidBreakMinutes" min="0" disabled="@(!rowEditable)" /></td>
+                                        <td><input type="number" step="0.1" name="entries[@n].MileageKm" class="form-control input-sm" value="@e.MileageKm" min="0" disabled="@(!rowEditable)" /></td>
+                                        <td><input type="text" name="entries[@n].Notes" class="form-control input-sm" value="@e.Notes" maxlength="500" disabled="@(!rowEditable)" /><input type="hidden" name="entries[@n].CertificationCode" value="@e.CertificationCode" disabled="@(!rowEditable)" /><input type="hidden" name="entries[@n].Id" class="entry-id" value="@e.DeploymentTimeEntryId" disabled="@(!rowEditable)" /></td>
+                                        <td class="text-nowrap">@if (rowEditable) { <button type="button" class="btn btn-xs btn-danger remove-row"><i class="fa fa-times"></i></button> } <small class="text-muted">@e.Hours.ToString("0.00")h</small></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        </div>
+                        @if (Model.CanEdit)
+                        {
+                            <button type="button" class="btn btn-sm btn-default" id="addRow"><i class="fa fa-plus"></i> @localizer["AddEntry"]</button>
+                        }
                     </div>
                 </div>
             </div>
@@ -214,10 +231,10 @@
                     clone = document.createElement('tr');
                     clone.innerHTML = '<td><select name="entries[0].SubjectId" class="form-control input-sm">@JsEncoder.Encode(string.Join("", Model.Subjects.Select(s => $"<option value=\"{s.Id}\">{System.Net.WebUtility.HtmlEncode(s.Name)}</option>")))</select></td>' +
                         '<td><select name="entries[0].EntryType" class="form-control input-sm">@JsEncoder.Encode(string.Join("", Enum.GetValues(typeof(Resgrid.Model.Invoicing.DeploymentTimeEntryTypes)).Cast<Resgrid.Model.Invoicing.DeploymentTimeEntryTypes>().Select(t => $"<option value=\"{(int)t}\">{System.Net.WebUtility.HtmlEncode(localizer["Entry" + t].Value)}</option>")))</select></td>' +
-                        '<td><input type="datetime-local" step="0.001" name="entries[0].Start" class="form-control input-sm" value="@r.ReportDate.ToString("yyyy-MM-dd")T08:00" /></td><td><input type="datetime-local" step="0.001" name="entries[0].End" class="form-control input-sm" value="@r.ReportDate.ToString("yyyy-MM-dd")T16:00" /></td>' +
+                        '<td><input type="datetime-local" step="any" name="entries[0].Start" class="form-control input-sm" value="@r.ReportDate.ToString("yyyy-MM-dd")T08:00" /></td><td><input type="datetime-local" step="any" name="entries[0].End" class="form-control input-sm" value="@r.ReportDate.ToString("yyyy-MM-dd")T16:00" /></td>' +
                         '<td><input type="number" name="entries[0].PaidBreakMinutes" class="form-control input-sm" value="0" min="0" /></td><td><input type="number" name="entries[0].UnpaidBreakMinutes" class="form-control input-sm" value="0" min="0" /></td>' +
                         '<td><input type="number" step="0.1" name="entries[0].MileageKm" class="form-control input-sm" min="0" /></td><td><input type="text" name="entries[0].Notes" class="form-control input-sm" maxlength="500" /></td>' +
-                        '<td><button type="button" class="btn btn-xs btn-danger remove-row"><i class="fa fa-times"></i></button></td>';
+                        '<td class="text-nowrap"><button type="button" class="btn btn-xs btn-danger remove-row"><i class="fa fa-times"></i></button></td>';
                 }
                 body.appendChild(clone); reindex();
             });
@@ -227,4 +244,13 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+    <style>
+        /* Fixed columns keep every input usable; Subject and Notes share whatever width is left. INSPINIA's roomy
+           cell and input padding would cut off a select's text in these narrow columns, so the grid is tighter. */
+        #entries { table-layout: fixed; min-width: 1050px; }
+        #entries > thead > tr > th, #entries > tbody > tr > td { padding: 6px 4px; }
+        #entries .form-control { padding: 4px 6px; }
+        /* INSPINIA floats ibox-title labels to the left, which put the status badge in front of the report number. */
+        #dtrForm .ibox-title h5 .label { float: none; margin-left: 4px; vertical-align: middle; }
+    </style>
 }

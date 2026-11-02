@@ -110,7 +110,7 @@
     </form>
     @if (!isNew && Model.CanManageCompensation && !p.IsApproved)
     {
-        <form method="post" asp-action="ApproveCompensationProfile">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@p.EmployeeCompensationProfileId" /><button type="submit" class="btn btn-success">@localizer["ApproveProfile"]</button></form>
+        <form method="post" asp-action="ApproveCompensationProfile" class="m-b-md">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@p.EmployeeCompensationProfileId" /><button type="submit" class="btn btn-success">@localizer["ApproveProfile"]</button></form>
     }
 </div>
 

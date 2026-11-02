@@ -130,7 +130,7 @@
 						<div class="form-group">
 							<div class="col-sm-4 col-sm-offset-2">
 								<a class="btn btn-white" asp-controller="Mapping" asp-action="Layers" asp-route-area="User">@localizer["Cancel"]</a>
-								<a id="addLayerButton" class="btn btn-primary">@localizer["AddLayerButton"]</a>
+								<button type="submit" id="addLayerButton" class="btn btn-primary">@localizer["AddLayerButton"]</button>
 							</div>
 						</div>
 					</form>
@@ -142,89 +142,5 @@
 
 @section Scripts
 {
-	@if (Model.CenterCoordinates != null && Model.CenterCoordinates.Latitude.HasValue && Model.CenterCoordinates.Longitude.HasValue)
-	{
-		<script type="text/javascript">
-			var centerLat = @(Model.CenterCoordinates.Latitude.Value);
-			var centerLng = @(Model.CenterCoordinates.Longitude.Value);
-		</script>
-	}
-
-	<script>
-		$(document).ready(function () {
-			$("#Color").minicolors({
-				  animationSpeed: 50,
-				  animationEasing: 'swing',
-				  changeDelay: 0,
-				  control: 'hue',
-				  defaultValue: '#0080ff',
-				  format: 'hex',
-				  showSpeed: 100,
-				  hideSpeed: 100,
-				  inline: false,
-				  theme: 'bootstrap'
-			});
-
-			const tiles1 = L.tileLayer(
-				'@SettingsHelper.GetDepartmentMapConfig(Resgrid.Config.InfoConfig.WebsiteKey).TileUrl',
-				{
-					maxZoom: 19,
-					attribution:
-						'@SettingsHelper.GetDepartmentMapConfig(Resgrid.Config.InfoConfig.WebsiteKey).Attribution',
-				}
-			);
-
-			const map = L.map('mapContainer').setView([centerLat, centerLng], 13).addLayer(tiles1);
-
-			map.pm.addControls({
-				drawMarker: true,
-				drawPolygon: true,
-				editMode: true,
-				drawPolyline: true,
-				removalMode: true,
-			});
-
-			$('#addLayerButton').click(function () {
-				var form$ = $("#newLayerForm");
-				let fg = L.featureGroup();
-				let layers = map.pm.getGeomanLayers();//getGeomanDrawLayers(); // or getGeomanLayers()
-
-
-				const features = layers.map((layer) => {
-					const geo = layer.toGeoJSON();
-					geo.properties.shape = layer.pm.getShape();
-					geo.properties.color = $('#Color').val();
-					geo.properties.name = $('#Name').val();
-					geo.properties.category = "default";
-
-					switch (geo.properties.shape) {
-						case "Circle": {
-							//const circle = layer as L.Circle;
-							geo.properties.radius = layer.getRadius(); //circle.getRadius();
-							break;
-						}
-						case "Text":
-							geo.properties.text = layer.pm.getText().trim();
-							break;
-						default:
-					}
-
-                    return geo;
-				});
-
-				const featureCollection = {
-					type: "FeatureCollection",
-					features,
-				};
-
-				const json = JSON.stringify(featureCollection);
-
-				$('#GeoJson').val(json);
-
-				$("#newLayerForm").submit();
-			});
-		});
-	</script>
-
-	<script src="~/lib/geoman-io/leaflet-geoman-free/dist/leaflet-geoman.min.js"></script>
+	<partial name="_LayerEditorScripts" model="(Model.GeoJson, Model.CenterCoordinates)" />
 }

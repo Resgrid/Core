@@ -123,6 +123,18 @@ namespace Resgrid.Model.Services
 		Task<CallNumberingConfig> GetCallNumberingConfigAsync(int departmentId, bool bypassCache = false);
 
 		/// <summary>Setting 117: work order, invoice, bid and daily time report number patterns and their numbering year start. Missing = the built-in numbers.</summary>
+		/// <summary>Setting 123: offline map packs (response area, included data, download policy); the defaults when unset.</summary>
+		Task<OfflineMapPacksConfig> GetOfflineMapPacksConfigAsync(int departmentId, bool bypassCache = false);
+
+		Task<DepartmentSetting> SetOfflineMapPacksConfigAsync(int departmentId, OfflineMapPacksConfig config,
+			CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>Setting 122: navigation defaults and route deviation thresholds; the defaults when unset.</summary>
+		Task<MappingNavigationConfig> GetMappingNavigationConfigAsync(int departmentId, bool bypassCache = false);
+
+		Task<DepartmentSetting> SetMappingNavigationConfigAsync(int departmentId, MappingNavigationConfig config,
+			CancellationToken cancellationToken = default(CancellationToken));
+
 		Task<DocumentNumberingConfig> GetDocumentNumberingConfigAsync(int departmentId, bool bypassCache = false);
 
 		Task<DepartmentSetting> SetDocumentNumberingConfigAsync(int departmentId, DocumentNumberingConfig config,

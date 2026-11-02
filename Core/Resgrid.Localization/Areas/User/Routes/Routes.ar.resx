@@ -185,4 +185,100 @@
 
   <!-- View -->
   <data name="ArchivedRoutes" xml:space="preserve"><value>المسارات المؤرشفة</value></data>
+  <data name="ProfileTruck" xml:space="preserve">
+    <value>شاحنة (أبعاد المركبة)</value>
+  </data>
+  <data name="ProfileTrafficUnavailable" xml:space="preserve">
+    <value>(لا توجد حركة مرور مباشرة على هذا الخادم)</value>
+  </data>
+  <data name="AvoidLabel" xml:space="preserve">
+    <value>تجنب</value>
+  </data>
+  <data name="AvoidTolls" xml:space="preserve">
+    <value>الطرق ذات الرسوم</value>
+  </data>
+  <data name="AvoidHighways" xml:space="preserve">
+    <value>الطرق السريعة</value>
+  </data>
+  <data name="AvoidFerries" xml:space="preserve">
+    <value>العبّارات</value>
+  </data>
+  <data name="AvoidUnpaved" xml:space="preserve">
+    <value>الطرق غير المعبّدة</value>
+  </data>
+  <data name="StartStation" xml:space="preserve">
+    <value>محطة البداية</value>
+  </data>
+  <data name="EndStation" xml:space="preserve">
+    <value>محطة النهاية</value>
+  </data>
+  <data name="UnitStationOption" xml:space="preserve">
+    <value>محطة الوحدة</value>
+  </data>
+  <data name="LegColumn" xml:space="preserve">
+    <value>المقطع</value>
+  </data>
+  <data name="ArrivalColumn" xml:space="preserve">
+    <value>الوصول</value>
+  </data>
+  <data name="StopGeofenceRadius" xml:space="preserve">
+    <value>نطاق الوصول (م)</value>
+  </data>
+  <data name="StopGeofenceRadiusHelp" xml:space="preserve">
+    <value>اتركه فارغًا لاستخدام نطاق المسار.</value>
+  </data>
+  <data name="OptimizeOrder" xml:space="preserve">
+    <value>تحسين الترتيب</value>
+  </data>
+  <data name="OptimizeTitle" xml:space="preserve">
+    <value>ترتيب التوقفات المحسّن</value>
+  </data>
+  <data name="OptimizeCurrent" xml:space="preserve">
+    <value>الترتيب الحالي</value>
+  </data>
+  <data name="OptimizeProposed" xml:space="preserve">
+    <value>الترتيب المقترح</value>
+  </data>
+  <data name="OptimizeAccept" xml:space="preserve">
+    <value>استخدام هذا الترتيب</value>
+  </data>
+  <data name="RouteStart" xml:space="preserve">
+    <value>البداية</value>
+  </data>
+  <data name="RouteEnd" xml:space="preserve">
+    <value>النهاية</value>
+  </data>
+  <data name="RouteTotal" xml:space="preserve">
+    <value>الإجمالي</value>
+  </data>
+  <data name="RouteWithStops" xml:space="preserve">
+    <value>مع التوقفات</value>
+  </data>
+  <data name="RouteEstimate" xml:space="preserve">
+    <value>تقدير بخط مستقيم</value>
+  </data>
+  <data name="MoveUp" xml:space="preserve">
+    <value>نقل لأعلى</value>
+  </data>
+  <data name="MoveDown" xml:space="preserve">
+    <value>نقل لأسفل</value>
+  </data>
+  <data name="DeleteStop" xml:space="preserve">
+    <value>حذف التوقف</value>
+  </data>
+  <data name="TruckNoVehicle" xml:space="preserve">
+    <value>لم تُحدَّد أبعاد مركبة لهذه الوحدة، لذا يحسب وضع الشاحنة المسار مثل القيادة.</value>
+  </data>
+  <data name="OptimizeFailed" xml:space="preserve">
+    <value>تعذّر تحسين ترتيب التوقفات.</value>
+  </data>
+  <data name="OptimizeNoChange" xml:space="preserve">
+    <value>التوقفات بالفعل في أفضل ترتيب.</value>
+  </data>
+  <data name="StopOrderFailed" xml:space="preserve">
+    <value>تعذّر حفظ الترتيب الجديد للتوقفات. ستتم إعادة تحميل الصفحة.</value>
+  </data>
+  <data name="StopMoveFailed" xml:space="preserve">
+    <value>تعذّر نقل التوقف. ستتم إعادة تحميل الصفحة.</value>
+  </data>
 </root>

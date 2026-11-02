@@ -73,16 +73,13 @@ namespace Resgrid.Model
 						mapFeature.Geometry.Line = new GeoJsonLineStringCoordinates<GeoJson2DGeographicCoordinates>(lineString.Coordinates.ToList().Select(x => new GeoJson2DGeographicCoordinates(x.Longitude, x.Latitude)));
 						break;
 					case GeoJSONObjectType.Polygon:
-						var polygon = (GeoJSON.Net.Geometry.Polygon)f.Geometry;
-						List<GeoJson2DGeographicCoordinates> coordinates = new List<GeoJson2DGeographicCoordinates>();
-
-						foreach (var position in polygon.Coordinates.ToList())
-						{
-							coordinates.AddRange(position.Coordinates.Select(x => new GeoJson2DGeographicCoordinates(x.Longitude, x.Latitude)));
-						}
-
-						mapFeature.Geometry.Polygon = GeoJson.Polygon(coordinates.ToArray());
-
+						// Rings stay rings: the first is the outline, the rest are holes (they used to be joined into one outline).
+						mapFeature.Geometry.Polygon = new GeoJsonPolygon<GeoJson2DGeographicCoordinates>(ToPolygonCoordinates((GeoJSON.Net.Geometry.Polygon)f.Geometry));
+						break;
+					case GeoJSONObjectType.MultiPolygon:
+						var multiPolygon = (GeoJSON.Net.Geometry.MultiPolygon)f.Geometry;
+						mapFeature.Geometry.MultiPolygon = new GeoJsonMultiPolygon<GeoJson2DGeographicCoordinates>(
+							new GeoJsonMultiPolygonCoordinates<GeoJson2DGeographicCoordinates>(multiPolygon.Coordinates.Select(ToPolygonCoordinates)));
 						break;
 				}
 
@@ -130,8 +127,12 @@ namespace Resgrid.Model
 						feature = new Feature(new GeoJSON.Net.Geometry.LineString(f.Geometry.Line.Positions.Select(x => new Position(x.Latitude, x.Longitude)).ToList()), properties);
 						break;
 					case "Polygon":
-						var line = new LineString(f.Geometry.Polygon.Coordinates.Exterior.Positions.Select(x => new Position(x.Latitude, x.Longitude)).ToList());
-						feature = new Feature(new GeoJSON.Net.Geometry.Polygon(new List<LineString> { line }), properties);
+						if (f.Geometry.Polygon != null)
+							feature = new Feature(FromPolygonCoordinates(f.Geometry.Polygon.Coordinates), properties);
+						break;
+					case "MultiPolygon":
+						if (f.Geometry.MultiPolygon != null)
+							feature = new Feature(new GeoJSON.Net.Geometry.MultiPolygon(f.Geometry.MultiPolygon.Coordinates.Polygons.Select(FromPolygonCoordinates).ToList()), properties);
 						break;
 						//case "Polygon":
 						//	var lines = new List<LineString>();
@@ -146,10 +147,29 @@ namespace Resgrid.Model
 						//	break;
 				}
 
-				fc.Features.Add(feature);
+				// A geometry this class cannot read back is left out rather than added as a null feature.
+				if (feature != null)
+					fc.Features.Add(feature);
 			}
 
 			return fc;
+		}
+
+		private static GeoJsonPolygonCoordinates<GeoJson2DGeographicCoordinates> ToPolygonCoordinates(GeoJSON.Net.Geometry.Polygon polygon)
+		{
+			var rings = polygon.Coordinates
+				.Select(ring => new GeoJsonLinearRingCoordinates<GeoJson2DGeographicCoordinates>(ring.Coordinates.Select(x => new GeoJson2DGeographicCoordinates(x.Longitude, x.Latitude))))
+				.ToList();
+
+			return new GeoJsonPolygonCoordinates<GeoJson2DGeographicCoordinates>(rings[0], rings.Skip(1));
+		}
+
+		private static GeoJSON.Net.Geometry.Polygon FromPolygonCoordinates(GeoJsonPolygonCoordinates<GeoJson2DGeographicCoordinates> polygon)
+		{
+			var rings = new List<LineString> { new LineString(polygon.Exterior.Positions.Select(x => new Position(x.Latitude, x.Longitude)).ToList()) };
+			rings.AddRange(polygon.Holes.Select(hole => new LineString(hole.Positions.Select(x => new Position(x.Latitude, x.Longitude)).ToList())));
+
+			return new GeoJSON.Net.Geometry.Polygon(rings);
 		}
 	}
 }

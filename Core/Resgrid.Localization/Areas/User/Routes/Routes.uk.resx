@@ -181,4 +181,100 @@
   <data name="Latitude" xml:space="preserve"><value>Широта</value></data>
   <data name="Longitude" xml:space="preserve"><value>Довгота</value></data>
   <data name="FindLocationVia" xml:space="preserve"><value>Знайти місце через</value></data>
+  <data name="ProfileTruck" xml:space="preserve">
+    <value>Вантажівка (габарити)</value>
+  </data>
+  <data name="ProfileTrafficUnavailable" xml:space="preserve">
+    <value>(немає даних про трафік на цьому сервері)</value>
+  </data>
+  <data name="AvoidLabel" xml:space="preserve">
+    <value>Уникати</value>
+  </data>
+  <data name="AvoidTolls" xml:space="preserve">
+    <value>Платні дороги</value>
+  </data>
+  <data name="AvoidHighways" xml:space="preserve">
+    <value>Автомагістралі</value>
+  </data>
+  <data name="AvoidFerries" xml:space="preserve">
+    <value>Пороми</value>
+  </data>
+  <data name="AvoidUnpaved" xml:space="preserve">
+    <value>Ґрунтові дороги</value>
+  </data>
+  <data name="StartStation" xml:space="preserve">
+    <value>Початкова станція</value>
+  </data>
+  <data name="EndStation" xml:space="preserve">
+    <value>Кінцева станція</value>
+  </data>
+  <data name="UnitStationOption" xml:space="preserve">
+    <value>Станція підрозділу</value>
+  </data>
+  <data name="LegColumn" xml:space="preserve">
+    <value>Відрізок</value>
+  </data>
+  <data name="ArrivalColumn" xml:space="preserve">
+    <value>Прибуття</value>
+  </data>
+  <data name="StopGeofenceRadius" xml:space="preserve">
+    <value>Радіус прибуття (м)</value>
+  </data>
+  <data name="StopGeofenceRadiusHelp" xml:space="preserve">
+    <value>Залиште порожнім, щоб використати радіус маршруту.</value>
+  </data>
+  <data name="OptimizeOrder" xml:space="preserve">
+    <value>Оптимізувати порядок</value>
+  </data>
+  <data name="OptimizeTitle" xml:space="preserve">
+    <value>Оптимізований порядок зупинок</value>
+  </data>
+  <data name="OptimizeCurrent" xml:space="preserve">
+    <value>Поточний порядок</value>
+  </data>
+  <data name="OptimizeProposed" xml:space="preserve">
+    <value>Запропонований порядок</value>
+  </data>
+  <data name="OptimizeAccept" xml:space="preserve">
+    <value>Використати цей порядок</value>
+  </data>
+  <data name="RouteStart" xml:space="preserve">
+    <value>Початок</value>
+  </data>
+  <data name="RouteEnd" xml:space="preserve">
+    <value>Кінець</value>
+  </data>
+  <data name="RouteTotal" xml:space="preserve">
+    <value>Усього</value>
+  </data>
+  <data name="RouteWithStops" xml:space="preserve">
+    <value>з зупинками</value>
+  </data>
+  <data name="RouteEstimate" xml:space="preserve">
+    <value>оцінка по прямій</value>
+  </data>
+  <data name="MoveUp" xml:space="preserve">
+    <value>Вище</value>
+  </data>
+  <data name="MoveDown" xml:space="preserve">
+    <value>Нижче</value>
+  </data>
+  <data name="DeleteStop" xml:space="preserve">
+    <value>Видалити зупинку</value>
+  </data>
+  <data name="TruckNoVehicle" xml:space="preserve">
+    <value>Для цього підрозділу не задано габарити, тому «Вантажівка» прокладає маршрут як автомобіль.</value>
+  </data>
+  <data name="OptimizeFailed" xml:space="preserve">
+    <value>Не вдалося оптимізувати порядок зупинок.</value>
+  </data>
+  <data name="OptimizeNoChange" xml:space="preserve">
+    <value>Зупинки вже в найкращому порядку.</value>
+  </data>
+  <data name="StopOrderFailed" xml:space="preserve">
+    <value>Не вдалося зберегти новий порядок зупинок. Сторінку буде перезавантажено.</value>
+  </data>
+  <data name="StopMoveFailed" xml:space="preserve">
+    <value>Не вдалося перемістити зупинку. Сторінку буде перезавантажено.</value>
+  </data>
 </root>

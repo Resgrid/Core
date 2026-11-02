@@ -35,6 +35,11 @@ namespace Resgrid.Model
 
 		public string ActualRouteGeometry { get; set; }
 
+		/// <summary>The plan's normalized route at start, so later plan edits do not move the line under a running unit (M0308).</summary>
+		public string PlannedDirectionsJson { get; set; }
+
+		public DateTime? LastRoutedOn { get; set; }
+
 		public int StopsCompleted { get; set; }
 
 		public int StopsTotal { get; set; }

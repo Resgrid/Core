@@ -77,6 +77,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IProtectedReadService _protectedReadService;
 		private readonly ICallNumberingService _callNumberingService;
 		private readonly IDocumentNumberingService _documentNumberingService;
+		private readonly IOfflineMapPackService _offlineMapPackService;
+		private readonly IStaticMapService _staticMapService;
+		private readonly IMapStyleService _mapStyleService;
 
 		public DepartmentController(IDepartmentsService departmentsService, IUsersService usersService, IActionLogsService actionLogsService,
 			IEmailService emailService, IDepartmentGroupsService departmentGroupsService, IUserProfileService userProfileService, IDeleteService deleteService,
@@ -88,7 +91,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			ISecurityPinService securityPinService, IRunCardsService runCardsService, IFeatureToggleService featureToggleService,
 			IDepartmentProfileMediaService departmentProfileMediaService, IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> departmentLocalizer,
 			Resgrid.Model.AiDispatch.IAiDispatchEnrichmentService aiDispatchService, IProtectedReadService protectedReadService,
-			ICallNumberingService callNumberingService, IDocumentNumberingService documentNumberingService,
+			ICallNumberingService callNumberingService, IDocumentNumberingService documentNumberingService, IOfflineMapPackService offlineMapPackService,
+			IStaticMapService staticMapService, IMapStyleService mapStyleService,
 			IStringLocalizer<Resgrid.Localization.Areas.User.CustomStatuses.CustomStatuses> statusLocalizer = null)
 		{
 			_departmentsService = departmentsService;
@@ -129,6 +133,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_protectedReadService = protectedReadService;
 			_callNumberingService = callNumberingService;
 			_documentNumberingService = documentNumberingService;
+			_offlineMapPackService = offlineMapPackService;
+			_staticMapService = staticMapService;
+			_mapStyleService = mapStyleService;
 		}
 
 		#endregion Private Members and Constructors
@@ -3286,10 +3293,170 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.UnitStatusThresholds = await BuildUnitStatusThresholdRowsAsync();
 			var thresholds = await _departmentSettingsService.GetUnitStatusThresholdsAsync(DepartmentId);
 			model.UnitStatusAlertNoteRequirement = thresholds.AcknowledgementNoteRequirement;
+			LoadNavigationSettings(model, await _departmentSettingsService.GetMappingNavigationConfigAsync(DepartmentId, true));
+			LoadOfflineMapSettings(model, await _offlineMapPackService.GetConfigAsync(DepartmentId, true));
 			await PopulateUnitStatusTimerWarningsAsync(model, thresholds);
 			await PopulateMapStyleContextAsync(model);
+			await PopulateMapFeatureContextAsync(model);
 
 			return View(model);
+		}
+
+		private static void LoadNavigationSettings(MappingSettingsView model, MappingNavigationConfig config)
+		{
+			config ??= new MappingNavigationConfig();
+			var avoid = (RouteAvoidOptions)config.DefaultAvoidOptions;
+
+			model.NavigationVoiceGuidance = !config.VoiceGuidanceOff;
+			model.NavigationDistanceUnits = Enum.IsDefined(typeof(NavigationDistanceUnits), config.DistanceUnits) ? (NavigationDistanceUnits)config.DistanceUnits : NavigationDistanceUnits.Device;
+			model.NavigationArrivalRadiusMeters = config.EffectiveArrivalRadiusMeters();
+			model.NavigationOnScenePrompt = !config.OnScenePromptOff;
+			model.NavigationAvoidTolls = avoid.HasFlag(RouteAvoidOptions.Tolls);
+			model.NavigationAvoidHighways = avoid.HasFlag(RouteAvoidOptions.Highways);
+			model.NavigationAvoidFerries = avoid.HasFlag(RouteAvoidOptions.Ferries);
+			model.NavigationAvoidUnpaved = avoid.HasFlag(RouteAvoidOptions.Unpaved);
+			model.RouteTimeDeviations = !config.TimeDeviationsOff;
+			model.RouteDeviationThresholdMinutes = (int)config.EffectiveDeviationThreshold().TotalMinutes;
+		}
+
+		/// <summary>Setting 122 from the form, numbers clamped to what the apps and the deviation rules accept.</summary>
+		private static MappingNavigationConfig BuildNavigationSettings(MappingSettingsView model)
+		{
+			var avoid = RouteAvoidOptions.None;
+			if (model.NavigationAvoidTolls) avoid |= RouteAvoidOptions.Tolls;
+			if (model.NavigationAvoidHighways) avoid |= RouteAvoidOptions.Highways;
+			if (model.NavigationAvoidFerries) avoid |= RouteAvoidOptions.Ferries;
+			if (model.NavigationAvoidUnpaved) avoid |= RouteAvoidOptions.Unpaved;
+
+			return new MappingNavigationConfig
+			{
+				VoiceGuidanceOff = !model.NavigationVoiceGuidance,
+				DistanceUnits = Enum.IsDefined(typeof(NavigationDistanceUnits), model.NavigationDistanceUnits) ? (int)model.NavigationDistanceUnits : 0,
+				ArrivalRadiusMeters = Math.Clamp(model.NavigationArrivalRadiusMeters, 10, 1000),
+				OnScenePromptOff = !model.NavigationOnScenePrompt,
+				DefaultAvoidOptions = (int)avoid,
+				DeviationThresholdMinutes = Math.Clamp(model.RouteDeviationThresholdMinutes, 1, 1440),
+				TimeDeviationsOff = !model.RouteTimeDeviations
+			};
+		}
+
+		private static void LoadOfflineMapSettings(MappingSettingsView model, OfflineMapPacksConfig config)
+		{
+			config ??= new OfflineMapPacksConfig();
+
+			model.OfflineResponseAreaGeoJson = config.ResponseAreaGeoJson;
+			model.OfflineIncludeCustomMaps = !config.ExcludeCustomMaps;
+			model.OfflineIncludeIndoorMaps = !config.ExcludeIndoorMaps;
+			model.OfflineIncludeLayers = !config.ExcludeLayers;
+			model.OfflineIncludePois = !config.ExcludePois;
+			model.OfflineIncludeHydrants = !config.ExcludeHydrants;
+			model.OfflineDownloadPolicy = Enum.IsDefined(typeof(OfflineDownloadPolicy), config.DownloadPolicy) ? (OfflineDownloadPolicy)config.DownloadPolicy : OfflineDownloadPolicy.WifiOnly;
+			model.OfflineIncidentPacks = !config.IncidentPacksOff;
+			model.OfflineIncidentRadiusKm = (int)config.EffectiveIncidentRadiusKm();
+			model.OfflineCorridorPacks = !config.CorridorPacksOff;
+			model.OfflineCorridorBufferMeters = (int)config.EffectiveCorridorBufferMeters();
+			model.OfflineRefreshHours = config.EffectiveRefreshHours();
+			model.OfflineStaleDays = config.EffectiveStaleDays();
+			model.OfflinePreferLocalInArea = config.PreferLocalInArea;
+		}
+
+		/// <summary>
+		/// Setting 123 from the form over the stored value, so fields the form does not show (the zoom the area was accepted
+		/// at) survive; the service re-measures a changed area.
+		/// </summary>
+		private async Task<OfflineMapPacksConfig> BuildOfflineMapSettingsAsync(MappingSettingsView model)
+		{
+			var config = await _offlineMapPackService.GetConfigAsync(DepartmentId, true) ?? new OfflineMapPacksConfig();
+
+			config.ResponseAreaGeoJson = string.IsNullOrWhiteSpace(model.OfflineResponseAreaGeoJson) ? null : model.OfflineResponseAreaGeoJson.Trim();
+			config.ExcludeCustomMaps = !model.OfflineIncludeCustomMaps;
+			config.ExcludeIndoorMaps = !model.OfflineIncludeIndoorMaps;
+			config.ExcludeLayers = !model.OfflineIncludeLayers;
+			config.ExcludePois = !model.OfflineIncludePois;
+			config.ExcludeHydrants = !model.OfflineIncludeHydrants;
+			config.DownloadPolicy = Enum.IsDefined(typeof(OfflineDownloadPolicy), model.OfflineDownloadPolicy) ? (int)model.OfflineDownloadPolicy : 0;
+			config.IncidentPacksOff = !model.OfflineIncidentPacks;
+			config.IncidentRadiusKm = Math.Clamp(model.OfflineIncidentRadiusKm, 1, 25);
+			config.CorridorPacksOff = !model.OfflineCorridorPacks;
+			config.CorridorBufferMeters = Math.Clamp(model.OfflineCorridorBufferMeters, 50, 5000);
+			config.RefreshHours = Math.Clamp(model.OfflineRefreshHours, 1, 24 * 30);
+			config.StaleDays = Math.Clamp(model.OfflineStaleDays, 1, 365);
+			config.PreferLocalInArea = model.OfflinePreferLocalInArea;
+
+			return config;
+		}
+
+		/// <summary>Which map features the department has; the navigation and offline sections show a note while they are off.</summary>
+		private async Task PopulateMapFeatureContextAsync(MappingSettingsView model)
+		{
+			model.OfflineFallbackRadiusKm = Math.Clamp(Config.MappingConfig.ResponseAreaFallbackRadiusKm, 1, 100);
+
+			try
+			{
+				model.NavigationEnabled = await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.NavigationInApp, DepartmentId);
+				model.OfflineMapsEnabled = await _offlineMapPackService.IsAvailableForDepartmentAsync(DepartmentId);
+			}
+			catch (Exception ex)
+			{
+				// Only the "not on yet" notes depend on these; the page still has to open.
+				Logging.LogException(ex, $"{nameof(PopulateMapFeatureContextAsync)}: feature checks failed for departmentId {DepartmentId}.");
+			}
+		}
+
+		/// <summary>
+		/// The base-map download size of the response area being drawn (§19.3), as the line shown under the map. An empty
+		/// area measures the fallback circle.
+		/// </summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> EstimateResponseArea([FromBody] EstimateResponseAreaInput input, CancellationToken cancellationToken)
+		{
+			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
+				return Unauthorized();
+
+			var estimate = await _offlineMapPackService.EstimateResponseAreaAsync(DepartmentId, input?.GeoJson, cancellationToken);
+
+			return Json(new
+			{
+				valid = estimate.Valid && estimate.Fits,
+				level = !estimate.Valid || !estimate.Fits ? "danger" : estimate.Measured && estimate.SizeBytes > estimate.MaxBytes * 0.8 ? "warning" : "success",
+				percent = estimate.Measured && estimate.MaxBytes > 0 ? (int)Math.Min(100, Math.Round(estimate.SizeBytes * 100.0 / estimate.MaxBytes)) : (int?)null,
+				message = ResponseAreaMessage(estimate)
+			});
+		}
+
+		/// <summary>The size line under the response area map, or why the area cannot be used.</summary>
+		private string ResponseAreaMessage(OfflineResponseAreaEstimate estimate)
+		{
+			var area = estimate.AreaSquareKm.ToString("N1", CultureInfo.CurrentCulture);
+
+			switch (estimate.Error)
+			{
+				case null:
+				case "":
+					return estimate.Measured
+						? string.Format(_departmentLocalizer["OfflineAreaSize"], FormatBytes(estimate.SizeBytes), FormatBytes(estimate.MaxBytes), area)
+						: string.Format(_departmentLocalizer["OfflineAreaNotMeasured"], area);
+				case "too-large":
+					return string.Format(_departmentLocalizer["OfflineAreaTooLarge"], FormatBytes(estimate.SizeBytes), FormatBytes(estimate.MaxBytes));
+				case "too-large-area":
+					return _departmentLocalizer["OfflineAreaTooLargeArea"];
+				case "self-intersecting":
+					return _departmentLocalizer["OfflineAreaSelfIntersecting"];
+				case "no-location":
+					return _departmentLocalizer["OfflineAreaNoLocation"];
+				default:
+					return _departmentLocalizer["OfflineAreaInvalid"];
+			}
+		}
+
+		private static string FormatBytes(long bytes)
+		{
+			const double mb = 1024d * 1024d;
+			return bytes >= 1024 * mb
+				? (bytes / (1024 * mb)).ToString("0.0", CultureInfo.CurrentCulture) + " GB"
+				: Math.Max(1, Math.Round(bytes / mb)).ToString("0", CultureInfo.CurrentCulture) + " MB";
 		}
 
 		/// <summary>
@@ -3338,8 +3505,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 		/// </summary>
 		private async Task PopulateMapStyleContextAsync(MappingSettingsView model)
 		{
+			// What this install can draw (plan §5.3, §6.6): the presets for its base map provider, previews through the signed
+			// GetStaticMap (Mapbox Static Images, TileServer GL or stitched raster tiles), and the providers shown read-only.
+			model.BaseMapProvider = _mapStyleService.GetPresetTileProvider();
+			model.AvailableStyles = (_mapStyleService.GetAvailablePresets() ?? MapStylePresets.SelectableStyles).ToList();
+			model.PreviewUrlTemplate = _staticMapService.GetSignedTemplate(DepartmentId, Config.InfoConfig.WebsiteKey);
+			model.RoutingProvider = RoutingProviderNames.Normalize(Config.MappingConfig.RoutingProvider);
+			model.TrafficLayerAvailable = _mapStyleService.GetTrafficTileUrl() != null;
 			model.WebsiteSupportsMapStyle = Config.MappingConfig.HasSystemMapboxAccessToken(Config.InfoConfig.WebsiteKey);
-			model.PreviewAccessToken = Config.MappingConfig.GetWebsiteMapboxPublicAccessToken();
 
 			// Same system default the config API seeds, so a department with no center still previews somewhere real.
 			model.PreviewLatitude = 39.14086268299356;
@@ -3361,6 +3534,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				// A preview centred on the default is better than a settings page that will not open.
 				Logging.LogException(ex, $"{nameof(PopulateMapStyleContextAsync)}: map center lookup failed for departmentId {DepartmentId}.");
 			}
+
+			// Self-hosted styles reach the website only through its MapLibre maps.
+			if (!model.WebsiteSupportsMapStyle && model.BaseMapProvider != Config.MappingConfig.MapboxMapProvider)
+				model.WebsiteSupportsMapStyle = await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.MapsMapLibreWeb, DepartmentId);
 		}
 
 		[HttpPost]
@@ -3386,6 +3563,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 				// a secret (sk.) token pasted here would otherwise sit in settings unused at best.
 				if (!String.IsNullOrWhiteSpace(model.MapboxAccessToken) && !Config.MappingConfig.IsPublicMapboxAccessToken(model.MapboxAccessToken))
 					ModelState.AddModelError(nameof(model.MapboxAccessToken), "The Mapbox access token must be a public token starting with pk. Never use a secret (sk.) token here: it is sent to every member's browser and app.");
+			}
+
+			OfflineMapPacksConfig offlineConfig = null;
+			if (ModelState.IsValid)
+			{
+				// Saved first: a changed response area over the download limit refuses the whole save, so the operator can
+				// shrink it without the rest of the page being half stored.
+				offlineConfig = await BuildOfflineMapSettingsAsync(model);
+				var offlineEstimate = await _offlineMapPackService.SaveConfigAsync(DepartmentId, offlineConfig, cancellationToken);
+				if (!offlineEstimate.Valid || !offlineEstimate.Fits)
+					ModelState.AddModelError(nameof(model.OfflineResponseAreaGeoJson), ResponseAreaMessage(offlineEstimate));
 			}
 
 			if (ModelState.IsValid)
@@ -3418,6 +3606,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.UseMapboxOverride.ToString(),
 					DepartmentSettingTypes.MappingUseMapboxOverride, cancellationToken);
 				await _departmentSettingsService.SaveMappingMapStylesAsync(DepartmentId, model.MapStyle, model.MapStyleNight, cancellationToken);
+				await _departmentSettingsService.SetMappingNavigationConfigAsync(DepartmentId, BuildNavigationSettings(model), cancellationToken);
 
 				if (model.UseMapboxOverride)
 				{
@@ -3434,8 +3623,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				model.MapStyle = MapStylePresets.Normalize(model.MapStyle);
 				model.MapStyleNight = MapStylePresets.Normalize(model.MapStyleNight);
+				LoadNavigationSettings(model, BuildNavigationSettings(model));
+				LoadOfflineMapSettings(model, offlineConfig);
 				await PopulateUnitStatusTimerWarningsAsync(model, savedThresholds);
 				await PopulateMapStyleContextAsync(model);
+				await PopulateMapFeatureContextAsync(model);
 
 				model.SaveSuccess = true;
 				return View(model);
@@ -3448,6 +3640,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			await PopulateUnitStatusTimerWarningsAsync(model, await _departmentSettingsService.GetUnitStatusThresholdsAsync(DepartmentId));
 			await PopulateMapStyleContextAsync(model);
+			await PopulateMapFeatureContextAsync(model);
 
 			model.SaveSuccess = false;
 			return View(model);

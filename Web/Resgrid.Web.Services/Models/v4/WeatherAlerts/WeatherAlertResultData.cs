@@ -23,6 +23,12 @@ namespace Resgrid.Web.Services.Models.v4.WeatherAlerts
 		public string Instruction { get; set; }
 		public string AreaDescription { get; set; }
 		public string Polygon { get; set; }
+
+		/// <summary>
+		/// The alert area as a GeoJSON geometry string whatever the source's format (NWS/MeteoAlarm GeoJSON or an
+		/// Environment Canada CAP "lat,lon lat,lon" polygon), for map clients; null when the alert has no area.
+		/// </summary>
+		public string GeoJson { get; set; }
 		public string Geocodes { get; set; }
 		public string CenterGeoLocation { get; set; }
 		// Despite the names, these string fields carry the department-local DISPLAY format

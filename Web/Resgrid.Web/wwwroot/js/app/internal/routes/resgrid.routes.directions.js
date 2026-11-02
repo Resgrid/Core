@@ -62,22 +62,25 @@ $(document).ready(function () {
         return 'Continue' + name;
     }
 
-    // ── Map setup ──────────────────────────────────────────────────────────────
-    var tiles = L.tileLayer(osmTileUrl, { maxZoom: 19, attribution: osmTileAttribution });
-    var map = L.map('routeMap', { scrollWheelZoom: false })
-               .setView([39.8283, -98.5795], 4)
-               .addLayer(tiles);
+    // ── Map setup (resgrid.maps: MapLibre or Leaflet by the department's Maps.MapLibreWeb flag) ─────────────
+    resgrid.maps.create('routeMap', { center: [39.8283, -98.5795], zoom: 4, scrollZoom: false, printable: true }).then(function (map) {
+        drawDirections(map);
+    });
 
-    var markers = [];
-    var group   = [];
+    function drawDirections(map) {
+    var positions = [];
 
     // Add start point marker if a configured origin exists
-    if (typeof startPoint !== 'undefined' && startPoint &&
-        Number.isFinite(Number(startPoint.lat)) && Number.isFinite(Number(startPoint.lng))) {
-        var startIcon = L.divIcon({ className: '', html: '<div style="background:#1ab394;color:#fff;border-radius:50%;width:28px;height:28px;line-height:28px;text-align:center;font-weight:bold;font-size:14px;">S</div>', iconSize: [28, 28], iconAnchor: [14, 14] });
-        var sm = L.marker([Number(startPoint.lat), Number(startPoint.lng)], { icon: startIcon }).addTo(map);
-        sm.bindTooltip('Start', { permanent: true, direction: 'right' });
-        group.push(sm);
+    var shownStart = (typeof serverRoute !== 'undefined' && serverRoute && serverRoute.start) ? serverRoute.start : (typeof startPoint !== 'undefined' ? startPoint : null);
+    if (shownStart && Number.isFinite(Number(shownStart.lat)) && Number.isFinite(Number(shownStart.lng))) {
+        var startPosition = [Number(shownStart.lat), Number(shownStart.lng)];
+        map.addMarker(startPosition, {
+            html: '<div style="background:#1ab394;color:#fff;border-radius:50%;width:28px;height:28px;line-height:28px;text-align:center;font-weight:bold;font-size:14px;">S</div>',
+            iconSize: [28, 28],
+            iconAnchor: [14, 14],
+            label: shownStart.name || 'Start'
+        });
+        positions.push(startPosition);
     }
 
     if (typeof routeStops !== 'undefined' && routeStops.length > 0) {
@@ -86,76 +89,70 @@ $(document).ready(function () {
             var lng = Number(stop.lng);
             if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
 
-            var m = L.marker([lat, lng]).addTo(map);
-            m.bindTooltip((index + 1) + '. ' + escapeHtml(stop.name), { permanent: true, direction: 'right' });
-            m.bindPopup('<strong>' + (index + 1) + '. ' + escapeHtml(stop.name) + '</strong>' +
-                        (stop.address ? '<br/><small>' + escapeHtml(stop.address) + '</small>' : ''));
-            markers.push(m);
-            group.push(m);
+            map.addMarker([lat, lng], {
+                label: (index + 1) + '. ' + stop.name,
+                popupHtml: '<strong>' + (index + 1) + '. ' + escapeHtml(stop.name) + '</strong>' +
+                           (stop.address ? '<br/><small>' + escapeHtml(stop.address) + '</small>' : '')
+            });
+            positions.push([lat, lng]);
         });
-
-        if (group.length > 0) {
-            map.fitBounds(L.featureGroup(group).getBounds(), { padding: [60, 60] });
-        }
     }
 
-    // ── OSRM routing ──────────────────────────────────────────────────────────
+    if (positions.length > 0) {
+        map.fitBounds(positions, { padding: 60 });
+    }
+
+    // ── Server route (routing provider on the server; plan §10.4) ──────────────
     var validStops = routeStops.filter(function (s) {
         return Number.isFinite(Number(s.lat)) && Number.isFinite(Number(s.lng));
     });
 
-    // Prepend the plan's configured start point (or last checked-in location)
-    // when one is available so routing begins from there rather than stop #1.
-    if (typeof startPoint !== 'undefined' && startPoint &&
+    // The server resolves the start (explicit point, chosen station or the unit's station) and the end; the legs it
+    // returns run start -> stops -> end, so the waypoint list here must match.
+    var serverStart = (typeof serverRoute !== 'undefined' && serverRoute) ? serverRoute.start : null;
+    if (!serverStart && typeof startPoint !== 'undefined' && startPoint &&
         Number.isFinite(Number(startPoint.lat)) && Number.isFinite(Number(startPoint.lng))) {
-        validStops = [{ name: startPoint.name || 'Start', address: '', lat: startPoint.lat, lng: startPoint.lng }].concat(validStops);
+        serverStart = startPoint;
+    }
+    if (serverStart) {
+        validStops = [{ name: serverStart.name || 'Start', address: '', lat: serverStart.lat, lng: serverStart.lng }].concat(validStops);
+    }
+    if (typeof serverRoute !== 'undefined' && serverRoute && serverRoute.end) {
+        validStops = validStops.concat([{ name: serverRoute.end.name || 'End', address: '', lat: serverRoute.end.lat, lng: serverRoute.end.lng }]);
     }
 
-    if (validStops.length < 2) {
+    if (validStops.length < 2 || typeof serverRoute === 'undefined' || !serverRoute || serverRoute.isEstimate) {
         $('#directionsError').show();
         return;
     }
 
-    // Map route profile names to OSRM profile names.
-    // driving-traffic falls back to driving (OSRM has no live traffic layer).
-    var osrmProfile = 'driving';
-    if (routeProfile === 'walking' || routeProfile === 'foot') osrmProfile = 'foot';
-    else if (routeProfile === 'cycling' || routeProfile === 'bike') osrmProfile = 'bike';
-    // driving and driving-traffic both use the OSRM 'driving' profile
-
-    // OSRM uses lon,lat order
-    var coords = validStops.map(function (s) { return Number(s.lng) + ',' + Number(s.lat); }).join(';');
-    var osrmUrl = 'https://router.project-osrm.org/route/v1/' + osrmProfile + '/' + coords +
-                  '?steps=true&geometries=geojson&overview=full&annotations=false';
-
-    $('#directionsLoading').show();
-
-    fetch(osrmUrl)
-        .then(function (r) {
-            if (!r.ok) throw new Error('OSRM error: ' + r.status);
-            return r.json();
-        })
-        .then(function (data) {
-            $('#directionsLoading').hide();
-
-            if (!data || data.code !== 'Ok' || !data.routes || !data.routes[0]) {
-                $('#directionsError').show();
-                return;
-            }
-
-            var route = data.routes[0];
+    (function (data) {
+            var route = {
+                distance: data.distance,
+                duration: data.duration,
+                geometry: data.geometry,
+                legs: (data.route && data.route.legs) ? data.route.legs : (data.legs || []).map(function (l) { return { distance: l.distance, duration: l.duration, steps: [] }; })
+            };
             var totalDist = route.distance;
             var totalDur  = route.duration;
 
-            // Summary
-            $('#routeSummary').text(formatDist(totalDist) + '  \u2022  ' + formatDuration(totalDur));
+            // Summary (travel time; plus dwell when stops have estimated dwell)
+            var summary = formatDist(totalDist) + '  \u2022  ' + formatDuration(totalDur);
+            if (data.durationWithDwell && data.durationWithDwell > totalDur + 30) {
+                summary += '  (' + formatDuration(data.durationWithDwell) + ')';
+            }
+            $('#routeSummary').text(summary);
+            if (data.attribution) {
+                $('#routeSummary').attr('title', data.attribution);
+            }
 
             // Draw route polyline
             if (route.geometry) {
-                L.geoJSON(route.geometry, {
-                    style: { color: routeColor || '#1c84c6', weight: 5, opacity: 0.75 }
-                }).addTo(map);
-                map.fitBounds(L.geoJSON(route.geometry).getBounds(), { padding: [50, 50] });
+                var line = map.addLine('route', route.geometry, { color: routeColor || '#1c84c6', weight: 5, opacity: 0.75 });
+                var lineBounds = line.bounds();
+                if (lineBounds) {
+                    map.fitBounds(lineBounds, { padding: 50 });
+                }
             }
 
             // Build turn-by-turn HTML
@@ -212,10 +209,6 @@ $(document).ready(function () {
             }
 
             $('#directionsContainer').html(html);
-        })
-        .catch(function (err) {
-            $('#directionsLoading').hide();
-            $('#directionsError').show();
-            console.error('Routing error:', err);
-        });
+    })(serverRoute);
+    }
 });

@@ -9,64 +9,58 @@ $(document).ready(function () {
         return '';
     }
 
-    function escapeHtml(str) {
-        return String(str)
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#39;');
-    }
-
-    function getStopTypeName(t) {
-        return ['Manual', 'Scheduled Call', '', 'Waypoint'][t] || String(t);
-    }
-
-    function getPriorityName(p) {
-        return ['Normal', 'High', 'Critical', 'Optional'][p] || String(p);
-    }
-
     // ── Main route map ────────────────────────────────────────────────────────
-    if (document.getElementById('routeMap')) {
-        var tiles = L.tileLayer(osmTileUrl, { maxZoom: 19, attribution: osmTileAttribution });
-        map = L.map('routeMap', { scrollWheelZoom: false })
-               .setView([39.8283, -98.5795], 4)
-               .addLayer(tiles);
-    }
+    var mapReady = document.getElementById('routeMap')
+        ? resgrid.maps.create('routeMap', { center: [39.8283, -98.5795], zoom: 4, scrollZoom: false, traffic: 'off' }).then(function (created) {
+            map = created;
+            return created;
+        })
+        : null;
 
-    // ── Stop picker map helpers ───────────────────────────────────────────────
-    function initStopPickerMap() {
-        if (stopPickerMap) {
-            stopPickerMap.invalidateSize();
-            return;
-        }
-        var pickerTiles = L.tileLayer(osmTileUrl, { maxZoom: 19, attribution: osmTileAttribution });
-        stopPickerMap = L.map('stopPickerMap', { scrollWheelZoom: false })
-                         .setView([39.8283, -98.5795], 4)
-                         .addLayer(pickerTiles);
+    // The stop list, stop markers and live route preview (resgrid.routes.editor.js); stops stay in this page until Save.
+    var stopEditor = resgrid.routes.editor;
 
-        stopPickerMap.on('click', function (e) {
-            setPickerLocation(e.latlng.lat, e.latlng.lng, true);
+    // ── Stop picker map helpers (resgrid.maps: MapLibre or Leaflet by the department's Maps.MapLibreWeb flag) ──
+    var stopPickerReady = null, startPickerReady = null, endPickerReady = null;
+
+    function createPicker(id, onPick) {
+        return resgrid.maps.create(id, { center: [39.8283, -98.5795], zoom: 4, scrollZoom: false, hydrants: false }).then(function (created) {
+            created.onClick(function (position) { onPick(position[0], position[1]); });
+            return created;
         });
     }
 
+    function initStopPickerMap() {
+        if (stopPickerReady) {
+            stopPickerReady.then(function (pickerMap) { pickerMap.resize(); });
+            return stopPickerReady;
+        }
+        stopPickerReady = createPicker('stopPickerMap', function (lat, lng) { setPickerLocation(lat, lng, true); }).then(function (created) {
+            stopPickerMap = created;
+            return created;
+        });
+        return stopPickerReady;
+    }
+
     function setPickerLocation(lat, lng, reverseGeocode) {
+        lat = Number(lat);
+        lng = Number(lng);
         $('#stopLat').val(lat.toFixed(6));
         $('#stopLng').val(lng.toFixed(6));
-        if (pickerMarker) {
-            pickerMarker.setLatLng(new L.LatLng(lat, lng));
-        } else {
-            pickerMarker = new L.marker(new L.LatLng(lat, lng), { draggable: true }).addTo(stopPickerMap);
-            pickerMarker.on('dragend', function (event) {
-                var pos = event.target.getLatLng();
-                event.target.setLatLng(new L.LatLng(pos.lat, pos.lng));
-                stopPickerMap.panTo(new L.LatLng(pos.lat, pos.lng));
-                $('#stopLat').val(pos.lat.toFixed(6));
-                $('#stopLng').val(pos.lng.toFixed(6));
-                reverseGeocodeStop(pos.lat, pos.lng);
-            });
-        }
-        stopPickerMap.setView(new L.LatLng(lat, lng), 15);
+        initStopPickerMap().then(function (pickerMap) {
+            if (pickerMarker) {
+                pickerMarker.setLatLng([lat, lng]);
+            } else {
+                pickerMarker = pickerMap.addMarker([lat, lng], { draggable: true });
+                pickerMarker.onDragEnd(function (pos) {
+                    pickerMap.setView(pos);
+                    $('#stopLat').val(pos[0].toFixed(6));
+                    $('#stopLng').val(pos[1].toFixed(6));
+                    reverseGeocodeStop(pos[0], pos[1]);
+                });
+            }
+            pickerMap.setView([lat, lng], 15);
+        });
         if (reverseGeocode) {
             reverseGeocodeStop(lat, lng);
         }
@@ -89,18 +83,21 @@ $(document).ready(function () {
     }
 
     // ── Start/End location pickers ────────────────────────────────────────────
+    function hasPoint(lat, lng) {
+        return lat != null && lng != null && lat !== '' && lng !== '' && Number.isFinite(Number(lat)) && Number.isFinite(Number(lng));
+    }
+
     function initStartPickerMap(initialLat, initialLng) {
-        if (startPickerInitialized) {
-            setTimeout(function () { startPickerMap.invalidateSize(); }, 50);
+        if (startPickerReady) {
+            setTimeout(function () { startPickerReady.then(function (pickerMap) { pickerMap.resize(); }); }, 50);
             return;
         }
-        var tiles = L.tileLayer(osmTileUrl, { maxZoom: 19, attribution: osmTileAttribution });
-        startPickerMap = L.map('startPickerMap', { scrollWheelZoom: false })
-                          .setView([39.8283, -98.5795], 4)
-                          .addLayer(tiles);
-        startPickerMap.on('click', function (e) { setStartLocation(e.latlng.lat, e.latlng.lng); });
+        startPickerReady = createPicker('startPickerMap', setStartLocation).then(function (created) {
+            startPickerMap = created;
+            return created;
+        });
         startPickerInitialized = true;
-        if (Number.isFinite(Number(initialLat)) && Number.isFinite(Number(initialLng))) { setStartLocation(initialLat, initialLng); }
+        if (hasPoint(initialLat, initialLng)) { setStartLocation(initialLat, initialLng); }
     }
 
     function setStartLocation(lat, lng) {
@@ -110,30 +107,33 @@ $(document).ready(function () {
         $('#startLng').val(lngStr);
         $('#startLatDisplay').val(latStr);
         $('#startLngDisplay').val(lngStr);
-        if (startMarker) {
-            startMarker.setLatLng(new L.LatLng(lat, lng));
-        } else {
-            startMarker = L.marker(new L.LatLng(lat, lng), { draggable: true }).addTo(startPickerMap);
-            startMarker.on('dragend', function (event) {
-                var pos = event.target.getLatLng();
-                setStartLocation(pos.lat, pos.lng);
-            });
+        stopEditor.refresh();
+        if (!startPickerReady) {
+            return;
         }
-        startPickerMap.setView(new L.LatLng(lat, lng), 15);
+        startPickerReady.then(function (pickerMap) {
+            var position = [Number(lat), Number(lng)];
+            if (startMarker) {
+                startMarker.setLatLng(position);
+            } else {
+                startMarker = pickerMap.addMarker(position, { draggable: true });
+                startMarker.onDragEnd(function (pos) { setStartLocation(pos[0], pos[1]); });
+            }
+            pickerMap.setView(position, 15);
+        });
     }
 
     function initEndPickerMap(initialLat, initialLng) {
-        if (endPickerInitialized) {
-            setTimeout(function () { endPickerMap.invalidateSize(); }, 50);
+        if (endPickerReady) {
+            setTimeout(function () { endPickerReady.then(function (pickerMap) { pickerMap.resize(); }); }, 50);
             return;
         }
-        var tiles = L.tileLayer(osmTileUrl, { maxZoom: 19, attribution: osmTileAttribution });
-        endPickerMap = L.map('endPickerMap', { scrollWheelZoom: false })
-                        .setView([39.8283, -98.5795], 4)
-                        .addLayer(tiles);
-        endPickerMap.on('click', function (e) { setEndLocation(e.latlng.lat, e.latlng.lng); });
+        endPickerReady = createPicker('endPickerMap', setEndLocation).then(function (created) {
+            endPickerMap = created;
+            return created;
+        });
         endPickerInitialized = true;
-        if (Number.isFinite(Number(initialLat)) && Number.isFinite(Number(initialLng))) { setEndLocation(initialLat, initialLng); }
+        if (hasPoint(initialLat, initialLng)) { setEndLocation(initialLat, initialLng); }
     }
 
     function setEndLocation(lat, lng) {
@@ -143,16 +143,20 @@ $(document).ready(function () {
         $('#endLng').val(lngStr);
         $('#endLatDisplay').val(latStr);
         $('#endLngDisplay').val(lngStr);
-        if (endMarker) {
-            endMarker.setLatLng(new L.LatLng(lat, lng));
-        } else {
-            endMarker = L.marker(new L.LatLng(lat, lng), { draggable: true }).addTo(endPickerMap);
-            endMarker.on('dragend', function (event) {
-                var pos = event.target.getLatLng();
-                setEndLocation(pos.lat, pos.lng);
-            });
+        stopEditor.refresh();
+        if (!endPickerReady) {
+            return;
         }
-        endPickerMap.setView(new L.LatLng(lat, lng), 15);
+        endPickerReady.then(function (pickerMap) {
+            var position = [Number(lat), Number(lng)];
+            if (endMarker) {
+                endMarker.setLatLng(position);
+            } else {
+                endMarker = pickerMap.addMarker(position, { draggable: true });
+                endMarker.onDragEnd(function (pos) { setEndLocation(pos[0], pos[1]); });
+            }
+            pickerMap.setView(position, 15);
+        });
     }
 
     function updateLocationPickerVisibility() {
@@ -268,42 +272,34 @@ $(document).ready(function () {
     // Initialise visibility on page load
     updateLocationPickerVisibility();
 
-    function renderStopsTable() {
-        var $body = $('#stopsTableBody');
-        $body.empty();
-        pendingStops.forEach(function (stop, index) {
-            $body.append(
-                '<tr id="pendingRow_' + stop._clientId + '">' +
-                '<td>' + (index + 1) + '</td>' +
-                '<td>' + escapeHtml(stop.name) + '</td>' +
-                '<td>' + escapeHtml(getStopTypeName(stop.stopType)) + '</td>' +
-                '<td>' + escapeHtml(stop.address || '') + '</td>' +
-                '<td>' + escapeHtml(getPriorityName(stop.priority)) + '</td>' +
-                '<td><button type="button" class="btn btn-xs btn-danger delete-pending-stop-btn" data-client-id="' + stop._clientId + '"><i class="fa fa-trash"></i></button></td>' +
-                '</tr>'
-            );
-        });
-        $('#stopCount').text(pendingStops.length);
-    }
-
-    function updateMainMap() {
-        if (!map) return;
-        map.eachLayer(function (layer) {
-            if (layer instanceof L.Marker) map.removeLayer(layer);
-        });
-        var group = [];
-        pendingStops.forEach(function (stop, index) {
-            if (stop.latitude && stop.longitude) {
-                var m = L.marker([stop.latitude, stop.longitude]).addTo(map);
-                m.bindTooltip((index + 1) + '. ' + escapeHtml(stop.name), { permanent: true, direction: 'right' });
-                m.bindPopup('<strong>' + (index + 1) + '. ' + escapeHtml(stop.name) + '</strong>');
-                group.push(m);
-            }
-        });
-        if (group.length > 0) {
-            map.fitBounds(L.featureGroup(group).getBounds(), { padding: [50, 50] });
+    stopEditor.init({
+        mapReady: mapReady,
+        getStops: function () {
+            return pendingStops.map(function (s) {
+                return { key: s._clientId, name: s.name, stopType: s.stopType, priority: s.priority, address: s.address, lat: s.latitude, lng: s.longitude, dwellMinutes: s.dwellMinutes };
+            });
+        },
+        onReorder: function (keys) {
+            pendingStops = keys.map(function (key) {
+                return pendingStops.filter(function (s) { return String(s._clientId) === key; })[0];
+            }).filter(Boolean);
+            stopEditor.refresh();
+        },
+        onDelete: function (key) {
+            if (!confirm('Remove this stop?')) return;
+            pendingStops = pendingStops.filter(function (s) { return String(s._clientId) !== key; });
+            stopEditor.refresh();
+        },
+        onMove: function (key, lat, lng) {
+            pendingStops.forEach(function (s) {
+                if (String(s._clientId) === key) {
+                    s.latitude = lat;
+                    s.longitude = lng;
+                }
+            });
+            stopEditor.refresh();
         }
-    }
+    });
 
     // ── Populate contact picker ───────────────────────────────────────────────
     function populateContactPicker() {
@@ -349,13 +345,14 @@ $(document).ready(function () {
         $('#stopPlannedArrival').val('');
         $('#stopPlannedDeparture').val('');
         $('#stopDwellMinutes').val('');
+        $('#stopGeofenceRadius').val('');
         $('#stopContactPicker').val('');
         $('#stopContactId').val('');
         $('#stopContactName').val('');
         $('#stopContactNumber').val('');
         $('#stopNotes').val('');
-        if (pickerMarker && stopPickerMap) {
-            stopPickerMap.removeLayer(pickerMarker);
+        if (pickerMarker) {
+            pickerMarker.remove();
             pickerMarker = null;
         }
     });
@@ -456,24 +453,15 @@ $(document).ready(function () {
             plannedArrival:   $('#stopPlannedArrival').val(),
             plannedDeparture: $('#stopPlannedDeparture').val(),
             dwellMinutes:     $('#stopDwellMinutes').val() || null,
+            geofenceRadius:   $('#stopGeofenceRadius').val() || null,
             contactName:      $('#stopContactName').val(),
             contactNumber:    $('#stopContactNumber').val(),
             contactId:        $('#stopContactId').val() || null,
             notes:            $('#stopNotes').val()
         });
 
-        renderStopsTable();
-        updateMainMap();
+        stopEditor.refresh();
         $('#addStopModal').modal('hide');
-    });
-
-    // ── Delete pending stop ───────────────────────────────────────────────────
-    $(document).on('click', '.delete-pending-stop-btn', function () {
-        if (!confirm('Remove this stop?')) return;
-        var clientId = $(this).data('client-id');
-        pendingStops = pendingStops.filter(function (s) { return s._clientId !== clientId; });
-        renderStopsTable();
-        updateMainMap();
     });
 
     // ── Serialize stops into hidden field before form submit ──────────────────
@@ -491,6 +479,7 @@ $(document).ready(function () {
                 plannedArrival:   s.plannedArrival,
                 plannedDeparture: s.plannedDeparture,
                 dwellMinutes:     s.dwellMinutes,
+                geofenceRadius:   s.geofenceRadius,
                 contactName:      s.contactName,
                 contactNumber:    s.contactNumber,
                 contactId:        s.contactId,

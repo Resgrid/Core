@@ -8,7 +8,8 @@ namespace Resgrid.WebCore.Models
 {
 	public abstract class GoogleReCaptchaModelBase
 	{
-		[Required]
+		// No [Required]: the validation below refuses an empty answer itself, with a message a person can act on (Required added a
+		// second one naming the field, "The GoogleReCaptchaResponse field is required.").
 		[GoogleReCaptchaValidation]
 		[JsonProperty("g-recaptcha-response")]
 		public String GoogleReCaptchaResponse { get; set; }

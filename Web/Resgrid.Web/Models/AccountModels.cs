@@ -101,6 +101,9 @@ namespace Resgrid.Web.Models
 
 		public string DepartmentName { get; set; }
 
+		/// <summary>The inviting department's minimum password length (its security policy, never below the system's 8).</summary>
+		public int MinPasswordLength { get; set; } = 8;
+
 		[Required]
 		[Display(Name = "User name")]
 		public string UserName { get; set; }
@@ -121,7 +124,7 @@ namespace Resgrid.Web.Models
 		public string Email { get; set; }
 
 		[Required]
-		[StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
+		[StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 8)]
 		[DataType(DataType.Password)]
 		[Display(Name = "Password")]
 		public string Password { get; set; }

@@ -1,0 +1,170 @@
+@model Resgrid.Web.Areas.User.Models.Units.VehicleSizeInput
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.VehicleSize> vehicleLocalizer
+@{
+    // Used by the unit type and unit edit pages with <partial name="_VehicleSizeFields" for="VehicleSize" />. On unit pages
+    // (TypeDefaults set) blank fields fall back to the unit type's values, shown as placeholders.
+    var isUnit = Model?.TypeDefaults != null;
+    var metric = Model?.Metric ?? false;
+    var limits = Resgrid.Web.Areas.User.Models.Units.VehicleSizeInput.LimitsFor(Resgrid.Config.MappingConfig.RoutingProvider);
+
+    // Range errors are posted as "LabelKey|low|high" and written in the page's language here.
+    string RangeError(string field)
+    {
+        var key = ViewData.TemplateInfo.GetFullHtmlFieldName(field);
+        if (!ViewData.ModelState.TryGetValue(key, out var entry) || entry.Errors.Count == 0)
+            return null;
+
+        var parts = entry.Errors[0].ErrorMessage.Split('|');
+        return parts.Length == 3
+            ? vehicleLocalizer["VehicleRangeError", vehicleLocalizer[parts[0]].Value, parts[1], parts[2]].Value
+            : entry.Errors[0].ErrorMessage;
+    }
+    var typeDefaults = isUnit
+        ? System.Text.Json.JsonSerializer.Serialize(Model.TypeDefaults)
+        : "{}";
+}
+
+<div class="hr-line-dashed"></div>
+<div class="form-group" id="vehicleSizeSection" data-metric="@(metric ? "true" : "false")" data-type-defaults="@typeDefaults">
+    <label class="col-sm-2 control-label">@vehicleLocalizer["VehicleSizeHeader"]</label>
+    <div class="col-sm-10">
+        <p class="text-muted small">
+            @vehicleLocalizer["VehicleSizeHelp"]
+            @if (isUnit)
+            {
+                <br />@vehicleLocalizer["VehicleSizeUnitHelp"]
+            }
+        </p>
+        <p class="small @(limits == "none" ? "text-warning" : "text-muted")">
+            @(limits == "all" ? vehicleLocalizer["VehicleLimitsAll"] : limits == "size" ? vehicleLocalizer["VehicleLimitsSize"] : vehicleLocalizer["VehicleLimitsNone"])
+            @vehicleLocalizer["VehicleDataCaveat"]
+        </p>
+        <div class="row" style="margin-bottom:8px;">
+            <div class="col-sm-4">
+                <label for="@Html.IdFor(m => m.Metric)" class="small">@vehicleLocalizer["VehicleUnits"]</label>
+                @* Not asp-for: the select tag helper writes bools as "True", which no lower-case option matches. *@
+                <select name="@Html.NameFor(m => m.Metric)" id="@Html.IdFor(m => m.Metric)" class="form-control input-sm" data-vehicle-units>
+                    <option value="false" selected="@(!metric)">@vehicleLocalizer["VehicleUnitsImperial"]</option>
+                    <option value="true" selected="@metric">@vehicleLocalizer["VehicleUnitsMetric"]</option>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <label asp-for="Height" class="small">@vehicleLocalizer["VehicleHeight"] (<span data-length-unit>@(metric ? "m" : "ft")</span>)</label>
+                <input asp-for="Height" type="number" step="0.01" min="0" class="form-control input-sm" data-vehicle-length data-default-key="HeightMeters" />
+                @if (RangeError("Height") is string heightError) { <span class="text-danger small">@heightError</span> }
+            </div>
+            <div class="col-sm-4">
+                <label asp-for="Width" class="small">@vehicleLocalizer["VehicleWidth"] (<span data-length-unit>@(metric ? "m" : "ft")</span>)</label>
+                <input asp-for="Width" type="number" step="0.01" min="0" class="form-control input-sm" data-vehicle-length data-default-key="WidthMeters" />
+                @if (RangeError("Width") is string widthError) { <span class="text-danger small">@widthError</span> }
+            </div>
+            <div class="col-sm-4">
+                <label asp-for="Length" class="small">@vehicleLocalizer["VehicleLength"] (<span data-length-unit>@(metric ? "m" : "ft")</span>)</label>
+                <input asp-for="Length" type="number" step="0.01" min="0" class="form-control input-sm" data-vehicle-length data-default-key="LengthMeters" />
+                @if (RangeError("Length") is string lengthError) { <span class="text-danger small">@lengthError</span> }
+            </div>
+        </div>
+        <div class="row" style="margin-top:8px;">
+            <div class="col-sm-4">
+                <label asp-for="GrossWeight" class="small">@vehicleLocalizer["VehicleGrossWeight"] (<span data-weight-unit>@(metric ? "kg" : "lb")</span>)</label>
+                <input asp-for="GrossWeight" type="number" step="1" min="0" class="form-control input-sm" data-vehicle-weight data-default-key="GrossWeightKg" />
+                @if (RangeError("GrossWeight") is string weightError) { <span class="text-danger small">@weightError</span> }
+            </div>
+            <div class="col-sm-4">
+                <label asp-for="AxleLoad" class="small">@vehicleLocalizer["VehicleAxleLoad"] (<span data-weight-unit>@(metric ? "kg" : "lb")</span>)</label>
+                <input asp-for="AxleLoad" type="number" step="1" min="0" class="form-control input-sm" data-vehicle-weight data-default-key="AxleLoadKg" />
+                @if (RangeError("AxleLoad") is string axleLoadError) { <span class="text-danger small">@axleLoadError</span> }
+            </div>
+            <div class="col-sm-2">
+                <label asp-for="AxleCount" class="small">@vehicleLocalizer["VehicleAxleCount"]</label>
+                <input asp-for="AxleCount" type="number" step="1" min="2" max="12" class="form-control input-sm" data-default-key="AxleCount" />
+                @if (RangeError("AxleCount") is string axleCountError) { <span class="text-danger small">@axleCountError</span> }
+            </div>
+            <div class="col-sm-2">
+                <label asp-for="Hazmat" class="small">@vehicleLocalizer["VehicleHazmat"]</label>
+                @if (isUnit)
+                {
+                    <select asp-for="Hazmat" class="form-control input-sm">
+                        <option value="">@vehicleLocalizer["VehicleHazmatInherit"]</option>
+                        <option value="true">@vehicleLocalizer["VehicleHazmatYes"]</option>
+                        <option value="false">@vehicleLocalizer["VehicleHazmatNo"]</option>
+                    </select>
+                }
+                else
+                {
+                    <select asp-for="Hazmat" class="form-control input-sm">
+                        <option value="">@vehicleLocalizer["VehicleHazmatNo"]</option>
+                        <option value="true">@vehicleLocalizer["VehicleHazmatYes"]</option>
+                    </select>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        var section = document.getElementById('vehicleSizeSection');
+        if (!section) { return; }
+
+        var metersPerFoot = 0.3048, kilogramsPerPound = 0.45359237;
+        var unitsSelect = section.querySelector('[data-vehicle-units]');
+        var defaults = {};
+        try { defaults = JSON.parse(section.getAttribute('data-type-defaults') || '{}') || {}; } catch (e) { defaults = {}; }
+
+        function isMetric() { return unitsSelect && unitsSelect.value === 'true'; }
+
+        function round(value, places) { var f = Math.pow(10, places); return Math.round(value * f) / f; }
+
+        function showUnits() {
+            var metric = isMetric();
+            section.querySelectorAll('[data-length-unit]').forEach(function (el) { el.textContent = metric ? 'm' : 'ft'; });
+            section.querySelectorAll('[data-weight-unit]').forEach(function (el) { el.textContent = metric ? 'kg' : 'lb'; });
+        }
+
+        // Placeholders show the unit type's values on unit pages, in the units selected.
+        function showTypeDefaults() {
+            var typeSelect = document.getElementById('Unit_Type');
+            var values = typeSelect ? defaults[typeSelect.value] : null;
+            var metric = isMetric();
+            section.querySelectorAll('[data-default-key]').forEach(function (input) {
+                var raw = values ? values[input.getAttribute('data-default-key')] : null;
+                if (raw === null || raw === undefined) { input.removeAttribute('placeholder'); return; }
+                var shown = raw;
+                if (input.hasAttribute('data-vehicle-length')) { shown = metric ? round(raw, 2) : round(raw / metersPerFoot, 1); }
+                if (input.hasAttribute('data-vehicle-weight')) { shown = metric ? round(raw, 0) : round(raw / kilogramsPerPound, 0); }
+                input.setAttribute('placeholder', String(shown));
+            });
+        }
+
+        var lastMetric = isMetric();
+        if (unitsSelect) {
+            unitsSelect.addEventListener('change', function () {
+                var metric = isMetric();
+                if (metric !== lastMetric) {
+                    section.querySelectorAll('[data-vehicle-length]').forEach(function (input) {
+                        if (input.value === '') { return; }
+                        var v = parseFloat(input.value);
+                        if (!isNaN(v)) { input.value = metric ? round(v * metersPerFoot, 2) : round(v / metersPerFoot, 2); }
+                    });
+                    section.querySelectorAll('[data-vehicle-weight]').forEach(function (input) {
+                        if (input.value === '') { return; }
+                        var v = parseFloat(input.value);
+                        if (!isNaN(v)) { input.value = metric ? round(v * kilogramsPerPound, 0) : round(v / kilogramsPerPound, 0); }
+                    });
+                    lastMetric = metric;
+                }
+                showUnits();
+                showTypeDefaults();
+            });
+        }
+
+        var typeSelect = document.getElementById('Unit_Type');
+        if (typeSelect) { typeSelect.addEventListener('change', showTypeDefaults); }
+
+        showUnits();
+        showTypeDefaults();
+    })();
+</script>

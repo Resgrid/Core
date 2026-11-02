@@ -59,6 +59,9 @@ namespace Resgrid.Tests.AdminAssist
 		[TestCase("api/v4/AdminAssist/Diagnostics", 30, true)]
 		[TestCase("api/v4/AdminAssist/AskStatus", 30, true)]
 		[TestCase("api/v4/Chat/Conversations", 30, false)]
+		// Web map routing (route plan editor, Live / Station Routing, Directions, View Call ETAs) goes through the BFF.
+		[TestCase("api/v4/Routing/GetRoute", 30, false)]
+		[TestCase("api/v4/Routing/GetActiveNavigations", 30, false)]
 		public async Task Attended_grant_and_extended_deadline_are_limited_to_expected_routes(string path, int seconds, bool grantExpected)
 		{
 			using var fixture = new Fixture();

@@ -6,11 +6,11 @@
         (function (viewevents) {
             $(document).ready(function () {
                 viewevents.markers = [];
-                viewevents.map = L.map('eventsMap').setView([centerLat, centerLon], 13);
-
-                L.tileLayer(osmTileUrl, {
-                    attribution: ''
-                }).addTo(viewevents.map);
+                // resgrid.maps (MapLibre or Leaflet by the department's Maps.MapLibreWeb flag); markers wait for the map.
+                var mapReady = resgrid.maps.create('eventsMap', { center: [Number(centerLat), Number(centerLon)], zoom: 13 }).then(function (map) {
+                    viewevents.map = map;
+                    return map;
+                });
 
                 viewevents.markers = [];
 
@@ -50,36 +50,35 @@
                 $('#eventsGrid thead th:first').html('<label><input type="checkbox" id="checkAllEvents"/></label>');
 
                 function updateMapMarkers(table) {
+                    mapReady.then(function (map) { drawMarkers(map, table); });
+                }
+
+                function drawMarkers(map, table) {
                     $.each(viewevents.markers, function (index, item) {
                         item.remove && item.remove();
                     });
                     viewevents.markers = [];
+                    var positions = [];
 
                     var data = table.rows().data();
                     $.each(data, function (index, item) {
                         if (item.Latitude && item.Latitude.length > 0 && item.Longitude && item.Longitude.length > 0) {
-                            var marker = L.marker([item.Latitude, item.Longitude], {
-                                icon: new L.icon({
-                                    iconUrl: "/images/Mapping/Event.png",
-                                    iconSize: [32, 37],
-                                    iconAnchor: [16, 37]
-                                }),
-                                draggable: false,
+                            var position = [Number(item.Latitude), Number(item.Longitude)];
+                            var marker = map.addMarker(position, {
+                                iconUrl: '/images/Mapping/Event.png',
+                                iconSize: [32, 37],
+                                iconAnchor: [16, 37],
                                 title: item.State + ' ' + item.Timestamp,
-                                tooltip: item.State + ' ' + item.Timestamp
-                            }).bindTooltip(resgrid.escapeHtml(item.State + ' ' + item.Timestamp),
-                                {
-                                    permanent: true,
-                                    direction: 'bottom'
-                                }).addTo(viewevents.map);
+                                label: item.State + ' ' + item.Timestamp
+                            });
 
                             viewevents.markers.push(marker);
+                            positions.push(position);
                         }
                     });
 
-                    if (viewevents.markers && viewevents.markers.length > 0) {
-                        var group = new L.featureGroup(viewevents.markers);
-                        viewevents.map.fitBounds(group.getBounds());
+                    if (positions.length > 0) {
+                        map.fitBounds(positions);
                     }
                 }
             });

@@ -5,6 +5,7 @@ import { apiFetchJson } from '../../runtime/api';
 import { connectEventingHub, connectGeolocationHub } from '../../runtime/signalr';
 import {
   isMapboxRendererEnabled,
+  isMapLibreRendererEnabled,
   resolveMapConfig,
   type GetMapDataResult,
   type MapConfigPayload,
@@ -37,6 +38,7 @@ export interface UnitMapElementProps {
   mapProvider?: string;
   mapStyleUrl?: string;
   mapAccessToken?: string;
+  traffic?: string;
   mapConfig?: MapConfigPayload | null;
   hostElement?: HTMLElement;
 }
@@ -177,7 +179,8 @@ export default function UnitMapElement(props: UnitMapElementProps) {
     () => resolveMapConfig(props),
     [props.leafletOsmUrl, props.mapAccessToken, props.mapAttribution, props.mapConfig, props.mapProvider, props.mapStyleUrl],
   );
-  const useMapboxRenderer = useMemo(() => isMapboxRendererEnabled(resolvedMapConfig), [resolvedMapConfig]);
+  const useMapLibreRenderer = useMemo(() => isMapLibreRendererEnabled(resolvedMapConfig), [resolvedMapConfig]);
+  const useMapboxRenderer = useMemo(() => !useMapLibreRenderer && isMapboxRendererEnabled(resolvedMapConfig), [resolvedMapConfig, useMapLibreRenderer]);
   const hasMapSource = useMapboxRenderer || resolvedMapConfig.tileUrl.length > 0;
 
   useEffect(() => writeKeepInView(keepInView), [keepInView]);
@@ -193,7 +196,11 @@ export default function UnitMapElement(props: UnitMapElementProps) {
 
     const loadRendererAsync = async () => {
       try {
-        const rendererModule = useMapboxRenderer ? await import('../map/MapboxMapView') : await import('../map/LeafletMapView');
+        const rendererModule = useMapLibreRenderer
+          ? await import('../map/MapLibreMapView')
+          : useMapboxRenderer
+            ? await import('../map/MapboxMapView')
+            : await import('../map/LeafletMapView');
 
         if (!cancelled) {
           setMapRenderer(() => rendererModule.default);

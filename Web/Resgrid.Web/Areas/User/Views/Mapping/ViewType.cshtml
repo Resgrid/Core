@@ -143,5 +143,6 @@
         var osmTileUrl = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(mapConfig.TileUrl, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
         var osmTileAttribution = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(mapConfig.Attribution, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
     </script>
+    <partial name="_MapKitConfig" />
     <script src="~/js/app/internal/mapping/resgrid.mapping.viewType.js" type="text/javascript"></script>
 }

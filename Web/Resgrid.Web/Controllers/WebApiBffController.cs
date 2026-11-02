@@ -49,7 +49,10 @@ namespace Resgrid.Web.Controllers
 			// Home dashboard (home-dashboard-redesign-plan.md §7.2): the unit status alerts widget acknowledges, mutes and clears
 			// alerts, and the route deviations widget acknowledges a deviation. Both exist only in v4, which re-checks permissions.
 			"api/v4/UnitStatusAlerts/",
-			"api/v4/Routes/AcknowledgeDeviation/"
+			"api/v4/Routes/AcknowledgeDeviation/",
+			// Routes and drive times for the web maps (maplibre-mapping-routing-navigation-plan.md §6.3): the route plan
+			// editor preview, Live / Station Routing, Directions and View Call's live ETAs. Routing never runs in the browser.
+			"api/v4/Routing/"
 		};
 
 		private readonly IHttpClientFactory _httpClientFactory;

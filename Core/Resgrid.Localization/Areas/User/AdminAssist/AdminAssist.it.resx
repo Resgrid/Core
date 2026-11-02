@@ -4933,7 +4933,7 @@
     <value>Usa l'override del fornitore mappe del dipartimento. Disattivarlo nella schermata di origine rimuove lo stile e il token salvati.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.MappingMapStyle">
-    <value>Mappa di base Mapbox mostrata da ogni mappa del dipartimento in modalità chiara, sul sito web e in tutte le app. Automatico corrisponde a Strade; il sito web richiede un token Mapbox del server e la sostituzione Mapbox del dipartimento lo sostituisce ovunque.</value>
+    <value>Mappa di base Mapbox mostrata da ogni mappa del dipartimento in modalità chiara, sul sito web e in tutte le app. Automatico corrisponde a Strade; il sito web richiede un token Mapbox del server e la sostituzione Mapbox del dipartimento lo sostituisce ovunque. Su un server con mappe proprie sono proposti solo gli stili che può mostrare.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.MappingMapStyleNight">
     <value>Mappa di base mostrata dalle app in modalità scura. Automatico si abbina allo stile diurno (Scuro per le mappe stradali, Navigazione notte per Navigazione giorno; Outdoor e satellite invariati). Il sito web usa sempre lo stile diurno.</value>
@@ -7763,5 +7763,17 @@
   </data>
   <data xml:space="preserve" name="Topic.dashboard-classic">
     <value>Attivare la nuova dashboard e tornare a quella classica</value>
+  </data>
+  <data xml:space="preserve" name="Setting.MappingNavigationConfig">
+    <value>Impostazioni di navigazione</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.MappingNavigationConfig">
+    <value>Valori predefiniti per la navigazione passo passo nell'app Unit (voce, unità di distanza, raggio di arrivo, richiesta Sul posto, strade da evitare) e quanto ritardo o sforamento di una sosta viene registrato come deviazione dal percorso.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.OfflineMapPacksConfig">
+    <value>Mappe offline</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.OfflineMapPacksConfig">
+    <value>Cosa scaricano le app per l'uso senza rete: l'area di intervento massima (la sua mappa di base deve rientrare nel limite di dimensione), quali dati cartografici sono inclusi, quando avvengono i download e la copertura aggiuntiva per chiamate e percorsi fuori dall'area.</value>
   </data>
 </root>

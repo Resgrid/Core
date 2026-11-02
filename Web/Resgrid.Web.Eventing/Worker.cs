@@ -65,6 +65,8 @@ namespace Resgrid.Web.Eventing
 			// Carries only the unit id; clients reload the crew through the REST endpoints, which apply the viewer's visibility.
 			_rabbitInboundEventProvider.RegisterForUnitActiveRolesEvents((departmentId, id) => _eventingHub.Clients.Group(departmentId.ToString()).SendAsync("unitActiveRolesUpdated", id));
 			_rabbitInboundEventProvider.RegisterForOutstandingRequirementsEvents((departmentId, id, payload) => _eventingHub.Clients.Group(departmentId.ToString()).SendAsync("outstandingRequirementsUpdated", id, payload));
+			// Ids and state only; clients reload the ETA through Routing/GetActiveNavigations, which applies the viewer's visibility.
+			_rabbitInboundEventProvider.RegisterForUnitNavigationEvents((departmentId, id, payload) => _eventingHub.Clients.Group(departmentId.ToString()).SendAsync("unitNavigationUpdated", id, payload));
 
 			await StartProviderAsync();
 

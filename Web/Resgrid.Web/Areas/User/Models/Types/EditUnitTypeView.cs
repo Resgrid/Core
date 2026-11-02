@@ -17,5 +17,8 @@ namespace Resgrid.Web.Areas.User.Models.Types
 
 		/// <summary>Removes the uploaded custom icon so the type falls back to its map icon.</summary>
 		public bool RemoveCustomIcon { get; set; }
+
+		/// <summary>Vehicle size and weight every unit of the type inherits (routing vehicle limits).</summary>
+		public Resgrid.Web.Areas.User.Models.Units.VehicleSizeInput VehicleSize { get; set; }
 	}
 }

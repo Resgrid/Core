@@ -34,6 +34,8 @@ namespace Resgrid.Web.Middleware
 			// over or resume (plan section 12.5.3).
 			"/SharedSession/",
 			"/Account/SsoUnlockBegin",
+			// A password the department requires changed comes first (RequirePasswordChangeMiddleware sends the session there).
+			RequirePasswordChangeMiddleware.ChangePath,
 			"/Account/LogOff",
 			"/Account/LogOn",
 			"/favicon.ico",

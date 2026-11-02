@@ -284,4 +284,49 @@
   <data name="False" xml:space="preserve">
     <value>Falso</value>
   </data>
+  <data name="DrawToolPolygon" xml:space="preserve">
+    <value>Disegna un poligono</value>
+  </data>
+  <data name="DrawToolRectangle" xml:space="preserve">
+    <value>Disegna un rettangolo</value>
+  </data>
+  <data name="DrawToolLine" xml:space="preserve">
+    <value>Disegna una linea</value>
+  </data>
+  <data name="DrawToolPoint" xml:space="preserve">
+    <value>Posiziona un indicatore</value>
+  </data>
+  <data name="DrawToolCircle" xml:space="preserve">
+    <value>Disegna un cerchio</value>
+  </data>
+  <data name="DrawToolText" xml:space="preserve">
+    <value>Aggiungi testo</value>
+  </data>
+  <data name="DrawToolCut" xml:space="preserve">
+    <value>Taglia la forma selezionata (disegna la parte da rimuovere)</value>
+  </data>
+  <data name="DrawToolRotate" xml:space="preserve">
+    <value>Ruota la forma selezionata (trascina sulla mappa)</value>
+  </data>
+  <data name="DrawToolSelect" xml:space="preserve">
+    <value>Seleziona e modifica</value>
+  </data>
+  <data name="DrawToolDelete" xml:space="preserve">
+    <value>Elimina la forma selezionata</value>
+  </data>
+  <data name="DrawToolClear" xml:space="preserve">
+    <value>Rimuovi tutte le forme</value>
+  </data>
+  <data name="DrawTextPrompt" xml:space="preserve">
+    <value>Testo da mostrare</value>
+  </data>
+  <data name="DrawSelectShapeFirst" xml:space="preserve">
+    <value>Seleziona prima una forma sulla mappa.</value>
+  </data>
+  <data name="LayerElementsInvalid" xml:space="preserve">
+    <value>Impossibile leggere le forme del livello. Ricarica la pagina e disegnale di nuovo.</value>
+  </data>
+  <data name="TrafficLayer" xml:space="preserve">
+    <value>Traffico in tempo reale</value>
+  </data>
 </root>

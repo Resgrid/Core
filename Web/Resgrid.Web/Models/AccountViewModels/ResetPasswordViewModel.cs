@@ -19,5 +19,8 @@ namespace Resgrid.Web.Models.AccountViewModels
 
 		public int MinPasswordLength { get; set; } = 8;
 		public bool InvalidOrExpired { get; set; }
+		/// <summary>Refused for the address's hourly limit on reset attempts; the page shows <see cref="RateLimitedMessage"/> instead of the form.</summary>
+		public bool RateLimited { get; set; }
+		public string RateLimitedMessage { get; set; }
     }
 }

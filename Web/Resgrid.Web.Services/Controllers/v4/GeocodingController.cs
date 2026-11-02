@@ -4,7 +4,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Resgrid.Model;
 using Resgrid.Model.Providers;
+using Resgrid.Model.Services;
 using Resgrid.Providers.Claims;
 using Resgrid.Web.Services.Helpers;
 using Resgrid.Web.Services.Models.v4.Geocoding;
@@ -22,10 +24,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 	public class GeocodingController : V4AuthenticatedApiControllerbase
 	{
 		private readonly IGeoLocationProvider _geoLocationProvider;
+		private readonly IDepartmentsService _departmentsService;
+		private readonly IDepartmentSettingsService _departmentSettingsService;
 
-		public GeocodingController(IGeoLocationProvider geoLocationProvider)
+		public GeocodingController(IGeoLocationProvider geoLocationProvider, IDepartmentsService departmentsService, IDepartmentSettingsService departmentSettingsService)
 		{
 			_geoLocationProvider = geoLocationProvider;
+			_departmentsService = departmentsService;
+			_departmentSettingsService = departmentSettingsService;
 		}
 
 		/// <summary>
@@ -125,9 +131,40 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (string.IsNullOrWhiteSpace(code))
 				return BadRequest();
 
-			// Plus codes geocode as an ordinary address query; this exists as its own endpoint so the
-			// client can report "that is not a valid plus code" rather than "address not found".
-			return await ForwardGeocode(code.Trim());
+			var trimmed = code.Trim();
+
+			// Full codes decode locally, so plus codes work whatever geocoders the install uses (plan D25).
+			if (OpenLocationCode.TryDecodeFull(trimmed, out var latitude, out var longitude))
+				return Ok(PlusCodeResult(trimmed, latitude, longitude));
+
+			// A short code on its own ("CWC8+R9") is recovered against the department's map centre; one followed by a
+			// locality ("CWC8+R9 Mountain View") still geocodes as an ordinary address query, as before.
+			if (trimmed.IndexOf(' ') < 0 && trimmed.IndexOf(',') < 0)
+			{
+				var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+				var center = department != null ? await _departmentSettingsService.GetMapCenterCoordinatesAsync(department) : null;
+
+				if (center?.Latitude != null && center.Longitude != null &&
+					OpenLocationCode.TryRecoverShort(trimmed, center.Latitude.Value, center.Longitude.Value, out latitude, out longitude))
+					return Ok(PlusCodeResult(trimmed, latitude, longitude));
+			}
+
+			// This exists as its own endpoint so the client can report "that is not a valid plus code" rather than
+			// "address not found".
+			return await ForwardGeocode(trimmed);
+		}
+
+		private static ForwardGeocodeResult PlusCodeResult(string code, double latitude, double longitude)
+		{
+			var result = new ForwardGeocodeResult();
+			result.Data.LookupSucceeded = true;
+			result.Data.Latitude = latitude;
+			result.Data.Longitude = longitude;
+			result.Data.Address = code;
+			result.PageSize = 1;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
 		}
 
 		/// <summary>

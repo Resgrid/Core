@@ -865,7 +865,9 @@ namespace Resgrid.Services
 				{
 					context.CancellationToken.ThrowIfCancellationRequested();
 
-					var seconds = await _geoService.GetEtaInSecondsAsync(FormatPoint(latitude.Value, longitude.Value), FormatPoint(anchor.Latitude, anchor.Longitude));
+					var seconds = entry.IsPerson
+						? await _geoService.GetEtaInSecondsAsync(FormatPoint(latitude.Value, longitude.Value), FormatPoint(anchor.Latitude, anchor.Longitude))
+						: await UnitEtaAsync(entry.Unit.Unit, FormatPoint(latitude.Value, longitude.Value), FormatPoint(anchor.Latitude, anchor.Longitude));
 					eta = seconds >= 0 ? seconds : (double?)null;
 
 					if (entry.IsPerson)

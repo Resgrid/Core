@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Resgrid.Model.Services;
@@ -7,6 +8,7 @@ using Resgrid.Web.Services.Helpers;
 using Resgrid.Web.Services.Models.v4.Configs;
 using Resgrid.Config;
 using Resgrid.Model;
+using Resgrid.Services;
 using Microsoft.Diagnostics.Tracing.Parsers.Kernel;
 using Resgrid.Web.ServicesCore.Helpers;
 
@@ -25,14 +27,23 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IUserProfileService _userProfileService;
 		private readonly IFeatureToggleService _featureToggleService;
 		private readonly IDepartmentsService _departmentsService;
+		private readonly IMapStyleService _mapStyleService;
+		private readonly IStaticMapService _staticMapService;
+		private readonly IRoutingService _routingService;
+		private readonly IOfflineMapPackService _offlineMapPackService;
 
 		public ConfigController(IDepartmentSettingsService departmentSettingsService, IUserProfileService userProfileService,
-			IFeatureToggleService featureToggleService, IDepartmentsService departmentsService)
+			IFeatureToggleService featureToggleService, IDepartmentsService departmentsService, IMapStyleService mapStyleService,
+			IStaticMapService staticMapService, IRoutingService routingService, IOfflineMapPackService offlineMapPackService)
 		{
+			_offlineMapPackService = offlineMapPackService;
 			_departmentSettingsService = departmentSettingsService;
 			_userProfileService = userProfileService;
 			_featureToggleService = featureToggleService;
 			_departmentsService = departmentsService;
+			_mapStyleService = mapStyleService;
+			_staticMapService = staticMapService;
+			_routingService = routingService;
 		}
 		#endregion Members and Constructors
 
@@ -150,6 +161,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			// at the wrong continent.
 			await PopulateMapCenterAsync(result, departmentId);
 			await PopulateAppMapAsync(result, departmentId, key);
+			await PopulateMapLibreAsync(result, departmentId, key);
 			await PopulateUnitStatusThresholdsAsync(result, departmentId);
 
 			result.Data.EventingUrl = SystemBehaviorConfig.ResgridEventingBaseUrl;
@@ -301,6 +313,52 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				Resgrid.Framework.Logging.LogException(ex,
 					$"{nameof(PopulateAppMapAsync)}: app map lookup failed for departmentId {departmentId}.");
+			}
+		}
+
+		/// <summary>
+		/// The MapLibre fields (maplibre-mapping-routing-navigation-plan.md §5.4, names as Omni declares them). Additive:
+		/// nothing here changes a field the legacy apps read (§21). Only signed-in callers get signed URLs.
+		/// </summary>
+		private async Task PopulateMapLibreAsync(GetConfigResult result, int departmentId, string key)
+		{
+			var capabilities = _routingService.Capabilities;
+			result.Data.RoutingProvider = _routingService.ProviderName;
+			result.Data.RoutingSupportsTraffic = capabilities.Traffic;
+			result.Data.RoutingSupportsIncidents = capabilities.Incidents;
+			result.Data.RoutingSupportsVoice = _routingService.IsNavigationAvailable;
+			result.Data.TrafficRefreshSeconds = Math.Max(60, Config.MappingConfig.TrafficRefreshSeconds);
+
+			if (departmentId <= 0)
+				return;
+
+			try
+			{
+				var style = await _mapStyleService.ResolveAsync(departmentId, key);
+				result.Data.MapRenderer = "maplibre";
+				result.Data.MapLibreStyleUrlDay = _mapStyleService.GetSignedStyleUrl(departmentId, key, false);
+				result.Data.MapLibreStyleUrlNight = _mapStyleService.GetSignedStyleUrl(departmentId, key, true);
+				result.Data.MapRasterTileUrl = style.RasterTileUrl;
+				result.Data.StaticMapUrlTemplate = _staticMapService.GetSignedTemplate(departmentId, key);
+
+				var trafficTiles = _mapStyleService.GetTrafficTileUrl();
+				result.Data.TrafficAvailable = !string.IsNullOrWhiteSpace(trafficTiles);
+				result.Data.TrafficTileUrl = trafficTiles;
+
+				result.Data.NavigationAvailable = _routingService.IsNavigationAvailable &&
+					await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.NavigationInApp, departmentId);
+
+				// Offline map packs (§19): the signed, same-origin manifest URL the apps call exactly as given.
+				result.Data.AmbientCacheMaxBytes = Config.MappingConfig.AmbientCacheMaxBytes;
+				result.Data.OfflineMapsAvailable = await _offlineMapPackService.IsAvailableForDepartmentAsync(departmentId);
+				if (result.Data.OfflineMapsAvailable)
+					result.Data.OfflineManifestUrl = MapResourceUrls.Sign($"{SystemBehaviorConfig.ResgridApiBaseUrl}/api/v4/Mapping/GetOfflineManifest",
+						departmentId, MapResourceUrls.OfflineManifestScope);
+			}
+			catch (Exception ex)
+			{
+				Resgrid.Framework.Logging.LogException(ex,
+					$"{nameof(PopulateMapLibreAsync)}: MapLibre map lookup failed for departmentId {departmentId}.");
 			}
 		}
 

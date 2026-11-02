@@ -396,6 +396,14 @@ namespace Resgrid.Workers.Console
 					Cron.MinuteIntervals(1),
 					stoppingToken);
 
+				// Every minute: builds queued offline map packs and prunes unused ones (MapLibre plan section 19.4). Idle until
+				// MappingConfig.OfflinePackStorage is configured.
+				_logger.Log(LogLevel.Information, "Scheduling Offline Map Packs");
+				await Client.ScheduleAsync("Offline Map Packs",
+					new Commands.OfflineMapPackCommand(77),
+					Cron.MinuteIntervals(1),
+					stoppingToken);
+
 				_logger.Log(LogLevel.Information, "Scheduling GDPR Data Export");
 				await Client.ScheduleAsync("GDPR Data Export",
 					new Commands.GdprExportCommand(16),

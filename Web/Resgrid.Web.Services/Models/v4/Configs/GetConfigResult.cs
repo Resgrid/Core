@@ -112,6 +112,57 @@ namespace Resgrid.Web.Services.Models.v4.Configs
 		public string AppMapboxAccessToken { get; set; }
 
 		/// <summary>
+		/// "maplibre" when the server serves MapLibre styles (maplibre-mapping-routing-navigation-plan.md §5.4). The
+		/// fields below are for MapLibre clients (Omni); the Mapbox fields above keep their meaning for older builds.
+		/// </summary>
+		public string MapRenderer { get; set; }
+
+		/// <summary>Signed GetStyle URL of the department's base map for a light theme (MapLibre style JSON).</summary>
+		public string MapLibreStyleUrlDay { get; set; }
+
+		/// <summary>Signed GetStyle URL of the department's base map for a dark theme.</summary>
+		public string MapLibreStyleUrlNight { get; set; }
+
+		/// <summary>Raster XYZ tile template ({z}/{x}/{y}) usable as a fallback base map.</summary>
+		public string MapRasterTileUrl { get; set; }
+
+		/// <summary>Signed static map image template; placeholders {lat} {lon} {zoom} {width} {height} {scale} {scheme}.</summary>
+		public string StaticMapUrlTemplate { get; set; }
+
+		/// <summary>A live traffic overlay is available (TrafficTileUrl).</summary>
+		public bool TrafficAvailable { get; set; }
+
+		/// <summary>Mapbox Traffic v1 vector tile template (layer "traffic", congestion low/moderate/heavy/severe, closed).</summary>
+		public string TrafficTileUrl { get; set; }
+
+		/// <summary>How often to reload traffic tiles, in seconds.</summary>
+		public int TrafficRefreshSeconds { get; set; }
+
+		/// <summary>Routing provider: valhalla, mapbox, google, osrm or estimate.</summary>
+		public string RoutingProvider { get; set; }
+
+		/// <summary>Drive times and routes reflect live traffic.</summary>
+		public bool RoutingSupportsTraffic { get; set; }
+
+		/// <summary>Routes report incidents (accidents, closures, construction).</summary>
+		public bool RoutingSupportsIncidents { get; set; }
+
+		/// <summary>Routes can carry spoken and on-screen navigation instructions.</summary>
+		public bool RoutingSupportsVoice { get; set; }
+
+		/// <summary>Unit in-app navigation is available (Valhalla or Mapbox routing, enabled, Navigation.InApp flag on).</summary>
+		public bool NavigationAvailable { get; set; }
+
+		/// <summary>The department may download offline map packs (OfflineManifestUrl).</summary>
+		public bool OfflineMapsAvailable { get; set; }
+
+		/// <summary>Signed offline map manifest URL (same origin as the API).</summary>
+		public string OfflineManifestUrl { get; set; }
+
+		/// <summary>Ambient tile cache budget for MapLibre on the device, in bytes.</summary>
+		public long AmbientCacheMaxBytes { get; set; }
+
+		/// <summary>
 		/// The department sets statuses in the Unit and Responder apps with a two-second press and hold
 		/// instead of a tap followed by Next/Submit (Dispatch Settings). Only signed-in callers get it;
 		/// false otherwise.

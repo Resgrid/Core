@@ -496,7 +496,7 @@
         "Field": "MapStyle"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-10-03T00:00:00Z",
+      "ReviewedOn": "2026-11-01T00:00:00Z",
       "Impact": {
         "Risk": "Low",
         "AudienceKey": "Impact.Audience",
@@ -546,6 +546,72 @@
       "DocumentationId": "setting.MappingMapStyleNight",
       "DefaultValue": "0",
       "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "setting.MappingNavigationConfig",
+      "AreaId": "mapping",
+      "LabelKey": "Setting.MappingNavigationConfig",
+      "HelpKey": "SettingHelp.MappingNavigationConfig",
+      "Binding": "DepartmentSettingTypes.MappingNavigationConfig",
+      "ValueType": "structured",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "MappingSettings",
+        "Field": "NavigationVoiceGuidance"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-01T00:00:00Z",
+      "Impact": {
+        "Risk": "Low",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.mapping",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.MappingNavigationConfig",
+      "DefaultValue": "missing = voice on, device units, 50 m arrival radius, On Scene prompt on, no avoid options, 15-minute deviation threshold",
+      "AllowedValues": "Validated by the owning editor and IDepartmentSettingsService; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "setting.OfflineMapPacksConfig",
+      "AreaId": "mapping",
+      "LabelKey": "Setting.OfflineMapPacksConfig",
+      "HelpKey": "SettingHelp.OfflineMapPacksConfig",
+      "Binding": "DepartmentSettingTypes.OfflineMapPacksConfig",
+      "ValueType": "structured",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "MappingSettings",
+        "Field": "OfflineResponseAreaGeoJson"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-01T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.mapping",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.OfflineMapPacksConfig",
+      "DefaultValue": "missing = a 40 km circle around the map centre (else the department address, else a station), all data included, Wi-Fi only, 24-hour refresh",
+      "AllowedValues": "The response area must fit the install download limit; checked on save by IOfflineMapPackService. Admin Assist never saves a proposed value.",
       "EvidenceSource": "DepartmentSettings",
       "Availability": "available"
     },
@@ -1709,12 +1775,12 @@
       "Id": "setting.MappingMapStyle",
       "Locale": "en",
       "TitleKey": "Setting.MappingMapStyle",
-      "Body": "Mapping Map Style. The Mapbox base map (Streets, Outdoors, Light, Dark, Satellite, Satellite with Streets, Navigation Day, Navigation Night, or one of the Mapbox gallery's community styles such as Blueprint, Frank, Moonlight or North Star) every department map shows in a light theme: the website and the Dispatch, Responder, Unit, IC and BigBoard apps. Automatic is Streets. The website uses it only when the server has a website Mapbox token. When the department Mapbox override is on, its custom style and token replace this on the website and in the apps.",
+      "Body": "Mapping Map Style. The Mapbox base map (Streets, Outdoors, Light, Dark, Satellite, Satellite with Streets, Navigation Day, Navigation Night, or one of the Mapbox gallery's community styles such as Blueprint, Frank, Moonlight or North Star) every department map shows in a light theme: the website and the Dispatch, Responder, Unit, IC and BigBoard apps. Automatic is Streets. The website uses it only when the server has a website Mapbox token. When the department Mapbox override is on, its custom style and token replace this on the website and in the apps. On a server that draws its own maps (self-hosted tiles) the settings page offers only the styles that server can render: no community styles, and satellite only when the server provides it.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-mappingmapstyle",
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-10-03T00:00:00Z"
+      "ReviewedOn": "2026-11-01T00:00:00Z"
     },
     {
       "Id": "setting.MappingMapStyleNight",

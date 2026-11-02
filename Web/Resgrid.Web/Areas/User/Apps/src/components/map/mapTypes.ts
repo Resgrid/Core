@@ -74,6 +74,10 @@ export interface GetMapLayersResult {
 }
 
 export interface MapConfigPayload {
+  MapRenderer?: string;
+  MapLibreStyleUrl?: string;
+  mapRenderer?: string;
+  mapLibreStyleUrl?: string;
   MapProvider?: string;
   TileUrl?: string;
   StyleUrl?: string;
@@ -89,12 +93,18 @@ export interface MapConfigPayload {
 }
 
 export interface ResolvedMapConfig {
+  /** "maplibre" when the department renders web maps with MapLibre GL (flag Maps.MapLibreWeb); else empty. */
+  renderer: string;
+  /** Signed MapLibre style URL (API Mapping/GetStyle) used by the MapLibre renderer. */
+  mapLibreStyleUrl: string;
   mapProvider: string;
   tileUrl: string;
   styleUrl: string;
   accessToken: string;
   attribution: string;
   isDepartmentOverride: boolean;
+  /** "on" or "off": a live traffic toggle starting in that state (MapLibre maps, §11.1); empty for none. */
+  traffic: string;
 }
 
 export interface NormalizedMapLayer {
@@ -114,6 +124,10 @@ export interface MapElementProps {
   mapProvider?: string;
   mapStyleUrl?: string;
   mapAccessToken?: string;
+  mapRenderer?: string;
+  mapLibreStyleUrl?: string;
+  /** "on" or "off" adds the live traffic toggle (MapLibre maps); empty for none. */
+  traffic?: string;
   mapConfig?: MapConfigPayload | null;
   hostElement?: HTMLElement;
 }
@@ -180,6 +194,8 @@ export function resolveMapConfig(props: MapElementProps): ResolvedMapConfig {
   const config = props.mapConfig ?? {};
 
   return {
+    renderer: getStringValue(config.MapRenderer, config.mapRenderer, props.mapRenderer).toLowerCase(),
+    mapLibreStyleUrl: getStringValue(config.MapLibreStyleUrl, config.mapLibreStyleUrl, props.mapLibreStyleUrl),
     mapProvider: getStringValue(config.MapProvider, config.mapProvider, props.mapProvider, 'leaflet')
       .toLowerCase(),
     tileUrl: getStringValue(config.TileUrl, config.tileUrl, props.leafletOsmUrl),
@@ -190,6 +206,7 @@ export function resolveMapConfig(props: MapElementProps): ResolvedMapConfig {
       config.IsDepartmentOverride ?? config.isDepartmentOverride,
       false,
     ),
+    traffic: getStringValue(props.traffic).toLowerCase(),
   };
 }
 
@@ -325,6 +342,11 @@ function getMapboxStyleId(styleUrl: string): string {
   }
 
   return '';
+}
+
+/** MapLibre GL renders when the page asked for it and gave a style; it takes precedence over Mapbox and Leaflet. */
+export function isMapLibreRendererEnabled(mapConfig: ResolvedMapConfig): boolean {
+  return mapConfig.renderer === 'maplibre' && mapConfig.mapLibreStyleUrl.length > 0;
 }
 
 export function isMapboxRendererEnabled(mapConfig: ResolvedMapConfig): boolean {

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import LoadingIndicator from '../shared/LoadingIndicator';
 import {
   deleteVisualization,
@@ -19,10 +19,16 @@ import VizMap from './VizMap';
 import VizSummary from './VizSummary';
 import './mapViz.css';
 
+// The MapLibre map loads only for departments on Maps.MapLibreWeb.
+const VizMapLibre = lazy(() => import('./VizMapLibre'));
+
 export interface MapVisualizerElementProps {
   strings?: Record<string, string> | null;
   tileUrl?: string;
   attribution?: string;
+  /** "maplibre" with a signed style URL renders the map with MapLibre GL (approved heat tuning, plan §22.8). */
+  mapRenderer?: string;
+  mapLibreStyleUrl?: string;
   initialId?: string;
   initialTemplate?: string;
   initialCallId?: number;
@@ -540,7 +546,24 @@ export default function MapVisualizerElement(props: MapVisualizerElementProps) {
         <div className="rg-viz__main">
           {runError && <div className="rg-error rg-viz__message" role="alert">{runError}</div>}
           <div className="rg-viz__map-wrap">
-            {props.tileUrl ? (
+            {props.mapRenderer === 'maplibre' && props.mapLibreStyleUrl ? (
+              <Suspense fallback={<LoadingIndicator label={t('Running')} />}>
+                <VizMapLibre
+                  styleUrl={props.mapLibreStyleUrl}
+                  tileUrl={props.tileUrl ?? ''}
+                  attribution={props.attribution ?? ''}
+                  definition={definition}
+                  result={result}
+                  renders={renders}
+                  fitKey={fitKey}
+                  formatHex={formatHex}
+                  formatTrack={formatTrack}
+                  renderPointPopup={renderPointPopup}
+                  stationLabel={t('Station')}
+                  height={mapHeight}
+                />
+              </Suspense>
+            ) : props.tileUrl ? (
               <VizMap
                 tileUrl={props.tileUrl}
                 attribution={props.attribution ?? ''}

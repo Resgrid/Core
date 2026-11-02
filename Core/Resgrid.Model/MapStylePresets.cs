@@ -93,6 +93,34 @@ namespace Resgrid.Model
 		/// <summary>Every selectable style: the Mapbox styles, then the community styles.</summary>
 		public static readonly IReadOnlyList<MapStyleTypes> SelectableStyles = MapboxStyles.Concat(CommunityStyles).ToArray();
 
+		/// <summary>
+		/// The kind of base map a preset is (maplibre-mapping-routing-navigation-plan.md §5.3), used to find its counterpart
+		/// in a self-hosted install's style catalog: "streets", "light", "dark", "outdoors" or "satellite". Null for the
+		/// community styles (and anything else Mapbox-only), which have no self-hosted counterpart.
+		/// </summary>
+		public static string StyleClass(MapStyleTypes style)
+		{
+			switch (style)
+			{
+				case MapStyleTypes.Outdoors:
+					return "outdoors";
+				case MapStyleTypes.Light:
+					return "light";
+				case MapStyleTypes.Dark:
+				case MapStyleTypes.NavigationNight:
+					return "dark";
+				case MapStyleTypes.Satellite:
+				case MapStyleTypes.SatelliteStreets:
+					return "satellite";
+				case MapStyleTypes.Automatic:
+				case MapStyleTypes.Streets:
+				case MapStyleTypes.NavigationDay:
+					return "streets";
+				default:
+					return null;
+			}
+		}
+
 		public static bool IsCommunityStyle(MapStyleTypes style)
 		{
 			return CommunityStyleUrls.ContainsKey(style);

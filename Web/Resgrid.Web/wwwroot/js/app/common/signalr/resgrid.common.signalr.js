@@ -147,6 +147,10 @@ var resgrid;
                 eventHub.on("outstandingRequirementsUpdated", function (id, payload) {
                     document.dispatchEvent(new CustomEvent("resgrid:outstanding-requirements-updated", { detail: { id: id, payload: payload } }));
                 });
+                // A navigating unit's live ETA changed or ended (MapLibre plan section 9.4); payload = ids and state JSON.
+                eventHub.on("unitNavigationUpdated", function (id, payload) {
+                    document.dispatchEvent(new CustomEvent("resgrid:unit-navigation-updated", { detail: { unitId: id, payload: payload } }));
+                });
                 eventHub.on("onConnected", function (id) {
                     //connectionId = id;
                 });

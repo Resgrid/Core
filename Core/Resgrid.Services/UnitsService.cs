@@ -52,6 +52,7 @@ namespace Resgrid.Services
 
 		// Lazy: the awaiting-resources check needs the calls and dispatch graph, which itself depends on this service.
 		private readonly Lazy<IOutstandingRequirementsService> _outstandingRequirementsService;
+		private readonly IUnitNavigationStateService _unitNavigationStateService;
 
 		public UnitsService(IUnitsRepository unitsRepository, IUnitStatesRepository unitStatesRepository,
 			IUnitLogsRepository unitLogsRepository, IUnitTypesRepository unitTypesRepository, ISubscriptionsService subscriptionsService,
@@ -64,8 +65,10 @@ namespace Resgrid.Services
 			ICallStatusAttributionService callStatusAttributionService, Lazy<ISearchProjectionService> searchProjections = null,
 			Lazy<ICallAutoCloseService> callAutoCloseService = null, INovuProvider novuProvider = null,
 			Lazy<IDepartmentsService> departmentsService = null, ITypeIconsRepository typeIconsRepository = null,
-			Lazy<IOutstandingRequirementsService> outstandingRequirementsService = null)
+			Lazy<IOutstandingRequirementsService> outstandingRequirementsService = null,
+			IUnitNavigationStateService unitNavigationStateService = null)
 		{
+			_unitNavigationStateService = unitNavigationStateService;
 			_outstandingRequirementsService = outstandingRequirementsService;
 			_callAutoCloseService = callAutoCloseService;
 			_novuProvider = novuProvider;
@@ -394,6 +397,40 @@ namespace Resgrid.Services
 			return await _unitTypesRepository.GetUnitByNameDepartmentIdAsync(departmentId, type);
 		}
 
+		public async Task<VehicleProfile> GetUnitVehicleProfileAsync(Unit unit)
+		{
+			if (unit == null)
+				return null;
+
+			UnitType unitType = null;
+			if (!string.IsNullOrWhiteSpace(unit.Type))
+				unitType = await _unitTypesRepository.GetUnitByNameDepartmentIdAsync(unit.DepartmentId, unit.Type);
+
+			return VehicleProfile.Resolve(unit, unitType);
+		}
+
+		public async Task<Dictionary<int, VehicleProfile>> GetVehicleProfilesForUnitsAsync(int departmentId, IEnumerable<Unit> units)
+		{
+			var profiles = new Dictionary<int, VehicleProfile>();
+			if (units == null)
+				return profiles;
+
+			var types = (await _unitTypesRepository.GetAllByDepartmentIdAsync(departmentId) ?? Enumerable.Empty<UnitType>())
+				.Where(t => !string.IsNullOrWhiteSpace(t.Type))
+				.GroupBy(t => t.Type, StringComparer.OrdinalIgnoreCase)
+				.ToDictionary(g => g.Key, g => g.First(), StringComparer.OrdinalIgnoreCase);
+
+			foreach (var unit in units.Where(u => u != null))
+			{
+				types.TryGetValue(unit.Type ?? string.Empty, out var unitType);
+				var profile = VehicleProfile.Resolve(unit, unitType);
+				if (profile != null)
+					profiles[unit.UnitId] = profile;
+			}
+
+			return profiles;
+		}
+
 		public async Task<UnitType> AddUnitTypeAsync(int departmentId, string name, int customStatesId, int? mapIconType, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var type = new UnitType();
@@ -484,6 +521,8 @@ namespace Resgrid.Services
 			if (_outstandingRequirementsService != null)
 				await _outstandingRequirementsService.Value.OnUnitStateSavedAsync(departmentId, saved, previousState, cancellationToken);
 
+			await EndNavigationForStatusAsync(departmentId, saved);
+
 			return saved;
 		}
 
@@ -545,7 +584,42 @@ namespace Resgrid.Services
 			if (_outstandingRequirementsService != null)
 				await _outstandingRequirementsService.Value.OnUnitStateSavedAsync(departmentId, saved, previousState, cancellationToken);
 
+			// Released from the call (an automatic status) ends a call navigation too.
+			await EndNavigationForStatusAsync(departmentId, saved);
+
 			return saved;
+		}
+
+		/// <summary>
+		/// A status whose base type ends the response (On Scene, Available, In Quarters, Out of Service, Released,
+		/// Returning) clears the unit's live call ETA (maplibre-mapping-routing-navigation-plan.md §9.4). Never throws.
+		/// </summary>
+		private async Task EndNavigationForStatusAsync(int departmentId, UnitState saved)
+		{
+			if (_unitNavigationStateService == null || saved == null)
+				return;
+
+			try
+			{
+				// Most units are not navigating: one Redis read, and the custom status lookup only when they are.
+				if (await _unitNavigationStateService.GetForUnitAsync(departmentId, saved.UnitId) == null)
+					return;
+
+				int baseType;
+				var custom = await GetCustomUnitStateBaseTypesAsync(departmentId);
+				if (custom.TryGetValue(saved.State, out var customBaseType))
+					baseType = customBaseType;
+				else if (saved.State <= CallStatusLinkage.MaxBuiltInStatusId)
+					baseType = (int)BuiltInStatusBaseTypes.ForUnitState(saved.State);
+				else
+					return;
+
+				await _unitNavigationStateService.ClearForUnitStatusAsync(departmentId, saved.UnitId, baseType);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Ending the navigation of unit {saved.UnitId} after a status change");
+			}
 		}
 
 		/// <summary>

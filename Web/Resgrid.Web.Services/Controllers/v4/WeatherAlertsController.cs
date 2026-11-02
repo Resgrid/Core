@@ -484,6 +484,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				Instruction = alert.Instruction,
 				AreaDescription = alert.AreaDescription,
 				Polygon = alert.Polygon,
+				GeoJson = WeatherAlertGeometry.ToGeoJson(alert.Polygon),
 				Geocodes = alert.Geocodes,
 				CenterGeoLocation = alert.CenterGeoLocation,
 				OnsetUtc = alert.OnsetUtc?.TimeConverterToString(department),

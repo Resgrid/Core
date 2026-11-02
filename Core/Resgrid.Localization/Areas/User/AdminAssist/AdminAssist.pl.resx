@@ -4933,7 +4933,7 @@
     <value>Używa zastąpienia dostawcy map oddziału. Wyłączenie go na właściwym ekranie usuwa zapisany styl i token.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.MappingMapStyle">
-    <value>Mapa bazowa Mapbox wyświetlana na każdej mapie departamentu w trybie jasnym, na stronie internetowej i we wszystkich aplikacjach. Automatyczny oznacza Ulice; strona wymaga tokenu Mapbox serwera, a nadpisanie Mapbox departamentu zastępuje go wszędzie.</value>
+    <value>Mapa bazowa Mapbox wyświetlana na każdej mapie departamentu w trybie jasnym, na stronie internetowej i we wszystkich aplikacjach. Automatyczny oznacza Ulice; strona wymaga tokenu Mapbox serwera, a nadpisanie Mapbox departamentu zastępuje go wszędzie. Na serwerze z własnymi mapami dostępne są tylko style, które potrafi wyświetlić.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.MappingMapStyleNight">
     <value>Mapa bazowa wyświetlana przez aplikacje w trybie ciemnym. Automatyczny dopasowuje się do stylu dziennego (Ciemny dla map drogowych, Nawigacja nocna dla Nawigacji dziennej; Teren i satelita bez zmian). Strona internetowa zawsze używa stylu dziennego.</value>
@@ -7763,5 +7763,17 @@
   </data>
   <data xml:space="preserve" name="Topic.dashboard-classic">
     <value>Włączanie nowego pulpitu i powrót do klasycznego</value>
+  </data>
+  <data xml:space="preserve" name="Setting.MappingNavigationConfig">
+    <value>Domyślne ustawienia nawigacji</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.MappingNavigationConfig">
+    <value>Ustawienia nawigacji krok po kroku w aplikacji Unit (głos, jednostki odległości, promień przybycia, pytanie Na miejscu, drogi do omijania) oraz jakie opóźnienie lub przekroczenie postoju jest zapisywane jako odchylenie od trasy.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.OfflineMapPacksConfig">
+    <value>Mapy offline</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.OfflineMapPacksConfig">
+    <value>Co aplikacje pobierają do pracy bez sieci: maksymalny obszar działania (jego mapa bazowa musi zmieścić się w limicie rozmiaru), jakie dane mapy są dołączone, kiedy odbywa się pobieranie oraz dodatkowe pokrycie dla zgłoszeń i tras poza obszarem.</value>
   </data>
 </root>

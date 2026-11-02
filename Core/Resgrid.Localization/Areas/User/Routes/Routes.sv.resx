@@ -181,4 +181,100 @@
   <data name="Latitude" xml:space="preserve"><value>Latitud</value></data>
   <data name="Longitude" xml:space="preserve"><value>Longitud</value></data>
   <data name="FindLocationVia" xml:space="preserve"><value>Hitta plats via</value></data>
+  <data name="ProfileTruck" xml:space="preserve">
+    <value>Lastbil (fordonsmått)</value>
+  </data>
+  <data name="ProfileTrafficUnavailable" xml:space="preserve">
+    <value>(ingen trafik i realtid på den här servern)</value>
+  </data>
+  <data name="AvoidLabel" xml:space="preserve">
+    <value>Undvik</value>
+  </data>
+  <data name="AvoidTolls" xml:space="preserve">
+    <value>Avgiftsvägar</value>
+  </data>
+  <data name="AvoidHighways" xml:space="preserve">
+    <value>Motorvägar</value>
+  </data>
+  <data name="AvoidFerries" xml:space="preserve">
+    <value>Färjor</value>
+  </data>
+  <data name="AvoidUnpaved" xml:space="preserve">
+    <value>Grusvägar</value>
+  </data>
+  <data name="StartStation" xml:space="preserve">
+    <value>Startstation</value>
+  </data>
+  <data name="EndStation" xml:space="preserve">
+    <value>Slutstation</value>
+  </data>
+  <data name="UnitStationOption" xml:space="preserve">
+    <value>Enhetens station</value>
+  </data>
+  <data name="LegColumn" xml:space="preserve">
+    <value>Sträcka</value>
+  </data>
+  <data name="ArrivalColumn" xml:space="preserve">
+    <value>Ankomst</value>
+  </data>
+  <data name="StopGeofenceRadius" xml:space="preserve">
+    <value>Ankomstradie (m)</value>
+  </data>
+  <data name="StopGeofenceRadiusHelp" xml:space="preserve">
+    <value>Lämna tomt för att använda ruttens radie.</value>
+  </data>
+  <data name="OptimizeOrder" xml:space="preserve">
+    <value>Optimera ordning</value>
+  </data>
+  <data name="OptimizeTitle" xml:space="preserve">
+    <value>Optimerad stoppordning</value>
+  </data>
+  <data name="OptimizeCurrent" xml:space="preserve">
+    <value>Nuvarande ordning</value>
+  </data>
+  <data name="OptimizeProposed" xml:space="preserve">
+    <value>Föreslagen ordning</value>
+  </data>
+  <data name="OptimizeAccept" xml:space="preserve">
+    <value>Använd den här ordningen</value>
+  </data>
+  <data name="RouteStart" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="RouteEnd" xml:space="preserve">
+    <value>Slut</value>
+  </data>
+  <data name="RouteTotal" xml:space="preserve">
+    <value>Totalt</value>
+  </data>
+  <data name="RouteWithStops" xml:space="preserve">
+    <value>med stopp</value>
+  </data>
+  <data name="RouteEstimate" xml:space="preserve">
+    <value>fågelvägsuppskattning</value>
+  </data>
+  <data name="MoveUp" xml:space="preserve">
+    <value>Flytta upp</value>
+  </data>
+  <data name="MoveDown" xml:space="preserve">
+    <value>Flytta ned</value>
+  </data>
+  <data name="DeleteStop" xml:space="preserve">
+    <value>Ta bort stopp</value>
+  </data>
+  <data name="TruckNoVehicle" xml:space="preserve">
+    <value>Enheten har inga fordonsmått, så Lastbil beräknar som Bil.</value>
+  </data>
+  <data name="OptimizeFailed" xml:space="preserve">
+    <value>Stoppordningen kunde inte optimeras.</value>
+  </data>
+  <data name="OptimizeNoChange" xml:space="preserve">
+    <value>Stoppen är redan i bästa ordning.</value>
+  </data>
+  <data name="StopOrderFailed" xml:space="preserve">
+    <value>Den nya stoppordningen kunde inte sparas. Sidan laddas om.</value>
+  </data>
+  <data name="StopMoveFailed" xml:space="preserve">
+    <value>Stoppet kunde inte flyttas. Sidan laddas om.</value>
+  </data>
 </root>

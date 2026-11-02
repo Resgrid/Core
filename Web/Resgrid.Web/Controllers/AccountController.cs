@@ -116,8 +116,12 @@ namespace Resgrid.Web.Controllers
 						Resgrid.Model.Repositories.IUserMfaStateRepository mfaState, IUserStore<IdentityUser> userStore, IFactorRecoveryService recoveries,
 						Resgrid.Model.Repositories.IUserPasskeyRepository passkeyRows, IAuthenticationChallengeService challenges,
 						Resgrid.Model.Repositories.IMfaApprovalRequestRepository approvalRows, ISharedSessionService sharedSessions,
-						IImportActivationService importActivation)
+						IImportActivationService importActivation, ICacheProvider cacheProvider, ILoginThrottleService loginThrottle,
+						IPublicFormRateLimiter formLimits)
 		{
+			_cacheProvider = cacheProvider;
+			_loginThrottle = loginThrottle;
+			_formLimits = formLimits;
 			_importActivation = importActivation;
 			_sharedSessions = sharedSessions;
 			_mfaState = mfaState;
@@ -160,7 +164,39 @@ namespace Resgrid.Web.Controllers
 
 		private readonly ISecurityNoticeService _securityNotices;
 		private readonly ISharedSessionService _sharedSessions;
+		private readonly ICacheProvider _cacheProvider;
+		private readonly ILoginThrottleService _loginThrottle;
+		private readonly IPublicFormRateLimiter _formLimits;
 		#endregion Private Members and Constructors
+
+		/// <summary>The caller's address for the per-address limits; null (never limited) when it can't be read.</summary>
+		private string ClientIp()
+		{
+			try
+			{
+				return IpAddressHelper.GetRequestIP(Request, true);
+			}
+			catch (Exception)
+			{
+				return null;
+			}
+		}
+
+		private static string WindowPhrase(TimeSpan window) =>
+			window >= TimeSpan.FromDays(1) ? "a day" : window >= TimeSpan.FromHours(1) ? "an hour" : $"{window.TotalMinutes:0} minutes";
+
+		/// <summary>"Too many {what} have come from your network…": what a refused form says, with how long to wait.</summary>
+		private string FormLimitedMessage(PublicFormLimit form, string what, string then) =>
+			$"Too many {what} have come from your network. Please wait up to {WindowPhrase(_formLimits.WindowOf(form))}, then {then}.";
+
+		/// <summary>The form again, refused for its per-address limit: 429, with only the limit's message.</summary>
+		private IActionResult FormLimited(object model, string message, string viewName = null)
+		{
+			Response.StatusCode = StatusCodes.Status429TooManyRequests;
+			ModelState.Clear();
+			ModelState.AddModelError(string.Empty, message);
+			return viewName == null ? View(model) : View(viewName, model);
+		}
 
 		/// <summary>Resolves a password-error key returned by ValidatePasswordAgainstPolicyAsync into a localised message.</summary>
 		private string ResolvePwdError(string key)
@@ -190,6 +226,8 @@ namespace Resgrid.Web.Controllers
 			ViewData["SharedWorkstation"] = WebSharedSession.IsAvailable ? WebSharedSession.WorkstationLabel(Request) : null;
 			if (ViewData["LoginMfaMessage"] == null && string.Equals(Request.Query["reason"], "shift_ended", StringComparison.Ordinal))
 				ViewData["LoginMfaMessage"] = _twoFactorLocalizer["SharedShiftEnded"].Value;
+			if (ViewData["LoginMfaMessage"] == null && string.Equals(Request.Query["reason"], "password-changed", StringComparison.Ordinal))
+				ViewData["LoginMfaMessage"] = "Your password was changed and every session was signed out. Sign in with your new password.";
 			return View();
 		}
 
@@ -211,6 +249,26 @@ namespace Resgrid.Web.Controllers
 			{
 				try
 				{
+					// Too many failed sign-ins from this address across different accounts: no password is checked until the pause
+					// ends, so a spraying or stuffing run learns nothing more here.
+					var ipAddress = IpAddressHelper.GetRequestIP(Request, true);
+					if (await _loginThrottle.IsThrottledAsync(ipAddress, cancellationToken))
+					{
+						await _systemAuditsService.SaveSystemAuditAsync(new SystemAudit
+						{
+							System = (int)SystemAuditSystems.Website,
+							Type = (int)SystemAuditTypes.Login,
+							Username = model.Username,
+							Successful = false,
+							IpAddress = ipAddress,
+							ServerName = Environment.MachineName,
+							Data = $"Web LogOn refused: too many failed sign-ins from this address {Request.Headers["User-Agent"]}"
+						}, cancellationToken);
+						Response.StatusCode = StatusCodes.Status429TooManyRequests;
+						ModelState.AddModelError(string.Empty, LoginThrottledMessage);
+						return View(model);
+					}
+
 					var passwordUser = await _userManager.FindByNameAsync(model.Username);
 					if (passwordUser != null && !await IsPasswordLoginAllowedAsync(passwordUser, cancellationToken))
 					{
@@ -225,11 +283,16 @@ namespace Resgrid.Web.Controllers
 							ServerName = Environment.MachineName,
 							Data = $"Web LogOn blocked by SSO policy {Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}"
 						}, cancellationToken);
+						await _loginThrottle.RecordFailureAsync(ipAddress, model.Username, cancellationToken);
 						ModelState.AddModelError(string.Empty, "Invalid username or password, please check them and try again.");
 						return View(model);
 					}
 
 					var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, true, lockoutOnFailure: true);
+
+					// A refused password (unknown user, wrong password, locked out) counts against the address; a verified one never does.
+					if (result == null || (!result.Succeeded && !result.RequiresTwoFactor))
+						await _loginThrottle.RecordFailureAsync(ipAddress, model.Username, cancellationToken);
 
 					SystemAudit audit = new SystemAudit();
 					audit.System = (int)SystemAuditSystems.Website;
@@ -283,44 +346,10 @@ namespace Resgrid.Web.Controllers
 								return View(model);
 							}
 
-							// Check whether the department's password expiration policy has been exceeded.
-							// Only check for password-based logins (SSO users are unaffected).
-							try
-							{
-								var identityUser = await _userManager.FindByNameAsync(model.Username);
-								if (identityUser != null)
-								{
-									var department = await _departmentsService.GetDepartmentForUserAsync(model.Username);
-									if (department != null)
-									{
-										var member = await _departmentsService.GetDepartmentMemberAsync(identityUser.Id, department.DepartmentId);
-
-										// Check if admin flagged this user to change password on next login
-										if (member != null && member.MustChangePassword)
-										{
-											HttpContext.Session.SetString("ForcePasswordChangeUserId", identityUser.Id);
-											HttpContext.Session.SetString("ForcePasswordChangeDeptId", department.DepartmentId.ToString());
-											return RedirectToAction(nameof(ForcePasswordChange));
-										}
-
-										var policy = await _departmentSsoService.GetSecurityPolicyForDepartmentAsync(department.DepartmentId, cancellationToken);
-										if (policy != null && policy.PasswordExpirationDays > 0)
-										{
-											if (_departmentSsoService.IsPasswordExpired(policy, member?.PasswordLastSetOn))
-											{
-												HttpContext.Session.SetString("ForcePasswordChangeUserId", identityUser.Id);
-												HttpContext.Session.SetString("ForcePasswordChangeDeptId", department.DepartmentId.ToString());
-												return RedirectToAction(nameof(ForcePasswordChange));
-											}
-										}
-									}
-								}
-							}
-							catch (Exception ex)
-							{
-								Logging.LogException(ex);
-								// Don't block login on a policy-check error — fail open.
-							}
+							// An administrator's must-change flag or an expired password was found when the session was made (every
+							// password sign-in path, not only this one); RequirePasswordChangeMiddleware keeps it on the change page.
+							if (PasswordChangeRequiredAtSignIn)
+								return RedirectToAction(nameof(ForcePasswordChange));
 
 							if (!String.IsNullOrWhiteSpace(returnUrl))
 								return RedirectToLocal(returnUrl);
@@ -345,11 +374,35 @@ namespace Resgrid.Web.Controllers
 						return View(model);
 					}
 				}
-				catch (Exception ex)
+				catch (Exception ex) when (!(ex is OperationCanceledException))
 				{
 					Logging.LogException(ex);
 
-					if (!await _usersService.DoesUserHaveAnyActiveDepartments(model.Username))
+					// The failed sign-in may have left a half-made session behind; it never stays signed in from here.
+					try
+					{
+						await _signInManager.SignOutAsync();
+						await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+					}
+					catch (Exception signOutException)
+					{
+						Logging.LogException(signOutException);
+					}
+
+					bool hasActiveDepartment;
+					try
+					{
+						hasActiveDepartment = await _usersService.DoesUserHaveAnyActiveDepartments(model.Username);
+					}
+					catch (Exception lookupException)
+					{
+						// The same outage that failed the sign-in: say so rather than turn the page into an error page.
+						Logging.LogException(lookupException);
+						ModelState.AddModelError(string.Empty, "We couldn't sign you in right now because of a problem on our side. Please wait a minute and try again.");
+						return View(model);
+					}
+
+					if (!hasActiveDepartment)
 					{
 						ModelState.AddModelError(string.Empty, "You do not have any active departments for this user. This usually happens when you only belong to one department and you have been removed (deleted) from that department. To log into Resgrid you need at least one active department. You can have a department add you by sending an email based invite to your Resgrid accounts email address.");
 						return View(model);
@@ -365,6 +418,9 @@ namespace Resgrid.Web.Controllers
 			// If we got this far, something failed, redisplay form
 			return View(model);
 		}
+
+		private string LoginThrottledMessage =>
+			$"Too many failed sign-in attempts have come from your network, so signing in from it is paused for up to {_loginThrottle.Window.TotalMinutes:0} minutes. Please wait, then try again.";
 
 		//
 		// GET: /Account/Register
@@ -396,79 +452,215 @@ namespace Resgrid.Web.Controllers
 			model.SiteKey = WebConfig.RecaptchaPublicKey;
 			ViewData["ReturnUrl"] = returnUrl;
 
+			// Every post counts against the address, valid or not: a script failing reCAPTCHA over and over is stopped here too.
+			var clientIp = ClientIp();
+			if (!await _formLimits.TryAcquireAsync(PublicFormLimit.Register, clientIp, cancellationToken))
+				return FormLimited(model, FormLimitedMessage(PublicFormLimit.Register, "registration attempts", "try again"));
+
 			// The picker only offers catalog types; store the catalog spelling and refuse anything else.
 			if (DepartmentTypeCatalog.TryResolveSelection(null, model.DepartmentType, out var departmentType))
 				model.DepartmentType = departmentType;
 			else
 				ModelState.AddModelError(nameof(model.DepartmentType), "Choose an organization type from the list.");
 
-			if (ModelState.IsValid)
+			// One registration per username at a time. A second post of this form (a double click, Enter pressed again, a resend)
+			// is told the first is under way, instead of racing it into "username is already taken" or a reCAPTCHA failure (its
+			// token was spent by the first post), either of which reads as if the registration had failed.
+			var submission = await ClaimAccountSubmissionAsync("Register", model.Username);
+			if (!submission.Claimed)
 			{
-				var user = new IdentityUser { UserName = model.Username, Email = model.Email, SecurityStamp = Guid.NewGuid().ToString() };
-				var result = await _userManager.CreateAsync(user, model.Password);
-				if (result.Succeeded)
+				if (submission.AlreadyCreated)
 				{
-					UserProfile up = new UserProfile();
-					up.UserId = user.Id;
-					up.FirstName = model.FirstName;
-					up.LastName = model.LastName;
-					await _userProfileService.SaveProfileAsync(0, up, cancellationToken);
-
-					_usersService.AddUserToUserRole(user.Id);
-					_usersService.InitUserExtInfo(user.Id);
-
-					Department department = await _departmentsService.CreateDepartmentAsync(model.DepartmentName, user.Id, model.DepartmentType, null, cancellationToken);
-					await _departmentsService.AddUserToDepartmentAsync(department.DepartmentId, user.Id, true, cancellationToken);
-
-					if (!String.IsNullOrWhiteSpace(model.AffiliateCode))
-					{
-						var affiliate = await _affiliateService.GetActiveAffiliateByCodeAsync(model.AffiliateCode);
-						if (affiliate != null)
-						{
-							department.AffiliateCode = affiliate.AffiliateCode;
-							await _departmentsService.SaveDepartmentAsync(department, cancellationToken);
-						}
-					}
-
-					// Only provision free plan when paid plan selection is not required
-					if (!SystemBehaviorConfig.RequirePlanSelectionDuringSignup)
-						await _subscriptionsService.CreateFreePlanPaymentAsync(department.DepartmentId, user.Id, cancellationToken);
-
-					// Guard, in case testing has caching turned on for the shared redis cache there can be artifacts
-					await _departmentsService.InvalidateAllDepartmentsCache(department.DepartmentId);
-					_departmentsService.InvalidateDepartmentMembers();
-
-					await _emailService.SendWelcomeEmail(department.Name, $"{model.FirstName} {model.LastName}", model.Email, model.Username, department.DepartmentId);
-
-					var loginResult = await _signInManager.PasswordSignInAsync(model.Username, model.Password, true, lockoutOnFailure: false);
-					if (loginResult.Succeeded)
-					{
-						if (!await SignInTrackedWebSessionAsync(user,
-							UserSessionAuthenticationMethod.LocalPassword, TimeSpan.FromHours(24), cancellationToken,
-							new VerifiedFactor(MfaEvidenceKind.FirstFactor, MfaEvidenceMethod.Password, DateTime.UtcNow)))
-						{
-							ModelState.AddModelError(string.Empty,
-								"Your department's maximum number of active sessions has been reached.");
-							return View(model);
-						}
-
-						if (!String.IsNullOrWhiteSpace(returnUrl))
-							return RedirectToLocal(returnUrl);
-						else if (SystemBehaviorConfig.RequirePlanSelectionDuringSignup)
-							return RedirectToAction("SelectRegistrationPlan", "Subscription", new { Area = "User", discountCode = model.DiscountCode });
-						else
-							return RedirectToAction("Dashboard", "Home", new { Area = "User" });
-					}
-					else
-					{
-						return View(model);
-					}
+					TempData["LoginMfaMessage"] = "Your account was created. Sign in with the username and password you just chose.";
+					return RedirectToAction(nameof(LogOn));
 				}
-				AddErrors(result);
+
+				ModelState.Clear();
+				ModelState.AddModelError(string.Empty, "This registration form was sent more than once and the first submission is still being processed. Wait a moment, then sign in with the username and password you chose; if you can't sign in, register again.");
+				return View(model);
 			}
 
-			// If we got this far, something failed, redisplay form
-			return View(model);
+			if (!ModelState.IsValid)
+			{
+				await ReleaseAccountSubmissionAsync(submission.Key);
+				return View(model);
+			}
+
+			// New departments from one address are capped per day, apart from the posts above.
+			if (await _formLimits.IsLimitedAsync(PublicFormLimit.RegisterCreated, clientIp, cancellationToken))
+			{
+				await ReleaseAccountSubmissionAsync(submission.Key);
+				return FormLimited(model, "Too many new departments have been registered from your network today. Please try again tomorrow, or contact Resgrid support if you need to register more.");
+			}
+
+			var user = new IdentityUser { UserName = model.Username, Email = model.Email, SecurityStamp = Guid.NewGuid().ToString() };
+			IdentityResult result;
+			try
+			{
+				result = await _userManager.CreateAsync(user, model.Password);
+			}
+			catch (Exception ex) when (!(ex is OperationCanceledException))
+			{
+				Logging.LogException(ex, "Registration could not create the account.");
+				await ReleaseAccountSubmissionAsync(submission.Key);
+				ModelState.AddModelError(string.Empty, "We couldn't create your account right now because of a problem on our side. Please wait a minute and try again.");
+				return View(model);
+			}
+
+			if (!result.Succeeded)
+			{
+				await ReleaseAccountSubmissionAsync(submission.Key);
+				AddErrors(result);
+				return View(model);
+			}
+
+			Department department;
+			try
+			{
+				UserProfile up = new UserProfile();
+				up.UserId = user.Id;
+				up.FirstName = model.FirstName;
+				up.LastName = model.LastName;
+				await _userProfileService.SaveProfileAsync(0, up, cancellationToken);
+
+				_usersService.AddUserToUserRole(user.Id);
+				_usersService.InitUserExtInfo(user.Id);
+
+				department = await _departmentsService.CreateDepartmentAsync(model.DepartmentName, user.Id, model.DepartmentType, null, cancellationToken);
+				await _departmentsService.AddUserToDepartmentAsync(department.DepartmentId, user.Id, true, cancellationToken);
+
+				if (!String.IsNullOrWhiteSpace(model.AffiliateCode))
+				{
+					var affiliate = await _affiliateService.GetActiveAffiliateByCodeAsync(model.AffiliateCode);
+					if (affiliate != null)
+					{
+						department.AffiliateCode = affiliate.AffiliateCode;
+						await _departmentsService.SaveDepartmentAsync(department, cancellationToken);
+					}
+				}
+
+				// Only provision free plan when paid plan selection is not required
+				if (!SystemBehaviorConfig.RequirePlanSelectionDuringSignup)
+					await _subscriptionsService.CreateFreePlanPaymentAsync(department.DepartmentId, user.Id, cancellationToken);
+
+				// Guard, in case testing has caching turned on for the shared redis cache there can be artifacts
+				await _departmentsService.InvalidateAllDepartmentsCache(department.DepartmentId);
+				_departmentsService.InvalidateDepartmentMembers();
+
+				await MarkAccountSubmissionCreatedAsync(submission.Key);
+				await _formLimits.RecordAsync(PublicFormLimit.RegisterCreated, clientIp, cancellationToken);
+			}
+			catch (Exception ex) when (!(ex is OperationCanceledException))
+			{
+				// The account exists, so registering again would only say the username is taken: say what happened instead.
+				Logging.LogException(ex, $"Registration created account {user.Id} but its department setup did not finish.");
+				await ReleaseAccountSubmissionAsync(submission.Key);
+				ModelState.AddModelError(string.Empty, "Your account was created, but setting up your department didn't finish because of a problem on our side. Please don't register again: sign in with the username and password you just chose, and if your department is missing, contact Resgrid support.");
+				return View(model);
+			}
+
+			// The account and department are made; a welcome email that cannot be sent now never undoes them.
+			try
+			{
+				await _emailService.SendWelcomeEmail(department.Name, $"{model.FirstName} {model.LastName}", model.Email, model.Username, department.DepartmentId);
+			}
+			catch (Exception ex) when (!(ex is OperationCanceledException))
+			{
+				Logging.LogException(ex, $"The welcome email for new department {department.DepartmentId} could not be sent.");
+			}
+
+			try
+			{
+				var loginResult = await _signInManager.PasswordSignInAsync(model.Username, model.Password, true, lockoutOnFailure: false);
+				if (loginResult.Succeeded)
+				{
+					if (!await SignInTrackedWebSessionAsync(user,
+						UserSessionAuthenticationMethod.LocalPassword, TimeSpan.FromHours(24), cancellationToken,
+						new VerifiedFactor(MfaEvidenceKind.FirstFactor, MfaEvidenceMethod.Password, DateTime.UtcNow)))
+					{
+						ModelState.AddModelError(string.Empty,
+							"Your department's maximum number of active sessions has been reached.");
+						return View(model);
+					}
+
+					if (!String.IsNullOrWhiteSpace(returnUrl))
+						return RedirectToLocal(returnUrl);
+					else if (SystemBehaviorConfig.RequirePlanSelectionDuringSignup)
+						return RedirectToAction("SelectRegistrationPlan", "Subscription", new { Area = "User", discountCode = model.DiscountCode });
+					else
+						return RedirectToAction("Dashboard", "Home", new { Area = "User" });
+				}
+			}
+			catch (Exception ex) when (!(ex is OperationCanceledException))
+			{
+				Logging.LogException(ex, $"New account {user.Id} was registered but could not be signed in.");
+			}
+
+			// Registered, but not signed in: the sign-in page says so, rather than this form coming back as if nothing happened.
+			TempData["LoginMfaMessage"] = "Your account was created. Sign in with the username and password you just chose.";
+			return RedirectToAction(nameof(LogOn));
+		}
+
+		/// <summary>How long a finished account-creating post keeps answering its own repeats (a double click, a resend).</summary>
+		private static readonly TimeSpan AccountSubmissionWindow = TimeSpan.FromMinutes(2);
+
+		/// <summary>The claim's value once its post created the account: a repeat after that is sent to sign in.</summary>
+		private const string AccountSubmissionCreated = "created";
+
+		/// <summary>
+		/// Claims the one account-creating post of a form; <paramref name="identity"/> is what makes two posts the same (the username
+		/// being registered, the invitation being completed). Not claimed when the same form is being, or was just, handled, so a
+		/// repeat is answered as one instead of racing the first post; AlreadyCreated says the first one finished. Without the cache
+		/// every post runs, as before: the database still refuses a second account with the same username.
+		/// </summary>
+		private async Task<(bool Claimed, string Key, bool AlreadyCreated)> ClaimAccountSubmissionAsync(string form, string identity)
+		{
+			if (string.IsNullOrWhiteSpace(identity))
+				return (true, null, false);
+
+			var key = $"AccountSubmission_{form}_{Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(identity.Trim().ToUpperInvariant())))}";
+			var claim = Guid.NewGuid().ToString("N");
+			try
+			{
+				var holder = await _cacheProvider.GetOrAddStringAsync(key, claim, AccountSubmissionWindow);
+				return (holder == null || holder == claim, key, holder == AccountSubmissionCreated);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, "The account submission claim could not be read; the post runs unguarded.");
+				return (true, null, false);
+			}
+		}
+
+		private async Task MarkAccountSubmissionCreatedAsync(string key)
+		{
+			if (key == null)
+				return;
+
+			try
+			{
+				await _cacheProvider.SetStringAsync(key, AccountSubmissionCreated, AccountSubmissionWindow);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, "The account submission could not be marked created; a repeat is told it is still being processed.");
+			}
+		}
+
+		/// <summary>Gives back a claim whose post did not create anything, so the corrected form can be sent again at once.</summary>
+		private async Task ReleaseAccountSubmissionAsync(string key)
+		{
+			if (key == null)
+				return;
+
+			try
+			{
+				await _cacheProvider.RemoveAsync(key);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, "The account submission claim could not be released; it expires on its own.");
+			}
 		}
 
 		//
@@ -1222,12 +1414,12 @@ namespace Resgrid.Web.Controllers
 		[Authorize]
 		public async Task<IActionResult> ForcePasswordChange(CancellationToken cancellationToken)
 		{
-			var userId = HttpContext.Session.GetString("ForcePasswordChangeUserId");
-			var deptIdStr = HttpContext.Session.GetString("ForcePasswordChangeDeptId");
-
-			// If there's no pending forced-change session key the user shouldn't be here.
-			if (string.IsNullOrWhiteSpace(userId) || !int.TryParse(deptIdStr, out int deptId))
+			// If there's no pending forced change the user shouldn't be here.
+			var pending = PendingPasswordChange();
+			if (pending == null)
 				return RedirectToAction("Dashboard", "Home", new { Area = "User" });
+
+			var deptId = pending.Value.DepartmentId;
 
 			var minLength = await _departmentSsoService.GetEffectiveMinPasswordLengthAsync(deptId, cancellationToken);
 			return View(new ForcePasswordChangeViewModel { MinPasswordLength = minLength });
@@ -1238,11 +1430,11 @@ namespace Resgrid.Web.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> ForcePasswordChange(ForcePasswordChangeViewModel model, CancellationToken cancellationToken)
 		{
-			var userId = HttpContext.Session.GetString("ForcePasswordChangeUserId");
-			var deptIdStr = HttpContext.Session.GetString("ForcePasswordChangeDeptId");
-
-			if (string.IsNullOrWhiteSpace(userId) || !int.TryParse(deptIdStr, out int deptId))
+			var pending = PendingPasswordChange();
+			if (pending == null)
 				return RedirectToAction("Dashboard", "Home", new { Area = "User" });
+
+			var (userId, deptId) = pending.Value;
 
 			model.MinPasswordLength = await _departmentSsoService.GetEffectiveMinPasswordLengthAsync(deptId, cancellationToken);
 
@@ -1393,7 +1585,9 @@ namespace Resgrid.Web.Controllers
 					if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)) || await _usersService.IsImportDormantOnlyAsync(user.Id))
 					{
 						// Count unknown-account requests too. The response is deliberately indistinguishable.
-						await _passwordRecoveryService.IssueAsync(null, model.Email, ipAddress, 0, null, cancellationToken);
+						var unknownIssue = await _passwordRecoveryService.IssueAsync(null, model.Email, ipAddress, 0, null, cancellationToken);
+						if (unknownIssue.IpRateLimited)
+							return FormLimited(model, ForgotPasswordLimitedMessage);
 						return View("ForgotPasswordConfirmation");
 					}
 
@@ -1402,6 +1596,12 @@ namespace Resgrid.Web.Controllers
 					var isSsoManaged = await IsSsoManagedAsync(user.Id, department?.DepartmentId);
 					var issue = await _passwordRecoveryService.IssueAsync(isSsoManaged ? null : user.Id,
 						model.Email, ipAddress, user.AuthenticationGeneration, user.SecurityStamp, cancellationToken);
+
+					// The network address's own hourly limit is said plainly: it counts every request from it, so it tells nothing about
+					// this account. The email's limit stays silent (the usual confirmation): saying it would tell anyone who asks that
+					// someone recently requested a reset for that email.
+					if (issue.IpRateLimited)
+						return FormLimited(model, ForgotPasswordLimitedMessage);
 
 					if (!issue.RateLimited && (issue.Issued || isSsoManaged))
 					{
@@ -1431,6 +1631,9 @@ namespace Resgrid.Web.Controllers
 			// If we got this far, something failed, redisplay form
 			return View(model);
 		}
+
+		private const string ForgotPasswordLimitedMessage =
+			"Too many password reset requests have come from your network. Please wait up to an hour, then try again.";
 
 		//
 		// GET: /Account/ForgotPasswordConfirmation
@@ -1481,6 +1684,9 @@ namespace Resgrid.Web.Controllers
 		public async Task<IActionResult> BeginPasswordReset(string token, CancellationToken cancellationToken)
 		{
 			SetPasswordRecoveryResponseHeaders();
+			if (!await _formLimits.TryAcquireAsync(PublicFormLimit.PasswordReset, ClientIp(), cancellationToken))
+				return PasswordResetLimited(new ResetPasswordViewModel());
+
 			try
 			{
 				if (!IsPlausibleRecoveryToken(token) ||
@@ -1512,6 +1718,9 @@ namespace Resgrid.Web.Controllers
 		public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model, CancellationToken cancellationToken)
 		{
 			SetPasswordRecoveryResponseHeaders();
+			if (!await _formLimits.TryAcquireAsync(PublicFormLimit.PasswordReset, ClientIp(), cancellationToken))
+				return PasswordResetLimited(model);
+
 			var token = Request.Cookies[RecoveryGrantCookie];
 			var lookup = await _passwordRecoveryService.GetAsync(token, cancellationToken);
 			var request = lookup.Request;
@@ -1590,6 +1799,16 @@ namespace Resgrid.Web.Controllers
 			}, cancellationToken);
 
 			return View("ResetPasswordConfirmation");
+		}
+
+		/// <summary>The reset page refused for the address's limit: the grant (if any) is kept, so the emailed link works once the wait is over.</summary>
+		private IActionResult PasswordResetLimited(ResetPasswordViewModel model)
+		{
+			Response.StatusCode = StatusCodes.Status429TooManyRequests;
+			model.RateLimited = true;
+			model.RateLimitedMessage = FormLimitedMessage(PublicFormLimit.PasswordReset, "password reset attempts",
+				"open the link from your email again");
+			return View(nameof(ResetPassword), model);
 		}
 
 		private async Task<bool> IsSsoManagedAsync(string userId, int? departmentId)
@@ -1694,14 +1913,25 @@ namespace Resgrid.Web.Controllers
 		{
 			Guid code;
 
+			// An address that kept trying codes that don't exist (or kept posting the form) gets no lookups, valid code or not.
+			var clientIp = ClientIp();
+			if (await _formLimits.IsLimitedAsync(PublicFormLimit.Invite, clientIp))
+				return InviteLimited();
+
 			if (!Guid.TryParse(inviteCode, out code))
+			{
+				await _formLimits.RecordAsync(PublicFormLimit.Invite, clientIp);
 				return RedirectToAction("MissingInvite");
+			}
 
 			CompleteInviteModel model = new CompleteInviteModel();
 			model.Invite = await _invitesService.GetInviteByCodeAsync(code);
 
 			if (model.Invite == null)
+			{
+				await _formLimits.RecordAsync(PublicFormLimit.Invite, clientIp);
 				return RedirectToAction("MissingInvite");
+			}
 
 			if (model.Invite.CompletedOn.HasValue)
 				return RedirectToAction("CompletedInvite");
@@ -1714,6 +1944,7 @@ namespace Resgrid.Web.Controllers
 			model.DepartmentName = department.Name;
 			model.Email = model.Invite.EmailAddress;
 			model.Code = inviteCode.ToString();
+			model.MinPasswordLength = await InviteMinPasswordLengthAsync(department.DepartmentId, CancellationToken.None);
 
 			if (model.Invite.IsImport)
 			{
@@ -1737,6 +1968,10 @@ namespace Resgrid.Web.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> CompleteInvite(CompleteInviteModel model, CancellationToken cancellationToken)
 		{
+			// Every post counts against the address (a wrong code included), so the form can't be used to try codes or flood sign-ups.
+			if (!await _formLimits.TryAcquireAsync(PublicFormLimit.Invite, ClientIp(), cancellationToken))
+				return InviteLimited();
+
 			if (!Guid.TryParse(model.Code, out var code))
 				return RedirectToAction("MissingInvite");
 
@@ -1748,11 +1983,30 @@ namespace Resgrid.Web.Controllers
 			if (model.Invite.CompletedOn.HasValue)
 				return RedirectToAction("CompletedInvite");
 
-			model.DepartmentName = (await _departmentsService.GetDepartmentByIdAsync(model.Invite.DepartmentId, true))?.Name;
+			var inviteDepartment = await _departmentsService.GetDepartmentByIdAsync(model.Invite.DepartmentId, true);
+			// The department was removed after the invitation went out: there is nothing left to join, and no account is made.
+			if (inviteDepartment == null)
+				return RedirectToAction("MissingInvite");
+
+			model.DepartmentName = inviteDepartment.Name;
 			model.Email = model.Invite.EmailAddress;
+			model.MinPasswordLength = await InviteMinPasswordLengthAsync(inviteDepartment.DepartmentId, cancellationToken);
 
 			if (model.Invite.IsImport)
 				return await CompleteImportInviteAsync(model, code, cancellationToken);
+
+			// One completion per invitation at a time. A second post of this form (a double click, a resend) is answered as a repeat,
+			// instead of racing the first into "this email is already in use" or "username is already taken".
+			var submission = await ClaimAccountSubmissionAsync("CompleteInvite", model.Code);
+			if (!submission.Claimed)
+			{
+				if (submission.AlreadyCreated)
+					return RedirectToAction("CompletedInvite");
+
+				ModelState.Clear();
+				ModelState.AddModelError(string.Empty, "This invitation form was sent more than once and the first submission is still being processed. Wait a moment, then sign in with the username and password you chose; if you can't sign in, open the invitation link again.");
+				return View(model);
+			}
 
 			if (!StringHelpers.ValidateEmail(model.Email))
 			{
@@ -1762,7 +2016,7 @@ namespace Resgrid.Web.Controllers
 			var existingUser = _usersService.GetUserByEmail(model.Email);
 			if (existingUser != null)
 			{
-				ModelState.AddModelError("EmailAddresses", string.Format("The email address {0} is already in use in this department on another. Email address can only be used once per account in the system. Use the account recovery form to recover your username and password.", model.Email));
+				ModelState.AddModelError("EmailAddresses", string.Format("{0} already belongs to a Resgrid account, so this invitation can't create another one (an email address can only be used by one account). Sign in with that account instead, using Forgot Password if you don't remember it, and ask the {1} administrator to add your existing account to the department.", model.Email, model.DepartmentName));
 			}
 
 			// The new member would take a personnel seat: at the plan's limit no account is created (fresh counts, not the 14-day cache).
@@ -1770,53 +2024,131 @@ namespace Resgrid.Web.Controllers
 
 			if (ModelState.IsValid && !model.DepartmentFull)
 			{
-				var user = new IdentityUser { UserName = model.UserName, Email = model.Email, SecurityStamp = Guid.NewGuid().ToString() };
-				var result = await _userManager.CreateAsync(user, model.Password);
-				if (result.Succeeded)
-				{
-					UserProfile up = new UserProfile();
-					up.UserId = user.Id;
-					up.FirstName = model.FirstName;
-					up.LastName = model.LastName;
-					await _userProfileService.SaveProfileAsync(model.Invite.DepartmentId, up, cancellationToken);
-
-					_usersService.AddUserToUserRole(user.Id);
-					_usersService.InitUserExtInfo(user.Id);
-					await _departmentsService.AddUserToDepartmentAsync(model.Invite.DepartmentId, user.Id, false, cancellationToken);
-
-					_eventAggregator.SendMessage<UserCreatedEvent>(new UserCreatedEvent()
-					{
-						DepartmentId = model.Invite.DepartmentId,
-						Name = $"{model.FirstName} {model.LastName}",
-						User = user
-					});
-
-					_departmentsService.InvalidateDepartmentUsersInCache(model.Invite.DepartmentId);
-					_departmentsService.InvalidatePersonnelNamesInCache(model.Invite.DepartmentId);
-					_usersService.ClearCacheForDepartment(model.Invite.DepartmentId);
-					_departmentsService.InvalidateDepartmentMembers();
-
-					var department = await _departmentsService.GetDepartmentByIdAsync(model.Invite.DepartmentId);
-
-					await _invitesService.CompleteInviteAsync(model.Invite.Code, user.UserId, cancellationToken);
-
-					await _emailService.SendWelcomeEmail(department.Name, $"{model.FirstName} {model.LastName}", model.Email, model.UserName, model.Invite.DepartmentId);
-
-					if (!await SignInTrackedWebSessionAsync(user,
-						UserSessionAuthenticationMethod.LocalPassword, TimeSpan.FromHours(8), cancellationToken,
-						new VerifiedFactor(MfaEvidenceKind.FirstFactor, MfaEvidenceMethod.Password, DateTime.UtcNow)))
-					{
-						ModelState.AddModelError(string.Empty,
-							"Your department's maximum number of active sessions has been reached.");
-						return View(model);
-					}
-
-					return RedirectToAction("Dashboard", "Home", new { area = "User" });
-				}
-				AddErrors(result);
+				// The inviting department's password rules (its minimum length and more) apply to the account it invites, as they do
+				// to every later password change.
+				var policyError = await _departmentSsoService.ValidatePasswordAgainstPolicyAsync(model.Invite.DepartmentId, model.Password, cancellationToken);
+				if (policyError != null)
+					ModelState.AddModelError(nameof(model.Password), ResolvePwdError(policyError));
 			}
 
-			return View(model);
+			if (!ModelState.IsValid || model.DepartmentFull)
+			{
+				await ReleaseAccountSubmissionAsync(submission.Key);
+				return View(model);
+			}
+
+			var user = new IdentityUser { UserName = model.UserName, Email = model.Email, SecurityStamp = Guid.NewGuid().ToString() };
+			IdentityResult result;
+			try
+			{
+				result = await _userManager.CreateAsync(user, model.Password);
+			}
+			catch (Exception ex) when (!(ex is OperationCanceledException))
+			{
+				Logging.LogException(ex, "Completing an invitation could not create the account.");
+				await ReleaseAccountSubmissionAsync(submission.Key);
+				ModelState.AddModelError(string.Empty, "We couldn't create your account right now because of a problem on our side. Please wait a minute and try again.");
+				return View(model);
+			}
+
+			if (!result.Succeeded)
+			{
+				await ReleaseAccountSubmissionAsync(submission.Key);
+				AddErrors(result);
+				return View(model);
+			}
+
+			try
+			{
+				UserProfile up = new UserProfile();
+				up.UserId = user.Id;
+				up.FirstName = model.FirstName;
+				up.LastName = model.LastName;
+				await _userProfileService.SaveProfileAsync(model.Invite.DepartmentId, up, cancellationToken);
+
+				_usersService.AddUserToUserRole(user.Id);
+				_usersService.InitUserExtInfo(user.Id);
+				await _departmentsService.AddUserToDepartmentAsync(model.Invite.DepartmentId, user.Id, false, cancellationToken);
+
+				// The password was just chosen under the department's policy, so its expiration (when the policy has one) counts from now.
+				await _departmentSsoService.RecordPasswordChangedAsync(model.Invite.DepartmentId, user.Id, cancellationToken);
+
+				_eventAggregator.SendMessage<UserCreatedEvent>(new UserCreatedEvent()
+				{
+					DepartmentId = model.Invite.DepartmentId,
+					Name = $"{model.FirstName} {model.LastName}",
+					User = user
+				});
+
+				_departmentsService.InvalidateDepartmentUsersInCache(model.Invite.DepartmentId);
+				_departmentsService.InvalidatePersonnelNamesInCache(model.Invite.DepartmentId);
+				_usersService.ClearCacheForDepartment(model.Invite.DepartmentId);
+				_departmentsService.InvalidateDepartmentMembers();
+
+				await _invitesService.CompleteInviteAsync(model.Invite.Code, user.UserId, cancellationToken);
+				await MarkAccountSubmissionCreatedAsync(submission.Key);
+			}
+			catch (Exception ex) when (!(ex is OperationCanceledException))
+			{
+				// The account exists, so sending the form again would only say the email is in use: say what happened instead.
+				Logging.LogException(ex, $"Invitation {model.Invite.InviteId} created account {user.Id} but adding it to department {model.Invite.DepartmentId} did not finish.");
+				await ReleaseAccountSubmissionAsync(submission.Key);
+				ModelState.AddModelError(string.Empty, "Your account was created, but adding it to the department didn't finish because of a problem on our side. Please don't send this form again: sign in with the username and password you just chose, and if you aren't in the department, ask its administrator to add you.");
+				return View(model);
+			}
+
+			// The account has joined; a welcome email that cannot be sent now never undoes that.
+			try
+			{
+				await _emailService.SendWelcomeEmail(inviteDepartment.Name, $"{model.FirstName} {model.LastName}", model.Email, model.UserName, model.Invite.DepartmentId);
+			}
+			catch (Exception ex) when (!(ex is OperationCanceledException))
+			{
+				Logging.LogException(ex, $"The welcome email for invitation {model.Invite.InviteId} could not be sent.");
+			}
+
+			try
+			{
+				if (!await SignInTrackedWebSessionAsync(user,
+					UserSessionAuthenticationMethod.LocalPassword, TimeSpan.FromHours(8), cancellationToken,
+					new VerifiedFactor(MfaEvidenceKind.FirstFactor, MfaEvidenceMethod.Password, DateTime.UtcNow)))
+				{
+					ModelState.AddModelError(string.Empty,
+						"Your department's maximum number of active sessions has been reached.");
+					return View(model);
+				}
+
+				return RedirectToAction("Dashboard", "Home", new { area = "User" });
+			}
+			catch (Exception ex) when (!(ex is OperationCanceledException))
+			{
+				Logging.LogException(ex, $"Account {user.Id} joined through invitation {model.Invite.InviteId} but could not be signed in.");
+			}
+
+			TempData["LoginMfaMessage"] = "Your account was created. Sign in with the username and password you just chose.";
+			return RedirectToAction(nameof(LogOn));
+		}
+
+		/// <summary>The invitation refused for the address's hourly limit: the missing-invite page, saying why and how long to wait.</summary>
+		private IActionResult InviteLimited()
+		{
+			Response.StatusCode = StatusCodes.Status429TooManyRequests;
+			ViewData["LimitMessage"] = FormLimitedMessage(PublicFormLimit.Invite, "invitation attempts", "open your invitation link again");
+			return View("MissingInvite");
+		}
+
+		/// <summary>The inviting department's minimum password length, for the form's requirements; the system minimum when it can't be read.</summary>
+		private async Task<int> InviteMinPasswordLengthAsync(int departmentId, CancellationToken cancellationToken)
+		{
+			try
+			{
+				return await _departmentSsoService.GetEffectiveMinPasswordLengthAsync(departmentId, cancellationToken);
+			}
+			catch (Exception ex) when (!(ex is OperationCanceledException))
+			{
+				Logging.LogException(ex, $"The minimum password length for department {departmentId} could not be read; the invitation form shows the system minimum.");
+				return 8;
+			}
 		}
 
 		/// <summary>
@@ -1849,6 +2181,14 @@ namespace Resgrid.Web.Controllers
 				ModelState.Remove(key);
 			if (!ModelState.IsValid)
 				return View(model);
+
+			// The importing department's password rules apply to the first password of the account it imported.
+			var policyError = await _departmentSsoService.ValidatePasswordAgainstPolicyAsync(model.Invite.DepartmentId, model.Password, cancellationToken);
+			if (policyError != null)
+			{
+				ModelState.AddModelError(nameof(CompleteInviteModel.Password), ResolvePwdError(policyError));
+				return View(model);
+			}
 
 			var accepted = await _importActivation.AcceptAccountInvitationAsync(code, model.Password, cancellationToken);
 			if (!accepted.Succeeded)
@@ -1991,6 +2331,18 @@ namespace Resgrid.Web.Controllers
 				}
 			}
 
+			// A password sign-in (not one through the department's identity provider) carries any password change the department
+			// requires; RequirePasswordChangeMiddleware holds the session on the change page until it is made.
+			if (departmentSsoConfigId == null &&
+				authenticationMethod is UserSessionAuthenticationMethod.LocalPassword or UserSessionAuthenticationMethod.Recovery &&
+				await DepartmentRequiringPasswordChangeAsync(user, cancellationToken) is int passwordChangeDepartmentId &&
+				principal.Identity is ClaimsIdentity passwordChangeIdentity)
+			{
+				passwordChangeIdentity.AddClaim(new Claim(Resgrid.Web.Middleware.RequirePasswordChangeMiddleware.ClaimType,
+					passwordChangeDepartmentId.ToString(System.Globalization.CultureInfo.InvariantCulture)));
+				HttpContext.Items[PasswordChangeRequiredItem] = passwordChangeDepartmentId;
+			}
+
 			await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal,
 				new AuthenticationProperties
 				{
@@ -2003,6 +2355,64 @@ namespace Resgrid.Web.Controllers
 			await RecordSignInEvidenceAsync(user, MfaEvidenceSession.KeyForNewSignIn(trackedSessionId, HttpContext), verifiedFactors,
 				cancellationToken);
 			return true;
+		}
+
+		private const string PasswordChangeRequiredItem = "Resgrid.PasswordChangeRequired";
+
+		/// <summary>The sign-in this request just made must change its password before anything else.</summary>
+		private bool PasswordChangeRequiredAtSignIn => HttpContext.Items.ContainsKey(PasswordChangeRequiredItem);
+
+		/// <summary>
+		/// The department that requires this account to choose a new password before it does anything else: an administrator flagged
+		/// the member, or the department's password expiration passed. Null when none does, for an account the department's identity
+		/// provider manages (its password is not changed here), and when the check itself fails: a sign-in is never blocked on it.
+		/// </summary>
+		private async Task<int?> DepartmentRequiringPasswordChangeAsync(IdentityUser user, CancellationToken cancellationToken)
+		{
+			try
+			{
+				var department = await _departmentsService.GetDepartmentForUserAsync(user.UserName);
+				if (department == null)
+					return null;
+
+				var member = await _departmentsService.GetDepartmentMemberAsync(user.Id, department.DepartmentId);
+				var required = member != null && member.MustChangePassword;
+				if (!required)
+				{
+					var policy = await _departmentSsoService.GetSecurityPolicyForDepartmentAsync(department.DepartmentId, cancellationToken);
+					required = policy != null && policy.PasswordExpirationDays > 0 &&
+						_departmentSsoService.IsPasswordExpired(policy, member?.PasswordLastSetOn);
+				}
+
+				if (!required || await IsSsoManagedAsync(user.Id, department.DepartmentId))
+					return null;
+
+				return department.DepartmentId;
+			}
+			catch (Exception ex) when (!(ex is OperationCanceledException))
+			{
+				Logging.LogException(ex, "The required password change could not be checked at sign-in; the sign-in continues without it.");
+				return null;
+			}
+		}
+
+		/// <summary>
+		/// The password change this session must make: the department recorded on the session at sign-in, or (for a session made
+		/// before that claim existed) the one the sign-in left in the server session.
+		/// </summary>
+		private (string UserId, int DepartmentId)? PendingPasswordChange()
+		{
+			var claim = User?.FindFirst(Resgrid.Web.Middleware.RequirePasswordChangeMiddleware.ClaimType);
+			var signedInUserId = User?.FindFirstValue(ClaimTypes.NameIdentifier);
+			if (claim != null && !string.IsNullOrWhiteSpace(signedInUserId) &&
+				int.TryParse(claim.Value, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out var claimedDepartmentId))
+				return (signedInUserId, claimedDepartmentId);
+
+			var userId = HttpContext.Session.GetString("ForcePasswordChangeUserId");
+			if (!string.IsNullOrWhiteSpace(userId) && int.TryParse(HttpContext.Session.GetString("ForcePasswordChangeDeptId"), out var departmentId))
+				return (userId, departmentId);
+
+			return null;
 		}
 
 		private async Task AuditSharedSessionStartedAsync(IdentityUser user, UserSession session, CancellationToken cancellationToken)

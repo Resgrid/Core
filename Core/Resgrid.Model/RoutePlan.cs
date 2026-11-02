@@ -35,8 +35,10 @@ namespace Resgrid.Model
 
 		public bool OptimizeStopOrder { get; set; }
 
+		/// <summary>Legacy profile name (driving, driving-traffic, walking, cycling); still written from <see cref="RoutingProfile"/> for builds that read it.</summary>
 		public string MapboxRouteProfile { get; set; }
 
+		/// <summary>The generated route line as a GeoJSON LineString string (every reader parses GeoJSON).</summary>
 		public string MapboxRouteGeometry { get; set; }
 
 		public double? EstimatedDistanceMeters { get; set; }
@@ -44,6 +46,32 @@ namespace Resgrid.Model
 		public double? EstimatedDurationSeconds { get; set; }
 
 		public int GeofenceRadiusMeters { get; set; }
+
+		/// <summary>A <see cref="Model.RoutingProfile"/> value (M0308).</summary>
+		public int RoutingProfile { get; set; }
+
+		/// <summary>A <see cref="RouteAvoidOptions"/> flags value.</summary>
+		public int AvoidOptions { get; set; }
+
+		/// <summary>Station the route starts at; null with <see cref="UseStationAsStart"/> means the plan unit's station.</summary>
+		public int? StartDepartmentGroupId { get; set; }
+
+		/// <summary>Station the route ends at; null with <see cref="UseStationAsEnd"/> means the plan unit's station.</summary>
+		public int? EndDepartmentGroupId { get; set; }
+
+		/// <summary>Routing provider that generated the stored route.</summary>
+		public string RouteProvider { get; set; }
+
+		public DateTime? RouteComputedOn { get; set; }
+
+		/// <summary>SHA-256 of everything the route depends on (start, end, stops, profile, avoid options, vehicle).</summary>
+		public string RouteInputHash { get; set; }
+
+		/// <summary>The normalized route (OSRM v5 / Mapbox Directions shape, polyline6 geometry) including legs and steps.</summary>
+		public string RouteDirectionsJson { get; set; }
+
+		/// <summary>True when stops or options changed since the stored route was generated.</summary>
+		public bool RouteIsStale { get; set; }
 
 		public bool IsDeleted { get; set; }
 

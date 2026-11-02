@@ -2241,4 +2241,223 @@
   <data name="ShiftTradeApproversRoles" xml:space="preserve">
     <value>أعضاء هذه الأدوار</value>
   </data>
+  <data name="NavigationHeader" xml:space="preserve">
+    <value>الملاحة</value>
+  </data>
+  <data name="NavigationHelp" xml:space="preserve">
+    <value>الإعدادات الافتراضية للملاحة خطوة بخطوة في تطبيق Resgrid Unit. لا يزال بإمكان الطواقم تغيير الإرشاد الصوتي والطرق التي يجب تجنبها على أجهزتهم.</value>
+  </data>
+  <data name="NavigationNotEnabled" xml:space="preserve">
+    <value>الملاحة داخل التطبيق غير مفعّلة لقسمك بعد. ستُطبَّق هذه الإعدادات الافتراضية عند تفعيلها.</value>
+  </data>
+  <data name="NavigationVoiceGuidanceLabel" xml:space="preserve">
+    <value>الإرشاد الصوتي</value>
+  </data>
+  <data name="NavigationVoiceGuidanceHelp" xml:space="preserve">
+    <value>قراءة الاتجاهات بصوت عالٍ افتراضيًا.</value>
+  </data>
+  <data name="NavigationDistanceUnitsLabel" xml:space="preserve">
+    <value>وحدات المسافة</value>
+  </data>
+  <data name="NavigationDistanceUnits_Device" xml:space="preserve">
+    <value>حسب الجهاز</value>
+  </data>
+  <data name="NavigationDistanceUnits_Imperial" xml:space="preserve">
+    <value>أميال وأقدام</value>
+  </data>
+  <data name="NavigationDistanceUnits_Metric" xml:space="preserve">
+    <value>كيلومترات وأمتار</value>
+  </data>
+  <data name="NavigationArrivalRadiusLabel" xml:space="preserve">
+    <value>نطاق الوصول (بالأمتار)</value>
+  </data>
+  <data name="NavigationArrivalRadiusHelp" xml:space="preserve">
+    <value>مدى الاقتراب من الوجهة الذي يجب أن تبلغه الوحدة لتُعدّ واصلة. من 10 إلى 1000؛ الافتراضي 50.</value>
+  </data>
+  <data name="NavigationOnScenePromptLabel" xml:space="preserve">
+    <value>اقتراح «في الموقع» عند الوصول</value>
+  </data>
+  <data name="NavigationOnScenePromptHelp" xml:space="preserve">
+    <value>عندما تصل وحدة إلى بلاغ، تقترح الملاحة تعيين حالتها إلى «في الموقع».</value>
+  </data>
+  <data name="NavigationAvoidLabel" xml:space="preserve">
+    <value>التجنب افتراضيًا</value>
+  </data>
+  <data name="NavigationAvoid_Tolls" xml:space="preserve">
+    <value>الطرق ذات الرسوم</value>
+  </data>
+  <data name="NavigationAvoid_Highways" xml:space="preserve">
+    <value>الطرق السريعة</value>
+  </data>
+  <data name="NavigationAvoid_Ferries" xml:space="preserve">
+    <value>العبّارات</value>
+  </data>
+  <data name="NavigationAvoid_Unpaved" xml:space="preserve">
+    <value>الطرق غير المعبّدة</value>
+  </data>
+  <data name="NavigationAvoidHelp" xml:space="preserve">
+    <value>الطرق التي تتجنبها ملاحة الوحدات ما لم يغيّر الطاقم ذلك.</value>
+  </data>
+  <data name="RouteDeviationsHeader" xml:space="preserve">
+    <value>انحرافات المسار</value>
+  </data>
+  <data name="RouteTimeDeviationsLabel" xml:space="preserve">
+    <value>تسجيل حالات الوصول المتأخر والتوقفات الطويلة</value>
+  </data>
+  <data name="RouteTimeDeviationsHelp" xml:space="preserve">
+    <value>يسجّل انحرافًا عندما تصل وحدة على مسار إلى نقطة توقف متأخرة عن الموعد المخطط، أو تبقى عندها أطول من المقدّر.</value>
+  </data>
+  <data name="RouteDeviationThresholdLabel" xml:space="preserve">
+    <value>حد الانحراف (بالدقائق)</value>
+  </data>
+  <data name="RouteDeviationThresholdHelp" xml:space="preserve">
+    <value>عدد دقائق التأخير، أو تجاوز وقت التوقف المقدّر، قبل تسجيل انحراف. من 1 إلى 1440؛ الافتراضي 15.</value>
+  </data>
+  <data name="OfflineMapsHeader" xml:space="preserve">
+    <value>الخرائط دون اتصال</value>
+  </data>
+  <data name="OfflineMapsHelp" xml:space="preserve">
+    <value>ما تنزّله تطبيقات Resgrid لتبقى خرائطها تعمل دون شبكة.</value>
+  </data>
+  <data name="OfflineMapsNotEnabled" xml:space="preserve">
+    <value>الخرائط دون اتصال غير مفعّلة لقسمك بعد. ستُطبَّق هذه الإعدادات عند تفعيلها.</value>
+  </data>
+  <data name="OfflineResponseAreaLabel" xml:space="preserve">
+    <value>منطقة الاستجابة القصوى</value>
+  </data>
+  <data name="OfflineResponseAreaHelp" xml:space="preserve">
+    <value>ارسم المنطقة التي تنزّلها التطبيقات بكامل التفاصيل؛ يمكنك رسم عدة أشكال. إذا لم تُرسم منطقة، تنزّل التطبيقات دائرة بنصف قطر {0} كم حول مركز خريطة القسم.</value>
+  </data>
+  <data name="OfflineResponseAreaClear" xml:space="preserve">
+    <value>مسح المنطقة</value>
+  </data>
+  <data name="OfflineResponseAreaGeoJsonHelp" xml:space="preserve">
+    <value>المنطقة بصيغة GeoJSON. بدلًا من الرسم، يمكنك لصق Polygon أو MultiPolygon من أداة نظم معلومات جغرافية هنا.</value>
+  </data>
+  <data name="OfflineAreaMeasuring" xml:space="preserve">
+    <value>جارٍ قياس حجم التنزيل...</value>
+  </data>
+  <data name="OfflineAreaMeasureFailed" xml:space="preserve">
+    <value>تعذّر قياس حجم التنزيل. سيُتحقق منه مجددًا عند الحفظ.</value>
+  </data>
+  <data name="OfflineAreaSize" xml:space="preserve">
+    <value>حجم التنزيل: {0} من أصل {1} مسموح بها. المساحة: {2} كم².</value>
+  </data>
+  <data name="OfflineAreaNotMeasured" xml:space="preserve">
+    <value>المساحة: {0} كم². لا يمكن قياس حجم التنزيل حتى يتم إعداد خريطة أساسية على الخادم.</value>
+  </data>
+  <data name="OfflineAreaTooLarge" xml:space="preserve">
+    <value>سيبلغ تنزيل هذه المنطقة {0}، أي أكثر من {1} المسموح بها. ارسم منطقة أصغر.</value>
+  </data>
+  <data name="OfflineAreaTooLargeArea" xml:space="preserve">
+    <value>هذه المنطقة كبيرة جدًا للتنزيل. ارسم منطقة أصغر.</value>
+  </data>
+  <data name="OfflineAreaSelfIntersecting" xml:space="preserve">
+    <value>حدود المنطقة تتقاطع مع نفسها. أعد رسمها.</value>
+  </data>
+  <data name="OfflineAreaNoLocation" xml:space="preserve">
+    <value>ليس للقسم مركز خريطة أو عنوان أو محطة لوضع المنطقة الافتراضية حولها. ارسم منطقة أو حدّد مركزًا للخريطة.</value>
+  </data>
+  <data name="OfflineAreaInvalid" xml:space="preserve">
+    <value>المنطقة ليست مضلعًا صالحًا بصيغة GeoJSON.</value>
+  </data>
+  <data name="OfflineIncludedDataLabel" xml:space="preserve">
+    <value>البيانات المضمّنة</value>
+  </data>
+  <data name="OfflineInclude_CustomMaps" xml:space="preserve">
+    <value>الخرائط المخصصة</value>
+  </data>
+  <data name="OfflineInclude_IndoorMaps" xml:space="preserve">
+    <value>الخرائط الداخلية</value>
+  </data>
+  <data name="OfflineInclude_Layers" xml:space="preserve">
+    <value>طبقات الخريطة</value>
+  </data>
+  <data name="OfflineInclude_Pois" xml:space="preserve">
+    <value>نقاط الاهتمام</value>
+  </data>
+  <data name="OfflineInclude_Hydrants" xml:space="preserve">
+    <value>صنابير الإطفاء</value>
+  </data>
+  <data name="OfflineDownloadPolicyLabel" xml:space="preserve">
+    <value>التنزيلات</value>
+  </data>
+  <data name="OfflineDownloadPolicy_WifiOnly" xml:space="preserve">
+    <value>عبر Wi-Fi فقط</value>
+  </data>
+  <data name="OfflineDownloadPolicy_AnyNetwork" xml:space="preserve">
+    <value>عبر أي شبكة</value>
+  </data>
+  <data name="OfflineDownloadPolicy_Manual" xml:space="preserve">
+    <value>فقط عندما يبدؤها المستخدم</value>
+  </data>
+  <data name="OfflineDownloadPolicyHelp" xml:space="preserve">
+    <value>متى تنزّل التطبيقات الخرائط دون اتصال وتحدّثها.</value>
+  </data>
+  <data name="OfflineIncidentPacksLabel" xml:space="preserve">
+    <value>البلاغات خارج المنطقة</value>
+  </data>
+  <data name="OfflineIncidentPacksHelp" xml:space="preserve">
+    <value>تنزيل الخريطة حول بلاغ يقع خارج منطقة الاستجابة.</value>
+  </data>
+  <data name="OfflineIncidentRadiusLabel" xml:space="preserve">
+    <value>نصف القطر حول البلاغات (كم)</value>
+  </data>
+  <data name="OfflineCorridorPacksLabel" xml:space="preserve">
+    <value>المسارات خارج المنطقة</value>
+  </data>
+  <data name="OfflineCorridorPacksHelp" xml:space="preserve">
+    <value>تنزيل الخريطة على طول مسار مخطط حيث يخرج من منطقة الاستجابة.</value>
+  </data>
+  <data name="OfflineCorridorBufferLabel" xml:space="preserve">
+    <value>العرض على جانبي المسارات (بالأمتار)</value>
+  </data>
+  <data name="OfflineRefreshHoursLabel" xml:space="preserve">
+    <value>التحقق من التحديثات كل (ساعات)</value>
+  </data>
+  <data name="OfflineRefreshHoursHelp" xml:space="preserve">
+    <value>عدد مرات بحث التطبيقات عن الخرائط المتغيّرة. من 1 إلى 720؛ الافتراضي 24.</value>
+  </data>
+  <data name="OfflineStaleDaysLabel" xml:space="preserve">
+    <value>تُعدّ قديمة بعد (أيام)</value>
+  </data>
+  <data name="OfflineStaleDaysHelp" xml:space="preserve">
+    <value>تُعرض الخرائط المنزّلة التي لم تُحدَّث خلال هذه المدة على أنها قديمة. من 1 إلى 365؛ الافتراضي 7.</value>
+  </data>
+  <data name="OfflinePreferLocalLabel" xml:space="preserve">
+    <value>استخدام الخرائط المنزّلة عند الاتصال</value>
+  </data>
+  <data name="OfflinePreferLocalHelp" xml:space="preserve">
+    <value>داخل منطقة الاستجابة، تستخدم التطبيقات الخريطة الأساسية المنزّلة حتى مع وجود شبكة، مما يوفّر بيانات الجوال.</value>
+  </data>
+  <data name="MapProviderBaseMap" xml:space="preserve">
+    <value>الخريطة الأساسية</value>
+  </data>
+  <data name="MapProviderRouting" xml:space="preserve">
+    <value>التوجيه</value>
+  </data>
+  <data name="MapProviderTraffic" xml:space="preserve">
+    <value>حركة المرور المباشرة</value>
+  </data>
+  <data name="MapProviderSelfHosted" xml:space="preserve">
+    <value>خرائط هذا الخادم (OpenStreetMap)</value>
+  </data>
+  <data name="MapProviderRoutingEstimate" xml:space="preserve">
+    <value>تقدير بخط مستقيم</value>
+  </data>
+  <data name="MapProviderTrafficOn" xml:space="preserve">
+    <value>متاحة</value>
+  </data>
+  <data name="MapProviderTrafficOff" xml:space="preserve">
+    <value>غير متاحة</value>
+  </data>
+  <data name="MapStyleSelfHostedNote" xml:space="preserve">
+    <value>يرسم هذا الخادم خرائطه الخاصة، لذا تُعرض فقط الأنماط التي يستطيع عرضها. تحتاج أنماط المجتمع، وصور الأقمار الصناعية إن لم يوفرها الخادم، إلى Mapbox.</value>
+  </data>
+  <data name="MapStyleServerGroup" xml:space="preserve">
+    <value>أنماط هذا الخادم</value>
+  </data>
+  <data name="MapStyleNotAvailable" xml:space="preserve">
+    <value>(غير متاح على هذا الخادم)</value>
+  </data>
 </root>

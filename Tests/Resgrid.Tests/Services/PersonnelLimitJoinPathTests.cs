@@ -50,15 +50,19 @@ namespace Resgrid.Tests.Services
 			_limits = new Mock<ILimitsService>();
 			_limits.Setup(l => l.CanDepartmentAddNewUserAsync(Dept, true)).ReturnsAsync(false);
 
+			var sso = new Mock<IDepartmentSsoService>();
+			sso.Setup(x => x.GetEffectiveMinPasswordLengthAsync(Dept, It.IsAny<CancellationToken>())).ReturnsAsync(8);
+
 			// No UserManager: reaching account creation would throw, which is the point.
 			_controller = new Resgrid.Web.Controllers.AccountController(userManager: null, signInManager: null, departmentsService: departments.Object,
 				usersService: new Mock<IUsersService>().Object, emailService: null, invitesService: invites.Object, userProfileService: null,
 				subscriptionsService: null, affiliateService: null, eventAggregator: null,
-				systemAuditsService: null, serviceProvider: null, departmentSsoService: null, secLocalizer: null,
+				systemAuditsService: null, serviceProvider: null, departmentSsoService: sso.Object, secLocalizer: null,
 				userSessionService: null, externalIdentityLinkService: null, passwordRecoveryService: null, limitsService: _limits.Object,
 				mfaEvidenceService: null, securityNotices: null, mfaActivity: null, loginTransactions: null, passkeys: null, approvals: null,
 				mfaPolicy: null, twoFactorLocalizer: null, ssoBroker: null, ssoReturnTargets: null, dataProtection: null, adpStepUp: null, mfaState: null,
-				userStore: null, recoveries: null, passkeyRows: null, challenges: null, approvalRows: null, sharedSessions: null, importActivation: null);
+				userStore: null, recoveries: null, passkeyRows: null, challenges: null, approvalRows: null, sharedSessions: null, importActivation: null,
+				loginThrottle: null, formLimits: new Resgrid.Services.PublicFormRateLimiter(new Resgrid.Tests.Security.Live.InMemoryCacheProvider()), cacheProvider: new Mock<ICacheProvider>().Object);
 		}
 
 		[Test]

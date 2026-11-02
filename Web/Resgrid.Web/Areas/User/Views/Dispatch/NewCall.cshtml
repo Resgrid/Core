@@ -617,8 +617,6 @@
         var newCallFormData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.NewCallFormData ?? string.Empty, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
         var osmTileUrl = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(mapConfig.TileUrl, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
         var osmTileAttribution = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(mapConfig.Attribution, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
-        var nominatimUrl = '@Resgrid.Config.MappingConfig.NominatimUrl';
-        var osrmUrl = '@Resgrid.Config.MappingConfig.OsrmUrl';
     </script>
 
     @if (Model.CenterCoordinates != null && Model.CenterCoordinates.Latitude.HasValue && Model.CenterCoordinates.Longitude.HasValue)
@@ -630,6 +628,7 @@
     }
 
     @await Html.PartialAsync("_DispatchLocalizationScript")
+    <partial name="_MapKitConfig" />
     <script src="~/js/app/internal/dispatch/resgrid.dispatch.runcarddecision.js"></script>
     <script src="~/js/app/internal/dispatch/resgrid.dispatch.nearestboard.js"></script>
     <script src="~/js/app/internal/dispatch/resgrid.dispatch.newcall.js"></script>

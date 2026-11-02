@@ -97,7 +97,7 @@
                             </select>
                         </div>
                     }
-                    <form id="registrationForm" class="m-t" role="form" asp-controller="Account" asp-action="Register" method="post">
+                    <form id="registrationForm" class="m-t" role="form" asp-controller="Account" asp-action="Register" method="post" data-submit-once>
                         @Html.AntiForgeryToken()
                         <div class="form-group">
                             <input type="text" class="form-control" placeholder="@localizer["FirstName"]" asp-for="FirstName" required="">
@@ -176,6 +176,7 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script src="~/js/app/public/resgrid.submit-once.js" asp-append-version="true"></script>
 
     <script>
             $(document).ready(function () {
@@ -198,14 +199,10 @@
                   useSpecial: false
                 });
 
+              // resgrid.submit-once.js keeps a second click from posting the registration twice.
               $(document).on('submit', '#registrationForm', function () {
                 var crep = $('#g-recaptcha-response').val();
                 $('#GoogleReCaptchaResponse').val(crep);
-
-                if ($(this).valid()) {
-                  // On submit disable form submit button
-                  $('#registerButton').prop('disabled', true);
-                }
 
                 return true;
               });

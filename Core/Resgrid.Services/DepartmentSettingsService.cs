@@ -41,6 +41,8 @@ namespace Resgrid.Services
 		private static string MapStyleNightCacheKey = "DSetMapStyleNight_{0}";
 		private static string CallNumberingConfigCacheKey = "DSetCallNumbering_{0}";
 		private static string DocumentNumberingConfigCacheKey = "DSetDocumentNumbering_{0}";
+		private static string MappingNavigationConfigCacheKey = "DSetMappingNavigation_{0}";
+		private static string OfflineMapPacksConfigCacheKey = "DSetOfflineMapPacks_{0}";
 		private static string DepartmentTerminologyCacheKey = "DSetTerminology_{0}";
 		private static string DispatchResponseCodesCacheKey = "DSetDispatchResponseCodes_{0}";
 		private static string DepartmentImportConfigCacheKey = "DSetDepartmentImport_{0}";
@@ -1279,6 +1281,84 @@ namespace Resgrid.Services
 				DepartmentSettingTypes.CallNumberingConfig, cancellationToken);
 		}
 
+		public async Task<OfflineMapPacksConfig> GetOfflineMapPacksConfigAsync(int departmentId, bool bypassCache = false)
+		{
+			async Task<string> getSetting()
+			{
+				var setting = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.OfflineMapPacksConfig);
+				return setting?.Setting ?? string.Empty;
+			}
+
+			string value;
+			if (Config.SystemBehaviorConfig.CacheEnabled && !bypassCache)
+				value = await _cacheProvider.RetrieveAsync<string>(string.Format(OfflineMapPacksConfigCacheKey, departmentId), getSetting, LongCacheLength);
+			else
+				value = await getSetting();
+
+			if (!String.IsNullOrWhiteSpace(value))
+			{
+				try
+				{
+					var config = ObjectSerialization.Deserialize<OfflineMapPacksConfig>(value);
+
+					if (config != null)
+						return config;
+				}
+				catch (Exception)
+				{
+					// A corrupt blob falls back to the defaults and the fallback response area.
+				}
+			}
+
+			return new OfflineMapPacksConfig();
+		}
+
+		public async Task<DepartmentSetting> SetOfflineMapPacksConfigAsync(int departmentId, OfflineMapPacksConfig config,
+			CancellationToken cancellationToken = default(CancellationToken))
+		{
+			return await SaveOrUpdateSettingAsync(departmentId, ObjectSerialization.Serialize(config ?? new OfflineMapPacksConfig()),
+				DepartmentSettingTypes.OfflineMapPacksConfig, cancellationToken);
+		}
+
+		public async Task<MappingNavigationConfig> GetMappingNavigationConfigAsync(int departmentId, bool bypassCache = false)
+		{
+			async Task<string> getSetting()
+			{
+				var setting = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.MappingNavigationConfig);
+				return setting?.Setting ?? string.Empty;
+			}
+
+			string value;
+			if (Config.SystemBehaviorConfig.CacheEnabled && !bypassCache)
+				value = await _cacheProvider.RetrieveAsync<string>(string.Format(MappingNavigationConfigCacheKey, departmentId), getSetting, LongCacheLength);
+			else
+				value = await getSetting();
+
+			if (!String.IsNullOrWhiteSpace(value))
+			{
+				try
+				{
+					var config = ObjectSerialization.Deserialize<MappingNavigationConfig>(value);
+
+					if (config != null)
+						return config;
+				}
+				catch (Exception)
+				{
+					// A corrupt blob falls back to the defaults; navigation and check-ins carry on.
+				}
+			}
+
+			return new MappingNavigationConfig();
+		}
+
+		public async Task<DepartmentSetting> SetMappingNavigationConfigAsync(int departmentId, MappingNavigationConfig config,
+			CancellationToken cancellationToken = default(CancellationToken))
+		{
+			return await SaveOrUpdateSettingAsync(departmentId, ObjectSerialization.Serialize(config ?? new MappingNavigationConfig()),
+				DepartmentSettingTypes.MappingNavigationConfig, cancellationToken);
+		}
+
 		public async Task<DocumentNumberingConfig> GetDocumentNumberingConfigAsync(int departmentId, bool bypassCache = false)
 		{
 			async Task<string> getSetting()
@@ -1879,6 +1959,12 @@ namespace Resgrid.Services
 					break;
 				case DepartmentSettingTypes.DocumentNumberingConfig:
 					cacheKey = string.Format(DocumentNumberingConfigCacheKey, departmentId);
+					break;
+				case DepartmentSettingTypes.MappingNavigationConfig:
+					cacheKey = string.Format(MappingNavigationConfigCacheKey, departmentId);
+					break;
+				case DepartmentSettingTypes.OfflineMapPacksConfig:
+					cacheKey = string.Format(OfflineMapPacksConfigCacheKey, departmentId);
 					break;
 				case DepartmentSettingTypes.DepartmentTerminology:
 					cacheKey = string.Format(DepartmentTerminologyCacheKey, departmentId);

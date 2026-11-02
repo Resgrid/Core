@@ -181,4 +181,100 @@
   <data name="Latitude" xml:space="preserve"><value>Szerokość geograficzna</value></data>
   <data name="Longitude" xml:space="preserve"><value>Długość geograficzna</value></data>
   <data name="FindLocationVia" xml:space="preserve"><value>Znajdź lokalizację przez</value></data>
+  <data name="ProfileTruck" xml:space="preserve">
+    <value>Ciężarówka (wymiary pojazdu)</value>
+  </data>
+  <data name="ProfileTrafficUnavailable" xml:space="preserve">
+    <value>(brak ruchu na żywo na tym serwerze)</value>
+  </data>
+  <data name="AvoidLabel" xml:space="preserve">
+    <value>Unikaj</value>
+  </data>
+  <data name="AvoidTolls" xml:space="preserve">
+    <value>Opłat drogowych</value>
+  </data>
+  <data name="AvoidHighways" xml:space="preserve">
+    <value>Autostrad</value>
+  </data>
+  <data name="AvoidFerries" xml:space="preserve">
+    <value>Promów</value>
+  </data>
+  <data name="AvoidUnpaved" xml:space="preserve">
+    <value>Dróg nieutwardzonych</value>
+  </data>
+  <data name="StartStation" xml:space="preserve">
+    <value>Strażnica początkowa</value>
+  </data>
+  <data name="EndStation" xml:space="preserve">
+    <value>Strażnica końcowa</value>
+  </data>
+  <data name="UnitStationOption" xml:space="preserve">
+    <value>Strażnica jednostki</value>
+  </data>
+  <data name="LegColumn" xml:space="preserve">
+    <value>Odcinek</value>
+  </data>
+  <data name="ArrivalColumn" xml:space="preserve">
+    <value>Przybycie</value>
+  </data>
+  <data name="StopGeofenceRadius" xml:space="preserve">
+    <value>Promień dotarcia (m)</value>
+  </data>
+  <data name="StopGeofenceRadiusHelp" xml:space="preserve">
+    <value>Pozostaw puste, aby użyć promienia trasy.</value>
+  </data>
+  <data name="OptimizeOrder" xml:space="preserve">
+    <value>Optymalizuj kolejność</value>
+  </data>
+  <data name="OptimizeTitle" xml:space="preserve">
+    <value>Zoptymalizowana kolejność przystanków</value>
+  </data>
+  <data name="OptimizeCurrent" xml:space="preserve">
+    <value>Obecna kolejność</value>
+  </data>
+  <data name="OptimizeProposed" xml:space="preserve">
+    <value>Proponowana kolejność</value>
+  </data>
+  <data name="OptimizeAccept" xml:space="preserve">
+    <value>Użyj tej kolejności</value>
+  </data>
+  <data name="RouteStart" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="RouteEnd" xml:space="preserve">
+    <value>Koniec</value>
+  </data>
+  <data name="RouteTotal" xml:space="preserve">
+    <value>Łącznie</value>
+  </data>
+  <data name="RouteWithStops" xml:space="preserve">
+    <value>z postojami</value>
+  </data>
+  <data name="RouteEstimate" xml:space="preserve">
+    <value>szacunek w linii prostej</value>
+  </data>
+  <data name="MoveUp" xml:space="preserve">
+    <value>W górę</value>
+  </data>
+  <data name="MoveDown" xml:space="preserve">
+    <value>W dół</value>
+  </data>
+  <data name="DeleteStop" xml:space="preserve">
+    <value>Usuń przystanek</value>
+  </data>
+  <data name="TruckNoVehicle" xml:space="preserve">
+    <value>Ta jednostka nie ma ustawionych wymiarów, więc Ciężarówka wyznacza trasę jak samochód.</value>
+  </data>
+  <data name="OptimizeFailed" xml:space="preserve">
+    <value>Nie udało się zoptymalizować kolejności przystanków.</value>
+  </data>
+  <data name="OptimizeNoChange" xml:space="preserve">
+    <value>Przystanki są już w najlepszej kolejności.</value>
+  </data>
+  <data name="StopOrderFailed" xml:space="preserve">
+    <value>Nie udało się zapisać nowej kolejności przystanków. Strona zostanie odświeżona.</value>
+  </data>
+  <data name="StopMoveFailed" xml:space="preserve">
+    <value>Nie udało się przenieść przystanku. Strona zostanie odświeżona.</value>
+  </data>
 </root>

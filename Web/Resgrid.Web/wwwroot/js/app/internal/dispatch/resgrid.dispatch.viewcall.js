@@ -48,20 +48,18 @@ var resgrid;
 					type: 'GET'
 				}).done(function (result) {
                     var data = result;
+                    var center = [Number(data.centerLat), Number(data.centerLon)];
 
-                    const tiles1 = L.tileLayer(
-                        osmTileUrl,
-                        {
-                            maxZoom: 19,
-                            attribution: osmTileAttribution
-                        }
-                    );
+                    resgrid.maps.create('callMap', { center: center, zoom: 11, scrollZoom: false, traffic: 'off' }).then(function (created) {
+                        map = created;
+                        callMarker = map.addMarker(center);
 
-                    map = L.map('callMap', {
-                        scrollWheelZoom: false
-                    }).setView([data.centerLat, data.centerLon], 11).addLayer(tiles1);
-
-                    callMarker = new L.marker(new L.LatLng(data.centerLat, data.centerLon), { draggable: false }).addTo(map);
+                        // The map tab can start hidden (Dispatched tab active), which leaves the map sized 0x0.
+                        $('a[href="#tab-1"]').on('shown.bs.tab', function () {
+                            map.resize();
+                            map.setView(center, map.getZoom());
+                        });
+                    });
 				});
 
 				$('.callImages').slick({

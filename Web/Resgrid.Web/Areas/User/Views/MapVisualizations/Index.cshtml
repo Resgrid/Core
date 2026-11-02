@@ -35,6 +35,8 @@
 					<rg-map-visualizer strings="@System.Text.Json.JsonSerializer.Serialize(Model.Strings)"
 					                   tileurl="@Model.TileUrl"
 					                   attribution="@Model.Attribution"
+					                   maprenderer="@SettingsHelper.GetMapLibreWebConfig().Renderer"
+					                   maplibrestyleurl="@SettingsHelper.GetMapLibreWebConfig().StyleUrlDay"
 					                   initialid="@Model.InitialId"
 					                   initialtemplate="@Model.InitialTemplate"
 					                   initialcallid="@Model.InitialCallId"></rg-map-visualizer>

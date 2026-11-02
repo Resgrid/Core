@@ -16,5 +16,8 @@ namespace Resgrid.Web.Areas.User.Models.Units
 		public List<UnitRole> UnitRoles { get; set; }
 		public List<CustomState> States { get; set; }
 		public List<PersonnelRole> PersonnelRoles { get; set; }
+
+		/// <summary>The unit's own vehicle size and weight; blank fields use its unit type's values.</summary>
+		public VehicleSizeInput VehicleSize { get; set; }
 	}
 }

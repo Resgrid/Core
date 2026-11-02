@@ -103,7 +103,75 @@ namespace Resgrid.Web.Services.Models.v4.Routes
 		/// <summary>Origin longitude supplied by the caller (unit's current location). Null means start from the first waypoint.</summary>
 		public decimal? OriginLongitude { get; set; }
 		public List<RouteDirectionWaypointData> Waypoints { get; set; }
+
+		// Appended by the MapLibre routing plan (section 10.5); legacy builds read only the fields above.
+		/// <summary>The routing provider that produced the route (valhalla, mapbox, google, osrm, estimate).</summary>
+		public string Provider { get; set; }
+		/// <summary>Attribution the provider requires wherever the route is shown.</summary>
+		public string Attribution { get; set; }
+		/// <summary>True when only a straight-line estimate was available (no road route).</summary>
+		public bool IsEstimate { get; set; }
+		public bool IsTrafficAware { get; set; }
+		/// <summary>True when the unit's size and weight limits were applied.</summary>
+		public bool VehicleRestricted { get; set; }
+		/// <summary>True when the route was computed from the caller's position (live instance directions).</summary>
+		public bool IsLive { get; set; }
+		/// <summary>Travel time plus estimated dwell at the stops.</summary>
+		public double? EstimatedDurationWithDwellSeconds { get; set; }
+		public DateTime? ComputedOn { get; set; }
+		/// <summary>The resolved route start (station or explicit point); null when the route starts at the first stop.</summary>
+		public RouteEndpointData Start { get; set; }
+		/// <summary>The resolved route end; null when the route ends at the last stop.</summary>
+		public RouteEndpointData End { get; set; }
+		/// <summary>One leg per stop arrival (and one to the end), with planned offsets or live ETAs.</summary>
+		public List<RouteDirectionLegData> Legs { get; set; } = new List<RouteDirectionLegData>();
+		/// <summary>The full route in the OSRM v5 / Mapbox Directions shape (polyline6 geometry, legs with steps); null when unavailable.</summary>
+		public Newtonsoft.Json.Linq.JToken Route { get; set; }
+		public List<Routing.RouteIncidentData> Incidents { get; set; } = new List<Routing.RouteIncidentData>();
+
 		public RouteDirectionsResultData() { Waypoints = new List<RouteDirectionWaypointData>(); }
+	}
+
+	public class RouteEndpointData
+	{
+		public double Latitude { get; set; }
+		public double Longitude { get; set; }
+		/// <summary>The station the point is; null for an explicit point.</summary>
+		public int? DepartmentGroupId { get; set; }
+		public string Name { get; set; }
+	}
+
+	public class RouteDirectionLegData
+	{
+		/// <summary>The stop this leg arrives at; null for the leg to the route end.</summary>
+		public string RouteStopId { get; set; }
+		public string RouteInstanceStopId { get; set; }
+		public string Name { get; set; }
+		public double DistanceMeters { get; set; }
+		public double DurationSeconds { get; set; }
+		/// <summary>Seconds from the route start (or from now, for live directions) to arrival, including dwell before it.</summary>
+		public double OffsetSeconds { get; set; }
+		/// <summary>Arrival time for live instance directions.</summary>
+		public DateTime? EtaUtc { get; set; }
+	}
+
+	public class PreviewRouteOptimizationResult : StandardApiResponseV4Base
+	{
+		public RouteOptimizationPreviewData Data { get; set; }
+		public PreviewRouteOptimizationResult() { Data = new RouteOptimizationPreviewData(); }
+	}
+
+	public class RouteOptimizationPreviewData
+	{
+		public string RoutePlanId { get; set; }
+		public string Provider { get; set; }
+		public bool Changed { get; set; }
+		public List<string> CurrentOrder { get; set; } = new List<string>();
+		public List<string> ProposedOrder { get; set; } = new List<string>();
+		public double CurrentDistanceMeters { get; set; }
+		public double CurrentDurationSeconds { get; set; }
+		public double ProposedDistanceMeters { get; set; }
+		public double ProposedDurationSeconds { get; set; }
 	}
 
 	public class RouteDirectionWaypointData
@@ -116,6 +184,12 @@ namespace Resgrid.Web.Services.Models.v4.Routes
 		public decimal Longitude { get; set; }
 		public string Address { get; set; }
 		public int Status { get; set; }
+
+		// Appended by the MapLibre routing plan (section 10.5).
+		public int? EstimatedDwellMinutes { get; set; }
+		public double? PlannedOffsetSeconds { get; set; }
+		/// <summary>Live ETA (instance directions from a position) or the planned arrival of a running instance's stop.</summary>
+		public DateTime? EtaUtc { get; set; }
 	}
 
 	public class GetActiveRouteInstancesResult : StandardApiResponseV4Base
@@ -217,6 +291,16 @@ namespace Resgrid.Web.Services.Models.v4.Routes
 		public double? EstimatedDurationSeconds { get; set; }
 		public string MapboxRouteProfile { get; set; }
 		public DateTime AddedOn { get; set; }
+
+		// Appended by the MapLibre routing plan (section 10.5); legacy builds ignore them.
+		/// <summary>RoutingProfile: Driving=0, DrivingTraffic=1, Truck=2, Walking=3, Cycling=4.</summary>
+		public int RoutingProfile { get; set; }
+		/// <summary>RouteAvoidOptions flags: Tolls=1, Highways=2, Ferries=4, Unpaved=8.</summary>
+		public int AvoidOptions { get; set; }
+		public string RouteProvider { get; set; }
+		public DateTime? RouteComputedOn { get; set; }
+		/// <summary>True when stops or options changed since the stored route was generated.</summary>
+		public bool RouteIsStale { get; set; }
 	}
 
 	public class RoutePlanDetailResultData
@@ -243,6 +327,19 @@ namespace Resgrid.Web.Services.Models.v4.Routes
 		public DateTime AddedOn { get; set; }
 		public List<RouteStopResultData> Stops { get; set; }
 		public List<RouteScheduleResultData> Schedules { get; set; }
+
+		// Appended by the MapLibre routing plan (section 10.5); legacy builds ignore them.
+		/// <summary>RoutingProfile: Driving=0, DrivingTraffic=1, Truck=2, Walking=3, Cycling=4.</summary>
+		public int RoutingProfile { get; set; }
+		/// <summary>RouteAvoidOptions flags: Tolls=1, Highways=2, Ferries=4, Unpaved=8.</summary>
+		public int AvoidOptions { get; set; }
+		public int? StartDepartmentGroupId { get; set; }
+		public int? EndDepartmentGroupId { get; set; }
+		public string RouteProvider { get; set; }
+		public DateTime? RouteComputedOn { get; set; }
+		public bool RouteIsStale { get; set; }
+		/// <summary>Travel time plus every stop's estimated dwell.</summary>
+		public double? EstimatedDurationWithDwellSeconds { get; set; }
 
 		public RoutePlanDetailResultData()
 		{
@@ -271,6 +368,14 @@ namespace Resgrid.Web.Services.Models.v4.Routes
 		public string ContactName { get; set; }
 		public string ContactNumber { get; set; }
 		public string Notes { get; set; }
+
+		// Appended by the MapLibre routing plan (section 10.5).
+		/// <summary>Distance of the leg arriving at this stop.</summary>
+		public double? LegDistanceMeters { get; set; }
+		/// <summary>Travel time of the leg arriving at this stop.</summary>
+		public double? LegDurationSeconds { get; set; }
+		/// <summary>Seconds from the route start to arrival here, including earlier stops' dwell.</summary>
+		public double? PlannedOffsetSeconds { get; set; }
 	}
 
 	public class RouteScheduleResultData

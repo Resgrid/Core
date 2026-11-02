@@ -72,17 +72,7 @@
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">@localizer["RouteProfile"]</label>
-                            <div class="col-sm-4">
-                                <select class="form-control" asp-for="Plan.MapboxRouteProfile">
-                                    <option value="driving">@localizer["ProfileDriving"]</option>
-                                    <option value="walking">@localizer["ProfileWalking"]</option>
-                                    <option value="cycling">@localizer["ProfileCycling"]</option>
-                                    <option value="driving-traffic">@localizer["ProfileDrivingTraffic"]</option>
-                                </select>
-                            </div>
-                        </div>
+                        <partial name="_RouteProfileOptions" model="Model" />
 
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["GeofenceRadius"]</label>
@@ -105,6 +95,8 @@
                                 </label>
                             </div>
                         </div>
+
+                        <partial name="_RouteStationOptions" model="Model" />
 
                         <!-- Start location picker (shown when Use Station as Start is unchecked) -->
                         <div id="startLocationGroup" style="display:none;">
@@ -165,7 +157,11 @@
                             <button type="button" class="btn btn-sm btn-primary pull-right" data-toggle="modal" data-target="#addStopModal">
                                 <i class="fa fa-plus"></i> @localizer["AddStop"]
                             </button>
+                            <button type="button" class="btn btn-sm btn-white pull-right" id="optimizeStopsBtn" style="display:none;margin-right:5px;">
+                                <i class="fa fa-magic"></i> @localizer["OptimizeOrder"]
+                            </button>
                         </div>
+                        <div id="routeTotals" class="text-muted m-b-sm"></div>
                         <div class="table-responsive">
                             <table class="table table-striped" id="stopsTable">
                                 <thead>
@@ -175,30 +171,18 @@
                                     <th>@localizer["StopType"]</th>
                                     <th>@localizer["Address"]</th>
                                     <th>@localizer["Priority"]</th>
+                                    <th>@localizer["LegColumn"]</th>
+                                    <th>@localizer["ArrivalColumn"]</th>
                                     <th></th>
                                 </tr>
                                 </thead>
-                                <tbody id="stopsTableBody">
-                                @foreach (var stop in Model.Stops)
-                                {
-                                    <tr id="stopRow_@stop.RouteStopId">
-                                        <td>@stop.StopOrder</td>
-                                        <td>@stop.Name</td>
-                                        <td>@((Resgrid.Model.RouteStopType)stop.StopType)</td>
-                                        <td>@stop.Address</td>
-                                        <td>@((Resgrid.Model.RouteStopPriority)stop.Priority)</td>
-                                        <td>
-                                            <button type="button" class="btn btn-xs btn-danger delete-stop-btn" data-stop-id="@stop.RouteStopId">
-                                                <i class="fa fa-trash"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                }
-                                </tbody>
+                                @* Rows are drawn by the route editor script, with each stop's leg and arrival. *@
+                                <tbody id="stopsTableBody"></tbody>
                             </table>
                         </div>
 
-                        <div id="routeMap" style="height:400px;margin-bottom:20px;border:1px solid #ddd;"></div>
+                        <div id="routeMap" style="height:400px;margin-bottom:5px;border:1px solid #ddd;"></div>
+                        <p class="text-muted small" id="routeAttribution" style="margin-bottom:20px;"></p>
 
                         <div class="hr-line-dashed"></div>
 
@@ -309,6 +293,13 @@
                         <div class="col-sm-9"><input type="number" id="stopDwellMinutes" class="form-control" min="0" /></div>
                     </div>
                     <div class="form-group">
+                        <label class="col-sm-3 control-label">@localizer["StopGeofenceRadius"]</label>
+                        <div class="col-sm-9">
+                            <input type="number" id="stopGeofenceRadius" class="form-control" min="10" max="5000" />
+                            <span class="help-block m-b-none">@localizer["StopGeofenceRadiusHelp"]</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <label class="col-sm-3 control-label">@localizer["SelectContact"]</label>
                         <div class="col-sm-9">
                             <select id="stopContactPicker" class="form-control">
@@ -340,11 +331,32 @@
     </div>
 </div>
 
+<div class="modal fade" id="optimizeModal" tabindex="-1" role="dialog" aria-labelledby="optimizeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="optimizeModalLabel">@localizer["OptimizeTitle"]</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-6"><h5>@localizer["OptimizeCurrent"]</h5><div id="optimizeCurrent"></div></div>
+                    <div class="col-sm-6"><h5>@localizer["OptimizeProposed"]</h5><div id="optimizeProposed"></div></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">@localizer["Cancel"]</button>
+                <button type="button" class="btn btn-primary" id="optimizeAcceptBtn">@localizer["OptimizeAccept"]</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script>
         var osmTileUrl = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(mapConfig.TileUrl, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
         var osmTileAttribution = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(mapConfig.Attribution, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
-        var editStops =@Html.ScriptJson(Model.Stops.OrderBy(s => s.StopOrder).Select(s => new { id = s.RouteStopId, s.Name, lat = s.Latitude, lng = s.Longitude }));
+        var editStops = @Html.ScriptJson(Model.Stops.OrderBy(s => s.StopOrder).Select(s => new { id = s.RouteStopId, name = s.Name, stopType = s.StopType, priority = s.Priority, address = s.Address, dwellMinutes = s.EstimatedDwellMinutes, lat = s.Latitude, lng = s.Longitude }));
         var routePlanId = '@Model.Plan.RoutePlanId';
         var availableContacts = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject((Model.Contacts ?? Enumerable.Empty<Resgrid.Model.Contact>()).Select(c => new { id = c.ContactId ?? "", name = c.GetName() ?? "", phone = c.CellPhoneNumber ?? c.OfficePhoneNumber ?? c.HomePhoneNumber ?? "" }), new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
         var existingStartLat = @(Model.Plan.StartLatitude.HasValue ? Model.Plan.StartLatitude.Value.ToString(System.Globalization.CultureInfo.InvariantCulture) : "null");
@@ -352,5 +364,7 @@
         var existingEndLat = @(Model.Plan.EndLatitude.HasValue ? Model.Plan.EndLatitude.Value.ToString(System.Globalization.CultureInfo.InvariantCulture) : "null");
         var existingEndLng = @(Model.Plan.EndLongitude.HasValue ? Model.Plan.EndLongitude.Value.ToString(System.Globalization.CultureInfo.InvariantCulture) : "null");
     </script>
+    <partial name="_MapKitConfig" />
+    <partial name="_RouteEditorSettings" model="Model" />
     <script src="~/js/app/internal/routes/resgrid.routes.edit.js"></script>
 }

@@ -197,5 +197,17 @@ namespace Resgrid.Model
 		/// dashboard. On: the new dashboard, unless the member chose classic. Seeded off by M0307.
 		/// </summary>
 		public const string DashboardModern = "Dashboard.Modern";
+
+		/// <summary>
+		/// Unit in-app turn-by-turn navigation and the live ETA it shares with Dispatch and Big Board
+		/// (maplibre-mapping-routing-navigation-plan.md §9). Also needs a Valhalla or Mapbox routing provider. Seeded off by M0308.
+		/// </summary>
+		public const string NavigationInApp = "Navigation.InApp";
+
+		/// <summary>The web application's maps on MapLibre GL instead of Leaflet raster tiles (plan §7). Seeded off by M0308.</summary>
+		public const string MapsMapLibreWeb = "Maps.MapLibreWeb";
+
+		/// <summary>Offline map packs for the apps (plan §19). Seeded off by M0308.</summary>
+		public const string MapsOffline = "Maps.Offline";
 	}
 }

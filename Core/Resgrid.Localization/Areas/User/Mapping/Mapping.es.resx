@@ -284,4 +284,49 @@
   <data name="False" xml:space="preserve">
     <value>No</value>
   </data>
+  <data name="DrawToolPolygon" xml:space="preserve">
+    <value>Dibujar un polígono</value>
+  </data>
+  <data name="DrawToolRectangle" xml:space="preserve">
+    <value>Dibujar un rectángulo</value>
+  </data>
+  <data name="DrawToolLine" xml:space="preserve">
+    <value>Dibujar una línea</value>
+  </data>
+  <data name="DrawToolPoint" xml:space="preserve">
+    <value>Colocar un marcador</value>
+  </data>
+  <data name="DrawToolCircle" xml:space="preserve">
+    <value>Dibujar un círculo</value>
+  </data>
+  <data name="DrawToolText" xml:space="preserve">
+    <value>Añadir texto</value>
+  </data>
+  <data name="DrawToolCut" xml:space="preserve">
+    <value>Recortar la forma seleccionada (dibuje la parte a quitar)</value>
+  </data>
+  <data name="DrawToolRotate" xml:space="preserve">
+    <value>Girar la forma seleccionada (arrastre en el mapa)</value>
+  </data>
+  <data name="DrawToolSelect" xml:space="preserve">
+    <value>Seleccionar y editar</value>
+  </data>
+  <data name="DrawToolDelete" xml:space="preserve">
+    <value>Eliminar la forma seleccionada</value>
+  </data>
+  <data name="DrawToolClear" xml:space="preserve">
+    <value>Quitar todas las formas</value>
+  </data>
+  <data name="DrawTextPrompt" xml:space="preserve">
+    <value>Texto a mostrar</value>
+  </data>
+  <data name="DrawSelectShapeFirst" xml:space="preserve">
+    <value>Seleccione primero una forma en el mapa.</value>
+  </data>
+  <data name="LayerElementsInvalid" xml:space="preserve">
+    <value>No se pudieron leer las formas de la capa. Recargue la página y vuelva a dibujarlas.</value>
+  </data>
+  <data name="TrafficLayer" xml:space="preserve">
+    <value>Tráfico en vivo</value>
+  </data>
 </root>

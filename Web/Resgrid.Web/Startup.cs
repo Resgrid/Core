@@ -804,6 +804,9 @@ namespace Resgrid.Web
 			app.UseWhen(
 				context => !string.Equals(context.Request.Path.Value, "/health/getcurrent", StringComparison.OrdinalIgnoreCase),
 				authenticatedApp => authenticatedApp.UseSession());
+			// A password the department requires changed is changed before anything else, 2FA enrollment included (that
+			// middleware lets the change page through, so the two never send the browser back and forth).
+			app.UseMiddleware<Resgrid.Web.Middleware.RequirePasswordChangeMiddleware>();
 			app.UseMiddleware<Resgrid.Web.Middleware.Require2FAEnrollmentMiddleware>();
 
 			app.UseRequestLocalization();

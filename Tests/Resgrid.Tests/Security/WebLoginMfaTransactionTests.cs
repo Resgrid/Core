@@ -76,6 +76,8 @@ namespace Resgrid.Tests.Security
 			_sharedGate = PasskeyConfig.SharedDeviceModeEnabled;
 			_grantShared = false;
 			_sharedSessions = Mock.Of<ISharedSessionService>();
+			_loginThrottle = new LoginThrottleService(new Resgrid.Tests.Security.Live.InMemoryCacheProvider());
+			_formLimits = new PublicFormRateLimiter(new Resgrid.Tests.Security.Live.InMemoryCacheProvider());
 			_begun = null;
 			_redeemedFor = null;
 			TwoFactorConfig.LoginMfaTransactionEnabled = true;
@@ -200,6 +202,8 @@ namespace Resgrid.Tests.Security
 		private const string StagedKey = "GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ";
 		private InMemoryUserMfaStateRepository _mfaState;
 		private ISharedSessionService _sharedSessions = Mock.Of<ISharedSessionService>();
+		private ILoginThrottleService _loginThrottle;
+		private IPublicFormRateLimiter _formLimits;
 		private bool _grantShared;
 		private bool _sharedGate;
 		private Mock<IAuthenticationService> _lastAuthentication;
@@ -296,7 +300,7 @@ namespace Resgrid.Tests.Security
 			var controller = new WebAccountController(_users.Object, _signIn.Object, departments.Object, usersService.Object, null, null, null, null, null, null,
 				_audits.Object, null, _sso.Object, null, _sessions.Object, _links.Object, null, null, _evidenceService ?? _evidence.Object, _notices.Object, _activity.Object,
 				_transactions, _passkeys.Object, _approvals.Object, _policyService, twoFactor.Object, _broker.Object, _returnTargets.Object, _dataProtection,
-				_adpStepUp.Object, _mfaState, _userStore.Object, _recoveries, _passkeyRows, _challenges.Object, _approvalRows.Object, _sharedSessions, null)
+				_adpStepUp.Object, _mfaState, _userStore.Object, _recoveries, _passkeyRows, _challenges.Object, _approvalRows.Object, _sharedSessions, null, null, _loginThrottle, _formLimits)
 			{
 				ControllerContext = new ControllerContext { HttpContext = http },
 				TempData = new TempDataDictionary(http, Mock.Of<ITempDataProvider>()),

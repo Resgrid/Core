@@ -36,7 +36,11 @@ namespace Resgrid.Services
 				ipCount > SessionSecurityConfig.PublicResetIpLimitPerHour ||
 				accountCount > SessionSecurityConfig.PublicResetAccountLimitPerHour)
 			{
-				return new PasswordRecoveryIssueResult { RateLimited = true };
+				return new PasswordRecoveryIssueResult
+				{
+					RateLimited = true,
+					IpRateLimited = ipCount > SessionSecurityConfig.PublicResetIpLimitPerHour
+				};
 			}
 
 			// Rate-limit unknown accounts too, but only persist a reset request for an eligible user.

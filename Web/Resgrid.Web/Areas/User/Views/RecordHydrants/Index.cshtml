@@ -69,13 +69,15 @@
 	</div>
 </div>
 @section Scripts {
+	<partial name="_MapKitConfig" />
 	<script>
-		(function () {
-			if (typeof L === 'undefined' || !document.getElementById('hydrantMap')) { return; }
-			var map = L.map('hydrantMap');
-			L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap' }).addTo(map);
+		// The hydrants themselves come from the hydrant layer every resgrid.maps map adds (department tiles, not a hard-coded OSM URL).
+		$(function () {
+			if (!document.getElementById('hydrantMap')) { return; }
 			var bounds = @Html.ScriptJson(Model.MapPoints.Select(p => new[] { p.Latitude, p.Longitude }));
-			if (bounds.length) { map.fitBounds(bounds, { padding: [20, 20], maxZoom: 17 }); } else { map.setView([39.5, -98.35], 4); }
-		})();
+			resgrid.maps.create('hydrantMap', { center: [39.5, -98.35], zoom: 4 }).then(function (map) {
+				if (bounds.length) { map.fitBounds(bounds.map(function (p) { return [Number(p[0]), Number(p[1])]; }), { padding: 20, maxZoom: 17 }); }
+			});
+		});
 	</script>
 }

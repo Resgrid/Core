@@ -95,7 +95,7 @@
                             @(string.IsNullOrWhiteSpace(sharedWorkstation) ? twoFactorLocalizer["SharedWorkstationNotice"] : string.Format(twoFactorLocalizer["SharedWorkstationNoticeNamed"].Value, sharedWorkstation))
                         </div>
                     }
-                    <form class="m-t" role="form" asp-controller="Account" asp-action="LogOn" method="post" asp-route-returnurl="@ViewData["ReturnUrl"]">
+                    <form class="m-t" role="form" asp-controller="Account" asp-action="LogOn" method="post" asp-route-returnurl="@ViewData["ReturnUrl"]" data-submit-once>
                         <div class="form-group">
                             <input type="text" class="form-control" placeholder="Username" asp-for="Username" required="">
                         </div>
@@ -217,6 +217,7 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script src="~/js/app/public/resgrid.submit-once.js" asp-append-version="true"></script>
     <script>
          $(document).ready(function () {
             let lanCookieString = RegExp(".AspNetCore.Culture" + "=[^;]+").exec(document.cookie);

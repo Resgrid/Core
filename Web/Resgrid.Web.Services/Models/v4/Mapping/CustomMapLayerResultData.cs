@@ -18,6 +18,12 @@ namespace Resgrid.Web.Services.Models.v4.Mapping
 		public decimal? BoundsSWLat { get; set; }
 		public decimal? BoundsSWLon { get; set; }
 		public decimal Opacity { get; set; }
+
+		/// <summary>
+		/// Signed Web Mercator tile template ({z}/{x}/{y}) for MapLibre clients when the layer is georeferenced (it or its
+		/// map has bounds); null for pixel-only layers. The pixel-pyramid tiles above are unchanged.
+		/// </summary>
+		public string MercatorTileUrl { get; set; }
 		public List<CustomMapRegionResultData> Regions { get; set; }
 	}
 }

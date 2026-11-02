@@ -120,19 +120,12 @@ var resgrid;
 
                 // No map when GPS coordinates are hidden by the field policy.
                 if (document.getElementById('callMap')) {
-                    const tiles1 = L.tileLayer(
-                        osmTileUrl,
-                        {
-                            maxZoom: 19,
-                            attribution: osmTileAttribution
-                        }
-                    );
+                    // resgrid.maps: MapLibre or Leaflet by the department's Maps.MapLibreWeb flag (maplibre plan section 7).
+                    resgrid.maps.create('callMap', { center: [Number(centerLat), Number(centerLng)], zoom: 11, scrollZoom: false, traffic: 'on' }).then(function (created) {
+                        map = created;
 
-                    map = L.map('callMap', {
-                        scrollWheelZoom: false
-                    }).setView([centerLat, centerLng], 11).addLayer(tiles1);
-
-                    map.on('click', function (e) {
+                    map.onClick(function (clicked) {
+                            var e = { latlng: { lat: clicked[0], lng: clicked[1] } };
                         resgrid.dispatch.nearestboard.keepView(e.latlng.lat, e.latlng.lng);
                         resgrid.dispatch.newcall.setMarkerLocation(e.latlng.lat, e.latlng.lng);
 
@@ -140,12 +133,20 @@ var resgrid;
                         $("#Longitude").val(e.latlng.lng.toString());
                         //$("#What3Word").val('');
 
-                        map.panTo(e.latlng);
+                        map.setView(clicked);
 
                         resgrid.dispatch.newcall.geocodeCoordinates(e.latlng.lat, e.latlng.lng);
                     });
 
                     resgrid.dispatch.nearestboard.drawBoundaries();
+
+                        // A location placed before the map finished loading gets its pin now.
+                        var placedLat = parseFloat($("#Latitude").val());
+                        var placedLng = parseFloat($("#Longitude").val());
+                        if (!isNaN(placedLat) && !isNaN(placedLng)) {
+                            resgrid.dispatch.newcall.setMarkerLocation(placedLat, placedLng);
+                        }
+                    });
                 }
                 $("#searchButton").click(function (evt) {
                     var where = jQuery.trim($("#Call_Address").val());
@@ -162,7 +163,7 @@ var resgrid;
                                 var lat = result.Data.Latitude;
                                 var lng = result.Data.Longitude;
                                 if (map) {
-                                    map.setView(new L.LatLng(lat, lng), 16);
+                                    map.setView([Number(lat), Number(lng)], 16);
                                 }
                                 $("#Latitude").val(lat.toString());
                                 $("#Longitude").val(lng.toString());
@@ -185,7 +186,7 @@ var resgrid;
                     }).done(function (data) {
                         if (data && data.Latitude != null && data.Longitude != null) {
                             if (map) {
-                                map.setView(new L.LatLng(data.Latitude, data.Longitude), 16);
+                                map.setView([Number(data.Latitude), Number(data.Longitude)], 16);
                             }
 
                             $("#Latitude").val(data.Latitude);
@@ -208,7 +209,9 @@ var resgrid;
                         alert(getText('invalidCoordinates', 'Please enter valid numeric latitude and longitude values.'));
                         return false;
                     }
-                    map.setView(new L.LatLng(lat, lng), 16);
+                    if (map) {
+                        map.setView([Number(lat), Number(lng)], 16);
+                    }
                     resgrid.dispatch.newcall.setMarkerLocation(lat, lng);
                     evt.preventDefault();
                 });
@@ -424,13 +427,13 @@ var resgrid;
             });
             function centerMap() {
                 if (map && centerLat && centerLng) {
-                    map.panTo(new L.LatLng(centerLat, centerLng));
+                    map.setView([Number(centerLat), Number(centerLng)]);
                 }
             }
             newcall.centerMap = centerMap;
             function foundLocation(position) {
                 if (map) {
-                    map.panTo(new L.LatLng(position.coords.latitude, position.coords.longitude));
+                    map.setView([Number(position.coords.latitude), Number(position.coords.longitude)]);
                 }
             }
             newcall.foundLocation = foundLocation;
@@ -439,7 +442,7 @@ var resgrid;
                 // configured map centre -- this used to pan to a hardcoded coordinate in Wollongong,
                 // Australia, which every department outside NSW saw as "the map is in the wrong place".
                 if (map && centerLat && centerLng) {
-                    map.panTo(new L.LatLng(centerLat, centerLng));
+                    map.setView([Number(centerLat), Number(centerLng)]);
                 }
             }
             newcall.noLocation = noLocation;
@@ -457,14 +460,12 @@ var resgrid;
                 }
 
                 if (callMarker) {
-                    callMarker.setLatLng(new L.LatLng(lat, lng));
+                    callMarker.setLatLng([Number(lat), Number(lng)]);
                 } else {
-                    callMarker = new L.marker(new L.LatLng(lat, lng), { draggable: 'true' }).addTo(map);
-                    callMarker.on('dragend', function (event) {
-                        var marker = event.target;
-                        var position = marker.getLatLng();
-                        marker.setLatLng(new L.LatLng(position.lat, position.lng), { draggable: 'true' });
-                        map.panTo(new L.LatLng(position.lat, position.lng));
+                    callMarker = map.addMarker([Number(lat), Number(lng)], { draggable: true });
+                    callMarker.onDragEnd(function (moved) {
+                        var position = { lat: moved[0], lng: moved[1] };
+                        map.setView(moved);
 
                         $("#Latitude").val(position.lat);
                         $("#Longitude").val(position.lng);

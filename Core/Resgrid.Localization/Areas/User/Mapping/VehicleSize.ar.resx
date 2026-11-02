@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Map Icon Legend and status / priority map icon pages -->
+    <data name="VehicleSizeHeader" xml:space="preserve">
+    <value>حجم المركبة ووزنها</value>
+  </data>
+  <data name="VehicleSizeHelp" xml:space="preserve">
+    <value>يتجنب التوجيه الطرق والجسور والأنفاق والمنعطفات التي لا تستطيع هذه المركبة استخدامها. اترك الحقل فارغًا إذا لم ينطبق.</value>
+  </data>
+  <data name="VehicleSizeUnitHelp" xml:space="preserve">
+    <value>الحقول الفارغة تستخدم قيم نوع الوحدة (باللون الرمادي).</value>
+  </data>
+  <data name="VehicleUnits" xml:space="preserve">
+    <value>الوحدات</value>
+  </data>
+  <data name="VehicleUnitsImperial" xml:space="preserve">
+    <value>أقدام وأرطال</value>
+  </data>
+  <data name="VehicleUnitsMetric" xml:space="preserve">
+    <value>أمتار وكيلوغرامات</value>
+  </data>
+  <data name="VehicleHeight" xml:space="preserve">
+    <value>الارتفاع</value>
+  </data>
+  <data name="VehicleWidth" xml:space="preserve">
+    <value>العرض</value>
+  </data>
+  <data name="VehicleLength" xml:space="preserve">
+    <value>الطول (مع المقطورة)</value>
+  </data>
+  <data name="VehicleGrossWeight" xml:space="preserve">
+    <value>الوزن الإجمالي</value>
+  </data>
+  <data name="VehicleAxleLoad" xml:space="preserve">
+    <value>حمولة المحور الأثقل</value>
+  </data>
+  <data name="VehicleAxleCount" xml:space="preserve">
+    <value>المحاور</value>
+  </data>
+  <data name="VehicleHazmat" xml:space="preserve">
+    <value>مواد خطرة</value>
+  </data>
+  <data name="VehicleHazmatInherit" xml:space="preserve">
+    <value>استخدام نوع الوحدة</value>
+  </data>
+  <data name="VehicleHazmatYes" xml:space="preserve">
+    <value>نعم</value>
+  </data>
+  <data name="VehicleHazmatNo" xml:space="preserve">
+    <value>لا</value>
+  </data>
+  <data name="VehicleLimitsAll" xml:space="preserve">
+    <value>يطبّق مزوّد التوجيه لديك جميع هذه القيود.</value>
+  </data>
+  <data name="VehicleLimitsSize" xml:space="preserve">
+    <value>يطبّق مزوّد التوجيه لديك الارتفاع والعرض والوزن فقط.</value>
+  </data>
+  <data name="VehicleLimitsNone" xml:space="preserve">
+    <value>لا يطبّق مزوّد التوجيه لديك قيود المركبة؛ قد تستخدم المسارات طرقًا لا تستطيع هذه المركبة سلوكها.</value>
+  </data>
+  <data name="VehicleDataCaveat" xml:space="preserve">
+    <value>القيود مكتملة بقدر اكتمال بيانات الطرق في الخريطة؛ ويبقى الطاقم مسؤولًا عن الحدود المعلنة.</value>
+  </data>
+  <data name="VehicleRangeError" xml:space="preserve">
+    <value>يجب أن تكون قيمة {0} بين {1} و{2}.</value>
+  </data>
+</root>

@@ -93,10 +93,12 @@
 </div>
 
 @section Scripts {
+    <partial name="_MapKitConfig" />
     <script>
-        var osmTileUrl = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(mapConfig.TileUrl, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
-        var osmTileAttribution = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(mapConfig.Attribution, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
         var instanceStops = @Html.ScriptJson(Model.Stops.OrderBy(s => s.StopOrder).Select(s => new { s.StopOrder, s.Status, lat = s.CheckInLatitude, lng = s.CheckInLongitude }));
+        var plannedGeometry = @Html.ScriptJson(Model.Plan?.MapboxRouteGeometry ?? "");
+        var actualGeometry = @Html.ScriptJson(Model.CanSeeTrack ? Model.Instance.ActualRouteGeometry ?? "" : "");
+        var instanceDeviations = @Html.ScriptJson(Model.CanSeeTrack ? Model.Deviations.Select(d => new { type = ((Resgrid.Model.RouteDeviationTypes)d.DeviationType).ToString(), notes = d.Notes, lat = d.Latitude, lng = d.Longitude }) : null);
     </script>
     <script src="~/js/app/internal/routes/resgrid.routes.instancedetail.js"></script>
 }

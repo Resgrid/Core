@@ -1,0 +1,55 @@
+@model Resgrid.Web.Areas.User.Models.Routes.IRouteEditorModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Routes.Routes> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.VehicleSize> vehicleLocalizer
+@{
+    var labels = new Dictionary<string, string>
+    {
+        ["stopType0"] = localizer["StopTypeManual"].Value,
+        ["stopType1"] = localizer["StopTypeScheduledCall"].Value,
+        ["stopType3"] = localizer["StopTypeWaypoint"].Value,
+        ["priority0"] = localizer["PriorityNormal"].Value,
+        ["priority1"] = localizer["PriorityHigh"].Value,
+        ["priority2"] = localizer["PriorityCritical"].Value,
+        ["priority3"] = localizer["PriorityOptional"].Value,
+        ["start"] = localizer["RouteStart"].Value,
+        ["end"] = localizer["RouteEnd"].Value,
+        ["total"] = localizer["RouteTotal"].Value,
+        ["withStops"] = localizer["RouteWithStops"].Value,
+        ["estimate"] = localizer["RouteEstimate"].Value,
+        ["moveUp"] = localizer["MoveUp"].Value,
+        ["moveDown"] = localizer["MoveDown"].Value,
+        ["deleteStop"] = localizer["DeleteStop"].Value,
+        ["truckNoVehicle"] = localizer["TruckNoVehicle"].Value,
+        ["optimizeFailed"] = localizer["OptimizeFailed"].Value,
+        ["optimizeNoChange"] = localizer["OptimizeNoChange"].Value,
+        ["stopOrderFailed"] = localizer["StopOrderFailed"].Value,
+        ["stopMoveFailed"] = localizer["StopMoveFailed"].Value,
+        ["limitsAll"] = vehicleLocalizer["VehicleLimitsAll"].Value,
+        ["limitsSize"] = vehicleLocalizer["VehicleLimitsSize"].Value,
+        ["limitsNone"] = vehicleLocalizer["VehicleLimitsNone"].Value,
+        ["caveat"] = vehicleLocalizer["VehicleDataCaveat"].Value,
+        ["height"] = vehicleLocalizer["VehicleHeight"].Value,
+        ["width"] = vehicleLocalizer["VehicleWidth"].Value,
+        ["length"] = vehicleLocalizer["VehicleLength"].Value,
+        ["weight"] = vehicleLocalizer["VehicleGrossWeight"].Value,
+        ["axleLoad"] = vehicleLocalizer["VehicleAxleLoad"].Value,
+        ["axles"] = vehicleLocalizer["VehicleAxleCount"].Value,
+        ["hazmat"] = vehicleLocalizer["VehicleHazmat"].Value
+    };
+}
+<script>
+    var routeEditorSettings = {
+        stations: @Html.ScriptJson(Model.Editor.Stations),
+        unitStations: @Html.ScriptJson(Model.Editor.UnitStations),
+        unitVehicles: @Html.ScriptJson(Model.Editor.UnitVehicles),
+        trafficAvailable: @(Model.Editor.TrafficAvailable ? "true" : "false"),
+        vehicleLimits: @Html.ScriptJson(Model.Editor.VehicleLimits),
+        attribution: @Html.ScriptJson(Model.Editor.Attribution ?? string.Empty),
+        metric: @(Model.Editor.Metric ? "true" : "false"),
+        previewUrl: @Html.ScriptJson(Url.Action("PreviewOptimization", "Routes", new { area = "User" })),
+        applyUrl: @Html.ScriptJson(Url.Action("ApplyStopOrder", "Routes", new { area = "User" })),
+        moveUrl: @Html.ScriptJson(Url.Action("MoveStop", "Routes", new { area = "User" })),
+        labels: @Html.ScriptJson(labels)
+    };
+</script>
+<script src="~/js/app/internal/routes/resgrid.routes.editor.js"></script>

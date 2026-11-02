@@ -24,6 +24,18 @@ namespace Resgrid.Model.Services
 		Task<double> GetEtaInSecondsAsync(string start, string destination);
 
 		/// <summary>
+		/// Routed drive time through the install's routing provider for a vehicle with size and weight limits (plan §10.3);
+		/// -1 when only a straight-line estimate is available.
+		/// </summary>
+		Task<double> GetEtaInSecondsAsync(string start, string destination, VehicleProfile vehicle);
+
+		/// <summary>
+		/// Routed drive times from several origins to one destination in one matrix request (plan §6.2). Each entry is the
+		/// time for the origin at the same index, or -1 when it could not be routed (callers keep their own estimate).
+		/// </summary>
+		Task<List<double>> GetEtasInSecondsAsync(IReadOnlyList<string> origins, string destination, VehicleProfile vehicle = null);
+
+		/// <summary>
 		/// Best-effort coordinates for a station group: its stored Latitude/Longitude
 		/// first, then the centroid of its geofence polygon, then the geocoded group
 		/// address (GetMapCenterCoordinatesForGroupAsync fallback chain). Null when

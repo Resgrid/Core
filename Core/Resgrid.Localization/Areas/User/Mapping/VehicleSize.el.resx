@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Map Icon Legend and status / priority map icon pages -->
+    <data name="VehicleSizeHeader" xml:space="preserve">
+    <value>Διαστάσεις και βάρος οχήματος</value>
+  </data>
+  <data name="VehicleSizeHelp" xml:space="preserve">
+    <value>Η δρομολόγηση αποφεύγει δρόμους, γέφυρες, σήραγγες και στροφές που αυτό το όχημα δεν μπορεί να χρησιμοποιήσει. Αφήστε ένα πεδίο κενό αν δεν ισχύει.</value>
+  </data>
+  <data name="VehicleSizeUnitHelp" xml:space="preserve">
+    <value>Τα κενά πεδία χρησιμοποιούν τις τιμές του τύπου μονάδας (με γκρι).</value>
+  </data>
+  <data name="VehicleUnits" xml:space="preserve">
+    <value>Μονάδες</value>
+  </data>
+  <data name="VehicleUnitsImperial" xml:space="preserve">
+    <value>Πόδια και λίβρες</value>
+  </data>
+  <data name="VehicleUnitsMetric" xml:space="preserve">
+    <value>Μέτρα και κιλά</value>
+  </data>
+  <data name="VehicleHeight" xml:space="preserve">
+    <value>Ύψος</value>
+  </data>
+  <data name="VehicleWidth" xml:space="preserve">
+    <value>Πλάτος</value>
+  </data>
+  <data name="VehicleLength" xml:space="preserve">
+    <value>Μήκος (με ρυμουλκούμενο)</value>
+  </data>
+  <data name="VehicleGrossWeight" xml:space="preserve">
+    <value>Μικτό βάρος</value>
+  </data>
+  <data name="VehicleAxleLoad" xml:space="preserve">
+    <value>Φορτίο βαρύτερου άξονα</value>
+  </data>
+  <data name="VehicleAxleCount" xml:space="preserve">
+    <value>Άξονες</value>
+  </data>
+  <data name="VehicleHazmat" xml:space="preserve">
+    <value>Επικίνδυνα υλικά</value>
+  </data>
+  <data name="VehicleHazmatInherit" xml:space="preserve">
+    <value>Χρήση τύπου μονάδας</value>
+  </data>
+  <data name="VehicleHazmatYes" xml:space="preserve">
+    <value>Ναι</value>
+  </data>
+  <data name="VehicleHazmatNo" xml:space="preserve">
+    <value>Όχι</value>
+  </data>
+  <data name="VehicleLimitsAll" xml:space="preserve">
+    <value>Ο πάροχος δρομολόγησής σας εφαρμόζει όλους αυτούς τους περιορισμούς.</value>
+  </data>
+  <data name="VehicleLimitsSize" xml:space="preserve">
+    <value>Ο πάροχος δρομολόγησής σας εφαρμόζει μόνο ύψος, πλάτος και βάρος.</value>
+  </data>
+  <data name="VehicleLimitsNone" xml:space="preserve">
+    <value>Ο πάροχος δρομολόγησής σας δεν εφαρμόζει περιορισμούς οχήματος· οι διαδρομές μπορεί να περνούν από δρόμους που αυτό το όχημα δεν μπορεί να χρησιμοποιήσει.</value>
+  </data>
+  <data name="VehicleDataCaveat" xml:space="preserve">
+    <value>Οι περιορισμοί είναι τόσο πλήρεις όσο τα οδικά δεδομένα του χάρτη· τα πληρώματα παραμένουν υπεύθυνα για τα σημασμένα όρια.</value>
+  </data>
+  <data name="VehicleRangeError" xml:space="preserve">
+    <value>Το {0} πρέπει να είναι μεταξύ {1} και {2}.</value>
+  </data>
+</root>

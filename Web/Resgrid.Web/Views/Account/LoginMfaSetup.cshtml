@@ -36,7 +36,7 @@
                         <p><kbd id="setupKey">@Model.SharedKey</kbd></p>
                     </div>
                     <p>@localizer["SetupStep3"]</p>
-                    <form asp-action="LoginMfaSetup" asp-controller="Account" method="post" id="loginMfaSetupForm" autocomplete="off">
+                    <form asp-action="LoginMfaSetup" asp-controller="Account" method="post" id="loginMfaSetupForm" autocomplete="off" data-submit-once>
                         @Html.AntiForgeryToken()
                         <input type="hidden" asp-for="ReturnUrl" />
                         @if (!ViewData.ModelState.IsValid)
@@ -57,5 +57,6 @@
     </div>
 
     @Html.Partial("_ScriptsPartial")
+    <script src="~/js/app/public/resgrid.submit-once.js" asp-append-version="true"></script>
 </body>
 </html>

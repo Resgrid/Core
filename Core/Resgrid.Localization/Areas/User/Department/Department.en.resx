@@ -2241,4 +2241,223 @@
   <data name="ShiftTradeApproversRoles" xml:space="preserve">
     <value>Members of These Roles</value>
   </data>
+  <data name="NavigationHeader" xml:space="preserve">
+    <value>Navigation</value>
+  </data>
+  <data name="NavigationHelp" xml:space="preserve">
+    <value>Defaults for turn-by-turn navigation in the Resgrid Unit app. Crews can still change spoken guidance and roads to avoid on their device.</value>
+  </data>
+  <data name="NavigationNotEnabled" xml:space="preserve">
+    <value>In-app navigation is not on for your department yet. These defaults apply once it is.</value>
+  </data>
+  <data name="NavigationVoiceGuidanceLabel" xml:space="preserve">
+    <value>Spoken guidance</value>
+  </data>
+  <data name="NavigationVoiceGuidanceHelp" xml:space="preserve">
+    <value>Read directions aloud by default.</value>
+  </data>
+  <data name="NavigationDistanceUnitsLabel" xml:space="preserve">
+    <value>Distance units</value>
+  </data>
+  <data name="NavigationDistanceUnits_Device" xml:space="preserve">
+    <value>Follow the device</value>
+  </data>
+  <data name="NavigationDistanceUnits_Imperial" xml:space="preserve">
+    <value>Miles and feet</value>
+  </data>
+  <data name="NavigationDistanceUnits_Metric" xml:space="preserve">
+    <value>Kilometres and metres</value>
+  </data>
+  <data name="NavigationArrivalRadiusLabel" xml:space="preserve">
+    <value>Arrival radius (metres)</value>
+  </data>
+  <data name="NavigationArrivalRadiusHelp" xml:space="preserve">
+    <value>How close a unit must get to its destination to count as arrived. 10 to 1000; default 50.</value>
+  </data>
+  <data name="NavigationOnScenePromptLabel" xml:space="preserve">
+    <value>Offer On Scene on arrival</value>
+  </data>
+  <data name="NavigationOnScenePromptHelp" xml:space="preserve">
+    <value>When a unit arrives at a call, navigation offers to set its status to On Scene.</value>
+  </data>
+  <data name="NavigationAvoidLabel" xml:space="preserve">
+    <value>Avoid by default</value>
+  </data>
+  <data name="NavigationAvoid_Tolls" xml:space="preserve">
+    <value>Tolls</value>
+  </data>
+  <data name="NavigationAvoid_Highways" xml:space="preserve">
+    <value>Highways</value>
+  </data>
+  <data name="NavigationAvoid_Ferries" xml:space="preserve">
+    <value>Ferries</value>
+  </data>
+  <data name="NavigationAvoid_Unpaved" xml:space="preserve">
+    <value>Unpaved roads</value>
+  </data>
+  <data name="NavigationAvoidHelp" xml:space="preserve">
+    <value>Roads unit navigation avoids unless the crew changes it.</value>
+  </data>
+  <data name="RouteDeviationsHeader" xml:space="preserve">
+    <value>Route deviations</value>
+  </data>
+  <data name="RouteTimeDeviationsLabel" xml:space="preserve">
+    <value>Record late arrivals and long stops</value>
+  </data>
+  <data name="RouteTimeDeviationsHelp" xml:space="preserve">
+    <value>Records a deviation when a unit on a route arrives at a stop later than planned, or stays at a stop longer than estimated.</value>
+  </data>
+  <data name="RouteDeviationThresholdLabel" xml:space="preserve">
+    <value>Deviation threshold (minutes)</value>
+  </data>
+  <data name="RouteDeviationThresholdHelp" xml:space="preserve">
+    <value>How many minutes late, or over the estimated stop time, before a deviation is recorded. 1 to 1440; default 15.</value>
+  </data>
+  <data name="OfflineMapsHeader" xml:space="preserve">
+    <value>Offline maps</value>
+  </data>
+  <data name="OfflineMapsHelp" xml:space="preserve">
+    <value>What the Resgrid apps download so their maps keep working without a network.</value>
+  </data>
+  <data name="OfflineMapsNotEnabled" xml:space="preserve">
+    <value>Offline maps are not on for your department yet. These settings apply once they are.</value>
+  </data>
+  <data name="OfflineResponseAreaLabel" xml:space="preserve">
+    <value>Maximum response area</value>
+  </data>
+  <data name="OfflineResponseAreaHelp" xml:space="preserve">
+    <value>Draw the area the apps download at full detail; you can draw several shapes. With no area drawn, the apps download a {0} km circle around the department map centre.</value>
+  </data>
+  <data name="OfflineResponseAreaClear" xml:space="preserve">
+    <value>Clear area</value>
+  </data>
+  <data name="OfflineResponseAreaGeoJsonHelp" xml:space="preserve">
+    <value>The area as GeoJSON. You can paste a Polygon or MultiPolygon from a GIS tool here instead of drawing it.</value>
+  </data>
+  <data name="OfflineAreaMeasuring" xml:space="preserve">
+    <value>Measuring the download size...</value>
+  </data>
+  <data name="OfflineAreaMeasureFailed" xml:space="preserve">
+    <value>The download size could not be measured. It is checked again when you save.</value>
+  </data>
+  <data name="OfflineAreaSize" xml:space="preserve">
+    <value>Download size: {0} of the {1} allowed. Area: {2} km².</value>
+  </data>
+  <data name="OfflineAreaNotMeasured" xml:space="preserve">
+    <value>Area: {0} km². The download size cannot be measured until a base map is set up on the server.</value>
+  </data>
+  <data name="OfflineAreaTooLarge" xml:space="preserve">
+    <value>This area's download would be {0}, over the {1} allowed. Draw a smaller area.</value>
+  </data>
+  <data name="OfflineAreaTooLargeArea" xml:space="preserve">
+    <value>This area is too large to download. Draw a smaller area.</value>
+  </data>
+  <data name="OfflineAreaSelfIntersecting" xml:space="preserve">
+    <value>The area's outline crosses itself. Redraw it.</value>
+  </data>
+  <data name="OfflineAreaNoLocation" xml:space="preserve">
+    <value>The department has no map centre, address or station to put the default area around. Draw an area, or set a map centre.</value>
+  </data>
+  <data name="OfflineAreaInvalid" xml:space="preserve">
+    <value>The area is not a valid GeoJSON polygon.</value>
+  </data>
+  <data name="OfflineIncludedDataLabel" xml:space="preserve">
+    <value>Included data</value>
+  </data>
+  <data name="OfflineInclude_CustomMaps" xml:space="preserve">
+    <value>Custom maps</value>
+  </data>
+  <data name="OfflineInclude_IndoorMaps" xml:space="preserve">
+    <value>Indoor maps</value>
+  </data>
+  <data name="OfflineInclude_Layers" xml:space="preserve">
+    <value>Map layers</value>
+  </data>
+  <data name="OfflineInclude_Pois" xml:space="preserve">
+    <value>Points of interest</value>
+  </data>
+  <data name="OfflineInclude_Hydrants" xml:space="preserve">
+    <value>Hydrants</value>
+  </data>
+  <data name="OfflineDownloadPolicyLabel" xml:space="preserve">
+    <value>Downloads</value>
+  </data>
+  <data name="OfflineDownloadPolicy_WifiOnly" xml:space="preserve">
+    <value>Over Wi-Fi only</value>
+  </data>
+  <data name="OfflineDownloadPolicy_AnyNetwork" xml:space="preserve">
+    <value>Over any network</value>
+  </data>
+  <data name="OfflineDownloadPolicy_Manual" xml:space="preserve">
+    <value>Only when the user starts them</value>
+  </data>
+  <data name="OfflineDownloadPolicyHelp" xml:space="preserve">
+    <value>When the apps download and refresh offline maps.</value>
+  </data>
+  <data name="OfflineIncidentPacksLabel" xml:space="preserve">
+    <value>Calls outside the area</value>
+  </data>
+  <data name="OfflineIncidentPacksHelp" xml:space="preserve">
+    <value>Download the map around a call outside the response area.</value>
+  </data>
+  <data name="OfflineIncidentRadiusLabel" xml:space="preserve">
+    <value>Radius around calls (km)</value>
+  </data>
+  <data name="OfflineCorridorPacksLabel" xml:space="preserve">
+    <value>Routes outside the area</value>
+  </data>
+  <data name="OfflineCorridorPacksHelp" xml:space="preserve">
+    <value>Download the map along a planned route where it leaves the response area.</value>
+  </data>
+  <data name="OfflineCorridorBufferLabel" xml:space="preserve">
+    <value>Width either side of routes (metres)</value>
+  </data>
+  <data name="OfflineRefreshHoursLabel" xml:space="preserve">
+    <value>Check for updates every (hours)</value>
+  </data>
+  <data name="OfflineRefreshHoursHelp" xml:space="preserve">
+    <value>How often the apps check for changed maps. 1 to 720; default 24.</value>
+  </data>
+  <data name="OfflineStaleDaysLabel" xml:space="preserve">
+    <value>Out of date after (days)</value>
+  </data>
+  <data name="OfflineStaleDaysHelp" xml:space="preserve">
+    <value>Downloaded maps not refreshed for this long are shown as out of date. 1 to 365; default 7.</value>
+  </data>
+  <data name="OfflinePreferLocalLabel" xml:space="preserve">
+    <value>Use downloaded maps when online</value>
+  </data>
+  <data name="OfflinePreferLocalHelp" xml:space="preserve">
+    <value>Inside the response area, the apps use the downloaded base map even with a network, which saves mobile data.</value>
+  </data>
+  <data name="MapProviderBaseMap" xml:space="preserve">
+    <value>Base map</value>
+  </data>
+  <data name="MapProviderRouting" xml:space="preserve">
+    <value>Routing</value>
+  </data>
+  <data name="MapProviderTraffic" xml:space="preserve">
+    <value>Live traffic</value>
+  </data>
+  <data name="MapProviderSelfHosted" xml:space="preserve">
+    <value>This server's own maps (OpenStreetMap)</value>
+  </data>
+  <data name="MapProviderRoutingEstimate" xml:space="preserve">
+    <value>Straight-line estimate</value>
+  </data>
+  <data name="MapProviderTrafficOn" xml:space="preserve">
+    <value>Available</value>
+  </data>
+  <data name="MapProviderTrafficOff" xml:space="preserve">
+    <value>Not available</value>
+  </data>
+  <data name="MapStyleSelfHostedNote" xml:space="preserve">
+    <value>This server draws its own maps, so only the styles it can show are listed. Community styles, and satellite imagery unless the server provides it, need Mapbox.</value>
+  </data>
+  <data name="MapStyleServerGroup" xml:space="preserve">
+    <value>This server's styles</value>
+  </data>
+  <data name="MapStyleNotAvailable" xml:space="preserve">
+    <value>(not available on this server)</value>
+  </data>
 </root>

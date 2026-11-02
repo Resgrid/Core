@@ -28,11 +28,22 @@
 
 
     <div class="middle-box text-center animated fadeInDown">
-        <h2>@localizer["MissingInviteHeader"]</h2>
-        <h3 class="font-bold">@localizer["MissingInviteTopText"]</h3>
+        @if (ViewData["LimitMessage"] is string limitMessage)
+        {
+            @* Refused for the address's hourly limit, not because the invitation is missing: say only that. *@
+            <div class="alert alert-warning m-t" id="inviteLimitMessage">@limitMessage</div>
+        }
+        else
+        {
+            <h2>@localizer["MissingInviteHeader"]</h2>
+            <h3 class="font-bold">@localizer["MissingInviteTopText"]</h3>
+        }
 
         <div class="error-desc">
-            @localizer["MissingInviteBody"]
+            @if (ViewData["LimitMessage"] == null)
+            {
+                @localizer["MissingInviteBody"]
+            }
             <ul class="list-inline">
                 <li>
                     <a class="btn btn-primary m-t" href="javascript:history.back();">@localizer["GoBack"]</a>

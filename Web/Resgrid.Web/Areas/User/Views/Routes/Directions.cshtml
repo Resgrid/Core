@@ -218,6 +218,37 @@
             }
         }
         var startPoint = @Html.ScriptJson(startPoint);
+        @{
+            // The route from the server's routing provider (§10.4): the line, the legs with turn-by-turn steps (OSRM v5 /
+            // Mapbox Directions shape) and the resolved start and end. The page no longer calls a public routing server.
+            object serverRoute = null;
+            if (Model.ServerRoute != null)
+            {
+                Newtonsoft.Json.Linq.JToken Parse(string json)
+                {
+                    try { return string.IsNullOrWhiteSpace(json) ? null : Newtonsoft.Json.Linq.JToken.Parse(json); }
+                    catch (Newtonsoft.Json.JsonException) { return null; }
+                }
+
+                var r = Model.ServerRoute;
+                serverRoute = new
+                {
+                    geometry = Parse(r.GeometryGeoJson),
+                    route = Parse(r.DirectionsJson),
+                    distance = r.DistanceMeters,
+                    duration = r.DurationSeconds,
+                    durationWithDwell = r.DurationWithDwellSeconds,
+                    provider = r.Provider,
+                    attribution = r.Attribution,
+                    isEstimate = r.IsEstimate,
+                    start = r.Start == null ? null : new { lat = r.Start.Latitude, lng = r.Start.Longitude, name = string.IsNullOrWhiteSpace(r.Start.Name) ? "Start" : r.Start.Name },
+                    end = r.End == null ? null : new { lat = r.End.Latitude, lng = r.End.Longitude, name = string.IsNullOrWhiteSpace(r.End.Name) ? "End" : r.End.Name },
+                    legs = r.Legs.Select(l => new { distance = l.DistanceMeters, duration = l.DurationSeconds, offset = l.OffsetSeconds }).ToList()
+                };
+            }
+        }
+        var serverRoute = @Html.ScriptJson(serverRoute);
     </script>
+    <partial name="_MapKitConfig" />
     <script src="~/js/app/internal/routes/resgrid.routes.directions.js"></script>
 }

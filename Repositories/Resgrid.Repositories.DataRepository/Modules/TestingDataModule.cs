@@ -334,6 +334,7 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<DocumentNumberSequencesRepository>().As<IDocumentNumberSequencesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentApiKeysRepository>().As<IDepartmentApiKeysRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<TypeIconsRepository>().As<ITypeIconsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<OfflineMapPacksRepository>().As<IOfflineMapPacksRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<MapVisualizationsRepository>().As<IMapVisualizationsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<UserDashboardsRepository>().As<IUserDashboardsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentDashboardTemplatesRepository>().As<IDepartmentDashboardTemplatesRepository>().InstancePerLifetimeScope();

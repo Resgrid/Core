@@ -17,6 +17,11 @@ namespace Resgrid.Services
 		private readonly IRouteInstancesRepository _routeInstancesRepository;
 		private readonly IRouteInstanceStopsRepository _routeInstanceStopsRepository;
 		private readonly IRouteDeviationsRepository _routeDeviationsRepository;
+		private readonly IUnitLocationsDocRepository _unitLocationsDocRepository;
+		private readonly IDepartmentSettingsService _departmentSettingsService;
+
+		// The most location rows read to build an ended instance's track.
+		private const int MaxTrackLocations = 20000;
 
 		public RouteService(
 			IRoutePlansRepository routePlansRepository,
@@ -24,7 +29,9 @@ namespace Resgrid.Services
 			IRouteSchedulesRepository routeSchedulesRepository,
 			IRouteInstancesRepository routeInstancesRepository,
 			IRouteInstanceStopsRepository routeInstanceStopsRepository,
-			IRouteDeviationsRepository routeDeviationsRepository)
+			IRouteDeviationsRepository routeDeviationsRepository,
+			IUnitLocationsDocRepository unitLocationsDocRepository,
+			IDepartmentSettingsService departmentSettingsService)
 		{
 			_routePlansRepository = routePlansRepository;
 			_routeStopsRepository = routeStopsRepository;
@@ -32,6 +39,8 @@ namespace Resgrid.Services
 			_routeInstancesRepository = routeInstancesRepository;
 			_routeInstanceStopsRepository = routeInstanceStopsRepository;
 			_routeDeviationsRepository = routeDeviationsRepository;
+			_unitLocationsDocRepository = unitLocationsDocRepository;
+			_departmentSettingsService = departmentSettingsService;
 		}
 
 		#region Route Plan CRUD
@@ -75,7 +84,45 @@ namespace Resgrid.Services
 
 		public async Task<RouteStop> SaveRouteStopAsync(RouteStop routeStop, CancellationToken cancellationToken = default)
 		{
-			return await _routeStopsRepository.SaveOrUpdateAsync(routeStop, cancellationToken);
+			var isNew = string.IsNullOrWhiteSpace(routeStop?.RouteStopId);
+			var saved = await _routeStopsRepository.SaveOrUpdateAsync(routeStop, cancellationToken);
+
+			if (saved != null && !string.IsNullOrWhiteSpace(saved.RoutePlanId))
+			{
+				await MarkRoutePlanStaleAsync(saved.RoutePlanId, cancellationToken);
+
+				// RD9: a stop added while the plan is running joins the running instance(s) as a pending stop.
+				if (isNew && !saved.IsDeleted)
+					await AddStopToRunningInstancesAsync(saved, cancellationToken);
+			}
+
+			return saved;
+		}
+
+		private async Task AddStopToRunningInstancesAsync(RouteStop stop, CancellationToken cancellationToken)
+		{
+			var instances = await _routeInstancesRepository.GetInstancesByRoutePlanIdAsync(stop.RoutePlanId);
+			if (instances == null)
+				return;
+
+			foreach (var instance in instances.Where(i => i.Status == (int)RouteInstanceStatus.InProgress || i.Status == (int)RouteInstanceStatus.Paused))
+			{
+				var existing = await GetInstanceStopsAsync(instance.RouteInstanceId);
+				if (existing.Any(s => s.RouteStopId == stop.RouteStopId))
+					continue;
+
+				await _routeInstanceStopsRepository.SaveOrUpdateAsync(new RouteInstanceStop
+				{
+					RouteInstanceId = instance.RouteInstanceId,
+					RouteStopId = stop.RouteStopId,
+					StopOrder = stop.StopOrder,
+					Status = 0, // Pending
+					AddedOn = DateTime.UtcNow
+				}, cancellationToken);
+
+				instance.StopsTotal += 1;
+				await _routeInstancesRepository.SaveOrUpdateAsync(instance, cancellationToken);
+			}
 		}
 
 		public async Task<List<RouteStop>> GetRouteStopsForPlanAsync(string routePlanId)
@@ -102,16 +149,15 @@ namespace Resgrid.Services
 			if (stops == null)
 				return false;
 
-			var stopDict = stops.ToDictionary(s => s.RouteStopId);
-			for (int i = 0; i < orderedStopIds.Count; i++)
-			{
-				if (stopDict.TryGetValue(orderedStopIds[i], out var stop))
-				{
-					stop.StopOrder = i;
-					await _routeStopsRepository.SaveOrUpdateAsync(stop, cancellationToken);
-				}
-			}
+			// RD3: contiguous 1-based order. Listed stops first, in the given order; any live stop not listed keeps its
+			// relative place after them, so a partial list can never produce duplicate numbers.
+			var live = stops.Where(s => !s.IsDeleted).OrderBy(s => s.StopOrder).ToList();
+			var byId = live.ToDictionary(s => s.RouteStopId);
+			var ordered = (orderedStopIds ?? new List<string>()).Distinct().Where(byId.ContainsKey).Select(id => byId[id]).ToList();
+			ordered.AddRange(live.Where(s => !ordered.Contains(s)));
 
+			await RenumberAsync(ordered, cancellationToken);
+			await MarkRoutePlanStaleAsync(routePlanId, cancellationToken);
 			return true;
 		}
 
@@ -123,7 +169,24 @@ namespace Resgrid.Services
 
 			stop.IsDeleted = true;
 			await _routeStopsRepository.SaveOrUpdateAsync(stop, cancellationToken);
+
+			// Close the gap so the next stop added (max + 1) and every reader see 1..n.
+			var remaining = await GetRouteStopsForPlanAsync(stop.RoutePlanId);
+			await RenumberAsync(remaining, cancellationToken);
+			await MarkRoutePlanStaleAsync(stop.RoutePlanId, cancellationToken);
 			return true;
+		}
+
+		private async Task RenumberAsync(IReadOnlyList<RouteStop> ordered, CancellationToken cancellationToken)
+		{
+			for (var i = 0; i < ordered.Count; i++)
+			{
+				if (ordered[i].StopOrder == i + 1)
+					continue;
+
+				ordered[i].StopOrder = i + 1;
+				await _routeStopsRepository.SaveOrUpdateAsync(ordered[i], cancellationToken);
+			}
 		}
 
 		#endregion Route Stop CRUD
@@ -170,7 +233,14 @@ namespace Resgrid.Services
 			if (plan == null)
 				throw new ArgumentException("Route plan not found.", nameof(routePlanId));
 
+			// RD8: the legacy active-instance query only sees in-progress instances, so a paused route would otherwise let
+			// the unit start a second one.
+			var paused = await GetActiveOrPausedInstanceForUnitAsync(plan.DepartmentId, unitId);
+			if (paused != null)
+				throw new InvalidOperationException("Unit already has a paused route instance.");
+
 			var stops = await GetRouteStopsForPlanAsync(routePlanId);
+			var startedOn = DateTime.UtcNow;
 
 			var instance = new RouteInstance
 			{
@@ -179,10 +249,12 @@ namespace Resgrid.Services
 				DepartmentId = plan.DepartmentId,
 				Status = (int)RouteInstanceStatus.InProgress,
 				StartedByUserId = startedByUserId,
-				ActualStartOn = DateTime.UtcNow,
+				ActualStartOn = startedOn,
 				StopsCompleted = 0,
 				StopsTotal = stops.Count,
-				AddedOn = DateTime.UtcNow
+				// RD6: snapshot the planned route so later plan edits don't move the line under a running unit.
+				PlannedDirectionsJson = plan.RouteIsStale ? null : plan.RouteDirectionsJson,
+				AddedOn = startedOn
 			};
 
 			await _routeInstancesRepository.SaveOrUpdateAsync(instance, cancellationToken);
@@ -195,7 +267,9 @@ namespace Resgrid.Services
 					RouteStopId = stop.RouteStopId,
 					StopOrder = stop.StopOrder,
 					Status = 0, // Pending
-					AddedOn = DateTime.UtcNow
+					// RD6: planned arrival from the generated route (legs + earlier dwell), so check-in can measure lateness.
+					EstimatedArrivalOn = !plan.RouteIsStale && stop.PlannedOffsetSeconds.HasValue ? startedOn.AddSeconds(stop.PlannedOffsetSeconds.Value) : (DateTime?)null,
+					AddedOn = startedOn
 				};
 
 				await _routeInstanceStopsRepository.SaveOrUpdateAsync(instanceStop, cancellationToken);
@@ -218,10 +292,68 @@ namespace Resgrid.Services
 			instance.EndedByUserId = endedByUserId;
 
 			if (instance.ActualStartOn.HasValue)
+			{
 				instance.TotalDurationSeconds = (DateTime.UtcNow - instance.ActualStartOn.Value).TotalSeconds;
 
+				// RD6: the driven track and distance from the unit's location history. Best effort: a history outage
+				// must never stop a route ending.
+				try
+				{
+					var locations = await _unitLocationsDocRepository.GetLocationsForDepartmentInRangeAsync(instance.DepartmentId,
+						instance.ActualStartOn.Value, instance.ActualEndOn.Value.AddSeconds(1), new[] { instance.UnitId }, MaxTrackLocations, cancellationToken);
+
+					var track = RouteTrackBuilder.Build(locations?.Where(l => l != null && l.UnitId == instance.UnitId)
+						.Select(l => ((double)l.Latitude, (double)l.Longitude, l.Timestamp)));
+
+					if (track.GeometryGeoJson != null)
+					{
+						instance.ActualRouteGeometry = track.GeometryGeoJson;
+						instance.TotalDistanceMeters = Math.Round(track.DistanceMeters, 1);
+					}
+				}
+				catch (Exception ex)
+				{
+					Framework.Logging.LogException(ex, $"Building the driven track for route instance {instance.RouteInstanceId}");
+				}
+			}
+
 			await _routeInstancesRepository.SaveOrUpdateAsync(instance, cancellationToken);
+			await RecordMissedStopsAsync(instance, cancellationToken);
 			return instance;
+		}
+
+		/// <summary>One MissedStop deviation per required stop still pending when the route ends.</summary>
+		private async Task RecordMissedStopsAsync(RouteInstance instance, CancellationToken cancellationToken)
+		{
+			try
+			{
+				var pending = (await GetInstanceStopsAsync(instance.RouteInstanceId)).Where(s => s.Status == 0).ToList();
+				if (pending.Count == 0)
+					return;
+
+				var planStops = (await _routeStopsRepository.GetStopsByRoutePlanIdAsync(instance.RoutePlanId))?.ToDictionary(s => s.RouteStopId)
+					?? new Dictionary<string, RouteStop>();
+
+				foreach (var instanceStop in pending)
+				{
+					if (!planStops.TryGetValue(instanceStop.RouteStopId, out var stop) || stop.IsDeleted || stop.Priority == (int)RouteStopPriority.Optional)
+						continue;
+
+					await _routeDeviationsRepository.SaveOrUpdateAsync(new RouteDeviation
+					{
+						RouteInstanceId = instance.RouteInstanceId,
+						DetectedOn = instance.ActualEndOn ?? DateTime.UtcNow,
+						Latitude = stop.Latitude,
+						Longitude = stop.Longitude,
+						DeviationType = (int)RouteDeviationTypes.MissedStop,
+						Notes = stop.Name
+					}, cancellationToken);
+				}
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex, $"Recording missed stops for route instance {instance.RouteInstanceId}");
+			}
 		}
 
 		public async Task<RouteInstance> CancelRouteAsync(string routeInstanceId, string userId, string reason, CancellationToken cancellationToken = default)
@@ -273,6 +405,21 @@ namespace Resgrid.Services
 			return instances?.FirstOrDefault();
 		}
 
+		public async Task<RouteInstance> GetActiveOrPausedInstanceForUnitAsync(int departmentId, int unitId)
+		{
+			var inProgress = await GetActiveInstanceForUnitAsync(unitId);
+			if (inProgress != null && inProgress.DepartmentId == departmentId)
+				return inProgress;
+
+			// The department read returns in-progress and paused summaries (no geometry); load the full row.
+			var summaries = await _routeInstancesRepository.GetActiveInstancesByDepartmentIdAsync(departmentId);
+			var paused = summaries?.Where(i => i != null && i.UnitId == unitId && i.DepartmentId == departmentId && i.Status == (int)RouteInstanceStatus.Paused)
+				.OrderByDescending(i => i.ActualStartOn)
+				.FirstOrDefault();
+
+			return paused == null ? null : await _routeInstancesRepository.GetByIdAsync(paused.RouteInstanceId);
+		}
+
 		public async Task<RouteInstance> GetInstanceByIdAsync(string routeInstanceId)
 		{
 			return await _routeInstancesRepository.GetByIdAsync(routeInstanceId);
@@ -320,7 +467,63 @@ namespace Resgrid.Services
 				instanceStop.ActualArrivalDeviation = (int)(DateTime.UtcNow - instanceStop.EstimatedArrivalOn.Value).TotalSeconds;
 
 			await _routeInstanceStopsRepository.SaveOrUpdateAsync(instanceStop, cancellationToken);
+			await RecordCheckInDeviationsAsync(instance, instanceStop, latitude, longitude, cancellationToken);
 			return instanceStop;
+		}
+
+		/// <summary>LateArrival beyond the department threshold, and OutOfOrder when earlier required stops are still pending.</summary>
+		private async Task RecordCheckInDeviationsAsync(RouteInstance instance, RouteInstanceStop instanceStop, decimal latitude, decimal longitude,
+			CancellationToken cancellationToken)
+		{
+			try
+			{
+				var config = await _departmentSettingsService.GetMappingNavigationConfigAsync(instance.DepartmentId);
+
+				if (!config.TimeDeviationsOff && instanceStop.ActualArrivalDeviation.HasValue &&
+				    instanceStop.ActualArrivalDeviation.Value > config.EffectiveDeviationThreshold().TotalSeconds)
+				{
+					await _routeDeviationsRepository.SaveOrUpdateAsync(new RouteDeviation
+					{
+						RouteInstanceId = instance.RouteInstanceId,
+						DetectedOn = DateTime.UtcNow,
+						Latitude = latitude,
+						Longitude = longitude,
+						DeviationType = (int)RouteDeviationTypes.LateArrival,
+						Notes = $"{Math.Round(instanceStop.ActualArrivalDeviation.Value / 60.0)} min"
+					}, cancellationToken);
+				}
+
+				var skippedOver = (await GetInstanceStopsAsync(instance.RouteInstanceId))
+					.Where(s => s.Status == 0 && s.StopOrder < instanceStop.StopOrder && s.RouteInstanceStopId != instanceStop.RouteInstanceStopId)
+					.ToList();
+
+				if (skippedOver.Count == 0)
+					return;
+
+				var planStops = (await _routeStopsRepository.GetStopsByRoutePlanIdAsync(instance.RoutePlanId))?.ToDictionary(s => s.RouteStopId)
+					?? new Dictionary<string, RouteStop>();
+
+				var required = skippedOver.Where(s => planStops.TryGetValue(s.RouteStopId, out var stop) && !stop.IsDeleted && stop.Priority != (int)RouteStopPriority.Optional)
+					.Select(s => planStops[s.RouteStopId].Name)
+					.ToList();
+
+				if (required.Count == 0)
+					return;
+
+				await _routeDeviationsRepository.SaveOrUpdateAsync(new RouteDeviation
+				{
+					RouteInstanceId = instance.RouteInstanceId,
+					DetectedOn = DateTime.UtcNow,
+					Latitude = latitude,
+					Longitude = longitude,
+					DeviationType = (int)RouteDeviationTypes.OutOfOrder,
+					Notes = string.Join(", ", required)
+				}, cancellationToken);
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex, $"Recording check-in deviations for route instance {instance.RouteInstanceId}");
+			}
 		}
 
 		public async Task<RouteInstanceStop> CheckOutFromStopAsync(string routeInstanceStopId, decimal latitude, decimal longitude, CancellationToken cancellationToken = default)
@@ -348,9 +551,47 @@ namespace Resgrid.Services
 			{
 				instance.StopsCompleted += 1;
 				await _routeInstancesRepository.SaveOrUpdateAsync(instance, cancellationToken);
+				await RecordLongDwellAsync(instance, instanceStop, latitude, longitude, cancellationToken);
 			}
 
 			return instanceStop;
+		}
+
+		/// <summary>LongDwell when time at the stop exceeds its estimated dwell by more than the department threshold.</summary>
+		private async Task RecordLongDwellAsync(RouteInstance instance, RouteInstanceStop instanceStop, decimal latitude, decimal longitude,
+			CancellationToken cancellationToken)
+		{
+			if (!instanceStop.DwellSeconds.HasValue)
+				return;
+
+			try
+			{
+				var stop = await _routeStopsRepository.GetByIdAsync(instanceStop.RouteStopId);
+				if (stop?.EstimatedDwellMinutes == null || stop.EstimatedDwellMinutes.Value <= 0)
+					return;
+
+				var config = await _departmentSettingsService.GetMappingNavigationConfigAsync(instance.DepartmentId);
+				var over = instanceStop.DwellSeconds.Value - stop.EstimatedDwellMinutes.Value * 60;
+				if (config.TimeDeviationsOff || over <= config.EffectiveDeviationThreshold().TotalSeconds)
+					return;
+
+				// Legacy builds check out without coordinates (0,0); place the deviation at the stop instead.
+				var hasPosition = latitude != 0 || longitude != 0;
+
+				await _routeDeviationsRepository.SaveOrUpdateAsync(new RouteDeviation
+				{
+					RouteInstanceId = instance.RouteInstanceId,
+					DetectedOn = DateTime.UtcNow,
+					Latitude = hasPosition ? latitude : stop.Latitude,
+					Longitude = hasPosition ? longitude : stop.Longitude,
+					DeviationType = (int)RouteDeviationTypes.LongDwell,
+					Notes = $"{stop.Name}: +{Math.Round(over / 60.0)} min"
+				}, cancellationToken);
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex, $"Recording dwell deviation for route instance {instance.RouteInstanceId}");
+			}
 		}
 
 		public async Task<RouteInstanceStop> SkipStopAsync(string routeInstanceStopId, string reason, CancellationToken cancellationToken = default)
@@ -395,6 +636,12 @@ namespace Resgrid.Services
 			return deviation;
 		}
 
+		public async Task<List<RouteDeviation>> GetDeviationsForInstanceAsync(string routeInstanceId)
+		{
+			var deviations = await _routeDeviationsRepository.GetDeviationsByRouteInstanceIdAsync(routeInstanceId);
+			return deviations?.OrderBy(d => d.DetectedOn).ToList() ?? new List<RouteDeviation>();
+		}
+
 		public async Task<List<RouteDeviation>> GetUnacknowledgedDeviationsAsync(int departmentId)
 		{
 			var deviations = await _routeDeviationsRepository.GetUnacknowledgedDeviationsByDepartmentAsync(departmentId);
@@ -417,6 +664,43 @@ namespace Resgrid.Services
 
 			await _routePlansRepository.SaveOrUpdateAsync(plan, cancellationToken);
 			return plan;
+		}
+
+		public async Task<RoutePlan> SaveGeneratedRouteAsync(RoutePlan plan, IEnumerable<RouteStop> stops, CancellationToken cancellationToken = default)
+		{
+			if (plan == null)
+				throw new ArgumentNullException(nameof(plan));
+
+			if (stops != null)
+			{
+				foreach (var stop in stops)
+					await _routeStopsRepository.SaveOrUpdateAsync(stop, cancellationToken);
+			}
+
+			return await _routePlansRepository.SaveOrUpdateAsync(plan, cancellationToken);
+		}
+
+		public async Task MarkRoutePlanStaleAsync(string routePlanId, CancellationToken cancellationToken = default)
+		{
+			if (string.IsNullOrWhiteSpace(routePlanId))
+				return;
+
+			var plan = await _routePlansRepository.GetByIdAsync(routePlanId);
+			if (plan == null || plan.RouteIsStale)
+				return;
+
+			plan.RouteIsStale = true;
+			await _routePlansRepository.SaveOrUpdateAsync(plan, cancellationToken);
+		}
+
+		public async Task<RouteInstance> SetInstanceLastRoutedOnAsync(string routeInstanceId, DateTime routedOn, CancellationToken cancellationToken = default)
+		{
+			var instance = await _routeInstancesRepository.GetByIdAsync(routeInstanceId);
+			if (instance == null)
+				return null;
+
+			instance.LastRoutedOn = routedOn;
+			return await _routeInstancesRepository.SaveOrUpdateAsync(instance, cancellationToken);
 		}
 
 		#endregion Mapbox Integration

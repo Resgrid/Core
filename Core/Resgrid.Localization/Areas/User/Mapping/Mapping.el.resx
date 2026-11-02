@@ -284,4 +284,49 @@
   <data name="False" xml:space="preserve">
     <value>Όχι</value>
   </data>
+  <data name="DrawToolPolygon" xml:space="preserve">
+    <value>Σχεδίαση πολυγώνου</value>
+  </data>
+  <data name="DrawToolRectangle" xml:space="preserve">
+    <value>Σχεδίαση ορθογωνίου</value>
+  </data>
+  <data name="DrawToolLine" xml:space="preserve">
+    <value>Σχεδίαση γραμμής</value>
+  </data>
+  <data name="DrawToolPoint" xml:space="preserve">
+    <value>Τοποθέτηση δείκτη</value>
+  </data>
+  <data name="DrawToolCircle" xml:space="preserve">
+    <value>Σχεδίαση κύκλου</value>
+  </data>
+  <data name="DrawToolText" xml:space="preserve">
+    <value>Προσθήκη κειμένου</value>
+  </data>
+  <data name="DrawToolCut" xml:space="preserve">
+    <value>Αποκοπή του επιλεγμένου σχήματος (σχεδιάστε το τμήμα που θα αφαιρεθεί)</value>
+  </data>
+  <data name="DrawToolRotate" xml:space="preserve">
+    <value>Περιστροφή του επιλεγμένου σχήματος (σύρετε στον χάρτη)</value>
+  </data>
+  <data name="DrawToolSelect" xml:space="preserve">
+    <value>Επιλογή και επεξεργασία</value>
+  </data>
+  <data name="DrawToolDelete" xml:space="preserve">
+    <value>Διαγραφή του επιλεγμένου σχήματος</value>
+  </data>
+  <data name="DrawToolClear" xml:space="preserve">
+    <value>Αφαίρεση όλων των σχημάτων</value>
+  </data>
+  <data name="DrawTextPrompt" xml:space="preserve">
+    <value>Κείμενο προς εμφάνιση</value>
+  </data>
+  <data name="DrawSelectShapeFirst" xml:space="preserve">
+    <value>Επιλέξτε πρώτα ένα σχήμα στον χάρτη.</value>
+  </data>
+  <data name="LayerElementsInvalid" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η ανάγνωση των σχημάτων του επιπέδου. Φορτώστε ξανά τη σελίδα και σχεδιάστε τα ξανά.</value>
+  </data>
+  <data name="TrafficLayer" xml:space="preserve">
+    <value>Ζωντανή κίνηση</value>
+  </data>
 </root>

@@ -164,13 +164,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 			};
 
 			var mapConfig = SettingsHelper.GetDepartmentMapConfig(Config.InfoConfig.WebsiteKey);
+			var mapLibre = SettingsHelper.GetMapLibreWebConfig(Config.InfoConfig.WebsiteKey);
 			result.Map = new DashboardMapResult
 			{
 				TileUrl = mapConfig?.TileUrl,
 				Attribution = mapConfig?.Attribution,
 				MapProvider = mapConfig?.MapProvider,
 				StyleUrl = mapConfig?.StyleUrl,
-				AccessToken = mapConfig?.AccessToken
+				AccessToken = mapConfig?.AccessToken,
+				Renderer = mapLibre.Renderer,
+				MapLibreStyleUrl = mapLibre.StyleUrlDay,
+				MapLibreStyleUrlNight = mapLibre.StyleUrlNight
 			};
 
 			return Json(result);

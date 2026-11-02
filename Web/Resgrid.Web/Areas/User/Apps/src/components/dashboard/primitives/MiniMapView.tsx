@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, type ReactNode } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useRef, type ReactNode } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import type { GeoJsonObject } from 'geojson';
@@ -50,6 +50,26 @@ export interface MiniMapProps {
   ariaLabel: string;
   /** Rendered over the map, bottom-start (layer toggles, a key). */
   legend?: ReactNode;
+  /** Use the department's night style (MapLibre maps; Leaflet maps take a night tileUrl instead). */
+  dark?: boolean;
+}
+
+// Departments on Maps.MapLibreWeb get the MapLibre mini map (maplibre plan section 22.2).
+const MiniMapLibre = lazy(() => import('./MiniMapLibre'));
+
+export default function MiniMapView(props: MiniMapProps) {
+  const { map: config } = usePrimitiveRuntime();
+  const styleUrl = config?.Renderer === 'maplibre' ? (props.dark && config.MapLibreStyleUrlNight) || config.MapLibreStyleUrl : null;
+
+  if (styleUrl) {
+    return (
+      <Suspense fallback={<div className="rg-minimap rg-minimap-loading" role="region" aria-label={props.ariaLabel} aria-busy="true" />}>
+        <MiniMapLibre {...props} styleUrl={styleUrl} />
+      </Suspense>
+    );
+  }
+
+  return <LeafletMiniMap {...props} />;
 }
 
 const DEFAULT_TILES = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
@@ -78,7 +98,7 @@ function hasSize(container: HTMLElement | null): container is HTMLElement {
   return !!container && container.isConnected && container.clientWidth > 0 && container.clientHeight > 0;
 }
 
-export default function MiniMapView(props: MiniMapProps) {
+function LeafletMiniMap(props: MiniMapProps) {
   const { markers, geoJsonLayers, center, zoom = 13, fit = true, hiddenLayers, ariaLabel, legend } = props;
   const { map: config } = usePrimitiveRuntime();
   const containerRef = useRef<HTMLDivElement | null>(null);

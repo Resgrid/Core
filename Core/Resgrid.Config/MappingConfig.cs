@@ -6,6 +6,7 @@ namespace Resgrid.Config
 	{
 		public const string LeafletMapProvider = "leaflet";
 		public const string MapboxMapProvider = "mapbox";
+		public const string SelfHostedMapProvider = "selfhosted";
 
 		public static int PersonnelLocationStaleSeconds = 30;
 		public static int UnitLocationStaleSeconds = 30;
@@ -86,6 +87,176 @@ namespace Resgrid.Config
 		 ***********************************/
 		public static string NominatimUrl = "https://nominatim.openstreetmap.org";
 		public static string OsrmUrl = "https://router.project-osrm.org";
+
+		/***********************************
+		 * Map providers (maplibre-mapping-routing-navigation-plan.md §5.1). Chosen per install; none of these change
+		 * the fields the legacy store apps read (plan §21).
+		 ***********************************/
+
+		/// <summary>Base map tiles: "mapbox", "selfhosted", or "auto" (mapbox when a system Mapbox token exists, else selfhosted).</summary>
+		public static string TileProvider = "auto";
+
+		/// <summary>MapLibre style JSON for self-hosted tiles (e.g. a TileServer GL or Protomaps style). Empty: a raster style is synthesized from SelfHostedRasterTileUrl / LeafletTileUrl.</summary>
+		public static string SelfHostedStyleUrlDay = "";
+		public static string SelfHostedStyleUrlNight = "";
+
+		/// <summary>Optional JSON object of preset class → style URL ("streets", "light", "dark", "outdoors", "satellite") so department style picks resolve on self-hosted tiles.</summary>
+		public static string SelfHostedStyleCatalog = "";
+
+		/// <summary>Raster XYZ tiles for the pixel-space editors and static maps on self-hosted installs; empty falls back to LeafletTileUrl.</summary>
+		public static string SelfHostedRasterTileUrl = "";
+
+		/// <summary>Forces the attribution text injected into every style (OpenStreetMap data needs visible attribution).</summary>
+		public static string MapAttributionOverride = "";
+
+		/// <summary>Routing provider: "valhalla", "mapbox", "google", "osrm" or "estimate" (straight line). Today's behaviour is "google".</summary>
+		public static string RoutingProvider = "google";
+
+		/// <summary>Provider used when the primary fails or times out; the straight-line estimate always remains the last resort.</summary>
+		public static string RoutingFallbackProvider = "estimate";
+
+		/// <summary>Base URL of a Valhalla server, e.g. http://valhalla:8002 (private network addresses are fine).</summary>
+		public static string ValhallaUrl = "";
+
+		/// <summary>Optional value sent as the X-Api-Key header to a Valhalla server behind a gateway.</summary>
+		public static string ValhallaApiKey = "";
+
+		/// <summary>Server-side Mapbox token for Directions, Matrix and Optimization; may be a secret (sk.) token and is never sent to clients.</summary>
+		public static string MapboxRoutingAccessToken = "";
+
+		/// <summary>Use live traffic where the provider has it (Mapbox driving-traffic, Google TRAFFIC_AWARE) for the DrivingTraffic profile and drive times.</summary>
+		public static bool RoutingTrafficAware = true;
+
+		/// <summary>"legacy" (Directions / Distance Matrix, today's calls) or "routes" (Routes API, required for Google Cloud projects created after March 2025).</summary>
+		public static string GoogleRoutingApi = "legacy";
+
+		/// <summary>Timeout per routing call in milliseconds; matrix calls get twice this.</summary>
+		public static int RoutingTimeoutMs = 4000;
+
+		/// <summary>Most origins one drive-time matrix may route on a provider without per-request cost (Valhalla, OSRM).</summary>
+		public static int RoutingMatrixMaxOrigins = 100;
+
+		/// <summary>Allows Unit in-app navigation; also needs the Navigation.InApp flag and a Valhalla or Mapbox routing provider.</summary>
+		public static bool NavigationEnabled = true;
+
+		/// <summary>Ordered geocoding chain: any of "google", "mapbox", "nominatim", "locationiq", "bing", comma separated.</summary>
+		public static string GeocodingProviders = "google,locationiq,bing";
+
+		/// <summary>Contact e-mail sent to Nominatim (its usage policy asks for one); production installs should self-host Nominatim.</summary>
+		public static string NominatimUserAgentEmail = "";
+
+		/// <summary>Mapbox token for the Geocoding API (v6).</summary>
+		public static string MapboxGeocodingAccessToken = "";
+
+		/// <summary>Live traffic overlay: "mapbox" or "none".</summary>
+		public static string TrafficProvider = "none";
+
+		/// <summary>Public (pk.) Mapbox token clients use for traffic tiles; a self-hosted install can enable traffic with only this.</summary>
+		public static string MapboxTrafficAccessToken = "";
+
+		/// <summary>How often clients reload traffic tiles (Mapbox updates traffic about every 8 minutes).</summary>
+		public static int TrafficRefreshSeconds = 300;
+
+		/// <summary>Lifetime of signed map resource URLs (styles, custom map tiles, indoor images, static maps).</summary>
+		public static int SignedMapUrlTtlHours = 24;
+
+		// ---- Offline map packs (maplibre-mapping-routing-navigation-plan.md section 19) ----------------------------------
+
+		/// <summary>Install-wide switch for offline map packs (still gated per department by the Maps.Offline flag).</summary>
+		public static bool OfflineMapsEnabled = true;
+
+		/// <summary>
+		/// Source PMTiles archive base-map packs are cut from: an https URL that honours Range requests (Resgrid's mirror of
+		/// the Protomaps build, or object storage) or a local path (a self-host regional extract). Never the public Protomaps
+		/// build URL. Empty disables base-map packs; department packs still build.
+		/// </summary>
+		public static string OfflineBasemapArchiveUrl = "";
+
+		/// <summary>Build date of the archive (e.g. 20261028); part of every base-map pack key, so a new archive rebuilds packs.</summary>
+		public static string OfflineBasemapVersion = "";
+
+		/// <summary>Highest zoom in base-map packs (Protomaps builds stop at 15; MapLibre over-zooms beyond).</summary>
+		public static int OfflineBasemapMaxZoom = 15;
+
+		/// <summary>Largest base-map download a department's maximum response area may produce (500 MB; hard ceiling 1 GB).</summary>
+		public static long ResponseAreaMaxBytes = 524288000;
+
+		/// <summary>Radius of the response area used when a department has not drawn one.</summary>
+		public static int ResponseAreaFallbackRadiusKm = 40;
+
+		/// <summary>Hard cap per pack; the builder lowers the max zoom until a pack fits.</summary>
+		public static long OfflinePackMaxBytes = 2147483648;
+
+		/// <summary>Native ambient tile cache budget the apps set (256 MB).</summary>
+		public static long AmbientCacheMaxBytes = 268435456;
+
+		/// <summary>Where built packs are kept: "" (offline packs off), "file" (OfflinePackStoragePath) or "s3" (OfflinePackS3*).</summary>
+		public static string OfflinePackStorage = "";
+
+		/// <summary>Directory for OfflinePackStorage "file"; must be shared by the API and the worker.</summary>
+		public static string OfflinePackStoragePath = "";
+
+		/// <summary>S3-compatible endpoint (RustFS, MinIO, S3) for OfflinePackStorage "s3".</summary>
+		public static string OfflinePackS3Endpoint = "";
+
+		public static string OfflinePackS3AccessKey = "";
+
+		public static string OfflinePackS3SecretKey = "";
+
+		public static string OfflinePackS3Bucket = "resgrid-offline-maps";
+
+		public static string OfflinePackS3Region = "us-east-1";
+
+		public static bool OfflinePackS3UseSsl = true;
+
+		/// <summary>Key prefix inside the bucket (an environment name keeps clusters apart in one bucket).</summary>
+		public static string OfflinePackS3Prefix = "";
+
+		/// <summary>
+		/// Offline style templates (Protomaps v4 schema, generated from @protomaps/basemaps themes) with {basemap}, {glyphs}
+		/// and {sprite} placeholders the apps fill with local paths. https URL or local path; mirrored into the pack store.
+		/// </summary>
+		public static string OfflineStyleUrlDay = "";
+
+		public static string OfflineStyleUrlNight = "";
+
+		/// <summary>Zip of the glyph PBF ranges the offline styles use; https URL or local path, mirrored into the pack store.</summary>
+		public static string OfflineGlyphsArchiveUrl = "";
+
+		/// <summary>Version of the style and glyph files above; part of their keys, so a new set is mirrored again.</summary>
+		public static string OfflineStyleVersion = "1";
+
+		/// <summary>
+		/// "mapbox" or "selfhosted" for a surface that has (or lacks) a public Mapbox token. A department's own Mapbox
+		/// account (override) always renders on Mapbox.
+		/// </summary>
+		public static string ResolveTileProvider(bool hasMapboxToken, bool isDepartmentOverride)
+		{
+			if (isDepartmentOverride && hasMapboxToken)
+				return MapboxMapProvider;
+
+			var configured = (TileProvider ?? "auto").Trim().ToLowerInvariant();
+
+			if (configured == SelfHostedMapProvider)
+				return SelfHostedMapProvider;
+
+			return hasMapboxToken ? MapboxMapProvider : SelfHostedMapProvider;
+		}
+
+		/// <summary>Raster XYZ tiles for a self-hosted surface: SelfHostedRasterTileUrl, else the surface's Leaflet tile URL.</summary>
+		public static string GetSelfHostedRasterTileUrl(string key)
+		{
+			if (!string.IsNullOrWhiteSpace(SelfHostedRasterTileUrl))
+				return ReplaceTileKey(SelfHostedRasterTileUrl, null);
+
+			return GetLegacyLeafletUrl(string.IsNullOrWhiteSpace(key) ? InfoConfig.WebsiteKey : key);
+		}
+
+		/// <summary>Attribution for self-hosted (OpenStreetMap-based) maps.</summary>
+		public static string GetSelfHostedAttribution()
+		{
+			return string.IsNullOrWhiteSpace(MapAttributionOverride) ? "© OpenStreetMap contributors" : MapAttributionOverride;
+		}
 
 		public static ResolvedMapConfig GetMapConfig(string key)
 		{

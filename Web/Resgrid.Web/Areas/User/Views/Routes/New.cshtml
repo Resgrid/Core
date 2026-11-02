@@ -71,17 +71,7 @@
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">@localizer["RouteProfile"]</label>
-                            <div class="col-sm-4">
-                                <select class="form-control" asp-for="Plan.MapboxRouteProfile">
-                                    <option value="driving">@localizer["ProfileDriving"]</option>
-                                    <option value="walking">@localizer["ProfileWalking"]</option>
-                                    <option value="cycling">@localizer["ProfileCycling"]</option>
-                                    <option value="driving-traffic">@localizer["ProfileDrivingTraffic"]</option>
-                                </select>
-                            </div>
-                        </div>
+                        <partial name="_RouteProfileOptions" model="Model" />
 
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["GeofenceRadius"]</label>
@@ -104,6 +94,8 @@
                                 </label>
                             </div>
                         </div>
+
+                        <partial name="_RouteStationOptions" model="Model" />
 
                         <!-- Start location picker (shown when Use Station as Start is unchecked) -->
                         <div id="startLocationGroup" style="display:none;">
@@ -165,6 +157,7 @@
                                 <i class="fa fa-plus"></i> @localizer["AddStop"]
                             </button>
                         </div>
+                        <div id="routeTotals" class="text-muted m-b-sm"></div>
                         <div class="table-responsive">
                             <table class="table table-striped" id="stopsTable">
                                 <thead>
@@ -174,6 +167,8 @@
                                     <th>@localizer["StopType"]</th>
                                     <th>@localizer["Address"]</th>
                                     <th>@localizer["Priority"]</th>
+                                    <th>@localizer["LegColumn"]</th>
+                                    <th>@localizer["ArrivalColumn"]</th>
                                     <th></th>
                                 </tr>
                                 </thead>
@@ -183,7 +178,8 @@
 
                         <h4>@localizer["MapAndStopsTitle"]</h4>
                         <p class="text-muted">@localizer["MapAndStopsHelp"]</p>
-                        <div id="routeMap" style="height:400px;margin-bottom:20px;border:1px solid #ddd;"></div>
+                        <div id="routeMap" style="height:400px;margin-bottom:5px;border:1px solid #ddd;"></div>
+                        <p class="text-muted small" id="routeAttribution" style="margin-bottom:20px;"></p>
 
                         <input type="hidden" asp-for="PendingStopsJson" id="PendingStopsJson" />
 
@@ -296,6 +292,13 @@
                         <div class="col-sm-9"><input type="number" id="stopDwellMinutes" class="form-control" min="0" /></div>
                     </div>
                     <div class="form-group">
+                        <label class="col-sm-3 control-label">@localizer["StopGeofenceRadius"]</label>
+                        <div class="col-sm-9">
+                            <input type="number" id="stopGeofenceRadius" class="form-control" min="10" max="5000" />
+                            <span class="help-block m-b-none">@localizer["StopGeofenceRadiusHelp"]</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <label class="col-sm-3 control-label">@localizer["SelectContact"]</label>
                         <div class="col-sm-9">
                             <select id="stopContactPicker" class="form-control">
@@ -333,5 +336,7 @@
         var osmTileAttribution = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(mapConfig.Attribution, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
         var availableContacts = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject((Model.Contacts ?? Enumerable.Empty<Resgrid.Model.Contact>()).Select(c => new { id = c.ContactId ?? "", name = c.GetName() ?? "", phone = c.CellPhoneNumber ?? c.OfficePhoneNumber ?? c.HomePhoneNumber ?? "" }), new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
     </script>
+    <partial name="_MapKitConfig" />
+    <partial name="_RouteEditorSettings" model="Model" />
     <script src="~/js/app/internal/routes/resgrid.routes.new.js"></script>
 }

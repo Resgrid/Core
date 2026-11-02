@@ -452,11 +452,17 @@ var resgrid;
                 if (!map || boundaryLayer || typeof groupBoundaries === 'undefined' || !groupBoundaries || !groupBoundaries.length) {
                     return;
                 }
-                boundaryLayer = L.layerGroup().addTo(map);
+                // GeoJSON fill and outline layers take no clicks: a click inside a boundary still places the call.
+                var features = [];
                 groupBoundaries.forEach(function (boundary) {
-                    // Not interactive: a click inside a boundary still places the call.
-                    L.polygon(boundary.points, { color: hexOr(boundary.color, '#0ea5e9'), weight: 2, opacity: 0.85, fillOpacity: 0.08, interactive: false }).addTo(boundaryLayer);
+                    var ring = (boundary.points || []).map(function (p) { return [Number(p[1]), Number(p[0])]; });
+                    if (ring.length < 3) {
+                        return;
+                    }
+                    ring.push(ring[0]);
+                    features.push({ type: 'Feature', properties: { color: hexOr(boundary.color, '#0ea5e9') }, geometry: { type: 'Polygon', coordinates: [ring] } });
                 });
+                boundaryLayer = map.addGeoJson('nearest-boundaries', { type: 'FeatureCollection', features: features }, { weight: 2, opacity: 0.85, fillOpacity: 0.08 });
                 updateLegend(0, 0);
             }
             nearestboard.drawBoundaries = drawBoundaries;
@@ -476,13 +482,11 @@ var resgrid;
                     return;
                 }
                 if (!legend) {
-                    legend = L.control({ position: 'topleft' });
-                    legend.onAdd = function () {
-                        var div = L.DomUtil.create('div', 'dispatch-map-legend');
-                        div.style.cssText = 'background: rgba(17,24,39,0.85); color: #f9fafb; padding: 6px 8px; border-radius: 4px; font-size: 11px; line-height: 16px;';
-                        return div;
-                    };
-                    legend.addTo(map);
+                    var legendBox = document.createElement('div');
+                    legendBox.className = 'dispatch-map-legend';
+                    legendBox.style.cssText = 'background: rgba(17,24,39,0.85); color: #f9fafb; padding: 6px 8px; border-radius: 4px; font-size: 11px; line-height: 16px;';
+                    legend = map.addControl(legendBox, 'top-left');
+                    legend.element = legendBox;
                 }
                 var lines = [];
                 if (unitCount) {
@@ -494,7 +498,7 @@ var resgrid;
                 if (hasBoundaries) {
                     lines.push('<span style="display:inline-block;width:11px;height:8px;border:2px solid #0ea5e9;vertical-align:middle;"></span> ' + escapeHtml(text('mapBoundaries')));
                 }
-                $(legend.getContainer()).html(lines.join('<br/>'));
+                $(legend.element).html(lines.join('<br/>'));
             }
 
             // Available units and personnel the board placed, around the call; hidden positions come without coordinates. The
@@ -504,11 +508,8 @@ var resgrid;
                 if (!map) {
                     return;
                 }
-                if (!resourceLayer) {
-                    resourceLayer = L.layerGroup().addTo(map);
-                } else {
-                    resourceLayer.clearLayers();
-                }
+                (resourceLayer || []).forEach(function (marker) { marker.remove(); });
+                resourceLayer = [];
 
                 var closest = [];
                 var unitCount = 0;
@@ -519,20 +520,19 @@ var resgrid;
                     }
                     var lat = prop(entry, 'latitude');
                     var lng = prop(entry, 'longitude');
-                    var marker = L.circleMarker([lat, lng], {
-                        radius: isUnit ? 8 : 6,
-                        color: '#ffffff',
-                        weight: isUnit ? 2.5 : 1.5,
-                        fillColor: hexOr(prop(entry, 'statusColor'), isUnit ? '#2563eb' : '#7c3aed'),
-                        fillOpacity: 0.95,
-                        opacity: 1,
-                        // A click on a resource opens its popup; it must not also move the call.
-                        bubblingMouseEvents: false
-                    });
+                    var size = isUnit ? 16 : 12;
                     var popup = '<strong>' + escapeHtml(prop(entry, 'name')) + '</strong>' + nearestBadge(rank)
                         + '<br/>' + escapeHtml(prop(entry, 'statusText') || '')
                         + '<br/>' + distanceEtaHtml(entry);
-                    marker.bindPopup(popup).bindTooltip(escapeHtml(prop(entry, 'name')), { direction: 'top', offset: [0, -8] }).addTo(resourceLayer);
+                    // A click on a resource opens its popup; the kit keeps it from also moving the call.
+                    resourceLayer.push(map.addMarker([lat, lng], {
+                        html: '<span style="display:block;width:' + size + 'px;height:' + size + 'px;border-radius:50%;border:' + (isUnit ? 2.5 : 1.5) + 'px solid #fff;box-sizing:border-box;background:'
+                            + hexOr(prop(entry, 'statusColor'), isUnit ? '#2563eb' : '#7c3aed') + ';box-shadow:0 0 1px rgba(0,0,0,.6);"></span>',
+                        iconSize: [size, size],
+                        iconAnchor: [size / 2, size / 2],
+                        title: prop(entry, 'name') || '',
+                        popupHtml: popup
+                    }));
                     if (isUnit) { unitCount++; } else { personCount++; }
                     if (rank > 0 && rank <= NEAREST_BADGES && prop(entry, 'distanceMeters') <= FRAME_MAX_METERS) {
                         closest.push([lat, lng]);
@@ -555,14 +555,14 @@ var resgrid;
                 if (framedFor !== key && keepViewFor !== key) {
                     framedFor = key;
                     if (closest.length) {
-                        var bounds = L.latLngBounds([[lat, lng]]);
+                        var framed = [[lat, lng]];
                         closest.forEach(function (point) {
-                            bounds.extend(point);
-                            bounds.extend([2 * lat - point[0], 2 * lng - point[1]]);
+                            framed.push(point);
+                            framed.push([2 * lat - point[0], 2 * lng - point[1]]);
                         });
-                        map.fitBounds(bounds, { padding: [30, 30], maxZoom: 15 });
+                        map.fitBounds(framed, { padding: 30, maxZoom: 15 });
                     } else {
-                        map.panTo([lat, lng]);
+                        map.setView([lat, lng]);
                     }
                 }
             }
@@ -585,7 +585,7 @@ var resgrid;
                     + '<div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal"></button></div>'
                     + '</div></div></div>');
                 positionModal.find('.modal-footer .btn').text(text('close'));
-                // Leaflet measures its container, so the map is drawn once the modal is on screen.
+                // The map measures its container, so it is drawn once the modal is on screen.
                 positionModal.on('shown.bs.modal', drawPositionMap);
                 $('body').append(positionModal);
                 return positionModal;
@@ -614,7 +614,7 @@ var resgrid;
             function showPosition(kind, id) {
                 var entry = kind === 'unit' ? unitsById[id] : personnelById[id];
                 var resource = entry ? (kind === 'unit' ? entry.unit : entry.person) : null;
-                if (!resource || !lastBoard || !hasCoordinates(resource) || typeof L === 'undefined') {
+                if (!resource || !lastBoard || !hasCoordinates(resource) || !window.resgrid || !resgrid.maps) {
                     return;
                 }
                 pendingPosition = { kind: kind, resource: resource, board: lastBoard };
@@ -629,32 +629,32 @@ var resgrid;
                     return;
                 }
                 if (!positionMap) {
-                    positionMap = L.map(positionModal.find('.dispatch-position-map')[0], { scrollWheelZoom: false });
-                    if (typeof osmTileUrl !== 'undefined' && osmTileUrl) {
-                        L.tileLayer(osmTileUrl, { maxZoom: 19, attribution: typeof osmTileAttribution !== 'undefined' ? osmTileAttribution : '' }).addTo(positionMap);
-                    }
-                    positionLayer = L.layerGroup().addTo(positionMap);
+                    positionMap = resgrid.maps.create(positionModal.find('.dispatch-position-map')[0], { scrollZoom: false, hydrants: false });
                 }
-                positionMap.invalidateSize();
-                positionLayer.clearLayers();
 
-                var isUnit = pendingPosition.kind === 'unit';
-                var resource = pendingPosition.resource;
-                var point = [prop(resource, 'latitude'), prop(resource, 'longitude')];
-                var callPoint = [prop(pendingPosition.board, 'latitude'), prop(pendingPosition.board, 'longitude')];
-                L.polyline([point, callPoint], { color: '#374151', weight: 3, opacity: 0.8, dashArray: '6 8', interactive: false }).addTo(positionLayer);
-                L.marker(callPoint, { keyboard: false })
-                    .bindTooltip(escapeHtml(text('callLocation')), { permanent: true, direction: 'top' })
-                    .addTo(positionLayer);
+                positionMap.then(function (map) { drawPosition(map, pendingPosition); });
+            }
+            function drawPosition(map, pending) {
+                map.resize();
+                (positionLayer || []).forEach(function (layer) { layer.remove(); });
+                positionLayer = [];
+
+                var isUnit = pending.kind === 'unit';
+                var resource = pending.resource;
+                var point = [Number(prop(resource, 'latitude')), Number(prop(resource, 'longitude'))];
+                var callPoint = [Number(prop(pending.board, 'latitude')), Number(prop(pending.board, 'longitude'))];
+                positionLayer.push(map.addLine('position-line', [point, callPoint], { color: '#374151', weight: 3, opacity: 0.8, dashed: true }));
+                positionLayer.push(map.addMarker(callPoint, { label: text('callLocation') }));
                 // A dark outline: a light status colour would otherwise vanish on light tiles.
-                L.circleMarker(point, {
-                    radius: isUnit ? 9 : 7,
-                    color: '#111827',
-                    weight: isUnit ? 3 : 2,
-                    fillColor: hexOr(prop(resource, 'statusColor'), isUnit ? '#2563eb' : '#7c3aed'),
-                    fillOpacity: 0.95
-                }).bindTooltip(escapeHtml(prop(resource, 'name')), { permanent: true, direction: 'top', offset: [0, -8] }).addTo(positionLayer);
-                positionMap.fitBounds(L.latLngBounds([point, callPoint]), { padding: [50, 50], maxZoom: 16, animate: false });
+                var size = isUnit ? 18 : 14;
+                positionLayer.push(map.addMarker(point, {
+                    html: '<span style="display:block;width:' + size + 'px;height:' + size + 'px;border-radius:50%;border:' + (isUnit ? 3 : 2) + 'px solid #111827;box-sizing:border-box;background:'
+                        + hexOr(prop(resource, 'statusColor'), isUnit ? '#2563eb' : '#7c3aed') + ';"></span>',
+                    iconSize: [size, size],
+                    iconAnchor: [size / 2, size / 2],
+                    label: prop(resource, 'name') || ''
+                }));
+                map.fitBounds([point, callPoint], { padding: 50, maxZoom: 16, animate: false });
             }
 
             // ── Board ──

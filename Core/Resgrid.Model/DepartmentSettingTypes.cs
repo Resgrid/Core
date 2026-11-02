@@ -211,5 +211,18 @@
 		CoordinationBoardDefaults = 120,
 		/// <summary><see cref="ShiftTradeApproverSettings"/> — who may pick the applicant for (and approve) a shift trade request.</summary>
 		ShiftTradeApprovers = 121,
+
+		/// <summary>
+		/// ProtoBuf-serialized <see cref="MappingNavigationConfig"/>: in-app navigation defaults (voice, units, arrival radius,
+		/// On Scene prompt, avoid options) and the route deviation threshold (Mapping settings). Missing = the documented defaults.
+		/// </summary>
+		MappingNavigationConfig = 122,
+
+		/// <summary>
+		/// ProtoBuf-serialized <see cref="OfflineMapPacksConfig"/>: the maximum response area the apps download at full detail
+		/// (size-limited on save), included data, download policy, incident and route-corridor packs, refresh (Mapping
+		/// settings). Missing = the defaults and the fallback area.
+		/// </summary>
+		OfflineMapPacksConfig = 123,
 	}
 }

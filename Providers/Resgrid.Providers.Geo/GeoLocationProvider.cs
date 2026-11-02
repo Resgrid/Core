@@ -65,9 +65,10 @@ namespace Resgrid.Providers.GeoLocationProvider
 				.ToList();
 		}
 
-		private static CancellationToken GeocodeTimeout()
+		/// <summary>One geocoder call's timeout; the caller disposes it (with <c>using</c>) once the call returns.</summary>
+		private static CancellationTokenSource GeocodeTimeout()
 		{
-			return new CancellationTokenSource(TimeSpan.FromMilliseconds(Math.Max(1000, Config.MappingConfig.RoutingTimeoutMs))).Token;
+			return new CancellationTokenSource(TimeSpan.FromMilliseconds(Math.Max(1000, Config.MappingConfig.RoutingTimeoutMs)));
 		}
 
 		public async Task<string> GetAproxAddressFromLatLong(double lat, double lon)
@@ -83,7 +84,8 @@ namespace Resgrid.Providers.GeoLocationProvider
 				{
 					try
 					{
-						var address = await geocoder.ReverseAsync(lat, lon, GeocodeTimeout());
+						using var timeout = GeocodeTimeout();
+						var address = await geocoder.ReverseAsync(lat, lon, timeout.Token);
 
 						if (!string.IsNullOrWhiteSpace(address))
 							return address;
@@ -108,7 +110,8 @@ namespace Resgrid.Providers.GeoLocationProvider
 				{
 					try
 					{
-						var match = await geocoder.ForwardAsync(address, GeocodeTimeout());
+						using var timeout = GeocodeTimeout();
+						var match = await geocoder.ForwardAsync(address, timeout.Token);
 
 						// Always invariant "lat,lon": many callers split and double.Parse it.
 						if (match != null)
@@ -304,7 +307,8 @@ namespace Resgrid.Providers.GeoLocationProvider
 		{
 			try
 			{
-				var match = await new LocationIqGeocodingProvider().ForwardAsync(address, GeocodeTimeout());
+				using var timeout = GeocodeTimeout();
+				var match = await new LocationIqGeocodingProvider().ForwardAsync(address, timeout.Token);
 
 				if (match != null)
 					return new Coordinates { Latitude = match.Latitude, Longitude = match.Longitude };
@@ -320,7 +324,10 @@ namespace Resgrid.Providers.GeoLocationProvider
 			{
 				if (double.TryParse(lat, NumberStyles.Float, CultureInfo.InvariantCulture, out var latitude) &&
 					double.TryParse(lon, NumberStyles.Float, CultureInfo.InvariantCulture, out var longitude))
-					return await new LocationIqGeocodingProvider().ReverseAsync(latitude, longitude, GeocodeTimeout());
+				{
+					using var timeout = GeocodeTimeout();
+					return await new LocationIqGeocodingProvider().ReverseAsync(latitude, longitude, timeout.Token);
+				}
 			}
 			catch { }
 

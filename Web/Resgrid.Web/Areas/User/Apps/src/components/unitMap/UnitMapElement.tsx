@@ -181,7 +181,8 @@ export default function UnitMapElement(props: UnitMapElementProps) {
   );
   const useMapLibreRenderer = useMemo(() => isMapLibreRendererEnabled(resolvedMapConfig), [resolvedMapConfig]);
   const useMapboxRenderer = useMemo(() => !useMapLibreRenderer && isMapboxRendererEnabled(resolvedMapConfig), [resolvedMapConfig, useMapLibreRenderer]);
-  const hasMapSource = useMapboxRenderer || resolvedMapConfig.tileUrl.length > 0;
+  // Same gate as MapElement: a department with only a MapLibre style has no raster tile URL.
+  const hasMapSource = useMapLibreRenderer || useMapboxRenderer || resolvedMapConfig.tileUrl.length > 0;
 
   useEffect(() => writeKeepInView(keepInView), [keepInView]);
 
@@ -217,7 +218,7 @@ export default function UnitMapElement(props: UnitMapElementProps) {
     return () => {
       cancelled = true;
     };
-  }, [hasMapSource, useMapboxRenderer]);
+  }, [hasMapSource, useMapLibreRenderer, useMapboxRenderer]);
 
   const loadAsync = useCallback(async () => {
     if (unitId <= 0) {

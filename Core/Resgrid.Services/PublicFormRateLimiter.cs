@@ -43,8 +43,9 @@ namespace Resgrid.Services
 			if (await IsLimitedAsync(form, ipAddress, cancellationToken))
 				return false;
 
-			await RecordAsync(form, ipAddress, cancellationToken);
-			return true;
+			// Decided on the use's own count, not only the marker: concurrent posts that all read no marker each get a distinct
+			// count from the atomic increment, so the ones past the cap are refused before the marker is visible to them.
+			return await CountAsync(form, ipAddress) <= LimitOf(form).Cap;
 		}
 
 		public async Task<bool> IsLimitedAsync(PublicFormLimit form, string ipAddress, CancellationToken cancellationToken = default)
@@ -65,19 +66,29 @@ namespace Resgrid.Services
 
 		public async Task RecordAsync(PublicFormLimit form, string ipAddress, CancellationToken cancellationToken = default)
 		{
+			await CountAsync(form, ipAddress);
+		}
+
+		/// <summary>Counts one use and returns the window's count after it; 0 when the limit is off or the use could not be counted.</summary>
+		private async Task<long> CountAsync(PublicFormLimit form, string ipAddress)
+		{
 			var (cap, window) = LimitOf(form);
 			if (cap <= 0 || string.IsNullOrWhiteSpace(ipAddress))
-				return;
+				return 0;
 
+			long count = 0;
 			try
 			{
-				if (await _cacheProvider.IncrementAsync(Key(form, ipAddress, "count"), window) >= cap)
+				count = await _cacheProvider.IncrementAsync(Key(form, ipAddress, "count"), window);
+				if (count >= cap)
 					await _cacheProvider.SetStringAsync(Key(form, ipAddress, "limited"), "1", window);
 			}
 			catch (Exception ex)
 			{
 				Logging.LogException(ex, $"A use of the {form} form could not be counted.");
 			}
+
+			return count;
 		}
 
 		private static string Key(PublicFormLimit form, string ipAddress, string part) =>

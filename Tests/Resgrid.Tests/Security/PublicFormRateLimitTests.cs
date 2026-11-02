@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading;
@@ -104,6 +105,24 @@ namespace Resgrid.Tests.Security
 			(await _limits.TryAcquireAsync(PublicFormLimit.Invite, Address)).Should().BeFalse();
 			(await _limits.TryAcquireAsync(PublicFormLimit.Invite, "198.51.100.4")).Should().BeTrue("another network is untouched");
 			(await _limits.TryAcquireAsync(PublicFormLimit.Register, Address)).Should().BeTrue("each form counts on its own");
+		}
+
+		[Test]
+		public async Task Uses_past_the_cap_are_refused_even_when_none_of_them_has_seen_the_refusal_marker()
+		{
+			// A burst of concurrent posts all read "no marker" before any of them counts; the marker read is pinned empty here.
+			var counter = 0L;
+			var cache = new Mock<ICacheProvider>();
+			cache.Setup(c => c.GetStringAsync(It.IsAny<string>())).ReturnsAsync((string)null);
+			cache.Setup(c => c.IncrementAsync(It.IsAny<string>(), It.IsAny<TimeSpan>())).ReturnsAsync(() => Interlocked.Increment(ref counter));
+			var limits = new PublicFormRateLimiter(cache.Object);
+
+			var results = new List<bool>();
+			for (var i = 0; i < SessionSecurityConfig.InviteIpLimitPerHour + 3; i++)
+				results.Add(await limits.TryAcquireAsync(PublicFormLimit.Invite, Address));
+
+			results.Count(r => r).Should().Be(SessionSecurityConfig.InviteIpLimitPerHour);
+			results.Skip(SessionSecurityConfig.InviteIpLimitPerHour).Should().OnlyContain(r => !r);
 		}
 
 		[Test]

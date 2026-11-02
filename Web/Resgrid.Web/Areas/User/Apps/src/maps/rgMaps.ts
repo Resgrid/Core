@@ -369,14 +369,17 @@ async function createMapLibre(element: HTMLElement, options: CreateMapOptions, c
   });
 
   if (options.traffic && config.trafficUrl) {
-    void import('./rgTraffic').then(({ addTrafficToggle }) =>
-      addTrafficToggle(map, {
-        url: config.trafficUrl!,
-        refreshSeconds: config.trafficRefreshSeconds,
-        initial: options.traffic === 'on',
-        label: config.trafficLabel,
-      }),
-    );
+    void import('./rgTraffic')
+      .then(({ addTrafficToggle }) =>
+        addTrafficToggle(map, {
+          url: config.trafficUrl!,
+          refreshSeconds: config.trafficRefreshSeconds,
+          initial: options.traffic === 'on',
+          label: config.trafficLabel,
+        }),
+      )
+      // The toggle is optional: the map stays usable without it, so a failed chunk load is logged, not raised.
+      .catch((error: unknown) => console.error('Failed to add the live traffic toggle', error));
   }
 
   const layerIds = new Set<string>();

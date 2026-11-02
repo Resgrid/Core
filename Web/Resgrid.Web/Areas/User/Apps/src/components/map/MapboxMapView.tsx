@@ -294,14 +294,17 @@ export function GlMapView({
           if (cancelled) {
             return;
           }
-          void import('../../maps/rgTraffic').then(({ addTrafficToggle }) =>
-            addTrafficToggle(map as unknown as import('maplibre-gl').Map, {
-              url: kitConfig.trafficUrl!,
-              refreshSeconds: kitConfig.trafficRefreshSeconds,
-              initial: resolvedMapConfig.traffic === 'on',
-              label: kitConfig.trafficLabel,
-            }),
-          );
+          void import('../../maps/rgTraffic')
+            .then(({ addTrafficToggle }) =>
+              addTrafficToggle(map as unknown as import('maplibre-gl').Map, {
+                url: kitConfig.trafficUrl!,
+                refreshSeconds: kitConfig.trafficRefreshSeconds,
+                initial: resolvedMapConfig.traffic === 'on',
+                label: kitConfig.trafficLabel,
+              }),
+            )
+            // The toggle is optional: the map stays usable without it, so a failed chunk load is logged, not raised.
+            .catch((trafficError: unknown) => console.error('Failed to add the live traffic toggle', trafficError));
         });
       }
 

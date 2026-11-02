@@ -48,6 +48,11 @@ namespace Resgrid.Services
 		{
 			departmentId = 0;
 
+			// Without the passphrase the key is a public constant and anyone could sign; refuse every signed URL instead
+			// (bearer callers are unaffected). Same rule as the invoice payment links.
+			if (string.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase))
+				return false;
+
 			if (string.IsNullOrWhiteSpace(signature) || string.IsNullOrWhiteSpace(scope) ||
 			    !int.TryParse(departmentText, NumberStyles.Integer, CultureInfo.InvariantCulture, out var department) || department <= 0 ||
 			    !long.TryParse(expiresText, NumberStyles.Integer, CultureInfo.InvariantCulture, out var expiresSeconds))

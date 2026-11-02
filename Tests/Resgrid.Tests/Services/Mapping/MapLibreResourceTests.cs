@@ -129,6 +129,16 @@ namespace Resgrid.Tests.Services.Mapping
 		}
 
 		[Test]
+		public void no_signature_validates_while_the_passphrase_is_unset()
+		{
+			SystemBehaviorConfig.ExternalLinkUrlParamPassphrase = "";
+			var (d, e, sig) = Parse(MapResourceUrls.SignQuery(42, MapResourceUrls.StaticMapScope));
+
+			MapResourceUrls.TryValidate(d, e, sig, MapResourceUrls.StaticMapScope, out var departmentId).Should().BeFalse();
+			departmentId.Should().Be(0);
+		}
+
+		[Test]
 		public void expired_signatures_fail()
 		{
 			var (d, e, sig) = Parse(MapResourceUrls.SignQuery(42, MapResourceUrls.StaticMapScope, TimeSpan.FromSeconds(-5)));

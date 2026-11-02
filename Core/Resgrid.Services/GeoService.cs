@@ -81,9 +81,11 @@ namespace Resgrid.Services
 
 				if (route != null)
 				{
-					// The cached route may be older than the log; subtract the time the responder has already travelled.
-					var timeDiff = route.ComputedOn - log.Timestamp;
-					var time = route.DurationSeconds - timeDiff.Seconds;
+					// The route runs from where the log was written; subtract the time the responder has travelled since. Measured
+					// from now, not the route's ComputedOn: a cached route can be older than the log. TotalSeconds, never Seconds
+					// (the 0–59 component), or a log older than a minute barely moves the ETA.
+					var travelledSeconds = Math.Max(0, (DateTime.UtcNow - log.Timestamp).TotalSeconds);
+					var time = route.DurationSeconds - travelledSeconds;
 
 					if (time < 0)
 						return 0;

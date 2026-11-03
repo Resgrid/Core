@@ -63,7 +63,7 @@ namespace Resgrid.Chatbot.Handlers
 				var sb = new StringBuilder();
 				sb.AppendLine(ChatbotResources.Get("CallDetail_Header", culture, call.CallId, call.Name));
 				sb.AppendLine(ChatbotResources.Get("CallDetail_Priority", culture, call.GetPriorityText()));
-				sb.AppendLine(ChatbotResources.Get("CallDetail_Nature", culture, call.NatureOfCall?.Truncate(100)));
+				sb.AppendLine(ChatbotResources.Get("CallDetail_Nature", culture, StringHelpers.HtmlToMessageText(call.NatureOfCall).Truncate(100)));
 				if (!string.IsNullOrWhiteSpace(call.Address))
 					sb.AppendLine(ChatbotResources.Get("CallDetail_Address", culture, call.Address));
 				sb.AppendLine(ChatbotResources.Get("CallDetail_Logged", culture, call.LoggedOn.TimeConverterToString(department)));

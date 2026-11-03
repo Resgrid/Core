@@ -247,5 +247,29 @@ namespace Resgrid.Tests.Chatbot
 			result.AnyDelivered.Should().BeFalse();
 			adapter.Verify(a => a.SendRichResponseAsync(It.IsAny<string>(), It.IsAny<ChatbotResponse>()), Times.Never);
 		}
+
+		[TestCase("<div dir=\"ltr\">JUST A TEST!<div><br></div><div>Shawn</div></div>", "Call TEST 10-7-2026\nJUST A TEST!\nShawn")]
+		[TestCase("pt <unconscious> bp 80", "Call TEST 10-7-2026\npt <unconscious> bp 80")]
+		[TestCase("<p><br></p>", "Call TEST 10-7-2026")]
+		public async Task Outbound_RichTextBody_IsDeliveredAsPlainLines(string body, string expected)
+		{
+			// A dispatch with no address carries the call's nature, which the web editor stores as HTML.
+			var (id, cfg, reg) = Mocks(
+				new List<ChatbotUserIdentity> { Identity(ChatbotPlatform.WebChat, platformUserId: "user-1") }, config: null);
+			reg.Setup(r => r.CanInitiateProactively(ChatbotPlatform.WebChat)).Returns(true);
+			ChatbotResponse sent = null;
+			var adapter = new Mock<IChatbotPlatformAdapter>();
+			adapter.Setup(a => a.SendRichResponseAsync("user-1", It.IsAny<ChatbotResponse>()))
+				.Callback<string, ChatbotResponse>((_, response) => sent = response)
+				.Returns(Task.CompletedTask);
+			reg.Setup(r => r.GetAdapter(ChatbotPlatform.WebChat)).Returns(adapter.Object);
+
+			var service = new ChatbotOutboundService(id.Object, reg.Object, cfg.Object);
+			await service.SendToUserAsync("user-1", 1,
+				new ChatbotOutboundMessage { Type = ChatbotOutboundType.Dispatch, Title = "Call TEST 10-7-2026", Body = body, ReferenceId = "5" });
+
+			sent.Should().NotBeNull();
+			sent.Text.Should().Be(expected);
+		}
 	}
 }

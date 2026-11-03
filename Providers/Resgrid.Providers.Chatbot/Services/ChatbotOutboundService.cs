@@ -49,6 +49,10 @@ namespace Resgrid.Providers.Chatbot.Services
 				if (identities == null)
 					return result;
 
+				// Bodies are often stored rich text (a call's nature, a message): chat platforms get it as plain lines.
+				var body = StringHelpers.HtmlToMessageText(message.Body);
+				var text = string.IsNullOrWhiteSpace(message.Title) ? body : string.IsNullOrEmpty(body) ? message.Title : $"{message.Title}\n{body}";
+
 				foreach (var identity in identities)
 				{
 					if (identity == null || !identity.IsActive)
@@ -78,7 +82,7 @@ namespace Resgrid.Providers.Chatbot.Services
 					{
 						var response = new ChatbotResponse
 						{
-							Text = string.IsNullOrWhiteSpace(message.Title) ? message.Body : $"{message.Title}\n{message.Body}",
+							Text = text,
 							Processed = true
 						};
 						await adapter.SendRichResponseAsync(identity.PlatformUserId, response);

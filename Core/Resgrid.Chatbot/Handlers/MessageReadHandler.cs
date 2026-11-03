@@ -48,7 +48,7 @@ namespace Resgrid.Chatbot.Handlers
 				sb.AppendLine(ChatbotResources.Get("Msg_ReadHeader", culture, msg.MessageId, subject));
 				sb.AppendLine(ChatbotResources.Get("Msg_Sent", culture, msg.SentOn.ToString("g")));
 				sb.AppendLine("----------------------");
-				sb.AppendLine(msg.Body);
+				sb.AppendLine(StringHelpers.HtmlToMessageText(msg.Body));
 				sb.AppendLine();
 				sb.AppendLine(ChatbotResources.Get("Msg_ReadFooter", culture, msg.MessageId));
 

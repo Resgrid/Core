@@ -48,6 +48,9 @@ class Api:
                 return response.status, _json(response.read())
         except urllib.error.HTTPError as error:
             return error.code, _json(error.read())
+        except (urllib.error.URLError, TimeoutError, ConnectionError) as error:
+            # Status 0: recorded as a failure like any other answer, and the remaining checks still run.
+            return 0, f'transport error: {error}'
 
     def sign_in(self, username: str, password: str, secret: str | None) -> tuple[int, Any]:
         form = {'grant_type': 'password', 'username': username, 'password': password, 'scope': SCOPE}

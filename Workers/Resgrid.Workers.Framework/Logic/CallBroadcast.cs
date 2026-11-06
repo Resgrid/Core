@@ -75,7 +75,9 @@ namespace Resgrid.Workers.Framework.Logic
 				// Resolve one route at a time: first sends retain their existing position relative to database
 				// reads. A preview supplies all routes to the same pure resolver without calling this sender.
 				var routingTimeUtc = DateTime.UtcNow;
-				async Task SendExpandedAsync(DispatchRoute route)
+				// renotifySourceId: the call dispatch the re-notification sweep checks the member is still on, when that is not
+				// the route's own source (a unit's station group is reached through the dispatched unit).
+				async Task SendExpandedAsync(DispatchRoute route, string renotifySourceId = null)
 				{
 					var selection = DispatchRecipientResolver.Resolve(routingTimeUtc, new[] { route }, dispatchedUsers);
 					foreach (var decision in selection.Decisions)
@@ -88,7 +90,7 @@ namespace Resgrid.Workers.Framework.Logic
 						{
 							var profile = cqi.Profiles.FirstOrDefault(x => x.UserId == userId);
 							if (await _communicationService.SendCallAsync(cqi.Call, new CallDispatch { UserId = userId }, cqi.DepartmentTextNumber, cqi.Call.DepartmentId, profile, cqi.Address))
-								renotifyRecipients.Add(DispatchRenotifyRecipient.ForUser(userId, RenotifySourceFor(route.Kind), route.SourceId));
+								renotifyRecipients.Add(DispatchRenotifyRecipient.ForUser(userId, RenotifySourceFor(route.Kind), renotifySourceId ?? route.SourceId));
 						}
 						catch (SocketException) { }
 						catch (Exception ex) { Logging.LogException(ex); }
@@ -162,7 +164,8 @@ namespace Resgrid.Workers.Framework.Logic
 						if (group && unit?.StationGroupId != null)
 						{
 							var members = await _departmentGroupsService.GetAllMembersForGroupAsync(unit.StationGroupId.Value);
-							await SendExpandedAsync(new DispatchRoute(DispatchRouteKind.UnitGroup, unit.StationGroupId.Value.ToString(), members.Select(x => x.UserId).ToArray()));
+							await SendExpandedAsync(new DispatchRoute(DispatchRouteKind.UnitGroup, unit.StationGroupId.Value.ToString(), members.Select(x => x.UserId).ToArray()),
+									dispatch.UnitId.ToString());
 						}
 					}
 				}

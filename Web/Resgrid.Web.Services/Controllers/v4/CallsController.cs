@@ -2551,39 +2551,70 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return Ok(result);
 		}
 
-		/// <summary>Returns calls closed in the caller's dispatch scope that were logged in the requested UTC year.</summary>
+		/// <summary>Most archived calls one GetArchivedCalls page returns.</summary>
+		public const int MaxArchivedCallsPageSize = 200;
+
+		/// <summary>
+		/// Returns one page of the calls closed in the caller's dispatch scope that were logged in the requested UTC year,
+		/// newest first, with their note and attachment counts. Continue with page + 1 while HasMore is true.
+		/// </summary>
 		/// <param name="year">Year the calls were logged.</param>
+		/// <param name="page">Zero-based page number; 0 when omitted.</param>
+		/// <param name="pageSize">Calls per page, 1 to 200; 50 when omitted.</param>
 		[HttpGet("GetArchivedCalls")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[Authorize(Policy = ResgridResources.Call_View)]
 		[DepartmentApiKeyScope(DepartmentApiKeyScopes.CallsRead)]
-		public async Task<ActionResult<ActiveCallsResult>> GetArchivedCalls(int year)
+		public async Task<ActionResult<ArchivedCallsResult>> GetArchivedCalls(int year, int page = 0, int pageSize = 50)
 		{
 			if (year is < 1 or > 9999)
 				return BadRequest("A valid year is required.");
+			if (page < 0)
+				return BadRequest("Page starts at 0.");
+			if (pageSize is < 1 or > MaxArchivedCallsPageSize)
+				return BadRequest($"Page size must be from 1 to {MaxArchivedCallsPageSize}.");
 
 			var closed = await _callsService.GetClosedCallsByDepartmentYearAsync(DepartmentId, year.ToString(CultureInfo.InvariantCulture));
-			var calls = (await ScopeCallsAsync(closed))
+			var ordered = (closed ?? new List<Call>())
 				.Where(call => call.State is >= (int)CallStates.Closed and <= (int)CallStates.FalseAlarm)
 				.OrderByDescending(call => call.LoggedOn)
 				.ThenByDescending(call => call.CallId)
 				.ToList();
-			var result = new ActiveCallsResult();
 
-			if (calls.Count > 0)
+			// For a group-scoped user, scope can need each call's dispatch rows. So calls are scoped newest first, in chunks
+			// that double, only until this page and one call past it are found: the rest of the year is never checked.
+			var pageEnd = ((long)page + 1) * pageSize;
+			var calls = new List<Call>();
+			var start = 0;
+			var chunk = pageSize + 1;
+			while (start < ordered.Count && calls.Count <= pageEnd)
+			{
+				var take = Math.Min(chunk, ordered.Count - start);
+				calls.AddRange(await ScopeCallsAsync(ordered.GetRange(start, take)));
+				start += take;
+				chunk = (int)Math.Min(2L * chunk, ordered.Count);
+			}
+
+			// Only the page is decrypted, counted and converted.
+			var pageCalls = calls.Skip((int)Math.Min((long)page * pageSize, calls.Count)).Take(pageSize).ToList();
+			var result = new ArchivedCallsResult { Page = page, HasMore = calls.Count > pageEnd };
+
+			if (pageCalls.Count > 0)
 			{
 				var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 				var archiveTimeZone = department?.TimeZone;
 				var callTypes = await _callsService.GetCallTypesForDepartmentAsync(DepartmentId);
 				var destinationPois = (await _mappingService.GetPOIsForDepartmentAsync(DepartmentId)).ToDictionary(poi => poi.PoiId);
-				var protectedReads = await ResolveProtectedReadsAsync(calls);
+				var protectedReads = await ResolveProtectedReadsAsync(pageCalls);
 
-				foreach (var call in calls)
+				foreach (var call in pageCalls)
 				{
-					destinationPois.TryGetValue(call.DestinationPoiId.GetValueOrDefault(), out var destinationPoi);
-					var callData = ConvertCall(call, null, call.Address, archiveTimeZone, destinationPoi, callTypes);
-					if (protectedReads.TryGetValue(call.CallId, out var protectedRead))
+					// Only notes and attachments: ConvertCall counts them and needs nothing else loaded.
+					var callWithData = await _callsService.PopulateCallData(call, false, true, true, false, false, false, false, false, false);
+					destinationPois.TryGetValue(callWithData.DestinationPoiId.GetValueOrDefault(), out var destinationPoi);
+					var callData = ConvertCall(callWithData, null, callWithData.Address, archiveTimeZone, destinationPoi, callTypes);
+					if (protectedReads.TryGetValue(callWithData.CallId, out var protectedRead))
 						ApplyProtectedReadMetadata(callData, protectedRead);
 					result.Data.Add(callData);
 				}

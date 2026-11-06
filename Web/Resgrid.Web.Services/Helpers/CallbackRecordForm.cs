@@ -109,6 +109,8 @@ namespace Resgrid.Web.Services.Helpers
 			}
 
 			if (current == null) return;
+			// The linked Call is kept unless the request names one: a form-only save never clears it.
+			draft.CallId ??= current.Record.CallId;
 			draft.ExternalId = current.Record.ExternalId;
 			draft.StartedOn = current.Record.StartedOn;
 			draft.EndedOn = current.Record.EndedOn;

@@ -21,6 +21,7 @@ import os
 import secrets
 import shutil
 import ssl
+import string
 import subprocess
 import sys
 import time
@@ -140,9 +141,16 @@ def seed(tag: str, scenarios: str) -> None:
     compose('run', '--rm', 'seed', 'seed', '--run-tag', tag, '--scenarios', scenarios)
 
 
+def run_tag(value: str) -> str:
+    """--run-tag, held to the seeder's rule (2-12 lower-case letters or digits) before it reaches SQL or a command line."""
+    if not 2 <= len(value) <= 12 or not all(c in string.ascii_lowercase + string.digits for c in value):
+        raise argparse.ArgumentTypeError('must be 2-12 lower-case letters or digits')
+    return value
+
+
 def seeded(tag: str) -> bool:
     """Whether this stack's database already holds the departments of run `tag` (and its manifest is still here)."""
-    query = f"SELECT count(*) FROM departments WHERE name LIKE '% ({tag})'"
+    query = f"SELECT count(*) FROM departments WHERE name LIKE '% ({run_tag(tag)})'"
     found = compose('exec', '-T', 'postgres', 'psql', '-U', 'resgrid', '-d', 'resgrid_qa', '-Atc', query, check=False, capture=True)
     return found.returncode == 0 and found.stdout.strip() not in ('', '0') and (PRIVATE / 'out' / 'qa-departments.json').exists()
 
@@ -157,7 +165,7 @@ def main() -> int:
     parser.add_argument('command', choices=('up', 'seed', 'verify', 'unlock', 'status', 'logs', 'down'))
     parser.add_argument('service', nargs='?')
     parser.add_argument('--no-build', action='store_true', help='reuse the resgrid-qa/* images already built')
-    parser.add_argument('--run-tag', default=None)
+    parser.add_argument('--run-tag', default=None, type=run_tag)
     parser.add_argument('--scenarios', default='all')
     args = parser.parse_args()
     if not shutil.which('docker'):

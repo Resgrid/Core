@@ -546,10 +546,15 @@ namespace Resgrid.Services.Search
 			return (hits, dropped == 0 && !search.Truncated && search.Hits.Count == search.Total ? hits.Count : (int?)null);
 		}
 
-		/// <summary>The caller may search Records: the view claim (or admin), an activated Records module, current membership and a live records index.</summary>
+		/// <summary>
+		/// The caller may search Records: the view claim (or admin), the department's Records module switch on, an activated
+		/// Records module, current membership and a live records index.
+		/// </summary>
 		private async Task<bool> RecordsSearchableAsync(SearchPrincipal principal)
 		{
 			if (!principal.IsDepartmentAdmin && !principal.HasResourceClaim("Record", "View"))
+				return false;
+			if (!principal.ModuleEnabled(SystemActionModules.Records))
 				return false;
 			if (_recordsSearch == null || !_recordsSearch.IsAvailable)
 				return false;

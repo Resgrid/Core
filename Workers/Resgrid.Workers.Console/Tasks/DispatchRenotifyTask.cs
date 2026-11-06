@@ -13,7 +13,7 @@ namespace Resgrid.Workers.Console.Tasks
 	{
 		public string Name => "Dispatch Re-notify";
 		public int Priority => 1;
-		public ILogger _logger;
+		private readonly ILogger _logger;
 
 		public DispatchRenotifyTask(ILogger logger)
 		{

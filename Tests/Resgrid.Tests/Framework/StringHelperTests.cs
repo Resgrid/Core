@@ -306,6 +306,8 @@ namespace Resgrid.Tests.Framework
 		[TestCase("<!-- Word comment --><p>A &amp; B &lt;c&gt;</p>", "A & B <c>")]
 		[TestCase("<p><br></p>", "")]
 		[TestCase("pt <unconscious> bp 80", "pt <unconscious> bp 80")]
+		[TestCase("<p>pt <unconscious> bp 80</p><p>SET UNIT <number or name> TO <b>Enroute</b></p>", "pt <unconscious> bp 80\nSET UNIT <number or name> TO Enroute")]
+		[TestCase("<p>Patient </unconscious> <o:p></o:p><x-note>noted</x-note><span class=\"a\">ok</span></p>", "Patient </unconscious>\nnoted\nok")]
 		[TestCase("C<id>: call detail\nSET UNIT <number or name> TO <status>", "C<id>: call detail\nSET UNIT <number or name> TO <status>")]
 		[TestCase("  Fire at 5th &amp; Main\n2nd alarm  ", "Fire at 5th &amp; Main\n2nd alarm")]
 		[TestCase(null, "")]

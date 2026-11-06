@@ -193,6 +193,8 @@ namespace Resgrid.Tests.Services
 				["Calls.GetPendingCalls"] = DepartmentApiKeyScopes.CallsRead,
 				["Calls.GetAllPendingScheduledCalls"] = DepartmentApiKeyScopes.CallsRead,
 				["Calls.GetNewCallFieldPolicy"] = DepartmentApiKeyScopes.CallsRead,
+				["Calls.GetCallYears"] = DepartmentApiKeyScopes.CallsRead,
+				["Calls.GetArchivedCalls"] = DepartmentApiKeyScopes.CallsRead,
 				["Calls.SaveCall"] = DepartmentApiKeyScopes.CallsCreate,
 				["Calls.EditCall"] = DepartmentApiKeyScopes.CallsUpdate,
 				["Calls.UpdateScheduledDispatchTime"] = DepartmentApiKeyScopes.CallsUpdate,

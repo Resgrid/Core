@@ -54,7 +54,28 @@ namespace Resgrid.Repositories.NoSqlRepository
             await connection.OpenAsync();
             var documents = await connection.QueryAsync<string>(
                 $"SELECT {Projection} FROM public.maplayers WHERE departmentid = @departmentId;", new { departmentId });
-            return documents.Where(value => IsIncludedDocument(value, type)).Select(DeserializeDocument).ToList();
+            return DeserializeIncludedDocuments(documents, type);
+        }
+
+        /// <summary>
+        /// The department's layers of one type. A legacy layer whose geometry was lost is left out (and logged) rather than
+        /// failing the whole list, so the department's other layers still load.
+        /// </summary>
+        internal static List<MapLayer> DeserializeIncludedDocuments(IEnumerable<string> documents, MapLayerTypes type)
+        {
+            var layers = new List<MapLayer>();
+            foreach (var value in documents.Where(value => IsIncludedDocument(value, type)))
+            {
+                try
+                {
+                    layers.Add(DeserializeDocument(value));
+                }
+                catch (InvalidOperationException ex)
+                {
+                    Resgrid.Framework.Logging.LogException(ex, "Skipping a legacy PostgreSQL map layer with no stored geometry while listing the department's layers.");
+                }
+            }
+            return layers;
         }
 
         internal static bool IsIncludedDocument(string value, MapLayerTypes type)

@@ -13,6 +13,8 @@ namespace Resgrid.Web.Helpers
 	/// The list has three forms. Blank means "everyone" on an immediate call (older clients send nothing, so this stays),
 	/// "0" means "everyone", and anything else is the explicit list. An explicit list with no entries ("|") dispatches
 	/// nobody: it is how a client creates or edits a call that goes to no one without the blank reading as "everyone".
+	/// A new immediate call made with a system API key is the exception: neither "0" nor a blank list pages everyone, so
+	/// it dispatches nobody unless the list names recipients (CallsController.SaveCall).
 	/// </remarks>
 	public static class DispatchListHelper
 	{

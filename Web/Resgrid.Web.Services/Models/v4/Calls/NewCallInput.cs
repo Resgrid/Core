@@ -69,7 +69,9 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		/// <remarks>
 		/// "0" dispatches everyone. Left blank, an immediate call also goes to everyone (older clients send nothing), and a
 		/// pending call has no proposed recipients. Send a list with no entries ("|") to create a call that dispatches
-		/// nobody; a department that requires a dispatch list refuses it.
+		/// nobody; a department that requires a dispatch list refuses it. A system API key never pages the whole department
+		/// on its own: its immediate call with "0" or a blank list dispatches nobody, so name the recipients (on a pending
+		/// call "0" is kept as the proposal, since nobody is paged until a dispatcher sends it).
 		/// </remarks>
 		public string DispatchList { get; set; }
 

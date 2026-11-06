@@ -157,5 +157,19 @@ namespace Resgrid.Tests.Search
 			_flagOn = false;
 			(await _service.GetSearchableEntityTypesAsync(Principal("Call:View"))).Should().BeEmpty();
 		}
+
+		[Test]
+		public async Task Records_are_neither_listed_nor_searched_while_the_department_switches_the_module_off()
+		{
+			RecordsAnswer(new RecordsSearchHit { SourceType = ((int)RmsSearchSourceType.Record).ToString(), SourceId = "r1", Score = 1f });
+			var on = await _service.SearchAsync(new UnifiedSearchRequest { Text = "one" }, Principal("Call:View", "Record:View"));
+			on.Hits.Should().Contain(h => h.EntityType == SearchEntityTypes.Record);
+
+			_settings.Setup(s => s.GetDepartmentModuleSettingsAsync(7, true)).ReturnsAsync(new DepartmentModuleSettings { RecordsDisabled = true });
+
+			(await _service.GetSearchableEntityTypesAsync(Principal("Call:View", "Record:View"))).Should().NotContain(SearchEntityTypes.Record);
+			var off = await _service.SearchAsync(new UnifiedSearchRequest { Text = "one" }, Principal("Call:View", "Record:View"));
+			off.Hits.Should().NotContain(h => h.EntityType == SearchEntityTypes.Record);
+		}
 	}
 }

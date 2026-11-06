@@ -8,6 +8,7 @@ MODULE_TAGS = {
     'messaging': 1, 'mapping': 3, 'shifts': 5, 'logs': 7, 'reports': 9, 'documents': 11, 'calendar': 13, 'notes': 15,
     'training': 17, 'inventory': 19, 'maintenance': 21, 'checklists': 23, 'businessOperations': 24, 'ai': 25,
     'incidentBackOffice': 26, 'incidentBusiness': 27, 'incidentCoordination': 28,
+    'records': 29, 'contacts': 30, 'certifications': 31, 'deployments': 32, 'chat': 33,
 }
 
 

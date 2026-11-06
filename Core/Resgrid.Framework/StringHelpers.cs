@@ -170,6 +170,20 @@ namespace Resgrid.Framework
 			return false;
 		}
 
+		/// <summary>
+		/// Whether an <see cref="HtmlTagPattern"/> match is markup by the same rules as <see cref="LooksLikeHtml"/>: a comment or
+		/// declaration, a known, namespaced or custom element, or a tag carrying attributes. A bare "&lt;unconscious&gt;" is text.
+		/// </summary>
+		private static bool IsMarkupTag(Match match)
+		{
+			if (!match.Groups[2].Success)
+				return true;
+			var name = match.Groups[2].Value;
+			if (KnownHtmlTags.Contains(name) || name.IndexOf(':') >= 0 || name.IndexOf('-') >= 0)
+				return true;
+			return match.Groups[3].Success && match.Groups[3].Value.IndexOf('=') >= 0;
+		}
+
 		private static string EncodeAngleBrackets(string text) => text.Replace("<", "&lt;").Replace(">", "&gt;");
 
 		private static readonly Regex HtmlTagToken = new Regex(@"<!--|<!doctype|<(/?)([a-zA-Z][\w:.-]*)(\s[^<>]*)?/?>",
@@ -251,9 +265,11 @@ namespace Resgrid.Framework
 				if (!LooksLikeHtml(html))
 					return singleLine ? PlainWhitespace.Replace(html, " ").Trim() : html.Trim();
 
-				// Whitespace inside markup is layout, not content: only tags break lines.
+				// Whitespace inside markup is layout, not content: only tags break lines. A bare "<unconscious>" next to real
+				// markup is the writer's text, not a tag, so it is kept as written.
 				var text = PlainWhitespace.Replace(HtmlNonTextBlocks.Replace(html, " "), " ");
-				text = HtmlTagPattern.Replace(text, m => m.Groups[2].Success && InlineHtmlTags.Contains(m.Groups[2].Value) ? string.Empty : "\n");
+				text = HtmlTagPattern.Replace(text, m => !IsMarkupTag(m) ? m.Value
+					: m.Groups[2].Success && InlineHtmlTags.Contains(m.Groups[2].Value) ? string.Empty : "\n");
 				if (text.IndexOf('&') >= 0)
 					text = System.Net.WebUtility.HtmlDecode(text);
 				text = HorizontalWhitespace.Replace(text, " ");

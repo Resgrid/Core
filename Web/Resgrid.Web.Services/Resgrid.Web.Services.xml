@@ -805,9 +805,17 @@
         <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.GetCallYears">
             <summary>Returns the years in which the department has calls, newest first.</summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.GetArchivedCalls(System.Int32)">
-            <summary>Returns calls closed in the caller's dispatch scope that were logged in the requested UTC year.</summary>
+        <member name="F:Resgrid.Web.Services.Controllers.v4.CallsController.MaxArchivedCallsPageSize">
+            <summary>Most archived calls one GetArchivedCalls page returns.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.GetArchivedCalls(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Returns one page of the calls closed in the caller's dispatch scope that were logged in the requested UTC year,
+            newest first, with their note and attachment counts. Continue with page + 1 while HasMore is true.
+            </summary>
             <param name="year">Year the calls were logged.</param>
+            <param name="page">Zero-based page number; 0 when omitted.</param>
+            <param name="pageSize">Calls per page, 1 to 200; 50 when omitted.</param>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.DispatchCallNow(Resgrid.Web.Services.Models.v4.Calls.DispatchCallNowInput,System.Threading.CancellationToken)">
             <summary>
@@ -9588,6 +9596,15 @@
             Default constructor
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Calls.ArchivedCallsResult">
+            <summary>
+            One page of a year's archived calls. Page is the zero-based page returned and PageSize the number of calls on it;
+            continue with Page + 1 while HasMore is true.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.ArchivedCallsResult.HasMore">
+            <summary>True when a later page has more calls.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Calls.CallExtraDataResult">
             <summary>
             Depicts a call in the Resgrid system.
@@ -10561,7 +10578,9 @@
             <remarks>
             "0" dispatches everyone. Left blank, an immediate call also goes to everyone (older clients send nothing), and a
             pending call has no proposed recipients. Send a list with no entries ("|") to create a call that dispatches
-            nobody; a department that requires a dispatch list refuses it.
+            nobody; a department that requires a dispatch list refuses it. A system API key never pages the whole department
+            on its own: its immediate call with "0" or a blank list dispatches nobody, so name the recipients (on a pending
+            call "0" is kept as the proposal, since nobody is paged until a dispatcher sends it).
             </remarks>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.UnitResponseCodes">
@@ -20179,6 +20198,8 @@
             The list has three forms. Blank means "everyone" on an immediate call (older clients send nothing, so this stays),
             "0" means "everyone", and anything else is the explicit list. An explicit list with no entries ("|") dispatches
             nobody: it is how a client creates or edits a call that goes to no one without the blank reading as "everyone".
+            A new immediate call made with a system API key is the exception: neither "0" nor a blank list pages everyone, so
+            it dispatches nobody unless the list names recipients (CallsController.SaveCall).
             </remarks>
         </member>
         <member name="M:Resgrid.Web.Helpers.DispatchListHelper.HasEntries(System.String)">

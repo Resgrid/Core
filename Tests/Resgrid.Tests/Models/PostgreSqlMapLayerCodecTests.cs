@@ -42,6 +42,18 @@ namespace Resgrid.Tests.Models
 		}
 
 		[Test]
+		public void A_lost_legacy_layer_is_left_out_of_the_list_without_failing_the_others()
+		{
+			const string lost = "{\"id\":\"8\",\"type\":0,\"isDeleted\":false,\"name\":\"Lost\",\"data\":{\"Features\":[{}]}}";
+			const string kept = "{\"id\":\"9\",\"type\":0,\"isDeleted\":false,\"name\":\"Kept\",\"data\":{\"Features\":[]}}";
+
+			var layers = (System.Collections.Generic.List<MapLayer>)Invoke("DeserializeIncludedDocuments", new[] { lost, kept }, (MapLayerTypes)0);
+
+			Assert.That(layers, Has.Count.EqualTo(1));
+			Assert.That(layers[0].GetId(), Is.EqualTo("9"));
+		}
+
+		[Test]
 		public void Empty_layer_remains_empty()
 		{
 			var layer = (MapLayer)Invoke("DeserializeDocument", "{\"id\":\"7\",\"data\":{\"Features\":[]}}");

@@ -207,6 +207,8 @@ namespace Resgrid.Web.Services.Helpers
 			var restricted = RmsDefinitionKeys.RestrictedClass.Contains(snapshot.DefinitionKey ?? string.Empty);
 			return new RecordData
 			{
+				// A Callback revision carries its form values like the current record, so a field client can render it.
+				Values = CallbackRecordForm.Matches(snapshot.DefinitionKey, snapshot.DefinitionVersion) ? CallbackRecordForm.Read(snapshot.Details) : null,
 				RecordId = snapshot.RecordId,
 				RecordKind = RmsRecordKind.Operational.ToString(),
 				DefinitionKey = snapshot.DefinitionKey,

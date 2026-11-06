@@ -71,6 +71,41 @@ namespace Resgrid.Tests.Web.Services
 		}
 
 		[Test]
+		public void A_values_only_save_keeps_the_linked_call_unless_the_request_names_one()
+		{
+			var current = new RecordAggregate
+			{
+				Record = new RmsOperationalRecord
+				{
+					DefinitionKey = RmsDefinitionKeys.Callback, DefinitionVersion = RmsDefinitionKeys.LockedDefinitionVersion, CallId = 41
+				}
+			};
+
+			var kept = RecordsApiMapper.ToDraftInput(new SaveRecordDraftInput { Values = [Cell("narrative", "Back in quarters.")] }, RmsOriginClient.Dispatch, current);
+			var moved = RecordsApiMapper.ToDraftInput(new SaveRecordDraftInput { CallId = 42, Values = [Cell("narrative", "Back in quarters.")] }, RmsOriginClient.Dispatch, current);
+
+			Assert.That(kept.CallId, Is.EqualTo(41));
+			Assert.That(moved.CallId, Is.EqualTo(42));
+		}
+
+		[Test]
+		public void A_callback_revision_snapshot_carries_its_form_values()
+		{
+			var snapshot = new RecordSnapshot
+			{
+				DefinitionKey = RmsDefinitionKeys.Callback, DefinitionVersion = RmsDefinitionKeys.LockedDefinitionVersion,
+				Details = new RmsOperationalRecordDetail { InitialReport = "Station inspection", Narrative = "Reported back." }
+			};
+
+			var record = RecordsApiMapper.ToRecord(snapshot, false);
+
+			Assert.That(record.Values, Is.Not.Null);
+			Assert.That(record.Values.Sections[0].Rows[0].Cells,
+				Has.Some.Matches<RecordValueCellData>(cell => cell.FieldKey == "initial-report" && cell.Value == "Station inspection"));
+			Assert.That(RecordsApiMapper.ToRecord(new RecordSnapshot { DefinitionKey = RmsDefinitionKeys.Run, DefinitionVersion = RmsDefinitionKeys.LockedDefinitionVersion }, false).Values, Is.Null);
+		}
+
+		[Test]
 		public void The_existing_details_input_keeps_its_contract()
 		{
 			var input = new SaveRecordDraftInput

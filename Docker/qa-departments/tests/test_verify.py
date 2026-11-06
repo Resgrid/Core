@@ -1,6 +1,8 @@
 import unittest
+import urllib.error
+from unittest import mock
 
-from seeder.verify import _expected_sign_in, _module_off
+from seeder.verify import Api, _expected_sign_in, _module_off
 
 
 def department(sso='none', mfa=False, disabled=()):
@@ -21,6 +23,14 @@ class VerifyRuleTests(unittest.TestCase):
         self.assertTrue(_module_off(off, 'Shifts/GetTodaysShifts'))
         self.assertFalse(_module_off(off, 'Calls/GetActiveCalls'))
         self.assertFalse(_module_off(department(), 'Messages/GetInboxMessages'))
+
+    def test_a_transport_failure_is_an_answer_not_a_crash(self):
+        api = Api('https://localhost:5443', insecure=False)
+        for failure in (urllib.error.URLError('refused'), TimeoutError('read timed out'), ConnectionResetError('reset')):
+            with mock.patch('urllib.request.urlopen', side_effect=failure):
+                status, body = api.request('GET', 'Config/GetConfig')
+            self.assertEqual(status, 0)
+            self.assertIn('transport error', body)
 
 
 if __name__ == '__main__':

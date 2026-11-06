@@ -476,6 +476,19 @@ namespace Resgrid.Tests.Services
 			DispatchRenotificationService.IsStillDispatched(_call, row).Should().BeFalse();
 		}
 
+		[Test]
+		public void A_member_reached_through_a_units_station_group_stays_on_the_call_while_that_unit_is_dispatched()
+		{
+			// The broadcast records the dispatched unit (not its station group) as the source of a unit-group member.
+			_call.Dispatches.Clear();
+			var row = UserRow(source: DispatchRenotifySourceTypes.UnitGroup, sourceId: UnitId.ToString());
+
+			DispatchRenotificationService.IsStillDispatched(_call, row).Should().BeTrue();
+
+			_call.UnitDispatches.Clear();
+			DispatchRenotificationService.IsStillDispatched(_call, row).Should().BeFalse();
+		}
+
 		#endregion Cancellation
 
 		[Test]

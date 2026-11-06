@@ -54,14 +54,14 @@ namespace Resgrid.Repositories.NoSqlRepository
             await connection.OpenAsync();
             var documents = await connection.QueryAsync<string>(
                 $"SELECT {Projection} FROM public.maplayers WHERE departmentid = @departmentId;", new { departmentId });
-            return DeserializeIncludedDocuments(documents, type);
+            return DeserializeIncludedDocuments(documents, type, departmentId);
         }
 
         /// <summary>
-        /// The department's layers of one type. A legacy layer whose geometry was lost is left out (and logged) rather than
-        /// failing the whole list, so the department's other layers still load.
+        /// The department's layers of one type. A legacy layer whose geometry was lost is left out (and logged with its id)
+        /// rather than failing the whole list, so the department's other layers still load.
         /// </summary>
-        internal static List<MapLayer> DeserializeIncludedDocuments(IEnumerable<string> documents, MapLayerTypes type)
+        internal static List<MapLayer> DeserializeIncludedDocuments(IEnumerable<string> documents, MapLayerTypes type, int departmentId)
         {
             var layers = new List<MapLayer>();
             foreach (var value in documents.Where(value => IsIncludedDocument(value, type)))
@@ -72,7 +72,10 @@ namespace Resgrid.Repositories.NoSqlRepository
                 }
                 catch (InvalidOperationException ex)
                 {
-                    Resgrid.Framework.Logging.LogException(ex, "Skipping a legacy PostgreSQL map layer with no stored geometry while listing the department's layers.");
+                    // The id and department find the row to repair; the document itself is not logged.
+                    var layerId = JObject.Parse(value).Value<string>("id");
+                    Resgrid.Framework.Logging.LogException(ex,
+                        $"Skipping legacy PostgreSQL map layer {layerId} of department {departmentId}: it has no stored geometry, so the department's layer list leaves it out.");
                 }
             }
             return layers;

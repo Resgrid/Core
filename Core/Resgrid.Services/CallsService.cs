@@ -1298,5 +1298,21 @@ namespace Resgrid.Services
 
 			return result;
 		}
+
+		public async Task<Dictionary<int, CallContentCounts>> GetCallContentCountsAsync(int departmentId, IEnumerable<int> callIds, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var result = new Dictionary<int, CallContentCounts>();
+			var ids = (callIds ?? Enumerable.Empty<int>()).Distinct().ToList();
+			if (ids.Count == 0)
+				return result;
+
+			foreach (var count in await _callsRepository.GetCallContentCountsAsync(departmentId, ids, cancellationToken) ?? Enumerable.Empty<CallContentCounts>())
+			{
+				if (count != null)
+					result[count.CallId] = count;
+			}
+
+			return result;
+		}
 	}
 }

@@ -47,7 +47,7 @@ namespace Resgrid.Tests.Models
 			const string lost = "{\"id\":\"8\",\"type\":0,\"isDeleted\":false,\"name\":\"Lost\",\"data\":{\"Features\":[{}]}}";
 			const string kept = "{\"id\":\"9\",\"type\":0,\"isDeleted\":false,\"name\":\"Kept\",\"data\":{\"Features\":[]}}";
 
-			var layers = (System.Collections.Generic.List<MapLayer>)Invoke("DeserializeIncludedDocuments", new[] { lost, kept }, (MapLayerTypes)0);
+			var layers = (System.Collections.Generic.List<MapLayer>)Invoke("DeserializeIncludedDocuments", new[] { lost, kept }, (MapLayerTypes)0, 5);
 
 			Assert.That(layers, Has.Count.EqualTo(1));
 			Assert.That(layers[0].GetId(), Is.EqualTo("9"));

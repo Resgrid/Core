@@ -32,7 +32,7 @@ namespace Resgrid.Workers.Console.Tasks
 				if (result.Item1)
 					_logger.LogInformation($"DispatchRenotify::{result.Item2}");
 				else
-					_logger.LogInformation($"DispatchRenotify::Failed to sweep dispatch re-notifications. {result.Item2}");
+					_logger.LogError($"DispatchRenotify::Failed to sweep dispatch re-notifications. {result.Item2}");
 
 				progress.Report(100, $"Finishing the {Name} Task");
 			}

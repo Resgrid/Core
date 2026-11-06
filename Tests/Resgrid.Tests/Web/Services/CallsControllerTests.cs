@@ -201,7 +201,7 @@ namespace Resgrid.Tests.Web.Services
 			_dispatchScope.Setup(x => x.FilterCallsForUserAsync(DepartmentId, UserId, It.IsAny<List<Call>>()))
 				.ReturnsAsync((int departmentId, string userId, List<Call> calls) => calls.Where(call => call != outOfScope).ToList());
 			_mappingService.Setup(x => x.GetPOIsForDepartmentAsync(DepartmentId)).ReturnsAsync([]);
-			PopulateArchivedCallsInPlace();
+			ArchivedCallCounts();
 
 			var response = await _controller.GetArchivedCalls(2026);
 
@@ -227,20 +227,7 @@ namespace Resgrid.Tests.Web.Services
 				.ToList();
 			_callsService.Setup(x => x.GetClosedCallsByDepartmentYearAsync(DepartmentId, "2026")).ReturnsAsync(calls);
 			_mappingService.Setup(x => x.GetPOIsForDepartmentAsync(DepartmentId)).ReturnsAsync([]);
-			PopulateArchivedCallsInPlace(call =>
-			{
-				if (call.CallId != 3)
-					return;
-
-				call.CallNotes = [new CallNote(), new CallNote()];
-				call.Attachments =
-				[
-					new CallAttachment { CallAttachmentType = (int)CallAttachmentTypes.DispatchAudio },
-					new CallAttachment { CallAttachmentType = (int)CallAttachmentTypes.Image },
-					new CallAttachment { CallAttachmentType = (int)CallAttachmentTypes.Image },
-					new CallAttachment { CallAttachmentType = (int)CallAttachmentTypes.File }
-				];
-			});
+			var countRequests = ArchivedCallCounts(new CallContentCounts { CallId = 3, NoteCount = 2, AudioCount = 1, ImageCount = 2, FileCount = 1 });
 
 			var first = (ArchivedCallsResult)((OkObjectResult)(await _controller.GetArchivedCalls(2026, 0, 2)).Result).Value;
 			var second = (ArchivedCallsResult)((OkObjectResult)(await _controller.GetArchivedCalls(2026, 1, 2)).Result).Value;
@@ -263,10 +250,12 @@ namespace Resgrid.Tests.Web.Services
 			counted.AudioCount.Should().Be(1);
 			counted.ImgagesCount.Should().Be(2);
 			counted.FileCount.Should().Be(1);
+			second.Data[1].NotesCount.Should().Be(0, "a call with no notes or attachments has no counts row");
 
-			// Each call is loaded once, on its own page, with notes and attachments and nothing else.
-			foreach (var call in calls)
-				_callsService.Verify(x => x.PopulateCallData(call, false, true, true, false, false, false, false, false, false, false), Times.Once);
+			// One counts query per page, for that page's calls only; no note or attachment rows are loaded.
+			countRequests.Should().BeEquivalentTo(new[] { new[] { 5, 4 }, new[] { 3, 2 }, new[] { 1 } }, options => options.WithStrictOrdering());
+			_callsService.Verify(x => x.PopulateCallData(It.IsAny<Call>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(),
+				It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>()), Times.Never);
 			_protectedCallReadService.Verify(x => x.ResolveForReadAsync(DepartmentId,
 				It.Is<IReadOnlyList<Call>>(page => page.Count <= 2), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Exactly(3));
 		}
@@ -298,7 +287,7 @@ namespace Resgrid.Tests.Web.Services
 			_callsService.Setup(x => x.GetClosedCallsByDepartmentYearAsync(DepartmentId, "2026"))
 				.ReturnsAsync([new Call { CallId = 1, State = (int)CallStates.Closed, LoggedOn = new DateTime(2026, 1, 1) }]);
 			_mappingService.Setup(x => x.GetPOIsForDepartmentAsync(DepartmentId)).ReturnsAsync([]);
-			PopulateArchivedCallsInPlace();
+			ArchivedCallCounts();
 
 			var result = (ArchivedCallsResult)((OkObjectResult)(await _controller.GetArchivedCalls(2026, int.MaxValue, CallsController.MaxArchivedCallsPageSize)).Result).Value;
 
@@ -323,7 +312,7 @@ namespace Resgrid.Tests.Web.Services
 					return chunk.Where(call => call.CallId % 2 == 0).ToList();
 				});
 			_mappingService.Setup(x => x.GetPOIsForDepartmentAsync(DepartmentId)).ReturnsAsync([]);
-			PopulateArchivedCallsInPlace();
+			ArchivedCallCounts();
 
 			var result = (ArchivedCallsResult)((OkObjectResult)(await _controller.GetArchivedCalls(2026, 0, 3)).Result).Value;
 
@@ -333,17 +322,22 @@ namespace Resgrid.Tests.Web.Services
 			checkedIds.Should().Equal(Enumerable.Range(29, 12).Reverse());
 		}
 
-		/// <summary>PopulateCallData fills the call it is given and returns it, as CallsService does.</summary>
-		private void PopulateArchivedCallsInPlace(Action<Call> fill = null)
+		/// <summary>
+		/// GetCallContentCountsAsync answers with the given rows for the calls asked about, as the grouped query does (a call with
+		/// no notes or attachments has no row). Returns the call ids of each request, in order.
+		/// </summary>
+		private List<int[]> ArchivedCallCounts(params CallContentCounts[] counts)
 		{
+			var requests = new List<int[]>();
 			_callsService
-				.Setup(x => x.PopulateCallData(It.IsAny<Call>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(),
-					It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>()))
-				.ReturnsAsync((Call call, bool _, bool _, bool _, bool _, bool _, bool _, bool _, bool _, bool _, bool _) =>
+				.Setup(x => x.GetCallContentCountsAsync(DepartmentId, It.IsAny<IEnumerable<int>>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((int departmentId, IEnumerable<int> callIds, CancellationToken cancellationToken) =>
 				{
-					fill?.Invoke(call);
-					return call;
+					var ids = callIds.ToArray();
+					requests.Add(ids);
+					return counts.Where(count => ids.Contains(count.CallId)).ToDictionary(count => count.CallId);
 				});
+			return requests;
 		}
 
 		[Test]

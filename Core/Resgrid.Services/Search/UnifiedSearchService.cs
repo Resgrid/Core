@@ -421,9 +421,9 @@ namespace Resgrid.Services.Search
 			Add(SearchEntityTypes.CalendarEvent, "Schedule", SystemActionModules.Calendar);
 			Add(SearchEntityTypes.Shift, "Shift", SystemActionModules.Shifts);
 			Add(SearchEntityTypes.Group, "GenericGroup");
-			// Occupancies sit behind Record_View like their pages; the Records cutover and the module flag are checked by
-			// WithoutClosedModulesAsync, which is asynchronous.
-			Add(SearchEntityTypes.Occupancy, "Record");
+			// Occupancies sit behind Record_View and the Records module switch like their pages, which are in the Records group;
+			// the Records cutover and the module flag are checked by WithoutClosedModulesAsync, which is asynchronous.
+			Add(SearchEntityTypes.Occupancy, "Record", SystemActionModules.Records);
 			if (WantsType(requested, SearchEntityTypes.Poi) && principal.ModuleEnabled(SystemActionModules.Mapping))
 				allowed.Add(SearchEntityTypes.Poi);
 			return allowed;

@@ -203,5 +203,23 @@ namespace Resgrid.Tests.Search
 			_callKeys.Verify(k => k.GetByAddressKeysAsync(It.IsAny<int>(), It.IsAny<IEnumerable<string>>(), It.IsAny<int>()), Times.Never,
 				"calls need the call family");
 		}
+
+		[Test]
+		public async Task Occupancies_are_neither_listed_nor_searched_while_the_department_switches_records_off()
+		{
+			var service = ServiceWithAddressMatching(occupancies: true);
+			Answer();
+			_occupancyRows.Setup(o => o.QueryAsync(7, It.IsAny<RmsOccupancyQuery>()))
+				.ReturnsAsync(new List<RmsOccupancy> { new RmsOccupancy { RmsOccupancyId = "o1", DepartmentId = 7, AddressText = "110 S Main St" } });
+			(await service.GetSearchableEntityTypesAsync(Principal("Record:View"))).Should().Contain(SearchEntityTypes.Occupancy);
+
+			// The occupancy pages are in the Records group, which this switch hides.
+			_settings.Setup(s => s.GetDepartmentModuleSettingsAsync(7, true)).ReturnsAsync(new DepartmentModuleSettings { RecordsDisabled = true });
+
+			(await service.GetSearchableEntityTypesAsync(Principal("Record:View"))).Should().NotContain(SearchEntityTypes.Occupancy);
+			var result = await service.SearchAsync(new UnifiedSearchRequest { Text = "110 South Main Street" }, Principal("Record:View"));
+			result.Hits.Should().NotContain(h => h.EntityType == SearchEntityTypes.Occupancy);
+			_occupancyRows.Verify(o => o.QueryAsync(It.IsAny<int>(), It.IsAny<RmsOccupancyQuery>()), Times.Never);
+		}
 	}
 }

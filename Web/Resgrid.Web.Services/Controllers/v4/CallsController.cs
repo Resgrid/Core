@@ -2607,15 +2607,23 @@ namespace Resgrid.Web.Services.Controllers.v4
 				var callTypes = await _callsService.GetCallTypesForDepartmentAsync(DepartmentId);
 				var destinationPois = (await _mappingService.GetPOIsForDepartmentAsync(DepartmentId)).ToDictionary(poi => poi.PoiId);
 				var protectedReads = await ResolveProtectedReadsAsync(pageCalls);
+				// The page's note and attachment counts in one query: loading the rows for ConvertCall to count would load every
+				// attachment's file.
+				var contentCounts = await _callsService.GetCallContentCountsAsync(DepartmentId, pageCalls.Select(call => call.CallId));
 
 				foreach (var call in pageCalls)
 				{
-					// Only notes and attachments: ConvertCall counts them and needs nothing else loaded.
-					var callWithData = await _callsService.PopulateCallData(call, false, true, true, false, false, false, false, false, false);
-					destinationPois.TryGetValue(callWithData.DestinationPoiId.GetValueOrDefault(), out var destinationPoi);
-					var callData = ConvertCall(callWithData, null, callWithData.Address, archiveTimeZone, destinationPoi, callTypes);
-					if (protectedReads.TryGetValue(callWithData.CallId, out var protectedRead))
+					destinationPois.TryGetValue(call.DestinationPoiId.GetValueOrDefault(), out var destinationPoi);
+					var callData = ConvertCall(call, null, call.Address, archiveTimeZone, destinationPoi, callTypes);
+					if (protectedReads.TryGetValue(call.CallId, out var protectedRead))
 						ApplyProtectedReadMetadata(callData, protectedRead);
+					if (contentCounts.TryGetValue(call.CallId, out var counts))
+					{
+						callData.NotesCount = counts.NoteCount;
+						callData.AudioCount = counts.AudioCount;
+						callData.ImgagesCount = counts.ImageCount;
+						callData.FileCount = counts.FileCount;
+					}
 					result.Data.Add(callData);
 				}
 

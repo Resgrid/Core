@@ -1615,7 +1615,8 @@ namespace Resgrid.Web.Controllers
 						await _emailService.SendPasswordRecoveryEmail(user.Email,
 							profile?.FullName.AsFirstNameLastName ?? "Resgrid user",
 							department?.Name ?? "Resgrid", resetUrl, ipAddress,
-							BoundSecurityContext(Request.Headers.UserAgent.ToString(), 512), requestedOn, isSsoManaged);
+							BoundSecurityContext(Request.Headers.UserAgent.ToString(), 512), requestedOn, isSsoManaged,
+							isSsoManaged ? null : user.UserName, issue.ExpiresOn, issue.Lifetime);
 					}
 				}
 				catch (Exception ex)
@@ -1658,7 +1659,7 @@ namespace Resgrid.Web.Controllers
 			var request = lookup.Request;
 			if (!lookup.Found || request == null)
 			{
-				Response.Cookies.Delete(RecoveryGrantCookie, new CookieOptions { Path = "/Account/ResetPassword" });
+				ClearRecoveryGrantCookie();
 				return View(new ResetPasswordViewModel { InvalidOrExpired = true });
 			}
 
@@ -1667,11 +1668,14 @@ namespace Resgrid.Web.Controllers
 			if (user == null || !IsCurrentRecoveryGrant(request, user) ||
 				await IsSsoManagedAsync(user.Id, department?.DepartmentId))
 			{
+				ClearRecoveryGrantCookie();
 				return View(new ResetPasswordViewModel { InvalidOrExpired = true });
 			}
 
 			return View(new ResetPasswordViewModel
 			{
+				// The form names the account it resets: the person knows it is theirs, and learns the username they sign in with.
+				UserName = user.UserName,
 				MinPasswordLength = department == null
 					? 8
 					: await _departmentSsoService.GetEffectiveMinPasswordLengthAsync(department.DepartmentId, cancellationToken)
@@ -1687,29 +1691,66 @@ namespace Resgrid.Web.Controllers
 			if (!await _formLimits.TryAcquireAsync(PublicFormLimit.PasswordReset, ClientIp(), cancellationToken))
 				return PasswordResetLimited(new ResetPasswordViewModel());
 
+			PasswordRecoveryLookupResult lookup;
 			try
 			{
-				if (!IsPlausibleRecoveryToken(token) ||
-					!(await _passwordRecoveryService.GetAsync(token, cancellationToken)).Found)
-					return RedirectToAction(nameof(ResetPassword));
+				lookup = IsPlausibleRecoveryToken(token)
+					? await _passwordRecoveryService.GetAsync(token, cancellationToken)
+					: PasswordRecoveryLookupResult.NotFound();
 			}
 			catch (Exception ex)
 			{
 				Logging.LogException(ex, "Password recovery grant validation unavailable.");
+				lookup = PasswordRecoveryLookupResult.NotFound();
+			}
+
+			if (!lookup.Found || lookup.Request == null)
+			{
+				// Never leave an earlier link's grant behind a refused one. On a shared computer that grant can be someone else's,
+				// and the page would offer to reset their account to whoever opened the expired link.
+				ClearRecoveryGrantCookie();
 				return RedirectToAction(nameof(ResetPassword));
 			}
 
-			Response.Cookies.Append(RecoveryGrantCookie, token, new CookieOptions
-			{
-				HttpOnly = true,
-				// Never conditional on the per-request scheme: a recovery grant must not travel in clear.
-				Secure = true,
-				SameSite = SameSiteMode.Strict,
-				Expires = DateTimeOffset.UtcNow.AddMinutes(Math.Max(5, SessionSecurityConfig.PublicResetLinkLifetimeMinutes)),
-				IsEssential = true,
-				Path = "/Account/ResetPassword"
-			});
+			// The cookie lasts as long as the grant itself (self-service and administrator links have different lifetimes).
+			Response.Cookies.Append(RecoveryGrantCookie, token,
+				RecoveryGrantCookieOptions(new DateTimeOffset(DateTime.SpecifyKind(lookup.Request.ExpiresOn, DateTimeKind.Utc))));
 			return RedirectToAction(nameof(ResetPassword));
+		}
+
+		private CookieOptions RecoveryGrantCookieOptions(DateTimeOffset? expires) => new CookieOptions
+		{
+			HttpOnly = true,
+			// Never conditional on the per-request scheme: a recovery grant must not travel in clear.
+			Secure = true,
+			SameSite = SameSiteMode.Strict,
+			Expires = expires,
+			IsEssential = true,
+			Path = Request.PathBase.Add("/Account/ResetPassword").Value
+		};
+
+		private void ClearRecoveryGrantCookie() =>
+			Response.Cookies.Delete(RecoveryGrantCookie, RecoveryGrantCookieOptions(null));
+
+		/// <summary>
+		/// After a reset, the account's own sign-in in this browser (if any) was just revoked with every other session. Its cookie
+		/// is removed, so the confirmation page's sign-in link opens the sign-in form instead of being refused for the dead session.
+		/// Anyone else signed in on this browser stays signed in. Best effort: the reset already succeeded.
+		/// </summary>
+		private async Task SignOutRevokedBrowserSessionAsync(string resetUserId)
+		{
+			try
+			{
+				var signedIn = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+				var signedInUserId = signedIn?.Principal?.FindFirstValue(ClaimTypes.NameIdentifier) ??
+					signedIn?.Principal?.FindFirstValue(ClaimTypes.PrimarySid);
+				if (signedIn?.Succeeded == true && string.Equals(signedInUserId, resetUserId, StringComparison.Ordinal))
+					await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, "Unable to remove the revoked sign-in cookie after a password reset.");
+			}
 		}
 
 		[HttpPost]
@@ -1735,10 +1776,12 @@ namespace Resgrid.Web.Controllers
 			if (!lookup.Found || request == null || user == null || !IsCurrentRecoveryGrant(request, user) ||
 				await IsSsoManagedAsync(user.Id, department?.DepartmentId))
 			{
+				ClearRecoveryGrantCookie();
 				model.InvalidOrExpired = true;
 				return View(model);
 			}
 
+			model.UserName = user.UserName;
 			if (!ModelState.IsValid)
 				return View(model);
 
@@ -1781,7 +1824,8 @@ namespace Resgrid.Web.Controllers
 			await _userSessionService.RevokeAllAfterCredentialChangeAsync(user.Id, user.Id, UserSessionRevocationReason.PasswordReset,
 				now, cancellationToken);
 			await _passwordRecoveryService.RemoveAsync(token, cancellationToken);
-			Response.Cookies.Delete(RecoveryGrantCookie, new CookieOptions { Path = "/Account/ResetPassword" });
+			ClearRecoveryGrantCookie();
+			await SignOutRevokedBrowserSessionAsync(user.Id);
 
 			await _systemAuditsService.SaveSystemAuditAsync(new SystemAudit
 			{
@@ -1798,6 +1842,7 @@ namespace Resgrid.Web.Controllers
 				Data = "Public password recovery completed; all authentication sessions and tokens revoked."
 			}, cancellationToken);
 
+			ViewData["ResetUserName"] = user.UserName;
 			return View("ResetPasswordConfirmation");
 		}
 

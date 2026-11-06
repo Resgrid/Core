@@ -134,5 +134,12 @@ namespace Resgrid.Model.Repositories
 		/// </summary>
 		Task<IEnumerable<CallDispatchCounts>> GetActiveCallDispatchCountsAsync(int departmentId, DateTime nowUtc,
 			System.Threading.CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Note and attachment counts for each of <paramref name="callIds"/> that belongs to the department, one row per call, in
+		/// one query that reads no note text or attachment data.
+		/// </summary>
+		Task<IEnumerable<CallContentCounts>> GetCallContentCountsAsync(int departmentId, IEnumerable<int> callIds,
+			System.Threading.CancellationToken cancellationToken = default);
 	}
 }

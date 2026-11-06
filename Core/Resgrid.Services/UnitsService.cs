@@ -311,6 +311,17 @@ namespace Resgrid.Services
 			return state;
 		}
 
+		public async Task<UnitState> GetLastUnitStateWithRolesByUnitIdAsync(int unitId)
+		{
+			var state = await GetLastUnitStateByUnitIdAsync(unitId);
+			var roles = state.UnitStateId > 0
+				? await _unitStateRoleRepository.GetRolesForUnitStatesAsync(new[] { state.UnitStateId })
+				: Enumerable.Empty<UnitStateRole>();
+			state.Roles = (roles ?? Enumerable.Empty<UnitStateRole>())
+				.Where(role => role != null && role.UnitStateId == state.UnitStateId).ToList();
+			return state;
+		}
+
 		public async Task<UnitState> GetLastUnitStateBeforeIdAsync(int unitId, int unitStateId)
 		{
 			var state = await _unitStatesRepository.GetLastUnitStateBeforeIdAsync(unitId, unitStateId);

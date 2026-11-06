@@ -298,6 +298,31 @@ namespace Resgrid.Tests.Framework
 			StringHelpers.HtmlToPlainText(input).Should().Be(expected);
 		}
 
+		[TestCase("<div dir=\"ltr\">JUST A TEST!<div><br></div><div>Shawn</div></div>", "JUST A TEST!\nShawn")]
+		[TestCase("<p>Structure <b>fire</b></p><p>2nd floor<br/>rear</p>", "Structure fire\n2nd floor\nrear")]
+		[TestCase("<p>Sh<b>aw</b>n</p>\r\n<p>Next</p>", "Shawn\nNext")]
+		[TestCase("<ol><li>Engine 1</li><li class=\"ql-indent-1\">Ladder 2</li></ol>", "Engine 1\nLadder 2")]
+		[TestCase("<html><head><title>Fwd</title><style>p{color:red}</style></head><body><p>Smoke&nbsp;showing</p><script>alert(1)</script></body></html>", "Smoke showing")]
+		[TestCase("<!-- Word comment --><p>A &amp; B &lt;c&gt;</p>", "A & B <c>")]
+		[TestCase("<p><br></p>", "")]
+		[TestCase("pt <unconscious> bp 80", "pt <unconscious> bp 80")]
+		[TestCase("<p>pt <unconscious> bp 80</p><p>SET UNIT <number or name> TO <b>Enroute</b></p>", "pt <unconscious> bp 80\nSET UNIT <number or name> TO Enroute")]
+		[TestCase("<p>Patient </unconscious> <o:p></o:p><x-note>noted</x-note><span class=\"a\">ok</span></p>", "Patient </unconscious>\nnoted\nok")]
+		[TestCase("C<id>: call detail\nSET UNIT <number or name> TO <status>", "C<id>: call detail\nSET UNIT <number or name> TO <status>")]
+		[TestCase("  Fire at 5th &amp; Main\n2nd alarm  ", "Fire at 5th &amp; Main\n2nd alarm")]
+		[TestCase(null, "")]
+		public void HtmlToMessageText_ShouldKeepLinesAndLeavePlainTextAlone(string input, string expected)
+		{
+			StringHelpers.HtmlToMessageText(input).Should().Be(expected);
+		}
+
+		[TestCase("<div dir=\"ltr\">JUST A TEST!<div><br></div><div>Shawn</div></div>", "JUST A TEST! Shawn")]
+		[TestCase("Line one\r\n\r\nLine two", "Line one Line two")]
+		public void HtmlToMessageText_SingleLine_ShouldJoinLines(string input, string expected)
+		{
+			StringHelpers.HtmlToMessageText(input, singleLine: true).Should().Be(expected);
+		}
+
 		[Test]
 		public void SanitizeHtmlInString_ShouldBeStableForQuillContent()
 		{

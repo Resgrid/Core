@@ -77,6 +77,20 @@ namespace Resgrid.Web.Services.Models.v4.Security
 		public bool CanCreateCalls { get; set; }
 
 		/// <summary>
+		/// Can the user close calls: the Call_Update right (from the Create Call permission) and the Close Call
+		/// permission. Department-wide: a Close Call permission locked to the user's group can still refuse a call
+		/// that group was not dispatched to (CloseCall checks each call).
+		/// </summary>
+		public bool CanCloseCalls { get; set; }
+
+		/// <summary>
+		/// Can the user delete calls: the Call_Delete right (from the Create Call permission) and the Delete Call
+		/// permission. Department-wide: a Delete Call permission locked to the user's group can still refuse a call
+		/// that group was not dispatched to (DeleteCall checks each call).
+		/// </summary>
+		public bool CanDeleteCalls { get; set; }
+
+		/// <summary>
 		/// Can the user add a note
 		/// </summary>
 		public bool CanAddNote { get; set; }

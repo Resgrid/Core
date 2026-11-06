@@ -11,7 +11,8 @@ namespace Resgrid.Model
 	/// </summary>
 	public static class DepartmentApiKeyScopes
 	{
-		/// <summary>Read calls: active, pending, scheduled, a single call, calls in a date range, the new-call field policy.</summary>
+		/// <summary>Read calls: active, pending, scheduled, a single call, calls in a date range, the archive (call years and a year's
+		/// closed calls), the new-call field policy.</summary>
 		public const string CallsRead = "calls.read";
 
 		/// <summary>Create calls, including pending (to be dispatched) and scheduled calls.</summary>

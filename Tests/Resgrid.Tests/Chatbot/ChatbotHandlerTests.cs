@@ -92,6 +92,21 @@ namespace Resgrid.Tests.Chatbot
 			messages.Verify(m => m.ReadMessageRecipientAsync(42, "user-1", It.IsAny<CancellationToken>()), Times.Once);
 		}
 
+		[Test]
+		public async Task MessageRead_RichTextBody_ReadsAsPlainLines()
+		{
+			var messages = new Mock<IMessageService>();
+			messages.Setup(m => m.GetMessageByIdAsync(42))
+				.ReturnsAsync(new Message { MessageId = 42, DepartmentId = 1, Subject = "Drill", Body = "<p>Drill at <b>1900</b></p><p>Bring SCBA &amp; radios</p>", SentOn = DateTime.UtcNow });
+			messages.Setup(m => m.GetMessageRecipientByMessageAndUserAsync(42, "user-1"))
+				.ReturnsAsync(new MessageRecipient { MessageId = 42, UserId = "user-1", ReadOn = DateTime.UtcNow });
+
+			var handler = new MessageReadHandler(messages.Object);
+			var response = await handler.HandleAsync(Msg("#42"), Intent(ChatbotIntentType.MessageDetail, ("messageId", "42")), Session());
+
+			response.Text.Should().Contain("Drill at 1900\nBring SCBA & radios").And.NotContain("<p>");
+		}
+
 		// ===================== MessageDeleteHandler =====================
 
 		[Test]
@@ -557,6 +572,27 @@ namespace Resgrid.Tests.Chatbot
 
 			// Without scoping the newer out-of-area fire would match and then be refused.
 			response.Text.Should().Contain("Fire in my area").And.NotContain("Fire elsewhere");
+		}
+
+		[Test]
+		public async Task CallDetail_RichTextNature_ReadsAsPlainLines()
+		{
+			// The tags no longer count toward the 100-character cut, so the whole nature fits.
+			var calls = new Mock<ICallsService>();
+			calls.Setup(c => c.GetCallByIdAsync(7, It.IsAny<bool>())).ReturnsAsync(new Call
+			{
+				CallId = 7, Name = "TEST 10-7-2026", DepartmentId = 1, LoggedOn = DateTime.UtcNow,
+				NatureOfCall = "<div dir=\"ltr\"><span style=\"font-family: arial, sans-serif; font-size: small;\">JUST A TEST!</span><div><br></div><div>Shawn</div></div>"
+			});
+			var depts = new Mock<IDepartmentsService>();
+			depts.Setup(d => d.GetDepartmentByIdAsync(1, It.IsAny<bool>())).ReturnsAsync(new Department { DepartmentId = 1, TimeZone = "UTC" });
+			var authz = new Mock<IAuthorizationService>();
+			authz.Setup(a => a.CanUserViewCallAsync("user-1", 7)).ReturnsAsync(true);
+
+			var handler = new CallDetailActionHandler(calls.Object, depts.Object, authz.Object, NoScope());
+			var response = await handler.HandleAsync(Msg("C7"), Intent(ChatbotIntentType.GetCallDetail, ("callRef", "C7")), Session(departmentId: 1));
+
+			response.Text.Should().Contain("JUST A TEST!\nShawn").And.NotContain("<div").And.NotContain("span");
 		}
 
 		[Test]

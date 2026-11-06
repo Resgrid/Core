@@ -143,6 +143,7 @@ Zespół Resgrid</value>
   <data name="AdpPinSaved" xml:space="preserve"><value>Zapisano.</value></data>
   <data name="AdpPinDenied" xml:space="preserve"><value>Nie można udostępnić ani zapisać chronionych danych. Zaloguj się do Resgrid i spróbuj ponownie.</value></data>
   <data name="AdpPinSmsChallenge" xml:space="preserve"><value>Dostępne jest chronione zgłoszenie. Odpowiedz OPEN {0}, a następnie wpisz spację i swój osobisty PIN.</value></data>
+  <data name="DispatchRenotifyPushPrefix" xml:space="preserve"><value>Przypomnienie {0}/{1}:</value></data>
   <data name="AdpPinVoiceChallenge" xml:space="preserve"><value>Dostępne jest chronione zgłoszenie. Wpisz swój osobisty PIN i naciśnij krzyżyk.</value></data>
   <data name="AdpReleaseSettings" xml:space="preserve"><value>Ustawienia udostępniania ADP</value></data>
   <data name="AdpSmsMode" xml:space="preserve"><value>Dostarczanie SMS</value></data>

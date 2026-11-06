@@ -1956,6 +1956,13 @@ Close Call When Last Unit Clears. An active call closes on its own when the last
 
 Default: false. Source: DepartmentSettingTypes.CloseCallWhenUnitsClear.
 
+<a id="setting-dispatchrenotifyconfig"></a>
+## Dispatch Re-notification
+
+Dispatch Re-notification. Sends a dispatch again to personnel and units that have not acknowledged it, as a push notification titled Reminder 1/3 and so on. Any status set after the dispatch acknowledges it: a person setting any status, such as Responding or Not Responding, or a unit setting any status, with or without a destination. Statuses Resgrid applies itself (dispatch statuses, scheduled resets, maintenance holds) do not count. Re-notification stops when the recipient acknowledges, after the last attempt, when the call closes, when the person or unit is taken off the call, or when the department turns it off. Text message, email, voice call and chat platform re-notification are built and each follows the member's own notification settings, but for system stability every channel other than push is locked off, as are the interval (5 minutes) and the number of re-notifications (3, so 15 minutes): the settings page shows them disabled, and the server stores and sends push only whatever is posted. Units are re-notified by push only. Off by default.
+
+Default: off (DispatchRenotifyConfig constructor: 5 minutes, 3 re-notifications, push). Source: DepartmentSettingTypes.DispatchRenotifyConfig.
+
 <a id="setting-enabletextcommand"></a>
 ## Enable Text Command
 
@@ -2092,6 +2099,13 @@ Default: false. Source: DepartmentModuleSettings.MessagingDisabled.
 Messaging menu name. Optional display name for messages and announcements in consumers that support the override. It changes the label, not permissions or functionality. This release has no separate name-override control in Module Settings.
 
 Default: unset. Source: DepartmentModuleSettings.MessagingNameOverride.
+
+<a id="module-chatdisabled"></a>
+## Chat availability
+
+Chat availability. Shows or hides Chat in the web app's navigation, dashboard widgets and search. Hiding it does not delete data or change permissions. Chat in the mobile apps is not affected.
+
+Default: false. Source: DepartmentModuleSettings.ChatDisabled.
 
 <a id="table-departmentnotification-eventtype"></a>
 ## Department Notification / Event Type
@@ -2837,6 +2851,13 @@ Training menu name. Optional display name for training in consumers that support
 
 Default: unset. Source: DepartmentModuleSettings.TrainingNameOverride.
 
+<a id="module-certificationsdisabled"></a>
+## Certifications availability
+
+Certifications availability. Shows or hides Certifications in the web app's navigation, dashboard widgets and search. Hiding it does not delete data or change permissions. Certification enforcement is not affected.
+
+Default: false. Source: DepartmentModuleSettings.CertificationsDisabled.
+
 <a id="trainings"></a>
 ## Trainings
 
@@ -2894,6 +2915,13 @@ Default: false. Source: DepartmentModuleSettings.NotesDisabled.
 Notes menu name. Optional display name for notes in consumers that support the override. It changes the label, not permissions or functionality. This release has no separate name-override control in Module Settings.
 
 Default: unset. Source: DepartmentModuleSettings.NotesNameOverride.
+
+<a id="module-contactsdisabled"></a>
+## Contacts availability
+
+Contacts availability. Shows or hides Contacts in the web app's navigation, dashboard widgets and search. Hiding it does not delete data or change permissions.
+
+Default: false. Source: DepartmentModuleSettings.ContactsDisabled.
 
 <a id="contacts"></a>
 ## Contacts
@@ -3031,6 +3059,13 @@ Default: false. Source: DepartmentModuleSettings.LogsDisabled.
 Logs menu name. Optional display name for legacy logs in consumers that support the override. It changes the label, not permissions or functionality. This release has no separate name-override control in Module Settings.
 
 Default: unset. Source: DepartmentModuleSettings.LogsNameOverride.
+
+<a id="module-recordsdisabled"></a>
+## Records availability
+
+Records availability. Shows or hides Records in the web app's navigation, dashboard widgets and search. Hiding it does not delete data or change permissions. Logs have their own switch.
+
+Default: false. Source: DepartmentModuleSettings.RecordsDisabled.
 
 <a id="module-reportsdisabled"></a>
 ## Reports availability
@@ -3565,6 +3600,13 @@ Readiness Pro The Readiness Pro add-on: work orders, preventive maintenance, rep
 Business Operations availability. Controls availability of business operations. Disabling this module can remove navigation and block module operations; it does not delete its records. Turning it on still requires the applicable subscription, rollout and permissions.
 
 Default: false. Source: DepartmentModuleSettings.BusinessOperationsDisabled.
+
+<a id="module-deploymentsdisabled"></a>
+## Deployments availability
+
+Deployments availability. Shows or hides Deployments in the web app's navigation, dashboard widgets and search. Hiding it does not delete data or change permissions.
+
+Default: false. Source: DepartmentModuleSettings.DeploymentsDisabled.
 
 <a id="invoices"></a>
 ## Invoices

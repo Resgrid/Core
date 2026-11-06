@@ -143,6 +143,7 @@ El equipo de Resgrid</value>
   <data name="AdpPinSaved" xml:space="preserve"><value>Guardado.</value></data>
   <data name="AdpPinDenied" xml:space="preserve"><value>No se pueden mostrar ni guardar los datos protegidos. Inicie sesión en Resgrid e inténtelo de nuevo.</value></data>
   <data name="AdpPinSmsChallenge" xml:space="preserve"><value>Hay un despacho protegido disponible. Responda OPEN {0} seguido de su PIN personal, separado por un espacio.</value></data>
+  <data name="DispatchRenotifyPushPrefix" xml:space="preserve"><value>Recordatorio {0}/{1}:</value></data>
   <data name="AdpPinVoiceChallenge" xml:space="preserve"><value>Hay un despacho protegido disponible. Introduzca su PIN personal y pulse la tecla de almohadilla.</value></data>
   <data name="AdpReleaseSettings" xml:space="preserve"><value>Configuración de entrega de ADP</value></data>
   <data name="AdpSmsMode" xml:space="preserve"><value>Entrega por SMS</value></data>

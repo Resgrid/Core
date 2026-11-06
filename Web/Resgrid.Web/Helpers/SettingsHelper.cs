@@ -71,6 +71,34 @@ namespace Resgrid.Web.Helpers
 			return !GetModuleSettings().LogsDisabled;
 		}
 
+		/// <summary>The department's Records module switch; whether Records exists at all is the Records.System flag.</summary>
+		public static bool IsRecordsEnabled()
+		{
+			return !GetModuleSettings().RecordsDisabled;
+		}
+
+		public static bool IsContactsEnabled()
+		{
+			return !GetModuleSettings().ContactsDisabled;
+		}
+
+		public static bool IsCertificationsEnabled()
+		{
+			return !GetModuleSettings().CertificationsDisabled;
+		}
+
+		/// <summary>The department's Deployments module switch; whether Deployments exists at all is the Operations.Deployments flag.</summary>
+		public static bool IsDeploymentsEnabled()
+		{
+			return !GetModuleSettings().DeploymentsDisabled;
+		}
+
+		/// <summary>The department's Chat module switch; whether chat exists at all is the Chat.System flag.</summary>
+		public static bool IsChatEnabled()
+		{
+			return !GetModuleSettings().ChatDisabled;
+		}
+
 		public static bool IsReportsEnabled()
 		{
 			return !GetModuleSettings().ReportsDisabled;

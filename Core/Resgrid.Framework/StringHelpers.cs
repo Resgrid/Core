@@ -170,6 +170,20 @@ namespace Resgrid.Framework
 			return false;
 		}
 
+		/// <summary>
+		/// Whether an <see cref="HtmlTagPattern"/> match is markup by the same rules as <see cref="LooksLikeHtml"/>: a comment or
+		/// declaration, a known, namespaced or custom element, or a tag carrying attributes. A bare "&lt;unconscious&gt;" is text.
+		/// </summary>
+		private static bool IsMarkupTag(Match match)
+		{
+			if (!match.Groups[2].Success)
+				return true;
+			var name = match.Groups[2].Value;
+			if (KnownHtmlTags.Contains(name) || name.IndexOf(':') >= 0 || name.IndexOf('-') >= 0)
+				return true;
+			return match.Groups[3].Success && match.Groups[3].Value.IndexOf('=') >= 0;
+		}
+
 		private static string EncodeAngleBrackets(string text) => text.Replace("<", "&lt;").Replace(">", "&gt;");
 
 		private static readonly Regex HtmlTagToken = new Regex(@"<!--|<!doctype|<(/?)([a-zA-Z][\w:.-]*)(\s[^<>]*)?/?>",
@@ -223,6 +237,43 @@ namespace Resgrid.Framework
 				if (text.IndexOf('&') >= 0)
 					text = System.Net.WebUtility.HtmlDecode(text);
 				return PlainWhitespace.Replace(text.Replace(' ', ' '), " ").Trim();
+			}
+			catch (RegexMatchTimeoutException)
+			{
+				return StripHtmlTagsCharArray(html).Trim();
+			}
+		}
+
+		private static readonly Regex HorizontalWhitespace = new Regex(@"[^\S\n]+", RegexOptions.Compiled, TimeSpan.FromSeconds(1));
+		private static readonly Regex LineBreakRun = new Regex(@"\s*\n\s*", RegexOptions.Compiled, TimeSpan.FromSeconds(1));
+
+		/// <summary>
+		/// Stored rich text as the body of a text or chat message (SMS, the in-app assistant, Slack, Teams...): like
+		/// <see cref="HtmlToPlainText"/>, but block tags and line breaks start a new line, so
+		/// "&lt;div dir="ltr"&gt;Just a test!&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Shawn&lt;/div&gt;&lt;/div&gt;" reads "Just a test!\nShawn" (blank lines
+		/// are not kept). Text that holds no markup (<see cref="LooksLikeHtml"/>) only has its ends trimmed, so a texted
+		/// "pt &lt;unconscious&gt; bp 80" and the assistant's "C&lt;id&gt;" placeholders survive. <paramref name="singleLine"/> joins the
+		/// lines with spaces, for one-line list entries. Null or blank in, empty string out.
+		/// </summary>
+		public static string HtmlToMessageText(string html, bool singleLine = false)
+		{
+			if (string.IsNullOrWhiteSpace(html))
+				return string.Empty;
+
+			try
+			{
+				if (!LooksLikeHtml(html))
+					return singleLine ? PlainWhitespace.Replace(html, " ").Trim() : html.Trim();
+
+				// Whitespace inside markup is layout, not content: only tags break lines. A bare "<unconscious>" next to real
+				// markup is the writer's text, not a tag, so it is kept as written.
+				var text = PlainWhitespace.Replace(HtmlNonTextBlocks.Replace(html, " "), " ");
+				text = HtmlTagPattern.Replace(text, m => !IsMarkupTag(m) ? m.Value
+					: m.Groups[2].Success && InlineHtmlTags.Contains(m.Groups[2].Value) ? string.Empty : "\n");
+				if (text.IndexOf('&') >= 0)
+					text = System.Net.WebUtility.HtmlDecode(text);
+				text = HorizontalWhitespace.Replace(text, " ");
+				return LineBreakRun.Replace(text, singleLine ? " " : "\n").Trim();
 			}
 			catch (RegexMatchTimeoutException)
 			{

@@ -448,6 +448,14 @@ namespace Resgrid.Model.Services
 
 		Task<DepartmentSetting> SetDispatchResponseCodesAsync(int departmentId, DispatchResponseCodesConfig config, CancellationToken cancellationToken = default(CancellationToken));
 
+		/// <summary>
+		/// Re-notify dispatched personnel and units until they acknowledge (<see cref="DepartmentSettingTypes.DispatchRenotifyConfig"/>).
+		/// Never null; missing or unreadable = off. Cached.
+		/// </summary>
+		Task<DispatchRenotifyConfig> GetDispatchRenotifyConfigAsync(int departmentId, bool bypassCache = false);
+
+		Task<DepartmentSetting> SetDispatchRenotifyConfigAsync(int departmentId, DispatchRenotifyConfig config, CancellationToken cancellationToken = default(CancellationToken));
+
 		Task<DepartmentSetting> SetDispatchRecommendationConfigAsync(int departmentId, DispatchRecommendationConfig config, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>Group-scoped dispatch switch and its department-wide roles. Never null; defaults to off. Cached on the security-setting window.</summary>

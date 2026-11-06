@@ -510,5 +510,11 @@ namespace Resgrid.Model.Services
 		/// query (the home dashboard's Active Calls widget; no dispatch rows are loaded).
 		/// </summary>
 		Task<Dictionary<int, CallDispatchCounts>> GetActiveCallDispatchCountsAsync(int departmentId, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
+		/// Note and attachment counts for those of <paramref name="callIds"/> in the department, keyed by call id, in one query that
+		/// loads no notes or attachments (a call list that shows only the counts).
+		/// </summary>
+		Task<Dictionary<int, CallContentCounts>> GetCallContentCountsAsync(int departmentId, IEnumerable<int> callIds, CancellationToken cancellationToken = default(CancellationToken));
 	}
 }

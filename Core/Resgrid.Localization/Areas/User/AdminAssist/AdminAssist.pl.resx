@@ -7125,6 +7125,12 @@
   <data xml:space="preserve" name="SettingHelp.DispatchResponseCodes">
     <value>Opcjonalne kody na jednostkę (np. C3 dla sygnałów) proponowane przez wiersze kart warunkowych oraz to, czy załogi widzą je w powiadomieniach i aplikacjach. Puste oznacza, że kody nie pojawiają się nigdzie.</value>
   </data>
+  <data xml:space="preserve" name="Setting.DispatchRenotifyConfig">
+    <value>Ponowne powiadamianie o dyspozycji</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.DispatchRenotifyConfig">
+    <value>Ponownie wysyła dyspozycję push do personelu i jednostek, które od jej wysłania nie ustawiły żadnego statusu: co 5 minut, maksymalnie 3 razy. Każdy status ustawiony przez osobę lub jednostkę jest potwierdzeniem; statusy automatyczne nie. Kończy się, gdy zgłoszenie zostanie zamknięte lub odbiorca zostanie z niego usunięty. Domyślnie wyłączone.</value>
+  </data>
   <data name="Field.DepartmentTermOverride.Singular" xml:space="preserve">
     <value>Termin jednostki / Jeden element</value>
   </data>
@@ -7775,5 +7781,35 @@
   </data>
   <data xml:space="preserve" name="SettingHelp.OfflineMapPacksConfig">
     <value>Co aplikacje pobierają do pracy bez sieci: maksymalny obszar działania (jego mapa bazowa musi zmieścić się w limicie rozmiaru), jakie dane mapy są dołączone, kiedy odbywa się pobieranie oraz dodatkowe pokrycie dla zgłoszeń i tras poza obszarem.</value>
+  </data>
+  <data name="Module.RecordsDisabled" xml:space="preserve">
+    <value>Dostępność rejestrów</value>
+  </data>
+  <data name="ModuleHelp.RecordsDisabled" xml:space="preserve">
+    <value>Pokazuje lub ukrywa Rejestry w nawigacji, widżetach pulpitu i wyszukiwaniu aplikacji internetowej. Ukrycie nie usuwa danych ani nie zmienia uprawnień. Dzienniki mają osobny przełącznik.</value>
+  </data>
+  <data name="Module.ContactsDisabled" xml:space="preserve">
+    <value>Dostępność kontaktów</value>
+  </data>
+  <data name="ModuleHelp.ContactsDisabled" xml:space="preserve">
+    <value>Pokazuje lub ukrywa Kontakty w nawigacji, widżetach pulpitu i wyszukiwaniu aplikacji internetowej. Ukrycie nie usuwa danych ani nie zmienia uprawnień.</value>
+  </data>
+  <data name="Module.CertificationsDisabled" xml:space="preserve">
+    <value>Dostępność certyfikatów</value>
+  </data>
+  <data name="ModuleHelp.CertificationsDisabled" xml:space="preserve">
+    <value>Pokazuje lub ukrywa Certyfikaty w nawigacji, widżetach pulpitu i wyszukiwaniu aplikacji internetowej. Ukrycie nie usuwa danych ani nie zmienia uprawnień. Nie wpływa to na egzekwowanie certyfikatów.</value>
+  </data>
+  <data name="Module.DeploymentsDisabled" xml:space="preserve">
+    <value>Dostępność dyslokacji</value>
+  </data>
+  <data name="ModuleHelp.DeploymentsDisabled" xml:space="preserve">
+    <value>Pokazuje lub ukrywa Dyslokacje w nawigacji, widżetach pulpitu i wyszukiwaniu aplikacji internetowej. Ukrycie nie usuwa danych ani nie zmienia uprawnień.</value>
+  </data>
+  <data name="Module.ChatDisabled" xml:space="preserve">
+    <value>Dostępność czatu</value>
+  </data>
+  <data name="ModuleHelp.ChatDisabled" xml:space="preserve">
+    <value>Pokazuje lub ukrywa Czat w nawigacji, widżetach pulpitu i wyszukiwaniu aplikacji internetowej. Ukrycie nie usuwa danych ani nie zmienia uprawnień. Nie wpływa to na czat w aplikacjach mobilnych.</value>
   </data>
 </root>

@@ -36,6 +36,7 @@ namespace Resgrid.Tests.Web.Services
 		private Mock<IProtectedWriteService> _protectedWriteService;
 		private Mock<IDispatchScopeService> _dispatchScope;
 		private Mock<IMappingService> _mappingService;
+		private Mock<IDepartmentsService> _departmentsService;
 		private CallsController _controller;
 		private Activity _activity;
 
@@ -71,6 +72,7 @@ namespace Resgrid.Tests.Web.Services
 
 			_dispatchScope = PassThroughDispatchScope();
 			_mappingService = new Mock<IMappingService>();
+			_departmentsService = new Mock<IDepartmentsService>();
 
 			var httpContext = new DefaultHttpContext
 			{
@@ -85,7 +87,7 @@ namespace Resgrid.Tests.Web.Services
 
 			_controller = new CallsController(
 				_callsService.Object,
-				Mock.Of<IDepartmentsService>(),
+				_departmentsService.Object,
 				Mock.Of<IUserProfileService>(),
 				Mock.Of<IGeoLocationProvider>(),
 				_authorizationService.Object,
@@ -172,6 +174,170 @@ namespace Resgrid.Tests.Web.Services
 			result.Should().NotBeNull();
 			result.Data.Should().BeEmpty();
 			_dispatchScope.Verify(x => x.FilterCallsForUserAsync(DepartmentId, UserId, departmentCalls), Times.Once);
+		}
+
+		[Test]
+		public async Task GetCallYears_ReturnsDepartmentYearsInClientEnvelope()
+		{
+			_callsService.Setup(x => x.GetCallYearsByDeptartmentAsync(DepartmentId)).ReturnsAsync(["2026", "2024"]);
+
+			var response = await _controller.GetCallYears();
+
+			var result = (CallYearsResult)((OkObjectResult)response.Result).Value;
+			result.Data.Should().Equal("2026", "2024");
+			result.PageSize.Should().Be(2);
+		}
+
+		[Test]
+		public async Task GetArchivedCalls_ReturnsScopedClosedCallsNewestFirst()
+		{
+			var earlier = new Call { CallId = 1, State = (int)CallStates.Closed, LoggedOn = new DateTime(2026, 1, 1) };
+			var later = new Call { CallId = 2, State = (int)CallStates.FalseAlarm, LoggedOn = new DateTime(2026, 10, 1, 19, 15, 0), ClosedOn = new DateTime(2026, 10, 1, 20, 0, 0) };
+			_departmentsService.Setup(x => x.GetDepartmentByIdAsync(DepartmentId, false)).ReturnsAsync(new Department { TimeZone = "Central Standard Time" });
+			var outOfScope = new Call { CallId = 3, State = (int)CallStates.Closed, LoggedOn = new DateTime(2026, 11, 1) };
+			var pending = new Call { CallId = 4, State = (int)CallStates.Pending, LoggedOn = new DateTime(2026, 11, 1) };
+			List<Call> departmentCalls = [earlier, later, outOfScope, pending];
+			_callsService.Setup(x => x.GetClosedCallsByDepartmentYearAsync(DepartmentId, "2026")).ReturnsAsync(departmentCalls);
+			_dispatchScope.Setup(x => x.FilterCallsForUserAsync(DepartmentId, UserId, It.IsAny<List<Call>>()))
+				.ReturnsAsync((int departmentId, string userId, List<Call> calls) => calls.Where(call => call != outOfScope).ToList());
+			_mappingService.Setup(x => x.GetPOIsForDepartmentAsync(DepartmentId)).ReturnsAsync([]);
+			ArchivedCallCounts();
+
+			var response = await _controller.GetArchivedCalls(2026);
+
+			var result = (ArchivedCallsResult)((OkObjectResult)response.Result).Value;
+			result.Data.Select(call => call.CallId).Should().Equal("2", "1");
+			result.PageSize.Should().Be(2);
+			result.Page.Should().Be(0);
+			result.HasMore.Should().BeFalse();
+			// The state test runs first, so a pending call never costs a scope check.
+			_dispatchScope.Verify(x => x.FilterCallsForUserAsync(DepartmentId, UserId, It.Is<List<Call>>(calls => calls.Contains(pending))), Times.Never);
+			result.Data[0].LoggedOn.Should().Be(new DateTime(2026, 10, 1, 14, 15, 0));
+			result.Data[0].ClosedOn.Should().Be(new DateTime(2026, 10, 1, 15, 0, 0));
+			result.Data[0].ClosedOnUtc.Should().Be(later.ClosedOn);
+			result.Data[1].ClosedOnUtc.Should().BeNull();
+		}
+
+		[Test]
+		public async Task GetArchivedCalls_PagesTheScopedYearAndCountsNotesAndAttachmentsOnlyForThePage()
+		{
+			// Five closed calls, newest is CallId 5; pages of two.
+			var calls = Enumerable.Range(1, 5)
+				.Select(id => new Call { CallId = id, State = (int)CallStates.Closed, LoggedOn = new DateTime(2026, 1, id) })
+				.ToList();
+			_callsService.Setup(x => x.GetClosedCallsByDepartmentYearAsync(DepartmentId, "2026")).ReturnsAsync(calls);
+			_mappingService.Setup(x => x.GetPOIsForDepartmentAsync(DepartmentId)).ReturnsAsync([]);
+			var countRequests = ArchivedCallCounts(new CallContentCounts { CallId = 3, NoteCount = 2, AudioCount = 1, ImageCount = 2, FileCount = 1 });
+
+			var first = (ArchivedCallsResult)((OkObjectResult)(await _controller.GetArchivedCalls(2026, 0, 2)).Result).Value;
+			var second = (ArchivedCallsResult)((OkObjectResult)(await _controller.GetArchivedCalls(2026, 1, 2)).Result).Value;
+			var last = (ArchivedCallsResult)((OkObjectResult)(await _controller.GetArchivedCalls(2026, 2, 2)).Result).Value;
+			var past = (ArchivedCallsResult)((OkObjectResult)(await _controller.GetArchivedCalls(2026, 3, 2)).Result).Value;
+
+			first.Data.Select(call => call.CallId).Should().Equal("5", "4");
+			first.HasMore.Should().BeTrue();
+			second.Data.Select(call => call.CallId).Should().Equal("3", "2");
+			second.Page.Should().Be(1);
+			second.PageSize.Should().Be(2);
+			second.HasMore.Should().BeTrue();
+			last.Data.Select(call => call.CallId).Should().Equal("1");
+			last.HasMore.Should().BeFalse();
+			past.Data.Should().BeEmpty();
+			past.HasMore.Should().BeFalse();
+
+			var counted = second.Data[0];
+			counted.NotesCount.Should().Be(2);
+			counted.AudioCount.Should().Be(1);
+			counted.ImgagesCount.Should().Be(2);
+			counted.FileCount.Should().Be(1);
+			second.Data[1].NotesCount.Should().Be(0, "a call with no notes or attachments has no counts row");
+
+			// One counts query per page, for that page's calls only; no note or attachment rows are loaded.
+			countRequests.Should().BeEquivalentTo(new[] { new[] { 5, 4 }, new[] { 3, 2 }, new[] { 1 } }, options => options.WithStrictOrdering());
+			_callsService.Verify(x => x.PopulateCallData(It.IsAny<Call>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(),
+				It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>()), Times.Never);
+			_protectedCallReadService.Verify(x => x.ResolveForReadAsync(DepartmentId,
+				It.Is<IReadOnlyList<Call>>(page => page.Count <= 2), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Exactly(3));
+		}
+
+		[TestCase(0)]
+		[TestCase(10000)]
+		public async Task GetArchivedCalls_RejectsInvalidYearBeforeQuerying(int year)
+		{
+			var response = await _controller.GetArchivedCalls(year);
+
+			response.Result.Should().BeOfType<BadRequestObjectResult>();
+			_callsService.Verify(x => x.GetClosedCallsByDepartmentYearAsync(It.IsAny<int>(), It.IsAny<string>()), Times.Never);
+		}
+
+		[TestCase(-1, 50)]
+		[TestCase(0, 0)]
+		[TestCase(0, CallsController.MaxArchivedCallsPageSize + 1)]
+		public async Task GetArchivedCalls_RejectsAnInvalidPageBeforeQuerying(int page, int pageSize)
+		{
+			var response = await _controller.GetArchivedCalls(2026, page, pageSize);
+
+			response.Result.Should().BeOfType<BadRequestObjectResult>();
+			_callsService.Verify(x => x.GetClosedCallsByDepartmentYearAsync(It.IsAny<int>(), It.IsAny<string>()), Times.Never);
+		}
+
+		[Test]
+		public async Task GetArchivedCalls_AFarPageDoesNotOverflowIntoTheFirstPage()
+		{
+			_callsService.Setup(x => x.GetClosedCallsByDepartmentYearAsync(DepartmentId, "2026"))
+				.ReturnsAsync([new Call { CallId = 1, State = (int)CallStates.Closed, LoggedOn = new DateTime(2026, 1, 1) }]);
+			_mappingService.Setup(x => x.GetPOIsForDepartmentAsync(DepartmentId)).ReturnsAsync([]);
+			ArchivedCallCounts();
+
+			var result = (ArchivedCallsResult)((OkObjectResult)(await _controller.GetArchivedCalls(2026, int.MaxValue, CallsController.MaxArchivedCallsPageSize)).Result).Value;
+
+			result.Data.Should().BeEmpty();
+			result.HasMore.Should().BeFalse();
+		}
+
+		[Test]
+		public async Task GetArchivedCalls_ScopesNewestFirstAndStopsOnceThePageAndOneMoreAreFound()
+		{
+			// Forty closed calls, newest is CallId 40. The scope keeps only even ids, so the first page of three
+			// needs the four newest even calls: 40, 38, 36 and 34 to know another page follows.
+			var calls = Enumerable.Range(1, 40)
+				.Select(id => new Call { CallId = id, State = (int)CallStates.Closed, LoggedOn = new DateTime(2026, 1, 1).AddHours(id) })
+				.ToList();
+			var checkedIds = new List<int>();
+			_callsService.Setup(x => x.GetClosedCallsByDepartmentYearAsync(DepartmentId, "2026")).ReturnsAsync(calls);
+			_dispatchScope.Setup(x => x.FilterCallsForUserAsync(DepartmentId, UserId, It.IsAny<List<Call>>()))
+				.ReturnsAsync((int departmentId, string userId, List<Call> chunk) =>
+				{
+					checkedIds.AddRange(chunk.Select(call => call.CallId));
+					return chunk.Where(call => call.CallId % 2 == 0).ToList();
+				});
+			_mappingService.Setup(x => x.GetPOIsForDepartmentAsync(DepartmentId)).ReturnsAsync([]);
+			ArchivedCallCounts();
+
+			var result = (ArchivedCallsResult)((OkObjectResult)(await _controller.GetArchivedCalls(2026, 0, 3)).Result).Value;
+
+			result.Data.Select(call => call.CallId).Should().Equal("40", "38", "36");
+			result.HasMore.Should().BeTrue();
+			// Chunks of four then eight: calls 40 down to 29 are checked, each once, and the older 28 never are.
+			checkedIds.Should().Equal(Enumerable.Range(29, 12).Reverse());
+		}
+
+		/// <summary>
+		/// GetCallContentCountsAsync answers with the given rows for the calls asked about, as the grouped query does (a call with
+		/// no notes or attachments has no row). Returns the call ids of each request, in order.
+		/// </summary>
+		private List<int[]> ArchivedCallCounts(params CallContentCounts[] counts)
+		{
+			var requests = new List<int[]>();
+			_callsService
+				.Setup(x => x.GetCallContentCountsAsync(DepartmentId, It.IsAny<IEnumerable<int>>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((int departmentId, IEnumerable<int> callIds, CancellationToken cancellationToken) =>
+				{
+					var ids = callIds.ToArray();
+					requests.Add(ids);
+					return counts.Where(count => ids.Contains(count.CallId)).ToDictionary(count => count.CallId);
+				});
+			return requests;
 		}
 
 		[Test]

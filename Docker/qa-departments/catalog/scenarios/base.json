@@ -1,0 +1,11 @@
+{
+  "id": "base",
+  "name": "Base Statuses",
+  "purpose": "The reference department: built-in personnel statuses, staffing levels, unit statuses and call priorities, standard data in every module, server-default feature flags.",
+  "covers": ["built-in statuses and staffing", "built-in call priorities (no department priorities)", "every module with data", "12-hour clock, US Eastern", "department switching (persona multi)"],
+  "extra": {
+    "people": [
+      { "persona": "multi", "first": "Taylor", "last": "Multi", "group": "Station 2", "roles": ["EMT"], "status": "available", "staffing": "available", "alsoMemberOf": ["custom-statuses", "terminology"] }
+    ]
+  }
+}

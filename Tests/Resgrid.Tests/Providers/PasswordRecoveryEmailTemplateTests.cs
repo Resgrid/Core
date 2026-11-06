@@ -15,6 +15,8 @@ namespace Resgrid.Tests.Providers
 	{
 		private const string ResetUrl =
 			"https://app.resgrid.test/Account/ResetPassword#token=abcdefghijklmnopqrstuvwxyz0123456789_-ABCD";
+		private const string UserName = "bsmith";
+		private const string ExpiresOn = "2026-09-02 16:12:00Z";
 
 		private static async Task<Email> Render(bool isSsoManaged = false)
 		{
@@ -30,7 +32,8 @@ namespace Resgrid.Tests.Providers
 			// Act
 			var result = await provider.SendPasswordRecoveryMail("Brandon", "brandon@example.com",
 				"Example Fire", isSsoManaged ? null : ResetUrl, "192.0.2.1", "Test browser",
-				"2026-09-02 14:12:00Z", isSsoManaged);
+				"2026-09-02 14:12:00Z", isSsoManaged, isSsoManaged ? null : UserName,
+				isSsoManaged ? null : "2 hours", isSsoManaged ? null : ExpiresOn);
 
 			// Assert
 			result.Should().BeTrue();
@@ -71,8 +74,48 @@ namespace Resgrid.Tests.Providers
 			// Assert
 			sent.HtmlBody.Should().NotContain("Choose a new password");
 			sent.HtmlBody.Should().NotContain("data-pm-no-track");
+			sent.HtmlBody.Should().NotContain("expires in", "no link was sent, so nothing expires");
 			sent.TextBody.Should().NotContain("Choose a new password");
 			sent.TextBody.Should().Contain("linked via SSO");
+		}
+
+		[Test]
+		public async Task SendPasswordRecoveryMail_WithResetLink_SaysHowLongTheLinkWorksAndNamesTheUsername()
+		{
+			// Act
+			var sent = await Render();
+			var html = WebUtility.HtmlDecode(sent.HtmlBody);
+
+			// Assert
+			html.Should().Contain("This link can only be used once and expires in 2 hours.",
+				"a recipient who opens the email later must know whether the link still works");
+			html.Should().Contain($"It stops working at {ExpiresOn} (UTC).");
+			html.Should().Contain($"Your username is <strong>{UserName}</strong>",
+				"the sign-in page asks for the username, which the person resetting may also have forgotten");
+			sent.TextBody.Should().Contain("This link can only be used once and expires in 2 hours.");
+			sent.TextBody.Should().Contain($"It stops working at {ExpiresOn} (UTC).");
+			sent.TextBody.Should().Contain($"Your username is {UserName}.");
+			html.Should().NotContain("{{", "every template field is filled");
+		}
+
+		[Test]
+		public async Task SendPasswordRecoveryMail_WithoutExpiryDetails_StillSaysTheLinkIsShortLived()
+		{
+			// Arrange
+			Email sent = null;
+			var senderMock = new Mock<IEmailSender>();
+			senderMock.Setup(sender => sender.Send(It.IsAny<Email>())).Callback<Email>(email => sent = email).ReturnsAsync(true);
+			var provider = new PostmarkTemplateProvider(senderMock.Object);
+
+			// Act
+			(await provider.SendPasswordRecoveryMail("Brandon", "brandon@example.com", "Example Fire", ResetUrl, "192.0.2.1",
+				"Test browser", "2026-09-02 14:12:00Z", false, null, null, null)).Should().BeTrue();
+
+			// Assert
+			sent.HtmlBody.Should().Contain("stops working after a short time");
+			sent.HtmlBody.Should().NotContain("It stops working at");
+			sent.HtmlBody.Should().NotContain("Your username is");
+			sent.TextBody.Should().NotContain("Your username is");
 		}
 
 		[Test]
@@ -84,7 +127,7 @@ namespace Resgrid.Tests.Providers
 
 			// Act
 			var result = await provider.SendPasswordRecoveryMail("Brandon", "brandon@example.com",
-				"Example Fire", null, "192.0.2.1", "Test browser", "2026-09-02 14:12:00Z", false);
+				"Example Fire", null, "192.0.2.1", "Test browser", "2026-09-02 14:12:00Z", false, UserName, "2 hours", ExpiresOn);
 
 			// Assert
 			result.Should().BeFalse();
@@ -108,7 +151,7 @@ namespace Resgrid.Tests.Providers
 			// Act
 			var result = await provider.SendPasswordRecoveryMail("Brandon & <Team>", "brandon@example.com",
 				"Example & <Fire>", resetUrl, "192.0.2.1 & proxy", "Browser <Beta> & Co",
-				"2026-09-02 14:12 UTC & verified", false);
+				"2026-09-02 14:12 UTC & verified", false, "b&o<n>", "2 hours", ExpiresOn);
 
 			// Assert
 			result.Should().BeTrue();
@@ -118,6 +161,7 @@ namespace Resgrid.Tests.Providers
 			sent.HtmlBody.Should().Contain("192.0.2.1 &amp; proxy");
 			sent.HtmlBody.Should().Contain("Browser &lt;Beta&gt; &amp; Co");
 			sent.HtmlBody.Should().Contain("2026-09-02 14:12 UTC &amp; verified");
+			sent.HtmlBody.Should().Contain("b&amp;o&lt;n&gt;");
 			sent.HtmlBody.Should().NotContain("&amp;amp;");
 			WebUtility.HtmlDecode(sent.HtmlBody).Should().Contain($"href=\"{resetUrl}\"");
 		}

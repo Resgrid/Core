@@ -396,7 +396,7 @@ namespace Resgrid.Services.Search
 			Add(SearchEntityTypes.Call, "Call");
 			Add(SearchEntityTypes.Unit, "Unit");
 			Add(SearchEntityTypes.Personnel, "Personnel");
-			Add(SearchEntityTypes.Contact, "Contacts");
+			Add(SearchEntityTypes.Contact, "Contacts", SystemActionModules.Contacts);
 			Add(SearchEntityTypes.Message, "Messages", SystemActionModules.Messaging);
 			Add(SearchEntityTypes.Document, "Documents", SystemActionModules.Documents);
 			Add(SearchEntityTypes.Note, "Notes", SystemActionModules.Notes);
@@ -407,10 +407,10 @@ namespace Resgrid.Services.Search
 			Add(SearchEntityTypes.ServiceContract, "ServiceContracts", SystemActionModules.BusinessOperations);
 			// Deployments have no family claim gate: the deployment page admits a rostered member without Deployments/View, so the
 			// index must too, and AuthorizeAsync keeps the claim-or-admin-or-roster rule per hit (membership was verified in LoadAccessAsync).
-			if (WantsType(requested, SearchEntityTypes.Deployment))
+			if (WantsType(requested, SearchEntityTypes.Deployment) && principal.ModuleEnabled(SystemActionModules.Deployments))
 				allowed.Add(SearchEntityTypes.Deployment);
 			// Certification types are the setup catalog: readers of records and ManageCertificationSetup holders both open them.
-			if (WantsType(requested, SearchEntityTypes.CertificationType) &&
+			if (WantsType(requested, SearchEntityTypes.CertificationType) && principal.ModuleEnabled(SystemActionModules.Certifications) &&
 				(principal.IsDepartmentAdmin || principal.HasResourceClaim("Certifications", "View") || principal.HasResourceClaim("Certifications", "Setup")))
 				allowed.Add(SearchEntityTypes.CertificationType);
 			// Operations reference families (plan R3 Tier 2): the claim and module switch of each family's own page. POIs have
@@ -421,9 +421,9 @@ namespace Resgrid.Services.Search
 			Add(SearchEntityTypes.CalendarEvent, "Schedule", SystemActionModules.Calendar);
 			Add(SearchEntityTypes.Shift, "Shift", SystemActionModules.Shifts);
 			Add(SearchEntityTypes.Group, "GenericGroup");
-			// Occupancies sit behind Record_View like their pages; the Records cutover and the module flag are checked by
-			// WithoutClosedModulesAsync, which is asynchronous.
-			Add(SearchEntityTypes.Occupancy, "Record");
+			// Occupancies sit behind Record_View and the Records module switch like their pages, which are in the Records group;
+			// the Records cutover and the module flag are checked by WithoutClosedModulesAsync, which is asynchronous.
+			Add(SearchEntityTypes.Occupancy, "Record", SystemActionModules.Records);
 			if (WantsType(requested, SearchEntityTypes.Poi) && principal.ModuleEnabled(SystemActionModules.Mapping))
 				allowed.Add(SearchEntityTypes.Poi);
 			return allowed;
@@ -546,10 +546,15 @@ namespace Resgrid.Services.Search
 			return (hits, dropped == 0 && !search.Truncated && search.Hits.Count == search.Total ? hits.Count : (int?)null);
 		}
 
-		/// <summary>The caller may search Records: the view claim (or admin), an activated Records module, current membership and a live records index.</summary>
+		/// <summary>
+		/// The caller may search Records: the view claim (or admin), the department's Records module switch on, an activated
+		/// Records module, current membership and a live records index.
+		/// </summary>
 		private async Task<bool> RecordsSearchableAsync(SearchPrincipal principal)
 		{
 			if (!principal.IsDepartmentAdmin && !principal.HasResourceClaim("Record", "View"))
+				return false;
+			if (!principal.ModuleEnabled(SystemActionModules.Records))
 				return false;
 			if (_recordsSearch == null || !_recordsSearch.IsAvailable)
 				return false;

@@ -22,6 +22,25 @@ namespace Resgrid.Config
 		public static int NonMobileRefreshTokenExpiryDays = 2;
 
 		/// <summary>
+		/// Issue access tokens as short opaque handles kept in the OIDC token store, instead of self-contained tokens that
+		/// carry every permission claim (about 10 KB, past a proxy's default 8 KB header limit). Turning it off is safe
+		/// at any time: the API refuses outstanding handles with a 401 and clients use their refresh token.
+		/// </summary>
+		public static bool UseReferenceAccessTokens = true;
+
+		/// <summary>
+		/// How often each API instance prunes expired, revoked and redeemed tokens, and authorizations left with no valid
+		/// token, from the OIDC store. 0 or less turns pruning off.
+		/// </summary>
+		public static int TokenPruneIntervalMinutes = 360;
+
+		/// <summary>
+		/// Nothing younger than this is pruned, whatever its state, so a replayed redeemed refresh token is still
+		/// recognized as reuse for this long.
+		/// </summary>
+		public static int TokenPruneMinimumAgeDays = 14;
+
+		/// <summary>
 		/// Comma-separated, registered client IDs allowed to receive the longer mobile
 		/// refresh-token lifetime. Anonymous requests and caller-supplied scopes never qualify.
 		/// </summary>

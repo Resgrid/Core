@@ -240,6 +240,13 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		public DateTime LoggedOnUtc { get; set; }
 
 		/// <summary>
+		/// The user who logged the call; null for a call with no reporting user (an email or API import). EditCall,
+		/// UpdateScheduledDispatchTime and DispatchCallNow allow a department admin or this user
+		/// (AuthorizationService.CanUserEditCallAsync), so clients offer edit and dispatch actions on that rule.
+		/// </summary>
+		public string ReportingUserId { get; set; }
+
+		/// <summary>
 		/// Dispatch On
 		/// </summary>
 		public DateTime? DispatchedOn { get; set; }
@@ -249,6 +256,13 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		/// </summary>
 		[JsonConverter(typeof(UtcDateTimeConverter))]
 		public DateTime? DispatchedOnUtc { get; set; }
+
+		/// <summary>When the call was closed, in the response's local time zone.</summary>
+		public DateTime? ClosedOn { get; set; }
+
+		/// <summary>When the call was closed in UTC, or null if no closure time was recorded.</summary>
+		[JsonConverter(typeof(UtcDateTimeConverter))]
+		public DateTime? ClosedOnUtc { get; set; }
 
 		/// <summary>
 		/// Geolocation (Latitude)

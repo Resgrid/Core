@@ -25,7 +25,7 @@ namespace Resgrid.Services.Dashboard
 				DefaultSize = DashboardWidgetSizes.M,
 				DefaultRefreshSeconds = 900,
 				Settings = new[] { Number("maxRows", 5, 1, 20) },
-				Gates = new DashboardWidgetGates { Flags = new[] { FeatureFlagKeys.Deployments } }
+				Gates = new DashboardWidgetGates { Flags = new[] { FeatureFlagKeys.Deployments }, Access = new[] { DashboardAccessChecks.DeploymentsEnabled } }
 			};
 
 			yield return new DashboardWidgetDefinition
@@ -37,7 +37,7 @@ namespace Resgrid.Services.Dashboard
 				AllowedSizes = Sizes(DashboardWidgetSizes.S, DashboardWidgetSizes.M),
 				DefaultSize = DashboardWidgetSizes.S,
 				DefaultRefreshSeconds = 900,
-				Gates = new DashboardWidgetGates { Policies = new[] { "TimeReports_Approve" }, Flags = new[] { FeatureFlagKeys.Deployments } }
+				Gates = new DashboardWidgetGates { Policies = new[] { "TimeReports_Approve" }, Flags = new[] { FeatureFlagKeys.Deployments }, Access = new[] { DashboardAccessChecks.DeploymentsEnabled } }
 			};
 
 			// InvoicingController also requires the Business Operations master flag (IBusinessOperationsAccessService.IsEnabledAsync).

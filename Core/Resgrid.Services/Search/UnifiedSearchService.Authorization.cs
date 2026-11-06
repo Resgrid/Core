@@ -377,6 +377,7 @@ namespace Resgrid.Services.Search
 				case SystemActionModules.Mapping: return !settings.MappingDisabled;
 				case SystemActionModules.Shifts: return !settings.ShiftsDisabled;
 				case SystemActionModules.Logs: return !settings.LogsDisabled;
+				case SystemActionModules.Records: return !settings.RecordsDisabled;
 				case SystemActionModules.Reports: return !settings.ReportsDisabled;
 				case SystemActionModules.Documents: return !settings.DocumentsDisabled;
 				case SystemActionModules.Calendar: return !settings.CalendarDisabled;
@@ -385,6 +386,10 @@ namespace Resgrid.Services.Search
 				case SystemActionModules.Inventory: return !settings.InventoryDisabled;
 				case SystemActionModules.Maintenance: return !settings.MaintenanceDisabled;
 				case SystemActionModules.BusinessOperations: return !settings.BusinessOperationsDisabled;
+				case SystemActionModules.Contacts: return !settings.ContactsDisabled;
+				case SystemActionModules.Certifications: return !settings.CertificationsDisabled;
+				case SystemActionModules.Deployments: return !settings.DeploymentsDisabled;
+				case SystemActionModules.Chat: return !settings.ChatDisabled;
 				default: return string.IsNullOrWhiteSpace(module);
 			}
 		}

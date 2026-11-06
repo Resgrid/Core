@@ -4,6 +4,8 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> checklistLocalizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Invoicing.Invoicing> invoicingLocalizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.IncidentBackOffice.IncidentBackOffice> incidentLocalizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Certifications.Certifications> certificationLocalizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Deployments.Deployments> deploymentLocalizer
 @{
     ViewBag.Title = "Resgrid | " + @localizer["DispatchSettingsModuleHeader"];
 }
@@ -64,6 +66,43 @@
                                 </div>
                             </div>
 
+                            @if (Model.ChatAvailable)
+                            {
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" for="ChatEnabled">@commonLocalizer["ChatModule"]</label>
+                                    <div class="col-sm-9">
+                                        <admin-assist-help-after>
+                                            <div class="switch">
+                                                <div class="onoffswitch">
+                                                    <input type="checkbox" class="onoffswitch-checkbox" asp-for="ChatEnabled">
+                                                    <label class="onoffswitch-label" for="ChatEnabled">
+                                                        <span class="onoffswitch-inner"></span>
+                                                        <span class="onoffswitch-switch"></span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </admin-assist-help-after>
+                                    </div>
+                                </div>
+                            }
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label" for="ContactsEnabled">@(await departmentTerms.NameAsync(DepartmentTerms.Contacts))</label>
+                                <div class="col-sm-9">
+                                    <admin-assist-help-after>
+                                        <div class="switch">
+                                            <div class="onoffswitch">
+                                                <input type="checkbox" class="onoffswitch-checkbox" asp-for="ContactsEnabled">
+                                                <label class="onoffswitch-label" for="ContactsEnabled">
+                                                    <span class="onoffswitch-inner"></span>
+                                                    <span class="onoffswitch-switch"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </admin-assist-help-after>
+                                </div>
+                            </div>
+
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">@localizer["DisableMappingLabel"]</label>
                                 <div class="col-sm-9">
@@ -114,6 +153,27 @@
                                     </admin-assist-help-after>
                                 </div>
                             </div>
+
+                            @if (Model.RecordsAvailable)
+                            {
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" for="RecordsEnabled">@(await departmentTerms.NameAsync(DepartmentTerms.Records))</label>
+                                    <div class="col-sm-9">
+                                        <admin-assist-help-after>
+                                            <div class="switch">
+                                                <div class="onoffswitch">
+                                                    <input type="checkbox" class="onoffswitch-checkbox" asp-for="RecordsEnabled">
+                                                    <label class="onoffswitch-label" for="RecordsEnabled">
+                                                        <span class="onoffswitch-inner"></span>
+                                                        <span class="onoffswitch-switch"></span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </admin-assist-help-after>
+                                        <span class="help-block m-b-none">@localizer["RecordsModuleNote"]</span>
+                                    </div>
+                                </div>
+                            }
 
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">@localizer["DisabledReportsLabel"]</label>
@@ -269,6 +329,43 @@
                                     <span class="help-block m-b-none">@invoicingLocalizer["BusinessOperationsModuleNote"]</span>
                                 </div>
                             </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label" for="CertificationsEnabled">@certificationLocalizer["Certifications"]</label>
+                                <div class="col-sm-9">
+                                    <admin-assist-help-after>
+                                        <div class="switch">
+                                            <div class="onoffswitch">
+                                                <input type="checkbox" class="onoffswitch-checkbox" asp-for="CertificationsEnabled">
+                                                <label class="onoffswitch-label" for="CertificationsEnabled">
+                                                    <span class="onoffswitch-inner"></span>
+                                                    <span class="onoffswitch-switch"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </admin-assist-help-after>
+                                </div>
+                            </div>
+
+                            @if (Model.DeploymentsAvailable)
+                            {
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" for="DeploymentsEnabled">@deploymentLocalizer["Deployments"]</label>
+                                    <div class="col-sm-9">
+                                        <admin-assist-help-after>
+                                            <div class="switch">
+                                                <div class="onoffswitch">
+                                                    <input type="checkbox" class="onoffswitch-checkbox" asp-for="DeploymentsEnabled">
+                                                    <label class="onoffswitch-label" for="DeploymentsEnabled">
+                                                        <span class="onoffswitch-inner"></span>
+                                                        <span class="onoffswitch-switch"></span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </admin-assist-help-after>
+                                    </div>
+                                </div>
+                            }
 
                             <div class="form-group">
                                 <label class="col-sm-3 control-label" for="IncidentBackOfficeEnabled">@incidentLocalizer["IncidentBackOffice"]</label>

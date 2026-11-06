@@ -438,7 +438,24 @@ $(document).ready(function () {
         if (!lat || !lng) { alert('Please select a location on the map, or use the address / What3Words finder.'); return; }
 
         var stopType = parseInt($('#stopType').val());
-        var callId   = (stopType === 1) ? ($('#linkedCallId').val() || null) : null;
+        function optionalWholeNumber(selector, label) {
+            var raw = $.trim($(selector).val());
+            if (raw === '') return null;
+            var value = Number(raw);
+            if (!Number.isSafeInteger(value) || value < 0 || value > 2147483647) {
+                throw new Error(label + ' must be a non-negative whole number.');
+            }
+            return value;
+        }
+        var callId, dwellMinutes, geofenceRadius;
+        try {
+            callId = stopType === 1 ? optionalWholeNumber('#linkedCallId', 'Linked call') : null;
+            dwellMinutes = optionalWholeNumber('#stopDwellMinutes', 'Dwell minutes');
+            geofenceRadius = optionalWholeNumber('#stopGeofenceRadius', 'Geofence radius');
+        } catch (error) {
+            alert(error.message);
+            return;
+        }
 
         pendingStops.push({
             _clientId:        ++stopIdCounter,
@@ -452,8 +469,8 @@ $(document).ready(function () {
             callId:           callId,
             plannedArrival:   $('#stopPlannedArrival').val(),
             plannedDeparture: $('#stopPlannedDeparture').val(),
-            dwellMinutes:     $('#stopDwellMinutes').val() || null,
-            geofenceRadius:   $('#stopGeofenceRadius').val() || null,
+            dwellMinutes:     dwellMinutes,
+            geofenceRadius:   geofenceRadius,
             contactName:      $('#stopContactName').val(),
             contactNumber:    $('#stopContactNumber').val(),
             contactId:        $('#stopContactId').val() || null,

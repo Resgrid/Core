@@ -416,6 +416,9 @@
   <data name="DisabledLogsLabel" xml:space="preserve">
     <value>Журнали</value>
   </data>
+  <data name="RecordsModuleNote" xml:space="preserve">
+    <value>Показує Записи в меню, окремо від Журналів.</value>
+  </data>
   <data name="DisabledMaintenanceLabel" xml:space="preserve">
     <value>Maintenance</value>
   </data>
@@ -1309,6 +1312,51 @@
   </data>
   <data name="CloseCallWhenUnitsClearHelp" xml:space="preserve">
     <value>Активний виклик закривається сам, коли остання направлена на нього одиниця повідомляє, що повернулася до служби або виведена з експлуатації (статус із базовим типом Доступна, У частині, Звільнена, Недоступна або Обслуговування). Усі інші направлені одиниці також мають повідомити про завершення після направлення. Враховуються лише одиниці: виклик без направленої одиниці, виклик з активним командуванням інцидентом або одиниця, що ще повертається чи транспортує, залишає виклик відкритим для диспетчера.</value>
+  </data>
+  <data name="DispatchRenotifyHeader" xml:space="preserve">
+    <value>Повторне сповіщення про виклик</value>
+  </data>
+  <data name="DispatchRenotifyEnabledLabel" xml:space="preserve">
+    <value>Повторно сповіщати до підтвердження</value>
+  </data>
+  <data name="DispatchRenotifyEnabledHelp" xml:space="preserve">
+    <value>Повторно надсилає сповіщення про виклик персоналу та одиницям, які його не підтвердили. Будь-який статус, встановлений після сповіщення, є підтвердженням: людина встановлює «Реагує» або «Не відповідає», або одиниця встановлює будь-який статус, з пунктом призначення чи без нього. Статуси, які Resgrid встановлює автоматично, не враховуються. Повторні сповіщення припиняються, коли виклик закрито або людину чи одиницю з нього вилучено. Типово вимкнено.</value>
+  </data>
+  <data name="DispatchRenotifyLockedNotice" xml:space="preserve">
+    <value>Щоб забезпечити стабільність системи, інтервал, максимальна кількість повторних сповіщень і всі канали, крім push, поки що заблоковані. Ці параметри стануть доступними в майбутньому.</value>
+  </data>
+  <data name="DispatchRenotifyIntervalLabel" xml:space="preserve">
+    <value>Інтервал повторного сповіщення (хвилини)</value>
+  </data>
+  <data name="DispatchRenotifyIntervalHelp" xml:space="preserve">
+    <value>Хвилини між повторними сповіщеннями.</value>
+  </data>
+  <data name="DispatchRenotifyMaxRetriesLabel" xml:space="preserve">
+    <value>Максимум повторних сповіщень</value>
+  </data>
+  <data name="DispatchRenotifyMaxRetriesHelp" xml:space="preserve">
+    <value>Скільки разів сповіщення про виклик надсилається повторно, перш ніж повторні сповіщення припиняться. За типових значень три повторні сповіщення з інтервалом п'ять хвилин охоплюють перші 15 хвилин після сповіщення.</value>
+  </data>
+  <data name="DispatchRenotifyChannelsLabel" xml:space="preserve">
+    <value>Повторно сповіщати через</value>
+  </data>
+  <data name="DispatchRenotifyChannelsHelp" xml:space="preserve">
+    <value>Кожен учасник отримує повторне сповіщення кожним позначеним тут каналом, який дозволяють його власні налаштування сповіщень, на підтверджені контактні дані. Одиниці отримують повторне сповіщення лише через push.</value>
+  </data>
+  <data name="DispatchRenotifyChannelPush" xml:space="preserve">
+    <value>Push-сповіщення</value>
+  </data>
+  <data name="DispatchRenotifyChannelSms" xml:space="preserve">
+    <value>SMS</value>
+  </data>
+  <data name="DispatchRenotifyChannelEmail" xml:space="preserve">
+    <value>Електронна пошта</value>
+  </data>
+  <data name="DispatchRenotifyChannelVoice" xml:space="preserve">
+    <value>Голосовий дзвінок</value>
+  </data>
+  <data name="DispatchRenotifyChannelChatPlatform" xml:space="preserve">
+    <value>Чат-платформа</value>
   </data>
   <data name="CallNumberingHeader" xml:space="preserve">
     <value>Нумерація викликів</value>

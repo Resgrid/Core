@@ -74,7 +74,7 @@ namespace Resgrid.Chatbot.Handlers
 			sb.AppendLine(ChatbotResources.Get("MyCalls_Header", culture));
 			sb.AppendLine("----------------------");
 			foreach (var call in myCalls.Take(MaxCallsToList))
-				sb.AppendLine(ChatbotResources.Get("Calls_Line", culture, call.CallId, call.Name?.Truncate(25), call.NatureOfCall?.Truncate(40)));
+				sb.AppendLine(ChatbotResources.Get("Calls_Line", culture, call.CallId, call.Name?.Truncate(25), StringHelpers.HtmlToMessageText(call.NatureOfCall, singleLine: true).Truncate(40)));
 
 			return new ChatbotResponse { Text = sb.ToString(), Processed = true };
 		}
@@ -124,7 +124,7 @@ namespace Resgrid.Chatbot.Handlers
 			sb.AppendLine(ChatbotResources.Get("UnitCalls_Header", culture, unit.Name));
 			sb.AppendLine("----------------------");
 			foreach (var call in unitCalls.Take(MaxCallsToList))
-				sb.AppendLine(ChatbotResources.Get("Calls_Line", culture, call.CallId, call.Name?.Truncate(25), call.NatureOfCall?.Truncate(40)));
+				sb.AppendLine(ChatbotResources.Get("Calls_Line", culture, call.CallId, call.Name?.Truncate(25), StringHelpers.HtmlToMessageText(call.NatureOfCall, singleLine: true).Truncate(40)));
 
 			return new ChatbotResponse { Text = sb.ToString(), Processed = true };
 		}

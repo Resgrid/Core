@@ -2284,6 +2284,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.PersonnelOnUnitSetUnitStatus = await _departmentSettingsService.GetPersonnelOnUnitSetUnitStatusAsync(DepartmentId);
 			model.StatusHoldToConfirm = await _departmentSettingsService.GetStatusHoldToConfirmAsync(DepartmentId, true);
 			model.CloseCallWhenUnitsClear = await _departmentSettingsService.GetCloseCallWhenUnitsClearAsync(DepartmentId, true);
+			await PopulateDispatchRenotifySettingsAsync(model, true);
 			model.AutoEnableCheckInTimers = await _departmentSettingsService.GetCheckInTimersAutoEnableForNewCallsAsync(DepartmentId);
 			model.NewCallFields = await BuildNewCallFieldRowsAsync();
 
@@ -2350,6 +2351,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.CloseCallWhenUnitsClear.ToString(),
 					DepartmentSettingTypes.CloseCallWhenUnitsClear, cancellationToken);
 
+				// Locked options are forced off here and again in SetDispatchRenotifyConfigAsync, so a crafted post cannot turn them on.
+				await _departmentSettingsService.SetDispatchRenotifyConfigAsync(DepartmentId,
+					BuildDispatchRenotifyConfig(model, DispatchConfig.RenotifyTimingLocked, DispatchConfig.RenotifyChannelsLocked), cancellationToken);
+
 				// Save check-in timer auto-enable setting
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.AutoEnableCheckInTimers.ToString(),
 					DepartmentSettingTypes.CheckInTimersAutoEnableForNewCalls, cancellationToken);
@@ -2404,6 +2409,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.UnitTypeStatusOverrides = new List<UnitTypeDispatchStatusOverrideView>();
 				await PopulateDispatchSettingsUnitTypeOverridesAsync(model, unitTypeStatusOverrides);
 				await PopulateUnitStatusTargetsAsync(model);
+				await PopulateDispatchRenotifySettingsAsync(model, true);
 				// Reload the code catalog as stored, so the page carries the ids the save assigned.
 				model.ResponseCodesJson = null;
 				await PopulateRunCardRecommendationSettingsAsync(model, false);
@@ -2414,6 +2420,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			await PopulateDispatchSettingsUnitTypeOverridesAsync(model);
 			await PopulateUnitStatusTargetsAsync(model);
 			await PopulateRunCardRecommendationSettingsAsync(model, false);
+			await PopulateDispatchRenotifySettingsAsync(model, false);
 
 			// A rejected post redisplays the operator's own ticks -- they round-trip through model
 			// binding. Only rebuild from storage when nothing came back at all.
@@ -2422,6 +2429,53 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			model.SaveSuccess = false;
 			return View(model);
+		}
+
+		/// <summary>
+		/// The dispatch re-notify fields as stored (<paramref name="fromStore"/>) or as posted, with what the server owns always
+		/// from the server: whether the timing is locked, the locked interval and retries, and the channels (push only for now).
+		/// </summary>
+		private async Task PopulateDispatchRenotifySettingsAsync(DispatchSettingsView model, bool fromStore)
+		{
+			var config = await _departmentSettingsService.GetDispatchRenotifyConfigAsync(DepartmentId, true);
+			var timingLocked = DispatchConfig.RenotifyTimingLocked;
+			var channelsLocked = DispatchConfig.RenotifyChannelsLocked;
+
+			// What is locked comes from the server, never from the request.
+			model.RenotifyTimingLocked = timingLocked;
+			model.RenotifyChannelsLocked = channelsLocked;
+
+			if (fromStore)
+				model.RenotifyEnabled = config.Enabled;
+
+			if (fromStore || timingLocked)
+			{
+				model.RenotifyIntervalMinutes = config.GetEffectiveIntervalMinutes(timingLocked);
+				model.RenotifyMaxRetries = config.GetEffectiveMaxRetries(timingLocked);
+			}
+
+			// Ticked channels: push only while locked; as stored, or as posted on a rejected save, otherwise.
+			model.RenotifyChannels = fromStore || channelsLocked
+				? (int)config.GetEffectiveChannels(channelsLocked)
+				: DispatchRenotifyConfig.ChannelsFrom(model.RenotifyChannelValues);
+		}
+
+		/// <summary>
+		/// The re-notify setting to store from a Dispatch Settings post. Whatever the request carries, a locked option is forced to
+		/// its default: the interval and retry count while the timing is locked, and every channel but push off while the channels
+		/// are locked. Unlocked options are clamped to their limits, and a post with no channel ticked keeps push.
+		/// </summary>
+		public static DispatchRenotifyConfig BuildDispatchRenotifyConfig(DispatchSettingsView model, bool timingLocked, bool channelsLocked)
+		{
+			var posted = new DispatchRenotifyConfig
+			{
+				Enabled = model.RenotifyEnabled,
+				IntervalMinutes = model.RenotifyIntervalMinutes,
+				MaxRetries = model.RenotifyMaxRetries,
+				Channels = DispatchRenotifyConfig.ChannelsFrom(model.RenotifyChannelValues)
+			};
+
+			return posted.ApplyLocks(timingLocked, channelsLocked);
 		}
 
 		/// <summary>
@@ -3868,8 +3922,27 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.IncidentBusinessEnabled = !model.Modules.IncidentBusinessDisabled;
 			model.IncidentCoordinationEnabled = !model.Modules.IncidentCoordinationDisabled;
 			model.AiEnabled = !model.Modules.AiDisabled;
+			ShowNewerModuleSwitches(model, model.Modules);
+			await LoadModuleAvailabilityAsync(model);
 
 			return View(model);
+		}
+
+		/// <summary>Whether each flag-gated module exists for the department, so its switch is on the page.</summary>
+		private async Task LoadModuleAvailabilityAsync(DepartmentModulesSettingView model)
+		{
+			model.RecordsAvailable = await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.RecordsSystem, DepartmentId);
+			model.DeploymentsAvailable = await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.Deployments, DepartmentId);
+			model.ChatAvailable = await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.ChatSystem, DepartmentId);
+		}
+
+		private static void ShowNewerModuleSwitches(DepartmentModulesSettingView model, DepartmentModuleSettings modules)
+		{
+			model.RecordsEnabled = !modules.RecordsDisabled;
+			model.ContactsEnabled = !modules.ContactsDisabled;
+			model.CertificationsEnabled = !modules.CertificationsDisabled;
+			model.DeploymentsEnabled = !modules.DeploymentsDisabled;
+			model.ChatEnabled = !modules.ChatDisabled;
 		}
 
 		[HttpPost]
@@ -3879,6 +3952,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
 				return Unauthorized();
+
+			await LoadModuleAvailabilityAsync(model);
 
 			if (ModelState.IsValid)
 			{
@@ -3901,6 +3976,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 				modules.IncidentBusinessDisabled = !model.IncidentBusinessEnabled;
 				modules.IncidentCoordinationDisabled = !model.IncidentCoordinationEnabled;
 				modules.AiDisabled = !model.AiEnabled;
+				modules.ContactsDisabled = !model.ContactsEnabled;
+				modules.CertificationsDisabled = !model.CertificationsEnabled;
+				// A flag-gated module's switch is not on the page while its flag is off, and an unposted checkbox reads as
+				// off: leave the stored value alone rather than hiding the module behind the department's back.
+				if (model.RecordsAvailable)
+					modules.RecordsDisabled = !model.RecordsEnabled;
+				if (model.DeploymentsAvailable)
+					modules.DeploymentsDisabled = !model.DeploymentsEnabled;
+				if (model.ChatAvailable)
+					modules.ChatDisabled = !model.ChatEnabled;
+				ShowNewerModuleSwitches(model, modules);
 
 				await _departmentSettingsService.SetDepartmentModuleSettingsAsync(DepartmentId, modules, cancellationToken);
 

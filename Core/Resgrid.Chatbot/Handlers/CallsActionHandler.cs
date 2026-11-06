@@ -71,7 +71,7 @@ namespace Resgrid.Chatbot.Handlers
 
 				foreach (var call in callList)
 				{
-					sb.AppendLine(ChatbotResources.Get("Calls_Line", culture, call.CallId, call.Name?.Truncate(25), call.NatureOfCall?.Truncate(40)));
+					sb.AppendLine(ChatbotResources.Get("Calls_Line", culture, call.CallId, call.Name?.Truncate(25), StringHelpers.HtmlToMessageText(call.NatureOfCall, singleLine: true).Truncate(40)));
 				}
 
 				return new ChatbotResponse { Text = sb.ToString(), Processed = true };

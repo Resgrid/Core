@@ -143,6 +143,7 @@
   <data name="AdpPinSaved" xml:space="preserve"><value>تم الحفظ.</value></data>
   <data name="AdpPinDenied" xml:space="preserve"><value>تعذر إتاحة البيانات المحمية أو حفظها. سجّل الدخول إلى Resgrid وحاول مجددًا.</value></data>
   <data name="AdpPinSmsChallenge" xml:space="preserve"><value>يتوفر بلاغ محمي. أرسل OPEN {0} ثم مسافة ثم رمز PIN الشخصي.</value></data>
+  <data name="DispatchRenotifyPushPrefix" xml:space="preserve"><value>تذكير {0}/{1}:</value></data>
   <data name="AdpPinVoiceChallenge" xml:space="preserve"><value>يتوفر بلاغ محمي. أدخل رمز PIN الشخصي ثم اضغط على مفتاح المربع.</value></data>
   <data name="AdpReleaseSettings" xml:space="preserve"><value>إعدادات إتاحة بيانات ADP</value></data>
   <data name="AdpSmsMode" xml:space="preserve"><value>الإرسال بالرسائل النصية</value></data>

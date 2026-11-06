@@ -148,6 +148,7 @@ namespace Resgrid.Model.Search
 		public const string Mapping = "Mapping";
 		public const string Shifts = "Shifts";
 		public const string Logs = "Logs";
+		public const string Records = "Records";
 		public const string Reports = "Reports";
 		public const string Documents = "Documents";
 		public const string Calendar = "Calendar";
@@ -156,6 +157,10 @@ namespace Resgrid.Model.Search
 		public const string Inventory = "Inventory";
 		public const string Maintenance = "Maintenance";
 		public const string BusinessOperations = "BusinessOperations";
+		public const string Contacts = "Contacts";
+		public const string Certifications = "Certifications";
+		public const string Deployments = "Deployments";
+		public const string Chat = "Chat";
 	}
 
 	/// <summary>

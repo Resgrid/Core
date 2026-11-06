@@ -7125,6 +7125,12 @@
   <data xml:space="preserve" name="SettingHelp.DispatchResponseCodes">
     <value>Codes facultatifs par unité (par exemple C3 pour gyrophares et sirène) proposés par les lignes des cartes conditionnelles, et si les équipages les voient dans les notifications et les applications. Vide signifie qu'aucun code n'apparaît.</value>
   </data>
+  <data xml:space="preserve" name="Setting.DispatchRenotifyConfig">
+    <value>Relance des dispatchs</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.DispatchRenotifyConfig">
+    <value>Renvoie un dispatch par push au personnel et aux unités qui n'ont défini aucun statut depuis son envoi : toutes les 5 minutes, jusqu'à 3 fois. Tout statut défini par une personne ou une unité vaut accusé de réception ; les statuts automatiques non. S'arrête lorsque l'appel est clôturé ou que le destinataire en est retiré. Désactivé par défaut.</value>
+  </data>
   <data name="Field.DepartmentTermOverride.Singular" xml:space="preserve">
     <value>Terme du service / Un élément</value>
   </data>
@@ -7775,5 +7781,35 @@
   </data>
   <data xml:space="preserve" name="SettingHelp.OfflineMapPacksConfig">
     <value>Ce que les applications téléchargent pour fonctionner sans réseau : la zone d'intervention maximale (sa carte de base doit respecter la limite de taille), les données cartographiques incluses, quand les téléchargements ont lieu et la couverture supplémentaire pour les appels et tournées hors de la zone.</value>
+  </data>
+  <data name="Module.RecordsDisabled" xml:space="preserve">
+    <value>Disponibilité des dossiers</value>
+  </data>
+  <data name="ModuleHelp.RecordsDisabled" xml:space="preserve">
+    <value>Affiche ou masque les Dossiers dans la navigation, les widgets du tableau de bord et la recherche de l'application web. Le masquage ne supprime aucune donnée et ne modifie pas les autorisations. Les Journaux ont leur propre interrupteur.</value>
+  </data>
+  <data name="Module.ContactsDisabled" xml:space="preserve">
+    <value>Disponibilité des contacts</value>
+  </data>
+  <data name="ModuleHelp.ContactsDisabled" xml:space="preserve">
+    <value>Affiche ou masque les Contacts dans la navigation, les widgets du tableau de bord et la recherche de l'application web. Le masquage ne supprime aucune donnée et ne modifie pas les autorisations.</value>
+  </data>
+  <data name="Module.CertificationsDisabled" xml:space="preserve">
+    <value>Disponibilité des certifications</value>
+  </data>
+  <data name="ModuleHelp.CertificationsDisabled" xml:space="preserve">
+    <value>Affiche ou masque les Certifications dans la navigation, les widgets du tableau de bord et la recherche de l'application web. Le masquage ne supprime aucune donnée et ne modifie pas les autorisations. L'application des certifications n'est pas affectée.</value>
+  </data>
+  <data name="Module.DeploymentsDisabled" xml:space="preserve">
+    <value>Disponibilité des déploiements</value>
+  </data>
+  <data name="ModuleHelp.DeploymentsDisabled" xml:space="preserve">
+    <value>Affiche ou masque les Déploiements dans la navigation, les widgets du tableau de bord et la recherche de l'application web. Le masquage ne supprime aucune donnée et ne modifie pas les autorisations.</value>
+  </data>
+  <data name="Module.ChatDisabled" xml:space="preserve">
+    <value>Disponibilité de la discussion</value>
+  </data>
+  <data name="ModuleHelp.ChatDisabled" xml:space="preserve">
+    <value>Affiche ou masque la Discussion dans la navigation, les widgets du tableau de bord et la recherche de l'application web. Le masquage ne supprime aucune donnée et ne modifie pas les autorisations. La discussion dans les applications mobiles n'est pas affectée.</value>
   </data>
 </root>

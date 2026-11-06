@@ -65,7 +65,10 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		public string What3Words { get; set; }
 
 		/// <summary>
-		/// Comma seperated list of users,units,roles and groups to dipstach
+		/// Pipe separated list of users, units, roles and groups to dispatch ("P:", "U:", "R:" and "G:" prefixes), replacing
+		/// the call's dispatches. "0" dispatches everyone. Left blank it also means everyone, except on a pending call or when
+		/// the department hides the dispatch list, where blank keeps the call's dispatches. A list with no entries ("|")
+		/// removes every dispatch.
 		/// </summary>
 		public string DispatchList { get; set; }
 

@@ -1,0 +1,15 @@
+{
+  "id": "adp",
+  "name": "Advanced Data Protection",
+  "purpose": "Advanced Data Protection enabled with a LocalDev key: call nature, notes, contact and call notes are stored as protected envelopes and come back REDACTED without a step-up grant. Admin and officer are TOTP-enrolled for step-up; member is not and lacks the protected-data permission.",
+  "covers": ["ADP enabled department", "REDACTED protected call fields and call notes", "step-up with TOTP (admin, officer)", "mfa_not_enrolled step-up (member)", "protected-data permissions", "US Mountain"],
+  "department": { "timeZone": "Mountain Standard Time" },
+  "security": {
+    "adp": { "enabled": true, "stepUpWindowMinutes": 15 },
+    "mfa": { "enrolled": ["admin", "officer"] }
+  },
+  "permissions": [
+    { "type": "ViewProtectedCallData", "action": "departmentAndGroupAdmins" },
+    { "type": "EditProtectedCallData", "action": "departmentAdminsOnly" }
+  ]
+}

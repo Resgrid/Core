@@ -121,7 +121,7 @@ namespace Resgrid.Services.Dashboard
 				DefaultSize = DashboardWidgetSizes.M,
 				DefaultRefreshSeconds = 3600,
 				Settings = new[] { Number("maxRows", 5, 1, 20) },
-				Gates = new DashboardWidgetGates { Policies = new[] { "Certifications_View" } }
+				Gates = new DashboardWidgetGates { Policies = new[] { "Certifications_View" }, Access = new[] { DashboardAccessChecks.CertificationsEnabled } }
 			};
 
 			yield return new DashboardWidgetDefinition
@@ -134,7 +134,7 @@ namespace Resgrid.Services.Dashboard
 				DefaultSize = DashboardWidgetSizes.S,
 				DefaultRefreshSeconds = 3600,
 				Settings = new[] { Number("maxRows", 5, 1, 20) },
-				Gates = new DashboardWidgetGates { Policies = new[] { "Profile_View" } }
+				Gates = new DashboardWidgetGates { Policies = new[] { "Profile_View" }, Access = new[] { DashboardAccessChecks.CertificationsEnabled } }
 			};
 		}
 	}

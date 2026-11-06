@@ -189,5 +189,77 @@ namespace Resgrid.Tests.Web.User
 
 			_workflows.Verify(w => w.SaveWorkflowStepAsync(It.Is<WorkflowStep>(s => s.WorkflowStepId == "our-step" && s.WorkflowId == "ours"), It.IsAny<CancellationToken>()), Times.Once);
 		}
+
+		[Test]
+		public async Task Edit_settings_saves_without_posting_server_owned_creator_and_keeps_identity_and_steps()
+		{
+			// Arrange: MVC adds this error because the settings form omits the entity's required creator.
+			var stored = new Workflow
+			{
+				WorkflowId = "ours", DepartmentId = OurDepartment, CreatedByUserId = "original-creator",
+				TriggerEventType = (int)WorkflowTriggerEventType.CallAdded,
+				Steps = new List<WorkflowStep> { new() { WorkflowStepId = "our-step", WorkflowId = "ours" } }
+			};
+			_workflows.Setup(w => w.GetWorkflowByIdAsync("ours", It.IsAny<CancellationToken>())).ReturnsAsync(stored);
+			_controller.ModelState.AddModelError(nameof(Workflow.CreatedByUserId), "The CreatedByUserId field is required.");
+			var posted = new Workflow
+			{
+				WorkflowId = "ours", Name = "Reviewed training workflow", IsEnabled = true,
+				DepartmentId = OtherDepartment, TriggerEventType = (int)WorkflowTriggerEventType.CallClosed
+			};
+
+			// Act.
+			var result = await _controller.Edit(posted, default);
+
+			// Assert: settings change, while the stored ownership, event and step collection survive.
+			result.Should().BeOfType<RedirectToActionResult>().Which.ActionName.Should().Be("Index");
+			stored.Name.Should().Be("Reviewed training workflow");
+			stored.IsEnabled.Should().BeTrue();
+			stored.DepartmentId.Should().Be(OurDepartment);
+			stored.CreatedByUserId.Should().Be("original-creator");
+			stored.TriggerEventType.Should().Be((int)WorkflowTriggerEventType.CallAdded);
+			stored.Steps.Should().ContainSingle().Which.WorkflowStepId.Should().Be("our-step");
+			_workflows.Verify(w => w.SaveWorkflowAsync(stored, It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
+		public async Task Edit_invalid_settings_preserves_errors_and_reloads_steps_credentials_and_locked_event()
+		{
+			// Arrange.
+			_workflows.Setup(w => w.GetStepsByWorkflowIdAsync("ours", It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new List<WorkflowStep> { new() { WorkflowStepId = "our-step", WorkflowId = "ours" } });
+			_workflows.Setup(w => w.GetCredentialsByDepartmentIdAsync(OurDepartment, It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new List<WorkflowCredential> { new() { WorkflowCredentialId = "credential", Name = "Training mail" } });
+			_controller.ModelState.AddModelError(nameof(Workflow.CreatedByUserId), "Required");
+			_controller.ModelState.AddModelError(nameof(Workflow.Name), "Name is required.");
+			var posted = new Workflow { WorkflowId = "ours", Name = "", TriggerEventType = (int)WorkflowTriggerEventType.CallClosed };
+
+			// Act.
+			var result = await _controller.Edit(posted, default);
+
+			// Assert: a correctable form is returned with its existing editor context and no write.
+			result.Should().BeOfType<ViewResult>().Which.Model.Should().BeSameAs(posted);
+			_controller.ModelState[nameof(Workflow.Name)].Errors.Should().ContainSingle();
+			posted.Steps.Should().ContainSingle().Which.WorkflowStepId.Should().Be("our-step");
+			posted.TriggerEventType.Should().Be((int)WorkflowTriggerEventType.CallAdded);
+			((string)_controller.ViewBag.CredentialsJson).Should().Contain("Training mail");
+			_workflows.Verify(w => w.SaveWorkflowAsync(It.IsAny<Workflow>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[TestCase("theirs")]
+		[TestCase("missing")]
+		[TestCase("")]
+		public async Task Edit_settings_outside_the_department_is_not_found_and_never_saved(string workflowId)
+		{
+			// Arrange.
+			var posted = new Workflow { WorkflowId = workflowId, Name = "Attempted update", IsEnabled = true };
+
+			// Act.
+			var result = await _controller.Edit(posted, default);
+
+			// Assert.
+			result.Should().BeOfType<NotFoundResult>();
+			_workflows.Verify(w => w.SaveWorkflowAsync(It.IsAny<Workflow>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
 	}
 }

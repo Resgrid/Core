@@ -142,7 +142,9 @@ namespace Resgrid.Web.Services.Helpers
 			var restricted = RmsDefinitionKeys.RestrictedClass.Contains(r.DefinitionKey ?? string.Empty);
 			var data = new RecordData
 			{
-				Values = RecordsRms1bApiMapper.ToValues(aggregate.Values, aggregate.DefinitionVersionRow?.Schema, canViewRestricted),
+				Values = CallbackRecordForm.Matches(r.DefinitionKey, r.DefinitionVersion)
+					? CallbackRecordForm.Read(aggregate.Details)
+					: RecordsRms1bApiMapper.ToValues(aggregate.Values, aggregate.DefinitionVersionRow?.Schema, canViewRestricted),
 				RecordId = r.RmsOperationalRecordId,
 				RecordKind = RmsRecordKind.Operational.ToString(),
 				DefinitionKey = r.DefinitionKey,
@@ -205,6 +207,8 @@ namespace Resgrid.Web.Services.Helpers
 			var restricted = RmsDefinitionKeys.RestrictedClass.Contains(snapshot.DefinitionKey ?? string.Empty);
 			return new RecordData
 			{
+				// A Callback revision carries its form values like the current record, so a field client can render it.
+				Values = CallbackRecordForm.Matches(snapshot.DefinitionKey, snapshot.DefinitionVersion) ? CallbackRecordForm.Read(snapshot.Details) : null,
 				RecordId = snapshot.RecordId,
 				RecordKind = RmsRecordKind.Operational.ToString(),
 				DefinitionKey = snapshot.DefinitionKey,
@@ -287,10 +291,10 @@ namespace Resgrid.Web.Services.Helpers
 			};
 		}
 
-		public static RecordDraftInput ToDraftInput(SaveRecordDraftInput input, RmsOriginClient origin)
+		public static RecordDraftInput ToDraftInput(SaveRecordDraftInput input, RmsOriginClient origin, RecordAggregate current = null)
 		{
 			var d = input.Details ?? new RecordDetailsInput();
-			return new RecordDraftInput
+			var draft = new RecordDraftInput
 			{
 				CustomFields = input.CustomFields,
 				DefinitionKey = input.DefinitionKey,
@@ -317,6 +321,15 @@ namespace Resgrid.Web.Services.Helpers
 				OriginClient = origin,
 				DuplicateContinueReason = input.DuplicateContinueReason
 			};
+			var definitionKey = current?.Record.DefinitionKey ?? input.DefinitionKey;
+			var definitionVersion = current?.Record.DefinitionVersion ?? RmsDefinitionKeys.LockedDefinitionVersion;
+			if (input.Details == null && input.Values != null && FieldRecordCatalogV1.IsFieldOrigin(origin)
+				&& CallbackRecordForm.Matches(definitionKey, definitionVersion))
+			{
+				CallbackRecordForm.Apply(draft, input.Values, current);
+				draft.Values = null;
+			}
+			return draft;
 		}
 
 		public static RecordConflictData ToConflict(RecordDraftConflict conflict, RecordAggregate current, bool canViewRestricted)

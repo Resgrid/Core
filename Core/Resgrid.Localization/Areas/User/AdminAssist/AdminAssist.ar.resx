@@ -7125,6 +7125,12 @@
   <data xml:space="preserve" name="SettingHelp.DispatchResponseCodes">
     <value>رموز اختيارية لكل وحدة (مثل C3 للأضواء وصفارة الإنذار) تقترحها صفوف البطاقات المشروطة، وما إذا كانت الطواقم تراها في الإشعارات والتطبيقات. الفراغ يعني عدم ظهور الرموز في أي مكان.</value>
   </data>
+  <data xml:space="preserve" name="Setting.DispatchRenotifyConfig">
+    <value>إعادة إشعار الإرسال</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.DispatchRenotifyConfig">
+    <value>يعيد إرسال إشعار البلاغ عبر الإشعارات الفورية إلى الأفراد والوحدات الذين لم يعيّنوا أي حالة منذ إرساله: كل 5 دقائق، حتى 3 مرات. أي حالة يعيّنها شخص أو وحدة تُعد تأكيدًا؛ أما الحالات التلقائية فلا. تتوقف عند إغلاق البلاغ أو إزالة المستلم منه. معطّل افتراضيًا.</value>
+  </data>
   <data name="Field.DepartmentTermOverride.Singular" xml:space="preserve">
     <value>مصطلح الإدارة / عنصر واحد</value>
   </data>
@@ -7775,5 +7781,35 @@
   </data>
   <data xml:space="preserve" name="SettingHelp.OfflineMapPacksConfig">
     <value>ما تنزّله التطبيقات للعمل دون شبكة: منطقة الاستجابة القصوى (يجب أن تقع خريطتها الأساسية ضمن حد الحجم)، وبيانات الخرائط المضمّنة، ووقت التنزيل، والتغطية الإضافية للبلاغات والمسارات خارج المنطقة.</value>
+  </data>
+  <data name="Module.RecordsDisabled" xml:space="preserve">
+    <value>توفر وحدة السجلات</value>
+  </data>
+  <data name="ModuleHelp.RecordsDisabled" xml:space="preserve">
+    <value>يُظهر وحدة السجلات أو يخفيها في التنقل وأدوات لوحة المعلومات والبحث في تطبيق الويب. لا يؤدي الإخفاء إلى حذف البيانات أو تغيير الصلاحيات. للسجلات القديمة مفتاح خاص بها.</value>
+  </data>
+  <data name="Module.ContactsDisabled" xml:space="preserve">
+    <value>توفر جهات الاتصال</value>
+  </data>
+  <data name="ModuleHelp.ContactsDisabled" xml:space="preserve">
+    <value>يُظهر جهات الاتصال أو يخفيها في التنقل وأدوات لوحة المعلومات والبحث في تطبيق الويب. لا يؤدي الإخفاء إلى حذف البيانات أو تغيير الصلاحيات.</value>
+  </data>
+  <data name="Module.CertificationsDisabled" xml:space="preserve">
+    <value>توفر الشهادات</value>
+  </data>
+  <data name="ModuleHelp.CertificationsDisabled" xml:space="preserve">
+    <value>يُظهر الشهادات أو يخفيها في التنقل وأدوات لوحة المعلومات والبحث في تطبيق الويب. لا يؤدي الإخفاء إلى حذف البيانات أو تغيير الصلاحيات. لا يتأثر فرض الشهادات.</value>
+  </data>
+  <data name="Module.DeploymentsDisabled" xml:space="preserve">
+    <value>توفر عمليات الانتشار</value>
+  </data>
+  <data name="ModuleHelp.DeploymentsDisabled" xml:space="preserve">
+    <value>يُظهر عمليات الانتشار أو يخفيها في التنقل وأدوات لوحة المعلومات والبحث في تطبيق الويب. لا يؤدي الإخفاء إلى حذف البيانات أو تغيير الصلاحيات.</value>
+  </data>
+  <data name="Module.ChatDisabled" xml:space="preserve">
+    <value>توفر الدردشة</value>
+  </data>
+  <data name="ModuleHelp.ChatDisabled" xml:space="preserve">
+    <value>يُظهر الدردشة أو يخفيها في التنقل وأدوات لوحة المعلومات والبحث في تطبيق الويب. لا يؤدي الإخفاء إلى حذف البيانات أو تغيير الصلاحيات. لا تتأثر الدردشة في تطبيقات الهاتف المحمول.</value>
   </data>
 </root>

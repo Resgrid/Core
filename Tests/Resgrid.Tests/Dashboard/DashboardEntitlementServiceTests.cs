@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
@@ -153,6 +154,47 @@ namespace Resgrid.Tests.Dashboard
 
 			(await Service().CompleteViewerForWidgetAsync(Viewer(admin: true), widget)).Audience.Should().Be(DashboardAudiences.Administrator);
 			(await Service().CompleteViewerForWidgetAsync(Viewer(), widget)).Audience.Should().Be(DashboardAudiences.Member);
+		}
+
+		[Test]
+		public async Task Records_widgets_follow_the_records_switch_not_the_logs_switch()
+		{
+			_records.Setup(r => r.GetModuleStateAsync(DepartmentId, It.IsAny<bool>())).ReturnsAsync(new RecordsModuleState
+			{
+				DepartmentId = DepartmentId, FlagEnabled = true, Activated = true, CutoverState = RmsDepartmentCutoverState.Active
+			});
+			var widget = Widget(new DashboardWidgetGates { Access = new[] { DashboardAccessChecks.RecordsUsable } });
+
+			_settings.Setup(s => s.GetDepartmentModuleSettingsAsync(DepartmentId, It.IsAny<bool>())).ReturnsAsync(new DepartmentModuleSettings { LogsDisabled = true });
+			(await Service().CompleteViewerForWidgetAsync(Viewer(), widget)).Passes(DashboardAccessChecks.RecordsUsable).Should().BeTrue("Logs off no longer hides Records");
+
+			_settings.Setup(s => s.GetDepartmentModuleSettingsAsync(DepartmentId, It.IsAny<bool>())).ReturnsAsync(new DepartmentModuleSettings { RecordsDisabled = true });
+			(await Service().CompleteViewerForWidgetAsync(Viewer(), widget)).Passes(DashboardAccessChecks.RecordsUsable).Should().BeFalse();
+		}
+
+		[TestCase(DashboardAccessChecks.ContactsEnabled, "contacts.preplans")]
+		[TestCase(DashboardAccessChecks.CertificationsEnabled, "certifications.expiry")]
+		[TestCase(DashboardAccessChecks.CertificationsEnabled, "certifications.mine")]
+		[TestCase(DashboardAccessChecks.DeploymentsEnabled, "deployments.active")]
+		[TestCase(DashboardAccessChecks.DeploymentsEnabled, "deployments.timeReports")]
+		[TestCase(DashboardAccessChecks.ChatEnabled, "chat.unread")]
+		[TestCase(DashboardAccessChecks.ChatEnabled, "chat.moderation")]
+		public async Task Newer_module_widgets_follow_their_module_switch(DashboardAccessChecks check, string widgetKey)
+		{
+			DashboardWidgetCatalog.All.Single(w => w.Key == widgetKey).Gates.Access.Should().Contain(check);
+			var widget = Widget(new DashboardWidgetGates { Access = new[] { check } });
+
+			(await Service().CompleteViewerForWidgetAsync(Viewer(), widget)).Passes(check).Should().BeTrue("every module is shown by default");
+
+			var hidden = new DepartmentModuleSettings
+			{
+				ContactsDisabled = check == DashboardAccessChecks.ContactsEnabled,
+				CertificationsDisabled = check == DashboardAccessChecks.CertificationsEnabled,
+				DeploymentsDisabled = check == DashboardAccessChecks.DeploymentsEnabled,
+				ChatDisabled = check == DashboardAccessChecks.ChatEnabled
+			};
+			_settings.Setup(s => s.GetDepartmentModuleSettingsAsync(DepartmentId, It.IsAny<bool>())).ReturnsAsync(hidden);
+			(await Service().CompleteViewerForWidgetAsync(Viewer(), widget)).Passes(check).Should().BeFalse();
 		}
 
 		[Test]

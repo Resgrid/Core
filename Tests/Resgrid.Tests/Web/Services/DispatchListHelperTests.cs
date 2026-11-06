@@ -70,5 +70,25 @@ namespace Resgrid.Tests.Web.Services
 			DispatchListHelper.ResolveIds(Split("G:1|U:2"), "R:", ResolveRole).Should().BeEmpty();
 			DispatchListHelper.ResolveIds(null, "R:", ResolveRole).Should().BeEmpty();
 		}
+
+		[Test]
+		public void A_list_with_no_entries_resolves_to_nobody_for_every_prefix()
+		{
+			foreach (var prefix in new[] { "G:", "R:", "U:" })
+				DispatchListHelper.ResolveIds(Split("|"), prefix, ResolveRole).Should().BeEmpty();
+		}
+
+		[TestCase(null, false)]
+		[TestCase("", false)]
+		[TestCase("  ", false)]
+		[TestCase("|", false)]
+		[TestCase(" | |", false)]
+		[TestCase("0", true)]
+		[TestCase("U:7", true)]
+		[TestCase("|P:abc|", true)]
+		public void HasEntries_counts_only_lists_that_name_someone(string dispatchList, bool expected)
+		{
+			DispatchListHelper.HasEntries(dispatchList).Should().Be(expected);
+		}
 	}
 }

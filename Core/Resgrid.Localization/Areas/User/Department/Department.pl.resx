@@ -416,6 +416,9 @@
   <data name="DisabledLogsLabel" xml:space="preserve">
     <value>Dzienniki</value>
   </data>
+  <data name="RecordsModuleNote" xml:space="preserve">
+    <value>Pokazuje Rejestry w menu, niezależnie od Dzienników.</value>
+  </data>
   <data name="DisabledMaintenanceLabel" xml:space="preserve">
     <value>Maintenance</value>
   </data>
@@ -1309,6 +1312,51 @@
   </data>
   <data name="CloseCallWhenUnitsClearHelp" xml:space="preserve">
     <value>Aktywne zgłoszenie zamyka się samo, gdy ostatnia zadysponowana do niego jednostka zgłosi powrót do służby lub wyłączenie z eksploatacji (status o typie bazowym Dostępna, W jednostce, Zwolniona, Niedostępna lub Serwis). Wszystkie pozostałe zadysponowane jednostki również muszą zgłosić zakończenie od chwili zadysponowania. Liczą się tylko jednostki: zgłoszenie bez zadysponowanej jednostki, zgłoszenie z aktywnym dowodzeniem incydentem lub jednostka, która wciąż wraca albo transportuje, pozostaje otwarte dla dyspozytora.</value>
+  </data>
+  <data name="DispatchRenotifyHeader" xml:space="preserve">
+    <value>Ponowne powiadamianie o dyspozycji</value>
+  </data>
+  <data name="DispatchRenotifyEnabledLabel" xml:space="preserve">
+    <value>Powiadamiaj ponownie do potwierdzenia</value>
+  </data>
+  <data name="DispatchRenotifyEnabledHelp" xml:space="preserve">
+    <value>Ponownie wysyła dyspozycję do personelu i jednostek, które jej nie potwierdziły. Każdy status ustawiony po dyspozycji jest potwierdzeniem: osoba ustawiająca Reaguje lub Nie odpowiada albo jednostka ustawiająca dowolny status, z celem lub bez. Statusy ustawiane automatycznie przez Resgrid się nie liczą. Ponowne powiadamianie kończy się, gdy zgłoszenie zostanie zamknięte lub osoba albo jednostka zostanie z niego usunięta. Domyślnie wyłączone.</value>
+  </data>
+  <data name="DispatchRenotifyLockedNotice" xml:space="preserve">
+    <value>Aby zapewnić stabilność systemu, odstęp, maksymalna liczba ponownych powiadomień i wszystkie kanały poza push są na razie zablokowane. Te opcje zostaną udostępnione w przyszłości.</value>
+  </data>
+  <data name="DispatchRenotifyIntervalLabel" xml:space="preserve">
+    <value>Odstęp między powiadomieniami (minuty)</value>
+  </data>
+  <data name="DispatchRenotifyIntervalHelp" xml:space="preserve">
+    <value>Minuty między kolejnymi ponownymi powiadomieniami.</value>
+  </data>
+  <data name="DispatchRenotifyMaxRetriesLabel" xml:space="preserve">
+    <value>Maksymalna liczba ponownych powiadomień</value>
+  </data>
+  <data name="DispatchRenotifyMaxRetriesHelp" xml:space="preserve">
+    <value>Ile razy dyspozycja jest wysyłana ponownie, zanim ponowne powiadamianie się zakończy. Przy ustawieniach domyślnych trzy ponowne powiadomienia co pięć minut obejmują pierwsze 15 minut po dyspozycji.</value>
+  </data>
+  <data name="DispatchRenotifyChannelsLabel" xml:space="preserve">
+    <value>Powiadamiaj ponownie przez</value>
+  </data>
+  <data name="DispatchRenotifyChannelsHelp" xml:space="preserve">
+    <value>Każda osoba jest powiadamiana ponownie każdym zaznaczonym tu kanałem, na który pozwalają jej ustawienia powiadomień, na zweryfikowane dane kontaktowe. Jednostki są powiadamiane ponownie tylko przez push.</value>
+  </data>
+  <data name="DispatchRenotifyChannelPush" xml:space="preserve">
+    <value>Powiadomienie push</value>
+  </data>
+  <data name="DispatchRenotifyChannelSms" xml:space="preserve">
+    <value>SMS</value>
+  </data>
+  <data name="DispatchRenotifyChannelEmail" xml:space="preserve">
+    <value>E-mail</value>
+  </data>
+  <data name="DispatchRenotifyChannelVoice" xml:space="preserve">
+    <value>Połączenie głosowe</value>
+  </data>
+  <data name="DispatchRenotifyChannelChatPlatform" xml:space="preserve">
+    <value>Platforma czatu</value>
   </data>
   <data name="CallNumberingHeader" xml:space="preserve">
     <value>Numeracja zgłoszeń</value>

@@ -1,0 +1,7 @@
+{
+  "id": "empty",
+  "name": "Empty",
+  "purpose": "A department exactly as registration leaves it: the managing member and nothing else. Every list screen shows its empty state.",
+  "covers": ["empty states on every screen", "first-run department", "no groups, units, calls or contacts"],
+  "baseline": "empty"
+}

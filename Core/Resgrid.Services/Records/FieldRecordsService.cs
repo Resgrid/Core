@@ -114,12 +114,12 @@ namespace Resgrid.Services.Records
 			if (context.UnitId.HasValue)
 			{
 				var unit = await _units.GetUnitByIdAsync(context.UnitId.Value);
-				if (unit == null || unit.DepartmentId != departmentId)
+				if (unit == null || unit.DepartmentId != departmentId || (origin == RmsOriginClient.Unit && unit.IsDeleted))
 					return FieldRecordContextVerification.Denied(FieldRecordCatalogV1.ExclusionReasons.ContextNotVerified);
 				verification.UnitName = unit.Name;
 				// The Unit app authors on the apparatus the caller is actually staffed on; every other app may
 				// reference a unit it can see but never claims crew membership from the client's word.
-				var state = await _units.GetLastUnitStateByUnitIdAsync(unit.UnitId);
+				var state = await _units.GetLastUnitStateWithRolesByUnitIdAsync(unit.UnitId);
 				verification.StaffedOnUnit = state?.Roles != null && state.Roles.Any(r => string.Equals(r.UserId, userId, StringComparison.OrdinalIgnoreCase));
 				if (origin == RmsOriginClient.Unit && !verification.StaffedOnUnit)
 					return FieldRecordContextVerification.Denied(FieldRecordCatalogV1.ExclusionReasons.ContextNotVerified);

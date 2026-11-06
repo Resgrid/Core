@@ -143,6 +143,7 @@ The Resgrid Team</value>
   <data name="AdpPinSaved" xml:space="preserve"><value>Saved.</value></data>
   <data name="AdpPinDenied" xml:space="preserve"><value>Unable to release or save protected data. Sign in to Resgrid and try again.</value></data>
   <data name="AdpPinSmsChallenge" xml:space="preserve"><value>A protected dispatch is available. Reply OPEN {0} followed by your personal PIN, separated by a space.</value></data>
+  <data name="DispatchRenotifyPushPrefix" xml:space="preserve"><value>Reminder {0}/{1}:</value></data>
   <data name="AdpPinVoiceChallenge" xml:space="preserve"><value>A protected dispatch is available. Enter your personal PIN followed by the pound key.</value></data>
   <data name="AdpReleaseSettings" xml:space="preserve"><value>ADP release settings</value></data>
   <data name="AdpSmsMode" xml:space="preserve"><value>SMS delivery</value></data>

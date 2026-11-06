@@ -61,6 +61,10 @@ namespace Resgrid.Workers.Framework.Logic
 
 				var dispatchedUsers = new HashSet<string>();
 
+				// Everyone this broadcast reached, for dispatch re-notification (a no-op unless the department turned it on).
+				var broadcastStartedUtc = DateTime.UtcNow;
+				var renotifyRecipients = new List<DispatchRenotifyRecipient>();
+
 				var _departmentsService = scope.Resolve<IDepartmentsService>();
 
 				var department = await _departmentsService.GetDepartmentByIdAsync(cqi.Call.DepartmentId);
@@ -71,7 +75,9 @@ namespace Resgrid.Workers.Framework.Logic
 				// Resolve one route at a time: first sends retain their existing position relative to database
 				// reads. A preview supplies all routes to the same pure resolver without calling this sender.
 				var routingTimeUtc = DateTime.UtcNow;
-				async Task SendExpandedAsync(DispatchRoute route)
+				// renotifySourceId: the call dispatch the re-notification sweep checks the member is still on, when that is not
+				// the route's own source (a unit's station group is reached through the dispatched unit).
+				async Task SendExpandedAsync(DispatchRoute route, string renotifySourceId = null)
 				{
 					var selection = DispatchRecipientResolver.Resolve(routingTimeUtc, new[] { route }, dispatchedUsers);
 					foreach (var decision in selection.Decisions)
@@ -83,7 +89,8 @@ namespace Resgrid.Workers.Framework.Logic
 						try
 						{
 							var profile = cqi.Profiles.FirstOrDefault(x => x.UserId == userId);
-							await _communicationService.SendCallAsync(cqi.Call, new CallDispatch { UserId = userId }, cqi.DepartmentTextNumber, cqi.Call.DepartmentId, profile, cqi.Address);
+							if (await _communicationService.SendCallAsync(cqi.Call, new CallDispatch { UserId = userId }, cqi.DepartmentTextNumber, cqi.Call.DepartmentId, profile, cqi.Address))
+								renotifyRecipients.Add(DispatchRenotifyRecipient.ForUser(userId, RenotifySourceFor(route.Kind), renotifySourceId ?? route.SourceId));
 						}
 						catch (SocketException) { }
 						catch (Exception ex) { Logging.LogException(ex); }
@@ -105,7 +112,10 @@ namespace Resgrid.Workers.Framework.Logic
 								dispatchedUsers.Add(userId);
 								var profile = cqi.Profiles.FirstOrDefault(x => x.UserId == userId);
 								if (profile != null)
-									await _communicationService.SendCallAsync(cqi.Call, dispatch, cqi.DepartmentTextNumber, cqi.Call.DepartmentId, profile, cqi.Address);
+								{
+									if (await _communicationService.SendCallAsync(cqi.Call, dispatch, cqi.DepartmentTextNumber, cqi.Call.DepartmentId, profile, cqi.Address))
+										renotifyRecipients.Add(DispatchRenotifyRecipient.ForUser(userId, DispatchRenotifySourceTypes.User, userId));
+								}
 								else DispatchTraceTelemetry.Observe(DispatchTraceStage.Skipped, reason: DispatchTraceReason.ProfileMissing, recipientId: userId);
 							}
 						}
@@ -144,7 +154,8 @@ namespace Resgrid.Workers.Framework.Logic
 					{
 						var unit = await _unitsService.GetUnitByIdAsync(dispatch.UnitId);
 						if (unit?.StationGroupId != null && !groupIds.Contains(unit.StationGroupId.Value)) groupIds.Add(unit.StationGroupId.Value);
-						await _communicationService.SendUnitCallAsync(cqi.Call, dispatch, cqi.DepartmentTextNumber, cqi.Address);
+						if (await _communicationService.SendUnitCallAsync(cqi.Call, dispatch, cqi.DepartmentTextNumber, cqi.Address))
+							renotifyRecipients.Add(DispatchRenotifyRecipient.ForUnit(dispatch.UnitId));
 						if (crew)
 						{
 							var members = await _unitsService.GetCurrentRolesForUnitAsync(dispatch.UnitId);
@@ -153,7 +164,8 @@ namespace Resgrid.Workers.Framework.Logic
 						if (group && unit?.StationGroupId != null)
 						{
 							var members = await _departmentGroupsService.GetAllMembersForGroupAsync(unit.StationGroupId.Value);
-							await SendExpandedAsync(new DispatchRoute(DispatchRouteKind.UnitGroup, unit.StationGroupId.Value.ToString(), members.Select(x => x.UserId).ToArray()));
+							await SendExpandedAsync(new DispatchRoute(DispatchRouteKind.UnitGroup, unit.StationGroupId.Value.ToString(), members.Select(x => x.UserId).ToArray()),
+									dispatch.UnitId.ToString());
 						}
 					}
 				}
@@ -167,6 +179,8 @@ namespace Resgrid.Workers.Framework.Logic
 						await SendExpandedAsync(new DispatchRoute(DispatchRouteKind.Role, dispatch.RoleId.ToString(), members.Select(x => x.UserId).ToArray()));
 					}
 				}
+
+				await RegisterRenotificationsAsync(scope, cqi, renotifyRecipients, broadcastStartedUtc);
 
 				// Send Call Print to Printer
 				var _printerProvider = scope.Resolve<IPrinterProvider>();
@@ -218,6 +232,46 @@ namespace Resgrid.Workers.Framework.Logic
 			}
 
 			return true;
+		}
+
+		/// <summary>
+		/// Starts dispatch re-notification for everyone the broadcast reached, when the department has it on. A status set since
+		/// the broadcast was queued acknowledges the dispatch. Never fails the broadcast.
+		/// </summary>
+		private static async Task RegisterRenotificationsAsync(ILifetimeScope scope, CallQueueItem cqi, List<DispatchRenotifyRecipient> recipients, DateTime broadcastStartedUtc)
+		{
+			if (recipients == null || recipients.Count == 0)
+				return;
+
+			try
+			{
+				var dispatchedOnUtc = cqi.EnqueuedOn.HasValue && cqi.EnqueuedOn.Value <= broadcastStartedUtc ? cqi.EnqueuedOn.Value : broadcastStartedUtc;
+				var renotificationService = scope.Resolve<IDispatchRenotificationService>();
+				await renotificationService.RegisterBroadcastAsync(cqi.Call, recipients, dispatchedOnUtc);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Could not start dispatch re-notification for call {cqi.Call?.CallId}.");
+			}
+		}
+
+		/// <summary>The call dispatch a routed member came through, so the sweep can tell when it is taken off the call.</summary>
+		private static DispatchRenotifySourceTypes RenotifySourceFor(DispatchRouteKind kind)
+		{
+			switch (kind)
+			{
+				case DispatchRouteKind.Group:
+				case DispatchRouteKind.Shift:
+					return DispatchRenotifySourceTypes.Group;
+				case DispatchRouteKind.Role:
+					return DispatchRenotifySourceTypes.Role;
+				case DispatchRouteKind.UnitCrew:
+					return DispatchRenotifySourceTypes.UnitCrew;
+				case DispatchRouteKind.UnitGroup:
+					return DispatchRenotifySourceTypes.UnitGroup;
+				default:
+					return DispatchRenotifySourceTypes.User;
+			}
 		}
 
 		/// <summary>

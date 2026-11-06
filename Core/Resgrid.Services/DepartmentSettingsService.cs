@@ -45,6 +45,7 @@ namespace Resgrid.Services
 		private static string OfflineMapPacksConfigCacheKey = "DSetOfflineMapPacks_{0}";
 		private static string DepartmentTerminologyCacheKey = "DSetTerminology_{0}";
 		private static string DispatchResponseCodesCacheKey = "DSetDispatchResponseCodes_{0}";
+		private static string DispatchRenotifyConfigCacheKey = "DSetDispatchRenotifyConfig_{0}";
 		private static string DepartmentImportConfigCacheKey = "DSetDepartmentImport_{0}";
 		private static TimeSpan LongCacheLength = TimeSpan.FromDays(14);
 		// Security-relevant settings ride the standard department-data window instead, so a missed
@@ -1482,6 +1483,50 @@ namespace Resgrid.Services
 				DepartmentSettingTypes.DispatchResponseCodes, cancellationToken);
 		}
 
+		public async Task<DispatchRenotifyConfig> GetDispatchRenotifyConfigAsync(int departmentId, bool bypassCache = false)
+		{
+			async Task<string> getSetting()
+			{
+				var setting = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.DispatchRenotifyConfig);
+				return setting?.Setting ?? string.Empty;
+			}
+
+			string value;
+			if (Config.SystemBehaviorConfig.CacheEnabled && !bypassCache)
+				value = await _cacheProvider.RetrieveAsync<string>(string.Format(DispatchRenotifyConfigCacheKey, departmentId), getSetting, LongCacheLength);
+			else
+				value = await getSetting();
+
+			if (!String.IsNullOrWhiteSpace(value))
+			{
+				try
+				{
+					var config = ObjectSerialization.Deserialize<DispatchRenotifyConfig>(value);
+
+					if (config != null)
+						return config;
+				}
+				catch (Exception)
+				{
+					// Read on every call broadcast; a corrupt blob means re-notification is off, never a failed dispatch.
+				}
+			}
+
+			return new DispatchRenotifyConfig();
+		}
+
+		public async Task<DepartmentSetting> SetDispatchRenotifyConfigAsync(int departmentId, DispatchRenotifyConfig config,
+			CancellationToken cancellationToken = default(CancellationToken))
+		{
+			// Whatever the caller sends, a locked option is stored at its default: the interval and retry count while the timing is
+			// locked, push only while the channels are locked (DispatchConfig). SaveOrUpdateSettingAsync invalidates the cached value
+			// (see the DispatchRenotifyConfig case in its cache switch).
+			var allowed = (config ?? new DispatchRenotifyConfig()).ApplyLocks(Config.DispatchConfig.RenotifyTimingLocked, Config.DispatchConfig.RenotifyChannelsLocked);
+
+			return await SaveOrUpdateSettingAsync(departmentId, ObjectSerialization.Serialize(allowed),
+				DepartmentSettingTypes.DispatchRenotifyConfig, cancellationToken);
+		}
+
 		public async Task<Model.Onboarding.DepartmentImportConfig> GetDepartmentImportConfigAsync(int departmentId, bool bypassCache = false)
 		{
 			async Task<string> getSetting()
@@ -1971,6 +2016,9 @@ namespace Resgrid.Services
 					break;
 				case DepartmentSettingTypes.DispatchResponseCodes:
 					cacheKey = string.Format(DispatchResponseCodesCacheKey, departmentId);
+					break;
+				case DepartmentSettingTypes.DispatchRenotifyConfig:
+					cacheKey = string.Format(DispatchRenotifyConfigCacheKey, departmentId);
 					break;
 				case DepartmentSettingTypes.DepartmentImportConfig:
 					cacheKey = string.Format(DepartmentImportConfigCacheKey, departmentId);

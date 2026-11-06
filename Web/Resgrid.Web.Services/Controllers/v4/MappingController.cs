@@ -240,6 +240,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 					info.Title = ProtectedDataEnvelope.SafeDisplay(call.Name);
 					info.InfoWindowContent = natureIsRedacted ? null : call.NatureOfCall;
 					info.Type = 0;
+					info.IsLinkedCall = call.LinkedCallId.HasValue;
 
 					try
 					{
@@ -832,7 +833,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			var result = new GetMapLayersData();
 
-			result.Id = layer.Id.ToString();
+			result.Id = layer.GetId();
 			result.DepartmentId = layer.DepartmentId;
 			result.Name = layer.Name;
 			result.Type = layer.Type;
@@ -1528,7 +1529,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		public async Task<IActionResult> GetMapLayerGeoJSON(string layerId)
 		{
 			var layer = await _mappingService.GetMapLayersByIdAsync(layerId);
-			if (layer == null || layer.DepartmentId != DepartmentId)
+			if (layer == null || layer.IsDeleted || layer.DepartmentId != DepartmentId)
 				return NotFound();
 
 			var fc = layer.Data?.Convert() ?? new FeatureCollection();

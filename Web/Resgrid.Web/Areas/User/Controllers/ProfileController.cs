@@ -1428,13 +1428,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var issued = false;
 			var emailSent = false;
 			string issuedToken = null;
+			TimeSpan? linkLifetime = null;
 
 			try
 			{
-				var issue = await _passwordRecoveryService.IssueAsync(user.Id, user.Email, ipAddress,
+				// Not IssueAsync: that is the signed-out request, limited per network. An administrator's sends count only against
+				// the member's own hourly limit, and their link lasts long enough for a member who is off shift.
+				var issue = await _passwordRecoveryService.IssueForAdministratorAsync(user.Id, user.Email,
 					user.AuthenticationGeneration, user.SecurityStamp, cancellationToken);
 				issued = issue.Issued && !issue.RateLimited;
 				issuedToken = issue.Token;
+				linkLifetime = issue.Lifetime;
 
 				if (issued)
 				{
@@ -1448,7 +1452,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 					emailSent = await _emailService.SendPasswordRecoveryEmail(user.Email,
 						profile?.FullName.AsFirstNameLastName ?? model.Name ?? "Resgrid user",
 						department?.Name ?? "Resgrid", resetUrl, ipAddress,
-						BoundSecurityContext(Request.Headers.UserAgent.ToString(), 512), requestedOn, false);
+						BoundSecurityContext(Request.Headers.UserAgent.ToString(), 512), requestedOn, false,
+						user.UserName, issue.ExpiresOn, issue.Lifetime);
 
 					if (!emailSent)
 						await TryRemovePasswordRecoveryTokenAsync(issue.Token, cancellationToken);
@@ -1487,8 +1492,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return View(model);
 			}
 
-			TempData["PasswordResetMessage"] =
-				"A short-lived, single-use password reset link was sent to the user's confirmed email address.";
+			TempData["PasswordResetMessage"] = linkLifetime.HasValue
+				? $"A single-use password reset link was sent to the user's confirmed email address. It works for {Resgrid.Services.EmailService.DescribeLinkLifetime(linkLifetime.Value)}."
+				: "A single-use password reset link was sent to the user's confirmed email address.";
 			return RedirectToAction(nameof(ResetPasswordForUser), new { userId = user.Id });
 		}
 

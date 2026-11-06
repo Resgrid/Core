@@ -158,6 +158,41 @@
       "AllowedValues": "owning serializer and consuming UI",
       "EvidenceSource": "DepartmentSettingsService.GetDepartmentModuleSettingsAsync",
       "Availability": "reference-only"
+    },
+    {
+      "Id": "module.ContactsDisabled",
+      "AreaId": "knowledge",
+      "LabelKey": "Module.ContactsDisabled",
+      "HelpKey": "ModuleHelp.ContactsDisabled",
+      "Binding": "DepartmentModuleSettings.ContactsDisabled",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "ModuleSettings",
+        "Field": "ContactsEnabled"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-03T00:00:00Z",
+      "Impact": {
+        "Risk": "High",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.knowledge",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.ModuleSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "module.ContactsDisabled",
+      "DefaultValue": "false",
+      "AllowedValues": "true or false",
+      "EvidenceSource": "DepartmentSettingsService.GetDepartmentModuleSettingsAsync",
+      "Availability": "available"
     }
   ],
   "Capabilities": [
@@ -174,8 +209,15 @@
         "Controller": "Contacts",
         "Action": "Index"
       },
-      "Requirements": [],
-      "SettingIds": [],
+      "Requirements": [
+        {
+          "Kind": "module",
+          "Id": "Contacts"
+        }
+      ],
+      "SettingIds": [
+        "module.ContactsDisabled"
+      ],
       "RuleIds": [],
       "Prominence": "Key",
       "DocsPath": "/web-app/contacts/"
@@ -246,8 +288,15 @@
         "Controller": "Contacts",
         "Action": "Add"
       },
-      "Requirements": [],
-      "SettingIds": [],
+      "Requirements": [
+        {
+          "Kind": "module",
+          "Id": "Contacts"
+        }
+      ],
+      "SettingIds": [
+        "module.ContactsDisabled"
+      ],
       "RuleIds": [],
       "Prominence": "Detail",
       "DocsPath": "/web-app/contacts/"
@@ -265,8 +314,15 @@
         "Controller": "Contacts",
         "Action": "Categories"
       },
-      "Requirements": [],
-      "SettingIds": [],
+      "Requirements": [
+        {
+          "Kind": "module",
+          "Id": "Contacts"
+        }
+      ],
+      "SettingIds": [
+        "module.ContactsDisabled"
+      ],
       "RuleIds": [],
       "Prominence": "Detail",
       "DocsPath": "/web-app/contacts/"
@@ -560,6 +616,17 @@
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "module.ContactsDisabled",
+      "Locale": "en",
+      "TitleKey": "Module.ContactsDisabled",
+      "Body": "Contacts availability. Shows or hides Contacts in the web app's navigation, dashboard widgets and search. Hiding it does not delete data or change permissions.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "module-contactsdisabled",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-03T00:00:00Z"
     },
     {
       "Id": "contacts",

@@ -7125,6 +7125,12 @@
   <data xml:space="preserve" name="SettingHelp.DispatchResponseCodes">
     <value>Προαιρετικοί κωδικοί ανά μονάδα (π.χ. C3 για φάρους και σειρήνα) που προτείνουν οι γραμμές των υπό συνθήκη καρτών, και αν τους βλέπουν τα πληρώματα σε ειδοποιήσεις και εφαρμογές. Κενό σημαίνει ότι οι κωδικοί δεν εμφανίζονται πουθενά.</value>
   </data>
+  <data xml:space="preserve" name="Setting.DispatchRenotifyConfig">
+    <value>Επανειδοποίηση αποστολής</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.DispatchRenotifyConfig">
+    <value>Στέλνει ξανά μια αποστολή μέσω push στο προσωπικό και στις μονάδες που δεν έχουν ορίσει κατάσταση από τότε: κάθε 5 λεπτά, έως 3 φορές. Οποιαδήποτε κατάσταση ορίσει ένα άτομο ή μια μονάδα μετρά ως επιβεβαίωση· οι αυτόματες καταστάσεις όχι. Σταματά όταν η κλήση κλείσει ή ο παραλήπτης αφαιρεθεί από αυτήν. Απενεργοποιημένο από προεπιλογή.</value>
+  </data>
   <data name="Field.DepartmentTermOverride.Singular" xml:space="preserve">
     <value>Όρος τμήματος / Ένα στοιχείο</value>
   </data>
@@ -7775,5 +7781,35 @@
   </data>
   <data xml:space="preserve" name="SettingHelp.OfflineMapPacksConfig">
     <value>Τι κατεβάζουν οι εφαρμογές για χρήση χωρίς δίκτυο: τη μέγιστη περιοχή απόκρισης (ο βασικός της χάρτης πρέπει να χωρά στο όριο μεγέθους), ποια δεδομένα χάρτη περιλαμβάνονται, πότε γίνεται η λήψη και επιπλέον κάλυψη για συμβάντα και διαδρομές εκτός της περιοχής.</value>
+  </data>
+  <data name="Module.RecordsDisabled" xml:space="preserve">
+    <value>Διαθεσιμότητα Αρχείων</value>
+  </data>
+  <data name="ModuleHelp.RecordsDisabled" xml:space="preserve">
+    <value>Εμφανίζει ή αποκρύπτει τα Αρχεία στην πλοήγηση, στα γραφικά στοιχεία του πίνακα ελέγχου και στην αναζήτηση της εφαρμογής web. Η απόκρυψη δεν διαγράφει δεδομένα ούτε αλλάζει δικαιώματα. Οι Καταγραφές έχουν δικό τους διακόπτη.</value>
+  </data>
+  <data name="Module.ContactsDisabled" xml:space="preserve">
+    <value>Διαθεσιμότητα Επαφών</value>
+  </data>
+  <data name="ModuleHelp.ContactsDisabled" xml:space="preserve">
+    <value>Εμφανίζει ή αποκρύπτει τις Επαφές στην πλοήγηση, στα γραφικά στοιχεία του πίνακα ελέγχου και στην αναζήτηση της εφαρμογής web. Η απόκρυψη δεν διαγράφει δεδομένα ούτε αλλάζει δικαιώματα.</value>
+  </data>
+  <data name="Module.CertificationsDisabled" xml:space="preserve">
+    <value>Διαθεσιμότητα Πιστοποιήσεων</value>
+  </data>
+  <data name="ModuleHelp.CertificationsDisabled" xml:space="preserve">
+    <value>Εμφανίζει ή αποκρύπτει τις Πιστοποιήσεις στην πλοήγηση, στα γραφικά στοιχεία του πίνακα ελέγχου και στην αναζήτηση της εφαρμογής web. Η απόκρυψη δεν διαγράφει δεδομένα ούτε αλλάζει δικαιώματα. Η επιβολή των πιστοποιήσεων δεν επηρεάζεται.</value>
+  </data>
+  <data name="Module.DeploymentsDisabled" xml:space="preserve">
+    <value>Διαθεσιμότητα Αποστολών</value>
+  </data>
+  <data name="ModuleHelp.DeploymentsDisabled" xml:space="preserve">
+    <value>Εμφανίζει ή αποκρύπτει τις Αποστολές στην πλοήγηση, στα γραφικά στοιχεία του πίνακα ελέγχου και στην αναζήτηση της εφαρμογής web. Η απόκρυψη δεν διαγράφει δεδομένα ούτε αλλάζει δικαιώματα.</value>
+  </data>
+  <data name="Module.ChatDisabled" xml:space="preserve">
+    <value>Διαθεσιμότητα Συνομιλίας</value>
+  </data>
+  <data name="ModuleHelp.ChatDisabled" xml:space="preserve">
+    <value>Εμφανίζει ή αποκρύπτει τη Συνομιλία στην πλοήγηση, στα γραφικά στοιχεία του πίνακα ελέγχου και στην αναζήτηση της εφαρμογής web. Η απόκρυψη δεν διαγράφει δεδομένα ούτε αλλάζει δικαιώματα. Η συνομιλία στις εφαρμογές για κινητά δεν επηρεάζεται.</value>
   </data>
 </root>

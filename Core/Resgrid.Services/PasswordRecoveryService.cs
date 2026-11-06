@@ -21,16 +21,21 @@ namespace Resgrid.Services
 			_cacheProvider = cacheProvider;
 		}
 
+		private static readonly TimeSpan RateWindow = TimeSpan.FromHours(1);
+
+		private static TimeSpan PublicLinkLifetime =>
+			TimeSpan.FromMinutes(Math.Max(5, SessionSecurityConfig.PublicResetLinkLifetimeMinutes));
+
+		private static TimeSpan AdministratorLinkLifetime =>
+			TimeSpan.FromMinutes(Math.Max(5, SessionSecurityConfig.AdministratorResetLinkLifetimeMinutes));
+
 		public async Task<PasswordRecoveryIssueResult> IssueAsync(string userId, string email, string ipAddress,
 			long authenticationGeneration, string securityStamp,
 			CancellationToken cancellationToken = default)
 		{
-			var rateWindow = TimeSpan.FromHours(1);
-			var normalizedEmail = (email ?? string.Empty).Trim().ToUpperInvariant();
 			var ipCount = await _cacheProvider.IncrementAsync(
-				$"{CachePrefix}rate:ip:{Hash(ipAddress ?? "unknown")}", rateWindow);
-			var accountCount = await _cacheProvider.IncrementAsync(
-				$"{CachePrefix}rate:account:{Hash(normalizedEmail)}", rateWindow);
+				$"{CachePrefix}rate:ip:{Hash(ipAddress ?? "unknown")}", RateWindow);
+			var accountCount = await CountAccountRequestAsync(email);
 
 			if (ipCount == 0 || accountCount == 0 ||
 				ipCount > SessionSecurityConfig.PublicResetIpLimitPerHour ||
@@ -47,8 +52,33 @@ namespace Resgrid.Services
 			if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(email))
 				return new PasswordRecoveryIssueResult();
 
+			return await SaveRequestAsync(userId, email, authenticationGeneration, securityStamp, PublicLinkLifetime);
+		}
+
+		public async Task<PasswordRecoveryIssueResult> IssueForAdministratorAsync(string userId, string email,
+			long authenticationGeneration, string securityStamp,
+			CancellationToken cancellationToken = default)
+		{
+			if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(email))
+				return new PasswordRecoveryIssueResult();
+
+			// The member's own hourly limit still applies (the same counter as their forgot-password requests), so nobody can
+			// fill a member's inbox with reset emails.
+			var accountCount = await CountAccountRequestAsync(email);
+			if (accountCount == 0 || accountCount > SessionSecurityConfig.PublicResetAccountLimitPerHour)
+				return new PasswordRecoveryIssueResult { RateLimited = true };
+
+			return await SaveRequestAsync(userId, email, authenticationGeneration, securityStamp, AdministratorLinkLifetime);
+		}
+
+		private Task<long> CountAccountRequestAsync(string email) =>
+			_cacheProvider.IncrementAsync(
+				$"{CachePrefix}rate:account:{Hash((email ?? string.Empty).Trim().ToUpperInvariant())}", RateWindow);
+
+		private async Task<PasswordRecoveryIssueResult> SaveRequestAsync(string userId, string email,
+			long authenticationGeneration, string securityStamp, TimeSpan lifetime)
+		{
 			var now = DateTime.UtcNow;
-			var lifetime = TimeSpan.FromMinutes(Math.Max(5, SessionSecurityConfig.PublicResetLinkLifetimeMinutes));
 			var token = ToBase64Url(RandomNumberGenerator.GetBytes(32));
 			var request = new PasswordRecoveryRequest
 			{
@@ -62,7 +92,9 @@ namespace Resgrid.Services
 
 			var saved = await _cacheProvider.SetStringAsync(GetRequestKey(token),
 				JsonConvert.SerializeObject(request), lifetime);
-			return new PasswordRecoveryIssueResult { Issued = saved, Token = saved ? token : null };
+			return saved
+				? new PasswordRecoveryIssueResult { Issued = true, Token = token, ExpiresOn = request.ExpiresOn, Lifetime = lifetime }
+				: new PasswordRecoveryIssueResult();
 		}
 
 		public async Task<PasswordRecoveryLookupResult> GetAsync(string token, CancellationToken cancellationToken = default)
@@ -93,11 +125,14 @@ namespace Resgrid.Services
 
 		public async Task<bool> TryConsumeAsync(string token, CancellationToken cancellationToken = default)
 		{
-			if (!(await GetAsync(token, cancellationToken)).Found)
+			var lookup = await GetAsync(token, cancellationToken);
+			if (!lookup.Found)
 				return false;
 
-			var lifetime = TimeSpan.FromMinutes(Math.Max(5, SessionSecurityConfig.PublicResetLinkLifetimeMinutes));
-			return await _cacheProvider.IncrementAsync(GetUsedKey(token), lifetime) == 1;
+			// The used marker only has to outlive the grant it guards, whichever lifetime that grant was issued with.
+			var remaining = lookup.Request.ExpiresOn - DateTime.UtcNow;
+			return await _cacheProvider.IncrementAsync(GetUsedKey(token),
+				remaining > TimeSpan.FromMinutes(1) ? remaining : TimeSpan.FromMinutes(1)) == 1;
 		}
 
 		public async Task ReleaseAsync(string token, CancellationToken cancellationToken = default)

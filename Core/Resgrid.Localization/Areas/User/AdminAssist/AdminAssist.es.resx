@@ -7125,6 +7125,12 @@
   <data xml:space="preserve" name="SettingHelp.DispatchResponseCodes">
     <value>Códigos opcionales por unidad (por ejemplo C3 para luces y sirena) que proponen las filas de las tarjetas condicionales, y si las dotaciones los ven en los avisos y las aplicaciones. Vacío significa que no aparecen en ningún lugar.</value>
   </data>
+  <data xml:space="preserve" name="Setting.DispatchRenotifyConfig">
+    <value>Renotificación de despacho</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.DispatchRenotifyConfig">
+    <value>Vuelve a enviar un despacho por push al personal y a las unidades que no han establecido ningún estado desde su envío: cada 5 minutos, hasta 3 veces. Cualquier estado que establezca una persona o unidad cuenta como confirmación; los estados automáticos no. Se detiene cuando la llamada se cierra o el destinatario se retira de ella. Desactivado de forma predeterminada.</value>
+  </data>
   <data name="Field.DepartmentTermOverride.Singular" xml:space="preserve">
     <value>Término del departamento / Un elemento</value>
   </data>
@@ -7775,5 +7781,35 @@
   </data>
   <data xml:space="preserve" name="SettingHelp.OfflineMapPacksConfig">
     <value>Lo que las apps descargan para usarse sin red: el área de respuesta máxima (su mapa base debe caber en el límite de tamaño), qué datos de mapa se incluyen, cuándo se descargan y cobertura adicional para incidentes y rutas fuera del área.</value>
+  </data>
+  <data name="Module.RecordsDisabled" xml:space="preserve">
+    <value>Disponibilidad de registros</value>
+  </data>
+  <data name="ModuleHelp.RecordsDisabled" xml:space="preserve">
+    <value>Muestra u oculta Registros en la navegación, los widgets del panel y la búsqueda de la aplicación web. Ocultar el módulo no elimina datos ni cambia permisos. Las bitácoras tienen su propio interruptor.</value>
+  </data>
+  <data name="Module.ContactsDisabled" xml:space="preserve">
+    <value>Disponibilidad de contactos</value>
+  </data>
+  <data name="ModuleHelp.ContactsDisabled" xml:space="preserve">
+    <value>Muestra u oculta Contactos en la navegación, los widgets del panel y la búsqueda de la aplicación web. Ocultar el módulo no elimina datos ni cambia permisos.</value>
+  </data>
+  <data name="Module.CertificationsDisabled" xml:space="preserve">
+    <value>Disponibilidad de certificaciones</value>
+  </data>
+  <data name="ModuleHelp.CertificationsDisabled" xml:space="preserve">
+    <value>Muestra u oculta Certificaciones en la navegación, los widgets del panel y la búsqueda de la aplicación web. Ocultar el módulo no elimina datos ni cambia permisos. No afecta la aplicación de las certificaciones.</value>
+  </data>
+  <data name="Module.DeploymentsDisabled" xml:space="preserve">
+    <value>Disponibilidad de despliegues</value>
+  </data>
+  <data name="ModuleHelp.DeploymentsDisabled" xml:space="preserve">
+    <value>Muestra u oculta Despliegues en la navegación, los widgets del panel y la búsqueda de la aplicación web. Ocultar el módulo no elimina datos ni cambia permisos.</value>
+  </data>
+  <data name="Module.ChatDisabled" xml:space="preserve">
+    <value>Disponibilidad del chat</value>
+  </data>
+  <data name="ModuleHelp.ChatDisabled" xml:space="preserve">
+    <value>Muestra u oculta el chat en la navegación, los widgets del panel y la búsqueda de la aplicación web. Ocultar el módulo no elimina datos ni cambia permisos. No afecta el chat en las aplicaciones móviles.</value>
   </data>
 </root>

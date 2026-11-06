@@ -36,6 +36,7 @@ namespace Resgrid.Model
 			{ ((int)PushSoundTypes.ModernWeatherAlert).ToString(),      "modernweatheralert" },
 			{ ((int)PushSoundTypes.ModernUnitNotice).ToString(),        "modernunitnotice" },
 			{ ((int)PushSoundTypes.ModernResourceOrder).ToString(),     "modernresourceorder" },
+			{ ((int)PushSoundTypes.ModernCallRenotify).ToString(),      "moderncallrenotify" },
 		};
 
 		/// <summary>

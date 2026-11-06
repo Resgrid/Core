@@ -7125,6 +7125,12 @@
   <data xml:space="preserve" name="SettingHelp.DispatchResponseCodes">
     <value>Codici facoltativi per unità (ad esempio C3 per luci e sirena) proposti dalle righe delle schede condizionali, e se gli equipaggi li vedono nelle notifiche e nelle app. Vuoto significa che i codici non compaiono da nessuna parte.</value>
   </data>
+  <data xml:space="preserve" name="Setting.DispatchRenotifyConfig">
+    <value>Notifiche ripetute dell'invio</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.DispatchRenotifyConfig">
+    <value>Ripete via push la notifica di un invio al personale e alle unità che da allora non hanno impostato alcuno stato: ogni 5 minuti, fino a 3 volte. Qualsiasi stato impostato da una persona o da un'unità vale come conferma; gli stati automatici no. Si ferma quando la chiamata viene chiusa o il destinatario ne viene rimosso. Disattivato per impostazione predefinita.</value>
+  </data>
   <data name="Field.DepartmentTermOverride.Singular" xml:space="preserve">
     <value>Termine del dipartimento / Un elemento</value>
   </data>
@@ -7775,5 +7781,35 @@
   </data>
   <data xml:space="preserve" name="SettingHelp.OfflineMapPacksConfig">
     <value>Cosa scaricano le app per l'uso senza rete: l'area di intervento massima (la sua mappa di base deve rientrare nel limite di dimensione), quali dati cartografici sono inclusi, quando avvengono i download e la copertura aggiuntiva per chiamate e percorsi fuori dall'area.</value>
+  </data>
+  <data name="Module.RecordsDisabled" xml:space="preserve">
+    <value>Disponibilità Registri</value>
+  </data>
+  <data name="ModuleHelp.RecordsDisabled" xml:space="preserve">
+    <value>Mostra o nasconde i Registri nella navigazione, nei widget della dashboard e nella ricerca dell'app web. Nascondere il modulo non elimina dati né modifica i permessi. I Log hanno un interruttore separato.</value>
+  </data>
+  <data name="Module.ContactsDisabled" xml:space="preserve">
+    <value>Disponibilità Contatti</value>
+  </data>
+  <data name="ModuleHelp.ContactsDisabled" xml:space="preserve">
+    <value>Mostra o nasconde i Contatti nella navigazione, nei widget della dashboard e nella ricerca dell'app web. Nascondere il modulo non elimina dati né modifica i permessi.</value>
+  </data>
+  <data name="Module.CertificationsDisabled" xml:space="preserve">
+    <value>Disponibilità Certificazioni</value>
+  </data>
+  <data name="ModuleHelp.CertificationsDisabled" xml:space="preserve">
+    <value>Mostra o nasconde le Certificazioni nella navigazione, nei widget della dashboard e nella ricerca dell'app web. Nascondere il modulo non elimina dati né modifica i permessi. L'applicazione delle certificazioni non cambia.</value>
+  </data>
+  <data name="Module.DeploymentsDisabled" xml:space="preserve">
+    <value>Disponibilità Impieghi</value>
+  </data>
+  <data name="ModuleHelp.DeploymentsDisabled" xml:space="preserve">
+    <value>Mostra o nasconde gli Impieghi nella navigazione, nei widget della dashboard e nella ricerca dell'app web. Nascondere il modulo non elimina dati né modifica i permessi.</value>
+  </data>
+  <data name="Module.ChatDisabled" xml:space="preserve">
+    <value>Disponibilità Chat</value>
+  </data>
+  <data name="ModuleHelp.ChatDisabled" xml:space="preserve">
+    <value>Mostra o nasconde la Chat nella navigazione, nei widget della dashboard e nella ricerca dell'app web. Nascondere il modulo non elimina dati né modifica i permessi. La chat nelle app mobili non cambia.</value>
   </data>
 </root>

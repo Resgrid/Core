@@ -707,11 +707,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!CanEditRecord(current.Record))
 				return Forbid();
 
-			var draft = RecordsApiMapper.ToDraftInput(input, origin);
-			if (draft.CallId.HasValue && draft.CallId != current.Record.CallId && !ClaimsAuthorizationHelper.CanViewCalls()) return Forbid();
-			draft.DefinitionKey = draft.DefinitionKey ?? current.Record.DefinitionKey;
+			RecordDraftInput draft = null;
 			try
 			{
+				draft = RecordsApiMapper.ToDraftInput(input, origin, current);
+				if (draft.CallId.HasValue && draft.CallId != current.Record.CallId && !ClaimsAuthorizationHelper.CanViewCalls()) return Forbid();
+				draft.DefinitionKey ??= current.Record.DefinitionKey;
 				var saved = await _recordsService.SaveDraftAsync(DepartmentId, UserId, input.RecordId, rowVersion.Value, draft, cancellationToken);
 				return Ok(await WrapAsync(saved, ResponseHelper.Updated));
 			}

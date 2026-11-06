@@ -26,6 +26,9 @@ namespace Resgrid.Web.Services.Models.v4.Configs
 	/// </summary>
 	public class GetConfigResultData
 	{
+		/// <summary>The signed-in department's time zone for displaying operational timestamps.</summary>
+		public string TimeZoneId { get; set; }
+
 		/// <summary>
 		/// The key for What3Words
 		/// </summary>

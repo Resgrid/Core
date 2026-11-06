@@ -205,9 +205,13 @@ namespace Resgrid.Services.Dashboard
 				case DashboardAccessChecks.NotesEnabled: return !modules.NotesDisabled;
 				case DashboardAccessChecks.TrainingEnabled: return !modules.TrainingDisabled;
 				case DashboardAccessChecks.InventoryEnabled: return !modules.InventoryDisabled;
+				case DashboardAccessChecks.ContactsEnabled: return !modules.ContactsDisabled;
+				case DashboardAccessChecks.CertificationsEnabled: return !modules.CertificationsDisabled;
+				case DashboardAccessChecks.DeploymentsEnabled: return !modules.DeploymentsDisabled;
+				case DashboardAccessChecks.ChatEnabled: return !modules.ChatDisabled;
 				case DashboardAccessChecks.ChecklistsUsable: return await _readinessAccessService.CanUseChecklistsAsync(departmentId);
 				case DashboardAccessChecks.MaintenanceUsable: return await _readinessAccessService.CanUseMaintenanceAsync(departmentId);
-				case DashboardAccessChecks.RecordsUsable: return !modules.LogsDisabled && records.FlagEnabled && records.RecordsUsable;
+				case DashboardAccessChecks.RecordsUsable: return !modules.RecordsDisabled && records.FlagEnabled && records.RecordsUsable;
 				case DashboardAccessChecks.LegacyLogsOnly: return !modules.LogsDisabled && !records.RecordsUsable;
 				case DashboardAccessChecks.InvoicingVisible:
 					return !modules.BusinessOperationsDisabled && await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.CustomerInvoicing, departmentId);

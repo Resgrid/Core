@@ -253,8 +253,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (workflow == null || workflow.DepartmentId != DepartmentId)
 				return NotFound();
 
-			workflow.Steps = await _workflowService.GetStepsByWorkflowIdAsync(workflowId, ct);
+			await PopulateEditorAsync(workflow, ct);
 
+			return View(workflow);
+		}
+
+		private async Task PopulateEditorAsync(Workflow workflow, CancellationToken ct)
+		{
+			workflow.Steps = await _workflowService.GetStepsByWorkflowIdAsync(workflow.WorkflowId, ct);
 			var credentials = await _workflowService.GetCredentialsByDepartmentIdAsync(DepartmentId, ct);
 			ViewBag.CredentialsJson = JsonSerializer.Serialize(
 				credentials.Select(c => new { id = c.WorkflowCredentialId, name = c.Name, credentialType = c.CredentialType })
@@ -265,10 +271,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			await AddExportTemplatesAsync((WorkflowTriggerEventType)workflow.TriggerEventType);
 
 			// EHR delivery options (content type, success rule, capture, idempotency) belong to protected steps.
-			var protectedRelease = await _protectedWorkflows.GetCurrentReleaseAsync(workflowId);
+			var protectedRelease = await _protectedWorkflows.GetCurrentReleaseAsync(workflow.WorkflowId);
 			ViewBag.IsProtectedWorkflow = protectedRelease != null && protectedRelease.ReleaseState != ProtectedReleaseState.Revoked;
-
-			return View(workflow);
 		}
 
 		[HttpPost]
@@ -279,17 +283,27 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!await CanUserManageWorkflowsAsync())
 				return RedirectToAction("Dashboard", "Home");
 
-			if (!ModelState.IsValid)
-			{
-				ViewBag.TriggerEventTypeName = ((WorkflowTriggerEventType)model.TriggerEventType).ToString();
-				ViewBag.RecordsTriggersAvailable = await RecordsTriggersAvailableAsync();
-				await AddExportTemplatesAsync((WorkflowTriggerEventType)model.TriggerEventType);
-				return View(model);
-			}
+			if (string.IsNullOrWhiteSpace(model.WorkflowId))
+				return NotFound();
 
 			var existing = await _workflowService.GetWorkflowByIdAsync(model.WorkflowId, ct);
 			if (existing == null || existing.DepartmentId != DepartmentId)
 				return NotFound();
+
+			// These fields belong to the stored workflow, not the settings form. In particular,
+			// CreatedByUserId is required on the entity but is never posted by this editor.
+			model.DepartmentId = existing.DepartmentId;
+			model.CreatedByUserId = existing.CreatedByUserId;
+			model.TriggerEventType = existing.TriggerEventType;
+			ModelState.Remove(nameof(Workflow.DepartmentId));
+			ModelState.Remove(nameof(Workflow.CreatedByUserId));
+			ModelState.Remove(nameof(Workflow.TriggerEventType));
+
+			if (!ModelState.IsValid)
+			{
+				await PopulateEditorAsync(model, ct);
+				return View(model);
+			}
 
 			existing.Name                    = model.Name;
 			existing.Description             = model.Description;

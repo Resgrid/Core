@@ -233,14 +233,14 @@ namespace Resgrid.Tests.Rms
 		{
 			Publish("crew-log", "Crew log", s => { s.Responder = false; s.Unit = true; s.LaunchContexts.Clear(); s.LaunchContexts.Add(FieldRecordCatalogV1.LaunchContexts.Unit); });
 			_units.Setup(u => u.GetUnitByIdAsync(7)).ReturnsAsync(new Unit { UnitId = 7, DepartmentId = Dept, Name = "Engine 7" });
-			_units.Setup(u => u.GetLastUnitStateByUnitIdAsync(7)).ReturnsAsync(new UnitState { UnitStateId = 1, UnitId = 7, Roles = new List<UnitStateRole>() });
+			_units.Setup(u => u.GetLastUnitStateWithRolesByUnitIdAsync(7)).ReturnsAsync(new UnitState { UnitStateId = 1, UnitId = 7, Roles = new List<UnitStateRole>() });
 
 			var unstaffed = await _service.GetCatalogAsync(Dept, "crew", Request(RmsOriginClient.Unit, context: new FieldRecordContext { UnitId = 7 }));
 			unstaffed.Ok.Should().BeFalse("the Unit app authors only on the apparatus the caller is staffed on");
 			unstaffed.Reasons.Should().Contain(FieldRecordCatalogV1.ExclusionReasons.ContextNotVerified);
 			unstaffed.Definitions.Should().BeEmpty();
 
-			_units.Setup(u => u.GetLastUnitStateByUnitIdAsync(7)).ReturnsAsync(new UnitState { UnitStateId = 2, UnitId = 7, Roles = new List<UnitStateRole> { new UnitStateRole { UserId = "crew", Role = "Driver" } } });
+			_units.Setup(u => u.GetLastUnitStateWithRolesByUnitIdAsync(7)).ReturnsAsync(new UnitState { UnitStateId = 2, UnitId = 7, Roles = new List<UnitStateRole> { new UnitStateRole { UserId = "crew", Role = "Driver" } } });
 			var staffed = await _service.GetCatalogAsync(Dept, "crew", Request(RmsOriginClient.Unit, context: new FieldRecordContext { UnitId = 7 }));
 			staffed.Ok.Should().BeTrue();
 			staffed.Definitions.Select(d => d.DefinitionKey).Should().Contain("crew-log");

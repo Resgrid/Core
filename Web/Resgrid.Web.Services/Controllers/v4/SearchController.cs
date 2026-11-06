@@ -242,6 +242,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 						case SystemActionModules.Mapping: return !modules.MappingDisabled;
 						case SystemActionModules.Shifts: return !modules.ShiftsDisabled;
 						case SystemActionModules.Logs: return !modules.LogsDisabled;
+						case SystemActionModules.Records: return !modules.RecordsDisabled;
 						case SystemActionModules.Reports: return !modules.ReportsDisabled;
 						case SystemActionModules.Documents: return !modules.DocumentsDisabled;
 						case SystemActionModules.Calendar: return !modules.CalendarDisabled;
@@ -250,6 +251,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 						case SystemActionModules.Inventory: return !modules.InventoryDisabled;
 						case SystemActionModules.Maintenance: return !modules.MaintenanceDisabled;
 						case SystemActionModules.BusinessOperations: return !modules.BusinessOperationsDisabled;
+						case SystemActionModules.Contacts: return !modules.ContactsDisabled;
+						case SystemActionModules.Certifications: return !modules.CertificationsDisabled;
+						case SystemActionModules.Deployments: return !modules.DeploymentsDisabled;
+						case SystemActionModules.Chat: return !modules.ChatDisabled;
 						default: return true;
 					}
 				}

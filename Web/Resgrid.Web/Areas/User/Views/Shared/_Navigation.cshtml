@@ -15,19 +15,24 @@
 @{
 	// Chat.System flag gates every chat surface (chat, assistant, moderation). When it is off
 	// the nav items are hidden entirely; the API 404s the endpoints regardless.
-	var chatSystemEnabled = await featureToggleService.IsEnabledAsync(FeatureFlagKeys.ChatSystem, ClaimsAuthorizationHelper.GetDepartmentId());
+	// The department's Chat module switch hides the menu entry too.
+	var chatSystemEnabled = SettingsHelper.IsChatEnabled() && await featureToggleService.IsEnabledAsync(FeatureFlagKeys.ChatSystem, ClaimsAuthorizationHelper.GetDepartmentId());
 	// Records.System flag shows the Records group; the department's cutover, not the flag, decides where Logs
 	// goes. Until an administrator activates Records, Logs is still the working log system and keeps its own
 	// sidebar link. After activation the old Logs stay readable (never writable) from inside the Records group.
-	// The existing LogsDisabled module setting still controls whether either is visible at all.
+	// Each has its own module switch: RecordsDisabled hides the Records group, LogsDisabled hides Logs (inside the
+	// group or on their own). With the group hidden after activation, the read-only Logs keep their own link.
 	var recordsState = await recordsCutover.GetModuleStateAsync(ClaimsAuthorizationHelper.GetDepartmentId());
 	var recordsEnabled = recordsState.FlagEnabled;
 	var recordsUsable = recordsState.RecordsUsable;
+	var showRecords = recordsEnabled && SettingsHelper.IsRecordsEnabled();
+	var showLogs = SettingsHelper.IsLogsEnabled();
+	var logsInsideRecords = showRecords && recordsUsable && showLogs;
 	// Keep legacy modules flat; only new feature areas get collapsible groups.
 	// Setup-only holders (ManageCertificationSetup) land on the Types page from the dashboard.
-	var showCertifications = ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || ClaimsAuthorizationHelper.CanViewCertifications() || ClaimsAuthorizationHelper.CanManageCertificationSetup();
+	var showCertifications = SettingsHelper.IsCertificationsEnabled() && (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || ClaimsAuthorizationHelper.CanViewCertifications() || ClaimsAuthorizationHelper.CanManageCertificationSetup());
 	var showInvoicing = ClaimsAuthorizationHelper.CanViewInvoicing() && SettingsHelper.IsBusinessOperationsEnabled() && await featureToggleService.IsEnabledAsync(FeatureFlagKeys.CustomerInvoicing, ClaimsAuthorizationHelper.GetDepartmentId());
-	var showDeployments = await featureToggleService.IsEnabledAsync(FeatureFlagKeys.Deployments, ClaimsAuthorizationHelper.GetDepartmentId());
+	var showDeployments = SettingsHelper.IsDeploymentsEnabled() && await featureToggleService.IsEnabledAsync(FeatureFlagKeys.Deployments, ClaimsAuthorizationHelper.GetDepartmentId());
 	var showContractorBilling = (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || ClaimsAuthorizationHelper.CanViewBids() || ClaimsAuthorizationHelper.CanViewContracts()) && SettingsHelper.IsBusinessOperationsEnabled() && await businessOperationsAccess.CanUseContractorBillingAsync(ClaimsAuthorizationHelper.GetDepartmentId());
 	var showCostRecovery = SettingsHelper.IsBusinessOperationsEnabled() && await businessOperationsAccess.CanUseCostRecoveryAsync(ClaimsAuthorizationHelper.GetDepartmentId());
 	var showWorkOrders = await readinessAccess.CanUseMaintenanceAsync(ClaimsAuthorizationHelper.GetDepartmentId());
@@ -103,7 +108,7 @@
 			<li class="@Html.IsSelected(controller: "Units")">
 				<a asp-controller="Units" asp-action="Index" asp-route-area="User"><i class="fa fa-road"></i> <span class="nav-label" data-i18n="nav.units">@(await departmentTerms.NameAsync(DepartmentTerms.Units))</span></a>
 			</li>
-			@if (ClaimsAuthorizationHelper.CanViewContacts())
+			@if (ClaimsAuthorizationHelper.CanViewContacts() && SettingsHelper.IsContactsEnabled())
 			{
 				<li class="@Html.IsSelected(controller: "Contacts")">
 					<a asp-controller="Contacts" asp-action="Index" asp-route-area="User"><i class="fa fa-address-book"></i> <span class="nav-label" data-i18n="nav.contacts">@(await departmentTerms.NameAsync(DepartmentTerms.Contacts))</span></a>
@@ -121,7 +126,7 @@
 					<a asp-controller="Shifts" asp-action="Index" asp-route-area="User"><i class="fa fa-briefcase"></i> <span class="nav-label" data-i18n="nav.mapping">@(await departmentTerms.NameAsync(DepartmentTerms.Shifts))</span></a>
 				</li>
 			}
-			@if (SettingsHelper.IsLogsEnabled() && recordsEnabled)
+			@if (showRecords)
 			{
 				// RMS-5 prevention and investigation modules: each link only when its own flag is on (RMS plan section 4.3/4.4).
 				var navDepartmentId = ClaimsAuthorizationHelper.GetDepartmentId();
@@ -141,7 +146,7 @@
 					"RecordDeployments", "RecordDocuments", "RecordEvidence", "RecordHydrants", "RecordInspections",
 					"RecordInvestigations", "RecordLegalHolds", "RecordOccupancies", "RecordPermits", "RecordSavedReports",
 					"RecordSubmissions", "RecordsAnalytics", "RecordsExportTemplates", "RecordsHealth", "RecordsInventory",
-					"RecordsQuality") || (recordsUsable && Html.IsController("Logs"));
+					"RecordsQuality") || (logsInsideRecords && Html.IsController("Logs"));
 
 				// The dashboard and the queue share the Records controller, so they are told apart by
 				// action. Drilling into a record (Details, Edit, New) keeps the queue highlighted.
@@ -200,7 +205,7 @@
 						{
 							<li class="@Html.IsSelected(controller: "RecordsAnalytics")"><a asp-controller="RecordsAnalytics" asp-action="Index" asp-route-area="User"><i class="fa fa-bar-chart"></i> @recordsLocalizer["AnalyticsHeader"]</a></li>
 						}
-						@if (recordsUsable)
+						@if (logsInsideRecords)
 						{
 							@* Logs created before activation: read-only, same Log_View gate as the pages themselves (LogsDeepLinkTests). *@
 							<li class="@Html.IsSelected(controller: "Logs")"><a asp-controller="Logs" asp-action="Index" asp-route-area="User"><i class="fa fa-history"></i> @recordsLocalizer["LegacyLogs"]</a></li>
@@ -208,7 +213,7 @@
 					</ul>
 				</li>
 			}
-			@if (SettingsHelper.IsLogsEnabled() && !recordsUsable)
+			@if (showLogs && !logsInsideRecords)
 			{
 				<li class="@Html.IsSelected(controller: "Logs")">
 					<a asp-controller="Logs" asp-action="Index" asp-route-area="User"><i class="fa fa-file"></i> <span class="nav-label" data-i18n="nav.logs">@(await departmentTerms.NameAsync(DepartmentTerms.Logs))</span></a>

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -30,7 +29,10 @@ namespace Resgrid.Services
 		private const string DepartmentOverridesCacheKey = "FeatureFlagOverrides_{0}";
 
 		// Static so the in-memory evaluation counters survive across (per-scope) service instances.
-		private static readonly ConcurrentDictionary<string, long[]> _usageBuffer = new ConcurrentDictionary<string, long[]>();
+		private static readonly FeatureFlagUsageBuffer _usageBuffer = new FeatureFlagUsageBuffer();
+
+		// Counts that keep failing to save (e.g. their department was deleted) are dropped once their day is this old.
+		private const int UsageRetryDays = 2;
 
 		private readonly IFeatureFlagRepository _featureFlagRepository;
 		private readonly IFeatureFlagOverrideRepository _featureFlagOverrideRepository;
@@ -852,56 +854,75 @@ namespace Resgrid.Services
 			if (!FeatureFlagsConfig.TrackEvaluations || featureFlagId == 0)
 				return;
 
-			var key = featureFlagId + "|" + departmentId + "|" + DateTime.UtcNow.ToString("yyyyMMdd", CultureInfo.InvariantCulture);
-			var counter = _usageBuffer.GetOrAdd(key, _ => new long[3]);
-			Interlocked.Increment(ref counter[0]);
-
-			// counter[1] = EnabledCount, counter[2] = DisabledCount (left untouched when the
-			// resolved state is unknown, e.g. an evaluation that threw before producing a result).
-			if (isEnabled.HasValue)
-				Interlocked.Increment(ref counter[isEnabled.Value ? 1 : 2]);
+			_usageBuffer.Record(featureFlagId, departmentId, DateTime.UtcNow, isEnabled);
 		}
 
 		public async Task<int> FlushEvaluationsAsync(CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var flushed = 0;
-			var touchedFlagIds = new HashSet<int>();
+			var pending = _usageBuffer.Drain();
+			if (pending.Count == 0)
+				return 0;
 
-			foreach (var key in _usageBuffer.Keys.ToList())
+			var saved = 0;
+			var retried = 0;
+			var dropped = 0;
+			Exception firstError = null;
+			var retryCutoff = DateTime.UtcNow.Date.AddDays(-UsageRetryDays);
+
+			foreach (var usage in pending)
 			{
-				if (!_usageBuffer.TryRemove(key, out var counter))
-					continue;
-
-				var parts = key.Split('|');
-				if (parts.Length != 3
-					|| !int.TryParse(parts[0], out var flagId)
-					|| !int.TryParse(parts[1], out var departmentId)
-					|| !DateTime.TryParseExact(parts[2], "yyyyMMdd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var date))
-					continue;
-
-				var usage = new FeatureFlagUsage
+				try
 				{
-					FeatureFlagId = flagId,
-					DepartmentId = departmentId,
-					UsageDate = date,
-					EvaluationCount = counter[0],
-					EnabledCount = counter[1],
-					DisabledCount = counter[2]
-				};
-
-				await _featureFlagUsageRepository.SaveOrUpdateAsync(usage, cancellationToken);
-				touchedFlagIds.Add(flagId);
-				flushed++;
+					await _featureFlagUsageRepository.AddUsageAsync(new FeatureFlagUsage
+					{
+						FeatureFlagId = usage.FeatureFlagId,
+						// Evaluations made outside any department (e.g. an SMS from an unknown number) are evaluated with
+						// department 0, which is not a Departments row; they are stored department-less.
+						DepartmentId = usage.DepartmentId > 0 ? usage.DepartmentId : (int?)null,
+						UsageDate = usage.UsageDate,
+						EvaluationCount = usage.EvaluationCount,
+						EnabledCount = usage.EnabledCount,
+						DisabledCount = usage.DisabledCount
+					}, cancellationToken);
+					saved++;
+				}
+				catch (Exception ex)
+				{
+					firstError = firstError ?? ex;
+					if (usage.UsageDate < retryCutoff)
+					{
+						dropped++;
+						Logging.LogError($"FeatureToggle usage flush dropped flag {usage.FeatureFlagId} department {usage.DepartmentId} on {usage.UsageDate:yyyy-MM-dd} after {UsageRetryDays} days of failed saves: {usage.EvaluationCount} evaluations ({usage.EnabledCount} enabled, {usage.DisabledCount} disabled) lost.");
+					}
+					else
+					{
+						_usageBuffer.Restore(usage);
+						retried++;
+					}
+				}
 			}
 
 			// Refresh LastEvaluatedOn for the flags that saw traffic (no cache invalidation - stale reads bypass cache).
+			var touchFailures = 0;
 			var now = DateTime.UtcNow;
-			foreach (var flagId in touchedFlagIds)
+			foreach (var flagId in pending.Select(u => u.FeatureFlagId).Distinct())
 			{
-				await _featureFlagRepository.TouchEvaluationAsync(flagId, now, cancellationToken);
+				try
+				{
+					await _featureFlagRepository.TouchEvaluationAsync(flagId, now, cancellationToken);
+				}
+				catch (Exception ex)
+				{
+					// The next flush with traffic for the flag sets it again.
+					firstError = firstError ?? ex;
+					touchFailures++;
+				}
 			}
 
-			return flushed;
+			if (firstError != null)
+				Logging.LogException(firstError, $"FeatureToggle usage flush: {saved} of {pending.Count} usage rows saved, {retried} kept for the next flush, {dropped} dropped; {touchFailures} LastEvaluatedOn updates failed.");
+
+			return saved;
 		}
 
 		public async Task<List<FeatureFlagUsage>> GetUsageForFlagAsync(string key, DateTime from, DateTime to)
@@ -910,9 +931,8 @@ namespace Resgrid.Services
 			if (flag == null)
 				return new List<FeatureFlagUsage>();
 
-			var all = await _featureFlagUsageRepository.GetAllAsync();
-			return all?.Where(u => u.FeatureFlagId == flag.FeatureFlagId && u.UsageDate >= from.Date && u.UsageDate <= to.Date)
-				.OrderBy(u => u.UsageDate).ToList() ?? new List<FeatureFlagUsage>();
+			var usages = await _featureFlagUsageRepository.GetUsageForFlagAsync(flag.FeatureFlagId, from.Date, to.Date);
+			return usages?.ToList() ?? new List<FeatureFlagUsage>();
 		}
 
 		public async Task<List<FeatureFlag>> GetStaleFlagsAsync(int? olderThanDays = null)

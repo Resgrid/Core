@@ -28,6 +28,14 @@ namespace Resgrid.Web.Middleware
 
 		public async Task InvokeAsync(HttpContext context, IUserSessionService userSessionService)
 		{
+			// A signed-out flow (password recovery) runs as anonymous whatever the browser's cookie holds. See SignedOutFlow.
+			if (SignedOutFlow.Matches(context.Request.Path))
+			{
+				context.User = new ClaimsPrincipal(new ClaimsIdentity());
+				await _next(context);
+				return;
+			}
+
 			if (context.User?.Identity?.IsAuthenticated != true)
 			{
 				await _next(context);
@@ -98,11 +106,42 @@ namespace Resgrid.Web.Middleware
 				}
 
 				await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-				if (HttpMethods.IsGet(context.Request.Method) && !context.Request.Path.StartsWithSegments("/Account"))
+				// A shared session past its shift ceiling says so on the sign-in page; the next operator signs in normally.
+				var shiftEnded = validation.FailureCode == SharedSessionRules.ExpiredFailureCode;
+				if (context.Request.Path.StartsWithSegments("/Account"))
+				{
+					// The sign-in pages themselves. A page load carries on signed out, so the sign-in form, an invitation or an MFA
+					// step shows instead of a blank 401 (and a page that needs a sign-in sends the browser to LogOn, as for any
+					// visitor). Redirecting here instead would loop on LogOn and lose an invitation's code.
+					if (WebSharedSession.IsNavigation(context.Request))
+					{
+						// Signing out on the LogOff path with a ReturnUrl already redirected; that answer stands.
+						if (!string.IsNullOrEmpty(context.Response.Headers.Location))
+							return;
+
+						context.User = new ClaimsPrincipal(new ClaimsIdentity());
+						await _next(context);
+						return;
+					}
+
+					// A form posted while the session was alive (sign out, say) cannot run: its anti-forgery token belongs to the dead
+					// session. The browser goes to the sign-in page instead of a blank 401.
+					if (IsFormNavigation(context.Request))
+					{
+						context.Response.StatusCode = StatusCodes.Status303SeeOther;
+						context.Response.Headers.Location = shiftEnded ? "/Account/LogOn?reason=shift_ended" : "/Account/LogOn";
+						return;
+					}
+
+					// Script and API calls keep the 401 they handle.
+					context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+					return;
+				}
+
+				if (HttpMethods.IsGet(context.Request.Method))
 				{
 					var returnUrl = Uri.EscapeDataString(context.Request.PathBase + context.Request.Path + context.Request.QueryString);
-					// A shared session past its shift ceiling says so on the sign-in page; the next operator signs in normally.
-					var reason = validation.FailureCode == SharedSessionRules.ExpiredFailureCode ? "&reason=shift_ended" : string.Empty;
+					var reason = shiftEnded ? "&reason=shift_ended" : string.Empty;
 					context.Response.Redirect($"/Account/LogOn?returnUrl={returnUrl}{reason}");
 				}
 				else
@@ -193,6 +232,23 @@ namespace Resgrid.Web.Middleware
 			}
 
 			await _next(context);
+		}
+
+		/// <summary>
+		/// A form the browser submits as a page load (<c>Sec-Fetch-Mode: navigate</c> on a non-GET), not a script's request. A browser
+		/// that sends no fetch metadata is judged as <see cref="WebSharedSession.IsNavigation"/> judges one: not XHR, and asking for HTML.
+		/// </summary>
+		private static bool IsFormNavigation(HttpRequest request)
+		{
+			if (HttpMethods.IsGet(request.Method) || HttpMethods.IsHead(request.Method))
+				return false;
+
+			var mode = request.Headers["Sec-Fetch-Mode"].ToString();
+			if (!string.IsNullOrWhiteSpace(mode))
+				return string.Equals(mode, "navigate", StringComparison.OrdinalIgnoreCase);
+
+			return !string.Equals(request.Headers["X-Requested-With"].ToString(), "XMLHttpRequest", StringComparison.OrdinalIgnoreCase) &&
+				request.Headers.Accept.ToString().Contains("text/html", StringComparison.OrdinalIgnoreCase);
 		}
 	}
 }

@@ -4222,6 +4222,21 @@
   <data name="ConfigModule.Logs" xml:space="preserve">
     <value>Καταγραφές</value>
   </data>
+  <data name="ConfigModule.Records" xml:space="preserve">
+    <value>Αρχεία</value>
+  </data>
+  <data name="ConfigModule.Contacts" xml:space="preserve">
+    <value>Επαφές</value>
+  </data>
+  <data name="ConfigModule.Certifications" xml:space="preserve">
+    <value>Πιστοποιήσεις</value>
+  </data>
+  <data name="ConfigModule.Deployments" xml:space="preserve">
+    <value>Αποστολές</value>
+  </data>
+  <data name="ConfigModule.Chat" xml:space="preserve">
+    <value>Συνομιλία</value>
+  </data>
   <data name="ConfigModule.Reports" xml:space="preserve">
     <value>Αναφορές</value>
   </data>

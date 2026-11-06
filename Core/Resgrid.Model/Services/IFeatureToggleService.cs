@@ -89,7 +89,11 @@ namespace Resgrid.Model.Services
 
 		#region Analytics & lifecycle
 
-		/// <summary>Persists buffered evaluation counts and refreshes LastEvaluatedOn. Called by the worker.</summary>
+		/// <summary>
+		/// Adds this process's buffered evaluation counts to FeatureFlagUsages and refreshes LastEvaluatedOn; returns the
+		/// number of usage rows written. Counts that fail to save go back into the buffer for the next flush (and are
+		/// logged). Every host that evaluates flags runs it periodically through FeatureToggleUsageFlusher.
+		/// </summary>
 		Task<int> FlushEvaluationsAsync(CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>Aggregated daily usage rows for a flag within a date range (admin analytics).</summary>

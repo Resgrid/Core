@@ -416,6 +416,9 @@
   <data name="DisabledLogsLabel" xml:space="preserve">
     <value>Log</value>
   </data>
+  <data name="RecordsModuleNote" xml:space="preserve">
+    <value>Mostra i Registri nel menu, separatamente dai Log.</value>
+  </data>
   <data name="DisabledMaintenanceLabel" xml:space="preserve">
     <value>Maintenance</value>
   </data>
@@ -1309,6 +1312,51 @@
   </data>
   <data name="CloseCallWhenUnitsClearHelp" xml:space="preserve">
     <value>Una chiamata attiva si chiude da sola quando l'ultima unità inviata segnala di essere di nuovo in servizio o fuori servizio (uno stato con tipo base Disponibile, In sede, Liberata, Non disponibile o Manutenzione). Anche tutte le altre unità inviate devono aver segnalato la fine dopo l'invio. Contano solo le unità: una chiamata senza unità inviate, una chiamata con un comando dell'incidente attivo o un'unità ancora in rientro o in trasporto resta aperta per l'operatore.</value>
+  </data>
+  <data name="DispatchRenotifyHeader" xml:space="preserve">
+    <value>Notifiche ripetute dell'invio</value>
+  </data>
+  <data name="DispatchRenotifyEnabledLabel" xml:space="preserve">
+    <value>Ripeti la notifica fino alla conferma</value>
+  </data>
+  <data name="DispatchRenotifyEnabledHelp" xml:space="preserve">
+    <value>Ripete la notifica di un invio al personale e alle unità che non l'hanno confermato. Qualsiasi stato impostato dopo l'invio vale come conferma: una persona che imposta In risposta o Non risponde, oppure un'unità che imposta qualsiasi stato, con o senza destinazione. Gli stati che Resgrid imposta automaticamente non contano. Le notifiche ripetute si fermano quando la chiamata viene chiusa o la persona o l'unità ne viene rimossa. Disattivato per impostazione predefinita.</value>
+  </data>
+  <data name="DispatchRenotifyLockedNotice" xml:space="preserve">
+    <value>Per garantire la stabilità del sistema, l'intervallo, il numero massimo di notifiche ripetute e tutti i canali diversi dalle notifiche push sono bloccati per ora. Queste opzioni verranno sbloccate in futuro.</value>
+  </data>
+  <data name="DispatchRenotifyIntervalLabel" xml:space="preserve">
+    <value>Intervallo tra le notifiche (minuti)</value>
+  </data>
+  <data name="DispatchRenotifyIntervalHelp" xml:space="preserve">
+    <value>Minuti tra una notifica ripetuta e l'altra.</value>
+  </data>
+  <data name="DispatchRenotifyMaxRetriesLabel" xml:space="preserve">
+    <value>Numero massimo di notifiche ripetute</value>
+  </data>
+  <data name="DispatchRenotifyMaxRetriesHelp" xml:space="preserve">
+    <value>Quante volte un invio viene notificato di nuovo prima che le notifiche ripetute si fermino. Con i valori predefiniti, tre notifiche ripetute a cinque minuti di distanza coprono i primi 15 minuti dopo un invio.</value>
+  </data>
+  <data name="DispatchRenotifyChannelsLabel" xml:space="preserve">
+    <value>Ripeti la notifica tramite</value>
+  </data>
+  <data name="DispatchRenotifyChannelsHelp" xml:space="preserve">
+    <value>Ogni membro riceve la notifica ripetuta su ogni canale selezionato qui consentito dalle sue impostazioni di notifica, ai suoi recapiti verificati. Le unità ricevono la notifica ripetuta solo via push.</value>
+  </data>
+  <data name="DispatchRenotifyChannelPush" xml:space="preserve">
+    <value>Notifica push</value>
+  </data>
+  <data name="DispatchRenotifyChannelSms" xml:space="preserve">
+    <value>SMS</value>
+  </data>
+  <data name="DispatchRenotifyChannelEmail" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="DispatchRenotifyChannelVoice" xml:space="preserve">
+    <value>Chiamata vocale</value>
+  </data>
+  <data name="DispatchRenotifyChannelChatPlatform" xml:space="preserve">
+    <value>Piattaforma di chat</value>
   </data>
   <data name="CallNumberingHeader" xml:space="preserve">
     <value>Numerazione delle chiamate</value>

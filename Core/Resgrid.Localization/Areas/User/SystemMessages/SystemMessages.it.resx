@@ -143,6 +143,7 @@ Il team Resgrid</value>
   <data name="AdpPinSaved" xml:space="preserve"><value>Salvato.</value></data>
   <data name="AdpPinDenied" xml:space="preserve"><value>Impossibile rilasciare o salvare i dati protetti. Accedi a Resgrid e riprova.</value></data>
   <data name="AdpPinSmsChallenge" xml:space="preserve"><value>È disponibile un intervento protetto. Rispondi OPEN {0} seguito dal tuo PIN personale, separato da uno spazio.</value></data>
+  <data name="DispatchRenotifyPushPrefix" xml:space="preserve"><value>Promemoria {0}/{1}:</value></data>
   <data name="AdpPinVoiceChallenge" xml:space="preserve"><value>È disponibile un intervento protetto. Inserisci il tuo PIN personale e premi il tasto cancelletto.</value></data>
   <data name="AdpReleaseSettings" xml:space="preserve"><value>Impostazioni di rilascio ADP</value></data>
   <data name="AdpSmsMode" xml:space="preserve"><value>Invio tramite SMS</value></data>

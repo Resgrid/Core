@@ -143,6 +143,7 @@ L'équipe Resgrid</value>
   <data name="AdpPinSaved" xml:space="preserve"><value>Enregistré.</value></data>
   <data name="AdpPinDenied" xml:space="preserve"><value>Impossible de transmettre ou d’enregistrer les données protégées. Connectez-vous à Resgrid et réessayez.</value></data>
   <data name="AdpPinSmsChallenge" xml:space="preserve"><value>Une intervention protégée est disponible. Répondez OPEN {0} suivi de votre code PIN personnel, séparé par un espace.</value></data>
+  <data name="DispatchRenotifyPushPrefix" xml:space="preserve"><value>Rappel {0}/{1} :</value></data>
   <data name="AdpPinVoiceChallenge" xml:space="preserve"><value>Une intervention protégée est disponible. Saisissez votre code PIN personnel puis appuyez sur dièse.</value></data>
   <data name="AdpReleaseSettings" xml:space="preserve"><value>Paramètres de transmission ADP</value></data>
   <data name="AdpSmsMode" xml:space="preserve"><value>Transmission par SMS</value></data>

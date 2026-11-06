@@ -12,7 +12,12 @@
 		public static string DepartmentSessionPolicyEnforcementAfterUtc = "";
 		public static int LastActivityWriteIntervalMinutes = 5;
 		public static int RevokedSessionRetentionDays = 90;
-		public static int PublicResetLinkLifetimeMinutes = 30;
+		// How long an emailed password reset link works. Each link is single-use and stops working as soon as the account's password
+		// or security stamp changes, so the lifetime only has to cover a slow inbox (filtering and quarantine can hold a message for
+		// half an hour) and a responder pulled away mid-reset. A link someone asked for themselves: 2 hours. A link an administrator
+		// sends: 24 hours, because the member did not ask for it and may not see it until their next shift. Minimum 5 minutes.
+		public static int PublicResetLinkLifetimeMinutes = 120;
+		public static int AdministratorResetLinkLifetimeMinutes = 1440;
 		public static int PublicResetAccountLimitPerHour = 3;
 		public static int PublicResetIpLimitPerHour = 10;
 

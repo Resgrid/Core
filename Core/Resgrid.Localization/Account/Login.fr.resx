@@ -159,10 +159,10 @@
     <value>privacy policy</value>
   </data>
   <data name="RecoverAccountSuccess" xml:space="preserve">
-    <value>If your email address is valid we have reset your password and sent your username and new password to the email address supplied. Email delivery can be delayed up to 15 minutes, &lt;b&gt;also check your spam or junk areas in your email client if you email doesn't arrive&lt;/b&gt; by then.</value>
+    <value>Si un compte utilise cette adresse e-mail, nous y avons envoyé un lien pour choisir un nouveau mot de passe, ainsi que le nom d'utilisateur du compte. Le lien ne peut être utilisé qu'une seule fois et l'e-mail indique sa durée de validité. L'e-mail peut mettre plusieurs minutes à arriver ; s'il n'est pas arrivé, vérifiez votre dossier de courrier indésirable avant de demander un nouveau lien.</value>
   </data>
   <data name="RecoverAccountText" xml:space="preserve">
-    <value>Supply the email address you used with your Resgrid account. We will then send you an email to that address with your username and new password to log into the system.</value>
+    <value>Saisissez l'adresse e-mail de votre compte Resgrid. Nous vous enverrons par e-mail un lien pour choisir un nouveau mot de passe, ainsi que votre nom d'utilisateur.</value>
   </data>
   <data name="RecoveryAccountHeader" xml:space="preserve">
     <value>Récupérer le compte</value>

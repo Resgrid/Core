@@ -139,7 +139,7 @@ namespace Resgrid.Tests.Providers
 				"2026-09-02 07:12 UTC", 42, null);
 			await provider.SendPasswordRecoveryMail("Recipient", "member@example.com", "Example Fire",
 				"https://app.resgrid.test/reset#token", "192.0.2.1", "Test browser", "2026-09-02 07:12 UTC",
-				false);
+				false, "recipient", "2 hours", "2026-09-02 09:12:00Z");
 			await provider.SendPasswordChangedByAdministratorMail("Recipient", "recipient",
 				"member@example.com", "Example Fire");
 			await provider.SendPaymentReciept("Example Fire", "Recipient", "2026-09-02", "$20.00",

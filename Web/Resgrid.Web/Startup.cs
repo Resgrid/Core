@@ -640,6 +640,9 @@ namespace Resgrid.Web
 				services.AddSentryTunneling();
 			}
 
+			// Flag evaluation counts are buffered per process; this host writes its own to FeatureFlagUsages.
+			services.AddHostedService<FeatureToggleUsageFlushService>();
+
 			this.Services = services;
 
 			//if (Config.ExternalErrorConfig.ApplicationInsightsEnabled)

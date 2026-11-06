@@ -8,8 +8,8 @@ using ProtoBuf;
 namespace Resgrid.Model
 {
 	/// <summary>
-	/// Aggregated daily evaluation counts for a feature flag (optionally per department). Written by a
-	/// background worker that flushes the service's in-memory counters; never written on the hot path.
+	/// Aggregated daily evaluation counts for a feature flag (optionally per department), one row per flag, department
+	/// and day. Each host periodically adds its in-memory counters to the row; never written on the hot path.
 	/// Mirrors the WorkflowDailyUsages aggregation pattern.
 	/// </summary>
 	[Table("FeatureFlagUsages")]
@@ -26,7 +26,7 @@ namespace Resgrid.Model
 		[ProtoMember(2)]
 		public int FeatureFlagId { get; set; }
 
-		/// <summary>Null aggregates across all departments for the day.</summary>
+		/// <summary>Null for evaluations made outside any department (evaluated with department 0).</summary>
 		[ProtoMember(3)]
 		public int? DepartmentId { get; set; }
 

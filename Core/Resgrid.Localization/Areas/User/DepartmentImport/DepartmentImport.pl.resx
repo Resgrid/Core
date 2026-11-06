@@ -4222,6 +4222,21 @@
   <data name="ConfigModule.Logs" xml:space="preserve">
     <value>Dzienniki</value>
   </data>
+  <data name="ConfigModule.Records" xml:space="preserve">
+    <value>Rejestry</value>
+  </data>
+  <data name="ConfigModule.Contacts" xml:space="preserve">
+    <value>Kontakty</value>
+  </data>
+  <data name="ConfigModule.Certifications" xml:space="preserve">
+    <value>Certyfikaty</value>
+  </data>
+  <data name="ConfigModule.Deployments" xml:space="preserve">
+    <value>Dyslokacje</value>
+  </data>
+  <data name="ConfigModule.Chat" xml:space="preserve">
+    <value>Czat</value>
+  </data>
   <data name="ConfigModule.Reports" xml:space="preserve">
     <value>Raporty</value>
   </data>

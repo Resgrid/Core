@@ -278,7 +278,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				var mapLayer = await _mappingService.SaveMapLayerAsync(newLayer);
 
-				if (mapLayer.Id.Timestamp == 0)
+				if (mapLayer == null || (String.IsNullOrWhiteSpace(mapLayer.PgId) && mapLayer.Id.Timestamp == 0))
 				{
 					ModelState.AddModelError("", "There was an error saving the layer. Please try again.");
 					return View(model);
@@ -315,7 +315,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var feature = layer.Data.Convert();
 			model.GeoJson = JsonConvert.SerializeObject(feature, HtmlHelpers.ScriptJsonSettings);
 
-			model.Id = layer.Id.ToString();
+			model.Id = layer.GetId();
 			model.Name = layer.Name;
 			model.Color = layer.Color;
 			// Without these the edit form showed both unticked, and saving it switched them off.

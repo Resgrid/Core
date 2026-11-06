@@ -192,8 +192,8 @@ namespace Resgrid.Services.Records
 		public async Task<bool> IsStaffedOnUnitAsync(int departmentId, string userId, int unitId)
 		{
 			var unit = await _units.GetUnitByIdAsync(unitId);
-			if (unit == null || unit.DepartmentId != departmentId) return false;
-			var state = await _units.GetLastUnitStateByUnitIdAsync(unitId);
+			if (unit == null || unit.DepartmentId != departmentId || unit.IsDeleted) return false;
+			var state = await _units.GetLastUnitStateWithRolesByUnitIdAsync(unitId);
 			return state?.Roles != null && state.Roles.Any(r => string.Equals(r.UserId, userId, StringComparison.OrdinalIgnoreCase));
 		}
 

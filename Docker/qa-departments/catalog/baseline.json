@@ -1,0 +1,195 @@
+{
+  "$comment": [
+    "The standard baseline every QA department starts from unless its scenario sets \"baseline\": \"empty\".",
+    "A scenario replaces any top-level section it defines and appends the lists under its \"extra\" section.",
+    "Times are relative to the moment the seed runs: \"-25m\", \"+2h\", \"-3d\" (UTC on the wire, as Core stores them).",
+    "Statuses are named by meaning (available, responding, onScene, ...): built-in values in a base department, the custom",
+    "option with that base type in a department with custom status sets. People with a persona can sign in; the run",
+    "password and user names are in the manifest. All names, addresses and numbers are fictional."
+  ],
+  "department": {
+    "type": "Fire Department",
+    "timeZone": "Eastern Standard Time",
+    "use24HourTime": false,
+    "address": { "address1": "100 Test Plaza", "city": "Springfield", "state": "IL", "postalCode": "62701", "country": "United States" },
+    "location": [39.7990, -89.6440]
+  },
+  "settings": {
+    "personnelSortOrder": "lastName",
+    "unitsSortOrder": "name",
+    "callsSortOrder": "date"
+  },
+  "groups": [
+    { "name": "Station 1", "type": "station", "location": [39.7990, -89.6440], "address": { "address1": "101 Engine Way", "city": "Springfield", "state": "IL", "postalCode": "62701", "country": "United States" } },
+    { "name": "Station 2", "type": "station", "location": [39.7652, -89.6801], "address": { "address1": "202 Ladder Ln", "city": "Springfield", "state": "IL", "postalCode": "62704", "country": "United States" } },
+    { "name": "Operations", "type": "organizational" },
+    { "name": "Hazmat Team", "type": "organizational", "parent": "Operations" }
+  ],
+  "roles": [
+    { "name": "Officer", "description": "Company officer" },
+    { "name": "Firefighter", "description": "Interior firefighter" },
+    { "name": "EMT", "description": "Emergency medical technician" },
+    { "name": "Paramedic", "description": "Advanced life support" },
+    { "name": "Driver/Operator", "description": "Apparatus driver" },
+    { "name": "Dispatcher", "description": "Communications" }
+  ],
+  "ranks": [
+    { "name": "Chief", "code": "CH", "color": "#b91c1c" },
+    { "name": "Captain", "code": "CPT", "color": "#c2410c" },
+    { "name": "Lieutenant", "code": "LT", "color": "#a16207" },
+    { "name": "Firefighter", "code": "FF", "color": "#1d4ed8" }
+  ],
+  "people": [
+    { "persona": "admin", "first": "Avery", "last": "Admin", "admin": true, "group": "Station 1", "groupAdmin": true, "roles": ["Officer"], "rank": "Chief", "status": "available", "staffing": "onShift", "mobile": "2175550101" },
+    { "persona": "officer", "first": "Morgan", "last": "Officer", "group": "Station 1", "groupAdmin": true, "roles": ["Officer", "Firefighter"], "rank": "Captain", "status": "responding", "staffing": "available", "statusCall": "structure-fire", "mobile": "2175550102" },
+    { "persona": "member", "first": "Riley", "last": "Member", "group": "Station 2", "roles": ["Firefighter", "EMT"], "rank": "Firefighter", "status": "notResponding", "staffing": "available", "mobile": "2175550103" },
+    { "persona": "dispatcher", "first": "Dana", "last": "Dispatcher", "group": "Operations", "roles": ["Dispatcher"], "status": "available", "staffing": "onShift", "mobile": "2175550104" },
+    { "persona": "crew", "first": "Casey", "last": "Crew", "group": "Station 2", "roles": ["Paramedic"], "rank": "Lieutenant", "status": "onScene", "staffing": "committed", "statusCall": "medical", "mobile": "2175550105" },
+    { "persona": "disabled", "first": "Devon", "last": "Disabled", "group": "Station 2", "roles": ["Firefighter"], "disabled": true, "status": "available", "staffing": "unavailable" },
+    { "persona": "hidden", "first": "Harper", "last": "Hidden", "group": "Operations", "roles": ["Dispatcher"], "hidden": true, "status": "available", "staffing": "available" },
+    { "first": "Jordan", "last": "Banks", "group": "Station 1", "roles": ["Firefighter", "Driver/Operator"], "rank": "Firefighter", "status": "responding", "staffing": "available", "statusCall": "structure-fire" },
+    { "first": "Quinn", "last": "Castillo", "group": "Station 1", "roles": ["Firefighter"], "rank": "Firefighter", "status": "onScene", "staffing": "committed", "statusCall": "structure-fire" },
+    { "first": "Skyler", "last": "Duarte", "group": "Station 2", "roles": ["EMT"], "status": "available", "staffing": "delayed" },
+    { "first": "Rowan", "last": "Ellis", "group": "Station 2", "roles": ["Paramedic", "Driver/Operator"], "status": "responding", "staffing": "available", "statusCall": "medical" },
+    { "first": "Emerson", "last": "Flores", "group": "Hazmat Team", "roles": ["Firefighter"], "status": "notResponding", "staffing": "unavailable" },
+    { "first": "Finley", "last": "Grant", "group": "Station 1", "roles": ["Officer"], "rank": "Lieutenant", "status": "available", "staffing": "onShift" },
+    { "first": "Sage", "last": "Holloway", "roles": ["EMT"], "status": "available", "staffing": "available" }
+  ],
+  "unitTypes": [
+    { "name": "Engine", "class": "engine" },
+    { "name": "Ladder", "class": "aerial" },
+    { "name": "Medic", "class": "ambulance" },
+    { "name": "Command", "class": "command" },
+    { "name": "Utility", "class": "support" }
+  ],
+  "units": [
+    { "name": "Engine 1", "type": "Engine", "station": "Station 1", "status": "onScene", "statusCall": "structure-fire", "location": [39.8012, -89.6475], "roles": ["Officer", "Driver/Operator", "Firefighter"], "crew": [{ "person": "officer", "role": "Officer" }, { "person": "Jordan Banks", "role": "Driver/Operator" }] },
+    { "name": "Ladder 1", "type": "Ladder", "station": "Station 1", "status": "responding", "statusCall": "structure-fire", "location": [39.7995, -89.6448], "roles": ["Officer", "Driver/Operator"] },
+    { "name": "Medic 2", "type": "Medic", "station": "Station 2", "status": "onScene", "statusCall": "medical", "location": [39.7701, -89.6612], "roles": ["Paramedic", "EMT"], "crew": [{ "person": "crew", "role": "Paramedic" }, { "person": "Rowan Ellis", "role": "EMT" }] },
+    { "name": "Battalion 1", "type": "Command", "status": "available", "location": [39.7990, -89.6440], "roles": ["Officer"] },
+    { "name": "Utility 2", "type": "Utility", "station": "Station 2", "status": "outOfService", "location": [39.7652, -89.6801] },
+    { "name": "Engine 2", "type": "Engine", "station": "Station 2", "status": "available", "location": [39.7652, -89.6801], "roles": ["Officer", "Firefighter"] }
+  ],
+  "callPriorities": [],
+  "callTypes": [
+    { "name": "Structure Fire", "class": "fire" },
+    { "name": "Medical Emergency", "class": "medical" },
+    { "name": "Vehicle Accident", "class": "trafficCollision" },
+    { "name": "Fire Alarm", "class": "alarm" },
+    { "name": "Public Service", "class": "serviceCall" }
+  ],
+  "calls": [
+    {
+      "key": "structure-fire", "name": "Structure Fire - 1200 Oak St", "nature": "Smoke showing from a two-story residence, occupants reported out.",
+      "notes": "Hydrant at Oak and 12th. Stage second-due on Elm.", "type": "Structure Fire", "priority": "high", "state": "active", "loggedOn": "-25m",
+      "address": "1200 Oak St, Springfield, IL 62702", "location": [39.8031, -89.6512], "number": "QA-0001", "referenceNumber": "REF-1001", "externalId": "CAD-1001",
+      "contactName": "Jordan Caller", "contactNumber": "2175550199",
+      "dispatch": { "units": ["Engine 1", "Ladder 1", "Battalion 1"], "groups": ["Station 1"], "roles": ["Officer"], "people": ["admin", "officer", "Jordan Banks", "Quinn Castillo"] },
+      "callNotes": [
+        { "by": "officer", "text": "Command established, offensive attack.", "at": "-20m" },
+        { "by": "admin", "text": "Second alarm requested.", "at": "-12m" }
+      ]
+    },
+    {
+      "key": "medical", "name": "Medical - Difficulty Breathing", "nature": "68 year old with difficulty breathing, conscious and alert.",
+      "type": "Medical Emergency", "priority": "medium", "state": "active", "loggedOn": "-14m",
+      "address": "455 Maple Ave, Springfield, IL 62704", "location": [39.7712, -89.6620], "number": "QA-0002", "contactName": "Pat Neighbor", "contactNumber": "2175550188",
+      "dispatch": { "units": ["Medic 2"], "people": ["crew", "Rowan Ellis"] },
+      "callNotes": [{ "by": "crew", "text": "Patient on 4L oxygen, preparing to transport.", "at": "-5m" }]
+    },
+    {
+      "key": "mva", "name": "Vehicle Accident - I-55 NB MM 92", "nature": "Two vehicle collision, one possibly trapped.",
+      "type": "Vehicle Accident", "priority": "emergency", "critical": true, "state": "active", "loggedOn": "-6m",
+      "address": "I-55 NB Mile Marker 92, Springfield, IL", "location": [39.7447, -89.6206], "number": "QA-0003",
+      "dispatch": { "units": ["Engine 2"], "groups": ["Station 2"], "people": ["member"] }
+    },
+    {
+      "key": "alarm", "name": "Fire Alarm - Commercial", "nature": "Automatic alarm, general fire zone 3.",
+      "type": "Fire Alarm", "priority": "low", "state": "active", "loggedOn": "-3m",
+      "address": "800 Commerce Dr, Springfield, IL 62703", "location": [39.7803, -89.6302], "number": "QA-0004", "linkedTo": "structure-fire"
+    },
+    {
+      "key": "scheduled", "name": "Standby - Community Event", "nature": "Scheduled EMS standby for the downtown 5K.",
+      "type": "Public Service", "priority": "low", "state": "active", "loggedOn": "-1d", "dispatchOn": "+2h",
+      "address": "1 Old State Capitol Plaza, Springfield, IL 62701", "location": [39.8017, -89.6487], "number": "QA-0005",
+      "dispatch": { "units": ["Engine 2"] }
+    },
+    {
+      "key": "closed", "name": "Fire Alarm - Residential (Closed)", "nature": "Burnt food, alarm reset.",
+      "type": "Fire Alarm", "priority": "low", "state": "closed", "loggedOn": "-2d", "closedOn": "-2d", "closedBy": "admin", "completedNotes": "Food on the stove, ventilated, alarm reset.",
+      "address": "77 Birch Ct, Springfield, IL 62707", "location": [39.7920, -89.6100], "number": "QA-0006",
+      "dispatch": { "units": ["Engine 1"] }
+    },
+    {
+      "key": "cancelled", "name": "Odor Investigation (Cancelled)", "nature": "Caller reports gas odor; cancelled by caller.",
+      "type": "Public Service", "priority": "low", "state": "cancelled", "loggedOn": "-3h", "closedOn": "-170m", "closedBy": "dispatcher",
+      "address": "19 Cedar St, Springfield, IL 62702", "location": [39.8102, -89.6555], "number": "QA-0007"
+    }
+  ],
+  "messages": [
+    { "from": "admin", "to": ["officer", "member", "crew", "dispatcher"], "subject": "Shift briefing", "body": "Review the updated hydrant map before tonight's drill.", "at": "-3h", "readBy": ["officer"] },
+    { "from": "officer", "to": ["member"], "subject": "Truck check", "body": "Please complete the Engine 1 truck check by 0900.", "at": "-90m" },
+    { "from": "dispatcher", "to": ["admin"], "subject": "Radio outage", "body": "Channel 2 repeater will be offline tomorrow 0200-0400.", "at": "-30m" }
+  ],
+  "notes": [
+    { "by": "admin", "title": "Station 1 door code", "body": "<p>The bay door keypad code changes on the first of the month.</p>", "category": "Stations", "color": "#2563eb" },
+    { "by": "officer", "title": "Hose testing schedule", "body": "<p>Annual hose testing runs the second week of the month.</p>", "category": "Maintenance" },
+    { "by": "admin", "title": "Officers only: budget", "body": "<p>Capital request deadline is the 15th.</p>", "adminOnly": true }
+  ],
+  "calendar": [
+    { "by": "admin", "title": "Monthly Drill", "description": "Live fire training at the burn tower.", "start": "+2d", "end": "+2d+3h", "location": "Training Grounds", "signup": true, "attending": ["officer", "member"] },
+    { "by": "admin", "title": "Department Meeting", "description": "Quarterly business meeting.", "start": "+7d", "end": "+7d+1h", "location": "Station 1" },
+    { "by": "officer", "title": "Station Open House", "description": "Community open house.", "start": "+14d", "end": "+14d", "allDay": true, "location": "Station 2" },
+    { "by": "admin", "title": "CPR Recertification (past)", "description": "Completed recertification class.", "start": "-5d", "end": "-5d+4h", "location": "Station 2" }
+  ],
+  "shifts": [
+    { "name": "A Shift", "code": "A", "color": "#dc2626", "start": "07:00", "end": "07:00", "hours": 24, "assignment": "assigned", "groups": ["Station 1", "Station 2"], "people": ["officer", "member", "crew", "Jordan Banks", "Quinn Castillo"], "admins": ["admin"], "days": 7 },
+    { "name": "Event Standby", "code": "EVT", "color": "#16a34a", "start": "10:00", "end": "14:00", "hours": 4, "assignment": "signup", "groups": ["Station 2"], "admins": ["admin"], "days": 7, "requireApproval": true, "signups": [{ "person": "member", "day": 1 }, { "person": "crew", "day": 2, "pending": true }] }
+  ],
+  "contacts": [
+    { "key": "hospital", "company": "Springfield Memorial Hospital (QA)", "email": "er@hospital.qa.example.com", "office": "2175550150", "location": [39.8095, -89.6525], "description": "Level I trauma center" },
+    { "key": "utility", "company": "City Water Utility (QA)", "email": "ops@water.qa.example.com", "office": "2175550160", "description": "24-hour water emergency line" },
+    { "key": "resident", "first": "Pat", "last": "Neighbor", "cell": "2175550188", "email": "pat.neighbor@qa.example.com", "description": "Frequent caller, hard of hearing" }
+  ],
+  "poiTypes": [
+    { "name": "Hydrant", "color": "#ef4444", "pois": [
+      { "name": "H-101", "location": [39.8035, -89.6505], "note": "1500 GPM" },
+      { "name": "H-102", "location": [39.8020, -89.6530] },
+      { "name": "H-201", "location": [39.7705, -89.6630], "note": "Out of service" }
+    ] },
+    { "name": "Hospital", "color": "#2563eb", "destination": true, "pois": [
+      { "name": "Springfield Memorial (QA)", "location": [39.8095, -89.6525], "address": "800 N Rutledge St, Springfield, IL 62702" }
+    ] },
+    { "name": "Staging Area", "color": "#16a34a", "pois": [{ "name": "Fairgrounds Lot B", "location": [39.8350, -89.6430] }] }
+  ],
+  "protocols": [
+    {
+      "name": "Structure Fire Response", "code": "SF-1", "description": "First-due structure fire checklist.", "text": "<p>Confirm occupants, establish water supply, size up all sides.</p>", "minimumWeight": 5,
+      "triggers": [{ "type": "callType", "callType": "Structure Fire" }],
+      "questions": [{ "question": "Are occupants trapped?", "answers": [{ "answer": "Yes", "weight": 10 }, { "answer": "No", "weight": 0 }] }]
+    },
+    {
+      "name": "Breathing Problems", "code": "MED-6", "description": "Difficulty breathing interrogation.", "text": "<p>Is the patient alert and breathing normally?</p>", "minimumWeight": 3,
+      "triggers": [{ "type": "callType", "callType": "Medical Emergency" }],
+      "questions": [{ "question": "Is the patient changing color?", "answers": [{ "answer": "Yes", "weight": 5 }, { "answer": "No", "weight": 1 }] }]
+    }
+  ],
+  "callTemplates": [
+    { "name": "Smoke Investigation", "callName": "Smoke Investigation", "nature": "Caller reports smoke in the area.", "type": "Public Service", "priority": "low" },
+    { "name": "Lift Assist", "callName": "Lift Assist", "nature": "Non-injury lift assist.", "type": "Medical Emergency", "priority": "low" }
+  ],
+  "callNoteTemplates": [
+    { "name": "Patient Contact", "text": "Patient contact made, assessment in progress." },
+    { "name": "Fire Under Control", "text": "Fire is under control, beginning overhaul." }
+  ],
+  "checkInTimers": [
+    { "target": "personnel", "duration": 20, "warning": 15 },
+    { "target": "par", "duration": 30, "warning": 25 }
+  ],
+  "trainings": [
+    { "by": "admin", "name": "SCBA Refresher", "description": "Annual SCBA donning and doffing refresher.", "text": "<p>Review the SCBA inspection steps.</p>", "minimumScore": 80, "due": "+14d" }
+  ],
+  "documents": [
+    { "by": "admin", "name": "Standard Operating Guidelines", "category": "SOGs", "description": "Department SOGs (QA copy).", "fileName": "sogs.txt", "contentType": "text/plain", "text": "QA standard operating guidelines placeholder." }
+  ]
+}

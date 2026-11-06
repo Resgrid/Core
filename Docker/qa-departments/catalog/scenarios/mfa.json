@@ -1,0 +1,11 @@
+{
+  "id": "mfa",
+  "name": "MFA Required",
+  "purpose": "MFA required by the security policy and for admins: admin, officer, dispatcher and crew are TOTP-enrolled (secrets in the manifest); member is not enrolled and must be sent to enrollment.",
+  "covers": ["mfa_required at sign-in", "TOTP sign-in", "mfa_enrollment_required (member)", "Require2FAForAdmins"],
+  "security": {
+    "policy": { "requireMfa": true },
+    "requireMfaForAdmins": true,
+    "mfa": { "enrolled": ["admin", "officer", "dispatcher", "crew"] }
+  }
+}

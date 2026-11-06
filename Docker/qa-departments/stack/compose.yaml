@@ -1,0 +1,139 @@
+# Isolated Resgrid QA stack for the app regression suites: Core built from this checkout, a fresh PostgreSQL database
+# migrated by Core's own console, the QA departments seeded on top. Driven by qa-stack.py (it writes private/ first).
+#   python3 Docker/qa-departments/stack/qa-stack.py up      build, migrate, start, seed, verify
+#   python3 Docker/qa-departments/stack/qa-stack.py down    stop and delete the stack and its data
+name: ${QA_STACK_NAME:-resgrid-qa}
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: resgrid_qa
+      POSTGRES_USER: resgrid
+      POSTGRES_PASSWORD_FILE: /run/qa/db-password
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./init-databases.sql:/docker-entrypoint-initdb.d/init-databases.sql:ro
+      - ./private/db-password:/run/qa/db-password:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U resgrid -d resgrid_qa"]
+      interval: 3s
+      timeout: 3s
+      retries: 40
+    networks: [qa]
+  redis:
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+    networks: [qa]
+  rabbit:
+    image: rabbitmq:3.13-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: resgrid
+      RABBITMQ_DEFAULT_PASS: ${QA_RABBIT_PASSWORD:?run qa-stack.py, which writes private/stack.env}
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    networks: [qa]
+  mail:
+    image: axllent/mailpit:v1.27
+    ports: ["127.0.0.1:${QA_MAIL_PORT:-5480}:8025"]
+    networks: [qa]
+  migrate:
+    profiles: ["tools"]
+    image: resgrid-qa/console:local
+    environment:
+      AppOptions__ConfigPath: /config/ResgridConfig.json
+    volumes: ["./private/ResgridConfig.json:/config/ResgridConfig.json:ro"]
+    depends_on:
+      postgres: {condition: service_healthy}
+    networks: [qa]
+  api:
+    image: resgrid-qa/api:local
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      AppOptions__ConfigPath: /config/ResgridConfig.json
+      # Trust the stack's own localhost certificate for calls to its public URLs (through api-loopback).
+      SSL_CERT_FILE: /config/localhost.crt
+    volumes:
+      - ./private/ResgridConfig.json:/config/ResgridConfig.json:ro
+      - ./private/tls/localhost.crt:/config/localhost.crt:ro
+    depends_on:
+      postgres: {condition: service_healthy}
+      redis: {condition: service_healthy}
+      rabbit: {condition: service_healthy}
+    networks: [qa]
+  eventing:
+    image: resgrid-qa/eventing:local
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      AppOptions__ConfigPath: /config/ResgridConfig.json
+      # Trust the stack's own localhost certificate for calls to its public URLs (through eventing-loopback).
+      SSL_CERT_FILE: /config/localhost.crt
+    volumes:
+      - ./private/ResgridConfig.json:/config/ResgridConfig.json:ro
+      - ./private/tls/localhost.crt:/config/localhost.crt:ro
+    depends_on:
+      postgres: {condition: service_healthy}
+      redis: {condition: service_healthy}
+      rabbit: {condition: service_healthy}
+    networks: [qa]
+  # Core's hosts call their own public URLs (https://localhost:5443 / 5444); inside a container that is the container.
+  api-loopback:
+    image: resgrid-qa/departments:local
+    network_mode: "service:api"
+    entrypoint: ["python", "/stack/loopback.py", "5443=gateway:8443", "5444=gateway:8444"]
+    volumes: ["./loopback.py:/stack/loopback.py:ro"]
+    depends_on: [api]
+  eventing-loopback:
+    image: resgrid-qa/departments:local
+    network_mode: "service:eventing"
+    entrypoint: ["python", "/stack/loopback.py", "5443=gateway:8443", "5444=gateway:8444"]
+    volumes: ["./loopback.py:/stack/loopback.py:ro"]
+    depends_on: [eventing]
+  gateway:
+    image: nginx:1.27-alpine
+    ports:
+      - "127.0.0.1:${QA_API_PORT:-5443}:8443"
+      - "127.0.0.1:${QA_EVENTING_PORT:-5444}:8444"
+      # http doors for native development builds (Android emulators reach them through adb reverse).
+      - "127.0.0.1:5450:8450"
+      - "127.0.0.1:5451:8451"
+    volumes:
+      - ./gateway.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./private/tls:/etc/nginx/tls:ro
+    depends_on: [api, eventing]
+    networks: [qa]
+  seed:
+    profiles: ["tools"]
+    image: resgrid-qa/departments:local
+    environment:
+      SEED_DB_DIALECT: postgres
+      SEED_DB_HOST: postgres
+      SEED_DB_NAME: resgrid_qa
+      SEED_DB_USER: resgrid
+      SEED_DB_PASSWORD_FILE: /run/qa/db-password
+      SEED_USER_PASSWORD_FILE: /run/qa/user-password
+      SEED_ALLOW_DATABASE: resgrid_qa
+      SEED_SERVER_ENVIRONMENT: "3"
+      SEED_ADP_MODE: envelopes
+      SEED_API_URL: https://localhost:${QA_API_PORT:-5443}
+    volumes:
+      - ./private/db-password:/run/qa/db-password:ro
+      - ./private/user-password:/run/qa/user-password:ro
+      - ./private/out:/out
+    depends_on:
+      postgres: {condition: service_healthy}
+    networks: [qa]
+networks:
+  qa:
+    # A fixed subnet so Core can trust the gateway's X-Forwarded-Proto (WebConfig.IngressProxyNetwork in ResgridConfig.json).
+    ipam:
+      config:
+        - subnet: ${QA_SUBNET:-172.31.250.0/24}
+volumes:
+  postgres-data:

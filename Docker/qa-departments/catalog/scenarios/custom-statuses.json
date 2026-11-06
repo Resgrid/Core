@@ -1,0 +1,65 @@
+{
+  "id": "custom-statuses",
+  "name": "Custom Statuses",
+  "purpose": "Custom personnel status, staffing and unit status sets (with destinations, notes, GPS and next-status workflows) and department call priorities; Command and Utility units stay on built-in statuses.",
+  "covers": ["custom personnel statuses", "custom staffing levels", "custom unit statuses per unit type", "mixed custom and built-in unit statuses", "status destinations and required notes", "next-status workflows", "department call priorities", "24-hour clock, US Pacific", "sort orders"],
+  "department": { "timeZone": "Pacific Standard Time", "use24HourTime": true },
+  "settings": { "personnelSortOrder": "group", "unitsSortOrder": "default", "callsSortOrder": "priority" },
+  "statuses": {
+    "personnel": {
+      "name": "QA Responder Statuses",
+      "options": [
+        { "text": "Available", "color": "#16a34a", "base": "available" },
+        { "text": "Responding", "color": "#2563eb", "base": "responding", "destination": "callsAndStations", "next": ["On Scene", "Available"] },
+        { "text": "On Scene", "color": "#dc2626", "base": "onScene", "note": "optional", "next": ["Available"] },
+        { "text": "Not Responding", "color": "#6b7280", "base": "notResponding", "note": "required" },
+        { "text": "At Hospital", "color": "#9333ea", "base": "atHospital", "destination": "pois", "gps": true },
+        { "text": "On Break", "color": "#f59e0b", "textColor": "#111827", "base": "onBreak" }
+      ]
+    },
+    "staffing": {
+      "name": "QA Staffing Levels",
+      "options": [
+        { "text": "Available", "color": "#16a34a", "base": "available" },
+        { "text": "Delayed 15 Min", "color": "#f59e0b", "textColor": "#111827", "base": "delayed" },
+        { "text": "Unavailable", "color": "#dc2626", "base": "unavailable" },
+        { "text": "Committed", "color": "#2563eb", "base": "committed" },
+        { "text": "On Shift", "color": "#0d9488", "base": "onShift" },
+        { "text": "Off Duty", "color": "#6b7280", "base": "offDuty" },
+        { "text": "On Call", "color": "#7c3aed", "base": "onCall" }
+      ]
+    },
+    "units": [
+      {
+        "name": "QA Fire Apparatus",
+        "unitTypes": ["Engine", "Ladder"],
+        "options": [
+          { "text": "In Quarters", "color": "#16a34a", "base": "available" },
+          { "text": "Responding", "color": "#2563eb", "base": "responding", "destination": "calls", "next": ["On Scene", "Staging"] },
+          { "text": "Staging", "color": "#f59e0b", "textColor": "#111827", "base": "staging", "note": "optional" },
+          { "text": "On Scene", "color": "#dc2626", "base": "onScene", "next": ["Returning"] },
+          { "text": "Returning", "color": "#0d9488", "base": "returning", "next": ["In Quarters"] },
+          { "text": "Out of Service", "color": "#374151", "base": "maintenance", "note": "required" }
+        ]
+      },
+      {
+        "name": "QA EMS Units",
+        "unitTypes": ["Medic"],
+        "options": [
+          { "text": "Available", "color": "#16a34a", "base": "available" },
+          { "text": "En Route", "color": "#2563eb", "base": "enroute", "destination": "calls" },
+          { "text": "On Scene", "color": "#dc2626", "base": "onScene" },
+          { "text": "Transporting", "color": "#9333ea", "base": "transporting", "destination": "pois", "gps": true },
+          { "text": "At Hospital", "color": "#7c3aed", "base": "atHospital" },
+          { "text": "Out of Service", "color": "#374151", "base": "unavailable", "note": "required" }
+        ]
+      }
+    ]
+  },
+  "callPriorities": [
+    { "name": "Routine", "color": "#2563eb", "base": "low", "default": true },
+    { "name": "Priority", "color": "#f59e0b", "base": "medium" },
+    { "name": "Urgent", "color": "#ea580c", "base": "high" },
+    { "name": "Life Threat", "color": "#dc2626", "base": "emergency", "forceNotifyAll": true }
+  ]
+}

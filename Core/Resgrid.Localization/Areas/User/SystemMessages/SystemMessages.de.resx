@@ -143,6 +143,7 @@ Ihr Resgrid-Team</value>
   <data name="AdpPinSaved" xml:space="preserve"><value>Gespeichert.</value></data>
   <data name="AdpPinDenied" xml:space="preserve"><value>Geschützte Daten konnten nicht freigegeben oder gespeichert werden. Melden Sie sich bei Resgrid an und versuchen Sie es erneut.</value></data>
   <data name="AdpPinSmsChallenge" xml:space="preserve"><value>Ein geschützter Einsatz ist verfügbar. Antworten Sie mit OPEN {0}, einem Leerzeichen und Ihrer persönlichen PIN.</value></data>
+  <data name="DispatchRenotifyPushPrefix" xml:space="preserve"><value>Erinnerung {0}/{1}:</value></data>
   <data name="AdpPinVoiceChallenge" xml:space="preserve"><value>Ein geschützter Einsatz ist verfügbar. Geben Sie Ihre persönliche PIN ein und drücken Sie die Raute-Taste.</value></data>
   <data name="AdpReleaseSettings" xml:space="preserve"><value>ADP-Freigabeeinstellungen</value></data>
   <data name="AdpSmsMode" xml:space="preserve"><value>SMS-Zustellung</value></data>

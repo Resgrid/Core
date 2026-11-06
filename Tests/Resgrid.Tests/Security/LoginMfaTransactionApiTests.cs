@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -78,6 +80,7 @@ namespace Resgrid.Tests.Security
 		private bool _twoFactor;
 		internal const string NewAuthenticatorKey = "JBSWY3DPEHPK3PXPJBSWY3DPEHPK3PXP";
 		private RelyingPartyRegistry _registry;
+		private IServiceProvider _services;
 
 		[SetUp]
 		public void SetUp()
@@ -173,24 +176,46 @@ namespace Resgrid.Tests.Security
 
 		// ---- Host ----------------------------------------------------------------------------------------------------
 
-		private async Task WithServer(Func<HttpClient, Task> test)
+		/// <param name="clientStore">
+		/// Run OpenIddict on Startup's Entity Framework stores (in memory here) with the app clients registered, so a
+		/// client_id is checked as in production and tokens are stored. Otherwise degraded mode, which checks no client.
+		/// </param>
+		private async Task WithServer(Func<HttpClient, Task> test, bool clientStore = false)
 		{
 			var builder = WebApplication.CreateBuilder(new WebApplicationOptions { EnvironmentName = "Testing" });
 			builder.Logging.ClearProviders();
 			builder.WebHost.UseUrls("http://127.0.0.1:0");
 			builder.Services.AddHttpContextAccessor();
 			builder.Services.AddApiVersioning();
-			builder.Services.AddOpenIddict().AddServer(options =>
+			var openIddict = builder.Services.AddOpenIddict();
+			if (clientStore)
 			{
-				// The token endpoint, grants and passthrough match Startup; degraded mode and ephemeral keys replace the stores
-				// and certificates, which play no part in these flows.
+				var database = "oidc-" + Guid.NewGuid().ToString("N");
+				builder.Services.AddDbContext<Resgrid.Web.Services.Models.AuthorizationDbContext>(options =>
+				{
+					options.UseInMemoryDatabase(database);
+					options.ConfigureWarnings(warnings => warnings.Ignore(InMemoryEventId.TransactionIgnoredWarning));
+					options.UseOpenIddict<Guid>();
+				});
+				openIddict.AddCore(options => options.UseEntityFrameworkCore()
+					.UseDbContext<Resgrid.Web.Services.Models.AuthorizationDbContext>()
+					.ReplaceDefaultEntities<Guid>());
+			}
+
+			openIddict.AddServer(options =>
+			{
+				// The token endpoint, grants and passthrough match Startup; ephemeral keys replace the certificates, and unless
+				// the client store is asked for, degraded mode replaces the stores, which play no part in the other flows.
 				Resgrid.Web.Services.Helpers.ResgridTokenEndpoints.UseResgridTokenEndpoints(options);
 				options.AcceptAnonymousClients();
-				options.EnableDegradedMode();
+				if (!clientStore)
+				{
+					options.EnableDegradedMode();
+					options.AddEventHandler<OpenIddictServerEvents.ValidateTokenRequestContext>(handler => handler.UseInlineHandler(_ => default));
+				}
 				options.DisableAccessTokenEncryption();
 				options.AddEphemeralEncryptionKey().AddEphemeralSigningKey();
 				options.UseAspNetCore().EnableTokenEndpointPassthrough().DisableTransportSecurityRequirement();
-				options.AddEventHandler<OpenIddictServerEvents.ValidateTokenRequestContext>(handler => handler.UseInlineHandler(_ => default));
 			});
 			builder.Services.AddAuthorization();
 			builder.Services.AddControllers().AddApplicationPart(typeof(ConnectController).Assembly)
@@ -290,6 +315,9 @@ namespace Resgrid.Tests.Security
 				policy, TimeProvider.System));
 
 			await using var app = builder.Build();
+			_services = app.Services;
+			if (clientStore)
+				await Resgrid.Web.Services.Helpers.ResgridAppClients.RegisterAsync(app.Services);
 			app.UseRouting();
 			app.UseAuthentication();
 			app.UseAuthorization();
@@ -330,7 +358,7 @@ namespace Resgrid.Tests.Security
 		private static async Task<(HttpStatusCode Status, JObject Body)> Send(HttpResponseMessage response) =>
 			(response.StatusCode, JObject.Parse(await response.Content.ReadAsStringAsync()));
 
-		private static Task<HttpResponseMessage> PasswordGrant(HttpClient client, bool transaction = true, string totp = null)
+		private static Task<HttpResponseMessage> PasswordGrant(HttpClient client, bool transaction = true, string totp = null, string clientId = null)
 		{
 			var form = new Dictionary<string, string>
 			{
@@ -338,14 +366,19 @@ namespace Resgrid.Tests.Security
 			};
 			if (transaction) form["mfa_flow"] = "transaction";
 			if (totp != null) form["totp_code"] = totp;
+			if (clientId != null) form["client_id"] = clientId;
 			return client.PostAsync(TokenRoute, new FormUrlEncodedContent(form));
 		}
 
-		private static Task<HttpResponseMessage> Redeem(HttpClient client, string transaction, string code) =>
-			client.PostAsync(TokenRoute, new FormUrlEncodedContent(new Dictionary<string, string>
+		private static Task<HttpResponseMessage> Redeem(HttpClient client, string transaction, string code, string clientId = null)
+		{
+			var form = new Dictionary<string, string>
 			{
 				["grant_type"] = MfaLoginTransactions.CompletionGrantType, ["transaction"] = transaction, ["completion_code"] = code
-			}));
+			};
+			if (clientId != null) form["client_id"] = clientId;
+			return client.PostAsync(TokenRoute, new FormUrlEncodedContent(form));
+		}
 
 		private static Task<HttpResponseMessage> Post(HttpClient client, string action, object body) =>
 			client.PostAsync("/api/v4/Authentication/" + action, new StringContent(JObject.FromObject(body).ToString(), Encoding.UTF8, "application/json"));
@@ -399,6 +432,159 @@ namespace Resgrid.Tests.Security
 				tokens.Value<string>("access_token").Should().NotBeNullOrEmpty();
 				_issued.Single().LoginMfaMethod.Should().Be(MfaEvidenceMethod.Totp);
 			});
+		}
+
+		// ---- The apps' registered clients (omni-plan section 8.6 item 5) -----------------------------------------------
+
+		private static TimeSpan AppLifetime => TimeSpan.FromDays(OidcConfig.RefreshTokenExpiryDays);
+
+		private static TimeSpan AnonymousLifetime => TimeSpan.FromDays(OidcConfig.NonMobileRefreshTokenExpiryDays);
+
+		private static readonly TimeSpan Slack = TimeSpan.FromMinutes(1);
+
+		/// <summary>The password grant as the Omni apps send it (packages/auth/src/api/connect.ts).</summary>
+		private static Task<HttpResponseMessage> AppPasswordGrant(HttpClient client, string clientId)
+		{
+			var form = new Dictionary<string, string>
+			{
+				["grant_type"] = "password", ["username"] = "user1", ["password"] = Password, ["scope"] = "openid profile offline_access mobile"
+			};
+			if (clientId != null) form["client_id"] = clientId;
+			return client.PostAsync(TokenRoute, new FormUrlEncodedContent(form));
+		}
+
+		/// <summary>The refresh grant as the Omni apps send it, with an empty scope.</summary>
+		private static Task<HttpResponseMessage> AppRefreshGrant(HttpClient client, string refreshToken, string clientId)
+		{
+			var form = new Dictionary<string, string> { ["grant_type"] = "refresh_token", ["refresh_token"] = refreshToken, ["scope"] = "" };
+			if (clientId != null) form["client_id"] = clientId;
+			return client.PostAsync(TokenRoute, new FormUrlEncodedContent(form));
+		}
+
+		private void SessionStaysValid() =>
+			_sessions.Setup(s => s.ValidateAsync(It.IsAny<SessionPrincipalContext>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(SessionValidationResult.Valid(new UserSession { UserSessionId = "session-1", UserId = UserId, DepartmentId = DepartmentId }));
+
+		/// <summary>The refresh tokens in the OpenIddict store, by status.</summary>
+		private async Task<List<(string Status, DateTimeOffset? ExpiresOn)>> StoredRefreshTokens()
+		{
+			using var scope = _services.CreateScope();
+			var tokens = scope.ServiceProvider.GetRequiredService<IOpenIddictTokenManager>();
+			var rows = new List<(string Status, DateTimeOffset? ExpiresOn)>();
+			await foreach (var token in tokens.ListAsync(null, null, CancellationToken.None))
+			{
+				if ((await tokens.GetTypeAsync(token))?.EndsWith(OpenIddictConstants.TokenTypeHints.RefreshToken, StringComparison.Ordinal) == true)
+					rows.Add((await tokens.GetStatusAsync(token), await tokens.GetExpirationDateAsync(token)));
+			}
+
+			return rows;
+		}
+
+		[TestCase(Resgrid.Web.Services.Helpers.ResgridAppClients.Responder)]
+		[TestCase(Resgrid.Web.Services.Helpers.ResgridAppClients.Unit)]
+		[TestCase(Resgrid.Web.Services.Helpers.ResgridAppClients.IncidentCommand)]
+		[TestCase(Resgrid.Web.Services.Helpers.ResgridAppClients.Dispatch)]
+		[TestCase(Resgrid.Web.Services.Helpers.ResgridAppClients.BigBoard)]
+		public async Task A_registered_app_client_signs_in_and_refreshes_with_the_long_lifetime(string clientId)
+		{
+			_twoFactor = false;
+			await WithServer(async client =>
+			{
+				var (status, tokens) = await Send(await AppPasswordGrant(client, clientId));
+				status.Should().Be(HttpStatusCode.OK, tokens.ToString());
+				_issued.Single().ExpiresOn.Should().BeCloseTo(DateTime.UtcNow.Add(AppLifetime), Slack,
+					"the session lasts as long as the app's refresh token, not the 2 days of an anonymous sign-in");
+				(await StoredRefreshTokens()).Single().ExpiresOn.Should().BeCloseTo(DateTimeOffset.UtcNow.Add(AppLifetime), Slack);
+
+				SessionStaysValid();
+				var (refreshStatus, refreshed) = await Send(await AppRefreshGrant(client, tokens.Value<string>("refresh_token"), clientId));
+				refreshStatus.Should().Be(HttpStatusCode.OK, refreshed.ToString());
+				var stored = await StoredRefreshTokens();
+				stored.Should().ContainSingle(t => t.Status == OpenIddictConstants.Statuses.Redeemed, "refresh tokens roll");
+				stored.Single(t => t.Status == OpenIddictConstants.Statuses.Valid).ExpiresOn.Should()
+					.BeCloseTo(DateTimeOffset.UtcNow.Add(AppLifetime), Slack);
+
+				// A refresh token stays with the app it was issued to.
+				var otherApp = clientId == Resgrid.Web.Services.Helpers.ResgridAppClients.Unit
+					? Resgrid.Web.Services.Helpers.ResgridAppClients.Responder
+					: Resgrid.Web.Services.Helpers.ResgridAppClients.Unit;
+				var (_, other) = await Send(await AppRefreshGrant(client, refreshed.Value<string>("refresh_token"), otherApp));
+				other.Value<string>("error").Should().Be(OpenIddictConstants.Errors.InvalidGrant);
+			}, clientStore: true);
+		}
+
+		[Test]
+		public async Task An_anonymous_sign_in_keeps_the_short_lifetime_and_its_refresh_token_moves_to_an_app_client()
+		{
+			_twoFactor = false;
+			await WithServer(async client =>
+			{
+				// Older app builds send no client_id.
+				var (status, tokens) = await Send(await AppPasswordGrant(client, clientId: null));
+				status.Should().Be(HttpStatusCode.OK, tokens.ToString());
+				_issued.Single().ExpiresOn.Should().BeCloseTo(DateTime.UtcNow.Add(AnonymousLifetime), Slack);
+				(await StoredRefreshTokens()).Single().ExpiresOn.Should().BeCloseTo(DateTimeOffset.UtcNow.Add(AnonymousLifetime), Slack);
+
+				// An Omni build that signed in while the server refused its client_id names it again on the next refresh. That is
+				// accepted and the new refresh token is the app's; the session keeps the expiry it was opened with.
+				SessionStaysValid();
+				var (refreshStatus, refreshed) = await Send(await AppRefreshGrant(client, tokens.Value<string>("refresh_token"),
+					Resgrid.Web.Services.Helpers.ResgridAppClients.Responder));
+				refreshStatus.Should().Be(HttpStatusCode.OK, refreshed.ToString());
+				(await StoredRefreshTokens()).Single(t => t.Status == OpenIddictConstants.Statuses.Valid).ExpiresOn.Should()
+					.BeCloseTo(DateTimeOffset.UtcNow.Add(AppLifetime), Slack);
+			}, clientStore: true);
+		}
+
+		[Test]
+		public async Task An_unknown_client_id_is_refused_as_invalid_client_before_the_grant_is_spent()
+		{
+			_twoFactor = false;
+			await WithServer(async client =>
+			{
+				var (status, refused) = await Send(await AppPasswordGrant(client, "resgrid-unknown"));
+				((int)status).Should().BeOneOf(400, 401);
+				refused.Value<string>("error").Should().Be(OpenIddictConstants.Errors.InvalidClient);
+				_issued.Should().BeEmpty();
+
+				var (_, tokens) = await Send(await AppPasswordGrant(client, clientId: null));
+				SessionStaysValid();
+				var (refreshStatus, refreshRefused) = await Send(await AppRefreshGrant(client, tokens.Value<string>("refresh_token"), "resgrid-unknown"));
+				((int)refreshStatus).Should().BeOneOf(400, 401);
+				refreshRefused.Value<string>("error").Should().Be(OpenIddictConstants.Errors.InvalidClient);
+
+				// The apps then retry without the client_id (connect.ts postToken); the refused attempt spent nothing.
+				var (retryStatus, retried) = await Send(await AppRefreshGrant(client, tokens.Value<string>("refresh_token"), clientId: null));
+				retryStatus.Should().Be(HttpStatusCode.OK, retried.ToString());
+			}, clientStore: true);
+		}
+
+		[Test]
+		public async Task The_mfa_completion_and_the_sso_exchange_accept_an_app_client_and_give_it_the_long_lifetime()
+		{
+			await WithServer(async client =>
+			{
+				const string clientId = Resgrid.Web.Services.Helpers.ResgridAppClients.Unit;
+				var (startStatus, started) = await Send(await PasswordGrant(client, clientId: clientId));
+				startStatus.Should().Be(HttpStatusCode.BadRequest, started.ToString());
+				var transaction = started.Value<string>("mfa_transaction");
+				var (_, completed) = await Send(await Post(client, "CompleteTotp", new { Transaction = transaction, Code = "123456" }));
+				var code = completed["Data"]!.Value<string>("CompletionCode");
+
+				var (tokenStatus, tokens) = await Send(await Redeem(client, transaction, code, clientId));
+				tokenStatus.Should().Be(HttpStatusCode.OK, tokens.ToString());
+				_issued.Single().ExpiresOn.Should().BeCloseTo(DateTime.UtcNow.Add(AppLifetime), Slack);
+
+				var (ssoStatus, sso) = await Send(await ExternalToken(client, new Dictionary<string, string>
+				{
+					["provider"] = "oidc", ["external_token"] = _idp.Token("app-client-nonce"), ["department_code"] = "DEPT", ["totp_code"] = "123456",
+					["scope"] = "openid email profile offline_access mobile", ["client_id"] = clientId
+				}));
+				ssoStatus.Should().Be(HttpStatusCode.OK, sso.ToString());
+				_issued.Should().HaveCount(2);
+				_issued.Last().AuthenticationMethod.Should().Be(UserSessionAuthenticationMethod.OidcSso);
+				_issued.Last().ExpiresOn.Should().BeCloseTo(DateTime.UtcNow.Add(AppLifetime), Slack);
+			}, clientStore: true);
 		}
 
 		// ---- The legacy SSO exchange (plan section 7.7.4) -------------------------------------------------------------

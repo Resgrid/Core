@@ -42,9 +42,13 @@ namespace Resgrid.Config
 
 		/// <summary>
 		/// Comma-separated, registered client IDs allowed to receive the longer mobile
-		/// refresh-token lifetime. Anonymous requests and caller-supplied scopes never qualify.
+		/// refresh-token lifetime (RefreshTokenExpiryDays, which is also the API session's lifetime).
+		/// Anonymous requests and caller-supplied scopes never qualify. The default is the Resgrid apps'
+		/// public clients, which the API registers at start (omni-plan section 8.6 item 5). They have no
+		/// secret, so this names the apps rather than authenticating them. An empty value is ignored by
+		/// the config loader: to give every client the short lifetime, set an id no client uses, e.g. "none".
 		/// </summary>
-		public static string TrustedLongLivedClientIds = "";
+		public static string TrustedLongLivedClientIds = "responder,unit,ic,dispatch,bigboard";
 
 		public static string EncryptionCert = "";
 

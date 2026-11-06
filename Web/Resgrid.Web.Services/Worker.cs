@@ -46,6 +46,9 @@ namespace Resgrid.Web.Services
 					});
 				}
 
+				// The apps' public clients (responder, unit, ic, dispatch, bigboard), which they name on every token grant.
+				await Helpers.ResgridAppClients.RegisterAsync(provider);
+
 				//// Blazor Hosted
 				//if (await manager.FindByClientIdAsync("blazorcodeflowpkceclient") is null)
 				//{

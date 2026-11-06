@@ -1438,7 +1438,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 				Scopes.Roles
 			});
 
-			var refreshTokenLifetime = GetRefreshTokenLifetime((string)null);
+			// This path is an OpenIddict token endpoint, so a client_id here has been checked against the registered clients
+			// like on the password grant; with none, the exchange keeps the short lifetime.
+			var refreshTokenLifetime = GetRefreshTokenLifetime(HttpContext.GetOpenIddictServerRequest());
 			if (SessionSecurityConfig.TrackingEnabled)
 			{
 				try

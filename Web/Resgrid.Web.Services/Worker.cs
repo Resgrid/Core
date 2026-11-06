@@ -24,15 +24,15 @@ namespace Resgrid.Web.Services
 			var context = scope.ServiceProvider.GetRequiredService<AuthorizationDbContext>();
 			await context.Database.EnsureCreatedAsync(cancellationToken);
 
-			await RegisterApplicationsAsync(scope.ServiceProvider);
+			await RegisterApplicationsAsync(scope.ServiceProvider, cancellationToken);
 			await RegisterScopesAsync(scope.ServiceProvider);
 
-			static async Task RegisterApplicationsAsync(IServiceProvider provider)
+			static async Task RegisterApplicationsAsync(IServiceProvider provider, CancellationToken cancellationToken)
 			{
 				var manager = provider.GetRequiredService<IOpenIddictApplicationManager>();
 
 				// Events Web API
-				if (await manager.FindByClientIdAsync(JwtConfig.EventsClientId) == null)
+				if (await manager.FindByClientIdAsync(JwtConfig.EventsClientId, cancellationToken) == null)
 				{
 					await manager.CreateAsync(new OpenIddictApplicationDescriptor
 					{
@@ -43,8 +43,11 @@ namespace Resgrid.Web.Services
 						{
 							Permissions.Endpoints.Introspection
 						}
-					});
+					}, cancellationToken);
 				}
+
+				// The apps' public clients (responder, unit, ic, dispatch, bigboard), which they name on every token grant.
+				await Helpers.ResgridAppClients.RegisterAsync(provider, cancellationToken);
 
 				//// Blazor Hosted
 				//if (await manager.FindByClientIdAsync("blazorcodeflowpkceclient") is null)

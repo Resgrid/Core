@@ -8393,7 +8393,9 @@
             <see cref="M:Resgrid.Web.Services.Helpers.ResgridAppClients.Describe(System.String)"/>, so a permission added here reaches stores registered earlier. Safe on every start and on
             several instances at once: when another instance created or updated the same client first, that is kept. Each
             client gets its own scope, so a failed write leaves nothing tracked for the next. A client that still cannot be
-            registered is logged and skipped: its app goes on signing in without a client_id, as before.
+            registered is logged and skipped, and the API starts anyway. Until a later start registers it, the token endpoint
+            refuses its client_id as invalid_client; the apps then retry without a client_id (anonymous, with the short
+            refresh-token lifetime).
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Helpers.ResgridTokenEndpoints">

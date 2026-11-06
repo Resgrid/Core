@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -6,6 +8,7 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using NUnit.Framework;
 using OpenIddict.Abstractions;
 using Resgrid.Config;
@@ -33,7 +36,8 @@ namespace Resgrid.Tests.Security
 			"scp:mobile"
 		};
 
-		private static ServiceProvider Services()
+		/// <param name="manager">Stands in for OpenIddict's application manager; otherwise its Entity Framework stores.</param>
+		private static ServiceProvider Services(IOpenIddictApplicationManager manager = null)
 		{
 			var database = "oidc-" + Guid.NewGuid().ToString("N");
 			var services = new ServiceCollection();
@@ -47,7 +51,26 @@ namespace Resgrid.Tests.Security
 			services.AddOpenIddict().AddCore(options => options.UseEntityFrameworkCore()
 				.UseDbContext<AuthorizationDbContext>()
 				.ReplaceDefaultEntities<Guid>());
+			if (manager != null)
+				services.AddSingleton(manager);
 			return services.BuildServiceProvider();
+		}
+
+		private static async Task<string> ConsoleOutputOf(Func<Task> action)
+		{
+			var originalOut = Console.Out;
+			using var writer = new StringWriter();
+			Console.SetOut(writer);
+			try
+			{
+				await action();
+			}
+			finally
+			{
+				Console.SetOut(originalOut);
+			}
+
+			return writer.ToString();
 		}
 
 		private static async Task<string[]> PermissionsOf(IServiceProvider services, string clientId)
@@ -122,6 +145,53 @@ namespace Resgrid.Tests.Security
 			{
 				JwtConfig.EventsClientSecret = secret;
 			}
+		}
+
+		[Test]
+		public async Task The_api_start_hands_its_cancellation_token_to_every_client_registration()
+		{
+			using var startup = new CancellationTokenSource();
+			var lookups = new List<(string ClientId, CancellationToken Token)>();
+			var creates = new List<(string ClientId, CancellationToken Token)>();
+			var manager = new Mock<IOpenIddictApplicationManager>();
+			manager.Setup(m => m.FindByClientIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+				.Returns((string clientId, CancellationToken token) =>
+				{
+					lookups.Add((clientId, token));
+					return new ValueTask<object>(clientId == JwtConfig.EventsClientId ? new object() : null);
+				});
+			manager.Setup(m => m.CreateAsync(It.IsAny<OpenIddictApplicationDescriptor>(), It.IsAny<CancellationToken>()))
+				.Returns((OpenIddictApplicationDescriptor descriptor, CancellationToken token) =>
+				{
+					creates.Add((descriptor.ClientId, token));
+					return new ValueTask<object>(new object());
+				});
+
+			await using var services = Services(manager.Object);
+			await new Resgrid.Web.Services.Worker(services).StartAsync(startup.Token);
+
+			lookups.Select(l => l.ClientId).Should().Contain(ResgridAppClients.ClientIds);
+			creates.Select(c => c.ClientId).Should().BeEquivalentTo(ResgridAppClients.ClientIds);
+			lookups.Concat(creates).Should().OnlyContain(call => call.Token == startup.Token,
+				"a start cancelled part way through must not go on through the remaining clients");
+		}
+
+		[Test]
+		public async Task A_client_that_cannot_be_written_is_logged_with_the_write_failure_as_its_cause()
+		{
+			var manager = new Mock<IOpenIddictApplicationManager>();
+			manager.Setup(m => m.FindByClientIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+				.Returns(new ValueTask<object>((object)null));
+			manager.Setup(m => m.CreateAsync(It.IsAny<OpenIddictApplicationDescriptor>(), It.IsAny<CancellationToken>()))
+				.Returns(() => ValueTask.FromException<object>(new InvalidOperationException("The application store is unavailable (test).")));
+
+			await using var services = Services(manager.Object);
+			var output = await ConsoleOutputOf(() => ResgridAppClients.RegisterAsync(services));
+
+			foreach (var clientId in ResgridAppClients.ClientIds)
+				output.Should().Contain($"The OAuth client '{clientId}' was not registered as described.");
+			output.Should().Contain("The application store is unavailable (test).", "the store's own failure is why the client is missing");
+			output.Should().Contain("invalid_client", "until a later start registers it, the token endpoint refuses its client_id");
 		}
 
 		[Test]

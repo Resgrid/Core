@@ -74,7 +74,9 @@ namespace Resgrid.Web.Services.Helpers
 		/// <see cref="Describe"/>, so a permission added here reaches stores registered earlier. Safe on every start and on
 		/// several instances at once: when another instance created or updated the same client first, that is kept. Each
 		/// client gets its own scope, so a failed write leaves nothing tracked for the next. A client that still cannot be
-		/// registered is logged and skipped: its app goes on signing in without a client_id, as before.
+		/// registered is logged and skipped, and the API starts anyway. Until a later start registers it, the token endpoint
+		/// refuses its client_id as invalid_client; the apps then retry without a client_id (anonymous, with the short
+		/// refresh-token lifetime).
 		/// </summary>
 		public static async Task RegisterAsync(IServiceProvider services, CancellationToken cancellationToken = default)
 		{
@@ -87,7 +89,7 @@ namespace Resgrid.Web.Services.Helpers
 				catch (Exception ex) when (ex is not OperationCanceledException)
 				{
 					Resgrid.Framework.Logging.LogException(ex,
-						$"Could not register the OAuth client '{clientId}'. Its app's token requests go on without a client_id, with the short refresh-token lifetime.");
+						$"Could not register the OAuth client '{clientId}'. Until a later start registers it, token requests naming it are refused as invalid_client; the apps then retry without a client_id and get the short refresh-token lifetime.");
 				}
 			}
 		}
@@ -95,6 +97,7 @@ namespace Resgrid.Web.Services.Helpers
 		private static async Task RegisterAsync(IServiceProvider services, string clientId, CancellationToken cancellationToken)
 		{
 			var descriptor = Describe(clientId);
+			Exception writeFailure = null;
 			using (var scope = services.CreateScope())
 			{
 				var manager = scope.ServiceProvider.GetRequiredService<IOpenIddictApplicationManager>();
@@ -112,6 +115,7 @@ namespace Resgrid.Web.Services.Helpers
 					// Possibly another instance writing the same client: settled below, from a clean scope.
 					if (existing != null && ex is not OpenIddictExceptions.ConcurrencyException)
 						throw;
+					writeFailure = ex;
 				}
 			}
 
@@ -119,8 +123,9 @@ namespace Resgrid.Web.Services.Helpers
 			{
 				var manager = scope.ServiceProvider.GetRequiredService<IOpenIddictApplicationManager>();
 				var current = await manager.FindByClientIdAsync(clientId, cancellationToken);
+				// Not another instance's write after all: keep this one's failure as the cause.
 				if (current == null || !await MatchesAsync(manager, current, descriptor, cancellationToken))
-					throw new InvalidOperationException($"The OAuth client '{clientId}' was not registered as described.");
+					throw new InvalidOperationException($"The OAuth client '{clientId}' was not registered as described.", writeFailure);
 			}
 		}
 

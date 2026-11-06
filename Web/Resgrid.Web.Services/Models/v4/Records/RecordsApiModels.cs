@@ -353,11 +353,11 @@ namespace Resgrid.Web.Services.Models.v4.Records
 		public string ExternalId { get; set; }
 		public DateTime? StartedOn { get; set; }
 		public DateTime? EndedOn { get; set; }
-		public RecordDetailsInput Details { get; set; } = new RecordDetailsInput();
+		public RecordDetailsInput Details { get; set; }
 		public List<RecordParticipantInputData> Participants { get; set; } = new List<RecordParticipantInputData>();
 		public List<RecordUnitResponseInputData> Units { get; set; } = new List<RecordUnitResponseInputData>();
 		/// <summary>
-		/// Typed values for a department definition (RMS-1B); ignored for locked system definitions. A posted list
+		/// Typed values for a department definition (RMS-1B) or the Callback field-client form when Details is omitted. A posted list
 		/// replaces the stored values wholesale, so this stays null when the property is omitted: null is "no value
 		/// update", an empty list is an explicit clear. Do not give it a default.
 		/// </summary>

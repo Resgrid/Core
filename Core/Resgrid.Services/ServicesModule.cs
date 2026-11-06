@@ -229,6 +229,7 @@ namespace Resgrid.Services
 			builder.RegisterType<FeatureToggleService>().As<IFeatureToggleService>().InstancePerLifetimeScope();
 			builder.RegisterType<ChecklistAccessMutationObserver>().As<IFeatureFlagMutationObserver>().InstancePerLifetimeScope();
 			builder.RegisterType<CallDispatchStatusService>().As<ICallDispatchStatusService>().InstancePerLifetimeScope();
+			builder.RegisterType<DispatchRenotificationService>().As<IDispatchRenotificationService>().InstancePerLifetimeScope();
 			builder.RegisterType<PendingCallsService>().As<IPendingCallsService>().InstancePerLifetimeScope();
 			builder.RegisterType<CallClosureService>().As<ICallClosureService>().InstancePerLifetimeScope();
 			builder.RegisterType<CallAutoCloseService>().As<ICallAutoCloseService>().InstancePerLifetimeScope();

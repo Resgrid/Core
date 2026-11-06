@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using Resgrid.Config;
@@ -182,6 +183,51 @@ namespace Resgrid.Tests.Services
 				true,
 				0,
 				null), Times.Once);
+		}
+
+		[TestCase(false, false, CallPriority.Low)]
+		[TestCase(true, false, CallPriority.Emergency)]
+		[TestCase(false, true, CallPriority.High)]
+		public async Task A_dispatch_re_notification_always_plays_the_re_notify_sound(bool departmentEnabled, bool userEnabled, CallPriority priority)
+		{
+			_departmentSettingsService
+				.Setup(x => x.GetModernNotificationsEnabledAsync(DepartmentId, false))
+				.ReturnsAsync(departmentEnabled);
+
+			var profile = new UserProfile { UserId = UserId, SendPush = true, EnableModernApplicationSounds = userEnabled };
+			var call = new StandardPushCall
+			{
+				DepartmentId = DepartmentId,
+				DepartmentCode = DepartmentCode,
+				CallId = 100,
+				Priority = (int)priority,
+				Title = "Reminder 1/3: Call Dispatch",
+				SubTitle = "Address",
+				SoundType = PushSoundTypes.ModernCallRenotify
+			};
+
+			await _pushService.PushCall(call, UserId, profile, new DepartmentCallPriority { Tone = 4 });
+
+			_novuProvider.Verify(x => x.SendUserDispatch(call.Title, call.SubTitle, UserId, DepartmentCode, "C100",
+				"27", true, 0, It.IsAny<string>()), Times.Once);
+		}
+
+		[Test]
+		public async Task A_unit_re_notification_plays_the_re_notify_sound()
+		{
+			var call = new StandardPushCall { DepartmentId = DepartmentId, DepartmentCode = DepartmentCode, CallId = 101, Priority = (int)CallPriority.Medium,
+				Title = "Reminder 1/3: Call Dispatch", SoundType = PushSoundTypes.ModernCallRenotify };
+
+			await _pushService.PushCallUnit(call, 31);
+
+			_novuProvider.Verify(x => x.SendUnitDispatch(call.Title, call.SubTitle, 31, DepartmentCode, "C101", "27", true, 0, It.IsAny<string>()), Times.Once);
+		}
+
+		[Test]
+		public void The_re_notify_sound_type_is_27_and_names_its_bundled_file()
+		{
+			((int)PushSoundTypes.ModernCallRenotify).Should().Be(27);
+			PushSoundFile.GetModernStem("27").Should().Be("moderncallrenotify");
 		}
 	}
 }

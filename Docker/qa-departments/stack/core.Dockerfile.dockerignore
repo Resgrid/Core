@@ -1,0 +1,17 @@
+# Context for core.Dockerfile is the Core repository root; send only the sources the hosts build from.
+**/.git
+**/.vs
+**/.vscode
+**/.idea
+**/bin
+**/obj
+**/node_modules
+**/*.user
+**/.env
+artifacts
+docs
+Documentation
+misc
+Docker
+Tests
+**/wwwroot/lib

@@ -9,7 +9,8 @@ namespace Resgrid.Model.Providers
 
 		Task<bool> SendWelcomeMail(string name, string departmentName, string userName, string email, int departmentId);
 		Task<bool> SendPasswordRecoveryMail(string name, string email, string departmentName,
-			string resetUrl, string ipAddress, string userAgent, string requestedOn, bool isSsoManaged);
+			string resetUrl, string ipAddress, string userAgent, string requestedOn, bool isSsoManaged,
+			string userName, string linkLifetime, string linkExpiresOn);
 		Task<bool> SendPasswordChangedByAdministratorMail(string name, string userName, string email, string departmentName);
 		Task<bool> SendSignupMail(string name, string departmentName, string email);
 		Task<bool> SendMessageMail(string email, string subject, string messageSubject, string messageBody, string senderEmail, string senderName, string sentOn, int messageId, DepartmentEmailBranding branding);

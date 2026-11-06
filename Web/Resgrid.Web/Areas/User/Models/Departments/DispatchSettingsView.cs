@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Resgrid.Model;
 
@@ -46,6 +47,30 @@ namespace Resgrid.Web.Areas.User.Models.Departments
 
 		/// <summary>An active call closes when its last dispatched unit reports back in service or out of service (setting 116).</summary>
 		public bool CloseCallWhenUnitsClear { get; set; }
+
+		/// <summary>Re-notify dispatched personnel and units until they set a status (setting 124, off by default).</summary>
+		public bool RenotifyEnabled { get; set; }
+
+		/// <summary>Minutes between re-notifications. Display only while <see cref="RenotifyTimingLocked"/>; a posted value is then ignored.</summary>
+		public int RenotifyIntervalMinutes { get; set; } = DispatchRenotifyConfig.DefaultIntervalMinutes;
+
+		/// <summary>Re-notifications after the dispatch. Display only while <see cref="RenotifyTimingLocked"/>; a posted value is then ignored.</summary>
+		public int RenotifyMaxRetries { get; set; } = DispatchRenotifyConfig.DefaultMaxRetries;
+
+		/// <summary>DispatchConfig.RenotifyTimingLocked: the interval and retry count are fixed for system stability. Set by the server, never bound.</summary>
+		[BindNever]
+		public bool RenotifyTimingLocked { get; set; }
+
+		/// <summary>DispatchConfig.RenotifyChannelsLocked: push is the only channel, for system stability. Set by the server, never bound.</summary>
+		[BindNever]
+		public bool RenotifyChannelsLocked { get; set; }
+
+		/// <summary>The channels shown ticked (<see cref="DispatchRenotifyChannels"/> flags): push only while locked. Set by the server, never bound.</summary>
+		[BindNever]
+		public int RenotifyChannels { get; set; } = (int)DispatchRenotifyConfig.DefaultChannels;
+
+		/// <summary>The channel checkboxes as posted (<see cref="DispatchRenotifyChannels"/> values). Ignored while the channels are locked.</summary>
+		public List<int> RenotifyChannelValues { get; set; } = new List<int>();
 
 		// Check-In Timer Settings
 		public bool AutoEnableCheckInTimers { get; set; }

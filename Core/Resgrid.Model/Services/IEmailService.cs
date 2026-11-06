@@ -24,10 +24,13 @@ namespace Resgrid.Model.Services
 			int departmentId);
 
 		/// <summary>
-		/// Sends a public password recovery email. SSO-managed accounts receive the request details but no link.
+		/// Sends a password recovery email. SSO-managed accounts receive the request details but no link. A link email says how
+		/// long the link works (<paramref name="linkLifetime"/>, until <paramref name="linkExpiresOn"/> UTC) and names the account's
+		/// username, which is what the sign-in page asks for.
 		/// </summary>
 		Task<bool> SendPasswordRecoveryEmail(string emailAddress, string name, string departmentName,
-			string resetUrl, string ipAddress, string userAgent, DateTime requestedOn, bool isSsoManaged);
+			string resetUrl, string ipAddress, string userAgent, DateTime requestedOn, bool isSsoManaged,
+			string userName, DateTime? linkExpiresOn, TimeSpan? linkLifetime);
 
 		/// <summary>Notifies a user that a department administrator changed their password.</summary>
 		Task<bool> SendPasswordChangedByAdministratorEmail(string emailAddress, string name, string userName,

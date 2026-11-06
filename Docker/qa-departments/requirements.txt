@@ -1,0 +1,4 @@
+# Seeder runtime (Docker/qa-departments/Dockerfile). Pinned; bump deliberately.
+psycopg[binary]==3.2.10
+pymssql==2.3.7
+cryptography==45.0.7

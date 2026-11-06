@@ -7125,6 +7125,12 @@
   <data xml:space="preserve" name="SettingHelp.DispatchResponseCodes">
     <value>Optionale Codes je Einheit (z. B. C3 für Sondersignal), die Zeilen bedingter Einsatzkarten vorschlagen, und ob Besatzungen sie in Push-Nachrichten und Apps sehen. Leer bedeutet, dass Codes nirgends erscheinen.</value>
   </data>
+  <data xml:space="preserve" name="Setting.DispatchRenotifyConfig">
+    <value>Erneute Alarmierung</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.DispatchRenotifyConfig">
+    <value>Sendet eine Alarmierung per Push erneut an Personal und Einheiten, die seitdem keinen Status gesetzt haben: alle 5 Minuten, bis zu 3-mal. Jeder Status, den eine Person oder Einheit setzt, gilt als Bestätigung; automatische Status nicht. Endet, wenn der Einsatz geschlossen oder der Empfänger daraus entfernt wird. Standardmäßig aus.</value>
+  </data>
   <data name="Field.DepartmentTermOverride.Singular" xml:space="preserve">
     <value>Begriff der Organisation / Ein Eintrag</value>
   </data>
@@ -7775,5 +7781,35 @@
   </data>
   <data xml:space="preserve" name="SettingHelp.OfflineMapPacksConfig">
     <value>Was die Apps für die Nutzung ohne Netz herunterladen: das maximale Einsatzgebiet (dessen Basiskarte die Größengrenze einhalten muss), welche Kartendaten enthalten sind, wann geladen wird und zusätzliche Abdeckung für Einsätze und Routen außerhalb des Gebiets.</value>
+  </data>
+  <data name="Module.RecordsDisabled" xml:space="preserve">
+    <value>Verfügbarkeit von Akten</value>
+  </data>
+  <data name="ModuleHelp.RecordsDisabled" xml:space="preserve">
+    <value>Blendet Akten in der Navigation, den Dashboard-Widgets und der Suche der Web-App ein oder aus. Das Ausblenden löscht keine Daten und ändert keine Berechtigungen. Protokolle haben einen eigenen Schalter.</value>
+  </data>
+  <data name="Module.ContactsDisabled" xml:space="preserve">
+    <value>Verfügbarkeit von Kontakten</value>
+  </data>
+  <data name="ModuleHelp.ContactsDisabled" xml:space="preserve">
+    <value>Blendet Kontakte in der Navigation, den Dashboard-Widgets und der Suche der Web-App ein oder aus. Das Ausblenden löscht keine Daten und ändert keine Berechtigungen.</value>
+  </data>
+  <data name="Module.CertificationsDisabled" xml:space="preserve">
+    <value>Verfügbarkeit von Zertifizierungen</value>
+  </data>
+  <data name="ModuleHelp.CertificationsDisabled" xml:space="preserve">
+    <value>Blendet Zertifizierungen in der Navigation, den Dashboard-Widgets und der Suche der Web-App ein oder aus. Das Ausblenden löscht keine Daten und ändert keine Berechtigungen. Die Durchsetzung von Zertifizierungen ist nicht betroffen.</value>
+  </data>
+  <data name="Module.DeploymentsDisabled" xml:space="preserve">
+    <value>Verfügbarkeit von Einsätzen</value>
+  </data>
+  <data name="ModuleHelp.DeploymentsDisabled" xml:space="preserve">
+    <value>Blendet Einsätze in der Navigation, den Dashboard-Widgets und der Suche der Web-App ein oder aus. Das Ausblenden löscht keine Daten und ändert keine Berechtigungen.</value>
+  </data>
+  <data name="Module.ChatDisabled" xml:space="preserve">
+    <value>Verfügbarkeit des Chats</value>
+  </data>
+  <data name="ModuleHelp.ChatDisabled" xml:space="preserve">
+    <value>Blendet den Chat in der Navigation, den Dashboard-Widgets und der Suche der Web-App ein oder aus. Das Ausblenden löscht keine Daten und ändert keine Berechtigungen. Der Chat in den mobilen Apps ist nicht betroffen.</value>
   </data>
 </root>

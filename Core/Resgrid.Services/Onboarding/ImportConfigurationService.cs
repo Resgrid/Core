@@ -49,7 +49,7 @@ namespace Resgrid.Services.Onboarding
 			["maintenance"] = "Maintenance",
 			["inventory"] = "Inventory",
 			["knowledge"] = "Documents",
-			["records"] = "Logs",
+			["records"] = "Records",
 			["communication"] = "Messaging",
 			["business"] = "BusinessOperations"
 		};

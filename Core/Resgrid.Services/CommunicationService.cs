@@ -244,70 +244,7 @@ namespace Resgrid.Services
 			{
 				try
 				{
-					var spc = new StandardPushCall();
-					spc.CallId = pushCall.CallId;
-					spc.Title = string.Format("Call {0}", pushCall.Name);
-					spc.Priority = pushCall.Priority;
-					spc.ActiveCallCount = 1;
-					spc.DepartmentId = departmentId;
-					spc.DepartmentCode = pushCall.Department?.Code;
-
-					if (pushCall.CallPriority != null && !String.IsNullOrWhiteSpace(pushCall.CallPriority.Color))
-					{
-						spc.Color = pushCall.CallPriority.Color;
-					}
-					else
-					{
-						spc.Color = "#000000";
-					}
-
-					string subTitle = String.Empty;
-
-					if (String.IsNullOrWhiteSpace(pushAddress) && !String.IsNullOrWhiteSpace(pushCall.Address))
-					{
-						subTitle = pushCall.Address;
-					}
-					else if (!String.IsNullOrWhiteSpace(pushAddress))
-					{
-						subTitle = pushAddress;
-					}
-					else if (!string.IsNullOrEmpty(pushCall.GeoLocationData) && pushCall.GeoLocationData.Length > 1)
-					{
-						try
-						{
-							string[] points = pushCall.GeoLocationData.Split(char.Parse(","));
-
-							if (points != null && points.Length == 2)
-							{
-								subTitle = await _geoLocationProvider.GetAproxAddressFromLatLong(double.Parse(points[0]), double.Parse(points[1]));
-							}
-						}
-						catch
-						{ }
-					}
-
-					if (!string.IsNullOrEmpty(subTitle))
-					{
-						spc.SubTitle = subTitle.Truncate(200);
-					}
-					else
-					{
-						if (!string.IsNullOrEmpty(pushCall.NatureOfCall))
-							spc.SubTitle = pushCall.NatureOfCall.Truncate(200);
-					}
-
-					if (String.IsNullOrWhiteSpace(spc.SubTitle))
-						spc.SubTitle = String.Empty;
-					else
-						spc.SubTitle = StringHelpers.StripHtmlTagsCharArray(spc.SubTitle);
-
-					spc.SubTitle = Regex.Replace(spc.SubTitle, @"((http|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?)", "");
-
-					spc.Title = StringHelpers.StripHtmlTagsCharArray(spc.Title);
-					spc.Title = Regex.Replace(spc.Title, @"((http|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?)", "");
-
-					spc.Title = spc.Title.Replace(char.Parse("/"), char.Parse(" "));
-					spc.SubTitle = spc.SubTitle.Replace(char.Parse("/"), char.Parse(" "));
+					var spc = await BuildUserPushCallAsync(pushCall, pushAddress, departmentId);
 
 					await DispatchTraceTelemetry.AttemptAsync(DispatchTraceChannel.Push, dispatch.UserId, () => _pushService.PushCall(spc, dispatch.UserId, profile, pushCall.CallPriority));
 				}
@@ -377,6 +314,303 @@ namespace Resgrid.Services
 		}
 
 		public async Task<bool> SendUnitCallAsync(Call call, CallDispatchUnit dispatch, string departmentNumber, string address = null)
+		{
+			var (spc, safeUnitCall) = await BuildUnitPushCallAsync(call, dispatch, address);
+
+			try
+			{
+				await DispatchTraceTelemetry.AttemptAsync(DispatchTraceChannel.UnitPush, dispatch.UnitId.ToString(), () => _pushService.PushCallUnit(spc, dispatch.UnitId, safeUnitCall.CallPriority));
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+			}
+
+			return true;
+		}
+
+		public async Task<bool> SendCallRenotificationAsync(Call call, string userId, int attempt, int maxAttempts, DispatchRenotifyChannels channels,
+			UserProfile profile = null, string address = null, string departmentNumber = null)
+		{
+			if (call == null || string.IsNullOrWhiteSpace(userId))
+				return false;
+
+			var departmentId = call.DepartmentId;
+
+			if (Config.SystemBehaviorConfig.DoNotBroadcast && !Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(departmentId))
+				return false;
+
+			// The same eligibility as the dispatch itself: a member disabled, removed or now suppressed by staffing is not chased.
+			if (!await CanSendToUser(userId, departmentId))
+				return false;
+
+			if (profile == null)
+				profile = await _userProfileService.GetProfileByUserIdAsync(userId);
+
+			var sent = false;
+			foreach (var channel in DispatchRenotifyConfig.AllChannels)
+			{
+				if ((channels & channel) != channel)
+					continue;
+
+				try
+				{
+					switch (channel)
+					{
+						// Each channel honours the member's preference and verified contact, and the ADP egress view, exactly as
+						// SendCallAsync does for the dispatch.
+						case DispatchRenotifyChannels.Push:
+							sent |= await SendUserPushRenotificationAsync(call, userId, attempt, maxAttempts, profile, address);
+							break;
+						case DispatchRenotifyChannels.Sms:
+							sent |= await SendUserSmsRenotificationAsync(call, userId, attempt, maxAttempts, profile, address, departmentNumber);
+							break;
+						case DispatchRenotifyChannels.Email:
+							sent |= await SendUserEmailRenotificationAsync(call, userId, attempt, maxAttempts, profile);
+							break;
+						case DispatchRenotifyChannels.Voice:
+							sent |= await SendUserVoiceRenotificationAsync(call, profile, departmentNumber);
+							break;
+						case DispatchRenotifyChannels.ChatPlatform:
+							sent |= await SendUserChatRenotificationAsync(call, userId, attempt, maxAttempts, profile);
+							break;
+					}
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex, $"Dispatch re-notification {attempt}/{maxAttempts} on {channel} failed for call {call.CallId}, user {userId}.");
+				}
+			}
+
+			return sent;
+		}
+
+		public async Task<bool> SendUnitCallRenotificationAsync(Call call, CallDispatchUnit dispatch, int attempt, int maxAttempts, DispatchRenotifyChannels channels,
+			string address = null)
+		{
+			if (call == null || dispatch == null)
+				return false;
+
+			if (Config.SystemBehaviorConfig.DoNotBroadcast && !Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(call.DepartmentId))
+				return false;
+
+			var sent = false;
+			foreach (var channel in DispatchRenotifyConfig.AllChannels)
+			{
+				if ((channels & DispatchRenotifyConfig.UnitChannels & channel) != channel)
+					continue;
+
+				try
+				{
+					switch (channel)
+					{
+						case DispatchRenotifyChannels.Push:
+							var (spc, safeUnitCall) = await BuildUnitPushCallAsync(call, dispatch, address);
+							spc.Title = BuildRenotifyTitle(spc.Title, attempt, maxAttempts, null);
+							spc.SoundType = PushSoundTypes.ModernCallRenotify;
+							sent |= await _pushService.PushCallUnit(spc, dispatch.UnitId, safeUnitCall.CallPriority);
+							break;
+
+						// A unit has no phone number, email address or chat identity of its own: the unit apps' push is its only
+						// channel (DispatchRenotifyConfig.UnitChannels). Its crew are re-notified as members on every channel.
+					}
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex, $"Dispatch re-notification {attempt}/{maxAttempts} on {channel} failed for call {call.CallId}, unit {dispatch.UnitId}.");
+				}
+			}
+
+			return sent;
+		}
+
+		private async Task<bool> SendUserPushRenotificationAsync(Call call, string userId, int attempt, int maxAttempts, UserProfile profile, string address)
+		{
+			if (profile != null && !profile.SendPush)
+				return false;
+
+			// ADP egress as for the dispatch: the push view, and the pre-resolved address only when that view is the original call.
+			var pushCall = await _protectedProjectionService.BuildNotificationSafeCallAsync(call.DepartmentId, call, ProtectedDataEgressChannel.Push, profile?.Language);
+			var pushAddress = ReferenceEquals(pushCall, call) ? address : null;
+
+			var spc = await BuildUserPushCallAsync(pushCall, pushAddress, call.DepartmentId);
+			spc.Title = BuildRenotifyTitle(spc.Title, attempt, maxAttempts, profile?.Language);
+			spc.SoundType = PushSoundTypes.ModernCallRenotify;
+
+			return await _pushService.PushCall(spc, userId, profile, pushCall.CallPriority);
+		}
+
+		/// <summary>
+		/// The dispatch's text message again, named as a reminder. Like the dispatch: the member's SMS preference and a verified
+		/// mobile number, the plan's SMS allowance (SmsService), the SMS egress view, and for a protected department the PIN
+		/// challenge in place of the call when one can be issued.
+		/// </summary>
+		private async Task<bool> SendUserSmsRenotificationAsync(Call call, string userId, int attempt, int maxAttempts, UserProfile profile, string address,
+			string departmentNumber)
+		{
+			if (profile != null && (!profile.SendSms || !profile.MobileNumberVerified.IsContactMethodAllowedForSending()))
+				return false;
+
+			var departmentId = call.DepartmentId;
+			var payment = await _subscriptionsService.GetCurrentPaymentForDepartmentAsync(departmentId);
+			var smsCall = await _protectedProjectionService.BuildNotificationSafeCallAsync(departmentId, call, ProtectedDataEgressChannel.Sms, profile?.Language);
+
+			try
+			{
+				var challenge = await _adpRelease.Value.CreateChallengeAsync(departmentId, call.CallId, userId, profile?.MobileNumber, ProtectedDataEgressChannel.Sms);
+				if (challenge != null && await _smsService.SendProtectedDispatchChallengeAsync(profile, departmentId, departmentNumber,
+						Resgrid.Localization.Areas.User.SystemMessages.SystemMessagesResources.Get("AdpPinSmsChallenge", profile?.Language, challenge), payment))
+					return true;
+			}
+			catch (Exception ex) { Logging.LogException(ex, $"ADP PIN challenge unavailable for department {departmentId}, call {call.CallId}; sending the safe re-notification."); }
+
+			return await _smsService.SendCallAsync(RenotifyCopy(smsCall, attempt, maxAttempts, profile?.Language), new CallDispatch { CallId = call.CallId, UserId = userId },
+				departmentNumber, departmentId, profile, ReferenceEquals(smsCall, call) ? (address ?? smsCall.Address) : null, payment);
+		}
+
+		/// <summary>The dispatch's email again, its subject naming the reminder. The member's email preference and a verified address apply.</summary>
+		private async Task<bool> SendUserEmailRenotificationAsync(Call call, string userId, int attempt, int maxAttempts, UserProfile profile)
+		{
+			if (profile != null && (!profile.SendEmail || !profile.EmailVerified.IsContactMethodAllowedForSending()))
+				return false;
+
+			var emailCall = await _protectedProjectionService.BuildNotificationSafeCallAsync(call.DepartmentId, call, ProtectedDataEgressChannel.Email, profile?.Language);
+
+			return await _emailService.SendCallAsync(RenotifyCopy(emailCall, attempt, maxAttempts, profile?.Language), new CallDispatch { CallId = call.CallId, UserId = userId }, profile);
+		}
+
+		/// <summary>
+		/// The dispatch's phone call again, to the number the member takes dispatch calls on (verified). The voice webhook reads
+		/// the call's dispatch prompt from the stored call, so the reminder is spoken exactly as the dispatch was.
+		/// </summary>
+		private async Task<bool> SendUserVoiceRenotificationAsync(Call call, UserProfile profile, string departmentNumber)
+		{
+			if (profile != null && !profile.VoiceForCall)
+				return false;
+
+			var voiceAllowed = profile == null ||
+				(profile.VoiceCallMobile ? profile.MobileNumberVerified.IsContactMethodAllowedForSending() : profile.HomeNumberVerified.IsContactMethodAllowedForSending());
+			if (!voiceAllowed)
+				return false;
+
+			var voiceCall = await _protectedProjectionService.BuildNotificationSafeCallAsync(call.DepartmentId, call, ProtectedDataEgressChannel.Voice, profile?.Language);
+
+			return await _outboundVoiceProvider.CommunicateCallAsync(departmentNumber, profile, voiceCall);
+		}
+
+		/// <summary>The dispatch's chat platform message (Discord, Slack, Teams) again, titled as a reminder. Always the chat egress view.</summary>
+		private async Task<bool> SendUserChatRenotificationAsync(Call call, string userId, int attempt, int maxAttempts, UserProfile profile)
+		{
+			var chatCall = await _protectedProjectionService.BuildNotificationSafeCallAsync(call.DepartmentId, call, ProtectedDataEgressChannel.ChatPlatform, profile?.Language);
+
+			var result = await _chatbotOutboundService.SendToUserAsync(userId, call.DepartmentId, new ChatbotOutboundMessage
+			{
+				Type = ChatbotOutboundType.Dispatch,
+				Title = BuildRenotifyTitle(string.Format("Call {0}", chatCall.Name), attempt, maxAttempts, profile?.Language),
+				Body = string.IsNullOrWhiteSpace(chatCall.Address) ? chatCall.NatureOfCall : chatCall.Address,
+				ReferenceId = chatCall.CallId.ToString()
+			});
+
+			return result?.AnyDelivered == true;
+		}
+
+		private static readonly System.Reflection.MethodInfo MemberwiseCloneMethod =
+			typeof(object).GetMethod("MemberwiseClone", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+
+		/// <summary>
+		/// A shallow copy of the (channel's view of the) call named as reminder <paramref name="attempt"/> of
+		/// <paramref name="maxAttempts"/>, so the text message title and email subject built from it say so. The call is never changed.
+		/// </summary>
+		private static Call RenotifyCopy(Call call, int attempt, int maxAttempts, string language)
+		{
+			var copy = (Call)MemberwiseCloneMethod.Invoke(call, null);
+			copy.Name = BuildRenotifyTitle(call.Name, attempt, maxAttempts, language);
+			return copy;
+		}
+
+		/// <summary>The dispatch's own push title behind a localized "Reminder 2/3:" so the recipient can tell it is a repeat.</summary>
+		public static string BuildRenotifyTitle(string title, int attempt, int maxAttempts, string language)
+		{
+			var prefix = Resgrid.Localization.Areas.User.SystemMessages.SystemMessagesResources.Get("DispatchRenotifyPushPrefix", language, attempt, maxAttempts);
+			return string.IsNullOrWhiteSpace(title) ? prefix : prefix + " " + title;
+		}
+
+		/// <summary>The push a member gets for a dispatch: title, priority colour, and the address (or nature) as the subtitle, scrubbed of markup and links.</summary>
+		private async Task<StandardPushCall> BuildUserPushCallAsync(Call pushCall, string pushAddress, int departmentId)
+		{
+			var spc = new StandardPushCall();
+			spc.CallId = pushCall.CallId;
+			spc.Title = string.Format("Call {0}", pushCall.Name);
+			spc.Priority = pushCall.Priority;
+			spc.ActiveCallCount = 1;
+			spc.DepartmentId = departmentId;
+			spc.DepartmentCode = pushCall.Department?.Code;
+
+			if (pushCall.CallPriority != null && !String.IsNullOrWhiteSpace(pushCall.CallPriority.Color))
+			{
+				spc.Color = pushCall.CallPriority.Color;
+			}
+			else
+			{
+				spc.Color = "#000000";
+			}
+
+			string subTitle = String.Empty;
+
+			if (String.IsNullOrWhiteSpace(pushAddress) && !String.IsNullOrWhiteSpace(pushCall.Address))
+			{
+				subTitle = pushCall.Address;
+			}
+			else if (!String.IsNullOrWhiteSpace(pushAddress))
+			{
+				subTitle = pushAddress;
+			}
+			else if (!string.IsNullOrEmpty(pushCall.GeoLocationData) && pushCall.GeoLocationData.Length > 1)
+			{
+				try
+				{
+					string[] points = pushCall.GeoLocationData.Split(char.Parse(","));
+
+					if (points != null && points.Length == 2)
+					{
+						subTitle = await _geoLocationProvider.GetAproxAddressFromLatLong(double.Parse(points[0]), double.Parse(points[1]));
+					}
+				}
+				catch
+				{ }
+			}
+
+			if (!string.IsNullOrEmpty(subTitle))
+			{
+				spc.SubTitle = subTitle.Truncate(200);
+			}
+			else
+			{
+				if (!string.IsNullOrEmpty(pushCall.NatureOfCall))
+					spc.SubTitle = pushCall.NatureOfCall.Truncate(200);
+			}
+
+			if (String.IsNullOrWhiteSpace(spc.SubTitle))
+				spc.SubTitle = String.Empty;
+			else
+				spc.SubTitle = StringHelpers.StripHtmlTagsCharArray(spc.SubTitle);
+
+			spc.SubTitle = Regex.Replace(spc.SubTitle, @"((http|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?)", "");
+
+			spc.Title = StringHelpers.StripHtmlTagsCharArray(spc.Title);
+			spc.Title = Regex.Replace(spc.Title, @"((http|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?)", "");
+
+			spc.Title = spc.Title.Replace(char.Parse("/"), char.Parse(" "));
+			spc.SubTitle = spc.SubTitle.Replace(char.Parse("/"), char.Parse(" "));
+
+			return spc;
+		}
+
+		/// <summary>
+		/// The push a unit gets for a dispatch, built from the notification-safe view of the call (returned with it, for the
+		/// priority): the pre-resolved address is protected location data and is dropped whenever that view is sanitized.
+		/// </summary>
+		private async Task<(StandardPushCall Push, Call SafeCall)> BuildUnitPushCallAsync(Call call, CallDispatchUnit dispatch, string address)
 		{
 			// ADP egress: unit push uses the notification-safe view; the pre-resolved address is
 			// protected location data and is dropped whenever the view is sanitized.
@@ -450,16 +684,7 @@ namespace Resgrid.Services
 
 			spc.Title = StringHelpers.StripHtmlTagsCharArray(spc.Title);
 
-			try
-			{
-				await DispatchTraceTelemetry.AttemptAsync(DispatchTraceChannel.UnitPush, dispatch.UnitId.ToString(), () => _pushService.PushCallUnit(spc, dispatch.UnitId, call.CallPriority));
-			}
-			catch (Exception ex)
-			{
-				Logging.LogException(ex);
-			}
-
-			return true;
+			return (spc, call);
 		}
 
 		public async Task<bool> SendCancelCallAsync(Call call, CallDispatch dispatch, string departmentNumber, int departmentId, UserProfile profile = null, string address = null)

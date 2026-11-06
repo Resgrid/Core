@@ -1063,7 +1063,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				HasProtocols = protocols.Any(),
 				HasLinkedCall = linkedCall != null,
 				DispatchOn = isPending ? null : (newCallInput.DispatchOnUtc ?? newCallInput.DispatchOn),
-				HasDispatchList = !string.IsNullOrWhiteSpace(newCallInput.DispatchList),
+				HasDispatchList = DispatchListHelper.HasEntries(newCallInput.DispatchList),
 				IsPending = isPending
 			};
 
@@ -1202,6 +1202,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			// An empty list means "everyone" for an immediate call (older clients send nothing), but for a pending call
 			// it means no proposed recipients yet: the dispatcher who picks it up chooses them. The system key never pages
 			// everyone on its own, but a pending call pages nobody until a dispatcher sends it, so "0" is honored there.
+			// A list with no entries ("|") takes the explicit branch below and dispatches nobody: clients send it for a
+			// call the dispatcher chose to send to no one.
 			if ((newCallInput.DispatchList == "0" && (!IsSystemApiKeyRequest || isPending)) ||
 				(!IsSystemApiKeyRequest && !isPending && string.IsNullOrWhiteSpace(newCallInput.DispatchList)))
 			{
@@ -2536,6 +2538,65 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return Ok(result);
 		}
 
+		/// <summary>Returns the years in which the department has calls, newest first.</summary>
+		[HttpGet("GetCallYears")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		[DepartmentApiKeyScope(DepartmentApiKeyScopes.CallsRead)]
+		public async Task<ActionResult<CallYearsResult>> GetCallYears()
+		{
+			var years = await _callsService.GetCallYearsByDeptartmentAsync(DepartmentId);
+			var result = new CallYearsResult { Data = years, PageSize = years.Count, Status = ResponseHelper.Success };
+			ResponseHelper.PopulateV4ResponseData(result);
+			return Ok(result);
+		}
+
+		/// <summary>Returns calls closed in the caller's dispatch scope that were logged in the requested UTC year.</summary>
+		/// <param name="year">Year the calls were logged.</param>
+		[HttpGet("GetArchivedCalls")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		[DepartmentApiKeyScope(DepartmentApiKeyScopes.CallsRead)]
+		public async Task<ActionResult<ActiveCallsResult>> GetArchivedCalls(int year)
+		{
+			if (year is < 1 or > 9999)
+				return BadRequest("A valid year is required.");
+
+			var closed = await _callsService.GetClosedCallsByDepartmentYearAsync(DepartmentId, year.ToString(CultureInfo.InvariantCulture));
+			var calls = (await ScopeCallsAsync(closed))
+				.Where(call => call.State is >= (int)CallStates.Closed and <= (int)CallStates.FalseAlarm)
+				.OrderByDescending(call => call.LoggedOn)
+				.ThenByDescending(call => call.CallId)
+				.ToList();
+			var result = new ActiveCallsResult();
+
+			if (calls.Count > 0)
+			{
+				var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+				var archiveTimeZone = department?.TimeZone;
+				var callTypes = await _callsService.GetCallTypesForDepartmentAsync(DepartmentId);
+				var destinationPois = (await _mappingService.GetPOIsForDepartmentAsync(DepartmentId)).ToDictionary(poi => poi.PoiId);
+				var protectedReads = await ResolveProtectedReadsAsync(calls);
+
+				foreach (var call in calls)
+				{
+					destinationPois.TryGetValue(call.DestinationPoiId.GetValueOrDefault(), out var destinationPoi);
+					var callData = ConvertCall(call, null, call.Address, archiveTimeZone, destinationPoi, callTypes);
+					if (protectedReads.TryGetValue(call.CallId, out var protectedRead))
+						ApplyProtectedReadMetadata(callData, protectedRead);
+					result.Data.Add(callData);
+				}
+
+				await ApplyBigBoardSafeShellAsync(result.Data);
+			}
+
+			result.PageSize = result.Data.Count;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+			return Ok(result);
+		}
+
 		/// <summary>
 		/// Dispatches a waiting call right now: a pending call, or a scheduled call that has not gone out yet. The call
 		/// becomes active and everyone on its dispatch list is notified. Pass DispatchList to replace who it goes to.
@@ -3015,15 +3076,23 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 
 			callResult.Geolocation = call.GeoLocationData;
-			callResult.LoggedOn = call.LoggedOn.TimeConverter(new Department() { TimeZone = timeZone });
+			var displayDepartment = new Department { TimeZone = timeZone };
+			callResult.LoggedOn = call.LoggedOn.TimeConverter(displayDepartment);
 			callResult.LoggedOnUtc = call.LoggedOn;
+			callResult.ReportingUserId = call.ReportingUserId;
 			callResult.State = call.State;
 			callResult.Number = call.Number;
 
 			if (call.DispatchOn.HasValue)
 			{
 				callResult.DispatchedOnUtc = call.DispatchOn.Value;
-				callResult.DispatchedOn = call.DispatchOn.Value.TimeConverter(new Department() { TimeZone = timeZone });
+				callResult.DispatchedOn = call.DispatchOn.Value.TimeConverter(displayDepartment);
+			}
+
+			if (call.ClosedOn.HasValue)
+			{
+				callResult.ClosedOnUtc = call.ClosedOn.Value;
+				callResult.ClosedOn = call.ClosedOn.Value.TimeConverter(displayDepartment);
 			}
 
 			callResult.What3Words = call.W3W;

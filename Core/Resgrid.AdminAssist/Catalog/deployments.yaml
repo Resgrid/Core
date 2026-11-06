@@ -18,7 +18,43 @@
       "DocsPath": "/web-app/business-ops/deployment-finance/"
     }
   ],
-  "Settings": [],
+  "Settings": [
+    {
+      "Id": "module.DeploymentsDisabled",
+      "AreaId": "deployments",
+      "LabelKey": "Module.DeploymentsDisabled",
+      "HelpKey": "ModuleHelp.DeploymentsDisabled",
+      "Binding": "DepartmentModuleSettings.DeploymentsDisabled",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "ModuleSettings",
+        "Field": "DeploymentsEnabled"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-03T00:00:00Z",
+      "Impact": {
+        "Risk": "High",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.deployments",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.ModuleSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "module.DeploymentsDisabled",
+      "DefaultValue": "false",
+      "AllowedValues": "true or false",
+      "EvidenceSource": "DepartmentSettingsService.GetDepartmentModuleSettingsAsync",
+      "Availability": "available"
+    }
+  ],
   "Capabilities": [
     {
       "Id": "deployments",
@@ -37,9 +73,15 @@
         {
           "Kind": "flag",
           "Id": "Operations.Deployments"
+        },
+        {
+          "Kind": "module",
+          "Id": "Deployments"
         }
       ],
-      "SettingIds": [],
+      "SettingIds": [
+        "module.DeploymentsDisabled"
+      ],
       "RuleIds": [],
       "Prominence": "Key",
       "DocsPath": "/web-app/business-ops/deployment-finance/"
@@ -61,9 +103,15 @@
         {
           "Kind": "flag",
           "Id": "Operations.Deployments"
+        },
+        {
+          "Kind": "module",
+          "Id": "Deployments"
         }
       ],
-      "SettingIds": [],
+      "SettingIds": [
+        "module.DeploymentsDisabled"
+      ],
       "RuleIds": [],
       "Prominence": "Detail",
       "DocsPath": "/web-app/business-ops/deployment-finance/"
@@ -85,9 +133,15 @@
         {
           "Kind": "flag",
           "Id": "Operations.Deployments"
+        },
+        {
+          "Kind": "module",
+          "Id": "Deployments"
         }
       ],
-      "SettingIds": [],
+      "SettingIds": [
+        "module.DeploymentsDisabled"
+      ],
       "RuleIds": [],
       "Prominence": "Detail",
       "DocsPath": "/web-app/resource-orders/"
@@ -128,6 +182,17 @@
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "module.DeploymentsDisabled",
+      "Locale": "en",
+      "TitleKey": "Module.DeploymentsDisabled",
+      "Body": "Deployments availability. Shows or hides Deployments in the web app's navigation, dashboard widgets and search. Hiding it does not delete data or change permissions.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "module-deploymentsdisabled",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-03T00:00:00Z"
     }
   ]
 }

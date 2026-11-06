@@ -224,5 +224,12 @@
 		/// settings). Missing = the defaults and the fallback area.
 		/// </summary>
 		OfflineMapPacksConfig = 123,
+
+		/// <summary>
+		/// ProtoBuf-serialized <see cref="Model.DispatchRenotifyConfig"/>: re-notify dispatched personnel and units until they acknowledge
+		/// the call by setting any status (Dispatch Settings). Missing = off. Interval and retries are locked at 5 minutes and 3
+		/// while <c>DispatchConfig.RenotifyTimingLocked</c> is on.
+		/// </summary>
+		DispatchRenotifyConfig = 124,
 	}
 }

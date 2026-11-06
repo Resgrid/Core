@@ -143,6 +143,7 @@
   <data name="AdpPinSaved" xml:space="preserve"><value>Αποθηκεύτηκε.</value></data>
   <data name="AdpPinDenied" xml:space="preserve"><value>Δεν ήταν δυνατή η παροχή ή αποθήκευση προστατευμένων δεδομένων. Συνδεθείτε στο Resgrid και δοκιμάστε ξανά.</value></data>
   <data name="AdpPinSmsChallenge" xml:space="preserve"><value>Υπάρχει προστατευμένο συμβάν. Απαντήστε OPEN {0}, ένα κενό και το προσωπικό σας PIN.</value></data>
+  <data name="DispatchRenotifyPushPrefix" xml:space="preserve"><value>Υπενθύμιση {0}/{1}:</value></data>
   <data name="AdpPinVoiceChallenge" xml:space="preserve"><value>Υπάρχει προστατευμένο συμβάν. Πληκτρολογήστε το προσωπικό σας PIN και πατήστε δίεση.</value></data>
   <data name="AdpReleaseSettings" xml:space="preserve"><value>Ρυθμίσεις παροχής δεδομένων ADP</value></data>
   <data name="AdpSmsMode" xml:space="preserve"><value>Παράδοση SMS</value></data>

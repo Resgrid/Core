@@ -492,6 +492,9 @@
   <data name="DisabledLogsLabel" xml:space="preserve">
     <value>Καταγραφές</value>
   </data>
+  <data name="RecordsModuleNote" xml:space="preserve">
+    <value>Εμφανίζει τα Αρχεία στο μενού, ανεξάρτητα από τις Καταγραφές.</value>
+  </data>
   <data name="DisabledMaintenanceLabel" xml:space="preserve">
     <value>Συντήρηση</value>
   </data>
@@ -1367,6 +1370,51 @@
   </data>
   <data name="CloseCallWhenUnitsClearHelp" xml:space="preserve">
     <value>Μια ενεργή κλήση κλείνει από μόνη της όταν η τελευταία μονάδα που διατέθηκε σε αυτήν αναφέρει ότι είναι ξανά σε υπηρεσία ή εκτός υπηρεσίας (κατάσταση με βασικό τύπο Διαθέσιμη, Στον σταθμό, Αποδεσμευμένη, Μη διαθέσιμη ή Συντήρηση). Όλες οι άλλες μονάδες που διατέθηκαν πρέπει επίσης να έχουν αναφέρει ολοκλήρωση από τη διάθεσή τους. Μετρούν μόνο οι μονάδες: μια κλήση χωρίς διατεθειμένη μονάδα, μια κλήση με ενεργή διοίκηση συμβάντος ή μια μονάδα που ακόμη επιστρέφει ή μεταφέρει κρατά την κλήση ανοιχτή για τον διαχειριστή.</value>
+  </data>
+  <data name="DispatchRenotifyHeader" xml:space="preserve">
+    <value>Επανειδοποίηση αποστολής</value>
+  </data>
+  <data name="DispatchRenotifyEnabledLabel" xml:space="preserve">
+    <value>Επανειδοποίηση έως την επιβεβαίωση</value>
+  </data>
+  <data name="DispatchRenotifyEnabledHelp" xml:space="preserve">
+    <value>Στέλνει ξανά μια αποστολή στο προσωπικό και στις μονάδες που δεν την έχουν επιβεβαιώσει. Οποιαδήποτε κατάσταση οριστεί μετά την αποστολή μετρά ως επιβεβαίωση: ένα άτομο που ορίζει Ανταποκρίνεται ή Δεν Ανταποκρίνεται ή μια μονάδα που ορίζει οποιαδήποτε κατάσταση, με ή χωρίς προορισμό. Οι καταστάσεις που ορίζει αυτόματα το Resgrid δεν μετρούν. Η επανειδοποίηση σταματά όταν η κλήση κλείσει ή το άτομο ή η μονάδα αφαιρεθεί από αυτήν. Απενεργοποιημένο από προεπιλογή.</value>
+  </data>
+  <data name="DispatchRenotifyLockedNotice" xml:space="preserve">
+    <value>Για τη διασφάλιση της σταθερότητας του συστήματος, το διάστημα, ο μέγιστος αριθμός επανειδοποιήσεων και όλα τα κανάλια εκτός από τις ειδοποιήσεις push είναι προς το παρόν κλειδωμένα. Οι επιλογές αυτές θα ανοίξουν στο μέλλον.</value>
+  </data>
+  <data name="DispatchRenotifyIntervalLabel" xml:space="preserve">
+    <value>Διάστημα επανειδοποίησης (λεπτά)</value>
+  </data>
+  <data name="DispatchRenotifyIntervalHelp" xml:space="preserve">
+    <value>Λεπτά μεταξύ των επανειδοποιήσεων.</value>
+  </data>
+  <data name="DispatchRenotifyMaxRetriesLabel" xml:space="preserve">
+    <value>Μέγιστος αριθμός επανειδοποιήσεων</value>
+  </data>
+  <data name="DispatchRenotifyMaxRetriesHelp" xml:space="preserve">
+    <value>Πόσες φορές στέλνεται ξανά μια αποστολή πριν σταματήσει η επανειδοποίηση. Με τις προεπιλεγμένες τιμές, τρεις επανειδοποιήσεις ανά πέντε λεπτά καλύπτουν τα πρώτα 15 λεπτά μετά από μια αποστολή.</value>
+  </data>
+  <data name="DispatchRenotifyChannelsLabel" xml:space="preserve">
+    <value>Επανειδοποίηση μέσω</value>
+  </data>
+  <data name="DispatchRenotifyChannelsHelp" xml:space="preserve">
+    <value>Κάθε μέλος λαμβάνει επανειδοποίηση σε κάθε κανάλι που είναι επιλεγμένο εδώ και επιτρέπουν οι δικές του ρυθμίσεις ειδοποιήσεων, στα επαληθευμένα στοιχεία επικοινωνίας του. Οι μονάδες λαμβάνουν επανειδοποίηση μόνο μέσω push.</value>
+  </data>
+  <data name="DispatchRenotifyChannelPush" xml:space="preserve">
+    <value>Ειδοποίηση push</value>
+  </data>
+  <data name="DispatchRenotifyChannelSms" xml:space="preserve">
+    <value>SMS</value>
+  </data>
+  <data name="DispatchRenotifyChannelEmail" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="DispatchRenotifyChannelVoice" xml:space="preserve">
+    <value>Φωνητική κλήση</value>
+  </data>
+  <data name="DispatchRenotifyChannelChatPlatform" xml:space="preserve">
+    <value>Πλατφόρμα συνομιλίας</value>
   </data>
   <data name="CallNumberingHeader" xml:space="preserve">
     <value>Αρίθμηση κλήσεων</value>

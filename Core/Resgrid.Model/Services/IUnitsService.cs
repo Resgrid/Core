@@ -81,6 +81,8 @@ namespace Resgrid.Model.Services
 		/// <param name="unitId">The unit identifier.</param>
 		/// <returns>Task&lt;UnitState&gt;.</returns>
 		Task<UnitState> GetLastUnitStateByUnitIdAsync(int unitId);
+		/// <summary>Returns crew persisted on the exact latest saved state, for staffing authorization.</summary>
+		Task<UnitState> GetLastUnitStateWithRolesByUnitIdAsync(int unitId);
 
 		/// <summary>
 		/// Gets the last unit state before identifier asynchronous.

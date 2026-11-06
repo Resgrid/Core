@@ -219,6 +219,68 @@
                         </div>
 
                         <div class="hr-line-dashed"></div>
+                        <h3>@localizer["DispatchRenotifyHeader"]</h3>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">@localizer["DispatchRenotifyEnabledLabel"]</label>
+                            <div class="col-sm-9">
+                                <div class="row">
+                                    <div class="col-sm-10">
+                                        <input type="checkbox" asp-for="RenotifyEnabled">
+                                        <span class="help-block m-b-none">@localizer["DispatchRenotifyEnabledHelp"]</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @if (Model.RenotifyTimingLocked || Model.RenotifyChannelsLocked)
+                        {
+                            <div class="form-group">
+                                <div class="col-sm-9 col-sm-offset-3">
+                                    <div class="alert alert-info m-b-none" id="renotifyLockedNotice">
+                                        <i class="fa fa-lock"></i> @localizer["DispatchRenotifyLockedNotice"]
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" asp-for="RenotifyIntervalMinutes">@localizer["DispatchRenotifyIntervalLabel"]</label>
+                            <div class="col-sm-9">
+                                <input type="number" asp-for="RenotifyIntervalMinutes" class="form-control" style="width: 30%"
+                                       min="@Resgrid.Model.DispatchRenotifyConfig.MinimumIntervalMinutes" max="@Resgrid.Model.DispatchRenotifyConfig.MaximumIntervalMinutes"
+                                       disabled="@Model.RenotifyTimingLocked" aria-describedby="@(Model.RenotifyTimingLocked ? "renotifyLockedNotice" : null)" />
+                                <span class="help-block m-b-none">@localizer["DispatchRenotifyIntervalHelp"]</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" asp-for="RenotifyMaxRetries">@localizer["DispatchRenotifyMaxRetriesLabel"]</label>
+                            <div class="col-sm-9">
+                                <input type="number" asp-for="RenotifyMaxRetries" class="form-control" style="width: 30%"
+                                       min="@Resgrid.Model.DispatchRenotifyConfig.MinimumMaxRetries" max="@Resgrid.Model.DispatchRenotifyConfig.MaximumMaxRetries"
+                                       disabled="@Model.RenotifyTimingLocked" aria-describedby="@(Model.RenotifyTimingLocked ? "renotifyLockedNotice" : null)" />
+                                <span class="help-block m-b-none">@localizer["DispatchRenotifyMaxRetriesHelp"]</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">@localizer["DispatchRenotifyChannelsLabel"]</label>
+                            <div class="col-sm-9">
+                                @* While the channels are locked every box is disabled with only Push ticked, and the server stores push only
+                                   whatever is posted (DepartmentController.BuildDispatchRenotifyConfig, SetDispatchRenotifyConfigAsync). *@
+                                @foreach (var channel in Resgrid.Model.DispatchRenotifyConfig.AllChannels)
+                                {
+                                    var selected = (Model.RenotifyChannels & (int)channel) == (int)channel;
+                                    <div class="checkbox m-t-none m-b-xs">
+                                        <label class="@(Model.RenotifyChannelsLocked ? "text-muted" : null)">
+                                            <input type="checkbox" name="RenotifyChannelValues" value="@((int)channel)" checked="@selected"
+                                                   disabled="@Model.RenotifyChannelsLocked" aria-describedby="@(Model.RenotifyChannelsLocked ? "renotifyLockedNotice" : null)" />
+                                            @localizer["DispatchRenotifyChannel" + channel]
+                                        </label>
+                                    </div>
+                                }
+                                <span class="help-block m-b-none">@localizer["DispatchRenotifyChannelsHelp"]</span>
+                            </div>
+                        </div>
+
+                        <div class="hr-line-dashed"></div>
                         <h3>@localizer["CheckInTimerSettingsHeader"]</h3>
 
                         <div class="form-group">

@@ -217,10 +217,10 @@
     <value>privacy policy</value>
   </data>
   <data name="RecoverAccountSuccess" xml:space="preserve">
-    <value>If your email address is valid we have reset your password and sent your username and new password to the email address supplied. Email delivery can be delayed up to 15 minutes, &lt;b&gt;also check your spam or junk areas in your email client if you email doesn't arrive&lt;/b&gt; by then.</value>
+    <value>If an account uses that email address, we have sent that address a link to choose a new password, along with the account's username. The link can be used once, and the email says how long it stays valid. Email can take several minutes to arrive; if it has not arrived, check your spam or junk folder before requesting another link.</value>
   </data>
   <data name="RecoverAccountText" xml:space="preserve">
-    <value>Supply the email address you used with your Resgrid account. We will then send you an email to that address with your username and new password to log into the system.</value>
+    <value>Enter the email address on your Resgrid account. We will email you a link to choose a new password, along with your username.</value>
   </data>
   <data name="RecoveryAccountHeader" xml:space="preserve">
     <value>Recover Account</value>

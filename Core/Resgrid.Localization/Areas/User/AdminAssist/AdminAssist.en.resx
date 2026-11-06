@@ -7125,6 +7125,12 @@
   <data xml:space="preserve" name="SettingHelp.DispatchResponseCodes">
     <value>Optional per-unit response codes (for example C3 for lights and siren) that conditional run card rows propose, and whether crews see them on unit pushes and in the field apps. Empty means codes appear nowhere.</value>
   </data>
+  <data xml:space="preserve" name="Setting.DispatchRenotifyConfig">
+    <value>Dispatch Re-notification</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.DispatchRenotifyConfig">
+    <value>Sends a dispatch again, by push, to personnel and units that have not set a status since it went out: every 5 minutes, up to 3 times. Any status a person or unit sets acknowledges it; automatic statuses do not. Stops when the call closes or the recipient is taken off it. Off by default.</value>
+  </data>
   <data name="Field.DepartmentTermOverride.Singular" xml:space="preserve">
     <value>Department Term / One Item</value>
   </data>
@@ -7775,5 +7781,35 @@
   </data>
   <data xml:space="preserve" name="SettingHelp.OfflineMapPacksConfig">
     <value>What the apps download for use without a network: the maximum response area (its base map download must fit the size limit), which map data is included, when downloads run, and extra coverage for calls and routes outside the area.</value>
+  </data>
+  <data name="Module.RecordsDisabled" xml:space="preserve">
+    <value>Records availability</value>
+  </data>
+  <data name="ModuleHelp.RecordsDisabled" xml:space="preserve">
+    <value>Shows or hides Records in the web app's navigation, dashboard widgets and search. Hiding it does not delete data or change permissions. Logs have their own switch.</value>
+  </data>
+  <data name="Module.ContactsDisabled" xml:space="preserve">
+    <value>Contacts availability</value>
+  </data>
+  <data name="ModuleHelp.ContactsDisabled" xml:space="preserve">
+    <value>Shows or hides Contacts in the web app's navigation, dashboard widgets and search. Hiding it does not delete data or change permissions.</value>
+  </data>
+  <data name="Module.CertificationsDisabled" xml:space="preserve">
+    <value>Certifications availability</value>
+  </data>
+  <data name="ModuleHelp.CertificationsDisabled" xml:space="preserve">
+    <value>Shows or hides Certifications in the web app's navigation, dashboard widgets and search. Hiding it does not delete data or change permissions. Certification enforcement is not affected.</value>
+  </data>
+  <data name="Module.DeploymentsDisabled" xml:space="preserve">
+    <value>Deployments availability</value>
+  </data>
+  <data name="ModuleHelp.DeploymentsDisabled" xml:space="preserve">
+    <value>Shows or hides Deployments in the web app's navigation, dashboard widgets and search. Hiding it does not delete data or change permissions.</value>
+  </data>
+  <data name="Module.ChatDisabled" xml:space="preserve">
+    <value>Chat availability</value>
+  </data>
+  <data name="ModuleHelp.ChatDisabled" xml:space="preserve">
+    <value>Shows or hides Chat in the web app's navigation, dashboard widgets and search. Hiding it does not delete data or change permissions. Chat in the mobile apps is not affected.</value>
   </data>
 </root>

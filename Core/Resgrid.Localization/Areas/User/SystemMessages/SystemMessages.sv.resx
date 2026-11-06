@@ -143,6 +143,7 @@ Resgrid-teamet</value>
   <data name="AdpPinSaved" xml:space="preserve"><value>Sparat.</value></data>
   <data name="AdpPinDenied" xml:space="preserve"><value>Det gick inte att lämna ut eller spara skyddade uppgifter. Logga in på Resgrid och försök igen.</value></data>
   <data name="AdpPinSmsChallenge" xml:space="preserve"><value>Ett skyddat larm är tillgängligt. Svara OPEN {0} följt av ett mellanslag och din personliga PIN.</value></data>
+  <data name="DispatchRenotifyPushPrefix" xml:space="preserve"><value>Påminnelse {0}/{1}:</value></data>
   <data name="AdpPinVoiceChallenge" xml:space="preserve"><value>Ett skyddat larm är tillgängligt. Ange din personliga PIN och avsluta med fyrkant.</value></data>
   <data name="AdpReleaseSettings" xml:space="preserve"><value>Inställningar för utlämning med ADP</value></data>
   <data name="AdpSmsMode" xml:space="preserve"><value>SMS-leverans</value></data>

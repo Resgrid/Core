@@ -474,6 +474,9 @@
   <data name="DisabledLogsLabel" xml:space="preserve">
     <value>السجلات</value>
   </data>
+  <data name="RecordsModuleNote" xml:space="preserve">
+    <value>يعرض وحدة السجلات في القائمة بشكل مستقل عن السجلات القديمة.</value>
+  </data>
   <data name="DisabledMaintenanceLabel" xml:space="preserve">
     <value>الصيانة</value>
   </data>
@@ -1367,6 +1370,51 @@
   </data>
   <data name="CloseCallWhenUnitsClearHelp" xml:space="preserve">
     <value>يُغلق البلاغ النشط تلقائياً عندما تُبلغ آخر وحدة أُرسلت إليه أنها عادت إلى الخدمة أو أصبحت خارج الخدمة (حالة نوعها الأساسي متاحة أو في المقر أو مُخلاة أو غير متاحة أو صيانة). ويجب أن تكون جميع الوحدات الأخرى المرسلة قد أبلغت أيضاً بانتهائها منذ إرسالها. تُحتسب الوحدات فقط: البلاغ الذي لم تُرسل إليه أي وحدة، أو البلاغ الخاضع لقيادة حادث نشطة، أو وحدة لا تزال عائدة أو تقوم بالنقل، يبقى مفتوحاً للمُرسِل.</value>
+  </data>
+  <data name="DispatchRenotifyHeader" xml:space="preserve">
+    <value>إعادة إشعار الإرسال</value>
+  </data>
+  <data name="DispatchRenotifyEnabledLabel" xml:space="preserve">
+    <value>إعادة الإشعار حتى التأكيد</value>
+  </data>
+  <data name="DispatchRenotifyEnabledHelp" xml:space="preserve">
+    <value>يعيد إرسال إشعار البلاغ إلى الأفراد والوحدات الذين لم يؤكدوه. أي حالة تُعيَّن بعد الإرسال تُعد تأكيدًا: شخص يعيّن يستجيب أو لا يستجيب، أو وحدة تعيّن أي حالة، مع وجهة أو بدونها. الحالات التي يعيّنها Resgrid تلقائيًا لا تُحتسب. تتوقف إعادة الإشعار عند إغلاق البلاغ أو إزالة الشخص أو الوحدة منه. معطّل افتراضيًا.</value>
+  </data>
+  <data name="DispatchRenotifyLockedNotice" xml:space="preserve">
+    <value>لضمان استقرار النظام، الفاصل الزمني والحد الأقصى لعدد مرات إعادة الإشعار وجميع القنوات باستثناء الإشعارات الفورية مقفلة حاليًا. ستُتاح هذه الخيارات مستقبلًا.</value>
+  </data>
+  <data name="DispatchRenotifyIntervalLabel" xml:space="preserve">
+    <value>الفاصل الزمني لإعادة الإشعار (بالدقائق)</value>
+  </data>
+  <data name="DispatchRenotifyIntervalHelp" xml:space="preserve">
+    <value>عدد الدقائق بين كل إعادة إشعار والتي تليها.</value>
+  </data>
+  <data name="DispatchRenotifyMaxRetriesLabel" xml:space="preserve">
+    <value>الحد الأقصى لإعادة الإشعار</value>
+  </data>
+  <data name="DispatchRenotifyMaxRetriesHelp" xml:space="preserve">
+    <value>عدد مرات إعادة إرسال إشعار البلاغ قبل توقف إعادة الإشعار. مع القيم الافتراضية، تغطي ثلاث إعادات إشعار بفاصل خمس دقائق أول 15 دقيقة بعد الإرسال.</value>
+  </data>
+  <data name="DispatchRenotifyChannelsLabel" xml:space="preserve">
+    <value>إعادة الإشعار عبر</value>
+  </data>
+  <data name="DispatchRenotifyChannelsHelp" xml:space="preserve">
+    <value>يتلقى كل عضو إعادة الإشعار عبر كل قناة محددة هنا تسمح بها إعدادات الإشعارات الخاصة به، على بيانات الاتصال الموثقة لديه. تتلقى الوحدات إعادة الإشعار عبر الإشعارات الفورية فقط.</value>
+  </data>
+  <data name="DispatchRenotifyChannelPush" xml:space="preserve">
+    <value>إشعار فوري</value>
+  </data>
+  <data name="DispatchRenotifyChannelSms" xml:space="preserve">
+    <value>رسالة نصية</value>
+  </data>
+  <data name="DispatchRenotifyChannelEmail" xml:space="preserve">
+    <value>البريد الإلكتروني</value>
+  </data>
+  <data name="DispatchRenotifyChannelVoice" xml:space="preserve">
+    <value>مكالمة صوتية</value>
+  </data>
+  <data name="DispatchRenotifyChannelChatPlatform" xml:space="preserve">
+    <value>منصة دردشة</value>
   </data>
   <data name="CallNumberingHeader" xml:space="preserve">
     <value>ترقيم البلاغات</value>

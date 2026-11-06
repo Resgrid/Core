@@ -1,0 +1,8 @@
+{
+  "id": "flags-off",
+  "name": "Flags Off",
+  "purpose": "Every active feature flag forced off with an operator override (including flags that are on globally), the pair of flags-on with the same data.",
+  "covers": ["every active feature flag off", "flag-gated screens hidden or falling back", "US Central"],
+  "department": { "timeZone": "Central Standard Time" },
+  "flags": { "profile": "all-off" }
+}

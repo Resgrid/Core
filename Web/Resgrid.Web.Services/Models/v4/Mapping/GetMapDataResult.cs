@@ -46,6 +46,7 @@ namespace Resgrid.Web.Services.Models.v4.Mapping
 		public string InfoWindowContent { get; set; }
 		public string Color { get; set; }
 		public int Type { get; set; }
+		public bool IsLinkedCall { get; set; }
 		public string Marker { get; set; }
 		public int? PoiTypeId { get; set; }
 		public string PoiTypeName { get; set; }

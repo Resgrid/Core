@@ -21,12 +21,15 @@ namespace Resgrid.Config
 		public static int CacheDurationMinutes = 60;
 
 		/// <summary>
-		/// When true, evaluations increment in-memory counters that the usage-flush worker persists to
+		/// When true, evaluations increment in-memory counters that each host's usage flush persists to
 		/// FeatureFlagUsages and uses to refresh LastEvaluatedOn (for stale-flag detection).
 		/// </summary>
 		public static bool TrackEvaluations = true;
 
-		/// <summary>How often the usage-flush worker drains the in-memory evaluation counters.</summary>
+		/// <summary>
+		/// How often each host (web, API, workers) drains its in-memory evaluation counters; they are also drained on
+		/// shutdown. Values of zero or less fall back to 60, and anything under 5 is raised to 5.
+		/// </summary>
 		public static int EvaluationFlushIntervalSeconds = 60;
 
 		/// <summary>Non-permanent flags not evaluated within this many days are reported as stale.</summary>

@@ -416,6 +416,9 @@
   <data name="DisabledLogsLabel" xml:space="preserve">
     <value>Loggar</value>
   </data>
+  <data name="RecordsModuleNote" xml:space="preserve">
+    <value>Visar Journaler i menyn, separat från Loggar.</value>
+  </data>
   <data name="DisabledMaintenanceLabel" xml:space="preserve">
     <value>Maintenance</value>
   </data>
@@ -1309,6 +1312,51 @@
   </data>
   <data name="CloseCallWhenUnitsClearHelp" xml:space="preserve">
     <value>Ett aktivt larm stängs av sig självt när den sista enheten som larmats till det rapporterar att den är tillbaka i tjänst eller ur tjänst (en status med bastypen Tillgänglig, På stationen, Klar, Otillgänglig eller Underhåll). Alla andra larmade enheter måste också ha rapporterat att de är klara sedan de larmades. Bara enheter räknas: ett larm utan larmad enhet, ett larm med aktiv insatsledning eller en enhet som fortfarande återvänder eller transporterar hålls öppet för operatören.</value>
+  </data>
+  <data name="DispatchRenotifyHeader" xml:space="preserve">
+    <value>Påminnelser om utskick</value>
+  </data>
+  <data name="DispatchRenotifyEnabledLabel" xml:space="preserve">
+    <value>Påminn tills utskicket bekräftas</value>
+  </data>
+  <data name="DispatchRenotifyEnabledHelp" xml:space="preserve">
+    <value>Skickar ett utskick igen till personal och enheter som inte har bekräftat det. Varje status som sätts efter utskicket räknas som en bekräftelse: en person som sätter Svarar eller Svarar inte, eller en enhet som sätter valfri status, med eller utan destination. Statusar som Resgrid sätter automatiskt räknas inte. Påminnelserna upphör när larmet stängs eller personen eller enheten tas bort från det. Avstängt som standard.</value>
+  </data>
+  <data name="DispatchRenotifyLockedNotice" xml:space="preserve">
+    <value>För att säkerställa systemets stabilitet är intervallet, det högsta antalet påminnelser och alla kanaler utom push låsta tills vidare. De här alternativen öppnas i framtiden.</value>
+  </data>
+  <data name="DispatchRenotifyIntervalLabel" xml:space="preserve">
+    <value>Påminnelseintervall (minuter)</value>
+  </data>
+  <data name="DispatchRenotifyIntervalHelp" xml:space="preserve">
+    <value>Minuter mellan påminnelserna.</value>
+  </data>
+  <data name="DispatchRenotifyMaxRetriesLabel" xml:space="preserve">
+    <value>Högsta antal påminnelser</value>
+  </data>
+  <data name="DispatchRenotifyMaxRetriesHelp" xml:space="preserve">
+    <value>Hur många gånger ett utskick skickas igen innan påminnelserna upphör. Med standardvärdena täcker tre påminnelser med fem minuters mellanrum de första 15 minuterna efter ett utskick.</value>
+  </data>
+  <data name="DispatchRenotifyChannelsLabel" xml:space="preserve">
+    <value>Påminn via</value>
+  </data>
+  <data name="DispatchRenotifyChannelsHelp" xml:space="preserve">
+    <value>Varje medlem påminns via varje kanal som är markerad här och som medlemmens egna aviseringsinställningar tillåter, till verifierade kontaktuppgifter. Enheter påminns endast via push.</value>
+  </data>
+  <data name="DispatchRenotifyChannelPush" xml:space="preserve">
+    <value>Pushnotis</value>
+  </data>
+  <data name="DispatchRenotifyChannelSms" xml:space="preserve">
+    <value>Sms</value>
+  </data>
+  <data name="DispatchRenotifyChannelEmail" xml:space="preserve">
+    <value>E-post</value>
+  </data>
+  <data name="DispatchRenotifyChannelVoice" xml:space="preserve">
+    <value>Röstsamtal</value>
+  </data>
+  <data name="DispatchRenotifyChannelChatPlatform" xml:space="preserve">
+    <value>Chattplattform</value>
   </data>
   <data name="CallNumberingHeader" xml:space="preserve">
     <value>Numrering av larm</value>

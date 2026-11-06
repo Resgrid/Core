@@ -321,10 +321,15 @@ namespace Resgrid.Providers.EmailProvider
 
 		public async Task<bool> SendPasswordRecoveryMail(string name, string email,
 			string departmentName, string resetUrl, string ipAddress, string userAgent, string requestedOn,
-			bool isSsoManaged)
+			bool isSsoManaged, string userName, string linkLifetime, string linkExpiresOn)
 		{
 			if (!isSsoManaged && String.IsNullOrWhiteSpace(resetUrl))
 				return false;
+
+			// Every link email says how long it has: a recipient who finds it later must know whether it still works.
+			var lifetimeSentence = String.IsNullOrWhiteSpace(linkLifetime)
+				? "This link can only be used once and stops working after a short time."
+				: $"This link can only be used once and expires in {linkLifetime}.";
 
 			var templateModel = new Dictionary<string, object>
 			{
@@ -343,7 +348,18 @@ namespace Resgrid.Providers.EmailProvider
 						{
 							new Dictionary<string, object>
 							{
-								{ "url", resetUrl }
+								{ "url", resetUrl },
+								{ "lifetime_sentence", lifetimeSentence },
+								{
+									"expires_on", String.IsNullOrWhiteSpace(linkExpiresOn)
+										? Array.Empty<Dictionary<string, object>>()
+										: new[] { new Dictionary<string, object> { { "value", linkExpiresOn } } }
+								},
+								{
+									"user_name", String.IsNullOrWhiteSpace(userName)
+										? Array.Empty<Dictionary<string, object>>()
+										: new[] { new Dictionary<string, object> { { "value", userName } } }
+								}
 							}
 						}
 				},
@@ -370,8 +386,18 @@ namespace Resgrid.Providers.EmailProvider
 				}
 				else
 				{
-					textContent.AppendLine("Choose a new password using this short-lived, single-use link:");
+					textContent.AppendLine("Choose a new password using this link:");
 					textContent.AppendLine(resetUrl);
+					textContent.AppendLine();
+					textContent.AppendLine(lifetimeSentence);
+					if (!String.IsNullOrWhiteSpace(linkExpiresOn))
+						textContent.AppendLine($"It stops working at {linkExpiresOn} (UTC).");
+					textContent.AppendLine("If it has expired, request a new one from the sign-in page.");
+					if (!String.IsNullOrWhiteSpace(userName))
+					{
+						textContent.AppendLine();
+						textContent.AppendLine($"Your username is {userName}. You sign in with it and your new password.");
+					}
 					textContent.AppendLine();
 					textContent.AppendLine(
 						"Changing your password will immediately sign you out of every Resgrid web, mobile, dispatch, and big-board session and revoke all existing access and refresh tokens.");

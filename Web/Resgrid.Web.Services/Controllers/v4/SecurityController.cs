@@ -104,9 +104,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var viewWorkflowRunsPermission = await _permissionsService.GetPermissionByDepartmentTypeAsync(DepartmentId, PermissionTypes.ViewWorkflowRuns);
 			var dispatchAppLoginPermission = await _permissionsService.GetPermissionByDepartmentTypeAsync(DepartmentId, PermissionTypes.DispatchAppLogin);
 			var commandAppLoginPermission = await _permissionsService.GetPermissionByDepartmentTypeAsync(DepartmentId, PermissionTypes.CommandAppLogin);
+			var closeCallPermission = await _permissionsService.GetPermissionByDepartmentTypeAsync(DepartmentId, PermissionTypes.CloseCall);
+			var deleteCallPermission = await _permissionsService.GetPermissionByDepartmentTypeAsync(DepartmentId, PermissionTypes.DeleteCall);
 
 			result.Data.CanViewPII = _permissionsService.IsUserAllowed(viewPIIPermission, result.Data.IsAdmin, isGroupAdmin, roles);
 			result.Data.CanCreateCalls = _permissionsService.IsUserAllowed(createCallPermission, result.Data.IsAdmin, isGroupAdmin, roles);
+			// CloseCall and DeleteCall also need the Call_Update / Call_Delete claims, which the Create Call permission grants
+			// (ClaimsLogic.AddCallClaims), so both rights include it.
+			result.Data.CanCloseCalls = result.Data.CanCreateCalls && _permissionsService.IsUserAllowed(closeCallPermission, result.Data.IsAdmin, isGroupAdmin, roles);
+			result.Data.CanDeleteCalls = result.Data.CanCreateCalls && _permissionsService.IsUserAllowed(deleteCallPermission, result.Data.IsAdmin, isGroupAdmin, roles);
 			result.Data.CanAddNote = _permissionsService.IsUserAllowed(createNotePermission, result.Data.IsAdmin, isGroupAdmin, roles);
 			result.Data.CanCreateMessage = _permissionsService.IsUserAllowed(createMessagePermission, result.Data.IsAdmin, isGroupAdmin, roles);
 			result.Data.CanCreateWorkflow = _permissionsService.IsUserAllowed(createWorkflowPermission, result.Data.IsAdmin, isGroupAdmin, roles);

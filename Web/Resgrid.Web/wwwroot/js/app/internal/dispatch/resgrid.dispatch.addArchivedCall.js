@@ -87,7 +87,8 @@
                     });
                 }
 
-                $('#Call_LoggedOn').datetimepicker({ step: 5 });
+                // Match the server-rendered department-local timestamp when the picker first opens.
+                $('#Call_LoggedOn').datetimepicker({ format: 'Y/m/d H:i', step: 5 });
 
                 $('#PrimaryContact').select2();
                 $('#AdditionalContacts').select2();

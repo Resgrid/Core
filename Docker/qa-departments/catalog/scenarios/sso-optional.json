@@ -1,0 +1,10 @@
+{
+  "id": "sso-optional",
+  "name": "SSO Optional",
+  "purpose": "An enabled OIDC provider with local (password) login still allowed: the apps offer SSO and password sign-in side by side.",
+  "covers": ["SSO discovery (sso-config, sso-config-for-user)", "OIDC provider", "password login alongside SSO"],
+  "security": {
+    "sso": [{ "provider": "oidc", "authority": "https://sso.qa.example.com/realms/resgrid-qa", "clientId": "resgrid-qa-apps", "allowLocalLogin": true }],
+    "policy": { "requireSso": false }
+  }
+}

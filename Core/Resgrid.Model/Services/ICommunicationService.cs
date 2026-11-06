@@ -46,6 +46,24 @@ namespace Resgrid.Model.Services
 			string address = null);
 
 		/// <summary>
+		/// Re-sends a dispatch a member has not acknowledged, titled as reminder <paramref name="attempt"/> of
+		/// <paramref name="maxAttempts"/>, on each of <paramref name="channels"/> (push, text message, email, voice call, chat
+		/// platform). The member's eligibility, channel preferences and verified contacts, and the ADP egress view, apply as for
+		/// the dispatch. <paramref name="call"/> should carry its Department and CallPriority; <paramref name="departmentNumber"/>
+		/// is the department's text number, used by text message and voice. Which channels a department may use is decided by the
+		/// caller (<see cref="DispatchRenotifyConfig.GetEffectiveChannels"/>). True when any channel sent.
+		/// </summary>
+		Task<bool> SendCallRenotificationAsync(Call call, string userId, int attempt, int maxAttempts, DispatchRenotifyChannels channels,
+			UserProfile profile = null, string address = null, string departmentNumber = null);
+
+		/// <summary>
+		/// Re-sends a dispatch a unit has not acknowledged to the unit apps, titled as reminder <paramref name="attempt"/> of
+		/// <paramref name="maxAttempts"/>. Push is the only unit channel. True when the push was sent.
+		/// </summary>
+		Task<bool> SendUnitCallRenotificationAsync(Call call, CallDispatchUnit dispatch, int attempt, int maxAttempts, DispatchRenotifyChannels channels,
+			string address = null);
+
+		/// <summary>
 		/// Sends a cancellation notification for a call dispatch to a user.
 		/// </summary>
 		Task<bool> SendCancelCallAsync(Call call, CallDispatch dispatch, string departmentNumber, int departmentId,

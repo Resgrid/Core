@@ -46,8 +46,9 @@ namespace Resgrid.Tests.Web.User
 			var state = new RecordsModuleState { DepartmentId = 77 };
 			var cutover = new Mock<IRecordsCutoverService>();
 			cutover.Setup(c => c.GetModuleStateAsync(It.IsAny<int>(), It.IsAny<bool>())).ReturnsAsync(() => state);
+			var modules = new DepartmentModuleSettings();
 			var settings = new Mock<IDepartmentSettingsService>();
-			settings.Setup(s => s.GetDepartmentModuleSettingsAsync(It.IsAny<int>(), It.IsAny<bool>())).ReturnsAsync(new DepartmentModuleSettings());
+			settings.Setup(s => s.GetDepartmentModuleSettingsAsync(It.IsAny<int>(), It.IsAny<bool>())).ReturnsAsync(() => modules);
 
 			var root = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
 			while (root != null && !File.Exists(Path.Combine(root.FullName, "Resgrid.sln"))) root = root.Parent;
@@ -60,6 +61,10 @@ namespace Resgrid.Tests.Web.User
 			var flags = new Mock<IFeatureToggleService>();
 			flags.Setup(f => f.IsEnabledAsync(FeatureFlagKeys.RecordsSystem, It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<System.Collections.Generic.IDictionary<string, string>>()))
 				.ReturnsAsync(() => state.FlagEnabled);
+			flags.Setup(f => f.IsEnabledAsync(FeatureFlagKeys.ChatSystem, It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<System.Collections.Generic.IDictionary<string, string>>()))
+				.ReturnsAsync(true);
+			flags.Setup(f => f.IsEnabledAsync(FeatureFlagKeys.Deployments, It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<System.Collections.Generic.IDictionary<string, string>>()))
+				.ReturnsAsync(true);
 			builder.Services.AddSingleton(cutover.Object);
 			builder.Services.AddSingleton(flags.Object);
 			builder.Services.AddSingleton(Mock.Of<IReadinessAccessService>());
@@ -79,7 +84,8 @@ namespace Resgrid.Tests.Web.User
 			ClaimsAuthorizationHelper._httpContextAccessor = app.Services.GetRequiredService<IHttpContextAccessor>();
 			app.Use(async (context, next) => {
 				context.User = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(ClaimTypes.PrimarySid, "member"), new Claim(ClaimTypes.PrimaryGroupSid, "77"),
-					new Claim(ResgridClaimTypes.Resources.Log, ResgridClaimTypes.Actions.View), new Claim(ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.View) }, "Test"));
+					new Claim(ResgridClaimTypes.Resources.Log, ResgridClaimTypes.Actions.View), new Claim(ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.View),
+					new Claim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.View), new Claim(ResgridClaimTypes.Resources.Certifications, ResgridClaimTypes.Actions.View) }, "Test"));
 				try { await next(); } catch (Exception ex) { context.Response.StatusCode = 500; await context.Response.WriteAsync(ex.ToString()); }
 			});
 			app.UseRequestLocalization(new RequestLocalizationOptions().SetDefaultCulture("en").AddSupportedCultures("en").AddSupportedUICultures("en"));
@@ -118,10 +124,48 @@ namespace Resgrid.Tests.Web.User
 				html.Should().NotContain(TopLevelLogs);
 				RecordsMenu(html).Should().Contain("href=\"/User/Logs\"").And.Contain("Existing logs");
 
+				// Logs and Records have separate module switches. Turning Logs off used to hide Records too; now it only
+				// takes the old Logs out of the Records group.
+				modules = new DepartmentModuleSettings { LogsDisabled = true };
+				html = await Render();
+				html.Should().Contain("id=\"records-menu\"", "the Logs switch no longer hides Records").And.NotContain(TopLevelLogs);
+				RecordsMenu(html).Should().NotContain("href=\"/User/Logs\"");
+				state = new RecordsModuleState { DepartmentId = 77, FlagEnabled = true };
+				(await Render()).Should().Contain("id=\"records-menu\"").And.NotContain(TopLevelLogs);
+
+				// Records switched off: no Records group. Once activated, the read-only Logs keep their own link.
+				modules = new DepartmentModuleSettings { RecordsDisabled = true };
+				(await Render()).Should().NotContain("id=\"records-menu\"").And.Contain(TopLevelLogs);
+				state = new RecordsModuleState { DepartmentId = 77, FlagEnabled = true, Activated = true, CutoverState = RmsDepartmentCutoverState.Active, LegacyWritesBlocked = true };
+				(await Render()).Should().NotContain("id=\"records-menu\"").And.Contain(TopLevelLogs).And.Contain("href=\"/User/Logs\"");
+				modules = new DepartmentModuleSettings();
+
 				// Activated and then the flag turned off: no Records group, so the (read-only) Logs link comes back.
 				state = new RecordsModuleState { DepartmentId = 77, FlagEnabled = false, Activated = true, CutoverState = RmsDepartmentCutoverState.Active, LegacyWritesBlocked = true };
 				html = await Render();
 				html.Should().Contain(TopLevelLogs).And.NotContain("id=\"records-menu\"");
+
+				// The newer modules' visibility switches each hide their own entry and nothing else.
+				var entries = new (string Href, Action<DepartmentModuleSettings> Hide)[]
+				{
+					("href=\"/User/Contacts\"", m => m.ContactsDisabled = true),
+					("href=\"/User/Certifications\"", m => m.CertificationsDisabled = true),
+					("href=\"/User/Deployments\"", m => m.DeploymentsDisabled = true),
+					("href=\"/User/Chat\"", m => m.ChatDisabled = true)
+				};
+				modules = new DepartmentModuleSettings();
+				html = await Render();
+				foreach (var entry in entries)
+					html.Should().Contain(entry.Href, "every module is shown by default");
+				foreach (var entry in entries)
+				{
+					modules = new DepartmentModuleSettings();
+					entry.Hide(modules);
+					html = await Render();
+					html.Should().NotContain(entry.Href);
+					foreach (var other in entries.Where(e => e.Href != entry.Href))
+						html.Should().Contain(other.Href, "only the switched-off module is hidden");
+				}
 			}
 			finally
 			{

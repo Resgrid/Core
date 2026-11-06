@@ -492,6 +492,9 @@
   <data name="DisabledLogsLabel" xml:space="preserve">
     <value>Bitácoras</value>
   </data>
+  <data name="RecordsModuleNote" xml:space="preserve">
+    <value>Muestra Registros en el menú, por separado de Bitácoras.</value>
+  </data>
   <data name="DisabledMaintenanceLabel" xml:space="preserve">
     <value>Mantenimiento</value>
   </data>
@@ -1367,6 +1370,51 @@
   </data>
   <data name="CloseCallWhenUnitsClearHelp" xml:space="preserve">
     <value>Una llamada activa se cierra sola cuando la última unidad despachada a ella informa que está de nuevo en servicio o fuera de servicio (un estado cuyo tipo base es Disponible, En cuartel, Liberada, No disponible o Mantenimiento). Todas las demás unidades despachadas también deben haber informado que terminaron desde su despacho. Solo cuentan las unidades: una llamada sin unidades despachadas, una llamada con un mando de incidente activo o una unidad que aún regresa o transporta mantiene la llamada abierta para el despachador.</value>
+  </data>
+  <data name="DispatchRenotifyHeader" xml:space="preserve">
+    <value>Renotificación de despacho</value>
+  </data>
+  <data name="DispatchRenotifyEnabledLabel" xml:space="preserve">
+    <value>Renotificar hasta la confirmación</value>
+  </data>
+  <data name="DispatchRenotifyEnabledHelp" xml:space="preserve">
+    <value>Vuelve a enviar un despacho al personal y a las unidades que no lo han confirmado. Cualquier estado establecido después del despacho cuenta como confirmación: una persona que marca Respondiendo o No responde, o una unidad que establece cualquier estado, con o sin destino. Los estados que Resgrid establece automáticamente no cuentan. La renotificación se detiene cuando la llamada se cierra o la persona o unidad se retira de ella. Desactivado de forma predeterminada.</value>
+  </data>
+  <data name="DispatchRenotifyLockedNotice" xml:space="preserve">
+    <value>Para garantizar la estabilidad del sistema, el intervalo, el número máximo de renotificaciones y todos los canales distintos de las notificaciones push están bloqueados por ahora. Estas opciones se habilitarán en el futuro.</value>
+  </data>
+  <data name="DispatchRenotifyIntervalLabel" xml:space="preserve">
+    <value>Intervalo de renotificación (minutos)</value>
+  </data>
+  <data name="DispatchRenotifyIntervalHelp" xml:space="preserve">
+    <value>Minutos entre renotificaciones.</value>
+  </data>
+  <data name="DispatchRenotifyMaxRetriesLabel" xml:space="preserve">
+    <value>Máximo de renotificaciones</value>
+  </data>
+  <data name="DispatchRenotifyMaxRetriesHelp" xml:space="preserve">
+    <value>Cuántas veces se vuelve a enviar un despacho antes de que se detenga la renotificación. Con los valores predeterminados, tres renotificaciones con cinco minutos de diferencia cubren los primeros 15 minutos tras un despacho.</value>
+  </data>
+  <data name="DispatchRenotifyChannelsLabel" xml:space="preserve">
+    <value>Renotificar por</value>
+  </data>
+  <data name="DispatchRenotifyChannelsHelp" xml:space="preserve">
+    <value>Cada miembro recibe la renotificación en cada canal marcado aquí que permitan sus propias preferencias de notificación, en sus datos de contacto verificados. Las unidades solo reciben la renotificación por push.</value>
+  </data>
+  <data name="DispatchRenotifyChannelPush" xml:space="preserve">
+    <value>Notificación push</value>
+  </data>
+  <data name="DispatchRenotifyChannelSms" xml:space="preserve">
+    <value>Mensaje de texto</value>
+  </data>
+  <data name="DispatchRenotifyChannelEmail" xml:space="preserve">
+    <value>Correo electrónico</value>
+  </data>
+  <data name="DispatchRenotifyChannelVoice" xml:space="preserve">
+    <value>Llamada de voz</value>
+  </data>
+  <data name="DispatchRenotifyChannelChatPlatform" xml:space="preserve">
+    <value>Plataforma de chat</value>
   </data>
   <data name="CallNumberingHeader" xml:space="preserve">
     <value>Numeración de llamadas</value>

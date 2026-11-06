@@ -88,6 +88,41 @@
       "AllowedValues": "owning serializer and consuming UI",
       "EvidenceSource": "DepartmentSettingsService.GetDepartmentModuleSettingsAsync",
       "Availability": "reference-only"
+    },
+    {
+      "Id": "module.CertificationsDisabled",
+      "AreaId": "training",
+      "LabelKey": "Module.CertificationsDisabled",
+      "HelpKey": "ModuleHelp.CertificationsDisabled",
+      "Binding": "DepartmentModuleSettings.CertificationsDisabled",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "ModuleSettings",
+        "Field": "CertificationsEnabled"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-03T00:00:00Z",
+      "Impact": {
+        "Risk": "High",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.training",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.ModuleSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "module.CertificationsDisabled",
+      "DefaultValue": "false",
+      "AllowedValues": "true or false",
+      "EvidenceSource": "DepartmentSettingsService.GetDepartmentModuleSettingsAsync",
+      "Availability": "available"
     }
   ],
   "Capabilities": [
@@ -136,8 +171,15 @@
         "Controller": "Certifications",
         "Action": "Types"
       },
-      "Requirements": [],
-      "SettingIds": [],
+      "Requirements": [
+        {
+          "Kind": "module",
+          "Id": "Certifications"
+        }
+      ],
+      "SettingIds": [
+        "module.CertificationsDisabled"
+      ],
       "RuleIds": [],
       "Setup": {
         "EvidenceId": "certificationTypeCount",
@@ -164,8 +206,15 @@
         "Controller": "Certifications",
         "Action": "Index"
       },
-      "Requirements": [],
-      "SettingIds": [],
+      "Requirements": [
+        {
+          "Kind": "module",
+          "Id": "Certifications"
+        }
+      ],
+      "SettingIds": [
+        "module.CertificationsDisabled"
+      ],
       "RuleIds": [
         "credential-expiry",
         "qualified-coverage"
@@ -212,8 +261,15 @@
         "Controller": "Certifications",
         "Action": "Settings"
       },
-      "Requirements": [],
-      "SettingIds": [],
+      "Requirements": [
+        {
+          "Kind": "module",
+          "Id": "Certifications"
+        }
+      ],
+      "SettingIds": [
+        "module.CertificationsDisabled"
+      ],
       "RuleIds": [],
       "Prominence": "Detail",
       "DocsPath": "/web-app/business-ops/certifications/"
@@ -231,8 +287,15 @@
         "Controller": "Certifications",
         "Action": "Index"
       },
-      "Requirements": [],
-      "SettingIds": [],
+      "Requirements": [
+        {
+          "Kind": "module",
+          "Id": "Certifications"
+        }
+      ],
+      "SettingIds": [
+        "module.CertificationsDisabled"
+      ],
       "RuleIds": [
         "credential-expiry",
         "qualified-coverage"
@@ -306,6 +369,17 @@
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "module.CertificationsDisabled",
+      "Locale": "en",
+      "TitleKey": "Module.CertificationsDisabled",
+      "Body": "Certifications availability. Shows or hides Certifications in the web app's navigation, dashboard widgets and search. Hiding it does not delete data or change permissions. Certification enforcement is not affected.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "module-certificationsdisabled",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-03T00:00:00Z"
     },
     {
       "Id": "trainings",

@@ -32,11 +32,14 @@ namespace Resgrid.Tests.Dashboard.Widgets
 		[Test]
 		public void Gates_mirror_the_nav_and_the_pages()
 		{
-			Visible("deployments.active", Viewer()).Should().BeFalse("the Operations.Deployments flag is required");
-			Visible("deployments.active", Viewer(flags: new[] { FeatureFlagKeys.Deployments })).Should().BeTrue("the Deployments list has no policy: members see their own");
+			var deploymentsShown = new[] { DashboardAccessChecks.DeploymentsEnabled };
+			Visible("deployments.active", Viewer(access: deploymentsShown)).Should().BeFalse("the Operations.Deployments flag is required");
+			Visible("deployments.active", Viewer(flags: new[] { FeatureFlagKeys.Deployments }, access: deploymentsShown)).Should().BeTrue("the Deployments list has no policy: members see their own");
+			Visible("deployments.active", Viewer(flags: new[] { FeatureFlagKeys.Deployments })).Should().BeFalse("the department's Deployments visibility switch hides it, like the menu entry");
 
-			Visible("deployments.timeReports", Viewer(flags: new[] { FeatureFlagKeys.Deployments })).Should().BeFalse("approving needs TimeReports_Approve");
-			Visible("deployments.timeReports", Viewer(flags: new[] { FeatureFlagKeys.Deployments }, policies: new[] { "TimeReports_Approve" })).Should().BeTrue();
+			Visible("deployments.timeReports", Viewer(flags: new[] { FeatureFlagKeys.Deployments }, access: deploymentsShown)).Should().BeFalse("approving needs TimeReports_Approve");
+			Visible("deployments.timeReports", Viewer(flags: new[] { FeatureFlagKeys.Deployments }, policies: new[] { "TimeReports_Approve" }, access: deploymentsShown)).Should().BeTrue();
+			Visible("deployments.timeReports", Viewer(flags: new[] { FeatureFlagKeys.Deployments }, policies: new[] { "TimeReports_Approve" })).Should().BeFalse();
 
 			var invoicing = Viewer(policies: new[] { "Invoicing_View" }, flags: new[] { FeatureFlagKeys.BusinessOperations }, access: new[] { DashboardAccessChecks.InvoicingVisible });
 			Visible("invoicing.receivables", invoicing).Should().BeTrue("Invoicing is visible on flag + module; a lapsed add-on only makes it read-only");

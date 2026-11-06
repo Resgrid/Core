@@ -142,7 +142,7 @@ namespace Resgrid.Tests.Rms
 		public async Task Unit_and_command_assignees_are_resolved_from_live_staffing_and_the_active_command()
 		{
 			_units.Setup(u => u.GetUnitByIdAsync(7)).ReturnsAsync(new Unit { UnitId = 7, DepartmentId = Dept, Name = "Engine 7" });
-			_units.Setup(u => u.GetLastUnitStateByUnitIdAsync(7)).ReturnsAsync(new UnitState { UnitStateId = 1, UnitId = 7, Roles = new List<UnitStateRole> { new UnitStateRole { UserId = "driver" } } });
+			_units.Setup(u => u.GetLastUnitStateWithRolesByUnitIdAsync(7)).ReturnsAsync(new UnitState { UnitStateId = 1, UnitId = 7, Roles = new List<UnitStateRole> { new UnitStateRole { UserId = "driver" } } });
 			var unitAssignment = await _service.AssignAsync(Dept, Officer, new RecordWorkAssignmentInput { RecordId = "r1", AssigneeKind = RmsWorkAssigneeKind.Unit, AssigneeUnitId = 7 });
 
 			(await _service.IsAssigneeAsync(Dept, "driver", unitAssignment, null)).Should().BeTrue();

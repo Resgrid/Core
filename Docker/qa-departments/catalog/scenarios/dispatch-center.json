@@ -1,0 +1,27 @@
+{
+  "id": "dispatch-center",
+  "name": "Dispatch Center",
+  "purpose": "A busy desk: department priorities, a custom call number pattern, pending and scheduled calls, linked calls, call contacts, critical calls and check-in timers that start on new calls.",
+  "covers": ["department call priorities", "call number pattern", "pending calls", "scheduled dispatch", "linked calls", "call contacts", "call quick and note templates", "check-in timers on new calls"],
+  "department": { "type": "Dispatch Center" },
+  "settings": { "callNumbering": { "pattern": "{YYYY}-{SEQ}", "width": 5 }, "checkInTimersAutoEnable": true, "callsSortOrder": "priority" },
+  "callPriorities": [
+    { "name": "P4 Non-Emergency", "color": "#64748b", "base": "low", "default": true },
+    { "name": "P3 Urgent", "color": "#2563eb", "base": "medium" },
+    { "name": "P2 Emergent", "color": "#ea580c", "base": "high" },
+    { "name": "P1 Immediate", "color": "#dc2626", "base": "emergency", "forceNotifyAll": true }
+  ],
+  "extra": {
+    "calls": [
+      {
+        "key": "pending", "name": "Welfare Check (Pending)", "nature": "Neighbor has not seen resident in two days.", "type": "Public Service", "priority": "medium", "state": "pending", "loggedOn": "-2m",
+        "address": "310 Walnut St, Springfield, IL 62704", "location": [39.7820, -89.6650], "number": "QA-0008", "contacts": ["resident"]
+      },
+      {
+        "key": "second-alarm", "name": "Structure Fire - Exposure (1204 Oak St)", "nature": "Fire extended to the B exposure.", "type": "Structure Fire", "priority": "emergency", "critical": true, "state": "active", "loggedOn": "-9m",
+        "address": "1204 Oak St, Springfield, IL 62702", "location": [39.8033, -89.6519], "number": "QA-0009", "linkedTo": "structure-fire", "checkInTimers": true,
+        "dispatch": { "units": ["Engine 2"], "groups": ["Station 2"], "people": ["member"] }, "contacts": ["utility", "hospital"]
+      }
+    ]
+  }
+}

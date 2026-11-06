@@ -4222,6 +4222,21 @@
   <data name="ConfigModule.Logs" xml:space="preserve">
     <value>Журнали</value>
   </data>
+  <data name="ConfigModule.Records" xml:space="preserve">
+    <value>Записи</value>
+  </data>
+  <data name="ConfigModule.Contacts" xml:space="preserve">
+    <value>Контакти</value>
+  </data>
+  <data name="ConfigModule.Certifications" xml:space="preserve">
+    <value>Сертифікати</value>
+  </data>
+  <data name="ConfigModule.Deployments" xml:space="preserve">
+    <value>Розгортання</value>
+  </data>
+  <data name="ConfigModule.Chat" xml:space="preserve">
+    <value>Чат</value>
+  </data>
   <data name="ConfigModule.Reports" xml:space="preserve">
     <value>Звіти</value>
   </data>

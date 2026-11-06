@@ -66,6 +66,11 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		/// Say you want to dispatch 2 users, 1 unit, 1 group and 1 role. The string would look like this:
 		/// P:c0a0f71a-0758-434c-868b-c77d245db78a|P:c0a0f71a-0758-434c-868b-c77d245db78a|U:1995012|G:991031|R:893139
 		/// </example>
+		/// <remarks>
+		/// "0" dispatches everyone. Left blank, an immediate call also goes to everyone (older clients send nothing), and a
+		/// pending call has no proposed recipients. Send a list with no entries ("|") to create a call that dispatches
+		/// nobody; a department that requires a dispatch list refuses it.
+		/// </remarks>
 		public string DispatchList { get; set; }
 
 		/// <summary>

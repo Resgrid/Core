@@ -85,6 +85,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 		public async Task<ActionResult<RecordDefinitionVersionResult>> Version(string key, int version)
 		{
 			if (!await FlagOnAsync()) return NotFound();
+			if (CallbackRecordForm.Matches(key, version))
+			{
+				var result = new RecordDefinitionVersionResult { Data = CallbackRecordForm.Version(), Status = ResponseHelper.Success, PageSize = 1 };
+				ResponseHelper.PopulateV4ResponseData(result);
+				return Ok(result);
+			}
 			var row = await _definitions.GetVersionAsync(DepartmentId, key, version);
 			if (row == null) return NotFound();
 			return Ok(Wrap(row));

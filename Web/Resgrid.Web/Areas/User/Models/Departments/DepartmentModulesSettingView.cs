@@ -26,6 +26,16 @@ namespace Resgrid.Web.Areas.User.Models.Departments
 		public bool IncidentBackOfficeEnabled { get; set; } = true;
 		public bool IncidentBusinessEnabled { get; set; } = true;
 		public bool IncidentCoordinationEnabled { get; set; } = true;
+		// Visibility switches for the newer modules (DepartmentModuleSettings 29-33).
+		public bool RecordsEnabled { get; set; } = true;
+		public bool ContactsEnabled { get; set; } = true;
+		public bool CertificationsEnabled { get; set; } = true;
+		public bool DeploymentsEnabled { get; set; } = true;
+		public bool ChatEnabled { get; set; } = true;
+		// A flag-gated module's switch is only on the page (and only saved) while its flag is on for the department.
+		public bool RecordsAvailable { get; set; }
+		public bool DeploymentsAvailable { get; set; }
+		public bool ChatAvailable { get; set; }
 
 		public DepartmentModulesSettingView()
 		{

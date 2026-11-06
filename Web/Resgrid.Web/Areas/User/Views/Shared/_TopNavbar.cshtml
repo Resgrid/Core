@@ -9,8 +9,9 @@
 	var adminAssistVisible = ClaimsAuthorizationHelper.IsUserDepartmentAdmin() &&
 		(await Resgrid.Services.AdminAssist.AdminAssistFeatureAvailability.IsEnabledAsync(featureToggleService, ClaimsAuthorizationHelper.GetDepartmentId(), true, Context.RequestAborted) ||
 		 await Resgrid.Services.AdminAssist.AdminAssistFeatureAvailability.IsWorkspaceEnabledAsync(featureToggleService, ClaimsAuthorizationHelper.GetDepartmentId(), Context.RequestAborted));
-	// Chat.System gates the moderation console link; it is only useful to department or group admins.
-	var chatModerationVisible = ClaimsAuthorizationHelper.IsUserDepartmentOrGroupAdmin(0) &&
+	// Chat.System and the department's Chat module switch gate the moderation console link; it is only useful to
+	// department or group admins.
+	var chatModerationVisible = ClaimsAuthorizationHelper.IsUserDepartmentOrGroupAdmin(0) && SettingsHelper.IsChatEnabled() &&
 		await featureToggleService.IsEnabledAsync(FeatureFlagKeys.ChatSystem, ClaimsAuthorizationHelper.GetDepartmentId());
 	// The search box is hidden below the md breakpoint; phones and small tablets get an icon to the Search page instead.
 	var searchVisible = await featureToggleService.IsEnabledAsync(FeatureFlagKeys.SearchUnified, ClaimsAuthorizationHelper.GetDepartmentId());

@@ -1,0 +1,13 @@
+{
+  "id": "sso-required",
+  "name": "SSO Required",
+  "purpose": "SSO required by the security policy with OIDC and SAML providers enabled: password sign-in is refused, so the apps must steer every member to SSO.",
+  "covers": ["SSO required policy", "password login refused", "OIDC and SAML providers", "SAML metadata discovery"],
+  "security": {
+    "sso": [
+      { "provider": "oidc", "authority": "https://sso.qa.example.com/realms/resgrid-qa", "clientId": "resgrid-qa-apps", "allowLocalLogin": false },
+      { "provider": "saml", "metadataUrl": "https://sso.qa.example.com/saml/metadata", "entityId": "https://sso.qa.example.com/saml", "idpSsoUrl": "https://sso.qa.example.com/saml/sso", "allowLocalLogin": false }
+    ],
+    "policy": { "requireSso": true }
+  }
+}

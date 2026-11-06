@@ -9,8 +9,27 @@ namespace Resgrid.Web.Helpers
 	/// <summary>
 	/// Parsing for the pipe delimited DispatchList string clients send when creating or editing a call.
 	/// </summary>
+	/// <remarks>
+	/// The list has three forms. Blank means "everyone" on an immediate call (older clients send nothing, so this stays),
+	/// "0" means "everyone", and anything else is the explicit list. An explicit list with no entries ("|") dispatches
+	/// nobody: it is how a client creates or edits a call that goes to no one without the blank reading as "everyone".
+	/// </remarks>
 	public static class DispatchListHelper
 	{
+		/// <summary>
+		/// Whether the list names anyone: "0" or at least one non-blank entry. Blank and an entry-less list ("|") do not,
+		/// so a department that requires a dispatch list refuses a call sent to nobody.
+		/// </summary>
+		/// <param name="dispatchList">The DispatchList string as the client sent it.</param>
+		/// <returns>True when the list has an entry.</returns>
+		public static bool HasEntries(string dispatchList)
+		{
+			if (string.IsNullOrWhiteSpace(dispatchList))
+				return false;
+
+			return dispatchList.Split('|').Any(entry => !string.IsNullOrWhiteSpace(entry));
+		}
+
 		/// <summary>
 		/// Pulls the ids out of a DispatchList for a single prefix ("G:", "R:" or "U:"). Clients are supposed
 		/// to send ids, but some send the display name instead (i.e. "R:PARAMÉDICO"), and one unparsable entry

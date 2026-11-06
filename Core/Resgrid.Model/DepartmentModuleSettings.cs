@@ -77,8 +77,28 @@ namespace Resgrid.Model
 		/// <summary>Incident Back Office LI-C switch; also requires the back office to be enabled.</summary>
 		[ProtoMember(27)]
 		public bool IncidentBusinessDisabled { get; set; }
-		/// <summary>Incident Back Office LI-D coordination boards switch. Next free tag after this is 29.</summary>
+		/// <summary>Incident Back Office LI-D coordination boards switch.</summary>
 		[ProtoMember(28)]
 		public bool IncidentCoordinationDisabled { get; set; }
+
+		// Visibility switches for modules added after the original list. Each hides the module's navigation entry,
+		// dashboard widgets and search shortcuts; none deletes data or changes permissions, and each defaults to shown.
+
+		/// <summary>
+		/// The Records module, independently of <see cref="LogsDisabled"/>; the Records.System flag still decides
+		/// whether Records exists at all.
+		/// </summary>
+		[ProtoMember(29)]
+		public bool RecordsDisabled { get; set; }
+		[ProtoMember(30)]
+		public bool ContactsDisabled { get; set; }
+		[ProtoMember(31)]
+		public bool CertificationsDisabled { get; set; }
+		/// <summary>Deployments; the Operations.Deployments flag still decides whether the module exists at all.</summary>
+		[ProtoMember(32)]
+		public bool DeploymentsDisabled { get; set; }
+		/// <summary>Department chat; the Chat.System flag still decides whether chat exists at all. Next free tag after this is 34.</summary>
+		[ProtoMember(33)]
+		public bool ChatDisabled { get; set; }
 	}
 }

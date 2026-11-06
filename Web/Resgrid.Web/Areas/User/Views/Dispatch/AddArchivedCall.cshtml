@@ -98,7 +98,7 @@
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["TimestampLabel"]</label>
-                            <div class="col-sm-10"><input type="text" onkeydown="javascript:return false;" style="width: 240px;" asp-for="Call.LoggedOn"></div>
+                            <div class="col-sm-10"><input type="text" onkeydown="javascript:return false;" style="width: 240px;" asp-for="Call.LoggedOn" asp-format="{0:yyyy'/'MM'/'dd HH':'mm}"></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["PrioirtyLabel"]</label>

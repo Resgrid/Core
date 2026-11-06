@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ProtoBuf;
 
@@ -39,6 +40,13 @@ namespace Resgrid.Model.Queue
 
 		[ProtoMember(11)]
 		public List<int> BroadcastRoleIds { get; set; }
+
+		/// <summary>
+		/// When the broadcast was queued (UTC), stamped by the queue service. Dispatch re-notification counts a status set from
+		/// then on as the acknowledgment, so a member who responds before the worker picks the message up is not chased.
+		/// </summary>
+		[ProtoMember(12)]
+		public DateTime? EnqueuedOn { get; set; }
 
 		public void SetBroadcastDispatches(IEnumerable<string> userIds, IEnumerable<int> groupIds,
 			IEnumerable<int> unitIds, IEnumerable<int> roleIds)

@@ -18,6 +18,9 @@ namespace Resgrid.Web.Models.AccountViewModels
         public string ConfirmPassword { get; set; }
 
 		public int MinPasswordLength { get; set; } = 8;
+		/// <summary>The account the grant resets; set by the server from the grant, never bound from the post.</summary>
+		[Microsoft.AspNetCore.Mvc.ModelBinding.BindNever]
+		public string UserName { get; set; }
 		public bool InvalidOrExpired { get; set; }
 		/// <summary>Refused for the address's hourly limit on reset attempts; the page shows <see cref="RateLimitedMessage"/> instead of the form.</summary>
 		public bool RateLimited { get; set; }

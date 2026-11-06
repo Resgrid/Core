@@ -7125,6 +7125,12 @@
   <data xml:space="preserve" name="SettingHelp.DispatchResponseCodes">
     <value>Необов'язкові коди для кожного підрозділу (наприклад, C3 для маячків і сирени), які пропонують рядки умовних карток, і чи бачать їх екіпажі у сповіщеннях і застосунках. Порожньо означає, що коди ніде не показуються.</value>
   </data>
+  <data xml:space="preserve" name="Setting.DispatchRenotifyConfig">
+    <value>Повторне сповіщення про виклик</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.DispatchRenotifyConfig">
+    <value>Повторно надсилає push-сповіщення про виклик персоналу та одиницям, які відтоді не встановили жодного статусу: кожні 5 хвилин, до 3 разів. Будь-який статус, встановлений людиною чи одиницею, є підтвердженням; автоматичні статуси — ні. Припиняється, коли виклик закрито або отримувача з нього вилучено. Типово вимкнено.</value>
+  </data>
   <data name="Field.DepartmentTermOverride.Singular" xml:space="preserve">
     <value>Термін підрозділу / Один елемент</value>
   </data>
@@ -7775,5 +7781,35 @@
   </data>
   <data xml:space="preserve" name="SettingHelp.OfflineMapPacksConfig">
     <value>Що застосунки завантажують для роботи без мережі: максимальну зону реагування (її базова карта має вкладатися в ліміт розміру), які картографічні дані включено, коли відбувається завантаження, і додаткове покриття для викликів і маршрутів поза зоною.</value>
+  </data>
+  <data name="Module.RecordsDisabled" xml:space="preserve">
+    <value>Доступність записів</value>
+  </data>
+  <data name="ModuleHelp.RecordsDisabled" xml:space="preserve">
+    <value>Показує або приховує Записи у навігації, віджетах панелі та пошуку вебзастосунку. Приховування не видаляє дані й не змінює дозволи. Журнали мають окремий перемикач.</value>
+  </data>
+  <data name="Module.ContactsDisabled" xml:space="preserve">
+    <value>Доступність контактів</value>
+  </data>
+  <data name="ModuleHelp.ContactsDisabled" xml:space="preserve">
+    <value>Показує або приховує Контакти у навігації, віджетах панелі та пошуку вебзастосунку. Приховування не видаляє дані й не змінює дозволи.</value>
+  </data>
+  <data name="Module.CertificationsDisabled" xml:space="preserve">
+    <value>Доступність сертифікатів</value>
+  </data>
+  <data name="ModuleHelp.CertificationsDisabled" xml:space="preserve">
+    <value>Показує або приховує Сертифікати у навігації, віджетах панелі та пошуку вебзастосунку. Приховування не видаляє дані й не змінює дозволи. Це не впливає на застосування вимог щодо сертифікатів.</value>
+  </data>
+  <data name="Module.DeploymentsDisabled" xml:space="preserve">
+    <value>Доступність розгортань</value>
+  </data>
+  <data name="ModuleHelp.DeploymentsDisabled" xml:space="preserve">
+    <value>Показує або приховує Розгортання у навігації, віджетах панелі та пошуку вебзастосунку. Приховування не видаляє дані й не змінює дозволи.</value>
+  </data>
+  <data name="Module.ChatDisabled" xml:space="preserve">
+    <value>Доступність чату</value>
+  </data>
+  <data name="ModuleHelp.ChatDisabled" xml:space="preserve">
+    <value>Показує або приховує Чат у навігації, віджетах панелі та пошуку вебзастосунку. Приховування не видаляє дані й не змінює дозволи. Це не впливає на чат у мобільних застосунках.</value>
   </data>
 </root>

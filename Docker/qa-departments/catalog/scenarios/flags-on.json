@@ -1,0 +1,8 @@
+{
+  "id": "flags-on",
+  "name": "Flags On",
+  "purpose": "Every active feature flag forced on with an operator override, so each flag-gated screen and endpoint can be checked in its on state.",
+  "covers": ["every active feature flag on", "flag-gated screens visible", "24-hour clock, India (UTC+05:30 half-hour offset)"],
+  "department": { "timeZone": "India Standard Time", "use24HourTime": true },
+  "flags": { "profile": "all-on" }
+}

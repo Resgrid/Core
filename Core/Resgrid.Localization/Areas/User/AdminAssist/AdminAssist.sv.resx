@@ -7125,6 +7125,12 @@
   <data xml:space="preserve" name="SettingHelp.DispatchResponseCodes">
     <value>Valfria koder per enhet (till exempel C3 för blåljus och siren) som villkorade korts rader föreslår, och om besättningar ser dem i push och appar. Tomt betyder att koder inte visas någonstans.</value>
   </data>
+  <data xml:space="preserve" name="Setting.DispatchRenotifyConfig">
+    <value>Påminnelser om utskick</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.DispatchRenotifyConfig">
+    <value>Skickar ett utskick igen via push till personal och enheter som inte har satt någon status sedan det gick ut: var 5:e minut, upp till 3 gånger. Varje status som en person eller enhet sätter räknas som bekräftelse; automatiska statusar gör det inte. Upphör när larmet stängs eller mottagaren tas bort från det. Avstängt som standard.</value>
+  </data>
   <data name="Field.DepartmentTermOverride.Singular" xml:space="preserve">
     <value>Organisationens term / Ett objekt</value>
   </data>
@@ -7775,5 +7781,35 @@
   </data>
   <data xml:space="preserve" name="SettingHelp.OfflineMapPacksConfig">
     <value>Vad apparna laddar ner för att fungera utan nätverk: det största insatsområdet (dess baskarta måste rymmas inom storleksgränsen), vilka kartdata som ingår, när nedladdningar sker och extra täckning för larm och rutter utanför området.</value>
+  </data>
+  <data name="Module.RecordsDisabled" xml:space="preserve">
+    <value>Tillgänglighet för journaler</value>
+  </data>
+  <data name="ModuleHelp.RecordsDisabled" xml:space="preserve">
+    <value>Visar eller döljer Journaler i webbappens navigering, instrumentpanelens widgetar och sökning. Att dölja modulen raderar inga data och ändrar inga behörigheter. Loggar har en egen brytare.</value>
+  </data>
+  <data name="Module.ContactsDisabled" xml:space="preserve">
+    <value>Tillgänglighet för kontakter</value>
+  </data>
+  <data name="ModuleHelp.ContactsDisabled" xml:space="preserve">
+    <value>Visar eller döljer Kontakter i webbappens navigering, instrumentpanelens widgetar och sökning. Att dölja modulen raderar inga data och ändrar inga behörigheter.</value>
+  </data>
+  <data name="Module.CertificationsDisabled" xml:space="preserve">
+    <value>Tillgänglighet för certifieringar</value>
+  </data>
+  <data name="ModuleHelp.CertificationsDisabled" xml:space="preserve">
+    <value>Visar eller döljer Certifieringar i webbappens navigering, instrumentpanelens widgetar och sökning. Att dölja modulen raderar inga data och ändrar inga behörigheter. Tillämpningen av certifieringar påverkas inte.</value>
+  </data>
+  <data name="Module.DeploymentsDisabled" xml:space="preserve">
+    <value>Tillgänglighet för insatser</value>
+  </data>
+  <data name="ModuleHelp.DeploymentsDisabled" xml:space="preserve">
+    <value>Visar eller döljer Insatser i webbappens navigering, instrumentpanelens widgetar och sökning. Att dölja modulen raderar inga data och ändrar inga behörigheter.</value>
+  </data>
+  <data name="Module.ChatDisabled" xml:space="preserve">
+    <value>Tillgänglighet för chatt</value>
+  </data>
+  <data name="ModuleHelp.ChatDisabled" xml:space="preserve">
+    <value>Visar eller döljer chatten i webbappens navigering, instrumentpanelens widgetar och sökning. Att dölja modulen raderar inga data och ändrar inga behörigheter. Chatten i mobilapparna påverkas inte.</value>
   </data>
 </root>

@@ -82,6 +82,7 @@ namespace Resgrid.Workers.Console
 					services.AddSingleton<IHostedService, QueuesProcessingService>();
 					services.AddSingleton<IHostedService, ScheduledJobsService>();
 					services.AddSingleton<IHostedService, AdminAssistTraceService>();
+					services.AddSingleton<IHostedService, FeatureToggleUsageFlushService>();
 
 				})
 				.ConfigureLogging((hostingContext, logging) => {
@@ -445,6 +446,14 @@ namespace Resgrid.Workers.Console
 				_logger.Log(LogLevel.Information, "Scheduling PAR Evaluation");
 				await Client.ScheduleAsync("PAR Evaluation",
 					new Commands.ParEvaluationCommand(23),
+					Cron.MinuteIntervals(1),
+					stoppingToken);
+
+				// Worker ID 78: dispatch re-notification. Every minute so a 5 minute reminder lands within a minute of due; a
+				// single indexed query when nothing is due. Departments opt in on Dispatch Settings (off by default).
+				_logger.Log(LogLevel.Information, "Scheduling Dispatch Re-notify");
+				await Client.ScheduleAsync("Dispatch Re-notify",
+					new Commands.DispatchRenotifyCommand(78),
 					Cron.MinuteIntervals(1),
 					stoppingToken);
 

@@ -651,6 +651,12 @@ namespace Resgrid.Web.ServicesCore
 					options.SetAccessTokenLifetime(TimeSpan.FromMinutes(OidcConfig.AccessTokenExpiryMinutes));
 					options.SetRefreshTokenLifetime(TimeSpan.FromDays(OidcConfig.RefreshTokenExpiryDays));
 
+					// Access tokens leave as an opaque handle and the token itself stays in the token store. Validation below
+					// (UseLocalServer) then resolves handles from the store, and Eventing already introspects. Not in
+					// ResgridTokenEndpoints: the HTTP tests run in degraded mode, which has no store to keep them in.
+					if (OidcConfig.UseReferenceAccessTokens)
+						options.UseReferenceAccessTokens();
+
 					// Accept anonymous clients (i.e clients that don't send a client_id).
 					options.AcceptAnonymousClients();
 
@@ -709,7 +715,13 @@ namespace Resgrid.Web.ServicesCore
 			//});
 
 
-			services.AddAuthentication(OpenIddict.Validation.AspNetCore.OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)
+			services.AddAuthentication(options =>
+				{
+					const string bearer = OpenIddict.Validation.AspNetCore.OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme;
+					options.DefaultScheme = bearer;
+					// Identity sets its cookie as DefaultAuthenticateScheme. Validate API bearer sessions before authorization runs.
+					options.DefaultAuthenticateScheme = bearer;
+				})
 				.AddScheme<AuthenticationSchemeOptions, SystemApiKeyAuthHandler>("SystemApiKey", null)
 				// Department API keys (X-Resgrid-ApiKey). Never the default scheme: it runs only on actions marked with
 				// [DepartmentApiKeyScope], which is what keeps a key off every other endpoint.
@@ -728,9 +740,12 @@ namespace Resgrid.Web.ServicesCore
 			services.AddTransient<ISentryEventProcessor, SentryEventProcessor>();
 
 			services.AddHostedService<Worker>();
+			services.AddHostedService<OidcTokenPruneService>();
 			// Open SignalR connections by session, closed by the sweep once their session ends or locks (slice 16).
 			services.AddSingleton<Resgrid.Services.SessionConnectionRegistry>();
 			services.AddHostedService<Resgrid.Web.Services.Middleware.SessionConnectionSweepService>();
+			// Flag evaluation counts are buffered per process; this host writes its own to FeatureFlagUsages.
+			services.AddHostedService<Resgrid.Web.Services.Middleware.FeatureToggleUsageFlushService>();
 			services.AddScoped<ITwilioVoiceResponseService, TwilioVoiceResponseService>();
 			this.Services = services;
 

@@ -268,6 +268,8 @@ namespace Resgrid.Services
 			// Nothing downstream of the queue reads UserProfile.Image.
 			StripProfileImages(cqi.Profiles);
 
+			cqi.EnqueuedOn = DateTime.UtcNow;
+
 			if (!await _outboundQueueProvider.EnqueueCall(cqi))
 				throw new InvalidOperationException("Failed to enqueue call broadcast for processing.");
 

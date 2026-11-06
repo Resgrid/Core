@@ -320,6 +320,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 						case SystemActionModules.Mapping: return SettingsHelper.IsMappingEnabled();
 						case SystemActionModules.Shifts: return SettingsHelper.IsShiftsEnabled();
 						case SystemActionModules.Logs: return SettingsHelper.IsLogsEnabled();
+						case SystemActionModules.Records: return SettingsHelper.IsRecordsEnabled();
 						case SystemActionModules.Reports: return SettingsHelper.IsReportsEnabled();
 						case SystemActionModules.Documents: return SettingsHelper.IsDocumentsEnabled();
 						case SystemActionModules.Calendar: return SettingsHelper.IsCalendarEnabled();
@@ -328,6 +329,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 						case SystemActionModules.Inventory: return SettingsHelper.IsInventoryEnabled();
 						case SystemActionModules.Maintenance: return SettingsHelper.IsMaintenanceEnabled();
 						case SystemActionModules.BusinessOperations: return SettingsHelper.IsBusinessOperationsEnabled();
+						case SystemActionModules.Contacts: return SettingsHelper.IsContactsEnabled();
+						case SystemActionModules.Certifications: return SettingsHelper.IsCertificationsEnabled();
+						case SystemActionModules.Deployments: return SettingsHelper.IsDeploymentsEnabled();
+						case SystemActionModules.Chat: return SettingsHelper.IsChatEnabled();
 						default: return true;
 					}
 				}

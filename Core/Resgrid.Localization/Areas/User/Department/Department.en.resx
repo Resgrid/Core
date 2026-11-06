@@ -492,6 +492,9 @@
   <data name="DisabledLogsLabel" xml:space="preserve">
     <value>Logs</value>
   </data>
+  <data name="RecordsModuleNote" xml:space="preserve">
+    <value>Shows Records in the menu, separately from Logs.</value>
+  </data>
   <data name="DisabledMaintenanceLabel" xml:space="preserve">
     <value>Maintenance</value>
   </data>
@@ -1367,6 +1370,51 @@
   </data>
   <data name="CloseCallWhenUnitsClearHelp" xml:space="preserve">
     <value>An active call closes on its own when the last unit dispatched to it reports back in service or out of service (a status whose base type is Available, In Quarters, Cleared, Unavailable or Maintenance). Every other dispatched unit must also have reported finished since its dispatch. Only units count: a call with no unit dispatched, a call under an active incident command, or a unit still returning or transporting keeps the call open for the dispatcher.</value>
+  </data>
+  <data name="DispatchRenotifyHeader" xml:space="preserve">
+    <value>Dispatch Re-notification</value>
+  </data>
+  <data name="DispatchRenotifyEnabledLabel" xml:space="preserve">
+    <value>Re-notify Until Acknowledged</value>
+  </data>
+  <data name="DispatchRenotifyEnabledHelp" xml:space="preserve">
+    <value>Sends a dispatch again to personnel and units that have not acknowledged it. Any status set after the dispatch acknowledges it: a person setting Responding or Not Responding, or a unit setting any status, with or without a destination. Statuses Resgrid sets automatically do not count. Re-notification stops when the call closes or the person or unit is removed from it. Off by default.</value>
+  </data>
+  <data name="DispatchRenotifyLockedNotice" xml:space="preserve">
+    <value>To ensure system stability, the re-notify interval, the maximum number of re-notifications and every channel other than push are locked for now. These options will open up in the future.</value>
+  </data>
+  <data name="DispatchRenotifyIntervalLabel" xml:space="preserve">
+    <value>Re-notify Interval (Minutes)</value>
+  </data>
+  <data name="DispatchRenotifyIntervalHelp" xml:space="preserve">
+    <value>Minutes between re-notifications.</value>
+  </data>
+  <data name="DispatchRenotifyMaxRetriesLabel" xml:space="preserve">
+    <value>Maximum Re-notifications</value>
+  </data>
+  <data name="DispatchRenotifyMaxRetriesHelp" xml:space="preserve">
+    <value>How many times a dispatch is sent again before re-notification stops. At the defaults, three re-notifications five minutes apart cover the first 15 minutes after a dispatch.</value>
+  </data>
+  <data name="DispatchRenotifyChannelsLabel" xml:space="preserve">
+    <value>Re-notify By</value>
+  </data>
+  <data name="DispatchRenotifyChannelsHelp" xml:space="preserve">
+    <value>Each member is re-notified on every channel ticked here that their own notification settings allow, using their verified contact details. Units are re-notified by push only.</value>
+  </data>
+  <data name="DispatchRenotifyChannelPush" xml:space="preserve">
+    <value>Push Notification</value>
+  </data>
+  <data name="DispatchRenotifyChannelSms" xml:space="preserve">
+    <value>Text Message</value>
+  </data>
+  <data name="DispatchRenotifyChannelEmail" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="DispatchRenotifyChannelVoice" xml:space="preserve">
+    <value>Voice Call</value>
+  </data>
+  <data name="DispatchRenotifyChannelChatPlatform" xml:space="preserve">
+    <value>Chat Platform</value>
   </data>
   <data name="CallNumberingHeader" xml:space="preserve">
     <value>Call Numbering</value>

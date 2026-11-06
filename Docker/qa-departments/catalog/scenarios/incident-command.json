@@ -1,0 +1,43 @@
+{
+  "id": "incident-command",
+  "name": "Incident Command",
+  "purpose": "An established incident command on the structure fire: divisions and groups with assigned units and personnel, objectives in every state, open and met needs, running timers, check-in timers and PAR check-ins.",
+  "covers": ["active incident command", "command structure and assignments", "tactical objectives", "incident needs", "incident timers", "check-in timers and PAR", "incident notes"],
+  "department": { "timeZone": "Central Standard Time" },
+  "settings": { "checkInTimersAutoEnable": true },
+  "incidentCommand": {
+    "call": "structure-fire",
+    "name": "Oak Street Command",
+    "commander": "admin",
+    "commandPost": [39.8028, -89.6519],
+    "commandPostText": "Alpha side, Oak St and 12th",
+    "stagingText": "Fairgrounds Lot B",
+    "actionPlan": "Offensive interior attack, primary search, protect B exposure.",
+    "nodes": [
+      { "name": "Division A", "type": "division", "supervisor": "officer", "color": "#dc2626", "resources": [{ "unit": "Engine 1" }, { "person": "Jordan Banks" }] },
+      { "name": "Roof Group", "type": "group", "supervisor": "Finley Grant", "resources": [{ "unit": "Ladder 1" }] },
+      { "name": "Medical Group", "type": "group", "supervisor": "crew", "resources": [{ "unit": "Medic 2" }] },
+      { "name": "Staging", "type": "staging", "resources": [{ "unit": "Engine 2" }] }
+    ],
+    "objectives": [
+      { "name": "Primary search", "type": "benchmark", "status": "complete", "progress": 100 },
+      { "name": "Fire control", "type": "benchmark", "status": "inProgress", "progress": 60 },
+      { "name": "Protect B exposure", "type": "general", "status": "pending" },
+      { "name": "Establish RIT", "type": "safety", "status": "inProgress", "progress": 30 }
+    ],
+    "needs": [
+      { "name": "Additional ladder company", "status": "open", "requested": 1 },
+      { "name": "Rehab unit", "status": "met", "requested": 1, "fulfilled": 1 }
+    ],
+    "timers": [
+      { "name": "Elapsed on scene", "type": "scene", "intervalMinutes": 10 },
+      { "name": "PAR", "type": "benchmark", "intervalMinutes": 20 }
+    ],
+    "roles": [{ "person": "admin", "roleType": 0 }],
+    "notes": [
+      { "title": "Hazard", "body": "Basement storage of propane cylinders reported by the owner.", "at": "-12m" },
+      { "title": "Public information", "body": "Oak St closed between 11th and 13th.", "public": true, "at": "-8m" }
+    ],
+    "checkIns": [{ "person": "officer", "type": "par", "at": "-4m" }, { "person": "Jordan Banks", "at": "-6m" }]
+  }
+}

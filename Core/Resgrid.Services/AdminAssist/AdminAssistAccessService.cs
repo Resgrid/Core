@@ -130,10 +130,12 @@ namespace Resgrid.Services.AdminAssist
 						bool? disabled = requirement.Id switch
 						{
 							"Messaging" => module.MessagingDisabled, "Mapping" => module.MappingDisabled, "Shifts" => module.ShiftsDisabled,
-							"Logs" => module.LogsDisabled, "Reports" => module.ReportsDisabled, "Documents" => module.DocumentsDisabled,
+							"Logs" => module.LogsDisabled, "Records" => module.RecordsDisabled, "Reports" => module.ReportsDisabled, "Documents" => module.DocumentsDisabled,
 							"Calendar" => module.CalendarDisabled, "Notes" => module.NotesDisabled, "Training" => module.TrainingDisabled,
 							"Inventory" => module.InventoryDisabled, "Maintenance" => module.MaintenanceDisabled,
 							"Checklists" => module.ChecklistsDisabled, "BusinessOperations" => module.BusinessOperationsDisabled,
+							"Contacts" => module.ContactsDisabled, "Certifications" => module.CertificationsDisabled,
+							"Deployments" => module.DeploymentsDisabled, "Chat" => module.ChatDisabled,
 							// The two Incident Back Office sub-switches only apply while the back office itself is on.
 							"IncidentBackOffice" => module.IncidentBackOfficeDisabled,
 							"IncidentBusiness" => module.IncidentBackOfficeDisabled || module.IncidentBusinessDisabled,

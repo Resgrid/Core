@@ -22,6 +22,10 @@ namespace Resgrid.Model.Security
 		/// </summary>
 		public bool IpRateLimited { get; set; }
 		public string Token { get; set; }
+		/// <summary>When an issued link stops working (UTC). Set only when <see cref="Issued"/>.</summary>
+		public DateTime? ExpiresOn { get; set; }
+		/// <summary>How long an issued link works, for telling the recipient. Set only when <see cref="Issued"/>.</summary>
+		public TimeSpan? Lifetime { get; set; }
 	}
 
 	/// <summary>

@@ -416,6 +416,9 @@
   <data name="DisabledLogsLabel" xml:space="preserve">
     <value>Protokolle</value>
   </data>
+  <data name="RecordsModuleNote" xml:space="preserve">
+    <value>Zeigt Akten im Menü an, unabhängig von Protokollen.</value>
+  </data>
   <data name="DisabledMaintenanceLabel" xml:space="preserve">
     <value>Maintenance</value>
   </data>
@@ -1309,6 +1312,51 @@
   </data>
   <data name="CloseCallWhenUnitsClearHelp" xml:space="preserve">
     <value>Ein aktiver Einsatz schließt sich selbst, wenn die letzte alarmierte Einheit meldet, dass sie wieder einsatzbereit oder außer Dienst ist (ein Status mit dem Basistyp Verfügbar, Auf der Wache, Freigegeben, Nicht verfügbar oder Wartung). Alle anderen alarmierten Einheiten müssen seit ihrer Alarmierung ebenfalls das Ende gemeldet haben. Es zählen nur Einheiten: Ein Einsatz ohne alarmierte Einheit, ein Einsatz mit aktiver Einsatzleitung oder eine Einheit, die noch zurückfährt oder transportiert, bleibt für den Disponenten offen.</value>
+  </data>
+  <data name="DispatchRenotifyHeader" xml:space="preserve">
+    <value>Erneute Alarmierung</value>
+  </data>
+  <data name="DispatchRenotifyEnabledLabel" xml:space="preserve">
+    <value>Erneut alarmieren bis zur Bestätigung</value>
+  </data>
+  <data name="DispatchRenotifyEnabledHelp" xml:space="preserve">
+    <value>Sendet eine Alarmierung erneut an Personal und Einheiten, die sie nicht bestätigt haben. Jeder nach der Alarmierung gesetzte Status gilt als Bestätigung: eine Person, die „Reagiert“ oder „Nicht erreichbar“ setzt, oder eine Einheit, die einen beliebigen Status setzt, mit oder ohne Ziel. Status, die Resgrid automatisch setzt, zählen nicht. Die erneute Alarmierung endet, wenn der Einsatz geschlossen oder die Person bzw. Einheit daraus entfernt wird. Standardmäßig aus.</value>
+  </data>
+  <data name="DispatchRenotifyLockedNotice" xml:space="preserve">
+    <value>Um die Systemstabilität zu gewährleisten, sind das Intervall, die maximale Anzahl erneuter Alarmierungen und alle Kanäle außer Push vorerst gesperrt. Diese Optionen werden künftig freigegeben.</value>
+  </data>
+  <data name="DispatchRenotifyIntervalLabel" xml:space="preserve">
+    <value>Intervall für erneute Alarmierung (Minuten)</value>
+  </data>
+  <data name="DispatchRenotifyIntervalHelp" xml:space="preserve">
+    <value>Minuten zwischen erneuten Alarmierungen.</value>
+  </data>
+  <data name="DispatchRenotifyMaxRetriesLabel" xml:space="preserve">
+    <value>Maximale erneute Alarmierungen</value>
+  </data>
+  <data name="DispatchRenotifyMaxRetriesHelp" xml:space="preserve">
+    <value>Wie oft eine Alarmierung erneut gesendet wird, bevor die erneute Alarmierung endet. Mit den Standardwerten decken drei erneute Alarmierungen im Abstand von fünf Minuten die ersten 15 Minuten nach einer Alarmierung ab.</value>
+  </data>
+  <data name="DispatchRenotifyChannelsLabel" xml:space="preserve">
+    <value>Erneut alarmieren per</value>
+  </data>
+  <data name="DispatchRenotifyChannelsHelp" xml:space="preserve">
+    <value>Jede Person wird auf allen hier ausgewählten Kanälen erneut alarmiert, die ihre eigenen Benachrichtigungseinstellungen zulassen, über ihre bestätigten Kontaktdaten. Einheiten werden nur per Push erneut alarmiert.</value>
+  </data>
+  <data name="DispatchRenotifyChannelPush" xml:space="preserve">
+    <value>Push-Benachrichtigung</value>
+  </data>
+  <data name="DispatchRenotifyChannelSms" xml:space="preserve">
+    <value>SMS</value>
+  </data>
+  <data name="DispatchRenotifyChannelEmail" xml:space="preserve">
+    <value>E-Mail</value>
+  </data>
+  <data name="DispatchRenotifyChannelVoice" xml:space="preserve">
+    <value>Sprachanruf</value>
+  </data>
+  <data name="DispatchRenotifyChannelChatPlatform" xml:space="preserve">
+    <value>Chat-Plattform</value>
   </data>
   <data name="CallNumberingHeader" xml:space="preserve">
     <value>Einsatznummerierung</value>

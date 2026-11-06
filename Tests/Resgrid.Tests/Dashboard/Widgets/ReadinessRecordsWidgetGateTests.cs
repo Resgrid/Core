@@ -74,9 +74,13 @@ namespace Resgrid.Tests.Dashboard.Widgets
 		[Test]
 		public void Certifications_follow_the_nav_and_profile_rules()
 		{
-			Visible("certifications.expiry", Viewer(policies: new[] { "Profile_View" })).Should().BeFalse();
-			Visible("certifications.expiry", Viewer(policies: new[] { "Certifications_View" })).Should().BeTrue();
-			Visible("certifications.mine", Viewer(policies: new[] { "Profile_View" })).Should().BeTrue();
+			var shown = new[] { DashboardAccessChecks.CertificationsEnabled };
+			Visible("certifications.expiry", Viewer(policies: new[] { "Profile_View" }, access: shown)).Should().BeFalse();
+			Visible("certifications.expiry", Viewer(policies: new[] { "Certifications_View" }, access: shown)).Should().BeTrue();
+			Visible("certifications.mine", Viewer(policies: new[] { "Profile_View" }, access: shown)).Should().BeTrue();
+			// The department's Certifications visibility switch hides both, like the menu entry.
+			Visible("certifications.expiry", Viewer(policies: new[] { "Certifications_View" })).Should().BeFalse();
+			Visible("certifications.mine", Viewer(policies: new[] { "Profile_View" })).Should().BeFalse();
 		}
 
 		private static DashboardViewer RecordsViewer(params string[] extraPolicies) => Viewer(

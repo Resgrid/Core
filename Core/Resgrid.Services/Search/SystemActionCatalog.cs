@@ -106,9 +106,9 @@ namespace Resgrid.Services.Search
 			Act("unit-staffing", "Unit Staffing", "Assign personnel to units", "/User/Units/UnitStaffing", SystemActionCategories.Manage, new[] { "crew", "assign", "staffing" }, Unit, Update),
 
 			// ---- Contacts
-			Nav("contacts", "Contacts", "People and organizations outside the department", "/User/Contacts", new[] { "businesses", "vendors", "customers", "address book", "pre-plans" }, Contacts, View),
-			Act("new-contact", "New Contact", "Add a person or organization contact", "/User/Contacts/Add", SystemActionCategories.Create, new[] { "add contact", "company", "person" }, Contacts, Create),
-			Nav("contact-categories", "Contact Categories", "Manage contact categories", "/User/Contacts/Categories", new[] { "categories" }, Contacts, Update),
+			Nav("contacts", "Contacts", "People and organizations outside the department", "/User/Contacts", new[] { "businesses", "vendors", "customers", "address book", "pre-plans" }, Contacts, View, SystemActionModules.Contacts),
+			Act("new-contact", "New Contact", "Add a person or organization contact", "/User/Contacts/Add", SystemActionCategories.Create, new[] { "add contact", "company", "person" }, Contacts, Create, SystemActionModules.Contacts),
+			Nav("contact-categories", "Contact Categories", "Manage contact categories", "/User/Contacts/Categories", new[] { "categories" }, Contacts, Update, SystemActionModules.Contacts),
 
 			// ---- Mapping
 			Nav("mapping", "Mapping", "Large map with layers, personnel and units", "/User/Mapping", new[] { "map", "gps", "avl", "location", "layers" }, module: SystemActionModules.Mapping),
@@ -125,11 +125,12 @@ namespace Resgrid.Services.Search
 
 			// ---- Logs (legacy) / Records
 			// Logs stay findable before and after the Records cutover (read-only after it); only creating one goes away.
+			// Logs and Records each follow their own module switch.
 			Nav("logs", "Logs", "Run, training, work and meeting logs", "/User/Logs", new[] { "run log", "activity", "reports", "training log", "work log", "legacy logs", "existing logs" }, Log, View, SystemActionModules.Logs),
 			Act("new-log", "New Log", "Create a run report, training log or work log", "/User/Logs/NewLog", SystemActionCategories.Create, new[] { "run report", "training log", "work log" }, Log, Create, SystemActionModules.Logs, hiddenAfterCutover: true),
-			Nav("records", "Records", "Records queue: run reports, training and operational records", "/User/Records", new[] { "rms", "run reports", "incident reports", "neris", "logs" }, Record, View, SystemActionModules.Logs, FeatureFlagKeys.RecordsSystem),
-			Nav("records-dashboard", "Records Dashboard", "Records due, submissions and quality at a glance", "/User/Records/Dashboard", new[] { "rms", "overview", "due" }, Record, View, SystemActionModules.Logs, FeatureFlagKeys.RecordsSystem),
-			Act("records-settings", "Records Settings", "Lifecycle, numbering, search, retention and visibility settings for Records", "/User/Records/Settings", SystemActionCategories.Manage, new[] { "rms settings", "retention", "numbering" }, Record, View, SystemActionModules.Logs, FeatureFlagKeys.RecordsSystem, adminOnly: true),
+			Nav("records", "Records", "Records queue: run reports, training and operational records", "/User/Records", new[] { "rms", "run reports", "incident reports", "neris", "logs" }, Record, View, SystemActionModules.Records, FeatureFlagKeys.RecordsSystem),
+			Nav("records-dashboard", "Records Dashboard", "Records due, submissions and quality at a glance", "/User/Records/Dashboard", new[] { "rms", "overview", "due" }, Record, View, SystemActionModules.Records, FeatureFlagKeys.RecordsSystem),
+			Act("records-settings", "Records Settings", "Lifecycle, numbering, search, retention and visibility settings for Records", "/User/Records/Settings", SystemActionCategories.Manage, new[] { "rms settings", "retention", "numbering" }, Record, View, SystemActionModules.Records, FeatureFlagKeys.RecordsSystem, adminOnly: true),
 
 			// ---- Reports
 			Nav("reports", "Reports", "Generate reports from department data", "/User/Reports", new[] { "reporting", "export", "statistics", "analytics" }, Reports, View, SystemActionModules.Reports),
@@ -162,15 +163,15 @@ namespace Resgrid.Services.Search
 			Act("online-payment-settings", "Online Payment Settings", "Connect your Stripe account to collect invoice payments online", "/User/Invoicing/Settings?tab=online", SystemActionCategories.Manage, new[] { "stripe", "pay online", "card", "ach", "payment link" }, Invoicing, Update, SystemActionModules.BusinessOperations, FeatureFlagKeys.OnlinePayments, adminOnly: true),
 
 			// Workforce & Business Operations plan, Phase D (certifications; free). Records are never projected (decision 41).
-			Nav("certification-dashboard", "Certification Dashboard", "Expiring and expired certifications for people and units", "/User/Certifications", new[] { "certification", "certs", "expiring", "expired", "license", "credential", "compliance", "dot inspection" }, Certifications, View),
-			Nav("certification-types", "Certification Types", "The department's certification catalog and template gallery", "/User/Certifications/Types", new[] { "certification", "catalog", "types", "nremt", "cdl", "nwcg", "template" }, Certifications, "Setup"),
-			Nav("certification-settings", "Certification Settings", "Enforcement mode, grace period and expiry notifications", "/User/Certifications/Settings", new[] { "certification", "enforcement", "grace", "expiry", "notifications" }, Certifications, "Setup"),
-			Nav("my-certifications", "My Certifications", "Your own certification records", "/User/Profile/Certifications", new[] { "my certifications", "my certs", "my licenses", "credentials" }),
+			Nav("certification-dashboard", "Certification Dashboard", "Expiring and expired certifications for people and units", "/User/Certifications", new[] { "certification", "certs", "expiring", "expired", "license", "credential", "compliance", "dot inspection" }, Certifications, View, SystemActionModules.Certifications),
+			Nav("certification-types", "Certification Types", "The department's certification catalog and template gallery", "/User/Certifications/Types", new[] { "certification", "catalog", "types", "nremt", "cdl", "nwcg", "template" }, Certifications, "Setup", SystemActionModules.Certifications),
+			Nav("certification-settings", "Certification Settings", "Enforcement mode, grace period and expiry notifications", "/User/Certifications/Settings", new[] { "certification", "enforcement", "grace", "expiry", "notifications" }, Certifications, "Setup", SystemActionModules.Certifications),
+			Nav("my-certifications", "My Certifications", "Your own certification records", "/User/Profile/Certifications", new[] { "my certifications", "my certs", "my licenses", "credentials" }, module: SystemActionModules.Certifications),
 
 			// Workforce & Business Operations plan, Phase C (deployment core; free behind Operations.Deployments). DTRs, expenses and attachments are never projected (decision 41).
-			Nav("deployments", "Deployment Finance", "Deployments, rosters, daily time reports and expenses", "/User/Deployments", new[] { "deployment", "deployments", "strike team", "mutual aid", "time report", "dtr", "shift ticket", "roster", "expenses" }, flag: FeatureFlagKeys.Deployments),
-			Act("new-deployment", "New Deployment", "Create a deployment finance wrapper", "/User/Deployments/New", SystemActionCategories.Create, new[] { "deployment", "deploy", "strike team" }, Deployments, Update, flag: FeatureFlagKeys.Deployments),
-			Act("deployment-from-external-order", "Deployment From External Order", "Create a deployment from an open RMS mutual-aid order", "/User/Deployments/FromExternalOrder", SystemActionCategories.Create, new[] { "external order", "mutual aid", "resource order", "deployment" }, Deployments, Update, flag: FeatureFlagKeys.Deployments),
+			Nav("deployments", "Deployment Finance", "Deployments, rosters, daily time reports and expenses", "/User/Deployments", new[] { "deployment", "deployments", "strike team", "mutual aid", "time report", "dtr", "shift ticket", "roster", "expenses" }, module: SystemActionModules.Deployments, flag: FeatureFlagKeys.Deployments),
+			Act("new-deployment", "New Deployment", "Create a deployment finance wrapper", "/User/Deployments/New", SystemActionCategories.Create, new[] { "deployment", "deploy", "strike team" }, Deployments, Update, module: SystemActionModules.Deployments, flag: FeatureFlagKeys.Deployments),
+			Act("deployment-from-external-order", "Deployment From External Order", "Create a deployment from an open RMS mutual-aid order", "/User/Deployments/FromExternalOrder", SystemActionCategories.Create, new[] { "external order", "mutual aid", "resource order", "deployment" }, Deployments, Update, module: SystemActionModules.Deployments, flag: FeatureFlagKeys.Deployments),
 			// Workforce & Business Operations plan, Phase C-M2 (contractor path; Business Ops add-on behind Invoicing.ContractorBilling).
 			Nav("bids", "Bids", "Priced estimates for customer contacts and contracts", "/User/Bids", new[] { "bid", "bids", "quote", "estimate", "proposal", "tender" }, Bids, View, SystemActionModules.BusinessOperations, FeatureFlagKeys.ContractorBilling),
 			Act("new-bid", "New Bid", "Draft a bid for a customer", "/User/Bids/New", SystemActionCategories.Create, new[] { "bid", "quote", "estimate" }, Bids, Create, SystemActionModules.BusinessOperations, FeatureFlagKeys.ContractorBilling),
@@ -196,7 +197,7 @@ namespace Resgrid.Services.Search
 			Nav("inbox", "Inbox", "Your messages inbox", "/User/Messages/Inbox", new[] { "messages", "mail", "read" }, Messages, View, SystemActionModules.Messaging),
 			Nav("outbox", "Sent Messages", "Messages you sent", "/User/Messages/Outbox", new[] { "sent", "outbox" }, Messages, View, SystemActionModules.Messaging),
 			Act("compose-message", "New Message", "Send a message, poll or callback request", "/User/Messages/Compose", SystemActionCategories.Create, new[] { "send", "compose", "email", "poll", "callback", "broadcast" }, Messages, Create, SystemActionModules.Messaging),
-			Nav("chat", "Chat", "Real-time department chat", "/User/Chat", new[] { "channels", "direct message", "dm", "team chat" }, flag: FeatureFlagKeys.ChatSystem),
+			Nav("chat", "Chat", "Real-time department chat", "/User/Chat", new[] { "channels", "direct message", "dm", "team chat" }, module: SystemActionModules.Chat, flag: FeatureFlagKeys.ChatSystem),
 
 			// ---- Automation / configuration
 			Nav("workflows", "Workflows", "Automations triggered by department events", "/User/Workflows", new[] { "automation", "triggers", "webhooks", "integrations" }, Workflow, View),

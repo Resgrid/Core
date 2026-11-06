@@ -416,6 +416,9 @@
   <data name="DisabledLogsLabel" xml:space="preserve">
     <value>Journaux</value>
   </data>
+  <data name="RecordsModuleNote" xml:space="preserve">
+    <value>Affiche les Dossiers dans le menu, indépendamment des Journaux.</value>
+  </data>
   <data name="DisabledMaintenanceLabel" xml:space="preserve">
     <value>Maintenance</value>
   </data>
@@ -1309,6 +1312,51 @@
   </data>
   <data name="CloseCallWhenUnitsClearHelp" xml:space="preserve">
     <value>Un appel actif se clôture de lui-même lorsque la dernière unité engagée signale qu'elle est de nouveau en service ou hors service (un statut dont le type de base est Disponible, En caserne, Libéré, Indisponible ou Maintenance). Toutes les autres unités engagées doivent aussi avoir signalé leur fin depuis leur engagement. Seules les unités comptent : un appel sans unité engagée, un appel sous commandement d'incident actif ou une unité encore en retour ou en transport laisse l'appel ouvert pour le dispatcheur.</value>
+  </data>
+  <data name="DispatchRenotifyHeader" xml:space="preserve">
+    <value>Relance des dispatchs</value>
+  </data>
+  <data name="DispatchRenotifyEnabledLabel" xml:space="preserve">
+    <value>Relancer jusqu'à l'accusé de réception</value>
+  </data>
+  <data name="DispatchRenotifyEnabledHelp" xml:space="preserve">
+    <value>Renvoie un dispatch au personnel et aux unités qui n'en ont pas accusé réception. Tout statut défini après le dispatch vaut accusé de réception : une personne qui passe En intervention ou Ne répond pas, ou une unité qui définit un statut quelconque, avec ou sans destination. Les statuts que Resgrid définit automatiquement ne comptent pas. Les relances s'arrêtent lorsque l'appel est clôturé ou que la personne ou l'unité en est retirée. Désactivé par défaut.</value>
+  </data>
+  <data name="DispatchRenotifyLockedNotice" xml:space="preserve">
+    <value>Pour garantir la stabilité du système, l'intervalle, le nombre maximal de relances et tous les canaux autres que les notifications push sont verrouillés pour le moment. Ces options seront ouvertes à l'avenir.</value>
+  </data>
+  <data name="DispatchRenotifyIntervalLabel" xml:space="preserve">
+    <value>Intervalle de relance (minutes)</value>
+  </data>
+  <data name="DispatchRenotifyIntervalHelp" xml:space="preserve">
+    <value>Minutes entre deux relances.</value>
+  </data>
+  <data name="DispatchRenotifyMaxRetriesLabel" xml:space="preserve">
+    <value>Nombre maximal de relances</value>
+  </data>
+  <data name="DispatchRenotifyMaxRetriesHelp" xml:space="preserve">
+    <value>Nombre de fois qu'un dispatch est renvoyé avant l'arrêt des relances. Avec les valeurs par défaut, trois relances espacées de cinq minutes couvrent les 15 premières minutes après un dispatch.</value>
+  </data>
+  <data name="DispatchRenotifyChannelsLabel" xml:space="preserve">
+    <value>Relancer par</value>
+  </data>
+  <data name="DispatchRenotifyChannelsHelp" xml:space="preserve">
+    <value>Chaque membre est relancé sur chaque canal coché ici que ses propres paramètres de notification autorisent, à ses coordonnées vérifiées. Les unités ne sont relancées que par notification push.</value>
+  </data>
+  <data name="DispatchRenotifyChannelPush" xml:space="preserve">
+    <value>Notification push</value>
+  </data>
+  <data name="DispatchRenotifyChannelSms" xml:space="preserve">
+    <value>SMS</value>
+  </data>
+  <data name="DispatchRenotifyChannelEmail" xml:space="preserve">
+    <value>E-mail</value>
+  </data>
+  <data name="DispatchRenotifyChannelVoice" xml:space="preserve">
+    <value>Appel vocal</value>
+  </data>
+  <data name="DispatchRenotifyChannelChatPlatform" xml:space="preserve">
+    <value>Plateforme de discussion</value>
   </data>
   <data name="CallNumberingHeader" xml:space="preserve">
     <value>Numérotation des appels</value>

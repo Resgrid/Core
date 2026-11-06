@@ -36,6 +36,7 @@ namespace Resgrid.Tests.Web.Services
 		private Mock<IProtectedWriteService> _protectedWriteService;
 		private Mock<IDispatchScopeService> _dispatchScope;
 		private Mock<IMappingService> _mappingService;
+		private Mock<IDepartmentsService> _departmentsService;
 		private CallsController _controller;
 		private Activity _activity;
 
@@ -71,6 +72,7 @@ namespace Resgrid.Tests.Web.Services
 
 			_dispatchScope = PassThroughDispatchScope();
 			_mappingService = new Mock<IMappingService>();
+			_departmentsService = new Mock<IDepartmentsService>();
 
 			var httpContext = new DefaultHttpContext
 			{
@@ -85,7 +87,7 @@ namespace Resgrid.Tests.Web.Services
 
 			_controller = new CallsController(
 				_callsService.Object,
-				Mock.Of<IDepartmentsService>(),
+				_departmentsService.Object,
 				Mock.Of<IUserProfileService>(),
 				Mock.Of<IGeoLocationProvider>(),
 				_authorizationService.Object,
@@ -172,6 +174,53 @@ namespace Resgrid.Tests.Web.Services
 			result.Should().NotBeNull();
 			result.Data.Should().BeEmpty();
 			_dispatchScope.Verify(x => x.FilterCallsForUserAsync(DepartmentId, UserId, departmentCalls), Times.Once);
+		}
+
+		[Test]
+		public async Task GetCallYears_ReturnsDepartmentYearsInClientEnvelope()
+		{
+			_callsService.Setup(x => x.GetCallYearsByDeptartmentAsync(DepartmentId)).ReturnsAsync(["2026", "2024"]);
+
+			var response = await _controller.GetCallYears();
+
+			var result = (CallYearsResult)((OkObjectResult)response.Result).Value;
+			result.Data.Should().Equal("2026", "2024");
+			result.PageSize.Should().Be(2);
+		}
+
+		[Test]
+		public async Task GetArchivedCalls_ReturnsScopedClosedCallsNewestFirst()
+		{
+			var earlier = new Call { CallId = 1, State = (int)CallStates.Closed, LoggedOn = new DateTime(2026, 1, 1) };
+			var later = new Call { CallId = 2, State = (int)CallStates.FalseAlarm, LoggedOn = new DateTime(2026, 10, 1, 19, 15, 0), ClosedOn = new DateTime(2026, 10, 1, 20, 0, 0) };
+			_departmentsService.Setup(x => x.GetDepartmentByIdAsync(DepartmentId, false)).ReturnsAsync(new Department { TimeZone = "Central Standard Time" });
+			var outOfScope = new Call { CallId = 3, State = (int)CallStates.Closed, LoggedOn = new DateTime(2026, 11, 1) };
+			var pending = new Call { CallId = 4, State = (int)CallStates.Pending, LoggedOn = new DateTime(2026, 11, 1) };
+			List<Call> departmentCalls = [earlier, later, outOfScope, pending];
+			_callsService.Setup(x => x.GetClosedCallsByDepartmentYearAsync(DepartmentId, "2026")).ReturnsAsync(departmentCalls);
+			_dispatchScope.Setup(x => x.FilterCallsForUserAsync(DepartmentId, UserId, departmentCalls))
+				.ReturnsAsync([earlier, later, pending]);
+			_mappingService.Setup(x => x.GetPOIsForDepartmentAsync(DepartmentId)).ReturnsAsync([]);
+
+			var response = await _controller.GetArchivedCalls(2026);
+
+			var result = (ActiveCallsResult)((OkObjectResult)response.Result).Value;
+			result.Data.Select(call => call.CallId).Should().Equal("2", "1");
+			result.PageSize.Should().Be(2);
+			result.Data[0].LoggedOn.Should().Be(new DateTime(2026, 10, 1, 14, 15, 0));
+			result.Data[0].ClosedOn.Should().Be(new DateTime(2026, 10, 1, 15, 0, 0));
+			result.Data[0].ClosedOnUtc.Should().Be(later.ClosedOn);
+			result.Data[1].ClosedOnUtc.Should().BeNull();
+		}
+
+		[TestCase(0)]
+		[TestCase(10000)]
+		public async Task GetArchivedCalls_RejectsInvalidYearBeforeQuerying(int year)
+		{
+			var response = await _controller.GetArchivedCalls(year);
+
+			response.Result.Should().BeOfType<BadRequestObjectResult>();
+			_callsService.Verify(x => x.GetClosedCallsByDepartmentYearAsync(It.IsAny<int>(), It.IsAny<string>()), Times.Never);
 		}
 
 		[Test]

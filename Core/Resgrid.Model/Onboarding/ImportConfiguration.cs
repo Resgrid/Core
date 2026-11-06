@@ -194,7 +194,7 @@ namespace Resgrid.Model.Onboarding
 		public static readonly IReadOnlyList<string> Modules = new[]
 		{
 			"Messaging", "Mapping", "Shifts", "Logs", "Reports", "Documents", "Calendar", "Notes", "Training", "Inventory", "Maintenance",
-			"Checklists", "BusinessOperations"
+			"Checklists", "BusinessOperations", "Records", "Contacts", "Certifications", "Deployments", "Chat"
 		};
 
 		/// <summary>The document kinds numbered outside Records (Records numbering is configured with Records).</summary>

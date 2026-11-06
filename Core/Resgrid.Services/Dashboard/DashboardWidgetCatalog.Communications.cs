@@ -44,7 +44,8 @@ namespace Resgrid.Services.Dashboard
 				Gates = new DashboardWidgetGates
 				{
 					Policies = new[] { "Department_View" }, // the Chat page is [Authorize] + Chat.System; no Chat_View policy in the web app
-					Flags = new[] { FeatureFlagKeys.ChatSystem }
+					Flags = new[] { FeatureFlagKeys.ChatSystem },
+					Access = new[] { DashboardAccessChecks.ChatEnabled }
 				},
 				Settings = new[] { Number("maxItems", 5, 1, 20) }
 			};
@@ -64,6 +65,7 @@ namespace Resgrid.Services.Dashboard
 				{
 					Policies = new[] { "Department_View" }, // the Chat page is [Authorize] + Chat.System; no Chat_View policy in the web app
 					Flags = new[] { FeatureFlagKeys.ChatSystem },
+					Access = new[] { DashboardAccessChecks.ChatEnabled },
 					Role = DashboardRoles.DepartmentAdmin
 				},
 				Settings = new[] { Number("maxItems", 5, 1, 20) }

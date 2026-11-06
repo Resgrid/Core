@@ -1,0 +1,7 @@
+{
+  "id": "modules-off",
+  "name": "Modules Off",
+  "purpose": "Every optional department module switched off (messaging, mapping, shifts, logs, reports, documents, calendar, notes, training, inventory, maintenance, checklists); calls, personnel and units only.",
+  "covers": ["module switches hide screens", "navigation without optional modules"],
+  "settings": { "disabledModules": ["messaging", "mapping", "shifts", "logs", "reports", "documents", "calendar", "notes", "training", "inventory", "maintenance", "checklists"] }
+}

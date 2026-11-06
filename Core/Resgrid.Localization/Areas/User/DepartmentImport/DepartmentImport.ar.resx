@@ -4222,6 +4222,21 @@
   <data name="ConfigModule.Logs" xml:space="preserve">
     <value>السجلات</value>
   </data>
+  <data name="ConfigModule.Records" xml:space="preserve">
+    <value>السجلات</value>
+  </data>
+  <data name="ConfigModule.Contacts" xml:space="preserve">
+    <value>جهات الاتصال</value>
+  </data>
+  <data name="ConfigModule.Certifications" xml:space="preserve">
+    <value>الشهادات</value>
+  </data>
+  <data name="ConfigModule.Deployments" xml:space="preserve">
+    <value>عمليات الانتشار</value>
+  </data>
+  <data name="ConfigModule.Chat" xml:space="preserve">
+    <value>الدردشة</value>
+  </data>
   <data name="ConfigModule.Reports" xml:space="preserve">
     <value>التقارير</value>
   </data>

@@ -1,0 +1,25 @@
+{
+  "id": "restricted",
+  "name": "Restricted Permissions",
+  "purpose": "Restrictive department permissions: only dispatchers create calls, only admins see locations, contacts and personal information, group admins close calls, and app sign-in is limited by role. Sign in as member to see a locked-down app.",
+  "covers": ["permission-gated actions hidden", "DispatchAppLogin / CommandAppLogin by role", "group-locked visibility", "admin vs group admin vs member"],
+  "permissions": [
+    { "type": "CreateCall", "action": "departmentAdminsAndSelectRoles", "roles": ["Dispatcher"] },
+    { "type": "CloseCall", "action": "departmentAndGroupAdmins" },
+    { "type": "DeleteCall", "action": "departmentAdminsOnly" },
+    { "type": "AddCallData", "action": "departmentAndGroupAdminsAndSelectRoles", "roles": ["Dispatcher", "Officer"] },
+    { "type": "CreateMessage", "action": "departmentAndGroupAdmins" },
+    { "type": "CreateNote", "action": "departmentAdminsOnly" },
+    { "type": "CreateCalendarEntry", "action": "departmentAdminsOnly" },
+    { "type": "CreateShift", "action": "departmentAdminsOnly" },
+    { "type": "ViewPersonalInfo", "action": "departmentAdminsOnly" },
+    { "type": "CanSeePersonnelLocations", "action": "departmentAdminsOnly" },
+    { "type": "CanSeeUnitLocations", "action": "departmentAndGroupAdmins" },
+    { "type": "ViewGroupUsers", "action": "departmentAndGroupAdmins", "lockToGroup": true },
+    { "type": "ViewGroupUnits", "action": "departmentAndGroupAdmins", "lockToGroup": true },
+    { "type": "ContactView", "action": "departmentAdminsOnly" },
+    { "type": "ContactEdit", "action": "departmentAdminsOnly" },
+    { "type": "DispatchAppLogin", "action": "departmentAdminsAndSelectRoles", "roles": ["Dispatcher"] },
+    { "type": "CommandAppLogin", "action": "departmentAdminsAndSelectRoles", "roles": ["Officer"] }
+  ]
+}

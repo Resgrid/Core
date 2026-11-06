@@ -159,7 +159,7 @@ namespace Resgrid.Services.Dashboard
 				AllowedSizes = Sizes(DashboardWidgetSizes.M, DashboardWidgetSizes.L),
 				DefaultSize = DashboardWidgetSizes.M,
 				DefaultRefreshSeconds = 900,
-				Gates = new DashboardWidgetGates { Policies = new[] { "Contacts_View" } },
+				Gates = new DashboardWidgetGates { Policies = new[] { "Contacts_View" }, Access = new[] { DashboardAccessChecks.ContactsEnabled } },
 				Settings = new[] { Number("maxItems", 8, 1, 25) },
 				ProtectedFields = new[]
 				{

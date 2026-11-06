@@ -143,6 +143,7 @@
   <data name="AdpPinSaved" xml:space="preserve"><value>Збережено.</value></data>
   <data name="AdpPinDenied" xml:space="preserve"><value>Не вдалося надати або зберегти захищені дані. Увійдіть у Resgrid і спробуйте ще раз.</value></data>
   <data name="AdpPinSmsChallenge" xml:space="preserve"><value>Доступний захищений виклик. Надішліть OPEN {0}, пробіл і свій особистий PIN.</value></data>
+  <data name="DispatchRenotifyPushPrefix" xml:space="preserve"><value>Нагадування {0}/{1}:</value></data>
   <data name="AdpPinVoiceChallenge" xml:space="preserve"><value>Доступний захищений виклик. Введіть свій особистий PIN і натисніть решітку.</value></data>
   <data name="AdpReleaseSettings" xml:space="preserve"><value>Налаштування надання даних ADP</value></data>
   <data name="AdpSmsMode" xml:space="preserve"><value>Доставка SMS</value></data>

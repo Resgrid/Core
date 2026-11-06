@@ -381,6 +381,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			try
 			{
 				var department = await _departmentsService.GetDepartmentByIdAsync(departmentId, false);
+				if (department != null)
+					result.Data.TimeZoneId = string.IsNullOrWhiteSpace(department.TimeZone) ? "Pacific Standard Time" : department.TimeZone;
 				var coordinates = await _departmentSettingsService.GetMapCenterCoordinatesAsync(department);
 
 				if (coordinates?.Latitude != null && coordinates.Longitude != null)

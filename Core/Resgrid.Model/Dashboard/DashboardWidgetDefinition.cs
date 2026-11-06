@@ -119,7 +119,12 @@ namespace Resgrid.Model.Dashboard
 		/// <summary>NerisConfig.Enabled and the department's NERIS workflow is on.</summary>
 		NerisWorkflowEnabled = 27,
 		/// <summary>Department has ADP enrollment offered (Security.DepartmentProtectedDataEnrollment) or already enrolled.</summary>
-		DataProtectionOffered = 28
+		DataProtectionOffered = 28,
+		/// <summary>Module visibility switches of the newer modules (DepartmentModuleSettings 30-33).</summary>
+		ContactsEnabled = 29,
+		CertificationsEnabled = 30,
+		DeploymentsEnabled = 31,
+		ChatEnabled = 32
 	}
 
 	public enum DashboardRoles

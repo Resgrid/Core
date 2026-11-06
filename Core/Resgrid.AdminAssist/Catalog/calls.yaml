@@ -2264,6 +2264,39 @@
       "Availability": "available"
     },
     {
+      "Id": "setting.DispatchRenotifyConfig",
+      "AreaId": "calls",
+      "LabelKey": "Setting.DispatchRenotifyConfig",
+      "HelpKey": "SettingHelp.DispatchRenotifyConfig",
+      "Binding": "DepartmentSettingTypes.DispatchRenotifyConfig",
+      "ValueType": "protobuf",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings",
+        "Field": "RenotifyEnabled"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-05T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.DispatchRenotifyConfig",
+      "DefaultValue": "DispatchRenotifyConfig constructor (off; 5 minutes, 3 re-notifications, push)",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
       "Id": "setting.EnableTextCommand",
       "AreaId": "calls",
       "LabelKey": "Setting.EnableTextCommand",
@@ -2423,6 +2456,7 @@
         "setting.DispatchRecommendationAutoDispatch",
         "setting.DispatchRecommendationConfig",
         "setting.DispatchRecommendationMode",
+        "setting.DispatchRenotifyConfig",
         "setting.DispatchResponseCodes",
         "setting.DispatchShiftInsteadOfGroup",
         "setting.GroupDispatchScopeConfig",
@@ -3753,6 +3787,17 @@
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-10-07T00:00:00Z"
+    },
+    {
+      "Id": "setting.DispatchRenotifyConfig",
+      "Locale": "en",
+      "TitleKey": "Setting.DispatchRenotifyConfig",
+      "Body": "Dispatch Re-notification. Sends a dispatch again to personnel and units that have not acknowledged it, as a push notification titled Reminder 1/3 and so on. Any status set after the dispatch acknowledges it: a person setting any status, such as Responding or Not Responding, or a unit setting any status, with or without a destination. Statuses Resgrid applies itself (dispatch statuses, scheduled resets, maintenance holds) do not count. Re-notification stops when the recipient acknowledges, after the last attempt, when the call closes, when the person or unit is taken off the call, or when the department turns it off. Text message, email, voice call and chat platform re-notification are built and each follows the member's own notification settings, but for system stability every channel other than push is locked off, as are the interval (5 minutes) and the number of re-notifications (3, so 15 minutes): the settings page shows them disabled, and the server stores and sends push only whatever is posted. Units are re-notified by push only. Off by default.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-dispatchrenotifyconfig",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-05T00:00:00Z"
     },
     {
       "Id": "setting.EnableTextCommand",

@@ -499,6 +499,10 @@ namespace Resgrid.Services
 
 		private async Task<string> GetCallSoundTypeAsync(StandardPushCall call, DepartmentCallPriority priority, UserProfile profile = null)
 		{
+			// A push that names its own sound (a dispatch re-notification) keeps it, whatever the priority or sound settings.
+			if (call.SoundType.HasValue)
+				return ((int)call.SoundType.Value).ToString();
+
 			bool useModern = await GetModernApplicationSoundsEnabledAsync(call.DepartmentId, profile);
 			return ConvertCallPriorityToSound((int)call.Priority, priority, useModern);
 		}

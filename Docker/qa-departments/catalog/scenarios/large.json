@@ -1,0 +1,8 @@
+{
+  "id": "large",
+  "name": "Large Department",
+  "purpose": "Volume: about 80 personnel, 30 units, 47 active calls and 60 messages for paging, scrolling, search, map clustering and performance checks, on an Australian (southern hemisphere) time zone.",
+  "covers": ["long lists and paging", "search and filtering", "dense maps", "AUS Eastern (UTC+10/+11)"],
+  "department": { "timeZone": "AUS Eastern Standard Time", "use24HourTime": true },
+  "generate": { "people": 64, "units": 24, "activeCalls": 40, "messages": 60 }
+}

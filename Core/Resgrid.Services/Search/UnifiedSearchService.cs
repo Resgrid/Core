@@ -396,7 +396,7 @@ namespace Resgrid.Services.Search
 			Add(SearchEntityTypes.Call, "Call");
 			Add(SearchEntityTypes.Unit, "Unit");
 			Add(SearchEntityTypes.Personnel, "Personnel");
-			Add(SearchEntityTypes.Contact, "Contacts");
+			Add(SearchEntityTypes.Contact, "Contacts", SystemActionModules.Contacts);
 			Add(SearchEntityTypes.Message, "Messages", SystemActionModules.Messaging);
 			Add(SearchEntityTypes.Document, "Documents", SystemActionModules.Documents);
 			Add(SearchEntityTypes.Note, "Notes", SystemActionModules.Notes);
@@ -407,10 +407,10 @@ namespace Resgrid.Services.Search
 			Add(SearchEntityTypes.ServiceContract, "ServiceContracts", SystemActionModules.BusinessOperations);
 			// Deployments have no family claim gate: the deployment page admits a rostered member without Deployments/View, so the
 			// index must too, and AuthorizeAsync keeps the claim-or-admin-or-roster rule per hit (membership was verified in LoadAccessAsync).
-			if (WantsType(requested, SearchEntityTypes.Deployment))
+			if (WantsType(requested, SearchEntityTypes.Deployment) && principal.ModuleEnabled(SystemActionModules.Deployments))
 				allowed.Add(SearchEntityTypes.Deployment);
 			// Certification types are the setup catalog: readers of records and ManageCertificationSetup holders both open them.
-			if (WantsType(requested, SearchEntityTypes.CertificationType) &&
+			if (WantsType(requested, SearchEntityTypes.CertificationType) && principal.ModuleEnabled(SystemActionModules.Certifications) &&
 				(principal.IsDepartmentAdmin || principal.HasResourceClaim("Certifications", "View") || principal.HasResourceClaim("Certifications", "Setup")))
 				allowed.Add(SearchEntityTypes.CertificationType);
 			// Operations reference families (plan R3 Tier 2): the claim and module switch of each family's own page. POIs have

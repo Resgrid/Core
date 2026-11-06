@@ -1,0 +1,16 @@
+{
+  "id": "terminology",
+  "name": "Terminology",
+  "purpose": "Department terminology overrides (Units are Apparatus, Calls are Incidents, Personnel are Members, Shifts are Rotations) on a UK department with a 24-hour clock.",
+  "covers": ["department terminology (useTerm)", "24-hour clock, Europe/London", "non-US department"],
+  "department": { "timeZone": "GMT Standard Time", "use24HourTime": true, "type": "Fire and Rescue Service", "address": { "address1": "1 Test Yard", "city": "London", "state": "Greater London", "postalCode": "SE1 7PB", "country": "United Kingdom" } },
+  "settings": {
+    "terminology": {
+      "module.units": { "text": "Apparatus", "singular": "Apparatus" },
+      "module.calls": { "text": "Incidents", "singular": "Incident" },
+      "module.personnel": { "text": "Members", "singular": "Member" },
+      "module.shifts": { "text": "Rotations", "singular": "Rotation" },
+      "module.contacts": { "text": "Directory", "singular": "Directory Entry" }
+    }
+  }
+}

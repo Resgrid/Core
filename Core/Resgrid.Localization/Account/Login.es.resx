@@ -217,10 +217,10 @@
     <value>política de privacidad</value>
   </data>
   <data name="RecoverAccountSuccess" xml:space="preserve">
-    <value>Si su dirección de correo electrónico es válida, hemos restablecido su contraseña y le hemos enviado su nombre de usuario y nueva contraseña a la dirección de correo electrónico proporcionada. La entrega del correo electrónico se puede retrasar hasta 15 minutos, &lt;b&gt;verifique también las áreas de spam o basura en su cliente de correo electrónico si su correo electrónico no llega&lt;/b&gt; para entonces.</value>
+    <value>Si alguna cuenta utiliza esa dirección de correo electrónico, le hemos enviado un enlace para elegir una nueva contraseña, junto con el nombre de usuario de la cuenta. El enlace solo se puede usar una vez y el correo indica durante cuánto tiempo es válido. El correo puede tardar varios minutos en llegar; si no llega, revise su carpeta de spam o correo no deseado antes de solicitar otro enlace.</value>
   </data>
   <data name="RecoverAccountText" xml:space="preserve">
-    <value>Proporcione la dirección de correo electrónico que utilizó con su cuenta de Resgrid. Luego le enviaremos un correo electrónico a esa dirección con su nombre de usuario y nueva contraseña para iniciar sesión en el sistema.</value>
+    <value>Introduzca la dirección de correo electrónico de su cuenta de Resgrid. Le enviaremos por correo electrónico un enlace para elegir una nueva contraseña, junto con su nombre de usuario.</value>
   </data>
   <data name="RecoveryAccountHeader" xml:space="preserve">
     <value>Recuperar cuenta</value>

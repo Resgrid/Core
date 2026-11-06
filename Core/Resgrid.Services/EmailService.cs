@@ -113,12 +113,14 @@ namespace Resgrid.Services
 
 		public async Task<bool> SendPasswordRecoveryEmail(string emailAddress, string name,
 			string departmentName, string resetUrl, string ipAddress, string userAgent, DateTime requestedOn,
-			bool isSsoManaged)
+			bool isSsoManaged, string userName, DateTime? linkExpiresOn, TimeSpan? linkLifetime)
 		{
 			try
 			{
 				return await _emailProvider.SendPasswordRecoveryMail(name, emailAddress, departmentName,
-					resetUrl, ipAddress, userAgent, requestedOn.ToString("u"), isSsoManaged);
+					resetUrl, ipAddress, userAgent, requestedOn.ToString("u"), isSsoManaged, userName,
+					linkLifetime.HasValue ? DescribeLinkLifetime(linkLifetime.Value) : null,
+					linkExpiresOn?.ToString("u"));
 			}
 			catch (Exception ex)
 			{
@@ -126,6 +128,16 @@ namespace Resgrid.Services
 			}
 
 			return false;
+		}
+
+		/// <summary>"2 hours", "24 hours", "45 minutes": how a reset email words its link's lifetime.</summary>
+		public static string DescribeLinkLifetime(TimeSpan lifetime)
+		{
+			var minutes = Math.Max(1, (int)Math.Round(lifetime.TotalMinutes));
+			if (minutes >= 60 && minutes % 60 == 0)
+				return minutes == 60 ? "1 hour" : $"{minutes / 60} hours";
+
+			return minutes == 1 ? "1 minute" : $"{minutes} minutes";
 		}
 
 		public async Task<bool> SendPasswordChangedByAdministratorEmail(string emailAddress, string name,

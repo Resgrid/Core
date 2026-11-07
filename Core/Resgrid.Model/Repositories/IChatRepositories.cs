@@ -27,6 +27,13 @@ namespace Resgrid.Model.Repositories
 		Task<IEnumerable<ChatChannel>> GetByIdsAsync(IEnumerable<string> chatChannelIds);
 
 		/// <summary>
+		/// The current LastMessageSeq of each channel, read by primary key (two columns, uncached). The cached channel list
+		/// is not rolled forward on every send, so unread arithmetic that must be current reads the sequences here.
+		/// Missing ids are absent from the result.
+		/// </summary>
+		Task<Dictionary<string, long>> GetLastMessageSeqsByIdsAsync(IEnumerable<string> chatChannelIds);
+
+		/// <summary>
 		/// Atomically increments the channel's LastMessageSeq (and stamps LastMessageOn) returning the
 		/// allocated sequence. Single UPDATE with OUTPUT/RETURNING so concurrent senders never collide.
 		/// </summary>

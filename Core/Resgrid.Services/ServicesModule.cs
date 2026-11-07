@@ -440,6 +440,10 @@ namespace Resgrid.Services
 			// Weather Alert Services
 			builder.RegisterType<WeatherAlertService>().As<IWeatherAlertService>().InstancePerLifetimeScope();
 
+			// Menu and tab badge counts (v4 Counts/GetBadgeCounts): the registry and every IBadgeCountProvider in this assembly.
+			builder.RegisterType<BadgeCounts.BadgeCountsService>().As<IBadgeCountsService>().InstancePerLifetimeScope();
+			RegisterBadgeCountProviders(builder, typeof(ServicesModule).Assembly);
+
 			// Records (RMS) Services - RMS plan section 5.11.1
 			builder.RegisterType<Records.RecordsCutoverService>().As<IRecordsCutoverService>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.DomainEventOutboxService>().As<IDomainEventOutboxService>().InstancePerLifetimeScope();
@@ -597,6 +601,18 @@ namespace Resgrid.Services
 			builder.RegisterType<Dashboard.DashboardEntitlementService>().As<IDashboardEntitlementService>().InstancePerLifetimeScope();
 			builder.RegisterType<Dashboard.DashboardWidgetDataService>().As<IDashboardWidgetDataService>().InstancePerLifetimeScope();
 			RegisterDashboardParts(builder, typeof(ServicesModule).Assembly);
+		}
+
+		/// <summary>
+		/// Registers every <see cref="IBadgeCountProvider"/> in <paramref name="assembly"/>; the badge counts service takes
+		/// them all and keys them by <see cref="IBadgeCountProvider.Key"/>. Public so another composition root can add its own.
+		/// </summary>
+		public static void RegisterBadgeCountProviders(ContainerBuilder builder, System.Reflection.Assembly assembly)
+		{
+			builder.RegisterAssemblyTypes(assembly)
+				.Where(t => typeof(IBadgeCountProvider).IsAssignableFrom(t) && t.IsClass && !t.IsAbstract)
+				.As<IBadgeCountProvider>()
+				.InstancePerLifetimeScope();
 		}
 
 		/// <summary>

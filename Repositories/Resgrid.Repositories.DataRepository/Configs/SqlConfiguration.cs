@@ -320,6 +320,10 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectAllCallDispatchesByGroupIdQuery { get; set; }
 		public string SelectCallAttachmentByCallIdTypeQuery { get; set; }
 		public string SelectAllOpenCallsByDidDateQuery { get; set; }
+		/// <summary>Active, non-deleted calls in a department (the v4 GetActiveCalls rule), as a count: the calls badge.</summary>
+		public string SelectActiveCallsCountByDidQuery { get; set; }
+		/// <summary>Active calls dispatched to a member: to them, their group, a role they hold or a unit they have a seat on (the "calls I'm on" card).</summary>
+		public string SelectActiveCallsCountDispatchedToUserQuery { get; set; }
 		public string SelectAllCallsByDidLoggedOnQuery { get; set; }
 
 		// Platform reporting / analytics aggregate queries (set-based; dual-scope via %ALLDEPTS%).
@@ -629,6 +633,8 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectActiveWeatherAlertsByDepartmentIdQuery { get; set; }
 		public string SelectWeatherAlertByExternalIdAndSourceIdQuery { get; set; }
 		public string SelectWeatherAlertsByDepartmentAndSeverityQuery { get; set; }
+		/// <summary>A department's active, unexpired alerts at or above a severity, counted per severity: the weather badge.</summary>
+		public string SelectActiveWeatherAlertSeverityCountsByDepartmentIdQuery { get; set; }
 		public string SelectWeatherAlertsByDepartmentAndCategoryQuery { get; set; }
 		public string SelectExpiredUnprocessedWeatherAlertsQuery { get; set; }
 		public string SelectUnnotifiedWeatherAlertsQuery { get; set; }

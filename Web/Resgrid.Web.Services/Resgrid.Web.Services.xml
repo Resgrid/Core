@@ -2162,6 +2162,27 @@
             Confirms a verification code previously sent to the specified contact method.
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.CountsController">
+            <summary>
+            Counts for menu and tab badges in one request, so the apps never load a list just to number it
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CountsController.GetBadgeCounts(System.String,System.Nullable{System.Int32})">
+            <summary>
+            Gets the signed-in member's badge counts. Each count is computed only when asked for and only when the member holds
+            the view permission of the list it counts; the others are left out. Known keys: calls (open calls), messages
+            (unread inbox), chats (unread chat messages), weather (active Extreme and Severe alerts) and the member counts
+            listed in the API documentation; an unknown key is ignored, so the apps can ask for keys newer servers add.
+            The department-wide counts are cached briefly and cleared on every change, so asking after each realtime ping is
+            cheap.
+            </summary>
+            <param name="include">Comma-separated keys of the counts to compute. Empty asks for every count.</param>
+            <param name="activeUnitId">Unit the member is operating as (Unit app): counts that cover a unit include it when the member may act as it</param>
+            <returns>BadgeCountsResult with one entry per count the member can see</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CountsController.ParseInclude(System.String)">
+            <summary>The <c>include</c> list as keys (trimmed, distinct, any case); empty means every count.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.CustomStatusesController">
             <summary>
             Custom statuses
@@ -13659,6 +13680,27 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.CostRecovery.CalOesMars.CalOesMarsWorkItemData.ExpectedTotal">
             <summary>Managers only.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Counts.BadgeCountsResult">
+            <summary>The menu and tab badge counts for the signed-in member</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Counts.BadgeCountsResult.Data">
+            <summary>
+            One entry per asked-for count the member can see. A count that is missing (no permission, module or feature flag
+            off, unknown key) means: show no badge for it, rather than zero.
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Counts.BadgeCountResultData">
+            <summary>One badge count</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Counts.BadgeCountResultData.Key">
+            <summary>The count's key, as asked for (e.g. calls, messages, chats, weather)</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Counts.BadgeCountResultData.Count">
+            <summary>The number to show on the badge</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Counts.BadgeCountResultData.Breakdown">
+            <summary>What the count is made of, when the parts mean something on their own (e.g. weather: extreme, severe); null otherwise</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.CustomStatuses.CustomStatusesResult">
             <summary>

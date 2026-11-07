@@ -14,7 +14,13 @@ namespace Resgrid.Model
 			if (channel == null)
 				return 0;
 
-			return Math.Max(0, channel.LastMessageSeq - (member?.LastReadSeq ?? 0));
+			return UnreadCount(channel.LastMessageSeq, member);
+		}
+
+		/// <summary>The same arithmetic against a channel sequence read separately (the badge count reads it fresh).</summary>
+		public static long UnreadCount(long lastMessageSeq, ChatChannelMember member)
+		{
+			return Math.Max(0, lastMessageSeq - (member?.LastReadSeq ?? 0));
 		}
 	}
 

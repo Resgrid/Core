@@ -23,7 +23,7 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<AdpBillingRepository>().As<IAdpBillingRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<AiDispatchAuditRepository>().As<Resgrid.Model.AiDispatch.IAiDispatchAuditRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<AiDispatchConfigRepository>().As<Resgrid.Model.AiDispatch.IAiDispatchConfigRepository>().InstancePerLifetimeScope();
-			builder.RegisterType<WorkOrderRepository>().As<IWorkOrderRepository>().As<IWorkOrderMaintenanceRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<WorkOrderRepository>().As<IWorkOrderRepository>().As<IWorkOrderMaintenanceRepository>().As<IWorkOrderCountRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<ChecklistRepository>().As<IChecklistRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<ChecklistReminderRepository>().As<IChecklistReminderRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<StandardIsolation>().As<IISolationLevel>().InstancePerLifetimeScope();
@@ -197,6 +197,7 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<CommunicationTestTargetRepository>().As<ICommunicationTestTargetRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<WeatherAlertSourceRepository>().As<IWeatherAlertSourceRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<WeatherAlertRepository>().As<IWeatherAlertRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<BadgeCountsRepository>().As<IBadgeCountsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<WeatherAlertZoneRepository>().As<IWeatherAlertZoneRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentCallPriorityRepository>().As<IDepartmentCallPriorityRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<CallProtocolsRepository>().As<ICallProtocolsRepository>().InstancePerLifetimeScope();

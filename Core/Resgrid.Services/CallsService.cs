@@ -254,7 +254,28 @@ namespace Resgrid.Services
 
 			if (_searchProjections != null) await _searchProjections.Value.ProjectCallAsync(savedCall, cancellationToken);
 			if (_callLocationHistory != null) await _callLocationHistory.Value.IndexCallAsync(savedCall, cancellationToken);
+			await RollOpenCallCountsAsync(savedCall.DepartmentId);
 			return savedCall;
+		}
+
+		/// <summary>
+		/// A call was created, changed, closed, reopened or deleted: every cached call badge count in its department (the
+		/// department-wide one and each group-scoped member's) keys on this version, so the next request counts again.
+		/// The realtime ping that makes the apps ask is sent after the save returns. A cache failure never fails the save.
+		/// </summary>
+		private async Task RollOpenCallCountsAsync(int departmentId)
+		{
+			if (_cacheProvider == null || !Config.SystemBehaviorConfig.CacheEnabled || departmentId <= 0)
+				return;
+
+			try
+			{
+				await _cacheProvider.SetStringAsync(BadgeCountCacheKeys.OpenCallsVersion(departmentId), Guid.NewGuid().ToString("N"), BadgeCountCacheKeys.VersionCacheLength);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+			}
 		}
 
 		public Task<bool> RegenerateCallNumbersAsync(int departmentId, DateTime inYearUtc, CancellationToken cancellationToken = default(CancellationToken))
@@ -337,6 +358,7 @@ namespace Resgrid.Services
 			var call = await GetCallByIdAsync(callId);
 			var deleted = await _callsRepository.DeleteAsync(call, cancellationToken);
 			if (deleted && call != null && _searchProjections != null) await _searchProjections.Value.RemoveAsync(call.DepartmentId, SearchEntityTypes.Call, call.CallId.ToString(), cancellationToken);
+			if (deleted && call != null) await RollOpenCallCountsAsync(call.DepartmentId);
 			return deleted;
 		}
 
@@ -351,6 +373,7 @@ namespace Resgrid.Services
 
 			var softDeleted = await _callsRepository.SaveOrUpdateAsync(call, cancellationToken);
 			if (_searchProjections != null) await _searchProjections.Value.ProjectCallAsync(softDeleted, cancellationToken);
+			await RollOpenCallCountsAsync(call.DepartmentId);
 			return softDeleted;
 		}
 
@@ -375,9 +398,18 @@ namespace Resgrid.Services
 			return (await _callsRepository.GetAllCallsByDepartmentIdLoggedOnAsync(departmentId, date)).Count();
 		}
 
+		public async Task<int> GetActiveCallsCountDispatchedToUserAsync(int departmentId, string userId)
+		{
+			if (string.IsNullOrWhiteSpace(userId))
+				return 0;
+
+			return await _callsRepository.GetActiveCallsCountDispatchedToUserAsync(departmentId, userId);
+		}
+
 		public async Task<int> GetActiveCallsForDepartmentAsync(int departmentId)
 		{
-			return (await GetActiveCallsByDepartmentAsync(departmentId)).Count();
+			// One COUNT, not every active call row loaded to count them.
+			return await _callsRepository.GetActiveCallsCountByDepartmentIdAsync(departmentId);
 		}
 
 		public async Task<bool> DeleteDispatchesAsync(List<CallDispatch> dispatches, CancellationToken cancellationToken = default(CancellationToken))

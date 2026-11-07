@@ -1256,6 +1256,15 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE CallId = %CALLID% AND CallAttachmentType = %TYPE%";
 			SelectAllOpenCallsByDidDateQuery =
 				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE DepartmentId = %DID% AND IsDeleted = false AND State = 0";
+			SelectActiveCallsCountByDidQuery =
+				"SELECT COUNT(*) FROM %SCHEMA%.%TABLENAME% WHERE DepartmentId = %DID% AND IsDeleted = false AND State = 0";
+			SelectActiveCallsCountDispatchedToUserQuery = @"
+					SELECT COUNT(*) FROM %SCHEMA%.%TABLENAME% c
+					WHERE c.DepartmentId = %DID% AND c.IsDeleted = false AND c.State = 0 AND (
+						EXISTS (SELECT 1 FROM %SCHEMA%.%CALLDISPATCHESTABLE% d WHERE d.CallId = c.CallId AND d.UserId = %USERID%)
+						OR EXISTS (SELECT 1 FROM %SCHEMA%.%CALLDISPATCHGROUPSTABLE% g INNER JOIN %SCHEMA%.%GROUPMEMBERSTABLE% m ON m.DepartmentGroupId = g.DepartmentGroupId WHERE g.CallId = c.CallId AND m.UserId = %USERID% AND m.DepartmentId = %DID%)
+						OR EXISTS (SELECT 1 FROM %SCHEMA%.%CALLDISPATCHROLESTABLE% r INNER JOIN %SCHEMA%.%ROLEUSERSTABLE% u ON u.PersonnelRoleId = r.RoleId WHERE r.CallId = c.CallId AND u.UserId = %USERID% AND u.DepartmentId = %DID%)
+						OR EXISTS (SELECT 1 FROM %SCHEMA%.%CALLDISPATCHUNITSTABLE% du INNER JOIN %SCHEMA%.%UNITACTIVEROLESTABLE% ar ON ar.UnitId = du.UnitId WHERE du.CallId = c.CallId AND ar.UserId = %USERID%))";
 			SelectAllCallsByDidLoggedOnQuery =
 				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE DepartmentId = %DID% AND LoggedOn >= %DATE%";
 
@@ -2042,6 +2051,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			SelectActiveWeatherAlertsByDepartmentIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE DepartmentId = %DEPARTMENTID% AND Status = 0";
 			SelectWeatherAlertByExternalIdAndSourceIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE ExternalId = %EXTERNALID% AND WeatherAlertSourceId = %SOURCEID% LIMIT 1";
 			SelectWeatherAlertsByDepartmentAndSeverityQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE DepartmentId = %DEPARTMENTID% AND Severity <= %MAXSEVERITY% AND Status = 0";
+			SelectActiveWeatherAlertSeverityCountsByDepartmentIdQuery = "SELECT Severity, COUNT(*) AS AlertCount FROM %SCHEMA%.%TABLENAME% WHERE DepartmentId = %DEPARTMENTID% AND Status = 0 AND Severity <= %MAXSEVERITY% AND (ExpiresUtc IS NULL OR ExpiresUtc > %NOW%) GROUP BY Severity";
 			SelectWeatherAlertsByDepartmentAndCategoryQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE DepartmentId = %DEPARTMENTID% AND AlertCategory = %CATEGORY% AND Status = 0";
 			SelectExpiredUnprocessedWeatherAlertsQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE Status = 0 AND ExpiresUtc IS NOT NULL AND ExpiresUtc < NOW() AT TIME ZONE 'UTC'";
 			SelectUnnotifiedWeatherAlertsQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE NotificationSent = false AND Status = 0";

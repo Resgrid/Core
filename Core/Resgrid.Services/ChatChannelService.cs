@@ -528,6 +528,46 @@ namespace Resgrid.Services
 			return members?.ToList() ?? new List<ChatChannelMember>();
 		}
 
+		public async Task<long> GetUnreadMessageCountForUserAsync(int departmentId, string userId, int? activeUnitId)
+		{
+			// The v4 channel list's reads: the access-checked channels (cached briefly per user), then the read pointers —
+			// the member's own rows first, then the active unit's (first row per channel wins).
+			var channels = await GetChannelsForUserAsync(departmentId, userId, activeUnitId);
+			if (channels == null || channels.Count == 0)
+				return 0;
+
+			var membersByChannel = new Dictionary<string, ChatChannelMember>(StringComparer.OrdinalIgnoreCase);
+			void addMembers(IEnumerable<ChatChannelMember> rows)
+			{
+				foreach (var member in rows ?? Enumerable.Empty<ChatChannelMember>())
+				{
+					if (member?.ChatChannelId != null && !membersByChannel.ContainsKey(member.ChatChannelId))
+						membersByChannel.Add(member.ChatChannelId, member);
+				}
+			}
+
+			addMembers(await GetActiveMembershipsForUserAsync(departmentId, userId));
+			if (activeUnitId.HasValue)
+				addMembers(await GetActiveMembershipsForUnitAsync(departmentId, activeUnitId.Value));
+
+			var listed = channels.Where(c => c != null && !string.IsNullOrWhiteSpace(c.ChatChannelId)).ToList();
+			if (listed.Count == 0)
+				return 0;
+
+			// The cached list can trail sends by its cache lifetime; one primary-key read brings every sequence current.
+			var sequences = await _chatChannelRepository.GetLastMessageSeqsByIdsAsync(listed.Select(c => c.ChatChannelId));
+
+			long total = 0;
+			foreach (var channel in listed)
+			{
+				membersByChannel.TryGetValue(channel.ChatChannelId, out var member);
+				var lastMessageSeq = sequences != null && sequences.TryGetValue(channel.ChatChannelId, out var current) ? Math.Max(current, channel.LastMessageSeq) : channel.LastMessageSeq;
+				total += ChatReadState.UnreadCount(lastMessageSeq, member);
+			}
+
+			return total;
+		}
+
 		public async Task<List<ChatChannelUnread>> GetUnreadChannelsForUserAsync(int departmentId, string userId, bool includeRead = false)
 		{
 			// The same reads as the v4 channel list for a personal (not acting as a unit) caller: the access-checked channel

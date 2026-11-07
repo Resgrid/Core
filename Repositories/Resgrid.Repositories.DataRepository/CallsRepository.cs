@@ -114,6 +114,89 @@ namespace Resgrid.Repositories.DataRepository
 			}
 		}
 
+		public async Task<int> GetActiveCallsCountByDepartmentIdAsync(int departmentId)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<int>>(async x =>
+				{
+					var dynamicParameters = new DynamicParametersExtension();
+					dynamicParameters.Add("DepartmentId", departmentId);
+
+					var query = _queryFactory.GetQuery<SelectActiveCallsCountByDidQuery>();
+
+					return await x.ExecuteScalarAsync<int>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
+		}
+
+		public async Task<int> GetActiveCallsCountDispatchedToUserAsync(int departmentId, string userId)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<int>>(async x =>
+				{
+					var dynamicParameters = new DynamicParametersExtension();
+					dynamicParameters.Add("DepartmentId", departmentId);
+					dynamicParameters.Add("UserId", userId);
+
+					var query = _queryFactory.GetQuery<SelectActiveCallsCountDispatchedToUserQuery>();
+
+					return await x.ExecuteScalarAsync<int>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
+		}
+
 		public async Task<IEnumerable<Call>> GetAllClosedCallsByDepartmentAsync(int departmentId)
 		{
 			try

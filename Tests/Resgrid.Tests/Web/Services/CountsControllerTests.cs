@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Authorization;
@@ -37,6 +38,7 @@ namespace Resgrid.Tests.Web.Services
 		private BadgeCountContext _context;
 		private IReadOnlyCollection<string> _keys;
 		private Func<string, Task<bool>> _policyCheck;
+		private CancellationToken _cancellationToken;
 
 		[SetUp]
 		public void SetUp()
@@ -49,12 +51,13 @@ namespace Resgrid.Tests.Web.Services
 				.Setup(x => x.AuthorizeAsync(It.IsAny<ClaimsPrincipal>(), It.IsAny<object>(), It.IsAny<string>()))
 				.ReturnsAsync((ClaimsPrincipal _, object _, string policy) => _grantedPolicies.Contains(policy) ? AuthorizationResult.Success() : AuthorizationResult.Failed());
 			_badgeCounts
-				.Setup(x => x.GetBadgeCountsAsync(It.IsAny<BadgeCountContext>(), It.IsAny<IReadOnlyCollection<string>>(), It.IsAny<Func<string, Task<bool>>>()))
-				.Callback((BadgeCountContext context, IReadOnlyCollection<string> keys, Func<string, Task<bool>> check) =>
+				.Setup(x => x.GetBadgeCountsAsync(It.IsAny<BadgeCountContext>(), It.IsAny<IReadOnlyCollection<string>>(), It.IsAny<Func<string, Task<bool>>>(), It.IsAny<CancellationToken>()))
+				.Callback((BadgeCountContext context, IReadOnlyCollection<string> keys, Func<string, Task<bool>> check, CancellationToken cancellationToken) =>
 				{
 					_context = context;
 					_keys = keys;
 					_policyCheck = check;
+					_cancellationToken = cancellationToken;
 				})
 				.ReturnsAsync(new List<BadgeCount>
 				{
@@ -120,6 +123,16 @@ namespace Resgrid.Tests.Web.Services
 
 			(await _policyCheck("Call_View")).Should().BeTrue();
 			(await _policyCheck("Chat_View")).Should().BeFalse();
+		}
+
+		[Test]
+		public async Task the_request_cancellation_reaches_the_registry()
+		{
+			using var aborted = new CancellationTokenSource();
+
+			await _controller.GetBadgeCounts("calls", null, aborted.Token);
+
+			_cancellationToken.Should().Be(aborted.Token);
 		}
 	}
 }

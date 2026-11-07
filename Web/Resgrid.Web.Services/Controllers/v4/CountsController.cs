@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -38,11 +39,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// cheap.
 		/// </summary>
 		/// <param name="include">Comma-separated keys of the counts to compute. Empty asks for every count.</param>
-		/// <param name="activeUnitId">Unit the member is operating as (Unit app): counts that cover a unit include it when the member may act as it</param>
+		/// <param name="activeUnitId">Unit the member is operating as (Unit app), checked as the lists check it: chats add its channels when the member crews it; checklists count its checks when the member may view it and give no checklist badge otherwise</param>
+		/// <param name="cancellationToken">Cancelled when the caller disconnects: no further count starts</param>
 		/// <returns>BadgeCountsResult with one entry per count the member can see</returns>
 		[HttpGet("GetBadgeCounts")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		public async Task<ActionResult<BadgeCountsResult>> GetBadgeCounts(string include = null, int? activeUnitId = null)
+		public async Task<ActionResult<BadgeCountsResult>> GetBadgeCounts(string include = null, int? activeUnitId = null, CancellationToken cancellationToken = default)
 		{
 			var context = new BadgeCountContext
 			{
@@ -53,7 +55,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				NowUtc = DateTime.UtcNow
 			};
 
-			var counts = await _badgeCountsService.GetBadgeCountsAsync(context, ParseInclude(include), IsAllowedAsync) ?? new List<BadgeCount>();
+			var counts = await _badgeCountsService.GetBadgeCountsAsync(context, ParseInclude(include), IsAllowedAsync, cancellationToken) ?? new List<BadgeCount>();
 
 			var result = new BadgeCountsResult
 			{

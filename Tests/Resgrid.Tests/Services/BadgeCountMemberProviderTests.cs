@@ -5,6 +5,7 @@ using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using Resgrid.Model;
+using Resgrid.Model.Checklists;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 using Resgrid.Services.BadgeCounts;
@@ -78,6 +79,17 @@ namespace Resgrid.Tests.Services
 			(await new DeploymentsBadgeCountProvider(_repository.Object, _flags.Object).GetCountAsync(Member())).Count.Should().Be(2);
 		}
 
+		/// <summary>The checklist authorization the due list uses: unit 12 is one the member may view, any other is unavailable.</summary>
+		private static Mock<IChecklistAuthorizationService> ChecklistTargets()
+		{
+			var authorization = new Mock<IChecklistAuthorizationService>();
+			authorization.Setup(x => x.TargetAsync(It.Is<ChecklistActor>(a => a.DepartmentId == DepartmentId && a.UserId == UserId), ChecklistTargetType.Unit, It.IsAny<string>()))
+				.ThrowsAsync(new ChecklistException(404, "Target is unavailable."));
+			authorization.Setup(x => x.TargetAsync(It.Is<ChecklistActor>(a => a.DepartmentId == DepartmentId && a.UserId == UserId), ChecklistTargetType.Unit, "12"))
+				.ReturnsAsync(new ChecklistTarget { Type = ChecklistTargetType.Unit, Id = "12", Name = "Engine 12" });
+			return authorization;
+		}
+
 		[Test]
 		public async Task checklists_count_the_member_or_the_active_unit()
 		{
@@ -85,13 +97,26 @@ namespace Resgrid.Tests.Services
 			var crew = Member(12);
 			_repository.Setup(x => x.CountDueChecklistsAsync(DepartmentId, UserId, null, member.NowUtc)).ReturnsAsync(3);
 			_repository.Setup(x => x.CountDueChecklistsAsync(DepartmentId, UserId, 12, crew.NowUtc)).ReturnsAsync(5);
-			var provider = new ChecklistsBadgeCountProvider(_repository.Object, _flags.Object);
+			var provider = new ChecklistsBadgeCountProvider(_repository.Object, ChecklistTargets().Object, _flags.Object);
 
 			(await provider.GetCountAsync(member)).Count.Should().Be(3);
 			(await provider.GetCountAsync(crew)).Count.Should().Be(5);
 
 			_modules.ChecklistsDisabled = true;
 			(await provider.GetCountAsync(member)).Should().BeNull();
+		}
+
+		/// <summary>activeUnitId is caller-supplied: a unit the due list would refuse (another department's, or hidden) gets no badge.</summary>
+		[Test]
+		public async Task checklists_count_nothing_for_a_unit_the_member_may_not_view()
+		{
+			var authorization = ChecklistTargets();
+			var provider = new ChecklistsBadgeCountProvider(_repository.Object, authorization.Object, _flags.Object);
+
+			(await provider.GetCountAsync(Member(99))).Should().BeNull();
+
+			authorization.Verify(x => x.TargetAsync(It.IsAny<ChecklistActor>(), ChecklistTargetType.Unit, "99"), Times.Once);
+			_repository.VerifyNoOtherCalls();
 		}
 
 		[Test]

@@ -51,14 +51,13 @@ namespace Resgrid.Services.BadgeCounts
 				if (!isDepartmentWide)
 					calls = await _dispatchScopeService.FilterCallsForUserAsync(departmentId, userId, calls) ?? new System.Collections.Generic.List<Call>();
 
-				var total = 0;
-				foreach (var call in calls)
-				{
-					var statuses = await _checkInTimerService.GetActiveTimerStatusesForCallAsync(call);
-					total += statuses?.Count(status => status != null && (status.Status == "Warning" || status.Status == "Overdue")) ?? 0;
-				}
+				if (calls.Count == 0)
+					return 0;
 
-				return total;
+				// One batch: the department's timer settings and member and unit states are read once, not once per call.
+				var statusesByCall = await _checkInTimerService.GetActiveTimerStatusesForCallsAsync(calls);
+
+				return statusesByCall?.Values.Sum(statuses => statuses?.Count(IsPendingOrMissed) ?? 0) ?? 0;
 			}
 
 			if (!BadgeCountCache.IsEnabled(_cacheProvider))
@@ -69,5 +68,11 @@ namespace Resgrid.Services.BadgeCounts
 
 			return new BadgeCount(Key, await BadgeCountCache.RetrieveAsync(_cacheProvider, key, countTimers, CheckInsCacheLength));
 		}
+
+		/// <summary>
+		/// A timer due within its warning threshold ("Warning") or past due ("Critical", the timer service's overdue state);
+		/// "Green" timers need nothing yet.
+		/// </summary>
+		private static bool IsPendingOrMissed(CheckInTimerStatus status) => status != null && (status.Status == "Warning" || status.Status == "Critical");
 	}
 }

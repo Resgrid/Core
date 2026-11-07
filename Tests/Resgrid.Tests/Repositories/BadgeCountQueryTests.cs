@@ -55,6 +55,18 @@ namespace Resgrid.Tests.Repositories
 			}
 		}
 
+		/// <summary>A call scheduled for later has its dispatch rows already; it counts once it dispatches, as SelectOpenCallDispatchesForUserQuery has it.</summary>
+		[Test]
+		public void Calls_dispatched_to_a_member_leave_out_calls_scheduled_for_later_in_both_dialects()
+		{
+			var sqlServer = new SelectActiveCallsCountDispatchedToUserQuery(new SqlServerConfiguration()).GetQuery();
+			var postgres = new SelectActiveCallsCountDispatchedToUserQuery(new PostgreSqlConfiguration()).GetQuery();
+
+			sqlServer.Should().Contain("(c.[HasBeenDispatched] = 1 OR c.[DispatchOn] IS NULL OR c.[DispatchOn] <= @Now)");
+			postgres.Should().Contain("(c.HasBeenDispatched = true OR c.DispatchOn IS NULL OR c.DispatchOn <= @Now)");
+			new SqlServerConfiguration().SelectOpenCallDispatchesForUserQuery.Should().Contain("(c.[HasBeenDispatched] = 1 OR c.[DispatchOn] IS NULL OR c.[DispatchOn] <= %NOW%)");
+		}
+
 		[Test]
 		public void Weather_counts_only_active_unexpired_alerts_per_severity_in_both_dialects()
 		{

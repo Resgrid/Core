@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Framework;
 using Resgrid.Model;
@@ -33,7 +34,7 @@ namespace Resgrid.Services.BadgeCounts
 
 		public IReadOnlyList<string> Keys { get; }
 
-		public async Task<List<BadgeCount>> GetBadgeCountsAsync(BadgeCountContext context, IReadOnlyCollection<string> keys, Func<string, Task<bool>> isPolicyGranted)
+		public async Task<List<BadgeCount>> GetBadgeCountsAsync(BadgeCountContext context, IReadOnlyCollection<string> keys, Func<string, Task<bool>> isPolicyGranted, CancellationToken cancellationToken = default)
 		{
 			var counts = new List<BadgeCount>();
 
@@ -57,6 +58,10 @@ namespace Resgrid.Services.BadgeCounts
 			{
 				if (wanted != null && !wanted.Contains(provider.Key))
 					continue;
+
+				// The caller went away: start no more counts. Not a provider failure, so nothing is logged.
+				if (cancellationToken.IsCancellationRequested)
+					break;
 
 				try
 				{

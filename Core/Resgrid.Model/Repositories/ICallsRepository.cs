@@ -98,7 +98,8 @@ namespace Resgrid.Model.Repositories
 
 		/// <summary>
 		/// Counts a department's active calls dispatched to <paramref name="userId"/>: directly, to their group, to a role they
-		/// hold or to a unit they have a seat on (one COUNT with EXISTS per dispatch kind).
+		/// hold or to a unit they have a seat on (one COUNT with EXISTS per dispatch kind). A call scheduled for later counts
+		/// once it dispatches.
 		/// </summary>
 		Task<int> GetActiveCallsCountDispatchedToUserAsync(int departmentId, string userId);
 

@@ -8,7 +8,8 @@ namespace Resgrid.Services.BadgeCounts
 	/// <summary>
 	/// Active calls dispatched to the member — to them, their group, a role they hold or a unit they have a seat on (the
 	/// Responder home's "calls I'm on" card). One COUNT; cached per member on the department's calls version, so a new or
-	/// changed call counts at once. A member always keeps the calls they are dispatched on, whatever the dispatch scope.
+	/// changed call counts at once. A call scheduled for later counts once it dispatches (the dispatch saves the call,
+	/// which rolls the version). A member always keeps the calls they are dispatched on, whatever the dispatch scope.
 	/// </summary>
 	public class CallsImOnBadgeCountProvider : IBadgeCountProvider
 	{

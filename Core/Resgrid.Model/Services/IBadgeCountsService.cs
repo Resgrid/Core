@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Resgrid.Model.Services
@@ -34,8 +35,10 @@ namespace Resgrid.Model.Services
 		/// <summary>
 		/// The counts for <paramref name="keys"/> (null or empty: all of them). A provider runs only when
 		/// <paramref name="isPolicyGranted"/> grants its <see cref="IBadgeCountProvider.RequiredPolicy"/>; one that fails or
-		/// does not apply is left out, never failing the others. Unknown keys are ignored.
+		/// does not apply is left out, never failing the others. Unknown keys are ignored. Once
+		/// <paramref name="cancellationToken"/> is cancelled (the caller went away), no further provider starts and the
+		/// counts made so far are returned.
 		/// </summary>
-		Task<List<BadgeCount>> GetBadgeCountsAsync(BadgeCountContext context, IReadOnlyCollection<string> keys, Func<string, Task<bool>> isPolicyGranted);
+		Task<List<BadgeCount>> GetBadgeCountsAsync(BadgeCountContext context, IReadOnlyCollection<string> keys, Func<string, Task<bool>> isPolicyGranted, CancellationToken cancellationToken = default);
 	}
 }

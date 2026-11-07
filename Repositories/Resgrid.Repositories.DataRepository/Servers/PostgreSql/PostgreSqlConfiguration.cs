@@ -1260,7 +1260,8 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 				"SELECT COUNT(*) FROM %SCHEMA%.%TABLENAME% WHERE DepartmentId = %DID% AND IsDeleted = false AND State = 0";
 			SelectActiveCallsCountDispatchedToUserQuery = @"
 					SELECT COUNT(*) FROM %SCHEMA%.%TABLENAME% c
-					WHERE c.DepartmentId = %DID% AND c.IsDeleted = false AND c.State = 0 AND (
+					WHERE c.DepartmentId = %DID% AND c.IsDeleted = false AND c.State = 0
+						AND (c.HasBeenDispatched = true OR c.DispatchOn IS NULL OR c.DispatchOn <= %NOW%) AND (
 						EXISTS (SELECT 1 FROM %SCHEMA%.%CALLDISPATCHESTABLE% d WHERE d.CallId = c.CallId AND d.UserId = %USERID%)
 						OR EXISTS (SELECT 1 FROM %SCHEMA%.%CALLDISPATCHGROUPSTABLE% g INNER JOIN %SCHEMA%.%GROUPMEMBERSTABLE% m ON m.DepartmentGroupId = g.DepartmentGroupId WHERE g.CallId = c.CallId AND m.UserId = %USERID% AND m.DepartmentId = %DID%)
 						OR EXISTS (SELECT 1 FROM %SCHEMA%.%CALLDISPATCHROLESTABLE% r INNER JOIN %SCHEMA%.%ROLEUSERSTABLE% u ON u.PersonnelRoleId = r.RoleId WHERE r.CallId = c.CallId AND u.UserId = %USERID% AND u.DepartmentId = %DID%)

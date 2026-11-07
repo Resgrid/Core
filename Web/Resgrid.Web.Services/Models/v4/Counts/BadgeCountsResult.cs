@@ -15,7 +15,10 @@ namespace Resgrid.Web.Services.Models.v4.Counts
 	/// <summary>One badge count</summary>
 	public class BadgeCountResultData
 	{
-		/// <summary>The count's key, as asked for (e.g. calls, messages, chats, weather)</summary>
+		/// <summary>
+		/// The count's key in its canonical spelling (e.g. calls, messages, callsImOn, checkIns), whatever case it was asked
+		/// for in: include=CALLS answers with calls, so match keys case-insensitively or ask with the canonical spelling
+		/// </summary>
 		public string Key { get; set; }
 
 		/// <summary>The number to show on the badge</summary>

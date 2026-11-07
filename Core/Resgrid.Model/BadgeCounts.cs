@@ -57,7 +57,7 @@ namespace Resgrid.Model
 
 		/// <summary>
 		/// The unit the member says they are operating as (Unit app). Caller-supplied: a provider that counts for it must
-		/// first check that the member may act as that unit.
+		/// first check it as the list it counts does (chats: the member crews it; checklists: the member may view it).
 		/// </summary>
 		public int? ActiveUnitId { get; set; }
 

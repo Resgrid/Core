@@ -2167,7 +2167,7 @@
             Counts for menu and tab badges in one request, so the apps never load a list just to number it
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.CountsController.GetBadgeCounts(System.String,System.Nullable{System.Int32})">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CountsController.GetBadgeCounts(System.String,System.Nullable{System.Int32},System.Threading.CancellationToken)">
             <summary>
             Gets the signed-in member's badge counts. Each count is computed only when asked for and only when the member holds
             the view permission of the list it counts; the others are left out. Known keys: calls (open calls), messages
@@ -2177,7 +2177,8 @@
             cheap.
             </summary>
             <param name="include">Comma-separated keys of the counts to compute. Empty asks for every count.</param>
-            <param name="activeUnitId">Unit the member is operating as (Unit app): counts that cover a unit include it when the member may act as it</param>
+            <param name="activeUnitId">Unit the member is operating as (Unit app), checked as the lists check it: chats add its channels when the member crews it; checklists count its checks when the member may view it and give no checklist badge otherwise</param>
+            <param name="cancellationToken">Cancelled when the caller disconnects: no further count starts</param>
             <returns>BadgeCountsResult with one entry per count the member can see</returns>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.CountsController.ParseInclude(System.String)">
@@ -13694,7 +13695,10 @@
             <summary>One badge count</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Counts.BadgeCountResultData.Key">
-            <summary>The count's key, as asked for (e.g. calls, messages, chats, weather)</summary>
+            <summary>
+            The count's key in its canonical spelling (e.g. calls, messages, callsImOn, checkIns), whatever case it was asked
+            for in: include=CALLS answers with calls, so match keys case-insensitively or ask with the canonical spelling
+            </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Counts.BadgeCountResultData.Count">
             <summary>The number to show on the badge</summary>

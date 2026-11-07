@@ -127,7 +127,7 @@ namespace Resgrid.Model.Services
 
 		/// <summary>
 		/// Counts the active calls dispatched to a member — to them, their group, a role they hold or a unit they have a seat
-		/// on (the apps' "calls I'm on") — with one COUNT query.
+		/// on (the apps' "calls I'm on") — with one COUNT query. A call scheduled for later counts once it dispatches.
 		/// </summary>
 		Task<int> GetActiveCallsCountDispatchedToUserAsync(int departmentId, string userId);
 

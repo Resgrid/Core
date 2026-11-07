@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
@@ -101,6 +102,24 @@ namespace Resgrid.Tests.Services
 			var counts = await service.GetBadgeCountsAsync(Member(), null, AllowAll);
 
 			counts.Select(c => (c.Key, c.Count)).Should().Equal(("messages", 2));
+		}
+
+		[Test]
+		public async Task an_abandoned_request_starts_no_further_counts()
+		{
+			using var aborted = new CancellationTokenSource();
+			var calls = new FakeProvider("calls", null, _ =>
+			{
+				aborted.Cancel();
+				return Task.FromResult(new BadgeCount("calls", 1));
+			});
+			var messages = Counting("messages", 2);
+			var service = new BadgeCountsService(new IBadgeCountProvider[] { calls, messages });
+
+			var counts = await service.GetBadgeCountsAsync(Member(), null, AllowAll, aborted.Token);
+
+			counts.Select(c => c.Key).Should().Equal("calls");
+			messages.Calls.Should().Be(0);
 		}
 
 		[Test]
@@ -267,6 +286,53 @@ namespace Resgrid.Tests.Services
 
 			(await provider.GetCountAsync(Member(12))).Count.Should().Be(5);
 			(await provider.GetCountAsync(Member(13))).Count.Should().Be(9);
+		}
+
+		private static CheckInTimerStatus Timer(string status) => new CheckInTimerStatus { Status = status };
+
+		/// <summary>The timer service reports "Green", "Warning" and "Critical" (past due); the badge counts the last two.</summary>
+		[Test]
+		public async Task check_ins_count_warning_and_critical_timers_in_one_batch()
+		{
+			var active = new List<Call>
+			{
+				new Call { CallId = 1, DepartmentId = DepartmentId, CheckInTimersEnabled = true },
+				new Call { CallId = 2, DepartmentId = DepartmentId, CheckInTimersEnabled = true },
+				new Call { CallId = 3, DepartmentId = DepartmentId, CheckInTimersEnabled = false }
+			};
+			var calls = new Mock<ICallsService>();
+			var scope = new Mock<IDispatchScopeService>();
+			var timers = new Mock<ICheckInTimerService>();
+			scope.Setup(x => x.GetScopeForUserAsync(DepartmentId, UserId)).ReturnsAsync(DispatchScope.DepartmentWide(DepartmentId, UserId, DispatchScopeReasons.ScopingDisabled));
+			calls.Setup(x => x.GetActiveCallsByDepartmentAsync(DepartmentId)).ReturnsAsync(active);
+			timers.Setup(x => x.GetActiveTimerStatusesForCallsAsync(It.IsAny<IEnumerable<Call>>())).ReturnsAsync(new Dictionary<int, List<CheckInTimerStatus>>
+			{
+				[1] = new List<CheckInTimerStatus> { Timer("Green"), Timer("Warning"), Timer("Critical") },
+				[2] = new List<CheckInTimerStatus> { Timer("Critical"), null }
+			});
+
+			var count = await new CheckInsBadgeCountProvider(calls.Object, scope.Object, timers.Object, Mock.Of<ICacheProvider>()).GetCountAsync(Member());
+
+			count.Count.Should().Be(3);
+			timers.Verify(x => x.GetActiveTimerStatusesForCallsAsync(It.Is<IEnumerable<Call>>(batch => batch.Select(c => c.CallId).SequenceEqual(new[] { 1, 2 }))), Times.Once);
+			timers.Verify(x => x.GetActiveTimerStatusesForCallAsync(It.IsAny<Call>()), Times.Never);
+		}
+
+		[Test]
+		public async Task check_ins_read_no_timers_when_no_visible_call_has_them()
+		{
+			var active = new List<Call> { new Call { CallId = 1, DepartmentId = DepartmentId, CheckInTimersEnabled = true } };
+			var calls = new Mock<ICallsService>();
+			var scope = new Mock<IDispatchScopeService>();
+			var timers = new Mock<ICheckInTimerService>();
+			scope.Setup(x => x.GetScopeForUserAsync(DepartmentId, UserId)).ReturnsAsync(new DispatchScope { DepartmentId = DepartmentId, UserId = UserId });
+			calls.Setup(x => x.GetActiveCallsByDepartmentAsync(DepartmentId)).ReturnsAsync(active);
+			scope.Setup(x => x.FilterCallsForUserAsync(DepartmentId, UserId, It.IsAny<List<Call>>())).ReturnsAsync(new List<Call>());
+
+			var count = await new CheckInsBadgeCountProvider(calls.Object, scope.Object, timers.Object, Mock.Of<ICacheProvider>()).GetCountAsync(Member());
+
+			count.Count.Should().Be(0);
+			timers.VerifyNoOtherCalls();
 		}
 
 		[Test]

@@ -17,6 +17,12 @@ namespace Resgrid.Model.Services
 		Task<WeatherAlert> GetAlertByIdAsync(Guid alertId);
 		Task<List<WeatherAlert>> GetActiveAlertsByDepartmentIdAsync(int departmentId);
 		Task<List<WeatherAlert>> GetAlertsByDepartmentAndSeverityAsync(int departmentId, WeatherAlertSeverity maxSeverity);
+
+		/// <summary>
+		/// The department's active, unexpired Extreme and Severe alerts, counted (the weather badge). Cached for
+		/// <see cref="BadgeCountCacheKeys.CountCacheLength"/>; ingestion, expiry and source removal drop the entry.
+		/// </summary>
+		Task<WeatherAlertSeverityCounts> GetActiveSevereAlertCountsAsync(int departmentId, bool bypassCache = false);
 		Task<List<WeatherAlert>> GetAlertsByDepartmentAndCategoryAsync(int departmentId, WeatherAlertCategory category);
 		Task<List<WeatherAlert>> GetAlertHistoryAsync(int departmentId, DateTime startDate, DateTime endDate);
 		Task<List<WeatherAlert>> GetActiveAlertsNearLocationAsync(int departmentId, double lat, double lng, double radiusMiles = 25);
@@ -36,7 +42,7 @@ namespace Resgrid.Model.Services
 		// Call integration
 		Task AttachWeatherAlertsToCallAsync(Call call, CancellationToken ct = default);
 
-		// Cache invalidation
+		// Cache invalidation: drops the department's cached alert counts.
 		Task<bool> InvalidateDepartmentWeatherCacheAsync(int departmentId);
 	}
 }

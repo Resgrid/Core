@@ -27,6 +27,14 @@ namespace Resgrid.Model.Services
 		// Timer Status Computation
 		Task<List<CheckInTimerStatus>> GetActiveTimerStatusesForCallAsync(Call call);
 
+		/// <summary>
+		/// <see cref="GetActiveTimerStatusesForCallAsync"/> for several calls, keyed by CallId (an empty list for a call that
+		/// is not active or has timers off). The department-wide reads (timer settings, call and unit types, the members'
+		/// and units' latest states) are made once per department for the whole batch rather than once per call; each
+		/// call's own check-ins and dispatches are still read per call.
+		/// </summary>
+		Task<Dictionary<int, List<CheckInTimerStatus>>> GetActiveTimerStatusesForCallsAsync(IEnumerable<Call> calls);
+
 		// ── New: per-user and per-call personnel check-in status ────────────────
 
 		/// <summary>

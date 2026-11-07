@@ -281,6 +281,59 @@ namespace Resgrid.Repositories.DataRepository
 			}
 		}
 
+		public async Task<Dictionary<string, long>> GetLastMessageSeqsByIdsAsync(IEnumerable<string> chatChannelIds)
+		{
+			try
+			{
+				var ids = chatChannelIds?.Where(id => !String.IsNullOrWhiteSpace(id)).Distinct(StringComparer.OrdinalIgnoreCase).ToList() ?? new List<string>();
+				var result = new Dictionary<string, long>(StringComparer.OrdinalIgnoreCase);
+				if (ids.Count == 0)
+					return result;
+
+				// = ANY() on Postgres, IN on SQL Server: see GetByIdsAsync.
+				var notation = _sqlConfiguration.ParameterNotation;
+				var sql = DataConfig.DatabaseType == DatabaseTypes.Postgres
+					? $"SELECT chatchannelid AS ChatChannelId, lastmessageseq AS LastMessageSeq FROM {_sqlConfiguration.SchemaName}.chatchannels WHERE chatchannelid = ANY({notation}Ids)"
+					: $"SELECT [ChatChannelId], [LastMessageSeq] FROM {_sqlConfiguration.SchemaName}.[ChatChannels] WHERE [ChatChannelId] IN {notation}Ids";
+
+				var select = new Func<DbConnection, Task<IEnumerable<ChatChannelSequence>>>(connection =>
+					connection.QueryAsync<ChatChannelSequence>(sql, new { Ids = ids }, _unitOfWork.Transaction));
+
+				IEnumerable<ChatChannelSequence> rows;
+				if (_unitOfWork?.Connection == null)
+				{
+					using var connection = _connectionProvider.Create();
+					await connection.OpenAsync();
+					rows = await select(connection);
+				}
+				else
+				{
+					rows = await select(_unitOfWork.CreateOrGetConnection());
+				}
+
+				foreach (var row in rows ?? Enumerable.Empty<ChatChannelSequence>())
+				{
+					if (row?.ChatChannelId != null)
+						result[row.ChatChannelId] = row.LastMessageSeq;
+				}
+
+				return result;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				throw;
+			}
+		}
+
+		/// <summary>The two columns <see cref="GetLastMessageSeqsByIdsAsync"/> reads.</summary>
+		private sealed class ChatChannelSequence
+		{
+			public string ChatChannelId { get; set; }
+
+			public long LastMessageSeq { get; set; }
+		}
+
 		public async Task<long> AllocateNextMessageSeqAsync(string chatChannelId, DateTime lastMessageOn)
 		{
 			try

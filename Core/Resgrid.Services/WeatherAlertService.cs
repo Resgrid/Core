@@ -96,6 +96,8 @@ namespace Resgrid.Services
 				if (owns)
 					_unitOfWork.CommitChanges();
 
+				await InvalidateDepartmentWeatherCacheAsync(source.DepartmentId);
+
 				return deleted;
 			}
 			catch
@@ -125,6 +127,34 @@ namespace Resgrid.Services
 		{
 			var items = await _weatherAlertRepository.GetAlertsByDepartmentAndSeverityAsync(departmentId, (int)maxSeverity);
 			return items?.ToList() ?? new List<WeatherAlert>();
+		}
+
+		public async Task<WeatherAlertSeverityCounts> GetActiveSevereAlertCountsAsync(int departmentId, bool bypassCache = false)
+		{
+			async Task<WeatherAlertSeverityCounts> countAlerts()
+			{
+				var rows = await _weatherAlertRepository.GetActiveSeverityCountsByDepartmentIdAsync(departmentId, (int)WeatherAlertSeverity.Severe, DateTime.UtcNow);
+				var counts = new WeatherAlertSeverityCounts();
+
+				foreach (var row in rows ?? Enumerable.Empty<WeatherAlertSeverityCountRow>())
+				{
+					if (row == null)
+						continue;
+
+					var count = (int)Math.Min(int.MaxValue, Math.Max(0, row.AlertCount));
+					if (row.Severity == (int)WeatherAlertSeverity.Extreme)
+						counts.Extreme += count;
+					else if (row.Severity == (int)WeatherAlertSeverity.Severe)
+						counts.Severe += count;
+				}
+
+				return counts;
+			}
+
+			if (!bypassCache && _cacheProvider != null && Config.SystemBehaviorConfig.CacheEnabled)
+				return await _cacheProvider.RetrieveAsync(BadgeCountCacheKeys.Weather(departmentId), countAlerts, BadgeCountCacheKeys.CountCacheLength);
+
+			return await countAlerts();
 		}
 
 		public async Task<List<WeatherAlert>> GetAlertsByDepartmentAndCategoryAsync(int departmentId, WeatherAlertCategory category)
@@ -265,6 +295,9 @@ namespace Resgrid.Services
 				source.IsPermanentFailure = false;
 				source.ErrorMessage = null;
 				await _weatherAlertSourceRepository.UpdateAsync(source, ct, true);
+
+				if (fetchedAlerts != null && fetchedAlerts.Any())
+					await InvalidateDepartmentWeatherCacheAsync(source.DepartmentId);
 			}
 			catch (PermanentWeatherAlertException ex)
 			{
@@ -341,6 +374,9 @@ namespace Resgrid.Services
 				alert.LastUpdatedUtc = DateTime.UtcNow;
 				await _weatherAlertRepository.UpdateAsync(alert, ct, true);
 			}
+
+			foreach (var departmentId in expired.Select(alert => alert.DepartmentId).Distinct())
+				await InvalidateDepartmentWeatherCacheAsync(departmentId);
 		}
 
 		public async Task SendPendingNotificationsAsync(CancellationToken ct = default)
@@ -590,8 +626,20 @@ namespace Resgrid.Services
 
 		public async Task<bool> InvalidateDepartmentWeatherCacheAsync(int departmentId)
 		{
-			// Cache invalidation - can be expanded when caching is implemented
-			return await Task.FromResult(true);
+			if (_cacheProvider == null || !Config.SystemBehaviorConfig.CacheEnabled || departmentId <= 0)
+				return true;
+
+			// A cache failure never fails ingestion: the count lapses on its own within CountCacheLength.
+			try
+			{
+				await _cacheProvider.RemoveAsync(BadgeCountCacheKeys.Weather(departmentId));
+				return true;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				return false;
+			}
 		}
 
 		#endregion

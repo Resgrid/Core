@@ -10,6 +10,12 @@ namespace Resgrid.Model.Repositories
 		Task<IEnumerable<WeatherAlert>> GetActiveAlertsByDepartmentIdAsync(int departmentId);
 		Task<WeatherAlert> GetByExternalIdAndSourceIdAsync(string externalId, Guid sourceId);
 		Task<IEnumerable<WeatherAlert>> GetAlertsByDepartmentAndSeverityAsync(int departmentId, int maxSeverity);
+
+		/// <summary>
+		/// Counts a department's active alerts at or above a severity (lower value = more severe) that have not passed
+		/// their expiry at <paramref name="now"/>: one row per severity, severities with none left out.
+		/// </summary>
+		Task<IEnumerable<WeatherAlertSeverityCountRow>> GetActiveSeverityCountsByDepartmentIdAsync(int departmentId, int maxSeverity, DateTime now);
 		Task<IEnumerable<WeatherAlert>> GetAlertsByDepartmentAndCategoryAsync(int departmentId, int category);
 		Task<IEnumerable<WeatherAlert>> GetExpiredUnprocessedAlertsAsync();
 		Task<IEnumerable<WeatherAlert>> GetUnnotifiedAlertsAsync();

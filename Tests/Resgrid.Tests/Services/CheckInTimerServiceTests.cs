@@ -196,6 +196,65 @@ namespace Resgrid.Tests.Services
 			result[0].Status.Should().Be("Critical");
 		}
 
+		/// <summary>The badge count's batch: the department-wide reads happen once for all its calls, each call's check-ins per call.</summary>
+		[Test]
+		public async Task GetActiveTimerStatusesForCallsAsync_ReadsTheDepartmentOnce_AndEachCallsCheckIns()
+		{
+			Call Active(int callId, int minutesAgo) => new Call
+			{
+				CallId = callId, DepartmentId = 10, State = (int)CallStates.Active, CheckInTimersEnabled = true,
+				LoggedOn = DateTime.UtcNow.AddMinutes(-minutesAgo),
+				Dispatches = new List<CallDispatch> { new CallDispatch { UserId = "user1" } },
+				UnitDispatches = new List<CallDispatchUnit>()
+			};
+			var calls = new List<Call>
+			{
+				Active(1, 5),
+				Active(2, 32),
+				new Call { CallId = 3, DepartmentId = 10, State = (int)CallStates.Closed, CheckInTimersEnabled = true }
+			};
+			_configRepo.Setup(x => x.GetByDepartmentIdAsync(10)).ReturnsAsync(new List<CheckInTimerConfig>
+			{
+				new CheckInTimerConfig { TimerTargetType = 0, DurationMinutes = 30, WarningThresholdMinutes = 5, IsEnabled = true, ActiveForStates = "3" }
+			});
+			_overrideRepo.Setup(x => x.GetMatchingOverridesAsync(10, null, 0)).ReturnsAsync(new List<CheckInTimerOverride>());
+			_recordRepo.Setup(x => x.GetByCallIdAsync(It.IsAny<int>())).ReturnsAsync(new List<CheckInRecord>());
+			_actionLogsService.Setup(x => x.GetLastActionLogsForDepartmentAsync(10, It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>()))
+				.ReturnsAsync(new List<ActionLog> { new ActionLog { UserId = "user1", ActionTypeId = (int)ActionTypes.OnScene } });
+
+			var result = await _service.GetActiveTimerStatusesForCallsAsync(calls);
+
+			result.Keys.Should().BeEquivalentTo(new[] { 1, 2, 3 });
+			result[1].Select(s => s.Status).Should().Equal("Green");
+			result[2].Select(s => s.Status).Should().Equal("Critical");
+			result[3].Should().BeEmpty();
+			_configRepo.Verify(x => x.GetByDepartmentIdAsync(10), Times.Once);
+			_overrideRepo.Verify(x => x.GetMatchingOverridesAsync(10, null, 0), Times.Once);
+			_actionLogsService.Verify(x => x.GetLastActionLogsForDepartmentAsync(10, It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>()), Times.Once);
+			_recordRepo.Verify(x => x.GetByCallIdAsync(1), Times.Once);
+			_recordRepo.Verify(x => x.GetByCallIdAsync(2), Times.Once);
+			_recordRepo.Verify(x => x.GetByCallIdAsync(3), Times.Never);
+		}
+
+		[Test]
+		public async Task GetActiveTimerStatusesForCallsAsync_MatchesTheSingleCallResult()
+		{
+			var call = new Call { CallId = 1, DepartmentId = 10, State = (int)CallStates.Active, CheckInTimersEnabled = true, LoggedOn = DateTime.UtcNow.AddMinutes(-27) };
+			_configRepo.Setup(x => x.GetByDepartmentIdAsync(10)).ReturnsAsync(new List<CheckInTimerConfig>
+			{
+				new CheckInTimerConfig { TimerTargetType = 0, DurationMinutes = 30, WarningThresholdMinutes = 5, IsEnabled = true }
+			});
+			_overrideRepo.Setup(x => x.GetMatchingOverridesAsync(10, null, 0)).ReturnsAsync(new List<CheckInTimerOverride>());
+			_recordRepo.Setup(x => x.GetByCallIdAsync(1)).ReturnsAsync(new List<CheckInRecord>());
+
+			var single = await _service.GetActiveTimerStatusesForCallAsync(call);
+			var batch = await _service.GetActiveTimerStatusesForCallsAsync(new[] { call, call, null });
+
+			batch.Should().ContainKey(1).And.HaveCount(1);
+			batch[1].Select(s => (s.TargetType, s.Status, s.DurationMinutes)).Should().Equal(single.Select(s => (s.TargetType, s.Status, s.DurationMinutes)));
+			batch[1].Single().Status.Should().Be("Warning");
+		}
+
 		[Test]
 		public async Task GetActiveTimerStatusesForCallAsync_EmptyList_ForClosedCalls()
 		{

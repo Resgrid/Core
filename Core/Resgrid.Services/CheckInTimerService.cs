@@ -235,8 +235,12 @@ namespace Resgrid.Services
 			if (call == null || !call.CheckInTimersEnabled)
 				return new List<ResolvedCheckInTimer>();
 
-			var defaults = await _configRepository.GetByDepartmentIdAsync(call.DepartmentId);
-			var defaultList = defaults?.Where(c => c.IsEnabled).ToList() ?? new List<CheckInTimerConfig>();
+			return await ResolveAllTimersForCallAsync(call, new DepartmentTimerReads(this, call.DepartmentId));
+		}
+
+		private async Task<List<ResolvedCheckInTimer>> ResolveAllTimersForCallAsync(Call call, DepartmentTimerReads reads)
+		{
+			var defaultList = await reads.EnabledConfigsAsync();
 
 			// Resolve the call's type to a CallTypeId for override matching. Call.Type stores
 			// the type NAME (see call creation in CallsController), so a numeric parse only
@@ -251,13 +255,12 @@ namespace Resgrid.Services
 				}
 				else
 				{
-					var callTypes = await _callsService.GetCallTypesForDepartmentAsync(call.DepartmentId);
+					var callTypes = await reads.CallTypesAsync();
 					callTypeId = CallTypeLink.FindByName(callTypes, call.Type)?.CallTypeId;
 				}
 			}
 
-			var overrides = await _overrideRepository.GetMatchingOverridesAsync(call.DepartmentId, callTypeId, call.Priority);
-			var overrideList = overrides?.ToList() ?? new List<CheckInTimerOverride>();
+			var overrideList = await reads.MatchingOverridesAsync(callTypeId, call.Priority);
 
 			var resolved = new Dictionary<string, ResolvedCheckInTimer>();
 
@@ -396,7 +399,38 @@ namespace Resgrid.Services
 			if (call == null || !call.CheckInTimersEnabled || call.State != (int)CallStates.Active)
 				return new List<CheckInTimerStatus>();
 
-			var resolvedTimers = await ResolveAllTimersForCallAsync(call);
+			return await GetActiveTimerStatusesForCallAsync(call, new DepartmentTimerReads(this, call.DepartmentId));
+		}
+
+		/// <inheritdoc/>
+		public async Task<Dictionary<int, List<CheckInTimerStatus>>> GetActiveTimerStatusesForCallsAsync(IEnumerable<Call> calls)
+		{
+			var statusesByCall = new Dictionary<int, List<CheckInTimerStatus>>();
+			var readsByDepartment = new Dictionary<int, DepartmentTimerReads>();
+
+			foreach (var call in calls ?? Enumerable.Empty<Call>())
+			{
+				if (call == null || statusesByCall.ContainsKey(call.CallId))
+					continue;
+
+				if (!call.CheckInTimersEnabled || call.State != (int)CallStates.Active)
+				{
+					statusesByCall[call.CallId] = new List<CheckInTimerStatus>();
+					continue;
+				}
+
+				if (!readsByDepartment.TryGetValue(call.DepartmentId, out var reads))
+					readsByDepartment[call.DepartmentId] = reads = new DepartmentTimerReads(this, call.DepartmentId);
+
+				statusesByCall[call.CallId] = await GetActiveTimerStatusesForCallAsync(call, reads);
+			}
+
+			return statusesByCall;
+		}
+
+		private async Task<List<CheckInTimerStatus>> GetActiveTimerStatusesForCallAsync(Call call, DepartmentTimerReads reads)
+		{
+			var resolvedTimers = await ResolveAllTimersForCallAsync(call, reads);
 			if (!resolvedTimers.Any())
 				return new List<CheckInTimerStatus>();
 
@@ -405,10 +439,10 @@ namespace Resgrid.Services
 			// a UnitId -> UnitTypeId map once when any timer is unit-type-scoped.
 			Dictionary<int, int?> unitTypeIdByUnitId = null;
 			if (resolvedTimers.Any(t => t.UnitTypeId.HasValue))
-				unitTypeIdByUnitId = await GetUnitTypeIdsByUnitIdAsync(call.DepartmentId);
+				unitTypeIdByUnitId = await reads.UnitTypeIdByUnitIdAsync();
 
 			// Filter timers by ActiveForStates against current dispatched entity states
-			resolvedTimers = await FilterTimersByActiveStatesAsync(resolvedTimers, call, unitTypeIdByUnitId);
+			resolvedTimers = await FilterTimersByActiveStatesAsync(resolvedTimers, call, unitTypeIdByUnitId, reads);
 			if (!resolvedTimers.Any())
 				return new List<CheckInTimerStatus>();
 
@@ -470,7 +504,7 @@ namespace Resgrid.Services
 
 		#region State Filtering
 
-		private async Task<List<ResolvedCheckInTimer>> FilterTimersByActiveStatesAsync(List<ResolvedCheckInTimer> timers, Call call, Dictionary<int, int?> unitTypeIdByUnitId)
+		private async Task<List<ResolvedCheckInTimer>> FilterTimersByActiveStatesAsync(List<ResolvedCheckInTimer> timers, Call call, Dictionary<int, int?> unitTypeIdByUnitId, DepartmentTimerReads reads)
 		{
 			var timersWithStateFilter = timers.Where(t => !string.IsNullOrWhiteSpace(t.ActiveForStates)).ToList();
 			if (!timersWithStateFilter.Any())
@@ -485,10 +519,7 @@ namespace Resgrid.Services
 			var personnelStates = new Dictionary<string, int>();
 			if (call.Dispatches != null && call.Dispatches.Any())
 			{
-				var lastActionLogs = await _actionLogsService.GetLastActionLogsForDepartmentAsync(call.DepartmentId);
-				var lastActionByUser = (lastActionLogs ?? new List<ActionLog>())
-					.GroupBy(a => a.UserId)
-					.ToDictionary(g => g.Key, g => g.First());
+				var lastActionByUser = await reads.LastActionByUserAsync();
 
 				foreach (var dispatch in call.Dispatches)
 				{
@@ -502,10 +533,7 @@ namespace Resgrid.Services
 			var unitStates = new Dictionary<int, int>();
 			if (call.UnitDispatches != null && call.UnitDispatches.Any())
 			{
-				var latestUnitStates = await _unitsService.GetAllLatestStatusForUnitsByDepartmentIdAsync(call.DepartmentId);
-				var lastStateByUnit = (latestUnitStates ?? new List<UnitState>())
-					.GroupBy(s => s.UnitId)
-					.ToDictionary(g => g.Key, g => g.First());
+				var lastStateByUnit = await reads.LastStateByUnitAsync();
 
 				foreach (var unitDispatch in call.UnitDispatches)
 				{
@@ -520,7 +548,7 @@ namespace Resgrid.Services
 			Func<int, int> personnelBaseTypes = null;
 			if (_customStateService != null && timersWithStateFilter.Any(t => StatusMatch.Tokens(t.ActiveForStates).Any(x => StatusMatch.BaseTypeOf(x).HasValue)))
 			{
-				var customStates = await _customStateService.GetAllCustomStatesForDepartmentAsync(call.DepartmentId);
+				var customStates = await reads.CustomStatesAsync();
 				unitBaseTypes = StatusMatch.UnitBaseTypes(customStates);
 				personnelBaseTypes = StatusMatch.PersonnelBaseTypes(customStates);
 			}
@@ -627,6 +655,86 @@ namespace Resgrid.Services
 
 
 		#endregion State Filtering
+
+		#region Department Reads
+
+		/// <summary>
+		/// The department-wide reads behind a call's timer statuses (timer settings, call types, unit types, the members' and
+		/// units' latest states, custom statuses), each made at most once. <see cref="GetActiveTimerStatusesForCallsAsync"/>
+		/// shares one across a department's calls; the single-call methods use a fresh one. Overrides are kept per call type
+		/// and priority, so calls that share both share one read. The results are only read, never changed.
+		/// </summary>
+		private sealed class DepartmentTimerReads
+		{
+			private readonly CheckInTimerService _service;
+			private readonly int _departmentId;
+			private readonly Dictionary<(int? CallTypeId, int Priority), Task<List<CheckInTimerOverride>>> _overrides = new Dictionary<(int? CallTypeId, int Priority), Task<List<CheckInTimerOverride>>>();
+			private Task<List<CheckInTimerConfig>> _enabledConfigs;
+			private Task<List<CallType>> _callTypes;
+			private Task<Dictionary<int, int?>> _unitTypeIdByUnitId;
+			private Task<Dictionary<string, ActionLog>> _lastActionByUser;
+			private Task<Dictionary<int, UnitState>> _lastStateByUnit;
+			private Task<List<CustomState>> _customStates;
+
+			public DepartmentTimerReads(CheckInTimerService service, int departmentId)
+			{
+				_service = service;
+				_departmentId = departmentId;
+			}
+
+			/// <summary>The department's enabled default timers.</summary>
+			public Task<List<CheckInTimerConfig>> EnabledConfigsAsync() => _enabledConfigs ??= LoadEnabledConfigsAsync();
+
+			public Task<List<CallType>> CallTypesAsync() => _callTypes ??= _service._callsService.GetCallTypesForDepartmentAsync(_departmentId);
+
+			public Task<List<CheckInTimerOverride>> MatchingOverridesAsync(int? callTypeId, int priority)
+			{
+				if (!_overrides.TryGetValue((callTypeId, priority), out var overrides))
+					_overrides[(callTypeId, priority)] = overrides = LoadMatchingOverridesAsync(callTypeId, priority);
+
+				return overrides;
+			}
+
+			public Task<Dictionary<int, int?>> UnitTypeIdByUnitIdAsync() => _unitTypeIdByUnitId ??= _service.GetUnitTypeIdsByUnitIdAsync(_departmentId);
+
+			/// <summary>Each member's latest action log, by user id.</summary>
+			public Task<Dictionary<string, ActionLog>> LastActionByUserAsync() => _lastActionByUser ??= LoadLastActionByUserAsync();
+
+			/// <summary>Each unit's latest state, by unit id.</summary>
+			public Task<Dictionary<int, UnitState>> LastStateByUnitAsync() => _lastStateByUnit ??= LoadLastStateByUnitAsync();
+
+			public Task<List<CustomState>> CustomStatesAsync() => _customStates ??= _service._customStateService.GetAllCustomStatesForDepartmentAsync(_departmentId);
+
+			private async Task<List<CheckInTimerConfig>> LoadEnabledConfigsAsync()
+			{
+				var defaults = await _service._configRepository.GetByDepartmentIdAsync(_departmentId);
+				return defaults?.Where(c => c.IsEnabled).ToList() ?? new List<CheckInTimerConfig>();
+			}
+
+			private async Task<List<CheckInTimerOverride>> LoadMatchingOverridesAsync(int? callTypeId, int priority)
+			{
+				var overrides = await _service._overrideRepository.GetMatchingOverridesAsync(_departmentId, callTypeId, priority);
+				return overrides?.ToList() ?? new List<CheckInTimerOverride>();
+			}
+
+			private async Task<Dictionary<string, ActionLog>> LoadLastActionByUserAsync()
+			{
+				var lastActionLogs = await _service._actionLogsService.GetLastActionLogsForDepartmentAsync(_departmentId);
+				return (lastActionLogs ?? new List<ActionLog>())
+					.GroupBy(a => a.UserId)
+					.ToDictionary(g => g.Key, g => g.First());
+			}
+
+			private async Task<Dictionary<int, UnitState>> LoadLastStateByUnitAsync()
+			{
+				var latestUnitStates = await _service._unitsService.GetAllLatestStatusForUnitsByDepartmentIdAsync(_departmentId);
+				return (latestUnitStates ?? new List<UnitState>())
+					.GroupBy(s => s.UnitId)
+					.ToDictionary(g => g.Key, g => g.First());
+			}
+		}
+
+		#endregion Department Reads
 
 		#region Per-User Active Call Check-In Summaries (Endpoint 1)
 

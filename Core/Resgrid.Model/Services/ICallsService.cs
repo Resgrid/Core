@@ -118,11 +118,18 @@ namespace Resgrid.Model.Services
 		Task<int> GetTodayCallsCountAsync(int departmentId);
 
 		/// <summary>
-		/// Gets the active calls for department asynchronous.
+		/// Counts the department's active calls (State Active, not deleted) with one COUNT query. No dispatch scope is
+		/// applied: this is the department's total (see IBadgeCountsService for what one member can see).
 		/// </summary>
 		/// <param name="departmentId">The department identifier.</param>
 		/// <returns>Task&lt;System.Int32&gt;.</returns>
 		Task<int> GetActiveCallsForDepartmentAsync(int departmentId);
+
+		/// <summary>
+		/// Counts the active calls dispatched to a member — to them, their group, a role they hold or a unit they have a seat
+		/// on (the apps' "calls I'm on") — with one COUNT query. A call scheduled for later counts once it dispatches.
+		/// </summary>
+		Task<int> GetActiveCallsCountDispatchedToUserAsync(int departmentId, string userId);
 
 		/// <summary>
 		/// Deletes the dispatches asynchronous.

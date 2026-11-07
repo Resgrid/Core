@@ -146,6 +146,46 @@ namespace Resgrid.Repositories.DataRepository
 			}
 		}
 
+		public async Task<IEnumerable<WeatherAlertSeverityCountRow>> GetActiveSeverityCountsByDepartmentIdAsync(int departmentId, int maxSeverity, DateTime now)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<WeatherAlertSeverityCountRow>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParametersExtension();
+					dynamicParameters.Add("DepartmentId", departmentId);
+					dynamicParameters.Add("MaxSeverity", maxSeverity);
+					dynamicParameters.Add("Now", now);
+
+					var query = _queryFactory.GetQuery<SelectActiveWeatherAlertSeverityCountsByDepartmentIdQuery>();
+
+					return await x.QueryAsync<WeatherAlertSeverityCountRow>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				throw;
+			}
+		}
+
 		public async Task<IEnumerable<WeatherAlert>> GetAlertsByDepartmentAndCategoryAsync(int departmentId, int category)
 		{
 			try

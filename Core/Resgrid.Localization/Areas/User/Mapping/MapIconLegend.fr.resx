@@ -272,4 +272,32 @@
   <data name="KeyOnUnit" xml:space="preserve">
     <value>Prend la couleur du statut de son unité</value>
   </data>
+  <!-- Station map icons -->
+  <data name="StationIcons" xml:space="preserve">
+    <value>Icônes des casernes</value>
+  </data>
+  <data name="StationIconsHelp" xml:space="preserve">
+    <value>Une icône de carte pour toutes les casernes et l'icône propre de chaque caserne, au même endroit.</value>
+  </data>
+  <data name="StationIconsTitle" xml:space="preserve">
+    <value>Icônes de carte des casernes</value>
+  </data>
+  <data name="StationIconsIntro" xml:space="preserve">
+    <value>Téléversez une icône pour toutes les casernes et donnez à une caserne sa propre icône lorsqu'elle doit se distinguer. L'icône propre de la caserne passe en premier, puis l'icône de toutes les casernes, puis le repère de caserne intégré. Les icônes des casernes ne changent pas selon le statut.</value>
+  </data>
+  <data name="AllStations" xml:space="preserve">
+    <value>Toutes les casernes</value>
+  </data>
+  <data name="AllStationsHelp" xml:space="preserve">
+    <value>Chaque caserne sans icône propre.</value>
+  </data>
+  <data name="StationColumn" xml:space="preserve">
+    <value>Caserne</value>
+  </data>
+  <data name="OnMapColumn" xml:space="preserve">
+    <value>Sur la carte</value>
+  </data>
+  <data name="NoStations" xml:space="preserve">
+    <value>Il n'y a pas encore de groupe de caserne. Ajoutez un groupe de caserne pour l'afficher sur la carte.</value>
+  </data>
 </root>

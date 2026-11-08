@@ -51,6 +51,7 @@
   "Dash.DensityComfortable": "Comfortable",
   "Dash.DensityCompact": "Compact",
   "Dash.DepartmentCodeMeta": "Code {0}",
+  "Dash.DepartmentIdMeta": "ID {0}",
   "Dash.DepartmentTime": "Department time",
   "Dash.Dismiss": "Dismiss",
   "Dash.Done": "Done",

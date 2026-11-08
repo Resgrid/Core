@@ -272,4 +272,32 @@
   <data name="KeyOnUnit" xml:space="preserve">
     <value>Takes the color of their unit's status</value>
   </data>
+  <!-- Station map icons -->
+  <data name="StationIcons" xml:space="preserve">
+    <value>Station icons</value>
+  </data>
+  <data name="StationIconsHelp" xml:space="preserve">
+    <value>One map icon for every station, and any station's own icon, in one place.</value>
+  </data>
+  <data name="StationIconsTitle" xml:space="preserve">
+    <value>Station map icons</value>
+  </data>
+  <data name="StationIconsIntro" xml:space="preserve">
+    <value>Upload one icon for every station, and give a station its own icon where it should look different. A station's own icon comes first, then the icon for all stations, then the built-in station pin. Station icons do not change with status.</value>
+  </data>
+  <data name="AllStations" xml:space="preserve">
+    <value>All stations</value>
+  </data>
+  <data name="AllStationsHelp" xml:space="preserve">
+    <value>Every station without an icon of its own.</value>
+  </data>
+  <data name="StationColumn" xml:space="preserve">
+    <value>Station</value>
+  </data>
+  <data name="OnMapColumn" xml:space="preserve">
+    <value>On the map</value>
+  </data>
+  <data name="NoStations" xml:space="preserve">
+    <value>There are no station groups yet. Add a station group to show it on the map.</value>
+  </data>
 </root>

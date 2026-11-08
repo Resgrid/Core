@@ -46,8 +46,38 @@ namespace Resgrid.Web.Areas.User.Models.Mapping
 	{
 		public MapIconLegend Legend { get; set; } = new MapIconLegend();
 		public List<MapLegendPoiType> PoiTypes { get; set; } = new List<MapLegendPoiType>();
+
+		/// <summary>True when the member can change the station icons (Mapping/StationIcons).</summary>
+		public bool CanEditStations { get; set; }
+
 		public bool CanEditTypes { get; set; }
 		public bool CanEditRoles { get; set; }
+	}
+
+	/// <summary>The station icons page: the department's icon for every station, then each station's own.</summary>
+	public class StationIconsView
+	{
+		/// <summary>What a station without its own icon shows (the department's upload, else the built-in station pin).</summary>
+		public MapLegendIcon DepartmentIcon { get; set; }
+
+		/// <summary>The department's uploaded station icon, or null.</summary>
+		public string DepartmentUploadedUrl { get; set; }
+
+		public List<StationIconRow> Stations { get; set; } = new List<StationIconRow>();
+		public string Message { get; set; }
+		public string ErrorMessage { get; set; }
+	}
+
+	public class StationIconRow
+	{
+		public int GroupId { get; set; }
+		public string Name { get; set; }
+
+		/// <summary>What the station shows on the map.</summary>
+		public MapLegendIcon Icon { get; set; }
+
+		/// <summary>The station's own uploaded icon, or null.</summary>
+		public string UploadedUrl { get; set; }
 	}
 
 	/// <summary>The status or priority icons page of one call type, unit type or role.</summary>

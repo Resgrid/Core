@@ -282,11 +282,21 @@
 				<div class="ibox-title"><h5>@legendStrings["OtherHeader"]</h5></div>
 				<div class="ibox-content">
 					<p>@legendStrings["OtherIntro"]</p>
+					@if (Model.CanEditStations)
+					{
+						<p><a class="btn btn-xs btn-default" asp-controller="Mapping" asp-action="StationIcons" asp-route-area="User">@legendStrings["StationIcons"]</a></p>
+					}
 					<div class="rg-legend-states">
-						<div class="rg-legend-state">
-							<img class="rg-legend-icon pin" src="/images/Mapping/Station.png" alt="" />
-							<span>@legendStrings["Station"]</span>
-						</div>
+						@foreach (var row in Model.Legend.StationRows)
+						{
+							// The first row is every station without an icon of its own; then each station with one.
+							var icon = MapLegendIcon.From(row.OwnIcon);
+							var name = row.Id.HasValue ? row.Name : legendStrings["Station"].Value;
+							<div class="rg-legend-state">
+								<img class="rg-legend-icon @(icon.IsUploaded ? "upload" : "pin")" src="@icon.Url" alt="" />
+								<span>@name</span>
+							</div>
+						}
 						<div class="rg-legend-state">
 							<span class="rg-legend-hydrant" style="margin: 9px 0 10px 0;"></span>
 							<span>@legendStrings["Hydrant"]</span>

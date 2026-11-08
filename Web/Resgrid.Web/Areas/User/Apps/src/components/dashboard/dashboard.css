@@ -132,6 +132,11 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* Department ID and code: wrap between the pairs, never between a label and its value. */
+.rg-head-ident {
+  white-space: nowrap;
+}
+
 .rg-head-actions {
   display: flex;
   flex-wrap: wrap;

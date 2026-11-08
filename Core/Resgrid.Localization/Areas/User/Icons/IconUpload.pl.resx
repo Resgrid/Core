@@ -188,4 +188,8 @@
   <data name="RoleOrderUnsaved" xml:space="preserve">
     <value>Kolejność została zmieniona. Zapisz ją, aby ją zastosować.</value>
   </data>
+  <!-- Station map icon -->
+  <data name="StationIconHelp" xml:space="preserve">
+    <value>Wyświetlana na mapie dla tej stacji zamiast ikony wszystkich stacji.</value>
+  </data>
 </root>

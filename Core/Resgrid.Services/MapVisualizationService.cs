@@ -61,6 +61,7 @@ namespace Resgrid.Services
 		private readonly IPersonnelLocationsDocRepository _personnelLocationsDocRepository;
 		private readonly Lazy<IMongoRepository<UnitsLocation>> _unitLocationsMongoRepository;
 		private readonly Lazy<IMongoRepository<PersonnelLocation>> _personnelLocationsMongoRepository;
+		private readonly ITypeIconsService _typeIconsService;
 
 		public MapVisualizationService(IMapVisualizationsRepository mapVisualizationsRepository, IDepartmentsService departmentsService,
 			IDepartmentSettingsService departmentSettingsService, ICallsService callsService, IDispatchScopeService dispatchScopeService,
@@ -69,8 +70,10 @@ namespace Resgrid.Services
 			ICallDispatchUnitRepository callDispatchUnitRepository, ICustomStateService customStateService, IDepartmentGroupsService departmentGroupsService, IUserProfileService userProfileService,
 			IAuthorizationService authorizationService, IGeoLocationProvider geoLocationProvider,
 			IUnitLocationsDocRepository unitLocationsDocRepository, IPersonnelLocationsDocRepository personnelLocationsDocRepository,
-			Lazy<IMongoRepository<UnitsLocation>> unitLocationsMongoRepository, Lazy<IMongoRepository<PersonnelLocation>> personnelLocationsMongoRepository)
+			Lazy<IMongoRepository<UnitsLocation>> unitLocationsMongoRepository, Lazy<IMongoRepository<PersonnelLocation>> personnelLocationsMongoRepository,
+			ITypeIconsService typeIconsService)
 		{
+			_typeIconsService = typeIconsService;
 			_mapVisualizationsRepository = mapVisualizationsRepository;
 			_departmentsService = departmentsService;
 			_departmentSettingsService = departmentSettingsService;
@@ -267,7 +270,7 @@ namespace Resgrid.Services
 			}
 
 			// Stations.
-			var stations = needStations ? await LoadStationsAsync(groups) : new List<MapVisualizationStation>();
+			var stations = needStations ? await LoadStationsAsync(departmentId, groups) : new List<MapVisualizationStation>();
 			if (options.ShowStations || options.StationRings.Count > 0)
 				context.Stations = stations;
 
@@ -895,9 +898,13 @@ namespace Resgrid.Services
 				yield return current;
 		}
 
-		private async Task<List<MapVisualizationStation>> LoadStationsAsync(List<DepartmentGroup> groups)
+		private async Task<List<MapVisualizationStation>> LoadStationsAsync(int departmentId, List<DepartmentGroup> groups)
 		{
 			var stations = new List<MapVisualizationStation>();
+
+			// The same station icon as the map: the station's own upload, else the department's station icon, else Station.png.
+			var icons = new MapIconResolver(departmentId, null, null, null, null, null, null,
+				stationIcons: await _typeIconsService.GetStationIconsAsync(departmentId) ?? new List<TypeIconVariant>());
 
 			foreach (var group in groups.Where(g => g != null && g.Type == (int)DepartmentGroupTypes.Station))
 			{
@@ -923,7 +930,8 @@ namespace Resgrid.Services
 						GroupId = group.DepartmentGroupId,
 						Name = group.Name,
 						Latitude = point.Value.Latitude,
-						Longitude = point.Value.Longitude
+						Longitude = point.Value.Longitude,
+						IconUrl = TypeIcons.WebIconUrl(icons.ForStation(group.DepartmentGroupId).IconKey)
 					});
 			}
 

@@ -2,6 +2,7 @@
 @using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.Groups.DepartmentGroupsModel
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Groups.Groups> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.MapIconLegend> legendStrings
 @{
     ViewBag.Title = "Resgrid | " + localizer["IndexPageTitle"];
 }
@@ -29,12 +30,16 @@
                 <div class="ibox-title">
                     <h5>@localizer["GroupsHeading"]</h5>
                     <div class="ibox-tools">
-                        @if (Model.CanAddNewGroup)
-                        {
-                            <div class="buttons-actions">
+                        <div class="buttons-actions">
+                            @if (User.HasClaim(Resgrid.Providers.Claims.ResgridClaimTypes.Resources.Department, Resgrid.Providers.Claims.ResgridClaimTypes.Actions.Update))
+                            {
+                                <a class="btn btn-white" asp-controller="Mapping" asp-action="StationIcons" asp-route-area="User"><i class="fa fa-map-marker"></i> @legendStrings["StationIcons"]</a>
+                            }
+                            @if (Model.CanAddNewGroup)
+                            {
                                 <a title="@localizer["AddNewGroupTitle"]" class="btn btn-success" asp-controller="Groups" asp-action="NewGroup" asp-route-area="User">@localizer["AddNewGroup"]</a>
-                            </div>
-                        }
+                            }
+                        </div>
                     </div>
                 </div>
                 <div class="ibox-content">

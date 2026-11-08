@@ -188,4 +188,8 @@
   <data name="RoleOrderUnsaved" xml:space="preserve">
     <value>L'ordre a changé. Enregistrez-le pour l'appliquer.</value>
   </data>
+  <!-- Station map icon -->
+  <data name="StationIconHelp" xml:space="preserve">
+    <value>Affichée sur la carte pour cette caserne à la place de l'icône de toutes les casernes.</value>
+  </data>
 </root>

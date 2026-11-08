@@ -1618,21 +1618,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			string buttonHtml = string.Empty;
 
-			CustomState customStates = null;
-			List<CustomStateDetail> activeDetails = null;
-
-			if (customStateId > 0)
-			{
-				customStates = await _customStateService.GetCustomSateByIdAsync(customStateId);
-
-				if (customStates != null)
-				{
-					activeDetails = customStates.GetActiveDetails();
-				}
-			}
-
-			if (activeDetails == null)
-				activeDetails = _customStateService.GetDefaultUnitStatuses();
+			var activeDetails = await GetActiveUnitStatusDetailsAsync(customStateId);
 
 			StringBuilder sb = new StringBuilder();
 
@@ -1716,16 +1702,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 			string buttonHtml = string.Empty;
 			var targetUnitIds = ParseUnitIds(units);
 
-			if (stateId > 1)
+			// The id comes from the page: only this department's own unit set is read; anything else gets the standard menu.
+			var customStates = await _customStateService.GetActiveCustomStateForDepartmentAsync(DepartmentId, stateId, CustomStateTypes.Unit);
+			if (customStates != null)
 			{
-				var customStates = await _customStateService.GetCustomSateByIdAsync(stateId);
-				var activeCalls = await _dispatchScopeService.FilterCallsForUserAsync(DepartmentId, UserId, await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId));
-				var stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
-				var destinationPois = await _mappingService.GetDestinationPOIsForDepartmentAsync(DepartmentId);
 				var activeDetails = customStates.GetActiveDetails();
 
 				if (activeDetails.Any())
 				{
+					var activeCalls = await _dispatchScopeService.FilterCallsForUserAsync(DepartmentId, UserId, await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId));
+					var stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
+					var destinationPois = await _mappingService.GetDestinationPOIsForDepartmentAsync(DepartmentId);
+
 					buttonHtml = BuildUnitStateMenuHtml(stateId.ToString(CultureInfo.InvariantCulture), null, targetUnitIds, "SetUnitStateForMultiple", "SetUnitStateWithDestForMultiple", activeDetails, activeCalls, stations, destinationPois);
 				}
 			}
@@ -1805,15 +1793,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return Json(personsJson);
 		}
 
+		/// <summary>
+		/// The options of this department's unit status set with that id, or the standard unit statuses when the id is 0,
+		/// not this department's active unit set, or a set with no options left. The id comes from the page, so another
+		/// department's set is never read, and the Set Status picker is never empty.
+		/// </summary>
 		private async Task<List<CustomStateDetail>> GetActiveUnitStatusDetailsAsync(int customStateId)
 		{
-			if (customStateId > 0)
-			{
-				var customStates = await _customStateService.GetCustomSateByIdAsync(customStateId);
+			var customStates = await _customStateService.GetActiveCustomStateForDepartmentAsync(DepartmentId, customStateId, CustomStateTypes.Unit);
+			var activeDetails = customStates?.GetActiveDetails();
 
-				if (customStates != null)
-					return customStates.GetActiveDetails();
-			}
+			if (activeDetails != null && activeDetails.Any())
+				return activeDetails;
 
 			return _customStateService.GetDefaultUnitStatuses();
 		}

@@ -188,4 +188,8 @@
   <data name="RoleOrderUnsaved" xml:space="preserve">
     <value>Die Reihenfolge wurde geändert. Speichern Sie sie, damit sie gilt.</value>
   </data>
+  <!-- Station map icon -->
+  <data name="StationIconHelp" xml:space="preserve">
+    <value>Wird für diese Wache auf der Karte statt des Symbols für alle Wachen angezeigt.</value>
+  </data>
 </root>

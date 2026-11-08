@@ -17,6 +17,7 @@ namespace Resgrid.Services
 		private static readonly Regex IconKeyFormat = new Regex("^[0-9a-f]{32}$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
 		private static string VariantsCacheKey = "TypeIconVariants_{0}";
+		private static string StationIconsCacheKey = "TypeIconStations_{0}";
 		private static TimeSpan VariantsCacheLength = TimeSpan.FromDays(1);
 
 		private readonly ITypeIconsRepository _typeIconsRepository;
@@ -48,6 +49,9 @@ namespace Resgrid.Services
 
 			var icon = BuildIcon(departmentId, kind, typeId, null, userId, TypeIconRenditions.Build(data));
 
+			if (!TypeIcons.MirrorsIconKey(kind))
+				return await UploadUnmirroredIconAsync(icon, cancellationToken);
+
 			// New row first, then point the type at the newest icon of its slot (the update is scoped to the department, so it
 			// also proves ownership), then drop the older rows: a failure part way leaves the type on a working icon, old or new.
 			// The newest, not "this one": two uploads at once would each delete the other's row and leave the type on a key
@@ -71,11 +75,55 @@ namespace Resgrid.Services
 			if (!Enum.IsDefined(typeof(TypeIconKinds), kind))
 				throw new ArgumentOutOfRangeException(nameof(kind));
 
+			if (!TypeIcons.MirrorsIconKey(kind))
+			{
+				// Scoped to the department, so only its own rows can go; no type row to prove, which lets a deleted group's icon go too.
+				await _typeIconsRepository.DeleteSlotAsync(departmentId, kind, typeId, null, null, cancellationToken);
+				await InvalidateStationIconsAsync(departmentId);
+				return true;
+			}
+
 			if (await _typeIconsRepository.SetTypeIconKeyAsync(departmentId, kind, typeId, null, cancellationToken) == 0)
 				return false;
 
 			await _typeIconsRepository.DeleteSlotAsync(departmentId, kind, typeId, null, null, cancellationToken);
 			return true;
+		}
+
+		/// <summary>
+		/// A station icon: nothing on the group points at it, so ownership is proven up front (the department's own station
+		/// icon, TypeId 0, needs no group), then the slot keeps its newest upload, as for every other kind.
+		/// </summary>
+		private async Task<string> UploadUnmirroredIconAsync(TypeIcon icon, CancellationToken cancellationToken)
+		{
+			var kind = (TypeIconKinds)icon.TypeKind;
+
+			if (icon.TypeId != TypeIcons.DepartmentStationTypeId && !await _typeIconsRepository.TypeBelongsToDepartmentAsync(icon.DepartmentId, kind, icon.TypeId))
+				return null;
+
+			await _typeIconsRepository.InsertAsync(icon, cancellationToken);
+			await _typeIconsRepository.DeleteAllButNewestInSlotAsync(icon.DepartmentId, kind, icon.TypeId, null, cancellationToken);
+			await InvalidateStationIconsAsync(icon.DepartmentId);
+
+			return icon.IconKey;
+		}
+
+		public async Task<List<TypeIconVariant>> GetStationIconsAsync(int departmentId, bool bypassCache = false)
+		{
+			async Task<List<TypeIconVariant>> getStationIcons()
+			{
+				return await _typeIconsRepository.GetOwnIconsForKindAsync(departmentId, TypeIconKinds.Station) ?? new List<TypeIconVariant>();
+			}
+
+			if (!bypassCache && Config.SystemBehaviorConfig.CacheEnabled)
+				return await _cacheProvider.RetrieveAsync(string.Format(StationIconsCacheKey, departmentId), getStationIcons, VariantsCacheLength) ?? new List<TypeIconVariant>();
+
+			return await getStationIcons();
+		}
+
+		private async Task InvalidateStationIconsAsync(int departmentId)
+		{
+			await _cacheProvider.RemoveAsync(string.Format(StationIconsCacheKey, departmentId));
 		}
 
 		public async Task<string> UploadVariantIconAsync(int departmentId, TypeIconKinds kind, int typeId, string variant, string userId, byte[] data, CancellationToken cancellationToken = default)

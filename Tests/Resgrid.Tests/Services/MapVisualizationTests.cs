@@ -455,7 +455,8 @@ namespace Resgrid.Tests.Services
 					Mock.Of<IDepartmentGroupsService>(), Profiles.Object, Authorization.Object, Mock.Of<IGeoLocationProvider>(),
 					Mock.Of<IUnitLocationsDocRepository>(), Mock.Of<IPersonnelLocationsDocRepository>(),
 					new Lazy<IMongoRepository<UnitsLocation>>(() => Mock.Of<IMongoRepository<UnitsLocation>>()),
-					new Lazy<IMongoRepository<PersonnelLocation>>(() => Mock.Of<IMongoRepository<PersonnelLocation>>()));
+					new Lazy<IMongoRepository<PersonnelLocation>>(() => Mock.Of<IMongoRepository<PersonnelLocation>>()),
+					Mock.Of<ITypeIconsService>());
 			}
 		}
 

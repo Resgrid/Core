@@ -105,6 +105,8 @@ namespace Resgrid.Tests.Repositories
 					await setup.ExecuteAsync("CREATE TABLE calltypes (calltypeid serial PRIMARY KEY, departmentid integer NOT NULL, type citext NOT NULL, mapicontype integer NULL);");
 					await setup.ExecuteAsync("CREATE TABLE poitypes (poitypeid serial PRIMARY KEY, departmentid integer NOT NULL, name citext NOT NULL);");
 					await setup.ExecuteAsync("CREATE TABLE personnelroles (personnelroleid serial PRIMARY KEY, departmentid integer NOT NULL, name citext NOT NULL, description citext NULL);");
+					// Station icons (TypeIconKinds.Station) are proven against a station group; no migration touches this table.
+					await setup.ExecuteAsync("CREATE TABLE departmentgroups (departmentgroupid serial PRIMARY KEY, departmentid integer NOT NULL, name citext NOT NULL, type integer NULL);");
 				}
 				else
 				{
@@ -112,6 +114,7 @@ namespace Resgrid.Tests.Repositories
 					await setup.ExecuteAsync("CREATE TABLE CallTypes (CallTypeId int IDENTITY(1,1) PRIMARY KEY, DepartmentId int NOT NULL, Type nvarchar(100) NOT NULL, MapIconType int NULL);");
 					await setup.ExecuteAsync("CREATE TABLE POITypes (PoiTypeId int IDENTITY(1,1) PRIMARY KEY, DepartmentId int NOT NULL, Name nvarchar(100) NOT NULL);");
 					await setup.ExecuteAsync("CREATE TABLE PersonnelRoles (PersonnelRoleId int IDENTITY(1,1) PRIMARY KEY, DepartmentId int NOT NULL, Name nvarchar(250) NOT NULL, Description nvarchar(3000) NULL);");
+					await setup.ExecuteAsync("CREATE TABLE DepartmentGroups (DepartmentGroupId int IDENTITY(1,1) PRIMARY KEY, DepartmentId int NOT NULL, Name nvarchar(250) NOT NULL, Type int NULL);");
 				}
 			}
 
@@ -146,8 +149,55 @@ namespace Resgrid.Tests.Repositories
 		public async Task Empty_the_tables()
 		{
 			await using var database = Connect(_connection);
-			foreach (var table in new[] { "TypeIcons", "UnitTypes", "CallTypes", "POITypes", "PersonnelRoles" })
+			foreach (var table in new[] { "TypeIcons", "UnitTypes", "CallTypes", "POITypes", "PersonnelRoles", "DepartmentGroups" })
 				await database.ExecuteAsync("DELETE FROM " + T(table));
+		}
+
+		private async Task<int> InsertGroupAsync(int departmentId, int? type)
+		{
+			await using var database = Connect(_connection);
+			var typeValue = type.HasValue ? type.Value.ToString() : "NULL";
+			return await database.ExecuteScalarAsync<int>(IsPostgres
+				? $"INSERT INTO departmentgroups (departmentid, name, type) VALUES ({departmentId}, 'Station 9', {typeValue}) RETURNING departmentgroupid"
+				: $"INSERT INTO DepartmentGroups (DepartmentId, Name, Type) OUTPUT INSERTED.DepartmentGroupId VALUES ({departmentId}, 'Station 9', {typeValue})");
+		}
+
+		[Test]
+		public async Task A_station_icon_belongs_only_to_a_station_group_of_the_department()
+		{
+			var station = await InsertGroupAsync(DepartmentId, (int)DepartmentGroupTypes.Station);
+			var organizational = await InsertGroupAsync(DepartmentId, (int)DepartmentGroupTypes.Orginizational);
+			var untyped = await InsertGroupAsync(DepartmentId, null);
+			var foreign = await InsertGroupAsync(DepartmentId + 1, (int)DepartmentGroupTypes.Station);
+
+			(await Repository().TypeBelongsToDepartmentAsync(DepartmentId, TypeIconKinds.Station, station)).Should().BeTrue();
+			(await Repository().TypeBelongsToDepartmentAsync(DepartmentId, TypeIconKinds.Station, organizational)).Should().BeFalse();
+			(await Repository().TypeBelongsToDepartmentAsync(DepartmentId, TypeIconKinds.Station, untyped)).Should().BeFalse();
+			(await Repository().TypeBelongsToDepartmentAsync(DepartmentId, TypeIconKinds.Station, foreign)).Should().BeFalse();
+
+			Func<Task> mirror = () => Repository().SetTypeIconKeyAsync(DepartmentId, TypeIconKinds.Station, station, "abc");
+			await mirror.Should().ThrowAsync<ArgumentOutOfRangeException>("a station's key is never written to DepartmentGroups");
+		}
+
+		[Test]
+		public async Task GetOwnIconsForKindAsync_lists_only_the_kinds_own_icons_oldest_first_without_bytes()
+		{
+			var older = NewIcon(TypeIconKinds.Station, 41);
+			var newer = NewIcon(TypeIconKinds.Station, 41);
+			newer.UploadedOn = older.UploadedOn.AddMinutes(1);
+			var departmentIcon = NewIcon(TypeIconKinds.Station, TypeIcons.DepartmentStationTypeId);
+			departmentIcon.UploadedOn = older.UploadedOn.AddMinutes(-5);
+			var unitType = NewIcon(TypeIconKinds.UnitType, 41);
+			var foreign = NewIcon(TypeIconKinds.Station, 41);
+			foreign.DepartmentId = DepartmentId + 1;
+
+			foreach (var icon in new[] { newer, unitType, older, foreign, departmentIcon })
+				await Repository().InsertAsync(icon, CancellationToken.None);
+
+			var rows = await Repository().GetOwnIconsForKindAsync(DepartmentId, TypeIconKinds.Station);
+
+			rows.Select(x => x.IconKey).Should().Equal(departmentIcon.IconKey, older.IconKey, newer.IconKey);
+			rows.Should().OnlyContain(x => x.TypeKind == (int)TypeIconKinds.Station && x.Variant == null);
 		}
 
 		private static TypeIcon NewIcon(TypeIconKinds kind, int typeId) => new TypeIcon

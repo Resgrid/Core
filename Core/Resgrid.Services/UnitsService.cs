@@ -459,7 +459,49 @@ namespace Resgrid.Services
 
 		public async Task<UnitType> SaveUnitTypeAsync(UnitType unitType, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			return await _unitTypesRepository.SaveOrUpdateAsync(unitType, cancellationToken);
+			// Units name their type (Unit.Type) rather than point at it, and the status set, icons, map pins, the apps'
+			// per-type statuses and run cards all find a unit's type by that name. Read the stored name before the save
+			// overwrites it, so a rename can take the type's units along (support case 2026-11-08: types renamed MUG to
+			// "MUG 112" left every unit without a type).
+			UnitType stored = null;
+			if (unitType != null && unitType.UnitTypeId > 0)
+				stored = await _unitTypesRepository.GetByIdAsync(unitType.UnitTypeId);
+
+			var saved = await _unitTypesRepository.SaveOrUpdateAsync(unitType, cancellationToken);
+
+			if (saved != null && stored != null && stored.DepartmentId == unitType.DepartmentId
+				&& !String.IsNullOrWhiteSpace(stored.Type) && !String.IsNullOrWhiteSpace(unitType.Type)
+				&& !String.Equals(stored.Type, unitType.Type, StringComparison.Ordinal))
+			{
+				await MoveUnitsToRenamedTypeAsync(unitType.DepartmentId, unitType.UnitTypeId, stored.Type, unitType.Type, cancellationToken);
+			}
+
+			return saved;
+		}
+
+		/// <summary>
+		/// Moves the department's units from a unit type's old name to its new one. Skipped when another of the department's
+		/// types still answers to the old name (names match ignoring case), since those units may be that type's.
+		/// </summary>
+		private async Task MoveUnitsToRenamedTypeAsync(int departmentId, int unitTypeId, string oldType, string newType, CancellationToken cancellationToken)
+		{
+			var otherTypes = await _unitTypesRepository.GetAllByDepartmentIdAsync(departmentId);
+			if (otherTypes != null && otherTypes.Any(x => x.UnitTypeId != unitTypeId && String.Equals(x.Type, oldType, StringComparison.OrdinalIgnoreCase)))
+				return;
+
+			var moved = await _unitsRepository.RenameUnitTypeForDepartmentAsync(departmentId, oldType, newType, cancellationToken);
+			if (moved <= 0)
+				return;
+
+			// The apps cache the unit list with each unit's type, and unit search shows the type.
+			_eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent() { DepartmentId = departmentId });
+
+			if (_searchProjections != null)
+			{
+				var units = await _unitsRepository.GetAllUnitsForTypeAsync(departmentId, newType);
+				foreach (var unit in units ?? Enumerable.Empty<Unit>())
+					await _searchProjections.Value.ProjectUnitAsync(unit, cancellationToken);
+			}
 		}
 
 		public async Task<bool> DeleteUnitTypeAsync(int unitTypeId, CancellationToken cancellationToken = default(CancellationToken))

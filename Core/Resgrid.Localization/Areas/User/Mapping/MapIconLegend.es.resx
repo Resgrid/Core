@@ -272,4 +272,32 @@
   <data name="KeyOnUnit" xml:space="preserve">
     <value>Toma el color del estado de su unidad</value>
   </data>
+  <!-- Station map icons -->
+  <data name="StationIcons" xml:space="preserve">
+    <value>Iconos de estaciones</value>
+  </data>
+  <data name="StationIconsHelp" xml:space="preserve">
+    <value>Un icono de mapa para todas las estaciones y el icono propio de cada estación, en un solo lugar.</value>
+  </data>
+  <data name="StationIconsTitle" xml:space="preserve">
+    <value>Iconos de mapa de estaciones</value>
+  </data>
+  <data name="StationIconsIntro" xml:space="preserve">
+    <value>Suba un icono para todas las estaciones y dé a una estación su propio icono cuando deba verse diferente. Primero se usa el icono propio de la estación, después el icono de todas las estaciones y después el marcador de estación integrado. Los iconos de estación no cambian con el estado.</value>
+  </data>
+  <data name="AllStations" xml:space="preserve">
+    <value>Todas las estaciones</value>
+  </data>
+  <data name="AllStationsHelp" xml:space="preserve">
+    <value>Cada estación sin icono propio.</value>
+  </data>
+  <data name="StationColumn" xml:space="preserve">
+    <value>Estación</value>
+  </data>
+  <data name="OnMapColumn" xml:space="preserve">
+    <value>En el mapa</value>
+  </data>
+  <data name="NoStations" xml:space="preserve">
+    <value>Todavía no hay grupos de estación. Agregue un grupo de estación para mostrarlo en el mapa.</value>
+  </data>
 </root>

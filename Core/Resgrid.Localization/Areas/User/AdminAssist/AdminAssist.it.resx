@@ -7078,10 +7078,10 @@
     <value>Icone mappa personalizzate</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.custom-map-icons">
-    <value>Icone personalizzate per tipi di unità, tipi di chiamata, punti di interesse e ruoli del personale, mostrate negli elenchi, nelle app e sulla mappa.</value>
+    <value>Icone personalizzate per tipi di unità, tipi di chiamata, punti di interesse, ruoli del personale e stazioni, mostrate negli elenchi, nelle app e sulla mappa.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.custom-map-icons">
-    <value>Carica un PNG quadrato con sfondo trasparente, di 128 × 128 px o più, nella pagina del tipo di unità, del tipo di chiamata, del tipo di POI o del ruolo; la pagina ne mostra l'anteprima su una mappa chiara e una scura. Per scegliere l'icona di una persona con più ruoli, ordina i ruoli nella pagina Ruoli. Usa Icone della mappa per stato o Icone della mappa per priorità nella stessa pagina per aggiungere un'icona per ogni stato o priorità.</value>
+    <value>Carica un PNG quadrato con sfondo trasparente, di 128 × 128 px o più, nella pagina del tipo di unità, del tipo di chiamata, del tipo di POI o del ruolo; la pagina ne mostra l'anteprima su una mappa chiara e una scura. Per scegliere l'icona di una persona con più ruoli, ordina i ruoli nella pagina Ruoli. Usa Icone della mappa per stato o Icone della mappa per priorità nella stessa pagina per aggiungere un'icona per ogni stato o priorità. Per le stazioni, carica un'icona per tutte le stazioni o assegna a una stazione un'icona propria in Gruppi &gt; Icone delle stazioni o nella pagina Modifica gruppo della stazione.</value>
   </data>
   <data xml:space="preserve" name="Feature.map-icon-legend">
     <value>Legenda delle icone della mappa</value>

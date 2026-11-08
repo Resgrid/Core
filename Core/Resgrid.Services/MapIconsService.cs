@@ -12,15 +12,17 @@ namespace Resgrid.Services
 		private readonly ICustomStateService _customStateService;
 		private readonly IPersonnelRolesService _personnelRolesService;
 		private readonly ITypeIconsService _typeIconsService;
+		private readonly IDepartmentGroupsService _departmentGroupsService;
 
 		public MapIconsService(ICallsService callsService, IUnitsService unitsService, ICustomStateService customStateService,
-			IPersonnelRolesService personnelRolesService, ITypeIconsService typeIconsService)
+			IPersonnelRolesService personnelRolesService, ITypeIconsService typeIconsService, IDepartmentGroupsService departmentGroupsService)
 		{
 			_callsService = callsService;
 			_unitsService = unitsService;
 			_customStateService = customStateService;
 			_personnelRolesService = personnelRolesService;
 			_typeIconsService = typeIconsService;
+			_departmentGroupsService = departmentGroupsService;
 		}
 
 		public async Task<MapIconResolver> GetResolverAsync(int departmentId, IEnumerable<UnitState> latestUnitStates = null)
@@ -34,7 +36,8 @@ namespace Resgrid.Services
 				await _personnelRolesService.GetRolesForDepartmentAsync(departmentId),
 				await _typeIconsService.GetVariantsForDepartmentAsync(departmentId),
 				await _customStateService.GetDefaultPersonnelStatusAsync(departmentId),
-				latestUnitStates);
+				latestUnitStates,
+				await _typeIconsService.GetStationIconsAsync(departmentId));
 		}
 
 		public async Task<MapIconLegend> GetLegendAsync(int departmentId, string noCallTypeName, string noUnitTypeName, string noRoleName)
@@ -45,7 +48,8 @@ namespace Resgrid.Services
 				_customStateService.GetDefaultUnitStatuses(),
 				await _customStateService.GetCustomPersonnelStatusesOrDefaultsAsync(departmentId),
 				await _personnelRolesService.GetRolesForDepartmentAsync(departmentId),
-				noCallTypeName, noUnitTypeName, noRoleName);
+				noCallTypeName, noUnitTypeName, noRoleName,
+				await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(departmentId));
 		}
 	}
 }

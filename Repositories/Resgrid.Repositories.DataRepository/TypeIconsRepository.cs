@@ -53,7 +53,7 @@ namespace Resgrid.Repositories.DataRepository
 
 		public Task<int> SetTypeIconKeyToNewestAsync(int departmentId, TypeIconKinds kind, int typeId, CancellationToken cancellationToken = default)
 		{
-			var (table, idColumn) = TypeTable(kind);
+			var (table, idColumn) = MirrorTable(kind);
 
 			// IconKey is unique, so the newest row is a single row; an empty slot gives NULL.
 			return ExecuteAsync(
@@ -82,20 +82,36 @@ namespace Resgrid.Repositories.DataRepository
 			return rows?.ToList() ?? new List<TypeIconVariant>();
 		}
 
+		public async Task<List<TypeIconVariant>> GetOwnIconsForKindAsync(int departmentId, TypeIconKinds kind)
+		{
+			// Never the bytes; the own icon slot only (no status or priority icons). Oldest first, so a reader that keeps the
+			// last row per type keeps the newest while an upload's insert has not yet dropped the row it replaces.
+			var rows = await QueryAsync<TypeIconVariant>(
+				$"SELECT {Col("TypeKind")}, {Col("TypeId")}, {Col("Variant")}, {Col("IconKey")} FROM {Tbl("TypeIcons")} " +
+				$"WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("TypeKind")} = {P}TypeKind AND {Col("Variant")} IS NULL " +
+				$"ORDER BY {Col("UploadedOn")}, {Col("IconKey")}",
+				new { DepartmentId = departmentId, TypeKind = (int)kind });
+
+			return rows?.ToList() ?? new List<TypeIconVariant>();
+		}
+
 		public async Task<bool> TypeBelongsToDepartmentAsync(int departmentId, TypeIconKinds kind, int typeId)
 		{
 			var (table, idColumn) = TypeTable(kind);
 
+			// A station icon belongs to a station group of the department (Type 2, DepartmentGroupTypes.Station).
+			var stationOnly = kind == TypeIconKinds.Station ? $" AND {Col("Type")} = {P}StationType" : string.Empty;
+
 			var count = await QueryFirstOrDefaultAsync<int>(
-				$"SELECT COUNT(1) FROM {Tbl(table)} WHERE {Col(idColumn)} = {P}TypeId AND {Col("DepartmentId")} = {P}DepartmentId",
-				new { TypeId = typeId, DepartmentId = departmentId });
+				$"SELECT COUNT(1) FROM {Tbl(table)} WHERE {Col(idColumn)} = {P}TypeId AND {Col("DepartmentId")} = {P}DepartmentId{stationOnly}",
+				new { TypeId = typeId, DepartmentId = departmentId, StationType = (int)DepartmentGroupTypes.Station });
 
 			return count > 0;
 		}
 
 		public Task<int> SetTypeIconKeyAsync(int departmentId, TypeIconKinds kind, int typeId, string iconKey, CancellationToken cancellationToken = default)
 		{
-			var (table, idColumn) = TypeTable(kind);
+			var (table, idColumn) = MirrorTable(kind);
 
 			return ExecuteAsync(
 				$"UPDATE {Tbl(table)} SET {Col("IconKey")} = {P}IconKey WHERE {Col(idColumn)} = {P}TypeId AND {Col("DepartmentId")} = {P}DepartmentId",
@@ -109,7 +125,12 @@ namespace Resgrid.Repositories.DataRepository
 			TypeIconKinds.CallType => ("CallTypes", "CallTypeId"),
 			TypeIconKinds.PoiType => ("POITypes", "PoiTypeId"),
 			TypeIconKinds.PersonnelRole => ("PersonnelRoles", "PersonnelRoleId"),
+			TypeIconKinds.Station => ("DepartmentGroups", "DepartmentGroupId"),
 			_ => throw new ArgumentOutOfRangeException(nameof(kind))
 		};
+
+		// Only the kinds whose own icon key is mirrored on the type row (TypeIcons.MirrorsIconKey) have an IconKey to set.
+		private static (string Table, string IdColumn) MirrorTable(TypeIconKinds kind) =>
+			TypeIcons.MirrorsIconKey(kind) ? TypeTable(kind) : throw new ArgumentOutOfRangeException(nameof(kind));
 	}
 }

@@ -1,6 +1,7 @@
 @using Resgrid.Model
 @model Resgrid.Web.Areas.User.Models.Groups.EditGroupView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Groups.Groups> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.MapIconLegend> legendStrings
 @{
     ViewBag.Title = "Resgrid | " + localizer["EditGroupPageTitle"];
 }
@@ -27,7 +28,7 @@
         <div class="wrapper wrapper-content">
             <div class="ibox float-e-margins">
                 <div class="ibox-content">
-                    <form class="form-horizontal" role="form" asp-controller="Groups" asp-action="EditGroup" asp-route-area="User" method="post">
+                    <form class="form-horizontal" role="form" asp-controller="Groups" asp-action="EditGroup" asp-route-area="User" method="post" enctype="multipart/form-data">
 
                         @Html.AntiForgeryToken()
                         @Html.HiddenFor(m => m.EditGroup.DepartmentGroupId)
@@ -164,6 +165,20 @@
                                 </div>
                             </div>
                         </div>
+                        @if (Model.EditGroup.Type.HasValue && Model.EditGroup.Type.Value == (int)DepartmentGroupTypes.Station)
+                        {
+                            var iconPicker = new TypeIconPicker { HelpKey = "StationIconHelp", SampleNameInputId = "EditGroup_Name", SampleName = Model.EditGroup?.Name, DefaultIconUrl = Model.DefaultStationIconUrl, CurrentIconUrl = Model.StationIconUrl, RemoveFieldName = "RemoveCustomIcon", RemoveChecked = Model.RemoveCustomIcon };
+                            <partial name="_TypeIconPicker" model="iconPicker" />
+                            if (User.HasClaim(Resgrid.Providers.Claims.ResgridClaimTypes.Resources.Department, Resgrid.Providers.Claims.ResgridClaimTypes.Actions.Update))
+                            {
+                                <div class="form-group">
+                                    <div class="col-sm-10 col-sm-offset-2">
+                                        <a class="btn btn-white btn-sm" asp-controller="Mapping" asp-action="StationIcons" asp-route-area="User"><i class="fa fa-map-marker"></i> @legendStrings["StationIcons"]</a>
+                                        <span class="help-block m-b-none">@legendStrings["StationIconsHelp"]</span>
+                                    </div>
+                                </div>
+                            }
+                        }
                         <div class="form-group">
                             <label class="col-sm-2 control-label required">
                                 <a href="https://www.printnode.com">PrintNode</a> @localizer["PrintNodePrinter"]

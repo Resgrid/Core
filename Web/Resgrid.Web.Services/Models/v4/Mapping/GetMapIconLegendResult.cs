@@ -58,6 +58,13 @@ namespace Resgrid.Web.Services.Models.v4.Mapping
 
 		/// <summary>The department's POI types by name, with the icon their markers show.</summary>
 		public List<MapLegendPoiTypeData> PoiTypes { get; set; } = new List<MapLegendPoiTypeData>();
+
+		/// <summary>
+		/// Stations: first (Id null, Name a generic label clients replace with their own) the icon every station without an
+		/// icon of its own shows (the department's uploaded station icon in IconUrl, else the bundled ImagePath "Station"), then
+		/// each station with an uploaded icon of its own, by name. No States: a station icon never changes with status.
+		/// </summary>
+		public List<MapLegendRowData> Stations { get; set; } = new List<MapLegendRowData>();
 	}
 
 	/// <summary>A status or priority style.</summary>

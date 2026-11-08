@@ -409,10 +409,13 @@ export default function VizMapLibre(props: VizMapProps & { styleUrl: string }) {
       });
 
       if (options.ShowStations) {
+        // The station's uploaded icon (square, like the map draws it), else the bundled station pin.
         const image = document.createElement('img');
-        image.src = '/images/Mapping/Station.png';
+        image.src = station.IconUrl || '/images/Mapping/Station.png';
         image.alt = '';
-        image.style.cssText = 'width:26px;height:30px;display:block;';
+        image.style.cssText = station.IconUrl
+          ? 'width:32px;height:32px;object-fit:contain;display:block;'
+          : 'width:26px;height:30px;display:block;';
         image.title = `${props.stationLabel}: ${station.Name ?? ''}`;
         stationArtifactsRef.current.markers.push(
           new maplibre.Marker({ element: image, anchor: 'bottom' }).setLngLat([station.Longitude, station.Latitude]).addTo(map),

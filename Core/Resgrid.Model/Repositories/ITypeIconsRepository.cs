@@ -31,7 +31,13 @@ namespace Resgrid.Model.Repositories
 		/// <summary>Every status and priority icon of the department, without bytes.</summary>
 		Task<List<TypeIconVariant>> GetVariantsForDepartmentAsync(int departmentId);
 
-		/// <summary>True when the unit type, call type, POI type or role is the department's.</summary>
+		/// <summary>
+		/// The own icon (no status or priority) of every type of <paramref name="kind"/> in the department, without bytes, oldest
+		/// upload first. For the kinds whose key is not mirrored on the type row (stations).
+		/// </summary>
+		Task<List<TypeIconVariant>> GetOwnIconsForKindAsync(int departmentId, TypeIconKinds kind);
+
+		/// <summary>True when the unit type, call type, POI type, role or station group (a group of type Station) is the department's.</summary>
 		Task<bool> TypeBelongsToDepartmentAsync(int departmentId, TypeIconKinds kind, int typeId);
 
 		/// <summary>

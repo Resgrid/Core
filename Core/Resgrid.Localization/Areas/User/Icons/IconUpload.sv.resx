@@ -188,4 +188,8 @@
   <data name="RoleOrderUnsaved" xml:space="preserve">
     <value>Ordningen har ändrats. Spara den för att tillämpa den.</value>
   </data>
+  <!-- Station map icon -->
+  <data name="StationIconHelp" xml:space="preserve">
+    <value>Visas på kartan för den här stationen i stället för ikonen för alla stationer.</value>
+  </data>
 </root>

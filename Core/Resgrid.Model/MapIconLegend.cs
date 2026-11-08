@@ -27,6 +27,12 @@ namespace Resgrid.Model
 
 		/// <summary>Members with no role icon first, then each role with an icon, in role order; a state per personnel status.</summary>
 		public List<MapIconLegendRow> PersonnelRows { get; set; } = new List<MapIconLegendRow>();
+
+		/// <summary>
+		/// What every station without an icon of its own shows first (Id and Name null; the host names it), then each station
+		/// with an icon of its own, by name. No states: a station icon never changes with status.
+		/// </summary>
+		public List<MapIconLegendRow> StationRows { get; set; } = new List<MapIconLegendRow>();
 	}
 
 	/// <summary>A status or priority style, with the meanings it groups and the department's own statuses or priorities in it.</summary>
@@ -105,9 +111,10 @@ namespace Resgrid.Model
 		/// <param name="noCallTypeName">The host's name for calls with no type.</param>
 		/// <param name="noUnitTypeName">The host's name for units with no type.</param>
 		/// <param name="noRoleName">The host's name for members with no role icon.</param>
+		/// <param name="stations">The department's station groups; only those with an icon of their own get a row.</param>
 		public static MapIconLegend Build(MapIconResolver resolver, IEnumerable<DepartmentCallPriority> priorities, IEnumerable<CustomState> customStates,
 			List<CustomStateDetail> builtInUnitStatuses, IEnumerable<CustomStateDetail> personnelStatuses, IEnumerable<PersonnelRole> roles,
-			string noCallTypeName, string noUnitTypeName, string noRoleName)
+			string noCallTypeName, string noUnitTypeName, string noRoleName, IEnumerable<DepartmentGroup> stations = null)
 		{
 			var priorityList = (priorities ?? Enumerable.Empty<DepartmentCallPriority>()).Where(x => x != null).ToList();
 			var statesList = (customStates ?? Enumerable.Empty<CustomState>()).Where(x => x != null).ToList();
@@ -128,10 +135,35 @@ namespace Resgrid.Model
 				.Where(x => !string.IsNullOrWhiteSpace(x.IconKey) || resolver.HasVariantIcons(TypeIconKinds.PersonnelRole, x.PersonnelRoleId)))
 				legend.PersonnelRows.Add(RoleRow(resolver, role, null, personnelList));
 
+			legend.StationRows = StationRows(resolver, stations);
+
 			legend.StatusStyles = StatusStyles(legend.UnitRows, legend.PersonnelRows.FirstOrDefault());
 			legend.PriorityStyles = PriorityStyles(legend.CallRows.FirstOrDefault());
 
 			return legend;
+		}
+
+		/// <summary>
+		/// The department's station icon row (Id and Name null), then each station group with an icon of its own, by name:
+		/// a station without one looks like the first row, so it is not listed.
+		/// </summary>
+		public static List<MapIconLegendRow> StationRows(MapIconResolver resolver, IEnumerable<DepartmentGroup> stations)
+		{
+			var rows = new List<MapIconLegendRow> { new MapIconLegendRow { OwnIcon = resolver.ForStation(null) } };
+
+			foreach (var station in (stations ?? Enumerable.Empty<DepartmentGroup>())
+				.Where(x => x != null && resolver.StationIconKey(x.DepartmentGroupId) != null)
+				.OrderBy(x => x.Name, StringComparer.CurrentCultureIgnoreCase))
+			{
+				rows.Add(new MapIconLegendRow
+				{
+					Id = station.DepartmentGroupId,
+					Name = station.Name,
+					OwnIcon = resolver.ForStation(station.DepartmentGroupId)
+				});
+			}
+
+			return rows;
 		}
 
 		/// <summary>

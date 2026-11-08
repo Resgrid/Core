@@ -188,4 +188,8 @@
   <data name="RoleOrderUnsaved" xml:space="preserve">
     <value>Η σειρά άλλαξε. Αποθηκεύστε την για να εφαρμοστεί.</value>
   </data>
+  <!-- Station map icon -->
+  <data name="StationIconHelp" xml:space="preserve">
+    <value>Εμφανίζεται στον χάρτη για αυτόν τον σταθμό αντί για το εικονίδιο όλων των σταθμών.</value>
+  </data>
 </root>

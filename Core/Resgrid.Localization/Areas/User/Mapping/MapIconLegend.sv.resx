@@ -272,4 +272,32 @@
   <data name="KeyOnUnit" xml:space="preserve">
     <value>Får färgen från sin enhets status</value>
   </data>
+  <!-- Station map icons -->
+  <data name="StationIcons" xml:space="preserve">
+    <value>Stationsikoner</value>
+  </data>
+  <data name="StationIconsHelp" xml:space="preserve">
+    <value>En kartikon för alla stationer och varje stations egen ikon, på ett ställe.</value>
+  </data>
+  <data name="StationIconsTitle" xml:space="preserve">
+    <value>Kartikoner för stationer</value>
+  </data>
+  <data name="StationIconsIntro" xml:space="preserve">
+    <value>Ladda upp en ikon för alla stationer och ge en station en egen ikon när den ska se annorlunda ut. Stationens egen ikon gäller först, sedan ikonen för alla stationer och sist den inbyggda stationsnålen. Stationsikoner ändras inte med status.</value>
+  </data>
+  <data name="AllStations" xml:space="preserve">
+    <value>Alla stationer</value>
+  </data>
+  <data name="AllStationsHelp" xml:space="preserve">
+    <value>Varje station utan egen ikon.</value>
+  </data>
+  <data name="StationColumn" xml:space="preserve">
+    <value>Station</value>
+  </data>
+  <data name="OnMapColumn" xml:space="preserve">
+    <value>På kartan</value>
+  </data>
+  <data name="NoStations" xml:space="preserve">
+    <value>Det finns inga stationsgrupper än. Lägg till en stationsgrupp för att visa den på kartan.</value>
+  </data>
 </root>

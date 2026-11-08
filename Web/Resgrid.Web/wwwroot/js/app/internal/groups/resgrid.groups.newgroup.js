@@ -6,17 +6,21 @@ var resgrid;
 		var newgroup;
 		(function (newgroup) {
 			$(document).ready(function () {
-				if ($('.groupTypeOrgRadio').is(':checked')) {
+				// The radios carry ids (the page re-renders with the posted type checked after a validation error).
+				if ($('#groupTypeOrgRadio, .groupTypeOrgRadio').is(':checked')) {
 					$("#ParentFields").show();
 					$("#StationAddress").hide();
+					$("#StationIcon").hide();
 				}
-				else if ($('.groupTypeStationRadio').is(':checked')) {
+				else if ($('#groupTypeStationRadio, .groupTypeStationRadio').is(':checked')) {
 					$("#ParentFields").hide();
 					$("#StationAddress").show();
+					$("#StationIcon").show();
 				}
 				else {
 					$("#ParentFields").hide();
 					$("#StationAddress").hide();
+					$("#StationIcon").hide();
 				}
 				var groupUrl = resgrid.absoluteBaseUrl + '/User/Department/GetRecipientsForGrid?filter=3&filterNotInGroup=true';
 
@@ -97,11 +101,13 @@ var resgrid;
 			function showParentFields() {
 				$("#ParentFields").show();
 				$("#StationAddress").hide();
+				$("#StationIcon").hide();
 			}
 			newgroup.showParentFields = showParentFields;
 			function showAddressFields() {
 				$("#ParentFields").hide();
 				$("#StationAddress").show();
+				$("#StationIcon").show();
 			}
 			newgroup.showAddressFields = showAddressFields;
 		})(newgroup = groups.newgroup || (groups.newgroup = {}));

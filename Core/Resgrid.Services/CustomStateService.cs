@@ -35,6 +35,16 @@ namespace Resgrid.Services
 			return await _customStateRepository.GetCustomStatesByIdAsync(customStateId);
 		}
 
+		public async Task<CustomState> GetActiveCustomStateForDepartmentAsync(int departmentId, int customStateId, CustomStateTypes type)
+		{
+			if (departmentId <= 0 || customStateId <= 0)
+				return null;
+
+			var states = await GetAllCustomStatesForDepartmentAsync(departmentId);
+
+			return states?.FirstOrDefault(x => x != null && x.CustomStateId == customStateId && x.DepartmentId == departmentId && !x.IsDeleted && x.Type == (int)type);
+		}
+
 		public async Task<List<CustomState>> GetAllActiveCustomStatesForDepartmentAsync(int departmentId)
 		{
 			var states = await GetAllCustomStatesForDepartmentAsync(departmentId);

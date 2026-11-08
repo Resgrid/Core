@@ -84,7 +84,7 @@ namespace Resgrid.Tests.Localization
 		/// </summary>
 		private static readonly HashSet<string> KnownIdenticalEverywhere = new HashSet<string>(StringComparer.Ordinal)
 		{
-			"HomeDashboard|Category.IncidentBackOffice", "HomeDashboard|Dash.Size.l", "HomeDashboard|Dash.Size.m", "HomeDashboard|Dash.Size.s",
+			"HomeDashboard|Category.IncidentBackOffice", "HomeDashboard|Dash.DepartmentIdMeta", "HomeDashboard|Dash.Size.l", "HomeDashboard|Dash.Size.m", "HomeDashboard|Dash.Size.s",
 			"HomeDashboard|Dash.Size.xl", "HomeDashboard|Dash.Size.xs", "DashboardWidgets|W.admin.plan.Addon.ADP",
 			"DashboardWidgets|W.admin.plan.Addon.EnhancedAi", "DashboardWidgets|W.admin.plan.Addon.IncidentBackOffice",
 			"DashboardWidgets|W.admin.plan.Addon.PTT", "DashboardWidgets|W.admin.plan.Addon.ReadinessPro", "DashboardWidgets|W.admin.plan.CostPer",
@@ -196,7 +196,7 @@ namespace Resgrid.Tests.Localization
 			// Map Icon Legend (2026-10-24): the same word in the target language, checked side by side.
 			"MapIconLegend|de|StatusColumn", "MapIconLegend|pl|StatusColumn", "MapIconLegend|sv|StatusColumn", // "Status"
 			"MapIconLegend|de|Hydrant", "MapIconLegend|pl|Hydrant",  // "Hydrant"
-			"MapIconLegend|sv|Station",                              // "Station"
+			"MapIconLegend|sv|Station", "MapIconLegend|sv|StationColumn", // "Station"
 			"MapIconLegend|fr|Type",                                 // "Type"
 			"MapIconLegend|fr|PersonnelHeader",                      // "Personnel"
 			// Report sources (2026-10-04): "Personnel" is the French word too.

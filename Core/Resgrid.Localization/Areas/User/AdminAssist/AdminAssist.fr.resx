@@ -7078,10 +7078,10 @@
     <value>Icônes de carte personnalisées</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.custom-map-icons">
-    <value>Vos propres icônes pour les types d'unités, les types d'appels, les points d'intérêt et les rôles du personnel, affichées dans les listes, les applications et sur la carte.</value>
+    <value>Vos propres icônes pour les types d'unités, les types d'appels, les points d'intérêt, les rôles du personnel et les casernes, affichées dans les listes, les applications et sur la carte.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.custom-map-icons">
-    <value>Téléversez un PNG carré à fond transparent, de 128 × 128 px ou plus, sur la page du type d'unité, du type d'appel, du type de POI ou du rôle ; la page en affiche un aperçu sur une carte claire et une carte sombre. Pour choisir l'icône d'une personne ayant plusieurs rôles, ordonnez les rôles sur la page Rôles. Utilisez Icônes de carte par statut ou Icônes de carte par priorité sur la même page pour ajouter une icône pour chaque statut ou priorité.</value>
+    <value>Téléversez un PNG carré à fond transparent, de 128 × 128 px ou plus, sur la page du type d'unité, du type d'appel, du type de POI ou du rôle ; la page en affiche un aperçu sur une carte claire et une carte sombre. Pour choisir l'icône d'une personne ayant plusieurs rôles, ordonnez les rôles sur la page Rôles. Utilisez Icônes de carte par statut ou Icônes de carte par priorité sur la même page pour ajouter une icône pour chaque statut ou priorité. Pour les casernes, téléversez une icône pour toutes les casernes ou donnez à une caserne sa propre icône dans Groupes &gt; Icônes des casernes ou sur la page Modifier le groupe de la caserne.</value>
   </data>
   <data xml:space="preserve" name="Feature.map-icon-legend">
     <value>Légende des icônes de la carte</value>

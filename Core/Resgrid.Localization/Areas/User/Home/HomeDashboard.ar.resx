@@ -465,6 +465,9 @@
   <data name="Dash.DepartmentCodeMeta" xml:space="preserve">
     <value>الرمز {0}</value>
   </data>
+  <data name="Dash.DepartmentIdMeta" xml:space="preserve">
+    <value>المعرّف {0}</value>
+  </data>
   <data name="Dash.DepartmentTime" xml:space="preserve">
     <value>وقت القسم</value>
   </data>

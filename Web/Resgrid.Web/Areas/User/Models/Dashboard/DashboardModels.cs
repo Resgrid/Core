@@ -170,6 +170,8 @@ namespace Resgrid.Web.Areas.User.Models.Dashboard
 	{
 		public string FirstName { get; set; }
 
+		public int DepartmentId { get; set; }
+
 		public string DepartmentName { get; set; }
 
 		public string DepartmentCode { get; set; }

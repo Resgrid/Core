@@ -182,7 +182,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 				{
 					MapMakerInfoData info = new MapMakerInfoData();
 					info.Id = $"s{station.DepartmentGroupId}";
-					info.ImagePath = "Station";
+					// ImagePath stays the bundled station pin older clients show; IconUrl is the station's own upload, else the
+					// department's station icon. Stations have no status, so no styled pin.
+					var stationIcon = icons.ForStation(station.DepartmentGroupId);
+					info.ImagePath = stationIcon.ImagePath;
+					info.IconUrl = TypeIcons.ApiIconUrl(Config.SystemBehaviorConfig.ResgridApiBaseUrl, stationIcon.IconKey);
 					info.Title = station.Name;
 					info.InfoWindowContent = station.Name;
 					info.Type = 2;
@@ -674,6 +678,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 			result.Data.Calls = legend.CallRows.Select(x => ConvertLegendRow(x, apiBaseUrl)).ToList();
 			result.Data.Units = legend.UnitRows.Select(x => ConvertLegendRow(x, apiBaseUrl)).ToList();
 			result.Data.Personnel = legend.PersonnelRows.Select(x => ConvertLegendRow(x, apiBaseUrl)).ToList();
+			result.Data.Stations = legend.StationRows.Select(x =>
+			{
+				var row = ConvertLegendRow(x, apiBaseUrl);
+				// The implicit conversion is null-safe (a missing localizer entry leaves the name null).
+				row.Name ??= (string)_legendStrings["Station"];
+				return row;
+			}).ToList();
 
 			var poiTypes = await _mappingService.GetPOITypesForDepartmentAsync(DepartmentId) ?? new List<PoiType>();
 			result.Data.PoiTypes = poiTypes.OrderBy(x => x.Name, StringComparer.CurrentCultureIgnoreCase).Select(poiType => new MapLegendPoiTypeData

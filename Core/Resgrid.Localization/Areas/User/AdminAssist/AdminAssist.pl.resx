@@ -7078,10 +7078,10 @@
     <value>Własne ikony mapy</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.custom-map-icons">
-    <value>Własne ikony dla typów jednostek, typów zgłoszeń, punktów zainteresowania i ról personelu, wyświetlane na listach, w aplikacjach i na mapie.</value>
+    <value>Własne ikony dla typów jednostek, typów zgłoszeń, punktów zainteresowania, ról personelu i stacji, wyświetlane na listach, w aplikacjach i na mapie.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.custom-map-icons">
-    <value>Prześlij kwadratowy plik PNG z przezroczystym tłem, o wymiarach co najmniej 128 × 128 px, na stronie typu jednostki, typu zgłoszenia, typu POI lub roli; strona pokaże podgląd na jasnej i ciemnej mapie. Aby wybrać ikonę osoby z kilkoma rolami, ustaw kolejność ról na stronie Role. Użyj opcji Ikony mapy według statusu lub Ikony mapy według priorytetu na tej samej stronie, aby dodać ikonę dla każdego statusu lub priorytetu.</value>
+    <value>Prześlij kwadratowy plik PNG z przezroczystym tłem, o wymiarach co najmniej 128 × 128 px, na stronie typu jednostki, typu zgłoszenia, typu POI lub roli; strona pokaże podgląd na jasnej i ciemnej mapie. Aby wybrać ikonę osoby z kilkoma rolami, ustaw kolejność ról na stronie Role. Użyj opcji Ikony mapy według statusu lub Ikony mapy według priorytetu na tej samej stronie, aby dodać ikonę dla każdego statusu lub priorytetu. W przypadku stacji prześlij jedną ikonę dla wszystkich stacji lub nadaj stacji własną ikonę w Grupy &gt; Ikony stacji albo na stronie edycji grupy stacji.</value>
   </data>
   <data xml:space="preserve" name="Feature.map-icon-legend">
     <value>Legenda ikon mapy</value>

@@ -33,14 +33,16 @@ namespace Resgrid.Services
 		private readonly IUnitOfWork _unitOfWork;
 		private readonly IInventoryStore _inventoryStore;
 		private readonly Lazy<ISearchProjectionService> _searchProjections;
+		private readonly ITypeIconsService _typeIconsService;
 
 		public DepartmentGroupsService(IDepartmentGroupsRepository departmentGroupsRepository, IDepartmentGroupMembersRepository departmentGroupMembersRepository,
 			ISubscriptionsService subscriptionsService, IAddressService addressService, IDepartmentsService departmentsService, IGeoLocationProvider geoLocationProvider,
 			IDepartmentSettingsService departmentSettingsService, IEventAggregator eventAggregator, ICacheProvider cacheProvider,
 			IIdentityRepository identityRepository, IUnitOfWork unitOfWork, IInventoryStore inventoryStore = null,
-			Lazy<ISearchProjectionService> searchProjections = null)
+			Lazy<ISearchProjectionService> searchProjections = null, ITypeIconsService typeIconsService = null)
 		{
 			_searchProjections = searchProjections;
+			_typeIconsService = typeIconsService;
 			_departmentGroupsRepository = departmentGroupsRepository;
 			_departmentGroupMembersRepository = departmentGroupMembersRepository;
 			_subscriptionsService = subscriptionsService;
@@ -334,6 +336,11 @@ namespace Resgrid.Services
 				await _searchProjections.Value.RemoveAsync(group.DepartmentId, SearchEntityTypes.Group, groupId.ToString(), cancellationToken);
 				await RefreshPersonnelProjectionsAsync(group.DepartmentId, formerMembers, cancellationToken);
 			}
+
+			// TypeIcons has no foreign key to the group, so a station's uploaded map icon goes once the group is gone.
+			if (deleted && _typeIconsService != null)
+				await _typeIconsService.RemoveIconAsync(group.DepartmentId, TypeIconKinds.Station, groupId, cancellationToken);
+
 			return deleted;
 		}
 

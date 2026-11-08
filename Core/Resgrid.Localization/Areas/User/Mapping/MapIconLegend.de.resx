@@ -272,4 +272,32 @@
   <data name="KeyOnUnit" xml:space="preserve">
     <value>Nimmt die Farbe des Status seiner Einheit an</value>
   </data>
+  <!-- Station map icons -->
+  <data name="StationIcons" xml:space="preserve">
+    <value>Wachen-Symbole</value>
+  </data>
+  <data name="StationIconsHelp" xml:space="preserve">
+    <value>Ein Kartensymbol für alle Wachen und das eigene Symbol jeder Wache an einem Ort.</value>
+  </data>
+  <data name="StationIconsTitle" xml:space="preserve">
+    <value>Kartensymbole der Wachen</value>
+  </data>
+  <data name="StationIconsIntro" xml:space="preserve">
+    <value>Laden Sie ein Symbol für alle Wachen hoch und geben Sie einer Wache ein eigenes Symbol, wenn sie anders aussehen soll. Zuerst gilt das eigene Symbol der Wache, dann das Symbol für alle Wachen, dann die eingebaute Wachen-Markierung. Wachen-Symbole ändern sich nicht mit dem Status.</value>
+  </data>
+  <data name="AllStations" xml:space="preserve">
+    <value>Alle Wachen</value>
+  </data>
+  <data name="AllStationsHelp" xml:space="preserve">
+    <value>Jede Wache ohne eigenes Symbol.</value>
+  </data>
+  <data name="StationColumn" xml:space="preserve">
+    <value>Wache</value>
+  </data>
+  <data name="OnMapColumn" xml:space="preserve">
+    <value>Auf der Karte</value>
+  </data>
+  <data name="NoStations" xml:space="preserve">
+    <value>Es gibt noch keine Wachen-Gruppen. Fügen Sie eine Wachen-Gruppe hinzu, um sie auf der Karte anzuzeigen.</value>
+  </data>
 </root>

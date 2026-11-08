@@ -28,7 +28,8 @@ namespace Resgrid.Web.Services.Models.v4.UnitStatusAlerts
 		/// Null on success. Otherwise one of: unit_alert_not_found, unit_alert_status_changed (the unit moved to a
 		/// new status since the board loaded), unit_alert_not_overdue, unit_alert_conflict (another dispatcher
 		/// acknowledged it first; their acknowledgement is in Data), unit_alert_invalid_mode,
-		/// unit_alert_invalid_level, unit_alert_note_too_long.
+		/// unit_alert_invalid_level, unit_alert_note_too_long, unit_alert_note_required (the department requires an
+		/// acknowledgement note and none was given).
 		/// </summary>
 		public string Error { get; set; }
 

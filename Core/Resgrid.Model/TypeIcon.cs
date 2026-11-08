@@ -15,7 +15,14 @@ namespace Resgrid.Model
 		CallType = 2,
 		PoiType = 3,
 		/// <summary>A personnel role (M0286); a person's map pin uses the icon of their first role, in role order, that has one.</summary>
-		PersonnelRole = 4
+		PersonnelRole = 4,
+		/// <summary>
+		/// A station group's map pin (TypeId the DepartmentGroupId), or with TypeId <see cref="TypeIcons.DepartmentStationTypeId"/>
+		/// the department's icon for every station without one of its own. Not mirrored on DepartmentGroups: a group save
+		/// rewrites the whole row from a possibly cached entity and would put an old key back, so the map reads the keys from
+		/// TypeIcons (<see cref="TypeIcons.MirrorsIconKey"/>).
+		/// </summary>
+		Station = 5
 	}
 
 	/// <summary>Why an uploaded file cannot be a type icon; the web pages show a localized message per reason.</summary>
@@ -79,7 +86,10 @@ namespace Resgrid.Model
 		[Required]
 		public int TypeKind { get; set; }
 
-		/// <summary>The UnitTypeId, CallTypeId, PoiTypeId or PersonnelRoleId, per <see cref="TypeKind"/>.</summary>
+		/// <summary>
+		/// The UnitTypeId, CallTypeId, PoiTypeId, PersonnelRoleId or station DepartmentGroupId (0: the department's station
+		/// icon), per <see cref="TypeKind"/>.
+		/// </summary>
 		[Required]
 		public int TypeId { get; set; }
 
@@ -216,6 +226,21 @@ namespace Resgrid.Model
 
 		/// <summary>Built-in pin a member takes (the Person artwork).</summary>
 		public const string PersonPinBase = "person";
+
+		/// <summary>
+		/// The TypeId of a department's station icon that stands for every station without an icon of its own
+		/// (<see cref="TypeIconKinds.Station"/>); no DepartmentGroupId is 0.
+		/// </summary>
+		public const int DepartmentStationTypeId = 0;
+
+		/// <summary>The bundled icon every client ships for a station (Station.png).</summary>
+		public const string StationImage = "Station";
+
+		/// <summary>
+		/// True when the kind's own icon key is mirrored on its type row (UnitTypes, CallTypes, POITypes, PersonnelRoles);
+		/// false for stations, whose keys live only in TypeIcons.
+		/// </summary>
+		public static bool MirrorsIconKey(TypeIconKinds kind) => kind != TypeIconKinds.Station;
 
 		/// <summary>The bundled icon name older clients show for a call, unit or person with no built-in icon of its type.</summary>
 		public const string LegacyCallImage = "Call";

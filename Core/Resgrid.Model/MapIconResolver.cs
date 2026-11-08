@@ -69,6 +69,7 @@ namespace Resgrid.Model
 		private readonly HashSet<string> _typesWithVariants;
 		private readonly Dictionary<int, UnitState> _unitStatesById;
 		private readonly CustomStateDetail _defaultPersonnelStatus;
+		private readonly Dictionary<int, string> _stationIconKeys;
 
 		/// <param name="departmentId">The department the lists belong to.</param>
 		/// <param name="callTypes">The department's call types.</param>
@@ -79,10 +80,18 @@ namespace Resgrid.Model
 		/// <param name="variants">The department's uploaded status and priority icons.</param>
 		/// <param name="defaultPersonnelStatus">The status a member with no status shows (GetDefaultPersonnelStatusAsync).</param>
 		/// <param name="latestUnitStates">Each unit's latest status, so a member On Unit takes the style of the unit they ride.</param>
+		/// <param name="stationIcons">The department's station icons (<see cref="TypeIconKinds.Station"/>), oldest upload first.</param>
 		public MapIconResolver(int departmentId, IEnumerable<CallType> callTypes, IEnumerable<DepartmentCallPriority> priorities,
 			IEnumerable<UnitType> unitTypes, IEnumerable<CustomState> customStates, IEnumerable<PersonnelRole> roles,
-			IEnumerable<TypeIconVariant> variants, CustomStateDetail defaultPersonnelStatus = null, IEnumerable<UnitState> latestUnitStates = null)
+			IEnumerable<TypeIconVariant> variants, CustomStateDetail defaultPersonnelStatus = null, IEnumerable<UnitState> latestUnitStates = null,
+			IEnumerable<TypeIconVariant> stationIcons = null)
 		{
+			// The last row per station wins: the rows come oldest first, so a slot caught mid-upload shows its newest icon.
+			_stationIconKeys = new Dictionary<int, string>();
+			foreach (var stationIcon in (stationIcons ?? Enumerable.Empty<TypeIconVariant>())
+				.Where(x => x != null && x.TypeKind == (int)TypeIconKinds.Station && x.Variant == null && !string.IsNullOrWhiteSpace(x.IconKey)))
+				_stationIconKeys[stationIcon.TypeId] = stationIcon.IconKey;
+
 			_departmentId = departmentId;
 			_callTypes = (callTypes ?? Enumerable.Empty<CallType>()).Where(x => x != null).ToList();
 			_priorities = (priorities ?? Enumerable.Empty<DepartmentCallPriority>()).Where(x => x != null).ToList();
@@ -219,6 +228,32 @@ namespace Resgrid.Model
 
 			return icon;
 		}
+
+		/// <summary>
+		/// The icon of a station group: its own uploaded icon, else the department's icon for every station, else the bundled
+		/// station pin. Stations have no status, so there is no style, slot or badge. Null <paramref name="departmentGroupId"/>
+		/// gives what a station without an icon of its own shows.
+		/// </summary>
+		public MapMarkerIcon ForStation(int? departmentGroupId)
+		{
+			var icon = new MapMarkerIcon { ImagePath = TypeIcons.StationImage };
+
+			if (departmentGroupId.HasValue && departmentGroupId.Value != TypeIcons.DepartmentStationTypeId &&
+				_stationIconKeys.TryGetValue(departmentGroupId.Value, out var ownKey))
+				icon.IconKey = ownKey;
+			else if (_stationIconKeys.TryGetValue(TypeIcons.DepartmentStationTypeId, out var departmentKey))
+				icon.IconKey = departmentKey;
+
+			return icon;
+		}
+
+		/// <summary>The station group's own uploaded icon, or null (it then shows the department's station icon or the bundled pin).</summary>
+		public string StationIconKey(int departmentGroupId) =>
+			departmentGroupId != TypeIcons.DepartmentStationTypeId && _stationIconKeys.TryGetValue(departmentGroupId, out var key) ? key : null;
+
+		/// <summary>The department's uploaded icon for every station without one of its own, or null.</summary>
+		public string DepartmentStationIconKey =>
+			_stationIconKeys.TryGetValue(TypeIcons.DepartmentStationTypeId, out var key) ? key : null;
 
 		/// <summary>
 		/// The meaning of a stored call priority for its icon: the department's own priority of that id first (the oldest

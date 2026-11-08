@@ -7078,10 +7078,10 @@
     <value>Iconos de mapa personalizados</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.custom-map-icons">
-    <value>Iconos propios para tipos de unidad, tipos de llamada, puntos de interés y roles de personal, que se muestran en listas, las aplicaciones y el mapa.</value>
+    <value>Iconos propios para tipos de unidad, tipos de llamada, puntos de interés, roles de personal y estaciones, que se muestran en listas, las aplicaciones y el mapa.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.custom-map-icons">
-    <value>Suba un PNG cuadrado con fondo transparente, de 128 × 128 px o más, en la página del tipo de unidad, tipo de llamada, tipo de POI o rol; la página muestra una vista previa en un mapa claro y uno oscuro. Para elegir el icono de una persona con varios roles, ordene los roles en la página Roles. Use Iconos del mapa por estado o Iconos del mapa por prioridad en la misma página para añadir un icono para cada estado o prioridad.</value>
+    <value>Suba un PNG cuadrado con fondo transparente, de 128 × 128 px o más, en la página del tipo de unidad, tipo de llamada, tipo de POI o rol; la página muestra una vista previa en un mapa claro y uno oscuro. Para elegir el icono de una persona con varios roles, ordene los roles en la página Roles. Use Iconos del mapa por estado o Iconos del mapa por prioridad en la misma página para añadir un icono para cada estado o prioridad. Para las estaciones, suba un icono para todas las estaciones o dé a una estación su propio icono en Grupos &gt; Iconos de estaciones o en la página Editar grupo de la estación.</value>
   </data>
   <data xml:space="preserve" name="Feature.map-icon-legend">
     <value>Leyenda de iconos del mapa</value>

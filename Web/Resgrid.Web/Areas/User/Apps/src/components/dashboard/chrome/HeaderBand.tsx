@@ -82,12 +82,21 @@ export function HeaderBand(props: HeaderBandProps) {
             {clock.time}
           </time>{' '}
           <span>{clock.zoneName}</span>
+          {/* ID and code as the classic page's Department Info box showed them: here on every board, whatever the layout. */}
+          {header?.DepartmentId ? (
+            <>
+              <span className="rg-head-sep" aria-hidden="true">
+                {' · '}
+              </span>
+              <span className="rg-head-ident">{t('Dash.DepartmentIdMeta', header.DepartmentId)}</span>
+            </>
+          ) : null}
           {header?.DepartmentCode ? (
             <>
               <span className="rg-head-sep" aria-hidden="true">
                 {' · '}
               </span>
-              <span>{t('Dash.DepartmentCodeMeta', header.DepartmentCode)}</span>
+              <span className="rg-head-ident">{t('Dash.DepartmentCodeMeta', header.DepartmentCode)}</span>
             </>
           ) : null}
         </div>

@@ -272,4 +272,32 @@
   <data name="KeyOnUnit" xml:space="preserve">
     <value>يأخذ لون حالة وحدته</value>
   </data>
+  <!-- Station map icons -->
+  <data name="StationIcons" xml:space="preserve">
+    <value>أيقونات المحطات</value>
+  </data>
+  <data name="StationIconsHelp" xml:space="preserve">
+    <value>أيقونة خريطة واحدة لكل المحطات وأيقونة خاصة لأي محطة، في مكان واحد.</value>
+  </data>
+  <data name="StationIconsTitle" xml:space="preserve">
+    <value>أيقونات المحطات على الخريطة</value>
+  </data>
+  <data name="StationIconsIntro" xml:space="preserve">
+    <value>ارفع أيقونة واحدة لكل المحطات، وامنح أي محطة أيقونتها الخاصة إذا أردت أن تبدو مختلفة. تُستخدم أيقونة المحطة الخاصة أولاً، ثم أيقونة كل المحطات، ثم دبوس المحطة المدمج. لا تتغير أيقونات المحطات مع الحالة.</value>
+  </data>
+  <data name="AllStations" xml:space="preserve">
+    <value>كل المحطات</value>
+  </data>
+  <data name="AllStationsHelp" xml:space="preserve">
+    <value>كل محطة ليست لها أيقونة خاصة.</value>
+  </data>
+  <data name="StationColumn" xml:space="preserve">
+    <value>المحطة</value>
+  </data>
+  <data name="OnMapColumn" xml:space="preserve">
+    <value>على الخريطة</value>
+  </data>
+  <data name="NoStations" xml:space="preserve">
+    <value>لا توجد مجموعات محطات بعد. أضف مجموعة محطة لعرضها على الخريطة.</value>
+  </data>
 </root>

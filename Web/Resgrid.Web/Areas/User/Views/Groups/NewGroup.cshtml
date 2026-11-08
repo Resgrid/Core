@@ -28,7 +28,7 @@
     <div class="wrapper wrapper-content">
       <div class="ibox float-e-margins">
         <div class="ibox-content">
-          <form class="form-horizontal" role="form" asp-controller="Groups" asp-action="NewGroup" asp-route-area="User" method="post">
+          <form class="form-horizontal" role="form" asp-controller="Groups" asp-action="NewGroup" asp-route-area="User" method="post" enctype="multipart/form-data">
 
             @Html.AntiForgeryToken()
             <div asp-validation-summary="All" class="text-danger"></div>
@@ -148,6 +148,10 @@
                   </div>
                 </div>
               </div>
+            </div>
+            <div id="StationIcon">
+              @{ var iconPicker = new TypeIconPicker { HelpKey = "StationIconHelp", SampleNameInputId = "NewGroup_Name", SampleName = Model.NewGroup?.Name, DefaultIconUrl = Model.DefaultStationIconUrl }; }
+              <partial name="_TypeIconPicker" model="iconPicker" />
             </div>
             <div class="form-group">
               <label class="col-sm-2 control-label">

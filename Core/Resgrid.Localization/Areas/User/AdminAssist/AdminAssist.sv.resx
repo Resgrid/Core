@@ -7078,10 +7078,10 @@
     <value>Egna kartikoner</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.custom-map-icons">
-    <value>Egna ikoner för enhetstyper, larmtyper, intressepunkter och personalroller som visas i listor, apparna och på kartan.</value>
+    <value>Egna ikoner för enhetstyper, larmtyper, intressepunkter, personalroller och stationer som visas i listor, apparna och på kartan.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.custom-map-icons">
-    <value>Ladda upp en kvadratisk PNG med genomskinlig bakgrund, 128 × 128 px eller större, på sidan för enhetstypen, larmtypen, POI-typen eller rollen; sidan förhandsgranskar den på en ljus och en mörk karta. Ordna rollerna på sidan Roller för att välja vilken ikon en person med flera roller får. Använd Kartikoner per status eller Kartikoner per prioritet på samma sida för att lägga till en ikon för varje status eller prioritet.</value>
+    <value>Ladda upp en kvadratisk PNG med genomskinlig bakgrund, 128 × 128 px eller större, på sidan för enhetstypen, larmtypen, POI-typen eller rollen; sidan förhandsgranskar den på en ljus och en mörk karta. Ordna rollerna på sidan Roller för att välja vilken ikon en person med flera roller får. Använd Kartikoner per status eller Kartikoner per prioritet på samma sida för att lägga till en ikon för varje status eller prioritet. För stationer laddar du upp en ikon för alla stationer eller ger en station en egen ikon under Grupper &gt; Stationsikoner eller på stationens sida Redigera grupp.</value>
   </data>
   <data xml:space="preserve" name="Feature.map-icon-legend">
     <value>Förklaring till kartikoner</value>

@@ -434,7 +434,7 @@ namespace Resgrid.Tests.Services
 			public readonly Mock<ICallDispatchUnitRepository> UnitDispatches = new Mock<ICallDispatchUnitRepository>();
 			public readonly MapVisualizationService Service;
 
-			public ServiceHarness()
+			public ServiceHarness(IDepartmentGroupsService groups = null, ITypeIconsService typeIcons = null)
 			{
 				DispatchScope.Setup(x => x.GetScopeForUserAsync(It.IsAny<int>(), It.IsAny<string>()))
 					.ReturnsAsync(new DispatchScope { DepartmentId = DepartmentId, IsDepartmentWide = true });
@@ -452,11 +452,33 @@ namespace Resgrid.Tests.Services
 				Service = new MapVisualizationService(Repository.Object, departments.Object, Mock.Of<IDepartmentSettingsService>(),
 					Mock.Of<ICallsService>(), DispatchScope.Object, Mock.Of<ICallGroupAssignmentService>(), Mock.Of<ICallStatusAttributionService>(),
 					Mock.Of<IUnitsService>(), Dispatches.Object, GroupDispatches.Object, UnitDispatches.Object, Mock.Of<ICustomStateService>(),
-					Mock.Of<IDepartmentGroupsService>(), Profiles.Object, Authorization.Object, Mock.Of<IGeoLocationProvider>(),
+					groups ?? Mock.Of<IDepartmentGroupsService>(), Profiles.Object, Authorization.Object, Mock.Of<IGeoLocationProvider>(),
 					Mock.Of<IUnitLocationsDocRepository>(), Mock.Of<IPersonnelLocationsDocRepository>(),
 					new Lazy<IMongoRepository<UnitsLocation>>(() => Mock.Of<IMongoRepository<UnitsLocation>>()),
-					new Lazy<IMongoRepository<PersonnelLocation>>(() => Mock.Of<IMongoRepository<PersonnelLocation>>()));
+					new Lazy<IMongoRepository<PersonnelLocation>>(() => Mock.Of<IMongoRepository<PersonnelLocation>>()),
+					typeIcons ?? Mock.Of<ITypeIconsService>());
 			}
+		}
+
+		[Test]
+		public async Task Run_draws_stations_with_the_bundled_pin_when_station_icons_cannot_be_read()
+		{
+			var groups = new Mock<IDepartmentGroupsService>();
+			groups.Setup(x => x.GetAllGroupsForDepartmentUnlimitedAsync(DepartmentId)).ReturnsAsync(new List<DepartmentGroup>
+			{
+				new DepartmentGroup { DepartmentGroupId = 42, DepartmentId = DepartmentId, Name = "Station 1", Type = (int)DepartmentGroupTypes.Station, Latitude = "40.1", Longitude = "-105.1" }
+			});
+			var typeIcons = new Mock<ITypeIconsService>();
+			typeIcons.Setup(x => x.GetStationIconsAsync(DepartmentId, It.IsAny<bool>())).ThrowsAsync(new TimeoutException("icon read timed out"));
+			var harness = new ServiceHarness(groups.Object, typeIcons.Object);
+
+			var definition = OneLayer(MapVisualizationKeys.SourceCalls, MapVisualizationKeys.DisplayPoints);
+			definition.Options.ShowStations = true;
+
+			var result = await harness.Service.RunAsync(DepartmentId, UserId, definition);
+
+			result.Stations.Should().ContainSingle(s => s.GroupId == 42 && s.IconUrl == null,
+				"icons only dress the pins: a failed read falls back to Station.png rather than failing the visualization");
 		}
 
 		private static MapVisualization Saved(string id, string owner, bool shared) => new MapVisualization

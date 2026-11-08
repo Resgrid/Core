@@ -38,11 +38,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IUserProfileService _userProfileService;
 		private readonly IUnitsService _unitsService;
 		private readonly IShiftsService _shiftsService;
+		private readonly ITypeIconsService _typeIconsService;
+		private readonly Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.Icons.IconUpload> _iconLocalizer;
 
 		public GroupsController(IDepartmentsService departmentsService, IUsersService usersService, IDepartmentGroupsService departmentGroupsService,
 			Model.Services.IAuthorizationService authorizationService, ILimitsService limitsService, IGeoLocationProvider geoLocationProvider, IDeleteService deleteService,
-			IEventAggregator eventAggregator, IUserProfileService userProfileService, IUnitsService unitsService, IShiftsService shiftsService)
+			IEventAggregator eventAggregator, IUserProfileService userProfileService, IUnitsService unitsService, IShiftsService shiftsService,
+			ITypeIconsService typeIconsService, Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.Icons.IconUpload> iconLocalizer)
 		{
+			_typeIconsService = typeIconsService;
+			_iconLocalizer = iconLocalizer;
 			_departmentsService = departmentsService;
 			_usersService = usersService;
 			_departmentGroupsService = departmentGroupsService;
@@ -85,6 +90,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			groups.AddRange(model.Groups.Where(x => x.ParentDepartmentGroupId.HasValue == false));
 
 			model.StationGroups = new SelectList(groups, "DepartmentGroupId", "Name");
+			model.DefaultStationIconUrl = (await GetStationIconsAsync()).DefaultUrl;
 
 			return View(model);
 		}
@@ -94,6 +100,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.GenericGroup_Create)]
 		public async Task<IActionResult> NewGroup(NewGroupView model, IFormCollection collection, CancellationToken cancellationToken)
 		{
+			var isStation = model.NewGroup.Type.HasValue && model.NewGroup.Type.Value == (int)DepartmentGroupTypes.Station;
+
+			// Only a station has a map icon; a file posted with an organizational group is ignored.
+			var iconData = isStation ? await ReadIconUploadAsync(model.IconFile, cancellationToken) : null;
+
 			model.Users = await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId);
 			model.Groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
 
@@ -253,7 +264,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (!String.IsNullOrWhiteSpace(model.NewGroup.Longitude))
 					model.NewGroup.Longitude = StringHelpers.SanitizeCoordinatesString(model.NewGroup.Longitude.Replace(" ", ""));
 
-				await _departmentGroupsService.SaveAsync(model.NewGroup, cancellationToken);
+				var savedGroup = await _departmentGroupsService.SaveAsync(model.NewGroup, cancellationToken);
+
+				// After the save, which gives the station its id; the icon is kept in TypeIcons, never on the group row.
+				var savedGroupId = savedGroup?.DepartmentGroupId ?? model.NewGroup.DepartmentGroupId;
+				if (iconData != null && savedGroupId > 0)
+					await _typeIconsService.UploadIconAsync(DepartmentId, TypeIconKinds.Station, savedGroupId, UserId, iconData, cancellationToken);
 
 				var auditEvent = new AuditEvent();
 				auditEvent.DepartmentId = DepartmentId;
@@ -268,6 +284,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				return RedirectToAction("Index", "Groups", new { Area = "User" });
 			}
+
+			model.DefaultStationIconUrl = (await GetStationIconsAsync()).DefaultUrl;
 
 			return View("NewGroup", model);
 		}
@@ -420,6 +438,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.PrinterName = printer.PrinterName;
 			}
 
+			await SetStationIconsAsync(model, model.EditGroup);
+
 			return View(model);
 		}
 
@@ -445,6 +465,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				ModelState.AddModelError("EditGroup.ParentDepartmentGroupId", "The selected parent group is not valid.");
 
 			var group = await _departmentGroupsService.GetGroupByIdAsync(model.EditGroup.DepartmentGroupId);
+
+			// The stored type decides, not the posted hidden field: only a station has a map icon.
+			var isStation = group.Type.HasValue && group.Type.Value == (int)DepartmentGroupTypes.Station;
+			var iconData = isStation ? await ReadIconUploadAsync(model.IconFile, cancellationToken) : null;
 
 			if (String.IsNullOrWhiteSpace(group.DispatchEmail))
 				group.DispatchEmail = RandomGenerator.GenerateRandomString(6, 6, false, true, false, true, true, false, null);
@@ -601,6 +625,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				await _departmentGroupsService.UpdateAsync(group, cancellationToken);
 
+				// The icon lives in TypeIcons, not on the group row, so the group save above cannot touch it.
+				if (isStation && iconData != null)
+					await _typeIconsService.UploadIconAsync(DepartmentId, TypeIconKinds.Station, group.DepartmentGroupId, UserId, iconData, cancellationToken);
+				else if (isStation && model.RemoveCustomIcon)
+					await _typeIconsService.RemoveIconAsync(DepartmentId, TypeIconKinds.Station, group.DepartmentGroupId, cancellationToken);
+
 				auditEvent.After = group.CloneJsonToString();
 				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
@@ -608,9 +638,45 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			model.EditGroup = group;
+			await SetStationIconsAsync(model, group);
 
 			return View(model);
 		}
+
+		/// <summary>
+		/// The department's station icons: each station's own (by group id) and what a station without one shows, as web URLs
+		/// (the department's station icon, else the bundled Station.png).
+		/// </summary>
+		private async Task<(Dictionary<int, string> OwnUrls, string DefaultUrl)> GetStationIconsAsync()
+		{
+			var stationIcons = await _typeIconsService.GetStationIconsAsync(DepartmentId) ?? new List<TypeIconVariant>();
+			var resolver = new MapIconResolver(DepartmentId, null, null, null, null, null, null, stationIcons: stationIcons);
+
+			var departmentKey = resolver.DepartmentStationIconKey;
+			var own = stationIcons
+				.Where(x => x != null && x.TypeId != TypeIcons.DepartmentStationTypeId && resolver.StationIconKey(x.TypeId) != null)
+				.Select(x => x.TypeId).Distinct()
+				.ToDictionary(id => id, id => TypeIcons.WebIconUrl(resolver.StationIconKey(id)));
+
+			return (own, departmentKey != null ? TypeIcons.WebIconUrl(departmentKey) : $"/images/Mapping/{TypeIcons.StationImage}.png");
+		}
+
+		private async Task SetStationIconsAsync(EditGroupView model, DepartmentGroup group)
+		{
+			if (group == null || !group.Type.HasValue || group.Type.Value != (int)DepartmentGroupTypes.Station)
+				return;
+
+			var icons = await GetStationIconsAsync();
+			model.StationIconUrl = icons.OwnUrls.TryGetValue(group.DepartmentGroupId, out var url) ? url : null;
+			model.DefaultStationIconUrl = icons.DefaultUrl;
+		}
+
+		/// <summary>
+		/// The posted station icon's bytes, or null when none was posted. A file that cannot be an icon adds a model error on
+		/// IconFile and returns null, so nothing is saved.
+		/// </summary>
+		private Task<byte[]> ReadIconUploadAsync(IFormFile iconFile, CancellationToken cancellationToken) =>
+			TypeIconUploads.ReadAsync(iconFile, _typeIconsService, ModelState, _iconLocalizer, cancellationToken);
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.GenericGroup_Update)]

@@ -612,7 +612,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				Legend = await _mapIconsService.GetLegendAsync(DepartmentId, _legendLocalizer["NoCallType"], _legendLocalizer["NoUnitType"], _legendLocalizer["NoRoleIcon"]),
 				CanEditTypes = CanEditStatusIcons(TypeIconKinds.UnitType),
-				CanEditRoles = CanEditStatusIcons(TypeIconKinds.PersonnelRole)
+				CanEditRoles = CanEditStatusIcons(TypeIconKinds.PersonnelRole),
+				CanEditStations = CanEditStatusIcons(TypeIconKinds.Station)
 			};
 
 			foreach (var poiType in (await _mappingService.GetPOITypesForDepartmentAsync(DepartmentId) ?? new List<PoiType>()).OrderBy(x => x.Name, StringComparer.CurrentCultureIgnoreCase))
@@ -690,14 +691,91 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return RedirectToAction("StatusIcons", new { kind, typeId });
 		}
 
-		// Unit and call types are department configuration (the Types pages need Department_Update); roles need Role_Update,
-		// as on the role pages. POI types have no status or priority.
+		/// <summary>
+		/// The department's station icon (every station without one of its own) and each station's own icon, with an upload
+		/// and a remove per row. Department configuration, like the unit and call type icons.
+		/// </summary>
+		[HttpGet]
+		public async Task<IActionResult> StationIcons()
+		{
+			if (!CanEditStatusIcons(TypeIconKinds.Station))
+				return Unauthorized();
+
+			var resolver = await _mapIconsService.GetResolverAsync(DepartmentId);
+			var departmentKey = resolver.DepartmentStationIconKey;
+			var model = new StationIconsView
+			{
+				DepartmentIcon = MapLegendIcon.From(resolver.ForStation(null)),
+				DepartmentUploadedUrl = TypeIcons.WebIconUrl(departmentKey),
+				Message = TempData["StationIconMessage"] as string,
+				ErrorMessage = TempData["StationIconError"] as string
+			};
+
+			foreach (var station in (await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId) ?? new List<DepartmentGroup>())
+				.OrderBy(x => x.Name, StringComparer.CurrentCultureIgnoreCase))
+			{
+				model.Stations.Add(new StationIconRow
+				{
+					GroupId = station.DepartmentGroupId,
+					Name = station.Name,
+					Icon = MapLegendIcon.From(resolver.ForStation(station.DepartmentGroupId)),
+					UploadedUrl = TypeIcons.WebIconUrl(resolver.StationIconKey(station.DepartmentGroupId))
+				});
+			}
+
+			return View(model);
+		}
+
+		/// <summary>Uploads a station's own icon, or with groupId 0 the department's icon for every station.</summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> UploadStationIcon(int groupId, IFormFile iconFile, CancellationToken cancellationToken)
+		{
+			if (!CanEditStatusIcons(TypeIconKinds.Station))
+				return Unauthorized();
+
+			var iconData = await ReadIconUploadAsync(iconFile, cancellationToken);
+
+			if (!ModelState.IsValid)
+				TempData["StationIconError"] = ModelState[IconFileField]?.Errors.FirstOrDefault()?.ErrorMessage;
+			else if (iconData == null)
+				TempData["StationIconError"] = TypeIconUploads.RejectionMessage(_iconLocalizer, TypeIconRejections.Required);
+			// Null when groupId is not a station group of this department.
+			else if (await _typeIconsService.UploadIconAsync(DepartmentId, TypeIconKinds.Station, groupId, UserId, iconData, cancellationToken) == null)
+				return NotFound();
+			else
+				TempData["StationIconMessage"] = _legendLocalizer["IconSaved"].Value;
+
+			return RedirectToAction("StationIcons");
+		}
+
+		/// <summary>Removes a station's own icon, or with groupId 0 the department's station icon.</summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> RemoveStationIcon(int groupId, CancellationToken cancellationToken)
+		{
+			if (!CanEditStatusIcons(TypeIconKinds.Station))
+				return Unauthorized();
+
+			if (groupId != TypeIcons.DepartmentStationTypeId &&
+				!(await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId) ?? new List<DepartmentGroup>()).Any(x => x.DepartmentGroupId == groupId))
+				return NotFound();
+
+			await _typeIconsService.RemoveIconAsync(DepartmentId, TypeIconKinds.Station, groupId, cancellationToken);
+
+			TempData["StationIconMessage"] = _legendLocalizer["IconRemoved"].Value;
+			return RedirectToAction("StationIcons");
+		}
+
+		// Unit and call types and stations are department configuration (the Types pages need Department_Update); roles need
+		// Role_Update, as on the role pages. POI types have no status or priority.
 		private bool CanEditStatusIcons(TypeIconKinds kind)
 		{
 			switch (kind)
 			{
 				case TypeIconKinds.UnitType:
 				case TypeIconKinds.CallType:
+				case TypeIconKinds.Station:
 					return User.HasClaim(Resgrid.Providers.Claims.ResgridClaimTypes.Resources.Department, Resgrid.Providers.Claims.ResgridClaimTypes.Actions.Update);
 				case TypeIconKinds.PersonnelRole:
 					return User.HasClaim(Resgrid.Providers.Claims.ResgridClaimTypes.Resources.Role, Resgrid.Providers.Claims.ResgridClaimTypes.Actions.Update);

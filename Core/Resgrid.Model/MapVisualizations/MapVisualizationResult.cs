@@ -113,6 +113,12 @@ namespace Resgrid.Model
 		public double Latitude { get; set; }
 
 		public double Longitude { get; set; }
+
+		/// <summary>
+		/// The station's uploaded map icon on the web app (its own, else the department's station icon), or null for the
+		/// bundled Station.png.
+		/// </summary>
+		public string IconUrl { get; set; }
 	}
 
 	public sealed class MapVisualizationSummary

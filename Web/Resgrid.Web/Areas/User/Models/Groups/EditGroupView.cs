@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Resgrid.Model;
 using Resgrid.Model.Identity;
@@ -38,5 +39,17 @@ namespace Resgrid.Web.Areas.User.Models.Groups
 		public string PrinterName { get; set; }
 		public string PrinterId { get; set; }
 		public string PrinterApiKey { get; set; }
+
+		/// <summary>Optional new map icon for a station (read with TypeIconUploads, never bound onto the group).</summary>
+		public IFormFile IconFile { get; set; }
+
+		/// <summary>Removes the station's own map icon; it falls back to the department's station icon or Station.png.</summary>
+		public bool RemoveCustomIcon { get; set; }
+
+		/// <summary>The station's own uploaded map icon (root-relative), or null.</summary>
+		public string StationIconUrl { get; set; }
+
+		/// <summary>What the station shows without its own icon: the department's station icon, else Station.png.</summary>
+		public string DefaultStationIconUrl { get; set; }
 	}
 }

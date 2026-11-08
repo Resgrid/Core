@@ -188,4 +188,8 @@
   <data name="RoleOrderUnsaved" xml:space="preserve">
     <value>The order has changed. Save it to apply it.</value>
   </data>
+  <!-- Station map icon -->
+  <data name="StationIconHelp" xml:space="preserve">
+    <value>Shown on the map for this station instead of the icon for all stations.</value>
+  </data>
 </root>

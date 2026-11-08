@@ -1365,27 +1365,29 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return Json(result);
 		}
 
+		/// <summary>
+		/// The options of this department's status or staffing set with that id, or the standard list when the id is 0, not
+		/// this department's active set of that kind, or a set with no options left. The id comes from the page, so another
+		/// department's set is never read, and the picker is never empty.
+		/// </summary>
+		private async Task<List<CustomStateDetail>> GetActiveDetailsOrDefaultsAsync(int customStateId, CustomStateTypes type, Func<List<CustomStateDetail>> defaults)
+		{
+			var customStates = await _customStateService.GetActiveCustomStateForDepartmentAsync(DepartmentId, customStateId, type);
+			var activeDetails = customStates?.GetActiveDetails();
+
+			if (activeDetails != null && activeDetails.Any())
+				return activeDetails;
+
+			return defaults();
+		}
+
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Personnel_View)]
 		public async Task<IActionResult> GetPersonnelStatusHtmlForDropdownByStateId(int customStateId)
 		{
 			string buttonHtml = string.Empty;
 
-			CustomState customStates = null;
-			List<CustomStateDetail> activeDetails = null;
-
-			if (customStateId > 0)
-			{
-				customStates = await _customStateService.GetCustomSateByIdAsync(customStateId);
-
-				if (customStates != null)
-				{
-					activeDetails = customStates.GetActiveDetails();
-				}
-			}
-
-			if (activeDetails == null)
-				activeDetails = _customStateService.GetDefaultPersonStatuses();
+			var activeDetails = await GetActiveDetailsOrDefaultsAsync(customStateId, CustomStateTypes.Personnel, _customStateService.GetDefaultPersonStatuses);
 
 			StringBuilder sb = new StringBuilder();
 
@@ -1406,21 +1408,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			string buttonHtml = string.Empty;
 
-			CustomState customStates = null;
-			List<CustomStateDetail> activeDetails = null;
-
-			if (customStateId > 0)
-			{
-				customStates = await _customStateService.GetCustomSateByIdAsync(customStateId);
-
-				if (customStates != null)
-				{
-					activeDetails = customStates.GetActiveDetails();
-				}
-			}
-
-			if (activeDetails == null)
-				activeDetails = _customStateService.GetDefaultPersonStaffings();
+			var activeDetails = await GetActiveDetailsOrDefaultsAsync(customStateId, CustomStateTypes.Staffing, _customStateService.GetDefaultPersonStaffings);
 
 			StringBuilder sb = new StringBuilder();
 
@@ -1441,21 +1429,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			string buttonHtml = string.Empty;
 
-			CustomState customStates = null;
-			List<CustomStateDetail> activeDetails = null;
-
-			if (customStateId > 0)
-			{
-				customStates = await _customStateService.GetCustomSateByIdAsync(customStateId);
-
-				if (customStates != null)
-				{
-					activeDetails = customStates.GetActiveDetails();
-				}
-			}
-
-			if (activeDetails == null)
-				activeDetails = _customStateService.GetDefaultPersonStatuses();
+			var activeDetails = await GetActiveDetailsOrDefaultsAsync(customStateId, CustomStateTypes.Personnel, _customStateService.GetDefaultPersonStatuses);
 
 			var state = activeDetails.FirstOrDefault(x => x.CustomStateDetailId == customStatusDetailId);
 			// Group-scoped dispatch (off by default): only offer calls in the viewer's area or that they are on.

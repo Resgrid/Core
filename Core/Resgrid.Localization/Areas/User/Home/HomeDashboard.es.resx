@@ -465,6 +465,9 @@
   <data name="Dash.DepartmentCodeMeta" xml:space="preserve">
     <value>Código {0}</value>
   </data>
+  <data name="Dash.DepartmentIdMeta" xml:space="preserve">
+    <value>ID {0}</value>
+  </data>
   <data name="Dash.DepartmentTime" xml:space="preserve">
     <value>Hora del departamento</value>
   </data>

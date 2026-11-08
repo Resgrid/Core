@@ -272,4 +272,32 @@
   <data name="KeyOnUnit" xml:space="preserve">
     <value>Παίρνει το χρώμα της κατάστασης της μονάδας του</value>
   </data>
+  <!-- Station map icons -->
+  <data name="StationIcons" xml:space="preserve">
+    <value>Εικονίδια σταθμών</value>
+  </data>
+  <data name="StationIconsHelp" xml:space="preserve">
+    <value>Ένα εικονίδιο χάρτη για όλους τους σταθμούς και το δικό του εικονίδιο για κάθε σταθμό, σε ένα σημείο.</value>
+  </data>
+  <data name="StationIconsTitle" xml:space="preserve">
+    <value>Εικονίδια σταθμών στον χάρτη</value>
+  </data>
+  <data name="StationIconsIntro" xml:space="preserve">
+    <value>Ανεβάστε ένα εικονίδιο για όλους τους σταθμούς και δώστε σε έναν σταθμό δικό του εικονίδιο όταν πρέπει να ξεχωρίζει. Πρώτα ισχύει το δικό του εικονίδιο του σταθμού, μετά το εικονίδιο όλων των σταθμών και μετά η ενσωματωμένη πινέζα σταθμού. Τα εικονίδια σταθμών δεν αλλάζουν με την κατάσταση.</value>
+  </data>
+  <data name="AllStations" xml:space="preserve">
+    <value>Όλοι οι σταθμοί</value>
+  </data>
+  <data name="AllStationsHelp" xml:space="preserve">
+    <value>Κάθε σταθμός χωρίς δικό του εικονίδιο.</value>
+  </data>
+  <data name="StationColumn" xml:space="preserve">
+    <value>Σταθμός</value>
+  </data>
+  <data name="OnMapColumn" xml:space="preserve">
+    <value>Στον χάρτη</value>
+  </data>
+  <data name="NoStations" xml:space="preserve">
+    <value>Δεν υπάρχουν ακόμη ομάδες σταθμών. Προσθέστε μια ομάδα σταθμού για να εμφανιστεί στον χάρτη.</value>
+  </data>
 </root>

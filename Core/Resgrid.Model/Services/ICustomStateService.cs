@@ -14,6 +14,11 @@ namespace Resgrid.Model.Services
 		/// <returns>Task&lt;CustomState&gt;.</returns>
 		Task<CustomState> GetCustomSateByIdAsync(int customStateId);
 		/// <summary>
+		/// The department's own, undeleted status set of the given kind with that id; null for 0, an unknown id, another
+		/// department's set, a deleted set or a set of another kind. Use it for any set id that came from a request.
+		/// </summary>
+		Task<CustomState> GetActiveCustomStateForDepartmentAsync(int departmentId, int customStateId, CustomStateTypes type);
+		/// <summary>
 		/// Gets all active custom states for department asynchronous.
 		/// </summary>
 		/// <param name="departmentId">The department identifier.</param>

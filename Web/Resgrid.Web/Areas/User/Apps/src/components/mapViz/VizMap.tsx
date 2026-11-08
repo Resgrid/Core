@@ -217,7 +217,11 @@ export default function VizMap(props: VizMapProps) {
       });
 
       if (options.ShowStations) {
-        L.marker([station.Latitude, station.Longitude], { icon: STATION_ICON, pane: 'rg-viz-stations', keyboard: false })
+        // The station's uploaded icon (square, like the map draws it), else the bundled station pin.
+        const icon = station.IconUrl
+          ? L.icon({ iconUrl: station.IconUrl, iconSize: [32, 32], iconAnchor: [16, 32] })
+          : STATION_ICON;
+        L.marker([station.Latitude, station.Longitude], { icon, pane: 'rg-viz-stations', keyboard: false })
           .bindTooltip(`${escapeHtml(props.stationLabel)}: ${escapeHtml(station.Name ?? '')}`)
           .addTo(group);
       }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
 using Resgrid.Framework;
@@ -28,6 +29,35 @@ namespace Resgrid.Repositories.DataRepository
 			_sqlConfiguration = sqlConfiguration;
 			_queryFactory = queryFactory;
 			_unitOfWork = unitOfWork;
+		}
+
+		public async Task<int> RenameUnitTypeForDepartmentAsync(int departmentId, string oldType, string newType, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			if (departmentId <= 0 || string.IsNullOrWhiteSpace(oldType) || string.IsNullOrWhiteSpace(newType))
+				return 0;
+
+			// A targeted update rather than unit saves: a unit save cascades its Roles collection. Units.Type is citext on
+			// PostgreSQL, so the parameter is cast to keep the match case-insensitive there too (a bare text parameter
+			// compares case-sensitively and skips the index); SQL Server's default collation already ignores case.
+			var oldTypeParameter = IsPostgres ? $"{P}OldType::citext" : $"{P}OldType";
+
+			Task<int> Write() => ExecuteAsync(
+				$"UPDATE {Tbl("Units")} SET {Col("Type")} = {P}NewType WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("Type")} = {oldTypeParameter}",
+				new { DepartmentId = departmentId, OldType = oldType, NewType = newType }, cancellationToken);
+
+			if (!HasConfigurationJournal)
+				return await Write();
+
+			async Task<Resgrid.Model.AdminAssist.ConfigurationChangeStamp> Read()
+			{
+				var rows = await QueryAsync<Unit>(
+					$"SELECT {Col("UnitId")}, {Col("Type")} FROM {Tbl("Units")} WHERE {Col("DepartmentId")} = {P}DepartmentId",
+					new { DepartmentId = departmentId }, cancellationToken);
+				var value = Newtonsoft.Json.JsonConvert.SerializeObject(rows.OrderBy(r => r.UnitId).Select(r => new object[] { r.UnitId, r.Type }));
+				return new(Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(value))), value);
+			}
+
+			return await ExecuteConfigurationMutationAsync(departmentId, "Units.Type", Read, Write, cancellationToken);
 		}
 
 		public async Task<Unit> GetUnitByNameDepartmentIdAsync(int departmentId, string name)

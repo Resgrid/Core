@@ -272,4 +272,32 @@
   <data name="KeyOnUnit" xml:space="preserve">
     <value>Набуває кольору статусу свого підрозділу</value>
   </data>
+  <!-- Station map icons -->
+  <data name="StationIcons" xml:space="preserve">
+    <value>Значки станцій</value>
+  </data>
+  <data name="StationIconsHelp" xml:space="preserve">
+    <value>Один значок карти для всіх станцій і власний значок кожної станції в одному місці.</value>
+  </data>
+  <data name="StationIconsTitle" xml:space="preserve">
+    <value>Значки станцій на карті</value>
+  </data>
+  <data name="StationIconsIntro" xml:space="preserve">
+    <value>Завантажте один значок для всіх станцій і задайте станції власний значок, якщо вона має виглядати інакше. Спершу діє власний значок станції, потім значок для всіх станцій, потім вбудована позначка станції. Значки станцій не змінюються залежно від статусу.</value>
+  </data>
+  <data name="AllStations" xml:space="preserve">
+    <value>Усі станції</value>
+  </data>
+  <data name="AllStationsHelp" xml:space="preserve">
+    <value>Кожна станція без власного значка.</value>
+  </data>
+  <data name="StationColumn" xml:space="preserve">
+    <value>Станція</value>
+  </data>
+  <data name="OnMapColumn" xml:space="preserve">
+    <value>На карті</value>
+  </data>
+  <data name="NoStations" xml:space="preserve">
+    <value>Груп станцій ще немає. Додайте групу станції, щоб показати її на карті.</value>
+  </data>
 </root>

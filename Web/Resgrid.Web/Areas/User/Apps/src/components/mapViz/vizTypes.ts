@@ -137,6 +137,8 @@ export interface VizStation {
   Name: string;
   Latitude: number;
   Longitude: number;
+  /** The station's uploaded map icon (its own, else the department's station icon); null for the bundled Station.png. */
+  IconUrl?: string | null;
 }
 
 export interface VizSummary {

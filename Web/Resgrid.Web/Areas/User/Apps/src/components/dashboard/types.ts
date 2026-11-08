@@ -93,6 +93,7 @@ export interface CategoryInfo {
 
 export interface HeaderInfo {
   FirstName?: string | null;
+  DepartmentId?: number;
   DepartmentName?: string | null;
   DepartmentCode?: string | null;
   /** IANA zone for Intl. */

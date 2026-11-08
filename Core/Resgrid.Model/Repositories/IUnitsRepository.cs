@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Resgrid.Model.Repositories
@@ -53,5 +54,13 @@ namespace Resgrid.Model.Repositories
 		/// <param name="departmentId">The department identifier.</param>
 		/// <returns>Task&lt;IEnumerable&lt;Unit&gt;&gt;.</returns>
 		Task<IEnumerable<Unit>> GetAllUnitsByDepartmentIdIncludingDeletedAsync(int departmentId);
+
+		/// <summary>
+		/// Moves every unit of the department (soft-deleted ones included) from one unit type name to another with a targeted
+		/// UPDATE. Units name their type rather than point at it, so a unit type rename has to carry them along. The old
+		/// name matches the way the Units page matches it, ignoring case.
+		/// </summary>
+		/// <returns>The number of units moved.</returns>
+		Task<int> RenameUnitTypeForDepartmentAsync(int departmentId, string oldType, string newType, CancellationToken cancellationToken = default(CancellationToken));
 	}
 }

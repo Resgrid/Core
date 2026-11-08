@@ -488,6 +488,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return new DashboardHeaderResult
 			{
 				FirstName = profile?.FirstName ?? ClaimsAuthorizationHelper.GetFullName(),
+				DepartmentId = DepartmentId,
 				DepartmentName = department?.Name,
 				DepartmentCode = department?.Code,
 				TimeZone = timeZone,

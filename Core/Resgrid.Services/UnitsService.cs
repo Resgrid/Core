@@ -8,6 +8,7 @@ using Resgrid.Model;
 using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Repositories.Queries;
 using Resgrid.Model.Search;
 using Resgrid.Model.Services;
 
@@ -54,6 +55,9 @@ namespace Resgrid.Services
 		private readonly Lazy<IOutstandingRequirementsService> _outstandingRequirementsService;
 		private readonly IUnitNavigationStateService _unitNavigationStateService;
 
+		// A unit type rename and the move of its units commit as one transaction.
+		private readonly IUnitOfWork _unitOfWork;
+
 		public UnitsService(IUnitsRepository unitsRepository, IUnitStatesRepository unitStatesRepository,
 			IUnitLogsRepository unitLogsRepository, IUnitTypesRepository unitTypesRepository, ISubscriptionsService subscriptionsService,
 			IUnitRolesRepository unitRolesRepository, IUnitStateRoleRepository unitStateRoleRepository, IUserStateService userStateService,
@@ -66,8 +70,9 @@ namespace Resgrid.Services
 			Lazy<ICallAutoCloseService> callAutoCloseService = null, INovuProvider novuProvider = null,
 			Lazy<IDepartmentsService> departmentsService = null, ITypeIconsRepository typeIconsRepository = null,
 			Lazy<IOutstandingRequirementsService> outstandingRequirementsService = null,
-			IUnitNavigationStateService unitNavigationStateService = null)
+			IUnitNavigationStateService unitNavigationStateService = null, IUnitOfWork unitOfWork = null)
 		{
+			_unitOfWork = unitOfWork;
 			_unitNavigationStateService = unitNavigationStateService;
 			_outstandingRequirementsService = outstandingRequirementsService;
 			_callAutoCloseService = callAutoCloseService;
@@ -467,13 +472,50 @@ namespace Resgrid.Services
 			if (unitType != null && unitType.UnitTypeId > 0)
 				stored = await _unitTypesRepository.GetByIdAsync(unitType.UnitTypeId);
 
-			var saved = await _unitTypesRepository.SaveOrUpdateAsync(unitType, cancellationToken);
-
-			if (saved != null && stored != null && stored.DepartmentId == unitType.DepartmentId
+			var renamed = stored != null && stored.DepartmentId == unitType.DepartmentId
 				&& !String.IsNullOrWhiteSpace(stored.Type) && !String.IsNullOrWhiteSpace(unitType.Type)
-				&& !String.Equals(stored.Type, unitType.Type, StringComparison.Ordinal))
+				&& !String.Equals(stored.Type, unitType.Type, StringComparison.Ordinal);
+
+			if (!renamed)
+				return await _unitTypesRepository.SaveOrUpdateAsync(unitType, cancellationToken);
+
+			// The new name and the units' move commit together. Were the type saved alone and the move then failed, the units
+			// would keep a name no type has, and a retried save would see no rename left to carry them. Joins a transaction the
+			// caller already holds (an import commit) rather than committing it early.
+			var owns = _unitOfWork != null && _unitOfWork.Transaction == null;
+			if (_unitOfWork != null)
+				await _unitOfWork.CreateOrGetConnectionAsync(cancellationToken);
+
+			UnitType saved;
+			int moved = 0;
+			try
 			{
-				await MoveUnitsToRenamedTypeAsync(unitType.DepartmentId, unitType.UnitTypeId, stored.Type, unitType.Type, cancellationToken);
+				saved = await _unitTypesRepository.SaveOrUpdateAsync(unitType, cancellationToken);
+
+				if (saved != null)
+					moved = await MoveUnitsToRenamedTypeAsync(unitType.DepartmentId, unitType.UnitTypeId, stored.Type, unitType.Type, cancellationToken);
+
+				if (owns)
+					_unitOfWork.CommitChanges();
+			}
+			catch
+			{
+				if (owns)
+					_unitOfWork.DiscardChanges();
+				throw;
+			}
+
+			if (moved > 0)
+			{
+				// The apps cache the unit list with each unit's type, and unit search shows the type.
+				_eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent() { DepartmentId = unitType.DepartmentId });
+
+				if (_searchProjections != null)
+				{
+					var units = await _unitsRepository.GetAllUnitsForTypeAsync(unitType.DepartmentId, unitType.Type);
+					foreach (var unit in units ?? Enumerable.Empty<Unit>())
+						await _searchProjections.Value.ProjectUnitAsync(unit, cancellationToken);
+				}
 			}
 
 			return saved;
@@ -483,25 +525,14 @@ namespace Resgrid.Services
 		/// Moves the department's units from a unit type's old name to its new one. Skipped when another of the department's
 		/// types still answers to the old name (names match ignoring case), since those units may be that type's.
 		/// </summary>
-		private async Task MoveUnitsToRenamedTypeAsync(int departmentId, int unitTypeId, string oldType, string newType, CancellationToken cancellationToken)
+		/// <returns>The number of units moved.</returns>
+		private async Task<int> MoveUnitsToRenamedTypeAsync(int departmentId, int unitTypeId, string oldType, string newType, CancellationToken cancellationToken)
 		{
 			var otherTypes = await _unitTypesRepository.GetAllByDepartmentIdAsync(departmentId);
 			if (otherTypes != null && otherTypes.Any(x => x.UnitTypeId != unitTypeId && String.Equals(x.Type, oldType, StringComparison.OrdinalIgnoreCase)))
-				return;
+				return 0;
 
-			var moved = await _unitsRepository.RenameUnitTypeForDepartmentAsync(departmentId, oldType, newType, cancellationToken);
-			if (moved <= 0)
-				return;
-
-			// The apps cache the unit list with each unit's type, and unit search shows the type.
-			_eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent() { DepartmentId = departmentId });
-
-			if (_searchProjections != null)
-			{
-				var units = await _unitsRepository.GetAllUnitsForTypeAsync(departmentId, newType);
-				foreach (var unit in units ?? Enumerable.Empty<Unit>())
-					await _searchProjections.Value.ProjectUnitAsync(unit, cancellationToken);
-			}
+			return await _unitsRepository.RenameUnitTypeForDepartmentAsync(departmentId, oldType, newType, cancellationToken);
 		}
 
 		public async Task<bool> DeleteUnitTypeAsync(int unitTypeId, CancellationToken cancellationToken = default(CancellationToken))

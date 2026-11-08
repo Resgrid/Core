@@ -903,8 +903,19 @@ namespace Resgrid.Services
 			var stations = new List<MapVisualizationStation>();
 
 			// The same station icon as the map: the station's own upload, else the department's station icon, else Station.png.
-			var icons = new MapIconResolver(departmentId, null, null, null, null, null, null,
-				stationIcons: await _typeIconsService.GetStationIconsAsync(departmentId) ?? new List<TypeIconVariant>());
+			// Icons only dress the pins, so a failed read falls back to Station.png rather than failing the visualization.
+			List<TypeIconVariant> stationIcons;
+			try
+			{
+				stationIcons = await _typeIconsService.GetStationIconsAsync(departmentId) ?? new List<TypeIconVariant>();
+			}
+			catch (Exception ex) when (ex is not OperationCanceledException)
+			{
+				Logging.LogException(ex, "Map visualization: station icons unavailable");
+				stationIcons = new List<TypeIconVariant>();
+			}
+
+			var icons = new MapIconResolver(departmentId, null, null, null, null, null, null, stationIcons: stationIcons);
 
 			foreach (var group in groups.Where(g => g != null && g.Type == (int)DepartmentGroupTypes.Station))
 			{

@@ -31,6 +31,8 @@ namespace Resgrid.Tests.Services
 		private Mock<IUnitsRepository> _units;
 		private Mock<IEventAggregator> _events;
 		private Mock<ISearchProjectionService> _projections;
+		private Mock<IUnitOfWork> _unitOfWork;
+		private List<string> _steps;
 		private List<UnitType> _departmentTypes;
 		private UnitsService _service;
 
@@ -60,6 +62,11 @@ namespace Resgrid.Tests.Services
 
 			_events = new Mock<IEventAggregator>();
 			_projections = new Mock<ISearchProjectionService>();
+			_unitOfWork = new Mock<IUnitOfWork>();
+			_steps = new List<string>();
+			_unitOfWork.Setup(x => x.CommitChanges()).Callback(() => _steps.Add("commit"));
+			_unitOfWork.Setup(x => x.DiscardChanges()).Callback(() => _steps.Add("discard"));
+			_events.Setup(x => x.SendMessage(It.IsAny<DepartmentSettingsUpdateEvent>())).Callback(() => _steps.Add("event"));
 
 			_service = new UnitsService(_units.Object, Mock.Of<IUnitStatesRepository>(), Mock.Of<IUnitLogsRepository>(),
 				_types.Object, Mock.Of<ISubscriptionsService>(), Mock.Of<IUnitRolesRepository>(),
@@ -69,7 +76,7 @@ namespace Resgrid.Tests.Services
 				Mock.Of<IUnitActiveRolesRepository>(), Mock.Of<IDepartmentGroupsService>(), Mock.Of<ILimitsService>(), Mock.Of<IPersonnelRolesService>(),
 				new Lazy<IProtectedWriteService>(() => Mock.Of<IProtectedWriteService>()),
 				new Lazy<IRecordsCutoverService>(() => Mock.Of<IRecordsCutoverService>()), Mock.Of<ICallStatusAttributionService>(),
-				searchProjections: new Lazy<ISearchProjectionService>(() => _projections.Object));
+				searchProjections: new Lazy<ISearchProjectionService>(() => _projections.Object), unitOfWork: _unitOfWork.Object);
 		}
 
 		private static UnitType Copy(UnitType type) => type == null ? null : new UnitType
@@ -174,6 +181,63 @@ namespace Resgrid.Tests.Services
 
 			_events.Verify(x => x.SendMessage(It.IsAny<DepartmentSettingsUpdateEvent>()), Times.Never);
 			_projections.Verify(x => x.ProjectUnitAsync(It.IsAny<Unit>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public async Task the_renamed_type_and_its_units_commit_together_before_the_refresh()
+		{
+			await SaveRenamed(MugTypeId, "MUG 112");
+
+			_unitOfWork.Verify(x => x.CreateOrGetConnectionAsync(It.IsAny<CancellationToken>()), Times.Once);
+			_steps.Should().Equal(new[] { "commit", "event" }, "the apps and search are told only once the rename is stored");
+		}
+
+		[Test]
+		public async Task a_failed_unit_move_rolls_the_type_rename_back()
+		{
+			// Committing the type alone would leave the units under a name no type has, and a retried save would see no
+			// rename left to carry them.
+			_units.Setup(x => x.RenameUnitTypeForDepartmentAsync(Dept, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+				.ThrowsAsync(new InvalidOperationException("database unavailable"));
+
+			Func<Task> save = () => SaveRenamed(MugTypeId, "MUG 112");
+
+			await save.Should().ThrowAsync<InvalidOperationException>();
+			_steps.Should().Equal(new[] { "discard" }, "nothing is committed and nobody is told of a rename that did not happen");
+			_projections.Verify(x => x.ProjectUnitAsync(It.IsAny<Unit>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public async Task a_rename_inside_a_callers_transaction_leaves_commit_and_rollback_to_the_caller()
+		{
+			// An import commit holds one transaction over all of its writes; committing it here would end it early.
+			_unitOfWork.SetupGet(x => x.Transaction).Returns(new Mock<System.Data.Common.DbTransaction>().Object);
+
+			await SaveRenamed(MugTypeId, "MUG 112");
+
+			_unitOfWork.Verify(x => x.CommitChanges(), Times.Never);
+
+			_units.Setup(x => x.RenameUnitTypeForDepartmentAsync(Dept, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+				.ThrowsAsync(new InvalidOperationException("database unavailable"));
+			_departmentTypes[0].Type = "MUG 112";
+
+			Func<Task> save = () => SaveRenamed(MugTypeId, "MUG 113");
+
+			await save.Should().ThrowAsync<InvalidOperationException>();
+			_unitOfWork.Verify(x => x.DiscardChanges(), Times.Never);
+		}
+
+		[Test]
+		public async Task a_save_without_a_rename_opens_no_transaction()
+		{
+			var type = await _service.GetUnitTypeByIdAsync(MugTypeId);
+			type.CustomStatesId = 4540;
+
+			await _service.SaveUnitTypeAsync(type, CancellationToken.None);
+
+			_unitOfWork.Verify(x => x.CreateOrGetConnectionAsync(It.IsAny<CancellationToken>()), Times.Never);
+			_unitOfWork.Verify(x => x.CreateOrGetConnection(), Times.Never);
+			_types.Verify(x => x.SaveOrUpdateAsync(type, It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Once);
 		}
 	}
 }

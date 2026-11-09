@@ -492,9 +492,16 @@ Default: No permission row: every active member counts as a dispatcher; no group
 <a id="permission-commandapplogin"></a>
 ## Command App Login
 
-Command App Login. Decides who can use the Incident Command app and read command boards: every board, accountability, needs, timeline, map, role, voice and resource read, the apps' offline sync of boards, and the chatbot's incident answers. With no saved rule every active member may. When you save a narrower rule, the people it allows also get command-assist capabilities on any board. Establishing command and editing boards still need department administrator command rights.
+Command App Login. Decides who can run incident command: sign in to the Incident Command app, establish or reopen command, and work the boards where they hold incident capabilities (the incident commander and whoever established command hold all of them; assigned ICS roles grant parts). With no saved rule every active member may. When you save a narrower rule, the people it allows also get command-assist capabilities on any board. Who reads boards is View Command Boards, which follows this rule until it has its own.
 
-Default: No permission row: every active member may use incident command; no group lock. Command assist is only granted when a rule other than Everyone is saved. Source: PermissionTypes.CommandAppLogin.
+Default: No permission row: every active member may run incident command; no group lock. Command assist is only granted when a rule other than Everyone is saved. Source: PermissionTypes.CommandAppLogin.
+
+<a id="permission-viewcommandboards"></a>
+## View Command Boards
+
+View Command Boards. Decides who can read every command board: the board, accountability, needs, timeline, map, roles, voice, resources and reports, the apps' offline sync of boards, the active commands list and dashboard widget, and the chatbot's incident answers. Members on an incident always read that incident's board: command staff, lane leads, members dispatched to the call directly or through their group, a personnel role or a unit they crew, and resources placed on the board. With no saved rule it follows Command App Login, and with neither rule every active member may.
+
+Default: No permission row: the Command App Login row decides; with neither row every active member may read every board; no group lock. Members on an incident always read that incident's board. Source: PermissionTypes.ViewCommandBoards.
 
 <a id="permission-managedepartmentdataprotection"></a>
 ## Manage Department Data Protection

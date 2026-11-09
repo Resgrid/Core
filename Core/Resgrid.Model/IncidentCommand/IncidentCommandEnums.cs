@@ -180,4 +180,26 @@ namespace Resgrid.Model
 		/// <summary>The incident map's saved view (center/zoom) was created or changed.</summary>
 		MapViewUpdated = 38
 	}
+
+	/// <summary>
+	/// The incident-command rows an endpoint can name by id alone. Used to find the incident (call) a request acts on so
+	/// its per-incident access can be checked (<c>IIncidentCommandService.ResolveCallIdForEntityAsync</c>). Not persisted.
+	/// </summary>
+	public enum IncidentEntityKind
+	{
+		None = 0,
+		IncidentCommand = 1,
+		CommandStructureNode = 2,
+		ResourceAssignment = 3,
+		IncidentNote = 4,
+		IncidentAttachment = 5,
+		TacticalObjective = 6,
+		IncidentNeed = 7,
+		IncidentTimer = 8,
+		IncidentMapAnnotation = 9,
+		IncidentMap = 10,
+		IncidentRoleAssignment = 11,
+		IncidentAdHocUnit = 12,
+		IncidentAdHocPersonnel = 13
+	}
 }

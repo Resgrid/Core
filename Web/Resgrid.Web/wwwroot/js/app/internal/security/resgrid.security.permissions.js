@@ -888,6 +888,34 @@ var resgrid;
                 initPermRoles("#commandAppLoginRoles", 30);
                 ////////////////////////////////////////////////////////
 
+                // View Command Boards
+                ////////////////////////////////////////////////////////
+                $('#ViewCommandBoards').change(function () {
+                    var val = this.value;
+                    $.ajax({
+                        url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=125&perm=' + val,
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
+                    }).done(function (results) {
+                    });
+                    if ($("#ViewCommandBoards").val() === "2") {
+                        $('#viewCommandBoardsNoRolesSpan').hide();
+                        $('#viewCommandBoardsRolesDiv').show();
+                    } else {
+                        $('#viewCommandBoardsNoRolesSpan').show();
+                        $('#viewCommandBoardsRolesDiv').hide();
+                    }
+                });
+                if ($("#ViewCommandBoards").val() === "2") {
+                    $('#viewCommandBoardsNoRolesSpan').hide();
+                    $('#viewCommandBoardsRolesDiv').show();
+                } else {
+                    $('#viewCommandBoardsNoRolesSpan').show();
+                    $('#viewCommandBoardsRolesDiv').hide();
+                }
+                initPermRoles("#viewCommandBoardsRoles", 125);
+                ////////////////////////////////////////////////////////
+
                 // Advanced Data Protection permissions: only 32 and 38 are on the screen (31, 33-37 and 39 are enforced nowhere)
                 ////////////////////////////////////////////////////////
                 var adpPermissions = [

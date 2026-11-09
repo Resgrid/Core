@@ -106,6 +106,8 @@ namespace Resgrid.Web.Areas.User.Models.Security
 			new PermissionScreenEntry(PermissionTypes.UseCalendarSync, EveryoneFirst, Everyone),
 			new PermissionScreenEntry(PermissionTypes.DispatchAppLogin, EveryoneFirst, Everyone),
 			new PermissionScreenEntry(PermissionTypes.CommandAppLogin, EveryoneFirst, Everyone),
+			// No row of its own follows the Command App Login row (CommandAccessService), shown through EffectiveRow.
+			new PermissionScreenEntry(PermissionTypes.ViewCommandBoards, EveryoneFirst, Everyone),
 			// Advanced Data Protection: only the two values a runtime check reads. View Protected Call Data gates SMS/voice
 			// PIN release (AdpReleaseService); egress never offers Everyone (ProtectedWorkflowService). Manage (31), the
 			// edit/personnel/contact/operational/export values (33-37) and break-glass (39) are not on this screen: nothing
@@ -144,6 +146,8 @@ namespace Resgrid.Web.Areas.User.Models.Security
 			var row = rows.FirstOrDefault(p => p.PermissionType == (int)type);
 			if (row == null && type is PermissionTypes.TransferInventory or PermissionTypes.IssueInventory)
 				row = rows.FirstOrDefault(p => p.PermissionType == (int)PermissionTypes.AdjustInventory);
+			if (row == null && type == PermissionTypes.ViewCommandBoards)
+				row = rows.FirstOrDefault(p => p.PermissionType == (int)PermissionTypes.CommandAppLogin);
 
 			return row;
 		}

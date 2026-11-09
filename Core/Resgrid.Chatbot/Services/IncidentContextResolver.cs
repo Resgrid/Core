@@ -24,17 +24,14 @@ namespace Resgrid.Chatbot.Services
 		private readonly IIncidentResourcesService _incidentResourcesService;
 		private readonly IAuthorizationService _authorizationService;
 		private readonly IDispatchScopeService _dispatchScopeService;
-		private readonly ICommandAccessService _commandAccessService;
 
 		public IncidentContextResolver(
 			ICallsService callsService,
 			IIncidentCommandService incidentCommandService,
 			IIncidentResourcesService incidentResourcesService,
 			IAuthorizationService authorizationService,
-			IDispatchScopeService dispatchScopeService,
-			ICommandAccessService commandAccessService)
+			IDispatchScopeService dispatchScopeService)
 		{
-			_commandAccessService = commandAccessService;
 			_dispatchScopeService = dispatchScopeService;
 			_callsService = callsService;
 			_incidentCommandService = incidentCommandService;
@@ -51,14 +48,9 @@ namespace Resgrid.Chatbot.Services
 
 			var departmentId = session.DepartmentId;
 
-			// The board is the command surface, so the assistant reads it only for a member the department lets
-			// work command (CommandAppLogin), the same gate the v4 board reads apply.
-			if (!await _commandAccessService.CanUseCommandAsync(departmentId, session.UserId))
-			{
-				context.IsUnauthorized = true;
-				return context;
-			}
-
+			// The board is the command surface: the assistant reads an incident's board only for a member who may read it
+			// (IIncidentCommandService.CanViewBoardAsync, the gate the v4 board reads apply). LoadAsync checks it for every
+			// incident, and the candidate list below only names incidents the member may read.
 			// 1. An explicit reference in the question always wins ("PAR for 26-1", "status of c1445").
 			//    CallReferenceResolver enforces department scoping, so a foreign call reads as not-found.
 			var reference = GetParameter(intent, "callRef") ?? GetParameter(intent, "callId");
@@ -114,7 +106,8 @@ namespace Resgrid.Chatbot.Services
 				if (call == null || call.DepartmentId != departmentId)
 					continue;
 
-				if (await _authorizationService.CanUserViewCallAsync(session.UserId, call.CallId))
+				if (await _authorizationService.CanUserViewCallAsync(session.UserId, call.CallId)
+					&& await _incidentCommandService.CanViewBoardAsync(departmentId, call.CallId, session.UserId))
 					context.Candidates.Add(call);
 			}
 
@@ -143,7 +136,8 @@ namespace Resgrid.Chatbot.Services
 
 		private async Task<IncidentContext> LoadAsync(IncidentContext context, Resgrid.Model.Call call, ChatbotSession session, bool includeAdHocResources)
 		{
-			if (!await _authorizationService.CanUserViewCallAsync(session.UserId, call.CallId))
+			if (!await _authorizationService.CanUserViewCallAsync(session.UserId, call.CallId)
+				|| !await _incidentCommandService.CanViewBoardAsync(session.DepartmentId, call.CallId, session.UserId))
 			{
 				context.IsUnauthorized = true;
 				return context;

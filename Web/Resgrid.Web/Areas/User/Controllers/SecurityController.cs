@@ -202,6 +202,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.CommandAppLogin = Value(PermissionTypes.CommandAppLogin);
 			model.CommandAppLoginPermissions = Options(PermissionTypes.CommandAppLogin);
 
+			// Reading boards: with no row of its own it shows (and applies) the Command App Login row.
+			model.ViewCommandBoards = Value(PermissionTypes.ViewCommandBoards);
+			model.ViewCommandBoardsPermissions = Options(PermissionTypes.ViewCommandBoards);
+
 			// ── Advanced Data Protection (ADP) permissions ─────────────────────────────
 			// Missing rows resolve through AdpPermissionDefaults, NOT the wide-open no-row convention — the
 			// preselected value here is exactly what enforcement uses. Only the two values a runtime check reads are
@@ -476,14 +480,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		/// <summary>
 		/// The row the screen shows for a type: the department's own row or, for Transfer and Issue Inventory with no row
-		/// of their own, the Adjust Inventory row InventoryAuthorizationService falls back to.
+		/// of their own, the Adjust Inventory row InventoryAuthorizationService falls back to, and for View Command Boards
+		/// the Command App Login row CommandAccessService falls back to.
 		/// </summary>
 		private async Task<Permission> EffectiveRowAsync(PermissionTypes type, Permission own)
 		{
-			if (own != null || type is not (PermissionTypes.TransferInventory or PermissionTypes.IssueInventory))
+			if (own != null)
 				return own;
 
-			return await _permissionsService.GetPermissionByDepartmentTypeAsync(DepartmentId, PermissionTypes.AdjustInventory);
+			if (type is PermissionTypes.TransferInventory or PermissionTypes.IssueInventory)
+				return await _permissionsService.GetPermissionByDepartmentTypeAsync(DepartmentId, PermissionTypes.AdjustInventory);
+
+			if (type == PermissionTypes.ViewCommandBoards)
+				return await _permissionsService.GetPermissionByDepartmentTypeAsync(DepartmentId, PermissionTypes.CommandAppLogin);
+
+			return null;
 		}
 
 		/// <summary>

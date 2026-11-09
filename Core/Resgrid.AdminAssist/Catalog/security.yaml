@@ -1927,7 +1927,40 @@
       "DocumentationId": "permission.CommandAppLogin",
       "DefaultValue": "No permission row: every active member may use incident command; no group lock. Command assist is only granted when a rule other than Everyone is saved",
       "AllowedValues": "Actions 3, 0, 1, 2 and selected department role IDs for action 2; no group lock",
-      "EvidenceSource": "CommandAccessService.CanUseCommandAsync via PermissionGateServiceBase (IsUserAllowed); v4 RequiresIncidentCapability filter and per-action checks on every IncidentCommand, IncidentResources, IncidentRoles, IncidentVoice, IncidentReporting and MutualAid read; v4 Sync Changes/Bundle board payload; chatbot IncidentContextResolver; v4 rights CanLoginToCommandApp",
+      "EvidenceSource": "CommandAccessService.CanUseCommandAsync via PermissionGateServiceBase (IsUserAllowed); v4 EstablishCommand/ReopenCommand; v4 RequiresIncidentCapability filter on every IncidentCommand, IncidentResources, IncidentRoles and IncidentVoice board write (then the member's incident capabilities); IIncidentCommandService.GetEffectiveCapabilitiesAsync and v4 IncidentRoles/GetMyCapabilities; v4 rights CanLoginToCommandApp; the no-row default of ViewCommandBoards",
+      "Availability": "available"
+    },
+    {
+      "Id": "permission.ViewCommandBoards",
+      "AreaId": "security",
+      "LabelKey": "Permission.ViewCommandBoards",
+      "HelpKey": "PermissionHelp.ViewCommandBoards",
+      "Binding": "PermissionTypes.ViewCommandBoards",
+      "ValueType": "permission",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Security",
+        "Action": "Index",
+        "Field": "ViewCommandBoards"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-08T00:00:00Z",
+      "Impact": {
+        "Risk": "High",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.security",
+        "TimingKey": "Impact.PermissionTiming",
+        "ReversibilityKey": "Impact.PermissionReversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "permission.ViewCommandBoards",
+      "DefaultValue": "No permission row: the Command App Login row decides; with neither row every active member may read every board; no group lock. Members on an incident always read that incident's board",
+      "AllowedValues": "Actions 3, 0, 1, 2 and selected department role IDs for action 2; no group lock",
+      "EvidenceSource": "CommandAccessService.CanViewCommandBoardsAsync via PermissionGateServiceBase (IsUserAllowed, falling back to the CommandAppLogin row); IIncidentCommandService.CanViewBoardAsync (department-wide permission, incident participation, effective capabilities) on every IncidentCommand, IncidentResources, IncidentRoles, IncidentVoice and IncidentReporting read; v4 GetCommandList and Sync Changes/Bundle filtered to viewable incidents; MutualAid GetAssignableResources; dashboard incidentCommand.active widget; chatbot IncidentContextResolver; v4 rights CanViewCommandBoards",
       "Availability": "available"
     },
     {
@@ -7026,6 +7059,7 @@
         "permission.ViewAllWorkOrders",
         "permission.ViewCertifications",
         "permission.ViewChecklistResults",
+        "permission.ViewCommandBoards",
         "permission.ViewGroupRecords",
         "permission.ViewGroupUnits",
         "permission.ViewGroupUsers",

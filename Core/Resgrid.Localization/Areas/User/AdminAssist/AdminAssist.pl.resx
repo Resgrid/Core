@@ -3201,6 +3201,9 @@
   <data xml:space="preserve" name="Permission.CommandAppLogin">
     <value>Logowanie do aplikacji dowodzenia</value>
   </data>
+  <data xml:space="preserve" name="Permission.ViewCommandBoards">
+    <value>Wyświetlanie tablic dowodzenia</value>
+  </data>
   <data xml:space="preserve" name="Permission.ConfigureProtectedDataEgress">
     <value>Konfigurowanie wypływu danych chronionych</value>
   </data>
@@ -3442,7 +3445,10 @@
     <value>Umożliwia zamykanie i ponowne otwieranie zgłoszeń. Gdy pole Tylko grupa jest zaznaczone, zgłoszenie mogą zamknąć lub ponownie otworzyć tylko administratorzy działu i osoby, których grupę zadysponowano do tego zgłoszenia — także wtedy, gdy zasada to Wszyscy. W wersji internetowej, w aplikacjach i w chatbocie potrzebne są też uprawnienia do zgłoszeń wynikające z uprawnienia Tworzenie zgłoszeń. Bez zapisanej zasady każdy, kto widzi zgłoszenie, może je zamknąć.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CommandAppLogin">
-    <value>Określa, kto może korzystać z aplikacji Incident Command i odczytywać tablice dowodzenia: każdą tablicę oraz wszystkie odczyty ewidencji personelu, potrzeb, osi czasu, mapy, ról, łączności głosowej i zasobów, synchronizację tablic offline w aplikacjach i odpowiedzi chatbota dotyczące zdarzeń. Bez zapisanej zasady może to robić każdy aktywny członek. Gdy zapiszesz węższą zasadę, dopuszczone przez nią osoby otrzymują też możliwości wspierania dowodzenia na dowolnej tablicy. Objęcie dowodzenia i edytowanie tablic nadal wymagają uprawnień dowodzenia na poziomie administratora działu.</value>
+    <value>Określa, kto może prowadzić dowodzenie zdarzeniem: logować się do aplikacji Incident Command, obejmować lub ponownie otwierać dowodzenie i pracować na tablicach, na których ma uprawnienia (dowódca zdarzenia i osoba, która objęła dowodzenie, mają wszystkie; przypisane role ICS dają ich część). Bez zapisanej reguły może to każdy aktywny członek. Gdy zapiszesz węższą regułę, dopuszczone przez nią osoby otrzymują też uprawnienia pomocy w dowodzeniu na dowolnej tablicy. O tym, kto odczytuje tablice, decyduje Wyświetlanie tablic dowodzenia, które do czasu zapisania własnej reguły podąża za tą.</value>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.ViewCommandBoards">
+    <value>Określa, kto może odczytywać każdą tablicę dowodzenia: tablicę, ewidencję personelu, potrzeby, oś czasu, mapę, role, łączność głosową, zasoby i raporty, synchronizację tablic offline w aplikacjach, listę i widżet pulpitu aktywnych akcji dowodzenia oraz odpowiedzi czatbota o zdarzeniach. Uczestnicy zdarzenia zawsze odczytują jego tablicę: sztab dowodzenia, kierownicy odcinków, członkowie zadysponowani do zgłoszenia bezpośrednio lub przez swoją grupę, rolę personelu albo jednostkę, w której obsadzie są, oraz zasoby umieszczone na tablicy. Bez zapisanej reguły obowiązuje Command App Login, a bez żadnej z nich może to każdy aktywny członek.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ConfigureProtectedDataEgress">
     <value>Określa, kto może administrować chronionymi przepływami pracy i ich zatwierdzeniami udostępnienia. Włączenie, zatwierdzenie lub odnowienie chronionego przepływu pracy wymaga też nowej wzmocnionej weryfikacji, a ustawienia udostępniania po podaniu PIN-u przez SMS i połączenie głosowe wymagają dodatkowo administratora działu. Ma zastosowanie tylko wtedy, gdy dział jest zarejestrowany w Zaawansowanej ochronie danych.</value>

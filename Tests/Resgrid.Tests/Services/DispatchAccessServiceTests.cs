@@ -381,5 +381,64 @@ namespace Resgrid.Tests.Services
 
 			result.Should().BeFalse();
 		}
+
+		[Test]
+		public async Task everyone_reads_boards_when_neither_command_permission_is_configured()
+		{
+			_permissionsService.Setup(x => x.GetPermissionByDepartmentTypeAsync(DepartmentId, PermissionTypes.ViewCommandBoards)).ReturnsAsync((Permission)null);
+			_permissionsService.Setup(x => x.GetPermissionByDepartmentTypeAsync(DepartmentId, PermissionTypes.CommandAppLogin)).ReturnsAsync((Permission)null);
+
+			var result = await BuildService().CanViewCommandBoardsAsync(DepartmentId, UserId);
+
+			result.Should().BeTrue();
+		}
+
+		[Test]
+		public async Task reading_boards_follows_the_command_app_login_row_until_view_has_its_own()
+		{
+			// A department that narrowed Command App Login before View Command Boards existed keeps the same readers.
+			var commandPermission = new Permission { DepartmentId = DepartmentId, Action = (int)PermissionActions.DepartmentAdminsOnly };
+			_permissionsService.Setup(x => x.GetPermissionByDepartmentTypeAsync(DepartmentId, PermissionTypes.ViewCommandBoards)).ReturnsAsync((Permission)null);
+			_permissionsService.Setup(x => x.GetPermissionByDepartmentTypeAsync(DepartmentId, PermissionTypes.CommandAppLogin)).ReturnsAsync(commandPermission);
+			_permissionsService.Setup(x => x.IsUserAllowed(commandPermission, false, false, It.IsAny<List<PersonnelRole>>())).Returns(false);
+
+			var result = await BuildService().CanViewCommandBoardsAsync(DepartmentId, UserId);
+
+			result.Should().BeFalse();
+		}
+
+		[Test]
+		public async Task the_view_row_decides_reading_once_saved_whatever_command_app_login_says()
+		{
+			var commandPermission = new Permission { DepartmentId = DepartmentId, Action = (int)PermissionActions.DepartmentAdminsOnly };
+			var viewPermission = new Permission { DepartmentId = DepartmentId, Action = (int)PermissionActions.Everyone };
+			_permissionsService.Setup(x => x.GetPermissionByDepartmentTypeAsync(DepartmentId, PermissionTypes.CommandAppLogin)).ReturnsAsync(commandPermission);
+			_permissionsService.Setup(x => x.GetPermissionByDepartmentTypeAsync(DepartmentId, PermissionTypes.ViewCommandBoards)).ReturnsAsync(viewPermission);
+			_permissionsService.Setup(x => x.IsUserAllowed(commandPermission, false, false, It.IsAny<List<PersonnelRole>>())).Returns(false);
+			_permissionsService.Setup(x => x.IsUserAllowed(viewPermission, false, false, It.IsAny<List<PersonnelRole>>())).Returns(true);
+
+			(await BuildService().CanViewCommandBoardsAsync(DepartmentId, UserId)).Should().BeTrue();
+			(await BuildService().CanUseCommandAsync(DepartmentId, UserId)).Should().BeFalse();
+		}
+
+		[Test]
+		public async Task view_and_run_verdicts_are_cached_apart()
+		{
+			_permissionsService.Setup(x => x.GetPermissionByDepartmentTypeAsync(DepartmentId, It.IsAny<PermissionTypes>())).ReturnsAsync((Permission)null);
+
+			await BuildService().CanViewCommandBoardsAsync(DepartmentId, UserId);
+			await BuildService().CanUseCommandAsync(DepartmentId, UserId);
+
+			_cacheKeys.Should().Contain($"commandview:{DepartmentId}:{UserId}").And.Contain($"commandaccess:{DepartmentId}:{UserId}");
+		}
+
+		[Test]
+		public async Task a_disabled_member_is_not_an_active_member()
+		{
+			_departmentsService.Setup(x => x.GetDepartmentMemberAsync(UserId, DepartmentId, It.IsAny<bool>()))
+				.ReturnsAsync(new DepartmentMember { UserId = UserId, DepartmentId = DepartmentId, IsDisabled = true });
+
+			(await BuildService().IsActiveDepartmentMemberAsync(DepartmentId, UserId)).Should().BeFalse();
+		}
 	}
 }

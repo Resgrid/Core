@@ -104,6 +104,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var viewWorkflowRunsPermission = await _permissionsService.GetPermissionByDepartmentTypeAsync(DepartmentId, PermissionTypes.ViewWorkflowRuns);
 			var dispatchAppLoginPermission = await _permissionsService.GetPermissionByDepartmentTypeAsync(DepartmentId, PermissionTypes.DispatchAppLogin);
 			var commandAppLoginPermission = await _permissionsService.GetPermissionByDepartmentTypeAsync(DepartmentId, PermissionTypes.CommandAppLogin);
+			// No View Command Boards row follows the Command App Login row (ICommandAccessService.CanViewCommandBoardsAsync).
+			var viewCommandBoardsPermission = await _permissionsService.GetPermissionByDepartmentTypeAsync(DepartmentId, PermissionTypes.ViewCommandBoards) ?? commandAppLoginPermission;
 			var closeCallPermission = await _permissionsService.GetPermissionByDepartmentTypeAsync(DepartmentId, PermissionTypes.CloseCall);
 			var deleteCallPermission = await _permissionsService.GetPermissionByDepartmentTypeAsync(DepartmentId, PermissionTypes.DeleteCall);
 
@@ -120,6 +122,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			result.Data.CanViewWorkflowRuns = _permissionsService.IsUserAllowed(viewWorkflowRunsPermission, result.Data.IsAdmin, isGroupAdmin, roles);
 			result.Data.CanLoginToDispatchApp = _permissionsService.IsUserAllowed(dispatchAppLoginPermission, result.Data.IsAdmin, isGroupAdmin, roles);
 			result.Data.CanLoginToCommandApp = _permissionsService.IsUserAllowed(commandAppLoginPermission, result.Data.IsAdmin, isGroupAdmin, roles);
+			result.Data.CanViewCommandBoards = _permissionsService.IsUserAllowed(viewCommandBoardsPermission, result.Data.IsAdmin, isGroupAdmin, roles);
 
 			result.PageSize = 1;
 			result.Status = ResponseHelper.Success;

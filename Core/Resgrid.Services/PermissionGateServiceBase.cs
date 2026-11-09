@@ -47,12 +47,18 @@ namespace Resgrid.Services
 		/// <summary>Cache key prefix, unique per gate so the two never share a verdict.</summary>
 		protected abstract string CacheKeyPrefix { get; }
 
-		protected async Task<bool> IsAllowedAsync(int departmentId, string userId)
+		protected Task<bool> IsAllowedAsync(int departmentId, string userId) => IsAllowedAsync(PermissionType, CacheKeyPrefix, departmentId, userId);
+
+		/// <summary>
+		/// The same evaluation for another permission the gate owns (command run vs. command view). Each permission needs
+		/// its own cache prefix so the two never share a verdict.
+		/// </summary>
+		protected async Task<bool> IsAllowedAsync(PermissionTypes permissionType, string cacheKeyPrefix, int departmentId, string userId)
 		{
 			if (departmentId <= 0 || string.IsNullOrWhiteSpace(userId))
 				return false;
 
-			var cacheKey = $"{CacheKeyPrefix}:{departmentId}:{userId}";
+			var cacheKey = $"{cacheKeyPrefix}:{departmentId}:{userId}";
 
 			try
 			{
@@ -68,7 +74,7 @@ namespace Resgrid.Services
 				Logging.LogException(ex);
 			}
 
-			var allowed = await EvaluateAsync(departmentId, userId);
+			var allowed = await EvaluateAsync(permissionType, departmentId, userId);
 
 			try
 			{
@@ -98,7 +104,7 @@ namespace Resgrid.Services
 
 			try
 			{
-				var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionType);
+				var permission = await GetEffectivePermissionAsync(departmentId, PermissionType);
 				return permission != null && permission.Action != (int)PermissionActions.Everyone;
 			}
 			catch (Exception ex)
@@ -119,7 +125,7 @@ namespace Resgrid.Services
 				.Where(m => !m.IsDisabled.GetValueOrDefault() && !m.IsDeleted && !string.IsNullOrWhiteSpace(m.UserId))
 				.ToList();
 
-			var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionType);
+			var permission = await GetEffectivePermissionAsync(departmentId, PermissionType);
 
 			// The overwhelmingly common case — no permission row, or one that allows everyone — needs no
 			// per-user evaluation at all. Only a genuinely restricted department pays for the fan-out.
@@ -141,7 +147,33 @@ namespace Resgrid.Services
 		/// group admin, and the user's personnel roles evaluated against the permission row. A missing row
 		/// means every active department member.
 		/// </summary>
-		private async Task<bool> EvaluateAsync(int departmentId, string userId)
+		/// <summary>
+		/// The permission row that decides <paramref name="permissionType"/> for the department; null means everyone. A gate
+		/// whose permission defaults to another permission's row overrides this.
+		/// </summary>
+		protected virtual Task<Permission> GetEffectivePermissionAsync(int departmentId, PermissionTypes permissionType)
+			=> _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, permissionType);
+
+		/// <summary>True when the user is an active (not disabled, not deleted) member of the department.</summary>
+		protected async Task<bool> IsActiveMemberAsync(int departmentId, string userId)
+		{
+			if (departmentId <= 0 || string.IsNullOrWhiteSpace(userId))
+				return false;
+
+			try
+			{
+				var membership = await _departmentsService.GetDepartmentMemberAsync(userId, departmentId, false);
+				return membership != null && !membership.IsDisabled.GetValueOrDefault() && !membership.IsDeleted;
+			}
+			catch (Exception ex)
+			{
+				// Fail closed, as the permission evaluation does.
+				Logging.LogException(ex);
+				return false;
+			}
+		}
+
+		private async Task<bool> EvaluateAsync(PermissionTypes permissionType, int departmentId, string userId)
 		{
 			try
 			{
@@ -153,7 +185,7 @@ namespace Resgrid.Services
 				if (membership == null || membership.IsDisabled.GetValueOrDefault() || membership.IsDeleted)
 					return false;
 
-				var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionType);
+				var permission = await GetEffectivePermissionAsync(departmentId, permissionType);
 				if (permission == null)
 					return true;
 

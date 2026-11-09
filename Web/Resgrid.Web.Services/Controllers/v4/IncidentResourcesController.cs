@@ -24,15 +24,20 @@ namespace Resgrid.Web.Services.Controllers.v4
 		#region Members and Constructors
 		private readonly IIncidentResourcesService _incidentResourcesService;
 		private readonly ICommandAccessService _commandAccessService;
+		private readonly IIncidentCommandService _incidentCommandService;
 
-		public IncidentResourcesController(IIncidentResourcesService incidentResourcesService, ICommandAccessService commandAccessService)
+		public IncidentResourcesController(IIncidentResourcesService incidentResourcesService, ICommandAccessService commandAccessService, IIncidentCommandService incidentCommandService)
 		{
 			_incidentResourcesService = incidentResourcesService;
 			_commandAccessService = commandAccessService;
+			_incidentCommandService = incidentCommandService;
 		}
 
-		/// <summary>The command-board read gate IncidentCommandController applies (CommandAppLogin); Command_View alone is a plan-level claim.</summary>
-		private Task<bool> CanReadBoardsAsync() => _commandAccessService.CanUseCommandAsync(DepartmentId, UserId);
+		/// <summary>Whether the caller may read this incident's board: Security &gt; View Command Boards, or being on the incident.</summary>
+		private Task<bool> CanViewBoardAsync(int callId) => _incidentCommandService.CanViewBoardAsync(DepartmentId, callId, UserId);
+
+		/// <summary>A refusal the apps treat as final (403), never as an expired session (401).</summary>
+		private ObjectResult Refused() => StatusCode(StatusCodes.Status403Forbidden, "You are not authorized for this incident command action.");
 		#endregion Members and Constructors
 
 		#region Ad-hoc units
@@ -40,7 +45,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>Creates an ad-hoc unit for a non-Resgrid resource.</summary>
 		[HttpPost("CreateAdHocUnit")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize(Policy = ResgridResources.Command_Update)]
+		[Authorize(Policy = ResgridResources.Command_View)]
 		[RequiresIncidentCapability(IncidentCapabilities.ManageResources)]
 		public async Task<ActionResult<ICModels.AdHocUnitResult>> CreateAdHocUnit([FromBody] IncidentAdHocUnit unit)
 		{
@@ -73,8 +78,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.AdHocUnitsResult>> GetAdHocUnits(int callId)
 		{
-			if (!await CanReadBoardsAsync())
-				return Unauthorized();
+			if (!await CanViewBoardAsync(callId))
+				return Refused();
 
 			var result = new ICModels.AdHocUnitsResult();
 			result.Data = await _incidentResourcesService.GetAdHocUnitsForCallAsync(DepartmentId, callId);
@@ -87,7 +92,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>Releases an ad-hoc unit.</summary>
 		[HttpPost("ReleaseAdHocUnit/{incidentAdHocUnitId}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize(Policy = ResgridResources.Command_Update)]
+		[Authorize(Policy = ResgridResources.Command_View)]
+		[RequiresIncidentCapability(IncidentCapabilities.ManageResources, Entity = IncidentEntityKind.IncidentAdHocUnit, EntityIdName = "incidentAdHocUnitId")]
 		public async Task<ActionResult<ICModels.IncidentCommandActionResult>> ReleaseAdHocUnit(string incidentAdHocUnitId)
 		{
 			var result = new ICModels.IncidentCommandActionResult();
@@ -104,7 +110,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>Creates an ad-hoc person for a non-Resgrid resource.</summary>
 		[HttpPost("CreateAdHocPersonnel")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize(Policy = ResgridResources.Command_Update)]
+		[Authorize(Policy = ResgridResources.Command_View)]
 		[RequiresIncidentCapability(IncidentCapabilities.ManageResources)]
 		public async Task<ActionResult<ICModels.AdHocPersonnelResult>> CreateAdHocPersonnel([FromBody] IncidentAdHocPersonnel personnel)
 		{
@@ -136,8 +142,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.AdHocPersonnelListResult>> GetAdHocPersonnel(int callId)
 		{
-			if (!await CanReadBoardsAsync())
-				return Unauthorized();
+			if (!await CanViewBoardAsync(callId))
+				return Refused();
 
 			var result = new ICModels.AdHocPersonnelListResult();
 			result.Data = await _incidentResourcesService.GetAdHocPersonnelForCallAsync(DepartmentId, callId);
@@ -150,7 +156,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>Releases an ad-hoc person.</summary>
 		[HttpPost("ReleaseAdHocPersonnel/{incidentAdHocPersonnelId}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize(Policy = ResgridResources.Command_Update)]
+		[Authorize(Policy = ResgridResources.Command_View)]
+		[RequiresIncidentCapability(IncidentCapabilities.ManageResources, Entity = IncidentEntityKind.IncidentAdHocPersonnel, EntityIdName = "incidentAdHocPersonnelId")]
 		public async Task<ActionResult<ICModels.IncidentCommandActionResult>> ReleaseAdHocPersonnel(string incidentAdHocPersonnelId)
 		{
 			var result = new ICModels.IncidentCommandActionResult();
@@ -167,7 +174,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>Adds an ad-hoc person to a unit roster for accountability.</summary>
 		[HttpPost("AssignPersonnelToUnit")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize(Policy = ResgridResources.Command_Update)]
+		[Authorize(Policy = ResgridResources.Command_View)]
+		[RequiresIncidentCapability(IncidentCapabilities.ManageResources, Entity = IncidentEntityKind.IncidentAdHocPersonnel, EntityIdName = "IncidentAdHocPersonnelId")]
 		public async Task<ActionResult<ICModels.AdHocPersonnelResult>> AssignPersonnelToUnit([FromBody] ICModels.AssignPersonnelToUnitInput input)
 		{
 			if (input == null || string.IsNullOrWhiteSpace(input.IncidentAdHocPersonnelId))
@@ -193,7 +201,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>Forms a new ad-hoc unit from on-scene ad-hoc personnel.</summary>
 		[HttpPost("FormUnit")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize(Policy = ResgridResources.Command_Update)]
+		[Authorize(Policy = ResgridResources.Command_View)]
 		[RequiresIncidentCapability(IncidentCapabilities.ManageResources)]
 		public async Task<ActionResult<ICModels.AdHocUnitResult>> FormUnit([FromBody] ICModels.FormUnitInput input)
 		{

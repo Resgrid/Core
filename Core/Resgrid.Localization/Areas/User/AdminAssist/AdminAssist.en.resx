@@ -3201,6 +3201,9 @@
   <data xml:space="preserve" name="Permission.CommandAppLogin">
     <value>Command App Login</value>
   </data>
+  <data xml:space="preserve" name="Permission.ViewCommandBoards">
+    <value>View Command Boards</value>
+  </data>
   <data xml:space="preserve" name="Permission.ConfigureProtectedDataEgress">
     <value>Configure Protected Data Egress</value>
   </data>
@@ -3442,7 +3445,10 @@
     <value>Allows closing and re-opening calls. With the group-only box ticked, only department administrators and people whose group was dispatched on the call may close or re-open it — also when the rule is Everyone. On the web, in the apps and in the chatbot people also need the call rights from Create Call. With no saved rule anyone who can see the call may close it.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CommandAppLogin">
-    <value>Decides who can use the Incident Command app and read command boards: every board, accountability, needs, timeline, map, role, voice and resource read, the apps' offline sync of boards, and the chatbot's incident answers. With no saved rule every active member may. When you save a narrower rule, the people it allows also get command-assist capabilities on any board. Establishing command and editing boards still need department administrator command rights.</value>
+    <value>Decides who can run incident command: sign in to the Incident Command app, establish or reopen command, and work the boards where they hold incident capabilities (the incident commander and whoever established command hold all of them; assigned ICS roles grant parts). With no saved rule every active member may. When you save a narrower rule, the people it allows also get command-assist capabilities on any board. Who reads boards is View Command Boards, which follows this rule until it has its own.</value>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.ViewCommandBoards">
+    <value>Decides who can read every command board: the board, accountability, needs, timeline, map, roles, voice, resources and reports, the apps' offline sync of boards, the active commands list and dashboard widget, and the chatbot's incident answers. Members on an incident always read that incident's board: command staff, lane leads, members dispatched to the call directly or through their group, a personnel role or a unit they crew, and resources placed on the board. With no saved rule it follows Command App Login, and with neither rule every active member may.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ConfigureProtectedDataEgress">
     <value>Controls who may administer protected workflows and their release approvals. Turning a protected workflow on, approving or renewing it also needs a fresh step-up, and the SMS and voice PIN release settings additionally require a department administrator. Applies only when Advanced Data Protection is enrolled.</value>

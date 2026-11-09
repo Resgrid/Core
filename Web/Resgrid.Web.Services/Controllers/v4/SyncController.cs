@@ -8,6 +8,7 @@ using Resgrid.Web.Services.Helpers;
 using Resgrid.Web.Services.Models.v4.Sync;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Resgrid.Web.Services.Controllers.v4
@@ -39,11 +40,24 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_commandAccessService = commandAccessService;
 		}
 
+		/// <summary>Whether the caller may read every board in the department (Security &gt; View Command Boards).</summary>
+		private Task<bool> CanViewAllBoardsAsync() => _commandAccessService.CanViewCommandBoardsAsync(DepartmentId, UserId);
+
 		/// <summary>
-		/// The commander gate (Security &gt; Command App Login) that IncidentCommandController applies to every board read.
-		/// Command_View is a plan-level claim; this is the department's choice of who commands.
+		/// The incidents among <paramref name="callIds"/> whose boards the caller may read when they may not read every
+		/// board: the ones they are on (IIncidentCommandService.CanViewBoardAsync).
 		/// </summary>
-		private Task<bool> CanReadBoardsAsync() => _commandAccessService.CanUseCommandAsync(DepartmentId, UserId);
+		private async Task<HashSet<int>> ViewableCallsAsync(IEnumerable<int> callIds)
+		{
+			var viewable = new HashSet<int>();
+			foreach (var callId in callIds.Distinct())
+			{
+				if (await _incidentCommandService.CanViewBoardAsync(DepartmentId, callId, UserId))
+					viewable.Add(callId);
+			}
+
+			return viewable;
+		}
 		#endregion Members and Constructors
 
 		/// <summary>
@@ -57,17 +71,6 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<SyncChangesResult>> Changes(long since = 0)
 		{
-			// Every row here is command-board data. A caller the commander gate refuses gets an empty delta with the cursor
-			// left where it was, so a later grant still pulls everything since then.
-			if (!await CanReadBoardsAsync())
-			{
-				var none = new SyncChangesResult { Data = new IncidentCommandChanges { ServerTimestampMs = Math.Max(since, 0) } };
-				none.PageSize = 0;
-				none.Status = ResponseHelper.Success;
-				ResponseHelper.PopulateV4ResponseData(none);
-				return none;
-			}
-
 			var sinceUtc = since <= 0
 				? DateTime.MinValue
 				: DateTimeOffset.FromUnixTimeMilliseconds(since).UtcDateTime;
@@ -78,6 +81,31 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var adHoc = await _incidentResourcesService.GetAdHocChangesSinceAsync(DepartmentId, sinceUtc);
 			changes.AdHocUnits = adHoc.Units;
 			changes.AdHocPersonnel = adHoc.Personnel;
+
+			// Every row here is command-board data: a caller who may not read every board gets only the incidents they are on.
+			if (!await CanViewAllBoardsAsync())
+			{
+				IEnumerable<int> Calls<T>(List<T> rows, Func<T, int> callOf) => rows?.Select(callOf) ?? Enumerable.Empty<int>();
+				var viewable = await ViewableCallsAsync(Calls(changes.Commands, x => x.CallId).Concat(Calls(changes.Nodes, x => x.CallId)).Concat(Calls(changes.Assignments, x => x.CallId))
+					.Concat(Calls(changes.Objectives, x => x.CallId)).Concat(Calls(changes.Needs, x => x.CallId)).Concat(Calls(changes.Timers, x => x.CallId))
+					.Concat(Calls(changes.Annotations, x => x.CallId)).Concat(Calls(changes.Maps, x => x.CallId)).Concat(Calls(changes.Roles, x => x.CallId))
+					.Concat(Calls(changes.AdHocUnits, x => x.CallId)).Concat(Calls(changes.AdHocPersonnel, x => x.CallId)).Concat(Calls(changes.Notes, x => x.CallId))
+					.Concat(Calls(changes.Attachments, x => x.CallId)).Concat(Calls(changes.TimelineEntries, x => x.CallId)));
+				changes.Commands?.RemoveAll(x => !viewable.Contains(x.CallId));
+				changes.Nodes?.RemoveAll(x => !viewable.Contains(x.CallId));
+				changes.Assignments?.RemoveAll(x => !viewable.Contains(x.CallId));
+				changes.Objectives?.RemoveAll(x => !viewable.Contains(x.CallId));
+				changes.Needs?.RemoveAll(x => !viewable.Contains(x.CallId));
+				changes.Timers?.RemoveAll(x => !viewable.Contains(x.CallId));
+				changes.Annotations?.RemoveAll(x => !viewable.Contains(x.CallId));
+				changes.Maps?.RemoveAll(x => !viewable.Contains(x.CallId));
+				changes.Roles?.RemoveAll(x => !viewable.Contains(x.CallId));
+				changes.AdHocUnits?.RemoveAll(x => !viewable.Contains(x.CallId));
+				changes.AdHocPersonnel?.RemoveAll(x => !viewable.Contains(x.CallId));
+				changes.Notes?.RemoveAll(x => !viewable.Contains(x.CallId));
+				changes.Attachments?.RemoveAll(x => !viewable.Contains(x.CallId));
+				changes.TimelineEntries?.RemoveAll(x => !viewable.Contains(x.CallId));
+			}
 
 			var result = new SyncChangesResult { Data = changes };
 			result.PageSize = changes.Commands.Count + changes.Nodes.Count + changes.Assignments.Count
@@ -99,16 +127,6 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<SyncBundleResult>> Bundle(bool includeAccountability = true)
 		{
-			// Boards and accountability only for a caller the commander gate admits; a zero cursor makes the next Changes a full pull.
-			if (!await CanReadBoardsAsync())
-			{
-				var none = new SyncBundleResult { Data = new IncidentCommandBundle { ServerTimestampMs = 0 } };
-				none.PageSize = 0;
-				none.Status = ResponseHelper.Success;
-				ResponseHelper.PopulateV4ResponseData(none);
-				return none;
-			}
-
 			var bundle = await _incidentCommandService.GetBundleForDepartmentAsync(DepartmentId, includeAccountability);
 
 			// Ad-hoc resources live in IncidentResourcesService; pull them for ALL active incidents in one batched call
@@ -116,6 +134,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var adHoc = await _incidentResourcesService.GetActiveAdHocResourcesForDepartmentAsync(DepartmentId);
 			bundle.AdHocUnits = adHoc.Units;
 			bundle.AdHocPersonnel = adHoc.Personnel;
+
+			// A caller who may not read every board gets the boards of the incidents they are on.
+			if (!await CanViewAllBoardsAsync())
+			{
+				var viewable = await ViewableCallsAsync((bundle.Boards ?? new List<IncidentCommandBoard>()).Where(x => x.Command != null).Select(x => x.Command.CallId));
+				bundle.Boards?.RemoveAll(x => x.Command == null || !viewable.Contains(x.Command.CallId));
+				bundle.AdHocUnits?.RemoveAll(x => !viewable.Contains(x.CallId));
+				bundle.AdHocPersonnel?.RemoveAll(x => !viewable.Contains(x.CallId));
+			}
 
 			var result = new SyncBundleResult { Data = bundle };
 			result.PageSize = bundle.Boards.Count;

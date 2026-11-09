@@ -42,18 +42,31 @@ namespace Resgrid.Web.Services.Controllers.v4
 		}
 
 		/// <summary>
-		/// Whether the caller may act as a commander (CommandAppLogin). Gates establishing command.
-		/// The Command_View / Command_Create policies above are plan-level claims; this is the
-		/// department's own choice about which of its members command incidents.
+		/// Whether the caller may run incident command (Security &gt; Command App Login, everyone unless the department
+		/// narrows it): establish or reopen command. Writes on a board are per incident — [RequiresIncidentCapability]
+		/// applies this gate and then the caller's capabilities on that incident (the commander and whoever established
+		/// command hold all of them).
 		/// </summary>
 		private Task<bool> CanCommandAsync() => _commandAccessService.CanUseCommandAsync(DepartmentId, UserId);
 
+		/// <summary>Whether the caller may read every board in the department (Security &gt; View Command Boards).</summary>
+		private Task<bool> CanViewAllBoardsAsync() => _commandAccessService.CanViewCommandBoardsAsync(DepartmentId, UserId);
+
+		/// <summary>Whether the caller may read this incident's board: the department-wide permission, or being on the incident.</summary>
+		private Task<bool> CanViewBoardAsync(int callId) => _incidentCommandService.CanViewBoardAsync(DepartmentId, callId, UserId);
+
 		/// <summary>
-		/// Whether the caller may READ command boards — the same commander gate as everything else on this
-		/// surface. A dispatcher who needs to work boards is given the command permission too (it grants
-		/// the assist capability set); dispatch authorization on its own is not a way in.
+		/// The board read check for a request that names an incident-command row by id. A row that isn't in the department
+		/// passes, so the read answers not_found as it always has.
 		/// </summary>
-		private Task<bool> CanReadBoardsAsync() => CanCommandAsync();
+		private async Task<bool> CanViewBoardForAsync(IncidentEntityKind kind, string entityId)
+		{
+			var callId = await _incidentCommandService.ResolveCallIdForEntityAsync(DepartmentId, kind, entityId);
+			return callId == null || await CanViewBoardAsync(callId.Value);
+		}
+
+		/// <summary>A refusal the apps treat as final (403), never as an expired session (401).</summary>
+		private ObjectResult Refused() => StatusCode(StatusCodes.Status403Forbidden, "You are not authorized for this incident command action.");
 		#endregion Members and Constructors
 
 		#region Command lifecycle
@@ -61,18 +74,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>Establishes command on a call, optionally seeding lanes from a command definition.</summary>
 		// Bootstrap: intentionally NOT [RequiresIncidentCapability]. EstablishCommand CREATES the command, so at call
 		// time no command/commander/role (hence no IncidentCapabilities) exists yet — GetCapabilitiesForUserAsync would
-		// return None and 403 every establish. Department-level [Authorize(Command_Create)] is the correct gate here;
-		// the incident-scoped capability checks apply to the lifecycle endpoints that operate on an existing command.
+		// return None and 403 every establish. The department-level run-command gate (CanCommandAsync, CommandAppLogin) is
+		// the correct gate here; the incident-scoped capability checks apply to the endpoints that act on an existing command.
 		[HttpPost("EstablishCommand")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize(Policy = ResgridResources.Command_Create)]
+		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.IncidentCommandResult>> EstablishCommand([FromBody] ICModels.EstablishCommandInput input)
 		{
 			if (input == null || input.CallId <= 0)
 				return BadRequest();
 
 			if (!await CanCommandAsync())
-				return Unauthorized();
+				return Refused();
 
 			var result = new ICModels.IncidentCommandResult();
 			var command = await _incidentCommandService.EstablishCommandAsync(DepartmentId, input.CallId, UserId, input.CommandDefinitionId, CancellationToken.None);
@@ -101,8 +114,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.IncidentCommandResult>> GetCommandForCall(int callId)
 		{
-			if (!await CanReadBoardsAsync())
-				return Unauthorized();
+			if (!await CanViewBoardAsync(callId))
+				return Refused();
 
 			var result = new ICModels.IncidentCommandResult();
 			var command = await _incidentCommandService.GetCommandForCallAsync(DepartmentId, callId);
@@ -124,18 +137,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>
 		/// Reopens a previously closed command with a reason. Bootstrap-gated like EstablishCommand: after a
 		/// close there is no active command, so incident capabilities cannot be evaluated — the department-level
-		/// Command_Create claim is the gate.
+		/// run-command gate (CommandAppLogin) is the gate.
 		/// </summary>
 		[HttpPut("ReopenCommand")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize(Policy = ResgridResources.Command_Create)]
+		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.IncidentCommandResult>> ReopenCommand([FromBody] ICModels.ReopenCommandInput input)
 		{
 			if (input == null || string.IsNullOrWhiteSpace(input.IncidentCommandId))
 				return BadRequest();
 
 			if (!await CanCommandAsync())
-				return Unauthorized();
+				return Refused();
 
 			var result = new ICModels.IncidentCommandResult();
 			try
@@ -170,10 +183,20 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.IncidentCommandSummariesResult>> GetCommandList([FromQuery] bool includeClosed = false)
 		{
-			if (!await CanReadBoardsAsync())
-				return Unauthorized();
-
 			var summaries = await _incidentCommandService.GetCommandSummariesForDepartmentAsync(DepartmentId, includeClosed);
+
+			// A member who may not read every board still lists the incidents they are on.
+			if (!await CanViewAllBoardsAsync())
+			{
+				var visible = new List<IncidentCommandSummary>();
+				foreach (var summary in summaries)
+				{
+					if (await CanViewBoardAsync(summary.CallId))
+						visible.Add(summary);
+				}
+
+				summaries = visible;
+			}
 			var result = new ICModels.IncidentCommandSummariesResult
 			{
 				Data = summaries,
@@ -194,8 +217,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.IncidentCommandBoardResult>> GetCommandBoardById(string incidentCommandId)
 		{
-			if (!await CanReadBoardsAsync())
-				return Unauthorized();
+			if (!await CanViewBoardForAsync(IncidentEntityKind.IncidentCommand, incidentCommandId))
+				return Refused();
 
 			var result = new ICModels.IncidentCommandBoardResult();
 			var board = await _incidentCommandService.GetCommandBoardByIdAsync(DepartmentId, incidentCommandId);
@@ -220,8 +243,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.IncidentCommandBoardResult>> GetCommandBoard(int callId)
 		{
-			if (!await CanReadBoardsAsync())
-				return Unauthorized();
+			if (!await CanViewBoardAsync(callId))
+				return Refused();
 
 			var result = new ICModels.IncidentCommandBoardResult();
 			var board = await _incidentCommandService.GetCommandBoardAsync(DepartmentId, callId);
@@ -243,7 +266,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>Transfers command to another user.</summary>
 		[HttpPost("TransferCommand")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize(Policy = ResgridResources.Command_Update)]
+		[Authorize(Policy = ResgridResources.Command_View)]
 		[RequiresIncidentCapability(IncidentCapabilities.ManageCommand)]
 		public async Task<ActionResult<ICModels.CommandTransferResult>> TransferCommand([FromBody] ICModels.TransferCommandInput input)
 		{
@@ -274,14 +297,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// </summary>
 		[HttpPost("SendMessageToCommand")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize(Policy = ResgridResources.Command_Update)]
+		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.SendMessageToCommandResult>> SendMessageToCommand([FromBody] ICModels.SendMessageToCommandInput input)
 		{
 			if (input == null || input.CallId <= 0 || string.IsNullOrWhiteSpace(input.Body))
 				return BadRequest();
 
-			if (!await CanCommandAsync())
-				return Unauthorized();
+			if (!await CanViewBoardAsync(input.CallId))
+				return Refused();
 
 			var result = new ICModels.SendMessageToCommandResult();
 			var command = await _incidentCommandService.GetCommandForCallAsync(DepartmentId, input.CallId);
@@ -321,7 +344,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>Closes command on an incident.</summary>
 		[HttpPut("CloseCommand/{incidentCommandId}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize(Policy = ResgridResources.Command_Update)]
+		[Authorize(Policy = ResgridResources.Command_View)]
 		[RequiresIncidentCapability(IncidentCapabilities.ManageCommand)]
 		public async Task<ActionResult<ICModels.IncidentCommandResult>> CloseCommand(string incidentCommandId)
 		{
@@ -345,7 +368,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>Updates the incident action plan.</summary>
 		[HttpPut("UpdateActionPlan")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize(Policy = ResgridResources.Command_Update)]
+		[Authorize(Policy = ResgridResources.Command_View)]
 		[RequiresIncidentCapability(IncidentCapabilities.ManageCommand)]
 		public async Task<ActionResult<ICModels.IncidentCommandResult>> UpdateActionPlan([FromBody] ICModels.UpdateActionPlanInput input)
 		{
@@ -372,7 +395,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>Updates the command-post location used by maps and incident weather.</summary>
 		[HttpPut("UpdateCommandPost")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize(Policy = ResgridResources.Command_Update)]
+		[Authorize(Policy = ResgridResources.Command_View)]
 		[RequiresIncidentCapability(IncidentCapabilities.ManageCommand)]
 		public async Task<ActionResult<ICModels.IncidentCommandResult>> UpdateCommandPost([FromBody] ICModels.UpdateCommandPostInput input)
 		{
@@ -400,7 +423,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>Updates command-level details every resource should see: estimated end and important information.</summary>
 		[HttpPut("UpdateCommandDetails")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize(Policy = ResgridResources.Command_Update)]
+		[Authorize(Policy = ResgridResources.Command_View)]
 		[RequiresIncidentCapability(IncidentCapabilities.ManageCommand)]
 		public async Task<ActionResult<ICModels.IncidentCommandResult>> UpdateCommandDetails([FromBody] ICModels.UpdateCommandDetailsInput input)
 		{
@@ -425,7 +448,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// </summary>
 		[HttpPut("UpdateCommandInfo")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize(Policy = ResgridResources.Command_Update)]
+		[Authorize(Policy = ResgridResources.Command_View)]
 		[RequiresIncidentCapability(IncidentCapabilities.ManageCommand)]
 		public async Task<ActionResult<ICModels.IncidentCommandResult>> UpdateCommandInfo([FromBody] ICModels.UpdateCommandInfoInput input)
 		{
@@ -513,7 +536,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>Adds an internal or public operational status note to the incident.</summary>
 		[HttpPost("AddNote")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize(Policy = ResgridResources.Command_Update)]
+		[Authorize(Policy = ResgridResources.Command_View)]
 		[RequiresIncidentCapability(IncidentCapabilities.ManageNotes)]
 		public async Task<ActionResult<ICModels.IncidentNoteResult>> AddNote([FromBody] ICModels.AddIncidentNoteInput input)
 		{
@@ -556,8 +579,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.IncidentNotesResult>> GetNotes(int callId)
 		{
-			if (!await CanReadBoardsAsync())
-				return Unauthorized();
+			if (!await CanViewBoardAsync(callId))
+				return Refused();
 
 			var notes = await _incidentCommandService.GetNotesForCallAsync(DepartmentId, callId);
 			var result = new ICModels.IncidentNotesResult { Data = notes, PageSize = notes.Count, Status = ResponseHelper.Success };
@@ -567,7 +590,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 		[HttpDelete("RemoveNote/{incidentNoteId}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize(Policy = ResgridResources.Command_Update)]
+		[Authorize(Policy = ResgridResources.Command_View)]
+		[RequiresIncidentCapability(IncidentCapabilities.ManageNotes, Entity = IncidentEntityKind.IncidentNote, EntityIdName = "incidentNoteId")]
 		public async Task<ActionResult<ICModels.IncidentCommandActionResult>> RemoveNote(string incidentNoteId)
 		{
 			var removed = await _incidentCommandService.RemoveNoteAsync(DepartmentId, incidentNoteId, UserId, CancellationToken.None);
@@ -582,7 +606,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[RequestSizeLimit(26_214_400)]
 		[RequestFormLimits(MultipartBodyLengthLimit = 26_214_400)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize(Policy = ResgridResources.Command_Update)]
+		[Authorize(Policy = ResgridResources.Command_View)]
 		[RequiresIncidentCapability(IncidentCapabilities.ManageDocuments)]
 		public async Task<ActionResult<ICModels.IncidentAttachmentResult>> AddAttachment([FromForm] ICModels.AddIncidentAttachmentInput input, CancellationToken cancellationToken)
 		{
@@ -627,8 +651,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.IncidentAttachmentsResult>> GetAttachments(int callId)
 		{
-			if (!await CanReadBoardsAsync())
-				return Unauthorized();
+			if (!await CanViewBoardAsync(callId))
+				return Refused();
 
 			var attachments = await _incidentCommandService.GetAttachmentsForCallAsync(DepartmentId, callId);
 			var result = new ICModels.IncidentAttachmentsResult { Data = attachments, PageSize = attachments.Count, Status = ResponseHelper.Success };
@@ -640,8 +664,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<IActionResult> DownloadAttachment(string incidentAttachmentId)
 		{
-			if (!await CanReadBoardsAsync())
-				return Unauthorized();
+			if (!await CanViewBoardForAsync(IncidentEntityKind.IncidentAttachment, incidentAttachmentId))
+				return Refused();
 
 			var attachment = await _incidentCommandService.GetAttachmentAsync(DepartmentId, incidentAttachmentId);
 			if (attachment?.Data == null)
@@ -652,7 +676,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 		[HttpDelete("RemoveAttachment/{incidentAttachmentId}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize(Policy = ResgridResources.Command_Update)]
+		[Authorize(Policy = ResgridResources.Command_View)]
+		[RequiresIncidentCapability(IncidentCapabilities.ManageDocuments, Entity = IncidentEntityKind.IncidentAttachment, EntityIdName = "incidentAttachmentId")]
 		public async Task<ActionResult<ICModels.IncidentCommandActionResult>> RemoveAttachment(string incidentAttachmentId)
 		{
 			var removed = await _incidentCommandService.RemoveAttachmentAsync(DepartmentId, incidentAttachmentId, UserId, CancellationToken.None);
@@ -666,7 +691,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		#region Public sharing and weather
 
 		[HttpPost("EnablePublicSharing/{incidentCommandId}")]
-		[Authorize(Policy = ResgridResources.Command_Update)]
+		[Authorize(Policy = ResgridResources.Command_View)]
 		[RequiresIncidentCapability(IncidentCapabilities.ManagePublicInformation)]
 		public async Task<ActionResult<ICModels.IncidentCommandResult>> EnablePublicSharing(string incidentCommandId)
 		{
@@ -677,7 +702,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		}
 
 		[HttpPost("DisablePublicSharing/{incidentCommandId}")]
-		[Authorize(Policy = ResgridResources.Command_Update)]
+		[Authorize(Policy = ResgridResources.Command_View)]
 		[RequiresIncidentCapability(IncidentCapabilities.ManagePublicInformation)]
 		public async Task<ActionResult<ICModels.IncidentCommandResult>> DisablePublicSharing(string incidentCommandId)
 		{
@@ -691,8 +716,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.IncidentWeatherResult>> GetWeather(int callId, CancellationToken cancellationToken)
 		{
-			if (!await CanReadBoardsAsync())
-				return Unauthorized();
+			if (!await CanViewBoardAsync(callId))
+				return Refused();
 
 			try
 			{
@@ -715,8 +740,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.CommandAccountabilityResult>> GetAccountability(int callId)
 		{
-			if (!await CanReadBoardsAsync())
-				return Unauthorized();
+			if (!await CanViewBoardAsync(callId))
+				return Refused();
 
 			var result = new ICModels.CommandAccountabilityResult();
 			result.Data = await _incidentCommandService.GetAccountabilityForCallAsync(DepartmentId, callId);
@@ -733,7 +758,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// </summary>
 		[HttpPost("EvaluateAccountability/{callId}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize(Policy = ResgridResources.Command_Update)]
+		[Authorize(Policy = ResgridResources.Command_View)]
 		[RequiresIncidentCapability(IncidentCapabilities.ManageAccountability)]
 		public async Task<ActionResult<ICModels.EvaluateAccountabilityResult>> EvaluateAccountability(int callId)
 		{
@@ -752,7 +777,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>Creates or updates a command structure lane.</summary>
 		[HttpPost("SaveNode")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize(Policy = ResgridResources.Command_Update)]
+		[Authorize(Policy = ResgridResources.Command_View)]
 		[RequiresIncidentCapability(IncidentCapabilities.ManageStructure)]
 		public async Task<ActionResult<ICModels.CommandNodeResult>> SaveNode([FromBody] CommandStructureNode node)
 		{
@@ -782,7 +807,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>Removes a command structure lane.</summary>
 		[HttpDelete("DeleteNode/{commandStructureNodeId}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize(Policy = ResgridResources.Command_Update)]
+		[Authorize(Policy = ResgridResources.Command_View)]
+		[RequiresIncidentCapability(IncidentCapabilities.ManageStructure, Entity = IncidentEntityKind.CommandStructureNode, EntityIdName = "commandStructureNodeId")]
 		public async Task<ActionResult<ICModels.IncidentCommandActionResult>> DeleteNode(string commandStructureNodeId)
 		{
 			var result = new ICModels.IncidentCommandActionResult();
@@ -799,7 +825,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>Assigns a resource (own/mutual-aid/ad-hoc unit or person) to a lane.</summary>
 		[HttpPost("AssignResource")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize(Policy = ResgridResources.Command_Update)]
+		[Authorize(Policy = ResgridResources.Command_View)]
 		[RequiresIncidentCapability(IncidentCapabilities.AssignResources)]
 		public async Task<ActionResult<ICModels.ResourceAssignmentResult>> AssignResource([FromBody] ResourceAssignment assignment)
 		{
@@ -843,7 +869,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>Moves a resource assignment to a different lane.</summary>
 		[HttpPost("MoveResource")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize(Policy = ResgridResources.Command_Update)]
+		[Authorize(Policy = ResgridResources.Command_View)]
+		[RequiresIncidentCapability(IncidentCapabilities.AssignResources, Entity = IncidentEntityKind.ResourceAssignment, EntityIdName = "ResourceAssignmentId")]
 		public async Task<ActionResult<ICModels.ResourceAssignmentResult>> MoveResource([FromBody] ICModels.MoveResourceInput input)
 		{
 			if (input == null || string.IsNullOrWhiteSpace(input.ResourceAssignmentId) || string.IsNullOrWhiteSpace(input.TargetNodeId))
@@ -884,7 +911,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>Releases a resource assignment.</summary>
 		[HttpPost("ReleaseResource/{resourceAssignmentId}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize(Policy = ResgridResources.Command_Update)]
+		[Authorize(Policy = ResgridResources.Command_View)]
+		[RequiresIncidentCapability(IncidentCapabilities.AssignResources, Entity = IncidentEntityKind.ResourceAssignment, EntityIdName = "resourceAssignmentId")]
 		public async Task<ActionResult<ICModels.IncidentCommandActionResult>> ReleaseResource(string resourceAssignmentId)
 		{
 			var result = new ICModels.IncidentCommandActionResult();
@@ -901,7 +929,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>Creates or updates a tactical objective / benchmark.</summary>
 		[HttpPost("SaveObjective")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize(Policy = ResgridResources.Command_Update)]
+		[Authorize(Policy = ResgridResources.Command_View)]
 		[RequiresIncidentCapability(IncidentCapabilities.ManageObjectives)]
 		public async Task<ActionResult<ICModels.TacticalObjectiveResult>> SaveObjective([FromBody] TacticalObjective objective)
 		{
@@ -930,7 +958,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>Sets a tactical objective's progress (0-100; 100 completes it).</summary>
 		[HttpPost("UpdateObjectiveProgress")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize(Policy = ResgridResources.Command_Update)]
+		[Authorize(Policy = ResgridResources.Command_View)]
+		[RequiresIncidentCapability(IncidentCapabilities.ManageObjectives, Entity = IncidentEntityKind.TacticalObjective, EntityIdName = "TacticalObjectiveId")]
 		public async Task<ActionResult<ICModels.TacticalObjectiveResult>> UpdateObjectiveProgress([FromBody] ICModels.UpdateObjectiveProgressInput input)
 		{
 			if (input == null || string.IsNullOrWhiteSpace(input.TacticalObjectiveId))
@@ -956,7 +985,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>Marks a tactical objective complete.</summary>
 		[HttpPost("CompleteObjective/{tacticalObjectiveId}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize(Policy = ResgridResources.Command_Update)]
+		[Authorize(Policy = ResgridResources.Command_View)]
+		[RequiresIncidentCapability(IncidentCapabilities.ManageObjectives, Entity = IncidentEntityKind.TacticalObjective, EntityIdName = "tacticalObjectiveId")]
 		public async Task<ActionResult<ICModels.TacticalObjectiveResult>> CompleteObjective(string tacticalObjectiveId, [FromBody] ICModels.CompleteObjectiveInput input = null)
 		{
 			var result = new ICModels.TacticalObjectiveResult();
@@ -984,7 +1014,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>Creates or updates a command-level incident need (resources/logistics/etc.).</summary>
 		[HttpPost("SaveNeed")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize(Policy = ResgridResources.Command_Update)]
+		[Authorize(Policy = ResgridResources.Command_View)]
 		[RequiresIncidentCapability(IncidentCapabilities.ManageObjectives)]
 		public async Task<ActionResult<ICModels.IncidentNeedResult>> SaveNeed([FromBody] IncidentNeed need)
 		{
@@ -1014,7 +1044,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>Transitions an incident need's fulfillment status (Open/PartiallyMet/Met/Cancelled).</summary>
 		[HttpPost("SetNeedStatus")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize(Policy = ResgridResources.Command_Update)]
+		[Authorize(Policy = ResgridResources.Command_View)]
+		[RequiresIncidentCapability(IncidentCapabilities.ManageObjectives, Entity = IncidentEntityKind.IncidentNeed, EntityIdName = "IncidentNeedId")]
 		public async Task<ActionResult<ICModels.IncidentNeedResult>> SetNeedStatus([FromBody] ICModels.SetNeedStatusInput input)
 		{
 			if (input == null || string.IsNullOrWhiteSpace(input.IncidentNeedId) || !Enum.IsDefined(typeof(IncidentNeedStatus), input.Status))
@@ -1043,8 +1074,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.IncidentNeedUpdatesResult>> GetNeedUpdates(string incidentNeedId)
 		{
-			if (!await CanReadBoardsAsync())
-				return Unauthorized();
+			if (!await CanViewBoardForAsync(IncidentEntityKind.IncidentNeed, incidentNeedId))
+				return Refused();
 
 			var updates = await _incidentCommandService.GetNeedUpdatesAsync(DepartmentId, incidentNeedId);
 			var result = new ICModels.IncidentNeedUpdatesResult { Data = updates, PageSize = updates.Count, Status = ResponseHelper.Success };
@@ -1058,7 +1089,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// </summary>
 		[HttpPost("RequestNeedEntities")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize(Policy = ResgridResources.Command_Update)]
+		[Authorize(Policy = ResgridResources.Command_View)]
 		[RequiresIncidentCapability(IncidentCapabilities.ManageObjectives)]
 		public async Task<ActionResult<ICModels.IncidentNeedResult>> RequestNeedEntities([FromBody] ICModels.RequestNeedEntitiesInput input)
 		{
@@ -1093,8 +1124,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.IncidentNeedEntitiesResult>> GetNeedEntities(string incidentNeedId)
 		{
-			if (!await CanReadBoardsAsync())
-				return Unauthorized();
+			if (!await CanViewBoardForAsync(IncidentEntityKind.IncidentNeed, incidentNeedId))
+				return Refused();
 
 			var items = await _incidentCommandService.GetNeedEntitiesAsync(DepartmentId, incidentNeedId);
 			var result = new ICModels.IncidentNeedEntitiesResult { Data = items, PageSize = items.Count, Status = ResponseHelper.Success };
@@ -1108,8 +1139,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.IncidentNeedsResult>> GetNeeds(int callId)
 		{
-			if (!await CanReadBoardsAsync())
-				return Unauthorized();
+			if (!await CanViewBoardAsync(callId))
+				return Refused();
 
 			var result = new ICModels.IncidentNeedsResult();
 			result.Data = await _incidentCommandService.GetNeedsForCallAsync(DepartmentId, callId);
@@ -1126,7 +1157,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>Starts a scene/benchmark/role timer.</summary>
 		[HttpPost("StartTimer")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize(Policy = ResgridResources.Command_Update)]
+		[Authorize(Policy = ResgridResources.Command_View)]
 		[RequiresIncidentCapability(IncidentCapabilities.ManageTimers)]
 		public async Task<ActionResult<ICModels.IncidentTimerResult>> StartTimer([FromBody] IncidentTimer timer)
 		{
@@ -1155,7 +1186,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>Acknowledges a timer (resets its next-due time).</summary>
 		[HttpPost("AcknowledgeTimer/{incidentTimerId}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize(Policy = ResgridResources.Command_Update)]
+		[Authorize(Policy = ResgridResources.Command_View)]
+		[RequiresIncidentCapability(IncidentCapabilities.ManageTimers, Entity = IncidentEntityKind.IncidentTimer, EntityIdName = "incidentTimerId")]
 		public async Task<ActionResult<ICModels.IncidentTimerResult>> AcknowledgeTimer(string incidentTimerId)
 		{
 			var result = new ICModels.IncidentTimerResult();
@@ -1182,7 +1214,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>Creates or updates a real-time map annotation.</summary>
 		[HttpPost("SaveAnnotation")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize(Policy = ResgridResources.Command_Update)]
+		[Authorize(Policy = ResgridResources.Command_View)]
 		[RequiresIncidentCapability(IncidentCapabilities.ManageAnnotations)]
 		public async Task<ActionResult<ICModels.IncidentMapAnnotationResult>> SaveAnnotation([FromBody] IncidentMapAnnotation annotation)
 		{
@@ -1211,7 +1243,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>Removes a map annotation.</summary>
 		[HttpDelete("DeleteAnnotation/{incidentMapAnnotationId}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize(Policy = ResgridResources.Command_Update)]
+		[Authorize(Policy = ResgridResources.Command_View)]
+		[RequiresIncidentCapability(IncidentCapabilities.ManageAnnotations, Entity = IncidentEntityKind.IncidentMapAnnotation, EntityIdName = "incidentMapAnnotationId")]
 		public async Task<ActionResult<ICModels.IncidentCommandActionResult>> DeleteAnnotation(string incidentMapAnnotationId)
 		{
 			var result = new ICModels.IncidentCommandActionResult();
@@ -1229,7 +1262,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// </summary>
 		[HttpPost("SaveIncidentMap")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize(Policy = ResgridResources.Command_Update)]
+		[Authorize(Policy = ResgridResources.Command_View)]
 		[RequiresIncidentCapability(IncidentCapabilities.ManageAnnotations)]
 		public async Task<ActionResult<ICModels.IncidentMapResult>> SaveIncidentMap([FromBody] IncidentMap map)
 		{
@@ -1259,7 +1292,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>Soft-deletes a named incident map.</summary>
 		[HttpDelete("DeleteIncidentMap/{incidentMapId}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize(Policy = ResgridResources.Command_Update)]
+		[Authorize(Policy = ResgridResources.Command_View)]
+		[RequiresIncidentCapability(IncidentCapabilities.ManageAnnotations, Entity = IncidentEntityKind.IncidentMap, EntityIdName = "incidentMapId")]
 		public async Task<ActionResult<ICModels.IncidentCommandActionResult>> DeleteIncidentMap(string incidentMapId)
 		{
 			var deleted = await _incidentCommandService.DeleteIncidentMapAsync(DepartmentId, incidentMapId, UserId, CancellationToken.None);
@@ -1274,8 +1308,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.IncidentMapsResult>> GetIncidentMaps(int callId)
 		{
-			if (!await CanReadBoardsAsync())
-				return Unauthorized();
+			if (!await CanViewBoardAsync(callId))
+				return Refused();
 
 			var maps = await _incidentCommandService.GetIncidentMapsForCallAsync(DepartmentId, callId);
 			var result = new ICModels.IncidentMapsResult { Data = maps, PageSize = maps.Count, Status = ResponseHelper.Success };
@@ -1289,7 +1323,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// </summary>
 		[HttpPut("UpdateMapView")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize(Policy = ResgridResources.Command_Update)]
+		[Authorize(Policy = ResgridResources.Command_View)]
 		[RequiresIncidentCapability(IncidentCapabilities.ManageAnnotations)]
 		public async Task<ActionResult<ICModels.IncidentCommandResult>> UpdateMapView([FromBody] ICModels.UpdateMapViewInput input)
 		{
@@ -1322,8 +1356,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.CommandTimelineResult>> GetTimeline(int callId)
 		{
-			if (!await CanReadBoardsAsync())
-				return Unauthorized();
+			if (!await CanViewBoardAsync(callId))
+				return Refused();
 
 			var result = new ICModels.CommandTimelineResult();
 			result.Data = await _incidentCommandService.GetTimelineForCallAsync(DepartmentId, callId);

@@ -29,5 +29,23 @@ namespace Resgrid.Services
 
 		public async Task<bool> CanAssistWithCommandAsync(int departmentId, string userId)
 			=> await IsRestrictedAsync(departmentId) && await IsAllowedAsync(departmentId, userId);
+
+		public Task<bool> CanViewCommandBoardsAsync(int departmentId, string userId)
+			=> IsAllowedAsync(PermissionTypes.ViewCommandBoards, "commandview", departmentId, userId);
+
+		public Task<bool> IsActiveDepartmentMemberAsync(int departmentId, string userId) => IsActiveMemberAsync(departmentId, userId);
+
+		/// <summary>
+		/// ViewCommandBoards with no row of its own follows the CommandAppLogin row: before it existed, CommandAppLogin also
+		/// decided who reads boards, so a department that narrowed command keeps exactly the same readers on upgrade.
+		/// </summary>
+		protected override async Task<Permission> GetEffectivePermissionAsync(int departmentId, PermissionTypes permissionType)
+		{
+			var permission = await base.GetEffectivePermissionAsync(departmentId, permissionType);
+			if (permission == null && permissionType == PermissionTypes.ViewCommandBoards)
+				return await base.GetEffectivePermissionAsync(departmentId, PermissionTypes.CommandAppLogin);
+
+			return permission;
+		}
 	}
 }

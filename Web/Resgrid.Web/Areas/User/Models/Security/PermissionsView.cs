@@ -101,6 +101,9 @@ namespace Resgrid.Web.Areas.User.Models.Security
 		public int CommandAppLogin { get; set; }
 		public IEnumerable<SelectListItem> CommandAppLoginPermissions { get; set; }
 
+		public int ViewCommandBoards { get; set; }
+		public IEnumerable<SelectListItem> ViewCommandBoardsPermissions { get; set; }
+
 		// Advanced Data Protection (ADP) permissions. Defaults come from
 		// Resgrid.Model.AdpPermissionDefaults — deliberately NOT the wide-open no-row convention. Only the values a
 		// runtime check reads are on the screen (PermissionScreenCatalog).

@@ -249,39 +249,60 @@ namespace Resgrid.Tests.Security.Audit20261005
 		#region v4 sync
 
 		[Test]
-		public async Task Sync_changes_and_bundle_are_empty_for_a_caller_the_commander_gate_refuses()
-		{
-			var commands = new Mock<IIncidentCommandService>();
-			var access = new Mock<ICommandAccessService>();
-			access.Setup(x => x.CanUseCommandAsync(DepartmentId, Caller)).ReturnsAsync(false);
-			var controller = Build<V4.SyncController>(new Dictionary<Type, object>
-			{
-				[typeof(IIncidentCommandService)] = commands.Object, [typeof(ICommandAccessService)] = access.Object
-			});
-
-			var changes = (await controller.Changes(1700000000000)).Value;
-			var bundle = (await controller.Bundle()).Value;
-
-			changes.Data.Commands.Should().BeEmpty();
-			changes.Data.ServerTimestampMs.Should().Be(1700000000000, "the cursor stays where it was");
-			bundle.Data.Boards.Should().BeEmpty();
-			commands.Verify(x => x.GetChangesSinceAsync(It.IsAny<int>(), It.IsAny<DateTime>()), Times.Never);
-			commands.Verify(x => x.GetBundleForDepartmentAsync(It.IsAny<int>(), It.IsAny<bool>()), Times.Never);
-		}
-
-		[Test]
-		public async Task Sync_changes_still_reach_a_commander()
+		public async Task Sync_changes_and_bundle_carry_only_the_incidents_a_member_is_on_when_they_may_not_read_every_board()
 		{
 			var commands = new Mock<IIncidentCommandService>();
 			commands.Setup(x => x.GetChangesSinceAsync(DepartmentId, It.IsAny<DateTime>())).ReturnsAsync(new IncidentCommandChanges
 			{
-				ServerTimestampMs = 5, Commands = new List<IncidentCommand> { new IncidentCommand() }
+				ServerTimestampMs = 5,
+				Commands = new List<IncidentCommand> { new IncidentCommand { CallId = 1 }, new IncidentCommand { CallId = 2 } },
+				Nodes = new List<CommandStructureNode> { new CommandStructureNode { CallId = 2 } }
+			});
+			commands.Setup(x => x.GetBundleForDepartmentAsync(DepartmentId, It.IsAny<bool>())).ReturnsAsync(new IncidentCommandBundle
+			{
+				Boards = new List<IncidentCommandBoard>
+				{
+					new IncidentCommandBoard { Command = new IncidentCommand { CallId = 1 } }, new IncidentCommandBoard { Command = new IncidentCommand { CallId = 2 } }
+				}
+			});
+			commands.Setup(x => x.GetViewableBoardCallIdsAsync(DepartmentId, It.IsAny<IEnumerable<int>>(), Caller))
+				.ReturnsAsync((int _, IEnumerable<int> ids, string _) => new HashSet<int>(ids.Where(id => id == 1)));
+			var resources = new Mock<IIncidentResourcesService>();
+			resources.Setup(x => x.GetAdHocChangesSinceAsync(DepartmentId, It.IsAny<DateTime>()))
+				.ReturnsAsync((new List<IncidentAdHocUnit> { new IncidentAdHocUnit { CallId = 2 } }, new List<IncidentAdHocPersonnel>()));
+			resources.Setup(x => x.GetActiveAdHocResourcesForDepartmentAsync(DepartmentId))
+				.ReturnsAsync((new List<IncidentAdHocUnit> { new IncidentAdHocUnit { CallId = 1 }, new IncidentAdHocUnit { CallId = 2 } }, new List<IncidentAdHocPersonnel>()));
+			var access = new Mock<ICommandAccessService>();
+			access.Setup(x => x.CanViewCommandBoardsAsync(DepartmentId, Caller)).ReturnsAsync(false);
+			var controller = Build<V4.SyncController>(new Dictionary<Type, object>
+			{
+				[typeof(IIncidentCommandService)] = commands.Object, [typeof(ICommandAccessService)] = access.Object,
+				[typeof(IIncidentResourcesService)] = resources.Object
+			});
+
+			var changes = (await controller.Changes(0)).Value;
+			var bundle = (await controller.Bundle()).Value;
+
+			changes.Data.Commands.Select(x => x.CallId).Should().Equal(1);
+			changes.Data.Nodes.Should().BeEmpty();
+			changes.Data.AdHocUnits.Should().BeEmpty();
+			bundle.Data.Boards.Select(x => x.Command.CallId).Should().Equal(1);
+			bundle.Data.AdHocUnits.Select(x => x.CallId).Should().Equal(1);
+		}
+
+		[Test]
+		public async Task Sync_changes_reach_everything_for_a_member_who_may_read_every_board()
+		{
+			var commands = new Mock<IIncidentCommandService>();
+			commands.Setup(x => x.GetChangesSinceAsync(DepartmentId, It.IsAny<DateTime>())).ReturnsAsync(new IncidentCommandChanges
+			{
+				ServerTimestampMs = 5, Commands = new List<IncidentCommand> { new IncidentCommand { CallId = 1 } }
 			});
 			var resources = new Mock<IIncidentResourcesService>();
 			resources.Setup(x => x.GetAdHocChangesSinceAsync(DepartmentId, It.IsAny<DateTime>()))
 				.ReturnsAsync((new List<IncidentAdHocUnit>(), new List<IncidentAdHocPersonnel>()));
 			var access = new Mock<ICommandAccessService>();
-			access.Setup(x => x.CanUseCommandAsync(DepartmentId, Caller)).ReturnsAsync(true);
+			access.Setup(x => x.CanViewCommandBoardsAsync(DepartmentId, Caller)).ReturnsAsync(true);
 			var controller = Build<V4.SyncController>(new Dictionary<Type, object>
 			{
 				[typeof(IIncidentCommandService)] = commands.Object, [typeof(ICommandAccessService)] = access.Object,
@@ -291,6 +312,8 @@ namespace Resgrid.Tests.Security.Audit20261005
 			var changes = (await controller.Changes(0)).Value;
 
 			changes.Data.Commands.Should().ContainSingle();
+			commands.Verify(x => x.CanViewBoardAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>()), Times.Never);
+			commands.Verify(x => x.GetViewableBoardCallIdsAsync(It.IsAny<int>(), It.IsAny<IEnumerable<int>>(), It.IsAny<string>()), Times.Never);
 		}
 
 		[Test]

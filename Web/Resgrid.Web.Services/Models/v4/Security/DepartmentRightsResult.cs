@@ -112,10 +112,18 @@ namespace Resgrid.Web.Services.Models.v4.Security
 		public bool CanLoginToDispatchApp { get; set; }
 
 		/// <summary>
-		/// Can the user act as a commander: sign in to the IC app, establish command, and read command
-		/// boards. Restrictable to admins or selected roles; defaults to everyone.
+		/// Can the user run incident command: sign in to the IC app, establish command, and work the boards
+		/// where they hold incident capabilities (per board: IncidentRoles/GetMyCapabilities). Restrictable to
+		/// admins or selected roles; defaults to everyone.
 		/// </summary>
 		public bool CanLoginToCommandApp { get; set; }
+
+		/// <summary>
+		/// Can the user read every command board in the department (Security &gt; View Command Boards). Without it
+		/// a member still reads the boards of incidents they are on. Restrictable to admins or selected roles; with
+		/// no setting of its own it follows <see cref="CanLoginToCommandApp"/>'s setting, and with neither, everyone.
+		/// </summary>
+		public bool CanViewCommandBoards { get; set; }
 
 		/// <summary>
 		/// Can the user manage workflow credentials

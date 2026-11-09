@@ -49,6 +49,41 @@ namespace Resgrid.Model.Services
 		Task<bool> RemoveIncidentRoleAsync(int departmentId, string incidentRoleAssignmentId, string userId, CancellationToken cancellationToken = default(CancellationToken));
 		Task<List<IncidentRoleAssignment>> GetIncidentRolesAsync(int departmentId, int callId);
 		Task<IncidentCapabilities> GetCapabilitiesForUserAsync(int departmentId, int callId, string userId);
+
+		/// <summary>
+		/// The capabilities this user can actually use on the incident's active command: none unless the department lets
+		/// them run command (<see cref="PermissionTypes.CommandAppLogin"/>), otherwise <see cref="GetCapabilitiesForUserAsync"/>.
+		/// The same order the RequiresIncidentCapability filter applies, so an app that gates on this never offers a
+		/// write the server refuses.
+		/// </summary>
+		Task<IncidentCapabilities> GetEffectiveCapabilitiesAsync(int departmentId, int callId, string userId);
+
+		/// <summary>
+		/// True when the user is on the incident: its commander or the member who established command, an ICS role holder,
+		/// a lane lead, a member or crewed unit placed on the board, or dispatched to the call directly or through their
+		/// group, a personnel role or a unit they crew. Considers the call's most recent command, active or closed.
+		/// </summary>
+		Task<bool> IsIncidentParticipantAsync(int departmentId, int callId, string userId);
+
+		/// <summary>
+		/// Whether the user may read this incident's command board: the department lets them read boards
+		/// (<see cref="ICommandAccessService.CanViewCommandBoardsAsync"/>), or they are on the incident
+		/// (<see cref="IsIncidentParticipantAsync"/>) or hold capabilities on it. Fails closed.
+		/// </summary>
+		Task<bool> CanViewBoardAsync(int departmentId, int callId, string userId);
+
+		/// <summary>
+		/// The incidents among <paramref name="callIds"/> whose boards the user may read: <see cref="CanViewBoardAsync"/> for a
+		/// whole list. The department's command, role, lane and assignment rows and the user's own lookups are read once for
+		/// the list instead of once per incident, so list and sync endpoints filter through this. Fails closed per incident.
+		/// </summary>
+		Task<HashSet<int>> GetViewableBoardCallIdsAsync(int departmentId, IEnumerable<int> callIds, string userId);
+
+		/// <summary>
+		/// The call an incident-command row belongs to, when the row exists in the department; null otherwise. Lets an
+		/// endpoint that names a row only by id check the caller's access to that incident.
+		/// </summary>
+		Task<int?> ResolveCallIdForEntityAsync(int departmentId, IncidentEntityKind kind, string entityId);
 		Task<IncidentCommand> CloseCommandAsync(int departmentId, string incidentCommandId, string userId, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>

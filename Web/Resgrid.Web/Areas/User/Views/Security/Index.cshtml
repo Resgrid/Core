@@ -420,6 +420,16 @@
                                         </td>
                                     </tr>
                                     <tr>
+                                        <td>@localizer["PermViewCommandBoardsLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermViewCommandBoardsNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.ViewCommandBoards, Model.ViewCommandBoardsPermissions)</td>
+                                        <td>@localizer["PermissionNA"]</td>
+                                        <td>
+                                            <span id="viewCommandBoardsNoRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="viewCommandBoardsRolesDiv" style="display: none;"><select id="viewCommandBoardsRoles" name="viewCommandBoardsRoles"></select></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
                                         <td colspan="5"><strong>@localizer["PermAdpSectionHeader"]</strong><br /><small>@localizer["PermAdpSectionNote"]</small></td>
                                     </tr>
                                     <tr>

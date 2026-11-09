@@ -41,10 +41,12 @@ namespace Resgrid.Model
 		DispatchAppLogin = 29,
 
 		/// <summary>
-		/// Who may act as a commander: sign in to the IC app, establish incident command on a call, and
-		/// read command boards. Defaults to everyone in the department (no permission row = allowed) and
-		/// can be narrowed to admins, group admins, or selected personnel roles — the same ladder as
-		/// <see cref="DispatchAppLogin"/>.
+		/// Who may run incident command: sign in to the IC app, establish (or reopen) command on a call, and
+		/// work a command board where they hold incident capabilities (the commander and the member who
+		/// established command hold all of them; ICS roles and command assist grant subsets). Defaults to
+		/// everyone in the department (no permission row = allowed) and can be narrowed to admins, group
+		/// admins, or selected personnel roles — the same ladder as <see cref="DispatchAppLogin"/>. Reading
+		/// boards is <see cref="ViewCommandBoards"/>.
 		/// </summary>
 		CommandAppLogin = 30,
 
@@ -300,7 +302,17 @@ ViewChecklistResults = 113,
 		/// <summary>LI-D (registry 123): boards, lanes and the situation entities. Department and group administrators.</summary>
 		ManageCoordinationBoards = 123,
 		/// <summary>LI-D (registry 124): interagency board share grants. Department administrators only.</summary>
-		ShareCoordinationBoards = 124
+		ShareCoordinationBoards = 124,
+
+		/// <summary>
+		/// Who may read incident command boards (the board, its log, reports and the department's list of commands).
+		/// No-row default: the <see cref="CommandAppLogin"/> row, which gated board reads before this value existed, so a
+		/// department that narrowed command keeps the same readers; with neither row, everyone. Can be narrowed to admins,
+		/// group admins, or selected personnel roles. Members on an incident — command staff, lane leads, members dispatched
+		/// to the call directly or through their group, role or a unit they crew, and resources placed on the board — always
+		/// read that incident's board whatever this says.
+		/// </summary>
+		ViewCommandBoards = 125
 	}
 
 }

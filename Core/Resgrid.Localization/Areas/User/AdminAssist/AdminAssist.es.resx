@@ -3201,6 +3201,9 @@
   <data xml:space="preserve" name="Permission.CommandAppLogin">
     <value>Inicio de sesión en la aplicación Incident Command</value>
   </data>
+  <data xml:space="preserve" name="Permission.ViewCommandBoards">
+    <value>Ver tableros de mando</value>
+  </data>
   <data xml:space="preserve" name="Permission.ConfigureProtectedDataEgress">
     <value>Configurar la salida de datos protegidos</value>
   </data>
@@ -3442,7 +3445,10 @@
     <value>Permite cerrar y reabrir llamadas. Con la casilla «Solo Grupo» marcada, solo los administradores del departamento y las personas cuyo grupo fue despachado a la llamada pueden cerrarla o reabrirla, también cuando la regla es «Todos». En la web, en las aplicaciones y en el chatbot, las personas también necesitan los derechos sobre llamadas de «Crear llamadas». Sin una regla guardada, cualquier persona que pueda ver la llamada puede cerrarla.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CommandAppLogin">
-    <value>Decide quién puede usar la aplicación Incident Command y leer los tableros de mando: cada tablero y todas las lecturas de control de personal, necesidades, cronología, mapa, roles, voz y recursos, la sincronización sin conexión de tableros en las aplicaciones y las respuestas del chatbot sobre incidentes. Sin una regla guardada, todo miembro activo puede hacerlo. Cuando guarda una regla más restringida, las personas que permite también obtienen capacidades de asistencia al mando en cualquier tablero. Establecer el mando y editar tableros siguen requiriendo derechos de mando de administrador del departamento.</value>
+    <value>Decide quién puede dirigir el mando de incidentes: iniciar sesión en la aplicación Incident Command, establecer o reabrir el mando y trabajar en los tableros donde tenga capacidades (el comandante del incidente y quien estableció el mando las tienen todas; los roles ICS asignados conceden una parte). Sin una regla guardada puede hacerlo cualquier miembro activo. Si guarda una regla más restrictiva, las personas que permite también obtienen capacidades de asistencia al mando en cualquier tablero. Quién lee los tableros lo decide Ver tableros de mando, que sigue esta regla hasta tener la suya.</value>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.ViewCommandBoards">
+    <value>Decide quién puede leer todos los tableros de mando: el tablero, el control de personal, las necesidades, la cronología, el mapa, los roles, la voz, los recursos y los informes, la sincronización sin conexión de los tableros en las aplicaciones, la lista y el widget del panel de mandos activos, y las respuestas del chatbot sobre incidentes. Los miembros que participan en un incidente siempre leen su tablero: el personal de mando, los responsables de sector, los miembros despachados a la llamada directamente o a través de su grupo, un rol de personal o una unidad de cuya dotación forman parte, y los recursos colocados en el tablero. Sin una regla guardada sigue a Command App Login y, sin ninguna de las dos, puede hacerlo cualquier miembro activo.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ConfigureProtectedDataEgress">
     <value>Controla quién puede administrar los flujos de trabajo protegidos y sus aprobaciones de entrega. Activar, aprobar o renovar un flujo de trabajo protegido también requiere una verificación reforzada reciente, y la configuración de entrega mediante PIN por SMS y voz requiere además un administrador del departamento. Solo se aplica cuando el departamento está inscrito en Protección de datos avanzada.</value>

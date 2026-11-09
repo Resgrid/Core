@@ -28,8 +28,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_commandAccessService = commandAccessService;
 		}
 
-		/// <summary>The command-board read gate IncidentCommandController applies (CommandAppLogin); Command_View alone is a plan-level claim.</summary>
-		private Task<bool> CanReadBoardsAsync() => _commandAccessService.CanUseCommandAsync(DepartmentId, UserId);
+		/// <summary>
+		/// Assignable resources are for working a board: the member may run command (Command App Login) or read boards
+		/// (View Command Boards).
+		/// </summary>
+		private async Task<bool> CanReadBoardsAsync()
+			=> await _commandAccessService.CanUseCommandAsync(DepartmentId, UserId) || await _commandAccessService.CanViewCommandBoardsAsync(DepartmentId, UserId);
 		#endregion Members and Constructors
 
 		/// <summary>
@@ -42,7 +46,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		public async Task<ActionResult<ICModels.MutualAidResourcesResult>> GetAssignableResources()
 		{
 			if (!await CanReadBoardsAsync())
-				return Unauthorized();
+				return StatusCode(StatusCodes.Status403Forbidden);
 
 			var result = new ICModels.MutualAidResourcesResult();
 			result.Data = await _mutualAidService.GetAssignableResourcesForIncidentAsync(DepartmentId);

@@ -3201,6 +3201,9 @@
   <data xml:space="preserve" name="Permission.CommandAppLogin">
     <value>Anmeldung Command-App</value>
   </data>
+  <data xml:space="preserve" name="Permission.ViewCommandBoards">
+    <value>Einsatzführungstafeln anzeigen</value>
+  </data>
   <data xml:space="preserve" name="Permission.ConfigureProtectedDataEgress">
     <value>Abfluss geschützter Daten konfigurieren</value>
   </data>
@@ -3442,7 +3445,10 @@
     <value>Ermöglicht das Abschließen und Wiedereröffnen von Einsätzen. Ist das Kontrollkästchen „Nur Gruppe“ aktiviert, dürfen nur Abteilungsadministratoren und Personen, deren Gruppe zu dem Einsatz alarmiert wurde, ihn abschließen oder wiedereröffnen – auch wenn die Regel „Alle“ lautet. Im Web, in den Apps und im Chatbot sind zusätzlich die Einsatzrechte aus „Einsätze erstellen“ erforderlich. Ohne gespeicherte Regel darf jeder, der den Einsatz sehen kann, ihn abschließen.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CommandAppLogin">
-    <value>Legt fest, wer die Incident-Command-App verwenden und Einsatzführungstafeln lesen darf: jede Tafel sowie alle Lesezugriffe auf Kräfteübersicht, Bedarfe, Zeitachse, Karte, Rollen, Sprachfunk und Ressourcen, die Offline-Synchronisierung von Tafeln in den Apps und die Einsatzauskünfte des Chatbots. Ohne gespeicherte Regel dürfen dies alle aktiven Mitglieder. Wenn Sie eine engere Regel speichern, erhalten die zugelassenen Personen außerdem Unterstützungsfunktionen für die Einsatzleitung an jeder Tafel. Das Übernehmen der Einsatzleitung und das Bearbeiten von Tafeln erfordern weiterhin die Einsatzleitungsrechte von Abteilungsadministratoren.</value>
+    <value>Legt fest, wer Einsatzleitungen führen darf: sich an der Incident-Command-App anmelden, eine Einsatzleitung übernehmen oder wieder eröffnen und auf den Tafeln arbeiten, auf denen er Befugnisse hat (der Einsatzleiter und wer die Einsatzleitung übernommen hat, haben alle; zugewiesene ICS-Rollen gewähren Teile davon). Ohne gespeicherte Regel darf es jedes aktive Mitglied. Wenn Sie eine engere Regel speichern, erhalten die zugelassenen Personen außerdem Unterstützungsbefugnisse auf jeder Tafel. Wer Tafeln lesen darf, legt „Einsatzführungstafeln anzeigen“ fest; ohne eigene Regel folgt es dieser.</value>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.ViewCommandBoards">
+    <value>Legt fest, wer jede Einsatzführungstafel lesen darf: die Tafel, Kräfteübersicht, Bedarfe, Zeitachse, Karte, Rollen, Sprachfunk, Ressourcen und Berichte, die Offline-Synchronisierung der Tafeln in den Apps, die Liste und das Dashboard-Widget der aktiven Einsatzleitungen sowie die Einsatzantworten des Chatbots. Am Einsatz Beteiligte lesen die Tafel dieses Einsatzes immer: Führungsstab, Abschnittsleitungen, Mitglieder, die direkt oder über ihre Gruppe, eine Personalrolle oder eine von ihnen besetzte Einheit alarmiert wurden, und auf der Tafel eingesetzte Ressourcen. Ohne gespeicherte Regel gilt Command App Login, und ohne beide Regeln darf es jedes aktive Mitglied.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ConfigureProtectedDataEgress">
     <value>Legt fest, wer geschützte Workflows und deren Freigabegenehmigungen verwalten darf. Das Aktivieren, Genehmigen oder Verlängern eines geschützten Workflows erfordert zusätzlich eine aktuelle Step-up-Bestätigung, und die Einstellungen für die Übermittlung per PIN über SMS und Sprachanruf erfordern außerdem einen Abteilungsadministrator. Gilt nur, wenn die Abteilung für den erweiterten Datenschutz registriert ist.</value>

@@ -183,11 +183,55 @@ namespace Resgrid.Tests.Web.Services
 		public void EstablishCommand_IsNotCapabilityGated_SoBootstrapCanCreateTheCommand()
 		{
 			// EstablishCommand bootstraps the command — before it runs there is no command/commander/role and thus no
-			// IncidentCapabilities, so it must NOT carry [RequiresIncidentCapability]; it stays on the Command_Create claim.
+			// IncidentCapabilities, so it must NOT carry [RequiresIncidentCapability]; the run-command permission gates it.
 			var method = typeof(IncidentCommandController).GetMethod(nameof(IncidentCommandController.EstablishCommand));
 			method.Should().NotBeNull();
 			method.GetCustomAttributes(typeof(RequiresIncidentCapabilityAttribute), true).Should().BeEmpty();
 			method.GetCustomAttributes(typeof(AuthorizeAttribute), true).Should().NotBeEmpty();
+		}
+
+		[Test]
+		public async Task Returns403_ForARowNamedOnlyById_WhenTheCallerLacksTheCapabilityOnItsIncident()
+		{
+			// MoveResource names only the assignment: its incident is looked up so a member cannot move resources on a
+			// board they hold no capability on.
+			_service.Setup(s => s.ResolveCallIdForEntityAsync(DepartmentId, IncidentEntityKind.ResourceAssignment, "ra-1")).ReturnsAsync(5);
+			_service.Setup(s => s.GetCapabilitiesForUserAsync(DepartmentId, 5, UserId)).ReturnsAsync(IncidentCapabilities.ViewBoard);
+
+			var filter = new RequiresIncidentCapabilityAttribute(IncidentCapabilities.AssignResources) { Entity = IncidentEntityKind.ResourceAssignment, EntityIdName = "ResourceAssignmentId" };
+			var context = BuildContext(args: new Dictionary<string, object> { ["input"] = new Resgrid.Web.Services.Models.v4.IncidentCommand.MoveResourceInput { ResourceAssignmentId = "ra-1", TargetNodeId = "n-2" } });
+
+			var nextCalled = await Invoke(filter, context);
+
+			nextCalled.Should().BeFalse();
+			context.Result.Should().BeOfType<ObjectResult>().Which.StatusCode.Should().Be(StatusCodes.Status403Forbidden);
+		}
+
+		[Test]
+		public async Task AllowsARowNamedOnlyById_ViaTheRouteValue_WhenTheCallerHoldsTheCapability()
+		{
+			_service.Setup(s => s.ResolveCallIdForEntityAsync(DepartmentId, IncidentEntityKind.CommandStructureNode, "node-1")).ReturnsAsync(5);
+			_service.Setup(s => s.GetCapabilitiesForUserAsync(DepartmentId, 5, UserId)).ReturnsAsync(IncidentCapabilities.ManageStructure | IncidentCapabilities.ViewBoard);
+
+			var filter = new RequiresIncidentCapabilityAttribute(IncidentCapabilities.ManageStructure) { Entity = IncidentEntityKind.CommandStructureNode, EntityIdName = "commandStructureNodeId" };
+			var context = BuildContext(
+				args: new Dictionary<string, object> { ["commandStructureNodeId"] = "node-1" },
+				routeValues: new Dictionary<string, object> { ["commandStructureNodeId"] = "node-1" });
+
+			(await Invoke(filter, context)).Should().BeTrue();
+		}
+
+		[Test]
+		public async Task ARowNotInTheDepartment_ResolvesToNoIncident_AndTheActionAnswersNotFound()
+		{
+			// Unresolvable means the row isn't the department's: the action's department-scoped service answers not_found.
+			_service.Setup(s => s.ResolveCallIdForEntityAsync(DepartmentId, IncidentEntityKind.IncidentNote, "other-dept-note")).ReturnsAsync((int?)null);
+
+			var filter = new RequiresIncidentCapabilityAttribute(IncidentCapabilities.ManageNotes) { Entity = IncidentEntityKind.IncidentNote, EntityIdName = "incidentNoteId" };
+			var context = BuildContext(args: new Dictionary<string, object> { ["incidentNoteId"] = "other-dept-note" });
+
+			(await Invoke(filter, context)).Should().BeTrue();
+			_service.Verify(s => s.GetCapabilitiesForUserAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>()), Times.Never);
 		}
 
 		#region Helpers

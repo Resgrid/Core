@@ -4,8 +4,9 @@ using System.Threading.Tasks;
 namespace Resgrid.Model.Services
 {
 	/// <summary>
-	/// Who is allowed to act as a commander, per the <see cref="PermissionTypes.CommandAppLogin"/>
-	/// permission: signing in to the IC app, establishing command on a call, and reading command boards.
+	/// Who is allowed to run incident command, per the <see cref="PermissionTypes.CommandAppLogin"/>
+	/// permission (signing in to the IC app, establishing command on a call, working a board where they hold
+	/// incident capabilities), and who may read command boards, per <see cref="PermissionTypes.ViewCommandBoards"/>.
 	///
 	/// The mirror of <see cref="IDispatchAccessService"/>, and enforced the same way — on the server, not
 	/// just in the app. A command board is only a client of the shared API, so a client-side check alone
@@ -33,5 +34,16 @@ namespace Resgrid.Model.Services
 		/// asked for. Once a department picks who commands, those people are trusted to assist.
 		/// </summary>
 		Task<bool> CanAssistWithCommandAsync(int departmentId, string userId);
+
+		/// <summary>
+		/// True when this user may read every command board in the department, per
+		/// <see cref="PermissionTypes.ViewCommandBoards"/> (which, with no row of its own, follows the
+		/// <see cref="PermissionTypes.CommandAppLogin"/> row; neither row = every active member). Members on an incident
+		/// read that incident's board regardless — see <see cref="IIncidentCommandService.CanViewBoardAsync"/>.
+		/// </summary>
+		Task<bool> CanViewCommandBoardsAsync(int departmentId, string userId);
+
+		/// <summary>True when the user is an active (not disabled, not deleted) member of the department.</summary>
+		Task<bool> IsActiveDepartmentMemberAsync(int departmentId, string userId);
 	}
 }

@@ -23,21 +23,26 @@ namespace Resgrid.Web.Services.Controllers.v4
 		#region Members and Constructors
 		private readonly IIncidentVoiceService _incidentVoiceService;
 		private readonly ICommandAccessService _commandAccessService;
+		private readonly IIncidentCommandService _incidentCommandService;
 
-		public IncidentVoiceController(IIncidentVoiceService incidentVoiceService, ICommandAccessService commandAccessService)
+		public IncidentVoiceController(IIncidentVoiceService incidentVoiceService, ICommandAccessService commandAccessService, IIncidentCommandService incidentCommandService)
 		{
 			_incidentVoiceService = incidentVoiceService;
 			_commandAccessService = commandAccessService;
+			_incidentCommandService = incidentCommandService;
 		}
 
-		/// <summary>The command-board read gate IncidentCommandController applies (CommandAppLogin); Command_View alone is a plan-level claim.</summary>
-		private Task<bool> CanReadBoardsAsync() => _commandAccessService.CanUseCommandAsync(DepartmentId, UserId);
+		/// <summary>Whether the caller may read this incident's board: Security &gt; View Command Boards, or being on the incident.</summary>
+		private Task<bool> CanViewBoardAsync(int callId) => _incidentCommandService.CanViewBoardAsync(DepartmentId, callId, UserId);
+
+		/// <summary>A refusal the apps treat as final (403), never as an expired session (401).</summary>
+		private ObjectResult Refused() => StatusCode(StatusCodes.Status403Forbidden, "You are not authorized for this incident command action.");
 		#endregion Members and Constructors
 
 		/// <summary>Creates an on-demand tactical channel scoped to a call (requires the voice addon).</summary>
 		[HttpPost("CreateIncidentChannel")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize(Policy = ResgridResources.Command_Update)]
+		[Authorize(Policy = ResgridResources.Command_View)]
 		[RequiresIncidentCapability(IncidentCapabilities.ManageChannels)]
 		public async Task<ActionResult<ICModels.IncidentVoiceChannelResult>> CreateIncidentChannel([FromBody] ICModels.CreateIncidentChannelInput input)
 		{
@@ -68,8 +73,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.IncidentVoiceChannelsResult>> GetChannelsForCall(int callId)
 		{
-			if (!await CanReadBoardsAsync())
-				return Unauthorized();
+			if (!await CanViewBoardAsync(callId))
+				return Refused();
 
 			var result = new ICModels.IncidentVoiceChannelsResult();
 			result.Data = await _incidentVoiceService.GetChannelsForCallAsync(DepartmentId, callId);
@@ -85,11 +90,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.VoiceTransmissionLogResult>> LogTransmission([FromBody] ICModels.LogTransmissionInput input)
 		{
-			if (!await CanReadBoardsAsync())
-				return Unauthorized();
-
 			if (input == null || input.CallId <= 0 || string.IsNullOrWhiteSpace(input.DepartmentVoiceChannelId))
 				return BadRequest();
+
+			if (!await CanViewBoardAsync(input.CallId))
+				return Refused();
 
 			var result = new ICModels.VoiceTransmissionLogResult();
 
@@ -128,8 +133,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.VoiceTransmissionLogsResult>> GetTransmissionLog(int callId)
 		{
-			if (!await CanReadBoardsAsync())
-				return Unauthorized();
+			if (!await CanViewBoardAsync(callId))
+				return Refused();
 
 			var result = new ICModels.VoiceTransmissionLogsResult();
 			result.Data = await _incidentVoiceService.GetTransmissionLogForCallAsync(DepartmentId, callId);
@@ -142,7 +147,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>Closes all open on-demand tactical channels for a call.</summary>
 		[HttpPost("CloseIncidentChannels/{callId}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize(Policy = ResgridResources.Command_Update)]
+		[Authorize(Policy = ResgridResources.Command_View)]
 		[RequiresIncidentCapability(IncidentCapabilities.ManageChannels)]
 		public async Task<ActionResult<ICModels.IncidentCommandActionResult>> CloseIncidentChannels(int callId)
 		{

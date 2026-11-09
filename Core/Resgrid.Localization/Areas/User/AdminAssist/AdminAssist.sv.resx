@@ -3201,6 +3201,9 @@
   <data xml:space="preserve" name="Permission.CommandAppLogin">
     <value>Inloggning i Incident Command-appen</value>
   </data>
+  <data xml:space="preserve" name="Permission.ViewCommandBoards">
+    <value>Visa ledningstavlor</value>
+  </data>
   <data xml:space="preserve" name="Permission.ConfigureProtectedDataEgress">
     <value>Konfigurera utflöde av skyddade data</value>
   </data>
@@ -3442,7 +3445,10 @@
     <value>Tillåter att larm avslutas och återöppnas. När rutan Endast grupp är markerad får bara avdelningsadministratörer och personer vars grupp larmades ut på larmet avsluta eller återöppna det – även när regeln är Alla. På webben, i apparna och i chattboten behöver personer också larmrättigheterna från Skapa larm. Utan sparad regel får alla som kan se larmet avsluta det.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CommandAppLogin">
-    <value>Avgör vem som kan använda Incident Command-appen och läsa ledningstavlor: varje tavla och all läsning av personalredovisning, behov, tidslinje, karta, roller, röst och resurser, apparnas offlinesynkronisering av tavlor och chattbotens svar om insatser. Utan sparad regel får alla aktiva medlemmar göra detta. När du sparar en snävare regel får de personer den tillåter även funktioner för ledningsstöd på alla tavlor. Att upprätta insatsledning och redigera tavlor kräver fortfarande ledningsrättigheter på avdelningsadministratörsnivå.</value>
+    <value>Avgör vem som får leda insatser: logga in i Incident Command-appen, upprätta eller återöppna insatsledning och arbeta på de tavlor där personen har behörigheter (insatsledaren och den som upprättade insatsledningen har alla; tilldelade ICS-roller ger en del av dem). Utan sparad regel får varje aktiv medlem det. När du sparar en snävare regel får de personer den tillåter också behörigheter att assistera på valfri tavla. Vem som läser tavlor styrs av Visa ledningstavlor, som följer den här regeln tills den har en egen.</value>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.ViewCommandBoards">
+    <value>Avgör vem som kan läsa alla ledningstavlor: tavlan, personalredovisning, behov, tidslinje, karta, roller, röst, resurser och rapporter, apparnas offlinesynkronisering av tavlor, listan och instrumentpanelswidgeten för aktiva insatsledningar samt chatbotens svar om insatser. Medlemmar som deltar i en insats läser alltid dess tavla: ledningsstab, sektorchefer, medlemmar larmade till ärendet direkt eller via sin grupp, en personalroll eller en enhet de bemannar, samt resurser placerade på tavlan. Utan sparad regel följer den Command App Login, och utan någon av reglerna får varje aktiv medlem det.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ConfigureProtectedDataEgress">
     <value>Styr vem som får administrera skyddade arbetsflöden och deras godkännanden av frisläppning. Att slå på, godkänna eller förnya ett skyddat arbetsflöde kräver också en ny förstärkt verifiering, och inställningarna för utlämning med PIN via sms och röstsamtal kräver dessutom en avdelningsadministratör. Gäller endast när avdelningen är registrerad för Avancerat dataskydd.</value>

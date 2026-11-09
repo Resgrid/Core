@@ -25,15 +25,24 @@ namespace Resgrid.Web.Services.Filters
 	/// determined the filter does NOT block: the broad Command_* claim and the service-layer department-ownership
 	/// guards still apply, so this filter only ever ADDS protection, never removes it.
 	///
-	/// Note: the entity-id "second action" verbs (delete/release/complete/acknowledge an existing row) are left on
-	/// the broad Command_* claim because the target Call isn't on the request — adding capability gating there
-	/// needs an entity-id → Call lookup and is a deliberate follow-up.
+	/// The entity-id "second action" verbs (delete/release/complete/acknowledge/move an existing row) name only the row:
+	/// they set <see cref="Entity"/> and <see cref="EntityIdName"/>, and the row's Call is looked up
+	/// (<see cref="IIncidentCommandService.ResolveCallIdForEntityAsync"/>, department-ownership checked). A row that
+	/// doesn't exist resolves to no Call, so the action runs and its service answers not_found.
 	/// </summary>
 	[AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
 	public sealed class RequiresIncidentCapabilityAttribute : Attribute, IAsyncActionFilter
 	{
 		/// <summary>The capability the caller must hold for the target incident to proceed.</summary>
 		public IncidentCapabilities Required { get; }
+
+		/// <summary>The kind of row the request names by id alone, when its incident isn't otherwise on the request.</summary>
+		public IncidentEntityKind Entity { get; set; } = IncidentEntityKind.None;
+
+		/// <summary>
+		/// The route value, action argument or bound-body string property that carries the <see cref="Entity"/> row's id.
+		/// </summary>
+		public string EntityIdName { get; set; }
 
 		public RequiresIncidentCapabilityAttribute(IncidentCapabilities required)
 		{
@@ -78,7 +87,7 @@ namespace Resgrid.Web.Services.Filters
 				return;
 			}
 
-			var callId = await ResolveCallIdAsync(context, service, departmentId);
+			var callId = await ResolveCallIdAsync(context, service, departmentId, Entity, EntityIdName);
 			if (callId == null || callId.Value <= 0)
 			{
 				// Couldn't classify the target incident — don't block; the broad Command_* claim still governs.
@@ -104,8 +113,16 @@ namespace Resgrid.Web.Services.Filters
 		/// (1) an explicit <c>callId</c> route/argument, (2) an <c>IncidentCommandId</c> (route/arg/body) resolved
 		/// to its Call and department-ownership checked, then (3) a <c>CallId</c> on a bound request body object.
 		/// </summary>
-		private static async Task<int?> ResolveCallIdAsync(ActionExecutingContext context, IIncidentCommandService service, int departmentId)
+		private static async Task<int?> ResolveCallIdAsync(ActionExecutingContext context, IIncidentCommandService service, int departmentId,
+			IncidentEntityKind entity = IncidentEntityKind.None, string entityIdName = null)
 		{
+			// (0) A row named by id alone — its Call, department-ownership checked. Authoritative when declared.
+			if (entity != IncidentEntityKind.None && !string.IsNullOrWhiteSpace(entityIdName))
+			{
+				var entityId = GetString(context, entityIdName) ?? GetStringProperty(context, entityIdName);
+				return string.IsNullOrWhiteSpace(entityId) ? null : await service.ResolveCallIdForEntityAsync(departmentId, entity, entityId);
+			}
+
 			// (1) Explicit callId (e.g. EvaluateAccountability/{callId}, CloseIncidentChannels/{callId}).
 			var directCallId = GetInt(context, "callId");
 			if (directCallId.HasValue && directCallId.Value > 0)

@@ -32,14 +32,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_commandAccessService = commandAccessService;
 		}
 
-		/// <summary>The command-board read gate IncidentCommandController applies (CommandAppLogin); Command_View alone is a plan-level claim.</summary>
-		private Task<bool> CanReadBoardsAsync() => _commandAccessService.CanUseCommandAsync(DepartmentId, UserId);
+		/// <summary>Whether the caller may read this incident's board: Security &gt; View Command Boards, or being on the incident.</summary>
+		private Task<bool> CanViewBoardAsync(int callId) => _incidentCommandService.CanViewBoardAsync(DepartmentId, callId, UserId);
+
+		/// <summary>A refusal the apps treat as final (403), never as an expired session (401).</summary>
+		private ObjectResult Refused() => StatusCode(StatusCodes.Status403Forbidden, "You are not authorized for this incident command action.");
 		#endregion Members and Constructors
 
 		/// <summary>Assigns a Resgrid user to a functional incident-command role.</summary>
 		[HttpPost("AssignRole")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize(Policy = ResgridResources.Command_Update)]
+		[Authorize(Policy = ResgridResources.Command_View)]
 		[RequiresIncidentCapability(IncidentCapabilities.ManageCommand)]
 		public async Task<ActionResult<ICModels.IncidentRoleResult>> AssignRole([FromBody] IncidentRoleAssignment assignment)
 		{
@@ -69,7 +72,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>Removes a functional incident-command role assignment.</summary>
 		[HttpPost("RemoveRole/{incidentRoleAssignmentId}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize(Policy = ResgridResources.Command_Update)]
+		[Authorize(Policy = ResgridResources.Command_View)]
+		[RequiresIncidentCapability(IncidentCapabilities.ManageCommand, Entity = IncidentEntityKind.IncidentRoleAssignment, EntityIdName = "incidentRoleAssignmentId")]
 		public async Task<ActionResult<ICModels.IncidentCommandActionResult>> RemoveRole(string incidentRoleAssignmentId)
 		{
 			var result = new ICModels.IncidentCommandActionResult();
@@ -85,8 +89,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.IncidentRolesResult>> GetRoles(int callId)
 		{
-			if (!await CanReadBoardsAsync())
-				return Unauthorized();
+			if (!await CanViewBoardAsync(callId))
+				return Refused();
 
 			var result = new ICModels.IncidentRolesResult();
 			result.Data = await _incidentCommandService.GetIncidentRolesAsync(DepartmentId, callId);
@@ -102,10 +106,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.IncidentCapabilitiesResult>> GetMyCapabilities(int callId)
 		{
-			if (!await CanReadBoardsAsync())
-				return Unauthorized();
-
-			var caps = await _incidentCommandService.GetCapabilitiesForUserAsync(DepartmentId, callId, UserId);
+			// What this member can actually do here — the same checks the write endpoints apply — so an app that gates its
+			// controls on this never offers a write the server refuses. ViewBoard says whether they may read the board at all
+			// (the department-wide View Command Boards permission, or being on the incident). Never refused: a member who
+			// may do nothing gets 0.
+			var caps = await _incidentCommandService.GetEffectiveCapabilitiesAsync(DepartmentId, callId, UserId);
+			if (caps != IncidentCapabilities.None || await CanViewBoardAsync(callId))
+				caps |= IncidentCapabilities.ViewBoard;
 
 			var result = new ICModels.IncidentCapabilitiesResult();
 			result.Value = (int)caps;

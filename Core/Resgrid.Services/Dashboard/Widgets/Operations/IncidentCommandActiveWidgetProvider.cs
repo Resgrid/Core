@@ -11,8 +11,9 @@ namespace Resgrid.Services.Dashboard.Widgets.Operations
 {
 	/// <summary>
 	/// incidentCommand.active (plan §7.1): v4 IncidentCommand/GetCommandList — the department's open commands — under the
-	/// same rule: Command_View (the definition's gate) and the commander gate (ICommandAccessService.CanUseCommandAsync,
-	/// the CommandAppLogin permission). A viewer who fails the commander gate gets the widget's "forbidden" state.
+	/// same rule: Command_View (the definition's gate) and the board read gate (ICommandAccessService.CanViewCommandBoardsAsync,
+	/// the ViewCommandBoards permission). A viewer who may not read every board sees the incidents they are on; one who is
+	/// on none gets the widget's "forbidden" state.
 	/// </summary>
 	[DashboardWidget("incidentCommand.active")]
 	public class IncidentCommandActiveWidgetProvider : IDashboardWidgetDataProvider
@@ -28,13 +29,21 @@ namespace Resgrid.Services.Dashboard.Widgets.Operations
 
 		public async Task<object> GetDataAsync(DashboardWidgetContext context, CancellationToken cancellationToken)
 		{
-			if (!await _commandAccessService.CanUseCommandAsync(context.DepartmentId, context.UserId))
-				throw new DashboardWidgetStateException(DashboardWidgetErrorCodes.Forbidden, "WidgetErrorForbidden");
-
 			var commands = (await _incidentCommandService.GetCommandSummariesForDepartmentAsync(context.DepartmentId, false) ?? new List<IncidentCommandSummary>())
 				.Where(c => c != null && c.DepartmentId == context.DepartmentId && c.Status == (int)IncidentCommandStatus.Active)
 				.OrderByDescending(c => c.EstablishedOn)
 				.ToList();
+
+			if (!await _commandAccessService.CanViewCommandBoardsAsync(context.DepartmentId, context.UserId))
+			{
+				var viewable = await _incidentCommandService.GetViewableBoardCallIdsAsync(context.DepartmentId, commands.Select(c => c.CallId), context.UserId);
+				var visible = commands.Where(c => viewable.Contains(c.CallId)).ToList();
+
+				if (visible.Count == 0)
+					throw new DashboardWidgetStateException(DashboardWidgetErrorCodes.Forbidden, "WidgetErrorForbidden");
+
+				commands = visible;
+			}
 
 			return new IncidentCommandActiveWidgetData
 			{

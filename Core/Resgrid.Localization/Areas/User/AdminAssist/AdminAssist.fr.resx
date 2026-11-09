@@ -3201,6 +3201,9 @@
   <data xml:space="preserve" name="Permission.CommandAppLogin">
     <value>Connexion à l'application Command</value>
   </data>
+  <data xml:space="preserve" name="Permission.ViewCommandBoards">
+    <value>Voir les tableaux de commandement</value>
+  </data>
   <data xml:space="preserve" name="Permission.ConfigureProtectedDataEgress">
     <value>Configurer la sortie des données protégées</value>
   </data>
@@ -3442,7 +3445,10 @@
     <value>Permet de clôturer et de rouvrir des appels. Lorsque la case « Groupe uniquement » est cochée, seuls les administrateurs du département et les personnes dont le groupe a été engagé sur l'appel peuvent le clôturer ou le rouvrir, même lorsque la règle est « Tout le monde ». Sur le web, dans les applications et dans le chatbot, il faut aussi les droits sur les appels accordés par « Créer des appels ». Sans règle enregistrée, toute personne qui peut voir l'appel peut le clôturer.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CommandAppLogin">
-    <value>Détermine qui peut utiliser l'application Incident Command et consulter les tableaux de commandement : chaque tableau et toutes les lectures du suivi des effectifs, des besoins, de la chronologie, de la carte, des rôles, de la voix et des ressources, la synchronisation hors ligne des tableaux dans les applications et les réponses du chatbot sur les incidents. Sans règle enregistrée, chaque membre actif le peut. Lorsque vous enregistrez une règle plus restreinte, les personnes qu'elle autorise obtiennent aussi des capacités d'assistance au commandement sur n'importe quel tableau. L'établissement du commandement et la modification des tableaux nécessitent toujours les droits de commandement d'administrateur du département.</value>
+    <value>Détermine qui peut diriger un commandement d'intervention : se connecter à l'application Incident Command, établir ou rouvrir le commandement et travailler sur les tableaux où il dispose de capacités (le commandant de l'intervention et la personne qui a établi le commandement les ont toutes ; les rôles ICS attribués en accordent une partie). Sans règle enregistrée, tout membre actif le peut. Si vous enregistrez une règle plus restreinte, les personnes qu'elle autorise obtiennent aussi les capacités d'assistance au commandement sur n'importe quel tableau. Qui consulte les tableaux relève de Voir les tableaux de commandement, qui suit cette règle tant qu'il n'a pas la sienne.</value>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.ViewCommandBoards">
+    <value>Détermine qui peut consulter chaque tableau de commandement : le tableau, le suivi du personnel, les besoins, la chronologie, la carte, les rôles, la voix, les moyens et les rapports, la synchronisation hors ligne des tableaux dans les applications, la liste et le widget de tableau de bord des commandements actifs, ainsi que les réponses du chatbot sur les interventions. Les membres engagés sur une intervention consultent toujours son tableau : état-major, chefs de secteur, membres engagés sur l'appel directement ou via leur groupe, un rôle de personnel ou une unité dont ils font partie de l'équipage, et moyens placés sur le tableau. Sans règle enregistrée, le réglage suit Command App Login, et sans aucune des deux règles, tout membre actif le peut.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ConfigureProtectedDataEgress">
     <value>Détermine qui peut administrer les flux de travail protégés et leurs approbations de diffusion. L'activation, l'approbation ou le renouvellement d'un flux de travail protégé exige aussi une nouvelle vérification renforcée, et les paramètres de diffusion par code PIN par SMS et appel vocal exigent en outre un administrateur du département. S'applique uniquement lorsque le département est inscrit à la Protection avancée des données.</value>

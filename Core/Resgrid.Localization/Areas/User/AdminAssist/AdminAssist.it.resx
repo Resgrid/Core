@@ -3201,6 +3201,9 @@
   <data xml:space="preserve" name="Permission.CommandAppLogin">
     <value>Accesso App Command</value>
   </data>
+  <data xml:space="preserve" name="Permission.ViewCommandBoards">
+    <value>Visualizza lavagne di comando</value>
+  </data>
   <data xml:space="preserve" name="Permission.ConfigureProtectedDataEgress">
     <value>Configura Uscita Dati Protetti</value>
   </data>
@@ -3442,7 +3445,10 @@
     <value>Consente di chiudere e riaprire chiamate. Con la casella Solo gruppo selezionata, solo gli amministratori del dipartimento e le persone il cui gruppo è stato inviato alla chiamata possono chiuderla o riaprirla, anche quando la regola è Tutti. Sul web, nelle app e nel chatbot servono anche i diritti sulle chiamate concessi da Crea chiamate. Senza una regola salvata, chiunque possa vedere la chiamata può chiuderla.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CommandAppLogin">
-    <value>Stabilisce chi può usare l'app Incident Command e leggere le lavagne di comando: ogni lavagna e ogni lettura di accountability, esigenze, cronologia, mappa, ruoli, voce e risorse, la sincronizzazione offline delle lavagne nelle app e le risposte del chatbot sugli incidenti. Senza una regola salvata, ogni membro attivo può farlo. Quando salvi una regola più restrittiva, le persone che essa consente ottengono anche funzionalità di supporto al comando su qualsiasi lavagna. Stabilire il comando e modificare le lavagne richiede comunque i diritti di comando degli amministratori del dipartimento.</value>
+    <value>Definisce chi può gestire il comando dell'incidente: accedere all'app Incident Command, stabilire o riaprire il comando e lavorare sulle lavagne su cui ha delle capacità (il comandante dell'incidente e chi ha stabilito il comando le hanno tutte; i ruoli ICS assegnati ne concedono una parte). Senza una regola salvata può farlo ogni membro attivo. Se salvi una regola più restrittiva, le persone che consente ottengono anche le capacità di assistenza al comando su qualsiasi lavagna. Chi legge le lavagne lo decide Visualizza lavagne di comando, che segue questa regola finché non ne ha una propria.</value>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.ViewCommandBoards">
+    <value>Definisce chi può leggere ogni lavagna di comando: la lavagna, l'accountability, le esigenze, la cronologia, la mappa, i ruoli, la voce, le risorse e i rapporti, la sincronizzazione offline delle lavagne nelle app, l'elenco e il widget della dashboard dei comandi attivi e le risposte del chatbot sugli incidenti. I membri coinvolti in un incidente leggono sempre la sua lavagna: staff di comando, responsabili di settore, membri inviati alla chiamata direttamente o tramite il loro gruppo, un ruolo del personale o un'unità di cui fanno parte dell'equipaggio, e risorse inserite nella lavagna. Senza una regola salvata segue Command App Login e, senza nessuna delle due, può farlo ogni membro attivo.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.ConfigureProtectedDataEgress">
     <value>Determina chi può amministrare i flussi di lavoro protetti e le relative approvazioni di rilascio. Attivare, approvare o rinnovare un flusso di lavoro protetto richiede anche una nuova verifica rafforzata, e le impostazioni di rilascio tramite PIN per SMS e chiamate vocali richiedono inoltre un amministratore del dipartimento. Si applica solo quando il dipartimento è registrato alla Protezione avanzata dei dati.</value>

@@ -143,11 +143,6 @@ namespace Resgrid.Services
 		}
 
 		/// <summary>
-		/// Mirrors how the department rights endpoint decides every other permission: department admin,
-		/// group admin, and the user's personnel roles evaluated against the permission row. A missing row
-		/// means every active department member.
-		/// </summary>
-		/// <summary>
 		/// The permission row that decides <paramref name="permissionType"/> for the department; null means everyone. A gate
 		/// whose permission defaults to another permission's row overrides this.
 		/// </summary>
@@ -173,6 +168,11 @@ namespace Resgrid.Services
 			}
 		}
 
+		/// <summary>
+		/// Mirrors how the department rights endpoint decides every other permission: department admin,
+		/// group admin, and the user's personnel roles evaluated against the permission row. A missing row
+		/// means every active department member.
+		/// </summary>
 		private async Task<bool> EvaluateAsync(PermissionTypes permissionType, int departmentId, string userId)
 		{
 			try

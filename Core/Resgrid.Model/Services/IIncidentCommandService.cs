@@ -73,6 +73,13 @@ namespace Resgrid.Model.Services
 		Task<bool> CanViewBoardAsync(int departmentId, int callId, string userId);
 
 		/// <summary>
+		/// The incidents among <paramref name="callIds"/> whose boards the user may read: <see cref="CanViewBoardAsync"/> for a
+		/// whole list. The department's command, role, lane and assignment rows and the user's own lookups are read once for
+		/// the list instead of once per incident, so list and sync endpoints filter through this. Fails closed per incident.
+		/// </summary>
+		Task<HashSet<int>> GetViewableBoardCallIdsAsync(int departmentId, IEnumerable<int> callIds, string userId);
+
+		/// <summary>
 		/// The call an incident-command row belongs to, when the row exists in the department; null otherwise. Lets an
 		/// endpoint that names a row only by id check the caller's access to that incident.
 		/// </summary>

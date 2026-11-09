@@ -165,12 +165,25 @@ namespace Resgrid.Tests.Security.Audit20261005
 			{
 				new IncidentCommandSummary { CallId = CallId }, new IncidentCommandSummary { CallId = 78 }
 			});
-			_incidentCommand.Setup(s => s.CanViewBoardAsync(Dept, CallId, Member)).ReturnsAsync(true);
-			_incidentCommand.Setup(s => s.CanViewBoardAsync(Dept, 78, Member)).ReturnsAsync(false);
+			_incidentCommand.Setup(s => s.GetViewableBoardCallIdsAsync(Dept, It.Is<IEnumerable<int>>(ids => ids.OrderBy(x => x).SequenceEqual(new[] { CallId, 78 })), Member))
+				.ReturnsAsync(new HashSet<int> { CallId });
 
 			var result = await ((IncidentCommandController)Build(typeof(IncidentCommandController))).GetCommandList();
 
 			result.Value.Data.Select(x => x.CallId).Should().Equal(CallId);
+			// One batched check for the whole list, never one per incident.
+			_incidentCommand.Verify(s => s.CanViewBoardAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>()), Times.Never);
+		}
+
+		[Test]
+		public async Task Logging_a_transmission_without_a_body_is_a_bad_request_not_an_error()
+		{
+			var controller = (IncidentVoiceController)Build(typeof(IncidentVoiceController));
+
+			var result = await controller.LogTransmission(null);
+
+			result.Result.Should().BeOfType<BadRequestResult>();
+			_incidentCommand.Verify(s => s.CanViewBoardAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>()), Times.Never);
 		}
 
 		[Test]

@@ -90,11 +90,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.VoiceTransmissionLogResult>> LogTransmission([FromBody] ICModels.LogTransmissionInput input)
 		{
-			if (!await CanViewBoardAsync(input.CallId))
-				return Refused();
-
 			if (input == null || input.CallId <= 0 || string.IsNullOrWhiteSpace(input.DepartmentVoiceChannelId))
 				return BadRequest();
+
+			if (!await CanViewBoardAsync(input.CallId))
+				return Refused();
 
 			var result = new ICModels.VoiceTransmissionLogResult();
 

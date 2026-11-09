@@ -480,26 +480,39 @@ namespace Resgrid.Services
 
 		public async Task<IncidentCapabilities> GetCapabilitiesForUserAsync(int departmentId, int callId, string userId)
 		{
+			var command = await GetActiveCommandForCallAsync(departmentId, callId);
+			var roles = await GetIncidentRolesAsync(departmentId, callId);
+
+			return CommandAndRoleCapabilities(command, roles, userId) | await CommandAssistCapabilitiesAsync(departmentId, userId);
+		}
+
+		/// <summary>What commanding (or having established) the incident's active command and the user's ICS roles on it grant.</summary>
+		private static IncidentCapabilities CommandAndRoleCapabilities(IncidentCommand activeCommand, IEnumerable<IncidentRoleAssignment> roles, string userId)
+		{
 			var caps = IncidentCapabilities.None;
 
-			var command = await GetActiveCommandForCallAsync(departmentId, callId);
-			if (command != null && (string.Equals(userId, command.CurrentCommanderUserId) || string.Equals(userId, command.EstablishedByUserId)))
+			if (activeCommand != null && (string.Equals(userId, activeCommand.CurrentCommanderUserId) || string.Equals(userId, activeCommand.EstablishedByUserId)))
 				caps = IncidentCapabilities.All;
 
-			var roles = await GetIncidentRolesAsync(departmentId, callId);
-			foreach (var role in roles.Where(r => string.Equals(r.UserId, userId)))
+			foreach (var role in (roles ?? Enumerable.Empty<IncidentRoleAssignment>()).Where(r => string.Equals(r.UserId, userId)))
 				caps |= IncidentRoleCapabilityMap.GetCapabilities((IncidentRoleType)role.RoleType);
 
-			// A department that has deliberately chosen who commands can let those people assist on a board
-			// without holding an ICS role on it — that is how a dispatcher helps work an incident from the
-			// Dispatch app. CanAssistWithCommandAsync (not CanUseCommandAsync) is the right question: the
-			// permission is open by default, and granting board authority off that open default would hand
-			// every member rights nobody asked for.
+			return caps;
+		}
+
+		/// <summary>
+		/// A department that has deliberately chosen who commands can let those people assist on a board without holding an
+		/// ICS role on it — that is how a dispatcher helps work an incident from the Dispatch app. CanAssistWithCommandAsync
+		/// (not CanUseCommandAsync) is the right question: the permission is open by default, and granting board authority off
+		/// that open default would hand every member rights nobody asked for. The same answer for every incident.
+		/// </summary>
+		private async Task<IncidentCapabilities> CommandAssistCapabilitiesAsync(int departmentId, string userId)
+		{
 			// Lazy (see the field) so the permission side does not close a DI cycle.
 			try
 			{
 				if (await CommandAccess.CanAssistWithCommandAsync(departmentId, userId))
-					caps |= IncidentRoleCapabilityMap.CommandAssistCapabilities;
+					return IncidentRoleCapabilityMap.CommandAssistCapabilities;
 			}
 			catch (Exception ex)
 			{
@@ -508,7 +521,7 @@ namespace Resgrid.Services
 				Resgrid.Framework.Logging.LogException(ex);
 			}
 
-			return caps;
+			return IncidentCapabilities.None;
 		}
 
 		public async Task<IncidentCapabilities> GetEffectiveCapabilitiesAsync(int departmentId, int callId, string userId)
@@ -516,11 +529,7 @@ namespace Resgrid.Services
 			if (departmentId <= 0 || callId <= 0 || string.IsNullOrWhiteSpace(userId))
 				return IncidentCapabilities.None;
 
-			// Capabilities only act for a member the department lets run command — the order the filter applies.
-			if (!await CommandAccess.CanUseCommandAsync(departmentId, userId))
-				return IncidentCapabilities.None;
-
-			return await GetCapabilitiesForUserAsync(departmentId, callId, userId);
+			return await GetEffectiveCapabilitiesAsync(new BoardAccessScope(departmentId, userId), callId);
 		}
 
 		public async Task<bool> IsIncidentParticipantAsync(int departmentId, int callId, string userId)
@@ -528,48 +537,162 @@ namespace Resgrid.Services
 			if (departmentId <= 0 || callId <= 0 || string.IsNullOrWhiteSpace(userId))
 				return false;
 
-			var call = await _callsService.GetCallByIdAsync(callId);
-			if (call == null || call.DepartmentId != departmentId)
-				return false;
+			return await IsIncidentParticipantAsync(new BoardAccessScope(departmentId, userId), callId);
+		}
 
-			bool Same(string candidate) => string.Equals(candidate, userId, StringComparison.OrdinalIgnoreCase);
+		public async Task<bool> CanViewBoardAsync(int departmentId, int callId, string userId)
+			=> callId > 0 && (await GetViewableBoardCallIdsAsync(departmentId, new[] { callId }, userId)).Contains(callId);
 
-			// Command staff: the commander, whoever established command (also on an ended command), ICS role holders.
-			var command = await GetCommandForCallAsync(departmentId, callId);
-			if (command != null && (Same(command.CurrentCommanderUserId) || Same(command.EstablishedByUserId)))
-				return true;
+		public async Task<HashSet<int>> GetViewableBoardCallIdsAsync(int departmentId, IEnumerable<int> callIds, string userId)
+		{
+			var viewable = new HashSet<int>();
+			var candidates = (callIds ?? Enumerable.Empty<int>()).Where(x => x > 0).Distinct().ToList();
+			if (departmentId <= 0 || string.IsNullOrWhiteSpace(userId) || candidates.Count == 0)
+				return viewable;
 
-			var roles = await GetIncidentRolesAsync(departmentId, callId);
-			if (roles != null && roles.Any(r => Same(r.UserId)))
-				return true;
-
-			var nodes = await GetNodesForCallAsync(departmentId, callId);
-			if (nodes != null && nodes.Any(n => Same(n.SupervisorUserId) || Same(n.PrimaryLeadUserId) || Same(n.SecondaryLeadUserId)))
-				return true;
-
-			// "A unit they are part of" is the unit's active crew, the rule incident chat uses.
-			var crewChecked = new Dictionary<int, bool>();
-			async Task<bool> CrewsUnitAsync(int unitId)
+			try
 			{
-				if (crewChecked.TryGetValue(unitId, out var known))
-					return known;
+				if (await CommandAccess.CanViewCommandBoardsAsync(departmentId, userId))
+				{
+					viewable.UnionWith(candidates);
+					return viewable;
+				}
 
-				var crew = await _unitsService.GetActiveRolesForUnitAsync(unitId);
-				var crews = crew != null && crew.Any(r => Same(r.UserId));
-				crewChecked[unitId] = crews;
-				return crews;
+				// Being on the incident opens its board whatever the department-wide setting says — for active members only.
+				if (!await CommandAccess.IsActiveDepartmentMemberAsync(departmentId, userId))
+					return viewable;
+			}
+			catch (Exception ex)
+			{
+				// Fail closed: board data is private incident traffic.
+				Resgrid.Framework.Logging.LogException(ex);
+				return viewable;
 			}
 
+			// One scope for the whole list, so each department table is read once rather than once per incident.
+			var scope = new BoardAccessScope(departmentId, userId);
+			foreach (var callId in candidates)
+			{
+				try
+				{
+					// On the incident, or command assist: a member trusted to work boards reads the boards they can work.
+					if (await IsIncidentParticipantAsync(scope, callId) || await GetEffectiveCapabilitiesAsync(scope, callId) != IncidentCapabilities.None)
+						viewable.Add(callId);
+				}
+				catch (Exception ex)
+				{
+					// Fail closed for this incident, as checking it alone would.
+					Resgrid.Framework.Logging.LogException(ex);
+				}
+			}
+
+			return viewable;
+		}
+
+		/// <summary>
+		/// The reads behind one user's board access that don't change from one incident to the next. The department's
+		/// command, ICS role, lane and assignment rows (indexed by call), the user's group, personnel roles and unit crews, and
+		/// their command permissions are each loaded the first time an incident needs them and reused after that. Reads run
+		/// one at a time, never concurrently, because they share the request's unit of work.
+		/// </summary>
+		private sealed class BoardAccessScope
+		{
+			public BoardAccessScope(int departmentId, string userId)
+			{
+				DepartmentId = departmentId;
+				UserId = userId;
+			}
+
+			public int DepartmentId { get; }
+			public string UserId { get; }
+
+			public Task<ILookup<int, IncidentCommand>> Commands;
+			public Task<ILookup<int, IncidentRoleAssignment>> Roles;
+			public Task<ILookup<int, CommandStructureNode>> Nodes;
+			public Task<ILookup<int, ResourceAssignment>> Assignments;
+			public Task<DepartmentGroup> Group;
+			public Task<List<PersonnelRole>> PersonnelRoles;
+			public Task<bool> CanUseCommand;
+			public Task<IncidentCapabilities> CommandAssist;
+			public readonly Dictionary<int, Task<bool>> CrewedUnits = new Dictionary<int, Task<bool>>();
+
+			public bool Same(string candidate) => string.Equals(candidate, UserId, StringComparison.OrdinalIgnoreCase);
+		}
+
+		// The same rows the per-call getters return: every command and assignment, live ICS roles and lanes.
+		private Task<ILookup<int, IncidentCommand>> CommandsByCallAsync(BoardAccessScope scope)
+			=> scope.Commands ??= ToCallLookupAsync(_incidentCommandRepository.GetAllByDepartmentIdAsync(scope.DepartmentId), x => x.CallId);
+
+		private Task<ILookup<int, IncidentRoleAssignment>> RolesByCallAsync(BoardAccessScope scope)
+			=> scope.Roles ??= ToCallLookupAsync(_incidentRoleAssignmentRepository.GetAllByDepartmentIdAsync(scope.DepartmentId), x => x.CallId, x => x.RemovedOn == null);
+
+		private Task<ILookup<int, CommandStructureNode>> NodesByCallAsync(BoardAccessScope scope)
+			=> scope.Nodes ??= ToCallLookupAsync(_commandStructureNodeRepository.GetAllByDepartmentIdAsync(scope.DepartmentId), x => x.CallId, x => x.DeletedOn == null);
+
+		private Task<ILookup<int, ResourceAssignment>> AssignmentsByCallAsync(BoardAccessScope scope)
+			=> scope.Assignments ??= ToCallLookupAsync(_resourceAssignmentRepository.GetAllByDepartmentIdAsync(scope.DepartmentId), x => x.CallId);
+
+		private static async Task<ILookup<int, T>> ToCallLookupAsync<T>(Task<IEnumerable<T>> rows, Func<T, int> callIdSelector, Func<T, bool> keep = null)
+		{
+			var items = await rows;
+			return ToCallLookup(keep == null || items == null ? items : items.Where(keep), callIdSelector);
+		}
+
+		/// <summary>"A unit they are part of" is the unit's active crew, the rule incident chat uses.</summary>
+		private Task<bool> CrewsUnitAsync(BoardAccessScope scope, int unitId)
+		{
+			if (!scope.CrewedUnits.TryGetValue(unitId, out var crews))
+				scope.CrewedUnits[unitId] = crews = LoadAsync();
+
+			return crews;
+
+			async Task<bool> LoadAsync()
+			{
+				var crew = await _unitsService.GetActiveRolesForUnitAsync(unitId);
+				return crew != null && crew.Any(r => scope.Same(r.UserId));
+			}
+		}
+
+		private async Task<IncidentCapabilities> GetEffectiveCapabilitiesAsync(BoardAccessScope scope, int callId)
+		{
+			// Capabilities only act for a member the department lets run command — the order the filter applies.
+			if (!await (scope.CanUseCommand ??= CommandAccess.CanUseCommandAsync(scope.DepartmentId, scope.UserId)))
+				return IncidentCapabilities.None;
+
+			// GetCapabilitiesForUserAsync, answered from the scope.
+			var activeCommand = (await CommandsByCallAsync(scope))[callId].FirstOrDefault(x => x.Status == (int)IncidentCommandStatus.Active);
+			var roles = (await RolesByCallAsync(scope))[callId];
+
+			return CommandAndRoleCapabilities(activeCommand, roles, scope.UserId)
+				| await (scope.CommandAssist ??= CommandAssistCapabilitiesAsync(scope.DepartmentId, scope.UserId));
+		}
+
+		private async Task<bool> IsIncidentParticipantAsync(BoardAccessScope scope, int callId)
+		{
+			var call = await _callsService.GetCallByIdAsync(callId);
+			if (call == null || call.DepartmentId != scope.DepartmentId)
+				return false;
+
+			// Command staff: the commander, whoever established command (also on an ended command), ICS role holders.
+			var command = (await CommandsByCallAsync(scope))[callId].OrderByDescending(x => x.EstablishedOn).FirstOrDefault();
+			if (command != null && (scope.Same(command.CurrentCommanderUserId) || scope.Same(command.EstablishedByUserId)))
+				return true;
+
+			if ((await RolesByCallAsync(scope))[callId].Any(r => scope.Same(r.UserId)))
+				return true;
+
+			if ((await NodesByCallAsync(scope))[callId].Any(n => scope.Same(n.SupervisorUserId) || scope.Same(n.PrimaryLeadUserId) || scope.Same(n.SecondaryLeadUserId)))
+				return true;
+
 			// Resources placed on the board.
-			var assignments = await GetAssignmentsForCallAsync(departmentId, callId) ?? new List<ResourceAssignment>();
-			foreach (var assignment in assignments.Where(a => a.ReleasedOn == null))
+			foreach (var assignment in (await AssignmentsByCallAsync(scope))[callId].Where(a => a.ReleasedOn == null))
 			{
 				var kind = (ResourceAssignmentKind)assignment.ResourceKind;
-				if ((kind == ResourceAssignmentKind.RealPersonnel || kind == ResourceAssignmentKind.LinkedDeptPersonnel) && Same(assignment.ResourceId))
+				if ((kind == ResourceAssignmentKind.RealPersonnel || kind == ResourceAssignmentKind.LinkedDeptPersonnel) && scope.Same(assignment.ResourceId))
 					return true;
 
 				if ((kind == ResourceAssignmentKind.RealUnit || kind == ResourceAssignmentKind.LinkedDeptUnit) && int.TryParse(assignment.ResourceId, out var assignedUnitId) &&
-					await CrewsUnitAsync(assignedUnitId))
+					await CrewsUnitAsync(scope, assignedUnitId))
 					return true;
 			}
 
@@ -578,61 +701,33 @@ namespace Resgrid.Services
 			if (call == null)
 				return false;
 
-			if (call.Dispatches != null && call.Dispatches.Any(d => Same(d.UserId)))
+			if (call.Dispatches != null && call.Dispatches.Any(d => scope.Same(d.UserId)))
 				return true;
 
 			if (call.UnitDispatches != null)
 			{
 				foreach (var unitDispatch in call.UnitDispatches)
 				{
-					if (await CrewsUnitAsync(unitDispatch.UnitId))
+					if (await CrewsUnitAsync(scope, unitDispatch.UnitId))
 						return true;
 				}
 			}
 
 			if (call.GroupDispatches != null && call.GroupDispatches.Any())
 			{
-				var group = await _departmentGroupsService.GetGroupForUserAsync(userId, departmentId);
+				var group = await (scope.Group ??= _departmentGroupsService.GetGroupForUserAsync(scope.UserId, scope.DepartmentId));
 				if (group != null && call.GroupDispatches.Any(g => g.DepartmentGroupId == group.DepartmentGroupId))
 					return true;
 			}
 
 			if (call.RoleDispatches != null && call.RoleDispatches.Any())
 			{
-				var userRoles = await _personnelRolesService.GetRolesForUserAsync(userId, departmentId);
+				var userRoles = await (scope.PersonnelRoles ??= _personnelRolesService.GetRolesForUserAsync(scope.UserId, scope.DepartmentId));
 				if (userRoles != null && userRoles.Any(r => call.RoleDispatches.Any(d => d.RoleId == r.PersonnelRoleId)))
 					return true;
 			}
 
 			return false;
-		}
-
-		public async Task<bool> CanViewBoardAsync(int departmentId, int callId, string userId)
-		{
-			if (departmentId <= 0 || callId <= 0 || string.IsNullOrWhiteSpace(userId))
-				return false;
-
-			try
-			{
-				if (await CommandAccess.CanViewCommandBoardsAsync(departmentId, userId))
-					return true;
-
-				// Being on the incident opens its board whatever the department-wide setting says — for active members only.
-				if (!await CommandAccess.IsActiveDepartmentMemberAsync(departmentId, userId))
-					return false;
-
-				if (await IsIncidentParticipantAsync(departmentId, callId, userId))
-					return true;
-
-				// Command assist: a member trusted to work boards reads the boards they can work.
-				return await GetEffectiveCapabilitiesAsync(departmentId, callId, userId) != IncidentCapabilities.None;
-			}
-			catch (Exception ex)
-			{
-				// Fail closed: board data is private incident traffic.
-				Resgrid.Framework.Logging.LogException(ex);
-				return false;
-			}
 		}
 
 		public async Task<int?> ResolveCallIdForEntityAsync(int departmentId, IncidentEntityKind kind, string entityId)

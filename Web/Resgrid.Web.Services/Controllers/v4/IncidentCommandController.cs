@@ -188,14 +188,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			// A member who may not read every board still lists the incidents they are on.
 			if (!await CanViewAllBoardsAsync())
 			{
-				var visible = new List<IncidentCommandSummary>();
-				foreach (var summary in summaries)
-				{
-					if (await CanViewBoardAsync(summary.CallId))
-						visible.Add(summary);
-				}
-
-				summaries = visible;
+				var viewable = await _incidentCommandService.GetViewableBoardCallIdsAsync(DepartmentId, summaries.Select(x => x.CallId), UserId);
+				summaries = summaries.Where(x => viewable.Contains(x.CallId)).ToList();
 			}
 			var result = new ICModels.IncidentCommandSummariesResult
 			{

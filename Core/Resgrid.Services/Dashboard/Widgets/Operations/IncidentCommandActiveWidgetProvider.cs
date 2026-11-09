@@ -36,12 +36,8 @@ namespace Resgrid.Services.Dashboard.Widgets.Operations
 
 			if (!await _commandAccessService.CanViewCommandBoardsAsync(context.DepartmentId, context.UserId))
 			{
-				var visible = new List<IncidentCommandSummary>();
-				foreach (var command in commands)
-				{
-					if (await _incidentCommandService.CanViewBoardAsync(context.DepartmentId, command.CallId, context.UserId))
-						visible.Add(command);
-				}
+				var viewable = await _incidentCommandService.GetViewableBoardCallIdsAsync(context.DepartmentId, commands.Select(c => c.CallId), context.UserId);
+				var visible = commands.Where(c => viewable.Contains(c.CallId)).ToList();
 
 				if (visible.Count == 0)
 					throw new DashboardWidgetStateException(DashboardWidgetErrorCodes.Forbidden, "WidgetErrorForbidden");

@@ -45,18 +45,31 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 		/// <summary>
 		/// The incidents among <paramref name="callIds"/> whose boards the caller may read when they may not read every
-		/// board: the ones they are on (IIncidentCommandService.CanViewBoardAsync).
+		/// board: the ones they are on. One batched check (IIncidentCommandService.GetViewableBoardCallIdsAsync), since a full
+		/// pull names every incident the department has had.
 		/// </summary>
-		private async Task<HashSet<int>> ViewableCallsAsync(IEnumerable<int> callIds)
-		{
-			var viewable = new HashSet<int>();
-			foreach (var callId in callIds.Distinct())
-			{
-				if (await _incidentCommandService.CanViewBoardAsync(DepartmentId, callId, UserId))
-					viewable.Add(callId);
-			}
+		private Task<HashSet<int>> ViewableCallsAsync(IEnumerable<int> callIds)
+			=> _incidentCommandService.GetViewableBoardCallIdsAsync(DepartmentId, callIds, UserId);
 
-			return viewable;
+		/// <summary>Every incident a Changes payload has a row for.</summary>
+		private static IEnumerable<int> CallIdsIn(IncidentCommandChanges changes)
+		{
+			IEnumerable<int> Calls<T>(List<T> rows, Func<T, int> callOf) => rows?.Select(callOf) ?? Enumerable.Empty<int>();
+
+			return Calls(changes.Commands, x => x.CallId)
+				.Concat(Calls(changes.Nodes, x => x.CallId))
+				.Concat(Calls(changes.Assignments, x => x.CallId))
+				.Concat(Calls(changes.Objectives, x => x.CallId))
+				.Concat(Calls(changes.Needs, x => x.CallId))
+				.Concat(Calls(changes.Timers, x => x.CallId))
+				.Concat(Calls(changes.Annotations, x => x.CallId))
+				.Concat(Calls(changes.Maps, x => x.CallId))
+				.Concat(Calls(changes.Roles, x => x.CallId))
+				.Concat(Calls(changes.AdHocUnits, x => x.CallId))
+				.Concat(Calls(changes.AdHocPersonnel, x => x.CallId))
+				.Concat(Calls(changes.Notes, x => x.CallId))
+				.Concat(Calls(changes.Attachments, x => x.CallId))
+				.Concat(Calls(changes.TimelineEntries, x => x.CallId));
 		}
 		#endregion Members and Constructors
 
@@ -85,12 +98,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			// Every row here is command-board data: a caller who may not read every board gets only the incidents they are on.
 			if (!await CanViewAllBoardsAsync())
 			{
-				IEnumerable<int> Calls<T>(List<T> rows, Func<T, int> callOf) => rows?.Select(callOf) ?? Enumerable.Empty<int>();
-				var viewable = await ViewableCallsAsync(Calls(changes.Commands, x => x.CallId).Concat(Calls(changes.Nodes, x => x.CallId)).Concat(Calls(changes.Assignments, x => x.CallId))
-					.Concat(Calls(changes.Objectives, x => x.CallId)).Concat(Calls(changes.Needs, x => x.CallId)).Concat(Calls(changes.Timers, x => x.CallId))
-					.Concat(Calls(changes.Annotations, x => x.CallId)).Concat(Calls(changes.Maps, x => x.CallId)).Concat(Calls(changes.Roles, x => x.CallId))
-					.Concat(Calls(changes.AdHocUnits, x => x.CallId)).Concat(Calls(changes.AdHocPersonnel, x => x.CallId)).Concat(Calls(changes.Notes, x => x.CallId))
-					.Concat(Calls(changes.Attachments, x => x.CallId)).Concat(Calls(changes.TimelineEntries, x => x.CallId)));
+				var viewable = await ViewableCallsAsync(CallIdsIn(changes));
 				changes.Commands?.RemoveAll(x => !viewable.Contains(x.CallId));
 				changes.Nodes?.RemoveAll(x => !viewable.Contains(x.CallId));
 				changes.Assignments?.RemoveAll(x => !viewable.Contains(x.CallId));

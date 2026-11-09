@@ -189,6 +189,76 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task A_member_trusted_to_assist_reads_a_board_they_are_not_on()
+		{
+			_access.Setup(x => x.CanViewCommandBoardsAsync(Dept, Member)).ReturnsAsync(false);
+			_access.Setup(x => x.CanUseCommandAsync(Dept, Member)).ReturnsAsync(true);
+			_access.Setup(x => x.CanAssistWithCommandAsync(Dept, Member)).ReturnsAsync(true);
+
+			(await _service.CanViewBoardAsync(Dept, CallId, Member)).Should().BeTrue();
+		}
+
+		[Test]
+		public async Task The_batched_check_returns_only_the_incidents_a_member_is_on()
+		{
+			const int otherCallId = 41;
+			var otherCall = new Call { CallId = otherCallId, DepartmentId = Dept };
+			_calls.Setup(x => x.GetCallByIdAsync(otherCallId, It.IsAny<bool>())).ReturnsAsync(otherCall);
+			_calls.Setup(x => x.PopulateCallData(otherCall, true, false, false, true, true, true, false, false, false, It.IsAny<bool>())).ReturnsAsync(() => otherCall);
+			_access.Setup(x => x.CanViewCommandBoardsAsync(Dept, Member)).ReturnsAsync(false);
+			_call.Dispatches = new List<CallDispatch> { new CallDispatch { CallId = CallId, UserId = Member } };
+
+			var viewable = await _service.GetViewableBoardCallIdsAsync(Dept, new[] { CallId, otherCallId, CallId, 0 }, Member);
+
+			viewable.Should().BeEquivalentTo(new[] { CallId });
+		}
+
+		[Test]
+		public async Task The_batched_check_reads_each_department_table_once_for_the_whole_list()
+		{
+			var callIds = new List<int>();
+			for (var callId = 100; callId < 110; callId++)
+			{
+				var call = new Call { CallId = callId, DepartmentId = Dept, GroupDispatches = new List<CallDispatchGroup> { new CallDispatchGroup { CallId = callId, DepartmentGroupId = 3 } } };
+				_calls.Setup(x => x.GetCallByIdAsync(call.CallId, It.IsAny<bool>())).ReturnsAsync(call);
+				_calls.Setup(x => x.PopulateCallData(call, true, false, false, true, true, true, false, false, false, It.IsAny<bool>())).ReturnsAsync(call);
+				callIds.Add(callId);
+			}
+			_access.Setup(x => x.CanViewCommandBoardsAsync(Dept, Member)).ReturnsAsync(false);
+			_access.Setup(x => x.CanUseCommandAsync(Dept, Member)).ReturnsAsync(true);
+			_groups.Setup(x => x.GetGroupForUserAsync(Member, Dept)).ReturnsAsync(new DepartmentGroup { DepartmentGroupId = 7, DepartmentId = Dept });
+
+			(await _service.GetViewableBoardCallIdsAsync(Dept, callIds, Member)).Should().BeEmpty();
+
+			_commands.Verify(x => x.GetAllByDepartmentIdAsync(Dept), Times.Once);
+			_roles.Verify(x => x.GetAllByDepartmentIdAsync(Dept), Times.Once);
+			_nodes.Verify(x => x.GetAllByDepartmentIdAsync(Dept), Times.Once);
+			_assignments.Verify(x => x.GetAllByDepartmentIdAsync(Dept), Times.Once);
+			_groups.Verify(x => x.GetGroupForUserAsync(Member, Dept), Times.Once);
+			_access.Verify(x => x.CanUseCommandAsync(Dept, Member), Times.Once);
+			_access.Verify(x => x.CanAssistWithCommandAsync(Dept, Member), Times.Once);
+		}
+
+		[Test]
+		public async Task The_batched_check_opens_every_listed_board_for_the_department_wide_permission_without_reading_boards()
+		{
+			_access.Setup(x => x.CanViewCommandBoardsAsync(Dept, Member)).ReturnsAsync(true);
+
+			(await _service.GetViewableBoardCallIdsAsync(Dept, new[] { CallId, 41 }, Member)).Should().BeEquivalentTo(new[] { CallId, 41 });
+
+			_commands.Verify(x => x.GetAllByDepartmentIdAsync(It.IsAny<int>()), Times.Never);
+		}
+
+		[Test]
+		public async Task The_batched_check_opens_nothing_for_a_disabled_member()
+		{
+			_access.Setup(x => x.CanViewCommandBoardsAsync(Dept, "commander")).ReturnsAsync(false);
+			_access.Setup(x => x.IsActiveDepartmentMemberAsync(Dept, "commander")).ReturnsAsync(false);
+
+			(await _service.GetViewableBoardCallIdsAsync(Dept, new[] { CallId }, "commander")).Should().BeEmpty();
+		}
+
+		[Test]
 		public async Task A_member_who_did_not_start_the_command_gets_no_write_capabilities_by_default()
 		{
 			// Everyone may run command by default, but that alone gives no rights on someone else's board.

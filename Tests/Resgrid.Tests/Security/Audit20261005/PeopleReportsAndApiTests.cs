@@ -265,8 +265,8 @@ namespace Resgrid.Tests.Security.Audit20261005
 					new IncidentCommandBoard { Command = new IncidentCommand { CallId = 1 } }, new IncidentCommandBoard { Command = new IncidentCommand { CallId = 2 } }
 				}
 			});
-			commands.Setup(x => x.CanViewBoardAsync(DepartmentId, 1, Caller)).ReturnsAsync(true);
-			commands.Setup(x => x.CanViewBoardAsync(DepartmentId, 2, Caller)).ReturnsAsync(false);
+			commands.Setup(x => x.GetViewableBoardCallIdsAsync(DepartmentId, It.IsAny<IEnumerable<int>>(), Caller))
+				.ReturnsAsync((int _, IEnumerable<int> ids, string _) => new HashSet<int>(ids.Where(id => id == 1)));
 			var resources = new Mock<IIncidentResourcesService>();
 			resources.Setup(x => x.GetAdHocChangesSinceAsync(DepartmentId, It.IsAny<DateTime>()))
 				.ReturnsAsync((new List<IncidentAdHocUnit> { new IncidentAdHocUnit { CallId = 2 } }, new List<IncidentAdHocPersonnel>()));
@@ -313,6 +313,7 @@ namespace Resgrid.Tests.Security.Audit20261005
 
 			changes.Data.Commands.Should().ContainSingle();
 			commands.Verify(x => x.CanViewBoardAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>()), Times.Never);
+			commands.Verify(x => x.GetViewableBoardCallIdsAsync(It.IsAny<int>(), It.IsAny<IEnumerable<int>>(), It.IsAny<string>()), Times.Never);
 		}
 
 		[Test]

@@ -5280,8 +5280,12 @@
         <member name="M:Resgrid.Web.Services.Controllers.v4.SyncController.ViewableCallsAsync(System.Collections.Generic.IEnumerable{System.Int32})">
             <summary>
             The incidents among <paramref name="callIds"/> whose boards the caller may read when they may not read every
-            board: the ones they are on (IIncidentCommandService.CanViewBoardAsync).
+            board: the ones they are on. One batched check (IIncidentCommandService.GetViewableBoardCallIdsAsync), since a full
+            pull names every incident the department has had.
             </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SyncController.CallIdsIn(Resgrid.Model.IncidentCommandChanges)">
+            <summary>Every incident a Changes payload has a row for.</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.SyncController.Changes(System.Int64)">
             <summary>

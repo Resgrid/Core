@@ -124,11 +124,12 @@ namespace Resgrid.Repositories.DataRepository
 				AND NOT EXISTS (SELECT 1 FROM {Tbl("ShiftSignupTrades")} t2 WHERE {Col("t2", "TargetShiftSignupId")} = {Col("ss", "ShiftSignupId")} AND {completed("t2")}))";
 
 			// A standing assignment, unless the member is off that day (a denied signup, or their signup traded away).
+			// Aliases must not be reserved words: OFF is reserved in T-SQL and failed every SQL Server badge request.
 			var standing = $@"(EXISTS (SELECT 1 FROM {Tbl("ShiftPersons")} sp WHERE {Col("sp", "ShiftId")} = {Col("sd", "ShiftId")} AND {Col("sp", "UserId")} = {User})
-				AND NOT EXISTS (SELECT 1 FROM {Tbl("ShiftSignups")} off
-					WHERE {Col("off", "ShiftId")} = {Col("sd", "ShiftId")} AND {Col("off", "UserId")} = {User} AND {onDay("off", "ShiftDay")}
-					AND ({Col("off", "Denied")} = {True}
-						OR EXISTS (SELECT 1 FROM {Tbl("ShiftSignupTrades")} t3 WHERE {Col("t3", "SourceShiftSignupId")} = {Col("off", "ShiftSignupId")} AND {completed("t3")}))))";
+				AND NOT EXISTS (SELECT 1 FROM {Tbl("ShiftSignups")} sx
+					WHERE {Col("sx", "ShiftId")} = {Col("sd", "ShiftId")} AND {Col("sx", "UserId")} = {User} AND {onDay("sx", "ShiftDay")}
+					AND ({Col("sx", "Denied")} = {True}
+						OR EXISTS (SELECT 1 FROM {Tbl("ShiftSignupTrades")} t3 WHERE {Col("t3", "SourceShiftSignupId")} = {Col("sx", "ShiftSignupId")} AND {completed("t3")}))))";
 
 			// A day taken over through a completed trade: picked for it, or swapped into it.
 			var tradedIn = $@"EXISTS (SELECT 1 FROM {Tbl("ShiftSignupTrades")} t4

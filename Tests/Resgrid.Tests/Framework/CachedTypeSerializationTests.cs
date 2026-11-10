@@ -65,6 +65,21 @@ namespace Resgrid.Tests.Framework
 			RoundTrip(new Call { CallId = 2, Type = "Unknown" }).CallTypeId.Should().BeNull();
 		}
 
+		[TestCase(0, 0)] // no alerts: the common case, must still be a non-empty payload (empty reads as a miss)
+		[TestCase(1, 0)]
+		[TestCase(0, 3)]
+		[TestCase(2, 5)]
+		public void WeatherAlertSeverityCounts_RoundTripsThroughTheCacheSerializer(int extreme, int severe)
+		{
+			var payload = ObjectSerialization.Serialize(new WeatherAlertSeverityCounts { Extreme = extreme, Severe = severe });
+
+			payload.Should().NotBeNullOrEmpty();
+
+			var result = ObjectSerialization.Deserialize<WeatherAlertSeverityCounts>(payload);
+			result.Extreme.Should().Be(extreme);
+			result.Severe.Should().Be(severe);
+		}
+
 		[Test]
 		public void RunCardList_RoundTripsThroughTheCacheSerializer()
 		{

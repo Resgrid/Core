@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ProtoBuf;
 
 namespace Resgrid.Model
 {
@@ -113,10 +114,15 @@ namespace Resgrid.Model
 	}
 
 	/// <summary>A department's active Extreme and Severe weather alerts (the weather badge), as cached.</summary>
+	[ProtoContract]
 	public class WeatherAlertSeverityCounts
 	{
+		// IsRequired: written even when 0. Most departments have no alerts, and an all-default instance serializes to an
+		// empty payload, which the cache provider reads as a miss (warning + key delete on every read).
+		[ProtoMember(1, IsRequired = true)]
 		public int Extreme { get; set; }
 
+		[ProtoMember(2)]
 		public int Severe { get; set; }
 	}
 

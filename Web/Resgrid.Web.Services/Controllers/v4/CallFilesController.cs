@@ -312,7 +312,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			// The SMTP relay keys each attachment of a message (CallsController.IdempotencyKeyHeader) and an app's offline outbox
 			// sends its event id as the body's IdempotencyKey; a resent upload comes back with the first file's id instead of twice.
 			var receipt = await _inboundEmailReceiptsService.ClaimApiRequestAsync(InboundEmailKinds.ApiCallFile, call.DepartmentId,
-				CallsController.ResolveIdempotencyKey(Request, input.IdempotencyKey), cancellationToken);
+				CallsController.ResolveCallIdempotencyKey(Request, input.IdempotencyKey, call.CallId), cancellationToken);
 
 			if (receipt.Outcome == InboundEmailClaimOutcomes.InProgress)
 				return StatusCode(StatusCodes.Status409Conflict);
@@ -328,10 +328,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 				saved = await _callsService.GetCallAttachmentAsync(receipt.EntityId.Value);
 
 				// Deleted since: nothing is left to protect.
-				if (saved == null || saved.CallId != call.CallId)
+				if (saved == null)
 				{
 					await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
 					return SavedFileResult(result, call.DepartmentId, receipt.EntityId.Value);
+				}
+
+				// Keys are per call, so this cannot happen; never answer for, or complete, another call's attachment.
+				if (saved.CallId != call.CallId)
+				{
+					await _inboundEmailReceiptsService.ReleaseAsync(receipt);
+					return StatusCode(StatusCodes.Status409Conflict);
 				}
 			}
 			else

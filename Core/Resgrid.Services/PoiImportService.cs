@@ -46,7 +46,10 @@ namespace Resgrid.Services
 		/// <summary>Finished imports (the report) are kept this long.</summary>
 		public static readonly TimeSpan Retention = TimeSpan.FromDays(90);
 
-		private static readonly TimeSpan HeartbeatInterval = TimeSpan.FromSeconds(30);
+		/// <summary>
+		/// How often a run writes its heartbeat; while locating, the rows' lookup results go with it (a checkpoint). Tests shorten it.
+		/// </summary>
+		public TimeSpan HeartbeatInterval { get; set; } = TimeSpan.FromSeconds(30);
 
 		/// <summary>Lookups in flight at once: well inside the geocoders' per-second limits.</summary>
 		private const int GeocodingConcurrency = 4;
@@ -133,7 +136,9 @@ namespace Resgrid.Services
 				PoiTypeId = poiTypeId,
 				PoiTypeName = poiTypeName?.Truncate(250),
 				UserId = userId,
-				FileName = Path.GetFileName(fileName ?? string.Empty).Truncate(260),
+				// GetSafeFileName, not Path.GetFileName: on Linux hosts Path.GetFileName keeps a Windows client path
+				// ("C:\fakepath\pois.kml") whole because '\' is not a separator there.
+				FileName = FileHelper.GetSafeFileName(fileName).Truncate(260),
 				Status = (int)PoiImportStatus.Queued,
 				TotalRows = file.Rows.Count,
 				SkippedCount = file.SkippedCount,
@@ -228,9 +233,22 @@ namespace Resgrid.Services
 					lastBeat = DateTime.UtcNow;
 				}
 
+				// While locating, the heartbeat also saves the lookups made so far (through the claim-guarded write), so a run that
+				// stops part way resumes without asking the geocoders again for the addresses it already asked about.
+				async Task CheckpointAsync()
+				{
+					if (DateTime.UtcNow - lastBeat < HeartbeatInterval)
+						return;
+
+					import.RowsJson = JsonConvert.SerializeObject(rows);
+					import.HeartbeatOn = DateTime.UtcNow;
+					await SaveAsync();
+					lastBeat = DateTime.UtcNow;
+				}
+
 				if (import.Status == (int)PoiImportStatus.Locating)
 				{
-					await LocateAsync(import, rows, BeatAsync, cancellationToken);
+					await LocateAsync(import, rows, CheckpointAsync, cancellationToken);
 					import.RowsJson = JsonConvert.SerializeObject(rows);
 
 					// Lookups no geocoder answered wait out a back-off; the run ended cleanly, so it does not count as a failure.
@@ -328,7 +346,7 @@ namespace Resgrid.Services
 		private static bool IsRetryable(PoiImportRow row) =>
 			!row.HasPosition && row.Lookup == (int)PoiImportRowLookup.Unavailable && row.LookupAttempts < MaximumLookupAttempts;
 
-		private async Task LocateAsync(PoiImport import, List<PoiImportRow> rows, Func<Task> beatAsync, CancellationToken cancellationToken)
+		private async Task LocateAsync(PoiImport import, List<PoiImportRow> rows, Func<Task> checkpointAsync, CancellationToken cancellationToken)
 		{
 			// The per-import limit applies once, to the addresses never looked up, in file order.
 			var fresh = rows.Where(r => !r.HasPosition && !string.IsNullOrWhiteSpace(r.Address) && r.Lookup == (int)PoiImportRowLookup.None)
@@ -348,6 +366,7 @@ namespace Resgrid.Services
 			                              (r.Lookup == (int)PoiImportRowLookup.None || IsRetryable(r)))
 				.GroupBy(r => r.Address.Trim(), StringComparer.OrdinalIgnoreCase).ToList();
 
+			// The checkpoint (heartbeat plus the rows' lookups so far) runs between chunks, never alongside the parallel lookups.
 			foreach (var chunk in lookups.Chunk(GeocodingChunk))
 			{
 				await Parallel.ForEachAsync(chunk, new ParallelOptions { MaxDegreeOfParallelism = GeocodingConcurrency, CancellationToken = cancellationToken }, async (lookup, token) =>
@@ -367,7 +386,7 @@ namespace Resgrid.Services
 					}
 				});
 
-				await beatAsync();
+				await checkpointAsync();
 			}
 
 			import.GeocodedCount = rows.Count(r => r.Lookup == (int)PoiImportRowLookup.Found);

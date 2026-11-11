@@ -128,6 +128,11 @@ namespace Resgrid.Model
 		CustomFieldValues = 128,
 		UnitStateRoles = 256,
 		/// <summary>The riders' own "on unit" statuses (department setting: personnel on a unit take its status).</summary>
-		UnitLinkedStatuses = 512
+		UnitLinkedStatuses = 512,
+		/// <summary>
+		/// The saved row's protected-data step: the save failed after its insert, so the row may still be plaintext and a resumed
+		/// request protects it before answering.
+		/// </summary>
+		ProtectedWrite = 1024
 	}
 }

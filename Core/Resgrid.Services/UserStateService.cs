@@ -110,6 +110,25 @@ namespace Resgrid.Services
 			return await SaveNewUserStateAsync(userState, false, cancellationToken);
 		}
 
+		public async Task ProtectUserStateAsync(int departmentId, int userStateId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var state = await _userStateRepository.GetByIdAsync(userStateId);
+			if (state == null || state.DepartmentId != departmentId)
+				return;
+
+			// Already-protected values are skipped, so running the step again is safe.
+			var protectedWrite = await _protectedWriteService.Value.PrepareUserStateWriteAsync(departmentId, state,
+				null, null, workloadCaller: true, cancellationToken);
+			if (!protectedWrite.Success)
+				throw new InvalidOperationException($"Protected write blocked ({protectedWrite.Reason}); user state {state.UserStateId} has transient plaintext pending re-encryption.");
+
+			if (protectedWrite.Changed)
+			{
+				await _userStateRepository.SaveOrUpdateAsync(state, cancellationToken);
+				InvalidateLatestStatesForDepartmentCache(departmentId);
+			}
+		}
+
 		/// <summary>
 		/// Every new staffing: the row is saved (its id written back onto <paramref name="us"/>), protected, then announced.
 		/// </summary>

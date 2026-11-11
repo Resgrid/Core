@@ -324,7 +324,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 					if (receipt.Outcome == InboundEmailClaimOutcomes.Resume)
 					{
-						// The earlier attempt saved and announced the state, then failed: only its riding roles can still be owed.
+						// The earlier attempt saved and announced the state, then failed: its protected-data step (when the save
+						// itself failed after the insert) and its riding roles can still be owed. A protection refusal throws,
+						// leaving the receipt open for the next replay.
+						if (receipt.Has(InboundEmailPendingSteps.ProtectedWrite))
+						{
+							await _unitsService.ProtectUnitStateAsync(DepartmentId, receipt.EntityId.Value, cancellationToken);
+							await _inboundEmailReceiptsService.CompleteStepAsync(receipt, InboundEmailPendingSteps.ProtectedWrite);
+						}
+
 						if (receipt.Has(InboundEmailPendingSteps.UnitStateRoles) || receipt.Has(InboundEmailPendingSteps.UnitLinkedStatuses))
 							await SaveUnitStateRolesAsync(stateInput, unit, receipt.EntityId.Value, setPersonnelStatus, receipt, true, cancellationToken);
 
@@ -347,9 +355,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 					catch
 					{
 						// The state row commits before the service's later work (protection, the status event, call close-out):
-						// keep the id a failure left behind, so the replay answers with this state instead of saving a second one.
+						// keep the id a failure left behind, so the replay protects and answers with this state instead of saving a
+						// second one.
 						if (state.UnitStateId > 0)
-							await _inboundEmailReceiptsService.MarkSavedAsync(receipt, state.UnitStateId, owedSteps);
+							await _inboundEmailReceiptsService.MarkSavedAsync(receipt, state.UnitStateId, owedSteps | InboundEmailPendingSteps.ProtectedWrite);
 
 						throw;
 					}
@@ -460,17 +469,29 @@ namespace Resgrid.Web.Services.Controllers.v4
 				var toSeat = roles;
 				if (resuming)
 				{
-					// Roles are saved one by one, so the failed attempt may have seated some of the riders already.
-					var seated = new HashSet<string>((await _unitsService.GetRolesForUnitStateAsync(unitStateId) ?? new List<UnitStateRole>())
-						.Select(r => r.UserId).Where(id => id != null), StringComparer.OrdinalIgnoreCase);
-					toSeat = roles.Where(r => !seated.Contains(r.UserId)).ToList();
+					// Roles are saved one by one, so the failed attempt may have seated some of them already. Each saved seat (rider
+					// and role) answers for one requested seat, so a rider holding two roles still gets the one that was not saved.
+					var seated = (await _unitsService.GetRolesForUnitStateAsync(unitStateId) ?? new List<UnitStateRole>()).ToList();
+					toSeat = new List<UnitStateRole>();
+
+					foreach (var role in roles)
+					{
+						var saved = seated.FirstOrDefault(s => string.Equals(s.UserId, role.UserId, StringComparison.OrdinalIgnoreCase) &&
+						                                       string.Equals(s.Role, role.Role, StringComparison.OrdinalIgnoreCase));
+						if (saved != null)
+							seated.Remove(saved);
+						else
+							toSeat.Add(role);
+					}
 				}
 
 				await _unitsService.AddAllUnitStateRolesAsync(toSeat);
 				await _inboundEmailReceiptsService.CompleteStepAsync(receipt, InboundEmailPendingSteps.UnitStateRoles);
 			}
 
-			if (setPersonnelStatus && (!resuming || receipt.Has(InboundEmailPendingSteps.UnitLinkedStatuses)))
+			// A resumed request finishes what its receipt says it owes, even if the department setting changed since.
+			var setLinkedStatuses = resuming ? receipt.Has(InboundEmailPendingSteps.UnitLinkedStatuses) : setPersonnelStatus;
+			if (setLinkedStatuses)
 			{
 				foreach (var role in roles)
 				{

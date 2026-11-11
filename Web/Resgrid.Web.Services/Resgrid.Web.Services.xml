@@ -654,6 +654,13 @@
             <c>IdempotencyKey</c> (an app's offline outbox sends its event id there). Null when neither is sent.
             </summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.ResolveCallIdempotencyKey(Microsoft.AspNetCore.Http.HttpRequest,System.String,System.Int32)">
+            <summary>
+            <see cref="M:Resgrid.Web.Services.Controllers.v4.CallsController.ResolveIdempotencyKey(Microsoft.AspNetCore.Http.HttpRequest,System.String)"/> for a write to one call (a note, an attachment): the call id is part of the key, so a
+            key reused for another call is a new request there and can never be answered with, or complete, the first call's receipt.
+            Null when no key is sent.
+            </summary>
+        </member>
         <member name="F:Resgrid.Web.Services.Controllers.v4.CallsController.SaveCallSteps">
             <summary>Everything SaveCall does after the call row is written; each is cleared from the receipt as it completes.</summary>
         </member>

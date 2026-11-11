@@ -166,7 +166,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			// Idempotency-Key header): the resend gets the note the first attempt saved instead of a second one. Claimed only
 			// now, once the request is known to be valid, so a rejected request leaves nothing for its retry to trip on.
 			var receipt = await _inboundEmailReceiptsService.ClaimApiRequestAsync(InboundEmailKinds.ApiCallNote, DepartmentId,
-				CallsController.ResolveIdempotencyKey(Request, input.IdempotencyKey), cancellationToken);
+				CallsController.ResolveCallIdempotencyKey(Request, input.IdempotencyKey, call.CallId), cancellationToken);
 
 			if (receipt.Outcome == InboundEmailClaimOutcomes.InProgress)
 				return StatusCode(StatusCodes.Status409Conflict);

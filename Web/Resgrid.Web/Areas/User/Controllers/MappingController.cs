@@ -526,7 +526,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				// Not the request's token: an upload the browser abandons after this point is still queued whole.
 				await _poiImportService.QueueImportAsync(DepartmentId, modal.TypeId, type.Name, UserId, fileToUpload.FileName, file, CancellationToken.None);
 
-				TempData["ImportPOIsMessage"] = string.Format(_localizer["PoiImportQueued"].Value, Path.GetFileName(fileToUpload.FileName), file.Rows.Count);
+				TempData["ImportPOIsMessage"] = string.Format(_localizer["PoiImportQueued"].Value, FileHelper.GetSafeFileName(fileToUpload.FileName), file.Rows.Count);
 
 				// A hydrant manager may import POIs without managing map data, so the POIs page is closed to them.
 				return CanManageMapData() ? RedirectToAction("POIs") : RedirectToAction("ImportPOIs", new { poiTypeId = modal.TypeId });

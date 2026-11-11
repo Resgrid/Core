@@ -289,6 +289,16 @@ namespace Resgrid.Model.Services
 		Task<bool> AddAllUnitStateRolesAsync(List<UnitStateRole> roles,
 			CancellationToken cancellationToken = default(CancellationToken));
 
+		/// <summary>
+		/// Runs the protected-data step again for a unit state whose save failed after its insert (a resumed API request). Values
+		/// already protected are left as they are; nothing happens for a state that is gone or whose unit belongs to another
+		/// department. Throws when the protected write is still refused.
+		/// </summary>
+		/// <param name="departmentId">The department the state's unit must belong to.</param>
+		/// <param name="unitStateId">The saved unit state.</param>
+		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+		Task ProtectUnitStateAsync(int departmentId, int unitStateId, CancellationToken cancellationToken = default(CancellationToken));
+
 		/// <summary>The riders (crew seats) recorded with one unit state; empty when it has none.</summary>
 		/// <param name="unitStateId">The unit state identifier.</param>
 		/// <returns>Task&lt;List&lt;UnitStateRole&gt;&gt;.</returns>

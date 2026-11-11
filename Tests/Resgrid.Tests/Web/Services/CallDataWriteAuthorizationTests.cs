@@ -362,6 +362,34 @@ namespace Resgrid.Tests.Web.Services
 		}
 
 		[Test]
+		public async Task A_key_reused_on_another_call_is_a_new_request_there_and_leaves_the_first_calls_receipt_alone()
+		{
+			// Receipts are per department; the call is part of the key, so another call's request never gets (or completes) this one.
+			const int otherCallId = 43;
+			_callsService.Setup(x => x.GetCallByIdAsync(otherCallId, It.IsAny<bool>()))
+				.ReturnsAsync(new Call { CallId = otherCallId, DepartmentId = DepartmentId, State = (int)CallStates.Active });
+			_authorizationService.Setup(x => x.CanUserAddCallDataAsync(UserId, It.IsAny<int>(), DepartmentId)).ReturnsAsync(true);
+			var otherNote = OutboxNoteInput("reused-key");
+			otherNote.CallId = otherCallId.ToString();
+			var otherFile = FileInput();
+			otherFile.CallId = otherCallId.ToString();
+			otherFile.IdempotencyKey = "reused-key";
+			var file = FileInput();
+			file.IdempotencyKey = "reused-key";
+
+			await NotesController().SaveCallNote(OutboxNoteInput("reused-key"), CancellationToken.None);
+			await NotesController().SaveCallNote(otherNote, CancellationToken.None);
+			var firstFile = await FilesController().SaveCallFile(file, CancellationToken.None);
+			var secondFile = await FilesController().SaveCallFile(otherFile, CancellationToken.None);
+
+			_callsService.Verify(x => x.SaveCallNoteAsync(It.Is<CallNote>(n => n.CallId == CallId), It.IsAny<CancellationToken>()), Times.Once);
+			_callsService.Verify(x => x.SaveCallNoteAsync(It.Is<CallNote>(n => n.CallId == otherCallId), It.IsAny<CancellationToken>()), Times.Once);
+			Id(firstFile).Should().Be("6");
+			Id(secondFile).Should().Be("7");
+			_receipts.Receipts.Should().HaveCount(4).And.OnlyContain(r => r.State == (int)InboundEmailReceiptStates.Completed);
+		}
+
+		[Test]
 		public async Task Unkeyed_notes_are_saved_every_time()
 		{
 			_authorizationService.Setup(x => x.CanUserAddCallDataAsync(UserId, CallId, DepartmentId)).ReturnsAsync(true);

@@ -91,6 +91,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return string.IsNullOrWhiteSpace(bodyKey) ? null : bodyKey.Trim();
 		}
 
+		/// <summary>
+		/// <see cref="ResolveIdempotencyKey"/> for a write to one call (a note, an attachment): the call id is part of the key, so a
+		/// key reused for another call is a new request there and can never be answered with, or complete, the first call's receipt.
+		/// Null when no key is sent.
+		/// </summary>
+		internal static string ResolveCallIdempotencyKey(HttpRequest request, string bodyKey, int callId)
+		{
+			var key = ResolveIdempotencyKey(request, bodyKey);
+			return key == null ? null : $"call:{callId}:{key}";
+		}
+
 		/// <summary>Everything SaveCall does after the call row is written; each is cleared from the receipt as it completes.</summary>
 		private const InboundEmailPendingSteps SaveCallSteps = InboundEmailPendingSteps.RunCardActivation | InboundEmailPendingSteps.WeatherAlerts |
 			InboundEmailPendingSteps.CallAddedEvent | InboundEmailPendingSteps.DispatchStatuses | InboundEmailPendingSteps.CallBroadcast |

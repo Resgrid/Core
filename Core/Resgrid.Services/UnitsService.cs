@@ -924,6 +924,26 @@ namespace Resgrid.Services
 			return false;
 		}
 
+		public async Task ProtectUnitStateAsync(int departmentId, int unitStateId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var state = await _unitStatesRepository.GetUnitStateByUnitStateIdAsync(unitStateId);
+			if (state == null)
+				return;
+
+			var unit = await GetUnitByIdAsync(state.UnitId);
+			if (unit == null || unit.DepartmentId != departmentId)
+				return;
+
+			// Already-protected values are skipped, so running the step again is safe. The state was announced when it was saved.
+			var protectedWrite = await _protectedWriteService.Value.PrepareUnitStateWriteAsync(departmentId, state,
+				null, null, workloadCaller: true, cancellationToken);
+			if (!protectedWrite.Success)
+				throw new InvalidOperationException($"Protected write blocked ({protectedWrite.Reason}); unit state {state.UnitStateId} has transient plaintext pending re-encryption.");
+
+			if (protectedWrite.Changed)
+				await _unitStatesRepository.SaveOrUpdateAsync(state, cancellationToken);
+		}
+
 		public async Task<List<UnitStateRole>> GetRolesForUnitStateAsync(int unitStateId)
 		{
 			if (unitStateId <= 0)

@@ -414,6 +414,44 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task Locating_checkpoints_the_lookups_made_so_far_with_the_heartbeat()
+		{
+			// 25 addresses: one chunk of 24 lookups, then one more. A run that stopped after the first chunk resumes from the
+			// checkpoint instead of asking the geocoders about those 24 addresses again.
+			var rows = Enumerable.Range(1, 25).Select(n => new PoiImportRow { Name = "Site " + n, Address = n + " Main St" }).ToArray();
+			foreach (var row in rows)
+				Geocodes(row.Address, 41.5, -93.5);
+			Runnable(PoiImportStatus.Queued, 1, rows);
+			var service = Service();
+			service.HeartbeatInterval = TimeSpan.Zero;
+
+			await service.ProcessNextAsync();
+
+			var checkpoint = _writes.First();
+			checkpoint.Status.Should().Be((int)PoiImportStatus.Locating);
+			checkpoint.HeartbeatOn.Should().NotBeNull();
+			RowsOf(checkpoint).Count(r => r.Lookup == (int)PoiImportRowLookup.Found).Should().Be(24);
+			RowsOf(checkpoint).Count(r => r.Lookup == (int)PoiImportRowLookup.None).Should().Be(1);
+			_runTokens.Should().OnlyContain(t => t == _claimToken, "checkpoints go through the claim-guarded write");
+			Final.Status.Should().Be((int)PoiImportStatus.Complete);
+			_saved.Should().HaveCount(25);
+		}
+
+		[Test]
+		public async Task A_locating_import_resumed_from_a_checkpoint_asks_only_for_the_addresses_not_yet_looked_up()
+		{
+			Geocodes("2 Main St", 41.6, -93.6);
+			Runnable(PoiImportStatus.Locating, 2,
+				new PoiImportRow { Name = "One", Address = "1 Main St", Latitude = 41.5, Longitude = -93.5, Lookup = (int)PoiImportRowLookup.Found, LookupAttempts = 1 },
+				new PoiImportRow { Name = "Two", Address = "2 Main St" });
+
+			await Service().ProcessNextAsync();
+
+			_geo.Verify(x => x.GeocodeAddressAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
+			_saved.Select(p => p.Name).Should().Equal("One", "Two");
+		}
+
+		[Test]
 		public async Task Every_write_of_a_run_names_the_claim_it_took()
 		{
 			Runnable(PoiImportStatus.Queued, 1, new PoiImportRow { Name = "Tank", Latitude = 41.5, Longitude = -93.5 });

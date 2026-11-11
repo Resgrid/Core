@@ -409,6 +409,87 @@ namespace Resgrid.Tests.Web.Services
 			first.Result.Should().BeOfType<BadRequestResult>();
 			Id(replay).Should().Be("900");
 			_savedStates.Should().ContainSingle();
+			_units.Verify(x => x.ProtectUnitStateAsync(DepartmentId, 900, It.IsAny<CancellationToken>()), Times.Once, "the replay finishes the protection the save never reached");
+			_receipts.Receipts.Single().State.Should().Be((int)InboundEmailReceiptStates.Completed);
+		}
+
+		[Test]
+		public async Task a_unit_status_replay_whose_protection_is_still_refused_stays_open_for_the_next_replay()
+		{
+			_units.Setup(x => x.SetUnitStateAsync(It.IsAny<UnitState>(), DepartmentId, It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.Returns((UnitState state, int departmentId, CancellationToken _, bool __) =>
+				{
+					state.UnitStateId = 900 + _savedStates.Count;
+					_savedStates.Add(state);
+					throw new InvalidOperationException("Protected write blocked (broker_unavailable).");
+				});
+			_units.SetupSequence(x => x.ProtectUnitStateAsync(DepartmentId, 900, It.IsAny<CancellationToken>()))
+				.ThrowsAsync(new InvalidOperationException("Protected write blocked (broker_unavailable)."))
+				.Returns(Task.CompletedTask);
+
+			await UnitStatus().SaveUnitStatus(UnitInput(), CancellationToken.None);
+			var refused = await UnitStatus().SaveUnitStatus(UnitInput(), CancellationToken.None);
+
+			refused.Result.Should().BeOfType<BadRequestResult>();
+			var receipt = _receipts.Receipts.Single();
+			receipt.State.Should().Be((int)InboundEmailReceiptStates.Saved);
+			((InboundEmailPendingSteps)receipt.PendingSteps).Should().HaveFlag(InboundEmailPendingSteps.ProtectedWrite);
+
+			var replay = await UnitStatus().SaveUnitStatus(UnitInput(), CancellationToken.None);
+
+			Id(replay).Should().Be("900");
+			_savedStates.Should().ContainSingle();
+			_receipts.Receipts.Single().State.Should().Be((int)InboundEmailReceiptStates.Completed);
+		}
+
+		[Test]
+		public async Task a_replay_seats_a_riders_second_role_when_only_the_first_was_saved()
+		{
+			// One rider holding two seats: the first seat committed, the second failed.
+			_units.Setup(x => x.GetRolesForUnitAsync(UnitId)).ReturnsAsync(new List<UnitRole>
+			{
+				new UnitRole { UnitRoleId = 7, UnitId = UnitId, Name = "Driver" },
+				new UnitRole { UnitRoleId = 8, UnitId = UnitId, Name = "Officer" }
+			});
+			var input = UnitInput(withRoles: true);
+			input.Roles.Add(new UnitStatusRoleInput { UserId = RiderId, RoleId = "8", EventId = OutboxEventId });
+
+			var seated = new List<UnitStateRole>();
+			var failOnce = true;
+			_units.Setup(x => x.AddAllUnitStateRolesAsync(It.IsAny<List<UnitStateRole>>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((List<UnitStateRole> roles, CancellationToken _) =>
+				{
+					if (failOnce)
+					{
+						failOnce = false;
+						seated.Add(roles.First());
+						throw new InvalidOperationException("UnitStateRoles insert failed.");
+					}
+
+					seated.AddRange(roles);
+					return true;
+				});
+			_units.Setup(x => x.GetRolesForUnitStateAsync(900)).ReturnsAsync(() => seated.ToList());
+
+			await UnitStatus().SaveUnitStatus(input, CancellationToken.None);
+			var replay = await UnitStatus().SaveUnitStatus(input, CancellationToken.None);
+
+			Id(replay).Should().Be("900");
+			seated.Select(r => r.Role).Should().Equal("Driver", "Officer");
+			_receipts.Receipts.Single().State.Should().Be((int)InboundEmailReceiptStates.Completed);
+		}
+
+		[Test]
+		public async Task a_replay_sets_the_linked_statuses_its_receipt_owes_even_after_the_setting_was_turned_off()
+		{
+			_roleSaveFailures = 1;
+			await UnitStatus().SaveUnitStatus(UnitInput(withRoles: true), CancellationToken.None);
+			((InboundEmailPendingSteps)_receipts.Receipts.Single().PendingSteps).Should().HaveFlag(InboundEmailPendingSteps.UnitLinkedStatuses);
+
+			_settings.Setup(x => x.GetPersonnelOnUnitSetUnitStatusAsync(DepartmentId, It.IsAny<bool>())).ReturnsAsync(false);
+			await UnitStatus().SaveUnitStatus(UnitInput(withRoles: true), CancellationToken.None);
+
+			_actionLogs.Verify(x => x.CreateUnitLinkedStatus(RiderId, DepartmentId, 900, "PMRT A1", It.IsAny<CancellationToken>()), Times.Once);
 			_receipts.Receipts.Single().State.Should().Be((int)InboundEmailReceiptStates.Completed);
 		}
 
@@ -539,6 +620,34 @@ namespace Resgrid.Tests.Web.Services
 			_savedStaffings.Should().ContainSingle();
 			_savedStaffings.Single().State.Should().Be((int)UserStateTypes.Committed);
 			_savedStaffings.Single().UserId.Should().Be(UserId);
+			_userStates.Verify(x => x.ProtectUserStateAsync(DepartmentId, 300, It.IsAny<CancellationToken>()), Times.Once, "the replay finishes the protection the save never reached");
+			_receipts.Receipts.Single().State.Should().Be((int)InboundEmailReceiptStates.Completed);
+		}
+
+		[Test]
+		public async Task a_staffing_replay_whose_protection_is_still_refused_stays_open_for_the_next_replay()
+		{
+			_userStates.Setup(x => x.CreateUserStateAsync(It.IsAny<UserState>(), It.IsAny<CancellationToken>()))
+				.Returns((UserState state, CancellationToken _) =>
+				{
+					state.UserStateId = 300 + _savedStaffings.Count;
+					_savedStaffings.Add(state);
+					throw new InvalidOperationException("Protected write blocked (broker_unavailable).");
+				});
+			_userStates.SetupSequence(x => x.ProtectUserStateAsync(DepartmentId, 300, It.IsAny<CancellationToken>()))
+				.ThrowsAsync(new InvalidOperationException("Protected write blocked (broker_unavailable)."))
+				.Returns(Task.CompletedTask);
+
+			await PersonStaffing().SavePersonStaffing(StaffingInput(), CancellationToken.None);
+			var refused = await PersonStaffing().SavePersonStaffing(StaffingInput(), CancellationToken.None);
+
+			refused.Result.Should().BeOfType<BadRequestResult>();
+			_receipts.Receipts.Single().State.Should().Be((int)InboundEmailReceiptStates.Saved, "a staffing is not answered for until it is protected");
+
+			var replay = await PersonStaffing().SavePersonStaffing(StaffingInput(), CancellationToken.None);
+
+			Id(replay).Should().Be("300");
+			_savedStaffings.Should().ContainSingle();
 			_receipts.Receipts.Single().State.Should().Be((int)InboundEmailReceiptStates.Completed);
 		}
 

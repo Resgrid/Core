@@ -181,6 +181,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 				if (receipt.EntityId.HasValue &&
 					(receipt.Outcome == InboundEmailClaimOutcomes.AlreadyProcessed || receipt.Outcome == InboundEmailClaimOutcomes.Resume))
 				{
+					// The first attempt failed after its insert, perhaps at the protected-data step: protect the staffing before
+					// answering for it. A refusal throws, leaving the receipt open for the next replay.
+					if (receipt.Outcome == InboundEmailClaimOutcomes.Resume && receipt.Has(InboundEmailPendingSteps.ProtectedWrite))
+						await _userStateService.ProtectUserStateAsync(DepartmentId, receipt.EntityId.Value, cancellationToken);
+
 					await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
 					return SavedPersonStaffingResult(result, receipt.EntityId.Value);
 				}
@@ -204,9 +209,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 				catch
 				{
 					// The staffing row commits before the service's later work (protection, the staffing event): keep the id a
-					// failure left behind, so the replay answers with this staffing instead of saving a second one.
+					// failure left behind, so the replay protects and answers with this staffing instead of saving a second one.
 					if (pending.UserStateId > 0)
-						await _inboundEmailReceiptsService.MarkSavedAsync(receipt, pending.UserStateId, InboundEmailPendingSteps.None);
+						await _inboundEmailReceiptsService.MarkSavedAsync(receipt, pending.UserStateId, InboundEmailPendingSteps.ProtectedWrite);
 
 					throw;
 				}

@@ -80,6 +80,16 @@ namespace Resgrid.Model.Services
 		Task<UserState> CreateUserStateAsync(UserState userState, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
+		/// Runs the protected-data step again for a staffing whose save failed after its insert (a resumed API request). Values
+		/// already protected are left as they are; nothing happens for a staffing that is gone or belongs to another department.
+		/// Throws when the protected write is still refused.
+		/// </summary>
+		/// <param name="departmentId">The department the staffing must belong to.</param>
+		/// <param name="userStateId">The saved staffing.</param>
+		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+		Task ProtectUserStateAsync(int departmentId, int userStateId, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
 		/// Gets the states for department asynchronous.
 		/// </summary>
 		/// <param name="departmentId">The department identifier.</param>

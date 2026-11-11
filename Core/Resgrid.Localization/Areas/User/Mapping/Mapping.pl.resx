@@ -329,4 +329,40 @@
   <data name="TrafficLayer" xml:space="preserve">
     <value>Ruch na żywo</value>
   </data>
+  <data name="PoiBulkTitle" xml:space="preserve">
+    <value>Usuń POI</value>
+  </data>
+  <data name="PoiBulkHelp" xml:space="preserve">
+    <value>Usuń wiele POI naraz, na przykład po zaimportowaniu niewłaściwego pliku. Zaznacz wiersze (wyszukiwarka zawęża listę, a pole w nagłówku zaznacza wszystkie wyniki) lub usuń wszystkie POI z tej listy. POI powiązane z hydrantami nie są wyświetlane i pozostają.</value>
+  </data>
+  <data name="PoiBulkScopeSelected" xml:space="preserve">
+    <value>POI zaznaczone na liście</value>
+  </data>
+  <data name="PoiBulkScopeAll" xml:space="preserve">
+    <value>Wszystkie POI z tej listy</value>
+  </data>
+  <data name="PoiBulkConfirmCount" xml:space="preserve">
+    <value>Wpisz liczbę POI do usunięcia</value>
+  </data>
+  <data name="PoiBulkConfirm" xml:space="preserve">
+    <value>Usunąć POI ({0})? Tej operacji nie można cofnąć.</value>
+  </data>
+  <data name="PoiBulkCountMismatch" xml:space="preserve">
+    <value>Aby potwierdzić, wpisz {0} — liczbę POI, które zostaną usunięte.</value>
+  </data>
+  <data name="PoiBulkNoneSelected" xml:space="preserve">
+    <value>Zaznacz na liście POI do usunięcia lub wybierz inną opcję.</value>
+  </data>
+  <data name="PoiBulkConfirmRequired" xml:space="preserve">
+    <value>Aby potwierdzić, wpisz liczbę POI do usunięcia.</value>
+  </data>
+  <data name="PoiBulkDeleted" xml:space="preserve">
+    <value>Usunięte POI: {0:N0}.</value>
+  </data>
+  <data name="PoiBulkSelectAll" xml:space="preserve">
+    <value>Zaznacz wszystkie POI pasujące do wyszukiwania</value>
+  </data>
+  <data name="PoiBulkSelectRow" xml:space="preserve">
+    <value>Zaznacz POI</value>
+  </data>
 </root>

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Threading;
@@ -269,6 +270,10 @@ namespace Resgrid.Tests.Repositories
 			var stale = await SeedDepartmentAsync();
 			var protectedDepartment = await SeedDepartmentAsync();
 			var repository = Repository();
+			// The fixture shares one database, and other tests leave suppressed states and protection policies behind
+			// (Protected_departments_with_late_keys_...), so the department lists are read for this test's departments only.
+			var mine = new HashSet<int> { fresh, done, stale, protectedDepartment };
+			async Task<List<int>> Own(Task<List<int>> departments) => (await departments).Where(mine.Contains).ToList();
 
 			await repository.SaveStateAsync(new CallLocationIndexState { DepartmentId = done, KeyVersion = ParsedStreetAddress.Version, CompletedOn = Now, ModifiedOn = Now });
 			await repository.SaveStateAsync(new CallLocationIndexState { DepartmentId = stale, KeyVersion = ParsedStreetAddress.Version - 1, NextCallId = 5, CompletedOn = Now, ModifiedOn = Now });
@@ -287,19 +292,19 @@ namespace Resgrid.Tests.Repositories
 			await using (var database = Connect(_connection))
 				await database.ExecuteAsync(IsPostgres ? "INSERT INTO departmentdataprotectionpolicies (departmentid, state) VALUES (@D, 5), (@Done, 0)"
 					: "INSERT INTO DepartmentDataProtectionPolicies (DepartmentId, State) VALUES (@D, 5), (@Done, 0)", new { D = protectedDepartment, Done = done });
-			(await repository.GetDepartmentsToSuppressAsync(10)).Should().Equal(protectedDepartment);
+			(await Own(repository.GetDepartmentsToSuppressAsync(100))).Should().Equal(protectedDepartment);
 
 			await repository.SaveStateAsync(new CallLocationIndexState { DepartmentId = protectedDepartment, KeyVersion = ParsedStreetAddress.Version, IsSuppressed = true, ModifiedOn = Now });
-			(await repository.GetDepartmentsToSuppressAsync(10)).Should().BeEmpty();
+			(await Own(repository.GetDepartmentsToSuppressAsync(100))).Should().BeEmpty();
 			// A call's address and position are operational, not ADP-protected (2026-10-17): an index suppressed under the
 			// old policy is resumed whatever the department's protection state.
-			(await repository.GetDepartmentsToResumeAsync(10)).Should().Equal(new[] { protectedDepartment }, "protection no longer holds the index back");
+			(await Own(repository.GetDepartmentsToResumeAsync(100))).Should().Equal(new[] { protectedDepartment }, "protection no longer holds the index back");
 			(await repository.GetDepartmentsNeedingIndexAsync(ParsedStreetAddress.Version, 50)).Should().NotContain(protectedDepartment, "it is resumed first, then indexed");
 
 			await using (var database = Connect(_connection))
 				await database.ExecuteAsync(IsPostgres ? "UPDATE departmentdataprotectionpolicies SET state = 0 WHERE departmentid = @D"
 					: "UPDATE DepartmentDataProtectionPolicies SET State = 0 WHERE DepartmentId = @D", new { D = protectedDepartment });
-			(await repository.GetDepartmentsToResumeAsync(10)).Should().Equal(protectedDepartment);
+			(await Own(repository.GetDepartmentsToResumeAsync(100))).Should().Equal(protectedDepartment);
 		}
 
 		[Test]

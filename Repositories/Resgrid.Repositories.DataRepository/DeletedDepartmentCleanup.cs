@@ -17,7 +17,7 @@ namespace Resgrid.Repositories.DataRepository
 	/// (decided 2026-10-11): ADP keys, member sensitive data, workflow credentials, payroll, chat and the rest. Purges them with
 	/// the cleanups department deletion runs, so the two cannot drift apart. RMS rows keep their own sweep (worker 43, which
 	/// also owns their search marker), and the retained tables (platform audit trails, sessions and login rows, search
-	/// markers) are not in any cleanup list. Neither is AuditLogs: the delete clears it, then DeleteService writes the
+	/// markers, offline map packs) are not in any cleanup list. Neither is AuditLogs: the delete clears it, then DeleteService writes the
 	/// deletion-executed row as the durable trail of the deletion, so a deleted department's AuditLogs rows are kept (only
 	/// readiness-type rows go, with the readiness subtree). An active Records legal hold keeps everything, as it defers a live
 	/// deletion.

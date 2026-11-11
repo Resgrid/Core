@@ -1592,6 +1592,19 @@
   <data name="HoursSpent" xml:space="preserve"><value>Ώρες</value></data>
   <data name="HydrantCounts" xml:space="preserve"><value>{0} κρουνοί, {1} εκτός λειτουργίας, {2} με οφειλόμενη δοκιμή ροής.</value></data>
   <data name="HydrantDeleted" xml:space="preserve"><value>Ο κρουνός διαγράφηκε.</value></data>
+  <data name="BulkDeleteConfirmCount" xml:space="preserve"><value>Πληκτρολογήστε τον αριθμό των κρουνών προς διαγραφή</value></data>
+  <data name="BulkDeleteConfirmRequired" xml:space="preserve"><value>Πληκτρολογήστε τον αριθμό των κρουνών προς διαγραφή για επιβεβαίωση.</value></data>
+  <data name="BulkDeleteCountMismatch" xml:space="preserve"><value>Πληκτρολογήστε {0} για επιβεβαίωση, τον αριθμό των κρουνών που διαγράφονται.</value></data>
+  <data name="BulkDeleteHydrants" xml:space="preserve"><value>Διαγραφή κρουνών</value></data>
+  <data name="BulkDeleteHydrantsConfirm" xml:space="preserve"><value>Διαγραφή {0} κρουνών; Οι δοκιμές ροής και το ιστορικό συντήρησης χάνονται.</value></data>
+  <data name="BulkDeleteHydrantsHelp" xml:space="preserve"><value>Διαγράψτε πολλούς κρουνούς μαζί, για παράδειγμα μετά από εισαγωγή λάθος αρχείου. Οι διαγραμμένοι κρουνοί φεύγουν από τη λίστα και από όλους τους χάρτες· νέα εισαγωγή του αρχείου τους προσθέτει ξανά.</value></data>
+  <data name="BulkDeleteNoneSelected" xml:space="preserve"><value>Επιλέξτε στη λίστα τους κρουνούς προς διαγραφή ή διαλέξτε άλλη επιλογή.</value></data>
+  <data name="BulkDeleteScopeAll" xml:space="preserve"><value>Όλοι οι κρουνοί ({0:N0})</value></data>
+  <data name="BulkDeleteScopeImported" xml:space="preserve"><value>Όλοι οι εισαγόμενοι κρουνοί ({0:N0})</value></data>
+  <data name="BulkDeleteScopeSelected" xml:space="preserve"><value>Κρουνοί επιλεγμένοι στη λίστα</value></data>
+  <data name="HydrantsBulkDeleted" xml:space="preserve"><value>Διαγράφηκαν {0:N0} κρουνοί.</value></data>
+  <data name="SelectAllHydrants" xml:space="preserve"><value>Επιλογή όλων των κρουνών</value></data>
+  <data name="SelectHydrant" xml:space="preserve"><value>Επιλογή κρουνού {0}</value></data>
   <data name="HydrantMap" xml:space="preserve"><value>Χάρτης</value></data>
   <data name="HydrantMapHint" xml:space="preserve"><value>Το χρώμα ακολουθεί την κλάση ροής NFPA 291· το μαύρο σημαίνει εκτός λειτουργίας.</value></data>
   <data name="HydrantNumber" xml:space="preserve"><value>Αρ. κρουνού</value></data>

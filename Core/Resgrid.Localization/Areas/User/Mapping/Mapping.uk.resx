@@ -329,4 +329,40 @@
   <data name="TrafficLayer" xml:space="preserve">
     <value>Трафік наживо</value>
   </data>
+  <data name="PoiBulkTitle" xml:space="preserve">
+    <value>Видалити POI</value>
+  </data>
+  <data name="PoiBulkHelp" xml:space="preserve">
+    <value>Видаляйте багато POI одразу, наприклад після імпорту не того файлу. Позначте рядки (пошук звужує список, а прапорець у заголовку позначає всі збіги) або видаліть усі POI з цього списку. POI, пов’язані з гідрантами, не показано, і вони залишаються.</value>
+  </data>
+  <data name="PoiBulkScopeSelected" xml:space="preserve">
+    <value>POI, позначені у списку</value>
+  </data>
+  <data name="PoiBulkScopeAll" xml:space="preserve">
+    <value>Усі POI з цього списку</value>
+  </data>
+  <data name="PoiBulkConfirmCount" xml:space="preserve">
+    <value>Введіть кількість POI для видалення</value>
+  </data>
+  <data name="PoiBulkConfirm" xml:space="preserve">
+    <value>Видалити POI ({0})? Цю дію не можна скасувати.</value>
+  </data>
+  <data name="PoiBulkCountMismatch" xml:space="preserve">
+    <value>Щоб підтвердити, введіть {0} — кількість POI, які буде видалено.</value>
+  </data>
+  <data name="PoiBulkNoneSelected" xml:space="preserve">
+    <value>Позначте у списку POI для видалення або виберіть інший варіант.</value>
+  </data>
+  <data name="PoiBulkConfirmRequired" xml:space="preserve">
+    <value>Щоб підтвердити, введіть кількість POI для видалення.</value>
+  </data>
+  <data name="PoiBulkDeleted" xml:space="preserve">
+    <value>Видалено POI: {0:N0}.</value>
+  </data>
+  <data name="PoiBulkSelectAll" xml:space="preserve">
+    <value>Вибрати всі POI, що відповідають пошуку</value>
+  </data>
+  <data name="PoiBulkSelectRow" xml:space="preserve">
+    <value>Вибрати POI</value>
+  </data>
 </root>

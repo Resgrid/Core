@@ -74,6 +74,30 @@ namespace Resgrid.Repositories.DataRepository
 			return rows > 0;
 		}
 
+		public async Task<int> SoftDeleteManyAsync(int departmentId, string entityType, IEnumerable<string> entityIds, CancellationToken cancellationToken = default)
+		{
+			if (string.IsNullOrWhiteSpace(entityType))
+				return 0;
+			var removed = 0;
+			// 1,000 ids per statement keeps SQL Server under its 2,100-parameter ceiling (as GetByEntityIdsAsync).
+			foreach (var ids in (entityIds ?? Enumerable.Empty<string>()).Where(id => !string.IsNullOrWhiteSpace(id)).Distinct().Chunk(1000))
+			{
+				var parameters = new DynamicParameters();
+				// Outside a caller's transaction each chunk commits on its own, so each is stamped when it runs: one timestamp taken before
+				// the loop would land a late chunk's tombstones behind the index checkpoint (and its one-second replay window) once newer
+				// projections were indexed.
+				parameters.Add("Now", DatabaseTimestamp(DateTime.UtcNow));
+				parameters.Add("DepartmentId", departmentId);
+				parameters.Add("EntityType", entityType);
+				parameters.Add("Ids", IsPostgres ? (object)ids : ids.ToList());
+				removed += await ExecuteAsync(
+					$"UPDATE {Tbl("SearchProjections")} SET {Col("DeletedOn")} = {P}Now, {Col("ModifiedOn")} = {P}Now, {Col("RowVersion")} = {Col("RowVersion")} + 1 " +
+					$"WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("EntityType")} = {P}EntityType AND {Col("DeletedOn")} IS NULL AND {InList("EntityId", "Ids")}",
+					parameters, cancellationToken);
+			}
+			return removed;
+		}
+
 		public Task<int> SoftDeleteStaleAsync(int departmentId, string entityType, DateTime notTouchedSince, CancellationToken cancellationToken = default)
 		{
 			var now = DatabaseTimestamp(DateTime.UtcNow);

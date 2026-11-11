@@ -86,7 +86,10 @@ namespace Resgrid.Tests.Services
 			["SsoLoginTransactions"] = "transient, purged an hour after it expires",
 			["FactorRecoveryTransactions"] = "transient, purged an hour after it expires",
 			["AuthenticationChallenges"] = "transient, purged an hour after it expires",
-			["MfaApprovalRequests"] = "kept a day for the user's approval rate limit, then purged"
+			["MfaApprovalRequests"] = "kept a day for the user's approval rate limit, then purged",
+			// Pack files live in the pack store (MappingConfig.OfflinePackStorage). The row is the only handle to them: deleting it
+			// would orphan the files, so OfflineMapPackService.CleanupAsync deletes file and row once unrequested for 60 days.
+			["OfflineMapPacks"] = "handle to the department's files in the offline pack store, removed with them by the 60-day pack retention cleanup"
 		};
 
 		private string _master, _connection, _database;
@@ -262,6 +265,29 @@ namespace Resgrid.Tests.Services
 			revoked.RevocationReason.Should().Be((int)Resgrid.Model.UserSessionRevocationReason.DepartmentDeleted);
 			revoked.RevokedOn.Should().NotBeNull("the revocation starts the retention clock");
 			(await db.ExecuteScalarAsync<int>("SELECT [State] FROM UserSessions WHERE UserSessionId = @Id", new { Id = keptSession })).Should().Be((int)Resgrid.Model.UserSessionState.Active);
+		}
+
+		[Test]
+		public async Task DeletingADepartmentClearsDecisionNodesAnEarlierCleanupLeftWithoutTheirAlarmLevel()
+		{
+			await using var db = new SqlConnection(_connection);
+			await db.OpenAsync();
+			await LoadSchemaAsync(db);
+			var deleted = await SeedBareDepartmentAsync(db);
+			var kept = await SeedBareDepartmentAsync(db);
+			// No foreign key holds a node to its alarm level, and cleanups before 2026-11-11 removed the level and left the node,
+			// which carries no DepartmentId for the deleted-department sweep to find.
+			var orphan = (await InsertOrThrowAsync(db, "RunCardDecisionNodes", deleted, new Dictionary<string, object> { ["RunCardAlarmLevelId"] = int.MaxValue - 1 }))["RunCardDecisionNodeId"];
+			// A live department's node, under its own run card's level, stays.
+			var runCard = (await InsertOrThrowAsync(db, "RunCards", kept, null))["RunCardId"];
+			var level = (await InsertOrThrowAsync(db, "RunCardAlarmLevels", kept, new Dictionary<string, object> { ["RunCardId"] = runCard }))["RunCardAlarmLevelId"];
+			var keptNode = (await InsertOrThrowAsync(db, "RunCardDecisionNodes", kept, new Dictionary<string, object> { ["RunCardAlarmLevelId"] = level }))["RunCardDecisionNodeId"];
+
+			(await new DeleteRepository().DeleteDepartmentAndUsersAsync(deleted.DepartmentId)).Should().BeTrue();
+
+			Task<int> Count(object id) => db.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM RunCardDecisionNodes WHERE RunCardDecisionNodeId = @id", new { id });
+			(await Count(orphan)).Should().Be(0, "a node whose alarm level is gone is purged");
+			(await Count(keptNode)).Should().Be(1, "a node under a live alarm level is never touched");
 		}
 
 		[Test]

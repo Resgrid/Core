@@ -120,4 +120,25 @@
   <data name="Error" xml:space="preserve"><value>خطأ</value></data>
   <data name="NoLayersAvailable" xml:space="preserve"><value>لا توجد طبقات متاحة. يرجى إنشاء طبقة أولاً قبل الاستيراد.</value></data>
   <data name="PleaseSelectTargetLayer" xml:space="preserve"><value>يرجى تحديد طبقة الهدف قبل الاستيراد. أنشئ طبقة أولاً إذا لم تكن موجودة.</value></data>
+  <data name="RegionBulkTitle" xml:space="preserve">
+    <value>حذف كل المناطق</value>
+  </data>
+  <data name="RegionBulkHelp" xml:space="preserve">
+    <value>يحذف كل المناطق ({0:N0}) من هذه الطبقة ويُبقي الطبقة، مثلًا بعد استيراد ملف إلى الطبقة الخطأ.</value>
+  </data>
+  <data name="RegionBulkConfirmCount" xml:space="preserve">
+    <value>اكتب عدد المناطق المراد حذفها</value>
+  </data>
+  <data name="RegionBulkConfirm" xml:space="preserve">
+    <value>حذف {0} من المناطق من هذه الطبقة؟</value>
+  </data>
+  <data name="RegionBulkCountMismatch" xml:space="preserve">
+    <value>اكتب {0} للتأكيد، وهو عدد المناطق في هذه الطبقة.</value>
+  </data>
+  <data name="RegionBulkConfirmRequired" xml:space="preserve">
+    <value>اكتب عدد المناطق المراد حذفها للتأكيد.</value>
+  </data>
+  <data name="RegionBulkDeleted" xml:space="preserve">
+    <value>تم حذف {0:N0} من المناطق.</value>
+  </data>
 </root>

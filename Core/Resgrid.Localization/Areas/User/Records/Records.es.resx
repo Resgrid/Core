@@ -1592,6 +1592,19 @@
   <data name="HoursSpent" xml:space="preserve"><value>Horas</value></data>
   <data name="HydrantCounts" xml:space="preserve"><value>{0} hidrantes, {1} fuera de servicio, {2} con prueba de caudal pendiente.</value></data>
   <data name="HydrantDeleted" xml:space="preserve"><value>Hidrante eliminado.</value></data>
+  <data name="BulkDeleteConfirmCount" xml:space="preserve"><value>Escriba el número de hidrantes que se eliminarán</value></data>
+  <data name="BulkDeleteConfirmRequired" xml:space="preserve"><value>Escriba el número de hidrantes que se eliminarán para confirmar.</value></data>
+  <data name="BulkDeleteCountMismatch" xml:space="preserve"><value>Escriba {0} para confirmar, el número de hidrantes que se eliminarán.</value></data>
+  <data name="BulkDeleteHydrants" xml:space="preserve"><value>Eliminar hidrantes</value></data>
+  <data name="BulkDeleteHydrantsConfirm" xml:space="preserve"><value>¿Eliminar {0} hidrantes? Se pierden sus pruebas de caudal y su historial de mantenimiento.</value></data>
+  <data name="BulkDeleteHydrantsHelp" xml:space="preserve"><value>Elimine muchos hidrantes a la vez, por ejemplo tras importar el archivo equivocado. Los hidrantes eliminados desaparecen de la lista y de todos los mapas; importar el archivo de nuevo los vuelve a añadir.</value></data>
+  <data name="BulkDeleteNoneSelected" xml:space="preserve"><value>Marque en la lista los hidrantes que desea eliminar o elija otra opción.</value></data>
+  <data name="BulkDeleteScopeAll" xml:space="preserve"><value>Todos los hidrantes ({0:N0})</value></data>
+  <data name="BulkDeleteScopeImported" xml:space="preserve"><value>Todos los hidrantes importados ({0:N0})</value></data>
+  <data name="BulkDeleteScopeSelected" xml:space="preserve"><value>Hidrantes marcados en la lista</value></data>
+  <data name="HydrantsBulkDeleted" xml:space="preserve"><value>{0:N0} hidrantes eliminados.</value></data>
+  <data name="SelectAllHydrants" xml:space="preserve"><value>Seleccionar todos los hidrantes</value></data>
+  <data name="SelectHydrant" xml:space="preserve"><value>Seleccionar hidrante {0}</value></data>
   <data name="HydrantMap" xml:space="preserve"><value>Mapa</value></data>
   <data name="HydrantMapHint" xml:space="preserve"><value>El color sigue la clase de caudal NFPA 291; el negro indica fuera de servicio.</value></data>
   <data name="HydrantNumber" xml:space="preserve"><value>N.º de hidrante</value></data>

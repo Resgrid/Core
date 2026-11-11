@@ -5,6 +5,8 @@
 @{
     var departmentTime = DepartmentTime.From(ViewData);
 	ViewBag.Title = "Resgrid | " + L["Hydrants"];
+	var canBulkDelete = Model.CanAdminister && Model.Hydrants.Count > 0;
+	var importedCount = Model.Hydrants.Count(h => RmsHydrantSources.IsImported(h.Source));
 }
 <div class="row wrapper border-bottom white-bg page-heading">
 	<div class="col-sm-6">
@@ -37,11 +39,12 @@
 				{
 					<div class="table-responsive">
 						<table class="table table-striped table-hover">
-							<thead><tr><th>@L["HydrantNumber"]</th><th>@L["Type"]</th><th>@L["AddressText"]</th><th>@L["FlowClass"]</th><th>@L["FlowGpm"]</th><th>@L["MainSize"]</th><th>@L["InService"]</th><th>@L["LastTestedOn"]</th><th></th></tr></thead>
+							<thead><tr>@if (canBulkDelete) { <th><input type="checkbox" id="hydrantSelectAll" aria-label="@L["SelectAllHydrants"]" title="@L["SelectAllHydrants"]" /></th> }<th>@L["HydrantNumber"]</th><th>@L["Type"]</th><th>@L["AddressText"]</th><th>@L["FlowClass"]</th><th>@L["FlowGpm"]</th><th>@L["MainSize"]</th><th>@L["InService"]</th><th>@L["LastTestedOn"]</th><th></th></tr></thead>
 							<tbody>
 							@foreach (var h in Model.Hydrants)
 							{
 								<tr class="@(h.InService ? "" : "danger")">
+									@if (canBulkDelete) { <td><input type="checkbox" class="hydrant-select" name="ids" value="@h.RmsHydrantId" form="hydrantBulkDeleteForm" aria-label="@string.Format(L["SelectHydrant"].Value, h.HydrantNumber)" /></td> }
 									<td>@h.HydrantNumber</td>
 									<td>@(RmsEnumDisplay.Label<RmsHydrantType>(h.Type))</td>
 									<td>@h.AddressText<br /><small class="text-muted">@h.Latitude, @h.Longitude</small></td>
@@ -64,7 +67,27 @@
 				<div id="hydrantMap" style="height:360px"></div>
 				<p class="text-muted m-t-xs"><small>@L["HydrantMapHint"]</small></p>
 			</div></div>
-
+			@if (canBulkDelete)
+			{
+				<div class="ibox"><div class="ibox-title"><h5>@L["BulkDeleteHydrants"]</h5></div><div class="ibox-content">
+					<form id="hydrantBulkDeleteForm" method="post" asp-controller="RecordHydrants" asp-action="BulkDelete" asp-route-area="User">
+						@Html.AntiForgeryToken()
+						<p class="text-muted"><small>@L["BulkDeleteHydrantsHelp"]</small></p>
+						@* Selected is the default: it is the only scope that removes nothing until rows are ticked. *@
+						<div class="radio"><label><input type="radio" name="scope" value="@HydrantBulkDeleteScope.Selected" data-count="0" checked /> @L["BulkDeleteScopeSelected"] (<span id="hydrantSelectedCount">0</span>)</label></div>
+						@if (importedCount > 0)
+						{
+							<div class="radio"><label><input type="radio" name="scope" value="@HydrantBulkDeleteScope.Imported" data-count="@importedCount" /> @string.Format(L["BulkDeleteScopeImported"].Value, importedCount)</label></div>
+						}
+						<div class="radio"><label><input type="radio" name="scope" value="@HydrantBulkDeleteScope.All" data-count="@Model.Hydrants.Count" /> @string.Format(L["BulkDeleteScopeAll"].Value, Model.Hydrants.Count)</label></div>
+						<div class="form-group">
+							<label for="hydrantBulkDeleteCount">@L["BulkDeleteConfirmCount"]</label>
+							<input id="hydrantBulkDeleteCount" class="form-control input-sm" type="number" name="expectedCount" min="1" step="1" required autocomplete="off" />
+						</div>
+						<button type="submit" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i> @L["BulkDeleteHydrants"]</button>
+					</form>
+				</div></div>
+			}
 		</div>
 	</div>
 </div>
@@ -78,6 +101,55 @@
 			resgrid.maps.create('hydrantMap', { center: [39.5, -98.35], zoom: 4 }).then(function (map) {
 				if (bounds.length) { map.fitBounds(bounds.map(function (p) { return [Number(p[0]), Number(p[1])]; }), { padding: 20, maxZoom: 17 }); }
 			});
+		});
+		// Bulk removal: the ticked-row count feeds the Selected option; the typed count is checked here and again by the server.
+		$(function () {
+			var form = document.getElementById('hydrantBulkDeleteForm');
+			if (!form) { return; }
+			var selectAll = document.getElementById('hydrantSelectAll');
+			var selectedLabel = document.getElementById('hydrantSelectedCount');
+			var selectedOption = form.querySelector('input[name="scope"][value="@HydrantBulkDeleteScope.Selected"]');
+			var mismatchText = @Html.ScriptJson(L["BulkDeleteCountMismatch"].Value);
+			var noneSelectedText = @Html.ScriptJson(L["BulkDeleteNoneSelected"].Value);
+			var confirmText = @Html.ScriptJson(L["BulkDeleteHydrantsConfirm"].Value);
+			function rowBoxes() { return document.querySelectorAll('input.hydrant-select'); }
+			function refreshSelected() {
+				var boxes = rowBoxes(), ticked = 0;
+				for (var i = 0; i < boxes.length; i++) { if (boxes[i].checked) { ticked++; } }
+				selectedOption.setAttribute('data-count', String(ticked));
+				selectedLabel.textContent = ticked.toLocaleString();
+				if (selectAll) { selectAll.checked = ticked > 0 && ticked === boxes.length; selectAll.indeterminate = ticked > 0 && ticked < boxes.length; }
+				if (ticked > 0 && !form.querySelector('input[name="scope"]:checked')) { selectedOption.checked = true; }
+			}
+			if (selectAll) {
+				selectAll.addEventListener('change', function () {
+					var boxes = rowBoxes();
+					for (var i = 0; i < boxes.length; i++) { boxes[i].checked = selectAll.checked; }
+					if (selectAll.checked) { selectedOption.checked = true; }
+					refreshSelected();
+				});
+			}
+			document.addEventListener('change', function (e) {
+				if (e.target && e.target.classList && e.target.classList.contains('hydrant-select')) {
+					if (e.target.checked) { selectedOption.checked = true; }
+					refreshSelected();
+				}
+			});
+			form.addEventListener('submit', function (e) {
+				var scope = form.querySelector('input[name="scope"]:checked');
+				var count = scope ? parseInt(scope.getAttribute('data-count'), 10) : 0;
+				var typed = parseInt(document.getElementById('hydrantBulkDeleteCount').value, 10);
+				if (!count) { e.preventDefault(); alert(noneSelectedText); return; }
+				if (typed !== count) { e.preventDefault(); alert(mismatchText.replace('{0}', count.toLocaleString())); return; }
+				if (!confirm(confirmText.replace('{0}', count.toLocaleString()))) { e.preventDefault(); return; }
+				// Imported and All name no rows: ticked boxes would only post ids the server ignores, and past the form-value limit
+				// they would reject the removal before it runs. Disabled boxes are not posted.
+				if (scope !== selectedOption) { setRowBoxesDisabled(true); }
+			});
+			function setRowBoxesDisabled(disabled) { var boxes = rowBoxes(); for (var i = 0; i < boxes.length; i++) { boxes[i].disabled = disabled; } }
+			// A page restored from the back-forward cache gets its boxes back.
+			window.addEventListener('pageshow', function () { setRowBoxesDisabled(false); });
+			refreshSelected();
 		});
 	</script>
 }

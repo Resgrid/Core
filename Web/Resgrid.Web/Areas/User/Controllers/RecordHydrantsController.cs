@@ -107,6 +107,28 @@ namespace Resgrid.Web.Areas.User.Controllers
 			catch (Exception ex) { return Fail(ex) ?? RedirectToAction(nameof(Details), new { id }); }
 		}
 
+		/// <summary>
+		/// Removes the ticked hydrants, every imported hydrant or every hydrant. <paramref name="expectedCount"/> is the number the
+		/// administrator typed to confirm; the service refuses when it does not match what would be removed.
+		/// </summary>
+		[HttpPost, ValidateAntiForgeryToken]
+		// One "ids" value per ticked row: the default 1,024-value form limit would reject a large selection before the action runs.
+		[RequestFormLimits(ValueCountLimit = RecordsHydrantsService.MaxBulkDeleteSelection + 16)]
+		[Authorize(Policy = ResgridResources.Record_PreventionAdmin)]
+		public async Task<IActionResult> BulkDelete(HydrantBulkDeleteScope scope, string[] ids, int? expectedCount, CancellationToken cancellationToken)
+		{
+			if (!await ModuleOnAsync(Flag)) return NotFound();
+			// The page always asks for the typed count, Selected included (the API makes it optional there).
+			if (expectedCount == null) { NotifyError(Localizer["BulkDeleteConfirmRequired"].Value); return RedirectToAction(nameof(Index)); }
+			try
+			{
+				var removed = await _hydrants.BulkDeleteAsync(DepartmentId, UserId, scope, ids, expectedCount, cancellationToken);
+				Notify("HydrantsBulkDeleted", removed);
+			}
+			catch (Exception ex) { var f = Fail(ex); if (f != null) return f; }
+			return RedirectToAction(nameof(Index));
+		}
+
 		[HttpPost, ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Record_PreventionAdmin)]
 		public async Task<IActionResult> ServiceState(string id, bool inService, string reason, CancellationToken cancellationToken)

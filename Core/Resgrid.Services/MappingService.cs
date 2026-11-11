@@ -162,6 +162,36 @@ namespace Resgrid.Services
 			return false;
 		}
 
+		/// <summary>Most POIs one bulk removal accepts.</summary>
+		public const int MaxBulkPoiDelete = 50000;
+
+		public async Task<int> DeletePOIsAsync(int departmentId, int poiTypeId, IEnumerable<int> poiIds, int? expectedCount, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var type = await GetTypeByIdAsync(poiTypeId);
+			if (type == null || type.DepartmentId != departmentId)
+				throw new ArgumentException("The POI type does not exist.");
+
+			var requested = (poiIds ?? Enumerable.Empty<int>()).Where(id => id > 0).Distinct().ToList();
+			if (requested.Count == 0)
+				throw new ArgumentException("Select the POIs to remove.");
+			if (requested.Count > MaxBulkPoiDelete)
+				throw new ArgumentException($"Remove at most {MaxBulkPoiDelete:N0} POIs at a time.");
+
+			// Only POIs of this type count: an id from another type (or department) is ignored, never removed.
+			var inType = (type.Pois ?? Enumerable.Empty<Poi>()).Select(p => p.PoiId).ToHashSet();
+			var matched = requested.Where(inType.Contains).ToList();
+			if (expectedCount.HasValue && expectedCount.Value != matched.Count)
+				throw new ArgumentException($"{matched.Count:N0} POIs match this removal, not {expectedCount.Value:N0}. Reload the list and confirm again.");
+			if (matched.Count == 0)
+				return 0;
+
+			// Only the rows the statements removed lose their search projection: a ticked POI moved to another type meanwhile is kept.
+			var deleted = await _poisRepository.DeleteForTypeAsync(type.PoiTypeId, matched, cancellationToken) ?? Array.Empty<int>();
+			if (deleted.Count > 0 && _searchProjections != null)
+				await _searchProjections.Value.RemoveManyAsync(type.DepartmentId, SearchEntityTypes.Poi, deleted.Select(id => id.ToString()), cancellationToken);
+			return deleted.Count;
+		}
+
 		public async Task<MapLayer> SaveMapLayerAsync(MapLayer mapLayer)
 		{
 			if (Config.DataConfig.DocDatabaseType == Config.DatabaseTypes.Postgres)

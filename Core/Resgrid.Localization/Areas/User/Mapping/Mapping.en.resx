@@ -329,4 +329,40 @@
   <data name="TrafficLayer" xml:space="preserve">
     <value>Live traffic</value>
   </data>
+  <data name="PoiBulkTitle" xml:space="preserve">
+    <value>Remove POIs</value>
+  </data>
+  <data name="PoiBulkHelp" xml:space="preserve">
+    <value>Remove many POIs at once, for example after importing the wrong file. Tick rows (the search box narrows the list and the header box ticks every match), or remove every POI in this list. POIs linked to hydrants are not listed and stay.</value>
+  </data>
+  <data name="PoiBulkScopeSelected" xml:space="preserve">
+    <value>POIs ticked in the list</value>
+  </data>
+  <data name="PoiBulkScopeAll" xml:space="preserve">
+    <value>Every POI in this list</value>
+  </data>
+  <data name="PoiBulkConfirmCount" xml:space="preserve">
+    <value>Type the number of POIs to remove</value>
+  </data>
+  <data name="PoiBulkConfirm" xml:space="preserve">
+    <value>Remove {0} POIs? This cannot be undone.</value>
+  </data>
+  <data name="PoiBulkCountMismatch" xml:space="preserve">
+    <value>Type {0} to confirm, the number of POIs this removes.</value>
+  </data>
+  <data name="PoiBulkNoneSelected" xml:space="preserve">
+    <value>Tick the POIs to remove in the list, or choose another option.</value>
+  </data>
+  <data name="PoiBulkConfirmRequired" xml:space="preserve">
+    <value>Type the number of POIs to remove to confirm.</value>
+  </data>
+  <data name="PoiBulkDeleted" xml:space="preserve">
+    <value>{0:N0} POIs removed.</value>
+  </data>
+  <data name="PoiBulkSelectAll" xml:space="preserve">
+    <value>Select every POI matching the search</value>
+  </data>
+  <data name="PoiBulkSelectRow" xml:space="preserve">
+    <value>Select POI</value>
+  </data>
 </root>

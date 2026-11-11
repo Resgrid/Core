@@ -148,6 +148,16 @@ namespace Resgrid.Model.Repositories
 		Task<int> CountTestDueAsync(int departmentId, DateTime cutoffUtc);
 		/// <summary>Live out-of-service hydrants, longest out first, at most <paramref name="take"/>.</summary>
 		Task<IEnumerable<RmsHydrant>> GetOutOfServiceAsync(int departmentId, int take);
+		/// <summary>
+		/// How many live hydrants <see cref="SoftDeleteBulkAsync"/> would remove for the same arguments. <paramref name="hydrantIds"/>
+		/// is read only for <see cref="HydrantBulkDeleteScope.Selected"/>.
+		/// </summary>
+		Task<int> CountForBulkDeleteAsync(int departmentId, HydrantBulkDeleteScope scope, IReadOnlyCollection<string> hydrantIds);
+		/// <summary>
+		/// Soft-deletes the live hydrants in <paramref name="scope"/> (DeletedOn and ModifiedOn set, RowVersion bumped) with set-based
+		/// updates in one transaction, and returns how many rows were removed. Rows of other departments are never touched.
+		/// </summary>
+		Task<int> SoftDeleteBulkAsync(int departmentId, HydrantBulkDeleteScope scope, IReadOnlyCollection<string> hydrantIds, DateTime deletedOnUtc, CancellationToken cancellationToken = default);
 	}
 
 	public interface IRmsHydrantFlowTestsRepository : IRepository<RmsHydrantFlowTest>

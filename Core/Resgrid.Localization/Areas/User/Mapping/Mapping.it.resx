@@ -329,4 +329,40 @@
   <data name="TrafficLayer" xml:space="preserve">
     <value>Traffico in tempo reale</value>
   </data>
+  <data name="PoiBulkTitle" xml:space="preserve">
+    <value>Elimina POI</value>
+  </data>
+  <data name="PoiBulkHelp" xml:space="preserve">
+    <value>Elimina molti POI in una volta, ad esempio dopo aver importato il file sbagliato. Spunta le righe (la ricerca filtra l'elenco e la casella nell'intestazione spunta tutti i risultati) oppure elimina tutti i POI di questo elenco. I POI collegati agli idranti non sono elencati e restano.</value>
+  </data>
+  <data name="PoiBulkScopeSelected" xml:space="preserve">
+    <value>POI spuntati nell'elenco</value>
+  </data>
+  <data name="PoiBulkScopeAll" xml:space="preserve">
+    <value>Tutti i POI di questo elenco</value>
+  </data>
+  <data name="PoiBulkConfirmCount" xml:space="preserve">
+    <value>Digita il numero di POI da eliminare</value>
+  </data>
+  <data name="PoiBulkConfirm" xml:space="preserve">
+    <value>Eliminare {0} POI? L'operazione non può essere annullata.</value>
+  </data>
+  <data name="PoiBulkCountMismatch" xml:space="preserve">
+    <value>Digita {0} per confermare, il numero di POI che verranno eliminati.</value>
+  </data>
+  <data name="PoiBulkNoneSelected" xml:space="preserve">
+    <value>Spunta nell'elenco i POI da eliminare o scegli un'altra opzione.</value>
+  </data>
+  <data name="PoiBulkConfirmRequired" xml:space="preserve">
+    <value>Digita il numero di POI da eliminare per confermare.</value>
+  </data>
+  <data name="PoiBulkDeleted" xml:space="preserve">
+    <value>{0:N0} POI eliminati.</value>
+  </data>
+  <data name="PoiBulkSelectAll" xml:space="preserve">
+    <value>Seleziona tutti i POI che corrispondono alla ricerca</value>
+  </data>
+  <data name="PoiBulkSelectRow" xml:space="preserve">
+    <value>Seleziona POI</value>
+  </data>
 </root>

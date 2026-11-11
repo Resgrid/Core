@@ -48,9 +48,8 @@ namespace Resgrid.Workers.Console.Tasks
 				using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
 				var offlineMaps = scope.Resolve<IOfflineMapPackService>();
 
-				if (!offlineMaps.IsInstallEnabled)
-					return;
-
+				// Cleanup runs before the install check: pack retention continues while installs are switched off (it is a no-op
+				// until the pack store is configured).
 				if (DateTime.UtcNow - _lastCleanup > CleanupInterval)
 				{
 					_lastCleanup = DateTime.UtcNow;
@@ -58,6 +57,9 @@ namespace Resgrid.Workers.Console.Tasks
 					if (cleaned > 0)
 						_logger.LogInformation("OfflineMapPacks::Requeued or removed {Count} pack(s)", cleaned);
 				}
+
+				if (!offlineMaps.IsInstallEnabled)
+					return;
 
 				var built = await offlineMaps.ProcessQueueAsync(MaxPacksPerTick, cancellationToken);
 				if (built > 0)

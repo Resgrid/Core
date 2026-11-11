@@ -24,6 +24,12 @@ namespace Resgrid.Model.Services
 		Task<IndoorMapZone> GetRegionByIdAsync(string regionId);
 		Task<List<IndoorMapZone>> GetRegionsForLayerAsync(string layerId);
 		Task<bool> DeleteRegionAsync(string regionId, CancellationToken cancellationToken = default(CancellationToken));
+		/// <summary>
+		/// Removes every region of a layer (the same soft delete as <see cref="DeleteRegionAsync"/>) and keeps the layer, for an import
+		/// into the wrong layer. <paramref name="expectedCount"/>, when given, must equal the layer's live region count or nothing is
+		/// removed (ArgumentException). Returns how many were removed.
+		/// </summary>
+		Task<int> DeleteRegionsForLayerAsync(string layerId, int? expectedCount, CancellationToken cancellationToken = default(CancellationToken));
 
 		// Dispatch integration
 		Task<List<IndoorMapZone>> SearchRegionsAsync(int departmentId, string searchTerm);

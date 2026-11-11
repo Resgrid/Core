@@ -1073,16 +1073,12 @@ namespace Resgrid.Services
 
 			var files = DepartmentSpriteBuilder.Build(icons);
 			var prefix = $"sprite/{pack.DepartmentId}/{SafeSegment(pack.Version)}";
-			var listed = new List<OfflineMapPackFile>();
+			var listed = files.Select(f => new OfflineMapPackFile { Name = f.Key, Sha256 = Sha256(f.Value), SizeBytes = f.Value.Length }).ToList();
 
+			await RecordStorageHandleAsync(pack, prefix, JsonConvert.SerializeObject(listed));
 			foreach (var (name, bytes) in files)
-			{
 				await _store.PutAsync(prefix + "/" + name, bytes, name.EndsWith(".png") ? "image/png" : "application/json", cancellationToken);
-				listed.Add(new OfflineMapPackFile { Name = name, Sha256 = Sha256(bytes), SizeBytes = bytes.Length });
-			}
 
-			pack.StoragePath = prefix;
-			pack.FilesJson = JsonConvert.SerializeObject(listed);
 			pack.SizeBytes = listed.Sum(f => f.SizeBytes);
 			pack.Sha256 = Sha256(Encoding.UTF8.GetBytes(string.Join("|", listed.Select(f => f.Sha256))));
 		}
@@ -1118,11 +1114,23 @@ namespace Resgrid.Services
 			using (var hash = SHA256.Create())
 				sha = Convert.ToHexString(await hash.ComputeHashAsync(stream, cancellationToken)).ToLowerInvariant();
 
+			await RecordStorageHandleAsync(pack, key, pack.FilesJson);
 			await _store.PutFileAsync(key, workPath, "application/vnd.pmtiles", cancellationToken);
 
-			pack.StoragePath = key;
 			pack.SizeBytes = info.Length;
 			pack.Sha256 = sha;
+		}
+
+		/// <summary>
+		/// Records where the pack's files go before any is uploaded. The row is the only handle to them: set afterwards, a build
+		/// that failed or was stopped part-way left retention a row with no path, and it deleted the row and orphaned the files.
+		/// The pack object carries it too, so the builder's final save (Ready or Failed) keeps it. Not cancelled with the build.
+		/// </summary>
+		private async Task RecordStorageHandleAsync(OfflineMapPack pack, string storagePath, string filesJson)
+		{
+			pack.StoragePath = storagePath;
+			pack.FilesJson = filesJson;
+			await _packsRepository.SetStorageHandleAsync(pack.OfflineMapPackId, storagePath, filesJson, CancellationToken.None);
 		}
 
 		/// <summary>Copies the configured offline styles and glyphs into the store once per OfflineStyleVersion.</summary>
@@ -1166,11 +1174,16 @@ namespace Resgrid.Services
 
 		public async Task<int> CleanupAsync(CancellationToken cancellationToken = default)
 		{
-			if (!IsInstallEnabled)
+			// Retention runs whenever the store is configured, offline installs switched off included: department deletion keeps the
+			// pack rows (the only handle to their files) and leaves them to this sweep, which must not stop when installs do.
+			if (!_store.IsConfigured)
 				return 0;
 
 			var changed = 0;
 
+			// Stuck builds are recovered with installs switched off too: retention skips Building rows, so a build the worker
+			// stopped (a shutdown mid-build) would otherwise keep its row and files for good. Requeued, it is built again once
+			// installs are back on, or ages out here like any other unrequested pack.
 			foreach (var stuck in await _packsRepository.GetStuckBuildingAsync(DateTime.UtcNow - StuckAfter))
 			{
 				stuck.Status = stuck.Attempts >= MaxAttempts ? (int)OfflineMapPackStatus.Failed : (int)OfflineMapPackStatus.Queued;

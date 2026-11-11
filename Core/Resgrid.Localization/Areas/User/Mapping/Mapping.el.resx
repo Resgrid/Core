@@ -329,4 +329,40 @@
   <data name="TrafficLayer" xml:space="preserve">
     <value>Ζωντανή κίνηση</value>
   </data>
+  <data name="PoiBulkTitle" xml:space="preserve">
+    <value>Διαγραφή σημείων ενδιαφέροντος</value>
+  </data>
+  <data name="PoiBulkHelp" xml:space="preserve">
+    <value>Διαγράψτε πολλά σημεία ενδιαφέροντος μαζί, για παράδειγμα μετά από εισαγωγή λάθος αρχείου. Επιλέξτε γραμμές (η αναζήτηση φιλτράρει τη λίστα και το πλαίσιο της κεφαλίδας επιλέγει όλα τα αποτελέσματα) ή διαγράψτε όλα τα σημεία της λίστας. Τα σημεία που συνδέονται με κρουνούς δεν εμφανίζονται και παραμένουν.</value>
+  </data>
+  <data name="PoiBulkScopeSelected" xml:space="preserve">
+    <value>Σημεία επιλεγμένα στη λίστα</value>
+  </data>
+  <data name="PoiBulkScopeAll" xml:space="preserve">
+    <value>Όλα τα σημεία αυτής της λίστας</value>
+  </data>
+  <data name="PoiBulkConfirmCount" xml:space="preserve">
+    <value>Πληκτρολογήστε τον αριθμό των σημείων προς διαγραφή</value>
+  </data>
+  <data name="PoiBulkConfirm" xml:space="preserve">
+    <value>Διαγραφή {0} σημείων ενδιαφέροντος; Η ενέργεια δεν αναιρείται.</value>
+  </data>
+  <data name="PoiBulkCountMismatch" xml:space="preserve">
+    <value>Πληκτρολογήστε {0} για επιβεβαίωση, τον αριθμό των σημείων που διαγράφονται.</value>
+  </data>
+  <data name="PoiBulkNoneSelected" xml:space="preserve">
+    <value>Επιλέξτε στη λίστα τα σημεία προς διαγραφή ή διαλέξτε άλλη επιλογή.</value>
+  </data>
+  <data name="PoiBulkConfirmRequired" xml:space="preserve">
+    <value>Πληκτρολογήστε τον αριθμό των σημείων προς διαγραφή για επιβεβαίωση.</value>
+  </data>
+  <data name="PoiBulkDeleted" xml:space="preserve">
+    <value>Διαγράφηκαν {0:N0} σημεία ενδιαφέροντος.</value>
+  </data>
+  <data name="PoiBulkSelectAll" xml:space="preserve">
+    <value>Επιλογή όλων των σημείων που ταιριάζουν στην αναζήτηση</value>
+  </data>
+  <data name="PoiBulkSelectRow" xml:space="preserve">
+    <value>Επιλογή σημείου</value>
+  </data>
 </root>

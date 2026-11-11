@@ -128,6 +128,9 @@ namespace Resgrid.Repositories.DataRepository
 
 		private static Func<PoiType, Poi, PoiType> PoiTypesMapping(Dictionary<int, PoiType> dictionary)
 		{
+			// One set of mapped (type, POI) pairs per query: a scan of the type's POI list per row made a large imported type quadratic.
+			var mapped = new HashSet<(int PoiTypeId, int PoiId)>();
+
 			return new Func<PoiType, Poi, PoiType>((poiType, poi) =>
 			{
 				var dictionaryPoiType = default(PoiType);
@@ -136,7 +139,7 @@ namespace Resgrid.Repositories.DataRepository
 				{
 					if (dictionary.TryGetValue(poiType.PoiTypeId, out dictionaryPoiType))
 					{
-						if (dictionaryPoiType.Pois.All(x => x.PoiId != poi.PoiId))
+						if (mapped.Add((poiType.PoiTypeId, poi.PoiId)))
 							dictionaryPoiType.Pois.Add(poi);
 					}
 					else
@@ -145,6 +148,7 @@ namespace Resgrid.Repositories.DataRepository
 							poiType.Pois = new List<Poi>();
 
 						poiType.Pois.Add(poi);
+						mapped.Add((poiType.PoiTypeId, poi.PoiId));
 						dictionary.Add(poiType.PoiTypeId, poiType);
 
 						dictionaryPoiType = poiType;

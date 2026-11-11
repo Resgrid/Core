@@ -1592,6 +1592,19 @@
   <data name="HoursSpent" xml:space="preserve"><value>Години</value></data>
   <data name="HydrantCounts" xml:space="preserve"><value>Гідрантів: {0}, не працює: {1}, потребують випробування: {2}.</value></data>
   <data name="HydrantDeleted" xml:space="preserve"><value>Гідрант видалено.</value></data>
+  <data name="BulkDeleteConfirmCount" xml:space="preserve"><value>Введіть кількість гідрантів для видалення</value></data>
+  <data name="BulkDeleteConfirmRequired" xml:space="preserve"><value>Щоб підтвердити, введіть кількість гідрантів для видалення.</value></data>
+  <data name="BulkDeleteCountMismatch" xml:space="preserve"><value>Щоб підтвердити, введіть {0} — кількість гідрантів, які буде видалено.</value></data>
+  <data name="BulkDeleteHydrants" xml:space="preserve"><value>Видалити гідранти</value></data>
+  <data name="BulkDeleteHydrantsConfirm" xml:space="preserve"><value>Видалити гідранти ({0})? Разом з ними зникнуть випробування витрати та історія обслуговування.</value></data>
+  <data name="BulkDeleteHydrantsHelp" xml:space="preserve"><value>Видаляйте багато гідрантів одразу, наприклад після імпорту не того файлу. Видалені гідранти зникають зі списку та з усіх карт; повторний імпорт файлу додасть їх знову.</value></data>
+  <data name="BulkDeleteNoneSelected" xml:space="preserve"><value>Позначте у списку гідранти для видалення або виберіть інший варіант.</value></data>
+  <data name="BulkDeleteScopeAll" xml:space="preserve"><value>Усі гідранти ({0:N0})</value></data>
+  <data name="BulkDeleteScopeImported" xml:space="preserve"><value>Усі імпортовані гідранти ({0:N0})</value></data>
+  <data name="BulkDeleteScopeSelected" xml:space="preserve"><value>Гідранти, позначені у списку</value></data>
+  <data name="HydrantsBulkDeleted" xml:space="preserve"><value>Видалено гідрантів: {0:N0}.</value></data>
+  <data name="SelectAllHydrants" xml:space="preserve"><value>Вибрати всі гідранти</value></data>
+  <data name="SelectHydrant" xml:space="preserve"><value>Вибрати гідрант {0}</value></data>
   <data name="HydrantMap" xml:space="preserve"><value>Карта</value></data>
   <data name="HydrantMapHint" xml:space="preserve"><value>Колір відповідає класу витрати NFPA 291; чорний означає не працює.</value></data>
   <data name="HydrantNumber" xml:space="preserve"><value>№ гідранта</value></data>

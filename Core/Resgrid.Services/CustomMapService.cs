@@ -9,6 +9,7 @@ using GeoJSON.Net.Geometry;
 using Newtonsoft.Json;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Repositories.Queries;
 using Resgrid.Model.Services;
 using SharpKml.Engine;
 using SixLabors.ImageSharp;
@@ -27,19 +28,22 @@ namespace Resgrid.Services
 		private readonly IIndoorMapZonesRepository _indoorMapZonesRepository;
 		private readonly ICustomMapTilesRepository _customMapTilesRepository;
 		private readonly ICustomMapImportsRepository _customMapImportsRepository;
+		private readonly IUnitOfWork _unitOfWork;
 
 		public CustomMapService(
 			IIndoorMapsRepository indoorMapsRepository,
 			IIndoorMapFloorsRepository indoorMapFloorsRepository,
 			IIndoorMapZonesRepository indoorMapZonesRepository,
 			ICustomMapTilesRepository customMapTilesRepository,
-			ICustomMapImportsRepository customMapImportsRepository)
+			ICustomMapImportsRepository customMapImportsRepository,
+			IUnitOfWork unitOfWork)
 		{
 			_indoorMapsRepository = indoorMapsRepository;
 			_indoorMapFloorsRepository = indoorMapFloorsRepository;
 			_indoorMapZonesRepository = indoorMapZonesRepository;
 			_customMapTilesRepository = customMapTilesRepository;
 			_customMapImportsRepository = customMapImportsRepository;
+			_unitOfWork = unitOfWork;
 		}
 
 		#region Maps CRUD
@@ -154,6 +158,39 @@ namespace Resgrid.Services
 			await _indoorMapZonesRepository.SaveOrUpdateAsync(region, cancellationToken);
 
 			return true;
+		}
+
+		public async Task<int> DeleteRegionsForLayerAsync(string layerId, int? expectedCount, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			if (string.IsNullOrWhiteSpace(layerId))
+				throw new ArgumentException("The layer does not exist.");
+
+			var live = (await GetRegionsForLayerAsync(layerId)).Count;
+			if (expectedCount.HasValue && expectedCount.Value != live)
+				throw CountMismatch(live, expectedCount.Value);
+			if (live == 0)
+				return 0;
+
+			// The count above refuses a stale page without writing. The UPDATE's own row count is the binding check: a region added to
+			// (or removed from) the layer since then makes it differ, and the removal rolls back instead of covering an unconfirmed set.
+			var owns = _unitOfWork.Transaction == null;
+			await _unitOfWork.CreateOrGetConnectionAsync(cancellationToken);
+			try
+			{
+				var removed = await _indoorMapZonesRepository.SoftDeleteForFloorAsync(layerId, cancellationToken);
+				if (expectedCount.HasValue && removed != expectedCount.Value)
+					throw CountMismatch(removed, expectedCount.Value);
+				if (owns) _unitOfWork.CommitChanges();
+				return removed;
+			}
+			catch
+			{
+				if (owns) _unitOfWork.DiscardChanges();
+				throw;
+			}
+
+			static ArgumentException CountMismatch(int live, int expected)
+				=> new ArgumentException($"{live:N0} regions are on this layer, not {expected:N0}. Reload the page and confirm again.");
 		}
 
 		#endregion Regions CRUD

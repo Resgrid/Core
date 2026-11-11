@@ -443,6 +443,74 @@ namespace Resgrid.Repositories.DataRepository
 			// NULL ordering differs by dialect (SQL Server first, PostgreSQL last), so an unknown start date is placed explicitly.
 			return QueryAsync<RmsHydrant>($"SELECT * FROM {Tbl("RmsHydrants")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("DeletedOn")} IS NULL AND {Col("InService")} = {P}Off ORDER BY CASE WHEN {Col("OutOfServiceSince")} IS NULL THEN 1 ELSE 0 END, {Col("OutOfServiceSince")}, {Col("HydrantNumber")}, {Col("RmsHydrantId")} {Paging()}", p);
 		}
+
+		/// <summary>Ids per statement for <see cref="HydrantBulkDeleteScope.Selected"/>: DepartmentId plus this many stays under SQL Server's 2,100-parameter ceiling.</summary>
+		public const int BulkDeleteIdChunkSize = 1000;
+
+		/// <summary>
+		/// One WHERE clause and parameter set per statement: a single one for the department-wide scopes, one per id chunk for Selected
+		/// (none for no ids). Every clause is limited to the department's live rows.
+		/// </summary>
+		private IEnumerable<(string From, string Where, DynamicParameters Parameters)> BulkDeleteStatements(int departmentId, HydrantBulkDeleteScope scope, IReadOnlyCollection<string> hydrantIds)
+		{
+			var table = $"{Tbl("RmsHydrants")} h";
+			var live = $"h.{Col("DepartmentId")} = {P}DepartmentId AND h.{Col("DeletedOn")} IS NULL";
+			if (scope == HydrantBulkDeleteScope.All || scope == HydrantBulkDeleteScope.Imported)
+			{
+				var p = new DynamicParameters();
+				p.Add("DepartmentId", departmentId);
+				if (scope == HydrantBulkDeleteScope.All) { yield return (table, live, p); yield break; }
+				// "-import" holds no LIKE wildcard; matches RmsHydrantSources.IsImported.
+				p.Add("ImportedSource", "%" + RmsHydrantSources.ImportSuffix);
+				yield return (table, $"{live} AND h.{Col("Source")} LIKE {P}ImportedSource", p);
+				yield break;
+			}
+			if (scope != HydrantBulkDeleteScope.Selected) throw new ArgumentOutOfRangeException(nameof(scope));
+			var ids = (hydrantIds ?? Array.Empty<string>()).Where(id => !string.IsNullOrWhiteSpace(id)).Distinct(StringComparer.Ordinal).ToList();
+			foreach (var chunk in ids.Chunk(BulkDeleteIdChunkSize))
+			{
+				var p = new DynamicParameters();
+				p.Add("DepartmentId", departmentId);
+				if (IsPostgres) { p.Add("Ids", InListValue(chunk)); yield return (table, $"{live} AND {InList("RmsHydrantId", "Ids", "h")}", p); continue; }
+				// The same joined VALUES row source as GetByNumbersAsync; the ids are distinct, so the join matches each row at most once.
+				var names = new List<string>(chunk.Length);
+				for (var i = 0; i < chunk.Length; i++) { p.Add("I" + i, chunk[i]); names.Add($"({P}I{i})"); }
+				yield return ($"{table} JOIN (VALUES {string.Join(", ", names)}) AS r({Col("RequestedId")}) ON h.{Col("RmsHydrantId")} = r.{Col("RequestedId")}", live, p);
+			}
+		}
+
+		public async Task<int> CountForBulkDeleteAsync(int departmentId, HydrantBulkDeleteScope scope, IReadOnlyCollection<string> hydrantIds)
+		{
+			var total = 0;
+			foreach (var (from, where, p) in BulkDeleteStatements(departmentId, scope, hydrantIds))
+				total += await ScalarAsync<int>($"SELECT COUNT(1) FROM {from} WHERE {where}", p);
+			return total;
+		}
+
+		public async Task<int> SoftDeleteBulkAsync(int departmentId, HydrantBulkDeleteScope scope, IReadOnlyCollection<string> hydrantIds, DateTime deletedOnUtc, CancellationToken cancellationToken = default)
+		{
+			// Selected ids span several statements; one transaction keeps a failure from leaving a partial removal behind.
+			var owns = UnitOfWork.Transaction == null;
+			await UnitOfWork.CreateOrGetConnectionAsync(cancellationToken);
+			try
+			{
+				var removed = 0;
+				foreach (var (from, where, p) in BulkDeleteStatements(departmentId, scope, hydrantIds))
+				{
+					p.Add("Now", DatabaseTimestamp(deletedOnUtc));
+					var set = $"{Col("DeletedOn")} = {P}Now, {Col("ModifiedOn")} = {P}Now, {Col("RowVersion")} = h.{Col("RowVersion")} + 1";
+					// PostgreSQL always gets the plain aliased table here (its selection is "= ANY"); SQL Server updates through the alias.
+					removed += await ExecuteAsync(IsPostgres ? $"UPDATE {from} SET {set} WHERE {where}" : $"UPDATE h SET {set} FROM {from} WHERE {where}", p, cancellationToken);
+				}
+				if (owns) UnitOfWork.CommitChanges();
+				return removed;
+			}
+			catch
+			{
+				if (owns) UnitOfWork.DiscardChanges();
+				throw;
+			}
+		}
 	}
 
 	public class RmsHydrantFlowTestsRepository : RmsRepositoryBase<RmsHydrantFlowTest>, IRmsHydrantFlowTestsRepository

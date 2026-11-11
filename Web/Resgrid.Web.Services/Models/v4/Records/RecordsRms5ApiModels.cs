@@ -348,6 +348,9 @@ namespace Resgrid.Web.Services.Models.v4.Records
 	public class HydrantFlowTestInput { public string HydrantId { get; set; } public DateTime? TestedOn { get; set; } public int StaticPressurePsi { get; set; } public int ResidualPressurePsi { get; set; } public int PitotPressurePsi { get; set; } public decimal OutletDiameterInches { get; set; } public decimal Coefficient { get; set; } public string Notes { get; set; } }
 	public class HydrantMaintenanceInput { public string HydrantId { get; set; } public DateTime? PerformedOn { get; set; } public int Kind { get; set; } public string Notes { get; set; } public bool ReturnedToService { get; set; } }
 	public class HydrantImportInput { public string Csv { get; set; } public string Json { get; set; } }
+	/// <summary>Scope: 0 = the HydrantIds given, 1 = every imported hydrant, 2 = every hydrant. ExpectedCount is required for 1 and 2 and must equal the number that match.</summary>
+	public class HydrantBulkDeleteInput { public int Scope { get; set; } public List<string> HydrantIds { get; set; } = new List<string>(); public int? ExpectedCount { get; set; } }
+	public class HydrantBulkDeleteResultData { public int Removed { get; set; } }
 
 	public class HydrantsResult : StandardApiResponseV4Base { public List<HydrantData> Data { get; set; } = new List<HydrantData>(); }
 	public class HydrantResult : StandardApiResponseV4Base { public HydrantAggregateData Data { get; set; } }
@@ -355,6 +358,7 @@ namespace Resgrid.Web.Services.Models.v4.Records
 	public class HydrantFlowTestResult : StandardApiResponseV4Base { public HydrantFlowTestData Data { get; set; } }
 	public class HydrantMaintenanceResult : StandardApiResponseV4Base { public HydrantMaintenanceData Data { get; set; } }
 	public class HydrantImportResultData : StandardApiResponseV4Base { public HydrantImportResult Data { get; set; } }
+	public class HydrantBulkDeleteResult : StandardApiResponseV4Base { public HydrantBulkDeleteResultData Data { get; set; } }
 	public class HydrantMapLayerResult : StandardApiResponseV4Base { public List<HydrantMapPoint> Data { get; set; } = new List<HydrantMapPoint>(); }
 
 	#endregion

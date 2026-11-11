@@ -18,7 +18,8 @@ namespace Resgrid.Repositories.DataRepository
 	/// before their tables were purged (DeletedDepartmentCleanup) run the same code. Not here: the readiness subtree (checklist
 	/// cleanup, under its fence), RMS (its own cleanup and orphan sweep) and ADP (deleted last). Retained by design (decided
 	/// 2026-10-11): SystemAudits, AdpAuditEvents and ProtectedWorkflowDisclosures, and the session, MFA and transient login
-	/// rows the CleanOIDC worker purges on retention.
+	/// rows the CleanOIDC worker purges on retention. Also retained (2026-11-10): OfflineMapPacks, the only handle to the pack
+	/// store files, which the pack retention cleanup deletes together with the row.
 	/// </summary>
 	public static class UnlinkedDepartmentCleanup
 	{
@@ -31,7 +32,8 @@ namespace Resgrid.Repositories.DataRepository
 		{
 			"CallLocationIndexStates", "CallNumberSequences", "DocumentNumberSequences", "DepartmentApiKeys", "ScheduledTasks", "UserStates",
 			"UdfDefinitions", "ChatbotSessions", "ChatbotMessageLog", "ChatbotDepartmentConfigs", "AiDispatchAudits", "DepartmentAiDispatchConfigs",
-			"AiBillingAccounts", "AdpBillingAccounts", "ContactPreplanHazards", "ContactPreplans", "ContactAttachments", "DepartmentProfileMedia", "TypeIcons", "MapVisualizations", "UserDashboards", "DepartmentDashboardTemplates", "RunCardActivations",
+			"AiBillingAccounts", "AdpBillingAccounts", "ContactPreplanHazards", "ContactPreplans", "ContactAttachments", "DepartmentProfileMedia", "TypeIcons", "MapVisualizations", "UserDashboards", "DepartmentDashboardTemplates",
+			"CallOutstandingRequirements", "RunCardDecisions", "RunCardTargets", "ResponsePackages", "RunCardActivations",
 			"RunCards", "StationCoverageRequirements", "ModerationActions", "ModerationReports", "ModerationRequests", "MessageRecipients", "Messages",
 			"DepartmentMemberSensitiveData", "DepartmentMemberEmergencyContacts", "UserExternalIdentityLinks", "DepartmentSecurityPolicies",
 			"DepartmentSsoConfigs", "GdprDataExportRequests", "Autofills", "DomainEventOutbox", "ReportingDailyRollup", "SearchProjections",
@@ -78,13 +80,29 @@ namespace Resgrid.Repositories.DataRepository
 			// Home dashboard boards and department templates (layouts only)
 			await Delete("UserDashboards", "DepartmentDashboardTemplates");
 
-			// Run cards: requirements hang off alarm levels, the other children off the run card
-			foreach (var requirement in new[] { "RunCardRoleRequirements", "RunCardUnitRequirements" })
-				if (await DepartmentCleanupCommands.ExistsAsync(connection, transaction, type, requirement, ct) && await DepartmentCleanupCommands.ExistsAsync(connection, transaction, type, "RunCardAlarmLevels", ct))
-					await connection.ExecuteAsync(new CommandDefinition($"DELETE FROM {Q(requirement)} WHERE {Q("RunCardAlarmLevelId")} IN (SELECT {Q("RunCardAlarmLevelId")} FROM {Q("RunCardAlarmLevels")} WHERE {Q("RunCardId")} IN (SELECT {Q("RunCardId")} FROM {Q("RunCards")} WHERE {Q("DepartmentId")}=@DepartmentId))",
+			// The orphan decision-node sweep below reads every department's nodes, so two cleanups in it at once (a deletion and
+			// the deleted-department sweep) could each wait on nodes the other just deleted. One transaction-scoped lock, taken
+			// before any run-card row is deleted and released when the transaction ends, serializes the run-card section.
+			await LockRunCardCleanupAsync(connection, transaction, type, ct);
+
+			// Conditional run cards (M0287): a call's awaited resources and pinned decisions, the "any of" targets of package
+			// rows and condition operands, and the response packages with their rows (rows carry no DepartmentId)
+			await Delete("CallOutstandingRequirements", "RunCardDecisions", "RunCardTargets");
+			await DeleteChild("ResponsePackageRows", false, ("ResponsePackages", "ResponsePackageId", "ResponsePackageId"));
+			await Delete("ResponsePackages");
+
+			// Run cards: requirements and decision graph nodes hang off alarm levels, the other children off the run card
+			foreach (var levelChild in new[] { "RunCardRoleRequirements", "RunCardUnitRequirements", "RunCardDecisionNodes" })
+				if (await DepartmentCleanupCommands.ExistsAsync(connection, transaction, type, levelChild, ct) && await DepartmentCleanupCommands.ExistsAsync(connection, transaction, type, "RunCardAlarmLevels", ct))
+					await connection.ExecuteAsync(new CommandDefinition($"DELETE FROM {Q(levelChild)} WHERE {Q("RunCardAlarmLevelId")} IN (SELECT {Q("RunCardAlarmLevelId")} FROM {Q("RunCardAlarmLevels")} WHERE {Q("RunCardId")} IN (SELECT {Q("RunCardId")} FROM {Q("RunCards")} WHERE {Q("DepartmentId")}=@DepartmentId))",
 						new { DepartmentId = departmentId }, transaction, cancellationToken: ct));
 			foreach (var child in new[] { "RunCardAlarmLevels", "RunCardAvailabilitySelections", "RunCardTriggers" })
 				await DeleteChild(child, false, ("RunCards", "RunCardId", "RunCardId"));
+			// Decision nodes have no foreign key to their alarm level, and cleanups before 2026-11-11 removed a department's levels without
+			// them. Such a node carries no DepartmentId for the deleted-department sweep to find, so nodes whose level is gone go here.
+			if (await DepartmentCleanupCommands.ExistsAsync(connection, transaction, type, "RunCardDecisionNodes", ct) && await DepartmentCleanupCommands.ExistsAsync(connection, transaction, type, "RunCardAlarmLevels", ct))
+				await connection.ExecuteAsync(new CommandDefinition($"DELETE FROM {Q("RunCardDecisionNodes")} WHERE {Q("RunCardAlarmLevelId")} NOT IN (SELECT {Q("RunCardAlarmLevelId")} FROM {Q("RunCardAlarmLevels")})",
+					null, transaction, cancellationToken: ct));
 			await Delete("RunCardActivations", "RunCards", "StationCoverageRequirements");
 
 			// Moderation (department admins moderate): reports and actions reference the request
@@ -118,6 +136,39 @@ namespace Resgrid.Repositories.DataRepository
 			// Every producer's outbox rows (the module cleanups removed their own already), rollups, and unified search
 			// projections. SearchIndexStates stays as the marker the global index sweep uses to erase the department's documents
 			await Delete("Autofills", "DomainEventOutbox", "ReportingDailyRollup", "SearchProjections", "VoiceTransmissionLogs");
+		}
+
+		/// <summary>SQL Server application lock resource and PostgreSQL advisory lock key for the run-card section.</summary>
+		internal const string RunCardCleanupLockResource = "Resgrid.DepartmentCleanup.RunCards";
+		internal const long RunCardCleanupLockKey = 0x5247_5243_4C45_414E; // "RGRCLEAN"
+		/// <summary>How long a cleanup waits for another one's run-card section; under the 30-second command timeout.</summary>
+		internal const int RunCardCleanupLockTimeoutMs = 20000;
+		internal const string RunCardCleanupBusyMessage = "Department deletion is waiting for another department cleanup to finish with run cards.";
+
+		/// <summary>
+		/// Takes the run-card section's transaction-scoped lock (released at commit or rollback). A wait past
+		/// <see cref="RunCardCleanupLockTimeoutMs"/> defers the deletion like the other deferrals: nothing is spent, a later pass retries.
+		/// </summary>
+		private static async Task LockRunCardCleanupAsync(DbConnection connection, DbTransaction transaction, DatabaseTypes type, CancellationToken ct)
+		{
+			if (type == DatabaseTypes.Postgres)
+			{
+				for (var waitedMs = 0; ; waitedMs += 250)
+				{
+					if (await connection.ExecuteScalarAsync<bool>(new CommandDefinition("SELECT pg_try_advisory_xact_lock(@Key)", new { Key = RunCardCleanupLockKey }, transaction, cancellationToken: ct)))
+						return;
+					if (waitedMs >= RunCardCleanupLockTimeoutMs)
+						throw new DepartmentDeletionDeferredException(RunCardCleanupBusyMessage);
+					await Task.Delay(250, ct);
+				}
+			}
+
+			// sp_getapplock answers 0 or 1 when granted and a negative code on timeout, cancellation or deadlock.
+			var result = await connection.ExecuteScalarAsync<int>(new CommandDefinition(
+				"DECLARE @Result int; EXEC @Result = sp_getapplock @Resource = @Resource, @LockMode = 'Exclusive', @LockOwner = 'Transaction', @LockTimeout = @TimeoutMs; SELECT @Result;",
+				new { Resource = RunCardCleanupLockResource, TimeoutMs = RunCardCleanupLockTimeoutMs }, transaction, cancellationToken: ct));
+			if (result < 0)
+				throw new DepartmentDeletionDeferredException(RunCardCleanupBusyMessage);
 		}
 	}
 }

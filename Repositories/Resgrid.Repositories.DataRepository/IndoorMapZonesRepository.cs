@@ -5,6 +5,7 @@ using Resgrid.Model.Repositories.Queries;
 using Resgrid.Repositories.DataRepository.Configs;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Threading;
 using System.Threading.Tasks;
 using System;
 using Dapper;
@@ -103,6 +104,43 @@ namespace Resgrid.Repositories.DataRepository
 
 					return await selectFunction(conn);
 				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
+			}
+		}
+
+		public async Task<int> SoftDeleteForFloorAsync(string indoorMapFloorId, CancellationToken cancellationToken = default)
+		{
+			if (string.IsNullOrWhiteSpace(indoorMapFloorId))
+				return 0;
+
+			var isPostgres = Config.DataConfig.DatabaseType == Config.DatabaseTypes.Postgres;
+			var table = isPostgres ? $"{_sqlConfiguration.SchemaName}.indoormapzones" : $"{_sqlConfiguration.SchemaName}.[IndoorMapZones]";
+			var sql = isPostgres
+				? $"UPDATE {table} SET isdeleted = true WHERE indoormapfloorid = {_sqlConfiguration.ParameterNotation}FloorId AND isdeleted = false"
+				: $"UPDATE {table} SET [IsDeleted] = 1 WHERE [IndoorMapFloorId] = {_sqlConfiguration.ParameterNotation}FloorId AND [IsDeleted] = 0";
+
+			try
+			{
+				var command = new Dapper.CommandDefinition(sql, new { FloorId = indoorMapFloorId }, _unitOfWork.Transaction, cancellationToken: cancellationToken);
+				if (_unitOfWork?.Connection == null)
+				{
+					using (var conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync(cancellationToken);
+						return await conn.ExecuteAsync(command);
+					}
+				}
+
+				return await _unitOfWork.CreateOrGetConnection().ExecuteAsync(command);
+			}
+			catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+			{
+				throw;
 			}
 			catch (Exception ex)
 			{

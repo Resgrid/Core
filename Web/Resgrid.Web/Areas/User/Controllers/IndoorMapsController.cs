@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using Resgrid.Model.Services;
+using Resgrid.Web.Helpers;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -59,10 +60,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return RedirectToAction("Edit", "CustomMaps", new { area = "User", id = id });
 		}
 
+		// CustomMaps/Delete takes an antiforgery POST only, so a GET can no longer delete a map; the old link lands on the list.
 		[HttpGet]
 		public IActionResult Delete(string id)
 		{
-			return RedirectToAction("Delete", "CustomMaps", new { area = "User", id = id });
+			return RedirectToAction("Index", "CustomMaps", new { area = "User", type = 0 });
 		}
 
 		[HttpGet]
@@ -87,6 +89,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> DeleteFloor(string id, CancellationToken cancellationToken)
 		{
+			// Same rule as CustomMaps/DeleteLayer, which removes the same row: department admins only.
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return Forbid();
+
 			var floor = await _indoorMapService.GetFloorByIdAsync(id);
 			if (floor == null)
 				return NotFound();

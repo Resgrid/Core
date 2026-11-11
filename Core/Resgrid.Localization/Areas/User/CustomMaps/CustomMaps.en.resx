@@ -371,4 +371,25 @@
   <data name="PleaseSelectTargetLayer" xml:space="preserve">
     <value>Please select a target layer before importing. Create a layer first if none exist.</value>
   </data>
+  <data name="RegionBulkTitle" xml:space="preserve">
+    <value>Remove all regions</value>
+  </data>
+  <data name="RegionBulkHelp" xml:space="preserve">
+    <value>Removes all {0:N0} regions from this layer and keeps the layer, for example after importing a file into the wrong layer.</value>
+  </data>
+  <data name="RegionBulkConfirmCount" xml:space="preserve">
+    <value>Type the number of regions to remove</value>
+  </data>
+  <data name="RegionBulkConfirm" xml:space="preserve">
+    <value>Remove {0} regions from this layer?</value>
+  </data>
+  <data name="RegionBulkCountMismatch" xml:space="preserve">
+    <value>Type {0} to confirm, the number of regions on this layer.</value>
+  </data>
+  <data name="RegionBulkConfirmRequired" xml:space="preserve">
+    <value>Type the number of regions to remove to confirm.</value>
+  </data>
+  <data name="RegionBulkDeleted" xml:space="preserve">
+    <value>{0:N0} regions removed.</value>
+  </data>
 </root>

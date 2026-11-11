@@ -329,4 +329,40 @@
   <data name="TrafficLayer" xml:space="preserve">
     <value>Tráfico en vivo</value>
   </data>
+  <data name="PoiBulkTitle" xml:space="preserve">
+    <value>Eliminar PDI</value>
+  </data>
+  <data name="PoiBulkHelp" xml:space="preserve">
+    <value>Elimine muchos PDI a la vez, por ejemplo tras importar el archivo equivocado. Marque filas (el cuadro de búsqueda filtra la lista y la casilla del encabezado marca todas las coincidencias) o elimine todos los PDI de esta lista. Los PDI vinculados a hidrantes no aparecen y se conservan.</value>
+  </data>
+  <data name="PoiBulkScopeSelected" xml:space="preserve">
+    <value>PDI marcados en la lista</value>
+  </data>
+  <data name="PoiBulkScopeAll" xml:space="preserve">
+    <value>Todos los PDI de esta lista</value>
+  </data>
+  <data name="PoiBulkConfirmCount" xml:space="preserve">
+    <value>Escriba el número de PDI que se eliminarán</value>
+  </data>
+  <data name="PoiBulkConfirm" xml:space="preserve">
+    <value>¿Eliminar {0} PDI? Esta acción no se puede deshacer.</value>
+  </data>
+  <data name="PoiBulkCountMismatch" xml:space="preserve">
+    <value>Escriba {0} para confirmar, el número de PDI que se eliminarán.</value>
+  </data>
+  <data name="PoiBulkNoneSelected" xml:space="preserve">
+    <value>Marque en la lista los PDI que desea eliminar o elija otra opción.</value>
+  </data>
+  <data name="PoiBulkConfirmRequired" xml:space="preserve">
+    <value>Escriba el número de PDI que se eliminarán para confirmar.</value>
+  </data>
+  <data name="PoiBulkDeleted" xml:space="preserve">
+    <value>{0:N0} PDI eliminados.</value>
+  </data>
+  <data name="PoiBulkSelectAll" xml:space="preserve">
+    <value>Seleccionar todos los PDI que coinciden con la búsqueda</value>
+  </data>
+  <data name="PoiBulkSelectRow" xml:space="preserve">
+    <value>Seleccionar PDI</value>
+  </data>
 </root>

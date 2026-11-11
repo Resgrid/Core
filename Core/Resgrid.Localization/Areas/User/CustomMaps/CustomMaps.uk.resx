@@ -371,4 +371,25 @@
   <data name="PleaseSelectTargetLayer" xml:space="preserve">
     <value>Виберіть цільовий шар перед імпортом. Якщо шарів немає, спочатку створіть шар.</value>
   </data>
+  <data name="RegionBulkTitle" xml:space="preserve">
+    <value>Видалити всі області</value>
+  </data>
+  <data name="RegionBulkHelp" xml:space="preserve">
+    <value>Видаляє всі області ({0:N0}) з цього шару й залишає шар, наприклад після імпорту файлу не в той шар.</value>
+  </data>
+  <data name="RegionBulkConfirmCount" xml:space="preserve">
+    <value>Введіть кількість областей для видалення</value>
+  </data>
+  <data name="RegionBulkConfirm" xml:space="preserve">
+    <value>Видалити області ({0}) з цього шару?</value>
+  </data>
+  <data name="RegionBulkCountMismatch" xml:space="preserve">
+    <value>Щоб підтвердити, введіть {0} — кількість областей на цьому шарі.</value>
+  </data>
+  <data name="RegionBulkConfirmRequired" xml:space="preserve">
+    <value>Щоб підтвердити, введіть кількість областей для видалення.</value>
+  </data>
+  <data name="RegionBulkDeleted" xml:space="preserve">
+    <value>Видалено областей: {0:N0}.</value>
+  </data>
 </root>

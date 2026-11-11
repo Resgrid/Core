@@ -71,6 +71,14 @@ namespace Resgrid.Repositories.DataRepository
 			return claimed == 1;
 		}
 
+		public Task SetStorageHandleAsync(string offlineMapPackId, string storagePath, string filesJson, CancellationToken cancellationToken = default)
+		{
+			return ExecuteAsync(
+				$"UPDATE {Tbl("OfflineMapPacks")} SET {Col("StoragePath")} = {P}StoragePath, {Col("FilesJson")} = {P}FilesJson WHERE {Col("OfflineMapPackId")} = {CaseInsensitive("Id")}",
+				new { Id = offlineMapPackId, StoragePath = storagePath, FilesJson = filesJson },
+				cancellationToken);
+		}
+
 		public async Task<List<OfflineMapPack>> GetStuckBuildingAsync(DateTime olderThan)
 		{
 			// BuiltOn holds the claim time while a pack builds.

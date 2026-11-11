@@ -73,7 +73,10 @@
                                                 <a class="btn btn-primary btn-xs" asp-controller="CustomMaps" asp-action="Layers" asp-route-id="@map.IndoorMapId" asp-route-area="User"><i class="fa fa-layer-group"></i> @localizer["Layers"]</a>
                                                 <a class="btn btn-warning btn-xs" asp-controller="CustomMaps" asp-action="Import" asp-route-id="@map.IndoorMapId" asp-route-area="User"><i class="fa fa-upload"></i> @localizer["Import"]</a>
                                                 <a class="btn btn-info btn-xs" asp-controller="CustomMaps" asp-action="Edit" asp-route-id="@map.IndoorMapId" asp-route-area="User"><i class="fa fa-pencil"></i> @localizer["Edit"]</a>
-                                                <a class="btn btn-danger btn-xs" asp-controller="CustomMaps" asp-action="Delete" asp-route-id="@map.IndoorMapId" asp-route-area="User" onclick="return confirm('@JsEncoder.Encode(localizer["DeleteMapConfirm"])');"><i class="fa fa-trash"></i> @localizer["Delete"]</a>
+                                                <form class="custom-map-delete-form" asp-controller="CustomMaps" asp-action="Delete" asp-route-area="User" asp-antiforgery="true" method="post" style="display:inline;" onsubmit="return confirm('@JsEncoder.Encode(localizer["DeleteMapConfirm"])');">
+                                                    <input type="hidden" name="id" value="@map.IndoorMapId" />
+                                                    <button type="submit" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> @localizer["Delete"]</button>
+                                                </form>
                                             </td>
                                         </tr>
                                     }

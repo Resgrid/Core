@@ -371,4 +371,25 @@
   <data name="PleaseSelectTargetLayer" xml:space="preserve">
     <value>Välj ett mållager innan du importerar. Skapa först ett lager om det inte finns något.</value>
   </data>
+  <data name="RegionBulkTitle" xml:space="preserve">
+    <value>Ta bort alla områden</value>
+  </data>
+  <data name="RegionBulkHelp" xml:space="preserve">
+    <value>Tar bort alla {0:N0} områden från lagret och behåller lagret, till exempel efter import av en fil till fel lager.</value>
+  </data>
+  <data name="RegionBulkConfirmCount" xml:space="preserve">
+    <value>Skriv antalet områden som ska tas bort</value>
+  </data>
+  <data name="RegionBulkConfirm" xml:space="preserve">
+    <value>Ta bort {0} områden från lagret?</value>
+  </data>
+  <data name="RegionBulkCountMismatch" xml:space="preserve">
+    <value>Skriv {0} för att bekräfta, antalet områden på lagret.</value>
+  </data>
+  <data name="RegionBulkConfirmRequired" xml:space="preserve">
+    <value>Skriv antalet områden som ska tas bort för att bekräfta.</value>
+  </data>
+  <data name="RegionBulkDeleted" xml:space="preserve">
+    <value>{0:N0} områden borttagna.</value>
+  </data>
 </root>

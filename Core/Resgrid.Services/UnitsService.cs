@@ -614,8 +614,9 @@ namespace Resgrid.Services
 		{
 			var previousState = await GetLastUnitStateByUnitIdAsync(state.UnitId);
 
-			if (state.Accuracy > 100000)
-				state.Accuracy = 100000;
+			// Device telemetry the UnitStates columns can't hold (e.g. a 15 km browser IP-location accuracy into
+			// decimal(6,2)) would fail the whole insert with an arithmetic overflow and lose the status.
+			UnitStateTelemetryLimits.FitToColumns(state);
 
 			if (state.Roles == null || !state.Roles.Any())
 			{

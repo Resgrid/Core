@@ -154,6 +154,30 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task Telemetry_the_columns_cannot_hold_is_fitted_before_the_insert()
+		{
+			// Sentry: a desktop browser's IP/Wi-Fi fix (accuracy 15 km) overflowed decimal(6,2) and the status was lost.
+			UnitState saved = null;
+			_unitStatesRepo.Setup(x => x.SaveOrUpdateAsync(It.IsAny<UnitState>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.Callback<UnitState, CancellationToken, bool>((s, _, __) => saved = s)
+				.ReturnsAsync((UnitState s, CancellationToken _, bool __) => s);
+
+			var state = BuildState();
+			state.Latitude = 44.9778m;
+			state.Longitude = -93.265m;
+			state.Accuracy = 15000m;
+			state.Speed = 5000m;
+
+			await _service.SetUnitStateAsync(state, DeptId);
+
+			saved.Should().NotBeNull();
+			saved.Accuracy.Should().Be(9999.99m);
+			saved.Speed.Should().BeNull();
+			saved.Latitude.Should().Be(44.9778m);
+			saved.Longitude.Should().Be(-93.265m);
+		}
+
+		[Test]
 		public async Task The_status_type_overload_is_covered_too()
 		{
 			await _service.SetUnitStateAsync(7, 2, DeptId);

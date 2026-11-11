@@ -36,7 +36,8 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 					.WithColumn("startedon").AsDateTime2().Nullable()
 					.WithColumn("heartbeaton").AsDateTime2().Nullable()
 					.WithColumn("completedon").AsDateTime2().Nullable()
-					.WithColumn("attempts").AsInt32().NotNullable().WithDefaultValue(0);
+					.WithColumn("attempts").AsInt32().NotNullable().WithDefaultValue(0)
+					.WithColumn("claimtoken").AsCustom("citext").Nullable();
 
 				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_poiimports_status ON poiimports (status, addedon);");
 				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_poiimports_department ON poiimports (departmentid, addedon);");
@@ -45,7 +46,8 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 			if (!Schema.Table("pois").Column("poiimportid").Exists())
 			{
 				Alter.Table("pois").AddColumn("poiimportid").AsCustom("citext").Nullable();
-				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_pois_poiimportid ON pois (poiimportid) WHERE poiimportid IS NOT NULL;");
+				Alter.Table("pois").AddColumn("poiimportrow").AsInt32().Nullable();
+				Execute.Sql("CREATE UNIQUE INDEX IF NOT EXISTS ux_pois_poiimportrow ON pois (poiimportid, poiimportrow) WHERE poiimportid IS NOT NULL AND poiimportrow IS NOT NULL;");
 			}
 		}
 
@@ -53,7 +55,8 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 		{
 			if (Schema.Table("pois").Column("poiimportid").Exists())
 			{
-				Execute.Sql("DROP INDEX IF EXISTS ix_pois_poiimportid;");
+				Execute.Sql("DROP INDEX IF EXISTS ux_pois_poiimportrow;");
+				Delete.Column("poiimportrow").FromTable("pois");
 				Delete.Column("poiimportid").FromTable("pois");
 			}
 

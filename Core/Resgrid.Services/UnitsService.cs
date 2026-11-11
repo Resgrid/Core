@@ -924,6 +924,15 @@ namespace Resgrid.Services
 			return false;
 		}
 
+		public async Task<List<UnitStateRole>> GetRolesForUnitStateAsync(int unitStateId)
+		{
+			if (unitStateId <= 0)
+				return new List<UnitStateRole>();
+
+			var roles = await _unitStateRoleRepository.GetRolesForUnitStatesAsync(new[] { unitStateId });
+			return (roles ?? Enumerable.Empty<UnitStateRole>()).Where(role => role != null && role.UnitStateId == unitStateId).ToList();
+		}
+
 		public async Task<bool> DeleteStatesForUnitAsync(int unitId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var unitStates = await _unitStatesRepository.GetAllStatesByUnitIdAsync(unitId);

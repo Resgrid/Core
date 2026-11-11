@@ -92,6 +92,12 @@ namespace Resgrid.Model
 
 		public int Attempts { get; set; }
 
+		/// <summary>
+		/// Issued to the worker that claimed the import last. Its progress, heartbeat and release writes require it, so a worker
+		/// that stalled past the stale period and was replaced can no longer write over the run that took the import over.
+		/// </summary>
+		public string ClaimToken { get; set; }
+
 		[NotMapped]
 		public bool IsFinished => Status == (int)PoiImportStatus.Complete || Status == (int)PoiImportStatus.Failed;
 

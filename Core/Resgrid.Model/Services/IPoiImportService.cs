@@ -17,8 +17,8 @@ namespace Resgrid.Model.Services
 		/// <summary>Queues the rows of a file read by <see cref="ReadFile"/> for the worker to import into the POI type.</summary>
 		Task<PoiImport> QueueImportAsync(int departmentId, int poiTypeId, string poiTypeName, string userId, string fileName, PoiImportFile file, CancellationToken cancellationToken = default(CancellationToken));
 
-		/// <summary>The department's most recent imports, newest first.</summary>
-		Task<List<PoiImport>> GetRecentImportsAsync(int departmentId, int max = 10);
+		/// <summary>The department's most recent imports, newest first; only <paramref name="userId"/>'s uploads when given.</summary>
+		Task<List<PoiImport>> GetRecentImportsAsync(int departmentId, int max = 10, string userId = null);
 
 		/// <summary>The unlocated rows an import's report names (at most the first hundred).</summary>
 		List<PoiImportRow> GetUnlocatedRows(PoiImport import);

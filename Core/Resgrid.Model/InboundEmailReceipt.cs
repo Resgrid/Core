@@ -126,6 +126,8 @@ namespace Resgrid.Model
 		CallAddedEvent = 32,
 		DispatchStatuses = 64,
 		CustomFieldValues = 128,
-		UnitStateRoles = 256
+		UnitStateRoles = 256,
+		/// <summary>The riders' own "on unit" statuses (department setting: personnel on a unit take its status).</summary>
+		UnitLinkedStatuses = 512
 	}
 }

@@ -141,6 +141,38 @@ namespace Resgrid.Tests.Providers
 		}
 
 		[Test]
+		public async Task a_match_at_0_0_or_out_of_range_is_skipped_for_the_next_geocoder_and_never_cached()
+		{
+			MappingConfig.GeocodingProviders = "google,locationiq,nominatim";
+			string cached = null;
+			var cache = new Mock<ICacheProvider>();
+			cache.Setup(c => c.RetrieveAsync(It.IsAny<string>(), It.IsAny<Func<Task<string>>>(), It.IsAny<TimeSpan>()))
+				.Returns(async (string _, Func<Task<string>> fallback, TimeSpan __) => cached = await fallback());
+			var provider = new GeoLocationProvider(cache.Object, new[]
+			{
+				Geocoder("google", new GeocodeMatch { Latitude = 0, Longitude = 0 }).Object,
+				Geocoder("locationiq", new GeocodeMatch { Latitude = -93.5, Longitude = 241.5 }).Object,
+				Geocoder("nominatim", new GeocodeMatch { Latitude = 41.5, Longitude = -93.5 }).Object
+			});
+
+			var result = await provider.GeocodeAddressAsync("1 Main St");
+
+			result.Outcome.Should().Be(GeocodeOutcome.Found);
+			result.Latitude.Should().Be(41.5);
+			result.Longitude.Should().Be(-93.5);
+			cached.Should().Be("41.5,-93.5");
+		}
+
+		[Test]
+		public async Task only_invalid_matches_are_unavailable_not_a_position()
+		{
+			MappingConfig.GeocodingProviders = "google";
+			var provider = new GeoLocationProvider(PassThroughCache().Object, new[] { Geocoder("google", new GeocodeMatch { Latitude = 0, Longitude = 0 }).Object });
+
+			(await provider.GeocodeAddressAsync("1 Main St")).Outcome.Should().Be(GeocodeOutcome.Unavailable);
+		}
+
+		[Test]
 		public async Task no_answer_from_any_geocoder_is_unavailable()
 		{
 			MappingConfig.GeocodingProviders = "google,locationiq";

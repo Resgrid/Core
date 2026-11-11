@@ -152,6 +152,11 @@ namespace Resgrid.Providers.GeoLocationProvider
 						var match = await geocoder.ForwardAsync(address, timeout.Token);
 						if (match != null)
 						{
+							// A "match" at 0,0 or out of range is no answer at all: it is neither returned nor cached, and the
+							// next geocoder gets its turn.
+							if (!GeocodeResult.IsValidPosition(match.Latitude, match.Longitude))
+								continue;
+
 							outcome = GeocodeOutcome.Found;
 							return string.Format(CultureInfo.InvariantCulture, "{0},{1}", match.Latitude, match.Longitude);
 						}

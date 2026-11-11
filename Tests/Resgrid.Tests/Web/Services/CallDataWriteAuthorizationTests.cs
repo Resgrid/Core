@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
@@ -272,22 +273,92 @@ namespace Resgrid.Tests.Web.Services
 			_callsService.Verify(x => x.SaveCallNoteAsync(It.IsAny<CallNote>(), It.IsAny<CancellationToken>()), Times.Once);
 		}
 
-		[Test]
-		public async Task A_resend_after_the_note_was_saved_but_not_yet_protected_returns_that_note()
+		/// <summary>The stored call with the notes and attachments the controller saved, as PopulateCallData reads them back.</summary>
+		private void StoredCallData()
 		{
-			// The first answer is 503 "Do not resubmit"; an outbox retries it anyway, and must not add the note twice.
+			_callsService.Setup(x => x.PopulateCallData(It.IsAny<Call>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(),
+					It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>()))
+				.Returns((Call call, bool a1, bool a2, bool a3, bool a4, bool a5, bool a6, bool a7, bool a8, bool a9, bool a10) =>
+				{
+					call.CallNotes = _savedNote != null ? new System.Collections.Generic.List<CallNote> { _savedNote } : new System.Collections.Generic.List<CallNote>();
+					return Task.FromResult(call);
+				});
+			_callsService.Setup(x => x.GetCallAttachmentAsync(It.IsAny<int>()))
+				.ReturnsAsync((int id) => _savedAttachment != null && _savedAttachment.CallAttachmentId == id ? _savedAttachment : null);
+		}
+
+		[Test]
+		public async Task A_resend_after_the_note_was_saved_but_not_yet_protected_protects_that_note_instead_of_adding_one()
+		{
+			// The first answer is 503; the outbox retries it with the same key, which must protect the saved note, not add a second.
 			_authorizationService.Setup(x => x.CanUserAddCallDataAsync(UserId, CallId, DepartmentId)).ReturnsAsync(true);
+			StoredCallData();
 			_protectedWriteService.SetupSequence(x => x.PrepareCallNoteWriteAsync(It.IsAny<int>(), It.IsAny<CallNote>(), It.IsAny<string>(), It.IsAny<string>(),
 					It.IsAny<bool>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync(new ProtectedWriteResult { Success = false, Reason = "broker_unavailable" })
 				.ReturnsAsync(new ProtectedWriteResult { Success = true });
 
 			var first = await NotesController().SaveCallNote(OutboxNoteInput("outbox-note-2"), CancellationToken.None);
-			var again = await NotesController().SaveCallNote(OutboxNoteInput("outbox-note-2"), CancellationToken.None);
 
 			(first.Result as ObjectResult)?.StatusCode.Should().Be(StatusCodes.Status503ServiceUnavailable);
+			var receipt = _receipts.Receipts.Should().ContainSingle().Subject;
+			receipt.State.Should().Be((int)InboundEmailReceiptStates.Saved, "the request is not finished until the note is protected");
+			receipt.EntityId.Should().Be(5);
+
+			var again = await NotesController().SaveCallNote(OutboxNoteInput("outbox-note-2"), CancellationToken.None);
+
 			NoteId(again).Should().Be("5");
 			_callsService.Verify(x => x.SaveCallNoteAsync(It.IsAny<CallNote>(), It.IsAny<CancellationToken>()), Times.Once);
+			_protectedWriteService.Verify(x => x.PrepareCallNoteWriteAsync(DepartmentId, It.Is<CallNote>(n => n.CallNoteId == 5), It.IsAny<string>(), It.IsAny<string>(),
+				It.IsAny<bool>(), It.IsAny<CancellationToken>()), Times.Exactly(2));
+			_receipts.Receipts.Single().State.Should().Be((int)InboundEmailReceiptStates.Completed);
+		}
+
+		[Test]
+		public async Task A_resend_after_the_note_service_failed_past_its_insert_resumes_that_note()
+		{
+			// CallsService.SaveCallNoteAsync inserts the row, then its own protection step throws.
+			_authorizationService.Setup(x => x.CanUserAddCallDataAsync(UserId, CallId, DepartmentId)).ReturnsAsync(true);
+			StoredCallData();
+			_callsService.Setup(x => x.SaveCallNoteAsync(It.IsAny<CallNote>(), It.IsAny<CancellationToken>()))
+				.Returns((CallNote n, CancellationToken _) =>
+				{
+					n.CallNoteId = 5;
+					_savedNote = n;
+					throw new InvalidOperationException("Protected write blocked (broker_unavailable); call note 5 has transient plaintext pending re-encryption.");
+				});
+
+			Func<Task> first = () => NotesController().SaveCallNote(OutboxNoteInput("outbox-note-3"), CancellationToken.None);
+			await first.Should().ThrowAsync<InvalidOperationException>();
+
+			var again = await NotesController().SaveCallNote(OutboxNoteInput("outbox-note-3"), CancellationToken.None);
+
+			NoteId(again).Should().Be("5");
+			_callsService.Verify(x => x.SaveCallNoteAsync(It.IsAny<CallNote>(), It.IsAny<CancellationToken>()), Times.Once);
+			_receipts.Receipts.Single().State.Should().Be((int)InboundEmailReceiptStates.Completed);
+		}
+
+		[Test]
+		public async Task A_file_resend_after_it_was_saved_but_not_yet_protected_protects_that_file_instead_of_adding_one()
+		{
+			StoredCallData();
+			_protectedWriteService.SetupSequence(x => x.PrepareCallAttachmentWriteAsync(It.IsAny<int>(), It.IsAny<CallAttachment>(), It.IsAny<string>(), It.IsAny<string>(),
+					It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new ProtectedWriteResult { Success = false, Reason = "broker_unavailable" })
+				.ReturnsAsync(new ProtectedWriteResult { Success = true });
+
+			var first = await FilesController(systemKey: true, idempotencyKey: "msg-2@cad.example#attachment-0").SaveCallFile(FileInput(), CancellationToken.None);
+
+			(first.Result as ObjectResult)?.StatusCode.Should().Be(StatusCodes.Status503ServiceUnavailable);
+			_receipts.Receipts.Single().State.Should().Be((int)InboundEmailReceiptStates.Saved);
+
+			var again = await FilesController(systemKey: true, idempotencyKey: "msg-2@cad.example#attachment-0").SaveCallFile(FileInput(), CancellationToken.None);
+
+			Id(again).Should().Be("6");
+			_savedAttachments.Should().Be(1);
+			_protectedWriteService.Verify(x => x.PrepareCallAttachmentWriteAsync(DepartmentId, It.Is<CallAttachment>(a => a.CallAttachmentId == 6), It.IsAny<string>(),
+				It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()), Times.Exactly(2));
+			_receipts.Receipts.Single().State.Should().Be((int)InboundEmailReceiptStates.Completed);
 		}
 
 		[Test]

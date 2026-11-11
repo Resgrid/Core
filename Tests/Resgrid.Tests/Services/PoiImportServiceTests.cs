@@ -36,6 +36,9 @@ namespace Resgrid.Tests.Services
 		private Mock<IMappingService> _mapping;
 		private List<Poi> _saved;
 		private List<PoiImport> _writes;
+		private List<string> _runTokens;
+		private string _claimToken;
+		private bool _claimHeld;
 
 		[SetUp]
 		public void SetUp()
@@ -45,16 +48,35 @@ namespace Resgrid.Tests.Services
 			_mapping = new Mock<IMappingService>();
 			_saved = new List<Poi>();
 			_writes = new List<PoiImport>();
+			_runTokens = new List<string>();
+			_claimToken = null;
+			_claimHeld = true;
 
 			_mapping.Setup(x => x.GetTypeByIdAsync(PoiTypeId)).ReturnsAsync(new PoiType { PoiTypeId = PoiTypeId, DepartmentId = DepartmentId });
 			_mapping.Setup(x => x.SavePOIAsync(It.IsAny<Poi>(), It.IsAny<CancellationToken>()))
 				.Callback((Poi p, CancellationToken _) => _saved.Add(p))
 				.ReturnsAsync((Poi p, CancellationToken _) => p);
+			// The upload's insert.
 			_imports.Setup(x => x.SaveOrUpdateAsync(It.IsAny<PoiImport>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
-				.Callback((PoiImport i, CancellationToken _, bool __) => _writes.Add(JsonConvert.DeserializeObject<PoiImport>(JsonConvert.SerializeObject(i))))
+				.Callback((PoiImport i, CancellationToken _, bool __) => _writes.Add(Copy(i)))
 				.ReturnsAsync((PoiImport i, CancellationToken _, bool __) => i);
+			// The worker's writes, which only land while its claim holds.
+			_imports.Setup(x => x.SaveRunAsync(It.IsAny<PoiImport>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((PoiImport i, string token, CancellationToken _) =>
+				{
+					_runTokens.Add(token);
+					if (_claimHeld)
+						_writes.Add(Copy(i));
+
+					return _claimHeld;
+				});
+			_imports.Setup(x => x.HeartbeatAsync(ImportId, It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(() => _claimHeld);
 			_imports.Setup(x => x.CountSavedPoisAsync(ImportId, It.IsAny<CancellationToken>())).ReturnsAsync(() => _saved.Count);
+			_imports.Setup(x => x.GetLastSavedRowAsync(ImportId, It.IsAny<CancellationToken>()))
+				.ReturnsAsync(() => _saved.Count == 0 ? (int?)null : _saved.Max(p => p.PoiImportRow));
 		}
+
+		private static PoiImport Copy(PoiImport import) => JsonConvert.DeserializeObject<PoiImport>(JsonConvert.SerializeObject(import));
 
 		private PoiImportService Service() => new PoiImportService(new KmlProvider(), _geo.Object, _imports.Object, _mapping.Object);
 
@@ -80,7 +102,9 @@ namespace Resgrid.Tests.Services
 
 			_imports.Setup(x => x.GetRunnableAsync(It.IsAny<DateTime>(), It.IsAny<int>()))
 				.ReturnsAsync(new List<PoiImport> { new PoiImport { PoiImportId = ImportId, Status = (int)status } });
-			_imports.Setup(x => x.TryClaimAsync(ImportId, (int)status, (int)claimedStatus, It.IsAny<DateTime>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
+			_imports.Setup(x => x.TryClaimAsync(ImportId, (int)status, (int)claimedStatus, It.IsAny<DateTime>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+				.Callback((string _, int __, int ___, DateTime ____, string token, CancellationToken _____) => _claimToken = token)
+				.ReturnsAsync(true);
 			_imports.Setup(x => x.GetByIdAsync(ImportId)).ReturnsAsync(import);
 
 			return import;
@@ -161,6 +185,17 @@ namespace Resgrid.Tests.Services
 			file.Rows.Single().Name.Should().Be("Café 1");
 			file.Rows.Single().Latitude.Should().Be(48.85);
 			file.Rows.Single().Longitude.Should().Be(2.35);
+		}
+
+		[Test]
+		public void Detects_the_delimiter_from_separators_outside_quoted_headers()
+		{
+			// Two commas and two semicolons in the header row, but the commas are inside a quoted column name.
+			var file = Service().ReadFile(Text("Name;Address;\"Notes, comments, remarks\"\nDepot;1 Main St, Ames, IA;\"Gate 4, code 12\"\n"), "sites.csv");
+
+			file.Error.Should().BeNull();
+			file.Rows.Single().Name.Should().Be("Depot");
+			file.Rows.Single().Address.Should().Be("1 Main St, Ames, IA");
 		}
 
 		[Test]
@@ -343,7 +378,7 @@ namespace Resgrid.Tests.Services
 		[Test]
 		public async Task A_resumed_import_saves_only_the_pois_it_had_not_saved()
 		{
-			_saved.AddRange(new[] { new Poi { Name = "A" }, new Poi { Name = "B" } });
+			_saved.AddRange(new[] { new Poi { Name = "A", PoiImportRow = 0 }, new Poi { Name = "B", PoiImportRow = 1 } });
 			Runnable(PoiImportStatus.Saving, 2,
 				new PoiImportRow { Name = "A", Latitude = 41.1, Longitude = -93.1 },
 				new PoiImportRow { Name = "Unlocated", Address = "nowhere", Lookup = (int)PoiImportRowLookup.NotFound, LookupAttempts = 1 },
@@ -353,9 +388,56 @@ namespace Resgrid.Tests.Services
 			await Service().ProcessNextAsync();
 
 			_saved.Select(p => p.Name).Should().Equal("A", "B", "C");
+			_saved.Last().PoiImportRow.Should().Be(2, "rows are numbered among the located rows, in file order");
 			_geo.Verify(x => x.GeocodeAddressAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never, "a saving import already holds its positions");
 			Final.Status.Should().Be((int)PoiImportStatus.Complete);
 			Final.ImportedCount.Should().Be(3);
+		}
+
+		[Test]
+		public async Task A_resumed_import_carries_on_after_its_last_row_when_a_saved_poi_was_deleted_meanwhile()
+		{
+			// Rows 0 and 2 were saved before the worker stopped; an administrator deleted row 1's POI while the import ran. Counting
+			// the two surviving POIs would resume at row 2 and save it a second time.
+			_saved.AddRange(new[] { new Poi { Name = "A", PoiImportRow = 0 }, new Poi { Name = "C", PoiImportRow = 2 } });
+			Runnable(PoiImportStatus.Saving, 2,
+				new PoiImportRow { Name = "A", Latitude = 41.1, Longitude = -93.1 },
+				new PoiImportRow { Name = "B", Latitude = 41.2, Longitude = -93.2 },
+				new PoiImportRow { Name = "C", Latitude = 41.3, Longitude = -93.3 },
+				new PoiImportRow { Name = "D", Latitude = 41.4, Longitude = -93.4 });
+
+			await Service().ProcessNextAsync();
+
+			_saved.Select(p => p.Name).Should().Equal("A", "C", "D");
+			_saved.Last().PoiImportRow.Should().Be(3);
+			Final.Status.Should().Be((int)PoiImportStatus.Complete);
+		}
+
+		[Test]
+		public async Task Every_write_of_a_run_names_the_claim_it_took()
+		{
+			Runnable(PoiImportStatus.Queued, 1, new PoiImportRow { Name = "Tank", Latitude = 41.5, Longitude = -93.5 });
+
+			await Service().ProcessNextAsync();
+
+			_claimToken.Should().NotBeNullOrEmpty();
+			_runTokens.Should().NotBeEmpty().And.OnlyContain(t => t == _claimToken);
+			Final.Status.Should().Be((int)PoiImportStatus.Complete);
+		}
+
+		[Test]
+		public async Task A_run_whose_claim_was_taken_over_stops_without_saving_releasing_or_failing_the_import()
+		{
+			// This run stalled past the stale period and another worker took the import over: its first write finds the claim gone.
+			_claimHeld = false;
+			Runnable(PoiImportStatus.Queued, PoiImportService.MaximumAttempts, new PoiImportRow { Name = "Tank", Latitude = 41.5, Longitude = -93.5 });
+
+			(await Service().ProcessNextAsync()).Should().BeTrue();
+
+			_saved.Should().BeEmpty("the run that owns the import saves its POIs");
+			_writes.Should().BeEmpty();
+			_imports.Verify(x => x.SaveRunAsync(It.IsAny<PoiImport>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
+			_imports.Verify(x => x.ReleaseAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
 
 		[Test]
@@ -363,7 +445,7 @@ namespace Resgrid.Tests.Services
 		{
 			_imports.Setup(x => x.GetRunnableAsync(It.IsAny<DateTime>(), It.IsAny<int>()))
 				.ReturnsAsync(new List<PoiImport> { new PoiImport { PoiImportId = ImportId, Status = (int)PoiImportStatus.Queued } });
-			_imports.Setup(x => x.TryClaimAsync(ImportId, It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>())).ReturnsAsync(false);
+			_imports.Setup(x => x.TryClaimAsync(ImportId, It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(false);
 
 			(await Service().ProcessNextAsync()).Should().BeFalse();
 
@@ -409,7 +491,7 @@ namespace Resgrid.Tests.Services
 
 			await Service().ProcessNextAsync();
 
-			_imports.Verify(x => x.ReleaseAsync(ImportId, It.IsAny<CancellationToken>()), Times.Once);
+			_imports.Verify(x => x.ReleaseAsync(ImportId, _claimToken, It.IsAny<CancellationToken>()), Times.Once);
 			_writes.Should().BeEmpty();
 
 			Runnable(PoiImportStatus.Saving, PoiImportService.MaximumAttempts, new PoiImportRow { Name = "Tank", Latitude = 41.5, Longitude = -93.5 });
@@ -430,7 +512,7 @@ namespace Resgrid.Tests.Services
 			Func<Task> run = () => Service().ProcessNextAsync(stopping.Token);
 
 			await run.Should().ThrowAsync<OperationCanceledException>();
-			_imports.Verify(x => x.ReleaseAsync(ImportId, It.IsAny<CancellationToken>()), Times.Once);
+			_imports.Verify(x => x.ReleaseAsync(ImportId, _claimToken, It.IsAny<CancellationToken>()), Times.Once);
 			_writes.Should().BeEmpty();
 		}
 

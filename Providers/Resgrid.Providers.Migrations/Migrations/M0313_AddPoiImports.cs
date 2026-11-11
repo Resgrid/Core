@@ -4,9 +4,11 @@ namespace Resgrid.Providers.Migrations.Migrations
 {
 	/// <summary>
 	/// Background POI imports: one row per upload, holding the parsed rows until worker 79 has geocoded the addresses and
-	/// saved the POIs. Pois.PoiImportId tags each imported POI, so an import resumed after a worker restart counts what it
-	/// already saved instead of saving it twice. No foreign keys: the import row is purged with the department
-	/// (UnlinkedDepartmentCleanup) and finished imports age out after 90 days. Existence-guarded for safe retry.
+	/// saved the POIs. Pois.PoiImportId + PoiImportRow tag each imported POI with its import and row (unique together), so an
+	/// import resumed after a worker restart carries on after the last row it saved and can never save a row twice.
+	/// PoiImports.ClaimToken names the worker run that owns the import; a run replaced after stalling can no longer write to
+	/// it. No foreign keys: the import row is purged with the department (UnlinkedDepartmentCleanup) and finished imports
+	/// age out after 90 days. Existence-guarded for safe retry.
 	/// </summary>
 	[Migration(313)]
 	public class M0313_AddPoiImports : Migration
@@ -41,7 +43,8 @@ namespace Resgrid.Providers.Migrations.Migrations
 					.WithColumn("StartedOn").AsDateTime2().Nullable()
 					.WithColumn("HeartbeatOn").AsDateTime2().Nullable()
 					.WithColumn("CompletedOn").AsDateTime2().Nullable()
-					.WithColumn("Attempts").AsInt32().NotNullable().WithDefaultValue(0);
+					.WithColumn("Attempts").AsInt32().NotNullable().WithDefaultValue(0)
+					.WithColumn("ClaimToken").AsString(36).Nullable();
 
 				Execute.Sql("CREATE NONCLUSTERED INDEX IX_PoiImports_Status ON PoiImports (Status, AddedOn);");
 				Execute.Sql("CREATE NONCLUSTERED INDEX IX_PoiImports_Department ON PoiImports (DepartmentId, AddedOn);");
@@ -50,7 +53,8 @@ namespace Resgrid.Providers.Migrations.Migrations
 			if (!Schema.Table("Pois").Column("PoiImportId").Exists())
 			{
 				Alter.Table("Pois").AddColumn("PoiImportId").AsString(36).Nullable();
-				Execute.Sql("CREATE NONCLUSTERED INDEX IX_Pois_PoiImportId ON Pois (PoiImportId) WHERE PoiImportId IS NOT NULL;");
+				Alter.Table("Pois").AddColumn("PoiImportRow").AsInt32().Nullable();
+				Execute.Sql("CREATE UNIQUE NONCLUSTERED INDEX UX_Pois_PoiImportRow ON Pois (PoiImportId, PoiImportRow) WHERE PoiImportId IS NOT NULL AND PoiImportRow IS NOT NULL;");
 			}
 		}
 
@@ -58,7 +62,8 @@ namespace Resgrid.Providers.Migrations.Migrations
 		{
 			if (Schema.Table("Pois").Column("PoiImportId").Exists())
 			{
-				Execute.Sql("DROP INDEX IF EXISTS IX_Pois_PoiImportId ON Pois;");
+				Execute.Sql("DROP INDEX IF EXISTS UX_Pois_PoiImportRow ON Pois;");
+				Delete.Column("PoiImportRow").FromTable("Pois");
 				Delete.Column("PoiImportId").FromTable("Pois");
 			}
 

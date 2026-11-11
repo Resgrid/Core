@@ -289,6 +289,11 @@ namespace Resgrid.Model.Services
 		Task<bool> AddAllUnitStateRolesAsync(List<UnitStateRole> roles,
 			CancellationToken cancellationToken = default(CancellationToken));
 
+		/// <summary>The riders (crew seats) recorded with one unit state; empty when it has none.</summary>
+		/// <param name="unitStateId">The unit state identifier.</param>
+		/// <returns>Task&lt;List&lt;UnitStateRole&gt;&gt;.</returns>
+		Task<List<UnitStateRole>> GetRolesForUnitStateAsync(int unitStateId);
+
 		/// <summary>
 		/// Deletes the states for unit asynchronous.
 		/// </summary>

@@ -70,6 +70,16 @@ namespace Resgrid.Model.Services
 			DateTime timeStamp, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
+		/// Saves a new staffing the caller built (UserId, DepartmentId, State, Timestamp, Note), as the CreateUserState overloads do.
+		/// The row commits before the protected-data step and the staffing event run, and its id is written back onto
+		/// <paramref name="userState"/>: a caller whose request fails after that can still tell which staffing it saved.
+		/// </summary>
+		/// <param name="userState">The new staffing; its UserStateId is set once the row is saved.</param>
+		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+		/// <returns>Task&lt;UserState&gt;.</returns>
+		Task<UserState> CreateUserStateAsync(UserState userState, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
 		/// Gets the states for department asynchronous.
 		/// </summary>
 		/// <param name="departmentId">The department identifier.</param>

@@ -106,10 +106,10 @@ namespace Resgrid.Tests.Web.Services
 				});
 
 			_userStates = new Mock<IUserStateService>();
-			_userStates.Setup(x => x.CreateUserState(It.IsAny<string>(), DepartmentId, It.IsAny<int>(), It.IsAny<CancellationToken>()))
-				.ReturnsAsync((string userId, int departmentId, int type, CancellationToken _) =>
+			_userStates.Setup(x => x.CreateUserStateAsync(It.IsAny<UserState>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((UserState state, CancellationToken _) =>
 				{
-					var state = new UserState { UserStateId = 300 + _savedStaffings.Count, UserId = userId, DepartmentId = departmentId, State = type };
+					state.UserStateId = 300 + _savedStaffings.Count;
 					_savedStaffings.Add(state);
 					return state;
 				});
@@ -302,7 +302,7 @@ namespace Resgrid.Tests.Web.Services
 			var receipt = _receipts.Receipts.Should().ContainSingle().Subject;
 			receipt.State.Should().Be((int)InboundEmailReceiptStates.Saved);
 			receipt.EntityId.Should().Be(900);
-			((InboundEmailPendingSteps)receipt.PendingSteps).Should().Be(InboundEmailPendingSteps.UnitStateRoles);
+			((InboundEmailPendingSteps)receipt.PendingSteps).Should().Be(InboundEmailPendingSteps.UnitStateRoles | InboundEmailPendingSteps.UnitLinkedStatuses);
 			receipt.ClaimedOn.Should().BeNull("the failed attempt gave its claim back");
 
 			var replay = await UnitStatus().SaveUnitStatus(UnitInput(withRoles: true), CancellationToken.None);
@@ -312,6 +312,103 @@ namespace Resgrid.Tests.Web.Services
 			_units.Verify(x => x.AddAllUnitStateRolesAsync(It.Is<List<UnitStateRole>>(r => r.Single().UnitStateId == 900 && r.Single().UserId == RiderId),
 				It.IsAny<CancellationToken>()), Times.Exactly(2));
 			_actionLogs.Verify(x => x.CreateUnitLinkedStatus(RiderId, DepartmentId, 900, "PMRT A1", It.IsAny<CancellationToken>()), Times.Once);
+			_receipts.Receipts.Single().State.Should().Be((int)InboundEmailReceiptStates.Completed);
+		}
+
+		[Test]
+		public async Task a_replay_after_a_linked_status_failed_sets_only_the_riders_not_yet_set_and_seats_nobody_again()
+		{
+			// Two riders: both are seated, the first rider's linked status commits, the second rider's fails.
+			const string secondRider = "rider-2";
+			var input = UnitInput(withRoles: true);
+			input.Roles.Add(new UnitStatusRoleInput { UserId = secondRider, RoleId = "7", EventId = OutboxEventId });
+
+			var linked = new Dictionary<string, ActionLog>();
+			var failSecondRider = true;
+			_actionLogs.Setup(x => x.CreateUnitLinkedStatus(It.IsAny<string>(), DepartmentId, It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((string userId, int departmentId, int unitStateId, string unitName, CancellationToken _) =>
+				{
+					if (userId == secondRider && failSecondRider)
+					{
+						failSecondRider = false;
+						throw new InvalidOperationException("ActionLogs insert failed.");
+					}
+
+					return linked[userId] = new ActionLog { ActionLogId = 700 + linked.Count, UserId = userId, UnitStateId = unitStateId };
+				});
+			_actionLogs.Setup(x => x.GetLastActionLogForUserNoLimitAsync(It.IsAny<string>()))
+				.ReturnsAsync((string userId) => linked.TryGetValue(userId, out var log) ? log : null);
+			var seated = new List<UnitStateRole>();
+			_units.Setup(x => x.AddAllUnitStateRolesAsync(It.IsAny<List<UnitStateRole>>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((List<UnitStateRole> roles, CancellationToken _) => { seated.AddRange(roles); return roles.Count > 0; });
+			_units.Setup(x => x.GetRolesForUnitStateAsync(900)).ReturnsAsync(() => seated.ToList());
+
+			var first = await UnitStatus().SaveUnitStatus(input, CancellationToken.None);
+
+			first.Result.Should().BeOfType<BadRequestResult>();
+			((InboundEmailPendingSteps)_receipts.Receipts.Single().PendingSteps).Should().Be(InboundEmailPendingSteps.UnitLinkedStatuses,
+				"the riders were seated before the linked statuses failed");
+
+			var replay = await UnitStatus().SaveUnitStatus(input, CancellationToken.None);
+
+			Id(replay).Should().Be("900");
+			seated.Select(r => r.UserId).Should().Equal(RiderId, secondRider);
+			_actionLogs.Verify(x => x.CreateUnitLinkedStatus(RiderId, DepartmentId, 900, It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
+			_actionLogs.Verify(x => x.CreateUnitLinkedStatus(secondRider, DepartmentId, 900, It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Exactly(2));
+			linked.Keys.Should().BeEquivalentTo(new[] { RiderId, secondRider });
+			_receipts.Receipts.Single().State.Should().Be((int)InboundEmailReceiptStates.Completed);
+		}
+
+		[Test]
+		public async Task a_replay_after_some_riders_were_seated_seats_only_the_rest()
+		{
+			const string secondRider = "rider-2";
+			var input = UnitInput(withRoles: true);
+			input.Roles.Add(new UnitStatusRoleInput { UserId = secondRider, RoleId = "7", EventId = OutboxEventId });
+
+			// Roles are saved one by one: the first rider's seat committed before the insert failed.
+			var seated = new List<UnitStateRole>();
+			var failOnce = true;
+			_units.Setup(x => x.AddAllUnitStateRolesAsync(It.IsAny<List<UnitStateRole>>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((List<UnitStateRole> roles, CancellationToken _) =>
+				{
+					if (failOnce)
+					{
+						failOnce = false;
+						seated.Add(roles.First());
+						throw new InvalidOperationException("UnitStateRoles insert failed.");
+					}
+
+					seated.AddRange(roles);
+					return true;
+				});
+			_units.Setup(x => x.GetRolesForUnitStateAsync(900)).ReturnsAsync(() => seated.ToList());
+
+			await UnitStatus().SaveUnitStatus(input, CancellationToken.None);
+			var replay = await UnitStatus().SaveUnitStatus(input, CancellationToken.None);
+
+			Id(replay).Should().Be("900");
+			seated.Select(r => r.UserId).Should().Equal(RiderId, secondRider);
+		}
+
+		[Test]
+		public async Task a_unit_status_whose_save_failed_after_the_row_committed_is_answered_with_that_row_on_replay()
+		{
+			// SetUnitStateAsync saves (and announces) the state before its protection step, then throws.
+			_units.Setup(x => x.SetUnitStateAsync(It.IsAny<UnitState>(), DepartmentId, It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.Returns((UnitState state, int departmentId, CancellationToken _, bool __) =>
+				{
+					state.UnitStateId = 900 + _savedStates.Count;
+					_savedStates.Add(state);
+					throw new InvalidOperationException("Protected write blocked (broker_unavailable).");
+				});
+
+			var first = await UnitStatus().SaveUnitStatus(UnitInput(), CancellationToken.None);
+			var replay = await UnitStatus().SaveUnitStatus(UnitInput(), CancellationToken.None);
+
+			first.Result.Should().BeOfType<BadRequestResult>();
+			Id(replay).Should().Be("900");
+			_savedStates.Should().ContainSingle();
 			_receipts.Receipts.Single().State.Should().Be((int)InboundEmailReceiptStates.Completed);
 		}
 
@@ -374,6 +471,26 @@ namespace Resgrid.Tests.Web.Services
 		}
 
 		[Test]
+		public async Task a_personnel_status_whose_save_failed_after_the_row_committed_is_answered_with_that_row_on_replay()
+		{
+			_actionLogs.Setup(x => x.SaveActionLogAsync(It.IsAny<ActionLog>(), It.IsAny<CancellationToken>()))
+				.Returns((ActionLog log, CancellationToken _) =>
+				{
+					log.ActionLogId = 500 + _savedLogs.Count;
+					_savedLogs.Add(log);
+					throw new InvalidOperationException("Protected write blocked (broker_unavailable).");
+				});
+
+			var first = await PersonStatus().SavePersonStatus(PersonInput(), CancellationToken.None);
+			var replay = await PersonStatus().SavePersonStatus(PersonInput(), CancellationToken.None);
+
+			first.Result.Should().BeOfType<BadRequestResult>();
+			Id(replay).Should().Be("500");
+			_savedLogs.Should().ContainSingle();
+			_receipts.Receipts.Single().State.Should().Be((int)InboundEmailReceiptStates.Completed);
+		}
+
+		[Test]
 		public async Task a_personnel_status_without_an_event_id_is_saved_every_time_as_before()
 		{
 			await PersonStatus().SavePersonStatus(PersonInput(eventId: ""), CancellationToken.None);
@@ -401,6 +518,28 @@ namespace Resgrid.Tests.Web.Services
 			var receipt = _receipts.Receipts.Should().ContainSingle().Subject;
 			receipt.Kind.Should().Be((int)InboundEmailKinds.ApiPersonStaffing);
 			receipt.State.Should().Be((int)InboundEmailReceiptStates.Completed);
+		}
+
+		[Test]
+		public async Task a_staffing_whose_save_failed_after_the_row_committed_is_answered_with_that_row_on_replay()
+		{
+			_userStates.Setup(x => x.CreateUserStateAsync(It.IsAny<UserState>(), It.IsAny<CancellationToken>()))
+				.Returns((UserState state, CancellationToken _) =>
+				{
+					state.UserStateId = 300 + _savedStaffings.Count;
+					_savedStaffings.Add(state);
+					throw new InvalidOperationException("Protected write blocked (broker_unavailable).");
+				});
+
+			var first = await PersonStaffing().SavePersonStaffing(StaffingInput(), CancellationToken.None);
+			var replay = await PersonStaffing().SavePersonStaffing(StaffingInput(), CancellationToken.None);
+
+			first.Result.Should().BeOfType<BadRequestResult>();
+			Id(replay).Should().Be("300");
+			_savedStaffings.Should().ContainSingle();
+			_savedStaffings.Single().State.Should().Be((int)UserStateTypes.Committed);
+			_savedStaffings.Single().UserId.Should().Be(UserId);
+			_receipts.Receipts.Single().State.Should().Be((int)InboundEmailReceiptStates.Completed);
 		}
 
 		[Test]

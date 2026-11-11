@@ -31,6 +31,15 @@ namespace Resgrid.Model.Providers
 			new GeocodeResult { Outcome = GeocodeOutcome.Found, Latitude = latitude, Longitude = longitude };
 
 		public static GeocodeResult Of(GeocodeOutcome outcome) => new GeocodeResult { Outcome = outcome };
+
+		/// <summary>
+		/// A position a POI can stand at. Out of range is usually latitude and longitude swapped; 0,0 is a converter's (or a
+		/// geocoder's) placeholder for "not located".
+		/// </summary>
+		public static bool IsValidPosition(double latitude, double longitude) =>
+			!double.IsNaN(latitude) && !double.IsNaN(longitude) &&
+			latitude >= -90 && latitude <= 90 && longitude >= -180 && longitude <= 180 &&
+			!(latitude == 0 && longitude == 0);
 	}
 
 	/// <summary>

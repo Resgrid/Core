@@ -144,9 +144,9 @@ namespace Resgrid.Services
 			return await _poiImportsRepository.SaveOrUpdateAsync(import, cancellationToken);
 		}
 
-		public async Task<List<PoiImport>> GetRecentImportsAsync(int departmentId, int max = 10)
+		public async Task<List<PoiImport>> GetRecentImportsAsync(int departmentId, int max = 10, string userId = null)
 		{
-			return await _poiImportsRepository.GetRecentForDepartmentAsync(departmentId, max);
+			return await _poiImportsRepository.GetRecentForDepartmentAsync(departmentId, max, userId);
 		}
 
 		public List<PoiImportRow> GetUnlocatedRows(PoiImport import)
@@ -162,14 +162,15 @@ namespace Resgrid.Services
 			{
 				// A queued import starts by locating; a stopped one resumes where it was (saving resumes after the POIs it saved).
 				var resumeAt = candidate.Status == (int)PoiImportStatus.Saving ? PoiImportStatus.Saving : PoiImportStatus.Locating;
-				if (!await _poiImportsRepository.TryClaimAsync(candidate.PoiImportId, candidate.Status, (int)resumeAt, staleBefore, cancellationToken))
+				var claimToken = Guid.NewGuid().ToString();
+				if (!await _poiImportsRepository.TryClaimAsync(candidate.PoiImportId, candidate.Status, (int)resumeAt, staleBefore, claimToken, cancellationToken))
 					continue;
 
 				var import = await _poiImportsRepository.GetByIdAsync(candidate.PoiImportId);
 				if (import == null)
 					continue;
 
-				await RunAsync(import, cancellationToken);
+				await RunAsync(import, claimToken, cancellationToken);
 				return true;
 			}
 
@@ -181,13 +182,26 @@ namespace Resgrid.Services
 			return await _poiImportsRepository.DeleteFinishedBeforeAsync(DateTime.UtcNow - Retention, cancellationToken);
 		}
 
-		private async Task RunAsync(PoiImport import, CancellationToken cancellationToken)
+		/// <summary>Thrown inside a run whose claim another run took over (this one stalled past <see cref="StaleAfter"/>).</summary>
+		private sealed class ClaimLostException : Exception
 		{
+		}
+
+		private async Task RunAsync(PoiImport import, string claimToken, CancellationToken cancellationToken)
+		{
+			// Every write to the import names this run's claim: a run that stalled past the stale period and was replaced stops
+			// at its next write instead of overwriting (or releasing, or failing) the run that took the import over.
+			async Task SaveAsync()
+			{
+				if (!await _poiImportsRepository.SaveRunAsync(import, claimToken, CancellationToken.None))
+					throw new ClaimLostException();
+			}
+
 			try
 			{
 				if (import.Attempts > MaximumAttempts)
 				{
-					await FailAsync(import, string.Format("The import stopped {0} times before it finished and was given up.", MaximumAttempts));
+					await FailAsync(import, claimToken, string.Format("The import stopped {0} times before it finished and was given up.", MaximumAttempts));
 					return;
 				}
 
@@ -195,7 +209,7 @@ namespace Resgrid.Services
 				var type = await _mappingService.GetTypeByIdAsync(import.PoiTypeId);
 				if (type == null || type.DepartmentId != import.DepartmentId)
 				{
-					await FailAsync(import, "The POI type was deleted before the import ran.");
+					await FailAsync(import, claimToken, "The POI type was deleted before the import ran.");
 					return;
 				}
 
@@ -208,7 +222,9 @@ namespace Resgrid.Services
 					if (DateTime.UtcNow - lastBeat < HeartbeatInterval)
 						return;
 
-					await _poiImportsRepository.HeartbeatAsync(import.PoiImportId, CancellationToken.None);
+					if (!await _poiImportsRepository.HeartbeatAsync(import.PoiImportId, claimToken, CancellationToken.None))
+						throw new ClaimLostException();
+
 					lastBeat = DateTime.UtcNow;
 				}
 
@@ -225,7 +241,7 @@ namespace Resgrid.Services
 						import.RetryAfter = DateTime.UtcNow + LookupRetryDelays[Math.Min(waiting.Max(r => r.LookupAttempts), LookupRetryDelays.Length) - 1];
 						import.HeartbeatOn = null;
 						import.Attempts = 0;
-						await _poiImportsRepository.SaveOrUpdateAsync(import, CancellationToken.None);
+						await SaveAsync();
 						return;
 					}
 
@@ -234,13 +250,15 @@ namespace Resgrid.Services
 					import.RetryAfter = null;
 					import.Status = (int)PoiImportStatus.Saving;
 					import.HeartbeatOn = DateTime.UtcNow;
-					await _poiImportsRepository.SaveOrUpdateAsync(import, CancellationToken.None);
+					await SaveAsync();
 				}
 
+				// Each POI records its row (Pois.PoiImportRow, unique per import), so a resumed import carries on after the last row
+				// it saved. Counting the saved POIs instead would go wrong once one of them is deleted while the import runs.
 				var positioned = rows.Where(r => r.HasPosition).ToList();
-				var saved = await _poiImportsRepository.CountSavedPoisAsync(import.PoiImportId, CancellationToken.None);
+				var lastSaved = await _poiImportsRepository.GetLastSavedRowAsync(import.PoiImportId, CancellationToken.None);
 
-				for (var i = saved; i < positioned.Count; i++)
+				for (var i = (lastSaved ?? -1) + 1; i < positioned.Count; i++)
 				{
 					cancellationToken.ThrowIfCancellationRequested();
 
@@ -254,7 +272,8 @@ namespace Resgrid.Services
 						Note = row.Note,
 						Latitude = row.Latitude.Value,
 						Longitude = row.Longitude.Value,
-						PoiImportId = import.PoiImportId
+						PoiImportId = import.PoiImportId,
+						PoiImportRow = i
 					}, CancellationToken.None);
 
 					await BeatAsync();
@@ -281,12 +300,17 @@ namespace Resgrid.Services
 				import.Status = (int)PoiImportStatus.Complete;
 				import.CompletedOn = DateTime.UtcNow;
 				import.HeartbeatOn = null;
-				await _poiImportsRepository.SaveOrUpdateAsync(import, CancellationToken.None);
+				await SaveAsync();
+			}
+			catch (ClaimLostException)
+			{
+				// Another run owns the import now and finishes it; this one has nothing left to write.
+				Logging.LogInfo($"PoiImportService stopped POI import {import.PoiImportId} for department {import.DepartmentId}: another worker run took it over.");
 			}
 			catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
 			{
 				// The worker is stopping: the next one resumes the import straight away instead of waiting out the stale period.
-				await _poiImportsRepository.ReleaseAsync(import.PoiImportId, CancellationToken.None);
+				await _poiImportsRepository.ReleaseAsync(import.PoiImportId, claimToken, CancellationToken.None);
 				throw;
 			}
 			catch (Exception ex)
@@ -294,9 +318,9 @@ namespace Resgrid.Services
 				Logging.LogException(ex, $"PoiImportService could not run POI import {import.PoiImportId} for department {import.DepartmentId}.");
 
 				if (import.Attempts >= MaximumAttempts)
-					await FailAsync(import, string.Format("The import failed {0} times and was given up. POIs it saved before failing were kept.", MaximumAttempts));
+					await FailAsync(import, claimToken, string.Format("The import failed {0} times and was given up. POIs it saved before failing were kept.", MaximumAttempts));
 				else
-					await _poiImportsRepository.ReleaseAsync(import.PoiImportId, CancellationToken.None);
+					await _poiImportsRepository.ReleaseAsync(import.PoiImportId, claimToken, CancellationToken.None);
 			}
 		}
 
@@ -397,7 +421,8 @@ namespace Resgrid.Services
 			}
 		}
 
-		private async Task FailAsync(PoiImport import, string error)
+		/// <summary>Records the import as given up; nothing when another run has taken it over since.</summary>
+		private async Task FailAsync(PoiImport import, string claimToken, string error)
 		{
 			import.ImportedCount = await _poiImportsRepository.CountSavedPoisAsync(import.PoiImportId, CancellationToken.None);
 			import.Status = (int)PoiImportStatus.Failed;
@@ -407,7 +432,9 @@ namespace Resgrid.Services
 			import.RetryAfter = null;
 			import.CompletedOn = DateTime.UtcNow;
 			import.HeartbeatOn = null;
-			await _poiImportsRepository.SaveOrUpdateAsync(import, CancellationToken.None);
+
+			if (!await _poiImportsRepository.SaveRunAsync(import, claimToken, CancellationToken.None))
+				Logging.LogInfo($"PoiImportService did not fail POI import {import.PoiImportId}: another worker run took it over.");
 		}
 
 		private static List<PoiImportRow> Rows(string json)

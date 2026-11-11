@@ -188,10 +188,28 @@ namespace Resgrid.Web.Services.Controllers.v4
 				if (receipt.Outcome == InboundEmailClaimOutcomes.AlreadyProcessed)
 					return StatusCode(StatusCodes.Status409Conflict);
 
-				if (String.IsNullOrWhiteSpace(input.Note))
-					savedState = await _userStateService.CreateUserState(userToSetStatusFor.UserId, DepartmentId, staffingType, cancellationToken);
-				else
-					savedState = await _userStateService.CreateUserState(userToSetStatusFor.UserId, DepartmentId, staffingType, input.Note, cancellationToken);
+				var pending = new UserState
+				{
+					UserId = userToSetStatusFor.UserId,
+					DepartmentId = DepartmentId,
+					State = staffingType,
+					Timestamp = DateTime.UtcNow,
+					Note = String.IsNullOrWhiteSpace(input.Note) ? null : input.Note
+				};
+
+				try
+				{
+					savedState = await _userStateService.CreateUserStateAsync(pending, cancellationToken);
+				}
+				catch
+				{
+					// The staffing row commits before the service's later work (protection, the staffing event): keep the id a
+					// failure left behind, so the replay answers with this staffing instead of saving a second one.
+					if (pending.UserStateId > 0)
+						await _inboundEmailReceiptsService.MarkSavedAsync(receipt, pending.UserStateId, InboundEmailPendingSteps.None);
+
+					throw;
+				}
 
 				await _inboundEmailReceiptsService.MarkSavedAsync(receipt, savedState.UserStateId, InboundEmailPendingSteps.None);
 				await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);

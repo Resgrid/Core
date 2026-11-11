@@ -769,10 +769,51 @@ namespace Resgrid.Tests.Security.Audit20261005
 		}
 
 		[Test]
-		public async Task PoiImportsPanel_is_for_map_admins_only()
+		public async Task PoiImportsPanel_is_for_poi_importers_only()
 		{
 			ShouldBeRefused(await Build<MappingController>().PoiImportsPanel());
-			M<IPoiImportService>().Verify(x => x.GetRecentImportsAsync(It.IsAny<int>(), It.IsAny<int>()), Times.Never);
+			M<IPoiImportService>().Verify(x => x.GetRecentImportsAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>()), Times.Never);
+		}
+
+		private static readonly Claim HydrantManager = new Claim(Resgrid.Providers.Claims.ResgridClaimTypes.Resources.Record, Resgrid.Providers.Claims.ResgridClaimTypes.Actions.PreventionAdmin);
+
+		[Test]
+		public async Task A_hydrant_manager_who_cannot_open_POIs_follows_their_import_on_the_import_page()
+		{
+			// CanImportPois admits Records prevention admins; the POIs page (map data management) does not.
+			Localizer<Resgrid.Localization.Areas.User.Mapping.Mapping>();
+			M<IMappingService>().Setup(x => x.GetTypeByIdAsync(5)).ReturnsAsync(new PoiType { PoiTypeId = 5, DepartmentId = DepartmentId, Name = "Stores" });
+			var file = new PoiImportFile { Rows = new List<PoiImportRow> { new PoiImportRow { Name = "Leon", Address = "1004 W 1st, Leon, IA, 50144" } } };
+			M<IPoiImportService>().Setup(x => x.ReadFile(It.IsAny<System.IO.Stream>(), "stores.csv")).Returns(file);
+			var controller = Build<MappingController>(HydrantManager);
+			controller.TempData = new Microsoft.AspNetCore.Mvc.ViewFeatures.TempDataDictionary(controller.HttpContext, Mock.Of<Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataProvider>());
+
+			var redirect = (await controller.ImportPOIs(new ImportPOIsView { TypeId = 5 }, PoiUpload("stores.csv"), CancellationToken.None))
+				.Should().BeOfType<RedirectToActionResult>().Which;
+
+			redirect.ActionName.Should().Be("ImportPOIs");
+			redirect.RouteValues["poiTypeId"].Should().Be(5);
+			ShouldBeRefused(await controller.POIs());
+		}
+
+		[Test]
+		public async Task A_hydrant_manager_sees_only_their_own_imports()
+		{
+			Localizer<Resgrid.Localization.Areas.User.Mapping.Mapping>();
+			var mine = new List<PoiImport>
+			{
+				new PoiImport { PoiImportId = "mine", UserId = UserId, PoiTypeId = 5, FileName = "stores.csv", Status = (int)PoiImportStatus.Saving, TotalRows = 3, AddedOn = new DateTime(2026, 11, 11, 18, 0, 0) }
+			};
+			M<IPoiImportService>().Setup(x => x.GetRecentImportsAsync(DepartmentId, 10, UserId)).ReturnsAsync(mine);
+			var controller = Build<MappingController>(HydrantManager);
+			controller.TempData = new Microsoft.AspNetCore.Mvc.ViewFeatures.TempDataDictionary(controller.HttpContext, Mock.Of<Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataProvider>());
+
+			var page = (await controller.ImportPOIs(5)).Should().BeOfType<ViewResult>().Which.Model.Should().BeOfType<ImportPOIsView>().Which;
+			var panel = (await controller.PoiImportsPanel()).Should().BeOfType<PartialViewResult>().Which.Model.Should().BeOfType<List<PoiImportListItem>>().Which;
+
+			page.Imports.Should().ContainSingle().Which.IsActive.Should().BeTrue();
+			panel.Should().ContainSingle();
+			M<IPoiImportService>().Verify(x => x.GetRecentImportsAsync(DepartmentId, It.IsAny<int>(), null), Times.Never, "the department's list is for map administrators");
 		}
 
 		/// <summary>A running import waiting on a geocoder outage, and a finished one with every kind of unimported row.</summary>
@@ -789,7 +830,7 @@ namespace Resgrid.Tests.Security.Audit20261005
 				PendingRetryCount = 3, RetryAfter = new DateTime(2026, 11, 11, 19, 2, 0), AddedOn = new DateTime(2026, 11, 11, 19, 0, 0)
 			};
 			var imports = new List<PoiImport> { running, done };
-			M<IPoiImportService>().Setup(x => x.GetRecentImportsAsync(DepartmentId, 10)).ReturnsAsync(imports);
+			M<IPoiImportService>().Setup(x => x.GetRecentImportsAsync(DepartmentId, 10, null)).ReturnsAsync(imports);
 			M<IPoiImportService>().Setup(x => x.GetUnlocatedRows(done)).Returns(new List<PoiImportRow>
 			{
 				new PoiImportRow { Name = "Gretna", Lookup = (int)PoiImportRowLookup.NotFound },

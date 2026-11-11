@@ -168,8 +168,10 @@ namespace Resgrid.Providers.GeoLocationProvider.Geocoding
 
 			using (document)
 			{
-				// Mapbox answers "no match" with 200 and an empty feature list.
-				if (!ok || document == null || !document.RootElement.TryGetProperty("features", out _))
+				// Mapbox answers "no match" with 200 and an empty feature list; any other shape (no list, "features": null)
+				// is not an answer about the address.
+				if (!ok || document == null || document.RootElement.ValueKind != JsonValueKind.Object ||
+				    !document.RootElement.TryGetProperty("features", out var features) || features.ValueKind != JsonValueKind.Array)
 					throw new GeocodingUnavailableException(Name, status);
 
 				var feature = FirstFeature(ok, document);
@@ -215,14 +217,18 @@ namespace Resgrid.Providers.GeoLocationProvider.Geocoding
 	{
 		/// <summary>
 		/// The first place of a successful Nominatim/LocationIQ search: null for an empty array (no match), and a
-		/// <see cref="GeocodingUnavailableException"/> for a body that is not a result array at all.
+		/// <see cref="GeocodingUnavailableException"/> for a body that is not a result array at all or whose first place has
+		/// no readable position (a result was there, so "no match" would be wrong and never asked again).
 		/// </summary>
 		public static GeocodeMatch FirstPlace(string provider, int status, JsonDocument document)
 		{
 			if (document == null || document.RootElement.ValueKind != JsonValueKind.Array)
 				throw new GeocodingUnavailableException(provider, status);
 
-			return document.RootElement.GetArrayLength() == 0 ? null : ReadPlace(document.RootElement[0]);
+			if (document.RootElement.GetArrayLength() == 0)
+				return null;
+
+			return ReadPlace(document.RootElement[0]) ?? throw new GeocodingUnavailableException(provider, status);
 		}
 
 		/// <summary>A Nominatim/LocationIQ place: "lat"/"lon" as strings, "display_name".</summary>

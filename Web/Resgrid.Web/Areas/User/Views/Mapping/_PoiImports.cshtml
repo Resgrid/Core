@@ -1,7 +1,8 @@
 @model List<Resgrid.Web.Areas.User.Models.Mapping.PoiImportListItem>
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.Mapping> localizer
-@* The POIs page's imports panel. While an import runs, resgrid.mapping.pois.js re-fetches this partial
-   (Mapping/PoiImportsPanel) and swaps it in; data-active tells the script whether to keep polling. *@
+@* The imports panel of the POIs page and the Import POIs page. While an import runs, resgrid.mapping.pois.js re-fetches
+   this partial (Mapping/PoiImportsPanel) and swaps it in; data-active tells the script whether to keep polling. Only map
+   administrators can open the POIs page the refresh link goes to. *@
 @{
 	var active = Model != null && Model.Any(i => i.IsActive);
 }
@@ -11,9 +12,12 @@
 		<div class="ibox float-e-margins">
 			<div class="ibox-title">
 				<h5>@localizer["PoiImportsHeader"]</h5>
-				<div class="ibox-tools">
-					<a asp-controller="Mapping" asp-action="POIs" asp-route-area="User" class="btn btn-xs btn-white">@localizer["PoiImportsRefresh"]</a>
-				</div>
+				@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				{
+					<div class="ibox-tools">
+						<a asp-controller="Mapping" asp-action="POIs" asp-route-area="User" class="btn btn-xs btn-white">@localizer["PoiImportsRefresh"]</a>
+					</div>
+				}
 			</div>
 			<div class="ibox-content">
 				@if (active)

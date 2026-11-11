@@ -325,19 +325,37 @@ namespace Resgrid.Web.Services.Controllers.v4
 					if (receipt.Outcome == InboundEmailClaimOutcomes.Resume)
 					{
 						// The earlier attempt saved and announced the state, then failed: only its riding roles can still be owed.
-						if (receipt.Has(InboundEmailPendingSteps.UnitStateRoles))
-							await SaveUnitStateRolesAsync(stateInput, unit, receipt.EntityId.Value, setPersonnelStatus, cancellationToken);
+						if (receipt.Has(InboundEmailPendingSteps.UnitStateRoles) || receipt.Has(InboundEmailPendingSteps.UnitLinkedStatuses))
+							await SaveUnitStateRolesAsync(stateInput, unit, receipt.EntityId.Value, setPersonnelStatus, receipt, true, cancellationToken);
 
 						await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
 						return SavedUnitStatusResult(result, receipt.EntityId.Value);
 					}
 
-					var savedState = await _unitsService.SetUnitStateAsync(state, DepartmentId);
 					var owesRoles = stateInput.Roles != null && stateInput.Roles.Count > 0;
+					var owedSteps = !owesRoles
+						? InboundEmailPendingSteps.None
+						: setPersonnelStatus
+							? InboundEmailPendingSteps.UnitStateRoles | InboundEmailPendingSteps.UnitLinkedStatuses
+							: InboundEmailPendingSteps.UnitStateRoles;
+
+					UnitState savedState;
+					try
+					{
+						savedState = await _unitsService.SetUnitStateAsync(state, DepartmentId);
+					}
+					catch
+					{
+						// The state row commits before the service's later work (protection, the status event, call close-out):
+						// keep the id a failure left behind, so the replay answers with this state instead of saving a second one.
+						if (state.UnitStateId > 0)
+							await _inboundEmailReceiptsService.MarkSavedAsync(receipt, state.UnitStateId, owedSteps);
+
+						throw;
+					}
 
 					// Recorded as soon as the row exists, so a failure below is resumed by the replay rather than saved twice.
-					await _inboundEmailReceiptsService.MarkSavedAsync(receipt, savedState.UnitStateId,
-						owesRoles ? InboundEmailPendingSteps.UnitStateRoles : InboundEmailPendingSteps.None);
+					await _inboundEmailReceiptsService.MarkSavedAsync(receipt, savedState.UnitStateId, owedSteps);
 
 					// Entity-need response: a unit that command requested answering the call lands on the
 					// incident log. Best-effort — never blocks the status save.
@@ -355,7 +373,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 					}
 
 					if (owesRoles)
-						await SaveUnitStateRolesAsync(stateInput, unit, savedState.UnitStateId, setPersonnelStatus, cancellationToken);
+						await SaveUnitStateRolesAsync(stateInput, unit, savedState.UnitStateId, setPersonnelStatus, receipt, false, cancellationToken);
 
 					await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
 
@@ -390,9 +408,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 		}
 
 		/// <summary>
-		/// The members riding the unit for a saved state, and (when the department links them) their personnel statuses.
+		/// The members riding the unit for a saved state, and (when the department links them) their personnel statuses. Each
+		/// part is checked off on the receipt once written. A replay resuming a failed attempt (<paramref name="resuming"/>)
+		/// runs only the parts still owed and skips the riders that attempt already wrote, so nobody is seated or set twice.
 		/// </summary>
-		private async Task SaveUnitStateRolesAsync(UnitStatusInput stateInput, Unit unit, int unitStateId, bool setPersonnelStatus, CancellationToken cancellationToken)
+		private async Task SaveUnitStateRolesAsync(UnitStatusInput stateInput, Unit unit, int unitStateId, bool setPersonnelStatus,
+			InboundEmailReceiptClaim receipt, bool resuming, CancellationToken cancellationToken)
 		{
 			var unitRoles = await _unitsService.GetRolesForUnitAsync(unit.UnitId);
 			var roles = new List<UnitStateRole>();
@@ -434,17 +455,33 @@ namespace Resgrid.Web.Services.Controllers.v4
 				}
 			}
 
-			await _unitsService.AddAllUnitStateRolesAsync(roles);
-
-			if (setPersonnelStatus)
+			if (!resuming || receipt.Has(InboundEmailPendingSteps.UnitStateRoles))
 			{
-				if (roles.Count > 0)
+				var toSeat = roles;
+				if (resuming)
 				{
-					foreach (var role in roles)
-					{
-						await _actionLogsService.CreateUnitLinkedStatus(role.UserId, DepartmentId, unitStateId, unit.Name, cancellationToken);
-					}
+					// Roles are saved one by one, so the failed attempt may have seated some of the riders already.
+					var seated = new HashSet<string>((await _unitsService.GetRolesForUnitStateAsync(unitStateId) ?? new List<UnitStateRole>())
+						.Select(r => r.UserId).Where(id => id != null), StringComparer.OrdinalIgnoreCase);
+					toSeat = roles.Where(r => !seated.Contains(r.UserId)).ToList();
 				}
+
+				await _unitsService.AddAllUnitStateRolesAsync(toSeat);
+				await _inboundEmailReceiptsService.CompleteStepAsync(receipt, InboundEmailPendingSteps.UnitStateRoles);
+			}
+
+			if (setPersonnelStatus && (!resuming || receipt.Has(InboundEmailPendingSteps.UnitLinkedStatuses)))
+			{
+				foreach (var role in roles)
+				{
+					// A rider whose latest status is already this state's linked one was set by the failed attempt.
+					if (resuming && (await _actionLogsService.GetLastActionLogForUserNoLimitAsync(role.UserId))?.UnitStateId == unitStateId)
+						continue;
+
+					await _actionLogsService.CreateUnitLinkedStatus(role.UserId, DepartmentId, unitStateId, unit.Name, cancellationToken);
+				}
+
+				await _inboundEmailReceiptsService.CompleteStepAsync(receipt, InboundEmailPendingSteps.UnitLinkedStatuses);
 			}
 		}
 

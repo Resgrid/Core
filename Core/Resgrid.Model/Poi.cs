@@ -32,6 +32,12 @@ namespace Resgrid.Model
 		/// <summary>The background import (<see cref="PoiImport"/>) that created this POI; null for POIs added by hand.</summary>
 		public string PoiImportId { get; set; }
 
+		/// <summary>
+		/// With <see cref="PoiImportId"/>: which of the import's located rows this POI is (0-based, file order). Unique per import,
+		/// so a resumed import carries on after the last row it saved and can never save a row twice.
+		/// </summary>
+		public int? PoiImportRow { get; set; }
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue

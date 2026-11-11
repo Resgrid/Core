@@ -228,7 +228,21 @@ namespace Resgrid.Web.Services.Controllers.v4
 				if (receipt.Outcome == InboundEmailClaimOutcomes.AlreadyProcessed)
 					return StatusCode(StatusCodes.Status409Conflict);
 
-				var log = await SavePersonStatusAsync(input.UserId, statusType, geolocation, destinationId, destinationType, input.Note, input.TimestampUtc, input.Timestamp, cancellationToken);
+				var pending = NewPersonStatus(input.UserId, statusType, geolocation, destinationId, destinationType, input.Note, input.TimestampUtc, input.Timestamp);
+				ActionLog log;
+				try
+				{
+					log = await _actionLogsService.SaveActionLogAsync(pending, cancellationToken);
+				}
+				catch
+				{
+					// The status row commits before the service's later work (protection, the status event): keep the id a failure
+					// left behind, so the replay answers with this status instead of saving a second one.
+					if (pending.ActionLogId > 0)
+						await _inboundEmailReceiptsService.MarkSavedAsync(receipt, pending.ActionLogId, InboundEmailPendingSteps.None);
+
+					throw;
+				}
 
 				// Nothing else is owed to the saved status: the incident-log line below is best-effort.
 				await _inboundEmailReceiptsService.MarkSavedAsync(receipt, log.ActionLogId, InboundEmailPendingSteps.None);
@@ -387,7 +401,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private async Task<ActionLog> SavePersonStatusAsync(string userId, int statusType, string geolocation, int? destinationId, int? destinationType,
 			string note, DateTime? timestampUtc, DateTime? timestamp, CancellationToken cancellationToken)
 		{
-			var log = new ActionLog
+			return await _actionLogsService.SaveActionLogAsync(NewPersonStatus(userId, statusType, geolocation, destinationId, destinationType, note, timestampUtc, timestamp),
+				cancellationToken);
+		}
+
+		private ActionLog NewPersonStatus(string userId, int statusType, string geolocation, int? destinationId, int? destinationType,
+			string note, DateTime? timestampUtc, DateTime? timestamp)
+		{
+			return new ActionLog
 			{
 				UserId = userId,
 				DepartmentId = DepartmentId,
@@ -398,8 +419,6 @@ namespace Resgrid.Web.Services.Controllers.v4
 				Note = note,
 				Timestamp = StatusTimestampHelper.ResolveStatusTimeUtc(timestampUtc, timestamp, DateTime.UtcNow)
 			};
-
-			return await _actionLogsService.SaveActionLogAsync(log, cancellationToken);
 		}
 
 		private async Task<bool> IsValidDestinationAsync(int destinationId, int destinationType)

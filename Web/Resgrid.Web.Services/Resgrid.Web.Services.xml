@@ -5523,9 +5523,11 @@
             <param name="statusInput">StatusInput object with the Status/Action to set.</param>
             <returns>Returns HttpStatusCode Created if successful, BadRequest otherwise.</returns>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.UnitStatusController.SaveUnitStateRolesAsync(Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput,Resgrid.Model.Unit,System.Int32,System.Boolean,System.Threading.CancellationToken)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.UnitStatusController.SaveUnitStateRolesAsync(Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput,Resgrid.Model.Unit,System.Int32,System.Boolean,Resgrid.Model.InboundEmailReceiptClaim,System.Boolean,System.Threading.CancellationToken)">
             <summary>
-            The members riding the unit for a saved state, and (when the department links them) their personnel statuses.
+            The members riding the unit for a saved state, and (when the department links them) their personnel statuses. Each
+            part is checked off on the receipt once written. A replay resuming a failed attempt (<paramref name="resuming"/>)
+            runs only the parts still owed and skips the riders that attempt already wrote, so nobody is seated or set twice.
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.UnitTrackingDevicesController">

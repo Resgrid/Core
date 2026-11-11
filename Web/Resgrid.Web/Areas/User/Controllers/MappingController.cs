@@ -427,12 +427,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(modal);
 		}
 
-		/// <summary>The POIs page's imports panel; the page polls it while an import is running.</summary>
+		/// <summary>
+		/// The imports panel of the POIs page (and of the Import POIs page, for importers who cannot open POIs); the page polls it
+		/// while an import is running.
+		/// </summary>
 		[HttpGet]
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 		public async Task<IActionResult> PoiImportsPanel()
 		{
-			if (!CanManageMapData())
+			if (!CanImportPois())
 				return Unauthorized();
 
 			return PartialView("_PoiImports", await GetPoiImportListAsync());
@@ -460,6 +463,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var model = new ImportPOIsView { HydrantsEnabled = await HydrantsAvailableAsync() };
 			model.TypeId = poiTypeId;
+			// An importer who cannot open the POIs page comes back here after an upload, to follow the import and read its report.
+			model.Message = TempData["ImportPOIsMessage"] as string;
+			model.Imports = await GetPoiImportListAsync();
 
 			return View(model);
 		}
@@ -521,16 +527,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 				await _poiImportService.QueueImportAsync(DepartmentId, modal.TypeId, type.Name, UserId, fileToUpload.FileName, file, CancellationToken.None);
 
 				TempData["ImportPOIsMessage"] = string.Format(_localizer["PoiImportQueued"].Value, Path.GetFileName(fileToUpload.FileName), file.Rows.Count);
-				return RedirectToAction("POIs");
+
+				// A hydrant manager may import POIs without managing map data, so the POIs page is closed to them.
+				return CanManageMapData() ? RedirectToAction("POIs") : RedirectToAction("ImportPOIs", new { poiTypeId = modal.TypeId });
 			}
 
 			return View(modal);
 		}
 
-		/// <summary>The department's recent POI imports, as the POIs page lists them.</summary>
+		/// <summary>
+		/// The recent POI imports the caller may follow: the department's for map administrators, otherwise only the caller's
+		/// own uploads (an importer gets the reports of what they uploaded, not the department's map data).
+		/// </summary>
 		private async Task<List<PoiImportListItem>> GetPoiImportListAsync()
 		{
-			var imports = await _poiImportService.GetRecentImportsAsync(DepartmentId, 10);
+			var imports = await _poiImportService.GetRecentImportsAsync(DepartmentId, 10, CanManageMapData() ? null : UserId);
 			if (imports == null || imports.Count == 0)
 				return new List<PoiImportListItem>();
 

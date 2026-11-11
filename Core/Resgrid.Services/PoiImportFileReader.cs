@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.VisualBasic.FileIO;
 using Resgrid.Model;
+using Resgrid.Model.Providers;
 
 namespace Resgrid.Services
 {
@@ -104,7 +105,7 @@ namespace Resgrid.Services
 				firstLine = line ?? string.Empty;
 			}
 
-			var delimiter = new[] { ',', ';', '\t' }.OrderByDescending(d => firstLine.Count(c => c == d)).First();
+			var delimiter = DetectDelimiter(firstLine);
 
 			using (var parser = new TextFieldParser(new StringReader(text)) { TextFieldType = FieldType.Delimited, HasFieldsEnclosedInQuotes = true, TrimWhiteSpace = true })
 			{
@@ -170,6 +171,40 @@ namespace Resgrid.Services
 			return result;
 		}
 
+		/// <summary>
+		/// The separator the header row uses most: comma, then semicolon, then tab on a tie. A separator inside a quoted header
+		/// ("Notes, comments") belongs to that column's name, so only the ones outside quotes are counted.
+		/// </summary>
+		private static char DetectDelimiter(string headerLine)
+		{
+			var candidates = new[] { ',', ';', '\t' };
+			var counts = new int[candidates.Length];
+			var quoted = false;
+
+			foreach (var c in headerLine ?? string.Empty)
+			{
+				// An escaped quote ("") toggles twice and leaves the state as it was.
+				if (c == '"')
+				{
+					quoted = !quoted;
+					continue;
+				}
+
+				var index = Array.IndexOf(candidates, c);
+				if (!quoted && index >= 0)
+					counts[index]++;
+			}
+
+			var best = 0;
+			for (var i = 1; i < candidates.Length; i++)
+			{
+				if (counts[i] > counts[best])
+					best = i;
+			}
+
+			return candidates[best];
+		}
+
 		private static string AddressOf(Func<Field, string> value)
 		{
 			var full = value(Field.FullAddress);
@@ -205,10 +240,7 @@ namespace Resgrid.Services
 		}
 
 		/// <summary>Out of range is usually latitude and longitude swapped; 0,0 is a converter's placeholder for "not geocoded".</summary>
-		public static bool IsValidPosition(double latitude, double longitude) =>
-			!double.IsNaN(latitude) && !double.IsNaN(longitude) &&
-			latitude >= -90 && latitude <= 90 && longitude >= -180 && longitude <= 180 &&
-			!(latitude == 0 && longitude == 0);
+		public static bool IsValidPosition(double latitude, double longitude) => GeocodeResult.IsValidPosition(latitude, longitude);
 
 		private static string Canonical(string header) =>
 			new string((header ?? string.Empty).Where(char.IsLetterOrDigit).ToArray()).ToLowerInvariant();

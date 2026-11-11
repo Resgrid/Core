@@ -78,6 +78,19 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// </summary>
 		public const string IdempotencyKeyHeader = "Idempotency-Key";
 
+		/// <summary>
+		/// A request's idempotency key: the <see cref="IdempotencyKeyHeader"/> header (the SMTP relay), else the body's
+		/// <c>IdempotencyKey</c> (an app's offline outbox sends its event id there). Null when neither is sent.
+		/// </summary>
+		internal static string ResolveIdempotencyKey(HttpRequest request, string bodyKey)
+		{
+			var header = request?.Headers[IdempotencyKeyHeader].ToString();
+			if (!string.IsNullOrWhiteSpace(header))
+				return header;
+
+			return string.IsNullOrWhiteSpace(bodyKey) ? null : bodyKey.Trim();
+		}
+
 		/// <summary>Everything SaveCall does after the call row is written; each is cleared from the receipt as it completes.</summary>
 		private const InboundEmailPendingSteps SaveCallSteps = InboundEmailPendingSteps.RunCardActivation | InboundEmailPendingSteps.WeatherAlerts |
 			InboundEmailPendingSteps.CallAddedEvent | InboundEmailPendingSteps.DispatchStatuses | InboundEmailPendingSteps.CallBroadcast |
@@ -1325,7 +1338,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			// Claimed only now, once the request is known to be valid, so a rejected request leaves nothing for its retry to trip on.
 			var receipt = await _inboundEmailReceiptsService.ClaimApiRequestAsync(InboundEmailKinds.ApiCall, effectiveDepartmentId,
-				Request.Headers[IdempotencyKeyHeader].ToString(), cancellationToken);
+				ResolveIdempotencyKey(Request, newCallInput.IdempotencyKey), cancellationToken);
 
 			if (receipt.Outcome == InboundEmailClaimOutcomes.InProgress)
 				return StatusCode(StatusCodes.Status409Conflict);

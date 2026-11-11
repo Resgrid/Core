@@ -37,6 +37,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IPersonnelRolesService _personnelRolesService;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly Model.Services.IAuthorizationService _authorizationService;
+		private readonly IInboundEmailReceiptsService _inboundEmailReceiptsService;
 
 		/// <summary>
 		/// The caller's Protected Data Grant, if they presented one. Absent means a staffing note
@@ -54,9 +55,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IPersonnelRolesService personnelRolesService,
 			IDepartmentSettingsService departmentSettingsService,
 			Model.Services.IAuthorizationService authorizationService,
-			IProtectedReadService protectedReadService
+			IProtectedReadService protectedReadService,
+			IInboundEmailReceiptsService inboundEmailReceiptsService
 			)
 		{
+			_inboundEmailReceiptsService = inboundEmailReceiptsService;
 			_protectedReadService = protectedReadService;
 			_usersService = usersService;
 			_actionLogsService = actionLogsService;
@@ -144,6 +147,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return BadRequest();
 
 			var result = new SavePersonnelStaffingResult();
+			var receipt = InboundEmailReceiptClaim.Untracked;
 
 			try
 			{
@@ -162,23 +166,55 @@ namespace Resgrid.Web.Services.Controllers.v4
 				if (input.UserId != UserId && !ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
 					return Unauthorized();
 
+				if (!int.TryParse(input.Type, out var staffingType))
+					return BadRequest();
+
+				// An app's offline outbox resends a staffing whose answer it lost with the same EventId and body
+				// (StatusWriteReplayKeys); the replay gets the staffing the first attempt saved instead of a second one. Claimed
+				// once the request is known to be valid. No EventId (or no client timestamp) is untracked, as before.
+				receipt = await _inboundEmailReceiptsService.ClaimApiRequestAsync(InboundEmailKinds.ApiPersonStaffing, DepartmentId,
+					StatusWriteReplayKeys.ForPersonStaffing(input), cancellationToken);
+
+				if (receipt.Outcome == InboundEmailClaimOutcomes.InProgress)
+					return StatusCode(StatusCodes.Status409Conflict);
+
+				if (receipt.EntityId.HasValue &&
+					(receipt.Outcome == InboundEmailClaimOutcomes.AlreadyProcessed || receipt.Outcome == InboundEmailClaimOutcomes.Resume))
+				{
+					await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
+					return SavedPersonStaffingResult(result, receipt.EntityId.Value);
+				}
+
+				if (receipt.Outcome == InboundEmailClaimOutcomes.AlreadyProcessed)
+					return StatusCode(StatusCodes.Status409Conflict);
+
 				if (String.IsNullOrWhiteSpace(input.Note))
-					savedState = await _userStateService.CreateUserState(userToSetStatusFor.UserId, DepartmentId, int.Parse(input.Type), cancellationToken);
+					savedState = await _userStateService.CreateUserState(userToSetStatusFor.UserId, DepartmentId, staffingType, cancellationToken);
 				else
-					savedState = await _userStateService.CreateUserState(userToSetStatusFor.UserId, DepartmentId, int.Parse(input.Type), input.Note, cancellationToken);
+					savedState = await _userStateService.CreateUserState(userToSetStatusFor.UserId, DepartmentId, staffingType, input.Note, cancellationToken);
 
-				result.Id = savedState.UserStateId.ToString();
-				result.PageSize = 0;
-				result.Status = ResponseHelper.Created;
-				ResponseHelper.PopulateV4ResponseData(result);
+				await _inboundEmailReceiptsService.MarkSavedAsync(receipt, savedState.UserStateId, InboundEmailPendingSteps.None);
+				await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
 
-				return Created($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/v4/Statuses/GetAllStaffingsForPersonnel", result);
+				return SavedPersonStaffingResult(result, savedState.UserStateId);
 			}
 			catch (Exception ex)
 			{
 				Logging.LogException(ex);
+				// Gives the claim back so the app's next replay is handled at once.
+				await _inboundEmailReceiptsService.ReleaseAsync(receipt);
 				return BadRequest();
 			}
+		}
+
+		private ActionResult<SavePersonnelStaffingResult> SavedPersonStaffingResult(SavePersonnelStaffingResult result, int userStateId)
+		{
+			result.Id = userStateId.ToString();
+			result.PageSize = 0;
+			result.Status = ResponseHelper.Created;
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Created($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/v4/Statuses/GetAllStaffingsForPersonnel", result);
 		}
 
 		/// <summary>

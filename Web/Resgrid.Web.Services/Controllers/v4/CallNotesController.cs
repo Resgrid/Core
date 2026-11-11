@@ -33,11 +33,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IProtectedReadService _protectedCallReadService;
 		private readonly IProtectedWriteService _protectedWriteService;
 		private readonly IAuthorizationService _authorizationService;
+		private readonly IInboundEmailReceiptsService _inboundEmailReceiptsService;
 
 		public CallNotesController(ICallsService callsService, IDepartmentsService departmentsService,
 			IProtectedReadService protectedCallReadService, IProtectedWriteService protectedWriteService,
-			IAuthorizationService authorizationService)
+			IAuthorizationService authorizationService, IInboundEmailReceiptsService inboundEmailReceiptsService)
 		{
+			_inboundEmailReceiptsService = inboundEmailReceiptsService;
 			_callsService = callsService;
 			_departmentsService = departmentsService;
 			_protectedCallReadService = protectedCallReadService;
@@ -160,7 +162,39 @@ namespace Resgrid.Web.Services.Controllers.v4
 					title: "Recent multi-factor verification is required to modify protected data.",
 					statusCode: StatusCodes.Status403Forbidden);
 
-			var saved = await _callsService.SaveCallNoteAsync(note, cancellationToken);
+			// An app's offline outbox resends a note whose answer it lost with the same key (body IdempotencyKey or the
+			// Idempotency-Key header): the resend gets the note the first attempt saved instead of a second one. Claimed only
+			// now, once the request is known to be valid, so a rejected request leaves nothing for its retry to trip on.
+			var receipt = await _inboundEmailReceiptsService.ClaimApiRequestAsync(InboundEmailKinds.ApiCallNote, DepartmentId,
+				CallsController.ResolveIdempotencyKey(Request, input.IdempotencyKey), cancellationToken);
+
+			if (receipt.Outcome == InboundEmailClaimOutcomes.InProgress)
+				return StatusCode(StatusCodes.Status409Conflict);
+
+			if (receipt.EntityId.HasValue &&
+				(receipt.Outcome == InboundEmailClaimOutcomes.AlreadyProcessed || receipt.Outcome == InboundEmailClaimOutcomes.Resume))
+			{
+				await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
+				return SavedNoteResult(result, call.CallId, receipt.EntityId.Value);
+			}
+
+			if (receipt.Outcome == InboundEmailClaimOutcomes.AlreadyProcessed)
+				return StatusCode(StatusCodes.Status409Conflict);
+
+			CallNote saved;
+			try
+			{
+				saved = await _callsService.SaveCallNoteAsync(note, cancellationToken);
+			}
+			catch
+			{
+				await _inboundEmailReceiptsService.ReleaseAsync(receipt);
+				throw;
+			}
+
+			// Recorded as soon as the row exists: a protected-write failure below still has the row (the sweep encrypts it).
+			await _inboundEmailReceiptsService.MarkSavedAsync(receipt, saved.CallNoteId, InboundEmailPendingSteps.None);
+			await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
 
 			// ADP two-phase write (plan 19.2): the identity pk is an AAD component — encrypt now
 			// that the id exists, then persist the enveloped row (companion coordinates move into
@@ -177,12 +211,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (protectedWrite.IsProtected)
 				saved = await _callsService.SaveCallNoteAsync(saved, cancellationToken);
 
-			result.Id = saved.CallNoteId.ToString();
+			return SavedNoteResult(result, saved.CallId, saved.CallNoteId);
+		}
+
+		private ActionResult<SaveCallNoteResult> SavedNoteResult(SaveCallNoteResult result, int callId, int callNoteId)
+		{
+			result.Id = callNoteId.ToString();
 			result.PageSize = 0;
 			result.Status = ResponseHelper.Created;
 			ResponseHelper.PopulateV4ResponseData(result);
 
-			return CreatedAtAction(nameof(GetCallNotes), new { callId = saved.CallId }, result);
+			return CreatedAtAction(nameof(GetCallNotes), new { callId }, result);
 		}
 
 		public static CallNoteResultData ConvertCallNote(CallNote note, string fullName, Department department)

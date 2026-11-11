@@ -457,6 +457,14 @@ namespace Resgrid.Workers.Console
 					Cron.MinuteIntervals(1),
 					stoppingToken);
 
+				// Worker ID 79: background POI imports (Mapping > POIs > Import). The upload only reads the file; this geocodes
+				// address-only rows and saves the POIs, resuming an import whose worker stopped. A single query when idle.
+				_logger.Log(LogLevel.Information, "Scheduling POI Imports");
+				await Client.ScheduleAsync("POI Imports",
+					new Commands.PoiImportCommand(79),
+					Cron.MinuteIntervals(1),
+					stoppingToken);
+
 				if (UnitTrackingConfig.LocationRetentionWorkerEnabled)
 				{
 					var retentionHour =

@@ -346,12 +346,11 @@ namespace Resgrid.Model.Services
 			CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
-		/// Gets the latest unit location asynchronous.
+		/// The unit's newest location, or null when it has none in this department. The department is part of the lookup
+		/// because every unit location index leads with it: a read by unit alone scans the whole collection (about a
+		/// second per unit on production, so GetAllUnitStatuses took 1.6 s at p50 and 11 s at p95).
 		/// </summary>
-		/// <param name="unitId">The unit identifier.</param>
-		/// <param name="timestamp">The timestamp.</param>
-		/// <returns>Task&lt;UnitLocation&gt;.</returns>
-		Task<UnitsLocation> GetLatestUnitLocationAsync(int unitId, DateTime? timestamp = null);
+		Task<UnitsLocation> GetLatestUnitLocationForDepartmentAsync(int departmentId, int unitId);
 
 		/// <summary>
 		/// Gets the current roles for unit asynchronous.

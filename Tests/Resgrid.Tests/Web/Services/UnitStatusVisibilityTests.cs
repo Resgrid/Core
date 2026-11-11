@@ -42,7 +42,7 @@ namespace Resgrid.Tests.Web.Services
 			_unitsService = new Mock<IUnitsService>();
 			_unitsService.Setup(x => x.GetUnitByIdAsync(UnitId)).ReturnsAsync(new Unit { UnitId = UnitId, DepartmentId = DepartmentId, Name = "PMRT A1" });
 			_unitsService.Setup(x => x.GetLastUnitStateByUnitIdAsync(UnitId)).ReturnsAsync((UnitState)null);
-			_unitsService.Setup(x => x.GetLatestUnitLocationAsync(UnitId, It.IsAny<DateTime?>()))
+			_unitsService.Setup(x => x.GetLatestUnitLocationForDepartmentAsync(DepartmentId, UnitId))
 				.ReturnsAsync(new UnitsLocation { UnitId = UnitId, Latitude = 34.05m, Longitude = -118.25m, Timestamp = DateTime.UtcNow });
 
 			var calls = new Mock<ICallsService>();
@@ -76,7 +76,7 @@ namespace Resgrid.Tests.Web.Services
 
 			_controller = new UnitStatusController(calls.Object, _unitsService.Object, groups.Object, Mock.Of<IDepartmentSettingsService>(),
 				Mock.Of<IActionLogsService>(), mapping.Object, Mock.Of<IIncidentCommandService>(), Mock.Of<IDepartmentsService>(),
-				DispatchScopeMocks.Off(), _authorizationService.Object)
+				DispatchScopeMocks.Off(), _authorizationService.Object, Mock.Of<IInboundEmailReceiptsService>())
 			{
 				ControllerContext = new ControllerContext { HttpContext = httpContext }
 			};
@@ -131,7 +131,31 @@ namespace Resgrid.Tests.Web.Services
 			var result = (response.Result as OkObjectResult)?.Value as Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResult ?? response.Value;
 			result.Data.Should().BeNull();
 			result.Status.Should().Be(ResponseHelper.NotFound);
-			_unitsService.Verify(x => x.GetLatestUnitLocationAsync(It.IsAny<int>(), It.IsAny<DateTime?>()), Times.Never);
+			_unitsService.Verify(x => x.GetLatestUnitLocationForDepartmentAsync(It.IsAny<int>(), It.IsAny<int>()), Times.Never);
+		}
+
+		[Test]
+		public async Task unit_status_list_reads_each_location_by_department_and_unit()
+		{
+			// The location indexes lead with the department: a read by unit alone scanned the whole collection per unit
+			// (GetAllUnitStatuses at 1.6 s p50 / 11 s p95 on production).
+			var response = await _controller.GetAllUnitStatuses();
+
+			var result = (response.Result as OkObjectResult)?.Value as Resgrid.Web.Services.Models.v4.UnitStatus.UnitStautsesResult ?? response.Value;
+			result.Data.Should().HaveCount(2);
+			result.Data.Single(d => d.UnitId == UnitId.ToString()).Latitude.Should().Be(34.05m);
+			_unitsService.Verify(x => x.GetLatestUnitLocationForDepartmentAsync(DepartmentId, UnitId), Times.Once);
+			_unitsService.Verify(x => x.GetLatestUnitLocationForDepartmentAsync(DepartmentId, OtherAreaUnitId), Times.Once);
+			_unitsService.Verify(x => x.GetLatestUnitLocationForDepartmentAsync(It.Is<int>(d => d != DepartmentId), It.IsAny<int>()), Times.Never);
+		}
+
+		[Test]
+		public async Task unit_status_reads_its_location_by_department_and_unit()
+		{
+			var response = await _controller.GetUnitStatus(UnitId.ToString());
+
+			response.Value.Data.Latitude.Should().Be(34.05m);
+			_unitsService.Verify(x => x.GetLatestUnitLocationForDepartmentAsync(DepartmentId, UnitId), Times.Once);
 		}
 
 		[Test]

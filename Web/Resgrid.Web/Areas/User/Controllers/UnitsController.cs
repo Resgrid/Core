@@ -1541,7 +1541,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 						unitJson.Eta = "N/A";
 					else
 					{
-						var location = await _unitsService.GetLatestUnitLocationAsync(state.UnitId, state.Timestamp);
+						var location = await _unitsService.GetLatestUnitLocationForDepartmentAsync(DepartmentId, state.UnitId);
 
 						if (location != null)
 						{

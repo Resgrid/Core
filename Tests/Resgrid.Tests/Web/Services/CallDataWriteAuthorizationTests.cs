@@ -16,6 +16,7 @@ using Resgrid.Tests.Mocks;
 using Resgrid.Web.Services.Controllers.v4;
 using Resgrid.Web.Services.Models.v4.CallFiles;
 using Resgrid.Web.Services.Models.v4.CallNotes;
+using Resgrid.Web.Services.Models.v4.Calls;
 using Resgrid.Web.ServicesCore.Helpers;
 
 namespace Resgrid.Tests.Web.Services
@@ -88,11 +89,19 @@ namespace Resgrid.Tests.Web.Services
 			return httpContext;
 		}
 
-		private CallNotesController NotesController() => new CallNotesController(_callsService.Object, Mock.Of<IDepartmentsService>(),
-			Mock.Of<IProtectedReadService>(), _protectedWriteService.Object, _authorizationService.Object)
+		private CallNotesController NotesController(string idempotencyKey = null)
 		{
-			ControllerContext = new ControllerContext { HttpContext = Context() }
-		};
+			var context = Context();
+			if (idempotencyKey != null)
+				context.Request.Headers[CallsController.IdempotencyKeyHeader] = idempotencyKey;
+
+			return new CallNotesController(_callsService.Object, Mock.Of<IDepartmentsService>(),
+				Mock.Of<IProtectedReadService>(), _protectedWriteService.Object, _authorizationService.Object,
+				new InboundEmailReceiptsService(_receipts, TimeProvider.System))
+			{
+				ControllerContext = new ControllerContext { HttpContext = context }
+			};
+		}
 
 		private CallFilesController FilesController(bool systemKey = false, string idempotencyKey = null)
 		{
@@ -194,5 +203,103 @@ namespace Resgrid.Tests.Web.Services
 		}
 
 		private static string Id(ActionResult<SaveCallFileResult> result) => ((result.Result as CreatedAtActionResult)?.Value as SaveCallFileResult)?.Id;
+
+		[Test]
+		public async Task A_file_resent_from_an_app_outbox_with_its_body_key_comes_back_with_the_first_id()
+		{
+			// Omni's offline outbox sends its event id as the body's IdempotencyKey, not as a header.
+			_authorizationService.Setup(x => x.CanUserAddCallDataAsync(UserId, CallId, DepartmentId)).ReturnsAsync(true);
+			var input = FileInput();
+			input.IdempotencyKey = "6f1c2a7e-outbox-file";
+
+			var first = await FilesController().SaveCallFile(input, CancellationToken.None);
+			var again = await FilesController().SaveCallFile(input, CancellationToken.None);
+
+			Id(first).Should().Be("6");
+			Id(again).Should().Be("6");
+			_savedAttachments.Should().Be(1);
+			_receipts.Receipts.Should().ContainSingle().Which.Kind.Should().Be((int)InboundEmailKinds.ApiCallFile);
+		}
+
+		[Test]
+		public async Task A_file_header_key_wins_over_its_body_key()
+		{
+			var keyed = FileInput();
+			keyed.IdempotencyKey = "body-key";
+
+			await FilesController(systemKey: true, idempotencyKey: "msg-1@cad.example#attachment-0").SaveCallFile(keyed, CancellationToken.None);
+			var bodyOnly = await FilesController(systemKey: true).SaveCallFile(keyed, CancellationToken.None);
+
+			Id(bodyOnly).Should().Be("7", "the first upload was keyed by its header, not by its body");
+			_savedAttachments.Should().Be(2);
+		}
+
+		private static string NoteId(ActionResult<SaveCallNoteResult> result) => ((result.Result as CreatedAtActionResult)?.Value as SaveCallNoteResult)?.Id;
+
+		private static SaveCallNoteInput OutboxNoteInput(string idempotencyKey)
+		{
+			var input = NoteInput();
+			input.IdempotencyKey = idempotencyKey;
+			return input;
+		}
+
+		[Test]
+		public async Task A_note_resent_from_an_app_outbox_with_its_body_key_returns_the_first_note_without_saving_again()
+		{
+			// Omni's offline outbox sends its event id as the body's IdempotencyKey.
+			_authorizationService.Setup(x => x.CanUserAddCallDataAsync(UserId, CallId, DepartmentId)).ReturnsAsync(true);
+
+			var first = await NotesController().SaveCallNote(OutboxNoteInput("6f1c2a7e-outbox-note"), CancellationToken.None);
+			var again = await NotesController().SaveCallNote(OutboxNoteInput("6f1c2a7e-outbox-note"), CancellationToken.None);
+
+			NoteId(first).Should().Be("5");
+			NoteId(again).Should().Be("5");
+			_callsService.Verify(x => x.SaveCallNoteAsync(It.IsAny<CallNote>(), It.IsAny<CancellationToken>()), Times.Once);
+			var receipt = _receipts.Receipts.Should().ContainSingle().Subject;
+			receipt.Kind.Should().Be((int)InboundEmailKinds.ApiCallNote);
+			receipt.State.Should().Be((int)InboundEmailReceiptStates.Completed);
+		}
+
+		[Test]
+		public async Task A_note_keyed_by_the_header_is_saved_once()
+		{
+			_authorizationService.Setup(x => x.CanUserAddCallDataAsync(UserId, CallId, DepartmentId)).ReturnsAsync(true);
+
+			await NotesController(idempotencyKey: "note-1").SaveCallNote(OutboxNoteInput("ignored-body-key"), CancellationToken.None);
+			var again = await NotesController(idempotencyKey: "note-1").SaveCallNote(NoteInput(), CancellationToken.None);
+
+			NoteId(again).Should().Be("5");
+			_callsService.Verify(x => x.SaveCallNoteAsync(It.IsAny<CallNote>(), It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
+		public async Task A_resend_after_the_note_was_saved_but_not_yet_protected_returns_that_note()
+		{
+			// The first answer is 503 "Do not resubmit"; an outbox retries it anyway, and must not add the note twice.
+			_authorizationService.Setup(x => x.CanUserAddCallDataAsync(UserId, CallId, DepartmentId)).ReturnsAsync(true);
+			_protectedWriteService.SetupSequence(x => x.PrepareCallNoteWriteAsync(It.IsAny<int>(), It.IsAny<CallNote>(), It.IsAny<string>(), It.IsAny<string>(),
+					It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new ProtectedWriteResult { Success = false, Reason = "broker_unavailable" })
+				.ReturnsAsync(new ProtectedWriteResult { Success = true });
+
+			var first = await NotesController().SaveCallNote(OutboxNoteInput("outbox-note-2"), CancellationToken.None);
+			var again = await NotesController().SaveCallNote(OutboxNoteInput("outbox-note-2"), CancellationToken.None);
+
+			(first.Result as ObjectResult)?.StatusCode.Should().Be(StatusCodes.Status503ServiceUnavailable);
+			NoteId(again).Should().Be("5");
+			_callsService.Verify(x => x.SaveCallNoteAsync(It.IsAny<CallNote>(), It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
+		public async Task Unkeyed_notes_are_saved_every_time()
+		{
+			_authorizationService.Setup(x => x.CanUserAddCallDataAsync(UserId, CallId, DepartmentId)).ReturnsAsync(true);
+
+			await NotesController().SaveCallNote(NoteInput(), CancellationToken.None);
+			await NotesController().SaveCallNote(NoteInput(), CancellationToken.None);
+
+			_callsService.Verify(x => x.SaveCallNoteAsync(It.IsAny<CallNote>(), It.IsAny<CancellationToken>()), Times.Exactly(2));
+			_receipts.Receipts.Should().BeEmpty();
+		}
 	}
 }

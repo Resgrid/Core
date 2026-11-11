@@ -74,14 +74,21 @@ namespace Resgrid.Providers.GeoLocationProvider.Geocoding
 		public async Task<GeocodeMatch> ForwardAsync(string address, CancellationToken cancellationToken)
 		{
 			var url = $"{BaseUrl}/search?key={WebUtility.UrlEncode(MappingConfig.LocationIQApiKey)}&format=json&limit=1&q={WebUtility.UrlEncode(address)}";
-			var (ok, _, document) = await RoutingHttp.GetJsonAsync(url, cancellationToken);
+			var (ok, status, document) = await RoutingHttp.GetJsonAsync(url, cancellationToken);
 
 			using (document)
 			{
-				if (!ok || document == null || document.RootElement.ValueKind != JsonValueKind.Array || document.RootElement.GetArrayLength() == 0)
-					return null;
+				// LocationIQ answers "no match" with 404 {"error":"Unable to geocode"}; every other failure (401/403 key,
+				// 429 rate limit, 5xx) says nothing about the address.
+				if (!ok)
+				{
+					if (status == 404)
+						return null;
 
-				return NominatimShape.ReadPlace(document.RootElement[0]);
+					throw new GeocodingUnavailableException(Name, status);
+				}
+
+				return NominatimShape.FirstPlace(Name, status, document);
 			}
 		}
 
@@ -111,14 +118,15 @@ namespace Resgrid.Providers.GeoLocationProvider.Geocoding
 		public async Task<GeocodeMatch> ForwardAsync(string address, CancellationToken cancellationToken)
 		{
 			var url = $"{RoutingHttp.TrimBase(MappingConfig.NominatimUrl)}/search?format=jsonv2&limit=1&addressdetails=0&q={WebUtility.UrlEncode(address)}{Contact()}";
-			var (ok, _, document) = await RoutingHttp.GetJsonAsync(url, cancellationToken);
+			var (ok, status, document) = await RoutingHttp.GetJsonAsync(url, cancellationToken);
 
 			using (document)
 			{
-				if (!ok || document == null || document.RootElement.ValueKind != JsonValueKind.Array || document.RootElement.GetArrayLength() == 0)
-					return null;
+				// Nominatim answers "no match" with 200 and an empty array.
+				if (!ok)
+					throw new GeocodingUnavailableException(Name, status);
 
-				return NominatimShape.ReadPlace(document.RootElement[0]);
+				return NominatimShape.FirstPlace(Name, status, document);
 			}
 		}
 
@@ -156,10 +164,14 @@ namespace Resgrid.Providers.GeoLocationProvider.Geocoding
 		public async Task<GeocodeMatch> ForwardAsync(string address, CancellationToken cancellationToken)
 		{
 			var url = $"{BaseUrl}/forward?limit=1&access_token={WebUtility.UrlEncode(MappingConfig.MapboxGeocodingAccessToken)}&q={WebUtility.UrlEncode(address)}";
-			var (ok, _, document) = await RoutingHttp.GetJsonAsync(url, cancellationToken);
+			var (ok, status, document) = await RoutingHttp.GetJsonAsync(url, cancellationToken);
 
 			using (document)
 			{
+				// Mapbox answers "no match" with 200 and an empty feature list.
+				if (!ok || document == null || !document.RootElement.TryGetProperty("features", out _))
+					throw new GeocodingUnavailableException(Name, status);
+
 				var feature = FirstFeature(ok, document);
 				if (feature == null)
 					return null;
@@ -201,6 +213,18 @@ namespace Resgrid.Providers.GeoLocationProvider.Geocoding
 
 	internal static class NominatimShape
 	{
+		/// <summary>
+		/// The first place of a successful Nominatim/LocationIQ search: null for an empty array (no match), and a
+		/// <see cref="GeocodingUnavailableException"/> for a body that is not a result array at all.
+		/// </summary>
+		public static GeocodeMatch FirstPlace(string provider, int status, JsonDocument document)
+		{
+			if (document == null || document.RootElement.ValueKind != JsonValueKind.Array)
+				throw new GeocodingUnavailableException(provider, status);
+
+			return document.RootElement.GetArrayLength() == 0 ? null : ReadPlace(document.RootElement[0]);
+		}
+
 		/// <summary>A Nominatim/LocationIQ place: "lat"/"lon" as strings, "display_name".</summary>
 		public static GeocodeMatch ReadPlace(JsonElement place)
 		{

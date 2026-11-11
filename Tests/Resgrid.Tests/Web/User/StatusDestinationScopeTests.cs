@@ -192,7 +192,7 @@ namespace Resgrid.Tests.Web.User
 			var controller = new Resgrid.Web.Services.Controllers.v4.PersonnelStatusesController(Mock.Of<IUsersService>(), _actionLogs.Object,
 				_departments.Object, Mock.Of<IUserProfileService>(), Mock.Of<IUserStateService>(), Mock.Of<IDepartmentGroupsService>(), _calls.Object,
 				Mock.Of<IMappingService>(), Mock.Of<IPersonnelRolesService>(), Mock.Of<IDepartmentSettingsService>(), _authorization.Object,
-				Mock.Of<IIncidentCommandService>(), _scope.Object)
+				Mock.Of<IIncidentCommandService>(), _scope.Object, Mock.Of<IInboundEmailReceiptsService>())
 			{ ControllerContext = new ControllerContext { HttpContext = _http } };
 
 			var result = await controller.SavePersonStatus(new SavePersonStatusInput

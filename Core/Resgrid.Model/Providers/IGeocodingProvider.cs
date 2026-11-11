@@ -15,7 +15,11 @@ namespace Resgrid.Model.Providers
 		/// <summary>True when the install has what this provider needs.</summary>
 		bool IsConfigured { get; }
 
-		/// <summary>Coordinates for an address; null when nothing matched or the call failed.</summary>
+		/// <summary>
+		/// Coordinates for an address. Null only when the service answered and nothing matched; when the call failed (an HTTP
+		/// error, a rate limit, a timeout) it throws, typically <see cref="GeocodingUnavailableException"/>, so a caller can
+		/// tell "no such address" from "ask again later".
+		/// </summary>
 		Task<GeocodeMatch> ForwardAsync(string address, CancellationToken cancellationToken);
 
 		/// <summary>An address for coordinates; null when nothing matched or the call failed.</summary>

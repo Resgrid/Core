@@ -58,6 +58,34 @@
   <data name="ImportPOIsHeader" xml:space="preserve"><value>استيراد نقاط الاهتمام</value></data>
   <data name="Upload" xml:space="preserve"><value>رفع</value></data>
   <data name="ImportPOIsButton" xml:space="preserve"><value>استيراد نقاط الاهتمام</value></data>
+  <data name="ImportPOIsHelp" xml:space="preserve"><value>ارفع ملف KML أو KMZ، أو ملف CSV يحتوي صفه الأول على أسماء الأعمدة. يحتاج كل إدخال إلى خط العرض وخط الطول، أو إلى عنوان (عمود "Address" أو "Street"، مع أعمدة اختيارية "City" و"State" و"Postal Code") يتم تحديد موقعه عند الاستيراد. يحدد عمود "Name" اسم كل نقطة اهتمام، ويضيف عمود "Notes" ملاحظة.</value></data>
+  <data name="PoiImportQueued" xml:space="preserve"><value>تمت إضافة {0} إلى قائمة انتظار الاستيراد ({1} إدخال). يعمل الاستيراد في الخلفية ويبدأ عادةً خلال دقيقة؛ يظهر تقدّمه أدناه.</value></data>
+  <data name="PoiImportsHeader" xml:space="preserve"><value>عمليات الاستيراد</value></data>
+  <data name="PoiImportsHelp" xml:space="preserve"><value>يعمل الاستيراد في الخلفية ويبدأ عادةً خلال دقيقة. حدّث هذه الصفحة لمتابعة التقدّم.</value></data>
+  <data name="PoiImportsRefresh" xml:space="preserve"><value>تحديث</value></data>
+  <data name="PoiImportFileColumn" xml:space="preserve"><value>الملف</value></data>
+  <data name="PoiImportUploadedColumn" xml:space="preserve"><value>تاريخ الرفع</value></data>
+  <data name="PoiImportStatusColumn" xml:space="preserve"><value>الحالة</value></data>
+  <data name="PoiImportResultColumn" xml:space="preserve"><value>النتيجة</value></data>
+  <data name="PoiImportStatusQueued" xml:space="preserve"><value>في الانتظار</value></data>
+  <data name="PoiImportStatusLocating" xml:space="preserve"><value>جارٍ تحديد العناوين</value></data>
+  <data name="PoiImportStatusSaving" xml:space="preserve"><value>جارٍ حفظ نقاط الاهتمام</value></data>
+  <data name="PoiImportStatusComplete" xml:space="preserve"><value>مكتمل</value></data>
+  <data name="PoiImportStatusFailed" xml:space="preserve"><value>فشل</value></data>
+  <data name="PoiImportPending" xml:space="preserve"><value>{0} إدخال بانتظار الاستيراد.</value></data>
+  <data name="PoiImportSummary" xml:space="preserve"><value>تم استيراد {0} من {1} إدخال.</value></data>
+  <data name="PoiImportGeocoded" xml:space="preserve"><value>تم تحديد موقع {0} من عناوينها؛ تحقّق من مواقعها على الخريطة.</value></data>
+  <data name="PoiImportSkipped" xml:space="preserve"><value>تم تخطي {0} لعدم وجود إحداثيات أو عنوان.</value></data>
+  <data name="PoiImportUnlocated" xml:space="preserve"><value>لم يتم استيراد {0} لتعذّر تحديد عناوينها:</value></data>
+  <data name="PoiImportUnlocatedMore" xml:space="preserve"><value>و{0} أخرى.</value></data>
+  <data name="PoiImportUnlocatedHint" xml:space="preserve"><value>صحّح هذه العناوين، أو أضف أعمدة خط العرض وخط الطول، ثم استورد هذه الإدخالات فقط.</value></data>
+  <data name="PoiImportLimitReached" xml:space="preserve"><value>يتوقف البحث عن العناوين بعد {0} عنوان لكل عملية استيراد، لذا لم تتم محاولة بعض الإدخالات؛ استوردها في ملف منفصل.</value></data>
+  <data name="PoiImportRetrying" xml:space="preserve"><value>لم تستجب خدمة البحث عن العناوين لـ {0} إدخال؛ ستتم إعادة المحاولة بعد {1}.</value></data>
+  <data name="PoiImportLookupFailed" xml:space="preserve"><value>لم يتم استيراد {0} لأن خدمة البحث عن العناوين لم تستجب حتى بعد إعادة المحاولة:</value></data>
+  <data name="PoiImportLookupFailedHint" xml:space="preserve"><value>عادةً ما يكون هذا مؤقتًا: استورد هذه الإدخالات فقط مرة أخرى لاحقًا.</value></data>
+  <data name="PoiImportLookupNotConfigured" xml:space="preserve"><value>لم يتم استيراد {0} لأن البحث عن العناوين غير مُعدّ على هذا الخادم:</value></data>
+  <data name="PoiImportLookupNotConfiguredHint" xml:space="preserve"><value>أضف أعمدة خط العرض وخط الطول إلى هذه الإدخالات ثم استوردها مرة أخرى.</value></data>
+  <data name="PoiImportNotTried" xml:space="preserve"><value>لم يتم استيراد {0} لأن الملف يحتوي على عناوين أكثر مما تبحث عنه عملية استيراد واحدة:</value></data>
 
   <!-- Layers -->
   <data name="LayersPageTitle" xml:space="preserve"><value>الطبقات</value></data>

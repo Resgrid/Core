@@ -195,6 +195,90 @@
   <data name="ImportPOIsButton" xml:space="preserve">
     <value>Імпортувати POI</value>
   </data>
+  <data name="ImportPOIsHelp" xml:space="preserve">
+    <value>Завантажте файл KML або KMZ чи файл CSV, перший рядок якого містить назви стовпців. Кожен запис потребує широти й довготи або адреси (стовпець «Address» чи «Street», з необов'язковими стовпцями «City», «State» і «Postal Code»), яку буде визначено під час імпорту. Стовпець «Name» задає назву кожної POI, а стовпець «Notes» додає примітку.</value>
+  </data>
+  <data name="PoiImportQueued" xml:space="preserve">
+    <value>Файл {0} поставлено в чергу на імпорт ({1} записів). Імпорт виконується у фоновому режимі й зазвичай починається протягом хвилини; його перебіг показано нижче.</value>
+  </data>
+  <data name="PoiImportsHeader" xml:space="preserve">
+    <value>Імпорти</value>
+  </data>
+  <data name="PoiImportsHelp" xml:space="preserve">
+    <value>Імпорт виконується у фоновому режимі й зазвичай починається протягом хвилини. Оновіть сторінку, щоб побачити перебіг.</value>
+  </data>
+  <data name="PoiImportsRefresh" xml:space="preserve">
+    <value>Оновити</value>
+  </data>
+  <data name="PoiImportFileColumn" xml:space="preserve">
+    <value>Файл</value>
+  </data>
+  <data name="PoiImportUploadedColumn" xml:space="preserve">
+    <value>Завантажено</value>
+  </data>
+  <data name="PoiImportStatusColumn" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="PoiImportResultColumn" xml:space="preserve">
+    <value>Результат</value>
+  </data>
+  <data name="PoiImportStatusQueued" xml:space="preserve">
+    <value>У черзі</value>
+  </data>
+  <data name="PoiImportStatusLocating" xml:space="preserve">
+    <value>Визначення адрес</value>
+  </data>
+  <data name="PoiImportStatusSaving" xml:space="preserve">
+    <value>Збереження POI</value>
+  </data>
+  <data name="PoiImportStatusComplete" xml:space="preserve">
+    <value>Завершено</value>
+  </data>
+  <data name="PoiImportStatusFailed" xml:space="preserve">
+    <value>Помилка</value>
+  </data>
+  <data name="PoiImportPending" xml:space="preserve">
+    <value>Записів до імпорту: {0}.</value>
+  </data>
+  <data name="PoiImportSummary" xml:space="preserve">
+    <value>Імпортовано {0} з {1} записів.</value>
+  </data>
+  <data name="PoiImportGeocoded" xml:space="preserve">
+    <value>Розташування визначено за адресою: {0}; перевірте їх положення на карті.</value>
+  </data>
+  <data name="PoiImportSkipped" xml:space="preserve">
+    <value>Пропущено, бо немає ні координат, ні адреси: {0}.</value>
+  </data>
+  <data name="PoiImportUnlocated" xml:space="preserve">
+    <value>Не імпортовано, бо не вдалося визначити адресу ({0}):</value>
+  </data>
+  <data name="PoiImportUnlocatedMore" xml:space="preserve">
+    <value>і ще {0}.</value>
+  </data>
+  <data name="PoiImportUnlocatedHint" xml:space="preserve">
+    <value>Виправте ці адреси або додайте стовпці широти й довготи та імпортуйте лише ці записи.</value>
+  </data>
+  <data name="PoiImportLimitReached" xml:space="preserve">
+    <value>Пошук адрес зупиняється після {0} адрес на один імпорт, тож деякі записи не оброблено; імпортуйте їх окремим файлом.</value>
+  </data>
+  <data name="PoiImportRetrying" xml:space="preserve">
+    <value>Служба пошуку адрес не відповіла для {0} записів; їх буде повторено після {1}.</value>
+  </data>
+  <data name="PoiImportLookupFailed" xml:space="preserve">
+    <value>Не імпортовано, бо служба пошуку адрес не відповіла навіть після повторних спроб ({0}):</value>
+  </data>
+  <data name="PoiImportLookupFailedHint" xml:space="preserve">
+    <value>Зазвичай це тимчасово: пізніше імпортуйте лише ці записи повторно.</value>
+  </data>
+  <data name="PoiImportLookupNotConfigured" xml:space="preserve">
+    <value>Не імпортовано, бо пошук адрес не налаштовано на цьому сервері ({0}):</value>
+  </data>
+  <data name="PoiImportLookupNotConfiguredHint" xml:space="preserve">
+    <value>Додайте до цих записів стовпці широти й довготи та імпортуйте їх повторно.</value>
+  </data>
+  <data name="PoiImportNotTried" xml:space="preserve">
+    <value>Не імпортовано, бо файл містить більше адрес, ніж шукає один імпорт ({0}):</value>
+  </data>
   <!-- Layers -->
   <data name="LayersPageTitle" xml:space="preserve">
     <value>Шари</value>

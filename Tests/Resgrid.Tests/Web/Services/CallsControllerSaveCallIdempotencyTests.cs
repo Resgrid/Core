@@ -249,5 +249,50 @@ namespace Resgrid.Tests.Web.Services
 			_broadcasts.Should().Be(2);
 			_receipts.Receipts.Should().BeEmpty();
 		}
+
+		private static NewCallInput OutboxInput(string idempotencyKey)
+		{
+			var input = Input();
+			input.IdempotencyKey = idempotencyKey;
+			return input;
+		}
+
+		[Test]
+		public async Task A_call_resent_from_an_app_outbox_with_its_body_key_returns_the_first_call_without_paging_again()
+		{
+			// Omni's offline outbox sends its event id as the body's IdempotencyKey, not as a header.
+			var first = await Controller(null).SaveCall(OutboxInput("6f1c2a7e-outbox-event"), CancellationToken.None);
+			var again = await Controller(null).SaveCall(OutboxInput("6f1c2a7e-outbox-event"), CancellationToken.None);
+
+			Id(first).Should().Be("700");
+			Id(again).Should().Be("700");
+			_saved.Should().ContainSingle();
+			_broadcasts.Should().Be(1);
+			CallAddedEvents().Should().Be(1);
+			_receipts.Find(InboundEmailReceiptsService.ApiRequestKey(InboundEmailKinds.ApiCall, DepartmentId, "6f1c2a7e-outbox-event"))
+				.State.Should().Be((int)InboundEmailReceiptStates.Completed);
+		}
+
+		[Test]
+		public async Task The_header_key_wins_over_the_body_key()
+		{
+			await Controller("msg-1@cad.example").SaveCall(OutboxInput("outbox-a"), CancellationToken.None);
+			var sameHeader = await Controller("msg-1@cad.example").SaveCall(OutboxInput("outbox-b"), CancellationToken.None);
+			var bodyOnly = await Controller(null).SaveCall(OutboxInput("outbox-a"), CancellationToken.None);
+
+			Id(sameHeader).Should().Be("700");
+			Id(bodyOnly).Should().Be("701", "the first request was keyed by its header, not by its body");
+			_saved.Should().HaveCount(2);
+		}
+
+		[Test]
+		public async Task A_blank_body_key_is_untracked()
+		{
+			await Controller(null).SaveCall(OutboxInput("   "), CancellationToken.None);
+			await Controller(null).SaveCall(OutboxInput("   "), CancellationToken.None);
+
+			_saved.Should().HaveCount(2);
+			_receipts.Receipts.Should().BeEmpty();
+		}
 	}
 }

@@ -209,7 +209,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			foreach (var us in unitStatuses.Where(x => viewableUnitIds.Contains(x.UnitId)))
 			{
 				var customState = await CustomStatesHelper.GetCustomUnitState(us);
-				var latestUnitLocation = await _unitsService.GetLatestUnitLocationAsync(us.UnitId, us.Timestamp);
+				var latestUnitLocation = await _unitsService.GetLatestUnitLocationForDepartmentAsync(DepartmentId, us.UnitId);
 
 				var group = allGroups.FirstOrDefault(x => x.DepartmentGroupId == us.Unit.StationGroupId);
 				var unitStatus = UnitStatusController.ConvertUnitStatusData(us.Unit, us, latestUnitLocation, customState, group, TimeZone, activeCalls, allGroups, pois,

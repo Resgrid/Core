@@ -34,5 +34,12 @@ namespace Resgrid.Web.Services.Models.v4.CallNotes
 		/// Longitude of when the note was taken
 		/// </summary>
 		public string Longitude { get; set; }
+
+		/// <summary>
+		/// Optional idempotency key for a note that may be sent again (an app's offline outbox sends its event id). The same key
+		/// in the same department returns the first note instead of adding a second one. The <c>Idempotency-Key</c> header, when
+		/// sent, takes precedence over this field.
+		/// </summary>
+		public string IdempotencyKey { get; set; }
 	}
 }

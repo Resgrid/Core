@@ -41,6 +41,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IIncidentCommandService _incidentCommandService;
 		private readonly IDispatchScopeService _dispatchScopeService;
 		private readonly ICustomStateService _customStateService;
+		private readonly IInboundEmailReceiptsService _inboundEmailReceiptsService;
 
 		public PersonnelStatusesController(
 			IUsersService usersService,
@@ -56,8 +57,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 			Model.Services.IAuthorizationService authorizationService,
 			IIncidentCommandService incidentCommandService,
 			IDispatchScopeService dispatchScopeService,
+			IInboundEmailReceiptsService inboundEmailReceiptsService,
 			ICustomStateService customStateService = null)
 		{
+			_inboundEmailReceiptsService = inboundEmailReceiptsService;
 			_dispatchScopeService = dispatchScopeService;
 			_customStateService = customStateService;
 			_usersService = usersService;
@@ -159,6 +162,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return BadRequest();
 
 			var result = new SavePersonStatusResult();
+			var receipt = InboundEmailReceiptClaim.Untracked;
 
 			try
 			{
@@ -189,49 +193,81 @@ namespace Resgrid.Web.Services.Controllers.v4
 				if (!int.TryParse(input.Type, out var statusType))
 					return BadRequest();
 
-				ActionLog log = null;
-				if (String.IsNullOrWhiteSpace(input.RespondingTo) || input.RespondingTo == "0")
-					log = await SavePersonStatusAsync(input.UserId, statusType, geolocation, null, null, input.Note, input.TimestampUtc, input.Timestamp, cancellationToken);
-				else
+				int? destinationId = null;
+				int? destinationType = null;
+				if (!String.IsNullOrWhiteSpace(input.RespondingTo) && input.RespondingTo != "0")
 				{
-					if (!int.TryParse(input.RespondingTo, out var destinationId))
+					if (!int.TryParse(input.RespondingTo, out var respondingToId))
 						return BadRequest();
 
-					var destinationType = input.RespondingToType ?? (int)DestinationEntityTypes.Call;
+					var respondingToType = input.RespondingToType ?? (int)DestinationEntityTypes.Call;
 
-					if (!await IsValidDestinationAsync(destinationId, destinationType))
+					if (!await IsValidDestinationAsync(respondingToId, respondingToType))
 						return BadRequest();
 
-					log = await SavePersonStatusAsync(input.UserId, statusType, geolocation, destinationId, destinationType, input.Note, input.TimestampUtc, input.Timestamp, cancellationToken);
+					destinationId = respondingToId;
+					destinationType = respondingToType;
+				}
 
-					// Entity-need response: a member that command requested answering the call lands on the
-					// incident log. Best-effort — never blocks the status save.
-					if (destinationType == (int)DestinationEntityTypes.Call)
+				// An app's offline outbox resends a status whose answer it lost with the same EventId and body
+				// (StatusWriteReplayKeys); the replay gets the status the first attempt saved instead of a second one. Claimed
+				// once the request is known to be valid. No EventId (or no client timestamp) is untracked, as before.
+				receipt = await _inboundEmailReceiptsService.ClaimApiRequestAsync(InboundEmailKinds.ApiPersonStatus, DepartmentId,
+					StatusWriteReplayKeys.ForPersonStatus(input), cancellationToken);
+
+				if (receipt.Outcome == InboundEmailClaimOutcomes.InProgress)
+					return StatusCode(StatusCodes.Status409Conflict);
+
+				if (receipt.EntityId.HasValue &&
+					(receipt.Outcome == InboundEmailClaimOutcomes.AlreadyProcessed || receipt.Outcome == InboundEmailClaimOutcomes.Resume))
+				{
+					await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
+					return SavedPersonStatusResult(result, receipt.EntityId.Value);
+				}
+
+				if (receipt.Outcome == InboundEmailClaimOutcomes.AlreadyProcessed)
+					return StatusCode(StatusCodes.Status409Conflict);
+
+				var log = await SavePersonStatusAsync(input.UserId, statusType, geolocation, destinationId, destinationType, input.Note, input.TimestampUtc, input.Timestamp, cancellationToken);
+
+				// Nothing else is owed to the saved status: the incident-log line below is best-effort.
+				await _inboundEmailReceiptsService.MarkSavedAsync(receipt, log.ActionLogId, InboundEmailPendingSteps.None);
+				await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
+
+				// Entity-need response: a member that command requested answering the call lands on the
+				// incident log. Best-effort — never blocks the status save.
+				if (destinationType == (int)DestinationEntityTypes.Call)
+				{
+					try
 					{
-						try
-						{
-							var actionLabel = int.TryParse(input.Type, out var actionType) && Enum.IsDefined(typeof(ActionTypes), actionType) ? ((ActionTypes)actionType).ToString() : $"status {input.Type}";
-							await _incidentCommandService.RecordNeedEntityStatusAsync(DepartmentId, destinationId, NeedEntityKind.User, input.UserId, actionLabel, UserId, cancellationToken);
-						}
-						catch (Exception ex)
-						{
-							Resgrid.Framework.Logging.LogException(ex, $"RecordNeedEntityStatusAsync failed for DepartmentId {DepartmentId}, DestinationId {destinationId}, UserId {input.UserId}");
-						}
+						var actionLabel = Enum.IsDefined(typeof(ActionTypes), statusType) ? ((ActionTypes)statusType).ToString() : $"status {input.Type}";
+						await _incidentCommandService.RecordNeedEntityStatusAsync(DepartmentId, destinationId.Value, NeedEntityKind.User, input.UserId, actionLabel, UserId, cancellationToken);
+					}
+					catch (Exception ex)
+					{
+						Resgrid.Framework.Logging.LogException(ex, $"RecordNeedEntityStatusAsync failed for DepartmentId {DepartmentId}, DestinationId {destinationId}, UserId {input.UserId}");
 					}
 				}
 
-				result.Id = log.ActionLogId.ToString();
-				result.PageSize = 0;
-				result.Status = ResponseHelper.Created;
-				ResponseHelper.PopulateV4ResponseData(result);
-
-				return Created($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/v4/Statuses/GetAllStatusesForPersonnel", result);
+				return SavedPersonStatusResult(result, log.ActionLogId);
 			}
 			catch (Exception ex)
 			{
 				Logging.LogException(ex);
+				// Gives the claim back so the app's next replay is handled at once.
+				await _inboundEmailReceiptsService.ReleaseAsync(receipt);
 				return BadRequest();
 			}
+		}
+
+		private ActionResult<SavePersonStatusResult> SavedPersonStatusResult(SavePersonStatusResult result, int actionLogId)
+		{
+			result.Id = actionLogId.ToString();
+			result.PageSize = 0;
+			result.Status = ResponseHelper.Created;
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Created($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/v4/Statuses/GetAllStatusesForPersonnel", result);
 		}
 
 		/// <summary>

@@ -1051,18 +1051,20 @@ namespace Resgrid.Services
 			return result;
 		}
 
-		public async Task<UnitsLocation> GetLatestUnitLocationAsync(int unitId, DateTime? timestamp = null)
+		public async Task<UnitsLocation> GetLatestUnitLocationForDepartmentAsync(int departmentId, int unitId)
 		{
 			try
 			{
 				if (Config.DataConfig.DocDatabaseType == Config.DatabaseTypes.Postgres)
-					return await _unitLocationsDocRepository.GetLatestLocationsByUnitIdAsync(unitId);
+					return await _unitLocationsDocRepository.GetLatestLocationForUnitAsync(departmentId, unitId);
 
-				var location = _unitLocationRepository.Value.AsQueryable().Where(x => x.UnitId == unitId).OrderByDescending(y => y.Timestamp).FirstOrDefault();
+				// Department first, so ix_unitlocations_department_unit_timestamp serves it as one index probe; awaited, so a
+				// slow read no longer holds a request thread.
+				var query = _unitLocationRepository.Value.AsQueryable()
+					.Where(x => x.DepartmentId == departmentId && x.UnitId == unitId)
+					.OrderByDescending(y => y.Timestamp);
 
-				//var layers = await _personnelLocationRepository.FilterByAsync(filter => filter.DepartmentId == departmentId && filter.Type == (int)type && filter.IsDeleted == false);
-
-				return location;
+				return await MongoDB.Driver.Linq.MongoQueryable.FirstOrDefaultAsync(query);
 			}
 			catch (Exception ex)
 			{

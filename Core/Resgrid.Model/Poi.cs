@@ -29,6 +29,9 @@ namespace Resgrid.Model
 
 		public string Note { get; set; }
 
+		/// <summary>The background import (<see cref="PoiImport"/>) that created this POI; null for POIs added by hand.</summary>
+		public string PoiImportId { get; set; }
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue

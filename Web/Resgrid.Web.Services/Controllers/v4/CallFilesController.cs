@@ -309,10 +309,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 					title: "Recent multi-factor verification is required to modify protected data.",
 					statusCode: StatusCodes.Status403Forbidden);
 
-			// The SMTP relay keys each attachment of a message (CallsController.IdempotencyKeyHeader); when it retries a message
-			// whose call already exists, the attachments it already uploaded come back with their ids instead of twice.
+			// The SMTP relay keys each attachment of a message (CallsController.IdempotencyKeyHeader) and an app's offline outbox
+			// sends its event id as the body's IdempotencyKey; a resent upload comes back with the first file's id instead of twice.
 			var receipt = await _inboundEmailReceiptsService.ClaimApiRequestAsync(InboundEmailKinds.ApiCallFile, call.DepartmentId,
-				Request.Headers[CallsController.IdempotencyKeyHeader].ToString(), cancellationToken);
+				CallsController.ResolveIdempotencyKey(Request, input.IdempotencyKey), cancellationToken);
 
 			if (receipt.Outcome == InboundEmailClaimOutcomes.InProgress)
 				return StatusCode(StatusCodes.Status409Conflict);

@@ -195,6 +195,90 @@
   <data name="ImportPOIsButton" xml:space="preserve">
     <value>Εισαγωγή Σημείων Ενδιαφέροντος</value>
   </data>
+  <data name="ImportPOIsHelp" xml:space="preserve">
+    <value>Ανεβάστε ένα αρχείο KML ή KMZ, ή ένα αρχείο CSV του οποίου η πρώτη γραμμή ονομάζει τις στήλες. Κάθε εγγραφή χρειάζεται γεωγραφικό πλάτος και μήκος, ή μια διεύθυνση (στήλη «Address» ή «Street», με προαιρετικές στήλες «City», «State» και «Postal Code») που εντοπίζεται κατά την εισαγωγή. Μια στήλη «Name» ονομάζει κάθε Σημείο Ενδιαφέροντος και μια στήλη «Notes» προσθέτει σημείωση.</value>
+  </data>
+  <data name="PoiImportQueued" xml:space="preserve">
+    <value>Το {0} μπήκε στην ουρά εισαγωγής ({1} εγγραφές). Οι εισαγωγές εκτελούνται στο παρασκήνιο και συνήθως ξεκινούν μέσα σε ένα λεπτό· η πρόοδός τους εμφανίζεται παρακάτω.</value>
+  </data>
+  <data name="PoiImportsHeader" xml:space="preserve">
+    <value>Εισαγωγές</value>
+  </data>
+  <data name="PoiImportsHelp" xml:space="preserve">
+    <value>Οι εισαγωγές εκτελούνται στο παρασκήνιο και συνήθως ξεκινούν μέσα σε ένα λεπτό. Ανανεώστε τη σελίδα για να δείτε την πρόοδο.</value>
+  </data>
+  <data name="PoiImportsRefresh" xml:space="preserve">
+    <value>Ανανέωση</value>
+  </data>
+  <data name="PoiImportFileColumn" xml:space="preserve">
+    <value>Αρχείο</value>
+  </data>
+  <data name="PoiImportUploadedColumn" xml:space="preserve">
+    <value>Μεταφορτώθηκε</value>
+  </data>
+  <data name="PoiImportStatusColumn" xml:space="preserve">
+    <value>Κατάσταση</value>
+  </data>
+  <data name="PoiImportResultColumn" xml:space="preserve">
+    <value>Αποτέλεσμα</value>
+  </data>
+  <data name="PoiImportStatusQueued" xml:space="preserve">
+    <value>Σε αναμονή</value>
+  </data>
+  <data name="PoiImportStatusLocating" xml:space="preserve">
+    <value>Εντοπισμός διευθύνσεων</value>
+  </data>
+  <data name="PoiImportStatusSaving" xml:space="preserve">
+    <value>Αποθήκευση σημείων</value>
+  </data>
+  <data name="PoiImportStatusComplete" xml:space="preserve">
+    <value>Ολοκληρώθηκε</value>
+  </data>
+  <data name="PoiImportStatusFailed" xml:space="preserve">
+    <value>Απέτυχε</value>
+  </data>
+  <data name="PoiImportPending" xml:space="preserve">
+    <value>{0} εγγραφές προς εισαγωγή.</value>
+  </data>
+  <data name="PoiImportSummary" xml:space="preserve">
+    <value>Εισήχθησαν {0} από {1} εγγραφές.</value>
+  </data>
+  <data name="PoiImportGeocoded" xml:space="preserve">
+    <value>{0} εντοπίστηκαν από τη διεύθυνσή τους· ελέγξτε τη θέση τους στον χάρτη.</value>
+  </data>
+  <data name="PoiImportSkipped" xml:space="preserve">
+    <value>{0} παραλείφθηκαν επειδή δεν έχουν ούτε συντεταγμένες ούτε διεύθυνση.</value>
+  </data>
+  <data name="PoiImportUnlocated" xml:space="preserve">
+    <value>{0} δεν εισήχθησαν επειδή η διεύθυνσή τους δεν εντοπίστηκε:</value>
+  </data>
+  <data name="PoiImportUnlocatedMore" xml:space="preserve">
+    <value>και {0} ακόμη.</value>
+  </data>
+  <data name="PoiImportUnlocatedHint" xml:space="preserve">
+    <value>Διορθώστε αυτές τις διευθύνσεις ή προσθέστε στήλες γεωγραφικού πλάτους και μήκους και εισαγάγετε μόνο αυτές τις εγγραφές.</value>
+  </data>
+  <data name="PoiImportLimitReached" xml:space="preserve">
+    <value>Η αναζήτηση διευθύνσεων σταματά μετά από {0} διευθύνσεις ανά εισαγωγή, οπότε ορισμένες εγγραφές δεν δοκιμάστηκαν· εισαγάγετέ τες σε ξεχωριστό αρχείο.</value>
+  </data>
+  <data name="PoiImportRetrying" xml:space="preserve">
+    <value>Η υπηρεσία αναζήτησης διευθύνσεων δεν απάντησε για {0} εγγραφές· θα ξαναδοκιμαστούν μετά τις {1}.</value>
+  </data>
+  <data name="PoiImportLookupFailed" xml:space="preserve">
+    <value>{0} δεν εισήχθησαν επειδή η υπηρεσία αναζήτησης διευθύνσεων δεν απάντησε, ακόμη και μετά από νέες προσπάθειες:</value>
+  </data>
+  <data name="PoiImportLookupFailedHint" xml:space="preserve">
+    <value>Συνήθως είναι προσωρινό: εισαγάγετε ξανά μόνο αυτές τις εγγραφές αργότερα.</value>
+  </data>
+  <data name="PoiImportLookupNotConfigured" xml:space="preserve">
+    <value>{0} δεν εισήχθησαν επειδή η αναζήτηση διευθύνσεων δεν έχει ρυθμιστεί σε αυτόν τον διακομιστή:</value>
+  </data>
+  <data name="PoiImportLookupNotConfiguredHint" xml:space="preserve">
+    <value>Προσθέστε στήλες γεωγραφικού πλάτους και μήκους σε αυτές τις εγγραφές και εισαγάγετέ τες ξανά.</value>
+  </data>
+  <data name="PoiImportNotTried" xml:space="preserve">
+    <value>{0} δεν εισήχθησαν επειδή το αρχείο έχει περισσότερες διευθύνσεις από όσες αναζητά μία εισαγωγή:</value>
+  </data>
   <!-- Layers -->
   <data name="LayersPageTitle" xml:space="preserve">
     <value>Επίπεδα</value>

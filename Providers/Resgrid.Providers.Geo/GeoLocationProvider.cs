@@ -126,6 +126,71 @@ namespace Resgrid.Providers.GeoLocationProvider
 			return await _cacheProvider.RetrieveAsync<string>(GeoLocationCacheKeys.ForwardGeocode(address), getCordsFromAddress, CacheLength);
 		}
 
+		public async Task<GeocodeResult> GeocodeAddressAsync(string address, CancellationToken cancellationToken = default)
+		{
+			if (string.IsNullOrWhiteSpace(address))
+				return GeocodeResult.Of(GeocodeOutcome.NotFound);
+
+			var chain = GeocoderChain();
+			var outcome = chain.Count == 0 ? GeocodeOutcome.NotConfigured : GeocodeOutcome.Unavailable;
+
+			// Shares GetLatLonFromAddress's cache entry, so a hit costs nothing and a found position is stored for both.
+			// Only positions are cached: "not found" and "unavailable" are asked again next time.
+			async Task<string> lookup()
+			{
+				var answeredWithoutMatch = false;
+
+				foreach (var geocoder in chain)
+				{
+					cancellationToken.ThrowIfCancellationRequested();
+
+					try
+					{
+						using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+						timeout.CancelAfter(TimeSpan.FromMilliseconds(Math.Max(1000, Config.MappingConfig.RoutingTimeoutMs)));
+
+						var match = await geocoder.ForwardAsync(address, timeout.Token);
+						if (match != null)
+						{
+							outcome = GeocodeOutcome.Found;
+							return string.Format(CultureInfo.InvariantCulture, "{0},{1}", match.Latitude, match.Longitude);
+						}
+
+						// This geocoder answered: it does not know the address. The next one may.
+						answeredWithoutMatch = true;
+					}
+					catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+					{
+						throw;
+					}
+					catch
+					{
+						// This geocoder did not answer (error, rate limit, timeout); that says nothing about the address.
+					}
+				}
+
+				// One geocoder saying "no such address" while none found it is a verdict on the address; only when none
+				// answered at all is the lookup worth retrying.
+				if (chain.Count > 0)
+					outcome = answeredWithoutMatch ? GeocodeOutcome.NotFound : GeocodeOutcome.Unavailable;
+
+				return null;
+			}
+
+			var coordinates = chain.Count == 0 ? null : await _cacheProvider.RetrieveAsync<string>(GeoLocationCacheKeys.ForwardGeocode(address), lookup, CacheLength);
+
+			if (coordinates != null)
+			{
+				var parts = coordinates.Split(',');
+				if (parts.Length == 2 &&
+				    double.TryParse(parts[0], NumberStyles.Float, CultureInfo.InvariantCulture, out var latitude) &&
+				    double.TryParse(parts[1], NumberStyles.Float, CultureInfo.InvariantCulture, out var longitude))
+					return GeocodeResult.Found(latitude, longitude);
+			}
+
+			return GeocodeResult.Of(outcome == GeocodeOutcome.Found ? GeocodeOutcome.Unavailable : outcome);
+		}
+
 		public async Task<RouteInformation> GetRoute(double startLat, double startLon, double endLat, double endLon)
 		{
 			async Task<RouteInformation> getRoute()

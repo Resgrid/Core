@@ -49,7 +49,7 @@ namespace Resgrid.Tests.Web.Services
 			M<IDepartmentSettingsService>().Setup(x => x.GetMappingPersonnelLocationTTLAsync(DepartmentId)).ReturnsAsync(60);
 
 			M<IUnitsService>().Setup(x => x.GetUnitByIdAsync(UnitId)).ReturnsAsync(new Unit { UnitId = UnitId, DepartmentId = DepartmentId, Name = "Engine 7", Type = "Engine" });
-			M<IUnitsService>().Setup(x => x.GetLatestUnitLocationAsync(UnitId, null))
+			M<IUnitsService>().Setup(x => x.GetLatestUnitLocationForDepartmentAsync(DepartmentId, UnitId))
 				.ReturnsAsync(new UnitsLocation { UnitId = UnitId, Latitude = 39.51m, Longitude = -119.81m, Timestamp = _now.AddMinutes(-2) });
 			M<IUnitsService>().Setup(x => x.GetRolesForUnitAsync(UnitId)).ReturnsAsync(new List<UnitRole>
 			{
@@ -153,7 +153,7 @@ namespace Resgrid.Tests.Web.Services
 		[Test]
 		public async Task A_unit_without_a_position_still_maps_its_crew_and_the_department_view()
 		{
-			M<IUnitsService>().Setup(x => x.GetLatestUnitLocationAsync(UnitId, null)).ReturnsAsync((UnitsLocation)null);
+			M<IUnitsService>().Setup(x => x.GetLatestUnitLocationForDepartmentAsync(DepartmentId, UnitId)).ReturnsAsync((UnitsLocation)null);
 
 			var result = await Load();
 
@@ -168,7 +168,7 @@ namespace Resgrid.Tests.Web.Services
 		[Test]
 		public async Task A_ping_past_the_departments_ttl_is_not_a_position()
 		{
-			M<IUnitsService>().Setup(x => x.GetLatestUnitLocationAsync(UnitId, null))
+			M<IUnitsService>().Setup(x => x.GetLatestUnitLocationForDepartmentAsync(DepartmentId, UnitId))
 				.ReturnsAsync(new UnitsLocation { UnitId = UnitId, Latitude = 39.51m, Longitude = -119.81m, Timestamp = _now.AddHours(-3) });
 
 			(await Load()).Data.UnitMarker.Should().BeNull();
@@ -177,7 +177,7 @@ namespace Resgrid.Tests.Web.Services
 		[Test]
 		public async Task A_status_with_a_location_stands_in_for_a_missing_ping()
 		{
-			M<IUnitsService>().Setup(x => x.GetLatestUnitLocationAsync(UnitId, null)).ReturnsAsync((UnitsLocation)null);
+			M<IUnitsService>().Setup(x => x.GetLatestUnitLocationForDepartmentAsync(DepartmentId, UnitId)).ReturnsAsync((UnitsLocation)null);
 			M<IUnitsService>().Setup(x => x.GetLastUnitStateByUnitIdAsync(UnitId))
 				.ReturnsAsync(new UnitState { UnitId = UnitId, Latitude = 39.6m, Longitude = -119.9m, Timestamp = _now.AddMinutes(-5) });
 
@@ -200,7 +200,7 @@ namespace Resgrid.Tests.Web.Services
 			driver.Marker.Should().BeNull();
 			driver.LocationTimestamp.Should().BeNull();
 			result.Data.Crew.Single(c => c.UserId == "officer-1").Marker.Should().NotBeNull();
-			M<IUnitsService>().Verify(x => x.GetLatestUnitLocationAsync(It.IsAny<int>(), It.IsAny<DateTime?>()), Times.Never);
+			M<IUnitsService>().Verify(x => x.GetLatestUnitLocationForDepartmentAsync(It.IsAny<int>(), It.IsAny<int>()), Times.Never);
 		}
 
 		[Test]

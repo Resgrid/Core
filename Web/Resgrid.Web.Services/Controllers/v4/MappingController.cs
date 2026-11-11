@@ -404,7 +404,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (await _authorizationService.CanUserViewUnitLocationViaMatrixAsync(unit.UnitId, UserId, DepartmentId))
 			{
-				var unitMarker = BuildUnitMarker(unit, await _unitsService.GetLatestUnitLocationAsync(unit.UnitId),
+				var unitMarker = BuildUnitMarker(unit, await _unitsService.GetLatestUnitLocationForDepartmentAsync(DepartmentId, unit.UnitId),
 					unitState, icons.ForUnit(unit, unitState),
 					await _departmentSettingsService.GetMappingUnitLocationTTLAsync(DepartmentId),
 					await _departmentSettingsService.GetMappingUnitAllowStatusWithNoLocationToOverwriteAsync(DepartmentId), now);

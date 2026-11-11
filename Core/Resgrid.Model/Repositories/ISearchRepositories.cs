@@ -16,6 +16,9 @@ namespace Resgrid.Model.Repositories
 		/// <summary>Soft-deletes one row; returns false when it did not exist.</summary>
 		Task<bool> SoftDeleteAsync(int departmentId, string entityType, string entityId, CancellationToken cancellationToken = default);
 
+		/// <summary>Set-based <see cref="SoftDeleteAsync"/> for many rows of one family (a bulk removal); returns how many live rows were removed.</summary>
+		Task<int> SoftDeleteManyAsync(int departmentId, string entityType, IEnumerable<string> entityIds, CancellationToken cancellationToken = default);
+
 		/// <summary>Soft-deletes live rows of one family that were not touched since <paramref name="notTouchedSince"/> (rebuild reconciliation).</summary>
 		Task<int> SoftDeleteStaleAsync(int departmentId, string entityType, DateTime notTouchedSince, CancellationToken cancellationToken = default);
 

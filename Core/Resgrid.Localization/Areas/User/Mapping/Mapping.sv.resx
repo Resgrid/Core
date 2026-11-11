@@ -329,4 +329,40 @@
   <data name="TrafficLayer" xml:space="preserve">
     <value>Trafik i realtid</value>
   </data>
+  <data name="PoiBulkTitle" xml:space="preserve">
+    <value>Ta bort POI</value>
+  </data>
+  <data name="PoiBulkHelp" xml:space="preserve">
+    <value>Ta bort många POI på en gång, till exempel efter import av fel fil. Markera rader (sökrutan filtrerar listan och rutan i rubriken markerar alla träffar) eller ta bort alla POI i listan. POI som är kopplade till brandposter visas inte och finns kvar.</value>
+  </data>
+  <data name="PoiBulkScopeSelected" xml:space="preserve">
+    <value>POI markerade i listan</value>
+  </data>
+  <data name="PoiBulkScopeAll" xml:space="preserve">
+    <value>Alla POI i listan</value>
+  </data>
+  <data name="PoiBulkConfirmCount" xml:space="preserve">
+    <value>Skriv antalet POI som ska tas bort</value>
+  </data>
+  <data name="PoiBulkConfirm" xml:space="preserve">
+    <value>Ta bort {0} POI? Åtgärden kan inte ångras.</value>
+  </data>
+  <data name="PoiBulkCountMismatch" xml:space="preserve">
+    <value>Skriv {0} för att bekräfta, antalet POI som tas bort.</value>
+  </data>
+  <data name="PoiBulkNoneSelected" xml:space="preserve">
+    <value>Markera POI som ska tas bort i listan eller välj ett annat alternativ.</value>
+  </data>
+  <data name="PoiBulkConfirmRequired" xml:space="preserve">
+    <value>Skriv antalet POI som ska tas bort för att bekräfta.</value>
+  </data>
+  <data name="PoiBulkDeleted" xml:space="preserve">
+    <value>{0:N0} POI borttagna.</value>
+  </data>
+  <data name="PoiBulkSelectAll" xml:space="preserve">
+    <value>Markera alla POI som matchar sökningen</value>
+  </data>
+  <data name="PoiBulkSelectRow" xml:space="preserve">
+    <value>Markera POI</value>
+  </data>
 </root>

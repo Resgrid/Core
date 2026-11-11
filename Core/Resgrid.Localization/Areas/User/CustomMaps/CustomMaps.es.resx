@@ -371,4 +371,25 @@
   <data name="PleaseSelectTargetLayer" xml:space="preserve">
     <value>Seleccione una capa de destino antes de importar. Si no hay ninguna, cree una capa primero.</value>
   </data>
+  <data name="RegionBulkTitle" xml:space="preserve">
+    <value>Eliminar todas las regiones</value>
+  </data>
+  <data name="RegionBulkHelp" xml:space="preserve">
+    <value>Elimina las {0:N0} regiones de esta capa y conserva la capa, por ejemplo tras importar un archivo en la capa equivocada.</value>
+  </data>
+  <data name="RegionBulkConfirmCount" xml:space="preserve">
+    <value>Escriba el número de regiones que se eliminarán</value>
+  </data>
+  <data name="RegionBulkConfirm" xml:space="preserve">
+    <value>¿Eliminar {0} regiones de esta capa?</value>
+  </data>
+  <data name="RegionBulkCountMismatch" xml:space="preserve">
+    <value>Escriba {0} para confirmar, el número de regiones de esta capa.</value>
+  </data>
+  <data name="RegionBulkConfirmRequired" xml:space="preserve">
+    <value>Escriba el número de regiones que se eliminarán para confirmar.</value>
+  </data>
+  <data name="RegionBulkDeleted" xml:space="preserve">
+    <value>{0:N0} regiones eliminadas.</value>
+  </data>
 </root>

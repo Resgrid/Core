@@ -284,6 +284,14 @@ namespace Resgrid.Services.Search
 			catch (Exception ex) { Logging.LogException(ex, $"Search projection removal failed for {entityType} {entityId} in department {departmentId}."); }
 		}
 
+		public async Task RemoveManyAsync(int departmentId, string entityType, IEnumerable<string> entityIds, CancellationToken cancellationToken = default)
+		{
+			if (departmentId <= 0 || string.IsNullOrWhiteSpace(entityType) || entityIds == null)
+				return;
+			try { await _projections.SoftDeleteManyAsync(departmentId, entityType, entityIds, cancellationToken); }
+			catch (Exception ex) { Logging.LogException(ex, $"Search projection bulk removal failed for {entityType} in department {departmentId}."); }
+		}
+
 		public async Task<SearchProjection> UpsertAsync(SearchProjection projection, CancellationToken cancellationToken = default)
 		{
 			if (projection == null)

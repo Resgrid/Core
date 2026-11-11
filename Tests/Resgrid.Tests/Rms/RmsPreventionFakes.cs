@@ -179,6 +179,21 @@ namespace Resgrid.Tests.Rms
 		public Task<int> CountTestDueAsync(int departmentId, DateTime cutoffUtc) => Task.FromResult(Live(departmentId).Count(h => h.InService && (h.LastTestedOn == null || h.LastTestedOn < cutoffUtc)));
 		public Task<IEnumerable<RmsHydrant>> GetOutOfServiceAsync(int departmentId, int take) => Task.FromResult<IEnumerable<RmsHydrant>>(Live(departmentId).Where(h => !h.InService)
 			.OrderBy(h => h.OutOfServiceSince.HasValue ? 0 : 1).ThenBy(h => h.OutOfServiceSince).ThenBy(h => h.HydrantNumber).Take(take).ToList());
+
+		public int BulkSoftDeletes { get; private set; }
+		private List<RmsHydrant> BulkMatches(int departmentId, HydrantBulkDeleteScope scope, IReadOnlyCollection<string> hydrantIds)
+		{
+			var ids = scope == HydrantBulkDeleteScope.Selected ? (hydrantIds ?? Array.Empty<string>()).ToHashSet(StringComparer.Ordinal) : null;
+			return Live(departmentId).Where(h => scope == HydrantBulkDeleteScope.All || (scope == HydrantBulkDeleteScope.Imported && RmsHydrantSources.IsImported(h.Source)) || (ids != null && ids.Contains(h.RmsHydrantId))).ToList();
+		}
+		public Task<int> CountForBulkDeleteAsync(int departmentId, HydrantBulkDeleteScope scope, IReadOnlyCollection<string> hydrantIds) => Task.FromResult(BulkMatches(departmentId, scope, hydrantIds).Count);
+		public Task<int> SoftDeleteBulkAsync(int departmentId, HydrantBulkDeleteScope scope, IReadOnlyCollection<string> hydrantIds, DateTime deletedOnUtc, CancellationToken cancellationToken = default)
+		{
+			BulkSoftDeletes++;
+			var rows = BulkMatches(departmentId, scope, hydrantIds);
+			foreach (var h in rows) { h.DeletedOn = deletedOnUtc; h.ModifiedOn = deletedOnUtc; h.RowVersion++; }
+			return Task.FromResult(rows.Count);
+		}
 	}
 
 	public class FakeFlowTests : InMemoryRepo<RmsHydrantFlowTest>, IRmsHydrantFlowTestsRepository

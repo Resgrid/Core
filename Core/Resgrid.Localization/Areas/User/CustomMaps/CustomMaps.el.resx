@@ -371,4 +371,25 @@
   <data name="PleaseSelectTargetLayer" xml:space="preserve">
     <value>Επιλέξτε επίπεδο προορισμού πριν από την εισαγωγή. Δημιουργήστε πρώτα ένα επίπεδο αν δεν υπάρχει.</value>
   </data>
+  <data name="RegionBulkTitle" xml:space="preserve">
+    <value>Διαγραφή όλων των περιοχών</value>
+  </data>
+  <data name="RegionBulkHelp" xml:space="preserve">
+    <value>Διαγράφει και τις {0:N0} περιοχές αυτού του επιπέδου και κρατά το επίπεδο, για παράδειγμα μετά από εισαγωγή αρχείου σε λάθος επίπεδο.</value>
+  </data>
+  <data name="RegionBulkConfirmCount" xml:space="preserve">
+    <value>Πληκτρολογήστε τον αριθμό των περιοχών προς διαγραφή</value>
+  </data>
+  <data name="RegionBulkConfirm" xml:space="preserve">
+    <value>Διαγραφή {0} περιοχών από αυτό το επίπεδο;</value>
+  </data>
+  <data name="RegionBulkCountMismatch" xml:space="preserve">
+    <value>Πληκτρολογήστε {0} για επιβεβαίωση, τον αριθμό των περιοχών του επιπέδου.</value>
+  </data>
+  <data name="RegionBulkConfirmRequired" xml:space="preserve">
+    <value>Πληκτρολογήστε τον αριθμό των περιοχών προς διαγραφή για επιβεβαίωση.</value>
+  </data>
+  <data name="RegionBulkDeleted" xml:space="preserve">
+    <value>Διαγράφηκαν {0:N0} περιοχές.</value>
+  </data>
 </root>

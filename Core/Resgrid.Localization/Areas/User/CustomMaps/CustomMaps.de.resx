@@ -371,4 +371,25 @@
   <data name="PleaseSelectTargetLayer" xml:space="preserve">
     <value>Bitte wählen Sie vor dem Import eine Zielebene aus. Erstellen Sie zuerst eine Ebene, falls noch keine vorhanden ist.</value>
   </data>
+  <data name="RegionBulkTitle" xml:space="preserve">
+    <value>Alle Bereiche entfernen</value>
+  </data>
+  <data name="RegionBulkHelp" xml:space="preserve">
+    <value>Entfernt alle {0:N0} Bereiche aus dieser Ebene und behält die Ebene, zum Beispiel nach dem Import einer Datei in die falsche Ebene.</value>
+  </data>
+  <data name="RegionBulkConfirmCount" xml:space="preserve">
+    <value>Anzahl der zu entfernenden Bereiche eingeben</value>
+  </data>
+  <data name="RegionBulkConfirm" xml:space="preserve">
+    <value>{0} Bereiche aus dieser Ebene entfernen?</value>
+  </data>
+  <data name="RegionBulkCountMismatch" xml:space="preserve">
+    <value>Zur Bestätigung {0} eingeben, die Anzahl der Bereiche auf dieser Ebene.</value>
+  </data>
+  <data name="RegionBulkConfirmRequired" xml:space="preserve">
+    <value>Zur Bestätigung die Anzahl der zu entfernenden Bereiche eingeben.</value>
+  </data>
+  <data name="RegionBulkDeleted" xml:space="preserve">
+    <value>{0:N0} Bereiche entfernt.</value>
+  </data>
 </root>

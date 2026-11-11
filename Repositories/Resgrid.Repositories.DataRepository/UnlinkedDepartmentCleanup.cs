@@ -18,7 +18,8 @@ namespace Resgrid.Repositories.DataRepository
 	/// before their tables were purged (DeletedDepartmentCleanup) run the same code. Not here: the readiness subtree (checklist
 	/// cleanup, under its fence), RMS (its own cleanup and orphan sweep) and ADP (deleted last). Retained by design (decided
 	/// 2026-10-11): SystemAudits, AdpAuditEvents and ProtectedWorkflowDisclosures, and the session, MFA and transient login
-	/// rows the CleanOIDC worker purges on retention.
+	/// rows the CleanOIDC worker purges on retention. Also retained (2026-11-10): OfflineMapPacks, the only handle to the pack
+	/// store files, which the pack retention cleanup deletes together with the row.
 	/// </summary>
 	public static class UnlinkedDepartmentCleanup
 	{
@@ -31,7 +32,8 @@ namespace Resgrid.Repositories.DataRepository
 		{
 			"CallLocationIndexStates", "CallNumberSequences", "DocumentNumberSequences", "DepartmentApiKeys", "ScheduledTasks", "UserStates",
 			"UdfDefinitions", "ChatbotSessions", "ChatbotMessageLog", "ChatbotDepartmentConfigs", "AiDispatchAudits", "DepartmentAiDispatchConfigs",
-			"AiBillingAccounts", "AdpBillingAccounts", "ContactPreplanHazards", "ContactPreplans", "ContactAttachments", "DepartmentProfileMedia", "TypeIcons", "MapVisualizations", "UserDashboards", "DepartmentDashboardTemplates", "RunCardActivations",
+			"AiBillingAccounts", "AdpBillingAccounts", "ContactPreplanHazards", "ContactPreplans", "ContactAttachments", "DepartmentProfileMedia", "TypeIcons", "MapVisualizations", "UserDashboards", "DepartmentDashboardTemplates",
+			"CallOutstandingRequirements", "RunCardDecisions", "RunCardTargets", "ResponsePackages", "RunCardActivations",
 			"RunCards", "StationCoverageRequirements", "ModerationActions", "ModerationReports", "ModerationRequests", "MessageRecipients", "Messages",
 			"DepartmentMemberSensitiveData", "DepartmentMemberEmergencyContacts", "UserExternalIdentityLinks", "DepartmentSecurityPolicies",
 			"DepartmentSsoConfigs", "GdprDataExportRequests", "Autofills", "DomainEventOutbox", "ReportingDailyRollup", "SearchProjections",
@@ -78,10 +80,16 @@ namespace Resgrid.Repositories.DataRepository
 			// Home dashboard boards and department templates (layouts only)
 			await Delete("UserDashboards", "DepartmentDashboardTemplates");
 
-			// Run cards: requirements hang off alarm levels, the other children off the run card
-			foreach (var requirement in new[] { "RunCardRoleRequirements", "RunCardUnitRequirements" })
-				if (await DepartmentCleanupCommands.ExistsAsync(connection, transaction, type, requirement, ct) && await DepartmentCleanupCommands.ExistsAsync(connection, transaction, type, "RunCardAlarmLevels", ct))
-					await connection.ExecuteAsync(new CommandDefinition($"DELETE FROM {Q(requirement)} WHERE {Q("RunCardAlarmLevelId")} IN (SELECT {Q("RunCardAlarmLevelId")} FROM {Q("RunCardAlarmLevels")} WHERE {Q("RunCardId")} IN (SELECT {Q("RunCardId")} FROM {Q("RunCards")} WHERE {Q("DepartmentId")}=@DepartmentId))",
+			// Conditional run cards (M0287): a call's awaited resources and pinned decisions, the "any of" targets of package
+			// rows and condition operands, and the response packages with their rows (rows carry no DepartmentId)
+			await Delete("CallOutstandingRequirements", "RunCardDecisions", "RunCardTargets");
+			await DeleteChild("ResponsePackageRows", false, ("ResponsePackages", "ResponsePackageId", "ResponsePackageId"));
+			await Delete("ResponsePackages");
+
+			// Run cards: requirements and decision graph nodes hang off alarm levels, the other children off the run card
+			foreach (var levelChild in new[] { "RunCardRoleRequirements", "RunCardUnitRequirements", "RunCardDecisionNodes" })
+				if (await DepartmentCleanupCommands.ExistsAsync(connection, transaction, type, levelChild, ct) && await DepartmentCleanupCommands.ExistsAsync(connection, transaction, type, "RunCardAlarmLevels", ct))
+					await connection.ExecuteAsync(new CommandDefinition($"DELETE FROM {Q(levelChild)} WHERE {Q("RunCardAlarmLevelId")} IN (SELECT {Q("RunCardAlarmLevelId")} FROM {Q("RunCardAlarmLevels")} WHERE {Q("RunCardId")} IN (SELECT {Q("RunCardId")} FROM {Q("RunCards")} WHERE {Q("DepartmentId")}=@DepartmentId))",
 						new { DepartmentId = departmentId }, transaction, cancellationToken: ct));
 			foreach (var child in new[] { "RunCardAlarmLevels", "RunCardAvailabilitySelections", "RunCardTriggers" })
 				await DeleteChild(child, false, ("RunCards", "RunCardId", "RunCardId"));

@@ -59,6 +59,9 @@ namespace Resgrid.Model.Services
 
 		Task RemoveAsync(int departmentId, string entityType, string entityId, CancellationToken cancellationToken = default);
 
+		/// <summary><see cref="RemoveAsync"/> for many entities of one family in a few statements (bulk removals). Never throws: a failure is logged.</summary>
+		Task RemoveManyAsync(int departmentId, string entityType, IEnumerable<string> entityIds, CancellationToken cancellationToken = default);
+
 		/// <summary>Builds the projection row without saving it (used by rebuilds and tests). Null when nothing safe can be indexed.</summary>
 		Task<SearchProjection> BuildCallAsync(Call call);
 		Task<SearchProjection> BuildUnitAsync(Unit unit);

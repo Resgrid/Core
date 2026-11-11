@@ -99,7 +99,10 @@
                                             </td>
                                             <td style="text-align:right;">
                                                 <a class="btn btn-primary btn-xs" asp-controller="CustomMaps" asp-action="RegionEditor" asp-route-id="@layer.IndoorMapFloorId" asp-route-area="User"><i class="fa fa-pencil"></i> @localizer["RegionEditor"]</a>
-                                                <a class="btn btn-danger btn-xs" asp-controller="CustomMaps" asp-action="DeleteLayer" asp-route-id="@layer.IndoorMapFloorId" asp-route-area="User" onclick="return confirm('@JsEncoder.Encode(localizer["DeleteLayerConfirm"])');"><i class="fa fa-trash"></i> @localizer["Delete"]</a>
+                                                <form class="custom-map-layer-delete-form" asp-controller="CustomMaps" asp-action="DeleteLayer" asp-route-area="User" asp-antiforgery="true" method="post" style="display:inline;" onsubmit="return confirm('@JsEncoder.Encode(localizer["DeleteLayerConfirm"])');">
+                                                    <input type="hidden" name="id" value="@layer.IndoorMapFloorId" />
+                                                    <button type="submit" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> @localizer["Delete"]</button>
+                                                </form>
                                             </td>
                                         </tr>
                                     }

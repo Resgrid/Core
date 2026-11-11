@@ -67,6 +67,21 @@ namespace Resgrid.Web.Services.Controllers.v4
 			catch (Exception ex) { return Fail(ex); }
 		}
 
+		/// <summary>Removes many hydrants at once: the ids given (Scope 0), every imported hydrant (1) or every hydrant (2). Scopes 1 and 2 need ExpectedCount equal to the number that match.</summary>
+		[HttpPost("BulkDelete")]
+		[Authorize(Policy = ResgridResources.Record_PreventionAdmin)]
+		public async Task<ActionResult<HydrantBulkDeleteResult>> BulkDelete([FromBody] HydrantBulkDeleteInput input, CancellationToken cancellationToken)
+		{
+			if (!await FlagOnAsync()) return NotFound();
+			if (input == null || !Enum.IsDefined(typeof(HydrantBulkDeleteScope), input.Scope)) return BadRequest("Scope must be 0 (selected ids), 1 (imported) or 2 (all).");
+			try
+			{
+				var removed = await _hydrants.BulkDeleteAsync(DepartmentId, UserId, (HydrantBulkDeleteScope)input.Scope, input.HydrantIds, input.ExpectedCount, cancellationToken);
+				return Ok(Done(new HydrantBulkDeleteResult { Data = new HydrantBulkDeleteResultData { Removed = removed }, PageSize = 1 }));
+			}
+			catch (Exception ex) { return Fail(ex); }
+		}
+
 		[HttpPost("SetServiceState")]
 		[Authorize(Policy = ResgridResources.Record_PreventionAdmin)]
 		public async Task<ActionResult<HydrantSavedResult>> SetServiceState([FromBody] HydrantServiceStateInput input, CancellationToken cancellationToken)

@@ -1003,6 +1003,57 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return RedirectToAction("ViewType", new { poiTypeId = type.PoiTypeId });
 		}
 
+		/// <summary>
+		/// Removes many POIs of one type: the ticked rows (<paramref name="poiIds"/>, comma separated) or every POI the type's list
+		/// shows (scope "All"). Hydrant-linked POIs are hidden from that list and stay. <paramref name="expectedCount"/> is the number
+		/// the administrator typed to confirm; the service refuses when it does not match.
+		/// </summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> DeletePOIs(int poiTypeId, string scope, string poiIds, int? expectedCount, CancellationToken cancellationToken)
+		{
+			if (!CanManageMapData())
+				return Unauthorized();
+
+			var type = await _mappingService.GetTypeByIdAsync(poiTypeId);
+			if (type == null)
+				return NotFound();
+			if (type.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			if (expectedCount == null)
+			{
+				TempData["PoiBulkError"] = _localizer["PoiBulkConfirmRequired"].Value;
+				return RedirectToAction("ViewType", new { poiTypeId });
+			}
+
+			List<int> ids;
+			if (string.Equals(scope, "All", StringComparison.Ordinal))
+			{
+				// The same rows GetPoisForType lists: a POI a hydrant points at is managed from the hydrant, not here.
+				var hydrantPoiIds = (await GetHydrantPointsAsync()).Where(h => h.PoiId.HasValue).Select(h => h.PoiId.Value).ToHashSet();
+				ids = (type.Pois ?? Enumerable.Empty<Poi>()).Select(p => p.PoiId).Where(id => !hydrantPoiIds.Contains(id)).ToList();
+			}
+			else
+			{
+				ids = (poiIds ?? string.Empty).Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+					.Select(s => int.TryParse(s, System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture, out var id) ? id : 0)
+					.Where(id => id > 0).ToList();
+			}
+
+			try
+			{
+				var removed = await _mappingService.DeletePOIsAsync(DepartmentId, poiTypeId, ids, expectedCount, cancellationToken);
+				TempData["PoiBulkMessage"] = string.Format(_localizer["PoiBulkDeleted"].Value, removed);
+			}
+			catch (ArgumentException ex)
+			{
+				TempData["PoiBulkError"] = ex.Message;
+			}
+
+			return RedirectToAction("ViewType", new { poiTypeId });
+		}
+
 		[HttpGet]
 		public async Task<IActionResult> GetMapData(MapSettingsInput input)
 		{

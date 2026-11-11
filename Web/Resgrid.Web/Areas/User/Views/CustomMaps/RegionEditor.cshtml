@@ -4,6 +4,10 @@
 @{
     ViewBag.Title = "Resgrid | " + localizer["RegionEditorPageTitlePrefix"] + " - " + Model.Layer.Name;
     var mapConfig = SettingsHelper.GetDepartmentMapConfig(Resgrid.Config.InfoConfig.WebsiteKey);
+    var regionCount = Model.Regions?.Count ?? 0;
+    var canClearRegions = ClaimsAuthorizationHelper.IsUserDepartmentAdmin() && regionCount > 0;
+    var regionBulkMessage = TempData["RegionBulkMessage"] as string;
+    var regionBulkError = TempData["RegionBulkError"] as string;
 }
 
 @section Styles {
@@ -29,6 +33,8 @@
 </div>
 
 <div class="wrapper wrapper-content animated fadeInRight">
+    @if (!string.IsNullOrEmpty(regionBulkMessage)) { <div class="alert alert-success">@regionBulkMessage</div> }
+    @if (!string.IsNullOrEmpty(regionBulkError)) { <div class="alert alert-danger">@regionBulkError</div> }
     <div class="row">
         <div class="col-lg-9">
             <div class="ibox float-e-margins">
@@ -62,6 +68,27 @@
                     }
                 </div>
             </div>
+
+            @if (canClearRegions)
+            {
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>@localizer["RegionBulkTitle"]</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <form id="regionBulkDeleteForm" method="post" asp-controller="CustomMaps" asp-action="ClearRegions" asp-route-area="User" data-count="@regionCount">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="layerId" value="@Model.Layer.IndoorMapFloorId" />
+                            <p class="text-muted"><small>@string.Format(localizer["RegionBulkHelp"].Value, regionCount)</small></p>
+                            <div class="form-group">
+                                <label for="regionBulkCount">@localizer["RegionBulkConfirmCount"]</label>
+                                <input id="regionBulkCount" class="form-control input-sm" type="number" name="expectedCount" min="1" step="1" required autocomplete="off" />
+                            </div>
+                            <button type="submit" class="btn btn-sm btn-danger btn-block"><i class="fa fa-trash"></i> @localizer["RegionBulkTitle"]</button>
+                        </form>
+                    </div>
+                </div>
+            }
 
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
@@ -137,4 +164,19 @@
         var deleteRegionUrl = '@Url.Action("DeleteRegion", "CustomMaps", new { area = "User" })';
     </script>
     <script src="~/js/app/internal/custommaps/resgrid.custommaps.regioneditor.js" asp-append-version="true"></script>
+    <script>
+        // Remove all regions: the typed count is checked here and again by the server.
+        $(function () {
+            var form = document.getElementById('regionBulkDeleteForm');
+            if (!form) { return; }
+            var mismatchText = @Html.ScriptJson(localizer["RegionBulkCountMismatch"].Value);
+            var confirmText = @Html.ScriptJson(localizer["RegionBulkConfirm"].Value);
+            form.addEventListener('submit', function (e) {
+                var count = parseInt(form.getAttribute('data-count'), 10);
+                var typed = parseInt(document.getElementById('regionBulkCount').value, 10);
+                if (typed !== count) { e.preventDefault(); alert(mismatchText.replace('{0}', count.toLocaleString())); return; }
+                if (!confirm(confirmText.replace('{0}', count.toLocaleString()))) { e.preventDefault(); }
+            });
+        });
+    </script>
 }

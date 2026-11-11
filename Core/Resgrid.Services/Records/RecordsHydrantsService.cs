@@ -101,6 +101,34 @@ namespace Resgrid.Services.Records
 			await _gate.AuditAsync(departmentId, userId, RmsAccessAuditAction.Change, "Hydrant removed", hydrantId, new { hydrant.HydrantNumber }, cancellationToken: cancellationToken);
 		}
 
+		/// <summary>Most ids one Selected removal accepts; matches the largest import (<see cref="HydrantImportParser.MaximumRows"/>).</summary>
+		public const int MaxBulkDeleteSelection = HydrantImportParser.MaximumRows;
+
+		public async Task<int> BulkDeleteAsync(int departmentId, string userId, HydrantBulkDeleteScope scope, IEnumerable<string> hydrantIds, int? expectedCount, CancellationToken cancellationToken = default)
+		{
+			await RequireAdminAsync(departmentId, userId);
+			if (!Enum.IsDefined(typeof(HydrantBulkDeleteScope), scope)) throw new ArgumentException("Choose which hydrants to remove.");
+			List<string> ids = null;
+			if (scope == HydrantBulkDeleteScope.Selected)
+			{
+				ids = (hydrantIds ?? Enumerable.Empty<string>()).Where(id => !string.IsNullOrWhiteSpace(id)).Select(id => id.Trim()).Distinct(StringComparer.Ordinal).ToList();
+				if (ids.Count == 0) throw new ArgumentException("Select the hydrants to remove.");
+				if (ids.Count > MaxBulkDeleteSelection) throw new ArgumentException($"Select at most {MaxBulkDeleteSelection:N0} hydrants at a time, or remove all imported hydrants instead.");
+			}
+			// A department-wide removal names no rows, so the caller confirms how many it expects to remove; a stale page or a
+			// concurrent import then refuses instead of removing hydrants nobody saw.
+			else if (expectedCount == null) throw new ArgumentException("Confirm how many hydrants will be removed.");
+
+			var matching = await _hydrants.CountForBulkDeleteAsync(departmentId, scope, ids);
+			if (expectedCount.HasValue && expectedCount.Value != matching)
+				throw new ArgumentException($"{matching:N0} hydrants match this removal, not {expectedCount.Value:N0}. Reload the hydrant list and confirm again.");
+			if (matching == 0) return 0;
+
+			var removed = await _hydrants.SoftDeleteBulkAsync(departmentId, scope, ids, DateTime.UtcNow, cancellationToken);
+			await _gate.AuditAsync(departmentId, userId, RmsAccessAuditAction.Change, "Hydrants removed in bulk", departmentId.ToString(), new { scope = scope.ToString(), removed }, cancellationToken: cancellationToken);
+			return removed;
+		}
+
 		public async Task<RmsHydrant> SetServiceStateAsync(int departmentId, string userId, string hydrantId, bool inService, string reason, CancellationToken cancellationToken = default)
 		{
 			await RequireAdminAsync(departmentId, userId);

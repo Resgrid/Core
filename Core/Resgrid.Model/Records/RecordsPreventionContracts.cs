@@ -162,6 +162,26 @@ namespace Resgrid.Model
 		public List<HydrantImportRow> Rejected { get; set; } = new List<HydrantImportRow>();
 	}
 
+	/// <summary>Which live hydrants a bulk removal takes.</summary>
+	public enum HydrantBulkDeleteScope
+	{
+		/// <summary>The hydrants whose ids are passed in.</summary>
+		Selected = 0,
+		/// <summary>Every hydrant created by a JSON or CSV import (<see cref="RmsHydrantSources.IsImported"/>); manually entered ones stay.</summary>
+		Imported = 1,
+		/// <summary>Every hydrant in the department.</summary>
+		All = 2
+	}
+
+	/// <summary><see cref="RmsHydrant.Source"/> values. An import writes "{format}-import" and an update keeps the row's original source.</summary>
+	public static class RmsHydrantSources
+	{
+		public const string Manual = "manual";
+		public const string ImportSuffix = "-import";
+
+		public static bool IsImported(string source) => source != null && source.EndsWith(ImportSuffix, StringComparison.Ordinal);
+	}
+
 	public class PreventionSummary
 	{
 		public int Occupancies { get; set; }

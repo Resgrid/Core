@@ -371,4 +371,25 @@
   <data name="PleaseSelectTargetLayer" xml:space="preserve">
     <value>Przed importem wybierz warstwę docelową. Jeśli nie ma żadnej, najpierw utwórz warstwę.</value>
   </data>
+  <data name="RegionBulkTitle" xml:space="preserve">
+    <value>Usuń wszystkie obszary</value>
+  </data>
+  <data name="RegionBulkHelp" xml:space="preserve">
+    <value>Usuwa wszystkie obszary ({0:N0}) z tej warstwy i zachowuje warstwę, na przykład po zaimportowaniu pliku do niewłaściwej warstwy.</value>
+  </data>
+  <data name="RegionBulkConfirmCount" xml:space="preserve">
+    <value>Wpisz liczbę obszarów do usunięcia</value>
+  </data>
+  <data name="RegionBulkConfirm" xml:space="preserve">
+    <value>Usunąć obszary ({0}) z tej warstwy?</value>
+  </data>
+  <data name="RegionBulkCountMismatch" xml:space="preserve">
+    <value>Aby potwierdzić, wpisz {0} — liczbę obszarów na tej warstwie.</value>
+  </data>
+  <data name="RegionBulkConfirmRequired" xml:space="preserve">
+    <value>Aby potwierdzić, wpisz liczbę obszarów do usunięcia.</value>
+  </data>
+  <data name="RegionBulkDeleted" xml:space="preserve">
+    <value>Usunięte obszary: {0:N0}.</value>
+  </data>
 </root>

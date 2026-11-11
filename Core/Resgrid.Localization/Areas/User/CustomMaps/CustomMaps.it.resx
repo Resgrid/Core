@@ -371,4 +371,25 @@
   <data name="PleaseSelectTargetLayer" xml:space="preserve">
     <value>Seleziona un livello di destinazione prima di importare. Se non ce ne sono, crea prima un livello.</value>
   </data>
+  <data name="RegionBulkTitle" xml:space="preserve">
+    <value>Elimina tutte le regioni</value>
+  </data>
+  <data name="RegionBulkHelp" xml:space="preserve">
+    <value>Elimina tutte le {0:N0} regioni da questo livello e mantiene il livello, ad esempio dopo aver importato un file nel livello sbagliato.</value>
+  </data>
+  <data name="RegionBulkConfirmCount" xml:space="preserve">
+    <value>Digita il numero di regioni da eliminare</value>
+  </data>
+  <data name="RegionBulkConfirm" xml:space="preserve">
+    <value>Eliminare {0} regioni da questo livello?</value>
+  </data>
+  <data name="RegionBulkCountMismatch" xml:space="preserve">
+    <value>Digita {0} per confermare, il numero di regioni su questo livello.</value>
+  </data>
+  <data name="RegionBulkConfirmRequired" xml:space="preserve">
+    <value>Digita il numero di regioni da eliminare per confermare.</value>
+  </data>
+  <data name="RegionBulkDeleted" xml:space="preserve">
+    <value>{0:N0} regioni eliminate.</value>
+  </data>
 </root>

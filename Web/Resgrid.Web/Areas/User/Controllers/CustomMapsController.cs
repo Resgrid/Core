@@ -18,6 +18,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 {
 	// Every action reads or writes maps scoped to the caller's department claim, so an anonymous
 	// request would run with a DepartmentId of 0 instead of being sent to sign-in.
+	//
+	// Managing custom maps (the pages and every write) is for department admins only, matching the Mapping page, which shows
+	// Custom Maps to admins only; each of those actions refuses anyone else before it reads anything. SearchRegions,
+	// GetLayerImage and GetLayerTile stay open to every member of the department, because dispatch reads them.
 	[Area("User")]
 	[Authorize]
 	public class CustomMapsController : SecureBaseController
@@ -36,6 +40,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		public async Task<IActionResult> Index(int? type)
 		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return Forbid();
+
 			var model = new CustomMapIndexView();
 			CustomMapType? filterType = type.HasValue ? (CustomMapType)type.Value : null;
 			model.FilterType = filterType;
@@ -46,6 +53,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		public IActionResult New(int? type)
 		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return Forbid();
+
 			var model = new CustomMapNewView();
 			if (type.HasValue)
 				model.Map.MapType = type.Value;
@@ -56,6 +66,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> New(CustomMapNewView model, CancellationToken cancellationToken)
 		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return Forbid();
+
 			if (ModelState.IsValid)
 			{
 				model.Map.DepartmentId = DepartmentId;
@@ -74,6 +87,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		public async Task<IActionResult> Edit(string id)
 		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return Forbid();
+
 			var map = await _customMapService.GetCustomMapByIdAsync(id);
 			if (map == null || map.DepartmentId != DepartmentId)
 				return RedirectToAction("Index");
@@ -87,6 +103,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Edit(CustomMapNewView model, CancellationToken cancellationToken)
 		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return Forbid();
+
 			var existing = await _customMapService.GetCustomMapByIdAsync(model.Map.IndoorMapId);
 			if (existing == null || existing.DepartmentId != DepartmentId)
 				return RedirectToAction("Index");
@@ -108,9 +127,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
-		[HttpGet]
+		// POST with antiforgery: as a GET, a link or an image tag on any page could delete a map for a signed-in admin.
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Delete(string id, CancellationToken cancellationToken)
 		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return Forbid();
+
 			var map = await _customMapService.GetCustomMapByIdAsync(id);
 			if (map != null && map.DepartmentId == DepartmentId)
 			{
@@ -127,6 +151,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		public async Task<IActionResult> Layers(string id)
 		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return Forbid();
+
 			var map = await _customMapService.GetCustomMapByIdAsync(id);
 			if (map == null || map.DepartmentId != DepartmentId)
 				return RedirectToAction("Index");
@@ -141,6 +168,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> NewLayer(string indoorMapId, string name, int floorOrder, int layerType, IFormFile layerImage, CancellationToken cancellationToken)
 		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return Forbid();
+
 			var map = await _customMapService.GetCustomMapByIdAsync(indoorMapId);
 			if (map == null || map.DepartmentId != DepartmentId)
 				return RedirectToAction("Index");
@@ -178,9 +208,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return RedirectToAction("Layers", new { id = indoorMapId });
 		}
 
-		[HttpGet]
+		// POST with antiforgery for the same reason as Delete.
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> DeleteLayer(string id, CancellationToken cancellationToken)
 		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return Forbid();
+
 			var layer = await _customMapService.GetLayerByIdAsync(id);
 			if (layer == null)
 				return RedirectToAction("Index");
@@ -201,6 +236,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		public async Task<IActionResult> RegionEditor(string id)
 		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return Forbid();
+
 			var layer = await _customMapService.GetLayerByIdAsync(id);
 			if (layer == null)
 				return RedirectToAction("Index");
@@ -220,6 +258,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> SaveRegion([FromBody] IndoorMapZone region, CancellationToken cancellationToken)
 		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return Forbid();
+
 			var layer = await _customMapService.GetLayerByIdAsync(region.IndoorMapFloorId);
 			if (layer == null)
 				return Json(new { success = false, message = "Layer not found" });
@@ -243,6 +284,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> DeleteRegion([FromBody] DeleteRegionRequest request, CancellationToken cancellationToken)
 		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return Forbid();
+
 			var region = await _customMapService.GetRegionByIdAsync(request.RegionId);
 			if (region == null)
 				return Json(new { success = false });
@@ -259,6 +303,44 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return Json(new { success = true });
 		}
 
+		/// <summary>
+		/// Removes every region of a layer and keeps the layer (an import into the wrong layer). Department admins only, as the
+		/// Mapping page shows Custom Maps; <paramref name="expectedCount"/> is the number the administrator typed to confirm.
+		/// </summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> ClearRegions(string layerId, int? expectedCount, CancellationToken cancellationToken)
+		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return Forbid();
+
+			var layer = await _customMapService.GetLayerByIdAsync(layerId);
+			if (layer == null || layer.IsDeleted)
+				return RedirectToAction("Index");
+
+			var map = await _customMapService.GetCustomMapByIdAsync(layer.IndoorMapId);
+			if (map == null || map.DepartmentId != DepartmentId)
+				return RedirectToAction("Index");
+
+			if (expectedCount == null)
+			{
+				TempData["RegionBulkError"] = _localizer["RegionBulkConfirmRequired"].Value;
+				return RedirectToAction("RegionEditor", new { id = layerId });
+			}
+
+			try
+			{
+				var removed = await _customMapService.DeleteRegionsForLayerAsync(layerId, expectedCount, cancellationToken);
+				TempData["RegionBulkMessage"] = string.Format(_localizer["RegionBulkDeleted"].Value, removed);
+			}
+			catch (ArgumentException ex)
+			{
+				TempData["RegionBulkError"] = ex.Message;
+			}
+
+			return RedirectToAction("RegionEditor", new { id = layerId });
+		}
+
 		#endregion Region Editor
 
 		#region Import
@@ -266,6 +348,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		public async Task<IActionResult> Import(string id)
 		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return Forbid();
+
 			var map = await _customMapService.GetCustomMapByIdAsync(id);
 			if (map == null || map.DepartmentId != DepartmentId)
 				return RedirectToAction("Index");
@@ -281,6 +366,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> ImportUpload(string mapId, string layerId, IFormFile importFile, CancellationToken cancellationToken)
 		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return Forbid();
+
 			var map = await _customMapService.GetCustomMapByIdAsync(mapId);
 			if (map == null || map.DepartmentId != DepartmentId)
 				return RedirectToAction("Index");

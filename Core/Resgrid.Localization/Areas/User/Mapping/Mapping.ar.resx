@@ -141,4 +141,40 @@
   <data name="TrafficLayer" xml:space="preserve">
     <value>حركة المرور المباشرة</value>
   </data>
+  <data name="PoiBulkTitle" xml:space="preserve">
+    <value>حذف نقاط الاهتمام</value>
+  </data>
+  <data name="PoiBulkHelp" xml:space="preserve">
+    <value>احذف نقاط اهتمام كثيرة دفعة واحدة، مثلًا بعد استيراد الملف الخطأ. حدّد الصفوف (يضيّق البحث القائمة ويحدد مربع العنوان كل النتائج المطابقة) أو احذف كل نقاط الاهتمام في هذه القائمة. نقاط الاهتمام المرتبطة بالصنابير لا تظهر وتبقى.</value>
+  </data>
+  <data name="PoiBulkScopeSelected" xml:space="preserve">
+    <value>نقاط الاهتمام المحددة في القائمة</value>
+  </data>
+  <data name="PoiBulkScopeAll" xml:space="preserve">
+    <value>كل نقاط الاهتمام في هذه القائمة</value>
+  </data>
+  <data name="PoiBulkConfirmCount" xml:space="preserve">
+    <value>اكتب عدد نقاط الاهتمام المراد حذفها</value>
+  </data>
+  <data name="PoiBulkConfirm" xml:space="preserve">
+    <value>حذف {0} من نقاط الاهتمام؟ لا يمكن التراجع عن ذلك.</value>
+  </data>
+  <data name="PoiBulkCountMismatch" xml:space="preserve">
+    <value>اكتب {0} للتأكيد، وهو عدد نقاط الاهتمام التي ستُحذف.</value>
+  </data>
+  <data name="PoiBulkNoneSelected" xml:space="preserve">
+    <value>حدّد في القائمة نقاط الاهتمام المراد حذفها أو اختر خيارًا آخر.</value>
+  </data>
+  <data name="PoiBulkConfirmRequired" xml:space="preserve">
+    <value>اكتب عدد نقاط الاهتمام المراد حذفها للتأكيد.</value>
+  </data>
+  <data name="PoiBulkDeleted" xml:space="preserve">
+    <value>تم حذف {0:N0} من نقاط الاهتمام.</value>
+  </data>
+  <data name="PoiBulkSelectAll" xml:space="preserve">
+    <value>تحديد كل نقاط الاهتمام المطابقة للبحث</value>
+  </data>
+  <data name="PoiBulkSelectRow" xml:space="preserve">
+    <value>تحديد نقطة الاهتمام</value>
+  </data>
 </root>

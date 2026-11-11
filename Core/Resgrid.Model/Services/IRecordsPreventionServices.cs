@@ -84,6 +84,13 @@ namespace Resgrid.Model.Services
 		Task<HydrantAggregate> GetAsync(int departmentId, string userId, string hydrantId);
 		Task<RmsHydrant> SaveAsync(int departmentId, string userId, RmsHydrant input, CancellationToken cancellationToken = default);
 		Task DeleteAsync(int departmentId, string userId, string hydrantId, CancellationToken cancellationToken = default);
+		/// <summary>
+		/// Soft-deletes many hydrants at once (the same removal as <see cref="DeleteAsync"/>) and returns how many were removed.
+		/// <paramref name="hydrantIds"/> is read only for <see cref="HydrantBulkDeleteScope.Selected"/>. <paramref name="expectedCount"/>
+		/// is required for the department-wide scopes and, when given, must equal the number of live hydrants that match or nothing is
+		/// removed (ArgumentException).
+		/// </summary>
+		Task<int> BulkDeleteAsync(int departmentId, string userId, HydrantBulkDeleteScope scope, IEnumerable<string> hydrantIds, int? expectedCount, CancellationToken cancellationToken = default);
 		Task<RmsHydrant> SetServiceStateAsync(int departmentId, string userId, string hydrantId, bool inService, string reason, CancellationToken cancellationToken = default);
 		Task<RmsHydrantFlowTest> RecordFlowTestAsync(int departmentId, string userId, RmsHydrantFlowTest input, CancellationToken cancellationToken = default);
 		Task<RmsHydrantMaintenance> RecordMaintenanceAsync(int departmentId, string userId, RmsHydrantMaintenance input, CancellationToken cancellationToken = default);

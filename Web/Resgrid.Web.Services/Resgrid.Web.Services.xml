@@ -4136,6 +4136,9 @@
         <member name="T:Resgrid.Web.Services.Controllers.v4.RecordHydrantsController">
             <summary>RMS-5 hydrants and water sources (RMS plan section 4.3): flow tests, maintenance, service state, JSON/CSV import and the response-map layer.</summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordHydrantsController.BulkDelete(Resgrid.Web.Services.Models.v4.Records.HydrantBulkDeleteInput,System.Threading.CancellationToken)">
+            <summary>Removes many hydrants at once: the ids given (Scope 0), every imported hydrant (1) or every hydrant (2). Scopes 1 and 2 need ExpectedCount equal to the number that match.</summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.RecordHydrantsController.Import(Resgrid.Web.Services.Models.v4.Records.HydrantImportInput,System.Threading.CancellationToken)">
             <summary>JSON or CSV import (number, latitude, longitude, type, address, main_size, flow_gpm, owner). Validate every row before saving.</summary>
         </member>
@@ -17108,6 +17111,9 @@
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Records.NerisCrosswalkCoverageData">
             <summary>Crosswalk gap report: an unmapped or stale local code is a filing that will need manual work.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Records.HydrantBulkDeleteInput">
+            <summary>Scope: 0 = the HydrantIds given, 1 = every imported hydrant, 2 = every hydrant. ExpectedCount is required for 1 and 2 and must equal the number that match.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Records.CrrActivityData">
             <summary>A CRR activity. SmokeAlarmsInstalled counts smoke-only units; CO-only and combination units are counted separately (M0284).</summary>

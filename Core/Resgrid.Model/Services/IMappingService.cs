@@ -60,6 +60,13 @@ namespace Resgrid.Model.Services
 
 		Task<bool> DeletePOIAsync(int poiId, CancellationToken cancellationToken = default(CancellationToken));
 
+		/// <summary>
+		/// Deletes many POIs of one type at once (the same removal as <see cref="DeletePOIAsync"/>) and returns how many were deleted.
+		/// Ids outside the type are ignored. When <paramref name="expectedCount"/> is given it must equal the number of listed POIs in
+		/// the type, or nothing is deleted (ArgumentException). A type of another department is an ArgumentException.
+		/// </summary>
+		Task<int> DeletePOIsAsync(int departmentId, int poiTypeId, IEnumerable<int> poiIds, int? expectedCount, CancellationToken cancellationToken = default(CancellationToken));
+
 		Task<MapLayer> SaveMapLayerAsync(MapLayer mapLayer);
 
 		Task<List<MapLayer>> GetMapLayersForTypeDepartmentAsync(int departmentId, MapLayerTypes type);

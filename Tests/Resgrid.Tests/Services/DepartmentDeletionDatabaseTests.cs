@@ -86,7 +86,10 @@ namespace Resgrid.Tests.Services
 			["SsoLoginTransactions"] = "transient, purged an hour after it expires",
 			["FactorRecoveryTransactions"] = "transient, purged an hour after it expires",
 			["AuthenticationChallenges"] = "transient, purged an hour after it expires",
-			["MfaApprovalRequests"] = "kept a day for the user's approval rate limit, then purged"
+			["MfaApprovalRequests"] = "kept a day for the user's approval rate limit, then purged",
+			// Pack files live in the pack store (MappingConfig.OfflinePackStorage). The row is the only handle to them: deleting it
+			// would orphan the files, so OfflineMapPackService.CleanupAsync deletes file and row once unrequested for 60 days.
+			["OfflineMapPacks"] = "handle to the department's files in the offline pack store, removed with them by the 60-day pack retention cleanup"
 		};
 
 		private string _master, _connection, _database;

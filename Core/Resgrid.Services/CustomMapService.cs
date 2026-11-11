@@ -156,6 +156,20 @@ namespace Resgrid.Services
 			return true;
 		}
 
+		public async Task<int> DeleteRegionsForLayerAsync(string layerId, int? expectedCount, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			if (string.IsNullOrWhiteSpace(layerId))
+				throw new ArgumentException("The layer does not exist.");
+
+			var live = (await GetRegionsForLayerAsync(layerId)).Count;
+			if (expectedCount.HasValue && expectedCount.Value != live)
+				throw new ArgumentException($"{live:N0} regions are on this layer, not {expectedCount.Value:N0}. Reload the page and confirm again.");
+			if (live == 0)
+				return 0;
+
+			return await _indoorMapZonesRepository.SoftDeleteForFloorAsync(layerId, cancellationToken);
+		}
+
 		#endregion Regions CRUD
 
 		#region Dispatch Integration

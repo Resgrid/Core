@@ -1592,6 +1592,19 @@
   <data name="HoursSpent" xml:space="preserve"><value>Ore</value></data>
   <data name="HydrantCounts" xml:space="preserve"><value>{0} idranti, {1} fuori servizio, {2} con prova di portata dovuta.</value></data>
   <data name="HydrantDeleted" xml:space="preserve"><value>Idrante eliminato.</value></data>
+  <data name="BulkDeleteConfirmCount" xml:space="preserve"><value>Digita il numero di idranti da eliminare</value></data>
+  <data name="BulkDeleteConfirmRequired" xml:space="preserve"><value>Digita il numero di idranti da eliminare per confermare.</value></data>
+  <data name="BulkDeleteCountMismatch" xml:space="preserve"><value>Digita {0} per confermare, il numero di idranti che verranno eliminati.</value></data>
+  <data name="BulkDeleteHydrants" xml:space="preserve"><value>Elimina idranti</value></data>
+  <data name="BulkDeleteHydrantsConfirm" xml:space="preserve"><value>Eliminare {0} idranti? Prove di portata e storico manutenzione vengono rimossi.</value></data>
+  <data name="BulkDeleteHydrantsHelp" xml:space="preserve"><value>Elimina molti idranti in una volta, ad esempio dopo aver importato il file sbagliato. Gli idranti eliminati spariscono dall'elenco e da tutte le mappe; importando di nuovo il file vengono aggiunti di nuovo.</value></data>
+  <data name="BulkDeleteNoneSelected" xml:space="preserve"><value>Spunta nell'elenco gli idranti da eliminare o scegli un'altra opzione.</value></data>
+  <data name="BulkDeleteScopeAll" xml:space="preserve"><value>Tutti gli idranti ({0:N0})</value></data>
+  <data name="BulkDeleteScopeImported" xml:space="preserve"><value>Tutti gli idranti importati ({0:N0})</value></data>
+  <data name="BulkDeleteScopeSelected" xml:space="preserve"><value>Idranti spuntati nell'elenco</value></data>
+  <data name="HydrantsBulkDeleted" xml:space="preserve"><value>{0:N0} idranti eliminati.</value></data>
+  <data name="SelectAllHydrants" xml:space="preserve"><value>Seleziona tutti gli idranti</value></data>
+  <data name="SelectHydrant" xml:space="preserve"><value>Seleziona idrante {0}</value></data>
   <data name="HydrantMap" xml:space="preserve"><value>Mappa</value></data>
   <data name="HydrantMapHint" xml:space="preserve"><value>Il colore segue la classe di portata NFPA 291; il nero indica fuori servizio.</value></data>
   <data name="HydrantNumber" xml:space="preserve"><value>N. idrante</value></data>

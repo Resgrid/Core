@@ -32,13 +32,8 @@ var resgrid;
             $(document).ready(function () {
                 resgrid.common.analytics.track('Mapping - View Type');
 
-                var poisTable = $("#poisGrid").DataTable({
-                    ajax: {
-                        url: resgrid.absoluteBaseUrl + '/User/Mapping/GetPoisForType?poiTypeId=' + poiTypeId,
-                        dataSrc: ''
-                    },
-                    pageLength: 50,
-                    columns: [
+                var bulkForm = canManagePois ? document.getElementById('poiBulkDeleteForm') : null;
+                var columns = [
                         { data: 'Name', title: 'Name', defaultContent: '', render: renderTextValue },
                         { data: 'Address', title: 'Address', defaultContent: '', render: renderTextValue },
                         { data: 'Note', title: 'Note', defaultContent: '', render: renderTextValue },
@@ -58,8 +53,42 @@ var resgrid;
                                     '<button type="button" class="btn btn-xs btn-danger" onclick="resgrid.mapping.viewType.deletePoi(' + data + ')">Delete</button>';
                             }
                         }
-                    ]
+                    ];
+
+                if (bulkForm) {
+                    columns.unshift({
+                        data: 'PoiId',
+                        title: '<input type="checkbox" id="poiSelectAll" aria-label="' + resgrid.escapeHtml(poiBulkStrings.selectAll) + '" title="' + resgrid.escapeHtml(poiBulkStrings.selectAll) + '" />',
+                        orderable: false,
+                        searchable: false,
+                        width: '20px',
+                        render: function (data, type) {
+                            if (type !== 'display') {
+                                return data;
+                            }
+                            var id = Number(data);
+                            return '<input type="checkbox" class="poi-select" value="' + id + '"' + (bulkSelected[id] ? ' checked' : '') +
+                                ' aria-label="' + resgrid.escapeHtml(poiBulkStrings.selectRow) + '" />';
+                        }
+                    });
+                }
+
+                var poisTable = $("#poisGrid").DataTable({
+                    ajax: {
+                        url: resgrid.absoluteBaseUrl + '/User/Mapping/GetPoisForType?poiTypeId=' + poiTypeId,
+                        dataSrc: ''
+                    },
+                    pageLength: 50,
+                    order: bulkForm ? [[1, 'asc']] : [[0, 'asc']],
+                    columns: columns
                 });
+
+                if (bulkForm) {
+                    initBulkRemoval(poisTable, bulkForm);
+                }
+                if (typeof poiBulkShowList !== 'undefined' && poiBulkShowList) {
+                    $('a[href="#tab-3"]').tab('show');
+                }
 
                 resgrid.maps.create('map', { center: [parseFloat(centerLat) || 39.7392, parseFloat(centerLon) || -104.9903], zoom: 9 }).then(function (created) {
                     map = created;
@@ -116,6 +145,76 @@ var resgrid;
                     return false;
             }
             viewType.checkboxToBool = checkboxToBool;
+
+            // Bulk removal: ticked ids live here, not in the DOM, so a selection survives paging and searching.
+            var bulkSelected = {};
+
+            function bulkSelectedIds() {
+                var ids = [];
+                for (var key in bulkSelected) {
+                    if (Object.prototype.hasOwnProperty.call(bulkSelected, key) && bulkSelected[key]) {
+                        ids.push(Number(key));
+                    }
+                }
+                return ids;
+            }
+
+            function initBulkRemoval(table, form) {
+                var selectedOption = form.querySelector('input[name="scope"][value="Selected"]');
+                var allOption = form.querySelector('input[name="scope"][value="All"]');
+                var selectedLabel = document.getElementById('poiBulkSelectedCount');
+                var allLabel = document.getElementById('poiBulkAllCount');
+
+                function matchingIds() {
+                    return table.rows({ search: 'applied' }).data().toArray().map(function (row) { return Number(row.PoiId); });
+                }
+
+                function refresh() {
+                    var selectedCount = bulkSelectedIds().length;
+                    selectedLabel.textContent = selectedCount.toLocaleString();
+                    allLabel.textContent = table.rows().count().toLocaleString();
+                    var header = document.getElementById('poiSelectAll');
+                    if (header) {
+                        var matching = matchingIds();
+                        var ticked = matching.filter(function (id) { return bulkSelected[id]; }).length;
+                        header.checked = matching.length > 0 && ticked === matching.length;
+                        header.indeterminate = ticked > 0 && ticked < matching.length;
+                    }
+                }
+
+                // The header box ticks (or clears) every row matching the search, on every page.
+                $(table.table().header()).on('change', '#poiSelectAll', function () {
+                    var check = this.checked;
+                    matchingIds().forEach(function (id) {
+                        if (check) { bulkSelected[id] = true; } else { delete bulkSelected[id]; }
+                    });
+                    if (check) { selectedOption.checked = true; }
+                    table.rows({ page: 'current' }).invalidate('data').draw(false);
+                    refresh();
+                });
+
+                $(table.table().body()).on('change', 'input.poi-select', function () {
+                    var id = Number(this.value);
+                    if (this.checked) { bulkSelected[id] = true; selectedOption.checked = true; } else { delete bulkSelected[id]; }
+                    refresh();
+                });
+
+                table.on('draw', refresh);
+                table.on('xhr', function () { bulkSelected = {}; });
+
+                form.addEventListener('submit', function (e) {
+                    var useAll = allOption.checked;
+                    var ids = bulkSelectedIds();
+                    var count = useAll ? table.rows().count() : ids.length;
+                    var typed = parseInt(document.getElementById('poiBulkCount').value, 10);
+                    if (!count) { e.preventDefault(); alert(poiBulkStrings.noneSelected); return; }
+                    if (typed !== count) { e.preventDefault(); alert(poiBulkStrings.countMismatch.replace('{0}', count.toLocaleString())); return; }
+                    if (!confirm(poiBulkStrings.confirm.replace('{0}', count.toLocaleString()))) { e.preventDefault(); return; }
+                    document.getElementById('poiBulkIds').value = useAll ? '' : ids.join(',');
+                });
+
+                refresh();
+            }
 
             function deletePoi(poiId) {
                 if (!confirm('Delete this POI?')) return;

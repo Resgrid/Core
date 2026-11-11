@@ -329,4 +329,40 @@
   <data name="TrafficLayer" xml:space="preserve">
     <value>Live-Verkehr</value>
   </data>
+  <data name="PoiBulkTitle" xml:space="preserve">
+    <value>POIs entfernen</value>
+  </data>
+  <data name="PoiBulkHelp" xml:space="preserve">
+    <value>Viele POIs auf einmal entfernen, zum Beispiel nach dem Import der falschen Datei. Zeilen ankreuzen (das Suchfeld grenzt die Liste ein, das Kästchen in der Kopfzeile kreuzt alle Treffer an) oder alle POIs dieser Liste entfernen. Mit Hydranten verknüpfte POIs werden nicht aufgeführt und bleiben erhalten.</value>
+  </data>
+  <data name="PoiBulkScopeSelected" xml:space="preserve">
+    <value>In der Liste angekreuzte POIs</value>
+  </data>
+  <data name="PoiBulkScopeAll" xml:space="preserve">
+    <value>Alle POIs dieser Liste</value>
+  </data>
+  <data name="PoiBulkConfirmCount" xml:space="preserve">
+    <value>Anzahl der zu entfernenden POIs eingeben</value>
+  </data>
+  <data name="PoiBulkConfirm" xml:space="preserve">
+    <value>{0} POIs entfernen? Dies kann nicht rückgängig gemacht werden.</value>
+  </data>
+  <data name="PoiBulkCountMismatch" xml:space="preserve">
+    <value>Zur Bestätigung {0} eingeben, die Anzahl der POIs, die entfernt werden.</value>
+  </data>
+  <data name="PoiBulkNoneSelected" xml:space="preserve">
+    <value>Die zu entfernenden POIs in der Liste ankreuzen oder eine andere Option wählen.</value>
+  </data>
+  <data name="PoiBulkConfirmRequired" xml:space="preserve">
+    <value>Zur Bestätigung die Anzahl der zu entfernenden POIs eingeben.</value>
+  </data>
+  <data name="PoiBulkDeleted" xml:space="preserve">
+    <value>{0:N0} POIs entfernt.</value>
+  </data>
+  <data name="PoiBulkSelectAll" xml:space="preserve">
+    <value>Alle POIs auswählen, die der Suche entsprechen</value>
+  </data>
+  <data name="PoiBulkSelectRow" xml:space="preserve">
+    <value>POI auswählen</value>
+  </data>
 </root>

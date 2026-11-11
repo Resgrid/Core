@@ -7,6 +7,8 @@
 	ViewBag.Title = "Resgrid | " + localizer["ViewTypePageTitle"];
 	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
 	var mapConfig = SettingsHelper.GetDepartmentMapConfig(Resgrid.Config.InfoConfig.WebsiteKey);
+	var poiBulkMessage = TempData["PoiBulkMessage"] as string;
+	var poiBulkError = TempData["PoiBulkError"] as string;
 }
 
 @section Styles
@@ -47,6 +49,15 @@
 		</ol>
 	</div>
 </div>
+
+@if (!string.IsNullOrEmpty(poiBulkMessage))
+{
+	<div class="alert alert-success m-t-sm">@poiBulkMessage</div>
+}
+@if (!string.IsNullOrEmpty(poiBulkError))
+{
+	<div class="alert alert-danger m-t-sm">@poiBulkError</div>
+}
 
 <div class="row">
 	<div class="col-xs-12">
@@ -118,6 +129,26 @@
 					</div>
 					<div id="tab-3" class="tab-pane active">
 						<div class="panel-body">
+							@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+							{
+								<div class="well well-sm" id="poiBulkPanel">
+									<form id="poiBulkDeleteForm" method="post" asp-controller="Mapping" asp-action="DeletePOIs" asp-route-area="User">
+										@Html.AntiForgeryToken()
+										<input type="hidden" name="poiTypeId" value="@Model.Type.PoiTypeId" />
+										<input type="hidden" name="poiIds" id="poiBulkIds" value="" />
+										<strong>@localizer["PoiBulkTitle"]</strong>
+										<p class="text-muted"><small>@localizer["PoiBulkHelp"]</small></p>
+										@* Selected is the default: it removes nothing until rows are ticked. *@
+										<div class="radio"><label><input type="radio" name="scope" value="Selected" checked /> @localizer["PoiBulkScopeSelected"] (<span id="poiBulkSelectedCount">0</span>)</label></div>
+										<div class="radio"><label><input type="radio" name="scope" value="All" /> @localizer["PoiBulkScopeAll"] (<span id="poiBulkAllCount">0</span>)</label></div>
+										<div class="form-group">
+											<label for="poiBulkCount">@localizer["PoiBulkConfirmCount"]</label>
+											<input id="poiBulkCount" class="form-control input-sm" style="max-width:200px" type="number" name="expectedCount" min="1" step="1" required autocomplete="off" />
+										</div>
+										<button type="submit" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i> @localizer["PoiBulkTitle"]</button>
+									</form>
+								</div>
+							}
 							<table id="poisGrid" class="table table-striped table-bordered table-hover" width="100%"></table>
 						</div>
 					</div>
@@ -140,6 +171,16 @@
         var centerLon = '@Model.Longitude';
         var poiTypeId = '@Model.Type.PoiTypeId';
         var canManagePois = @(ClaimsAuthorizationHelper.IsUserDepartmentAdmin() ? "true" : "false");
+        // Bulk removal text for resgrid.mapping.viewType.js; poiBulkShowList opens the list tab after a removal.
+        var poiBulkStrings = @Html.ScriptJson(new
+        {
+            selectAll = localizer["PoiBulkSelectAll"].Value,
+            selectRow = localizer["PoiBulkSelectRow"].Value,
+            noneSelected = localizer["PoiBulkNoneSelected"].Value,
+            countMismatch = localizer["PoiBulkCountMismatch"].Value,
+            confirm = localizer["PoiBulkConfirm"].Value
+        });
+        var poiBulkShowList = @(poiBulkMessage != null || poiBulkError != null ? "true" : "false");
         var osmTileUrl = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(mapConfig.TileUrl, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
         var osmTileAttribution = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(mapConfig.Attribution, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
     </script>

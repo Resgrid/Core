@@ -93,6 +93,11 @@ namespace Resgrid.Repositories.DataRepository
 						new { DepartmentId = departmentId }, transaction, cancellationToken: ct));
 			foreach (var child in new[] { "RunCardAlarmLevels", "RunCardAvailabilitySelections", "RunCardTriggers" })
 				await DeleteChild(child, false, ("RunCards", "RunCardId", "RunCardId"));
+			// Decision nodes have no foreign key to their alarm level, and cleanups before 2026-11-11 removed a department's levels without
+			// them. Such a node carries no DepartmentId for the deleted-department sweep to find, so nodes whose level is gone go here.
+			if (await DepartmentCleanupCommands.ExistsAsync(connection, transaction, type, "RunCardDecisionNodes", ct) && await DepartmentCleanupCommands.ExistsAsync(connection, transaction, type, "RunCardAlarmLevels", ct))
+				await connection.ExecuteAsync(new CommandDefinition($"DELETE FROM {Q("RunCardDecisionNodes")} WHERE {Q("RunCardAlarmLevelId")} NOT IN (SELECT {Q("RunCardAlarmLevelId")} FROM {Q("RunCardAlarmLevels")})",
+					null, transaction, cancellationToken: ct));
 			await Delete("RunCardActivations", "RunCards", "StationCoverageRequirements");
 
 			// Moderation (department admins moderate): reports and actions reference the request

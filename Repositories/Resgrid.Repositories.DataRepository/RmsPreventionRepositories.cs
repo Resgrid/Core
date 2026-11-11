@@ -497,7 +497,7 @@ namespace Resgrid.Repositories.DataRepository
 				var removed = 0;
 				foreach (var (from, where, p) in BulkDeleteStatements(departmentId, scope, hydrantIds))
 				{
-					p.Add("Now", deletedOnUtc);
+					p.Add("Now", DatabaseTimestamp(deletedOnUtc));
 					var set = $"{Col("DeletedOn")} = {P}Now, {Col("ModifiedOn")} = {P}Now, {Col("RowVersion")} = h.{Col("RowVersion")} + 1";
 					// PostgreSQL always gets the plain aliased table here (its selection is "= ANY"); SQL Server updates through the alias.
 					removed += await ExecuteAsync(IsPostgres ? $"UPDATE {from} SET {set} WHERE {where}" : $"UPDATE h SET {set} FROM {from} WHERE {where}", p, cancellationToken);

@@ -30,7 +30,7 @@ namespace Resgrid.Tests.Services
 			_zonesRepo = new Mock<IIndoorMapZonesRepository>();
 			_tilesRepo = new Mock<ICustomMapTilesRepository>();
 			_importsRepo = new Mock<ICustomMapImportsRepository>();
-			_service = new CustomMapService(_mapsRepo.Object, _floorsRepo.Object, _zonesRepo.Object, _tilesRepo.Object, _importsRepo.Object);
+			_service = new CustomMapService(_mapsRepo.Object, _floorsRepo.Object, _zonesRepo.Object, _tilesRepo.Object, _importsRepo.Object, Mock.Of<Resgrid.Model.Repositories.Queries.IUnitOfWork>());
 		}
 
 		#region Maps CRUD

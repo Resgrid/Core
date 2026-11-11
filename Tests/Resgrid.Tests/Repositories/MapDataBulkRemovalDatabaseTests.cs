@@ -137,7 +137,7 @@ namespace Resgrid.Tests.Repositories
 
 			var deleted = await Pois().DeleteForTypeAsync(TypeA, typeA.Concat(typeB).ToList());
 
-			deleted.Should().Be(ManyPois);
+			deleted.Should().BeEquivalentTo(typeA, "the statements report exactly the rows they removed");
 			(await PoiIds(TypeA)).Should().BeEmpty();
 			(await PoiIds(TypeB)).Should().BeEquivalentTo(typeB, "ids of another type are ignored");
 		}
@@ -151,7 +151,7 @@ namespace Resgrid.Tests.Repositories
 			await unitOfWork.CreateOrGetConnectionAsync();
 			try
 			{
-				(await Pois(unitOfWork).DeleteForTypeAsync(TypeA, typeA)).Should().Be(ManyPois);
+				(await Pois(unitOfWork).DeleteForTypeAsync(TypeA, typeA)).Should().HaveCount(ManyPois);
 				unitOfWork.Transaction.Should().NotBeNull("the repository leaves a caller's transaction open");
 			}
 			finally { unitOfWork.DiscardChanges(); }

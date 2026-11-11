@@ -234,6 +234,8 @@ $(document).ready(function () {
                         delete regionLayerMap[regionId];
                     }
                     $('[data-region-id="' + regionId + '"]').remove();
+                    // The page's "remove all regions" panel keeps its count from this.
+                    document.dispatchEvent(new CustomEvent('rg-region-deleted', { detail: { regionId: regionId } }));
                 }
             }
         });

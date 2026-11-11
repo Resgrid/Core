@@ -191,6 +191,20 @@ namespace Resgrid.Tests.Web.User
 				response = await Post("/User/Mapping/DeletePOIs", ("__RequestVerificationToken", token), ("poiTypeId", TypeId.ToString()), ("scope", "All"), ("expectedCount", "12345"));
 				response.StatusCode.Should().Be(HttpStatusCode.Redirect, "a refused count is a page message, not an error page");
 
+				// A type past one removal's limit: "All" checks the typed count against its whole list, then removes it in batches.
+				var large = Enumerable.Range(1000, Resgrid.Services.MappingService.MaxBulkPoiDelete + 5).ToList();
+				type.Pois = large.Select(id => new Poi { PoiId = id, PoiTypeId = TypeId, Name = "L" + id }).ToList();
+				response = await Post("/User/Mapping/DeletePOIs", ("__RequestVerificationToken", token), ("poiTypeId", TypeId.ToString()), ("scope", "All"), ("expectedCount", "3"));
+				response.StatusCode.Should().Be(HttpStatusCode.Redirect);
+				poiCalls.Should().HaveCount(2, "a stale count for a large type removes nothing");
+				response = await Post("/User/Mapping/DeletePOIs", ("__RequestVerificationToken", token), ("poiTypeId", TypeId.ToString()), ("scope", "All"), ("expectedCount", large.Count.ToString()));
+				response.StatusCode.Should().Be(HttpStatusCode.Redirect, await response.Content.ReadAsStringAsync());
+				poiCalls.Should().HaveCount(4);
+				poiCalls[2].Ids.Should().HaveCount(Resgrid.Services.MappingService.MaxBulkPoiDelete);
+				poiCalls[3].Ids.Should().Equal(large.Skip(Resgrid.Services.MappingService.MaxBulkPoiDelete));
+				poiCalls.Skip(2).Should().OnlyContain(c => c.ExpectedCount == null, "each batch is part of the one confirmed removal");
+				poiCalls.Skip(2).SelectMany(c => c.Ids).Should().Equal(large);
+
 				// ---- Custom map regions ----
 				response = await Post("/User/CustomMaps/ClearRegions", ("layerId", "layer-1"), ("expectedCount", "2"));
 				response.StatusCode.Should().Be(HttpStatusCode.BadRequest, "no antiforgery token");
@@ -213,7 +227,7 @@ namespace Resgrid.Tests.Web.User
 				// SecureBaseController.Unauthorized() sends the browser to the Unauthorized page.
 				response.Headers.Location!.OriginalString.Should().Contain("/Public/Unauthorized");
 				(await Post("/User/CustomMaps/ClearRegions", ("__RequestVerificationToken", token), ("layerId", "layer-1"), ("expectedCount", "2"))).StatusCode.Should().Be(HttpStatusCode.Forbidden);
-				poiCalls.Should().HaveCount(2);
+				poiCalls.Should().HaveCount(4);
 				regionCalls.Should().HaveCount(1);
 				// The region editor is an admin page (CustomMapsAdminGateFormTests covers the rest of the controller).
 				(await client.GetAsync("/User/CustomMaps/RegionEditor/layer-1")).StatusCode.Should().Be(HttpStatusCode.Forbidden);

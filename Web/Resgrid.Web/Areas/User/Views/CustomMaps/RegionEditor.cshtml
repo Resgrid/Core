@@ -71,7 +71,7 @@
 
             @if (canClearRegions)
             {
-                <div class="ibox float-e-margins">
+                <div class="ibox float-e-margins" id="regionBulkPanel">
                     <div class="ibox-title">
                         <h5>@localizer["RegionBulkTitle"]</h5>
                     </div>
@@ -79,7 +79,7 @@
                         <form id="regionBulkDeleteForm" method="post" asp-controller="CustomMaps" asp-action="ClearRegions" asp-route-area="User" data-count="@regionCount">
                             @Html.AntiForgeryToken()
                             <input type="hidden" name="layerId" value="@Model.Layer.IndoorMapFloorId" />
-                            <p class="text-muted"><small>@string.Format(localizer["RegionBulkHelp"].Value, regionCount)</small></p>
+                            <p class="text-muted"><small id="regionBulkHelp">@string.Format(localizer["RegionBulkHelp"].Value, regionCount)</small></p>
                             <div class="form-group">
                                 <label for="regionBulkCount">@localizer["RegionBulkConfirmCount"]</label>
                                 <input id="regionBulkCount" class="form-control input-sm" type="number" name="expectedCount" min="1" step="1" required autocomplete="off" />
@@ -171,6 +171,15 @@
             if (!form) { return; }
             var mismatchText = @Html.ScriptJson(localizer["RegionBulkCountMismatch"].Value);
             var confirmText = @Html.ScriptJson(localizer["RegionBulkConfirm"].Value);
+            var helpText = @Html.ScriptJson(localizer["RegionBulkHelp"].Value);
+            // A region deleted on its own leaves one fewer to clear: keep the count (and its help line) current, and hide the panel
+            // once the layer is empty, so the typed count and the server's check still agree.
+            document.addEventListener('rg-region-deleted', function () {
+                var count = Math.max(0, parseInt(form.getAttribute('data-count'), 10) - 1);
+                form.setAttribute('data-count', String(count));
+                document.getElementById('regionBulkHelp').textContent = helpText.replace(/\{0(:N0)?\}/, count.toLocaleString());
+                if (count === 0) { document.getElementById('regionBulkPanel').style.display = 'none'; }
+            });
             form.addEventListener('submit', function (e) {
                 var count = parseInt(form.getAttribute('data-count'), 10);
                 var typed = parseInt(document.getElementById('regionBulkCount').value, 10);

@@ -1015,20 +1015,22 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!CanManageMapData())
 				return Unauthorized();
 
-			var type = await _mappingService.GetTypeByIdAsync(poiTypeId);
-			if (type == null)
-				return NotFound();
-			if (type.DepartmentId != DepartmentId)
-				return Unauthorized();
-
+			// Refused before the type (and every POI of it) is read; ViewType checks the type's department itself.
 			if (expectedCount == null)
 			{
 				TempData["PoiBulkError"] = _localizer["PoiBulkConfirmRequired"].Value;
 				return RedirectToAction("ViewType", new { poiTypeId });
 			}
 
+			var type = await _mappingService.GetTypeByIdAsync(poiTypeId);
+			if (type == null)
+				return NotFound();
+			if (type.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			var all = string.Equals(scope, "All", StringComparison.Ordinal);
 			List<int> ids;
-			if (string.Equals(scope, "All", StringComparison.Ordinal))
+			if (all)
 			{
 				// The same rows GetPoisForType lists: a POI a hydrant points at is managed from the hydrant, not here.
 				var hydrantPoiIds = (await GetHydrantPointsAsync()).Where(h => h.PoiId.HasValue).Select(h => h.PoiId.Value).ToHashSet();
@@ -1043,7 +1045,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			try
 			{
-				var removed = await _mappingService.DeletePOIsAsync(DepartmentId, poiTypeId, ids, expectedCount, cancellationToken);
+				int removed;
+				if (all && ids.Count > Resgrid.Services.MappingService.MaxBulkPoiDelete)
+				{
+					// "All" names its rows here, not in the post, so a type larger than one removal's limit goes in batches once the
+					// typed count matches the whole list. Each batch is its own transaction; a failure part-way leaves the rest listed.
+					if (expectedCount.Value != ids.Count)
+						throw new ArgumentException($"{ids.Count:N0} POIs match this removal, not {expectedCount.Value:N0}. Reload the list and confirm again.");
+					removed = 0;
+					foreach (var batch in ids.Chunk(Resgrid.Services.MappingService.MaxBulkPoiDelete))
+						removed += await _mappingService.DeletePOIsAsync(DepartmentId, poiTypeId, batch, null, cancellationToken);
+				}
+				else
+				{
+					removed = await _mappingService.DeletePOIsAsync(DepartmentId, poiTypeId, ids, expectedCount, cancellationToken);
+				}
 				TempData["PoiBulkMessage"] = string.Format(_localizer["PoiBulkDeleted"].Value, removed);
 			}
 			catch (ArgumentException ex)

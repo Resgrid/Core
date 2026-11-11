@@ -141,8 +141,14 @@
 				var typed = parseInt(document.getElementById('hydrantBulkDeleteCount').value, 10);
 				if (!count) { e.preventDefault(); alert(noneSelectedText); return; }
 				if (typed !== count) { e.preventDefault(); alert(mismatchText.replace('{0}', count.toLocaleString())); return; }
-				if (!confirm(confirmText.replace('{0}', count.toLocaleString()))) { e.preventDefault(); }
+				if (!confirm(confirmText.replace('{0}', count.toLocaleString()))) { e.preventDefault(); return; }
+				// Imported and All name no rows: ticked boxes would only post ids the server ignores, and past the form-value limit
+				// they would reject the removal before it runs. Disabled boxes are not posted.
+				if (scope !== selectedOption) { setRowBoxesDisabled(true); }
 			});
+			function setRowBoxesDisabled(disabled) { var boxes = rowBoxes(); for (var i = 0; i < boxes.length; i++) { boxes[i].disabled = disabled; } }
+			// A page restored from the back-forward cache gets its boxes back.
+			window.addEventListener('pageshow', function () { setRowBoxesDisabled(false); });
 			refreshSelected();
 		});
 	</script>

@@ -1166,17 +1166,23 @@ namespace Resgrid.Services
 
 		public async Task<int> CleanupAsync(CancellationToken cancellationToken = default)
 		{
-			if (!IsInstallEnabled)
+			// Retention runs whenever the store is configured, offline installs switched off included: department deletion keeps the
+			// pack rows (the only handle to their files) and leaves them to this sweep, which must not stop when installs do.
+			if (!_store.IsConfigured)
 				return 0;
 
 			var changed = 0;
 
-			foreach (var stuck in await _packsRepository.GetStuckBuildingAsync(DateTime.UtcNow - StuckAfter))
+			// A stuck build only matters while packs are being built.
+			if (IsInstallEnabled)
 			{
-				stuck.Status = stuck.Attempts >= MaxAttempts ? (int)OfflineMapPackStatus.Failed : (int)OfflineMapPackStatus.Queued;
-				stuck.Error = "The builder stopped";
-				await _packsRepository.SaveOrUpdateAsync(stuck, CancellationToken.None);
-				changed++;
+				foreach (var stuck in await _packsRepository.GetStuckBuildingAsync(DateTime.UtcNow - StuckAfter))
+				{
+					stuck.Status = stuck.Attempts >= MaxAttempts ? (int)OfflineMapPackStatus.Failed : (int)OfflineMapPackStatus.Queued;
+					stuck.Error = "The builder stopped";
+					await _packsRepository.SaveOrUpdateAsync(stuck, CancellationToken.None);
+					changed++;
+				}
 			}
 
 			foreach (var old in await _packsRepository.GetNotRequestedSinceAsync(DateTime.UtcNow - Retention, 200))

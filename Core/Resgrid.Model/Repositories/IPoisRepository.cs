@@ -13,8 +13,9 @@ namespace Resgrid.Model.Repositories
 	{
 		/// <summary>
 		/// Deletes the POIs of one type whose ids are listed, with set-based statements in one transaction (unless the caller
-		/// holds one), and returns how many rows were deleted. Ids of other types are never touched.
+		/// holds one), and returns the ids the statements actually deleted. Ids of other types are never touched, so a listed POI
+		/// moved to another type meanwhile is kept and is not in the result.
 		/// </summary>
-		Task<int> DeleteForTypeAsync(int poiTypeId, IReadOnlyCollection<int> poiIds, CancellationToken cancellationToken = default);
+		Task<IReadOnlyList<int>> DeleteForTypeAsync(int poiTypeId, IReadOnlyCollection<int> poiIds, CancellationToken cancellationToken = default);
 	}
 }

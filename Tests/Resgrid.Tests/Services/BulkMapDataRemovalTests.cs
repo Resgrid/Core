@@ -8,6 +8,7 @@ using Moq;
 using NUnit.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Repositories.Queries;
 using Resgrid.Model.Search;
 using Resgrid.Model.Services;
 using Resgrid.Services;
@@ -35,7 +36,7 @@ namespace Resgrid.Tests.Services
 			_projections = new Mock<ISearchProjectionService>();
 			_deletedIds = null;
 			_pois.Setup(x => x.DeleteForTypeAsync(It.IsAny<int>(), It.IsAny<IReadOnlyCollection<int>>(), It.IsAny<CancellationToken>()))
-				.ReturnsAsync((int type, IReadOnlyCollection<int> ids, CancellationToken _) => { _deletedIds = ids.ToList(); return ids.Count; });
+				.ReturnsAsync((int type, IReadOnlyCollection<int> ids, CancellationToken _) => { _deletedIds = ids.ToList(); return ids.ToList(); });
 			_mapping = new MappingService(_poiTypes.Object, _pois.Object, null, null, new Lazy<ISearchProjectionService>(() => _projections.Object));
 		}
 
@@ -57,6 +58,20 @@ namespace Resgrid.Tests.Services
 			_deletedIds.Should().BeEquivalentTo(new[] { 2, 3 }, "99 is not a POI of this type");
 			_pois.Verify(x => x.DeleteForTypeAsync(TypeId, It.IsAny<IReadOnlyCollection<int>>(), It.IsAny<CancellationToken>()), Times.Once);
 			_projections.Verify(x => x.RemoveManyAsync(DepartmentId, SearchEntityTypes.Poi, It.Is<IEnumerable<string>>(ids => ids.OrderBy(i => i).SequenceEqual(new[] { "2", "3" })), It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
+		public async Task Only_the_pois_the_statement_deleted_lose_their_search_projection()
+		{
+			SeedType(DepartmentId, 1, 2, 3);
+			// POI 2 was moved to another type after the page loaded: the type filter keeps it, so its projection must stay.
+			_pois.Setup(x => x.DeleteForTypeAsync(TypeId, It.IsAny<IReadOnlyCollection<int>>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new List<int> { 1, 3 });
+
+			var removed = await _mapping.DeletePOIsAsync(DepartmentId, TypeId, new[] { 1, 2, 3 }, 3);
+
+			removed.Should().Be(2);
+			_projections.Verify(x => x.RemoveManyAsync(DepartmentId, SearchEntityTypes.Poi, It.Is<IEnumerable<string>>(ids => ids.OrderBy(i => i).SequenceEqual(new[] { "1", "3" })), It.IsAny<CancellationToken>()), Times.Once);
 		}
 
 		[Test]
@@ -104,8 +119,9 @@ namespace Resgrid.Tests.Services
 			_pois.Verify(x => x.DeleteForTypeAsync(It.IsAny<int>(), It.IsAny<IReadOnlyCollection<int>>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
 
-		private static CustomMapService CustomMaps(Mock<IIndoorMapZonesRepository> zones)
-			=> new CustomMapService(Mock.Of<IIndoorMapsRepository>(), Mock.Of<IIndoorMapFloorsRepository>(), zones.Object, Mock.Of<ICustomMapTilesRepository>(), Mock.Of<ICustomMapImportsRepository>());
+		private static CustomMapService CustomMaps(Mock<IIndoorMapZonesRepository> zones, Mock<IUnitOfWork> unitOfWork = null)
+			=> new CustomMapService(Mock.Of<IIndoorMapsRepository>(), Mock.Of<IIndoorMapFloorsRepository>(), zones.Object, Mock.Of<ICustomMapTilesRepository>(), Mock.Of<ICustomMapImportsRepository>(),
+				(unitOfWork ?? new Mock<IUnitOfWork>()).Object);
 
 		private static Mock<IIndoorMapZonesRepository> Zones(params bool[] deleted)
 		{
@@ -123,6 +139,26 @@ namespace Resgrid.Tests.Services
 			(await CustomMaps(zones).DeleteRegionsForLayerAsync("layer-1", 2)).Should().Be(2);
 
 			zones.Verify(x => x.SoftDeleteForFloorAsync("layer-1", It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
+		public async Task Clearing_a_layer_commits_only_when_the_update_matches_the_confirmed_count()
+		{
+			var unitOfWork = new Mock<IUnitOfWork>();
+			var zones = Zones(false, false);
+			(await CustomMaps(zones, unitOfWork).DeleteRegionsForLayerAsync("layer-1", 2)).Should().Be(2);
+			unitOfWork.Verify(x => x.CommitChanges(), Times.Once);
+			unitOfWork.Verify(x => x.DiscardChanges(), Times.Never);
+
+			// A region added between the page's count and the UPDATE: the statement matches 3, so the removal rolls back.
+			unitOfWork = new Mock<IUnitOfWork>();
+			zones = Zones(false, false);
+			zones.Setup(x => x.SoftDeleteForFloorAsync("layer-1", It.IsAny<CancellationToken>())).ReturnsAsync(3);
+			Func<Task> raced = () => CustomMaps(zones, unitOfWork).DeleteRegionsForLayerAsync("layer-1", 2);
+
+			await raced.Should().ThrowAsync<ArgumentException>().WithMessage("3 regions are on this layer, not 2*");
+			unitOfWork.Verify(x => x.DiscardChanges(), Times.Once);
+			unitOfWork.Verify(x => x.CommitChanges(), Times.Never);
 		}
 
 		[Test]

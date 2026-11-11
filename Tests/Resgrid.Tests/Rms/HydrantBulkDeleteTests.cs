@@ -1,7 +1,9 @@
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Moq;
 using NUnit.Framework;
 using Resgrid.Model;
 using Resgrid.Services.Records;
@@ -104,6 +106,37 @@ namespace Resgrid.Tests.Rms
 			h.Hydrants.BulkSoftDeletes.Should().Be(0);
 			h.Hydrants.Rows.Should().OnlyContain(x => x.DeletedOn == null);
 			h.Audits.Rows.Should().NotContain(a => a.Purpose == "Hydrants removed in bulk");
+		}
+
+		[Test]
+		public async Task A_hydrant_imported_between_the_count_and_the_removal_rolls_the_removal_back()
+		{
+			var h = new RmsPreventionHarness();
+			Seed(h, Dept, "I-1", "csv-import");
+			Seed(h, Dept, "I-2", "csv-import");
+			// The administrator confirmed 2; an import commits a third before the UPDATE runs, so the statement matches 3.
+			h.Hydrants.BeforeBulkSoftDelete = () => Seed(h, Dept, "I-3", "csv-import");
+
+			Func<Task> raced = () => h.HydrantsService.BulkDeleteAsync(Dept, Admin, HydrantBulkDeleteScope.Imported, null, 2);
+
+			await raced.Should().ThrowAsync<ArgumentException>().WithMessage("3 hydrants match*not 2*Reload*");
+			h.UnitOfWork.Verify(x => x.DiscardChanges(), Times.Once, "the UPDATE is rolled back, not committed");
+			h.UnitOfWork.Verify(x => x.CommitChanges(), Times.Never);
+			h.Audits.Rows.Should().NotContain(a => a.Purpose == "Hydrants removed in bulk");
+		}
+
+		[Test]
+		public async Task The_removal_and_its_audit_row_commit_together()
+		{
+			var h = new RmsPreventionHarness();
+			Seed(h, Dept, "I-1", "csv-import");
+
+			(await h.HydrantsService.BulkDeleteAsync(Dept, Admin, HydrantBulkDeleteScope.All, null, 1)).Should().Be(1);
+
+			h.UnitOfWork.Verify(x => x.CreateOrGetConnectionAsync(It.IsAny<CancellationToken>()), Times.AtLeastOnce);
+			h.UnitOfWork.Verify(x => x.CommitChanges(), Times.Once);
+			h.UnitOfWork.Verify(x => x.DiscardChanges(), Times.Never);
+			h.Audits.Rows.Should().ContainSingle(a => a.Purpose == "Hydrants removed in bulk");
 		}
 
 		[Test]

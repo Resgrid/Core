@@ -120,14 +120,30 @@ namespace Resgrid.Services.Records
 			else if (expectedCount == null) throw new ArgumentException("Confirm how many hydrants will be removed.");
 
 			var matching = await _hydrants.CountForBulkDeleteAsync(departmentId, scope, ids);
-			if (expectedCount.HasValue && expectedCount.Value != matching)
-				throw new ArgumentException($"{matching:N0} hydrants match this removal, not {expectedCount.Value:N0}. Reload the hydrant list and confirm again.");
+			if (expectedCount.HasValue && expectedCount.Value != matching) throw BulkCountMismatch(matching, expectedCount.Value);
 			if (matching == 0) return 0;
 
-			var removed = await _hydrants.SoftDeleteBulkAsync(departmentId, scope, ids, DateTime.UtcNow, cancellationToken);
-			await _gate.AuditAsync(departmentId, userId, RmsAccessAuditAction.Change, "Hydrants removed in bulk", departmentId.ToString(), new { scope = scope.ToString(), removed }, cancellationToken: cancellationToken);
-			return removed;
+			// The count above refuses a stale page without writing. The UPDATE's own row count is the binding check: a hydrant imported
+			// (or removed) since then makes it differ and the removal rolls back. The audit row commits with the removal or not at all.
+			var owns = _unitOfWork.Transaction == null;
+			await _unitOfWork.CreateOrGetConnectionAsync(cancellationToken);
+			try
+			{
+				var removed = await _hydrants.SoftDeleteBulkAsync(departmentId, scope, ids, DateTime.UtcNow, cancellationToken);
+				if (expectedCount.HasValue && removed != expectedCount.Value) throw BulkCountMismatch(removed, expectedCount.Value);
+				await _gate.AuditAsync(departmentId, userId, RmsAccessAuditAction.Change, "Hydrants removed in bulk", departmentId.ToString(), new { scope = scope.ToString(), removed }, cancellationToken: cancellationToken);
+				if (owns) _unitOfWork.CommitChanges();
+				return removed;
+			}
+			catch
+			{
+				if (owns) _unitOfWork.DiscardChanges();
+				throw;
+			}
 		}
+
+		private static ArgumentException BulkCountMismatch(int matching, int expected)
+			=> new ArgumentException($"{matching:N0} hydrants match this removal, not {expected:N0}. Reload the hydrant list and confirm again.");
 
 		public async Task<RmsHydrant> SetServiceStateAsync(int departmentId, string userId, string hydrantId, bool inService, string reason, CancellationToken cancellationToken = default)
 		{

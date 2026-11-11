@@ -268,6 +268,29 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task DeletingADepartmentClearsDecisionNodesAnEarlierCleanupLeftWithoutTheirAlarmLevel()
+		{
+			await using var db = new SqlConnection(_connection);
+			await db.OpenAsync();
+			await LoadSchemaAsync(db);
+			var deleted = await SeedBareDepartmentAsync(db);
+			var kept = await SeedBareDepartmentAsync(db);
+			// No foreign key holds a node to its alarm level, and cleanups before 2026-11-11 removed the level and left the node,
+			// which carries no DepartmentId for the deleted-department sweep to find.
+			var orphan = (await InsertOrThrowAsync(db, "RunCardDecisionNodes", deleted, new Dictionary<string, object> { ["RunCardAlarmLevelId"] = int.MaxValue - 1 }))["RunCardDecisionNodeId"];
+			// A live department's node, under its own run card's level, stays.
+			var runCard = (await InsertOrThrowAsync(db, "RunCards", kept, null))["RunCardId"];
+			var level = (await InsertOrThrowAsync(db, "RunCardAlarmLevels", kept, new Dictionary<string, object> { ["RunCardId"] = runCard }))["RunCardAlarmLevelId"];
+			var keptNode = (await InsertOrThrowAsync(db, "RunCardDecisionNodes", kept, new Dictionary<string, object> { ["RunCardAlarmLevelId"] = level }))["RunCardDecisionNodeId"];
+
+			(await new DeleteRepository().DeleteDepartmentAndUsersAsync(deleted.DepartmentId)).Should().BeTrue();
+
+			Task<int> Count(object id) => db.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM RunCardDecisionNodes WHERE RunCardDecisionNodeId = @id", new { id });
+			(await Count(orphan)).Should().Be(0, "a node whose alarm level is gone is purged");
+			(await Count(keptNode)).Should().Be(1, "a node under a live alarm level is never touched");
+		}
+
+		[Test]
 		public async Task TheGlobalSearchMarkerOutlivesTheDepartmentAndIsDroppedOnlyOnceItIsDeleted()
 		{
 			await using var db = new SqlConnection(_connection);

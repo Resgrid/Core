@@ -62,13 +62,15 @@ var resgrid;
                         orderable: false,
                         searchable: false,
                         width: '20px',
-                        render: function (data, type) {
+                        render: function (data, type, row) {
                             if (type !== 'display') {
                                 return data;
                             }
                             var id = Number(data);
+                            // Each box names its row, so moving between boxes says which POI would be removed.
+                            var label = poiBulkStrings.selectRow + ': ' + (row && row.Name ? String(row.Name) : '') + ' (' + id + ')';
                             return '<input type="checkbox" class="poi-select" value="' + id + '"' + (bulkSelected[id] ? ' checked' : '') +
-                                ' aria-label="' + resgrid.escapeHtml(poiBulkStrings.selectRow) + '" />';
+                                ' aria-label="' + resgrid.escapeHtml(label) + '" />';
                         }
                     });
                 }

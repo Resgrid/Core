@@ -187,8 +187,11 @@ namespace Resgrid.Tests.Rms
 			return Live(departmentId).Where(h => scope == HydrantBulkDeleteScope.All || (scope == HydrantBulkDeleteScope.Imported && RmsHydrantSources.IsImported(h.Source)) || (ids != null && ids.Contains(h.RmsHydrantId))).ToList();
 		}
 		public Task<int> CountForBulkDeleteAsync(int departmentId, HydrantBulkDeleteScope scope, IReadOnlyCollection<string> hydrantIds) => Task.FromResult(BulkMatches(departmentId, scope, hydrantIds).Count);
+		/// <summary>Runs between the service's count and its UPDATE: a concurrent import or removal.</summary>
+		public Action BeforeBulkSoftDelete { get; set; }
 		public Task<int> SoftDeleteBulkAsync(int departmentId, HydrantBulkDeleteScope scope, IReadOnlyCollection<string> hydrantIds, DateTime deletedOnUtc, CancellationToken cancellationToken = default)
 		{
+			BeforeBulkSoftDelete?.Invoke();
 			BulkSoftDeletes++;
 			var rows = BulkMatches(departmentId, scope, hydrantIds);
 			foreach (var h in rows) { h.DeletedOn = deletedOnUtc; h.ModifiedOn = deletedOnUtc; h.RowVersion++; }

@@ -185,10 +185,11 @@ namespace Resgrid.Services
 			if (matched.Count == 0)
 				return 0;
 
-			var deleted = await _poisRepository.DeleteForTypeAsync(type.PoiTypeId, matched, cancellationToken);
-			if (deleted > 0 && _searchProjections != null)
-				await _searchProjections.Value.RemoveManyAsync(type.DepartmentId, SearchEntityTypes.Poi, matched.Select(id => id.ToString()), cancellationToken);
-			return deleted;
+			// Only the rows the statements removed lose their search projection: a ticked POI moved to another type meanwhile is kept.
+			var deleted = await _poisRepository.DeleteForTypeAsync(type.PoiTypeId, matched, cancellationToken) ?? Array.Empty<int>();
+			if (deleted.Count > 0 && _searchProjections != null)
+				await _searchProjections.Value.RemoveManyAsync(type.DepartmentId, SearchEntityTypes.Poi, deleted.Select(id => id.ToString()), cancellationToken);
+			return deleted.Count;
 		}
 
 		public async Task<MapLayer> SaveMapLayerAsync(MapLayer mapLayer)

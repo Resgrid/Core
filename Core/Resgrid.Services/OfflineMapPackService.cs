@@ -1173,16 +1173,15 @@ namespace Resgrid.Services
 
 			var changed = 0;
 
-			// A stuck build only matters while packs are being built.
-			if (IsInstallEnabled)
+			// Stuck builds are recovered with installs switched off too: retention skips Building rows, so a build the worker
+			// stopped (a shutdown mid-build) would otherwise keep its row and files for good. Requeued, it is built again once
+			// installs are back on, or ages out here like any other unrequested pack.
+			foreach (var stuck in await _packsRepository.GetStuckBuildingAsync(DateTime.UtcNow - StuckAfter))
 			{
-				foreach (var stuck in await _packsRepository.GetStuckBuildingAsync(DateTime.UtcNow - StuckAfter))
-				{
-					stuck.Status = stuck.Attempts >= MaxAttempts ? (int)OfflineMapPackStatus.Failed : (int)OfflineMapPackStatus.Queued;
-					stuck.Error = "The builder stopped";
-					await _packsRepository.SaveOrUpdateAsync(stuck, CancellationToken.None);
-					changed++;
-				}
+				stuck.Status = stuck.Attempts >= MaxAttempts ? (int)OfflineMapPackStatus.Failed : (int)OfflineMapPackStatus.Queued;
+				stuck.Error = "The builder stopped";
+				await _packsRepository.SaveOrUpdateAsync(stuck, CancellationToken.None);
+				changed++;
 			}
 
 			foreach (var old in await _packsRepository.GetNotRequestedSinceAsync(DateTime.UtcNow - Retention, 200))

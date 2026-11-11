@@ -16,7 +16,8 @@ namespace Resgrid.Tests.Services
 {
 	/// <summary>
 	/// Offline pack retention (<see cref="OfflineMapPackService.CleanupAsync"/>) keeps running while offline installs are switched off:
-	/// department deletion leaves pack rows (the only handle to their files) to this sweep.
+	/// department deletion leaves pack rows (the only handle to their files) to this sweep, and stuck builds are recovered so
+	/// retention (which skips Building rows) can reach them.
 	/// </summary>
 	[TestFixture]
 	public class OfflineMapPackRetentionTests
@@ -47,17 +48,18 @@ namespace Resgrid.Tests.Services
 				Mock.Of<IUnitsService>(), Mock.Of<ICallsService>(), Mock.Of<ITypeIconsService>(), Mock.Of<IRouteService>());
 
 		[Test]
-		public async Task Expired_packs_are_removed_while_offline_installs_are_switched_off()
+		public async Task Expired_packs_are_removed_and_stuck_builds_recovered_while_offline_installs_are_switched_off()
 		{
 			MappingConfig.OfflineMapsEnabled = false;
 			_store.SetupGet(x => x.IsConfigured).Returns(true);
 
 			var changed = await Service().CleanupAsync();
 
-			changed.Should().Be(1, "only the expired pack; a stuck build is not requeued while nothing builds");
+			changed.Should().Be(2);
 			_store.Verify(x => x.DeleteAsync(_expired.StoragePath, It.IsAny<CancellationToken>()), Times.Once);
 			_packs.Verify(x => x.DeleteAsync(_expired, It.IsAny<CancellationToken>()), Times.Once);
-			_packs.Verify(x => x.GetStuckBuildingAsync(It.IsAny<DateTime>()), Times.Never);
+			// Retention skips Building rows, so a build stopped mid-way must leave Building or it would never age out.
+			_packs.Verify(x => x.SaveOrUpdateAsync(It.Is<OfflineMapPack>(p => p.OfflineMapPackId == "stuck" && p.Status == (int)OfflineMapPackStatus.Queued), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Once);
 		}
 
 		[Test]

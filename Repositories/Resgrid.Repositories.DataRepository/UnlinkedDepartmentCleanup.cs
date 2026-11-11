@@ -80,6 +80,11 @@ namespace Resgrid.Repositories.DataRepository
 			// Home dashboard boards and department templates (layouts only)
 			await Delete("UserDashboards", "DepartmentDashboardTemplates");
 
+			// The orphan decision-node sweep below reads every department's nodes, so two cleanups in it at once (a deletion and
+			// the deleted-department sweep) could each wait on nodes the other just deleted. One transaction-scoped lock, taken
+			// before any run-card row is deleted and released when the transaction ends, serializes the run-card section.
+			await LockRunCardCleanupAsync(connection, transaction, type, ct);
+
 			// Conditional run cards (M0287): a call's awaited resources and pinned decisions, the "any of" targets of package
 			// rows and condition operands, and the response packages with their rows (rows carry no DepartmentId)
 			await Delete("CallOutstandingRequirements", "RunCardDecisions", "RunCardTargets");
@@ -131,6 +136,39 @@ namespace Resgrid.Repositories.DataRepository
 			// Every producer's outbox rows (the module cleanups removed their own already), rollups, and unified search
 			// projections. SearchIndexStates stays as the marker the global index sweep uses to erase the department's documents
 			await Delete("Autofills", "DomainEventOutbox", "ReportingDailyRollup", "SearchProjections", "VoiceTransmissionLogs");
+		}
+
+		/// <summary>SQL Server application lock resource and PostgreSQL advisory lock key for the run-card section.</summary>
+		internal const string RunCardCleanupLockResource = "Resgrid.DepartmentCleanup.RunCards";
+		internal const long RunCardCleanupLockKey = 0x5247_5243_4C45_414E; // "RGRCLEAN"
+		/// <summary>How long a cleanup waits for another one's run-card section; under the 30-second command timeout.</summary>
+		internal const int RunCardCleanupLockTimeoutMs = 20000;
+		internal const string RunCardCleanupBusyMessage = "Department deletion is waiting for another department cleanup to finish with run cards.";
+
+		/// <summary>
+		/// Takes the run-card section's transaction-scoped lock (released at commit or rollback). A wait past
+		/// <see cref="RunCardCleanupLockTimeoutMs"/> defers the deletion like the other deferrals: nothing is spent, a later pass retries.
+		/// </summary>
+		private static async Task LockRunCardCleanupAsync(DbConnection connection, DbTransaction transaction, DatabaseTypes type, CancellationToken ct)
+		{
+			if (type == DatabaseTypes.Postgres)
+			{
+				for (var waitedMs = 0; ; waitedMs += 250)
+				{
+					if (await connection.ExecuteScalarAsync<bool>(new CommandDefinition("SELECT pg_try_advisory_xact_lock(@Key)", new { Key = RunCardCleanupLockKey }, transaction, cancellationToken: ct)))
+						return;
+					if (waitedMs >= RunCardCleanupLockTimeoutMs)
+						throw new DepartmentDeletionDeferredException(RunCardCleanupBusyMessage);
+					await Task.Delay(250, ct);
+				}
+			}
+
+			// sp_getapplock answers 0 or 1 when granted and a negative code on timeout, cancellation or deadlock.
+			var result = await connection.ExecuteScalarAsync<int>(new CommandDefinition(
+				"DECLARE @Result int; EXEC @Result = sp_getapplock @Resource = @Resource, @LockMode = 'Exclusive', @LockOwner = 'Transaction', @LockTimeout = @TimeoutMs; SELECT @Result;",
+				new { Resource = RunCardCleanupLockResource, TimeoutMs = RunCardCleanupLockTimeoutMs }, transaction, cancellationToken: ct));
+			if (result < 0)
+				throw new DepartmentDeletionDeferredException(RunCardCleanupBusyMessage);
 		}
 	}
 }

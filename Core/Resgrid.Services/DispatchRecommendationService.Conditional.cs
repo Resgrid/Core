@@ -693,7 +693,7 @@ namespace Resgrid.Services
 					if (anchor.HasValue && candidate.Latitude.HasValue && candidate.Longitude.HasValue)
 					{
 						entry.Distance = GeoMath.HaversineMeters(anchor.Value.Latitude, anchor.Value.Longitude, candidate.Latitude.Value, candidate.Longitude.Value);
-						entry.EstimatedSeconds = candidate.TurnoutSeconds + UnitResponseOrigin.EstimateTravelSeconds(entry.Distance.Value);
+						entry.EstimatedSeconds = candidate.TurnoutSeconds + candidate.Travel.EstimateSeconds(entry.Distance.Value);
 					}
 
 					if (!PlaceEntry(context, state, ranking, entry, closest, stationIndex, candidate.Unit.StationGroupId.HasValue
@@ -866,8 +866,8 @@ namespace Resgrid.Services
 					context.CancellationToken.ThrowIfCancellationRequested();
 
 					var seconds = entry.IsPerson
-						? await _geoService.GetEtaInSecondsAsync(FormatPoint(latitude.Value, longitude.Value), FormatPoint(anchor.Latitude, anchor.Longitude))
-						: await UnitEtaAsync(entry.Unit.Unit, FormatPoint(latitude.Value, longitude.Value), FormatPoint(anchor.Latitude, anchor.Longitude));
+						? await PersonEtaAsync(context, FormatPoint(latitude.Value, longitude.Value), FormatPoint(anchor.Latitude, anchor.Longitude))
+						: await UnitEtaAsync(context, entry.Unit, FormatPoint(latitude.Value, longitude.Value), FormatPoint(anchor.Latitude, anchor.Longitude));
 					eta = seconds >= 0 ? seconds : (double?)null;
 
 					if (entry.IsPerson)

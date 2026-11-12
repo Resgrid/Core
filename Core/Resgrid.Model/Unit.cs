@@ -83,6 +83,14 @@ namespace Resgrid.Model
 		[ProtoMember(19)]
 		public bool? VehicleHazmat { get; set; }
 
+		/// <summary>Travel mode override, a <see cref="UnitTravelModes"/> value; null uses the unit type's (M0314, <see cref="UnitTravelProfile"/>).</summary>
+		[ProtoMember(20)]
+		public int? TravelMode { get; set; }
+
+		/// <summary>Average travel speed override in km/h; null uses the unit type's speed when the mode matches, else the mode's default.</summary>
+		[ProtoMember(21)]
+		public double? TravelSpeedKmh { get; set; }
+
 		public virtual DepartmentGroup StationGroup { get; set; }
 
 		public virtual Department Department { get; set; }

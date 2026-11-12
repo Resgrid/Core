@@ -20,5 +20,7 @@ namespace Resgrid.Web.Areas.User.Models.Types
 
 		/// <summary>Vehicle size and weight every unit of the type inherits (routing vehicle limits).</summary>
 		public Resgrid.Web.Areas.User.Models.Units.VehicleSizeInput VehicleSize { get; set; }
+
+		public Resgrid.Web.Areas.User.Models.Units.TravelModeInput TravelMode { get; set; }
 	}
 }

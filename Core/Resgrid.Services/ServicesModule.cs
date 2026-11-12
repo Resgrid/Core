@@ -594,6 +594,7 @@ namespace Resgrid.Services
 			builder.RegisterType<TypeIconsService>().As<ITypeIconsService>().InstancePerLifetimeScope();
 			builder.RegisterType<MapIconsService>().As<IMapIconsService>().InstancePerLifetimeScope();
 			builder.RegisterType<MapVisualizationService>().As<IMapVisualizationService>().InstancePerLifetimeScope();
+			builder.RegisterType<RoadClosureService>().As<IRoadClosureService>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.RecordsPrintLayoutService>().As<IRecordsPrintLayoutService>().InstancePerLifetimeScope();
 
 			// Home dashboard (home-dashboard-redesign-plan.md). Widget providers and option sources register themselves by

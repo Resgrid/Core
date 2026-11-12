@@ -120,7 +120,10 @@ namespace Resgrid.Services
 			foreach (var provider in Chain())
 			{
 				var trafficAware = IsTrafficAware(provider, request.Profile);
-				var cacheKey = RouteCachePrefix + Hash(provider.Name + "\n" + RouteKey(request));
+
+				// Road closures: what this provider is told to avoid, and what is measured on the route afterwards (M0314).
+				var closurePlan = RoadClosureRouting.Plan(request, provider.Capabilities, provider.Name == RoutingProviderNames.Estimate);
+				var cacheKey = RouteCachePrefix + Hash(provider.Name + "\n" + RouteKey(request) + closurePlan.Key);
 
 				if (!request.BypassCache)
 				{
@@ -132,27 +135,35 @@ namespace Resgrid.Services
 				if (request.Waypoints.Count > provider.Capabilities.MaxWaypoints)
 					continue;
 
-				RouteResult result;
-				try
-				{
-					using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-					timeout.CancelAfter(Math.Max(500, MappingConfig.RoutingTimeoutMs));
-					result = await provider.GetRouteAsync(request, timeout.Token);
-				}
-				catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
-				{
-					result = new RouteResult { Provider = provider.Name, Error = "Timed out" };
-				}
-				catch (Exception ex)
-				{
-					result = new RouteResult { Provider = provider.Name, Error = ex.Message };
-				}
+				var result = await CallProviderAsync(provider, closurePlan.ProviderRequest ?? request, cancellationToken);
 
 				if (result != null && result.Successful)
 				{
 					result.Provider = provider.Name;
+
+					if (closurePlan.HasClosures)
+					{
+						// A provider that excludes by point gets the places the route went into a full closure, and tries again.
+						for (var retry = 0; retry < RoadClosureRouting.MaxAvoidanceRetries; retry++)
+						{
+							var entries = RoadClosureRouting.EntryPointsToExclude(result, closurePlan);
+							if (entries.Count == 0)
+								break;
+
+							var rerouted = await CallProviderAsync(provider, RoadClosureRouting.WithExtraExcludePoints(closurePlan, entries), cancellationToken);
+							if (rerouted == null || !rerouted.Successful)
+								break;
+
+							rerouted.Provider = provider.Name;
+							result = rerouted;
+						}
+
+						RoadClosureRouting.Apply(result, closurePlan);
+					}
+
+					// Closure-shaped routes are kept briefly: windows open and close, and edits change the closure set.
 					if (provider.Name != RoutingProviderNames.Estimate)
-						await WriteCacheAsync(cacheKey, result, trafficAware || result.IsTrafficAware ? TrafficCacheLength : SuccessCacheLength);
+						await WriteCacheAsync(cacheKey, result, trafficAware || result.IsTrafficAware || closurePlan.HasClosures ? TrafficCacheLength : SuccessCacheLength);
 
 					return result;
 				}
@@ -161,6 +172,24 @@ namespace Resgrid.Services
 			}
 
 			return new RouteResult { Error = "No routing provider returned a route" };
+		}
+
+		private static async Task<RouteResult> CallProviderAsync(IRoutingProvider provider, RouteRequest request, CancellationToken cancellationToken)
+		{
+			try
+			{
+				using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+				timeout.CancelAfter(Math.Max(500, MappingConfig.RoutingTimeoutMs));
+				return await provider.GetRouteAsync(request, timeout.Token);
+			}
+			catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
+			{
+				return new RouteResult { Provider = provider.Name, Error = "Timed out" };
+			}
+			catch (Exception ex)
+			{
+				return new RouteResult { Provider = provider.Name, Error = ex.Message };
+			}
 		}
 
 		public async Task<RouteMatrixResult> GetMatrixAsync(RouteMatrixRequest request, CancellationToken cancellationToken = default)

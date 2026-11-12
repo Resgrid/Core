@@ -17,10 +17,12 @@ namespace Resgrid.Services
 		private readonly IAddressService _addressService;
 		private readonly IMappingService _mappingService;
 		private readonly IRoutingService _routingService;
+		private readonly IRoadClosureService _roadClosureService;
 
 		public GeoService(IGeoLocationProvider geoLocationProvider, ICallsService callsService, IDepartmentGroupsService departmentGroupsService, IAddressService addressService, IMappingService mappingService,
-			IRoutingService routingService)
+			IRoutingService routingService, IRoadClosureService roadClosureService)
 		{
+			_roadClosureService = roadClosureService;
 			_geoLocationProvider = geoLocationProvider;
 			_callsService = callsService;
 			_departmentGroupsService = departmentGroupsService;
@@ -152,6 +154,67 @@ namespace Resgrid.Services
 			}
 
 			return etas;
+		}
+
+		public async Task<TravelEstimate> GetTravelEstimateAsync(string start, string destination, TravelLookup lookup, System.Threading.CancellationToken cancellationToken = default)
+		{
+			if (String.IsNullOrWhiteSpace(start) || String.IsNullOrWhiteSpace(destination))
+				return TravelEstimate.None;
+
+			var from = await ResolvePointAsync(start);
+			var to = await ResolvePointAsync(destination);
+
+			if (from == null || to == null)
+				return TravelEstimate.None;
+
+			var travel = lookup?.Travel ?? UnitTravelProfile.Default;
+
+			// Air travel is the straight line at the unit's air speed; road closures don't apply and nothing is routed.
+			if (travel.IsAir)
+			{
+				var meters = GeoMath.HaversineMeters(from.Latitude, from.Longitude, to.Latitude, to.Longitude);
+				return new TravelEstimate { Seconds = travel.EstimateSeconds(meters), Source = EtaSources.Direct };
+			}
+
+			var closures = new List<RoutingClosure>();
+			if (lookup != null && lookup.DepartmentId > 0)
+			{
+				try
+				{
+					closures = await _roadClosureService.GetRoutingClosuresAsync(lookup.DepartmentId, travel.Mode, DateTime.UtcNow) ?? new List<RoutingClosure>();
+				}
+				catch (Exception ex)
+				{
+					// A closure lookup that fails must not take the drive time with it.
+					Framework.Logging.LogException(ex, $"Reading road closures for department {lookup.DepartmentId} failed; routing without them.");
+				}
+			}
+
+			// Walking and cycling ignore vehicle limits; driving picks plain, traffic-aware or truck routing as before.
+			var vehicle = travel.Mode == UnitTravelModes.Driving ? lookup?.Vehicle : null;
+			var route = await _routingService.GetRouteAsync(new RouteRequest
+			{
+				Waypoints = new List<RoutingWaypoint> { from, to },
+				Profile = travel.RoutingProfile ?? DriveTimeProfile(vehicle),
+				Vehicle = vehicle,
+				Closures = closures
+			}, cancellationToken);
+
+			if (route == null || !route.Successful || route.Provider == RoutingProviderNames.Estimate)
+				return TravelEstimate.None;
+
+			// Providers walk and cycle at fixed speeds; a team's own speed over the routed path is the better time.
+			var seconds = travel.UsesConfiguredSpeedOnRoute && route.DistanceMeters > 0
+				? Math.Round(route.DistanceMeters / travel.SpeedMetersPerSecond) + route.ClosureDelaySeconds
+				: route.DurationSeconds;
+
+			return new TravelEstimate
+			{
+				Seconds = seconds,
+				Source = EtaSources.Road,
+				ClosureDelaySeconds = route.ClosureDelaySeconds,
+				Closures = route.Closures ?? new List<RouteClosureEffect>()
+			};
 		}
 
 		/// <summary>

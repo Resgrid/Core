@@ -318,6 +318,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Types = await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId);
 			model.VehicleSize = VehicleSizeInput.From(model.Unit, VehicleSizeInput.DefaultMetric());
 			model.VehicleSize.TypeDefaults = VehicleSizeInput.DefaultsFor(model.Types);
+			model.TravelMode = TravelModeInput.From(model.Unit, TravelModeInput.DefaultMetric());
+			model.TravelMode.TypeDefaults = TravelModeInput.DefaultsFor(model.Types);
 
 			var states = new List<CustomState>();
 			states.Add(new CustomState
@@ -360,6 +362,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.VehicleSize ??= new VehicleSizeInput();
 			model.VehicleSize.TypeDefaults = VehicleSizeInput.DefaultsFor(model.Types);
 			model.VehicleSize.AddErrorsTo(ModelState);
+			model.TravelMode ??= new TravelModeInput { Metric = true };
+			model.TravelMode.TypeDefaults = TravelModeInput.DefaultsFor(model.Types);
+			model.TravelMode.AddErrorsTo(ModelState);
 
 			if ((await _unitsService.GetUnitByNameDepartmentIdAsync(DepartmentId, model.Unit.Name)) != null)
 				ModelState.AddModelError("Name", HttpContext.WithDepartmentTerms("Unit with that name already exists."));
@@ -389,8 +394,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (!await IsDepartmentGroupAsync(model.Unit.StationGroupId))
 					return Unauthorized();
 
-				// Vehicle limits come only from the converted size fields, never from posted Unit.Vehicle* values.
+				// Vehicle limits and travel come only from their converted fields, never from posted Unit.Vehicle* / Unit.Travel* values.
 				model.VehicleSize.ApplyTo(model.Unit);
+				model.TravelMode.ApplyTo(model.Unit);
 
 				model.Unit = await _unitsService.SaveUnitAsync(model.Unit, cancellationToken);
 
@@ -513,6 +519,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.PersonnelRoles = await _personnelRolesService.GetAllRolesForDepartmentAsync(DepartmentId);
 			model.VehicleSize = VehicleSizeInput.From(model.Unit, VehicleSizeInput.DefaultMetric());
 			model.VehicleSize.TypeDefaults = VehicleSizeInput.DefaultsFor(model.Types);
+			model.TravelMode = TravelModeInput.From(model.Unit, TravelModeInput.DefaultMetric());
+			model.TravelMode.TypeDefaults = TravelModeInput.DefaultsFor(model.Types);
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			await _novuProvider.CreateUnitSubscriber(model.Unit.UnitId, department.Code, DepartmentId, model.Unit.Name, null);
@@ -619,6 +627,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.VehicleSize ??= new VehicleSizeInput();
 			model.VehicleSize.TypeDefaults = VehicleSizeInput.DefaultsFor(model.Types);
 			model.VehicleSize.AddErrorsTo(ModelState);
+			model.TravelMode ??= new TravelModeInput { Metric = true };
+			model.TravelMode.TypeDefaults = TravelModeInput.DefaultsFor(model.Types);
+			model.TravelMode.AddErrorsTo(ModelState);
 
 			var unitCheck = await _unitsService.GetUnitByNameDepartmentIdAsync(DepartmentId, model.Unit.Name);
 			if (unitCheck != null && unitCheck.UnitId != model.Unit.UnitId)
@@ -667,6 +678,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			// Legacy forms and scripted posts without the size section leave the stored limits alone.
 			if (Request.HasFormContentType && Request.Form.ContainsKey("VehicleSize.Metric"))
 				model.VehicleSize.ApplyTo(unit);
+
+			// Likewise the travel mode section (M0314).
+			if (Request.HasFormContentType && Request.Form.ContainsKey("TravelMode.Mode"))
+				model.TravelMode.ApplyTo(unit);
 
 			if (ModelState.IsValid)
 			{

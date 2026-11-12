@@ -7107,6 +7107,15 @@
   <data xml:space="preserve" name="FeatureSetup.map-visualizations">
     <value>Open Mapping, then Visualizations, pick a library visualization such as Call hot zones, adjust its date range, filters and layers on the Customize tab, and save it. Department admins can share a saved visualization with everyone.</value>
   </data>
+  <data xml:space="preserve" name="Feature.road-closures">
+    <value>Road closures</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.road-closures">
+    <value>Closed and slowed roads and areas drawn on the map, with who closed them, why, a contact and the times they are in effect. Dispatch ranking routes around full closures and slows routes through partial ones.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.road-closures">
+    <value>Open Mapping, then Road Closures, and choose New Closure. Draw the closed road as a line or the area as a shape, choose full or partial, the traffic it stops and its times (use Repeat for a road closed only at night), and save. Set how units travel on each unit type (driving, cycling, on foot or air) so run cards and the nearest units list measure them the way they move.</value>
+  </data>
   <data xml:space="preserve" name="Field.DispatchRecommendationConfig.PersonnelTurnoutSeconds">
     <value>Dispatch Recommendation Config / Personnel Turnout Seconds</value>
   </data>

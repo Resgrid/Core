@@ -796,7 +796,7 @@ namespace Resgrid.Services
 					return null;
 
 				var distance = GeoMath.HaversineMeters(callPoint.Value.Latitude, callPoint.Value.Longitude, origin.Point.Value.Latitude, origin.Point.Value.Longitude);
-				return origin.TurnoutSeconds + UnitResponseOrigin.EstimateTravelSeconds(distance);
+				return origin.TurnoutSeconds + UnitTravelProfile.Resolve(unit.Unit, unit.UnitType).EstimateSeconds(distance);
 			}
 			catch (Exception ex)
 			{

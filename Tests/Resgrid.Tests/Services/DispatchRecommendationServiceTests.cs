@@ -7,6 +7,7 @@ using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using Resgrid.Model;
+using Resgrid.Tests.Helpers;
 using Resgrid.Model.Services;
 using Resgrid.Services;
 
@@ -58,6 +59,7 @@ namespace Resgrid.Tests.Services
 			_departmentGroupsService = new Mock<IDepartmentGroupsService>();
 			_departmentSettingsService = new Mock<IDepartmentSettingsService>();
 			_geoService = new Mock<IGeoService>();
+			_geoService.BridgeTravelEstimates();
 			_personnelLocationResolver = new Mock<IPersonnelLocationResolver>();
 			_shiftsService = new Mock<IShiftsService>();
 			_runCardActivationsRepository = new Mock<Resgrid.Model.Repositories.IRunCardActivationsRepository>();

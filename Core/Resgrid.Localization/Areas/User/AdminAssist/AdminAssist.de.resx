@@ -7107,6 +7107,15 @@
   <data xml:space="preserve" name="FeatureSetup.map-visualizations">
     <value>Öffnen Sie Kartierung und dann Visualisierungen, wählen Sie eine Visualisierung aus der Bibliothek wie „Einsatz-Hotspots“, passen Sie Zeitraum, Filter und Ebenen auf der Registerkarte „Anpassen“ an und speichern Sie sie. Abteilungsadministratoren können eine gespeicherte Visualisierung für alle freigeben.</value>
   </data>
+  <data xml:space="preserve" name="Feature.road-closures">
+    <value>Straßensperrungen</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.road-closures">
+    <value>Gesperrte und verlangsamte Straßen und Bereiche, auf der Karte gezeichnet, mit Angaben, wer sie gesperrt hat, warum, einem Kontakt und den Zeiten, in denen sie gelten. Die Disposition plant Routen um Vollsperrungen herum und verlangsamt Routen durch Teilsperrungen.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.road-closures">
+    <value>Öffnen Sie Kartierung, dann Straßensperrungen, und wählen Sie Neue Sperrung. Zeichnen Sie die gesperrte Straße als Linie oder den Bereich als Fläche, wählen Sie Voll- oder Teilsperrung, den betroffenen Verkehr und die Zeiten (Wiederholen für eine nur nachts gesperrte Straße) und speichern Sie. Legen Sie bei jedem Einheitentyp fest, wie die Einheiten unterwegs sind (Fahrzeug, Fahrrad, zu Fuß oder Luft), damit Ausrückeordnungen und die Liste der nächsten Einheiten sie so messen, wie sie sich bewegen.</value>
+  </data>
   <data xml:space="preserve" name="Field.DispatchRecommendationConfig.PersonnelTurnoutSeconds">
     <value>Konfiguration der Dispositionsempfehlungen / Ausrückzeit Personal in Sekunden</value>
   </data>

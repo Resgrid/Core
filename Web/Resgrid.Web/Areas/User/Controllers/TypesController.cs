@@ -86,6 +86,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.UnitType = new UnitType();
 			model.UnitType.MapIconType = -1;
 			model.VehicleSize = VehicleSizeInput.From((UnitType)null, VehicleSizeInput.DefaultMetric());
+			model.TravelMode = TravelModeInput.From((UnitType)null, TravelModeInput.DefaultMetric());
 
 			var states = new List<CustomState>();
 			states.Add(new CustomState
@@ -137,6 +138,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			model.VehicleSize ??= new VehicleSizeInput();
 			model.VehicleSize.AddErrorsTo(ModelState);
+			model.TravelMode ??= new TravelModeInput { Metric = true, Mode = "0" };
+			model.TravelMode.AddErrorsTo(ModelState);
 
 			var iconData = await ReadIconUploadAsync(model.IconFile, cancellationToken);
 
@@ -175,15 +178,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 						added.BaseType = unitClass;
 
 					model.VehicleSize.ApplyTo(added);
+					model.TravelMode.ApplyTo(added);
 
-					if (unitClass != (int)UnitTypeClasses.None || VehicleProfile.Resolve(null, added) != null)
+					if (unitClass != (int)UnitTypeClasses.None || VehicleProfile.Resolve(null, added) != null ||
+						added.TravelMode != (int)UnitTravelModes.Driving || added.TravelSpeedKmh.HasValue)
 						await _unitsService.SaveUnitTypeAsync(added, cancellationToken);
 				}
 
 				if (added != null && iconData != null)
 					await _typeIconsService.UploadIconAsync(DepartmentId, TypeIconKinds.UnitType, added.UnitTypeId, UserId, iconData, cancellationToken);
 			}
-			else if (ModelState[IconFileField]?.Errors.Count > 0 || ModelState.Keys.Any(k => k.StartsWith("VehicleSize.", StringComparison.Ordinal) && ModelState[k].Errors.Count > 0))
+			else if (ModelState[IconFileField]?.Errors.Count > 0 || ModelState.Keys.Any(k => (k.StartsWith("VehicleSize.", StringComparison.Ordinal) || k.StartsWith("TravelMode.", StringComparison.Ordinal)) && ModelState[k].Errors.Count > 0))
 			{
 				// A rejected icon comes back to the form with its reason; the name check keeps its old redirect.
 				model.States = await GetUnitTypeStatesAsync();
@@ -237,6 +242,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			// -1 = the Default option, so a type without an icon re-posts "no icon" rather than a value no option has.
 			model.UnitTypeIcon = model.UnitType.MapIconType ?? -1;
 			model.VehicleSize = VehicleSizeInput.From(model.UnitType, VehicleSizeInput.DefaultMetric());
+			model.TravelMode = TravelModeInput.From(model.UnitType, TravelModeInput.DefaultMetric());
 
 			return View(model);
 		}
@@ -263,6 +269,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			model.VehicleSize ??= new VehicleSizeInput();
 			model.VehicleSize.AddErrorsTo(ModelState);
+			model.TravelMode ??= new TravelModeInput { Metric = true };
+			model.TravelMode.AddErrorsTo(ModelState);
 
 			var iconData = await ReadIconUploadAsync(model.IconFile, cancellationToken);
 
@@ -289,6 +297,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 					unitType.MapIconType = null;
 
 				model.VehicleSize.ApplyTo(unitType);
+
+				// Legacy forms and scripted posts without the travel section leave the stored mode and speed alone.
+				if (Request.HasFormContentType && Request.Form.ContainsKey("TravelMode.Mode"))
+					model.TravelMode.ApplyTo(unitType);
 
 				auditEvent.DepartmentId = DepartmentId;
 				auditEvent.UserId = UserId;

@@ -1305,6 +1305,32 @@
       "DocsPath": "/web-app/mapping/#map-visualizations"
     },
     {
+      "Id": "road-closures",
+      "AreaId": "mapping",
+      "LabelKey": "Feature.road-closures",
+      "PurposeKey": "FeaturePurpose.road-closures",
+      "ValueKey": "AreaValue.mapping",
+      "ExampleKey": "AreaExample.mapping",
+      "AdoptionKey": "FeatureSetup.road-closures",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "RoadClosures",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "module",
+          "Id": "Mapping"
+        }
+      ],
+      "SettingIds": [
+        "module.MappingDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/mapping/#road-closures"
+    },
+    {
       "Id": "weather",
       "AreaId": "mapping",
       "LabelKey": "Feature.weather",
@@ -2034,6 +2060,17 @@
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-10-22T00:00:00Z"
+    },
+    {
+      "Id": "road-closures",
+      "Locale": "en",
+      "TitleKey": "Feature.road-closures",
+      "Body": "Road closures Closed and slowed roads and areas drawn on the map, with who closed them, why, a contact and the times they are in effect. Dispatch ranking routes around full closures and slows routes through partial ones. A current map shows where responders and apparatus are and puts important locations in front of dispatchers. Open Mapping, then Road Closures, and choose New Closure. Draw the closed road as a line or the area as a shape, choose full or partial, the traffic it stops and its times (use Repeat for a road closed only at night), and save. Set how units travel on each unit type (driving, cycling, on foot or air) so run cards and the nearest units list measure them the way they move. A full closure is routed around where the routing provider can avoid drawn areas (Valhalla) or closed road points (Mapbox, driving); with other providers the route is charged the closure's detour time and marked as crossing it. A partial closure, and a full one the call or the unit's start is inside, is driven through at the closure's speed. Each closure applies to the traffic it is set to stop: vehicles, bicycles or pedestrians; air units fly a straight line and never meet one. Anyone who can see calls can see closures; department admins and members who can create calls manage them.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "road-closures",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-12T00:00:00Z"
     },
     {
       "Id": "weather",

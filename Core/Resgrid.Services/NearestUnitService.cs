@@ -107,14 +107,27 @@ namespace Resgrid.Services
 			var unitCandidates = await BuildUnitCandidatesAsync(request, scope, config, units, groupsById, now);
 			var personnelCandidates = await BuildPersonnelCandidatesAsync(request, scope, people, groupsById);
 
+			// How each unit travels (M0314): a foot team is measured at walking pace on paths, a helicopter in a straight line.
+			var travel = await _unitsService.GetTravelProfilesForUnitsAsync(departmentId, unitCandidates.Select(c => c.Unit)) ?? new Dictionary<int, UnitTravelProfile>();
+			foreach (var candidate in unitCandidates)
+				candidate.Travel = travel.TryGetValue(candidate.Unit.UnitId, out var profile) && profile != null ? profile : UnitTravelProfile.Default;
+
 			// A distance or ETA from a position the viewer may not see would let them work the position out, so a hidden
 			// position gets neither (and so no drive-time lookup): it ranks after the rows that have one.
 			foreach (var candidate in unitCandidates.Cast<Candidate>().Concat(personnelCandidates).Where(c => !c.LocationHidden && c.Latitude.HasValue && c.Longitude.HasValue))
 			{
 				var distance = GeoMath.HaversineMeters(request.Latitude, request.Longitude, candidate.Latitude.Value, candidate.Longitude.Value);
+				var unitTravel = (candidate as UnitCandidate)?.Travel ?? UnitTravelProfile.Default;
 				candidate.DistanceMeters = distance;
-				candidate.EtaSeconds = EstimateEtaSeconds(distance);
+				candidate.EtaSeconds = unitTravel.EstimateSeconds(distance);
 				candidate.EtaSource = EtaSources.Estimated;
+
+				// Air travel is the straight line at the unit's air speed: as good as its ETA gets, and never routed.
+				if (unitTravel.IsAir)
+				{
+					candidate.EtaSource = EtaSources.Direct;
+					candidate.DriveTimeLookedUp = true;
+				}
 			}
 
 			var useRoadEta = request.UseRoadEta ?? config.UseRoutedEta;
@@ -240,6 +253,12 @@ namespace Resgrid.Services
 			/// <summary>A drive time was looked up for this position (it may have failed and left the estimate).</summary>
 			public bool DriveTimeLookedUp { get; set; }
 
+			/// <summary>Seconds active road closures added to the routed time.</summary>
+			public int RoadClosureDelaySeconds { get; set; }
+
+			/// <summary>Active road closures the routed time was measured against.</summary>
+			public List<string> RoadClosures { get; } = new List<string>();
+
 			/// <summary>The position as the mapping provider is asked for it; set only once the row is measured.</summary>
 			public string Origin => Latitude.HasValue && Longitude.HasValue ? FormatPoint(Latitude.Value, Longitude.Value) : null;
 		}
@@ -264,6 +283,9 @@ namespace Resgrid.Services
 			public double? ResponseSeconds => EtaSeconds.HasValue ? TurnoutSeconds + EtaSeconds.Value : (double?)null;
 
 			public UnitCrewSources CrewSource { get; set; }
+
+			/// <summary>How the unit travels (M0314).</summary>
+			public UnitTravelProfile Travel { get; set; } = UnitTravelProfile.Default;
 
 			public List<string> CrewNames { get; } = new List<string>();
 
@@ -304,6 +326,9 @@ namespace Resgrid.Services
 					DistanceMeters = DistanceMeters,
 					EtaSeconds = EtaSeconds,
 					EtaSource = EtaSource,
+					TravelMode = Travel.Mode,
+					RoadClosureDelaySeconds = RoadClosureDelaySeconds,
+					RoadClosures = RoadClosures.ToList(),
 					TurnoutSeconds = TurnoutSeconds,
 					ResponseSeconds = ResponseSeconds,
 					CrewSource = CrewSource,
@@ -660,7 +685,8 @@ namespace Resgrid.Services
 				? Math.Min(config.EtaShortlistSize, DispatchRecommendationConfig.MaximumEtaShortlistSize)
 				: DispatchRecommendationConfig.DefaultEtaShortlistSize;
 
-			bool Routable(Candidate c) => c.IsAvailable && c.DistanceMeters.HasValue && !c.LocationIsStale;
+			// Air units already have their straight-line time; nothing to route.
+			bool Routable(Candidate c) => c.IsAvailable && c.DistanceMeters.HasValue && !c.LocationIsStale && !((c as UnitCandidate)?.Travel.IsAir ?? false);
 
 			// Each unit type is shortlisted the way a run card requirement shortlists its type (on estimated response, or
 			// on distance when the department ranks by distance), so the drive times on the board are the ones the run card
@@ -682,14 +708,24 @@ namespace Resgrid.Services
 			// A unit with a vehicle size and weight is routed with it (plan §10.3, owner Q2), so it is never ranked on a road it
 			// cannot use; units without limits and responders share plain driving times.
 			var vehicles = await _unitsService.GetVehicleProfilesForUnitsAsync(request.DepartmentId, units.Select(u => u.Unit)) ?? new Dictionary<int, VehicleProfile>();
-			VehicleProfile VehicleOf(Candidate candidate) =>
-				candidate is UnitCandidate unitCandidate && unitCandidate.Unit != null && vehicles.TryGetValue(unitCandidate.Unit.UnitId, out var profile) ? profile : null;
-			string LookupKey(Candidate candidate) => candidate.Origin + "|" + (VehicleOf(candidate)?.Key() ?? string.Empty);
+			TravelLookup LookupOf(Candidate candidate)
+			{
+				var travel = (candidate as UnitCandidate)?.Travel ?? UnitTravelProfile.Default;
+				VehicleProfile vehicle = null;
+				if (travel.Mode == UnitTravelModes.Driving && candidate is UnitCandidate unitCandidate && unitCandidate.Unit != null)
+					vehicles.TryGetValue(unitCandidate.Unit.UnitId, out vehicle);
+
+				return new TravelLookup { DepartmentId = request.DepartmentId, Travel = travel, Vehicle = vehicle };
+			}
+
+			// Units at one position share a lookup only when they also travel the same way: a foot team and an ambulance at the
+			// same post get different times.
+			string LookupKey(Candidate candidate) => candidate.Origin + "|" + LookupOf(candidate).Key();
 
 			// One lookup per position (and vehicle size), a rank at a time across the groups (every type's best first) and
 			// units before responders, up to the cap on what one board may ask of the mapping provider while the dispatcher
 			// waits. Units parked at the same station share its drive time.
-			var origins = new List<(string Key, string Origin, VehicleProfile Vehicle)>();
+			var origins = new List<(string Key, string Origin, TravelLookup Lookup)>();
 			var depth = groups.Max(g => g.Count);
 			for (var rank = 0; rank < depth; rank++)
 			{
@@ -697,7 +733,7 @@ namespace Resgrid.Services
 				{
 					var key = LookupKey(group[rank]);
 					if (origins.Count < DispatchRecommendationConfig.MaximumEtaShortlistSize && origins.All(o => o.Key != key))
-						origins.Add((key, group[rank].Origin, VehicleOf(group[rank])));
+						origins.Add((key, group[rank].Origin, LookupOf(group[rank])));
 				}
 			}
 
@@ -707,25 +743,38 @@ namespace Resgrid.Services
 			cancellationToken.ThrowIfCancellationRequested();
 
 			var destination = FormatPoint(request.Latitude, request.Longitude);
-			var lookups = await Task.WhenAll(origins.Select(async origin => (origin.Key, Eta: origin.Vehicle == null
-				? await _geoService.GetEtaInSecondsAsync(origin.Origin, destination)
-				: await _geoService.GetEtaInSecondsAsync(origin.Origin, destination, origin.Vehicle))));
-			var etaByOrigin = lookups.ToDictionary(x => x.Key, x => x.Eta, StringComparer.Ordinal);
+			var lookups = await Task.WhenAll(origins.Select(async origin => (origin.Key,
+				Estimate: await _geoService.GetTravelEstimateAsync(origin.Origin, destination, origin.Lookup, cancellationToken) ?? TravelEstimate.None)));
+			var etaByOrigin = lookups.ToDictionary(x => x.Key, x => x.Estimate, StringComparer.Ordinal);
+			var closuresApplied = new SortedSet<string>(StringComparer.OrdinalIgnoreCase);
 
 			foreach (var candidate in units.Cast<Candidate>().Concat(personnel).Where(Routable))
 			{
-				if (!etaByOrigin.TryGetValue(LookupKey(candidate), out var eta))
+				if (!etaByOrigin.TryGetValue(LookupKey(candidate), out var estimate))
 					continue;
 
 				// A failed lookup keeps the estimate but still counts as looked up, as it does in a run card's shortlist.
 				candidate.DriveTimeLookedUp = true;
 
-				if (eta >= 0)
+				if (estimate.HasValue)
 				{
-					candidate.EtaSeconds = eta;
-					candidate.EtaSource = EtaSources.Road;
+					candidate.EtaSeconds = estimate.Seconds;
+					candidate.EtaSource = estimate.Source == EtaSources.None ? EtaSources.Road : estimate.Source;
+					candidate.RoadClosureDelaySeconds = estimate.ClosureDelaySeconds;
+
+					foreach (var effect in estimate.Closures ?? new List<RouteClosureEffect>())
+					{
+						if (string.IsNullOrWhiteSpace(effect?.Name))
+							continue;
+
+						candidate.RoadClosures.Add(effect.Name);
+						closuresApplied.Add(effect.Name);
+					}
 				}
 			}
+
+			if (closuresApplied.Count > 0)
+				board.Notes.Add($"Drive times account for {closuresApplied.Count} active road closure(s): {string.Join(", ", closuresApplied)}.");
 
 			board.Notes.Add($"Drive times were looked up for {origins.Count} position(s): the {perGroup} {(config.RanksByDistance ? "closest" : "fastest")} " +
 				"available units of each unit type and the closest responders (units at the same position share one). " +

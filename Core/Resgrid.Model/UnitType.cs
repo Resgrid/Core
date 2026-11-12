@@ -53,6 +53,12 @@ namespace Resgrid.Model
 		/// <summary>Carries hazardous materials.</summary>
 		public bool? VehicleHazmat { get; set; }
 
+		/// <summary>How units of this type travel to an incident, a <see cref="UnitTravelModes"/> value; 0 (Driving) by default (M0314).</summary>
+		public int TravelMode { get; set; }
+
+		/// <summary>Average travel speed in km/h for this type's estimates (and air travel); null uses the mode's default (M0314).</summary>
+		public double? TravelSpeedKmh { get; set; }
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue

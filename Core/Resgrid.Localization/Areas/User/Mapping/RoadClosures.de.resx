@@ -1,0 +1,419 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Map Icon Legend and status / priority map icon pages -->
+    <data name="PageTitle" xml:space="preserve">
+    <value>Straßensperrungen</value>
+  </data>
+  <data name="PageIntro" xml:space="preserve">
+    <value>Gesperrte und eingeschränkt befahrbare Straßen und Bereiche. Die Disposition umfährt Vollsperrungen und verlangsamt Routen durch Teilsperrungen, wenn sie die nächsten Einheiten ermittelt.</value>
+  </data>
+  <data name="NewClosure" xml:space="preserve">
+    <value>Neue Sperrung</value>
+  </data>
+  <data name="EditClosure" xml:space="preserve">
+    <value>Straßensperrung bearbeiten</value>
+  </data>
+  <data name="MappingHeader" xml:space="preserve">
+    <value>Kartierung</value>
+  </data>
+  <data name="ShowCurrent" xml:space="preserve">
+    <value>Aktuell und geplant</value>
+  </data>
+  <data name="ShowAll" xml:space="preserve">
+    <value>Alle Sperrungen</value>
+  </data>
+  <data name="NoClosures" xml:space="preserve">
+    <value>Noch keine Straßensperrungen.</value>
+  </data>
+  <data name="NoClosuresInFilter" xml:space="preserve">
+    <value>Keine aktuellen oder geplanten Straßensperrungen.</value>
+  </data>
+  <data name="ColumnName" xml:space="preserve">
+    <value>Sperrung</value>
+  </data>
+  <data name="ColumnSeverity" xml:space="preserve">
+    <value>Sperrung</value>
+  </data>
+  <data name="ColumnAppliesTo" xml:space="preserve">
+    <value>Gesperrt für</value>
+  </data>
+  <data name="ColumnWhen" xml:space="preserve">
+    <value>Wann</value>
+  </data>
+  <data name="ColumnStatus" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="ColumnClosedBy" xml:space="preserve">
+    <value>Gesperrt von</value>
+  </data>
+  <data name="StateActive" xml:space="preserve">
+    <value>In Kraft</value>
+  </data>
+  <data name="StateScheduled" xml:space="preserve">
+    <value>Geplant</value>
+  </data>
+  <data name="StateEnded" xml:space="preserve">
+    <value>Beendet</value>
+  </data>
+  <data name="StateDisabled" xml:space="preserve">
+    <value>Deaktiviert</value>
+  </data>
+  <data name="WhenAlways" xml:space="preserve">
+    <value>Bis zur Deaktivierung</value>
+  </data>
+  <data name="WhenUntil" xml:space="preserve">
+    <value>Bis {0}</value>
+  </data>
+  <data name="WhenUntilFurtherNotice" xml:space="preserve">
+    <value>Bis auf Weiteres</value>
+  </data>
+  <data name="WhenNext" xml:space="preserve">
+    <value>Nächste: {0} – {1}</value>
+  </data>
+  <data name="WhenNextOpen" xml:space="preserve">
+    <value>Ab {0}</value>
+  </data>
+  <data name="WhenLast" xml:space="preserve">
+    <value>Letzte: {0} – {1}</value>
+  </data>
+  <data name="WindowCount" xml:space="preserve">
+    <value>{0} Sperrzeiten</value>
+  </data>
+  <data name="SeverityFull" xml:space="preserve">
+    <value>Vollsperrung</value>
+  </data>
+  <data name="SeverityPartial" xml:space="preserve">
+    <value>Teilsperrung (langsamer Verkehr)</value>
+  </data>
+  <data name="TypeOther" xml:space="preserve">
+    <value>Sonstige</value>
+  </data>
+  <data name="TypeEvent" xml:space="preserve">
+    <value>Veranstaltung</value>
+  </data>
+  <data name="TypeRoadWorks" xml:space="preserve">
+    <value>Baustelle</value>
+  </data>
+  <data name="TypeIncident" xml:space="preserve">
+    <value>Einsatz</value>
+  </data>
+  <data name="TypePolice" xml:space="preserve">
+    <value>Polizei</value>
+  </data>
+  <data name="TypeWeather" xml:space="preserve">
+    <value>Wetter</value>
+  </data>
+  <data name="TypeHazard" xml:space="preserve">
+    <value>Gefahr auf der Fahrbahn</value>
+  </data>
+  <data name="TypeInfrastructure" xml:space="preserve">
+    <value>Brücke, Tunnel oder Übergang</value>
+  </data>
+  <data name="ModeDriving" xml:space="preserve">
+    <value>Fahrzeuge</value>
+  </data>
+  <data name="ModeCycling" xml:space="preserve">
+    <value>Fahrräder</value>
+  </data>
+  <data name="ModeWalking" xml:space="preserve">
+    <value>Fußgänger</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Bearbeiten</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Löschen</value>
+  </data>
+  <data name="DeleteConfirm" xml:space="preserve">
+    <value>Diese Straßensperrung löschen? Dies kann nicht rückgängig gemacht werden.</value>
+  </data>
+  <data name="TurnOff" xml:space="preserve">
+    <value>Deaktivieren</value>
+  </data>
+  <data name="TurnOn" xml:space="preserve">
+    <value>Aktivieren</value>
+  </data>
+  <data name="ShowOnMap" xml:space="preserve">
+    <value>Auf Karte anzeigen</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Speichern</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Abbrechen</value>
+  </data>
+  <data name="SectionShape" xml:space="preserve">
+    <value>Wo</value>
+  </data>
+  <data name="ShapeHelp" xml:space="preserve">
+    <value>Zeichnen Sie gesperrte Straßen als Linien entlang der Straße oder den gesperrten Bereich als Fläche. Eine Linie sperrt die Straße, der sie folgt; das Queren an einer Kreuzung bleibt erlaubt. Eine Fläche sperrt alle Straßen darin.</value>
+  </data>
+  <data name="ShapeClear" xml:space="preserve">
+    <value>Zeichnung löschen</value>
+  </data>
+  <data name="ShapeGeoJson" xml:space="preserve">
+    <value>GeoJSON (erweitert)</value>
+  </data>
+  <data name="ShapeGeoJsonHelp" xml:space="preserve">
+    <value>Die Zeichnung als GeoJSON. Fügen Sie hier eine Form ein, um sie auf der Karte zu laden.</value>
+  </data>
+  <data name="ShapeGeoJsonInvalid" xml:space="preserve">
+    <value>Das ist keine GeoJSON-Fläche oder -Linie.</value>
+  </data>
+  <data name="SectionDetails" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="NameHelp" xml:space="preserve">
+    <value>Woran die Disponenten sie erkennen, z. B. „Stadtmarathon - Hauptstraße“.</value>
+  </data>
+  <data name="ClosureType" xml:space="preserve">
+    <value>Art der Sperrung</value>
+  </data>
+  <data name="Severity" xml:space="preserve">
+    <value>Sperrung</value>
+  </data>
+  <data name="SeverityHelp" xml:space="preserve">
+    <value>Eine Vollsperrung hat keinen Durchgangsverkehr: Routen führen um sie herum. Eine Teilsperrung bleibt befahrbar, aber langsam (ein Fahrstreifen gesperrt, Verkehrsregelung, eine Menschenmenge): Routen dürfen sie mit verringerter Geschwindigkeit nutzen.</value>
+  </data>
+  <data name="SpeedPercent" xml:space="preserve">
+    <value>Geschwindigkeit darin (% der normalen)</value>
+  </data>
+  <data name="SpeedPercentHelp" xml:space="preserve">
+    <value>Bei einer Teilsperrung: wie schnell der Verkehr dort noch fließt. Bei einer Vollsperrung: die Geschwindigkeit einer Einheit, wenn der Einsatzort oder ihr Startpunkt in der Sperrung liegt und sie hineinfahren muss.</value>
+  </data>
+  <data name="DetourMinutes" xml:space="preserve">
+    <value>Umleitungszeit (Minuten)</value>
+  </data>
+  <data name="DetourMinutesHelp" xml:space="preserve">
+    <value>Wird zu einer Route addiert, die eine Vollsperrung dennoch quert, weil der Routing-Anbieter gezeichnete Bereiche nicht umfahren kann. Die Route wird in jedem Fall als die Sperrung querend markiert.</value>
+  </data>
+  <data name="AppliesTo" xml:space="preserve">
+    <value>Gesperrt für</value>
+  </data>
+  <data name="AppliesToHelp" xml:space="preserve">
+    <value>Für wen die Sperrung gilt. Eine Marathonstrecke kann die Straße für Fahrzeuge sperren, während Fußtrupps sie weiterhin queren.</value>
+  </data>
+  <data name="Enabled" xml:space="preserve">
+    <value>Aktiviert</value>
+  </data>
+  <data name="EnabledHelp" xml:space="preserve">
+    <value>Deaktivierte Sperrungen bleiben gespeichert, werden aber nie für das Routing verwendet.</value>
+  </data>
+  <data name="SectionWho" xml:space="preserve">
+    <value>Wer und warum</value>
+  </data>
+  <data name="Reason" xml:space="preserve">
+    <value>Grund</value>
+  </data>
+  <data name="ClosedBy" xml:space="preserve">
+    <value>Gesperrt von</value>
+  </data>
+  <data name="ClosedByHelp" xml:space="preserve">
+    <value>Wer die Straße gesperrt hat: Polizei, Stadt, ein Veranstalter.</value>
+  </data>
+  <data name="Authority" xml:space="preserve">
+    <value>Behörde</value>
+  </data>
+  <data name="AuthorityHelp" xml:space="preserve">
+    <value>Die für die Sperrung zuständige Behörde oder die Behörde, die die Genehmigung erteilt hat.</value>
+  </data>
+  <data name="ContactName" xml:space="preserve">
+    <value>Kontakt</value>
+  </data>
+  <data name="ContactDetails" xml:space="preserve">
+    <value>Kontaktdaten</value>
+  </data>
+  <data name="ContactDetailsHelp" xml:space="preserve">
+    <value>Telefon, Funkkanal oder E-Mail.</value>
+  </data>
+  <data name="Notes" xml:space="preserve">
+    <value>Notizen</value>
+  </data>
+  <data name="SectionTimes" xml:space="preserve">
+    <value>Wann</value>
+  </data>
+  <data name="TimesHelp" xml:space="preserve">
+    <value>Die Sperrung gilt während jeder dieser Zeiten (Zeitzone der Abteilung). Ohne Zeiten gilt sie bis zur Deaktivierung. Eine Straße, die eine Woche lang nur nachts gesperrt ist, hat sieben Zeiten; fügen Sie sie mit „Wiederholen“ hinzu.</value>
+  </data>
+  <data name="TimesStart" xml:space="preserve">
+    <value>Von</value>
+  </data>
+  <data name="TimesEnd" xml:space="preserve">
+    <value>Bis</value>
+  </data>
+  <data name="TimesEndHelp" xml:space="preserve">
+    <value>Leer: bis auf Weiteres.</value>
+  </data>
+  <data name="TimesAdd" xml:space="preserve">
+    <value>Zeit hinzufügen</value>
+  </data>
+  <data name="TimesRemove" xml:space="preserve">
+    <value>Entfernen</value>
+  </data>
+  <data name="TimesClearAll" xml:space="preserve">
+    <value>Alle Zeiten entfernen</value>
+  </data>
+  <data name="TimesNone" xml:space="preserve">
+    <value>Keine Zeiten: gilt bis zur Deaktivierung.</value>
+  </data>
+  <data name="RepeatTitle" xml:space="preserve">
+    <value>Wiederholen</value>
+  </data>
+  <data name="RepeatHelp" xml:space="preserve">
+    <value>Fügt an jedem gewählten Tag zwischen den beiden Daten eine Zeit hinzu. Eine Endzeit vor der Startzeit läuft über Mitternacht (22:00 bis 06:00).</value>
+  </data>
+  <data name="RepeatFirstDate" xml:space="preserve">
+    <value>Erster Tag</value>
+  </data>
+  <data name="RepeatLastDate" xml:space="preserve">
+    <value>Letzter Tag</value>
+  </data>
+  <data name="RepeatDailyStart" xml:space="preserve">
+    <value>Täglich von</value>
+  </data>
+  <data name="RepeatDailyEnd" xml:space="preserve">
+    <value>Täglich bis</value>
+  </data>
+  <data name="RepeatDays" xml:space="preserve">
+    <value>Tage</value>
+  </data>
+  <data name="RepeatAdd" xml:space="preserve">
+    <value>Zeiten hinzufügen</value>
+  </data>
+  <data name="RepeatInvalid" xml:space="preserve">
+    <value>Wählen Sie den ersten und letzten Tag sowie beide Uhrzeiten.</value>
+  </data>
+  <data name="RepeatTooMany" xml:space="preserve">
+    <value>Das würde mehr als {0} Zeiten hinzufügen.</value>
+  </data>
+  <data name="DayMon" xml:space="preserve">
+    <value>Mo</value>
+  </data>
+  <data name="DayTue" xml:space="preserve">
+    <value>Di</value>
+  </data>
+  <data name="DayWed" xml:space="preserve">
+    <value>Mi</value>
+  </data>
+  <data name="DayThu" xml:space="preserve">
+    <value>Do</value>
+  </data>
+  <data name="DayFri" xml:space="preserve">
+    <value>Fr</value>
+  </data>
+  <data name="DaySat" xml:space="preserve">
+    <value>Sa</value>
+  </data>
+  <data name="DaySun" xml:space="preserve">
+    <value>So</value>
+  </data>
+  <data name="LastChanged" xml:space="preserve">
+    <value>Zuletzt geändert: {0}</value>
+  </data>
+  <data name="ErrorNameRequired" xml:space="preserve">
+    <value>Geben Sie der Straßensperrung einen Namen.</value>
+  </data>
+  <data name="ErrorNameTooLong" xml:space="preserve">
+    <value>Der Name darf höchstens {0} Zeichen lang sein.</value>
+  </data>
+  <data name="ErrorShapeRequired" xml:space="preserve">
+    <value>Zeichnen Sie die gesperrte Straße oder den Bereich auf der Karte.</value>
+  </data>
+  <data name="ErrorShapeInvalid" xml:space="preserve">
+    <value>Die Zeichnung ist keine gültige Fläche oder Straßenlinie.</value>
+  </data>
+  <data name="ErrorShapeTooLarge" xml:space="preserve">
+    <value>Die Zeichnung hat mehr als {0} Punkte. Vereinfachen Sie sie.</value>
+  </data>
+  <data name="ErrorTravelModeRequired" xml:space="preserve">
+    <value>Wählen Sie mindestens eine Verkehrsart, für die die Sperrung gilt.</value>
+  </data>
+  <data name="ErrorTooManyWindows" xml:space="preserve">
+    <value>Eine Sperrung kann höchstens {0} Sperrzeiten haben.</value>
+  </data>
+  <data name="ErrorWindowInvalid" xml:space="preserve">
+    <value>Jede Sperrzeit braucht ein gültiges Startdatum und eine gültige Startzeit.</value>
+  </data>
+  <data name="ErrorWindowEndsBeforeStart" xml:space="preserve">
+    <value>Eine Sperrzeit endet, bevor sie beginnt.</value>
+  </data>
+  <data name="ErrorTextTooLong" xml:space="preserve">
+    <value>Eines der Felder ist zu lang.</value>
+  </data>
+  <data name="ErrorInvalid" xml:space="preserve">
+    <value>Die Straßensperrung konnte nicht gespeichert werden.</value>
+  </data>
+  <data name="MapLegendActiveFull" xml:space="preserve">
+    <value>Vollsperrung in Kraft</value>
+  </data>
+  <data name="MapLegendActivePartial" xml:space="preserve">
+    <value>Teilsperrung in Kraft</value>
+  </data>
+  <data name="MapLegendScheduled" xml:space="preserve">
+    <value>Geplant</value>
+  </data>
+  <data name="MapLegendInactive" xml:space="preserve">
+    <value>Beendet oder deaktiviert</value>
+  </data>
+</root>

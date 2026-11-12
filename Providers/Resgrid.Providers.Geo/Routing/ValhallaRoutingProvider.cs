@@ -33,7 +33,10 @@ namespace Resgrid.Providers.GeoLocationProvider.Routing
 			VehicleFull = true,
 			MaxMatrixCoordinates = 1000,
 			MaxWaypoints = 50,
-			MaxOptimizeWaypoints = 50
+			MaxOptimizeWaypoints = 50,
+			// Road closures (M0314): exclude_polygons for areas, exclude_locations for points on closed roads.
+			ExcludeAreas = true,
+			MaxExcludePoints = 200
 		};
 
 		public bool IsConfigured => !string.IsNullOrWhiteSpace(MappingConfig.ValhallaUrl);
@@ -62,6 +65,8 @@ namespace Resgrid.Providers.GeoLocationProvider.Routing
 
 			if (!request.Steps && !request.NavigationInstructions)
 				body["directions_type"] = "none";
+
+			AddExclusions(body, request);
 
 			var (_, status, document) = await RoutingHttp.PostJsonAsync(Url("/route"), body, cancellationToken, Authorize);
 
@@ -189,6 +194,25 @@ namespace Resgrid.Providers.GeoLocationProvider.Routing
 			}
 
 			return location;
+		}
+
+		/// <summary>Road closures the route must not use: areas as closed [lon, lat] rings, road points as locations.</summary>
+		public static void AddExclusions(Dictionary<string, object> body, RouteRequest request)
+		{
+			var areas = (request.ExcludeAreas ?? new List<List<RoutingWaypoint>>()).Where(a => a != null && a.Count >= 3).ToList();
+			if (areas.Count > 0)
+			{
+				body["exclude_polygons"] = areas.Select(ring =>
+				{
+					var positions = ring.Select(p => new[] { p.Longitude, p.Latitude }).ToList();
+					positions.Add(new[] { ring[0].Longitude, ring[0].Latitude });
+					return positions;
+				}).ToList();
+			}
+
+			var points = (request.ExcludePoints ?? new List<RoutingWaypoint>()).ToList();
+			if (points.Count > 0)
+				body["exclude_locations"] = points.Select(p => new Dictionary<string, object> { ["lat"] = p.Latitude, ["lon"] = p.Longitude }).ToList();
 		}
 
 		internal static bool UsesTruckCosting(RoutingProfile profile, VehicleProfile vehicle)

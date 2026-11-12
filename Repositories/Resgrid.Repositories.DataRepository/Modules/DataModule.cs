@@ -338,6 +338,7 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<OfflineMapPacksRepository>().As<IOfflineMapPacksRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<PoiImportsRepository>().As<IPoiImportsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<MapVisualizationsRepository>().As<IMapVisualizationsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RoadClosuresRepository>().As<IRoadClosuresRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<UserDashboardsRepository>().As<IUserDashboardsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentDashboardTemplatesRepository>().As<IDepartmentDashboardTemplatesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<SystemOperationRequestsRepository>().As<ISystemOperationRequestsRepository>().InstancePerLifetimeScope();

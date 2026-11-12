@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using Resgrid.Model;
+using Resgrid.Tests.Helpers;
 using Resgrid.Model.Identity;
 using Resgrid.Model.Services;
 using Resgrid.Services;
@@ -76,6 +78,7 @@ namespace Resgrid.Tests.Services
 			_shiftsService = new Mock<IShiftsService>();
 			_departmentSettingsService = new Mock<IDepartmentSettingsService>();
 			_geoService = new Mock<IGeoService>();
+			_geoService.BridgeTravelEstimates();
 			_authorizationService = new Mock<IAuthorizationService>();
 			_departmentsService = new Mock<IDepartmentsService>();
 
@@ -531,6 +534,63 @@ namespace Resgrid.Tests.Services
 			UnitRow(board, TeamUnit).EtaSource.Should().Be(EtaSources.Road);
 			UnitRow(board, IndividualUnit).EtaSource.Should().Be(EtaSources.Estimated, "its lookup failed");
 			UnitRow(board, FarTeamUnit).EtaSource.Should().Be(EtaSources.Estimated, "it is not its type's fastest");
+		}
+
+		[Test]
+		public async Task a_walking_unit_is_estimated_at_walking_pace_and_looked_up_as_a_walker()
+		{
+			// M0314: a BLS team on foot is measured the way it travels, not at driving speed.
+			_config.EtaShortlistSize = 1;
+			_unitsService.Setup(x => x.GetTravelProfilesForUnitsAsync(DepartmentId, It.IsAny<IEnumerable<Unit>>()))
+				.ReturnsAsync(new Dictionary<int, UnitTravelProfile> { [TeamUnit] = new UnitTravelProfile(UnitTravelModes.Walking, null) });
+
+			var estimated = UnitRow(await GetBoardAsync(useRoadEta: false), TeamUnit);
+
+			estimated.TravelMode.Should().Be(UnitTravelModes.Walking);
+			estimated.EtaSource.Should().Be(EtaSources.Estimated);
+			estimated.EtaSeconds.Should().Be(new UnitTravelProfile(UnitTravelModes.Walking, null).EstimateSeconds(estimated.DistanceMeters.Value));
+
+			_geoService.Setup(x => x.GetEtaInSecondsAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(-1);
+			await GetBoardAsync(useRoadEta: true);
+
+			_geoService.Verify(x => x.GetTravelEstimateAsync("34.059,-118.25", "34.05,-118.25",
+				It.Is<TravelLookup>(l => l.Travel.Mode == UnitTravelModes.Walking && l.DepartmentId == DepartmentId && l.Vehicle == null), It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
+		public async Task an_air_unit_gets_its_straight_line_time_and_is_never_routed()
+		{
+			_config.EtaShortlistSize = 1;
+			_unitsService.Setup(x => x.GetTravelProfilesForUnitsAsync(DepartmentId, It.IsAny<IEnumerable<Unit>>()))
+				.ReturnsAsync(new Dictionary<int, UnitTravelProfile> { [TeamUnit] = new UnitTravelProfile(UnitTravelModes.Air, 180) });
+			_geoService.Setup(x => x.GetEtaInSecondsAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(-1);
+
+			var team = UnitRow(await GetBoardAsync(useRoadEta: true), TeamUnit);
+
+			team.EtaSource.Should().Be(EtaSources.Direct);
+			team.TravelMode.Should().Be(UnitTravelModes.Air);
+			team.EtaSeconds.Should().Be(new UnitTravelProfile(UnitTravelModes.Air, 180).EstimateSeconds(team.DistanceMeters.Value));
+			_geoService.Verify(x => x.GetTravelEstimateAsync("34.059,-118.25", It.IsAny<string>(), It.IsAny<TravelLookup>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public async Task road_closures_a_drive_time_met_are_shown_on_the_unit_and_noted_once()
+		{
+			_config.EtaShortlistSize = 1;
+			_geoService.Setup(x => x.GetTravelEstimateAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TravelLookup>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new TravelEstimate
+				{
+					Seconds = 400,
+					Source = EtaSources.Road,
+					ClosureDelaySeconds = 120,
+					Closures = new List<RouteClosureEffect> { new RouteClosureEffect { ClosureId = "c1", Name = "Marathon", Effect = RouteClosureEffects.Slowed, DelaySeconds = 120 } }
+				});
+
+			var board = await GetBoardAsync(useRoadEta: true);
+
+			UnitRow(board, TeamUnit).RoadClosureDelaySeconds.Should().Be(120);
+			UnitRow(board, TeamUnit).RoadClosures.Should().Equal("Marathon");
+			board.Notes.Should().ContainSingle(n => n.Contains("Marathon"));
 		}
 
 		[Test]

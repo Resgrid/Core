@@ -354,6 +354,8 @@ namespace Resgrid.Services
 			public int BaseType { get; set; }
 			/// <summary>The unit type's meaning (UnitTypeClasses), for "unit class" targets.</summary>
 			public int UnitTypeClass { get; set; }
+			/// <summary>How the unit travels (its own mode and speed, else its type's); estimates and routed times use it.</summary>
+			public UnitTravelProfile Travel { get; set; } = UnitTravelProfile.Default;
 		}
 
 		private sealed class PersonnelCandidate
@@ -400,6 +402,8 @@ namespace Resgrid.Services
 			public Dictionary<int, string> UnitTypeNames { get; set; } = new Dictionary<int, string>();
 			/// <summary>Personnel role names by id, for naming recommended people, shortfalls and move-ups.</summary>
 			public Dictionary<int, string> RoleNames { get; set; } = new Dictionary<int, string>();
+			/// <summary>Road closures already named in the notes.</summary>
+			public HashSet<string> RoadClosuresNoted { get; } = new HashSet<string>(StringComparer.Ordinal);
 		}
 
 		private async Task BuildUnitCandidatesAsync(RecommendationContext context)
@@ -479,7 +483,8 @@ namespace Resgrid.Services
 					StaffingLevel = staffingLevel,
 					InQuarters = UnitResponseOrigin.IsInQuarters(stateId, customDetails),
 					BaseType = isCustom ? customDetails[stateId].BaseType : (int)BuiltInStatusBaseTypes.ForUnitState(stateId),
-					UnitTypeClass = unitType.BaseType
+					UnitTypeClass = unitType.BaseType,
+					Travel = UnitTravelProfile.Resolve(unit, unitType)
 				});
 			}
 		}
@@ -1179,7 +1184,7 @@ namespace Resgrid.Services
 					{
 						Candidate = c,
 						Distance = distance,
-						EstimatedResponse = c.TurnoutSeconds + UnitResponseOrigin.EstimateTravelSeconds(distance)
+						EstimatedResponse = c.TurnoutSeconds + c.Travel.EstimateSeconds(distance)
 					};
 				})
 				.Where(x => context.Config.MaxRadiusMeters <= 0 || x.Distance <= context.Config.MaxRadiusMeters)
@@ -1202,7 +1207,7 @@ namespace Resgrid.Services
 				{
 					context.CancellationToken.ThrowIfCancellationRequested();
 
-					var eta = await UnitEtaAsync(entry.Candidate.Unit,
+					var eta = await UnitEtaAsync(context, entry.Candidate,
 						FormatPoint(entry.Candidate.Latitude.Value, entry.Candidate.Longitude.Value),
 						FormatPoint(anchor.Latitude, anchor.Longitude));
 
@@ -1320,7 +1325,7 @@ namespace Resgrid.Services
 				{
 					context.CancellationToken.ThrowIfCancellationRequested();
 
-					var eta = await _geoService.GetEtaInSecondsAsync(
+					var eta = await PersonEtaAsync(context,
 						FormatPoint(entry.Candidate.Latitude.Value, entry.Candidate.Longitude.Value),
 						FormatPoint(anchor.Latitude, anchor.Longitude));
 
@@ -1385,16 +1390,47 @@ namespace Resgrid.Services
 		private readonly Dictionary<int, VehicleProfile> _vehicleProfiles = new Dictionary<int, VehicleProfile>();
 
 		/// <summary>
-		/// Routed drive time for a unit, with its vehicle size and weight when it has any (plan §10.3, owner Q2) so a
-		/// unit is never ranked on a road it cannot use.
+		/// Travel time for a unit the way it travels (M0314): routed driving with its vehicle size and weight when it has
+		/// any (plan §10.3, owner Q2) so a unit is never ranked on a road it cannot use, routed cycling or walking, or a
+		/// straight line at its air speed; through the department's active road closures for its mode.
 		/// </summary>
-		private async Task<double> UnitEtaAsync(Unit unit, string origin, string destination)
+		private async Task<double> UnitEtaAsync(RecommendationContext context, UnitCandidate candidate, string origin, string destination)
 		{
-			var vehicle = await VehicleProfileForAsync(unit);
+			var vehicle = candidate.Travel.Mode == UnitTravelModes.Driving ? await VehicleProfileForAsync(candidate.Unit) : null;
 
-			return vehicle == null
-				? await _geoService.GetEtaInSecondsAsync(origin, destination)
-				: await _geoService.GetEtaInSecondsAsync(origin, destination, vehicle);
+			var estimate = await _geoService.GetTravelEstimateAsync(origin, destination, new TravelLookup
+			{
+				DepartmentId = context.Request.DepartmentId,
+				Travel = candidate.Travel,
+				Vehicle = vehicle
+			}, context.CancellationToken);
+
+			NoteRoadClosures(context, estimate);
+			return estimate?.Seconds ?? -1;
+		}
+
+		/// <summary>A responder's routed drive time, through the department's active road closures for driving.</summary>
+		private async Task<double> PersonEtaAsync(RecommendationContext context, string origin, string destination)
+		{
+			var estimate = await _geoService.GetTravelEstimateAsync(origin, destination, new TravelLookup { DepartmentId = context.Request.DepartmentId }, context.CancellationToken);
+
+			NoteRoadClosures(context, estimate);
+			return estimate?.Seconds ?? -1;
+		}
+
+		/// <summary>Once per closure: a note that a drive time was measured around or through it.</summary>
+		private static void NoteRoadClosures(RecommendationContext context, TravelEstimate estimate)
+		{
+			if (estimate?.Closures == null)
+				return;
+
+			foreach (var effect in estimate.Closures.Where(e => e != null && !string.IsNullOrWhiteSpace(e.ClosureId)))
+			{
+				if (!context.RoadClosuresNoted.Add(effect.ClosureId))
+					continue;
+
+				context.Result.Notes.Add($"Drive times account for the road closure '{effect.Name}'.");
+			}
 		}
 
 		private async Task<VehicleProfile> VehicleProfileForAsync(Unit unit)

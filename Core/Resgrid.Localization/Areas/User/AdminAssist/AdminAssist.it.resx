@@ -7107,6 +7107,15 @@
   <data xml:space="preserve" name="FeatureSetup.map-visualizations">
     <value>Apri Mappatura e poi Visualizzazioni, scegli una visualizzazione della libreria come «Zone calde delle chiamate», modifica intervallo di date, filtri e livelli nella scheda Personalizza e salvala. Gli amministratori del dipartimento possono condividere una visualizzazione salvata con tutti.</value>
   </data>
+  <data xml:space="preserve" name="Feature.road-closures">
+    <value>Chiusure stradali</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.road-closures">
+    <value>Strade e aree chiuse o rallentate disegnate sulla mappa, con chi le ha chiuse, perché, un contatto e gli orari in cui sono in vigore. La centrale operativa calcola percorsi che evitano le chiusure totali e rallenta quelli che attraversano le chiusure parziali.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.road-closures">
+    <value>Apri Mappatura, poi Chiusure stradali, e scegli Nuova chiusura. Disegna la strada chiusa come una linea o l'area come una forma, scegli chiusura totale o parziale, il traffico interessato e gli orari (usa Ripeti per una strada chiusa solo di notte) e salva. Imposta su ogni tipo di unità come si spostano le sue unità (veicolo, bicicletta, a piedi o aereo) perché i piani di intervento e l'elenco delle unità più vicine le misurino come si muovono.</value>
+  </data>
   <data xml:space="preserve" name="Field.DispatchRecommendationConfig.PersonnelTurnoutSeconds">
     <value>Configurazione raccomandazioni di dispaccio / Tempo di uscita del personale in secondi</value>
   </data>

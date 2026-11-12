@@ -159,6 +159,9 @@ namespace Resgrid.Model.Services
 		/// <summary>Effective vehicle profiles keyed by unit id; units without any limit are left out.</summary>
 		Task<Dictionary<int, VehicleProfile>> GetVehicleProfilesForUnitsAsync(int departmentId, IEnumerable<Unit> units);
 
+		/// <summary>Each unit's travel mode and speed (its own, else its unit type's), keyed by unit id; every unit is listed.</summary>
+		Task<Dictionary<int, UnitTravelProfile>> GetTravelProfilesForUnitsAsync(int departmentId, IEnumerable<Unit> units);
+
 		/// <summary>
 		/// Adds the unit type asynchronous.
 		/// </summary>

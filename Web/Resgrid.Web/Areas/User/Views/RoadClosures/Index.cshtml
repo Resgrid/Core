@@ -1,0 +1,169 @@
+@using Resgrid.Web.Helpers
+@using Resgrid.Model
+@using System.Globalization
+@using Newtonsoft.Json
+@model Resgrid.Web.Areas.User.Models.Mapping.RoadClosuresIndexView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.RoadClosures> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["PageTitle"];
+    var jsonSettings = new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml };
+
+    string TypeName(RoadClosureTypes type) => localizer["Type" + type].Value;
+    string StateName(RoadClosureStates state) => localizer["State" + state].Value;
+    // Same colours as the map legend: red full, orange partial, blue scheduled, grey otherwise.
+    string StateLabel(RoadClosureStates state, RoadClosureSeverities severity) => state == RoadClosureStates.Active
+        ? (severity == RoadClosureSeverities.Partial ? "label-warning" : "label-danger")
+        : state == RoadClosureStates.Scheduled ? "label-info" : "label-default";
+    string When(DateTime? value) => value.HasValue ? value.Value.ToString("g", CultureInfo.CurrentCulture) : string.Empty;
+
+    string WhenText(Resgrid.Web.Areas.User.Models.Mapping.RoadClosureRow row)
+    {
+        if (row.WindowCount == 0)
+            return localizer["WhenAlways"].Value;
+        if (row.State == RoadClosureStates.Active && row.WindowStartsLocal.HasValue)
+            return row.WindowEndsLocal.HasValue ? localizer["WhenUntil", When(row.WindowEndsLocal)].Value : localizer["WhenUntilFurtherNotice"].Value;
+        if (row.WindowStartsLocal.HasValue)
+            return row.WindowEndsLocal.HasValue ? localizer["WhenNext", When(row.WindowStartsLocal), When(row.WindowEndsLocal)].Value : localizer["WhenNextOpen", When(row.WindowStartsLocal)].Value;
+        return string.Empty;
+    }
+
+    var mapClosures = Model.Closures.Select(c => new
+    {
+        id = c.RoadClosureId,
+        name = c.Name,
+        state = c.State.ToString().ToLowerInvariant(),
+        severity = c.Severity.ToString().ToLowerInvariant(),
+        geometry = string.IsNullOrWhiteSpace(c.GeometryJson) ? null : JsonConvert.DeserializeObject(c.GeometryJson)
+    });
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-6">
+        <h2>@localizer["PageTitle"]</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            <li><a asp-controller="Mapping" asp-action="Index" asp-route-area="User">@localizer["MappingHeader"]</a></li>
+            <li class="active"><strong>@localizer["PageTitle"]</strong></li>
+        </ol>
+    </div>
+    @if (Model.CanManage)
+    {
+        <div class="col-sm-6">
+            <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+                <a class="btn btn-success" asp-controller="RoadClosures" asp-action="New" asp-route-area="User"><i class="fa fa-plus"></i> @localizer["NewClosure"]</a>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <p class="text-muted">@localizer["PageIntro"]</p>
+                    <div id="roadClosuresMap" style="position: relative; width: 100%; height: 420px;"></div>
+                    <div class="small" style="margin-top: 6px;">
+                        <span style="display:inline-block;width:14px;height:4px;background:#ed5565;vertical-align:middle;"></span> @localizer["MapLegendActiveFull"]
+                        &nbsp; <span style="display:inline-block;width:14px;height:4px;background:#f8ac59;vertical-align:middle;"></span> @localizer["MapLegendActivePartial"]
+                        &nbsp; <span style="display:inline-block;width:14px;height:4px;background:#1c84c6;vertical-align:middle;"></span> @localizer["MapLegendScheduled"]
+                        &nbsp; <span style="display:inline-block;width:14px;height:4px;background:#999999;vertical-align:middle;"></span> @localizer["MapLegendInactive"]
+                    </div>
+                </div>
+            </div>
+
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <div class="btn-group" role="group" style="margin-bottom: 10px;" id="roadClosuresFilter">
+                        <button type="button" class="btn btn-sm @(Model.Filter == "all" ? "btn-white" : "btn-primary")" data-filter="current">@localizer["ShowCurrent"]</button>
+                        <button type="button" class="btn btn-sm @(Model.Filter == "all" ? "btn-primary" : "btn-white")" data-filter="all">@localizer["ShowAll"]</button>
+                    </div>
+
+                    @if (Model.Closures.Count == 0)
+                    {
+                        <p class="text-muted">@localizer["NoClosures"]</p>
+                    }
+                    else
+                    {
+                        <p class="text-muted" id="roadClosuresNoneInFilter" style="display:none;">@localizer["NoClosuresInFilter"]</p>
+                        <div class="table-responsive">
+                            <table class="table table-striped" id="roadClosuresTable">
+                                <thead>
+                                    <tr>
+                                        <th>@localizer["ColumnName"]</th>
+                                        <th>@localizer["ColumnStatus"]</th>
+                                        <th>@localizer["ColumnWhen"]</th>
+                                        <th>@localizer["ColumnAppliesTo"]</th>
+                                        <th>@localizer["ColumnClosedBy"]</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var closure in Model.Closures)
+                                    {
+                                        var current = closure.State == RoadClosureStates.Active || closure.State == RoadClosureStates.Scheduled;
+                                        <tr data-closure-id="@closure.RoadClosureId" data-current="@(current ? "1" : "0")">
+                                            <td>
+                                                <a href="#" data-show-closure="@closure.RoadClosureId" title="@localizer["ShowOnMap"]"><strong>@closure.Name</strong></a><br />
+                                                <small class="text-muted">@TypeName(closure.ClosureType) &middot; @(closure.Severity == RoadClosureSeverities.Full ? localizer["SeverityFull"] : localizer["SeverityPartial"])</small>
+                                                @if (!string.IsNullOrWhiteSpace(closure.Reason))
+                                                {
+                                                    <br /><small>@closure.Reason</small>
+                                                }
+                                            </td>
+                                            <td><span class="label @StateLabel(closure.State, closure.Severity)">@StateName(closure.State)</span></td>
+                                            <td>
+                                                @WhenText(closure)
+                                                @if (closure.WindowCount > 1)
+                                                {
+                                                    <br /><small class="text-muted">@localizer["WindowCount", closure.WindowCount]</small>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (closure.AppliesTo.HasFlag(RoadClosureTravelModes.Driving)) { <i class="fa fa-car" title="@localizer["ModeDriving"]"></i><span class="sr-only">@localizer["ModeDriving"]</span> }
+                                                @if (closure.AppliesTo.HasFlag(RoadClosureTravelModes.Cycling)) { <i class="fa fa-bicycle" title="@localizer["ModeCycling"]"></i><span class="sr-only">@localizer["ModeCycling"]</span> }
+                                                @if (closure.AppliesTo.HasFlag(RoadClosureTravelModes.Walking)) { <i class="fa fa-male" title="@localizer["ModeWalking"]"></i><span class="sr-only">@localizer["ModeWalking"]</span> }
+                                            </td>
+                                            <td>@closure.ClosedBy</td>
+                                            <td class="text-nowrap">
+                                                @if (Model.CanManage)
+                                                {
+                                                    <a class="btn btn-xs btn-primary" asp-controller="RoadClosures" asp-action="Edit" asp-route-area="User" asp-route-id="@closure.RoadClosureId">@localizer["Edit"]</a>
+                                                    <form method="post" asp-controller="RoadClosures" asp-action="SetEnabled" asp-route-area="User" style="display: inline;">
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="id" value="@closure.RoadClosureId" />
+                                                        <input type="hidden" name="enabled" value="@(closure.IsEnabled ? "false" : "true")" />
+                                                        <button type="submit" class="btn btn-xs btn-white">@(closure.IsEnabled ? localizer["TurnOff"] : localizer["TurnOn"])</button>
+                                                    </form>
+                                                    <form method="post" asp-controller="RoadClosures" asp-action="Delete" asp-route-area="User" style="display: inline;" data-confirm="@localizer["DeleteConfirm"]">
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="id" value="@closure.RoadClosureId" />
+                                                        <button type="submit" class="btn btn-xs btn-danger">@localizer["Delete"]</button>
+                                                    </form>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <partial name="_MapKitConfig" />
+    <script>
+        var roadClosuresPage = {
+            page: 'index',
+            center: [@Model.CenterLatitude.ToString(CultureInfo.InvariantCulture), @Model.CenterLongitude.ToString(CultureInfo.InvariantCulture)],
+            filter: @Html.Raw(JsonConvert.SerializeObject(Model.Filter ?? "current", jsonSettings)),
+            closures: @Html.Raw(JsonConvert.SerializeObject(mapClosures, jsonSettings))
+        };
+    </script>
+    <script src="~/js/app/internal/mapping/resgrid.mapping.roadclosures.js" asp-append-version="true"></script>
+}

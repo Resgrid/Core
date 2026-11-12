@@ -24,7 +24,7 @@ namespace Resgrid.Tests.Services.Routing
 			routing.Setup(r => r.GetRouteAsync(It.IsAny<RouteRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(route);
 
 			return new GeoService(Mock.Of<IGeoLocationProvider>(), calls.Object, Mock.Of<IDepartmentGroupsService>(), Mock.Of<IAddressService>(),
-				Mock.Of<IMappingService>(), routing.Object);
+				Mock.Of<IMappingService>(), routing.Object, Mock.Of<IRoadClosureService>());
 		}
 
 		private static ActionLog RespondingLog(DateTime timestamp) => new ActionLog

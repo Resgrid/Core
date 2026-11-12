@@ -12,7 +12,10 @@ namespace Resgrid.Model
 		Estimated = 1,
 
 		/// <summary>Routed drive time from the mapping provider.</summary>
-		Road = 2
+		Road = 2,
+
+		/// <summary>Straight-line flight time at the unit's air speed (air travel mode); as exact as an air ETA gets, so not labelled an estimate.</summary>
+		Direct = 3
 	}
 
 	/// <summary>Where a unit's position on the board comes from.</summary>
@@ -152,6 +155,15 @@ namespace Resgrid.Model
 		public double? EtaSeconds { get; set; }
 
 		public EtaSources EtaSource { get; set; }
+
+		/// <summary>How the unit travels (<see cref="UnitTravelModes"/>), from the unit or its type; the ETA is measured that way.</summary>
+		public UnitTravelModes TravelMode { get; set; }
+
+		/// <summary>Seconds that active road closures added to the routed ETA (slowdowns, or a detour the router could not take); 0 when none.</summary>
+		public int RoadClosureDelaySeconds { get; set; }
+
+		/// <summary>Names of the active road closures the unit's route was measured against (avoided, slowed by, or crossing).</summary>
+		public List<string> RoadClosures { get; set; } = new List<string>();
 
 		/// <summary>The department's turnout for where the unit is (in quarters or already out); 0 when none is configured.</summary>
 		public int TurnoutSeconds { get; set; }

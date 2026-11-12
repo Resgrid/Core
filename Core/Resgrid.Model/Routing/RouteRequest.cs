@@ -51,6 +51,18 @@ namespace Resgrid.Model
 
 		/// <summary>Skip the cache (navigation reroutes, traffic refreshes).</summary>
 		public bool BypassCache { get; set; }
+
+		/// <summary>
+		/// Road closures in effect for this trip: full ones are routed around where the provider can, partial ones (and a full
+		/// one the trip starts or ends in) slow the route down. Empty for callers that don't apply closures.
+		/// </summary>
+		public List<RoutingClosure> Closures { get; set; } = new List<RoutingClosure>();
+
+		/// <summary>Set by the routing service for the provider: areas the route must not enter (Valhalla exclude_polygons).</summary>
+		public List<List<RoutingWaypoint>> ExcludeAreas { get; set; } = new List<List<RoutingWaypoint>>();
+
+		/// <summary>Set by the routing service for the provider: points on roads the route must not use (Valhalla exclude_locations, Mapbox exclude=point).</summary>
+		public List<RoutingWaypoint> ExcludePoints { get; set; } = new List<RoutingWaypoint>();
 	}
 
 	/// <summary>Travel times and distances between every origin and every destination.</summary>

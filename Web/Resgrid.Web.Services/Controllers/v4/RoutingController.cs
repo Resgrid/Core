@@ -33,10 +33,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly Model.Services.IAuthorizationService _authorizationService;
 		private readonly IUnitNavigationStateService _unitNavigationStateService;
 		private readonly IRouteService _routeService;
+		private readonly IRoadClosureService _roadClosureService;
 
 		public RoutingController(IRoutingService routingService, ICallsService callsService, IUnitsService unitsService, Model.Services.IAuthorizationService authorizationService,
-			IUnitNavigationStateService unitNavigationStateService, IRouteService routeService)
+			IUnitNavigationStateService unitNavigationStateService, IRouteService routeService, IRoadClosureService roadClosureService)
 		{
+			_roadClosureService = roadClosureService;
 			_routingService = routingService;
 			_callsService = callsService;
 			_unitsService = unitsService;
@@ -105,6 +107,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (vehicle != null && request.Profile != RoutingProfile.Walking && request.Profile != RoutingProfile.Cycling && request.Profile != RoutingProfile.DrivingTraffic)
 				request.Profile = RoutingProfile.Truck;
 
+			request.Closures = await ClosuresForAsync(ClosureModeFor(request.Profile));
+
 			return Ok(await BuildResultAsync(request, cancellationToken));
 		}
 
@@ -136,13 +140,20 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return NotFound();
 
 			VehicleProfile vehicle = null;
+			var travel = UnitTravelProfile.Default;
 			if (unitId.HasValue)
 			{
 				var unit = await _unitsService.GetUnitByIdAsync(unitId.Value);
 				if (unit == null || unit.DepartmentId != DepartmentId)
 					return BadRequest();
 
-				vehicle = await _unitsService.GetUnitVehicleProfileAsync(unit);
+				// A unit that walks or cycles is routed on foot or by bike (M0314); air units keep the road route as before.
+				var profiles = await _unitsService.GetTravelProfilesForUnitsAsync(DepartmentId, new[] { unit });
+				if (profiles != null && profiles.TryGetValue(unit.UnitId, out var unitTravel) && unitTravel != null)
+					travel = unitTravel;
+
+				if (travel.Mode == UnitTravelModes.Driving || travel.IsAir)
+					vehicle = await _unitsService.GetUnitVehicleProfileAsync(unit);
 			}
 
 			var request = new RouteRequest
@@ -152,7 +163,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 					new RoutingWaypoint(latitude, longitude) { Heading = heading },
 					new RoutingWaypoint(destination.Value.Latitude, destination.Value.Longitude)
 				},
-				Profile = vehicle != null ? RoutingProfile.Truck : (Config.MappingConfig.RoutingTrafficAware ? RoutingProfile.DrivingTraffic : RoutingProfile.Driving),
+				Profile = travel.RoutingProfile ?? (vehicle != null ? RoutingProfile.Truck : (Config.MappingConfig.RoutingTrafficAware ? RoutingProfile.DrivingTraffic : RoutingProfile.Driving)),
 				Vehicle = vehicle,
 				Steps = true,
 				NavigationInstructions = navigation && _routingService.IsNavigationAvailable,
@@ -162,7 +173,36 @@ namespace Resgrid.Web.Services.Controllers.v4
 				BypassCache = navigation
 			};
 
+			request.Closures = await ClosuresForAsync(ClosureModeFor(request.Profile));
+
 			return Ok(await BuildResultAsync(request, cancellationToken));
+		}
+
+		private static UnitTravelModes ClosureModeFor(RoutingProfile profile)
+		{
+			switch (profile)
+			{
+				case RoutingProfile.Walking:
+					return UnitTravelModes.Walking;
+				case RoutingProfile.Cycling:
+					return UnitTravelModes.Cycling;
+				default:
+					return UnitTravelModes.Driving;
+			}
+		}
+
+		/// <summary>The department's road closures in effect now for the mode (M0314); none when they can't be read.</summary>
+		private async Task<List<RoutingClosure>> ClosuresForAsync(UnitTravelModes mode)
+		{
+			try
+			{
+				return await _roadClosureService.GetRoutingClosuresAsync(DepartmentId, mode, DateTime.UtcNow) ?? new List<RoutingClosure>();
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex, $"Reading road closures for department {DepartmentId} failed; routing without them.");
+				return new List<RoutingClosure>();
+			}
 		}
 
 		private async Task<GetRouteResult> BuildResultAsync(RouteRequest request, CancellationToken cancellationToken)
@@ -193,6 +233,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 					Closed = i.Closed
 				}).ToList();
 				result.Data.Route = string.IsNullOrWhiteSpace(route.NormalizedJson) ? null : JToken.Parse(route.NormalizedJson);
+				result.Data.RoadClosureDelaySeconds = route.ClosureDelaySeconds;
+				result.Data.RoadClosures = (route.Closures ?? new List<RouteClosureEffect>()).Select(c => new RouteClosureData
+				{
+					RoadClosureId = c.ClosureId,
+					Name = c.Name,
+					Effect = (int)c.Effect,
+					DelaySeconds = c.DelaySeconds
+				}).ToList();
 				result.Data.NavigationAvailable = request.NavigationInstructions && !result.Data.IsEstimate &&
 					(route.Provider == RoutingProviderNames.Valhalla || route.Provider == RoutingProviderNames.Mapbox);
 				result.Data.ExpiresUtc = DateTime.UtcNow.Add(route.IsTrafficAware ? TimeSpan.FromMinutes(5) : TimeSpan.FromHours(12));

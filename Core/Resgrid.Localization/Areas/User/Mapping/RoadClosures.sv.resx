@@ -1,0 +1,419 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Map Icon Legend and status / priority map icon pages -->
+    <data name="PageTitle" xml:space="preserve">
+    <value>Vägavstängningar</value>
+  </data>
+  <data name="PageIntro" xml:space="preserve">
+    <value>Avstängda vägar och områden samt vägar med nedsatt framkomlighet. När utlarmningen rangordnar de närmaste enheterna leds rutter runt fullständiga avstängningar och går långsammare genom delvisa.</value>
+  </data>
+  <data name="NewClosure" xml:space="preserve">
+    <value>Ny avstängning</value>
+  </data>
+  <data name="EditClosure" xml:space="preserve">
+    <value>Redigera vägavstängning</value>
+  </data>
+  <data name="MappingHeader" xml:space="preserve">
+    <value>Kartläggning</value>
+  </data>
+  <data name="ShowCurrent" xml:space="preserve">
+    <value>Aktuella och kommande</value>
+  </data>
+  <data name="ShowAll" xml:space="preserve">
+    <value>Alla avstängningar</value>
+  </data>
+  <data name="NoClosures" xml:space="preserve">
+    <value>Inga vägavstängningar ännu.</value>
+  </data>
+  <data name="NoClosuresInFilter" xml:space="preserve">
+    <value>Inga aktuella eller kommande vägavstängningar.</value>
+  </data>
+  <data name="ColumnName" xml:space="preserve">
+    <value>Avstängning</value>
+  </data>
+  <data name="ColumnSeverity" xml:space="preserve">
+    <value>Avstängning</value>
+  </data>
+  <data name="ColumnAppliesTo" xml:space="preserve">
+    <value>Stoppar</value>
+  </data>
+  <data name="ColumnWhen" xml:space="preserve">
+    <value>När</value>
+  </data>
+  <data name="ColumnStatus" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="ColumnClosedBy" xml:space="preserve">
+    <value>Avstängd av</value>
+  </data>
+  <data name="StateActive" xml:space="preserve">
+    <value>Gäller</value>
+  </data>
+  <data name="StateScheduled" xml:space="preserve">
+    <value>Planerad</value>
+  </data>
+  <data name="StateEnded" xml:space="preserve">
+    <value>Avslutad</value>
+  </data>
+  <data name="StateDisabled" xml:space="preserve">
+    <value>Inaktiverad</value>
+  </data>
+  <data name="WhenAlways" xml:space="preserve">
+    <value>Tills den inaktiveras</value>
+  </data>
+  <data name="WhenUntil" xml:space="preserve">
+    <value>Till {0}</value>
+  </data>
+  <data name="WhenUntilFurtherNotice" xml:space="preserve">
+    <value>Tills vidare</value>
+  </data>
+  <data name="WhenNext" xml:space="preserve">
+    <value>Nästa: {0} – {1}</value>
+  </data>
+  <data name="WhenNextOpen" xml:space="preserve">
+    <value>Från {0}</value>
+  </data>
+  <data name="WhenLast" xml:space="preserve">
+    <value>Senaste: {0} – {1}</value>
+  </data>
+  <data name="WindowCount" xml:space="preserve">
+    <value>{0} avstängningstider</value>
+  </data>
+  <data name="SeverityFull" xml:space="preserve">
+    <value>Fullständig avstängning</value>
+  </data>
+  <data name="SeverityPartial" xml:space="preserve">
+    <value>Delvis avstängning (nedsatt framkomlighet)</value>
+  </data>
+  <data name="TypeOther" xml:space="preserve">
+    <value>Övrigt</value>
+  </data>
+  <data name="TypeEvent" xml:space="preserve">
+    <value>Evenemang</value>
+  </data>
+  <data name="TypeRoadWorks" xml:space="preserve">
+    <value>Vägarbete</value>
+  </data>
+  <data name="TypeIncident" xml:space="preserve">
+    <value>Händelse</value>
+  </data>
+  <data name="TypePolice" xml:space="preserve">
+    <value>Polis</value>
+  </data>
+  <data name="TypeWeather" xml:space="preserve">
+    <value>Väder</value>
+  </data>
+  <data name="TypeHazard" xml:space="preserve">
+    <value>Fara på vägen</value>
+  </data>
+  <data name="TypeInfrastructure" xml:space="preserve">
+    <value>Bro, tunnel eller övergång</value>
+  </data>
+  <data name="ModeDriving" xml:space="preserve">
+    <value>Fordon</value>
+  </data>
+  <data name="ModeCycling" xml:space="preserve">
+    <value>Cyklar</value>
+  </data>
+  <data name="ModeWalking" xml:space="preserve">
+    <value>Fotgängare</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Redigera</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Ta bort</value>
+  </data>
+  <data name="DeleteConfirm" xml:space="preserve">
+    <value>Ta bort denna vägavstängning? Det går inte att ångra.</value>
+  </data>
+  <data name="TurnOff" xml:space="preserve">
+    <value>Inaktivera</value>
+  </data>
+  <data name="TurnOn" xml:space="preserve">
+    <value>Aktivera</value>
+  </data>
+  <data name="ShowOnMap" xml:space="preserve">
+    <value>Visa på karta</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Spara</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Avbryt</value>
+  </data>
+  <data name="SectionShape" xml:space="preserve">
+    <value>Var</value>
+  </data>
+  <data name="ShapeHelp" xml:space="preserve">
+    <value>Rita de avstängda vägarna som linjer längs vägen, eller det avstängda området som en form. En linje täcker vägen den följer; att korsa den i en korsning är fortfarande tillåtet. Ett område stänger av alla vägar inom det.</value>
+  </data>
+  <data name="ShapeClear" xml:space="preserve">
+    <value>Rensa ritning</value>
+  </data>
+  <data name="ShapeGeoJson" xml:space="preserve">
+    <value>GeoJSON (avancerat)</value>
+  </data>
+  <data name="ShapeGeoJsonHelp" xml:space="preserve">
+    <value>Ritningen som GeoJSON. Klistra in en form här för att läsa in den på kartan.</value>
+  </data>
+  <data name="ShapeGeoJsonInvalid" xml:space="preserve">
+    <value>Det är inte ett GeoJSON-område eller en GeoJSON-linje.</value>
+  </data>
+  <data name="SectionDetails" xml:space="preserve">
+    <value>Detaljer</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Namn</value>
+  </data>
+  <data name="NameHelp" xml:space="preserve">
+    <value>Hur larmoperatörerna känner igen den, till exempel ”Stadsmaraton - Storgatan”.</value>
+  </data>
+  <data name="ClosureType" xml:space="preserve">
+    <value>Typ av avstängning</value>
+  </data>
+  <data name="Severity" xml:space="preserve">
+    <value>Avstängning</value>
+  </data>
+  <data name="SeverityHelp" xml:space="preserve">
+    <value>En fullständig avstängning har ingen genomfartstrafik: rutter leds runt den. En delvis avstängning är öppen men långsam (ett körfält avstängt, trafikdirigering, folksamling): rutter kan gå igenom med sänkt hastighet.</value>
+  </data>
+  <data name="SpeedPercent" xml:space="preserve">
+    <value>Hastighet inom området (% av normal)</value>
+  </data>
+  <data name="SpeedPercentHelp" xml:space="preserve">
+    <value>Vid en delvis avstängning: hur snabbt trafiken fortfarande rör sig genom den. Vid en fullständig avstängning: den hastighet en enhet håller när händelsen eller dess startpunkt ligger inom avstängningen och den måste ta sig in.</value>
+  </data>
+  <data name="DetourMinutes" xml:space="preserve">
+    <value>Omvägstid (minuter)</value>
+  </data>
+  <data name="DetourMinutesHelp" xml:space="preserve">
+    <value>Läggs till en rutt som ändå korsar en fullständig avstängning eftersom ruttleverantören inte kan undvika ritade områden. Rutten markeras i båda fallen som att den korsar avstängningen.</value>
+  </data>
+  <data name="AppliesTo" xml:space="preserve">
+    <value>Stoppar</value>
+  </data>
+  <data name="AppliesToHelp" xml:space="preserve">
+    <value>Vilka avstängningen gäller. En maratonbana kan stänga av vägen för fordon medan patruller till fots fortfarande korsar den.</value>
+  </data>
+  <data name="Enabled" xml:space="preserve">
+    <value>Aktiverad</value>
+  </data>
+  <data name="EnabledHelp" xml:space="preserve">
+    <value>Inaktiverade avstängningar sparas men används aldrig för ruttberäkning.</value>
+  </data>
+  <data name="SectionWho" xml:space="preserve">
+    <value>Vem och varför</value>
+  </data>
+  <data name="Reason" xml:space="preserve">
+    <value>Orsak</value>
+  </data>
+  <data name="ClosedBy" xml:space="preserve">
+    <value>Avstängd av</value>
+  </data>
+  <data name="ClosedByHelp" xml:space="preserve">
+    <value>Vem som stängde av vägen: polisen, kommunen, en evenemangsarrangör.</value>
+  </data>
+  <data name="Authority" xml:space="preserve">
+    <value>Myndighet</value>
+  </data>
+  <data name="AuthorityHelp" xml:space="preserve">
+    <value>Den myndighet som ansvarar för avstängningen eller som utfärdade tillståndet.</value>
+  </data>
+  <data name="ContactName" xml:space="preserve">
+    <value>Kontakt</value>
+  </data>
+  <data name="ContactDetails" xml:space="preserve">
+    <value>Kontaktuppgifter</value>
+  </data>
+  <data name="ContactDetailsHelp" xml:space="preserve">
+    <value>Telefon, radiokanal eller e-post.</value>
+  </data>
+  <data name="Notes" xml:space="preserve">
+    <value>Anteckningar</value>
+  </data>
+  <data name="SectionTimes" xml:space="preserve">
+    <value>När</value>
+  </data>
+  <data name="TimesHelp" xml:space="preserve">
+    <value>Avstängningen gäller under var och en av dessa tider (avdelningens tid). Utan tider gäller den tills den inaktiveras. En väg som bara är avstängd nattetid under en vecka är sju tider; använd Upprepa för att lägga till dem.</value>
+  </data>
+  <data name="TimesStart" xml:space="preserve">
+    <value>Från</value>
+  </data>
+  <data name="TimesEnd" xml:space="preserve">
+    <value>Till</value>
+  </data>
+  <data name="TimesEndHelp" xml:space="preserve">
+    <value>Tomt: tills vidare.</value>
+  </data>
+  <data name="TimesAdd" xml:space="preserve">
+    <value>Lägg till en tid</value>
+  </data>
+  <data name="TimesRemove" xml:space="preserve">
+    <value>Ta bort</value>
+  </data>
+  <data name="TimesClearAll" xml:space="preserve">
+    <value>Ta bort alla tider</value>
+  </data>
+  <data name="TimesNone" xml:space="preserve">
+    <value>Inga tider: gäller tills den inaktiveras.</value>
+  </data>
+  <data name="RepeatTitle" xml:space="preserve">
+    <value>Upprepa</value>
+  </data>
+  <data name="RepeatHelp" xml:space="preserve">
+    <value>Lägger till en tid varje vald dag mellan de två datumen. En sluttid som är tidigare än starttiden går över midnatt (22:00 till 06:00).</value>
+  </data>
+  <data name="RepeatFirstDate" xml:space="preserve">
+    <value>Första dag</value>
+  </data>
+  <data name="RepeatLastDate" xml:space="preserve">
+    <value>Sista dag</value>
+  </data>
+  <data name="RepeatDailyStart" xml:space="preserve">
+    <value>Dagligen från</value>
+  </data>
+  <data name="RepeatDailyEnd" xml:space="preserve">
+    <value>Dagligen till</value>
+  </data>
+  <data name="RepeatDays" xml:space="preserve">
+    <value>Dagar</value>
+  </data>
+  <data name="RepeatAdd" xml:space="preserve">
+    <value>Lägg till tider</value>
+  </data>
+  <data name="RepeatInvalid" xml:space="preserve">
+    <value>Välj första och sista dag samt båda tiderna.</value>
+  </data>
+  <data name="RepeatTooMany" xml:space="preserve">
+    <value>Det skulle lägga till fler än {0} tider.</value>
+  </data>
+  <data name="DayMon" xml:space="preserve">
+    <value>Mån</value>
+  </data>
+  <data name="DayTue" xml:space="preserve">
+    <value>Tis</value>
+  </data>
+  <data name="DayWed" xml:space="preserve">
+    <value>Ons</value>
+  </data>
+  <data name="DayThu" xml:space="preserve">
+    <value>Tor</value>
+  </data>
+  <data name="DayFri" xml:space="preserve">
+    <value>Fre</value>
+  </data>
+  <data name="DaySat" xml:space="preserve">
+    <value>Lör</value>
+  </data>
+  <data name="DaySun" xml:space="preserve">
+    <value>Sön</value>
+  </data>
+  <data name="LastChanged" xml:space="preserve">
+    <value>Senast ändrad {0}</value>
+  </data>
+  <data name="ErrorNameRequired" xml:space="preserve">
+    <value>Ge vägavstängningen ett namn.</value>
+  </data>
+  <data name="ErrorNameTooLong" xml:space="preserve">
+    <value>Namnet får vara högst {0} tecken.</value>
+  </data>
+  <data name="ErrorShapeRequired" xml:space="preserve">
+    <value>Rita den avstängda vägen eller området på kartan.</value>
+  </data>
+  <data name="ErrorShapeInvalid" xml:space="preserve">
+    <value>Ritningen är inte ett giltigt område eller en giltig väglinje.</value>
+  </data>
+  <data name="ErrorShapeTooLarge" xml:space="preserve">
+    <value>Ritningen har fler än {0} punkter. Förenkla den.</value>
+  </data>
+  <data name="ErrorTravelModeRequired" xml:space="preserve">
+    <value>Välj minst en trafiktyp som avstängningen stoppar.</value>
+  </data>
+  <data name="ErrorTooManyWindows" xml:space="preserve">
+    <value>En avstängning kan ha högst {0} avstängningstider.</value>
+  </data>
+  <data name="ErrorWindowInvalid" xml:space="preserve">
+    <value>Varje avstängningstid behöver ett giltigt startdatum och en giltig starttid.</value>
+  </data>
+  <data name="ErrorWindowEndsBeforeStart" xml:space="preserve">
+    <value>En avstängningstid slutar innan den börjar.</value>
+  </data>
+  <data name="ErrorTextTooLong" xml:space="preserve">
+    <value>Ett av fälten är för långt.</value>
+  </data>
+  <data name="ErrorInvalid" xml:space="preserve">
+    <value>Vägavstängningen kunde inte sparas.</value>
+  </data>
+  <data name="MapLegendActiveFull" xml:space="preserve">
+    <value>Fullständig avstängning gäller</value>
+  </data>
+  <data name="MapLegendActivePartial" xml:space="preserve">
+    <value>Delvis avstängning gäller</value>
+  </data>
+  <data name="MapLegendScheduled" xml:space="preserve">
+    <value>Planerad</value>
+  </data>
+  <data name="MapLegendInactive" xml:space="preserve">
+    <value>Avslutad eller inaktiverad</value>
+  </data>
+</root>

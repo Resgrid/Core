@@ -88,6 +88,12 @@ namespace Resgrid.Web.Services.Models.v4.Routing
 
 		public List<RouteIncidentData> Incidents { get; set; } = new List<RouteIncidentData>();
 
+		/// <summary>Seconds the department's active road closures added to DurationSeconds (slowdowns, detours the provider could not take); 0 when none (M0314).</summary>
+		public int RoadClosureDelaySeconds { get; set; }
+
+		/// <summary>The department's active road closures near the route and what each did to it (M0314).</summary>
+		public List<RouteClosureData> RoadClosures { get; set; } = new List<RouteClosureData>();
+
 		/// <summary>
 		/// The full route in the OSRM v5 / Mapbox Directions shape (polyline6 geometry, legs, steps, maneuvers, and
 		/// voiceInstructions / bannerInstructions when navigation was requested); null without steps.
@@ -99,6 +105,19 @@ namespace Resgrid.Web.Services.Models.v4.Routing
 
 		/// <summary>When a client should ask again (traffic-aware routes change).</summary>
 		public DateTime ExpiresUtc { get; set; }
+	}
+
+	/// <summary>A road closure as it affected a route (M0314).</summary>
+	public class RouteClosureData
+	{
+		public string RoadClosureId { get; set; }
+
+		public string Name { get; set; }
+
+		/// <summary>0 avoided (routed around), 1 slowed (driven through at reduced speed), 2 crossed (the provider could not avoid it; a detour time was added).</summary>
+		public int Effect { get; set; }
+
+		public int DelaySeconds { get; set; }
 	}
 
 	public class RouteLegData

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Map Icon Legend and status / priority map icon pages -->
+    <data name="TravelModeHeader" xml:space="preserve">
+    <value>Τρόπος μετακίνησης</value>
+  </data>
+  <data name="TravelModeHelp" xml:space="preserve">
+    <value>Πώς φτάνουν αυτές οι μονάδες σε ένα συμβάν. Η αποστολή (κάρτες εξόδου και λίστα πλησιέστερων μονάδων) υπολογίζει τον χρόνο μετάβασής τους ως εξής: οδικές διαδρομές για οχήματα, ποδηλατικές διαδρομές για ποδήλατα, διαδρομές πεζών για πεζή μετακίνηση και ευθεία γραμμή για εναέρια μέσα.</value>
+  </data>
+  <data name="TravelModeUnitHelp" xml:space="preserve">
+    <value>Αφήστε κενό τον τρόπο ή την ταχύτητα για να ισχύσουν αυτά του τύπου μονάδας.</value>
+  </data>
+  <data name="TravelModeLabel" xml:space="preserve">
+    <value>Τρόπος μετακίνησης</value>
+  </data>
+  <data name="TravelModeInherit" xml:space="preserve">
+    <value>Από τον τύπο μονάδας</value>
+  </data>
+  <data name="TravelModeInheritedHint" xml:space="preserve">
+    <value>Τύπος μονάδας: {0}</value>
+  </data>
+  <data name="TravelModeDriving" xml:space="preserve">
+    <value>Όχημα (οδικώς)</value>
+  </data>
+  <data name="TravelModeCycling" xml:space="preserve">
+    <value>Ποδήλατο</value>
+  </data>
+  <data name="TravelModeWalking" xml:space="preserve">
+    <value>Πεζή</value>
+  </data>
+  <data name="TravelModeAir" xml:space="preserve">
+    <value>Εναέρια (ευθεία γραμμή)</value>
+  </data>
+  <data name="TravelSpeedLabel" xml:space="preserve">
+    <value>Μέση ταχύτητα</value>
+  </data>
+  <data name="TravelSpeedUnits" xml:space="preserve">
+    <value>Μονάδες ταχύτητας</value>
+  </data>
+  <data name="TravelSpeedDefaultHint" xml:space="preserve">
+    <value>Κενό: {0}.</value>
+  </data>
+  <data name="TravelSpeedHelp" xml:space="preserve">
+    <value>Η ταχύτητα χρησιμοποιείται για εκτιμήσεις σε ευθεία γραμμή, για εναέρια μετακίνηση και για διαδρομές πεζών και ποδηλάτων. Οι οδικές διαδρομές διατηρούν τις ταχύτητες δρόμου του παρόχου δρομολόγησης.</value>
+  </data>
+  <data name="TravelSpeedRangeError" xml:space="preserve">
+    <value>Η μέση ταχύτητα πρέπει να είναι μεταξύ {0} και {1}.</value>
+  </data>
+  <data name="TravelModeInvalid" xml:space="preserve">
+    <value>Επιλέξτε τρόπο μετακίνησης από τη λίστα.</value>
+  </data>
+  <data name="TravelModeColumn" xml:space="preserve">
+    <value>Μετάβαση</value>
+  </data>
+  <data name="BoardClosureDelay" xml:space="preserve">
+    <value>+{0} λεπ. λόγω κλεισίματος δρόμων</value>
+  </data>
+  <data name="BoardClosures" xml:space="preserve">
+    <value>Κλεισίματα δρόμων που αποφεύχθηκαν: {0}</value>
+  </data>
+</root>

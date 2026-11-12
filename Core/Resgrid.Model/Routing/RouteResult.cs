@@ -47,6 +47,12 @@ namespace Resgrid.Model
 		/// <summary>Why the lookup failed, for logs; never shown to users.</summary>
 		public string Error { get; set; }
 
+		/// <summary>Seconds road closures added to <see cref="DurationSeconds"/> (slowdowns, and detours the provider could not take).</summary>
+		public int ClosureDelaySeconds { get; set; }
+
+		/// <summary>The road closures near the route and what each did to it.</summary>
+		public List<RouteClosureEffect> Closures { get; set; } = new List<RouteClosureEffect>();
+
 		public DateTime ComputedOn { get; set; } = DateTime.UtcNow;
 	}
 

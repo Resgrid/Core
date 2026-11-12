@@ -1,0 +1,419 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Map Icon Legend and status / priority map icon pages -->
+    <data name="PageTitle" xml:space="preserve">
+    <value>إغلاقات الطرق</value>
+  </data>
+  <data name="PageIntro" xml:space="preserve">
+    <value>الطرق والمناطق المغلقة أو بطيئة الحركة. عند ترتيب أقرب الوحدات، يتجنب الإرسال الإغلاقات الكلية ويُبطئ المسارات التي تمر عبر الإغلاقات الجزئية.</value>
+  </data>
+  <data name="NewClosure" xml:space="preserve">
+    <value>إغلاق جديد</value>
+  </data>
+  <data name="EditClosure" xml:space="preserve">
+    <value>تعديل إغلاق الطريق</value>
+  </data>
+  <data name="MappingHeader" xml:space="preserve">
+    <value>الخرائط</value>
+  </data>
+  <data name="ShowCurrent" xml:space="preserve">
+    <value>الحالية والقادمة</value>
+  </data>
+  <data name="ShowAll" xml:space="preserve">
+    <value>جميع الإغلاقات</value>
+  </data>
+  <data name="NoClosures" xml:space="preserve">
+    <value>لا توجد إغلاقات طرق بعد.</value>
+  </data>
+  <data name="NoClosuresInFilter" xml:space="preserve">
+    <value>لا توجد إغلاقات طرق حالية أو قادمة.</value>
+  </data>
+  <data name="ColumnName" xml:space="preserve">
+    <value>الإغلاق</value>
+  </data>
+  <data name="ColumnSeverity" xml:space="preserve">
+    <value>الإغلاق</value>
+  </data>
+  <data name="ColumnAppliesTo" xml:space="preserve">
+    <value>مغلق أمام</value>
+  </data>
+  <data name="ColumnWhen" xml:space="preserve">
+    <value>متى</value>
+  </data>
+  <data name="ColumnStatus" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="ColumnClosedBy" xml:space="preserve">
+    <value>أُغلق بواسطة</value>
+  </data>
+  <data name="StateActive" xml:space="preserve">
+    <value>سارٍ</value>
+  </data>
+  <data name="StateScheduled" xml:space="preserve">
+    <value>مجدول</value>
+  </data>
+  <data name="StateEnded" xml:space="preserve">
+    <value>منتهٍ</value>
+  </data>
+  <data name="StateDisabled" xml:space="preserve">
+    <value>معطّل</value>
+  </data>
+  <data name="WhenAlways" xml:space="preserve">
+    <value>حتى التعطيل</value>
+  </data>
+  <data name="WhenUntil" xml:space="preserve">
+    <value>حتى {0}</value>
+  </data>
+  <data name="WhenUntilFurtherNotice" xml:space="preserve">
+    <value>حتى إشعار آخر</value>
+  </data>
+  <data name="WhenNext" xml:space="preserve">
+    <value>التالي: {0} – {1}</value>
+  </data>
+  <data name="WhenNextOpen" xml:space="preserve">
+    <value>من {0}</value>
+  </data>
+  <data name="WhenLast" xml:space="preserve">
+    <value>الأخير: {0} – {1}</value>
+  </data>
+  <data name="WindowCount" xml:space="preserve">
+    <value>أوقات الإغلاق: {0}</value>
+  </data>
+  <data name="SeverityFull" xml:space="preserve">
+    <value>إغلاق كلي</value>
+  </data>
+  <data name="SeverityPartial" xml:space="preserve">
+    <value>إغلاق جزئي (إبطاء)</value>
+  </data>
+  <data name="TypeOther" xml:space="preserve">
+    <value>أخرى</value>
+  </data>
+  <data name="TypeEvent" xml:space="preserve">
+    <value>فعالية</value>
+  </data>
+  <data name="TypeRoadWorks" xml:space="preserve">
+    <value>أعمال طرق</value>
+  </data>
+  <data name="TypeIncident" xml:space="preserve">
+    <value>حادث</value>
+  </data>
+  <data name="TypePolice" xml:space="preserve">
+    <value>الشرطة</value>
+  </data>
+  <data name="TypeWeather" xml:space="preserve">
+    <value>الطقس</value>
+  </data>
+  <data name="TypeHazard" xml:space="preserve">
+    <value>خطر على الطريق</value>
+  </data>
+  <data name="TypeInfrastructure" xml:space="preserve">
+    <value>جسر أو نفق أو معبر</value>
+  </data>
+  <data name="ModeDriving" xml:space="preserve">
+    <value>المركبات</value>
+  </data>
+  <data name="ModeCycling" xml:space="preserve">
+    <value>الدراجات الهوائية</value>
+  </data>
+  <data name="ModeWalking" xml:space="preserve">
+    <value>المشاة</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>تعديل</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>حذف</value>
+  </data>
+  <data name="DeleteConfirm" xml:space="preserve">
+    <value>هل تريد حذف إغلاق الطريق هذا؟ لا يمكن التراجع عن ذلك.</value>
+  </data>
+  <data name="TurnOff" xml:space="preserve">
+    <value>تعطيل</value>
+  </data>
+  <data name="TurnOn" xml:space="preserve">
+    <value>تفعيل</value>
+  </data>
+  <data name="ShowOnMap" xml:space="preserve">
+    <value>عرض على الخريطة</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>حفظ</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="SectionShape" xml:space="preserve">
+    <value>أين</value>
+  </data>
+  <data name="ShapeHelp" xml:space="preserve">
+    <value>ارسم الطرق المغلقة كخطوط على امتداد الطريق، أو المنطقة المغلقة كشكل. يغطي الخط الطريق الذي يتبعه، ويبقى عبوره عند التقاطع مسموحًا. تُغلق المنطقة كل طريق بداخلها.</value>
+  </data>
+  <data name="ShapeClear" xml:space="preserve">
+    <value>مسح الرسم</value>
+  </data>
+  <data name="ShapeGeoJson" xml:space="preserve">
+    <value>GeoJSON (متقدم)</value>
+  </data>
+  <data name="ShapeGeoJsonHelp" xml:space="preserve">
+    <value>الرسم بتنسيق GeoJSON. الصق شكلًا هنا لتحميله على الخريطة.</value>
+  </data>
+  <data name="ShapeGeoJsonInvalid" xml:space="preserve">
+    <value>هذه ليست منطقة أو خط GeoJSON.</value>
+  </data>
+  <data name="SectionDetails" xml:space="preserve">
+    <value>التفاصيل</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>الاسم</value>
+  </data>
+  <data name="NameHelp" xml:space="preserve">
+    <value>الاسم الذي سيعرفه به موظفو الإرسال، مثل «ماراثون المدينة - الشارع الرئيسي».</value>
+  </data>
+  <data name="ClosureType" xml:space="preserve">
+    <value>نوع الإغلاق</value>
+  </data>
+  <data name="Severity" xml:space="preserve">
+    <value>الإغلاق</value>
+  </data>
+  <data name="SeverityHelp" xml:space="preserve">
+    <value>الإغلاق الكلي لا يسمح بحركة العبور: تلتف المسارات حوله. الإغلاق الجزئي يبقى مفتوحًا لكن بطيئًا (حارة مغلقة، تنظيم مروري، تجمّع حشود): يمكن للمسارات استخدامه بسرعة مخفّضة.</value>
+  </data>
+  <data name="SpeedPercent" xml:space="preserve">
+    <value>السرعة داخله (% من المعتادة)</value>
+  </data>
+  <data name="SpeedPercentHelp" xml:space="preserve">
+    <value>في الإغلاق الجزئي: سرعة حركة المرور التي لا تزال تمر عبره. في الإغلاق الكلي: السرعة التي تسير بها الوحدة عندما يكون البلاغ أو نقطة انطلاقها داخل الإغلاق ويتعين عليها الدخول.</value>
+  </data>
+  <data name="DetourMinutes" xml:space="preserve">
+    <value>وقت التحويلة (بالدقائق)</value>
+  </data>
+  <data name="DetourMinutesHelp" xml:space="preserve">
+    <value>يُضاف إلى المسار الذي لا يزال يعبر إغلاقًا كليًا لأن مزوّد المسارات لا يستطيع تجنّب المناطق المرسومة. يُعلَّم المسار على أنه يعبر الإغلاق في كلتا الحالتين.</value>
+  </data>
+  <data name="AppliesTo" xml:space="preserve">
+    <value>مغلق أمام</value>
+  </data>
+  <data name="AppliesToHelp" xml:space="preserve">
+    <value>على من ينطبق الإغلاق. قد يغلق مسار الماراثون الطريق أمام المركبات بينما تواصل الفرق الراجلة عبوره.</value>
+  </data>
+  <data name="Enabled" xml:space="preserve">
+    <value>مفعّل</value>
+  </data>
+  <data name="EnabledHelp" xml:space="preserve">
+    <value>تُحفظ الإغلاقات المعطّلة لكنها لا تُستخدم أبدًا في حساب المسارات.</value>
+  </data>
+  <data name="SectionWho" xml:space="preserve">
+    <value>من ولماذا</value>
+  </data>
+  <data name="Reason" xml:space="preserve">
+    <value>السبب</value>
+  </data>
+  <data name="ClosedBy" xml:space="preserve">
+    <value>أُغلق بواسطة</value>
+  </data>
+  <data name="ClosedByHelp" xml:space="preserve">
+    <value>من أغلق الطريق: الشرطة، أو البلدية، أو منظم فعالية.</value>
+  </data>
+  <data name="Authority" xml:space="preserve">
+    <value>الجهة المختصة</value>
+  </data>
+  <data name="AuthorityHelp" xml:space="preserve">
+    <value>الجهة المسؤولة عن الإغلاق أو التي أصدرت التصريح.</value>
+  </data>
+  <data name="ContactName" xml:space="preserve">
+    <value>جهة الاتصال</value>
+  </data>
+  <data name="ContactDetails" xml:space="preserve">
+    <value>بيانات الاتصال</value>
+  </data>
+  <data name="ContactDetailsHelp" xml:space="preserve">
+    <value>الهاتف أو قناة اللاسلكي أو البريد الإلكتروني.</value>
+  </data>
+  <data name="Notes" xml:space="preserve">
+    <value>ملاحظات</value>
+  </data>
+  <data name="SectionTimes" xml:space="preserve">
+    <value>متى</value>
+  </data>
+  <data name="TimesHelp" xml:space="preserve">
+    <value>يسري الإغلاق خلال كل وقت من هذه الأوقات (بتوقيت الإدارة). من دون أوقات يسري حتى تعطيله. الطريق المغلق ليلًا فقط لمدة أسبوع يعني سبعة أوقات؛ استخدم «تكرار» لإضافتها.</value>
+  </data>
+  <data name="TimesStart" xml:space="preserve">
+    <value>من</value>
+  </data>
+  <data name="TimesEnd" xml:space="preserve">
+    <value>إلى</value>
+  </data>
+  <data name="TimesEndHelp" xml:space="preserve">
+    <value>فارغ: حتى إشعار آخر.</value>
+  </data>
+  <data name="TimesAdd" xml:space="preserve">
+    <value>إضافة وقت</value>
+  </data>
+  <data name="TimesRemove" xml:space="preserve">
+    <value>إزالة</value>
+  </data>
+  <data name="TimesClearAll" xml:space="preserve">
+    <value>إزالة جميع الأوقات</value>
+  </data>
+  <data name="TimesNone" xml:space="preserve">
+    <value>لا توجد أوقات: يسري حتى التعطيل.</value>
+  </data>
+  <data name="RepeatTitle" xml:space="preserve">
+    <value>تكرار</value>
+  </data>
+  <data name="RepeatHelp" xml:space="preserve">
+    <value>يضيف وقتًا في كل يوم مختار بين التاريخين. وقت الانتهاء الأسبق من وقت البدء يمتد بعد منتصف الليل (22:00 إلى 06:00).</value>
+  </data>
+  <data name="RepeatFirstDate" xml:space="preserve">
+    <value>اليوم الأول</value>
+  </data>
+  <data name="RepeatLastDate" xml:space="preserve">
+    <value>اليوم الأخير</value>
+  </data>
+  <data name="RepeatDailyStart" xml:space="preserve">
+    <value>يوميًا من</value>
+  </data>
+  <data name="RepeatDailyEnd" xml:space="preserve">
+    <value>يوميًا إلى</value>
+  </data>
+  <data name="RepeatDays" xml:space="preserve">
+    <value>الأيام</value>
+  </data>
+  <data name="RepeatAdd" xml:space="preserve">
+    <value>إضافة الأوقات</value>
+  </data>
+  <data name="RepeatInvalid" xml:space="preserve">
+    <value>اختر اليوم الأول والأخير وكلا الوقتين.</value>
+  </data>
+  <data name="RepeatTooMany" xml:space="preserve">
+    <value>سيؤدي ذلك إلى إضافة أكثر من {0} وقت.</value>
+  </data>
+  <data name="DayMon" xml:space="preserve">
+    <value>الاثنين</value>
+  </data>
+  <data name="DayTue" xml:space="preserve">
+    <value>الثلاثاء</value>
+  </data>
+  <data name="DayWed" xml:space="preserve">
+    <value>الأربعاء</value>
+  </data>
+  <data name="DayThu" xml:space="preserve">
+    <value>الخميس</value>
+  </data>
+  <data name="DayFri" xml:space="preserve">
+    <value>الجمعة</value>
+  </data>
+  <data name="DaySat" xml:space="preserve">
+    <value>السبت</value>
+  </data>
+  <data name="DaySun" xml:space="preserve">
+    <value>الأحد</value>
+  </data>
+  <data name="LastChanged" xml:space="preserve">
+    <value>آخر تغيير {0}</value>
+  </data>
+  <data name="ErrorNameRequired" xml:space="preserve">
+    <value>أدخل اسمًا لإغلاق الطريق.</value>
+  </data>
+  <data name="ErrorNameTooLong" xml:space="preserve">
+    <value>يجب ألا يتجاوز الاسم {0} حرفًا.</value>
+  </data>
+  <data name="ErrorShapeRequired" xml:space="preserve">
+    <value>ارسم الطريق أو المنطقة المغلقة على الخريطة.</value>
+  </data>
+  <data name="ErrorShapeInvalid" xml:space="preserve">
+    <value>الرسم ليس منطقة أو خط طريق صالحًا.</value>
+  </data>
+  <data name="ErrorShapeTooLarge" xml:space="preserve">
+    <value>يحتوي الرسم على أكثر من {0} نقطة. بسّطه.</value>
+  </data>
+  <data name="ErrorTravelModeRequired" xml:space="preserve">
+    <value>اختر نوعًا واحدًا على الأقل من حركة المرور يوقفه الإغلاق.</value>
+  </data>
+  <data name="ErrorTooManyWindows" xml:space="preserve">
+    <value>يمكن أن يحتوي الإغلاق على {0} من أوقات الإغلاق كحد أقصى.</value>
+  </data>
+  <data name="ErrorWindowInvalid" xml:space="preserve">
+    <value>يحتاج كل وقت إغلاق إلى تاريخ ووقت بدء صالحين.</value>
+  </data>
+  <data name="ErrorWindowEndsBeforeStart" xml:space="preserve">
+    <value>ينتهي أحد أوقات الإغلاق قبل أن يبدأ.</value>
+  </data>
+  <data name="ErrorTextTooLong" xml:space="preserve">
+    <value>أحد الحقول طويل جدًا.</value>
+  </data>
+  <data name="ErrorInvalid" xml:space="preserve">
+    <value>تعذّر حفظ إغلاق الطريق.</value>
+  </data>
+  <data name="MapLegendActiveFull" xml:space="preserve">
+    <value>إغلاق كلي سارٍ</value>
+  </data>
+  <data name="MapLegendActivePartial" xml:space="preserve">
+    <value>إغلاق جزئي سارٍ</value>
+  </data>
+  <data name="MapLegendScheduled" xml:space="preserve">
+    <value>مجدول</value>
+  </data>
+  <data name="MapLegendInactive" xml:space="preserve">
+    <value>منتهٍ أو معطّل</value>
+  </data>
+</root>

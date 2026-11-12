@@ -36,6 +36,14 @@ namespace Resgrid.Model.Services
 		Task<List<double>> GetEtasInSecondsAsync(IReadOnlyList<string> origins, string destination, VehicleProfile vehicle = null);
 
 		/// <summary>
+		/// Travel time for dispatch ranking, the way the unit actually travels: routed driving (with its vehicle limits), cycling
+		/// or walking, or a straight line at its air speed; through the department's active road closures for that mode (full
+		/// closures routed around where the provider can, partial ones slowed through). <see cref="TravelEstimate.Seconds"/> is -1
+		/// when only the straight-line estimate could answer a ground trip.
+		/// </summary>
+		Task<TravelEstimate> GetTravelEstimateAsync(string start, string destination, TravelLookup lookup, System.Threading.CancellationToken cancellationToken = default);
+
+		/// <summary>
 		/// Best-effort coordinates for a station group: its stored Latitude/Longitude
 		/// first, then the centroid of its geofence polygon, then the geocoded group
 		/// address (GetMapCenterCoordinatesForGroupAsync fallback chain). Null when

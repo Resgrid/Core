@@ -36,7 +36,10 @@ namespace Resgrid.Providers.GeoLocationProvider.Routing
 			VehicleFull = false,
 			MaxMatrixCoordinates = 25,
 			MaxWaypoints = 25,
-			MaxOptimizeWaypoints = 12
+			MaxOptimizeWaypoints = 12,
+			// Directions "exclude=point(lon lat)": snapped to the nearest road, at most 50, driving profiles only (beta).
+			MaxExcludePoints = 50,
+			ExcludePointsDrivingOnly = true
 		};
 
 		public bool IsConfigured => !string.IsNullOrWhiteSpace(MappingConfig.MapboxRoutingAccessToken);
@@ -61,7 +64,7 @@ namespace Resgrid.Providers.GeoLocationProvider.Routing
 			if (profile == "driving-traffic" && (request.Steps || request.NavigationInstructions))
 				query.Append("&annotations=congestion,duration,distance,maxspeed");
 
-			AppendExclude(query, request.Profile, request.Avoid);
+			AppendExclude(query, request.Profile, request.Avoid, request.ExcludePoints);
 			var restricted = AppendVehicle(query, request.Profile, request.Vehicle);
 			AppendBearings(query, request.Waypoints);
 			AppendStopIndexes(query, request.Waypoints);
@@ -179,12 +182,17 @@ namespace Resgrid.Providers.GeoLocationProvider.Routing
 			}
 		}
 
-		private static void AppendExclude(StringBuilder query, RoutingProfile profile, RouteAvoidOptions avoid)
+		public static void AppendExclude(StringBuilder query, RoutingProfile profile, RouteAvoidOptions avoid, IReadOnlyList<RoutingWaypoint> excludePoints = null)
 		{
-			if (profile == RoutingProfile.Walking || profile == RoutingProfile.Cycling || avoid == RouteAvoidOptions.None)
+			if (profile == RoutingProfile.Walking || profile == RoutingProfile.Cycling)
 				return;
 
 			var exclude = new List<string>();
+
+			// Road closures (M0314): points on closed roads, each snapped by Mapbox to the nearest road.
+			foreach (var point in (excludePoints ?? new List<RoutingWaypoint>()).Take(50))
+				exclude.Add(string.Format(CultureInfo.InvariantCulture, "point({0:0.######}%20{1:0.######})", point.Longitude, point.Latitude));
+
 			if (avoid.HasFlag(RouteAvoidOptions.Tolls))
 				exclude.Add("toll");
 			if (avoid.HasFlag(RouteAvoidOptions.Highways))

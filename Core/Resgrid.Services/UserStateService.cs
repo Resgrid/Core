@@ -129,6 +129,23 @@ namespace Resgrid.Services
 			}
 		}
 
+		public async Task AnnounceUserStateAsync(int departmentId, int userStateId)
+		{
+			var state = await _userStateRepository.GetByIdAsync(userStateId);
+			if (state == null || state.DepartmentId != departmentId)
+				return;
+
+			InvalidateLatestStatesForDepartmentCache(departmentId);
+
+			// A newer staffing has announced itself; announcing this one now would report a change that no longer holds.
+			var latest = await _userStateRepository.GetLastUserStateByUserIdAsync(state.UserId);
+			if (latest == null || latest.UserStateId != state.UserStateId)
+				return;
+
+			var previousStaffing = await _userStateRepository.GetPreviousUserStateByUserIdAsync(state.UserId, state.UserStateId);
+			_eventAggregator.SendMessage<UserStaffingEvent>(new UserStaffingEvent() { DepartmentId = departmentId, Staffing = state, PreviousStaffing = previousStaffing });
+		}
+
 		/// <summary>
 		/// Every new staffing: the row is saved (its id written back onto <paramref name="us"/>), protected, then announced.
 		/// </summary>

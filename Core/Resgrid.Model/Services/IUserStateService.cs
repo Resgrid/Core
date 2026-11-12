@@ -90,6 +90,15 @@ namespace Resgrid.Model.Services
 		Task ProtectUserStateAsync(int departmentId, int userStateId, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
+		/// Sends the staffing event a save that failed after its insert never sent (a resumed API request), when the staffing is
+		/// still the member's latest; a newer staffing has announced itself and replaced this one. Nothing happens for a staffing
+		/// that is gone or belongs to another department.
+		/// </summary>
+		/// <param name="departmentId">The department the staffing must belong to.</param>
+		/// <param name="userStateId">The saved staffing.</param>
+		Task AnnounceUserStateAsync(int departmentId, int userStateId);
+
+		/// <summary>
 		/// Gets the states for department asynchronous.
 		/// </summary>
 		/// <param name="departmentId">The department identifier.</param>

@@ -194,6 +194,27 @@ namespace Resgrid.Tests.Web.Services
 		}
 
 		[Test]
+		public async Task A_relay_retry_spanning_the_upgrade_finds_the_receipt_saved_under_its_old_key()
+		{
+			// The relay's receipts predate per-call keys: one saved before the upgrade is keyed by the relay's key alone.
+			_receipts.Seed(new InboundEmailReceipt
+			{
+				InboundEmailReceiptId = Guid.NewGuid().ToString(),
+				ProviderMessageId = InboundEmailReceiptsService.ApiRequestKey(InboundEmailKinds.ApiCallFile, DepartmentId, "msg-9@cad.example#attachment-0"),
+				Kind = (int)InboundEmailKinds.ApiCallFile,
+				State = (int)InboundEmailReceiptStates.Completed,
+				EntityId = 77,
+				Deliveries = 1,
+				ReceivedOn = DateTime.UtcNow.AddHours(-1)
+			});
+
+			var again = await FilesController(systemKey: true, idempotencyKey: "msg-9@cad.example#attachment-0").SaveCallFile(FileInput(), CancellationToken.None);
+
+			Id(again).Should().Be("77");
+			_savedAttachments.Should().Be(0);
+		}
+
+		[Test]
 		public async Task Unkeyed_files_are_saved_every_time()
 		{
 			await FilesController(systemKey: true).SaveCallFile(FileInput(), CancellationToken.None);

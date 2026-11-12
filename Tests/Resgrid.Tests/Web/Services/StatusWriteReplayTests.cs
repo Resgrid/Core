@@ -410,6 +410,7 @@ namespace Resgrid.Tests.Web.Services
 			Id(replay).Should().Be("900");
 			_savedStates.Should().ContainSingle();
 			_units.Verify(x => x.ProtectUnitStateAsync(DepartmentId, 900, It.IsAny<CancellationToken>()), Times.Once, "the replay finishes the protection the save never reached");
+			_units.Verify(x => x.FinishUnitStateAsync(DepartmentId, 900, It.IsAny<CancellationToken>()), Times.Once, "and the call close-out after it");
 			_receipts.Receipts.Single().State.Should().Be((int)InboundEmailReceiptStates.Completed);
 		}
 
@@ -434,11 +435,15 @@ namespace Resgrid.Tests.Web.Services
 			var receipt = _receipts.Receipts.Single();
 			receipt.State.Should().Be((int)InboundEmailReceiptStates.Saved);
 			((InboundEmailPendingSteps)receipt.PendingSteps).Should().HaveFlag(InboundEmailPendingSteps.ProtectedWrite);
+			((InboundEmailPendingSteps)receipt.PendingSteps).Should().HaveFlag(InboundEmailPendingSteps.StatusFollowUp);
+			_units.Verify(x => x.FinishUnitStateAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Never,
+				"calls are not closed out on a state that is not protected yet");
 
 			var replay = await UnitStatus().SaveUnitStatus(UnitInput(), CancellationToken.None);
 
 			Id(replay).Should().Be("900");
 			_savedStates.Should().ContainSingle();
+			_units.Verify(x => x.FinishUnitStateAsync(DepartmentId, 900, It.IsAny<CancellationToken>()), Times.Once);
 			_receipts.Receipts.Single().State.Should().Be((int)InboundEmailReceiptStates.Completed);
 		}
 
@@ -621,6 +626,7 @@ namespace Resgrid.Tests.Web.Services
 			_savedStaffings.Single().State.Should().Be((int)UserStateTypes.Committed);
 			_savedStaffings.Single().UserId.Should().Be(UserId);
 			_userStates.Verify(x => x.ProtectUserStateAsync(DepartmentId, 300, It.IsAny<CancellationToken>()), Times.Once, "the replay finishes the protection the save never reached");
+			_userStates.Verify(x => x.AnnounceUserStateAsync(DepartmentId, 300), Times.Once, "and sends the staffing event the save never sent");
 			_receipts.Receipts.Single().State.Should().Be((int)InboundEmailReceiptStates.Completed);
 		}
 
@@ -643,11 +649,13 @@ namespace Resgrid.Tests.Web.Services
 
 			refused.Result.Should().BeOfType<BadRequestResult>();
 			_receipts.Receipts.Single().State.Should().Be((int)InboundEmailReceiptStates.Saved, "a staffing is not answered for until it is protected");
+			_userStates.Verify(x => x.AnnounceUserStateAsync(It.IsAny<int>(), It.IsAny<int>()), Times.Never, "an unprotected staffing is not announced");
 
 			var replay = await PersonStaffing().SavePersonStaffing(StaffingInput(), CancellationToken.None);
 
 			Id(replay).Should().Be("300");
 			_savedStaffings.Should().ContainSingle();
+			_userStates.Verify(x => x.AnnounceUserStateAsync(DepartmentId, 300), Times.Once);
 			_receipts.Receipts.Single().State.Should().Be((int)InboundEmailReceiptStates.Completed);
 		}
 

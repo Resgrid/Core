@@ -133,6 +133,11 @@ namespace Resgrid.Model
 		/// The saved row's protected-data step: the save failed after its insert, so the row may still be plaintext and a resumed
 		/// request protects it before answering.
 		/// </summary>
-		ProtectedWrite = 1024
+		ProtectedWrite = 1024,
+		/// <summary>
+		/// What a status save does after its row is protected and that the failed save never reached: the staffing event, or a unit
+		/// state's call close-out, outstanding-requirement fill and navigation end. Run once by the resumed request.
+		/// </summary>
+		StatusFollowUp = 2048
 	}
 }

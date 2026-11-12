@@ -333,6 +333,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 							await _inboundEmailReceiptsService.CompleteStepAsync(receipt, InboundEmailPendingSteps.ProtectedWrite);
 						}
 
+						// The call close-out, outstanding-requirement fill and navigation end the failed save never reached.
+						if (receipt.Has(InboundEmailPendingSteps.StatusFollowUp))
+						{
+							await _unitsService.FinishUnitStateAsync(DepartmentId, receipt.EntityId.Value, cancellationToken);
+							await _inboundEmailReceiptsService.CompleteStepAsync(receipt, InboundEmailPendingSteps.StatusFollowUp);
+						}
+
 						if (receipt.Has(InboundEmailPendingSteps.UnitStateRoles) || receipt.Has(InboundEmailPendingSteps.UnitLinkedStatuses))
 							await SaveUnitStateRolesAsync(stateInput, unit, receipt.EntityId.Value, setPersonnelStatus, receipt, true, cancellationToken);
 
@@ -358,7 +365,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 						// keep the id a failure left behind, so the replay protects and answers with this state instead of saving a
 						// second one.
 						if (state.UnitStateId > 0)
-							await _inboundEmailReceiptsService.MarkSavedAsync(receipt, state.UnitStateId, owedSteps | InboundEmailPendingSteps.ProtectedWrite);
+							await _inboundEmailReceiptsService.MarkSavedAsync(receipt, state.UnitStateId,
+								owedSteps | InboundEmailPendingSteps.ProtectedWrite | InboundEmailPendingSteps.StatusFollowUp);
 
 						throw;
 					}

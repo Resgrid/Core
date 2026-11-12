@@ -311,8 +311,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			// The SMTP relay keys each attachment of a message (CallsController.IdempotencyKeyHeader) and an app's offline outbox
 			// sends its event id as the body's IdempotencyKey; a resent upload comes back with the first file's id instead of twice.
+			// Members' keys are per call. The relay (system key) keeps the key its receipts have used since before per-call keys,
+			// so a retry that spans the upgrade still finds its receipt; its keys name one message, and a message makes one call.
+			var idempotencyKey = IsSystemApiKeyRequest
+				? CallsController.ResolveIdempotencyKey(Request, input.IdempotencyKey)
+				: CallsController.ResolveCallIdempotencyKey(Request, input.IdempotencyKey, call.CallId);
 			var receipt = await _inboundEmailReceiptsService.ClaimApiRequestAsync(InboundEmailKinds.ApiCallFile, call.DepartmentId,
-				CallsController.ResolveCallIdempotencyKey(Request, input.IdempotencyKey, call.CallId), cancellationToken);
+				idempotencyKey, cancellationToken);
 
 			if (receipt.Outcome == InboundEmailClaimOutcomes.InProgress)
 				return StatusCode(StatusCodes.Status409Conflict);
@@ -334,7 +339,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 					return SavedFileResult(result, call.DepartmentId, receipt.EntityId.Value);
 				}
 
-				// Keys are per call, so this cannot happen; never answer for, or complete, another call's attachment.
+				// Members' keys are per call and the relay's name one message (one call), so this should not happen; never answer
+				// for, or complete, another call's attachment.
 				if (saved.CallId != call.CallId)
 				{
 					await _inboundEmailReceiptsService.ReleaseAsync(receipt);

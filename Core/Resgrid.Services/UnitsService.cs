@@ -944,6 +944,30 @@ namespace Resgrid.Services
 				await _unitStatesRepository.SaveOrUpdateAsync(state, cancellationToken);
 		}
 
+		public async Task FinishUnitStateAsync(int departmentId, int unitStateId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var state = await _unitStatesRepository.GetUnitStateByUnitStateIdAsync(unitStateId);
+			if (state == null)
+				return;
+
+			var unit = await GetUnitByIdAsync(state.UnitId);
+			if (unit == null || unit.DepartmentId != departmentId)
+				return;
+
+			var latest = await _unitStatesRepository.GetLastUnitStateByUnitIdAsync(state.UnitId);
+			if (latest == null || latest.UnitStateId != state.UnitStateId)
+				return;
+
+			// As SetUnitStateAsync runs them for a status a unit reported (resumed requests come from the API, never automatic).
+			var previousState = await _unitStatesRepository.GetLastUnitStateBeforeIdAsync(state.UnitId, state.UnitStateId);
+			await CloseCallsFinishedByAsync(departmentId, state, previousState, cancellationToken);
+
+			if (_outstandingRequirementsService != null)
+				await _outstandingRequirementsService.Value.OnUnitStateSavedAsync(departmentId, state, previousState, cancellationToken);
+
+			await EndNavigationForStatusAsync(departmentId, state);
+		}
+
 		public async Task<List<UnitStateRole>> GetRolesForUnitStateAsync(int unitStateId)
 		{
 			if (unitStateId <= 0)

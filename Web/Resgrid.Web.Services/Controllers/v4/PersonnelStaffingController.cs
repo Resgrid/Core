@@ -181,10 +181,23 @@ namespace Resgrid.Web.Services.Controllers.v4
 				if (receipt.EntityId.HasValue &&
 					(receipt.Outcome == InboundEmailClaimOutcomes.AlreadyProcessed || receipt.Outcome == InboundEmailClaimOutcomes.Resume))
 				{
-					// The first attempt failed after its insert, perhaps at the protected-data step: protect the staffing before
-					// answering for it. A refusal throws, leaving the receipt open for the next replay.
-					if (receipt.Outcome == InboundEmailClaimOutcomes.Resume && receipt.Has(InboundEmailPendingSteps.ProtectedWrite))
-						await _userStateService.ProtectUserStateAsync(DepartmentId, receipt.EntityId.Value, cancellationToken);
+					// The first attempt failed after its insert, perhaps at the protected-data step: protect the staffing, then send
+					// the staffing event it never reached, before answering for it. A refusal throws, leaving the receipt open for the
+					// next replay; each step is checked off once done, so neither runs twice.
+					if (receipt.Outcome == InboundEmailClaimOutcomes.Resume)
+					{
+						if (receipt.Has(InboundEmailPendingSteps.ProtectedWrite))
+						{
+							await _userStateService.ProtectUserStateAsync(DepartmentId, receipt.EntityId.Value, cancellationToken);
+							await _inboundEmailReceiptsService.CompleteStepAsync(receipt, InboundEmailPendingSteps.ProtectedWrite);
+						}
+
+						if (receipt.Has(InboundEmailPendingSteps.StatusFollowUp))
+						{
+							await _userStateService.AnnounceUserStateAsync(DepartmentId, receipt.EntityId.Value);
+							await _inboundEmailReceiptsService.CompleteStepAsync(receipt, InboundEmailPendingSteps.StatusFollowUp);
+						}
+					}
 
 					await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
 					return SavedPersonStaffingResult(result, receipt.EntityId.Value);
@@ -211,7 +224,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 					// The staffing row commits before the service's later work (protection, the staffing event): keep the id a
 					// failure left behind, so the replay protects and answers with this staffing instead of saving a second one.
 					if (pending.UserStateId > 0)
-						await _inboundEmailReceiptsService.MarkSavedAsync(receipt, pending.UserStateId, InboundEmailPendingSteps.ProtectedWrite);
+						await _inboundEmailReceiptsService.MarkSavedAsync(receipt, pending.UserStateId,
+							InboundEmailPendingSteps.ProtectedWrite | InboundEmailPendingSteps.StatusFollowUp);
 
 					throw;
 				}

@@ -299,6 +299,17 @@ namespace Resgrid.Model.Services
 		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
 		Task ProtectUnitStateAsync(int departmentId, int unitStateId, CancellationToken cancellationToken = default(CancellationToken));
 
+		/// <summary>
+		/// Runs what a unit-state save does after its row is protected (call close-out, outstanding-requirement fill, navigation
+		/// end) for a save that failed before getting there (a resumed API request). Only while the state is still the unit's
+		/// latest: a newer state has run its own, and closing calls on this older one could close a call the unit went back to.
+		/// Nothing happens for a state that is gone or whose unit belongs to another department.
+		/// </summary>
+		/// <param name="departmentId">The department the state's unit must belong to.</param>
+		/// <param name="unitStateId">The saved unit state.</param>
+		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+		Task FinishUnitStateAsync(int departmentId, int unitStateId, CancellationToken cancellationToken = default(CancellationToken));
+
 		/// <summary>The riders (crew seats) recorded with one unit state; empty when it has none.</summary>
 		/// <param name="unitStateId">The unit state identifier.</param>
 		/// <returns>Task&lt;List&lt;UnitStateRole&gt;&gt;.</returns>

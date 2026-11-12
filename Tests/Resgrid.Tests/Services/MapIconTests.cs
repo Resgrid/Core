@@ -373,6 +373,28 @@ namespace Resgrid.Tests.Services
 			MapIconPinRenderer.RenderBadge(new byte[] { 1, 2, 3 }, MapIconStyles.Available, "bad").Should().BeNull();
 		}
 
+		[Test]
+		public void The_map_size_rendition_is_the_icon_scaled_to_a_32_px_square()
+		{
+			byte[] icon;
+			using (var source = new Image<Rgba32>(128, 128, new Rgba32(200, 30, 30, 255)))
+			using (var stream = new MemoryStream())
+			{
+				source.Save(stream, new PngEncoder());
+				icon = stream.ToArray();
+			}
+
+			var data = MapIconPinRenderer.RenderAtMapSize(icon, "checksum-sized");
+
+			using var image = Image.Load<Rgba32>(data);
+			image.Width.Should().Be(TypeIcons.MapSize);
+			image.Height.Should().Be(TypeIcons.MapSize);
+			image[16, 16].Should().Be(new Rgba32(200, 30, 30, 255));
+			MapIconPinRenderer.RenderAtMapSize(icon, "checksum-sized").Should().BeSameAs(data, "renditions are cached by checksum");
+			MapIconPinRenderer.RenderAtMapSize(new byte[] { 1, 2, 3 }, "bad").Should().BeNull();
+			MapIconPinRenderer.RenderAtMapSize(null, "none").Should().BeNull();
+		}
+
 		private static Rgba32 Hex(string hex) => new Rgba32(Convert.ToByte(hex.Substring(1, 2), 16), Convert.ToByte(hex.Substring(3, 2), 16), Convert.ToByte(hex.Substring(5, 2), 16), 255);
 
 		private static Rgba32 MostCommonOpaqueColour(Image<Rgba32> image)

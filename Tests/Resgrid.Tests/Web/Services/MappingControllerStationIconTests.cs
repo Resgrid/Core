@@ -76,7 +76,7 @@ namespace Resgrid.Tests.Web.Services
 			return (Mock<T>)mock;
 		}
 
-		private MappingController Build()
+		private MappingController Build(string client = null, string appVersion = null)
 		{
 			var constructor = typeof(MappingController).GetConstructors().OrderByDescending(c => c.GetParameters().Length).First();
 			var arguments = constructor.GetParameters().Select(p =>
@@ -98,6 +98,10 @@ namespace Resgrid.Tests.Web.Services
 					new Claim(ClaimTypes.PrimaryGroupSid, DepartmentId.ToString())
 				}, "test"))
 			};
+			if (client != null)
+				http.Request.Headers["X-Resgrid-Client"] = client;
+			if (appVersion != null)
+				http.Request.Headers["X-Resgrid-App-Version"] = appVersion;
 			ClaimsAuthorizationHelper._httpContextAccessor = new HttpContextAccessor { HttpContext = http };
 
 			var controller = (MappingController)constructor.Invoke(arguments);
@@ -105,12 +109,26 @@ namespace Resgrid.Tests.Web.Services
 			return controller;
 		}
 
-		private async Task<Dictionary<string, MapMakerInfoData>> StationMarkers(MapIconResolver resolver)
+		private async Task<Dictionary<string, MapMakerInfoData>> StationMarkers(MapIconResolver resolver, string client = null, string appVersion = null, bool fullSizeIcons = false)
 		{
 			M<IMapIconsService>().Setup(x => x.GetResolverAsync(DepartmentId, It.IsAny<IEnumerable<UnitState>>())).ReturnsAsync(resolver);
 
-			var result = (GetMapDataResult)(await Build().GetMapDataAndMarkers()).Result.Should().BeOfType<OkObjectResult>().Which.Value;
+			var result = (GetMapDataResult)(await Build(client, appVersion).GetMapDataAndMarkers(fullSizeIcons)).Result.Should().BeOfType<OkObjectResult>().Which.Value;
 			return result.Data.MapMakerInfos.Where(m => m.Type == 2).ToDictionary(m => m.Id);
+		}
+
+		// TEMP (2026-11-11, LegacyOmniPinIcons): Omni store builds that draw a marker's image at its pixel size get the 32 px icon.
+		[TestCase("unit", "8.25", false, true, TestName = "Omni Unit store build gets the 32 px icon")]
+		[TestCase("unit", "8.30", true, false, TestName = "Fixed Omni build asking for full size icons keeps 128 px")]
+		[TestCase("unit", "7.655", false, false, TestName = "Legacy Unit keeps 128 px")]
+		[TestCase(null, null, false, false, TestName = "Client without headers keeps 128 px")]
+		public async Task Station_icons_follow_the_clients_pin_drawing(string client, string appVersion, bool fullSizeIcons, bool mapSize)
+		{
+			var markers = await StationMarkers(Resolver(
+				new TypeIconVariant { TypeKind = (int)TypeIconKinds.Station, TypeId = TypeIcons.DepartmentStationTypeId, IconKey = "all-stations" }), client, appVersion, fullSizeIcons);
+
+			var full = TypeIcons.ApiIconUrl(Api, "all-stations");
+			markers.Values.Should().OnlyContain(m => m.IconUrl == (mapSize ? TypeIcons.AtMapSize(full) : full));
 		}
 
 		[Test]

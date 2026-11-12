@@ -30,27 +30,39 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>The icon as a 128 px square PNG.</summary>
 		/// <param name="key">The icon key at the end of a TypeIconUrl.</param>
 		/// <param name="s">Optional status or priority style (an IconStyle value): the icon is returned with a badge of that colour.</param>
+		/// <param name="px">Optional; 32 returns the icon as a 32 px square (the map pin size), any other value is ignored. Only
+		/// map markers sent to Omni store builds that draw a pin's image at its pixel size link to it (TEMP, 2026-11-11).</param>
 		[HttpGet("{key}")]
 		[Produces(MediaTypeNames.Image.Png)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status304NotModified)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		public async Task<ActionResult> Get(string key, string s = null)
+		public async Task<ActionResult> Get(string key, string s = null, int? px = null)
 		{
 			var icon = await _typeIconsService.GetIconByKeyAsync(key);
 			if (icon?.Data == null || icon.Data.Length == 0)
 				return NotFound();
 
 			var data = icon.Data;
-			var etag = "\"" + icon.Checksum + "\"";
+			var variant = icon.Checksum;
 
 			if (MapIconStyles.IsStyle(s))
 			{
 				data = MapIconPinRenderer.RenderBadge(icon.Data, s, icon.Checksum) ?? icon.Data;
-				etag = $"\"{icon.Checksum}-{s}-{MapIconStyles.Version}\"";
+				variant = $"{icon.Checksum}-{s}-{MapIconStyles.Version}";
 			}
 
-			return Image(data, etag);
+			if (px == TypeIcons.MapSize)
+			{
+				var sized = MapIconPinRenderer.RenderAtMapSize(data, variant);
+				if (sized != null)
+				{
+					data = sized;
+					variant = $"{variant}-{TypeIcons.MapSize}";
+				}
+			}
+
+			return Image(data, "\"" + variant + "\"");
 		}
 
 		/// <summary>A built-in map pin in a status or priority style as a 32 x 37 PNG, e.g. "ambulance-responding" or "call-high".</summary>

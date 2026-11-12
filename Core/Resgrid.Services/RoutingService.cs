@@ -168,7 +168,10 @@ namespace Resgrid.Services
 					return result;
 				}
 
-				RecordFailure(provider, result?.Error);
+				if (result?.RequestRejected == true)
+					RecordRejection(provider, result.Error);
+				else
+					RecordFailure(provider, result?.Error);
 			}
 
 			return new RouteResult { Error = "No routing provider returned a route" };
@@ -270,7 +273,12 @@ namespace Resgrid.Services
 
 					if (result == null || !result.Successful || result.Durations == null)
 					{
-						RecordFailure(provider, result?.Error);
+						// One origin outside the provider's coverage fails its whole batch; the next provider takes the
+						// remaining origins for this request only.
+						if (result?.RequestRejected == true)
+							RecordRejection(provider, result.Error);
+						else
+							RecordFailure(provider, result?.Error);
 						failed = true;
 						break;
 					}
@@ -375,12 +383,30 @@ namespace Resgrid.Services
 			Logging.LogError($"Routing provider '{provider.Name}' failed: {error}. Check MappingConfig.RoutingProvider and the provider's settings ({SettingsFor(provider.Name)}); falling back to {MappingConfig.RoutingFallbackProvider} then the straight-line estimate.");
 		}
 
+		/// <summary>
+		/// The provider is up but cannot route this request (outside its coverage, no road near a point, over its limits):
+		/// the next provider answers it and the provider stays in use for everything else. Logged at most every 10 minutes.
+		/// </summary>
+		private static void RecordRejection(IRoutingProvider provider, string error)
+		{
+			if (provider == null || provider.Name == RoutingProviderNames.Estimate)
+				return;
+
+			var key = provider.Name + ":rejected";
+			var now = DateTime.UtcNow;
+			if (LastErrorLogged.TryGetValue(key, out var last) && now - last < ErrorLogInterval)
+				return;
+
+			LastErrorLogged[key] = now;
+			Logging.LogInfo($"Routing provider '{provider.Name}' could not route a request ({error}); {MappingConfig.RoutingFallbackProvider} answered it instead. The provider stays in use for other requests.");
+		}
+
 		private static string SettingsFor(string provider)
 		{
 			switch (provider)
 			{
 				case RoutingProviderNames.Valhalla:
-					return "MappingConfig.ValhallaUrl, MappingConfig.ValhallaApiKey";
+					return "MappingConfig.ValhallaUrl, MappingConfig.ValhallaApiKey, MappingConfig.ValhallaAuthScheme";
 				case RoutingProviderNames.Mapbox:
 					return "MappingConfig.MapboxRoutingAccessToken";
 				case RoutingProviderNames.Google:

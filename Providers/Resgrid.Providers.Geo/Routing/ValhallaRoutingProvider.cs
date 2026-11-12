@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,17 +14,25 @@ using Resgrid.Model.Providers;
 namespace Resgrid.Providers.GeoLocationProvider.Routing
 {
 	/// <summary>
-	/// Self-hosted Valhalla (plan §6.1). Routes come back in the OSRM shape (format=osrm) with banner and voice
+	/// Valhalla (plan §6.1), self-hosted or a hosted Valhalla service such as SimpleRouting (Bearer key, see
+	/// MappingConfig.ValhallaAuthScheme). Routes come back in the OSRM shape (format=osrm) with banner and voice
 	/// instructions, so navigation clients read them like Mapbox Directions. Truck costing applies every vehicle limit.
-	/// No live traffic. The URL may be on a private network.
+	/// No live traffic. The URL may be on a private network. A request the server refuses (outside its map data, no road
+	/// near a point, over its limits) is marked RequestRejected so the next provider answers it without benching Valhalla.
 	/// </summary>
 	public class ValhallaRoutingProvider : IRoutingProvider
 	{
 		private const string AttributionText = "© OpenStreetMap contributors";
+		private const string OutsideCoverageError = "Outside MappingConfig.ValhallaCoverage";
+
+		private static readonly object CoverageLock = new object();
+		private static string _coverageSource;
+		private static List<(double West, double South, double East, double North)> _coverageBoxes = new List<(double, double, double, double)>();
 
 		public string Name => RoutingProviderNames.Valhalla;
 
-		public RoutingCapabilities Capabilities { get; } = new RoutingCapabilities
+		// Built per read: the stop and closure limits follow the server's service_limits through MappingConfig.
+		public RoutingCapabilities Capabilities => new RoutingCapabilities
 		{
 			Steps = true,
 			Navigation = true,
@@ -32,17 +43,21 @@ namespace Resgrid.Providers.GeoLocationProvider.Routing
 			VehicleSize = true,
 			VehicleFull = true,
 			MaxMatrixCoordinates = 1000,
-			MaxWaypoints = 50,
+			MaxWaypoints = Math.Max(2, MappingConfig.ValhallaMaxWaypoints),
+			// optimized_route is bounded by the matrix limit (stock 2,500 pairs), not by max_locations.
 			MaxOptimizeWaypoints = 50,
 			// Road closures (M0314): exclude_polygons for areas, exclude_locations for points on closed roads.
 			ExcludeAreas = true,
-			MaxExcludePoints = 200
+			MaxExcludePoints = Math.Max(0, MappingConfig.ValhallaMaxExcludePoints)
 		};
 
 		public bool IsConfigured => !string.IsNullOrWhiteSpace(MappingConfig.ValhallaUrl);
 
 		public async Task<RouteResult> GetRouteAsync(RouteRequest request, CancellationToken cancellationToken)
 		{
+			if (!IsCovered(request.Waypoints))
+				return new RouteResult { Provider = Name, Error = OutsideCoverageError, RequestRejected = true };
+
 			var body = new Dictionary<string, object>
 			{
 				["locations"] = request.Waypoints.Select((w, i) => Location(w, i, request.Waypoints.Count)).ToList(),
@@ -73,9 +88,16 @@ namespace Resgrid.Providers.GeoLocationProvider.Routing
 			using (document)
 			{
 				if (document != null && document.RootElement.TryGetProperty("error", out var error))
-					return new RouteResult { Provider = Name, Error = $"{status}: {error}" };
+					return new RouteResult { Provider = Name, Error = $"{status}: {error}", RequestRejected = IsRejection(status, document) };
 
 				var result = OsrmShapeParser.Parse(document, Name, AttributionText, request.Steps || request.NavigationInstructions);
+				if (!result.Successful)
+				{
+					result.Error = $"{status}: {result.Error}";
+					result.RequestRejected = IsRejection(status, document);
+					return result;
+				}
+
 				result.VehicleRestricted = UsesTruckCosting(request.Profile, request.Vehicle);
 				return result;
 			}
@@ -83,6 +105,9 @@ namespace Resgrid.Providers.GeoLocationProvider.Routing
 
 		public async Task<RouteMatrixResult> GetMatrixAsync(RouteMatrixRequest request, CancellationToken cancellationToken)
 		{
+			if (!IsCovered(request.Origins) || !IsCovered(request.Destinations))
+				return new RouteMatrixResult { Provider = Name, Error = OutsideCoverageError, RequestRejected = true };
+
 			var body = new Dictionary<string, object>
 			{
 				["sources"] = request.Origins.Select(o => new Dictionary<string, object> { ["lat"] = o.Latitude, ["lon"] = o.Longitude }).ToList(),
@@ -97,7 +122,7 @@ namespace Resgrid.Providers.GeoLocationProvider.Routing
 			using (document)
 			{
 				if (document == null || !document.RootElement.TryGetProperty("sources_to_targets", out var rows) || rows.ValueKind != JsonValueKind.Array)
-					return new RouteMatrixResult { Provider = Name, Error = $"Matrix failed ({status})" };
+					return new RouteMatrixResult { Provider = Name, Error = $"Matrix failed ({status}){ErrorDetail(document)}", RequestRejected = IsRejection(status, document) };
 
 				var durations = new double?[request.Origins.Count][];
 				var distances = new double?[request.Origins.Count][];
@@ -133,6 +158,9 @@ namespace Resgrid.Providers.GeoLocationProvider.Routing
 			if (!request.KeepFirst || !request.KeepLast)
 				return new RouteOptimizationResult { Provider = Name, Error = "Valhalla keeps the first and last stops fixed" };
 
+			if (!IsCovered(request.Waypoints))
+				return new RouteOptimizationResult { Provider = Name, Error = OutsideCoverageError, RequestRejected = true };
+
 			var body = new Dictionary<string, object>
 			{
 				["locations"] = request.Waypoints.Select(w => new Dictionary<string, object> { ["lat"] = w.Latitude, ["lon"] = w.Longitude }).ToList(),
@@ -145,7 +173,7 @@ namespace Resgrid.Providers.GeoLocationProvider.Routing
 			using (document)
 			{
 				if (document == null || !document.RootElement.TryGetProperty("trip", out var trip) || !trip.TryGetProperty("locations", out var locations))
-					return new RouteOptimizationResult { Provider = Name, Error = $"Optimization failed ({status})" };
+					return new RouteOptimizationResult { Provider = Name, Error = $"Optimization failed ({status}){ErrorDetail(document)}", RequestRejected = IsRejection(status, document) };
 
 				var order = new List<int>();
 				foreach (var location in locations.EnumerateArray())
@@ -171,10 +199,110 @@ namespace Resgrid.Providers.GeoLocationProvider.Routing
 			return RoutingHttp.TrimBase(MappingConfig.ValhallaUrl) + path;
 		}
 
-		private static void Authorize(System.Net.Http.HttpRequestMessage request)
+		/// <summary>Adds ValhallaApiKey as an X-Api-Key header, or as "Authorization: Bearer key" when ValhallaAuthScheme is "bearer".</summary>
+		public static void Authorize(HttpRequestMessage request)
 		{
-			if (!string.IsNullOrWhiteSpace(MappingConfig.ValhallaApiKey))
-				request.Headers.TryAddWithoutValidation("X-Api-Key", MappingConfig.ValhallaApiKey);
+			var key = MappingConfig.ValhallaApiKey?.Trim();
+			if (string.IsNullOrWhiteSpace(key))
+				return;
+
+			if (string.Equals(MappingConfig.ValhallaAuthScheme?.Trim(), MappingConfig.ValhallaBearerAuthScheme, StringComparison.OrdinalIgnoreCase))
+			{
+				// A key pasted together with its scheme ("Bearer abc") is sent once, not as "Bearer Bearer abc".
+				if (key.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+					key = key.Substring("Bearer ".Length).Trim();
+
+				request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", key);
+			}
+			else
+			{
+				request.Headers.TryAddWithoutValidation("X-Api-Key", key);
+			}
+		}
+
+		/// <summary>
+		/// True for a Valhalla 400 with an error body (JSON error_code, or an OSRM-format code other than "Ok"): the server is
+		/// up but cannot route this request. Authentication (401/403), rate limits (429), server errors and unreadable
+		/// replies are provider failures instead.
+		/// </summary>
+		public static bool IsRejection(int status, JsonDocument document)
+		{
+			if (status != 400 || document == null || document.RootElement.ValueKind != JsonValueKind.Object)
+				return false;
+
+			var root = document.RootElement;
+			if (root.TryGetProperty("error_code", out var errorCode) && errorCode.ValueKind == JsonValueKind.Number)
+				return true;
+
+			return root.TryGetProperty("code", out var code) && code.ValueKind == JsonValueKind.String && code.GetString() != "Ok";
+		}
+
+		/// <summary>True when every point is inside one of the MappingConfig.ValhallaCoverage boxes (always, when none are set).</summary>
+		public static bool IsCovered(IEnumerable<RoutingWaypoint> points)
+		{
+			var boxes = CoverageBoxes();
+			if (boxes.Count == 0 || points == null)
+				return true;
+
+			return points.All(p => boxes.Any(b => InBox(b, p.Latitude, p.Longitude)));
+		}
+
+		private static bool InBox((double West, double South, double East, double North) box, double latitude, double longitude)
+		{
+			if (latitude < box.South || latitude > box.North)
+				return false;
+
+			// A box whose west edge is east of its east edge crosses the antimeridian.
+			return box.West <= box.East
+				? longitude >= box.West && longitude <= box.East
+				: longitude >= box.West || longitude <= box.East;
+		}
+
+		private static List<(double West, double South, double East, double North)> CoverageBoxes()
+		{
+			var source = MappingConfig.ValhallaCoverage ?? string.Empty;
+
+			lock (CoverageLock)
+			{
+				if (string.Equals(source, _coverageSource, StringComparison.Ordinal))
+					return _coverageBoxes;
+
+				var boxes = new List<(double, double, double, double)>();
+				foreach (var part in source.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+				{
+					var values = part.Split(',', StringSplitOptions.TrimEntries);
+					if (values.Length != 4)
+						continue;
+
+					var numbers = new double[4];
+					var valid = true;
+					for (var i = 0; i < 4 && valid; i++)
+						valid = double.TryParse(values[i], NumberStyles.Float, CultureInfo.InvariantCulture, out numbers[i]);
+
+					// west, south, east, north; a malformed box is ignored rather than sending every request elsewhere.
+					if (valid && numbers[1] < numbers[3] && numbers[1] >= -90 && numbers[3] <= 90 &&
+					    numbers[0] >= -180 && numbers[0] <= 180 && numbers[2] >= -180 && numbers[2] <= 180)
+						boxes.Add((numbers[0], numbers[1], numbers[2], numbers[3]));
+				}
+
+				_coverageSource = source;
+				_coverageBoxes = boxes;
+				return boxes;
+			}
+		}
+
+		private static string ErrorDetail(JsonDocument document)
+		{
+			if (document == null || document.RootElement.ValueKind != JsonValueKind.Object)
+				return string.Empty;
+
+			var root = document.RootElement;
+			if (root.TryGetProperty("error", out var error) && error.ValueKind == JsonValueKind.String)
+				return ": " + error.GetString();
+			if (root.TryGetProperty("message", out var message) && message.ValueKind == JsonValueKind.String)
+				return ": " + message.GetString();
+
+			return string.Empty;
 		}
 
 		private static Dictionary<string, object> Location(RoutingWaypoint waypoint, int index, int count)

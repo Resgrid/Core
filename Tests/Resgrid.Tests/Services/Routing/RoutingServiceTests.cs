@@ -183,6 +183,50 @@ namespace Resgrid.Tests.Services.Routing
 			result.Successful.Should().BeTrue();
 			result.Order.Should().Equal(0, 2, 1, 3);
 		}
+
+		[Test]
+		public async Task rejected_route_goes_to_the_fallback_without_benching_the_provider()
+		{
+			// A hosted Valhalla that only covers some regions refuses one department's request; it must keep answering the rest.
+			MappingConfig.RoutingProvider = RoutingProviderNames.Valhalla;
+			MappingConfig.RoutingFallbackProvider = RoutingProviderNames.Estimate;
+			var valhalla = Provider(RoutingProviderNames.Valhalla, true,
+				new RouteResult { Successful = false, Error = "400: NoSegment", RequestRejected = true });
+			var service = new RoutingService(new[] { valhalla.Object, new EstimateRoutingProvider() }, null);
+
+			var first = await service.GetRouteAsync(TwoPoints());
+			var second = await service.GetRouteAsync(TwoPoints());
+
+			first.Successful.Should().BeTrue();
+			first.Provider.Should().Be(RoutingProviderNames.Estimate);
+			second.Provider.Should().Be(RoutingProviderNames.Estimate);
+			valhalla.Verify(p => p.GetRouteAsync(It.IsAny<RouteRequest>(), It.IsAny<CancellationToken>()), Times.Exactly(2));
+		}
+
+		[Test]
+		public async Task rejected_matrix_goes_to_the_fallback_without_benching_the_provider()
+		{
+			MappingConfig.RoutingProvider = RoutingProviderNames.Valhalla;
+			MappingConfig.RoutingFallbackProvider = RoutingProviderNames.Estimate;
+			var valhalla = Provider(RoutingProviderNames.Valhalla, true);
+			valhalla.Setup(p => p.GetMatrixAsync(It.IsAny<RouteMatrixRequest>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new RouteMatrixResult { Successful = false, Error = "Outside MappingConfig.ValhallaCoverage", RequestRejected = true });
+			var service = new RoutingService(new[] { valhalla.Object, new EstimateRoutingProvider() }, null);
+			var request = new RouteMatrixRequest
+			{
+				Origins = new List<RoutingWaypoint> { new RoutingWaypoint(39.53, -119.81), new RoutingWaypoint(-33.8688, 151.2093) },
+				Destinations = new List<RoutingWaypoint> { new RoutingWaypoint(39.54, -119.75) }
+			};
+
+			var first = await service.GetMatrixAsync(request);
+			var second = await service.GetMatrixAsync(request);
+
+			first.Successful.Should().BeTrue();
+			first.Provider.Should().Be(RoutingProviderNames.Estimate);
+			first.Durations[0][0].Should().NotBeNull();
+			second.Provider.Should().Be(RoutingProviderNames.Estimate);
+			valhalla.Verify(p => p.GetMatrixAsync(It.IsAny<RouteMatrixRequest>(), It.IsAny<CancellationToken>()), Times.Exactly(2));
+		}
 	}
 
 	[TestFixture]

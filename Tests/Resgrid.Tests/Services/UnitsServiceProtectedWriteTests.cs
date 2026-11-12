@@ -185,5 +185,69 @@ namespace Resgrid.Tests.Services
 			_protectedWriteService.Verify(x => x.PrepareUnitStateWriteAsync(DeptId, It.IsAny<UnitState>(), null, null, true, It.IsAny<CancellationToken>()),
 				Times.Once, "both SetUnitStateAsync overloads persist a unit state and both must be covered");
 		}
+
+		/// <summary>A service that can close calls, for the resumed-request follow-up (FinishUnitStateAsync).</summary>
+		private (UnitsService Service, Mock<ICallAutoCloseService> AutoClose) WithCallAutoClose(UnitState saved, UnitState latest, int unitDepartmentId = DeptId)
+		{
+			var units = new Mock<IUnitsRepository>();
+			units.Setup(x => x.GetByIdAsync(saved.UnitId)).ReturnsAsync(new Unit { UnitId = saved.UnitId, DepartmentId = unitDepartmentId });
+			_unitStatesRepo.Setup(x => x.GetUnitStateByUnitStateIdAsync(saved.UnitStateId)).ReturnsAsync(saved);
+			_unitStatesRepo.Setup(x => x.GetLastUnitStateByUnitIdAsync(saved.UnitId)).ReturnsAsync(latest);
+			_unitStatesRepo.Setup(x => x.GetLastUnitStateBeforeIdAsync(saved.UnitId, saved.UnitStateId)).ReturnsAsync(new UnitState { UnitStateId = 54, UnitId = saved.UnitId });
+			var autoClose = new Mock<ICallAutoCloseService>();
+
+			var service = new UnitsService(
+				units.Object, _unitStatesRepo.Object, Mock.Of<IUnitLogsRepository>(),
+				Mock.Of<IUnitTypesRepository>(), Mock.Of<ISubscriptionsService>(), Mock.Of<IUnitRolesRepository>(),
+				Mock.Of<IUnitStateRoleRepository>(), Mock.Of<IUserStateService>(), _eventAggregator.Object,
+				Mock.Of<ICustomStateService>(),
+				new Lazy<IMongoRepository<UnitsLocation>>(() => Mock.Of<IMongoRepository<UnitsLocation>>()),
+				Mock.Of<IUnitLocationsDocRepository>(),
+				new Lazy<IUnitLocationsMongoRepository>(() => Mock.Of<IUnitLocationsMongoRepository>()),
+				Mock.Of<IUnitActiveRolesRepository>(), Mock.Of<IDepartmentGroupsService>(), Mock.Of<ILimitsService>(),
+				Mock.Of<IPersonnelRolesService>(),
+				new Lazy<IProtectedWriteService>(() => _protectedWriteService.Object),
+				new Lazy<IRecordsCutoverService>(() => Mock.Of<IRecordsCutoverService>()),
+				Mock.Of<ICallStatusAttributionService>(),
+				callAutoCloseService: new Lazy<ICallAutoCloseService>(() => autoClose.Object));
+
+			return (service, autoClose);
+		}
+
+		[Test]
+		public async Task A_resumed_save_runs_the_call_close_out_the_failed_save_never_reached()
+		{
+			var saved = BuildState();
+			var (service, autoClose) = WithCallAutoClose(saved, latest: saved);
+
+			await service.FinishUnitStateAsync(DeptId, saved.UnitStateId);
+
+			autoClose.Verify(x => x.CloseCallsFinishedByUnitStateAsync(DeptId, saved, It.Is<UnitState>(p => p.UnitStateId == 54), It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
+		public async Task A_resumed_save_leaves_calls_alone_once_the_unit_has_set_a_newer_status()
+		{
+			// Closing calls on the older state could close a call the unit has since gone back to.
+			var saved = BuildState();
+			var (service, autoClose) = WithCallAutoClose(saved, latest: new UnitState { UnitStateId = 56, UnitId = saved.UnitId });
+
+			await service.FinishUnitStateAsync(DeptId, saved.UnitStateId);
+
+			autoClose.Verify(x => x.CloseCallsFinishedByUnitStateAsync(It.IsAny<int>(), It.IsAny<UnitState>(), It.IsAny<UnitState>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public async Task A_resumed_save_never_runs_for_another_departments_unit()
+		{
+			var saved = BuildState();
+			var (service, autoClose) = WithCallAutoClose(saved, latest: saved, unitDepartmentId: DeptId + 1);
+
+			await service.FinishUnitStateAsync(DeptId, saved.UnitStateId);
+			await service.ProtectUnitStateAsync(DeptId, saved.UnitStateId);
+
+			autoClose.Verify(x => x.CloseCallsFinishedByUnitStateAsync(It.IsAny<int>(), It.IsAny<UnitState>(), It.IsAny<UnitState>(), It.IsAny<CancellationToken>()), Times.Never);
+			_protectedWriteService.Verify(x => x.PrepareUnitStateWriteAsync(It.IsAny<int>(), It.IsAny<UnitState>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
 	}
 }

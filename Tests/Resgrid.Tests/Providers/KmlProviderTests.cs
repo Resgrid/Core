@@ -118,6 +118,25 @@ namespace Resgrid.Tests.Providers
 		}
 
 		[Test]
+		public void Hands_back_placemarks_that_only_have_an_address_for_geocoding()
+		{
+			// Google My Maps writes a layer it located "by address" with no Point at all.
+			var result = Import(Kml("http://www.opengis.net/kml/2.2",
+				"<Document>" +
+				"<Placemark><name>Erie</name><address>4116 Erie 1 E Erie St Chicago Illinois</address>" +
+				"<ExtendedData><Data name=\"Street Address 1\"><value> 1 E Erie St </value></Data><Data name=\"Notes\"><value/></Data></ExtendedData></Placemark>" +
+				"<Placemark><name>No geometry</name></Placemark>" +
+				"</Document>"));
+
+			result.Coordinates.Should().BeEmpty();
+			result.SkippedCount.Should().Be(1);
+			var placemark = result.AddressOnly.Single();
+			placemark.Name.Should().Be("Erie");
+			placemark.Address.Should().Be("4116 Erie 1 E Erie St Chicago Illinois");
+			placemark.Fields.Should().ContainSingle().Which.Should().Be(new System.Collections.Generic.KeyValuePair<string, string>("Street Address 1", "1 E Erie St"));
+		}
+
+		[Test]
 		public void Reports_why_a_malformed_file_could_not_be_read()
 		{
 			var result = Import(Kml("http://www.opengis.net/kml/2.2",

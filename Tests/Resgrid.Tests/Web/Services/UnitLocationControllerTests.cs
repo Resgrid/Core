@@ -90,14 +90,14 @@ namespace Resgrid.Tests.Web.Services
 			var response = await _controller.GetLatestUnitLocation(UnitId.ToString());
 
 			response.Result.Should().BeOfType<UnauthorizedResult>();
-			_unitsService.Verify(x => x.GetLatestUnitLocationAsync(It.IsAny<int>(), It.IsAny<System.DateTime?>()), Times.Never);
+			_unitsService.Verify(x => x.GetLatestUnitLocationForDepartmentAsync(It.IsAny<int>(), It.IsAny<int>()), Times.Never);
 		}
 
 		[Test]
 		public async Task GetLatestUnitLocation_ReturnsTheLocation_WhenTheCallerMaySeeIt()
 		{
 			_unitsService
-				.Setup(x => x.GetLatestUnitLocationAsync(UnitId, It.IsAny<System.DateTime?>()))
+				.Setup(x => x.GetLatestUnitLocationForDepartmentAsync(DepartmentId, UnitId))
 				.ReturnsAsync(new UnitsLocation { UnitId = UnitId, Latitude = 47.6062m, Longitude = -122.3321m, Timestamp = System.DateTime.UtcNow });
 
 			var response = await _controller.GetLatestUnitLocation(UnitId.ToString());

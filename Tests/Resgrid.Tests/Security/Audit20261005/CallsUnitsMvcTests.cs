@@ -679,41 +679,175 @@ namespace Resgrid.Tests.Security.Audit20261005
 			var file = new FormFile(new System.IO.MemoryStream(bytes), 0, bytes.Length, "fileToUpload", "hydrants.kml") { Headers = new HeaderDictionary() };
 
 			ShouldBeRefused(await Build<MappingController>(MapAdmin).ImportPOIs(new ImportPOIsView { TypeId = 6 }, file, CancellationToken.None));
-			M<IKmlProvider>().Verify(x => x.ImportFile(It.IsAny<System.IO.Stream>(), It.IsAny<bool>()), Times.Never);
-			M<IMappingService>().Verify(x => x.SavePOIAsync(It.IsAny<Poi>(), It.IsAny<CancellationToken>()), Times.Never);
+			M<IPoiImportService>().Verify(x => x.ReadFile(It.IsAny<System.IO.Stream>(), It.IsAny<string>()), Times.Never);
+			M<IPoiImportService>().Verify(x => x.QueueImportAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<PoiImportFile>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
 
 		[Test]
-		public async Task ImportPOIs_shows_why_the_file_could_not_be_read_and_saves_nothing()
+		public async Task ImportPOIs_shows_why_the_file_could_not_be_read_and_queues_nothing()
 		{
 			M<IMappingService>().Setup(x => x.GetTypeByIdAsync(5)).ReturnsAsync(new PoiType { PoiTypeId = 5, DepartmentId = DepartmentId });
-			M<IKmlProvider>().Setup(x => x.ImportFile(It.IsAny<System.IO.Stream>(), false)).Returns(new KmlImportResult { Error = "The file is not valid KML: bad entity." });
+			M<IPoiImportService>().Setup(x => x.ReadFile(It.IsAny<System.IO.Stream>(), "hydrants.kml")).Returns(new PoiImportFile { Error = "The file is not valid KML: bad entity." });
 			var controller = Build<MappingController>(MapAdmin);
 
 			var result = await controller.ImportPOIs(new ImportPOIsView { TypeId = 5 }, PoiUpload("hydrants.kml"), CancellationToken.None);
 
 			result.Should().BeOfType<ViewResult>();
 			controller.ModelState["fileToUpload"].Errors.Single().ErrorMessage.Should().Be("The file is not valid KML: bad entity.");
-			M<IMappingService>().Verify(x => x.SavePOIAsync(It.IsAny<Poi>(), It.IsAny<CancellationToken>()), Times.Never);
+			M<IPoiImportService>().Verify(x => x.QueueImportAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<PoiImportFile>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
 
 		[Test]
-		public async Task ImportPOIs_fits_long_names_to_the_column_and_reports_skipped_placemarks()
+		public async Task ImportPOIs_reports_a_file_with_nothing_to_import_on_the_upload_page()
 		{
 			M<IMappingService>().Setup(x => x.GetTypeByIdAsync(5)).ReturnsAsync(new PoiType { PoiTypeId = 5, DepartmentId = DepartmentId });
-			M<IKmlProvider>().Setup(x => x.ImportFile(It.IsAny<System.IO.Stream>(), true)).Returns(new KmlImportResult
-			{
-				Coordinates = new List<Coordinates> { new Coordinates { Name = new string('x', 300), Latitude = 37.42, Longitude = -122.08 } },
-				SkippedCount = 2
-			});
+			M<IPoiImportService>().Setup(x => x.ReadFile(It.IsAny<System.IO.Stream>(), "hydrants.kml")).Returns(new PoiImportFile { SkippedCount = 3 });
+			var controller = Build<MappingController>(MapAdmin);
+
+			(await controller.ImportPOIs(new ImportPOIsView { TypeId = 5 }, PoiUpload("hydrants.kml"), CancellationToken.None)).Should().BeOfType<ViewResult>();
+
+			controller.ModelState["fileToUpload"].Errors.Single().ErrorMessage.Should().StartWith("None of the 3 entries in the file have valid coordinates or an address");
+			M<IPoiImportService>().Verify(x => x.QueueImportAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<PoiImportFile>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public async Task ImportPOIs_queues_a_csv_for_the_worker_instead_of_saving_in_the_request()
+		{
+			Localizer<Resgrid.Localization.Areas.User.Mapping.Mapping>();
+			M<IMappingService>().Setup(x => x.GetTypeByIdAsync(5)).ReturnsAsync(new PoiType { PoiTypeId = 5, DepartmentId = DepartmentId, Name = "Stores" });
+			var file = new PoiImportFile { Rows = new List<PoiImportRow> { new PoiImportRow { Name = "Leon", Address = "1004 W 1st, Leon, IA, 50144" } } };
+			M<IPoiImportService>().Setup(x => x.ReadFile(It.IsAny<System.IO.Stream>(), "stores.csv")).Returns(file);
 			var controller = Build<MappingController>(MapAdmin);
 			controller.TempData = new Microsoft.AspNetCore.Mvc.ViewFeatures.TempDataDictionary(controller.HttpContext, Mock.Of<Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataProvider>());
 
-			var result = await controller.ImportPOIs(new ImportPOIsView { TypeId = 5 }, PoiUpload("hydrants.kmz"), CancellationToken.None);
+			var result = await controller.ImportPOIs(new ImportPOIsView { TypeId = 5 }, PoiUpload("stores.csv"), CancellationToken.None);
 
 			result.Should().BeOfType<RedirectToActionResult>().Which.ActionName.Should().Be("POIs");
-			M<IMappingService>().Verify(x => x.SavePOIAsync(It.Is<Poi>(p => p.PoiTypeId == 5 && p.Name.Length == 250), It.IsAny<CancellationToken>()), Times.Once);
-			controller.TempData["ImportPOIsMessage"].Should().Be("Successfully imported 1 POI(s). 2 placemark(s) were skipped because they have no valid coordinates.");
+			M<IPoiImportService>().Verify(x => x.QueueImportAsync(DepartmentId, 5, "Stores", UserId, "stores.csv", file, CancellationToken.None), Times.Once);
+			M<IMappingService>().Verify(x => x.SavePOIAsync(It.IsAny<Poi>(), It.IsAny<CancellationToken>()), Times.Never);
+			controller.TempData["ImportPOIsMessage"].Should().Be("PoiImportQueued");
+		}
+
+		[Test]
+		public async Task ImportPOIs_refuses_a_spreadsheet_saved_as_xlsx()
+		{
+			M<IMappingService>().Setup(x => x.GetTypeByIdAsync(5)).ReturnsAsync(new PoiType { PoiTypeId = 5, DepartmentId = DepartmentId });
+			var controller = Build<MappingController>(MapAdmin);
+
+			(await controller.ImportPOIs(new ImportPOIsView { TypeId = 5 }, PoiUpload("stores.xlsx"), CancellationToken.None)).Should().BeOfType<ViewResult>();
+
+			controller.ModelState["fileToUpload"].Errors.Single().ErrorMessage.Should().Be("File type (.xlsx) cannot be imported as POIs: upload a KML, KMZ or CSV file.");
+			M<IPoiImportService>().Verify(x => x.ReadFile(It.IsAny<System.IO.Stream>(), It.IsAny<string>()), Times.Never);
+		}
+
+		[Test]
+		public async Task POIs_lists_the_departments_imports_with_their_report()
+		{
+			Localizer<Resgrid.Localization.Areas.User.Mapping.Mapping>();
+			M<IMappingService>().Setup(x => x.GetPOITypesForDepartmentAsync(DepartmentId)).ReturnsAsync(new List<PoiType> { new PoiType { PoiTypeId = 5, Name = "Stores", Pois = new List<Poi>() } });
+			var imports = PoiImportsWithEveryReport();
+			var controller = Build<MappingController>(MapAdmin);
+			controller.TempData = new Microsoft.AspNetCore.Mvc.ViewFeatures.TempDataDictionary(controller.HttpContext, Mock.Of<Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataProvider>());
+
+			var listed = (await controller.POIs()).Should().BeOfType<ViewResult>().Which.Model.Should().BeOfType<POIsView>().Which.Imports;
+
+			ShouldReportEveryReason(listed);
+			M<IMappingService>().Verify(x => x.GetTypeByIdAsync(It.IsAny<int>()), Times.Never, "the list uses the type name stored with the import");
+		}
+
+		[Test]
+		public async Task PoiImportsPanel_returns_the_same_report_for_the_page_to_poll()
+		{
+			Localizer<Resgrid.Localization.Areas.User.Mapping.Mapping>();
+			PoiImportsWithEveryReport();
+
+			var panel = (await Build<MappingController>(MapAdmin).PoiImportsPanel()).Should().BeOfType<PartialViewResult>().Which;
+
+			panel.ViewName.Should().Be("_PoiImports");
+			ShouldReportEveryReason(panel.Model.Should().BeOfType<List<PoiImportListItem>>().Which);
+			M<IMappingService>().Verify(x => x.GetPOITypesForDepartmentAsync(It.IsAny<int>()), Times.Never, "polling must not load every type and its POIs");
+		}
+
+		[Test]
+		public async Task PoiImportsPanel_is_for_poi_importers_only()
+		{
+			ShouldBeRefused(await Build<MappingController>().PoiImportsPanel());
+			M<IPoiImportService>().Verify(x => x.GetRecentImportsAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>()), Times.Never);
+		}
+
+		private static readonly Claim HydrantManager = new Claim(Resgrid.Providers.Claims.ResgridClaimTypes.Resources.Record, Resgrid.Providers.Claims.ResgridClaimTypes.Actions.PreventionAdmin);
+
+		[Test]
+		public async Task A_hydrant_manager_who_cannot_open_POIs_follows_their_import_on_the_import_page()
+		{
+			// CanImportPois admits Records prevention admins; the POIs page (map data management) does not.
+			Localizer<Resgrid.Localization.Areas.User.Mapping.Mapping>();
+			M<IMappingService>().Setup(x => x.GetTypeByIdAsync(5)).ReturnsAsync(new PoiType { PoiTypeId = 5, DepartmentId = DepartmentId, Name = "Stores" });
+			var file = new PoiImportFile { Rows = new List<PoiImportRow> { new PoiImportRow { Name = "Leon", Address = "1004 W 1st, Leon, IA, 50144" } } };
+			M<IPoiImportService>().Setup(x => x.ReadFile(It.IsAny<System.IO.Stream>(), "stores.csv")).Returns(file);
+			var controller = Build<MappingController>(HydrantManager);
+			controller.TempData = new Microsoft.AspNetCore.Mvc.ViewFeatures.TempDataDictionary(controller.HttpContext, Mock.Of<Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataProvider>());
+
+			var redirect = (await controller.ImportPOIs(new ImportPOIsView { TypeId = 5 }, PoiUpload("stores.csv"), CancellationToken.None))
+				.Should().BeOfType<RedirectToActionResult>().Which;
+
+			redirect.ActionName.Should().Be("ImportPOIs");
+			redirect.RouteValues["poiTypeId"].Should().Be(5);
+			ShouldBeRefused(await controller.POIs());
+		}
+
+		[Test]
+		public async Task A_hydrant_manager_sees_only_their_own_imports()
+		{
+			Localizer<Resgrid.Localization.Areas.User.Mapping.Mapping>();
+			var mine = new List<PoiImport>
+			{
+				new PoiImport { PoiImportId = "mine", UserId = UserId, PoiTypeId = 5, FileName = "stores.csv", Status = (int)PoiImportStatus.Saving, TotalRows = 3, AddedOn = new DateTime(2026, 11, 11, 18, 0, 0) }
+			};
+			M<IPoiImportService>().Setup(x => x.GetRecentImportsAsync(DepartmentId, 10, UserId)).ReturnsAsync(mine);
+			var controller = Build<MappingController>(HydrantManager);
+			controller.TempData = new Microsoft.AspNetCore.Mvc.ViewFeatures.TempDataDictionary(controller.HttpContext, Mock.Of<Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataProvider>());
+
+			var page = (await controller.ImportPOIs(5)).Should().BeOfType<ViewResult>().Which.Model.Should().BeOfType<ImportPOIsView>().Which;
+			var panel = (await controller.PoiImportsPanel()).Should().BeOfType<PartialViewResult>().Which.Model.Should().BeOfType<List<PoiImportListItem>>().Which;
+
+			page.Imports.Should().ContainSingle().Which.IsActive.Should().BeTrue();
+			panel.Should().ContainSingle();
+			M<IPoiImportService>().Verify(x => x.GetRecentImportsAsync(DepartmentId, It.IsAny<int>(), null), Times.Never, "the department's list is for map administrators");
+		}
+
+		/// <summary>A running import waiting on a geocoder outage, and a finished one with every kind of unimported row.</summary>
+		private List<PoiImport> PoiImportsWithEveryReport()
+		{
+			var done = new PoiImport
+			{
+				PoiImportId = "done", PoiTypeId = 5, PoiTypeName = "Stores", FileName = "stores.csv", Status = (int)PoiImportStatus.Complete, TotalRows = 5,
+				ImportedCount = 2, GeocodedCount = 2, UnlocatedCount = 1, LookupFailedCount = 1, UnlocatedJson = "x", AddedOn = new DateTime(2026, 11, 11, 18, 0, 0)
+			};
+			var running = new PoiImport
+			{
+				PoiImportId = "running", PoiTypeId = 5, PoiTypeName = "Stores", FileName = "more.kml", Status = (int)PoiImportStatus.Locating, TotalRows = 40,
+				PendingRetryCount = 3, RetryAfter = new DateTime(2026, 11, 11, 19, 2, 0), AddedOn = new DateTime(2026, 11, 11, 19, 0, 0)
+			};
+			var imports = new List<PoiImport> { running, done };
+			M<IPoiImportService>().Setup(x => x.GetRecentImportsAsync(DepartmentId, 10, null)).ReturnsAsync(imports);
+			M<IPoiImportService>().Setup(x => x.GetUnlocatedRows(done)).Returns(new List<PoiImportRow>
+			{
+				new PoiImportRow { Name = "Gretna", Lookup = (int)PoiImportRowLookup.NotFound },
+				new PoiImportRow { Name = "Cherokee", Lookup = (int)PoiImportRowLookup.Unavailable }
+			});
+			return imports;
+		}
+
+		private static void ShouldReportEveryReason(List<PoiImportListItem> listed)
+		{
+			listed.Select(i => i.Status).Should().Equal("PoiImportStatusLocating", "PoiImportStatusComplete");
+			listed[0].IsActive.Should().BeTrue();
+			listed[0].Lines.Should().Equal("PoiImportPending", "PoiImportRetrying");
+			listed[1].TypeName.Should().Be("Stores");
+			listed[1].Lines.Should().Equal("PoiImportSummary", "PoiImportGeocoded",
+				"PoiImportUnlocated Gretna", "PoiImportUnlocatedHint",
+				"PoiImportLookupFailed Cherokee", "PoiImportLookupFailedHint");
 		}
 
 		private static IFormFile PoiUpload(string fileName)

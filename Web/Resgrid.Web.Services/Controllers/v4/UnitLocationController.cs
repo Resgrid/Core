@@ -159,7 +159,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!await UnitLocationVisibility.CanSeeAsync(_authorizationService, unit.UnitId, UserId, DepartmentId))
 				return Unauthorized();
 
-			var lastLocation = await _unitsService.GetLatestUnitLocationAsync(int.Parse(unitId));
+			var lastLocation = await _unitsService.GetLatestUnitLocationForDepartmentAsync(DepartmentId, unit.UnitId);
 
 			if (lastLocation != null)
 			{

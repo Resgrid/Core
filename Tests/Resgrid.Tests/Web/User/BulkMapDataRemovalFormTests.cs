@@ -119,7 +119,7 @@ namespace Resgrid.Tests.Web.User
 			builder.Services.AddSingleton(Mock.Of<IDepartmentGroupsService>());
 			builder.Services.AddSingleton(Mock.Of<IActionLogsService>());
 			builder.Services.AddSingleton(Mock.Of<IUnitsService>());
-			builder.Services.AddSingleton(Mock.Of<IKmlProvider>());
+			builder.Services.AddSingleton(Mock.Of<IPoiImportService>());
 			builder.Services.AddSingleton(Mock.Of<IPermissionsService>());
 			builder.Services.AddSingleton(Mock.Of<IPersonnelRolesService>());
 			builder.Services.AddSingleton(Mock.Of<IProtectedReadService>());

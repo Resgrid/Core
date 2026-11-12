@@ -70,6 +70,35 @@ namespace Resgrid.Model.Services
 			DateTime timeStamp, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
+		/// Saves a new staffing the caller built (UserId, DepartmentId, State, Timestamp, Note), as the CreateUserState overloads do.
+		/// The row commits before the protected-data step and the staffing event run, and its id is written back onto
+		/// <paramref name="userState"/>: a caller whose request fails after that can still tell which staffing it saved.
+		/// </summary>
+		/// <param name="userState">The new staffing; its UserStateId is set once the row is saved.</param>
+		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+		/// <returns>Task&lt;UserState&gt;.</returns>
+		Task<UserState> CreateUserStateAsync(UserState userState, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
+		/// Runs the protected-data step again for a staffing whose save failed after its insert (a resumed API request). Values
+		/// already protected are left as they are; nothing happens for a staffing that is gone or belongs to another department.
+		/// Throws when the protected write is still refused.
+		/// </summary>
+		/// <param name="departmentId">The department the staffing must belong to.</param>
+		/// <param name="userStateId">The saved staffing.</param>
+		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+		Task ProtectUserStateAsync(int departmentId, int userStateId, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
+		/// Sends the staffing event a save that failed after its insert never sent (a resumed API request), when the staffing is
+		/// still the member's latest; a newer staffing has announced itself and replaced this one. Nothing happens for a staffing
+		/// that is gone or belongs to another department.
+		/// </summary>
+		/// <param name="departmentId">The department the staffing must belong to.</param>
+		/// <param name="userStateId">The saved staffing.</param>
+		Task AnnounceUserStateAsync(int departmentId, int userStateId);
+
+		/// <summary>
 		/// Gets the states for department asynchronous.
 		/// </summary>
 		/// <param name="departmentId">The department identifier.</param>

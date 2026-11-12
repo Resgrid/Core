@@ -127,7 +127,11 @@ namespace Resgrid.Tests.Security.Audit20261005
 		public async Task Department_admins_manage_pois_and_prevention_admins_may_import_them()
 		{
 			(await Build<MappingController>(DepartmentAdmin).AddPOIType()).Should().BeOfType<ViewResult>();
-			(await Build<MappingController>(PreventionAdmin).ImportPOIs(5)).Should().BeOfType<ViewResult>();
+
+			// The import page reads the queued-upload message (TempData), which MVC always provides; a bare controller has none.
+			var importer = Build<MappingController>(PreventionAdmin);
+			importer.TempData = new Microsoft.AspNetCore.Mvc.ViewFeatures.TempDataDictionary(importer.HttpContext, Mock.Of<Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataProvider>());
+			(await importer.ImportPOIs(5)).Should().BeOfType<ViewResult>();
 			ShouldBeRefused(await Build<MappingController>(PreventionAdmin).AddPOIType());
 		}
 

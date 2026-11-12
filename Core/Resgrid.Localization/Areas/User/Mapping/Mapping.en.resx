@@ -195,6 +195,90 @@
   <data name="ImportPOIsButton" xml:space="preserve">
     <value>Import POIs</value>
   </data>
+  <data name="ImportPOIsHelp" xml:space="preserve">
+    <value>Upload a KML or KMZ file, or a CSV file whose first row names the columns. Each entry needs a latitude and longitude, or an address (an Address or Street column, plus optional City, State and Postal Code columns) that is located when the file is imported. A Name column names each POI and a Notes column adds a note.</value>
+  </data>
+  <data name="PoiImportQueued" xml:space="preserve">
+    <value>{0} was queued for import ({1} entries). Imports run in the background and usually start within a minute; their progress is listed below.</value>
+  </data>
+  <data name="PoiImportsHeader" xml:space="preserve">
+    <value>Imports</value>
+  </data>
+  <data name="PoiImportsHelp" xml:space="preserve">
+    <value>Imports run in the background and usually start within a minute. Refresh this page to see their progress.</value>
+  </data>
+  <data name="PoiImportsRefresh" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="PoiImportFileColumn" xml:space="preserve">
+    <value>File</value>
+  </data>
+  <data name="PoiImportUploadedColumn" xml:space="preserve">
+    <value>Uploaded</value>
+  </data>
+  <data name="PoiImportStatusColumn" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="PoiImportResultColumn" xml:space="preserve">
+    <value>Result</value>
+  </data>
+  <data name="PoiImportStatusQueued" xml:space="preserve">
+    <value>Queued</value>
+  </data>
+  <data name="PoiImportStatusLocating" xml:space="preserve">
+    <value>Locating addresses</value>
+  </data>
+  <data name="PoiImportStatusSaving" xml:space="preserve">
+    <value>Saving POIs</value>
+  </data>
+  <data name="PoiImportStatusComplete" xml:space="preserve">
+    <value>Complete</value>
+  </data>
+  <data name="PoiImportStatusFailed" xml:space="preserve">
+    <value>Failed</value>
+  </data>
+  <data name="PoiImportPending" xml:space="preserve">
+    <value>{0} entries to import.</value>
+  </data>
+  <data name="PoiImportSummary" xml:space="preserve">
+    <value>{0} of {1} entries imported.</value>
+  </data>
+  <data name="PoiImportGeocoded" xml:space="preserve">
+    <value>{0} were located from their address; check their positions on the map.</value>
+  </data>
+  <data name="PoiImportSkipped" xml:space="preserve">
+    <value>{0} were skipped because they have neither coordinates nor an address.</value>
+  </data>
+  <data name="PoiImportUnlocated" xml:space="preserve">
+    <value>{0} were not imported because their address could not be located:</value>
+  </data>
+  <data name="PoiImportUnlocatedMore" xml:space="preserve">
+    <value>and {0} more.</value>
+  </data>
+  <data name="PoiImportUnlocatedHint" xml:space="preserve">
+    <value>Correct those addresses, or add latitude and longitude columns, and import just those entries.</value>
+  </data>
+  <data name="PoiImportLimitReached" xml:space="preserve">
+    <value>Address lookup stops after {0} addresses per import, so some entries were not tried; import them in a separate file.</value>
+  </data>
+  <data name="PoiImportRetrying" xml:space="preserve">
+    <value>The address lookup service did not answer for {0} entries; they will be tried again after {1}.</value>
+  </data>
+  <data name="PoiImportLookupFailed" xml:space="preserve">
+    <value>{0} were not imported because the address lookup service did not answer, even after retrying:</value>
+  </data>
+  <data name="PoiImportLookupFailedHint" xml:space="preserve">
+    <value>This is usually temporary: import just those entries again later.</value>
+  </data>
+  <data name="PoiImportLookupNotConfigured" xml:space="preserve">
+    <value>{0} were not imported because address lookup is not set up on this server:</value>
+  </data>
+  <data name="PoiImportLookupNotConfiguredHint" xml:space="preserve">
+    <value>Add latitude and longitude columns to those entries and import them again.</value>
+  </data>
+  <data name="PoiImportNotTried" xml:space="preserve">
+    <value>{0} were not imported because the file has more addresses than one import looks up:</value>
+  </data>
   <!-- Layers -->
   <data name="LayersPageTitle" xml:space="preserve">
     <value>Layers</value>

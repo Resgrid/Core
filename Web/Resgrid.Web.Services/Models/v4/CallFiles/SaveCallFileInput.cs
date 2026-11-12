@@ -48,5 +48,12 @@ namespace Resgrid.Web.Services.Models.v4.CallFiles
 		/// When provided, overrides the department derived from the auth token.
 		/// </summary>
 		public string DepartmentId { get; set; }
+
+		/// <summary>
+		/// Optional idempotency key for an upload that may be sent again (an app's offline outbox sends its event id). The same
+		/// key in the same department returns the first file instead of attaching a second copy. The <c>Idempotency-Key</c>
+		/// header, when sent, takes precedence over this field.
+		/// </summary>
+		public string IdempotencyKey { get; set; }
 	}
 }

@@ -195,6 +195,90 @@
   <data name="ImportPOIsButton" xml:space="preserve">
     <value>Importuj POI</value>
   </data>
+  <data name="ImportPOIsHelp" xml:space="preserve">
+    <value>Prześlij plik KML lub KMZ albo plik CSV, którego pierwszy wiersz zawiera nazwy kolumn. Każdy wpis wymaga szerokości i długości geograficznej lub adresu (kolumna „Address” lub „Street” oraz opcjonalnie „City”, „State” i „Postal Code”), który zostanie zlokalizowany podczas importu. Kolumna „Name” nadaje nazwę każdemu POI, a kolumna „Notes” dodaje notatkę.</value>
+  </data>
+  <data name="PoiImportQueued" xml:space="preserve">
+    <value>Plik {0} został dodany do kolejki importu ({1} wpisów). Importy działają w tle i zwykle zaczynają się w ciągu minuty; ich postęp jest widoczny poniżej.</value>
+  </data>
+  <data name="PoiImportsHeader" xml:space="preserve">
+    <value>Importy</value>
+  </data>
+  <data name="PoiImportsHelp" xml:space="preserve">
+    <value>Importy działają w tle i zwykle zaczynają się w ciągu minuty. Odśwież tę stronę, aby zobaczyć ich postęp.</value>
+  </data>
+  <data name="PoiImportsRefresh" xml:space="preserve">
+    <value>Odśwież</value>
+  </data>
+  <data name="PoiImportFileColumn" xml:space="preserve">
+    <value>Plik</value>
+  </data>
+  <data name="PoiImportUploadedColumn" xml:space="preserve">
+    <value>Przesłano</value>
+  </data>
+  <data name="PoiImportStatusColumn" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="PoiImportResultColumn" xml:space="preserve">
+    <value>Wynik</value>
+  </data>
+  <data name="PoiImportStatusQueued" xml:space="preserve">
+    <value>W kolejce</value>
+  </data>
+  <data name="PoiImportStatusLocating" xml:space="preserve">
+    <value>Lokalizowanie adresów</value>
+  </data>
+  <data name="PoiImportStatusSaving" xml:space="preserve">
+    <value>Zapisywanie POI</value>
+  </data>
+  <data name="PoiImportStatusComplete" xml:space="preserve">
+    <value>Zakończony</value>
+  </data>
+  <data name="PoiImportStatusFailed" xml:space="preserve">
+    <value>Niepowodzenie</value>
+  </data>
+  <data name="PoiImportPending" xml:space="preserve">
+    <value>Wpisy do zaimportowania: {0}.</value>
+  </data>
+  <data name="PoiImportSummary" xml:space="preserve">
+    <value>Zaimportowano {0} z {1} wpisów.</value>
+  </data>
+  <data name="PoiImportGeocoded" xml:space="preserve">
+    <value>Zlokalizowane na podstawie adresu: {0}; sprawdź ich położenie na mapie.</value>
+  </data>
+  <data name="PoiImportSkipped" xml:space="preserve">
+    <value>Pominięte, ponieważ nie mają współrzędnych ani adresu: {0}.</value>
+  </data>
+  <data name="PoiImportUnlocated" xml:space="preserve">
+    <value>Niezaimportowane, ponieważ nie udało się zlokalizować adresu ({0}):</value>
+  </data>
+  <data name="PoiImportUnlocatedMore" xml:space="preserve">
+    <value>i {0} więcej.</value>
+  </data>
+  <data name="PoiImportUnlocatedHint" xml:space="preserve">
+    <value>Popraw te adresy lub dodaj kolumny szerokości i długości geograficznej, a następnie zaimportuj tylko te wpisy.</value>
+  </data>
+  <data name="PoiImportLimitReached" xml:space="preserve">
+    <value>Wyszukiwanie adresów kończy się po {0} adresach na import, więc niektórych wpisów nie sprawdzono; zaimportuj je w osobnym pliku.</value>
+  </data>
+  <data name="PoiImportRetrying" xml:space="preserve">
+    <value>Usługa wyszukiwania adresów nie odpowiedziała dla {0} wpisów; zostaną ponowione po {1}.</value>
+  </data>
+  <data name="PoiImportLookupFailed" xml:space="preserve">
+    <value>Niezaimportowane, ponieważ usługa wyszukiwania adresów nie odpowiedziała nawet po ponownych próbach ({0}):</value>
+  </data>
+  <data name="PoiImportLookupFailedHint" xml:space="preserve">
+    <value>Zwykle jest to chwilowe: zaimportuj później ponownie tylko te wpisy.</value>
+  </data>
+  <data name="PoiImportLookupNotConfigured" xml:space="preserve">
+    <value>Niezaimportowane, ponieważ wyszukiwanie adresów nie jest skonfigurowane na tym serwerze ({0}):</value>
+  </data>
+  <data name="PoiImportLookupNotConfiguredHint" xml:space="preserve">
+    <value>Dodaj do tych wpisów kolumny szerokości i długości geograficznej i zaimportuj je ponownie.</value>
+  </data>
+  <data name="PoiImportNotTried" xml:space="preserve">
+    <value>Niezaimportowane, ponieważ plik zawiera więcej adresów, niż wyszukuje jeden import ({0}):</value>
+  </data>
   <!-- Layers -->
   <data name="LayersPageTitle" xml:space="preserve">
     <value>Warstwy</value>

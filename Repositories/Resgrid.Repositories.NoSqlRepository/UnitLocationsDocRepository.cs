@@ -30,14 +30,16 @@ namespace Resgrid.Repositories.NoSqlRepository
 			}
 		}
 
-		public async Task<UnitsLocation> GetLatestLocationsByUnitIdAsync(int unitId)
+		public async Task<UnitsLocation> GetLatestLocationForUnitAsync(int departmentId, int unitId)
 		{
 			using (var connection = new NpgsqlConnection(Config.DataConfig.DocumentConnectionString))
 			{
 				await connection.OpenAsync();
+				// departmentid first: ix_unitlocations_department_unit_timestamp (departmentid, unitid, timestamp DESC) answers this
+				// with one index probe; filtered by unitid alone it cannot be used.
 				var unitLocationsData = await connection.QueryAsync<UnitsLocation>(
-					"SELECT data FROM public.unitlocations ul WHERE ul.unitid = @unitId ORDER BY timestamp DESC LIMIT 1;",
-					new { unitId });
+					"SELECT data FROM public.unitlocations ul WHERE ul.departmentid = @departmentId AND ul.unitid = @unitId ORDER BY ul.timestamp DESC LIMIT 1;",
+					new { departmentId, unitId });
 
 				if (unitLocationsData != null)
 					return unitLocationsData.FirstOrDefault();

@@ -648,6 +648,19 @@
             whose answer it never got, keyed by its Message-Id) names it, and a repeat returns the first result instead of a second call.
             </summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.ResolveIdempotencyKey(Microsoft.AspNetCore.Http.HttpRequest,System.String)">
+            <summary>
+            A request's idempotency key: the <see cref="F:Resgrid.Web.Services.Controllers.v4.CallsController.IdempotencyKeyHeader"/> header (the SMTP relay), else the body's
+            <c>IdempotencyKey</c> (an app's offline outbox sends its event id there). Null when neither is sent.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.ResolveCallIdempotencyKey(Microsoft.AspNetCore.Http.HttpRequest,System.String,System.Int32)">
+            <summary>
+            <see cref="M:Resgrid.Web.Services.Controllers.v4.CallsController.ResolveIdempotencyKey(Microsoft.AspNetCore.Http.HttpRequest,System.String)"/> for a write to one call (a note, an attachment): the call id is part of the key, so a
+            key reused for another call is a new request there and can never be answered with, or complete, the first call's receipt.
+            Null when no key is sent.
+            </summary>
+        </member>
         <member name="F:Resgrid.Web.Services.Controllers.v4.CallsController.SaveCallSteps">
             <summary>Everything SaveCall does after the call row is written; each is cleared from the receipt as it completes.</summary>
         </member>
@@ -5517,6 +5530,13 @@
             <param name="statusInput">StatusInput object with the Status/Action to set.</param>
             <returns>Returns HttpStatusCode Created if successful, BadRequest otherwise.</returns>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.UnitStatusController.SaveUnitStateRolesAsync(Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput,Resgrid.Model.Unit,System.Int32,System.Boolean,Resgrid.Model.InboundEmailReceiptClaim,System.Boolean,System.Threading.CancellationToken)">
+            <summary>
+            The members riding the unit for a saved state, and (when the department links them) their personnel statuses. Each
+            part is checked off on the receipt once written. A replay resuming a failed attempt (<paramref name="resuming"/>)
+            runs only the parts still owed and skips the riders that attempt already wrote, so nobody is seated or set twice.
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.UnitTrackingDevicesController">
             <summary>
             Administrative lifecycle and status operations for Unit hardware tracking bindings.
@@ -8493,6 +8513,27 @@
         <member name="M:Resgrid.Web.Services.Helpers.SharedSessionEndpoints.IsOperatorActivity(Microsoft.AspNetCore.Http.HttpRequest)">
             <summary>True when the client marked this request as caused by the operator (<c>X-Resgrid-Operator-Activity: 1</c>).</summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Helpers.StatusWriteReplayKeys">
+            <summary>
+            Idempotency keys for v4 status writes replayed from an app's offline outbox (InboundEmailReceipts kinds 7 to 9). Omni queues
+            every unit status, personnel status and staffing write and, when the answer is lost (15 s timeout, dropped connection),
+            sends the same body again with the same <c>EventId</c> (its outbox event id). Without a key each replay saved a second
+            status, announced it again and re-ran call attribution, auto-close and outstanding requirements.
+            <para>
+            <c>EventId</c> alone is not a safe key: apps that have no outbox send it blank, and Responder puts the destination's call or
+            station id in it, so two different statuses to the same call share one. The key therefore covers the subject (unit or
+            member), the status type, the destination and the client's timestamps as well: a replay matches on all of them, while two
+            real statuses differ at least in the time they were set. Without a client timestamp a replay cannot be told apart from a
+            deliberate repeat, so such a write is not tracked. Null means untracked: the write is saved as it always was.
+            </para>
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Helpers.StatusWriteReplayKeys.Build(System.String,System.String,System.String,System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.String,System.Nullable{System.Int32})">
+            <summary>
+            "sha256:{hex}" of the fields that identify the write, so the receipt key ("{kind}:{departmentId}:sha256:{hex}") always
+            fits the column and carries no member id or client text.
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Helpers.UnitLocationVisibility">
             <summary>
             The one rule for a unit's coordinates leaving the v4 API, the same one the map applies: they go out only when
@@ -9563,6 +9604,13 @@
             When provided, overrides the department derived from the auth token.
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallFiles.SaveCallFileInput.IdempotencyKey">
+            <summary>
+            Optional idempotency key for an upload that may be sent again (an app's offline outbox sends its event id). The same
+            key in the same department returns the first file instead of attaching a second copy. The <c>Idempotency-Key</c>
+            header, when sent, takes precedence over this field.
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.CallNotes.CallNotesResult">
             <summary>
             Gets the notes for a call
@@ -9678,6 +9726,13 @@
         <member name="P:Resgrid.Web.Services.Models.v4.CallNotes.SaveCallNoteInput.Longitude">
             <summary>
             Longitude of when the note was taken
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallNotes.SaveCallNoteInput.IdempotencyKey">
+            <summary>
+            Optional idempotency key for a note that may be sent again (an app's offline outbox sends its event id). The same key
+            in the same department returns the first note instead of adding a second one. The <c>Idempotency-Key</c> header, when
+            sent, takes precedence over this field.
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Calls.ActiveCallsResult">
@@ -10806,6 +10861,13 @@
             <summary>
             Department Id for the call. Only used in System API Key (hosted multi-department) mode.
             When provided, overrides the department derived from the auth token.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.IdempotencyKey">
+            <summary>
+            Optional idempotency key for a create that may be sent again (an app's offline outbox sends its event id). The same
+            key in the same department returns the first call instead of creating and paging a second one. The
+            <c>Idempotency-Key</c> header, when sent, takes precedence over this field.
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Calls.PendingCallsResult">

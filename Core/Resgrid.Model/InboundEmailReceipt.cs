@@ -77,7 +77,10 @@ namespace Resgrid.Model
 
 	/// <summary>
 	/// What a receipt guards. 1 to 4 are Postmark deliveries to <c>api/Email/Receive</c>, by where the email was addressed; 5 and
-	/// 6 are v4 requests carrying an <c>Idempotency-Key</c> (the SMTP relay sends the email's Message-Id), keyed per department.
+	/// 6 are v4 requests carrying an <c>Idempotency-Key</c> (the SMTP relay sends the email's Message-Id), keyed per department;
+	/// 7 to 9 are v4 status writes replayed from an app's offline outbox with the same <c>EventId</c>
+	/// (<c>StatusWriteReplayKeys</c>), keyed per department; 10 is a v4 call note sent with an idempotency key (header or body
+	/// <c>IdempotencyKey</c>), keyed per department. Persisted: never renumber.
 	/// </summary>
 	public enum InboundEmailKinds
 	{
@@ -86,7 +89,11 @@ namespace Resgrid.Model
 		GroupDispatch = 3,
 		GroupMessage = 4,
 		ApiCall = 5,
-		ApiCallFile = 6
+		ApiCallFile = 6,
+		ApiUnitStatus = 7,
+		ApiPersonStatus = 8,
+		ApiPersonStaffing = 9,
+		ApiCallNote = 10
 	}
 
 	public enum InboundEmailReceiptStates
@@ -104,6 +111,8 @@ namespace Resgrid.Model
 	/// <summary>
 	/// Work owed to a saved call or message, finished by a redelivery when the attempt that saved it failed. v4 SaveCall clears
 	/// each step as it completes, so a retry only repeats the steps that never happened (no second Call Added event or page).
+	/// v4 SaveUnitStatus owes <see cref="UnitStateRoles"/> (the riding roles and their linked personnel statuses) to its saved
+	/// unit state.
 	/// </summary>
 	[Flags]
 	public enum InboundEmailPendingSteps
@@ -116,6 +125,19 @@ namespace Resgrid.Model
 		WeatherAlerts = 16,
 		CallAddedEvent = 32,
 		DispatchStatuses = 64,
-		CustomFieldValues = 128
+		CustomFieldValues = 128,
+		UnitStateRoles = 256,
+		/// <summary>The riders' own "on unit" statuses (department setting: personnel on a unit take its status).</summary>
+		UnitLinkedStatuses = 512,
+		/// <summary>
+		/// The saved row's protected-data step: the save failed after its insert, so the row may still be plaintext and a resumed
+		/// request protects it before answering.
+		/// </summary>
+		ProtectedWrite = 1024,
+		/// <summary>
+		/// What a status save does after its row is protected and that the failed save never reached: the staffing event, or a unit
+		/// state's call close-out, outstanding-requirement fill and navigation end. Run once by the resumed request.
+		/// </summary>
+		StatusFollowUp = 2048
 	}
 }

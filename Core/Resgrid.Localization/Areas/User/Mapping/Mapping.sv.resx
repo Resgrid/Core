@@ -195,6 +195,90 @@
   <data name="ImportPOIsButton" xml:space="preserve">
     <value>Importera POI</value>
   </data>
+  <data name="ImportPOIsHelp" xml:space="preserve">
+    <value>Ladda upp en KML- eller KMZ-fil, eller en CSV-fil vars första rad namnger kolumnerna. Varje post behöver latitud och longitud, eller en adress (en kolumn ”Address” eller ”Street”, med valfria kolumner ”City”, ”State” och ”Postal Code”) som slås upp vid importen. En kolumn ”Name” namnger varje POI och en kolumn ”Notes” lägger till en anteckning.</value>
+  </data>
+  <data name="PoiImportQueued" xml:space="preserve">
+    <value>{0} har köats för import ({1} poster). Importer körs i bakgrunden och startar oftast inom en minut; deras förlopp visas nedan.</value>
+  </data>
+  <data name="PoiImportsHeader" xml:space="preserve">
+    <value>Importer</value>
+  </data>
+  <data name="PoiImportsHelp" xml:space="preserve">
+    <value>Importer körs i bakgrunden och startar oftast inom en minut. Uppdatera sidan för att se förloppet.</value>
+  </data>
+  <data name="PoiImportsRefresh" xml:space="preserve">
+    <value>Uppdatera</value>
+  </data>
+  <data name="PoiImportFileColumn" xml:space="preserve">
+    <value>Fil</value>
+  </data>
+  <data name="PoiImportUploadedColumn" xml:space="preserve">
+    <value>Uppladdad</value>
+  </data>
+  <data name="PoiImportStatusColumn" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="PoiImportResultColumn" xml:space="preserve">
+    <value>Resultat</value>
+  </data>
+  <data name="PoiImportStatusQueued" xml:space="preserve">
+    <value>I kö</value>
+  </data>
+  <data name="PoiImportStatusLocating" xml:space="preserve">
+    <value>Lokaliserar adresser</value>
+  </data>
+  <data name="PoiImportStatusSaving" xml:space="preserve">
+    <value>Sparar POI</value>
+  </data>
+  <data name="PoiImportStatusComplete" xml:space="preserve">
+    <value>Klar</value>
+  </data>
+  <data name="PoiImportStatusFailed" xml:space="preserve">
+    <value>Misslyckades</value>
+  </data>
+  <data name="PoiImportPending" xml:space="preserve">
+    <value>{0} poster att importera.</value>
+  </data>
+  <data name="PoiImportSummary" xml:space="preserve">
+    <value>{0} av {1} poster importerade.</value>
+  </data>
+  <data name="PoiImportGeocoded" xml:space="preserve">
+    <value>{0} lokaliserades utifrån sin adress; kontrollera deras position på kartan.</value>
+  </data>
+  <data name="PoiImportSkipped" xml:space="preserve">
+    <value>{0} hoppades över eftersom de saknar både koordinater och adress.</value>
+  </data>
+  <data name="PoiImportUnlocated" xml:space="preserve">
+    <value>{0} importerades inte eftersom adressen inte kunde lokaliseras:</value>
+  </data>
+  <data name="PoiImportUnlocatedMore" xml:space="preserve">
+    <value>och {0} till.</value>
+  </data>
+  <data name="PoiImportUnlocatedHint" xml:space="preserve">
+    <value>Rätta adresserna, eller lägg till kolumner för latitud och longitud, och importera bara de posterna.</value>
+  </data>
+  <data name="PoiImportLimitReached" xml:space="preserve">
+    <value>Adressökningen avbryts efter {0} adresser per import, så vissa poster prövades inte; importera dem i en separat fil.</value>
+  </data>
+  <data name="PoiImportRetrying" xml:space="preserve">
+    <value>Adresstjänsten svarade inte för {0} poster; de försöks igen efter {1}.</value>
+  </data>
+  <data name="PoiImportLookupFailed" xml:space="preserve">
+    <value>{0} importerades inte eftersom adresstjänsten inte svarade, inte ens efter nya försök:</value>
+  </data>
+  <data name="PoiImportLookupFailedHint" xml:space="preserve">
+    <value>Det är oftast tillfälligt: importera bara de posterna igen senare.</value>
+  </data>
+  <data name="PoiImportLookupNotConfigured" xml:space="preserve">
+    <value>{0} importerades inte eftersom adressökning inte är konfigurerad på den här servern:</value>
+  </data>
+  <data name="PoiImportLookupNotConfiguredHint" xml:space="preserve">
+    <value>Lägg till kolumner för latitud och longitud för de posterna och importera dem igen.</value>
+  </data>
+  <data name="PoiImportNotTried" xml:space="preserve">
+    <value>{0} importerades inte eftersom filen har fler adresser än en import slår upp:</value>
+  </data>
   <!-- Layers -->
   <data name="LayersPageTitle" xml:space="preserve">
     <value>Lager</value>

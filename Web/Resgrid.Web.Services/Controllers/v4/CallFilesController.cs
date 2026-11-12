@@ -309,25 +309,83 @@ namespace Resgrid.Web.Services.Controllers.v4
 					title: "Recent multi-factor verification is required to modify protected data.",
 					statusCode: StatusCodes.Status403Forbidden);
 
-			// The SMTP relay keys each attachment of a message (CallsController.IdempotencyKeyHeader); when it retries a message
-			// whose call already exists, the attachments it already uploaded come back with their ids instead of twice.
+			// The SMTP relay keys each attachment of a message (CallsController.IdempotencyKeyHeader) and an app's offline outbox
+			// sends its event id as the body's IdempotencyKey; a resent upload comes back with the first file's id instead of twice.
+			// Members' keys are per call. The relay (system key) keeps the key its receipts have used since before per-call keys,
+			// so a retry that spans the upgrade still finds its receipt; its keys name one message, and a message makes one call.
+			var idempotencyKey = IsSystemApiKeyRequest
+				? CallsController.ResolveIdempotencyKey(Request, input.IdempotencyKey)
+				: CallsController.ResolveCallIdempotencyKey(Request, input.IdempotencyKey, call.CallId);
 			var receipt = await _inboundEmailReceiptsService.ClaimApiRequestAsync(InboundEmailKinds.ApiCallFile, call.DepartmentId,
-				Request.Headers[CallsController.IdempotencyKeyHeader].ToString(), cancellationToken);
+				idempotencyKey, cancellationToken);
 
 			if (receipt.Outcome == InboundEmailClaimOutcomes.InProgress)
 				return StatusCode(StatusCodes.Status409Conflict);
 
-			if (receipt.EntityId.HasValue &&
-				(receipt.Outcome == InboundEmailClaimOutcomes.AlreadyProcessed || receipt.Outcome == InboundEmailClaimOutcomes.Resume))
-			{
-				await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
+			// Completed only once the attachment is protected, so a finished request has nothing left to do.
+			if (receipt.Outcome == InboundEmailClaimOutcomes.AlreadyProcessed && receipt.EntityId.HasValue)
 				return SavedFileResult(result, call.DepartmentId, receipt.EntityId.Value);
+
+			CallAttachment saved = null;
+			if (receipt.Outcome == InboundEmailClaimOutcomes.Resume)
+			{
+				// The first attempt saved the attachment and failed before it was protected: protect that one rather than add another.
+				saved = await _callsService.GetCallAttachmentAsync(receipt.EntityId.Value);
+
+				// Deleted since: nothing is left to protect.
+				if (saved == null)
+				{
+					await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
+					return SavedFileResult(result, call.DepartmentId, receipt.EntityId.Value);
+				}
+
+				// Members' keys are per call and the relay's name one message (one call), so this should not happen; never answer
+				// for, or complete, another call's attachment.
+				if (saved.CallId != call.CallId)
+				{
+					await _inboundEmailReceiptsService.ReleaseAsync(receipt);
+					return StatusCode(StatusCodes.Status409Conflict);
+				}
+			}
+			else
+			{
+				try
+				{
+					saved = await _callsService.SaveCallAttachmentAsync(callAttachment, cancellationToken);
+				}
+				catch
+				{
+					// The attachment row commits before the service's own protection step: keep the id a failure left behind, so
+					// the retry protects that attachment instead of saving a second one.
+					if (callAttachment.CallAttachmentId > 0)
+						await _inboundEmailReceiptsService.MarkSavedAsync(receipt, callAttachment.CallAttachmentId, InboundEmailPendingSteps.None);
+
+					await _inboundEmailReceiptsService.ReleaseAsync(receipt);
+					throw;
+				}
+
+				// Recorded as soon as the row exists, so a protected-write failure below is finished by the retry, not saved twice.
+				await _inboundEmailReceiptsService.MarkSavedAsync(receipt, saved.CallAttachmentId, InboundEmailPendingSteps.None);
 			}
 
-			CallAttachment saved;
 			try
 			{
-				saved = await _callsService.SaveCallAttachmentAsync(callAttachment, cancellationToken);
+				// ADP two-phase write (plan 19.2): encrypt names/coordinates AND the rgdpb binary
+				// payload now that the identity pk (an AAD component) exists, then persist the
+				// enveloped row. Already-enveloped values are skipped, so a resumed request runs it again safely.
+				var protectedWrite = await _protectedWriteService.PrepareCallAttachmentWriteAsync(call.DepartmentId, saved,
+					Request.Headers[DataProtectionController.GrantHeader].ToString(), UserId, IsSystemApiKeyRequest, cancellationToken);
+				if (!protectedWrite.Success)
+				{
+					Resgrid.Framework.Logging.LogError($"ADP protected write failed AFTER insert for call attachment {saved.CallAttachmentId} in department {call.DepartmentId} ({protectedWrite.Reason}); transient plaintext row pending re-encryption.");
+					// Not completed: a retry with the same idempotency key protects this attachment instead of saving another.
+					await _inboundEmailReceiptsService.ReleaseAsync(receipt);
+					return Problem(type: protectedWrite.Reason,
+						title: "The attachment was saved but could not be protected; protected storage is temporarily unavailable. Retry the request with the same idempotency key to protect it; a resubmission without one saves a second attachment.",
+						statusCode: StatusCodes.Status503ServiceUnavailable);
+				}
+				if (protectedWrite.IsProtected)
+					saved = await _callsService.SaveCallAttachmentAsync(saved, cancellationToken);
 			}
 			catch
 			{
@@ -335,25 +393,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				throw;
 			}
 
-			// Recorded as soon as the row exists: a protected-write failure below still has the row (the sweep encrypts it).
-			await _inboundEmailReceiptsService.MarkSavedAsync(receipt, saved.CallAttachmentId, InboundEmailPendingSteps.None);
 			await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
-
-			// ADP two-phase write (plan 19.2): encrypt names/coordinates AND the rgdpb binary
-			// payload now that the identity pk (an AAD component) exists, then persist the
-			// enveloped row.
-			var protectedWrite = await _protectedWriteService.PrepareCallAttachmentWriteAsync(call.DepartmentId, saved,
-				Request.Headers[DataProtectionController.GrantHeader].ToString(), UserId, IsSystemApiKeyRequest, cancellationToken);
-			if (!protectedWrite.Success)
-			{
-				Resgrid.Framework.Logging.LogError($"ADP protected write failed AFTER insert for call attachment {saved.CallAttachmentId} in department {call.DepartmentId} ({protectedWrite.Reason}); transient plaintext row pending re-encryption.");
-				return Problem(type: protectedWrite.Reason,
-					title: "The attachment was saved but could not be protected; protected storage is temporarily unavailable. Do not resubmit — the attachment will be encrypted automatically.",
-					statusCode: StatusCodes.Status503ServiceUnavailable);
-			}
-			if (protectedWrite.IsProtected)
-				saved = await _callsService.SaveCallAttachmentAsync(saved, cancellationToken);
-
 			return SavedFileResult(result, call.DepartmentId, saved.CallAttachmentId);
 		}
 

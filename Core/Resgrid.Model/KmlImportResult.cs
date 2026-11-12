@@ -8,10 +8,29 @@ namespace Resgrid.Model
 		/// <summary>Placemarks with a usable position.</summary>
 		public List<Coordinates> Coordinates { get; set; } = new List<Coordinates>();
 
-		/// <summary>Placemarks passed over because they have no position, or one outside the valid latitude/longitude range.</summary>
+		/// <summary>
+		/// Placemarks without a usable position that carry an address the caller can geocode: an &lt;address&gt; element,
+		/// address columns in ExtendedData, or both. Google My Maps exports a layer it located "by address" this way,
+		/// with no &lt;Point&gt; at all. Not counted in <see cref="SkippedCount"/>.
+		/// </summary>
+		public List<KmlAddressPlacemark> AddressOnly { get; set; } = new List<KmlAddressPlacemark>();
+
+		/// <summary>Placemarks passed over because they have neither a usable position nor an address.</summary>
 		public int SkippedCount { get; set; }
 
 		/// <summary>Set when the file could not be read at all: a message the uploader can act on.</summary>
 		public string Error { get; set; }
+	}
+
+	/// <summary>A placemark that has no usable position but may be located from its address.</summary>
+	public class KmlAddressPlacemark
+	{
+		public string Name { get; set; }
+
+		/// <summary>The placemark's &lt;address&gt; element, when it has one.</summary>
+		public string Address { get; set; }
+
+		/// <summary>ExtendedData Data and SimpleData values in document order, keyed by their name attribute.</summary>
+		public List<KeyValuePair<string, string>> Fields { get; set; } = new List<KeyValuePair<string, string>>();
 	}
 }

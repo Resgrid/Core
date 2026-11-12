@@ -1,0 +1,70 @@
+@model List<Resgrid.Web.Areas.User.Models.Mapping.PoiImportListItem>
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.Mapping> localizer
+@* The imports panel of the POIs page and the Import POIs page. While an import runs, resgrid.mapping.pois.js re-fetches
+   this partial (Mapping/PoiImportsPanel) and swaps it in; data-active tells the script whether to keep polling. Only map
+   administrators can open the POIs page the refresh link goes to. *@
+@{
+	var active = Model != null && Model.Any(i => i.IsActive);
+}
+<div id="poiImportsPanel" data-active="@(active ? "true" : "false")">
+	@if (Model != null && Model.Count > 0)
+	{
+		<div class="ibox float-e-margins">
+			<div class="ibox-title">
+				<h5>@localizer["PoiImportsHeader"]</h5>
+				@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				{
+					<div class="ibox-tools">
+						<a asp-controller="Mapping" asp-action="POIs" asp-route-area="User" class="btn btn-xs btn-white">@localizer["PoiImportsRefresh"]</a>
+					</div>
+				}
+			</div>
+			<div class="ibox-content">
+				@if (active)
+				{
+					<p class="text-muted">@localizer["PoiImportsHelp"]</p>
+				}
+				<div class="table-responsive">
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th>@localizer["PoiImportFileColumn"]</th>
+								<th>@localizer["PoiImportUploadedColumn"]</th>
+								<th>@localizer["PoiImportStatusColumn"]</th>
+								<th>@localizer["PoiImportResultColumn"]</th>
+							</tr>
+						</thead>
+						<tbody>
+							@foreach (var import in Model)
+							{
+								<tr>
+									<td>
+										@import.FileName
+										@if (!String.IsNullOrEmpty(import.TypeName))
+										{
+											<br /><small class="text-muted">@import.TypeName</small>
+										}
+									</td>
+									<td>@import.Uploaded.ToString("g")</td>
+									<td>
+										<span class="label @(import.IsFailed ? "label-danger" : import.IsActive ? "label-info" : "label-primary")">@import.Status</span>
+									</td>
+									<td>
+										@foreach (var line in import.Lines)
+										{
+											<div>@line</div>
+										}
+										@if (!String.IsNullOrEmpty(import.Error))
+										{
+											<div class="text-danger">@import.Error</div>
+										}
+									</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	}
+</div>

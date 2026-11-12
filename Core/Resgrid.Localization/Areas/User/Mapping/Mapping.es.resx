@@ -195,6 +195,90 @@
   <data name="ImportPOIsButton" xml:space="preserve">
     <value>Importar PDI</value>
   </data>
+  <data name="ImportPOIsHelp" xml:space="preserve">
+    <value>Suba un archivo KML o KMZ, o un archivo CSV cuya primera fila nombre las columnas. Cada entrada necesita latitud y longitud, o una dirección (una columna "Address" o "Street", con columnas opcionales "City", "State" y "Postal Code") que se localiza al importar el archivo. Una columna "Name" da nombre a cada PDI y una columna "Notes" añade una nota.</value>
+  </data>
+  <data name="PoiImportQueued" xml:space="preserve">
+    <value>{0} se ha puesto en cola para importar ({1} entradas). Las importaciones se ejecutan en segundo plano y suelen empezar en menos de un minuto; su progreso aparece abajo.</value>
+  </data>
+  <data name="PoiImportsHeader" xml:space="preserve">
+    <value>Importaciones</value>
+  </data>
+  <data name="PoiImportsHelp" xml:space="preserve">
+    <value>Las importaciones se ejecutan en segundo plano y suelen empezar en menos de un minuto. Actualice esta página para ver su progreso.</value>
+  </data>
+  <data name="PoiImportsRefresh" xml:space="preserve">
+    <value>Actualizar</value>
+  </data>
+  <data name="PoiImportFileColumn" xml:space="preserve">
+    <value>Archivo</value>
+  </data>
+  <data name="PoiImportUploadedColumn" xml:space="preserve">
+    <value>Subido</value>
+  </data>
+  <data name="PoiImportStatusColumn" xml:space="preserve">
+    <value>Estado</value>
+  </data>
+  <data name="PoiImportResultColumn" xml:space="preserve">
+    <value>Resultado</value>
+  </data>
+  <data name="PoiImportStatusQueued" xml:space="preserve">
+    <value>En cola</value>
+  </data>
+  <data name="PoiImportStatusLocating" xml:space="preserve">
+    <value>Localizando direcciones</value>
+  </data>
+  <data name="PoiImportStatusSaving" xml:space="preserve">
+    <value>Guardando PDI</value>
+  </data>
+  <data name="PoiImportStatusComplete" xml:space="preserve">
+    <value>Completada</value>
+  </data>
+  <data name="PoiImportStatusFailed" xml:space="preserve">
+    <value>Fallida</value>
+  </data>
+  <data name="PoiImportPending" xml:space="preserve">
+    <value>{0} entradas por importar.</value>
+  </data>
+  <data name="PoiImportSummary" xml:space="preserve">
+    <value>{0} de {1} entradas importadas.</value>
+  </data>
+  <data name="PoiImportGeocoded" xml:space="preserve">
+    <value>{0} se localizaron a partir de su dirección; compruebe su posición en el mapa.</value>
+  </data>
+  <data name="PoiImportSkipped" xml:space="preserve">
+    <value>{0} se omitieron porque no tienen coordenadas ni dirección.</value>
+  </data>
+  <data name="PoiImportUnlocated" xml:space="preserve">
+    <value>{0} no se importaron porque no se pudo localizar su dirección:</value>
+  </data>
+  <data name="PoiImportUnlocatedMore" xml:space="preserve">
+    <value>y {0} más.</value>
+  </data>
+  <data name="PoiImportUnlocatedHint" xml:space="preserve">
+    <value>Corrija esas direcciones, o añada columnas de latitud y longitud, e importe solo esas entradas.</value>
+  </data>
+  <data name="PoiImportLimitReached" xml:space="preserve">
+    <value>La búsqueda de direcciones se detiene tras {0} direcciones por importación, por lo que algunas entradas no se intentaron; impórtelas en un archivo aparte.</value>
+  </data>
+  <data name="PoiImportRetrying" xml:space="preserve">
+    <value>El servicio de búsqueda de direcciones no respondió para {0} entradas; se volverán a intentar después de las {1}.</value>
+  </data>
+  <data name="PoiImportLookupFailed" xml:space="preserve">
+    <value>{0} no se importaron porque el servicio de búsqueda de direcciones no respondió, ni siquiera tras reintentarlo:</value>
+  </data>
+  <data name="PoiImportLookupFailedHint" xml:space="preserve">
+    <value>Suele ser temporal: vuelva a importar solo esas entradas más tarde.</value>
+  </data>
+  <data name="PoiImportLookupNotConfigured" xml:space="preserve">
+    <value>{0} no se importaron porque la búsqueda de direcciones no está configurada en este servidor:</value>
+  </data>
+  <data name="PoiImportLookupNotConfiguredHint" xml:space="preserve">
+    <value>Añada columnas de latitud y longitud a esas entradas e impórtelas de nuevo.</value>
+  </data>
+  <data name="PoiImportNotTried" xml:space="preserve">
+    <value>{0} no se importaron porque el archivo tiene más direcciones de las que busca una importación:</value>
+  </data>
   <!-- Layers -->
   <data name="LayersPageTitle" xml:space="preserve">
     <value>Capas</value>

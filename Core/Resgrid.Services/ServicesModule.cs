@@ -264,6 +264,7 @@ namespace Resgrid.Services
 			builder.RegisterType<PermissionsService>().As<IPermissionsService>().InstancePerLifetimeScope();
 			builder.RegisterType<ImageService>().As<IImageService>().InstancePerLifetimeScope();
 			builder.RegisterType<MappingService>().As<IMappingService>().InstancePerLifetimeScope();
+			builder.RegisterType<PoiImportService>().As<IPoiImportService>().InstancePerLifetimeScope();
 			builder.RegisterType<InventoryService>().As<IInventoryService>().InstancePerLifetimeScope();
 			//builder.RegisterType<DepartmentProfileService>().As<IDepartmentProfileService>().InstancePerLifetimeScope();
 			builder.RegisterType<FileService>().As<IFileService>().InstancePerLifetimeScope();

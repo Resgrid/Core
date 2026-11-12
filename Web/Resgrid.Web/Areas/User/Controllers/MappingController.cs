@@ -39,7 +39,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IActionLogsService _actionLogsService;
 		private readonly IUnitsService _unitsService;
 		private readonly IMappingService _mappingService;
-		private readonly IKmlProvider _kmlProvider;
+		private readonly IPoiImportService _poiImportService;
 		private readonly IPermissionsService _permissionsService;
 		private readonly IPersonnelRolesService _personnelRolesService;
 		private readonly IProtectedReadService _protectedReadService;
@@ -57,7 +57,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			IGeoLocationProvider geoLocationProvider, ICallsService callsService,
 			IDepartmentsService departmentsService, IDepartmentGroupsService departmentGroupsService,
 			IActionLogsService actionLogsService, IUnitsService unitsService, IMappingService mappingService,
-			IKmlProvider kmlProvider, IPermissionsService permissionsService, IPersonnelRolesService personnelRolesService,
+			IPoiImportService poiImportService, IPermissionsService permissionsService, IPersonnelRolesService personnelRolesService,
 			IProtectedReadService protectedReadService, IRecordsHydrantsService hydrantsService, IDispatchScopeService dispatchScopeService,
 			Model.Services.IAuthorizationService authorizationService, ITypeIconsService typeIconsService,
 			Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.Icons.IconUpload> iconLocalizer,
@@ -81,7 +81,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_actionLogsService = actionLogsService;
 			_unitsService = unitsService;
 			_mappingService = mappingService;
-			_kmlProvider = kmlProvider;
+			_poiImportService = poiImportService;
 			_permissionsService = permissionsService;
 			_personnelRolesService = personnelRolesService;
 			_protectedReadService = protectedReadService;
@@ -422,8 +422,23 @@ namespace Resgrid.Web.Areas.User.Controllers
 			modal.Types = await _mappingService.GetPOITypesForDepartmentAsync(DepartmentId);
 			modal.Message = TempData["ImportPOIsMessage"] as string;
 			modal.ErrorMessage = TempData["ImportPOIsError"] as string;
+			modal.Imports = await GetPoiImportListAsync();
 
 			return View(modal);
+		}
+
+		/// <summary>
+		/// The imports panel of the POIs page (and of the Import POIs page, for importers who cannot open POIs); the page polls it
+		/// while an import is running.
+		/// </summary>
+		[HttpGet]
+		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+		public async Task<IActionResult> PoiImportsPanel()
+		{
+			if (!CanImportPois())
+				return Unauthorized();
+
+			return PartialView("_PoiImports", await GetPoiImportListAsync());
 		}
 
 		[HttpGet]
@@ -448,6 +463,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var model = new ImportPOIsView { HydrantsEnabled = await HydrantsAvailableAsync() };
 			model.TypeId = poiTypeId;
+			// An importer who cannot open the POIs page comes back here after an upload, to follow the import and read its report.
+			model.Message = TempData["ImportPOIsMessage"] as string;
+			model.Imports = await GetPoiImportListAsync();
 
 			return View(model);
 		}
@@ -467,8 +485,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				var extension = Path.GetExtension(fileToUpload.FileName).ToLower();
 
-				if (extension != ".kml" && extension != ".kmz")
-					ModelState.AddModelError("fileToUpload", string.Format("File type ({0}) is not a KMZ or KML extension to import POIs.", extension));
+				if (extension != ".kml" && extension != ".kmz" && extension != ".csv")
+					ModelState.AddModelError("fileToUpload", string.Format("File type ({0}) cannot be imported as POIs: upload a KML, KMZ or CSV file.", extension));
 
 				if (fileToUpload.Length > 10000000)
 					ModelState.AddModelError("fileToUpload", "Document is too large, must be smaller then 10MB.");
@@ -485,45 +503,112 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (type == null || type.DepartmentId != DepartmentId)
 					return Unauthorized();
 
-				var import = _kmlProvider.ImportFile(fileToUpload.OpenReadStream(), Path.GetExtension(fileToUpload.FileName).ToLower() == ".kmz");
+				// The request only reads the file, so a bad file is reported here; geocoding and saving run in worker 79, as they
+				// can take minutes for a large spreadsheet of addresses.
+				PoiImportFile file;
+				using (var upload = fileToUpload.OpenReadStream())
+					file = _poiImportService.ReadFile(upload, fileToUpload.FileName);
 
-				if (!string.IsNullOrEmpty(import.Error))
+				if (!string.IsNullOrEmpty(file.Error))
 				{
-					ModelState.AddModelError("fileToUpload", import.Error);
+					ModelState.AddModelError("fileToUpload", file.Error);
 					return View(modal);
 				}
 
-				int importedCount = 0;
-				foreach (var coordinate in import.Coordinates)
+				if (file.Rows.Count == 0)
 				{
-					var poi = new Poi();
-					poi.PoiTypeId = modal.TypeId;
-					// Pois.Name is nvarchar(250); a longer placemark name would fail the whole import.
-					poi.Name = coordinate.Name?.Truncate(250);
-
-					if (coordinate.Latitude.HasValue && coordinate.Longitude.HasValue)
-					{
-						poi.Latitude = coordinate.Latitude.Value;
-						poi.Longitude = coordinate.Longitude.Value;
-
-						await _mappingService.SavePOIAsync(poi, cancellationToken);
-						importedCount++;
-					}
+					ModelState.AddModelError("fileToUpload", file.SkippedCount > 0
+						? string.Format("None of the {0} entries in the file have valid coordinates or an address (check that latitude and longitude are not swapped or blank).", file.SkippedCount)
+						: "No placemarks or rows with coordinates or an address could be found in the uploaded file.");
+					return View(modal);
 				}
 
-				if (importedCount > 0)
-					TempData["ImportPOIsMessage"] = import.SkippedCount > 0
-						? string.Format("Successfully imported {0} POI(s). {1} placemark(s) were skipped because they have no valid coordinates.", importedCount, import.SkippedCount)
-						: string.Format("Successfully imported {0} POI(s).", importedCount);
-				else if (import.SkippedCount > 0)
-					TempData["ImportPOIsError"] = string.Format("No POIs were imported: none of the {0} placemark(s) in the file have valid coordinates (check that latitude and longitude are not swapped or blank).", import.SkippedCount);
-				else
-					TempData["ImportPOIsError"] = "No valid placemarks with coordinates could be found in the uploaded file.";
+				// Not the request's token: an upload the browser abandons after this point is still queued whole.
+				await _poiImportService.QueueImportAsync(DepartmentId, modal.TypeId, type.Name, UserId, fileToUpload.FileName, file, CancellationToken.None);
 
-				return RedirectToAction("POIs");
+				TempData["ImportPOIsMessage"] = string.Format(_localizer["PoiImportQueued"].Value, FileHelper.GetSafeFileName(fileToUpload.FileName), file.Rows.Count);
+
+				// A hydrant manager may import POIs without managing map data, so the POIs page is closed to them.
+				return CanManageMapData() ? RedirectToAction("POIs") : RedirectToAction("ImportPOIs", new { poiTypeId = modal.TypeId });
 			}
 
 			return View(modal);
+		}
+
+		/// <summary>
+		/// The recent POI imports the caller may follow: the department's for map administrators, otherwise only the caller's
+		/// own uploads (an importer gets the reports of what they uploaded, not the department's map data).
+		/// </summary>
+		private async Task<List<PoiImportListItem>> GetPoiImportListAsync()
+		{
+			var imports = await _poiImportService.GetRecentImportsAsync(DepartmentId, 10, CanManageMapData() ? null : UserId);
+			if (imports == null || imports.Count == 0)
+				return new List<PoiImportListItem>();
+
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			DateTime Local(DateTime utc) => department != null ? utc.TimeConverter(department) : utc;
+			var items = new List<PoiImportListItem>();
+
+			foreach (var import in imports)
+			{
+				var status = (PoiImportStatus)import.Status;
+				var item = new PoiImportListItem
+				{
+					FileName = import.FileName,
+					TypeName = import.PoiTypeName,
+					Uploaded = Local(import.AddedOn),
+					Status = _localizer["PoiImportStatus" + status].Value,
+					IsActive = !import.IsFinished,
+					IsFailed = status == PoiImportStatus.Failed,
+					Error = import.Error
+				};
+
+				if (!import.IsFinished)
+				{
+					item.Lines.Add(string.Format(_localizer["PoiImportPending"].Value, import.TotalRows));
+					if (import.PendingRetryCount > 0 && import.RetryAfter.HasValue)
+						item.Lines.Add(string.Format(_localizer["PoiImportRetrying"].Value, import.PendingRetryCount, Local(import.RetryAfter.Value).ToString("t")));
+				}
+				else
+				{
+					item.Lines.Add(string.Format(_localizer["PoiImportSummary"].Value, import.ImportedCount, import.TotalRows + import.SkippedCount));
+					if (import.GeocodedCount > 0)
+						item.Lines.Add(string.Format(_localizer["PoiImportGeocoded"].Value, import.GeocodedCount));
+					if (import.SkippedCount > 0)
+						item.Lines.Add(string.Format(_localizer["PoiImportSkipped"].Value, import.SkippedCount));
+
+					var unlocated = _poiImportService.GetUnlocatedRows(import);
+
+					// Each reason gets its own line and advice: a wrong address needs fixing, an outage needs a later upload.
+					void Report(int count, PoiImportRowLookup[] lookups, string lineKey, string hint)
+					{
+						if (count <= 0)
+							return;
+
+						const int listed = 10;
+						var names = unlocated.Where(r => lookups.Contains((PoiImportRowLookup)r.Lookup)).Take(listed).Select(r => r.Name ?? r.Address).ToList();
+						var line = string.Format(_localizer[lineKey].Value, count);
+						if (names.Count > 0)
+							line += " " + string.Join("; ", names);
+						if (count > names.Count)
+							line += " " + string.Format(_localizer["PoiImportUnlocatedMore"].Value, count - names.Count);
+
+						item.Lines.Add(line);
+						item.Lines.Add(hint);
+					}
+
+					Report(import.UnlocatedCount, new[] { PoiImportRowLookup.NotFound }, "PoiImportUnlocated", _localizer["PoiImportUnlocatedHint"].Value);
+					Report(import.LookupFailedCount, new[] { PoiImportRowLookup.Unavailable, PoiImportRowLookup.NotConfigured },
+						import.LookupNotConfigured ? "PoiImportLookupNotConfigured" : "PoiImportLookupFailed",
+						_localizer[import.LookupNotConfigured ? "PoiImportLookupNotConfiguredHint" : "PoiImportLookupFailedHint"].Value);
+					Report(import.NotTriedCount, new[] { PoiImportRowLookup.OverLimit }, "PoiImportNotTried",
+						string.Format(_localizer["PoiImportLimitReached"].Value, Resgrid.Services.PoiImportService.MaximumGeocodedAddresses));
+				}
+
+				items.Add(item);
+			}
+
+			return items;
 		}
 
 		[HttpPost]

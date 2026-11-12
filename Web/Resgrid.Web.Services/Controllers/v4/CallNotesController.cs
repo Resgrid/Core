@@ -33,11 +33,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IProtectedReadService _protectedCallReadService;
 		private readonly IProtectedWriteService _protectedWriteService;
 		private readonly IAuthorizationService _authorizationService;
+		private readonly IInboundEmailReceiptsService _inboundEmailReceiptsService;
 
 		public CallNotesController(ICallsService callsService, IDepartmentsService departmentsService,
 			IProtectedReadService protectedCallReadService, IProtectedWriteService protectedWriteService,
-			IAuthorizationService authorizationService)
+			IAuthorizationService authorizationService, IInboundEmailReceiptsService inboundEmailReceiptsService)
 		{
+			_inboundEmailReceiptsService = inboundEmailReceiptsService;
 			_callsService = callsService;
 			_departmentsService = departmentsService;
 			_protectedCallReadService = protectedCallReadService;
@@ -160,29 +162,91 @@ namespace Resgrid.Web.Services.Controllers.v4
 					title: "Recent multi-factor verification is required to modify protected data.",
 					statusCode: StatusCodes.Status403Forbidden);
 
-			var saved = await _callsService.SaveCallNoteAsync(note, cancellationToken);
+			// An app's offline outbox resends a note whose answer it lost with the same key (body IdempotencyKey or the
+			// Idempotency-Key header): the resend gets the note the first attempt saved instead of a second one. Claimed only
+			// now, once the request is known to be valid, so a rejected request leaves nothing for its retry to trip on.
+			var receipt = await _inboundEmailReceiptsService.ClaimApiRequestAsync(InboundEmailKinds.ApiCallNote, DepartmentId,
+				CallsController.ResolveCallIdempotencyKey(Request, input.IdempotencyKey, call.CallId), cancellationToken);
 
-			// ADP two-phase write (plan 19.2): the identity pk is an AAD component — encrypt now
-			// that the id exists, then persist the enveloped row (companion coordinates move into
-			// their envelope columns).
-			var protectedWrite = await _protectedWriteService.PrepareCallNoteWriteAsync(DepartmentId, saved,
-				Request.Headers[DataProtectionController.GrantHeader].ToString(), UserId, workloadCaller: false, cancellationToken);
-			if (!protectedWrite.Success)
+			if (receipt.Outcome == InboundEmailClaimOutcomes.InProgress)
+				return StatusCode(StatusCodes.Status409Conflict);
+
+			// Completed only once the note is protected, so a finished request has nothing left to do.
+			if (receipt.Outcome == InboundEmailClaimOutcomes.AlreadyProcessed)
+				return receipt.EntityId.HasValue ? SavedNoteResult(result, call.CallId, receipt.EntityId.Value) : StatusCode(StatusCodes.Status409Conflict);
+
+			CallNote saved;
+			if (receipt.Outcome == InboundEmailClaimOutcomes.Resume)
 			{
-				Resgrid.Framework.Logging.LogError($"ADP protected write failed AFTER insert for call note {saved.CallNoteId} in department {DepartmentId} ({protectedWrite.Reason}); transient plaintext row pending re-encryption.");
-				return Problem(type: protectedWrite.Reason,
-					title: "The note was saved but could not be protected; protected storage is temporarily unavailable. Do not resubmit — the note will be encrypted automatically.",
-					statusCode: StatusCodes.Status503ServiceUnavailable);
-			}
-			if (protectedWrite.IsProtected)
-				saved = await _callsService.SaveCallNoteAsync(saved, cancellationToken);
+				// The first attempt saved the note and failed before it was protected: protect that note rather than add another.
+				var stored = await _callsService.PopulateCallData(call, false, false, true, false, false, false, false, false, false);
+				saved = stored?.CallNotes?.FirstOrDefault(n => n.CallNoteId == receipt.EntityId.Value);
 
-			result.Id = saved.CallNoteId.ToString();
+				// Deleted since: nothing is left to protect.
+				if (saved == null)
+				{
+					await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
+					return SavedNoteResult(result, call.CallId, receipt.EntityId.Value);
+				}
+			}
+			else
+			{
+				try
+				{
+					saved = await _callsService.SaveCallNoteAsync(note, cancellationToken);
+				}
+				catch
+				{
+					// The note row commits before the service's own protection step: keep the id a failure left behind, so the
+					// retry protects that note instead of saving a second one.
+					if (note.CallNoteId > 0)
+						await _inboundEmailReceiptsService.MarkSavedAsync(receipt, note.CallNoteId, InboundEmailPendingSteps.None);
+
+					await _inboundEmailReceiptsService.ReleaseAsync(receipt);
+					throw;
+				}
+
+				// Recorded as soon as the row exists, so a protected-write failure below is finished by the retry, not saved twice.
+				await _inboundEmailReceiptsService.MarkSavedAsync(receipt, saved.CallNoteId, InboundEmailPendingSteps.None);
+			}
+
+			try
+			{
+				// ADP two-phase write (plan 19.2): the identity pk is an AAD component — encrypt now
+				// that the id exists, then persist the enveloped row (companion coordinates move into
+				// their envelope columns). Already-enveloped values are skipped, so a resumed request runs it again safely.
+				var protectedWrite = await _protectedWriteService.PrepareCallNoteWriteAsync(DepartmentId, saved,
+					Request.Headers[DataProtectionController.GrantHeader].ToString(), UserId, workloadCaller: false, cancellationToken);
+				if (!protectedWrite.Success)
+				{
+					Resgrid.Framework.Logging.LogError($"ADP protected write failed AFTER insert for call note {saved.CallNoteId} in department {DepartmentId} ({protectedWrite.Reason}); transient plaintext row pending re-encryption.");
+					// Not completed: a retry with the same idempotency key protects this note instead of saving another.
+					await _inboundEmailReceiptsService.ReleaseAsync(receipt);
+					return Problem(type: protectedWrite.Reason,
+						title: "The note was saved but could not be protected; protected storage is temporarily unavailable. Retry the request with the same idempotency key to protect it; a resubmission without one saves a second note.",
+						statusCode: StatusCodes.Status503ServiceUnavailable);
+				}
+				if (protectedWrite.IsProtected)
+					saved = await _callsService.SaveCallNoteAsync(saved, cancellationToken);
+			}
+			catch
+			{
+				await _inboundEmailReceiptsService.ReleaseAsync(receipt);
+				throw;
+			}
+
+			await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
+			return SavedNoteResult(result, saved.CallId, saved.CallNoteId);
+		}
+
+		private ActionResult<SaveCallNoteResult> SavedNoteResult(SaveCallNoteResult result, int callId, int callNoteId)
+		{
+			result.Id = callNoteId.ToString();
 			result.PageSize = 0;
 			result.Status = ResponseHelper.Created;
 			ResponseHelper.PopulateV4ResponseData(result);
 
-			return CreatedAtAction(nameof(GetCallNotes), new { callId = saved.CallId }, result);
+			return CreatedAtAction(nameof(GetCallNotes), new { callId }, result);
 		}
 
 		public static CallNoteResultData ConvertCallNote(CallNote note, string fullName, Department department)

@@ -37,6 +37,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IPersonnelRolesService _personnelRolesService;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly Model.Services.IAuthorizationService _authorizationService;
+		private readonly IInboundEmailReceiptsService _inboundEmailReceiptsService;
 
 		/// <summary>
 		/// The caller's Protected Data Grant, if they presented one. Absent means a staffing note
@@ -54,9 +55,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IPersonnelRolesService personnelRolesService,
 			IDepartmentSettingsService departmentSettingsService,
 			Model.Services.IAuthorizationService authorizationService,
-			IProtectedReadService protectedReadService
+			IProtectedReadService protectedReadService,
+			IInboundEmailReceiptsService inboundEmailReceiptsService
 			)
 		{
+			_inboundEmailReceiptsService = inboundEmailReceiptsService;
 			_protectedReadService = protectedReadService;
 			_usersService = usersService;
 			_actionLogsService = actionLogsService;
@@ -144,6 +147,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return BadRequest();
 
 			var result = new SavePersonnelStaffingResult();
+			var receipt = InboundEmailReceiptClaim.Untracked;
 
 			try
 			{
@@ -162,23 +166,92 @@ namespace Resgrid.Web.Services.Controllers.v4
 				if (input.UserId != UserId && !ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
 					return Unauthorized();
 
-				if (String.IsNullOrWhiteSpace(input.Note))
-					savedState = await _userStateService.CreateUserState(userToSetStatusFor.UserId, DepartmentId, int.Parse(input.Type), cancellationToken);
-				else
-					savedState = await _userStateService.CreateUserState(userToSetStatusFor.UserId, DepartmentId, int.Parse(input.Type), input.Note, cancellationToken);
+				if (!int.TryParse(input.Type, out var staffingType))
+					return BadRequest();
 
-				result.Id = savedState.UserStateId.ToString();
-				result.PageSize = 0;
-				result.Status = ResponseHelper.Created;
-				ResponseHelper.PopulateV4ResponseData(result);
+				// An app's offline outbox resends a staffing whose answer it lost with the same EventId and body
+				// (StatusWriteReplayKeys); the replay gets the staffing the first attempt saved instead of a second one. Claimed
+				// once the request is known to be valid. No EventId (or no client timestamp) is untracked, as before.
+				receipt = await _inboundEmailReceiptsService.ClaimApiRequestAsync(InboundEmailKinds.ApiPersonStaffing, DepartmentId,
+					StatusWriteReplayKeys.ForPersonStaffing(input), cancellationToken);
 
-				return Created($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/v4/Statuses/GetAllStaffingsForPersonnel", result);
+				if (receipt.Outcome == InboundEmailClaimOutcomes.InProgress)
+					return StatusCode(StatusCodes.Status409Conflict);
+
+				if (receipt.EntityId.HasValue &&
+					(receipt.Outcome == InboundEmailClaimOutcomes.AlreadyProcessed || receipt.Outcome == InboundEmailClaimOutcomes.Resume))
+				{
+					// The first attempt failed after its insert, perhaps at the protected-data step: protect the staffing, then send
+					// the staffing event it never reached, before answering for it. A refusal throws, leaving the receipt open for the
+					// next replay; each step is checked off once done, so neither runs twice.
+					if (receipt.Outcome == InboundEmailClaimOutcomes.Resume)
+					{
+						if (receipt.Has(InboundEmailPendingSteps.ProtectedWrite))
+						{
+							await _userStateService.ProtectUserStateAsync(DepartmentId, receipt.EntityId.Value, cancellationToken);
+							await _inboundEmailReceiptsService.CompleteStepAsync(receipt, InboundEmailPendingSteps.ProtectedWrite);
+						}
+
+						if (receipt.Has(InboundEmailPendingSteps.StatusFollowUp))
+						{
+							await _userStateService.AnnounceUserStateAsync(DepartmentId, receipt.EntityId.Value);
+							await _inboundEmailReceiptsService.CompleteStepAsync(receipt, InboundEmailPendingSteps.StatusFollowUp);
+						}
+					}
+
+					await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
+					return SavedPersonStaffingResult(result, receipt.EntityId.Value);
+				}
+
+				if (receipt.Outcome == InboundEmailClaimOutcomes.AlreadyProcessed)
+					return StatusCode(StatusCodes.Status409Conflict);
+
+				var pending = new UserState
+				{
+					UserId = userToSetStatusFor.UserId,
+					DepartmentId = DepartmentId,
+					State = staffingType,
+					Timestamp = DateTime.UtcNow,
+					Note = String.IsNullOrWhiteSpace(input.Note) ? null : input.Note
+				};
+
+				try
+				{
+					savedState = await _userStateService.CreateUserStateAsync(pending, cancellationToken);
+				}
+				catch
+				{
+					// The staffing row commits before the service's later work (protection, the staffing event): keep the id a
+					// failure left behind, so the replay protects and answers with this staffing instead of saving a second one.
+					if (pending.UserStateId > 0)
+						await _inboundEmailReceiptsService.MarkSavedAsync(receipt, pending.UserStateId,
+							InboundEmailPendingSteps.ProtectedWrite | InboundEmailPendingSteps.StatusFollowUp);
+
+					throw;
+				}
+
+				await _inboundEmailReceiptsService.MarkSavedAsync(receipt, savedState.UserStateId, InboundEmailPendingSteps.None);
+				await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
+
+				return SavedPersonStaffingResult(result, savedState.UserStateId);
 			}
 			catch (Exception ex)
 			{
 				Logging.LogException(ex);
+				// Gives the claim back so the app's next replay is handled at once.
+				await _inboundEmailReceiptsService.ReleaseAsync(receipt);
 				return BadRequest();
 			}
+		}
+
+		private ActionResult<SavePersonnelStaffingResult> SavedPersonStaffingResult(SavePersonnelStaffingResult result, int userStateId)
+		{
+			result.Id = userStateId.ToString();
+			result.PageSize = 0;
+			result.Status = ResponseHelper.Created;
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Created($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/v4/Statuses/GetAllStaffingsForPersonnel", result);
 		}
 
 		/// <summary>

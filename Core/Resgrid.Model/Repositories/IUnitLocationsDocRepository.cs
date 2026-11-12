@@ -8,7 +8,8 @@ namespace Resgrid.Model.Repositories
 	public interface IUnitLocationsDocRepository
 	{
 		Task<List<UnitsLocation>> GetAllLocationsByUnitIdAsync(int unitId);
-		Task<UnitsLocation> GetLatestLocationsByUnitIdAsync(int unitId);
+		/// <summary>The unit's newest location in the department (served by ix_unitlocations_department_unit_timestamp).</summary>
+		Task<UnitsLocation> GetLatestLocationForUnitAsync(int departmentId, int unitId);
 		Task<List<UnitsLocation>> GetLatestLocationsByDepartmentIdAsync(int departmentId);
 
 		/// <summary>

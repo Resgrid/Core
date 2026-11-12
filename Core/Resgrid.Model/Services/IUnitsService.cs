@@ -290,6 +290,32 @@ namespace Resgrid.Model.Services
 			CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
+		/// Runs the protected-data step again for a unit state whose save failed after its insert (a resumed API request). Values
+		/// already protected are left as they are; nothing happens for a state that is gone or whose unit belongs to another
+		/// department. Throws when the protected write is still refused.
+		/// </summary>
+		/// <param name="departmentId">The department the state's unit must belong to.</param>
+		/// <param name="unitStateId">The saved unit state.</param>
+		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+		Task ProtectUnitStateAsync(int departmentId, int unitStateId, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
+		/// Runs what a unit-state save does after its row is protected (call close-out, outstanding-requirement fill, navigation
+		/// end) for a save that failed before getting there (a resumed API request). Only while the state is still the unit's
+		/// latest: a newer state has run its own, and closing calls on this older one could close a call the unit went back to.
+		/// Nothing happens for a state that is gone or whose unit belongs to another department.
+		/// </summary>
+		/// <param name="departmentId">The department the state's unit must belong to.</param>
+		/// <param name="unitStateId">The saved unit state.</param>
+		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+		Task FinishUnitStateAsync(int departmentId, int unitStateId, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>The riders (crew seats) recorded with one unit state; empty when it has none.</summary>
+		/// <param name="unitStateId">The unit state identifier.</param>
+		/// <returns>Task&lt;List&lt;UnitStateRole&gt;&gt;.</returns>
+		Task<List<UnitStateRole>> GetRolesForUnitStateAsync(int unitStateId);
+
+		/// <summary>
 		/// Deletes the states for unit asynchronous.
 		/// </summary>
 		/// <param name="unitId">The unit identifier.</param>
@@ -346,12 +372,11 @@ namespace Resgrid.Model.Services
 			CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
-		/// Gets the latest unit location asynchronous.
+		/// The unit's newest location, or null when it has none in this department. The department is part of the lookup
+		/// because every unit location index leads with it: a read by unit alone scans the whole collection (about a
+		/// second per unit on production, so GetAllUnitStatuses took 1.6 s at p50 and 11 s at p95).
 		/// </summary>
-		/// <param name="unitId">The unit identifier.</param>
-		/// <param name="timestamp">The timestamp.</param>
-		/// <returns>Task&lt;UnitLocation&gt;.</returns>
-		Task<UnitsLocation> GetLatestUnitLocationAsync(int unitId, DateTime? timestamp = null);
+		Task<UnitsLocation> GetLatestUnitLocationForDepartmentAsync(int departmentId, int unitId);
 
 		/// <summary>
 		/// Gets the current roles for unit asynchronous.

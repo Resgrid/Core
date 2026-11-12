@@ -100,12 +100,34 @@ namespace Resgrid.Providers.GeoLocationProvider
 
 				if (center == null || !IsValidPosition(center.Latitude, center.Longitude))
 				{
-					result.SkippedCount++;
+					// No geometry (Google My Maps "by address" layers) or a converter's 0,0 placeholder: the caller can
+					// still locate it from the address it carries.
+					var fields = ExtendedDataOf(placemark);
+					var address = placemark.Address?.Trim();
+
+					if (!string.IsNullOrWhiteSpace(address) || fields.Count > 0)
+						result.AddressOnly.Add(new KmlAddressPlacemark { Name = NameOf(placemark), Address = string.IsNullOrWhiteSpace(address) ? null : address, Fields = fields });
+					else
+						result.SkippedCount++;
+
 					continue;
 				}
 
 				result.Coordinates.Add(new Coordinates { Name = NameOf(placemark), Latitude = center.Latitude, Longitude = center.Longitude });
 			}
+		}
+
+		private static List<KeyValuePair<string, string>> ExtendedDataOf(Placemark placemark)
+		{
+			var data = placemark.ExtendedData;
+			if (data == null)
+				return new List<KeyValuePair<string, string>>();
+
+			return data.Data.Select(d => new KeyValuePair<string, string>(d.Name, d.Value))
+				.Concat(data.SchemaData.SelectMany(s => s.SimpleData).Select(d => new KeyValuePair<string, string>(d.Name, d.Text)))
+				.Where(v => !string.IsNullOrWhiteSpace(v.Key) && !string.IsNullOrWhiteSpace(v.Value))
+				.Select(v => new KeyValuePair<string, string>(v.Key.Trim(), v.Value.Trim()))
+				.ToList();
 		}
 
 		/// <summary>
@@ -122,20 +144,13 @@ namespace Resgrid.Providers.GeoLocationProvider
 			if (!string.IsNullOrWhiteSpace(placemark.Name))
 				return placemark.Name.Trim();
 
-			var data = placemark.ExtendedData;
-			if (data == null)
-				return null;
-
-			var values = data.Data.Select(d => new KeyValuePair<string, string>(d.Name, d.Value))
-				.Concat(data.SchemaData.SelectMany(s => s.SimpleData).Select(d => new KeyValuePair<string, string>(d.Name, d.Text)))
-				.Where(v => !string.IsNullOrWhiteSpace(v.Value))
-				.ToList();
+			var values = ExtendedDataOf(placemark);
 
 			foreach (var key in ExtendedDataNameKeys)
 			{
-				var value = values.FirstOrDefault(v => string.Equals(v.Key?.Trim(), key, StringComparison.OrdinalIgnoreCase)).Value;
+				var value = values.FirstOrDefault(v => string.Equals(v.Key, key, StringComparison.OrdinalIgnoreCase)).Value;
 				if (value != null)
-					return value.Trim();
+					return value;
 			}
 
 			return null;

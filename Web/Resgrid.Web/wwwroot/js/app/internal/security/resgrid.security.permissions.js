@@ -10,20 +10,30 @@ var resgrid;
             function antiForgeryToken() {
                 return $('input[name="__RequestVerificationToken"]').first().val();
             }
+            // One request for the department's roles serves every role picker on the page. GetRoles ignores
+            // any search term, so the pickers hold the list as local options and select2 filters it itself.
+            var departmentRolesRequest = null;
+            var rolesLoadErrorShown = false;
+            function departmentRoles() {
+                if (!departmentRolesRequest) {
+                    departmentRolesRequest = $.ajax({
+                        url: resgrid.absoluteBaseUrl + '/User/Personnel/GetRoles',
+                        dataType: 'json', type: 'GET'
+                    });
+                }
+                return departmentRolesRequest;
+            }
             // lockValue (optional) returns the row's current LockToGroup so a role change does not
             // silently reset the group lock; rows without a lock checkbox omit it.
             function initPermRoles(selector, permType, lockValue) {
+                // select2's default width is measured from the <select>, which is empty (and usually hidden)
+                // here, so every picker drew as a 1-17px sliver. Fill the cell instead; the view gives the
+                // cell its minimum width.
                 $(selector).select2({
                     placeholder: "Select roles...",
                     allowClear: true,
                     multiple: true,
-                    ajax: {
-                        url: resgrid.absoluteBaseUrl + '/User/Personnel/GetRoles',
-                        dataType: 'json',
-                        processResults: function (data) {
-                            return { results: $.map(data, function (i) { return { id: i.RoleId, text: i.Name }; }) };
-                        }
-                    }
+                    width: '100%'
                 });
                 $(selector).on('change', function () {
                     var url = resgrid.absoluteBaseUrl + '/User/Security/SetPermissionData?type=' + permType + '&data=' + encodeURIComponent(($(selector).val() || []).join(','));
@@ -38,17 +48,28 @@ var resgrid;
                         resgrid.common.notifications.showError('Permission Not Saved', 'The permission change could not be saved. Reload the page and try again.');
                     });
                 });
-                $.ajax({
+                var savedRoles = $.ajax({
                     url: resgrid.absoluteBaseUrl + '/User/Security/GetRolesForPermission?type=' + permType,
                     contentType: 'application/json', type: 'GET'
-                }).done(function (data) {
-                    if (data) {
-                        data.split(',').forEach(function (v) {
-                            if (v) { $(selector).append(new Option(v, v, true, true)); }
-                        });
-                        // Only redraw select2: a plain 'change' would run the handler above and post the
-                        // loaded roles straight back, resetting the group lock on every page load.
-                        $(selector).trigger('change.select2');
+                });
+                $.when(departmentRoles(), savedRoles).then(function (rolesResult, savedResult) {
+                    // The permission stores role ids; the picker shows the role names. A saved id with no
+                    // department role (the role was deleted) is not shown, and the next change drops it.
+                    var savedIds = String(savedResult[0] || '').split(',').map(function (v) { return $.trim(v); });
+                    $.each(rolesResult[0] || [], function (i, role) {
+                        var selected = savedIds.indexOf(String(role.RoleId)) >= 0;
+                        $(selector).append(new Option(role.Name, role.RoleId, selected, selected));
+                    });
+                    // Only redraw select2: a plain 'change' would run the handler above and post the
+                    // loaded roles straight back, resetting the group lock on every page load.
+                    $(selector).trigger('change.select2');
+                }, function () {
+                    // Without the saved roles a change would post only what was picked and wipe the rest,
+                    // so the picker stays locked rather than editable on a partial picture.
+                    $(selector).prop('disabled', true).trigger('change.select2');
+                    if (!rolesLoadErrorShown) {
+                        rolesLoadErrorShown = true;
+                        resgrid.common.notifications.showError('Roles Not Loaded', 'The roles for these permissions could not be loaded. Reload the page to change them.');
                     }
                 });
             }

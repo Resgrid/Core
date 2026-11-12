@@ -924,6 +924,59 @@ namespace Resgrid.Services
 			return false;
 		}
 
+		public async Task ProtectUnitStateAsync(int departmentId, int unitStateId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var state = await _unitStatesRepository.GetUnitStateByUnitStateIdAsync(unitStateId);
+			if (state == null)
+				return;
+
+			var unit = await GetUnitByIdAsync(state.UnitId);
+			if (unit == null || unit.DepartmentId != departmentId)
+				return;
+
+			// Already-protected values are skipped, so running the step again is safe. The state was announced when it was saved.
+			var protectedWrite = await _protectedWriteService.Value.PrepareUnitStateWriteAsync(departmentId, state,
+				null, null, workloadCaller: true, cancellationToken);
+			if (!protectedWrite.Success)
+				throw new InvalidOperationException($"Protected write blocked ({protectedWrite.Reason}); unit state {state.UnitStateId} has transient plaintext pending re-encryption.");
+
+			if (protectedWrite.Changed)
+				await _unitStatesRepository.SaveOrUpdateAsync(state, cancellationToken);
+		}
+
+		public async Task FinishUnitStateAsync(int departmentId, int unitStateId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var state = await _unitStatesRepository.GetUnitStateByUnitStateIdAsync(unitStateId);
+			if (state == null)
+				return;
+
+			var unit = await GetUnitByIdAsync(state.UnitId);
+			if (unit == null || unit.DepartmentId != departmentId)
+				return;
+
+			var latest = await _unitStatesRepository.GetLastUnitStateByUnitIdAsync(state.UnitId);
+			if (latest == null || latest.UnitStateId != state.UnitStateId)
+				return;
+
+			// As SetUnitStateAsync runs them for a status a unit reported (resumed requests come from the API, never automatic).
+			var previousState = await _unitStatesRepository.GetLastUnitStateBeforeIdAsync(state.UnitId, state.UnitStateId);
+			await CloseCallsFinishedByAsync(departmentId, state, previousState, cancellationToken);
+
+			if (_outstandingRequirementsService != null)
+				await _outstandingRequirementsService.Value.OnUnitStateSavedAsync(departmentId, state, previousState, cancellationToken);
+
+			await EndNavigationForStatusAsync(departmentId, state);
+		}
+
+		public async Task<List<UnitStateRole>> GetRolesForUnitStateAsync(int unitStateId)
+		{
+			if (unitStateId <= 0)
+				return new List<UnitStateRole>();
+
+			var roles = await _unitStateRoleRepository.GetRolesForUnitStatesAsync(new[] { unitStateId });
+			return (roles ?? Enumerable.Empty<UnitStateRole>()).Where(role => role != null && role.UnitStateId == unitStateId).ToList();
+		}
+
 		public async Task<bool> DeleteStatesForUnitAsync(int unitId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var unitStates = await _unitStatesRepository.GetAllStatesByUnitIdAsync(unitId);
@@ -1051,18 +1104,20 @@ namespace Resgrid.Services
 			return result;
 		}
 
-		public async Task<UnitsLocation> GetLatestUnitLocationAsync(int unitId, DateTime? timestamp = null)
+		public async Task<UnitsLocation> GetLatestUnitLocationForDepartmentAsync(int departmentId, int unitId)
 		{
 			try
 			{
 				if (Config.DataConfig.DocDatabaseType == Config.DatabaseTypes.Postgres)
-					return await _unitLocationsDocRepository.GetLatestLocationsByUnitIdAsync(unitId);
+					return await _unitLocationsDocRepository.GetLatestLocationForUnitAsync(departmentId, unitId);
 
-				var location = _unitLocationRepository.Value.AsQueryable().Where(x => x.UnitId == unitId).OrderByDescending(y => y.Timestamp).FirstOrDefault();
+				// Department first, so ix_unitlocations_department_unit_timestamp serves it as one index probe; awaited, so a
+				// slow read no longer holds a request thread.
+				var query = _unitLocationRepository.Value.AsQueryable()
+					.Where(x => x.DepartmentId == departmentId && x.UnitId == unitId)
+					.OrderByDescending(y => y.Timestamp);
 
-				//var layers = await _personnelLocationRepository.FilterByAsync(filter => filter.DepartmentId == departmentId && filter.Type == (int)type && filter.IsDeleted == false);
-
-				return location;
+				return await MongoDB.Driver.Linq.MongoQueryable.FirstOrDefaultAsync(query);
 			}
 			catch (Exception ex)
 			{

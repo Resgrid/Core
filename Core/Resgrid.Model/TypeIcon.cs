@@ -212,6 +212,22 @@ namespace Resgrid.Model
 			return $"{url}?s={badgeStyle}&v={MapIconStyles.Version}";
 		}
 
+		/// <summary>Query parameter of the icon endpoint that asks for the icon at <see cref="MapSize"/> px (the only size it accepts).</summary>
+		public const string SizeQuery = "px";
+
+		/// <summary>
+		/// TEMP (2026-11-11, goes with <c>LegacyOmniPinIcons</c> in the API): <paramref name="iconUrl"/> (an icon endpoint URL,
+		/// with or without a badge) asking for the icon at <see cref="MapSize"/> px instead of <see cref="StoredSize"/>, for
+		/// Omni store builds that draw a map pin's image at its own pixel size. Null and blank stay as they are.
+		/// </summary>
+		public static string AtMapSize(string iconUrl)
+		{
+			if (string.IsNullOrWhiteSpace(iconUrl))
+				return iconUrl;
+
+			return $"{iconUrl}{(iconUrl.Contains('?') ? '&' : '?')}{SizeQuery}={MapSize}";
+		}
+
 		/// <summary>Path of the anonymous built-in pin endpoint on the API host.</summary>
 		public const string ApiPinPath = "/api/v4/TypeIcons/Pins/";
 

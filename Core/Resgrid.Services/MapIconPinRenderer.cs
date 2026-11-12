@@ -31,6 +31,7 @@ namespace Resgrid.Services
 
 		private static readonly ConcurrentDictionary<string, byte[]> PinCache = new ConcurrentDictionary<string, byte[]>(StringComparer.Ordinal);
 		private static readonly ConcurrentDictionary<string, byte[]> BadgeCache = new ConcurrentDictionary<string, byte[]>(StringComparer.Ordinal);
+		private static readonly ConcurrentDictionary<string, byte[]> SizedCache = new ConcurrentDictionary<string, byte[]>(StringComparer.Ordinal);
 
 		/// <summary>True when a pin artwork of that name ships with the renderer.</summary>
 		public static bool HasArtwork(string pinBase) =>
@@ -74,6 +75,43 @@ namespace Resgrid.Services
 					BadgeCache.Clear();
 
 				BadgeCache[key] = rendered;
+			}
+
+			return rendered;
+		}
+
+		/// <summary>
+		/// <paramref name="iconPng"/> (an uploaded icon, with or without a badge) scaled down to the <see cref="TypeIcons.MapSize"/>
+		/// px square the map draws it at, as PNG bytes; <paramref name="cacheKey"/> (checksum and badge style) keys the cache. Null
+		/// for an unreadable image. TEMP (2026-11-11): only Omni store builds that draw a pin's image at its pixel size ask for it.
+		/// </summary>
+		public static byte[] RenderAtMapSize(byte[] iconPng, string cacheKey)
+		{
+			if (iconPng == null || iconPng.Length == 0)
+				return null;
+
+			var key = $"{cacheKey}:{TypeIcons.MapSize}";
+			if (cacheKey != null && SizedCache.TryGetValue(key, out var cached))
+				return cached;
+
+			byte[] rendered;
+			try
+			{
+				using var image = Image.Load<Rgba32>(iconPng);
+				image.Mutate(x => x.Resize(new ResizeOptions { Size = new Size(TypeIcons.MapSize, TypeIcons.MapSize), Mode = ResizeMode.Pad, PadColor = Color.Transparent }));
+				rendered = EncodePng(image);
+			}
+			catch (Exception)
+			{
+				return null;
+			}
+
+			if (cacheKey != null)
+			{
+				if (SizedCache.Count >= BadgeCacheLimit)
+					SizedCache.Clear();
+
+				SizedCache[key] = rendered;
 			}
 
 			return rendered;

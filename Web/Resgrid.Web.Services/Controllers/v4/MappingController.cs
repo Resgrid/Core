@@ -137,11 +137,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>
 		/// Data to center the map and it's default location plus marker information for displaying makers on the map.
 		/// </summary>
+		/// <param name="fullSizeIcons">True from clients that draw markers' uploaded 128 px IconUrl images at the 32 px pin size
+		/// themselves. Omni store builds that do not send it get IconUrl at 32 px (TEMP, see LegacyOmniPinIcons).</param>
 		/// <returns>GetMapDataResult object</returns>
 		[HttpGet("GetMapDataAndMarkers")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Call_View)]
-		public async Task<ActionResult<GetMapDataResult>> GetMapDataAndMarkers()
+		public async Task<ActionResult<GetMapDataResult>> GetMapDataAndMarkers(bool fullSizeIcons = false)
 		{
 			var result = new GetMapDataResult();
 
@@ -351,6 +353,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 					}
 				}
 			}
+
+			var headers = HttpContext?.Request?.Headers;
+			if (headers != null && LegacyOmniPinIcons.Applies(headers[ApiClientApplication.Header], headers[LegacyOmniPinIcons.AppVersionHeader], fullSizeIcons))
+				LegacyOmniPinIcons.Apply(result.Data.MapMakerInfos);
 
 			result.PageSize = 1;
 			result.Status = ResponseHelper.Success;

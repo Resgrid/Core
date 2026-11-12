@@ -3290,10 +3290,12 @@
             (plan section 7.3) and egress policy can never relax that.
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.GetMapDataAndMarkers">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.GetMapDataAndMarkers(System.Boolean)">
             <summary>
             Data to center the map and it's default location plus marker information for displaying makers on the map.
             </summary>
+            <param name="fullSizeIcons">True from clients that draw markers' uploaded 128 px IconUrl images at the 32 px pin size
+            themselves. Omni store builds that do not send it get IconUrl at 32 px (TEMP, see LegacyOmniPinIcons).</param>
             <returns>GetMapDataResult object</returns>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.GetUnitMapData(System.Int32)">
@@ -5382,10 +5384,12 @@
             them without an auth header: the opaque key is the capability, and a new upload gets a new key, so responses are immutable.
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.TypeIconsController.Get(System.String,System.String)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.TypeIconsController.Get(System.String,System.String,System.Nullable{System.Int32})">
             <summary>The icon as a 128 px square PNG.</summary>
             <param name="key">The icon key at the end of a TypeIconUrl.</param>
             <param name="s">Optional status or priority style (an IconStyle value): the icon is returned with a badge of that colour.</param>
+            <param name="px">Optional; 32 returns the icon as a 32 px square (the map pin size), any other value is ignored. Only
+            map markers sent to Omni store builds that draw a pin's image at its pixel size link to it (TEMP, 2026-11-11).</param>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.TypeIconsController.GetPin(System.String)">
             <summary>A built-in map pin in a status or priority style as a 32 x 37 PNG, e.g. "ambulance-responding" or "call-high".</summary>
@@ -8294,6 +8298,39 @@
         </member>
         <member name="M:Resgrid.Web.Services.Helpers.HttpProtectedGrantContext.SessionOf(Microsoft.AspNetCore.Http.HttpContext)">
             <summary>The validated session of an HTTP request, for controllers that check a grant themselves.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Helpers.LegacyOmniPinIcons">
+            <summary>
+            TEMP (2026-11-11): Omni store builds released before the pin icon fix draw map markers as a MapLibre symbol layer at
+            each image's own pixel size, so an uploaded 128 px icon shows four times the size of the 32 px built-in pins.
+            Until those builds age out, GetMapDataAndMarkers links their markers' IconUrl to the 32 px rendition instead.
+            <para>
+            Fixed Omni builds send <c>fullSizeIcons=true</c> and scale the 128 px icon themselves; the legacy store apps (an older
+            major of the same app, see <see cref="F:Resgrid.Web.Services.Helpers.LegacyOmniPinIcons.FirstOmniMajor"/>) and the web map draw icons into a 32 px box and keep the
+            128 px icon, which stays sharp on high-density screens. Builds that send no app version (web and Electron) are not
+            recognised and keep the 128 px icon.
+            </para>
+            Remove this class, <see cref="M:Resgrid.Model.TypeIcons.AtMapSize(System.String)"/>, the TypeIcons endpoint's <c>px</c> parameter and
+            MapIconPinRenderer.RenderAtMapSize once the Omni fleet is on fixed builds.
+            </summary>
+        </member>
+        <member name="F:Resgrid.Web.Services.Helpers.LegacyOmniPinIcons.AppVersionHeader">
+            <summary>The app version header every Omni and legacy store build sends with <see cref="F:Resgrid.Web.Services.Helpers.ApiClientApplication.Header"/>.</summary>
+        </member>
+        <member name="F:Resgrid.Web.Services.Helpers.LegacyOmniPinIcons.FirstOmniMajor">
+            <summary>
+            The first Omni major of each app, by <c>X-Resgrid-Client</c>: Omni took over each legacy app's store listing with a
+            new major (legacy Responder 10, Unit 7, IC, Dispatch and BigBoard 1).
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Helpers.LegacyOmniPinIcons.Applies(System.String,System.String,System.Boolean)">
+            <summary>True for an Omni store build that draws a marker's image at its pixel size and has not said it scales icons.</summary>
+            <param name="client">The <c>X-Resgrid-Client</c> header.</param>
+            <param name="appVersion">The <c>X-Resgrid-App-Version</c> header ("8.25").</param>
+            <param name="fullSizeIcons">The request's <c>fullSizeIcons</c> flag, sent by builds that scale the 128 px icon themselves.</param>
+        </member>
+        <member name="M:Resgrid.Web.Services.Helpers.LegacyOmniPinIcons.Apply(System.Collections.Generic.IEnumerable{Resgrid.Web.Services.Models.v4.Mapping.MapMakerInfoData})">
+            <summary>Points every marker's uploaded icon at the 32 px rendition.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Helpers.LegacySamlRelay">
             <summary>

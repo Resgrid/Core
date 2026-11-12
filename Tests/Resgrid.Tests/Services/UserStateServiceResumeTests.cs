@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -42,9 +43,55 @@ namespace Resgrid.Tests.Services
 			_events = new Mock<IEventAggregator>();
 		}
 
-		private UserStateService Service() =>
-			new UserStateService(_states.Object, Mock.Of<IDepartmentsService>(), _events.Object, Mock.Of<ICacheProvider>(),
+		private UserStateService Service(ICacheProvider cache = null) =>
+			new UserStateService(_states.Object, Mock.Of<IDepartmentsService>(), _events.Object, cache ?? Mock.Of<ICacheProvider>(),
 				new Lazy<IProtectedWriteService>(() => _protectedWrite.Object));
+
+		/// <summary>A cache and event aggregator that record, in order, when the latest-staffings cache is cleared and the event sent.</summary>
+		private (ICacheProvider Cache, List<string> Steps) RecordingCacheAndEvents()
+		{
+			var steps = new List<string>();
+			var cache = new Mock<ICacheProvider>();
+			cache.Setup(x => x.Remove(It.IsAny<string>())).Callback(() => steps.Add("invalidate"));
+			_events.Setup(x => x.SendMessage(It.IsAny<UserStaffingEvent>())).Callback(() => steps.Add("announce"));
+			return (cache.Object, steps);
+		}
+
+		[Test]
+		public async Task A_new_staffing_clears_the_cache_before_it_is_announced_so_the_event_is_the_last_step()
+		{
+			_states.Setup(x => x.SaveOrUpdateAsync(It.IsAny<UserState>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((UserState s, CancellationToken _, bool __) => { s.UserStateId = 302; return s; });
+			var (cache, steps) = RecordingCacheAndEvents();
+
+			await Service(cache).CreateUserStateAsync(new UserState { UserId = UserId, DepartmentId = DepartmentId, State = (int)UserStateTypes.Available, Timestamp = DateTime.UtcNow });
+
+			steps.Should().Equal(new[] { "invalidate", "announce" });
+		}
+
+		[Test]
+		public async Task A_cache_failure_stops_the_staffing_event_so_the_replay_still_owes_it()
+		{
+			_states.Setup(x => x.SaveOrUpdateAsync(It.IsAny<UserState>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((UserState s, CancellationToken _, bool __) => { s.UserStateId = 302; return s; });
+			var cache = new Mock<ICacheProvider>();
+			cache.Setup(x => x.Remove(It.IsAny<string>())).Throws(new InvalidOperationException("cache unavailable"));
+
+			Func<Task> save = () => Service(cache.Object).CreateUserStateAsync(new UserState { UserId = UserId, DepartmentId = DepartmentId, State = (int)UserStateTypes.Available, Timestamp = DateTime.UtcNow });
+
+			await save.Should().ThrowAsync<InvalidOperationException>();
+			_events.Verify(x => x.SendMessage(It.IsAny<UserStaffingEvent>()), Times.Never);
+		}
+
+		[Test]
+		public async Task A_resumed_announcement_also_clears_the_cache_before_the_event()
+		{
+			var (cache, steps) = RecordingCacheAndEvents();
+
+			await Service(cache).AnnounceUserStateAsync(DepartmentId, 300);
+
+			steps.Should().Equal(new[] { "invalidate", "announce" });
+		}
 
 		[Test]
 		public async Task Protecting_a_saved_staffing_again_persists_the_enveloped_row()

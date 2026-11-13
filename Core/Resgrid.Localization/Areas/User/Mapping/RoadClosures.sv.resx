@@ -347,6 +347,9 @@
   <data name="RepeatTooMany" xml:space="preserve">
     <value>Det skulle lägga till fler än {0} tider.</value>
   </data>
+  <data name="RepeatNoDays" xml:space="preserve">
+    <value>Välj minst en dag.</value>
+  </data>
   <data name="DayMon" xml:space="preserve">
     <value>Mån</value>
   </data>

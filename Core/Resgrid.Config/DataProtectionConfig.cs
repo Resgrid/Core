@@ -215,6 +215,27 @@ namespace Resgrid.Config
 		/// <summary>PFX password, supplied through the environment/secret store only.</summary>
 		public static string OpenBaoClientCertificatePassword = "";
 
+		/// <summary>
+		/// Filesystem path to the certificate (PFX/PKCS#12) the broker's HTTPS listener presents. Empty = the listener
+		/// takes its certificate the way it always has (Kestrel configuration, or plain HTTP). When set, the endpoints
+		/// still come from ASPNETCORE_URLS (e.g. https://+:8443); this only supplies the certificate, re-read from disk
+		/// as a renewal sidecar replaces it. It may be the same file as <see cref="OpenBaoClientCertificatePath"/> when
+		/// one leaf carries both the serverAuth and clientAuth EKUs. The path is configuration; the FILE is a mounted
+		/// secret and must never land in appsettings*.json, resgrid.env, container images, or the repository.
+		/// </summary>
+		public static string BrokerHttpsCertificatePath = "";
+
+		/// <summary>PFX password for the HTTPS listener certificate, supplied through the environment/secret store only.</summary>
+		public static string BrokerHttpsCertificatePassword = "";
+
+		/// <summary>
+		/// How often, in seconds, the broker checks its certificate files (the OpenBao client certificate and the HTTPS
+		/// listener certificate) for a renewal. Checked lazily on the TLS handshake path, at most once per interval: a
+		/// stat, and a reload only when the file changed. Values below 1 fall back to 60; values above 3600 are capped
+		/// so a renewed short-lived leaf is always picked up well before the old one expires.
+		/// </summary>
+		public static int BrokerCertificatePollSeconds = 60;
+
 		/// <summary>Optional named cert-auth role ("name" parameter on auth/cert/login); empty = any matching role.</summary>
 		public static string OpenBaoCertAuthRoleName = "";
 

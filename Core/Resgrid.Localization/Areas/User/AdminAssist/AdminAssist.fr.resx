@@ -7827,4 +7827,10 @@
   <data name="ModuleHelp.ChatDisabled" xml:space="preserve">
     <value>Affiche ou masque la Discussion dans la navigation, les widgets du tableau de bord et la recherche de l'application web. Le masquage ne supprime aucune donnée et ne modifie pas les autorisations. La discussion dans les applications mobiles n'est pas affectée.</value>
   </data>
+  <data xml:space="preserve" name="Setting.MappingProviderOverrides">
+    <value>Vos propres fournisseurs de cartes</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.MappingProviderOverrides">
+    <value>Comptes propres au service pour l'itinéraire, le trafic en direct et la recherche d'adresses, essayés avant les fournisseurs de Resgrid. Seuls les fournisseurs configurés sont signalés, jamais les clés. Remettre les trois sur la valeur par défaut de Resgrid supprime le paramètre.</value>
+  </data>
 </root>

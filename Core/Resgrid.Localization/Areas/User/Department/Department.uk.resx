@@ -2450,4 +2450,118 @@
   <data name="MapStyleNotAvailable" xml:space="preserve">
     <value>(недоступно на цьому сервері)</value>
   </data>
+  <data name="ProvidersHeader" xml:space="preserve">
+    <value>Власні картографічні провайдери</value>
+  </data>
+  <data name="ProvidersHelp" xml:space="preserve">
+    <value>Використовуйте власні облікові записи вашого підрозділу замість облікових записів Resgrid. Спочатку запит надходить до вашого провайдера; якщо він дає збій або не може відповісти на запит, відповідають провайдери Resgrid, тож карти й час у дорозі продовжують працювати. Ключі зберігаються в зашифрованому вигляді й більше ніколи не показуються.</value>
+  </data>
+  <data name="ProvidersSystemDefault" xml:space="preserve">
+    <value>Типовий (Resgrid)</value>
+  </data>
+  <data name="ProvidersYourAccount" xml:space="preserve">
+    <value>ваш обліковий запис</value>
+  </data>
+  <data name="ProvidersRoutingLabel" xml:space="preserve">
+    <value>Провайдер маршрутизації</value>
+  </data>
+  <data name="ProvidersRoutingHelp" xml:space="preserve">
+    <value>Використовується для маршрутів, часу в дорозі для карток виїзду та найближчих підрозділів, планів маршрутів і навігації в застосунку. Для навігації в застосунку потрібен Mapbox або Valhalla.</value>
+  </data>
+  <data name="ProvidersRoutingUrlLabel" xml:space="preserve">
+    <value>URL сервера</value>
+  </data>
+  <data name="ProvidersRoutingUrlHelp" xml:space="preserve">
+    <value>Адреса https вашого сервера Valhalla або OSRM. Він має бути доступний з публічного інтернету, наприклад https://api.example.com/valhalla.</value>
+  </data>
+  <data name="ProvidersRoutingKeyLabel" xml:space="preserve">
+    <value>Ключ API</value>
+  </data>
+  <data name="ProvidersRoutingKeyHelp" xml:space="preserve">
+    <value>Mapbox: токен із доступом до Directions, Matrix і Optimization (секретний токен sk. підходить, він ніколи не залишає сервер). Google: ключ з API Directions і Distance Matrix або з Routes API. Valhalla: лише якщо ваш сервер його потребує.</value>
+  </data>
+  <data name="ProvidersKeySaved" xml:space="preserve">
+    <value>Збережено. Залиште порожнім, щоб не змінювати.</value>
+  </data>
+  <data name="ProvidersClearKey" xml:space="preserve">
+    <value>Видалити збережений ключ</value>
+  </data>
+  <data name="ProvidersAuthSchemeLabel" xml:space="preserve">
+    <value>Надсилати ключ як</value>
+  </data>
+  <data name="ProvidersAuthSchemeApiKey" xml:space="preserve">
+    <value>Заголовок X-Api-Key</value>
+  </data>
+  <data name="ProvidersAuthSchemeBearer" xml:space="preserve">
+    <value>Токен Bearer (заголовок Authorization)</value>
+  </data>
+  <data name="ProvidersGoogleApiLabel" xml:space="preserve">
+    <value>API Google</value>
+  </data>
+  <data name="ProvidersGoogleApiLegacy" xml:space="preserve">
+    <value>Directions і Distance Matrix</value>
+  </data>
+  <data name="ProvidersGoogleApiRoutes" xml:space="preserve">
+    <value>Routes API (проєкти Google Cloud, створені після березня 2025 року)</value>
+  </data>
+  <data name="ProvidersTrafficLabel" xml:space="preserve">
+    <value>Шар трафіку наживо</value>
+  </data>
+  <data name="ProvidersTrafficHelp" xml:space="preserve">
+    <value>Кнопка трафіку на картах вебсайту та в застосунках.</value>
+  </data>
+  <data name="ProvidersTrafficMapbox" xml:space="preserve">
+    <value>Mapbox Traffic (ваш токен)</value>
+  </data>
+  <data name="ProvidersTrafficTiles" xml:space="preserve">
+    <value>URL плиток трафіку</value>
+  </data>
+  <data name="ProvidersTrafficTokenLabel" xml:space="preserve">
+    <value>Публічний токен Mapbox</value>
+  </data>
+  <data name="ProvidersTrafficTokenHelp" xml:space="preserve">
+    <value>Публічний токен, що починається з pk. Він надсилається до браузерів і застосунків ваших учасників.</value>
+  </data>
+  <data name="ProvidersTrafficTileUrlLabel" xml:space="preserve">
+    <value>URL плиток трафіку</value>
+  </data>
+  <data name="ProvidersTrafficTileUrlHelp" xml:space="preserve">
+    <value>URL-адреса https для плиток-зображень із {z}, {x} і {y}, наприклад плиток транспортного потоку TomTom. URL-адресу та будь-який ключ у ній бачать браузери ваших учасників.</value>
+  </data>
+  <data name="ProvidersGeocodingLabel" xml:space="preserve">
+    <value>Пошук адрес</value>
+  </data>
+  <data name="ProvidersGeocodingHelp" xml:space="preserve">
+    <value>Перетворює адреси на місця на карті, а місця — на адреси, для користувачів вашого підрозділу.</value>
+  </data>
+  <data name="ProvidersGeocodingKeyLabel" xml:space="preserve">
+    <value>Ключ API</value>
+  </data>
+  <data name="ProvidersErrorUnknownRouting" xml:space="preserve">
+    <value>Виберіть провайдера маршрутизації зі списку.</value>
+  </data>
+  <data name="ProvidersErrorRoutingKey" xml:space="preserve">
+    <value>Вкажіть ключ API для цього провайдера маршрутизації.</value>
+  </data>
+  <data name="ProvidersErrorRoutingUrl" xml:space="preserve">
+    <value>Вкажіть URL вашого сервера маршрутизації.</value>
+  </data>
+  <data name="ProvidersErrorRoutingUrlPublic" xml:space="preserve">
+    <value>URL сервера маршрутизації має починатися з https:// і вказувати на адресу в публічному інтернеті.</value>
+  </data>
+  <data name="ProvidersErrorUnknownTraffic" xml:space="preserve">
+    <value>Виберіть шар трафіку зі списку.</value>
+  </data>
+  <data name="ProvidersErrorTrafficToken" xml:space="preserve">
+    <value>Вкажіть публічний токен Mapbox (він починається з pk.).</value>
+  </data>
+  <data name="ProvidersErrorTrafficTileUrl" xml:space="preserve">
+    <value>Вкажіть URL-адресу https для плиток трафіку, що містить {z}, {x} і {y}.</value>
+  </data>
+  <data name="ProvidersErrorUnknownGeocoding" xml:space="preserve">
+    <value>Виберіть провайдера пошуку адрес зі списку.</value>
+  </data>
+  <data name="ProvidersErrorGeocodingKey" xml:space="preserve">
+    <value>Вкажіть ключ API для цього провайдера пошуку адрес.</value>
+  </data>
 </root>

@@ -58,5 +58,13 @@ namespace Resgrid.Tests.Security.Live
 				(_, existing) => existing.ExpiresOn > now ? (existing.Value + 1, existing.ExpiresOn) : (1, now.Add(expiration)));
 			return Task.FromResult(entry.Value);
 		}
+
+		public Task<long> IncrementByAsync(string cacheKey, long amount, TimeSpan expiration)
+		{
+			var now = DateTime.UtcNow;
+			var entry = _counters.AddOrUpdate(cacheKey, (amount, now.Add(expiration)),
+				(_, existing) => existing.ExpiresOn > now ? (existing.Value + amount, existing.ExpiresOn) : (amount, now.Add(expiration)));
+			return Task.FromResult(entry.Value);
+		}
 	}
 }

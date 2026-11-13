@@ -183,6 +183,35 @@ namespace Resgrid.Tests.Services.Routing
 			route.Closures.Should().ContainSingle(c => c.Effect == RouteClosureEffects.Avoided);
 		}
 
+		[Test]
+		public void a_slowdown_retimed_at_another_pace_scales_with_it_and_a_detour_allowance_does_not()
+		{
+			// PR 585: 1,000 s of provider time with a 500 s slowdown; a team that covers the path in 500 s spends half as long
+			// inside the closure, so its slowdown is 250 s. A crossed full closure's 300 s detour stays 300 s.
+			RouteResult Timed(double seconds, int delay, params RouteClosureEffect[] effects) =>
+				new RouteResult { Successful = true, DistanceMeters = 1000, DurationSeconds = seconds, ClosureDelaySeconds = delay, Closures = effects.ToList() };
+
+			var slowed = new RouteClosureEffect { Effect = RouteClosureEffects.Slowed, DelaySeconds = 500 };
+			var crossed = new RouteClosureEffect { Effect = RouteClosureEffects.Crossed, DelaySeconds = 300 };
+
+			RoadClosureRouting.DelayAtPace(Timed(1500, 500, slowed), 500).Should().Be(250);
+			RoadClosureRouting.DelayAtPace(Timed(1800, 800, slowed, crossed), 500).Should().Be(300 + 250);
+			RoadClosureRouting.DelayAtPace(Timed(1300, 300, crossed), 500).Should().Be(300);
+			RoadClosureRouting.DelayAtPace(Timed(1000, 0), 500).Should().Be(0);
+		}
+
+		[Test]
+		public void only_a_route_still_through_a_full_closure_counts_as_crossing_one()
+		{
+			RouteResult With(RouteClosureEffects effect) => new RouteResult { Closures = new List<RouteClosureEffect> { new RouteClosureEffect { Effect = effect } } };
+
+			RoadClosureRouting.CrossesFullClosure(With(RouteClosureEffects.Crossed)).Should().BeTrue();
+			RoadClosureRouting.CrossesFullClosure(With(RouteClosureEffects.Avoided)).Should().BeFalse();
+			RoadClosureRouting.CrossesFullClosure(With(RouteClosureEffects.Slowed)).Should().BeFalse();
+			RoadClosureRouting.CrossesFullClosure(new RouteResult()).Should().BeFalse();
+			RoadClosureRouting.CrossesFullClosure(null).Should().BeFalse();
+		}
+
 		#endregion
 
 		#region Routing service
@@ -206,7 +235,7 @@ namespace Resgrid.Tests.Services.Routing
 				.Callback((RouteRequest r, CancellationToken _) => requests.Add(r))
 				.ReturnsAsync((RouteRequest r, CancellationToken _) => r.ExcludePoints.Count == 0 ? Route(StraightThrough, 2800, 280) : Route(AroundTheNorth, 4900, 490));
 
-			var route = await new RoutingService(new[] { mapbox.Object, new EstimateRoutingProvider() }, null)
+			var route = await new RoutingService(new[] { mapbox.Object, new EstimateRoutingProvider() }, null, null, null)
 				.GetRouteAsync(WestToEast(Closure("area", BlockPolygon, RoadClosureSeverities.Full)));
 
 			requests.Should().HaveCount(2);
@@ -222,7 +251,7 @@ namespace Resgrid.Tests.Services.Routing
 			var google = Provider(RoutingProviderNames.Google, new RoutingCapabilities { MaxWaypoints = 25 });
 			google.Setup(p => p.GetRouteAsync(It.IsAny<RouteRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(() => Route(StraightThrough, 2800, 280));
 
-			var route = await new RoutingService(new[] { google.Object, new EstimateRoutingProvider() }, null)
+			var route = await new RoutingService(new[] { google.Object, new EstimateRoutingProvider() }, null, null, null)
 				.GetRouteAsync(WestToEast(Closure("area", BlockPolygon, RoadClosureSeverities.Full, detourMinutes: 5)));
 
 			google.Verify(p => p.GetRouteAsync(It.IsAny<RouteRequest>(), It.IsAny<CancellationToken>()), Times.Once);
@@ -241,11 +270,35 @@ namespace Resgrid.Tests.Services.Routing
 				.Callback((RouteRequest r, CancellationToken _) => sent = r)
 				.ReturnsAsync(() => Route(AroundTheNorth, 4900, 490));
 
-			var route = await new RoutingService(new[] { valhalla.Object, new EstimateRoutingProvider() }, null)
+			var route = await new RoutingService(new[] { valhalla.Object, new EstimateRoutingProvider() }, null, null, null)
 				.GetRouteAsync(WestToEast(Closure("area", BlockPolygon, RoadClosureSeverities.Full)));
 
 			sent.ExcludeAreas.Should().ContainSingle();
 			route.DurationSeconds.Should().Be(490);
+		}
+
+		[Test]
+		public async Task exclusions_a_caller_sets_are_part_of_the_route_cache_key()
+		{
+			// PR 585: two requests that differ only in their exclusions must not share a cached route.
+			SystemBehaviorConfig.CacheEnabled = true;
+			MappingConfig.RoutingProvider = RoutingProviderNames.Valhalla;
+			var valhalla = Provider(RoutingProviderNames.Valhalla, new RoutingCapabilities { ExcludeAreas = true, MaxExcludePoints = 200, MaxWaypoints = 25 });
+			valhalla.Setup(p => p.GetRouteAsync(It.IsAny<RouteRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(() => Route(StraightThrough, 2800, 280));
+			var service = new RoutingService(new[] { valhalla.Object, new EstimateRoutingProvider() }, new Resgrid.Tests.Security.Live.InMemoryCacheProvider(), null, null);
+
+			var pointExcluded = WestToEast();
+			pointExcluded.ExcludePoints.Add(new RoutingWaypoint(51.05, 3.72));
+			var areaExcluded = WestToEast();
+			areaExcluded.ExcludeAreas.Add(new List<RoutingWaypoint> { new RoutingWaypoint(51.049, 3.715), new RoutingWaypoint(51.049, 3.725), new RoutingWaypoint(51.051, 3.725) });
+
+			await service.GetRouteAsync(WestToEast());
+			await service.GetRouteAsync(WestToEast());
+			await service.GetRouteAsync(pointExcluded);
+			await service.GetRouteAsync(areaExcluded);
+
+			valhalla.Verify(p => p.GetRouteAsync(It.IsAny<RouteRequest>(), It.IsAny<CancellationToken>()), Times.Exactly(3),
+				"the repeated plain request is the only cache hit");
 		}
 
 		[Test]

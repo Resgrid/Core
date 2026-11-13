@@ -7827,4 +7827,10 @@
   <data name="ModuleHelp.ChatDisabled" xml:space="preserve">
     <value>Показує або приховує Чат у навігації, віджетах панелі та пошуку вебзастосунку. Приховування не видаляє дані й не змінює дозволи. Це не впливає на чат у мобільних застосунках.</value>
   </data>
+  <data xml:space="preserve" name="Setting.MappingProviderOverrides">
+    <value>Власні картографічні провайдери</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.MappingProviderOverrides">
+    <value>Власні облікові записи підрозділу для маршрутів, трафіку в реальному часі та пошуку адрес, до яких запит надходить раніше, ніж до провайдерів Resgrid. Повідомляється лише, які провайдери налаштовані, ніколи не ключі. Якщо повернути всі три до типових налаштувань Resgrid, параметр буде видалено.</value>
+  </data>
 </root>

@@ -272,9 +272,11 @@ namespace Resgrid.Services
 
 			var series = new MetricSeries { Key = key, Granularity = granularity };
 
+			// Buckets are UTC-kinded: the report is cached with protobuf's WellKnown timestamp, which reads every date
+			// back as Utc, so an Unspecified bucket would serialize without its "Z" on a miss and with it on a hit.
 			var cursor = granularity == ReportGranularity.Month
-				? new DateTime(startUtc.Year, startUtc.Month, 1)
-				: startUtc.Date;
+				? new DateTime(startUtc.Year, startUtc.Month, 1, 0, 0, 0, DateTimeKind.Utc)
+				: DateTime.SpecifyKind(startUtc.Date, DateTimeKind.Utc);
 
 			while (cursor <= endUtc)
 			{
@@ -287,7 +289,9 @@ namespace Resgrid.Services
 		}
 
 		private static DateTime NormalizeBucket(DateTime bucket, ReportGranularity granularity)
-			=> granularity == ReportGranularity.Month ? new DateTime(bucket.Year, bucket.Month, 1) : bucket.Date;
+			=> granularity == ReportGranularity.Month
+				? new DateTime(bucket.Year, bucket.Month, 1, 0, 0, 0, DateTimeKind.Utc)
+				: DateTime.SpecifyKind(bucket.Date, DateTimeKind.Utc);
 
 		private static Breakdown BuildStringBreakdown(string key, IEnumerable<CountByStringKeyResult> rows, int topN)
 		{

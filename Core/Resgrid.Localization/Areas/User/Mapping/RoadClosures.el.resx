@@ -347,6 +347,9 @@
   <data name="RepeatTooMany" xml:space="preserve">
     <value>Θα προστεθούν περισσότερα από {0} διαστήματα.</value>
   </data>
+  <data name="RepeatNoDays" xml:space="preserve">
+    <value>Επιλέξτε τουλάχιστον μία ημέρα.</value>
+  </data>
   <data name="DayMon" xml:space="preserve">
     <value>Δευ</value>
   </data>

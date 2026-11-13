@@ -157,7 +157,7 @@ var resgrid;
                 var label = delay > 0
                     ? text('closureDelay').replace('{0}', Math.max(1, Math.round(delay / 60)))
                     : text('closures').replace('{0}', names.length);
-                return '<small class="text-warning" title="' + escapeHtml(names.join(', ')) + '"><i class="fa fa-road" aria-hidden="true"></i> ' + escapeHtml(label) + '</small>';
+                return '<small class="text-warning" title="' + escapeAttr(names.join(', ')) + '"><i class="fa fa-road" aria-hidden="true"></i> ' + escapeHtml(label) + '</small>';
             }
             // A unit's ETA parts: with a turnout configured, the response time it is ranked on (turnout + travel).
             function unitEtaParts(unit) {

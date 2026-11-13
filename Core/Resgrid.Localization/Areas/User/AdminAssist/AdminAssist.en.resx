@@ -7827,4 +7827,10 @@
   <data name="ModuleHelp.ChatDisabled" xml:space="preserve">
     <value>Shows or hides Chat in the web app's navigation, dashboard widgets and search. Hiding it does not delete data or change permissions. Chat in the mobile apps is not affected.</value>
   </data>
+  <data xml:space="preserve" name="Setting.MappingProviderOverrides">
+    <value>Your own map providers</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.MappingProviderOverrides">
+    <value>Department-owned routing, live traffic and address lookup accounts, tried before Resgrid's providers. Only which providers are set is reported, never the keys. Setting all three back to Resgrid default removes the setting.</value>
+  </data>
 </root>

@@ -117,6 +117,7 @@ namespace Resgrid.Console
 					services.AddKeyedTransient<ICommandService, SecurityRefreshCommand>("SecurityRefreshCommand");
 					services.AddKeyedTransient<ICommandService, FeatureFlagsCommand>("FeatureFlagsCommand");
 					services.AddKeyedTransient<ICommandService, AuthenticatorSeedsCommand>("AuthenticatorSeedsCommand");
+					services.AddKeyedTransient<ICommandService, RoutingUsageCommand>("RoutingUsageCommand");
 					services.AddKeyedTransient<ICommandService, HelpCommand>("HelpCommand");
 
 					services.AddHostedService<ApplicationHostedService>();

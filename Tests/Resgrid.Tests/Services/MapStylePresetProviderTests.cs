@@ -38,7 +38,7 @@ namespace Resgrid.Tests.Services
 			MappingConfig.SelfHostedStyleUrlDay = "https://tiles.example.org/styles/osm-bright/style.json";
 			MappingConfig.SelfHostedStyleUrlNight = "https://tiles.example.org/styles/dark-matter/style.json";
 
-			_service = new MapStyleService(Mock.Of<IDepartmentSettingsService>(), Mock.Of<ICacheProvider>());
+			_service = new MapStyleService(Mock.Of<IDepartmentSettingsService>(), Mock.Of<ICacheProvider>(), null);
 		}
 
 		[TearDown]

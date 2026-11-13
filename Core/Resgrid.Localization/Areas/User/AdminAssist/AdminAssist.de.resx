@@ -7827,4 +7827,10 @@
   <data name="ModuleHelp.ChatDisabled" xml:space="preserve">
     <value>Blendet den Chat in der Navigation, den Dashboard-Widgets und der Suche der Web-App ein oder aus. Das Ausblenden löscht keine Daten und ändert keine Berechtigungen. Der Chat in den mobilen Apps ist nicht betroffen.</value>
   </data>
+  <data xml:space="preserve" name="Setting.MappingProviderOverrides">
+    <value>Ihre eigenen Kartenanbieter</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.MappingProviderOverrides">
+    <value>Eigene Konten der Abteilung für Routing, Live-Verkehr und Adresssuche, die vor den Anbietern von Resgrid angefragt werden. Gemeldet wird nur, welche Anbieter eingestellt sind, nie die Schlüssel. Werden alle drei auf den Resgrid-Standard zurückgesetzt, wird die Einstellung entfernt.</value>
+  </data>
 </root>

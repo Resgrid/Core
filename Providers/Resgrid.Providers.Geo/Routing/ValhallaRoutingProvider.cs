@@ -29,6 +29,23 @@ namespace Resgrid.Providers.GeoLocationProvider.Routing
 		private static string _coverageSource;
 		private static List<(double West, double South, double East, double North)> _coverageBoxes = new List<(double, double, double, double)>();
 
+		// A department's own Valhalla (Mapping Settings); null = the install's. Its URL is only reached on a public address.
+		private readonly RoutingProviderCredentials _department;
+
+		public ValhallaRoutingProvider()
+		{
+		}
+
+		private ValhallaRoutingProvider(RoutingProviderCredentials department)
+		{
+			_department = department;
+		}
+
+		public IRoutingProvider WithCredentials(RoutingProviderCredentials credentials)
+		{
+			return credentials == null ? null : new ValhallaRoutingProvider(credentials);
+		}
+
 		public string Name => RoutingProviderNames.Valhalla;
 
 		// Built per read: the stop and closure limits follow the server's service_limits through MappingConfig.
@@ -43,20 +60,23 @@ namespace Resgrid.Providers.GeoLocationProvider.Routing
 			VehicleSize = true,
 			VehicleFull = true,
 			MaxMatrixCoordinates = 1000,
-			MaxWaypoints = Math.Max(2, MappingConfig.ValhallaMaxWaypoints),
+			// A department's own server is assumed to have stock Valhalla limits.
+			MaxWaypoints = _department != null ? 20 : Math.Max(2, MappingConfig.ValhallaMaxWaypoints),
 			// optimized_route is bounded by the matrix limit (stock 2,500 pairs), not by max_locations.
 			MaxOptimizeWaypoints = 50,
 			// Road closures (M0314): exclude_polygons for areas, exclude_locations for points on closed roads.
 			ExcludeAreas = true,
-			MaxExcludePoints = Math.Max(0, MappingConfig.ValhallaMaxExcludePoints)
+			MaxExcludePoints = _department != null ? 50 : Math.Max(0, MappingConfig.ValhallaMaxExcludePoints)
 		};
 
-		public bool IsConfigured => !string.IsNullOrWhiteSpace(MappingConfig.ValhallaUrl);
+		public bool IsConfigured => _department != null
+			? RoutingHttp.IsAcceptableDepartmentUrl(_department.Url)
+			: !string.IsNullOrWhiteSpace(MappingConfig.ValhallaUrl);
 
 		public async Task<RouteResult> GetRouteAsync(RouteRequest request, CancellationToken cancellationToken)
 		{
-			if (!IsCovered(request.Waypoints))
-				return new RouteResult { Provider = Name, Error = OutsideCoverageError, RequestRejected = true };
+			if (_department == null && !IsCovered(request.Waypoints))
+				return new RouteResult { Provider = Name, Error = OutsideCoverageError, RequestRejected = true, NotSent = true };
 
 			var body = new Dictionary<string, object>
 			{
@@ -83,7 +103,7 @@ namespace Resgrid.Providers.GeoLocationProvider.Routing
 
 			AddExclusions(body, request);
 
-			var (_, status, document) = await RoutingHttp.PostJsonAsync(Url("/route"), body, cancellationToken, Authorize);
+			var (_, status, document) = await RoutingHttp.PostJsonAsync(Url("/route"), body, cancellationToken, AuthorizeRequest, _department != null);
 
 			using (document)
 			{
@@ -105,8 +125,8 @@ namespace Resgrid.Providers.GeoLocationProvider.Routing
 
 		public async Task<RouteMatrixResult> GetMatrixAsync(RouteMatrixRequest request, CancellationToken cancellationToken)
 		{
-			if (!IsCovered(request.Origins) || !IsCovered(request.Destinations))
-				return new RouteMatrixResult { Provider = Name, Error = OutsideCoverageError, RequestRejected = true };
+			if (_department == null && (!IsCovered(request.Origins) || !IsCovered(request.Destinations)))
+				return new RouteMatrixResult { Provider = Name, Error = OutsideCoverageError, RequestRejected = true, NotSent = true };
 
 			var body = new Dictionary<string, object>
 			{
@@ -117,7 +137,7 @@ namespace Resgrid.Providers.GeoLocationProvider.Routing
 				["units"] = "kilometers"
 			};
 
-			var (_, status, document) = await RoutingHttp.PostJsonAsync(Url("/sources_to_targets"), body, cancellationToken, Authorize);
+			var (_, status, document) = await RoutingHttp.PostJsonAsync(Url("/sources_to_targets"), body, cancellationToken, AuthorizeRequest, _department != null);
 
 			using (document)
 			{
@@ -156,10 +176,10 @@ namespace Resgrid.Providers.GeoLocationProvider.Routing
 		{
 			// Valhalla's optimizer always keeps the first and last locations in place.
 			if (!request.KeepFirst || !request.KeepLast)
-				return new RouteOptimizationResult { Provider = Name, Error = "Valhalla keeps the first and last stops fixed" };
+				return new RouteOptimizationResult { Provider = Name, Error = "Valhalla keeps the first and last stops fixed", NotSent = true };
 
-			if (!IsCovered(request.Waypoints))
-				return new RouteOptimizationResult { Provider = Name, Error = OutsideCoverageError, RequestRejected = true };
+			if (_department == null && !IsCovered(request.Waypoints))
+				return new RouteOptimizationResult { Provider = Name, Error = OutsideCoverageError, RequestRejected = true, NotSent = true };
 
 			var body = new Dictionary<string, object>
 			{
@@ -168,7 +188,7 @@ namespace Resgrid.Providers.GeoLocationProvider.Routing
 				["costing_options"] = CostingOptions(request.Profile, request.Vehicle, request.Avoid)
 			};
 
-			var (_, status, document) = await RoutingHttp.PostJsonAsync(Url("/optimized_route"), body, cancellationToken, Authorize);
+			var (_, status, document) = await RoutingHttp.PostJsonAsync(Url("/optimized_route"), body, cancellationToken, AuthorizeRequest, _department != null);
 
 			using (document)
 			{
@@ -194,19 +214,33 @@ namespace Resgrid.Providers.GeoLocationProvider.Routing
 			}
 		}
 
-		private static string Url(string path)
+		private string Url(string path)
 		{
-			return RoutingHttp.TrimBase(MappingConfig.ValhallaUrl) + path;
+			return RoutingHttp.TrimBase(_department != null ? _department.Url : MappingConfig.ValhallaUrl) + path;
+		}
+
+		private void AuthorizeRequest(HttpRequestMessage request)
+		{
+			if (_department != null)
+				Authorize(request, _department.ApiKey, _department.AuthScheme);
+			else
+				Authorize(request);
 		}
 
 		/// <summary>Adds ValhallaApiKey as an X-Api-Key header, or as "Authorization: Bearer key" when ValhallaAuthScheme is "bearer".</summary>
 		public static void Authorize(HttpRequestMessage request)
 		{
-			var key = MappingConfig.ValhallaApiKey?.Trim();
+			Authorize(request, MappingConfig.ValhallaApiKey, MappingConfig.ValhallaAuthScheme);
+		}
+
+		/// <summary>Adds a key as an X-Api-Key header, or as "Authorization: Bearer key" when the scheme is "bearer".</summary>
+		public static void Authorize(HttpRequestMessage request, string apiKey, string scheme)
+		{
+			var key = apiKey?.Trim();
 			if (string.IsNullOrWhiteSpace(key))
 				return;
 
-			if (string.Equals(MappingConfig.ValhallaAuthScheme?.Trim(), MappingConfig.ValhallaBearerAuthScheme, StringComparison.OrdinalIgnoreCase))
+			if (string.Equals(scheme?.Trim(), MappingConfig.ValhallaBearerAuthScheme, StringComparison.OrdinalIgnoreCase))
 			{
 				// A key pasted together with its scheme ("Bearer abc") is sent once, not as "Bearer Bearer abc".
 				if (key.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))

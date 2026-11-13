@@ -138,6 +138,12 @@ namespace Resgrid.Web.Services.Models.v4.Configs
 		/// <summary>Mapbox Traffic v1 vector tile template (layer "traffic", congestion low/moderate/heavy/severe, closed).</summary>
 		public string TrafficTileUrl { get; set; }
 
+		/// <summary>
+		/// "vector" (Mapbox Traffic v1, layer "traffic") or "raster" (a department's own traffic tile URL, drawn as an image
+		/// overlay). Null with no traffic. Older apps that ignore it should only draw TrafficTileUrl when this is "vector".
+		/// </summary>
+		public string TrafficTileType { get; set; }
+
 		/// <summary>How often to reload traffic tiles, in seconds.</summary>
 		public int TrafficRefreshSeconds { get; set; }
 

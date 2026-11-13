@@ -16,8 +16,13 @@ namespace Resgrid.Services
 	/// <summary>Road closures (M0314); see <see cref="IRoadClosureService"/>.</summary>
 	public class RoadClosureService : IRoadClosureService
 	{
-		private const string CacheKey = "RoadClosures1_{0}";
+		// The closures are cached under the department's current version, and every write gives the department a new one. A
+		// read that began before a write and stores what it read after the write therefore stores it under a version nobody
+		// reads again; with one fixed key that late store brought back the old closures for a day.
+		private const string CacheKey = "RoadClosures2_{0}_{1}";
+		private const string VersionKey = "RoadClosuresVersion1_{0}";
 		private static readonly TimeSpan CacheLength = TimeSpan.FromDays(1);
+		private static readonly TimeSpan VersionLength = TimeSpan.FromDays(30);
 
 		// Parsed shapes by closure version, shared across requests: a board asks for the same closures dozens of times.
 		private const int MaxCachedShapes = 2000;
@@ -47,7 +52,21 @@ namespace Resgrid.Services
 			if (bypassCache || !Config.SystemBehaviorConfig.CacheEnabled || _cacheProvider == null)
 				return await read();
 
-			var key = string.Format(CacheKey, departmentId);
+			// The version is read before the closures are (see CacheKey). Null means the cache is unavailable.
+			string version = null;
+			try
+			{
+				version = await _cacheProvider.GetOrAddStringAsync(string.Format(VersionKey, departmentId), NewVersion(), VersionLength);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Reading the road closure cache version for department {departmentId} failed.");
+			}
+
+			if (string.IsNullOrWhiteSpace(version))
+				return await read();
+
+			var key = string.Format(CacheKey, departmentId, version);
 			try
 			{
 				var cached = await _cacheProvider.GetStringAsync(key);
@@ -142,14 +161,15 @@ namespace Resgrid.Services
 
 		public async Task<bool> SetClosureEnabledAsync(int departmentId, string roadClosureId, bool enabled, string userId, CancellationToken cancellationToken = default)
 		{
-			var closure = await GetClosureByIdAsync(departmentId, roadClosureId);
-			if (closure == null)
+			if (departmentId <= 0 || string.IsNullOrWhiteSpace(roadClosureId))
 				return false;
 
-			closure.IsEnabled = enabled;
-			closure.UpdatedByUserId = userId;
-			closure.UpdatedOn = DateTime.UtcNow;
-			await _roadClosuresRepository.UpdateAsync(closure, CancellationToken.None);
+			// Only the switch and who flipped it: writing back the whole closure read a moment earlier would undo an edit saved
+			// in between (its shape or times).
+			var changed = await _roadClosuresRepository.SetEnabledAsync(departmentId, roadClosureId, enabled, userId, DateTime.UtcNow, CancellationToken.None);
+			if (changed == 0)
+				return false;
+
 			await InvalidateAsync(departmentId);
 			return true;
 		}
@@ -279,12 +299,15 @@ namespace Resgrid.Services
 
 			try
 			{
-				await _cacheProvider.RemoveAsync(string.Format(CacheKey, departmentId));
+				// A new version moves every reader to a fresh key (see CacheKey); the old entry ages out.
+				await _cacheProvider.SetStringAsync(string.Format(VersionKey, departmentId), NewVersion(), VersionLength);
 			}
 			catch (Exception ex)
 			{
 				Logging.LogException(ex, $"Clearing cached road closures for department {departmentId} failed.");
 			}
 		}
+
+		private static string NewVersion() => Guid.NewGuid().ToString("N");
 	}
 }

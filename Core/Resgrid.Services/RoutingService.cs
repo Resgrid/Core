@@ -22,9 +22,24 @@ namespace Resgrid.Services
 	/// RoutingFallbackProvider, then the straight-line estimate. Each call is bounded by RoutingTimeoutMs; results are
 	/// cached in Redis by provider, profile, vehicle and coordinates (30 days, 5 minutes when traffic-aware); a provider
 	/// that just failed is skipped for a short back-off so a broken key or server does not slow every request.
+	/// A department with its own routing account (setting 125) has it tried first, then the system chain. Back-off, cache
+	/// keys, logs and usage counts are scoped per account, so a department's bad key never benches the system provider.
 	/// </summary>
 	public class RoutingService : IRoutingService
 	{
+		/// <summary>One provider in a request's chain: the install's account, or a department's own.</summary>
+		private sealed class Link
+		{
+			public IRoutingProvider Provider { get; init; }
+
+			/// <summary>Back-off, cache and log scope: the provider name, or name#d{departmentId} for a department account.</summary>
+			public string Key { get; init; }
+
+			public int DepartmentId { get; init; }
+
+			public bool DepartmentAccount => DepartmentId > 0;
+		}
+
 		private const string RouteCachePrefix = "RtR1_";
 		private const string PairCachePrefix = "RtP1_";
 		private static readonly TimeSpan SuccessCacheLength = TimeSpan.FromDays(30);
@@ -37,39 +52,92 @@ namespace Resgrid.Services
 
 		private readonly IReadOnlyList<IRoutingProvider> _providers;
 		private readonly ICacheProvider _cacheProvider;
+		private readonly IRoutingUsageService _routingUsageService;
+		// Lazy: department settings geocode through providers that read these overrides too (construction-time cycle).
+		private readonly Lazy<IDepartmentMapProvidersService> _departmentMapProviders;
 
-		public RoutingService(IEnumerable<IRoutingProvider> providers, ICacheProvider cacheProvider)
+		public RoutingService(IEnumerable<IRoutingProvider> providers, ICacheProvider cacheProvider, IRoutingUsageService routingUsageService,
+			Lazy<IDepartmentMapProvidersService> departmentMapProviders)
 		{
 			_providers = (providers ?? Enumerable.Empty<IRoutingProvider>()).ToList();
 			_cacheProvider = cacheProvider;
+			_routingUsageService = routingUsageService;
+			_departmentMapProviders = departmentMapProviders;
 		}
 
 		public string ProviderName => Primary?.Name ?? RoutingProviderNames.Estimate;
 
 		public RoutingCapabilities Capabilities => (Primary ?? Estimate)?.Capabilities ?? new RoutingCapabilities();
 
-		public string Attribution
+		public string Attribution => AttributionFor(ProviderName);
+
+		private static string AttributionFor(string provider)
 		{
-			get
+			switch (provider)
 			{
-				switch (ProviderName)
-				{
-					case RoutingProviderNames.Mapbox:
-						return "© Mapbox © OpenStreetMap contributors";
-					case RoutingProviderNames.Google:
-						return "Map data © Google";
-					case RoutingProviderNames.Valhalla:
-					case RoutingProviderNames.Osrm:
-						return "© OpenStreetMap contributors";
-					default:
-						return string.Empty;
-				}
+				case RoutingProviderNames.Mapbox:
+					return "© Mapbox © OpenStreetMap contributors";
+				case RoutingProviderNames.Google:
+					return "Map data © Google";
+				case RoutingProviderNames.Valhalla:
+				case RoutingProviderNames.Osrm:
+					return "© OpenStreetMap contributors";
+				default:
+					return string.Empty;
 			}
 		}
 
-		public bool IsNavigationAvailable =>
-			MappingConfig.NavigationEnabled && Primary != null && Primary.Capabilities.Navigation &&
-			(Primary.Name == RoutingProviderNames.Valhalla || Primary.Name == RoutingProviderNames.Mapbox);
+		public bool IsNavigationAvailable => NavigationAvailableOn(Primary);
+
+		private static bool NavigationAvailableOn(IRoutingProvider provider) =>
+			MappingConfig.NavigationEnabled && provider != null && provider.Capabilities.Navigation &&
+			(provider.Name == RoutingProviderNames.Valhalla || provider.Name == RoutingProviderNames.Mapbox);
+
+		public async Task<RoutingProviderInfo> GetProviderInfoAsync(int departmentId)
+		{
+			var department = await DepartmentLinkAsync(departmentId);
+			var provider = department?.Provider ?? Primary;
+			var capabilities = (provider ?? Estimate)?.Capabilities ?? new RoutingCapabilities();
+			var name = provider?.Name ?? RoutingProviderNames.Estimate;
+
+			return new RoutingProviderInfo
+			{
+				Name = name,
+				Capabilities = capabilities,
+				Attribution = AttributionFor(name),
+				NavigationAvailable = NavigationAvailableOn(provider),
+				DepartmentAccount = department != null
+			};
+		}
+
+		/// <summary>The department's own routing account as a chain link, or null (none, unusable, or department 0).</summary>
+		private async Task<Link> DepartmentLinkAsync(int departmentId)
+		{
+			if (departmentId <= 0 || _departmentMapProviders == null)
+				return null;
+
+			try
+			{
+				var credentials = (await _departmentMapProviders.Value.GetAsync(departmentId))?.Routing;
+				if (credentials == null)
+					return null;
+
+				var template = Find(credentials.Provider);
+				if (template == null || template.Name == RoutingProviderNames.Estimate)
+					return null;
+
+				var provider = template.WithCredentials(credentials);
+				if (provider == null || !provider.IsConfigured)
+					return null;
+
+				return new Link { Provider = provider, Key = $"{provider.Name}#d{departmentId}", DepartmentId = departmentId };
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Reading department {departmentId}'s routing account failed; the system providers answer");
+				return null;
+			}
+		}
 
 		/// <summary>The configured primary provider, or null when it is the estimate or not configured.</summary>
 		private IRoutingProvider Primary
@@ -89,26 +157,32 @@ namespace Resgrid.Services
 			return _providers.FirstOrDefault(p => p.Name == normalized);
 		}
 
-		/// <summary>Primary, fallback, estimate — skipping duplicates, unconfigured providers and ones in back-off.</summary>
-		private List<IRoutingProvider> Chain()
+		/// <summary>
+		/// The department's own account (if any), then primary, fallback, estimate — skipping duplicates, unconfigured
+		/// providers and ones in back-off.
+		/// </summary>
+		private async Task<List<Link>> ChainAsync(int departmentId)
 		{
-			var chain = new List<IRoutingProvider>();
+			var chain = new List<Link>();
 
-			void Add(IRoutingProvider provider)
+			void Add(Link link)
 			{
-				if (provider == null || !provider.IsConfigured || chain.Any(p => p.Name == provider.Name))
+				if (link?.Provider == null || !link.Provider.IsConfigured || chain.Any(l => l.Key == link.Key))
 					return;
 
-				if (provider.Name != RoutingProviderNames.Estimate &&
-				    ProviderBackoffUntil.TryGetValue(provider.Name, out var until) && until > DateTime.UtcNow)
+				if (link.Provider.Name != RoutingProviderNames.Estimate &&
+				    ProviderBackoffUntil.TryGetValue(link.Key, out var until) && until > DateTime.UtcNow)
 					return;
 
-				chain.Add(provider);
+				chain.Add(link);
 			}
 
-			Add(Find(MappingConfig.RoutingProvider));
-			Add(Find(MappingConfig.RoutingFallbackProvider));
-			Add(Estimate);
+			Link System(IRoutingProvider provider) => provider == null ? null : new Link { Provider = provider, Key = provider.Name };
+
+			Add(await DepartmentLinkAsync(departmentId));
+			Add(System(Find(MappingConfig.RoutingProvider)));
+			Add(System(Find(MappingConfig.RoutingFallbackProvider)));
+			Add(System(Estimate));
 			return chain;
 		}
 
@@ -117,13 +191,14 @@ namespace Resgrid.Services
 			if (request?.Waypoints == null || request.Waypoints.Count < 2)
 				return new RouteResult { Error = "A route needs at least two points" };
 
-			foreach (var provider in Chain())
+			foreach (var link in await ChainAsync(request.DepartmentId))
 			{
+				var provider = link.Provider;
 				var trafficAware = IsTrafficAware(provider, request.Profile);
 
 				// Road closures: what this provider is told to avoid, and what is measured on the route afterwards (M0314).
 				var closurePlan = RoadClosureRouting.Plan(request, provider.Capabilities, provider.Name == RoutingProviderNames.Estimate);
-				var cacheKey = RouteCachePrefix + Hash(provider.Name + "\n" + RouteKey(request) + closurePlan.Key);
+				var cacheKey = RouteCachePrefix + Hash(link.Key + "\n" + RouteKey(request) + closurePlan.Key);
 
 				if (!request.BypassCache)
 				{
@@ -136,6 +211,7 @@ namespace Resgrid.Services
 					continue;
 
 				var result = await CallProviderAsync(provider, closurePlan.ProviderRequest ?? request, cancellationToken);
+				await RecordUsageAsync(link, RoutingUsageOperation.Route, result?.Successful == true, result?.RequestRejected == true, result?.NotSent == true);
 
 				if (result != null && result.Successful)
 				{
@@ -151,6 +227,7 @@ namespace Resgrid.Services
 								break;
 
 							var rerouted = await CallProviderAsync(provider, RoadClosureRouting.WithExtraExcludePoints(closurePlan, entries), cancellationToken);
+							await RecordUsageAsync(link, RoutingUsageOperation.Route, rerouted?.Successful == true, rerouted?.RequestRejected == true, rerouted?.NotSent == true);
 							if (rerouted == null || !rerouted.Successful)
 								break;
 
@@ -169,9 +246,9 @@ namespace Resgrid.Services
 				}
 
 				if (result?.RequestRejected == true)
-					RecordRejection(provider, result.Error);
+					RecordRejection(link, result.Error);
 				else
-					RecordFailure(provider, result?.Error);
+					RecordFailure(link, result?.Error);
 			}
 
 			return new RouteResult { Error = "No routing provider returned a route" };
@@ -207,8 +284,9 @@ namespace Resgrid.Services
 			var pending = Enumerable.Range(0, origins).ToList();
 			string provided = null;
 
-			foreach (var provider in Chain())
+			foreach (var link in await ChainAsync(request.DepartmentId))
 			{
+				var provider = link.Provider;
 				var trafficAware = IsTrafficAware(provider, request.Profile);
 				var keys = new string[origins, destinations];
 
@@ -220,7 +298,7 @@ namespace Resgrid.Services
 						var complete = true;
 						for (var j = 0; j < destinations; j++)
 						{
-							keys[i, j] = PairCachePrefix + Hash(provider.Name + "\n" + PairKey(request, request.Origins[i], request.Destinations[j]));
+							keys[i, j] = PairCachePrefix + Hash(link.Key + "\n" + PairKey(request, request.Origins[i], request.Destinations[j]));
 							var cached = await ReadCacheAsync<CachedPair>(keys[i, j]);
 							if (cached != null)
 							{
@@ -271,14 +349,17 @@ namespace Resgrid.Services
 						result = new RouteMatrixResult { Provider = provider.Name, Error = ex.Message };
 					}
 
-					if (result == null || !result.Successful || result.Durations == null)
+					var matrixOk = result != null && result.Successful && result.Durations != null;
+					await RecordUsageAsync(link, RoutingUsageOperation.Matrix, matrixOk, result?.RequestRejected == true, result?.NotSent == true, batch.Length * destinations);
+
+					if (!matrixOk)
 					{
 						// One origin outside the provider's coverage fails its whole batch; the next provider takes the
 						// remaining origins for this request only.
 						if (result?.RequestRejected == true)
-							RecordRejection(provider, result.Error);
+							RecordRejection(link, result.Error);
 						else
-							RecordFailure(provider, result?.Error);
+							RecordFailure(link, result?.Error);
 						failed = true;
 						break;
 					}
@@ -315,7 +396,8 @@ namespace Resgrid.Services
 			if (request?.Waypoints == null || request.Waypoints.Count <= 2)
 				return new RouteOptimizationResult { Successful = true, Order = Enumerable.Range(0, request?.Waypoints?.Count ?? 0).ToList() };
 
-			var primary = Primary;
+			var link = (await ChainAsync(request.DepartmentId)).FirstOrDefault(l => l.Provider.Name != RoutingProviderNames.Estimate);
+			var primary = link?.Provider;
 			if (primary != null && primary.Capabilities.Optimize && request.Waypoints.Count <= primary.Capabilities.MaxOptimizeWaypoints)
 			{
 				try
@@ -323,17 +405,21 @@ namespace Resgrid.Services
 					using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
 					timeout.CancelAfter(Math.Max(1000, MappingConfig.RoutingTimeoutMs * 2));
 					var optimized = await primary.OptimizeAsync(request, timeout.Token);
+					var optimizedOk = optimized != null && optimized.Successful && IsPermutation(optimized.Order, request.Waypoints.Count);
+					await RecordUsageAsync(link, RoutingUsageOperation.Optimize, optimizedOk, optimized?.RequestRejected == true, optimized?.NotSent == true);
 
-					if (optimized != null && optimized.Successful && IsPermutation(optimized.Order, request.Waypoints.Count))
+					if (optimizedOk)
 						return optimized;
 				}
 				catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
 				{
 					// Fall through to the heuristic.
+					await RecordUsageAsync(link, RoutingUsageOperation.Optimize, false, false, false);
 				}
 				catch (Exception ex)
 				{
-					RecordFailure(primary, ex.Message);
+					await RecordUsageAsync(link, RoutingUsageOperation.Optimize, false, false, false);
+					RecordFailure(link, ex.Message);
 				}
 			}
 
@@ -342,6 +428,7 @@ namespace Resgrid.Services
 			{
 				Origins = request.Waypoints,
 				Destinations = request.Waypoints,
+				DepartmentId = request.DepartmentId,
 				Profile = request.Profile,
 				Vehicle = request.Vehicle,
 				Avoid = request.Avoid
@@ -363,23 +450,46 @@ namespace Resgrid.Services
 			return order != null && order.Count == count && order.Distinct().Count() == count && order.All(i => i >= 0 && i < count);
 		}
 
+		/// <summary>Counts one provider call for the usage report (IRoutingUsageService); the estimate is never counted.</summary>
+		private async Task RecordUsageAsync(Link link, RoutingUsageOperation operation, bool succeeded, bool rejected, bool notSent, int elements = 0)
+		{
+			if (_routingUsageService == null || link?.Provider == null || link.Provider.Name == RoutingProviderNames.Estimate)
+				return;
+
+			var outcome = succeeded ? RoutingUsageOutcome.Succeeded
+				: notSent ? RoutingUsageOutcome.NotSent
+				: rejected ? RoutingUsageOutcome.Rejected
+				: RoutingUsageOutcome.Failed;
+
+			await _routingUsageService.RecordAsync(link.Provider.Name, operation, outcome, elements, link.DepartmentAccount);
+		}
+
 		private static bool IsTrafficAware(IRoutingProvider provider, RoutingProfile profile)
 		{
 			return profile == RoutingProfile.DrivingTraffic && MappingConfig.RoutingTrafficAware && provider.Capabilities.Traffic;
 		}
 
-		private static void RecordFailure(IRoutingProvider provider, string error)
+		private static void RecordFailure(Link link, string error)
 		{
+			var provider = link?.Provider;
 			if (provider == null || provider.Name == RoutingProviderNames.Estimate)
 				return;
 
-			ProviderBackoffUntil[provider.Name] = DateTime.UtcNow.Add(FailureBackoff);
+			ProviderBackoffUntil[link.Key] = DateTime.UtcNow.Add(FailureBackoff);
 
 			var now = DateTime.UtcNow;
-			if (LastErrorLogged.TryGetValue(provider.Name, out var last) && now - last < ErrorLogInterval)
+			if (LastErrorLogged.TryGetValue(link.Key, out var last) && now - last < ErrorLogInterval)
 				return;
 
-			LastErrorLogged[provider.Name] = now;
+			LastErrorLogged[link.Key] = now;
+
+			// A department's own account failing is the department's to fix (Mapping Settings), not an install fault.
+			if (link.DepartmentAccount)
+			{
+				Logging.LogInfo($"Department {link.DepartmentId}'s own routing account ({provider.Name}) failed: {error}; the system providers answer for a minute.");
+				return;
+			}
+
 			Logging.LogError($"Routing provider '{provider.Name}' failed: {error}. Check MappingConfig.RoutingProvider and the provider's settings ({SettingsFor(provider.Name)}); falling back to {MappingConfig.RoutingFallbackProvider} then the straight-line estimate.");
 		}
 
@@ -387,12 +497,13 @@ namespace Resgrid.Services
 		/// The provider is up but cannot route this request (outside its coverage, no road near a point, over its limits):
 		/// the next provider answers it and the provider stays in use for everything else. Logged at most every 10 minutes.
 		/// </summary>
-		private static void RecordRejection(IRoutingProvider provider, string error)
+		private static void RecordRejection(Link link, string error)
 		{
+			var provider = link?.Provider;
 			if (provider == null || provider.Name == RoutingProviderNames.Estimate)
 				return;
 
-			var key = provider.Name + ":rejected";
+			var key = link.Key + ":rejected";
 			var now = DateTime.UtcNow;
 			if (LastErrorLogged.TryGetValue(key, out var last) && now - last < ErrorLogInterval)
 				return;
@@ -469,6 +580,21 @@ namespace Resgrid.Services
 					.Append(waypoint.IsStop ? 's' : 't')
 					.Append(waypoint.Heading.HasValue ? Math.Round(waypoint.Heading.Value).ToString(CultureInfo.InvariantCulture) : string.Empty)
 					.Append(';');
+			}
+
+			// Exclusions a caller set itself change the route; none (every caller today) leaves the key as it was.
+			builder.Append(RoadClosureRouting.ExcludePointsKey(request));
+
+			if (request.ExcludeAreas?.Count > 0)
+			{
+				builder.Append("|xa:");
+				foreach (var area in request.ExcludeAreas)
+				{
+					foreach (var point in area ?? new List<RoutingWaypoint>())
+						builder.Append(Coordinate(point.Latitude)).Append(',').Append(Coordinate(point.Longitude)).Append(';');
+
+					builder.Append('/');
+				}
 			}
 
 			return builder.ToString();

@@ -27,5 +27,11 @@ namespace Resgrid.Model.Providers
 		/// increment (when the value becomes 1). Returns 0 when the cache is unavailable.
 		/// </summary>
 		Task<long> IncrementAsync(string cacheKey, TimeSpan expiration);
+
+		/// <summary>
+		/// Atomically adds <paramref name="amount"/> to a counter and returns the new value. Sets the expiration when the
+		/// counter has none yet. Returns 0 when the cache is unavailable.
+		/// </summary>
+		Task<long> IncrementByAsync(string cacheKey, long amount, TimeSpan expiration);
 	}
 }

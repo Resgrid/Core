@@ -347,6 +347,9 @@
   <data name="RepeatTooMany" xml:space="preserve">
     <value>Das würde mehr als {0} Zeiten hinzufügen.</value>
   </data>
+  <data name="RepeatNoDays" xml:space="preserve">
+    <value>Wählen Sie mindestens einen Tag.</value>
+  </data>
   <data name="DayMon" xml:space="preserve">
     <value>Mo</value>
   </data>

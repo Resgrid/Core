@@ -2584,6 +2584,13 @@ Mapping Mapbox Access Token. Map-provider access token. Only presence is reporte
 
 Default: unset. Source: DepartmentSettingTypes.MappingMapboxAccessToken.
 
+<a id="setting-mappingprovideroverrides"></a>
+## Your own map providers
+
+Your own map providers. Department-owned routing, live traffic and address lookup accounts, tried before Resgrid's providers. Only which providers are set is reported, never the keys. Setting all three back to Resgrid default removes the setting.
+
+Default: none (Resgrid's providers). Source: DepartmentSettingTypes.MappingProviderOverrides.
+
 <a id="setting-mappingmapstyle"></a>
 ## Mapping Map Style
 

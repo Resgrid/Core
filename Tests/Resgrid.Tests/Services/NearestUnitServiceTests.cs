@@ -574,6 +574,24 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task an_air_unit_gets_no_head_start_when_every_time_is_an_estimate()
+		{
+			// PR 585: with routed ETAs off nothing is looked up, so a slow air unit 20 km out ranks on its time against the
+			// team's 1 km estimate instead of jumping its type's queue as a "looked up" time.
+			_unitsService.Setup(x => x.GetTravelProfilesForUnitsAsync(DepartmentId, It.IsAny<IEnumerable<Unit>>()))
+				.ReturnsAsync(new Dictionary<int, UnitTravelProfile> { [FarTeamUnit] = new UnitTravelProfile(UnitTravelModes.Air, 180) });
+
+			var board = await GetBoardAsync(useRoadEta: false);
+
+			var air = UnitRow(board, FarTeamUnit);
+			var team = UnitRow(board, TeamUnit);
+			air.EtaSource.Should().Be(EtaSources.Direct);
+			air.EtaSeconds.Should().BeGreaterThan(team.EtaSeconds.Value);
+			var order = board.Units.Select(u => u.UnitId).ToList();
+			order.IndexOf(TeamUnit).Should().BeLessThan(order.IndexOf(FarTeamUnit));
+		}
+
+		[Test]
 		public async Task road_closures_a_drive_time_met_are_shown_on_the_unit_and_noted_once()
 		{
 			_config.EtaShortlistSize = 1;

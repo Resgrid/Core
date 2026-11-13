@@ -20,8 +20,14 @@ namespace Resgrid.Model.Services
 		/// <summary>Signed, expiring URL of the GetStyle endpoint for the department and surface.</summary>
 		string GetSignedStyleUrl(int departmentId, string appKey, bool night);
 
-		/// <summary>Mapbox Traffic v1 vector tile URL with the traffic token, or null when traffic is off.</summary>
+		/// <summary>Mapbox Traffic v1 vector tile URL with the install's traffic token, or null when traffic is off.</summary>
 		string GetTrafficTileUrl();
+
+		/// <summary>
+		/// The live traffic layer a department's maps show: its own (Mapping Settings: a Mapbox token or a raster tile URL),
+		/// else the install's Mapbox Traffic layer; null when neither exists. 0 = the install's.
+		/// </summary>
+		Task<TrafficLayerSource> GetTrafficLayerAsync(int departmentId);
 
 		/// <summary>
 		/// Where the department style presets render on this install, before any department Mapbox override: "mapbox" or

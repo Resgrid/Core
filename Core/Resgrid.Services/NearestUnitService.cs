@@ -112,6 +112,8 @@ namespace Resgrid.Services
 			foreach (var candidate in unitCandidates)
 				candidate.Travel = travel.TryGetValue(candidate.Unit.UnitId, out var profile) && profile != null ? profile : UnitTravelProfile.Default;
 
+			var useRoadEta = request.UseRoadEta ?? config.UseRoutedEta;
+
 			// A distance or ETA from a position the viewer may not see would let them work the position out, so a hidden
 			// position gets neither (and so no drive-time lookup): it ranks after the rows that have one.
 			foreach (var candidate in unitCandidates.Cast<Candidate>().Concat(personnelCandidates).Where(c => !c.LocationHidden && c.Latitude.HasValue && c.Longitude.HasValue))
@@ -122,15 +124,15 @@ namespace Resgrid.Services
 				candidate.EtaSeconds = unitTravel.EstimateSeconds(distance);
 				candidate.EtaSource = EtaSources.Estimated;
 
-				// Air travel is the straight line at the unit's air speed: as good as its ETA gets, and never routed.
+				// Air travel is the straight line at the unit's air speed: as good as its ETA gets, and never routed. With routed
+				// ETAs on it ranks with the looked-up drive times; with them off every time is an estimate, so it gets no head start.
 				if (unitTravel.IsAir)
 				{
 					candidate.EtaSource = EtaSources.Direct;
-					candidate.DriveTimeLookedUp = true;
+					candidate.DriveTimeLookedUp = useRoadEta;
 				}
 			}
 
-			var useRoadEta = request.UseRoadEta ?? config.UseRoutedEta;
 			if (useRoadEta)
 				await ApplyRoadEtasAsync(request, config, unitCandidates, personnelCandidates, board, cancellationToken);
 			else

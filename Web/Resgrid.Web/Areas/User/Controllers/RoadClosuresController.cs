@@ -280,18 +280,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			set(latitude, longitude);
 		}
 
+		/// <summary>The list shows "current" (in effect now or still to come) or "all"; anything else is "current".</summary>
 		private static string NormalizeFilter(string filter)
 		{
-			switch ((filter ?? string.Empty).Trim().ToLowerInvariant())
-			{
-				case "scheduled":
-				case "ended":
-				case "disabled":
-				case "all":
-					return filter.Trim().ToLowerInvariant();
-				default:
-					return "current";
-			}
+			return string.Equals((filter ?? string.Empty).Trim(), "all", StringComparison.OrdinalIgnoreCase) ? "all" : "current";
 		}
 	}
 }

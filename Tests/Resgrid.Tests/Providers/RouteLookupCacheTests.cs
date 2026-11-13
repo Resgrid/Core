@@ -145,6 +145,7 @@ namespace Resgrid.Tests.Providers
 			public Task<string> GetOrAddStringAsync(string cacheKey, string valueIfAbsent, TimeSpan slidingExpiration) => throw new NotSupportedException();
 
 			public Task<long> IncrementAsync(string cacheKey, TimeSpan expiration) => throw new NotSupportedException();
+			public Task<long> IncrementByAsync(string cacheKey, long amount, TimeSpan expiration) => throw new NotSupportedException();
 		}
 	}
 }

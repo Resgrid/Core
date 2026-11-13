@@ -344,6 +344,46 @@ namespace Resgrid.Providers.Cache
 			return 0;
 		}
 
+		public async Task<long> IncrementByAsync(string cacheKey, long amount, TimeSpan expiration)
+		{
+			try
+			{
+				if (Config.SystemBehaviorConfig.CacheEnabled && _connection != null && _connection.IsConnected)
+				{
+					IDatabase cache = _connection.GetDatabase();
+					var key = SetCacheKeyForEnv(cacheKey);
+
+					// INCRBY + PEXPIRE in one server-side script, like IncrementAsync. The TTL is set whenever the key has
+					// none (PTTL -1), so a counter whose first add was larger than 1 still expires.
+					const string incrementByAndExpireScript =
+						"local current = redis.call('INCRBY', KEYS[1], ARGV[1])\n" +
+						"if redis.call('PTTL', KEYS[1]) == -1 then\n" +
+						"  redis.call('PEXPIRE', KEYS[1], ARGV[2])\n" +
+						"end\n" +
+						"return current";
+
+					var result = await cache.ScriptEvaluateAsync(
+						incrementByAndExpireScript,
+						new RedisKey[] { key },
+						new RedisValue[] { amount, (long)expiration.TotalMilliseconds });
+
+					return (long)result;
+				}
+			}
+			catch (TimeoutException)
+			{ }
+			catch (RedisConnectionException ex)
+			{
+				Logging.LogError(ex);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+			}
+
+			return 0;
+		}
+
 		public async Task<string> GetOrAddStringAsync(string cacheKey, string valueIfAbsent, TimeSpan slidingExpiration)
 		{
 			try

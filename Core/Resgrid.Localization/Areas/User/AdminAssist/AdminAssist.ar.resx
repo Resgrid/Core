@@ -7827,4 +7827,10 @@
   <data name="ModuleHelp.ChatDisabled" xml:space="preserve">
     <value>يُظهر الدردشة أو يخفيها في التنقل وأدوات لوحة المعلومات والبحث في تطبيق الويب. لا يؤدي الإخفاء إلى حذف البيانات أو تغيير الصلاحيات. لا تتأثر الدردشة في تطبيقات الهاتف المحمول.</value>
   </data>
+  <data xml:space="preserve" name="Setting.MappingProviderOverrides">
+    <value>مزودو الخرائط الخاصون بك</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.MappingProviderOverrides">
+    <value>حسابات القسم الخاصة للتوجيه وحركة المرور المباشرة والبحث عن العناوين، وتُجرَّب قبل مزودي Resgrid. يُبلَّغ فقط عن المزودين المعيّنين، ولا تُعرض المفاتيح أبدًا. تؤدي إعادة الثلاثة إلى الإعداد الافتراضي لـ Resgrid إلى إزالة هذا الإعداد.</value>
+  </data>
 </root>

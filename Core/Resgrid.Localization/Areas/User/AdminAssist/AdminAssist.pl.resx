@@ -7827,4 +7827,10 @@
   <data name="ModuleHelp.ChatDisabled" xml:space="preserve">
     <value>Pokazuje lub ukrywa Czat w nawigacji, widżetach pulpitu i wyszukiwaniu aplikacji internetowej. Ukrycie nie usuwa danych ani nie zmienia uprawnień. Nie wpływa to na czat w aplikacjach mobilnych.</value>
   </data>
+  <data xml:space="preserve" name="Setting.MappingProviderOverrides">
+    <value>Własni dostawcy map</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.MappingProviderOverrides">
+    <value>Własne konta departamentu do wyznaczania tras, ruchu na żywo i wyszukiwania adresów, odpytywane przed dostawcami Resgrid. Raportowane jest tylko to, którzy dostawcy są ustawieni, nigdy klucze. Przywrócenie wszystkich trzech do ustawień domyślnych Resgrid usuwa to ustawienie.</value>
+  </data>
 </root>

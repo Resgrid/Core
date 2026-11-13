@@ -42,6 +42,14 @@ namespace Resgrid.Tests.Services.Routing
 			_routing.SetupGet(r => r.ProviderName).Returns(RoutingProviderNames.Valhalla);
 			_routing.SetupGet(r => r.Capabilities).Returns(new RoutingCapabilities { Steps = true, VehicleSize = true, VehicleFull = true });
 			_routing.SetupGet(r => r.Attribution).Returns("© OpenStreetMap contributors");
+			// The plan's department has no account of its own here: the install's provider, as the getters above describe it.
+			_routing.Setup(r => r.GetProviderInfoAsync(It.IsAny<int>())).ReturnsAsync(() => new RoutingProviderInfo
+			{
+				Name = _routing.Object.ProviderName,
+				Capabilities = _routing.Object.Capabilities,
+				Attribution = _routing.Object.Attribution,
+				NavigationAvailable = _routing.Object.IsNavigationAvailable
+			});
 			_routing.Setup(r => r.GetRouteAsync(It.IsAny<RouteRequest>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync((RouteRequest request, CancellationToken _) =>
 				{

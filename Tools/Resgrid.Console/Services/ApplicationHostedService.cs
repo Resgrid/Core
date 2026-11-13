@@ -37,6 +37,7 @@ public sealed class ApplicationHostedService : IHostedService, IDisposable
     private ICommandService _securityRefreshCommand;
     private ICommandService _featureFlagsCommand;
     private ICommandService _authenticatorSeedsCommand;
+    private ICommandService _routingUsageCommand;
     private ICommandService _helpCommand;
 
     // Cancellation token source used to submit a cancellation request.
@@ -67,6 +68,7 @@ public sealed class ApplicationHostedService : IHostedService, IDisposable
         [FromKeyedServices("SecurityRefreshCommand")] ICommandService securityRefreshCommand,
         [FromKeyedServices("FeatureFlagsCommand")] ICommandService featureFlagsCommand,
         [FromKeyedServices("AuthenticatorSeedsCommand")] ICommandService authenticatorSeedsCommand,
+        [FromKeyedServices("RoutingUsageCommand")] ICommandService routingUsageCommand,
         [FromKeyedServices("HelpCommand")] ICommandService helpCommand)
     {
         _hostApplicationLifetime = hostApplicationLifetime;
@@ -84,6 +86,7 @@ public sealed class ApplicationHostedService : IHostedService, IDisposable
         _securityRefreshCommand = securityRefreshCommand;
         _featureFlagsCommand = featureFlagsCommand;
         _authenticatorSeedsCommand = authenticatorSeedsCommand;
+        _routingUsageCommand = routingUsageCommand;
         _helpCommand = helpCommand;
     }
 
@@ -221,6 +224,8 @@ public sealed class ApplicationHostedService : IHostedService, IDisposable
 		        return await _featureFlagsCommand.ExecuteMainAsync(args, cancellationToken).ConfigureAwait(false);
 	        else if (args.Contains("--AuthenticatorSeeds"))
 		        return await _authenticatorSeedsCommand.ExecuteMainAsync(args, cancellationToken).ConfigureAwait(false);
+	        else if (args.Contains("--RoutingUsage"))
+		        return await _routingUsageCommand.ExecuteMainAsync(args, cancellationToken).ConfigureAwait(false);
 	        else
 	        {
 		        return await _helpCommand.ExecuteMainAsync(args, cancellationToken).ConfigureAwait(false);

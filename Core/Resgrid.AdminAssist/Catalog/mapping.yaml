@@ -616,6 +616,39 @@
       "Availability": "available"
     },
     {
+      "Id": "setting.MappingProviderOverrides",
+      "AreaId": "mapping",
+      "LabelKey": "Setting.MappingProviderOverrides",
+      "HelpKey": "SettingHelp.MappingProviderOverrides",
+      "Binding": "DepartmentSettingTypes.MappingProviderOverrides",
+      "ValueType": "secret",
+      "Classification": "Restricted",
+      "Secret": true,
+      "Location": {
+        "Controller": "Department",
+        "Action": "MappingSettings",
+        "Field": "ProviderRouting"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-12T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.mapping",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.MappingProviderOverrides",
+      "DefaultValue": "missing = Resgrid's routing, traffic and geocoding providers",
+      "AllowedValues": "Validated and encrypted by IDepartmentMapProvidersService (public https URLs only, keys write-only); Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
       "Id": "setting.HardwareTrackingStaleAfterSeconds",
       "AreaId": "mapping",
       "LabelKey": "Setting.HardwareTrackingStaleAfterSeconds",
@@ -2137,6 +2170,17 @@
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "setting.MappingProviderOverrides",
+      "Locale": "en",
+      "TitleKey": "Setting.MappingProviderOverrides",
+      "Body": "Your own map providers. Department-owned routing, live traffic and address lookup accounts, tried before Resgrid's providers. Only which providers are set is reported, never the keys. Setting all three back to Resgrid default removes the setting.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-mappingprovideroverrides",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-12T00:00:00Z"
     }
   ]
 }

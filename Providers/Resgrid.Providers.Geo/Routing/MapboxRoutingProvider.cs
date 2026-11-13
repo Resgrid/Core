@@ -22,6 +22,25 @@ namespace Resgrid.Providers.GeoLocationProvider.Routing
 		private const string BaseUrl = "https://api.mapbox.com";
 		private const string AttributionText = "© Mapbox © OpenStreetMap contributors";
 
+		// A department's own Mapbox account (Mapping Settings); null = the install's token.
+		private readonly RoutingProviderCredentials _department;
+
+		public MapboxRoutingProvider()
+		{
+		}
+
+		private MapboxRoutingProvider(RoutingProviderCredentials department)
+		{
+			_department = department;
+		}
+
+		public IRoutingProvider WithCredentials(RoutingProviderCredentials credentials)
+		{
+			return credentials == null ? null : new MapboxRoutingProvider(credentials);
+		}
+
+		private string AccessToken => _department != null ? _department.ApiKey : MappingConfig.MapboxRoutingAccessToken;
+
 		public string Name => RoutingProviderNames.Mapbox;
 
 		public RoutingCapabilities Capabilities { get; } = new RoutingCapabilities
@@ -42,13 +61,13 @@ namespace Resgrid.Providers.GeoLocationProvider.Routing
 			ExcludePointsDrivingOnly = true
 		};
 
-		public bool IsConfigured => !string.IsNullOrWhiteSpace(MappingConfig.MapboxRoutingAccessToken);
+		public bool IsConfigured => !string.IsNullOrWhiteSpace(AccessToken);
 
 		public async Task<RouteResult> GetRouteAsync(RouteRequest request, CancellationToken cancellationToken)
 		{
 			var profile = Profile(request.Profile);
 			var query = new StringBuilder();
-			query.Append("?access_token=").Append(WebUtility.UrlEncode(MappingConfig.MapboxRoutingAccessToken));
+			query.Append("?access_token=").Append(WebUtility.UrlEncode(AccessToken));
 			query.Append("&geometries=polyline6&overview=full");
 			query.Append("&steps=").Append(request.Steps || request.NavigationInstructions ? "true" : "false");
 
@@ -92,7 +111,7 @@ namespace Resgrid.Providers.GeoLocationProvider.Routing
 			var perChunk = Math.Max(1, limit - request.Destinations.Count);
 
 			if (request.Destinations.Count >= limit)
-				return new RouteMatrixResult { Provider = Name, Error = "Too many destinations for one Mapbox matrix" };
+				return new RouteMatrixResult { Provider = Name, Error = "Too many destinations for one Mapbox matrix", NotSent = true };
 
 			var durations = new double?[request.Origins.Count][];
 			var distances = new double?[request.Origins.Count][];
@@ -105,7 +124,7 @@ namespace Resgrid.Providers.GeoLocationProvider.Routing
 				var destinations = string.Join(";", Enumerable.Range(origins.Count, request.Destinations.Count));
 
 				var query = new StringBuilder();
-				query.Append("?access_token=").Append(WebUtility.UrlEncode(MappingConfig.MapboxRoutingAccessToken));
+				query.Append("?access_token=").Append(WebUtility.UrlEncode(AccessToken));
 				query.Append("&annotations=duration,distance");
 				query.Append("&sources=").Append(sources).Append("&destinations=").Append(destinations);
 
@@ -134,14 +153,14 @@ namespace Resgrid.Providers.GeoLocationProvider.Routing
 		public async Task<RouteOptimizationResult> OptimizeAsync(RouteOptimizationRequest request, CancellationToken cancellationToken)
 		{
 			if (request.Waypoints.Count > Capabilities.MaxOptimizeWaypoints)
-				return new RouteOptimizationResult { Provider = Name, Error = "Too many stops for Mapbox optimization" };
+				return new RouteOptimizationResult { Provider = Name, Error = "Too many stops for Mapbox optimization", NotSent = true };
 
 			if (!request.KeepFirst || !request.KeepLast)
-				return new RouteOptimizationResult { Provider = Name, Error = "Only fixed start and end are supported" };
+				return new RouteOptimizationResult { Provider = Name, Error = "Only fixed start and end are supported", NotSent = true };
 
 			var profile = Profile(request.Profile);
 			var query = new StringBuilder();
-			query.Append("?access_token=").Append(WebUtility.UrlEncode(MappingConfig.MapboxRoutingAccessToken));
+			query.Append("?access_token=").Append(WebUtility.UrlEncode(AccessToken));
 			query.Append("&source=first&destination=last&roundtrip=false&overview=false");
 
 			var url = $"{BaseUrl}/optimized-trips/v1/mapbox/{profile}/{RoutingHttp.LonLatPath(request.Waypoints)}{query}";

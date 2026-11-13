@@ -7827,4 +7827,10 @@
   <data name="ModuleHelp.ChatDisabled" xml:space="preserve">
     <value>Visar eller döljer chatten i webbappens navigering, instrumentpanelens widgetar och sökning. Att dölja modulen raderar inga data och ändrar inga behörigheter. Chatten i mobilapparna påverkas inte.</value>
   </data>
+  <data xml:space="preserve" name="Setting.MappingProviderOverrides">
+    <value>Egna kartleverantörer</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.MappingProviderOverrides">
+    <value>Avdelningens egna konton för vägvisning, trafik i realtid och adressökning, som provas före Resgrids leverantörer. Endast vilka leverantörer som är inställda rapporteras, aldrig nycklarna. Om alla tre återställs till Resgrids standard tas inställningen bort.</value>
+  </data>
 </root>

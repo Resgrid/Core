@@ -80,8 +80,10 @@ namespace Resgrid.Web.Areas.User.Models.Units
 			if (!string.IsNullOrWhiteSpace(Mode) && !TryMode(out _))
 				errors.Add((nameof(Mode), string.Empty, string.Empty));
 
+			// Only a blank speed means "use the default"; zero, a negative or a non-number is refused rather than read as blank,
+			// which would clear a speed already saved.
 			var kmh = ToKmh(Speed);
-			if (kmh.HasValue && (kmh < UnitTravelProfile.MinimumSpeedKmh || kmh > UnitTravelProfile.MaximumSpeedKmh))
+			if (Speed.HasValue && (!kmh.HasValue || kmh < UnitTravelProfile.MinimumSpeedKmh || kmh > UnitTravelProfile.MaximumSpeedKmh))
 				errors.Add((nameof(Speed), FormatSpeed(UnitTravelProfile.MinimumSpeedKmh), FormatSpeed(UnitTravelProfile.MaximumSpeedKmh)));
 
 			return errors;

@@ -347,6 +347,9 @@
   <data name="RepeatTooMany" xml:space="preserve">
     <value>Verrebbero aggiunte più di {0} fasce.</value>
   </data>
+  <data name="RepeatNoDays" xml:space="preserve">
+    <value>Scegli almeno un giorno.</value>
+  </data>
   <data name="DayMon" xml:space="preserve">
     <value>Lun</value>
   </data>

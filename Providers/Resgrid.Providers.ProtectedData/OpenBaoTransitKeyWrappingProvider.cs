@@ -3,7 +3,6 @@ using System.Globalization;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -35,13 +34,21 @@ namespace Resgrid.Providers.ProtectedData
 		// Refresh the token this many seconds before its lease actually expires.
 		private const int TokenRefreshSkewSeconds = 60;
 
+		// A pooled connection keeps the client certificate it handshook with. Retiring connections after this long
+		// makes a renewed certificate reach OpenBao within minutes, and well before the old one can expire.
+		private static readonly TimeSpan ClientConnectionLifetime = TimeSpan.FromMinutes(5);
+
 		private readonly HttpClient _httpClient;
 		private readonly SemaphoreSlim _tokenLock = new SemaphoreSlim(1, 1);
 		private string _token;
 		private DateTime _tokenExpiresUtc = DateTime.MinValue;
 
-		public OpenBaoTransitKeyWrappingProvider()
-			: this(CreateMtlsHandler())
+		/// <summary>
+		/// Production constructor. Autofac resolves <paramref name="clientCertificate"/> first, and it throws when the
+		/// certificate path is unset or the file cannot be loaded, so the broker still fails at startup on bad config.
+		/// </summary>
+		public OpenBaoTransitKeyWrappingProvider(OpenBaoClientCertificate clientCertificate)
+			: this(CreateMtlsHandler(clientCertificate))
 		{
 		}
 
@@ -278,19 +285,16 @@ namespace Resgrid.Providers.ProtectedData
 			return (base64.Length * 3 / 4) - padding;
 		}
 
-		private static SocketsHttpHandler CreateMtlsHandler()
+		private static SocketsHttpHandler CreateMtlsHandler(OpenBaoClientCertificate clientCertificate)
 		{
-			if (string.IsNullOrWhiteSpace(DataProtectionConfig.OpenBaoClientCertificatePath))
-				throw new InvalidOperationException(
-					"DataProtectionConfig.OpenBaoClientCertificatePath is not configured. The OpenBao cert auth method requires the broker's mTLS client certificate.");
+			ArgumentNullException.ThrowIfNull(clientCertificate);
 
-			var certificate = string.IsNullOrEmpty(DataProtectionConfig.OpenBaoClientCertificatePassword)
-				? X509CertificateLoader.LoadPkcs12FromFile(DataProtectionConfig.OpenBaoClientCertificatePath, null)
-				: X509CertificateLoader.LoadPkcs12FromFile(DataProtectionConfig.OpenBaoClientCertificatePath,
-					DataProtectionConfig.OpenBaoClientCertificatePassword);
+			var handler = new SocketsHttpHandler { PooledConnectionLifetime = ClientConnectionLifetime };
 
-			var handler = new SocketsHttpHandler();
-			handler.SslOptions.ClientCertificates = new X509CertificateCollection { certificate };
+			// Chosen per handshake rather than fixed in ClientCertificates, so each new connection presents the
+			// certificate on disk now: step-ca leaves live about a day and the sidecar renews them in place.
+			handler.SslOptions.LocalCertificateSelectionCallback =
+				(_, _, _, _, _) => clientCertificate.Current;
 			return handler;
 		}
 

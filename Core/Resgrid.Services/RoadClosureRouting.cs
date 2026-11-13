@@ -209,6 +209,35 @@ namespace Resgrid.Services
 			route.DurationSeconds += route.ClosureDelaySeconds;
 		}
 
+		/// <summary>True when the route still runs through a full closure the provider could not avoid: its directions lead into it.</summary>
+		public static bool CrossesFullClosure(RouteResult route)
+		{
+			return route?.Closures != null && route.Closures.Any(c => c != null && c.Effect == RouteClosureEffects.Crossed);
+		}
+
+		/// <summary>
+		/// The route's closure delay for a trip over the same path at another pace, <paramref name="baseSeconds"/> without
+		/// closures (a team at its own walking or cycling speed). A slowdown is time spent inside a closure, so it scales with
+		/// the pace; a crossed full closure's detour time is a fixed allowance and does not.
+		/// </summary>
+		public static int DelayAtPace(RouteResult route, double baseSeconds)
+		{
+			if (route == null || route.ClosureDelaySeconds <= 0)
+				return 0;
+
+			var effects = route.Closures ?? new List<RouteClosureEffect>();
+			if (!effects.Any(c => c != null && c.Effect == RouteClosureEffects.Slowed))
+				return route.ClosureDelaySeconds;
+
+			var fixedSeconds = Math.Min(route.ClosureDelaySeconds, effects.Where(c => c != null && c.Effect == RouteClosureEffects.Crossed).Sum(c => Math.Max(0, c.DelaySeconds)));
+			var slowedSeconds = route.ClosureDelaySeconds - fixedSeconds;
+			var providerBaseSeconds = route.DurationSeconds - route.ClosureDelaySeconds;
+			if (slowedSeconds <= 0 || providerBaseSeconds <= 0 || baseSeconds <= 0)
+				return route.ClosureDelaySeconds;
+
+			return (int)Math.Round(fixedSeconds + slowedSeconds * baseSeconds / providerBaseSeconds);
+		}
+
 		/// <summary>The [lon, lat] positions of a GeoJSON LineString string; empty when missing or unreadable.</summary>
 		public static List<GeoMath.GeoPoint> ParseLine(string geoJson)
 		{

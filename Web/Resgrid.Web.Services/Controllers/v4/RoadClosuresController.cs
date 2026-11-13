@@ -15,7 +15,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 {
 	/// <summary>
 	/// Road closures (M0314): the department's drawn closed and slowed roads, for maps in the apps. Dispatch ranking and the
-	/// Routing endpoints already apply them; closures are managed on the web (Mapping → Road Closures).
+	/// Routing endpoints already apply them, except when the closures can't be read: the route or drive time is then worked
+	/// out without them rather than not at all. Closures are managed on the web (Mapping → Road Closures).
 	/// </summary>
 	[Route("api/v{VersionId:apiVersion}/[controller]")]
 	[ApiVersion("4.0")]

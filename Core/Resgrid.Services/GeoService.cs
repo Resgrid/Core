@@ -79,7 +79,7 @@ namespace Resgrid.Services
 					}
 				}
 
-				var route = await GetRoutedTravelAsync(log.GeoLocationData, destination, null);
+				var route = await GetRoutedTravelAsync(log.GeoLocationData, destination, null, log.DepartmentId);
 
 				if (route != null)
 				{
@@ -106,7 +106,7 @@ namespace Resgrid.Services
 
 		public async Task<double> GetEtaInSecondsAsync(string start, string destination, VehicleProfile vehicle)
 		{
-			var route = await GetRoutedTravelAsync(start, destination, vehicle);
+			var route = await GetRoutedTravelAsync(start, destination, vehicle, 0);
 
 			return route?.DurationSeconds ?? -1;
 		}
@@ -194,6 +194,7 @@ namespace Resgrid.Services
 			var vehicle = travel.Mode == UnitTravelModes.Driving ? lookup?.Vehicle : null;
 			var route = await _routingService.GetRouteAsync(new RouteRequest
 			{
+				DepartmentId = lookup?.DepartmentId ?? 0,
 				Waypoints = new List<RoutingWaypoint> { from, to },
 				Profile = travel.RoutingProfile ?? DriveTimeProfile(vehicle),
 				Vehicle = vehicle,
@@ -203,25 +204,32 @@ namespace Resgrid.Services
 			if (route == null || !route.Successful || route.Provider == RoutingProviderNames.Estimate)
 				return TravelEstimate.None;
 
-			// Providers walk and cycle at fixed speeds; a team's own speed over the routed path is the better time.
-			var seconds = travel.UsesConfiguredSpeedOnRoute && route.DistanceMeters > 0
-				? Math.Round(route.DistanceMeters / travel.SpeedMetersPerSecond) + route.ClosureDelaySeconds
-				: route.DurationSeconds;
+			// Providers walk and cycle at fixed speeds; a team's own speed over the routed path is the better time. Closure
+			// slowdowns were timed at the provider's pace, so they are re-timed at the team's (detour allowances stay as they are).
+			var seconds = route.DurationSeconds;
+			var closureDelay = route.ClosureDelaySeconds;
+			if (travel.UsesConfiguredSpeedOnRoute && route.DistanceMeters > 0)
+			{
+				var configuredSeconds = route.DistanceMeters / travel.SpeedMetersPerSecond;
+				closureDelay = RoadClosureRouting.DelayAtPace(route, configuredSeconds);
+				seconds = Math.Round(configuredSeconds) + closureDelay;
+			}
 
 			return new TravelEstimate
 			{
 				Seconds = seconds,
 				Source = EtaSources.Road,
-				ClosureDelaySeconds = route.ClosureDelaySeconds,
+				ClosureDelaySeconds = closureDelay,
 				Closures = route.Closures ?? new List<RouteClosureEffect>()
 			};
 		}
 
 		/// <summary>
-		/// A routed drive between two "lat,lon" strings or addresses through the install's routing provider; null when
-		/// only the straight-line estimate could answer (callers have their own estimate and label it as one).
+		/// A routed drive between two "lat,lon" strings or addresses through the department's own routing account (if any)
+		/// and the install's providers; null when only the straight-line estimate could answer (callers have their own
+		/// estimate and label it as one). Department 0 = the install's providers only.
 		/// </summary>
-		private async Task<RouteResult> GetRoutedTravelAsync(string start, string destination, VehicleProfile vehicle)
+		private async Task<RouteResult> GetRoutedTravelAsync(string start, string destination, VehicleProfile vehicle, int departmentId)
 		{
 			if (String.IsNullOrWhiteSpace(start) || String.IsNullOrWhiteSpace(destination))
 				return null;
@@ -234,6 +242,7 @@ namespace Resgrid.Services
 
 			var route = await _routingService.GetRouteAsync(new RouteRequest
 			{
+				DepartmentId = departmentId,
 				Waypoints = new List<RoutingWaypoint> { from, to },
 				Profile = DriveTimeProfile(vehicle),
 				Vehicle = vehicle

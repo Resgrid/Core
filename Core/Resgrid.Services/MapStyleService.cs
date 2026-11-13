@@ -27,10 +27,35 @@ namespace Resgrid.Services
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly ICacheProvider _cacheProvider;
 
-		public MapStyleService(IDepartmentSettingsService departmentSettingsService, ICacheProvider cacheProvider)
+		// Lazy: the overrides service reads department settings, which reach map services while being built.
+		private readonly Lazy<IDepartmentMapProvidersService> _departmentMapProviders;
+
+		public MapStyleService(IDepartmentSettingsService departmentSettingsService, ICacheProvider cacheProvider,
+			Lazy<IDepartmentMapProvidersService> departmentMapProviders)
 		{
 			_departmentSettingsService = departmentSettingsService;
 			_cacheProvider = cacheProvider;
+			_departmentMapProviders = departmentMapProviders;
+		}
+
+		public async Task<TrafficLayerSource> GetTrafficLayerAsync(int departmentId)
+		{
+			if (departmentId > 0 && _departmentMapProviders != null)
+			{
+				try
+				{
+					var own = (await _departmentMapProviders.Value.GetAsync(departmentId))?.Traffic;
+					if (own != null)
+						return own;
+				}
+				catch (Exception ex)
+				{
+					Framework.Logging.LogException(ex, $"Reading department {departmentId}'s traffic layer failed; the install's layer is used");
+				}
+			}
+
+			var system = GetTrafficTileUrl();
+			return system == null ? null : new TrafficLayerSource { Url = system, Type = TrafficLayerSource.VectorType };
 		}
 
 		private static HttpClient CreateClient()
@@ -122,8 +147,14 @@ namespace Resgrid.Services
 			    !MappingConfig.IsPublicMapboxAccessToken(MappingConfig.MapboxTrafficAccessToken))
 				return null;
 
+			return MapboxTrafficTileUrl(MappingConfig.MapboxTrafficAccessToken);
+		}
+
+		/// <summary>Mapbox Traffic v1 vector tiles (source-layer "traffic") with a public (pk.) token.</summary>
+		public static string MapboxTrafficTileUrl(string publicToken)
+		{
 			return "https://api.mapbox.com/v4/mapbox.mapbox-traffic-v1/{z}/{x}/{y}.vector.pbf?access_token=" +
-			       WebUtility.UrlEncode(MappingConfig.MapboxTrafficAccessToken.Trim());
+			       WebUtility.UrlEncode(publicToken.Trim());
 		}
 
 		private async Task<string> BuildMapboxStyleAsync(string fetchUrl, MapLibreStyleInfo info, CancellationToken cancellationToken)

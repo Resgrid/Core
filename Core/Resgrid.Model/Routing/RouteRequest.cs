@@ -29,6 +29,9 @@ namespace Resgrid.Model
 	/// <summary>A request for one route through two or more waypoints.</summary>
 	public class RouteRequest
 	{
+		/// <summary>The department asking; its own routing account (Mapping Settings) is tried first. 0 = system providers only.</summary>
+		public int DepartmentId { get; set; }
+
 		public List<RoutingWaypoint> Waypoints { get; set; } = new List<RoutingWaypoint>();
 
 		public RoutingProfile Profile { get; set; } = RoutingProfile.Driving;
@@ -68,6 +71,9 @@ namespace Resgrid.Model
 	/// <summary>Travel times and distances between every origin and every destination.</summary>
 	public class RouteMatrixRequest
 	{
+		/// <summary>The department asking; its own routing account (Mapping Settings) is tried first. 0 = system providers only.</summary>
+		public int DepartmentId { get; set; }
+
 		public List<RoutingWaypoint> Origins { get; set; } = new List<RoutingWaypoint>();
 
 		public List<RoutingWaypoint> Destinations { get; set; } = new List<RoutingWaypoint>();
@@ -82,6 +88,9 @@ namespace Resgrid.Model
 	/// <summary>Best visiting order for a set of stops.</summary>
 	public class RouteOptimizationRequest
 	{
+		/// <summary>The department asking; its own routing account (Mapping Settings) is tried first. 0 = system providers only.</summary>
+		public int DepartmentId { get; set; }
+
 		/// <summary>All points in their current order, including the start and end.</summary>
 		public List<RoutingWaypoint> Waypoints { get; set; } = new List<RoutingWaypoint>();
 

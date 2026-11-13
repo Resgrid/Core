@@ -46,9 +46,28 @@ namespace Resgrid.Providers.GeoLocationProvider.Routing
 			MaxOptimizeWaypoints = 25
 		};
 
-		public bool IsConfigured => !string.IsNullOrWhiteSpace(MappingConfig.GoogleMapsApiKey);
+		// A department's own Google key (Mapping Settings); null = the install's.
+		private readonly RoutingProviderCredentials _department;
 
-		private static bool UseRoutesApi => string.Equals(MappingConfig.GoogleRoutingApi?.Trim(), "routes", StringComparison.OrdinalIgnoreCase);
+		public GoogleRoutingProvider()
+		{
+		}
+
+		private GoogleRoutingProvider(RoutingProviderCredentials department)
+		{
+			_department = department;
+		}
+
+		public IRoutingProvider WithCredentials(RoutingProviderCredentials credentials)
+		{
+			return credentials == null ? null : new GoogleRoutingProvider(credentials);
+		}
+
+		private string ApiKey => _department != null ? _department.ApiKey : MappingConfig.GoogleMapsApiKey;
+
+		public bool IsConfigured => !string.IsNullOrWhiteSpace(ApiKey);
+
+		private bool UseRoutesApi => string.Equals((_department != null ? _department.GoogleRoutingApi : MappingConfig.GoogleRoutingApi)?.Trim(), "routes", StringComparison.OrdinalIgnoreCase);
 
 		public Task<RouteResult> GetRouteAsync(RouteRequest request, CancellationToken cancellationToken)
 		{
@@ -93,7 +112,7 @@ namespace Resgrid.Providers.GeoLocationProvider.Routing
 		public async Task<RouteOptimizationResult> OptimizeAsync(RouteOptimizationRequest request, CancellationToken cancellationToken)
 		{
 			if (!request.KeepFirst || !request.KeepLast)
-				return new RouteOptimizationResult { Provider = Name, Error = "Only fixed start and end are supported" };
+				return new RouteOptimizationResult { Provider = Name, Error = "Only fixed start and end are supported", NotSent = true };
 
 			var routeRequest = new RouteRequest { Waypoints = request.Waypoints, Profile = request.Profile, Avoid = request.Avoid };
 			var (route, intermediateOrder) = UseRoutesApi
@@ -134,7 +153,7 @@ namespace Resgrid.Providers.GeoLocationProvider.Routing
 				{
 					Origin = LatLon(waypoints[0]),
 					Destination = LatLon(waypoints[waypoints.Count - 1]),
-					ApiKey = MappingConfig.GoogleMapsApiKey,
+					ApiKey = ApiKey,
 					TravelMode = request.Profile == RoutingProfile.Walking ? TravelMode.Walking :
 						request.Profile == RoutingProfile.Cycling ? TravelMode.Bicycling : TravelMode.Driving,
 					Language = request.Language
@@ -252,7 +271,7 @@ namespace Resgrid.Providers.GeoLocationProvider.Routing
 			{
 				var (ok, status, document) = await RoutingHttp.PostJsonAsync(RoutesUrl, body, cancellationToken, message =>
 				{
-					message.Headers.TryAddWithoutValidation("X-Goog-Api-Key", MappingConfig.GoogleMapsApiKey);
+					message.Headers.TryAddWithoutValidation("X-Goog-Api-Key", ApiKey);
 					message.Headers.TryAddWithoutValidation("X-Goog-FieldMask", fields);
 				});
 
@@ -346,7 +365,7 @@ namespace Resgrid.Providers.GeoLocationProvider.Routing
 
 			var (ok, status, document) = await RoutingHttp.PostJsonAsync(MatrixUrl, body, cancellationToken, message =>
 			{
-				message.Headers.TryAddWithoutValidation("X-Goog-Api-Key", MappingConfig.GoogleMapsApiKey);
+				message.Headers.TryAddWithoutValidation("X-Goog-Api-Key", ApiKey);
 				message.Headers.TryAddWithoutValidation("X-Goog-FieldMask", "originIndex,destinationIndex,duration,distanceMeters,condition");
 			});
 

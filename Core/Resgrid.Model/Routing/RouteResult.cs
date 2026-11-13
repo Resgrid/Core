@@ -53,6 +53,9 @@ namespace Resgrid.Model
 		/// </summary>
 		public bool RequestRejected { get; set; }
 
+		/// <summary>The provider answered without calling its service (outside its coverage, a request it cannot take): nothing was billed or counted against a quota.</summary>
+		public bool NotSent { get; set; }
+
 		/// <summary>Seconds road closures added to <see cref="DurationSeconds"/> (slowdowns, and detours the provider could not take).</summary>
 		public int ClosureDelaySeconds { get; set; }
 
@@ -103,6 +106,9 @@ namespace Resgrid.Model
 
 		/// <summary>See <see cref="RouteResult.RequestRejected"/>.</summary>
 		public bool RequestRejected { get; set; }
+
+		/// <summary>See <see cref="RouteResult.NotSent"/>.</summary>
+		public bool NotSent { get; set; }
 	}
 
 	public class RouteOptimizationResult
@@ -122,5 +128,8 @@ namespace Resgrid.Model
 
 		/// <summary>See <see cref="RouteResult.RequestRejected"/>.</summary>
 		public bool RequestRejected { get; set; }
+
+		/// <summary>See <see cref="RouteResult.NotSent"/>.</summary>
+		public bool NotSent { get; set; }
 	}
 }

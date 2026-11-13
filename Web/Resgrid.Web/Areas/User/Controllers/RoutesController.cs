@@ -678,12 +678,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 		/// <summary>Stations (with coordinates), unit stations and vehicles, and routing capabilities for the editor.</summary>
 		private async Task<RouteEditorContext> BuildEditorContextAsync(List<Unit> units)
 		{
+			// The department's own routing account (Mapping Settings) when it has one.
+			var provider = await _routingService.GetProviderInfoAsync(DepartmentId);
 			var context = new RouteEditorContext
 			{
 				Metric = VehicleSizeInput.DefaultMetric(),
-				VehicleLimits = VehicleSizeInput.LimitsFor(_routingService.ProviderName),
-				TrafficAvailable = _routingService.Capabilities?.Traffic == true,
-				Attribution = _routingService.Attribution
+				VehicleLimits = VehicleSizeInput.LimitsFor(provider.Name),
+				TrafficAvailable = provider.Capabilities?.Traffic == true,
+				Attribution = provider.Attribution
 			};
 
 			try

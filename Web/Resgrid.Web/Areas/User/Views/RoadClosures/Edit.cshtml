@@ -260,6 +260,7 @@
             maxWindows: @RoadClosureWindows.MaxWindows,
             strings: {
                 repeatInvalid: @Html.Raw(JsonConvert.SerializeObject(localizer["RepeatInvalid"].Value, jsonSettings)),
+                repeatNoDays: @Html.Raw(JsonConvert.SerializeObject(localizer["RepeatNoDays"].Value, jsonSettings)),
                 repeatTooMany: @Html.Raw(JsonConvert.SerializeObject(localizer["RepeatTooMany", RoadClosureWindows.MaxWindows].Value, jsonSettings))
             }
         };

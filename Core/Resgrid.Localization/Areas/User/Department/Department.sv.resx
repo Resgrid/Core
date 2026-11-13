@@ -2450,4 +2450,118 @@
   <data name="MapStyleNotAvailable" xml:space="preserve">
     <value>(inte tillgänglig på den här servern)</value>
   </data>
+  <data name="ProvidersHeader" xml:space="preserve">
+    <value>Egna kartleverantörer</value>
+  </data>
+  <data name="ProvidersHelp" xml:space="preserve">
+    <value>Använd avdelningens egna konton i stället för Resgrids. Din leverantör provas först; när den misslyckas eller inte kan besvara en förfrågan svarar Resgrids leverantörer, så att kartor och körtider fortsätter att fungera. Nycklar lagras krypterade och visas aldrig igen.</value>
+  </data>
+  <data name="ProvidersSystemDefault" xml:space="preserve">
+    <value>Resgrids standard</value>
+  </data>
+  <data name="ProvidersYourAccount" xml:space="preserve">
+    <value>ditt konto</value>
+  </data>
+  <data name="ProvidersRoutingLabel" xml:space="preserve">
+    <value>Leverantör för ruttplanering</value>
+  </data>
+  <data name="ProvidersRoutingHelp" xml:space="preserve">
+    <value>Används för rutter, körtider för larmplaner och närmaste enheter, ruttplaner och navigering i appen. Navigering i appen kräver Mapbox eller Valhalla.</value>
+  </data>
+  <data name="ProvidersRoutingUrlLabel" xml:space="preserve">
+    <value>Server-URL</value>
+  </data>
+  <data name="ProvidersRoutingUrlHelp" xml:space="preserve">
+    <value>Https-adressen till din Valhalla- eller OSRM-server. Den måste vara nåbar från det publika internet, till exempel https://api.example.com/valhalla.</value>
+  </data>
+  <data name="ProvidersRoutingKeyLabel" xml:space="preserve">
+    <value>API-nyckel</value>
+  </data>
+  <data name="ProvidersRoutingKeyHelp" xml:space="preserve">
+    <value>Mapbox: en token med åtkomst till Directions, Matrix och Optimization (en hemlig sk.-token går bra, den lämnar aldrig servern). Google: en nyckel med API:erna Directions och Distance Matrix, eller Routes API. Valhalla: bara om din server kräver en.</value>
+  </data>
+  <data name="ProvidersKeySaved" xml:space="preserve">
+    <value>Sparad. Lämna tomt för att behålla.</value>
+  </data>
+  <data name="ProvidersClearKey" xml:space="preserve">
+    <value>Ta bort den sparade nyckeln</value>
+  </data>
+  <data name="ProvidersAuthSchemeLabel" xml:space="preserve">
+    <value>Skicka nyckeln som</value>
+  </data>
+  <data name="ProvidersAuthSchemeApiKey" xml:space="preserve">
+    <value>X-Api-Key-huvud</value>
+  </data>
+  <data name="ProvidersAuthSchemeBearer" xml:space="preserve">
+    <value>Bearer-token (Authorization-huvud)</value>
+  </data>
+  <data name="ProvidersGoogleApiLabel" xml:space="preserve">
+    <value>Google-API</value>
+  </data>
+  <data name="ProvidersGoogleApiLegacy" xml:space="preserve">
+    <value>Directions och Distance Matrix</value>
+  </data>
+  <data name="ProvidersGoogleApiRoutes" xml:space="preserve">
+    <value>Routes API (Google Cloud-projekt som skapats efter mars 2025)</value>
+  </data>
+  <data name="ProvidersTrafficLabel" xml:space="preserve">
+    <value>Trafiklager i realtid</value>
+  </data>
+  <data name="ProvidersTrafficHelp" xml:space="preserve">
+    <value>Trafikknappen på webbplatsens kartor och i apparna.</value>
+  </data>
+  <data name="ProvidersTrafficMapbox" xml:space="preserve">
+    <value>Mapbox Traffic (din token)</value>
+  </data>
+  <data name="ProvidersTrafficTiles" xml:space="preserve">
+    <value>URL för trafikplattor</value>
+  </data>
+  <data name="ProvidersTrafficTokenLabel" xml:space="preserve">
+    <value>Offentlig Mapbox-token</value>
+  </data>
+  <data name="ProvidersTrafficTokenHelp" xml:space="preserve">
+    <value>En offentlig token som börjar med pk. Den skickas till dina medlemmars webbläsare och appar.</value>
+  </data>
+  <data name="ProvidersTrafficTileUrlLabel" xml:space="preserve">
+    <value>URL för trafikplattor</value>
+  </data>
+  <data name="ProvidersTrafficTileUrlHelp" xml:space="preserve">
+    <value>En https-URL för bildplattor med {z}, {x} och {y}, till exempel trafikflödesplattor från TomTom. URL:en, och eventuell nyckel i den, är synlig för dina medlemmars webbläsare.</value>
+  </data>
+  <data name="ProvidersGeocodingLabel" xml:space="preserve">
+    <value>Adressuppslag</value>
+  </data>
+  <data name="ProvidersGeocodingHelp" xml:space="preserve">
+    <value>Omvandlar adresser till kartpositioner, och positioner till adresser, för avdelningens användare.</value>
+  </data>
+  <data name="ProvidersGeocodingKeyLabel" xml:space="preserve">
+    <value>API-nyckel</value>
+  </data>
+  <data name="ProvidersErrorUnknownRouting" xml:space="preserve">
+    <value>Välj en leverantör för ruttplanering i listan.</value>
+  </data>
+  <data name="ProvidersErrorRoutingKey" xml:space="preserve">
+    <value>Ange API-nyckeln till den här leverantören för ruttplanering.</value>
+  </data>
+  <data name="ProvidersErrorRoutingUrl" xml:space="preserve">
+    <value>Ange URL:en till din server för ruttplanering.</value>
+  </data>
+  <data name="ProvidersErrorRoutingUrlPublic" xml:space="preserve">
+    <value>URL:en till servern för ruttplanering måste börja med https:// och peka på en adress på det publika internet.</value>
+  </data>
+  <data name="ProvidersErrorUnknownTraffic" xml:space="preserve">
+    <value>Välj ett trafiklager i listan.</value>
+  </data>
+  <data name="ProvidersErrorTrafficToken" xml:space="preserve">
+    <value>Ange en offentlig Mapbox-token (den börjar med pk.).</value>
+  </data>
+  <data name="ProvidersErrorTrafficTileUrl" xml:space="preserve">
+    <value>Ange en https-URL för trafikplattor som innehåller {z}, {x} och {y}.</value>
+  </data>
+  <data name="ProvidersErrorUnknownGeocoding" xml:space="preserve">
+    <value>Välj en leverantör för adressuppslag i listan.</value>
+  </data>
+  <data name="ProvidersErrorGeocodingKey" xml:space="preserve">
+    <value>Ange API-nyckeln till den här leverantören för adressuppslag.</value>
+  </data>
 </root>

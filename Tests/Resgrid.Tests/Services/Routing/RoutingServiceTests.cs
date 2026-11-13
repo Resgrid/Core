@@ -70,7 +70,7 @@ namespace Resgrid.Tests.Services.Routing
 			MappingConfig.RoutingProvider = RoutingProviderNames.Valhalla;
 			MappingConfig.RoutingFallbackProvider = RoutingProviderNames.Estimate;
 			var valhalla = Provider(RoutingProviderNames.Valhalla, true, new RouteResult { Successful = true, DurationSeconds = 420 });
-			var service = new RoutingService(new[] { valhalla.Object, new EstimateRoutingProvider() }, null);
+			var service = new RoutingService(new[] { valhalla.Object, new EstimateRoutingProvider() }, null, null, null);
 
 			var route = await service.GetRouteAsync(TwoPoints());
 
@@ -86,7 +86,7 @@ namespace Resgrid.Tests.Services.Routing
 			MappingConfig.RoutingFallbackProvider = RoutingProviderNames.Osrm;
 			var mapbox = Provider(RoutingProviderNames.Mapbox, true);
 			var osrm = Provider(RoutingProviderNames.Osrm, false);
-			var service = new RoutingService(new[] { mapbox.Object, osrm.Object, new EstimateRoutingProvider() }, null);
+			var service = new RoutingService(new[] { mapbox.Object, osrm.Object, new EstimateRoutingProvider() }, null, null, null);
 
 			var route = await service.GetRouteAsync(TwoPoints());
 
@@ -103,7 +103,7 @@ namespace Resgrid.Tests.Services.Routing
 			MappingConfig.RoutingProvider = RoutingProviderNames.Valhalla;
 			MappingConfig.RoutingFallbackProvider = RoutingProviderNames.Estimate;
 			var valhalla = Provider(RoutingProviderNames.Valhalla, true, new RouteResult { Successful = true }, configured: false);
-			var service = new RoutingService(new[] { valhalla.Object, new EstimateRoutingProvider() }, null);
+			var service = new RoutingService(new[] { valhalla.Object, new EstimateRoutingProvider() }, null, null, null);
 
 			var route = await service.GetRouteAsync(TwoPoints());
 
@@ -131,7 +131,7 @@ namespace Resgrid.Tests.Services.Routing
 			if (providerName != RoutingProviderNames.Estimate)
 				providers.Add(new EstimateRoutingProvider());
 
-			new RoutingService(providers, null).IsNavigationAvailable.Should().Be(expected);
+			new RoutingService(providers, null, null, null).IsNavigationAvailable.Should().Be(expected);
 		}
 
 		[Test]
@@ -139,7 +139,7 @@ namespace Resgrid.Tests.Services.Routing
 		{
 			MappingConfig.RoutingProvider = RoutingProviderNames.Valhalla;
 			MappingConfig.NavigationEnabled = false;
-			var service = new RoutingService(new[] { Provider(RoutingProviderNames.Valhalla, true).Object, new EstimateRoutingProvider() }, null);
+			var service = new RoutingService(new[] { Provider(RoutingProviderNames.Valhalla, true).Object, new EstimateRoutingProvider() }, null, null, null);
 
 			service.IsNavigationAvailable.Should().BeFalse();
 		}
@@ -148,7 +148,7 @@ namespace Resgrid.Tests.Services.Routing
 		public async Task matrix_from_the_estimate_reports_the_estimate_provider()
 		{
 			MappingConfig.RoutingProvider = RoutingProviderNames.Estimate;
-			var service = new RoutingService(new IRoutingProvider[] { new EstimateRoutingProvider() }, null);
+			var service = new RoutingService(new IRoutingProvider[] { new EstimateRoutingProvider() }, null, null, null);
 
 			var matrix = await service.GetMatrixAsync(new RouteMatrixRequest
 			{
@@ -166,7 +166,7 @@ namespace Resgrid.Tests.Services.Routing
 		public async Task optimize_uses_the_heuristic_when_the_provider_has_none()
 		{
 			MappingConfig.RoutingProvider = RoutingProviderNames.Estimate;
-			var service = new RoutingService(new IRoutingProvider[] { new EstimateRoutingProvider() }, null);
+			var service = new RoutingService(new IRoutingProvider[] { new EstimateRoutingProvider() }, null, null, null);
 
 			// Start, a far stop, a near stop, end next to the far stop: near stop first is shorter.
 			var result = await service.OptimizeAsync(new RouteOptimizationRequest
@@ -192,7 +192,7 @@ namespace Resgrid.Tests.Services.Routing
 			MappingConfig.RoutingFallbackProvider = RoutingProviderNames.Estimate;
 			var valhalla = Provider(RoutingProviderNames.Valhalla, true,
 				new RouteResult { Successful = false, Error = "400: NoSegment", RequestRejected = true });
-			var service = new RoutingService(new[] { valhalla.Object, new EstimateRoutingProvider() }, null);
+			var service = new RoutingService(new[] { valhalla.Object, new EstimateRoutingProvider() }, null, null, null);
 
 			var first = await service.GetRouteAsync(TwoPoints());
 			var second = await service.GetRouteAsync(TwoPoints());
@@ -211,7 +211,7 @@ namespace Resgrid.Tests.Services.Routing
 			var valhalla = Provider(RoutingProviderNames.Valhalla, true);
 			valhalla.Setup(p => p.GetMatrixAsync(It.IsAny<RouteMatrixRequest>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync(new RouteMatrixResult { Successful = false, Error = "Outside MappingConfig.ValhallaCoverage", RequestRejected = true });
-			var service = new RoutingService(new[] { valhalla.Object, new EstimateRoutingProvider() }, null);
+			var service = new RoutingService(new[] { valhalla.Object, new EstimateRoutingProvider() }, null, null, null);
 			var request = new RouteMatrixRequest
 			{
 				Origins = new List<RoutingWaypoint> { new RoutingWaypoint(39.53, -119.81), new RoutingWaypoint(-33.8688, 151.2093) },

@@ -347,6 +347,9 @@
   <data name="RepeatTooMany" xml:space="preserve">
     <value>سيؤدي ذلك إلى إضافة أكثر من {0} وقت.</value>
   </data>
+  <data name="RepeatNoDays" xml:space="preserve">
+    <value>اختر يومًا واحدًا على الأقل.</value>
+  </data>
   <data name="DayMon" xml:space="preserve">
     <value>الاثنين</value>
   </data>

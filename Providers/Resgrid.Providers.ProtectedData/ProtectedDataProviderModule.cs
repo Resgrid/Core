@@ -17,7 +17,12 @@ namespace Resgrid.Providers.ProtectedData
 		{
 			builder.RegisterDecorator<AuditedKeyWrappingProvider, IKeyWrappingProvider>();
 			if (string.Equals(DataProtectionConfig.KeyWrappingProviderType, "OpenBaoTransit", System.StringComparison.OrdinalIgnoreCase))
+			{
+				// One reloading client certificate per broker, shared by the provider (presents it) and the readiness
+				// check (watches its expiry).
+				builder.RegisterType<OpenBaoClientCertificate>().AsSelf().SingleInstance();
 				builder.RegisterType<OpenBaoTransitKeyWrappingProvider>().As<IKeyWrappingProvider>().SingleInstance();
+			}
 		}
 	}
 }

@@ -196,6 +196,35 @@ namespace Resgrid.Tests.Web.User
 			new TravelModeInput { Metric = true, Mode = "3", Speed = 200 }.Validate().Should().BeEmpty();
 		}
 
+		[TestCase(-10d)]
+		[TestCase(0d)]
+		[TestCase(double.NaN)]
+		[TestCase(double.PositiveInfinity)]
+		public void a_speed_that_is_not_a_positive_number_is_refused_not_read_as_blank(double speed)
+		{
+			// PR 585: read as blank it passed validation and cleared the speed already saved.
+			new TravelModeInput { Metric = true, Mode = "2", Speed = speed }.Validate().Should().ContainSingle(e => e.Field == "Speed");
+			new TravelModeInput { Metric = false, Mode = "2", Speed = speed }.Validate().Should().ContainSingle(e => e.Field == "Speed");
+			new TravelModeInput { Metric = true, Mode = "2", Speed = null }.Validate().Should().BeEmpty("blank is the only way to use the default");
+		}
+
+		[TestCase(null, "current")]
+		[TestCase("", "current")]
+		[TestCase("ALL", "all")]
+		[TestCase(" all ", "all")]
+		[TestCase("ended", "current")]
+		[TestCase("scheduled", "current")]
+		[TestCase("disabled", "current")]
+		public async Task the_list_takes_only_the_filters_it_offers(string filter, string expected)
+		{
+			// PR 585: the page offers current and all; other names were accepted and then shown as current.
+			_closures.Setup(c => c.GetClosuresForDepartmentAsync(DepartmentId, false)).ReturnsAsync(new List<RoadClosure>());
+
+			var index = await Build(CallView).Index(filter);
+
+			index.Should().BeOfType<ViewResult>().Which.Model.Should().BeOfType<RoadClosuresIndexView>().Which.Filter.Should().Be(expected);
+		}
+
 		[Test]
 		public void the_form_shows_stored_values_in_the_chosen_units()
 		{

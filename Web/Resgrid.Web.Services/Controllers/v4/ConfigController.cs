@@ -322,11 +322,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// </summary>
 		private async Task PopulateMapLibreAsync(GetConfigResult result, int departmentId, string key)
 		{
-			var capabilities = _routingService.Capabilities;
-			result.Data.RoutingProvider = _routingService.ProviderName;
+			// The department's own routing account (Mapping Settings) when it has one; anonymous callers get the install's.
+			var provider = await _routingService.GetProviderInfoAsync(departmentId);
+			var capabilities = provider.Capabilities;
+			result.Data.RoutingProvider = provider.Name;
 			result.Data.RoutingSupportsTraffic = capabilities.Traffic;
 			result.Data.RoutingSupportsIncidents = capabilities.Incidents;
-			result.Data.RoutingSupportsVoice = _routingService.IsNavigationAvailable;
+			result.Data.RoutingSupportsVoice = provider.NavigationAvailable;
 			result.Data.TrafficRefreshSeconds = Math.Max(60, Config.MappingConfig.TrafficRefreshSeconds);
 
 			if (departmentId <= 0)
@@ -341,11 +343,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 				result.Data.MapRasterTileUrl = style.RasterTileUrl;
 				result.Data.StaticMapUrlTemplate = _staticMapService.GetSignedTemplate(departmentId, key);
 
-				var trafficTiles = _mapStyleService.GetTrafficTileUrl();
-				result.Data.TrafficAvailable = !string.IsNullOrWhiteSpace(trafficTiles);
-				result.Data.TrafficTileUrl = trafficTiles;
+				var traffic = await _mapStyleService.GetTrafficLayerAsync(departmentId);
+				result.Data.TrafficAvailable = !string.IsNullOrWhiteSpace(traffic?.Url);
+				result.Data.TrafficTileUrl = traffic?.Url;
+				result.Data.TrafficTileType = traffic?.Type;
 
-				result.Data.NavigationAvailable = _routingService.IsNavigationAvailable &&
+				result.Data.NavigationAvailable = provider.NavigationAvailable &&
 					await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.NavigationInApp, departmentId);
 
 				// Offline map packs (§19): the signed, same-origin manifest URL the apps call exactly as given.

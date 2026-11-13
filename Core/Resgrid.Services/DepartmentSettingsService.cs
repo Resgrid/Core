@@ -46,6 +46,7 @@ namespace Resgrid.Services
 		private static string DepartmentTerminologyCacheKey = "DSetTerminology_{0}";
 		private static string DispatchResponseCodesCacheKey = "DSetDispatchResponseCodes_{0}";
 		private static string DispatchRenotifyConfigCacheKey = "DSetDispatchRenotifyConfig_{0}";
+		private static string MappingProviderOverridesCacheKey = "DSetMappingProviderOverrides_{0}";
 		private static string DepartmentImportConfigCacheKey = "DSetDepartmentImport_{0}";
 		private static TimeSpan LongCacheLength = TimeSpan.FromDays(14);
 		// Security-relevant settings ride the standard department-data window instead, so a missed
@@ -1353,6 +1354,51 @@ namespace Resgrid.Services
 			return new MappingNavigationConfig();
 		}
 
+		public async Task<MappingProviderOverrides> GetMappingProviderOverridesAsync(int departmentId, bool bypassCache = false)
+		{
+			async Task<string> getSetting()
+			{
+				var setting = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.MappingProviderOverrides);
+				return setting?.Setting ?? string.Empty;
+			}
+
+			string value;
+			if (Config.SystemBehaviorConfig.CacheEnabled && !bypassCache)
+				value = await _cacheProvider.RetrieveAsync<string>(string.Format(MappingProviderOverridesCacheKey, departmentId), getSetting, LongCacheLength);
+			else
+				value = await getSetting();
+
+			if (!String.IsNullOrWhiteSpace(value))
+			{
+				try
+				{
+					var config = ObjectSerialization.Deserialize<MappingProviderOverrides>(value);
+
+					if (config != null)
+						return config;
+				}
+				catch (Exception)
+				{
+					// A corrupt blob falls back to the system providers; routing and maps carry on.
+				}
+			}
+
+			return new MappingProviderOverrides();
+		}
+
+		public async Task<DepartmentSetting> SetMappingProviderOverridesAsync(int departmentId, MappingProviderOverrides config,
+			CancellationToken cancellationToken = default(CancellationToken))
+		{
+			if (config == null || config.IsEmpty)
+			{
+				await DeleteSettingAsync(departmentId, DepartmentSettingTypes.MappingProviderOverrides, cancellationToken);
+				return null;
+			}
+
+			return await SaveOrUpdateSettingAsync(departmentId, ObjectSerialization.Serialize(config),
+				DepartmentSettingTypes.MappingProviderOverrides, cancellationToken);
+		}
+
 		public async Task<DepartmentSetting> SetMappingNavigationConfigAsync(int departmentId, MappingNavigationConfig config,
 			CancellationToken cancellationToken = default(CancellationToken))
 		{
@@ -2007,6 +2053,9 @@ namespace Resgrid.Services
 					break;
 				case DepartmentSettingTypes.MappingNavigationConfig:
 					cacheKey = string.Format(MappingNavigationConfigCacheKey, departmentId);
+					break;
+				case DepartmentSettingTypes.MappingProviderOverrides:
+					cacheKey = string.Format(MappingProviderOverridesCacheKey, departmentId);
 					break;
 				case DepartmentSettingTypes.OfflineMapPacksConfig:
 					cacheKey = string.Format(OfflineMapPacksConfigCacheKey, departmentId);

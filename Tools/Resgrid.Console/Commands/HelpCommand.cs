@@ -39,6 +39,7 @@ namespace Resgrid.Console.Commands
 			logger.LogInformation("--NormalizePhoneNumbers [--Apply] [--DepartmentId=1] :: Rewrites stored profile phone numbers to E.164. Dry run unless --Apply is passed");
 			logger.LogInformation("--OidcUpdate :: Updates the Resgrid OIDC Database");
 			logger.LogInformation("--ResetPassword -- --UserId=[GUID] --Password=[PASSWORD] :: Resets the password for a user");
+			logger.LogInformation("--RoutingUsage [--Days=31] :: Routing calls per provider and day, this month's projection, busiest day, and the Mapbox bill they imply");
 			logger.LogInformation("--SecurityRefresh :: Refreshes the Resgrid Security Matrix Cache");
 
 			return ExitCode.Success;

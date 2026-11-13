@@ -1,8 +1,8 @@
 /**
  * The live traffic overlay and its map toggle (maplibre-mapping-routing-navigation-plan.md §11.1): Mapbox Traffic v1
  * vector tiles drawn as congestion-coloured lines above the roads and under the labels, offset to each side of two-way
- * roads, reloaded every refresh interval while shown, and the on/off choice remembered on this device. MapLibre maps
- * only; the Leaflet raster maps have no vector tiles to draw it with.
+ * roads, reloaded every refresh interval while shown, and the on/off choice remembered on this device. A department's
+ * own traffic tile URL (Mapping Settings, e.g. TomTom flow tiles) is a raster overlay instead. MapLibre maps only.
  */
 
 import { ensureControlStyles } from './rgControlStyles';
@@ -10,8 +10,10 @@ import { ensureControlStyles } from './rgControlStyles';
 type GlMap = import('maplibre-gl').Map;
 
 export interface TrafficOptions {
-  /** Traffic vector tile URL template ({z}/{x}/{y}) with its token, from the server config. */
+  /** Traffic tile URL template ({z}/{x}/{y}) with its token, from the server config. */
   url: string;
+  /** 'vector' (Mapbox Traffic v1, the default) or 'raster' (an image tile overlay). */
+  type?: string;
   /** Seconds between reloads while shown; the provider updates about every 8 minutes. */
   refreshSeconds?: number;
   /** Shown when the user has never chosen on this device. */
@@ -28,6 +30,7 @@ export interface TrafficHandle {
 const SOURCE = 'rg-traffic';
 const LINE = 'rg-traffic-line';
 const CLOSED = 'rg-traffic-closed';
+const RASTER = 'rg-traffic-raster';
 const STORAGE_KEY = 'rg.maps.traffic';
 
 function remembered(): boolean | null {
@@ -71,6 +74,21 @@ export function addTrafficToggle(map: GlMap, options: TrafficOptions): TrafficHa
     // Under the first label layer, so street names stay readable over the colours.
     const labels = (map.getStyle().layers ?? []).find((layer) => layer.type === 'symbol')?.id;
 
+    if (options.type === 'raster') {
+      map.addSource(SOURCE, { type: 'raster', tiles: tilesFor(options.url), tileSize: 256, minzoom: 0, maxzoom: 22 });
+      map.addLayer(
+        {
+          id: RASTER,
+          type: 'raster',
+          source: SOURCE,
+          layout: { visibility: on ? 'visible' : 'none' },
+          paint: { 'raster-opacity': 0.85 },
+        },
+        labels,
+      );
+      return;
+    }
+
     map.addSource(SOURCE, { type: 'vector', tiles: tilesFor(options.url), minzoom: 0, maxzoom: 16 });
     const offset = ['interpolate', ['linear'], ['zoom'], 10, 1, 16, 4] as any;
     const width = ['interpolate', ['linear'], ['zoom'], 10, 1.5, 16, 4] as any;
@@ -111,13 +129,13 @@ export function addTrafficToggle(map: GlMap, options: TrafficOptions): TrafficHa
     if (!on || document.hidden) {
       return;
     }
-    const source = map.getSource(SOURCE) as (import('maplibre-gl').VectorTileSource & { setTiles?: (tiles: string[]) => void }) | undefined;
+    const source = map.getSource(SOURCE) as { setTiles?: (tiles: string[]) => void } | undefined;
     source?.setTiles?.(tilesFor(options.url));
   };
 
   const apply = () => {
     ensureLayers();
-    for (const id of [LINE, CLOSED]) {
+    for (const id of [LINE, CLOSED, RASTER]) {
       if (map.getLayer(id)) {
         map.setLayoutProperty(id, 'visibility', on ? 'visible' : 'none');
       }

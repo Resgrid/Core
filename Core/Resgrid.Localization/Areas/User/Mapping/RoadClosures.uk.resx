@@ -347,6 +347,9 @@
   <data name="RepeatTooMany" xml:space="preserve">
     <value>Буде додано понад {0} періодів.</value>
   </data>
+  <data name="RepeatNoDays" xml:space="preserve">
+    <value>Виберіть принаймні один день.</value>
+  </data>
   <data name="DayMon" xml:space="preserve">
     <value>Пн</value>
   </data>

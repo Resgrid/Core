@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
@@ -29,6 +31,15 @@ namespace Resgrid.Repositories.DataRepository
 			return QueryFirstOrDefaultAsync<RoadClosure>(
 				$"SELECT * FROM {Tbl("RoadClosures")} WHERE {Col("RoadClosureId")} = {P}RoadClosureId AND {Col("DepartmentId")} = {P}DepartmentId",
 				new { RoadClosureId = roadClosureId, DepartmentId = departmentId });
+		}
+
+		public Task<int> SetEnabledAsync(int departmentId, string roadClosureId, bool isEnabled, string userId, DateTime updatedOn, CancellationToken cancellationToken)
+		{
+			return ExecuteAsync(
+				$"UPDATE {Tbl("RoadClosures")} SET {Col("IsEnabled")} = {P}IsEnabled, {Col("UpdatedByUserId")} = {P}UserId, {Col("UpdatedOn")} = {P}UpdatedOn " +
+				$"WHERE {Col("RoadClosureId")} = {CaseInsensitive("RoadClosureId")} AND {Col("DepartmentId")} = {P}DepartmentId",
+				new { IsEnabled = isEnabled, UserId = userId, UpdatedOn = DatabaseTimestamp(updatedOn), RoadClosureId = roadClosureId, DepartmentId = departmentId },
+				cancellationToken);
 		}
 	}
 }

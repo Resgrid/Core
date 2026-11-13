@@ -257,6 +257,8 @@ namespace Resgrid.Services
 			builder.RegisterType<CustomStateService>().As<ICustomStateService>().InstancePerLifetimeScope();
 			builder.RegisterType<GeoService>().As<IGeoService>().InstancePerLifetimeScope();
 			builder.RegisterType<RoutingService>().As<IRoutingService>().InstancePerLifetimeScope();
+			builder.RegisterType<RoutingUsageService>().As<IRoutingUsageService>().InstancePerLifetimeScope();
+			builder.RegisterType<DepartmentMapProvidersService>().As<IDepartmentMapProvidersService>().InstancePerLifetimeScope();
 			builder.RegisterType<MapStyleService>().As<IMapStyleService>().InstancePerLifetimeScope();
 			builder.RegisterType<StaticMapService>().As<IStaticMapService>().InstancePerLifetimeScope();
 			builder.RegisterType<CustomMapMercatorTileRenderer>().As<ICustomMapMercatorTileRenderer>().InstancePerLifetimeScope();

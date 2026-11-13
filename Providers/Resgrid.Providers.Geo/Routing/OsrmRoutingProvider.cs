@@ -16,6 +16,25 @@ namespace Resgrid.Providers.GeoLocationProvider.Routing
 	{
 		private const string AttributionText = "© OpenStreetMap contributors";
 
+		// A department's own OSRM server (Mapping Settings); null = the install's. Only reached on a public address.
+		private readonly RoutingProviderCredentials _department;
+
+		public OsrmRoutingProvider()
+		{
+		}
+
+		private OsrmRoutingProvider(RoutingProviderCredentials department)
+		{
+			_department = department;
+		}
+
+		public IRoutingProvider WithCredentials(RoutingProviderCredentials credentials)
+		{
+			return credentials == null ? null : new OsrmRoutingProvider(credentials);
+		}
+
+		private string BaseUrl => RoutingHttp.TrimBase(_department != null ? _department.Url : MappingConfig.OsrmUrl);
+
 		public string Name => RoutingProviderNames.Osrm;
 
 		public RoutingCapabilities Capabilities { get; } = new RoutingCapabilities
@@ -33,15 +52,17 @@ namespace Resgrid.Providers.GeoLocationProvider.Routing
 			MaxOptimizeWaypoints = 100
 		};
 
-		public bool IsConfigured => !string.IsNullOrWhiteSpace(MappingConfig.OsrmUrl);
+		public bool IsConfigured => _department != null
+			? RoutingHttp.IsAcceptableDepartmentUrl(_department.Url)
+			: !string.IsNullOrWhiteSpace(MappingConfig.OsrmUrl);
 
 		public async Task<RouteResult> GetRouteAsync(RouteRequest request, CancellationToken cancellationToken)
 		{
 			var steps = request.Steps || request.NavigationInstructions;
-			var url = $"{RoutingHttp.TrimBase(MappingConfig.OsrmUrl)}/route/v1/{Profile(request.Profile)}/{RoutingHttp.LonLatPath(request.Waypoints)}" +
+			var url = $"{BaseUrl}/route/v1/{Profile(request.Profile)}/{RoutingHttp.LonLatPath(request.Waypoints)}" +
 			          $"?overview=full&geometries=polyline6&steps={(steps ? "true" : "false")}";
 
-			var (_, status, document) = await RoutingHttp.GetJsonAsync(url, cancellationToken);
+			var (_, status, document) = await RoutingHttp.GetJsonAsync(url, cancellationToken, null, _department != null);
 
 			using (document)
 			{
@@ -59,8 +80,8 @@ namespace Resgrid.Providers.GeoLocationProvider.Routing
 			query.Append("&sources=").Append(string.Join(";", Enumerable.Range(0, request.Origins.Count)));
 			query.Append("&destinations=").Append(string.Join(";", Enumerable.Range(request.Origins.Count, request.Destinations.Count)));
 
-			var url = $"{RoutingHttp.TrimBase(MappingConfig.OsrmUrl)}/table/v1/{Profile(request.Profile)}/{RoutingHttp.LonLatPath(coordinates)}{query}";
-			var (ok, status, document) = await RoutingHttp.GetJsonAsync(url, cancellationToken);
+			var url = $"{BaseUrl}/table/v1/{Profile(request.Profile)}/{RoutingHttp.LonLatPath(coordinates)}{query}";
+			var (ok, status, document) = await RoutingHttp.GetJsonAsync(url, cancellationToken, null, _department != null);
 
 			using (document)
 			{
@@ -80,11 +101,11 @@ namespace Resgrid.Providers.GeoLocationProvider.Routing
 		public async Task<RouteOptimizationResult> OptimizeAsync(RouteOptimizationRequest request, CancellationToken cancellationToken)
 		{
 			if (!request.KeepFirst || !request.KeepLast)
-				return new RouteOptimizationResult { Provider = Name, Error = "Only fixed start and end are supported" };
+				return new RouteOptimizationResult { Provider = Name, Error = "Only fixed start and end are supported", NotSent = true };
 
-			var url = $"{RoutingHttp.TrimBase(MappingConfig.OsrmUrl)}/trip/v1/{Profile(request.Profile)}/{RoutingHttp.LonLatPath(request.Waypoints)}" +
+			var url = $"{BaseUrl}/trip/v1/{Profile(request.Profile)}/{RoutingHttp.LonLatPath(request.Waypoints)}" +
 			          "?source=first&destination=last&roundtrip=false&overview=false";
-			var (ok, status, document) = await RoutingHttp.GetJsonAsync(url, cancellationToken);
+			var (ok, status, document) = await RoutingHttp.GetJsonAsync(url, cancellationToken, null, _department != null);
 
 			using (document)
 			{

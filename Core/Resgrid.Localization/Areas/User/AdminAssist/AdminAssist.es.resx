@@ -7827,4 +7827,10 @@
   <data name="ModuleHelp.ChatDisabled" xml:space="preserve">
     <value>Muestra u oculta el chat en la navegación, los widgets del panel y la búsqueda de la aplicación web. Ocultar el módulo no elimina datos ni cambia permisos. No afecta el chat en las aplicaciones móviles.</value>
   </data>
+  <data xml:space="preserve" name="Setting.MappingProviderOverrides">
+    <value>Sus propios proveedores de mapas</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.MappingProviderOverrides">
+    <value>Cuentas propias del departamento para rutas, tráfico en vivo y búsqueda de direcciones, que se prueban antes que los proveedores de Resgrid. Solo se informa qué proveedores están configurados, nunca las claves. Si los tres vuelven al valor predeterminado de Resgrid, se elimina la configuración.</value>
+  </data>
 </root>

@@ -386,24 +386,31 @@ var resgrid;
                         return;
                     }
 
+                    // Times go only on the chosen days, so with none chosen there is nothing to add.
                     var days = [];
                     $('[data-repeat-day]:checked').each(function () { days.push(parseInt($(this).attr('data-repeat-day'), 10)); });
+                    if (days.length === 0) {
+                        error.text(page.strings.repeatNoDays).show();
+                        return;
+                    }
 
                     dailyStart = dailyStart.substring(0, 5);
                     dailyEnd = dailyEnd.substring(0, 5);
                     var overnight = dailyEnd <= dailyStart;
                     var windows = [];
                     var dayMs = 24 * 60 * 60 * 1000;
+                    var room = page.maxWindows - body.find('[data-window-row]').length;
 
-                    for (var t = first; t <= last; t += dayMs) {
+                    // Stops as soon as the times would not fit: a range of centuries is refused, not built first.
+                    for (var t = first; t <= last && windows.length <= room; t += dayMs) {
                         var date = new Date(t);
-                        if (days.length > 0 && days.indexOf(date.getUTCDay()) < 0) {
+                        if (days.indexOf(date.getUTCDay()) < 0) {
                             continue;
                         }
                         windows.push([formatDate(t) + 'T' + dailyStart, formatDate(overnight ? t + dayMs : t) + 'T' + dailyEnd]);
                     }
 
-                    if (body.find('[data-window-row]').length + windows.length > page.maxWindows) {
+                    if (windows.length > room) {
                         error.text(page.strings.repeatTooMany).show();
                         return;
                     }

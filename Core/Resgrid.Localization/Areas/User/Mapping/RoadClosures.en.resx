@@ -347,6 +347,9 @@
   <data name="RepeatTooMany" xml:space="preserve">
     <value>That would add more than {0} times.</value>
   </data>
+  <data name="RepeatNoDays" xml:space="preserve">
+    <value>Choose at least one day.</value>
+  </data>
   <data name="DayMon" xml:space="preserve">
     <value>Mon</value>
   </data>

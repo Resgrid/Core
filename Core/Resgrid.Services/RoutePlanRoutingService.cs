@@ -96,6 +96,7 @@ namespace Resgrid.Services
 
 			var optimized = await _routingService.OptimizeAsync(new RouteOptimizationRequest
 			{
+				DepartmentId = inputs.DepartmentId,
 				Waypoints = waypoints,
 				KeepFirst = inputs.Start != null,
 				KeepLast = inputs.End != null,
@@ -176,7 +177,7 @@ namespace Resgrid.Services
 			var live = inputs.WithStart(origin).WithStops(remaining.Select(s => byStopId[s.RouteStopId]).ToList());
 
 			if (remaining.Count == 0 && live.End == null)
-				return new RoutePlanRouteResult { Successful = true, Start = origin, Provider = _routingService.ProviderName, Attribution = _routingService.Attribution };
+				return new RoutePlanRouteResult { Successful = true, Start = origin, Provider = inputs.Provider.Name, Attribution = inputs.Provider.Attribution };
 
 			var result = await RouteAsync(live, steps: true, cancellationToken: cancellationToken, heading: heading, navigation: navigation,
 				language: language, metric: metric, bypassCache: true);
@@ -335,8 +336,8 @@ namespace Resgrid.Services
 				DurationSeconds = plan.EstimatedDurationSeconds ?? 0,
 				GeometryGeoJson = plan.MapboxRouteGeometry,
 				DirectionsJson = plan.RouteDirectionsJson,
-				VehicleRestricted = inputs.Vehicle != null && (_routingService.Capabilities.VehicleSize || _routingService.Capabilities.VehicleFull),
-				IsTrafficAware = inputs.Profile == RoutingProfile.DrivingTraffic && _routingService.Capabilities.Traffic,
+				VehicleRestricted = inputs.Vehicle != null && (inputs.Provider.Capabilities.VehicleSize || inputs.Provider.Capabilities.VehicleFull),
+				IsTrafficAware = inputs.Profile == RoutingProfile.DrivingTraffic && inputs.Provider.Capabilities.Traffic,
 				Start = inputs.Start,
 				End = inputs.End,
 				ComputedOn = plan.RouteComputedOn
@@ -392,12 +393,13 @@ namespace Resgrid.Services
 				var chunk = waypoints.Skip(first).Take(ChunkWaypoints).ToList();
 				var route = await _routingService.GetRouteAsync(new RouteRequest
 				{
+					DepartmentId = inputs.DepartmentId,
 					Waypoints = chunk,
 					Profile = inputs.Profile,
 					Vehicle = inputs.Vehicle,
 					Avoid = inputs.Avoid,
 					Steps = steps,
-					NavigationInstructions = navigation && _routingService.IsNavigationAvailable,
+					NavigationInstructions = navigation && inputs.Provider.NavigationAvailable,
 					Language = string.IsNullOrWhiteSpace(language) ? "en" : language,
 					Units = metric ? RoutingUnits.Metric : RoutingUnits.Imperial,
 					BypassCache = bypassCache
@@ -500,8 +502,13 @@ namespace Resgrid.Services
 			if (profile == RoutingProfile.Truck && vehicle == null)
 				profile = RoutingProfile.Driving;
 
+			// The department's own routing account (Mapping Settings) answers first when it has one.
+			var provider = await _routingService.GetProviderInfoAsync(plan.DepartmentId);
+
 			var inputs = new PlanInputs
 			{
+				DepartmentId = plan.DepartmentId,
+				Provider = provider,
 				Stops = stops,
 				Profile = profile,
 				Avoid = (RouteAvoidOptions)(plan.AvoidOptions & 15),
@@ -510,7 +517,8 @@ namespace Resgrid.Services
 				End = await ResolveEndpointAsync(plan.DepartmentId, plan.UseStationAsEnd, plan.EndDepartmentGroupId, unit, plan.EndLatitude, plan.EndLongitude)
 			};
 
-			inputs.Hash = Hash(inputs, _routingService.ProviderName);
+			// A switch between the install's account and the department's marks stored routes stale, like a provider change.
+			inputs.Hash = Hash(inputs, provider.DepartmentAccount ? provider.Name + "#department" : provider.Name);
 			return inputs;
 		}
 
@@ -670,6 +678,11 @@ namespace Resgrid.Services
 
 		private sealed class PlanInputs
 		{
+			public int DepartmentId { get; set; }
+
+			/// <summary>The provider that answers first for the plan's department.</summary>
+			public RoutingProviderInfo Provider { get; set; }
+
 			public RoutePlanEndpoint Start { get; set; }
 
 			public RoutePlanEndpoint End { get; set; }

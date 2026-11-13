@@ -69,9 +69,10 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		/// <remarks>
 		/// "0" dispatches everyone, and is the only way to: a blank list, or one with no entries ("|"), creates a call that
 		/// dispatches nobody (an informational call; for a pending call, no proposed recipients). A department that requires
-		/// a dispatch list refuses either. A system API key never pages the whole department on its own: its immediate call
-		/// with "0" dispatches nobody, so name the recipients (on a pending call "0" is kept as the proposal, since nobody is
-		/// paged until a dispatcher sends it).
+		/// a dispatch list refuses either, except on a pending call (IsPending), which may wait with no proposed recipients.
+		/// A system API key never pages the whole department on its own: its immediate call with "0" dispatches nobody, so
+		/// name the recipients (on a pending call "0" is kept as the proposal, since nobody is paged until a dispatcher sends
+		/// it).
 		/// </remarks>
 		public string DispatchList { get; set; }
 

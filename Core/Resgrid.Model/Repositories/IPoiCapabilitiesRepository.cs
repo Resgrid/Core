@@ -32,7 +32,10 @@ namespace Resgrid.Model.Repositories
 		/// <summary>Removes the POIs' reports (they reopened or are being deleted). Returns the rows removed.</summary>
 		Task<int> DeleteForPoisAsync(int departmentId, IEnumerable<int> poiIds, CancellationToken cancellationToken = default);
 
-		/// <summary>Takes a deleted capability out of every report that names it.</summary>
+		/// <summary>
+		/// Takes a deleted capability out of every report that names it. Throws <see cref="System.InvalidOperationException"/>
+		/// when a report kept changing under it and still names the capability, so the capability is not deleted.
+		/// </summary>
 		Task RemoveCapabilityAsync(int departmentId, string poiCapabilityId, CancellationToken cancellationToken = default);
 	}
 }

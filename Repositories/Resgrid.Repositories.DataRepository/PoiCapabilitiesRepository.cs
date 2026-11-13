@@ -125,13 +125,18 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				// The write only lands on the list it was computed from: a report someone changed since the read (a dispatcher
 				// marking another capability down, or another removal) is read again rather than overwritten with the old list.
+				// Still holding the capability after every attempt is an error: the caller must not go on as if it were removed.
 				var report = read;
-				for (var attempt = 0; attempt < MaxRemoveAttempts && report?.UnavailableCapabilityIds != null; attempt++)
+				for (var attempt = 0; ; attempt++)
 				{
-					var ids = report.GetUnavailableCapabilityIds();
+					var ids = report?.GetUnavailableCapabilityIds() ?? new List<string>();
 					var kept = ids.Where(x => !string.Equals(x, poiCapabilityId, StringComparison.OrdinalIgnoreCase)).ToList();
 					if (kept.Count == ids.Count)
 						break;
+
+					if (attempt >= MaxRemoveAttempts)
+						throw new InvalidOperationException(
+							$"Availability report {report.PoiAvailabilityId} kept changing; capability {poiCapabilityId} could not be removed from it. Try again.");
 
 					var changed = await ExecuteAsync(
 						$"UPDATE {Tbl("PoiAvailabilities")} SET {Col("UnavailableCapabilityIds")} = {P}Ids " +
@@ -145,7 +150,7 @@ namespace Resgrid.Repositories.DataRepository
 			}
 		}
 
-		/// <summary>Reads of one report <see cref="RemoveCapabilityAsync"/> makes while others keep changing it.</summary>
+		/// <summary>Conditional writes of one report <see cref="RemoveCapabilityAsync"/> tries while others keep changing it.</summary>
 		private const int MaxRemoveAttempts = 3;
 	}
 }

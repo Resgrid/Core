@@ -355,18 +355,51 @@ namespace Resgrid.Services.Records
 			return null;
 		}
 
-		/// <summary>True when a negation word comes before the "out of service" / "out of order" phrase.</summary>
+		/// <summary>
+		/// True when a negation word comes before the "out of service" / "out of order" phrase in the same clause ("Not out of
+		/// service", "No longer out of order"). One in an earlier clause ("Not working - out of service") does not count. One pass
+		/// over the text: a status cell has no length limit of its own.
+		/// </summary>
 		private static bool NegatesOutOfService(string text)
 		{
-			// Apostrophes go (isn't = isnt); every other non-letter separates words.
-			var words = new string(text.ToLowerInvariant().Where(c => c != '\'' && c != '’').Select(c => char.IsLetterOrDigit(c) ? c : ' ').ToArray())
-				.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-			for (var i = 0; i < words.Length; i++)
+			// Words and the clause each is in. Apostrophes go (isn't = isnt); a hyphen inside a word ("out-of-service") only
+			// separates words, while other punctuation, or a dash with a space beside it, starts a new clause.
+			var words = new List<(string Word, int Clause)>();
+			var current = new StringBuilder();
+			var clause = 0;
+			var lower = text.ToLowerInvariant();
+			for (var i = 0; i < lower.Length; i++)
 			{
-				var rest = string.Concat(words.Skip(i));
-				if (rest.StartsWith("outofservice", StringComparison.Ordinal) || rest.StartsWith("outoforder", StringComparison.Ordinal))
-					return words.Take(i).Any(Negations.Contains);
+				var c = lower[i];
+				if (char.IsLetterOrDigit(c)) { current.Append(c); continue; }
+				if (c == '\'' || c == '’') continue;
+				if (current.Length > 0) { words.Add((current.ToString(), clause)); current.Clear(); }
+				if (char.IsWhiteSpace(c)) continue;
+				var hyphenInWord = c == '-' && i > 0 && i + 1 < lower.Length && char.IsLetterOrDigit(lower[i - 1]) && char.IsLetterOrDigit(lower[i + 1]);
+				if (!hyphenInWord) clause++;
 			}
+			if (current.Length > 0) words.Add((current.ToString(), clause));
+
+			// The words joined once, with where each starts: the phrase may span words ("out of service") or be one
+			// ("OutOfService"), and must begin at a word.
+			var joined = new StringBuilder();
+			var wordAt = new Dictionary<int, int>();
+			for (var w = 0; w < words.Count; w++) { wordAt[joined.Length] = w; joined.Append(words[w].Word); }
+			var all = joined.ToString();
+
+			var phraseWord = -1;
+			foreach (var phrase in new[] { "outofservice", "outoforder" })
+			{
+				for (var at = all.IndexOf(phrase, StringComparison.Ordinal); at >= 0; at = all.IndexOf(phrase, at + 1, StringComparison.Ordinal))
+				{
+					if (!wordAt.TryGetValue(at, out var index)) continue;
+					if (phraseWord < 0 || index < phraseWord) phraseWord = index;
+					break;
+				}
+			}
+
+			for (var w = phraseWord - 1; w >= 0 && words[w].Clause == words[phraseWord].Clause; w--)
+				if (Negations.Contains(words[w].Word)) return true;
 
 			return false;
 		}

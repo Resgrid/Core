@@ -225,6 +225,19 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task a_capability_a_report_still_names_is_not_deleted()
+		{
+			// The report kept changing under the removal: the capability stays, so deleting it can be tried again.
+			_availabilities.Setup(x => x.RemoveCapabilityAsync(DeptId, "cath", It.IsAny<CancellationToken>()))
+				.ThrowsAsync(new InvalidOperationException("kept changing"));
+
+			Func<Task> act = () => _service.DeletePoiCapabilityAsync(DeptId, "CATH");
+
+			await act.Should().ThrowAsync<InvalidOperationException>();
+			_capabilities.Verify(x => x.DeleteAsync(It.IsAny<PoiCapability>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
 		public async Task deleting_a_poi_removes_its_capabilities_and_report()
 		{
 			_pois.Setup(x => x.GetByIdAsync(Gent)).ReturnsAsync(new Poi { PoiId = Gent, PoiTypeId = HospitalType });

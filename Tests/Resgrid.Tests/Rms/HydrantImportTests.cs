@@ -145,6 +145,8 @@ namespace Resgrid.Tests.Rms
 		[TestCase("OOS", false)]
 		[TestCase("Temporarily Out of Service", false)]
 		[TestCase("Out of service - no water", false)]
+		[TestCase("Not working - out of service", false)]
+		[TestCase("Not flowing; out-of-order", false)]
 		[TestCase("Not In Service", false)]
 		[TestCase("Inactive", false)]
 		[TestCase("Broken", false)]
@@ -169,6 +171,7 @@ namespace Resgrid.Tests.Rms
 		[TestCase("Not out of service")]
 		[TestCase("No longer out of service")]
 		[TestCase("Isn't out of order")]
+		[TestCase("Not out-of-service")]
 		public void Unrecognized_status_leaves_service_state_alone_and_is_reported(string value)
 		{
 			var batch = HydrantImportParser.Parse($"number,latitude,longitude,Hydrant Status\nH,45,-122,{value}", "csv");
@@ -337,6 +340,21 @@ namespace Resgrid.Tests.Rms
 			batch.Rows.Should().HaveCount(5);
 			batch.Rows.Where(r => r.Row.HydrantNumber != "H4").Should().OnlyContain(r => r.Hydrant.Type == (int)RmsHydrantType.Other, "a combined value is not read as a flags combination");
 			batch.Result.UnmappedValues.Select(u => (u.Column, u.Value, u.Rows)).Should().Equal(("Hydrant Type", "Pillar", 2), ("Hydrant Type", "DryBarrel,WetBarrel", 1), ("Hydrant Type", "Flush", 1));
+		}
+
+		[Test]
+		public void A_very_long_status_is_read_in_one_pass()
+		{
+			// The status cell has no length limit of its own (only the 10 MB file): matching the phrase must not rebuild the rest
+			// of the text at every word.
+			var status = string.Join(" ", Enumerable.Repeat("w", 200000)) + " not out of service";
+			var watch = System.Diagnostics.Stopwatch.StartNew();
+
+			var batch = HydrantImportParser.Parse($"number,latitude,longitude,status\nH,45,-122,{status}", "csv");
+
+			watch.Stop();
+			batch.Rows.Single().InService.Should().BeNull("the negation is in the phrase's clause");
+			watch.Elapsed.Should().BeLessThan(TimeSpan.FromSeconds(5));
 		}
 
 		[TestCase("-2")]

@@ -39,8 +39,8 @@ namespace Resgrid.Tests.Services.Routing
 			_cache.Setup(c => c.IsConnected()).Returns(true);
 			_cache.Setup(c => c.IncrementByAsync(It.IsAny<string>(), It.IsAny<long>(), It.IsAny<TimeSpan>()))
 				.ReturnsAsync((string key, long amount, TimeSpan _) => _counters.AddOrUpdate(key, amount, (_, value) => value + amount));
-			_cache.Setup(c => c.GetStringAsync(It.IsAny<string>()))
-				.ReturnsAsync((string key) => _counters.TryGetValue(key, out var value) ? value.ToString() : null);
+			_cache.Setup(c => c.TryGetStringAsync(It.IsAny<string>()))
+				.ReturnsAsync((string key) => (true, _counters.TryGetValue(key, out var value) ? value.ToString() : null));
 			_service = new RoutingUsageService(_cache.Object);
 		}
 
@@ -63,13 +63,28 @@ namespace Resgrid.Tests.Services.Routing
 		}
 
 		[Test]
+		public async Task one_failed_read_fails_the_report_even_with_the_connection_up()
+		{
+			// PR 585 round 3: a single timeout part way through read as zero calls, and the before/after connection checks
+			// both passed once Redis was back.
+			var today = DateTime.UtcNow.Date;
+			await _service.RecordAsync(RoutingProviderNames.Mapbox, RoutingUsageOperation.Route, RoutingUsageOutcome.Succeeded);
+			var failing = RoutingUsageService.Key(today.AddDays(-1), RoutingProviderNames.Mapbox, RoutingUsageOperation.Route, "ok");
+			_cache.Setup(c => c.TryGetStringAsync(failing)).ReturnsAsync((false, (string)null));
+
+			Func<Task> read = () => _service.GetUsageAsync(today.AddDays(-2), today);
+
+			await read.Should().ThrowAsync<InvalidOperationException>().WithMessage($"*{failing}*");
+		}
+
+		[Test]
 		public async Task a_report_reads_every_counter_once_and_stops_when_cancelled()
 		{
 			var today = DateTime.UtcNow.Date;
 			await _service.RecordAsync(RoutingProviderNames.Valhalla, RoutingUsageOperation.Route, RoutingUsageOutcome.Succeeded);
 
 			(await _service.GetUsageAsync(today.AddDays(-2), today)).Should().ContainSingle();
-			_cache.Verify(c => c.GetStringAsync(It.IsAny<string>()), Times.Exactly(3 * 4 * 3 * 2 * 5), "every counter of the three days, read once");
+			_cache.Verify(c => c.TryGetStringAsync(It.IsAny<string>()), Times.Exactly(3 * 4 * 3 * 2 * 5), "every counter of the three days, read once");
 
 			using var cancelled = new CancellationTokenSource();
 			cancelled.Cancel();

@@ -67,8 +67,8 @@ namespace Resgrid.Services
 			if (_cacheProvider == null)
 				return rows;
 
-			// A missing counter reads as zero, and so does every counter while Redis is unreachable: refuse rather than report
-			// a month of no calls and a $0 bill.
+			// A missing counter reads as zero; a counter that could not be read must not (it would report a month of no calls
+			// and a $0 bill). Checked up front for a clear message, and per read below for a timeout or drop part way through.
 			EnsureCacheReachable();
 
 			var from = fromDayUtc.Date;
@@ -115,8 +115,6 @@ namespace Resgrid.Services
 				}
 			}
 
-			// A connection lost part way through would have zeroed the days after it.
-			EnsureCacheReachable();
 			return rows;
 		}
 
@@ -149,9 +147,13 @@ namespace Resgrid.Services
 			       (departmentAccount ? "_dept" : string.Empty);
 		}
 
+		/// <summary>A counter's value; 0 for a counter that was never incremented. Throws when the read itself failed.</summary>
 		private async Task<long> ReadAsync(string key)
 		{
-			var text = await _cacheProvider.GetStringAsync(key);
+			var (succeeded, text) = await _cacheProvider.TryGetStringAsync(key);
+			if (!succeeded)
+				throw new InvalidOperationException($"Reading the routing counter '{key}' from Redis failed; the report would undercount, so it is not shown.");
+
 			return long.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out var value) ? value : 0;
 		}
 	}

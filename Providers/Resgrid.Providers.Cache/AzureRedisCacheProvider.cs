@@ -266,6 +266,32 @@ namespace Resgrid.Providers.Cache
 			return null;
 		}
 
+		public async Task<(bool Succeeded, string Value)> TryGetStringAsync(string cacheKey)
+		{
+			if (!Config.SystemBehaviorConfig.CacheEnabled || _connection == null || !_connection.IsConnected)
+				return (false, null);
+
+			try
+			{
+				var cacheValue = await _connection.GetDatabase().StringGetAsync(SetCacheKeyForEnv(cacheKey));
+				return (true, cacheValue.HasValue ? cacheValue.ToString() : null);
+			}
+			catch (TimeoutException)
+			{
+				return (false, null);
+			}
+			catch (RedisConnectionException ex)
+			{
+				Logging.LogError(ex);
+				return (false, null);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				return (false, null);
+			}
+		}
+
 		public async Task<T> GetAsync<T>(string cacheKey) where T : class
 		{
 			var cacheValue = await GetStringAsync(cacheKey);

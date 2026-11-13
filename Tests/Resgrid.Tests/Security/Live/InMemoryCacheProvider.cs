@@ -41,6 +41,8 @@ namespace Resgrid.Tests.Security.Live
 		public Task<string> GetStringAsync(string cacheKey) =>
 			Task.FromResult(_strings.TryGetValue(cacheKey, out var entry) && entry.ExpiresOn > DateTime.UtcNow ? entry.Value : null);
 
+		public async Task<(bool Succeeded, string Value)> TryGetStringAsync(string cacheKey) => (true, await GetStringAsync(cacheKey));
+
 		public Task<T> GetAsync<T>(string cacheKey) where T : class => Task.FromResult<T>(null);
 
 		public Task<string> GetOrAddStringAsync(string cacheKey, string valueIfAbsent, TimeSpan slidingExpiration)

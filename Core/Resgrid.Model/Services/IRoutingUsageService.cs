@@ -19,8 +19,8 @@ namespace Resgrid.Model.Services
 
 		/// <summary>
 		/// The counted days between the two UTC dates (inclusive), one row per provider and operation with any calls. Throws
-		/// <see cref="InvalidOperationException"/> when the cache holding the counters is not reachable, rather than reporting
-		/// every counter as zero.
+		/// <see cref="InvalidOperationException"/> when the cache holding the counters is not reachable or any counter read
+		/// fails, rather than reporting the counters it could not read as zero.
 		/// </summary>
 		Task<List<RoutingUsageDay>> GetUsageAsync(DateTime fromDayUtc, DateTime toDayUtc, CancellationToken cancellationToken = default);
 	}

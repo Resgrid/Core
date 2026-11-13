@@ -612,6 +612,36 @@ namespace Resgrid.Tests.Services.Routing
 			own.Should().StartWith("2,", "the department's own geocoder is asked, not the install's cached answer");
 			stored.Should().HaveCount(2, "departments without their own geocoder share one entry");
 		}
+
+		[Test]
+		public async Task a_department_that_switches_geocoders_stops_getting_the_old_ones_cached_answers()
+		{
+			// PR 585 round 3: the department's entries were keyed by department alone, so Google's cached positions kept
+			// answering for up to 30 days after the department moved to Mapbox.
+			var stored = new Dictionary<string, string>();
+			var cache = new Mock<ICacheProvider>();
+			cache.Setup(c => c.RetrieveAsync(It.IsAny<string>(), It.IsAny<Func<Task<string>>>(), It.IsAny<TimeSpan>()))
+				.Returns(async (string key, Func<Task<string>> fallback, TimeSpan _) =>
+				{
+					if (!stored.TryGetValue(key, out var value))
+						stored[key] = value = await fallback();
+					return value;
+				});
+			var geocoder = "google";
+			var accounts = new Mock<IDepartmentMapProvidersService>();
+			accounts.Setup(s => s.GetAsync(77)).ReturnsAsync(() => new DepartmentMapProviders { GeocodingProvider = geocoder, GeocodingApiKey = "dept-key" });
+			var provider = new GeoLocationProvider(cache.Object, new IGeocodingProvider[] { new FakeGeocoder("google"), new FakeGeocoder("mapbox") },
+				new Lazy<IDepartmentMapProvidersService>(() => accounts.Object));
+
+			using (RequestDepartment.Enter(77))
+			{
+				await provider.GetLatLonFromAddress("1 Main St");
+				geocoder = "mapbox";
+				await provider.GetLatLonFromAddress("1 Main St");
+			}
+
+			stored.Keys.Should().HaveCount(2).And.Contain(k => k.Contains("d77.google_")).And.Contain(k => k.Contains("d77.mapbox_"));
+		}
 	}
 
 	/// <summary>The live traffic layer a department's maps get.</summary>

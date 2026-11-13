@@ -298,6 +298,68 @@ export function getLayerColor(layer: NormalizedMapLayer): string {
   return layer.color || '#2563eb';
 }
 
+const hexColorPattern = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i;
+
+/**
+ * The color for a layer shape that has no usable color of its own: the layer's color. getLayerColor (the first shape's
+ * color) is only the fallback for a layer saved without one -- an imported layer's first shape has its own color, which
+ * is not the layer's default.
+ */
+export function getLayerDefaultColor(layer: NormalizedMapLayer): string {
+  return typeof layer.color === 'string' && hexColorPattern.test(layer.color) ? layer.color : getLayerColor(layer);
+}
+
+/**
+ * A shape's own color when it has one: a layer imported from KML, KMZ or GeoJSON keeps the file's colors per shape (the
+ * route red, the first-aid posts green). Otherwise the layer's color.
+ */
+export function getFeatureColor(properties: GeoJsonProperties | null | undefined, fallback: string): string {
+  const color = properties?.color;
+  return typeof color === 'string' && hexColorPattern.test(color) ? color : fallback;
+}
+
+function escapePopupText(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+/**
+ * Popup content for a layer shape that has a name or description (an event layer's vendors, stages, aid posts), as
+ * escaped text: names and descriptions come from uploaded files and are never trusted as HTML. Null for a shape with
+ * neither, which then opens no popup.
+ */
+export function getFeaturePopupHtml(layerName: string, properties: GeoJsonProperties | null | undefined): string | null {
+  const name = typeof properties?.name === 'string' ? properties.name.trim() : '';
+  const description = typeof properties?.description === 'string' ? properties.description.trim() : '';
+  const category = typeof properties?.category === 'string' && properties.category !== 'default' ? properties.category.trim() : '';
+
+  // A drawn layer's shapes all carry the layer's own name: nothing to tell beyond the layer itself.
+  if (!description && (!name || name === layerName)) {
+    return null;
+  }
+
+  // Sizes set here, not inherited: the map element's toolbar styles shrink inherited text in some renderers.
+  const parts: string[] = [];
+  if (name) {
+    parts.push(`<div style="font-size: 14px; font-weight: 600; line-height: 1.3;">${escapePopupText(name)}</div>`);
+  }
+  if (category) {
+    parts.push(`<div style="font-size: 12px; color: #6b7280; margin-top: 1px;">${escapePopupText(category)}</div>`);
+  }
+  if (description) {
+    parts.push(`<div style="font-size: 13px; line-height: 1.4; white-space: pre-line; max-width: 280px; margin-top: 6px;">${escapePopupText(description)}</div>`);
+  }
+  if (layerName && layerName !== name) {
+    parts.push(`<div style="font-size: 11px; color: #6b7280; margin-top: 6px;">${escapePopupText(layerName)}</div>`);
+  }
+
+  return `<div style="font-size: 13px;">${parts.join('')}</div>`;
+}
+
 function extractMapboxStyleId(stylePath: string): string {
   const normalizedPath = stylePath.trim().replace(/^\/+|\/+$/g, '');
 

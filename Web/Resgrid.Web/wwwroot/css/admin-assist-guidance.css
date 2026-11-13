@@ -1,4 +1,12 @@
-.admin-assist-field-help { max-width: 70ch; white-space: normal; }
+/* Admin Assist field help: a quiet tinted note under its editor, marked with the Admin Assist wand. The markup stays
+   <span class="help-block admin-assist-field-help" id="aa-help-..."> (the field-help layout tests match it), so the mark is drawn here. */
+.admin-assist-field-help { display: flex; align-items: flex-start; gap: 8px; max-width: 70ch; margin: 6px 0 4px; padding: 7px 10px;
+  border: 1px solid #d3eee7; border-inline-start: 3px solid #1ab394; border-radius: 3px; background: #f4fbf9;
+  color: #4f5a64; font-size: 12px; line-height: 1.5; white-space: normal; }
+.admin-assist-field-help::before { content: "\f0d0"; flex: 0 0 auto; margin-top: 1px; font-family: FontAwesome; font-size: 13px; color: #1ab394; }
+/* Arriving from an Admin Assist link: the field is outlined and its help stands out. */
+.admin-assist-field-highlight + .admin-assist-field-help,
+.form-group:has(.admin-assist-field-highlight) .admin-assist-field-help { background: #e3f6f1; border-color: #9fdcca; color: #2f4050; }
 .admin-assist-field-highlight { outline: 3px solid #176ca4; outline-offset: 4px; scroll-margin-block: 8rem; }
 @media (prefers-reduced-motion: reduce) { .admin-assist-field-highlight { scroll-behavior: auto; } }
 /* An on/off switch hides its checkbox, so a linked switch outlines the visible switch instead. */
@@ -9,3 +17,26 @@
 .numbering-year-start > .numbering-year-day { width: 5em; }
 .numbering-year-start::after { content: ''; flex-basis: 100%; order: 9; } /* a line break before the help */
 .numbering-year-start > .admin-assist-field-help { order: 10; margin: 0; }
+/* Admin Assist setup prompt on the dashboards: icon, prompt and module-choice progress, with the actions beside them. */
+.aa-setup-prompt { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 20px; margin-bottom: 20px; padding: 16px 20px; background: #fff;
+  border: 1px solid #e7eaec; border-inline-start: 4px solid #1ab394; border-radius: 3px; box-shadow: 0 1px 3px rgba(47, 64, 80, .06); }
+.aa-setup-prompt__icon { flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%;
+  background: #e3f6f1; color: #1ab394; font-size: 20px; }
+.aa-setup-prompt__body { flex: 1 1 320px; min-width: 0; }
+.aa-setup-prompt__title { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; margin: 0 0 2px; font-size: 15px; color: #2f4050; }
+.aa-setup-prompt__mode { padding: 1px 8px; border: 1px solid #b4e7e8; border-radius: 10px; background: #e4f7f7; color: #106a6b; font-size: 11px; font-weight: 600; line-height: 18px; }
+.aa-setup-prompt__text { margin: 0 0 8px; color: #5c6670; }
+.aa-setup-prompt__progress { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; }
+.aa-setup-prompt__bar { flex: 0 1 220px; height: 6px; border-radius: 3px; overflow: hidden; background: #eef0f2; }
+.aa-setup-prompt__bar > span { display: block; height: 100%; background: #1ab394; }
+.aa-setup-prompt__count { font-size: 12px; color: #6b7682; }
+.aa-setup-prompt__actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px; flex: 0 1 auto; }
+.aa-setup-prompt__dismiss { flex-basis: 100%; margin: 0; text-align: end; }
+.aa-setup-prompt__dismiss .btn-link { padding: 0; color: #6b7682; font-size: 12px; white-space: normal; text-align: end; }
+.aa-setup-prompt__dismiss .btn-link:hover, .aa-setup-prompt__dismiss .btn-link:focus { color: #2f4050; }
+@media (max-width: 767px) {
+  .aa-setup-prompt { align-items: flex-start; }
+  .aa-setup-prompt__actions { justify-content: flex-start; flex-basis: 100%; }
+  .aa-setup-prompt__dismiss { text-align: start; }
+  .aa-setup-prompt__dismiss .btn-link { text-align: start; }
+}

@@ -948,7 +948,7 @@
     <value>Coordonnées du déclarant</value>
   </data>
   <data name="NewCallField_externalId" xml:space="preserve">
-    <value>ID externe de l'intervention</value>
+    <value>Identifiant de l'intervention (ID externe)</value>
   </data>
   <data name="NewCallField_incidentId" xml:space="preserve">
     <value>ID de l'incident</value>
@@ -1312,6 +1312,12 @@
   </data>
   <data name="CloseCallWhenUnitsClearHelp" xml:space="preserve">
     <value>Un appel actif se clôture de lui-même lorsque la dernière unité engagée signale qu'elle est de nouveau en service ou hors service (un statut dont le type de base est Disponible, En caserne, Libéré, Indisponible ou Maintenance). Toutes les autres unités engagées doivent aussi avoir signalé leur fin depuis leur engagement. Seules les unités comptent : un appel sans unité engagée, un appel sous commandement d'incident actif ou une unité encore en retour ou en transport laisse l'appel ouvert pour le dispatcheur.</value>
+  </data>
+  <data name="TransportDestinationChecksLabel" xml:space="preserve">
+    <value>Contrôle de la destination de transport</value>
+  </data>
+  <data name="TransportDestinationChecksHelp" xml:space="preserve">
+    <value>Lorsqu'une unité définit un statut dont le type de base est En transport ou À l'hôpital vers une destination différente de celle attribuée à son appel, les applications demandent un motif (la note du statut) avant l'enregistrement, et le changement est ajouté à l'appel sous forme de note. Les applications présélectionnent dans tous les cas la destination attribuée à l'appel pour ces statuts.</value>
   </data>
   <data name="DispatchRenotifyHeader" xml:space="preserve">
     <value>Relance des dispatchs</value>
@@ -2563,5 +2569,44 @@
   </data>
   <data name="ProvidersErrorGeocodingKey" xml:space="preserve">
     <value>Saisissez la clé API de ce fournisseur de recherche d'adresses.</value>
+  </data>
+  <data name="NewCallField_mapPage" xml:space="preserve">
+    <value>Page de carte</value>
+  </data>
+  <data name="NewCallField_primaryContact" xml:space="preserve">
+    <value>Contact principal</value>
+  </data>
+  <data name="NewCallField_additionalContacts" xml:space="preserve">
+    <value>Contacts supplémentaires</value>
+  </data>
+  <data name="NewCallField_checkInTimers" xml:space="preserve">
+    <value>Minuteries de pointage</value>
+  </data>
+  <data name="NewCallField_part2Consent" xml:space="preserve">
+    <value>Consentement 42 CFR Part 2</value>
+  </data>
+  <data name="NewCallField_pendingCall" xml:space="preserve">
+    <value>Enregistrer en attente</value>
+  </data>
+  <data name="NewCallField_dispatchPersonnel" xml:space="preserve">
+    <value>Envoi au personnel</value>
+  </data>
+  <data name="NewCallField_dispatchGroups" xml:space="preserve">
+    <value>Envoi aux groupes</value>
+  </data>
+  <data name="NewCallField_dispatchRoles" xml:space="preserve">
+    <value>Envoi aux rôles</value>
+  </data>
+  <data name="NewCallField_dispatchUnits" xml:space="preserve">
+    <value>Envoi aux unités</value>
+  </data>
+  <data name="NewCallFieldHideOnly" xml:space="preserve">
+    <value>Ce champ peut être masqué, mais pas rendu obligatoire.</value>
+  </data>
+  <data name="NewCallFieldFollowsLists" xml:space="preserve">
+    <value>Affiché avec n'importe quelle liste d'envoi</value>
+  </data>
+  <data name="NewCallDispatchListsHiddenWarning" xml:space="preserve">
+    <value>Toutes les listes d'envoi (personnel, groupes, rôles et unités) sont masquées. Les formulaires d'intervention proposeront à la place un bouton facultatif « Appel général » : avec lui, l'intervention est envoyée à tout le monde ; sans lui, elle est enregistrée pour information et personne n'est alerté. Les plans de départ à envoi automatique continuent d'engager leurs unités.</value>
   </data>
 </root>

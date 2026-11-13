@@ -648,6 +648,45 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task units_rank_to_the_second_and_units_level_on_the_second_go_nearest_first()
+		{
+			// Belgian EMS, 2026-11-12: an ambulance showing 17 min at 10.0 km was listed after two showing 17 min at 12.6 km,
+			// which the router had at 16:35 against its 17:10; whole minutes on screen hid why. The board ranks to the second
+			// (and shows m:ss), and only units level on the second go nearest first.
+			var now = DateTime.UtcNow;
+			_unitsService.Setup(x => x.GetUnitsForDepartmentUnlimitedAsync(DepartmentId)).ReturnsAsync(new List<Unit>
+			{
+				new Unit { UnitId = 11, DepartmentId = DepartmentId, Name = "Medic 1", Type = "Ambulance" },
+				new Unit { UnitId = 14, DepartmentId = DepartmentId, Name = "Medic 4", Type = "Ambulance" },
+				new Unit { UnitId = 15, DepartmentId = DepartmentId, Name = "Medic 5", Type = "Ambulance" },
+				new Unit { UnitId = 17, DepartmentId = DepartmentId, Name = "Medic 7", Type = "Ambulance" },
+				new Unit { UnitId = 18, DepartmentId = DepartmentId, Name = "Medic 8", Type = "Ambulance" }
+			});
+			_unitsService.Setup(x => x.GetAllLatestStatusForUnitsByDepartmentIdAsync(DepartmentId))
+				.ReturnsAsync(new[] { 11, 14, 15, 17, 18 }.Select(id => new UnitState { UnitId = id, State = (int)UnitStateTypes.Available, Timestamp = now }).ToList());
+			_unitsService.Setup(x => x.GetLatestUnitLocationsAsync(DepartmentId)).ReturnsAsync(new List<UnitsLocation>
+			{
+				new UnitsLocation { UnitId = 11, Latitude = 34.084m, Longitude = -118.25m, Timestamp = now },   // ~3.8 km, 9 min
+				new UnitsLocation { UnitId = 14, Latitude = 34.1633m, Longitude = -118.25m, Timestamp = now },  // ~12.6 km, 16:35
+				new UnitsLocation { UnitId = 15, Latitude = 34.1633m, Longitude = -118.25m, Timestamp = now },  // same post
+				new UnitsLocation { UnitId = 17, Latitude = 34.14m, Longitude = -118.25m, Timestamp = now },    // ~10.0 km, 17:10
+				new UnitsLocation { UnitId = 18, Latitude = 34.12m, Longitude = -118.25m, Timestamp = now }     // ~7.8 km, 17:10 too
+			});
+			_geoService.Setup(x => x.GetEtaInSecondsAsync("34.084,-118.25", "34.05,-118.25")).ReturnsAsync(540);
+			_geoService.Setup(x => x.GetEtaInSecondsAsync("34.1633,-118.25", "34.05,-118.25")).ReturnsAsync(995);
+			_geoService.Setup(x => x.GetEtaInSecondsAsync("34.14,-118.25", "34.05,-118.25")).ReturnsAsync(1029.8);
+			_geoService.Setup(x => x.GetEtaInSecondsAsync("34.12,-118.25", "34.05,-118.25")).ReturnsAsync(1030.3);
+
+			var board = await GetBoardAsync(useRoadEta: true);
+
+			// 9:00, then the 16:35 pair (same post, by name), then the two at 17:10 nearest first, though the router had the
+			// farther one half a second quicker.
+			board.Units.Select(u => u.UnitId).Should().Equal(11, 14, 15, 18, 17);
+			board.Units.Should().OnlyContain(u => u.EtaSource == EtaSources.Road);
+			UnitRow(board, 17).ResponseSeconds.Should().Be(1029.8, "the row carries the unrounded routed seconds");
+		}
+
+		[Test]
 		public async Task units_at_the_same_position_share_one_drive_time_lookup()
 		{
 			var now = DateTime.UtcNow;

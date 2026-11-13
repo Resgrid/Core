@@ -22,6 +22,16 @@ namespace Resgrid.Model
 		public string Error { get; set; }
 	}
 
+	/// <summary>
+	/// A placemark with a usable position (<see cref="KmlImportResult.Coordinates"/> holds these) that also carries ExtendedData,
+	/// such as a "Capabilities" column a POI import reads. Never serialized: the protobuf members are the base class's.
+	/// </summary>
+	public class KmlPositionedPlacemark : Coordinates
+	{
+		/// <summary>ExtendedData Data and SimpleData values in document order, keyed by their name attribute.</summary>
+		public List<KeyValuePair<string, string>> Fields { get; set; } = new List<KeyValuePair<string, string>>();
+	}
+
 	/// <summary>A placemark that has no usable position but may be located from its address.</summary>
 	public class KmlAddressPlacemark
 	{

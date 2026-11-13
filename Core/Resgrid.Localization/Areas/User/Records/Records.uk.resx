@@ -2160,6 +2160,14 @@
   <data name="DeploymentNewExternalOrder" xml:space="preserve"><value>Нове зовнішнє замовлення</value></data>
   <data name="HydrantImportBack" xml:space="preserve"><value>Назад до гідрантів</value></data>
   <data name="HydrantImportNotSaved" xml:space="preserve"><value>Жодного гідранта не збережено. Виправте рядки нижче та імпортуйте файл знову.</value></data>
+  <data name="HydrantImportIgnoredColumns" xml:space="preserve"><value>Стовпці не імпортовано, оскільки в Resgrid немає відповідного поля гідранта: {0}. Щоб імпортувати один із них, перейменуйте його заголовок на назву стовпця з прикладу та імпортуйте файл знову.</value></data>
+  <data name="HydrantImportServiceChanges" xml:space="preserve"><value>За стовпцем стану у файлі: виведено з роботи гідрантів: {0}, повернуто в роботу: {1}.</value></data>
+  <data name="HydrantImportUnmappedValues" xml:space="preserve"><value>Значення, імпортовані зі значенням за замовчуванням</value></data>
+  <data name="HydrantImportUnmappedValuesHelp" xml:space="preserve"><value>Ці значення зі стовпців іншої системи не розпізнано. Гідранти все одно імпортовано: невідомі типи як Other, нечитабельні витрати й кольори витрати залишено порожніми, а за невідомого стану робочий стан не змінено. Щоб задати їх, змініть значення у файлі та імпортуйте його знову; гідранти з тим самим номером оновлюються.</value></data>
+  <data name="HydrantImportColumn" xml:space="preserve"><value>Стовпець</value></data>
+  <data name="HydrantImportValue" xml:space="preserve"><value>Значення</value></data>
+  <data name="HydrantImportRowCount" xml:space="preserve"><value>Рядки</value></data>
+  <data name="HydrantImportOtherSystems" xml:space="preserve"><value>Файли, експортовані з інших систем: hydrant_type, flow_rate і location_address читаються як type, flow_gpm і address. Витрату задано в галонах за хвилину, якщо значення не вказує L/min. flow_rating_color (light blue, green, orange, red, AA–C або колір #hex) задає клас витрати гідрантів без витрати. status (active, in service, out of service, broken…) виводить гідранти з роботи або повертає їх у роботу; стан стає причиною виведення з роботи. Невідомі типи імпортуються як Other; інші стовпці пропускаються й показуються після імпорту.</value></data>
   <data name="HydrantImportIssuesShown" xml:space="preserve"><value>Показано {0} із {1} рядків із помилками. JSON використовує номери елементів, CSV — номери рядків.</value></data>
   <data name="HydrantImportRow" xml:space="preserve"><value>Елемент / рядок</value></data>
   <data name="HydrantImportCorrection" xml:space="preserve"><value>Як виправити</value></data>

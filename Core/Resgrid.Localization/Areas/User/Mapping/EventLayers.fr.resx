@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Map Icon Legend and status / priority map icon pages -->
+    <data name="ImportLayer" xml:space="preserve">
+    <value>Importer une couche</value>
+  </data>
+  <data name="ImportLayerHeader" xml:space="preserve">
+    <value>Importer une couche</value>
+  </data>
+  <data name="ImportHelp" xml:space="preserve">
+    <value>Téléversez un fichier KML, KMZ ou GeoJSON (Google My Maps, Google Earth ou un SIG) contenant le parcours, le site ou les points d'arrêt d'un événement. Chaque point, ligne et polygone devient une forme de la couche, avec son propre nom, sa description et sa couleur. Donnez à la couche les dates de l'événement : elle s'affiche alors sur toutes les cartes pendant l'événement.</value>
+  </data>
+  <data name="DetailsHeader" xml:space="preserve">
+    <value>Détails de la couche</value>
+  </data>
+  <data name="LayerFile" xml:space="preserve">
+    <value>Fichier</value>
+  </data>
+  <data name="LayerFileHelp" xml:space="preserve">
+    <value>KML, KMZ ou GeoJSON, jusqu'à {0} Mo.</value>
+  </data>
+  <data name="ReplaceFile" xml:space="preserve">
+    <value>Remplacer le fichier</value>
+  </data>
+  <data name="ReplaceFileHelp" xml:space="preserve">
+    <value>Facultatif. Un nouveau fichier remplace toutes les formes de la couche ; les informations ci-dessus sont conservées.</value>
+  </data>
+  <data name="DeleteHelp" xml:space="preserve">
+    <value>Supprimer la couche (Cartographie → Couches) supprime toutes ses formes et informations.</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Nom</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="Color" xml:space="preserve">
+    <value>Couleur par défaut</value>
+  </data>
+  <data name="ColorHelp" xml:space="preserve">
+    <value>Utilisée pour les formes auxquelles le fichier ne donne pas de couleur.</value>
+  </data>
+  <data name="EventSection" xml:space="preserve">
+    <value>Événement</value>
+  </data>
+  <data name="StartsOn" xml:space="preserve">
+    <value>Début</value>
+  </data>
+  <data name="EndsOn" xml:space="preserve">
+    <value>Fin</value>
+  </data>
+  <data name="EventDatesHelp" xml:space="preserve">
+    <value>Dans le fuseau horaire du département ({0}). Pendant l'événement, la couche s'affiche sur toutes les cartes, quel que soit le réglage « Affichée par défaut ». Laissez les deux vides pour une couche sans événement.</value>
+  </data>
+  <data name="Organizer" xml:space="preserve">
+    <value>Organisateur</value>
+  </data>
+  <data name="ContactName" xml:space="preserve">
+    <value>Coordinateur / Contact</value>
+  </data>
+  <data name="ContactPhone" xml:space="preserve">
+    <value>Téléphone du contact</value>
+  </data>
+  <data name="ContactEmail" xml:space="preserve">
+    <value>E-mail du contact</value>
+  </data>
+  <data name="OnByDefault" xml:space="preserve">
+    <value>Affichée par défaut</value>
+  </data>
+  <data name="OnByDefaultHelp" xml:space="preserve">
+    <value>Afficher la couche à l'ouverture de chaque carte, y compris en dehors des dates de l'événement.</value>
+  </data>
+  <data name="Searchable" xml:space="preserve">
+    <value>Recherchable</value>
+  </data>
+  <data name="SaveImport" xml:space="preserve">
+    <value>Importer</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Enregistrer</value>
+  </data>
+  <data name="EditShapes" xml:space="preserve">
+    <value>Modifier les formes</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Détails</value>
+  </data>
+  <data name="SourceFile" xml:space="preserve">
+    <value>Source</value>
+  </data>
+  <data name="Drawn" xml:space="preserve">
+    <value>Dessinée sur la carte</value>
+  </data>
+  <data name="ShapeCount" xml:space="preserve">
+    <value>{0} formes</value>
+  </data>
+  <data name="EventColumn" xml:space="preserve">
+    <value>Événement</value>
+  </data>
+  <data name="PhaseUpcoming" xml:space="preserve">
+    <value>À venir</value>
+  </data>
+  <data name="PhaseActive" xml:space="preserve">
+    <value>En cours</value>
+  </data>
+  <data name="PhaseEnded" xml:space="preserve">
+    <value>Terminé</value>
+  </data>
+  <data name="ImportedOn" xml:space="preserve">
+    <value>importé le</value>
+  </data>
+  <data name="FileRequired" xml:space="preserve">
+    <value>Choisissez un fichier KML, KMZ ou GeoJSON à importer.</value>
+  </data>
+  <data name="FileTypeUnsupported" xml:space="preserve">
+    <value>Téléversez un fichier .kml, .kmz, .geojson ou .json.</value>
+  </data>
+  <data name="FileTooLarge" xml:space="preserve">
+    <value>Le fichier dépasse {0} Mo.</value>
+  </data>
+  <data name="FileTooManyShapes" xml:space="preserve">
+    <value>Le fichier contient plus de {0} formes. Répartissez-le sur plusieurs couches.</value>
+  </data>
+  <data name="FileTooManyPoints" xml:space="preserve">
+    <value>Le fichier contient plus de {0} coordonnées. Simplifiez les lignes (la plupart des SIG le permettent) ou répartissez-le sur plusieurs couches.</value>
+  </data>
+  <data name="FileNoShapes" xml:space="preserve">
+    <value>Le fichier ne contient aucun point, ligne ou polygone avec des coordonnées.</value>
+  </data>
+  <data name="FileOnlyAddresses" xml:space="preserve">
+    <value>Les {0} lieux du fichier ont une adresse mais pas de coordonnées (une couche Google My Maps localisée par adresse). Importez-les plutôt comme points d'intérêt (Cartographie → POI → Importer), qui recherche les adresses, ou exportez la carte avec les coordonnées.</value>
+  </data>
+  <data name="FileUnreadable" xml:space="preserve">
+    <value>Le fichier n'a pas pu être lu. Vérifiez qu'il s'agit d'un fichier KML, KMZ ou GeoJSON valide.</value>
+  </data>
+  <data name="EndsBeforeStarts" xml:space="preserve">
+    <value>L'événement ne peut pas se terminer avant de commencer.</value>
+  </data>
+  <data name="ContactEmailInvalid" xml:space="preserve">
+    <value>Saisissez une adresse e-mail valide.</value>
+  </data>
+  <data name="ColorInvalid" xml:space="preserve">
+    <value>Choisissez une couleur.</value>
+  </data>
+  <data name="SaveFailed" xml:space="preserve">
+    <value>La couche n'a pas pu être enregistrée. Veuillez réessayer.</value>
+  </data>
+  <data name="ImportedSummary" xml:space="preserve">
+    <value>« {0} » importée : {1} points, {2} lignes, {3} polygones.</value>
+  </data>
+  <data name="ReplacedSummary" xml:space="preserve">
+    <value>Formes de « {0} » remplacées : {1} points, {2} lignes, {3} polygones.</value>
+  </data>
+  <data name="SavedSummary" xml:space="preserve">
+    <value>« {0} » enregistrée.</value>
+  </data>
+  <data name="SkippedNote" xml:space="preserve">
+    <value>{0} repères sans coordonnées utilisables ont été ignorés.</value>
+  </data>
+</root>

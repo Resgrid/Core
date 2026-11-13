@@ -948,7 +948,7 @@
     <value>Контакти заявника</value>
   </data>
   <data name="NewCallField_externalId" xml:space="preserve">
-    <value>Зовнішній ідентифікатор</value>
+    <value>Ідентифікатор виклику (зовнішній)</value>
   </data>
   <data name="NewCallField_incidentId" xml:space="preserve">
     <value>Ідентифікатор інциденту</value>
@@ -1312,6 +1312,12 @@
   </data>
   <data name="CloseCallWhenUnitsClearHelp" xml:space="preserve">
     <value>Активний виклик закривається сам, коли остання направлена на нього одиниця повідомляє, що повернулася до служби або виведена з експлуатації (статус із базовим типом Доступна, У частині, Звільнена, Недоступна або Обслуговування). Усі інші направлені одиниці також мають повідомити про завершення після направлення. Враховуються лише одиниці: виклик без направленої одиниці, виклик з активним командуванням інцидентом або одиниця, що ще повертається чи транспортує, залишає виклик відкритим для диспетчера.</value>
+  </data>
+  <data name="TransportDestinationChecksLabel" xml:space="preserve">
+    <value>Перевірка пункту призначення транспортування</value>
+  </data>
+  <data name="TransportDestinationChecksHelp" xml:space="preserve">
+    <value>Коли одиниця встановлює статус із базовим типом «Транспортування» або «У лікарні» з пунктом призначення, відмінним від призначеного у її виклику, застосунки перед збереженням запитують причину (примітку до статусу), а зміну додають до виклику як примітку. Застосунки в будь-якому разі попередньо вибирають призначений пункт призначення виклику для цих статусів.</value>
   </data>
   <data name="DispatchRenotifyHeader" xml:space="preserve">
     <value>Повторне сповіщення про виклик</value>
@@ -2563,5 +2569,44 @@
   </data>
   <data name="ProvidersErrorGeocodingKey" xml:space="preserve">
     <value>Вкажіть ключ API для цього провайдера пошуку адрес.</value>
+  </data>
+  <data name="NewCallField_mapPage" xml:space="preserve">
+    <value>Сторінка карти</value>
+  </data>
+  <data name="NewCallField_primaryContact" xml:space="preserve">
+    <value>Основний контакт</value>
+  </data>
+  <data name="NewCallField_additionalContacts" xml:space="preserve">
+    <value>Додаткові контакти</value>
+  </data>
+  <data name="NewCallField_checkInTimers" xml:space="preserve">
+    <value>Таймери реєстрації</value>
+  </data>
+  <data name="NewCallField_part2Consent" xml:space="preserve">
+    <value>Згода 42 CFR Part 2</value>
+  </data>
+  <data name="NewCallField_pendingCall" xml:space="preserve">
+    <value>Зберегти як очікуваний</value>
+  </data>
+  <data name="NewCallField_dispatchPersonnel" xml:space="preserve">
+    <value>Висилання персоналу</value>
+  </data>
+  <data name="NewCallField_dispatchGroups" xml:space="preserve">
+    <value>Висилання групам</value>
+  </data>
+  <data name="NewCallField_dispatchRoles" xml:space="preserve">
+    <value>Висилання ролям</value>
+  </data>
+  <data name="NewCallField_dispatchUnits" xml:space="preserve">
+    <value>Висилання підрозділам</value>
+  </data>
+  <data name="NewCallFieldHideOnly" xml:space="preserve">
+    <value>Це поле можна приховати, але не можна зробити обов'язковим.</value>
+  </data>
+  <data name="NewCallFieldFollowsLists" xml:space="preserve">
+    <value>Відображається з будь-яким списком висилання</value>
+  </data>
+  <data name="NewCallDispatchListsHiddenWarning" xml:space="preserve">
+    <value>Усі списки висилання (персонал, групи, ролі та підрозділи) приховано. Натомість форми викликів пропонуватимуть необов'язкову кнопку «Загальний виклик»: з нею виклик надходить усім, без неї виклик зберігається лише для інформації й нікого не сповіщають. Картки виїзду з автоматичним висиланням і надалі надсилають свої підрозділи.</value>
   </data>
 </root>

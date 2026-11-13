@@ -2197,16 +2197,16 @@
     <value>Limite les vues de régulation prises en charge à la sous-arborescence de groupe du membre. Les administrateurs du département et les rôles configurés à l'échelle du département conservent un accès à l'ensemble du département.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.NewCallFieldPolicy.Rules">
-    <value>Visibilité et caractère obligatoire, par champ, pour les champs facultatifs de création d'appel. Les champs non configurés restent visibles et facultatifs.</value>
+    <value>Une règle par champ configuré : affiché ou masqué, facultatif ou obligatoire. Un champ sans règle est affiché et facultatif, et une règle enregistrée qui masque les destinataires (antérieure aux clés propres aux listes) masque les quatre listes.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.NewCallFieldRule.Key">
-    <value>Une clé de champ d'appel intégrée prise en charge. Le nom, la nature, la priorité et le type ne peuvent pas être supprimés via cette règle.</value>
+    <value>Le champ concerné par la règle : address, geolocation, what3words, pluscode, destinationPoi, indoorLocation, mapPage, note, contactName, contactInfo, primaryContact, additionalContacts, externalId, incidentId, referenceId, protocols, linkedCall, dispatchPersonnel, dispatchGroups, dispatchRoles, dispatchUnits, dispatchList, checkInTimers, part2Consent, dispatchOn, pendingCall. Le nom, la nature, la priorité et le type n'ont pas de clé : ils sont toujours affichés et obligatoires.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.NewCallFieldRule.Required">
-    <value>Indique si un champ facultatif visible doit obligatoirement être renseigné. Vérifiez les importations et chaque client pris en charge avant de rendre un champ obligatoire.</value>
+    <value>Indique si un champ affiché doit être rempli avant de créer une intervention ou d'enregistrer une modification. Plus Code, contacts supplémentaires, minuteries de pointage, consentement Part 2, enregistrer en attente et les quatre listes d'envoi peuvent seulement être masqués ; rendre les destinataires obligatoires signifie au moins un destinataire, dans n'importe quelle liste. Vérifiez les imports et chaque client avant de rendre un champ obligatoire.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.NewCallFieldRule.Visible">
-    <value>Indique si le champ d'appel facultatif est affiché sur les interfaces de création prises en charge. Un champ masqué ne peut pas être obligatoire.</value>
+    <value>Indique si le champ ou la section figure sur les formulaires d'intervention. Un champ masqué conserve sa valeur enregistrée lors de la modification d'une intervention. Les destinataires n'ont pas de réglage propre : ils s'affichent tant qu'une des quatre listes d'envoi s'affiche ; si les quatre sont masquées, les formulaires proposent à la place un appel général facultatif.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.PersonnelListStatusOrder.StatusId">
     <value>Identifiant de statut de personnel existant dont la position dans la liste est configurée.</value>
@@ -4299,6 +4299,9 @@
   <data xml:space="preserve" name="Rule.map-token">
     <value>Les identifiants de carte personnalisés sont manquants</value>
   </data>
+  <data xml:space="preserve" name="Rule.new-call-dispatch-lists-hidden">
+    <value>Les nouvelles interventions n'ont aucune liste d'envoi</value>
+  </data>
   <data xml:space="preserve" name="Rule.notification-channels">
     <value>Les préférences de canal de notification doivent être examinées</value>
   </data>
@@ -4419,6 +4422,9 @@
   <data xml:space="preserve" name="RuleNext.map-token">
     <value>Examinez la substitution de carte sur son écran de configuration protégé.</value>
   </data>
+  <data xml:space="preserve" name="RuleNext.new-call-dispatch-lists-hidden">
+    <value>Affichez au moins une liste d'envoi dans les champs du formulaire d'intervention, sauf si chaque intervention doit aller à tout le monde (« Appel général ») ou rester purement informative.</value>
+  </data>
   <data xml:space="preserve" name="RuleNext.notification-channels">
     <value>Examinez les préférences de notification des membres autorisés et n’utilisez les tests de communication qu’après un examen explicite des destinataires et des canaux.</value>
   </data>
@@ -4538,6 +4544,9 @@
   </data>
   <data xml:space="preserve" name="RuleWhy.map-token">
     <value>Une substitution de carte activée nécessite les identifiants de son prestataire.</value>
+  </data>
+  <data xml:space="preserve" name="RuleWhy.new-call-dispatch-lists-hidden">
+    <value>Les champs du formulaire d'intervention masquent les listes personnel, groupes, rôles et unités : une nouvelle intervention n'alerte donc personne si « Appel général » n'est pas coché.</value>
   </data>
   <data xml:space="preserve" name="RuleWhy.notification-channels">
     <value>Certains membres actifs visibles n’ont aucune préférence SMS, e-mail ou push éligible sous l’expéditeur de notification ordinaire. Une préférence push seule ne constitue pas un enregistrement valide ni une preuve de distribution.</value>
@@ -4948,7 +4957,7 @@
     <value>Contrôle la navigation des modules et les restrictions de fonctionnalités prises en charge. Masquer un module ne supprime pas ses dossiers et ne prouve pas que les paramètres de régulation indépendants sont désactivés.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.NewCallFieldPolicy">
-    <value>Contrôle les champs facultatifs de nouvel appel sur les clients pris en charge. Les champs masqués ne peuvent pas être obligatoires ; les champs de régulation essentiels restent obligatoires.</value>
+    <value>Détermine quels champs et sections intégrés les formulaires d'intervention affichent et lesquels doivent être remplis, sur le web, dans Omni et via l'API. Un champ masqué ne peut pas être obligatoire ; le nom, la nature, la priorité et le type sont toujours affichés et obligatoires. Masquer les quatre listes d'envoi les remplace par un appel général facultatif : une intervention créée sans lui n'alerte personne.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.PaddleCustomerId">
     <value>Référence client du prestataire de facturation. Gérée par les flux de facturation autorisés et jamais renvoyée dans les éléments de preuve de l’assistant.</value>
@@ -6758,6 +6767,12 @@
   </data>
   <data xml:space="preserve" name="SettingHelp.CloseCallWhenUnitsClear">
     <value>Un appel actif se clôture de lui-même lorsque sa dernière unité engagée signale qu'elle est de nouveau en service ou hors service. Les unités encore au travail, un appel sans unité engagée et un appel sous commandement d'incident actif le laissent ouvert.</value>
+  </data>
+  <data name="Setting.TransportDestinationChecks" xml:space="preserve">
+    <value>Contrôle de la destination de transport</value>
+  </data>
+  <data name="SettingHelp.TransportDestinationChecks" xml:space="preserve">
+    <value>Lorsque le statut En transport ou À l'hôpital d'une unité vise une destination différente de celle attribuée à son appel, les applications exigent un motif et le changement est noté sur l'appel.</value>
   </data>
   <data name="Setting.CallNumberingConfig" xml:space="preserve">
     <value>Configuration de la numérotation des appels</value>

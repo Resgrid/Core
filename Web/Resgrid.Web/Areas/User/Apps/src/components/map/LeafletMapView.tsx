@@ -3,7 +3,9 @@ import type { GeoJsonObject } from 'geojson';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import {
-  getLayerColor,
+  getFeatureColor,
+  getFeaturePopupHtml,
+  getLayerDefaultColor,
   getMarkerIconUrl,
   hasUploadedMarkerIcon,
   getPoiIconClass,
@@ -269,24 +271,35 @@ export default function LeafletMapView({
     layerRefs.current.clear();
 
     for (const layer of layers) {
-      const color = getLayerColor(layer);
+      const color = getLayerDefaultColor(layer);
       const geoJsonLayer = L.geoJSON(layer.featureCollection as GeoJsonObject, {
-        style: () => ({
-          color,
-          opacity: 0.7,
-          fillColor: color,
-          fillOpacity: 0.1,
-          weight: 2,
-        }),
-        pointToLayer: (_, latLng) =>
-          L.circleMarker(latLng, {
-            color,
-            fillColor: color,
+        // Shapes imported from a file keep their own colors; drawn shapes use the layer's.
+        style: (feature) => {
+          const shapeColor = getFeatureColor(feature?.properties, color);
+          return {
+            color: shapeColor,
+            opacity: 0.7,
+            fillColor: shapeColor,
+            fillOpacity: 0.1,
+            weight: 2,
+          };
+        },
+        pointToLayer: (feature, latLng) => {
+          const shapeColor = getFeatureColor(feature?.properties, color);
+          return L.circleMarker(latLng, {
+            color: shapeColor,
+            fillColor: shapeColor,
             fillOpacity: 0.45,
             radius: 6,
             weight: 2,
-          }),
-        onEachFeature: (_, mapLayer) => {
+          });
+        },
+        onEachFeature: (feature, mapLayer) => {
+          const popupHtml = getFeaturePopupHtml(layer.name, feature?.properties);
+          if (popupHtml) {
+            mapLayer.bindPopup(popupHtml);
+          }
+
           const pathLayer = mapLayer as L.Path;
 
           mapLayer.on('mouseover', () => {

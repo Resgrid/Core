@@ -781,7 +781,7 @@ namespace Resgrid.Services
 						properties["layerId"] = layer.GetId();
 						properties["layerName"] = layer.Name;
 						properties["layerColor"] = layer.Color;
-						properties["onByDefault"] = layer.IsOnByDefault;
+						properties["onByDefault"] = MapLayerEvents.IsShownByDefault(layer, DateTime.UtcNow);
 						feature["properties"] = properties;
 						features.Add(feature);
 					}

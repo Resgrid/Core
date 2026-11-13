@@ -126,9 +126,9 @@ Module Settings. Controls module navigation and supported feature gates. Hiding 
 Default: all switches enabled, no label overrides. Source: DepartmentSettingTypes.ModuleSettings.
 
 <a id="setting-require2faforadmins"></a>
-## Require2 FAFor Admins
+## Require 2FA for Admins
 
-Require2 FAFor Admins. Administrator MFA requirement mode. Verify actual factors and recovery for each administrator before enforcement changes.
+Require 2FA for Admins. Administrator MFA requirement mode. Verify actual factors and recovery for each administrator before enforcement changes.
 
 Default: 0. Source: DepartmentSettingTypes.Require2FAForAdmins.
 
@@ -1651,7 +1651,7 @@ Default: DispatchResponseCodesConfig constructor. Source: DepartmentSettingTypes
 <a id="setting-newcallfieldpolicy"></a>
 ## New Call Field Policy
 
-New Call Field Policy. Controls optional new-call fields across supported clients. Hidden fields cannot be required; core dispatch fields remain mandatory.
+New Call Field Policy. Controls which built-in fields and sections the call forms show and which must be filled in, on the web, in Omni and through the API. Hidden fields cannot be required; name, nature, priority and type are always shown and required. Hiding all four dispatch lists replaces them with an optional All Call, so a call left without it pages nobody.
 
 Default: visible, not required. Source: DepartmentSettingTypes.NewCallFieldPolicy.
 
@@ -1735,28 +1735,28 @@ Default: -1. Source: UnitTypeCallStatusOverride.ReleaseStatus.
 <a id="field-newcallfieldpolicy-rules"></a>
 ## New Call Field Policy / Rules
 
-New Call Field Policy / Rules. Per-field visibility and requiredness for optional call-creation fields. Unconfigured fields remain visible and optional.
+New Call Field Policy / Rules. One rule per configured field: shown or hidden, optional or required. A field with no rule is shown and optional, and a stored rule hiding Dispatch Recipients (from before the lists had their own keys) hides all four lists.
 
 Default: empty. Source: NewCallFieldPolicy.Rules.
 
 <a id="field-newcallfieldrule-key"></a>
 ## New Call Field Rule / Key
 
-New Call Field Rule / Key. One supported built-in call-field key. Name, nature, priority and type cannot be removed through this policy.
+New Call Field Rule / Key. The field the rule is for: address, geolocation, what3words, pluscode, destinationPoi, indoorLocation, mapPage, note, contactName, contactInfo, primaryContact, additionalContacts, externalId, incidentId, referenceId, protocols, linkedCall, dispatchPersonnel, dispatchGroups, dispatchRoles, dispatchUnits, dispatchList, checkInTimers, part2Consent, dispatchOn, pendingCall. Name, nature, priority and type have no key: they are always shown and required.
 
 Default: unset. Source: NewCallFieldRule.Key.
 
 <a id="field-newcallfieldrule-visible"></a>
 ## New Call Field Rule / Visible
 
-New Call Field Rule / Visible. Whether the optional call field is shown on supported creation surfaces. Hidden fields cannot be required.
+New Call Field Rule / Visible. Whether the field or section is on the call forms. A hidden field keeps its stored value when a call is edited. Dispatch Recipients has no setting of its own: it shows while any of the four dispatch lists does, and with all four hidden the forms offer an optional All Call instead.
 
 Default: true. Source: NewCallFieldRule.Visible.
 
 <a id="field-newcallfieldrule-required"></a>
 ## New Call Field Rule / Required
 
-New Call Field Rule / Required. Whether a visible optional field must be supplied. Review imports and each supported client before making a field mandatory.
+New Call Field Rule / Required. Whether a shown field must be filled in before a call is created or an edit is saved. Plus Code, Additional Contacts, Check-In Timers, Part 2 Consent, Save as Pending and the four dispatch lists can only be hidden; requiring Dispatch Recipients means at least one recipient from any list. Review imports and each client before making a field mandatory.
 
 Default: false. Source: NewCallFieldRule.Required.
 
@@ -1962,6 +1962,13 @@ Default: false. Source: DepartmentSettingTypes.StatusHoldToConfirm.
 Close Call When Last Unit Clears. An active call closes on its own when the last unit dispatched to it goes from working the call to back in service or out of service: a status whose base type is Available, In Quarters, Cleared, Completed, On Patrol, Unavailable, Not Responding or Maintenance. Every other dispatched unit must also have reported such a status since its dispatch. Only units count. A call with no unit dispatched, a call under an active incident command, a unit still returning, transporting or at the hospital, a unit that never reported after its dispatch, and a custom status with no base type all leave the call open for the dispatcher. The close is recorded with a note naming the last unit, applies the release statuses (which skip units back in service or out of service) and notifies nobody. Off by default.
 
 Default: false. Source: DepartmentSettingTypes.CloseCallWhenUnitsClear.
+
+<a id="setting-transportdestinationchecks"></a>
+## Transport Destination Checks
+
+Transport Destination Checks. A call can name the destination its patient or load goes to (the call's Destination). For a status whose base type is Transporting or At Hospital, the Omni, Unit and Dispatch apps pre-select that destination whether or not this is on, and show when a different destination is chosen. With this on, choosing a different destination needs a reason, entered as the status note, and Resgrid adds a call note naming the unit, the status, both destinations and the reason. A unit that then reports At Hospital at the same destination is not noted twice. A status set from an app that predates this setting is saved without asking; its call note then says no reason was given. Off by default.
+
+Default: false. Source: DepartmentSettingTypes.TransportDestinationChecks.
 
 <a id="setting-dispatchrenotifyconfig"></a>
 ## Dispatch Re-notification

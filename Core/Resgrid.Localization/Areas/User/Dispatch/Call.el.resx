@@ -1019,4 +1019,28 @@
   <data name="NearestUnitsCallLocation" xml:space="preserve">
     <value>Τοποθεσία συμβάντος</value>
   </data>
+  <data name="AllCallLabel" xml:space="preserve">
+    <value>Γενική κλήση</value>
+  </data>
+  <data name="AllCallButton" xml:space="preserve">
+    <value>Γενική κλήση (αποστολή σε όλους)</value>
+  </data>
+  <data name="AllCallHelp" xml:space="preserve">
+    <value>Όλες οι λίστες αποστολής είναι κρυφές. Ενεργοποιήστε τη Γενική κλήση για να σταλεί αυτή η κλήση σε όλους ή αφήστε την ανενεργή για να αποθηκευτεί μια ενημερωτική κλήση χωρίς ειδοποίηση.</value>
+  </data>
+  <data name="AllCallEditHelp" xml:space="preserve">
+    <value>Ενεργοποιήστε τη Γενική κλήση για να προστεθούν όλοι σε αυτή την κλήση και να ειδοποιηθούν. Αφήστε την ανενεργή για να διατηρηθούν οι υπάρχοντες παραλήπτες.</value>
+  </data>
+  <data name="DestinationAvailabilityLimited" xml:space="preserve">
+    <value>Περιορισμένο</value>
+  </data>
+  <data name="DestinationAvailabilityDiversion" xml:space="preserve">
+    <value>Εκτροπή</value>
+  </data>
+  <data name="DestinationAvailabilityClosed" xml:space="preserve">
+    <value>Κλειστό</value>
+  </data>
+  <data name="DestinationAvailabilityLink" xml:space="preserve">
+    <value>Διαθεσιμότητα προορισμών</value>
+  </data>
 </root>

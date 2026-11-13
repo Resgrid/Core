@@ -2197,16 +2197,16 @@
     <value>Ogranicza obsługiwane widoki dysponowania do poddrzewa grupy członka. Administratorzy oddziału oraz skonfigurowane role ogólnooddziałowe zachowują dostęp obejmujący cały oddział.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.NewCallFieldPolicy.Rules">
-    <value>Widoczność i wymagalność poszczególnych opcjonalnych pól tworzenia zgłoszenia. Nieskonfigurowane pola pozostają widoczne i opcjonalne.</value>
+    <value>Jedna reguła na skonfigurowane pole: widoczne lub ukryte, opcjonalne lub wymagane. Pole bez reguły jest widoczne i opcjonalne, a zapisana reguła ukrywająca odbiorców dysponowania (sprzed własnych kluczy list) ukrywa wszystkie cztery listy.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.NewCallFieldRule.Key">
-    <value>Jeden obsługiwany wbudowany klucz pola zgłoszenia. Nazwy, rodzaju, priorytetu i typu nie można usunąć za pomocą tej polityki.</value>
+    <value>Pole, którego dotyczy reguła: address, geolocation, what3words, pluscode, destinationPoi, indoorLocation, mapPage, note, contactName, contactInfo, primaryContact, additionalContacts, externalId, incidentId, referenceId, protocols, linkedCall, dispatchPersonnel, dispatchGroups, dispatchRoles, dispatchUnits, dispatchList, checkInTimers, part2Consent, dispatchOn, pendingCall. Nazwa, charakter, priorytet i typ nie mają klucza: są zawsze widoczne i wymagane.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.NewCallFieldRule.Required">
-    <value>Określa, czy widoczne pole opcjonalne musi zostać wypełnione. Przed uczynieniem pola obowiązkowym sprawdź importy i każdy obsługiwany klient.</value>
+    <value>Określa, czy widoczne pole trzeba wypełnić przed utworzeniem zdarzenia lub zapisaniem zmian. Plus Code, dodatkowe kontakty, czasomierze meldowania, zgoda Part 2, zapis jako oczekujące i cztery listy dysponowania można tylko ukryć; wymaganie odbiorców oznacza co najmniej jednego odbiorcę z dowolnej listy. Przed uczynieniem pola wymaganym sprawdź importy i każdego klienta.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.NewCallFieldRule.Visible">
-    <value>Określa, czy opcjonalne pole zgłoszenia jest wyświetlane w obsługiwanych miejscach tworzenia. Ukrytych pól nie można oznaczyć jako wymagane.</value>
+    <value>Określa, czy pole lub sekcja jest w formularzach zdarzeń. Ukryte pole zachowuje zapisaną wartość przy edycji zdarzenia. Odbiorcy dysponowania nie mają własnego ustawienia: są widoczni, dopóki widoczna jest którakolwiek z czterech list; gdy wszystkie cztery są ukryte, formularze oferują zamiast nich opcjonalny alarm ogólny.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.PersonnelListStatusOrder.StatusId">
     <value>Istniejący identyfikator statusu personelu, którego pozycja na liście jest konfigurowana.</value>
@@ -4299,6 +4299,9 @@
   <data xml:space="preserve" name="Rule.map-token">
     <value>Brak niestandardowych danych uwierzytelniających mapy</value>
   </data>
+  <data xml:space="preserve" name="Rule.new-call-dispatch-lists-hidden">
+    <value>Nowe zdarzenia nie mają list dysponowania</value>
+  </data>
   <data xml:space="preserve" name="Rule.notification-channels">
     <value>Preferencje kanałów powiadomień wymagają przeglądu</value>
   </data>
@@ -4419,6 +4422,9 @@
   <data xml:space="preserve" name="RuleNext.map-token">
     <value>Sprawdź zastąpienie mapy na jego chronionym ekranie konfiguracji.</value>
   </data>
+  <data xml:space="preserve" name="RuleNext.new-call-dispatch-lists-hidden">
+    <value>Pokaż co najmniej jedną listę dysponowania w polach formularza nowego zdarzenia, chyba że każde zdarzenie ma trafiać do wszystkich („Alarm ogólny”) lub być tylko informacyjne.</value>
+  </data>
   <data xml:space="preserve" name="RuleNext.notification-channels">
     <value>Sprawdź autoryzowane preferencje powiadomień członków i używaj Testów komunikacji dopiero po jawnym przeglądzie odbiorców i kanałów.</value>
   </data>
@@ -4538,6 +4544,9 @@
   </data>
   <data xml:space="preserve" name="RuleWhy.map-token">
     <value>Włączone zastąpienie mapy wymaga danych uwierzytelniających dostawcy.</value>
+  </data>
+  <data xml:space="preserve" name="RuleWhy.new-call-dispatch-lists-hidden">
+    <value>Pola formularza nowego zdarzenia ukrywają listy personelu, grup, ról i jednostek, więc nowe zdarzenie nikogo nie alarmuje, jeśli nie zaznaczono „Alarm ogólny”.</value>
   </data>
   <data xml:space="preserve" name="RuleWhy.notification-channels">
     <value>Niektórzy widoczni aktywni członkowie nie mają żadnej kwalifikującej się preferencji SMS, e-mail ani push w standardowym module wysyłki powiadomień. Sama preferencja push nie stanowi ważnej rejestracji ani dowodu doręczenia.</value>
@@ -4948,7 +4957,7 @@
     <value>Kontroluje nawigację po modułach i obsługiwane bramki funkcji. Ukrycie modułu nie usuwa jego rekordów ani nie jest dowodem wyłączenia niezależnych ustawień dyspozytorskich.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.NewCallFieldPolicy">
-    <value>Kontroluje opcjonalne pola nowego zgłoszenia we wszystkich obsługiwanych aplikacjach klienckich. Ukrytych pól nie można uczynić wymaganymi — podstawowe pola dyspozytorskie pozostają obowiązkowe.</value>
+    <value>Określa, które wbudowane pola i sekcje pokazują formularze zdarzeń i które trzeba wypełnić — w sieci, w Omni i przez API. Ukryte pola nie mogą być wymagane; nazwa, charakter, priorytet i typ są zawsze widoczne i wymagane. Ukrycie wszystkich czterech list dysponowania zastępuje je opcjonalnym alarmem ogólnym; zdarzenie utworzone bez niego nikogo nie alarmuje.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.PaddleCustomerId">
     <value>Odwołanie klienta u dostawcy rozliczeń. Zarządzane przez autoryzowane procesy rozliczeniowe i nigdy nie zwracane w danych potwierdzających asystenta.</value>
@@ -6758,6 +6767,12 @@
   </data>
   <data xml:space="preserve" name="SettingHelp.CloseCallWhenUnitsClear">
     <value>Aktywne zgłoszenie zamyka się samo, gdy jego ostatnia zadysponowana jednostka zgłosi powrót do służby lub wyłączenie z eksploatacji. Jednostki nadal pracujące, zgłoszenie bez zadysponowanej jednostki i zgłoszenie z aktywnym dowodzeniem incydentem pozostawiają je otwarte.</value>
+  </data>
+  <data name="Setting.TransportDestinationChecks" xml:space="preserve">
+    <value>Kontrola miejsca docelowego transportu</value>
+  </data>
+  <data name="SettingHelp.TransportDestinationChecks" xml:space="preserve">
+    <value>Gdy status Transport lub W szpitalu jednostki wskazuje inne miejsce docelowe niż przypisane do jej zgłoszenia, aplikacje wymagają podania powodu, a zmiana jest odnotowywana w zgłoszeniu.</value>
   </data>
   <data name="Setting.CallNumberingConfig" xml:space="preserve">
     <value>Konfiguracja numeracji zgłoszeń</value>

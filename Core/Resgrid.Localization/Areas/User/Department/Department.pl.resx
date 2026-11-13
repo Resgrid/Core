@@ -948,7 +948,7 @@
     <value>Dane kontaktowe zgłaszającego</value>
   </data>
   <data name="NewCallField_externalId" xml:space="preserve">
-    <value>Zewnętrzny identyfikator</value>
+    <value>Identyfikator zgłoszenia (zewnętrzny)</value>
   </data>
   <data name="NewCallField_incidentId" xml:space="preserve">
     <value>Identyfikator zdarzenia</value>
@@ -1312,6 +1312,12 @@
   </data>
   <data name="CloseCallWhenUnitsClearHelp" xml:space="preserve">
     <value>Aktywne zgłoszenie zamyka się samo, gdy ostatnia zadysponowana do niego jednostka zgłosi powrót do służby lub wyłączenie z eksploatacji (status o typie bazowym Dostępna, W jednostce, Zwolniona, Niedostępna lub Serwis). Wszystkie pozostałe zadysponowane jednostki również muszą zgłosić zakończenie od chwili zadysponowania. Liczą się tylko jednostki: zgłoszenie bez zadysponowanej jednostki, zgłoszenie z aktywnym dowodzeniem incydentem lub jednostka, która wciąż wraca albo transportuje, pozostaje otwarte dla dyspozytora.</value>
+  </data>
+  <data name="TransportDestinationChecksLabel" xml:space="preserve">
+    <value>Kontrola miejsca docelowego transportu</value>
+  </data>
+  <data name="TransportDestinationChecksHelp" xml:space="preserve">
+    <value>Gdy jednostka ustawia status o typie bazowym Transport lub W szpitalu z miejscem docelowym innym niż przypisane do jej zgłoszenia, aplikacje przed zapisaniem proszą o podanie powodu (notatka statusu), a zmiana jest dodawana do zgłoszenia jako notatka. Aplikacje i tak wstępnie wybierają przypisane miejsce docelowe zgłoszenia dla tych statusów.</value>
   </data>
   <data name="DispatchRenotifyHeader" xml:space="preserve">
     <value>Ponowne powiadamianie o dyspozycji</value>
@@ -2563,5 +2569,44 @@
   </data>
   <data name="ProvidersErrorGeocodingKey" xml:space="preserve">
     <value>Podaj klucz API tego dostawcy wyszukiwania adresów.</value>
+  </data>
+  <data name="NewCallField_mapPage" xml:space="preserve">
+    <value>Strona mapy</value>
+  </data>
+  <data name="NewCallField_primaryContact" xml:space="preserve">
+    <value>Kontakt główny</value>
+  </data>
+  <data name="NewCallField_additionalContacts" xml:space="preserve">
+    <value>Dodatkowe kontakty</value>
+  </data>
+  <data name="NewCallField_checkInTimers" xml:space="preserve">
+    <value>Czasomierze meldowania</value>
+  </data>
+  <data name="NewCallField_part2Consent" xml:space="preserve">
+    <value>Zgoda 42 CFR Part 2</value>
+  </data>
+  <data name="NewCallField_pendingCall" xml:space="preserve">
+    <value>Zapisz jako oczekujące</value>
+  </data>
+  <data name="NewCallField_dispatchPersonnel" xml:space="preserve">
+    <value>Dysponowanie do personelu</value>
+  </data>
+  <data name="NewCallField_dispatchGroups" xml:space="preserve">
+    <value>Dysponowanie do grup</value>
+  </data>
+  <data name="NewCallField_dispatchRoles" xml:space="preserve">
+    <value>Dysponowanie do ról</value>
+  </data>
+  <data name="NewCallField_dispatchUnits" xml:space="preserve">
+    <value>Dysponowanie do jednostek</value>
+  </data>
+  <data name="NewCallFieldHideOnly" xml:space="preserve">
+    <value>To pole można ukryć, ale nie można uczynić go wymaganym.</value>
+  </data>
+  <data name="NewCallFieldFollowsLists" xml:space="preserve">
+    <value>Widoczne razem z dowolną listą dysponowania</value>
+  </data>
+  <data name="NewCallDispatchListsHiddenWarning" xml:space="preserve">
+    <value>Wszystkie listy dysponowania (personel, grupy, role i jednostki) są ukryte. Formularze zdarzeń zaoferują zamiast nich opcjonalny przycisk „Alarm ogólny”: z nim zdarzenie trafia do wszystkich, bez niego jest zapisywane tylko informacyjnie i nikt nie jest alarmowany. Karty dysponowania z automatycznym dysponowaniem nadal wysyłają swoje jednostki.</value>
   </data>
 </root>

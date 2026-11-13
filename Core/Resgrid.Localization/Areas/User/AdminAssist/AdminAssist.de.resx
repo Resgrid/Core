@@ -2197,16 +2197,16 @@
     <value>Beschränkt unterstützte Dispositionsansichten auf den Gruppenzweig des Mitglieds. Abteilungsadministratoren und konfigurierte abteilungsweite Rollen behalten abteilungsweiten Zugriff.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.NewCallFieldPolicy.Rules">
-    <value>Sichtbarkeit und Pflichtstatus je Feld für optionale Felder bei der Einsatzerstellung. Nicht konfigurierte Felder bleiben sichtbar und optional.</value>
+    <value>Eine Regel je eingestelltem Feld: angezeigt oder ausgeblendet, optional oder verpflichtend. Ein Feld ohne Regel wird angezeigt und ist optional; eine gespeicherte Regel, die die Alarmierungsempfänger ausblendet (aus der Zeit vor eigenen Schlüsseln für die Listen), blendet alle vier Listen aus.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.NewCallFieldRule.Key">
-    <value>Ein unterstützter integrierter Schlüssel für ein Einsatzfeld. Name, Art, Priorität und Typ können über diese Richtlinie nicht entfernt werden.</value>
+    <value>Das Feld, für das die Regel gilt: address, geolocation, what3words, pluscode, destinationPoi, indoorLocation, mapPage, note, contactName, contactInfo, primaryContact, additionalContacts, externalId, incidentId, referenceId, protocols, linkedCall, dispatchPersonnel, dispatchGroups, dispatchRoles, dispatchUnits, dispatchList, checkInTimers, part2Consent, dispatchOn, pendingCall. Name, Art, Priorität und Typ haben keinen Schlüssel: Sie werden immer angezeigt und sind immer verpflichtend.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.NewCallFieldRule.Required">
-    <value>Legt fest, ob ein sichtbares optionales Feld ausgefüllt werden muss. Prüfen Sie Importe und jeden unterstützten Client, bevor Sie ein Feld verpflichtend machen.</value>
+    <value>Legt fest, ob ein angezeigtes Feld ausgefüllt sein muss, bevor ein Einsatz angelegt oder eine Änderung gespeichert wird. Plus Code, weitere Kontakte, Check-in-Timer, Einwilligung nach Part 2, Als ausstehend speichern und die vier Alarmierungslisten können nur ausgeblendet werden; verpflichtende Alarmierungsempfänger bedeuten mindestens einen Empfänger aus einer beliebigen Liste. Prüfen Sie Importe und jeden Client, bevor Sie ein Feld verpflichtend machen.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.NewCallFieldRule.Visible">
-    <value>Legt fest, ob das optionale Einsatzfeld auf unterstützten Erstellungsoberflächen angezeigt wird. Ausgeblendete Felder können nicht verpflichtend sein.</value>
+    <value>Legt fest, ob das Feld oder der Bereich auf den Einsatzformularen erscheint. Ein ausgeblendetes Feld behält beim Bearbeiten eines Einsatzes seinen gespeicherten Wert. Die Alarmierungsempfänger haben keine eigene Einstellung: Sie erscheinen, solange eine der vier Alarmierungslisten erscheint; sind alle vier ausgeblendet, bieten die Formulare stattdessen einen optionalen Vollalarm.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.PersonnelListStatusOrder.StatusId">
     <value>Vorhandene Kennung eines Personalstatus, dessen Listenposition konfiguriert wird.</value>
@@ -4299,6 +4299,9 @@
   <data xml:space="preserve" name="Rule.map-token">
     <value>Benutzerdefinierte Kartenzugangsdaten fehlen</value>
   </data>
+  <data xml:space="preserve" name="Rule.new-call-dispatch-lists-hidden">
+    <value>Neue Einsätze haben keine Alarmierungslisten</value>
+  </data>
   <data xml:space="preserve" name="Rule.notification-channels">
     <value>Benachrichtigungskanal-Einstellungen müssen geprüft werden</value>
   </data>
@@ -4419,6 +4422,9 @@
   <data xml:space="preserve" name="RuleNext.map-token">
     <value>Prüfen Sie die Kartenüberschreibung auf der geschützten Konfigurationsseite.</value>
   </data>
+  <data xml:space="preserve" name="RuleNext.new-call-dispatch-lists-hidden">
+    <value>Blenden Sie in den Feldern im Einsatzformular mindestens eine Alarmierungsliste ein, es sei denn, jeder Einsatz soll an alle gehen („Vollalarm“) oder nur zur Information dienen.</value>
+  </data>
   <data xml:space="preserve" name="RuleNext.notification-channels">
     <value>Prüfen Sie die autorisierten Benachrichtigungseinstellungen der Mitglieder und nutzen Sie Kommunikationstests nur nach ausdrücklicher Prüfung von Empfänger und Kanal.</value>
   </data>
@@ -4538,6 +4544,9 @@
   </data>
   <data xml:space="preserve" name="RuleWhy.map-token">
     <value>Eine aktivierte Kartenüberschreibung benötigt die Zugangsdaten des Anbieters.</value>
+  </data>
+  <data xml:space="preserve" name="RuleWhy.new-call-dispatch-lists-hidden">
+    <value>Die Felder im Einsatzformular blenden die Listen Personal, Gruppen, Rollen und Einheiten aus, daher alarmiert ein neuer Einsatz niemanden, solange „Vollalarm“ nicht angekreuzt ist.</value>
   </data>
   <data xml:space="preserve" name="RuleWhy.notification-channels">
     <value>Einige sichtbare aktive Mitglieder haben keine berechtigte SMS-, E-Mail- oder Push-Einstellung unter dem gewöhnlichen Benachrichtigungsabsender. Eine Push-Einstellung allein ist keine gültige Registrierung und kein Zustellungsnachweis.</value>
@@ -4948,7 +4957,7 @@
     <value>Steuert die Modulnavigation und unterstützte Funktionsschalter. Das Ausblenden eines Moduls löscht weder dessen Datensätze noch belegt es, dass unabhängige Dispositionseinstellungen deaktiviert sind.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.NewCallFieldPolicy">
-    <value>Steuert optionale Felder für neue Einsätze in unterstützten Clients. Ausgeblendete Felder können nicht erforderlich sein; zentrale Dispositionsfelder bleiben verpflichtend.</value>
+    <value>Legt fest, welche integrierten Felder und Bereiche die Einsatzformulare zeigen und welche ausgefüllt sein müssen – im Web, in Omni und über die API. Ausgeblendete Felder können nicht verpflichtend sein; Name, Art, Priorität und Typ werden immer angezeigt und sind immer verpflichtend. Sind alle vier Alarmierungslisten ausgeblendet, ersetzt sie ein optionaler Vollalarm; ein Einsatz ohne ihn alarmiert niemanden.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.PaddleCustomerId">
     <value>Kundenreferenz des Abrechnungsanbieters. Wird von autorisierten Abrechnungsabläufen verwaltet und nie in Assistent-Nachweisen zurückgegeben.</value>
@@ -6758,6 +6767,12 @@
   </data>
   <data xml:space="preserve" name="SettingHelp.CloseCallWhenUnitsClear">
     <value>Ein aktiver Einsatz schließt sich selbst, wenn seine letzte alarmierte Einheit meldet, dass sie wieder einsatzbereit oder außer Dienst ist. Noch arbeitende Einheiten, ein Einsatz ohne alarmierte Einheit und ein Einsatz mit aktiver Einsatzleitung halten ihn offen.</value>
+  </data>
+  <data name="Setting.TransportDestinationChecks" xml:space="preserve">
+    <value>Prüfung des Transportziels</value>
+  </data>
+  <data name="SettingHelp.TransportDestinationChecks" xml:space="preserve">
+    <value>Wenn der Status Transport oder Im Krankenhaus einer Einheit ein anderes Ziel als das im Einsatz zugewiesene hat, verlangen die Apps eine Begründung, und die Änderung wird im Einsatz vermerkt.</value>
   </data>
   <data name="Setting.CallNumberingConfig" xml:space="preserve">
     <value>Konfiguration der Einsatznummerierung</value>

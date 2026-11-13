@@ -449,4 +449,136 @@
   <data name="PoiBulkSelectRow" xml:space="preserve">
     <value>Вибрати POI</value>
   </data>
+  <data name="PoiCapabilities" xml:space="preserve">
+    <value>Можливості POI</value>
+  </data>
+  <data name="PoiCapabilitiesHelp" xml:space="preserve">
+    <value>Можливості описують, що пропонують ваші пункти призначення та інші точки інтересу, наприклад катетеризаційна лабораторія, інсультний центр чи травмоцентр. Позначте їх для кожного POI; диспетчери бачать їх під час вибору пункту призначення й можуть позначити одну з них як недоступну.</value>
+  </data>
+  <data name="PoiCapabilitiesPoiHelp" xml:space="preserve">
+    <value>Що пропонує ця точка інтересу. Диспетчери бачать це під час вибору пункту призначення.</value>
+  </data>
+  <data name="AddPoiCapability" xml:space="preserve">
+    <value>Додати можливість</value>
+  </data>
+  <data name="PoiCapabilityNamePlaceholder" xml:space="preserve">
+    <value>Назва можливості, напр. Катетеризаційна лабораторія</value>
+  </data>
+  <data name="SortOrder" xml:space="preserve">
+    <value>Порядок сортування</value>
+  </data>
+  <data name="PoiCapabilitySortHelp" xml:space="preserve">
+    <value>Можливості впорядковуються за порядком сортування, потім за назвою. Залиште порядок порожнім, щоб додати можливість у кінець.</value>
+  </data>
+  <data name="NoPoiCapabilities" xml:space="preserve">
+    <value>Ще не визначено жодної можливості.</value>
+  </data>
+  <data name="ManagePoiCapabilities" xml:space="preserve">
+    <value>Керувати можливостями</value>
+  </data>
+  <data name="DeletePoiCapabilityConfirm" xml:space="preserve">
+    <value>Видалити можливість «{0}»? Її буде знято з усіх POI, що її пропонують ({1}), і з кожного звіту про доступність.</value>
+  </data>
+  <data name="PoiCapabilityNameRequired" xml:space="preserve">
+    <value>Введіть назву можливості довжиною не більше {0} символів.</value>
+  </data>
+  <data name="PoiCapabilityNameExists" xml:space="preserve">
+    <value>Можливість із назвою «{0}» уже існує.</value>
+  </data>
+  <data name="PoiCapabilitySaved" xml:space="preserve">
+    <value>Можливість «{0}» збережено.</value>
+  </data>
+  <data name="PoiCapabilityDeleted" xml:space="preserve">
+    <value>Можливість «{0}» видалено.</value>
+  </data>
+  <data name="PoiCapabilitySaveFailed" xml:space="preserve">
+    <value>Не вдалося зберегти можливість. Перезавантажте сторінку й спробуйте ще раз.</value>
+  </data>
+  <data name="DestinationAvailability" xml:space="preserve">
+    <value>Доступність пунктів призначення</value>
+  </data>
+  <data name="DestinationAvailabilityHelp" xml:space="preserve">
+    <value>Фіксуйте, коли пункт призначення, наприклад лікарня, повідомляє про обмежену спроможність, перенаправлення чи закриття або про недоступність однієї зі своїх можливостей. Диспетчери бачать це під час вибору пункту призначення виклику.</value>
+  </data>
+  <data name="PoiType" xml:space="preserve">
+    <value>Тип</value>
+  </data>
+  <data name="PoiAvailability" xml:space="preserve">
+    <value>Доступність</value>
+  </data>
+  <data name="SetPoiAvailability" xml:space="preserve">
+    <value>Встановити доступність</value>
+  </data>
+  <data name="NoDestinationPois" xml:space="preserve">
+    <value>Ще немає POI — пунктів призначення. Позначте тип POI як пункт призначення, щоб його POI з’явилися тут.</value>
+  </data>
+  <data name="PoiAvailabilityOpen" xml:space="preserve">
+    <value>Відкрито</value>
+  </data>
+  <data name="PoiAvailabilityLimited" xml:space="preserve">
+    <value>Обмежено</value>
+  </data>
+  <data name="PoiAvailabilityDiversion" xml:space="preserve">
+    <value>Перенаправлення</value>
+  </data>
+  <data name="PoiAvailabilityClosed" xml:space="preserve">
+    <value>Закрито</value>
+  </data>
+  <data name="PoiAvailabilityUnavailable" xml:space="preserve">
+    <value>Недоступно:</value>
+  </data>
+  <data name="PoiAvailabilityUntil" xml:space="preserve">
+    <value>До {0}</value>
+  </data>
+  <data name="PoiAvailabilityCurrent" xml:space="preserve">
+    <value>Поточна</value>
+  </data>
+  <data name="PoiAvailabilitySetOn" xml:space="preserve">
+    <value>Встановлено {0}</value>
+  </data>
+  <data name="PoiAvailabilityStatusHelp" xml:space="preserve">
+    <value>«Відкрито» знімає звіт. «Обмежено» ще приймає пацієнтів зі зменшеною спроможністю; «Перенаправлення» просить бригади їхати деінде, якщо є альтернатива; «Закрито» не приймає нікого.</value>
+  </data>
+  <data name="PoiAvailabilityUnavailableHelp" xml:space="preserve">
+    <value>Позначте, чого цей пункт призначення зараз не може забезпечити.</value>
+  </data>
+  <data name="PoiAvailabilityNoCapabilities" xml:space="preserve">
+    <value>Для цього пункту призначення не позначено жодної можливості.</value>
+  </data>
+  <data name="PoiAvailabilityNoteHelp" xml:space="preserve">
+    <value>Необов’язково, не більше {0} символів.</value>
+  </data>
+  <data name="PoiAvailabilityExpires" xml:space="preserve">
+    <value>Спливає</value>
+  </data>
+  <data name="PoiAvailabilityExpiresHelp" xml:space="preserve">
+    <value>Коли звіт спливає і пункт призначення знову вважається відкритим.</value>
+  </data>
+  <data name="PoiAvailabilityExpiryNone" xml:space="preserve">
+    <value>Без терміну (до зміни)</value>
+  </data>
+  <data name="PoiAvailabilityExpiryKeep" xml:space="preserve">
+    <value>Залишити поточний ({0})</value>
+  </data>
+  <data name="PoiAvailabilityExpiryOneHour" xml:space="preserve">
+    <value>Через 1 годину</value>
+  </data>
+  <data name="PoiAvailabilityExpiryHours" xml:space="preserve">
+    <value>Через {0} год</value>
+  </data>
+  <data name="PoiAvailabilityStatusInvalid" xml:space="preserve">
+    <value>Виберіть стан доступності.</value>
+  </data>
+  <data name="PoiAvailabilityNoteTooLong" xml:space="preserve">
+    <value>Примітка може містити не більше {0} символів.</value>
+  </data>
+  <data name="PoiAvailabilityExpiryInvalid" xml:space="preserve">
+    <value>Виберіть, коли спливає звіт.</value>
+  </data>
+  <data name="PoiAvailabilitySaved" xml:space="preserve">
+    <value>Доступність {0} встановлено: {1}.</value>
+  </data>
+  <data name="PoiAvailabilitySaveFailed" xml:space="preserve">
+    <value>Не вдалося зберегти доступність: POI більше не є пунктом призначення. Перезавантажте сторінку й спробуйте ще раз.</value>
+  </data>
 </root>

@@ -948,7 +948,7 @@
     <value>Contatti del segnalante</value>
   </data>
   <data name="NewCallField_externalId" xml:space="preserve">
-    <value>ID chiamata esterno</value>
+    <value>Identificativo chiamata (ID esterno)</value>
   </data>
   <data name="NewCallField_incidentId" xml:space="preserve">
     <value>ID incidente</value>
@@ -1312,6 +1312,12 @@
   </data>
   <data name="CloseCallWhenUnitsClearHelp" xml:space="preserve">
     <value>Una chiamata attiva si chiude da sola quando l'ultima unità inviata segnala di essere di nuovo in servizio o fuori servizio (uno stato con tipo base Disponibile, In sede, Liberata, Non disponibile o Manutenzione). Anche tutte le altre unità inviate devono aver segnalato la fine dopo l'invio. Contano solo le unità: una chiamata senza unità inviate, una chiamata con un comando dell'incidente attivo o un'unità ancora in rientro o in trasporto resta aperta per l'operatore.</value>
+  </data>
+  <data name="TransportDestinationChecksLabel" xml:space="preserve">
+    <value>Controllo della destinazione di trasporto</value>
+  </data>
+  <data name="TransportDestinationChecksHelp" xml:space="preserve">
+    <value>Quando un'unità imposta uno stato con tipo base In trasporto o In ospedale verso una destinazione diversa da quella assegnata alla sua chiamata, le app chiedono un motivo (la nota dello stato) prima di salvare e la modifica viene aggiunta alla chiamata come nota. Le app preselezionano comunque la destinazione assegnata alla chiamata per questi stati.</value>
   </data>
   <data name="DispatchRenotifyHeader" xml:space="preserve">
     <value>Notifiche ripetute dell'invio</value>
@@ -2563,5 +2569,44 @@
   </data>
   <data name="ProvidersErrorGeocodingKey" xml:space="preserve">
     <value>Inserisci la chiave API di questo provider di ricerca indirizzi.</value>
+  </data>
+  <data name="NewCallField_mapPage" xml:space="preserve">
+    <value>Pagina mappa</value>
+  </data>
+  <data name="NewCallField_primaryContact" xml:space="preserve">
+    <value>Contatto principale</value>
+  </data>
+  <data name="NewCallField_additionalContacts" xml:space="preserve">
+    <value>Contatti aggiuntivi</value>
+  </data>
+  <data name="NewCallField_checkInTimers" xml:space="preserve">
+    <value>Timer di registrazione</value>
+  </data>
+  <data name="NewCallField_part2Consent" xml:space="preserve">
+    <value>Consenso 42 CFR Part 2</value>
+  </data>
+  <data name="NewCallField_pendingCall" xml:space="preserve">
+    <value>Salva in attesa</value>
+  </data>
+  <data name="NewCallField_dispatchPersonnel" xml:space="preserve">
+    <value>Invio al personale</value>
+  </data>
+  <data name="NewCallField_dispatchGroups" xml:space="preserve">
+    <value>Invio ai gruppi</value>
+  </data>
+  <data name="NewCallField_dispatchRoles" xml:space="preserve">
+    <value>Invio ai ruoli</value>
+  </data>
+  <data name="NewCallField_dispatchUnits" xml:space="preserve">
+    <value>Invio alle unità</value>
+  </data>
+  <data name="NewCallFieldHideOnly" xml:space="preserve">
+    <value>Questo campo può essere nascosto ma non reso obbligatorio.</value>
+  </data>
+  <data name="NewCallFieldFollowsLists" xml:space="preserve">
+    <value>Visibile con qualsiasi elenco di invio</value>
+  </data>
+  <data name="NewCallDispatchListsHiddenWarning" xml:space="preserve">
+    <value>Tutti gli elenchi di invio (personale, gruppi, ruoli e unità) sono nascosti. I moduli di chiamata offriranno invece un pulsante facoltativo «Chiamata generale»: con esso la chiamata va a tutti, senza di esso viene salvata solo a titolo informativo e nessuno viene allertato. Le schede di intervento con invio automatico continuano a inviare le loro unità.</value>
   </data>
 </root>

@@ -2160,6 +2160,14 @@
   <data name="DeploymentNewExternalOrder" xml:space="preserve"><value>Ny extern order</value></data>
   <data name="HydrantImportBack" xml:space="preserve"><value>Tillbaka till brandposter</value></data>
   <data name="HydrantImportNotSaved" xml:space="preserve"><value>Inga brandposter sparades. Rätta raderna nedan och importera filen igen.</value></data>
+  <data name="HydrantImportIgnoredColumns" xml:space="preserve"><value>Kolumner som inte importerades eftersom Resgrid saknar ett motsvarande brandpostfält: {0}. Om du vill importera en av dem byter du namn på rubriken till ett kolumnnamn från exemplet och importerar filen igen.</value></data>
+  <data name="HydrantImportServiceChanges" xml:space="preserve"><value>Från filens statuskolumn: {0} brandposter togs ur drift, {1} togs i drift igen.</value></data>
+  <data name="HydrantImportUnmappedValues" xml:space="preserve"><value>Värden som importerades med ett standardvärde</value></data>
+  <data name="HydrantImportUnmappedValuesHelp" xml:space="preserve"><value>Dessa värden från ett annat systems kolumner kändes inte igen. Brandposterna importerades ändå: okända typer som Other, oläsliga flöden och flödesfärger lämnades tomma, och vid okänd status ändrades inte driftläget. Om du vill ange dem ändrar du värdena i filen och importerar den igen; brandposter med samma nummer uppdateras.</value></data>
+  <data name="HydrantImportColumn" xml:space="preserve"><value>Kolumn</value></data>
+  <data name="HydrantImportValue" xml:space="preserve"><value>Värde</value></data>
+  <data name="HydrantImportRowCount" xml:space="preserve"><value>Rader</value></data>
+  <data name="HydrantImportOtherSystems" xml:space="preserve"><value>Filer exporterade från andra system: hydrant_type, flow_rate och location_address läses som type, flow_gpm och address. Flödet anges i gallon per minut om inte värdet anger L/min. flow_rating_color (light blue, green, orange, red, AA–C eller en #hex-färg) anger flödesklassen för brandposter utan flöde. status (active, in service, out of service, broken…) tar brandposter ur drift eller i drift igen; statusen blir orsaken till att de tas ur drift. Okända typer importeras som Other; övriga kolumner hoppas över och listas efter importen.</value></data>
   <data name="HydrantImportIssuesShown" xml:space="preserve"><value>Visar {0} av {1} rader med problem. JSON använder postnummer; CSV använder radnummer.</value></data>
   <data name="HydrantImportRow" xml:space="preserve"><value>Post / rad</value></data>
   <data name="HydrantImportCorrection" xml:space="preserve"><value>Så rättar du felet</value></data>

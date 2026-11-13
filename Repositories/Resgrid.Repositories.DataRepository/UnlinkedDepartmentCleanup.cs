@@ -32,7 +32,7 @@ namespace Resgrid.Repositories.DataRepository
 		{
 			"CallLocationIndexStates", "CallNumberSequences", "DocumentNumberSequences", "DepartmentApiKeys", "ScheduledTasks", "UserStates",
 			"UdfDefinitions", "ChatbotSessions", "ChatbotMessageLog", "ChatbotDepartmentConfigs", "AiDispatchAudits", "DepartmentAiDispatchConfigs",
-			"AiBillingAccounts", "AdpBillingAccounts", "ContactPreplanHazards", "ContactPreplans", "ContactAttachments", "DepartmentProfileMedia", "TypeIcons", "MapVisualizations", "RoadClosures", "PoiImports", "UserDashboards", "DepartmentDashboardTemplates",
+			"AiBillingAccounts", "AdpBillingAccounts", "ContactPreplanHazards", "ContactPreplans", "ContactAttachments", "DepartmentProfileMedia", "TypeIcons", "MapVisualizations", "RoadClosures", "PoiImports", "PoiCapabilityAssignments", "PoiCapabilities", "PoiAvailabilities", "UserDashboards", "DepartmentDashboardTemplates",
 			"CallOutstandingRequirements", "RunCardDecisions", "RunCardTargets", "ResponsePackages", "RunCardActivations",
 			"RunCards", "StationCoverageRequirements", "ModerationActions", "ModerationReports", "ModerationRequests", "MessageRecipients", "Messages",
 			"DepartmentMemberSensitiveData", "DepartmentMemberEmergencyContacts", "UserExternalIdentityLinks", "DepartmentSecurityPolicies",
@@ -82,6 +82,9 @@ namespace Resgrid.Repositories.DataRepository
 
 			// Background POI imports (M0313): the upload's pending rows and its report; the POIs themselves go with their types
 			await Delete("PoiImports");
+
+			// POI capabilities, their assignments to POIs and destination availability reports (M0315); no foreign keys
+			await Delete("PoiCapabilityAssignments", "PoiCapabilities", "PoiAvailabilities");
 
 			// Home dashboard boards and department templates (layouts only)
 			await Delete("UserDashboards", "DepartmentDashboardTemplates");

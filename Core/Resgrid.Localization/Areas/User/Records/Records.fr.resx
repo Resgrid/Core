@@ -2160,6 +2160,14 @@
   <data name="DeploymentNewExternalOrder" xml:space="preserve"><value>Nouvel ordre externe</value></data>
   <data name="HydrantImportBack" xml:space="preserve"><value>Retour aux hydrants</value></data>
   <data name="HydrantImportNotSaved" xml:space="preserve"><value>Aucun hydrant n’a été enregistré. Corrigez les lignes ci-dessous et importez à nouveau le fichier.</value></data>
+  <data name="HydrantImportIgnoredColumns" xml:space="preserve"><value>Colonnes non importées, car Resgrid n’a aucun champ d’hydrant correspondant : {0}. Pour en importer une, renommez son en-tête avec un nom de colonne de l’exemple, puis importez à nouveau le fichier.</value></data>
+  <data name="HydrantImportServiceChanges" xml:space="preserve"><value>D’après la colonne d’état du fichier : {0} hydrants mis hors service, {1} remis en service.</value></data>
+  <data name="HydrantImportUnmappedValues" xml:space="preserve"><value>Valeurs importées avec une valeur par défaut</value></data>
+  <data name="HydrantImportUnmappedValuesHelp" xml:space="preserve"><value>Ces valeurs provenant des colonnes d’un autre système n’ont pas été reconnues. Les hydrants ont tout de même été importés : types inconnus en Other, débits et couleurs de débit illisibles laissés vides, et état de service inchangé pour les statuts inconnus. Pour les définir, modifiez les valeurs dans le fichier et importez-le à nouveau ; les hydrants de même numéro sont mis à jour.</value></data>
+  <data name="HydrantImportColumn" xml:space="preserve"><value>Colonne</value></data>
+  <data name="HydrantImportValue" xml:space="preserve"><value>Valeur</value></data>
+  <data name="HydrantImportRowCount" xml:space="preserve"><value>Lignes</value></data>
+  <data name="HydrantImportOtherSystems" xml:space="preserve"><value>Fichiers exportés d’autres systèmes : hydrant_type, flow_rate et location_address sont lus comme type, flow_gpm et address. Le débit est en gallons par minute, sauf si la valeur indique L/min. flow_rating_color (light blue, green, orange, red, AA–C ou une couleur #hex) définit la classe de débit des hydrants sans débit. status (active, in service, out of service, broken…) met les hydrants hors service ou les remet en service ; le statut devient le motif de mise hors service. Les types inconnus sont importés en Other ; les autres colonnes sont ignorées et listées après l’import.</value></data>
   <data name="HydrantImportIssuesShown" xml:space="preserve"><value>Affichage de {0} lignes sur {1} comportant des erreurs. JSON utilise les numéros d’élément, CSV les numéros de ligne.</value></data>
   <data name="HydrantImportRow" xml:space="preserve"><value>Élément / ligne</value></data>
   <data name="HydrantImportCorrection" xml:space="preserve"><value>Comment corriger</value></data>

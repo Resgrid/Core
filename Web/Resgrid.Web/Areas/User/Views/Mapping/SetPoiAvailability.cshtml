@@ -1,0 +1,179 @@
+@model Resgrid.Web.Areas.User.Models.Mapping.SetPoiAvailabilityView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.Mapping> localizer
+@{
+	ViewBag.Title = "Resgrid | " + localizer["SetPoiAvailability"];
+	var destination = Model.Destination;
+	var returnsToType = string.Equals(Model.ReturnTo, "Type", StringComparison.OrdinalIgnoreCase) && ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
+	var statuses = new[] { PoiAvailabilityStatuses.Open, PoiAvailabilityStatuses.Limited, PoiAvailabilityStatuses.Diversion, PoiAvailabilityStatuses.Closed };
+	var selectedIds = new HashSet<string>(Model.UnavailableCapabilityIds ?? new List<string>(), StringComparer.OrdinalIgnoreCase);
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@localizer["SetPoiAvailability"]</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+			</li>
+			<li>
+				<a asp-controller="Mapping" asp-action="Index" asp-route-area="User">@localizer["MappingHeader"]</a>
+			</li>
+			<li>
+				<a asp-controller="Mapping" asp-action="Destinations" asp-route-area="User">@localizer["DestinationAvailability"]</a>
+			</li>
+			<li class="active">
+				<strong>@destination?.Name</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<form id="setPoiAvailabilityForm" class="form-horizontal" role="form" method="post" asp-controller="Mapping" asp-action="SetPoiAvailability" asp-route-area="User">
+						@Html.AntiForgeryToken()
+						<input type="hidden" name="PoiId" value="@Model.PoiId" />
+						<input type="hidden" name="ReturnTo" value="@Model.ReturnTo" />
+
+						<div class="row">
+							<div class="col-md-8 col-md-offset-2">
+								<div asp-validation-summary="All" class="text-danger"></div>
+							</div>
+						</div>
+
+						@if (destination != null)
+						{
+							<div class="form-group">
+								<label class="col-sm-2 control-label">@localizer["Name"]</label>
+								<div class="col-sm-8">
+									<p class="form-control-static">
+										<strong>@destination.Name</strong>
+										@if (!String.IsNullOrWhiteSpace(destination.TypeName))
+										{
+											<span class="text-muted">(@destination.TypeName)</span>
+										}
+										@if (!String.IsNullOrWhiteSpace(destination.Address) && destination.Address != destination.Name)
+										{
+											<br /><span class="text-muted">@destination.Address</span>
+										}
+									</p>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">@localizer["PoiAvailabilityCurrent"]</label>
+								<div class="col-sm-8">
+									<div class="form-control-static" id="currentPoiAvailability">
+										<partial name="_PoiAvailabilityBadge" model="destination" />
+										@if (destination.SetOn.HasValue)
+										{
+											<div class="small text-muted">@string.Format(localizer["PoiAvailabilitySetOn"].Value, destination.SetOn.Value.ToString("g"))</div>
+										}
+									</div>
+								</div>
+							</div>
+						}
+
+						<div class="form-group">
+							<label class="col-sm-2 control-label required" for="poiAvailabilityStatus">@localizer["PoiAvailability"]</label>
+							<div class="col-sm-4">
+								<select id="poiAvailabilityStatus" name="Status" class="form-control">
+									@foreach (var status in statuses)
+									{
+										<option value="@((int)status)" selected="@(Model.Status == (int)status)">@localizer["PoiAvailability" + status]</option>
+									}
+								</select>
+								<span class="help-block">@localizer["PoiAvailabilityStatusHelp"]</span>
+							</div>
+						</div>
+
+						<div id="poiAvailabilityDetails">
+							<div class="form-group">
+								<label class="col-sm-2 control-label">@localizer["PoiAvailabilityUnavailable"]</label>
+								<div class="col-sm-8">
+									@if (Model.Capabilities.Any())
+									{
+										foreach (var capability in Model.Capabilities)
+										{
+											<div class="checkbox">
+												<label>
+													<input type="checkbox" name="UnavailableCapabilityIds" value="@capability.PoiCapabilityId" checked="@selectedIds.Contains(capability.PoiCapabilityId)" /> @capability.Name
+												</label>
+											</div>
+										}
+										<span class="help-block">@localizer["PoiAvailabilityUnavailableHelp"]</span>
+									}
+									else
+									{
+										<p class="form-control-static text-muted">@localizer["PoiAvailabilityNoCapabilities"]</p>
+									}
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="poiAvailabilityNote">@localizer["Note"]</label>
+								<div class="col-sm-8">
+									<textarea id="poiAvailabilityNote" name="Note" class="form-control" rows="3" maxlength="@PoiAvailability.MaxNoteLength">@Model.Note</textarea>
+									<span class="help-block">@string.Format(localizer["PoiAvailabilityNoteHelp"].Value, PoiAvailability.MaxNoteLength)</span>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="col-sm-2 control-label" for="poiAvailabilityExpires">@localizer["PoiAvailabilityExpires"]</label>
+								<div class="col-sm-4">
+									<select id="poiAvailabilityExpires" name="ExpiresInHours" class="form-control">
+										@if (destination?.ExpiresOn != null)
+										{
+											<option value="@Resgrid.Web.Areas.User.Models.Mapping.SetPoiAvailabilityView.KeepExpiry" selected="@(Model.ExpiresInHours == Resgrid.Web.Areas.User.Models.Mapping.SetPoiAvailabilityView.KeepExpiry)">@string.Format(localizer["PoiAvailabilityExpiryKeep"].Value, destination.ExpiresOn.Value.ToString("g"))</option>
+										}
+										@foreach (var hours in Resgrid.Web.Areas.User.Models.Mapping.SetPoiAvailabilityView.ExpiryHours)
+										{
+											var label = hours == 0 ? localizer["PoiAvailabilityExpiryNone"].Value : hours == 1 ? localizer["PoiAvailabilityExpiryOneHour"].Value : string.Format(localizer["PoiAvailabilityExpiryHours"].Value, hours);
+											<option value="@hours" selected="@(Model.ExpiresInHours == hours)">@label</option>
+										}
+									</select>
+									<span class="help-block">@localizer["PoiAvailabilityExpiresHelp"]</span>
+								</div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<div class="col-sm-6 col-sm-offset-2">
+								@if (returnsToType && destination != null)
+								{
+									<a class="btn btn-white" asp-controller="Mapping" asp-action="ViewType" asp-route-area="User" asp-route-poiTypeId="@destination.PoiTypeId">@localizer["Cancel"]</a>
+								}
+								else
+								{
+									<a class="btn btn-white" asp-controller="Mapping" asp-action="Destinations" asp-route-area="User">@localizer["Cancel"]</a>
+								}
+								<button class="btn btn-primary" type="submit">@localizer["Save"]</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+	<script type="text/javascript">
+		(function () {
+			// Open clears the report, so what is unavailable, the note and the expiry only apply to the other statuses.
+			var status = document.getElementById('poiAvailabilityStatus');
+			var details = document.getElementById('poiAvailabilityDetails');
+			if (!status || !details) {
+				return;
+			}
+			function toggle() {
+				details.style.display = status.value === '@((int)PoiAvailabilityStatuses.Open)' ? 'none' : '';
+			}
+			status.addEventListener('change', toggle);
+			toggle();
+		})();
+	</script>
+}

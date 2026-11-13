@@ -2158,6 +2158,14 @@
   <data name="DeploymentOpenWorkspace" xml:space="preserve"><value>Open deployment workspace</value></data>
   <data name="HydrantImportBack" xml:space="preserve"><value>Back to hydrants</value></data>
   <data name="HydrantImportNotSaved" xml:space="preserve"><value>No hydrants were saved. Correct the rows below and import the file again.</value></data>
+  <data name="HydrantImportIgnoredColumns" xml:space="preserve"><value>Columns not imported because Resgrid has no matching hydrant field: {0}. To import one, rename its header to a column name from the example and import the file again.</value></data>
+  <data name="HydrantImportServiceChanges" xml:space="preserve"><value>From the file's status column: {0} hydrants set out of service, {1} returned to service.</value></data>
+  <data name="HydrantImportUnmappedValues" xml:space="preserve"><value>Values imported with a default</value></data>
+  <data name="HydrantImportUnmappedValuesHelp" xml:space="preserve"><value>These values from another system's columns were not recognized. The hydrants were still imported: unrecognized types as Other, unreadable flows and flow colours left blank, and unrecognized statuses with their service state unchanged. To set them, change the values in the file and import it again; matching hydrant numbers are updated.</value></data>
+  <data name="HydrantImportColumn" xml:space="preserve"><value>Column</value></data>
+  <data name="HydrantImportValue" xml:space="preserve"><value>Value</value></data>
+  <data name="HydrantImportRowCount" xml:space="preserve"><value>Rows</value></data>
+  <data name="HydrantImportOtherSystems" xml:space="preserve"><value>Files exported from other systems: hydrant_type, flow_rate and location_address are read as type, flow_gpm and address. Flow is in gallons per minute unless the value says L/min. flow_rating_color (light blue, green, orange, red, AA–C or a #hex colour) sets the flow class of hydrants with no flow. status (active, in service, out of service, broken…) takes hydrants out of service or returns them to service; the status becomes the out-of-service reason. Unrecognized types are imported as Other; other columns are skipped and listed after the import.</value></data>
   <data name="HydrantImportIssuesShown" xml:space="preserve"><value>Showing {0} of {1} rows with issues. JSON uses item numbers; CSV uses line numbers.</value></data>
   <data name="HydrantImportRow" xml:space="preserve"><value>Row / line</value></data>
   <data name="HydrantImportCorrection" xml:space="preserve"><value>How to fix it</value></data>

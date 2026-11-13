@@ -948,7 +948,7 @@
     <value>Anmälarens kontaktuppgifter</value>
   </data>
   <data name="NewCallField_externalId" xml:space="preserve">
-    <value>Externt ärende-ID</value>
+    <value>Ärendeidentifierare (externt ID)</value>
   </data>
   <data name="NewCallField_incidentId" xml:space="preserve">
     <value>Händelse-ID</value>
@@ -1312,6 +1312,12 @@
   </data>
   <data name="CloseCallWhenUnitsClearHelp" xml:space="preserve">
     <value>Ett aktivt larm stängs av sig självt när den sista enheten som larmats till det rapporterar att den är tillbaka i tjänst eller ur tjänst (en status med bastypen Tillgänglig, På stationen, Klar, Otillgänglig eller Underhåll). Alla andra larmade enheter måste också ha rapporterat att de är klara sedan de larmades. Bara enheter räknas: ett larm utan larmad enhet, ett larm med aktiv insatsledning eller en enhet som fortfarande återvänder eller transporterar hålls öppet för operatören.</value>
+  </data>
+  <data name="TransportDestinationChecksLabel" xml:space="preserve">
+    <value>Kontroll av transportdestination</value>
+  </data>
+  <data name="TransportDestinationChecksHelp" xml:space="preserve">
+    <value>När en enhet sätter en status med bastypen Transporterar eller På sjukhus till en annan destination än den som tilldelats larmet ber apparna om en anledning (statusanteckningen) innan den sparas, och ändringen läggs till i larmet som en anteckning. Apparna förväljer larmets tilldelade destination för dessa statusar i båda fallen.</value>
   </data>
   <data name="DispatchRenotifyHeader" xml:space="preserve">
     <value>Påminnelser om utskick</value>
@@ -2563,5 +2569,44 @@
   </data>
   <data name="ProvidersErrorGeocodingKey" xml:space="preserve">
     <value>Ange API-nyckeln till den här leverantören för adressuppslag.</value>
+  </data>
+  <data name="NewCallField_mapPage" xml:space="preserve">
+    <value>Kartsida</value>
+  </data>
+  <data name="NewCallField_primaryContact" xml:space="preserve">
+    <value>Primär kontakt</value>
+  </data>
+  <data name="NewCallField_additionalContacts" xml:space="preserve">
+    <value>Ytterligare kontakter</value>
+  </data>
+  <data name="NewCallField_checkInTimers" xml:space="preserve">
+    <value>Incheckningstimers</value>
+  </data>
+  <data name="NewCallField_part2Consent" xml:space="preserve">
+    <value>Samtycke enligt 42 CFR Part 2</value>
+  </data>
+  <data name="NewCallField_pendingCall" xml:space="preserve">
+    <value>Spara som väntande</value>
+  </data>
+  <data name="NewCallField_dispatchPersonnel" xml:space="preserve">
+    <value>Larma personal</value>
+  </data>
+  <data name="NewCallField_dispatchGroups" xml:space="preserve">
+    <value>Larma grupper</value>
+  </data>
+  <data name="NewCallField_dispatchRoles" xml:space="preserve">
+    <value>Larma roller</value>
+  </data>
+  <data name="NewCallField_dispatchUnits" xml:space="preserve">
+    <value>Larma enheter</value>
+  </data>
+  <data name="NewCallFieldHideOnly" xml:space="preserve">
+    <value>Det här fältet kan döljas men inte göras obligatoriskt.</value>
+  </data>
+  <data name="NewCallFieldFollowsLists" xml:space="preserve">
+    <value>Visas med valfri larmlista</value>
+  </data>
+  <data name="NewCallDispatchListsHiddenWarning" xml:space="preserve">
+    <value>Alla larmlistor (personal, grupper, roller och enheter) är dolda. Ärendeformulären erbjuder i stället en valfri knapp ”Allmänt larm”: med den går ärendet till alla, utan den sparas ärendet endast som information och ingen larmas. Larmplaner som larmar automatiskt skickar fortfarande sina enheter.</value>
   </data>
 </root>

@@ -1,8 +1,15 @@
 @using Resgrid.Web.Helpers
+@using Resgrid.Model.Helpers
 @model Resgrid.Web.Areas.User.Models.Mapping.LayersView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.Mapping> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.EventLayers> eventLocalizer
 @{
     ViewBag.Title = "Resgrid | " + localizer["LayersPageTitle"];
+    var now = DateTime.UtcNow;
+
+    string LocalTime(DateTime? utc) => utc.HasValue
+        ? (Model.Department != null ? DateTime.SpecifyKind(utc.Value, DateTimeKind.Utc).TimeConverter(Model.Department) : utc.Value).ToString("g")
+        : null;
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
@@ -24,6 +31,7 @@
     {
         <div class="col-sm-8">
             <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+                <a title="@eventLocalizer["ImportLayer"]" class="btn btn-primary" asp-controller="EventLayers" asp-action="Import" asp-route-area="User"><i class="fa fa-upload"></i> @eventLocalizer["ImportLayer"]</a>
                 <a title="@localizer["NewLayer"]" class="btn btn-success" asp-controller="Mapping" asp-action="NewLayer" asp-route-area="User">@localizer["NewLayer"]</a>
             </div>
         </div>
@@ -33,6 +41,10 @@
 <div class="row">
     <div class="col-xs-12">
         <div class="wrapper wrapper-content">
+            @if (TempData["LayersMessage"] is string layersMessage && !string.IsNullOrWhiteSpace(layersMessage))
+            {
+                <div class="alert alert-success">@layersMessage</div>
+            }
             <div class="ibox float-e-margins">
                 <div class="ibox-content">
                     <div class="table-responsive">
@@ -43,10 +55,16 @@
                                         @localizer["Name"]
                                     </th>
                                     <th>
+                                        @eventLocalizer["EventColumn"]
+                                    </th>
+                                    <th>
                                         @localizer["Color"]
                                     </th>
                                     <th>
                                         @localizer["ItemCount"]
+                                    </th>
+                                    <th>
+                                        @eventLocalizer["SourceFile"]
                                     </th>
                                     <th class='span1'>
                                     </th>
@@ -55,18 +73,48 @@
                             <tbody>
                                 @foreach (var layer in Model.Layers)
                                 {
+                                    var phase = MapLayerEvents.GetPhase(layer, now);
                                     <tr>
                                         <td>
                                             @layer.Name
+                                            @if (!string.IsNullOrWhiteSpace(layer.Organizer))
+                                            {
+                                                <br /><small class="text-muted">@layer.Organizer</small>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (phase != MapLayerEventPhases.None)
+                                            {
+                                                @switch (phase)
+                                                {
+                                                    case MapLayerEventPhases.Active:
+                                                        <span class="label label-primary">@eventLocalizer["PhaseActive"]</span>
+                                                        break;
+                                                    case MapLayerEventPhases.Upcoming:
+                                                        <span class="label label-info">@eventLocalizer["PhaseUpcoming"]</span>
+                                                        break;
+                                                    default:
+                                                        <span class="label label-default">@eventLocalizer["PhaseEnded"]</span>
+                                                        break;
+                                                }
+                                                <br /><small>@LocalTime(layer.EventStartsOn) &ndash; @LocalTime(layer.EventEndsOn)</small>
+                                            }
                                         </td>
                                         <td style="color: @layer.Color;">
                                             @layer.Color
                                         </td>
                                         <td>
-                                            @layer.Data.Features.Count
+                                            @(layer.Data?.Features?.Count ?? 0)
                                         </td>
                                         <td>
-                                            <a class="btn btn-xs btn-primary" asp-controller="Mapping" asp-action="EditLayer" asp-route-area="User" asp-route-layerId="@layer.GetId()">@localizer["Edit"]</a>
+                                            @(layer.IsImported ? layer.SourceFileName : eventLocalizer["Drawn"].Value)
+                                        </td>
+                                        <td style="white-space: nowrap;">
+                                            @if (!layer.IsImported)
+                                            {
+                                                <a class="btn btn-xs btn-primary" asp-controller="Mapping" asp-action="EditLayer" asp-route-area="User" asp-route-layerId="@layer.GetId()">@eventLocalizer["EditShapes"]</a>
+                                            }
+                                            <a class="btn btn-xs btn-info" asp-controller="EventLayers" asp-action="Details" asp-route-area="User" asp-route-layerId="@layer.GetId()">@eventLocalizer["Details"]</a>
                                             <form method="post" asp-controller="Mapping" asp-action="DeleteLayer" asp-route-area="User" style="display: inline;">@Html.AntiForgeryToken()<input type="hidden" name="layerId" value="@layer.GetId()" /><button type="submit" class="btn btn-xs btn-danger">@localizer["Delete"]</button></form>
                                         </td>
                                     </tr>

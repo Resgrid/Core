@@ -449,4 +449,136 @@
   <data name="PoiBulkSelectRow" xml:space="preserve">
     <value>Select POI</value>
   </data>
+  <data name="PoiCapabilities" xml:space="preserve">
+    <value>POI Capabilities</value>
+  </data>
+  <data name="PoiCapabilitiesHelp" xml:space="preserve">
+    <value>Capabilities are what your destinations and other points of interest offer, such as Cath Lab, Stroke Center or Trauma Center. Tick them on each POI; dispatchers see them when picking a destination and can report one unavailable.</value>
+  </data>
+  <data name="PoiCapabilitiesPoiHelp" xml:space="preserve">
+    <value>What this point of interest offers. Dispatchers see these when picking a destination.</value>
+  </data>
+  <data name="AddPoiCapability" xml:space="preserve">
+    <value>Add Capability</value>
+  </data>
+  <data name="PoiCapabilityNamePlaceholder" xml:space="preserve">
+    <value>Capability name, e.g. Cath Lab</value>
+  </data>
+  <data name="SortOrder" xml:space="preserve">
+    <value>Sort Order</value>
+  </data>
+  <data name="PoiCapabilitySortHelp" xml:space="preserve">
+    <value>Capabilities are listed by sort order, then by name. Leave the sort order blank to add a capability at the end.</value>
+  </data>
+  <data name="NoPoiCapabilities" xml:space="preserve">
+    <value>No capabilities have been defined yet.</value>
+  </data>
+  <data name="ManagePoiCapabilities" xml:space="preserve">
+    <value>Manage capabilities</value>
+  </data>
+  <data name="DeletePoiCapabilityConfirm" xml:space="preserve">
+    <value>Delete the capability "{0}"? It is removed from every POI that offers it ({1}) and from every availability report.</value>
+  </data>
+  <data name="PoiCapabilityNameRequired" xml:space="preserve">
+    <value>Enter a capability name of at most {0} characters.</value>
+  </data>
+  <data name="PoiCapabilityNameExists" xml:space="preserve">
+    <value>A capability named "{0}" already exists.</value>
+  </data>
+  <data name="PoiCapabilitySaved" xml:space="preserve">
+    <value>Capability "{0}" saved.</value>
+  </data>
+  <data name="PoiCapabilityDeleted" xml:space="preserve">
+    <value>Capability "{0}" deleted.</value>
+  </data>
+  <data name="PoiCapabilitySaveFailed" xml:space="preserve">
+    <value>The capability could not be saved. Reload the page and try again.</value>
+  </data>
+  <data name="DestinationAvailability" xml:space="preserve">
+    <value>Destination Availability</value>
+  </data>
+  <data name="DestinationAvailabilityHelp" xml:space="preserve">
+    <value>Record when a destination such as a hospital reports limited capacity, diversion or closure, or that one of its capabilities is unavailable. Dispatchers see it when picking a call's destination.</value>
+  </data>
+  <data name="PoiType" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="PoiAvailability" xml:space="preserve">
+    <value>Availability</value>
+  </data>
+  <data name="SetPoiAvailability" xml:space="preserve">
+    <value>Set Availability</value>
+  </data>
+  <data name="NoDestinationPois" xml:space="preserve">
+    <value>There are no destination POIs yet. Mark a POI type as a destination to list its POIs here.</value>
+  </data>
+  <data name="PoiAvailabilityOpen" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="PoiAvailabilityLimited" xml:space="preserve">
+    <value>Limited</value>
+  </data>
+  <data name="PoiAvailabilityDiversion" xml:space="preserve">
+    <value>Diversion</value>
+  </data>
+  <data name="PoiAvailabilityClosed" xml:space="preserve">
+    <value>Closed</value>
+  </data>
+  <data name="PoiAvailabilityUnavailable" xml:space="preserve">
+    <value>Unavailable:</value>
+  </data>
+  <data name="PoiAvailabilityUntil" xml:space="preserve">
+    <value>Until {0}</value>
+  </data>
+  <data name="PoiAvailabilityCurrent" xml:space="preserve">
+    <value>Current</value>
+  </data>
+  <data name="PoiAvailabilitySetOn" xml:space="preserve">
+    <value>Set {0}</value>
+  </data>
+  <data name="PoiAvailabilityStatusHelp" xml:space="preserve">
+    <value>Open clears the report. Limited still takes patients with reduced capacity; Diversion asks crews to go elsewhere unless there is no alternative; Closed takes no one.</value>
+  </data>
+  <data name="PoiAvailabilityUnavailableHelp" xml:space="preserve">
+    <value>Tick what this destination cannot provide right now.</value>
+  </data>
+  <data name="PoiAvailabilityNoCapabilities" xml:space="preserve">
+    <value>This destination has no capabilities ticked.</value>
+  </data>
+  <data name="PoiAvailabilityNoteHelp" xml:space="preserve">
+    <value>Optional, at most {0} characters.</value>
+  </data>
+  <data name="PoiAvailabilityExpires" xml:space="preserve">
+    <value>Expires</value>
+  </data>
+  <data name="PoiAvailabilityExpiresHelp" xml:space="preserve">
+    <value>When the report lapses and the destination reads as open again.</value>
+  </data>
+  <data name="PoiAvailabilityExpiryNone" xml:space="preserve">
+    <value>No expiry (until changed)</value>
+  </data>
+  <data name="PoiAvailabilityExpiryKeep" xml:space="preserve">
+    <value>Keep current ({0})</value>
+  </data>
+  <data name="PoiAvailabilityExpiryOneHour" xml:space="preserve">
+    <value>In 1 hour</value>
+  </data>
+  <data name="PoiAvailabilityExpiryHours" xml:space="preserve">
+    <value>In {0} hours</value>
+  </data>
+  <data name="PoiAvailabilityStatusInvalid" xml:space="preserve">
+    <value>Choose an availability status.</value>
+  </data>
+  <data name="PoiAvailabilityNoteTooLong" xml:space="preserve">
+    <value>The note can be at most {0} characters.</value>
+  </data>
+  <data name="PoiAvailabilityExpiryInvalid" xml:space="preserve">
+    <value>Choose when the report expires.</value>
+  </data>
+  <data name="PoiAvailabilitySaved" xml:space="preserve">
+    <value>Availability of {0} set to {1}.</value>
+  </data>
+  <data name="PoiAvailabilitySaveFailed" xml:space="preserve">
+    <value>The availability could not be saved: the POI is no longer a destination. Reload the page and try again.</value>
+  </data>
 </root>

@@ -20,7 +20,10 @@ namespace Resgrid.Services
 	{
 		public const int MaximumRows = 10000;
 
-		private enum Field { Name, Latitude, Longitude, Street, FullAddress, City, State, PostalCode, Country, Note }
+		private enum Field { Name, Latitude, Longitude, Street, FullAddress, City, State, PostalCode, Country, Note, Capabilities }
+
+		/// <summary>Separators between the names in one Capabilities cell ("Cath Lab; Stroke Center", "Cath Lab | Burns").</summary>
+		private static readonly char[] CapabilitySeparators = { ';', ',', '|' };
 
 		// Compared after lower-casing and removing everything but letters and digits ("Street Address 1" -> "streetaddress1").
 		// "Region" is deliberately absent: spreadsheets use it for sales or response regions as often as for a state.
@@ -40,7 +43,11 @@ namespace Resgrid.Services
 			["zipcode"] = Field.PostalCode,
 			["country"] = Field.Country,
 			["note"] = Field.Note, ["notes"] = Field.Note, ["comment"] = Field.Note, ["comments"] = Field.Note, ["remarks"] = Field.Note,
-			["description"] = Field.Note
+			["description"] = Field.Note,
+			// What a destination offers (Cath Lab, Stroke Center, Trauma Center): the department's POI capabilities.
+			["capabilities"] = Field.Capabilities, ["capability"] = Field.Capabilities, ["specialties"] = Field.Capabilities,
+			["specialities"] = Field.Capabilities, ["specialty"] = Field.Capabilities, ["speciality"] = Field.Capabilities,
+			["services"] = Field.Capabilities
 		};
 
 		// Spreadsheet tools that treat a ZIP code as a number write "60611.0".
@@ -71,7 +78,7 @@ namespace Resgrid.Services
 
 			string Value(Field field) => values.TryGetValue(field, out var value) ? value : null;
 
-			var row = new PoiImportRow { Name = Value(Field.Name), Note = Value(Field.Note), Address = AddressOf(Value) };
+			var row = new PoiImportRow { Name = Value(Field.Name), Note = Value(Field.Note), Address = AddressOf(Value), Capabilities = CapabilityNames(Value(Field.Capabilities)) };
 
 			var latitude = Coordinate(Value(Field.Latitude), decimalSeparatorHint);
 			var longitude = Coordinate(Value(Field.Longitude), decimalSeparatorHint);
@@ -225,6 +232,34 @@ namespace Resgrid.Services
 
 			var parts = new[] { street, value(Field.City), value(Field.State), postalCode, value(Field.Country) };
 			return string.Join(", ", parts.Where(p => !string.IsNullOrWhiteSpace(p)));
+		}
+
+		/// <summary>
+		/// The capability names in one cell, split on ';', ',' or '|', trimmed, cut to <see cref="PoiCapability.MaxNameLength"/> and
+		/// de-duplicated (ignoring case) in the order given; null when the cell names none.
+		/// </summary>
+		public static List<string> CapabilityNames(string cell)
+		{
+			if (string.IsNullOrWhiteSpace(cell))
+				return null;
+
+			var names = cell.Split(CapabilitySeparators)
+				.Select(CapabilityName)
+				.Where(name => name != null)
+				.Distinct(StringComparer.OrdinalIgnoreCase)
+				.ToList();
+
+			return names.Count > 0 ? names : null;
+		}
+
+		/// <summary>A capability name as the department stores it: trimmed and cut to <see cref="PoiCapability.MaxNameLength"/>; null when blank.</summary>
+		public static string CapabilityName(string name)
+		{
+			var trimmed = name?.Trim();
+			if (string.IsNullOrEmpty(trimmed))
+				return null;
+
+			return trimmed.Length > PoiCapability.MaxNameLength ? trimmed.Substring(0, PoiCapability.MaxNameLength).TrimEnd() : trimmed;
 		}
 
 		private static double? Coordinate(string value, char decimalSeparatorHint)

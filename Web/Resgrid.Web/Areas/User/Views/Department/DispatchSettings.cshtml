@@ -217,6 +217,17 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">@localizer["TransportDestinationChecksLabel"]</label>
+                            <div class="col-sm-9">
+                                <div class="row">
+                                    <div class="col-sm-10">
+                                        <input type="checkbox" asp-for="TransportDestinationChecks">
+                                        <span class="help-block m-b-none">@localizer["TransportDestinationChecksHelp"]</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
                         <div class="hr-line-dashed"></div>
                         <h3>@localizer["DispatchRenotifyHeader"]</h3>
@@ -464,26 +475,45 @@
                                     <tbody>
                                         @for (var i = 0; i < Model.NewCallFields.Count; i++)
                                         {
+                                            var fieldKey = Model.NewCallFields[i].Key;
+                                            var isDispatchTarget = Resgrid.Model.NewCallFieldKeys.IsDispatchTarget(fieldKey);
+                                            var cannotBeRequiredText = string.Equals(fieldKey, Resgrid.Model.NewCallFieldKeys.PlusCode, StringComparison.OrdinalIgnoreCase)
+                                                ? localizer["NewCallFieldCannotBeRequired"]
+                                                : localizer["NewCallFieldHideOnly"];
                                             <tr>
                                                 <td>
-                                                    @localizer["NewCallField_" + Model.NewCallFields[i].Key]
+                                                    @localizer["NewCallField_" + fieldKey]
                                                     <input type="hidden" asp-for="NewCallFields[i].Key" />
                                                 </td>
-                                                <td><input type="checkbox" asp-for="NewCallFields[i].Visible" /></td>
                                                 <td>
-                                                    @if (Resgrid.Model.NewCallFieldKeys.CanBeRequired(Model.NewCallFields[i].Key))
+                                                    @if (Resgrid.Model.NewCallFieldKeys.CanBeHidden(fieldKey))
+                                                    {
+                                                        <input type="checkbox" asp-for="NewCallFields[i].Visible" class="@(isDispatchTarget ? "js-new-call-dispatch-target" : "")" />
+                                                    }
+                                                    else
+                                                    {
+                                                        @* The recipients section shows while any of its lists does; NewCallFieldPolicy.Normalize sets it. *@
+                                                        <input type="hidden" name="NewCallFields[@i].Visible" value="true" />
+                                                        <span class="text-muted" title="@localizer["NewCallFieldFollowsLists"]">@localizer["NewCallFieldFollowsLists"]</span>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    @if (Resgrid.Model.NewCallFieldKeys.CanBeRequired(fieldKey))
                                                     {
                                                         <input type="checkbox" asp-for="NewCallFields[i].Required" />
                                                     }
                                                     else
                                                     {
-                                                        <input type="checkbox" disabled="disabled" title="@localizer["NewCallFieldCannotBeRequired"]" aria-label="@localizer["NewCallFieldCannotBeRequired"]" />
+                                                        <input type="checkbox" disabled="disabled" title="@cannotBeRequiredText" aria-label="@cannotBeRequiredText" />
                                                     }
                                                 </td>
                                             </tr>
                                         }
                                     </tbody>
                                 </table>
+                                <div class="alert alert-warning" id="newCallDispatchListsHiddenWarning" style="display: none;">
+                                    <i class="fa fa-exclamation-triangle"></i> @localizer["NewCallDispatchListsHiddenWarning"]
+                                </div>
                             </div>
                         </div>
 
@@ -845,6 +875,19 @@
 @section Scripts
 {
 <script>
+    // New Call Form Fields: warn while every recipient list is unticked (call forms then offer only an optional All Call).
+    $(function () {
+        var $targets = $('.js-new-call-dispatch-target');
+        if (!$targets.length) { return; }
+
+        function update() {
+            $('#newCallDispatchListsHiddenWarning').toggle($targets.filter(':checked').length === 0);
+        }
+
+        $targets.on('change', update);
+        update();
+    });
+
     // Conditional run cards: the response code catalog, edited as a table and posted back as JSON.
     $(function () {
         var $codesField = $('#ResponseCodesJson');

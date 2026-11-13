@@ -160,6 +160,26 @@ namespace Resgrid.Model
 		public int Created { get; set; }
 		public int Updated { get; set; }
 		public List<HydrantImportRow> Rejected { get; set; } = new List<HydrantImportRow>();
+		/// <summary>CSV header names (as written in the file) that map to no hydrant field and were skipped, e.g. extra columns in another system's export.</summary>
+		public List<string> IgnoredColumns { get; set; } = new List<string>();
+		/// <summary>
+		/// Values in a column read under another system's name (hydrant_type, flow_rate, flow_rating_color, status) that could not be read:
+		/// the hydrant was still imported, with type Other, a blank flow, no flow class or its service state unchanged. Most frequent first.
+		/// </summary>
+		public List<HydrantImportUnmappedValue> UnmappedValues { get; set; } = new List<HydrantImportUnmappedValue>();
+		/// <summary>Hydrants another system's status column set out of service, including new hydrants imported out of service.</summary>
+		public int TakenOutOfService { get; set; }
+		/// <summary>Out-of-service hydrants another system's status column returned to service.</summary>
+		public int ReturnedToService { get; set; }
+	}
+
+	public class HydrantImportUnmappedValue
+	{
+		/// <summary>The column header as written in the file.</summary>
+		public string Column { get; set; }
+		public string Value { get; set; }
+		/// <summary>How many rows held this value (compared without regard to case).</summary>
+		public int Rows { get; set; }
 	}
 
 	/// <summary>Which live hydrants a bulk removal takes.</summary>

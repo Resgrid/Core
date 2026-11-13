@@ -1,0 +1,60 @@
+@model Resgrid.Web.Areas.User.Models.Mapping.EventLayerView
+@using System.Globalization
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.EventLayers> localizer
+@{
+    string LocalInput(DateTime? value) => value.HasValue ? value.Value.ToString("yyyy-MM-ddTHH:mm", CultureInfo.InvariantCulture) : string.Empty;
+}
+<div class="form-group">
+    <label class="col-sm-2 control-label" asp-for="Name">@localizer["Name"] <span class="text-danger">*</span></label>
+    <div class="col-sm-10"><input type="text" class="form-control" asp-for="Name" maxlength="250" /></div>
+</div>
+<div class="form-group">
+    <label class="col-sm-2 control-label" asp-for="Description">@localizer["Description"]</label>
+    <div class="col-sm-10"><textarea class="form-control" asp-for="Description" rows="3" maxlength="2000"></textarea></div>
+</div>
+<div class="form-group">
+    <label class="col-sm-2 control-label" asp-for="Color">@localizer["Color"]</label>
+    <div class="col-sm-10">
+        <input type="color" class="form-control" asp-for="Color" style="width: 80px; padding: 2px;" />
+        <span class="help-block m-b-none">@localizer["ColorHelp"]</span>
+    </div>
+</div>
+
+<div class="hr-line-dashed"></div>
+<h3>@localizer["EventSection"]</h3>
+<div class="form-group">
+    <label class="col-sm-2 control-label" for="StartsOn">@localizer["StartsOn"]</label>
+    <div class="col-sm-4"><input type="datetime-local" class="form-control" id="StartsOn" name="StartsOn" value="@LocalInput(Model.StartsOn)" /></div>
+    <label class="col-sm-2 control-label" for="EndsOn">@localizer["EndsOn"]</label>
+    <div class="col-sm-4"><input type="datetime-local" class="form-control" id="EndsOn" name="EndsOn" value="@LocalInput(Model.EndsOn)" /></div>
+    <div class="col-sm-10 col-sm-offset-2">
+        <span class="help-block m-b-none">@string.Format(localizer["EventDatesHelp"].Value, Model.TimeZoneName)</span>
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-sm-2 control-label" asp-for="Organizer">@localizer["Organizer"]</label>
+    <div class="col-sm-10"><input type="text" class="form-control" asp-for="Organizer" maxlength="250" /></div>
+</div>
+<div class="form-group">
+    <label class="col-sm-2 control-label" asp-for="ContactName">@localizer["ContactName"]</label>
+    <div class="col-sm-10"><input type="text" class="form-control" asp-for="ContactName" maxlength="250" /></div>
+</div>
+<div class="form-group">
+    <label class="col-sm-2 control-label" asp-for="ContactPhone">@localizer["ContactPhone"]</label>
+    <div class="col-sm-4"><input type="tel" class="form-control" asp-for="ContactPhone" maxlength="100" /></div>
+    <label class="col-sm-2 control-label" asp-for="ContactEmail">@localizer["ContactEmail"]</label>
+    <div class="col-sm-4"><input type="email" class="form-control" asp-for="ContactEmail" maxlength="250" /></div>
+</div>
+
+<div class="hr-line-dashed"></div>
+<div class="form-group">
+    <div class="col-sm-10 col-sm-offset-2">
+        <div class="checkbox">
+            <label><input type="checkbox" asp-for="IsOnByDefault" /> @localizer["OnByDefault"]</label>
+            <span class="help-block m-b-none">@localizer["OnByDefaultHelp"]</span>
+        </div>
+        <div class="checkbox">
+            <label><input type="checkbox" asp-for="IsSearchable" /> @localizer["Searchable"]</label>
+        </div>
+    </div>
+</div>

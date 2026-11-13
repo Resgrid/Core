@@ -151,6 +151,7 @@
     { "key": "utility", "company": "City Water Utility (QA)", "email": "ops@water.qa.example.com", "office": "2175550160", "description": "24-hour water emergency line" },
     { "key": "resident", "first": "Pat", "last": "Neighbor", "cell": "2175550188", "email": "pat.neighbor@qa.example.com", "description": "Frequent caller, hard of hearing" }
   ],
+  "poiCapabilities": ["Trauma Center", "Cath Lab", "Stroke Center"],
   "poiTypes": [
     { "name": "Hydrant", "color": "#ef4444", "pois": [
       { "name": "H-101", "location": [39.8035, -89.6505], "note": "1500 GPM" },
@@ -158,7 +159,9 @@
       { "name": "H-201", "location": [39.7705, -89.6630], "note": "Out of service" }
     ] },
     { "name": "Hospital", "color": "#2563eb", "destination": true, "pois": [
-      { "name": "Springfield Memorial (QA)", "location": [39.8095, -89.6525], "address": "800 N Rutledge St, Springfield, IL 62702" }
+      { "name": "Springfield Memorial (QA)", "location": [39.8095, -89.6525], "address": "800 N Rutledge St, Springfield, IL 62702", "capabilities": ["Trauma Center", "Cath Lab"] },
+      { "name": "St. John's (QA)", "location": [39.8115, -89.6435], "address": "800 E Carpenter St, Springfield, IL 62769", "capabilities": ["Cath Lab", "Stroke Center"],
+        "availability": { "status": 2, "note": "ED capacity overload (QA)", "unavailable": ["Cath Lab"] } }
     ] },
     { "name": "Staging Area", "color": "#16a34a", "pois": [{ "name": "Fairgrounds Lot B", "location": [39.8350, -89.6430] }] }
   ],

@@ -1006,7 +1006,7 @@
     <value>معلومات الاتصال بالمبلّغ</value>
   </data>
   <data name="NewCallField_externalId" xml:space="preserve">
-    <value>معرّف خارجي</value>
+    <value>معرّف البلاغ (معرّف خارجي)</value>
   </data>
   <data name="NewCallField_incidentId" xml:space="preserve">
     <value>معرّف الحادث</value>
@@ -1370,6 +1370,12 @@
   </data>
   <data name="CloseCallWhenUnitsClearHelp" xml:space="preserve">
     <value>يُغلق البلاغ النشط تلقائياً عندما تُبلغ آخر وحدة أُرسلت إليه أنها عادت إلى الخدمة أو أصبحت خارج الخدمة (حالة نوعها الأساسي متاحة أو في المقر أو مُخلاة أو غير متاحة أو صيانة). ويجب أن تكون جميع الوحدات الأخرى المرسلة قد أبلغت أيضاً بانتهائها منذ إرسالها. تُحتسب الوحدات فقط: البلاغ الذي لم تُرسل إليه أي وحدة، أو البلاغ الخاضع لقيادة حادث نشطة، أو وحدة لا تزال عائدة أو تقوم بالنقل، يبقى مفتوحاً للمُرسِل.</value>
+  </data>
+  <data name="TransportDestinationChecksLabel" xml:space="preserve">
+    <value>التحقق من وجهة النقل</value>
+  </data>
+  <data name="TransportDestinationChecksHelp" xml:space="preserve">
+    <value>عندما تضبط وحدة حالةً نوعها الأساسي «نقل» أو «في المستشفى» إلى وجهة غير الوجهة المحددة في بلاغها، تطلب التطبيقات سببًا (ملاحظة الحالة) قبل الحفظ، ويُضاف التغيير إلى البلاغ كملاحظة. تحدد التطبيقات مسبقًا الوجهة المحددة للبلاغ لهذه الحالات في جميع الأحوال.</value>
   </data>
   <data name="DispatchRenotifyHeader" xml:space="preserve">
     <value>إعادة إشعار الإرسال</value>
@@ -2621,5 +2627,44 @@
   </data>
   <data name="ProvidersErrorGeocodingKey" xml:space="preserve">
     <value>أدخل مفتاح API لمزود البحث عن العناوين هذا.</value>
+  </data>
+  <data name="NewCallField_mapPage" xml:space="preserve">
+    <value>صفحة الخريطة</value>
+  </data>
+  <data name="NewCallField_primaryContact" xml:space="preserve">
+    <value>جهة الاتصال الرئيسية</value>
+  </data>
+  <data name="NewCallField_additionalContacts" xml:space="preserve">
+    <value>جهات اتصال إضافية</value>
+  </data>
+  <data name="NewCallField_checkInTimers" xml:space="preserve">
+    <value>مؤقتات تسجيل الوصول</value>
+  </data>
+  <data name="NewCallField_part2Consent" xml:space="preserve">
+    <value>موافقة 42 CFR Part 2</value>
+  </data>
+  <data name="NewCallField_pendingCall" xml:space="preserve">
+    <value>الحفظ كمعلّقة</value>
+  </data>
+  <data name="NewCallField_dispatchPersonnel" xml:space="preserve">
+    <value>الإرسال إلى الأفراد</value>
+  </data>
+  <data name="NewCallField_dispatchGroups" xml:space="preserve">
+    <value>الإرسال إلى المجموعات</value>
+  </data>
+  <data name="NewCallField_dispatchRoles" xml:space="preserve">
+    <value>الإرسال إلى الأدوار</value>
+  </data>
+  <data name="NewCallField_dispatchUnits" xml:space="preserve">
+    <value>الإرسال إلى الوحدات</value>
+  </data>
+  <data name="NewCallFieldHideOnly" xml:space="preserve">
+    <value>يمكن إخفاء هذا الحقل لكن لا يمكن جعله إلزاميًا.</value>
+  </data>
+  <data name="NewCallFieldFollowsLists" xml:space="preserve">
+    <value>يظهر مع أي قائمة إرسال</value>
+  </data>
+  <data name="NewCallDispatchListsHiddenWarning" xml:space="preserve">
+    <value>جميع قوائم الإرسال (الأفراد والمجموعات والأدوار والوحدات) مخفية. ستعرض نماذج البلاغات بدلاً من ذلك زر «نداء عام» اختياريًا: معه يُرسَل البلاغ إلى الجميع، ومن دونه يُحفظ البلاغ للعلم فقط ولا يُنبَّه أحد. بطاقات الإرسال التي ترسل تلقائيًا تظل ترسل وحداتها.</value>
   </data>
 </root>

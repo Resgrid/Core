@@ -437,6 +437,13 @@ namespace Resgrid.Model.Services
 		/// </summary>
 		Task<bool> GetCloseCallWhenUnitsClearAsync(int departmentId, bool bypassCache = false);
 
+		/// <summary>
+		/// Whether the apps require a reason when a unit's transport status goes to a destination other than its call's
+		/// assigned one, and Resgrid records the change as a call note (<see cref="DepartmentSettingTypes.TransportDestinationChecks"/>).
+		/// False when unset. Cached.
+		/// </summary>
+		Task<bool> GetTransportDestinationChecksAsync(int departmentId, bool bypassCache = false);
+
 		/// <summary>Department-wide dispatch recommendation mode (Off / StationBased / ClosestUnit). Cached.</summary>
 		Task<DispatchRecommendationModes> GetDispatchRecommendationModeAsync(int departmentId, bool bypassCache = false);
 

@@ -17,6 +17,14 @@ namespace Resgrid.Model
 
 		public string Note { get; set; }
 
+		/// <summary>
+		/// The capability names a "Capabilities" column gave ("Cath Lab; Stroke Center"), trimmed, de-duplicated and cut to
+		/// <see cref="PoiCapability.MaxNameLength"/>; null without the column (and then left out of RowsJson, as before). The import
+		/// adds the names the department does not have yet and tags the saved POI with them.
+		/// </summary>
+		[JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+		public List<string> Capabilities { get; set; }
+
 		/// <summary>Address lookup state (<see cref="PoiImportRowLookup"/>) of a row the file gave no position.</summary>
 		public int Lookup { get; set; }
 

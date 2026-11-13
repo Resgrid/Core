@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Map Icon Legend and status / priority map icon pages -->
+    <data name="ImportLayer" xml:space="preserve">
+    <value>Імпортувати шар</value>
+  </data>
+  <data name="ImportLayerHeader" xml:space="preserve">
+    <value>Імпортувати шар</value>
+  </data>
+  <data name="ImportHelp" xml:space="preserve">
+    <value>Завантажте файл KML, KMZ або GeoJSON (з Google My Maps, Google Earth або ГІС) із маршрутом, територією чи пунктами заходу. Кожна точка, лінія й полігон стають фігурою шару з власною назвою, описом і кольором. Вкажіть дати заходу, і шар показуватиметься на кожній карті, поки захід триває.</value>
+  </data>
+  <data name="DetailsHeader" xml:space="preserve">
+    <value>Відомості про шар</value>
+  </data>
+  <data name="LayerFile" xml:space="preserve">
+    <value>Файл</value>
+  </data>
+  <data name="LayerFileHelp" xml:space="preserve">
+    <value>KML, KMZ або GeoJSON, до {0} МБ.</value>
+  </data>
+  <data name="ReplaceFile" xml:space="preserve">
+    <value>Замінити файл</value>
+  </data>
+  <data name="ReplaceFileHelp" xml:space="preserve">
+    <value>Необов'язково. Новий файл замінює всі фігури шару; відомості вище зберігаються.</value>
+  </data>
+  <data name="DeleteHelp" xml:space="preserve">
+    <value>Видалення шару (Карти → Шари) видаляє всі його фігури й відомості.</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Назва</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Опис</value>
+  </data>
+  <data name="Color" xml:space="preserve">
+    <value>Колір за замовчуванням</value>
+  </data>
+  <data name="ColorHelp" xml:space="preserve">
+    <value>Для фігур, яким файл не задає власного кольору.</value>
+  </data>
+  <data name="EventSection" xml:space="preserve">
+    <value>Захід</value>
+  </data>
+  <data name="StartsOn" xml:space="preserve">
+    <value>Початок</value>
+  </data>
+  <data name="EndsOn" xml:space="preserve">
+    <value>Кінець</value>
+  </data>
+  <data name="EventDatesHelp" xml:space="preserve">
+    <value>У часовому поясі підрозділу ({0}). Поки захід триває, шар показується на кожній карті незалежно від параметра «Увімкнено за замовчуванням». Залиште обидва порожніми для шару, не пов'язаного із заходом.</value>
+  </data>
+  <data name="Organizer" xml:space="preserve">
+    <value>Організатор</value>
+  </data>
+  <data name="ContactName" xml:space="preserve">
+    <value>Координатор / Контакт</value>
+  </data>
+  <data name="ContactPhone" xml:space="preserve">
+    <value>Телефон контакту</value>
+  </data>
+  <data name="ContactEmail" xml:space="preserve">
+    <value>Ел. пошта контакту</value>
+  </data>
+  <data name="OnByDefault" xml:space="preserve">
+    <value>Увімкнено за замовчуванням</value>
+  </data>
+  <data name="OnByDefaultHelp" xml:space="preserve">
+    <value>Показувати шар під час відкриття кожної карти, також поза датами заходу.</value>
+  </data>
+  <data name="Searchable" xml:space="preserve">
+    <value>Доступний для пошуку</value>
+  </data>
+  <data name="SaveImport" xml:space="preserve">
+    <value>Імпортувати</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Зберегти</value>
+  </data>
+  <data name="EditShapes" xml:space="preserve">
+    <value>Редагувати фігури</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Відомості</value>
+  </data>
+  <data name="SourceFile" xml:space="preserve">
+    <value>Джерело</value>
+  </data>
+  <data name="Drawn" xml:space="preserve">
+    <value>Намальовано на карті</value>
+  </data>
+  <data name="ShapeCount" xml:space="preserve">
+    <value>Фігур: {0}</value>
+  </data>
+  <data name="EventColumn" xml:space="preserve">
+    <value>Захід</value>
+  </data>
+  <data name="PhaseUpcoming" xml:space="preserve">
+    <value>Майбутній</value>
+  </data>
+  <data name="PhaseActive" xml:space="preserve">
+    <value>Триває</value>
+  </data>
+  <data name="PhaseEnded" xml:space="preserve">
+    <value>Завершено</value>
+  </data>
+  <data name="ImportedOn" xml:space="preserve">
+    <value>імпортовано</value>
+  </data>
+  <data name="FileRequired" xml:space="preserve">
+    <value>Виберіть файл KML, KMZ або GeoJSON для імпорту.</value>
+  </data>
+  <data name="FileTypeUnsupported" xml:space="preserve">
+    <value>Завантажте файл .kml, .kmz, .geojson або .json.</value>
+  </data>
+  <data name="FileTooLarge" xml:space="preserve">
+    <value>Файл більший за {0} МБ.</value>
+  </data>
+  <data name="FileTooManyShapes" xml:space="preserve">
+    <value>Файл містить понад {0} фігур. Розділіть його на кілька шарів.</value>
+  </data>
+  <data name="FileTooManyPoints" xml:space="preserve">
+    <value>Файл містить понад {0} координат. Спростіть лінії (це вміє більшість ГІС) або розділіть його на кілька шарів.</value>
+  </data>
+  <data name="FileNoShapes" xml:space="preserve">
+    <value>Файл не містить точок, ліній чи полігонів із координатами.</value>
+  </data>
+  <data name="FileOnlyAddresses" xml:space="preserve">
+    <value>Місця у файлі ({0}) мають адресу, але не мають координат (шар Google My Maps, розміщений за адресою). Імпортуйте їх як точки інтересу (Карти → POI → Імпорт), де адреси буде знайдено, або експортуйте карту з координатами.</value>
+  </data>
+  <data name="FileUnreadable" xml:space="preserve">
+    <value>Не вдалося прочитати файл. Перевірте, що це дійсний файл KML, KMZ або GeoJSON.</value>
+  </data>
+  <data name="EndsBeforeStarts" xml:space="preserve">
+    <value>Захід не може закінчитися раніше, ніж почнеться.</value>
+  </data>
+  <data name="ContactEmailInvalid" xml:space="preserve">
+    <value>Введіть дійсну адресу ел. пошти.</value>
+  </data>
+  <data name="ColorInvalid" xml:space="preserve">
+    <value>Виберіть колір.</value>
+  </data>
+  <data name="SaveFailed" xml:space="preserve">
+    <value>Не вдалося зберегти шар. Спробуйте ще раз.</value>
+  </data>
+  <data name="ImportedSummary" xml:space="preserve">
+    <value>Імпортовано «{0}»: точок {1}, ліній {2}, полігонів {3}.</value>
+  </data>
+  <data name="ReplacedSummary" xml:space="preserve">
+    <value>Замінено фігури «{0}»: точок {1}, ліній {2}, полігонів {3}.</value>
+  </data>
+  <data name="SavedSummary" xml:space="preserve">
+    <value>Збережено «{0}».</value>
+  </data>
+  <data name="SkippedNote" xml:space="preserve">
+    <value>Пропущено позначок без придатних координат: {0}.</value>
+  </data>
+</root>

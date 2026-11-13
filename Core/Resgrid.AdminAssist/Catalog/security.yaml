@@ -7390,7 +7390,7 @@
       "Id": "setting.Require2FAForAdmins",
       "Locale": "en",
       "TitleKey": "Setting.Require2FAForAdmins",
-      "Body": "Require2 FAFor Admins. Administrator MFA requirement mode. Verify actual factors and recovery for each administrator before enforcement changes.",
+      "Body": "Require 2FA for Admins. Administrator MFA requirement mode. Verify actual factors and recovery for each administrator before enforcement changes.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-require2faforadmins",
       "PackVersion": "2026.09.25.2",

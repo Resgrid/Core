@@ -77,14 +77,51 @@ export function FeatureRow({ feature, t, ui, access, setupState, learned, canLea
       {feature.releaseStatus !== 'available' && <> <Chip tone="unknown">{ui(`Feature${feature.releaseStatus}`)}</Chip></>}
       <span className="rgaa-feature-row__text">{t(feature.purposeKey)}</span>
       <span className="rgaa-feature-row__step"><i className="fa fa-hand-o-right" aria-hidden="true" /> {t(feature.adoptionKey)}</span>
+      {((setupState && setupTone[setupState]) || blocked) && <span className="rgaa-feature-row__state">
+        {setupState && setupTone[setupState] && <Chip tone={setupTone[setupState]}>{ui(`SetupState.${setupState}`)}</Chip>}
+        {blocked && <Chip tone={access!.state === 'Unavailable' ? 'info' : 'unknown'} icon="fa-lock">{access!.reasonCodes.length > 0 ? access!.reasonCodes.map(r => ui(r)).join(' · ') : ui('AvailabilityUnknown')}</Chip>}
+      </span>}
     </div>
     <div className="rgaa-caps__side">
-      {setupState && setupTone[setupState] && <Chip tone={setupTone[setupState]}>{ui(`SetupState.${setupState}`)}</Chip>}
-      {blocked && <Chip tone={access!.state === 'Unavailable' ? 'info' : 'unknown'} icon="fa-lock">{access!.reasonCodes.length > 0 ? access!.reasonCodes.map(r => ui(r)).join(' · ') : ui('AvailabilityUnknown')}</Chip>}
-      {canLearn && <label className="rgaa-check rgaa-check--inline"><input type="checkbox" disabled={busy} checked={learned} onChange={e => onLearn(e.target.checked)} />{ui('Learned')}</label>}
+      {canLearn && <label className="rgaa-check rgaa-check--inline rgaa-learn"><input type="checkbox" disabled={busy} checked={learned} onChange={e => onLearn(e.target.checked)} />{ui('Learned')}</label>}
       {destination && <a className="btn btn-white btn-xs" href={destination}><i className="fa fa-external-link" aria-hidden="true" /> {ui('Configure')}</a>}
     </div>
   </li>;
+}
+
+/**
+ * A compact module summary for browsing (Explore): name, purpose, commercial and status chips and key-feature progress.
+ * The whole tile opens the full module card. `matches` names the features a search found inside the module.
+ */
+export function ModuleTile({ module, features, access, setup, findings, choice, t, ui, matches, suggested, showStatus, onOpen }: {
+  module: Module; features: Feature[]; access: Access[]; setup: Setup[]; findings: Finding[]; choice: Choice | undefined; t: Translate; ui: Translate;
+  matches: string[]; suggested?: boolean; showStatus: boolean; onOpen: () => void;
+}) {
+  const keys = keyFeatures(features, module.id);
+  const status = moduleStatus(module, features, setup, findings);
+  const progress = format(ui('FeaturesSetUp'), status.setUp, status.measurable);
+  return <button type="button" id={`rgaa-tile-${module.id}`} className={`rgaa-plain rgaa-module-tile rgaa-module-tile--${module.tier}`} onClick={onOpen}>
+    <span className="rgaa-module-tile__head">
+      <span className="rgaa-module-tile__name">{t(module.labelKey)}</span>
+      {suggested && <span className="rgaa-module-tile__star" title={ui('SuggestedArea')}><i className="fa fa-star" aria-hidden="true" /><span className="sr-only">{ui('SuggestedArea')}</span></span>}
+      <i className="fa fa-chevron-right rgaa-module-tile__go" aria-hidden="true" />
+    </span>
+    <span className="rgaa-module-tile__purpose">{t(module.purposeKey)}</span>
+    {matches.length > 0 && <span className="rgaa-module-tile__matches"><i className="fa fa-search" aria-hidden="true" /> {matches.slice(0, 3).join(' · ')}
+      {matches.length > 3 && <> {format(ui('ShowMoreSubjects'), matches.length - 3)}</>}</span>}
+    <span className="rgaa-module-tile__chips">
+      <CommercialChip module={module} features={features} access={access} ui={ui} t={t} />
+      {module.global && <Chip tone="info" icon="fa-globe">{ui('GlobalModule')}</Chip>}
+      {showStatus && choice === 'UseNow' && <ModuleStatusChip state={status.state} ui={ui} />}
+      {showStatus && choice && choice !== 'UseNow' && <Chip tone="muted">{ui(choice)}</Chip>}
+    </span>
+    <span className="rgaa-module-tile__foot">
+      {status.measurable > 0 ? <>
+        <span className="rgaa-bar rgaa-bar--thin" aria-hidden="true"><span className="rgaa-bar__info" style={{ width: `${(status.setUp / status.measurable) * 100}%` }} /></span>
+        <span>{progress}</span>
+      </> : <span>{ui('KeyFeatures')}: {keys.length}</span>}
+    </span>
+  </button>;
 }
 
 /** A module with its guidance and key features. Detail features are left to Settings reference and Ask. */
@@ -99,7 +136,7 @@ export function ModuleCard({ module, features, t, ui, access, setup, findings, c
   const subscription = access.find(a => a.capabilityId === features.find(f => f.areaId === module.id && f.id.startsWith('addon-'))?.id)?.subscriptionDestination;
   return <article className={`rgaa-module rgaa-module--${module.tier}`} aria-labelledby={`rgaa-module-${module.id}`}>
     <header className="rgaa-module__head">
-      <h4 id={`rgaa-module-${module.id}`}>{t(module.labelKey)}</h4>
+      <h4 id={`rgaa-module-${module.id}`} tabIndex={-1}>{t(module.labelKey)}</h4>
       <span className="rgaa-caps__side">
         <CommercialChip module={module} features={features} access={access} ui={ui} t={t} />
         {module.global && <Chip tone="info" icon="fa-globe">{ui('GlobalModule')}</Chip>}
@@ -107,11 +144,11 @@ export function ModuleCard({ module, features, t, ui, access, setup, findings, c
         {showStatus && choice !== 'UseNow' && choice && <Chip tone="muted">{ui(choice)}</Chip>}
       </span>
     </header>
-    <p>{t(module.purposeKey)} <DocsLink path={module.docsPath} ui={ui} subject={t(module.labelKey)} /></p>
+    <p className="rgaa-module__purpose">{t(module.purposeKey)} <DocsLink path={module.docsPath} ui={ui} subject={t(module.labelKey)} /></p>
     <dl className="rgaa-module__guide">
-      <dt>{ui('WhyItMatters')}</dt><dd>{t(module.valueKey)}</dd>
-      <dt>{ui('Example')}</dt><dd className="rgaa-muted">{t(module.exampleKey)}</dd>
-      <dt>{ui('BeforeYouStart')}</dt><dd>{t(module.adoptionKey)}</dd>
+      <div><dt><i className="fa fa-lightbulb-o" aria-hidden="true" /> {ui('WhyItMatters')}</dt><dd>{t(module.valueKey)}</dd></div>
+      <div><dt><i className="fa fa-commenting-o" aria-hidden="true" /> {ui('Example')}</dt><dd>{t(module.exampleKey)}</dd></div>
+      <div><dt><i className="fa fa-flag-checkered" aria-hidden="true" /> {ui('BeforeYouStart')}</dt><dd>{t(module.adoptionKey)}</dd></div>
     </dl>
     {scopeControl}
     <h5 className="rgaa-module__features">{ui('KeyFeatures')}{status.measurable > 0 && <span className="rgaa-muted rgaa-small"> · {format(ui('FeaturesSetUp'), status.setUp, status.measurable)}</span>}</h5>
@@ -135,39 +172,47 @@ export function ModuleCard({ module, features, t, ui, access, setup, findings, c
   </article>;
 }
 
-/** One row per module, grouped by tier: the admin's choice, key-feature setup and check results side by side. */
+/**
+ * Module readiness as a compact list: modules in the selected scope by tier, each with its choice, key-feature setup and
+ * check results; modules outside the scope are folded away (security and scope-independent checks still count for them).
+ */
 export function ModuleReadiness({ modules, features, setup, findings, choices, reasons, t, ui, onShowModule }: {
   modules: Module[]; features: Feature[]; setup: Setup[]; findings: Finding[]; choices: Record<string, Choice>; reasons?: Record<string, string>;
   t: Translate; ui: Translate; onShowModule?: (moduleId: string) => void;
 }) {
-  return <div className="table-responsive"><table className="table table-hover rgaa-areas">
-    <thead><tr><th scope="col">{ui('Area')}</th><th scope="col">{ui('SetupChoice')}</th><th scope="col">{ui('KeyFeatures')}</th><th scope="col">{ui('ChecksColumn')}</th><th scope="col"><span className="sr-only">{ui('ViewChecks')}</span></th></tr></thead>
+  const rows = modules.map(module => {
+    const choice: Choice = module.id === 'security' ? 'UseNow' : choices[module.id] ?? 'LearnLater';
+    const using = choice === 'UseNow';
+    const moduleFindings = findings.filter(f => f.areaId === module.id && (using || f.scopeIndependent));
+    return { module, choice, using, moduleFindings, counts: countFindings(moduleFindings), status: moduleStatus(module, features, setup, moduleFindings) };
+  });
+  type Row = typeof rows[number];
+  const row = ({ module, choice, using, moduleFindings, counts, status }: Row) => <li key={module.id} className={`rgaa-readiness__row${using ? '' : ' rgaa-readiness__row--dim'}`}>
+    <div className="rgaa-readiness__head">
+      <span className="rgaa-readiness__name">{t(module.labelKey)}{module.addon && <> <i className="fa fa-tag rgaa-muted" title={ui('AddonBadge')} aria-hidden="true" /><span className="sr-only">{ui('AddonBadge')}</span></>}</span>
+      <Chip tone={using ? 'ok' : choice === 'NotApplicable' ? 'muted' : 'info'} title={choice === 'NotApplicable' && reasons?.[module.id] ? ui(`ScopeReason.${reasons[module.id]}`) : undefined}>{ui(choice)}</Chip>
+    </div>
+    {using && (status.measurable > 0
+      ? <div className="rgaa-readiness__line"><ProgressBar value={status.setUp} total={status.measurable} label={format(ui('FeaturesSetUp'), status.setUp, status.measurable)} />
+        <span>{format(ui('FeaturesSetUp'), status.setUp, status.measurable)}</span></div>
+      : <div className="rgaa-readiness__line"><ModuleStatusChip state={status.state} ui={ui} /></div>)}
+    {counts.total > 0
+      ? <div className="rgaa-readiness__line"><StatusBar thin counts={counts} label={countsLabel(counts, ui)} />
+        <span>{countsLabel(counts, ui)}{onShowModule && <> <button type="button" className="btn btn-link btn-xs" onClick={() => onShowModule(module.id)}>{ui('ViewChecks')}</button></>}</span></div>
+      : using && <div className="rgaa-readiness__line rgaa-muted">{moduleFindings.length > 0 ? ui('ChecksNotApplicable') : ui('NoAutomatedChecks')}</div>}
+  </li>;
+  const others = rows.filter(r => !r.using);
+  return <>
     {tiers.map(tier => {
-      const rows = modules.filter(m => m.tier === tier);
-      if (rows.length === 0) return null;
-      return <tbody key={tier}>
-        <tr className="rgaa-tier-row"><th colSpan={5} scope="colgroup">{ui(`Tier.${tier}`)}</th></tr>
-        {rows.map(module => {
-          const choice: Choice = module.id === 'security' ? 'UseNow' : choices[module.id] ?? 'LearnLater';
-          const using = choice === 'UseNow';
-          const moduleFindings = findings.filter(f => f.areaId === module.id && (using || f.scopeIndependent));
-          const counts = countFindings(moduleFindings);
-          const status = moduleStatus(module, features, setup, moduleFindings);
-          return <tr key={module.id} className={using ? undefined : 'rgaa-dim'}>
-            <th scope="row">{t(module.labelKey)}{module.addon && <> <Chip tone="info" icon="fa-tag">{ui('AddonBadge')}</Chip></>}</th>
-            <td><Chip tone={using ? 'ok' : choice === 'NotApplicable' ? 'muted' : 'info'} title={choice === 'NotApplicable' && reasons?.[module.id] ? ui(`ScopeReason.${reasons[module.id]}`) : undefined}>{ui(choice)}</Chip></td>
-            <td style={{ minWidth: 130 }}>{using && status.measurable > 0 ? <>
-              <ProgressBar value={status.setUp} total={status.measurable} label={format(ui('FeaturesSetUp'), status.setUp, status.measurable)} />
-              <span className="rgaa-small">{format(ui('FeaturesSetUp'), status.setUp, status.measurable)}</span>
-            </> : using ? <ModuleStatusChip state={status.state} ui={ui} /> : <span className="rgaa-muted rgaa-small">{ui('OutsideScope')}</span>}</td>
-            <td style={{ minWidth: 140 }}>{counts.total > 0 ? <>
-              <StatusBar counts={counts} label={countsLabel(counts, ui)} />
-              <span className="rgaa-small">{countsLabel(counts, ui)}</span>
-            </> : <span className="rgaa-muted rgaa-small">{!using ? '' : moduleFindings.length > 0 ? ui('ChecksNotApplicable') : ui('NoAutomatedChecks')}</span>}</td>
-            <td className="text-right">{onShowModule && counts.total > 0 && <button type="button" className="btn btn-white btn-xs" onClick={() => onShowModule(module.id)}>{ui('ViewChecks')}</button>}</td>
-          </tr>;
-        })}
-      </tbody>;
+      const scoped = rows.filter(r => r.using && r.module.tier === tier);
+      return scoped.length > 0 && <section key={tier} className="rgaa-readiness" aria-label={ui(`Tier.${tier}`)}>
+        <h6 className="rgaa-readiness__tier">{ui(`Tier.${tier}`)}</h6>
+        <ul>{scoped.map(row)}</ul>
+      </section>;
     })}
-  </table></div>;
+    {others.length > 0 && <details className="rgaa-readiness rgaa-readiness__others">
+      <summary>{ui('OutsideScope')} <span className="rgaa-history-list__count">{others.length}</span></summary>
+      <ul>{others.map(row)}</ul>
+    </details>}
+  </>;
 }

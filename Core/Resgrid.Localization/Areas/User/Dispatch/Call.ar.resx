@@ -549,4 +549,28 @@
   <data name="NearestUnitsCallLocation" xml:space="preserve">
     <value>موقع البلاغ</value>
   </data>
+  <data name="AllCallLabel" xml:space="preserve">
+    <value>نداء عام</value>
+  </data>
+  <data name="AllCallButton" xml:space="preserve">
+    <value>نداء عام (إرسال إلى الجميع)</value>
+  </data>
+  <data name="AllCallHelp" xml:space="preserve">
+    <value>جميع قوائم الإرسال مخفية. فعّل النداء العام لإرسال هذا البلاغ إلى الجميع، أو اتركه متوقفًا لحفظ بلاغ للعلم فقط لا يُنبَّه فيه أحد.</value>
+  </data>
+  <data name="AllCallEditHelp" xml:space="preserve">
+    <value>فعّل النداء العام لإضافة الجميع إلى هذا البلاغ وتنبيههم. اتركه متوقفًا للإبقاء على مستلمي البلاغ الحاليين.</value>
+  </data>
+  <data name="DestinationAvailabilityLimited" xml:space="preserve">
+    <value>محدود</value>
+  </data>
+  <data name="DestinationAvailabilityDiversion" xml:space="preserve">
+    <value>تحويل</value>
+  </data>
+  <data name="DestinationAvailabilityClosed" xml:space="preserve">
+    <value>مغلق</value>
+  </data>
+  <data name="DestinationAvailabilityLink" xml:space="preserve">
+    <value>توفر الوجهات</value>
+  </data>
 </root>

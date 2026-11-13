@@ -238,5 +238,13 @@
 		/// system defaults.
 		/// </summary>
 		MappingProviderOverrides = 125,
+
+		/// <summary>
+		/// Cached scalar, Dispatch Settings screen: "true" turns on transport destination checks (<see cref="TransportDestinationRules"/>).
+		/// When a unit reports a Transporting or At Hospital status to a destination POI other than its call's assigned
+		/// destination, the apps require a reason (the status note) and Resgrid adds a call note recording the change. Missing =
+		/// false (the apps still pre-select the call's destination and show the difference, nothing is required or recorded).
+		/// </summary>
+		TransportDestinationChecks = 126,
 	}
 }

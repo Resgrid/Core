@@ -62,9 +62,18 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 			FieldPolicy = new NewCallFieldPolicy();
 		}
 
+		/// <summary>
+		/// "All Call": dispatch everyone in the department. Offered only when the department hides every recipient list;
+		/// left off, the call pages nobody (an informational call).
+		/// </summary>
+		public bool AllCall { get; set; }
+
 		public bool IsFieldVisible(string key) => FieldPolicy == null || FieldPolicy.IsVisible(key);
 
 		public bool IsFieldRequired(string key) => FieldPolicy != null && FieldPolicy.IsRequired(key);
+
+		/// <summary>Every recipient list is hidden, so the form offers the optional All Call instead.</summary>
+		public bool OffersAllCall => FieldPolicy != null && FieldPolicy.AreAllDispatchTargetsHidden;
 
 		/// <summary>
 		/// The pin the form posted, in the call's "lat,lon" form; null when none was placed. The form posts the pin as

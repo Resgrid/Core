@@ -948,7 +948,7 @@
     <value>Kontaktdaten des Melders</value>
   </data>
   <data name="NewCallField_externalId" xml:space="preserve">
-    <value>Externe Einsatz-ID</value>
+    <value>Einsatzkennung (externe ID)</value>
   </data>
   <data name="NewCallField_incidentId" xml:space="preserve">
     <value>Vorgangs-ID</value>
@@ -1312,6 +1312,12 @@
   </data>
   <data name="CloseCallWhenUnitsClearHelp" xml:space="preserve">
     <value>Ein aktiver Einsatz schließt sich selbst, wenn die letzte alarmierte Einheit meldet, dass sie wieder einsatzbereit oder außer Dienst ist (ein Status mit dem Basistyp Verfügbar, Auf der Wache, Freigegeben, Nicht verfügbar oder Wartung). Alle anderen alarmierten Einheiten müssen seit ihrer Alarmierung ebenfalls das Ende gemeldet haben. Es zählen nur Einheiten: Ein Einsatz ohne alarmierte Einheit, ein Einsatz mit aktiver Einsatzleitung oder eine Einheit, die noch zurückfährt oder transportiert, bleibt für den Disponenten offen.</value>
+  </data>
+  <data name="TransportDestinationChecksLabel" xml:space="preserve">
+    <value>Prüfung des Transportziels</value>
+  </data>
+  <data name="TransportDestinationChecksHelp" xml:space="preserve">
+    <value>Wenn eine Einheit einen Status mit dem Basistyp Transport oder Im Krankenhaus mit einem anderen Ziel als dem im Einsatz zugewiesenen setzt, verlangen die Apps vor dem Speichern eine Begründung (die Statusnotiz), und die Änderung wird dem Einsatz als Notiz hinzugefügt. Die Apps wählen das zugewiesene Ziel des Einsatzes für diese Status in jedem Fall vor.</value>
   </data>
   <data name="DispatchRenotifyHeader" xml:space="preserve">
     <value>Erneute Alarmierung</value>
@@ -2563,5 +2569,44 @@
   </data>
   <data name="ProvidersErrorGeocodingKey" xml:space="preserve">
     <value>Geben Sie den API-Schlüssel für diesen Anbieter der Adresssuche ein.</value>
+  </data>
+  <data name="NewCallField_mapPage" xml:space="preserve">
+    <value>Kartenseite</value>
+  </data>
+  <data name="NewCallField_primaryContact" xml:space="preserve">
+    <value>Hauptkontakt</value>
+  </data>
+  <data name="NewCallField_additionalContacts" xml:space="preserve">
+    <value>Weitere Kontakte</value>
+  </data>
+  <data name="NewCallField_checkInTimers" xml:space="preserve">
+    <value>Check-in-Timer</value>
+  </data>
+  <data name="NewCallField_part2Consent" xml:space="preserve">
+    <value>Einwilligung nach 42 CFR Part 2</value>
+  </data>
+  <data name="NewCallField_pendingCall" xml:space="preserve">
+    <value>Als ausstehend speichern</value>
+  </data>
+  <data name="NewCallField_dispatchPersonnel" xml:space="preserve">
+    <value>Alarmierung an Personal</value>
+  </data>
+  <data name="NewCallField_dispatchGroups" xml:space="preserve">
+    <value>Alarmierung an Gruppen</value>
+  </data>
+  <data name="NewCallField_dispatchRoles" xml:space="preserve">
+    <value>Alarmierung an Rollen</value>
+  </data>
+  <data name="NewCallField_dispatchUnits" xml:space="preserve">
+    <value>Alarmierung an Einheiten</value>
+  </data>
+  <data name="NewCallFieldHideOnly" xml:space="preserve">
+    <value>Dieses Feld kann ausgeblendet, aber nicht als Pflichtfeld festgelegt werden.</value>
+  </data>
+  <data name="NewCallFieldFollowsLists" xml:space="preserve">
+    <value>Sichtbar, solange eine Alarmierungsliste sichtbar ist</value>
+  </data>
+  <data name="NewCallDispatchListsHiddenWarning" xml:space="preserve">
+    <value>Alle Alarmierungslisten (Personal, Gruppen, Rollen und Einheiten) sind ausgeblendet. Die Einsatzformulare bieten stattdessen eine optionale Schaltfläche „Vollalarm“: Damit geht der Einsatz an alle, ohne sie wird er nur zur Information gespeichert und niemand wird alarmiert. Ausrückeordnungen mit automatischer Alarmierung alarmieren ihre Einheiten weiterhin.</value>
   </data>
 </root>

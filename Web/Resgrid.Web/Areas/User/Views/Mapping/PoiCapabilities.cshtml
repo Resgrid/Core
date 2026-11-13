@@ -1,0 +1,113 @@
+@model Resgrid.Web.Areas.User.Models.Mapping.PoiCapabilitiesView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.Mapping> localizer
+@{
+	ViewBag.Title = "Resgrid | " + localizer["PoiCapabilities"];
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-6">
+		<h2>@localizer["PoiCapabilities"]</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+			</li>
+			<li>
+				<a asp-controller="Mapping" asp-action="Index" asp-route-area="User">@localizer["MappingHeader"]</a>
+			</li>
+			<li>
+				<a asp-controller="Mapping" asp-action="POIs" asp-route-area="User">@localizer["POIsHeader"]</a>
+			</li>
+			<li class="active">
+				<strong>@localizer["PoiCapabilities"]</strong>
+			</li>
+		</ol>
+	</div>
+	<div class="col-sm-6">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			<a class="btn btn-default" asp-controller="Mapping" asp-action="Destinations" asp-route-area="User">@localizer["DestinationAvailability"]</a>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<p>@localizer["PoiCapabilitiesHelp"]</p>
+
+					@if (!String.IsNullOrEmpty(Model.Message))
+					{
+						<div class="alert alert-success">@Model.Message</div>
+					}
+					@if (!String.IsNullOrEmpty(Model.ErrorMessage))
+					{
+						<div class="alert alert-danger">@Model.ErrorMessage</div>
+					}
+
+					<form id="addPoiCapabilityForm" class="form-inline" method="post" asp-controller="Mapping" asp-action="SavePoiCapability" asp-route-area="User" style="margin-bottom: 15px;">
+						@Html.AntiForgeryToken()
+						<div class="form-group">
+							<label class="sr-only" for="newPoiCapabilityName">@localizer["Name"]</label>
+							<input type="text" id="newPoiCapabilityName" name="name" class="form-control" maxlength="@PoiCapability.MaxNameLength" required placeholder="@localizer["PoiCapabilityNamePlaceholder"]" />
+						</div>
+						<div class="form-group">
+							<label class="sr-only" for="newPoiCapabilitySort">@localizer["SortOrder"]</label>
+							<input type="number" id="newPoiCapabilitySort" name="sort" class="form-control" style="width: 110px;" step="1" placeholder="@localizer["SortOrder"]" title="@localizer["PoiCapabilitySortHelp"]" />
+						</div>
+						<button type="submit" class="btn btn-success">@localizer["AddPoiCapability"]</button>
+					</form>
+
+					@if (Model.Capabilities.Any())
+					{
+						<div class="table-responsive">
+							<table class="table table-striped" id="poiCapabilitiesTable">
+								<thead>
+									<tr>
+										<th>@localizer["Name"]</th>
+										<th style="width: 130px;">@localizer["SortOrder"]</th>
+										<th style="width: 110px;">@localizer["PointCount"]</th>
+										<th class="span1"></th>
+									</tr>
+								</thead>
+								<tbody>
+									@foreach (var capability in Model.Capabilities)
+									{
+										var formId = "poiCapability-" + capability.PoiCapabilityId;
+										var poiCount = Model.PoiCounts.TryGetValue(capability.PoiCapabilityId ?? string.Empty, out var counted) ? counted : 0;
+										<tr>
+											<td>
+												<input type="text" name="name" form="@formId" class="form-control input-sm" maxlength="@PoiCapability.MaxNameLength" required value="@capability.Name" aria-label="@localizer["Name"]" />
+											</td>
+											<td>
+												<input type="number" name="sort" form="@formId" class="form-control input-sm" step="1" value="@capability.Sort" aria-label="@localizer["SortOrder"]" />
+											</td>
+											<td>@poiCount</td>
+											<td style="white-space: nowrap;">
+												<form id="@formId" method="post" asp-controller="Mapping" asp-action="SavePoiCapability" asp-route-area="User" style="display: inline;">
+													@Html.AntiForgeryToken()
+													<input type="hidden" name="poiCapabilityId" value="@capability.PoiCapabilityId" />
+													<button type="submit" class="btn btn-xs btn-primary">@localizer["Save"]</button>
+												</form>
+												<form method="post" asp-controller="Mapping" asp-action="DeletePoiCapability" asp-route-area="User" style="display: inline;">
+													@Html.AntiForgeryToken()
+													<input type="hidden" name="poiCapabilityId" value="@capability.PoiCapabilityId" />
+													<button type="submit" class="btn btn-xs btn-danger" data-confirm="@string.Format(localizer["DeletePoiCapabilityConfirm"].Value, capability.Name, poiCount)">@localizer["Delete"]</button>
+												</form>
+											</td>
+										</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+						<p class="text-muted"><small>@localizer["PoiCapabilitySortHelp"]</small></p>
+					}
+					else
+					{
+						<p class="text-muted" id="noPoiCapabilities">@localizer["NoPoiCapabilities"]</p>
+					}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1039,7 +1039,7 @@
     <value>Datos de contacto del informante</value>
   </data>
   <data name="NewCallField_externalId" xml:space="preserve">
-    <value>ID externo de la llamada</value>
+    <value>Identificador de llamada (ID externo)</value>
   </data>
   <data name="NewCallField_incidentId" xml:space="preserve">
     <value>ID del incidente</value>
@@ -1370,6 +1370,12 @@
   </data>
   <data name="CloseCallWhenUnitsClearHelp" xml:space="preserve">
     <value>Una llamada activa se cierra sola cuando la última unidad despachada a ella informa que está de nuevo en servicio o fuera de servicio (un estado cuyo tipo base es Disponible, En cuartel, Liberada, No disponible o Mantenimiento). Todas las demás unidades despachadas también deben haber informado que terminaron desde su despacho. Solo cuentan las unidades: una llamada sin unidades despachadas, una llamada con un mando de incidente activo o una unidad que aún regresa o transporta mantiene la llamada abierta para el despachador.</value>
+  </data>
+  <data name="TransportDestinationChecksLabel" xml:space="preserve">
+    <value>Comprobación del destino de traslado</value>
+  </data>
+  <data name="TransportDestinationChecksHelp" xml:space="preserve">
+    <value>Cuando una unidad establece un estado cuyo tipo base es Transportando o En el hospital con un destino distinto del asignado en su llamada, las aplicaciones piden un motivo (la nota del estado) antes de guardar y el cambio se añade a la llamada como nota. Las aplicaciones preseleccionan el destino asignado de la llamada para estos estados en cualquier caso.</value>
   </data>
   <data name="DispatchRenotifyHeader" xml:space="preserve">
     <value>Renotificación de despacho</value>
@@ -2621,5 +2627,44 @@
   </data>
   <data name="ProvidersErrorGeocodingKey" xml:space="preserve">
     <value>Ingrese la clave API de este proveedor de búsqueda de direcciones.</value>
+  </data>
+  <data name="NewCallField_mapPage" xml:space="preserve">
+    <value>Página del mapa</value>
+  </data>
+  <data name="NewCallField_primaryContact" xml:space="preserve">
+    <value>Contacto principal</value>
+  </data>
+  <data name="NewCallField_additionalContacts" xml:space="preserve">
+    <value>Contactos adicionales</value>
+  </data>
+  <data name="NewCallField_checkInTimers" xml:space="preserve">
+    <value>Temporizadores de registro</value>
+  </data>
+  <data name="NewCallField_part2Consent" xml:space="preserve">
+    <value>Consentimiento 42 CFR Part 2</value>
+  </data>
+  <data name="NewCallField_pendingCall" xml:space="preserve">
+    <value>Guardar como pendiente</value>
+  </data>
+  <data name="NewCallField_dispatchPersonnel" xml:space="preserve">
+    <value>Despachar a personal</value>
+  </data>
+  <data name="NewCallField_dispatchGroups" xml:space="preserve">
+    <value>Despachar a grupos</value>
+  </data>
+  <data name="NewCallField_dispatchRoles" xml:space="preserve">
+    <value>Despachar a roles</value>
+  </data>
+  <data name="NewCallField_dispatchUnits" xml:space="preserve">
+    <value>Despachar a unidades</value>
+  </data>
+  <data name="NewCallFieldHideOnly" xml:space="preserve">
+    <value>Este campo se puede ocultar, pero no hacer obligatorio.</value>
+  </data>
+  <data name="NewCallFieldFollowsLists" xml:space="preserve">
+    <value>Visible con cualquier lista de despacho</value>
+  </data>
+  <data name="NewCallDispatchListsHiddenWarning" xml:space="preserve">
+    <value>Todas las listas de despacho (personal, grupos, roles y unidades) están ocultas. Los formularios de llamada ofrecerán en su lugar un botón opcional «Llamada general»: con él la llamada va a todos; sin él, la llamada se guarda solo como información y no se avisa a nadie. Las tarjetas de despacho que despachan automáticamente siguen enviando sus unidades.</value>
   </data>
 </root>

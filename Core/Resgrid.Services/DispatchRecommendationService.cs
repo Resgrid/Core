@@ -1174,6 +1174,8 @@ namespace Resgrid.Services
 			// Ranked on response time by default: the turnout for where the unit is plus estimated travel. With no turnout
 			// configured this orders exactly as distance does; with one, a unit already out can beat a nearer unit that
 			// still has to leave its station. A department that ranks by distance gets the nearest unit whatever its turnout.
+			// Response compares in whole seconds (UnitResponseOrigin.RankingSeconds), as the screens show it: units level
+			// on the second go nearest first.
 			var byDistance = context.Config.RanksByDistance;
 			var ranked = located
 				.Select(c =>
@@ -1189,7 +1191,7 @@ namespace Resgrid.Services
 				})
 				.Where(x => context.Config.MaxRadiusMeters <= 0 || x.Distance <= context.Config.MaxRadiusMeters)
 				.OrderBy(x => IsUnitInRestPeriod(context, x.Candidate.Unit.UnitId) ? 1 : 0)
-				.ThenBy(x => byDistance ? x.Distance : x.EstimatedResponse)
+				.ThenBy(x => byDistance ? x.Distance : UnitResponseOrigin.RankingSeconds(x.EstimatedResponse))
 				.ThenBy(x => byDistance ? x.EstimatedResponse : x.Distance)
 				.ToList();
 
@@ -1221,7 +1223,7 @@ namespace Resgrid.Services
 					// dropping to the end of the shortlist, where it would lose to slower units with a route.
 					var reranked = shortlist
 						.OrderBy(x => IsUnitInRestPeriod(context, x.Candidate.Unit.UnitId) ? 1 : 0)
-						.ThenBy(x => etaByUnitId.TryGetValue(x.Candidate.Unit.UnitId, out var eta) ? x.Candidate.TurnoutSeconds + eta : x.EstimatedResponse)
+						.ThenBy(x => UnitResponseOrigin.RankingSeconds(etaByUnitId.TryGetValue(x.Candidate.Unit.UnitId, out var eta) ? x.Candidate.TurnoutSeconds + eta : x.EstimatedResponse))
 						.ThenBy(x => x.Distance)
 						.ToList();
 
@@ -1338,7 +1340,7 @@ namespace Resgrid.Services
 					// Same as units: a failed lookup ranks on the straight-line estimate, in seconds like the routed ETAs.
 					var reranked = shortlist
 						.OrderBy(x => IsUserInRestPeriod(context, x.Candidate.UserId) ? 1 : 0)
-						.ThenBy(x => etaByUserId.TryGetValue(x.Candidate.UserId, out var eta) ? eta : UnitResponseOrigin.EstimateTravelSeconds(x.Distance))
+						.ThenBy(x => UnitResponseOrigin.RankingSeconds(etaByUserId.TryGetValue(x.Candidate.UserId, out var eta) ? eta : UnitResponseOrigin.EstimateTravelSeconds(x.Distance)))
 						.ThenBy(x => x.Distance)
 						.ToList();
 

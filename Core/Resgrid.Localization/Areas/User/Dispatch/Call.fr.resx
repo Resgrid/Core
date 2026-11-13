@@ -1107,4 +1107,28 @@
   <data name="NearestUnitsCallLocation" xml:space="preserve">
     <value>Lieu de l'appel</value>
   </data>
+  <data name="AllCallLabel" xml:space="preserve">
+    <value>Appel général</value>
+  </data>
+  <data name="AllCallButton" xml:space="preserve">
+    <value>Appel général (alerter tout le monde)</value>
+  </data>
+  <data name="AllCallHelp" xml:space="preserve">
+    <value>Toutes les listes d'envoi sont masquées. Activez l'appel général pour envoyer cette intervention à tout le monde, ou laissez-le désactivé pour enregistrer une intervention informative qui n'alerte personne.</value>
+  </data>
+  <data name="AllCallEditHelp" xml:space="preserve">
+    <value>Activez l'appel général pour ajouter tout le monde à cette intervention et les alerter. Laissez-le désactivé pour conserver les destinataires actuels.</value>
+  </data>
+  <data name="DestinationAvailabilityLimited" xml:space="preserve">
+    <value>Limité</value>
+  </data>
+  <data name="DestinationAvailabilityDiversion" xml:space="preserve">
+    <value>Délestage</value>
+  </data>
+  <data name="DestinationAvailabilityClosed" xml:space="preserve">
+    <value>Fermé</value>
+  </data>
+  <data name="DestinationAvailabilityLink" xml:space="preserve">
+    <value>Disponibilité des destinations</value>
+  </data>
 </root>

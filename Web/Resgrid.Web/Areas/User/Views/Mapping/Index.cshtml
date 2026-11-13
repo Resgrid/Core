@@ -50,7 +50,11 @@
 			@if (ClaimsAuthorizationHelper.CanViewCalls())
 			{
 				<a title="@visualizationStrings["PageIntro"]" class="btn btn-warning" asp-controller="MapVisualizations" asp-action="Index" asp-route-area="User">@visualizationStrings["PageTitle"]</a>
-				<a title="@closureStrings["PageIntro"]" class="btn btn-danger" asp-controller="RoadClosures" asp-action="Index" asp-route-area="User"><i class="fa fa-road"></i> @closureStrings["PageTitle"]</a>
+				<a title="@closureStrings["PageIntro"]" class="btn btn-danger" asp-controller="RoadClosures" asp-action="Index" asp-route-area="User">@closureStrings["PageTitle"]</a>
+			}
+			@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || ClaimsAuthorizationHelper.CanCreateCall())
+			{
+				<a title="@localizer["DestinationAvailabilityHelp"]" class="btn btn-default" asp-controller="Mapping" asp-action="Destinations" asp-route-area="User">@localizer["DestinationAvailability"]</a>
 			}
 			@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
 			{

@@ -985,15 +985,24 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var result = new NewCallFieldPolicyResult();
 			var policy = await _departmentSettingsService.GetNewCallFieldPolicyAsync(DepartmentId);
 
-			if (policy?.Rules != null)
+			// The effective rule for every key that differs from "shown, optional", not the stored rules: the recipients
+			// section's visibility follows its four lists, and a list the department has not set on its own follows a
+			// section hidden before the lists could be (NewCallFieldPolicy.IsVisible). Clients then read each key as is.
+			if (policy != null && !policy.IsEmpty)
 			{
-				foreach (var rule in policy.Rules)
+				foreach (var key in NewCallFieldKeys.All)
 				{
+					var visible = policy.IsVisible(key);
+					var required = policy.IsRequired(key);
+
+					if (visible && !required)
+						continue;
+
 					result.Data.Rules.Add(new NewCallFieldRuleData
 					{
-						Key = rule.Key,
-						Visible = rule.Visible,
-						Required = policy.IsRequired(rule.Key)
+						Key = key,
+						Visible = visible,
+						Required = required
 					});
 				}
 			}
@@ -1082,6 +1091,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 				ExternalId = newCallInput.ExternalId,
 				IncidentId = newCallInput.IncidentId,
 				ReferenceId = newCallInput.ReferenceId,
+				MapPage = newCallInput.MapPage,
+				PrimaryContactId = newCallInput.ContactId,
 				DestinationPoiId = newCallInput.DestinationPoiId,
 				IndoorMapZoneId = newCallInput.IndoorMapZoneId,
 				HasProtocols = protocols.Any(),
@@ -1095,6 +1106,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 			// requirement it cannot meet would stop it creating calls at all.
 			if (newCallInput.IndoorMapZoneId == null)
 				fieldValues.Unsupported(NewCallFieldKeys.IndoorLocation);
+
+			if (newCallInput.MapPage == null)
+				fieldValues.Unsupported(NewCallFieldKeys.MapPage);
+
+			if (newCallInput.ContactId == null)
+				fieldValues.Unsupported(NewCallFieldKeys.PrimaryContact);
 
 			if (newCallInput.ProtocolIds == null)
 				fieldValues.Unsupported(NewCallFieldKeys.Protocols);
@@ -1140,6 +1157,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (!string.IsNullOrWhiteSpace(newCallInput.ReferenceId))
 				call.ReferenceNumber = newCallInput.ReferenceId;
+
+			if (!string.IsNullOrWhiteSpace(newCallInput.MapPage))
+				call.MapPage = newCallInput.MapPage;
 
 			if (!string.IsNullOrWhiteSpace(newCallInput.Address))
 				call.Address = newCallInput.Address;
@@ -1223,15 +1243,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 			call.RoleDispatches = new List<CallDispatchRole>();
 			call.UnitDispatches = new List<CallDispatchUnit>();
 
-			// An empty list means "everyone" for an immediate call (older clients send nothing), but for a pending call
-			// it means no proposed recipients yet: the dispatcher who picks it up chooses them. The system key never pages
-			// everyone on its own, but a pending call pages nobody until a dispatcher sends it, so "0" is honored there.
-			// A list with no entries ("|") takes the explicit branch below and dispatches nobody: clients send it for a
-			// call the dispatcher chose to send to no one.
-			if ((newCallInput.DispatchList == "0" && (!IsSystemApiKeyRequest || isPending)) ||
-				(!IsSystemApiKeyRequest && !isPending && string.IsNullOrWhiteSpace(newCallInput.DispatchList)))
+			// Everyone ("All Call") is only ever explicit: "0". A blank list, or one with no entries ("|"), dispatches
+			// nobody -- an informational call, or for a pending call no proposed recipients yet. Older clients that send a
+			// blank list when nothing was picked used to page the whole department; they no longer do (2026-11-13). The
+			// system key never pages everyone on its own, but a pending call pages nobody until a dispatcher sends it, so
+			// "0" is honored there.
+			if (DispatchListHelper.IsEveryone(newCallInput.DispatchList) && (!IsSystemApiKeyRequest || isPending))
 			{
-				// Use case, existing clients and non-ionic2 app this will be null dispatch all users. Or we've specified everyone (0).
 				foreach (var u in users)
 				{
 					var cd = new CallDispatch { UserId = u.UserId };
@@ -1239,7 +1257,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 					call.Dispatches.Add(cd);
 				}
 			}
-			else if (!string.IsNullOrWhiteSpace(newCallInput.DispatchList) && newCallInput.DispatchList != "0")
+			else if (!string.IsNullOrWhiteSpace(newCallInput.DispatchList) && !DispatchListHelper.IsEveryone(newCallInput.DispatchList))
 			{
 				var dispatch = newCallInput.DispatchList.Split(char.Parse("|"));
 
@@ -1642,6 +1660,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!string.IsNullOrWhiteSpace(editCallInput.ReferenceId))
 				call.ReferenceNumber = editCallInput.ReferenceId;
 
+			if (!string.IsNullOrWhiteSpace(editCallInput.MapPage))
+				call.MapPage = editCallInput.MapPage;
+
 			var addressChanged = !string.IsNullOrWhiteSpace(editCallInput.Address)
 				&& !string.Equals(editCallInput.Address, call.Address, StringComparison.Ordinal);
 
@@ -1759,11 +1780,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var existingUnitDispatches = new List<CallDispatchUnit>(call.UnitDispatches ?? new List<CallDispatchUnit>());
 			var existingRoleDispatches = new List<CallDispatchRole>(call.RoleDispatches ?? new List<CallDispatchRole>());
 
-			if ((isPending || !fieldPolicy.IsVisible(NewCallFieldKeys.DispatchList)) && string.IsNullOrWhiteSpace(editCallInput.DispatchList))
+			if (string.IsNullOrWhiteSpace(editCallInput.DispatchList))
 			{
-				// No list on an edit of a pending call keeps its proposed recipients (an empty list would otherwise mean
-				// "everyone"). The same when the department hides the dispatch list: the edit form never had one, so
-				// treating the blank as "everyone" would page the whole department on every edit.
+				// No list keeps the call's recipients. Everyone ("All Call") is only ever explicit ("0"): a blank list used
+				// to page the whole department on an edit from a client with no picker (a hidden list, an older build).
 				if (call.Dispatches == null)
 					call.Dispatches = new List<CallDispatch>();
 
@@ -1776,7 +1796,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				if (call.UnitDispatches == null)
 					call.UnitDispatches = new List<CallDispatchUnit>();
 			}
-			else if (string.IsNullOrWhiteSpace(editCallInput.DispatchList) || editCallInput.DispatchList == "0")
+			else if (DispatchListHelper.IsEveryone(editCallInput.DispatchList))
 			{
 				if (call.Dispatches == null)
 					call.Dispatches = new List<CallDispatch>();
@@ -1791,10 +1811,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 					call.UnitDispatches = new List<CallDispatchUnit>();
 
 				var users = await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId);
-				// Use case, existing clients and non-ionic2 app this will be null dispatch all users. Or we've specified everyone (0).
+				// "0": everyone. Someone already on the call stays as they are (an All Call on an edit adds everyone else).
 				foreach (var u in users)
 				{
-					var cd = new CallDispatch { UserId = u.UserId };
+					if (call.Dispatches.Any(x => x.UserId == u.UserId))
+						continue;
+
+					var cd = new CallDispatch { CallId = call.CallId, UserId = u.UserId };
 
 					call.Dispatches.Add(cd);
 				}
@@ -1810,12 +1833,23 @@ namespace Resgrid.Web.Services.Controllers.v4
 				var unitsToDispatch = DispatchListHelper.ResolveIds(dispatch,"U:",
 					name => units.FirstOrDefault(x => string.Equals(x.Name?.Trim(), name, StringComparison.OrdinalIgnoreCase))?.UnitId);
 
+				// A recipient list the department hides is not on the client's edit form, so the list it sends has none of
+				// that kind: the call keeps the ones it has (a run card may have added them) rather than losing them.
+				bool KeepsHiddenList(string key, bool sentAny) => !sentAny && !fieldPolicy.IsVisible(key);
+
+				var keepUsers = KeepsHiddenList(NewCallFieldKeys.DispatchPersonnel, usersToDispatch.Any());
+				var keepGroups = KeepsHiddenList(NewCallFieldKeys.DispatchGroups, groupsToDispatch.Any());
+				var keepRoles = KeepsHiddenList(NewCallFieldKeys.DispatchRoles, rolesToDispatch.Any());
+				var keepUnits = KeepsHiddenList(NewCallFieldKeys.DispatchUnits, unitsToDispatch.Any());
+
 				try
 				{
 					if (call.Dispatches == null)
 						call.Dispatches = new List<CallDispatch>();
 
-					var dispatchesToRemove = call.Dispatches.Select(x => x.UserId).Where(y => !usersToDispatch.Contains(y)).ToList();
+					var dispatchesToRemove = keepUsers
+						? new List<string>()
+						: call.Dispatches.Select(x => x.UserId).Where(y => !usersToDispatch.Contains(y)).ToList();
 
 					foreach (var userId in dispatchesToRemove)
 					{
@@ -1845,7 +1879,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 					if (call.GroupDispatches == null)
 						call.GroupDispatches = new List<CallDispatchGroup>();
 
-					var dispatchesToRemove = call.GroupDispatches.Select(x => x.DepartmentGroupId).Where(y => !groupsToDispatch.Contains(y)).ToList();
+					var dispatchesToRemove = keepGroups
+						? new List<int>()
+						: call.GroupDispatches.Select(x => x.DepartmentGroupId).Where(y => !groupsToDispatch.Contains(y)).ToList();
 
 					foreach (var id in dispatchesToRemove)
 					{
@@ -1874,7 +1910,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 					if (call.RoleDispatches == null)
 						call.RoleDispatches = new List<CallDispatchRole>();
 
-					var dispatchesToRemove = call.RoleDispatches.Select(x => x.RoleId).Where(y => !rolesToDispatch.Contains(y)).ToList();
+					var dispatchesToRemove = keepRoles
+						? new List<int>()
+						: call.RoleDispatches.Select(x => x.RoleId).Where(y => !rolesToDispatch.Contains(y)).ToList();
 
 					foreach (var id in dispatchesToRemove)
 					{
@@ -1903,7 +1941,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 					if (call.UnitDispatches == null)
 						call.UnitDispatches = new List<CallDispatchUnit>();
 
-					var dispatchesToRemove = call.UnitDispatches.Select(x => x.UnitId).Where(y => !unitsToDispatch.Contains(y)).ToList();
+					var dispatchesToRemove = keepUnits
+						? new List<int>()
+						: call.UnitDispatches.Select(x => x.UnitId).Where(y => !unitsToDispatch.Contains(y)).ToList();
 
 					foreach (var id in dispatchesToRemove)
 					{
@@ -1947,6 +1987,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 				ExternalId = call.ExternalIdentifier,
 				IncidentId = call.IncidentNumber,
 				ReferenceId = call.ReferenceNumber,
+				MapPage = call.MapPage,
+				PrimaryContactId = editCallInput.ContactId ?? call.Contacts?.FirstOrDefault(x => x.CallContactType == 0)?.ContactId,
 				DestinationPoiId = call.DestinationPoiId,
 				IndoorMapZoneId = call.IndoorMapZoneId,
 				HasProtocols = call.Protocols?.Any() ?? false,
@@ -1960,6 +2002,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 			// would stop it saving any edit.
 			if (editCallInput.IndoorMapZoneId == null)
 				fieldValues.Unsupported(NewCallFieldKeys.IndoorLocation);
+
+			if (editCallInput.MapPage == null)
+				fieldValues.Unsupported(NewCallFieldKeys.MapPage);
+
+			if (editCallInput.ContactId == null)
+				fieldValues.Unsupported(NewCallFieldKeys.PrimaryContact);
 
 			if (editCallInput.ProtocolIds == null)
 				fieldValues.Unsupported(NewCallFieldKeys.Protocols);
@@ -1981,7 +2029,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 			// Contacts plan Phase A (A5): replace the contact links only when the input carries them.
 			if (editCallInput.ContactId != null || editCallInput.AdditionalContactIds != null)
 			{
-				var contactLinks = await BuildCallContactLinksAsync(DepartmentId, editCallInput.ContactId, editCallInput.AdditionalContactIds);
+				// A contact picker the department hides is not on the client's edit form: when it sends nothing for it, the
+				// call keeps the contact(s) it has of that kind instead of losing them to the other picker's replacement.
+				var primaryContactId = editCallInput.ContactId;
+				if (primaryContactId == null && !fieldPolicy.IsVisible(NewCallFieldKeys.PrimaryContact))
+					primaryContactId = call.Contacts?.FirstOrDefault(x => x.CallContactType == 0)?.ContactId;
+
+				var additionalContactIds = editCallInput.AdditionalContactIds;
+				if (additionalContactIds == null && !fieldPolicy.IsVisible(NewCallFieldKeys.AdditionalContacts))
+					additionalContactIds = call.Contacts?.Where(x => x.CallContactType == 1).Select(x => x.ContactId).ToList();
+
+				var contactLinks = await BuildCallContactLinksAsync(DepartmentId, primaryContactId, additionalContactIds);
 				if (contactLinks == null)
 					return BadRequest("One or more contacts do not belong to this department.");
 
@@ -3162,6 +3220,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			callResult.ContactName = call.ContactName;
 			callResult.ContactInfo = call.ContactNumber;
 			callResult.ReferenceId = call.ReferenceNumber;
+			callResult.MapPage = call.MapPage;
 			callResult.ExternalId = call.ExternalIdentifier;
 			callResult.SubjectIdentifiers = ToSubjectIdentifiersResult(call.SubjectIdentifiers);
 			callResult.Part2ConsentOnFile = call.Part2ConsentOnFile;

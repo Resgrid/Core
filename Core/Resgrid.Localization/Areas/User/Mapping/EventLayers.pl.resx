@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Map Icon Legend and status / priority map icon pages -->
+    <data name="ImportLayer" xml:space="preserve">
+    <value>Importuj warstwę</value>
+  </data>
+  <data name="ImportLayerHeader" xml:space="preserve">
+    <value>Importuj warstwę</value>
+  </data>
+  <data name="ImportHelp" xml:space="preserve">
+    <value>Prześlij plik KML, KMZ lub GeoJSON (z Google My Maps, Google Earth lub systemu GIS) z trasą, terenem lub punktami wydarzenia. Każdy punkt, linia i wielokąt staje się kształtem warstwy z własną nazwą, opisem i kolorem. Nadaj warstwie daty wydarzenia, a będzie widoczna na każdej mapie w czasie jego trwania.</value>
+  </data>
+  <data name="DetailsHeader" xml:space="preserve">
+    <value>Szczegóły warstwy</value>
+  </data>
+  <data name="LayerFile" xml:space="preserve">
+    <value>Plik</value>
+  </data>
+  <data name="LayerFileHelp" xml:space="preserve">
+    <value>KML, KMZ lub GeoJSON, do {0} MB.</value>
+  </data>
+  <data name="ReplaceFile" xml:space="preserve">
+    <value>Zastąp plik</value>
+  </data>
+  <data name="ReplaceFileHelp" xml:space="preserve">
+    <value>Opcjonalnie. Nowy plik zastępuje wszystkie kształty warstwy; powyższe dane zostają zachowane.</value>
+  </data>
+  <data name="DeleteHelp" xml:space="preserve">
+    <value>Usunięcie warstwy (Mapy → Warstwy) usuwa wszystkie jej kształty i dane.</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Nazwa</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Opis</value>
+  </data>
+  <data name="Color" xml:space="preserve">
+    <value>Kolor domyślny</value>
+  </data>
+  <data name="ColorHelp" xml:space="preserve">
+    <value>Używany dla kształtów, którym plik nie nadaje własnego koloru.</value>
+  </data>
+  <data name="EventSection" xml:space="preserve">
+    <value>Wydarzenie</value>
+  </data>
+  <data name="StartsOn" xml:space="preserve">
+    <value>Początek</value>
+  </data>
+  <data name="EndsOn" xml:space="preserve">
+    <value>Koniec</value>
+  </data>
+  <data name="EventDatesHelp" xml:space="preserve">
+    <value>W strefie czasowej jednostki ({0}). W czasie wydarzenia warstwa jest widoczna na każdej mapie, niezależnie od ustawienia „Domyślnie włączona”. Pozostaw oba pola puste dla warstwy niezwiązanej z wydarzeniem.</value>
+  </data>
+  <data name="Organizer" xml:space="preserve">
+    <value>Organizator</value>
+  </data>
+  <data name="ContactName" xml:space="preserve">
+    <value>Koordynator / Kontakt</value>
+  </data>
+  <data name="ContactPhone" xml:space="preserve">
+    <value>Telefon kontaktowy</value>
+  </data>
+  <data name="ContactEmail" xml:space="preserve">
+    <value>E-mail kontaktowy</value>
+  </data>
+  <data name="OnByDefault" xml:space="preserve">
+    <value>Domyślnie włączona</value>
+  </data>
+  <data name="OnByDefaultHelp" xml:space="preserve">
+    <value>Pokazuj warstwę po otwarciu każdej mapy, także poza datami wydarzenia.</value>
+  </data>
+  <data name="Searchable" xml:space="preserve">
+    <value>Możliwa do wyszukania</value>
+  </data>
+  <data name="SaveImport" xml:space="preserve">
+    <value>Importuj</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Zapisz</value>
+  </data>
+  <data name="EditShapes" xml:space="preserve">
+    <value>Edytuj kształty</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Szczegóły</value>
+  </data>
+  <data name="SourceFile" xml:space="preserve">
+    <value>Źródło</value>
+  </data>
+  <data name="Drawn" xml:space="preserve">
+    <value>Narysowana na mapie</value>
+  </data>
+  <data name="ShapeCount" xml:space="preserve">
+    <value>Kształty: {0}</value>
+  </data>
+  <data name="EventColumn" xml:space="preserve">
+    <value>Wydarzenie</value>
+  </data>
+  <data name="PhaseUpcoming" xml:space="preserve">
+    <value>Nadchodzące</value>
+  </data>
+  <data name="PhaseActive" xml:space="preserve">
+    <value>Trwa teraz</value>
+  </data>
+  <data name="PhaseEnded" xml:space="preserve">
+    <value>Zakończone</value>
+  </data>
+  <data name="ImportedOn" xml:space="preserve">
+    <value>zaimportowano</value>
+  </data>
+  <data name="FileRequired" xml:space="preserve">
+    <value>Wybierz plik KML, KMZ lub GeoJSON do zaimportowania.</value>
+  </data>
+  <data name="FileTypeUnsupported" xml:space="preserve">
+    <value>Prześlij plik .kml, .kmz, .geojson lub .json.</value>
+  </data>
+  <data name="FileTooLarge" xml:space="preserve">
+    <value>Plik jest większy niż {0} MB.</value>
+  </data>
+  <data name="FileTooManyShapes" xml:space="preserve">
+    <value>Plik ma więcej niż {0} kształtów. Podziel go na kilka warstw.</value>
+  </data>
+  <data name="FileTooManyPoints" xml:space="preserve">
+    <value>Plik ma więcej niż {0} współrzędnych. Uprość linie (potrafi to większość programów GIS) lub podziel go na kilka warstw.</value>
+  </data>
+  <data name="FileNoShapes" xml:space="preserve">
+    <value>Plik nie zawiera punktów, linii ani wielokątów ze współrzędnymi.</value>
+  </data>
+  <data name="FileOnlyAddresses" xml:space="preserve">
+    <value>Miejsca w pliku ({0}) mają adres, ale nie mają współrzędnych (warstwa Google My Maps lokalizowana według adresu). Zaimportuj je jako punkty zainteresowania (Mapy → POI → Importuj), gdzie adresy zostaną wyszukane, albo wyeksportuj mapę ze współrzędnymi.</value>
+  </data>
+  <data name="FileUnreadable" xml:space="preserve">
+    <value>Nie udało się odczytać pliku. Sprawdź, czy to poprawny plik KML, KMZ lub GeoJSON.</value>
+  </data>
+  <data name="EndsBeforeStarts" xml:space="preserve">
+    <value>Wydarzenie nie może skończyć się przed rozpoczęciem.</value>
+  </data>
+  <data name="ContactEmailInvalid" xml:space="preserve">
+    <value>Podaj poprawny adres e-mail.</value>
+  </data>
+  <data name="ColorInvalid" xml:space="preserve">
+    <value>Wybierz kolor.</value>
+  </data>
+  <data name="SaveFailed" xml:space="preserve">
+    <value>Nie udało się zapisać warstwy. Spróbuj ponownie.</value>
+  </data>
+  <data name="ImportedSummary" xml:space="preserve">
+    <value>Zaimportowano „{0}”: punkty: {1}, linie: {2}, wielokąty: {3}.</value>
+  </data>
+  <data name="ReplacedSummary" xml:space="preserve">
+    <value>Zastąpiono kształty „{0}”: punkty: {1}, linie: {2}, wielokąty: {3}.</value>
+  </data>
+  <data name="SavedSummary" xml:space="preserve">
+    <value>Zapisano „{0}”.</value>
+  </data>
+  <data name="SkippedNote" xml:space="preserve">
+    <value>Pominięto znaczniki bez użytecznych współrzędnych: {0}.</value>
+  </data>
+</root>

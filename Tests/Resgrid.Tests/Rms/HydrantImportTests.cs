@@ -95,7 +95,303 @@ namespace Resgrid.Tests.Rms
 			parsed.Rows.Single().Hydrant.Type.Should().Be((int)RmsHydrantType.WetBarrel);
 		}
 
+		[Test]
+		public async Task Csv_from_another_system_imports_known_columns_and_reports_the_rest()
+		{
+			// Header shape of a third-party export a customer uploaded: 15 extra columns used to reject the whole file.
+			const string csv = "number,status,exclude_from_auto_routing,flow_rate,flow_rating_color,hydrant_type,inspection_responsible_shift_id,inspection_responsible_station_id,"
+				+ "last_inspection_date,latitude,location_address,longitude,next_inspection_date,notes,offline_edited_at,route_access_latitude,route_access_longitude,zone,\n"
+				+ "H-1,Active,false,1250,green,Dry Hydrant,,7,2026-05-01,45.5,\"1 River Rd, Rear\",-122.6,2027-05-01,\"Note, with comma\",,45.49,-122.59,North,\n"
+				+ "H-2,Out of Service,true,,,Wet,,,,45.6,,-122.7,,,,,,South,\n";
+			var h = new RmsPreventionHarness();
+
+			var result = await h.HydrantsService.ImportCsvAsync(Dept, Admin, csv);
+
+			result.ValidationFailed.Should().BeFalse();
+			result.Rejected.Should().BeEmpty();
+			result.Created.Should().Be(2);
+			result.TakenOutOfService.Should().Be(1);
+			result.ReturnedToService.Should().Be(0);
+			result.IgnoredColumns.Should().Equal("exclude_from_auto_routing", "inspection_responsible_shift_id",
+				"inspection_responsible_station_id", "last_inspection_date", "next_inspection_date", "notes", "offline_edited_at", "route_access_latitude", "route_access_longitude", "zone");
+			result.UnmappedValues.Should().BeEmpty();
+			var first = h.Hydrants.Rows.Single(x => x.HydrantNumber == "H-1");
+			first.Latitude.Should().Be(45.5m);
+			first.Longitude.Should().Be(-122.6m);
+			first.AddressText.Should().Be("1 River Rd, Rear", "location_address is an alias of address");
+			first.Type.Should().Be((int)RmsHydrantType.DraftingSite, "a dry hydrant is an unpressurized drafting pipe");
+			first.FlowGpm.Should().Be(1250, "flow_rate is an alias of flow_gpm");
+			first.FlowClass.Should().Be((int)RmsHydrantFlowClass.A);
+			first.Notes.Should().BeNull();
+			var second = h.Hydrants.Rows.Single(x => x.HydrantNumber == "H-2");
+			second.Type.Should().Be((int)RmsHydrantType.WetBarrel);
+			second.FlowGpm.Should().BeNull();
+			second.FlowClass.Should().Be((int)RmsHydrantFlowClass.Unknown);
+			first.InService.Should().BeTrue();
+			second.InService.Should().BeFalse();
+			second.OutOfServiceReason.Should().Be("status: Out of Service");
+			second.OutOfServiceSince.Should().NotBeNull();
+		}
+
+		[TestCase("Active", true)]
+		[TestCase("In Service", true)]
+		[TestCase("in-service", true)]
+		[TestCase("Operational", true)]
+		[TestCase("Yes", true)]
+		[TestCase("1", true)]
+		[TestCase("Out of Service", false)]
+		[TestCase("OOS", false)]
+		[TestCase("Temporarily Out of Service", false)]
+		[TestCase("Not In Service", false)]
+		[TestCase("Inactive", false)]
+		[TestCase("Broken", false)]
+		[TestCase("Needs Repair", false)]
+		[TestCase("FALSE", false)]
+		[TestCase("", null)]
+		[TestCase("N/A", null)]
+		public void Foreign_status_values_map_to_service_state(string value, bool? expected)
+		{
+			var batch = HydrantImportParser.Parse($"number,latitude,longitude,status\nH,45,-122,{value}", "csv");
+			batch.Result.Rejected.Should().BeEmpty();
+			batch.Result.UnmappedValues.Should().BeEmpty();
+			batch.Result.IgnoredColumns.Should().BeEmpty();
+			var item = batch.Rows.Single();
+			item.InService.Should().Be(expected);
+			item.Hydrant.OutOfServiceReason.Should().Be(expected == false ? "status: " + value : null);
+		}
+
+		[TestCase("Passed")]
+		[TestCase("Due")]
+		[TestCase("In Service - needs paint")]
+		public void Unrecognized_status_leaves_service_state_alone_and_is_reported(string value)
+		{
+			var batch = HydrantImportParser.Parse($"number,latitude,longitude,Hydrant Status\nH,45,-122,{value}", "csv");
+			batch.Result.ValidationFailed.Should().BeFalse();
+			batch.Rows.Single().InService.Should().BeNull();
+			batch.Result.UnmappedValues.Should().ContainSingle().Which.Should().BeEquivalentTo(new HydrantImportUnmappedValue { Column = "Hydrant Status", Value = value, Rows = 1 });
+		}
+
+		[Test]
+		public async Task Imported_status_changes_service_state_and_counts_the_changes()
+		{
+			var h = new RmsPreventionHarness();
+			await h.HydrantsService.SaveAsync(Dept, Admin, new RmsHydrant { HydrantNumber = "Working", Latitude = 1, Longitude = 2 });
+			await h.HydrantsService.SaveAsync(Dept, Admin, new RmsHydrant { HydrantNumber = "Untouched", Latitude = 1, Longitude = 2 });
+			var repaired = await h.HydrantsService.SaveAsync(Dept, Admin, new RmsHydrant { HydrantNumber = "Repaired", Latitude = 1, Longitude = 2 });
+			await h.HydrantsService.SetServiceStateAsync(Dept, Admin, repaired.RmsHydrantId, false, "Valve stuck");
+			var stillDown = await h.HydrantsService.SaveAsync(Dept, Admin, new RmsHydrant { HydrantNumber = "StillDown", Latitude = 1, Longitude = 2 });
+			await h.HydrantsService.SetServiceStateAsync(Dept, Admin, stillDown.RmsHydrantId, false, "Frozen");
+			var since = Hydrant("StillDown").OutOfServiceSince;
+
+			var result = await h.HydrantsService.ImportCsvAsync(Dept, Admin,
+				"number,latitude,longitude,Status\nWorking,1,2,Broken\nUntouched,1,2,\nRepaired,1,2,Active\nStillDown,1,2,Out of service\nNew,1,2,Inactive\nNewActive,1,2,Active\n");
+
+			result.FailureMessage.Should().BeNull();
+			result.TakenOutOfService.Should().Be(2, "Working was taken out and New was created out of service");
+			result.ReturnedToService.Should().Be(1);
+			Hydrant("Working").InService.Should().BeFalse();
+			Hydrant("Working").OutOfServiceReason.Should().Be("Status: Broken");
+			Hydrant("Working").OutOfServiceSince.Should().NotBeNull();
+			Hydrant("Untouched").InService.Should().BeTrue();
+			Hydrant("Repaired").InService.Should().BeTrue();
+			Hydrant("Repaired").OutOfServiceReason.Should().BeNull();
+			Hydrant("Repaired").OutOfServiceSince.Should().BeNull();
+			Hydrant("StillDown").OutOfServiceReason.Should().Be("Frozen", "a hydrant already out of service keeps its own reason");
+			Hydrant("StillDown").OutOfServiceSince.Should().Be(since);
+			Hydrant("New").InService.Should().BeFalse();
+			Hydrant("New").OutOfServiceReason.Should().Be("Status: Inactive");
+			Hydrant("NewActive").InService.Should().BeTrue();
+
+			RmsHydrant Hydrant(string number) => h.Hydrants.Rows.Single(x => x.HydrantNumber == number);
+		}
+
+		[Test]
+		public async Task Rolled_back_batch_does_not_count_its_service_changes_twice()
+		{
+			var h = new RmsPreventionHarness();
+			var store = new List<RmsHydrant> { new RmsHydrant { RmsHydrantId = "existing", DepartmentId = Dept, HydrantNumber = "H1", Latitude = 1m, Longitude = 2m, InService = true } };
+			List<RmsHydrant> snapshot = null;
+			h.UnitOfWork.Setup(u => u.CreateOrGetConnectionAsync(It.IsAny<CancellationToken>())).Callback(() => snapshot = store.Select(x => x.CloneJson()).ToList()).ReturnsAsync((System.Data.Common.DbConnection)null);
+			h.UnitOfWork.Setup(u => u.DiscardChanges()).Callback(() => { store.Clear(); store.AddRange(snapshot); snapshot = null; });
+			var repository = new Mock<IRmsHydrantsRepository>();
+			repository.Setup(x => x.GetAllLiveAsync(Dept)).ReturnsAsync(() => store.ToList());
+			repository.Setup(x => x.GetByNumberAsync(Dept, It.IsAny<string>())).ReturnsAsync((int _, string n) => store.FirstOrDefault(x => x.HydrantNumber == n));
+			repository.Setup(x => x.GetByNumbersAsync(Dept, It.IsAny<IEnumerable<string>>()))
+				.ReturnsAsync((int _, IEnumerable<string> numbers) => (IReadOnlyDictionary<string, RmsHydrant>)numbers.Select(n => store.FirstOrDefault(x => x.HydrantNumber == n)).Where(x => x != null).ToDictionary(x => x.HydrantNumber));
+			repository.Setup(x => x.InsertAsync(It.IsAny<RmsHydrant>(), It.IsAny<CancellationToken>(), true)).ReturnsAsync((RmsHydrant e, CancellationToken _, bool __) => { store.Add(e); return e; });
+			repository.Setup(x => x.InsertAsync(It.Is<RmsHydrant>(x => x.HydrantNumber == "H3"), It.IsAny<CancellationToken>(), true)).ThrowsAsync(new Exception("secret database details"));
+			repository.Setup(x => x.UpdateAsync(It.IsAny<RmsHydrant>(), It.IsAny<CancellationToken>(), true)).ReturnsAsync((RmsHydrant e, CancellationToken _, bool __) => { store.RemoveAll(x => x.RmsHydrantId == e.RmsHydrantId); store.Add(e); return e; });
+			var service = new RecordsHydrantsService(h.Gate, repository.Object, h.FlowTests, h.Maintenance, h.Attachments, h.UnitOfWork.Object);
+
+			var result = await service.ImportCsvAsync(Dept, Admin, "number,latitude,longitude,status\nH1,1,2,broken\nH2,2,3,inactive\nH3,3,4,broken");
+
+			result.FailureMessage.Should().Contain("row 4");
+			result.TakenOutOfService.Should().Be(2, "only the replayed H1 and H2 count, not the rolled-back batch attempt as well");
+			store.Single(x => x.HydrantNumber == "H1").InService.Should().BeFalse();
+		}
+
+		[TestCase("Light Blue", RmsHydrantFlowClass.AA)]
+		[TestCase("BLUE", RmsHydrantFlowClass.AA)]
+		[TestCase("Class AA", RmsHydrantFlowClass.AA)]
+		[TestCase("green", RmsHydrantFlowClass.A)]
+		[TestCase("A", RmsHydrantFlowClass.A)]
+		[TestCase("Orange", RmsHydrantFlowClass.B)]
+		[TestCase("class-b", RmsHydrantFlowClass.B)]
+		[TestCase("Red", RmsHydrantFlowClass.C)]
+		[TestCase("#23c6c8", RmsHydrantFlowClass.AA)]
+		[TestCase("#ADD8E6", RmsHydrantFlowClass.AA)]
+		[TestCase("#1ab394", RmsHydrantFlowClass.A)]
+		[TestCase("#008000", RmsHydrantFlowClass.A)]
+		[TestCase("#FFA500", RmsHydrantFlowClass.B)]
+		[TestCase("#f8ac59", RmsHydrantFlowClass.B)]
+		[TestCase("#f00", RmsHydrantFlowClass.C)]
+		[TestCase("#ed5565", RmsHydrantFlowClass.C)]
+		[TestCase("", RmsHydrantFlowClass.Unknown)]
+		[TestCase("N/A", RmsHydrantFlowClass.Unknown)]
+		public void Foreign_flow_colours_map_to_flow_classes(string value, RmsHydrantFlowClass expected)
+		{
+			var batch = HydrantImportParser.Parse($"number,latitude,longitude,flow_rating_color\nH,45,-122,{value}", "csv");
+			batch.Result.Rejected.Should().BeEmpty();
+			batch.Result.UnmappedValues.Should().BeEmpty();
+			batch.Result.IgnoredColumns.Should().BeEmpty();
+			batch.Rows.Single().Hydrant.FlowClass.Should().Be((int)expected);
+		}
+
+		[TestCase("Black")]
+		[TestCase("yellow")]
+		[TestCase("#FFFF00")]
+		[TestCase("#808080")]
+		[TestCase("#000")]
+		[TestCase("#800080")]
+		[TestCase("Class AA (1500+ GPM)")]
+		public void Unreadable_flow_colours_get_no_class_and_are_reported(string value)
+		{
+			var batch = HydrantImportParser.Parse($"number,latitude,longitude,Cap Color\nH,45,-122,\"{value}\"", "csv");
+			batch.Result.ValidationFailed.Should().BeFalse();
+			batch.Rows.Single().Hydrant.FlowClass.Should().Be((int)RmsHydrantFlowClass.Unknown);
+			batch.Result.UnmappedValues.Should().ContainSingle().Which.Should().BeEquivalentTo(new HydrantImportUnmappedValue { Column = "Cap Color", Value = value, Rows = 1 });
+		}
+
+		[Test]
+		public async Task Imported_flow_colour_sets_the_class_only_where_no_flow_decides_it()
+		{
+			var h = new RmsPreventionHarness();
+			await h.HydrantsService.SaveAsync(Dept, Admin, new RmsHydrant { HydrantNumber = "Tested", Latitude = 1, Longitude = 2, FlowGpm = 1200 });
+			await h.HydrantsService.SaveAsync(Dept, Admin, new RmsHydrant { HydrantNumber = "Untested", Latitude = 1, Longitude = 2 });
+
+			var result = await h.HydrantsService.ImportCsvAsync(Dept, Admin,
+				"number,latitude,longitude,flow_rate,flow_rating_color\nTested,1,2,,red\nUntested,1,2,,orange\nNew,1,2,,light blue\nMeasured,1,2,1600,red\nZero,1,2,0,green\n");
+
+			result.FailureMessage.Should().BeNull();
+			FlowClassOf("Tested").Should().Be(RmsHydrantFlowClass.A, "the flow on record still decides the class");
+			h.Hydrants.Rows.Single(x => x.HydrantNumber == "Tested").FlowGpm.Should().Be(1200);
+			FlowClassOf("Untested").Should().Be(RmsHydrantFlowClass.B);
+			FlowClassOf("New").Should().Be(RmsHydrantFlowClass.AA);
+			FlowClassOf("Measured").Should().Be(RmsHydrantFlowClass.AA, "an imported flow decides the class over the colour");
+			FlowClassOf("Zero").Should().Be(RmsHydrantFlowClass.A, "a zero flow cannot be classified, so the colour is used");
+
+			RmsHydrantFlowClass FlowClassOf(string number) => (RmsHydrantFlowClass)h.Hydrants.Rows.Single(x => x.HydrantNumber == number).FlowClass;
+		}
+
+		[Test]
+		public async Task Manual_save_does_not_take_a_flow_class_without_a_flow()
+		{
+			var h = new RmsPreventionHarness();
+			var saved = await h.HydrantsService.SaveAsync(Dept, Admin, new RmsHydrant { HydrantNumber = "H", Latitude = 1, Longitude = 2, FlowClass = (int)RmsHydrantFlowClass.C });
+			saved.FlowClass.Should().Be((int)RmsHydrantFlowClass.Unknown);
+		}
+
+		[TestCase("Dry Barrel", RmsHydrantType.DryBarrel)]
+		[TestCase("dry-barrel hydrant", RmsHydrantType.DryBarrel)]
+		[TestCase("WET_BARREL", RmsHydrantType.WetBarrel)]
+		[TestCase("Wet Hydrant", RmsHydrantType.WetBarrel)]
+		[TestCase("Standpipe", RmsHydrantType.Standpipe)]
+		[TestCase("Underground Tank", RmsHydrantType.Cistern)]
+		[TestCase("Dry Hydrant", RmsHydrantType.DraftingSite)]
+		[TestCase("Drafting Point", RmsHydrantType.DraftingSite)]
+		[TestCase("Static Water Source", RmsHydrantType.DraftingSite)]
+		[TestCase("4", RmsHydrantType.Cistern)]
+		[TestCase("", RmsHydrantType.DryBarrel)]
+		[TestCase("N/A", RmsHydrantType.DryBarrel)]
+		[TestCase("Unknown", RmsHydrantType.DryBarrel)]
+		public void Foreign_hydrant_type_values_map_to_types(string value, RmsHydrantType expected)
+		{
+			var batch = HydrantImportParser.Parse($"number,latitude,longitude,hydrant_type\nH,45,-122,{value}", "csv");
+			batch.Result.Rejected.Should().BeEmpty();
+			batch.Result.UnmappedValues.Should().BeEmpty();
+			batch.Rows.Single().Hydrant.Type.Should().Be((int)expected);
+		}
+
+		[Test]
+		public void Unrecognized_foreign_types_import_as_other_and_are_counted()
+		{
+			var batch = HydrantImportParser.Parse("number,latitude,longitude,Hydrant Type\nH1,45,-122,Pillar\nH2,45,-122,pillar\nH3,45,-122,Flush\nH4,45,-122,Dry\nH5,45,-122,\"DryBarrel,WetBarrel\"", "csv");
+
+			batch.Result.ValidationFailed.Should().BeFalse();
+			batch.Rows.Should().HaveCount(5);
+			batch.Rows.Where(r => r.Row.HydrantNumber != "H4").Should().OnlyContain(r => r.Hydrant.Type == (int)RmsHydrantType.Other, "a combined value is not read as a flags combination");
+			batch.Result.UnmappedValues.Select(u => (u.Column, u.Value, u.Rows)).Should().Equal(("Hydrant Type", "Pillar", 2), ("Hydrant Type", "DryBarrel,WetBarrel", 1), ("Hydrant Type", "Flush", 1));
+		}
+
+		[TestCase("1250", 1250)]
+		[TestCase("1250.6", 1251)]
+		[TestCase("1,250", 1250)]
+		[TestCase("1,250.4 GPM", 1250)]
+		[TestCase("1000 gal/min", 1000)]
+		[TestCase("3785 L/min", 1000)]
+		[TestCase("3785lpm", 1000)]
+		[TestCase("0", 0)]
+		[TestCase("", null)]
+		[TestCase("n/a", null)]
+		public void Foreign_flow_rate_values_are_read_as_gallons_per_minute(string value, int? expected)
+		{
+			var batch = HydrantImportParser.Parse($"number,latitude,longitude,flow_rate\nH,45,-122,\"{value}\"", "csv");
+			batch.Result.Rejected.Should().BeEmpty();
+			batch.Result.UnmappedValues.Should().BeEmpty();
+			batch.Rows.Single().Hydrant.FlowGpm.Should().Be(expected);
+		}
+
+		[TestCase("-5")]
+		[TestCase("lots")]
+		[TestCase("1250 m3/h")]
+		[TestCase("1250,5")]
+		[TestCase("99999999999999")]
+		public void Unreadable_foreign_flow_is_left_blank_and_reported(string value)
+		{
+			var batch = HydrantImportParser.Parse($"number,latitude,longitude,flow_rate\nH,45,-122,\"{value}\"", "csv");
+			batch.Result.ValidationFailed.Should().BeFalse();
+			batch.Rows.Single().Hydrant.FlowGpm.Should().BeNull();
+			batch.Result.UnmappedValues.Should().ContainSingle().Which.Should().BeEquivalentTo(new HydrantImportUnmappedValue { Column = "flow_rate", Value = value, Rows = 1 });
+		}
+
+		[TestCase("type", "Pillar", "type")]
+		[TestCase("flow_gpm", "1,250", "flow_gpm")]
+		public void Documented_columns_stay_strict(string column, string value, string error)
+		{
+			var batch = HydrantImportParser.Parse($"number,latitude,longitude,{column}\nH,45,-122,\"{value}\"", "csv");
+			batch.Result.Rejected.Should().ContainSingle().Which.Error.Should().Contain(error);
+			batch.Result.UnmappedValues.Should().BeEmpty();
+		}
+
+		[Test]
+		public void Csv_with_only_known_columns_reports_nothing_ignored()
+		{
+			HydrantImportParser.Parse(HydrantImportParser.CsvExample, "csv").Result.IgnoredColumns.Should().BeEmpty();
+			var headerless = HydrantImportParser.Parse("H,45,-122,DryBarrel,1 River Rd,8,1100,City", "csv");
+			headerless.Result.Rejected.Should().BeEmpty("a file without a header uses the eight documented columns");
+			headerless.Result.IgnoredColumns.Should().BeEmpty();
+		}
+
+		[Test]
+		public void Two_columns_for_one_field_name_both_columns()
+		{
+			Action parse = () => HydrantImportParser.Parse("id,hydrant_number,latitude,longitude\nabc,H,1,2", "csv");
+			parse.Should().Throw<ArgumentException>().WithMessage("*more than one number column (id, hydrant_number)*");
+		}
+
 		[TestCase("number,latitude,longitude,latitude\nH,1,2,3")]
+		[TestCase("number,address,location_address,latitude,longitude\nH,a,b,1,2")]
+		[TestCase("number,latitude,longitude,flow_rating_color,cap_color\nH,1,2,red,red")]
 		[TestCase("number,latitude\nH,1")]
 		[TestCase("number,latitude,longitude\n\"H,1,2")]
 		public void Invalid_csv_structure_is_rejected(string csv)

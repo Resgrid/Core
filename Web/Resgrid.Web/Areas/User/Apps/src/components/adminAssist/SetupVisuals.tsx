@@ -163,6 +163,18 @@ export function FindingGroups({ findings, t, ui, areas, link, onPlan, showArea =
   })}</>;
 }
 
+export type FilterOption = { value: string; label: string; count?: number; icon?: string; tone?: 'ok' | 'fail' | 'unknown' | 'info' | 'muted' };
+/** A row of toggle buttons for one filter, each with its count; replaces a select when the choices are few and the counts matter. */
+export function FilterPills({ label, options, value, onChange, disabled }: { label: string; options: FilterOption[]; value: string; onChange: (value: string) => void; disabled?: boolean }) {
+  return <div className="rgaa-pills" role="group" aria-label={label}>
+    {options.map(option => <button type="button" key={option.value} className="rgaa-plain rgaa-pill" aria-pressed={value === option.value} disabled={disabled}
+      onClick={() => onChange(option.value)}>
+      {option.icon && <i className={`fa ${option.icon}${option.tone ? ` rgaa-icon--${option.tone}` : ''}`} aria-hidden="true" />}{option.label}
+      {option.count !== undefined && <span className="rgaa-pill__count">{option.count}</span>}
+    </button>)}
+  </div>;
+}
+
 export function Ibox({ title, tools, children }: { title: ReactNode; tools?: ReactNode; children: ReactNode }) {
   const headingId = useId();
   return <section className="ibox" aria-labelledby={headingId}>

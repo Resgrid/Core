@@ -12,7 +12,7 @@ from .sqlgen import SeedError
 CATALOG = Path(__file__).resolve().parent.parent / 'catalog'
 # Sections a scenario may replace or extend.
 SECTIONS = ('department', 'settings', 'statuses', 'groups', 'roles', 'ranks', 'people', 'unitTypes', 'units', 'callPriorities', 'callTypes', 'calls', 'messages', 'notes',
-            'calendar', 'shifts', 'contacts', 'poiTypes', 'protocols', 'callTemplates', 'callNoteTemplates', 'checkInTimers', 'trainings', 'documents', 'permissions',
+            'calendar', 'shifts', 'contacts', 'poiCapabilities', 'poiTypes', 'protocols', 'callTemplates', 'callNoteTemplates', 'checkInTimers', 'trainings', 'documents', 'permissions',
             'security', 'incidentCommand', 'flags')
 SCENARIO_FIELDS = {'id', 'name', 'purpose', 'covers', 'baseline', 'extra', 'generate', 'personas', '$comment'} | set(SECTIONS)
 _ID = re.compile(r'^[a-z][a-z0-9-]{1,30}$')

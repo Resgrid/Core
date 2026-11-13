@@ -1,0 +1,55 @@
+@model Resgrid.Web.Areas.User.Models.Mapping.EventLayerView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.Mapping> mappingLocalizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.EventLayers> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["ImportLayerHeader"];
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-8">
+        <h2>@localizer["ImportLayerHeader"]</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            <li><a asp-controller="Mapping" asp-action="Index" asp-route-area="User">@mappingLocalizer["MappingHeader"]</a></li>
+            <li><a asp-controller="Mapping" asp-action="Layers" asp-route-area="User">@mappingLocalizer["LayersHeader"]</a></li>
+            <li class="active"><strong>@localizer["ImportLayerHeader"]</strong></li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <form class="form-horizontal" role="form" asp-controller="EventLayers" asp-action="Import" asp-route-area="User" method="post" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
+                        <div class="row">
+                            <div class="col-md-10 col-md-offset-1">
+                                <p>@localizer["ImportHelp"]</p>
+                                <div asp-validation-summary="All" class="text-danger"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="layerFile">@localizer["LayerFile"] <span class="text-danger">*</span></label>
+                            <div class="col-sm-10">
+                                <input type="file" id="layerFile" name="layerFile" accept=".kml,.kmz,.geojson,.json" required />
+                                <span class="help-block m-b-none">@string.Format(localizer["LayerFileHelp"].Value, Resgrid.Model.MapLayerFileLimits.MaxFileBytes / (1024 * 1024))</span>
+                            </div>
+                        </div>
+
+                        <partial name="_EventLayerFields" model="Model" />
+
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <a class="btn btn-white" asp-controller="Mapping" asp-action="Layers" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+                                <button class="btn btn-primary" type="submit"><i class="fa fa-upload"></i> @localizer["SaveImport"]</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

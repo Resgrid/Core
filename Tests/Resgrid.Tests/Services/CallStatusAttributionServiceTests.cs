@@ -597,5 +597,54 @@ namespace Resgrid.Tests.Services
 
 			working.Should().BeEquivalentTo(new Dictionary<int, int> { { 1, 40 } });
 		}
+
+		// Transport destination checks: the call a unit was working when it set a transport status.
+		[Test]
+		public async Task one_units_working_call_is_its_previous_status_call_even_with_two_open_dispatches()
+		{
+			Call(40);
+			Call(41);
+			_unitDispatches.Setup(x => x.GetOpenCallUnitDispatchesForUnitAsync(DepartmentId, UnitId)).ReturnsAsync(UnitDispatches(40, 41));
+
+			var working = await _service.GetWorkingCallIdForUnitAsync(DepartmentId, UnitId,
+				new UnitState { UnitStateId = 10, UnitId = UnitId, State = (int)UnitStateTypes.OnScene, DestinationId = 41, DestinationType = (int)DestinationEntityTypes.Call });
+
+			working.Should().Be(41);
+		}
+
+		[Test]
+		public async Task one_units_working_call_falls_back_to_its_one_dispatch_when_its_status_points_at_a_poi()
+		{
+			Call(40);
+			_unitDispatches.Setup(x => x.GetOpenCallUnitDispatchesForUnitAsync(DepartmentId, UnitId)).ReturnsAsync(UnitDispatches(40));
+
+			var working = await _service.GetWorkingCallIdForUnitAsync(DepartmentId, UnitId,
+				new UnitState { UnitStateId = 10, UnitId = UnitId, State = (int)UnitStateTypes.Committed, DestinationId = 9, DestinationType = (int)DestinationEntityTypes.Poi });
+
+			working.Should().Be(40);
+		}
+
+		[Test]
+		public async Task one_unit_with_no_open_dispatch_or_open_status_call_has_no_working_call()
+		{
+			Call(39, CallStates.Closed);
+
+			var working = await _service.GetWorkingCallIdForUnitAsync(DepartmentId, UnitId,
+				new UnitState { UnitStateId = 10, UnitId = UnitId, State = (int)UnitStateTypes.OnScene, DestinationId = 39, DestinationType = (int)DestinationEntityTypes.Call });
+
+			working.Should().BeNull();
+		}
+
+		[Test]
+		public async Task one_units_working_call_ignores_a_status_of_another_unit()
+		{
+			Call(41);
+			_unitDispatches.Setup(x => x.GetOpenCallUnitDispatchesForUnitAsync(DepartmentId, UnitId)).ReturnsAsync(new List<CallDispatchUnit>());
+
+			var working = await _service.GetWorkingCallIdForUnitAsync(DepartmentId, UnitId,
+				new UnitState { UnitStateId = 10, UnitId = UnitId + 1, State = (int)UnitStateTypes.OnScene, DestinationId = 41, DestinationType = (int)DestinationEntityTypes.Call });
+
+			working.Should().BeNull();
+		}
 	}
 }

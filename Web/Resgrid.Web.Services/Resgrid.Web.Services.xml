@@ -3349,6 +3349,31 @@
             </summary>
             <returns>GetMapLayersResult object</returns>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.GetPoiCapabilities">
+            <summary>
+            The capabilities the department's POIs can offer (e.g. "Cath Lab", "Stroke Center"), in the department's order.
+            POIs name theirs in <c>CapabilityIds</c>.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.GetNearestDestinations(System.Double,System.Double,System.String,System.Nullable{System.Int32},System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            The department's destinations nearest a point, best first: those that can take the patient (not closed, and with
+            <paramref name="capabilityId"/> not reported unavailable) before diversion before the rest; the closest are routed
+            (travel seconds), the others ranked by straight-line distance.
+            </summary>
+            <param name="latitude">Origin latitude (a unit's position or a call's location).</param>
+            <param name="longitude">Origin longitude.</param>
+            <param name="capabilityId">Only destinations offering this capability (GetPoiCapabilities); omit for all.</param>
+            <param name="unitId">The travelling unit, so its travel mode and vehicle limits apply; omit for plain driving.</param>
+            <param name="take">How many to return (1 to 50, default 10).</param>
+            <param name="cancellationToken">Request cancellation.</param>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.SetPoiAvailability(Resgrid.Web.Services.Models.v4.Mapping.SetPoiAvailabilityInput,System.Threading.CancellationToken)">
+            <summary>
+            Sets a destination's availability (a hospital reporting capacity overload, a closed emergency department, or one
+            service down). Status 0 clears it. For the department's dispatchers (those who can create calls).
+            </summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.GetIndoorMaps">
             <summary>
             Gets all indoor maps for the department.
@@ -4155,7 +4180,11 @@
             <summary>Removes many hydrants at once: the ids given (Scope 0), every imported hydrant (1) or every hydrant (2). Scopes 1 and 2 need ExpectedCount equal to the number that match.</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.RecordHydrantsController.Import(Resgrid.Web.Services.Models.v4.Records.HydrantImportInput,System.Threading.CancellationToken)">
-            <summary>JSON or CSV import (number, latitude, longitude, type, address, main_size, flow_gpm, owner). Validate every row before saving.</summary>
+            <summary>JSON or CSV import (number, latitude, longitude, type, address, main_size, flow_gpm, owner). Validate every row before saving.
+            CSV from another system: hydrant_type, flow_rate and location_address are read as type, flow_gpm and address, and flow_rating_color
+            (NFPA 291 colour, class letter or #hex) sets the flow class of a hydrant with no flow, and status takes hydrants out of service or returns
+            them to service (counted in TakenOutOfService and ReturnedToService); values those columns hold that cannot be read are imported as type
+            Other, a blank flow, no class or an unchanged service state and returned in UnmappedValues; other columns are skipped and returned in IgnoredColumns.</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.RecordHydrantsController.MapLayer(System.Nullable{System.Decimal},System.Nullable{System.Decimal},System.Nullable{System.Decimal},System.Nullable{System.Decimal})">
             <summary>Map layer for the response map and the apps; bounded to a viewport when bounds are given.</summary>
@@ -10107,6 +10136,11 @@
             Reference Id
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.MapPage">
+            <summary>
+            The map book page for the call's location, blank when none was entered.
+            </summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.ExternalId">
             <summary>
             External Id
@@ -10450,9 +10484,8 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.EditCallInput.DispatchList">
             <summary>
             Pipe separated list of users, units, roles and groups to dispatch ("P:", "U:", "R:" and "G:" prefixes), replacing
-            the call's dispatches. "0" dispatches everyone. Left blank it also means everyone, except on a pending call or when
-            the department hides the dispatch list, where blank keeps the call's dispatches. A list with no entries ("|")
-            removes every dispatch.
+            the call's dispatches. "0" adds everyone, and is the only way to. Left blank, the call keeps its dispatches. A list
+            with no entries ("|") removes every dispatch, except those of a recipient list the department hides.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.EditCallInput.UnitResponseCodes">
@@ -10509,6 +10542,12 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.EditCallInput.ReferenceId">
             <summary>
             Reference Id
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.EditCallInput.MapPage">
+            <summary>
+            Optional. The map book page for the call's location. Null or blank keeps the stored page; leave it out (null) when
+            the client has no input for it, so the department's map page requirement is not enforced against it.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.EditCallInput.IndoorMapZoneId">
@@ -10792,11 +10831,11 @@
             P:c0a0f71a-0758-434c-868b-c77d245db78a|P:c0a0f71a-0758-434c-868b-c77d245db78a|U:1995012|G:991031|R:893139
             </example>
             <remarks>
-            "0" dispatches everyone. Left blank, an immediate call also goes to everyone (older clients send nothing), and a
-            pending call has no proposed recipients. Send a list with no entries ("|") to create a call that dispatches
-            nobody; a department that requires a dispatch list refuses it. A system API key never pages the whole department
-            on its own: its immediate call with "0" or a blank list dispatches nobody, so name the recipients (on a pending
-            call "0" is kept as the proposal, since nobody is paged until a dispatcher sends it).
+            "0" dispatches everyone, and is the only way to: a blank list, or one with no entries ("|"), creates a call that
+            dispatches nobody (an informational call; for a pending call, no proposed recipients). A department that requires
+            a dispatch list refuses either. A system API key never pages the whole department on its own: its immediate call
+            with "0" dispatches nobody, so name the recipients (on a pending call "0" is kept as the proposal, since nobody is
+            paged until a dispatcher sends it).
             </remarks>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.UnitResponseCodes">
@@ -10859,6 +10898,12 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.ReferenceId">
             <summary>
             Reference Id
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.MapPage">
+            <summary>
+            Optional. The map book page for the call's location. Leave it out (null) when the client has no input for it: the
+            department's map page requirement is then not enforced; sent blank, it is.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.LinkedCallId">
@@ -13306,6 +13351,14 @@
             false otherwise.
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.TransportDestinationChecks">
+            <summary>
+            Transport destination checks (Dispatch Settings): when a unit's Transporting or At Hospital status goes to a
+            destination POI other than its call's assigned destination, the apps require a reason (the status note) and
+            Resgrid records the change as a call note. The apps pre-select the call's destination either way. Only signed-in
+            callers get it; false otherwise.
+            </summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.MapCenterLatitude">
             <summary>
             Latitude every map in every client should open on for this department. Resolved from the
@@ -15411,6 +15464,26 @@
             Map Layers
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.GetMapLayersData.IsOnByDefault">
+            <summary>
+            Whether maps start with the layer switched on: the department's setting, or (event layers) the event running now.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.GetMapLayersData.Description">
+            <summary>What the layer is for. Event layers carry the event's summary here.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.GetMapLayersData.EventStartsOnUtc">
+            <summary>Event start (UTC, ISO 8601), blank for a layer with no event dates.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.GetMapLayersData.EventEndsOnUtc">
+            <summary>Event end (UTC, ISO 8601), blank when open-ended or not an event layer.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.GetMapLayersData.EventPhase">
+            <summary>"none", "upcoming", "active" or "ended", relative to the request time.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.GetMapLayersData.SourceFileName">
+            <summary>The file the shapes were imported from (KML, KMZ or GeoJSON), blank for a drawn layer.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Mapping.GetUnitMapDataResult">
             <summary>
             One unit's map: its own position (when it reports one) and the positions of the members seated in its active
@@ -15486,6 +15559,66 @@
             Absolute URL of the department's uploaded icon for the POI type (a 128 px square PNG, anonymous GET,
             immutable); null when the type has no uploaded icon, so PoiImage / ImagePath stay the marker icon.
             </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.PoiResultData.CapabilityIds">
+            <summary>
+            Ids of the department capabilities this POI offers (GetPoiCapabilities), in the department's order. Empty when it
+            offers none, or on endpoints that do not fill capabilities.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.PoiResultData.Capabilities">
+            <summary>The names of <see cref="P:Resgrid.Web.Services.Models.v4.Mapping.PoiResultData.CapabilityIds"/>, same order (e.g. "Cath Lab", "Trauma Center").</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.PoiResultData.AvailabilityStatus">
+            <summary>
+            The destination's current availability (Resgrid.Model.PoiAvailabilityStatuses): 0 open, 1 limited, 2 diversion,
+            3 closed. An expired report reads as 0.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.PoiResultData.UnavailableCapabilityIds">
+            <summary>Capability ids the destination cannot provide right now (with a non-open <see cref="P:Resgrid.Web.Services.Models.v4.Mapping.PoiResultData.AvailabilityStatus"/>).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.PoiResultData.AvailabilityNote">
+            <summary>What the hospital reported, e.g. "ED capacity overload, CT down".</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.PoiResultData.AvailabilitySetOnUtc">
+            <summary>When the current report was set (UTC), or null when open.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.PoiResultData.AvailabilityExpiresOnUtc">
+            <summary>When the current report lapses (UTC); null when open or when it lasts until changed.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Mapping.PoiCapabilityResultData">
+            <summary>A capability the department's POIs can offer.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Mapping.NearestDestinationResultData">
+            <summary>One destination of GetNearestDestinations, best first.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.NearestDestinationResultData.Poi">
+            <summary>The destination, with capabilities and availability.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.NearestDestinationResultData.DistanceMeters">
+            <summary>Straight-line distance from the origin.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.NearestDestinationResultData.TravelSeconds">
+            <summary>Travel seconds from the origin; -1 when not looked up (beyond the shortlist, or the lookup failed).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.NearestDestinationResultData.CanProvide">
+            <summary>True when it can take the patient now (not closed; the asked capability not reported unavailable).</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Mapping.SetPoiAvailabilityInput">
+            <summary>SetPoiAvailability body.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.SetPoiAvailabilityInput.Status">
+            <summary>0 open (clears the report), 1 limited, 2 diversion, 3 closed.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.SetPoiAvailabilityInput.UnavailableCapabilityIds">
+            <summary>Capability ids the destination cannot provide right now.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.SetPoiAvailabilityInput.ExpiresInMinutes">
+            <summary>Minutes until the report lapses (at most a week); null or 0 lasts until changed.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.SetPoiAvailabilityResult.Data">
+            <summary>The destination after the change.</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Mapping.MapFeatureResultData.FeatureType">
             <summary>"indoor_zone" or "custom_region"</summary>
@@ -20517,12 +20650,17 @@
             Parsing for the pipe delimited DispatchList string clients send when creating or editing a call.
             </summary>
             <remarks>
-            The list has three forms. Blank means "everyone" on an immediate call (older clients send nothing, so this stays),
-            "0" means "everyone", and anything else is the explicit list. An explicit list with no entries ("|") dispatches
-            nobody: it is how a client creates or edits a call that goes to no one without the blank reading as "everyone".
-            A new immediate call made with a system API key is the exception: neither "0" nor a blank list pages everyone, so
-            it dispatches nobody unless the list names recipients (CallsController.SaveCall).
+            "0" means everyone ("All Call"), and it is the only way to ask for everyone. A blank list, or an explicit list with
+            no entries ("|"), dispatches nobody on a new call and keeps the recipients on an edit. (Until 2026-11-13 a blank
+            list paged everyone on an immediate call, because older clients sent nothing when nothing was picked.) Anything
+            else is the explicit list. A new immediate call made with a system API key never pages everyone on its own: "0"
+            dispatches nobody there unless the call is pending (CallsController.SaveCall).
             </remarks>
+        </member>
+        <member name="M:Resgrid.Web.Helpers.DispatchListHelper.IsEveryone(System.String)">
+            <summary>True for "0", the explicit "everyone" (All Call). Blank is not everyone.</summary>
+            <param name="dispatchList">The DispatchList string as the client sent it.</param>
+            <returns>True when the list asks for everyone.</returns>
         </member>
         <member name="M:Resgrid.Web.Helpers.DispatchListHelper.HasEntries(System.String)">
             <summary>

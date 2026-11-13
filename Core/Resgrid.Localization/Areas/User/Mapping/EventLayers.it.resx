@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Map Icon Legend and status / priority map icon pages -->
+    <data name="ImportLayer" xml:space="preserve">
+    <value>Importa livello</value>
+  </data>
+  <data name="ImportLayerHeader" xml:space="preserve">
+    <value>Importa livello</value>
+  </data>
+  <data name="ImportHelp" xml:space="preserve">
+    <value>Carica un file KML, KMZ o GeoJSON (da Google My Maps, Google Earth o un GIS) con il percorso, l'area o le tappe di un evento. Ogni punto, linea e poligono diventa una forma del livello con nome, descrizione e colore propri. Assegna al livello le date dell'evento e verrà mostrato su ogni mappa mentre l'evento è in corso.</value>
+  </data>
+  <data name="DetailsHeader" xml:space="preserve">
+    <value>Dettagli del livello</value>
+  </data>
+  <data name="LayerFile" xml:space="preserve">
+    <value>File</value>
+  </data>
+  <data name="LayerFileHelp" xml:space="preserve">
+    <value>KML, KMZ o GeoJSON, fino a {0} MB.</value>
+  </data>
+  <data name="ReplaceFile" xml:space="preserve">
+    <value>Sostituisci file</value>
+  </data>
+  <data name="ReplaceFileHelp" xml:space="preserve">
+    <value>Facoltativo. Un nuovo file sostituisce tutte le forme del livello; i dati sopra vengono mantenuti.</value>
+  </data>
+  <data name="DeleteHelp" xml:space="preserve">
+    <value>Eliminare il livello (Mappe → Livelli) rimuove tutte le sue forme e i suoi dati.</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Nome</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Descrizione</value>
+  </data>
+  <data name="Color" xml:space="preserve">
+    <value>Colore predefinito</value>
+  </data>
+  <data name="ColorHelp" xml:space="preserve">
+    <value>Usato per le forme a cui il file non assegna un colore.</value>
+  </data>
+  <data name="EventSection" xml:space="preserve">
+    <value>Evento</value>
+  </data>
+  <data name="StartsOn" xml:space="preserve">
+    <value>Inizio</value>
+  </data>
+  <data name="EndsOn" xml:space="preserve">
+    <value>Fine</value>
+  </data>
+  <data name="EventDatesHelp" xml:space="preserve">
+    <value>Nel fuso orario del dipartimento ({0}). Durante l'evento il livello è mostrato su ogni mappa, qualunque sia l'impostazione «Attivo per impostazione predefinita». Lascia entrambi vuoti per un livello non legato a un evento.</value>
+  </data>
+  <data name="Organizer" xml:space="preserve">
+    <value>Organizzatore</value>
+  </data>
+  <data name="ContactName" xml:space="preserve">
+    <value>Coordinatore / Contatto</value>
+  </data>
+  <data name="ContactPhone" xml:space="preserve">
+    <value>Telefono del contatto</value>
+  </data>
+  <data name="ContactEmail" xml:space="preserve">
+    <value>E-mail del contatto</value>
+  </data>
+  <data name="OnByDefault" xml:space="preserve">
+    <value>Attivo per impostazione predefinita</value>
+  </data>
+  <data name="OnByDefaultHelp" xml:space="preserve">
+    <value>Mostra il livello all'apertura di ogni mappa, anche fuori dalle date dell'evento.</value>
+  </data>
+  <data name="Searchable" xml:space="preserve">
+    <value>Ricercabile</value>
+  </data>
+  <data name="SaveImport" xml:space="preserve">
+    <value>Importa</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Salva</value>
+  </data>
+  <data name="EditShapes" xml:space="preserve">
+    <value>Modifica forme</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Dettagli</value>
+  </data>
+  <data name="SourceFile" xml:space="preserve">
+    <value>Origine</value>
+  </data>
+  <data name="Drawn" xml:space="preserve">
+    <value>Disegnato sulla mappa</value>
+  </data>
+  <data name="ShapeCount" xml:space="preserve">
+    <value>{0} forme</value>
+  </data>
+  <data name="EventColumn" xml:space="preserve">
+    <value>Evento</value>
+  </data>
+  <data name="PhaseUpcoming" xml:space="preserve">
+    <value>In arrivo</value>
+  </data>
+  <data name="PhaseActive" xml:space="preserve">
+    <value>In corso</value>
+  </data>
+  <data name="PhaseEnded" xml:space="preserve">
+    <value>Terminato</value>
+  </data>
+  <data name="ImportedOn" xml:space="preserve">
+    <value>importato</value>
+  </data>
+  <data name="FileRequired" xml:space="preserve">
+    <value>Scegli un file KML, KMZ o GeoJSON da importare.</value>
+  </data>
+  <data name="FileTypeUnsupported" xml:space="preserve">
+    <value>Carica un file .kml, .kmz, .geojson o .json.</value>
+  </data>
+  <data name="FileTooLarge" xml:space="preserve">
+    <value>Il file supera {0} MB.</value>
+  </data>
+  <data name="FileTooManyShapes" xml:space="preserve">
+    <value>Il file ha più di {0} forme. Dividilo in più livelli.</value>
+  </data>
+  <data name="FileTooManyPoints" xml:space="preserve">
+    <value>Il file ha più di {0} coordinate. Semplifica le linee (la maggior parte dei GIS lo consente) o dividilo in più livelli.</value>
+  </data>
+  <data name="FileNoShapes" xml:space="preserve">
+    <value>Il file non contiene punti, linee o poligoni con coordinate.</value>
+  </data>
+  <data name="FileOnlyAddresses" xml:space="preserve">
+    <value>I {0} luoghi del file hanno un indirizzo ma non coordinate (un livello di Google My Maps localizzato per indirizzo). Importali invece come punti di interesse (Mappe → POI → Importa), che cerca gli indirizzi, oppure esporta la mappa con le coordinate.</value>
+  </data>
+  <data name="FileUnreadable" xml:space="preserve">
+    <value>Impossibile leggere il file. Verifica che sia un file KML, KMZ o GeoJSON valido.</value>
+  </data>
+  <data name="EndsBeforeStarts" xml:space="preserve">
+    <value>L'evento non può finire prima di iniziare.</value>
+  </data>
+  <data name="ContactEmailInvalid" xml:space="preserve">
+    <value>Inserisci un indirizzo e-mail valido.</value>
+  </data>
+  <data name="ColorInvalid" xml:space="preserve">
+    <value>Scegli un colore.</value>
+  </data>
+  <data name="SaveFailed" xml:space="preserve">
+    <value>Impossibile salvare il livello. Riprova.</value>
+  </data>
+  <data name="ImportedSummary" xml:space="preserve">
+    <value>«{0}» importato: {1} punti, {2} linee, {3} poligoni.</value>
+  </data>
+  <data name="ReplacedSummary" xml:space="preserve">
+    <value>Forme di «{0}» sostituite: {1} punti, {2} linee, {3} poligoni.</value>
+  </data>
+  <data name="SavedSummary" xml:space="preserve">
+    <value>«{0}» salvato.</value>
+  </data>
+  <data name="SkippedNote" xml:space="preserve">
+    <value>{0} segnaposto senza coordinate utilizzabili sono stati esclusi.</value>
+  </data>
+</root>

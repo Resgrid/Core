@@ -186,6 +186,50 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task conditional_rows_rank_to_the_second_and_ties_go_nearest_first()
+		{
+			var card = BuildCard();
+			card.AlarmLevels.First().ResponsePackageId = EnginePackageId;
+			EnableConditions(Package(EnginePackageId, "Engine", PackageRow(9002, "Engine", 1, UnitTypeTarget(EngineTypeId))));
+			_config.UseRoutedEta = true;
+
+			// Engine 1 (~12.6 km) routes in 5:01, the nearer Engine 2 (~10 km) in 5:29: the quicker one goes.
+			PlaceUnits((1, 39.8633, -104.95), (2, 39.84, -104.95), (3, 40.5, -105.5));
+			_geoService.Setup(x => x.GetEtaInSecondsAsync("39.8633,-104.95", It.IsAny<string>())).ReturnsAsync(301);
+			_geoService.Setup(x => x.GetEtaInSecondsAsync("39.84,-104.95", It.IsAny<string>())).ReturnsAsync(329);
+
+			var quicker = await _service.GetRecommendationAsync(BuildRequest());
+			quicker.Units.Should().ContainSingle().Which.UnitId.Should().Be(1);
+
+			// Both show 5:01: level on the second, so the nearer one goes.
+			_geoService.Setup(x => x.GetEtaInSecondsAsync("39.84,-104.95", It.IsAny<string>())).ReturnsAsync(301.3);
+
+			var level = await _service.GetRecommendationAsync(BuildRequest());
+			level.Units.Should().ContainSingle().Which.UnitId.Should().Be(2);
+		}
+
+		[Test]
+		public async Task conditional_first_arriving_level_on_the_second_is_the_nearer_unit()
+		{
+			var card = BuildCard();
+			card.AlarmLevels.First().ResponsePackageId = LadderPackageId;
+			var first = new ResponsePackageRow { ResponsePackageRowId = 9010, Label = "Closest resource", FillMode = (int)RequirementFillModes.EnsureFirstArriving, Targets = new List<RunCardTarget> { AnyUnitTarget() } };
+			EnableConditions(Package(LadderPackageId, "Ladder", PackageRow(9001, "Ladder", 1, UnitTypeTarget(LadderTypeId)), first));
+			_config.UseRoutedEta = true;
+
+			// The ladder is far off; Engine 1 (~12.6 km) and Engine 2 (~10 km) both show 5:01, the farther a fraction quicker.
+			PlaceUnits((1, 39.8633, -104.95), (2, 39.84, -104.95), (3, 40.5, -105.5));
+			_geoService.Setup(x => x.GetEtaInSecondsAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(-1);
+			_geoService.Setup(x => x.GetEtaInSecondsAsync("39.8633,-104.95", It.IsAny<string>())).ReturnsAsync(300.8);
+			_geoService.Setup(x => x.GetEtaInSecondsAsync("39.84,-104.95", It.IsAny<string>())).ReturnsAsync(301.3);
+
+			var result = await _service.GetRecommendationAsync(BuildRequest());
+
+			result.Units.Should().Contain(u => u.UnitId == 2 && u.SelectionReason == RecommendationSelectionReasons.FirstArriving);
+			result.Decision.FirstArriving.Should().ContainSingle(f => !f.AlreadyIncluded && f.ResourceName == "Engine 2");
+		}
+
+		[Test]
 		public async Task conditional_station_based_rows_keep_the_response_order_when_the_department_ranks_by_distance()
 		{
 			var card = BuildCard();

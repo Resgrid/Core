@@ -2197,16 +2197,16 @@
     <value>Limita las vistas de despacho compatibles al subárbol de grupo del miembro. Los administradores del departamento y los roles configurados a nivel de todo el departamento conservan el acceso a nivel de todo el departamento.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.NewCallFieldPolicy.Rules">
-    <value>Visibilidad y obligatoriedad por campo para los campos opcionales de creación de llamadas. Los campos sin configurar permanecen visibles y opcionales.</value>
+    <value>Una regla por campo configurado: visible u oculto, opcional u obligatorio. Un campo sin regla es visible y opcional, y una regla guardada que oculta los destinatarios del despacho (anterior a las claves propias de las listas) oculta las cuatro listas.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.NewCallFieldRule.Key">
-    <value>Una clave de campo de llamada integrada compatible. El nombre, la naturaleza, la prioridad y el tipo no se pueden quitar mediante esta política.</value>
+    <value>El campo al que se aplica la regla: address, geolocation, what3words, pluscode, destinationPoi, indoorLocation, mapPage, note, contactName, contactInfo, primaryContact, additionalContacts, externalId, incidentId, referenceId, protocols, linkedCall, dispatchPersonnel, dispatchGroups, dispatchRoles, dispatchUnits, dispatchList, checkInTimers, part2Consent, dispatchOn, pendingCall. Nombre, naturaleza, prioridad y tipo no tienen clave: siempre se muestran y son obligatorios.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.NewCallFieldRule.Required">
-    <value>Indica si se debe proporcionar un campo opcional visible. Revise las importaciones y cada cliente compatible antes de hacer obligatorio un campo.</value>
+    <value>Indica si un campo visible debe completarse antes de crear una llamada o guardar una edición. Plus Code, contactos adicionales, temporizadores de registro, consentimiento Part 2, guardar como pendiente y las cuatro listas de despacho solo se pueden ocultar; exigir destinatarios significa al menos un destinatario de cualquier lista. Revise las importaciones y cada cliente antes de hacer obligatorio un campo.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.NewCallFieldRule.Visible">
-    <value>Indica si el campo de llamada opcional se muestra en las interfaces de creación compatibles. Los campos ocultos no pueden ser obligatorios.</value>
+    <value>Indica si el campo o la sección aparece en los formularios de llamada. Un campo oculto conserva su valor guardado al editar una llamada. Los destinatarios del despacho no tienen ajuste propio: se muestran mientras se muestre alguna de las cuatro listas; con las cuatro ocultas, los formularios ofrecen en su lugar una llamada general opcional.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.PersonnelListStatusOrder.StatusId">
     <value>Identificador de estado de personal existente cuya posición en la lista se está configurando.</value>
@@ -4299,6 +4299,9 @@
   <data xml:space="preserve" name="Rule.map-token">
     <value>Faltan las credenciales personalizadas del mapa</value>
   </data>
+  <data xml:space="preserve" name="Rule.new-call-dispatch-lists-hidden">
+    <value>Las llamadas nuevas no tienen listas de despacho</value>
+  </data>
   <data xml:space="preserve" name="Rule.notification-channels">
     <value>Las preferencias de canal de notificación necesitan revisión</value>
   </data>
@@ -4419,6 +4422,9 @@
   <data xml:space="preserve" name="RuleNext.map-token">
     <value>Revise la anulación del mapa en su pantalla de configuración protegida.</value>
   </data>
+  <data xml:space="preserve" name="RuleNext.new-call-dispatch-lists-hidden">
+    <value>Muestre al menos una lista de despacho en los campos del formulario de nueva llamada, salvo que cada llamada deba ir a todos («Llamada general») o ser solo informativa.</value>
+  </data>
   <data xml:space="preserve" name="RuleNext.notification-channels">
     <value>Revise las preferencias de notificación autorizadas de los miembros y use las pruebas de comunicación solo después de revisar explícitamente los destinatarios y el canal.</value>
   </data>
@@ -4538,6 +4544,9 @@
   </data>
   <data xml:space="preserve" name="RuleWhy.map-token">
     <value>Una anulación de mapa habilitada necesita las credenciales de su proveedor.</value>
+  </data>
+  <data xml:space="preserve" name="RuleWhy.new-call-dispatch-lists-hidden">
+    <value>Los campos del formulario de nueva llamada ocultan las listas de personal, grupos, roles y unidades, así que una llamada nueva no avisa a nadie a menos que se marque «Llamada general».</value>
   </data>
   <data xml:space="preserve" name="RuleWhy.notification-channels">
     <value>Algunos miembros activos visibles no tienen ninguna preferencia elegible de SMS, correo electrónico o push en el remitente de notificaciones ordinario. La preferencia push por sí sola no es un registro válido ni una prueba de entrega.</value>
@@ -4948,7 +4957,7 @@
     <value>Controla la navegación de módulos y los controles de funciones admitidos. Ocultar un módulo no elimina sus registros ni demuestra que la configuración de despacho independiente esté deshabilitada.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.NewCallFieldPolicy">
-    <value>Controla los campos opcionales para llamadas nuevas en los clientes admitidos. Los campos ocultos no se pueden marcar como obligatorios; los campos principales de despacho siguen siendo obligatorios.</value>
+    <value>Determina qué campos y secciones integrados muestran los formularios de llamada y cuáles deben completarse, en la web, en Omni y mediante la API. Los campos ocultos no pueden ser obligatorios; nombre, naturaleza, prioridad y tipo siempre se muestran y son obligatorios. Ocultar las cuatro listas de despacho las sustituye por una llamada general opcional; una llamada creada sin ella no avisa a nadie.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.PaddleCustomerId">
     <value>Referencia de cliente del proveedor de facturación. Se administra mediante flujos de facturación autorizados y nunca se devuelve en la evidencia del asistente.</value>
@@ -6758,6 +6767,12 @@
   </data>
   <data xml:space="preserve" name="SettingHelp.CloseCallWhenUnitsClear">
     <value>Una llamada activa se cierra sola cuando su última unidad despachada informa que está de nuevo en servicio o fuera de servicio. Las unidades que siguen trabajando, una llamada sin unidades despachadas y una llamada con un mando de incidente activo la mantienen abierta.</value>
+  </data>
+  <data name="Setting.TransportDestinationChecks" xml:space="preserve">
+    <value>Comprobación del destino de traslado</value>
+  </data>
+  <data name="SettingHelp.TransportDestinationChecks" xml:space="preserve">
+    <value>Cuando el estado Transportando o En el hospital de una unidad va a un destino distinto del asignado en su llamada, las aplicaciones exigen un motivo y el cambio se anota en la llamada.</value>
   </data>
   <data name="Setting.CallNumberingConfig" xml:space="preserve">
     <value>Configuración de numeración de llamadas</value>

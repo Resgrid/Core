@@ -2160,6 +2160,14 @@
   <data name="DeploymentNewExternalOrder" xml:space="preserve"><value>Nuovo ordine esterno</value></data>
   <data name="HydrantImportBack" xml:space="preserve"><value>Torna agli idranti</value></data>
   <data name="HydrantImportNotSaved" xml:space="preserve"><value>Nessun idrante è stato salvato. Correggi le righe seguenti e importa nuovamente il file.</value></data>
+  <data name="HydrantImportIgnoredColumns" xml:space="preserve"><value>Colonne non importate perché Resgrid non ha un campo idrante corrispondente: {0}. Per importarne una, rinomina la sua intestazione con un nome di colonna dell’esempio e importa nuovamente il file.</value></data>
+  <data name="HydrantImportServiceChanges" xml:space="preserve"><value>Dalla colonna di stato del file: {0} idranti messi fuori servizio, {1} rimessi in servizio.</value></data>
+  <data name="HydrantImportUnmappedValues" xml:space="preserve"><value>Valori importati con un valore predefinito</value></data>
+  <data name="HydrantImportUnmappedValuesHelp" xml:space="preserve"><value>Questi valori provenienti da colonne di un altro sistema non sono stati riconosciuti. Gli idranti sono stati comunque importati: i tipi sconosciuti come Other, le portate e i colori di portata illeggibili lasciati vuoti e, con uno stato sconosciuto, lo stato di servizio invariato. Per impostarli, modifica i valori nel file e importalo nuovamente; gli idranti con lo stesso numero vengono aggiornati.</value></data>
+  <data name="HydrantImportColumn" xml:space="preserve"><value>Colonna</value></data>
+  <data name="HydrantImportValue" xml:space="preserve"><value>Valore</value></data>
+  <data name="HydrantImportRowCount" xml:space="preserve"><value>Righe</value></data>
+  <data name="HydrantImportOtherSystems" xml:space="preserve"><value>File esportati da altri sistemi: hydrant_type, flow_rate e location_address vengono letti come type, flow_gpm e address. La portata è in galloni al minuto, salvo che il valore indichi L/min. flow_rating_color (light blue, green, orange, red, AA–C o un colore #hex) imposta la classe di portata degli idranti senza portata. status (active, in service, out of service, broken…) mette gli idranti fuori servizio o li rimette in servizio; lo stato diventa il motivo del fuori servizio. I tipi sconosciuti vengono importati come Other; le altre colonne vengono ignorate ed elencate dopo l’importazione.</value></data>
   <data name="HydrantImportIssuesShown" xml:space="preserve"><value>Sono mostrate {0} di {1} righe con problemi. JSON usa i numeri degli elementi; CSV i numeri di riga.</value></data>
   <data name="HydrantImportRow" xml:space="preserve"><value>Elemento / riga</value></data>
   <data name="HydrantImportCorrection" xml:space="preserve"><value>Come correggere</value></data>

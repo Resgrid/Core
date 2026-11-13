@@ -173,6 +173,11 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		public string ReferenceId { get; set; }
 
 		/// <summary>
+		/// The map book page for the call's location, blank when none was entered.
+		/// </summary>
+		public string MapPage { get; set; }
+
+		/// <summary>
 		/// External Id
 		/// </summary>
 		public string ExternalId { get; set; }

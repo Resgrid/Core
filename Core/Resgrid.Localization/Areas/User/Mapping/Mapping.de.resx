@@ -449,4 +449,136 @@
   <data name="PoiBulkSelectRow" xml:space="preserve">
     <value>POI auswählen</value>
   </data>
+  <data name="PoiCapabilities" xml:space="preserve">
+    <value>POI-Fähigkeiten</value>
+  </data>
+  <data name="PoiCapabilitiesHelp" xml:space="preserve">
+    <value>Fähigkeiten beschreiben, was Ihre Ziele und anderen Points of Interest bieten, z. B. Herzkatheterlabor, Stroke Unit oder Traumazentrum. Haken Sie sie bei jedem POI an; Disponenten sehen sie bei der Zielauswahl und können eine als nicht verfügbar melden.</value>
+  </data>
+  <data name="PoiCapabilitiesPoiHelp" xml:space="preserve">
+    <value>Was dieser POI bietet. Disponenten sehen dies bei der Zielauswahl.</value>
+  </data>
+  <data name="AddPoiCapability" xml:space="preserve">
+    <value>Fähigkeit hinzufügen</value>
+  </data>
+  <data name="PoiCapabilityNamePlaceholder" xml:space="preserve">
+    <value>Name der Fähigkeit, z. B. Herzkatheterlabor</value>
+  </data>
+  <data name="SortOrder" xml:space="preserve">
+    <value>Sortierung</value>
+  </data>
+  <data name="PoiCapabilitySortHelp" xml:space="preserve">
+    <value>Fähigkeiten werden nach Sortierung und dann nach Name aufgelistet. Lassen Sie die Sortierung leer, um eine Fähigkeit am Ende hinzuzufügen.</value>
+  </data>
+  <data name="NoPoiCapabilities" xml:space="preserve">
+    <value>Es wurden noch keine Fähigkeiten definiert.</value>
+  </data>
+  <data name="ManagePoiCapabilities" xml:space="preserve">
+    <value>Fähigkeiten verwalten</value>
+  </data>
+  <data name="DeletePoiCapabilityConfirm" xml:space="preserve">
+    <value>Die Fähigkeit „{0}“ löschen? Sie wird von allen POIs entfernt, die sie anbieten ({1}), sowie aus jeder Verfügbarkeitsmeldung.</value>
+  </data>
+  <data name="PoiCapabilityNameRequired" xml:space="preserve">
+    <value>Geben Sie einen Namen mit höchstens {0} Zeichen ein.</value>
+  </data>
+  <data name="PoiCapabilityNameExists" xml:space="preserve">
+    <value>Eine Fähigkeit namens „{0}“ existiert bereits.</value>
+  </data>
+  <data name="PoiCapabilitySaved" xml:space="preserve">
+    <value>Fähigkeit „{0}“ gespeichert.</value>
+  </data>
+  <data name="PoiCapabilityDeleted" xml:space="preserve">
+    <value>Fähigkeit „{0}“ gelöscht.</value>
+  </data>
+  <data name="PoiCapabilitySaveFailed" xml:space="preserve">
+    <value>Die Fähigkeit konnte nicht gespeichert werden. Laden Sie die Seite neu und versuchen Sie es erneut.</value>
+  </data>
+  <data name="DestinationAvailability" xml:space="preserve">
+    <value>Zielverfügbarkeit</value>
+  </data>
+  <data name="DestinationAvailabilityHelp" xml:space="preserve">
+    <value>Erfassen Sie, wenn ein Ziel wie ein Krankenhaus eingeschränkte Kapazität, eine Abmeldung oder eine Schließung meldet oder eine seiner Fähigkeiten nicht verfügbar ist. Disponenten sehen dies bei der Auswahl des Einsatzziels.</value>
+  </data>
+  <data name="PoiType" xml:space="preserve">
+    <value>Typ</value>
+  </data>
+  <data name="PoiAvailability" xml:space="preserve">
+    <value>Verfügbarkeit</value>
+  </data>
+  <data name="SetPoiAvailability" xml:space="preserve">
+    <value>Verfügbarkeit setzen</value>
+  </data>
+  <data name="NoDestinationPois" xml:space="preserve">
+    <value>Es gibt noch keine Ziel-POIs. Markieren Sie einen POI-Typ als Ziel, um seine POIs hier aufzulisten.</value>
+  </data>
+  <data name="PoiAvailabilityOpen" xml:space="preserve">
+    <value>Offen</value>
+  </data>
+  <data name="PoiAvailabilityLimited" xml:space="preserve">
+    <value>Eingeschränkt</value>
+  </data>
+  <data name="PoiAvailabilityDiversion" xml:space="preserve">
+    <value>Abgemeldet</value>
+  </data>
+  <data name="PoiAvailabilityClosed" xml:space="preserve">
+    <value>Geschlossen</value>
+  </data>
+  <data name="PoiAvailabilityUnavailable" xml:space="preserve">
+    <value>Nicht verfügbar:</value>
+  </data>
+  <data name="PoiAvailabilityUntil" xml:space="preserve">
+    <value>Bis {0}</value>
+  </data>
+  <data name="PoiAvailabilityCurrent" xml:space="preserve">
+    <value>Aktuell</value>
+  </data>
+  <data name="PoiAvailabilitySetOn" xml:space="preserve">
+    <value>Gesetzt am {0}</value>
+  </data>
+  <data name="PoiAvailabilityStatusHelp" xml:space="preserve">
+    <value>Offen hebt die Meldung auf. Eingeschränkt nimmt weiterhin Patienten mit verringerter Kapazität auf; Abgemeldet bittet Besatzungen, ein anderes Ziel anzufahren, sofern es eine Alternative gibt; Geschlossen nimmt niemanden auf.</value>
+  </data>
+  <data name="PoiAvailabilityUnavailableHelp" xml:space="preserve">
+    <value>Haken Sie an, was dieses Ziel derzeit nicht leisten kann.</value>
+  </data>
+  <data name="PoiAvailabilityNoCapabilities" xml:space="preserve">
+    <value>Für dieses Ziel sind keine Fähigkeiten angehakt.</value>
+  </data>
+  <data name="PoiAvailabilityNoteHelp" xml:space="preserve">
+    <value>Optional, höchstens {0} Zeichen.</value>
+  </data>
+  <data name="PoiAvailabilityExpires" xml:space="preserve">
+    <value>Läuft ab</value>
+  </data>
+  <data name="PoiAvailabilityExpiresHelp" xml:space="preserve">
+    <value>Wann die Meldung abläuft und das Ziel wieder als offen gilt.</value>
+  </data>
+  <data name="PoiAvailabilityExpiryNone" xml:space="preserve">
+    <value>Kein Ablauf (bis zur Änderung)</value>
+  </data>
+  <data name="PoiAvailabilityExpiryKeep" xml:space="preserve">
+    <value>Aktuellen beibehalten ({0})</value>
+  </data>
+  <data name="PoiAvailabilityExpiryOneHour" xml:space="preserve">
+    <value>In 1 Stunde</value>
+  </data>
+  <data name="PoiAvailabilityExpiryHours" xml:space="preserve">
+    <value>In {0} Stunden</value>
+  </data>
+  <data name="PoiAvailabilityStatusInvalid" xml:space="preserve">
+    <value>Wählen Sie einen Verfügbarkeitsstatus.</value>
+  </data>
+  <data name="PoiAvailabilityNoteTooLong" xml:space="preserve">
+    <value>Die Notiz darf höchstens {0} Zeichen lang sein.</value>
+  </data>
+  <data name="PoiAvailabilityExpiryInvalid" xml:space="preserve">
+    <value>Wählen Sie, wann die Meldung abläuft.</value>
+  </data>
+  <data name="PoiAvailabilitySaved" xml:space="preserve">
+    <value>Verfügbarkeit von {0} auf {1} gesetzt.</value>
+  </data>
+  <data name="PoiAvailabilitySaveFailed" xml:space="preserve">
+    <value>Die Verfügbarkeit konnte nicht gespeichert werden: Der POI ist kein Ziel mehr. Laden Sie die Seite neu und versuchen Sie es erneut.</value>
+  </data>
 </root>

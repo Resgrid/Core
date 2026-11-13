@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Map Icon Legend and status / priority map icon pages -->
+    <data name="ImportLayer" xml:space="preserve">
+    <value>Importera lager</value>
+  </data>
+  <data name="ImportLayerHeader" xml:space="preserve">
+    <value>Importera lager</value>
+  </data>
+  <data name="ImportHelp" xml:space="preserve">
+    <value>Ladda upp en KML-, KMZ- eller GeoJSON-fil (från Google My Maps, Google Earth eller ett GIS) med ett evenemangs bana, område eller stationer. Varje punkt, linje och polygon blir en form i lagret med eget namn, egen beskrivning och färg. Ge lagret evenemangets datum så visas det på alla kartor medan evenemanget pågår.</value>
+  </data>
+  <data name="DetailsHeader" xml:space="preserve">
+    <value>Lagerdetaljer</value>
+  </data>
+  <data name="LayerFile" xml:space="preserve">
+    <value>Fil</value>
+  </data>
+  <data name="LayerFileHelp" xml:space="preserve">
+    <value>KML, KMZ eller GeoJSON, upp till {0} MB.</value>
+  </data>
+  <data name="ReplaceFile" xml:space="preserve">
+    <value>Ersätt fil</value>
+  </data>
+  <data name="ReplaceFileHelp" xml:space="preserve">
+    <value>Valfritt. En ny fil ersätter alla former i lagret; uppgifterna ovan behålls.</value>
+  </data>
+  <data name="DeleteHelp" xml:space="preserve">
+    <value>Att ta bort lagret (Kartor → Lager) tar bort alla dess former och uppgifter.</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Namn</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Beskrivning</value>
+  </data>
+  <data name="Color" xml:space="preserve">
+    <value>Standardfärg</value>
+  </data>
+  <data name="ColorHelp" xml:space="preserve">
+    <value>Används för former som filen inte ger någon egen färg.</value>
+  </data>
+  <data name="EventSection" xml:space="preserve">
+    <value>Evenemang</value>
+  </data>
+  <data name="StartsOn" xml:space="preserve">
+    <value>Börjar</value>
+  </data>
+  <data name="EndsOn" xml:space="preserve">
+    <value>Slutar</value>
+  </data>
+  <data name="EventDatesHelp" xml:space="preserve">
+    <value>I avdelningens tidszon ({0}). Medan evenemanget pågår visas lagret på alla kartor oavsett "På som standard". Lämna båda tomma för ett lager som inte hör till ett evenemang.</value>
+  </data>
+  <data name="Organizer" xml:space="preserve">
+    <value>Arrangör</value>
+  </data>
+  <data name="ContactName" xml:space="preserve">
+    <value>Samordnare / Kontakt</value>
+  </data>
+  <data name="ContactPhone" xml:space="preserve">
+    <value>Kontaktens telefon</value>
+  </data>
+  <data name="ContactEmail" xml:space="preserve">
+    <value>Kontaktens e-post</value>
+  </data>
+  <data name="OnByDefault" xml:space="preserve">
+    <value>På som standard</value>
+  </data>
+  <data name="OnByDefaultHelp" xml:space="preserve">
+    <value>Visa lagret när varje karta öppnas, även utanför evenemangets datum.</value>
+  </data>
+  <data name="Searchable" xml:space="preserve">
+    <value>Sökbart</value>
+  </data>
+  <data name="SaveImport" xml:space="preserve">
+    <value>Importera</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Spara</value>
+  </data>
+  <data name="EditShapes" xml:space="preserve">
+    <value>Redigera former</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Detaljer</value>
+  </data>
+  <data name="SourceFile" xml:space="preserve">
+    <value>Källa</value>
+  </data>
+  <data name="Drawn" xml:space="preserve">
+    <value>Ritat på kartan</value>
+  </data>
+  <data name="ShapeCount" xml:space="preserve">
+    <value>{0} former</value>
+  </data>
+  <data name="EventColumn" xml:space="preserve">
+    <value>Evenemang</value>
+  </data>
+  <data name="PhaseUpcoming" xml:space="preserve">
+    <value>Kommande</value>
+  </data>
+  <data name="PhaseActive" xml:space="preserve">
+    <value>Pågår nu</value>
+  </data>
+  <data name="PhaseEnded" xml:space="preserve">
+    <value>Avslutat</value>
+  </data>
+  <data name="ImportedOn" xml:space="preserve">
+    <value>importerat</value>
+  </data>
+  <data name="FileRequired" xml:space="preserve">
+    <value>Välj en KML-, KMZ- eller GeoJSON-fil att importera.</value>
+  </data>
+  <data name="FileTypeUnsupported" xml:space="preserve">
+    <value>Ladda upp en .kml-, .kmz-, .geojson- eller .json-fil.</value>
+  </data>
+  <data name="FileTooLarge" xml:space="preserve">
+    <value>Filen är större än {0} MB.</value>
+  </data>
+  <data name="FileTooManyShapes" xml:space="preserve">
+    <value>Filen har fler än {0} former. Dela upp den i flera lager.</value>
+  </data>
+  <data name="FileTooManyPoints" xml:space="preserve">
+    <value>Filen har fler än {0} koordinater. Förenkla linjerna (de flesta GIS-verktyg kan) eller dela upp den i flera lager.</value>
+  </data>
+  <data name="FileNoShapes" xml:space="preserve">
+    <value>Filen har inga punkter, linjer eller polygoner med koordinater.</value>
+  </data>
+  <data name="FileOnlyAddresses" xml:space="preserve">
+    <value>Filens {0} platser har en adress men inga koordinater (ett Google My Maps-lager placerat efter adress). Importera dem i stället som intressepunkter (Kartor → POI → Importera), där adresserna slås upp, eller exportera kartan med koordinater.</value>
+  </data>
+  <data name="FileUnreadable" xml:space="preserve">
+    <value>Filen kunde inte läsas. Kontrollera att det är en giltig KML-, KMZ- eller GeoJSON-fil.</value>
+  </data>
+  <data name="EndsBeforeStarts" xml:space="preserve">
+    <value>Evenemanget kan inte sluta innan det börjar.</value>
+  </data>
+  <data name="ContactEmailInvalid" xml:space="preserve">
+    <value>Ange en giltig e-postadress.</value>
+  </data>
+  <data name="ColorInvalid" xml:space="preserve">
+    <value>Välj en färg.</value>
+  </data>
+  <data name="SaveFailed" xml:space="preserve">
+    <value>Lagret kunde inte sparas. Försök igen.</value>
+  </data>
+  <data name="ImportedSummary" xml:space="preserve">
+    <value>Importerade "{0}": {1} punkter, {2} linjer, {3} polygoner.</value>
+  </data>
+  <data name="ReplacedSummary" xml:space="preserve">
+    <value>Ersatte formerna i "{0}": {1} punkter, {2} linjer, {3} polygoner.</value>
+  </data>
+  <data name="SavedSummary" xml:space="preserve">
+    <value>Sparade "{0}".</value>
+  </data>
+  <data name="SkippedNote" xml:space="preserve">
+    <value>{0} platsmarkeringar utan användbara koordinater utelämnades.</value>
+  </data>
+</root>

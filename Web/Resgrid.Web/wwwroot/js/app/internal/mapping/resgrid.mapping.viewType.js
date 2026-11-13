@@ -23,6 +23,48 @@ var resgrid;
                 return data;
             }
 
+            // The availability badge colours match PoiAvailabilityBadge (Limited amber, Diversion orange, Closed red).
+            var availabilityColors = { 0: '#1ab394', 1: '#f0ad4e', 2: '#e8590c', 3: '#d9534f' };
+
+            function listStrings() {
+                return typeof poiListStrings !== 'undefined' && poiListStrings ? poiListStrings : {};
+            }
+
+            function renderCapabilities(data, type) {
+                var names = Array.isArray(data) ? data : [];
+                if (type !== 'display') {
+                    return names.join(', ');
+                }
+                return names.map(function (name) {
+                    return '<span class="label label-default" style="display:inline-block;margin:0 3px 3px 0;">' + resgrid.escapeHtml(String(name)) + '</span>';
+                }).join('');
+            }
+
+            function renderAvailability(data, type, row) {
+                var label = row && row.AvailabilityLabel ? String(row.AvailabilityLabel) : '';
+                if (type !== 'display') {
+                    return label;
+                }
+                var status = Number(data) || 0;
+                var html = '<span class="label poi-availability-badge" data-status="' + status + '" style="background-color:' + (availabilityColors[status] || availabilityColors[0]) + ';color:#fff;">' +
+                    resgrid.escapeHtml(label) + '</span>';
+                if (status === 0) {
+                    return html;
+                }
+                var strings = listStrings();
+                if (row.UnavailableCapabilities && row.UnavailableCapabilities.length) {
+                    html += '<div class="small"><strong>' + resgrid.escapeHtml(strings.unavailable || '') + '</strong> ' +
+                        resgrid.escapeHtml(row.UnavailableCapabilities.join(', ')) + '</div>';
+                }
+                if (row.AvailabilityNote) {
+                    html += '<div class="small text-muted">' + resgrid.escapeHtml(String(row.AvailabilityNote)) + '</div>';
+                }
+                if (row.AvailabilityExpires) {
+                    html += '<div class="small text-muted">' + resgrid.escapeHtml(String(strings.until || '{0}').replace('{0}', String(row.AvailabilityExpires))) + '</div>';
+                }
+                return html;
+            }
+
             function createSafeTextElement(text) {
                 var safeElement = document.createElement('span');
                 safeElement.textContent = text === null || text === undefined ? '' : String(text);
@@ -37,6 +79,7 @@ var resgrid;
                         { data: 'Name', title: 'Name', defaultContent: '', render: renderTextValue },
                         { data: 'Address', title: 'Address', defaultContent: '', render: renderTextValue },
                         { data: 'Note', title: 'Note', defaultContent: '', render: renderTextValue },
+                        { data: 'Capabilities', title: resgrid.escapeHtml(listStrings().capabilities || 'Capabilities'), defaultContent: '', render: renderCapabilities },
                         { data: 'Latitude', title: 'Latitude' },
                         { data: 'Longitude', title: 'Longitude' },
                         {
@@ -44,16 +87,26 @@ var resgrid;
                             title: 'Actions',
                             orderable: false,
                             searchable: false,
-                            render: function (data) {
-                                if (!canManagePois) {
-                                    return '';
+                            render: function (data, type, row) {
+                                var id = Number(data);
+                                var html = '';
+                                if (canManagePois) {
+                                    html += '<a class="btn btn-xs btn-info" href="' + resgrid.absoluteBaseUrl + '/User/Mapping/EditPOI?poiId=' + id + '">Edit</a> ' +
+                                        '<button type="button" class="btn btn-xs btn-danger" onclick="resgrid.mapping.viewType.deletePoi(' + id + ')">Delete</button>';
                                 }
-
-                                return '<a class="btn btn-xs btn-info" href="' + resgrid.absoluteBaseUrl + '/User/Mapping/EditPOI?poiId=' + data + '">Edit</a> ' +
-                                    '<button type="button" class="btn btn-xs btn-danger" onclick="resgrid.mapping.viewType.deletePoi(' + data + ')">Delete</button>';
+                                if (row && row.IsDestination) {
+                                    html += ' <a class="btn btn-xs btn-warning" href="' + resgrid.absoluteBaseUrl + '/User/Mapping/SetPoiAvailability?poiId=' + id + '&amp;returnTo=Type">' +
+                                        resgrid.escapeHtml(listStrings().setAvailability || 'Set availability') + '</a>';
+                                }
+                                return html;
                             }
                         }
                     ];
+
+                if (typeof poiTypeIsDestination !== 'undefined' && poiTypeIsDestination) {
+                    // After Capabilities: Name, Address, Note, Capabilities, Availability, ...
+                    columns.splice(4, 0, { data: 'AvailabilityStatus', title: resgrid.escapeHtml(listStrings().availability || 'Availability'), defaultContent: '', render: renderAvailability });
+                }
 
                 if (bulkForm) {
                     columns.unshift({

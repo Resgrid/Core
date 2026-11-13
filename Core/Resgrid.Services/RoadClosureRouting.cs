@@ -209,6 +209,20 @@ namespace Resgrid.Services
 			route.DurationSeconds += route.ClosureDelaySeconds;
 		}
 
+		/// <summary>Whose road closures apply to a routing profile: walkers', cyclists', or (every driving profile) drivers'.</summary>
+		public static UnitTravelModes ModeFor(RoutingProfile profile)
+		{
+			switch (profile)
+			{
+				case RoutingProfile.Walking:
+					return UnitTravelModes.Walking;
+				case RoutingProfile.Cycling:
+					return UnitTravelModes.Cycling;
+				default:
+					return UnitTravelModes.Driving;
+			}
+		}
+
 		/// <summary>True when the route still runs through a full closure the provider could not avoid: its directions lead into it.</summary>
 		public static bool CrossesFullClosure(RouteResult route)
 		{

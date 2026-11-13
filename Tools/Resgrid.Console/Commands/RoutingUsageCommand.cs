@@ -42,7 +42,7 @@ namespace Resgrid.Console.Commands
 				if (monthStart < from)
 					from = monthStart;
 
-				var rows = await routingUsageService.GetUsageAsync(from, today);
+				var rows = await routingUsageService.GetUsageAsync(from, today, cancellationToken);
 
 				logger.LogInformation($"Routing provider: {MappingConfig.RoutingProvider}, fallback: {MappingConfig.RoutingFallbackProvider}");
 				logger.LogInformation("");

@@ -26,17 +26,55 @@ namespace Resgrid.Tests.Services.Routing
 		private ConcurrentDictionary<string, long> _counters;
 		private Mock<ICacheProvider> _cache;
 		private RoutingUsageService _service;
+		private bool _cacheEnabled;
 
 		[SetUp]
 		public void SetUp()
 		{
+			_cacheEnabled = SystemBehaviorConfig.CacheEnabled;
+			SystemBehaviorConfig.CacheEnabled = true;
+
 			_counters = new ConcurrentDictionary<string, long>();
 			_cache = new Mock<ICacheProvider>();
+			_cache.Setup(c => c.IsConnected()).Returns(true);
 			_cache.Setup(c => c.IncrementByAsync(It.IsAny<string>(), It.IsAny<long>(), It.IsAny<TimeSpan>()))
 				.ReturnsAsync((string key, long amount, TimeSpan _) => _counters.AddOrUpdate(key, amount, (_, value) => value + amount));
 			_cache.Setup(c => c.GetStringAsync(It.IsAny<string>()))
 				.ReturnsAsync((string key) => _counters.TryGetValue(key, out var value) ? value.ToString() : null);
 			_service = new RoutingUsageService(_cache.Object);
+		}
+
+		[TearDown]
+		public void TearDown()
+		{
+			SystemBehaviorConfig.CacheEnabled = _cacheEnabled;
+		}
+
+		[Test]
+		public async Task an_unreachable_cache_fails_the_report_instead_of_showing_no_calls()
+		{
+			// PR 585: Redis returns null for every key while disconnected, which read as a month of zero calls and a $0 bill.
+			await _service.RecordAsync(RoutingProviderNames.Mapbox, RoutingUsageOperation.Route, RoutingUsageOutcome.Succeeded);
+			_cache.Setup(c => c.IsConnected()).Returns(false);
+
+			Func<Task> read = () => _service.GetUsageAsync(DateTime.UtcNow.Date, DateTime.UtcNow.Date);
+
+			await read.Should().ThrowAsync<InvalidOperationException>();
+		}
+
+		[Test]
+		public async Task a_report_reads_every_counter_once_and_stops_when_cancelled()
+		{
+			var today = DateTime.UtcNow.Date;
+			await _service.RecordAsync(RoutingProviderNames.Valhalla, RoutingUsageOperation.Route, RoutingUsageOutcome.Succeeded);
+
+			(await _service.GetUsageAsync(today.AddDays(-2), today)).Should().ContainSingle();
+			_cache.Verify(c => c.GetStringAsync(It.IsAny<string>()), Times.Exactly(3 * 4 * 3 * 2 * 5), "every counter of the three days, read once");
+
+			using var cancelled = new CancellationTokenSource();
+			cancelled.Cancel();
+			Func<Task> read = () => _service.GetUsageAsync(today.AddDays(-400), today, cancelled.Token);
+			await read.Should().ThrowAsync<OperationCanceledException>();
 		}
 
 		[Test]

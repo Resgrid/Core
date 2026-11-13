@@ -1362,9 +1362,11 @@ namespace Resgrid.Services
 				return setting?.Setting ?? string.Empty;
 			}
 
+			// Provider accounts carry credentials, so they ride the security-setting window: a cache fill racing a save, or a
+			// missed invalidation, cannot keep a removed or replaced account in use for two weeks.
 			string value;
 			if (Config.SystemBehaviorConfig.CacheEnabled && !bypassCache)
-				value = await _cacheProvider.RetrieveAsync<string>(string.Format(MappingProviderOverridesCacheKey, departmentId), getSetting, LongCacheLength);
+				value = await _cacheProvider.RetrieveAsync<string>(string.Format(MappingProviderOverridesCacheKey, departmentId), getSetting, SecuritySettingCacheLength);
 			else
 				value = await getSetting();
 

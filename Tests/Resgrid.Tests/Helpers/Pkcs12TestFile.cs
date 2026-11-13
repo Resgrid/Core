@@ -34,6 +34,18 @@ namespace Resgrid.Tests.Helpers
 			return certificate.Thumbprint;
 		}
 
+		/// <summary>Writes a PKCS#12 that holds a fresh certificate but not its private key; returns the thumbprint.</summary>
+		public string WriteWithoutPrivateKey(string subject, string password = Password)
+		{
+			using var key = ECDsa.Create(ECCurve.NamedCurves.nistP256);
+			var request = new CertificateRequest(subject, key, HashAlgorithmName.SHA256);
+			using var withKey = request.CreateSelfSigned(DateTimeOffset.UtcNow.AddMinutes(-5), DateTimeOffset.UtcNow.AddDays(1));
+			using var publicOnly = X509CertificateLoader.LoadCertificate(withKey.RawData);
+
+			Replace(publicOnly.Export(X509ContentType.Pkcs12, password));
+			return publicOnly.Thumbprint;
+		}
+
 		/// <summary>Replaces the file with bytes that are not a PKCS#12.</summary>
 		public void Corrupt() => Replace(System.Text.Encoding.UTF8.GetBytes("not a certificate"));
 

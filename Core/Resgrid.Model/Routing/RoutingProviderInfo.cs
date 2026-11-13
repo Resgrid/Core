@@ -15,5 +15,11 @@ namespace Resgrid.Model
 
 		/// <summary>True when it is the department's own account (Mapping Settings).</summary>
 		public bool DepartmentAccount { get; set; }
+
+		/// <summary>
+		/// A department account's settings revision: a short one-way digest that changes when its URL, key or options do (so
+		/// stored routes can tell an edited account from the one that made them). Null for the install's providers.
+		/// </summary>
+		public string AccountRevision { get; set; }
 	}
 }

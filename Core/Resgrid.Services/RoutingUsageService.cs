@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Framework;
 using Resgrid.Model;
@@ -60,53 +61,69 @@ namespace Resgrid.Services
 			}
 		}
 
-		public async Task<List<RoutingUsageDay>> GetUsageAsync(DateTime fromDayUtc, DateTime toDayUtc)
+		public async Task<List<RoutingUsageDay>> GetUsageAsync(DateTime fromDayUtc, DateTime toDayUtc, CancellationToken cancellationToken = default)
 		{
 			var rows = new List<RoutingUsageDay>();
 			if (_cacheProvider == null)
 				return rows;
+
+			// A missing counter reads as zero, and so does every counter while Redis is unreachable: refuse rather than report
+			// a month of no calls and a $0 bill.
+			EnsureCacheReachable();
 
 			var from = fromDayUtc.Date;
 			var to = toDayUtc.Date;
 			if (to < from)
 				(from, to) = (to, from);
 
+			var metrics = new[]
+			{
+				Metric(RoutingUsageOutcome.Succeeded), Metric(RoutingUsageOutcome.Rejected), Metric(RoutingUsageOutcome.Failed),
+				Metric(RoutingUsageOutcome.NotSent), ElementsMetric
+			};
+			var series = (from provider in CountedProviders
+				from operation in Operations
+				from departmentAccount in new[] { false, true }
+				select (Provider: provider, Operation: operation, DepartmentAccount: departmentAccount)).ToList();
+
+			// One round of reads per day (every provider, operation, account and metric at once), not one per series: a
+			// 400-day report is 400 round trips, not 9,600.
 			for (var day = from; day <= to; day = day.AddDays(1))
 			{
-				foreach (var provider in CountedProviders)
+				cancellationToken.ThrowIfCancellationRequested();
+
+				var values = await Task.WhenAll(series.SelectMany(s => metrics.Select(metric => ReadAsync(Key(day, s.Provider, s.Operation, metric, s.DepartmentAccount)))));
+
+				for (var i = 0; i < series.Count; i++)
 				{
-					foreach (var operation in Operations)
+					var offset = i * metrics.Length;
+					if (Enumerable.Range(offset, metrics.Length).All(v => values[v] == 0))
+						continue;
+
+					rows.Add(new RoutingUsageDay
 					{
-						foreach (var departmentAccount in new[] { false, true })
-						{
-						var values = await Task.WhenAll(
-							ReadAsync(Key(day, provider, operation, Metric(RoutingUsageOutcome.Succeeded), departmentAccount)),
-							ReadAsync(Key(day, provider, operation, Metric(RoutingUsageOutcome.Rejected), departmentAccount)),
-							ReadAsync(Key(day, provider, operation, Metric(RoutingUsageOutcome.Failed), departmentAccount)),
-							ReadAsync(Key(day, provider, operation, Metric(RoutingUsageOutcome.NotSent), departmentAccount)),
-							ReadAsync(Key(day, provider, operation, ElementsMetric, departmentAccount)));
-
-						if (values.All(v => v == 0))
-							continue;
-
-						rows.Add(new RoutingUsageDay
-						{
-							Day = day,
-							Provider = provider,
-							Operation = operation,
-							DepartmentAccount = departmentAccount,
-							Succeeded = values[0],
-							Rejected = values[1],
-							Failed = values[2],
-							NotSent = values[3],
-							Elements = values[4]
-						});
-						}
-					}
+						Day = day,
+						Provider = series[i].Provider,
+						Operation = series[i].Operation,
+						DepartmentAccount = series[i].DepartmentAccount,
+						Succeeded = values[offset],
+						Rejected = values[offset + 1],
+						Failed = values[offset + 2],
+						NotSent = values[offset + 3],
+						Elements = values[offset + 4]
+					});
 				}
 			}
 
+			// A connection lost part way through would have zeroed the days after it.
+			EnsureCacheReachable();
 			return rows;
+		}
+
+		private void EnsureCacheReachable()
+		{
+			if (!Config.SystemBehaviorConfig.CacheEnabled || !_cacheProvider.IsConnected())
+				throw new InvalidOperationException("The routing counters are in Redis, which is not reachable (or SystemBehaviorConfig.CacheEnabled is false); usage cannot be read.");
 		}
 
 		private const string ElementsMetric = "elements";

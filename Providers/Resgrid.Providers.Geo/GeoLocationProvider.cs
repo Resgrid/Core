@@ -62,7 +62,7 @@ namespace Resgrid.Providers.GeoLocationProvider
 		/// The geocoders MappingConfig.GeocodingProviders lists, in that order (plan §6.4). The default
 		/// "google,locationiq,bing" is the order this provider always used.
 		/// </summary>
-		private async Task<List<IGeocodingProvider>> GeocoderChainAsync()
+		private async Task<(List<IGeocodingProvider> Chain, int CacheDepartmentId)> GeocoderChainAsync()
 		{
 			var names = (Config.MappingConfig.GeocodingProviders ?? string.Empty)
 				.Split(new[] { ',', ';', ' ' }, StringSplitOptions.RemoveEmptyEntries)
@@ -74,12 +74,15 @@ namespace Resgrid.Providers.GeoLocationProvider
 				.Where(g => g != null && g.IsConfigured)
 				.ToList();
 
-			// The department the request is for (web and API middleware) tries its own account first (setting 125).
-			var own = await DepartmentGeocoderAsync(Framework.RequestDepartment.Id);
+			// The department the request is for (web and API middleware) tries its own account first (setting 125). Its lookups
+			// get cache entries of their own: a shared entry would answer it from the install's geocoders (or another
+			// department's) without its own ever being asked, which is what it set one up to avoid.
+			var departmentId = Framework.RequestDepartment.Id;
+			var own = await DepartmentGeocoderAsync(departmentId);
 			if (own != null)
 				chain.Insert(0, own);
 
-			return chain;
+			return (chain, own != null ? departmentId : 0);
 		}
 
 		private async Task<IGeocodingProvider> DepartmentGeocoderAsync(int departmentId)
@@ -116,9 +119,11 @@ namespace Resgrid.Providers.GeoLocationProvider
 
 		public async Task<string> GetAddressFromLatLong(double lat, double lon)
 		{
+			var (chain, cacheDepartmentId) = await GeocoderChainAsync();
+
 			async Task<string> getAddressFromCords()
 			{
-				foreach (var geocoder in await GeocoderChainAsync())
+				foreach (var geocoder in chain)
 				{
 					try
 					{
@@ -134,7 +139,7 @@ namespace Resgrid.Providers.GeoLocationProvider
 				return null;
 			}
 
-			return await _cacheProvider.RetrieveAsync<string>(GeoLocationCacheKeys.ReverseGeocode(lat, lon), getAddressFromCords, CacheLength);
+			return await _cacheProvider.RetrieveAsync<string>(GeoLocationCacheKeys.ReverseGeocode(lat, lon, cacheDepartmentId), getAddressFromCords, CacheLength);
 		}
 
 		public async Task<string> GetLatLonFromAddress(string address)
@@ -142,9 +147,11 @@ namespace Resgrid.Providers.GeoLocationProvider
 			if (string.IsNullOrWhiteSpace(address))
 				return null;
 
+			var (chain, cacheDepartmentId) = await GeocoderChainAsync();
+
 			async Task<string> getCordsFromAddress()
 			{
-				foreach (var geocoder in await GeocoderChainAsync())
+				foreach (var geocoder in chain)
 				{
 					try
 					{
@@ -161,7 +168,7 @@ namespace Resgrid.Providers.GeoLocationProvider
 				return null;
 			}
 
-			return await _cacheProvider.RetrieveAsync<string>(GeoLocationCacheKeys.ForwardGeocode(address), getCordsFromAddress, CacheLength);
+			return await _cacheProvider.RetrieveAsync<string>(GeoLocationCacheKeys.ForwardGeocode(address, cacheDepartmentId), getCordsFromAddress, CacheLength);
 		}
 
 		public async Task<GeocodeResult> GeocodeAddressAsync(string address, CancellationToken cancellationToken = default)
@@ -169,7 +176,7 @@ namespace Resgrid.Providers.GeoLocationProvider
 			if (string.IsNullOrWhiteSpace(address))
 				return GeocodeResult.Of(GeocodeOutcome.NotFound);
 
-			var chain = await GeocoderChainAsync();
+			var (chain, cacheDepartmentId) = await GeocoderChainAsync();
 			var outcome = chain.Count == 0 ? GeocodeOutcome.NotConfigured : GeocodeOutcome.Unavailable;
 
 			// Shares GetLatLonFromAddress's cache entry, so a hit costs nothing and a found position is stored for both.
@@ -220,7 +227,7 @@ namespace Resgrid.Providers.GeoLocationProvider
 				return null;
 			}
 
-			var coordinates = chain.Count == 0 ? null : await _cacheProvider.RetrieveAsync<string>(GeoLocationCacheKeys.ForwardGeocode(address), lookup, CacheLength);
+			var coordinates = chain.Count == 0 ? null : await _cacheProvider.RetrieveAsync<string>(GeoLocationCacheKeys.ForwardGeocode(address, cacheDepartmentId), lookup, CacheLength);
 
 			if (coordinates != null)
 			{

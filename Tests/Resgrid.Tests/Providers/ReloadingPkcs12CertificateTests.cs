@@ -68,6 +68,40 @@ namespace Resgrid.Tests.Providers
 		}
 
 		[Test]
+		public void A_file_with_no_private_key_is_refused_at_startup()
+		{
+			// PR 585: it loaded, but no TLS handshake can use a certificate without its key.
+			_file.WriteWithoutPrivateKey("CN=broker.protected.internal");
+
+			FluentActions.Invoking(() => Holder(TimeSpan.Zero)).Should().Throw<InvalidOperationException>()
+				.WithMessage($"*{_file.Path}*");
+		}
+
+		[Test]
+		public void A_renewal_without_a_key_or_outside_its_validity_never_replaces_a_working_certificate()
+		{
+			// Valid at the test clock, as every certificate below is placed relative to it.
+			var first = _file.Write("CN=broker.protected.internal", Start.AddMinutes(-5), Start.AddDays(1));
+			var holder = Holder(TimeSpan.FromMinutes(1));
+
+			_file.WriteWithoutPrivateKey("CN=broker.protected.internal");
+			_clock.Advance(TimeSpan.FromMinutes(1));
+			holder.Current.Thumbprint.Should().Be(first, "a renewal with no key cannot complete a handshake");
+
+			_file.Write("CN=broker.protected.internal", Start.AddDays(-2), Start.AddDays(-1));
+			_clock.Advance(TimeSpan.FromMinutes(1));
+			holder.Current.Thumbprint.Should().Be(first, "an expired renewal is worse than the certificate in hand");
+
+			_file.Write("CN=broker.protected.internal", Start.AddHours(6), Start.AddDays(2));
+			_clock.Advance(TimeSpan.FromMinutes(1));
+			holder.Current.Thumbprint.Should().Be(first, "a renewal that is not valid yet waits");
+
+			var renewed = _file.Write("CN=broker.protected.internal", Start, Start.AddDays(2));
+			_clock.Advance(TimeSpan.FromMinutes(1));
+			holder.Current.Thumbprint.Should().Be(renewed);
+		}
+
+		[Test]
 		public void A_path_is_required()
 		{
 			FluentActions.Invoking(() => new ReloadingPkcs12Certificate(" ", null, TimeSpan.Zero, _clock))

@@ -24,16 +24,25 @@ namespace Resgrid.Providers.GeoLocationProvider
 		// 16 bytes (32 hex chars) of the SHA-256; a collision at 128 bits is not a practical concern.
 		private const int HashBytes = 16;
 
-		/// <summary>Forward geocode (address to coordinates). Case and whitespace differences share one entry.</summary>
-		public static string ForwardGeocode(string address)
+		/// <summary>
+		/// Forward geocode (address to coordinates). Case and whitespace differences share one entry. A department that
+		/// geocodes through its own account (<paramref name="departmentId"/> above 0) has entries of its own; 0 is the
+		/// install-wide entry every other lookup shares.
+		/// </summary>
+		public static string ForwardGeocode(string address, int departmentId = 0)
 		{
-			return ForwardPrefix + Hash(NormalizeText(address));
+			return ForwardPrefix + DepartmentScope(departmentId) + Hash(NormalizeText(address));
 		}
 
-		/// <summary>Reverse geocode (coordinates to address).</summary>
-		public static string ReverseGeocode(double latitude, double longitude)
+		/// <summary>Reverse geocode (coordinates to address); <paramref name="departmentId"/> as for <see cref="ForwardGeocode"/>.</summary>
+		public static string ReverseGeocode(double latitude, double longitude, int departmentId = 0)
 		{
-			return ReversePrefix + Hash(FormatCoordinates(latitude, longitude));
+			return ReversePrefix + DepartmentScope(departmentId) + Hash(FormatCoordinates(latitude, longitude));
+		}
+
+		private static string DepartmentScope(int departmentId)
+		{
+			return departmentId > 0 ? "d" + departmentId.ToString(CultureInfo.InvariantCulture) + "_" : string.Empty;
 		}
 
 		/// <summary>

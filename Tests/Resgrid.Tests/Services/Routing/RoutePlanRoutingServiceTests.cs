@@ -21,6 +21,7 @@ namespace Resgrid.Tests.Services.Routing
 		private Mock<IDepartmentGroupsService> _groups;
 		private Mock<IUnitsService> _units;
 		private Mock<IGeoService> _geo;
+		private Mock<IRoadClosureService> _closures;
 		private RoutePlanRoutingService _service;
 
 		private RoutePlan _plan;
@@ -83,7 +84,9 @@ namespace Resgrid.Tests.Services.Routing
 			_groups.Setup(g => g.GetGroupByIdAsync(4, false)).ReturnsAsync(new DepartmentGroup { DepartmentGroupId = 4, DepartmentId = 7, Name = "Station 4" });
 			_geo.Setup(g => g.GetStationCoordinatesAsync(It.Is<DepartmentGroup>(d => d.DepartmentGroupId == 4))).ReturnsAsync(new GeoMath.GeoPoint(39.50, -119.80));
 
-			_service = new RoutePlanRoutingService(_routing.Object, _routes.Object, _groups.Object, _units.Object, _geo.Object);
+			_closures = new Mock<IRoadClosureService>();
+			_closures.Setup(c => c.GetRoutingClosuresAsync(It.IsAny<int>(), It.IsAny<UnitTravelModes>(), It.IsAny<DateTime>())).ReturnsAsync(new List<RoutingClosure>());
+			_service = new RoutePlanRoutingService(_routing.Object, _routes.Object, _groups.Object, _units.Object, _geo.Object, _closures.Object);
 		}
 
 		/// <summary>One leg per consecutive pair: 600 s and 1000 m each, straight-line geometry through the points.</summary>
@@ -310,6 +313,69 @@ namespace Resgrid.Tests.Services.Routing
 			live.Legs[1].OffsetSeconds.Should().Be(600 + 600 + 600);
 			_routes.Verify(r => r.SetInstanceLastRoutedOnAsync("inst", It.IsAny<DateTime>(), It.IsAny<CancellationToken>()), Times.Once);
 			_saved.Should().BeNull();
+		}
+
+		[Test]
+		public async Task road_closures_near_the_plan_are_routed_with_and_a_new_one_regenerates_the_stored_route()
+		{
+			// PR 585: route plans went straight through the department's closures.
+			await _service.GenerateAsync("plan");
+			_requests.Should().ContainSingle().Which.Closures.Should().BeEmpty();
+			_requests.Clear();
+
+			var parade = new RoutingClosure
+			{
+				ClosureId = "parade",
+				Name = "Parade",
+				VersionKey = "parade@1",
+				Severity = RoadClosureSeverities.Full,
+				Shape = RoadClosureShape.ParseOrNull("{\"type\":\"Polygon\",\"coordinates\":[[[-119.83,39.505],[-119.80,39.505],[-119.80,39.525],[-119.83,39.525],[-119.83,39.505]]]}")
+			};
+			_closures.Setup(c => c.GetRoutingClosuresAsync(7, UnitTravelModes.Driving, It.IsAny<DateTime>())).ReturnsAsync(new List<RoutingClosure> { parade });
+
+			var current = await _service.GetCurrentRouteAsync("plan");
+
+			current.Successful.Should().BeTrue();
+			_requests.Should().ContainSingle("the closure changed what the stored route depends on")
+				.Which.Closures.Should().ContainSingle(c => c.ClosureId == "parade");
+		}
+
+		[Test]
+		public async Task a_route_the_install_answered_for_a_failing_department_account_is_retried_later()
+		{
+			// PR 585: the hash names the department's provider, not the one that answered, so a fallback route stood in for good.
+			var answeredBy = RoutingProviderNames.Google;
+			_routing.Setup(r => r.GetProviderInfoAsync(7)).ReturnsAsync(new RoutingProviderInfo
+			{
+				Name = RoutingProviderNames.Mapbox,
+				Capabilities = new RoutingCapabilities { Steps = true, VehicleSize = true, VehicleFull = true },
+				DepartmentAccount = true,
+				AccountRevision = "rev1"
+			});
+			_routing.Setup(r => r.GetRouteAsync(It.IsAny<RouteRequest>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((RouteRequest request, CancellationToken _) =>
+				{
+					_requests.Add(request);
+					return Route(request, answeredBy);
+				});
+			_routing.Setup(r => r.CapabilitiesOf(RoutingProviderNames.Google)).Returns(new RoutingCapabilities { Steps = true });
+			_units.Setup(u => u.GetUnitVehicleProfileAsync(It.IsAny<Unit>())).ReturnsAsync(new VehicleProfile { HeightMeters = 3.8 });
+
+			await _service.GenerateAsync("plan");
+			_requests.Clear();
+
+			var fresh = await _service.GetCurrentRouteAsync("plan");
+			_requests.Should().BeEmpty("a recent fallback route is served as stored");
+			fresh.Provider.Should().Be(RoutingProviderNames.Google);
+			fresh.VehicleRestricted.Should().BeFalse("the provider that made the stored route applied no vehicle limits");
+
+			_plan.RouteComputedOn = DateTime.UtcNow.AddHours(-2);
+			answeredBy = RoutingProviderNames.Mapbox;
+
+			var retried = await _service.GetCurrentRouteAsync("plan");
+			_requests.Should().ContainSingle();
+			retried.Provider.Should().Be(RoutingProviderNames.Mapbox);
+			_plan.RouteProvider.Should().Be(RoutingProviderNames.Mapbox);
 		}
 
 		[Test]

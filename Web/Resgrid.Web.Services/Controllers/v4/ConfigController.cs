@@ -343,10 +343,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				result.Data.MapRasterTileUrl = style.RasterTileUrl;
 				result.Data.StaticMapUrlTemplate = _staticMapService.GetSignedTemplate(departmentId, key);
 
-				var traffic = await _mapStyleService.GetTrafficLayerAsync(departmentId);
-				result.Data.TrafficAvailable = !string.IsNullOrWhiteSpace(traffic?.Url);
-				result.Data.TrafficTileUrl = traffic?.Url;
-				result.Data.TrafficTileType = traffic?.Type;
+				ConfigTrafficFields.Apply(result.Data, await _mapStyleService.GetTrafficLayerAsync(departmentId));
 
 				result.Data.NavigationAvailable = provider.NavigationAvailable &&
 					await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.NavigationInApp, departmentId);

@@ -114,7 +114,7 @@ namespace Resgrid.Services
 		public async Task<List<double>> GetEtasInSecondsAsync(IReadOnlyList<string> origins, string destination, VehicleProfile vehicle = null)
 		{
 			var etas = (origins ?? new List<string>()).Select(_ => -1d).ToList();
-			var target = await ResolvePointAsync(destination);
+			var target = await ResolvePointAsync(destination, 0);
 
 			if (target == null || etas.Count == 0)
 				return etas;
@@ -123,7 +123,7 @@ namespace Resgrid.Services
 			var indexes = new List<int>();
 			for (var i = 0; i < origins.Count; i++)
 			{
-				var point = await ResolvePointAsync(origins[i]);
+				var point = await ResolvePointAsync(origins[i], 0);
 				if (point == null)
 					continue;
 
@@ -161,8 +161,8 @@ namespace Resgrid.Services
 			if (String.IsNullOrWhiteSpace(start) || String.IsNullOrWhiteSpace(destination))
 				return TravelEstimate.None;
 
-			var from = await ResolvePointAsync(start);
-			var to = await ResolvePointAsync(destination);
+			var from = await ResolvePointAsync(start, lookup?.DepartmentId ?? 0);
+			var to = await ResolvePointAsync(destination, lookup?.DepartmentId ?? 0);
 
 			if (from == null || to == null)
 				return TravelEstimate.None;
@@ -176,19 +176,7 @@ namespace Resgrid.Services
 				return new TravelEstimate { Seconds = travel.EstimateSeconds(meters), Source = EtaSources.Direct };
 			}
 
-			var closures = new List<RoutingClosure>();
-			if (lookup != null && lookup.DepartmentId > 0)
-			{
-				try
-				{
-					closures = await _roadClosureService.GetRoutingClosuresAsync(lookup.DepartmentId, travel.Mode, DateTime.UtcNow) ?? new List<RoutingClosure>();
-				}
-				catch (Exception ex)
-				{
-					// A closure lookup that fails must not take the drive time with it.
-					Framework.Logging.LogException(ex, $"Reading road closures for department {lookup.DepartmentId} failed; routing without them.");
-				}
-			}
+			var closures = await ClosuresForAsync(lookup?.DepartmentId ?? 0, travel.Mode);
 
 			// Walking and cycling ignore vehicle limits; driving picks plain, traffic-aware or truck routing as before.
 			var vehicle = travel.Mode == UnitTravelModes.Driving ? lookup?.Vehicle : null;
@@ -234,18 +222,20 @@ namespace Resgrid.Services
 			if (String.IsNullOrWhiteSpace(start) || String.IsNullOrWhiteSpace(destination))
 				return null;
 
-			var from = await ResolvePointAsync(start);
-			var to = await ResolvePointAsync(destination);
+			var from = await ResolvePointAsync(start, departmentId);
+			var to = await ResolvePointAsync(destination, departmentId);
 
 			if (from == null || to == null)
 				return null;
 
+			// A department's drive (a responder heading in) goes around its road closures for driving, as dispatch ETAs do.
 			var route = await _routingService.GetRouteAsync(new RouteRequest
 			{
 				DepartmentId = departmentId,
 				Waypoints = new List<RoutingWaypoint> { from, to },
 				Profile = DriveTimeProfile(vehicle),
-				Vehicle = vehicle
+				Vehicle = vehicle,
+				Closures = await ClosuresForAsync(departmentId, UnitTravelModes.Driving)
 			});
 
 			if (route == null || !route.Successful || route.Provider == RoutingProviderNames.Estimate)
@@ -262,8 +252,29 @@ namespace Resgrid.Services
 			return Config.MappingConfig.RoutingTrafficAware ? RoutingProfile.DrivingTraffic : RoutingProfile.Driving;
 		}
 
-		/// <summary>A "lat,lon" string as a point, else the address geocoded through the install's geocoding chain.</summary>
-		private async Task<RoutingWaypoint> ResolvePointAsync(string location)
+		/// <summary>The department's road closures in effect now for the mode; none for department 0 or when they can't be read.</summary>
+		private async Task<List<RoutingClosure>> ClosuresForAsync(int departmentId, UnitTravelModes mode)
+		{
+			if (departmentId <= 0)
+				return new List<RoutingClosure>();
+
+			try
+			{
+				return await _roadClosureService.GetRoutingClosuresAsync(departmentId, mode, DateTime.UtcNow) ?? new List<RoutingClosure>();
+			}
+			catch (Exception ex)
+			{
+				// A closure lookup that fails must not take the drive time with it.
+				Framework.Logging.LogException(ex, $"Reading road closures for department {departmentId} failed; routing without them.");
+				return new List<RoutingClosure>();
+			}
+		}
+
+		/// <summary>
+		/// A "lat,lon" string as a point, else the address geocoded through the geocoding chain: the given department's own
+		/// geocoder first (setting 125) even when the call runs outside that department's request (a worker, another scope).
+		/// </summary>
+		private async Task<RoutingWaypoint> ResolvePointAsync(string location, int departmentId)
 		{
 			if (String.IsNullOrWhiteSpace(location))
 				return null;
@@ -272,7 +283,10 @@ namespace Resgrid.Services
 			if (parsed.HasValue)
 				return new RoutingWaypoint(parsed.Value.Latitude, parsed.Value.Longitude);
 
-			var geocoded = await _geoLocationProvider.GetLatLonFromAddress(location);
+			string geocoded;
+			using (departmentId > 0 && Framework.RequestDepartment.Id != departmentId ? Framework.RequestDepartment.Enter(departmentId) : null)
+				geocoded = await _geoLocationProvider.GetLatLonFromAddress(location);
+
 			parsed = GeoMath.ParseLatLonString(geocoded);
 
 			return parsed.HasValue ? new RoutingWaypoint(parsed.Value.Latitude, parsed.Value.Longitude) : null;

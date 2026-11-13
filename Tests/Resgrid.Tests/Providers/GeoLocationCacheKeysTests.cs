@@ -37,6 +37,16 @@ namespace Resgrid.Tests.Providers
 		}
 
 		[Test]
+		public void A_department_with_its_own_geocoder_gets_its_own_entries_and_everyone_else_shares_one()
+		{
+			// PR 585: a shared entry answered a department from the install's geocoders without its own being asked.
+			GeoLocationCacheKeys.ForwardGeocode("123 Main St, Springfield, IL", 0).Should().Be("FGeo2_395f588c4d955af5c43a7e4400da765a");
+			GeoLocationCacheKeys.ForwardGeocode("123 Main St, Springfield, IL", 42).Should().Be("FGeo2_d42_395f588c4d955af5c43a7e4400da765a");
+			GeoLocationCacheKeys.ReverseGeocode(47.5, -122.25, 42).Should().Be("RGeo2_d42_1a92dd69fc23e08022eac5fcd742e37a");
+			GeoLocationCacheKeys.ReverseGeocode(47.5, -122.25, 43).Should().NotBe(GeoLocationCacheKeys.ReverseGeocode(47.5, -122.25, 42));
+		}
+
+		[Test]
 		public void Route_by_coordinates_should_match_the_pinned_sha256_key()
 		{
 			GeoLocationCacheKeys.Route(47.5, -122.25, 47.6, -122.3)

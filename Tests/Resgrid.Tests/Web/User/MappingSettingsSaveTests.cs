@@ -33,6 +33,7 @@ namespace Resgrid.Tests.Web.User
 		private OfflineMapPacksConfig _storedOffline;
 		private Mock<IStaticMapService> _staticMaps;
 		private Mock<IMapStyleService> _styles;
+		private Mock<IDepartmentMapProvidersService> _providers;
 		private DepartmentController _controller;
 
 		[SetUp]
@@ -60,6 +61,12 @@ namespace Resgrid.Tests.Web.User
 			_styles.Setup(s => s.GetPresetTileProvider()).Returns("selfhosted");
 			_styles.Setup(s => s.GetAvailablePresets()).Returns(new[] { MapStyleTypes.Streets, MapStyleTypes.Light, MapStyleTypes.Dark });
 
+			_providers = new Mock<IDepartmentMapProvidersService>();
+			_providers.Setup(p => p.ValidateAsync(DepartmentId, It.IsAny<DepartmentMapProvidersUpdate>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new DepartmentMapProvidersSaveResult());
+			_providers.Setup(p => p.SaveAsync(DepartmentId, It.IsAny<DepartmentMapProvidersUpdate>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new DepartmentMapProvidersSaveResult { Saved = true });
+
 			var localizer = new Mock<IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department>>();
 			localizer.Setup(l => l[It.IsAny<string>()]).Returns((string key) => new LocalizedString(key, key));
 
@@ -82,7 +89,7 @@ namespace Resgrid.Tests.Web.User
 				Mock.Of<IDocumentsService>(), Mock.Of<INotesService>(), Mock.Of<IContactsService>(), Mock.Of<ICheckInTimerService>(), Mock.Of<ISecurityPinService>(),
 				Mock.Of<IRunCardsService>(), Mock.Of<IFeatureToggleService>(), Mock.Of<IDepartmentProfileMediaService>(),
 				localizer.Object, Mock.Of<Resgrid.Model.AiDispatch.IAiDispatchEnrichmentService>(),
-				Mock.Of<IProtectedReadService>(), Mock.Of<ICallNumberingService>(), Mock.Of<IDocumentNumberingService>(), _offline.Object, _staticMaps.Object, _styles.Object, Mock.Of<IRoutingService>(), Mock.Of<IDepartmentMapProvidersService>())
+				Mock.Of<IProtectedReadService>(), Mock.Of<ICallNumberingService>(), Mock.Of<IDocumentNumberingService>(), _offline.Object, _staticMaps.Object, _styles.Object, Mock.Of<IRoutingService>(), _providers.Object)
 			{
 				ControllerContext = new ControllerContext { HttpContext = httpContext }
 			};
@@ -163,6 +170,38 @@ namespace Resgrid.Tests.Web.User
 			_controller.ModelState[nameof(MappingSettingsView.OfflineResponseAreaGeoJson)].Errors.Select(e => e.ErrorMessage).Should().Equal("OfflineAreaTooLarge");
 			_settings.Verify(s => s.SetMappingNavigationConfigAsync(It.IsAny<int>(), It.IsAny<MappingNavigationConfig>(), It.IsAny<CancellationToken>()), Times.Never);
 			_settings.Verify(s => s.SaveUnitStatusThresholdsAsync(It.IsAny<int>(), It.IsAny<UnitStatusThresholds>(), It.IsAny<CancellationToken>()), Times.Never);
+			_providers.Verify(p => p.SaveAsync(It.IsAny<int>(), It.IsAny<DepartmentMapProvidersUpdate>(), It.IsAny<CancellationToken>()), Times.Never,
+				"PR 585: a new routing key must not go live behind a page that reports the save failed");
+		}
+
+		[Test]
+		public async Task A_refused_provider_account_stores_nothing()
+		{
+			_providers.Setup(p => p.ValidateAsync(DepartmentId, It.IsAny<DepartmentMapProvidersUpdate>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new DepartmentMapProvidersSaveResult { Errors = { DepartmentMapProvidersError.RoutingUrlNotPublic } });
+
+			var result = await _controller.MappingSettings(new MappingSettingsView { ProviderRouting = "valhalla", ProviderRoutingUrl = "https://10.0.0.5" }, CancellationToken.None);
+
+			((MappingSettingsView)((ViewResult)result).Model).SaveSuccess.Should().BeFalse();
+			_offline.Verify(o => o.SaveConfigAsync(It.IsAny<int>(), It.IsAny<OfflineMapPacksConfig>(), It.IsAny<CancellationToken>()), Times.Never);
+			_providers.Verify(p => p.SaveAsync(It.IsAny<int>(), It.IsAny<DepartmentMapProvidersUpdate>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public async Task A_ticked_clear_key_box_comes_back_unticked_after_a_successful_save()
+		{
+			// PR 585: the posted value outranks the model when the page renders, so the box stayed ticked and the next save
+			// removed the key just entered.
+			_controller.ModelState.SetModelValue(nameof(MappingSettingsView.ProviderClearRoutingApiKey), "true", "true");
+			_controller.ModelState.MarkFieldValid(nameof(MappingSettingsView.ProviderClearRoutingApiKey));
+
+			var result = await _controller.MappingSettings(new MappingSettingsView { ProviderRouting = "valhalla", ProviderClearRoutingApiKey = true }, CancellationToken.None);
+
+			var model = (MappingSettingsView)((ViewResult)result).Model;
+			model.SaveSuccess.Should().BeTrue();
+			model.ProviderClearRoutingApiKey.Should().BeFalse();
+			_controller.ModelState.ContainsKey(nameof(MappingSettingsView.ProviderClearRoutingApiKey)).Should().BeFalse();
+			_providers.Verify(p => p.SaveAsync(DepartmentId, It.Is<DepartmentMapProvidersUpdate>(u => u.ClearRoutingApiKey), It.IsAny<CancellationToken>()), Times.Once);
 		}
 
 		[Test]

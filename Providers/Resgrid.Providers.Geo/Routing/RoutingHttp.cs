@@ -42,8 +42,18 @@ namespace Resgrid.Providers.GeoLocationProvider.Routing
 
 			var client = new HttpClient(handler) { Timeout = TimeSpan.FromSeconds(30) };
 			client.DefaultRequestHeaders.UserAgent.ParseAdd("Resgrid/1.0 (+https://resgrid.com)");
+
+			// A department's server is not ours: its whole answer is buffered before parsing, so it is capped well above any
+			// real route or matrix (a 25-stop route with voice instructions is a few MB) and far below the 2 GB default. Over
+			// the cap the call fails and the install's providers answer.
+			if (publicOnly)
+				client.MaxResponseContentBufferSize = DepartmentResponseMaxBytes;
+
 			return client;
 		}
+
+		/// <summary>Largest answer read from a department's own routing server.</summary>
+		public const long DepartmentResponseMaxBytes = 32L * 1024 * 1024;
 
 		public static async Task<(bool Ok, int Status, JsonDocument Body)> GetJsonAsync(string url, CancellationToken cancellationToken, Action<HttpRequestMessage> configure = null, bool publicOnly = false)
 		{

@@ -67,8 +67,28 @@ namespace Resgrid.Services
 			return value;
 		}
 
+		public async Task<DepartmentMapProvidersSaveResult> ValidateAsync(int departmentId, DepartmentMapProvidersUpdate update,
+			CancellationToken cancellationToken = default(CancellationToken))
+		{
+			return (await BuildAsync(departmentId, update, cancellationToken)).Result;
+		}
+
 		public async Task<DepartmentMapProvidersSaveResult> SaveAsync(int departmentId, DepartmentMapProvidersUpdate update,
 			CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var (next, result) = await BuildAsync(departmentId, update, cancellationToken);
+			if (result.Errors.Count > 0)
+				return result;
+
+			await _departmentSettingsService.SetMappingProviderOverridesAsync(departmentId, next, cancellationToken);
+			Decrypted.TryRemove(departmentId, out _);
+			result.Saved = true;
+			return result;
+		}
+
+		/// <summary>The stored form of <paramref name="update"/> (keys encrypted, blanks keeping saved keys) and why it is refused, if it is.</summary>
+		private async Task<(MappingProviderOverrides Next, DepartmentMapProvidersSaveResult Result)> BuildAsync(int departmentId,
+			DepartmentMapProvidersUpdate update, CancellationToken cancellationToken)
 		{
 			var result = new DepartmentMapProvidersSaveResult();
 			update ??= new DepartmentMapProvidersUpdate();
@@ -187,13 +207,7 @@ namespace Resgrid.Services
 				}
 			}
 
-			if (result.Errors.Count > 0)
-				return result;
-
-			await _departmentSettingsService.SetMappingProviderOverridesAsync(departmentId, next, cancellationToken);
-			Decrypted.TryRemove(departmentId, out _);
-			result.Saved = true;
-			return result;
+			return (next, result);
 		}
 
 		/// <summary>An https URL template with {z}, {x} and {y}; the browser fetches it, so it must not be plain http.</summary>

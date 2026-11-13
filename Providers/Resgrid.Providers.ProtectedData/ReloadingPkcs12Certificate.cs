@@ -17,9 +17,10 @@ namespace Resgrid.Providers.ProtectedData
 	/// broker fails within a day.
 	///
 	/// <see cref="Current"/> sits on the handshake path, so the file is stat-ed at most once per poll interval and
-	/// re-read only when its last-write time moved. A failed reload (the sidecar stopped, a bad write) keeps the
+	/// re-read only when its last-write time moved. A failed reload (the sidecar stopped, a bad write, a file with no
+	/// private key, or a renewal that is expired or not yet valid while the current certificate still is) keeps the
 	/// certificate already in hand: it stays valid until it expires, and the broker's readiness check reports one
-	/// that is close to expiry. The replaced certificate is never disposed, because a handshake in flight may still
+	/// that is close to expiry. A file with no private key is refused at startup too. The replaced certificate is never disposed, because a handshake in flight may still
 	/// hold it; renewals happen a few times a day, so leaving it to the finalizer costs nothing measurable.
 	///
 	/// Lives in the ProtectedData provider project because both of its users reference that project already: the
@@ -119,19 +120,35 @@ namespace Resgrid.Providers.ProtectedData
 						return _current;
 
 					X509Certificate2 loaded;
+					string refused;
 					try
 					{
 						loaded = Load(Path, _password);
+
+						// A renewal that is expired or not yet valid never replaces a certificate that still works (a
+						// sidecar that wrote a stale leaf, a clock off on one side). When the current one has lapsed too,
+						// the newer file is taken: it is no worse.
+						refused = !IsTimeValid(loaded, now) && IsTimeValid(_current, now)
+							? $"it is valid only from {loaded.NotBefore.ToUniversalTime():u} to {loaded.NotAfter.ToUniversalTime():u}"
+							: null;
 					}
 					catch (Exception ex) when (IsLoadFailure(ex))
 					{
+						loaded = null;
+						refused = ex.GetType().Name;
+					}
+
+					if (refused != null)
+					{
+						loaded?.Dispose();
+
 						// Log once per file version, not once per poll: a stopped sidecar would otherwise log every
 						// minute until the certificate expires. The readiness check carries the ongoing signal.
 						if (writeTimeUtc != _failedWriteTimeUtc)
 						{
 							_failedWriteTimeUtc = writeTimeUtc;
 							Logging.LogError(
-								$"The certificate at '{Path}' changed but could not be reloaded ({ex.GetType().Name}); still presenting the certificate valid through {_current.NotAfter.ToUniversalTime():u}.");
+								$"The certificate at '{Path}' changed but could not be reloaded ({refused}); still presenting the certificate valid through {_current.NotAfter.ToUniversalTime():u}.");
 						}
 
 						return _current;
@@ -150,10 +167,27 @@ namespace Resgrid.Providers.ProtectedData
 			}
 		}
 
-		private static X509Certificate2 Load(string path, string password) =>
+		private static X509Certificate2 Load(string path, string password)
+		{
 			// Default key storage, as before this class existed: Linux keeps PKCS#12 keys in memory either way, and
 			// Windows SChannel cannot present an ephemeral-key certificate on a TLS handshake.
-			X509CertificateLoader.LoadPkcs12FromFile(path, password);
+			var certificate = X509CertificateLoader.LoadPkcs12FromFile(path, password);
+
+			// A file holding only a certificate (no key) loads fine but cannot complete a handshake as server or client.
+			if (!certificate.HasPrivateKey)
+			{
+				certificate.Dispose();
+				throw new CryptographicException("The PKCS#12 file has no private key for its certificate.");
+			}
+
+			return certificate;
+		}
+
+		private static bool IsTimeValid(X509Certificate2 certificate, DateTimeOffset now)
+		{
+			var utc = now.UtcDateTime;
+			return certificate.NotBefore.ToUniversalTime() <= utc && utc < certificate.NotAfter.ToUniversalTime();
+		}
 
 		private static DateTime WriteTimeUtc(string path)
 		{

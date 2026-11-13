@@ -13,6 +13,12 @@ namespace Resgrid.Model.Services
 		/// <summary>The department's accounts, decrypted; <see cref="DepartmentMapProviders.None"/> when it has none or for department 0.</summary>
 		Task<DepartmentMapProviders> GetAsync(int departmentId);
 
+		/// <summary>
+		/// The errors <see cref="SaveAsync"/> would return for this update, without saving anything: for a page that saves
+		/// other sections too and must refuse the whole save before any part of it is stored.
+		/// </summary>
+		Task<DepartmentMapProvidersSaveResult> ValidateAsync(int departmentId, DepartmentMapProvidersUpdate update, CancellationToken cancellationToken = default(CancellationToken));
+
 		/// <summary>Validates, encrypts and saves; nothing is saved when any error is returned.</summary>
 		Task<DepartmentMapProvidersSaveResult> SaveAsync(int departmentId, DepartmentMapProvidersUpdate update, CancellationToken cancellationToken = default(CancellationToken));
 	}

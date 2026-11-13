@@ -386,6 +386,66 @@ namespace Resgrid.Tests.Services.Routing
 			installInfo.Name.Should().Be(RoutingProviderNames.Valhalla);
 			installInfo.DepartmentAccount.Should().BeFalse();
 		}
+
+		[Test]
+		public async Task an_edited_department_account_never_gets_the_old_accounts_cached_routes()
+		{
+			// PR 585: the cache scope was name#d{department}, so a department that pointed Valhalla at a new server kept
+			// getting the old server's routes for up to 30 days.
+			SystemBehaviorConfig.CacheEnabled = true;
+			var department = Interlocked.Increment(ref _nextDepartment);
+			var valhalla = new FakeProvider(RoutingProviderNames.Valhalla, true,
+				c => new RouteResult { Successful = true, DurationSeconds = c?.Url == "https://two.example.org" ? 222 : 111 });
+			var credentials = new RoutingProviderCredentials { DepartmentId = department, Provider = RoutingProviderNames.Valhalla, Url = "https://one.example.org" };
+			var service = new RoutingService(new IRoutingProvider[] { valhalla, new EstimateRoutingProvider() }, new Resgrid.Tests.Security.Live.InMemoryCacheProvider(), null,
+				Accounts(department, credentials));
+
+			(await service.GetRouteAsync(Request(department))).DurationSeconds.Should().Be(111);
+			(await service.GetRouteAsync(Request(department))).DurationSeconds.Should().Be(111);
+			valhalla.Copies.Sum(c => c.Calls.Count).Should().Be(1, "the repeat is a cache hit");
+			var before = (await service.GetProviderInfoAsync(department)).AccountRevision;
+
+			credentials.Url = "https://two.example.org";
+
+			(await service.GetRouteAsync(Request(department))).DurationSeconds.Should().Be(222);
+			var after = (await service.GetProviderInfoAsync(department)).AccountRevision;
+			after.Should().NotBeNullOrWhiteSpace().And.NotBe(before);
+			after.Should().NotContain("two.example.org");
+		}
+
+		[Test]
+		public async Task a_department_account_that_cannot_optimize_hands_the_stop_order_to_the_install()
+		{
+			// PR 585: only the first provider in the chain was asked; a department's Google account sent every plan to the
+			// matrix heuristic even though the install's Valhalla optimizes.
+			var department = Interlocked.Increment(ref _nextDepartment);
+			var google = new Mock<IRoutingProvider>();
+			google.SetupGet(p => p.Name).Returns(RoutingProviderNames.Google);
+			google.SetupGet(p => p.IsConfigured).Returns(true);
+			google.SetupGet(p => p.Capabilities).Returns(new RoutingCapabilities { MaxWaypoints = 25 });
+			google.Setup(p => p.WithCredentials(It.IsAny<RoutingProviderCredentials>())).Returns(google.Object);
+			var valhalla = new Mock<IRoutingProvider>();
+			valhalla.SetupGet(p => p.Name).Returns(RoutingProviderNames.Valhalla);
+			valhalla.SetupGet(p => p.IsConfigured).Returns(true);
+			valhalla.SetupGet(p => p.Capabilities).Returns(new RoutingCapabilities { Optimize = true, MaxOptimizeWaypoints = 25, MaxWaypoints = 25 });
+			valhalla.Setup(p => p.OptimizeAsync(It.IsAny<RouteOptimizationRequest>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new RouteOptimizationResult { Successful = true, Provider = RoutingProviderNames.Valhalla, Order = new List<int> { 0, 2, 1, 3 } });
+			var service = new RoutingService(new IRoutingProvider[] { valhalla.Object, google.Object, new EstimateRoutingProvider() }, null, null,
+				Accounts(department, new RoutingProviderCredentials { DepartmentId = department, Provider = RoutingProviderNames.Google, ApiKey = "key" }));
+
+			var result = await service.OptimizeAsync(new RouteOptimizationRequest
+			{
+				DepartmentId = department,
+				Waypoints = new List<RoutingWaypoint>
+				{
+					new RoutingWaypoint(39.50, -119.80), new RoutingWaypoint(39.53, -119.81), new RoutingWaypoint(39.51, -119.79), new RoutingWaypoint(39.54, -119.75)
+				}
+			});
+
+			result.Order.Should().Equal(0, 2, 1, 3);
+			result.Provider.Should().Be(RoutingProviderNames.Valhalla);
+			valhalla.Verify(p => p.OptimizeAsync(It.IsAny<RouteOptimizationRequest>(), It.IsAny<CancellationToken>()), Times.Once);
+		}
 	}
 
 	/// <summary>The Valhalla provider with a department's own server.</summary>
@@ -518,6 +578,39 @@ namespace Resgrid.Tests.Services.Routing
 			own.Should().StartWith("2,", "the department's own Google key answered");
 			install.Should().StartWith("1,", "another department gets the install's chain (Nominatim)");
 			RequestDepartment.Id.Should().Be(0, "the scope is restored");
+		}
+
+		[Test]
+		public async Task a_department_with_its_own_geocoder_never_gets_an_answer_the_install_cached()
+		{
+			// PR 585: forward and reverse keys were shared, so a cached install answer bypassed the department's geocoder.
+			var stored = new Dictionary<string, string>();
+			var cache = new Mock<ICacheProvider>();
+			cache.Setup(c => c.RetrieveAsync(It.IsAny<string>(), It.IsAny<Func<Task<string>>>(), It.IsAny<TimeSpan>()))
+				.Returns(async (string key, Func<Task<string>> fallback, TimeSpan _) =>
+				{
+					if (!stored.TryGetValue(key, out var value))
+						stored[key] = value = await fallback();
+					return value;
+				});
+			var accounts = new Mock<IDepartmentMapProvidersService>();
+			accounts.Setup(s => s.GetAsync(77)).ReturnsAsync(new DepartmentMapProviders { GeocodingProvider = "google", GeocodingApiKey = "AIza-dept" });
+			accounts.Setup(s => s.GetAsync(It.Is<int>(id => id != 77))).ReturnsAsync(DepartmentMapProviders.None);
+			var provider = new GeoLocationProvider(cache.Object, new IGeocodingProvider[] { new FakeGeocoder("google"), new FakeGeocoder("nominatim") },
+				new Lazy<IDepartmentMapProvidersService>(() => accounts.Object));
+
+			string install, other, own;
+			using (RequestDepartment.Enter(78))
+				install = await provider.GetLatLonFromAddress("1 Main St");
+			using (RequestDepartment.Enter(79))
+				other = await provider.GetLatLonFromAddress("1 Main St");
+			using (RequestDepartment.Enter(77))
+				own = await provider.GetLatLonFromAddress("1 Main St");
+
+			install.Should().StartWith("1,");
+			other.Should().StartWith("1,");
+			own.Should().StartWith("2,", "the department's own geocoder is asked, not the install's cached answer");
+			stored.Should().HaveCount(2, "departments without their own geocoder share one entry");
 		}
 	}
 

@@ -184,18 +184,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return Ok(await BuildResultAsync(request, cancellationToken));
 		}
 
-		private static UnitTravelModes ClosureModeFor(RoutingProfile profile)
-		{
-			switch (profile)
-			{
-				case RoutingProfile.Walking:
-					return UnitTravelModes.Walking;
-				case RoutingProfile.Cycling:
-					return UnitTravelModes.Cycling;
-				default:
-					return UnitTravelModes.Driving;
-			}
-		}
+		private static UnitTravelModes ClosureModeFor(RoutingProfile profile) => Resgrid.Services.RoadClosureRouting.ModeFor(profile);
 
 		/// <summary>The department's road closures in effect now for the mode (M0314); none when they can't be read.</summary>
 		private async Task<List<RoutingClosure>> ClosuresForAsync(UnitTravelModes mode)

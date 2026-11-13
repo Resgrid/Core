@@ -37,7 +37,19 @@ namespace Resgrid.Services
 
 			public int DepartmentId { get; init; }
 
+			/// <summary>A department account's settings revision (<see cref="AccountRevision"/>); null for the install's providers.</summary>
+			public string Revision { get; init; }
+
 			public bool DepartmentAccount => DepartmentId > 0;
+		}
+
+		/// <summary>
+		/// A short one-way digest of a department account's settings (provider, URL, key, options): it changes whenever any of
+		/// them does and reveals none of them.
+		/// </summary>
+		private static string AccountRevision(RoutingProviderCredentials credentials)
+		{
+			return Hash(string.Join("\u001f", credentials.Provider, credentials.Url, credentials.ApiKey, credentials.AuthScheme, credentials.GoogleRoutingApi)).Substring(0, 12);
 		}
 
 		private const string RouteCachePrefix = "RtR1_";
@@ -106,8 +118,14 @@ namespace Resgrid.Services
 				Capabilities = capabilities,
 				Attribution = AttributionFor(name),
 				NavigationAvailable = NavigationAvailableOn(provider),
-				DepartmentAccount = department != null
+				DepartmentAccount = department != null,
+				AccountRevision = department?.Revision
 			};
+		}
+
+		public RoutingCapabilities CapabilitiesOf(string providerName)
+		{
+			return Find(providerName)?.Capabilities ?? new RoutingCapabilities();
 		}
 
 		/// <summary>The department's own routing account as a chain link, or null (none, unusable, or department 0).</summary>
@@ -130,7 +148,10 @@ namespace Resgrid.Services
 				if (provider == null || !provider.IsConfigured)
 					return null;
 
-				return new Link { Provider = provider, Key = $"{provider.Name}#d{departmentId}", DepartmentId = departmentId };
+				// The account's revision is part of the key: a department that points the same provider at a new server or key
+				// gets fresh routes and a fresh back-off, not 30 days of answers from the old account.
+				var revision = AccountRevision(credentials);
+				return new Link { Provider = provider, Key = $"{provider.Name}#d{departmentId}@{revision}", DepartmentId = departmentId, Revision = revision };
 			}
 			catch (Exception ex)
 			{
@@ -396,15 +417,19 @@ namespace Resgrid.Services
 			if (request?.Waypoints == null || request.Waypoints.Count <= 2)
 				return new RouteOptimizationResult { Successful = true, Order = Enumerable.Range(0, request?.Waypoints?.Count ?? 0).ToList() };
 
-			var link = (await ChainAsync(request.DepartmentId)).FirstOrDefault(l => l.Provider.Name != RoutingProviderNames.Estimate);
-			var primary = link?.Provider;
-			if (primary != null && primary.Capabilities.Optimize && request.Waypoints.Count <= primary.Capabilities.MaxOptimizeWaypoints)
+			// Each provider in the chain that can optimize this many stops gets its turn (a department account that can't, or
+			// that fails, hands over to the install's providers, as routes do); the matrix heuristic answers when none does.
+			foreach (var link in (await ChainAsync(request.DepartmentId)).Where(l => l.Provider.Name != RoutingProviderNames.Estimate))
 			{
+				var provider = link.Provider;
+				if (!provider.Capabilities.Optimize || request.Waypoints.Count > provider.Capabilities.MaxOptimizeWaypoints)
+					continue;
+
 				try
 				{
 					using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
 					timeout.CancelAfter(Math.Max(1000, MappingConfig.RoutingTimeoutMs * 2));
-					var optimized = await primary.OptimizeAsync(request, timeout.Token);
+					var optimized = await provider.OptimizeAsync(request, timeout.Token);
 					var optimizedOk = optimized != null && optimized.Successful && IsPermutation(optimized.Order, request.Waypoints.Count);
 					await RecordUsageAsync(link, RoutingUsageOperation.Optimize, optimizedOk, optimized?.RequestRejected == true, optimized?.NotSent == true);
 
@@ -413,7 +438,7 @@ namespace Resgrid.Services
 				}
 				catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
 				{
-					// Fall through to the heuristic.
+					// The next provider, then the heuristic.
 					await RecordUsageAsync(link, RoutingUsageOperation.Optimize, false, false, false);
 				}
 				catch (Exception ex)

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Resgrid.Model.Services
@@ -16,7 +17,11 @@ namespace Resgrid.Model.Services
 		/// <param name="departmentAccount">True when the call used a department's own account (billed to the department).</param>
 		Task RecordAsync(string provider, RoutingUsageOperation operation, RoutingUsageOutcome outcome, int elements = 0, bool departmentAccount = false);
 
-		/// <summary>The counted days between the two UTC dates (inclusive), one row per provider and operation with any calls.</summary>
-		Task<List<RoutingUsageDay>> GetUsageAsync(DateTime fromDayUtc, DateTime toDayUtc);
+		/// <summary>
+		/// The counted days between the two UTC dates (inclusive), one row per provider and operation with any calls. Throws
+		/// <see cref="InvalidOperationException"/> when the cache holding the counters is not reachable, rather than reporting
+		/// every counter as zero.
+		/// </summary>
+		Task<List<RoutingUsageDay>> GetUsageAsync(DateTime fromDayUtc, DateTime toDayUtc, CancellationToken cancellationToken = default);
 	}
 }

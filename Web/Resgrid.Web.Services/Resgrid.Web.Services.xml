@@ -8299,6 +8299,14 @@
         <member name="T:Resgrid.Web.Services.Helpers.CallbackRecordForm">
             <summary>Exposes the locked Callback's text fields to field clients that render Records schemas.</summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Helpers.ConfigTrafficFields">
+            <summary>
+            Fills the Config/GetConfig traffic fields from the department's traffic layer. Mapbox Traffic v1 vector tiles go in
+            TrafficTileUrl (with TrafficAvailable); a department's own image tiles (e.g. TomTom flow) go only in
+            TrafficRasterTileUrl, because app builds that predate that field read TrafficTileUrl as vector tiles and would try
+            to parse the images as vector data. Those builds show no traffic for such a department instead.
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Helpers.HttpProtectedGrantContext">
             <summary>
             Request-bound <see cref="T:Resgrid.Model.Services.IProtectedGrantContext"/> (ADP plan 3.3 / 7.2): the caller's Protected Data
@@ -13252,15 +13260,16 @@
             <summary>Signed static map image template; placeholders {lat} {lon} {zoom} {width} {height} {scale} {scheme}.</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.TrafficAvailable">
-            <summary>A live traffic overlay is available (TrafficTileUrl).</summary>
+            <summary>The vector traffic overlay is available (TrafficTileUrl). False when the department uses its own image tiles.</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.TrafficTileUrl">
             <summary>Mapbox Traffic v1 vector tile template (layer "traffic", congestion low/moderate/heavy/severe, closed).</summary>
         </member>
-        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.TrafficTileType">
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.TrafficRasterTileUrl">
             <summary>
-            "vector" (Mapbox Traffic v1, layer "traffic") or "raster" (a department's own traffic tile URL, drawn as an image
-            overlay). Null with no traffic. Older apps that ignore it should only draw TrafficTileUrl when this is "vector".
+            The department's own traffic image tile template ({z}/{x}/{y}, e.g. TomTom flow tiles), drawn as a raster overlay
+            instead of TrafficTileUrl. Kept out of TrafficTileUrl/TrafficAvailable so app builds that only know the vector
+            overlay never load image tiles as vector tiles: they simply show no traffic for that department.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.TrafficRefreshSeconds">

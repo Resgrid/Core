@@ -3694,25 +3694,28 @@ namespace Resgrid.Web.Areas.User.Controllers
 					ModelState.AddModelError(nameof(model.MapboxAccessToken), "The Mapbox access token must be a public token starting with pk. Never use a secret (sk.) token here: it is sent to every member's browser and app.");
 			}
 
-			// The department's own map providers (setting 125) are validated and saved first: a bad key or URL refuses the
-			// whole save. Keys are encrypted by the service; blank keeps the saved one.
+			// The department's own map providers (setting 125) are checked before anything is stored: a bad key or URL refuses
+			// the whole save. They are saved only after the offline area below has been accepted, so a refused area never
+			// leaves new provider keys in force behind a page that reports the save failed. Keys are encrypted by the
+			// service; blank keeps the saved one.
+			var providerUpdate = new DepartmentMapProvidersUpdate
+			{
+				RoutingProvider = model.ProviderRouting,
+				RoutingUrl = model.ProviderRoutingUrl,
+				RoutingApiKey = model.ProviderRoutingApiKey,
+				ClearRoutingApiKey = model.ProviderClearRoutingApiKey,
+				RoutingAuthScheme = model.ProviderRoutingAuthScheme,
+				GoogleRoutingApi = model.ProviderGoogleRoutingApi,
+				TrafficSource = model.ProviderTraffic,
+				TrafficMapboxToken = model.ProviderTrafficMapboxToken,
+				TrafficTileUrl = model.ProviderTrafficTileUrl,
+				GeocodingProvider = model.ProviderGeocoding,
+				GeocodingApiKey = model.ProviderGeocodingApiKey
+			};
+
 			if (ModelState.IsValid && _departmentMapProvidersService != null)
 			{
-				var providers = await _departmentMapProvidersService.SaveAsync(DepartmentId, new DepartmentMapProvidersUpdate
-				{
-					RoutingProvider = model.ProviderRouting,
-					RoutingUrl = model.ProviderRoutingUrl,
-					RoutingApiKey = model.ProviderRoutingApiKey,
-					ClearRoutingApiKey = model.ProviderClearRoutingApiKey,
-					RoutingAuthScheme = model.ProviderRoutingAuthScheme,
-					GoogleRoutingApi = model.ProviderGoogleRoutingApi,
-					TrafficSource = model.ProviderTraffic,
-					TrafficMapboxToken = model.ProviderTrafficMapboxToken,
-					TrafficTileUrl = model.ProviderTrafficTileUrl,
-					GeocodingProvider = model.ProviderGeocoding,
-					GeocodingApiKey = model.ProviderGeocodingApiKey
-				}, cancellationToken);
-
+				var providers = await _departmentMapProvidersService.ValidateAsync(DepartmentId, providerUpdate, cancellationToken);
 				foreach (var error in providers?.Errors ?? new List<DepartmentMapProvidersError>())
 					AddProviderError(error);
 			}
@@ -3720,12 +3723,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 			OfflineMapPacksConfig offlineConfig = null;
 			if (ModelState.IsValid)
 			{
-				// Saved first: a changed response area over the download limit refuses the whole save, so the operator can
-				// shrink it without the rest of the page being half stored.
+				// Saved before the other settings: a changed response area over the download limit refuses the whole save, so
+				// the operator can shrink it without the rest of the page being half stored.
 				offlineConfig = await BuildOfflineMapSettingsAsync(model);
 				var offlineEstimate = await _offlineMapPackService.SaveConfigAsync(DepartmentId, offlineConfig, cancellationToken);
 				if (!offlineEstimate.Valid || !offlineEstimate.Fits)
 					ModelState.AddModelError(nameof(model.OfflineResponseAreaGeoJson), ResponseAreaMessage(offlineEstimate));
+			}
+
+			if (ModelState.IsValid && _departmentMapProvidersService != null)
+			{
+				// Checked again as it is saved (a routing host's DNS can change in between); refused here only in that race.
+				var providers = await _departmentMapProvidersService.SaveAsync(DepartmentId, providerUpdate, cancellationToken);
+				foreach (var error in providers?.Errors ?? new List<DepartmentMapProvidersError>())
+					AddProviderError(error);
 			}
 
 			if (ModelState.IsValid)
@@ -3778,6 +3789,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				LoadNavigationSettings(model, BuildNavigationSettings(model));
 				LoadOfflineMapSettings(model, offlineConfig);
 				LoadProviderOverrides(model, await _departmentSettingsService.GetMappingProviderOverridesAsync(DepartmentId, true));
+
+				// The posted values would otherwise win over the model when the page renders: a ticked "clear key" box would
+				// come back ticked and remove the key just saved on the next save.
+				ModelState.Remove(nameof(model.ProviderClearRoutingApiKey));
 				await PopulateUnitStatusTimerWarningsAsync(model, savedThresholds);
 				await PopulateMapStyleContextAsync(model);
 				await PopulateMapFeatureContextAsync(model);

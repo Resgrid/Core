@@ -41,6 +41,8 @@ namespace Resgrid.Tests.Security.Live
 		public Task<string> GetStringAsync(string cacheKey) =>
 			Task.FromResult(_strings.TryGetValue(cacheKey, out var entry) && entry.ExpiresOn > DateTime.UtcNow ? entry.Value : null);
 
+		public async Task<(bool Succeeded, string Value)> TryGetStringAsync(string cacheKey) => (true, await GetStringAsync(cacheKey));
+
 		public Task<T> GetAsync<T>(string cacheKey) where T : class => Task.FromResult<T>(null);
 
 		public Task<string> GetOrAddStringAsync(string cacheKey, string valueIfAbsent, TimeSpan slidingExpiration)
@@ -56,6 +58,14 @@ namespace Resgrid.Tests.Security.Live
 			var now = DateTime.UtcNow;
 			var entry = _counters.AddOrUpdate(cacheKey, (1, now.Add(expiration)),
 				(_, existing) => existing.ExpiresOn > now ? (existing.Value + 1, existing.ExpiresOn) : (1, now.Add(expiration)));
+			return Task.FromResult(entry.Value);
+		}
+
+		public Task<long> IncrementByAsync(string cacheKey, long amount, TimeSpan expiration)
+		{
+			var now = DateTime.UtcNow;
+			var entry = _counters.AddOrUpdate(cacheKey, (amount, now.Add(expiration)),
+				(_, existing) => existing.ExpiresOn > now ? (existing.Value + amount, existing.ExpiresOn) : (amount, now.Add(expiration)));
 			return Task.FromResult(entry.Value);
 		}
 	}

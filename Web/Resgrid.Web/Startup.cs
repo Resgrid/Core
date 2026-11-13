@@ -804,6 +804,14 @@ namespace Resgrid.Web
 			app.UseAuthentication();
 			app.UseMiddleware<Resgrid.Web.Middleware.SessionValidationMiddleware>();
 			app.UseAuthorization();
+			// The signed-in user's department for code with no department parameter (its own geocoding account, setting 125).
+			app.Use(async (context, next) =>
+			{
+				var claim = context.User?.FindFirst(System.Security.Claims.ClaimTypes.PrimaryGroupSid);
+				var departmentId = claim != null && int.TryParse(claim.Value, out var parsed) ? parsed : 0;
+				using (Resgrid.Framework.RequestDepartment.Enter(departmentId))
+					await next();
+			});
 			app.UseWhen(
 				context => !string.Equals(context.Request.Path.Value, "/health/getcurrent", StringComparison.OrdinalIgnoreCase),
 				authenticatedApp => authenticatedApp.UseSession());

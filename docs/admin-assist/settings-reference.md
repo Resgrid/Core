@@ -2584,6 +2584,13 @@ Mapping Mapbox Access Token. Map-provider access token. Only presence is reporte
 
 Default: unset. Source: DepartmentSettingTypes.MappingMapboxAccessToken.
 
+<a id="setting-mappingprovideroverrides"></a>
+## Your own map providers
+
+Your own map providers. Department-owned routing, live traffic and address lookup accounts, tried before Resgrid's providers. Only which providers are set is reported, never the keys. Setting all three back to Resgrid default removes the setting.
+
+Default: none (Resgrid's providers). Source: DepartmentSettingTypes.MappingProviderOverrides.
+
 <a id="setting-mappingmapstyle"></a>
 ## Mapping Map Style
 
@@ -2741,6 +2748,11 @@ Map icon legend Every icon the map shows for calls, units and personnel in each 
 ## Map visualizations
 
 Map visualizations Heat maps, hexagon grids and overlays of calls, response times, station coverage, unit and personnel responses and movement, from a built-in library or saved by the department. A current map shows where responders and apparatus are and puts important locations in front of dispatchers. Open Mapping, then Visualizations, pick a library visualization such as Call hot zones, adjust its date range, filters and layers on the Customize tab, and save it. Department admins can share a saved visualization with everyone. Every visualization reads its data fresh under the viewer's own permissions: dispatch scope limits the calls, and the location visibility settings limit member and unit locations, so sharing a visualization never shares data. Response times run from the call being logged to the first unit on scene or responding, using status base types, so they appear only when units set statuses. Unit and member paths cover at most 7 days, status positions at most 12 months, and one view at most 100,000 calls.
+
+<a id="road-closures"></a>
+## Road closures
+
+Road closures Closed and slowed roads and areas drawn on the map, with who closed them, why, a contact and the times they are in effect. Dispatch ranking routes around full closures and slows routes through partial ones. A current map shows where responders and apparatus are and puts important locations in front of dispatchers. Open Mapping, then Road Closures, and choose New Closure. Draw the closed road as a line or the area as a shape, choose full or partial, the traffic it stops and its times (use Repeat for a road closed only at night), and save. Set how units travel on each unit type (driving, cycling, on foot or air) so run cards and the nearest units list measure them the way they move. A full closure is routed around where the routing provider can avoid drawn areas (Valhalla) or closed road points (Mapbox, driving); with other providers the route is charged the closure's detour time and marked as crossing it. A partial closure, and a full one the call or the unit's start is inside, is driven through at the closure's speed. Each closure applies to the traffic it is set to stop: vehicles, bicycles or pedestrians; air units fly a straight line and never meet one. Anyone who can see calls can see closures; department admins and members who can create calls manage them.
 
 <a id="weather"></a>
 ## Weather zones and alerts

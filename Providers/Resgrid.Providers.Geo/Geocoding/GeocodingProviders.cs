@@ -17,13 +17,29 @@ namespace Resgrid.Providers.GeoLocationProvider.Geocoding
 	/// <summary>Google Geocoding (MappingConfig.GoogleMapsApiKey); today's first choice.</summary>
 	public class GoogleGeocodingProvider : IGeocodingProvider
 	{
+		// A department's own key (setting 125); null = the install's.
+		private readonly string _apiKey;
+
+		public GoogleGeocodingProvider()
+		{
+		}
+
+		private GoogleGeocodingProvider(string apiKey)
+		{
+			_apiKey = apiKey;
+		}
+
+		public IGeocodingProvider WithApiKey(string apiKey) => string.IsNullOrWhiteSpace(apiKey) ? null : new GoogleGeocodingProvider(apiKey.Trim());
+
+		private string ApiKey => _apiKey ?? MappingConfig.GoogleMapsApiKey;
+
 		public string Name => "google";
 
-		public bool IsConfigured => !string.IsNullOrWhiteSpace(MappingConfig.GoogleMapsApiKey);
+		public bool IsConfigured => !string.IsNullOrWhiteSpace(ApiKey);
 
 		public async Task<GeocodeMatch> ForwardAsync(string address, CancellationToken cancellationToken)
 		{
-			var geocoder = new GoogleGeocoder { ApiKey = MappingConfig.GoogleMapsApiKey };
+			var geocoder = new GoogleGeocoder { ApiKey = ApiKey };
 			var addresses = await geocoder.GeocodeAsync(address);
 			var first = addresses?.FirstOrDefault();
 
@@ -32,7 +48,7 @@ namespace Resgrid.Providers.GeoLocationProvider.Geocoding
 
 		public async Task<string> ReverseAsync(double latitude, double longitude, CancellationToken cancellationToken)
 		{
-			var geocoder = new GoogleGeocoder { ApiKey = MappingConfig.GoogleMapsApiKey };
+			var geocoder = new GoogleGeocoder { ApiKey = ApiKey };
 			var addresses = await geocoder.ReverseGeocodeAsync(latitude, longitude);
 			return addresses?.FirstOrDefault()?.FormattedAddress;
 		}
@@ -67,13 +83,29 @@ namespace Resgrid.Providers.GeoLocationProvider.Geocoding
 	{
 		private const string BaseUrl = "https://us1.locationiq.com/v1";
 
+		// A department's own key (setting 125); null = the install's.
+		private readonly string _apiKey;
+
+		public LocationIqGeocodingProvider()
+		{
+		}
+
+		private LocationIqGeocodingProvider(string apiKey)
+		{
+			_apiKey = apiKey;
+		}
+
+		public IGeocodingProvider WithApiKey(string apiKey) => string.IsNullOrWhiteSpace(apiKey) ? null : new LocationIqGeocodingProvider(apiKey.Trim());
+
+		private string ApiKey => _apiKey ?? MappingConfig.LocationIQApiKey;
+
 		public string Name => "locationiq";
 
-		public bool IsConfigured => !string.IsNullOrWhiteSpace(MappingConfig.LocationIQApiKey);
+		public bool IsConfigured => !string.IsNullOrWhiteSpace(ApiKey);
 
 		public async Task<GeocodeMatch> ForwardAsync(string address, CancellationToken cancellationToken)
 		{
-			var url = $"{BaseUrl}/search?key={WebUtility.UrlEncode(MappingConfig.LocationIQApiKey)}&format=json&limit=1&q={WebUtility.UrlEncode(address)}";
+			var url = $"{BaseUrl}/search?key={WebUtility.UrlEncode(ApiKey)}&format=json&limit=1&q={WebUtility.UrlEncode(address)}";
 			var (ok, status, document) = await RoutingHttp.GetJsonAsync(url, cancellationToken);
 
 			using (document)
@@ -94,7 +126,7 @@ namespace Resgrid.Providers.GeoLocationProvider.Geocoding
 
 		public async Task<string> ReverseAsync(double latitude, double longitude, CancellationToken cancellationToken)
 		{
-			var url = $"{BaseUrl}/reverse?key={WebUtility.UrlEncode(MappingConfig.LocationIQApiKey)}&format=json&zoom=18" +
+			var url = $"{BaseUrl}/reverse?key={WebUtility.UrlEncode(ApiKey)}&format=json&zoom=18" +
 			          $"&lat={RoutingHttp.Coordinate(latitude)}&lon={RoutingHttp.Coordinate(longitude)}";
 			var (ok, _, document) = await RoutingHttp.GetJsonAsync(url, cancellationToken);
 
@@ -157,13 +189,29 @@ namespace Resgrid.Providers.GeoLocationProvider.Geocoding
 	{
 		private const string BaseUrl = "https://api.mapbox.com/search/geocode/v6";
 
+		// A department's own token (setting 125); null = the install's.
+		private readonly string _accessToken;
+
+		public MapboxGeocodingProvider()
+		{
+		}
+
+		private MapboxGeocodingProvider(string accessToken)
+		{
+			_accessToken = accessToken;
+		}
+
+		public IGeocodingProvider WithApiKey(string apiKey) => string.IsNullOrWhiteSpace(apiKey) ? null : new MapboxGeocodingProvider(apiKey.Trim());
+
+		private string AccessToken => _accessToken ?? MappingConfig.MapboxGeocodingAccessToken;
+
 		public string Name => "mapbox";
 
-		public bool IsConfigured => !string.IsNullOrWhiteSpace(MappingConfig.MapboxGeocodingAccessToken);
+		public bool IsConfigured => !string.IsNullOrWhiteSpace(AccessToken);
 
 		public async Task<GeocodeMatch> ForwardAsync(string address, CancellationToken cancellationToken)
 		{
-			var url = $"{BaseUrl}/forward?limit=1&access_token={WebUtility.UrlEncode(MappingConfig.MapboxGeocodingAccessToken)}&q={WebUtility.UrlEncode(address)}";
+			var url = $"{BaseUrl}/forward?limit=1&access_token={WebUtility.UrlEncode(AccessToken)}&q={WebUtility.UrlEncode(address)}";
 			var (ok, status, document) = await RoutingHttp.GetJsonAsync(url, cancellationToken);
 
 			using (document)
@@ -190,7 +238,7 @@ namespace Resgrid.Providers.GeoLocationProvider.Geocoding
 
 		public async Task<string> ReverseAsync(double latitude, double longitude, CancellationToken cancellationToken)
 		{
-			var url = $"{BaseUrl}/reverse?limit=1&access_token={WebUtility.UrlEncode(MappingConfig.MapboxGeocodingAccessToken)}" +
+			var url = $"{BaseUrl}/reverse?limit=1&access_token={WebUtility.UrlEncode(AccessToken)}" +
 			          $"&longitude={RoutingHttp.Coordinate(longitude)}&latitude={RoutingHttp.Coordinate(latitude)}";
 			var (ok, _, document) = await RoutingHttp.GetJsonAsync(url, cancellationToken);
 

@@ -2450,4 +2450,118 @@
   <data name="MapStyleNotAvailable" xml:space="preserve">
     <value>(niedostępny na tym serwerze)</value>
   </data>
+  <data name="ProvidersHeader" xml:space="preserve">
+    <value>Własni dostawcy map</value>
+  </data>
+  <data name="ProvidersHelp" xml:space="preserve">
+    <value>Używaj własnych kont swojego departamentu zamiast kont Resgrid. Najpierw odpytywany jest Twój dostawca; gdy zawiedzie lub nie może obsłużyć żądania, odpowiadają dostawcy Resgrid, więc mapy i czasy dojazdu nadal działają. Klucze są przechowywane w postaci zaszyfrowanej i nigdy więcej nie są wyświetlane.</value>
+  </data>
+  <data name="ProvidersSystemDefault" xml:space="preserve">
+    <value>Domyślny (Resgrid)</value>
+  </data>
+  <data name="ProvidersYourAccount" xml:space="preserve">
+    <value>Twoje konto</value>
+  </data>
+  <data name="ProvidersRoutingLabel" xml:space="preserve">
+    <value>Dostawca wyznaczania tras</value>
+  </data>
+  <data name="ProvidersRoutingHelp" xml:space="preserve">
+    <value>Używany do tras, czasów dojazdu w kartach dysponowania i dla najbliższych jednostek, planów tras oraz nawigacji w aplikacji. Nawigacja w aplikacji wymaga Mapbox lub Valhalla.</value>
+  </data>
+  <data name="ProvidersRoutingUrlLabel" xml:space="preserve">
+    <value>Adres URL serwera</value>
+  </data>
+  <data name="ProvidersRoutingUrlHelp" xml:space="preserve">
+    <value>Adres https Twojego serwera Valhalla lub OSRM. Musi być osiągalny z publicznego internetu, na przykład https://api.example.com/valhalla.</value>
+  </data>
+  <data name="ProvidersRoutingKeyLabel" xml:space="preserve">
+    <value>Klucz API</value>
+  </data>
+  <data name="ProvidersRoutingKeyHelp" xml:space="preserve">
+    <value>Mapbox: token z dostępem do Directions, Matrix i Optimization (tajny token sk. jest w porządku, nigdy nie opuszcza serwera). Google: klucz z interfejsami API Directions i Distance Matrix lub z Routes API. Valhalla: tylko jeśli Twój serwer go wymaga.</value>
+  </data>
+  <data name="ProvidersKeySaved" xml:space="preserve">
+    <value>Zapisano. Pozostaw puste, aby zachować.</value>
+  </data>
+  <data name="ProvidersClearKey" xml:space="preserve">
+    <value>Usuń zapisany klucz</value>
+  </data>
+  <data name="ProvidersAuthSchemeLabel" xml:space="preserve">
+    <value>Wysyłaj klucz jako</value>
+  </data>
+  <data name="ProvidersAuthSchemeApiKey" xml:space="preserve">
+    <value>Nagłówek X-Api-Key</value>
+  </data>
+  <data name="ProvidersAuthSchemeBearer" xml:space="preserve">
+    <value>Token Bearer (nagłówek Authorization)</value>
+  </data>
+  <data name="ProvidersGoogleApiLabel" xml:space="preserve">
+    <value>API Google</value>
+  </data>
+  <data name="ProvidersGoogleApiLegacy" xml:space="preserve">
+    <value>Directions i Distance Matrix</value>
+  </data>
+  <data name="ProvidersGoogleApiRoutes" xml:space="preserve">
+    <value>Routes API (projekty Google Cloud utworzone po marcu 2025)</value>
+  </data>
+  <data name="ProvidersTrafficLabel" xml:space="preserve">
+    <value>Warstwa ruchu na żywo</value>
+  </data>
+  <data name="ProvidersTrafficHelp" xml:space="preserve">
+    <value>Przycisk ruchu drogowego na mapach strony internetowej i w aplikacjach.</value>
+  </data>
+  <data name="ProvidersTrafficMapbox" xml:space="preserve">
+    <value>Mapbox Traffic (Twój token)</value>
+  </data>
+  <data name="ProvidersTrafficTiles" xml:space="preserve">
+    <value>URL kafelków ruchu</value>
+  </data>
+  <data name="ProvidersTrafficTokenLabel" xml:space="preserve">
+    <value>Publiczny token Mapbox</value>
+  </data>
+  <data name="ProvidersTrafficTokenHelp" xml:space="preserve">
+    <value>Publiczny token zaczynający się od pk. Jest wysyłany do przeglądarek i aplikacji Twoich członków.</value>
+  </data>
+  <data name="ProvidersTrafficTileUrlLabel" xml:space="preserve">
+    <value>URL kafelków ruchu</value>
+  </data>
+  <data name="ProvidersTrafficTileUrlHelp" xml:space="preserve">
+    <value>Adres URL https kafelków graficznych z {z}, {x} i {y}, na przykład kafelków natężenia ruchu TomTom. Adres URL i każdy zawarty w nim klucz są widoczne dla przeglądarek Twoich członków.</value>
+  </data>
+  <data name="ProvidersGeocodingLabel" xml:space="preserve">
+    <value>Wyszukiwanie adresów</value>
+  </data>
+  <data name="ProvidersGeocodingHelp" xml:space="preserve">
+    <value>Zamienia adresy na lokalizacje na mapie, a lokalizacje na adresy, dla użytkowników Twojego departamentu.</value>
+  </data>
+  <data name="ProvidersGeocodingKeyLabel" xml:space="preserve">
+    <value>Klucz API</value>
+  </data>
+  <data name="ProvidersErrorUnknownRouting" xml:space="preserve">
+    <value>Wybierz dostawcę wyznaczania tras z listy.</value>
+  </data>
+  <data name="ProvidersErrorRoutingKey" xml:space="preserve">
+    <value>Podaj klucz API tego dostawcy wyznaczania tras.</value>
+  </data>
+  <data name="ProvidersErrorRoutingUrl" xml:space="preserve">
+    <value>Podaj adres URL swojego serwera wyznaczania tras.</value>
+  </data>
+  <data name="ProvidersErrorRoutingUrlPublic" xml:space="preserve">
+    <value>Adres URL serwera wyznaczania tras musi zaczynać się od https:// i wskazywać adres w publicznym internecie.</value>
+  </data>
+  <data name="ProvidersErrorUnknownTraffic" xml:space="preserve">
+    <value>Wybierz warstwę ruchu z listy.</value>
+  </data>
+  <data name="ProvidersErrorTrafficToken" xml:space="preserve">
+    <value>Podaj publiczny token Mapbox (zaczyna się od pk.).</value>
+  </data>
+  <data name="ProvidersErrorTrafficTileUrl" xml:space="preserve">
+    <value>Podaj adres URL https kafelków ruchu zawierający {z}, {x} i {y}.</value>
+  </data>
+  <data name="ProvidersErrorUnknownGeocoding" xml:space="preserve">
+    <value>Wybierz dostawcę wyszukiwania adresów z listy.</value>
+  </data>
+  <data name="ProvidersErrorGeocodingKey" xml:space="preserve">
+    <value>Podaj klucz API tego dostawcy wyszukiwania adresów.</value>
+  </data>
 </root>

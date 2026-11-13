@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Map Icon Legend and status / priority map icon pages -->
+    <data name="PageTitle" xml:space="preserve">
+    <value>Κλεισίματα δρόμων</value>
+  </data>
+  <data name="PageIntro" xml:space="preserve">
+    <value>Κλειστοί δρόμοι και περιοχές, καθώς και δρόμοι με αργή κυκλοφορία. Κατά την κατάταξη των πλησιέστερων μονάδων, η αποστολή παρακάμπτει τα πλήρη κλεισίματα και επιβραδύνει τις διαδρομές μέσα από τα μερικά.</value>
+  </data>
+  <data name="NewClosure" xml:space="preserve">
+    <value>Νέο κλείσιμο</value>
+  </data>
+  <data name="EditClosure" xml:space="preserve">
+    <value>Επεξεργασία κλεισίματος δρόμου</value>
+  </data>
+  <data name="MappingHeader" xml:space="preserve">
+    <value>Χαρτογράφηση</value>
+  </data>
+  <data name="ShowCurrent" xml:space="preserve">
+    <value>Τρέχοντα και επερχόμενα</value>
+  </data>
+  <data name="ShowAll" xml:space="preserve">
+    <value>Όλα τα κλεισίματα</value>
+  </data>
+  <data name="NoClosures" xml:space="preserve">
+    <value>Δεν υπάρχουν ακόμη κλεισίματα δρόμων.</value>
+  </data>
+  <data name="NoClosuresInFilter" xml:space="preserve">
+    <value>Δεν υπάρχουν τρέχοντα ή επερχόμενα κλεισίματα δρόμων.</value>
+  </data>
+  <data name="ColumnName" xml:space="preserve">
+    <value>Κλείσιμο</value>
+  </data>
+  <data name="ColumnSeverity" xml:space="preserve">
+    <value>Κλείσιμο</value>
+  </data>
+  <data name="ColumnAppliesTo" xml:space="preserve">
+    <value>Κλειστό για</value>
+  </data>
+  <data name="ColumnWhen" xml:space="preserve">
+    <value>Πότε</value>
+  </data>
+  <data name="ColumnStatus" xml:space="preserve">
+    <value>Κατάσταση</value>
+  </data>
+  <data name="ColumnClosedBy" xml:space="preserve">
+    <value>Έκλεισε από</value>
+  </data>
+  <data name="StateActive" xml:space="preserve">
+    <value>Σε ισχύ</value>
+  </data>
+  <data name="StateScheduled" xml:space="preserve">
+    <value>Προγραμματισμένο</value>
+  </data>
+  <data name="StateEnded" xml:space="preserve">
+    <value>Έληξε</value>
+  </data>
+  <data name="StateDisabled" xml:space="preserve">
+    <value>Απενεργοποιημένο</value>
+  </data>
+  <data name="WhenAlways" xml:space="preserve">
+    <value>Μέχρι την απενεργοποίηση</value>
+  </data>
+  <data name="WhenUntil" xml:space="preserve">
+    <value>Έως {0}</value>
+  </data>
+  <data name="WhenUntilFurtherNotice" xml:space="preserve">
+    <value>Μέχρι νεωτέρας</value>
+  </data>
+  <data name="WhenNext" xml:space="preserve">
+    <value>Επόμενο: {0} – {1}</value>
+  </data>
+  <data name="WhenNextOpen" xml:space="preserve">
+    <value>Από {0}</value>
+  </data>
+  <data name="WhenLast" xml:space="preserve">
+    <value>Τελευταίο: {0} – {1}</value>
+  </data>
+  <data name="WindowCount" xml:space="preserve">
+    <value>{0} διαστήματα κλεισίματος</value>
+  </data>
+  <data name="SeverityFull" xml:space="preserve">
+    <value>Πλήρες κλείσιμο</value>
+  </data>
+  <data name="SeverityPartial" xml:space="preserve">
+    <value>Μερικό κλείσιμο (επιβράδυνση)</value>
+  </data>
+  <data name="TypeOther" xml:space="preserve">
+    <value>Άλλο</value>
+  </data>
+  <data name="TypeEvent" xml:space="preserve">
+    <value>Εκδήλωση</value>
+  </data>
+  <data name="TypeRoadWorks" xml:space="preserve">
+    <value>Οδικά έργα</value>
+  </data>
+  <data name="TypeIncident" xml:space="preserve">
+    <value>Συμβάν</value>
+  </data>
+  <data name="TypePolice" xml:space="preserve">
+    <value>Αστυνομία</value>
+  </data>
+  <data name="TypeWeather" xml:space="preserve">
+    <value>Καιρός</value>
+  </data>
+  <data name="TypeHazard" xml:space="preserve">
+    <value>Κίνδυνος στον δρόμο</value>
+  </data>
+  <data name="TypeInfrastructure" xml:space="preserve">
+    <value>Γέφυρα, σήραγγα ή διάβαση</value>
+  </data>
+  <data name="ModeDriving" xml:space="preserve">
+    <value>Οχήματα</value>
+  </data>
+  <data name="ModeCycling" xml:space="preserve">
+    <value>Ποδήλατα</value>
+  </data>
+  <data name="ModeWalking" xml:space="preserve">
+    <value>Πεζοί</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Επεξεργασία</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Διαγραφή</value>
+  </data>
+  <data name="DeleteConfirm" xml:space="preserve">
+    <value>Διαγραφή αυτού του κλεισίματος δρόμου; Η ενέργεια δεν μπορεί να αναιρεθεί.</value>
+  </data>
+  <data name="TurnOff" xml:space="preserve">
+    <value>Απενεργοποίηση</value>
+  </data>
+  <data name="TurnOn" xml:space="preserve">
+    <value>Ενεργοποίηση</value>
+  </data>
+  <data name="ShowOnMap" xml:space="preserve">
+    <value>Εμφάνιση στον χάρτη</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Αποθήκευση</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Άκυρο</value>
+  </data>
+  <data name="SectionShape" xml:space="preserve">
+    <value>Πού</value>
+  </data>
+  <data name="ShapeHelp" xml:space="preserve">
+    <value>Σχεδιάστε τους κλειστούς δρόμους ως γραμμές κατά μήκος του δρόμου ή την κλειστή περιοχή ως σχήμα. Μια γραμμή καλύπτει τον δρόμο που ακολουθεί, ενώ η διέλευση κάθετα σε διασταύρωση παραμένει επιτρεπτή. Μια περιοχή κλείνει κάθε δρόμο μέσα της.</value>
+  </data>
+  <data name="ShapeClear" xml:space="preserve">
+    <value>Καθαρισμός σχεδίου</value>
+  </data>
+  <data name="ShapeGeoJson" xml:space="preserve">
+    <value>GeoJSON (για προχωρημένους)</value>
+  </data>
+  <data name="ShapeGeoJsonHelp" xml:space="preserve">
+    <value>Το σχέδιο σε μορφή GeoJSON. Επικολλήστε εδώ ένα σχήμα για να φορτωθεί στον χάρτη.</value>
+  </data>
+  <data name="ShapeGeoJsonInvalid" xml:space="preserve">
+    <value>Αυτό δεν είναι περιοχή ή γραμμή GeoJSON.</value>
+  </data>
+  <data name="SectionDetails" xml:space="preserve">
+    <value>Λεπτομέρειες</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Όνομα</value>
+  </data>
+  <data name="NameHelp" xml:space="preserve">
+    <value>Πώς θα το αναγνωρίζουν οι χειριστές, για παράδειγμα «Μαραθώνιος πόλης - Κεντρική οδός».</value>
+  </data>
+  <data name="ClosureType" xml:space="preserve">
+    <value>Είδος κλεισίματος</value>
+  </data>
+  <data name="Severity" xml:space="preserve">
+    <value>Κλείσιμο</value>
+  </data>
+  <data name="SeverityHelp" xml:space="preserve">
+    <value>Σε πλήρες κλείσιμο δεν υπάρχει διερχόμενη κυκλοφορία: οι διαδρομές το παρακάμπτουν. Σε μερικό κλείσιμο ο δρόμος μένει ανοιχτός αλλά αργός (κλειστή λωρίδα, ρύθμιση κυκλοφορίας, συνωστισμός): οι διαδρομές μπορούν να περνούν από εκεί με μειωμένη ταχύτητα.</value>
+  </data>
+  <data name="SpeedPercent" xml:space="preserve">
+    <value>Ταχύτητα εντός (% της κανονικής)</value>
+  </data>
+  <data name="SpeedPercentHelp" xml:space="preserve">
+    <value>Για μερικό κλείσιμο, πόσο γρήγορα κινείται ακόμη η κυκλοφορία μέσα από αυτό. Για πλήρες κλείσιμο, η ταχύτητα μιας μονάδας όταν το συμβάν ή το σημείο εκκίνησής της βρίσκεται μέσα στο κλείσιμο και πρέπει να μπει.</value>
+  </data>
+  <data name="DetourMinutes" xml:space="preserve">
+    <value>Χρόνος παράκαμψης (λεπτά)</value>
+  </data>
+  <data name="DetourMinutesHelp" xml:space="preserve">
+    <value>Προστίθεται σε διαδρομή που εξακολουθεί να διασχίζει πλήρες κλείσιμο, επειδή ο πάροχος δρομολόγησης δεν μπορεί να αποφύγει σχεδιασμένες περιοχές. Η διαδρομή επισημαίνεται σε κάθε περίπτωση ως διερχόμενη από το κλείσιμο.</value>
+  </data>
+  <data name="AppliesTo" xml:space="preserve">
+    <value>Κλειστό για</value>
+  </data>
+  <data name="AppliesToHelp" xml:space="preserve">
+    <value>Σε ποιους ισχύει το κλείσιμο. Η διαδρομή ενός μαραθωνίου μπορεί να κλείνει τον δρόμο στα οχήματα, ενώ οι πεζές ομάδες εξακολουθούν να τον διασχίζουν.</value>
+  </data>
+  <data name="Enabled" xml:space="preserve">
+    <value>Ενεργοποιημένο</value>
+  </data>
+  <data name="EnabledHelp" xml:space="preserve">
+    <value>Τα απενεργοποιημένα κλεισίματα διατηρούνται, αλλά δεν χρησιμοποιούνται ποτέ στη δρομολόγηση.</value>
+  </data>
+  <data name="SectionWho" xml:space="preserve">
+    <value>Ποιος και γιατί</value>
+  </data>
+  <data name="Reason" xml:space="preserve">
+    <value>Αιτία</value>
+  </data>
+  <data name="ClosedBy" xml:space="preserve">
+    <value>Έκλεισε από</value>
+  </data>
+  <data name="ClosedByHelp" xml:space="preserve">
+    <value>Ποιος έκλεισε τον δρόμο: η αστυνομία, ο δήμος, ένας διοργανωτής εκδήλωσης.</value>
+  </data>
+  <data name="Authority" xml:space="preserve">
+    <value>Αρχή</value>
+  </data>
+  <data name="AuthorityHelp" xml:space="preserve">
+    <value>Η αρχή που είναι υπεύθυνη για το κλείσιμο ή που εξέδωσε την άδεια.</value>
+  </data>
+  <data name="ContactName" xml:space="preserve">
+    <value>Υπεύθυνος επικοινωνίας</value>
+  </data>
+  <data name="ContactDetails" xml:space="preserve">
+    <value>Στοιχεία επικοινωνίας</value>
+  </data>
+  <data name="ContactDetailsHelp" xml:space="preserve">
+    <value>Τηλέφωνο, κανάλι ασυρμάτου ή ηλεκτρονικό ταχυδρομείο.</value>
+  </data>
+  <data name="Notes" xml:space="preserve">
+    <value>Σημειώσεις</value>
+  </data>
+  <data name="SectionTimes" xml:space="preserve">
+    <value>Πότε</value>
+  </data>
+  <data name="TimesHelp" xml:space="preserve">
+    <value>Το κλείσιμο ισχύει σε καθένα από αυτά τα διαστήματα (ώρα τμήματος). Χωρίς διαστήματα ισχύει μέχρι να απενεργοποιηθεί. Ένας δρόμος κλειστός μόνο τη νύχτα για μία εβδομάδα αντιστοιχεί σε επτά διαστήματα. Χρησιμοποιήστε την «Επανάληψη» για να τα προσθέσετε.</value>
+  </data>
+  <data name="TimesStart" xml:space="preserve">
+    <value>Από</value>
+  </data>
+  <data name="TimesEnd" xml:space="preserve">
+    <value>Έως</value>
+  </data>
+  <data name="TimesEndHelp" xml:space="preserve">
+    <value>Κενό: μέχρι νεωτέρας.</value>
+  </data>
+  <data name="TimesAdd" xml:space="preserve">
+    <value>Προσθήκη διαστήματος</value>
+  </data>
+  <data name="TimesRemove" xml:space="preserve">
+    <value>Αφαίρεση</value>
+  </data>
+  <data name="TimesClearAll" xml:space="preserve">
+    <value>Αφαίρεση όλων των διαστημάτων</value>
+  </data>
+  <data name="TimesNone" xml:space="preserve">
+    <value>Χωρίς διαστήματα: ισχύει μέχρι την απενεργοποίηση.</value>
+  </data>
+  <data name="RepeatTitle" xml:space="preserve">
+    <value>Επανάληψη</value>
+  </data>
+  <data name="RepeatHelp" xml:space="preserve">
+    <value>Προσθέτει ένα διάστημα σε κάθε επιλεγμένη ημέρα μεταξύ των δύο ημερομηνιών. Ώρα λήξης νωρίτερα από την ώρα έναρξης περνά τα μεσάνυχτα (22:00 έως 06:00).</value>
+  </data>
+  <data name="RepeatFirstDate" xml:space="preserve">
+    <value>Πρώτη ημέρα</value>
+  </data>
+  <data name="RepeatLastDate" xml:space="preserve">
+    <value>Τελευταία ημέρα</value>
+  </data>
+  <data name="RepeatDailyStart" xml:space="preserve">
+    <value>Καθημερινά από</value>
+  </data>
+  <data name="RepeatDailyEnd" xml:space="preserve">
+    <value>Καθημερινά έως</value>
+  </data>
+  <data name="RepeatDays" xml:space="preserve">
+    <value>Ημέρες</value>
+  </data>
+  <data name="RepeatAdd" xml:space="preserve">
+    <value>Προσθήκη διαστημάτων</value>
+  </data>
+  <data name="RepeatInvalid" xml:space="preserve">
+    <value>Επιλέξτε την πρώτη και την τελευταία ημέρα και τις δύο ώρες.</value>
+  </data>
+  <data name="RepeatTooMany" xml:space="preserve">
+    <value>Θα προστεθούν περισσότερα από {0} διαστήματα.</value>
+  </data>
+  <data name="RepeatNoDays" xml:space="preserve">
+    <value>Επιλέξτε τουλάχιστον μία ημέρα.</value>
+  </data>
+  <data name="DayMon" xml:space="preserve">
+    <value>Δευ</value>
+  </data>
+  <data name="DayTue" xml:space="preserve">
+    <value>Τρί</value>
+  </data>
+  <data name="DayWed" xml:space="preserve">
+    <value>Τετ</value>
+  </data>
+  <data name="DayThu" xml:space="preserve">
+    <value>Πέμ</value>
+  </data>
+  <data name="DayFri" xml:space="preserve">
+    <value>Παρ</value>
+  </data>
+  <data name="DaySat" xml:space="preserve">
+    <value>Σάβ</value>
+  </data>
+  <data name="DaySun" xml:space="preserve">
+    <value>Κυρ</value>
+  </data>
+  <data name="LastChanged" xml:space="preserve">
+    <value>Τελευταία αλλαγή {0}</value>
+  </data>
+  <data name="ErrorNameRequired" xml:space="preserve">
+    <value>Δώστε ένα όνομα στο κλείσιμο δρόμου.</value>
+  </data>
+  <data name="ErrorNameTooLong" xml:space="preserve">
+    <value>Το όνομα μπορεί να έχει έως {0} χαρακτήρες.</value>
+  </data>
+  <data name="ErrorShapeRequired" xml:space="preserve">
+    <value>Σχεδιάστε τον κλειστό δρόμο ή την περιοχή στον χάρτη.</value>
+  </data>
+  <data name="ErrorShapeInvalid" xml:space="preserve">
+    <value>Το σχέδιο δεν είναι έγκυρη περιοχή ή γραμμή δρόμου.</value>
+  </data>
+  <data name="ErrorShapeTooLarge" xml:space="preserve">
+    <value>Το σχέδιο έχει περισσότερα από {0} σημεία. Απλοποιήστε το.</value>
+  </data>
+  <data name="ErrorTravelModeRequired" xml:space="preserve">
+    <value>Επιλέξτε τουλάχιστον ένα είδος κυκλοφορίας που σταματά το κλείσιμο.</value>
+  </data>
+  <data name="ErrorTooManyWindows" xml:space="preserve">
+    <value>Ένα κλείσιμο μπορεί να έχει έως {0} διαστήματα κλεισίματος.</value>
+  </data>
+  <data name="ErrorWindowInvalid" xml:space="preserve">
+    <value>Κάθε διάστημα κλεισίματος χρειάζεται έγκυρη ημερομηνία και ώρα έναρξης.</value>
+  </data>
+  <data name="ErrorWindowEndsBeforeStart" xml:space="preserve">
+    <value>Ένα διάστημα κλεισίματος λήγει πριν αρχίσει.</value>
+  </data>
+  <data name="ErrorTextTooLong" xml:space="preserve">
+    <value>Ένα από τα πεδία είναι πολύ μεγάλο.</value>
+  </data>
+  <data name="ErrorInvalid" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η αποθήκευση του κλεισίματος δρόμου.</value>
+  </data>
+  <data name="MapLegendActiveFull" xml:space="preserve">
+    <value>Πλήρες κλείσιμο σε ισχύ</value>
+  </data>
+  <data name="MapLegendActivePartial" xml:space="preserve">
+    <value>Μερικό κλείσιμο σε ισχύ</value>
+  </data>
+  <data name="MapLegendScheduled" xml:space="preserve">
+    <value>Προγραμματισμένο</value>
+  </data>
+  <data name="MapLegendInactive" xml:space="preserve">
+    <value>Έληξε ή απενεργοποιήθηκε</value>
+  </data>
+</root>

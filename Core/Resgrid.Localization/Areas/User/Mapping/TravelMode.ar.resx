@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Map Icon Legend and status / priority map icon pages -->
+    <data name="TravelModeHeader" xml:space="preserve">
+    <value>وسيلة التنقل</value>
+  </data>
+  <data name="TravelModeHelp" xml:space="preserve">
+    <value>كيف تصل هذه الوحدات إلى الحادث. يحسب الإرسال (بطاقات الإرسال وقائمة أقرب الوحدات) زمن تنقلها بهذه الطريقة: طرق المركبات للقيادة، ومسارات الدراجات للدراجات الهوائية، وممرات المشاة للسير على الأقدام، وخط مستقيم للنقل الجوي.</value>
+  </data>
+  <data name="TravelModeUnitHelp" xml:space="preserve">
+    <value>اترك الوسيلة أو السرعة فارغة لاستخدام قيم نوع الوحدة.</value>
+  </data>
+  <data name="TravelModeLabel" xml:space="preserve">
+    <value>وسيلة التنقل</value>
+  </data>
+  <data name="TravelModeInherit" xml:space="preserve">
+    <value>حسب نوع الوحدة</value>
+  </data>
+  <data name="TravelModeInheritedHint" xml:space="preserve">
+    <value>نوع الوحدة: {0}</value>
+  </data>
+  <data name="TravelModeDriving" xml:space="preserve">
+    <value>مركبة (طرق)</value>
+  </data>
+  <data name="TravelModeCycling" xml:space="preserve">
+    <value>دراجة هوائية</value>
+  </data>
+  <data name="TravelModeWalking" xml:space="preserve">
+    <value>سيرًا على الأقدام</value>
+  </data>
+  <data name="TravelModeAir" xml:space="preserve">
+    <value>جوي (خط مستقيم)</value>
+  </data>
+  <data name="TravelSpeedLabel" xml:space="preserve">
+    <value>متوسط السرعة</value>
+  </data>
+  <data name="TravelSpeedUnits" xml:space="preserve">
+    <value>وحدات السرعة</value>
+  </data>
+  <data name="TravelSpeedDefaultHint" xml:space="preserve">
+    <value>إذا تُرك فارغًا: {0}.</value>
+  </data>
+  <data name="TravelSpeedHelp" xml:space="preserve">
+    <value>تُستخدم السرعة في التقديرات بخط مستقيم، وللتنقل الجوي، ولمسارات المشي والدراجات. تحتفظ مسارات المركبات بسرعات الطرق الخاصة بمزوّد المسارات.</value>
+  </data>
+  <data name="TravelSpeedRangeError" xml:space="preserve">
+    <value>يجب أن يكون متوسط السرعة بين {0} و{1}.</value>
+  </data>
+  <data name="TravelModeInvalid" xml:space="preserve">
+    <value>اختر وسيلة تنقل من القائمة.</value>
+  </data>
+  <data name="TravelModeColumn" xml:space="preserve">
+    <value>التنقل</value>
+  </data>
+  <data name="BoardClosureDelay" xml:space="preserve">
+    <value>+{0} دقيقة بسبب إغلاقات الطرق</value>
+  </data>
+  <data name="BoardClosures" xml:space="preserve">
+    <value>إغلاقات طرق تم تجنبها: {0}</value>
+  </data>
+</root>

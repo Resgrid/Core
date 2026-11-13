@@ -7107,6 +7107,15 @@
   <data xml:space="preserve" name="FeatureSetup.map-visualizations">
     <value>Abra Cartografía y luego Visualizaciones, elija una visualización de la biblioteca como «Zonas calientes de llamadas», ajuste el rango de fechas, los filtros y las capas en la pestaña Personalizar y guárdela. Los administradores del departamento pueden compartir una visualización guardada con todos.</value>
   </data>
+  <data xml:space="preserve" name="Feature.road-closures">
+    <value>Cortes de carretera</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.road-closures">
+    <value>Calles y zonas cerradas o ralentizadas dibujadas en el mapa, con quién las cerró, por qué, un contacto y los horarios en que están vigentes. El despacho calcula rutas que evitan los cierres totales y ralentiza las que pasan por cierres parciales.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.road-closures">
+    <value>Abra Cartografía, luego Cortes de carretera, y elija Nuevo cierre. Dibuje la calle cerrada como una línea o la zona como una forma, elija cierre total o parcial, el tráfico afectado y sus horarios (use Repetir para una calle cerrada solo de noche) y guarde. Indique en cada tipo de unidad cómo se desplazan sus unidades (vehículo, bicicleta, a pie o aire) para que los planes de despacho y la lista de unidades más cercanas las midan según su forma de moverse.</value>
+  </data>
   <data xml:space="preserve" name="Field.DispatchRecommendationConfig.PersonnelTurnoutSeconds">
     <value>Configuración de recomendaciones de despacho / Tiempo de salida del personal en segundos</value>
   </data>
@@ -7817,5 +7826,11 @@
   </data>
   <data name="ModuleHelp.ChatDisabled" xml:space="preserve">
     <value>Muestra u oculta el chat en la navegación, los widgets del panel y la búsqueda de la aplicación web. Ocultar el módulo no elimina datos ni cambia permisos. No afecta el chat en las aplicaciones móviles.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.MappingProviderOverrides">
+    <value>Sus propios proveedores de mapas</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.MappingProviderOverrides">
+    <value>Cuentas propias del departamento para rutas, tráfico en vivo y búsqueda de direcciones, que se prueban antes que los proveedores de Resgrid. Solo se informa qué proveedores están configurados, nunca las claves. Si los tres vuelven al valor predeterminado de Resgrid, se elimina la configuración.</value>
   </data>
 </root>

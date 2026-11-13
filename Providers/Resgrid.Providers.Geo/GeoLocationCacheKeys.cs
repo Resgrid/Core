@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -24,16 +25,33 @@ namespace Resgrid.Providers.GeoLocationProvider
 		// 16 bytes (32 hex chars) of the SHA-256; a collision at 128 bits is not a practical concern.
 		private const int HashBytes = 16;
 
-		/// <summary>Forward geocode (address to coordinates). Case and whitespace differences share one entry.</summary>
-		public static string ForwardGeocode(string address)
+		/// <summary>
+		/// Forward geocode (address to coordinates). Case and whitespace differences share one entry. A department that
+		/// geocodes through its own account (<paramref name="departmentId"/> above 0) has entries of its own, per
+		/// <paramref name="geocoder"/> (its provider name), so switching providers never serves the old provider's answers;
+		/// 0 is the install-wide entry every other lookup shares. The account's key is left out on purpose: a rotated key
+		/// gets the same answers.
+		/// </summary>
+		public static string ForwardGeocode(string address, int departmentId = 0, string geocoder = null)
 		{
-			return ForwardPrefix + Hash(NormalizeText(address));
+			return ForwardPrefix + DepartmentScope(departmentId, geocoder) + Hash(NormalizeText(address));
 		}
 
-		/// <summary>Reverse geocode (coordinates to address).</summary>
-		public static string ReverseGeocode(double latitude, double longitude)
+		/// <summary>Reverse geocode (coordinates to address); <paramref name="departmentId"/> and <paramref name="geocoder"/> as for <see cref="ForwardGeocode"/>.</summary>
+		public static string ReverseGeocode(double latitude, double longitude, int departmentId = 0, string geocoder = null)
 		{
-			return ReversePrefix + Hash(FormatCoordinates(latitude, longitude));
+			return ReversePrefix + DepartmentScope(departmentId, geocoder) + Hash(FormatCoordinates(latitude, longitude));
+		}
+
+		private static string DepartmentScope(int departmentId, string geocoder)
+		{
+			if (departmentId <= 0)
+				return string.Empty;
+
+			// Provider names are short lowercase words (google, mapbox, locationiq); anything else is dropped so the key stays
+			// one plain segment.
+			var name = new string((geocoder ?? string.Empty).ToLowerInvariant().Where(char.IsAsciiLetterOrDigit).ToArray());
+			return "d" + departmentId.ToString(CultureInfo.InvariantCulture) + (name.Length > 0 ? "." + name : string.Empty) + "_";
 		}
 
 		/// <summary>

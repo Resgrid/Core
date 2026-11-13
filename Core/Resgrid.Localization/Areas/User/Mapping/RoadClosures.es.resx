@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Map Icon Legend and status / priority map icon pages -->
+    <data name="PageTitle" xml:space="preserve">
+    <value>Cierres de vías</value>
+  </data>
+  <data name="PageIntro" xml:space="preserve">
+    <value>Vías y zonas cerradas o con circulación lenta. Al clasificar las unidades más cercanas, el despacho evita los cierres totales y ralentiza las rutas que atraviesan cierres parciales.</value>
+  </data>
+  <data name="NewClosure" xml:space="preserve">
+    <value>Nuevo cierre</value>
+  </data>
+  <data name="EditClosure" xml:space="preserve">
+    <value>Editar cierre de vía</value>
+  </data>
+  <data name="MappingHeader" xml:space="preserve">
+    <value>Cartografía</value>
+  </data>
+  <data name="ShowCurrent" xml:space="preserve">
+    <value>Actuales y próximos</value>
+  </data>
+  <data name="ShowAll" xml:space="preserve">
+    <value>Todos los cierres</value>
+  </data>
+  <data name="NoClosures" xml:space="preserve">
+    <value>Aún no hay cierres de vías.</value>
+  </data>
+  <data name="NoClosuresInFilter" xml:space="preserve">
+    <value>No hay cierres de vías actuales ni próximos.</value>
+  </data>
+  <data name="ColumnName" xml:space="preserve">
+    <value>Cierre</value>
+  </data>
+  <data name="ColumnSeverity" xml:space="preserve">
+    <value>Cierre</value>
+  </data>
+  <data name="ColumnAppliesTo" xml:space="preserve">
+    <value>Cerrado a</value>
+  </data>
+  <data name="ColumnWhen" xml:space="preserve">
+    <value>Cuándo</value>
+  </data>
+  <data name="ColumnStatus" xml:space="preserve">
+    <value>Estado</value>
+  </data>
+  <data name="ColumnClosedBy" xml:space="preserve">
+    <value>Cerrado por</value>
+  </data>
+  <data name="StateActive" xml:space="preserve">
+    <value>En vigor</value>
+  </data>
+  <data name="StateScheduled" xml:space="preserve">
+    <value>Programado</value>
+  </data>
+  <data name="StateEnded" xml:space="preserve">
+    <value>Finalizado</value>
+  </data>
+  <data name="StateDisabled" xml:space="preserve">
+    <value>Desactivado</value>
+  </data>
+  <data name="WhenAlways" xml:space="preserve">
+    <value>Hasta que se desactive</value>
+  </data>
+  <data name="WhenUntil" xml:space="preserve">
+    <value>Hasta {0}</value>
+  </data>
+  <data name="WhenUntilFurtherNotice" xml:space="preserve">
+    <value>Hasta nuevo aviso</value>
+  </data>
+  <data name="WhenNext" xml:space="preserve">
+    <value>Próximo: {0} – {1}</value>
+  </data>
+  <data name="WhenNextOpen" xml:space="preserve">
+    <value>Desde {0}</value>
+  </data>
+  <data name="WhenLast" xml:space="preserve">
+    <value>Último: {0} – {1}</value>
+  </data>
+  <data name="WindowCount" xml:space="preserve">
+    <value>{0} periodos de cierre</value>
+  </data>
+  <data name="SeverityFull" xml:space="preserve">
+    <value>Cierre total</value>
+  </data>
+  <data name="SeverityPartial" xml:space="preserve">
+    <value>Cierre parcial (circulación lenta)</value>
+  </data>
+  <data name="TypeOther" xml:space="preserve">
+    <value>Otro</value>
+  </data>
+  <data name="TypeEvent" xml:space="preserve">
+    <value>Evento</value>
+  </data>
+  <data name="TypeRoadWorks" xml:space="preserve">
+    <value>Obras</value>
+  </data>
+  <data name="TypeIncident" xml:space="preserve">
+    <value>Incidente</value>
+  </data>
+  <data name="TypePolice" xml:space="preserve">
+    <value>Policía</value>
+  </data>
+  <data name="TypeWeather" xml:space="preserve">
+    <value>Meteorología</value>
+  </data>
+  <data name="TypeHazard" xml:space="preserve">
+    <value>Peligro en la vía</value>
+  </data>
+  <data name="TypeInfrastructure" xml:space="preserve">
+    <value>Puente, túnel o paso</value>
+  </data>
+  <data name="ModeDriving" xml:space="preserve">
+    <value>Vehículos</value>
+  </data>
+  <data name="ModeCycling" xml:space="preserve">
+    <value>Bicicletas</value>
+  </data>
+  <data name="ModeWalking" xml:space="preserve">
+    <value>Peatones</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Editar</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Eliminar</value>
+  </data>
+  <data name="DeleteConfirm" xml:space="preserve">
+    <value>¿Eliminar este cierre de vía? Esta acción no se puede deshacer.</value>
+  </data>
+  <data name="TurnOff" xml:space="preserve">
+    <value>Desactivar</value>
+  </data>
+  <data name="TurnOn" xml:space="preserve">
+    <value>Activar</value>
+  </data>
+  <data name="ShowOnMap" xml:space="preserve">
+    <value>Mostrar en el mapa</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Guardar</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <data name="SectionShape" xml:space="preserve">
+    <value>Dónde</value>
+  </data>
+  <data name="ShapeHelp" xml:space="preserve">
+    <value>Dibuje las vías cerradas como líneas a lo largo de la vía, o la zona cerrada como una forma. Una línea cubre la vía que sigue; cruzarla en una intersección sigue estando permitido. Una zona cierra todas las vías que contiene.</value>
+  </data>
+  <data name="ShapeClear" xml:space="preserve">
+    <value>Borrar dibujo</value>
+  </data>
+  <data name="ShapeGeoJson" xml:space="preserve">
+    <value>GeoJSON (avanzado)</value>
+  </data>
+  <data name="ShapeGeoJsonHelp" xml:space="preserve">
+    <value>El dibujo en formato GeoJSON. Pegue aquí una forma para cargarla en el mapa.</value>
+  </data>
+  <data name="ShapeGeoJsonInvalid" xml:space="preserve">
+    <value>No es una zona ni una línea GeoJSON.</value>
+  </data>
+  <data name="SectionDetails" xml:space="preserve">
+    <value>Detalles</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Nombre</value>
+  </data>
+  <data name="NameHelp" xml:space="preserve">
+    <value>Cómo lo identificarán los operadores, por ejemplo «Maratón de la ciudad - Calle Mayor».</value>
+  </data>
+  <data name="ClosureType" xml:space="preserve">
+    <value>Tipo de cierre</value>
+  </data>
+  <data name="Severity" xml:space="preserve">
+    <value>Cierre</value>
+  </data>
+  <data name="SeverityHelp" xml:space="preserve">
+    <value>Un cierre total no permite el tráfico de paso: las rutas lo rodean. Un cierre parcial sigue abierto pero lento (un carril cerrado, control de tráfico, una aglomeración): las rutas pueden usarlo a velocidad reducida.</value>
+  </data>
+  <data name="SpeedPercent" xml:space="preserve">
+    <value>Velocidad dentro (% de la normal)</value>
+  </data>
+  <data name="SpeedPercentHelp" xml:space="preserve">
+    <value>En un cierre parcial, la velocidad a la que el tráfico aún circula por él. En un cierre total, la velocidad de una unidad cuando el incidente o su punto de partida está dentro del cierre y tiene que entrar.</value>
+  </data>
+  <data name="DetourMinutes" xml:space="preserve">
+    <value>Tiempo de desvío (minutos)</value>
+  </data>
+  <data name="DetourMinutesHelp" xml:space="preserve">
+    <value>Se suma a una ruta que aún cruza un cierre total porque el proveedor de rutas no puede evitar las zonas dibujadas. En cualquier caso, la ruta se marca como que cruza el cierre.</value>
+  </data>
+  <data name="AppliesTo" xml:space="preserve">
+    <value>Cerrado a</value>
+  </data>
+  <data name="AppliesToHelp" xml:space="preserve">
+    <value>A quién se aplica el cierre. El recorrido de un maratón puede cerrar la vía a los vehículos mientras los equipos a pie siguen cruzándola.</value>
+  </data>
+  <data name="Enabled" xml:space="preserve">
+    <value>Activado</value>
+  </data>
+  <data name="EnabledHelp" xml:space="preserve">
+    <value>Los cierres desactivados se conservan, pero nunca se usan para calcular rutas.</value>
+  </data>
+  <data name="SectionWho" xml:space="preserve">
+    <value>Quién y por qué</value>
+  </data>
+  <data name="Reason" xml:space="preserve">
+    <value>Motivo</value>
+  </data>
+  <data name="ClosedBy" xml:space="preserve">
+    <value>Cerrado por</value>
+  </data>
+  <data name="ClosedByHelp" xml:space="preserve">
+    <value>Quién cerró la vía: la policía, el municipio, un organizador de eventos.</value>
+  </data>
+  <data name="Authority" xml:space="preserve">
+    <value>Autoridad</value>
+  </data>
+  <data name="AuthorityHelp" xml:space="preserve">
+    <value>La autoridad responsable del cierre o que emitió el permiso.</value>
+  </data>
+  <data name="ContactName" xml:space="preserve">
+    <value>Contacto</value>
+  </data>
+  <data name="ContactDetails" xml:space="preserve">
+    <value>Datos de contacto</value>
+  </data>
+  <data name="ContactDetailsHelp" xml:space="preserve">
+    <value>Teléfono, canal de radio o correo electrónico.</value>
+  </data>
+  <data name="Notes" xml:space="preserve">
+    <value>Notas</value>
+  </data>
+  <data name="SectionTimes" xml:space="preserve">
+    <value>Cuándo</value>
+  </data>
+  <data name="TimesHelp" xml:space="preserve">
+    <value>El cierre está en vigor durante cada uno de estos periodos (hora del departamento). Sin periodos, está en vigor hasta que se desactive. Una vía cerrada solo por la noche durante una semana son siete periodos; use Repetir para añadirlos.</value>
+  </data>
+  <data name="TimesStart" xml:space="preserve">
+    <value>Desde</value>
+  </data>
+  <data name="TimesEnd" xml:space="preserve">
+    <value>Hasta</value>
+  </data>
+  <data name="TimesEndHelp" xml:space="preserve">
+    <value>En blanco: hasta nuevo aviso.</value>
+  </data>
+  <data name="TimesAdd" xml:space="preserve">
+    <value>Añadir un periodo</value>
+  </data>
+  <data name="TimesRemove" xml:space="preserve">
+    <value>Quitar</value>
+  </data>
+  <data name="TimesClearAll" xml:space="preserve">
+    <value>Quitar todos los periodos</value>
+  </data>
+  <data name="TimesNone" xml:space="preserve">
+    <value>Sin periodos: en vigor hasta que se desactive.</value>
+  </data>
+  <data name="RepeatTitle" xml:space="preserve">
+    <value>Repetir</value>
+  </data>
+  <data name="RepeatHelp" xml:space="preserve">
+    <value>Añade un periodo cada día elegido entre las dos fechas. Una hora de fin anterior a la de inicio pasa de la medianoche (22:00 a 06:00).</value>
+  </data>
+  <data name="RepeatFirstDate" xml:space="preserve">
+    <value>Primer día</value>
+  </data>
+  <data name="RepeatLastDate" xml:space="preserve">
+    <value>Último día</value>
+  </data>
+  <data name="RepeatDailyStart" xml:space="preserve">
+    <value>Cada día desde</value>
+  </data>
+  <data name="RepeatDailyEnd" xml:space="preserve">
+    <value>Cada día hasta</value>
+  </data>
+  <data name="RepeatDays" xml:space="preserve">
+    <value>Días</value>
+  </data>
+  <data name="RepeatAdd" xml:space="preserve">
+    <value>Añadir periodos</value>
+  </data>
+  <data name="RepeatInvalid" xml:space="preserve">
+    <value>Elija el primer y el último día y ambas horas.</value>
+  </data>
+  <data name="RepeatTooMany" xml:space="preserve">
+    <value>Eso añadiría más de {0} periodos.</value>
+  </data>
+  <data name="RepeatNoDays" xml:space="preserve">
+    <value>Elija al menos un día.</value>
+  </data>
+  <data name="DayMon" xml:space="preserve">
+    <value>Lun</value>
+  </data>
+  <data name="DayTue" xml:space="preserve">
+    <value>Mar</value>
+  </data>
+  <data name="DayWed" xml:space="preserve">
+    <value>Mié</value>
+  </data>
+  <data name="DayThu" xml:space="preserve">
+    <value>Jue</value>
+  </data>
+  <data name="DayFri" xml:space="preserve">
+    <value>Vie</value>
+  </data>
+  <data name="DaySat" xml:space="preserve">
+    <value>Sáb</value>
+  </data>
+  <data name="DaySun" xml:space="preserve">
+    <value>Dom</value>
+  </data>
+  <data name="LastChanged" xml:space="preserve">
+    <value>Última modificación: {0}</value>
+  </data>
+  <data name="ErrorNameRequired" xml:space="preserve">
+    <value>Asigne un nombre al cierre de vía.</value>
+  </data>
+  <data name="ErrorNameTooLong" xml:space="preserve">
+    <value>El nombre puede tener como máximo {0} caracteres.</value>
+  </data>
+  <data name="ErrorShapeRequired" xml:space="preserve">
+    <value>Dibuje la vía o la zona cerrada en el mapa.</value>
+  </data>
+  <data name="ErrorShapeInvalid" xml:space="preserve">
+    <value>El dibujo no es una zona ni una línea de vía válida.</value>
+  </data>
+  <data name="ErrorShapeTooLarge" xml:space="preserve">
+    <value>El dibujo tiene más de {0} puntos. Simplifíquelo.</value>
+  </data>
+  <data name="ErrorTravelModeRequired" xml:space="preserve">
+    <value>Elija al menos un tipo de tráfico al que afecte el cierre.</value>
+  </data>
+  <data name="ErrorTooManyWindows" xml:space="preserve">
+    <value>Un cierre puede tener como máximo {0} periodos de cierre.</value>
+  </data>
+  <data name="ErrorWindowInvalid" xml:space="preserve">
+    <value>Cada periodo de cierre necesita una fecha y hora de inicio válidas.</value>
+  </data>
+  <data name="ErrorWindowEndsBeforeStart" xml:space="preserve">
+    <value>Un periodo de cierre termina antes de empezar.</value>
+  </data>
+  <data name="ErrorTextTooLong" xml:space="preserve">
+    <value>Uno de los campos es demasiado largo.</value>
+  </data>
+  <data name="ErrorInvalid" xml:space="preserve">
+    <value>No se pudo guardar el cierre de vía.</value>
+  </data>
+  <data name="MapLegendActiveFull" xml:space="preserve">
+    <value>Cierre total en vigor</value>
+  </data>
+  <data name="MapLegendActivePartial" xml:space="preserve">
+    <value>Cierre parcial en vigor</value>
+  </data>
+  <data name="MapLegendScheduled" xml:space="preserve">
+    <value>Programado</value>
+  </data>
+  <data name="MapLegendInactive" xml:space="preserve">
+    <value>Finalizado o desactivado</value>
+  </data>
+</root>

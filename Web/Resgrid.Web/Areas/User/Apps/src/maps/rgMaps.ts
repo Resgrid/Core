@@ -21,6 +21,8 @@ export interface RgMapConfig {
   attribution?: string;
   /** Live traffic vector tiles (MapLibre maps only); empty when the install has no traffic provider. */
   trafficUrl?: string;
+  /** 'vector' (Mapbox Traffic) or 'raster' (a department's own traffic tile URL). */
+  trafficType?: string;
   trafficRefreshSeconds?: number;
   /** The traffic toggle's localized label. */
   trafficLabel?: string;
@@ -373,6 +375,7 @@ async function createMapLibre(element: HTMLElement, options: CreateMapOptions, c
       .then(({ addTrafficToggle }) =>
         addTrafficToggle(map, {
           url: config.trafficUrl!,
+          type: config.trafficType,
           refreshSeconds: config.trafficRefreshSeconds,
           initial: options.traffic === 'on',
           label: config.trafficLabel,

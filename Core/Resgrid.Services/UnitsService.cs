@@ -447,6 +447,26 @@ namespace Resgrid.Services
 			return profiles;
 		}
 
+		public async Task<Dictionary<int, UnitTravelProfile>> GetTravelProfilesForUnitsAsync(int departmentId, IEnumerable<Unit> units)
+		{
+			var profiles = new Dictionary<int, UnitTravelProfile>();
+			if (units == null)
+				return profiles;
+
+			var types = (await _unitTypesRepository.GetAllByDepartmentIdAsync(departmentId) ?? Enumerable.Empty<UnitType>())
+				.Where(t => !string.IsNullOrWhiteSpace(t.Type))
+				.GroupBy(t => t.Type.Trim(), StringComparer.OrdinalIgnoreCase)
+				.ToDictionary(g => g.Key, g => g.First(), StringComparer.OrdinalIgnoreCase);
+
+			foreach (var unit in units.Where(u => u != null))
+			{
+				types.TryGetValue((unit.Type ?? string.Empty).Trim(), out var unitType);
+				profiles[unit.UnitId] = UnitTravelProfile.Resolve(unit, unitType);
+			}
+
+			return profiles;
+		}
+
 		public async Task<UnitType> AddUnitTypeAsync(int departmentId, string name, int customStatesId, int? mapIconType, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var type = new UnitType();

@@ -69,6 +69,8 @@ namespace Resgrid.Tests.Web.User
 			var routingService = new Mock<IRoutingService>();
 			routingService.SetupGet(r => r.ProviderName).Returns(RoutingProviderNames.Mapbox);
 			routingService.SetupGet(r => r.Capabilities).Returns(new RoutingCapabilities { Traffic = true });
+			routingService.Setup(r => r.GetProviderInfoAsync(It.IsAny<int>()))
+				.ReturnsAsync(new RoutingProviderInfo { Name = RoutingProviderNames.Mapbox, Capabilities = new RoutingCapabilities { Traffic = true } });
 
 			var httpContext = new DefaultHttpContext
 			{

@@ -2450,4 +2450,118 @@
   <data name="MapStyleNotAvailable" xml:space="preserve">
     <value>(auf diesem Server nicht verfügbar)</value>
   </data>
+  <data name="ProvidersHeader" xml:space="preserve">
+    <value>Ihre eigenen Kartenanbieter</value>
+  </data>
+  <data name="ProvidersHelp" xml:space="preserve">
+    <value>Nutzen Sie die eigenen Konten Ihrer Abteilung statt der von Resgrid. Ihr Anbieter wird zuerst angefragt; wenn er ausfällt oder eine Anfrage nicht beantworten kann, antworten die Anbieter von Resgrid, sodass Karten und Fahrzeiten weiter funktionieren. Schlüssel werden verschlüsselt gespeichert und nie wieder angezeigt.</value>
+  </data>
+  <data name="ProvidersSystemDefault" xml:space="preserve">
+    <value>Resgrid-Standard</value>
+  </data>
+  <data name="ProvidersYourAccount" xml:space="preserve">
+    <value>Ihr Konto</value>
+  </data>
+  <data name="ProvidersRoutingLabel" xml:space="preserve">
+    <value>Routing-Anbieter</value>
+  </data>
+  <data name="ProvidersRoutingHelp" xml:space="preserve">
+    <value>Wird für Routen, Fahrzeiten für Ausrückeordnungen und nächste Einheiten, Routenpläne und die In-App-Navigation verwendet. Die In-App-Navigation benötigt Mapbox oder Valhalla.</value>
+  </data>
+  <data name="ProvidersRoutingUrlLabel" xml:space="preserve">
+    <value>Server-URL</value>
+  </data>
+  <data name="ProvidersRoutingUrlHelp" xml:space="preserve">
+    <value>Die https-Adresse Ihres Valhalla- oder OSRM-Servers. Er muss aus dem öffentlichen Internet erreichbar sein, zum Beispiel https://api.example.com/valhalla.</value>
+  </data>
+  <data name="ProvidersRoutingKeyLabel" xml:space="preserve">
+    <value>API-Schlüssel</value>
+  </data>
+  <data name="ProvidersRoutingKeyHelp" xml:space="preserve">
+    <value>Mapbox: ein Token mit Zugriff auf Directions, Matrix und Optimization (ein geheimes sk.-Token ist in Ordnung, es verlässt den Server nie). Google: ein Schlüssel mit den APIs Directions und Distance Matrix oder der Routes API. Valhalla: nur, wenn Ihr Server einen benötigt.</value>
+  </data>
+  <data name="ProvidersKeySaved" xml:space="preserve">
+    <value>Gespeichert. Zum Beibehalten leer lassen.</value>
+  </data>
+  <data name="ProvidersClearKey" xml:space="preserve">
+    <value>Gespeicherten Schlüssel entfernen</value>
+  </data>
+  <data name="ProvidersAuthSchemeLabel" xml:space="preserve">
+    <value>Schlüssel senden als</value>
+  </data>
+  <data name="ProvidersAuthSchemeApiKey" xml:space="preserve">
+    <value>X-Api-Key-Header</value>
+  </data>
+  <data name="ProvidersAuthSchemeBearer" xml:space="preserve">
+    <value>Bearer-Token (Authorization-Header)</value>
+  </data>
+  <data name="ProvidersGoogleApiLabel" xml:space="preserve">
+    <value>Google-API</value>
+  </data>
+  <data name="ProvidersGoogleApiLegacy" xml:space="preserve">
+    <value>Directions und Distance Matrix</value>
+  </data>
+  <data name="ProvidersGoogleApiRoutes" xml:space="preserve">
+    <value>Routes API (Projekte in Google Cloud, die nach März 2025 erstellt wurden)</value>
+  </data>
+  <data name="ProvidersTrafficLabel" xml:space="preserve">
+    <value>Live-Verkehrsebene</value>
+  </data>
+  <data name="ProvidersTrafficHelp" xml:space="preserve">
+    <value>Die Verkehrsschaltfläche auf den Karten der Website und in den Apps.</value>
+  </data>
+  <data name="ProvidersTrafficMapbox" xml:space="preserve">
+    <value>Mapbox Traffic (Ihr Token)</value>
+  </data>
+  <data name="ProvidersTrafficTiles" xml:space="preserve">
+    <value>URL für Verkehrskacheln</value>
+  </data>
+  <data name="ProvidersTrafficTokenLabel" xml:space="preserve">
+    <value>Öffentliches Mapbox-Token</value>
+  </data>
+  <data name="ProvidersTrafficTokenHelp" xml:space="preserve">
+    <value>Ein öffentliches Token, das mit pk. beginnt. Es wird an die Browser und Apps Ihrer Mitglieder gesendet.</value>
+  </data>
+  <data name="ProvidersTrafficTileUrlLabel" xml:space="preserve">
+    <value>URL für Verkehrskacheln</value>
+  </data>
+  <data name="ProvidersTrafficTileUrlHelp" xml:space="preserve">
+    <value>Eine https-URL für Bildkacheln mit {z}, {x} und {y}, zum Beispiel Verkehrsfluss-Kacheln von TomTom. Die URL und jeder darin enthaltene Schlüssel sind für die Browser Ihrer Mitglieder sichtbar.</value>
+  </data>
+  <data name="ProvidersGeocodingLabel" xml:space="preserve">
+    <value>Adresssuche</value>
+  </data>
+  <data name="ProvidersGeocodingHelp" xml:space="preserve">
+    <value>Wandelt für die Benutzer Ihrer Abteilung Adressen in Kartenpositionen und Positionen in Adressen um.</value>
+  </data>
+  <data name="ProvidersGeocodingKeyLabel" xml:space="preserve">
+    <value>API-Schlüssel</value>
+  </data>
+  <data name="ProvidersErrorUnknownRouting" xml:space="preserve">
+    <value>Wählen Sie einen Routing-Anbieter aus der Liste.</value>
+  </data>
+  <data name="ProvidersErrorRoutingKey" xml:space="preserve">
+    <value>Geben Sie den API-Schlüssel für diesen Routing-Anbieter ein.</value>
+  </data>
+  <data name="ProvidersErrorRoutingUrl" xml:space="preserve">
+    <value>Geben Sie die URL Ihres Routing-Servers ein.</value>
+  </data>
+  <data name="ProvidersErrorRoutingUrlPublic" xml:space="preserve">
+    <value>Die URL des Routing-Servers muss mit https:// beginnen und auf eine Adresse im öffentlichen Internet verweisen.</value>
+  </data>
+  <data name="ProvidersErrorUnknownTraffic" xml:space="preserve">
+    <value>Wählen Sie eine Verkehrsebene aus der Liste.</value>
+  </data>
+  <data name="ProvidersErrorTrafficToken" xml:space="preserve">
+    <value>Geben Sie ein öffentliches Mapbox-Token ein (es beginnt mit pk.).</value>
+  </data>
+  <data name="ProvidersErrorTrafficTileUrl" xml:space="preserve">
+    <value>Geben Sie eine https-URL für Verkehrskacheln ein, die {z}, {x} und {y} enthält.</value>
+  </data>
+  <data name="ProvidersErrorUnknownGeocoding" xml:space="preserve">
+    <value>Wählen Sie einen Anbieter für die Adresssuche aus der Liste.</value>
+  </data>
+  <data name="ProvidersErrorGeocodingKey" xml:space="preserve">
+    <value>Geben Sie den API-Schlüssel für diesen Anbieter der Adresssuche ein.</value>
+  </data>
 </root>

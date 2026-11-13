@@ -132,11 +132,18 @@ namespace Resgrid.Web.Services.Models.v4.Configs
 		/// <summary>Signed static map image template; placeholders {lat} {lon} {zoom} {width} {height} {scale} {scheme}.</summary>
 		public string StaticMapUrlTemplate { get; set; }
 
-		/// <summary>A live traffic overlay is available (TrafficTileUrl).</summary>
+		/// <summary>The vector traffic overlay is available (TrafficTileUrl). False when the department uses its own image tiles.</summary>
 		public bool TrafficAvailable { get; set; }
 
 		/// <summary>Mapbox Traffic v1 vector tile template (layer "traffic", congestion low/moderate/heavy/severe, closed).</summary>
 		public string TrafficTileUrl { get; set; }
+
+		/// <summary>
+		/// The department's own traffic image tile template ({z}/{x}/{y}, e.g. TomTom flow tiles), drawn as a raster overlay
+		/// instead of TrafficTileUrl. Kept out of TrafficTileUrl/TrafficAvailable so app builds that only know the vector
+		/// overlay never load image tiles as vector tiles: they simply show no traffic for that department.
+		/// </summary>
+		public string TrafficRasterTileUrl { get; set; }
 
 		/// <summary>How often to reload traffic tiles, in seconds.</summary>
 		public int TrafficRefreshSeconds { get; set; }

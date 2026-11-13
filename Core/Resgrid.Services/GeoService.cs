@@ -17,10 +17,12 @@ namespace Resgrid.Services
 		private readonly IAddressService _addressService;
 		private readonly IMappingService _mappingService;
 		private readonly IRoutingService _routingService;
+		private readonly IRoadClosureService _roadClosureService;
 
 		public GeoService(IGeoLocationProvider geoLocationProvider, ICallsService callsService, IDepartmentGroupsService departmentGroupsService, IAddressService addressService, IMappingService mappingService,
-			IRoutingService routingService)
+			IRoutingService routingService, IRoadClosureService roadClosureService)
 		{
+			_roadClosureService = roadClosureService;
 			_geoLocationProvider = geoLocationProvider;
 			_callsService = callsService;
 			_departmentGroupsService = departmentGroupsService;
@@ -77,7 +79,7 @@ namespace Resgrid.Services
 					}
 				}
 
-				var route = await GetRoutedTravelAsync(log.GeoLocationData, destination, null);
+				var route = await GetRoutedTravelAsync(log.GeoLocationData, destination, null, log.DepartmentId);
 
 				if (route != null)
 				{
@@ -104,7 +106,7 @@ namespace Resgrid.Services
 
 		public async Task<double> GetEtaInSecondsAsync(string start, string destination, VehicleProfile vehicle)
 		{
-			var route = await GetRoutedTravelAsync(start, destination, vehicle);
+			var route = await GetRoutedTravelAsync(start, destination, vehicle, 0);
 
 			return route?.DurationSeconds ?? -1;
 		}
@@ -112,7 +114,7 @@ namespace Resgrid.Services
 		public async Task<List<double>> GetEtasInSecondsAsync(IReadOnlyList<string> origins, string destination, VehicleProfile vehicle = null)
 		{
 			var etas = (origins ?? new List<string>()).Select(_ => -1d).ToList();
-			var target = await ResolvePointAsync(destination);
+			var target = await ResolvePointAsync(destination, 0);
 
 			if (target == null || etas.Count == 0)
 				return etas;
@@ -121,7 +123,7 @@ namespace Resgrid.Services
 			var indexes = new List<int>();
 			for (var i = 0; i < origins.Count; i++)
 			{
-				var point = await ResolvePointAsync(origins[i]);
+				var point = await ResolvePointAsync(origins[i], 0);
 				if (point == null)
 					continue;
 
@@ -154,26 +156,86 @@ namespace Resgrid.Services
 			return etas;
 		}
 
+		public async Task<TravelEstimate> GetTravelEstimateAsync(string start, string destination, TravelLookup lookup, System.Threading.CancellationToken cancellationToken = default)
+		{
+			if (String.IsNullOrWhiteSpace(start) || String.IsNullOrWhiteSpace(destination))
+				return TravelEstimate.None;
+
+			var from = await ResolvePointAsync(start, lookup?.DepartmentId ?? 0);
+			var to = await ResolvePointAsync(destination, lookup?.DepartmentId ?? 0);
+
+			if (from == null || to == null)
+				return TravelEstimate.None;
+
+			var travel = lookup?.Travel ?? UnitTravelProfile.Default;
+
+			// Air travel is the straight line at the unit's air speed; road closures don't apply and nothing is routed.
+			if (travel.IsAir)
+			{
+				var meters = GeoMath.HaversineMeters(from.Latitude, from.Longitude, to.Latitude, to.Longitude);
+				return new TravelEstimate { Seconds = travel.EstimateSeconds(meters), Source = EtaSources.Direct };
+			}
+
+			var closures = await ClosuresForAsync(lookup?.DepartmentId ?? 0, travel.Mode);
+
+			// Walking and cycling ignore vehicle limits; driving picks plain, traffic-aware or truck routing as before.
+			var vehicle = travel.Mode == UnitTravelModes.Driving ? lookup?.Vehicle : null;
+			var route = await _routingService.GetRouteAsync(new RouteRequest
+			{
+				DepartmentId = lookup?.DepartmentId ?? 0,
+				Waypoints = new List<RoutingWaypoint> { from, to },
+				Profile = travel.RoutingProfile ?? DriveTimeProfile(vehicle),
+				Vehicle = vehicle,
+				Closures = closures
+			}, cancellationToken);
+
+			if (route == null || !route.Successful || route.Provider == RoutingProviderNames.Estimate)
+				return TravelEstimate.None;
+
+			// Providers walk and cycle at fixed speeds; a team's own speed over the routed path is the better time. Closure
+			// slowdowns were timed at the provider's pace, so they are re-timed at the team's (detour allowances stay as they are).
+			var seconds = route.DurationSeconds;
+			var closureDelay = route.ClosureDelaySeconds;
+			if (travel.UsesConfiguredSpeedOnRoute && route.DistanceMeters > 0)
+			{
+				var configuredSeconds = route.DistanceMeters / travel.SpeedMetersPerSecond;
+				closureDelay = RoadClosureRouting.DelayAtPace(route, configuredSeconds);
+				seconds = Math.Round(configuredSeconds) + closureDelay;
+			}
+
+			return new TravelEstimate
+			{
+				Seconds = seconds,
+				Source = EtaSources.Road,
+				ClosureDelaySeconds = closureDelay,
+				Closures = route.Closures ?? new List<RouteClosureEffect>()
+			};
+		}
+
 		/// <summary>
-		/// A routed drive between two "lat,lon" strings or addresses through the install's routing provider; null when
-		/// only the straight-line estimate could answer (callers have their own estimate and label it as one).
+		/// A routed drive between two "lat,lon" strings or addresses through the department's own routing account (if any)
+		/// and the install's providers; null when only the straight-line estimate could answer (callers have their own
+		/// estimate and label it as one). Department 0 = the install's providers only.
 		/// </summary>
-		private async Task<RouteResult> GetRoutedTravelAsync(string start, string destination, VehicleProfile vehicle)
+		private async Task<RouteResult> GetRoutedTravelAsync(string start, string destination, VehicleProfile vehicle, int departmentId)
 		{
 			if (String.IsNullOrWhiteSpace(start) || String.IsNullOrWhiteSpace(destination))
 				return null;
 
-			var from = await ResolvePointAsync(start);
-			var to = await ResolvePointAsync(destination);
+			var from = await ResolvePointAsync(start, departmentId);
+			var to = await ResolvePointAsync(destination, departmentId);
 
 			if (from == null || to == null)
 				return null;
 
+			// A department's drive (a responder heading in) goes around its road closures for driving, as dispatch ETAs do.
 			var route = await _routingService.GetRouteAsync(new RouteRequest
 			{
+				DepartmentId = departmentId,
 				Waypoints = new List<RoutingWaypoint> { from, to },
 				Profile = DriveTimeProfile(vehicle),
-				Vehicle = vehicle
+				Vehicle = vehicle,
+				Closures = await ClosuresForAsync(departmentId, UnitTravelModes.Driving)
 			});
 
 			if (route == null || !route.Successful || route.Provider == RoutingProviderNames.Estimate)
@@ -190,8 +252,29 @@ namespace Resgrid.Services
 			return Config.MappingConfig.RoutingTrafficAware ? RoutingProfile.DrivingTraffic : RoutingProfile.Driving;
 		}
 
-		/// <summary>A "lat,lon" string as a point, else the address geocoded through the install's geocoding chain.</summary>
-		private async Task<RoutingWaypoint> ResolvePointAsync(string location)
+		/// <summary>The department's road closures in effect now for the mode; none for department 0 or when they can't be read.</summary>
+		private async Task<List<RoutingClosure>> ClosuresForAsync(int departmentId, UnitTravelModes mode)
+		{
+			if (departmentId <= 0)
+				return new List<RoutingClosure>();
+
+			try
+			{
+				return await _roadClosureService.GetRoutingClosuresAsync(departmentId, mode, DateTime.UtcNow) ?? new List<RoutingClosure>();
+			}
+			catch (Exception ex)
+			{
+				// A closure lookup that fails must not take the drive time with it.
+				Framework.Logging.LogException(ex, $"Reading road closures for department {departmentId} failed; routing without them.");
+				return new List<RoutingClosure>();
+			}
+		}
+
+		/// <summary>
+		/// A "lat,lon" string as a point, else the address geocoded through the geocoding chain: the given department's own
+		/// geocoder first (setting 125) even when the call runs outside that department's request (a worker, another scope).
+		/// </summary>
+		private async Task<RoutingWaypoint> ResolvePointAsync(string location, int departmentId)
 		{
 			if (String.IsNullOrWhiteSpace(location))
 				return null;
@@ -200,7 +283,10 @@ namespace Resgrid.Services
 			if (parsed.HasValue)
 				return new RoutingWaypoint(parsed.Value.Latitude, parsed.Value.Longitude);
 
-			var geocoded = await _geoLocationProvider.GetLatLonFromAddress(location);
+			string geocoded;
+			using (departmentId > 0 && Framework.RequestDepartment.Id != departmentId ? Framework.RequestDepartment.Enter(departmentId) : null)
+				geocoded = await _geoLocationProvider.GetLatLonFromAddress(location);
+
 			parsed = GeoMath.ParseLatLonString(geocoded);
 
 			return parsed.HasValue ? new RoutingWaypoint(parsed.Value.Latitude, parsed.Value.Longitude) : null;

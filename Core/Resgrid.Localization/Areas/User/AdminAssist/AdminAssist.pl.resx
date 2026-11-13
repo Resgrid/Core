@@ -7107,6 +7107,15 @@
   <data xml:space="preserve" name="FeatureSetup.map-visualizations">
     <value>Otwórz Mapowanie, a następnie Wizualizacje, wybierz wizualizację z biblioteki, np. „Gorące strefy zgłoszeń”, dostosuj zakres dat, filtry i warstwy na karcie Dostosuj i zapisz ją. Administratorzy działu mogą udostępnić zapisaną wizualizację wszystkim.</value>
   </data>
+  <data xml:space="preserve" name="Feature.road-closures">
+    <value>Zamknięcia dróg</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.road-closures">
+    <value>Zamknięte i spowolnione drogi oraz obszary narysowane na mapie, z informacją, kto je zamknął, dlaczego, kontaktem i godzinami obowiązywania. Dysponowanie wyznacza trasy omijające całkowite zamknięcia i spowalnia trasy przez zamknięcia częściowe.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.road-closures">
+    <value>Otwórz Mapowanie, następnie Zamknięcia dróg, i wybierz Nowe zamknięcie. Narysuj zamkniętą drogę jako linię lub obszar jako kształt, wybierz zamknięcie całkowite lub częściowe, ruch, którego dotyczy, i godziny (użyj Powtórz dla drogi zamkniętej tylko w nocy), a następnie zapisz. Ustaw w każdym typie jednostki, jak poruszają się jego jednostki (pojazd, rower, pieszo lub powietrze), aby karty dysponowania i lista najbliższych jednostek mierzyły je tak, jak się przemieszczają.</value>
+  </data>
   <data xml:space="preserve" name="Field.DispatchRecommendationConfig.PersonnelTurnoutSeconds">
     <value>Konfiguracja rekomendacji dysponowania / Czas wyjazdu personelu w sekundach</value>
   </data>
@@ -7817,5 +7826,11 @@
   </data>
   <data name="ModuleHelp.ChatDisabled" xml:space="preserve">
     <value>Pokazuje lub ukrywa Czat w nawigacji, widżetach pulpitu i wyszukiwaniu aplikacji internetowej. Ukrycie nie usuwa danych ani nie zmienia uprawnień. Nie wpływa to na czat w aplikacjach mobilnych.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.MappingProviderOverrides">
+    <value>Własni dostawcy map</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.MappingProviderOverrides">
+    <value>Własne konta departamentu do wyznaczania tras, ruchu na żywo i wyszukiwania adresów, odpytywane przed dostawcami Resgrid. Raportowane jest tylko to, którzy dostawcy są ustawieni, nigdy klucze. Przywrócenie wszystkich trzech do ustawień domyślnych Resgrid usuwa to ustawienie.</value>
   </data>
 </root>

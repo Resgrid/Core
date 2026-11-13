@@ -65,6 +65,7 @@ namespace Resgrid.Web.Services.Models.v4.Routing
 
 		public double DistanceMeters { get; set; }
 
+		/// <summary>Travel time including <see cref="RoadClosureDelaySeconds"/>: the provider's time plus what road closures add.</summary>
 		public double DurationSeconds { get; set; }
 
 		/// <summary>Duration without live traffic, when the provider reports it.</summary>
@@ -84,21 +85,48 @@ namespace Resgrid.Web.Services.Models.v4.Routing
 		/// <summary>The route line as a GeoJSON LineString string, the same format the route screens already parse.</summary>
 		public string Geometry { get; set; }
 
+		/// <summary>
+		/// One leg per pair of consecutive stops, timed by the provider: road closure delay is not spread over the legs, so
+		/// their durations add up to <see cref="DurationSeconds"/> minus <see cref="RoadClosureDelaySeconds"/>.
+		/// </summary>
 		public List<RouteLegData> Legs { get; set; } = new List<RouteLegData>();
 
 		public List<RouteIncidentData> Incidents { get; set; } = new List<RouteIncidentData>();
 
+		/// <summary>Seconds the department's active road closures added to DurationSeconds (slowdowns, detours the provider could not take); 0 when none (M0314).</summary>
+		public int RoadClosureDelaySeconds { get; set; }
+
+		/// <summary>The department's active road closures near the route and what each did to it (M0314).</summary>
+		public List<RouteClosureData> RoadClosures { get; set; } = new List<RouteClosureData>();
+
 		/// <summary>
 		/// The full route in the OSRM v5 / Mapbox Directions shape (polyline6 geometry, legs, steps, maneuvers, and
-		/// voiceInstructions / bannerInstructions when navigation was requested); null without steps.
+		/// voiceInstructions / bannerInstructions when navigation was requested); null without steps. Its durations are the
+		/// provider's, without <see cref="RoadClosureDelaySeconds"/> (as <see cref="Legs"/>).
 		/// </summary>
 		public JToken Route { get; set; }
 
-		/// <summary>In-app navigation may use this route (Valhalla or Mapbox, navigation enabled).</summary>
+		/// <summary>
+		/// In-app navigation may use this route (Valhalla or Mapbox, navigation enabled). False when the route still runs
+		/// through a full road closure the provider could not avoid (RoadClosures effect 2): its directions would lead into it.
+		/// </summary>
 		public bool NavigationAvailable { get; set; }
 
-		/// <summary>When a client should ask again (traffic-aware routes change).</summary>
+		/// <summary>When a client should ask again: five minutes for traffic-aware routes and while the department has road closures in effect, else twelve hours.</summary>
 		public DateTime ExpiresUtc { get; set; }
+	}
+
+	/// <summary>A road closure as it affected a route (M0314).</summary>
+	public class RouteClosureData
+	{
+		public string RoadClosureId { get; set; }
+
+		public string Name { get; set; }
+
+		/// <summary>0 avoided (routed around), 1 slowed (driven through at reduced speed), 2 crossed (the provider could not avoid it; a detour time was added).</summary>
+		public int Effect { get; set; }
+
+		public int DelaySeconds { get; set; }
 	}
 
 	public class RouteLegData

@@ -298,6 +298,7 @@ export function GlMapView({
             .then(({ addTrafficToggle }) =>
               addTrafficToggle(map as unknown as import('maplibre-gl').Map, {
                 url: kitConfig.trafficUrl!,
+                type: kitConfig.trafficType,
                 refreshSeconds: kitConfig.trafficRefreshSeconds,
                 initial: resolvedMapConfig.traffic === 'on',
                 label: kitConfig.trafficLabel,

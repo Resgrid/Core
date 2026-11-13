@@ -1,0 +1,269 @@
+@using Resgrid.Web.Helpers
+@using Resgrid.Model
+@using System.Globalization
+@using Newtonsoft.Json
+@model Resgrid.Web.Areas.User.Models.Mapping.RoadClosureEditView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.RoadClosures> localizer
+@{
+    var title = Model.IsNew ? localizer["NewClosure"] : localizer["EditClosure"];
+    ViewBag.Title = "Resgrid | " + title;
+    var jsonSettings = new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml };
+    var types = Enum.GetValues(typeof(RoadClosureTypes)).Cast<RoadClosureTypes>()
+        .OrderBy(t => t == RoadClosureTypes.Other ? 1 : 0).ThenBy(t => localizer["Type" + t].Value, StringComparer.CurrentCultureIgnoreCase).ToList();
+    var windows = Model.Windows ?? new List<Resgrid.Web.Areas.User.Models.Mapping.RoadClosureWindowInput>();
+
+    string FieldError(string field)
+    {
+        return ViewData.ModelState.TryGetValue(field, out var entry) && entry.Errors.Count > 0 ? entry.Errors[0].ErrorMessage : null;
+    }
+
+    var shapeError = FieldError("GeometryJson");
+    var windowsError = FieldError("Windows") ?? FieldError("WindowsJson");
+    var generalErrors = ViewData.ModelState.Where(kv => kv.Key != "GeometryJson" && kv.Key != "Windows" && kv.Key != "WindowsJson" && kv.Key != "Name" && kv.Key != "AppliesTo")
+        .SelectMany(kv => kv.Value.Errors).Select(e => e.ErrorMessage).Where(m => !string.IsNullOrWhiteSpace(m)).Distinct().ToList();
+}
+
+@section Styles
+{
+    <link rel="stylesheet" href="~/lib/geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css" />
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-8">
+        <h2>@title</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            <li><a asp-controller="Mapping" asp-action="Index" asp-route-area="User">@localizer["MappingHeader"]</a></li>
+            <li><a asp-controller="RoadClosures" asp-action="Index" asp-route-area="User">@localizer["PageTitle"]</a></li>
+            <li class="active"><strong>@title</strong></li>
+        </ol>
+    </div>
+</div>
+
+<form class="form-horizontal" role="form" method="post" asp-controller="RoadClosures" asp-action="Save" asp-route-area="User" id="roadClosureForm">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="RoadClosureId" />
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="wrapper wrapper-content">
+                @if (generalErrors.Any())
+                {
+                    <div class="alert alert-danger">
+                        @foreach (var error in generalErrors) { <div>@error</div> }
+                    </div>
+                }
+
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@localizer["SectionShape"]</h5></div>
+                    <div class="ibox-content">
+                        <p class="text-muted small">@localizer["ShapeHelp"]</p>
+                        @if (shapeError != null) { <div class="alert alert-danger">@shapeError</div> }
+                        <div id="roadClosureMap" style="position: relative; width: 100%; height: 480px;"></div>
+                        <div style="margin-top: 8px;">
+                            <button type="button" class="btn btn-xs btn-white" id="roadClosureClearShape"><i class="fa fa-eraser"></i> @localizer["ShapeClear"]</button>
+                            <a href="#roadClosureGeoJsonPanel" data-toggle="collapse" class="small" style="margin-left: 10px;">@localizer["ShapeGeoJson"]</a>
+                        </div>
+                        <div id="roadClosureGeoJsonPanel" class="collapse" style="margin-top: 8px;">
+                            <p class="text-muted small">@localizer["ShapeGeoJsonHelp"]</p>
+                            <textarea asp-for="GeometryJson" class="form-control" rows="4" style="font-family: monospace; font-size: 11px;"></textarea>
+                            <span class="text-danger small" id="roadClosureGeoJsonError" style="display:none;">@localizer["ShapeGeoJsonInvalid"]</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@localizer["SectionDetails"]</h5></div>
+                    <div class="ibox-content">
+                        <div class="form-group">
+                            <label asp-for="Name" class="col-sm-2 control-label">@localizer["Name"]</label>
+                            <div class="col-sm-10">
+                                <input asp-for="Name" class="form-control" maxlength="@RoadClosure.MaxNameLength" required />
+                                <span class="help-block small">@localizer["NameHelp"]</span>
+                                @if (FieldError("Name") is string nameError) { <span class="text-danger small">@nameError</span> }
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="ClosureType" class="col-sm-2 control-label">@localizer["ClosureType"]</label>
+                            <div class="col-sm-4">
+                                <select asp-for="ClosureType" class="form-control">
+                                    @foreach (var type in types)
+                                    {
+                                        <option value="@((int)type)" selected="@(Model.ClosureType == (int)type)">@localizer["Type" + type]</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Severity" class="col-sm-2 control-label">@localizer["Severity"]</label>
+                            <div class="col-sm-10">
+                                <select asp-for="Severity" class="form-control" style="max-width: 360px;" id="roadClosureSeverity">
+                                    <option value="0" selected="@(Model.Severity == 0)">@localizer["SeverityFull"]</option>
+                                    <option value="1" selected="@(Model.Severity == 1)">@localizer["SeverityPartial"]</option>
+                                </select>
+                                <span class="help-block small">@localizer["SeverityHelp"]</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="SpeedPercent" class="col-sm-2 control-label">@localizer["SpeedPercent"]</label>
+                            <div class="col-sm-10">
+                                <input asp-for="SpeedPercent" type="number" min="@RoadClosure.MinimumSpeedPercent" max="@RoadClosure.MaximumSpeedPercent" step="5" class="form-control" style="max-width: 140px;" />
+                                <span class="help-block small">@localizer["SpeedPercentHelp"]</span>
+                            </div>
+                        </div>
+                        <div class="form-group" id="roadClosureDetourGroup">
+                            <label asp-for="DetourMinutes" class="col-sm-2 control-label">@localizer["DetourMinutes"]</label>
+                            <div class="col-sm-10">
+                                <input asp-for="DetourMinutes" type="number" min="0" max="@RoadClosure.MaximumDetourMinutes" step="1" class="form-control" style="max-width: 140px;" />
+                                <span class="help-block small">@localizer["DetourMinutesHelp"]</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["AppliesTo"]</label>
+                            <div class="col-sm-10">
+                                <label class="checkbox-inline"><input type="checkbox" asp-for="AppliesToDriving" /> <i class="fa fa-car"></i> @localizer["ModeDriving"]</label>
+                                <label class="checkbox-inline"><input type="checkbox" asp-for="AppliesToCycling" /> <i class="fa fa-bicycle"></i> @localizer["ModeCycling"]</label>
+                                <label class="checkbox-inline"><input type="checkbox" asp-for="AppliesToWalking" /> <i class="fa fa-male"></i> @localizer["ModeWalking"]</label>
+                                <span class="help-block small">@localizer["AppliesToHelp"]</span>
+                                @if (FieldError("AppliesTo") is string modeError) { <span class="text-danger small">@modeError</span> }
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["Enabled"]</label>
+                            <div class="col-sm-10">
+                                <label class="checkbox-inline"><input type="checkbox" asp-for="IsEnabled" /> @localizer["Enabled"]</label>
+                                <span class="help-block small">@localizer["EnabledHelp"]</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@localizer["SectionTimes"]</h5></div>
+                    <div class="ibox-content">
+                        <p class="text-muted small">@localizer["TimesHelp"]</p>
+                        @if (windowsError != null) { <div class="alert alert-danger">@windowsError</div> }
+                        <table class="table table-condensed" id="roadClosureWindows" style="max-width: 720px;">
+                            <thead>
+                                <tr>
+                                    <th>@localizer["TimesStart"]</th>
+                                    <th>@localizer["TimesEnd"] <small class="text-muted">(@localizer["TimesEndHelp"])</small></th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (var i = 0; i < windows.Count; i++)
+                                {
+                                    <tr data-window-row>
+                                        <td><input type="datetime-local" class="form-control input-sm" name="Windows[@i].StartsOn" value="@windows[i].StartsOn" data-window-start /></td>
+                                        <td><input type="datetime-local" class="form-control input-sm" name="Windows[@i].EndsOn" value="@windows[i].EndsOn" data-window-end /></td>
+                                        <td><button type="button" class="btn btn-xs btn-white" data-window-remove>@localizer["TimesRemove"]</button></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        <p class="text-muted small" id="roadClosureNoWindows" style="@(windows.Count == 0 ? "" : "display:none;")">@localizer["TimesNone"]</p>
+                        <button type="button" class="btn btn-sm btn-white" id="roadClosureAddWindow"><i class="fa fa-plus"></i> @localizer["TimesAdd"]</button>
+                        <button type="button" class="btn btn-sm btn-white" id="roadClosureClearWindows"><i class="fa fa-trash"></i> @localizer["TimesClearAll"]</button>
+
+                        <div class="well well-sm" style="margin-top: 14px; max-width: 720px;">
+                            <strong>@localizer["RepeatTitle"]</strong>
+                            <p class="text-muted small">@localizer["RepeatHelp"]</p>
+                            <div class="row">
+                                <div class="col-sm-3"><label class="small" for="repeatFirstDate">@localizer["RepeatFirstDate"]</label><input type="date" class="form-control input-sm" id="repeatFirstDate" /></div>
+                                <div class="col-sm-3"><label class="small" for="repeatLastDate">@localizer["RepeatLastDate"]</label><input type="date" class="form-control input-sm" id="repeatLastDate" /></div>
+                                <div class="col-sm-3"><label class="small" for="repeatDailyStart">@localizer["RepeatDailyStart"]</label><input type="time" class="form-control input-sm" id="repeatDailyStart" /></div>
+                                <div class="col-sm-3"><label class="small" for="repeatDailyEnd">@localizer["RepeatDailyEnd"]</label><input type="time" class="form-control input-sm" id="repeatDailyEnd" /></div>
+                            </div>
+                            <div style="margin-top: 8px;">
+                                <span class="small" style="margin-right: 6px;">@localizer["RepeatDays"]</span>
+                                @foreach (var day in new[] { (1, "DayMon"), (2, "DayTue"), (3, "DayWed"), (4, "DayThu"), (5, "DayFri"), (6, "DaySat"), (0, "DaySun") })
+                                {
+                                    <label class="checkbox-inline small"><input type="checkbox" data-repeat-day="@day.Item1" checked /> @localizer[day.Item2]</label>
+                                }
+                            </div>
+                            <div style="margin-top: 8px;">
+                                <button type="button" class="btn btn-sm btn-primary" id="roadClosureRepeat">@localizer["RepeatAdd"]</button>
+                                <span class="text-danger small" id="roadClosureRepeatError" style="display:none; margin-left: 8px;"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@localizer["SectionWho"]</h5></div>
+                    <div class="ibox-content">
+                        <div class="form-group">
+                            <label asp-for="Reason" class="col-sm-2 control-label">@localizer["Reason"]</label>
+                            <div class="col-sm-10"><textarea asp-for="Reason" class="form-control" rows="2" maxlength="@RoadClosure.MaxReasonLength"></textarea></div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="ClosedBy" class="col-sm-2 control-label">@localizer["ClosedBy"]</label>
+                            <div class="col-sm-10">
+                                <input asp-for="ClosedBy" class="form-control" maxlength="@RoadClosure.MaxTextLength" />
+                                <span class="help-block small">@localizer["ClosedByHelp"]</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Authority" class="col-sm-2 control-label">@localizer["Authority"]</label>
+                            <div class="col-sm-10">
+                                <input asp-for="Authority" class="form-control" maxlength="@RoadClosure.MaxTextLength" />
+                                <span class="help-block small">@localizer["AuthorityHelp"]</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="ContactName" class="col-sm-2 control-label">@localizer["ContactName"]</label>
+                            <div class="col-sm-4"><input asp-for="ContactName" class="form-control" maxlength="@RoadClosure.MaxTextLength" /></div>
+                            <label asp-for="ContactDetails" class="col-sm-2 control-label">@localizer["ContactDetails"]</label>
+                            <div class="col-sm-4">
+                                <input asp-for="ContactDetails" class="form-control" maxlength="@RoadClosure.MaxContactDetailsLength" />
+                                <span class="help-block small">@localizer["ContactDetailsHelp"]</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Notes" class="col-sm-2 control-label">@localizer["Notes"]</label>
+                            <div class="col-sm-10"><textarea asp-for="Notes" class="form-control" rows="3" maxlength="@RoadClosure.MaxNotesLength"></textarea></div>
+                        </div>
+                        @if (Model.UpdatedOnLocal.HasValue)
+                        {
+                            <p class="text-muted small">@localizer["LastChanged", Model.UpdatedOnLocal.Value.ToString("g", CultureInfo.CurrentCulture)]</p>
+                        }
+                        <div class="form-group">
+                            <div class="col-sm-10 col-sm-offset-2">
+                                <a class="btn btn-white" asp-controller="RoadClosures" asp-action="Index" asp-route-area="User">@localizer["Cancel"]</a>
+                                <button type="submit" class="btn btn-primary">@localizer["Save"]</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<template id="roadClosureWindowTemplate">
+    <tr data-window-row>
+        <td><input type="datetime-local" class="form-control input-sm" data-window-start /></td>
+        <td><input type="datetime-local" class="form-control input-sm" data-window-end /></td>
+        <td><button type="button" class="btn btn-xs btn-white" data-window-remove>@localizer["TimesRemove"]</button></td>
+    </tr>
+</template>
+
+@section Scripts
+{
+    <script src="~/lib/geoman-io/leaflet-geoman-free/dist/leaflet-geoman.min.js"></script>
+    <partial name="_MapKitConfig" />
+    <script>
+        var roadClosuresPage = {
+            page: 'edit',
+            center: [@Model.CenterLatitude.ToString(CultureInfo.InvariantCulture), @Model.CenterLongitude.ToString(CultureInfo.InvariantCulture)],
+            maxWindows: @RoadClosureWindows.MaxWindows,
+            strings: {
+                repeatInvalid: @Html.Raw(JsonConvert.SerializeObject(localizer["RepeatInvalid"].Value, jsonSettings)),
+                repeatNoDays: @Html.Raw(JsonConvert.SerializeObject(localizer["RepeatNoDays"].Value, jsonSettings)),
+                repeatTooMany: @Html.Raw(JsonConvert.SerializeObject(localizer["RepeatTooMany", RoadClosureWindows.MaxWindows].Value, jsonSettings))
+            }
+        };
+    </script>
+    <script src="~/js/app/internal/mapping/resgrid.mapping.roadclosures.js" asp-append-version="true"></script>
+}

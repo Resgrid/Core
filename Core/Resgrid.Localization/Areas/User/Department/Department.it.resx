@@ -2450,4 +2450,118 @@
   <data name="MapStyleNotAvailable" xml:space="preserve">
     <value>(non disponibile su questo server)</value>
   </data>
+  <data name="ProvidersHeader" xml:space="preserve">
+    <value>I tuoi provider di mappe</value>
+  </data>
+  <data name="ProvidersHelp" xml:space="preserve">
+    <value>Usa gli account del tuo dipartimento invece di quelli di Resgrid. Il tuo provider viene interrogato per primo; quando non riesce o non può rispondere a una richiesta, rispondono i provider di Resgrid, così mappe e tempi di guida continuano a funzionare. Le chiavi sono memorizzate cifrate e non vengono più mostrate.</value>
+  </data>
+  <data name="ProvidersSystemDefault" xml:space="preserve">
+    <value>Predefinito di Resgrid</value>
+  </data>
+  <data name="ProvidersYourAccount" xml:space="preserve">
+    <value>il tuo account</value>
+  </data>
+  <data name="ProvidersRoutingLabel" xml:space="preserve">
+    <value>Provider dei percorsi</value>
+  </data>
+  <data name="ProvidersRoutingHelp" xml:space="preserve">
+    <value>Usato per percorsi, tempi di guida per le schede di intervento e le unità più vicine, piani di percorso e navigazione nell'app. La navigazione nell'app richiede Mapbox o Valhalla.</value>
+  </data>
+  <data name="ProvidersRoutingUrlLabel" xml:space="preserve">
+    <value>URL del server</value>
+  </data>
+  <data name="ProvidersRoutingUrlHelp" xml:space="preserve">
+    <value>L'indirizzo https del tuo server Valhalla o OSRM. Deve essere raggiungibile da Internet pubblico, ad esempio https://api.example.com/valhalla.</value>
+  </data>
+  <data name="ProvidersRoutingKeyLabel" xml:space="preserve">
+    <value>Chiave API</value>
+  </data>
+  <data name="ProvidersRoutingKeyHelp" xml:space="preserve">
+    <value>Mapbox: un token con accesso a Directions, Matrix e Optimization (va bene un token segreto sk., non lascia mai il server). Google: una chiave con le API Directions e Distance Matrix, oppure con la Routes API. Valhalla: solo se il tuo server ne richiede una.</value>
+  </data>
+  <data name="ProvidersKeySaved" xml:space="preserve">
+    <value>Salvato. Lascia vuoto per mantenerlo.</value>
+  </data>
+  <data name="ProvidersClearKey" xml:space="preserve">
+    <value>Rimuovi la chiave salvata</value>
+  </data>
+  <data name="ProvidersAuthSchemeLabel" xml:space="preserve">
+    <value>Invia la chiave come</value>
+  </data>
+  <data name="ProvidersAuthSchemeApiKey" xml:space="preserve">
+    <value>Intestazione X-Api-Key</value>
+  </data>
+  <data name="ProvidersAuthSchemeBearer" xml:space="preserve">
+    <value>Token Bearer (intestazione Authorization)</value>
+  </data>
+  <data name="ProvidersGoogleApiLabel" xml:space="preserve">
+    <value>API di Google</value>
+  </data>
+  <data name="ProvidersGoogleApiLegacy" xml:space="preserve">
+    <value>Directions e Distance Matrix</value>
+  </data>
+  <data name="ProvidersGoogleApiRoutes" xml:space="preserve">
+    <value>Routes API (progetti Google Cloud creati dopo marzo 2025)</value>
+  </data>
+  <data name="ProvidersTrafficLabel" xml:space="preserve">
+    <value>Livello del traffico in tempo reale</value>
+  </data>
+  <data name="ProvidersTrafficHelp" xml:space="preserve">
+    <value>Il pulsante del traffico sulle mappe del sito web e nelle app.</value>
+  </data>
+  <data name="ProvidersTrafficMapbox" xml:space="preserve">
+    <value>Mapbox Traffic (il tuo token)</value>
+  </data>
+  <data name="ProvidersTrafficTiles" xml:space="preserve">
+    <value>URL dei tile del traffico</value>
+  </data>
+  <data name="ProvidersTrafficTokenLabel" xml:space="preserve">
+    <value>Token pubblico Mapbox</value>
+  </data>
+  <data name="ProvidersTrafficTokenHelp" xml:space="preserve">
+    <value>Un token pubblico che inizia con pk. Viene inviato ai browser e alle app dei tuoi membri.</value>
+  </data>
+  <data name="ProvidersTrafficTileUrlLabel" xml:space="preserve">
+    <value>URL dei tile del traffico</value>
+  </data>
+  <data name="ProvidersTrafficTileUrlHelp" xml:space="preserve">
+    <value>Un URL https di tile immagine con {z}, {x} e {y}, ad esempio i tile del flusso di traffico di TomTom. L'URL, e qualsiasi chiave contenuta, è visibile ai browser dei tuoi membri.</value>
+  </data>
+  <data name="ProvidersGeocodingLabel" xml:space="preserve">
+    <value>Ricerca indirizzi</value>
+  </data>
+  <data name="ProvidersGeocodingHelp" xml:space="preserve">
+    <value>Converte gli indirizzi in posizioni sulla mappa, e le posizioni in indirizzi, per gli utenti del tuo dipartimento.</value>
+  </data>
+  <data name="ProvidersGeocodingKeyLabel" xml:space="preserve">
+    <value>Chiave API</value>
+  </data>
+  <data name="ProvidersErrorUnknownRouting" xml:space="preserve">
+    <value>Scegli un provider dei percorsi dall'elenco.</value>
+  </data>
+  <data name="ProvidersErrorRoutingKey" xml:space="preserve">
+    <value>Inserisci la chiave API di questo provider dei percorsi.</value>
+  </data>
+  <data name="ProvidersErrorRoutingUrl" xml:space="preserve">
+    <value>Inserisci l'URL del tuo server dei percorsi.</value>
+  </data>
+  <data name="ProvidersErrorRoutingUrlPublic" xml:space="preserve">
+    <value>L'URL del server dei percorsi deve iniziare con https:// e puntare a un indirizzo su Internet pubblico.</value>
+  </data>
+  <data name="ProvidersErrorUnknownTraffic" xml:space="preserve">
+    <value>Scegli un livello del traffico dall'elenco.</value>
+  </data>
+  <data name="ProvidersErrorTrafficToken" xml:space="preserve">
+    <value>Inserisci un token pubblico Mapbox (inizia con pk.).</value>
+  </data>
+  <data name="ProvidersErrorTrafficTileUrl" xml:space="preserve">
+    <value>Inserisci un URL https dei tile del traffico che contenga {z}, {x} e {y}.</value>
+  </data>
+  <data name="ProvidersErrorUnknownGeocoding" xml:space="preserve">
+    <value>Scegli un provider di ricerca indirizzi dall'elenco.</value>
+  </data>
+  <data name="ProvidersErrorGeocodingKey" xml:space="preserve">
+    <value>Inserisci la chiave API di questo provider di ricerca indirizzi.</value>
+  </data>
 </root>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Map Icon Legend and status / priority map icon pages -->
+    <data name="TravelModeHeader" xml:space="preserve">
+    <value>Modo de desplazamiento</value>
+  </data>
+  <data name="TravelModeHelp" xml:space="preserve">
+    <value>Cómo llegan estas unidades a un incidente. El despacho (tarjetas de despacho y lista de unidades más cercanas) calcula su tiempo de desplazamiento así: rutas por carretera en vehículo, rutas ciclistas en bicicleta, caminos peatonales a pie y línea recta por aire.</value>
+  </data>
+  <data name="TravelModeUnitHelp" xml:space="preserve">
+    <value>Deje el modo o la velocidad en blanco para usar los del tipo de unidad.</value>
+  </data>
+  <data name="TravelModeLabel" xml:space="preserve">
+    <value>Modo de desplazamiento</value>
+  </data>
+  <data name="TravelModeInherit" xml:space="preserve">
+    <value>Usar el del tipo de unidad</value>
+  </data>
+  <data name="TravelModeInheritedHint" xml:space="preserve">
+    <value>Tipo de unidad: {0}</value>
+  </data>
+  <data name="TravelModeDriving" xml:space="preserve">
+    <value>Vehículo (carreteras)</value>
+  </data>
+  <data name="TravelModeCycling" xml:space="preserve">
+    <value>Bicicleta</value>
+  </data>
+  <data name="TravelModeWalking" xml:space="preserve">
+    <value>A pie</value>
+  </data>
+  <data name="TravelModeAir" xml:space="preserve">
+    <value>Aéreo (línea recta)</value>
+  </data>
+  <data name="TravelSpeedLabel" xml:space="preserve">
+    <value>Velocidad media</value>
+  </data>
+  <data name="TravelSpeedUnits" xml:space="preserve">
+    <value>Unidades de velocidad</value>
+  </data>
+  <data name="TravelSpeedDefaultHint" xml:space="preserve">
+    <value>En blanco: {0}.</value>
+  </data>
+  <data name="TravelSpeedHelp" xml:space="preserve">
+    <value>La velocidad se usa para estimaciones en línea recta, para desplazamientos aéreos y para rutas a pie y en bicicleta. Las rutas en vehículo mantienen las velocidades de vía del proveedor de rutas.</value>
+  </data>
+  <data name="TravelSpeedRangeError" xml:space="preserve">
+    <value>La velocidad media debe estar entre {0} y {1}.</value>
+  </data>
+  <data name="TravelModeInvalid" xml:space="preserve">
+    <value>Elija un modo de desplazamiento de la lista.</value>
+  </data>
+  <data name="TravelModeColumn" xml:space="preserve">
+    <value>Desplazamiento</value>
+  </data>
+  <data name="BoardClosureDelay" xml:space="preserve">
+    <value>+{0} min por cierres de vías</value>
+  </data>
+  <data name="BoardClosures" xml:space="preserve">
+    <value>{0} cierre(s) de vía evitado(s)</value>
+  </data>
+</root>

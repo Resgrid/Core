@@ -7107,6 +7107,15 @@
   <data xml:space="preserve" name="FeatureSetup.map-visualizations">
     <value>افتح الخرائط ثم التصورات، واختر تصورًا من المكتبة مثل «المناطق الساخنة للبلاغات»، واضبط النطاق الزمني والمرشحات والطبقات في علامة التبويب «التخصيص»، ثم احفظه. يمكن لمسؤولي الإدارة مشاركة تصور محفوظ مع الجميع.</value>
   </data>
+  <data xml:space="preserve" name="Feature.road-closures">
+    <value>إغلاقات الطرق</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.road-closures">
+    <value>طرق ومناطق مغلقة أو بطيئة مرسومة على الخريطة، مع من أغلقها ولماذا وجهة اتصال والأوقات التي تسري فيها. يوجّه الإرسال المسارات حول الإغلاقات الكلية ويُبطئ المسارات التي تمر عبر الإغلاقات الجزئية.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.road-closures">
+    <value>افتح الخرائط، ثم إغلاقات الطرق، واختر إغلاق جديد. ارسم الطريق المغلق كخط أو المنطقة كشكل، واختر إغلاقاً كلياً أو جزئياً، وحركة المرور التي يشملها وأوقاته (استخدم التكرار لطريق مغلق ليلاً فقط)، ثم احفظ. حدّد لكل نوع وحدة كيف تتنقل وحداته (مركبة أو دراجة أو سيراً على الأقدام أو جواً) حتى تقيسها بطاقات الإرسال وقائمة أقرب الوحدات وفق طريقة تنقلها.</value>
+  </data>
   <data xml:space="preserve" name="Field.DispatchRecommendationConfig.PersonnelTurnoutSeconds">
     <value>إعداد توصيات الإرسال / زمن انطلاق الأفراد بالثواني</value>
   </data>
@@ -7817,5 +7826,11 @@
   </data>
   <data name="ModuleHelp.ChatDisabled" xml:space="preserve">
     <value>يُظهر الدردشة أو يخفيها في التنقل وأدوات لوحة المعلومات والبحث في تطبيق الويب. لا يؤدي الإخفاء إلى حذف البيانات أو تغيير الصلاحيات. لا تتأثر الدردشة في تطبيقات الهاتف المحمول.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.MappingProviderOverrides">
+    <value>مزودو الخرائط الخاصون بك</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.MappingProviderOverrides">
+    <value>حسابات القسم الخاصة للتوجيه وحركة المرور المباشرة والبحث عن العناوين، وتُجرَّب قبل مزودي Resgrid. يُبلَّغ فقط عن المزودين المعيّنين، ولا تُعرض المفاتيح أبدًا. تؤدي إعادة الثلاثة إلى الإعداد الافتراضي لـ Resgrid إلى إزالة هذا الإعداد.</value>
   </data>
 </root>

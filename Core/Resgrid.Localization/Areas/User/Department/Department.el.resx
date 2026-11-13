@@ -2508,4 +2508,118 @@
   <data name="MapStyleNotAvailable" xml:space="preserve">
     <value>(μη διαθέσιμο σε αυτόν τον διακομιστή)</value>
   </data>
+  <data name="ProvidersHeader" xml:space="preserve">
+    <value>Δικοί σας πάροχοι χαρτών</value>
+  </data>
+  <data name="ProvidersHelp" xml:space="preserve">
+    <value>Χρησιμοποιήστε τους δικούς λογαριασμούς του τμήματός σας αντί για αυτούς του Resgrid. Ο πάροχός σας δοκιμάζεται πρώτος· όταν αποτυγχάνει ή δεν μπορεί να απαντήσει σε ένα αίτημα, απαντούν οι πάροχοι του Resgrid, ώστε οι χάρτες και οι χρόνοι οδήγησης να συνεχίζουν να λειτουργούν. Τα κλειδιά αποθηκεύονται κρυπτογραφημένα και δεν εμφανίζονται ποτέ ξανά.</value>
+  </data>
+  <data name="ProvidersSystemDefault" xml:space="preserve">
+    <value>Προεπιλογή Resgrid</value>
+  </data>
+  <data name="ProvidersYourAccount" xml:space="preserve">
+    <value>ο λογαριασμός σας</value>
+  </data>
+  <data name="ProvidersRoutingLabel" xml:space="preserve">
+    <value>Πάροχος δρομολόγησης</value>
+  </data>
+  <data name="ProvidersRoutingHelp" xml:space="preserve">
+    <value>Χρησιμοποιείται για διαδρομές, χρόνους οδήγησης για κάρτες εξόδου και πλησιέστερες μονάδες, σχέδια διαδρομής και πλοήγηση εντός εφαρμογής. Η πλοήγηση εντός εφαρμογής απαιτεί Mapbox ή Valhalla.</value>
+  </data>
+  <data name="ProvidersRoutingUrlLabel" xml:space="preserve">
+    <value>URL διακομιστή</value>
+  </data>
+  <data name="ProvidersRoutingUrlHelp" xml:space="preserve">
+    <value>Η διεύθυνση https του διακομιστή σας Valhalla ή OSRM. Πρέπει να είναι προσβάσιμος από το δημόσιο διαδίκτυο, για παράδειγμα https://api.example.com/valhalla.</value>
+  </data>
+  <data name="ProvidersRoutingKeyLabel" xml:space="preserve">
+    <value>Κλειδί API</value>
+  </data>
+  <data name="ProvidersRoutingKeyHelp" xml:space="preserve">
+    <value>Mapbox: ένα διακριτικό με πρόσβαση σε Directions, Matrix και Optimization (ένα μυστικό διακριτικό sk. είναι εντάξει, δεν φεύγει ποτέ από τον διακομιστή). Google: ένα κλειδί με τα API Directions και Distance Matrix ή με το Routes API. Valhalla: μόνο αν το απαιτεί ο διακομιστής σας.</value>
+  </data>
+  <data name="ProvidersKeySaved" xml:space="preserve">
+    <value>Αποθηκεύτηκε. Αφήστε το κενό για να διατηρηθεί.</value>
+  </data>
+  <data name="ProvidersClearKey" xml:space="preserve">
+    <value>Αφαίρεση του αποθηκευμένου κλειδιού</value>
+  </data>
+  <data name="ProvidersAuthSchemeLabel" xml:space="preserve">
+    <value>Αποστολή του κλειδιού ως</value>
+  </data>
+  <data name="ProvidersAuthSchemeApiKey" xml:space="preserve">
+    <value>Κεφαλίδα X-Api-Key</value>
+  </data>
+  <data name="ProvidersAuthSchemeBearer" xml:space="preserve">
+    <value>Διακριτικό Bearer (κεφαλίδα Authorization)</value>
+  </data>
+  <data name="ProvidersGoogleApiLabel" xml:space="preserve">
+    <value>API της Google</value>
+  </data>
+  <data name="ProvidersGoogleApiLegacy" xml:space="preserve">
+    <value>Directions και Distance Matrix</value>
+  </data>
+  <data name="ProvidersGoogleApiRoutes" xml:space="preserve">
+    <value>Routes API (έργα Google Cloud που δημιουργήθηκαν μετά τον Μάρτιο του 2025)</value>
+  </data>
+  <data name="ProvidersTrafficLabel" xml:space="preserve">
+    <value>Επίπεδο ζωντανής κίνησης</value>
+  </data>
+  <data name="ProvidersTrafficHelp" xml:space="preserve">
+    <value>Το κουμπί κίνησης στους χάρτες του ιστότοπου και στις εφαρμογές.</value>
+  </data>
+  <data name="ProvidersTrafficMapbox" xml:space="preserve">
+    <value>Mapbox Traffic (το διακριτικό σας)</value>
+  </data>
+  <data name="ProvidersTrafficTiles" xml:space="preserve">
+    <value>URL πλακιδίων κίνησης</value>
+  </data>
+  <data name="ProvidersTrafficTokenLabel" xml:space="preserve">
+    <value>Δημόσιο διακριτικό Mapbox</value>
+  </data>
+  <data name="ProvidersTrafficTokenHelp" xml:space="preserve">
+    <value>Ένα δημόσιο διακριτικό που ξεκινά με pk. Αποστέλλεται στα προγράμματα περιήγησης και στις εφαρμογές των μελών σας.</value>
+  </data>
+  <data name="ProvidersTrafficTileUrlLabel" xml:space="preserve">
+    <value>URL πλακιδίων κίνησης</value>
+  </data>
+  <data name="ProvidersTrafficTileUrlHelp" xml:space="preserve">
+    <value>Ένα URL https πλακιδίων εικόνας με {z}, {x} και {y}, για παράδειγμα πλακίδια ροής κίνησης του TomTom. Το URL, και οποιοδήποτε κλειδί περιέχει, είναι ορατό στα προγράμματα περιήγησης των μελών σας.</value>
+  </data>
+  <data name="ProvidersGeocodingLabel" xml:space="preserve">
+    <value>Αναζήτηση διευθύνσεων</value>
+  </data>
+  <data name="ProvidersGeocodingHelp" xml:space="preserve">
+    <value>Μετατρέπει διευθύνσεις σε τοποθεσίες στον χάρτη, και τοποθεσίες σε διευθύνσεις, για τους χρήστες του τμήματός σας.</value>
+  </data>
+  <data name="ProvidersGeocodingKeyLabel" xml:space="preserve">
+    <value>Κλειδί API</value>
+  </data>
+  <data name="ProvidersErrorUnknownRouting" xml:space="preserve">
+    <value>Επιλέξτε πάροχο δρομολόγησης από τη λίστα.</value>
+  </data>
+  <data name="ProvidersErrorRoutingKey" xml:space="preserve">
+    <value>Εισαγάγετε το κλειδί API για αυτόν τον πάροχο δρομολόγησης.</value>
+  </data>
+  <data name="ProvidersErrorRoutingUrl" xml:space="preserve">
+    <value>Εισαγάγετε το URL του δικού σας διακομιστή δρομολόγησης.</value>
+  </data>
+  <data name="ProvidersErrorRoutingUrlPublic" xml:space="preserve">
+    <value>Το URL του διακομιστή δρομολόγησης πρέπει να ξεκινά με https:// και να οδηγεί σε διεύθυνση στο δημόσιο διαδίκτυο.</value>
+  </data>
+  <data name="ProvidersErrorUnknownTraffic" xml:space="preserve">
+    <value>Επιλέξτε επίπεδο κίνησης από τη λίστα.</value>
+  </data>
+  <data name="ProvidersErrorTrafficToken" xml:space="preserve">
+    <value>Εισαγάγετε ένα δημόσιο διακριτικό Mapbox (ξεκινά με pk.).</value>
+  </data>
+  <data name="ProvidersErrorTrafficTileUrl" xml:space="preserve">
+    <value>Εισαγάγετε ένα URL https πλακιδίων κίνησης που περιέχει {z}, {x} και {y}.</value>
+  </data>
+  <data name="ProvidersErrorUnknownGeocoding" xml:space="preserve">
+    <value>Επιλέξτε πάροχο αναζήτησης διευθύνσεων από τη λίστα.</value>
+  </data>
+  <data name="ProvidersErrorGeocodingKey" xml:space="preserve">
+    <value>Εισαγάγετε το κλειδί API για αυτόν τον πάροχο αναζήτησης διευθύνσεων.</value>
+  </data>
 </root>

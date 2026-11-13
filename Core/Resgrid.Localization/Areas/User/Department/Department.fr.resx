@@ -2450,4 +2450,118 @@
   <data name="MapStyleNotAvailable" xml:space="preserve">
     <value>(non disponible sur ce serveur)</value>
   </data>
+  <data name="ProvidersHeader" xml:space="preserve">
+    <value>Vos propres fournisseurs de cartes</value>
+  </data>
+  <data name="ProvidersHelp" xml:space="preserve">
+    <value>Utilisez les propres comptes de votre service plutôt que ceux de Resgrid. Votre fournisseur est essayé en premier ; s'il échoue ou ne peut pas répondre à une requête, les fournisseurs de Resgrid répondent, afin que les cartes et les temps de trajet continuent de fonctionner. Les clés sont stockées chiffrées et ne sont plus jamais affichées.</value>
+  </data>
+  <data name="ProvidersSystemDefault" xml:space="preserve">
+    <value>Resgrid par défaut</value>
+  </data>
+  <data name="ProvidersYourAccount" xml:space="preserve">
+    <value>votre compte</value>
+  </data>
+  <data name="ProvidersRoutingLabel" xml:space="preserve">
+    <value>Fournisseur d'itinéraires</value>
+  </data>
+  <data name="ProvidersRoutingHelp" xml:space="preserve">
+    <value>Utilisé pour les itinéraires, les temps de trajet des plans de départ et des unités les plus proches, les plans d'itinéraire et la navigation dans l'application. La navigation dans l'application nécessite Mapbox ou Valhalla.</value>
+  </data>
+  <data name="ProvidersRoutingUrlLabel" xml:space="preserve">
+    <value>URL du serveur</value>
+  </data>
+  <data name="ProvidersRoutingUrlHelp" xml:space="preserve">
+    <value>L'adresse https de votre serveur Valhalla ou OSRM. Il doit être accessible depuis l'internet public, par exemple https://api.example.com/valhalla.</value>
+  </data>
+  <data name="ProvidersRoutingKeyLabel" xml:space="preserve">
+    <value>Clé API</value>
+  </data>
+  <data name="ProvidersRoutingKeyHelp" xml:space="preserve">
+    <value>Mapbox : un jeton avec accès à Directions, Matrix et Optimization (un jeton secret sk. convient, il ne quitte jamais le serveur). Google : une clé avec les API Directions et Distance Matrix, ou la Routes API. Valhalla : uniquement si votre serveur en exige une.</value>
+  </data>
+  <data name="ProvidersKeySaved" xml:space="preserve">
+    <value>Enregistrée. Laissez vide pour la conserver.</value>
+  </data>
+  <data name="ProvidersClearKey" xml:space="preserve">
+    <value>Supprimer la clé enregistrée</value>
+  </data>
+  <data name="ProvidersAuthSchemeLabel" xml:space="preserve">
+    <value>Envoyer la clé en tant que</value>
+  </data>
+  <data name="ProvidersAuthSchemeApiKey" xml:space="preserve">
+    <value>En-tête X-Api-Key</value>
+  </data>
+  <data name="ProvidersAuthSchemeBearer" xml:space="preserve">
+    <value>Jeton Bearer (en-tête Authorization)</value>
+  </data>
+  <data name="ProvidersGoogleApiLabel" xml:space="preserve">
+    <value>API Google</value>
+  </data>
+  <data name="ProvidersGoogleApiLegacy" xml:space="preserve">
+    <value>Directions et Distance Matrix</value>
+  </data>
+  <data name="ProvidersGoogleApiRoutes" xml:space="preserve">
+    <value>Routes API (projets Google Cloud créés après mars 2025)</value>
+  </data>
+  <data name="ProvidersTrafficLabel" xml:space="preserve">
+    <value>Couche de trafic en direct</value>
+  </data>
+  <data name="ProvidersTrafficHelp" xml:space="preserve">
+    <value>Le bouton trafic des cartes du site web et des applications.</value>
+  </data>
+  <data name="ProvidersTrafficMapbox" xml:space="preserve">
+    <value>Mapbox Traffic (votre jeton)</value>
+  </data>
+  <data name="ProvidersTrafficTiles" xml:space="preserve">
+    <value>URL de tuiles de trafic</value>
+  </data>
+  <data name="ProvidersTrafficTokenLabel" xml:space="preserve">
+    <value>Jeton public Mapbox</value>
+  </data>
+  <data name="ProvidersTrafficTokenHelp" xml:space="preserve">
+    <value>Un jeton public commençant par pk. Il est envoyé aux navigateurs et aux applications de vos membres.</value>
+  </data>
+  <data name="ProvidersTrafficTileUrlLabel" xml:space="preserve">
+    <value>URL de tuiles de trafic</value>
+  </data>
+  <data name="ProvidersTrafficTileUrlHelp" xml:space="preserve">
+    <value>Une URL https de tuiles d'image avec {z}, {x} et {y}, par exemple les tuiles de flux de trafic TomTom. L'URL, et toute clé qu'elle contient, est visible par les navigateurs de vos membres.</value>
+  </data>
+  <data name="ProvidersGeocodingLabel" xml:space="preserve">
+    <value>Recherche d'adresses</value>
+  </data>
+  <data name="ProvidersGeocodingHelp" xml:space="preserve">
+    <value>Convertit les adresses en positions sur la carte, et les positions en adresses, pour les utilisateurs de votre service.</value>
+  </data>
+  <data name="ProvidersGeocodingKeyLabel" xml:space="preserve">
+    <value>Clé API</value>
+  </data>
+  <data name="ProvidersErrorUnknownRouting" xml:space="preserve">
+    <value>Choisissez un fournisseur d'itinéraires dans la liste.</value>
+  </data>
+  <data name="ProvidersErrorRoutingKey" xml:space="preserve">
+    <value>Saisissez la clé API de ce fournisseur d'itinéraires.</value>
+  </data>
+  <data name="ProvidersErrorRoutingUrl" xml:space="preserve">
+    <value>Saisissez l'URL de votre serveur d'itinéraires.</value>
+  </data>
+  <data name="ProvidersErrorRoutingUrlPublic" xml:space="preserve">
+    <value>L'URL du serveur d'itinéraires doit commencer par https:// et pointer vers une adresse de l'internet public.</value>
+  </data>
+  <data name="ProvidersErrorUnknownTraffic" xml:space="preserve">
+    <value>Choisissez une couche de trafic dans la liste.</value>
+  </data>
+  <data name="ProvidersErrorTrafficToken" xml:space="preserve">
+    <value>Saisissez un jeton public Mapbox (il commence par pk.).</value>
+  </data>
+  <data name="ProvidersErrorTrafficTileUrl" xml:space="preserve">
+    <value>Saisissez une URL https de tuiles de trafic contenant {z}, {x} et {y}.</value>
+  </data>
+  <data name="ProvidersErrorUnknownGeocoding" xml:space="preserve">
+    <value>Choisissez un fournisseur de recherche d'adresses dans la liste.</value>
+  </data>
+  <data name="ProvidersErrorGeocodingKey" xml:space="preserve">
+    <value>Saisissez la clé API de ce fournisseur de recherche d'adresses.</value>
+  </data>
 </root>

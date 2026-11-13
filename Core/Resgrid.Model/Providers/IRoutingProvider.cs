@@ -23,5 +23,11 @@ namespace Resgrid.Model.Providers
 		Task<RouteMatrixResult> GetMatrixAsync(RouteMatrixRequest request, CancellationToken cancellationToken);
 
 		Task<RouteOptimizationResult> OptimizeAsync(RouteOptimizationRequest request, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// A copy of this provider that uses a department's own account instead of the install's, or null when the provider
+		/// has no account to replace (the straight-line estimate). A department URL is only ever reached on a public address.
+		/// </summary>
+		IRoutingProvider WithCredentials(RoutingProviderCredentials credentials) => null;
 	}
 }

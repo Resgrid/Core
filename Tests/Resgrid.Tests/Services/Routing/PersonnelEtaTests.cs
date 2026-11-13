@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -24,7 +25,7 @@ namespace Resgrid.Tests.Services.Routing
 			routing.Setup(r => r.GetRouteAsync(It.IsAny<RouteRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(route);
 
 			return new GeoService(Mock.Of<IGeoLocationProvider>(), calls.Object, Mock.Of<IDepartmentGroupsService>(), Mock.Of<IAddressService>(),
-				Mock.Of<IMappingService>(), routing.Object);
+				Mock.Of<IMappingService>(), routing.Object, Mock.Of<IRoadClosureService>());
 		}
 
 		private static ActionLog RespondingLog(DateTime timestamp) => new ActionLog
@@ -55,6 +56,31 @@ namespace Resgrid.Tests.Services.Routing
 			var eta = await Service(route).GetPersonnelEtaInSecondsAsync(RespondingLog(DateTime.UtcNow));
 
 			eta.Should().BeApproximately(600, 5);
+		}
+
+		[Test]
+		public async Task A_responders_drive_goes_around_the_departments_road_closures()
+		{
+			// PR 585: personnel ETAs were routed without the department's closures.
+			var calls = new Mock<ICallsService>();
+			calls.Setup(c => c.GetCallByIdAsync(7, false)).ReturnsAsync(new Call { CallId = 7, GeoLocationData = "39.80,-104.80" });
+			var routing = new Mock<IRoutingService>();
+			RouteRequest sent = null;
+			routing.Setup(r => r.GetRouteAsync(It.IsAny<RouteRequest>(), It.IsAny<CancellationToken>()))
+				.Callback((RouteRequest r, CancellationToken _) => sent = r)
+				.ReturnsAsync(new RouteResult { Successful = true, Provider = RoutingProviderNames.Valhalla, DurationSeconds = 600 });
+			var closures = new Mock<IRoadClosureService>();
+			closures.Setup(c => c.GetRoutingClosuresAsync(12, UnitTravelModes.Driving, It.IsAny<DateTime>()))
+				.ReturnsAsync(new List<RoutingClosure> { new RoutingClosure { ClosureId = "c1", Name = "Bridge" } });
+			var service = new GeoService(Mock.Of<IGeoLocationProvider>(), calls.Object, Mock.Of<IDepartmentGroupsService>(), Mock.Of<IAddressService>(),
+				Mock.Of<IMappingService>(), routing.Object, closures.Object);
+
+			var log = RespondingLog(DateTime.UtcNow);
+			log.DepartmentId = 12;
+			await service.GetPersonnelEtaInSecondsAsync(log);
+
+			sent.DepartmentId.Should().Be(12);
+			sent.Closures.Should().ContainSingle(c => c.ClosureId == "c1");
 		}
 
 		[Test]

@@ -132,6 +132,13 @@ namespace Resgrid.Model.Services
 		/// <summary>Setting 122: navigation defaults and route deviation thresholds; the defaults when unset.</summary>
 		Task<MappingNavigationConfig> GetMappingNavigationConfigAsync(int departmentId, bool bypassCache = false);
 
+		/// <summary>Setting 125: the department's own map provider accounts (keys still encrypted). Empty object when none.</summary>
+		Task<MappingProviderOverrides> GetMappingProviderOverridesAsync(int departmentId, bool bypassCache = false);
+
+		/// <summary>Saves setting 125; an empty object deletes it.</summary>
+		Task<DepartmentSetting> SetMappingProviderOverridesAsync(int departmentId, MappingProviderOverrides config,
+			CancellationToken cancellationToken = default(CancellationToken));
+
 		Task<DepartmentSetting> SetMappingNavigationConfigAsync(int departmentId, MappingNavigationConfig config,
 			CancellationToken cancellationToken = default(CancellationToken));
 

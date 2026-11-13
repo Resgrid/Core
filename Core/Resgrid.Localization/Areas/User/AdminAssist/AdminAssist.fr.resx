@@ -7107,6 +7107,15 @@
   <data xml:space="preserve" name="FeatureSetup.map-visualizations">
     <value>Ouvrez Cartographie, puis Visualisations, choisissez une visualisation de la bibliothèque comme « Zones chaudes des appels », ajustez la période, les filtres et les calques dans l’onglet Personnaliser, puis enregistrez-la. Les administrateurs du service peuvent partager une visualisation enregistrée avec tout le monde.</value>
   </data>
+  <data xml:space="preserve" name="Feature.road-closures">
+    <value>Fermetures de routes</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.road-closures">
+    <value>Routes et zones fermées ou ralenties dessinées sur la carte, avec qui les a fermées, pourquoi, un contact et les périodes où elles s'appliquent. L'engagement contourne les fermetures totales et ralentit les itinéraires qui traversent les fermetures partielles.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.road-closures">
+    <value>Ouvrez Cartographie, puis Fermetures de routes, et choisissez Nouvelle fermeture. Dessinez la route fermée comme une ligne ou la zone comme une forme, choisissez fermeture totale ou partielle, le trafic concerné et les périodes (utilisez Répéter pour une route fermée seulement la nuit), puis enregistrez. Indiquez pour chaque type d'unité comment ses unités se déplacent (véhicule, vélo, à pied ou aérien) pour que les plans de départ et la liste des unités les plus proches les mesurent selon leur mode de déplacement.</value>
+  </data>
   <data xml:space="preserve" name="Field.DispatchRecommendationConfig.PersonnelTurnoutSeconds">
     <value>Configuration des recommandations de régulation / Délai de départ du personnel en secondes</value>
   </data>
@@ -7817,5 +7826,11 @@
   </data>
   <data name="ModuleHelp.ChatDisabled" xml:space="preserve">
     <value>Affiche ou masque la Discussion dans la navigation, les widgets du tableau de bord et la recherche de l'application web. Le masquage ne supprime aucune donnée et ne modifie pas les autorisations. La discussion dans les applications mobiles n'est pas affectée.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.MappingProviderOverrides">
+    <value>Vos propres fournisseurs de cartes</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.MappingProviderOverrides">
+    <value>Comptes propres au service pour l'itinéraire, le trafic en direct et la recherche d'adresses, essayés avant les fournisseurs de Resgrid. Seuls les fournisseurs configurés sont signalés, jamais les clés. Remettre les trois sur la valeur par défaut de Resgrid supprime le paramètre.</value>
   </data>
 </root>

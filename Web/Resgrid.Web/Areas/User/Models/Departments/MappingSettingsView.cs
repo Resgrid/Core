@@ -54,6 +54,48 @@ namespace Resgrid.Web.Areas.User.Models.Departments
 		/// <summary>The live traffic layer is configured on this install, shown read-only.</summary>
 		public bool TrafficLayerAvailable { get; set; }
 
+		/// <summary>The routing provider shown is the department's own account (setting 125). Built server-side.</summary>
+		public bool RoutingIsDepartmentAccount { get; set; }
+
+		/// <summary>The traffic layer shown is the department's own. Built server-side.</summary>
+		public bool TrafficIsDepartmentAccount { get; set; }
+
+		// Setting 125 (MappingProviderOverrides): the department's own map provider accounts. Keys are write-only: the
+		// inputs are always rendered empty and a blank key keeps the stored one; the *Saved flags come from storage.
+
+		/// <summary>"" (Resgrid default), mapbox, google, valhalla or osrm.</summary>
+		public string ProviderRouting { get; set; }
+
+		public string ProviderRoutingUrl { get; set; }
+
+		public string ProviderRoutingApiKey { get; set; }
+
+		public bool ProviderRoutingKeySaved { get; set; }
+
+		public bool ProviderClearRoutingApiKey { get; set; }
+
+		/// <summary>Valhalla: apikey or bearer.</summary>
+		public string ProviderRoutingAuthScheme { get; set; }
+
+		/// <summary>Google: legacy or routes.</summary>
+		public string ProviderGoogleRoutingApi { get; set; }
+
+		/// <summary>"" (Resgrid default), mapbox or tiles.</summary>
+		public string ProviderTraffic { get; set; }
+
+		public string ProviderTrafficMapboxToken { get; set; }
+
+		public string ProviderTrafficTileUrl { get; set; }
+
+		public bool ProviderTrafficTileUrlSaved { get; set; }
+
+		/// <summary>"" (Resgrid default), google, mapbox or locationiq.</summary>
+		public string ProviderGeocoding { get; set; }
+
+		public string ProviderGeocodingApiKey { get; set; }
+
+		public bool ProviderGeocodingKeySaved { get; set; }
+
 		public double PreviewLatitude { get; set; }
 		public double PreviewLongitude { get; set; }
 

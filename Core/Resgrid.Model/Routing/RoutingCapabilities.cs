@@ -36,5 +36,14 @@ namespace Resgrid.Model
 
 		/// <summary>Most waypoints the optimizer accepts in one request.</summary>
 		public int MaxOptimizeWaypoints { get; set; } = 12;
+
+		/// <summary>Routes around drawn areas (<see cref="RouteRequest.ExcludeAreas"/>; Valhalla only).</summary>
+		public bool ExcludeAreas { get; set; }
+
+		/// <summary>Most road points a route can be told to avoid (<see cref="RouteRequest.ExcludePoints"/>); 0 when it can't.</summary>
+		public int MaxExcludePoints { get; set; }
+
+		/// <summary>Point exclusions only work for driving profiles (Mapbox).</summary>
+		public bool ExcludePointsDrivingOnly { get; set; }
 	}
 }

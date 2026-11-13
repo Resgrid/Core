@@ -1,0 +1,144 @@
+@model Resgrid.Web.Areas.User.Models.Units.TravelModeInput
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.TravelMode> travelLocalizer
+@{
+    // Used by the unit type and unit edit pages with <partial name="_TravelModeFields" for="TravelMode" />. On unit pages
+    // (TypeDefaults set) a blank mode or speed uses the unit type's, shown as a hint.
+    var isUnit = Model?.TypeDefaults != null;
+    var metric = Model?.Metric ?? true;
+
+    string FieldError(string field)
+    {
+        var key = ViewData.TemplateInfo.GetFullHtmlFieldName(field);
+        if (!ViewData.ModelState.TryGetValue(key, out var entry) || entry.Errors.Count == 0)
+            return null;
+
+        var parts = entry.Errors[0].ErrorMessage.Split('|');
+        if (parts.Length == 3)
+            return travelLocalizer["TravelSpeedRangeError", parts[1], parts[2]].Value;
+
+        return travelLocalizer[parts[0]].Value;
+    }
+
+    var typeDefaults = isUnit ? System.Text.Json.JsonSerializer.Serialize(Model.TypeDefaults) : "{}";
+    var modeNames = System.Text.Json.JsonSerializer.Serialize(new Dictionary<string, string>
+    {
+        ["0"] = travelLocalizer["TravelModeDriving"].Value,
+        ["1"] = travelLocalizer["TravelModeCycling"].Value,
+        ["2"] = travelLocalizer["TravelModeWalking"].Value,
+        ["3"] = travelLocalizer["TravelModeAir"].Value
+    });
+    var defaultSpeeds = System.Text.Json.JsonSerializer.Serialize(new Dictionary<string, double>
+    {
+        ["0"] = Resgrid.Model.UnitTravelProfile.DefaultDrivingSpeedKmh,
+        ["1"] = Resgrid.Model.UnitTravelProfile.DefaultCyclingSpeedKmh,
+        ["2"] = Resgrid.Model.UnitTravelProfile.DefaultWalkingSpeedKmh,
+        ["3"] = Resgrid.Model.UnitTravelProfile.DefaultAirSpeedKmh
+    });
+}
+
+<div class="hr-line-dashed"></div>
+<div class="form-group" id="travelModeSection" data-type-defaults="@typeDefaults" data-mode-names="@modeNames" data-default-speeds="@defaultSpeeds"
+     data-inherit-format="@travelLocalizer["TravelModeInheritedHint"]" data-default-format="@travelLocalizer["TravelSpeedDefaultHint"]">
+    <label class="col-sm-2 control-label">@travelLocalizer["TravelModeHeader"]</label>
+    <div class="col-sm-10">
+        <p class="text-muted small">
+            @travelLocalizer["TravelModeHelp"]
+            @if (isUnit)
+            {
+                <br />@travelLocalizer["TravelModeUnitHelp"]
+            }
+        </p>
+        <div class="row">
+            <div class="col-sm-4">
+                <label for="@Html.IdFor(m => m.Mode)" class="small">@travelLocalizer["TravelModeLabel"]</label>
+                <select name="@Html.NameFor(m => m.Mode)" id="@Html.IdFor(m => m.Mode)" class="form-control input-sm" data-travel-mode>
+                    @if (isUnit)
+                    {
+                        <option value="" selected="@(string.IsNullOrEmpty(Model?.Mode))">@travelLocalizer["TravelModeInherit"]</option>
+                    }
+                    <option value="0" selected="@(Model?.Mode == "0")">@travelLocalizer["TravelModeDriving"]</option>
+                    <option value="1" selected="@(Model?.Mode == "1")">@travelLocalizer["TravelModeCycling"]</option>
+                    <option value="2" selected="@(Model?.Mode == "2")">@travelLocalizer["TravelModeWalking"]</option>
+                    <option value="3" selected="@(Model?.Mode == "3")">@travelLocalizer["TravelModeAir"]</option>
+                </select>
+                <span class="help-block small" data-travel-inherited></span>
+                @if (FieldError("Mode") is string modeError) { <span class="text-danger small">@modeError</span> }
+            </div>
+            <div class="col-sm-4">
+                <label for="@Html.IdFor(m => m.Speed)" class="small">@travelLocalizer["TravelSpeedLabel"] (<span data-speed-unit>@(metric ? "km/h" : "mph")</span>)</label>
+                <input name="@Html.NameFor(m => m.Speed)" id="@Html.IdFor(m => m.Speed)" value="@(Model?.Speed?.ToString(System.Globalization.CultureInfo.InvariantCulture))"
+                       type="number" step="0.1" min="0" class="form-control input-sm" data-travel-speed />
+                <span class="help-block small" data-travel-default></span>
+                @if (FieldError("Speed") is string speedError) { <span class="text-danger small">@speedError</span> }
+            </div>
+            <div class="col-sm-4">
+                <label for="@Html.IdFor(m => m.Metric)" class="small">@travelLocalizer["TravelSpeedUnits"]</label>
+                <select name="@Html.NameFor(m => m.Metric)" id="@Html.IdFor(m => m.Metric)" class="form-control input-sm" data-speed-units>
+                    <option value="true" selected="@metric">km/h</option>
+                    <option value="false" selected="@(!metric)">mph</option>
+                </select>
+            </div>
+        </div>
+        <p class="text-muted small" style="margin-top:6px;">@travelLocalizer["TravelSpeedHelp"]</p>
+    </div>
+</div>
+
+<script>
+    (function () {
+        var section = document.getElementById('travelModeSection');
+        if (!section) { return; }
+
+        var kmPerMile = 1.609344;
+        function json(name) { try { return JSON.parse(section.getAttribute(name) || '{}') || {}; } catch (e) { return {}; } }
+        var typeDefaults = json('data-type-defaults'), modeNames = json('data-mode-names'), defaultSpeeds = json('data-default-speeds');
+        var modeSelect = section.querySelector('[data-travel-mode]');
+        var speedInput = section.querySelector('[data-travel-speed]');
+        var unitsSelect = section.querySelector('[data-speed-units]');
+        var inheritedHint = section.querySelector('[data-travel-inherited]');
+        var defaultHint = section.querySelector('[data-travel-default]');
+
+        function isMetric() { return unitsSelect && unitsSelect.value === 'true'; }
+        function round(value) { return Math.round(value * 10) / 10; }
+        function shown(kmh) { return isMetric() ? round(kmh) + ' km/h' : round(kmh / kmPerMile) + ' mph'; }
+        function format(template, value) { return (template || '{0}').replace('{0}', value); }
+
+        function typeValues() {
+            var typeSelect = document.getElementById('Unit_Type');
+            return typeSelect ? typeDefaults[typeSelect.value] : null;
+        }
+
+        function refresh() {
+            var type = typeValues();
+            var mode = modeSelect.value;
+            var effectiveMode = mode === '' ? String(type ? type.Mode : 0) : mode;
+
+            if (inheritedHint) {
+                inheritedHint.textContent = (mode === '' && type) ? format(section.getAttribute('data-inherit-format'), modeNames[String(type.Mode)] || '') : '';
+            }
+
+            // Blank speed: the unit type's speed when the unit travels the type's way, else the mode's default.
+            var fallback = defaultSpeeds[effectiveMode];
+            if (type && type.SpeedKmh && String(type.Mode) === effectiveMode) { fallback = type.SpeedKmh; }
+            if (defaultHint) { defaultHint.textContent = fallback ? format(section.getAttribute('data-default-format'), shown(fallback)) : ''; }
+            speedInput.setAttribute('placeholder', fallback ? String(isMetric() ? round(fallback) : round(fallback / kmPerMile)) : '');
+            section.querySelectorAll('[data-speed-unit]').forEach(function (el) { el.textContent = isMetric() ? 'km/h' : 'mph'; });
+        }
+
+        var lastMetric = isMetric();
+        unitsSelect.addEventListener('change', function () {
+            var metric = isMetric();
+            if (metric !== lastMetric && speedInput.value !== '') {
+                var v = parseFloat(speedInput.value);
+                if (!isNaN(v)) { speedInput.value = metric ? round(v * kmPerMile) : round(v / kmPerMile); }
+            }
+            lastMetric = metric;
+            refresh();
+        });
+        modeSelect.addEventListener('change', refresh);
+
+        var typeSelect = document.getElementById('Unit_Type');
+        if (typeSelect) { typeSelect.addEventListener('change', refresh); }
+
+        refresh();
+    })();
+</script>

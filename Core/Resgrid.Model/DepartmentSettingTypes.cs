@@ -231,5 +231,12 @@
 		/// while <c>DispatchConfig.RenotifyTimingLocked</c> is on.
 		/// </summary>
 		DispatchRenotifyConfig = 124,
+
+		/// <summary>
+		/// ProtoBuf-serialized <see cref="Model.MappingProviderOverrides"/>: the department's own routing, live traffic and
+		/// geocoding accounts, used before the system defaults (Mapping Settings). Keys are encrypted per department. Missing =
+		/// system defaults.
+		/// </summary>
+		MappingProviderOverrides = 125,
 	}
 }

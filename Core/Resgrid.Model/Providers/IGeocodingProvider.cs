@@ -24,6 +24,9 @@ namespace Resgrid.Model.Providers
 
 		/// <summary>An address for coordinates; null when nothing matched or the call failed.</summary>
 		Task<string> ReverseAsync(double latitude, double longitude, CancellationToken cancellationToken);
+
+		/// <summary>A copy that uses a department's own key (Mapping Settings, setting 125); null when the geocoder takes no key.</summary>
+		IGeocodingProvider WithApiKey(string apiKey) => null;
 	}
 
 	public class GeocodeMatch

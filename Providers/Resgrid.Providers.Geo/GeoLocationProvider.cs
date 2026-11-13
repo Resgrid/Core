@@ -8,6 +8,7 @@ using GoogleMapsApi.Entities.Directions.Request;
 using GoogleMapsApi.Entities.Directions.Response;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
+using Resgrid.Model.Services;
 using RestSharp;
 using System.Net;
 using System.Threading.Tasks;
@@ -26,6 +27,8 @@ namespace Resgrid.Providers.GeoLocationProvider
 
 		private readonly ICacheProvider _cacheProvider;
 		private readonly IReadOnlyList<IGeocodingProvider> _geocoders;
+		// Lazy: department settings geocode through this provider (construction-time cycle). Null = no department accounts.
+		private readonly Lazy<IDepartmentMapProvidersService> _departmentMapProviders;
 
 		public GeoLocationProvider(ICacheProvider cacheProvider)
 			: this(cacheProvider, DefaultGeocoders())
@@ -33,10 +36,17 @@ namespace Resgrid.Providers.GeoLocationProvider
 		}
 
 		public GeoLocationProvider(ICacheProvider cacheProvider, IEnumerable<IGeocodingProvider> geocoders)
+			: this(cacheProvider, geocoders, null)
+		{
+		}
+
+		public GeoLocationProvider(ICacheProvider cacheProvider, IEnumerable<IGeocodingProvider> geocoders,
+			Lazy<IDepartmentMapProvidersService> departmentMapProviders)
 		{
 			_cacheProvider = cacheProvider;
 			var registered = geocoders?.ToList();
 			_geocoders = registered != null && registered.Count > 0 ? registered : DefaultGeocoders().ToList();
+			_departmentMapProviders = departmentMapProviders;
 		}
 
 		private static IEnumerable<IGeocodingProvider> DefaultGeocoders()
@@ -52,17 +62,49 @@ namespace Resgrid.Providers.GeoLocationProvider
 		/// The geocoders MappingConfig.GeocodingProviders lists, in that order (plan §6.4). The default
 		/// "google,locationiq,bing" is the order this provider always used.
 		/// </summary>
-		private List<IGeocodingProvider> GeocoderChain()
+		private async Task<(List<IGeocodingProvider> Chain, int CacheDepartmentId, string CacheGeocoder)> GeocoderChainAsync()
 		{
 			var names = (Config.MappingConfig.GeocodingProviders ?? string.Empty)
 				.Split(new[] { ',', ';', ' ' }, StringSplitOptions.RemoveEmptyEntries)
 				.Select(n => n.Trim().ToLowerInvariant())
 				.Distinct();
 
-			return names
+			var chain = names
 				.Select(name => _geocoders.FirstOrDefault(g => g.Name == name))
 				.Where(g => g != null && g.IsConfigured)
 				.ToList();
+
+			// The department the request is for (web and API middleware) tries its own account first (setting 125). Its lookups
+			// get cache entries of their own: a shared entry would answer it from the install's geocoders (or another
+			// department's) without its own ever being asked, which is what it set one up to avoid. The entries are per
+			// provider too, so a department that switches geocoders stops getting the old one's answers at once.
+			var departmentId = Framework.RequestDepartment.Id;
+			var own = await DepartmentGeocoderAsync(departmentId);
+			if (own != null)
+				chain.Insert(0, own);
+
+			return own != null ? (chain, departmentId, own.Name) : (chain, 0, null);
+		}
+
+		private async Task<IGeocodingProvider> DepartmentGeocoderAsync(int departmentId)
+		{
+			if (departmentId <= 0 || _departmentMapProviders == null)
+				return null;
+
+			try
+			{
+				var providers = await _departmentMapProviders.Value.GetAsync(departmentId);
+				if (string.IsNullOrWhiteSpace(providers?.GeocodingProvider))
+					return null;
+
+				var geocoder = _geocoders.FirstOrDefault(g => g.Name == providers.GeocodingProvider)?.WithApiKey(providers.GeocodingApiKey);
+				return geocoder != null && geocoder.IsConfigured ? geocoder : null;
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex, $"Reading department {departmentId}'s geocoding account failed; the install's geocoders answer");
+				return null;
+			}
 		}
 
 		/// <summary>One geocoder call's timeout; the caller disposes it (with <c>using</c>) once the call returns.</summary>
@@ -78,9 +120,11 @@ namespace Resgrid.Providers.GeoLocationProvider
 
 		public async Task<string> GetAddressFromLatLong(double lat, double lon)
 		{
+			var (chain, cacheDepartmentId, cacheGeocoder) = await GeocoderChainAsync();
+
 			async Task<string> getAddressFromCords()
 			{
-				foreach (var geocoder in GeocoderChain())
+				foreach (var geocoder in chain)
 				{
 					try
 					{
@@ -96,7 +140,7 @@ namespace Resgrid.Providers.GeoLocationProvider
 				return null;
 			}
 
-			return await _cacheProvider.RetrieveAsync<string>(GeoLocationCacheKeys.ReverseGeocode(lat, lon), getAddressFromCords, CacheLength);
+			return await _cacheProvider.RetrieveAsync<string>(GeoLocationCacheKeys.ReverseGeocode(lat, lon, cacheDepartmentId, cacheGeocoder), getAddressFromCords, CacheLength);
 		}
 
 		public async Task<string> GetLatLonFromAddress(string address)
@@ -104,9 +148,11 @@ namespace Resgrid.Providers.GeoLocationProvider
 			if (string.IsNullOrWhiteSpace(address))
 				return null;
 
+			var (chain, cacheDepartmentId, cacheGeocoder) = await GeocoderChainAsync();
+
 			async Task<string> getCordsFromAddress()
 			{
-				foreach (var geocoder in GeocoderChain())
+				foreach (var geocoder in chain)
 				{
 					try
 					{
@@ -123,7 +169,7 @@ namespace Resgrid.Providers.GeoLocationProvider
 				return null;
 			}
 
-			return await _cacheProvider.RetrieveAsync<string>(GeoLocationCacheKeys.ForwardGeocode(address), getCordsFromAddress, CacheLength);
+			return await _cacheProvider.RetrieveAsync<string>(GeoLocationCacheKeys.ForwardGeocode(address, cacheDepartmentId, cacheGeocoder), getCordsFromAddress, CacheLength);
 		}
 
 		public async Task<GeocodeResult> GeocodeAddressAsync(string address, CancellationToken cancellationToken = default)
@@ -131,7 +177,7 @@ namespace Resgrid.Providers.GeoLocationProvider
 			if (string.IsNullOrWhiteSpace(address))
 				return GeocodeResult.Of(GeocodeOutcome.NotFound);
 
-			var chain = GeocoderChain();
+			var (chain, cacheDepartmentId, cacheGeocoder) = await GeocoderChainAsync();
 			var outcome = chain.Count == 0 ? GeocodeOutcome.NotConfigured : GeocodeOutcome.Unavailable;
 
 			// Shares GetLatLonFromAddress's cache entry, so a hit costs nothing and a found position is stored for both.
@@ -182,7 +228,7 @@ namespace Resgrid.Providers.GeoLocationProvider
 				return null;
 			}
 
-			var coordinates = chain.Count == 0 ? null : await _cacheProvider.RetrieveAsync<string>(GeoLocationCacheKeys.ForwardGeocode(address), lookup, CacheLength);
+			var coordinates = chain.Count == 0 ? null : await _cacheProvider.RetrieveAsync<string>(GeoLocationCacheKeys.ForwardGeocode(address, cacheDepartmentId, cacheGeocoder), lookup, CacheLength);
 
 			if (coordinates != null)
 			{

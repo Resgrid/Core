@@ -33,15 +33,21 @@ namespace Resgrid.Services
 		private readonly IDepartmentGroupsService _departmentGroupsService;
 		private readonly IUnitsService _unitsService;
 		private readonly IGeoService _geoService;
+		private readonly IRoadClosureService _roadClosureService;
+
+		// A stored route that the install's providers answered because the department's own account failed is served for
+		// this long, then the department's account is asked again on the next read.
+		private static readonly TimeSpan FallbackRouteRetryAfter = TimeSpan.FromHours(1);
 
 		public RoutePlanRoutingService(IRoutingService routingService, IRouteService routeService, IDepartmentGroupsService departmentGroupsService,
-			IUnitsService unitsService, IGeoService geoService)
+			IUnitsService unitsService, IGeoService geoService, IRoadClosureService roadClosureService)
 		{
 			_routingService = routingService;
 			_routeService = routeService;
 			_departmentGroupsService = departmentGroupsService;
 			_unitsService = unitsService;
 			_geoService = geoService;
+			_roadClosureService = roadClosureService;
 		}
 
 		public async Task<RoutePlanRouteResult> GenerateAsync(string routePlanId, CancellationToken cancellationToken = default)
@@ -63,7 +69,18 @@ namespace Resgrid.Services
 			var inputs = await ResolveInputsAsync(plan);
 
 			if (!plan.RouteIsStale && plan.RouteInputHash == inputs.Hash && !string.IsNullOrWhiteSpace(plan.MapboxRouteGeometry))
-				return FromStored(plan, inputs);
+			{
+				// The hash names the provider that should answer, not the one that did: a route a fallback produced while the
+				// first provider was failing is retried after a while instead of standing in for good. Until a retry works,
+				// the stored fallback route is still the answer.
+				var answeredByFallback = inputs.Provider.DepartmentAccount &&
+					!string.Equals(plan.RouteProvider, inputs.Provider.Name, StringComparison.OrdinalIgnoreCase);
+				if (!answeredByFallback || plan.RouteComputedOn > DateTime.UtcNow - FallbackRouteRetryAfter)
+					return FromStored(plan, inputs);
+
+				var retried = await GenerateAsync(plan, inputs, cancellationToken);
+				return retried.Successful && !retried.IsEstimate ? retried : FromStored(plan, inputs);
+			}
 
 			return await GenerateAsync(plan, inputs, cancellationToken);
 		}
@@ -96,6 +113,7 @@ namespace Resgrid.Services
 
 			var optimized = await _routingService.OptimizeAsync(new RouteOptimizationRequest
 			{
+				DepartmentId = inputs.DepartmentId,
 				Waypoints = waypoints,
 				KeepFirst = inputs.Start != null,
 				KeepLast = inputs.End != null,
@@ -176,7 +194,7 @@ namespace Resgrid.Services
 			var live = inputs.WithStart(origin).WithStops(remaining.Select(s => byStopId[s.RouteStopId]).ToList());
 
 			if (remaining.Count == 0 && live.End == null)
-				return new RoutePlanRouteResult { Successful = true, Start = origin, Provider = _routingService.ProviderName, Attribution = _routingService.Attribution };
+				return new RoutePlanRouteResult { Successful = true, Start = origin, Provider = inputs.Provider.Name, Attribution = inputs.Provider.Attribution };
 
 			var result = await RouteAsync(live, steps: true, cancellationToken: cancellationToken, heading: heading, navigation: navigation,
 				language: language, metric: metric, bypassCache: true);
@@ -325,6 +343,13 @@ namespace Resgrid.Services
 
 		private RoutePlanRouteResult FromStored(RoutePlan plan, PlanInputs inputs)
 		{
+			// The flags follow the provider that made the stored route, which is not the department's first provider when a
+			// fallback answered (a department's Mapbox failing over to the install's Google applies no vehicle limits).
+			var capabilities = string.Equals(plan.RouteProvider, inputs.Provider.Name, StringComparison.OrdinalIgnoreCase)
+				? inputs.Provider.Capabilities
+				: _routingService.CapabilitiesOf(plan.RouteProvider);
+			capabilities ??= new RoutingCapabilities();
+
 			var result = new RoutePlanRouteResult
 			{
 				Successful = true,
@@ -335,8 +360,8 @@ namespace Resgrid.Services
 				DurationSeconds = plan.EstimatedDurationSeconds ?? 0,
 				GeometryGeoJson = plan.MapboxRouteGeometry,
 				DirectionsJson = plan.RouteDirectionsJson,
-				VehicleRestricted = inputs.Vehicle != null && (_routingService.Capabilities.VehicleSize || _routingService.Capabilities.VehicleFull),
-				IsTrafficAware = inputs.Profile == RoutingProfile.DrivingTraffic && _routingService.Capabilities.Traffic,
+				VehicleRestricted = inputs.Vehicle != null && (capabilities.VehicleSize || capabilities.VehicleFull),
+				IsTrafficAware = inputs.Profile == RoutingProfile.DrivingTraffic && capabilities.Traffic,
 				Start = inputs.Start,
 				End = inputs.End,
 				ComputedOn = plan.RouteComputedOn
@@ -392,15 +417,17 @@ namespace Resgrid.Services
 				var chunk = waypoints.Skip(first).Take(ChunkWaypoints).ToList();
 				var route = await _routingService.GetRouteAsync(new RouteRequest
 				{
+					DepartmentId = inputs.DepartmentId,
 					Waypoints = chunk,
 					Profile = inputs.Profile,
 					Vehicle = inputs.Vehicle,
 					Avoid = inputs.Avoid,
 					Steps = steps,
-					NavigationInstructions = navigation && _routingService.IsNavigationAvailable,
+					NavigationInstructions = navigation && inputs.Provider.NavigationAvailable,
 					Language = string.IsNullOrWhiteSpace(language) ? "en" : language,
 					Units = metric ? RoutingUnits.Metric : RoutingUnits.Imperial,
-					BypassCache = bypassCache
+					BypassCache = bypassCache,
+					Closures = inputs.Closures
 				}, cancellationToken);
 
 				if (route == null || !route.Successful)
@@ -500,18 +527,43 @@ namespace Resgrid.Services
 			if (profile == RoutingProfile.Truck && vehicle == null)
 				profile = RoutingProfile.Driving;
 
+			// The department's own routing account (Mapping Settings) answers first when it has one.
+			var provider = await _routingService.GetProviderInfoAsync(plan.DepartmentId);
+
 			var inputs = new PlanInputs
 			{
+				DepartmentId = plan.DepartmentId,
+				Provider = provider,
 				Stops = stops,
 				Profile = profile,
 				Avoid = (RouteAvoidOptions)(plan.AvoidOptions & 15),
 				Vehicle = vehicle,
 				Start = await ResolveEndpointAsync(plan.DepartmentId, plan.UseStationAsStart, plan.StartDepartmentGroupId, unit, plan.StartLatitude, plan.StartLongitude),
-				End = await ResolveEndpointAsync(plan.DepartmentId, plan.UseStationAsEnd, plan.EndDepartmentGroupId, unit, plan.EndLatitude, plan.EndLongitude)
+				End = await ResolveEndpointAsync(plan.DepartmentId, plan.UseStationAsEnd, plan.EndDepartmentGroupId, unit, plan.EndLatitude, plan.EndLongitude),
+				Closures = await ClosuresForAsync(plan.DepartmentId, RoadClosureRouting.ModeFor(profile))
 			};
 
-			inputs.Hash = Hash(inputs, _routingService.ProviderName);
+			// A switch between the install's account and the department's (or an edit of the department's account) marks
+			// stored routes stale, like a provider change. So does a change in the road closures near the plan's points: one
+			// opening, ending or being edited (M0314).
+			var providerKey = provider.DepartmentAccount ? provider.Name + "#department" + provider.AccountRevision : provider.Name;
+			var closureKey = RoadClosureRouting.Plan(new RouteRequest { Waypoints = Waypoints(inputs), Profile = profile, Closures = inputs.Closures }, null, false).Key;
+			inputs.Hash = Hash(inputs, providerKey + closureKey);
 			return inputs;
+		}
+
+		/// <summary>The department's road closures in effect now for the mode; none when they can't be read.</summary>
+		private async Task<List<RoutingClosure>> ClosuresForAsync(int departmentId, UnitTravelModes mode)
+		{
+			try
+			{
+				return await _roadClosureService.GetRoutingClosuresAsync(departmentId, mode, DateTime.UtcNow) ?? new List<RoutingClosure>();
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Reading road closures for department {departmentId}'s route plan failed; routing without them.");
+				return new List<RoutingClosure>();
+			}
 		}
 
 		/// <summary>The chosen station, else the unit's station (when the plan uses a station), else the explicit point.</summary>
@@ -670,6 +722,11 @@ namespace Resgrid.Services
 
 		private sealed class PlanInputs
 		{
+			public int DepartmentId { get; set; }
+
+			/// <summary>The provider that answers first for the plan's department.</summary>
+			public RoutingProviderInfo Provider { get; set; }
+
 			public RoutePlanEndpoint Start { get; set; }
 
 			public RoutePlanEndpoint End { get; set; }
@@ -681,6 +738,9 @@ namespace Resgrid.Services
 			public RouteAvoidOptions Avoid { get; set; }
 
 			public VehicleProfile Vehicle { get; set; }
+
+			/// <summary>The department's road closures in effect now for the profile's travel mode (M0314).</summary>
+			public List<RoutingClosure> Closures { get; set; } = new List<RoutingClosure>();
 
 			public string Hash { get; set; }
 

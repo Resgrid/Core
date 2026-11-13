@@ -33,10 +33,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly Model.Services.IAuthorizationService _authorizationService;
 		private readonly IUnitNavigationStateService _unitNavigationStateService;
 		private readonly IRouteService _routeService;
+		private readonly IRoadClosureService _roadClosureService;
 
 		public RoutingController(IRoutingService routingService, ICallsService callsService, IUnitsService unitsService, Model.Services.IAuthorizationService authorizationService,
-			IUnitNavigationStateService unitNavigationStateService, IRouteService routeService)
+			IUnitNavigationStateService unitNavigationStateService, IRouteService routeService, IRoadClosureService roadClosureService)
 		{
+			_roadClosureService = roadClosureService;
 			_routingService = routingService;
 			_callsService = callsService;
 			_unitsService = unitsService;
@@ -49,16 +51,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpGet("GetCapabilities")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Call_View)]
-		public ActionResult<RoutingCapabilitiesResult> GetCapabilities()
+		public async Task<ActionResult<RoutingCapabilitiesResult>> GetCapabilities()
 		{
-			var capabilities = _routingService.Capabilities;
+			// The department's own routing account (Mapping Settings) when it has one, else the install's provider.
+			var provider = await _routingService.GetProviderInfoAsync(DepartmentId);
+			var capabilities = provider.Capabilities;
 			var result = new RoutingCapabilitiesResult();
-			result.Data.Provider = _routingService.ProviderName;
-			result.Data.Attribution = _routingService.Attribution;
+			result.Data.Provider = provider.Name;
+			result.Data.Attribution = provider.Attribution;
 			result.Data.Steps = capabilities.Steps;
 			result.Data.Traffic = capabilities.Traffic;
 			result.Data.Incidents = capabilities.Incidents;
-			result.Data.NavigationAvailable = _routingService.IsNavigationAvailable;
+			result.Data.NavigationAvailable = provider.NavigationAvailable;
 			result.Data.VehicleLimitsEnforced = VehicleLimits(capabilities);
 
 			result.PageSize = 1;
@@ -67,7 +71,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return Ok(result);
 		}
 
-		/// <summary>A route through two or more points.</summary>
+		/// <summary>
+		/// A route through two or more points, around or slowed by the department's road closures in effect for the profile
+		/// (when they can't be read, the route is worked out without them).
+		/// </summary>
 		[HttpPost("GetRoute")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -97,7 +104,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				Avoid = (RouteAvoidOptions)(input.Avoid & 15),
 				Vehicle = vehicle,
 				Steps = input.Steps || input.Navigation,
-				NavigationInstructions = input.Navigation && _routingService.IsNavigationAvailable,
+				NavigationInstructions = input.Navigation,
 				Language = string.IsNullOrWhiteSpace(input.Language) ? "en" : input.Language,
 				Units = input.Metric ? RoutingUnits.Metric : RoutingUnits.Imperial
 			};
@@ -105,12 +112,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (vehicle != null && request.Profile != RoutingProfile.Walking && request.Profile != RoutingProfile.Cycling && request.Profile != RoutingProfile.DrivingTraffic)
 				request.Profile = RoutingProfile.Truck;
 
+			request.Closures = await ClosuresForAsync(ClosureModeFor(request.Profile));
+
 			return Ok(await BuildResultAsync(request, cancellationToken));
 		}
 
 		/// <summary>
 		/// Route from the caller's position to a call (Unit navigation start and reroute). The destination is the call's
-		/// location; the unit's vehicle size and weight apply when <paramref name="unitId"/> is given.
+		/// location; the unit's vehicle size and weight apply when <paramref name="unitId"/> is given. Road closures apply as
+		/// for GetRoute (when they can't be read, the route is worked out without them).
 		/// </summary>
 		[HttpGet("GetCallRoute")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
@@ -136,13 +146,20 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return NotFound();
 
 			VehicleProfile vehicle = null;
+			var travel = UnitTravelProfile.Default;
 			if (unitId.HasValue)
 			{
 				var unit = await _unitsService.GetUnitByIdAsync(unitId.Value);
 				if (unit == null || unit.DepartmentId != DepartmentId)
 					return BadRequest();
 
-				vehicle = await _unitsService.GetUnitVehicleProfileAsync(unit);
+				// A unit that walks or cycles is routed on foot or by bike (M0314); air units keep the road route as before.
+				var profiles = await _unitsService.GetTravelProfilesForUnitsAsync(DepartmentId, new[] { unit });
+				if (profiles != null && profiles.TryGetValue(unit.UnitId, out var unitTravel) && unitTravel != null)
+					travel = unitTravel;
+
+				if (travel.Mode == UnitTravelModes.Driving || travel.IsAir)
+					vehicle = await _unitsService.GetUnitVehicleProfileAsync(unit);
 			}
 
 			var request = new RouteRequest
@@ -152,34 +169,57 @@ namespace Resgrid.Web.Services.Controllers.v4
 					new RoutingWaypoint(latitude, longitude) { Heading = heading },
 					new RoutingWaypoint(destination.Value.Latitude, destination.Value.Longitude)
 				},
-				Profile = vehicle != null ? RoutingProfile.Truck : (Config.MappingConfig.RoutingTrafficAware ? RoutingProfile.DrivingTraffic : RoutingProfile.Driving),
+				Profile = travel.RoutingProfile ?? (vehicle != null ? RoutingProfile.Truck : (Config.MappingConfig.RoutingTrafficAware ? RoutingProfile.DrivingTraffic : RoutingProfile.Driving)),
 				Vehicle = vehicle,
 				Steps = true,
-				NavigationInstructions = navigation && _routingService.IsNavigationAvailable,
+				NavigationInstructions = navigation,
 				Language = string.IsNullOrWhiteSpace(language) ? "en" : language,
 				Units = metric ? RoutingUnits.Metric : RoutingUnits.Imperial,
 				// Navigation starts and reroutes need the route from where the unit is now.
 				BypassCache = navigation
 			};
 
+			request.Closures = await ClosuresForAsync(ClosureModeFor(request.Profile));
+
 			return Ok(await BuildResultAsync(request, cancellationToken));
+		}
+
+		private static UnitTravelModes ClosureModeFor(RoutingProfile profile) => Resgrid.Services.RoadClosureRouting.ModeFor(profile);
+
+		/// <summary>The department's road closures in effect now for the mode (M0314); none when they can't be read.</summary>
+		private async Task<List<RoutingClosure>> ClosuresForAsync(UnitTravelModes mode)
+		{
+			try
+			{
+				return await _roadClosureService.GetRoutingClosuresAsync(DepartmentId, mode, DateTime.UtcNow) ?? new List<RoutingClosure>();
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex, $"Reading road closures for department {DepartmentId} failed; routing without them.");
+				return new List<RoutingClosure>();
+			}
 		}
 
 		private async Task<GetRouteResult> BuildResultAsync(RouteRequest request, CancellationToken cancellationToken)
 		{
+			// The department's own routing account answers first; navigation instructions only where it allows them.
+			var provider = await _routingService.GetProviderInfoAsync(DepartmentId);
+			request.DepartmentId = DepartmentId;
+			request.NavigationInstructions = request.NavigationInstructions && provider.NavigationAvailable;
+
 			var route = await _routingService.GetRouteAsync(request, cancellationToken);
 			var result = new GetRouteResult();
 
 			if (route != null && route.Successful)
 			{
 				result.Data.Provider = route.Provider;
-				result.Data.Attribution = string.IsNullOrWhiteSpace(route.Attribution) ? _routingService.Attribution : route.Attribution;
+				result.Data.Attribution = string.IsNullOrWhiteSpace(route.Attribution) ? provider.Attribution : route.Attribution;
 				result.Data.DistanceMeters = Math.Round(route.DistanceMeters, 1);
 				result.Data.DurationSeconds = Math.Round(route.DurationSeconds, 1);
 				result.Data.TypicalDurationSeconds = route.TypicalDurationSeconds;
 				result.Data.IsTrafficAware = route.IsTrafficAware;
 				result.Data.VehicleRestricted = route.VehicleRestricted;
-				result.Data.VehicleLimitsEnforced = VehicleLimits(_routingService.Capabilities);
+				result.Data.VehicleLimitsEnforced = VehicleLimits(provider.Capabilities);
 				result.Data.IsEstimate = route.Provider == RoutingProviderNames.Estimate;
 				result.Data.Geometry = route.GeometryGeoJson;
 				result.Data.Legs = route.Legs.Select(l => new RouteLegData { DistanceMeters = Math.Round(l.DistanceMeters, 1), DurationSeconds = Math.Round(l.DurationSeconds, 1) }).ToList();
@@ -193,9 +233,23 @@ namespace Resgrid.Web.Services.Controllers.v4
 					Closed = i.Closed
 				}).ToList();
 				result.Data.Route = string.IsNullOrWhiteSpace(route.NormalizedJson) ? null : JToken.Parse(route.NormalizedJson);
+				result.Data.RoadClosureDelaySeconds = route.ClosureDelaySeconds;
+				result.Data.RoadClosures = (route.Closures ?? new List<RouteClosureEffect>()).Select(c => new RouteClosureData
+				{
+					RoadClosureId = c.ClosureId,
+					Name = c.Name,
+					Effect = (int)c.Effect,
+					DelaySeconds = c.DelaySeconds
+				}).ToList();
+				// A route that still runs through a full closure the provider could not avoid keeps its line and time (with the
+				// detour allowance) but is not navigable: its directions would lead the unit into the closed road.
 				result.Data.NavigationAvailable = request.NavigationInstructions && !result.Data.IsEstimate &&
-					(route.Provider == RoutingProviderNames.Valhalla || route.Provider == RoutingProviderNames.Mapbox);
-				result.Data.ExpiresUtc = DateTime.UtcNow.Add(route.IsTrafficAware ? TimeSpan.FromMinutes(5) : TimeSpan.FromHours(12));
+					(route.Provider == RoutingProviderNames.Valhalla || route.Provider == RoutingProviderNames.Mapbox) &&
+					!Resgrid.Services.RoadClosureRouting.CrossesFullClosure(route);
+				// Closure-shaped routes change as closure times open and close and as closures are edited (the server keeps them
+				// five minutes too), as traffic-aware ones do.
+				var closureAware = request.Closures?.Count > 0 || route.Closures?.Count > 0;
+				result.Data.ExpiresUtc = DateTime.UtcNow.Add(route.IsTrafficAware || closureAware ? TimeSpan.FromMinutes(5) : TimeSpan.FromHours(12));
 				result.PageSize = 1;
 			}
 

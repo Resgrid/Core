@@ -1,5 +1,6 @@
 ﻿@model List<Resgrid.Model.DepartmentGroup>
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Call> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.TravelMode> travelLocalizer
 @*
     The nearest-unit board for New Call and Update Call (filled by resgrid.dispatch.nearestboard.js once the call has a
     location). The units and personnel it ranks by response time are shown in the dispatch lists below (_DispatchUnitLists
@@ -52,7 +53,12 @@
         ["showOnMap"] = localizer["NearestUnitsShowOnMap"].Value,
         ["positionTitle"] = localizer["NearestUnitsPositionTitle"].Value,
         ["callLocation"] = localizer["NearestUnitsCallLocation"].Value,
-        ["close"] = commonLocalizer["Close"].Value
+        ["close"] = commonLocalizer["Close"].Value,
+        ["travelCycling"] = travelLocalizer["TravelModeCycling"].Value,
+        ["travelWalking"] = travelLocalizer["TravelModeWalking"].Value,
+        ["travelAir"] = travelLocalizer["TravelModeAir"].Value,
+        ["closureDelay"] = travelLocalizer["BoardClosureDelay"].Value,
+        ["closures"] = travelLocalizer["BoardClosures"].Value
     }, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
     var groupBoundaries = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject((Model ?? new List<DepartmentGroup>())
         .Select(g => new { group = g, points = Resgrid.Model.GeoMath.ParseGeofence(g.Geofence) })

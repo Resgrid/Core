@@ -125,8 +125,8 @@
 									<span class="help-block">@localizer["MapStyleHelp"]</span>
 									<ul class="list-unstyled small m-b-sm" id="mapProviders">
 										<li><strong>@localizer["MapProviderBaseMap"]:</strong> @(selfHosted ? localizer["MapProviderSelfHosted"].Value : "Mapbox")</li>
-										<li><strong>@localizer["MapProviderRouting"]:</strong> @routingName</li>
-										<li><strong>@localizer["MapProviderTraffic"]:</strong> @(Model.TrafficLayerAvailable ? localizer["MapProviderTrafficOn"] : localizer["MapProviderTrafficOff"])</li>
+										<li><strong>@localizer["MapProviderRouting"]:</strong> @routingName@(Model.RoutingIsDepartmentAccount ? " (" + localizer["ProvidersYourAccount"].Value + ")" : string.Empty)</li>
+										<li><strong>@localizer["MapProviderTraffic"]:</strong> @(Model.TrafficLayerAvailable ? localizer["MapProviderTrafficOn"] : localizer["MapProviderTrafficOff"])@(Model.TrafficIsDepartmentAccount ? " (" + localizer["ProvidersYourAccount"].Value + ")" : string.Empty)</li>
 									</ul>
 									@if (selfHosted)
 									{
@@ -233,6 +233,110 @@
 								<div class="col-sm-6">
 									<input type="text" class="form-control" asp-for="MapboxAccessToken" placeholder="pk.ey...">
 									<span class="help-block m-b-none">Use a public (pk.) Mapbox token intended for website and mobile client-side map rendering for this department. It is sent to every member's browser and app; never use a secret (sk.) token.</span>
+								</div>
+							</div>
+
+							<h3 id="providers">@localizer["ProvidersHeader"]</h3>
+							<div class="form-group">
+								<div class="col-sm-6 col-sm-offset-3">
+									<span class="help-block">@localizer["ProvidersHelp"]</span>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label" asp-for="ProviderRouting">@localizer["ProvidersRoutingLabel"]</label>
+								<div class="col-sm-6">
+									<select class="form-control" asp-for="ProviderRouting" data-provider-switch="routing">
+										<option value="">@localizer["ProvidersSystemDefault"]</option>
+										<option value="mapbox">Mapbox</option>
+										<option value="google">Google</option>
+										<option value="valhalla">Valhalla</option>
+										<option value="osrm">OSRM</option>
+									</select>
+									<span class="help-block m-b-none">@localizer["ProvidersRoutingHelp"]</span>
+								</div>
+							</div>
+							<div class="form-group" data-provider-show="routing:valhalla,osrm">
+								<label class="col-sm-3 control-label" asp-for="ProviderRoutingUrl">@localizer["ProvidersRoutingUrlLabel"]</label>
+								<div class="col-sm-6">
+									<input type="url" class="form-control" asp-for="ProviderRoutingUrl" placeholder="https://" autocomplete="off">
+									<span class="help-block m-b-none">@localizer["ProvidersRoutingUrlHelp"]</span>
+								</div>
+							</div>
+							<div class="form-group" data-provider-show="routing:mapbox,google,valhalla">
+								<label class="col-sm-3 control-label" asp-for="ProviderRoutingApiKey">@localizer["ProvidersRoutingKeyLabel"]</label>
+								<div class="col-sm-6">
+									<input type="password" class="form-control" asp-for="ProviderRoutingApiKey" autocomplete="new-password"
+										   placeholder="@(Model.ProviderRoutingKeySaved ? localizer["ProvidersKeySaved"].Value : string.Empty)">
+									@if (Model.ProviderRoutingKeySaved)
+									{
+										<div class="checkbox m-b-none">
+											<label><input type="checkbox" asp-for="ProviderClearRoutingApiKey"> @localizer["ProvidersClearKey"]</label>
+										</div>
+									}
+									<span class="help-block m-b-none">@localizer["ProvidersRoutingKeyHelp"]</span>
+								</div>
+							</div>
+							<div class="form-group" data-provider-show="routing:valhalla">
+								<label class="col-sm-3 control-label" asp-for="ProviderRoutingAuthScheme">@localizer["ProvidersAuthSchemeLabel"]</label>
+								<div class="col-sm-6">
+									<select class="form-control" asp-for="ProviderRoutingAuthScheme">
+										<option value="apikey">@localizer["ProvidersAuthSchemeApiKey"]</option>
+										<option value="bearer">@localizer["ProvidersAuthSchemeBearer"]</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group" data-provider-show="routing:google">
+								<label class="col-sm-3 control-label" asp-for="ProviderGoogleRoutingApi">@localizer["ProvidersGoogleApiLabel"]</label>
+								<div class="col-sm-6">
+									<select class="form-control" asp-for="ProviderGoogleRoutingApi">
+										<option value="legacy">@localizer["ProvidersGoogleApiLegacy"]</option>
+										<option value="routes">@localizer["ProvidersGoogleApiRoutes"]</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label" asp-for="ProviderTraffic">@localizer["ProvidersTrafficLabel"]</label>
+								<div class="col-sm-6">
+									<select class="form-control" asp-for="ProviderTraffic" data-provider-switch="traffic">
+										<option value="">@localizer["ProvidersSystemDefault"]</option>
+										<option value="mapbox">@localizer["ProvidersTrafficMapbox"]</option>
+										<option value="tiles">@localizer["ProvidersTrafficTiles"]</option>
+									</select>
+									<span class="help-block m-b-none">@localizer["ProvidersTrafficHelp"]</span>
+								</div>
+							</div>
+							<div class="form-group" data-provider-show="traffic:mapbox">
+								<label class="col-sm-3 control-label" asp-for="ProviderTrafficMapboxToken">@localizer["ProvidersTrafficTokenLabel"]</label>
+								<div class="col-sm-6">
+									<input type="text" class="form-control" asp-for="ProviderTrafficMapboxToken" placeholder="pk.ey..." autocomplete="off">
+									<span class="help-block m-b-none">@localizer["ProvidersTrafficTokenHelp"]</span>
+								</div>
+							</div>
+							<div class="form-group" data-provider-show="traffic:tiles">
+								<label class="col-sm-3 control-label" asp-for="ProviderTrafficTileUrl">@localizer["ProvidersTrafficTileUrlLabel"]</label>
+								<div class="col-sm-6">
+									<input type="password" class="form-control" asp-for="ProviderTrafficTileUrl" autocomplete="new-password"
+										   placeholder="@(Model.ProviderTrafficTileUrlSaved ? localizer["ProvidersKeySaved"].Value : "https://.../{z}/{x}/{y}.png?key=...")">
+									<span class="help-block m-b-none">@localizer["ProvidersTrafficTileUrlHelp"]</span>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label" asp-for="ProviderGeocoding">@localizer["ProvidersGeocodingLabel"]</label>
+								<div class="col-sm-6">
+									<select class="form-control" asp-for="ProviderGeocoding" data-provider-switch="geocoding">
+										<option value="">@localizer["ProvidersSystemDefault"]</option>
+										<option value="google">Google</option>
+										<option value="mapbox">Mapbox</option>
+										<option value="locationiq">LocationIQ</option>
+									</select>
+									<span class="help-block m-b-none">@localizer["ProvidersGeocodingHelp"]</span>
+								</div>
+							</div>
+							<div class="form-group" data-provider-show="geocoding:google,mapbox,locationiq">
+								<label class="col-sm-3 control-label" asp-for="ProviderGeocodingApiKey">@localizer["ProvidersGeocodingKeyLabel"]</label>
+								<div class="col-sm-6">
+									<input type="password" class="form-control" asp-for="ProviderGeocodingApiKey" autocomplete="new-password"
+										   placeholder="@(Model.ProviderGeocodingKeySaved ? localizer["ProvidersKeySaved"].Value : string.Empty)">
 								</div>
 							</div>
  
@@ -498,6 +602,27 @@
 		};
 	</script>
 	<script src="~/js/app/internal/department/resgrid.department.offlinearea.js"></script>
+	<script>
+		(function () {
+			// Your own map providers: show each part's fields only for the provider chosen in its select.
+			var switches = document.querySelectorAll('[data-provider-switch]');
+			function sync() {
+				var chosen = {};
+				for (var i = 0; i < switches.length; i++)
+					chosen[switches[i].getAttribute('data-provider-switch')] = switches[i].value;
+
+				var groups = document.querySelectorAll('[data-provider-show]');
+				for (var j = 0; j < groups.length; j++) {
+					var rule = groups[j].getAttribute('data-provider-show').split(':');
+					var values = rule[1].split(',');
+					groups[j].style.display = values.indexOf(chosen[rule[0]] || '') >= 0 ? '' : 'none';
+				}
+			}
+			for (var k = 0; k < switches.length; k++)
+				switches[k].addEventListener('change', sync);
+			sync();
+		})();
+	</script>
 	<script>
 		(function () {
 			// Previews come from the server's signed GetStaticMap (plan §6.6), drawn the way this install renders the style.

@@ -4492,6 +4492,16 @@
             left out of the run report list and named in the access audit of every run report returned.
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.RoadClosuresController">
+            <summary>
+            Road closures (M0314): the department's drawn closed and slowed roads, for maps in the apps. Dispatch ranking and the
+            Routing endpoints already apply them, except when the closures can't be read: the route or drive time is then worked
+            out without them rather than not at all. Closures are managed on the web (Mapping → Road Closures).
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoadClosuresController.GetRoadClosures(System.Boolean)">
+            <summary>The department's road closures in effect now and still to come (activeOnly: in effect now only).</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.RolesController">
             <summary>
             User generated forms that are dispayed to get custom information for New Calls, Unit Checks, etc
@@ -4694,13 +4704,20 @@
             <summary>What the install's routing provider supports (traffic, incidents, navigation, vehicle limits).</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.RoutingController.GetRoute(Resgrid.Web.Services.Models.v4.Routing.GetRouteInput,System.Threading.CancellationToken)">
-            <summary>A route through two or more points.</summary>
+            <summary>
+            A route through two or more points, around or slowed by the department's road closures in effect for the profile
+            (when they can't be read, the route is worked out without them).
+            </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.RoutingController.GetCallRoute(System.Int32,System.Double,System.Double,System.Nullable{System.Double},System.Nullable{System.Int32},System.Boolean,System.String,System.Boolean,System.Threading.CancellationToken)">
             <summary>
             Route from the caller's position to a call (Unit navigation start and reroute). The destination is the call's
-            location; the unit's vehicle size and weight apply when <paramref name="unitId"/> is given.
+            location; the unit's vehicle size and weight apply when <paramref name="unitId"/> is given. Road closures apply as
+            for GetRoute (when they can't be read, the route is worked out without them).
             </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutingController.ClosuresForAsync(Resgrid.Model.UnitTravelModes)">
+            <summary>The department's road closures in effect now for the mode (M0314); none when they can't be read.</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.RoutingController.ReportNavigationProgress(Resgrid.Web.Services.Models.v4.Routing.ReportNavigationProgressInput)">
             <summary>
@@ -8281,6 +8298,14 @@
         </member>
         <member name="T:Resgrid.Web.Services.Helpers.CallbackRecordForm">
             <summary>Exposes the locked Callback's text fields to field clients that render Records schemas.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Helpers.ConfigTrafficFields">
+            <summary>
+            Fills the Config/GetConfig traffic fields from the department's traffic layer. Mapbox Traffic v1 vector tiles go in
+            TrafficTileUrl (with TrafficAvailable); a department's own image tiles (e.g. TomTom flow) go only in
+            TrafficRasterTileUrl, because app builds that predate that field read TrafficTileUrl as vector tiles and would try
+            to parse the images as vector data. Those builds show no traffic for such a department instead.
+            </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Helpers.HttpProtectedGrantContext">
             <summary>
@@ -13235,10 +13260,17 @@
             <summary>Signed static map image template; placeholders {lat} {lon} {zoom} {width} {height} {scale} {scheme}.</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.TrafficAvailable">
-            <summary>A live traffic overlay is available (TrafficTileUrl).</summary>
+            <summary>The vector traffic overlay is available (TrafficTileUrl). False when the department uses its own image tiles.</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.TrafficTileUrl">
             <summary>Mapbox Traffic v1 vector tile template (layer "traffic", congestion low/moderate/heavy/severe, closed).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.TrafficRasterTileUrl">
+            <summary>
+            The department's own traffic image tile template ({z}/{x}/{y}, e.g. TomTom flow tiles), drawn as a raster overlay
+            instead of TrafficTileUrl. Kept out of TrafficTileUrl/TrafficAvailable so app builds that only know the vector
+            overlay never load image tiles as vector tiles: they simply show no traffic for that department.
+            </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.TrafficRefreshSeconds">
             <summary>How often to reload traffic tiles, in seconds.</summary>
@@ -17305,6 +17337,30 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Reporting.ExportGapReportResult.Data">
             <summary>Response Data</summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.RoadClosures.RoadClosureResultData">
+            <summary>A road closure (M0314). Times are UTC.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.RoadClosures.RoadClosureResultData.ClosureType">
+            <summary>RoadClosureTypes: 0 other, 1 event, 2 road works, 3 incident, 4 police, 5 weather, 6 hazard, 7 infrastructure.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.RoadClosures.RoadClosureResultData.Severity">
+            <summary>0 full (no through traffic), 1 partial (slowed).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.RoadClosures.RoadClosureResultData.SpeedPercent">
+            <summary>Speed inside as a percentage of normal.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.RoadClosures.RoadClosureResultData.AppliesTo">
+            <summary>Bit mask of who it stops: 1 driving, 2 cycling, 4 walking.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.RoadClosures.RoadClosureResultData.State">
+            <summary>0 in effect, 1 scheduled, 2 ended, 3 switched off.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.RoadClosures.RoadClosureResultData.Geometry">
+            <summary>The closed areas and road lines as a GeoJSON FeatureCollection.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.RoadClosures.RoadClosureWindowData.EndsOn">
+            <summary>Null: until further notice.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Roles.RoleResult">
             <summary>
             A role in the Resgrid system
@@ -17505,6 +17561,9 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Routing.RouteResultData.Attribution">
             <summary>Attribution to show with the route.</summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routing.RouteResultData.DurationSeconds">
+            <summary>Travel time including <see cref="P:Resgrid.Web.Services.Models.v4.Routing.RouteResultData.RoadClosureDelaySeconds"/>: the provider's time plus what road closures add.</summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Routing.RouteResultData.TypicalDurationSeconds">
             <summary>Duration without live traffic, when the provider reports it.</summary>
         </member>
@@ -17520,17 +17579,39 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Routing.RouteResultData.Geometry">
             <summary>The route line as a GeoJSON LineString string, the same format the route screens already parse.</summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routing.RouteResultData.Legs">
+            <summary>
+            One leg per pair of consecutive stops, timed by the provider: road closure delay is not spread over the legs, so
+            their durations add up to <see cref="P:Resgrid.Web.Services.Models.v4.Routing.RouteResultData.DurationSeconds"/> minus <see cref="P:Resgrid.Web.Services.Models.v4.Routing.RouteResultData.RoadClosureDelaySeconds"/>.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routing.RouteResultData.RoadClosureDelaySeconds">
+            <summary>Seconds the department's active road closures added to DurationSeconds (slowdowns, detours the provider could not take); 0 when none (M0314).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routing.RouteResultData.RoadClosures">
+            <summary>The department's active road closures near the route and what each did to it (M0314).</summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Routing.RouteResultData.Route">
             <summary>
             The full route in the OSRM v5 / Mapbox Directions shape (polyline6 geometry, legs, steps, maneuvers, and
-            voiceInstructions / bannerInstructions when navigation was requested); null without steps.
+            voiceInstructions / bannerInstructions when navigation was requested); null without steps. Its durations are the
+            provider's, without <see cref="P:Resgrid.Web.Services.Models.v4.Routing.RouteResultData.RoadClosureDelaySeconds"/> (as <see cref="P:Resgrid.Web.Services.Models.v4.Routing.RouteResultData.Legs"/>).
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Routing.RouteResultData.NavigationAvailable">
-            <summary>In-app navigation may use this route (Valhalla or Mapbox, navigation enabled).</summary>
+            <summary>
+            In-app navigation may use this route (Valhalla or Mapbox, navigation enabled). False when the route still runs
+            through a full road closure the provider could not avoid (RoadClosures effect 2): its directions would lead into it.
+            </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Routing.RouteResultData.ExpiresUtc">
-            <summary>When a client should ask again (traffic-aware routes change).</summary>
+            <summary>When a client should ask again: five minutes for traffic-aware routes and while the department has road closures in effect, else twelve hours.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Routing.RouteClosureData">
+            <summary>A road closure as it affected a route (M0314).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routing.RouteClosureData.Effect">
+            <summary>0 avoided (routed around), 1 slowed (driven through at reduced speed), 2 crossed (the provider could not avoid it; a detour time was added).</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Routing.RoutingCapabilitiesData.VehicleLimitsEnforced">
             <summary>"all", "size" or "none".</summary>

@@ -257,6 +257,8 @@ namespace Resgrid.Services
 			builder.RegisterType<CustomStateService>().As<ICustomStateService>().InstancePerLifetimeScope();
 			builder.RegisterType<GeoService>().As<IGeoService>().InstancePerLifetimeScope();
 			builder.RegisterType<RoutingService>().As<IRoutingService>().InstancePerLifetimeScope();
+			builder.RegisterType<RoutingUsageService>().As<IRoutingUsageService>().InstancePerLifetimeScope();
+			builder.RegisterType<DepartmentMapProvidersService>().As<IDepartmentMapProvidersService>().InstancePerLifetimeScope();
 			builder.RegisterType<MapStyleService>().As<IMapStyleService>().InstancePerLifetimeScope();
 			builder.RegisterType<StaticMapService>().As<IStaticMapService>().InstancePerLifetimeScope();
 			builder.RegisterType<CustomMapMercatorTileRenderer>().As<ICustomMapMercatorTileRenderer>().InstancePerLifetimeScope();
@@ -594,6 +596,7 @@ namespace Resgrid.Services
 			builder.RegisterType<TypeIconsService>().As<ITypeIconsService>().InstancePerLifetimeScope();
 			builder.RegisterType<MapIconsService>().As<IMapIconsService>().InstancePerLifetimeScope();
 			builder.RegisterType<MapVisualizationService>().As<IMapVisualizationService>().InstancePerLifetimeScope();
+			builder.RegisterType<RoadClosureService>().As<IRoadClosureService>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.RecordsPrintLayoutService>().As<IRecordsPrintLayoutService>().InstancePerLifetimeScope();
 
 			// Home dashboard (home-dashboard-redesign-plan.md). Widget providers and option sources register themselves by

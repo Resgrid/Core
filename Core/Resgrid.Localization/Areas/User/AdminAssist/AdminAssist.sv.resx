@@ -7107,6 +7107,15 @@
   <data xml:space="preserve" name="FeatureSetup.map-visualizations">
     <value>Öppna Kartläggning och sedan Visualiseringar, välj en visualisering i biblioteket, till exempel ”Larmens hotspots”, justera datumintervall, filter och lager på fliken Anpassa och spara den. Avdelningens administratörer kan dela en sparad visualisering med alla.</value>
   </data>
+  <data xml:space="preserve" name="Feature.road-closures">
+    <value>Vägavstängningar</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.road-closures">
+    <value>Avstängda och långsammare vägar och områden ritade på kartan, med vem som stängde dem, varför, en kontakt och tiderna då de gäller. Utlarmningen leder rutter runt fullständiga avstängningar och saktar ner rutter genom delvisa avstängningar.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.road-closures">
+    <value>Öppna Kartläggning, sedan Vägavstängningar, och välj Ny avstängning. Rita den avstängda vägen som en linje eller området som en form, välj fullständig eller delvis avstängning, vilken trafik den gäller och tiderna (använd Upprepa för en väg som bara är avstängd nattetid) och spara. Ange på varje enhetstyp hur dess enheter färdas (fordon, cykel, till fots eller luft) så att larmplaner och listan över närmaste enheter mäter dem som de rör sig.</value>
+  </data>
   <data xml:space="preserve" name="Field.DispatchRecommendationConfig.PersonnelTurnoutSeconds">
     <value>Inställningar för utlarmningsrekommendationer / Utryckningstid personal i sekunder</value>
   </data>
@@ -7817,5 +7826,11 @@
   </data>
   <data name="ModuleHelp.ChatDisabled" xml:space="preserve">
     <value>Visar eller döljer chatten i webbappens navigering, instrumentpanelens widgetar och sökning. Att dölja modulen raderar inga data och ändrar inga behörigheter. Chatten i mobilapparna påverkas inte.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.MappingProviderOverrides">
+    <value>Egna kartleverantörer</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.MappingProviderOverrides">
+    <value>Avdelningens egna konton för vägvisning, trafik i realtid och adressökning, som provas före Resgrids leverantörer. Endast vilka leverantörer som är inställda rapporteras, aldrig nycklarna. Om alla tre återställs till Resgrids standard tas inställningen bort.</value>
   </data>
 </root>

@@ -2508,4 +2508,118 @@
   <data name="MapStyleNotAvailable" xml:space="preserve">
     <value>(غير متاح على هذا الخادم)</value>
   </data>
+  <data name="ProvidersHeader" xml:space="preserve">
+    <value>مزودو الخرائط الخاصون بك</value>
+  </data>
+  <data name="ProvidersHelp" xml:space="preserve">
+    <value>استخدم حسابات قسمك الخاصة بدلًا من حسابات Resgrid. يُجرَّب مزودك أولًا؛ وعندما يفشل أو لا يستطيع الإجابة عن طلب، يجيب مزودو Resgrid، لتستمر الخرائط وأوقات القيادة في العمل. تُخزَّن المفاتيح مشفّرة ولا تُعرض مرة أخرى أبدًا.</value>
+  </data>
+  <data name="ProvidersSystemDefault" xml:space="preserve">
+    <value>الافتراضي من Resgrid</value>
+  </data>
+  <data name="ProvidersYourAccount" xml:space="preserve">
+    <value>حسابك</value>
+  </data>
+  <data name="ProvidersRoutingLabel" xml:space="preserve">
+    <value>مزود التوجيه</value>
+  </data>
+  <data name="ProvidersRoutingHelp" xml:space="preserve">
+    <value>يُستخدم للمسارات، وأوقات القيادة لبطاقات الإرسال وأقرب الوحدات، وخطط المسارات، والملاحة داخل التطبيق. تحتاج الملاحة داخل التطبيق إلى Mapbox أو Valhalla.</value>
+  </data>
+  <data name="ProvidersRoutingUrlLabel" xml:space="preserve">
+    <value>عنوان URL للخادم</value>
+  </data>
+  <data name="ProvidersRoutingUrlHelp" xml:space="preserve">
+    <value>عنوان https لخادم Valhalla أو OSRM الخاص بك. يجب أن يكون الوصول إليه ممكنًا عبر الإنترنت العام، مثل https://api.example.com/valhalla.</value>
+  </data>
+  <data name="ProvidersRoutingKeyLabel" xml:space="preserve">
+    <value>مفتاح API</value>
+  </data>
+  <data name="ProvidersRoutingKeyHelp" xml:space="preserve">
+    <value>Mapbox: رمز يتيح الوصول إلى Directions وMatrix وOptimization (لا بأس برمز سري sk.، فهو لا يغادر الخادم أبدًا). Google: مفتاح لواجهتي Directions وDistance Matrix البرمجيتين، أو لـ Routes API. Valhalla: فقط إذا كان خادمك يتطلب مفتاحًا.</value>
+  </data>
+  <data name="ProvidersKeySaved" xml:space="preserve">
+    <value>محفوظ. اتركه فارغًا للإبقاء عليه.</value>
+  </data>
+  <data name="ProvidersClearKey" xml:space="preserve">
+    <value>إزالة المفتاح المحفوظ</value>
+  </data>
+  <data name="ProvidersAuthSchemeLabel" xml:space="preserve">
+    <value>إرسال المفتاح عبر</value>
+  </data>
+  <data name="ProvidersAuthSchemeApiKey" xml:space="preserve">
+    <value>ترويسة X-Api-Key</value>
+  </data>
+  <data name="ProvidersAuthSchemeBearer" xml:space="preserve">
+    <value>رمز Bearer (ترويسة Authorization)</value>
+  </data>
+  <data name="ProvidersGoogleApiLabel" xml:space="preserve">
+    <value>واجهة API من Google</value>
+  </data>
+  <data name="ProvidersGoogleApiLegacy" xml:space="preserve">
+    <value>Directions وDistance Matrix</value>
+  </data>
+  <data name="ProvidersGoogleApiRoutes" xml:space="preserve">
+    <value>Routes API (مشاريع Google Cloud المُنشأة بعد مارس 2025)</value>
+  </data>
+  <data name="ProvidersTrafficLabel" xml:space="preserve">
+    <value>طبقة حركة المرور المباشرة</value>
+  </data>
+  <data name="ProvidersTrafficHelp" xml:space="preserve">
+    <value>زر حركة المرور في خرائط الموقع الإلكتروني وفي التطبيقات.</value>
+  </data>
+  <data name="ProvidersTrafficMapbox" xml:space="preserve">
+    <value>Mapbox Traffic (رمزك)</value>
+  </data>
+  <data name="ProvidersTrafficTiles" xml:space="preserve">
+    <value>عنوان URL لبلاطات حركة المرور</value>
+  </data>
+  <data name="ProvidersTrafficTokenLabel" xml:space="preserve">
+    <value>رمز Mapbox العام</value>
+  </data>
+  <data name="ProvidersTrafficTokenHelp" xml:space="preserve">
+    <value>رمز عام يبدأ بـ pk. يُرسَل إلى متصفحات أعضائك وتطبيقاتهم.</value>
+  </data>
+  <data name="ProvidersTrafficTileUrlLabel" xml:space="preserve">
+    <value>عنوان URL لبلاطات حركة المرور</value>
+  </data>
+  <data name="ProvidersTrafficTileUrlHelp" xml:space="preserve">
+    <value>عنوان URL بصيغة https لبلاطات صور يتضمن {z} و{x} و{y}، مثل بلاطات تدفق حركة المرور من TomTom. عنوان URL، وأي مفتاح فيه، مرئي لمتصفحات أعضائك.</value>
+  </data>
+  <data name="ProvidersGeocodingLabel" xml:space="preserve">
+    <value>البحث عن العناوين</value>
+  </data>
+  <data name="ProvidersGeocodingHelp" xml:space="preserve">
+    <value>يحوّل العناوين إلى مواقع على الخريطة، والمواقع إلى عناوين، لمستخدمي قسمك.</value>
+  </data>
+  <data name="ProvidersGeocodingKeyLabel" xml:space="preserve">
+    <value>مفتاح API</value>
+  </data>
+  <data name="ProvidersErrorUnknownRouting" xml:space="preserve">
+    <value>اختر مزود توجيه من القائمة.</value>
+  </data>
+  <data name="ProvidersErrorRoutingKey" xml:space="preserve">
+    <value>أدخل مفتاح API لمزود التوجيه هذا.</value>
+  </data>
+  <data name="ProvidersErrorRoutingUrl" xml:space="preserve">
+    <value>أدخل عنوان URL لخادم التوجيه الخاص بك.</value>
+  </data>
+  <data name="ProvidersErrorRoutingUrlPublic" xml:space="preserve">
+    <value>يجب أن يبدأ عنوان URL لخادم التوجيه بـ https:// وأن يشير إلى عنوان على الإنترنت العام.</value>
+  </data>
+  <data name="ProvidersErrorUnknownTraffic" xml:space="preserve">
+    <value>اختر طبقة حركة مرور من القائمة.</value>
+  </data>
+  <data name="ProvidersErrorTrafficToken" xml:space="preserve">
+    <value>أدخل رمز Mapbox عامًا (يبدأ بـ pk.).</value>
+  </data>
+  <data name="ProvidersErrorTrafficTileUrl" xml:space="preserve">
+    <value>أدخل عنوان URL بصيغة https لبلاطات حركة المرور يحتوي على {z} و{x} و{y}.</value>
+  </data>
+  <data name="ProvidersErrorUnknownGeocoding" xml:space="preserve">
+    <value>اختر مزود بحث عن العناوين من القائمة.</value>
+  </data>
+  <data name="ProvidersErrorGeocodingKey" xml:space="preserve">
+    <value>أدخل مفتاح API لمزود البحث عن العناوين هذا.</value>
+  </data>
 </root>

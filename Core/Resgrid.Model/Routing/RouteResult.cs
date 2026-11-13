@@ -47,6 +47,21 @@ namespace Resgrid.Model
 		/// <summary>Why the lookup failed, for logs; never shown to users.</summary>
 		public string Error { get; set; }
 
+		/// <summary>
+		/// The provider is working but cannot route this request: a point outside its coverage or far from any road, or more
+		/// stops or closures than it accepts. The next provider answers it, and the provider is not benched for other requests.
+		/// </summary>
+		public bool RequestRejected { get; set; }
+
+		/// <summary>The provider answered without calling its service (outside its coverage, a request it cannot take): nothing was billed or counted against a quota.</summary>
+		public bool NotSent { get; set; }
+
+		/// <summary>Seconds road closures added to <see cref="DurationSeconds"/> (slowdowns, and detours the provider could not take).</summary>
+		public int ClosureDelaySeconds { get; set; }
+
+		/// <summary>The road closures near the route and what each did to it.</summary>
+		public List<RouteClosureEffect> Closures { get; set; } = new List<RouteClosureEffect>();
+
 		public DateTime ComputedOn { get; set; } = DateTime.UtcNow;
 	}
 
@@ -88,6 +103,12 @@ namespace Resgrid.Model
 		public double?[][] Distances { get; set; }
 
 		public string Error { get; set; }
+
+		/// <summary>See <see cref="RouteResult.RequestRejected"/>.</summary>
+		public bool RequestRejected { get; set; }
+
+		/// <summary>See <see cref="RouteResult.NotSent"/>.</summary>
+		public bool NotSent { get; set; }
 	}
 
 	public class RouteOptimizationResult
@@ -104,5 +125,11 @@ namespace Resgrid.Model
 		public double DurationSeconds { get; set; }
 
 		public string Error { get; set; }
+
+		/// <summary>See <see cref="RouteResult.RequestRejected"/>.</summary>
+		public bool RequestRejected { get; set; }
+
+		/// <summary>See <see cref="RouteResult.NotSent"/>.</summary>
+		public bool NotSent { get; set; }
 	}
 }

@@ -138,12 +138,41 @@ var resgrid;
                 }
                 return html || '&mdash;';
             }
+            // How a unit that doesn't drive gets there (M0314): its travel mode, with an icon.
+            function travelModeHtml(unit) {
+                var mode = prop(unit, 'travelMode');
+                var icon = null, label = null;
+                if (isEnum(mode, 1, 'Cycling')) { icon = 'fa-bicycle'; label = text('travelCycling'); }
+                else if (isEnum(mode, 2, 'Walking')) { icon = 'fa-male'; label = text('travelWalking'); }
+                else if (isEnum(mode, 3, 'Air')) { icon = 'fa-plane'; label = text('travelAir'); }
+                return icon ? '<small class="text-muted"><i class="fa ' + icon + '" aria-hidden="true"></i> ' + escapeHtml(label) + '</small>' : '';
+            }
+            // Road closures the routed time went around or through, and what they added.
+            function closuresHtml(unit) {
+                var names = prop(unit, 'roadClosures') || [];
+                var delay = prop(unit, 'roadClosureDelaySeconds') || 0;
+                if (!names.length && delay <= 0) {
+                    return '';
+                }
+                var label = delay > 0
+                    ? text('closureDelay').replace('{0}', Math.max(1, Math.round(delay / 60)))
+                    : text('closures').replace('{0}', names.length);
+                return '<small class="text-warning" title="' + escapeAttr(names.join(', ')) + '"><i class="fa fa-road" aria-hidden="true"></i> ' + escapeHtml(label) + '</small>';
+            }
             // A unit's ETA parts: with a turnout configured, the response time it is ranked on (turnout + travel).
             function unitEtaParts(unit) {
                 var turnout = prop(unit, 'turnoutSeconds') || 0;
                 var response = prop(unit, 'responseSeconds');
                 var withTurnout = turnout > 0 && response !== null && response !== undefined;
                 var parts = [formatEta(withTurnout ? response : prop(unit, 'etaSeconds'), prop(unit, 'etaSource'))];
+                var travel = travelModeHtml(unit);
+                if (travel) {
+                    parts.push(travel);
+                }
+                var closures = closuresHtml(unit);
+                if (closures) {
+                    parts.push(closures);
+                }
                 if (withTurnout) {
                     parts.push('<small class="text-muted">' + escapeHtml(text('includesTurnout').replace('{0}', turnout)) + '</small>');
                 }
@@ -508,8 +537,7 @@ var resgrid;
                 if (!map) {
                     return;
                 }
-                (resourceLayer || []).forEach(function (marker) { marker.remove(); });
-                resourceLayer = [];
+                clearMarkers();
 
                 var closest = [];
                 var unitCount = 0;
@@ -565,6 +593,11 @@ var resgrid;
                         map.setView([lat, lng]);
                     }
                 }
+            }
+            // The resource markers are map-kit marker handles, not a layer group: each is removed on its own.
+            function clearMarkers() {
+                (resourceLayer || []).forEach(function (marker) { marker.remove(); });
+                resourceLayer = [];
             }
             function locationKey(board) {
                 return coordinateKey(prop(board, 'latitude'), prop(board, 'longitude'));
@@ -725,8 +758,9 @@ var resgrid;
 
                 if (isNaN(lat) || isNaN(lng) || (lat === 0 && lng === 0)) {
                     row.hide();
-                    if (resourceLayer) {
-                        resourceLayer.clearLayers();
+                    if (resourceLayer && resourceLayer.length) {
+                        clearMarkers();
+                        updateLegend(0, 0);
                     }
                     // No call location, so no distances: the lists drop the last location's ETAs and positions.
                     if (lastBoard) {

@@ -94,6 +94,7 @@
                         @{ var iconPicker = new TypeIconPicker { HelpKey = "UnitTypeIconHelp", SampleNameInputId = "UnitType_Type", SampleName = Model.UnitType?.Type, DefaultIconSelectId = "UnitTypeIcon", BaseIconUrl = "/images/Mapping/Engine_Responding.png" }; }
                         <partial name="_TypeIconPicker" model="iconPicker" />
                         <partial name="_VehicleSizeFields" for="VehicleSize" />
+                        <partial name="_TravelModeFields" for="TravelMode" />
                         <div class="form-group">
                             <div class="col-sm-4 col-sm-offset-2">
                                 <a class="btn btn-white" asp-controller="Department" asp-action="Types" asp-route-area="User">@commonLocalizer["Cancel"]</a>

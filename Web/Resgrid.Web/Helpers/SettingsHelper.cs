@@ -13,8 +13,11 @@ namespace Resgrid.Web.Helpers
 		public string StyleUrlDay { get; set; } = string.Empty;
 		public string StyleUrlNight { get; set; } = string.Empty;
 
-		/// <summary>Live traffic vector tiles for the MapLibre maps' traffic toggle (plan §11.1); empty when the install has none.</summary>
+		/// <summary>Live traffic tiles for the MapLibre maps' traffic toggle (plan §11.1): the department's own or the install's; empty when neither.</summary>
 		public string TrafficTileUrl { get; set; } = string.Empty;
+
+		/// <summary>"vector" (Mapbox Traffic) or "raster" (a department's own traffic tile URL).</summary>
+		public string TrafficTileType { get; set; } = string.Empty;
 
 		public int TrafficRefreshSeconds { get; set; }
 	}
@@ -166,7 +169,9 @@ namespace Resgrid.Web.Helpers
 					config.Renderer = "maplibre";
 					config.StyleUrlDay = styles.GetSignedStyleUrl(departmentId, requestedKey, false);
 					config.StyleUrlNight = styles.GetSignedStyleUrl(departmentId, requestedKey, true);
-					config.TrafficTileUrl = styles.GetTrafficTileUrl() ?? string.Empty;
+					var traffic = styles.GetTrafficLayerAsync(departmentId).GetAwaiter().GetResult();
+					config.TrafficTileUrl = traffic?.Url ?? string.Empty;
+					config.TrafficTileType = traffic?.Type ?? string.Empty;
 					config.TrafficRefreshSeconds = MappingConfig.TrafficRefreshSeconds;
 				}
 			}

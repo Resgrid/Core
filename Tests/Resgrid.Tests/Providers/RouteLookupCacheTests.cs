@@ -140,11 +140,14 @@ namespace Resgrid.Tests.Providers
 
 			public Task<string> GetStringAsync(string cacheKey) => throw new NotSupportedException();
 
+			public Task<(bool Succeeded, string Value)> TryGetStringAsync(string cacheKey) => throw new NotSupportedException();
+
 			public Task<T> GetAsync<T>(string cacheKey) where T : class => throw new NotSupportedException();
 
 			public Task<string> GetOrAddStringAsync(string cacheKey, string valueIfAbsent, TimeSpan slidingExpiration) => throw new NotSupportedException();
 
 			public Task<long> IncrementAsync(string cacheKey, TimeSpan expiration) => throw new NotSupportedException();
+			public Task<long> IncrementByAsync(string cacheKey, long amount, TimeSpan expiration) => throw new NotSupportedException();
 		}
 	}
 }

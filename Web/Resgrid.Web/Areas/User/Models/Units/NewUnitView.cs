@@ -19,5 +19,7 @@ namespace Resgrid.Web.Areas.User.Models.Units
 
 		/// <summary>The unit's own vehicle size and weight; blank fields use its unit type's values.</summary>
 		public VehicleSizeInput VehicleSize { get; set; }
+
+		public TravelModeInput TravelMode { get; set; }
 	}
 }

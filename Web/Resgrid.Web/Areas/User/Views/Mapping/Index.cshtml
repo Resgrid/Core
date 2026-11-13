@@ -5,6 +5,7 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> hydrantStrings
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.MapVisualizations> visualizationStrings
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.MapIconLegend> legendStrings
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.RoadClosures> closureStrings
 @{
 	var moduleTitle = await departmentTerms.NameAsync(DepartmentTerms.Mapping, localizer["MappingHeader"]);
 	ViewBag.Title = "Resgrid | " + moduleTitle;
@@ -49,6 +50,7 @@
 			@if (ClaimsAuthorizationHelper.CanViewCalls())
 			{
 				<a title="@visualizationStrings["PageIntro"]" class="btn btn-warning" asp-controller="MapVisualizations" asp-action="Index" asp-route-area="User">@visualizationStrings["PageTitle"]</a>
+				<a title="@closureStrings["PageIntro"]" class="btn btn-danger" asp-controller="RoadClosures" asp-action="Index" asp-route-area="User"><i class="fa fa-road"></i> @closureStrings["PageTitle"]</a>
 			}
 			@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
 			{

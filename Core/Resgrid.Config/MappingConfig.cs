@@ -118,8 +118,30 @@ namespace Resgrid.Config
 		/// <summary>Base URL of a Valhalla server, e.g. http://valhalla:8002 (private network addresses are fine).</summary>
 		public static string ValhallaUrl = "";
 
-		/// <summary>Optional value sent as the X-Api-Key header to a Valhalla server behind a gateway.</summary>
+		/// <summary>Optional key for a Valhalla server behind a gateway or a hosted Valhalla service; how it is sent is ValhallaAuthScheme.</summary>
 		public static string ValhallaApiKey = "";
+
+		/// <summary>
+		/// How ValhallaApiKey is sent: "apikey" (X-Api-Key header, a gateway in front of your own server) or "bearer"
+		/// ("Authorization: Bearer key", hosted Valhalla such as SimpleRouting, ValhallaUrl https://api.simplerouting.io/valhalla).
+		/// </summary>
+		public static string ValhallaAuthScheme = ValhallaApiKeyAuthScheme;
+
+		public const string ValhallaApiKeyAuthScheme = "apikey";
+		public const string ValhallaBearerAuthScheme = "bearer";
+
+		/// <summary>
+		/// Where the Valhalla server has map data, as "west,south,east,north" boxes in degrees separated by ";". A route,
+		/// matrix or optimization with any point outside every box goes straight to RoutingFallbackProvider without calling
+		/// Valhalla. Empty: everywhere. North America and Europe (e.g. SimpleRouting): "-170,14,-50,84;-32,27,45,82".
+		/// </summary>
+		public static string ValhallaCoverage = "";
+
+		/// <summary>Most stops in one Valhalla route; match the server's service_limits.auto.max_locations (stock Valhalla 20, the setup kit raises it to 50).</summary>
+		public static int ValhallaMaxWaypoints = 20;
+
+		/// <summary>Most road-closure points in one Valhalla route; match the server's service_limits.max_exclude_locations (stock Valhalla 50, the setup kit raises it to 200).</summary>
+		public static int ValhallaMaxExcludePoints = 50;
 
 		/// <summary>Server-side Mapbox token for Directions, Matrix and Optimization; may be a secret (sk.) token and is never sent to clients.</summary>
 		public static string MapboxRoutingAccessToken = "";

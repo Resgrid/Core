@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Map Icon Legend and status / priority map icon pages -->
+    <data name="PageTitle" xml:space="preserve">
+    <value>Перекриття доріг</value>
+  </data>
+  <data name="PageIntro" xml:space="preserve">
+    <value>Перекриті дороги й ділянки та дороги з уповільненим рухом. Під час визначення найближчих підрозділів диспетчеризація оминає повні перекриття та уповільнює маршрути через часткові.</value>
+  </data>
+  <data name="NewClosure" xml:space="preserve">
+    <value>Нове перекриття</value>
+  </data>
+  <data name="EditClosure" xml:space="preserve">
+    <value>Редагувати перекриття дороги</value>
+  </data>
+  <data name="MappingHeader" xml:space="preserve">
+    <value>Картографування</value>
+  </data>
+  <data name="ShowCurrent" xml:space="preserve">
+    <value>Поточні й заплановані</value>
+  </data>
+  <data name="ShowAll" xml:space="preserve">
+    <value>Усі перекриття</value>
+  </data>
+  <data name="NoClosures" xml:space="preserve">
+    <value>Перекриттів доріг поки немає.</value>
+  </data>
+  <data name="NoClosuresInFilter" xml:space="preserve">
+    <value>Немає поточних або запланованих перекриттів доріг.</value>
+  </data>
+  <data name="ColumnName" xml:space="preserve">
+    <value>Перекриття</value>
+  </data>
+  <data name="ColumnSeverity" xml:space="preserve">
+    <value>Перекриття</value>
+  </data>
+  <data name="ColumnAppliesTo" xml:space="preserve">
+    <value>Закрито для</value>
+  </data>
+  <data name="ColumnWhen" xml:space="preserve">
+    <value>Коли</value>
+  </data>
+  <data name="ColumnStatus" xml:space="preserve">
+    <value>Стан</value>
+  </data>
+  <data name="ColumnClosedBy" xml:space="preserve">
+    <value>Ким перекрито</value>
+  </data>
+  <data name="StateActive" xml:space="preserve">
+    <value>Діє</value>
+  </data>
+  <data name="StateScheduled" xml:space="preserve">
+    <value>Заплановано</value>
+  </data>
+  <data name="StateEnded" xml:space="preserve">
+    <value>Завершено</value>
+  </data>
+  <data name="StateDisabled" xml:space="preserve">
+    <value>Вимкнено</value>
+  </data>
+  <data name="WhenAlways" xml:space="preserve">
+    <value>До вимкнення</value>
+  </data>
+  <data name="WhenUntil" xml:space="preserve">
+    <value>До {0}</value>
+  </data>
+  <data name="WhenUntilFurtherNotice" xml:space="preserve">
+    <value>До окремого розпорядження</value>
+  </data>
+  <data name="WhenNext" xml:space="preserve">
+    <value>Наступне: {0} – {1}</value>
+  </data>
+  <data name="WhenNextOpen" xml:space="preserve">
+    <value>З {0}</value>
+  </data>
+  <data name="WhenLast" xml:space="preserve">
+    <value>Останнє: {0} – {1}</value>
+  </data>
+  <data name="WindowCount" xml:space="preserve">
+    <value>Періодів перекриття: {0}</value>
+  </data>
+  <data name="SeverityFull" xml:space="preserve">
+    <value>Повне перекриття</value>
+  </data>
+  <data name="SeverityPartial" xml:space="preserve">
+    <value>Часткове перекриття (уповільнення)</value>
+  </data>
+  <data name="TypeOther" xml:space="preserve">
+    <value>Інше</value>
+  </data>
+  <data name="TypeEvent" xml:space="preserve">
+    <value>Захід</value>
+  </data>
+  <data name="TypeRoadWorks" xml:space="preserve">
+    <value>Дорожні роботи</value>
+  </data>
+  <data name="TypeIncident" xml:space="preserve">
+    <value>Подія</value>
+  </data>
+  <data name="TypePolice" xml:space="preserve">
+    <value>Поліція</value>
+  </data>
+  <data name="TypeWeather" xml:space="preserve">
+    <value>Погода</value>
+  </data>
+  <data name="TypeHazard" xml:space="preserve">
+    <value>Небезпека на дорозі</value>
+  </data>
+  <data name="TypeInfrastructure" xml:space="preserve">
+    <value>Міст, тунель або переїзд</value>
+  </data>
+  <data name="ModeDriving" xml:space="preserve">
+    <value>Транспорт</value>
+  </data>
+  <data name="ModeCycling" xml:space="preserve">
+    <value>Велосипеди</value>
+  </data>
+  <data name="ModeWalking" xml:space="preserve">
+    <value>Пішоходи</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Редагувати</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Видалити</value>
+  </data>
+  <data name="DeleteConfirm" xml:space="preserve">
+    <value>Видалити це перекриття дороги? Цю дію не можна скасувати.</value>
+  </data>
+  <data name="TurnOff" xml:space="preserve">
+    <value>Вимкнути</value>
+  </data>
+  <data name="TurnOn" xml:space="preserve">
+    <value>Увімкнути</value>
+  </data>
+  <data name="ShowOnMap" xml:space="preserve">
+    <value>Показати на карті</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Зберегти</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Скасувати</value>
+  </data>
+  <data name="SectionShape" xml:space="preserve">
+    <value>Де</value>
+  </data>
+  <data name="ShapeHelp" xml:space="preserve">
+    <value>Накресліть перекриті дороги лініями вздовж дороги або перекриту ділянку фігурою. Лінія охоплює дорогу, вздовж якої проходить; перетинати її на перехресті й надалі дозволено. Ділянка перекриває всі дороги всередині неї.</value>
+  </data>
+  <data name="ShapeClear" xml:space="preserve">
+    <value>Очистити креслення</value>
+  </data>
+  <data name="ShapeGeoJson" xml:space="preserve">
+    <value>GeoJSON (розширено)</value>
+  </data>
+  <data name="ShapeGeoJsonHelp" xml:space="preserve">
+    <value>Креслення у форматі GeoJSON. Вставте сюди фігуру, щоб завантажити її на карту.</value>
+  </data>
+  <data name="ShapeGeoJsonInvalid" xml:space="preserve">
+    <value>Це не ділянка чи лінія GeoJSON.</value>
+  </data>
+  <data name="SectionDetails" xml:space="preserve">
+    <value>Подробиці</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Назва</value>
+  </data>
+  <data name="NameHelp" xml:space="preserve">
+    <value>Як його впізнаватимуть диспетчери, наприклад «Міський марафон - вул. Головна».</value>
+  </data>
+  <data name="ClosureType" xml:space="preserve">
+    <value>Тип перекриття</value>
+  </data>
+  <data name="Severity" xml:space="preserve">
+    <value>Перекриття</value>
+  </data>
+  <data name="SeverityHelp" xml:space="preserve">
+    <value>Повне перекриття не пропускає транзитний рух: маршрути його оминають. Часткове перекриття залишається відкритим, але рух повільний (перекрита смуга, регулювання руху, натовп): маршрути можуть проходити через нього зі зниженою швидкістю.</value>
+  </data>
+  <data name="SpeedPercent" xml:space="preserve">
+    <value>Швидкість усередині (% від звичайної)</value>
+  </data>
+  <data name="SpeedPercentHelp" xml:space="preserve">
+    <value>Для часткового перекриття — з якою швидкістю рух усе ще проходить через нього. Для повного перекриття — швидкість підрозділу, коли виклик або його початкова точка всередині перекриття і йому потрібно туди заїхати.</value>
+  </data>
+  <data name="DetourMinutes" xml:space="preserve">
+    <value>Час об’їзду (хвилини)</value>
+  </data>
+  <data name="DetourMinutesHelp" xml:space="preserve">
+    <value>Додається до маршруту, який усе ж перетинає повне перекриття, бо постачальник маршрутів не може оминати накреслені ділянки. Маршрут у будь-якому разі позначається як такий, що перетинає перекриття.</value>
+  </data>
+  <data name="AppliesTo" xml:space="preserve">
+    <value>Закрито для</value>
+  </data>
+  <data name="AppliesToHelp" xml:space="preserve">
+    <value>Кого стосується перекриття. Траса марафону може бути закрита для транспорту, тоді як піші групи й надалі її перетинають.</value>
+  </data>
+  <data name="Enabled" xml:space="preserve">
+    <value>Увімкнено</value>
+  </data>
+  <data name="EnabledHelp" xml:space="preserve">
+    <value>Вимкнені перекриття зберігаються, але ніколи не використовуються для прокладання маршрутів.</value>
+  </data>
+  <data name="SectionWho" xml:space="preserve">
+    <value>Хто і чому</value>
+  </data>
+  <data name="Reason" xml:space="preserve">
+    <value>Причина</value>
+  </data>
+  <data name="ClosedBy" xml:space="preserve">
+    <value>Ким перекрито</value>
+  </data>
+  <data name="ClosedByHelp" xml:space="preserve">
+    <value>Хто перекрив дорогу: поліція, міська влада, організатор заходу.</value>
+  </data>
+  <data name="Authority" xml:space="preserve">
+    <value>Орган влади</value>
+  </data>
+  <data name="AuthorityHelp" xml:space="preserve">
+    <value>Орган, відповідальний за перекриття або який видав дозвіл.</value>
+  </data>
+  <data name="ContactName" xml:space="preserve">
+    <value>Контактна особа</value>
+  </data>
+  <data name="ContactDetails" xml:space="preserve">
+    <value>Контактні дані</value>
+  </data>
+  <data name="ContactDetailsHelp" xml:space="preserve">
+    <value>Телефон, радіоканал або електронна пошта.</value>
+  </data>
+  <data name="Notes" xml:space="preserve">
+    <value>Примітки</value>
+  </data>
+  <data name="SectionTimes" xml:space="preserve">
+    <value>Коли</value>
+  </data>
+  <data name="TimesHelp" xml:space="preserve">
+    <value>Перекриття діє протягом кожного з цих періодів (за часом організації). Без періодів воно діє до вимкнення. Дорога, перекрита лише вночі протягом тижня, — це сім періодів; додайте їх за допомогою «Повторити».</value>
+  </data>
+  <data name="TimesStart" xml:space="preserve">
+    <value>З</value>
+  </data>
+  <data name="TimesEnd" xml:space="preserve">
+    <value>До</value>
+  </data>
+  <data name="TimesEndHelp" xml:space="preserve">
+    <value>Порожньо: до окремого розпорядження.</value>
+  </data>
+  <data name="TimesAdd" xml:space="preserve">
+    <value>Додати період</value>
+  </data>
+  <data name="TimesRemove" xml:space="preserve">
+    <value>Вилучити</value>
+  </data>
+  <data name="TimesClearAll" xml:space="preserve">
+    <value>Вилучити всі періоди</value>
+  </data>
+  <data name="TimesNone" xml:space="preserve">
+    <value>Немає періодів: діє до вимкнення.</value>
+  </data>
+  <data name="RepeatTitle" xml:space="preserve">
+    <value>Повторити</value>
+  </data>
+  <data name="RepeatHelp" xml:space="preserve">
+    <value>Додає період у кожен вибраний день між двома датами. Час завершення, раніший за час початку, переходить через північ (з 22:00 до 06:00).</value>
+  </data>
+  <data name="RepeatFirstDate" xml:space="preserve">
+    <value>Перший день</value>
+  </data>
+  <data name="RepeatLastDate" xml:space="preserve">
+    <value>Останній день</value>
+  </data>
+  <data name="RepeatDailyStart" xml:space="preserve">
+    <value>Щодня з</value>
+  </data>
+  <data name="RepeatDailyEnd" xml:space="preserve">
+    <value>Щодня до</value>
+  </data>
+  <data name="RepeatDays" xml:space="preserve">
+    <value>Дні</value>
+  </data>
+  <data name="RepeatAdd" xml:space="preserve">
+    <value>Додати періоди</value>
+  </data>
+  <data name="RepeatInvalid" xml:space="preserve">
+    <value>Виберіть перший і останній день та обидва часи.</value>
+  </data>
+  <data name="RepeatTooMany" xml:space="preserve">
+    <value>Буде додано понад {0} періодів.</value>
+  </data>
+  <data name="RepeatNoDays" xml:space="preserve">
+    <value>Виберіть принаймні один день.</value>
+  </data>
+  <data name="DayMon" xml:space="preserve">
+    <value>Пн</value>
+  </data>
+  <data name="DayTue" xml:space="preserve">
+    <value>Вт</value>
+  </data>
+  <data name="DayWed" xml:space="preserve">
+    <value>Ср</value>
+  </data>
+  <data name="DayThu" xml:space="preserve">
+    <value>Чт</value>
+  </data>
+  <data name="DayFri" xml:space="preserve">
+    <value>Пт</value>
+  </data>
+  <data name="DaySat" xml:space="preserve">
+    <value>Сб</value>
+  </data>
+  <data name="DaySun" xml:space="preserve">
+    <value>Нд</value>
+  </data>
+  <data name="LastChanged" xml:space="preserve">
+    <value>Востаннє змінено {0}</value>
+  </data>
+  <data name="ErrorNameRequired" xml:space="preserve">
+    <value>Дайте перекриттю дороги назву.</value>
+  </data>
+  <data name="ErrorNameTooLong" xml:space="preserve">
+    <value>Назва може містити щонайбільше {0} символів.</value>
+  </data>
+  <data name="ErrorShapeRequired" xml:space="preserve">
+    <value>Накресліть перекриту дорогу або ділянку на карті.</value>
+  </data>
+  <data name="ErrorShapeInvalid" xml:space="preserve">
+    <value>Креслення не є коректною ділянкою або лінією дороги.</value>
+  </data>
+  <data name="ErrorShapeTooLarge" xml:space="preserve">
+    <value>Креслення має понад {0} точок. Спростіть його.</value>
+  </data>
+  <data name="ErrorTravelModeRequired" xml:space="preserve">
+    <value>Виберіть хоча б один вид руху, який зупиняє перекриття.</value>
+  </data>
+  <data name="ErrorTooManyWindows" xml:space="preserve">
+    <value>Перекриття може мати щонайбільше {0} періодів.</value>
+  </data>
+  <data name="ErrorWindowInvalid" xml:space="preserve">
+    <value>Кожен період перекриття потребує коректних дати й часу початку.</value>
+  </data>
+  <data name="ErrorWindowEndsBeforeStart" xml:space="preserve">
+    <value>Період перекриття закінчується раніше, ніж починається.</value>
+  </data>
+  <data name="ErrorTextTooLong" xml:space="preserve">
+    <value>Одне з полів задовге.</value>
+  </data>
+  <data name="ErrorInvalid" xml:space="preserve">
+    <value>Не вдалося зберегти перекриття дороги.</value>
+  </data>
+  <data name="MapLegendActiveFull" xml:space="preserve">
+    <value>Діє повне перекриття</value>
+  </data>
+  <data name="MapLegendActivePartial" xml:space="preserve">
+    <value>Діє часткове перекриття</value>
+  </data>
+  <data name="MapLegendScheduled" xml:space="preserve">
+    <value>Заплановано</value>
+  </data>
+  <data name="MapLegendInactive" xml:space="preserve">
+    <value>Завершено або вимкнено</value>
+  </data>
+</root>

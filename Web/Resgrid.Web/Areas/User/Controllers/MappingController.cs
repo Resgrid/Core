@@ -353,6 +353,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (newLayer.DepartmentId != DepartmentId)
 					return Unauthorized();
 
+				// The GET sends an imported layer to its Details page; a stale or crafted editor post must not replace its shapes
+				// (their own names, descriptions and colors) with the drawing editor's either.
+				if (newLayer.IsImported)
+					return RedirectToAction("Details", "EventLayers", new { area = "User", layerId = model.Id });
+
 				newLayer.Name = model.Name;
 				newLayer.Color = model.Color;
 				newLayer.IsOnByDefault = model.IsOnByDefault;

@@ -122,6 +122,24 @@ namespace Resgrid.Tests.Providers
 			aid.Properties["color"].Should().Be("#00a000");
 			aid.Properties["category"].Should().Be("Aid stations");
 			((Polygon)back.Features.First(f => (string)f.Properties["name"] == "Start village").Geometry).Coordinates.Should().HaveCount(2);
+			data.StoredBytes().Should().BeLessThan(MapLayerFileLimits.MaxStoredBytes);
+		}
+
+		[Test]
+		public void One_description_repeated_over_many_shapes_is_measured_as_stored()
+		{
+			// A small file within the shape and point limits: one multipoint of 10,000 aid posts sharing a long description
+			// becomes 10,000 shapes that each carry it, more than one stored layer document can hold.
+			var points = string.Join(",", Enumerable.Range(0, 10000).Select(i => $"[{(4 + i * 0.00001).ToString("0.00000", System.Globalization.CultureInfo.InvariantCulture)},50]"));
+			var geoJson = $@"{{""type"":""Feature"",""properties"":{{""name"":""Aid posts"",""description"":""{new string('x', 2000)}""}},""geometry"":{{""type"":""MultiPoint"",""coordinates"":[{points}]}}}}";
+
+			var result = MapLayerFileReader.Read(Encoding.UTF8.GetBytes(geoJson), "posts.geojson");
+			result.Success.Should().BeTrue();
+			result.Points.Should().Be(10000);
+
+			var data = new MapLayerData();
+			data.Hydrate(result.Features);
+			data.StoredBytes().Should().BeGreaterThan(MapLayerFileLimits.MaxStoredBytes);
 		}
 
 		[Test]
@@ -204,6 +222,8 @@ namespace Resgrid.Tests.Providers
 		[TestCase("{ broken json", "x.geojson", MapLayerFileReadErrors.Unreadable)]
 		[TestCase("plain text", "x.txt", MapLayerFileReadErrors.UnsupportedType)]
 		[TestCase("<kml><Document></Document></kml>", "x.kml", MapLayerFileReadErrors.NoShapes)]
+		[TestCase(@"{""type"":{}}", "x.geojson", MapLayerFileReadErrors.NoShapes)]
+		[TestCase(@"{""type"":""Feature"",""geometry"":{""type"":[""Point""],""coordinates"":[4,50]}}", "x.geojson", MapLayerFileReadErrors.NoShapes)]
 		public void Unusable_files_report_why(string content, string name, MapLayerFileReadErrors error)
 		{
 			MapLayerFileReader.Read(Encoding.UTF8.GetBytes(content), name).Error.Should().Be(error);

@@ -176,6 +176,9 @@
   <data name="FileTooLarge" xml:space="preserve">
     <value>The file is larger than {0} MB.</value>
   </data>
+  <data name="FileTooMuchData" xml:space="preserve">
+    <value>The file holds more than one layer can store ({0} MB of shapes and descriptions). Split it into smaller files or shorten the descriptions.</value>
+  </data>
   <data name="FileTooManyShapes" xml:space="preserve">
     <value>The file has more than {0} shapes. Split it into several layers.</value>
   </data>

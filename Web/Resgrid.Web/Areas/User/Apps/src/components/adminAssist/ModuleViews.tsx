@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Chip, ProgressBar, StatusBar, countFindings, countsLabel, format, type Area, type Finding, type Translate } from './SetupVisuals';
+import { Chip, ProgressBar, StatusBar, countFindings, countsLabel, format, isSuggestion, type Area, type Finding, type Translate } from './SetupVisuals';
 
 /** A product module (catalog "area"): the unit Setup Wizard, Setup Report and Explore teach. */
 export type Module = Area & { tier: string; addon: string | null; global: boolean; valueKey: string; exampleKey: string; adoptionKey: string; minimumMinutes: number; maximumMinutes: number; docsPath?: string | null };
@@ -199,7 +199,10 @@ export function ModuleReadiness({ modules, features, setup, findings, choices, r
     {counts.total > 0
       ? <div className="rgaa-readiness__line"><StatusBar thin counts={counts} label={countsLabel(counts, ui)} />
         <span>{countsLabel(counts, ui)}{onShowModule && <> <button type="button" className="btn btn-link btn-xs" onClick={() => onShowModule(module.id)}>{ui('ViewChecks')}</button></>}</span></div>
-      : using && <div className="rgaa-readiness__line rgaa-muted">{moduleFindings.length > 0 ? ui('ChecksNotApplicable') : ui('NoAutomatedChecks')}</div>}
+      : using && <div className="rgaa-readiness__line rgaa-muted">{moduleFindings.some(isSuggestion)
+        // Suggestions are not counted as checks, but a module with only suggestions still has something to look at.
+        ? <span>{ui('GroupSuggestions')}{onShowModule && <> <button type="button" className="btn btn-link btn-xs" onClick={() => onShowModule(module.id)}>{ui('ViewChecks')}</button></>}</span>
+        : moduleFindings.length > 0 ? ui('ChecksNotApplicable') : ui('NoAutomatedChecks')}</div>}
   </li>;
   const others = rows.filter(r => !r.using);
   return <>

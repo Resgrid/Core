@@ -40,6 +40,7 @@ namespace Resgrid.Tests.Web.Services
 		private Mock<ICallsService> _callsService;
 		private Mock<IQueueService> _queue;
 		private Mock<IDepartmentSettingsService> _settings;
+		private Mock<IContactsService> _contacts;
 		private List<Call> _saved;
 		private int _broadcasts;
 		private Call _stored;
@@ -79,6 +80,7 @@ namespace Resgrid.Tests.Web.Services
 				});
 
 			_settings = new Mock<IDepartmentSettingsService>();
+			_contacts = new Mock<IContactsService>();
 			_activity = new Activity(nameof(CallsControllerDispatchListTests)).Start();
 		}
 
@@ -143,7 +145,7 @@ namespace Resgrid.Tests.Web.Services
 				Mock.Of<IEventAggregator>(), Mock.Of<ICustomStateService>(), _settings.Object, Mock.Of<IShiftsService>(), Mock.Of<IMappingService>(),
 				Mock.Of<IUserDefinedFieldsService>(), Mock.Of<ICommunicationService>(), Mock.Of<IWeatherAlertService>(), Mock.Of<ICallDispatchStatusService>(),
 				Mock.Of<IDispatchRecommendationService>(), Mock.Of<IFeatureToggleService>(), Mock.Of<IDepartmentDataProtectionService>(),
-				Mock.Of<IProtectedReadService>(), protectedWrite.Object, Mock.Of<IContactsService>(), Mock.Of<IDispatchScopeService>(),
+				Mock.Of<IProtectedReadService>(), protectedWrite.Object, _contacts.Object, Mock.Of<IDispatchScopeService>(),
 				Mock.Of<ICallLocationHistoryService>(), Mock.Of<IPendingCallsService>(), Mock.Of<ICallClosureService>(),
 				new InboundEmailReceiptsService(new MockInboundEmailReceiptsRepository(), TimeProvider.System))
 			{
@@ -371,6 +373,65 @@ namespace Resgrid.Tests.Web.Services
 				CancellationToken.None);
 
 			DispatchCount(_stored).Should().Be(2);
+		}
+
+		[Test]
+		public async Task EditCall_keeps_the_contacts_of_a_hidden_picker_as_they_are_even_one_deleted_since()
+		{
+			// Additional contacts are hidden, so the client sends none: the stored ones stay, unchecked. Checking them like a new
+			// pick refused every edit once one of them had been deleted.
+			HideDispatchLists(NewCallFieldKeys.AdditionalContacts);
+			_contacts.Setup(x => x.GetContactByIdAsync("c-new")).ReturnsAsync(new Contact { ContactId = "c-new", DepartmentId = DepartmentId });
+			_contacts.Setup(x => x.GetContactByIdAsync("c-gone")).ReturnsAsync(new Contact { ContactId = "c-gone", DepartmentId = DepartmentId, IsDeleted = true });
+			_stored = new Call
+			{
+				CallId = CallId,
+				DepartmentId = DepartmentId,
+				State = (int)CallStates.Active,
+				Name = "Fuel spill",
+				NatureOfCall = "Logged for the record",
+				HasBeenDispatched = true,
+				Dispatches = new List<CallDispatch>(),
+				GroupDispatches = new List<CallDispatchGroup>(),
+				RoleDispatches = new List<CallDispatchRole>(),
+				UnitDispatches = new List<CallDispatchUnit>(),
+				Contacts = new List<CallContact>
+				{
+					new CallContact { CallId = CallId, DepartmentId = DepartmentId, ContactId = "c-old", CallContactType = 0 },
+					new CallContact { CallId = CallId, DepartmentId = DepartmentId, ContactId = "c-gone", CallContactType = 1 }
+				}
+			};
+
+			var result = await Controller().EditCall(new EditCallInput { Id = CallId.ToString(), Priority = 1, Name = "Fuel spill", Nature = "Logged for the record", DispatchList = "", ContactId = "c-new" },
+				CancellationToken.None);
+
+			result.Result.Should().BeOfType<OkObjectResult>();
+			_stored.Contacts.Select(x => (x.ContactId, x.CallContactType)).Should().Equal(("c-new", 0), ("c-gone", 1));
+		}
+
+		[Test]
+		public async Task EditCall_still_refuses_a_deleted_contact_it_was_sent()
+		{
+			_contacts.Setup(x => x.GetContactByIdAsync("c-gone")).ReturnsAsync(new Contact { ContactId = "c-gone", DepartmentId = DepartmentId, IsDeleted = true });
+			_stored = new Call
+			{
+				CallId = CallId,
+				DepartmentId = DepartmentId,
+				State = (int)CallStates.Active,
+				Name = "Fuel spill",
+				NatureOfCall = "Logged for the record",
+				HasBeenDispatched = true,
+				Dispatches = new List<CallDispatch>(),
+				GroupDispatches = new List<CallDispatchGroup>(),
+				RoleDispatches = new List<CallDispatchRole>(),
+				UnitDispatches = new List<CallDispatchUnit>(),
+				Contacts = new List<CallContact>()
+			};
+
+			var result = await Controller().EditCall(new EditCallInput { Id = CallId.ToString(), Priority = 1, Name = "Fuel spill", Nature = "Logged for the record", DispatchList = "",
+				AdditionalContactIds = new List<string> { "c-gone" } }, CancellationToken.None);
+
+			result.Result.Should().BeOfType<BadRequestObjectResult>();
 		}
 
 		[Test]

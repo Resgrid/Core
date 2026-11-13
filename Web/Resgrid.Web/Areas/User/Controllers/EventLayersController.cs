@@ -73,7 +73,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!ModelState.IsValid)
 				return View(model);
 
-			var read = ReadFile(layerFile);
+			var read = ReadFile(layerFile, out var data);
 			if (read == null)
 				return View(model);
 
@@ -86,7 +86,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			};
 
 			ApplyDetails(layer, model, department);
-			ApplyFile(layer, read, layerFile.FileName);
+			ApplyFile(layer, data, layerFile.FileName);
 
 			var saved = await _mappingService.SaveMapLayerAsync(layer);
 			if (saved == null)
@@ -134,15 +134,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			// A blank file input keeps the layer's shapes; a file replaces all of them.
 			MapLayerFileReadResult read = null;
+			MapLayerData data = null;
 			if (ModelState.IsValid && layerFile != null && layerFile.Length > 0)
-				read = ReadFile(layerFile);
+				read = ReadFile(layerFile, out data);
 
 			if (!ModelState.IsValid)
 				return View(Redisplay(model, layer, department));
 
 			ApplyDetails(layer, model, department);
 			if (read != null)
-				ApplyFile(layer, read, layerFile.FileName);
+				ApplyFile(layer, data, layerFile.FileName);
 
 			layer.UpdatedById = UserId;
 			layer.UpdatedOn = DateTime.UtcNow;
@@ -183,8 +184,30 @@ namespace Resgrid.Web.Areas.User.Controllers
 				ModelState.AddModelError(nameof(EventLayerView.Color), _localizer["ColorInvalid"]);
 		}
 
-		/// <summary>The file's shapes, or null with a model error saying why it cannot be used.</summary>
-		private MapLayerFileReadResult ReadFile(IFormFile file)
+		/// <summary>
+		/// The file's shapes and the layer data they make, or null with a model error saying why it cannot be used. The data is
+		/// measured as stored: one layer is one document, whatever the shape and point counts.
+		/// </summary>
+		private MapLayerFileReadResult ReadFile(IFormFile file, out MapLayerData data)
+		{
+			data = null;
+			var read = ReadShapes(file);
+			if (read == null)
+				return null;
+
+			var hydrated = new MapLayerData();
+			hydrated.Hydrate(read.Features);
+			if (hydrated.StoredBytes() > MapLayerFileLimits.MaxStoredBytes)
+			{
+				ModelState.AddModelError("layerFile", string.Format(_localizer["FileTooMuchData"].Value, MapLayerFileLimits.MaxStoredBytes / (1024 * 1024)));
+				return null;
+			}
+
+			data = hydrated;
+			return read;
+		}
+
+		private MapLayerFileReadResult ReadShapes(IFormFile file)
 		{
 			var extension = (Path.GetExtension(file.FileName ?? string.Empty) ?? string.Empty).ToLowerInvariant();
 			if (!AllowedExtensions.Contains(extension))
@@ -254,10 +277,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			layer.EventEndsOn = ToUtc(model.EndsOn, department);
 		}
 
-		private void ApplyFile(MapLayer layer, MapLayerFileReadResult read, string fileName)
+		private void ApplyFile(MapLayer layer, MapLayerData data, string fileName)
 		{
-			layer.Data = new MapLayerData();
-			layer.Data.Hydrate(read.Features);
+			layer.Data = data;
 
 			var name = Path.GetFileName(fileName ?? string.Empty);
 			layer.SourceFileName = string.IsNullOrWhiteSpace(name) ? "upload" : (name.Length > 260 ? name.Substring(name.Length - 260) : name);

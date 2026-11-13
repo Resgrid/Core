@@ -77,6 +77,8 @@ namespace Resgrid.Tests.Rms
 		}
 
 		[TestCase("type", "mystery", "type")]
+		[TestCase("type", "-2", "type")]
+		[TestCase("type", "0.5", "type")]
 		[TestCase("main_size", "bad", "main_size")]
 		[TestCase("flow_gpm", "12.5", "flow_gpm")]
 		[TestCase("flow_gpm", "-1", "flow_gpm")]
@@ -142,6 +144,7 @@ namespace Resgrid.Tests.Rms
 		[TestCase("Out of Service", false)]
 		[TestCase("OOS", false)]
 		[TestCase("Temporarily Out of Service", false)]
+		[TestCase("Out of service - no water", false)]
 		[TestCase("Not In Service", false)]
 		[TestCase("Inactive", false)]
 		[TestCase("Broken", false)]
@@ -163,6 +166,9 @@ namespace Resgrid.Tests.Rms
 		[TestCase("Passed")]
 		[TestCase("Due")]
 		[TestCase("In Service - needs paint")]
+		[TestCase("Not out of service")]
+		[TestCase("No longer out of service")]
+		[TestCase("Isn't out of order")]
 		public void Unrecognized_status_leaves_service_state_alone_and_is_reported(string value)
 		{
 			var batch = HydrantImportParser.Parse($"number,latitude,longitude,Hydrant Status\nH,45,-122,{value}", "csv");
@@ -331,6 +337,18 @@ namespace Resgrid.Tests.Rms
 			batch.Rows.Should().HaveCount(5);
 			batch.Rows.Where(r => r.Row.HydrantNumber != "H4").Should().OnlyContain(r => r.Hydrant.Type == (int)RmsHydrantType.Other, "a combined value is not read as a flags combination");
 			batch.Result.UnmappedValues.Select(u => (u.Column, u.Value, u.Rows)).Should().Equal(("Hydrant Type", "Pillar", 2), ("Hydrant Type", "DryBarrel,WetBarrel", 1), ("Hydrant Type", "Flush", 1));
+		}
+
+		[TestCase("-2")]
+		[TestCase("0.5")]
+		[TestCase("99")]
+		public void Signed_fractional_or_unknown_foreign_type_numbers_import_as_other_and_are_reported(string value)
+		{
+			var batch = HydrantImportParser.Parse($"number,latitude,longitude,hydrant_type\nH,45,-122,{value}", "csv");
+
+			batch.Result.ValidationFailed.Should().BeFalse();
+			batch.Rows.Single().Hydrant.Type.Should().Be((int)RmsHydrantType.Other, "a number is not stripped of its sign or decimal point into another type");
+			batch.Result.UnmappedValues.Should().ContainSingle().Which.Value.Should().Be(value);
 		}
 
 		[TestCase("1250", 1250)]

@@ -866,6 +866,12 @@
             placeholder (no grant) comes back as null, with calls.subjectidentifiers in RedactedFields.
             </summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.KeepStoredContactLinks(Resgrid.Model.Call,System.Collections.Generic.List{Resgrid.Model.CallContact},System.Boolean,System.Boolean)">
+            <summary>
+            The call's contact links after an edit: the stored ones of a kind whose hidden picker sent nothing, as they were, plus
+            the checked new ones. The primary contact comes first, and a contact is linked once (as primary when it is both).
+            </summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.BuildCallContactLinksAsync(System.Int32,System.String,System.Collections.Generic.List{System.String})">
             <summary>Validates the requested contact links belong to the department; null when any does not, empty when none were requested.</summary>
         </member>
@@ -20650,11 +20656,12 @@
             Parsing for the pipe delimited DispatchList string clients send when creating or editing a call.
             </summary>
             <remarks>
-            "0" means everyone ("All Call"), and it is the only way to ask for everyone. A blank list, or an explicit list with
-            no entries ("|"), dispatches nobody on a new call and keeps the recipients on an edit. (Until 2026-11-13 a blank
-            list paged everyone on an immediate call, because older clients sent nothing when nothing was picked.) Anything
-            else is the explicit list. A new immediate call made with a system API key never pages everyone on its own: "0"
-            dispatches nobody there unless the call is pending (CallsController.SaveCall).
+            "0" means everyone ("All Call"), and it is the only way to ask for everyone. On a new call a blank list, or an
+            explicit list with no entries ("|"), names nobody (a run card set to auto-dispatch still adds its resources). On an
+            edit a blank list keeps the recipients, while "|" removes them, except those of a recipient list the department
+            hides. (Until 2026-11-13 a blank list paged everyone on an immediate call, because older clients sent nothing when
+            nothing was picked.) Anything else is the explicit list. A new immediate call made with a system API key never
+            pages everyone on its own: "0" dispatches nobody there unless the call is pending (CallsController.SaveCall).
             </remarks>
         </member>
         <member name="M:Resgrid.Web.Helpers.DispatchListHelper.IsEveryone(System.String)">

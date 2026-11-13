@@ -231,6 +231,62 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task a_second_hospital_change_walks_back_to_the_status_that_names_the_call()
+		{
+			// A unit that took the call itself (no dispatch): its first transport status points at a POI, not at the call.
+			var departing = State(Departing, OtherPoi);
+			departing.UnitStateId = 299;
+			var onScene = OnSceneAtCall();
+			onScene.UnitStateId = 298;
+			_units.Setup(x => x.GetLastUnitStateBeforeIdAsync(UnitId, 299)).ReturnsAsync(onScene);
+			_mapping.Setup(x => x.GetDestinationPOIByIdAsync(DeptId, 902)).ReturnsAsync(new Poi { PoiId = 902, Name = "UZ Brussel" });
+
+			await _service.OnUnitStateSavedAsync(DeptId, State(Departing, 902, note: "Burn centre"), departing);
+
+			_attribution.Verify(x => x.GetWorkingCallIdForUnitAsync(DeptId, UnitId, It.Is<UnitState>(s => s.UnitStateId == 298)), Times.Once);
+			_savedNote.Note.Should().Contain("to UZ Brussel");
+		}
+
+		[Test]
+		public async Task the_walk_back_stops_at_a_status_that_is_not_a_transport_to_a_poi()
+		{
+			var departing = State(Departing, OtherPoi);
+			departing.UnitStateId = 299;
+			var earlier = State(NoMeaning, AssignedPoi);
+			earlier.UnitStateId = 298;
+			_units.Setup(x => x.GetLastUnitStateBeforeIdAsync(UnitId, 299)).ReturnsAsync(earlier);
+
+			await _service.OnUnitStateSavedAsync(DeptId, State(AtHospital, 902), departing);
+
+			_attribution.Verify(x => x.GetWorkingCallIdForUnitAsync(DeptId, UnitId, It.Is<UnitState>(s => s.UnitStateId == 298)), Times.Once);
+			_units.Verify(x => x.GetLastUnitStateBeforeIdAsync(UnitId, 298), Times.Never);
+		}
+
+		[Test]
+		public async Task an_offline_status_replayed_after_a_newer_one_is_not_noted()
+		{
+			var replayed = State(Departing, OtherPoi);
+			replayed.Timestamp = DateTime.UtcNow.AddMinutes(-20);
+			var newer = OnSceneAtCall();
+			newer.Timestamp = DateTime.UtcNow.AddMinutes(-2);
+
+			(await _service.OnUnitStateSavedAsync(DeptId, replayed, newer)).Should().BeNull();
+
+			_attribution.Verify(x => x.GetWorkingCallIdForUnitAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<UnitState>()), Times.Never);
+		}
+
+		[Test]
+		public async Task an_offline_status_replayed_in_order_is_still_noted()
+		{
+			var replayed = State(Departing, OtherPoi);
+			replayed.Timestamp = DateTime.UtcNow.AddMinutes(-20);
+			var before = OnSceneAtCall();
+			before.Timestamp = DateTime.UtcNow.AddMinutes(-30);
+
+			(await _service.OnUnitStateSavedAsync(DeptId, replayed, before)).Should().NotBeNull();
+		}
+
+		[Test]
 		public async Task a_unit_with_no_working_call_is_not_checked()
 		{
 			_attribution.Setup(x => x.GetWorkingCallIdForUnitAsync(DeptId, UnitId, It.IsAny<UnitState>())).ReturnsAsync((int?)null);

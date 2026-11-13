@@ -105,6 +105,8 @@ export default function AdminAssistElement({ page, setup, loadingLabel, errorLab
   const [followup, setFollowup] = useState<Followup | null>(null);
   const request = useRef<AbortController | null>(null);
   const protectionRevision = useRef(0);
+  // Bumped when protected values are revealed or hidden again, so the open History or Worklist tab loads again.
+  const [protectionRefreshes, setProtectionRefreshes] = useState(0);
   const t = (key: string) => catalog?.strings[key] ?? key;
   const ui = (key: string) => t(`Ui.${key}`);
 
@@ -132,6 +134,7 @@ export default function AdminAssistElement({ page, setup, loadingLabel, errorLab
     const refreshProtection = () => {
       protectionRevision.current++;
       setOverview(null); setWorklist([]); setHistory([]); setFollowup(null);
+      setProtectionRefreshes(count => count + 1);
       void reload();
     };
     window.addEventListener('resgrid:adp-reveal-changed', refreshProtection);
@@ -149,13 +152,14 @@ export default function AdminAssistElement({ page, setup, loadingLabel, errorLab
     const target = exploreOpen ? `rgaa-module-${exploreOpen}` : lastExplored.current ? `rgaa-tile-${lastExplored.current}` : '';
     if (target) document.getElementById(target)?.focus();
   }, [exploreOpen]);
-  // The worklist and change history load when their tab opens, however it was opened (a tab click, a link or the page's first tab).
+  // The worklist and change history load when their tab opens, however it was opened (a tab click, a link or the page's first tab),
+  // and again after a protection change emptied them while their tab stayed open.
   const catalogReady = catalog !== null;
   useEffect(() => {
     if (!catalog || !tabsFor(catalog, setup).ai.includes(tab)) return;
     if (tab === 'history') void loadHistory(true);
     if (tab === 'worklist') void loadWorklist();
-  }, [tab, catalogReady]);
+  }, [tab, catalogReady, protectionRefreshes]);
 
   async function save(operation: string, targetId: string | null = null, choice: string | null = null, reasonCode: string | null = null, revisitOnUtc: string | null = null) {
     if (!overview || !catalog || busy) return;

@@ -373,7 +373,7 @@ namespace Resgrid.Providers.GeoLocationProvider
 			if (!(node is JObject obj))
 				return true;
 
-			var type = obj.Value<string>("type") ?? string.Empty;
+			var type = GeoJsonType(obj);
 
 			if (type.Equals("FeatureCollection", StringComparison.OrdinalIgnoreCase))
 				return ReadGeoJsonNode(obj["features"], null, builder);
@@ -413,9 +413,15 @@ namespace Resgrid.Providers.GeoLocationProvider
 			return true;
 		}
 
+		/// <summary>An object's "type" when it is a string; empty otherwise (Value&lt;string&gt; throws on an object or array).</summary>
+		private static string GeoJsonType(JObject obj)
+		{
+			return obj["type"] is JValue value && value.Type == JTokenType.String ? (string)value ?? string.Empty : string.Empty;
+		}
+
 		private static void CollectGeoJsonGeometry(JObject geometry, List<IGeometryObject> shapes, ref int invalid)
 		{
-			var type = geometry.Value<string>("type") ?? string.Empty;
+			var type = GeoJsonType(geometry);
 			var coordinates = geometry["coordinates"];
 
 			switch (type.ToLowerInvariant())

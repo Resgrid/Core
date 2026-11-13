@@ -204,6 +204,18 @@ namespace Resgrid.Services.Records
 
 		private static bool TryParseType(string text, out RmsHydrantType type)
 		{
+			// A number is read as a number before separators are stripped from names: "-2" or "0.5" would otherwise become the
+			// defined values 2 and 5.
+			if (decimal.TryParse(text.Trim(), NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out var number))
+			{
+				type = default;
+				if (number != decimal.Truncate(number) || number < 0 || number > int.MaxValue)
+					return false;
+
+				type = (RmsHydrantType)(int)number;
+				return Enum.IsDefined(type);
+			}
+
 			var value = new string(text.Trim().ToLowerInvariant().Where(c => c != ' ' && c != '-' && c != '_' && c != '.').ToArray());
 			// "Dry Barrel Hydrant", "Wet Hydrant": a trailing "hydrant" adds nothing once the explicit names ("dry hydrant") have been tried.
 			foreach (var name in new[] { value, value.EndsWith("hydrant", StringComparison.Ordinal) ? value.Substring(0, value.Length - 7) : null })
@@ -325,18 +337,38 @@ namespace Resgrid.Services.Records
 			["false"] = false, ["no"] = false, ["n"] = false, ["f"] = false, ["0"] = false
 		};
 
+		/// <summary>Words that, ahead of "out of service", say the opposite ("Not out of service", "No longer out of order").</summary>
+		private static readonly HashSet<string> Negations = new HashSet<string>(StringComparer.Ordinal) { "not", "no", "never", "isnt", "arent", "wasnt" };
+
 		/// <summary>
 		/// A service state from another system's status column: blank gives none (the hydrant keeps its state; a new one is in service).
-		/// "Temporarily out of service" and the like count as out of service. Anything else (passed, due...) gives none and is reported.
+		/// "Temporarily out of service" and the like count as out of service, but not a negated one ("No longer out of service").
+		/// Anything else (passed, due...) gives none and is reported.
 		/// </summary>
 		private static bool? ReadForeignStatus(string text, string column, Batch batch)
 		{
 			if (string.IsNullOrWhiteSpace(text) || NoValue.Contains(text.Trim())) return null;
 			var word = new string(text.Trim().ToLowerInvariant().Where(char.IsLetterOrDigit).ToArray());
 			if (StatusWords.TryGetValue(word, out var inService)) return inService;
-			if (word.Contains("outofservice") || word.Contains("outoforder")) return false;
+			if ((word.Contains("outofservice") || word.Contains("outoforder")) && !NegatesOutOfService(text)) return false;
 			batch.AddUnmapped(column, text.Trim());
 			return null;
+		}
+
+		/// <summary>True when a negation word comes before the "out of service" / "out of order" phrase.</summary>
+		private static bool NegatesOutOfService(string text)
+		{
+			// Apostrophes go (isn't = isnt); every other non-letter separates words.
+			var words = new string(text.ToLowerInvariant().Where(c => c != '\'' && c != '’').Select(c => char.IsLetterOrDigit(c) ? c : ' ').ToArray())
+				.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+			for (var i = 0; i < words.Length; i++)
+			{
+				var rest = string.Concat(words.Skip(i));
+				if (rest.StartsWith("outofservice", StringComparison.Ordinal) || rest.StartsWith("outoforder", StringComparison.Ordinal))
+					return words.Take(i).Any(Negations.Contains);
+			}
+
+			return false;
 		}
 
 		private static void Add(Input input, HydrantImportRow row, Batch batch, HashSet<string> numbers, RmsHydrantFlowClass flowClass = RmsHydrantFlowClass.Unknown,

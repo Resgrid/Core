@@ -176,6 +176,9 @@
   <data name="FileTooLarge" xml:space="preserve">
     <value>Filen är större än {0} MB.</value>
   </data>
+  <data name="FileTooMuchData" xml:space="preserve">
+    <value>Filen innehåller mer än ett lager kan lagra ({0} MB former och beskrivningar). Dela upp den i mindre filer eller korta ner beskrivningarna.</value>
+  </data>
   <data name="FileTooManyShapes" xml:space="preserve">
     <value>Filen har fler än {0} former. Dela upp den i flera lager.</value>
   </data>

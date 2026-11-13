@@ -26,6 +26,12 @@ namespace Resgrid.Model
 		public const long MaxFileBytes = 30L * 1024 * 1024;
 		public const int MaxFeatures = 20000;
 		public const int MaxPositions = 250000;
+
+		/// <summary>
+		/// Most bytes a layer's shapes may take as one stored document. MongoDB refuses a document over 16 MB, and descriptions
+		/// repeated over thousands of shapes can stay inside the shape and point limits and still not fit.
+		/// </summary>
+		public const long MaxStoredBytes = 15L * 1024 * 1024;
 	}
 
 	/// <summary>

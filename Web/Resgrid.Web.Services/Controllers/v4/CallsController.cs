@@ -1243,11 +1243,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 			call.RoleDispatches = new List<CallDispatchRole>();
 			call.UnitDispatches = new List<CallDispatchUnit>();
 
-			// Everyone ("All Call") is only ever explicit: "0". A blank list, or one with no entries ("|"), dispatches
-			// nobody -- an informational call, or for a pending call no proposed recipients yet. Older clients that send a
+			// Everyone ("All Call") is only ever explicit: "0". A blank list, or one with no entries ("|"), names nobody
+			// -- an informational call, or for a pending call no proposed recipients yet. Older clients that send a
 			// blank list when nothing was picked used to page the whole department; they no longer do (2026-11-13). The
 			// system key never pages everyone on its own, but a pending call pages nobody until a dispatcher sends it, so
-			// "0" is honored there.
+			// "0" is honored there. A run card set to auto-dispatch still adds its resources below, whatever the list
+			// names, as it does for a web New Call and an inbound e-mail or text call.
 			if (DispatchListHelper.IsEveryone(newCallInput.DispatchList) && (!IsSystemApiKeyRequest || isPending))
 			{
 				foreach (var u in users)
@@ -2030,18 +2031,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (editCallInput.ContactId != null || editCallInput.AdditionalContactIds != null)
 			{
 				// A contact picker the department hides is not on the client's edit form: when it sends nothing for it, the
-				// call keeps the contact(s) it has of that kind instead of losing them to the other picker's replacement.
-				var primaryContactId = editCallInput.ContactId;
-				if (primaryContactId == null && !fieldPolicy.IsVisible(NewCallFieldKeys.PrimaryContact))
-					primaryContactId = call.Contacts?.FirstOrDefault(x => x.CallContactType == 0)?.ContactId;
+				// call keeps the contact(s) it has of that kind instead of losing them to the other picker's replacement. Those
+				// stay as they are, unchecked: a contact deleted since is still part of the call's history, and checking it like
+				// a new pick would refuse every edit of the call.
+				var keepsPrimary = editCallInput.ContactId == null && !fieldPolicy.IsVisible(NewCallFieldKeys.PrimaryContact);
+				var keepsAdditional = editCallInput.AdditionalContactIds == null && !fieldPolicy.IsVisible(NewCallFieldKeys.AdditionalContacts);
 
-				var additionalContactIds = editCallInput.AdditionalContactIds;
-				if (additionalContactIds == null && !fieldPolicy.IsVisible(NewCallFieldKeys.AdditionalContacts))
-					additionalContactIds = call.Contacts?.Where(x => x.CallContactType == 1).Select(x => x.ContactId).ToList();
-
-				var contactLinks = await BuildCallContactLinksAsync(DepartmentId, primaryContactId, additionalContactIds);
+				var contactLinks = await BuildCallContactLinksAsync(DepartmentId, keepsPrimary ? null : editCallInput.ContactId,
+					keepsAdditional ? null : editCallInput.AdditionalContactIds);
 				if (contactLinks == null)
 					return BadRequest("One or more contacts do not belong to this department.");
+
+				contactLinks = KeepStoredContactLinks(call, contactLinks, keepsPrimary, keepsAdditional);
 
 				await _callsService.DeleteCallContactsAsync(call.CallId, cancellationToken);
 				call.Contacts = contactLinks;
@@ -3245,6 +3246,24 @@ namespace Resgrid.Web.Services.Controllers.v4
 			callResult.TypeMapIcon = TypeIcons.BuiltInIconName(callType);
 
 			return callResult;
+		}
+
+		/// <summary>
+		/// The call's contact links after an edit: the stored ones of a kind whose hidden picker sent nothing, as they were, plus
+		/// the checked new ones. The primary contact comes first, and a contact is linked once (as primary when it is both).
+		/// </summary>
+		private static List<CallContact> KeepStoredContactLinks(Call call, List<CallContact> newLinks, bool keepsPrimary, bool keepsAdditional)
+		{
+			List<CallContact> Stored(int callContactType) => (call.Contacts ?? Enumerable.Empty<CallContact>())
+				.Where(x => x != null && x.CallContactType == callContactType && !string.IsNullOrWhiteSpace(x.ContactId))
+				.Select(x => new CallContact { DepartmentId = x.DepartmentId, ContactId = x.ContactId, CallContactType = x.CallContactType })
+				.ToList();
+
+			var primary = keepsPrimary ? Stored(0).Take(1).ToList() : newLinks.Where(x => x.CallContactType == 0).ToList();
+			var additional = keepsAdditional ? Stored(1) : newLinks.Where(x => x.CallContactType == 1).ToList();
+
+			var seen = new HashSet<string>(StringComparer.Ordinal);
+			return primary.Concat(additional).Where(x => seen.Add(x.ContactId)).ToList();
 		}
 
 		/// <summary>Validates the requested contact links belong to the department; null when any does not, empty when none were requested.</summary>

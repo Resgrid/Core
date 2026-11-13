@@ -176,6 +176,9 @@
   <data name="FileTooLarge" xml:space="preserve">
     <value>Το αρχείο υπερβαίνει τα {0} MB.</value>
   </data>
+  <data name="FileTooMuchData" xml:space="preserve">
+    <value>Το αρχείο περιέχει περισσότερα από όσα μπορεί να αποθηκεύσει ένα επίπεδο ({0} MB σχημάτων και περιγραφών). Χωρίστε το σε μικρότερα αρχεία ή συντομεύστε τις περιγραφές.</value>
+  </data>
   <data name="FileTooManyShapes" xml:space="preserve">
     <value>Το αρχείο έχει περισσότερα από {0} σχήματα. Χωρίστε το σε περισσότερα επίπεδα.</value>
   </data>

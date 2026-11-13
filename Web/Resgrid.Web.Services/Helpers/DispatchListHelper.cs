@@ -10,11 +10,12 @@ namespace Resgrid.Web.Helpers
 	/// Parsing for the pipe delimited DispatchList string clients send when creating or editing a call.
 	/// </summary>
 	/// <remarks>
-	/// "0" means everyone ("All Call"), and it is the only way to ask for everyone. A blank list, or an explicit list with
-	/// no entries ("|"), dispatches nobody on a new call and keeps the recipients on an edit. (Until 2026-11-13 a blank
-	/// list paged everyone on an immediate call, because older clients sent nothing when nothing was picked.) Anything
-	/// else is the explicit list. A new immediate call made with a system API key never pages everyone on its own: "0"
-	/// dispatches nobody there unless the call is pending (CallsController.SaveCall).
+	/// "0" means everyone ("All Call"), and it is the only way to ask for everyone. On a new call a blank list, or an
+	/// explicit list with no entries ("|"), names nobody (a run card set to auto-dispatch still adds its resources). On an
+	/// edit a blank list keeps the recipients, while "|" removes them, except those of a recipient list the department
+	/// hides. (Until 2026-11-13 a blank list paged everyone on an immediate call, because older clients sent nothing when
+	/// nothing was picked.) Anything else is the explicit list. A new immediate call made with a system API key never
+	/// pages everyone on its own: "0" dispatches nobody there unless the call is pending (CallsController.SaveCall).
 	/// </remarks>
 	public static class DispatchListHelper
 	{

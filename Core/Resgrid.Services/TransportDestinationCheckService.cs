@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Framework;
@@ -40,6 +41,9 @@ namespace Resgrid.Services
 			if (TransportDestinationRules.RepeatsPreviousDestination(state, previousState))
 				return null;
 
+			if (IsOutOfOrderReplay(state, previousState))
+				return null;
+
 			try
 			{
 				if (!await _departmentSettingsService.GetTransportDestinationChecksAsync(departmentId))
@@ -53,7 +57,8 @@ namespace Resgrid.Services
 					return null;
 
 				// The call the unit was working before it headed off: its previous status's call, else its one open dispatch.
-				var callId = await _callStatusAttributionService.GetWorkingCallIdForUnitAsync(departmentId, state.UnitId, previousState ?? state);
+				var basis = await WorkingCallBasisAsync(previousState, statuses);
+				var callId = await _callStatusAttributionService.GetWorkingCallIdForUnitAsync(departmentId, state.UnitId, basis ?? state);
 				if (!callId.HasValue)
 					return null;
 
@@ -85,6 +90,47 @@ namespace Resgrid.Services
 				Logging.LogException(ex, $"Recording the transport destination change of unit {state.UnitId} (status {state.UnitStateId}) failed; the status is saved.");
 				return null;
 			}
+		}
+
+		/// <summary>Most earlier transport statuses walked back over to find the call a unit is transporting for.</summary>
+		private const int MaxTransportStatusesWalkedBack = 5;
+
+		/// <summary>
+		/// A status older than the live window that arrives after a newer one (an offline outbox replayed late). The unit's
+		/// working call now need not be the one it was working then, so its note could land on the wrong call: it is not noted.
+		/// An offline status replayed in order still resolves from the status before it.
+		/// </summary>
+		private static bool IsOutOfOrderReplay(UnitState state, UnitState previousState)
+		{
+			return previousState != null && previousState.UnitStateId > 0 && previousState.Timestamp > state.Timestamp &&
+				!CallStatusAttribution.IsLiveStatus(state.Timestamp, DateTime.UtcNow);
+		}
+
+		/// <summary>
+		/// The status to resolve the working call from. A transport status points at its POI, not at the call, so after a first
+		/// transport status (a second hospital, or arriving somewhere else) the unit's earlier transport statuses are walked back
+		/// over to the status that does tell: a unit that took the call itself has no dispatch to fall back on.
+		/// </summary>
+		private async Task<UnitState> WorkingCallBasisAsync(UnitState previousState, Dictionary<int, CustomStateDetail> statuses)
+		{
+			var basis = previousState;
+
+			for (var i = 0; i < MaxTransportStatusesWalkedBack && IsTransportToPoi(basis, statuses); i++)
+			{
+				var earlier = await _unitsService.GetLastUnitStateBeforeIdAsync(basis.UnitId, basis.UnitStateId);
+				if (earlier == null || earlier.UnitStateId <= 0)
+					break;
+
+				basis = earlier;
+			}
+
+			return basis;
+		}
+
+		private static bool IsTransportToPoi(UnitState state, Dictionary<int, CustomStateDetail> statuses)
+		{
+			return state != null && state.UnitStateId > 0 && state.DestinationType == (int)DestinationEntityTypes.Poi && state.DestinationId > 0 &&
+				statuses.TryGetValue(state.State, out var status) && status != null && TransportDestinationRules.IsTransportBaseType(status.BaseType);
 		}
 
 		/// <summary>

@@ -659,11 +659,16 @@ class Builder:
         for index, capability in enumerate(capabilities):
             self.add('PoiCapabilities', {'PoiCapabilityId': self.guid('poicapability', capability), 'DepartmentId': self.department, 'Name': capability, 'Sort': index + 1},
                      label=f'POI capability {capability}')
+        # A POI is keyed by its name (capability/availability rows and the manifest's "pois" ids), so a name may appear once.
+        poi_names: set[str] = set()
         for poi_type in self.s.get('poiTypes', []):
             self.add('PoiTypes', {'DepartmentId': self.department, 'Name': poi_type['name'], 'Color': poi_type.get('color'), 'IsDestination': bool(poi_type.get('destination'))},
                      key=('poitype', poi_type['name']), returns='PoiTypeId', label=f'POI type {poi_type["name"]}')
             for poi in poi_type.get('pois', []):
                 name = poi.get('name')
+                if name in poi_names:
+                    raise SeedError(f'{self.sid}: POI "{name}" appears more than once (POI names must be unique within a department)')
+                poi_names.add(name)
                 self.add('Pois', {'PoiTypeId': self.key('poitype', poi_type['name']), 'Latitude': poi['location'][0], 'Longitude': poi['location'][1], 'Name': name,
                                   'Address': poi.get('address'), 'Note': poi.get('note')}, key=('poi', name), returns='PoiId', label=f'POI {name}')
                 for capability in poi.get('capabilities', []):

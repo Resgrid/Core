@@ -39,6 +39,13 @@ namespace Resgrid.Repositories.DataRepository
 			UnitOfWork.CreateOrGetConnection();
 			try
 			{
+				// Two saves of one POI's capabilities at once could both delete before either inserts and leave the union of the
+				// two sets. Locking the POI row first makes the second wait for the first to commit, then replace its set.
+				await ScalarAsync<int>(IsPostgres
+						? $"SELECT {Col("PoiId")} FROM {Tbl("Pois")} WHERE {Col("PoiId")} = {P}PoiId FOR UPDATE"
+						: $"SELECT {Col("PoiId")} FROM {Tbl("Pois")} WITH (UPDLOCK, HOLDLOCK) WHERE {Col("PoiId")} = {P}PoiId",
+					new { PoiId = poiId }, cancellationToken);
+
 				await ExecuteAsync(
 					$"DELETE FROM {Tbl("PoiCapabilityAssignments")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("PoiId")} = {P}PoiId",
 					new { DepartmentId = departmentId, PoiId = poiId }, cancellationToken);
@@ -114,17 +121,31 @@ namespace Resgrid.Repositories.DataRepository
 				$"SELECT * FROM {Tbl("PoiAvailabilities")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("UnavailableCapabilityIds")} IS NOT NULL",
 				new { DepartmentId = departmentId }, cancellationToken);
 
-			foreach (var report in reports)
+			foreach (var read in reports)
 			{
-				var ids = report.GetUnavailableCapabilityIds();
-				var kept = ids.Where(x => !string.Equals(x, poiCapabilityId, StringComparison.OrdinalIgnoreCase)).ToList();
-				if (kept.Count == ids.Count)
-					continue;
+				// The write only lands on the list it was computed from: a report someone changed since the read (a dispatcher
+				// marking another capability down, or another removal) is read again rather than overwritten with the old list.
+				var report = read;
+				for (var attempt = 0; attempt < MaxRemoveAttempts && report?.UnavailableCapabilityIds != null; attempt++)
+				{
+					var ids = report.GetUnavailableCapabilityIds();
+					var kept = ids.Where(x => !string.Equals(x, poiCapabilityId, StringComparison.OrdinalIgnoreCase)).ToList();
+					if (kept.Count == ids.Count)
+						break;
 
-				await ExecuteAsync(
-					$"UPDATE {Tbl("PoiAvailabilities")} SET {Col("UnavailableCapabilityIds")} = {P}Ids WHERE {Col("PoiAvailabilityId")} = {CaseInsensitive("Id")}",
-					new { Id = report.PoiAvailabilityId, Ids = kept.Count == 0 ? null : string.Join(",", kept) }, cancellationToken);
+					var changed = await ExecuteAsync(
+						$"UPDATE {Tbl("PoiAvailabilities")} SET {Col("UnavailableCapabilityIds")} = {P}Ids " +
+						$"WHERE {Col("PoiAvailabilityId")} = {CaseInsensitive("Id")} AND {Col("UnavailableCapabilityIds")} = {P}Previous",
+						new { Id = report.PoiAvailabilityId, Ids = kept.Count == 0 ? null : string.Join(",", kept), Previous = report.UnavailableCapabilityIds }, cancellationToken);
+					if (changed > 0)
+						break;
+
+					report = await GetByPoiIdAsync(departmentId, report.PoiId);
+				}
 			}
 		}
+
+		/// <summary>Reads of one report <see cref="RemoveCapabilityAsync"/> makes while others keep changing it.</summary>
+		private const int MaxRemoveAttempts = 3;
 	}
 }

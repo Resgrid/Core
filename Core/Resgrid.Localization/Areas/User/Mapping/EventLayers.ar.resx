@@ -176,6 +176,9 @@
   <data name="FileTooLarge" xml:space="preserve">
     <value>حجم الملف أكبر من {0} ميغابايت.</value>
   </data>
+  <data name="FileTooMuchData" xml:space="preserve">
+    <value>يحتوي الملف على أكثر مما يمكن لطبقة واحدة تخزينه ({0} ميغابايت من الأشكال والأوصاف). قسّمه إلى ملفات أصغر أو اختصر الأوصاف.</value>
+  </data>
   <data name="FileTooManyShapes" xml:space="preserve">
     <value>يحتوي الملف على أكثر من {0} شكل. قسّمه على عدة طبقات.</value>
   </data>

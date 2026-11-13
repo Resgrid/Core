@@ -87,6 +87,12 @@ namespace Resgrid.Model
 			}
 		}
 
+		/// <summary>This data's size as a stored document, to hold against <see cref="MapLayerFileLimits.MaxStoredBytes"/>.</summary>
+		public long StoredBytes()
+		{
+			return this.ToBson().LongLength;
+		}
+
 		public FeatureCollection Convert()
 		{
 			var fc = new FeatureCollection();

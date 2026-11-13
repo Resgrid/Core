@@ -290,14 +290,13 @@ export function GlMapView({
           return;
         }
 
-        const hit = map.queryRenderedFeatures(event.point, { layers: ids })[0];
-        if (!hit) {
-          return;
-        }
-
-        const html = getFeaturePopupHtml(layerNamesRef.current.get(hit.layer.id) ?? '', hit.properties);
-        if (html) {
-          new mapboxgl.Popup({ offset: 8 }).setLngLat(event.lngLat).setHTML(html).addTo(map);
+        // Hits come top-most first: a shape with nothing to show (a drawn area over an aid post) must not hide the one below.
+        for (const hit of map.queryRenderedFeatures(event.point, { layers: ids })) {
+          const html = getFeaturePopupHtml((hit.layer ? layerNamesRef.current.get(hit.layer.id) : undefined) ?? '', hit.properties);
+          if (html) {
+            new mapboxgl.Popup({ offset: 8 }).setLngLat(event.lngLat).setHTML(html).addTo(map);
+            return;
+          }
         }
       };
 

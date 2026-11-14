@@ -38,6 +38,21 @@ namespace Resgrid.Model
 		/// </summary>
 		public int? PoiImportRow { get; set; }
 
+		/// <summary>
+		/// The <see cref="PoiCapability"/> ids this POI offers, in the department's capability order. Filled by
+		/// <c>IMappingService.PopulatePoiDetailsAsync</c>; not a column (see <see cref="PoiCapabilityAssignment"/>).
+		/// </summary>
+		[NotMapped]
+		public List<string> CapabilityIds { get; set; }
+
+		/// <summary>The names of <see cref="CapabilityIds"/>, same order. Filled with them.</summary>
+		[NotMapped]
+		public List<string> Capabilities { get; set; }
+
+		/// <summary>The POI's current availability report, or null when it is open. Filled with <see cref="CapabilityIds"/>.</summary>
+		[NotMapped]
+		public PoiAvailability Availability { get; set; }
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue
@@ -57,6 +72,6 @@ namespace Resgrid.Model
 		public int IdType => 0;
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Type" };
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Type", "CapabilityIds", "Capabilities", "Availability" };
 	}
 }

@@ -2160,6 +2160,14 @@
   <data name="DeploymentNewExternalOrder" xml:space="preserve"><value>Νέα εξωτερική εντολή</value></data>
   <data name="HydrantImportBack" xml:space="preserve"><value>Επιστροφή στους κρουνούς</value></data>
   <data name="HydrantImportNotSaved" xml:space="preserve"><value>Δεν αποθηκεύτηκε κανένας κρουνός. Διορθώστε τις παρακάτω γραμμές και εισαγάγετε ξανά το αρχείο.</value></data>
+  <data name="HydrantImportIgnoredColumns" xml:space="preserve"><value>Στήλες που δεν εισήχθησαν επειδή το Resgrid δεν έχει αντίστοιχο πεδίο κρουνού: {0}. Για να εισαγάγετε μία από αυτές, μετονομάστε την κεφαλίδα της σε όνομα στήλης από το παράδειγμα και εισαγάγετε ξανά το αρχείο.</value></data>
+  <data name="HydrantImportServiceChanges" xml:space="preserve"><value>Από τη στήλη κατάστασης του αρχείου: {0} κρουνοί τέθηκαν εκτός λειτουργίας, {1} επανήλθαν σε λειτουργία.</value></data>
+  <data name="HydrantImportUnmappedValues" xml:space="preserve"><value>Τιμές που εισήχθησαν με προεπιλογή</value></data>
+  <data name="HydrantImportUnmappedValuesHelp" xml:space="preserve"><value>Αυτές οι τιμές από στήλες άλλου συστήματος δεν αναγνωρίστηκαν. Οι κρουνοί εισήχθησαν κανονικά: οι άγνωστοι τύποι ως Other, οι μη αναγνώσιμες παροχές και τα χρώματα παροχής έμειναν κενά, και με άγνωστη κατάσταση η λειτουργία τους έμεινε αμετάβλητη. Για να τις ορίσετε, αλλάξτε τις τιμές στο αρχείο και εισαγάγετέ το ξανά· οι κρουνοί με ίδιο αριθμό ενημερώνονται.</value></data>
+  <data name="HydrantImportColumn" xml:space="preserve"><value>Στήλη</value></data>
+  <data name="HydrantImportValue" xml:space="preserve"><value>Τιμή</value></data>
+  <data name="HydrantImportRowCount" xml:space="preserve"><value>Γραμμές</value></data>
+  <data name="HydrantImportOtherSystems" xml:space="preserve"><value>Αρχεία από άλλα συστήματα: τα hydrant_type, flow_rate και location_address διαβάζονται ως type, flow_gpm και address. Η παροχή είναι σε γαλόνια ανά λεπτό, εκτός αν η τιμή αναφέρει L/min. Το flow_rating_color (light blue, green, orange, red, AA–C ή χρώμα #hex) ορίζει την κλάση παροχής των κρουνών χωρίς παροχή. Το status (active, in service, out of service, broken…) θέτει κρουνούς εκτός λειτουργίας ή τους επαναφέρει σε λειτουργία· η κατάσταση γίνεται ο λόγος εκτός λειτουργίας. Οι άγνωστοι τύποι εισάγονται ως Other· οι υπόλοιπες στήλες παραλείπονται και εμφανίζονται μετά την εισαγωγή.</value></data>
   <data name="HydrantImportIssuesShown" xml:space="preserve"><value>Εμφανίζονται {0} από {1} γραμμές με προβλήματα. Το JSON χρησιμοποιεί αριθμούς στοιχείων, το CSV αριθμούς γραμμών.</value></data>
   <data name="HydrantImportRow" xml:space="preserve"><value>Στοιχείο / γραμμή</value></data>
   <data name="HydrantImportCorrection" xml:space="preserve"><value>Τρόπος διόρθωσης</value></data>

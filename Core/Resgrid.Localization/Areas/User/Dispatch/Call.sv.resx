@@ -1107,4 +1107,28 @@
   <data name="NearestUnitsCallLocation" xml:space="preserve">
     <value>Händelsens plats</value>
   </data>
+  <data name="AllCallLabel" xml:space="preserve">
+    <value>Allmänt larm</value>
+  </data>
+  <data name="AllCallButton" xml:space="preserve">
+    <value>Allmänt larm (larma alla)</value>
+  </data>
+  <data name="AllCallHelp" xml:space="preserve">
+    <value>Alla larmlistor är dolda. Slå på allmänt larm för att skicka ärendet till alla, eller låt det vara av för att spara ett informationsärende som inte larmar någon.</value>
+  </data>
+  <data name="AllCallEditHelp" xml:space="preserve">
+    <value>Slå på allmänt larm för att lägga till alla i ärendet och larma dem. Låt det vara av för att behålla ärendets nuvarande mottagare.</value>
+  </data>
+  <data name="DestinationAvailabilityLimited" xml:space="preserve">
+    <value>Begränsad</value>
+  </data>
+  <data name="DestinationAvailabilityDiversion" xml:space="preserve">
+    <value>Omdirigering</value>
+  </data>
+  <data name="DestinationAvailabilityClosed" xml:space="preserve">
+    <value>Stängd</value>
+  </data>
+  <data name="DestinationAvailabilityLink" xml:space="preserve">
+    <value>Destinationstillgänglighet</value>
+  </data>
 </root>

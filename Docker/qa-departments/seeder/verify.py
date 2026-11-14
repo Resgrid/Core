@@ -25,7 +25,7 @@ BOOTSTRAP = [
     'Calls/GetActiveCalls', 'Calls/GetPendingCalls', 'Calls/GetAllPendingScheduledCalls', 'CallPriorities/GetAllCallPriorites', 'CallTypes/GetAllCallTypes',
     'Units/GetAllUnitsInfos', 'UnitStatus/GetAllUnitStatuses', 'UnitRoles/GetAllUnitRolesAndAssignmentsForDepartment', 'Personnel/GetAllPersonnelInfos',
     'Statuses/GetAllStatusesForPersonnel', 'Statuses/GetAllStaffingsForPersonnel', 'Statuses/GetAllUnitStatuses', 'Groups/GetAllGroups',
-    'Messages/GetInboxMessages', 'Contacts/GetAllContacts', 'Mapping/GetPoiTypes', 'Mapping/GetMapDataAndMarkers', 'Protocols/GetAllProtocols',
+    'Messages/GetInboxMessages', 'Contacts/GetAllContacts', 'Mapping/GetPoiTypes', 'Mapping/GetPoiCapabilities', 'Mapping/GetMapDataAndMarkers', 'Protocols/GetAllProtocols',
     'Notes/GetAllNotes', 'Calendar/GetDepartmentCalendarItems', 'Shifts/GetShifts', 'Shifts/GetTodaysShifts',
 ]
 

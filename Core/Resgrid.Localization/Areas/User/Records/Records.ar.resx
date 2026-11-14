@@ -2160,6 +2160,14 @@
   <data name="DeploymentNewExternalOrder" xml:space="preserve"><value>أمر خارجي جديد</value></data>
   <data name="HydrantImportBack" xml:space="preserve"><value>العودة إلى صنابير الإطفاء</value></data>
   <data name="HydrantImportNotSaved" xml:space="preserve"><value>لم يتم حفظ أي صنبور. صحح الصفوف أدناه ثم استورد الملف مجددًا.</value></data>
+  <data name="HydrantImportIgnoredColumns" xml:space="preserve"><value>أعمدة لم يتم استيرادها لعدم وجود حقل صنبور مطابق في Resgrid: {0}. لاستيراد أحدها، أعد تسمية عنوانه إلى اسم عمود من المثال ثم استورد الملف مجددًا.</value></data>
+  <data name="HydrantImportServiceChanges" xml:space="preserve"><value>من عمود الحالة في الملف: {0} صنبور أُخرج من الخدمة، و{1} أُعيد إلى الخدمة.</value></data>
+  <data name="HydrantImportUnmappedValues" xml:space="preserve"><value>قيم استُوردت بقيمة افتراضية</value></data>
+  <data name="HydrantImportUnmappedValuesHelp" xml:space="preserve"><value>لم يتم التعرف على هذه القيم من أعمدة نظام آخر. تم استيراد الصنابير مع ذلك: الأنواع غير المعروفة بالنوع Other، وتُركت التدفقات وألوان التدفق غير المقروءة فارغة، وبقيت حالة الخدمة دون تغيير عند الحالات غير المعروفة. لتعيينها، غيّر القيم في الملف ثم استورده مجددًا؛ يتم تحديث الصنابير ذات الأرقام المطابقة.</value></data>
+  <data name="HydrantImportColumn" xml:space="preserve"><value>العمود</value></data>
+  <data name="HydrantImportValue" xml:space="preserve"><value>القيمة</value></data>
+  <data name="HydrantImportRowCount" xml:space="preserve"><value>الصفوف</value></data>
+  <data name="HydrantImportOtherSystems" xml:space="preserve"><value>الملفات المصدَّرة من أنظمة أخرى: تتم قراءة hydrant_type وflow_rate وlocation_address على أنها type وflow_gpm وaddress. التدفق بالغالون في الدقيقة ما لم تذكر القيمة L/min. يحدد flow_rating_color (light blue أو green أو orange أو red أو AA–C أو لون #hex) فئة التدفق للصنابير التي ليس لها تدفق. يُخرج status (active أو in service أو out of service أو broken…) الصنابير من الخدمة أو يعيدها إليها، وتصبح الحالة سبب الإخراج من الخدمة. تُستورد الأنواع غير المعروفة بالنوع Other، ويتم تخطي الأعمدة الأخرى وإدراجها بعد الاستيراد.</value></data>
   <data name="HydrantImportIssuesShown" xml:space="preserve"><value>عرض {0} من أصل {1} صفوف بها مشكلات. يستخدم JSON أرقام العناصر ويستخدم CSV أرقام الأسطر.</value></data>
   <data name="HydrantImportRow" xml:space="preserve"><value>العنصر / السطر</value></data>
   <data name="HydrantImportCorrection" xml:space="preserve"><value>كيفية التصحيح</value></data>

@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Map Icon Legend and status / priority map icon pages -->
+    <data name="ImportLayer" xml:space="preserve">
+    <value>استيراد طبقة</value>
+  </data>
+  <data name="ImportLayerHeader" xml:space="preserve">
+    <value>استيراد طبقة</value>
+  </data>
+  <data name="ImportHelp" xml:space="preserve">
+    <value>ارفع ملف KML أو KMZ أو GeoJSON (من Google My Maps أو Google Earth أو نظام معلومات جغرافية) يحتوي مسار فعالية أو موقعها أو نقاط توقفها. تصبح كل نقطة وخط ومضلع شكلاً في الطبقة باسمه ووصفه ولونه. أدخل تواريخ الفعالية لتظهر الطبقة على كل خريطة طوال مدة الفعالية.</value>
+  </data>
+  <data name="DetailsHeader" xml:space="preserve">
+    <value>تفاصيل الطبقة</value>
+  </data>
+  <data name="LayerFile" xml:space="preserve">
+    <value>الملف</value>
+  </data>
+  <data name="LayerFileHelp" xml:space="preserve">
+    <value>KML أو KMZ أو GeoJSON، حتى {0} ميغابايت.</value>
+  </data>
+  <data name="ReplaceFile" xml:space="preserve">
+    <value>استبدال الملف</value>
+  </data>
+  <data name="ReplaceFileHelp" xml:space="preserve">
+    <value>اختياري. يستبدل الملف الجديد كل أشكال الطبقة، وتبقى التفاصيل أعلاه كما هي.</value>
+  </data>
+  <data name="DeleteHelp" xml:space="preserve">
+    <value>حذف الطبقة (الخرائط ← الطبقات) يزيل كل أشكالها وتفاصيلها.</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>الاسم</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>الوصف</value>
+  </data>
+  <data name="Color" xml:space="preserve">
+    <value>اللون الافتراضي</value>
+  </data>
+  <data name="ColorHelp" xml:space="preserve">
+    <value>يُستخدم للأشكال التي لا يحدد لها الملف لوناً.</value>
+  </data>
+  <data name="EventSection" xml:space="preserve">
+    <value>الفعالية</value>
+  </data>
+  <data name="StartsOn" xml:space="preserve">
+    <value>البداية</value>
+  </data>
+  <data name="EndsOn" xml:space="preserve">
+    <value>النهاية</value>
+  </data>
+  <data name="EventDatesHelp" xml:space="preserve">
+    <value>بالمنطقة الزمنية للقسم ({0}). أثناء الفعالية تظهر الطبقة على كل خريطة مهما كان إعداد «مفعّلة افتراضياً». اترك الحقلين فارغين لطبقة غير مرتبطة بفعالية.</value>
+  </data>
+  <data name="Organizer" xml:space="preserve">
+    <value>المنظِّم</value>
+  </data>
+  <data name="ContactName" xml:space="preserve">
+    <value>المنسق / جهة الاتصال</value>
+  </data>
+  <data name="ContactPhone" xml:space="preserve">
+    <value>هاتف جهة الاتصال</value>
+  </data>
+  <data name="ContactEmail" xml:space="preserve">
+    <value>بريد جهة الاتصال</value>
+  </data>
+  <data name="OnByDefault" xml:space="preserve">
+    <value>مفعّلة افتراضياً</value>
+  </data>
+  <data name="OnByDefaultHelp" xml:space="preserve">
+    <value>إظهار الطبقة عند فتح كل خريطة، حتى خارج تواريخ الفعالية.</value>
+  </data>
+  <data name="Searchable" xml:space="preserve">
+    <value>قابلة للبحث</value>
+  </data>
+  <data name="SaveImport" xml:space="preserve">
+    <value>استيراد</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>حفظ</value>
+  </data>
+  <data name="EditShapes" xml:space="preserve">
+    <value>تحرير الأشكال</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>التفاصيل</value>
+  </data>
+  <data name="SourceFile" xml:space="preserve">
+    <value>المصدر</value>
+  </data>
+  <data name="Drawn" xml:space="preserve">
+    <value>مرسومة على الخريطة</value>
+  </data>
+  <data name="ShapeCount" xml:space="preserve">
+    <value>عدد الأشكال: {0}</value>
+  </data>
+  <data name="EventColumn" xml:space="preserve">
+    <value>الفعالية</value>
+  </data>
+  <data name="PhaseUpcoming" xml:space="preserve">
+    <value>قادمة</value>
+  </data>
+  <data name="PhaseActive" xml:space="preserve">
+    <value>جارية الآن</value>
+  </data>
+  <data name="PhaseEnded" xml:space="preserve">
+    <value>انتهت</value>
+  </data>
+  <data name="ImportedOn" xml:space="preserve">
+    <value>تاريخ الاستيراد</value>
+  </data>
+  <data name="FileRequired" xml:space="preserve">
+    <value>اختر ملف KML أو KMZ أو GeoJSON لاستيراده.</value>
+  </data>
+  <data name="FileTypeUnsupported" xml:space="preserve">
+    <value>ارفع ملفاً بامتداد ‎.kml أو ‎.kmz أو ‎.geojson أو ‎.json.</value>
+  </data>
+  <data name="FileTooLarge" xml:space="preserve">
+    <value>حجم الملف أكبر من {0} ميغابايت.</value>
+  </data>
+  <data name="FileTooMuchData" xml:space="preserve">
+    <value>يحتوي الملف على أكثر مما يمكن لطبقة واحدة تخزينه ({0} ميغابايت من الأشكال والأوصاف). قسّمه إلى ملفات أصغر أو اختصر الأوصاف.</value>
+  </data>
+  <data name="FileTooManyShapes" xml:space="preserve">
+    <value>يحتوي الملف على أكثر من {0} شكل. قسّمه على عدة طبقات.</value>
+  </data>
+  <data name="FileTooManyPoints" xml:space="preserve">
+    <value>يحتوي الملف على أكثر من {0} إحداثية. بسّط الخطوط (تستطيع ذلك معظم أدوات نظم المعلومات الجغرافية) أو قسّمه على عدة طبقات.</value>
+  </data>
+  <data name="FileNoShapes" xml:space="preserve">
+    <value>لا يحتوي الملف على نقاط أو خطوط أو مضلعات ذات إحداثيات.</value>
+  </data>
+  <data name="FileOnlyAddresses" xml:space="preserve">
+    <value>أماكن الملف ({0}) لها عنوان دون إحداثيات (طبقة Google My Maps محددة بالعنوان). استوردها بدلاً من ذلك كنقاط اهتمام (الخرائط ← نقاط الاهتمام ← استيراد) حيث يُبحث عن العناوين، أو صدّر الخريطة مع الإحداثيات.</value>
+  </data>
+  <data name="FileUnreadable" xml:space="preserve">
+    <value>تعذرت قراءة الملف. تحقق من أنه ملف KML أو KMZ أو GeoJSON صالح.</value>
+  </data>
+  <data name="EndsBeforeStarts" xml:space="preserve">
+    <value>لا يمكن أن تنتهي الفعالية قبل أن تبدأ.</value>
+  </data>
+  <data name="ContactEmailInvalid" xml:space="preserve">
+    <value>أدخل عنوان بريد إلكتروني صالحاً.</value>
+  </data>
+  <data name="ColorInvalid" xml:space="preserve">
+    <value>اختر لوناً.</value>
+  </data>
+  <data name="SaveFailed" xml:space="preserve">
+    <value>تعذر حفظ الطبقة. حاول مرة أخرى.</value>
+  </data>
+  <data name="ImportedSummary" xml:space="preserve">
+    <value>تم استيراد «{0}»: نقاط {1}، خطوط {2}، مضلعات {3}.</value>
+  </data>
+  <data name="ReplacedSummary" xml:space="preserve">
+    <value>تم استبدال أشكال «{0}»: نقاط {1}، خطوط {2}، مضلعات {3}.</value>
+  </data>
+  <data name="SavedSummary" xml:space="preserve">
+    <value>تم حفظ «{0}».</value>
+  </data>
+  <data name="SkippedNote" xml:space="preserve">
+    <value>تم استبعاد {0} علامة دون إحداثيات صالحة.</value>
+  </data>
+</root>

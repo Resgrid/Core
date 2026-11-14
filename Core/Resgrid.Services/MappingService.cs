@@ -18,11 +18,16 @@ namespace Resgrid.Services
 		private readonly IMapLayersDocRepository _mapLayersDocRepository;
 		private readonly Lazy<ISearchProjectionService> _searchProjections;
 		private readonly ITypeIconsRepository _typeIconsRepository;
+		private readonly IPoiCapabilitiesRepository _poiCapabilitiesRepository;
+		private readonly IPoiAvailabilitiesRepository _poiAvailabilitiesRepository;
 
 		public MappingService(IPoiTypesRepository poiTypesRepository, IPoisRepository poisRepository, Lazy<IMongoRepository<MapLayer>> mapLayersRepository,
 			IMapLayersDocRepository mapLayersDocRepository, Lazy<ISearchProjectionService> searchProjections = null,
-			ITypeIconsRepository typeIconsRepository = null)
+			ITypeIconsRepository typeIconsRepository = null, IPoiCapabilitiesRepository poiCapabilitiesRepository = null,
+			IPoiAvailabilitiesRepository poiAvailabilitiesRepository = null)
 		{
+			_poiCapabilitiesRepository = poiCapabilitiesRepository;
+			_poiAvailabilitiesRepository = poiAvailabilitiesRepository;
 			_searchProjections = searchProjections;
 			_typeIconsRepository = typeIconsRepository;
 			_poiTypesRepository = poiTypesRepository;
@@ -137,6 +142,9 @@ namespace Resgrid.Services
 				if (deleted && _typeIconsRepository != null)
 					await _typeIconsRepository.DeleteForTypeAsync(type.DepartmentId, TypeIconKinds.PoiType, type.PoiTypeId, null, cancellationToken);
 
+				if (deleted)
+					await DeletePoiDetailsAsync(type.DepartmentId, (type.Pois ?? Enumerable.Empty<Poi>()).Select(x => x.PoiId).ToList(), cancellationToken);
+
 				if (deleted && _searchProjections != null)
 					foreach (var poi in type.Pois ?? Enumerable.Empty<Poi>())
 						await _searchProjections.Value.RemoveAsync(type.DepartmentId, SearchEntityTypes.Poi, poi.PoiId.ToString(), cancellationToken);
@@ -152,14 +160,267 @@ namespace Resgrid.Services
 
 			if (poi != null)
 			{
-				var type = _searchProjections != null ? await GetTypeByIdAsync(poi.PoiTypeId) : null;
+				var type = await GetTypeByIdAsync(poi.PoiTypeId);
 				var deleted = await _poisRepository.DeleteAsync(poi, cancellationToken);
 				if (deleted && type != null)
+					await DeletePoiDetailsAsync(type.DepartmentId, new List<int> { poi.PoiId }, cancellationToken);
+				if (deleted && type != null && _searchProjections != null)
 					await _searchProjections.Value.RemoveAsync(type.DepartmentId, SearchEntityTypes.Poi, poi.PoiId.ToString(), cancellationToken);
 				return deleted;
 			}
 
 			return false;
+		}
+
+		/// <summary>
+		/// Capability tags and availability reports have no foreign key to their POI; they go with it. A failure leaves only
+		/// unreachable rows (the department purge sweeps them), never a failed delete.
+		/// </summary>
+		private async Task DeletePoiDetailsAsync(int departmentId, IReadOnlyCollection<int> poiIds, CancellationToken cancellationToken)
+		{
+			if (poiIds == null || poiIds.Count == 0)
+				return;
+
+			try
+			{
+				if (_poiCapabilitiesRepository != null)
+					await _poiCapabilitiesRepository.DeleteAssignmentsForPoisAsync(departmentId, poiIds, cancellationToken);
+
+				if (_poiAvailabilitiesRepository != null)
+					await _poiAvailabilitiesRepository.DeleteForPoisAsync(departmentId, poiIds, cancellationToken);
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex, $"Removing the capabilities and availability of {poiIds.Count} deleted POIs of department {departmentId} failed.");
+			}
+		}
+
+		public async Task<List<PoiCapability>> GetPoiCapabilitiesForDepartmentAsync(int departmentId)
+		{
+			if (_poiCapabilitiesRepository == null)
+				return new List<PoiCapability>();
+
+			var capabilities = await _poiCapabilitiesRepository.GetAllByDepartmentIdAsync(departmentId);
+
+			return (capabilities ?? Enumerable.Empty<PoiCapability>())
+				.Where(x => x != null && x.DepartmentId == departmentId)
+				.OrderBy(x => x.Sort)
+				.ThenBy(x => x.Name, StringComparer.OrdinalIgnoreCase)
+				.ToList();
+		}
+
+		public async Task<PoiCapability> GetPoiCapabilityByIdAsync(int departmentId, string poiCapabilityId)
+		{
+			if (string.IsNullOrWhiteSpace(poiCapabilityId))
+				return null;
+
+			return (await GetPoiCapabilitiesForDepartmentAsync(departmentId))
+				.FirstOrDefault(x => string.Equals(x.PoiCapabilityId, poiCapabilityId.Trim(), StringComparison.OrdinalIgnoreCase));
+		}
+
+		public async Task<PoiCapability> SavePoiCapabilityAsync(PoiCapability capability, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			if (capability == null || capability.DepartmentId <= 0)
+				throw new ArgumentException("The capability has no department.");
+
+			var name = CapabilityName(capability.Name);
+			if (name == null)
+				throw new ArgumentException("Give the capability a name.");
+
+			var existing = await GetPoiCapabilitiesForDepartmentAsync(capability.DepartmentId);
+			var isNew = string.IsNullOrWhiteSpace(capability.PoiCapabilityId);
+
+			if (!isNew && !existing.Any(x => string.Equals(x.PoiCapabilityId, capability.PoiCapabilityId, StringComparison.OrdinalIgnoreCase)))
+				throw new ArgumentException("The capability does not exist.");
+
+			if (existing.Any(x => string.Equals(x.Name, name, StringComparison.OrdinalIgnoreCase) &&
+				(isNew || !string.Equals(x.PoiCapabilityId, capability.PoiCapabilityId, StringComparison.OrdinalIgnoreCase))))
+				throw new ArgumentException($"A capability named \"{name}\" already exists.");
+
+			capability.Name = name;
+			if (isNew && capability.Sort == 0 && existing.Count > 0)
+				capability.Sort = existing.Max(x => x.Sort) + 1;
+
+			return await _poiCapabilitiesRepository.SaveOrUpdateAsync(capability, cancellationToken);
+		}
+
+		public async Task<List<PoiCapability>> GetOrAddPoiCapabilitiesByNameAsync(int departmentId, IEnumerable<string> names, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var wanted = (names ?? Enumerable.Empty<string>()).Select(CapabilityName).Where(x => x != null).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+			var result = new List<PoiCapability>();
+			if (wanted.Count == 0 || _poiCapabilitiesRepository == null)
+				return result;
+
+			var existing = await GetPoiCapabilitiesForDepartmentAsync(departmentId);
+			var sort = existing.Count == 0 ? 0 : existing.Max(x => x.Sort);
+
+			foreach (var name in wanted)
+			{
+				var match = existing.FirstOrDefault(x => string.Equals(x.Name, name, StringComparison.OrdinalIgnoreCase));
+				if (match == null)
+				{
+					match = await _poiCapabilitiesRepository.SaveOrUpdateAsync(new PoiCapability { DepartmentId = departmentId, Name = name, Sort = ++sort }, cancellationToken);
+					existing.Add(match);
+				}
+
+				result.Add(match);
+			}
+
+			return result;
+		}
+
+		private static string CapabilityName(string name)
+		{
+			var trimmed = name?.Trim();
+			if (string.IsNullOrEmpty(trimmed))
+				return null;
+
+			return trimmed.Length > PoiCapability.MaxNameLength ? trimmed.Substring(0, PoiCapability.MaxNameLength).TrimEnd() : trimmed;
+		}
+
+		public async Task<bool> DeletePoiCapabilityAsync(int departmentId, string poiCapabilityId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var capability = await GetPoiCapabilityByIdAsync(departmentId, poiCapabilityId);
+
+			if (capability == null)
+				return false;
+
+			await _poiCapabilitiesRepository.DeleteAssignmentsForCapabilityAsync(departmentId, capability.PoiCapabilityId, cancellationToken);
+
+			if (_poiAvailabilitiesRepository != null)
+				await _poiAvailabilitiesRepository.RemoveCapabilityAsync(departmentId, capability.PoiCapabilityId, cancellationToken);
+
+			return await _poiCapabilitiesRepository.DeleteAsync(capability, cancellationToken);
+		}
+
+		public async Task<List<string>> GetPoiCapabilityIdsForPoiAsync(int departmentId, int poiId)
+		{
+			if (_poiCapabilitiesRepository == null)
+				return new List<string>();
+
+			var assignments = await _poiCapabilitiesRepository.GetAssignmentsByPoiIdAsync(departmentId, poiId);
+
+			return (assignments ?? Enumerable.Empty<PoiCapabilityAssignment>()).Select(x => x.PoiCapabilityId).ToList();
+		}
+
+		public async Task SetPoiCapabilitiesAsync(int departmentId, int poiId, IEnumerable<string> poiCapabilityIds, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			if (_poiCapabilitiesRepository == null)
+				return;
+
+			// Only the department's own capabilities: a posted id from another department is dropped.
+			var departmentCapabilityIds = (await GetPoiCapabilitiesForDepartmentAsync(departmentId)).Select(x => x.PoiCapabilityId).ToList();
+			var ids = (poiCapabilityIds ?? Enumerable.Empty<string>())
+				.Select(x => departmentCapabilityIds.FirstOrDefault(y => string.Equals(y, x?.Trim(), StringComparison.OrdinalIgnoreCase)))
+				.Where(x => x != null)
+				.Distinct(StringComparer.OrdinalIgnoreCase)
+				.ToList();
+
+			await _poiCapabilitiesRepository.ReplacePoiAssignmentsAsync(departmentId, poiId, ids, cancellationToken);
+		}
+
+		public async Task PopulatePoiDetailsAsync(int departmentId, IEnumerable<Poi> pois)
+		{
+			var poiList = (pois ?? Enumerable.Empty<Poi>()).Where(x => x != null).ToList();
+			foreach (var poi in poiList)
+			{
+				poi.CapabilityIds = new List<string>();
+				poi.Capabilities = new List<string>();
+				poi.Availability = null;
+			}
+
+			if (poiList.Count == 0)
+				return;
+
+			var capabilities = await GetPoiCapabilitiesForDepartmentAsync(departmentId);
+			if (capabilities.Count > 0)
+			{
+				var order = capabilities.Select((capability, index) => (capability, index))
+					.ToDictionary(x => x.capability.PoiCapabilityId, x => x, StringComparer.OrdinalIgnoreCase);
+				var assignments = await _poiCapabilitiesRepository.GetAssignmentsByDepartmentIdAsync(departmentId);
+				var byPoi = (assignments ?? Enumerable.Empty<PoiCapabilityAssignment>())
+					.Where(x => x.PoiCapabilityId != null && order.ContainsKey(x.PoiCapabilityId))
+					.GroupBy(x => x.PoiId)
+					.ToDictionary(g => g.Key, g => g.Select(x => order[x.PoiCapabilityId]).Distinct().OrderBy(x => x.index).Select(x => x.capability).ToList());
+
+				foreach (var poi in poiList)
+				{
+					if (byPoi.TryGetValue(poi.PoiId, out var offered))
+					{
+						poi.CapabilityIds = offered.Select(x => x.PoiCapabilityId).ToList();
+						poi.Capabilities = offered.Select(x => x.Name).ToList();
+					}
+				}
+			}
+
+			var availabilities = await GetCurrentPoiAvailabilitiesAsync(departmentId);
+			foreach (var poi in poiList)
+				if (availabilities.TryGetValue(poi.PoiId, out var availability))
+					poi.Availability = availability;
+		}
+
+		public async Task<Dictionary<int, PoiAvailability>> GetCurrentPoiAvailabilitiesAsync(int departmentId)
+		{
+			var result = new Dictionary<int, PoiAvailability>();
+			if (_poiAvailabilitiesRepository == null)
+				return result;
+
+			var now = DateTime.UtcNow;
+			foreach (var report in await _poiAvailabilitiesRepository.GetAllByDepartmentIdAsync(departmentId) ?? Enumerable.Empty<PoiAvailability>())
+			{
+				var current = report != null && report.DepartmentId == departmentId ? PoiAvailabilityRules.Current(report, now) : null;
+				if (current != null)
+					result[current.PoiId] = current;
+			}
+
+			return result;
+		}
+
+		public async Task<PoiAvailability> SetPoiAvailabilityAsync(int departmentId, int poiId, PoiAvailabilityStatuses status, IEnumerable<string> unavailableCapabilityIds,
+			string note, DateTime? expiresOnUtc, string userId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			if (_poiAvailabilitiesRepository == null)
+				throw new InvalidOperationException("Destination availability is not available.");
+
+			if (!Enum.IsDefined(typeof(PoiAvailabilityStatuses), status))
+				throw new ArgumentException("Unknown availability.");
+
+			if (await GetDestinationPOIByIdAsync(departmentId, poiId) == null)
+				throw new ArgumentException("The destination does not exist.");
+
+			var now = DateTime.UtcNow;
+			var existing = await _poiAvailabilitiesRepository.GetByPoiIdAsync(departmentId, poiId);
+
+			if (status == PoiAvailabilityStatuses.Open || (expiresOnUtc.HasValue && expiresOnUtc.Value <= now))
+			{
+				if (existing != null)
+					await _poiAvailabilitiesRepository.DeleteForPoisAsync(departmentId, new[] { poiId }, cancellationToken);
+
+				return null;
+			}
+
+			var departmentCapabilityIds = (await GetPoiCapabilitiesForDepartmentAsync(departmentId)).Select(x => x.PoiCapabilityId).ToList();
+			var unavailable = (unavailableCapabilityIds ?? Enumerable.Empty<string>())
+				.Select(x => departmentCapabilityIds.FirstOrDefault(y => string.Equals(y, x?.Trim(), StringComparison.OrdinalIgnoreCase)))
+				.Where(x => x != null)
+				.Distinct(StringComparer.OrdinalIgnoreCase)
+				.ToList();
+
+			var trimmedNote = note?.Trim();
+			if (string.IsNullOrEmpty(trimmedNote))
+				trimmedNote = null;
+			else if (trimmedNote.Length > PoiAvailability.MaxNoteLength)
+				trimmedNote = trimmedNote.Substring(0, PoiAvailability.MaxNoteLength);
+
+			var report = existing ?? new PoiAvailability { DepartmentId = departmentId, PoiId = poiId };
+			report.Status = (int)status;
+			report.UnavailableCapabilityIds = unavailable.Count == 0 ? null : string.Join(",", unavailable);
+			report.Note = trimmedNote;
+			report.SetByUserId = userId;
+			report.SetOn = now;
+			report.ExpiresOn = expiresOnUtc.HasValue && expiresOnUtc.Value > now + PoiAvailabilityRules.MaxExpiry ? now + PoiAvailabilityRules.MaxExpiry : expiresOnUtc;
+
+			return await _poiAvailabilitiesRepository.SaveOrUpdateAsync(report, cancellationToken);
 		}
 
 		/// <summary>Most POIs one bulk removal accepts.</summary>
@@ -187,6 +448,8 @@ namespace Resgrid.Services
 
 			// Only the rows the statements removed lose their search projection: a ticked POI moved to another type meanwhile is kept.
 			var deleted = await _poisRepository.DeleteForTypeAsync(type.PoiTypeId, matched, cancellationToken) ?? Array.Empty<int>();
+			if (deleted.Count > 0)
+				await DeletePoiDetailsAsync(type.DepartmentId, deleted.ToList(), cancellationToken);
 			if (deleted.Count > 0 && _searchProjections != null)
 				await _searchProjections.Value.RemoveManyAsync(type.DepartmentId, SearchEntityTypes.Poi, deleted.Select(id => id.ToString()), cancellationToken);
 			return deleted.Count;

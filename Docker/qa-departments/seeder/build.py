@@ -654,12 +654,39 @@ class Builder:
                          label=f'shift signup {name}/{signup["person"]}')
 
     def _pois_protocols_templates(self) -> None:
+        # Destination capabilities (M0315): the department's list, then each POI's tags and its availability report.
+        capabilities = self.s.get('poiCapabilities', [])
+        for index, capability in enumerate(capabilities):
+            self.add('PoiCapabilities', {'PoiCapabilityId': self.guid('poicapability', capability), 'DepartmentId': self.department, 'Name': capability, 'Sort': index + 1},
+                     label=f'POI capability {capability}')
+        # A POI is keyed by its name (capability/availability rows and the manifest's "pois" ids), so a name may appear once.
+        poi_names: set[str] = set()
         for poi_type in self.s.get('poiTypes', []):
             self.add('PoiTypes', {'DepartmentId': self.department, 'Name': poi_type['name'], 'Color': poi_type.get('color'), 'IsDestination': bool(poi_type.get('destination'))},
                      key=('poitype', poi_type['name']), returns='PoiTypeId', label=f'POI type {poi_type["name"]}')
             for poi in poi_type.get('pois', []):
-                self.add('Pois', {'PoiTypeId': self.key('poitype', poi_type['name']), 'Latitude': poi['location'][0], 'Longitude': poi['location'][1], 'Name': poi.get('name'),
-                                  'Address': poi.get('address'), 'Note': poi.get('note')}, label=f'POI {poi.get("name")}')
+                name = poi.get('name')
+                if name in poi_names:
+                    raise SeedError(f'{self.sid}: POI "{name}" appears more than once (POI names must be unique within a department)')
+                poi_names.add(name)
+                self.add('Pois', {'PoiTypeId': self.key('poitype', poi_type['name']), 'Latitude': poi['location'][0], 'Longitude': poi['location'][1], 'Name': name,
+                                  'Address': poi.get('address'), 'Note': poi.get('note')}, key=('poi', name), returns='PoiId', label=f'POI {name}')
+                for capability in poi.get('capabilities', []):
+                    if capability not in capabilities:
+                        raise SeedError(f'{self.sid}: POI "{name}" offers unknown capability "{capability}" (add it to poiCapabilities)')
+                    self.add('PoiCapabilityAssignments', {'PoiCapabilityAssignmentId': self.guid('poicapabilityassignment', name, capability), 'DepartmentId': self.department,
+                                                          'PoiId': self.key('poi', name), 'PoiCapabilityId': self.guid('poicapability', capability)},
+                             label=f'POI {name} offers {capability}')
+                availability = poi.get('availability')
+                if availability:
+                    down = availability.get('unavailable', [])
+                    unknown = [capability for capability in down if capability not in poi.get('capabilities', [])]
+                    if unknown:
+                        raise SeedError(f'{self.sid}: POI "{name}" reports capabilities it does not offer unavailable: {unknown}')
+                    self.add('PoiAvailabilities', {'PoiAvailabilityId': self.guid('poiavailability', name), 'DepartmentId': self.department, 'PoiId': self.key('poi', name),
+                                                   'Status': availability['status'], 'UnavailableCapabilityIds': ','.join(self.guid('poicapability', c) for c in down) or None,
+                                                   'Note': availability.get('note'), 'SetByUserId': self._admin_id(), 'SetOn': self.at('-30m'), 'ExpiresOn': None},
+                             label=f'POI {name} availability')
         trigger_types = {'priority': 0, 'callType': 1, 'priorityAndType': 2}
         for protocol in self.s.get('protocols', []):
             code = protocol['code']

@@ -2160,6 +2160,14 @@
   <data name="DeploymentNewExternalOrder" xml:space="preserve"><value>Nueva orden externa</value></data>
   <data name="HydrantImportBack" xml:space="preserve"><value>Volver a hidrantes</value></data>
   <data name="HydrantImportNotSaved" xml:space="preserve"><value>No se guardó ningún hidrante. Corrija las filas siguientes e importe el archivo de nuevo.</value></data>
+  <data name="HydrantImportIgnoredColumns" xml:space="preserve"><value>Columnas no importadas porque Resgrid no tiene un campo de hidrante equivalente: {0}. Para importar una, cambie su encabezado por un nombre de columna del ejemplo e importe el archivo de nuevo.</value></data>
+  <data name="HydrantImportServiceChanges" xml:space="preserve"><value>Según la columna de estado del archivo: {0} hidrantes puestos fuera de servicio y {1} devueltos al servicio.</value></data>
+  <data name="HydrantImportUnmappedValues" xml:space="preserve"><value>Valores importados con un valor predeterminado</value></data>
+  <data name="HydrantImportUnmappedValuesHelp" xml:space="preserve"><value>Estos valores de columnas de otro sistema no se reconocieron. Los hidrantes se importaron igualmente: los tipos desconocidos como Other, los caudales y colores de caudal ilegibles en blanco, y con un estado desconocido su situación de servicio no cambió. Para asignarlos, cambie los valores en el archivo e impórtelo de nuevo; los hidrantes con el mismo número se actualizan.</value></data>
+  <data name="HydrantImportColumn" xml:space="preserve"><value>Columna</value></data>
+  <data name="HydrantImportValue" xml:space="preserve"><value>Valor</value></data>
+  <data name="HydrantImportRowCount" xml:space="preserve"><value>Filas</value></data>
+  <data name="HydrantImportOtherSystems" xml:space="preserve"><value>Archivos exportados de otros sistemas: hydrant_type, flow_rate y location_address se leen como type, flow_gpm y address. El caudal se expresa en galones por minuto salvo que el valor indique L/min. flow_rating_color (light blue, green, orange, red, AA–C o un color #hex) establece la clase de caudal de los hidrantes sin caudal. status (active, in service, out of service, broken…) pone hidrantes fuera de servicio o los devuelve al servicio; el estado pasa a ser el motivo de fuera de servicio. Los tipos desconocidos se importan como Other; las demás columnas se omiten y se muestran tras la importación.</value></data>
   <data name="HydrantImportIssuesShown" xml:space="preserve"><value>Se muestran {0} de {1} filas con problemas. JSON usa números de elemento; CSV usa números de línea.</value></data>
   <data name="HydrantImportRow" xml:space="preserve"><value>Fila / línea</value></data>
   <data name="HydrantImportCorrection" xml:space="preserve"><value>Cómo corregirlo</value></data>

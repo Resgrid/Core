@@ -2197,16 +2197,16 @@
     <value>Limita le visualizzazioni di dispaccio supportate al sottoalbero di gruppo del membro. Gli amministratori del dipartimento e i ruoli configurati a livello di dipartimento mantengono l'accesso a livello di dipartimento.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.NewCallFieldPolicy.Rules">
-    <value>Visibilità e obbligatorietà per campo per i campi facoltativi di creazione chiamata. I campi non configurati restano visibili e facoltativi.</value>
+    <value>Una regola per ogni campo configurato: visibile o nascosto, facoltativo o obbligatorio. Un campo senza regola è visibile e facoltativo, e una regola salvata che nasconde i destinatari (precedente alle chiavi proprie degli elenchi) nasconde tutti e quattro gli elenchi.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.NewCallFieldRule.Key">
-    <value>Una chiave di campo chiamata predefinita supportata. Nome, natura, priorità e tipo non possono essere rimossi tramite questa politica.</value>
+    <value>Il campo a cui si applica la regola: address, geolocation, what3words, pluscode, destinationPoi, indoorLocation, mapPage, note, contactName, contactInfo, primaryContact, additionalContacts, externalId, incidentId, referenceId, protocols, linkedCall, dispatchPersonnel, dispatchGroups, dispatchRoles, dispatchUnits, dispatchList, checkInTimers, part2Consent, dispatchOn, pendingCall. Nome, natura, priorità e tipo non hanno chiave: sono sempre visibili e obbligatori.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.NewCallFieldRule.Required">
-    <value>Se un campo facoltativo visibile deve essere compilato. Esamina le importazioni e ogni client supportato prima di rendere obbligatorio un campo.</value>
+    <value>Indica se un campo visibile deve essere compilato prima di creare una chiamata o salvare una modifica. Plus Code, contatti aggiuntivi, timer di registrazione, consenso Part 2, salva in attesa e i quattro elenchi di invio possono solo essere nascosti; rendere obbligatori i destinatari significa almeno un destinatario da qualsiasi elenco. Verifica le importazioni e ogni client prima di rendere obbligatorio un campo.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.NewCallFieldRule.Visible">
-    <value>Se il campo chiamata facoltativo viene mostrato nelle interfacce di creazione supportate. I campi nascosti non possono essere obbligatori.</value>
+    <value>Indica se il campo o la sezione compare nei moduli di chiamata. Un campo nascosto conserva il valore salvato quando si modifica una chiamata. I destinatari non hanno un'impostazione propria: compaiono finché compare uno dei quattro elenchi di invio; con tutti e quattro nascosti, i moduli offrono invece una chiamata generale facoltativa.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.PersonnelListStatusOrder.StatusId">
     <value>Identificatore di stato del personale esistente la cui posizione nell'elenco viene configurata.</value>
@@ -4299,6 +4299,9 @@
   <data xml:space="preserve" name="Rule.map-token">
     <value>Le credenziali mappa personalizzate mancano</value>
   </data>
+  <data xml:space="preserve" name="Rule.new-call-dispatch-lists-hidden">
+    <value>Le nuove chiamate non hanno elenchi di invio</value>
+  </data>
   <data xml:space="preserve" name="Rule.notification-channels">
     <value>Le preferenze dei canali di notifica richiedono una revisione</value>
   </data>
@@ -4419,6 +4422,9 @@
   <data xml:space="preserve" name="RuleNext.map-token">
     <value>Rivedi l'override della mappa nella relativa schermata di configurazione protetta.</value>
   </data>
+  <data xml:space="preserve" name="RuleNext.new-call-dispatch-lists-hidden">
+    <value>Mostra almeno un elenco di invio nei campi del modulo di chiamata, a meno che ogni chiamata debba andare a tutti («Chiamata generale») o essere solo informativa.</value>
+  </data>
   <data xml:space="preserve" name="RuleNext.notification-channels">
     <value>Rivedi le preferenze di notifica dei membri autorizzati e usa i test di comunicazione solo dopo una revisione esplicita di destinatari e canali.</value>
   </data>
@@ -4538,6 +4544,9 @@
   </data>
   <data xml:space="preserve" name="RuleWhy.map-token">
     <value>Un override mappa attivo richiede le credenziali del fornitore.</value>
+  </data>
+  <data xml:space="preserve" name="RuleWhy.new-call-dispatch-lists-hidden">
+    <value>I campi del modulo di chiamata nascondono gli elenchi di personale, gruppi, ruoli e unità, quindi una nuova chiamata non allerta nessuno se non si seleziona «Chiamata generale».</value>
   </data>
   <data xml:space="preserve" name="RuleWhy.notification-channels">
     <value>Alcuni membri attivi visibili non hanno preferenze idonee per SMS, e-mail o push nel mittente di notifica ordinario. La sola preferenza push non è una registrazione valida né una prova di consegna.</value>
@@ -4948,7 +4957,7 @@
     <value>Controlla la navigazione dei moduli e i gate delle funzionalità supportate. Nascondere un modulo non elimina i suoi record né dimostra che le impostazioni indipendenti della centrale operativa siano disattivate.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.NewCallFieldPolicy">
-    <value>Controlla i campi opzionali per le nuove chiamate nei client supportati. I campi nascosti non possono essere obbligatori; i campi principali della centrale operativa restano obbligatori.</value>
+    <value>Stabilisce quali campi e sezioni predefiniti mostrano i moduli di chiamata e quali devono essere compilati, sul web, in Omni e tramite l'API. I campi nascosti non possono essere obbligatori; nome, natura, priorità e tipo sono sempre visibili e obbligatori. Nascondere tutti e quattro gli elenchi di invio li sostituisce con una chiamata generale facoltativa; una chiamata creata senza di essa non allerta nessuno.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.PaddleCustomerId">
     <value>Riferimento cliente del fornitore di fatturazione. Gestito dai flussi di fatturazione autorizzati e mai restituito nelle evidenze dell'assistente.</value>
@@ -6758,6 +6767,12 @@
   </data>
   <data xml:space="preserve" name="SettingHelp.CloseCallWhenUnitsClear">
     <value>Una chiamata attiva si chiude da sola quando la sua ultima unità inviata segnala di essere di nuovo in servizio o fuori servizio. Le unità ancora al lavoro, una chiamata senza unità inviate e una chiamata con un comando dell'incidente attivo la mantengono aperta.</value>
+  </data>
+  <data name="Setting.TransportDestinationChecks" xml:space="preserve">
+    <value>Controllo della destinazione di trasporto</value>
+  </data>
+  <data name="SettingHelp.TransportDestinationChecks" xml:space="preserve">
+    <value>Quando lo stato In trasporto o In ospedale di un'unità va verso una destinazione diversa da quella assegnata alla sua chiamata, le app richiedono un motivo e la modifica viene annotata sulla chiamata.</value>
   </data>
   <data name="Setting.CallNumberingConfig" xml:space="preserve">
     <value>Configurazione della numerazione delle chiamate</value>

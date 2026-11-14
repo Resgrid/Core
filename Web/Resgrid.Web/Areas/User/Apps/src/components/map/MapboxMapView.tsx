@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import {
-  getLayerColor,
+  getFeaturePopupHtml,
+  getLayerDefaultColor,
   getMarkerIconUrl,
   hasUploadedMarkerIcon,
   getPoiIconClass,
@@ -127,7 +128,9 @@ function addGeoJsonLayer(map: MapboxMap, layerId: string, layer: MapRendererProp
   const fillLayerId = `rg-layer-fill-${layerId}`;
   const lineLayerId = `rg-layer-line-${layerId}`;
   const pointLayerId = `rg-layer-point-${layerId}`;
-  const color = getLayerColor(layer);
+  const layerColor = getLayerDefaultColor(layer);
+  // Shapes imported from a file keep their own colors; drawn shapes (and anything not a color) use the layer's.
+  const color = ['to-color', ['get', 'color'], layerColor] as unknown as string;
 
   map.addSource(sourceId, {
     type: 'geojson',
@@ -224,6 +227,8 @@ export function GlMapView({
   mapDataRef.current = mapData;
   const layerIdsRef = useRef<string[]>([]);
   const sourceIdsRef = useRef<string[]>([]);
+  // GL layer id -> the department layer's name, for the shape popup.
+  const layerNamesRef = useRef<Map<string, string>>(new Map());
   const [styleReady, setStyleReady] = useState(false);
   const [initError, setInitError] = useState<string | null>(null);
 
@@ -278,6 +283,25 @@ export function GlMapView({
 
       map.on('error', handleMapError);
 
+      // A layer shape with a name or description (an imported event layer's vendors, stages, aid posts) opens a popup.
+      const handleLayerClick = (event: import('mapbox-gl').MapMouseEvent) => {
+        const ids = layerIdsRef.current.filter((id) => map.getLayer(id));
+        if (ids.length === 0) {
+          return;
+        }
+
+        // Hits come top-most first: a shape with nothing to show (a drawn area over an aid post) must not hide the one below.
+        for (const hit of map.queryRenderedFeatures(event.point, { layers: ids })) {
+          const html = getFeaturePopupHtml((hit.layer ? layerNamesRef.current.get(hit.layer.id) : undefined) ?? '', hit.properties);
+          if (html) {
+            new mapboxgl.Popup({ offset: 8 }).setLngLat(event.lngLat).setHTML(html).addTo(map);
+            return;
+          }
+        }
+      };
+
+      map.on('click', handleLayerClick);
+
       const handleStyleReady = () => {
         styleLoaded = true;
         setStyleReady(true);
@@ -324,6 +348,7 @@ export function GlMapView({
       return () => {
         window.removeEventListener('resize', resizeMap);
         map.off('error', handleMapError);
+        map.off('click', handleLayerClick);
         clearLayerArtifacts(map, layerIdsRef.current, sourceIdsRef.current);
         layerIdsRef.current = [];
         sourceIdsRef.current = [];
@@ -478,6 +503,7 @@ export function GlMapView({
     clearLayerArtifacts(map, layerIdsRef.current, sourceIdsRef.current);
     layerIdsRef.current = [];
     sourceIdsRef.current = [];
+    layerNamesRef.current.clear();
 
     for (const layer of layers) {
       if (!layerVisibility[layer.id]) {
@@ -487,6 +513,9 @@ export function GlMapView({
       const layerArtifacts = addGeoJsonLayer(map, layer.id, layer);
       sourceIdsRef.current.push(layerArtifacts.sourceId);
       layerIdsRef.current.push(...layerArtifacts.layerIds);
+      for (const glLayerId of layerArtifacts.layerIds) {
+        layerNamesRef.current.set(glLayerId, layer.name);
+      }
     }
   }, [layerVisibility, layers, styleReady]);
 

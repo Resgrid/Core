@@ -201,6 +201,32 @@ namespace Resgrid.Services
 
 			return working;
 		}
+
+		public async Task<int?> GetWorkingCallIdForUnitAsync(int departmentId, int unitId, UnitState state)
+		{
+			if (unitId <= 0)
+				return null;
+
+			var latest = state != null && state.UnitId == unitId ? state : null;
+			var dispatched = ((await _callDispatchUnitRepository.GetOpenCallUnitDispatchesForUnitAsync(departmentId, unitId)) ?? Enumerable.Empty<CallDispatchUnit>())
+				.Where(x => x != null)
+				.ToList();
+
+			var openCallIds = new HashSet<int>(dispatched.Select(x => x.CallId));
+
+			// A status can point at an open call the unit was never dispatched to (a unit that took the call itself).
+			var linkedCallId = latest != null && latest.DestinationType == (int)DestinationEntityTypes.Call ? latest.DestinationId : null;
+			if (linkedCallId > 0 && !openCallIds.Contains(linkedCallId.Value) && await IsOpenCallAsync(departmentId, linkedCallId.Value))
+				openCallIds.Add(linkedCallId.Value);
+
+			if (openCallIds.Count == 0)
+				return null;
+
+			var isClearing = latest != null && latest.UnitStateId > 0 &&
+				CallStatusLinkage.IsClearingUnitState(latest.State, await GetBaseTypesAsync(departmentId, CustomStateTypes.Unit));
+
+			return UnitCallInvolvement.ResolveWorkingCallId(latest, isClearing, openCallIds, dispatched);
+		}
 		#endregion Write-time attribution
 
 		#region Read-time inference

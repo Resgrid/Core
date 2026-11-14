@@ -139,13 +139,153 @@ namespace Resgrid.Tests.Models
 		}
 
 		[Test]
-		public void Every_other_field_can_be_required()
+		public void Only_the_hide_only_fields_cannot_be_required()
+		{
+			// Switches whose "off" is an answer, and the single recipient lists (requiring recipients as a whole covers them).
+			var hideOnly = new[]
+			{
+				NewCallFieldKeys.PlusCode,
+				NewCallFieldKeys.AdditionalContacts,
+				NewCallFieldKeys.CheckInTimers,
+				NewCallFieldKeys.Part2Consent,
+				NewCallFieldKeys.PendingCall,
+				NewCallFieldKeys.DispatchPersonnel,
+				NewCallFieldKeys.DispatchGroups,
+				NewCallFieldKeys.DispatchRoles,
+				NewCallFieldKeys.DispatchUnits
+			};
+
+			foreach (var key in NewCallFieldKeys.All)
+				NewCallFieldKeys.CanBeRequired(key).Should().Be(System.Array.IndexOf(hideOnly, key) < 0, key);
+		}
+
+		[Test]
+		public void Every_field_but_the_recipients_section_can_be_hidden()
 		{
 			foreach (var key in NewCallFieldKeys.All)
-			{
-				if (key != NewCallFieldKeys.PlusCode)
-					NewCallFieldKeys.CanBeRequired(key).Should().BeTrue(key);
-			}
+				NewCallFieldKeys.CanBeHidden(key).Should().Be(key != NewCallFieldKeys.DispatchList, key);
+		}
+
+		[Test]
+		public void A_recipients_section_hidden_before_the_lists_could_be_hides_every_list()
+		{
+			// Stored before the four lists had keys of their own: hiding the section hid all of them.
+			var legacy = PolicyWith(new NewCallFieldRule { Key = NewCallFieldKeys.DispatchList, Visible = false });
+
+			foreach (var target in NewCallFieldKeys.DispatchTargets)
+				legacy.IsVisible(target).Should().BeFalse(target);
+
+			legacy.IsVisible(NewCallFieldKeys.DispatchList).Should().BeFalse();
+			legacy.AreAllDispatchTargetsHidden.Should().BeTrue();
+		}
+
+		[Test]
+		public void The_recipients_section_shows_while_any_list_does()
+		{
+			var policy = PolicyWith(
+				new NewCallFieldRule { Key = NewCallFieldKeys.DispatchPersonnel, Visible = false },
+				new NewCallFieldRule { Key = NewCallFieldKeys.DispatchGroups, Visible = false },
+				new NewCallFieldRule { Key = NewCallFieldKeys.DispatchRoles, Visible = false });
+
+			policy.IsVisible(NewCallFieldKeys.DispatchUnits).Should().BeTrue();
+			policy.IsVisible(NewCallFieldKeys.DispatchList).Should().BeTrue();
+			policy.AreAllDispatchTargetsHidden.Should().BeFalse();
+		}
+
+		[Test]
+		public void A_list_set_on_its_own_wins_over_a_section_hidden_before()
+		{
+			var policy = PolicyWith(
+				new NewCallFieldRule { Key = NewCallFieldKeys.DispatchList, Visible = false },
+				new NewCallFieldRule { Key = NewCallFieldKeys.DispatchUnits, Visible = true });
+
+			policy.IsVisible(NewCallFieldKeys.DispatchUnits).Should().BeTrue();
+			policy.IsVisible(NewCallFieldKeys.DispatchPersonnel).Should().BeFalse();
+			policy.IsVisible(NewCallFieldKeys.DispatchList).Should().BeTrue();
+		}
+
+		[Test]
+		public void Requiring_recipients_lapses_when_every_list_is_hidden()
+		{
+			// Nothing to pick from: the call forms offer only the optional All Call, so the requirement cannot apply.
+			var policy = PolicyWith(
+				new NewCallFieldRule { Key = NewCallFieldKeys.DispatchList, Visible = true, Required = true },
+				new NewCallFieldRule { Key = NewCallFieldKeys.DispatchPersonnel, Visible = false },
+				new NewCallFieldRule { Key = NewCallFieldKeys.DispatchGroups, Visible = false },
+				new NewCallFieldRule { Key = NewCallFieldKeys.DispatchRoles, Visible = false },
+				new NewCallFieldRule { Key = NewCallFieldKeys.DispatchUnits, Visible = false });
+
+			policy.IsRequired(NewCallFieldKeys.DispatchList).Should().BeFalse();
+			NewCallFieldPolicyValidator.Validate(policy, new NewCallFieldValues()).Should().BeEmpty();
+
+			policy.Rules.Find(x => x.Key == NewCallFieldKeys.DispatchUnits).Visible = true;
+
+			policy.IsRequired(NewCallFieldKeys.DispatchList).Should().BeTrue();
+		}
+
+		[Test]
+		public void Normalize_writes_the_section_rule_so_older_clients_hide_their_picker_only_when_every_list_is_hidden()
+		{
+			// Apps that predate the per-list keys read only "dispatchList".
+			var allHidden = PolicyWith(
+				new NewCallFieldRule { Key = NewCallFieldKeys.DispatchList, Visible = true, Required = true },
+				new NewCallFieldRule { Key = NewCallFieldKeys.DispatchPersonnel, Visible = false },
+				new NewCallFieldRule { Key = NewCallFieldKeys.DispatchGroups, Visible = false },
+				new NewCallFieldRule { Key = NewCallFieldKeys.DispatchRoles, Visible = false },
+				new NewCallFieldRule { Key = NewCallFieldKeys.DispatchUnits, Visible = false }).Normalize();
+
+			var section = allHidden.Rules.Find(x => x.Key == NewCallFieldKeys.DispatchList);
+			section.Should().NotBeNull();
+			section.Visible.Should().BeFalse();
+
+			var personnelHidden = PolicyWith(
+				new NewCallFieldRule { Key = NewCallFieldKeys.DispatchList, Visible = false },
+				new NewCallFieldRule { Key = NewCallFieldKeys.DispatchPersonnel, Visible = false },
+				new NewCallFieldRule { Key = NewCallFieldKeys.DispatchGroups, Visible = true },
+				new NewCallFieldRule { Key = NewCallFieldKeys.DispatchRoles, Visible = true },
+				new NewCallFieldRule { Key = NewCallFieldKeys.DispatchUnits, Visible = true }).Normalize();
+
+			personnelHidden.Rules.Should().ContainSingle().Which.Key.Should().Be(NewCallFieldKeys.DispatchPersonnel);
+			personnelHidden.IsVisible(NewCallFieldKeys.DispatchList).Should().BeTrue();
+			personnelHidden.IsVisible(NewCallFieldKeys.DispatchGroups).Should().BeTrue();
+		}
+
+		[Test]
+		public void Normalize_writes_down_the_lists_a_section_hidden_before_still_hides()
+		{
+			var legacy = PolicyWith(new NewCallFieldRule { Key = NewCallFieldKeys.DispatchList, Visible = false }).Normalize();
+
+			foreach (var target in NewCallFieldKeys.DispatchTargets)
+				legacy.Rules.Should().Contain(x => x.Key == target && !x.Visible, target);
+
+			legacy.AreAllDispatchTargetsHidden.Should().BeTrue();
+		}
+
+		[Test]
+		public void Every_list_hidden_survives_the_stored_round_trip()
+		{
+			var policy = PolicyWith(
+				new NewCallFieldRule { Key = NewCallFieldKeys.DispatchPersonnel, Visible = false },
+				new NewCallFieldRule { Key = NewCallFieldKeys.DispatchGroups, Visible = false },
+				new NewCallFieldRule { Key = NewCallFieldKeys.DispatchRoles, Visible = false },
+				new NewCallFieldRule { Key = NewCallFieldKeys.DispatchUnits, Visible = false }).Normalize();
+
+			var restored = ObjectSerialization.Deserialize<NewCallFieldPolicy>(ObjectSerialization.Serialize(policy)).Normalize();
+
+			restored.AreAllDispatchTargetsHidden.Should().BeTrue();
+			restored.IsVisible(NewCallFieldKeys.DispatchList).Should().BeFalse();
+		}
+
+		[Test]
+		public void A_hide_only_field_never_carries_a_requirement()
+		{
+			var policy = PolicyWith(
+				new NewCallFieldRule { Key = NewCallFieldKeys.CheckInTimers, Visible = true, Required = true },
+				new NewCallFieldRule { Key = NewCallFieldKeys.DispatchUnits, Visible = true, Required = true });
+
+			policy.IsRequired(NewCallFieldKeys.CheckInTimers).Should().BeFalse();
+			policy.IsRequired(NewCallFieldKeys.DispatchUnits).Should().BeFalse();
+			policy.Normalize().Rules.Should().BeEmpty();
 		}
 
 		[Test]
@@ -226,6 +366,28 @@ namespace Resgrid.Tests.Models
 			});
 
 			violations.Should().BeEmpty();
+		}
+
+		[Test]
+		public void A_required_map_page_and_primary_contact_must_be_supplied()
+		{
+			var policy = Requiring(NewCallFieldKeys.MapPage, NewCallFieldKeys.PrimaryContact);
+
+			NewCallFieldPolicyValidator.Validate(policy, new NewCallFieldValues { MapPage = " ", PrimaryContactId = "" })
+				.ConvertAll(x => x.Key).Should().BeEquivalentTo(new[] { NewCallFieldKeys.MapPage, NewCallFieldKeys.PrimaryContact });
+
+			NewCallFieldPolicyValidator.Validate(policy, new NewCallFieldValues { MapPage = "12-C4", PrimaryContactId = "c-1" })
+				.Should().BeEmpty();
+		}
+
+		[Test]
+		public void A_client_with_no_map_page_or_contact_input_is_not_held_to_them()
+		{
+			var policy = Requiring(NewCallFieldKeys.MapPage, NewCallFieldKeys.PrimaryContact);
+
+			NewCallFieldPolicyValidator.Validate(policy, new NewCallFieldValues()
+					.Unsupported(NewCallFieldKeys.MapPage, NewCallFieldKeys.PrimaryContact))
+				.Should().BeEmpty();
 		}
 
 		[Test]

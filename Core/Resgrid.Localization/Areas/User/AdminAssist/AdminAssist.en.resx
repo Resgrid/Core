@@ -2197,16 +2197,16 @@
     <value>Limit supported dispatch views to the member's group subtree. Department administrators and configured department-wide roles keep department-wide access.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.NewCallFieldPolicy.Rules">
-    <value>Per-field visibility and requiredness for optional call-creation fields. Unconfigured fields remain visible and optional.</value>
+    <value>One rule per configured field: shown or hidden, optional or required. A field with no rule is shown and optional, and a stored rule hiding Dispatch Recipients (from before the lists had their own keys) hides all four lists.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.NewCallFieldRule.Key">
-    <value>One supported built-in call-field key. Name, nature, priority and type cannot be removed through this policy.</value>
+    <value>The field the rule is for: address, geolocation, what3words, pluscode, destinationPoi, indoorLocation, mapPage, note, contactName, contactInfo, primaryContact, additionalContacts, externalId, incidentId, referenceId, protocols, linkedCall, dispatchPersonnel, dispatchGroups, dispatchRoles, dispatchUnits, dispatchList, checkInTimers, part2Consent, dispatchOn, pendingCall. Name, nature, priority and type have no key: they are always shown and required.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.NewCallFieldRule.Required">
-    <value>Whether a visible optional field must be supplied. Review imports and each supported client before making a field mandatory.</value>
+    <value>Whether a shown field must be filled in before a call is created or an edit is saved. Plus Code, Additional Contacts, Check-In Timers, Part 2 Consent, Save as Pending and the four dispatch lists can only be hidden; requiring Dispatch Recipients means at least one recipient from any list. Review imports and each client before making a field mandatory.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.NewCallFieldRule.Visible">
-    <value>Whether the optional call field is shown on supported creation surfaces. Hidden fields cannot be required.</value>
+    <value>Whether the field or section is on the call forms. A hidden field keeps its stored value when a call is edited. Dispatch Recipients has no setting of its own: it shows while any of the four dispatch lists does, and with all four hidden the forms offer an optional All Call instead.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.PersonnelListStatusOrder.StatusId">
     <value>Existing personnel-status identifier whose list position is being configured.</value>
@@ -4299,6 +4299,9 @@
   <data xml:space="preserve" name="Rule.map-token">
     <value>Custom map credentials are missing</value>
   </data>
+  <data xml:space="preserve" name="Rule.new-call-dispatch-lists-hidden">
+    <value>New calls have no dispatch lists</value>
+  </data>
   <data xml:space="preserve" name="Rule.notification-channels">
     <value>Notification channel preferences need review</value>
   </data>
@@ -4419,6 +4422,9 @@
   <data xml:space="preserve" name="RuleNext.map-token">
     <value>Review the map override on its protected configuration screen.</value>
   </data>
+  <data xml:space="preserve" name="RuleNext.new-call-dispatch-lists-hidden">
+    <value>Show at least one dispatch list in New Call Form Fields, unless every call should go to everyone (All Call) or be for information only.</value>
+  </data>
   <data xml:space="preserve" name="RuleNext.notification-channels">
     <value>Review authorized member notification preferences and use Communication Tests only after explicit recipient and channel review.</value>
   </data>
@@ -4538,6 +4544,9 @@
   </data>
   <data xml:space="preserve" name="RuleWhy.map-token">
     <value>An enabled map override needs its provider credentials.</value>
+  </data>
+  <data xml:space="preserve" name="RuleWhy.new-call-dispatch-lists-hidden">
+    <value>New Call Form Fields hides the personnel, groups, roles and units lists, so a new call pages nobody unless All Call is ticked.</value>
   </data>
   <data xml:space="preserve" name="RuleWhy.notification-channels">
     <value>Some visible active members have no eligible SMS, email or push preference under the ordinary notification sender. Push preference alone is not a valid registration or proof of delivery.</value>
@@ -4762,7 +4771,7 @@
     <value>Records Search Config</value>
   </data>
   <data xml:space="preserve" name="Setting.Require2FAForAdmins">
-    <value>Require2 FAFor Admins</value>
+    <value>Require 2FA for Admins</value>
   </data>
   <data xml:space="preserve" name="Setting.RequirePasswordResetViaEmail">
     <value>Require Password Reset Via Email</value>
@@ -4948,7 +4957,7 @@
     <value>Controls module navigation and supported feature gates. Hiding a module does not delete its records or prove independent dispatch settings are disabled.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.NewCallFieldPolicy">
-    <value>Controls optional new-call fields across supported clients. Hidden fields cannot be required; core dispatch fields remain mandatory.</value>
+    <value>Controls which built-in fields and sections the call forms show and which must be filled in, on the web, in Omni and through the API. Hidden fields cannot be required; name, nature, priority and type are always shown and required. Hiding all four dispatch lists replaces them with an optional All Call, so a call left without it pages nobody.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.PaddleCustomerId">
     <value>Billing-provider customer reference. Managed by authorized billing flows and never returned in assistant evidence.</value>
@@ -6758,6 +6767,12 @@
   </data>
   <data xml:space="preserve" name="SettingHelp.CloseCallWhenUnitsClear">
     <value>An active call closes on its own when its last dispatched unit reports back in service or out of service. Units still working, a call with no unit dispatched and a call under an active incident command keep it open.</value>
+  </data>
+  <data name="Setting.TransportDestinationChecks" xml:space="preserve">
+    <value>Transport Destination Checks</value>
+  </data>
+  <data name="SettingHelp.TransportDestinationChecks" xml:space="preserve">
+    <value>When a unit's Transporting or At Hospital status goes to a destination other than its call's assigned destination, the apps require a reason and the change is noted on the call.</value>
   </data>
   <data name="Setting.CallNumberingConfig" xml:space="preserve">
     <value>Call Numbering Config</value>

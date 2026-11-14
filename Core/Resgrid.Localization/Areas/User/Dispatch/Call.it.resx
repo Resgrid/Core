@@ -1107,4 +1107,28 @@
   <data name="NearestUnitsCallLocation" xml:space="preserve">
     <value>Luogo della chiamata</value>
   </data>
+  <data name="AllCallLabel" xml:space="preserve">
+    <value>Chiamata generale</value>
+  </data>
+  <data name="AllCallButton" xml:space="preserve">
+    <value>Chiamata generale (invia a tutti)</value>
+  </data>
+  <data name="AllCallHelp" xml:space="preserve">
+    <value>Tutti gli elenchi di invio sono nascosti. Attiva la chiamata generale per inviare questa chiamata a tutti, oppure lasciala disattivata per salvare una chiamata informativa che non allerta nessuno.</value>
+  </data>
+  <data name="AllCallEditHelp" xml:space="preserve">
+    <value>Attiva la chiamata generale per aggiungere tutti a questa chiamata e allertarli. Lasciala disattivata per mantenere i destinatari attuali.</value>
+  </data>
+  <data name="DestinationAvailabilityLimited" xml:space="preserve">
+    <value>Limitato</value>
+  </data>
+  <data name="DestinationAvailabilityDiversion" xml:space="preserve">
+    <value>Dirottamento</value>
+  </data>
+  <data name="DestinationAvailabilityClosed" xml:space="preserve">
+    <value>Chiuso</value>
+  </data>
+  <data name="DestinationAvailabilityLink" xml:space="preserve">
+    <value>Disponibilità delle destinazioni</value>
+  </data>
 </root>

@@ -26,6 +26,10 @@ namespace Resgrid.Model.Helpers
 		public string ExternalId { get; set; }
 		public string IncidentId { get; set; }
 		public string ReferenceId { get; set; }
+		public string MapPage { get; set; }
+
+		/// <summary>The contact chosen as the call's primary contact (Contacts module), blank for none.</summary>
+		public string PrimaryContactId { get; set; }
 		public int? DestinationPoiId { get; set; }
 		public string IndoorMapZoneId { get; set; }
 		public bool HasProtocols { get; set; }
@@ -102,6 +106,8 @@ namespace Resgrid.Model.Helpers
 			RequireText(NewCallFieldKeys.ExternalId, values.ExternalId);
 			RequireText(NewCallFieldKeys.IncidentId, values.IncidentId);
 			RequireText(NewCallFieldKeys.ReferenceId, values.ReferenceId);
+			RequireText(NewCallFieldKeys.MapPage, values.MapPage);
+			RequireText(NewCallFieldKeys.PrimaryContact, values.PrimaryContactId);
 			RequireText(NewCallFieldKeys.IndoorLocation, values.IndoorMapZoneId);
 
 			Require(NewCallFieldKeys.DestinationPoi, values.DestinationPoiId.HasValue && values.DestinationPoiId.Value > 0);

@@ -9,6 +9,7 @@
 	var mapConfig = SettingsHelper.GetDepartmentMapConfig(Resgrid.Config.InfoConfig.WebsiteKey);
 	var poiBulkMessage = TempData["PoiBulkMessage"] as string;
 	var poiBulkError = TempData["PoiBulkError"] as string;
+	var poiAvailabilityMessage = TempData["PoiAvailabilityMessage"] as string;
 }
 
 @section Styles
@@ -57,6 +58,10 @@
 @if (!string.IsNullOrEmpty(poiBulkError))
 {
 	<div class="alert alert-danger m-t-sm">@poiBulkError</div>
+}
+@if (!string.IsNullOrEmpty(poiAvailabilityMessage))
+{
+	<div class="alert alert-success m-t-sm">@poiAvailabilityMessage</div>
 }
 
 <div class="row">
@@ -180,7 +185,17 @@
             countMismatch = localizer["PoiBulkCountMismatch"].Value,
             confirm = localizer["PoiBulkConfirm"].Value
         });
-        var poiBulkShowList = @(poiBulkMessage != null || poiBulkError != null ? "true" : "false");
+        var poiBulkShowList = @(poiBulkMessage != null || poiBulkError != null || poiAvailabilityMessage != null ? "true" : "false");
+        // Capabilities column for every type; availability and its "Set availability" action for destination types.
+        var poiTypeIsDestination = @(Model.Type.IsDestination ? "true" : "false");
+        var poiListStrings = @Html.ScriptJson(new
+        {
+            capabilities = localizer["PoiCapabilities"].Value,
+            availability = localizer["PoiAvailability"].Value,
+            setAvailability = localizer["SetPoiAvailability"].Value,
+            unavailable = localizer["PoiAvailabilityUnavailable"].Value,
+            until = localizer["PoiAvailabilityUntil"].Value
+        });
         var osmTileUrl = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(mapConfig.TileUrl, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
         var osmTileAttribution = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(mapConfig.Attribution, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
     </script>

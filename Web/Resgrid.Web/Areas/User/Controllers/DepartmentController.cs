@@ -2289,6 +2289,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.PersonnelOnUnitSetUnitStatus = await _departmentSettingsService.GetPersonnelOnUnitSetUnitStatusAsync(DepartmentId);
 			model.StatusHoldToConfirm = await _departmentSettingsService.GetStatusHoldToConfirmAsync(DepartmentId, true);
 			model.CloseCallWhenUnitsClear = await _departmentSettingsService.GetCloseCallWhenUnitsClearAsync(DepartmentId, true);
+			model.TransportDestinationChecks = await _departmentSettingsService.GetTransportDestinationChecksAsync(DepartmentId, true);
 			await PopulateDispatchRenotifySettingsAsync(model, true);
 			model.AutoEnableCheckInTimers = await _departmentSettingsService.GetCheckInTimersAutoEnableForNewCallsAsync(DepartmentId);
 			model.NewCallFields = await BuildNewCallFieldRowsAsync();
@@ -2355,6 +2356,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.CloseCallWhenUnitsClear.ToString(),
 					DepartmentSettingTypes.CloseCallWhenUnitsClear, cancellationToken);
+
+				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.TransportDestinationChecks.ToString(),
+					DepartmentSettingTypes.TransportDestinationChecks, cancellationToken);
 
 				// Locked options are forced off here and again in SetDispatchRenotifyConfigAsync, so a crafted post cannot turn them on.
 				await _departmentSettingsService.SetDispatchRenotifyConfigAsync(DepartmentId,

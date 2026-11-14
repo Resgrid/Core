@@ -2197,16 +2197,16 @@
     <value>يقصر عروض الإرسال المدعومة على الشجرة الفرعية لمجموعة العضو. يحتفظ مسؤولو القسم والأدوار المُهيَّأة على مستوى القسم بالوصول الكامل للقسم.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.NewCallFieldPolicy.Rules">
-    <value>رؤية كل حقل وإلزاميته لحقول إنشاء البلاغ الاختيارية. تبقى الحقول غير المُهيَّأة مرئية واختيارية.</value>
+    <value>قاعدة واحدة لكل حقل مضبوط: ظاهر أو مخفي، اختياري أو إلزامي. الحقل الذي لا قاعدة له ظاهر واختياري، والقاعدة المحفوظة التي تخفي مستلمي الإرسال (من قبل أن تصبح للقوائم مفاتيحها الخاصة) تخفي القوائم الأربع.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.NewCallFieldRule.Key">
-    <value>مفتاح واحد مدعوم من حقول البلاغ المدمجة. لا يمكن إزالة الاسم أو الطبيعة أو الأولوية أو النوع عبر هذه السياسة.</value>
+    <value>الحقل الذي تخصه القاعدة: address, geolocation, what3words, pluscode, destinationPoi, indoorLocation, mapPage, note, contactName, contactInfo, primaryContact, additionalContacts, externalId, incidentId, referenceId, protocols, linkedCall, dispatchPersonnel, dispatchGroups, dispatchRoles, dispatchUnits, dispatchList, checkInTimers, part2Consent, dispatchOn, pendingCall. لا مفتاح للاسم والطبيعة والأولوية والنوع: فهي تظهر دائماً وإلزامية دائماً.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.NewCallFieldRule.Required">
-    <value>ما إذا كان يجب تقديم حقل اختياري مرئي. راجع عمليات الاستيراد وكل عميل مدعوم قبل جعل حقل إلزاميًا.</value>
+    <value>يحدد ما إذا كان يجب ملء الحقل الظاهر قبل إنشاء البلاغ أو حفظ التعديل. لا يمكن إلا إخفاء Plus Code وجهات الاتصال الإضافية ومؤقتات تسجيل الوصول وموافقة Part 2 والحفظ كمعلّقة وقوائم الإرسال الأربع؛ وجعل المستلمين إلزاميين يعني مستلماً واحداً على الأقل من أي قائمة. راجع عمليات الاستيراد وكل تطبيق قبل جعل الحقل إلزامياً.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.NewCallFieldRule.Visible">
-    <value>ما إذا كان حقل البلاغ الاختياري يظهر في واجهات الإنشاء المدعومة. لا يمكن أن يكون الحقل المخفي إلزاميًا.</value>
+    <value>يحدد ما إذا كان الحقل أو القسم موجوداً في نماذج البلاغات. يحتفظ الحقل المخفي بقيمته المحفوظة عند تحرير البلاغ. لا إعداد خاص لمستلمي الإرسال: يظهرون ما دامت إحدى قوائم الإرسال الأربع ظاهرة، وعند إخفاء الأربع تعرض النماذج بدلاً منها نداءً عاماً اختيارياً.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.PersonnelListStatusOrder.StatusId">
     <value>معرّف حالة الأفراد الحالي الذي يجري إعداد موضعه في القائمة.</value>
@@ -4299,6 +4299,9 @@
   <data xml:space="preserve" name="Rule.map-token">
     <value>بيانات اعتماد الخريطة المخصصة مفقودة</value>
   </data>
+  <data xml:space="preserve" name="Rule.new-call-dispatch-lists-hidden">
+    <value>البلاغات الجديدة بلا قوائم إرسال</value>
+  </data>
   <data xml:space="preserve" name="Rule.notification-channels">
     <value>تفضيلات قنوات الإشعارات بحاجة إلى مراجعة</value>
   </data>
@@ -4419,6 +4422,9 @@
   <data xml:space="preserve" name="RuleNext.map-token">
     <value>راجع تجاوز الخريطة في شاشة إعداده المحمية.</value>
   </data>
+  <data xml:space="preserve" name="RuleNext.new-call-dispatch-lists-hidden">
+    <value>أظهر قائمة إرسال واحدة على الأقل في حقول نموذج البلاغ الجديد، إلا إذا كان كل بلاغ يجب أن يذهب إلى الجميع («نداء عام») أو يكون للعلم فقط.</value>
+  </data>
   <data xml:space="preserve" name="RuleNext.notification-channels">
     <value>راجع تفضيلات إشعارات الأعضاء المعتمدة، ولا تستخدم اختبارات الاتصال إلا بعد مراجعة صريحة للمستلمين والقناة.</value>
   </data>
@@ -4538,6 +4544,9 @@
   </data>
   <data xml:space="preserve" name="RuleWhy.map-token">
     <value>يحتاج تجاوز الخريطة المُفعَّل إلى بيانات اعتماد المزوّد الخاصة به.</value>
+  </data>
+  <data xml:space="preserve" name="RuleWhy.new-call-dispatch-lists-hidden">
+    <value>تُخفي حقول نموذج البلاغ الجديد قوائم الأفراد والمجموعات والأدوار والوحدات، لذلك لا يُنبَّه أحد عند بلاغ جديد ما لم يُحدَّد «نداء عام».</value>
   </data>
   <data xml:space="preserve" name="RuleWhy.notification-channels">
     <value>بعض الأعضاء النشطين الظاهرين ليس لديهم تفضيل مؤهَّل للرسائل النصية القصيرة أو البريد الإلكتروني أو الدفع ضمن مرسِل الإشعارات المعتاد. تفضيل الدفع وحده ليس تسجيلًا صالحًا أو دليلًا على التسليم.</value>
@@ -4948,7 +4957,7 @@
     <value>يتحكم في التنقل بين الوحدات وبوابات الميزات المدعومة. إخفاء وحدة لا يحذف سجلاتها ولا يثبت تعطيل إعدادات إرسال مستقلة.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.NewCallFieldPolicy">
-    <value>يتحكم في حقول البلاغ الجديد الاختيارية عبر العملاء المدعومين. لا يمكن جعل الحقول المخفية إلزامية؛ وتبقى حقول الإرسال الأساسية إلزامية.</value>
+    <value>يحدد الحقول والأقسام المدمجة التي تعرضها نماذج البلاغات وأيها يجب ملؤه، على الويب وفي Omni وعبر واجهة API. لا يمكن جعل الحقول المخفية إلزامية؛ يظهر الاسم والطبيعة والأولوية والنوع دائماً وهي إلزامية دائماً. إخفاء قوائم الإرسال الأربع يستبدلها بنداء عام اختياري؛ والبلاغ الذي يُنشأ دونه لا ينبّه أحداً.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.PaddleCustomerId">
     <value>مرجع عميل مزوّد الفوترة. تديره مسارات الفوترة المعتمدة ولا يُعاد إظهاره أبدًا في أدلة المساعد.</value>
@@ -6758,6 +6767,12 @@
   </data>
   <data xml:space="preserve" name="SettingHelp.CloseCallWhenUnitsClear">
     <value>يُغلق البلاغ النشط تلقائياً عندما تُبلغ آخر وحدة أُرسلت إليه أنها عادت إلى الخدمة أو أصبحت خارج الخدمة. تُبقيه مفتوحاً الوحداتُ التي لا تزال تعمل، والبلاغ الذي لم تُرسل إليه أي وحدة، والبلاغ الخاضع لقيادة حادث نشطة.</value>
+  </data>
+  <data name="Setting.TransportDestinationChecks" xml:space="preserve">
+    <value>التحقق من وجهة النقل</value>
+  </data>
+  <data name="SettingHelp.TransportDestinationChecks" xml:space="preserve">
+    <value>عندما تتجه حالة «نقل» أو «في المستشفى» لوحدة إلى وجهة غير الوجهة المحددة في بلاغها، تطلب التطبيقات سببًا ويُسجَّل التغيير على البلاغ.</value>
   </data>
   <data name="Setting.CallNumberingConfig" xml:space="preserve">
     <value>إعداد ترقيم البلاغات</value>

@@ -1107,4 +1107,28 @@
   <data name="NearestUnitsCallLocation" xml:space="preserve">
     <value>Місце виклику</value>
   </data>
+  <data name="AllCallLabel" xml:space="preserve">
+    <value>Загальний виклик</value>
+  </data>
+  <data name="AllCallButton" xml:space="preserve">
+    <value>Загальний виклик (надіслати всім)</value>
+  </data>
+  <data name="AllCallHelp" xml:space="preserve">
+    <value>Усі списки висилання приховано. Увімкніть загальний виклик, щоб надіслати цей виклик усім, або залиште вимкненим, щоб зберегти інформаційний виклик без сповіщень.</value>
+  </data>
+  <data name="AllCallEditHelp" xml:space="preserve">
+    <value>Увімкніть загальний виклик, щоб додати всіх до цього виклику та сповістити їх. Залиште вимкненим, щоб зберегти поточних отримувачів.</value>
+  </data>
+  <data name="DestinationAvailabilityLimited" xml:space="preserve">
+    <value>Обмежено</value>
+  </data>
+  <data name="DestinationAvailabilityDiversion" xml:space="preserve">
+    <value>Перенаправлення</value>
+  </data>
+  <data name="DestinationAvailabilityClosed" xml:space="preserve">
+    <value>Закрито</value>
+  </data>
+  <data name="DestinationAvailabilityLink" xml:space="preserve">
+    <value>Доступність пунктів призначення</value>
+  </data>
 </root>

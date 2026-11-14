@@ -815,9 +815,10 @@ namespace Resgrid.Services
 					.ThenBy(e => e.SortName, StringComparer.OrdinalIgnoreCase)
 					.ToList();
 
+			// Response in the whole seconds the screens show (UnitResponseOrigin.RankingSeconds): level on the second, nearest first.
 			return ordered
 				.ThenBy(e => e.ResponseSeconds.HasValue ? 0 : 1)
-				.ThenBy(e => e.ResponseSeconds ?? 0)
+				.ThenBy(e => UnitResponseOrigin.RankingSeconds(e.ResponseSeconds))
 				.ThenBy(e => e.Distance ?? double.MaxValue)
 				.ThenBy(e => e.SortName, StringComparer.OrdinalIgnoreCase)
 				.ToList();
@@ -1083,11 +1084,13 @@ namespace Resgrid.Services
 
 			var ranking = await RankAsync(context, state, row.Targets, row.StatusFilter, row.StatusBaseTypes, 1);
 
-			// Station order is not arrival order: the earliest arrival is the fastest response, rested resources first.
+			// Station order is not arrival order: the earliest arrival is the fastest response, rested resources first, and
+			// level on the second (as the closest-unit ranking compares), the nearer one.
 			var first = ranking.Ranked
 				.OrderBy(e => e.InRestPeriod ? 1 : 0)
 				.ThenBy(e => e.ResponseSeconds.HasValue ? 0 : 1)
-				.ThenBy(e => e.ResponseSeconds ?? 0)
+				.ThenBy(e => UnitResponseOrigin.RankingSeconds(e.ResponseSeconds))
+				.ThenBy(e => e.Distance ?? double.MaxValue)
 				.FirstOrDefault();
 
 			if (first == null)

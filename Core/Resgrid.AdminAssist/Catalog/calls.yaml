@@ -730,7 +730,7 @@
         "Action": "DispatchSettings"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-11-13T00:00:00Z",
       "Impact": {
         "Risk": "Critical",
         "AudienceKey": "Impact.Audience",
@@ -1147,7 +1147,7 @@
         "Field": null
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-11-13T00:00:00Z",
       "Impact": {
         "Risk": "Critical",
         "AudienceKey": "Impact.Audience",
@@ -1182,7 +1182,7 @@
         "Field": null
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-11-13T00:00:00Z",
       "Impact": {
         "Risk": "Critical",
         "AudienceKey": "Impact.Audience",
@@ -1198,7 +1198,7 @@
       "Conflicts": [],
       "DocumentationId": "field.NewCallFieldRule.Key",
       "DefaultValue": "unset",
-      "AllowedValues": "Validated by the owning configuration workflow",
+      "AllowedValues": "address, geolocation, what3words, pluscode, destinationPoi, indoorLocation, mapPage, note, contactName, contactInfo, primaryContact, additionalContacts, externalId, incidentId, referenceId, protocols, linkedCall, dispatchPersonnel, dispatchGroups, dispatchRoles, dispatchUnits, dispatchList, checkInTimers, part2Consent, dispatchOn, pendingCall",
       "EvidenceSource": "NewCallFieldRule",
       "Availability": "reference-only"
     },
@@ -1217,7 +1217,7 @@
         "Field": null
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-11-13T00:00:00Z",
       "Impact": {
         "Risk": "Critical",
         "AudienceKey": "Impact.Audience",
@@ -1252,7 +1252,7 @@
         "Field": null
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-11-13T00:00:00Z",
       "Impact": {
         "Risk": "Critical",
         "AudienceKey": "Impact.Audience",
@@ -2264,6 +2264,39 @@
       "Availability": "available"
     },
     {
+      "Id": "setting.TransportDestinationChecks",
+      "AreaId": "calls",
+      "LabelKey": "Setting.TransportDestinationChecks",
+      "HelpKey": "SettingHelp.TransportDestinationChecks",
+      "Binding": "DepartmentSettingTypes.TransportDestinationChecks",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings",
+        "Field": "TransportDestinationChecks"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-13T00:00:00Z",
+      "Impact": {
+        "Risk": "Low",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.calls",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.TransportDestinationChecks",
+      "DefaultValue": "false",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
       "Id": "setting.DispatchRenotifyConfig",
       "AreaId": "calls",
       "LabelKey": "Setting.DispatchRenotifyConfig",
@@ -2465,6 +2498,7 @@
         "setting.ShiftCallDispatchPersonnelStatusToSet",
         "setting.ShiftCallReleasePersonnelStatusToSet",
         "setting.StatusHoldToConfirm",
+        "setting.TransportDestinationChecks",
         "setting.UnitCallDispatchStatusToSet",
         "setting.UnitCallReleaseStatusToSet",
         "setting.UnitCallStatusOverridesByUnitType",
@@ -2473,6 +2507,7 @@
       ],
       "RuleIds": [
         "checkin-timers",
+        "new-call-dispatch-lists-hidden",
         "shift-auto-without-dispatch",
         "shift-coverage",
         "unit-status-targets",
@@ -2592,7 +2627,9 @@
       },
       "Requirements": [],
       "SettingIds": [],
-      "RuleIds": [],
+      "RuleIds": [
+        "new-call-dispatch-lists-hidden"
+      ],
       "Prominence": "Detail",
       "DocsPath": "/web-app/dispatch-calls/#creating-a-call"
     },
@@ -2839,6 +2876,26 @@
         {
           "EvidenceId": "DispatchShiftInsteadOfGroup",
           "Comparison": "IsFalse",
+          "Number": null
+        }
+      ]
+    },
+    {
+      "Id": "new-call-dispatch-lists-hidden",
+      "AreaId": "calls",
+      "Severity": "Warning",
+      "TitleKey": "Rule.new-call-dispatch-lists-hidden",
+      "ExplanationKey": "RuleWhy.new-call-dispatch-lists-hidden",
+      "NextActionKey": "RuleNext.new-call-dispatch-lists-hidden",
+      "Location": {
+        "Controller": "Department",
+        "Action": "DispatchSettings"
+      },
+      "AppliesWhen": [],
+      "FailsWhen": [
+        {
+          "EvidenceId": "newCallDispatchListsHidden",
+          "Comparison": "IsTrue",
           "Number": null
         }
       ]
@@ -3363,12 +3420,12 @@
       "Id": "setting.NewCallFieldPolicy",
       "Locale": "en",
       "TitleKey": "Setting.NewCallFieldPolicy",
-      "Body": "New Call Field Policy. Controls optional new-call fields across supported clients. Hidden fields cannot be required; core dispatch fields remain mandatory.",
+      "Body": "New Call Field Policy. Controls which built-in fields and sections the call forms show and which must be filled in, on the web, in Omni and through the API. Hidden fields cannot be required; name, nature, priority and type are always shown and required. Hiding all four dispatch lists replaces them with an optional All Call, so a call left without it pages nobody.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-newcallfieldpolicy",
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
+      "ReviewedOn": "2026-11-13T00:00:00Z"
     },
     {
       "Id": "setting.GroupDispatchScopeConfig",
@@ -3429,45 +3486,45 @@
       "Id": "field.NewCallFieldPolicy.Rules",
       "Locale": "en",
       "TitleKey": "Field.NewCallFieldPolicy.Rules",
-      "Body": "New Call Field Policy / Rules. Per-field visibility and requiredness for optional call-creation fields. Unconfigured fields remain visible and optional.",
+      "Body": "New Call Field Policy / Rules. One rule per configured field: shown or hidden, optional or required. A field with no rule is shown and optional, and a stored rule hiding Dispatch Recipients (from before the lists had their own keys) hides all four lists.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-newcallfieldpolicy-rules",
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
+      "ReviewedOn": "2026-11-13T00:00:00Z"
     },
     {
       "Id": "field.NewCallFieldRule.Key",
       "Locale": "en",
       "TitleKey": "Field.NewCallFieldRule.Key",
-      "Body": "New Call Field Rule / Key. One supported built-in call-field key. Name, nature, priority and type cannot be removed through this policy.",
+      "Body": "New Call Field Rule / Key. The field the rule is for: address, geolocation, what3words, pluscode, destinationPoi, indoorLocation, mapPage, note, contactName, contactInfo, primaryContact, additionalContacts, externalId, incidentId, referenceId, protocols, linkedCall, dispatchPersonnel, dispatchGroups, dispatchRoles, dispatchUnits, dispatchList, checkInTimers, part2Consent, dispatchOn, pendingCall. Name, nature, priority and type have no key: they are always shown and required.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-newcallfieldrule-key",
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
+      "ReviewedOn": "2026-11-13T00:00:00Z"
     },
     {
       "Id": "field.NewCallFieldRule.Visible",
       "Locale": "en",
       "TitleKey": "Field.NewCallFieldRule.Visible",
-      "Body": "New Call Field Rule / Visible. Whether the optional call field is shown on supported creation surfaces. Hidden fields cannot be required.",
+      "Body": "New Call Field Rule / Visible. Whether the field or section is on the call forms. A hidden field keeps its stored value when a call is edited. Dispatch Recipients has no setting of its own: it shows while any of the four dispatch lists does, and with all four hidden the forms offer an optional All Call instead.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-newcallfieldrule-visible",
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
+      "ReviewedOn": "2026-11-13T00:00:00Z"
     },
     {
       "Id": "field.NewCallFieldRule.Required",
       "Locale": "en",
       "TitleKey": "Field.NewCallFieldRule.Required",
-      "Body": "New Call Field Rule / Required. Whether a visible optional field must be supplied. Review imports and each supported client before making a field mandatory.",
+      "Body": "New Call Field Rule / Required. Whether a shown field must be filled in before a call is created or an edit is saved. Plus Code, Additional Contacts, Check-In Timers, Part 2 Consent, Save as Pending and the four dispatch lists can only be hidden; requiring Dispatch Recipients means at least one recipient from any list. Review imports and each client before making a field mandatory.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-newcallfieldrule-required",
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
+      "ReviewedOn": "2026-11-13T00:00:00Z"
     },
     {
       "Id": "field.GroupDispatchScopeConfig.Enabled",
@@ -3787,6 +3844,17 @@
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-10-07T00:00:00Z"
+    },
+    {
+      "Id": "setting.TransportDestinationChecks",
+      "Locale": "en",
+      "TitleKey": "Setting.TransportDestinationChecks",
+      "Body": "Transport Destination Checks. A call can name the destination its patient or load goes to (the call's Destination). For a status whose base type is Transporting or At Hospital, the Omni, Unit and Dispatch apps pre-select that destination whether or not this is on, and show when a different destination is chosen. With this on, choosing a different destination needs a reason, entered as the status note, and Resgrid adds a call note naming the unit, the status, both destinations and the reason. A unit that then reports At Hospital at the same destination is not noted twice. A status set from an app that predates this setting is saved without asking; its call note then says no reason was given. Off by default.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-transportdestinationchecks",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-13T00:00:00Z"
     },
     {
       "Id": "setting.DispatchRenotifyConfig",

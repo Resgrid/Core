@@ -4,13 +4,14 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.AdminAssist;
 using Resgrid.Model.Repositories;
 
 namespace Resgrid.Services.AdminAssist
 {
-	/// <summary>One uncached repository read. Only explicit scalar bindings and secret-presence markers leave it.</summary>
+	/// <summary>One uncached repository read. Only explicit scalar bindings, secret-presence markers and derived booleans leave it.</summary>
 	public sealed class SettingsEvidenceSource(IDepartmentSettingsRepository settings) : IAdminAssistEvidenceSource
 	{
 		private static readonly DepartmentSettingTypes[] BooleanSettings =
@@ -39,9 +40,11 @@ namespace Resgrid.Services.AdminAssist
 			["mapTokenPresent"] = DepartmentSettingTypes.MappingMapboxAccessToken,
 			["mapStylePresent"] = DepartmentSettingTypes.MappingMapboxStyleUrl
 		};
+		/// <summary>True when New Call Form Fields hides every dispatch list (personnel, groups, roles and units).</summary>
+		public const string NewCallDispatchListsHiddenId = "newCallDispatchListsHidden";
 		public string SourceId => "DepartmentSettings";
 		public IReadOnlyList<string> EvidenceIds { get; } = BooleanSettings.Select(s => s.ToString())
-			.Concat(NumberSettings.Keys.Select(s => s.ToString())).Concat(PresenceSettings.Keys).ToArray();
+			.Concat(NumberSettings.Keys.Select(s => s.ToString())).Concat(PresenceSettings.Keys).Append(NewCallDispatchListsHiddenId).ToArray();
 
 		public async Task<IReadOnlyList<ConfigurationEvidence>> ReadAsync(AdminAssistActor actor, DateTime now, CancellationToken ct)
 		{
@@ -68,7 +71,24 @@ namespace Resgrid.Services.AdminAssist
 			foreach (var (id, type) in PresenceSettings)
 				values.Add(new ConfigurationEvidence(id, EvidenceState.Known, SourceId, "1", now,
 					Boolean: data.TryGetValue(type, out var value) && !string.IsNullOrWhiteSpace(value)));
+			values.Add(NewCallDispatchListsHidden(data.TryGetValue(DepartmentSettingTypes.NewCallFieldPolicy, out var policy) ? policy : null, now));
 			return values;
+		}
+
+		/// <summary>
+		/// Only the derived answer leaves the source, never the stored rules. No policy row means the stock form (every list shown).
+		/// A blob that does not read is Unknown here, although the call forms fall back to the stock form for it.
+		/// </summary>
+		private ConfigurationEvidence NewCallDispatchListsHidden(string raw, DateTime now)
+		{
+			bool? hidden = false;
+			if (!string.IsNullOrWhiteSpace(raw))
+			{
+				try { hidden = ObjectSerialization.Deserialize<NewCallFieldPolicy>(raw)?.Normalize().AreAllDispatchTargetsHidden; }
+				catch (Exception) { hidden = null; }
+			}
+			return new ConfigurationEvidence(NewCallDispatchListsHiddenId, hidden.HasValue ? EvidenceState.Known : EvidenceState.Unknown, SourceId, "1", now,
+				Boolean: hidden, ReasonCode: hidden.HasValue ? null : "InvalidStoredValue");
 		}
 	}
 }

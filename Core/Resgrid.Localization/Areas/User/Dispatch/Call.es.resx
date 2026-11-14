@@ -1165,4 +1165,28 @@
   <data name="NearestUnitsCallLocation" xml:space="preserve">
     <value>Ubicación de la llamada</value>
   </data>
+  <data name="AllCallLabel" xml:space="preserve">
+    <value>Llamada general</value>
+  </data>
+  <data name="AllCallButton" xml:space="preserve">
+    <value>Llamada general (despachar a todos)</value>
+  </data>
+  <data name="AllCallHelp" xml:space="preserve">
+    <value>Todas las listas de despacho están ocultas. Active la llamada general para enviar esta llamada a todos, o déjela desactivada para guardar una llamada informativa que no avisa a nadie.</value>
+  </data>
+  <data name="AllCallEditHelp" xml:space="preserve">
+    <value>Active la llamada general para añadir a todos a esta llamada y avisarles. Déjela desactivada para mantener los destinatarios actuales.</value>
+  </data>
+  <data name="DestinationAvailabilityLimited" xml:space="preserve">
+    <value>Limitado</value>
+  </data>
+  <data name="DestinationAvailabilityDiversion" xml:space="preserve">
+    <value>Desvío</value>
+  </data>
+  <data name="DestinationAvailabilityClosed" xml:space="preserve">
+    <value>Cerrado</value>
+  </data>
+  <data name="DestinationAvailabilityLink" xml:space="preserve">
+    <value>Disponibilidad de destinos</value>
+  </data>
 </root>

@@ -685,7 +685,10 @@ var resgrid;
                             var distance = prop(u, 'distanceMeters');
                             var response = prop(u, 'responseSeconds');
                             if (distance && response !== null && response !== undefined) {
-                                text += ' (' + (distance / 1000).toFixed(1) + ' km, ' + Math.max(1, Math.round(response / 60)) + ' ' + nearestText('minutes') + ')';
+                                // m:ss, as the board shows and the run card ranks (to the second).
+                                var total = Math.max(0, Math.round(response));
+                                var rest = total % 60;
+                                text += ' (' + (distance / 1000).toFixed(1) + ' km, ' + Math.floor(total / 60) + ':' + (rest < 10 ? '0' : '') + rest + ' ' + nearestText('minutes') + ')';
                             } else if (distance) {
                                 text += ' (' + (distance / 1000).toFixed(1) + ' km)';
                             }

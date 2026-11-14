@@ -64,9 +64,20 @@ namespace Resgrid.Services.Records
 			return entity;
 		}
 
+		/// <summary>Service-state changes an import made; merged into the result only once the writes that made them have succeeded.</summary>
+		private sealed class ServiceTally
+		{
+			public int TakenOut;
+			public int Returned;
+			public void AddTo(HydrantImportResult result) { result.TakenOutOfService += TakenOut; result.ReturnedToService += Returned; }
+		}
+
 		/// <param name="byNumber">Import batches pass the batch lookup (<see cref="IRmsHydrantsRepository.GetByNumbersAsync"/>, keyed by the
 		/// normalized number); null falls back to the single-row lookup.</param>
-		private async Task<RmsHydrant> UpsertAsync(int departmentId, string userId, RmsHydrant input, string source, CancellationToken cancellationToken, IReadOnlyDictionary<string, RmsHydrant> byNumber = null)
+		/// <param name="serviceState">Import only: the state another system's status column gives (null = leave as it is), with
+		/// <paramref name="input"/>.OutOfServiceReason as the reason when false.</param>
+		private async Task<RmsHydrant> UpsertAsync(int departmentId, string userId, RmsHydrant input, string source, CancellationToken cancellationToken, IReadOnlyDictionary<string, RmsHydrant> byNumber = null,
+			bool? serviceState = null, ServiceTally tally = null)
 		{
 			var now = DateTime.UtcNow;
 			var number = RecordsPreventionGate.Require(input.HydrantNumber, 64, "A hydrant needs a number.");
@@ -85,8 +96,25 @@ namespace Resgrid.Services.Records
 			entity.AddressText = RecordsPreventionGate.Trim(input.AddressText, 500); entity.OwnerKind = input.OwnerKind == 0 ? (int)RmsHydrantOwnerKind.Municipal : input.OwnerKind; entity.OwnerName = RecordsPreventionGate.Trim(input.OwnerName, 200);
 			entity.MainSizeInches = input.MainSizeInches; if (source == "manual") { entity.Notes = RecordsPreventionGate.Trim(input.Notes, 4000); entity.PoiId = input.PoiId; }
 			if (input.FlowGpm.HasValue) { entity.FlowGpm = input.FlowGpm; entity.FlowClass = (int)HydrantFlowCalculator.Classify(input.FlowGpm); }
+			// An import's flow class (another system's cap colour) applies only while there is no flow to classify: a known flow decides the class.
+			if (source != "manual" && Enum.IsDefined(typeof(RmsHydrantFlowClass), input.FlowClass) && input.FlowClass != (int)RmsHydrantFlowClass.Unknown
+				&& HydrantFlowCalculator.Classify(entity.FlowGpm) == RmsHydrantFlowClass.Unknown)
+				entity.FlowClass = input.FlowClass;
 			if (input.StaticPressurePsi.HasValue) entity.StaticPressurePsi = input.StaticPressurePsi;
 			if (input.ResidualPressurePsi.HasValue) entity.ResidualPressurePsi = input.ResidualPressurePsi;
+			// A change of state is applied as SetServiceStateAsync would; a hydrant already out of service keeps its own reason and date.
+			// Deliberately both ways (product decision 2026-11-13): the file is the source of truth for the state it carries, so an older
+			// export can return a hydrant to service. The result's TakenOutOfService/ReturnedToService counts and the audit make that visible.
+			if (serviceState == true && !entity.InService)
+			{
+				entity.InService = true; entity.OutOfServiceReason = null; entity.OutOfServiceSince = null;
+				if (tally != null) tally.Returned++;
+			}
+			else if (serviceState == false && entity.InService)
+			{
+				entity.InService = false; entity.OutOfServiceReason = RecordsPreventionGate.Trim(input.OutOfServiceReason, 500); entity.OutOfServiceSince = now;
+				if (tally != null) tally.TakenOut++;
+			}
 			entity.ModifiedOn = now; entity.RowVersion++;
 			if (existing == null) await _hydrants.InsertAsync(entity, cancellationToken, true); else await _hydrants.UpdateAsync(entity, cancellationToken, true);
 			return entity;
@@ -222,10 +250,12 @@ namespace Resgrid.Services.Records
 			// counts and the failure message are exactly those of a row-by-row import.
 			foreach (var chunk in batch.Rows.Chunk(ImportBatchSize))
 			{
-				if (await TryImportBatchAsync(departmentId, userId, chunk, source, cancellationToken))
+				var batchTally = new ServiceTally();
+				if (await TryImportBatchAsync(departmentId, userId, chunk, source, batchTally, cancellationToken))
 				{
 					foreach (var item in chunk)
 						if (existingNumbers.Add(item.Hydrant.HydrantNumber)) result.Created++; else result.Updated++;
+					batchTally.AddTo(result);
 					continue;
 				}
 				var stopped = false;
@@ -234,8 +264,10 @@ namespace Resgrid.Services.Records
 					cancellationToken.ThrowIfCancellationRequested();
 					try
 					{
-						await UpsertAsync(departmentId, userId, item.Hydrant, source, cancellationToken);
+						var rowTally = new ServiceTally();
+						await UpsertAsync(departmentId, userId, item.Hydrant, source, cancellationToken, null, item.InService, rowTally);
 						if (existingNumbers.Add(item.Hydrant.HydrantNumber)) result.Created++; else result.Updated++;
+						rowTally.AddTo(result);
 					}
 					catch (OperationCanceledException) { throw; }
 					catch (Exception ex)
@@ -250,7 +282,7 @@ namespace Resgrid.Services.Records
 			}
 			try
 			{
-				await _gate.AuditAsync(departmentId, userId, RmsAccessAuditAction.Admin, "Hydrants imported", departmentId.ToString(), new { result.RowsRead, result.Created, result.Updated, result.FailureMessage }, cancellationToken: cancellationToken);
+				await _gate.AuditAsync(departmentId, userId, RmsAccessAuditAction.Admin, "Hydrants imported", departmentId.ToString(), new { result.RowsRead, result.Created, result.Updated, result.TakenOutOfService, result.ReturnedToService, result.FailureMessage }, cancellationToken: cancellationToken);
 			}
 			catch (OperationCanceledException) { throw; }
 			catch (Exception ex)
@@ -262,7 +294,7 @@ namespace Resgrid.Services.Records
 		}
 
 		/// <summary>Writes one import batch in a single transaction. False (rolled back) when any row fails; cancellation rolls back and rethrows.</summary>
-		private async Task<bool> TryImportBatchAsync(int departmentId, string userId, (HydrantImportRow Row, RmsHydrant Hydrant)[] chunk, string source, CancellationToken cancellationToken)
+		private async Task<bool> TryImportBatchAsync(int departmentId, string userId, (HydrantImportRow Row, RmsHydrant Hydrant, bool? InService)[] chunk, string source, ServiceTally tally, CancellationToken cancellationToken)
 		{
 			// Inside an ambient transaction a failed batch could not be rolled back on its own to replay; use the row-by-row path.
 			if (_unitOfWork == null || _unitOfWork.Transaction != null) return false;
@@ -276,7 +308,7 @@ namespace Resgrid.Services.Records
 				foreach (var item in chunk)
 				{
 					cancellationToken.ThrowIfCancellationRequested();
-					await UpsertAsync(departmentId, userId, item.Hydrant, source, cancellationToken, byNumber);
+					await UpsertAsync(departmentId, userId, item.Hydrant, source, cancellationToken, byNumber, item.InService, tally);
 				}
 				_unitOfWork.CommitChanges();
 				return true;

@@ -1,0 +1,89 @@
+@model Resgrid.Web.Areas.User.Models.Mapping.DestinationAvailabilityView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.Mapping> localizer
+@{
+	ViewBag.Title = "Resgrid | " + localizer["DestinationAvailability"];
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-6">
+		<h2>@localizer["DestinationAvailability"]</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+			</li>
+			<li>
+				<a asp-controller="Mapping" asp-action="Index" asp-route-area="User">@localizer["MappingHeader"]</a>
+			</li>
+			<li class="active">
+				<strong>@localizer["DestinationAvailability"]</strong>
+			</li>
+		</ol>
+	</div>
+	@if (Model.CanManagePois)
+	{
+		<div class="col-sm-6">
+			<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+				<a class="btn btn-info" asp-controller="Mapping" asp-action="PoiCapabilities" asp-route-area="User">@localizer["PoiCapabilities"]</a>
+				<a class="btn btn-primary" asp-controller="Mapping" asp-action="POIs" asp-route-area="User">@localizer["POIsHeader"]</a>
+			</div>
+		</div>
+	}
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<p>@localizer["DestinationAvailabilityHelp"]</p>
+
+					@if (!String.IsNullOrEmpty(Model.Message))
+					{
+						<div class="alert alert-success">@Model.Message</div>
+					}
+
+					@if (Model.Destinations.Any())
+					{
+						<div class="table-responsive">
+							<table class="table table-striped" id="destinationsTable">
+								<thead>
+									<tr>
+										<th>@localizer["Name"]</th>
+										<th>@localizer["PoiType"]</th>
+										<th>@localizer["PoiCapabilities"]</th>
+										<th>@localizer["PoiAvailability"]</th>
+										<th class="span1"></th>
+									</tr>
+								</thead>
+								<tbody>
+									@foreach (var destination in Model.Destinations)
+									{
+										<tr data-poi-id="@destination.PoiId">
+											<td>
+												<strong>@destination.Name</strong>
+												@if (!String.IsNullOrWhiteSpace(destination.Address) && destination.Address != destination.Name)
+												{
+													<div class="small text-muted">@destination.Address</div>
+												}
+											</td>
+											<td>@destination.TypeName</td>
+											<td>@string.Join(", ", destination.Capabilities)</td>
+											<td><partial name="_PoiAvailabilityBadge" model="destination" /></td>
+											<td style="white-space: nowrap;">
+												<a class="btn btn-xs btn-warning" asp-controller="Mapping" asp-action="SetPoiAvailability" asp-route-area="User" asp-route-poiId="@destination.PoiId">@localizer["SetPoiAvailability"]</a>
+											</td>
+										</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+					}
+					else
+					{
+						<p class="text-muted" id="noDestinations">@localizer["NoDestinationPois"]</p>
+					}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

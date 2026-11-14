@@ -2160,6 +2160,14 @@
   <data name="DeploymentNewExternalOrder" xml:space="preserve"><value>Nowe zlecenie zewnętrzne</value></data>
   <data name="HydrantImportBack" xml:space="preserve"><value>Wróć do hydrantów</value></data>
   <data name="HydrantImportNotSaved" xml:space="preserve"><value>Nie zapisano żadnych hydrantów. Popraw poniższe wiersze i ponownie zaimportuj plik.</value></data>
+  <data name="HydrantImportIgnoredColumns" xml:space="preserve"><value>Kolumny niezaimportowane, ponieważ Resgrid nie ma odpowiadającego pola hydrantu: {0}. Aby zaimportować jedną z nich, zmień jej nagłówek na nazwę kolumny z przykładu i ponownie zaimportuj plik.</value></data>
+  <data name="HydrantImportServiceChanges" xml:space="preserve"><value>Na podstawie kolumny stanu w pliku: wyłączone z użytku hydranty: {0}, przywrócone do użytku: {1}.</value></data>
+  <data name="HydrantImportUnmappedValues" xml:space="preserve"><value>Wartości zaimportowane z wartością domyślną</value></data>
+  <data name="HydrantImportUnmappedValuesHelp" xml:space="preserve"><value>Tych wartości z kolumn innego systemu nie rozpoznano. Hydranty i tak zaimportowano: nieznane typy jako Other, nieczytelne przepływy i kolory przepływu pozostawiono puste, a przy nieznanym stanie stan użytkowania się nie zmienił. Aby je ustawić, zmień wartości w pliku i ponownie go zaimportuj; hydranty o tym samym numerze zostaną zaktualizowane.</value></data>
+  <data name="HydrantImportColumn" xml:space="preserve"><value>Kolumna</value></data>
+  <data name="HydrantImportValue" xml:space="preserve"><value>Wartość</value></data>
+  <data name="HydrantImportRowCount" xml:space="preserve"><value>Wiersze</value></data>
+  <data name="HydrantImportOtherSystems" xml:space="preserve"><value>Pliki wyeksportowane z innych systemów: hydrant_type, flow_rate i location_address są odczytywane jako type, flow_gpm i address. Przepływ jest w galonach na minutę, chyba że wartość podaje L/min. flow_rating_color (light blue, green, orange, red, AA–C lub kolor #hex) ustawia klasę przepływu hydrantów bez przepływu. status (active, in service, out of service, broken…) wyłącza hydranty z użytku lub przywraca je do użytku; stan staje się powodem wyłączenia. Nieznane typy są importowane jako Other; pozostałe kolumny są pomijane i wyświetlane po imporcie.</value></data>
   <data name="HydrantImportIssuesShown" xml:space="preserve"><value>Wyświetlono {0} z {1} wierszy z błędami. JSON używa numerów elementów, a CSV numerów wierszy.</value></data>
   <data name="HydrantImportRow" xml:space="preserve"><value>Element / wiersz</value></data>
   <data name="HydrantImportCorrection" xml:space="preserve"><value>Jak poprawić</value></data>

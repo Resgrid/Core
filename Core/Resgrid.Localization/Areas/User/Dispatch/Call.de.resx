@@ -1107,4 +1107,28 @@
   <data name="NearestUnitsCallLocation" xml:space="preserve">
     <value>Einsatzort</value>
   </data>
+  <data name="AllCallLabel" xml:space="preserve">
+    <value>Vollalarm</value>
+  </data>
+  <data name="AllCallButton" xml:space="preserve">
+    <value>Vollalarm (alle alarmieren)</value>
+  </data>
+  <data name="AllCallHelp" xml:space="preserve">
+    <value>Alle Alarmierungslisten sind ausgeblendet. Schalten Sie Vollalarm ein, um diesen Einsatz an alle zu senden, oder lassen Sie ihn aus, um einen Einsatz nur zur Information zu speichern, bei dem niemand alarmiert wird.</value>
+  </data>
+  <data name="AllCallEditHelp" xml:space="preserve">
+    <value>Schalten Sie Vollalarm ein, um alle diesem Einsatz hinzuzufügen und zu alarmieren. Lassen Sie ihn aus, bleiben die bisherigen Empfänger unverändert.</value>
+  </data>
+  <data name="DestinationAvailabilityLimited" xml:space="preserve">
+    <value>Eingeschränkt</value>
+  </data>
+  <data name="DestinationAvailabilityDiversion" xml:space="preserve">
+    <value>Abgemeldet</value>
+  </data>
+  <data name="DestinationAvailabilityClosed" xml:space="preserve">
+    <value>Geschlossen</value>
+  </data>
+  <data name="DestinationAvailabilityLink" xml:space="preserve">
+    <value>Zielverfügbarkeit</value>
+  </data>
 </root>

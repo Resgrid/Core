@@ -449,4 +449,136 @@
   <data name="PoiBulkSelectRow" xml:space="preserve">
     <value>Zaznacz POI</value>
   </data>
+  <data name="PoiCapabilities" xml:space="preserve">
+    <value>Możliwości POI</value>
+  </data>
+  <data name="PoiCapabilitiesHelp" xml:space="preserve">
+    <value>Możliwości opisują, co oferują Twoje miejsca docelowe i inne punkty POI, np. pracownia hemodynamiki, oddział udarowy lub centrum urazowe. Zaznacz je przy każdym POI; dyspozytorzy widzą je przy wyborze miejsca docelowego i mogą zgłosić jedną z nich jako niedostępną.</value>
+  </data>
+  <data name="PoiCapabilitiesPoiHelp" xml:space="preserve">
+    <value>Co oferuje ten punkt POI. Dyspozytorzy widzą to przy wyborze miejsca docelowego.</value>
+  </data>
+  <data name="AddPoiCapability" xml:space="preserve">
+    <value>Dodaj możliwość</value>
+  </data>
+  <data name="PoiCapabilityNamePlaceholder" xml:space="preserve">
+    <value>Nazwa możliwości, np. Pracownia hemodynamiki</value>
+  </data>
+  <data name="SortOrder" xml:space="preserve">
+    <value>Kolejność</value>
+  </data>
+  <data name="PoiCapabilitySortHelp" xml:space="preserve">
+    <value>Możliwości są wyświetlane według kolejności, a następnie nazwy. Pozostaw kolejność pustą, aby dodać możliwość na końcu.</value>
+  </data>
+  <data name="NoPoiCapabilities" xml:space="preserve">
+    <value>Nie zdefiniowano jeszcze żadnych możliwości.</value>
+  </data>
+  <data name="ManagePoiCapabilities" xml:space="preserve">
+    <value>Zarządzaj możliwościami</value>
+  </data>
+  <data name="DeletePoiCapabilityConfirm" xml:space="preserve">
+    <value>Usunąć możliwość „{0}”? Zostanie usunięta ze wszystkich POI, które ją oferują ({1}), oraz z każdego zgłoszenia dostępności.</value>
+  </data>
+  <data name="PoiCapabilityNameRequired" xml:space="preserve">
+    <value>Wpisz nazwę możliwości o długości maksymalnie {0} znaków.</value>
+  </data>
+  <data name="PoiCapabilityNameExists" xml:space="preserve">
+    <value>Możliwość o nazwie „{0}” już istnieje.</value>
+  </data>
+  <data name="PoiCapabilitySaved" xml:space="preserve">
+    <value>Zapisano możliwość „{0}”.</value>
+  </data>
+  <data name="PoiCapabilityDeleted" xml:space="preserve">
+    <value>Usunięto możliwość „{0}”.</value>
+  </data>
+  <data name="PoiCapabilitySaveFailed" xml:space="preserve">
+    <value>Nie udało się zapisać możliwości. Odśwież stronę i spróbuj ponownie.</value>
+  </data>
+  <data name="DestinationAvailability" xml:space="preserve">
+    <value>Dostępność miejsc docelowych</value>
+  </data>
+  <data name="DestinationAvailabilityHelp" xml:space="preserve">
+    <value>Odnotuj, gdy miejsce docelowe, np. szpital, zgłasza ograniczone możliwości przyjęć, kierowanie gdzie indziej lub zamknięcie albo niedostępność jednej ze swoich możliwości. Dyspozytorzy widzą to przy wyborze miejsca docelowego zdarzenia.</value>
+  </data>
+  <data name="PoiType" xml:space="preserve">
+    <value>Typ</value>
+  </data>
+  <data name="PoiAvailability" xml:space="preserve">
+    <value>Dostępność</value>
+  </data>
+  <data name="SetPoiAvailability" xml:space="preserve">
+    <value>Ustaw dostępność</value>
+  </data>
+  <data name="NoDestinationPois" xml:space="preserve">
+    <value>Nie ma jeszcze POI będących miejscami docelowymi. Oznacz typ POI jako miejsce docelowe, aby wyświetlić tu jego POI.</value>
+  </data>
+  <data name="PoiAvailabilityOpen" xml:space="preserve">
+    <value>Otwarte</value>
+  </data>
+  <data name="PoiAvailabilityLimited" xml:space="preserve">
+    <value>Ograniczone</value>
+  </data>
+  <data name="PoiAvailabilityDiversion" xml:space="preserve">
+    <value>Przekierowanie</value>
+  </data>
+  <data name="PoiAvailabilityClosed" xml:space="preserve">
+    <value>Zamknięte</value>
+  </data>
+  <data name="PoiAvailabilityUnavailable" xml:space="preserve">
+    <value>Niedostępne:</value>
+  </data>
+  <data name="PoiAvailabilityUntil" xml:space="preserve">
+    <value>Do {0}</value>
+  </data>
+  <data name="PoiAvailabilityCurrent" xml:space="preserve">
+    <value>Obecnie</value>
+  </data>
+  <data name="PoiAvailabilitySetOn" xml:space="preserve">
+    <value>Ustawiono {0}</value>
+  </data>
+  <data name="PoiAvailabilityStatusHelp" xml:space="preserve">
+    <value>Otwarte usuwa zgłoszenie. Ograniczone nadal przyjmuje pacjentów przy zmniejszonych możliwościach; Przekierowanie prosi zespoły o jazdę gdzie indziej, chyba że nie ma alternatywy; Zamknięte nie przyjmuje nikogo.</value>
+  </data>
+  <data name="PoiAvailabilityUnavailableHelp" xml:space="preserve">
+    <value>Zaznacz, czego to miejsce docelowe nie może teraz zapewnić.</value>
+  </data>
+  <data name="PoiAvailabilityNoCapabilities" xml:space="preserve">
+    <value>To miejsce docelowe nie ma zaznaczonych możliwości.</value>
+  </data>
+  <data name="PoiAvailabilityNoteHelp" xml:space="preserve">
+    <value>Opcjonalnie, maksymalnie {0} znaków.</value>
+  </data>
+  <data name="PoiAvailabilityExpires" xml:space="preserve">
+    <value>Wygasa</value>
+  </data>
+  <data name="PoiAvailabilityExpiresHelp" xml:space="preserve">
+    <value>Kiedy zgłoszenie wygasa i miejsce docelowe znów jest otwarte.</value>
+  </data>
+  <data name="PoiAvailabilityExpiryNone" xml:space="preserve">
+    <value>Bez wygaśnięcia (do zmiany)</value>
+  </data>
+  <data name="PoiAvailabilityExpiryKeep" xml:space="preserve">
+    <value>Zachowaj obecne ({0})</value>
+  </data>
+  <data name="PoiAvailabilityExpiryOneHour" xml:space="preserve">
+    <value>Za 1 godzinę</value>
+  </data>
+  <data name="PoiAvailabilityExpiryHours" xml:space="preserve">
+    <value>Za {0} godz.</value>
+  </data>
+  <data name="PoiAvailabilityStatusInvalid" xml:space="preserve">
+    <value>Wybierz status dostępności.</value>
+  </data>
+  <data name="PoiAvailabilityNoteTooLong" xml:space="preserve">
+    <value>Notatka może mieć maksymalnie {0} znaków.</value>
+  </data>
+  <data name="PoiAvailabilityExpiryInvalid" xml:space="preserve">
+    <value>Wybierz, kiedy zgłoszenie wygasa.</value>
+  </data>
+  <data name="PoiAvailabilitySaved" xml:space="preserve">
+    <value>Ustawiono dostępność {0}: {1}.</value>
+  </data>
+  <data name="PoiAvailabilitySaveFailed" xml:space="preserve">
+    <value>Nie udało się zapisać dostępności: POI nie jest już miejscem docelowym. Odśwież stronę i spróbuj ponownie.</value>
+  </data>
 </root>

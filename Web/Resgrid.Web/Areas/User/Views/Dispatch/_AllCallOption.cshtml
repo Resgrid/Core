@@ -1,0 +1,25 @@
+@model bool
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Call> localizer
+@*
+    Shown on the call forms only when the department hides every recipient list (Dispatch Settings > New Call Form
+    Fields). Optional on purpose: left off, a new call is informational and pages nobody, and an edit keeps the
+    recipients the call already has.
+*@
+@{
+    var isEdit = ViewData["AllCallIsEdit"] as bool? == true;
+}
+<style>
+    .all-call-option .btn { margin-bottom: 0; }
+    .all-call-option .btn:has(input:checked) { background-color: #ed5565; border-color: #ed5565; color: #fff; }
+    .all-call-option .btn input { margin: 0 6px 0 0; vertical-align: middle; }
+</style>
+<div class="form-group all-call-option">
+    <label class="col-sm-2 control-label">@localizer["AllCallLabel"]</label>
+    <div class="col-sm-10">
+        <label class="btn btn-danger btn-outline" for="AllCall">
+            <input type="checkbox" id="AllCall" name="AllCall" value="true" @(Model ? "checked" : "") />
+            <i class="fa fa-bullhorn"></i> @localizer["AllCallButton"]
+        </label>
+        <span class="help-block m-b-none">@(isEdit ? localizer["AllCallEditHelp"] : localizer["AllCallHelp"])</span>
+    </div>
+</div>

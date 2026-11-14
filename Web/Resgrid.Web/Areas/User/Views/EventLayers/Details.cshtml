@@ -1,0 +1,91 @@
+@model Resgrid.Web.Areas.User.Models.Mapping.EventLayerView
+@using Resgrid.Model
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.Mapping> mappingLocalizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.EventLayers> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["DetailsHeader"];
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-8">
+        <h2>@localizer["DetailsHeader"]</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            <li><a asp-controller="Mapping" asp-action="Index" asp-route-area="User">@mappingLocalizer["MappingHeader"]</a></li>
+            <li><a asp-controller="Mapping" asp-action="Layers" asp-route-area="User">@mappingLocalizer["LayersHeader"]</a></li>
+            <li class="active"><strong>@Model.Name</strong></li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <form class="form-horizontal" role="form" asp-controller="EventLayers" asp-action="Details" asp-route-area="User" method="post" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="Id" />
+                        <div class="row">
+                            <div class="col-md-10 col-md-offset-1">
+                                <div asp-validation-summary="All" class="text-danger"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["SourceFile"]</label>
+                            <div class="col-sm-10">
+                                <p class="form-control-static">
+                                    @if (Model.IsImported)
+                                    {
+                                        @Model.SourceFileName
+                                        @if (Model.ImportedOn.HasValue)
+                                        {
+                                            <span class="text-muted"> &middot; @localizer["ImportedOn"] @Model.ImportedOn.Value.ToString("g")</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        @localizer["Drawn"]
+                                        <a class="btn btn-xs btn-primary" style="margin-left: 8px;" asp-controller="Mapping" asp-action="EditLayer" asp-route-area="User" asp-route-layerId="@Model.Id">@localizer["EditShapes"]</a>
+                                    }
+                                    <span class="text-muted"> &middot; @string.Format(localizer["ShapeCount"].Value, Model.ShapeCount)</span>
+                                    @switch (Model.Phase)
+                                    {
+                                        case MapLayerEventPhases.Active:
+                                            <span class="label label-primary" style="margin-left: 8px;">@localizer["PhaseActive"]</span>
+                                            break;
+                                        case MapLayerEventPhases.Upcoming:
+                                            <span class="label label-info" style="margin-left: 8px;">@localizer["PhaseUpcoming"]</span>
+                                            break;
+                                        case MapLayerEventPhases.Ended:
+                                            <span class="label label-default" style="margin-left: 8px;">@localizer["PhaseEnded"]</span>
+                                            break;
+                                    }
+                                </p>
+                            </div>
+                        </div>
+
+                        <partial name="_EventLayerFields" model="Model" />
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="layerFile">@localizer["ReplaceFile"]</label>
+                            <div class="col-sm-10">
+                                <input type="file" id="layerFile" name="layerFile" accept=".kml,.kmz,.geojson,.json" />
+                                <span class="help-block m-b-none">@localizer["ReplaceFileHelp"]</span>
+                                <span class="help-block m-b-none">@localizer["DeleteHelp"]</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <a class="btn btn-white" asp-controller="Mapping" asp-action="Layers" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+                                <button class="btn btn-primary" type="submit">@localizer["Save"]</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

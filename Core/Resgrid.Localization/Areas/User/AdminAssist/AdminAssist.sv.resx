@@ -2197,16 +2197,16 @@
     <value>Begränsa utlarmningsvyer som stöds till medlemmens grupp och undergrupper. Avdelningsadministratörer och konfigurerade avdelningsövergripande roller behåller åtkomst för hela avdelningen.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.NewCallFieldPolicy.Rules">
-    <value>Synlighet och obligatoriskhet per fält för valfria fält vid skapande av larm. Ej konfigurerade fält förblir synliga och valfria.</value>
+    <value>En regel per inställt fält: visat eller dolt, valfritt eller obligatoriskt. Ett fält utan regel visas och är valfritt, och en sparad regel som döljer larmmottagarna (från innan listorna hade egna nycklar) döljer alla fyra listor.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.NewCallFieldRule.Key">
-    <value>En nyckel för ett inbyggt larmfält som stöds. Namn, art, prioritet och typ kan inte tas bort genom denna policy.</value>
+    <value>Fältet regeln gäller: address, geolocation, what3words, pluscode, destinationPoi, indoorLocation, mapPage, note, contactName, contactInfo, primaryContact, additionalContacts, externalId, incidentId, referenceId, protocols, linkedCall, dispatchPersonnel, dispatchGroups, dispatchRoles, dispatchUnits, dispatchList, checkInTimers, part2Consent, dispatchOn, pendingCall. Namn, art, prioritet och typ har ingen nyckel: de visas och krävs alltid.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.NewCallFieldRule.Required">
-    <value>Om ett synligt valfritt fält måste fyllas i. Granska importer och varje klient som stöds innan du gör ett fält obligatoriskt.</value>
+    <value>Anger om ett visat fält måste fyllas i innan ett ärende skapas eller en ändring sparas. Plus Code, ytterligare kontakter, incheckningstimers, samtycke enligt Part 2, spara som väntande och de fyra larmlistorna kan bara döljas; att kräva larmmottagare betyder minst en mottagare från valfri lista. Granska importer och varje klient innan ett fält görs obligatoriskt.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.NewCallFieldRule.Visible">
-    <value>Om det valfria larmfältet visas på de ytor för skapande som stöds. Dolda fält kan inte vara obligatoriska.</value>
+    <value>Anger om fältet eller avsnittet finns på ärendeformulären. Ett dolt fält behåller sitt sparade värde när ett ärende redigeras. Larmmottagarna har ingen egen inställning: de visas så länge någon av de fyra larmlistorna visas, och med alla fyra dolda erbjuder formulären i stället ett valfritt allmänt larm.</value>
   </data>
   <data xml:space="preserve" name="FieldHelp.PersonnelListStatusOrder.StatusId">
     <value>Befintlig identifierare för personalstatus vars listposition konfigureras.</value>
@@ -4299,6 +4299,9 @@
   <data xml:space="preserve" name="Rule.map-token">
     <value>Anpassade kartuppgifter saknas</value>
   </data>
+  <data xml:space="preserve" name="Rule.new-call-dispatch-lists-hidden">
+    <value>Nya ärenden saknar larmlistor</value>
+  </data>
   <data xml:space="preserve" name="Rule.notification-channels">
     <value>Inställningar för aviseringskanaler behöver granskas</value>
   </data>
@@ -4419,6 +4422,9 @@
   <data xml:space="preserve" name="RuleNext.map-token">
     <value>Granska kartåsidosättningen på dess skyddade konfigurationssida.</value>
   </data>
+  <data xml:space="preserve" name="RuleNext.new-call-dispatch-lists-hidden">
+    <value>Visa minst en larmlista i fälten i ärendeformuläret, om inte varje ärende ska gå till alla (”Allmänt larm”) eller bara vara för information.</value>
+  </data>
   <data xml:space="preserve" name="RuleNext.notification-channels">
     <value>Granska auktoriserade medlemmars aviseringsinställningar och använd kommunikationstest först efter uttrycklig granskning av mottagare och kanal.</value>
   </data>
@@ -4538,6 +4544,9 @@
   </data>
   <data xml:space="preserve" name="RuleWhy.map-token">
     <value>En aktiverad kartåsidosättning behöver sina leverantörsuppgifter.</value>
+  </data>
+  <data xml:space="preserve" name="RuleWhy.new-call-dispatch-lists-hidden">
+    <value>Fälten i ärendeformuläret döljer listorna för personal, grupper, roller och enheter, så ett nytt ärende larmar ingen om inte ”Allmänt larm” är markerat.</value>
   </data>
   <data xml:space="preserve" name="RuleWhy.notification-channels">
     <value>Vissa synliga aktiva medlemmar saknar behörigt SMS-, e-post- eller push-alternativ under den vanliga aviseringsavsändaren. Push-alternativ i sig är inte en giltig registrering eller bevis på leverans.</value>
@@ -4948,7 +4957,7 @@
     <value>Styr modulnavigering och funktionsspärrar som stöds. Att dölja en modul tar inte bort dess poster eller bevisar att oberoende utlarmningsinställningar är inaktiverade.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.NewCallFieldPolicy">
-    <value>Styr valfria fält för nytt larm i klienter som stöds. Dolda fält kan inte göras obligatoriska; kärnfält för utlarmning förblir obligatoriska.</value>
+    <value>Styr vilka inbyggda fält och avsnitt ärendeformulären visar och vilka som måste fyllas i, på webben, i Omni och via API:t. Dolda fält kan inte vara obligatoriska; namn, art, prioritet och typ visas och krävs alltid. Att dölja alla fyra larmlistor ersätter dem med ett valfritt allmänt larm; ett ärende som skapas utan det larmar ingen.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.PaddleCustomerId">
     <value>Kundreferens för faktureringsleverantör. Hanteras av auktoriserade faktureringsflöden och returneras aldrig i assistentens underlag.</value>
@@ -6758,6 +6767,12 @@
   </data>
   <data xml:space="preserve" name="SettingHelp.CloseCallWhenUnitsClear">
     <value>Ett aktivt larm stängs av sig självt när dess sista larmade enhet rapporterar att den är tillbaka i tjänst eller ur tjänst. Enheter som fortfarande arbetar, ett larm utan larmad enhet och ett larm med aktiv insatsledning håller det öppet.</value>
+  </data>
+  <data name="Setting.TransportDestinationChecks" xml:space="preserve">
+    <value>Kontroll av transportdestination</value>
+  </data>
+  <data name="SettingHelp.TransportDestinationChecks" xml:space="preserve">
+    <value>När en enhets status Transporterar eller På sjukhus går till en annan destination än larmets tilldelade destination kräver apparna en anledning och ändringen antecknas i larmet.</value>
   </data>
   <data name="Setting.CallNumberingConfig" xml:space="preserve">
     <value>Konfiguration för larmnumrering</value>

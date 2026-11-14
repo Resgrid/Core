@@ -67,11 +67,12 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		/// P:c0a0f71a-0758-434c-868b-c77d245db78a|P:c0a0f71a-0758-434c-868b-c77d245db78a|U:1995012|G:991031|R:893139
 		/// </example>
 		/// <remarks>
-		/// "0" dispatches everyone. Left blank, an immediate call also goes to everyone (older clients send nothing), and a
-		/// pending call has no proposed recipients. Send a list with no entries ("|") to create a call that dispatches
-		/// nobody; a department that requires a dispatch list refuses it. A system API key never pages the whole department
-		/// on its own: its immediate call with "0" or a blank list dispatches nobody, so name the recipients (on a pending
-		/// call "0" is kept as the proposal, since nobody is paged until a dispatcher sends it).
+		/// "0" dispatches everyone, and is the only way to: a blank list, or one with no entries ("|"), names nobody (an
+		/// informational call; for a pending call, no proposed recipients). A department that requires a dispatch list refuses
+		/// either, except on a pending call (IsPending), which may wait with no proposed recipients. A system API key never
+		/// pages the whole department on its own: its immediate call with "0" adds no recipients from the list, so name the
+		/// recipients (on a pending call "0" is kept as the proposal, since nobody is paged until a dispatcher sends it). A run
+		/// card set to auto-dispatch still adds its resources to an immediate call, whatever the list names.
 		/// </remarks>
 		public string DispatchList { get; set; }
 
@@ -136,6 +137,12 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		/// Reference Id
 		/// </summary>
 		public string ReferenceId { get; set; }
+
+		/// <summary>
+		/// Optional. The map book page for the call's location. Leave it out (null) when the client has no input for it: the
+		/// department's map page requirement is then not enforced; sent blank, it is.
+		/// </summary>
+		public string MapPage { get; set; }
 
 		/// <summary>
 		/// Optional. Id of an existing call in the department to link this call to (shown as a linked call on both). Leave it

@@ -2160,6 +2160,14 @@
   <data name="DeploymentNewExternalOrder" xml:space="preserve"><value>Neuer externer Auftrag</value></data>
   <data name="HydrantImportBack" xml:space="preserve"><value>Zurück zu Hydranten</value></data>
   <data name="HydrantImportNotSaved" xml:space="preserve"><value>Es wurden keine Hydranten gespeichert. Korrigieren Sie die folgenden Zeilen und importieren Sie die Datei erneut.</value></data>
+  <data name="HydrantImportIgnoredColumns" xml:space="preserve"><value>Nicht importierte Spalten, da Resgrid kein passendes Hydrantenfeld hat: {0}. Um eine davon zu importieren, benennen Sie die Spaltenüberschrift in einen Spaltennamen aus dem Beispiel um und importieren Sie die Datei erneut.</value></data>
+  <data name="HydrantImportServiceChanges" xml:space="preserve"><value>Aus der Statusspalte der Datei: {0} Hydranten außer Betrieb gesetzt, {1} wieder in Betrieb genommen.</value></data>
+  <data name="HydrantImportUnmappedValues" xml:space="preserve"><value>Mit Standardwert importierte Werte</value></data>
+  <data name="HydrantImportUnmappedValuesHelp" xml:space="preserve"><value>Diese Werte aus Spalten eines anderen Systems wurden nicht erkannt. Die Hydranten wurden trotzdem importiert: unbekannte Typen als Other, nicht lesbare Durchflüsse und Durchflussfarben leer, und bei unbekanntem Status bleibt der Betriebszustand unverändert. Um sie festzulegen, ändern Sie die Werte in der Datei und importieren Sie sie erneut; Hydranten mit gleicher Nummer werden aktualisiert.</value></data>
+  <data name="HydrantImportColumn" xml:space="preserve"><value>Spalte</value></data>
+  <data name="HydrantImportValue" xml:space="preserve"><value>Wert</value></data>
+  <data name="HydrantImportRowCount" xml:space="preserve"><value>Zeilen</value></data>
+  <data name="HydrantImportOtherSystems" xml:space="preserve"><value>Exporte aus anderen Systemen: hydrant_type, flow_rate und location_address werden als type, flow_gpm und address gelesen. Der Durchfluss gilt in Gallonen pro Minute, sofern der Wert nicht L/min angibt. flow_rating_color (light blue, green, orange, red, AA–C oder eine #Hex-Farbe) legt die Durchflussklasse von Hydranten ohne Durchfluss fest. status (active, in service, out of service, broken…) nimmt Hydranten außer Betrieb oder wieder in Betrieb; der Status wird zum Grund für die Außerbetriebnahme. Unbekannte Typen werden als Other importiert; andere Spalten werden übersprungen und nach dem Import aufgeführt.</value></data>
   <data name="HydrantImportIssuesShown" xml:space="preserve"><value>{0} von {1} fehlerhaften Zeilen werden angezeigt. JSON verwendet Eintragsnummern, CSV Zeilennummern.</value></data>
   <data name="HydrantImportRow" xml:space="preserve"><value>Eintrag / Zeile</value></data>
   <data name="HydrantImportCorrection" xml:space="preserve"><value>So beheben Sie das Problem</value></data>

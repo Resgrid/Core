@@ -137,6 +137,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var callTypes = await _callsService.GetCallTypesForDepartmentAsync(DepartmentId);
 			var activeCalls = await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId);
 			var poiTypes = await _mappingService.GetPOITypesForDepartmentAsync(DepartmentId);
+			// Destinations carry their capabilities and availability (call form destination picker).
+			await _mappingService.PopulatePoiDetailsAsync(DepartmentId, (poiTypes ?? new List<PoiType>()).Where(x => x != null && x.IsDestination && x.Pois != null).SelectMany(x => x.Pois));
 			var pois = await _mappingService.GetPOIsForDepartmentAsync(DepartmentId);
 			var canViewPII = await _authorizationService.CanUserViewPIIAsync(UserId, DepartmentId);
 			// Shown for anyone without a status inside the auto-available hour (the department's own Available option, if any).
@@ -318,6 +320,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var activeCalls = await _dispatchScopeService.FilterCallsForUserAsync(DepartmentId, UserId, await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId));
 			var stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
 			var poiTypes = await _mappingService.GetPOITypesForDepartmentAsync(DepartmentId);
+			// Destinations carry their capabilities and availability (status destination picker).
+			await _mappingService.PopulatePoiDetailsAsync(DepartmentId, (poiTypes ?? new List<PoiType>()).Where(x => x != null && x.IsDestination && x.Pois != null).SelectMany(x => x.Pois));
 
 			var callDefault = new CallResultData();
 			callDefault.CallId = "0";

@@ -1039,7 +1039,7 @@
     <value>Στοιχεία επικοινωνίας αναφέροντος</value>
   </data>
   <data name="NewCallField_externalId" xml:space="preserve">
-    <value>Εξωτερικό αναγνωριστικό</value>
+    <value>Αναγνωριστικό κλήσης (εξωτερικό)</value>
   </data>
   <data name="NewCallField_incidentId" xml:space="preserve">
     <value>Αναγνωριστικό συμβάντος</value>
@@ -1370,6 +1370,12 @@
   </data>
   <data name="CloseCallWhenUnitsClearHelp" xml:space="preserve">
     <value>Μια ενεργή κλήση κλείνει από μόνη της όταν η τελευταία μονάδα που διατέθηκε σε αυτήν αναφέρει ότι είναι ξανά σε υπηρεσία ή εκτός υπηρεσίας (κατάσταση με βασικό τύπο Διαθέσιμη, Στον σταθμό, Αποδεσμευμένη, Μη διαθέσιμη ή Συντήρηση). Όλες οι άλλες μονάδες που διατέθηκαν πρέπει επίσης να έχουν αναφέρει ολοκλήρωση από τη διάθεσή τους. Μετρούν μόνο οι μονάδες: μια κλήση χωρίς διατεθειμένη μονάδα, μια κλήση με ενεργή διοίκηση συμβάντος ή μια μονάδα που ακόμη επιστρέφει ή μεταφέρει κρατά την κλήση ανοιχτή για τον διαχειριστή.</value>
+  </data>
+  <data name="TransportDestinationChecksLabel" xml:space="preserve">
+    <value>Έλεγχοι προορισμού μεταφοράς</value>
+  </data>
+  <data name="TransportDestinationChecksHelp" xml:space="preserve">
+    <value>Όταν μια μονάδα ορίζει κατάσταση με βασικό τύπο Μεταφορά ή Στο νοσοκομείο προς προορισμό διαφορετικό από αυτόν που έχει οριστεί στην κλήση της, οι εφαρμογές ζητούν αιτιολογία (τη σημείωση της κατάστασης) πριν από την αποθήκευση και η αλλαγή προστίθεται στην κλήση ως σημείωση. Οι εφαρμογές προεπιλέγουν σε κάθε περίπτωση τον ορισμένο προορισμό της κλήσης για αυτές τις καταστάσεις.</value>
   </data>
   <data name="DispatchRenotifyHeader" xml:space="preserve">
     <value>Επανειδοποίηση αποστολής</value>
@@ -2621,5 +2627,44 @@
   </data>
   <data name="ProvidersErrorGeocodingKey" xml:space="preserve">
     <value>Εισαγάγετε το κλειδί API για αυτόν τον πάροχο αναζήτησης διευθύνσεων.</value>
+  </data>
+  <data name="NewCallField_mapPage" xml:space="preserve">
+    <value>Σελίδα χάρτη</value>
+  </data>
+  <data name="NewCallField_primaryContact" xml:space="preserve">
+    <value>Κύρια επαφή</value>
+  </data>
+  <data name="NewCallField_additionalContacts" xml:space="preserve">
+    <value>Πρόσθετες επαφές</value>
+  </data>
+  <data name="NewCallField_checkInTimers" xml:space="preserve">
+    <value>Χρονόμετρα παρουσίας</value>
+  </data>
+  <data name="NewCallField_part2Consent" xml:space="preserve">
+    <value>Συγκατάθεση 42 CFR Part 2</value>
+  </data>
+  <data name="NewCallField_pendingCall" xml:space="preserve">
+    <value>Αποθήκευση ως εκκρεμής</value>
+  </data>
+  <data name="NewCallField_dispatchPersonnel" xml:space="preserve">
+    <value>Αποστολή σε προσωπικό</value>
+  </data>
+  <data name="NewCallField_dispatchGroups" xml:space="preserve">
+    <value>Αποστολή σε ομάδες</value>
+  </data>
+  <data name="NewCallField_dispatchRoles" xml:space="preserve">
+    <value>Αποστολή σε ρόλους</value>
+  </data>
+  <data name="NewCallField_dispatchUnits" xml:space="preserve">
+    <value>Αποστολή σε μονάδες</value>
+  </data>
+  <data name="NewCallFieldHideOnly" xml:space="preserve">
+    <value>Αυτό το πεδίο μπορεί να αποκρυφτεί αλλά όχι να γίνει υποχρεωτικό.</value>
+  </data>
+  <data name="NewCallFieldFollowsLists" xml:space="preserve">
+    <value>Εμφανίζεται μαζί με οποιαδήποτε λίστα αποστολής</value>
+  </data>
+  <data name="NewCallDispatchListsHiddenWarning" xml:space="preserve">
+    <value>Όλες οι λίστες αποστολής (προσωπικό, ομάδες, ρόλοι και μονάδες) είναι κρυφές. Οι φόρμες κλήσεων θα προσφέρουν αντί γι' αυτές ένα προαιρετικό κουμπί «Γενική κλήση»: με αυτό η κλήση πηγαίνει σε όλους, χωρίς αυτό αποθηκεύεται μόνο για ενημέρωση και δεν ειδοποιείται κανείς. Οι κάρτες εξόδου με αυτόματη αποστολή εξακολουθούν να στέλνουν τις μονάδες τους.</value>
   </data>
 </root>

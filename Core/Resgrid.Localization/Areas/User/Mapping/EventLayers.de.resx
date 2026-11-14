@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Map Icon Legend and status / priority map icon pages -->
+    <data name="ImportLayer" xml:space="preserve">
+    <value>Ebene importieren</value>
+  </data>
+  <data name="ImportLayerHeader" xml:space="preserve">
+    <value>Ebene importieren</value>
+  </data>
+  <data name="ImportHelp" xml:space="preserve">
+    <value>Laden Sie eine KML-, KMZ- oder GeoJSON-Datei (aus Google My Maps, Google Earth oder einem GIS) mit der Strecke, dem Gelände oder den Standorten einer Veranstaltung hoch. Jeder Punkt, jede Linie und jedes Polygon wird zu einer Form auf der Ebene, mit eigenem Namen, eigener Beschreibung und Farbe. Geben Sie der Ebene die Termine der Veranstaltung, dann wird sie während der Veranstaltung auf jeder Karte angezeigt.</value>
+  </data>
+  <data name="DetailsHeader" xml:space="preserve">
+    <value>Ebenendetails</value>
+  </data>
+  <data name="LayerFile" xml:space="preserve">
+    <value>Datei</value>
+  </data>
+  <data name="LayerFileHelp" xml:space="preserve">
+    <value>KML, KMZ oder GeoJSON, bis {0} MB.</value>
+  </data>
+  <data name="ReplaceFile" xml:space="preserve">
+    <value>Datei ersetzen</value>
+  </data>
+  <data name="ReplaceFileHelp" xml:space="preserve">
+    <value>Optional. Eine neue Datei ersetzt alle Formen der Ebene; die Angaben oben bleiben erhalten.</value>
+  </data>
+  <data name="DeleteHelp" xml:space="preserve">
+    <value>Das Löschen der Ebene (Kartierung → Ebenen) entfernt alle ihre Formen und Angaben.</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Beschreibung</value>
+  </data>
+  <data name="Color" xml:space="preserve">
+    <value>Standardfarbe</value>
+  </data>
+  <data name="ColorHelp" xml:space="preserve">
+    <value>Für Formen, denen die Datei keine eigene Farbe gibt.</value>
+  </data>
+  <data name="EventSection" xml:space="preserve">
+    <value>Veranstaltung</value>
+  </data>
+  <data name="StartsOn" xml:space="preserve">
+    <value>Beginn</value>
+  </data>
+  <data name="EndsOn" xml:space="preserve">
+    <value>Ende</value>
+  </data>
+  <data name="EventDatesHelp" xml:space="preserve">
+    <value>In der Zeitzone der Abteilung ({0}). Während die Veranstaltung läuft, wird die Ebene auf jeder Karte angezeigt, unabhängig von „Standardmäßig an“. Lassen Sie beide leer für eine Ebene ohne Veranstaltung.</value>
+  </data>
+  <data name="Organizer" xml:space="preserve">
+    <value>Veranstalter</value>
+  </data>
+  <data name="ContactName" xml:space="preserve">
+    <value>Koordinator / Kontakt</value>
+  </data>
+  <data name="ContactPhone" xml:space="preserve">
+    <value>Telefon des Kontakts</value>
+  </data>
+  <data name="ContactEmail" xml:space="preserve">
+    <value>E-Mail des Kontakts</value>
+  </data>
+  <data name="OnByDefault" xml:space="preserve">
+    <value>Standardmäßig an</value>
+  </data>
+  <data name="OnByDefaultHelp" xml:space="preserve">
+    <value>Die Ebene beim Öffnen jeder Karte anzeigen, auch außerhalb der Veranstaltungstermine.</value>
+  </data>
+  <data name="Searchable" xml:space="preserve">
+    <value>Durchsuchbar</value>
+  </data>
+  <data name="SaveImport" xml:space="preserve">
+    <value>Importieren</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Speichern</value>
+  </data>
+  <data name="EditShapes" xml:space="preserve">
+    <value>Formen bearbeiten</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="SourceFile" xml:space="preserve">
+    <value>Quelle</value>
+  </data>
+  <data name="Drawn" xml:space="preserve">
+    <value>Auf der Karte gezeichnet</value>
+  </data>
+  <data name="ShapeCount" xml:space="preserve">
+    <value>{0} Formen</value>
+  </data>
+  <data name="EventColumn" xml:space="preserve">
+    <value>Veranstaltung</value>
+  </data>
+  <data name="PhaseUpcoming" xml:space="preserve">
+    <value>Bevorstehend</value>
+  </data>
+  <data name="PhaseActive" xml:space="preserve">
+    <value>Läuft gerade</value>
+  </data>
+  <data name="PhaseEnded" xml:space="preserve">
+    <value>Beendet</value>
+  </data>
+  <data name="ImportedOn" xml:space="preserve">
+    <value>importiert</value>
+  </data>
+  <data name="FileRequired" xml:space="preserve">
+    <value>Wählen Sie eine KML-, KMZ- oder GeoJSON-Datei zum Importieren.</value>
+  </data>
+  <data name="FileTypeUnsupported" xml:space="preserve">
+    <value>Laden Sie eine .kml-, .kmz-, .geojson- oder .json-Datei hoch.</value>
+  </data>
+  <data name="FileTooLarge" xml:space="preserve">
+    <value>Die Datei ist größer als {0} MB.</value>
+  </data>
+  <data name="FileTooMuchData" xml:space="preserve">
+    <value>Die Datei enthält mehr, als eine Ebene speichern kann ({0} MB an Formen und Beschreibungen). Teilen Sie sie in kleinere Dateien auf oder kürzen Sie die Beschreibungen.</value>
+  </data>
+  <data name="FileTooManyShapes" xml:space="preserve">
+    <value>Die Datei hat mehr als {0} Formen. Teilen Sie sie auf mehrere Ebenen auf.</value>
+  </data>
+  <data name="FileTooManyPoints" xml:space="preserve">
+    <value>Die Datei hat mehr als {0} Koordinaten. Vereinfachen Sie die Linien (die meisten GIS-Programme können das) oder teilen Sie sie auf mehrere Ebenen auf.</value>
+  </data>
+  <data name="FileNoShapes" xml:space="preserve">
+    <value>Die Datei enthält keine Punkte, Linien oder Polygone mit Koordinaten.</value>
+  </data>
+  <data name="FileOnlyAddresses" xml:space="preserve">
+    <value>Die {0} Orte der Datei haben eine Adresse, aber keine Koordinaten (eine Google-My-Maps-Ebene, die nach Adresse verortet ist). Importieren Sie sie stattdessen als POIs (Kartierung → POIs → Importieren), wo die Adressen nachgeschlagen werden, oder exportieren Sie die Karte mit Koordinaten.</value>
+  </data>
+  <data name="FileUnreadable" xml:space="preserve">
+    <value>Die Datei konnte nicht gelesen werden. Prüfen Sie, ob es eine gültige KML-, KMZ- oder GeoJSON-Datei ist.</value>
+  </data>
+  <data name="EndsBeforeStarts" xml:space="preserve">
+    <value>Die Veranstaltung kann nicht enden, bevor sie beginnt.</value>
+  </data>
+  <data name="ContactEmailInvalid" xml:space="preserve">
+    <value>Geben Sie eine gültige E-Mail-Adresse ein.</value>
+  </data>
+  <data name="ColorInvalid" xml:space="preserve">
+    <value>Wählen Sie eine Farbe.</value>
+  </data>
+  <data name="SaveFailed" xml:space="preserve">
+    <value>Die Ebene konnte nicht gespeichert werden. Bitte versuchen Sie es erneut.</value>
+  </data>
+  <data name="ImportedSummary" xml:space="preserve">
+    <value>„{0}“ importiert: {1} Punkte, {2} Linien, {3} Polygone.</value>
+  </data>
+  <data name="ReplacedSummary" xml:space="preserve">
+    <value>Formen von „{0}“ ersetzt: {1} Punkte, {2} Linien, {3} Polygone.</value>
+  </data>
+  <data name="SavedSummary" xml:space="preserve">
+    <value>„{0}“ gespeichert.</value>
+  </data>
+  <data name="SkippedNote" xml:space="preserve">
+    <value>{0} Ortsmarken ohne verwendbare Koordinaten wurden ausgelassen.</value>
+  </data>
+</root>

@@ -10,14 +10,21 @@ namespace Resgrid.Web.Helpers
 	/// Parsing for the pipe delimited DispatchList string clients send when creating or editing a call.
 	/// </summary>
 	/// <remarks>
-	/// The list has three forms. Blank means "everyone" on an immediate call (older clients send nothing, so this stays),
-	/// "0" means "everyone", and anything else is the explicit list. An explicit list with no entries ("|") dispatches
-	/// nobody: it is how a client creates or edits a call that goes to no one without the blank reading as "everyone".
-	/// A new immediate call made with a system API key is the exception: neither "0" nor a blank list pages everyone, so
-	/// it dispatches nobody unless the list names recipients (CallsController.SaveCall).
+	/// "0" means everyone ("All Call"), and it is the only way to ask for everyone. On a new call a blank list, or an
+	/// explicit list with no entries ("|"), names nobody (a run card set to auto-dispatch still adds its resources). On an
+	/// edit a blank list keeps the recipients, while "|" removes them, except those of a recipient list the department
+	/// hides. (Until 2026-11-13 a blank list paged everyone on an immediate call, because older clients sent nothing when
+	/// nothing was picked.) Anything else is the explicit list. A new immediate call made with a system API key never
+	/// pages everyone on its own: "0" dispatches nobody there unless the call is pending (CallsController.SaveCall).
 	/// </remarks>
 	public static class DispatchListHelper
 	{
+		/// <summary>True for "0", the explicit "everyone" (All Call). Blank is not everyone.</summary>
+		/// <param name="dispatchList">The DispatchList string as the client sent it.</param>
+		/// <returns>True when the list asks for everyone.</returns>
+		public static bool IsEveryone(string dispatchList) =>
+			dispatchList != null && dispatchList.Trim() == "0";
+
 		/// <summary>
 		/// Whether the list names anyone: "0" or at least one non-blank entry. Blank and an entry-less list ("|") do not,
 		/// so a department that requires a dispatch list refuses a call sent to nobody.

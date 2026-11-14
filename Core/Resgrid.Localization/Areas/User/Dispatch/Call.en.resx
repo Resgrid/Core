@@ -1019,4 +1019,28 @@
   <data name="NearestUnitsCallLocation" xml:space="preserve">
     <value>Call location</value>
   </data>
+  <data name="AllCallLabel" xml:space="preserve">
+    <value>All Call</value>
+  </data>
+  <data name="AllCallButton" xml:space="preserve">
+    <value>All Call (dispatch everyone)</value>
+  </data>
+  <data name="AllCallHelp" xml:space="preserve">
+    <value>Every dispatch list is hidden. Turn on All Call to send this call to everyone, or leave it off to save an informational call that pages nobody.</value>
+  </data>
+  <data name="AllCallEditHelp" xml:space="preserve">
+    <value>Turn on All Call to add everyone to this call and page them. Leave it off to keep the recipients the call already has.</value>
+  </data>
+  <data name="DestinationAvailabilityLimited" xml:space="preserve">
+    <value>Limited</value>
+  </data>
+  <data name="DestinationAvailabilityDiversion" xml:space="preserve">
+    <value>Diversion</value>
+  </data>
+  <data name="DestinationAvailabilityClosed" xml:space="preserve">
+    <value>Closed</value>
+  </data>
+  <data name="DestinationAvailabilityLink" xml:space="preserve">
+    <value>Destination availability</value>
+  </data>
 </root>

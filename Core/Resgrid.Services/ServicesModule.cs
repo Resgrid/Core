@@ -416,6 +416,8 @@ namespace Resgrid.Services
 			builder.RegisterType<RunCardsService>().As<IRunCardsService>().InstancePerLifetimeScope();
 			builder.RegisterType<ResponsePackagesService>().As<IResponsePackagesService>().InstancePerLifetimeScope();
 			builder.RegisterType<OutstandingRequirementsService>().As<IOutstandingRequirementsService>().InstancePerLifetimeScope();
+			builder.RegisterType<TransportDestinationCheckService>().As<ITransportDestinationCheckService>().InstancePerLifetimeScope();
+			builder.RegisterType<NearestDestinationService>().As<INearestDestinationService>().InstancePerLifetimeScope();
 			builder.RegisterType<RunCardTemplatesService>().As<IRunCardTemplatesService>().InstancePerLifetimeScope();
 			builder.RegisterType<PersonnelLocationResolver>().As<IPersonnelLocationResolver>().InstancePerLifetimeScope();
 			// Singleton: it keeps each department's reduced visibility matrix in memory between location pings.

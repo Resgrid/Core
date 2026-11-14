@@ -69,8 +69,17 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 			FieldPolicy = new NewCallFieldPolicy();
 		}
 
+		/// <summary>
+		/// "All Call": add everyone in the department to the call's recipients. Offered only when the department hides
+		/// every recipient list; left off, the recipients stay as they are.
+		/// </summary>
+		public bool AllCall { get; set; }
+
 		public bool IsFieldVisible(string key) => FieldPolicy == null || FieldPolicy.IsVisible(key);
 
 		public bool IsFieldRequired(string key) => FieldPolicy != null && FieldPolicy.IsRequired(key);
+
+		/// <summary>Every recipient list is hidden, so the form offers the optional All Call instead.</summary>
+		public bool OffersAllCall => FieldPolicy != null && FieldPolicy.AreAllDispatchTargetsHidden;
 	}
 }

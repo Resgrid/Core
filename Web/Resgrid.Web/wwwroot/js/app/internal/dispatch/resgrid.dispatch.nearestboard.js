@@ -117,11 +117,18 @@ var resgrid;
                     ? ' <span class="label label-success">' + escapeHtml(text('nearest').replace('{0}', rank)) + '</span>'
                     : '';
             }
+            // m:ss, rounded to the second as NearestUnitService ranks (UnitResponseOrigin.RankingSeconds), so the order on
+            // screen always matches the times shown: whole minutes hid why a "17 min" unit ranked behind another "17 min".
+            function formatDuration(seconds) {
+                var total = Math.max(0, Math.round(seconds));
+                var rest = total % 60;
+                return Math.floor(total / 60) + ':' + (rest < 10 ? '0' : '') + rest + ' ' + text('minutes');
+            }
             function formatEta(seconds, source) {
                 if (seconds === null || seconds === undefined) {
                     return '&mdash;';
                 }
-                var html = escapeHtml(Math.max(1, Math.round(seconds / 60)) + ' ' + text('minutes'));
+                var html = escapeHtml(formatDuration(seconds));
                 if (isEnum(source, 1, 'Estimated')) {
                     html += ' <small class="text-muted">(' + escapeHtml(text('estimate')) + ')</small>';
                 }

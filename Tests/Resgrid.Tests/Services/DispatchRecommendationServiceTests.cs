@@ -630,6 +630,90 @@ namespace Resgrid.Tests.Services
 			engine.ResponseSeconds.Should().Be(130);
 		}
 
+		[TestCase(359, Description = "5:01 beats a nearer 5:59")]
+		[TestCase(329, Description = "5:01 beats a nearer 5:29, though both read 5 min in whole minutes")]
+		public async Task closest_unit_ranks_routed_times_to_the_second(double nearerSeconds)
+		{
+			// Belgian EMS, 2026-11-12: whole minutes on screen hid why a unit showing 17 min ranked behind others showing
+			// 17 min. Ranking is to the second and the screens show m:ss; there is no minute cut-off.
+			BuildCard(engineCount: 2);
+			_departmentSettingsService.Setup(x => x.GetDispatchRecommendationModeAsync(DepartmentId, It.IsAny<bool>()))
+				.ReturnsAsync(DispatchRecommendationModes.ClosestUnit);
+			_config.UseRoutedEta = true;
+
+			// Engine 1 is ~12.6 km out and routes in 5:01; Engine 2 is nearer (~10 km) but slower by road.
+			PlaceUnits((1, 39.8633, -104.95), (2, 39.84, -104.95));
+			_geoService.Setup(x => x.GetEtaInSecondsAsync("39.8633,-104.95", It.IsAny<string>())).ReturnsAsync(301);
+			_geoService.Setup(x => x.GetEtaInSecondsAsync("39.84,-104.95", It.IsAny<string>())).ReturnsAsync(nearerSeconds);
+
+			var result = await _service.GetRecommendationAsync(BuildRequest());
+
+			result.Units.Select(u => u.UnitId).Should().Equal(1, 2);
+			result.Units.Should().OnlyContain(u => u.SelectionReason == RecommendationSelectionReasons.ClosestByEta);
+			result.Units[0].ResponseSeconds.Should().Be(301);
+		}
+
+		[Test]
+		public async Task closest_unit_level_on_the_second_goes_nearest_first()
+		{
+			BuildCard(engineCount: 2);
+			_departmentSettingsService.Setup(x => x.GetDispatchRecommendationModeAsync(DepartmentId, It.IsAny<bool>()))
+				.ReturnsAsync(DispatchRecommendationModes.ClosestUnit);
+			_config.UseRoutedEta = true;
+
+			// Both show 17:10. The router has the farther Engine 1 a fraction of a second quicker, which is no reason to send it.
+			PlaceUnits((1, 39.8633, -104.95), (2, 39.84, -104.95));
+			_geoService.Setup(x => x.GetEtaInSecondsAsync("39.8633,-104.95", It.IsAny<string>())).ReturnsAsync(1029.6);
+			_geoService.Setup(x => x.GetEtaInSecondsAsync("39.84,-104.95", It.IsAny<string>())).ReturnsAsync(1030.2);
+
+			var result = await _service.GetRecommendationAsync(BuildRequest());
+
+			result.Units.Select(u => u.UnitId).Should().Equal(2, 1);
+		}
+
+		[Test]
+		public async Task closest_role_ranks_routed_times_to_the_second_and_ties_go_nearest_first()
+		{
+			BuildCard(roleCount: 1);
+			_departmentSettingsService.Setup(x => x.GetDispatchRecommendationModeAsync(DepartmentId, It.IsAny<bool>()))
+				.ReturnsAsync(DispatchRecommendationModes.ClosestUnit);
+			_config.UseRoutedEta = true;
+
+			var now = DateTime.UtcNow;
+			_personnelLocationResolver.Setup(x => x.GetLatestLocationsAsync(DepartmentId, It.IsAny<int>(), It.IsAny<DateTime?>()))
+				.ReturnsAsync(new Dictionary<string, ResolvedPersonnelLocation>
+				{
+					{ "user-1", new ResolvedPersonnelLocation { UserId = "user-1", Latitude = 39.8633, Longitude = -104.95, Timestamp = now } },
+					{ "user-2", new ResolvedPersonnelLocation { UserId = "user-2", Latitude = 39.84, Longitude = -104.95, Timestamp = now } }
+				});
+			_geoService.Setup(x => x.GetEtaInSecondsAsync("39.8633,-104.95", It.IsAny<string>())).ReturnsAsync(301);
+			_geoService.Setup(x => x.GetEtaInSecondsAsync("39.84,-104.95", It.IsAny<string>())).ReturnsAsync(329);
+
+			var faster = await _service.GetRecommendationAsync(BuildRequest());
+			faster.Personnel.Should().ContainSingle().Which.UserId.Should().Be("user-1", "5:01 beats the nearer 5:29");
+
+			_geoService.Setup(x => x.GetEtaInSecondsAsync("39.84,-104.95", It.IsAny<string>())).ReturnsAsync(301.3);
+
+			var level = await _service.GetRecommendationAsync(BuildRequest());
+			level.Personnel.Should().ContainSingle().Which.UserId.Should().Be("user-2", "both show 5:01, so the nearer goes");
+		}
+
+		[TestCase(0, 0)]
+		[TestCase(301, 301)]
+		[TestCase(301.4, 301)]
+		[TestCase(301.5, 302, Description = "half a second rounds up, as the screens' Math.round does")]
+		[TestCase(1029.6, 1030)]
+		public void ranking_seconds_round_as_the_screens_show_them(double seconds, double expected)
+		{
+			UnitResponseOrigin.RankingSeconds(seconds).Should().Be(expected);
+		}
+
+		[Test]
+		public void ranking_seconds_put_no_time_last()
+		{
+			UnitResponseOrigin.RankingSeconds((double?)null).Should().Be(double.MaxValue);
+		}
+
 		[Test]
 		public async Task closest_unit_ranked_by_distance_picks_the_nearest_unit_whatever_its_turnout()
 		{

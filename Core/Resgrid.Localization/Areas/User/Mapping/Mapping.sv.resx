@@ -449,4 +449,136 @@
   <data name="PoiBulkSelectRow" xml:space="preserve">
     <value>Markera POI</value>
   </data>
+  <data name="PoiCapabilities" xml:space="preserve">
+    <value>POI-förmågor</value>
+  </data>
+  <data name="PoiCapabilitiesHelp" xml:space="preserve">
+    <value>Förmågor beskriver vad dina destinationer och andra intressepunkter erbjuder, till exempel PCI-lab, strokeenhet eller traumacenter. Markera dem på varje POI; larmoperatörer ser dem när de väljer destination och kan rapportera en som otillgänglig.</value>
+  </data>
+  <data name="PoiCapabilitiesPoiHelp" xml:space="preserve">
+    <value>Vad den här intressepunkten erbjuder. Larmoperatörer ser det när de väljer destination.</value>
+  </data>
+  <data name="AddPoiCapability" xml:space="preserve">
+    <value>Lägg till förmåga</value>
+  </data>
+  <data name="PoiCapabilityNamePlaceholder" xml:space="preserve">
+    <value>Förmågans namn, t.ex. PCI-lab</value>
+  </data>
+  <data name="SortOrder" xml:space="preserve">
+    <value>Sorteringsordning</value>
+  </data>
+  <data name="PoiCapabilitySortHelp" xml:space="preserve">
+    <value>Förmågor listas efter sorteringsordning och sedan namn. Lämna sorteringsordningen tom för att lägga till en förmåga sist.</value>
+  </data>
+  <data name="NoPoiCapabilities" xml:space="preserve">
+    <value>Inga förmågor har definierats ännu.</value>
+  </data>
+  <data name="ManagePoiCapabilities" xml:space="preserve">
+    <value>Hantera förmågor</value>
+  </data>
+  <data name="DeletePoiCapabilityConfirm" xml:space="preserve">
+    <value>Ta bort förmågan ”{0}”? Den tas bort från alla POI som erbjuder den ({1}) och från varje tillgänglighetsrapport.</value>
+  </data>
+  <data name="PoiCapabilityNameRequired" xml:space="preserve">
+    <value>Ange ett namn på högst {0} tecken.</value>
+  </data>
+  <data name="PoiCapabilityNameExists" xml:space="preserve">
+    <value>Det finns redan en förmåga som heter ”{0}”.</value>
+  </data>
+  <data name="PoiCapabilitySaved" xml:space="preserve">
+    <value>Förmågan ”{0}” sparades.</value>
+  </data>
+  <data name="PoiCapabilityDeleted" xml:space="preserve">
+    <value>Förmågan ”{0}” togs bort.</value>
+  </data>
+  <data name="PoiCapabilitySaveFailed" xml:space="preserve">
+    <value>Förmågan kunde inte sparas. Ladda om sidan och försök igen.</value>
+  </data>
+  <data name="DestinationAvailability" xml:space="preserve">
+    <value>Destinationstillgänglighet</value>
+  </data>
+  <data name="DestinationAvailabilityHelp" xml:space="preserve">
+    <value>Registrera när en destination, till exempel ett sjukhus, rapporterar begränsad kapacitet, omdirigering eller stängning, eller att en av dess förmågor inte är tillgänglig. Larmoperatörer ser det när de väljer ett ärendes destination.</value>
+  </data>
+  <data name="PoiType" xml:space="preserve">
+    <value>Typ</value>
+  </data>
+  <data name="PoiAvailability" xml:space="preserve">
+    <value>Tillgänglighet</value>
+  </data>
+  <data name="SetPoiAvailability" xml:space="preserve">
+    <value>Ange tillgänglighet</value>
+  </data>
+  <data name="NoDestinationPois" xml:space="preserve">
+    <value>Det finns inga destinations-POI ännu. Markera en POI-typ som destination för att lista dess POI här.</value>
+  </data>
+  <data name="PoiAvailabilityOpen" xml:space="preserve">
+    <value>Öppen</value>
+  </data>
+  <data name="PoiAvailabilityLimited" xml:space="preserve">
+    <value>Begränsad</value>
+  </data>
+  <data name="PoiAvailabilityDiversion" xml:space="preserve">
+    <value>Omdirigering</value>
+  </data>
+  <data name="PoiAvailabilityClosed" xml:space="preserve">
+    <value>Stängd</value>
+  </data>
+  <data name="PoiAvailabilityUnavailable" xml:space="preserve">
+    <value>Ej tillgängligt:</value>
+  </data>
+  <data name="PoiAvailabilityUntil" xml:space="preserve">
+    <value>Till {0}</value>
+  </data>
+  <data name="PoiAvailabilityCurrent" xml:space="preserve">
+    <value>Nuvarande</value>
+  </data>
+  <data name="PoiAvailabilitySetOn" xml:space="preserve">
+    <value>Angiven {0}</value>
+  </data>
+  <data name="PoiAvailabilityStatusHelp" xml:space="preserve">
+    <value>Öppen rensar rapporten. Begränsad tar fortfarande emot patienter med minskad kapacitet; Omdirigering ber besättningar åka någon annanstans om det finns ett alternativ; Stängd tar inte emot någon.</value>
+  </data>
+  <data name="PoiAvailabilityUnavailableHelp" xml:space="preserve">
+    <value>Markera det som den här destinationen inte kan erbjuda just nu.</value>
+  </data>
+  <data name="PoiAvailabilityNoCapabilities" xml:space="preserve">
+    <value>Den här destinationen har inga förmågor markerade.</value>
+  </data>
+  <data name="PoiAvailabilityNoteHelp" xml:space="preserve">
+    <value>Valfritt, högst {0} tecken.</value>
+  </data>
+  <data name="PoiAvailabilityExpires" xml:space="preserve">
+    <value>Upphör</value>
+  </data>
+  <data name="PoiAvailabilityExpiresHelp" xml:space="preserve">
+    <value>När rapporten upphör och destinationen räknas som öppen igen.</value>
+  </data>
+  <data name="PoiAvailabilityExpiryNone" xml:space="preserve">
+    <value>Inget slut (tills den ändras)</value>
+  </data>
+  <data name="PoiAvailabilityExpiryKeep" xml:space="preserve">
+    <value>Behåll nuvarande ({0})</value>
+  </data>
+  <data name="PoiAvailabilityExpiryOneHour" xml:space="preserve">
+    <value>Om 1 timme</value>
+  </data>
+  <data name="PoiAvailabilityExpiryHours" xml:space="preserve">
+    <value>Om {0} timmar</value>
+  </data>
+  <data name="PoiAvailabilityStatusInvalid" xml:space="preserve">
+    <value>Välj en tillgänglighetsstatus.</value>
+  </data>
+  <data name="PoiAvailabilityNoteTooLong" xml:space="preserve">
+    <value>Anteckningen får vara högst {0} tecken.</value>
+  </data>
+  <data name="PoiAvailabilityExpiryInvalid" xml:space="preserve">
+    <value>Välj när rapporten upphör.</value>
+  </data>
+  <data name="PoiAvailabilitySaved" xml:space="preserve">
+    <value>Tillgängligheten för {0} har satts till {1}.</value>
+  </data>
+  <data name="PoiAvailabilitySaveFailed" xml:space="preserve">
+    <value>Tillgängligheten kunde inte sparas: POI:n är inte längre en destination. Ladda om sidan och försök igen.</value>
+  </data>
 </root>

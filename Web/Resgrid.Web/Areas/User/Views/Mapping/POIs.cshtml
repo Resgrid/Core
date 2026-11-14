@@ -25,6 +25,8 @@
 	{
 		<div class="col-sm-8">
 			<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+				<a title="@localizer["DestinationAvailabilityHelp"]" class="btn btn-default" asp-controller="Mapping" asp-action="Destinations" asp-route-area="User">@localizer["DestinationAvailability"]</a>
+				<a title="@localizer["PoiCapabilitiesHelp"]" class="btn btn-info" asp-controller="Mapping" asp-action="PoiCapabilities" asp-route-area="User">@localizer["PoiCapabilities"]</a>
 				<a title="@localizer["AddPOIType"]" class="btn btn-success" asp-controller="Mapping" asp-action="AddPOIType" asp-route-area="User">@localizer["AddPOIType"]</a>
 			</div>
 		</div>

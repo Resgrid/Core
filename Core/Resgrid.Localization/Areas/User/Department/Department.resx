@@ -631,7 +631,7 @@
     <value>Reporter Contact Info</value>
   </data>
   <data name="NewCallField_externalId" xml:space="preserve">
-    <value>External Call ID</value>
+    <value>Call Identifier (External ID)</value>
   </data>
   <data name="NewCallField_incidentId" xml:space="preserve">
     <value>Incident ID</value>
@@ -962,6 +962,12 @@
   </data>
   <data name="CloseCallWhenUnitsClearHelp" xml:space="preserve">
     <value>An active call closes on its own when the last unit dispatched to it reports back in service or out of service (a status whose base type is Available, In Quarters, Cleared, Unavailable or Maintenance). Every other dispatched unit must also have reported finished since its dispatch. Only units count: a call with no unit dispatched, a call under an active incident command, or a unit still returning or transporting keeps the call open for the dispatcher.</value>
+  </data>
+  <data name="TransportDestinationChecksLabel" xml:space="preserve">
+    <value>Transport destination checks</value>
+  </data>
+  <data name="TransportDestinationChecksHelp" xml:space="preserve">
+    <value>When a unit sets a status whose base type is Transporting or At Hospital to a destination other than the one assigned on its call, the apps ask for a reason (the status note) before saving, and the change is added to the call as a note. The apps pre-select the call's assigned destination for these statuses either way.</value>
   </data>
   <data name="DispatchRenotifyHeader" xml:space="preserve">
     <value>Dispatch Re-notification</value>
@@ -2201,5 +2207,44 @@
   </data>
   <data name="ProvidersErrorGeocodingKey" xml:space="preserve">
     <value>Enter the API key for this address lookup provider.</value>
+  </data>
+  <data name="NewCallField_mapPage" xml:space="preserve">
+    <value>Map Page</value>
+  </data>
+  <data name="NewCallField_primaryContact" xml:space="preserve">
+    <value>Primary Contact</value>
+  </data>
+  <data name="NewCallField_additionalContacts" xml:space="preserve">
+    <value>Additional Contacts</value>
+  </data>
+  <data name="NewCallField_checkInTimers" xml:space="preserve">
+    <value>Check-In Timers</value>
+  </data>
+  <data name="NewCallField_part2Consent" xml:space="preserve">
+    <value>42 CFR Part 2 Consent</value>
+  </data>
+  <data name="NewCallField_pendingCall" xml:space="preserve">
+    <value>Save as Pending</value>
+  </data>
+  <data name="NewCallField_dispatchPersonnel" xml:space="preserve">
+    <value>Dispatch to Personnel</value>
+  </data>
+  <data name="NewCallField_dispatchGroups" xml:space="preserve">
+    <value>Dispatch to Groups</value>
+  </data>
+  <data name="NewCallField_dispatchRoles" xml:space="preserve">
+    <value>Dispatch to Roles</value>
+  </data>
+  <data name="NewCallField_dispatchUnits" xml:space="preserve">
+    <value>Dispatch to Units</value>
+  </data>
+  <data name="NewCallFieldHideOnly" xml:space="preserve">
+    <value>This field can be hidden but not required.</value>
+  </data>
+  <data name="NewCallFieldFollowsLists" xml:space="preserve">
+    <value>Shown with any dispatch list</value>
+  </data>
+  <data name="NewCallDispatchListsHiddenWarning" xml:space="preserve">
+    <value>Every dispatch list (personnel, groups, roles and units) is hidden. The call forms will offer an optional All Call button instead: with it a call goes to everyone, without it the call is saved for information only and nobody is paged. Run cards that dispatch automatically still send their units.</value>
   </data>
 </root>

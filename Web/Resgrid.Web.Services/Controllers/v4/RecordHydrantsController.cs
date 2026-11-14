@@ -120,7 +120,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 			catch (Exception ex) { return Fail(ex); }
 		}
 
-		/// <summary>JSON or CSV import (number, latitude, longitude, type, address, main_size, flow_gpm, owner). Validate every row before saving.</summary>
+		/// <summary>JSON or CSV import (number, latitude, longitude, type, address, main_size, flow_gpm, owner). Validate every row before saving.
+		/// CSV from another system: hydrant_type, flow_rate and location_address are read as type, flow_gpm and address, and flow_rating_color
+		/// (NFPA 291 colour, class letter or #hex) sets the flow class of a hydrant with no flow, and status takes hydrants out of service or returns
+		/// them to service (counted in TakenOutOfService and ReturnedToService); values those columns hold that cannot be read are imported as type
+		/// Other, a blank flow, no class or an unchanged service state and returned in UnmappedValues; other columns are skipped and returned in IgnoredColumns.</summary>
 		[HttpPost("Import")]
 		[Authorize(Policy = ResgridResources.Record_PreventionAdmin)]
 		public async Task<ActionResult<HydrantImportResultData>> Import([FromBody] HydrantImportInput input, CancellationToken cancellationToken)

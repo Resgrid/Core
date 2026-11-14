@@ -20,6 +20,7 @@ namespace Resgrid.Tests.AdminAssist
 		[TestCase("map-style", "mapStylePresent", false, true)]
 		[TestCase("password-recovery", "RequirePasswordResetViaEmail", false, true)]
 		[TestCase("import-heartbeat", "importHeartbeatMissing", true, false)]
+		[TestCase("new-call-dispatch-lists-hidden", "newCallDispatchListsHidden", true, false)]
 		public void Boolean_rules_distinguish_the_documented_failure_from_correct_configuration(string ruleId, string fact, bool failing, bool passing)
 		{
 			var rule = Rule(ruleId);

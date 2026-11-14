@@ -59,5 +59,32 @@ namespace Resgrid.Tests.Models
 			var layer = (MapLayer)Invoke("DeserializeDocument", "{\"id\":\"7\",\"data\":{\"Features\":[]}}");
 			Assert.That(layer.Data.Convert().Features, Is.Empty);
 		}
+
+		[Test]
+		public void An_event_layers_details_survive_postgres_json()
+		{
+			var starts = new DateTime(2026, 11, 20, 7, 0, 0, DateTimeKind.Utc);
+			var layer = new MapLayer
+			{
+				DepartmentId = 51, Type = 0, Name = "City Marathon", Data = new MapLayerData(),
+				Description = "42 km course", EventStartsOn = starts, EventEndsOn = starts.AddHours(8), Organizer = "Run Club",
+				ContactName = "Ann", ContactPhone = "+32 470 00 00 00", ContactEmail = "ann@example.org",
+				SourceFileName = "marathon.kml", ImportedById = "user-1", ImportedOn = starts.AddDays(-3)
+			};
+			layer.Data.Hydrate(new FeatureCollection());
+
+			var stored = JObject.Parse((string)Invoke("SerializeDocument", layer));
+			stored["id"] = "43";
+			var actual = (MapLayer)Invoke("DeserializeDocument", stored.ToString());
+
+			Assert.That(actual.Description, Is.EqualTo("42 km course"));
+			Assert.That(actual.EventStartsOn, Is.EqualTo(starts));
+			Assert.That(actual.EventEndsOn, Is.EqualTo(starts.AddHours(8)));
+			Assert.That(actual.Organizer, Is.EqualTo("Run Club"));
+			Assert.That(actual.ContactEmail, Is.EqualTo("ann@example.org"));
+			Assert.That(actual.SourceFileName, Is.EqualTo("marathon.kml"));
+			Assert.That(actual.IsImported, Is.True);
+			Assert.That(stored["isImported"], Is.Null, "a computed flag is not stored");
+		}
 	}
 }

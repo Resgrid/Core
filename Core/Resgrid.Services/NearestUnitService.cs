@@ -148,13 +148,13 @@ namespace Resgrid.Services
 				.ToList();
 
 			// A responder whose drive time was looked up comes before one left on a straight-line estimate, as a run card's
-			// shortlist does: the estimate is the cheaper guess, not a comparable time.
+			// shortlist does: the estimate is the cheaper guess, not a comparable time. Times compare in the seconds shown.
 			board.Personnel = personnelCandidates
 				.OrderBy(p => !p.IsAvailable)
 				.ThenBy(p => !p.DistanceMeters.HasValue)
 				.ThenBy(p => p.LocationIsStale)
 				.ThenBy(p => byDistance || p.DriveTimeLookedUp ? 0 : 1)
-				.ThenBy(p => byDistance ? p.DistanceMeters ?? double.MaxValue : p.EtaSeconds ?? double.MaxValue)
+				.ThenBy(p => byDistance ? p.DistanceMeters ?? double.MaxValue : UnitResponseOrigin.RankingSeconds(p.EtaSeconds))
 				.ThenBy(p => p.DistanceMeters ?? double.MaxValue)
 				.ThenBy(p => p.Person.Name, StringComparer.OrdinalIgnoreCase)
 				.Select(c => c.ToResult())
@@ -166,15 +166,17 @@ namespace Resgrid.Services
 		/// <summary>
 		/// The board's unit order. Available units with a distance come first, each unit type in the order a closest-unit
 		/// run card ranks that type: fastest response (drive time first for the type's shortlist when routed ETAs are on,
-		/// then the straight-line estimates), or nearest when the department ranks by distance. The types are then merged
-		/// by taking whichever type's next unit is fastest (or nearest), so a type's own order is never broken: the unit a
-		/// run card picks for a type is always that type's first row. A stale fix is flagged on the row rather than ranked
-		/// down: sorting it below every fresh unit put a unit two minutes out in the middle of the list. Available units with
-		/// no distance (no position, or one hidden from the viewer) follow, then the units that aren't available.
+		/// then the straight-line estimates), or nearest when the department ranks by distance. Response is compared in the
+		/// whole seconds the board shows (<see cref="UnitResponseOrigin.RankingSeconds(double?)"/>), and units level on the
+		/// second go nearest first. The types are then merged by taking whichever type's next unit is fastest (or nearest),
+		/// so a type's own order is never broken: the unit a run card picks for a type is always that type's first row. A
+		/// stale fix is flagged on the row rather than ranked down: sorting it below every fresh unit put a unit two minutes
+		/// out in the middle of the list. Available units with no distance (no position, or one hidden from the viewer)
+		/// follow, then the units that aren't available.
 		/// </summary>
 		private static List<UnitCandidate> RankUnits(List<UnitCandidate> units, bool byDistance)
 		{
-			double Key(UnitCandidate c) => byDistance ? c.DistanceMeters ?? double.MaxValue : c.ResponseSeconds ?? double.MaxValue;
+			double Key(UnitCandidate c) => byDistance ? c.DistanceMeters ?? double.MaxValue : UnitResponseOrigin.RankingSeconds(c.ResponseSeconds);
 
 			var queues = units
 				.Where(c => c.IsAvailable && c.DistanceMeters.HasValue)
@@ -698,7 +700,7 @@ namespace Resgrid.Services
 			var groups = units.Where(Routable)
 				.GroupBy(UnitTypeKey, StringComparer.OrdinalIgnoreCase)
 				.Select(g => g
-					.OrderBy(c => config.RanksByDistance ? c.DistanceMeters.Value : c.ResponseSeconds ?? double.MaxValue)
+					.OrderBy(c => config.RanksByDistance ? c.DistanceMeters.Value : UnitResponseOrigin.RankingSeconds(c.ResponseSeconds))
 					.ThenBy(c => c.DistanceMeters.Value)
 					.Take(perGroup)
 					.Cast<Candidate>()

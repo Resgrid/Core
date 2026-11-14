@@ -449,4 +449,136 @@
   <data name="PoiBulkSelectRow" xml:space="preserve">
     <value>Seleccionar PDI</value>
   </data>
+  <data name="PoiCapabilities" xml:space="preserve">
+    <value>Capacidades de POI</value>
+  </data>
+  <data name="PoiCapabilitiesHelp" xml:space="preserve">
+    <value>Las capacidades describen lo que ofrecen sus destinos y otros puntos de interés, como sala de hemodinámica, unidad de ictus o centro de trauma. Márquelas en cada POI; los despachadores las ven al elegir un destino y pueden notificar una como no disponible.</value>
+  </data>
+  <data name="PoiCapabilitiesPoiHelp" xml:space="preserve">
+    <value>Lo que ofrece este punto de interés. Los despachadores lo ven al elegir un destino.</value>
+  </data>
+  <data name="AddPoiCapability" xml:space="preserve">
+    <value>Añadir capacidad</value>
+  </data>
+  <data name="PoiCapabilityNamePlaceholder" xml:space="preserve">
+    <value>Nombre de la capacidad, p. ej. Sala de hemodinámica</value>
+  </data>
+  <data name="SortOrder" xml:space="preserve">
+    <value>Orden</value>
+  </data>
+  <data name="PoiCapabilitySortHelp" xml:space="preserve">
+    <value>Las capacidades se ordenan por orden y luego por nombre. Deje el orden en blanco para añadir una capacidad al final.</value>
+  </data>
+  <data name="NoPoiCapabilities" xml:space="preserve">
+    <value>Aún no se ha definido ninguna capacidad.</value>
+  </data>
+  <data name="ManagePoiCapabilities" xml:space="preserve">
+    <value>Gestionar capacidades</value>
+  </data>
+  <data name="DeletePoiCapabilityConfirm" xml:space="preserve">
+    <value>¿Eliminar la capacidad «{0}»? Se quitará de todos los POI que la ofrecen ({1}) y de todos los informes de disponibilidad.</value>
+  </data>
+  <data name="PoiCapabilityNameRequired" xml:space="preserve">
+    <value>Introduzca un nombre de capacidad de {0} caracteres como máximo.</value>
+  </data>
+  <data name="PoiCapabilityNameExists" xml:space="preserve">
+    <value>Ya existe una capacidad llamada «{0}».</value>
+  </data>
+  <data name="PoiCapabilitySaved" xml:space="preserve">
+    <value>Capacidad «{0}» guardada.</value>
+  </data>
+  <data name="PoiCapabilityDeleted" xml:space="preserve">
+    <value>Capacidad «{0}» eliminada.</value>
+  </data>
+  <data name="PoiCapabilitySaveFailed" xml:space="preserve">
+    <value>No se pudo guardar la capacidad. Vuelva a cargar la página e inténtelo de nuevo.</value>
+  </data>
+  <data name="DestinationAvailability" xml:space="preserve">
+    <value>Disponibilidad de destinos</value>
+  </data>
+  <data name="DestinationAvailabilityHelp" xml:space="preserve">
+    <value>Registre cuando un destino, como un hospital, informa de capacidad limitada, desvío o cierre, o de que una de sus capacidades no está disponible. Los despachadores lo ven al elegir el destino de un incidente.</value>
+  </data>
+  <data name="PoiType" xml:space="preserve">
+    <value>Tipo</value>
+  </data>
+  <data name="PoiAvailability" xml:space="preserve">
+    <value>Disponibilidad</value>
+  </data>
+  <data name="SetPoiAvailability" xml:space="preserve">
+    <value>Establecer disponibilidad</value>
+  </data>
+  <data name="NoDestinationPois" xml:space="preserve">
+    <value>Aún no hay POI de destino. Marque un tipo de POI como destino para listar aquí sus POI.</value>
+  </data>
+  <data name="PoiAvailabilityOpen" xml:space="preserve">
+    <value>Abierto</value>
+  </data>
+  <data name="PoiAvailabilityLimited" xml:space="preserve">
+    <value>Limitado</value>
+  </data>
+  <data name="PoiAvailabilityDiversion" xml:space="preserve">
+    <value>Desvío</value>
+  </data>
+  <data name="PoiAvailabilityClosed" xml:space="preserve">
+    <value>Cerrado</value>
+  </data>
+  <data name="PoiAvailabilityUnavailable" xml:space="preserve">
+    <value>No disponible:</value>
+  </data>
+  <data name="PoiAvailabilityUntil" xml:space="preserve">
+    <value>Hasta {0}</value>
+  </data>
+  <data name="PoiAvailabilityCurrent" xml:space="preserve">
+    <value>Actual</value>
+  </data>
+  <data name="PoiAvailabilitySetOn" xml:space="preserve">
+    <value>Establecido el {0}</value>
+  </data>
+  <data name="PoiAvailabilityStatusHelp" xml:space="preserve">
+    <value>Abierto elimina el informe. Limitado sigue aceptando pacientes con capacidad reducida; Desvío pide a las dotaciones que vayan a otro sitio salvo que no haya alternativa; Cerrado no acepta a nadie.</value>
+  </data>
+  <data name="PoiAvailabilityUnavailableHelp" xml:space="preserve">
+    <value>Marque lo que este destino no puede ofrecer ahora mismo.</value>
+  </data>
+  <data name="PoiAvailabilityNoCapabilities" xml:space="preserve">
+    <value>Este destino no tiene capacidades marcadas.</value>
+  </data>
+  <data name="PoiAvailabilityNoteHelp" xml:space="preserve">
+    <value>Opcional, {0} caracteres como máximo.</value>
+  </data>
+  <data name="PoiAvailabilityExpires" xml:space="preserve">
+    <value>Caduca</value>
+  </data>
+  <data name="PoiAvailabilityExpiresHelp" xml:space="preserve">
+    <value>Cuándo caduca el informe y el destino vuelve a figurar como abierto.</value>
+  </data>
+  <data name="PoiAvailabilityExpiryNone" xml:space="preserve">
+    <value>Sin caducidad (hasta que se cambie)</value>
+  </data>
+  <data name="PoiAvailabilityExpiryKeep" xml:space="preserve">
+    <value>Mantener la actual ({0})</value>
+  </data>
+  <data name="PoiAvailabilityExpiryOneHour" xml:space="preserve">
+    <value>En 1 hora</value>
+  </data>
+  <data name="PoiAvailabilityExpiryHours" xml:space="preserve">
+    <value>En {0} horas</value>
+  </data>
+  <data name="PoiAvailabilityStatusInvalid" xml:space="preserve">
+    <value>Elija un estado de disponibilidad.</value>
+  </data>
+  <data name="PoiAvailabilityNoteTooLong" xml:space="preserve">
+    <value>La nota puede tener como máximo {0} caracteres.</value>
+  </data>
+  <data name="PoiAvailabilityExpiryInvalid" xml:space="preserve">
+    <value>Elija cuándo caduca el informe.</value>
+  </data>
+  <data name="PoiAvailabilitySaved" xml:space="preserve">
+    <value>Disponibilidad de {0} establecida en {1}.</value>
+  </data>
+  <data name="PoiAvailabilitySaveFailed" xml:space="preserve">
+    <value>No se pudo guardar la disponibilidad: el POI ya no es un destino. Vuelva a cargar la página e inténtelo de nuevo.</value>
+  </data>
 </root>

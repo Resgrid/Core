@@ -205,4 +205,136 @@
   <data name="PoiBulkSelectRow" xml:space="preserve">
     <value>تحديد نقطة الاهتمام</value>
   </data>
+  <data name="PoiCapabilities" xml:space="preserve">
+    <value>قدرات نقاط الاهتمام</value>
+  </data>
+  <data name="PoiCapabilitiesHelp" xml:space="preserve">
+    <value>تصف القدرات ما تقدمه وجهاتك ونقاط الاهتمام الأخرى، مثل مختبر القسطرة القلبية أو وحدة السكتة الدماغية أو مركز الإصابات. حدّدها لكل نقطة اهتمام؛ يراها المرسلون عند اختيار الوجهة ويمكنهم الإبلاغ عن عدم توفر إحداها.</value>
+  </data>
+  <data name="PoiCapabilitiesPoiHelp" xml:space="preserve">
+    <value>ما تقدمه نقطة الاهتمام هذه. يراها المرسلون عند اختيار الوجهة.</value>
+  </data>
+  <data name="AddPoiCapability" xml:space="preserve">
+    <value>إضافة قدرة</value>
+  </data>
+  <data name="PoiCapabilityNamePlaceholder" xml:space="preserve">
+    <value>اسم القدرة، مثل مختبر القسطرة القلبية</value>
+  </data>
+  <data name="SortOrder" xml:space="preserve">
+    <value>ترتيب الفرز</value>
+  </data>
+  <data name="PoiCapabilitySortHelp" xml:space="preserve">
+    <value>تُعرض القدرات حسب ترتيب الفرز ثم حسب الاسم. اترك ترتيب الفرز فارغًا لإضافة قدرة في النهاية.</value>
+  </data>
+  <data name="NoPoiCapabilities" xml:space="preserve">
+    <value>لم يتم تعريف أي قدرات بعد.</value>
+  </data>
+  <data name="ManagePoiCapabilities" xml:space="preserve">
+    <value>إدارة القدرات</value>
+  </data>
+  <data name="DeletePoiCapabilityConfirm" xml:space="preserve">
+    <value>حذف القدرة «{0}»؟ ستُزال من جميع نقاط الاهتمام التي تقدمها ({1}) ومن كل تقرير توفر.</value>
+  </data>
+  <data name="PoiCapabilityNameRequired" xml:space="preserve">
+    <value>أدخل اسم قدرة لا يتجاوز {0} حرفًا.</value>
+  </data>
+  <data name="PoiCapabilityNameExists" xml:space="preserve">
+    <value>توجد بالفعل قدرة باسم «{0}».</value>
+  </data>
+  <data name="PoiCapabilitySaved" xml:space="preserve">
+    <value>تم حفظ القدرة «{0}».</value>
+  </data>
+  <data name="PoiCapabilityDeleted" xml:space="preserve">
+    <value>تم حذف القدرة «{0}».</value>
+  </data>
+  <data name="PoiCapabilitySaveFailed" xml:space="preserve">
+    <value>تعذّر حفظ القدرة. أعد تحميل الصفحة وحاول مرة أخرى.</value>
+  </data>
+  <data name="DestinationAvailability" xml:space="preserve">
+    <value>توفر الوجهات</value>
+  </data>
+  <data name="DestinationAvailabilityHelp" xml:space="preserve">
+    <value>سجّل متى تبلغ وجهة مثل مستشفى عن سعة محدودة أو تحويل أو إغلاق، أو أن إحدى قدراتها غير متوفرة. يرى المرسلون ذلك عند اختيار وجهة البلاغ.</value>
+  </data>
+  <data name="PoiType" xml:space="preserve">
+    <value>النوع</value>
+  </data>
+  <data name="PoiAvailability" xml:space="preserve">
+    <value>التوفر</value>
+  </data>
+  <data name="SetPoiAvailability" xml:space="preserve">
+    <value>تعيين التوفر</value>
+  </data>
+  <data name="NoDestinationPois" xml:space="preserve">
+    <value>لا توجد نقاط اهتمام وجهة بعد. حدّد نوع نقطة اهتمام كوجهة لعرض نقاطه هنا.</value>
+  </data>
+  <data name="PoiAvailabilityOpen" xml:space="preserve">
+    <value>مفتوح</value>
+  </data>
+  <data name="PoiAvailabilityLimited" xml:space="preserve">
+    <value>محدود</value>
+  </data>
+  <data name="PoiAvailabilityDiversion" xml:space="preserve">
+    <value>تحويل</value>
+  </data>
+  <data name="PoiAvailabilityClosed" xml:space="preserve">
+    <value>مغلق</value>
+  </data>
+  <data name="PoiAvailabilityUnavailable" xml:space="preserve">
+    <value>غير متوفر:</value>
+  </data>
+  <data name="PoiAvailabilityUntil" xml:space="preserve">
+    <value>حتى {0}</value>
+  </data>
+  <data name="PoiAvailabilityCurrent" xml:space="preserve">
+    <value>الحالي</value>
+  </data>
+  <data name="PoiAvailabilitySetOn" xml:space="preserve">
+    <value>عُيّن في {0}</value>
+  </data>
+  <data name="PoiAvailabilityStatusHelp" xml:space="preserve">
+    <value>«مفتوح» يلغي التقرير. «محدود» يستقبل المرضى بسعة منخفضة؛ «تحويل» يطلب من الطواقم التوجه إلى مكان آخر ما لم يكن هناك بديل؛ «مغلق» لا يستقبل أحدًا.</value>
+  </data>
+  <data name="PoiAvailabilityUnavailableHelp" xml:space="preserve">
+    <value>حدّد ما لا تستطيع هذه الوجهة تقديمه الآن.</value>
+  </data>
+  <data name="PoiAvailabilityNoCapabilities" xml:space="preserve">
+    <value>لا توجد قدرات محددة لهذه الوجهة.</value>
+  </data>
+  <data name="PoiAvailabilityNoteHelp" xml:space="preserve">
+    <value>اختياري، بحد أقصى {0} حرفًا.</value>
+  </data>
+  <data name="PoiAvailabilityExpires" xml:space="preserve">
+    <value>ينتهي</value>
+  </data>
+  <data name="PoiAvailabilityExpiresHelp" xml:space="preserve">
+    <value>متى ينتهي التقرير وتُعتبر الوجهة مفتوحة مجددًا.</value>
+  </data>
+  <data name="PoiAvailabilityExpiryNone" xml:space="preserve">
+    <value>بلا انتهاء (حتى التغيير)</value>
+  </data>
+  <data name="PoiAvailabilityExpiryKeep" xml:space="preserve">
+    <value>الإبقاء على الحالي ({0})</value>
+  </data>
+  <data name="PoiAvailabilityExpiryOneHour" xml:space="preserve">
+    <value>خلال ساعة واحدة</value>
+  </data>
+  <data name="PoiAvailabilityExpiryHours" xml:space="preserve">
+    <value>خلال {0} ساعة</value>
+  </data>
+  <data name="PoiAvailabilityStatusInvalid" xml:space="preserve">
+    <value>اختر حالة التوفر.</value>
+  </data>
+  <data name="PoiAvailabilityNoteTooLong" xml:space="preserve">
+    <value>يمكن أن تحتوي الملاحظة على {0} حرفًا كحد أقصى.</value>
+  </data>
+  <data name="PoiAvailabilityExpiryInvalid" xml:space="preserve">
+    <value>اختر موعد انتهاء التقرير.</value>
+  </data>
+  <data name="PoiAvailabilitySaved" xml:space="preserve">
+    <value>تم تعيين توفر {0} إلى {1}.</value>
+  </data>
+  <data name="PoiAvailabilitySaveFailed" xml:space="preserve">
+    <value>تعذّر حفظ التوفر: لم تعد نقطة الاهتمام وجهة. أعد تحميل الصفحة وحاول مرة أخرى.</value>
+  </data>
 </root>

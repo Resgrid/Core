@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Map Icon Legend and status / priority map icon pages -->
+    <data name="ImportLayer" xml:space="preserve">
+    <value>Εισαγωγή επιπέδου</value>
+  </data>
+  <data name="ImportLayerHeader" xml:space="preserve">
+    <value>Εισαγωγή επιπέδου</value>
+  </data>
+  <data name="ImportHelp" xml:space="preserve">
+    <value>Ανεβάστε ένα αρχείο KML, KMZ ή GeoJSON (από Google My Maps, Google Earth ή GIS) με τη διαδρομή, τον χώρο ή τα σημεία μιας εκδήλωσης. Κάθε σημείο, γραμμή και πολύγωνο γίνεται σχήμα του επιπέδου με δικό του όνομα, περιγραφή και χρώμα. Δώστε στο επίπεδο τις ημερομηνίες της εκδήλωσης και θα εμφανίζεται σε κάθε χάρτη όσο διαρκεί.</value>
+  </data>
+  <data name="DetailsHeader" xml:space="preserve">
+    <value>Στοιχεία επιπέδου</value>
+  </data>
+  <data name="LayerFile" xml:space="preserve">
+    <value>Αρχείο</value>
+  </data>
+  <data name="LayerFileHelp" xml:space="preserve">
+    <value>KML, KMZ ή GeoJSON, έως {0} MB.</value>
+  </data>
+  <data name="ReplaceFile" xml:space="preserve">
+    <value>Αντικατάσταση αρχείου</value>
+  </data>
+  <data name="ReplaceFileHelp" xml:space="preserve">
+    <value>Προαιρετικό. Ένα νέο αρχείο αντικαθιστά όλα τα σχήματα του επιπέδου· τα παραπάνω στοιχεία διατηρούνται.</value>
+  </data>
+  <data name="DeleteHelp" xml:space="preserve">
+    <value>Η διαγραφή του επιπέδου (Χαρτογράφηση → Επίπεδα) αφαιρεί όλα τα σχήματα και τα στοιχεία του.</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Όνομα</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Περιγραφή</value>
+  </data>
+  <data name="Color" xml:space="preserve">
+    <value>Προεπιλεγμένο χρώμα</value>
+  </data>
+  <data name="ColorHelp" xml:space="preserve">
+    <value>Για σχήματα στα οποία το αρχείο δεν δίνει δικό τους χρώμα.</value>
+  </data>
+  <data name="EventSection" xml:space="preserve">
+    <value>Εκδήλωση</value>
+  </data>
+  <data name="StartsOn" xml:space="preserve">
+    <value>Έναρξη</value>
+  </data>
+  <data name="EndsOn" xml:space="preserve">
+    <value>Λήξη</value>
+  </data>
+  <data name="EventDatesHelp" xml:space="preserve">
+    <value>Στη ζώνη ώρας του τμήματος ({0}). Όσο διαρκεί η εκδήλωση, το επίπεδο εμφανίζεται σε κάθε χάρτη, ανεξάρτητα από τη ρύθμιση «Ενεργό από προεπιλογή». Αφήστε και τα δύο κενά για επίπεδο χωρίς εκδήλωση.</value>
+  </data>
+  <data name="Organizer" xml:space="preserve">
+    <value>Διοργανωτής</value>
+  </data>
+  <data name="ContactName" xml:space="preserve">
+    <value>Συντονιστής / Επαφή</value>
+  </data>
+  <data name="ContactPhone" xml:space="preserve">
+    <value>Τηλέφωνο επαφής</value>
+  </data>
+  <data name="ContactEmail" xml:space="preserve">
+    <value>Email επαφής</value>
+  </data>
+  <data name="OnByDefault" xml:space="preserve">
+    <value>Ενεργό από προεπιλογή</value>
+  </data>
+  <data name="OnByDefaultHelp" xml:space="preserve">
+    <value>Εμφάνιση του επιπέδου με το άνοιγμα κάθε χάρτη, και εκτός των ημερομηνιών της εκδήλωσης.</value>
+  </data>
+  <data name="Searchable" xml:space="preserve">
+    <value>Με δυνατότητα αναζήτησης</value>
+  </data>
+  <data name="SaveImport" xml:space="preserve">
+    <value>Εισαγωγή</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Αποθήκευση</value>
+  </data>
+  <data name="EditShapes" xml:space="preserve">
+    <value>Επεξεργασία σχημάτων</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Στοιχεία</value>
+  </data>
+  <data name="SourceFile" xml:space="preserve">
+    <value>Προέλευση</value>
+  </data>
+  <data name="Drawn" xml:space="preserve">
+    <value>Σχεδιασμένο στον χάρτη</value>
+  </data>
+  <data name="ShapeCount" xml:space="preserve">
+    <value>{0} σχήματα</value>
+  </data>
+  <data name="EventColumn" xml:space="preserve">
+    <value>Εκδήλωση</value>
+  </data>
+  <data name="PhaseUpcoming" xml:space="preserve">
+    <value>Επερχόμενη</value>
+  </data>
+  <data name="PhaseActive" xml:space="preserve">
+    <value>Σε εξέλιξη</value>
+  </data>
+  <data name="PhaseEnded" xml:space="preserve">
+    <value>Ολοκληρώθηκε</value>
+  </data>
+  <data name="ImportedOn" xml:space="preserve">
+    <value>εισήχθη</value>
+  </data>
+  <data name="FileRequired" xml:space="preserve">
+    <value>Επιλέξτε ένα αρχείο KML, KMZ ή GeoJSON για εισαγωγή.</value>
+  </data>
+  <data name="FileTypeUnsupported" xml:space="preserve">
+    <value>Ανεβάστε ένα αρχείο .kml, .kmz, .geojson ή .json.</value>
+  </data>
+  <data name="FileTooLarge" xml:space="preserve">
+    <value>Το αρχείο υπερβαίνει τα {0} MB.</value>
+  </data>
+  <data name="FileTooMuchData" xml:space="preserve">
+    <value>Το αρχείο περιέχει περισσότερα από όσα μπορεί να αποθηκεύσει ένα επίπεδο ({0} MB σχημάτων και περιγραφών). Χωρίστε το σε μικρότερα αρχεία ή συντομεύστε τις περιγραφές.</value>
+  </data>
+  <data name="FileTooManyShapes" xml:space="preserve">
+    <value>Το αρχείο έχει περισσότερα από {0} σχήματα. Χωρίστε το σε περισσότερα επίπεδα.</value>
+  </data>
+  <data name="FileTooManyPoints" xml:space="preserve">
+    <value>Το αρχείο έχει περισσότερες από {0} συντεταγμένες. Απλοποιήστε τις γραμμές (τα περισσότερα GIS το κάνουν) ή χωρίστε το σε περισσότερα επίπεδα.</value>
+  </data>
+  <data name="FileNoShapes" xml:space="preserve">
+    <value>Το αρχείο δεν έχει σημεία, γραμμές ή πολύγωνα με συντεταγμένες.</value>
+  </data>
+  <data name="FileOnlyAddresses" xml:space="preserve">
+    <value>Οι {0} τοποθεσίες του αρχείου έχουν διεύθυνση αλλά όχι συντεταγμένες (επίπεδο Google My Maps που τοποθετείται με διεύθυνση). Εισαγάγετέ τες ως σημεία ενδιαφέροντος (Χαρτογράφηση → POI → Εισαγωγή), όπου αναζητούνται οι διευθύνσεις, ή εξαγάγετε τον χάρτη με συντεταγμένες.</value>
+  </data>
+  <data name="FileUnreadable" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η ανάγνωση του αρχείου. Ελέγξτε ότι είναι έγκυρο αρχείο KML, KMZ ή GeoJSON.</value>
+  </data>
+  <data name="EndsBeforeStarts" xml:space="preserve">
+    <value>Η εκδήλωση δεν μπορεί να λήξει πριν ξεκινήσει.</value>
+  </data>
+  <data name="ContactEmailInvalid" xml:space="preserve">
+    <value>Εισαγάγετε έγκυρη διεύθυνση email.</value>
+  </data>
+  <data name="ColorInvalid" xml:space="preserve">
+    <value>Επιλέξτε χρώμα.</value>
+  </data>
+  <data name="SaveFailed" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η αποθήκευση του επιπέδου. Δοκιμάστε ξανά.</value>
+  </data>
+  <data name="ImportedSummary" xml:space="preserve">
+    <value>Εισήχθη το «{0}»: {1} σημεία, {2} γραμμές, {3} πολύγωνα.</value>
+  </data>
+  <data name="ReplacedSummary" xml:space="preserve">
+    <value>Αντικαταστάθηκαν τα σχήματα του «{0}»: {1} σημεία, {2} γραμμές, {3} πολύγωνα.</value>
+  </data>
+  <data name="SavedSummary" xml:space="preserve">
+    <value>Αποθηκεύτηκε το «{0}».</value>
+  </data>
+  <data name="SkippedNote" xml:space="preserve">
+    <value>Παραλείφθηκαν {0} σημάνσεις χωρίς χρήσιμες συντεταγμένες.</value>
+  </data>
+</root>

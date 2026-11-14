@@ -1,0 +1,19 @@
+@model Resgrid.Web.Areas.User.Models.Mapping.PoiAvailabilityRow
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.Mapping> localizer
+@* A destination's availability: the status badge, then what is unavailable, the note and when the report lapses. *@
+<span class="label poi-availability-badge" data-status="@Model.Status" style="background-color: @Resgrid.Web.Areas.User.Models.Mapping.PoiAvailabilityBadge.Color(Model.Status); color: #fff;">@Model.StatusLabel</span>
+@if (!Model.IsOpen)
+{
+	if (Model.UnavailableCapabilities.Any())
+	{
+		<div class="small"><strong>@localizer["PoiAvailabilityUnavailable"]</strong> @string.Join(", ", Model.UnavailableCapabilities)</div>
+	}
+	if (!String.IsNullOrWhiteSpace(Model.Note))
+	{
+		<div class="small text-muted">@Model.Note</div>
+	}
+	if (Model.ExpiresOn.HasValue)
+	{
+		<div class="small text-muted">@string.Format(localizer["PoiAvailabilityUntil"].Value, Model.ExpiresOn.Value.ToString("g"))</div>
+	}
+}

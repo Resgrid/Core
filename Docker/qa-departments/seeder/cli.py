@@ -253,7 +253,7 @@ def build_manifest(departments: list[Department], keys: dict[tuple[str, str], in
                 'alsoMemberOf': p.spec.get('alsoMemberOf', []),
             } for p in department.people if p.persona],
             'otherPeople': len([p for p in department.people if not p.persona]),
-            'groups': ids('group'), 'units': ids('unit'), 'calls': {k: {'id': v, 'name': next(c['name'] for c in s.get('calls', []) if c['key'] == k),
+            'groups': ids('group'), 'units': ids('unit'), 'pois': ids('poi'), 'calls': {k: {'id': v, 'name': next(c['name'] for c in s.get('calls', []) if c['key'] == k),
                                                                        'state': next(c.get('state', 'active') for c in s.get('calls', []) if c['key'] == k)} for k, v in ids('call').items()},
             'flags': {'profile': s.get('flags', {}).get('profile', 'server'), 'overrides': {f.key: department.flag_overrides[f.id] for f in flags if f.id in department.flag_overrides},
                       'expected': {key: {'enabled': p.enabled, 'source': p.source} for key, p in department.flag_predictions.items()}},

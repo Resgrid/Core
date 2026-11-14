@@ -73,5 +73,23 @@ namespace Resgrid.Model
 		{
 			return Math.Round(distanceMeters * EstimatedRoadDistanceFactor / EstimatedSpeedMetersPerSecond);
 		}
+
+		/// <summary>
+		/// The response time a closest-unit ranking orders on: whole seconds, rounded as the dispatch screens show them
+		/// (m:ss, half up), so the order always agrees with the times on screen. Resources level on the second then go
+		/// nearest first (straight-line distance) in every ranking: units sharing a station share its drive time, and a
+		/// router's fraction of a second is not a reason to send the farther one. Thresholds (time conditions,
+		/// waiting-call limits) still compare the unrounded seconds.
+		/// </summary>
+		public static double RankingSeconds(double responseSeconds)
+		{
+			return Math.Round(responseSeconds, MidpointRounding.AwayFromZero);
+		}
+
+		/// <summary><see cref="RankingSeconds(double)"/>, with no time ranking last.</summary>
+		public static double RankingSeconds(double? responseSeconds)
+		{
+			return responseSeconds.HasValue ? RankingSeconds(responseSeconds.Value) : double.MaxValue;
+		}
 	}
 }

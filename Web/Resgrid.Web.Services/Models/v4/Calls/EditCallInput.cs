@@ -66,9 +66,8 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 
 		/// <summary>
 		/// Pipe separated list of users, units, roles and groups to dispatch ("P:", "U:", "R:" and "G:" prefixes), replacing
-		/// the call's dispatches. "0" dispatches everyone. Left blank it also means everyone, except on a pending call or when
-		/// the department hides the dispatch list, where blank keeps the call's dispatches. A list with no entries ("|")
-		/// removes every dispatch.
+		/// the call's dispatches. "0" adds everyone, and is the only way to. Left blank, the call keeps its dispatches. A list
+		/// with no entries ("|") removes every dispatch, except those of a recipient list the department hides.
 		/// </summary>
 		public string DispatchList { get; set; }
 
@@ -127,6 +126,12 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		/// Reference Id
 		/// </summary>
 		public string ReferenceId { get; set; }
+
+		/// <summary>
+		/// Optional. The map book page for the call's location. Null or blank keeps the stored page; leave it out (null) when
+		/// the client has no input for it, so the department's map page requirement is not enforced against it.
+		/// </summary>
+		public string MapPage { get; set; }
 
 		/// <summary>
 		/// Optional. Indoor map zone the incident is in. Blank keeps the stored zone; leave it out (null) when the client

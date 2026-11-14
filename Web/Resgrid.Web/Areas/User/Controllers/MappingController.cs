@@ -225,6 +225,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var model = new LayersView();
 			model.Layers = await _mappingService.GetMapLayersForTypeDepartmentAsync(DepartmentId, MapLayerTypes.TopLevel);
+			// Event layers show their dates in the department's time zone.
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 
 			return View(model);
 		}
@@ -312,6 +314,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (layer.DepartmentId != DepartmentId)
 				return Unauthorized();
 
+			// An imported layer's shapes carry their own names, descriptions and colors, which the drawing editor would
+			// overwrite with the layer's; it is changed on its Details page (event details, replace the file) instead.
+			if (layer.IsImported)
+				return RedirectToAction("Details", "EventLayers", new { area = "User", layerId });
+
 			var feature = layer.Data.Convert();
 			model.GeoJson = JsonConvert.SerializeObject(feature, HtmlHelpers.ScriptJsonSettings);
 
@@ -345,6 +352,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (newLayer.DepartmentId != DepartmentId)
 					return Unauthorized();
+
+				// The GET sends an imported layer to its Details page; a stale or crafted editor post must not replace its shapes
+				// (their own names, descriptions and colors) with the drawing editor's either.
+				if (newLayer.IsImported)
+					return RedirectToAction("Details", "EventLayers", new { area = "User", layerId = model.Id });
 
 				newLayer.Name = model.Name;
 				newLayer.Color = model.Color;
@@ -407,6 +419,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			layer.IsDeleted = true;
 			layer.UpdatedById = UserId;
 			layer.UpdatedOn = DateTime.UtcNow;
+			// Everything the layer held goes with it (an event layer's vendor list, contacts and route), not just its listing.
+			layer.Data = new MapLayerData { Features = new List<MapLayerDataFeature>() };
+			layer.Description = null;
+			layer.Organizer = null;
+			layer.ContactName = null;
+			layer.ContactPhone = null;
+			layer.ContactEmail = null;
 
 			var mapLayer = await _mappingService.SaveMapLayerAsync(layer);
 
@@ -955,6 +974,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var modal = new AddPOIView();
 			modal.TypeId = poiTypeId;
 			modal.Poi = new Poi();
+			modal.Capabilities = await _mappingService.GetPoiCapabilitiesForDepartmentAsync(DepartmentId);
 
 			return View(modal);
 		}
@@ -984,11 +1004,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 				// Always a new POI: a posted id would make the save update that row, whichever department owns it.
 				modal.Poi.PoiId = 0;
 				modal.Poi.PoiTypeId = modal.TypeId;
-				await _mappingService.SavePOIAsync(modal.Poi, cancellationToken);
+				var saved = await _mappingService.SavePOIAsync(modal.Poi, cancellationToken);
+
+				// The service keeps only this department's capabilities, whatever ids are posted.
+				if (saved != null && saved.PoiId > 0 && modal.SelectedCapabilityIds != null && modal.SelectedCapabilityIds.Count > 0)
+					await _mappingService.SetPoiCapabilitiesAsync(DepartmentId, saved.PoiId, modal.SelectedCapabilityIds, cancellationToken);
 
 				return RedirectToAction("ViewType", new { poiTypeId = modal.TypeId });
 			}
 
+			modal.Capabilities = await _mappingService.GetPoiCapabilitiesForDepartmentAsync(DepartmentId);
 			return View(modal);
 		}
 
@@ -1014,6 +1039,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var model = new AddPOIView();
 			model.TypeId = type.PoiTypeId;
 			model.Poi = poi;
+			model.Capabilities = await _mappingService.GetPoiCapabilitiesForDepartmentAsync(DepartmentId);
+			model.SelectedCapabilityIds = await _mappingService.GetPoiCapabilityIdsForPoiAsync(DepartmentId, poi.PoiId) ?? new List<string>();
 
 			return View("AddPOI", model);
 		}
@@ -1028,6 +1055,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (modal?.Poi == null || modal.Poi.PoiId <= 0)
 			{
 				ModelState.AddModelError("", "Cannot edit POI. Please go back and try again.");
+				if (modal != null)
+					modal.Capabilities = await _mappingService.GetPoiCapabilitiesForDepartmentAsync(DepartmentId);
 				return View("AddPOI", modal);
 			}
 
@@ -1056,10 +1085,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				await _mappingService.SavePOIAsync(existingPoi, cancellationToken);
 
+				// The ticked boxes replace the POI's capabilities (none ticked clears them); other departments' ids are dropped.
+				await _mappingService.SetPoiCapabilitiesAsync(DepartmentId, existingPoi.PoiId, modal.SelectedCapabilityIds ?? new List<string>(), cancellationToken);
+
 				return RedirectToAction("ViewType", new { poiTypeId = type.PoiTypeId });
 			}
 
 			modal.Poi.PoiTypeId = type.PoiTypeId;
+			modal.Capabilities = await _mappingService.GetPoiCapabilitiesForDepartmentAsync(DepartmentId);
 			return View("AddPOI", modal);
 		}
 
@@ -1154,6 +1187,285 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			return RedirectToAction("ViewType", new { poiTypeId });
 		}
+
+		#region POI capabilities and destination availability
+
+		// A destination's availability is operational, like a call: whoever can create calls (dispatchers) may set it, as may the
+		// map administrators who manage the destinations. The v4 SetPoiAvailability takes the same Call_Create claim.
+		private static bool CanSetPoiAvailability() => CanManageMapData() || ClaimsAuthorizationHelper.CanCreateCall();
+
+		/// <summary>The department's POI capabilities ("Cath Lab", "Stroke Center"), with how many POIs offer each.</summary>
+		[HttpGet]
+		public async Task<IActionResult> PoiCapabilities()
+		{
+			if (!CanManageMapData())
+				return Unauthorized();
+
+			var model = new PoiCapabilitiesView();
+			model.Capabilities = await _mappingService.GetPoiCapabilitiesForDepartmentAsync(DepartmentId) ?? new List<PoiCapability>();
+			model.Message = TempData?["PoiCapabilitiesMessage"] as string;
+			model.ErrorMessage = TempData?["PoiCapabilitiesError"] as string;
+
+			if (model.Capabilities.Count > 0)
+			{
+				var pois = await _mappingService.GetPOIsForDepartmentAsync(DepartmentId) ?? new List<Poi>();
+				await _mappingService.PopulatePoiDetailsAsync(DepartmentId, pois);
+
+				foreach (var id in pois.Where(p => p.CapabilityIds != null).SelectMany(p => p.CapabilityIds))
+					model.PoiCounts[id] = model.PoiCounts.TryGetValue(id, out var count) ? count + 1 : 1;
+			}
+
+			return View(model);
+		}
+
+		/// <summary>
+		/// Adds a capability (no <paramref name="poiCapabilityId"/>) or renames / re-sorts one of the department's. A blank sort on a
+		/// new capability puts it last.
+		/// </summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> SavePoiCapability(string poiCapabilityId, string name, int? sort, CancellationToken cancellationToken)
+		{
+			if (!CanManageMapData())
+				return Unauthorized();
+
+			name = name?.Trim();
+			if (string.IsNullOrEmpty(name) || name.Length > PoiCapability.MaxNameLength)
+			{
+				TempData["PoiCapabilitiesError"] = string.Format(_localizer["PoiCapabilityNameRequired"].Value, PoiCapability.MaxNameLength);
+				return RedirectToAction("PoiCapabilities");
+			}
+
+			var capabilities = await _mappingService.GetPoiCapabilitiesForDepartmentAsync(DepartmentId) ?? new List<PoiCapability>();
+			PoiCapability capability;
+
+			if (string.IsNullOrWhiteSpace(poiCapabilityId))
+			{
+				// Always a new capability of this department.
+				capability = new PoiCapability { DepartmentId = DepartmentId, Sort = sort ?? 0 };
+			}
+			else
+			{
+				// Only one of this department's capabilities can be changed: another department's id is not found.
+				capability = capabilities.FirstOrDefault(x => string.Equals(x.PoiCapabilityId, poiCapabilityId.Trim(), StringComparison.OrdinalIgnoreCase));
+				if (capability == null)
+					return NotFound();
+
+				capability.DepartmentId = DepartmentId;
+				capability.Sort = sort ?? capability.Sort;
+			}
+
+			if (capabilities.Any(x => string.Equals(x.Name?.Trim(), name, StringComparison.OrdinalIgnoreCase) &&
+				!string.Equals(x.PoiCapabilityId, capability.PoiCapabilityId, StringComparison.OrdinalIgnoreCase)))
+			{
+				TempData["PoiCapabilitiesError"] = string.Format(_localizer["PoiCapabilityNameExists"].Value, name);
+				return RedirectToAction("PoiCapabilities");
+			}
+
+			capability.Name = name;
+
+			try
+			{
+				await _mappingService.SavePoiCapabilityAsync(capability, cancellationToken);
+				TempData["PoiCapabilitiesMessage"] = string.Format(_localizer["PoiCapabilitySaved"].Value, name);
+			}
+			catch (ArgumentException)
+			{
+				// Another administrator added the same name meanwhile, or deleted the capability being renamed.
+				TempData["PoiCapabilitiesError"] = _localizer["PoiCapabilitySaveFailed"].Value;
+			}
+
+			return RedirectToAction("PoiCapabilities");
+		}
+
+		/// <summary>Deletes one of the department's capabilities: it comes off every POI and out of every availability report.</summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> DeletePoiCapability(string poiCapabilityId, CancellationToken cancellationToken)
+		{
+			if (!CanManageMapData())
+				return Unauthorized();
+
+			// Scoped to the department: another department's id deletes nothing.
+			var capability = await _mappingService.GetPoiCapabilityByIdAsync(DepartmentId, poiCapabilityId);
+			if (capability == null)
+				return NotFound();
+
+			await _mappingService.DeletePoiCapabilityAsync(DepartmentId, capability.PoiCapabilityId, cancellationToken);
+			TempData["PoiCapabilitiesMessage"] = string.Format(_localizer["PoiCapabilityDeleted"].Value, capability.Name);
+
+			return RedirectToAction("PoiCapabilities");
+		}
+
+		/// <summary>Every destination POI with what it offers and its current availability; dispatchers set availability from here.</summary>
+		[HttpGet]
+		public async Task<IActionResult> Destinations()
+		{
+			if (!CanSetPoiAvailability())
+				return Unauthorized();
+
+			var pois = await _mappingService.GetDestinationPOIsForDepartmentAsync(DepartmentId) ?? new List<Poi>();
+			await _mappingService.PopulatePoiDetailsAsync(DepartmentId, pois);
+
+			var capabilityNames = await GetPoiCapabilityNamesAsync();
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+
+			var model = new DestinationAvailabilityView
+			{
+				CanManagePois = CanManageMapData(),
+				Message = TempData?["PoiAvailabilityMessage"] as string,
+				Destinations = pois
+					.OrderBy(p => p.Type?.Name, StringComparer.CurrentCultureIgnoreCase)
+					.ThenBy(p => PoiDisplayHelper.GetDisplayName(p, p.Type?.Name), StringComparer.CurrentCultureIgnoreCase)
+					.Select(p => ToAvailabilityRow(p, p.Type, capabilityNames, department))
+					.ToList()
+			};
+
+			return View(model);
+		}
+
+		[HttpGet]
+		public async Task<IActionResult> SetPoiAvailability(int poiId, string returnTo)
+		{
+			if (!CanSetPoiAvailability())
+				return Unauthorized();
+
+			// Department-scoped, destinations only: another department's POI, or one that is not a destination, is not found.
+			var poi = await _mappingService.GetDestinationPOIByIdAsync(DepartmentId, poiId);
+			if (poi == null)
+				return NotFound();
+
+			await _mappingService.PopulatePoiDetailsAsync(DepartmentId, new[] { poi });
+
+			var model = new SetPoiAvailabilityView
+			{
+				PoiId = poi.PoiId,
+				ReturnTo = returnTo,
+				Status = poi.Availability?.Status ?? (int)PoiAvailabilityStatuses.Open,
+				UnavailableCapabilityIds = poi.Availability?.GetUnavailableCapabilityIds() ?? new List<string>(),
+				Note = poi.Availability?.Note,
+				// A current report's expiry stays unless another is picked; a new report lasts until changed.
+				ExpiresInHours = poi.Availability?.ExpiresOn != null ? SetPoiAvailabilityView.KeepExpiry : 0
+			};
+
+			await FillSetPoiAvailabilityViewAsync(model, poi);
+			return View(model);
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> SetPoiAvailability(SetPoiAvailabilityView model, CancellationToken cancellationToken)
+		{
+			if (!CanSetPoiAvailability())
+				return Unauthorized();
+
+			if (model == null || model.PoiId <= 0)
+				return NotFound();
+
+			var poi = await _mappingService.GetDestinationPOIByIdAsync(DepartmentId, model.PoiId);
+			if (poi == null)
+				return NotFound();
+
+			await _mappingService.PopulatePoiDetailsAsync(DepartmentId, new[] { poi });
+
+			if (!Enum.IsDefined(typeof(PoiAvailabilityStatuses), model.Status))
+				ModelState.AddModelError(nameof(model.Status), _localizer["PoiAvailabilityStatusInvalid"].Value);
+
+			var note = model.Note?.Trim();
+			if (note != null && note.Length > PoiAvailability.MaxNoteLength)
+				ModelState.AddModelError(nameof(model.Note), string.Format(_localizer["PoiAvailabilityNoteTooLong"].Value, PoiAvailability.MaxNoteLength));
+
+			var keepsExpiry = model.ExpiresInHours == SetPoiAvailabilityView.KeepExpiry && poi.Availability?.ExpiresOn != null;
+			if (!keepsExpiry && !SetPoiAvailabilityView.ExpiryHours.Contains(model.ExpiresInHours))
+				ModelState.AddModelError(nameof(model.ExpiresInHours), _localizer["PoiAvailabilityExpiryInvalid"].Value);
+
+			if (ModelState.IsValid)
+			{
+				var expiresOn = keepsExpiry
+					? poi.Availability.ExpiresOn
+					: model.ExpiresInHours > 0 ? DateTime.UtcNow.AddHours(model.ExpiresInHours) : (DateTime?)null;
+
+				try
+				{
+					await _mappingService.SetPoiAvailabilityAsync(DepartmentId, poi.PoiId, (PoiAvailabilityStatuses)model.Status, model.UnavailableCapabilityIds,
+						note, expiresOn, UserId, cancellationToken);
+
+					var status = (PoiAvailabilityStatuses)model.Status;
+					TempData["PoiAvailabilityMessage"] = string.Format(_localizer["PoiAvailabilitySaved"].Value,
+						PoiDisplayHelper.GetDisplayName(poi, poi.Type?.Name), PoiAvailabilityLabel(status));
+
+					// Only map administrators can open a type's POI list; everyone else goes back to the destinations page.
+					if (string.Equals(model.ReturnTo, "Type", StringComparison.OrdinalIgnoreCase) && CanManageMapData())
+						return RedirectToAction("ViewType", new { poiTypeId = poi.PoiTypeId });
+
+					return RedirectToAction("Destinations");
+				}
+				catch (ArgumentException)
+				{
+					// The POI's type stopped being a destination (or the POI was deleted) after the form was opened.
+					ModelState.AddModelError(string.Empty, _localizer["PoiAvailabilitySaveFailed"].Value);
+				}
+			}
+
+			await FillSetPoiAvailabilityViewAsync(model, poi);
+			return View(model);
+		}
+
+		private async Task FillSetPoiAvailabilityViewAsync(SetPoiAvailabilityView model, Poi poi)
+		{
+			var capabilities = (await _mappingService.GetPoiCapabilitiesForDepartmentAsync(DepartmentId) ?? new List<PoiCapability>())
+				.Where(x => x?.PoiCapabilityId != null).ToList();
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			var offered = new HashSet<string>(poi.CapabilityIds ?? new List<string>(), StringComparer.OrdinalIgnoreCase);
+			var reported = new HashSet<string>(poi.Availability?.GetUnavailableCapabilityIds() ?? new List<string>(), StringComparer.OrdinalIgnoreCase);
+
+			model.Destination = ToAvailabilityRow(poi, poi.Type, CapabilityNames(capabilities), department);
+			// What the destination offers, plus anything reported unavailable that it no longer lists (so saving never drops it unseen).
+			model.Capabilities = capabilities.Where(x => offered.Contains(x.PoiCapabilityId) || reported.Contains(x.PoiCapabilityId)).ToList();
+			model.UnavailableCapabilityIds = model.UnavailableCapabilityIds ?? new List<string>();
+		}
+
+		private async Task<Dictionary<string, string>> GetPoiCapabilityNamesAsync()
+		{
+			return CapabilityNames(await _mappingService.GetPoiCapabilitiesForDepartmentAsync(DepartmentId));
+		}
+
+		private static Dictionary<string, string> CapabilityNames(IEnumerable<PoiCapability> capabilities)
+		{
+			return (capabilities ?? Enumerable.Empty<PoiCapability>()).Where(x => x?.PoiCapabilityId != null).GroupBy(x => x.PoiCapabilityId, StringComparer.OrdinalIgnoreCase)
+				.ToDictionary(g => g.Key, g => g.First().Name, StringComparer.OrdinalIgnoreCase);
+		}
+
+		private string PoiAvailabilityLabel(PoiAvailabilityStatuses status) => _localizer["PoiAvailability" + status].Value;
+
+		/// <summary>A POI (details already populated) as the destination lists show it; times in the department's time zone.</summary>
+		private PoiAvailabilityRow ToAvailabilityRow(Poi poi, PoiType type, Dictionary<string, string> capabilityNames, Department department)
+		{
+			DateTime Local(DateTime utc) => department != null ? utc.TimeConverter(department) : utc;
+
+			var availability = PoiAvailabilityRules.Current(poi.Availability, DateTime.UtcNow);
+			var status = availability == null ? PoiAvailabilityStatuses.Open : (PoiAvailabilityStatuses)availability.Status;
+
+			return new PoiAvailabilityRow
+			{
+				PoiId = poi.PoiId,
+				PoiTypeId = poi.PoiTypeId,
+				TypeName = type?.Name,
+				Name = PoiDisplayHelper.GetDisplayName(poi, type?.Name),
+				Address = poi.Address,
+				Capabilities = poi.Capabilities?.ToList() ?? new List<string>(),
+				Status = (int)status,
+				StatusLabel = PoiAvailabilityLabel(status),
+				UnavailableCapabilities = availability == null
+					? new List<string>()
+					: availability.GetUnavailableCapabilityIds().Select(id => capabilityNames.TryGetValue(id, out var name) ? name : null).Where(n => n != null).ToList(),
+				Note = availability?.Note,
+				SetOn = availability != null ? Local(availability.SetOn) : (DateTime?)null,
+				ExpiresOn = availability?.ExpiresOn != null ? Local(availability.ExpiresOn.Value) : (DateTime?)null
+			};
+		}
+
+		#endregion POI capabilities and destination availability
 
 		[HttpGet]
 		public async Task<IActionResult> GetMapData(MapSettingsInput input)
@@ -1420,8 +1732,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return Unauthorized();
 
 			var hydrantPoiIds = (await GetHydrantPointsAsync()).Where(h => h.PoiId.HasValue).Select(h => h.PoiId.Value).ToHashSet();
+			var listed = (poiType.Pois ?? Enumerable.Empty<Poi>()).Where(p => !hydrantPoiIds.Contains(p.PoiId)).ToList();
 
-			foreach (var poi in poiType.Pois.Where(p => !hydrantPoiIds.Contains(p.PoiId)))
+			// Capabilities for every POI; availability only means something for a destination type.
+			await _mappingService.PopulatePoiDetailsAsync(DepartmentId, listed);
+			var capabilityNames = poiType.IsDestination ? await GetPoiCapabilityNamesAsync() : null;
+			var department = poiType.IsDestination ? await _departmentsService.GetDepartmentByIdAsync(DepartmentId) : null;
+
+			foreach (var poi in listed)
 			{
 				var poiJson = new PoiJson();
 				poiJson.PoiId = poi.PoiId;
@@ -1431,6 +1749,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 				poiJson.Longitude = poi.Longitude;
 				poiJson.Address = poi.Address;
 				poiJson.Note = poi.Note;
+				poiJson.Capabilities = poi.Capabilities?.ToList() ?? new List<string>();
+				poiJson.IsDestination = poiType.IsDestination;
+
+				if (poiType.IsDestination)
+				{
+					var row = ToAvailabilityRow(poi, poiType, capabilityNames, department);
+					poiJson.AvailabilityStatus = row.Status;
+					poiJson.AvailabilityLabel = row.StatusLabel;
+					poiJson.UnavailableCapabilities = row.UnavailableCapabilities;
+					poiJson.AvailabilityNote = row.Note;
+					poiJson.AvailabilityExpires = row.ExpiresOn?.ToString("g");
+				}
 
 				poisJson.Add(poiJson);
 			}

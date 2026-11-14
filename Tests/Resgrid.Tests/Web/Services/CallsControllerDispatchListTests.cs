@@ -24,10 +24,10 @@ using Resgrid.Web.ServicesCore.Helpers;
 namespace Resgrid.Tests.Web.Services
 {
 	/// <summary>
-	/// The three DispatchList forms on v4 SaveCall and EditCall. A blank list pages everyone on an immediate call (older
-	/// clients send nothing, so that stays) and "0" pages everyone, so a client whose dispatcher picks no one sends a list
-	/// with no entries ("|"): the call is created, or edited, with nobody dispatched. The apps (Omni's
-	/// DISPATCH_LIST_NOBODY) depend on this, so a refactor of the list parsing must keep it.
+	/// The DispatchList forms on v4 SaveCall and EditCall. Everyone ("All Call") is only ever explicit: "0". A blank list
+	/// (older apps send one when nothing was picked) or a list with no entries ("|") creates a call with nobody dispatched,
+	/// and a blank list on an edit keeps the call's recipients. The apps (Omni's DISPATCH_LIST_NOBODY) depend on this, so a
+	/// refactor of the list parsing must keep it.
 	/// </summary>
 	[TestFixture]
 	[NonParallelizable]
@@ -40,6 +40,7 @@ namespace Resgrid.Tests.Web.Services
 		private Mock<ICallsService> _callsService;
 		private Mock<IQueueService> _queue;
 		private Mock<IDepartmentSettingsService> _settings;
+		private Mock<IContactsService> _contacts;
 		private List<Call> _saved;
 		private int _broadcasts;
 		private Call _stored;
@@ -79,6 +80,7 @@ namespace Resgrid.Tests.Web.Services
 				});
 
 			_settings = new Mock<IDepartmentSettingsService>();
+			_contacts = new Mock<IContactsService>();
 			_activity = new Activity(nameof(CallsControllerDispatchListTests)).Start();
 		}
 
@@ -143,7 +145,7 @@ namespace Resgrid.Tests.Web.Services
 				Mock.Of<IEventAggregator>(), Mock.Of<ICustomStateService>(), _settings.Object, Mock.Of<IShiftsService>(), Mock.Of<IMappingService>(),
 				Mock.Of<IUserDefinedFieldsService>(), Mock.Of<ICommunicationService>(), Mock.Of<IWeatherAlertService>(), Mock.Of<ICallDispatchStatusService>(),
 				Mock.Of<IDispatchRecommendationService>(), Mock.Of<IFeatureToggleService>(), Mock.Of<IDepartmentDataProtectionService>(),
-				Mock.Of<IProtectedReadService>(), protectedWrite.Object, Mock.Of<IContactsService>(), Mock.Of<IDispatchScopeService>(),
+				Mock.Of<IProtectedReadService>(), protectedWrite.Object, _contacts.Object, Mock.Of<IDispatchScopeService>(),
 				Mock.Of<ICallLocationHistoryService>(), Mock.Of<IPendingCallsService>(), Mock.Of<ICallClosureService>(),
 				new InboundEmailReceiptsService(new MockInboundEmailReceiptsRepository(), TimeProvider.System))
 			{
@@ -163,15 +165,76 @@ namespace Resgrid.Tests.Web.Services
 		private static int DispatchCount(Call call) =>
 			(call.Dispatches?.Count ?? 0) + (call.GroupDispatches?.Count ?? 0) + (call.RoleDispatches?.Count ?? 0) + (call.UnitDispatches?.Count ?? 0);
 
-		[TestCase(null)]
-		[TestCase("")]
 		[TestCase("0")]
-		public async Task SaveCall_pages_everyone_for_a_blank_list_or_zero(string dispatchList)
+		[TestCase(" 0 ")]
+		public async Task SaveCall_pages_everyone_only_for_zero(string dispatchList)
 		{
 			await Controller().SaveCall(NewCall(dispatchList), CancellationToken.None);
 
 			_saved.Should().ContainSingle().Which.Dispatches.Select(x => x.UserId).Should().BeEquivalentTo("responder-1", "responder-2");
 			_broadcasts.Should().Be(1);
+		}
+
+		[TestCase(null)]
+		[TestCase("")]
+		[TestCase("   ")]
+		public async Task SaveCall_with_a_blank_list_dispatches_nobody(string dispatchList)
+		{
+			// Older apps send a blank list when nothing was picked; it used to page the whole department.
+			var result = await Controller().SaveCall(NewCall(dispatchList), CancellationToken.None);
+
+			// The broadcast is still queued, as for "|": with no dispatches on the call it pages no one.
+			result.Result.Should().BeOfType<CreatedAtActionResult>();
+			DispatchCount(_saved.Should().ContainSingle().Subject).Should().Be(0);
+		}
+
+		[Test]
+		public async Task EditCall_with_a_blank_list_keeps_the_recipients_and_pages_nobody_new()
+		{
+			_stored = new Call
+			{
+				CallId = CallId,
+				DepartmentId = DepartmentId,
+				State = (int)CallStates.Active,
+				Name = "Fuel spill",
+				NatureOfCall = "Logged for the record",
+				HasBeenDispatched = true,
+				Dispatches = new List<CallDispatch> { new CallDispatch { CallId = CallId, UserId = "responder-1" } },
+				GroupDispatches = new List<CallDispatchGroup>(),
+				RoleDispatches = new List<CallDispatchRole>(),
+				UnitDispatches = new List<CallDispatchUnit> { new CallDispatchUnit { CallId = CallId, UnitId = 7 } }
+			};
+
+			var result = await Controller().EditCall(new EditCallInput { Id = CallId.ToString(), Priority = 1, Name = "Fuel spill", Nature = "Logged for the record", DispatchList = "" },
+				CancellationToken.None);
+
+			result.Result.Should().BeOfType<OkObjectResult>();
+			_stored.Dispatches.Select(x => x.UserId).Should().Equal("responder-1");
+			_stored.UnitDispatches.Select(x => x.UnitId).Should().Equal(7);
+			_broadcasts.Should().Be(0);
+		}
+
+		[Test]
+		public async Task EditCall_with_zero_adds_everyone_without_duplicating_who_is_already_on_the_call()
+		{
+			_stored = new Call
+			{
+				CallId = CallId,
+				DepartmentId = DepartmentId,
+				State = (int)CallStates.Active,
+				Name = "Fuel spill",
+				NatureOfCall = "Logged for the record",
+				HasBeenDispatched = true,
+				Dispatches = new List<CallDispatch> { new CallDispatch { CallId = CallId, UserId = "responder-1" } },
+				GroupDispatches = new List<CallDispatchGroup>(),
+				RoleDispatches = new List<CallDispatchRole>(),
+				UnitDispatches = new List<CallDispatchUnit>()
+			};
+
+			await Controller().EditCall(new EditCallInput { Id = CallId.ToString(), Priority = 1, Name = "Fuel spill", Nature = "Logged for the record", DispatchList = "0" },
+				CancellationToken.None);
+
+			_stored.Dispatches.Select(x => x.UserId).Should().BeEquivalentTo("responder-1", "responder-2");
 		}
 
 		[Test]
@@ -253,6 +316,158 @@ namespace Resgrid.Tests.Web.Services
 			result.Result.Should().BeOfType<OkObjectResult>();
 			DispatchCount(_stored).Should().Be(0);
 			_broadcasts.Should().Be(0);
+		}
+
+		private void HideDispatchLists(params string[] keys) =>
+			_settings.Setup(x => x.GetNewCallFieldPolicyAsync(DepartmentId, It.IsAny<bool>()))
+				.ReturnsAsync(new NewCallFieldPolicy { Rules = keys.Select(k => new NewCallFieldRule { Key = k, Visible = false }).ToList() });
+
+		[Test]
+		public async Task EditCall_keeps_the_dispatches_of_a_list_the_department_hides()
+		{
+			// The client's edit form has no personnel list, so the list it sends names none: a run card's (or another
+			// surface's) personnel dispatch stays. A shown list is still replaced by what was sent.
+			HideDispatchLists(NewCallFieldKeys.DispatchPersonnel);
+			_stored = new Call
+			{
+				CallId = CallId,
+				DepartmentId = DepartmentId,
+				State = (int)CallStates.Active,
+				Name = "Fuel spill",
+				NatureOfCall = "Logged for the record",
+				HasBeenDispatched = true,
+				Dispatches = new List<CallDispatch> { new CallDispatch { CallId = CallId, UserId = "responder-1" } },
+				GroupDispatches = new List<CallDispatchGroup> { new CallDispatchGroup { CallId = CallId, DepartmentGroupId = 3 } },
+				RoleDispatches = new List<CallDispatchRole>(),
+				UnitDispatches = new List<CallDispatchUnit>()
+			};
+
+			var result = await Controller().EditCall(new EditCallInput { Id = CallId.ToString(), Priority = 1, Name = "Fuel spill", Nature = "Logged for the record", DispatchList = "U:7" },
+				CancellationToken.None);
+
+			result.Result.Should().BeOfType<OkObjectResult>();
+			_stored.Dispatches.Select(x => x.UserId).Should().Equal("responder-1");
+			_stored.GroupDispatches.Should().BeEmpty();
+			_stored.UnitDispatches.Select(x => x.UnitId).Should().Equal(7);
+		}
+
+		[Test]
+		public async Task EditCall_with_every_list_hidden_and_a_list_with_no_entries_keeps_every_dispatch()
+		{
+			HideDispatchLists(NewCallFieldKeys.DispatchPersonnel, NewCallFieldKeys.DispatchGroups, NewCallFieldKeys.DispatchRoles, NewCallFieldKeys.DispatchUnits);
+			_stored = new Call
+			{
+				CallId = CallId,
+				DepartmentId = DepartmentId,
+				State = (int)CallStates.Active,
+				Name = "Fuel spill",
+				NatureOfCall = "Logged for the record",
+				HasBeenDispatched = true,
+				Dispatches = new List<CallDispatch> { new CallDispatch { CallId = CallId, UserId = "responder-1" } },
+				GroupDispatches = new List<CallDispatchGroup>(),
+				RoleDispatches = new List<CallDispatchRole>(),
+				UnitDispatches = new List<CallDispatchUnit> { new CallDispatchUnit { CallId = CallId, UnitId = 7 } }
+			};
+
+			await Controller().EditCall(new EditCallInput { Id = CallId.ToString(), Priority = 1, Name = "Fuel spill", Nature = "Logged for the record", DispatchList = "|" },
+				CancellationToken.None);
+
+			DispatchCount(_stored).Should().Be(2);
+		}
+
+		[Test]
+		public async Task EditCall_keeps_the_contacts_of_a_hidden_picker_as_they_are_even_one_deleted_since()
+		{
+			// Additional contacts are hidden, so the client sends none: the stored ones stay, unchecked. Checking them like a new
+			// pick refused every edit once one of them had been deleted.
+			HideDispatchLists(NewCallFieldKeys.AdditionalContacts);
+			_contacts.Setup(x => x.GetContactByIdAsync("c-new")).ReturnsAsync(new Contact { ContactId = "c-new", DepartmentId = DepartmentId });
+			_contacts.Setup(x => x.GetContactByIdAsync("c-gone")).ReturnsAsync(new Contact { ContactId = "c-gone", DepartmentId = DepartmentId, IsDeleted = true });
+			_stored = new Call
+			{
+				CallId = CallId,
+				DepartmentId = DepartmentId,
+				State = (int)CallStates.Active,
+				Name = "Fuel spill",
+				NatureOfCall = "Logged for the record",
+				HasBeenDispatched = true,
+				Dispatches = new List<CallDispatch>(),
+				GroupDispatches = new List<CallDispatchGroup>(),
+				RoleDispatches = new List<CallDispatchRole>(),
+				UnitDispatches = new List<CallDispatchUnit>(),
+				Contacts = new List<CallContact>
+				{
+					new CallContact { CallId = CallId, DepartmentId = DepartmentId, ContactId = "c-old", CallContactType = 0 },
+					new CallContact { CallId = CallId, DepartmentId = DepartmentId, ContactId = "c-gone", CallContactType = 1 }
+				}
+			};
+
+			var result = await Controller().EditCall(new EditCallInput { Id = CallId.ToString(), Priority = 1, Name = "Fuel spill", Nature = "Logged for the record", DispatchList = "", ContactId = "c-new" },
+				CancellationToken.None);
+
+			result.Result.Should().BeOfType<OkObjectResult>();
+			_stored.Contacts.Select(x => (x.ContactId, x.CallContactType)).Should().Equal(("c-new", 0), ("c-gone", 1));
+		}
+
+		[Test]
+		public async Task EditCall_still_refuses_a_deleted_contact_it_was_sent()
+		{
+			_contacts.Setup(x => x.GetContactByIdAsync("c-gone")).ReturnsAsync(new Contact { ContactId = "c-gone", DepartmentId = DepartmentId, IsDeleted = true });
+			_stored = new Call
+			{
+				CallId = CallId,
+				DepartmentId = DepartmentId,
+				State = (int)CallStates.Active,
+				Name = "Fuel spill",
+				NatureOfCall = "Logged for the record",
+				HasBeenDispatched = true,
+				Dispatches = new List<CallDispatch>(),
+				GroupDispatches = new List<CallDispatchGroup>(),
+				RoleDispatches = new List<CallDispatchRole>(),
+				UnitDispatches = new List<CallDispatchUnit>(),
+				Contacts = new List<CallContact>()
+			};
+
+			var result = await Controller().EditCall(new EditCallInput { Id = CallId.ToString(), Priority = 1, Name = "Fuel spill", Nature = "Logged for the record", DispatchList = "",
+				AdditionalContactIds = new List<string> { "c-gone" } }, CancellationToken.None);
+
+			result.Result.Should().BeOfType<BadRequestObjectResult>();
+		}
+
+		[Test]
+		public async Task SaveCall_holds_an_app_that_sends_a_map_page_to_a_required_one_but_not_an_app_that_has_no_input()
+		{
+			_settings.Setup(x => x.GetNewCallFieldPolicyAsync(DepartmentId, It.IsAny<bool>()))
+				.ReturnsAsync(new NewCallFieldPolicy { Rules = new List<NewCallFieldRule> { new NewCallFieldRule { Key = NewCallFieldKeys.MapPage, Visible = true, Required = true } } });
+
+			var blank = NewCall("|");
+			blank.MapPage = "";
+			(await Controller().SaveCall(blank, CancellationToken.None)).Result.Should().BeOfType<BadRequestObjectResult>();
+
+			(await Controller().SaveCall(NewCall("|"), CancellationToken.None)).Result.Should().BeOfType<CreatedAtActionResult>();
+
+			var withPage = NewCall("|");
+			withPage.MapPage = "12-C4";
+			(await Controller().SaveCall(withPage, CancellationToken.None)).Result.Should().BeOfType<CreatedAtActionResult>();
+			_saved.Last().MapPage.Should().Be("12-C4");
+		}
+
+		[Test]
+		public async Task GetNewCallFieldPolicy_reports_each_list_a_section_hidden_before_still_hides()
+		{
+			// Clients read keys as they are: a list with no rule of its own would read as shown.
+			_settings.Setup(x => x.GetNewCallFieldPolicyAsync(DepartmentId, It.IsAny<bool>()))
+				.ReturnsAsync(new NewCallFieldPolicy { Rules = new List<NewCallFieldRule> { new NewCallFieldRule { Key = NewCallFieldKeys.DispatchList, Visible = false } } });
+
+			var result = (await Controller().GetNewCallFieldPolicy()).Result.Should().BeOfType<OkObjectResult>().Subject.Value
+				.Should().BeOfType<NewCallFieldPolicyResult>().Subject;
+
+			result.Data.Rules.Where(x => !x.Visible).Select(x => x.Key).Should().BeEquivalentTo(
+				NewCallFieldKeys.DispatchList,
+				NewCallFieldKeys.DispatchPersonnel,
+				NewCallFieldKeys.DispatchGroups,
+				NewCallFieldKeys.DispatchRoles,
+				NewCallFieldKeys.DispatchUnits);
 		}
 	}
 }

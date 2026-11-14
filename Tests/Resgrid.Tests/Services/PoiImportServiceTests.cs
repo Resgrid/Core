@@ -555,5 +555,158 @@ namespace Resgrid.Tests.Services
 		}
 
 		#endregion Worker
+
+		#region Capabilities
+
+		// The Belgian EMS sheet of hospitals: what each one offers in a "Capabilities" column, separated by ; , or |.
+		[Test]
+		public void Reads_a_capabilities_column_split_on_semicolons_commas_and_bars()
+		{
+			var csv =
+				"Name,Latitude,Longitude,Capabilities\r\n" +
+				"UZ Gent,51.0234,3.7262,\"Cath Lab; Stroke Center, Trauma Center | cath lab\"\r\n" +
+				"AZ Alma,51.1854,3.5634,\r\n" +
+				"OLV Aalst,50.9364,4.0390,\" ; | \"\r\n";
+
+			var file = Service().ReadFile(Text(csv), "hospitals.csv");
+
+			file.Error.Should().BeNull();
+			file.Rows[0].Capabilities.Should().Equal(new[] { "Cath Lab", "Stroke Center", "Trauma Center" }, "names are trimmed and a repeat (in any case) is dropped");
+			file.Rows[1].Capabilities.Should().BeNull("a blank cell names none");
+			file.Rows[2].Capabilities.Should().BeNull("separators alone name none");
+		}
+
+		[TestCase("Capability")]
+		[TestCase("Specialties")]
+		[TestCase("Specialities")]
+		[TestCase("Services")]
+		[TestCase("capabilities")]
+		public void Recognizes_the_capabilities_column_by_its_other_names(string header)
+		{
+			var file = Service().ReadFile(Text("Name;Lat;Lng;" + header + "\nUZ Gent;51,0234;3,7262;Cath Lab|Burns\n"), "hospitals.csv");
+
+			file.Rows.Single().Capabilities.Should().Equal("Cath Lab", "Burns");
+		}
+
+		[Test]
+		public void Cuts_a_capability_name_to_the_column_length()
+		{
+			var file = Service().ReadFile(Text("Name,Lat,Lng,Capabilities\nSite,41.5,-93.6," + new string('x', PoiCapability.MaxNameLength + 20) + "\n"), "sites.csv");
+
+			file.Rows.Single().Capabilities.Single().Should().HaveLength(PoiCapability.MaxNameLength);
+		}
+
+		[Test]
+		public async Task Rows_without_the_column_are_queued_as_before()
+		{
+			var file = Service().ReadFile(Text("Name,Lat,Lng\nTank 7,41.59,-93.62\n"), "tanks.csv");
+
+			await Service().QueueImportAsync(DepartmentId, PoiTypeId, "Tanks", "user-1", "tanks.csv", file);
+
+			file.Rows.Single().Capabilities.Should().BeNull();
+			_writes.Single().RowsJson.Should().NotContain("Capabilities", "a file without the column stores the rows it always did");
+		}
+
+		[Test]
+		public void Reads_capabilities_from_kml_extended_data_with_or_without_a_point()
+		{
+			var kml =
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?><kml xmlns=\"http://www.opengis.net/kml/2.2\"><Document>" +
+				"<Placemark><name>UZ Gent</name><ExtendedData><Data name=\"Capabilities\"><value>Cath Lab; Stroke Center</value></Data></ExtendedData>" +
+				"<Point><coordinates>3.7262,51.0234</coordinates></Point></Placemark>" +
+				"<Placemark><name>AZ Alma</name><Point><coordinates>3.5634,51.1854</coordinates></Point></Placemark>" +
+				"<Placemark><name>OLV Aalst</name><ExtendedData><Data name=\"Street Address 1\"><value>Moorselbaan 164</value></Data>" +
+				"<Data name=\"City\"><value>Aalst</value></Data><Data name=\"Specialties\"><value>Trauma Center</value></Data></ExtendedData></Placemark>" +
+				"</Document></kml>";
+
+			var file = Service().ReadFile(Text(kml), "hospitals.kml");
+
+			file.Error.Should().BeNull();
+			file.Rows.Single(r => r.Name == "UZ Gent").Capabilities.Should().Equal("Cath Lab", "Stroke Center");
+			file.Rows.Single(r => r.Name == "AZ Alma").Capabilities.Should().BeNull();
+			var aalst = file.Rows.Single(r => r.Name == "OLV Aalst");
+			aalst.HasPosition.Should().BeFalse();
+			aalst.Capabilities.Should().Equal("Trauma Center");
+		}
+
+		/// <summary>Saved POIs get ids (100 + their row), as the database would give them.</summary>
+		private void SavedPoisGetIds()
+		{
+			_mapping.Setup(x => x.SavePOIAsync(It.IsAny<Poi>(), It.IsAny<CancellationToken>()))
+				.Callback((Poi p, CancellationToken _) => _saved.Add(p))
+				.ReturnsAsync((Poi p, CancellationToken _) => { p.PoiId = 100 + (p.PoiImportRow ?? 0); return p; });
+		}
+
+		/// <summary>The department already has "Cath Lab"; any other name asked for is added with a new id.</summary>
+		private List<List<string>> CapabilitiesAddedOrFound()
+		{
+			var asked = new List<List<string>>();
+			_mapping.Setup(x => x.GetOrAddPoiCapabilitiesByNameAsync(DepartmentId, It.IsAny<IEnumerable<string>>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((int _, IEnumerable<string> names, CancellationToken __) =>
+				{
+					asked.Add(names.ToList());
+					return names.Select(n => string.Equals(n, "cath lab", StringComparison.OrdinalIgnoreCase)
+						? new PoiCapability { PoiCapabilityId = "cath", DepartmentId = DepartmentId, Name = "Cath Lab" }
+						: new PoiCapability { PoiCapabilityId = "new-" + n.ToLowerInvariant().Replace(' ', '-'), DepartmentId = DepartmentId, Name = n }).ToList();
+				});
+			return asked;
+		}
+
+		[Test]
+		public async Task Saving_tags_each_poi_with_its_capabilities_adding_the_missing_ones_once_per_run()
+		{
+			SavedPoisGetIds();
+			var asked = CapabilitiesAddedOrFound();
+			Runnable(PoiImportStatus.Saving, 1,
+				new PoiImportRow { Name = "UZ Gent", Latitude = 51.0234, Longitude = 3.7262, Capabilities = new List<string> { "CATH LAB", "Stroke Center" } },
+				new PoiImportRow { Name = "AZ Alma", Latitude = 51.1854, Longitude = 3.5634 },
+				new PoiImportRow { Name = "OLV Aalst", Latitude = 50.9364, Longitude = 4.0390, Capabilities = new List<string> { "Stroke Center", "Trauma Center" } });
+
+			await Service().ProcessNextAsync();
+
+			Final.Status.Should().Be((int)PoiImportStatus.Complete);
+			asked.Should().ContainSingle("the names are matched once per run, not per row");
+			asked[0].Should().BeEquivalentTo(new[] { "CATH LAB", "Stroke Center", "Trauma Center" });
+			_mapping.Verify(x => x.SetPoiCapabilitiesAsync(DepartmentId, 100, It.Is<IEnumerable<string>>(ids => ids.SequenceEqual(new[] { "cath", "new-stroke-center" })), It.IsAny<CancellationToken>()), Times.Once);
+			_mapping.Verify(x => x.SetPoiCapabilitiesAsync(DepartmentId, 102, It.Is<IEnumerable<string>>(ids => ids.SequenceEqual(new[] { "new-stroke-center", "new-trauma-center" })), It.IsAny<CancellationToken>()), Times.Once);
+			_mapping.Verify(x => x.SetPoiCapabilitiesAsync(It.IsAny<int>(), 101, It.IsAny<IEnumerable<string>>(), It.IsAny<CancellationToken>()), Times.Never, "a row without capabilities gets none written");
+		}
+
+		[Test]
+		public async Task An_import_without_capabilities_never_touches_them()
+		{
+			SavedPoisGetIds();
+			Runnable(PoiImportStatus.Saving, 1,
+				new PoiImportRow { Name = "Tank 7", Latitude = 41.59, Longitude = -93.62 },
+				new PoiImportRow { Name = "Tank 8", Latitude = 41.6, Longitude = -93.6 });
+
+			await Service().ProcessNextAsync();
+
+			_saved.Should().HaveCount(2);
+			_mapping.Verify(x => x.GetOrAddPoiCapabilitiesByNameAsync(It.IsAny<int>(), It.IsAny<IEnumerable<string>>(), It.IsAny<CancellationToken>()), Times.Never);
+			_mapping.Verify(x => x.SetPoiCapabilitiesAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<IEnumerable<string>>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public async Task A_resumed_import_sets_the_capabilities_of_the_poi_it_saved_last_again()
+		{
+			// The worker stopped after saving row 0's POI (id 100), before its capabilities were written.
+			SavedPoisGetIds();
+			CapabilitiesAddedOrFound();
+			_saved.Add(new Poi { PoiId = 100, Name = "UZ Gent", PoiImportId = ImportId, PoiImportRow = 0 });
+			_mapping.Setup(x => x.GetTypeByIdAsync(PoiTypeId)).ReturnsAsync(new PoiType { PoiTypeId = PoiTypeId, DepartmentId = DepartmentId, Pois = _saved.ToList() });
+			Runnable(PoiImportStatus.Saving, 2,
+				new PoiImportRow { Name = "UZ Gent", Latitude = 51.0234, Longitude = 3.7262, Capabilities = new List<string> { "Cath Lab" } },
+				new PoiImportRow { Name = "OLV Aalst", Latitude = 50.9364, Longitude = 4.0390, Capabilities = new List<string> { "Trauma Center" } });
+
+			await Service().ProcessNextAsync();
+
+			_saved.Select(p => p.Name).Should().Equal(new[] { "UZ Gent", "OLV Aalst" }, "row 0 is not saved a second time");
+			_mapping.Verify(x => x.SetPoiCapabilitiesAsync(DepartmentId, 100, It.Is<IEnumerable<string>>(ids => ids.SequenceEqual(new[] { "cath" })), It.IsAny<CancellationToken>()), Times.Once);
+			_mapping.Verify(x => x.SetPoiCapabilitiesAsync(DepartmentId, 101, It.Is<IEnumerable<string>>(ids => ids.SequenceEqual(new[] { "new-trauma-center" })), It.IsAny<CancellationToken>()), Times.Once);
+			Final.Status.Should().Be((int)PoiImportStatus.Complete);
+		}
+
+		#endregion Capabilities
 	}
 }

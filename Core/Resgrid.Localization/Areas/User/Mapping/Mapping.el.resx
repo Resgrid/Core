@@ -449,4 +449,136 @@
   <data name="PoiBulkSelectRow" xml:space="preserve">
     <value>Επιλογή σημείου</value>
   </data>
+  <data name="PoiCapabilities" xml:space="preserve">
+    <value>Δυνατότητες POI</value>
+  </data>
+  <data name="PoiCapabilitiesHelp" xml:space="preserve">
+    <value>Οι δυνατότητες περιγράφουν τι προσφέρουν οι προορισμοί σας και τα άλλα σημεία ενδιαφέροντος, όπως αιμοδυναμικό εργαστήριο, μονάδα αγγειακών εγκεφαλικών ή κέντρο τραύματος. Επιλέξτε τες σε κάθε POI· οι συντονιστές τις βλέπουν όταν επιλέγουν προορισμό και μπορούν να δηλώσουν μία ως μη διαθέσιμη.</value>
+  </data>
+  <data name="PoiCapabilitiesPoiHelp" xml:space="preserve">
+    <value>Τι προσφέρει αυτό το σημείο ενδιαφέροντος. Οι συντονιστές το βλέπουν όταν επιλέγουν προορισμό.</value>
+  </data>
+  <data name="AddPoiCapability" xml:space="preserve">
+    <value>Προσθήκη δυνατότητας</value>
+  </data>
+  <data name="PoiCapabilityNamePlaceholder" xml:space="preserve">
+    <value>Όνομα δυνατότητας, π.χ. Αιμοδυναμικό εργαστήριο</value>
+  </data>
+  <data name="SortOrder" xml:space="preserve">
+    <value>Σειρά ταξινόμησης</value>
+  </data>
+  <data name="PoiCapabilitySortHelp" xml:space="preserve">
+    <value>Οι δυνατότητες εμφανίζονται κατά σειρά ταξινόμησης και μετά κατά όνομα. Αφήστε τη σειρά κενή για να προσθέσετε μια δυνατότητα στο τέλος.</value>
+  </data>
+  <data name="NoPoiCapabilities" xml:space="preserve">
+    <value>Δεν έχουν οριστεί ακόμη δυνατότητες.</value>
+  </data>
+  <data name="ManagePoiCapabilities" xml:space="preserve">
+    <value>Διαχείριση δυνατοτήτων</value>
+  </data>
+  <data name="DeletePoiCapabilityConfirm" xml:space="preserve">
+    <value>Διαγραφή της δυνατότητας «{0}»; Αφαιρείται από όλα τα POI που την προσφέρουν ({1}) και από κάθε αναφορά διαθεσιμότητας.</value>
+  </data>
+  <data name="PoiCapabilityNameRequired" xml:space="preserve">
+    <value>Εισαγάγετε όνομα δυνατότητας έως {0} χαρακτήρες.</value>
+  </data>
+  <data name="PoiCapabilityNameExists" xml:space="preserve">
+    <value>Υπάρχει ήδη δυνατότητα με όνομα «{0}».</value>
+  </data>
+  <data name="PoiCapabilitySaved" xml:space="preserve">
+    <value>Η δυνατότητα «{0}» αποθηκεύτηκε.</value>
+  </data>
+  <data name="PoiCapabilityDeleted" xml:space="preserve">
+    <value>Η δυνατότητα «{0}» διαγράφηκε.</value>
+  </data>
+  <data name="PoiCapabilitySaveFailed" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η αποθήκευση της δυνατότητας. Ανανεώστε τη σελίδα και δοκιμάστε ξανά.</value>
+  </data>
+  <data name="DestinationAvailability" xml:space="preserve">
+    <value>Διαθεσιμότητα προορισμών</value>
+  </data>
+  <data name="DestinationAvailabilityHelp" xml:space="preserve">
+    <value>Καταγράψτε πότε ένας προορισμός, όπως ένα νοσοκομείο, αναφέρει περιορισμένη δυναμικότητα, εκτροπή ή κλείσιμο, ή ότι μία από τις δυνατότητές του δεν είναι διαθέσιμη. Οι συντονιστές το βλέπουν όταν επιλέγουν τον προορισμό ενός συμβάντος.</value>
+  </data>
+  <data name="PoiType" xml:space="preserve">
+    <value>Τύπος</value>
+  </data>
+  <data name="PoiAvailability" xml:space="preserve">
+    <value>Διαθεσιμότητα</value>
+  </data>
+  <data name="SetPoiAvailability" xml:space="preserve">
+    <value>Ορισμός διαθεσιμότητας</value>
+  </data>
+  <data name="NoDestinationPois" xml:space="preserve">
+    <value>Δεν υπάρχουν ακόμη POI προορισμού. Σημειώστε έναν τύπο POI ως προορισμό για να εμφανιστούν εδώ τα POI του.</value>
+  </data>
+  <data name="PoiAvailabilityOpen" xml:space="preserve">
+    <value>Ανοιχτό</value>
+  </data>
+  <data name="PoiAvailabilityLimited" xml:space="preserve">
+    <value>Περιορισμένο</value>
+  </data>
+  <data name="PoiAvailabilityDiversion" xml:space="preserve">
+    <value>Εκτροπή</value>
+  </data>
+  <data name="PoiAvailabilityClosed" xml:space="preserve">
+    <value>Κλειστό</value>
+  </data>
+  <data name="PoiAvailabilityUnavailable" xml:space="preserve">
+    <value>Μη διαθέσιμο:</value>
+  </data>
+  <data name="PoiAvailabilityUntil" xml:space="preserve">
+    <value>Έως {0}</value>
+  </data>
+  <data name="PoiAvailabilityCurrent" xml:space="preserve">
+    <value>Τρέχουσα</value>
+  </data>
+  <data name="PoiAvailabilitySetOn" xml:space="preserve">
+    <value>Ορίστηκε {0}</value>
+  </data>
+  <data name="PoiAvailabilityStatusHelp" xml:space="preserve">
+    <value>Το «Ανοιχτό» καταργεί την αναφορά. Το «Περιορισμένο» δέχεται ακόμη ασθενείς με μειωμένη δυναμικότητα· η «Εκτροπή» ζητά από τα πληρώματα να πάνε αλλού εκτός αν δεν υπάρχει εναλλακτική· το «Κλειστό» δεν δέχεται κανέναν.</value>
+  </data>
+  <data name="PoiAvailabilityUnavailableHelp" xml:space="preserve">
+    <value>Επιλέξτε ό,τι δεν μπορεί να παρέχει αυτός ο προορισμός αυτή τη στιγμή.</value>
+  </data>
+  <data name="PoiAvailabilityNoCapabilities" xml:space="preserve">
+    <value>Αυτός ο προορισμός δεν έχει επιλεγμένες δυνατότητες.</value>
+  </data>
+  <data name="PoiAvailabilityNoteHelp" xml:space="preserve">
+    <value>Προαιρετικό, έως {0} χαρακτήρες.</value>
+  </data>
+  <data name="PoiAvailabilityExpires" xml:space="preserve">
+    <value>Λήξη</value>
+  </data>
+  <data name="PoiAvailabilityExpiresHelp" xml:space="preserve">
+    <value>Πότε λήγει η αναφορά και ο προορισμός θεωρείται ξανά ανοιχτός.</value>
+  </data>
+  <data name="PoiAvailabilityExpiryNone" xml:space="preserve">
+    <value>Χωρίς λήξη (μέχρι να αλλάξει)</value>
+  </data>
+  <data name="PoiAvailabilityExpiryKeep" xml:space="preserve">
+    <value>Διατήρηση τρέχουσας ({0})</value>
+  </data>
+  <data name="PoiAvailabilityExpiryOneHour" xml:space="preserve">
+    <value>Σε 1 ώρα</value>
+  </data>
+  <data name="PoiAvailabilityExpiryHours" xml:space="preserve">
+    <value>Σε {0} ώρες</value>
+  </data>
+  <data name="PoiAvailabilityStatusInvalid" xml:space="preserve">
+    <value>Επιλέξτε κατάσταση διαθεσιμότητας.</value>
+  </data>
+  <data name="PoiAvailabilityNoteTooLong" xml:space="preserve">
+    <value>Η σημείωση μπορεί να έχει έως {0} χαρακτήρες.</value>
+  </data>
+  <data name="PoiAvailabilityExpiryInvalid" xml:space="preserve">
+    <value>Επιλέξτε πότε λήγει η αναφορά.</value>
+  </data>
+  <data name="PoiAvailabilitySaved" xml:space="preserve">
+    <value>Η διαθεσιμότητα του {0} ορίστηκε σε {1}.</value>
+  </data>
+  <data name="PoiAvailabilitySaveFailed" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η αποθήκευση της διαθεσιμότητας: το POI δεν είναι πλέον προορισμός. Ανανεώστε τη σελίδα και δοκιμάστε ξανά.</value>
+  </data>
 </root>

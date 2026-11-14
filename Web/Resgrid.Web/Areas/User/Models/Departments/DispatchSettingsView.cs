@@ -48,6 +48,9 @@ namespace Resgrid.Web.Areas.User.Models.Departments
 		/// <summary>An active call closes when its last dispatched unit reports back in service or out of service (setting 116).</summary>
 		public bool CloseCallWhenUnitsClear { get; set; }
 
+		/// <summary>A transport status to a destination other than the call's assigned one needs a reason and is noted on the call (setting 126).</summary>
+		public bool TransportDestinationChecks { get; set; }
+
 		/// <summary>Re-notify dispatched personnel and units until they set a status (setting 124, off by default).</summary>
 		public bool RenotifyEnabled { get; set; }
 

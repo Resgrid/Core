@@ -355,6 +355,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				ExternalId = model.Call?.ExternalIdentifier,
 				IncidentId = model.Call?.IncidentNumber,
 				ReferenceId = model.Call?.ReferenceNumber,
+				MapPage = model.Call?.MapPage,
+				PrimaryContactId = model.PrimaryContact,
 				DestinationPoiId = model.Call?.DestinationPoiId,
 				IndoorMapZoneId = collection?["IndoorMapZoneId"].FirstOrDefault(),
 				HasProtocols = selections.HasProtocols,
@@ -364,7 +366,26 @@ namespace Resgrid.Web.Areas.User.Controllers
 				IsPending = model.SaveAsPending
 			}.Unsupported(unsupportedKeys);
 
+			// No contacts to pick (none in the department, or no Security > View Contacts): the form has no picker.
+			if (model.ContactsList == null)
+				values.Unsupported(NewCallFieldKeys.PrimaryContact);
+
 			AddFieldPolicyErrors(policy, values);
+		}
+
+		/// <summary>
+		/// Everyone an "All Call" dispatches: the department's members who can be dispatched at all (not deleted, disabled
+		/// or hidden -- the same people the personnel list offers).
+		/// </summary>
+		private async Task<List<string>> GetAllCallUserIdsAsync()
+		{
+			var members = await _departmentsService.GetAllMembersForDepartmentAsync(DepartmentId) ?? new List<DepartmentMember>();
+
+			return members
+				.Where(x => !x.IsDeleted && !x.IsDisabled.GetValueOrDefault() && !x.IsHidden.GetValueOrDefault())
+				.Select(x => x.UserId)
+				.Distinct()
+				.ToList();
 		}
 
 		[HttpPost]
@@ -425,9 +446,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 				else if (!string.IsNullOrWhiteSpace(model.Call.Address))
 					model.Call.GeoLocationData = await _geoLocationProvider.GetLatLonFromAddress(model.Call.Address);
 
-				// Check-in timers
-				var checkInTimersValue = collection["Call.CheckInTimersEnabled"].FirstOrDefault();
-				model.Call.CheckInTimersEnabled = !string.IsNullOrEmpty(checkInTimersValue) && checkInTimersValue.Contains("true", StringComparison.OrdinalIgnoreCase);
+				// Check-in timers. A department that hides the checkbox gets its "auto-enable for new calls" setting, the
+				// same default the v4 SaveCall applies when a client sends nothing.
+				if (model.IsFieldVisible(NewCallFieldKeys.CheckInTimers))
+				{
+					var checkInTimersValue = collection["Call.CheckInTimersEnabled"].FirstOrDefault();
+					model.Call.CheckInTimersEnabled = !string.IsNullOrEmpty(checkInTimersValue) && checkInTimersValue.Contains("true", StringComparison.OrdinalIgnoreCase);
+				}
+				else
+				{
+					model.Call.CheckInTimersEnabled = await _departmentSettingsService.GetCheckInTimersAutoEnableForNewCallsAsync(DepartmentId);
+				}
 
 				// 42 CFR Part 2 consent is a dispatcher-set flag; subject identifiers come only from integrations (v4 API),
 				// never from a posted form.
@@ -496,6 +525,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 				}
 
+				// All Call: offered only when the department hides every recipient list. Left off, the call pages nobody.
+				var allCallUserIds = model.AllCall && model.OffersAllCall
+					? new HashSet<string>(await GetAllCallUserIdsAsync())
+					: new HashSet<string>();
+
+				foreach (var userId in allCallUserIds.Where(x => !dispatchingUserIds.Contains(x)))
+					dispatchingUserIds.Add(userId);
+
 				model.Call.Dispatches = new Collection<CallDispatch>();
 
 				// Add all users dispatch's
@@ -503,9 +540,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 				{
 					foreach (var userId in dispatchingUserIds)
 					{
-						var member = await _departmentsService.GetDepartmentMemberAsync(userId, DepartmentId, false);
-						if (member == null || member.IsDisabled.GetValueOrDefault() || member.IsDeleted)
-							continue;
+						// An All Call recipient was just read from the active members; only a picked one needs checking.
+						if (!allCallUserIds.Contains(userId))
+						{
+							var member = await _departmentsService.GetDepartmentMemberAsync(userId, DepartmentId, false);
+							if (member == null || member.IsDisabled.GetValueOrDefault() || member.IsDeleted)
+								continue;
+						}
 
 						CallDispatch cd = new CallDispatch();
 						cd.UserId = userId;
@@ -1170,9 +1211,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 				// before anything below touches stored data. The dispatch time only means something before a call goes
 				// out, so it is never required of an edit.
 				var selections = PostedCallSelections.From(collection);
-				AddFieldPolicyErrors(policy, new NewCallFieldValues
+
+				// The contact pickers are on the form only with contacts to pick from (and Security > View Contacts).
+				var editsContacts = model.ContactsList != null;
+				var storedPrimaryContactId = call.Contacts?.FirstOrDefault(x => x.CallContactType == 0)?.ContactId;
+				var fieldValues = new NewCallFieldValues
 				{
 					Note = Shows(NewCallFieldKeys.Note) ? NoteText(model.Call.Notes) : NoteText(call.Notes),
+					MapPage = Shows(NewCallFieldKeys.MapPage) ? model.Call.MapPage : call.MapPage,
+					PrimaryContactId = editsContacts && Shows(NewCallFieldKeys.PrimaryContact) ? model.PrimaryContact : storedPrimaryContactId,
 					Address = Shows(NewCallFieldKeys.Address) ? model.Call.Address : call.Address,
 					Geolocation = postedPin ?? call.GeoLocationData,
 					What3Words = Shows(NewCallFieldKeys.What3Words) ? model.What3Word : call.W3W,
@@ -1189,7 +1236,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 					HasDispatchList = selections.HasDispatchList || (call.Dispatches?.Any() ?? false) || (call.GroupDispatches?.Any() ?? false) ||
 									  (call.UnitDispatches?.Any() ?? false) || (call.RoleDispatches?.Any() ?? false),
 					IsPending = call.State == (int)CallStates.Pending && !model.DispatchNow && !model.ScheduleDispatchDate.HasValue
-				}.Unsupported(NewCallFieldKeys.DispatchOn));
+				}.Unsupported(NewCallFieldKeys.DispatchOn);
+
+				// Nothing to pick: a stored contact still counts, but a missing one cannot be supplied here.
+				if (!editsContacts && string.IsNullOrWhiteSpace(storedPrimaryContactId))
+					fieldValues.Unsupported(NewCallFieldKeys.PrimaryContact);
+
+				AddFieldPolicyErrors(policy, fieldValues);
 
 				if (!ModelState.IsValid)
 					return View("UpdateCall", model);
@@ -1198,10 +1251,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 				call.Name = model.Call.Name;
 				call.Priority = (int)model.CallPriority;
 				call.IsCritical = model.Call.IsCritical;
-				call.MapPage = model.Call.MapPage;
 				call.CallSource = (int)CallSources.User;
 				call.Public = model.Call.Public;
-				call.Type = model.Call.Type;
+
+				// With no call types the form carries the stored type in a hidden input; it is only a choice with types.
+				if (model.CallTypes != null && model.CallTypes.Count() > 1)
+					call.Type = model.Call.Type;
+
+				if (Shows(NewCallFieldKeys.MapPage))
+					call.MapPage = model.Call.MapPage;
 
 				if (Shows(NewCallFieldKeys.Note))
 					call.Notes = System.Net.WebUtility.HtmlDecode(model.Call.Notes);
@@ -1233,11 +1291,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (postedPin != null)
 					call.GeoLocationData = postedPin;
 
-				var checkInTimersValue = collection["Call.CheckInTimersEnabled"].FirstOrDefault();
-				call.CheckInTimersEnabled = !string.IsNullOrEmpty(checkInTimersValue) && checkInTimersValue.Contains("true", StringComparison.OrdinalIgnoreCase);
+				if (Shows(NewCallFieldKeys.CheckInTimers))
+				{
+					var checkInTimersValue = collection["Call.CheckInTimersEnabled"].FirstOrDefault();
+					call.CheckInTimersEnabled = !string.IsNullOrEmpty(checkInTimersValue) && checkInTimersValue.Contains("true", StringComparison.OrdinalIgnoreCase);
+				}
 
-				var part2ConsentValue = collection["Call.Part2ConsentOnFile"].FirstOrDefault();
-				call.Part2ConsentOnFile = !string.IsNullOrEmpty(part2ConsentValue) && part2ConsentValue.Contains("true", StringComparison.OrdinalIgnoreCase);
+				if (Shows(NewCallFieldKeys.Part2Consent))
+				{
+					var part2ConsentValue = collection["Call.Part2ConsentOnFile"].FirstOrDefault();
+					call.Part2ConsentOnFile = !string.IsNullOrEmpty(part2ConsentValue) && part2ConsentValue.Contains("true", StringComparison.OrdinalIgnoreCase);
+				}
 
 				// Indoor map zone (the form carries the stored zone, so a blank one was cleared on purpose)
 				if (Shows(NewCallFieldKeys.IndoorLocation))
@@ -1318,6 +1382,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 				//await _callsService.DeleteRoleDispatchesAsync(call.RoleDispatches.ToList(), cancellationToken);
 				//await _callsService.DeleteUnitDispatchesAsync(call.UnitDispatches.ToList(), cancellationToken);
 
+				// All Call (offered only when every recipient list is hidden) adds everyone to who the call already went to;
+				// nobody already on it is taken off. Left off, the recipients stay as they are.
+				var allCallUserIds = model.AllCall && model.OffersAllCall
+					? new HashSet<string>(await GetAllCallUserIdsAsync())
+					: new HashSet<string>();
+
+				if (allCallUserIds.Any())
+				{
+					foreach (var userId in (call.Dispatches ?? Enumerable.Empty<CallDispatch>()).Select(x => x.UserId).Concat(allCallUserIds))
+					{
+						if (!dispatchingUserIds.Contains(userId))
+							dispatchingUserIds.Add(userId);
+					}
+				}
+
 				// Add all users dispatch's
 				if (dispatchingUserIds.Any())
 				{
@@ -1334,9 +1413,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 					foreach (var userId in dispatchingUserIds)
 					{
-						var member = await _departmentsService.GetDepartmentMemberAsync(userId, DepartmentId, false);
-						if (member == null || member.IsDisabled.GetValueOrDefault() || member.IsDeleted)
+						if (call.Dispatches.Any(x => x.UserId == userId))
 							continue;
+
+						// An All Call recipient was just read from the active members; only a picked one needs checking.
+						if (!allCallUserIds.Contains(userId))
+						{
+							var member = await _departmentsService.GetDepartmentMemberAsync(userId, DepartmentId, false);
+							if (member == null || member.IsDisabled.GetValueOrDefault() || member.IsDeleted)
+								continue;
+						}
 
 						if (!call.Dispatches.Any(x => x.UserId == userId))
 						{
@@ -1463,35 +1549,39 @@ namespace Resgrid.Web.Areas.User.Controllers
 				}
 
 
+				// A contact picker the department hides is not on the form, so the call keeps its contact(s) of that kind.
+				var primaryContactId = Shows(NewCallFieldKeys.PrimaryContact) ? model.PrimaryContact : storedPrimaryContactId;
+				var additionalContactIds = Shows(NewCallFieldKeys.AdditionalContacts)
+					? model.AdditionalContacts ?? new List<string>()
+					: (call.Contacts ?? Enumerable.Empty<CallContact>()).Where(x => x.CallContactType == 1).Select(x => x.ContactId).ToList();
+
 				var contacts = new List<CallContact>();
-				if (!String.IsNullOrWhiteSpace(model.PrimaryContact))
+				if (!String.IsNullOrWhiteSpace(primaryContactId))
 				{
 					CallContact contact = new CallContact();
 					contact.DepartmentId = DepartmentId;
-					contact.ContactId = model.PrimaryContact;
+					contact.ContactId = primaryContactId;
 					contact.CallContactType = 0;
 
 					contacts.Add(contact);
 				}
 
-				if (model.AdditionalContacts != null && model.AdditionalContacts.Any())
+				foreach (var additionalContact in additionalContactIds)
 				{
-					foreach (var additionalContact in model.AdditionalContacts)
+					if (!String.IsNullOrWhiteSpace(additionalContact))
 					{
-						if (!String.IsNullOrWhiteSpace(additionalContact))
-						{
-							CallContact contact = new CallContact();
-							contact.DepartmentId = DepartmentId;
-							contact.ContactId = additionalContact;
-							contact.CallContactType = 1;
+						CallContact contact = new CallContact();
+						contact.DepartmentId = DepartmentId;
+						contact.ContactId = additionalContact;
+						contact.CallContactType = 1;
 
-							contacts.Add(contact);
-						}
+						contacts.Add(contact);
 					}
 				}
 
-				// Without Security > View Contacts the form has no contact pickers, so the call keeps the contacts it has.
-				if (ClaimsAuthorizationHelper.CanViewContacts())
+				// Without Security > View Contacts, or with no contacts to pick, the form has no contact pickers, so the
+				// call keeps the contacts it has.
+				if (editsContacts)
 				{
 					await _callsService.DeleteCallContactsAsync(call.CallId);
 					call.Contacts = contacts;
@@ -4298,6 +4388,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var groups = new Dictionary<string, SelectListGroup>(StringComparer.OrdinalIgnoreCase);
 
+			// What each destination offers and whether it is limited, on diversion or closed right now, so the dispatcher sees it
+			// while picking (and can search for "Cath Lab").
+			await _mappingService.PopulatePoiDetailsAsync(DepartmentId, destinationPois);
+
 			foreach (var poi in destinationPois.OrderBy(x => x.Type?.Name).ThenBy(x => x.Name).ThenBy(x => x.Address).ThenBy(x => x.Note))
 			{
 				var groupName = !String.IsNullOrWhiteSpace(poi.Type?.Name) ? poi.Type.Name : _dispatchLocalizer["Pois"].Value;
@@ -4305,7 +4399,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (!groups.ContainsKey(groupName))
 					groups[groupName] = new SelectListGroup { Name = groupName };
 
-				var title = PoiDisplayHelper.GetSelectionLabel(poi, groupName);
+				var title = GetDestinationOptionText(poi, PoiDisplayHelper.GetSelectionLabel(poi, groupName));
 
 				selectListItems.Add(new SelectListItem
 				{
@@ -4317,6 +4411,25 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			return selectListItems;
+		}
+
+		/// <summary>
+		/// A destination option's text: its label, then the capabilities it offers and a status other than open, e.g.
+		/// "UZ Gent — Cath Lab, Trauma Center (Diversion)". The option value stays the POI id.
+		/// </summary>
+		private string GetDestinationOptionText(Poi poi, string label)
+		{
+			var text = label ?? string.Empty;
+
+			var capabilities = (poi?.Capabilities ?? new List<string>()).Where(x => !String.IsNullOrWhiteSpace(x)).ToList();
+			if (capabilities.Count > 0)
+				text += " — " + string.Join(", ", capabilities);
+
+			var status = PoiAvailabilityRules.StatusOf(poi?.Availability, DateTime.UtcNow);
+			if (status != PoiAvailabilityStatuses.Open)
+				text += " (" + _dispatchLocalizer["DestinationAvailability" + status].Value + ")";
+
+			return text;
 		}
 
 		private async Task<Poi> GetValidatedDestinationPoiAsync(int? destinationPoiId)

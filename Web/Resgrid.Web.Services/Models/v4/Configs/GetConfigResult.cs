@@ -180,6 +180,14 @@ namespace Resgrid.Web.Services.Models.v4.Configs
 		public bool StatusHoldToConfirm { get; set; }
 
 		/// <summary>
+		/// Transport destination checks (Dispatch Settings): when a unit's Transporting or At Hospital status goes to a
+		/// destination POI other than its call's assigned destination, the apps require a reason (the status note) and
+		/// Resgrid records the change as a call note. The apps pre-select the call's destination either way. Only signed-in
+		/// callers get it; false otherwise.
+		/// </summary>
+		public bool TransportDestinationChecks { get; set; }
+
+		/// <summary>
 		/// Latitude every map in every client should open on for this department. Resolved from the
 		/// department's configured map center, falling back to its address and finally to a system
 		/// default, so this is always populated.

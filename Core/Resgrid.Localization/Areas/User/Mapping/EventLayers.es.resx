@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Map Icon Legend and status / priority map icon pages -->
+    <data name="ImportLayer" xml:space="preserve">
+    <value>Importar capa</value>
+  </data>
+  <data name="ImportLayerHeader" xml:space="preserve">
+    <value>Importar capa</value>
+  </data>
+  <data name="ImportHelp" xml:space="preserve">
+    <value>Suba un archivo KML, KMZ o GeoJSON (de Google My Maps, Google Earth o un SIG) con el recorrido, el recinto o las paradas de un evento. Cada punto, línea y polígono se convierte en una forma de la capa con su propio nombre, descripción y color. Asigne a la capa las fechas del evento y se mostrará en todos los mapas mientras dure.</value>
+  </data>
+  <data name="DetailsHeader" xml:space="preserve">
+    <value>Detalles de la capa</value>
+  </data>
+  <data name="LayerFile" xml:space="preserve">
+    <value>Archivo</value>
+  </data>
+  <data name="LayerFileHelp" xml:space="preserve">
+    <value>KML, KMZ o GeoJSON, hasta {0} MB.</value>
+  </data>
+  <data name="ReplaceFile" xml:space="preserve">
+    <value>Reemplazar archivo</value>
+  </data>
+  <data name="ReplaceFileHelp" xml:space="preserve">
+    <value>Opcional. Un archivo nuevo reemplaza todas las formas de la capa; los datos de arriba se conservan.</value>
+  </data>
+  <data name="DeleteHelp" xml:space="preserve">
+    <value>Eliminar la capa (Mapas → Capas) elimina todas sus formas y datos.</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Nombre</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Descripción</value>
+  </data>
+  <data name="Color" xml:space="preserve">
+    <value>Color predeterminado</value>
+  </data>
+  <data name="ColorHelp" xml:space="preserve">
+    <value>Se usa para las formas a las que el archivo no da color propio.</value>
+  </data>
+  <data name="EventSection" xml:space="preserve">
+    <value>Evento</value>
+  </data>
+  <data name="StartsOn" xml:space="preserve">
+    <value>Inicio</value>
+  </data>
+  <data name="EndsOn" xml:space="preserve">
+    <value>Fin</value>
+  </data>
+  <data name="EventDatesHelp" xml:space="preserve">
+    <value>En la zona horaria del departamento ({0}). Mientras dura el evento, la capa se muestra en todos los mapas, diga lo que diga «Activa por defecto». Deje ambos en blanco para una capa sin evento.</value>
+  </data>
+  <data name="Organizer" xml:space="preserve">
+    <value>Organizador</value>
+  </data>
+  <data name="ContactName" xml:space="preserve">
+    <value>Coordinador / Contacto</value>
+  </data>
+  <data name="ContactPhone" xml:space="preserve">
+    <value>Teléfono de contacto</value>
+  </data>
+  <data name="ContactEmail" xml:space="preserve">
+    <value>Correo de contacto</value>
+  </data>
+  <data name="OnByDefault" xml:space="preserve">
+    <value>Activa por defecto</value>
+  </data>
+  <data name="OnByDefaultHelp" xml:space="preserve">
+    <value>Mostrar la capa al abrir cada mapa, también fuera de las fechas del evento.</value>
+  </data>
+  <data name="Searchable" xml:space="preserve">
+    <value>Buscable</value>
+  </data>
+  <data name="SaveImport" xml:space="preserve">
+    <value>Importar</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Guardar</value>
+  </data>
+  <data name="EditShapes" xml:space="preserve">
+    <value>Editar formas</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Detalles</value>
+  </data>
+  <data name="SourceFile" xml:space="preserve">
+    <value>Origen</value>
+  </data>
+  <data name="Drawn" xml:space="preserve">
+    <value>Dibujada en el mapa</value>
+  </data>
+  <data name="ShapeCount" xml:space="preserve">
+    <value>{0} formas</value>
+  </data>
+  <data name="EventColumn" xml:space="preserve">
+    <value>Evento</value>
+  </data>
+  <data name="PhaseUpcoming" xml:space="preserve">
+    <value>Próximo</value>
+  </data>
+  <data name="PhaseActive" xml:space="preserve">
+    <value>En curso</value>
+  </data>
+  <data name="PhaseEnded" xml:space="preserve">
+    <value>Finalizado</value>
+  </data>
+  <data name="ImportedOn" xml:space="preserve">
+    <value>importada</value>
+  </data>
+  <data name="FileRequired" xml:space="preserve">
+    <value>Elija un archivo KML, KMZ o GeoJSON para importar.</value>
+  </data>
+  <data name="FileTypeUnsupported" xml:space="preserve">
+    <value>Suba un archivo .kml, .kmz, .geojson o .json.</value>
+  </data>
+  <data name="FileTooLarge" xml:space="preserve">
+    <value>El archivo supera los {0} MB.</value>
+  </data>
+  <data name="FileTooMuchData" xml:space="preserve">
+    <value>El archivo contiene más de lo que una capa puede almacenar ({0} MB de formas y descripciones). Divídalo en archivos más pequeños o acorte las descripciones.</value>
+  </data>
+  <data name="FileTooManyShapes" xml:space="preserve">
+    <value>El archivo tiene más de {0} formas. Divídalo en varias capas.</value>
+  </data>
+  <data name="FileTooManyPoints" xml:space="preserve">
+    <value>El archivo tiene más de {0} coordenadas. Simplifique las líneas (la mayoría de los SIG pueden hacerlo) o divídalo en varias capas.</value>
+  </data>
+  <data name="FileNoShapes" xml:space="preserve">
+    <value>El archivo no tiene puntos, líneas ni polígonos con coordenadas.</value>
+  </data>
+  <data name="FileOnlyAddresses" xml:space="preserve">
+    <value>Los {0} lugares del archivo tienen dirección pero no coordenadas (una capa de Google My Maps ubicada por dirección). Impórtelos como puntos de interés (Mapas → POI → Importar), que busca las direcciones, o exporte el mapa con coordenadas.</value>
+  </data>
+  <data name="FileUnreadable" xml:space="preserve">
+    <value>No se pudo leer el archivo. Compruebe que sea un archivo KML, KMZ o GeoJSON válido.</value>
+  </data>
+  <data name="EndsBeforeStarts" xml:space="preserve">
+    <value>El evento no puede terminar antes de empezar.</value>
+  </data>
+  <data name="ContactEmailInvalid" xml:space="preserve">
+    <value>Introduzca un correo electrónico válido.</value>
+  </data>
+  <data name="ColorInvalid" xml:space="preserve">
+    <value>Elija un color.</value>
+  </data>
+  <data name="SaveFailed" xml:space="preserve">
+    <value>No se pudo guardar la capa. Inténtelo de nuevo.</value>
+  </data>
+  <data name="ImportedSummary" xml:space="preserve">
+    <value>«{0}» importada: {1} puntos, {2} líneas, {3} polígonos.</value>
+  </data>
+  <data name="ReplacedSummary" xml:space="preserve">
+    <value>Formas de «{0}» reemplazadas: {1} puntos, {2} líneas, {3} polígonos.</value>
+  </data>
+  <data name="SavedSummary" xml:space="preserve">
+    <value>«{0}» guardada.</value>
+  </data>
+  <data name="SkippedNote" xml:space="preserve">
+    <value>Se omitieron {0} marcadores sin coordenadas utilizables.</value>
+  </data>
+</root>

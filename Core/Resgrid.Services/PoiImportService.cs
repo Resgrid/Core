@@ -103,7 +103,14 @@ namespace Resgrid.Services
 				return result;
 			}
 
-			result.Rows.AddRange(kml.Coordinates.Select(c => new PoiImportRow { Name = c.Name, Latitude = c.Latitude, Longitude = c.Longitude }));
+			// A placemark's ExtendedData can name its capabilities ("Capabilities" column of a My Maps or QGIS export).
+			result.Rows.AddRange(kml.Coordinates.Select(c => new PoiImportRow
+			{
+				Name = c.Name,
+				Latitude = c.Latitude,
+				Longitude = c.Longitude,
+				Capabilities = c is KmlPositionedPlacemark placemark ? PoiImportFileReader.FromFields(placemark.Fields).Capabilities : null
+			}));
 			result.SkippedCount = kml.SkippedCount;
 
 			foreach (var placemark in kml.AddressOnly)
@@ -275,13 +282,29 @@ namespace Resgrid.Services
 				// it saved. Counting the saved POIs instead would go wrong once one of them is deleted while the import runs.
 				var positioned = rows.Where(r => r.HasPosition).ToList();
 				var lastSaved = await _poiImportsRepository.GetLastSavedRowAsync(import.PoiImportId, CancellationToken.None);
+				var firstToSave = (lastSaved ?? -1) + 1;
 
-				for (var i = (lastSaved ?? -1) + 1; i < positioned.Count; i++)
+				// A run that stopped between a POI and its capabilities resumes after that POI, so the row saved last gets its
+				// capabilities set again (a replace: the same result however often it runs).
+				var resumedRow = lastSaved.HasValue && lastSaved.Value >= 0 && lastSaved.Value < positioned.Count ? lastSaved : null;
+
+				// Capability names (a "Capabilities" column) are matched to the department's capabilities, adding the missing ones,
+				// once per run rather than per row. A file without the column (or queued before it was read) makes no query at all.
+				var capabilityIds = await GetCapabilityIdsAsync(import.DepartmentId, positioned.Skip(resumedRow ?? firstToSave));
+
+				if (resumedRow.HasValue && HasCapabilities(positioned[resumedRow.Value]))
+				{
+					var resumedPoi = type.Pois?.FirstOrDefault(p => p.PoiImportId == import.PoiImportId && p.PoiImportRow == resumedRow.Value);
+					if (resumedPoi != null)
+						await SetCapabilitiesAsync(import.DepartmentId, resumedPoi.PoiId, positioned[resumedRow.Value], capabilityIds);
+				}
+
+				for (var i = firstToSave; i < positioned.Count; i++)
 				{
 					cancellationToken.ThrowIfCancellationRequested();
 
 					var row = positioned[i];
-					await _mappingService.SavePOIAsync(new Poi
+					var saved = await _mappingService.SavePOIAsync(new Poi
 					{
 						PoiTypeId = import.PoiTypeId,
 						// Pois.Name is nvarchar(250) and Pois.Address nvarchar(500); a longer value would fail the import.
@@ -293,6 +316,9 @@ namespace Resgrid.Services
 						PoiImportId = import.PoiImportId,
 						PoiImportRow = i
 					}, CancellationToken.None);
+
+					if (saved != null && saved.PoiId > 0 && HasCapabilities(row))
+						await SetCapabilitiesAsync(import.DepartmentId, saved.PoiId, row, capabilityIds);
 
 					await BeatAsync();
 				}
@@ -340,6 +366,45 @@ namespace Resgrid.Services
 				else
 					await _poiImportsRepository.ReleaseAsync(import.PoiImportId, claimToken, CancellationToken.None);
 			}
+		}
+
+		private static bool HasCapabilities(PoiImportRow row) => row?.Capabilities != null && row.Capabilities.Count > 0;
+
+		/// <summary>
+		/// The department's capability ids by name (ignoring case) for every capability the rows name, adding the names the
+		/// department does not have yet. Empty, without a query, when no row names any.
+		/// </summary>
+		private async Task<Dictionary<string, string>> GetCapabilityIdsAsync(int departmentId, IEnumerable<PoiImportRow> rows)
+		{
+			var result = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+			var names = rows.Where(HasCapabilities).SelectMany(r => r.Capabilities).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+			if (names.Count == 0)
+				return result;
+
+			// A write (it may add capabilities), so it finishes even when the worker is stopping, like the POI saves.
+			var capabilities = await _mappingService.GetOrAddPoiCapabilitiesByNameAsync(departmentId, names, CancellationToken.None);
+
+			foreach (var capability in capabilities ?? new List<PoiCapability>())
+			{
+				var name = PoiImportFileReader.CapabilityName(capability?.Name);
+				if (name != null && !string.IsNullOrWhiteSpace(capability.PoiCapabilityId) && !result.ContainsKey(name))
+					result[name] = capability.PoiCapabilityId;
+			}
+
+			return result;
+		}
+
+		/// <summary>Makes the row's named capabilities the saved POI's.</summary>
+		private async Task SetCapabilitiesAsync(int departmentId, int poiId, PoiImportRow row, Dictionary<string, string> capabilityIds)
+		{
+			var ids = row.Capabilities
+				.Select(name => capabilityIds.TryGetValue(PoiImportFileReader.CapabilityName(name) ?? string.Empty, out var id) ? id : null)
+				.Where(id => id != null)
+				.Distinct(StringComparer.OrdinalIgnoreCase)
+				.ToList();
+
+			if (ids.Count > 0)
+				await _mappingService.SetPoiCapabilitiesAsync(departmentId, poiId, ids, CancellationToken.None);
 		}
 
 		/// <summary>A row whose lookup no geocoder answered and that has retries left.</summary>

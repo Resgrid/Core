@@ -4,9 +4,15 @@ var resgrid;
     (function (dispatch) {
         var editcall;
         (function (editcall) {
-            // The unit lists are built by resgrid.dispatch.nearestboard and count as drawn once they are loaded.
+            // The unit lists are built by resgrid.dispatch.nearestboard and count as drawn once they are loaded. A list the
+            // department's call form hides is not on the page and never draws, so only the lists that are there are waited for.
             var personnelTable, groupsTable, rolesTable;
             var totalTables = 4;
+            function countRenderedTables() {
+                return ['#personnelGrid', '#groupsGrid', '#rolesGrid', '#unitsGrid'].filter(function (selector) {
+                    return $(selector).length > 0;
+                }).length;
+            }
             var drawnTables = {};
             var dispatchedEntitiesApplied = false;
             // Ticks what the call is already dispatched to once every list has drawn its rows. Only once: a later redraw (a
@@ -39,6 +45,7 @@ var resgrid;
             $(document).ready(function () {
                 callMarker = null;
                 map = null;
+                totalTables = countRenderedTables();
                 resgrid.dispatch.nearestboard.init({
                     getMap: function () { return map; },
                     getPersonnelGrid: function () { return personnelTable; },

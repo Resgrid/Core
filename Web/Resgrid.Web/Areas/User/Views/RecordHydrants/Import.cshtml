@@ -3,8 +3,8 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
 @{ ViewBag.Title = "Resgrid | " + L["ImportHydrants"]; }
 <style>
-	#hydrantImportErrors { table-layout:fixed; width:100%; }
-	#hydrantImportErrors th, #hydrantImportErrors td { white-space:normal; overflow-wrap:anywhere; }
+	#hydrantImportErrors, #hydrantImportUnmapped { table-layout:fixed; width:100%; }
+	#hydrantImportErrors th, #hydrantImportErrors td, #hydrantImportUnmapped th, #hydrantImportUnmapped td { white-space:normal; overflow-wrap:anywhere; }
 </style>
 <div class="row wrapper border-bottom white-bg page-heading">
 	<div class="col-sm-8">
@@ -24,7 +24,28 @@
 			<p>@string.Format(L["ImportResult"].Value, Model.Result.RowsRead, Model.Result.Created, Model.Result.Updated, Model.Result.Rejected.Count)</p>
 			@if (Model.Result.ValidationFailed) { <p><strong>@L["HydrantImportNotSaved"]</strong></p> }
 			@if (Model.Result.FailureMessage != null) { <p>@Model.Result.FailureMessage</p> }
+			@if (Model.Result.TakenOutOfService > 0 || Model.Result.ReturnedToService > 0)
+			{
+				<p>@string.Format(L["HydrantImportServiceChanges"].Value, Model.Result.TakenOutOfService, Model.Result.ReturnedToService)</p>
+			}
+			@if (Model.Result.IgnoredColumns?.Count > 0)
+			{
+				<p>@string.Format(L["HydrantImportIgnoredColumns"].Value, string.Join(", ", Model.Result.IgnoredColumns.Take(50)) + (Model.Result.IgnoredColumns.Count > 50 ? ", …" : ""))</p>
+			}
 		</div>
+		@if (Model.Result.UnmappedValues?.Count > 0)
+		{
+			<div class="ibox"><div class="ibox-title"><h5>@L["HydrantImportUnmappedValues"]</h5></div><div class="ibox-content">
+				<p>@L["HydrantImportUnmappedValuesHelp"]</p>
+				<div class="table-responsive"><table class="table table-striped" id="hydrantImportUnmapped">
+					<thead><tr><th style="width:30%">@L["HydrantImportColumn"]</th><th>@L["HydrantImportValue"]</th><th style="width:15%">@L["HydrantImportRowCount"]</th></tr></thead>
+					<tbody>
+						@foreach (var unmapped in Model.Result.UnmappedValues.Take(100)) { <tr><td>@unmapped.Column</td><td>@unmapped.Value</td><td>@unmapped.Rows</td></tr> }
+						@if (Model.Result.UnmappedValues.Count > 100) { <tr><td colspan="3">…</td></tr> }
+					</tbody>
+				</table></div>
+			</div></div>
+		}
 		@if (Model.Result.Rejected.Count > 0)
 		{
 			<div class="ibox"><div class="ibox-title"><h5>@L["ImportRejectedRows"]</h5></div><div class="ibox-content">
@@ -63,6 +84,7 @@
 			<p>@L["HydrantImportOptional"]</p>
 			<p><code>type</code>: <code>DryBarrel</code>, <code>WetBarrel</code>, <code>Standpipe</code>, <code>Cistern</code>, <code>DraftingSite</code>, <code>Other</code> (1–6).</p>
 			<p>@L["HydrantImportTypesHelp"]</p>
+			<p>@L["HydrantImportOtherSystems"]</p>
 			<p><a asp-action="ImportExample" asp-route-format="json">@L["HydrantImportJsonExample"]</a> · <a asp-action="ImportExample" asp-route-format="csv">@L["HydrantImportCsvExample"]</a></p>
 			<pre style="white-space:pre-wrap;overflow-wrap:anywhere">@HydrantImportParser.JsonExample</pre>
 			<p>@L["HydrantImportMappingHelp"]</p>

@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Map Icon Legend and status / priority map icon pages -->
+    <data name="ImportLayer" xml:space="preserve">
+    <value>Import Layer</value>
+  </data>
+  <data name="ImportLayerHeader" xml:space="preserve">
+    <value>Import Layer</value>
+  </data>
+  <data name="ImportHelp" xml:space="preserve">
+    <value>Upload a KML, KMZ or GeoJSON file (from Google My Maps, Google Earth or a GIS system) with an event's route, site or stops. Every point, line and polygon becomes a shape on the layer with its own name, description and color. Give the layer the event's dates and it is shown on every map while the event runs.</value>
+  </data>
+  <data name="DetailsHeader" xml:space="preserve">
+    <value>Layer Details</value>
+  </data>
+  <data name="LayerFile" xml:space="preserve">
+    <value>File</value>
+  </data>
+  <data name="LayerFileHelp" xml:space="preserve">
+    <value>KML, KMZ or GeoJSON, up to {0} MB.</value>
+  </data>
+  <data name="ReplaceFile" xml:space="preserve">
+    <value>Replace File</value>
+  </data>
+  <data name="ReplaceFileHelp" xml:space="preserve">
+    <value>Optional. A new file replaces every shape on the layer; the details above are kept.</value>
+  </data>
+  <data name="DeleteHelp" xml:space="preserve">
+    <value>Deleting the layer (Mapping → Layers) removes all of its shapes and details.</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="Color" xml:space="preserve">
+    <value>Default Color</value>
+  </data>
+  <data name="ColorHelp" xml:space="preserve">
+    <value>Used for shapes the file gives no color of their own.</value>
+  </data>
+  <data name="EventSection" xml:space="preserve">
+    <value>Event</value>
+  </data>
+  <data name="StartsOn" xml:space="preserve">
+    <value>Starts</value>
+  </data>
+  <data name="EndsOn" xml:space="preserve">
+    <value>Ends</value>
+  </data>
+  <data name="EventDatesHelp" xml:space="preserve">
+    <value>In the department's time zone ({0}). While the event runs, the layer is shown on every map whatever "On by default" says. Leave both blank for a layer that is not tied to an event.</value>
+  </data>
+  <data name="Organizer" xml:space="preserve">
+    <value>Organizer</value>
+  </data>
+  <data name="ContactName" xml:space="preserve">
+    <value>Coordinator / Contact</value>
+  </data>
+  <data name="ContactPhone" xml:space="preserve">
+    <value>Contact Phone</value>
+  </data>
+  <data name="ContactEmail" xml:space="preserve">
+    <value>Contact Email</value>
+  </data>
+  <data name="OnByDefault" xml:space="preserve">
+    <value>On by default</value>
+  </data>
+  <data name="OnByDefaultHelp" xml:space="preserve">
+    <value>Show the layer on every map when it opens, outside the event's dates too.</value>
+  </data>
+  <data name="Searchable" xml:space="preserve">
+    <value>Searchable</value>
+  </data>
+  <data name="SaveImport" xml:space="preserve">
+    <value>Import</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="EditShapes" xml:space="preserve">
+    <value>Edit Shapes</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="SourceFile" xml:space="preserve">
+    <value>Source</value>
+  </data>
+  <data name="Drawn" xml:space="preserve">
+    <value>Drawn on the map</value>
+  </data>
+  <data name="ShapeCount" xml:space="preserve">
+    <value>{0} shapes</value>
+  </data>
+  <data name="EventColumn" xml:space="preserve">
+    <value>Event</value>
+  </data>
+  <data name="PhaseUpcoming" xml:space="preserve">
+    <value>Upcoming</value>
+  </data>
+  <data name="PhaseActive" xml:space="preserve">
+    <value>Active now</value>
+  </data>
+  <data name="PhaseEnded" xml:space="preserve">
+    <value>Ended</value>
+  </data>
+  <data name="ImportedOn" xml:space="preserve">
+    <value>imported</value>
+  </data>
+  <data name="FileRequired" xml:space="preserve">
+    <value>Choose a KML, KMZ or GeoJSON file to import.</value>
+  </data>
+  <data name="FileTypeUnsupported" xml:space="preserve">
+    <value>Upload a .kml, .kmz, .geojson or .json file.</value>
+  </data>
+  <data name="FileTooLarge" xml:space="preserve">
+    <value>The file is larger than {0} MB.</value>
+  </data>
+  <data name="FileTooMuchData" xml:space="preserve">
+    <value>The file holds more than one layer can store ({0} MB of shapes and descriptions). Split it into smaller files or shorten the descriptions.</value>
+  </data>
+  <data name="FileTooManyShapes" xml:space="preserve">
+    <value>The file has more than {0} shapes. Split it into several layers.</value>
+  </data>
+  <data name="FileTooManyPoints" xml:space="preserve">
+    <value>The file has more than {0} coordinates. Simplify the lines (most GIS tools can) or split it into several layers.</value>
+  </data>
+  <data name="FileNoShapes" xml:space="preserve">
+    <value>The file has no points, lines or polygons with coordinates.</value>
+  </data>
+  <data name="FileOnlyAddresses" xml:space="preserve">
+    <value>The file's {0} places have an address but no coordinates (a Google My Maps layer located by address). Import them as points of interest instead (Mapping → POIs → Import), which looks the addresses up, or export the map with coordinates.</value>
+  </data>
+  <data name="FileUnreadable" xml:space="preserve">
+    <value>The file could not be read. Check that it is a valid KML, KMZ or GeoJSON file.</value>
+  </data>
+  <data name="EndsBeforeStarts" xml:space="preserve">
+    <value>The event cannot end before it starts.</value>
+  </data>
+  <data name="ContactEmailInvalid" xml:space="preserve">
+    <value>Enter a valid email address.</value>
+  </data>
+  <data name="ColorInvalid" xml:space="preserve">
+    <value>Pick a color.</value>
+  </data>
+  <data name="SaveFailed" xml:space="preserve">
+    <value>The layer could not be saved. Please try again.</value>
+  </data>
+  <data name="ImportedSummary" xml:space="preserve">
+    <value>Imported "{0}": {1} points, {2} lines, {3} polygons.</value>
+  </data>
+  <data name="ReplacedSummary" xml:space="preserve">
+    <value>Replaced the shapes of "{0}": {1} points, {2} lines, {3} polygons.</value>
+  </data>
+  <data name="SavedSummary" xml:space="preserve">
+    <value>Saved "{0}".</value>
+  </data>
+  <data name="SkippedNote" xml:space="preserve">
+    <value>{0} placemarks without usable coordinates were left out.</value>
+  </data>
+</root>

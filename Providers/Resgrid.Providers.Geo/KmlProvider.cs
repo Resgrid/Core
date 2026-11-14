@@ -113,7 +113,11 @@ namespace Resgrid.Providers.GeoLocationProvider
 					continue;
 				}
 
-				result.Coordinates.Add(new Coordinates { Name = NameOf(placemark), Latitude = center.Latitude, Longitude = center.Longitude });
+				// The ExtendedData goes with it only when there is some (a POI import reads a "Capabilities" column from it).
+				var extendedData = ExtendedDataOf(placemark);
+				result.Coordinates.Add(extendedData.Count > 0
+					? new KmlPositionedPlacemark { Name = NameOf(placemark), Latitude = center.Latitude, Longitude = center.Longitude, Fields = extendedData }
+					: new Coordinates { Name = NameOf(placemark), Latitude = center.Latitude, Longitude = center.Longitude });
 			}
 		}
 

@@ -1107,4 +1107,28 @@
   <data name="NearestUnitsCallLocation" xml:space="preserve">
     <value>Miejsce zgłoszenia</value>
   </data>
+  <data name="AllCallLabel" xml:space="preserve">
+    <value>Alarm ogólny</value>
+  </data>
+  <data name="AllCallButton" xml:space="preserve">
+    <value>Alarm ogólny (dysponuj wszystkich)</value>
+  </data>
+  <data name="AllCallHelp" xml:space="preserve">
+    <value>Wszystkie listy dysponowania są ukryte. Włącz alarm ogólny, aby wysłać to zdarzenie do wszystkich, lub pozostaw go wyłączonym, aby zapisać zdarzenie informacyjne, które nikogo nie alarmuje.</value>
+  </data>
+  <data name="AllCallEditHelp" xml:space="preserve">
+    <value>Włącz alarm ogólny, aby dodać wszystkich do tego zdarzenia i ich zaalarmować. Pozostaw go wyłączonym, aby zachować obecnych odbiorców.</value>
+  </data>
+  <data name="DestinationAvailabilityLimited" xml:space="preserve">
+    <value>Ograniczone</value>
+  </data>
+  <data name="DestinationAvailabilityDiversion" xml:space="preserve">
+    <value>Przekierowanie</value>
+  </data>
+  <data name="DestinationAvailabilityClosed" xml:space="preserve">
+    <value>Zamknięte</value>
+  </data>
+  <data name="DestinationAvailabilityLink" xml:space="preserve">
+    <value>Dostępność miejsc docelowych</value>
+  </data>
 </root>

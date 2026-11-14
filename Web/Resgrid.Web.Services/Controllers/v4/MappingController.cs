@@ -13,6 +13,7 @@ using Resgrid.Model;
 using Resgrid.Model.Providers;
 using System;
 using System.Globalization;
+using System.Net.Mime;
 using Resgrid.Web.Services.Models.v4.Mapping;
 using Resgrid.Web.Services.Models.v4.Roles;
 using GeoJSON.Net;
@@ -58,6 +59,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IStaticMapService _staticMapService;
 		private readonly ICustomMapMercatorTileRenderer _mercatorTileRenderer;
 		private readonly IOfflineMapPackService _offlineMapPackService;
+		private readonly INearestDestinationService _nearestDestinationService;
 		private readonly IOfflineMapPackStore _offlineMapPackStore;
 		private readonly Microsoft.AspNetCore.Authorization.IAuthorizationService _policyAuthorization;
 		private readonly Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.MapIconLegend> _legendStrings;
@@ -89,9 +91,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 			Microsoft.AspNetCore.Authorization.IAuthorizationService policyAuthorization,
 			ICustomMapMercatorTileRenderer mercatorTileRenderer,
 			IOfflineMapPackService offlineMapPackService,
-			IOfflineMapPackStore offlineMapPackStore
+			IOfflineMapPackStore offlineMapPackStore,
+			INearestDestinationService nearestDestinationService
 			)
 		{
+			_nearestDestinationService = nearestDestinationService;
 			_offlineMapPackService = offlineMapPackService;
 			_offlineMapPackStore = offlineMapPackStore;
 			_mercatorTileRenderer = mercatorTileRenderer;
@@ -805,7 +809,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 				if (destinationOnly)
 					filteredPoiTypes = filteredPoiTypes.Where(x => x.IsDestination);
 
-				foreach (var poiType in filteredPoiTypes.Where(x => x.Pois != null && x.Pois.Any()))
+				var withPois = filteredPoiTypes.Where(x => x.Pois != null && x.Pois.Any()).ToList();
+				await _mappingService.PopulatePoiDetailsAsync(DepartmentId, withPois.SelectMany(x => x.Pois));
+
+				foreach (var poiType in withPois)
 				{
 					foreach (var poi in poiType.Pois)
 					{
@@ -838,8 +845,117 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (poiType == null || poiType.DepartmentId != DepartmentId)
 				return NotFound();
 
+			await _mappingService.PopulatePoiDetailsAsync(DepartmentId, new[] { poi });
 			result.Data = ConvertPoiData(poi, poiType);
 			result.PageSize = 1;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// The capabilities the department's POIs can offer (e.g. "Cath Lab", "Stroke Center"), in the department's order.
+		/// POIs name theirs in <c>CapabilityIds</c>.
+		/// </summary>
+		[HttpGet("GetPoiCapabilities")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Department_View)]
+		public async Task<ActionResult<PoiCapabilitiesResult>> GetPoiCapabilities()
+		{
+			var result = new PoiCapabilitiesResult();
+
+			foreach (var capability in await _mappingService.GetPoiCapabilitiesForDepartmentAsync(DepartmentId))
+				result.Data.Add(new PoiCapabilityResultData { PoiCapabilityId = capability.PoiCapabilityId, Name = capability.Name, Sort = capability.Sort });
+
+			result.PageSize = result.Data.Count;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// The department's destinations nearest a point, best first: those that can take the patient (not closed, and with
+		/// <paramref name="capabilityId"/> not reported unavailable) before diversion before the rest; the closest are routed
+		/// (travel seconds), the others ranked by straight-line distance.
+		/// </summary>
+		/// <param name="latitude">Origin latitude (a unit's position or a call's location).</param>
+		/// <param name="longitude">Origin longitude.</param>
+		/// <param name="capabilityId">Only destinations offering this capability (GetPoiCapabilities); omit for all.</param>
+		/// <param name="unitId">The travelling unit, so its travel mode and vehicle limits apply; omit for plain driving.</param>
+		/// <param name="take">How many to return (1 to 50, default 10).</param>
+		/// <param name="cancellationToken">Request cancellation.</param>
+		[HttpGet("GetNearestDestinations")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[Authorize(Policy = ResgridResources.Department_View)]
+		public async Task<ActionResult<NearestDestinationsResult>> GetNearestDestinations(double latitude, double longitude, string capabilityId = null, int? unitId = null,
+			int take = 10, CancellationToken cancellationToken = default)
+		{
+			if (double.IsNaN(latitude) || double.IsNaN(longitude) || Math.Abs(latitude) > 90 || Math.Abs(longitude) > 180)
+				return BadRequest();
+
+			var result = new NearestDestinationsResult();
+			var ranked = await _nearestDestinationService.GetNearestDestinationsAsync(DepartmentId, latitude, longitude, capabilityId, unitId, take, cancellationToken);
+
+			foreach (var destination in ranked)
+			{
+				result.Data.Add(new NearestDestinationResultData
+				{
+					Poi = ConvertPoiData(destination.Poi, destination.Poi.Type),
+					DistanceMeters = Math.Round(destination.DistanceMeters),
+					TravelSeconds = destination.TravelSeconds >= 0 ? Math.Round(destination.TravelSeconds) : -1,
+					CanProvide = destination.CanProvide
+				});
+			}
+
+			result.PageSize = result.Data.Count;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// Sets a destination's availability (a hospital reporting capacity overload, a closed emergency department, or one
+		/// service down). Status 0 clears it. For the department's dispatchers (those who can create calls).
+		/// </summary>
+		[HttpPost("SetPoiAvailability")]
+		[Consumes(MediaTypeNames.Application.Json)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[Authorize(Policy = ResgridResources.Call_Create)]
+		public async Task<ActionResult<SetPoiAvailabilityResult>> SetPoiAvailability([FromBody] SetPoiAvailabilityInput input, CancellationToken cancellationToken)
+		{
+			if (input == null || input.PoiId <= 0 || !Enum.IsDefined(typeof(PoiAvailabilityStatuses), input.Status))
+				return BadRequest();
+
+			DateTime? expiresOn = input.ExpiresInMinutes.HasValue && input.ExpiresInMinutes.Value > 0
+				? DateTime.UtcNow.AddMinutes(Math.Min(input.ExpiresInMinutes.Value, (int)PoiAvailabilityRules.MaxExpiry.TotalMinutes))
+				: (DateTime?)null;
+
+			try
+			{
+				// Writes finish even when the client disconnects: the dispatcher saw it sent.
+				await _mappingService.SetPoiAvailabilityAsync(DepartmentId, input.PoiId, (PoiAvailabilityStatuses)input.Status, input.UnavailableCapabilityIds,
+					input.Note, expiresOn, UserId, CancellationToken.None);
+			}
+			catch (ArgumentException)
+			{
+				return BadRequest();
+			}
+
+			var poi = await _mappingService.GetDestinationPOIByIdAsync(DepartmentId, input.PoiId);
+			var result = new SetPoiAvailabilityResult();
+
+			if (poi != null)
+			{
+				await _mappingService.PopulatePoiDetailsAsync(DepartmentId, new[] { poi });
+				result.Data = ConvertPoiData(poi, poi.Type);
+			}
+
+			result.PageSize = result.Data == null ? 0 : 1;
 			result.Status = ResponseHelper.Success;
 			ResponseHelper.PopulateV4ResponseData(result);
 
@@ -856,11 +972,22 @@ namespace Resgrid.Web.Services.Controllers.v4
 			result.Type = layer.Type;
 			result.Color = layer.Color;
 			result.IsSearchable = layer.IsSearchable;
-			result.IsOnByDefault = layer.IsOnByDefault;
+			// An event layer is switched on by default while its event runs (every client reads this flag as is).
+			var now = DateTime.UtcNow;
+			result.IsOnByDefault = MapLayerEvents.IsShownByDefault(layer, now);
 			result.AddedById = layer.AddedById;
 			result.AddedOn = layer.AddedOn;
 			result.UpdatedById = layer.UpdatedById;
 			result.UpdatedOn = layer.UpdatedOn;
+			result.Description = layer.Description;
+			result.EventStartsOnUtc = layer.EventStartsOn.HasValue ? DateTime.SpecifyKind(layer.EventStartsOn.Value, DateTimeKind.Utc).ToString("o") : null;
+			result.EventEndsOnUtc = layer.EventEndsOn.HasValue ? DateTime.SpecifyKind(layer.EventEndsOn.Value, DateTimeKind.Utc).ToString("o") : null;
+			result.EventPhase = MapLayerEvents.GetPhase(layer, now).ToString().ToLowerInvariant();
+			result.Organizer = layer.Organizer;
+			result.ContactName = layer.ContactName;
+			result.ContactPhone = layer.ContactPhone;
+			result.ContactEmail = layer.ContactEmail;
+			result.SourceFileName = layer.SourceFileName;
 
 			result.Data = new GetMapLayersDataInfo();
 			result.Data.Type = ((GeoJSONObjectType)layer.Type).ToString();
@@ -901,7 +1028,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 				PoiImage = poiType.Image,
 				Marker = poiType.Marker,
 				IsDestination = poiType.IsDestination,
-				IconUrl = TypeIcons.ApiIconUrl(Config.SystemBehaviorConfig.ResgridApiBaseUrl, poiType)
+				IconUrl = TypeIcons.ApiIconUrl(Config.SystemBehaviorConfig.ResgridApiBaseUrl, poiType),
+				CapabilityIds = poi.CapabilityIds?.ToList() ?? new List<string>(),
+				Capabilities = poi.Capabilities?.ToList() ?? new List<string>(),
+				AvailabilityStatus = poi.Availability?.Status ?? (int)PoiAvailabilityStatuses.Open,
+				UnavailableCapabilityIds = poi.Availability?.GetUnavailableCapabilityIds() ?? new List<string>(),
+				AvailabilityNote = poi.Availability?.Note,
+				AvailabilitySetOnUtc = poi.Availability != null ? DateTime.SpecifyKind(poi.Availability.SetOn, DateTimeKind.Utc) : (DateTime?)null,
+				AvailabilityExpiresOnUtc = poi.Availability?.ExpiresOn.HasValue == true ? DateTime.SpecifyKind(poi.Availability.ExpiresOn.Value, DateTimeKind.Utc) : (DateTime?)null
 			};
 		}
 
@@ -1568,7 +1702,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var mapLayers = await _mappingService.GetMapLayersForTypeDepartmentAsync(DepartmentId, MapLayerTypes.TopLevel);
 			if (mapLayers != null)
 			{
-				foreach (var layer in mapLayers.Where(l => !l.IsDeleted && l.IsOnByDefault))
+				// An event layer counts as on by default while its event runs (MapLayerEvents).
+				var now = DateTime.UtcNow;
+				foreach (var layer in mapLayers.Where(l => !l.IsDeleted && MapLayerEvents.IsShownByDefault(l, now)))
 				{
 					result.Data.Add(new ActiveLayerResultData
 					{
@@ -1578,7 +1714,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 						Type = layer.Type,
 						Color = layer.Color,
 						IsSearchable = layer.IsSearchable,
-						IsOnByDefault = layer.IsOnByDefault
+						IsOnByDefault = true
 					});
 				}
 			}

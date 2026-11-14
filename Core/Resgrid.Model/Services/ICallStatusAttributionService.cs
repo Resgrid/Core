@@ -70,5 +70,14 @@ namespace Resgrid.Model.Services
 		/// queries for the department, plus one per call a status points at that the unit is not dispatched to.
 		/// </summary>
 		Task<Dictionary<int, int>> GetWorkingCallIdsForUnitsAsync(int departmentId, IReadOnlyCollection<UnitState> latestStates);
+
+		/// <summary>
+		/// One unit's working call, as <see cref="GetWorkingCallIdsForUnitsAsync"/> resolves it from the given status (or no
+		/// status), reading only that unit's open dispatches. Null when there is none or more than one to choose from.
+		/// </summary>
+		/// <param name="departmentId">The unit's department.</param>
+		/// <param name="unitId">The unit.</param>
+		/// <param name="state">The status to resolve from (e.g. the one before a transport status), or null.</param>
+		Task<int?> GetWorkingCallIdForUnitAsync(int departmentId, int unitId, UnitState state);
 	}
 }

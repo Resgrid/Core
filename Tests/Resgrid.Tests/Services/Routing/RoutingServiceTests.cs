@@ -1,5 +1,8 @@
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -34,6 +37,7 @@ namespace Resgrid.Tests.Services.Routing
 			_cacheEnabled = SystemBehaviorConfig.CacheEnabled;
 			SystemBehaviorConfig.CacheEnabled = false;
 			MappingConfig.NavigationEnabled = true;
+			ClearProviderHealth();
 		}
 
 		[TearDown]
@@ -43,6 +47,20 @@ namespace Resgrid.Tests.Services.Routing
 			MappingConfig.RoutingFallbackProvider = _fallback;
 			MappingConfig.NavigationEnabled = _navigation;
 			SystemBehaviorConfig.CacheEnabled = _cacheEnabled;
+			ClearProviderHealth();
+		}
+
+		/// <summary>
+		/// A failed provider is benched for 60 s in process-wide state; clear it so one test's failure never decides
+		/// another's chain.
+		/// </summary>
+		private static void ClearProviderHealth()
+		{
+			foreach (var name in new[] { "ProviderBackoffUntil", "LastErrorLogged" })
+			{
+				var field = typeof(RoutingService).GetField(name, BindingFlags.NonPublic | BindingFlags.Static)!;
+				((ConcurrentDictionary<string, DateTime>)field.GetValue(null)!).Clear();
+			}
 		}
 
 		private static Mock<IRoutingProvider> Provider(string name, bool navigation, RouteResult route = null, bool configured = true)
@@ -226,6 +244,200 @@ namespace Resgrid.Tests.Services.Routing
 			first.Durations[0][0].Should().NotBeNull();
 			second.Provider.Should().Be(RoutingProviderNames.Estimate);
 			valhalla.Verify(p => p.GetMatrixAsync(It.IsAny<RouteMatrixRequest>(), It.IsAny<CancellationToken>()), Times.Exactly(2));
+		}
+
+		[Test]
+		public async Task failed_valhalla_falls_back_to_mapbox_before_the_estimate_even_with_an_estimate_fallback()
+		{
+			// Production (2026-11-13): SimpleRouting answered 429 and the dispatch recommendation got the straight-line estimate,
+			// because RoutingFallbackProvider was left at "estimate" although the install has a Mapbox routing token.
+			MappingConfig.RoutingProvider = RoutingProviderNames.Valhalla;
+			MappingConfig.RoutingFallbackProvider = RoutingProviderNames.Estimate;
+			var valhalla = Provider(RoutingProviderNames.Valhalla, true, new RouteResult { Successful = false, Error = "429: No route" });
+			var mapbox = Provider(RoutingProviderNames.Mapbox, true, new RouteResult { Successful = true, DurationSeconds = 510 });
+			var service = new RoutingService(new[] { valhalla.Object, mapbox.Object, new EstimateRoutingProvider() }, null, null, null);
+
+			var first = await service.GetRouteAsync(TwoPoints());
+			var second = await service.GetRouteAsync(TwoPoints());
+
+			first.Successful.Should().BeTrue();
+			first.Provider.Should().Be(RoutingProviderNames.Mapbox);
+			first.DurationSeconds.Should().Be(510);
+			second.Provider.Should().Be(RoutingProviderNames.Mapbox, "Mapbox keeps answering while Valhalla sits out its back-off");
+			valhalla.Verify(p => p.GetRouteAsync(It.IsAny<RouteRequest>(), It.IsAny<CancellationToken>()), Times.Once);
+			mapbox.Verify(p => p.GetRouteAsync(It.IsAny<RouteRequest>(), It.IsAny<CancellationToken>()), Times.Exactly(2));
+		}
+
+		[Test]
+		public async Task rejected_valhalla_route_goes_to_mapbox_before_the_estimate()
+		{
+			MappingConfig.RoutingProvider = RoutingProviderNames.Valhalla;
+			MappingConfig.RoutingFallbackProvider = RoutingProviderNames.Estimate;
+			var valhalla = Provider(RoutingProviderNames.Valhalla, true,
+				new RouteResult { Successful = false, Error = "Outside MappingConfig.ValhallaCoverage", RequestRejected = true, NotSent = true });
+			var mapbox = Provider(RoutingProviderNames.Mapbox, true, new RouteResult { Successful = true, DurationSeconds = 300 });
+			var service = new RoutingService(new[] { valhalla.Object, mapbox.Object, new EstimateRoutingProvider() }, null, null, null);
+
+			var route = await service.GetRouteAsync(TwoPoints());
+
+			route.Provider.Should().Be(RoutingProviderNames.Mapbox);
+			route.DurationSeconds.Should().Be(300);
+		}
+
+		[Test]
+		public async Task a_configured_fallback_is_tried_before_the_added_mapbox()
+		{
+			MappingConfig.RoutingProvider = RoutingProviderNames.Valhalla;
+			MappingConfig.RoutingFallbackProvider = RoutingProviderNames.Osrm;
+			var valhalla = Provider(RoutingProviderNames.Valhalla, true);
+			var osrm = Provider(RoutingProviderNames.Osrm, false);
+			var mapbox = Provider(RoutingProviderNames.Mapbox, true, new RouteResult { Successful = true, DurationSeconds = 300 });
+			var service = new RoutingService(new[] { valhalla.Object, osrm.Object, mapbox.Object, new EstimateRoutingProvider() }, null, null, null);
+
+			var route = await service.GetRouteAsync(TwoPoints());
+
+			route.Provider.Should().Be(RoutingProviderNames.Mapbox);
+			osrm.Verify(p => p.GetRouteAsync(It.IsAny<RouteRequest>(), It.IsAny<CancellationToken>()), Times.Once);
+			mapbox.Verify(p => p.GetRouteAsync(It.IsAny<RouteRequest>(), It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
+		public async Task failed_valhalla_without_a_mapbox_token_falls_back_to_the_estimate()
+		{
+			MappingConfig.RoutingProvider = RoutingProviderNames.Valhalla;
+			MappingConfig.RoutingFallbackProvider = RoutingProviderNames.Estimate;
+			var valhalla = Provider(RoutingProviderNames.Valhalla, true, new RouteResult { Successful = false, Error = "503: unavailable" });
+			var mapbox = Provider(RoutingProviderNames.Mapbox, true, new RouteResult { Successful = true }, configured: false);
+			var service = new RoutingService(new[] { valhalla.Object, mapbox.Object, new EstimateRoutingProvider() }, null, null, null);
+
+			var route = await service.GetRouteAsync(TwoPoints());
+
+			route.Successful.Should().BeTrue();
+			route.Provider.Should().Be(RoutingProviderNames.Estimate);
+			mapbox.Verify(p => p.GetRouteAsync(It.IsAny<RouteRequest>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public async Task mapbox_is_not_added_when_valhalla_is_not_in_use()
+		{
+			// Mapbox is billed per call: an install on Google with an estimate fallback keeps exactly that chain.
+			MappingConfig.RoutingProvider = RoutingProviderNames.Google;
+			MappingConfig.RoutingFallbackProvider = RoutingProviderNames.Estimate;
+			var google = Provider(RoutingProviderNames.Google, false);
+			var mapbox = Provider(RoutingProviderNames.Mapbox, true, new RouteResult { Successful = true });
+			var service = new RoutingService(new[] { google.Object, mapbox.Object, new EstimateRoutingProvider() }, null, null, null);
+
+			var route = await service.GetRouteAsync(TwoPoints());
+
+			route.Provider.Should().Be(RoutingProviderNames.Estimate);
+			mapbox.Verify(p => p.GetRouteAsync(It.IsAny<RouteRequest>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public async Task failed_valhalla_matrix_falls_back_to_the_mapbox_matrix()
+		{
+			MappingConfig.RoutingProvider = RoutingProviderNames.Valhalla;
+			MappingConfig.RoutingFallbackProvider = RoutingProviderNames.Estimate;
+			var valhalla = Provider(RoutingProviderNames.Valhalla, true);
+			valhalla.Setup(p => p.GetMatrixAsync(It.IsAny<RouteMatrixRequest>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new RouteMatrixResult { Successful = false, Error = "Matrix failed (429)" });
+			var mapbox = Provider(RoutingProviderNames.Mapbox, true);
+			mapbox.Setup(p => p.GetMatrixAsync(It.IsAny<RouteMatrixRequest>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((RouteMatrixRequest r, CancellationToken _) => new RouteMatrixResult
+				{
+					Successful = true,
+					Provider = RoutingProviderNames.Mapbox,
+					Durations = r.Origins.Select(_ => r.Destinations.Select(__ => (double?)240).ToArray()).ToArray(),
+					Distances = r.Origins.Select(_ => r.Destinations.Select(__ => (double?)3000).ToArray()).ToArray()
+				});
+			var service = new RoutingService(new[] { valhalla.Object, mapbox.Object, new EstimateRoutingProvider() }, null, null, null);
+
+			var matrix = await service.GetMatrixAsync(new RouteMatrixRequest
+			{
+				Origins = new List<RoutingWaypoint> { new RoutingWaypoint(39.53, -119.81), new RoutingWaypoint(39.60, -119.80) },
+				Destinations = new List<RoutingWaypoint> { new RoutingWaypoint(39.54, -119.75) }
+			});
+
+			matrix.Successful.Should().BeTrue();
+			matrix.Provider.Should().Be(RoutingProviderNames.Mapbox);
+			matrix.Durations[0][0].Should().Be(240);
+			matrix.Durations[1][0].Should().Be(240);
+		}
+	}
+
+	/// <summary>
+	/// Mapbox routing without a routing token borrows the web app's Mapbox map token (Directions, Matrix and Optimization
+	/// accept a public token), with the install's web address as Referer for a URL-restricted token.
+	/// </summary>
+	[TestFixture]
+	public class MapboxInstallTokenTests
+	{
+		private (string Routing, string WebsiteAccess, string WebsiteKey, string BaseUrl) _saved;
+
+		[SetUp]
+		public void SetUp()
+		{
+			_saved = (MappingConfig.MapboxRoutingAccessToken, MappingConfig.WebsiteMapboxAccessToken, MappingConfig.WebsiteMapboxKey, SystemBehaviorConfig.ResgridBaseUrl);
+			MappingConfig.MapboxRoutingAccessToken = MappingConfig.WebsiteMapboxAccessToken = MappingConfig.WebsiteMapboxKey = string.Empty;
+			SystemBehaviorConfig.ResgridBaseUrl = "https://app.example.org";
+		}
+
+		[TearDown]
+		public void TearDown()
+		{
+			(MappingConfig.MapboxRoutingAccessToken, MappingConfig.WebsiteMapboxAccessToken, MappingConfig.WebsiteMapboxKey, SystemBehaviorConfig.ResgridBaseUrl) = _saved;
+		}
+
+		[Test]
+		public void the_routing_token_wins_and_needs_no_referer()
+		{
+			MappingConfig.MapboxRoutingAccessToken = "sk.routing";
+			MappingConfig.WebsiteMapboxAccessToken = "pk.website";
+
+			var (token, referer) = MapboxRoutingProvider.InstallToken();
+
+			token.Should().Be("sk.routing");
+			referer.Should().BeNull();
+		}
+
+		[Test]
+		public void without_a_routing_token_the_web_map_token_answers_with_the_install_address_as_referer()
+		{
+			MappingConfig.WebsiteMapboxAccessToken = " pk.website ";
+			SystemBehaviorConfig.ResgridBaseUrl = "https://app.example.org/";
+
+			var (token, referer) = MapboxRoutingProvider.InstallToken();
+
+			token.Should().Be("pk.website");
+			referer.Should().Be(new Uri("https://app.example.org/"));
+			new MapboxRoutingProvider().IsConfigured.Should().BeTrue();
+		}
+
+		[Test]
+		public void the_older_website_key_is_used_when_the_access_token_is_blank()
+		{
+			MappingConfig.WebsiteMapboxKey = "pk.older";
+
+			MapboxRoutingProvider.InstallToken().Token.Should().Be("pk.older");
+		}
+
+		[Test]
+		public void a_non_mapbox_website_key_is_never_sent_to_mapbox()
+		{
+			// WebsiteMapboxKey has held MapTiler keys on Leaflet installs; sending one to Mapbox only earns a 401 and a back-off.
+			MappingConfig.WebsiteMapboxKey = "maptiler-abc123";
+
+			MapboxRoutingProvider.InstallToken().Token.Should().BeNull();
+			new MapboxRoutingProvider().IsConfigured.Should().BeFalse();
+		}
+
+		[Test]
+		public void a_department_account_uses_only_its_own_key()
+		{
+			MappingConfig.WebsiteMapboxAccessToken = "pk.website";
+
+			new MapboxRoutingProvider().WithCredentials(new RoutingProviderCredentials { Provider = RoutingProviderNames.Mapbox, ApiKey = "" })
+				.IsConfigured.Should().BeFalse("a department's blank key never borrows the install's web token");
 		}
 	}
 

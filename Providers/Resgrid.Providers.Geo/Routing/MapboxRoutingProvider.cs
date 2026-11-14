@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,8 +15,9 @@ namespace Resgrid.Providers.GeoLocationProvider.Routing
 {
 	/// <summary>
 	/// Mapbox Directions v5, Matrix v1 and Optimization v1 (plan §6.1) with the server-side token
-	/// (MappingConfig.MapboxRoutingAccessToken). Live traffic and incidents on driving-traffic. Applies vehicle height,
-	/// width and weight (max_height/max_width/max_weight); Mapbox has no length, axle or hazmat restrictions.
+	/// (MappingConfig.MapboxRoutingAccessToken), else the web app's Mapbox map token. Live traffic and incidents on
+	/// driving-traffic. Applies vehicle height, width and weight (max_height/max_width/max_weight); Mapbox has no length,
+	/// axle or hazmat restrictions.
 	/// </summary>
 	public class MapboxRoutingProvider : IRoutingProvider
 	{
@@ -39,7 +41,39 @@ namespace Resgrid.Providers.GeoLocationProvider.Routing
 			return credentials == null ? null : new MapboxRoutingProvider(credentials);
 		}
 
-		private string AccessToken => _department != null ? _department.ApiKey : MappingConfig.MapboxRoutingAccessToken;
+		private string AccessToken => _department != null ? _department.ApiKey : InstallToken().Token;
+
+		/// <summary>
+		/// The install's token for Directions, Matrix and Optimization: MapboxRoutingAccessToken, else the web app's Mapbox
+		/// map token (WebsiteMapboxAccessToken, then WebsiteMapboxKey), which those APIs accept as well — an install with
+		/// Mapbox maps routes on Mapbox without a separate routing token. Only a Mapbox token (pk. or sk.) is borrowed from the
+		/// web settings, since WebsiteMapboxKey may hold another tile service's key. The web map token is public and usually
+		/// URL-restricted to the web app, which Mapbox checks against the Referer, so it comes with the install's own web
+		/// address to send as one; the routing token comes with none. Token null: no Mapbox token at all.
+		/// </summary>
+		public static (string Token, Uri Referer) InstallToken()
+		{
+			var routing = MappingConfig.MapboxRoutingAccessToken?.Trim();
+			if (!string.IsNullOrEmpty(routing))
+				return (routing, null);
+
+			var website = new[] { MappingConfig.WebsiteMapboxAccessToken, MappingConfig.WebsiteMapboxKey }
+				.Select(t => t?.Trim())
+				.FirstOrDefault(t => !string.IsNullOrEmpty(t) &&
+				                     (t.StartsWith("pk.", StringComparison.Ordinal) || t.StartsWith("sk.", StringComparison.Ordinal)));
+			if (website == null)
+				return (null, null);
+
+			Uri.TryCreate(SystemBehaviorConfig.ResgridBaseUrl?.Trim().TrimEnd('/') + "/", UriKind.Absolute, out var site);
+			return (website, site);
+		}
+
+		/// <summary>Sets the Referer the install's web map token needs; nothing for a routing or department token.</summary>
+		private Action<HttpRequestMessage> Referer()
+		{
+			var referer = _department == null ? InstallToken().Referer : null;
+			return referer == null ? null : request => request.Headers.Referrer = referer;
+		}
 
 		public string Name => RoutingProviderNames.Mapbox;
 
@@ -89,7 +123,7 @@ namespace Resgrid.Providers.GeoLocationProvider.Routing
 			AppendStopIndexes(query, request.Waypoints);
 
 			var url = $"{BaseUrl}/directions/v5/mapbox/{profile}/{RoutingHttp.LonLatPath(request.Waypoints)}{query}";
-			var (_, status, document) = await RoutingHttp.GetJsonAsync(url, cancellationToken);
+			var (_, status, document) = await RoutingHttp.GetJsonAsync(url, cancellationToken, Referer());
 
 			using (document)
 			{
@@ -129,7 +163,7 @@ namespace Resgrid.Providers.GeoLocationProvider.Routing
 				query.Append("&sources=").Append(sources).Append("&destinations=").Append(destinations);
 
 				var url = $"{BaseUrl}/directions-matrix/v1/mapbox/{profile}/{RoutingHttp.LonLatPath(coordinates)}{query}";
-				var (ok, status, document) = await RoutingHttp.GetJsonAsync(url, cancellationToken);
+				var (ok, status, document) = await RoutingHttp.GetJsonAsync(url, cancellationToken, Referer());
 
 				using (document)
 				{
@@ -164,7 +198,7 @@ namespace Resgrid.Providers.GeoLocationProvider.Routing
 			query.Append("&source=first&destination=last&roundtrip=false&overview=false");
 
 			var url = $"{BaseUrl}/optimized-trips/v1/mapbox/{profile}/{RoutingHttp.LonLatPath(request.Waypoints)}{query}";
-			var (ok, status, document) = await RoutingHttp.GetJsonAsync(url, cancellationToken);
+			var (ok, status, document) = await RoutingHttp.GetJsonAsync(url, cancellationToken, Referer());
 
 			using (document)
 			{

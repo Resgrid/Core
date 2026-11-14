@@ -19,7 +19,7 @@ namespace Resgrid.Services
 	/// <summary>
 	/// Routes, matrices and stop-order optimization through the install's routing provider
 	/// (maplibre-mapping-routing-navigation-plan.md §6.1): the provider MappingConfig.RoutingProvider names, then
-	/// RoutingFallbackProvider, then the straight-line estimate. Each call is bounded by RoutingTimeoutMs; results are
+	/// RoutingFallbackProvider, then Mapbox when Valhalla is either of those, then the straight-line estimate. Each call is bounded by RoutingTimeoutMs; results are
 	/// cached in Redis by provider, profile, vehicle and coordinates (30 days, 5 minutes when traffic-aware); a provider
 	/// that just failed is skipped for a short back-off so a broken key or server does not slow every request.
 	/// A department with its own routing account (setting 125) has it tried first, then the system chain. Back-off, cache
@@ -179,8 +179,8 @@ namespace Resgrid.Services
 		}
 
 		/// <summary>
-		/// The department's own account (if any), then primary, fallback, estimate — skipping duplicates, unconfigured
-		/// providers and ones in back-off.
+		/// The department's own account (if any), then primary, fallback, Mapbox when Valhalla is one of those, estimate —
+		/// skipping duplicates, unconfigured providers and ones in back-off.
 		/// </summary>
 		private async Task<List<Link>> ChainAsync(int departmentId)
 		{
@@ -200,11 +200,56 @@ namespace Resgrid.Services
 
 			Link System(IRoutingProvider provider) => provider == null ? null : new Link { Provider = provider, Key = provider.Name };
 
-			Add(await DepartmentLinkAsync(departmentId));
-			Add(System(Find(MappingConfig.RoutingProvider)));
-			Add(System(Find(MappingConfig.RoutingFallbackProvider)));
+			// The estimate always answers last, even when RoutingProvider or RoutingFallbackProvider names it.
+			Link Routed(string name)
+			{
+				var provider = Find(name);
+				return provider == null || provider.Name == RoutingProviderNames.Estimate ? null : System(provider);
+			}
+
+			var department = await DepartmentLinkAsync(departmentId);
+			var primary = Routed(MappingConfig.RoutingProvider);
+			var fallback = Routed(MappingConfig.RoutingFallbackProvider);
+
+			Add(department);
+			Add(primary);
+			Add(fallback);
+
+			// Valhalla (a hosted plan's per-second and daily limits, a server that is down, a point off its map) hands over to
+			// the install's Mapbox before the straight-line estimate, whatever RoutingFallbackProvider says. Decided on what is
+			// configured, not on what is in the chain: while Valhalla sits out its back-off Mapbox must still answer.
+			if (UsesValhalla(department, primary, fallback))
+				Add(System(Find(RoutingProviderNames.Mapbox)));
+
 			Add(System(Estimate));
 			return chain;
+		}
+
+		private static bool UsesValhalla(params Link[] links) =>
+			links.Any(l => l?.Provider != null && l.Provider.Name == RoutingProviderNames.Valhalla && l.Provider.IsConfigured);
+
+		/// <summary>What answers after <paramref name="link"/> in this request's chain, for the log.</summary>
+		private static string Next(IReadOnlyList<Link> chain, Link link)
+		{
+			var rest = (chain ?? new List<Link>()).SkipWhile(l => !ReferenceEquals(l, link)).Skip(1)
+				.Select(l => l.Provider.Name == RoutingProviderNames.Estimate ? "the straight-line estimate" : l.DepartmentAccount ? $"{l.Provider.Name} (department account)" : l.Provider.Name)
+				.ToList();
+
+			return rest.Count == 0 ? "no other provider" : string.Join(" then ", rest);
+		}
+
+		/// <summary>
+		/// Valhalla without a usable system Mapbox goes straight to the estimate when it fails: say how to close that gap.
+		/// </summary>
+		private string MapboxGap(Link link)
+		{
+			if (link?.Provider?.Name != RoutingProviderNames.Valhalla)
+				return string.Empty;
+
+			var mapbox = Find(RoutingProviderNames.Mapbox);
+			return mapbox != null && mapbox.IsConfigured
+				? string.Empty
+				: " Set MappingConfig.MapboxRoutingAccessToken (or a Mapbox WebsiteMapboxAccessToken) so Mapbox answers before the straight-line estimate.";
 		}
 
 		public async Task<RouteResult> GetRouteAsync(RouteRequest request, CancellationToken cancellationToken = default)
@@ -212,7 +257,8 @@ namespace Resgrid.Services
 			if (request?.Waypoints == null || request.Waypoints.Count < 2)
 				return new RouteResult { Error = "A route needs at least two points" };
 
-			foreach (var link in await ChainAsync(request.DepartmentId))
+			var chain = await ChainAsync(request.DepartmentId);
+			foreach (var link in chain)
 			{
 				var provider = link.Provider;
 				var trafficAware = IsTrafficAware(provider, request.Profile);
@@ -267,9 +313,9 @@ namespace Resgrid.Services
 				}
 
 				if (result?.RequestRejected == true)
-					RecordRejection(link, result.Error);
+					RecordRejection(chain, link, result.Error);
 				else
-					RecordFailure(link, result?.Error);
+					RecordFailure(chain, link, result?.Error);
 			}
 
 			return new RouteResult { Error = "No routing provider returned a route" };
@@ -305,7 +351,8 @@ namespace Resgrid.Services
 			var pending = Enumerable.Range(0, origins).ToList();
 			string provided = null;
 
-			foreach (var link in await ChainAsync(request.DepartmentId))
+			var chain = await ChainAsync(request.DepartmentId);
+			foreach (var link in chain)
 			{
 				var provider = link.Provider;
 				var trafficAware = IsTrafficAware(provider, request.Profile);
@@ -378,9 +425,9 @@ namespace Resgrid.Services
 						// One origin outside the provider's coverage fails its whole batch; the next provider takes the
 						// remaining origins for this request only.
 						if (result?.RequestRejected == true)
-							RecordRejection(link, result.Error);
+							RecordRejection(chain, link, result.Error);
 						else
-							RecordFailure(link, result?.Error);
+							RecordFailure(chain, link, result?.Error);
 						failed = true;
 						break;
 					}
@@ -419,7 +466,8 @@ namespace Resgrid.Services
 
 			// Each provider in the chain that can optimize this many stops gets its turn (a department account that can't, or
 			// that fails, hands over to the install's providers, as routes do); the matrix heuristic answers when none does.
-			foreach (var link in (await ChainAsync(request.DepartmentId)).Where(l => l.Provider.Name != RoutingProviderNames.Estimate))
+			var chain = await ChainAsync(request.DepartmentId);
+			foreach (var link in chain.Where(l => l.Provider.Name != RoutingProviderNames.Estimate))
 			{
 				var provider = link.Provider;
 				if (!provider.Capabilities.Optimize || request.Waypoints.Count > provider.Capabilities.MaxOptimizeWaypoints)
@@ -444,7 +492,7 @@ namespace Resgrid.Services
 				catch (Exception ex)
 				{
 					await RecordUsageAsync(link, RoutingUsageOperation.Optimize, false, false, false);
-					RecordFailure(link, ex.Message);
+					RecordFailure(chain, link, ex.Message);
 				}
 			}
 
@@ -494,7 +542,7 @@ namespace Resgrid.Services
 			return profile == RoutingProfile.DrivingTraffic && MappingConfig.RoutingTrafficAware && provider.Capabilities.Traffic;
 		}
 
-		private static void RecordFailure(Link link, string error)
+		private void RecordFailure(IReadOnlyList<Link> chain, Link link, string error)
 		{
 			var provider = link?.Provider;
 			if (provider == null || provider.Name == RoutingProviderNames.Estimate)
@@ -515,14 +563,14 @@ namespace Resgrid.Services
 				return;
 			}
 
-			Logging.LogError($"Routing provider '{provider.Name}' failed: {error}. Check MappingConfig.RoutingProvider and the provider's settings ({SettingsFor(provider.Name)}); falling back to {MappingConfig.RoutingFallbackProvider} then the straight-line estimate.");
+			Logging.LogError($"Routing provider '{provider.Name}' failed: {error}. Check MappingConfig.RoutingProvider and the provider's settings ({SettingsFor(provider.Name)}); falling back to {Next(chain, link)}.{MapboxGap(link)}");
 		}
 
 		/// <summary>
 		/// The provider is up but cannot route this request (outside its coverage, no road near a point, over its limits):
 		/// the next provider answers it and the provider stays in use for everything else. Logged at most every 10 minutes.
 		/// </summary>
-		private static void RecordRejection(Link link, string error)
+		private void RecordRejection(IReadOnlyList<Link> chain, Link link, string error)
 		{
 			var provider = link?.Provider;
 			if (provider == null || provider.Name == RoutingProviderNames.Estimate)
@@ -534,7 +582,7 @@ namespace Resgrid.Services
 				return;
 
 			LastErrorLogged[key] = now;
-			Logging.LogInfo($"Routing provider '{provider.Name}' could not route a request ({error}); {MappingConfig.RoutingFallbackProvider} answered it instead. The provider stays in use for other requests.");
+			Logging.LogInfo($"Routing provider '{provider.Name}' could not route a request ({error}); {Next(chain, link)} answered it instead. The provider stays in use for other requests.{MapboxGap(link)}");
 		}
 
 		private static string SettingsFor(string provider)
@@ -544,7 +592,7 @@ namespace Resgrid.Services
 				case RoutingProviderNames.Valhalla:
 					return "MappingConfig.ValhallaUrl, MappingConfig.ValhallaApiKey, MappingConfig.ValhallaAuthScheme";
 				case RoutingProviderNames.Mapbox:
-					return "MappingConfig.MapboxRoutingAccessToken";
+					return "MappingConfig.MapboxRoutingAccessToken, else MappingConfig.WebsiteMapboxAccessToken / WebsiteMapboxKey sent with SystemBehaviorConfig.ResgridBaseUrl as Referer";
 				case RoutingProviderNames.Google:
 					return "MappingConfig.GoogleMapsApiKey, MappingConfig.GoogleRoutingApi";
 				case RoutingProviderNames.Osrm:

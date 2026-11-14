@@ -337,6 +337,9 @@ namespace Resgrid.Services.Records
 			["false"] = false, ["no"] = false, ["n"] = false, ["f"] = false, ["0"] = false
 		};
 
+		/// <summary>Brackets and quotation marks: they set words apart without ending a clause.</summary>
+		private const string GroupingMarks = "()[]{}\"“”«»‘";
+
 		/// <summary>Words that, ahead of "out of service", say the opposite ("Not out of service", "No longer out of order").</summary>
 		private static readonly HashSet<string> Negations = new HashSet<string>(StringComparer.Ordinal) { "not", "no", "never", "isnt", "arent", "wasnt" };
 
@@ -362,8 +365,9 @@ namespace Resgrid.Services.Records
 		/// </summary>
 		private static bool NegatesOutOfService(string text)
 		{
-			// Words and the clause each is in. Apostrophes go (isn't = isnt); a hyphen inside a word ("out-of-service") only
-			// separates words, while other punctuation, or a dash with a space beside it, starts a new clause.
+			// Words and the clause each is in. Apostrophes go (isn't = isnt). Brackets and quotation marks only separate words
+			// ("Not (out of service)" is still negated), as does a hyphen inside a word ("out-of-service"); other punctuation, or
+			// a dash with a space beside it, starts a new clause.
 			var words = new List<(string Word, int Clause)>();
 			var current = new StringBuilder();
 			var clause = 0;
@@ -374,7 +378,7 @@ namespace Resgrid.Services.Records
 				if (char.IsLetterOrDigit(c)) { current.Append(c); continue; }
 				if (c == '\'' || c == '’') continue;
 				if (current.Length > 0) { words.Add((current.ToString(), clause)); current.Clear(); }
-				if (char.IsWhiteSpace(c)) continue;
+				if (char.IsWhiteSpace(c) || GroupingMarks.IndexOf(c) >= 0) continue;
 				var hyphenInWord = c == '-' && i > 0 && i + 1 < lower.Length && char.IsLetterOrDigit(lower[i - 1]) && char.IsLetterOrDigit(lower[i + 1]);
 				if (!hyphenInWord) clause++;
 			}

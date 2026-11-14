@@ -67,12 +67,12 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		/// P:c0a0f71a-0758-434c-868b-c77d245db78a|P:c0a0f71a-0758-434c-868b-c77d245db78a|U:1995012|G:991031|R:893139
 		/// </example>
 		/// <remarks>
-		/// "0" dispatches everyone, and is the only way to: a blank list, or one with no entries ("|"), creates a call that
-		/// dispatches nobody (an informational call; for a pending call, no proposed recipients). A department that requires
-		/// a dispatch list refuses either, except on a pending call (IsPending), which may wait with no proposed recipients.
-		/// A system API key never pages the whole department on its own: its immediate call with "0" dispatches nobody, so
-		/// name the recipients (on a pending call "0" is kept as the proposal, since nobody is paged until a dispatcher sends
-		/// it).
+		/// "0" dispatches everyone, and is the only way to: a blank list, or one with no entries ("|"), names nobody (an
+		/// informational call; for a pending call, no proposed recipients). A department that requires a dispatch list refuses
+		/// either, except on a pending call (IsPending), which may wait with no proposed recipients. A system API key never
+		/// pages the whole department on its own: its immediate call with "0" adds no recipients from the list, so name the
+		/// recipients (on a pending call "0" is kept as the proposal, since nobody is paged until a dispatcher sends it). A run
+		/// card set to auto-dispatch still adds its resources to an immediate call, whatever the list names.
 		/// </remarks>
 		public string DispatchList { get; set; }
 

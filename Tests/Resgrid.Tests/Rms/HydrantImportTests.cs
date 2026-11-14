@@ -172,6 +172,8 @@ namespace Resgrid.Tests.Rms
 		[TestCase("No longer out of service")]
 		[TestCase("Isn't out of order")]
 		[TestCase("Not out-of-service")]
+		[TestCase("Not (out of service)")]
+		[TestCase("No longer [out of order]")]
 		public void Unrecognized_status_leaves_service_state_alone_and_is_reported(string value)
 		{
 			var batch = HydrantImportParser.Parse($"number,latitude,longitude,Hydrant Status\nH,45,-122,{value}", "csv");

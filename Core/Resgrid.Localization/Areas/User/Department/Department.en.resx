@@ -1435,7 +1435,7 @@
     <value>Example:</value>
   </data>
   <data name="CallNumberPatternHelp" xml:space="preserve">
-    <value>Fixed text (letters, digits, - _ . /) around tokens: {YYYY} or {YY} the year, {MM} the month, {DD} the day and {SEQ} the sequence, which must appear once. The sequence starts again at 1 whenever the date in the number changes: each year with a year, each month with {MM}, each day with {DD}, and never without a date. {MM} needs a year and {DD} needs {MM}. Dates use the department's time zone.</value>
+    <value>Fixed text (letters, digits, - _ . / :) around tokens: {YYYY} or {YY} the year, {MM} the month, {DD} the day, {HH} the hour, {MIN} the minute and {SEQ} the sequence, which must appear once. The sequence starts again at 1 whenever the date in the number changes: each year with a year, each month with {MM}, each day with {DD}, and never without a date; the hour and minute never restart it. {MM} needs a year, {DD} needs {MM}, {HH} needs {DD} and {MIN} needs {HH}. Dates and times use the department's time zone.</value>
   </data>
   <data name="CallNumberSequenceWidth" xml:space="preserve">
     <value>Sequence digits</value>
@@ -1468,7 +1468,7 @@
     <value>Raise the next call number? It can only be raised, never lowered.</value>
   </data>
   <data name="CallNumberPatternInvalid" xml:space="preserve">
-    <value>The call numbering was not saved. The pattern needs {SEQ} exactly once, can only contain letters, digits, - _ . / and the {YYYY}, {YY}, {MM} and {DD} tokens, needs a year for {MM} and {MM} for {DD}, and can be at most 40 characters.</value>
+    <value>The call numbering was not saved. The pattern needs {SEQ} exactly once, can only contain letters, digits, - _ . / : and the {YYYY}, {YY}, {MM}, {DD}, {HH} and {MIN} tokens, each at most once (the minute is {MIN}; {MM} is the month), needs a year for {MM}, {MM} for {DD}, {DD} for {HH} and {HH} for {MIN}, and can be at most 40 characters.</value>
   </data>
   <data name="CallNumberNextBelowCurrent" xml:space="preserve">
     <value>The next call number was not raised: it can only be raised above the number the next call already receives ({0}).</value>

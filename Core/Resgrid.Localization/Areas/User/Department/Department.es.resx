@@ -1435,7 +1435,7 @@
     <value>Ejemplo:</value>
   </data>
   <data name="CallNumberPatternHelp" xml:space="preserve">
-    <value>Texto fijo (letras, dígitos, - _ . /) alrededor de marcadores: {YYYY} o {YY} el año, {MM} el mes, {DD} el día y {SEQ} la secuencia, que debe aparecer una vez. La secuencia vuelve a empezar en 1 cada vez que cambia la fecha del número: cada año con un año, cada mes con {MM}, cada día con {DD} y nunca sin fecha. {MM} requiere un año y {DD} requiere {MM}. Las fechas usan la zona horaria del departamento.</value>
+    <value>Texto fijo (letras, dígitos, - _ . / :) alrededor de marcadores: {YYYY} o {YY} el año, {MM} el mes, {DD} el día, {HH} la hora, {MIN} el minuto y {SEQ} la secuencia, que debe aparecer una vez. La secuencia vuelve a empezar en 1 cada vez que cambia la fecha del número: cada año con un año, cada mes con {MM}, cada día con {DD} y nunca sin fecha; la hora y el minuto nunca la reinician. {MM} requiere un año, {DD} requiere {MM}, {HH} requiere {DD} y {MIN} requiere {HH}. Las fechas y horas usan la zona horaria del departamento.</value>
   </data>
   <data name="CallNumberSequenceWidth" xml:space="preserve">
     <value>Dígitos de la secuencia</value>
@@ -1468,7 +1468,7 @@
     <value>¿Subir el próximo número de llamada? Solo se puede subir, nunca bajar.</value>
   </data>
   <data name="CallNumberPatternInvalid" xml:space="preserve">
-    <value>La numeración de llamadas no se guardó. El patrón necesita {SEQ} exactamente una vez, solo puede contener letras, dígitos, - _ . / y los marcadores {YYYY}, {YY}, {MM} y {DD}, necesita un año para {MM} y {MM} para {DD}, y puede tener como máximo 40 caracteres.</value>
+    <value>La numeración de llamadas no se guardó. El patrón necesita {SEQ} exactamente una vez, solo puede contener letras, dígitos, - _ . / : y los marcadores {YYYY}, {YY}, {MM}, {DD}, {HH} y {MIN}, cada uno como máximo una vez (el minuto es {MIN}; {MM} es el mes), necesita un año para {MM}, {MM} para {DD}, {DD} para {HH} y {HH} para {MIN}, y puede tener como máximo 40 caracteres.</value>
   </data>
   <data name="CallNumberNextBelowCurrent" xml:space="preserve">
     <value>El próximo número de llamada no se subió: solo se puede subir por encima del número que ya recibe la próxima llamada ({0}).</value>

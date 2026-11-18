@@ -444,6 +444,15 @@ namespace Resgrid.Model.Services
 		/// </summary>
 		Task<bool> GetTransportDestinationChecksAsync(int departmentId, bool bypassCache = false);
 
+		/// <summary>
+		/// Destination suggestions (<see cref="DepartmentSettingTypes.DestinationSuggestions"/>): off, suggest, or suggest and fill,
+		/// and the preferred-capability near-tie window. Defaults (off) when unset or unreadable. Cached.
+		/// </summary>
+		Task<DestinationSuggestionConfig> GetDestinationSuggestionConfigAsync(int departmentId, bool bypassCache = false);
+
+		/// <summary>Stores the destination suggestion setting (mode limited to the known ones, window clamped).</summary>
+		Task<DepartmentSetting> SetDestinationSuggestionConfigAsync(int departmentId, DestinationSuggestionConfig config, CancellationToken cancellationToken = default(CancellationToken));
+
 		/// <summary>Department-wide dispatch recommendation mode (Off / StationBased / ClosestUnit). Cached.</summary>
 		Task<DispatchRecommendationModes> GetDispatchRecommendationModeAsync(int departmentId, bool bypassCache = false);
 

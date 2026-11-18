@@ -25,7 +25,12 @@ namespace Resgrid.Web.Areas.User.Models.Records
 		public int? Year { get; set; }
 		public List<SelectListItem> Years { get; set; } = new List<SelectListItem>();
 		public string StateFilter { get; set; }
+		/// <summary>Cancelled and voided reports are hidden unless this is set or one of those states is picked.</summary>
+		public bool IncludeClosed { get; set; }
 		public List<SelectListItem> States { get; set; } = new List<SelectListItem>();
+		/// <summary>Rows that get a Delete button (the service still decides); voided ones also need a reason.</summary>
+		public HashSet<string> DeletableReportIds { get; set; } = new HashSet<string>(StringComparer.Ordinal);
+		public int DeletePurgeDays { get; set; }
 		public List<SelectListItem> ActiveCalls { get; set; } = new List<SelectListItem>();
 		public int? SelectedCallId { get; set; }
 		public Dictionary<string, string> PersonnelNames { get; set; } = new Dictionary<string, string>();
@@ -56,6 +61,8 @@ namespace Resgrid.Web.Areas.User.Models.Records
 		public bool CanSubmit { get; set; }
 		public bool CanAmend { get; set; }
 		public bool CanVoid { get; set; }
+		public bool CanDelete { get; set; }
+		public int DeletePurgeDays { get; set; }
 		public bool CanExport { get; set; }
 		public bool IsDepartmentAdmin { get; set; }
 		public bool CanViewRestricted { get; set; }

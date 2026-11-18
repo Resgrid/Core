@@ -38,6 +38,19 @@ namespace Resgrid.Web.Services.Models.v4.Records
 		public IncidentReportData Data { get; set; }
 	}
 
+	/// <summary>A deleted report: it no longer reads back, so only its id and when its content will be erased are returned.</summary>
+	public class IncidentReportDeleteResult : StandardApiResponseV4Base
+	{
+		public IncidentReportDeleteData Data { get; set; }
+	}
+
+	public class IncidentReportDeleteData
+	{
+		public string ReportId { get; set; }
+		/// <summary>Days after which worker 43 erases the deleted report's content.</summary>
+		public int PurgeAfterDays { get; set; }
+	}
+
 	/// <summary>Read-only NFIRS rendering and crosswalk for one Call (RMS-3); the model is the contract.</summary>
 	public class NfirsLegacyResult : StandardApiResponseV4Base
 	{

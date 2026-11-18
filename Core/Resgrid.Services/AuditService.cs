@@ -136,6 +136,26 @@ namespace Resgrid.Services
 					return "Incident Protected Access Denied";
 				case AuditLogTypes.IncidentBackOfficeSettingsChanged:
 					return "Incident Back Office Settings Changed";
+				case AuditLogTypes.RecurringCallCreated:
+					return "Recurring Call Created";
+				case AuditLogTypes.RecurringCallUpdated:
+					return "Recurring Call Updated";
+				case AuditLogTypes.RecurringCallPaused:
+					return "Recurring Call Paused";
+				case AuditLogTypes.RecurringCallResumed:
+					return "Recurring Call Resumed";
+				case AuditLogTypes.RecurringCallDeleted:
+					return "Recurring Call Deleted";
+				case AuditLogTypes.RecurringCallOccurrenceSkipped:
+					return "Recurring Call Occurrence Skipped";
+				case AuditLogTypes.RecurringCallOccurrenceRestored:
+					return "Recurring Call Occurrence Restored";
+				case AuditLogTypes.RecurringCallOccurrenceCreated:
+					return "Recurring Call Occurrence Created";
+				case AuditLogTypes.RecurringCallAlertAcknowledged:
+					return "Recurring Call Alert Acknowledged";
+				case AuditLogTypes.RecurringCallAlertDismissed:
+					return "Recurring Call Alert Dismissed";
 				case AuditLogTypes.AdminAssistReviewChanged:
 					return "Admin Assist Review Changed";
 				case AuditLogTypes.DepartmentSettingsChanged:

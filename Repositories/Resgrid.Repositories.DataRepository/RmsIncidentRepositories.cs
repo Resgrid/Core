@@ -29,18 +29,20 @@ namespace Resgrid.Repositories.DataRepository
 				new { DepartmentId = departmentId, ReportId = reportId });
 		}
 
+		// A cancelled report no longer holds its Call (M0318): the unique index and these lookups leave it out together, so a
+		// report started by mistake and cancelled never blocks the real one.
 		public Task<RmsIncidentReport> GetByCallAsync(int departmentId, int callId, string reportingEntityId)
 		{
 			return QueryFirstOrDefaultAsync<RmsIncidentReport>(
-				$"SELECT * FROM {Tbl("RmsIncidentReports")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("CallId")} = {P}CallId AND {Col("ReportingEntityId")} = {P}ReportingEntityId AND {Col("DeletedOn")} IS NULL",
-				new { DepartmentId = departmentId, CallId = callId, ReportingEntityId = reportingEntityId ?? string.Empty });
+				$"SELECT * FROM {Tbl("RmsIncidentReports")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("CallId")} = {P}CallId AND {Col("ReportingEntityId")} = {P}ReportingEntityId AND {Col("DeletedOn")} IS NULL AND {Col("State")} <> {P}Cancelled",
+				new { DepartmentId = departmentId, CallId = callId, ReportingEntityId = reportingEntityId ?? string.Empty, Cancelled = (int)RmsRecordState.Cancelled });
 		}
 
 		public Task<IEnumerable<RmsIncidentReport>> GetByCallAnyEntityAsync(int departmentId, int callId)
 		{
 			return QueryAsync<RmsIncidentReport>(
-				$"SELECT * FROM {Tbl("RmsIncidentReports")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("CallId")} = {P}CallId AND {Col("DeletedOn")} IS NULL ORDER BY {Col("CreatedOn")}",
-				new { DepartmentId = departmentId, CallId = callId });
+				$"SELECT * FROM {Tbl("RmsIncidentReports")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("CallId")} = {P}CallId AND {Col("DeletedOn")} IS NULL AND {Col("State")} <> {P}Cancelled ORDER BY {Col("CreatedOn")}",
+				new { DepartmentId = departmentId, CallId = callId, Cancelled = (int)RmsRecordState.Cancelled });
 		}
 
 		public Task<RmsIncidentReport> GetByIdempotencyKeyAsync(int departmentId, string idempotencyKey)
@@ -65,13 +67,33 @@ namespace Resgrid.Repositories.DataRepository
 			parameters.Add("DepartmentId", departmentId);
 			parameters.Add("States", InListValue(states));
 			parameters.Add("Cutoff", cutoffUtc);
+			parameters.Add("Cancelled", (int)RmsRecordState.Cancelled);
+			parameters.Add("AfterId", afterId);
+			parameters.Add("Skip", 0);
+			parameters.Add("Take", Math.Clamp(take, 1, 10000));
+			// A report cancelled before it was ever finalized closes on CancelledOn; without that clause an abandoned draft
+			// kept its content forever while a finished report was purged on schedule.
+			return QueryAsync<RmsIncidentReport>(
+				$@"SELECT * FROM {Tbl("RmsIncidentReports")}
+					WHERE {Col("DepartmentId")} = {P}DepartmentId AND {InList("State", "States")}
+					AND (({Col("FinalizedOn")} IS NOT NULL AND {Col("FinalizedOn")} < {P}Cutoff)
+						OR ({Col("FinalizedOn")} IS NULL AND {Col("State")} = {P}Cancelled AND {Col("CancelledOn")} IS NOT NULL AND {Col("CancelledOn")} < {P}Cutoff))
+					AND {Col("DeletedOn")} IS NULL
+					AND {Col("PurgedOn")} IS NULL AND ({P}AfterId IS NULL OR {Col("RmsIncidentReportId")} > {P}AfterId)
+					ORDER BY {Col("RmsIncidentReportId")} {Paging()}", parameters);
+		}
+
+		public Task<IEnumerable<RmsIncidentReport>> GetDeletedPurgeCandidatesAsync(int departmentId, DateTime deletedBeforeUtc, int take, string afterId = null)
+		{
+			var parameters = new DynamicParameters();
+			parameters.Add("DepartmentId", departmentId);
+			parameters.Add("Cutoff", deletedBeforeUtc);
 			parameters.Add("AfterId", afterId);
 			parameters.Add("Skip", 0);
 			parameters.Add("Take", Math.Clamp(take, 1, 10000));
 			return QueryAsync<RmsIncidentReport>(
 				$@"SELECT * FROM {Tbl("RmsIncidentReports")}
-					WHERE {Col("DepartmentId")} = {P}DepartmentId AND {InList("State", "States")}
-					AND {Col("FinalizedOn")} IS NOT NULL AND {Col("FinalizedOn")} < {P}Cutoff AND {Col("DeletedOn")} IS NULL
+					WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("DeletedOn")} IS NOT NULL AND {Col("DeletedOn")} < {P}Cutoff
 					AND {Col("PurgedOn")} IS NULL AND ({P}AfterId IS NULL OR {Col("RmsIncidentReportId")} > {P}AfterId)
 					ORDER BY {Col("RmsIncidentReportId")} {Paging()}", parameters);
 		}
@@ -94,6 +116,11 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				where.Append($" AND {InList("State", "States", R)}");
 				parameters.Add("States", InListValue(query.States));
+			}
+			else if (query.ExcludeStates != null && query.ExcludeStates.Count > 0)
+			{
+				where.Append($" AND NOT ({InList("State", "ExcludeStates", R)})");
+				parameters.Add("ExcludeStates", InListValue(query.ExcludeStates));
 			}
 			if (query.YearFrom.HasValue || query.YearBefore.HasValue)
 			{

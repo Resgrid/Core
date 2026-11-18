@@ -638,6 +638,15 @@
   <data name="AllOfGroupDispatched" xml:space="preserve">
     <value>Alla i {0} utlarmade</value>
   </data>
+  <data name="ReleaseUnit" xml:space="preserve"><value>Avbeordra</value></data>
+  <data name="ReleaseUnitTitle" xml:space="preserve"><value>Avbeordra {0} från detta ärende?</value></data>
+  <data name="ReleaseUnitText" xml:space="preserve"><value>Enheten tas bort från ärendet och får organisationens status för avbeordrade enheter, om den inte redan är tillgänglig, ur tjänst eller på ett annat ärende. Ärendet förblir öppet.</value></data>
+  <data name="ReleaseUnitNotify" xml:space="preserve"><value>Meddela enheten</value></data>
+  <data name="ReleaseUnitFailed" xml:space="preserve"><value>Enheten kunde inte avbeordras.</value></data>
+  <data name="UnitReleasedAt" xml:space="preserve"><value>Avbeordrad {0}</value></data>
+  <data name="ReleasePersonnelText" xml:space="preserve"><value>Personen tas bort från ärendet och får organisationens status för avbeordrad personal, om personen inte redan är tillgänglig, otillgänglig eller på ett annat ärende. Ärendet förblir öppet.</value></data>
+  <data name="ReleasePersonnelFailed" xml:space="preserve"><value>Personen kunde inte avbeordras.</value></data>
+  <data name="ReleasePersonnelNotify" xml:space="preserve"><value>Meddela personen</value></data>
   <data name="AreYouSure" xml:space="preserve">
     <value>Är du säker?</value>
   </data>

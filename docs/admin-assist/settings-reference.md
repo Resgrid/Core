@@ -1672,7 +1672,7 @@ Default: legacy pattern {YY}-{SEQ}, unpadded. Source: DepartmentSettingTypes.Cal
 <a id="field-callnumberingconfig-pattern"></a>
 ## Call Numbering Config / Pattern
 
-Call Numbering Config / Pattern. Fixed text (letters, digits, - _ . /) plus the {YYYY} or {YY}, {MM}, {DD} and {SEQ} tokens, for example FD-{YYYY}-{SEQ}. {SEQ} appears exactly once. The sequence starts again at 1 whenever the date the pattern writes changes: yearly with a year, monthly with {MM}, daily with {DD}, never without a date; {MM} needs a year and {DD} needs {MM}. Dates are the department's local date of the call. A new pattern starts its own sequence, which the department can raise to continue earlier numbers. Until a pattern is saved, calls keep the {YY}-{SEQ} numbers Resgrid has always issued.
+Call Numbering Config / Pattern. Fixed text (letters, digits, - _ . / :) plus the {YYYY} or {YY}, {MM}, {DD}, {HH} (hour, 00-23), {MIN} (minute) and {SEQ} tokens, for example FD-{YYYY}-{SEQ} or {DD}-{MM}-{YYYY}-{HH}:{MIN}-{SEQ}. {SEQ} appears exactly once, and each other token at most once. The sequence starts again at 1 whenever the date the pattern writes changes: yearly with a year, monthly with {MM}, daily with {DD}, never without a date; the hour and minute are written into each number but never restart it. {MM} needs a year, {DD} needs {MM}, {HH} needs {DD} and {MIN} needs {HH}. Dates and times are the department's local time of the call. Document numbers (setting 117) and Records numbers do not take {HH}, {MIN} or ':'. A new pattern starts its own sequence, which the department can raise to continue earlier numbers. Until a pattern is saved, calls keep the {YY}-{SEQ} numbers Resgrid has always issued.
 
 Default: unset. Source: CallNumberingConfig.Pattern.
 
@@ -2597,6 +2597,13 @@ Default: unset. Source: DepartmentSettingTypes.MappingMapboxAccessToken.
 Your own map providers. Department-owned routing, live traffic and address lookup accounts, tried before Resgrid's providers. Only which providers are set is reported, never the keys. Setting all three back to Resgrid default removes the setting.
 
 Default: none (Resgrid's providers). Source: DepartmentSettingTypes.MappingProviderOverrides.
+
+<a id="setting-destinationsuggestions"></a>
+## Destination suggestions
+
+Destination suggestions. Suggests the best destination for a call, and for a unit's status destination, from the department's destination rules (Mapping, Destination Rules) and the incident location, with drive time and distance. Suggest and fill also fills a new call's empty destination with the best one; dispatchers and crews can still choose another. Off by default, because each suggestion looks up drive times.
+
+Default: off (preferred capability window 3 minutes). Source: DepartmentSettingTypes.DestinationSuggestions.
 
 <a id="setting-mappingmapstyle"></a>
 ## Mapping Map Style

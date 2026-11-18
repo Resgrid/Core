@@ -1,0 +1,704 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Map Icon Legend and status / priority map icon pages -->
+    <data name="ActionFailed" xml:space="preserve">
+    <value>Operazione non riuscita. Aggiornare la pagina e riprovare.</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Azioni</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>Attiva</value>
+  </data>
+  <data name="ActiveHelp" xml:space="preserve">
+    <value>Deselezionare per sospenderla: non vengono create chiamate finché non viene ripresa.</value>
+  </data>
+  <data name="AddTime" xml:space="preserve">
+    <value>Aggiungi orario</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>Indirizzo</value>
+  </data>
+  <data name="AddressHelp" xml:space="preserve">
+    <value>Localizzato al salvataggio, per la mappa e l'itinerario.</value>
+  </data>
+  <data name="AlertAcknowledge" xml:space="preserve">
+    <value>Prendi in carico</value>
+  </data>
+  <data name="AlertAcknowledgedBy" xml:space="preserve">
+    <value>Presa in carico da {0}</value>
+  </data>
+  <data name="AlertCreateCall" xml:space="preserve">
+    <value>Crea chiamata</value>
+  </data>
+  <data name="AlertDismiss" xml:space="preserve">
+    <value>Chiudi</value>
+  </data>
+  <data name="AlertDismissPrompt" xml:space="preserve">
+    <value>Nota (facoltativa): perché questo avviso viene chiuso?</value>
+  </data>
+  <data name="AlertKindCreateFailed" xml:space="preserve">
+    <value>Non è stato possibile creare la chiamata</value>
+  </data>
+  <data name="AlertKindDispatchDue" xml:space="preserve">
+    <value>Da inviare</value>
+  </data>
+  <data name="AlertKindMissed" xml:space="preserve">
+    <value>Persa: la chiamata non è stata creata in tempo</value>
+  </data>
+  <data name="AlertKindNoResources" xml:space="preserve">
+    <value>Nessuno ha potuto essere inviato: la chiamata è in sospeso</value>
+  </data>
+  <data name="AlertKindResourcesUnavailable" xml:space="preserve">
+    <value>Inviata senza alcune risorse scelte</value>
+  </data>
+  <data name="AlertOpenCall" xml:space="preserve">
+    <value>Apri chiamata</value>
+  </data>
+  <data name="AlertReasonDepartmentUnavailable" xml:space="preserve">
+    <value>Impossibile caricare il dipartimento.</value>
+  </data>
+  <data name="AlertReasonNoneAvailable" xml:space="preserve">
+    <value>Nessuna delle risorse scelte era disponibile.</value>
+  </data>
+  <data name="AlertReasonNoneChosen" xml:space="preserve">
+    <value>Nessuna risorsa scelta e nessuna scheda d'intervento corrispondente.</value>
+  </data>
+  <data name="AlertReasonSaveFailed" xml:space="preserve">
+    <value>Il salvataggio della chiamata non è riuscito; si riprova fino all'ora prevista.</value>
+  </data>
+  <data name="AlertSchedule" xml:space="preserve">
+    <value>Chiamata ricorrente</value>
+  </data>
+  <data name="AlertUnavailable" xml:space="preserve">
+    <value>Non disponibili: {0}</value>
+  </data>
+  <data name="AlertWhat" xml:space="preserve">
+    <value>Cosa è successo</value>
+  </data>
+  <data name="AlertWhen" xml:space="preserve">
+    <value>Previsto</value>
+  </data>
+  <data name="AlertsBanner" xml:space="preserve">
+    <value>{0} avvisi di chiamate ricorrenti richiedono attenzione.</value>
+  </data>
+  <data name="AlertsBannerLink" xml:space="preserve">
+    <value>Rivedi</value>
+  </data>
+  <data name="AlertsHelp" xml:space="preserve">
+    <value>Avvisati (push, SMS o email secondo le loro impostazioni) quando una chiamata non può essere creata, viene persa, nessuno può essere inviato, le risorse scelte non sono disponibili o un operatore deve inviarla. Nessuno scelto: chi ha creato la pianificazione.</value>
+  </data>
+  <data name="AlertsTitle" xml:space="preserve">
+    <value>Richiede attenzione</value>
+  </data>
+  <data name="AvailabilityHelp" xml:space="preserve">
+    <value>Quando una chiamata parte, le unità e i membri scelti non disponibili (su un'altra chiamata, fuori servizio, non in turno) vengono esclusi e l'operatore viene avvisato. Se non resta nessuno, la chiamata resta in sospeso per un operatore.</value>
+  </data>
+  <data name="Calendar" xml:space="preserve">
+    <value>Calendario</value>
+  </data>
+  <data name="ContactName" xml:space="preserve">
+    <value>Nome del contatto</value>
+  </data>
+  <data name="ContactNumber" xml:space="preserve">
+    <value>Numero del contatto</value>
+  </data>
+  <data name="Coordinates" xml:space="preserve">
+    <value>Coordinate</value>
+  </data>
+  <data name="CoordinatesHelp" xml:space="preserve">
+    <value>Latitudine, longitudine (facoltativo). Lasciare vuoto per localizzare l'indirizzo.</value>
+  </data>
+  <data name="CreateNow" xml:space="preserve">
+    <value>Crea la chiamata ora</value>
+  </data>
+  <data name="CreatedByRecurringCall" xml:space="preserve">
+    <value>Questa chiamata è stata creata da una chiamata ricorrente.</value>
+  </data>
+  <data name="CreationMode" xml:space="preserve">
+    <value>Chi invia ogni chiamata</value>
+  </data>
+  <data name="CreationModeAutomatic" xml:space="preserve">
+    <value>Automaticamente: ogni chiamata viene creata in anticipo e inviata all'ora prevista</value>
+  </data>
+  <data name="CreationModeDispatcher" xml:space="preserve">
+    <value>Un operatore: nulla viene creato in anticipo; un operatore viene avvisato all'ora prevista e la invia</value>
+  </data>
+  <data name="DatesFrom" xml:space="preserve">
+    <value>Dal {0}</value>
+  </data>
+  <data name="DatesUntil" xml:space="preserve">
+    <value>fino al {0}</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Elimina</value>
+  </data>
+  <data name="DeleteConfirm" xml:space="preserve">
+    <value>Eliminare questa chiamata ricorrente? Non verranno create altre chiamate da essa.</value>
+  </data>
+  <data name="DeleteRecurringCall" xml:space="preserve">
+    <value>Elimina chiamata ricorrente</value>
+  </data>
+  <data name="DeleteUpcoming" xml:space="preserve">
+    <value>Elimina anche le {0} chiamate imminenti già create</value>
+  </data>
+  <data name="DeletedMessage" xml:space="preserve">
+    <value>Chiamata ricorrente eliminata.</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Descrizione</value>
+  </data>
+  <data name="DescriptionHelp" xml:space="preserve">
+    <value>A cosa serve questa pianificazione e cosa deve sapere un operatore. Resta nella pianificazione, non viene copiato nelle chiamate.</value>
+  </data>
+  <data name="Destination" xml:space="preserve">
+    <value>Destinazione</value>
+  </data>
+  <data name="DestinationDetails" xml:space="preserve">
+    <value>Dettagli della destinazione</value>
+  </data>
+  <data name="DestinationName" xml:space="preserve">
+    <value>Struttura di destinazione</value>
+  </data>
+  <data name="DispatchHelp" xml:space="preserve">
+    <value>A chi va ogni chiamata. Lascia tutto vuoto perché scelga un operatore: all'ora prevista la chiamata resta in sospeso e l'operatore viene avvisato.</value>
+  </data>
+  <data name="DueHelp" xml:space="preserve">
+    <value>È ora di inviare questa chiamata. Inviala ora, creala prima per modificarla o saltala.</value>
+  </data>
+  <data name="DueTitle" xml:space="preserve">
+    <value>Da inviare: {0}</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Modifica</value>
+  </data>
+  <data name="EditRecurringCall" xml:space="preserve">
+    <value>Modifica chiamata ricorrente</value>
+  </data>
+  <data name="EnableCheckInTimers" xml:space="preserve">
+    <value>Attiva i timer di check-in</value>
+  </data>
+  <data name="EndsOn" xml:space="preserve">
+    <value>Termina il</value>
+  </data>
+  <data name="EndsOnHelp" xml:space="preserve">
+    <value>Lasciare vuoto per ripetere senza fine.</value>
+  </data>
+  <data name="ErrorContactEmailInvalid" xml:space="preserve">
+    <value>Inserisci un indirizzo email valido per il contatto.</value>
+  </data>
+  <data name="ErrorCoordinatesInvalid" xml:space="preserve">
+    <value>Inserire le coordinate come latitudine, longitudine (ad esempio 39.7392,-104.9903).</value>
+  </data>
+  <data name="ErrorCreationModeInvalid" xml:space="preserve">
+    <value>Scegli chi invia ogni chiamata.</value>
+  </data>
+  <data name="ErrorDaysRequired" xml:space="preserve">
+    <value>Scegliere almeno un giorno della settimana.</value>
+  </data>
+  <data name="ErrorEndsBeforeStart" xml:space="preserve">
+    <value>La data di fine è precedente a quella di inizio.</value>
+  </data>
+  <data name="ErrorEndsOnInvalid" xml:space="preserve">
+    <value>Inserire una data di fine valida.</value>
+  </data>
+  <data name="ErrorFacilityPoiInvalid" xml:space="preserve">
+    <value>Scegli il punto di interesse di prelievo dall'elenco.</value>
+  </data>
+  <data name="ErrorFrequencyInvalid" xml:space="preserve">
+    <value>Scegliere come si ripete.</value>
+  </data>
+  <data name="ErrorIntervalInvalid" xml:space="preserve">
+    <value>Ripetere ogni 1-{1}.</value>
+  </data>
+  <data name="ErrorLeadTimeInvalid" xml:space="preserve">
+    <value>Scegliere quando viene creata ogni chiamata.</value>
+  </data>
+  <data name="ErrorManualAlertInvalid" xml:space="preserve">
+    <value>Scegli quando avvisare l'operatore.</value>
+  </data>
+  <data name="ErrorMonthlyDayInvalid" xml:space="preserve">
+    <value>Scegliere un giorno del mese da 1 a 31.</value>
+  </data>
+  <data name="ErrorMonthlyWeekdayInvalid" xml:space="preserve">
+    <value>Scegliere quale giorno della settimana del mese.</value>
+  </data>
+  <data name="ErrorNameRequired" xml:space="preserve">
+    <value>Inserire un nome.</value>
+  </data>
+  <data name="ErrorResumeOnInvalid" xml:space="preserve">
+    <value>La data di ripresa non è valida.</value>
+  </data>
+  <data name="ErrorStartsOnRequired" xml:space="preserve">
+    <value>Inserire una data di inizio.</value>
+  </data>
+  <data name="ErrorTimeInvalid" xml:space="preserve">
+    <value>Inserire ogni orario in ore e minuti (ad esempio 08:00).</value>
+  </data>
+  <data name="ErrorTimesRequired" xml:space="preserve">
+    <value>Aggiungere almeno un orario di invio.</value>
+  </data>
+  <data name="ErrorTooManyTimes" xml:space="preserve">
+    <value>Usare al massimo {0} orari di invio al giorno.</value>
+  </data>
+  <data name="Every" xml:space="preserve">
+    <value>Ogni</value>
+  </data>
+  <data name="ExternalId" xml:space="preserve">
+    <value>ID esterno</value>
+  </data>
+  <data name="FacilityDetails" xml:space="preserve">
+    <value>Dettagli del prelievo</value>
+  </data>
+  <data name="FacilityDetailsPlaceholder" xml:space="preserve">
+    <value>Reparto, piano, stanza, ingresso, chi chiedere</value>
+  </data>
+  <data name="FacilityHelp" xml:space="preserve">
+    <value>Le righe di prelievo e destinazione vengono aggiunte alle note di ogni chiamata creata, così l'equipaggio le ha.</value>
+  </data>
+  <data name="FacilityName" xml:space="preserve">
+    <value>Struttura di prelievo</value>
+  </data>
+  <data name="FacilityPoi" xml:space="preserve">
+    <value>Punto di interesse di prelievo</value>
+  </data>
+  <data name="FacilityPoiHelp" xml:space="preserve">
+    <value>Compila la struttura di prelievo e l'indirizzo quando sono vuoti.</value>
+  </data>
+  <data name="FrequencyDaily" xml:space="preserve">
+    <value>Ogni giorno</value>
+  </data>
+  <data name="FrequencyMonthly" xml:space="preserve">
+    <value>Ogni mese</value>
+  </data>
+  <data name="FrequencyWeekly" xml:space="preserve">
+    <value>Ogni settimana</value>
+  </data>
+  <data name="FromCallNotice" xml:space="preserve">
+    <value>Compilato dalla chiamata {0}. Scegliere quando si ripete.</value>
+  </data>
+  <data name="Groups" xml:space="preserve">
+    <value>Gruppi</value>
+  </data>
+  <data name="HeldMessage" xml:space="preserve">
+    <value>Nessuno ha potuto essere inviato; la chiamata è in sospeso.</value>
+  </data>
+  <data name="HeldTitle" xml:space="preserve">
+    <value>In sospeso: {0}</value>
+  </data>
+  <data name="IncidentId" xml:space="preserve">
+    <value>ID incidente</value>
+  </data>
+  <data name="IncludeScheduledCalls" xml:space="preserve">
+    <value>Mostra le chiamate programmate</value>
+  </data>
+  <data name="IntervalDays" xml:space="preserve">
+    <value>giorno/i</value>
+  </data>
+  <data name="IntervalMonths" xml:space="preserve">
+    <value>mese/i</value>
+  </data>
+  <data name="IntervalWeeks" xml:space="preserve">
+    <value>settimana/e</value>
+  </data>
+  <data name="LeadTime" xml:space="preserve">
+    <value>Crea ogni chiamata</value>
+  </data>
+  <data name="LeadTimeDay" xml:space="preserve">
+    <value>1 giorno prima</value>
+  </data>
+  <data name="LeadTimeDays" xml:space="preserve">
+    <value>{0} giorni prima</value>
+  </data>
+  <data name="LeadTimeHelp" xml:space="preserve">
+    <value>Quanto tempo prima del suo orario di invio viene creata ogni chiamata. Compare poi in Chiamate programmate, dove può essere modificata, inviata in anticipo o eliminata singolarmente.</value>
+  </data>
+  <data name="LeadTimeHour" xml:space="preserve">
+    <value>1 ora prima</value>
+  </data>
+  <data name="LeadTimeHours" xml:space="preserve">
+    <value>{0} ore prima</value>
+  </data>
+  <data name="LeadTimeMinutes" xml:space="preserve">
+    <value>{0} minuti prima</value>
+  </data>
+  <data name="LegendCancelled" xml:space="preserve">
+    <value>Chiusa prima dell'invio</value>
+  </data>
+  <data name="LegendDispatched" xml:space="preserve">
+    <value>Inviata</value>
+  </data>
+  <data name="LegendDue" xml:space="preserve">
+    <value>In attesa di un operatore</value>
+  </data>
+  <data name="LegendHeld" xml:space="preserve">
+    <value>In sospeso, nessuno disponibile</value>
+  </data>
+  <data name="LegendMissed" xml:space="preserve">
+    <value>Persa</value>
+  </data>
+  <data name="LegendProjected" xml:space="preserve">
+    <value>Ricorrente, non ancora creata</value>
+  </data>
+  <data name="LegendScheduled" xml:space="preserve">
+    <value>Programmata</value>
+  </data>
+  <data name="LegendSkipped" xml:space="preserve">
+    <value>Saltata</value>
+  </data>
+  <data name="ListTab" xml:space="preserve">
+    <value>Elenco</value>
+  </data>
+  <data name="ManualAlert" xml:space="preserve">
+    <value>Avvisa l'operatore</value>
+  </data>
+  <data name="ManualAlertAtTime" xml:space="preserve">
+    <value>All'ora prevista</value>
+  </data>
+  <data name="ManualAlertHelp" xml:space="preserve">
+    <value>Quando l'operatore viene avvisato che è ora di inviare la chiamata. Compare in Richiede attenzione in Chiamate ricorrenti e nell'app Dispatch finché qualcuno non la invia o la salta.</value>
+  </data>
+  <data name="MapPage" xml:space="preserve">
+    <value>Pagina mappa</value>
+  </data>
+  <data name="MissedHelp" xml:space="preserve">
+    <value>L'ora è passata e nessuna chiamata è stata creata. Inviala ora o saltala.</value>
+  </data>
+  <data name="MissedTitle" xml:space="preserve">
+    <value>Persa: {0}</value>
+  </data>
+  <data name="ModeAutomaticShort" xml:space="preserve">
+    <value>Inviata automaticamente</value>
+  </data>
+  <data name="ModeDispatcherShort" xml:space="preserve">
+    <value>Inviata da un operatore</value>
+  </data>
+  <data name="MonthlyDayHelp" xml:space="preserve">
+    <value>In un mese senza quel giorno, viene eseguita l'ultimo giorno.</value>
+  </data>
+  <data name="MonthlyOn" xml:space="preserve">
+    <value>Il giorno</value>
+  </data>
+  <data name="MonthlyOnDay" xml:space="preserve">
+    <value>Giorno</value>
+  </data>
+  <data name="MonthlyOnThe" xml:space="preserve">
+    <value>Il</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Nome</value>
+  </data>
+  <data name="NameHelp" xml:space="preserve">
+    <value>Ogni chiamata creata riceve questo nome.</value>
+  </data>
+  <data name="Nature" xml:space="preserve">
+    <value>Natura della chiamata</value>
+  </data>
+  <data name="NewRecurringCall" xml:space="preserve">
+    <value>Nuova chiamata ricorrente</value>
+  </data>
+  <data name="NextDispatch" xml:space="preserve">
+    <value>Prossimo invio</value>
+  </data>
+  <data name="NextDispatches" xml:space="preserve">
+    <value>Prossimi invii</value>
+  </data>
+  <data name="NoAlerts" xml:space="preserve">
+    <value>Nulla richiede attenzione.</value>
+  </data>
+  <data name="NoFacilityPoi" xml:space="preserve">
+    <value>Nessuno</value>
+  </data>
+  <data name="NoNextDispatches" xml:space="preserve">
+    <value>Nessuno programmato.</value>
+  </data>
+  <data name="NoRecurringCalls" xml:space="preserve">
+    <value>Ancora nessuna chiamata ricorrente.</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Nessuno</value>
+  </data>
+  <data name="Notes" xml:space="preserve">
+    <value>Note</value>
+  </data>
+  <data name="OnDays" xml:space="preserve">
+    <value>Il</value>
+  </data>
+  <data name="OpenAlertsCount" xml:space="preserve">
+    <value>{0} richiede/richiedono attenzione</value>
+  </data>
+  <data name="PageIntro" xml:space="preserve">
+    <value>Una chiamata ricorrente viene inviata secondo una pianificazione, ad esempio trasferimenti tra strutture ogni martedì e giovedì alle 08:00, 13:00 e 19:00. Ogni chiamata viene creata prima del suo orario di invio e compare in Chiamate programmate, dove può essere modificata, inviata in anticipo o eliminata come qualsiasi altra.</value>
+  </data>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Chiamate ricorrenti</value>
+  </data>
+  <data name="Pause" xml:space="preserve">
+    <value>Sospendi</value>
+  </data>
+  <data name="PauseDeleteUpcoming" xml:space="preserve">
+    <value>Elimina anche le chiamate già create non ancora inviate</value>
+  </data>
+  <data name="PauseHelp" xml:space="preserve">
+    <value>Mentre è sospesa non viene creato né avvisato nulla. La pianificazione, le impostazioni e lo storico vengono mantenuti.</value>
+  </data>
+  <data name="PauseReason" xml:space="preserve">
+    <value>Motivo</value>
+  </data>
+  <data name="PauseTitle" xml:space="preserve">
+    <value>Sospendi:</value>
+  </data>
+  <data name="PausedMessage" xml:space="preserve">
+    <value>Chiamata ricorrente sospesa. Non verranno create chiamate finché non viene ripresa.</value>
+  </data>
+  <data name="PausedUntil" xml:space="preserve">
+    <value>fino al {0}</value>
+  </data>
+  <data name="Personnel" xml:space="preserve">
+    <value>Personale</value>
+  </data>
+  <data name="Priority" xml:space="preserve">
+    <value>Priorità</value>
+  </data>
+  <data name="ProjectedHelp" xml:space="preserve">
+    <value>La sua chiamata non è ancora stata creata. Inviala ora, salta questa o crea ora la chiamata per modificarla singolarmente.</value>
+  </data>
+  <data name="ReadOnlyHelp" xml:space="preserve">
+    <value>La sua chiamata non è ancora stata creata. Solo i membri che possono creare chiamate possono inviarla, saltarla o crearla.</value>
+  </data>
+  <data name="ReferenceId" xml:space="preserve">
+    <value>ID di riferimento</value>
+  </data>
+  <data name="RemoveTime" xml:space="preserve">
+    <value>Rimuovi orario</value>
+  </data>
+  <data name="RepeatCall" xml:space="preserve">
+    <value>Ripeti</value>
+  </data>
+  <data name="RepeatCallHelp" xml:space="preserve">
+    <value>Crea una chiamata ricorrente da questa chiamata</value>
+  </data>
+  <data name="Repeats" xml:space="preserve">
+    <value>Ripetizione</value>
+  </data>
+  <data name="ReplaceUpcoming" xml:space="preserve">
+    <value>Sostituisci le {0} chiamate imminenti già create</value>
+  </data>
+  <data name="ReplaceUpcomingHelp" xml:space="preserve">
+    <value>Vengono eliminate e ricreate con questi dati, quindi le modifiche fatte singolarmente vanno perse. Deselezionare per lasciarle come sono.</value>
+  </data>
+  <data name="RestoreOccurrence" xml:space="preserve">
+    <value>Ripristina</value>
+  </data>
+  <data name="Resume" xml:space="preserve">
+    <value>Riprendi</value>
+  </data>
+  <data name="ResumeOn" xml:space="preserve">
+    <value>Riprendi il</value>
+  </data>
+  <data name="ResumeOnHelp" xml:space="preserve">
+    <value>Lascia vuoto per restare sospesa finché qualcuno non la riprende.</value>
+  </data>
+  <data name="ResumedMessage" xml:space="preserve">
+    <value>Chiamata ricorrente ripresa.</value>
+  </data>
+  <data name="Roles" xml:space="preserve">
+    <value>Ruoli</value>
+  </data>
+  <data name="RunCardsOffHelp" xml:space="preserve">
+    <value>Le schede d'intervento non sono attive per questo dipartimento, quindi non ha effetto.</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Salva</value>
+  </data>
+  <data name="SavedCreatedMessage" xml:space="preserve">
+    <value>{0} chiamata/e imminente/i creata/e e presente/i in Chiamate programmate.</value>
+  </data>
+  <data name="SavedMessage" xml:space="preserve">
+    <value>Chiamata ricorrente salvata.</value>
+  </data>
+  <data name="SavedReplacedMessage" xml:space="preserve">
+    <value>{0} chiamata/e già creata/e sostituita/e.</value>
+  </data>
+  <data name="Schedule" xml:space="preserve">
+    <value>Pianificazione</value>
+  </data>
+  <data name="ScheduleContactEmail" xml:space="preserve">
+    <value>Email del contatto</value>
+  </data>
+  <data name="ScheduleContactHelp" xml:space="preserve">
+    <value>Chi ha organizzato la pianificazione e va chiamato per le modifiche.</value>
+  </data>
+  <data name="ScheduleContactName" xml:space="preserve">
+    <value>Contatto della pianificazione</value>
+  </data>
+  <data name="ScheduleContactNumber" xml:space="preserve">
+    <value>Telefono del contatto</value>
+  </data>
+  <data name="SectionAlerts" xml:space="preserve">
+    <value>Chi avvisare</value>
+  </data>
+  <data name="SectionCall" xml:space="preserve">
+    <value>Dettagli della chiamata</value>
+  </data>
+  <data name="SectionDispatch" xml:space="preserve">
+    <value>Chi inviare</value>
+  </data>
+  <data name="SectionFacility" xml:space="preserve">
+    <value>Strutture e contatto</value>
+  </data>
+  <data name="SectionSchedule" xml:space="preserve">
+    <value>Pianificazione</value>
+  </data>
+  <data name="SelectPlaceholder" xml:space="preserve">
+    <value>Seleziona...</value>
+  </data>
+  <data name="SendNow" xml:space="preserve">
+    <value>Invia ora</value>
+  </data>
+  <data name="SentMessage" xml:space="preserve">
+    <value>La chiamata è stata inviata.</value>
+  </data>
+  <data name="SkipOccurrence" xml:space="preserve">
+    <value>Salta questa</value>
+  </data>
+  <data name="SkippedHelp" xml:space="preserve">
+    <value>Questa è stata saltata e non verrà creata alcuna chiamata. Ripristinarla per creare di nuovo la chiamata.</value>
+  </data>
+  <data name="SkippedTitle" xml:space="preserve">
+    <value>Saltata: {0}</value>
+  </data>
+  <data name="StartsOn" xml:space="preserve">
+    <value>Inizia il</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Stato</value>
+  </data>
+  <data name="StatusActive" xml:space="preserve">
+    <value>Attiva</value>
+  </data>
+  <data name="StatusEnded" xml:space="preserve">
+    <value>Terminata</value>
+  </data>
+  <data name="StatusPaused" xml:space="preserve">
+    <value>In pausa</value>
+  </data>
+  <data name="SummaryDaily" xml:space="preserve">
+    <value>Ogni giorno</value>
+  </data>
+  <data name="SummaryEveryNDays" xml:space="preserve">
+    <value>Ogni {0} giorni</value>
+  </data>
+  <data name="SummaryEveryNMonthsDay" xml:space="preserve">
+    <value>Ogni {0} mesi il giorno {1}</value>
+  </data>
+  <data name="SummaryEveryNMonthsWeekday" xml:space="preserve">
+    <value>Ogni {0} mesi il {1} {2}</value>
+  </data>
+  <data name="SummaryEveryNWeeks" xml:space="preserve">
+    <value>Ogni {0} settimane il {1}</value>
+  </data>
+  <data name="SummaryMonthlyDay" xml:space="preserve">
+    <value>Ogni mese il giorno {0}</value>
+  </data>
+  <data name="SummaryMonthlyWeekday" xml:space="preserve">
+    <value>Ogni mese il {0} {1}</value>
+  </data>
+  <data name="SummaryWeekly" xml:space="preserve">
+    <value>Ogni settimana il {0}</value>
+  </data>
+  <data name="SummaryWithTimes" xml:space="preserve">
+    <value>{0} alle {1}</value>
+  </data>
+  <data name="Times" xml:space="preserve">
+    <value>Orari di invio</value>
+  </data>
+  <data name="TimesHelp" xml:space="preserve">
+    <value>Ora del dipartimento ({0}). Aggiungere un orario per ogni chiamata della giornata, ad esempio 08:00, 13:00 e 19:00.</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Tipo</value>
+  </data>
+  <data name="Units" xml:space="preserve">
+    <value>Unità</value>
+  </data>
+  <data name="UseRunCard" xml:space="preserve">
+    <value>Usa anche la scheda d'intervento corrispondente</value>
+  </data>
+  <data name="UseRunCardHelp" xml:space="preserve">
+    <value>Quando la chiamata parte, aggiungi le risorse della scheda d'intervento che corrisponde a tipo, priorità e luogo, anche se non invia in automatico.</value>
+  </data>
+  <data name="WeekFirst" xml:space="preserve">
+    <value>primo</value>
+  </data>
+  <data name="WeekFourth" xml:space="preserve">
+    <value>quarto</value>
+  </data>
+  <data name="WeekLast" xml:space="preserve">
+    <value>ultimo</value>
+  </data>
+  <data name="WeekSecond" xml:space="preserve">
+    <value>secondo</value>
+  </data>
+  <data name="WeekThird" xml:space="preserve">
+    <value>terzo</value>
+  </data>
+</root>

@@ -137,7 +137,8 @@ namespace Resgrid.Repositories.DataRepository
 			var max = await ScalarAsync<long?>(sql, new
 			{
 				DepartmentId = departmentId,
-				Pattern = Queries.Calls.SearchCallsQuery.EscapeLike(numberPrefix) + "%" + Queries.Calls.SearchCallsQuery.EscapeLike(numberSuffix),
+				// '?' (never a pattern literal) stands for one character: a time-of-day digit (CallNumberScope.SearchPrefix).
+				Pattern = Like(numberPrefix) + "%" + Like(numberSuffix),
 				PrefixLength = numberPrefix.Length,
 				SuffixLength = numberSuffix.Length,
 				FromUtc = fromUtc.HasValue ? DatabaseTimestamp(fromUtc.Value) : (DateTime?)null,
@@ -146,5 +147,7 @@ namespace Resgrid.Repositories.DataRepository
 
 			return (int)Math.Min(Math.Max(max ?? 0, 0), int.MaxValue - 1);
 		}
+
+		private static string Like(string text) => Queries.Calls.SearchCallsQuery.EscapeLike(text).Replace("?", "_");
 	}
 }

@@ -692,6 +692,15 @@
   </data>
   <data name="Additional" xml:space="preserve"><value>Additional</value></data>
   <data name="AllOfGroupDispatched" xml:space="preserve"><value>All of {0} Dispatched</value></data>
+  <data name="ReleaseUnit" xml:space="preserve"><value>Release</value></data>
+  <data name="ReleaseUnitTitle" xml:space="preserve"><value>Release {0} from this call?</value></data>
+  <data name="ReleaseUnitText" xml:space="preserve"><value>The unit is taken off this call and set to the department's release status, unless it is already available, out of service, or on another call. The call stays open.</value></data>
+  <data name="ReleaseUnitNotify" xml:space="preserve"><value>Notify the unit</value></data>
+  <data name="ReleaseUnitFailed" xml:space="preserve"><value>The unit could not be released.</value></data>
+  <data name="UnitReleasedAt" xml:space="preserve"><value>Released {0}</value></data>
+  <data name="ReleasePersonnelText" xml:space="preserve"><value>The member is taken off this call and set to the department's personnel release status, unless they are already available, unavailable, or on another call. The call stays open.</value></data>
+  <data name="ReleasePersonnelFailed" xml:space="preserve"><value>The member could not be released.</value></data>
+  <data name="ReleasePersonnelNotify" xml:space="preserve"><value>Notify the member</value></data>
   <data name="AreYouSure" xml:space="preserve"><value>Are you sure?</value></data>
   <data name="CallUpdatedTitle" xml:space="preserve"><value>Call Updated</value></data>
   <data name="CallUpdatedMessage" xml:space="preserve"><value>This call was updated, please refresh the page to view the latest information.</value></data>

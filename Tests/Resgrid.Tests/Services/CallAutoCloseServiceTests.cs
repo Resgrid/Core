@@ -129,6 +129,35 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task a_unit_released_from_the_call_and_working_another_does_not_keep_it_open()
+		{
+			// The MUG (B) was stood down and sent to the next call; the ambulance (A) clearing is the last unit on this one.
+			_unitDispatches.Setup(x => x.GetCallUnitDispatchesByCallIdAsync(CallId)).ReturnsAsync(() => new List<CallDispatchUnit>
+			{
+				new CallDispatchUnit { CallId = CallId, UnitId = UnitA, DispatchedOn = _now.AddMinutes(-40) },
+				new CallDispatchUnit { CallId = CallId, UnitId = UnitB, DispatchedOn = _now.AddMinutes(-40), ReleasedOn = _now.AddMinutes(-35) }
+			});
+			_unitStates.Setup(x => x.GetLastUnitStateByUnitIdAsync(UnitB))
+				.ReturnsAsync(new UnitState { UnitStateId = 70, UnitId = UnitB, State = (int)UnitStateTypes.Responding, Timestamp = _now.AddMinutes(-20), DestinationId = 41, DestinationType = (int)DestinationEntityTypes.Call });
+
+			var closed = await _service.CloseCallsFinishedByUnitStateAsync(DeptId, Saved((int)UnitStateTypes.Available), Previous((int)UnitStateTypes.OnScene));
+
+			closed.Should().Equal(CallId);
+		}
+
+		[Test]
+		public async Task a_unit_still_on_the_call_and_working_another_keeps_it_open()
+		{
+			_unitStates.Setup(x => x.GetLastUnitStateByUnitIdAsync(UnitB))
+				.ReturnsAsync(new UnitState { UnitStateId = 70, UnitId = UnitB, State = (int)UnitStateTypes.Responding, Timestamp = _now.AddMinutes(-20), DestinationId = 41, DestinationType = (int)DestinationEntityTypes.Call });
+
+			var closed = await _service.CloseCallsFinishedByUnitStateAsync(DeptId, Saved((int)UnitStateTypes.Available), Previous((int)UnitStateTypes.OnScene));
+
+			closed.Should().BeEmpty();
+			VerifyNotClosed();
+		}
+
+		[Test]
 		public async Task closes_the_call_when_its_last_unit_comes_back_in_service()
 		{
 			var closed = await _service.CloseCallsFinishedByUnitStateAsync(DeptId, Saved((int)UnitStateTypes.Available), Previous((int)UnitStateTypes.OnScene));

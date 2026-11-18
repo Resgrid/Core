@@ -19,14 +19,14 @@ namespace Resgrid.Repositories.DataRepository
 			var schema = _sqlConfiguration.SchemaName;
 			var sql = postgres
 				? "SELECT c.callid AS CallId, " +
-				  $"(SELECT COUNT(DISTINCT cdu.unitid) FROM {schema}.calldispatchunits cdu WHERE cdu.callid = c.callid) AS UnitCount, " +
-				  $"(SELECT COUNT(DISTINCT cd.userid) FROM {schema}.calldispatches cd WHERE cd.callid = c.callid) AS PersonnelCount " +
+				  $"(SELECT COUNT(DISTINCT cdu.unitid) FROM {schema}.calldispatchunits cdu WHERE cdu.callid = c.callid AND cdu.releasedon IS NULL) AS UnitCount, " +
+				  $"(SELECT COUNT(DISTINCT cd.userid) FROM {schema}.calldispatches cd WHERE cd.callid = c.callid AND NOT EXISTS (SELECT 1 FROM {schema}.callpersonnelreleases pr WHERE pr.callid = cd.callid AND CAST(pr.userid AS text) = CAST(cd.userid AS text))) AS PersonnelCount " +
 				  $"FROM {schema}.calls c " +
 				  "WHERE c.departmentid = @DepartmentId AND c.state = 0 AND c.isdeleted = false " +
 				  "AND (c.hasbeendispatched = true OR c.dispatchon IS NULL OR c.dispatchon <= @Now)"
 				: "SELECT c.[CallId] AS [CallId], " +
-				  $"(SELECT COUNT(DISTINCT cdu.[UnitId]) FROM {schema}.[CallDispatchUnits] cdu WHERE cdu.[CallId] = c.[CallId]) AS [UnitCount], " +
-				  $"(SELECT COUNT(DISTINCT cd.[UserId]) FROM {schema}.[CallDispatches] cd WHERE cd.[CallId] = c.[CallId]) AS [PersonnelCount] " +
+				  $"(SELECT COUNT(DISTINCT cdu.[UnitId]) FROM {schema}.[CallDispatchUnits] cdu WHERE cdu.[CallId] = c.[CallId] AND cdu.[ReleasedOn] IS NULL) AS [UnitCount], " +
+				  $"(SELECT COUNT(DISTINCT cd.[UserId]) FROM {schema}.[CallDispatches] cd WHERE cd.[CallId] = c.[CallId] AND NOT EXISTS (SELECT 1 FROM {schema}.[CallPersonnelReleases] pr WHERE pr.[CallId] = cd.[CallId] AND pr.[UserId] = cd.[UserId])) AS [PersonnelCount] " +
 				  $"FROM {schema}.[Calls] c " +
 				  "WHERE c.[DepartmentId] = @DepartmentId AND c.[State] = 0 AND c.[IsDeleted] = 0 " +
 				  "AND (c.[HasBeenDispatched] = 1 OR c.[DispatchOn] IS NULL OR c.[DispatchOn] <= @Now)";

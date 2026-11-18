@@ -43,7 +43,8 @@ var resgrid;
                             allDay: rawEvent.allDay || false,
                             url: rawEvent.url,
                             backgroundColor: rawEvent.backgroundColor || '#1e90ff',
-                            borderColor: rawEvent.backgroundColor || '#1e90ff'
+                            borderColor: rawEvent.backgroundColor || '#1e90ff',
+                            classNames: rawEvent.classNames || []
                         };
                     },
                     eventClick: function (info) {
@@ -56,6 +57,19 @@ var resgrid;
 
                 calendarInstance.render();
                 document.getElementById('include-checklists')?.addEventListener('change', function () { calendarInstance.refetchEvents(); });
+                // Scheduled calls (Calls -> Scheduled Calls calendar feed): a second source, only fetched while the box is ticked.
+                document.getElementById('include-scheduled-calls')?.addEventListener('change', function () {
+                    var source = calendarInstance.getEventSourceById('scheduledCalls');
+                    if (this.checked && !source) {
+                        calendarInstance.addEventSource({
+                            id: 'scheduledCalls',
+                            url: resgrid.absoluteBaseUrl + '/User/RecurringCalls/GetCalendarEvents',
+                            failure: function () { console.error('Failed to load scheduled calls.'); }
+                        });
+                    } else if (!this.checked && source) {
+                        source.remove();
+                    }
+                });
             });
 
             index.getCalendar = function () { return calendarInstance; };

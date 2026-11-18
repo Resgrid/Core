@@ -649,6 +649,39 @@
       "Availability": "available"
     },
     {
+      "Id": "setting.DestinationSuggestions",
+      "AreaId": "mapping",
+      "LabelKey": "Setting.DestinationSuggestions",
+      "HelpKey": "SettingHelp.DestinationSuggestions",
+      "Binding": "DepartmentSettingTypes.DestinationSuggestions",
+      "ValueType": "protobuf",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "DestinationRules",
+        "Action": "Index",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-16T00:00:00Z",
+      "Impact": {
+        "Risk": "Low",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.mapping",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.DestinationSuggestions",
+      "DefaultValue": "DestinationSuggestionConfig constructor (off; preferred capability window 3 minutes)",
+      "AllowedValues": "Mode 0 off, 1 suggest, 2 suggest and fill; window 0-30 minutes. Validated by the Destination Rules page; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
       "Id": "setting.HardwareTrackingStaleAfterSeconds",
       "AreaId": "mapping",
       "LabelKey": "Setting.HardwareTrackingStaleAfterSeconds",
@@ -2181,6 +2214,17 @@
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-11-12T00:00:00Z"
+    },
+    {
+      "Id": "setting.DestinationSuggestions",
+      "Locale": "en",
+      "TitleKey": "Setting.DestinationSuggestions",
+      "Body": "Destination suggestions. Suggests the best destination for a call, and for a unit's status destination, from the department's destination rules (Mapping, Destination Rules) and the incident location, with drive time and distance. Suggest and fill also fills a new call's empty destination with the best one; dispatchers and crews can still choose another. Off by default, because each suggestion looks up drive times.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-destinationsuggestions",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-16T00:00:00Z"
     }
   ]
 }

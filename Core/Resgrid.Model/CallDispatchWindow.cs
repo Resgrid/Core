@@ -22,6 +22,9 @@ namespace Resgrid.Model
 
 		public DateTime? ClosedOn { get; set; }
 
+		/// <summary>When the unit was released (stood down) from the call while it stayed open; null for personnel windows.</summary>
+		public DateTime? ReleasedOn { get; set; }
+
 		/// <summary>True when the person was reached through a paged group or role rather than dispatched directly.</summary>
 		public bool Paged { get; set; }
 	}

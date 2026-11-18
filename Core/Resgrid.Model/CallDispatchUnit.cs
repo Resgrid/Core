@@ -54,6 +54,44 @@ namespace Resgrid.Model
 		[ProtoMember(10)]
 		public string ResponseCodeName { get; set; }
 
+		/// <summary>
+		/// When a dispatcher released (stood down) this unit from the call while the call stayed open (M0316), UTC; null while
+		/// the unit is still on the call. A released dispatch stays on the call's record, so reports keep the dispatch time and
+		/// the stand-down, but it is no longer live: no re-notification, no "on this call" list, no auto-close or status
+		/// attribution. Re-dispatching the unit to the call clears it (<see cref="Redispatch"/>).
+		/// </summary>
+		[ProtoMember(11)]
+		public DateTime? ReleasedOn { get; set; }
+
+		/// <summary>Who released the unit from the call (<see cref="ReleasedOn"/>).</summary>
+		[MaxLength(128)]
+		[ProtoMember(12)]
+		public string ReleasedByUserId { get; set; }
+
+		/// <summary>True when the unit was released from the call and has not been re-dispatched to it since.</summary>
+		[NotMapped]
+		[JsonIgnore]
+		public bool IsReleased => ReleasedOn.HasValue;
+
+		/// <summary>Stands the unit down from the call: the dispatch stays on the record but is no longer live.</summary>
+		public void Release(DateTime releasedOnUtc, string releasedByUserId)
+		{
+			ReleasedOn = releasedOnUtc;
+			ReleasedByUserId = releasedByUserId;
+		}
+
+		/// <summary>
+		/// Sends a released unit back to the call: the dispatch is live again from <paramref name="dispatchedOnUtc"/>, as a
+		/// re-page of a unit still on the call would record it.
+		/// </summary>
+		public void Redispatch(DateTime dispatchedOnUtc)
+		{
+			ReleasedOn = null;
+			ReleasedByUserId = null;
+			LastDispatchedOn = dispatchedOnUtc;
+			DispatchCount++;
+		}
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue
@@ -72,6 +110,6 @@ namespace Resgrid.Model
 		public int IdType => 0;
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Unit", "Call" };
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Unit", "Call", "IsReleased" };
 	}
 }

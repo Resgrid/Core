@@ -98,6 +98,9 @@
 								}
 							</select>
 						</div>
+						<div class="checkbox" style="margin:0 8px">
+							<label><input type="checkbox" name="closed" value="true" checked="@Model.IncludeClosed" /> @localizer["IncludeClosedReports"]</label>
+						</div>
 						<button type="submit" class="btn btn-sm btn-primary">@localizer["Filter"]</button>
 					</form>
 
@@ -140,7 +143,22 @@
 											}
 											<td>@Name(r.OwnerUserId)</td>
 											<td>@When(r.CreatedOn)</td>
-											<td><a class="btn btn-xs btn-info" asp-controller="IncidentReports" asp-action="Details" asp-route-area="User" asp-route-id="@r.RmsIncidentReportId">@localizer["ViewRevision"]</a></td>
+											<td style="white-space:nowrap">
+												<a class="btn btn-xs btn-info" asp-controller="IncidentReports" asp-action="Details" asp-route-area="User" asp-route-id="@r.RmsIncidentReportId">@localizer["ViewRevision"]</a>
+												@if (Model.DeletableReportIds.Contains(r.RmsIncidentReportId))
+												{
+													var confirmText = JsEncoder.Encode(string.Format(localizer["DeleteIncidentReportConfirm"].Value, Model.DeletePurgeDays));
+													<form method="post" asp-controller="IncidentReports" asp-action="Delete" asp-route-area="User" asp-route-id="@r.RmsIncidentReportId" style="display:inline"
+														  onsubmit="@(r.State == (int)RmsRecordState.Voided
+															? "var reason = prompt('" + JsEncoder.Encode(localizer["DeleteVoidedReasonPrompt"].Value) + "'); if (!reason) { return false; } this.reasonText.value = reason; return confirm('" + confirmText + "');"
+															: "return confirm('" + confirmText + "');")">
+														@Html.AntiForgeryToken()
+														<input type="hidden" name="returnTo" value="Index" />
+														<input type="hidden" name="reasonText" value="" />
+														<button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> @localizer["DeleteIncidentReport"]</button>
+													</form>
+												}
+											</td>
 										</tr>
 									}
 								</tbody>
@@ -151,7 +169,7 @@
 							<ul class="pagination">
 								@for (var p = 1; p <= Model.TotalPages; p++)
 								{
-									<li class="@(p == Model.Page ? "active" : string.Empty)"><a asp-controller="IncidentReports" asp-action="Index" asp-route-area="User" asp-route-year="@Model.Year" asp-route-state="@Model.StateFilter" asp-route-page="@p">@p</a></li>
+									<li class="@(p == Model.Page ? "active" : string.Empty)"><a asp-controller="IncidentReports" asp-action="Index" asp-route-area="User" asp-route-year="@Model.Year" asp-route-state="@Model.StateFilter" asp-route-closed="@(Model.IncludeClosed ? "true" : null)" asp-route-page="@p">@p</a></li>
 								}
 							</ul>
 						}

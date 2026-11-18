@@ -2273,4 +2273,17 @@
   <data name="NoAlarmActivity" xml:space="preserve"><value>Inga varnare eller riskreducerande aktiviteter har registrerats här ännu.</value></data>
   <data name="RecordAlarmLeft" xml:space="preserve"><value>Registrera lämnad varnare</value></data>
   <data name="AlarmsRequestedColumnHelp" xml:space="preserve"><value>Totalt begärda enheter (endast rök / endast CO / kombinerade)</value></data>
+  <data name="IncidentReportDeleted" xml:space="preserve"><value>Insatsrapporten har tagits bort.</value></data>
+  <data name="DeleteIncidentReport" xml:space="preserve"><value>Ta bort</value></data>
+  <data name="DeleteIncidentReportConfirm" xml:space="preserve"><value>Ta bort den här insatsrapporten? Den tas bort från alla listor, dess ärende frigörs för en ny rapport och dess innehåll raderas efter {0} dagar.</value></data>
+  <data name="DeleteIncidentReportHelp" xml:space="preserve"><value>Tar bort rapporten från alla listor och frigör dess ärende för en ny rapport. En rapport som aldrig slutförts avbryts först. Innehållet raderas efter {0} dagar.</value></data>
+  <data name="DeleteVoidedReasonPrompt" xml:space="preserve"><value>Varför tas den här ogiltigförklarade rapporten bort?</value></data>
+  <data name="DeleteRefusedNotDeletable" xml:space="preserve"><value>En slutförd rapport kan inte tas bort. Ogiltigförklara den först.</value></data>
+  <data name="DeleteRefusedVoidedNeedsAdmin" xml:space="preserve"><value>Endast en avdelningsadministratör kan ta bort en ogiltigförklarad rapport.</value></data>
+  <data name="DeleteRefusedReasonRequired" xml:space="preserve"><value>Ange en anledning för att ta bort en ogiltigförklarad rapport.</value></data>
+  <data name="DeleteRefusedSubmittedExternally" xml:space="preserve"><value>Den här rapporten har skickats till ett externt system som NERIS och kan därför inte tas bort. Ogiltigförklara den i stället.</value></data>
+  <data name="DeleteRefusedLegalHold" xml:space="preserve"><value>Ett rättsligt bevarandekrav omfattar den här rapporten, så den kan inte tas bort.</value></data>
+  <data name="DeleteRefusedPermanentContent" xml:space="preserve"><value>Den här rapporten har poster om skadade, räddningar eller exponeringar, som sparas permanent. Ta bort dem från utkastet innan du tar bort rapporten.</value></data>
+  <data name="DeleteRefusedAmendmentOpen" xml:space="preserve"><value>Överge den öppna ändringen innan du tar bort den här rapporten.</value></data>
+  <data name="IncludeClosedReports" xml:space="preserve"><value>Inkludera avbrutna och ogiltigförklarade</value></data>
 </root>

@@ -6784,7 +6784,7 @@
     <value>إعداد ترقيم البلاغات / النمط</value>
   </data>
   <data name="FieldHelp.CallNumberingConfig.Pattern" xml:space="preserve">
-    <value>كيفية كتابة أرقام البلاغات، مثل FD-2026-0153: نص ثابت مع الرموز YYYY أو YY وMM وDD وSEQ. يبدأ التسلسل من جديد كلما تغيّر التاريخ المكتوب. إلى أن يُحفظ نمط، تحتفظ البلاغات بأرقام YY-SEQ التي أصدرها Resgrid دائمًا.</value>
+    <value>كيفية كتابة أرقام البلاغات، مثل FD-2026-0153: نص ثابت مع الرموز YYYY أو YY وMM وDD وHH (الساعة) وMIN (الدقيقة) وSEQ. يبدأ التسلسل من جديد كلما تغيّر التاريخ المكتوب؛ ولا تعيده الساعة والدقيقة إلى البداية أبدًا. إلى أن يُحفظ نمط، تحتفظ البلاغات بأرقام YY-SEQ التي أصدرها Resgrid دائمًا.</value>
   </data>
   <data name="Field.CallNumberingConfig.SequenceWidth" xml:space="preserve">
     <value>إعداد ترقيم البلاغات / عرض التسلسل</value>
@@ -7847,5 +7847,11 @@
   </data>
   <data xml:space="preserve" name="SettingHelp.MappingProviderOverrides">
     <value>حسابات القسم الخاصة للتوجيه وحركة المرور المباشرة والبحث عن العناوين، وتُجرَّب قبل مزودي Resgrid. يُبلَّغ فقط عن المزودين المعيّنين، ولا تُعرض المفاتيح أبدًا. تؤدي إعادة الثلاثة إلى الإعداد الافتراضي لـ Resgrid إلى إزالة هذا الإعداد.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.DestinationSuggestions">
+    <value>اقتراحات الوجهات</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.DestinationSuggestions">
+    <value>يقترح أفضل وجهة للبلاغ، ولوجهة حالة الوحدة، بناءً على قواعد الوجهات في القسم (الخرائط، قواعد الوجهات) وموقع الحادث، مع زمن القيادة والمسافة. ويقوم «اقتراح الوجهة وتعبئتها» أيضًا بتعبئة الوجهة الفارغة للبلاغ الجديد بأفضل وجهة؛ ويظل بإمكان المرسلين والطواقم اختيار وجهة أخرى. متوقف افتراضيًا، لأن كل اقتراح يستعلم عن أزمنة القيادة.</value>
   </data>
 </root>

@@ -41,6 +41,8 @@ namespace Resgrid.Tests.Web.Services
 		private Mock<IQueueService> _queue;
 		private Mock<IDepartmentSettingsService> _settings;
 		private Mock<IContactsService> _contacts;
+		private Mock<ICallDispatchStatusService> _dispatchStatuses;
+		private Mock<ICallResourceReleaseService> _releases;
 		private List<Call> _saved;
 		private int _broadcasts;
 		private Call _stored;
@@ -81,6 +83,8 @@ namespace Resgrid.Tests.Web.Services
 
 			_settings = new Mock<IDepartmentSettingsService>();
 			_contacts = new Mock<IContactsService>();
+			_dispatchStatuses = new Mock<ICallDispatchStatusService>();
+			_releases = new Mock<ICallResourceReleaseService>();
 			_activity = new Activity(nameof(CallsControllerDispatchListTests)).Start();
 		}
 
@@ -143,11 +147,11 @@ namespace Resgrid.Tests.Web.Services
 			return new CallsController(_callsService.Object, departments.Object, profiles.Object, Mock.Of<IGeoLocationProvider>(), authorization.Object,
 				_queue.Object, Mock.Of<IUsersService>(), units.Object, Mock.Of<IActionLogsService>(), groups.Object, roles.Object, Mock.Of<IProtocolsService>(),
 				Mock.Of<IEventAggregator>(), Mock.Of<ICustomStateService>(), _settings.Object, Mock.Of<IShiftsService>(), Mock.Of<IMappingService>(),
-				Mock.Of<IUserDefinedFieldsService>(), Mock.Of<ICommunicationService>(), Mock.Of<IWeatherAlertService>(), Mock.Of<ICallDispatchStatusService>(),
+				Mock.Of<IUserDefinedFieldsService>(), Mock.Of<ICommunicationService>(), Mock.Of<IWeatherAlertService>(), _dispatchStatuses.Object,
 				Mock.Of<IDispatchRecommendationService>(), Mock.Of<IFeatureToggleService>(), Mock.Of<IDepartmentDataProtectionService>(),
 				Mock.Of<IProtectedReadService>(), protectedWrite.Object, _contacts.Object, Mock.Of<IDispatchScopeService>(),
 				Mock.Of<ICallLocationHistoryService>(), Mock.Of<IPendingCallsService>(), Mock.Of<ICallClosureService>(),
-				new InboundEmailReceiptsService(new MockInboundEmailReceiptsRepository(), TimeProvider.System))
+				new InboundEmailReceiptsService(new MockInboundEmailReceiptsRepository(), TimeProvider.System), _releases.Object)
 			{
 				ControllerContext = new ControllerContext { HttpContext = httpContext }
 			};
@@ -468,6 +472,119 @@ namespace Resgrid.Tests.Web.Services
 				NewCallFieldKeys.DispatchGroups,
 				NewCallFieldKeys.DispatchRoles,
 				NewCallFieldKeys.DispatchUnits);
+		}
+
+		private Call StoredCallWithReleasedUnit()
+		{
+			return new Call
+			{
+				CallId = CallId,
+				DepartmentId = DepartmentId,
+				State = (int)CallStates.Active,
+				Name = "Snoring respirations",
+				NatureOfCall = "Logged for the record",
+				HasBeenDispatched = true,
+				Dispatches = new List<CallDispatch>(),
+				GroupDispatches = new List<CallDispatchGroup>(),
+				RoleDispatches = new List<CallDispatchRole>(),
+				UnitDispatches = new List<CallDispatchUnit>
+				{
+					new CallDispatchUnit { CallDispatchUnitId = 1, CallId = CallId, UnitId = 7, DispatchedOn = new DateTime(2026, 11, 16, 14, 39, 0) },
+					new CallDispatchUnit
+					{
+						CallDispatchUnitId = 2, CallId = CallId, UnitId = 8, DispatchedOn = new DateTime(2026, 11, 16, 14, 39, 0),
+						ReleasedOn = new DateTime(2026, 11, 16, 14, 41, 0), ReleasedByUserId = UserId
+					}
+				}
+			};
+		}
+
+		[Test]
+		public async Task EditCall_keeps_a_released_unit_on_the_record_when_the_list_leaves_it_out()
+		{
+			// The MUG (8) was stood down; an unrelated edit from a client that lists only the ambulance (7) still on the call.
+			_stored = StoredCallWithReleasedUnit();
+
+			var result = await Controller().EditCall(new EditCallInput { Id = CallId.ToString(), Priority = 1, Name = "Snoring respirations", Nature = "Logged for the record", DispatchList = "U:7" },
+				CancellationToken.None);
+
+			result.Result.Should().BeOfType<OkObjectResult>();
+			_stored.UnitDispatches.Select(x => x.UnitId).Should().BeEquivalentTo(new[] { 7, 8 });
+			_stored.UnitDispatches.Single(x => x.UnitId == 8).IsReleased.Should().BeTrue();
+			_dispatchStatuses.Verify(x => x.ApplyReleaseStatusesAsync(It.IsAny<Call>(), It.IsAny<IEnumerable<int>>(), It.IsAny<IEnumerable<int>>(), It.IsAny<CancellationToken>()), Times.Never);
+			_dispatchStatuses.Verify(x => x.ApplyDispatchStatusesAsync(It.IsAny<Call>(), It.IsAny<IEnumerable<int>>(), It.IsAny<IEnumerable<int>>(), It.IsAny<CancellationToken>()), Times.Never);
+			_broadcasts.Should().Be(0);
+		}
+
+		[Test]
+		public async Task EditCall_sends_a_released_unit_back_to_the_call_when_the_list_names_it()
+		{
+			_stored = StoredCallWithReleasedUnit();
+
+			await Controller().EditCall(new EditCallInput { Id = CallId.ToString(), Priority = 1, Name = "Snoring respirations", Nature = "Logged for the record", DispatchList = "U:7|U:8" },
+				CancellationToken.None);
+
+			var mug = _stored.UnitDispatches.Where(x => x.UnitId == 8).Should().ContainSingle().Subject;
+			mug.IsReleased.Should().BeFalse();
+			mug.ReleasedByUserId.Should().BeNull();
+			mug.LastDispatchedOn.Should().NotBeNull();
+			_dispatchStatuses.Verify(x => x.ApplyDispatchStatusesAsync(It.IsAny<Call>(), It.IsAny<IEnumerable<int>>(),
+				It.Is<IEnumerable<int>>(u => u.SequenceEqual(new[] { 8 })), It.IsAny<CancellationToken>()), Times.Once);
+			_broadcasts.Should().Be(1);
+		}
+
+		[Test]
+		public async Task EditCall_removing_every_unit_releases_the_live_one_and_keeps_the_released_record()
+		{
+			_stored = StoredCallWithReleasedUnit();
+
+			await Controller().EditCall(new EditCallInput { Id = CallId.ToString(), Priority = 1, Name = "Snoring respirations", Nature = "Logged for the record", DispatchList = "|" },
+				CancellationToken.None);
+
+			_stored.UnitDispatches.Select(x => x.UnitId).Should().Equal(8);
+			_dispatchStatuses.Verify(x => x.ApplyReleaseStatusesAsync(It.IsAny<Call>(), It.IsAny<IEnumerable<int>>(),
+				It.Is<IEnumerable<int>>(u => u.SequenceEqual(new[] { 7 })), It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		private Call StoredCallWithReleasedMember()
+		{
+			var call = StoredCallWithReleasedUnit();
+			call.Dispatches = new List<CallDispatch>
+			{
+				new CallDispatch { CallId = CallId, UserId = "responder-1" },
+				new CallDispatch { CallId = CallId, UserId = "responder-2" }
+			};
+			call.PersonnelReleases = new List<CallPersonnelRelease>
+			{
+				new CallPersonnelRelease { CallId = CallId, UserId = "responder-2", ReleasedOn = new DateTime(2026, 11, 16, 14, 41, 0) }
+			};
+			return call;
+		}
+
+		[Test]
+		public async Task EditCall_keeps_a_released_member_on_the_record_and_does_not_page_them()
+		{
+			_stored = StoredCallWithReleasedMember();
+
+			await Controller().EditCall(new EditCallInput { Id = CallId.ToString(), Priority = 1, Name = "Snoring respirations", Nature = "Logged for the record", DispatchList = "P:responder-1|U:7" },
+				CancellationToken.None);
+
+			_stored.Dispatches.Select(x => x.UserId).Should().BeEquivalentTo(new[] { "responder-1", "responder-2" });
+			_releases.Verify(x => x.ClearPersonnelReleasesAsync(It.IsAny<int>(), It.IsAny<IEnumerable<string>>(), It.IsAny<CancellationToken>()), Times.Never);
+			_broadcasts.Should().Be(0);
+		}
+
+		[Test]
+		public async Task EditCall_naming_a_released_member_again_sends_them_back()
+		{
+			_stored = StoredCallWithReleasedMember();
+
+			await Controller().EditCall(new EditCallInput { Id = CallId.ToString(), Priority = 1, Name = "Snoring respirations", Nature = "Logged for the record", DispatchList = "P:responder-1|P:responder-2|U:7" },
+				CancellationToken.None);
+
+			_releases.Verify(x => x.ClearPersonnelReleasesAsync(CallId, It.Is<IEnumerable<string>>(u => u.SequenceEqual(new[] { "responder-2" })), It.IsAny<CancellationToken>()), Times.Once);
+			_stored.IsUserReleased("responder-2").Should().BeFalse();
+			_broadcasts.Should().Be(1);
 		}
 	}
 }

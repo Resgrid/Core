@@ -162,7 +162,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Record_View)]
-		public async Task<IActionResult> Index(int? year, string state, int page = 1, int? callId = null)
+		public async Task<IActionResult> Index(int? year, string state, int page = 1, int? callId = null, bool closed = false)
 		{
 			var moduleState = await _cutoverService.GetModuleStateAsync(DepartmentId);
 			if (!moduleState.FlagEnabled)
@@ -180,6 +180,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				SubmissionEnabled = await _neris.IsSubmissionEnabledAsync(DepartmentId),
 				Year = year,
 				StateFilter = state,
+				IncludeClosed = closed,
+				DeletePurgeDays = IncidentReportsService.DeletedPurgeDays(),
 				Page = Math.Max(1, page),
 				States = Enum.GetValues(typeof(RmsRecordState)).Cast<RmsRecordState>().Select(s => new SelectListItem { Value = ((int)s).ToString(), Text = s.ToString() }).ToList()
 			};
@@ -196,10 +198,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			// filtered after paging reported its own length as the total, so a member with scoped visibility saw a
 			// single page of links and could never reach anything older.
 			var visibleGroups = await _recordsAuthorizationService.GetVisibleGroupIdsAsync(UserId, DepartmentId);
+			var states = int.TryParse(state, out var stateValue) ? new List<int> { stateValue } : null;
 			var query = new RmsIncidentReportQuery
 			{
 				Year = year,
-				States = int.TryParse(state, out var stateValue) ? new List<int> { stateValue } : null,
+				States = states,
+				// Cancelled and voided reports are finished with; they stay reachable by picking the state or ticking the box.
+				ExcludeStates = states == null && !closed ? new List<int> { (int)RmsRecordState.Cancelled, (int)RmsRecordState.Voided } : null,
 				VisibleGroupIds = visibleGroups,
 				ViewerUserId = UserId,
 				Skip = (model.Page - 1) * model.PageSize,
@@ -208,6 +213,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Reports = (await _incidentReports.QueryAsync(DepartmentId, query)) ?? new List<RmsIncidentReport>();
 			model.Total = await _incidentReports.CountAsync(DepartmentId, query);
 			model.PersonnelNames = await PersonnelNamesAsync();
+			model.DeletableReportIds = new HashSet<string>(model.Reports.Where(r => MayOfferDelete(r, null, null)).Select(r => r.RmsIncidentReportId), StringComparer.Ordinal);
 
 			model.SelectedCallId = callId;
 
@@ -569,6 +575,75 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		/// <summary>
+		/// Soft-deletes a report from the queue or its details page (IIncidentReportsService.DeleteAsync decides what may go).
+		/// <paramref name="returnTo"/> "Index" sends a refusal back to the queue instead of the details page.
+		/// </summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Record_Void)]
+		public async Task<IActionResult> Delete(string id, string reasonText, string returnTo, CancellationToken cancellationToken)
+		{
+			if (await LoadAuthorizedAsync(id) == null)
+				return NotFound();
+
+			string error;
+			try
+			{
+				await _incidentReports.DeleteAsync(DepartmentId, UserId, id, reasonText, RmsOriginClient.Web, cancellationToken);
+				TempData["RecordsMessage"] = _localizer["IncidentReportDeleted"].Value;
+				return RedirectToAction("Index");
+			}
+			catch (UnauthorizedAccessException) { return Forbid(); }
+			catch (IncidentReportDeleteRefusedException ex) { error = DeleteRefusalMessage(ex.Refusal); }
+			catch (RecordConcurrencyException) { error = _localizer["ConcurrencyError"]; }
+			catch (Exception ex) when (ex is ArgumentException || ex is RecordTransitionException || ex is InvalidOperationException) { error = ex.Message; }
+
+			if (string.Equals(returnTo, "Index", StringComparison.OrdinalIgnoreCase))
+			{
+				TempData["RecordsError"] = error;
+				return RedirectToAction("Index");
+			}
+			return await DetailsWithErrorAsync(id, error);
+		}
+
+		private string DeleteRefusalMessage(IncidentReportDeleteRefusal refusal)
+		{
+			switch (refusal)
+			{
+				case IncidentReportDeleteRefusal.VoidedNeedsDepartmentAdmin: return _localizer["DeleteRefusedVoidedNeedsAdmin"];
+				case IncidentReportDeleteRefusal.ReasonRequired: return _localizer["DeleteRefusedReasonRequired"];
+				case IncidentReportDeleteRefusal.SubmittedExternally: return _localizer["DeleteRefusedSubmittedExternally"];
+				case IncidentReportDeleteRefusal.LegalHold: return _localizer["DeleteRefusedLegalHold"];
+				case IncidentReportDeleteRefusal.PermanentContent: return _localizer["DeleteRefusedPermanentContent"];
+				case IncidentReportDeleteRefusal.AmendmentOpen: return _localizer["DeleteRefusedAmendmentOpen"];
+				default: return _localizer["DeleteRefusedNotDeletable"];
+			}
+		}
+
+		/// <summary>
+		/// Whether to offer Delete for a report. The service decides; this only keeps the button off rows it would refuse
+		/// outright (official records, voided reports for non-admins, anything that reached a destination).
+		/// </summary>
+		private bool MayOfferDelete(RmsIncidentReport report, IEnumerable<RmsRecordGroupScope> scope, IEnumerable<RmsSubmission> submissions)
+		{
+			if (report == null || report.AmendsRevisionId != null || !string.IsNullOrWhiteSpace(report.NerisIncidentId) || !ClaimsAuthorizationHelper.CanVoidRecords())
+				return false;
+			var state = (RmsRecordState)report.State;
+			var deletable = state == RmsRecordState.Cancelled
+				|| state == RmsRecordState.Voided && ClaimsAuthorizationHelper.IsUserDepartmentAdmin()
+				|| RmsLifecycle.CanTransition((RmsLifecyclePreset)report.LifecyclePreset, state, RmsRecordState.Cancelled);
+			if (!deletable)
+				return false;
+			if (submissions != null && submissions.Any(IncidentReportsService.LeftResgrid))
+				return false;
+			// The queue row carries only the latest submission state; anything past Queued means it went out.
+			if (submissions == null && report.LastSubmissionState.HasValue
+				&& report.LastSubmissionState.Value != (int)RmsSubmissionState.Queued && report.LastSubmissionState.Value != (int)RmsSubmissionState.Superseded)
+				return false;
+			return RecordsLifecycleClaims.MayVoidOrCancel(UserId, report.StationGroupId, scope, report.AuthorUserId, report.OwnerUserId, report.ReviewerUserId, report.ApproverUserId);
+		}
+
+		/// <summary>
 		/// Re-reads the call, unit and personnel statuses and Incident Command into the draft (fills blanks, follows sources
 		/// the author never changed, adds units and mutual aid), for a report started while the incident was still running.
 		/// </summary>
@@ -843,6 +918,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				CanAmend = ClaimsAuthorizationHelper.CanAmendRecords(),
 				CanVoid = ClaimsAuthorizationHelper.CanVoidRecords() && RecordsLifecycleClaims.MayVoidOrCancel(UserId, aggregate.Report.StationGroupId, aggregate.GroupScope,
 					aggregate.Report.AuthorUserId, aggregate.Report.OwnerUserId, aggregate.Report.ReviewerUserId, aggregate.Report.ApproverUserId),
+				CanDelete = MayOfferDelete(aggregate.Report, aggregate.GroupScope, aggregate.Submissions ?? new List<RmsSubmission>()) && (analysis?.Analysis == null || string.IsNullOrWhiteSpace(analysis.Analysis.NerisAnalysisId))
+					&& !aggregate.Casualties.Any() && !aggregate.Exposures.Any(),
+				DeletePurgeDays = IncidentReportsService.DeletedPurgeDays(),
 				CanExport = ClaimsAuthorizationHelper.CanExportRecords(),
 				IsDepartmentAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin()
 			};

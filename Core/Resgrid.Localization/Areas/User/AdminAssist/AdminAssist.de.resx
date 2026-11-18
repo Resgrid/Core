@@ -6784,7 +6784,7 @@
     <value>Konfiguration der Einsatznummerierung / Muster</value>
   </data>
   <data name="FieldHelp.CallNumberingConfig.Pattern" xml:space="preserve">
-    <value>Wie Einsatznummern geschrieben werden, z. B. FD-2026-0153: fester Text und die Platzhalter YYYY oder YY, MM, DD und SEQ. Die laufende Nummer beginnt neu, sobald sich das geschriebene Datum ändert. Solange kein Muster gespeichert ist, behalten Einsätze die YY-SEQ-Nummern, die Resgrid immer vergeben hat.</value>
+    <value>Wie Einsatznummern geschrieben werden, z. B. FD-2026-0153: fester Text und die Platzhalter YYYY oder YY, MM, DD, HH (Stunde), MIN (Minute) und SEQ. Die laufende Nummer beginnt neu, sobald sich das geschriebene Datum ändert; Stunde und Minute setzen sie nie zurück. Solange kein Muster gespeichert ist, behalten Einsätze die YY-SEQ-Nummern, die Resgrid immer vergeben hat.</value>
   </data>
   <data name="Field.CallNumberingConfig.SequenceWidth" xml:space="preserve">
     <value>Konfiguration der Einsatznummerierung / Stellenanzahl der laufenden Nummer</value>
@@ -7847,5 +7847,11 @@
   </data>
   <data xml:space="preserve" name="SettingHelp.MappingProviderOverrides">
     <value>Eigene Konten der Abteilung für Routing, Live-Verkehr und Adresssuche, die vor den Anbietern von Resgrid angefragt werden. Gemeldet wird nur, welche Anbieter eingestellt sind, nie die Schlüssel. Werden alle drei auf den Resgrid-Standard zurückgesetzt, wird die Einstellung entfernt.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.DestinationSuggestions">
+    <value>Zielvorschläge</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.DestinationSuggestions">
+    <value>Schlägt das beste Ziel für einen Einsatz und für das Statusziel einer Einheit vor, ermittelt aus den Zielregeln der Abteilung (Kartierung, Zielregeln) und dem Einsatzort, mit Fahrzeit und Entfernung. „Ziel vorschlagen und eintragen“ trägt zusätzlich das beste Ziel in das leere Ziel eines neuen Einsatzes ein; Disponenten und Besatzungen können weiterhin ein anderes wählen. Standardmäßig aus, da jeder Vorschlag Fahrzeiten abfragt.</value>
   </data>
 </root>

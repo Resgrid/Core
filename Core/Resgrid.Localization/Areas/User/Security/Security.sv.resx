@@ -2732,4 +2732,14 @@
   <data name="PermRecordsShareCoordinationBoardsNote" xml:space="preserve">
     <value>Tillåter att dela en samordningstavla med samverkansparter.</value>
   </data>
+  <data name="AuditLogTypeRecurringCallCreated" xml:space="preserve"><value>Återkommande larm skapat</value></data>
+  <data name="AuditLogTypeRecurringCallUpdated" xml:space="preserve"><value>Återkommande larm uppdaterat</value></data>
+  <data name="AuditLogTypeRecurringCallPaused" xml:space="preserve"><value>Återkommande larm pausat</value></data>
+  <data name="AuditLogTypeRecurringCallResumed" xml:space="preserve"><value>Återkommande larm återupptaget</value></data>
+  <data name="AuditLogTypeRecurringCallDeleted" xml:space="preserve"><value>Återkommande larm borttaget</value></data>
+  <data name="AuditLogTypeRecurringCallOccurrenceSkipped" xml:space="preserve"><value>Tillfälle för återkommande larm överhoppat</value></data>
+  <data name="AuditLogTypeRecurringCallOccurrenceRestored" xml:space="preserve"><value>Tillfälle för återkommande larm återställt</value></data>
+  <data name="AuditLogTypeRecurringCallOccurrenceCreated" xml:space="preserve"><value>Tillfälle för återkommande larm skapat</value></data>
+  <data name="AuditLogTypeRecurringCallAlertAcknowledged" xml:space="preserve"><value>Varning för återkommande larm kvitterad</value></data>
+  <data name="AuditLogTypeRecurringCallAlertDismissed" xml:space="preserve"><value>Varning för återkommande larm avfärdad</value></data>
 </root>

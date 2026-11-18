@@ -221,6 +221,64 @@ var resgrid;
 			viewcall.reOpenCall = reOpenCall;
 			// Bound here rather than inline (RESGRID-WEB-1MA); the button renders disabled until now.
 			$('#reOpenCallButton').on('click', reOpenCall).prop('disabled', false);
+
+			// Release (stand down) one unit or member from the open call: the Release buttons (_ViewCallResourceRelease). The
+			// strings come localized and attribute-encoded from the button; they are set as text here, never as HTML.
+			function releaseResource(button) {
+				var btn = $(button);
+				var isUnit = btn.attr('data-kind') === 'unit';
+				var content = document.createElement('div');
+				var text = document.createElement('p');
+				text.textContent = btn.attr('data-text') || '';
+				content.appendChild(text);
+				var label = document.createElement('label');
+				var notify = document.createElement('input');
+				notify.type = 'checkbox';
+				notify.checked = true;
+				notify.style.marginRight = '6px';
+				label.appendChild(notify);
+				label.appendChild(document.createTextNode(btn.attr('data-notify-label') || ''));
+				content.appendChild(label);
+
+				swal({
+					title: btn.attr('data-title') || '',
+					content: content,
+					icon: 'warning',
+					buttons: true,
+					dangerMode: true
+				}).then(function (confirmed) {
+					if (!confirmed)
+						return;
+
+					var failed = btn.attr('data-failed') || '';
+					btn.prop('disabled', true);
+					$.ajax({
+						url: resgrid.absoluteBaseUrl + (isUnit ? '/User/Dispatch/ReleaseUnitFromCall' : '/User/Dispatch/ReleasePersonnelFromCall'),
+						type: 'POST',
+						data: {
+							callId: callId,
+							unitId: isUnit ? btn.attr('data-resource-id') : undefined,
+							userId: isUnit ? undefined : btn.attr('data-resource-id'),
+							notify: notify.checked,
+							__RequestVerificationToken: $('#releaseUnitForm input[name="__RequestVerificationToken"]').val()
+						}
+					}).done(function (data) {
+						if (data && data.success) {
+							window.location.reload();
+						} else {
+							btn.prop('disabled', false);
+							swal(failed, '', 'error');
+						}
+					}).fail(function () {
+						btn.prop('disabled', false);
+						swal(failed, '', 'error');
+					});
+				});
+			}
+			viewcall.releaseResource = releaseResource;
+			$(document).on('click', '.release-resource-button', function () {
+				releaseResource(this);
+			});
 		})(viewcall = dispatch.viewcall || (dispatch.viewcall = {}));
 	})(dispatch = resgrid.dispatch || (resgrid.dispatch = {}));
 })(resgrid || (resgrid = {}));

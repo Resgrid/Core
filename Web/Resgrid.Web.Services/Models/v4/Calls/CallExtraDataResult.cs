@@ -45,6 +45,21 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		public List<DispatchedEventResultData> Dispatches { get; set; }
 
 		/// <summary>
+		/// Units released (stood down) from this call while it stayed open: kept on the call's record but no longer on it, so
+		/// they are left out of <see cref="Dispatches"/> (an older client pre-selecting Dispatches on an edit would otherwise
+		/// send a stood-down unit back to the call). Entries carry <see cref="DispatchedEventResultData.ReleasedOn"/>.
+		/// </summary>
+		public List<DispatchedEventResultData> ReleasedUnits { get; set; }
+
+		/// <summary>
+		/// Members released (stood down) from this call while it stayed open, however they were reached (by name, a dispatched group
+		/// or role, a unit's crew, or a status). Left out of <see cref="Dispatches"/> when dispatched by name; a group or role entry
+		/// stays there, so clients subtract these members from those they show on the call. Entries carry
+		/// <see cref="DispatchedEventResultData.ReleasedOn"/>.
+		/// </summary>
+		public List<DispatchedEventResultData> ReleasedPersonnel { get; set; }
+
+		/// <summary>
 		/// Call priority inforamtion
 		/// </summary>
 		public CallPriorityResultData Priority { get; set; }
@@ -61,6 +76,8 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		{
 			Activity = new List<DispatchedEventResultData>();
 			Dispatches = new List<DispatchedEventResultData>();
+			ReleasedUnits = new List<DispatchedEventResultData>();
+			ReleasedPersonnel = new List<DispatchedEventResultData>();
 			Protocols = new List<CallProtocolResultData>();
 		}
 	}
@@ -107,5 +124,14 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		public string ResponseCodeName { get; set; }
 
 		public string ResponseCodeColor { get; set; }
+
+		/// <summary>
+		/// <see cref="CallExtraDataResultData.ReleasedUnits"/> entries only: when the unit was released from the call, ISO 8601
+		/// UTC ("Z"); null elsewhere.
+		/// </summary>
+		public string ReleasedOn { get; set; }
+
+		/// <summary><see cref="CallExtraDataResultData.ReleasedUnits"/> entries only: who released the unit; null elsewhere.</summary>
+		public string ReleasedBy { get; set; }
 	}
 }

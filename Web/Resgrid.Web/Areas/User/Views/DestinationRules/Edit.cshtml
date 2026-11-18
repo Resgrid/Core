@@ -1,0 +1,157 @@
+@model Resgrid.Web.Areas.User.Models.Mapping.DestinationRuleEditView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.DestinationRules> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.Mapping> mappingLocalizer
+@{
+	var isNew = string.IsNullOrWhiteSpace(Model.DestinationRuleId);
+	ViewBag.Title = "Resgrid | " + (isNew ? localizer["NewRule"] : localizer["EditRule"]);
+	var selectedTypes = new HashSet<string>((Model.PoiTypeIds ?? new List<int>()).Select(x => x.ToString()));
+	var required = new HashSet<string>(Model.RequiredCapabilityIds ?? new List<string>(), StringComparer.OrdinalIgnoreCase);
+	var preferred = new HashSet<string>(Model.PreferredCapabilityIds ?? new List<string>(), StringComparer.OrdinalIgnoreCase);
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@(isNew ? localizer["NewRule"] : localizer["EditRule"])</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+			</li>
+			<li>
+				<a asp-controller="Mapping" asp-action="Index" asp-route-area="User">@mappingLocalizer["MappingHeader"]</a>
+			</li>
+			<li>
+				<a asp-controller="DestinationRules" asp-action="Index" asp-route-area="User">@localizer["PageTitle"]</a>
+			</li>
+			<li class="active">
+				<strong>@(isNew ? localizer["NewRule"] : localizer["EditRule"])</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<form id="destinationRuleForm" class="form-horizontal" method="post" asp-controller="DestinationRules" asp-action="Edit" asp-route-area="User">
+						@Html.AntiForgeryToken()
+						<input type="hidden" asp-for="DestinationRuleId" />
+						<div asp-validation-summary="All" class="text-danger"></div>
+
+						<div class="form-group">
+							<label class="col-sm-2 control-label" asp-for="Name">@localizer["Name"]</label>
+							<div class="col-sm-6">
+								<input type="text" asp-for="Name" class="form-control" maxlength="@DestinationRule.MaxNameLength" required />
+								<span class="help-block">@localizer["RuleNameHelp"]</span>
+							</div>
+						</div>
+
+						<h4>@localizer["AppliesWhen"]</h4>
+						<p class="text-muted">@localizer["AppliesWhenHelp"]</p>
+						<div class="form-group">
+							<label class="col-sm-2 control-label" asp-for="CallTypeId">@localizer["CallType"]</label>
+							<div class="col-sm-4">
+								<select asp-for="CallTypeId" class="form-control">
+									<option value="">@localizer["Any"]</option>
+									@foreach (var option in Model.CallTypes)
+									{
+										<option value="@option.Id" selected="@(Model.CallTypeId?.ToString() == option.Id)">@option.Name</option>
+									}
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label" asp-for="CallPriority">@localizer["Priority"]</label>
+							<div class="col-sm-4">
+								<select asp-for="CallPriority" class="form-control">
+									<option value="">@localizer["Any"]</option>
+									@foreach (var option in Model.Priorities)
+									{
+										<option value="@option.Id" selected="@(Model.CallPriority?.ToString() == option.Id)">@option.Name</option>
+									}
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label" asp-for="UnitTypeId">@localizer["UnitType"]</label>
+							<div class="col-sm-4">
+								<select asp-for="UnitTypeId" class="form-control">
+									<option value="">@localizer["Any"]</option>
+									@foreach (var option in Model.UnitTypes)
+									{
+										<option value="@option.Id" selected="@(Model.UnitTypeId?.ToString() == option.Id)">@option.Name</option>
+									}
+								</select>
+							</div>
+						</div>
+
+						<h4>@localizer["Destination"]</h4>
+						<div class="form-group" id="destinationRuleTypes">
+							<label class="col-sm-2 control-label">@localizer["DestinationTypes"]</label>
+							<div class="col-sm-6">
+								@foreach (var option in Model.DestinationTypes)
+								{
+									<div class="checkbox">
+										<label>
+											<input type="checkbox" name="PoiTypeIds" value="@option.Id" checked="@selectedTypes.Contains(option.Id)" /> @option.Name
+										</label>
+									</div>
+								}
+								<span class="help-block">@localizer["DestinationTypesHelp"]</span>
+							</div>
+						</div>
+						<div class="form-group" id="destinationRuleRequired">
+							<label class="col-sm-2 control-label">@localizer["RequiredCapabilities"]</label>
+							<div class="col-sm-6">
+								@if (Model.Capabilities.Any())
+								{
+									foreach (var option in Model.Capabilities)
+									{
+										<div class="checkbox">
+											<label>
+												<input type="checkbox" name="RequiredCapabilityIds" value="@option.Id" checked="@required.Contains(option.Id)" /> @option.Name
+											</label>
+										</div>
+									}
+									<span class="help-block">@localizer["RequiredCapabilitiesHelp"]</span>
+								}
+								else
+								{
+									<p class="form-control-static text-muted">
+										@localizer["NoCapabilities"]
+										<a asp-controller="Mapping" asp-action="PoiCapabilities" asp-route-area="User">@localizer["ManageCapabilities"]</a>
+									</p>
+								}
+							</div>
+						</div>
+						@if (Model.Capabilities.Any())
+						{
+							<div class="form-group" id="destinationRulePreferred">
+								<label class="col-sm-2 control-label">@localizer["PreferredCapabilities"]</label>
+								<div class="col-sm-6">
+									@foreach (var option in Model.Capabilities)
+									{
+										<div class="checkbox">
+											<label>
+												<input type="checkbox" name="PreferredCapabilityIds" value="@option.Id" checked="@preferred.Contains(option.Id)" /> @option.Name
+											</label>
+										</div>
+									}
+									<span class="help-block">@localizer["PreferredCapabilitiesHelp"]</span>
+								</div>
+							</div>
+						}
+
+						<div class="form-group">
+							<div class="col-sm-offset-2 col-sm-6">
+								<a class="btn btn-default" asp-controller="DestinationRules" asp-action="Index" asp-route-area="User">@localizer["Cancel"]</a>
+								<button type="submit" class="btn btn-primary">@localizer["Save"]</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

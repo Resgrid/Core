@@ -638,6 +638,15 @@
   <data name="AllOfGroupDispatched" xml:space="preserve">
     <value>Tout {0} dépêché</value>
   </data>
+  <data name="ReleaseUnit" xml:space="preserve"><value>Désengager</value></data>
+  <data name="ReleaseUnitTitle" xml:space="preserve"><value>Désengager {0} de cet appel ?</value></data>
+  <data name="ReleaseUnitText" xml:space="preserve"><value>L'unité est retirée de cet appel et reçoit le statut de désengagement du service, sauf si elle est déjà disponible, hors service ou sur un autre appel. L'appel reste ouvert.</value></data>
+  <data name="ReleaseUnitNotify" xml:space="preserve"><value>Prévenir l'unité</value></data>
+  <data name="ReleaseUnitFailed" xml:space="preserve"><value>L'unité n'a pas pu être désengagée.</value></data>
+  <data name="UnitReleasedAt" xml:space="preserve"><value>Désengagée {0}</value></data>
+  <data name="ReleasePersonnelText" xml:space="preserve"><value>La personne est retirée de cet appel et reçoit le statut de désengagement du personnel du service, sauf si elle est déjà disponible, indisponible ou sur un autre appel. L'appel reste ouvert.</value></data>
+  <data name="ReleasePersonnelFailed" xml:space="preserve"><value>La personne n'a pas pu être désengagée.</value></data>
+  <data name="ReleasePersonnelNotify" xml:space="preserve"><value>Prévenir la personne</value></data>
   <data name="AreYouSure" xml:space="preserve">
     <value>Êtes-vous sûr ?</value>
   </data>

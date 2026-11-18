@@ -76,9 +76,9 @@ namespace Resgrid.Tests.Rms
 			ReportsRepo.Setup(r => r.GetByIdForDepartmentAsync(It.IsAny<int>(), It.IsAny<string>()))
 				.ReturnsAsync((int d, string id) => Reports.FirstOrDefault(x => x.DepartmentId == d && x.RmsIncidentReportId == id));
 			ReportsRepo.Setup(r => r.GetByCallAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>()))
-				.ReturnsAsync((int d, int call, string entity) => Reports.FirstOrDefault(x => x.DepartmentId == d && x.CallId == call && x.ReportingEntityId == entity && x.DeletedOn == null));
+				.ReturnsAsync((int d, int call, string entity) => Reports.FirstOrDefault(x => x.DepartmentId == d && x.CallId == call && x.ReportingEntityId == entity && x.DeletedOn == null && x.State != (int)RmsRecordState.Cancelled));
 			ReportsRepo.Setup(r => r.GetByCallAnyEntityAsync(It.IsAny<int>(), It.IsAny<int>()))
-				.ReturnsAsync((int d, int call) => Reports.Where(x => x.DepartmentId == d && x.CallId == call).ToList());
+				.ReturnsAsync((int d, int call) => Reports.Where(x => x.DepartmentId == d && x.CallId == call && x.DeletedOn == null && x.State != (int)RmsRecordState.Cancelled).OrderBy(x => x.CreatedOn).ToList());
 			ReportsRepo.Setup(r => r.GetByNerisIncidentIdAsync(It.IsAny<int>(), It.IsAny<string>()))
 				.ReturnsAsync((int d, string id) => Reports.FirstOrDefault(x => x.DepartmentId == d && x.NerisIncidentId == id));
 			// The state filter is honoured: a fake that ignores it would let a queue-count bug pass unnoticed.
@@ -102,6 +102,38 @@ namespace Resgrid.Tests.Rms
 					row.RowVersion = expected + 1;
 					return true;
 				});
+
+			// Audits mirror RmsAccessAuditsRepository.InsertAsync: written against a deleted or purged report (or a deleted
+			// analysis), the row keeps its identity but loses purpose and detail. Without this a service that audits after
+			// marking the report deleted passes here and loses its audit detail in the real database.
+			Shared.AuditsRepo.Setup(r => r.InsertAsync(It.IsAny<RmsAccessAudit>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((RmsAccessAudit e, CancellationToken c, bool f) =>
+				{
+					var report = Reports.FirstOrDefault(x => x.DepartmentId == e.DepartmentId && x.RmsIncidentReportId == e.RecordId);
+					var analysis = Analyses.FirstOrDefault(x => x.DepartmentId == e.DepartmentId && x.RmsIncidentAnalysisId == e.RecordId);
+					var record = Shared.Records.FirstOrDefault(x => x.DepartmentId == e.DepartmentId && x.RmsOperationalRecordId == e.RecordId);
+					var unavailable = report != null && (report.DeletedOn.HasValue || report.PurgedOn.HasValue)
+						|| analysis != null && analysis.DeletedOn.HasValue
+						|| record != null && (record.DeletedOn.HasValue || record.PurgedOn.HasValue);
+					var stored = !unavailable ? e : new RmsAccessAudit { DepartmentId = e.DepartmentId, RecordId = e.RecordId, RevisionId = e.RevisionId, Action = e.Action,
+						ActorUserId = e.ActorUserId, OriginClient = e.OriginClient, Successful = e.Successful, OccurredOn = e.OccurredOn, Purpose = "Audit for unavailable record" };
+					Audits.Add(stored);
+					return stored;
+				});
+
+			// Worker 43 candidates: closed reports (a never-finalized cancel closes on CancelledOn) and deleted reports past their window
+			ReportsRepo.Setup(r => r.GetRetentionCandidatesAsync(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<int>(), It.IsAny<string>()))
+				.ReturnsAsync((int d, DateTime cutoff, int take, string after) => Reports
+					.Where(x => x.DepartmentId == d && x.DeletedOn == null && x.PurgedOn == null
+						&& new[] { RmsRecordState.Finalized, RmsRecordState.Amended, RmsRecordState.Accepted, RmsRecordState.Voided, RmsRecordState.Cancelled }.Contains((RmsRecordState)x.State)
+						&& (x.FinalizedOn.HasValue && x.FinalizedOn < cutoff || !x.FinalizedOn.HasValue && x.State == (int)RmsRecordState.Cancelled && x.CancelledOn.HasValue && x.CancelledOn < cutoff)
+						&& (after == null || string.CompareOrdinal(x.RmsIncidentReportId, after) > 0))
+					.OrderBy(x => x.RmsIncidentReportId, StringComparer.Ordinal).Take(take).ToList());
+			ReportsRepo.Setup(r => r.GetDeletedPurgeCandidatesAsync(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<int>(), It.IsAny<string>()))
+				.ReturnsAsync((int d, DateTime cutoff, int take, string after) => Reports
+					.Where(x => x.DepartmentId == d && x.DeletedOn.HasValue && x.DeletedOn < cutoff && x.PurgedOn == null
+						&& (after == null || string.CompareOrdinal(x.RmsIncidentReportId, after) > 0))
+					.OrderBy(x => x.RmsIncidentReportId, StringComparer.Ordinal).Take(take).ToList());
 
 			// Child rows (draft rows carry RevisionId null; revision copies carry the revision id)
 			Wire(FactsRepo, Facts, x => x.RmsSourceFactId, x => x.DepartmentId, x => x.RecordId, x => x.RevisionId);
@@ -274,6 +306,8 @@ namespace Resgrid.Tests.Rms
 				|| Scopes.Any(s => s.DepartmentId == departmentId && s.RecordId == r.RmsIncidentReportId && query.VisibleGroupIds.Contains(s.DepartmentGroupId)));
 			if (query?.States != null && query.States.Count > 0)
 				rows = rows.Where(x => query.States.Contains(x.State));
+			else if (query?.ExcludeStates != null && query.ExcludeStates.Count > 0)
+				rows = rows.Where(x => !query.ExcludeStates.Contains(x.State));
 			if (query?.CallId != null)
 				rows = rows.Where(x => x.CallId == query.CallId.Value);
 			if (!string.IsNullOrWhiteSpace(query?.OwnerUserId))
@@ -308,6 +342,8 @@ namespace Resgrid.Tests.Rms
 				.ReturnsAsync((T e, CancellationToken c, bool f) => { rows.RemoveAll(x => id(x) == id(e)); rows.Add(e); return e; });
 			repo.Setup(r => r.GetForRecordAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
 				.ReturnsAsync((int d, string rec, string rev) => (IEnumerable<T>)rows.Where(x => dept(x) == d && record(x) == rec && revision(x) == rev).ToList());
+			repo.Setup(r => r.GetForRevisionsAsync(It.IsAny<int>(), It.IsAny<IEnumerable<string>>()))
+				.ReturnsAsync((int d, IEnumerable<string> revs) => (IEnumerable<T>)rows.Where(x => dept(x) == d && revision(x) != null && revs.Contains(revision(x))).ToList());
 			repo.Setup(r => r.DeleteDraftForRecordAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync((int d, string rec, CancellationToken c) => rows.RemoveAll(x => dept(x) == d && record(x) == rec && revision(x) == null));
 		}

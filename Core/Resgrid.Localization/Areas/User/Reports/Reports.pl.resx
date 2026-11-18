@@ -329,6 +329,9 @@
   <data name="CallUnitTimesClearedHeader" xml:space="preserve">
     <value>Zwolniona</value>
   </data>
+  <data name="CallUnitTimesReleasedHeader" xml:space="preserve">
+    <value>Odwołana</value>
+  </data>
   <data name="CallUnitTimesSourceHeader" xml:space="preserve">
     <value>Powiązane przez</value>
   </data>

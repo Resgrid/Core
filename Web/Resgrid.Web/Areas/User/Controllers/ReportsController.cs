@@ -663,7 +663,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var csv = new StringBuilder();
 			csv.AppendLine(string.Join(",", new[] { "Call Number", "Call Name", "Call Type", "Logged On", "Closed On", "Unit", "Unit Type", "Group",
-				"Dispatched", "En Route", "On Scene", "Staging", "Cleared", "End of Commitment", "Committed Minutes", "Linked By" }
+				"Dispatched", "En Route", "On Scene", "Staging", "Cleared", "Released", "End of Commitment", "Committed Minutes", "Linked By" }
 				.Select(h => CsvCell(HttpContext.WithDepartmentTerms(h, "Reports")))));
 
 			foreach (var call in model.Calls)
@@ -674,7 +674,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					{
 						call.Number, call.Name, call.Type, Time(call.LoggedOn), Time(call.ClosedOn), unit.UnitName, unit.UnitType, unit.Group,
 						Time(unit.Times.DispatchedOn), Time(unit.Times.EnrouteOn), Time(unit.Times.OnSceneOn), Time(unit.Times.StagingOn),
-						Time(unit.Times.ClearedOn), Time(unit.Times.InServiceOn), Minutes(unit.Times.CommittedSeconds), unit.Times.Source.ToString()
+						Time(unit.Times.ClearedOn), Time(unit.Times.ReleasedOn), Time(unit.Times.InServiceOn), Minutes(unit.Times.CommittedSeconds), unit.Times.Source.ToString()
 					}.Select(CsvCell)));
 				}
 			}
@@ -2459,7 +2459,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				{
 					if (callData.Dispatches != null && callData.Dispatches.Any())
 					{
-						foreach (var dispatch in callData.Dispatches)
+						// Resources released (stood down) from the call are not on it any more.
+						foreach (var dispatch in callData.Dispatches.Where(x => !callData.IsUserReleased(x.UserId)))
 						{
 							var person = personnel.FirstOrDefault(x => x.UserId == dispatch.UserId);
 
@@ -2478,7 +2479,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 					if (callData.UnitDispatches != null && callData.UnitDispatches.Any())
 					{
-						foreach (var disaptch in callData.UnitDispatches)
+						foreach (var disaptch in callData.GetActiveUnitDispatches())
 						{
 							var unit = units.FirstOrDefault(x => x.UnitId == disaptch.UnitId);
 

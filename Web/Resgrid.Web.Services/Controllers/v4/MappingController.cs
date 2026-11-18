@@ -906,6 +906,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 					Poi = ConvertPoiData(destination.Poi, destination.Poi.Type),
 					DistanceMeters = Math.Round(destination.DistanceMeters),
 					TravelSeconds = destination.TravelSeconds >= 0 ? Math.Round(destination.TravelSeconds) : -1,
+					TravelDistanceMeters = destination.TravelDistanceMeters >= 0 ? Math.Round(destination.TravelDistanceMeters) : -1,
 					CanProvide = destination.CanProvide
 				});
 			}
@@ -915,6 +916,109 @@ namespace Resgrid.Web.Services.Controllers.v4
 			ResponseHelper.PopulateV4ResponseData(result);
 
 			return Ok(result);
+		}
+
+		/// <summary>
+		/// The destinations to suggest for a call, or for a unit travelling for one, from the department's destination rules
+		/// (call type, priority and the unit's type say which destination types are allowed and which capabilities are required
+		/// or preferred): those meeting the requirements first (diversion after them, missing a capability next, closed last),
+		/// the closest routed. <c>SuggestedPoiId</c> is the best one that meets the requirements. While the department's
+		/// destination suggestions are off, <c>Mode</c> is 0 and nothing is returned or routed.
+		/// </summary>
+		/// <param name="latitude">Origin latitude (the incident location, or the unit's position).</param>
+		/// <param name="longitude">Origin longitude.</param>
+		/// <param name="type">The call type name; omit to take the call's (with callId).</param>
+		/// <param name="priority">The call priority (the call's Priority value); omit to take the call's (with callId).</param>
+		/// <param name="callId">The call the destination is for; supplies its type and priority when not given.</param>
+		/// <param name="unitId">The travelling unit: its type's rules, travel mode and vehicle limits apply.</param>
+		/// <param name="take">How many to return (1 to 50, default 10).</param>
+		/// <param name="cancellationToken">Request cancellation.</param>
+		[HttpGet("GetSuggestedDestinations")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[Authorize(Policy = ResgridResources.Department_View)]
+		public async Task<ActionResult<SuggestedDestinationsResult>> GetSuggestedDestinations(double latitude, double longitude, string type = null, int? priority = null,
+			int? callId = null, int? unitId = null, int take = 10, CancellationToken cancellationToken = default)
+		{
+			if (double.IsNaN(latitude) || double.IsNaN(longitude) || Math.Abs(latitude) > 90 || Math.Abs(longitude) > 180)
+				return BadRequest();
+
+			var request = new DestinationSuggestionRequest
+			{
+				DepartmentId = DepartmentId,
+				Latitude = latitude,
+				Longitude = longitude,
+				CallType = type,
+				CallPriority = priority,
+				UnitId = unitId,
+				MaxResults = take
+			};
+
+			if (callId.HasValue && callId.Value > 0 && (string.IsNullOrWhiteSpace(type) || !priority.HasValue))
+			{
+				var call = await _callsService.GetCallByIdAsync(callId.Value);
+				if (call != null && call.DepartmentId == DepartmentId && await _authorizationService.CanUserViewCallAsync(UserId, call.CallId))
+				{
+					if (string.IsNullOrWhiteSpace(type))
+					{
+						request.CallTypeId = call.CallTypeId;
+						request.CallType = call.Type;
+					}
+
+					request.CallPriority ??= call.Priority;
+				}
+			}
+
+			var suggestions = await _nearestDestinationService.SuggestDestinationsAsync(request, cancellationToken);
+			var result = new SuggestedDestinationsResult();
+			result.Data.Mode = (int)suggestions.Mode;
+			result.Data.PreferredWithinMinutes = suggestions.PreferredWithinMinutes;
+			result.Data.SuggestedPoiId = suggestions.SuggestedPoiId;
+			result.Data.Requirements = ConvertDestinationRequirements(suggestions.Requirements);
+
+			foreach (var destination in suggestions.Destinations)
+			{
+				result.Data.Destinations.Add(new SuggestedDestinationResultData
+				{
+					Poi = ConvertPoiData(destination.Poi, destination.Poi.Type),
+					DistanceMeters = Math.Round(destination.DistanceMeters),
+					TravelSeconds = destination.TravelSeconds >= 0 ? Math.Round(destination.TravelSeconds) : -1,
+					TravelDistanceMeters = destination.TravelDistanceMeters >= 0 ? Math.Round(destination.TravelDistanceMeters) : -1,
+					CanProvide = destination.CanProvide,
+					Status = (int)destination.Status,
+					MeetsRequirements = destination.MeetsRequirements,
+					MissingCapabilityIds = destination.MissingCapabilityIds?.ToList() ?? new List<string>(),
+					PreferredCapabilityIds = destination.PreferredCapabilityIds?.ToList() ?? new List<string>(),
+					Tier = destination.Tier
+				});
+			}
+
+			result.PageSize = result.Data.Destinations.Count;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
+		}
+
+		/// <summary>The resolved destination requirements as the v4 shape.</summary>
+		public static DestinationRequirementsResultData ConvertDestinationRequirements(DestinationRequirements requirements)
+		{
+			var data = new DestinationRequirementsResultData();
+			if (requirements == null)
+				return data;
+
+			data.PoiTypeIds = requirements.PoiTypeIds?.ToList() ?? new List<int>();
+			data.RequiredCapabilityIds = requirements.RequiredCapabilityIds?.ToList() ?? new List<string>();
+			data.PreferredCapabilityIds = requirements.PreferredCapabilityIds?.ToList() ?? new List<string>();
+			data.Rules = (requirements.AppliedRules ?? new List<DestinationRule>())
+				.Select(x => new DestinationRuleRefResultData { DestinationRuleId = x.DestinationRuleId, Name = x.Name })
+				.ToList();
+			data.SetAsideRules = (requirements.SetAsideRules ?? new List<SetAsideDestinationRule>())
+				.Where(x => x?.Rule != null)
+				.Select(x => new DestinationRuleRefResultData { DestinationRuleId = x.Rule.DestinationRuleId, Name = x.Rule.Name, Reason = x.Reason.ToString() })
+				.ToList();
+
+			return data;
 		}
 
 		/// <summary>

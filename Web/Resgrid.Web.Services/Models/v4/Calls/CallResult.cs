@@ -295,6 +295,12 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		public bool CheckInTimersEnabled { get; set; }
 
 		/// <summary>
+		/// The recurring call schedule that created this call (RecurringCalls/GetRecurringCall), or null. A pending call with one was
+		/// held because nobody chosen was available; see RecurringCalls/GetRecurringCallAlerts.
+		/// </summary>
+		public int? RecurringCallId { get; set; }
+
+		/// <summary>
 		/// Contacts linked to this call (primary first) with pre-plan / alert / hazard indicators.
 		/// Populated by GetCall and GetActiveCalls; empty on other list endpoints. Use
 		/// GetCallSiteInfo for the full site knowledge. Contacts plan Phase A, decision 3a.

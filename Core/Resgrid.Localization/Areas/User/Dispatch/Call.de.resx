@@ -638,6 +638,15 @@
   <data name="AllOfGroupDispatched" xml:space="preserve">
     <value>Alle von {0} alarmiert</value>
   </data>
+  <data name="ReleaseUnit" xml:space="preserve"><value>Freigeben</value></data>
+  <data name="ReleaseUnitTitle" xml:space="preserve"><value>{0} aus diesem Einsatz freigeben?</value></data>
+  <data name="ReleaseUnitText" xml:space="preserve"><value>Die Einheit wird aus diesem Einsatz genommen und erhält den Freigabestatus der Organisation, sofern sie nicht bereits verfügbar, außer Dienst oder in einem anderen Einsatz ist. Der Einsatz bleibt offen.</value></data>
+  <data name="ReleaseUnitNotify" xml:space="preserve"><value>Einheit benachrichtigen</value></data>
+  <data name="ReleaseUnitFailed" xml:space="preserve"><value>Die Einheit konnte nicht freigegeben werden.</value></data>
+  <data name="UnitReleasedAt" xml:space="preserve"><value>Freigegeben {0}</value></data>
+  <data name="ReleasePersonnelText" xml:space="preserve"><value>Die Person wird aus diesem Einsatz genommen und erhält den Freigabestatus der Organisation für Personal, sofern sie nicht bereits verfügbar, nicht verfügbar oder in einem anderen Einsatz ist. Der Einsatz bleibt offen.</value></data>
+  <data name="ReleasePersonnelFailed" xml:space="preserve"><value>Die Person konnte nicht freigegeben werden.</value></data>
+  <data name="ReleasePersonnelNotify" xml:space="preserve"><value>Person benachrichtigen</value></data>
   <data name="AreYouSure" xml:space="preserve">
     <value>Sind Sie sicher?</value>
   </data>

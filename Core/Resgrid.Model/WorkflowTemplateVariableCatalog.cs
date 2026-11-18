@@ -1060,6 +1060,73 @@ namespace Resgrid.Model
 					});
 					break;
 
+				case WorkflowTriggerEventType.RecurringCallScheduleCreated:
+				case WorkflowTriggerEventType.RecurringCallScheduleUpdated:
+				case WorkflowTriggerEventType.RecurringCallSchedulePaused:
+				case WorkflowTriggerEventType.RecurringCallScheduleResumed:
+				case WorkflowTriggerEventType.RecurringCallScheduleDeleted:
+					list.AddRange(new[]
+					{
+						new TemplateVariableDescriptor("recurring_call.id", "Recurring call (schedule) ID", "int", false),
+						new TemplateVariableDescriptor("recurring_call.name", "Schedule name (the name of every call it creates)", "string", false),
+						new TemplateVariableDescriptor("recurring_call.change", "What changed: Created, Updated, Paused, Resumed or Deleted", "string", false),
+						new TemplateVariableDescriptor("recurring_call.nature", "Nature of the calls it creates", "string", false),
+						new TemplateVariableDescriptor("recurring_call.address", "Address of the calls it creates", "string", false),
+						new TemplateVariableDescriptor("recurring_call.facility_name", "Pickup facility", "string", false),
+						new TemplateVariableDescriptor("recurring_call.destination_name", "Destination facility", "string", false),
+						new TemplateVariableDescriptor("recurring_call.contact_name", "The schedule contact (who arranged it)", "string", false),
+						new TemplateVariableDescriptor("recurring_call.contact_number", "The schedule contact phone number", "string", false),
+						new TemplateVariableDescriptor("recurring_call.starts_on", "First date it runs (yyyy-MM-dd, department time)", "string", false),
+						new TemplateVariableDescriptor("recurring_call.ends_on", "Last date it runs (yyyy-MM-dd), empty when open-ended", "string", false),
+						new TemplateVariableDescriptor("recurring_call.times", "Times of day it runs (HH:mm, comma-separated)", "string", false),
+						new TemplateVariableDescriptor("recurring_call.mode", "Automatic (the system creates and sends each call) or Dispatcher", "string", false),
+						new TemplateVariableDescriptor("recurring_call.use_run_card", "True when matching run card resources are added", "bool", false),
+						new TemplateVariableDescriptor("recurring_call.is_active", "False while paused or deleted", "bool", false),
+						new TemplateVariableDescriptor("recurring_call.pause_reason", "Why it was paused", "string", false),
+						new TemplateVariableDescriptor("recurring_call.resume_on", "Date it resumes on by itself (yyyy-MM-dd)", "string", false),
+						new TemplateVariableDescriptor("recurring_call.next_occurrence_on", "Next occurrence still to come (UTC)", "datetime", false),
+					});
+					break;
+
+				case WorkflowTriggerEventType.RecurringCallOccurrenceCreated:
+				case WorkflowTriggerEventType.RecurringCallOccurrenceSkipped:
+				case WorkflowTriggerEventType.RecurringCallOccurrenceDispatched:
+					list.AddRange(new[]
+					{
+						new TemplateVariableDescriptor("occurrence.recurring_call_id", "Recurring call (schedule) ID", "int", false),
+						new TemplateVariableDescriptor("occurrence.name", "Schedule name", "string", false),
+						new TemplateVariableDescriptor("occurrence.change", "Created, Skipped or Dispatched", "string", false),
+						new TemplateVariableDescriptor("occurrence.occurrence_on", "When the occurrence is due (UTC)", "datetime", false),
+						new TemplateVariableDescriptor("occurrence.call_id", "Call ID (0 when skipped)", "int", false),
+						new TemplateVariableDescriptor("occurrence.call_number", "Call number", "string", false),
+						new TemplateVariableDescriptor("occurrence.by_dispatcher", "True when a dispatcher created or sent it by hand", "bool", false),
+						new TemplateVariableDescriptor("occurrence.unit_count", "Units on the call", "int", false),
+						new TemplateVariableDescriptor("occurrence.personnel_count", "Members dispatched directly", "int", false),
+						new TemplateVariableDescriptor("occurrence.group_count", "Groups dispatched", "int", false),
+						new TemplateVariableDescriptor("occurrence.role_count", "Roles dispatched", "int", false),
+						new TemplateVariableDescriptor("occurrence.unavailable_count", "Chosen units and members left off as not available", "int", false),
+						new TemplateVariableDescriptor("occurrence.run_card_applied", "True when a run card added resources", "bool", false),
+					});
+					break;
+
+				case WorkflowTriggerEventType.RecurringCallAlertRaised:
+				case WorkflowTriggerEventType.RecurringCallAlertResolved:
+					list.AddRange(new[]
+					{
+						new TemplateVariableDescriptor("alert.id", "Alert ID", "string", false),
+						new TemplateVariableDescriptor("alert.recurring_call_id", "Recurring call (schedule) ID", "int", false),
+						new TemplateVariableDescriptor("alert.name", "Schedule name", "string", false),
+						new TemplateVariableDescriptor("alert.kind", "CreateFailed, Missed, NoResources, ResourcesUnavailable or DispatchDue", "string", false),
+						new TemplateVariableDescriptor("alert.occurrence_on", "When the occurrence is due (UTC)", "datetime", false),
+						new TemplateVariableDescriptor("alert.call_id", "Call ID (0 when no call)", "int", false),
+						new TemplateVariableDescriptor("alert.reason", "NoneChosen, NoneAvailable or SaveFailed, when known", "string", false),
+						new TemplateVariableDescriptor("alert.unavailable_unit_count", "Chosen units that were not available", "int", false),
+						new TemplateVariableDescriptor("alert.unavailable_personnel_count", "Chosen members who were not available", "int", false),
+						new TemplateVariableDescriptor("alert.resolution", "How it was closed (Dispatched, Dismissed, Skipped, CallClosed, CallCreated, Expired, ScheduleDeleted)", "string", false),
+						new TemplateVariableDescriptor("alert.raised", "True when raised, false when closed", "bool", false),
+					});
+					break;
+
 				case WorkflowTriggerEventType.StationCoverageGapDetected:
 					list.AddRange(new[]
 					{

@@ -55,6 +55,6 @@ def terminology(terms: dict[str, dict[str, str] | str]) -> str:
 
 
 def call_numbering(pattern: str, width: int) -> str:
-    """CallNumbering {1 Pattern, 2 SequenceWidth, ...}; tokens {YYYY} {YY} {MM} {DD} {SEQ}."""
+    """CallNumbering {1 Pattern, 2 SequenceWidth, ...}; tokens {YYYY} {YY} {MM} {DD} {HH} {MIN} {SEQ}."""
     payload = _field_string(1, pattern) + _varint(2 << 3) + _varint(width)
     return base64.b64encode(payload).decode('ascii')

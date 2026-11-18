@@ -99,9 +99,10 @@ namespace Resgrid.Services.IncidentLogistics
 				if (call == null || call.DepartmentId != actor.DepartmentId)
 					continue;
 				call = await _calls.PopulateCallData(call, true, false, false, false, true, false, false, false, false);
-				foreach (var dispatch in call.Dispatches ?? new List<CallDispatch>())
+				// Resources released (stood down) from the call are not working it, so they are not offered for enrollment.
+				foreach (var dispatch in (call.Dispatches ?? new List<CallDispatch>()).Where(x => !call.IsUserReleased(x.UserId)))
 					Person(dispatch.UserId, "Dispatch", dispatch.DispatchedOn);
-				foreach (var dispatch in call.UnitDispatches ?? new List<CallDispatchUnit>())
+				foreach (var dispatch in call.GetActiveUnitDispatches())
 					UnitRow(dispatch.UnitId, "Dispatch", dispatch.DispatchedOn);
 
 				foreach (var assignment in await _incidentCommand.GetAssignmentsForCallAsync(actor.DepartmentId, callId) ?? new List<ResourceAssignment>())

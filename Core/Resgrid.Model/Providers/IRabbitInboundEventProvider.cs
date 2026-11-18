@@ -44,5 +44,8 @@ namespace Resgrid.Model.Providers
 
 		/// <summary>A navigating unit's live ETA changed or ended (department id, unit id, ids-and-state payload without the ETA).</summary>
 		void RegisterForUnitNavigationEvents(Func<int, string, string, Task> unitNavigationEvent);
+
+		/// <summary>Recurring call alerts changed (department id, schedule id, payload { alertId, kind, raised }).</summary>
+		void RegisterForRecurringCallAlertsEvents(Func<int, string, string, Task> recurringCallAlertsEvent);
 	}
 }

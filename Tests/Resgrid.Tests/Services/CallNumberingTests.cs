@@ -43,6 +43,9 @@ namespace Resgrid.Tests.Services
 		[TestCase("CAD.{YYYY}.{MM}.{SEQ}", 1, "CAD.2026.10.7")]
 		[TestCase("{SEQ}", 6, "000007")]
 		[TestCase("{yyyy}_{seq}", 2, "2026_07")]
+		[TestCase("{DD}-{MM}-{YYYY}-{HH}:{MIN}-{SEQ}", 1, "06-10-2026-14:30-7")]
+		[TestCase("{YYYY}{MM}{DD}{HH}{MIN}/{SEQ}", 3, "202610061430/007")]
+		[TestCase("{SEQ}-{yy}{mm}{dd}.{hh}{min}", 2, "07-261006.1430")]
 		public void Patterns_write_their_date_parts_around_the_sequence(string pattern, int width, string expected)
 		{
 			CallNumberFormat.Resolve(pattern, width, new DateTime(2026, 10, 6, 14, 30, 0)).Format(7).Should().Be(expected);
@@ -59,6 +62,14 @@ namespace Resgrid.Tests.Services
 		[TestCase("FD#{SEQ}")]
 		[TestCase("{GROUP}-{SEQ}")]
 		[TestCase("{SEQ}-ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")]
+		[TestCase("{HH}-{SEQ}")]
+		[TestCase("{YYYY}{MM}-{HH}-{SEQ}")]
+		[TestCase("{YYYY}{MM}{DD}-{MIN}-{SEQ}")]
+		[TestCase("{YYYY}{MM}{DD}-{HH}{HH}-{SEQ}")]
+		[TestCase("{DD}-{MM}-{YYYY}-{HH}:{MM}")]
+		[TestCase("{DD}-{MM}-{YYYY}-{HH}:{MM}-{SEQ}")]
+		[TestCase("FD?{SEQ}")]
+		[TestCase("{YYYY}{MM}{DD}-{H}-{SEQ}")]
 		public void Invalid_patterns_are_refused(string pattern)
 		{
 			CallNumberFormat.IsValid(pattern).Should().BeFalse();
@@ -76,9 +87,60 @@ namespace Resgrid.Tests.Services
 		[TestCase("{YY}-{SEQ}", CallNumberResetPeriod.Yearly)]
 		[TestCase("{YYYY}{MM}-{SEQ}", CallNumberResetPeriod.Monthly)]
 		[TestCase("{YYYY}{MM}{DD}-{SEQ}", CallNumberResetPeriod.Daily)]
+		[TestCase("{DD}-{MM}-{YYYY}-{HH}:{MIN}-{SEQ}", CallNumberResetPeriod.Daily)]
 		public void The_finest_date_part_decides_when_the_sequence_restarts(string pattern, CallNumberResetPeriod period)
 		{
 			CallNumberFormat.ResetPeriod(pattern).Should().Be(period);
+		}
+
+		[Test]
+		public void The_time_of_day_is_written_into_the_number_but_the_sequence_is_the_days()
+		{
+			const string pattern = "{DD}-{MM}-{YYYY}-{HH}:{MIN}-{SEQ}";
+			var morning = CallNumberFormat.Resolve(pattern, 1, new DateTime(2026, 11, 16, 0, 5, 0));
+			var evening = CallNumberFormat.Resolve(pattern, 1, new DateTime(2026, 11, 16, 19, 53, 0));
+
+			evening.Format(14).Should().Be("16-11-2026-19:53-14");
+			morning.Format(1).Should().Be("16-11-2026-00:05-1", "the hour is written 00 to 23, always two digits");
+			evening.Key.Should().Be(morning.Key, "every call that day shares one sequence");
+			evening.Key.Should().Be("16-11-2026-{HH}:{MIN}-#");
+			evening.SearchPrefix.Should().Be("16-11-2026-??:??-");
+			evening.SearchPrefix.Length.Should().Be(evening.Prefix.Length, "the seed scan reads the sequence from the rendered number's length");
+			evening.PeriodStart.Should().Be(new DateTime(2026, 11, 16));
+			evening.PeriodEnd.Should().Be(new DateTime(2026, 11, 17));
+			CallNumberFormat.Resolve(pattern, 1, new DateTime(2026, 11, 17, 0, 0, 0)).Key.Should().Be("17-11-2026-{HH}:{MIN}-#");
+		}
+
+		[Test]
+		public void A_time_after_the_sequence_stays_out_of_the_key_too()
+		{
+			var scope = CallNumberFormat.Resolve("{YYYY}{MM}{DD}-{SEQ}-{HH}{MIN}", 3, new DateTime(2026, 11, 16, 7, 9, 0));
+
+			scope.Format(2).Should().Be("20261116-002-0709");
+			scope.Key.Should().Be("20261116-#-{HH}{MIN}");
+			scope.SearchSuffix.Should().Be("-????");
+		}
+
+		[Test]
+		public void A_pattern_without_a_time_keeps_its_scope_key()
+		{
+			// Counter rows are keyed by this text; it must read exactly as before the time of day was added.
+			var scope = CallNumberFormat.Resolve("FD{YYYY}{MM}{DD}-{SEQ}", 4, new DateTime(2026, 11, 16, 19, 53, 0));
+
+			scope.Key.Should().Be("FD20261116-#");
+			scope.SearchPrefix.Should().Be(scope.Prefix);
+			scope.SearchSuffix.Should().Be(scope.Suffix);
+		}
+
+		[TestCase("{DD}-{MM}-{YYYY}-{HH}:{MIN}-{SEQ}", false)]
+		[TestCase("{YYYY}{MM}{DD}{HH}-{SEQ}", false)]
+		[TestCase("FD:{YYYY}-{SEQ}", false)]
+		[TestCase("FD-{YYYY}-{SEQ}", true)]
+		public void Document_numbers_take_the_call_grammar_without_the_time_of_day(string pattern, bool valid)
+		{
+			CallNumberFormat.IsValid(pattern).Should().BeTrue();
+			CallNumberFormat.IsValidWithoutTime(pattern).Should().Be(valid);
+			DocumentNumbering.IsValid(DocumentNumberKinds.Find(DocumentNumberKinds.WorkOrder), pattern).Should().Be(valid);
 		}
 
 		[Test]
@@ -139,6 +201,8 @@ namespace Resgrid.Tests.Services
 		[TestCase("{YY}{MM}{DD}{SEQ}", "26102310,2610239,2610241,2609309", "2609309,2610239,26102310,2610241")]
 		[TestCase("CAD.{YYYY}.{MM}.{SEQ}", "CAD.2026.10.10,CAD.2026.09.12,CAD.2026.10.7", "CAD.2026.09.12,CAD.2026.10.7,CAD.2026.10.10")]
 		[TestCase("{SEQ}", "100,9,10", "9,10,100")]
+		[TestCase("{DD}-{MM}-{YYYY}-{HH}:{MIN}-{SEQ}", "16-11-2026-19:53-14,01-12-2026-08:00-1,16-11-2026-09:10-2,15-11-2026-23:59-30,16-11-2026-21:00-15",
+			"15-11-2026-23:59-30,16-11-2026-09:10-2,16-11-2026-19:53-14,16-11-2026-21:00-15,01-12-2026-08:00-1")]
 		public void Custom_numbers_sort_in_the_order_they_were_issued(string pattern, string numbers, string expected)
 		{
 			// ',' is never a pattern literal, so it can separate the numbers here.
@@ -352,6 +416,70 @@ namespace Resgrid.Tests.Services
 			(await _service.AllocateCallNumberAsync(Dept, new DateTime(2026, 10, 6, 8, 0, 0))).Should().Be("20261006-001");
 			(await _service.AllocateCallNumberAsync(Dept, new DateTime(2026, 10, 6, 23, 0, 0))).Should().Be("20261006-002");
 			(await _service.AllocateCallNumberAsync(Dept, new DateTime(2026, 10, 7, 0, 5, 0))).Should().Be("20261007-001");
+		}
+
+		[Test]
+		public async Task A_pattern_with_the_time_writes_each_calls_time_and_counts_the_day()
+		{
+			_saved = new CallNumberingConfig { Pattern = "{DD}-{MM}-{YYYY}-{HH}:{MIN}-{SEQ}", SequenceWidth = 1 };
+
+			(await _service.AllocateCallNumberAsync(Dept, new DateTime(2026, 11, 16, 19, 53, 0))).Should().Be("16-11-2026-19:53-1");
+			(await _service.AllocateCallNumberAsync(Dept, new DateTime(2026, 11, 16, 19, 53, 40))).Should().Be("16-11-2026-19:53-2", "two calls in the same minute still get their own numbers");
+			(await _service.AllocateCallNumberAsync(Dept, new DateTime(2026, 11, 16, 21, 4, 0))).Should().Be("16-11-2026-21:04-3");
+			(await _service.AllocateCallNumberAsync(Dept, new DateTime(2026, 11, 17, 0, 1, 0))).Should().Be("17-11-2026-00:01-1");
+			_sequences.Rows.Keys.Should().BeEquivalentTo(new[] { "16-11-2026-{HH}:{MIN}-#", "17-11-2026-{HH}:{MIN}-#" }, "one counter per day, not per minute");
+		}
+
+		[Test]
+		public async Task A_pattern_with_the_time_writes_the_departments_local_time()
+		{
+			_department.TimeZone = "W. Europe Standard Time";
+			_saved = new CallNumberingConfig { Pattern = "{DD}-{MM}-{YYYY}-{HH}:{MIN}-{SEQ}", SequenceWidth = 1 };
+
+			// 18:53 UTC on 16 November is 19:53 in Brussels (CET, UTC+1); 23:30 UTC is already 17 November there.
+			(await _service.AllocateCallNumberAsync(Dept, new DateTime(2026, 11, 16, 18, 53, 0, DateTimeKind.Utc))).Should().Be("16-11-2026-19:53-1");
+			(await _service.AllocateCallNumberAsync(Dept, new DateTime(2026, 11, 16, 23, 30, 0, DateTimeKind.Utc))).Should().Be("17-11-2026-00:30-1");
+		}
+
+		[Test]
+		public async Task A_time_pattern_carries_on_from_numbers_already_issued_that_day_whatever_time_they_wrote()
+		{
+			_saved = new CallNumberingConfig { Pattern = "{DD}-{MM}-{YYYY}-{HH}:{MIN}-{SEQ}", SequenceWidth = 1 };
+			Issued("16-11-2026-08:12-1", new DateTime(2026, 11, 16, 8, 12, 0));
+			Issued("16-11-2026-11:40-2", new DateTime(2026, 11, 16, 11, 40, 0), deleted: true);
+			Issued("15-11-2026-22:00-9", new DateTime(2026, 11, 15, 22, 0, 0));
+
+			(await _service.GetNextAsync(Dept, null, new DateTime(2026, 11, 16, 19, 53, 0))).NextNumber.Should().Be("16-11-2026-19:53-3");
+			(await _service.AllocateCallNumberAsync(Dept, new DateTime(2026, 11, 16, 19, 53, 0))).Should().Be("16-11-2026-19:53-3");
+		}
+
+		[Test]
+		public async Task A_raised_next_number_shown_a_minute_earlier_still_applies_to_a_time_pattern()
+		{
+			_saved = new CallNumberingConfig { Pattern = "{DD}-{MM}-{YYYY}-{HH}:{MIN}-{SEQ}", SequenceWidth = 1 };
+			// Shown at midnight, saved now: a different minute (and hour) of the same day.
+			var shown = await _service.GetNextAsync(Dept, null, DateTime.UtcNow.Date);
+
+			var result = await _service.SaveAsync(Dept, "admin", new CallNumberingUpdate { Pattern = _saved.Pattern, SequenceWidth = 1, ScopeKey = shown.ScopeKey, NextSequence = 40 });
+
+			result.NextNotApplied.Should().BeFalse("the scope is the day, so the page's key does not go stale each minute");
+			(await _service.GetNextAsync(Dept, null, DateTime.UtcNow)).NextSequence.Should().Be(40);
+		}
+
+		[Test]
+		public async Task Renumbering_a_time_pattern_keeps_each_calls_own_time()
+		{
+			_saved = new CallNumberingConfig { Pattern = "{YYYY}{MM}{DD}-{HH}{MIN}-{SEQ}", SequenceWidth = 2 };
+			Issued("a", new DateTime(2026, 3, 1, 9, 15, 0));
+			Issued("b", new DateTime(2026, 3, 1, 7, 5, 0));
+			Issued("c", new DateTime(2026, 3, 2, 23, 59, 0));
+
+			(await _service.RenumberCallsForYearAsync(Dept, new DateTime(2026, 6, 1))).Should().BeTrue();
+
+			_calls.Single(c => c.CallId == 2).Number.Should().Be("20260301-0705-01");
+			_calls.Single(c => c.CallId == 1).Number.Should().Be("20260301-0915-02");
+			_calls.Single(c => c.CallId == 3).Number.Should().Be("20260302-2359-01");
+			(await _service.AllocateCallNumberAsync(Dept, new DateTime(2026, 3, 1, 12, 0, 0))).Should().Be("20260301-1200-03");
 		}
 
 		[Test]
@@ -616,7 +744,8 @@ namespace Resgrid.Tests.Services
 				foreach (var call in Calls.Where(c => (!fromUtc.HasValue || c.LoggedOn >= fromUtc) && (!toUtc.HasValue || c.LoggedOn < toUtc)))
 				{
 					var n = call.Number ?? string.Empty;
-					if (n.Length <= numberPrefix.Length + numberSuffix.Length || !n.StartsWith(numberPrefix, StringComparison.Ordinal) || !n.EndsWith(numberSuffix, StringComparison.Ordinal))
+					if (n.Length <= numberPrefix.Length + numberSuffix.Length || !Matches(n.Substring(0, numberPrefix.Length), numberPrefix) ||
+						!Matches(n.Substring(n.Length - numberSuffix.Length), numberSuffix))
 						continue;
 					var mid = n.Substring(numberPrefix.Length, n.Length - numberPrefix.Length - numberSuffix.Length);
 					if (mid.All(char.IsDigit) && int.TryParse(mid, out var value))
@@ -624,6 +753,10 @@ namespace Resgrid.Tests.Services
 				}
 				return Task.FromResult(highest);
 			}
+
+			/// <summary>Ordinal, with '?' matching any one character, as the repository's LIKE does.</summary>
+			private static bool Matches(string text, string pattern) =>
+				text.Length == pattern.Length && !text.Where((c, i) => pattern[i] != '?' && pattern[i] != c).Any();
 		}
 	}
 }

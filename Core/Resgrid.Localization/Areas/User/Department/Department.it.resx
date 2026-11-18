@@ -1377,7 +1377,7 @@
     <value>Esempio:</value>
   </data>
   <data name="CallNumberPatternHelp" xml:space="preserve">
-    <value>Testo fisso (lettere, cifre, - _ . /) attorno a segnaposto: {YYYY} o {YY} l'anno, {MM} il mese, {DD} il giorno e {SEQ} la sequenza, che deve comparire una volta. La sequenza riparte da 1 ogni volta che la data nel numero cambia: ogni anno con un anno, ogni mese con {MM}, ogni giorno con {DD} e mai senza data. {MM} richiede un anno e {DD} richiede {MM}. Le date usano il fuso orario del dipartimento.</value>
+    <value>Testo fisso (lettere, cifre, - _ . / :) attorno a segnaposto: {YYYY} o {YY} l'anno, {MM} il mese, {DD} il giorno, {HH} l'ora, {MIN} il minuto e {SEQ} la sequenza, che deve comparire una volta. La sequenza riparte da 1 ogni volta che la data nel numero cambia: ogni anno con un anno, ogni mese con {MM}, ogni giorno con {DD} e mai senza data; l'ora e il minuto non la fanno mai ripartire. {MM} richiede un anno, {DD} richiede {MM}, {HH} richiede {DD} e {MIN} richiede {HH}. Date e orari usano il fuso orario del dipartimento.</value>
   </data>
   <data name="CallNumberSequenceWidth" xml:space="preserve">
     <value>Cifre della sequenza</value>
@@ -1410,7 +1410,7 @@
     <value>Alzare il prossimo numero di chiamata? Può solo essere alzato, mai abbassato.</value>
   </data>
   <data name="CallNumberPatternInvalid" xml:space="preserve">
-    <value>La numerazione delle chiamate non è stata salvata. Lo schema richiede {SEQ} esattamente una volta, può contenere solo lettere, cifre, - _ . / e i segnaposto {YYYY}, {YY}, {MM} e {DD}, richiede un anno per {MM} e {MM} per {DD} e può essere lungo al massimo 40 caratteri.</value>
+    <value>La numerazione delle chiamate non è stata salvata. Lo schema richiede {SEQ} esattamente una volta, può contenere solo lettere, cifre, - _ . / : e i segnaposto {YYYY}, {YY}, {MM}, {DD}, {HH} e {MIN}, ciascuno al massimo una volta (il minuto è {MIN}, {MM} è il mese), richiede un anno per {MM}, {MM} per {DD}, {DD} per {HH} e {HH} per {MIN} e può essere lungo al massimo 40 caratteri.</value>
   </data>
   <data name="CallNumberNextBelowCurrent" xml:space="preserve">
     <value>Il prossimo numero di chiamata non è stato alzato: può essere alzato solo sopra il numero che la prossima chiamata riceve già ({0}).</value>

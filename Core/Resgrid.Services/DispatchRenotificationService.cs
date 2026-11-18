@@ -275,12 +275,16 @@ namespace Resgrid.Services
 
 		/// <summary>
 		/// Whether the recipient is still on the call: a person dispatched by name, or through the group, role or unit they were
-		/// reached by; a unit still dispatched. Expects the call's dispatch lists to be loaded.
+		/// reached by; a unit still dispatched and not released from the call. Expects the call's dispatch lists to be loaded.
 		/// </summary>
 		public static bool IsStillDispatched(Call call, DispatchRenotification row)
 		{
 			if (row.RecipientType == (int)DispatchRenotifyRecipientTypes.Unit)
-				return int.TryParse(row.RecipientId, out var unitId) && (call.UnitDispatches?.Any(d => d.UnitId == unitId) ?? false);
+				return int.TryParse(row.RecipientId, out var unitId) && call.IsUnitOnCall(unitId);
+
+			// A member released (stood down) from the call is off it however they were reached.
+			if (call.IsUserReleased(row.RecipientId))
+				return false;
 
 			if (call.Dispatches?.Any(d => string.Equals(d.UserId, row.RecipientId, StringComparison.OrdinalIgnoreCase)) ?? false)
 				return true;
@@ -295,7 +299,7 @@ namespace Resgrid.Services
 					return call.RoleDispatches?.Any(d => d.RoleId == sourceId) ?? false;
 				case DispatchRenotifySourceTypes.UnitCrew:
 				case DispatchRenotifySourceTypes.UnitGroup:
-					return call.UnitDispatches?.Any(d => d.UnitId == sourceId) ?? false;
+					return call.IsUnitOnCall(sourceId);
 				default:
 					// Dispatched by name and no longer on the call's list.
 					return false;

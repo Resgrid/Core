@@ -195,6 +195,8 @@ namespace Resgrid.Model
 		public int DepartmentsEvaluated { get; set; }
 		public int RecordsEvaluated { get; set; }
 		public int RecordsPurged { get; set; }
+		/// <summary>Of <see cref="RecordsPurged"/>, deleted incident reports erased because their recovery window ran out.</summary>
+		public int DeletedReportsPurged { get; set; }
 		/// <summary>SQL purges from this sweep still awaiting committed index erasure; not a total backlog count.</summary>
 		public int SearchErasuresPending { get; set; }
 		public int AttachmentsPurged { get; set; }

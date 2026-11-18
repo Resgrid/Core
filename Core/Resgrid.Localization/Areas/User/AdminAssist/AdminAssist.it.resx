@@ -6784,7 +6784,7 @@
     <value>Configurazione della numerazione delle chiamate / Schema</value>
   </data>
   <data name="FieldHelp.CallNumberingConfig.Pattern" xml:space="preserve">
-    <value>Come vengono scritti i numeri di chiamata, ad esempio FD-2026-0153: testo fisso più i segnaposto YYYY o YY, MM, DD e SEQ. La sequenza riparte ogni volta che la data scritta cambia. Finché non viene salvato uno schema, le chiamate mantengono i numeri YY-SEQ che Resgrid ha sempre emesso.</value>
+    <value>Come vengono scritti i numeri di chiamata, ad esempio FD-2026-0153: testo fisso più i segnaposto YYYY o YY, MM, DD, HH (ora), MIN (minuto) e SEQ. La sequenza riparte ogni volta che la data scritta cambia; l'ora e il minuto non la fanno mai ripartire. Finché non viene salvato uno schema, le chiamate mantengono i numeri YY-SEQ che Resgrid ha sempre emesso.</value>
   </data>
   <data name="Field.CallNumberingConfig.SequenceWidth" xml:space="preserve">
     <value>Configurazione della numerazione delle chiamate / Larghezza della sequenza</value>
@@ -7847,5 +7847,11 @@
   </data>
   <data xml:space="preserve" name="SettingHelp.MappingProviderOverrides">
     <value>Account propri del dipartimento per percorsi, traffico in tempo reale e ricerca indirizzi, interrogati prima dei provider di Resgrid. Viene indicato solo quali provider sono impostati, mai le chiavi. Riportare tutti e tre al valore predefinito di Resgrid rimuove l'impostazione.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.DestinationSuggestions">
+    <value>Suggerimenti di destinazione</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.DestinationSuggestions">
+    <value>Suggerisce la destinazione migliore per una chiamata, e per la destinazione di stato di un'unità, in base alle regole di destinazione del dipartimento (Mappatura, Regole di destinazione) e al luogo dell'intervento, con tempo di percorrenza e distanza. «Suggerisci e compila la destinazione» compila inoltre la destinazione vuota di una nuova chiamata con la migliore; operatori ed equipaggi possono comunque sceglierne un'altra. Disattivato per impostazione predefinita, perché ogni suggerimento calcola i tempi di percorrenza.</value>
   </data>
 </root>

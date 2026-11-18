@@ -685,6 +685,70 @@ namespace Resgrid.Services
 					obj["shortfall"] = shortfall;
 					break;
 
+				case WorkflowTriggerEventType.RecurringCallScheduleCreated:
+				case WorkflowTriggerEventType.RecurringCallScheduleUpdated:
+				case WorkflowTriggerEventType.RecurringCallSchedulePaused:
+				case WorkflowTriggerEventType.RecurringCallScheduleResumed:
+				case WorkflowTriggerEventType.RecurringCallScheduleDeleted:
+					var recurringCall = new ScriptObject();
+					recurringCall["id"] = 12;
+					recurringCall["name"] = "Dialysis transfer - Mercy to Riverside";
+					recurringCall["change"] = eventType == WorkflowTriggerEventType.RecurringCallSchedulePaused ? "Paused" : "Updated";
+					recurringCall["nature"] = "Scheduled interfacility transfer";
+					recurringCall["address"] = "1200 Main St, Springfield";
+					recurringCall["facility_name"] = "Mercy General Hospital";
+					recurringCall["destination_name"] = "Riverside Dialysis Center";
+					recurringCall["contact_name"] = "Pat Lee";
+					recurringCall["contact_number"] = "555-0100";
+					recurringCall["starts_on"] = "2026-11-17";
+					recurringCall["ends_on"] = "2027-05-31";
+					recurringCall["times"] = "08:00,13:00,19:00";
+					recurringCall["mode"] = "Automatic";
+					recurringCall["use_run_card"] = false;
+					recurringCall["is_active"] = eventType != WorkflowTriggerEventType.RecurringCallSchedulePaused;
+					recurringCall["pause_reason"] = eventType == WorkflowTriggerEventType.RecurringCallSchedulePaused ? "Holiday week" : null;
+					recurringCall["resume_on"] = eventType == WorkflowTriggerEventType.RecurringCallSchedulePaused ? "2026-12-28" : null;
+					recurringCall["next_occurrence_on"] = DateTime.UtcNow.Date.AddDays(1).AddHours(16);
+					obj["recurring_call"] = recurringCall;
+					break;
+
+				case WorkflowTriggerEventType.RecurringCallOccurrenceCreated:
+				case WorkflowTriggerEventType.RecurringCallOccurrenceSkipped:
+				case WorkflowTriggerEventType.RecurringCallOccurrenceDispatched:
+					var occurrence = new ScriptObject();
+					occurrence["recurring_call_id"] = 12;
+					occurrence["name"] = "Dialysis transfer - Mercy to Riverside";
+					occurrence["change"] = eventType == WorkflowTriggerEventType.RecurringCallOccurrenceDispatched ? "Dispatched" : eventType == WorkflowTriggerEventType.RecurringCallOccurrenceSkipped ? "Skipped" : "Created";
+					occurrence["occurrence_on"] = DateTime.UtcNow.Date.AddDays(1).AddHours(16);
+					occurrence["call_id"] = eventType == WorkflowTriggerEventType.RecurringCallOccurrenceSkipped ? 0 : 1001;
+					occurrence["call_number"] = eventType == WorkflowTriggerEventType.RecurringCallOccurrenceSkipped ? null : "26-1001";
+					occurrence["by_dispatcher"] = false;
+					occurrence["unit_count"] = 1;
+					occurrence["personnel_count"] = 0;
+					occurrence["group_count"] = 0;
+					occurrence["role_count"] = 0;
+					occurrence["unavailable_count"] = 0;
+					occurrence["run_card_applied"] = false;
+					obj["occurrence"] = occurrence;
+					break;
+
+				case WorkflowTriggerEventType.RecurringCallAlertRaised:
+				case WorkflowTriggerEventType.RecurringCallAlertResolved:
+					var recurringAlert = new ScriptObject();
+					recurringAlert["id"] = "3f2b6c1e-8a51-4d0b-9a7e-2c0f6f1d9b42";
+					recurringAlert["recurring_call_id"] = 12;
+					recurringAlert["name"] = "Dialysis transfer - Mercy to Riverside";
+					recurringAlert["kind"] = "NoResources";
+					recurringAlert["occurrence_on"] = DateTime.UtcNow.Date.AddDays(1).AddHours(16);
+					recurringAlert["call_id"] = 1001;
+					recurringAlert["reason"] = "NoneAvailable";
+					recurringAlert["unavailable_unit_count"] = 1;
+					recurringAlert["unavailable_personnel_count"] = 0;
+					recurringAlert["resolution"] = eventType == WorkflowTriggerEventType.RecurringCallAlertResolved ? "Dispatched" : null;
+					recurringAlert["raised"] = eventType == WorkflowTriggerEventType.RecurringCallAlertRaised;
+					obj["alert"] = recurringAlert;
+					break;
+
 				case WorkflowTriggerEventType.StationCoverageGapDetected:
 					var coverageGap = new ScriptObject();
 					coverageGap["call_id"] = 1001;

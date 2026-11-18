@@ -205,7 +205,8 @@ namespace Resgrid.Services
 				to = new DateTime(scope.Year.Value + 2, 1, 1, 0, 0, 0, DateTimeKind.Unspecified);
 			}
 
-			return _sequences.GetHighestIssuedAsync(departmentId, scope.Prefix, scope.Suffix,
+			// The search text, not the rendered prefix: a number with a time of day matches whatever time it wrote.
+			return _sequences.GetHighestIssuedAsync(departmentId, scope.SearchPrefix, scope.SearchSuffix,
 				from.HasValue ? ToUtc(from.Value, timeZone) : (DateTime?)null, to.HasValue ? ToUtc(to.Value, timeZone) : (DateTime?)null);
 		}
 

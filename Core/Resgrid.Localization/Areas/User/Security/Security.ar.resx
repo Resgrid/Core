@@ -1339,4 +1339,14 @@
   <data name="PermRecordsShareCoordinationBoardsNote" xml:space="preserve">
     <value>يسمح بمشاركة لوحة تنسيق مع الجهات الشريكة.</value>
   </data>
+  <data name="AuditLogTypeRecurringCallCreated" xml:space="preserve"><value>تم إنشاء مكالمة متكررة</value></data>
+  <data name="AuditLogTypeRecurringCallUpdated" xml:space="preserve"><value>تم تحديث مكالمة متكررة</value></data>
+  <data name="AuditLogTypeRecurringCallPaused" xml:space="preserve"><value>تم إيقاف مكالمة متكررة مؤقتًا</value></data>
+  <data name="AuditLogTypeRecurringCallResumed" xml:space="preserve"><value>تم استئناف مكالمة متكررة</value></data>
+  <data name="AuditLogTypeRecurringCallDeleted" xml:space="preserve"><value>تم حذف مكالمة متكررة</value></data>
+  <data name="AuditLogTypeRecurringCallOccurrenceSkipped" xml:space="preserve"><value>تم تخطي موعد مكالمة متكررة</value></data>
+  <data name="AuditLogTypeRecurringCallOccurrenceRestored" xml:space="preserve"><value>تمت استعادة موعد مكالمة متكررة</value></data>
+  <data name="AuditLogTypeRecurringCallOccurrenceCreated" xml:space="preserve"><value>تم إنشاء موعد مكالمة متكررة يدويًا</value></data>
+  <data name="AuditLogTypeRecurringCallAlertAcknowledged" xml:space="preserve"><value>تم الإقرار بتنبيه مكالمة متكررة</value></data>
+  <data name="AuditLogTypeRecurringCallAlertDismissed" xml:space="preserve"><value>تم تجاهل تنبيه مكالمة متكررة</value></data>
 </root>

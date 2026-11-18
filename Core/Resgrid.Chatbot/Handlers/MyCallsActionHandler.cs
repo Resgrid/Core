@@ -112,7 +112,7 @@ namespace Resgrid.Chatbot.Handlers
 			var unitCalls = new List<Call>();
 			foreach (var call in await GetActiveCallsWithDispatchesAsync(session.DepartmentId, forUnits: true))
 			{
-				if (call.UnitDispatches != null && call.UnitDispatches.Any(d => d.UnitId == unit.UnitId) &&
+				if (call.IsUnitOnCall(unit.UnitId) &&
 					await _authorizationService.CanUserViewCallAsync(session.UserId, call.CallId))
 					unitCalls.Add(call);
 			}

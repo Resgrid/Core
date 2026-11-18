@@ -1,0 +1,704 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Map Icon Legend and status / priority map icon pages -->
+    <data name="ActionFailed" xml:space="preserve">
+    <value>Das war nicht möglich. Laden Sie die Seite neu und versuchen Sie es erneut.</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Aktionen</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>Aktiv</value>
+  </data>
+  <data name="ActiveHelp" xml:space="preserve">
+    <value>Haken entfernen, um zu pausieren: Bis zur Fortsetzung werden keine Einsätze angelegt.</value>
+  </data>
+  <data name="AddTime" xml:space="preserve">
+    <value>Zeit hinzufügen</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>Adresse</value>
+  </data>
+  <data name="AddressHelp" xml:space="preserve">
+    <value>Wird beim Speichern für Karte und Wegbeschreibung verortet.</value>
+  </data>
+  <data name="AlertAcknowledge" xml:space="preserve">
+    <value>Bestätigen</value>
+  </data>
+  <data name="AlertAcknowledgedBy" xml:space="preserve">
+    <value>Bestätigt von {0}</value>
+  </data>
+  <data name="AlertCreateCall" xml:space="preserve">
+    <value>Einsatz anlegen</value>
+  </data>
+  <data name="AlertDismiss" xml:space="preserve">
+    <value>Verwerfen</value>
+  </data>
+  <data name="AlertDismissPrompt" xml:space="preserve">
+    <value>Notiz (optional): Warum wird diese Benachrichtigung geschlossen?</value>
+  </data>
+  <data name="AlertKindCreateFailed" xml:space="preserve">
+    <value>Der Einsatz konnte nicht angelegt werden</value>
+  </data>
+  <data name="AlertKindDispatchDue" xml:space="preserve">
+    <value>Zeit zum Alarmieren</value>
+  </data>
+  <data name="AlertKindMissed" xml:space="preserve">
+    <value>Verpasst: Der Einsatz wurde nicht rechtzeitig angelegt</value>
+  </data>
+  <data name="AlertKindNoResources" xml:space="preserve">
+    <value>Niemand konnte alarmiert werden: Der Einsatz wird als ausstehend gehalten</value>
+  </data>
+  <data name="AlertKindResourcesUnavailable" xml:space="preserve">
+    <value>Ohne einige ausgewählte Kräfte alarmiert</value>
+  </data>
+  <data name="AlertOpenCall" xml:space="preserve">
+    <value>Einsatz öffnen</value>
+  </data>
+  <data name="AlertReasonDepartmentUnavailable" xml:space="preserve">
+    <value>Die Organisation konnte nicht geladen werden.</value>
+  </data>
+  <data name="AlertReasonNoneAvailable" xml:space="preserve">
+    <value>Keine der ausgewählten Kräfte war verfügbar.</value>
+  </data>
+  <data name="AlertReasonNoneChosen" xml:space="preserve">
+    <value>Es sind keine Kräfte ausgewählt und keine Alarm- und Ausrückeordnung passte.</value>
+  </data>
+  <data name="AlertReasonSaveFailed" xml:space="preserve">
+    <value>Das Speichern des Einsatzes schlug fehl; es wird bis zum fälligen Zeitpunkt erneut versucht.</value>
+  </data>
+  <data name="AlertSchedule" xml:space="preserve">
+    <value>Wiederkehrender Einsatz</value>
+  </data>
+  <data name="AlertUnavailable" xml:space="preserve">
+    <value>Nicht verfügbar: {0}</value>
+  </data>
+  <data name="AlertWhat" xml:space="preserve">
+    <value>Was passiert ist</value>
+  </data>
+  <data name="AlertWhen" xml:space="preserve">
+    <value>Fällig</value>
+  </data>
+  <data name="AlertsBanner" xml:space="preserve">
+    <value>{0} Benachrichtigung(en) zu wiederkehrenden Einsätzen erfordern Aufmerksamkeit.</value>
+  </data>
+  <data name="AlertsBannerLink" xml:space="preserve">
+    <value>Prüfen</value>
+  </data>
+  <data name="AlertsHelp" xml:space="preserve">
+    <value>Werden (Push, SMS oder E-Mail je nach ihren Einstellungen) benachrichtigt, wenn ein Einsatz nicht angelegt werden kann, verpasst wird, niemand alarmiert werden kann, ausgewählte Kräfte nicht verfügbar sind oder ein Disponent ihn alarmieren muss. Niemand gewählt: die Person, die den Zeitplan angelegt hat.</value>
+  </data>
+  <data name="AlertsTitle" xml:space="preserve">
+    <value>Erfordert Aufmerksamkeit</value>
+  </data>
+  <data name="AvailabilityHelp" xml:space="preserve">
+    <value>Wenn ein Einsatz alarmiert wird, werden ausgewählte Einheiten und Mitglieder, die nicht verfügbar sind (anderer Einsatz, außer Dienst, nicht im Dienst), weggelassen und der Disponent benachrichtigt. Bleibt niemand übrig, wird der Einsatz für einen Disponenten als ausstehend gehalten.</value>
+  </data>
+  <data name="Calendar" xml:space="preserve">
+    <value>Kalender</value>
+  </data>
+  <data name="ContactName" xml:space="preserve">
+    <value>Name des Kontakts</value>
+  </data>
+  <data name="ContactNumber" xml:space="preserve">
+    <value>Kontaktnummer</value>
+  </data>
+  <data name="Coordinates" xml:space="preserve">
+    <value>Koordinaten</value>
+  </data>
+  <data name="CoordinatesHelp" xml:space="preserve">
+    <value>Breitengrad, Längengrad (optional). Leer lassen, um die Adresse zu verorten.</value>
+  </data>
+  <data name="CreateNow" xml:space="preserve">
+    <value>Einsatz jetzt anlegen</value>
+  </data>
+  <data name="CreatedByRecurringCall" xml:space="preserve">
+    <value>Dieser Einsatz wurde von einem wiederkehrenden Einsatz angelegt.</value>
+  </data>
+  <data name="CreationMode" xml:space="preserve">
+    <value>Wer jeden Einsatz alarmiert</value>
+  </data>
+  <data name="CreationModeAutomatic" xml:space="preserve">
+    <value>Automatisch: Jeder Einsatz wird vorab angelegt und zum fälligen Zeitpunkt alarmiert</value>
+  </data>
+  <data name="CreationModeDispatcher" xml:space="preserve">
+    <value>Ein Disponent: Nichts wird vorab angelegt; ein Disponent wird bei Fälligkeit benachrichtigt und alarmiert</value>
+  </data>
+  <data name="DatesFrom" xml:space="preserve">
+    <value>Ab {0}</value>
+  </data>
+  <data name="DatesUntil" xml:space="preserve">
+    <value>bis {0}</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Löschen</value>
+  </data>
+  <data name="DeleteConfirm" xml:space="preserve">
+    <value>Diesen wiederkehrenden Einsatz löschen? Es werden keine weiteren Einsätze daraus angelegt.</value>
+  </data>
+  <data name="DeleteRecurringCall" xml:space="preserve">
+    <value>Wiederkehrenden Einsatz löschen</value>
+  </data>
+  <data name="DeleteUpcoming" xml:space="preserve">
+    <value>Auch die {0} bereits angelegten anstehenden Einsätze löschen</value>
+  </data>
+  <data name="DeletedMessage" xml:space="preserve">
+    <value>Wiederkehrender Einsatz gelöscht.</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Beschreibung</value>
+  </data>
+  <data name="DescriptionHelp" xml:space="preserve">
+    <value>Wofür dieser Zeitplan ist und was ein Disponent wissen sollte. Bleibt beim Zeitplan und wird nicht in die Einsätze übernommen.</value>
+  </data>
+  <data name="Destination" xml:space="preserve">
+    <value>Ziel</value>
+  </data>
+  <data name="DestinationDetails" xml:space="preserve">
+    <value>Details zum Ziel</value>
+  </data>
+  <data name="DestinationName" xml:space="preserve">
+    <value>Zieleinrichtung</value>
+  </data>
+  <data name="DispatchHelp" xml:space="preserve">
+    <value>An wen jeder Einsatz geht. Alles leer lassen, damit ein Disponent auswählt: Zum fälligen Zeitpunkt wird der Einsatz als ausstehend gehalten und der Disponent benachrichtigt.</value>
+  </data>
+  <data name="DueHelp" xml:space="preserve">
+    <value>Dieser Einsatz ist zu alarmieren. Jetzt alarmieren, zuerst anlegen, um ihn zu ändern, oder überspringen.</value>
+  </data>
+  <data name="DueTitle" xml:space="preserve">
+    <value>Alarmieren: {0}</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Bearbeiten</value>
+  </data>
+  <data name="EditRecurringCall" xml:space="preserve">
+    <value>Wiederkehrenden Einsatz bearbeiten</value>
+  </data>
+  <data name="EnableCheckInTimers" xml:space="preserve">
+    <value>Check-in-Timer aktivieren</value>
+  </data>
+  <data name="EndsOn" xml:space="preserve">
+    <value>Endet am</value>
+  </data>
+  <data name="EndsOnHelp" xml:space="preserve">
+    <value>Leer lassen, um ohne Ende zu wiederholen.</value>
+  </data>
+  <data name="ErrorContactEmailInvalid" xml:space="preserve">
+    <value>Geben Sie eine gültige E-Mail-Adresse für den Ansprechpartner ein.</value>
+  </data>
+  <data name="ErrorCoordinatesInvalid" xml:space="preserve">
+    <value>Geben Sie Koordinaten als Breitengrad, Längengrad ein (zum Beispiel 39.7392,-104.9903).</value>
+  </data>
+  <data name="ErrorCreationModeInvalid" xml:space="preserve">
+    <value>Wählen Sie, wer jeden Einsatz alarmiert.</value>
+  </data>
+  <data name="ErrorDaysRequired" xml:space="preserve">
+    <value>Wählen Sie mindestens einen Wochentag.</value>
+  </data>
+  <data name="ErrorEndsBeforeStart" xml:space="preserve">
+    <value>Das Enddatum liegt vor dem Startdatum.</value>
+  </data>
+  <data name="ErrorEndsOnInvalid" xml:space="preserve">
+    <value>Geben Sie ein gültiges Enddatum ein.</value>
+  </data>
+  <data name="ErrorFacilityPoiInvalid" xml:space="preserve">
+    <value>Wählen Sie den Abholort aus der Liste.</value>
+  </data>
+  <data name="ErrorFrequencyInvalid" xml:space="preserve">
+    <value>Wählen Sie, wie er sich wiederholt.</value>
+  </data>
+  <data name="ErrorIntervalInvalid" xml:space="preserve">
+    <value>Wiederholung alle 1 bis {1}.</value>
+  </data>
+  <data name="ErrorLeadTimeInvalid" xml:space="preserve">
+    <value>Wählen Sie, wann jeder Einsatz angelegt wird.</value>
+  </data>
+  <data name="ErrorManualAlertInvalid" xml:space="preserve">
+    <value>Wählen Sie, wann der Disponent benachrichtigt wird.</value>
+  </data>
+  <data name="ErrorMonthlyDayInvalid" xml:space="preserve">
+    <value>Wählen Sie einen Monatstag von 1 bis 31.</value>
+  </data>
+  <data name="ErrorMonthlyWeekdayInvalid" xml:space="preserve">
+    <value>Wählen Sie den Wochentag im Monat.</value>
+  </data>
+  <data name="ErrorNameRequired" xml:space="preserve">
+    <value>Geben Sie eine Bezeichnung ein.</value>
+  </data>
+  <data name="ErrorResumeOnInvalid" xml:space="preserve">
+    <value>Das Fortsetzungsdatum ist kein gültiges Datum.</value>
+  </data>
+  <data name="ErrorStartsOnRequired" xml:space="preserve">
+    <value>Geben Sie ein Startdatum ein.</value>
+  </data>
+  <data name="ErrorTimeInvalid" xml:space="preserve">
+    <value>Geben Sie jede Zeit in Stunden und Minuten ein (zum Beispiel 08:00).</value>
+  </data>
+  <data name="ErrorTimesRequired" xml:space="preserve">
+    <value>Fügen Sie mindestens eine Alarmierungszeit hinzu.</value>
+  </data>
+  <data name="ErrorTooManyTimes" xml:space="preserve">
+    <value>Verwenden Sie höchstens {0} Alarmierungszeiten pro Tag.</value>
+  </data>
+  <data name="Every" xml:space="preserve">
+    <value>Alle</value>
+  </data>
+  <data name="ExternalId" xml:space="preserve">
+    <value>Externe ID</value>
+  </data>
+  <data name="FacilityDetails" xml:space="preserve">
+    <value>Details zur Abholung</value>
+  </data>
+  <data name="FacilityDetailsPlaceholder" xml:space="preserve">
+    <value>Station, Etage, Zimmer, Eingang, Ansprechperson</value>
+  </data>
+  <data name="FacilityHelp" xml:space="preserve">
+    <value>Die Zeilen zu Abholort und Ziel werden in die Notizen jedes angelegten Einsatzes übernommen, damit die Besatzung sie hat.</value>
+  </data>
+  <data name="FacilityName" xml:space="preserve">
+    <value>Abholeinrichtung</value>
+  </data>
+  <data name="FacilityPoi" xml:space="preserve">
+    <value>Abholort (Ort von Interesse)</value>
+  </data>
+  <data name="FacilityPoiHelp" xml:space="preserve">
+    <value>Füllt Abholeinrichtung und Adresse, wenn sie leer sind.</value>
+  </data>
+  <data name="FrequencyDaily" xml:space="preserve">
+    <value>Täglich</value>
+  </data>
+  <data name="FrequencyMonthly" xml:space="preserve">
+    <value>Monatlich</value>
+  </data>
+  <data name="FrequencyWeekly" xml:space="preserve">
+    <value>Wöchentlich</value>
+  </data>
+  <data name="FromCallNotice" xml:space="preserve">
+    <value>Aus Einsatz {0} übernommen. Wählen Sie, wann er sich wiederholt.</value>
+  </data>
+  <data name="Groups" xml:space="preserve">
+    <value>Gruppen</value>
+  </data>
+  <data name="HeldMessage" xml:space="preserve">
+    <value>Niemand konnte alarmiert werden; der Einsatz wird als ausstehend gehalten.</value>
+  </data>
+  <data name="HeldTitle" xml:space="preserve">
+    <value>Gehalten: {0}</value>
+  </data>
+  <data name="IncidentId" xml:space="preserve">
+    <value>Einsatz-ID</value>
+  </data>
+  <data name="IncludeScheduledCalls" xml:space="preserve">
+    <value>Geplante Einsätze anzeigen</value>
+  </data>
+  <data name="IntervalDays" xml:space="preserve">
+    <value>Tag(e)</value>
+  </data>
+  <data name="IntervalMonths" xml:space="preserve">
+    <value>Monat(e)</value>
+  </data>
+  <data name="IntervalWeeks" xml:space="preserve">
+    <value>Woche(n)</value>
+  </data>
+  <data name="LeadTime" xml:space="preserve">
+    <value>Jeden Einsatz anlegen</value>
+  </data>
+  <data name="LeadTimeDay" xml:space="preserve">
+    <value>1 Tag vorher</value>
+  </data>
+  <data name="LeadTimeDays" xml:space="preserve">
+    <value>{0} Tage vorher</value>
+  </data>
+  <data name="LeadTimeHelp" xml:space="preserve">
+    <value>Wie lange vor seinem Alarmierungszeitpunkt jeder Einsatz angelegt wird. Danach erscheint er unter Geplante Einsätze, wo er einzeln geändert, früher alarmiert oder gelöscht werden kann.</value>
+  </data>
+  <data name="LeadTimeHour" xml:space="preserve">
+    <value>1 Stunde vorher</value>
+  </data>
+  <data name="LeadTimeHours" xml:space="preserve">
+    <value>{0} Stunden vorher</value>
+  </data>
+  <data name="LeadTimeMinutes" xml:space="preserve">
+    <value>{0} Minuten vorher</value>
+  </data>
+  <data name="LegendCancelled" xml:space="preserve">
+    <value>Vor der Alarmierung geschlossen</value>
+  </data>
+  <data name="LegendDispatched" xml:space="preserve">
+    <value>Alarmiert</value>
+  </data>
+  <data name="LegendDue" xml:space="preserve">
+    <value>Wartet auf Disponenten</value>
+  </data>
+  <data name="LegendHeld" xml:space="preserve">
+    <value>Gehalten, niemand verfügbar</value>
+  </data>
+  <data name="LegendMissed" xml:space="preserve">
+    <value>Verpasst</value>
+  </data>
+  <data name="LegendProjected" xml:space="preserve">
+    <value>Wiederkehrend, noch nicht angelegt</value>
+  </data>
+  <data name="LegendScheduled" xml:space="preserve">
+    <value>Geplant</value>
+  </data>
+  <data name="LegendSkipped" xml:space="preserve">
+    <value>Übersprungen</value>
+  </data>
+  <data name="ListTab" xml:space="preserve">
+    <value>Liste</value>
+  </data>
+  <data name="ManualAlert" xml:space="preserve">
+    <value>Disponent benachrichtigen</value>
+  </data>
+  <data name="ManualAlertAtTime" xml:space="preserve">
+    <value>Zum fälligen Zeitpunkt</value>
+  </data>
+  <data name="ManualAlertHelp" xml:space="preserve">
+    <value>Wann der Disponent erfährt, dass der Einsatz zu alarmieren ist. Er erscheint unter „Erfordert Aufmerksamkeit“ in Wiederkehrende Einsätze und in der Dispatch-App, bis jemand ihn alarmiert oder überspringt.</value>
+  </data>
+  <data name="MapPage" xml:space="preserve">
+    <value>Kartenseite</value>
+  </data>
+  <data name="MissedHelp" xml:space="preserve">
+    <value>Der Zeitpunkt ist verstrichen und kein Einsatz wurde angelegt. Jetzt alarmieren oder überspringen.</value>
+  </data>
+  <data name="MissedTitle" xml:space="preserve">
+    <value>Verpasst: {0}</value>
+  </data>
+  <data name="ModeAutomaticShort" xml:space="preserve">
+    <value>Automatisch alarmiert</value>
+  </data>
+  <data name="ModeDispatcherShort" xml:space="preserve">
+    <value>Vom Disponenten alarmiert</value>
+  </data>
+  <data name="MonthlyDayHelp" xml:space="preserve">
+    <value>In einem Monat ohne diesen Tag läuft er am letzten Tag.</value>
+  </data>
+  <data name="MonthlyOn" xml:space="preserve">
+    <value>Am</value>
+  </data>
+  <data name="MonthlyOnDay" xml:space="preserve">
+    <value>Tag</value>
+  </data>
+  <data name="MonthlyOnThe" xml:space="preserve">
+    <value>Am</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Bezeichnung</value>
+  </data>
+  <data name="NameHelp" xml:space="preserve">
+    <value>Jeder angelegte Einsatz erhält diese Bezeichnung.</value>
+  </data>
+  <data name="Nature" xml:space="preserve">
+    <value>Einsatzstichwort</value>
+  </data>
+  <data name="NewRecurringCall" xml:space="preserve">
+    <value>Neuer wiederkehrender Einsatz</value>
+  </data>
+  <data name="NextDispatch" xml:space="preserve">
+    <value>Nächste Alarmierung</value>
+  </data>
+  <data name="NextDispatches" xml:space="preserve">
+    <value>Nächste Alarmierungen</value>
+  </data>
+  <data name="NoAlerts" xml:space="preserve">
+    <value>Nichts erfordert Aufmerksamkeit.</value>
+  </data>
+  <data name="NoFacilityPoi" xml:space="preserve">
+    <value>Keiner</value>
+  </data>
+  <data name="NoNextDispatches" xml:space="preserve">
+    <value>Nichts geplant.</value>
+  </data>
+  <data name="NoRecurringCalls" xml:space="preserve">
+    <value>Noch keine wiederkehrenden Einsätze.</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Keine</value>
+  </data>
+  <data name="Notes" xml:space="preserve">
+    <value>Notizen</value>
+  </data>
+  <data name="OnDays" xml:space="preserve">
+    <value>An</value>
+  </data>
+  <data name="OpenAlertsCount" xml:space="preserve">
+    <value>{0} erfordert/erfordern Aufmerksamkeit</value>
+  </data>
+  <data name="PageIntro" xml:space="preserve">
+    <value>Ein wiederkehrender Einsatz wird nach Zeitplan alarmiert, zum Beispiel Verlegungsfahrten jeden Dienstag und Donnerstag um 08:00, 13:00 und 19:00 Uhr. Jeder Einsatz wird vor seinem Alarmierungszeitpunkt angelegt und erscheint unter Geplante Einsätze, wo er wie jeder andere geändert, früher alarmiert oder gelöscht werden kann.</value>
+  </data>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Wiederkehrende Einsätze</value>
+  </data>
+  <data name="Pause" xml:space="preserve">
+    <value>Pausieren</value>
+  </data>
+  <data name="PauseDeleteUpcoming" xml:space="preserve">
+    <value>Auch bereits angelegte, noch nicht alarmierte Einsätze löschen</value>
+  </data>
+  <data name="PauseHelp" xml:space="preserve">
+    <value>Während der Pause wird nichts angelegt oder benachrichtigt. Zeitplan, Einstellungen und Verlauf bleiben erhalten.</value>
+  </data>
+  <data name="PauseReason" xml:space="preserve">
+    <value>Grund</value>
+  </data>
+  <data name="PauseTitle" xml:space="preserve">
+    <value>Pausieren:</value>
+  </data>
+  <data name="PausedMessage" xml:space="preserve">
+    <value>Wiederkehrender Einsatz pausiert. Bis zur Fortsetzung werden keine Einsätze angelegt.</value>
+  </data>
+  <data name="PausedUntil" xml:space="preserve">
+    <value>bis {0}</value>
+  </data>
+  <data name="Personnel" xml:space="preserve">
+    <value>Personal</value>
+  </data>
+  <data name="Priority" xml:space="preserve">
+    <value>Priorität</value>
+  </data>
+  <data name="ProjectedHelp" xml:space="preserve">
+    <value>Der Einsatz ist noch nicht angelegt. Jetzt alarmieren, diesen überspringen oder den Einsatz jetzt anlegen, um ihn einzeln zu ändern.</value>
+  </data>
+  <data name="ReadOnlyHelp" xml:space="preserve">
+    <value>Der Einsatz ist noch nicht angelegt. Nur Mitglieder, die Einsätze anlegen dürfen, können ihn alarmieren, überspringen oder anlegen.</value>
+  </data>
+  <data name="ReferenceId" xml:space="preserve">
+    <value>Referenz-ID</value>
+  </data>
+  <data name="RemoveTime" xml:space="preserve">
+    <value>Zeit entfernen</value>
+  </data>
+  <data name="RepeatCall" xml:space="preserve">
+    <value>Wiederholen</value>
+  </data>
+  <data name="RepeatCallHelp" xml:space="preserve">
+    <value>Aus diesem Einsatz einen wiederkehrenden Einsatz anlegen</value>
+  </data>
+  <data name="Repeats" xml:space="preserve">
+    <value>Wiederholung</value>
+  </data>
+  <data name="ReplaceUpcoming" xml:space="preserve">
+    <value>Die {0} bereits angelegten anstehenden Einsätze ersetzen</value>
+  </data>
+  <data name="ReplaceUpcomingHelp" xml:space="preserve">
+    <value>Sie werden gelöscht und mit diesen Angaben neu angelegt; einzeln vorgenommene Änderungen gehen verloren. Haken entfernen, um sie unverändert zu lassen.</value>
+  </data>
+  <data name="RestoreOccurrence" xml:space="preserve">
+    <value>Wiederherstellen</value>
+  </data>
+  <data name="Resume" xml:space="preserve">
+    <value>Fortsetzen</value>
+  </data>
+  <data name="ResumeOn" xml:space="preserve">
+    <value>Fortsetzen am</value>
+  </data>
+  <data name="ResumeOnHelp" xml:space="preserve">
+    <value>Leer lassen, um pausiert zu bleiben, bis jemand fortsetzt.</value>
+  </data>
+  <data name="ResumedMessage" xml:space="preserve">
+    <value>Wiederkehrender Einsatz fortgesetzt.</value>
+  </data>
+  <data name="Roles" xml:space="preserve">
+    <value>Rollen</value>
+  </data>
+  <data name="RunCardsOffHelp" xml:space="preserve">
+    <value>Alarm- und Ausrückeordnungen sind für diese Organisation nicht aktiviert, daher hat dies keine Wirkung.</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Speichern</value>
+  </data>
+  <data name="SavedCreatedMessage" xml:space="preserve">
+    <value>{0} anstehende(r) Einsatz/Einsätze wurde(n) angelegt und steht/stehen unter Geplante Einsätze.</value>
+  </data>
+  <data name="SavedMessage" xml:space="preserve">
+    <value>Wiederkehrender Einsatz gespeichert.</value>
+  </data>
+  <data name="SavedReplacedMessage" xml:space="preserve">
+    <value>{0} bereits angelegte(r) Einsatz/Einsätze wurde(n) ersetzt.</value>
+  </data>
+  <data name="Schedule" xml:space="preserve">
+    <value>Zeitplan</value>
+  </data>
+  <data name="ScheduleContactEmail" xml:space="preserve">
+    <value>E-Mail des Ansprechpartners</value>
+  </data>
+  <data name="ScheduleContactHelp" xml:space="preserve">
+    <value>Wer den Zeitplan vereinbart hat und bei Änderungen anzurufen ist.</value>
+  </data>
+  <data name="ScheduleContactName" xml:space="preserve">
+    <value>Ansprechpartner des Zeitplans</value>
+  </data>
+  <data name="ScheduleContactNumber" xml:space="preserve">
+    <value>Telefon des Ansprechpartners</value>
+  </data>
+  <data name="SectionAlerts" xml:space="preserve">
+    <value>Wer benachrichtigt wird</value>
+  </data>
+  <data name="SectionCall" xml:space="preserve">
+    <value>Einsatzdetails</value>
+  </data>
+  <data name="SectionDispatch" xml:space="preserve">
+    <value>Wer alarmiert wird</value>
+  </data>
+  <data name="SectionFacility" xml:space="preserve">
+    <value>Einrichtungen und Ansprechpartner</value>
+  </data>
+  <data name="SectionSchedule" xml:space="preserve">
+    <value>Zeitplan</value>
+  </data>
+  <data name="SelectPlaceholder" xml:space="preserve">
+    <value>Auswählen...</value>
+  </data>
+  <data name="SendNow" xml:space="preserve">
+    <value>Jetzt alarmieren</value>
+  </data>
+  <data name="SentMessage" xml:space="preserve">
+    <value>Der Einsatz wurde alarmiert.</value>
+  </data>
+  <data name="SkipOccurrence" xml:space="preserve">
+    <value>Diesen überspringen</value>
+  </data>
+  <data name="SkippedHelp" xml:space="preserve">
+    <value>Dieser wurde übersprungen, es wird kein Einsatz angelegt. Wiederherstellen, um den Einsatz wieder anzulegen.</value>
+  </data>
+  <data name="SkippedTitle" xml:space="preserve">
+    <value>Übersprungen: {0}</value>
+  </data>
+  <data name="StartsOn" xml:space="preserve">
+    <value>Beginnt am</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Zustand</value>
+  </data>
+  <data name="StatusActive" xml:space="preserve">
+    <value>Aktiv</value>
+  </data>
+  <data name="StatusEnded" xml:space="preserve">
+    <value>Beendet</value>
+  </data>
+  <data name="StatusPaused" xml:space="preserve">
+    <value>Pausiert</value>
+  </data>
+  <data name="SummaryDaily" xml:space="preserve">
+    <value>Jeden Tag</value>
+  </data>
+  <data name="SummaryEveryNDays" xml:space="preserve">
+    <value>Alle {0} Tage</value>
+  </data>
+  <data name="SummaryEveryNMonthsDay" xml:space="preserve">
+    <value>Alle {0} Monate am {1}.</value>
+  </data>
+  <data name="SummaryEveryNMonthsWeekday" xml:space="preserve">
+    <value>Alle {0} Monate am {1} {2}</value>
+  </data>
+  <data name="SummaryEveryNWeeks" xml:space="preserve">
+    <value>Alle {0} Wochen am {1}</value>
+  </data>
+  <data name="SummaryMonthlyDay" xml:space="preserve">
+    <value>Monatlich am {0}.</value>
+  </data>
+  <data name="SummaryMonthlyWeekday" xml:space="preserve">
+    <value>Monatlich am {0} {1}</value>
+  </data>
+  <data name="SummaryWeekly" xml:space="preserve">
+    <value>Wöchentlich am {0}</value>
+  </data>
+  <data name="SummaryWithTimes" xml:space="preserve">
+    <value>{0} um {1}</value>
+  </data>
+  <data name="Times" xml:space="preserve">
+    <value>Alarmierungszeiten</value>
+  </data>
+  <data name="TimesHelp" xml:space="preserve">
+    <value>Zeit der Organisation ({0}). Fügen Sie für jeden Einsatz des Tages eine Zeit hinzu, zum Beispiel 08:00, 13:00 und 19:00.</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Typ</value>
+  </data>
+  <data name="Units" xml:space="preserve">
+    <value>Einheiten</value>
+  </data>
+  <data name="UseRunCard" xml:space="preserve">
+    <value>Auch die passende Alarm- und Ausrückeordnung verwenden</value>
+  </data>
+  <data name="UseRunCardHelp" xml:space="preserve">
+    <value>Beim Alarmieren die Kräfte der Alarm- und Ausrückeordnung hinzufügen, die zu Typ, Priorität und Ort passt, auch wenn sie nicht automatisch alarmiert.</value>
+  </data>
+  <data name="WeekFirst" xml:space="preserve">
+    <value>ersten</value>
+  </data>
+  <data name="WeekFourth" xml:space="preserve">
+    <value>vierten</value>
+  </data>
+  <data name="WeekLast" xml:space="preserve">
+    <value>letzten</value>
+  </data>
+  <data name="WeekSecond" xml:space="preserve">
+    <value>zweiten</value>
+  </data>
+  <data name="WeekThird" xml:space="preserve">
+    <value>dritten</value>
+  </data>
+</root>

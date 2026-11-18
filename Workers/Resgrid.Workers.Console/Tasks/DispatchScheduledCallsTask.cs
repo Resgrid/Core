@@ -37,6 +37,22 @@ namespace Resgrid.Workers.Console.Tasks
 				var callDispatchStatusService = scope.Resolve<ICallDispatchStatusService>();
 				var featureToggleService = scope.Resolve<IFeatureToggleService>();
 				var dispatchRecommendationService = scope.Resolve<IDispatchRecommendationService>();
+				var recurringCallsService = scope.Resolve<IRecurringCallsService>();
+
+				// Recurring calls first: each occurrence due within its schedule's lead time becomes an ordinary scheduled call,
+				// so one due right now is created here and sent by the dispatch loop below in the same pass (dispatcher-mode
+				// schedules alert a dispatcher instead; missed occurrences and settled alerts are dealt with too). A failure here
+				// must never hold up calls that are already scheduled.
+				try
+				{
+					var created = await recurringCallsService.GenerateDueCallsAsync(DateTime.UtcNow, cancellationToken);
+					if (created > 0)
+						progress.Report(10, $"{Name}: created {created} call(s) from recurring schedules");
+				}
+				catch (Exception recurringEx)
+				{
+					Resgrid.Framework.Logging.LogException(recurringEx, "Recurring call schedules could not create their calls.");
+				}
 
 				// Calls whose dispatch time has arrived, never ones still ahead (the old +5 minute edge sent
 				// calls up to one poll early). Looking back three poll intervals lets a broadcast that failed,
@@ -52,6 +68,24 @@ namespace Resgrid.Workers.Console.Tasks
 						// A scheduled call closed or cancelled before its time must not page anyone.
 						if (call.State != (int)Resgrid.Model.CallStates.Active)
 							continue;
+
+						// A recurring call goes out through its schedule's rules: the run card it asks for, only the chosen resources
+						// that are available, and held for a dispatcher (with an alert) when nobody is left.
+						if (call.RecurringCallId.HasValue)
+						{
+							try
+							{
+								var outcome = await recurringCallsService.DispatchCallAsync(call, null, cancellationToken);
+								if (outcome.Outcome == RecurringCallDispatchOutcomes.Held)
+									progress.Report(50, $"{Name}: recurring call {call.CallId} held, nobody available to send");
+							}
+							catch (Exception recurringDispatchEx)
+							{
+								Resgrid.Framework.Logging.LogException(recurringDispatchEx, $"Recurring call {call.CallId} could not be dispatched.");
+							}
+
+							continue;
+						}
 
 						// A dispatcher may press Dispatch Now on this call while the poll runs: only whoever marks the
 						// stored call dispatched first sends it.

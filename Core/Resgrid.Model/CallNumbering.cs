@@ -59,11 +59,13 @@ namespace Resgrid.Model
 
 	/// <summary>
 	/// One call-number sequence: the text a pattern writes before and after {SEQ} for one period. Calls share a sequence
-	/// exactly when they share a scope, so the date parts a pattern includes are also what its sequence restarts on.
+	/// exactly when they share a scope, so the date parts a pattern includes are also what its sequence restarts on. The time
+	/// of day ({HH}, {MIN}) is written into each number but is not part of the scope: those patterns restart daily.
 	/// </summary>
 	public sealed class CallNumberScope
 	{
-		public CallNumberScope(string prefix, string suffix, int width, CallNumberResetPeriod period, DateTime? periodStart, DateTime? periodEnd, int? year = null)
+		public CallNumberScope(string prefix, string suffix, int width, CallNumberResetPeriod period, DateTime? periodStart, DateTime? periodEnd, int? year = null,
+			string keyPrefix = null, string keySuffix = null)
 		{
 			Prefix = prefix ?? string.Empty;
 			Suffix = suffix ?? string.Empty;
@@ -72,11 +74,27 @@ namespace Resgrid.Model
 			PeriodStart = periodStart;
 			PeriodEnd = periodEnd;
 			Year = year;
+			KeyPrefix = keyPrefix ?? Prefix;
+			KeySuffix = keySuffix ?? Suffix;
 		}
 
+		/// <summary>The text written before the sequence for the moment the scope was resolved, time of day included.</summary>
 		public string Prefix { get; }
 
 		public string Suffix { get; }
+
+		/// <summary><see cref="Prefix"/> with any time-of-day token left as the token ("{HH}", "{MIN}"), so it is the same all period.</summary>
+		public string KeyPrefix { get; }
+
+		public string KeySuffix { get; }
+
+		/// <summary>
+		/// <see cref="KeyPrefix"/> with each time-of-day digit as '?', the repository's one-character wildcard: the seed scan
+		/// matches every number the scope issued, whatever time it wrote. The same length as <see cref="Prefix"/>.
+		/// </summary>
+		public string SearchPrefix => AsSearch(KeyPrefix);
+
+		public string SearchSuffix => AsSearch(KeySuffix);
 
 		public int Width { get; }
 
@@ -91,18 +109,26 @@ namespace Resgrid.Model
 		/// <summary>The year {YYYY} and {YY} write for the scope (a fiscal year's name when the numbering year starts later than January 1); null when the pattern has no year.</summary>
 		public int? Year { get; }
 
-		/// <summary>Stable identity of the sequence; the counter row is keyed by it. '#' never appears in a pattern literal.</summary>
-		public string Key => Prefix + "#" + Suffix;
+		/// <summary>
+		/// Stable identity of the sequence; the counter row is keyed by it. '#' never appears in a pattern literal, and neither
+		/// do the braces a time-of-day token keeps here, so a key is the same text it always was for a pattern without one.
+		/// </summary>
+		public string Key => KeyPrefix + "#" + KeySuffix;
 
 		public string Format(int sequence) => Prefix + sequence.ToString("D" + Width, CultureInfo.InvariantCulture) + Suffix;
+
+		private static string AsSearch(string keyText) => keyText.Replace(CallNumberFormat.HourToken, "??").Replace(CallNumberFormat.MinuteToken, "??");
 	}
 
 	/// <summary>
 	/// Department call-number patterns (setting 115, <see cref="CallNumberingConfig.Pattern"/>). A pattern is literal text
-	/// (letters, digits, '-', '_', '.' and '/') around tokens: {YYYY} or {YY} the year, {MM} the month, {DD} the day of the
-	/// month, and {SEQ} the sequence, which must appear exactly once. Dates are the department's local date of the call.
-	/// {MM} needs a year token and {DD} needs {MM}, so a sequence never runs on across the same month of different years.
+	/// (letters, digits, '-', '_', '.', '/' and ':') around tokens: {YYYY} or {YY} the year, {MM} the month, {DD} the day of
+	/// the month, {HH} the hour (00-23), {MIN} the minute, and {SEQ} the sequence, which must appear exactly once. Dates and
+	/// times are the department's local time of the call. {MM} needs a year token, {DD} needs {MM}, {HH} needs {DD} and
+	/// {MIN} needs {HH}, so a sequence never runs on across the same month of different years. The time of day is written
+	/// into the number but never restarts the sequence (<see cref="CallNumberScope"/>): a pattern with it restarts daily.
 	/// A department numbering by a fiscal year sets the day its numbering year starts (<see cref="CallNumberingConfig.YearStart"/>).
+	/// Document numbers share this grammar without the time of day (<see cref="IsValidWithoutTime"/>).
 	/// </summary>
 	public static class CallNumberFormat
 	{
@@ -110,6 +136,10 @@ namespace Resgrid.Model
 		public const string ShortYearToken = "{YY}";
 		public const string MonthToken = "{MM}";
 		public const string DayToken = "{DD}";
+		/// <summary>The hour, 00 to 23.</summary>
+		public const string HourToken = "{HH}";
+		/// <summary>The minute; not {MM}, which is the month.</summary>
+		public const string MinuteToken = "{MIN}";
 		public const string SequenceToken = "{SEQ}";
 
 		/// <summary>What every department issued before call numbering was configurable: "26-153".</summary>
@@ -123,7 +153,7 @@ namespace Resgrid.Model
 		public const int DefaultWidth = 1;
 		public const int MaxSequence = 99999999;
 
-		private static readonly string[] Tokens = { YearToken, ShortYearToken, MonthToken, DayToken, SequenceToken };
+		private static readonly string[] Tokens = { YearToken, ShortYearToken, MonthToken, DayToken, HourToken, MinuteToken, SequenceToken };
 
 		/// <summary>The saved pattern, or the legacy one when none is saved (or a saved one no longer validates).</summary>
 		public static string EffectivePattern(CallNumberingConfig config)
@@ -138,6 +168,16 @@ namespace Resgrid.Model
 
 		public static bool IsValid(string pattern) => Parse(pattern) != null;
 
+		/// <summary>
+		/// True when <paramref name="pattern"/> is valid and writes no time of day: no {HH} or {MIN} and no ':'. Document numbers
+		/// (<see cref="DocumentNumbering"/>) take only these; the time of day is for call numbers.
+		/// </summary>
+		public static bool IsValidWithoutTime(string pattern)
+		{
+			var parts = Parse(pattern);
+			return parts != null && parts.All(p => p.Token != HourToken && p.Token != MinuteToken && (p.Literal == null || p.Literal.IndexOf(':') < 0));
+		}
+
 		/// <summary>Tokens are matched case-insensitively; this writes them back in their canonical upper case. Null when not valid.</summary>
 		public static string Normalize(string pattern)
 		{
@@ -150,7 +190,7 @@ namespace Resgrid.Model
 			return Parse(pattern)?.Any(p => p.Token == token) == true;
 		}
 
-		/// <summary>How often a valid pattern restarts its sequence; the finest date token it writes decides.</summary>
+		/// <summary>How often a valid pattern restarts its sequence; the finest date token it writes decides ({HH} and {MIN} need {DD}, so daily).</summary>
 		public static CallNumberResetPeriod ResetPeriod(string pattern)
 		{
 			var parts = Parse(pattern);
@@ -169,6 +209,8 @@ namespace Resgrid.Model
 		/// The sequence scope a call logged at <paramref name="localDate"/> (department time) falls in. A pattern that restarts
 		/// yearly runs from <paramref name="yearStart"/> (January 1 when null) and writes that numbering year's name; one with
 		/// {MM} or {DD} writes and restarts on the calendar date, so a number such as 20270115-3 always reads as the day it was logged.
+		/// {HH} and {MIN} write the local time of <paramref name="localDate"/> into <see cref="CallNumberScope.Prefix"/> and
+		/// <see cref="CallNumberScope.Suffix"/> only; the scope's key and search text keep them as tokens.
 		/// </summary>
 		public static CallNumberScope Resolve(string pattern, int width, DateTime localDate, NumberingYearStart yearStart = null)
 		{
@@ -179,16 +221,22 @@ namespace Resgrid.Model
 
 			var prefix = new StringBuilder();
 			var suffix = new StringBuilder();
+			var keyPrefix = new StringBuilder();
+			var keySuffix = new StringBuilder();
 			var target = prefix;
+			var keyTarget = keyPrefix;
 			foreach (var part in parts)
 			{
 				if (part.Token == SequenceToken)
 				{
 					target = suffix;
+					keyTarget = keySuffix;
 					continue;
 				}
 
-				target.Append(part.Token == null ? part.Literal : Render(part.Token, localDate, year));
+				var text = part.Token == null ? part.Literal : Render(part.Token, localDate, year);
+				target.Append(text);
+				keyTarget.Append(part.Token == HourToken || part.Token == MinuteToken ? part.Token : text);
 			}
 
 			DateTime? start = null, end = null;
@@ -208,7 +256,8 @@ namespace Resgrid.Model
 					break;
 			}
 
-			return new CallNumberScope(prefix.ToString(), suffix.ToString(), EffectiveWidth(width), period, start, end, period == CallNumberResetPeriod.Never ? (int?)null : year);
+			return new CallNumberScope(prefix.ToString(), suffix.ToString(), EffectiveWidth(width), period, start, end, period == CallNumberResetPeriod.Never ? (int?)null : year,
+				keyPrefix.ToString(), keySuffix.ToString());
 		}
 
 		private static string Render(string token, DateTime localDate, int year)
@@ -219,13 +268,17 @@ namespace Resgrid.Model
 				case ShortYearToken: return (year % 100).ToString("D2", CultureInfo.InvariantCulture);
 				case MonthToken: return localDate.Month.ToString("D2", CultureInfo.InvariantCulture);
 				case DayToken: return localDate.Day.ToString("D2", CultureInfo.InvariantCulture);
+				// Always two digits: the seed scan's wildcard (CallNumberScope.SearchPrefix) counts on it.
+				case HourToken: return localDate.Hour.ToString("D2", CultureInfo.InvariantCulture);
+				case MinuteToken: return localDate.Minute.ToString("D2", CultureInfo.InvariantCulture);
 				default: return string.Empty;
 			}
 		}
 
 		/// <summary>
 		/// Keys that sort call numbers in the order they were issued, which their text does not ("26-10" reads before "26-5"):
-		/// by the year, month and day a number names, then by its sequence. A number is read with the department's
+		/// by the year, month and day a number names, then by its sequence (a time of day it names is read past, not compared:
+		/// its daily sequence is already the order the day's calls were issued in). A number is read with the department's
 		/// <paramref name="pattern"/>, else with the legacy one; text neither wrote (a pattern the department has since replaced)
 		/// sorts ahead of them, by its characters with each run of digits compared as a number. Keys compare ordinally.
 		/// </summary>
@@ -251,6 +304,8 @@ namespace Resgrid.Model
 					case ShortYearToken: reader.Append("(?<yy>[0-9]{2})"); break;
 					case MonthToken: reader.Append("(?<month>[0-9]{2})"); break;
 					case DayToken: reader.Append("(?<day>[0-9]{2})"); break;
+					case HourToken: reader.Append("(?<hour>[0-9]{2})"); break;
+					case MinuteToken: reader.Append("(?<minute>[0-9]{2})"); break;
 					case SequenceToken: reader.Append("(?<seq>[0-9]+)"); break;
 				}
 			}
@@ -301,7 +356,9 @@ namespace Resgrid.Model
 			return match.Groups[name].Success ? int.Parse(match.Groups[name].Value, NumberStyles.None, CultureInfo.InvariantCulture) : 0;
 		}
 
-		private static bool IsLiteral(char c) => (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '-' || c == '_' || c == '.' || c == '/';
+		// Never '#' (the scope key's separator), braces (tokens, and the time-of-day tokens a scope key keeps) or '?' (the seed
+		// scan's wildcard). ':' is for a time such as {HH}:{MIN}; document numbers refuse it (IsValidWithoutTime).
+		private static bool IsLiteral(char c) => (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '-' || c == '_' || c == '.' || c == '/' || c == ':';
 
 		/// <summary>Null when the pattern is not valid; otherwise literal runs and tokens in order.</summary>
 		private static List<PatternPart> Parse(string pattern)
@@ -345,7 +402,14 @@ namespace Resgrid.Model
 			var hasMonth = parts.Any(p => p.Token == MonthToken);
 			if (hasMonth && !hasYear)
 				return null;
-			if (parts.Any(p => p.Token == DayToken) && !hasMonth)
+			var hasDay = parts.Any(p => p.Token == DayToken);
+			if (hasDay && !hasMonth)
+				return null;
+			// The time of day reads only with the date it is on, and the sequence restarting daily keeps such numbers unique.
+			var hasHour = parts.Any(p => p.Token == HourToken);
+			if (hasHour && !hasDay)
+				return null;
+			if (parts.Any(p => p.Token == MinuteToken) && !hasHour)
 				return null;
 
 			return parts;

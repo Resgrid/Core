@@ -72,6 +72,7 @@ namespace Resgrid.Tests.Rms
 		{
 			Resgrid.Config.SystemBehaviorConfig.CacheEnabled = false;
 			_store = new FakeIncidentStore();
+			LegalHolds = CreateLegalHolds();
 
 			_settings = new Mock<IDepartmentSettingsService>();
 			_settings.Setup(s => s.GetRecordsNumberingConfigAsync(Dept, It.IsAny<bool>())).ReturnsAsync(new RecordsNumberingConfig());
@@ -139,6 +140,16 @@ namespace Resgrid.Tests.Rms
 
 		protected PassthroughRecordsProtection Protection { get; } = new PassthroughRecordsProtection();
 
+		/// <summary>No hold is active unless a test adds one.</summary>
+		protected Mock<IRmsRecordLegalHoldsRepository> LegalHolds { get; private set; }
+
+		private static Mock<IRmsRecordLegalHoldsRepository> CreateLegalHolds()
+		{
+			var holds = new Mock<IRmsRecordLegalHoldsRepository>();
+			holds.Setup(h => h.GetActiveForDepartmentAsync(It.IsAny<int>())).ReturnsAsync(new List<RmsRecordLegalHold>());
+			return holds;
+		}
+
 		private IncidentReportsService BuildService(IRecordsUdfService udf = null, IRecordsEvidenceService evidence = null)
 		{
 			var outbox = new DomainEventOutboxService(_store.Shared.OutboxRepo.Object, _aggregator.Object);
@@ -150,7 +161,7 @@ namespace Resgrid.Tests.Rms
 				_store.Shared.ScopesRepo.Object, _store.Shared.SharesRepo.Object, _store.Shared.ProjectionsRepo.Object, outbox, _settings.Object,
 				_groups.Object, _profiles.Object, _roles.Object, _units.Object, _calls.Object, _adp.Object, _store.UnitOfWork.Object,
 				_neris.Object, new NerisMappingService(), _validation.Object, _authorization.Object, _store.Shared.AttachmentsRepo.Object, _store.Shared.EvidenceRepo.Object, udf ?? Mock.Of<IRecordsUdfService>(), evidence ?? Mock.Of<IRecordsEvidenceService>(),
-				_feeds.Object, Protection, _departments.Object);
+				_feeds.Object, Protection, _departments.Object, _store.AnalysesRepo.Object, LegalHolds.Object);
 		}
 
 		[Test]

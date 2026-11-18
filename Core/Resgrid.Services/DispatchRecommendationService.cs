@@ -206,8 +206,9 @@ namespace Resgrid.Services
 				Latitude = location?.Latitude,
 				Longitude = location?.Longitude,
 				TargetAlarmLevel = targetAlarmLevel,
-				AlreadyDispatchedUnitIds = call.UnitDispatches?.Select(d => d.UnitId).ToList() ?? new List<int>(),
-				AlreadyDispatchedUserIds = call.Dispatches?.Select(d => d.UserId).Where(id => !string.IsNullOrWhiteSpace(id)).ToList() ?? new List<string>(),
+				// A unit released (stood down) from the call is not on it any more: it can be recommended again.
+				AlreadyDispatchedUnitIds = CallDispatchUnitReleases.ActiveUnitIds(call.UnitDispatches).ToList(),
+				AlreadyDispatchedUserIds = call.Dispatches?.Select(d => d.UserId).Where(id => !string.IsNullOrWhiteSpace(id) && !call.IsUserReleased(id)).ToList() ?? new List<string>(),
 				CallId = call.CallId > 0 ? call.CallId : (int?)null,
 				ForcedLeafNodeKey = forcedLeafNodeKey
 			};
@@ -235,8 +236,19 @@ namespace Resgrid.Services
 
 				foreach (var unit in result.Units)
 				{
-					if (call.UnitDispatches.Any(d => d.UnitId == unit.UnitId))
+					if (call.IsUnitOnCall(unit.UnitId))
 						continue;
+
+					// Recommended again after it was released from the call: the unit goes back on its own dispatch row.
+					var released = call.UnitDispatches.Where(d => d != null && d.UnitId == unit.UnitId).OrderByDescending(d => d.DispatchedOn).FirstOrDefault();
+					if (released != null)
+					{
+						released.Redispatch(DateTime.UtcNow);
+						released.ResponseCodeId = unit.ResponseCodeId;
+						released.ResponseCode = unit.ResponseCode;
+						released.ResponseCodeName = unit.ResponseCodeName;
+						continue;
+					}
 
 					call.UnitDispatches.Add(new CallDispatchUnit
 					{

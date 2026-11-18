@@ -70,6 +70,8 @@ namespace Resgrid.Services.Records
 		private readonly IIncidentSourceFeedService _feeds;
 		private readonly IRecordsProtectionService _protection;
 		private readonly IDepartmentsService _departments;
+		private readonly IRmsIncidentAnalysesRepository _analyses;
+		private readonly IRmsRecordLegalHoldsRepository _legalHolds;
 
 		public IncidentReportsService(IRmsIncidentReportsRepository reports, IRmsSourceFactsRepository facts, IRmsUnitResponsesRepository units,
 			IRmsIncidentTypesRepository types, IRmsActionTacticsRepository tactics, IRmsAidsRepository aids, IRmsLocationsRepository locations,
@@ -80,8 +82,11 @@ namespace Resgrid.Services.Records
 			IDepartmentGroupsService groups, IUserProfileService profiles, IPersonnelRolesService roles, IUnitsService unitsService, ICallsService calls,
 			IDepartmentDataProtectionService dataProtection, IUnitOfWork unitOfWork, INerisProfileService neris, INerisMappingService mapping,
 			INerisValidationService validation, IRecordsAuthorizationService authorization, IRmsRecordAttachmentsRepository attachments, IRmsEvidenceArtifactsRepository evidence, IRecordsUdfService udf, IRecordsEvidenceService evidenceService,
-			IIncidentSourceFeedService feeds, IRecordsProtectionService protection, IDepartmentsService departments)
+			IIncidentSourceFeedService feeds, IRecordsProtectionService protection, IDepartmentsService departments,
+			IRmsIncidentAnalysesRepository analyses, IRmsRecordLegalHoldsRepository legalHolds)
 		{
+			_analyses = analyses;
+			_legalHolds = legalHolds;
 			_departments = departments;
 			_protection = protection;
 			_feeds = feeds;
@@ -139,7 +144,8 @@ namespace Resgrid.Services.Records
 			// SingleAuthoritative (plan 5.2.1): a second start returns the existing report, never a duplicate. The
 			// entity-scoped lookup is not enough on its own — a report started before the NERIS profile was
 			// configured carries the placeholder entity, and matching only the current one would start a second
-			// authoritative report for the same call the moment the department sets its entity id.
+			// authoritative report for the same call the moment the department sets its entity id. A cancelled or deleted
+			// report does not count (M0318): one started by mistake must not keep the Call from getting its real report.
 			var existing = await _reports.GetByCallAsync(departmentId, callId, entity)
 				?? (await _reports.GetByCallAnyEntityAsync(departmentId, callId))?.FirstOrDefault(r => !r.DeletedOn.HasValue);
 			if (existing != null && !existing.DeletedOn.HasValue)

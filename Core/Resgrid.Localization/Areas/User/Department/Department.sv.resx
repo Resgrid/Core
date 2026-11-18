@@ -1377,7 +1377,7 @@
     <value>Exempel:</value>
   </data>
   <data name="CallNumberPatternHelp" xml:space="preserve">
-    <value>Fast text (bokstäver, siffror, - _ . /) runt platshållare: {YYYY} eller {YY} året, {MM} månaden, {DD} dagen och {SEQ} löpnumret, som måste förekomma en gång. Löpnumret börjar om på 1 varje gång datumet i numret ändras: varje år med ett år, varje månad med {MM}, varje dag med {DD} och aldrig utan datum. {MM} kräver ett år och {DD} kräver {MM}. Datum använder avdelningens tidszon.</value>
+    <value>Fast text (bokstäver, siffror, - _ . / :) runt platshållare: {YYYY} eller {YY} året, {MM} månaden, {DD} dagen, {HH} timmen, {MIN} minuten och {SEQ} löpnumret, som måste förekomma en gång. Löpnumret börjar om på 1 varje gång datumet i numret ändras: varje år med ett år, varje månad med {MM}, varje dag med {DD} och aldrig utan datum; timme och minut startar aldrig om det. {MM} kräver ett år, {DD} kräver {MM}, {HH} kräver {DD} och {MIN} kräver {HH}. Datum och tider använder avdelningens tidszon.</value>
   </data>
   <data name="CallNumberSequenceWidth" xml:space="preserve">
     <value>Siffror i löpnumret</value>
@@ -1410,7 +1410,7 @@
     <value>Höja nästa larmnummer? Det kan bara höjas, aldrig sänkas.</value>
   </data>
   <data name="CallNumberPatternInvalid" xml:space="preserve">
-    <value>Larmnumreringen sparades inte. Mönstret behöver {SEQ} exakt en gång, får bara innehålla bokstäver, siffror, - _ . / och platshållarna {YYYY}, {YY}, {MM} och {DD}, behöver ett år för {MM} och {MM} för {DD} och får vara högst 40 tecken.</value>
+    <value>Larmnumreringen sparades inte. Mönstret behöver {SEQ} exakt en gång, får bara innehålla bokstäver, siffror, - _ . / : och platshållarna {YYYY}, {YY}, {MM}, {DD}, {HH} och {MIN}, var och en högst en gång (minuten är {MIN}, {MM} är månaden), behöver ett år för {MM}, {MM} för {DD}, {DD} för {HH} och {HH} för {MIN} och får vara högst 40 tecken.</value>
   </data>
   <data name="CallNumberNextBelowCurrent" xml:space="preserve">
     <value>Nästa larmnummer höjdes inte: det kan bara höjas över det nummer som nästa larm redan får ({0}).</value>

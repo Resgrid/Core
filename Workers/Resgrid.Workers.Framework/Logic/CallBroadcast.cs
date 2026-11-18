@@ -61,6 +61,18 @@ namespace Resgrid.Workers.Framework.Logic
 
 				var dispatchedUsers = new HashSet<string>();
 
+				// Members released (stood down) from the call are not paged again by a rebroadcast, however the call reaches them
+				// (by name, group, role or unit crew): seeding them as already reached keeps every route below from selecting them.
+				// Read now, not from the queued call: a release made while the broadcast waited in the queue still counts.
+				try
+				{
+					var releases = await scope.Resolve<Resgrid.Model.Repositories.ICallPersonnelReleasesRepository>().GetByCallIdAsync(cqi.Call.CallId);
+					foreach (var release in releases ?? Enumerable.Empty<CallPersonnelRelease>())
+						if (release != null && !String.IsNullOrWhiteSpace(release.UserId))
+							dispatchedUsers.Add(release.UserId);
+				}
+				catch (Exception ex) { Logging.LogException(ex, $"Call {cqi.Call.CallId} broadcast: released members could not be read; sending to every dispatched member."); }
+
 				// Everyone this broadcast reached, for dispatch re-notification (a no-op unless the department turned it on).
 				var broadcastStartedUtc = DateTime.UtcNow;
 				var renotifyRecipients = new List<DispatchRenotifyRecipient>();
@@ -145,12 +157,14 @@ namespace Resgrid.Workers.Framework.Logic
 					}
 				}
 
-				if (cqi.Call.UnitDispatches != null && cqi.Call.UnitDispatches.Any())
+				// A unit released (stood down) from the call is not paged again by a rebroadcast of it.
+				var liveUnitDispatches = cqi.Call.GetActiveUnitDispatches();
+				if (liveUnitDispatches.Any())
 				{
 					var _unitsService = scope.Resolve<IUnitsService>();
 					var crew = await _departmentSettingsService.GetUnitDispatchAlsoDispatchToAssignedPersonnelAsync(cqi.Call.DepartmentId);
 					var group = await _departmentSettingsService.GetUnitDispatchAlsoDispatchToGroupAsync(cqi.Call.DepartmentId);
-					foreach (var dispatch in cqi.Call.UnitDispatches)
+					foreach (var dispatch in liveUnitDispatches)
 					{
 						var unit = await _unitsService.GetUnitByIdAsync(dispatch.UnitId);
 						if (unit?.StationGroupId != null && !groupIds.Contains(unit.StationGroupId.Value)) groupIds.Add(unit.StationGroupId.Value);

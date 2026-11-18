@@ -1,0 +1,574 @@
+@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Dispatch.RecurringCallEditView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.RecurringCalls> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Call> callLocalizer
+@{
+	var title = Model.IsNew ? localizer["NewRecurringCall"] : localizer["EditRecurringCall"];
+	ViewBag.Title = "Resgrid | " + title;
+	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+	var selectedDays = new HashSet<int>(Model.Days ?? new List<int>());
+	Func<string, Microsoft.AspNetCore.Html.IHtmlContent> requiredMark = key => Model.IsRequired(key) ? Html.Raw(" <span class=\"text-danger\">*</span>") : Microsoft.AspNetCore.Html.HtmlString.Empty;
+	var weekChoices = new[] { 1, 2, 3, 4, 5 };
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@title</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+			</li>
+			<li>
+				<a asp-controller="Dispatch" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["CallsModule"]</a>
+			</li>
+			<li>
+				<a asp-controller="RecurringCalls" asp-action="Index" asp-route-area="User">@localizer["PageTitle"]</a>
+			</li>
+			<li class="active">
+				<strong>@title</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="row">
+				<div class="@(Model.IsNew ? "col-lg-12" : "col-lg-9")">
+					<div class="ibox float-e-margins">
+						<div class="ibox-content">
+							<form id="recurringCallForm" class="form-horizontal" method="post" asp-controller="RecurringCalls" asp-action="Save" asp-route-area="User">
+								@Html.AntiForgeryToken()
+								<input type="hidden" asp-for="RecurringCallId" />
+								<div asp-validation-summary="All" class="text-danger"></div>
+
+								@if (!string.IsNullOrWhiteSpace(Model.FromCallNumber))
+								{
+									<div class="alert alert-info">@string.Format(localizer["FromCallNotice"].Value, Model.FromCallNumber)</div>
+								}
+
+								@if (!Model.IsNew && !Model.IsActive)
+								{
+									<div class="alert alert-warning" id="recurringPausedNotice">
+										<strong>@localizer["StatusPaused"]</strong>
+										@if (!string.IsNullOrWhiteSpace(Model.ResumeOn))
+										{
+											<span>@string.Format(localizer["PausedUntil"].Value, Model.ResumeOn)</span>
+										}
+										@if (!string.IsNullOrWhiteSpace(Model.PauseReason))
+										{
+											<br /><span>@Model.PauseReason</span>
+										}
+									</div>
+								}
+
+								<h3>@localizer["SectionCall"]</h3>
+								<div class="form-group">
+									<label class="col-sm-2 control-label" for="Name">@localizer["Name"] <span class="text-danger">*</span></label>
+									<div class="col-sm-8">
+										<input type="text" asp-for="Name" class="form-control" maxlength="@RecurringCall.MaxNameLength" required />
+										<span class="help-block m-b-none">@localizer["NameHelp"]</span>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label" for="Description">@localizer["Description"]</label>
+									<div class="col-sm-8">
+										<textarea asp-for="Description" class="form-control" rows="2"></textarea>
+										<span class="help-block m-b-none">@localizer["DescriptionHelp"]</span>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label" for="Priority">@localizer["Priority"]</label>
+									<div class="col-sm-3">
+										<select asp-for="Priority" asp-items="Model.Priorities" class="form-control"></select>
+									</div>
+									<label class="col-sm-2 control-label" for="Type">@localizer["Type"]</label>
+									<div class="col-sm-3">
+										<select asp-for="Type" asp-items="Model.CallTypes" class="form-control"></select>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label" for="NatureOfCall">@localizer["Nature"]</label>
+									<div class="col-sm-8">
+										<textarea asp-for="NatureOfCall" class="form-control" rows="3"></textarea>
+									</div>
+								</div>
+								@if (Model.IsVisible(NewCallFieldKeys.Note))
+								{
+									<div class="form-group">
+										<label class="col-sm-2 control-label" for="Notes">@localizer["Notes"]@requiredMark(NewCallFieldKeys.Note)</label>
+										<div class="col-sm-8">
+											<textarea asp-for="Notes" class="form-control" rows="3"></textarea>
+										</div>
+									</div>
+								}
+								@if (Model.IsVisible(NewCallFieldKeys.Address))
+								{
+									<div class="form-group">
+										<label class="col-sm-2 control-label" for="Address">@localizer["Address"]@requiredMark(NewCallFieldKeys.Address)</label>
+										<div class="col-sm-8">
+											<input type="text" asp-for="Address" class="form-control" />
+											<span class="help-block m-b-none">@localizer["AddressHelp"]</span>
+										</div>
+									</div>
+								}
+								@if (Model.IsVisible(NewCallFieldKeys.Geolocation))
+								{
+									<div class="form-group">
+										<label class="col-sm-2 control-label" for="Coordinates">@localizer["Coordinates"]@requiredMark(NewCallFieldKeys.Geolocation)</label>
+										<div class="col-sm-4">
+											<input type="text" asp-for="Coordinates" class="form-control" placeholder="39.7392,-104.9903" />
+											<span class="help-block m-b-none">@localizer["CoordinatesHelp"]</span>
+										</div>
+									</div>
+								}
+								@if (Model.IsVisible(NewCallFieldKeys.DestinationPoi))
+								{
+									<div class="form-group">
+										<label class="col-sm-2 control-label" for="DestinationPoiId">@localizer["Destination"]@requiredMark(NewCallFieldKeys.DestinationPoi)</label>
+										<div class="col-sm-8">
+											<select asp-for="DestinationPoiId" asp-items="Model.DestinationPois" class="form-control recurring-destination"></select>
+										</div>
+									</div>
+								}
+								@if (Model.IsVisible(NewCallFieldKeys.ContactName) || Model.IsVisible(NewCallFieldKeys.ContactInfo))
+								{
+									<div class="form-group">
+										@if (Model.IsVisible(NewCallFieldKeys.ContactName))
+										{
+											<label class="col-sm-2 control-label" for="ContactName">@localizer["ContactName"]@requiredMark(NewCallFieldKeys.ContactName)</label>
+											<div class="col-sm-3">
+												<input type="text" asp-for="ContactName" class="form-control" />
+											</div>
+										}
+										@if (Model.IsVisible(NewCallFieldKeys.ContactInfo))
+										{
+											<label class="col-sm-2 control-label" for="ContactNumber">@localizer["ContactNumber"]@requiredMark(NewCallFieldKeys.ContactInfo)</label>
+											<div class="col-sm-3">
+												<input type="text" asp-for="ContactNumber" class="form-control" />
+											</div>
+										}
+									</div>
+								}
+								@if (Model.IsVisible(NewCallFieldKeys.ExternalId) || Model.IsVisible(NewCallFieldKeys.ReferenceId))
+								{
+									<div class="form-group">
+										@if (Model.IsVisible(NewCallFieldKeys.ExternalId))
+										{
+											<label class="col-sm-2 control-label" for="ExternalIdentifier">@localizer["ExternalId"]@requiredMark(NewCallFieldKeys.ExternalId)</label>
+											<div class="col-sm-3">
+												<input type="text" asp-for="ExternalIdentifier" class="form-control" />
+											</div>
+										}
+										@if (Model.IsVisible(NewCallFieldKeys.ReferenceId))
+										{
+											<label class="col-sm-2 control-label" for="ReferenceNumber">@localizer["ReferenceId"]@requiredMark(NewCallFieldKeys.ReferenceId)</label>
+											<div class="col-sm-3">
+												<input type="text" asp-for="ReferenceNumber" class="form-control" />
+											</div>
+										}
+									</div>
+								}
+								@if (Model.IsVisible(NewCallFieldKeys.IncidentId) || Model.IsVisible(NewCallFieldKeys.MapPage))
+								{
+									<div class="form-group">
+										@if (Model.IsVisible(NewCallFieldKeys.IncidentId))
+										{
+											<label class="col-sm-2 control-label" for="IncidentNumber">@localizer["IncidentId"]@requiredMark(NewCallFieldKeys.IncidentId)</label>
+											<div class="col-sm-3">
+												<input type="text" asp-for="IncidentNumber" class="form-control" />
+											</div>
+										}
+										@if (Model.IsVisible(NewCallFieldKeys.MapPage))
+										{
+											<label class="col-sm-2 control-label" for="MapPage">@localizer["MapPage"]@requiredMark(NewCallFieldKeys.MapPage)</label>
+											<div class="col-sm-3">
+												<input type="text" asp-for="MapPage" class="form-control" />
+											</div>
+										}
+									</div>
+								}
+								@if (Model.IsVisible(NewCallFieldKeys.CheckInTimers))
+								{
+									<div class="form-group">
+										<div class="col-sm-offset-2 col-sm-8">
+											<div class="checkbox">
+												<label><input asp-for="CheckInTimersEnabled" /> @localizer["EnableCheckInTimers"]</label>
+											</div>
+										</div>
+									</div>
+								}
+								else
+								{
+									<input type="hidden" asp-for="CheckInTimersEnabled" />
+								}
+
+								<div class="hr-line-dashed"></div>
+								<h3>@localizer["SectionFacility"]</h3>
+								<p class="text-muted">@localizer["FacilityHelp"]</p>
+								<div class="form-group">
+									<label class="col-sm-2 control-label" for="FacilityPoiId">@localizer["FacilityPoi"]</label>
+									<div class="col-sm-8">
+										<select asp-for="FacilityPoiId" asp-items="Model.FacilityPois" class="form-control recurring-destination"></select>
+										<span class="help-block m-b-none">@localizer["FacilityPoiHelp"]</span>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label" for="FacilityName">@localizer["FacilityName"]</label>
+									<div class="col-sm-3">
+										<input type="text" asp-for="FacilityName" class="form-control" maxlength="@RecurringCall.MaxShortFieldLength" />
+									</div>
+									<label class="col-sm-2 control-label" for="FacilityDetails">@localizer["FacilityDetails"]</label>
+									<div class="col-sm-3">
+										<input type="text" asp-for="FacilityDetails" class="form-control" placeholder="@localizer["FacilityDetailsPlaceholder"]" />
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label" for="DestinationName">@localizer["DestinationName"]</label>
+									<div class="col-sm-3">
+										<input type="text" asp-for="DestinationName" class="form-control" maxlength="@RecurringCall.MaxShortFieldLength" />
+									</div>
+									<label class="col-sm-2 control-label" for="DestinationDetails">@localizer["DestinationDetails"]</label>
+									<div class="col-sm-3">
+										<input type="text" asp-for="DestinationDetails" class="form-control" placeholder="@localizer["FacilityDetailsPlaceholder"]" />
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label" for="ScheduleContactName">@localizer["ScheduleContactName"]</label>
+									<div class="col-sm-3">
+										<input type="text" asp-for="ScheduleContactName" class="form-control" maxlength="@RecurringCall.MaxShortFieldLength" />
+										<span class="help-block m-b-none">@localizer["ScheduleContactHelp"]</span>
+									</div>
+									<label class="col-sm-2 control-label" for="ScheduleContactNumber">@localizer["ScheduleContactNumber"]</label>
+									<div class="col-sm-3">
+										<input type="text" asp-for="ScheduleContactNumber" class="form-control" maxlength="100" />
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label" for="ScheduleContactEmail">@localizer["ScheduleContactEmail"]</label>
+									<div class="col-sm-3">
+										<input type="email" asp-for="ScheduleContactEmail" class="form-control" maxlength="256" />
+									</div>
+								</div>
+
+								<div class="hr-line-dashed"></div>
+								<h3>@localizer["SectionDispatch"]@requiredMark(NewCallFieldKeys.DispatchList)</h3>
+								<p class="text-muted">@localizer["DispatchHelp"]</p>
+								<p class="text-muted">@localizer["AvailabilityHelp"]</p>
+								<div class="form-group">
+									<label class="col-sm-2 control-label" for="DispatchUnitIds">@localizer["Units"]</label>
+									<div class="col-sm-8">
+										<select id="DispatchUnitIds" name="DispatchUnitIds" multiple class="form-control recurring-targets" data-placeholder="@localizer["SelectPlaceholder"]">
+											@foreach (var item in Model.Units)
+											{
+												<option value="@item.Value" selected="@item.Selected">@item.Text</option>
+											}
+										</select>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label" for="DispatchUserIds">@localizer["Personnel"]</label>
+									<div class="col-sm-8">
+										<select id="DispatchUserIds" name="DispatchUserIds" multiple class="form-control recurring-targets" data-placeholder="@localizer["SelectPlaceholder"]">
+											@foreach (var item in Model.Personnel)
+											{
+												<option value="@item.Value" selected="@item.Selected">@item.Text</option>
+											}
+										</select>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label" for="DispatchGroupIds">@localizer["Groups"]</label>
+									<div class="col-sm-8">
+										<select id="DispatchGroupIds" name="DispatchGroupIds" multiple class="form-control recurring-targets" data-placeholder="@localizer["SelectPlaceholder"]">
+											@foreach (var item in Model.Groups)
+											{
+												<option value="@item.Value" selected="@item.Selected">@item.Text</option>
+											}
+										</select>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label" for="DispatchRoleIds">@localizer["Roles"]</label>
+									<div class="col-sm-8">
+										<select id="DispatchRoleIds" name="DispatchRoleIds" multiple class="form-control recurring-targets" data-placeholder="@localizer["SelectPlaceholder"]">
+											@foreach (var item in Model.Roles)
+											{
+												<option value="@item.Value" selected="@item.Selected">@item.Text</option>
+											}
+										</select>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="col-sm-offset-2 col-sm-8">
+										<div class="checkbox">
+											<label><input asp-for="UseRunCard" /> @localizer["UseRunCard"]</label>
+										</div>
+										<span class="help-block m-b-none">@(Model.RunCardsEnabled ? localizer["UseRunCardHelp"] : localizer["RunCardsOffHelp"])</span>
+									</div>
+								</div>
+
+								<div class="hr-line-dashed"></div>
+								<h3>@localizer["SectionAlerts"]</h3>
+								<p class="text-muted">@localizer["AlertsHelp"]</p>
+								<div class="form-group">
+									<label class="col-sm-2 control-label" for="AlertUserIds">@localizer["Personnel"]</label>
+									<div class="col-sm-8">
+										<select id="AlertUserIds" name="AlertUserIds" multiple class="form-control recurring-targets" data-placeholder="@localizer["SelectPlaceholder"]">
+											@foreach (var item in Model.AlertPersonnel)
+											{
+												<option value="@item.Value" selected="@item.Selected">@item.Text</option>
+											}
+										</select>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label" for="AlertGroupIds">@localizer["Groups"]</label>
+									<div class="col-sm-8">
+										<select id="AlertGroupIds" name="AlertGroupIds" multiple class="form-control recurring-targets" data-placeholder="@localizer["SelectPlaceholder"]">
+											@foreach (var item in Model.AlertGroups)
+											{
+												<option value="@item.Value" selected="@item.Selected">@item.Text</option>
+											}
+										</select>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label" for="AlertRoleIds">@localizer["Roles"]</label>
+									<div class="col-sm-8">
+										<select id="AlertRoleIds" name="AlertRoleIds" multiple class="form-control recurring-targets" data-placeholder="@localizer["SelectPlaceholder"]">
+											@foreach (var item in Model.AlertRoles)
+											{
+												<option value="@item.Value" selected="@item.Selected">@item.Text</option>
+											}
+										</select>
+									</div>
+								</div>
+
+								<div class="hr-line-dashed"></div>
+								<h3>@localizer["SectionSchedule"]</h3>
+								<div class="form-group">
+									<label class="col-sm-2 control-label" for="Frequency">@localizer["Repeats"]</label>
+									<div class="col-sm-3">
+										<select asp-for="Frequency" class="form-control">
+											<option value="@((int)RecurringCallFrequencies.Daily)">@localizer["FrequencyDaily"]</option>
+											<option value="@((int)RecurringCallFrequencies.Weekly)">@localizer["FrequencyWeekly"]</option>
+											<option value="@((int)RecurringCallFrequencies.Monthly)">@localizer["FrequencyMonthly"]</option>
+										</select>
+									</div>
+									<label class="col-sm-1 control-label" for="RepeatInterval">@localizer["Every"]</label>
+									<div class="col-sm-4">
+										<div class="input-group" style="max-width:220px;">
+											<input type="number" asp-for="RepeatInterval" class="form-control" min="1" max="@RecurringCallRecurrence.MaxInterval" />
+											<span class="input-group-addon">
+												<span class="recurring-unit" data-frequency="@((int)RecurringCallFrequencies.Daily)">@localizer["IntervalDays"]</span>
+												<span class="recurring-unit" data-frequency="@((int)RecurringCallFrequencies.Weekly)">@localizer["IntervalWeeks"]</span>
+												<span class="recurring-unit" data-frequency="@((int)RecurringCallFrequencies.Monthly)">@localizer["IntervalMonths"]</span>
+											</span>
+										</div>
+									</div>
+								</div>
+								<div class="form-group recurring-section" data-frequency="@((int)RecurringCallFrequencies.Weekly)">
+									<label class="col-sm-2 control-label">@localizer["OnDays"]</label>
+									<div class="col-sm-8" id="recurringDays">
+										@foreach (var day in Model.WeekDays)
+										{
+											var value = int.Parse(day.Value);
+											<label class="checkbox-inline">
+												<input type="checkbox" name="Days" value="@value" checked="@selectedDays.Contains(value)" /> @day.Text
+											</label>
+										}
+									</div>
+								</div>
+								<div class="form-group recurring-section" data-frequency="@((int)RecurringCallFrequencies.Monthly)">
+									<label class="col-sm-2 control-label">@localizer["MonthlyOn"]</label>
+									<div class="col-sm-8">
+										<div class="radio">
+											<label class="form-inline">
+												<input type="radio" name="MonthlyMode" value="0" checked="@(Model.MonthlyMode == 0)" />
+												@localizer["MonthlyOnDay"]
+												<input type="number" asp-for="MonthlyDay" class="form-control input-sm" min="1" max="31" style="width:80px;display:inline-block;" />
+											</label>
+										</div>
+										<div class="radio">
+											<label class="form-inline">
+												<input type="radio" name="MonthlyMode" value="1" checked="@(Model.MonthlyMode == 1)" />
+												@localizer["MonthlyOnThe"]
+												<select asp-for="MonthlyWeek" class="form-control input-sm" style="width:auto;display:inline-block;">
+													@foreach (var week in weekChoices)
+													{
+														<option value="@week">@localizer[Resgrid.Web.Areas.User.Controllers.RecurringCallsController.WeekKey(week)]</option>
+													}
+												</select>
+												<select asp-for="MonthlyWeekday" asp-items="Model.WeekDays" class="form-control input-sm" style="width:auto;display:inline-block;"></select>
+											</label>
+										</div>
+										<span class="help-block m-b-none">@localizer["MonthlyDayHelp"]</span>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label">@localizer["Times"] <span class="text-danger">*</span></label>
+									<div class="col-sm-8">
+										<div id="recurringTimes">
+											@foreach (var time in Model.Times)
+											{
+												<div class="input-group recurring-time-row" style="max-width:220px;margin-bottom:5px;">
+													<input type="time" name="Times" class="form-control" value="@time" step="60" />
+													<span class="input-group-btn">
+														<button type="button" class="btn btn-default recurring-remove-time" title="@localizer["RemoveTime"]"><i class="fa fa-times"></i></button>
+													</span>
+												</div>
+											}
+										</div>
+										<button type="button" id="recurringAddTime" class="btn btn-xs btn-default"><i class="fa fa-plus"></i> @localizer["AddTime"]</button>
+										<span class="help-block m-b-none">@string.Format(localizer["TimesHelp"].Value, Model.TimeZoneName)</span>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label" for="StartsOn">@localizer["StartsOn"] <span class="text-danger">*</span></label>
+									<div class="col-sm-3">
+										<input type="date" asp-for="StartsOn" class="form-control" required />
+									</div>
+									<label class="col-sm-2 control-label" for="EndsOn">@localizer["EndsOn"]</label>
+									<div class="col-sm-3">
+										<input type="date" asp-for="EndsOn" class="form-control" />
+										<span class="help-block m-b-none">@localizer["EndsOnHelp"]</span>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label">@localizer["CreationMode"]</label>
+									<div class="col-sm-8" id="recurringCreationMode">
+										<div class="radio">
+											<label><input type="radio" name="CreationMode" value="@((int)RecurringCallCreationModes.Automatic)" checked="@(Model.CreationMode != (int)RecurringCallCreationModes.Dispatcher)" /> @localizer["CreationModeAutomatic"]</label>
+										</div>
+										<div class="radio">
+											<label><input type="radio" name="CreationMode" value="@((int)RecurringCallCreationModes.Dispatcher)" checked="@(Model.CreationMode == (int)RecurringCallCreationModes.Dispatcher)" /> @localizer["CreationModeDispatcher"]</label>
+										</div>
+									</div>
+								</div>
+								<div class="form-group recurring-mode-section" data-mode="@((int)RecurringCallCreationModes.Automatic)">
+									<label class="col-sm-2 control-label" for="LeadTimeMinutes">@localizer["LeadTime"]</label>
+									<div class="col-sm-3">
+										<select asp-for="LeadTimeMinutes" asp-items="Model.LeadTimes" class="form-control"></select>
+									</div>
+									<div class="col-sm-5">
+										<span class="help-block m-b-none">@localizer["LeadTimeHelp"]</span>
+									</div>
+								</div>
+								<div class="form-group recurring-mode-section" data-mode="@((int)RecurringCallCreationModes.Dispatcher)">
+									<label class="col-sm-2 control-label" for="ManualAlertMinutes">@localizer["ManualAlert"]</label>
+									<div class="col-sm-3">
+										<select asp-for="ManualAlertMinutes" asp-items="Model.ManualAlertChoices" class="form-control"></select>
+									</div>
+									<div class="col-sm-5">
+										<span class="help-block m-b-none">@localizer["ManualAlertHelp"]</span>
+									</div>
+								</div>
+								@if (Model.IsNew)
+								{
+									<div class="form-group">
+										<div class="col-sm-offset-2 col-sm-8">
+											<div class="checkbox">
+												<label><input asp-for="IsActive" /> @localizer["Active"]</label>
+											</div>
+											<span class="help-block m-b-none">@localizer["ActiveHelp"]</span>
+										</div>
+									</div>
+								}
+								else
+								{
+									<input type="hidden" asp-for="IsActive" />
+								}
+								@if (!Model.IsNew && Model.UpcomingCallCount > 0)
+								{
+									<div class="form-group">
+										<div class="col-sm-offset-2 col-sm-8">
+											<div class="checkbox">
+												<label><input asp-for="ReplaceUpcomingCalls" /> @string.Format(localizer["ReplaceUpcoming"].Value, Model.UpcomingCallCount)</label>
+											</div>
+											<span class="help-block m-b-none">@localizer["ReplaceUpcomingHelp"]</span>
+										</div>
+									</div>
+								}
+								else
+								{
+									<input type="hidden" name="ReplaceUpcomingCalls" value="false" />
+								}
+
+								<div class="form-group">
+									<div class="col-sm-offset-2 col-sm-8">
+										<a class="btn btn-white" asp-controller="RecurringCalls" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+										<button type="submit" id="saveRecurringCall" class="btn btn-primary">@localizer["Save"]</button>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+				@if (!Model.IsNew)
+				{
+					<div class="col-lg-3">
+						<div class="ibox float-e-margins">
+							<div class="ibox-title">
+								<h5>@localizer["NextDispatches"]</h5>
+							</div>
+							<div class="ibox-content" id="recurringNextDispatches">
+								@if (Model.NextDispatches.Any())
+								{
+									<ul class="list-unstyled">
+										@foreach (var next in Model.NextDispatches)
+										{
+											<li><i class="fa fa-clock-o"></i> @next</li>
+										}
+									</ul>
+								}
+								else
+								{
+									<p class="text-muted">@localizer["NoNextDispatches"]</p>
+								}
+								<a asp-controller="Dispatch" asp-action="ScheduledCalls" asp-route-area="User" asp-route-view="calendar">@localizer["Calendar"]</a>
+							</div>
+						</div>
+						@if (Model.CanManage)
+						{
+							<div class="ibox float-e-margins">
+								<div class="ibox-title">
+									<h5>@localizer["DeleteRecurringCall"]</h5>
+								</div>
+								<div class="ibox-content">
+									<form id="deleteRecurringCallForm" method="post" asp-controller="RecurringCalls" asp-action="Delete" asp-route-area="User"
+										  data-confirm="@localizer["DeleteConfirm"]">
+										@Html.AntiForgeryToken()
+										<input type="hidden" name="id" value="@Model.RecurringCallId" />
+										@if (Model.UpcomingCallCount > 0)
+										{
+											<div class="checkbox">
+												<label><input type="checkbox" name="deleteUpcomingCalls" value="true" checked /> @string.Format(localizer["DeleteUpcoming"].Value, Model.UpcomingCallCount)</label>
+											</div>
+										}
+										<button type="submit" class="btn btn-danger btn-sm">@localizer["Delete"]</button>
+									</form>
+								</div>
+							</div>
+						}
+					</div>
+				}
+			</div>
+		</div>
+	</div>
+</div>
+
+<template id="recurringTimeTemplate">
+	<div class="input-group recurring-time-row" style="max-width:220px;margin-bottom:5px;">
+		<input type="time" name="Times" class="form-control" value="" step="60" />
+		<span class="input-group-btn">
+			<button type="button" class="btn btn-default recurring-remove-time" title="@localizer["RemoveTime"]"><i class="fa fa-times"></i></button>
+		</span>
+	</div>
+</template>
+
+@section Scripts
+{
+	<script src="@Url.Content("~/js/app/internal/dispatch/resgrid.dispatch.recurringcalls.js")" asp-append-version="true" type="text/javascript"></script>
+}

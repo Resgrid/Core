@@ -108,11 +108,82 @@ namespace Resgrid.Web.Services.Models.v4.Mapping
 
 		/// <summary>True when it can take the patient now (not closed; the asked capability not reported unavailable).</summary>
 		public bool CanProvide { get; set; }
+
+		/// <summary>Travel distance along the route in metres (straight line for air travel); -1 when not looked up.</summary>
+		public double TravelDistanceMeters { get; set; } = -1;
 	}
 
 	public class NearestDestinationsResult : StandardApiResponseV4Base
 	{
 		public List<NearestDestinationResultData> Data { get; set; } = new List<NearestDestinationResultData>();
+	}
+
+	/// <summary>One destination of GetSuggestedDestinations, best first.</summary>
+	public class SuggestedDestinationResultData : NearestDestinationResultData
+	{
+		/// <summary>Availability: 0 open, 1 limited, 2 diversion, 3 closed.</summary>
+		public int Status { get; set; }
+
+		/// <summary>True when it offers every required capability.</summary>
+		public bool MeetsRequirements { get; set; }
+
+		/// <summary>Required capabilities it does not offer.</summary>
+		public List<string> MissingCapabilityIds { get; set; } = new List<string>();
+
+		/// <summary>Preferred capabilities it offers (and has not reported unavailable).</summary>
+		public List<string> PreferredCapabilityIds { get; set; } = new List<string>();
+
+		/// <summary>0 meets the requirements and can take the patient, 1 the same on diversion, 2 misses or has a required capability down, 3 closed.</summary>
+		public int Tier { get; set; }
+	}
+
+	/// <summary>A destination rule that applies (or was set aside).</summary>
+	public class DestinationRuleRefResultData
+	{
+		public string DestinationRuleId { get; set; }
+
+		public string Name { get; set; }
+
+		/// <summary>Set-aside rules only: "TypesRemoved" (its destination types no longer exist) or "TypeConflict" (a more specific rule sends elsewhere).</summary>
+		public string Reason { get; set; }
+	}
+
+	/// <summary>What the destination must be, from the department's destination rules.</summary>
+	public class DestinationRequirementsResultData
+	{
+		/// <summary>The destination POI types allowed; empty for any destination type.</summary>
+		public List<int> PoiTypeIds { get; set; } = new List<int>();
+
+		public List<string> RequiredCapabilityIds { get; set; } = new List<string>();
+
+		public List<string> PreferredCapabilityIds { get; set; } = new List<string>();
+
+		/// <summary>The rules that apply, most specific first.</summary>
+		public List<DestinationRuleRefResultData> Rules { get; set; } = new List<DestinationRuleRefResultData>();
+
+		/// <summary>Rules that matched but did not apply, with the reason.</summary>
+		public List<DestinationRuleRefResultData> SetAsideRules { get; set; } = new List<DestinationRuleRefResultData>();
+	}
+
+	public class SuggestedDestinationsResultData
+	{
+		/// <summary>The department's setting: 0 off (nothing else is filled), 1 suggest, 2 suggest and fill an empty destination.</summary>
+		public int Mode { get; set; }
+
+		/// <summary>A destination with more preferred capabilities wins only within this many minutes of the fastest.</summary>
+		public int PreferredWithinMinutes { get; set; }
+
+		/// <summary>The best destination that meets the requirements and is not closed; null when none does.</summary>
+		public int? SuggestedPoiId { get; set; }
+
+		public DestinationRequirementsResultData Requirements { get; set; } = new DestinationRequirementsResultData();
+
+		public List<SuggestedDestinationResultData> Destinations { get; set; } = new List<SuggestedDestinationResultData>();
+	}
+
+	public class SuggestedDestinationsResult : StandardApiResponseV4Base
+	{
+		public SuggestedDestinationsResultData Data { get; set; } = new SuggestedDestinationsResultData();
 	}
 
 	/// <summary>SetPoiAvailability body.</summary>

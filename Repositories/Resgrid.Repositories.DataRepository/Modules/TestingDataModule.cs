@@ -168,7 +168,12 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<InventoryTypesRepository>().As<IInventoryTypesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<PoisRepository>().As<IPoisRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<PoiCapabilitiesRepository>().As<IPoiCapabilitiesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<CallPersonnelReleasesRepository>().As<ICallPersonnelReleasesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<PoiAvailabilitiesRepository>().As<IPoiAvailabilitiesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DestinationRulesRepository>().As<IDestinationRulesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RecurringCallsRepository>().As<IRecurringCallsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RecurringCallOccurrencesRepository>().As<IRecurringCallOccurrencesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RecurringCallAlertsRepository>().As<IRecurringCallAlertsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<PoiTypesRepository>().As<IPoiTypesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<QueueItemsRepository>().As<IQueueItemsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<CallQuickTemplateRepository>().As<ICallQuickTemplateRepository>().InstancePerLifetimeScope();

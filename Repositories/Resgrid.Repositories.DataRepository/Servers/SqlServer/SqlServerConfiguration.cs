@@ -1196,7 +1196,8 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 						EXISTS (SELECT 1 FROM %SCHEMA%.%CALLDISPATCHESTABLE% d WHERE d.[CallId] = c.[CallId] AND d.[UserId] = %USERID%)
 						OR EXISTS (SELECT 1 FROM %SCHEMA%.%CALLDISPATCHGROUPSTABLE% g INNER JOIN %SCHEMA%.%GROUPMEMBERSTABLE% m ON m.[DepartmentGroupId] = g.[DepartmentGroupId] WHERE g.[CallId] = c.[CallId] AND m.[UserId] = %USERID% AND m.[DepartmentId] = %DID%)
 						OR EXISTS (SELECT 1 FROM %SCHEMA%.%CALLDISPATCHROLESTABLE% r INNER JOIN %SCHEMA%.%ROLEUSERSTABLE% u ON u.[PersonnelRoleId] = r.[RoleId] WHERE r.[CallId] = c.[CallId] AND u.[UserId] = %USERID% AND u.[DepartmentId] = %DID%)
-						OR EXISTS (SELECT 1 FROM %SCHEMA%.%CALLDISPATCHUNITSTABLE% du INNER JOIN %SCHEMA%.%UNITACTIVEROLESTABLE% ar ON ar.[UnitId] = du.[UnitId] WHERE du.[CallId] = c.[CallId] AND ar.[UserId] = %USERID%))";
+						OR EXISTS (SELECT 1 FROM %SCHEMA%.%CALLDISPATCHUNITSTABLE% du INNER JOIN %SCHEMA%.%UNITACTIVEROLESTABLE% ar ON ar.[UnitId] = du.[UnitId] WHERE du.[CallId] = c.[CallId] AND du.[ReleasedOn] IS NULL AND ar.[UserId] = %USERID%))
+						AND NOT EXISTS (SELECT 1 FROM %SCHEMA%.CallPersonnelReleases pr WHERE pr.[CallId] = c.[CallId] AND pr.[UserId] = %USERID%)";
 			SelectAllCallsByDidLoggedOnQuery =
 				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DID% AND [LoggedOn] >= %DATE%";
 
@@ -1270,20 +1271,21 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					INNER JOIN %SCHEMA%.%CALLSTABLE% c ON c.[CallId] = cdu.[CallId]
 					WHERE c.[DepartmentId] = %DID% AND c.[State] = 0 AND c.[IsDeleted] = 0
 						AND (c.[HasBeenDispatched] = 1 OR c.[DispatchOn] IS NULL OR c.[DispatchOn] <= %NOW%)
-						AND cdu.[UnitId] = %UNITID%";
+						AND cdu.[UnitId] = %UNITID% AND cdu.[ReleasedOn] IS NULL";
 			SelectOpenCallUnitDispatchesForDepartmentQuery = @"
 					SELECT cdu.*
 					FROM %SCHEMA%.%CALLDISPATCHUNITSTABLE% cdu
 					INNER JOIN %SCHEMA%.%CALLSTABLE% c ON c.[CallId] = cdu.[CallId]
 					WHERE c.[DepartmentId] = %DID% AND c.[State] = 0 AND c.[IsDeleted] = 0
-						AND (c.[HasBeenDispatched] = 1 OR c.[DispatchOn] IS NULL OR c.[DispatchOn] <= %NOW%)";
+						AND (c.[HasBeenDispatched] = 1 OR c.[DispatchOn] IS NULL OR c.[DispatchOn] <= %NOW%)
+						AND cdu.[ReleasedOn] IS NULL";
 			SelectOpenCallDispatchesForUserQuery = @"
 					SELECT cd.[CallId], COALESCE(cd.[LastDispatchedOn], cd.[DispatchedOn]) AS [DispatchedOn], CAST(0 AS bit) AS [Paged]
 					FROM %SCHEMA%.%CALLDISPATCHESTABLE% cd
 					INNER JOIN %SCHEMA%.%CALLSTABLE% c ON c.[CallId] = cd.[CallId]
 					WHERE c.[DepartmentId] = %DID% AND c.[State] = 0 AND c.[IsDeleted] = 0
 						AND (c.[HasBeenDispatched] = 1 OR c.[DispatchOn] IS NULL OR c.[DispatchOn] <= %NOW%)
-						AND cd.[UserId] = %USERID%
+						AND cd.[UserId] = %USERID% AND NOT EXISTS (SELECT 1 FROM %SCHEMA%.CallPersonnelReleases r WHERE r.[CallId] = c.[CallId] AND r.[UserId] = cd.[UserId])
 					UNION ALL
 					SELECT cg.[CallId], COALESCE(cg.[LastDispatchedOn], cg.[DispatchedOn]), CAST(1 AS bit)
 					FROM %SCHEMA%.%CALLDISPATCHGROUPSTABLE% cg
@@ -1291,7 +1293,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					INNER JOIN %SCHEMA%.%DEPARTMENTGROUPMEMBERSTABLE% gm ON gm.[DepartmentGroupId] = cg.[DepartmentGroupId]
 					WHERE c.[DepartmentId] = %DID% AND c.[State] = 0 AND c.[IsDeleted] = 0
 						AND (c.[HasBeenDispatched] = 1 OR c.[DispatchOn] IS NULL OR c.[DispatchOn] <= %NOW%)
-						AND gm.[UserId] = %USERID%
+						AND gm.[UserId] = %USERID% AND NOT EXISTS (SELECT 1 FROM %SCHEMA%.CallPersonnelReleases r WHERE r.[CallId] = c.[CallId] AND r.[UserId] = gm.[UserId])
 					UNION ALL
 					SELECT cr.[CallId], COALESCE(cr.[LastDispatchedOn], cr.[DispatchedOn]), CAST(1 AS bit)
 					FROM %SCHEMA%.%CALLDISPATCHROLESTABLE% cr
@@ -1299,7 +1301,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					INNER JOIN %SCHEMA%.%PERSONNELROLEUSERSTABLE% ru ON ru.[PersonnelRoleId] = cr.[RoleId]
 					WHERE c.[DepartmentId] = %DID% AND c.[State] = 0 AND c.[IsDeleted] = 0
 						AND (c.[HasBeenDispatched] = 1 OR c.[DispatchOn] IS NULL OR c.[DispatchOn] <= %NOW%)
-						AND ru.[UserId] = %USERID%";
+						AND ru.[UserId] = %USERID% AND NOT EXISTS (SELECT 1 FROM %SCHEMA%.CallPersonnelReleases r WHERE r.[CallId] = c.[CallId] AND r.[UserId] = ru.[UserId])";
 			SelectCallUnitDispatchesForCallsInRangeQuery = @"
 					SELECT cdu.*
 					FROM %SCHEMA%.%CALLDISPATCHUNITSTABLE% cdu
@@ -1321,26 +1323,26 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					INNER JOIN %SCHEMA%.%CALLSTABLE% c ON c.[CallId] = cr.[CallId]
 					WHERE c.[DepartmentId] = %DID% AND c.[IsDeleted] = 0 AND c.[LoggedOn] >= %STARTDATE% AND c.[LoggedOn] <= %ENDDATE%";
 			SelectUnitDispatchWindowsQuery = @"
-					SELECT cdu.[CallId], cdu.[UnitId], cdu.[DispatchedOn], c.[LoggedOn], c.[ClosedOn]
+					SELECT cdu.[CallId], cdu.[UnitId], cdu.[DispatchedOn], c.[LoggedOn], c.[ClosedOn], cdu.[ReleasedOn]
 					FROM %SCHEMA%.%CALLDISPATCHUNITSTABLE% cdu
 					INNER JOIN %SCHEMA%.%CALLSTABLE% c ON c.[CallId] = cdu.[CallId]
 					WHERE c.[DepartmentId] = %DID% AND c.[IsDeleted] = 0 AND c.[LoggedOn] >= %LOGGEDFROM% AND c.[LoggedOn] <= %ENDDATE%
 						AND cdu.[DispatchedOn] >= %STARTDATE% AND cdu.[DispatchedOn] <= %ENDDATE%";
 			SelectPersonnelDispatchWindowsQuery = @"
-					SELECT cd.[CallId], cd.[UserId], cd.[DispatchedOn], c.[LoggedOn], c.[ClosedOn], CAST(0 AS bit) AS [Paged]
+					SELECT cd.[CallId], cd.[UserId], cd.[DispatchedOn], c.[LoggedOn], c.[ClosedOn], CAST(0 AS bit) AS [Paged], (SELECT MAX(r.[ReleasedOn]) FROM %SCHEMA%.CallPersonnelReleases r WHERE r.[CallId] = cd.[CallId] AND r.[UserId] = cd.[UserId]) AS [ReleasedOn]
 					FROM %SCHEMA%.%CALLDISPATCHESTABLE% cd
 					INNER JOIN %SCHEMA%.%CALLSTABLE% c ON c.[CallId] = cd.[CallId]
 					WHERE c.[DepartmentId] = %DID% AND c.[IsDeleted] = 0 AND c.[LoggedOn] >= %LOGGEDFROM% AND c.[LoggedOn] <= %ENDDATE%
 						AND cd.[DispatchedOn] >= %STARTDATE% AND cd.[DispatchedOn] <= %ENDDATE%
 					UNION ALL
-					SELECT cg.[CallId], gm.[UserId], cg.[DispatchedOn], c.[LoggedOn], c.[ClosedOn], CAST(1 AS bit)
+					SELECT cg.[CallId], gm.[UserId], cg.[DispatchedOn], c.[LoggedOn], c.[ClosedOn], CAST(1 AS bit), (SELECT MAX(r.[ReleasedOn]) FROM %SCHEMA%.CallPersonnelReleases r WHERE r.[CallId] = cg.[CallId] AND r.[UserId] = gm.[UserId])
 					FROM %SCHEMA%.%CALLDISPATCHGROUPSTABLE% cg
 					INNER JOIN %SCHEMA%.%CALLSTABLE% c ON c.[CallId] = cg.[CallId]
 					INNER JOIN %SCHEMA%.%DEPARTMENTGROUPMEMBERSTABLE% gm ON gm.[DepartmentGroupId] = cg.[DepartmentGroupId]
 					WHERE c.[DepartmentId] = %DID% AND c.[IsDeleted] = 0 AND c.[LoggedOn] >= %LOGGEDFROM% AND c.[LoggedOn] <= %ENDDATE%
 						AND cg.[DispatchedOn] >= %STARTDATE% AND cg.[DispatchedOn] <= %ENDDATE%
 					UNION ALL
-					SELECT cr.[CallId], ru.[UserId], cr.[DispatchedOn], c.[LoggedOn], c.[ClosedOn], CAST(1 AS bit)
+					SELECT cr.[CallId], ru.[UserId], cr.[DispatchedOn], c.[LoggedOn], c.[ClosedOn], CAST(1 AS bit), (SELECT MAX(r.[ReleasedOn]) FROM %SCHEMA%.CallPersonnelReleases r WHERE r.[CallId] = cr.[CallId] AND r.[UserId] = ru.[UserId])
 					FROM %SCHEMA%.%CALLDISPATCHROLESTABLE% cr
 					INNER JOIN %SCHEMA%.%CALLSTABLE% c ON c.[CallId] = cr.[CallId]
 					INNER JOIN %SCHEMA%.%PERSONNELROLEUSERSTABLE% ru ON ru.[PersonnelRoleId] = cr.[RoleId]

@@ -153,13 +153,15 @@ namespace Resgrid.Model
 				return int.MaxValue;
 			return normalized.Replace(CallNumberFormat.YearToken, "0000").Replace(CallNumberFormat.ShortYearToken, "00")
 				.Replace(CallNumberFormat.MonthToken, "00").Replace(CallNumberFormat.DayToken, "00")
+				.Replace(CallNumberFormat.HourToken, "00").Replace(CallNumberFormat.MinuteToken, "00")
 				.Replace(CallNumberFormat.SequenceToken, CallNumberFormat.MaxSequence.ToString(System.Globalization.CultureInfo.InvariantCulture)).Length;
 		}
 
 		/// <summary>True when <paramref name="pattern"/> is in the grammar and every number it writes fits the kind's column.</summary>
 		public static bool IsValid(DocumentNumberKind kind, string pattern)
 		{
-			return kind != null && CallNumberFormat.IsValid(pattern?.Trim()) && MaxRenderedLength(pattern) <= kind.MaxLength;
+			// The call grammar without the time of day: a document is numbered by its date, and its sequences never carry a time.
+			return kind != null && CallNumberFormat.IsValidWithoutTime(pattern?.Trim()) && MaxRenderedLength(pattern) <= kind.MaxLength;
 		}
 
 		/// <summary>

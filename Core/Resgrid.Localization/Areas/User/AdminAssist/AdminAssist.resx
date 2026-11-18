@@ -6730,7 +6730,7 @@
     <value>Call Numbering Config / Pattern</value>
   </data>
   <data name="FieldHelp.CallNumberingConfig.Pattern" xml:space="preserve">
-    <value>How call numbers are written, for example FD-2026-0153: fixed text plus the YYYY or YY, MM, DD and SEQ tokens. The sequence starts again whenever the date it writes changes. Until a pattern is saved, calls keep the YY-SEQ numbers Resgrid has always issued.</value>
+    <value>How call numbers are written, for example FD-2026-0153: fixed text plus the YYYY or YY, MM, DD, HH (hour), MIN (minute) and SEQ tokens. The sequence starts again whenever the date it writes changes; the hour and minute never restart it. Until a pattern is saved, calls keep the YY-SEQ numbers Resgrid has always issued.</value>
   </data>
   <data name="Field.CallNumberingConfig.SequenceWidth" xml:space="preserve">
     <value>Call Numbering Config / Sequence Width</value>
@@ -7769,5 +7769,11 @@
   </data>
   <data xml:space="preserve" name="SettingHelp.MappingProviderOverrides">
     <value>Department-owned routing, live traffic and address lookup accounts, tried before Resgrid's providers. Only which providers are set is reported, never the keys. Setting all three back to Resgrid default removes the setting.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.DestinationSuggestions">
+    <value>Destination suggestions</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.DestinationSuggestions">
+    <value>Suggests the best destination for a call, and for a unit's status destination, from the department's destination rules (Mapping, Destination Rules) and the incident location, with drive time and distance. Suggest and fill also fills a new call's empty destination with the best one; dispatchers and crews can still choose another. Off by default, because each suggestion looks up drive times.</value>
   </data>
 </root>

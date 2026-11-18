@@ -66,6 +66,8 @@ namespace Resgrid.Web.Eventing
 			_rabbitInboundEventProvider.RegisterForUnitActiveRolesEvents((departmentId, id) => _eventingHub.Clients.Group(departmentId.ToString()).SendAsync("unitActiveRolesUpdated", id));
 			_rabbitInboundEventProvider.RegisterForOutstandingRequirementsEvents((departmentId, id, payload) => _eventingHub.Clients.Group(departmentId.ToString()).SendAsync("outstandingRequirementsUpdated", id, payload));
 			// Ids and state only; clients reload the ETA through Routing/GetActiveNavigations, which applies the viewer's visibility.
+			// Ids only; clients reload the alerts through RecurringCalls/GetRecurringCallAlerts, which applies the viewer's dispatch scope.
+			_rabbitInboundEventProvider.RegisterForRecurringCallAlertsEvents((departmentId, id, payload) => _eventingHub.Clients.Group(departmentId.ToString()).SendAsync("recurringCallAlertsUpdated", id, payload));
 			_rabbitInboundEventProvider.RegisterForUnitNavigationEvents((departmentId, id, payload) => _eventingHub.Clients.Group(departmentId.ToString()).SendAsync("unitNavigationUpdated", id, payload));
 
 			await StartProviderAsync();

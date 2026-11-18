@@ -157,8 +157,9 @@ namespace Resgrid.Services
 			if (!call.HasBeenDispatched.GetValueOrDefault() && call.DispatchOn.HasValue && call.DispatchOn.Value > now)
 				return false;
 
+			// A unit released from the call is done with it, whatever it is doing now (often the next call).
 			var dispatches = ((await _callDispatchUnitRepository.GetCallUnitDispatchesByCallIdAsync(callId)) ?? Enumerable.Empty<CallDispatchUnit>())
-				.Where(x => x != null)
+				.Where(x => x != null && !x.IsReleased)
 				.GroupBy(x => x.UnitId)
 				.Select(g => g.OrderBy(x => x.DispatchedOn).First())
 				.ToList();

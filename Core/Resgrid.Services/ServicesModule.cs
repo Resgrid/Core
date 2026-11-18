@@ -233,6 +233,7 @@ namespace Resgrid.Services
 			builder.RegisterType<PendingCallsService>().As<IPendingCallsService>().InstancePerLifetimeScope();
 			builder.RegisterType<CallClosureService>().As<ICallClosureService>().InstancePerLifetimeScope();
 			builder.RegisterType<CallAutoCloseService>().As<ICallAutoCloseService>().InstancePerLifetimeScope();
+			builder.RegisterType<CallResourceReleaseService>().As<ICallResourceReleaseService>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentApiKeysService>().As<IDepartmentApiKeysService>().InstancePerLifetimeScope();
 			builder.RegisterType<SystemOperationsService>().As<ISystemOperationsService>().InstancePerLifetimeScope();
 			builder.RegisterType<InboundEmailReceiptsService>().As<IInboundEmailReceiptsService>().InstancePerLifetimeScope();
@@ -418,6 +419,8 @@ namespace Resgrid.Services
 			builder.RegisterType<OutstandingRequirementsService>().As<IOutstandingRequirementsService>().InstancePerLifetimeScope();
 			builder.RegisterType<TransportDestinationCheckService>().As<ITransportDestinationCheckService>().InstancePerLifetimeScope();
 			builder.RegisterType<NearestDestinationService>().As<INearestDestinationService>().InstancePerLifetimeScope();
+			builder.RegisterType<DestinationRulesService>().As<IDestinationRulesService>().InstancePerLifetimeScope();
+			builder.RegisterType<RecurringCallsService>().As<IRecurringCallsService>().InstancePerLifetimeScope();
 			builder.RegisterType<RunCardTemplatesService>().As<IRunCardTemplatesService>().InstancePerLifetimeScope();
 			builder.RegisterType<PersonnelLocationResolver>().As<IPersonnelLocationResolver>().InstancePerLifetimeScope();
 			// Singleton: it keeps each department's reduced visibility matrix in memory between location pings.

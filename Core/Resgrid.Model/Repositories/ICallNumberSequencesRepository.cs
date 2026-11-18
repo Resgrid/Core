@@ -44,6 +44,7 @@ namespace Resgrid.Model.Repositories
 		/// <summary>
 		/// Highest sequence written as prefix + digits + suffix into the department's call numbers, deleted calls included, limited to
 		/// calls logged in [fromUtc, toUtc) when given. The sequence is read as a number, so a change of digit width never restarts it.
+		/// A '?' in the prefix or suffix matches any one character (a time-of-day digit, <see cref="CallNumberScope.SearchPrefix"/>).
 		/// </summary>
 		Task<int> GetHighestIssuedAsync(int departmentId, string numberPrefix, string numberSuffix, DateTime? fromUtc, DateTime? toUtc);
 	}

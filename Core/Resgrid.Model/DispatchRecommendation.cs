@@ -132,8 +132,9 @@ namespace Resgrid.Model
 				Latitude = location?.Latitude,
 				Longitude = location?.Longitude,
 				TargetAlarmLevel = targetLevel,
-				AlreadyDispatchedUnitIds = call.UnitDispatches?.Select(d => d.UnitId).Distinct().ToList() ?? new List<int>(),
-				AlreadyDispatchedUserIds = call.Dispatches?.Select(d => d.UserId).Where(id => !string.IsNullOrWhiteSpace(id)).Distinct().ToList() ?? new List<string>(),
+				// A unit released (stood down) from the call neither covers a requirement nor is kept from being recommended again.
+				AlreadyDispatchedUnitIds = CallDispatchUnitReleases.ActiveUnitIds(call.UnitDispatches).ToList(),
+				AlreadyDispatchedUserIds = call.Dispatches?.Select(d => d.UserId).Where(id => !string.IsNullOrWhiteSpace(id) && !call.IsUserReleased(id)).Distinct().ToList() ?? new List<string>(),
 				CountDispatchedTowardRequirements = targetLevel <= currentLevel,
 				CallId = call.CallId > 0 ? call.CallId : (int?)null
 			};

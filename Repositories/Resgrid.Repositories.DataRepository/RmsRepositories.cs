@@ -526,13 +526,17 @@ AND NOT EXISTS (SELECT 1 FROM {Tbl("RmsRecordLegalHoldMembers")} m WHERE m.{Col(
 		{
 			// Closed states only: a Record still being authored or reviewed is never a retention candidate, however old.
 			var states = new[] { (int)RmsRecordState.Finalized, (int)RmsRecordState.Amended, (int)RmsRecordState.Voided, (int)RmsRecordState.Cancelled };
+			// A Record cancelled before it was ever finalized closes on CancelledOn, so an abandoned draft is purged on the same
+			// schedule as a finished one instead of keeping its content forever.
 			return QueryAsync<RmsOperationalRecord>(
 				$@"SELECT * FROM {Tbl("RmsOperationalRecords")}
 					WHERE {Col("DepartmentId")} = {P}DepartmentId AND {InList("State", "States")}
-					AND {Col("FinalizedOn")} IS NOT NULL AND {Col("FinalizedOn")} < {P}Cutoff AND {Col("DeletedOn")} IS NULL
+					AND (({Col("FinalizedOn")} IS NOT NULL AND {Col("FinalizedOn")} < {P}Cutoff)
+						OR ({Col("FinalizedOn")} IS NULL AND {Col("State")} = {P}Cancelled AND {Col("CancelledOn")} IS NOT NULL AND {Col("CancelledOn")} < {P}Cutoff))
+					AND {Col("DeletedOn")} IS NULL
 					AND {Col("PurgedOn")} IS NULL AND ({P}AfterId IS NULL OR {Col("RmsOperationalRecordId")} > {P}AfterId)
 					ORDER BY {Col("RmsOperationalRecordId")} {Paging()}",
-				new { DepartmentId = departmentId, States = InListValue(states), Cutoff = cutoffUtc, AfterId = afterId, Skip = 0, Take = Math.Clamp(take, 1, 10000) });
+				new { DepartmentId = departmentId, States = InListValue(states), Cutoff = cutoffUtc, Cancelled = (int)RmsRecordState.Cancelled, AfterId = afterId, Skip = 0, Take = Math.Clamp(take, 1, 10000) });
 		}
 
 		public Task<int> CountAllAsync(int departmentId)

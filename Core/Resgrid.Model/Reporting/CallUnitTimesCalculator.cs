@@ -29,6 +29,13 @@ namespace Resgrid.Model.Reporting
 		public DateTime? OnSceneOn { get; set; }
 		public DateTime? StagingOn { get; set; }
 		public DateTime? ClearedOn { get; set; }
+
+		/// <summary>
+		/// When a dispatcher released (stood down) the unit from the call while the call stayed open
+		/// (<see cref="CallDispatchUnit.ReleasedOn"/>); null when it was never released or was sent back to the call since.
+		/// </summary>
+		public DateTime? ReleasedOn { get; set; }
+
 		public CallUnitTimesSources Source { get; set; }
 
 		/// <summary>Every status from dispatch until the unit was back in service (<see cref="CallUnitTimeline"/>), oldest first.</summary>
@@ -104,6 +111,7 @@ namespace Resgrid.Model.Reporting
 
 				var row = new CallUnitTimesRow { UnitId = unitId };
 				row.DispatchedOn = unitDispatches.Count > 0 ? unitDispatches.Min(x => x.DispatchedOn) : (DateTime?)null;
+				row.ReleasedOn = unitDispatches.Count > 0 && unitDispatches.All(x => x.IsReleased) ? unitDispatches.Max(x => x.ReleasedOn) : null;
 
 				var enroute = First(UnitStateTypes.Responding, UnitStateTypes.Enroute);
 				var onScene = First(UnitStateTypes.OnScene);

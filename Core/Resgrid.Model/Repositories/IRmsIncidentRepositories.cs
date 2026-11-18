@@ -9,6 +9,8 @@ namespace Resgrid.Model.Repositories
 	public sealed class RmsIncidentReportQuery
 	{
 		public IList<int> States { get; set; }
+		/// <summary>States to leave out (the queue hides cancelled and voided reports unless asked); ignored when <see cref="States"/> is set.</summary>
+		public IList<int> ExcludeStates { get; set; }
 		/// <summary>
 		/// A numbering year of the department: IIncidentReportsService turns it into <see cref="YearFrom"/>/<see cref="YearBefore"/>
 		/// (department-local, a fiscal year when one is set) so it keeps the reports whose numbers name it. Read directly by the
@@ -52,8 +54,12 @@ namespace Resgrid.Model.Repositories
 	public interface IRmsIncidentReportsRepository : IRepository<RmsIncidentReport>
 	{
 		Task<RmsIncidentReport> GetByIdForDepartmentAsync(int departmentId, string reportId);
-		/// <summary>The department's own report for a Call (SingleAuthoritative, plan 5.2.1); null when none exists.</summary>
+		/// <summary>
+		/// The department's own report for a Call (SingleAuthoritative, plan 5.2.1); null when none exists. Deleted and
+		/// cancelled reports are left out: neither holds the Call (M0318).
+		/// </summary>
 		Task<RmsIncidentReport> GetByCallAsync(int departmentId, int callId, string reportingEntityId);
+		/// <summary>As <see cref="GetByCallAsync"/> for any reporting entity, oldest first; deleted and cancelled reports are left out.</summary>
 		Task<IEnumerable<RmsIncidentReport>> GetByCallAnyEntityAsync(int departmentId, int callId);
 		Task<RmsIncidentReport> GetByIdempotencyKeyAsync(int departmentId, string idempotencyKey);
 		Task<RmsIncidentReport> GetByNerisIncidentIdAsync(int departmentId, string nerisIncidentId);
@@ -67,7 +73,10 @@ namespace Resgrid.Model.Repositories
 		Task<int> GetMaxRecordNumberSequenceAsync(int departmentId, string numberPrefix, string numberSuffix);
 		Task<bool> TryBumpRowVersionAsync(int departmentId, string reportId, long expectedRowVersion, CancellationToken cancellationToken = default);
 		/// <summary>Retention candidates (RMS-3, worker 43): live, closed reports finalized before the cutoff, oldest first.</summary>
+		/// <summary>Closed, not deleted, not purged reports: finalized before the cutoff, or cancelled before it without ever being finalized.</summary>
 		Task<IEnumerable<RmsIncidentReport>> GetRetentionCandidatesAsync(int departmentId, DateTime cutoffUtc, int take, string afterId = null);
+		/// <summary>Deleted, not yet purged reports whose deletion is older than <paramref name="deletedBeforeUtc"/>, in id order.</summary>
+		Task<IEnumerable<RmsIncidentReport>> GetDeletedPurgeCandidatesAsync(int departmentId, DateTime deletedBeforeUtc, int take, string afterId = null);
 	}
 
 	/// <summary>Shared contract of every per-report child row set: a working draft (RevisionId null) and immutable revision copies.</summary>

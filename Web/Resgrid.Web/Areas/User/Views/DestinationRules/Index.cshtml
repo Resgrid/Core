@@ -1,0 +1,222 @@
+@model Resgrid.Web.Areas.User.Models.Mapping.DestinationRulesIndexView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.DestinationRules> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.Mapping> mappingLocalizer
+@{
+	ViewBag.Title = "Resgrid | " + localizer["PageTitle"];
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-6">
+		<h2>@localizer["PageTitle"]</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+			</li>
+			<li>
+				<a asp-controller="Mapping" asp-action="Index" asp-route-area="User">@mappingLocalizer["MappingHeader"]</a>
+			</li>
+			<li>
+				<a asp-controller="Mapping" asp-action="POIs" asp-route-area="User">@mappingLocalizer["POIsHeader"]</a>
+			</li>
+			<li class="active">
+				<strong>@localizer["PageTitle"]</strong>
+			</li>
+		</ol>
+	</div>
+	<div class="col-sm-6">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			<a class="btn btn-default" asp-controller="Mapping" asp-action="PoiCapabilities" asp-route-area="User">@mappingLocalizer["PoiCapabilities"]</a>
+			<a class="btn btn-default" asp-controller="Mapping" asp-action="Destinations" asp-route-area="User">@mappingLocalizer["DestinationAvailability"]</a>
+			@if (Model.HasDestinationTypes)
+			{
+				<a class="btn btn-success" id="addDestinationRule" asp-controller="DestinationRules" asp-action="Edit" asp-route-area="User">@localizer["AddRule"]</a>
+			}
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<p>@localizer["PageIntro"]</p>
+
+					@if (!String.IsNullOrEmpty(Model.Message))
+					{
+						<div class="alert alert-success">@Model.Message</div>
+					}
+					@if (!String.IsNullOrEmpty(Model.ErrorMessage))
+					{
+						<div class="alert alert-danger">@Model.ErrorMessage</div>
+					}
+
+					<h3>@localizer["SettingsHeader"]</h3>
+					<form id="destinationSuggestionSettings" class="form-horizontal" method="post" asp-controller="DestinationRules" asp-action="SaveSettings" asp-route-area="User">
+						@Html.AntiForgeryToken()
+						<div class="form-group">
+							<label class="col-sm-3 control-label" for="destinationSuggestionMode">@localizer["Mode"]</label>
+							<div class="col-sm-6">
+								<select id="destinationSuggestionMode" name="mode" class="form-control">
+									<option value="0" selected="@(Model.Mode == DestinationSuggestionModes.Off)">@localizer["ModeOff"]</option>
+									<option value="1" selected="@(Model.Mode == DestinationSuggestionModes.Suggest)">@localizer["ModeSuggest"]</option>
+									<option value="2" selected="@(Model.Mode == DestinationSuggestionModes.SuggestAndFill)">@localizer["ModeSuggestAndFill"]</option>
+								</select>
+								<span class="help-block">@localizer["ModeHelp"]</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label" for="preferredWithinMinutes">@localizer["PreferredWithinMinutes"]</label>
+							<div class="col-sm-2">
+								<input type="number" id="preferredWithinMinutes" name="preferredWithinMinutes" class="form-control" min="0" max="@DestinationSuggestionConfig.MaximumPreferredWithinMinutes" step="1" value="@Model.PreferredWithinMinutes" />
+							</div>
+							<div class="col-sm-7">
+								<span class="help-block">@localizer["PreferredWithinMinutesHelp"]</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-offset-3 col-sm-6">
+								<button type="submit" class="btn btn-primary">@localizer["SaveSettings"]</button>
+							</div>
+						</div>
+					</form>
+
+					<h3>@localizer["RulesHeader"]</h3>
+					@if (!Model.HasDestinationTypes)
+					{
+						<div class="alert alert-warning" id="noDestinationTypes">@localizer["NoDestinationTypes"]</div>
+					}
+					@if (Model.Rules.Any())
+					{
+						<div class="table-responsive">
+							<table class="table table-striped" id="destinationRulesTable">
+								<thead>
+									<tr>
+										<th>@localizer["Name"]</th>
+										<th>@localizer["When"]</th>
+										<th>@localizer["Destination"]</th>
+										<th>@localizer["Requires"]</th>
+										<th>@localizer["Prefers"]</th>
+										<th class="span1"></th>
+									</tr>
+								</thead>
+								<tbody>
+									@foreach (var rule in Model.Rules)
+									{
+										var conditions = new List<string>();
+										if (rule.CallTypeName != null || rule.CallTypeMissing)
+										{
+											conditions.Add(string.Format(localizer["CallTypeCondition"].Value, rule.CallTypeMissing ? localizer["DeletedChoice"].Value : rule.CallTypeName));
+										}
+										if (rule.PriorityName != null || rule.PriorityMissing)
+										{
+											conditions.Add(string.Format(localizer["PriorityCondition"].Value, rule.PriorityMissing ? localizer["DeletedChoice"].Value : rule.PriorityName));
+										}
+										if (rule.UnitTypeName != null || rule.UnitTypeMissing)
+										{
+											conditions.Add(string.Format(localizer["UnitTypeCondition"].Value, rule.UnitTypeMissing ? localizer["DeletedChoice"].Value : rule.UnitTypeName));
+										}
+										<tr>
+											<td>
+												<strong>@rule.Name</strong>
+												@if (rule.AllTypesRemoved)
+												{
+													<div class="text-danger small">@localizer["AllTypesRemoved"]</div>
+												}
+												else if (rule.MissingReferenceCount > 0)
+												{
+													<div class="text-warning small">@string.Format(localizer["NeedsAttention"].Value, rule.MissingReferenceCount)</div>
+												}
+											</td>
+											<td>@(conditions.Count == 0 ? localizer["EveryCall"].Value : string.Join(", ", conditions))</td>
+											<td>@(rule.DestinationTypeNames.Count == 0 ? localizer["AnyDestinationType"].Value : string.Join(", ", rule.DestinationTypeNames))</td>
+											<td>
+												@foreach (var name in rule.RequiredCapabilityNames)
+												{
+													<span class="label label-primary">@name</span>
+												}
+											</td>
+											<td>
+												@foreach (var name in rule.PreferredCapabilityNames)
+												{
+													<span class="label label-default">@name</span>
+												}
+											</td>
+											<td style="white-space: nowrap;">
+												<a class="btn btn-xs btn-primary" asp-controller="DestinationRules" asp-action="Edit" asp-route-id="@rule.DestinationRuleId" asp-route-area="User">@localizer["Edit"]</a>
+												<form method="post" asp-controller="DestinationRules" asp-action="Delete" asp-route-area="User" style="display: inline;">
+													@Html.AntiForgeryToken()
+													<input type="hidden" name="id" value="@rule.DestinationRuleId" />
+													<button type="submit" class="btn btn-xs btn-danger" data-confirm="@string.Format(localizer["DeleteRuleConfirm"].Value, rule.Name)">@localizer["Delete"]</button>
+												</form>
+											</td>
+										</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+					}
+					else
+					{
+						<p class="text-muted" id="noDestinationRules">@localizer["NoRules"]</p>
+					}
+
+					<h3>@localizer["TryIt"]</h3>
+					<p class="text-muted">@localizer["TryItHelp"]</p>
+					<form id="destinationRulesTryIt" class="form-inline" onsubmit="return false;">
+						<div class="form-group">
+							<label for="tryCallType">@localizer["CallType"]</label>
+							<select id="tryCallType" class="form-control">
+								<option value="">@localizer["Any"]</option>
+								@foreach (var option in Model.CallTypes)
+								{
+									<option value="@option.Id">@option.Name</option>
+								}
+							</select>
+						</div>
+						<div class="form-group">
+							<label for="tryPriority">@localizer["Priority"]</label>
+							<select id="tryPriority" class="form-control">
+								<option value="">@localizer["Any"]</option>
+								@foreach (var option in Model.Priorities)
+								{
+									<option value="@option.Id">@option.Name</option>
+								}
+							</select>
+						</div>
+						<div class="form-group">
+							<label for="tryUnitType">@localizer["UnitType"]</label>
+							<select id="tryUnitType" class="form-control">
+								<option value="">@localizer["Any"]</option>
+								@foreach (var option in Model.UnitTypes)
+								{
+									<option value="@option.Id">@option.Name</option>
+								}
+							</select>
+						</div>
+						<button type="button" id="tryDestinationRules" class="btn btn-default">@localizer["TryItButton"]</button>
+					</form>
+					<div id="destinationRulesTryItResult" class="well well-sm" style="display: none; margin-top: 10px;"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+	<script type="text/javascript">
+		var destinationRuleStrings = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(new
+		{
+			appliedRules = localizer["AppliedRules"].Value,
+			setAsideRules = localizer["SetAsideRules"].Value,
+			noRulesApply = localizer["NoRulesApply"].Value,
+			destination = localizer["Destination"].Value,
+			requires = localizer["Requires"].Value,
+			prefers = localizer["Prefers"].Value,
+			anyDestinationType = localizer["AnyDestinationType"].Value,
+			nothing = localizer["NothingRequired"].Value
+		}, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
+	</script>
+	<script src="~/js/app/internal/mapping/resgrid.mapping.destinationrules.js"></script>
+}

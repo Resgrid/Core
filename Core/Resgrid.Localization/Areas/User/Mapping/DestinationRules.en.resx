@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Map Icon Legend and status / priority map icon pages -->
+    <data name="PageTitle" xml:space="preserve">
+    <value>Destination Rules</value>
+  </data>
+  <data name="PageIntro" xml:space="preserve">
+    <value>Tell Resgrid what a call's destination must offer, so the call form and the apps can suggest the nearest suitable one: "Burns calls need a Burn Center", "a Helicopter needs a Helipad", "a Water Tender goes to a Water Source that allows Drafting". Every rule that matches a call (and the unit travelling) applies together. Destinations are your POI types marked as destinations; capabilities are managed under POI Capabilities, and open, diversion or closed comes from Destination Availability.</value>
+  </data>
+  <data name="SettingsHeader" xml:space="preserve">
+    <value>Destination suggestions</value>
+  </data>
+  <data name="Mode" xml:space="preserve">
+    <value>Suggestions</value>
+  </data>
+  <data name="ModeOff" xml:space="preserve">
+    <value>Off</value>
+  </data>
+  <data name="ModeSuggest" xml:space="preserve">
+    <value>Suggest destinations</value>
+  </data>
+  <data name="ModeSuggestAndFill" xml:space="preserve">
+    <value>Suggest and fill in the destination</value>
+  </data>
+  <data name="ModeHelp" xml:space="preserve">
+    <value>Suggest shows the best destinations under the Destination field of the New Call and Update Call forms and in the apps' destination lists, with drive time and distance. Suggest and fill also fills a new call's empty destination with the best one; dispatchers and crews can still choose another. Each suggestion looks up drive times, so leave this off if you don't use destinations.</value>
+  </data>
+  <data name="PreferredWithinMinutes" xml:space="preserve">
+    <value>Preferred capability window (minutes)</value>
+  </data>
+  <data name="PreferredWithinMinutesHelp" xml:space="preserve">
+    <value>A destination offering more of the preferred capabilities comes first only while its drive time is within this many minutes of the closest. 0 = only on equal times.</value>
+  </data>
+  <data name="SaveSettings" xml:space="preserve">
+    <value>Save settings</value>
+  </data>
+  <data name="SettingsSaved" xml:space="preserve">
+    <value>Destination suggestion settings saved.</value>
+  </data>
+  <data name="SettingsInvalid" xml:space="preserve">
+    <value>Choose a suggestion mode and a window from 0 to {0} minutes.</value>
+  </data>
+  <data name="RulesHeader" xml:space="preserve">
+    <value>Rules</value>
+  </data>
+  <data name="AddRule" xml:space="preserve">
+    <value>Add Rule</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="When" xml:space="preserve">
+    <value>When</value>
+  </data>
+  <data name="Destination" xml:space="preserve">
+    <value>Destination</value>
+  </data>
+  <data name="Requires" xml:space="preserve">
+    <value>Requires</value>
+  </data>
+  <data name="Prefers" xml:space="preserve">
+    <value>Prefers</value>
+  </data>
+  <data name="EveryCall" xml:space="preserve">
+    <value>Every call</value>
+  </data>
+  <data name="AnyDestinationType" xml:space="preserve">
+    <value>Any destination type</value>
+  </data>
+  <data name="CallTypeCondition" xml:space="preserve">
+    <value>Call type: {0}</value>
+  </data>
+  <data name="PriorityCondition" xml:space="preserve">
+    <value>Priority: {0}</value>
+  </data>
+  <data name="UnitTypeCondition" xml:space="preserve">
+    <value>Unit type: {0}</value>
+  </data>
+  <data name="DeletedChoice" xml:space="preserve">
+    <value>(deleted)</value>
+  </data>
+  <data name="NeedsAttention" xml:space="preserve">
+    <value>Needs attention: {0} of its types or capabilities were deleted and are ignored.</value>
+  </data>
+  <data name="AllTypesRemoved" xml:space="preserve">
+    <value>Never applies: every destination type it named was deleted.</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="DeleteRuleConfirm" xml:space="preserve">
+    <value>Delete the rule "{0}"?</value>
+  </data>
+  <data name="NoRules" xml:space="preserve">
+    <value>No destination rules yet. Without rules every destination is suggested, nearest open one first.</value>
+  </data>
+  <data name="NoDestinationTypes" xml:space="preserve">
+    <value>No POI type is marked as a destination yet. Mark one as a destination under Mapping, POIs before adding rules.</value>
+  </data>
+  <data name="RuleSaved" xml:space="preserve">
+    <value>Rule "{0}" saved.</value>
+  </data>
+  <data name="RuleDeleted" xml:space="preserve">
+    <value>Rule "{0}" deleted.</value>
+  </data>
+  <data name="RuleNameRequired" xml:space="preserve">
+    <value>Enter a name of up to {0} characters.</value>
+  </data>
+  <data name="RuleNothingRequired" xml:space="preserve">
+    <value>Choose at least one destination type or capability.</value>
+  </data>
+  <data name="RuleChoicesChanged" xml:space="preserve">
+    <value>A call type, priority, unit type, destination type or capability you chose no longer exists. Check the choices and save again.</value>
+  </data>
+  <data name="NewRule" xml:space="preserve">
+    <value>New Rule</value>
+  </data>
+  <data name="EditRule" xml:space="preserve">
+    <value>Edit Rule</value>
+  </data>
+  <data name="RuleNameHelp" xml:space="preserve">
+    <value>Shown to dispatchers as the reason for the requirement, for example "Burns" or "Helicopter landing".</value>
+  </data>
+  <data name="AppliesWhen" xml:space="preserve">
+    <value>Applies when</value>
+  </data>
+  <data name="AppliesWhenHelp" xml:space="preserve">
+    <value>Leave all three on Any to apply the rule to every call. Unit type rules apply when that kind of unit travels (its status destination list in the apps), not to the call's own destination.</value>
+  </data>
+  <data name="CallType" xml:space="preserve">
+    <value>Call type</value>
+  </data>
+  <data name="Priority" xml:space="preserve">
+    <value>Priority</value>
+  </data>
+  <data name="UnitType" xml:space="preserve">
+    <value>Unit type</value>
+  </data>
+  <data name="Any" xml:space="preserve">
+    <value>Any</value>
+  </data>
+  <data name="DestinationTypes" xml:space="preserve">
+    <value>Destination types</value>
+  </data>
+  <data name="DestinationTypesHelp" xml:space="preserve">
+    <value>The destination must be one of these; none ticked means any destination type. When two rules name types that don't overlap, the more specific rule wins (unit type rules first) and the other is set aside.</value>
+  </data>
+  <data name="RequiredCapabilities" xml:space="preserve">
+    <value>Required capabilities</value>
+  </data>
+  <data name="RequiredCapabilitiesHelp" xml:space="preserve">
+    <value>The suggested destination must offer all of these. When no destination in range does, nothing is filled in and the nearest are shown with what they lack.</value>
+  </data>
+  <data name="PreferredCapabilities" xml:space="preserve">
+    <value>Preferred capabilities</value>
+  </data>
+  <data name="PreferredCapabilitiesHelp" xml:space="preserve">
+    <value>Break near-ties: within the preferred capability window, a destination offering more of these comes first.</value>
+  </data>
+  <data name="NoCapabilities" xml:space="preserve">
+    <value>No POI capabilities yet.</value>
+  </data>
+  <data name="ManageCapabilities" xml:space="preserve">
+    <value>Manage POI capabilities</value>
+  </data>
+  <data name="TryIt" xml:space="preserve">
+    <value>Try it</value>
+  </data>
+  <data name="TryItHelp" xml:space="preserve">
+    <value>Pick a call type, priority and unit type to see which rules apply and what the destination must be.</value>
+  </data>
+  <data name="TryItButton" xml:space="preserve">
+    <value>Show</value>
+  </data>
+  <data name="AppliedRules" xml:space="preserve">
+    <value>Rules that apply</value>
+  </data>
+  <data name="SetAsideRules" xml:space="preserve">
+    <value>Set aside</value>
+  </data>
+  <data name="NoRulesApply" xml:space="preserve">
+    <value>No rule applies: any destination type, nothing required.</value>
+  </data>
+  <data name="SetAsideTypesRemoved" xml:space="preserve">
+    <value>its destination types were deleted</value>
+  </data>
+  <data name="SetAsideTypeConflict" xml:space="preserve">
+    <value>a more specific rule sends to other destination types</value>
+  </data>
+  <data name="NothingRequired" xml:space="preserve">
+    <value>nothing</value>
+  </data>
+  <data name="DestinationRulesLink" xml:space="preserve">
+    <value>Destination Rules</value>
+  </data>
+  <data name="SuggestedDestinations" xml:space="preserve">
+    <value>Suggested</value>
+  </data>
+  <data name="SuggestionLoading" xml:space="preserve">
+    <value>Finding destinations...</value>
+  </data>
+  <data name="SuggestionNone" xml:space="preserve">
+    <value>No destination of the required kind was found.</value>
+  </data>
+  <data name="SuggestionNoneMeet" xml:space="preserve">
+    <value>No destination nearby offers everything required; the nearest are shown.</value>
+  </data>
+  <data name="SuggestionNeeds" xml:space="preserve">
+    <value>Needs: {0}</value>
+  </data>
+  <data name="SuggestionPrefers" xml:space="preserve">
+    <value>Prefers: {0}</value>
+  </data>
+  <data name="SuggestionRules" xml:space="preserve">
+    <value>Rules: {0}</value>
+  </data>
+  <data name="UseDestination" xml:space="preserve">
+    <value>Use</value>
+  </data>
+  <data name="InUse" xml:space="preserve">
+    <value>Selected</value>
+  </data>
+  <data name="SuggestedBadge" xml:space="preserve">
+    <value>Suggested</value>
+  </data>
+  <data name="FilledAutomatically" xml:space="preserve">
+    <value>Filled in with the suggested destination. Choose another if needed.</value>
+  </data>
+  <data name="MissingCapabilities" xml:space="preserve">
+    <value>Missing: {0}</value>
+  </data>
+  <data name="DownCapabilities" xml:space="preserve">
+    <value>Unavailable now: {0}</value>
+  </data>
+  <data name="MinutesShort" xml:space="preserve">
+    <value>{0} min</value>
+  </data>
+  <data name="KilometersShort" xml:space="preserve">
+    <value>{0} km</value>
+  </data>
+  <data name="StraightLineKilometers" xml:space="preserve">
+    <value>{0} km straight line</value>
+  </data>
+  <data name="StatusLimited" xml:space="preserve">
+    <value>Limited</value>
+  </data>
+  <data name="StatusDiversion" xml:space="preserve">
+    <value>Diversion</value>
+  </data>
+  <data name="StatusClosed" xml:space="preserve">
+    <value>Closed</value>
+  </data>
+  <data name="SuggestionFailed" xml:space="preserve">
+    <value>Destination suggestions are unavailable right now.</value>
+  </data>
+</root>

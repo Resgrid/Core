@@ -48,6 +48,10 @@ namespace Resgrid.Tests.Localization
 			// Home dashboard chrome and widgets (2026-10-31) shipped fully translated.
 			"Areas/User/Home/HomeDashboard",
 			"Areas/User/Home/DashboardWidgets",
+			// Destination Rules and the call form's suggested destinations (2026-11-16) shipped fully translated.
+			"Areas/User/Mapping/DestinationRules",
+			// Recurring Calls and the scheduled calls calendar (2026-11-17) shipped fully translated.
+			"Areas/User/Dispatch/RecurringCalls",
 		};
 
 		private static string LocalizationRoot()
@@ -98,6 +102,12 @@ namespace Resgrid.Tests.Localization
 
 		private static readonly HashSet<string> KnownIdentical = new HashSet<string>(StringComparer.Ordinal)
 		{
+			// Destination Rules (2026-11-16), checked side by side: "{0} km" / "{0} min" are the same unit abbreviations, and
+			// "Destination" is the word the French and Swedish call form already uses for the field.
+			"DestinationRules|de|KilometersShort", "DestinationRules|es|KilometersShort", "DestinationRules|fr|KilometersShort",
+			"DestinationRules|it|KilometersShort", "DestinationRules|pl|KilometersShort", "DestinationRules|sv|KilometersShort",
+			"DestinationRules|es|MinutesShort", "DestinationRules|fr|MinutesShort", "DestinationRules|it|MinutesShort",
+			"DestinationRules|pl|MinutesShort", "DestinationRules|sv|MinutesShort", "DestinationRules|fr|Destination", "DestinationRules|sv|Destination",
 			// Home dashboard (2026-10-31), checked side by side: the same word in that language (Status, Budget, Personnel,
 			// Normal, Chat, Spam, compass letters), the module's own wording (Messages it "Inbox", sv "Poll"), or a proper name
 			// (Cal OES Attachment A). Product names, sizes and format-only strings are in KnownIdenticalEverywhere.

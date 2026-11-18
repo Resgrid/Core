@@ -112,11 +112,13 @@ namespace Resgrid.Chatbot.Handlers
 						sb.AppendLine(roleDispatch.Role?.Name ?? $"Role {roleDispatch.RoleId}");
 				}
 
-				if (call.UnitDispatches != null && call.UnitDispatches.Any())
+				// Who is on the call now: a unit released (stood down) from it is not.
+				var liveUnitDispatches = call.GetActiveUnitDispatches();
+				if (liveUnitDispatches.Any())
 				{
 					any = true;
 					sb.AppendLine(ChatbotResources.Get("Section_Units", culture));
-					foreach (var unitDispatch in call.UnitDispatches.Take(MaxLinesPerSection))
+					foreach (var unitDispatch in liveUnitDispatches.Take(MaxLinesPerSection))
 						sb.AppendLine(unitDispatch.Unit?.Name ?? $"Unit {unitDispatch.UnitId}");
 				}
 

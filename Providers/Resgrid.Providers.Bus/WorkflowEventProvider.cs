@@ -141,6 +141,11 @@ namespace Resgrid.Providers.Bus
 			_eventAggregator.AddListener<DispatchShortfallEvent>(e => HandleEvent(e.DepartmentId, WorkflowTriggerEventType.DispatchShortfallDetected, e));
 			_eventAggregator.AddListener<StationCoverageGapEvent>(e => HandleEvent(e.DepartmentId, WorkflowTriggerEventType.StationCoverageGapDetected, e));
 
+			// Recurring calls (208-217): one event class per family, the trigger chosen by what happened.
+			_eventAggregator.AddListener<RecurringCallScheduleEvent>(e => HandleEvent(e.DepartmentId, e.Trigger, e));
+			_eventAggregator.AddListener<RecurringCallOccurrenceEvent>(e => HandleEvent(e.DepartmentId, e.Trigger, e));
+			_eventAggregator.AddListener<RecurringCallAlertEvent>(e => HandleEvent(e.DepartmentId, e.Trigger, e));
+
 			// Records (RMS) lifecycle triggers 100-107 arrive through the DomainEventOutbox dispatcher (post-commit in
 			// the producing process, or worker command 40's sweep), never straight from the Records transaction
 			// (plan section 5.6). The legacy LogAdded compatibility projection rides the same road with

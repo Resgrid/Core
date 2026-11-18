@@ -6784,7 +6784,7 @@
     <value>Konfiguracja numeracji zgłoszeń / Wzorzec</value>
   </data>
   <data name="FieldHelp.CallNumberingConfig.Pattern" xml:space="preserve">
-    <value>Sposób zapisywania numerów zgłoszeń, na przykład FD-2026-0153: stały tekst oraz znaczniki YYYY lub YY, MM, DD i SEQ. Numer kolejny zaczyna się od nowa, gdy zmienia się zapisywana data. Dopóki wzorzec nie zostanie zapisany, zgłoszenia zachowują numery YY-SEQ, które Resgrid nadawał zawsze.</value>
+    <value>Sposób zapisywania numerów zgłoszeń, na przykład FD-2026-0153: stały tekst oraz znaczniki YYYY lub YY, MM, DD, HH (godzina), MIN (minuta) i SEQ. Numer kolejny zaczyna się od nowa, gdy zmienia się zapisywana data; godzina i minuta nigdy go nie zerują. Dopóki wzorzec nie zostanie zapisany, zgłoszenia zachowują numery YY-SEQ, które Resgrid nadawał zawsze.</value>
   </data>
   <data name="Field.CallNumberingConfig.SequenceWidth" xml:space="preserve">
     <value>Konfiguracja numeracji zgłoszeń / Szerokość numeru kolejnego</value>
@@ -7847,5 +7847,11 @@
   </data>
   <data xml:space="preserve" name="SettingHelp.MappingProviderOverrides">
     <value>Własne konta departamentu do wyznaczania tras, ruchu na żywo i wyszukiwania adresów, odpytywane przed dostawcami Resgrid. Raportowane jest tylko to, którzy dostawcy są ustawieni, nigdy klucze. Przywrócenie wszystkich trzech do ustawień domyślnych Resgrid usuwa to ustawienie.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.DestinationSuggestions">
+    <value>Propozycje miejsc docelowych</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.DestinationSuggestions">
+    <value>Proponuje najlepsze miejsce docelowe dla zgłoszenia oraz dla miejsca docelowego statusu jednostki na podstawie reguł miejsc docelowych departamentu (Mapowanie, Reguły miejsc docelowych) i lokalizacji zdarzenia, wraz z czasem dojazdu i odległością. „Proponuj i uzupełniaj miejsce docelowe” dodatkowo wpisuje najlepsze miejsce w puste pole celu nowego zgłoszenia; dyspozytorzy i zespoły nadal mogą wybrać inne. Domyślnie wyłączone, ponieważ każda propozycja sprawdza czasy dojazdu.</value>
   </data>
 </root>

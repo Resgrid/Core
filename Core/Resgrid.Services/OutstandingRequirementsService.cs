@@ -175,7 +175,8 @@ namespace Resgrid.Services
 
 				var priority = await _callsService.GetCallPrioritiesByIdAsync(departmentId, call.Priority);
 				var callPoint = GeoMath.ParseLatLonString(call.GeoLocationData);
-				var onCall = new HashSet<int>((call.UnitDispatches ?? new List<CallDispatchUnit>()).Select(d => d.UnitId));
+				// A unit released from the call can be suggested again (it was stood down, not used up).
+				var onCall = CallDispatchUnitReleases.ActiveUnitIds(call.UnitDispatches);
 
 				var entry = new AwaitingResourcesCall
 				{
@@ -309,7 +310,7 @@ namespace Resgrid.Services
 					if (call == null || call.State != (int)CallStates.Active)
 						continue;
 
-					if ((call.UnitDispatches ?? new List<CallDispatchUnit>()).Any(d => d.UnitId == unit.UnitId))
+					if (call.IsUnitOnCall(unit.UnitId))
 						continue;
 
 					var requirement = requirements.FirstOrDefault(r => r.IsOpen && RunCardTargetRules.MatchesUnit(ReadTargets(r), unitType.UnitTypeId, unitType.BaseType));
@@ -674,17 +675,29 @@ namespace Resgrid.Services
 			var resolved = 0;
 			var added = false;
 
-			if (call.UnitDispatches.All(d => d.UnitId != unit.UnitId))
+			if (!call.IsUnitOnCall(unit.UnitId))
 			{
 				added = true;
-				call.UnitDispatches.Add(new CallDispatchUnit
+
+				// A unit released from the call earlier is sent back on its own dispatch row, keeping one row per unit.
+				var released = call.UnitDispatches.Where(d => d != null && d.UnitId == unit.UnitId).OrderByDescending(d => d.DispatchedOn).FirstOrDefault();
+				if (released != null)
 				{
-					CallId = call.CallId,
-					UnitId = unit.UnitId,
-					DispatchedOn = DateTime.UtcNow,
-					ResponseCodeId = requirement?.ResponseCodeId,
-					ResponseCode = requirement?.ResponseCode
-				});
+					released.Redispatch(DateTime.UtcNow);
+					released.ResponseCodeId = requirement?.ResponseCodeId;
+					released.ResponseCode = requirement?.ResponseCode;
+				}
+				else
+				{
+					call.UnitDispatches.Add(new CallDispatchUnit
+					{
+						CallId = call.CallId,
+						UnitId = unit.UnitId,
+						DispatchedOn = DateTime.UtcNow,
+						ResponseCodeId = requirement?.ResponseCodeId,
+						ResponseCode = requirement?.ResponseCode
+					});
+				}
 
 				var savedCall = await _callsService.SaveCallAsync(call, cancellationToken);
 				var unitIds = new List<int> { unit.UnitId };

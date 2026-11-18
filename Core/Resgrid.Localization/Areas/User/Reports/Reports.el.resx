@@ -758,6 +758,9 @@
   <data name="CallUnitTimesClearedHeader" xml:space="preserve">
     <value>Ελευθερώθηκε</value>
   </data>
+  <data name="CallUnitTimesReleasedHeader" xml:space="preserve">
+    <value>Αποδεσμεύτηκε</value>
+  </data>
   <data name="CallUnitTimesSourceHeader" xml:space="preserve">
     <value>Σύνδεση μέσω</value>
   </data>

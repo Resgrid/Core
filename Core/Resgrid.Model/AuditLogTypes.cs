@@ -413,6 +413,18 @@ ChecklistReminderSettingsUpdated,
 		/// <summary>A read of protected Incident Back Office data was refused (plan §15.4: denied attempts are audited).</summary>
 		IncidentProtectedAccessDenied,
 		/// <summary>An Incident Back Office department policy (settings 85-97, 120) changed.</summary>
-		IncidentBackOfficeSettingsChanged
+		IncidentBackOfficeSettingsChanged,
+		// Recurring calls (2026-11-17)
+		RecurringCallCreated,
+		RecurringCallUpdated,
+		RecurringCallPaused,
+		RecurringCallResumed,
+		RecurringCallDeleted,
+		RecurringCallOccurrenceSkipped,
+		RecurringCallOccurrenceRestored,
+		/// <summary>A dispatcher created (and possibly sent) an occurrence's call by hand.</summary>
+		RecurringCallOccurrenceCreated,
+		RecurringCallAlertAcknowledged,
+		RecurringCallAlertDismissed
 	}
 }

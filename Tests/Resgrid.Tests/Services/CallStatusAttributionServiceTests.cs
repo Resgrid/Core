@@ -55,7 +55,8 @@ namespace Resgrid.Tests.Services
 			_units.Setup(x => x.GetAllUnitsByDepartmentIdIncludingDeletedAsync(DepartmentId)).ReturnsAsync(new List<Unit> { new Unit { UnitId = UnitId, DepartmentId = DepartmentId, Name = "Engine 5" } });
 
 			_service = new CallStatusAttributionService(_calls.Object, _unitDispatches.Object, _dispatches.Object, _groupDispatches.Object,
-				_roleDispatches.Object, _groupMembers.Object, _roleUsers.Object, _unitStates.Object, _actionLogs.Object, _units.Object, _customStates.Object);
+				_roleDispatches.Object, _groupMembers.Object, _roleUsers.Object, _unitStates.Object, _actionLogs.Object, _units.Object, _customStates.Object,
+				Mock.Of<ICallPersonnelReleasesRepository>());
 		}
 
 		private void Call(int callId, CallStates state = CallStates.Active, int departmentId = DepartmentId, DateTime? closedOn = null) =>

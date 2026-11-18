@@ -521,7 +521,8 @@ namespace Resgrid.Services
 			{
 				var lastActionByUser = await reads.LastActionByUserAsync();
 
-				foreach (var dispatch in call.Dispatches)
+				// A member released from the call no longer keeps its timers going.
+				foreach (var dispatch in call.Dispatches.Where(d => !call.IsUserReleased(d.UserId)))
 				{
 					lastActionByUser.TryGetValue(dispatch.UserId, out var lastAction);
 					personnelStates[dispatch.UserId] = lastAction?.ActionTypeId ?? (int)ActionTypes.StandingBy;
@@ -530,12 +531,14 @@ namespace Resgrid.Services
 
 			// Build a set of current unit state IDs keyed by UnitId (one batch query instead
 			// of one last-state query per dispatched unit)
+			// A unit released from the call no longer keeps its timers going, whatever it is doing on its next call.
 			var unitStates = new Dictionary<int, int>();
-			if (call.UnitDispatches != null && call.UnitDispatches.Any())
+			var liveUnitDispatches = call.GetActiveUnitDispatches();
+			if (liveUnitDispatches.Any())
 			{
 				var lastStateByUnit = await reads.LastStateByUnitAsync();
 
-				foreach (var unitDispatch in call.UnitDispatches)
+				foreach (var unitDispatch in liveUnitDispatches)
 				{
 					lastStateByUnit.TryGetValue(unitDispatch.UnitId, out var lastState);
 					unitStates[unitDispatch.UnitId] = lastState?.State ?? (int)UnitStateTypes.Available;

@@ -2732,4 +2732,14 @@
   <data name="PermRecordsShareCoordinationBoardsNote" xml:space="preserve">
     <value>Consente di condividere una bacheca di coordinamento con gli enti partner.</value>
   </data>
+  <data name="AuditLogTypeRecurringCallCreated" xml:space="preserve"><value>Chiamata ricorrente creata</value></data>
+  <data name="AuditLogTypeRecurringCallUpdated" xml:space="preserve"><value>Chiamata ricorrente aggiornata</value></data>
+  <data name="AuditLogTypeRecurringCallPaused" xml:space="preserve"><value>Chiamata ricorrente sospesa</value></data>
+  <data name="AuditLogTypeRecurringCallResumed" xml:space="preserve"><value>Chiamata ricorrente ripresa</value></data>
+  <data name="AuditLogTypeRecurringCallDeleted" xml:space="preserve"><value>Chiamata ricorrente eliminata</value></data>
+  <data name="AuditLogTypeRecurringCallOccurrenceSkipped" xml:space="preserve"><value>Occorrenza di chiamata ricorrente saltata</value></data>
+  <data name="AuditLogTypeRecurringCallOccurrenceRestored" xml:space="preserve"><value>Occorrenza di chiamata ricorrente ripristinata</value></data>
+  <data name="AuditLogTypeRecurringCallOccurrenceCreated" xml:space="preserve"><value>Occorrenza di chiamata ricorrente creata</value></data>
+  <data name="AuditLogTypeRecurringCallAlertAcknowledged" xml:space="preserve"><value>Avviso di chiamata ricorrente preso in carico</value></data>
+  <data name="AuditLogTypeRecurringCallAlertDismissed" xml:space="preserve"><value>Avviso di chiamata ricorrente chiuso</value></data>
 </root>

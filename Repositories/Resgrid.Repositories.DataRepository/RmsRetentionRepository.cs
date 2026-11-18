@@ -23,6 +23,9 @@ namespace Resgrid.Repositories.DataRepository
 		public RmsRetentionRepository(IConnectionProvider connections, SqlConfiguration configuration, IUnitOfWork unitOfWork, IQueryFactory queries)
 			: base(connections, configuration, unitOfWork, queries) { }
 
+		public const string RetentionPurgeAuditPurpose = "Retention purge";
+		public const string DeletedPurgeAuditPurpose = "Deleted report purge";
+
 		public static readonly string[] ContentTables =
 		{
 			"RmsOperationalRecordDetails", "RmsRecordParticipants", "RmsRecordUnitResponses", "RmsRecordAttachments",
@@ -120,18 +123,40 @@ namespace Resgrid.Repositories.DataRepository
 			var incident = !operational ? await QueryFirstOrDefaultAsync<RmsIncidentReport>($"SELECT * FROM {Tbl(table)} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col(idColumn)} = {P}Id", key, cancellationToken) : null;
 			var definition = op?.DefinitionKey ?? incident.DefinitionKey;
 			var finalized = op?.FinalizedOn ?? incident?.FinalizedOn;
+			var cancelledOn = op?.CancelledOn ?? incident?.CancelledOn;
+			// Only incident reports have a delete path; a deleted one is erased after its recovery window, whatever its retention.
+			var deletedOn = operational ? null : incident.DeletedOn;
 			var started = operational ? op.StartedOn ?? op.CreatedOn : incident.CallCreatedOn ?? incident.CreatedOn;
 			var state = (RmsRecordState)(op?.State ?? incident.State);
+			var amending = (op?.AmendsRevisionId ?? incident?.AmendsRevisionId) != null;
 			// Resumable upload bytes have a fixed 24-hour lifetime. Allow their expiration/cleanup before erasure.
 			if ((op?.ModifiedOn ?? incident.ModifiedOn) > now.AddHours(-25)) return new RmsPurgeResult { Reason = "Recent record activity is still within the upload cleanup window." };
-			if (!finalized.HasValue || (op?.AmendsRevisionId ?? incident?.AmendsRevisionId) != null ||
-				!new[] { RmsRecordState.Finalized, RmsRecordState.Amended, RmsRecordState.Accepted, RmsRecordState.Voided, RmsRecordState.Cancelled }.Contains(state))
-				return new RmsPurgeResult { Reason = "The report is still open." };
 			var setting = await QueryFirstOrDefaultAsync<DepartmentSetting>($"SELECT * FROM {Tbl("DepartmentSettings")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("SettingType")} = {(int)DepartmentSettingTypes.RecordsRetentionPolicy}", key, cancellationToken);
 			var policy = string.IsNullOrEmpty(setting?.Setting) ? new RecordsRetentionPolicy() : ObjectSerialization.Deserialize<RecordsRetentionPolicy>(setting.Setting);
 			if (policy == null) throw new InvalidOperationException("Retention policy is unreadable.");
-			var years = policy.ResolveYears(definition, finalized.Value);
-			if (!RecordsRetentionWindow.HasExpired(finalized, years, now)) return new RmsPurgeResult { Reason = "Retention has not expired." };
+			DateTime? closedOn;
+			int years;
+			if (deletedOn.HasValue)
+			{
+				// Delete only ever leaves a cancelled or voided report behind; anything else is not ours to erase.
+				if (amending || state != RmsRecordState.Cancelled && state != RmsRecordState.Voided)
+					return new RmsPurgeResult { Reason = "A deleted report must be cancelled or voided before its content is erased." };
+				if (deletedOn.Value.AddDays(Math.Max(1, RecordsRetentionConfig.DeletedIncidentReportPurgeDays)) > now)
+					return new RmsPurgeResult { Reason = "The deleted report is still within its recovery window." };
+				closedOn = deletedOn;
+				years = 0;
+			}
+			else
+			{
+				// A Record cancelled before it was ever finalized closes on CancelledOn: an abandoned draft keeps its content no
+				// longer than a finished one, where it used to keep it forever.
+				closedOn = finalized ?? (state == RmsRecordState.Cancelled ? cancelledOn : null);
+				if (!closedOn.HasValue || amending ||
+					!new[] { RmsRecordState.Finalized, RmsRecordState.Amended, RmsRecordState.Accepted, RmsRecordState.Voided, RmsRecordState.Cancelled }.Contains(state))
+					return new RmsPurgeResult { Reason = "The report is still open." };
+				years = policy.ResolveYears(definition, closedOn.Value);
+				if (!RecordsRetentionWindow.HasExpired(closedOn, years, now)) return new RmsPurgeResult { Reason = "Retention has not expired." };
+			}
 			var analyses = operational ? new List<RmsIncidentAnalysis>() : (await QueryAsync<RmsIncidentAnalysis>($"SELECT * FROM {Tbl("RmsIncidentAnalyses")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("IncidentReportId")} = {P}Id", key, cancellationToken)).ToList();
 			var ids = new[] { recordId }.Concat(analyses.Select(a => a.RmsIncidentAnalysisId)).ToArray();
 			foreach (var analysis in analyses.OrderBy(a => a.RmsIncidentAnalysisId, StringComparer.Ordinal))
@@ -223,8 +248,8 @@ namespace Resgrid.Repositories.DataRepository
 				await ExecuteAsync($"UPDATE {Tbl("RmsIncidentAnalyses")} SET {Col("GeneralCause")} = NULL, {Col("InvestigationTypesCsv")} = NULL, {Col("EstimatedLossTotal")} = NULL, {Col("EstimatedValueTotal")} = NULL, {Col("RejectionSummary")} = NULL, {Col("VoidReasonText")} = NULL, {Col("DeletedOn")} = {P}Now, {Col("ModifiedOn")} = {P}Now, {Col("RowVersion")} = {Col("RowVersion")} + 1 WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("IncidentReportId")} = {P}Id", new { DepartmentId = departmentId, Id = recordId, Now = now }, cancellationToken);
 			}
 			await ExecuteAsync($"INSERT INTO {Tbl("RmsAccessAudits")} ({Cols("DepartmentId", "RecordId", "Action", "Purpose", "OriginClient", "Successful", "OccurredOn", "DetailJson")}) VALUES ({P}DepartmentId, {P}Id, {P}Action, {P}Purpose, {P}Origin, {P}Successful, {P}Now, {P}Detail)",
-				new { DepartmentId = departmentId, Id = recordId, Action = (int)RmsAccessAuditAction.Change, Purpose = "Retention purge", Origin = (int)RmsOriginClient.System,
-					Successful = true, Now = now, Detail = JsonConvert.SerializeObject(new { definition, years, finalizedOn = finalized, childRecordIds = ids, attachmentsPurged = attachments }) }, cancellationToken);
+				new { DepartmentId = departmentId, Id = recordId, Action = (int)RmsAccessAuditAction.Change, Purpose = deletedOn.HasValue ? DeletedPurgeAuditPurpose : RetentionPurgeAuditPurpose, Origin = (int)RmsOriginClient.System,
+					Successful = true, Now = now, Detail = JsonConvert.SerializeObject(new { definition, years, finalizedOn = finalized, closedOn, deletedOn, childRecordIds = ids, attachmentsPurged = attachments }) }, cancellationToken);
 			return new RmsPurgeResult { Purged = true, SearchErasurePending = true, AttachmentsPurged = attachments, Reason = "RMS database content removed; committed search-storage erasure is pending." };
 		}
 	}

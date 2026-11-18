@@ -301,7 +301,20 @@ RecordPermitExpiring = 163,
 		IncidentBudgetAuthorityChanged = 204,
 		IncidentCostShareApportioned = 205,
 		IncidentIntakeBacklog = 206,
-		IncidentRecoveryDeadlineApproaching = 207
+		IncidentRecoveryDeadlineApproaching = 207,
+
+		// Recurring calls (registry 2026-11-17, 208-217): schedule lifecycle, occurrences and dispatcher alerts. Raised in process
+		// by RecurringCallsService (web, API and the scheduled-calls worker 12); payloads in Events/RecurringCallEvents.cs.
+		RecurringCallScheduleCreated = 208,
+		RecurringCallScheduleUpdated = 209,
+		RecurringCallSchedulePaused = 210,
+		RecurringCallScheduleResumed = 211,
+		RecurringCallScheduleDeleted = 212,
+		RecurringCallOccurrenceCreated = 213,
+		RecurringCallOccurrenceSkipped = 214,
+		RecurringCallOccurrenceDispatched = 215,
+		RecurringCallAlertRaised = 216,
+		RecurringCallAlertResolved = 217
 	}
 
 	public static class WorkflowTriggerEventTypes

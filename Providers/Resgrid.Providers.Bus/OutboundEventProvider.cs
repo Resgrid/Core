@@ -72,6 +72,7 @@ namespace Resgrid.Providers.Bus
 			_eventAggregator.AddAsyncListener(unitActiveRolesUpdatedTopicHandler);
 			_eventAggregator.AddAsyncListener(outstandingRequirementsUpdatedTopicHandler);
 			_eventAggregator.AddAsyncListener(unitNavigationUpdatedTopicHandler);
+			_eventAggregator.AddAsyncListener(recurringCallAlertsUpdatedTopicHandler);
 			_eventAggregator.AddAsyncListener<DomainEventDispatchedEvent>(async message =>
 			{
 				if (message.ProducerSubsystem != "Checklists") return;
@@ -740,6 +741,15 @@ namespace Resgrid.Providers.Bus
 
 			if (!await _rabbitTopicProvider.UnitNavigationUpdated(message.DepartmentId, message.UnitId, message.Payload))
 				Framework.Logging.LogError($"Unable to publish the unit navigation realtime update for department {message.DepartmentId}.");
+		};
+
+		public Func<RecurringCallAlertsUpdatedEvent, Task> recurringCallAlertsUpdatedTopicHandler = async delegate (RecurringCallAlertsUpdatedEvent message)
+		{
+			if (_rabbitTopicProvider == null)
+				_rabbitTopicProvider = new RabbitTopicProvider();
+
+			if (!await _rabbitTopicProvider.RecurringCallAlertsUpdated(message.DepartmentId, message.RecurringCallId, message.Payload))
+				Framework.Logging.LogError($"Unable to publish the recurring call alerts realtime update for department {message.DepartmentId}.");
 		};
 
 		public Func<OutstandingRequirementsUpdatedEvent, Task> outstandingRequirementsUpdatedTopicHandler = async delegate (OutstandingRequirementsUpdatedEvent message)

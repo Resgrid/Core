@@ -59,6 +59,17 @@ namespace Resgrid.Model.Services
 
 		Task<IncidentReportAggregate> CancelAsync(int departmentId, string userId, string reportId, CancellationToken cancellationToken = default);
 
+		/// <summary>
+		/// Soft-deletes a report so it leaves every list and stops holding its Call. A report that was never finalized is
+		/// cancelled first; a cancelled one is deleted as it is; a voided one only by a department administrator, with a
+		/// reason, and only when neither it nor its analysis ever reached an outside destination. Finalized and amended
+		/// reports must be voided first. Refused under an active legal hold or while casualty, rescue or exposure entries
+		/// exist (those are kept permanently). Worker 43 erases the content once the deletion is older than
+		/// <c>RecordsRetentionConfig.DeletedIncidentReportPurgeDays</c>. Throws <see cref="IncidentReportDeleteRefusedException"/>
+		/// for a policy refusal and <see cref="System.UnauthorizedAccessException"/> when the caller may not close the report out.
+		/// </summary>
+		Task DeleteAsync(int departmentId, string userId, string reportId, string reasonText, RmsOriginClient origin = RmsOriginClient.Web, CancellationToken cancellationToken = default);
+
 		Task<List<RmsIncidentReport>> QueryAsync(int departmentId, RmsIncidentReportQuery query);
 
 		Task<int> CountAsync(int departmentId, RmsIncidentReportQuery query);

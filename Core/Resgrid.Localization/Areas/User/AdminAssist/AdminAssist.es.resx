@@ -6784,7 +6784,7 @@
     <value>Configuración de numeración de llamadas / Patrón</value>
   </data>
   <data name="FieldHelp.CallNumberingConfig.Pattern" xml:space="preserve">
-    <value>Cómo se escriben los números de llamada, por ejemplo FD-2026-0153: texto fijo más los marcadores YYYY o YY, MM, DD y SEQ. La secuencia vuelve a empezar cada vez que cambia la fecha que escribe. Mientras no se guarde un patrón, las llamadas mantienen los números YY-SEQ que Resgrid siempre ha emitido.</value>
+    <value>Cómo se escriben los números de llamada, por ejemplo FD-2026-0153: texto fijo más los marcadores YYYY o YY, MM, DD, HH (hora), MIN (minuto) y SEQ. La secuencia vuelve a empezar cada vez que cambia la fecha que escribe; la hora y el minuto nunca la reinician. Mientras no se guarde un patrón, las llamadas mantienen los números YY-SEQ que Resgrid siempre ha emitido.</value>
   </data>
   <data name="Field.CallNumberingConfig.SequenceWidth" xml:space="preserve">
     <value>Configuración de numeración de llamadas / Ancho de la secuencia</value>
@@ -7847,5 +7847,11 @@
   </data>
   <data xml:space="preserve" name="SettingHelp.MappingProviderOverrides">
     <value>Cuentas propias del departamento para rutas, tráfico en vivo y búsqueda de direcciones, que se prueban antes que los proveedores de Resgrid. Solo se informa qué proveedores están configurados, nunca las claves. Si los tres vuelven al valor predeterminado de Resgrid, se elimina la configuración.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.DestinationSuggestions">
+    <value>Sugerencias de destino</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.DestinationSuggestions">
+    <value>Sugiere el mejor destino para una llamada, y para el destino de estado de una unidad, a partir de las reglas de destino del departamento (Cartografía, Reglas de destino) y la ubicación del incidente, con el tiempo de trayecto y la distancia. «Sugerir y rellenar el destino» además rellena el destino vacío de una nueva llamada con el mejor; los despachadores y las dotaciones pueden elegir otro igualmente. Desactivado de forma predeterminada, porque cada sugerencia consulta tiempos de trayecto.</value>
   </data>
 </root>

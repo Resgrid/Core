@@ -638,6 +638,15 @@
   <data name="AllOfGroupDispatched" xml:space="preserve">
     <value>Tutto {0} inviato</value>
   </data>
+  <data name="ReleaseUnit" xml:space="preserve"><value>Rilascia</value></data>
+  <data name="ReleaseUnitTitle" xml:space="preserve"><value>Rilasciare {0} da questa chiamata?</value></data>
+  <data name="ReleaseUnitText" xml:space="preserve"><value>L'unità viene tolta da questa chiamata e riceve lo stato di rilascio del dipartimento, a meno che non sia già disponibile, fuori servizio o su un'altra chiamata. La chiamata resta aperta.</value></data>
+  <data name="ReleaseUnitNotify" xml:space="preserve"><value>Avvisa l'unità</value></data>
+  <data name="ReleaseUnitFailed" xml:space="preserve"><value>Impossibile rilasciare l'unità.</value></data>
+  <data name="UnitReleasedAt" xml:space="preserve"><value>Rilasciata {0}</value></data>
+  <data name="ReleasePersonnelText" xml:space="preserve"><value>La persona viene tolta da questa chiamata e riceve lo stato di rilascio del personale del dipartimento, a meno che non sia già disponibile, non disponibile o su un'altra chiamata. La chiamata resta aperta.</value></data>
+  <data name="ReleasePersonnelFailed" xml:space="preserve"><value>Impossibile rilasciare la persona.</value></data>
+  <data name="ReleasePersonnelNotify" xml:space="preserve"><value>Avvisa la persona</value></data>
   <data name="AreYouSure" xml:space="preserve">
     <value>Sei sicuro?</value>
   </data>

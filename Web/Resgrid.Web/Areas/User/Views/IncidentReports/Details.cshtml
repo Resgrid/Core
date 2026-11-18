@@ -677,6 +677,30 @@
 					</div>
 				</div>
 			}
+			@if (Model.CanDelete)
+			{
+				<div class="ibox">
+					<div class="ibox-title"><h5><i class="fa fa-trash"></i> @localizer["DeleteIncidentReport"]</h5></div>
+					<div class="ibox-content">
+						<p class="text-muted">@string.Format(localizer["DeleteIncidentReportHelp"].Value, Model.DeletePurgeDays)</p>
+						<form method="post" asp-controller="IncidentReports" asp-action="Delete" asp-route-area="User" asp-route-id="@r.RmsIncidentReportId" onsubmit="return confirm('@JsEncoder.Encode(string.Format(localizer["DeleteIncidentReportConfirm"].Value, Model.DeletePurgeDays))');">
+							@Html.AntiForgeryToken()
+							<div class="form-group">
+								<label>@localizer["ReasonText"]</label>
+								@if (state == RmsRecordState.Voided)
+								{
+									<textarea class="form-control" name="reasonText" rows="2" maxlength="1000" required></textarea>
+								}
+								else
+								{
+									<textarea class="form-control" name="reasonText" rows="2" maxlength="1000"></textarea>
+								}
+							</div>
+							<button type="submit" class="btn btn-danger btn-block"><i class="fa fa-trash"></i> @localizer["DeleteIncidentReport"]</button>
+						</form>
+					</div>
+				</div>
+			}
 
 			@if (Model.NerisWorkflowsEnabled || a.Submissions.Count > 0)
 			{

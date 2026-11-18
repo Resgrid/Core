@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Map Icon Legend and status / priority map icon pages -->
+    <data name="PageTitle" xml:space="preserve">
+    <value>Правила пунктів призначення</value>
+  </data>
+  <data name="PageIntro" xml:space="preserve">
+    <value>Вкажіть Resgrid, що має пропонувати пункт призначення виклику, щоб форма виклику та застосунки могли запропонувати найближчий придатний: «виклики з опіками потребують опікового центру», «гелікоптер потребує вертолітного майданчика», «автоцистерна їде до джерела води, що дозволяє забір води всмоктуванням». Усі правила, що відповідають виклику (і підрозділу, який їде), діють разом. Пункти призначення — це ваші типи POI, позначені як пункти призначення; можливостями керують у розділі «Можливості POI», а стан «відкрито», «перенаправлення» чи «закрито» береться з розділу «Доступність пунктів призначення».</value>
+  </data>
+  <data name="SettingsHeader" xml:space="preserve">
+    <value>Пропозиції пунктів призначення</value>
+  </data>
+  <data name="Mode" xml:space="preserve">
+    <value>Пропозиції</value>
+  </data>
+  <data name="ModeOff" xml:space="preserve">
+    <value>Вимкнено</value>
+  </data>
+  <data name="ModeSuggest" xml:space="preserve">
+    <value>Пропонувати пункти призначення</value>
+  </data>
+  <data name="ModeSuggestAndFill" xml:space="preserve">
+    <value>Пропонувати й заповнювати пункт призначення</value>
+  </data>
+  <data name="ModeHelp" xml:space="preserve">
+    <value>«Пропонувати пункти призначення» показує найкращі пункти призначення під полем «Пункт призначення» у формах створення та оновлення виклику й у списках пунктів призначення в застосунках, разом із часом у дорозі та відстанню. «Пропонувати й заповнювати пункт призначення» також заповнює порожній пункт призначення нового виклику найкращим; диспетчери та бригади все одно можуть вибрати інший. Кожна пропозиція запитує час у дорозі, тож залиште цю опцію вимкненою, якщо не використовуєте пункти призначення.</value>
+  </data>
+  <data name="PreferredWithinMinutes" xml:space="preserve">
+    <value>Вікно бажаних можливостей (хвилини)</value>
+  </data>
+  <data name="PreferredWithinMinutesHelp" xml:space="preserve">
+    <value>Пункт призначення з більшою кількістю бажаних можливостей виходить наперед лише тоді, коли його час у дорозі перевищує час до найближчого не більше ніж на цю кількість хвилин. 0 = лише за однакового часу.</value>
+  </data>
+  <data name="SaveSettings" xml:space="preserve">
+    <value>Зберегти налаштування</value>
+  </data>
+  <data name="SettingsSaved" xml:space="preserve">
+    <value>Налаштування пропозицій пунктів призначення збережено.</value>
+  </data>
+  <data name="SettingsInvalid" xml:space="preserve">
+    <value>Виберіть режим пропозицій і вікно від 0 до {0} хвилин.</value>
+  </data>
+  <data name="RulesHeader" xml:space="preserve">
+    <value>Правила</value>
+  </data>
+  <data name="AddRule" xml:space="preserve">
+    <value>Додати правило</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Назва</value>
+  </data>
+  <data name="When" xml:space="preserve">
+    <value>Коли</value>
+  </data>
+  <data name="Destination" xml:space="preserve">
+    <value>Пункт призначення</value>
+  </data>
+  <data name="Requires" xml:space="preserve">
+    <value>Вимагає</value>
+  </data>
+  <data name="Prefers" xml:space="preserve">
+    <value>Віддає перевагу</value>
+  </data>
+  <data name="EveryCall" xml:space="preserve">
+    <value>Кожен виклик</value>
+  </data>
+  <data name="AnyDestinationType" xml:space="preserve">
+    <value>Будь-який тип пункту призначення</value>
+  </data>
+  <data name="CallTypeCondition" xml:space="preserve">
+    <value>Тип виклику: {0}</value>
+  </data>
+  <data name="PriorityCondition" xml:space="preserve">
+    <value>Пріоритет: {0}</value>
+  </data>
+  <data name="UnitTypeCondition" xml:space="preserve">
+    <value>Тип підрозділу: {0}</value>
+  </data>
+  <data name="DeletedChoice" xml:space="preserve">
+    <value>(видалено)</value>
+  </data>
+  <data name="NeedsAttention" xml:space="preserve">
+    <value>Потребує уваги: {0} з його типів або можливостей видалено, і вони ігноруються.</value>
+  </data>
+  <data name="AllTypesRemoved" xml:space="preserve">
+    <value>Ніколи не застосовується: усі вказані в ньому типи пунктів призначення видалено.</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Редагувати</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Видалити</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Зберегти</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Скасувати</value>
+  </data>
+  <data name="DeleteRuleConfirm" xml:space="preserve">
+    <value>Видалити правило «{0}»?</value>
+  </data>
+  <data name="NoRules" xml:space="preserve">
+    <value>Правил пунктів призначення ще немає. Без правил пропонуються всі пункти призначення, спершу найближчий відкритий.</value>
+  </data>
+  <data name="NoDestinationTypes" xml:space="preserve">
+    <value>Жоден тип POI ще не позначено як пункт призначення. Перш ніж додавати правила, позначте один як пункт призначення в розділі «Картографування», «POI».</value>
+  </data>
+  <data name="RuleSaved" xml:space="preserve">
+    <value>Правило «{0}» збережено.</value>
+  </data>
+  <data name="RuleDeleted" xml:space="preserve">
+    <value>Правило «{0}» видалено.</value>
+  </data>
+  <data name="RuleNameRequired" xml:space="preserve">
+    <value>Введіть назву довжиною не більше {0} символів.</value>
+  </data>
+  <data name="RuleNothingRequired" xml:space="preserve">
+    <value>Виберіть принаймні один тип пункту призначення або можливість.</value>
+  </data>
+  <data name="RuleChoicesChanged" xml:space="preserve">
+    <value>Вибраний тип виклику, пріоритет, тип підрозділу, тип пункту призначення або можливість більше не існує. Перевірте вибір і збережіть знову.</value>
+  </data>
+  <data name="NewRule" xml:space="preserve">
+    <value>Нове правило</value>
+  </data>
+  <data name="EditRule" xml:space="preserve">
+    <value>Редагувати правило</value>
+  </data>
+  <data name="RuleNameHelp" xml:space="preserve">
+    <value>Показується диспетчерам як причина вимоги, наприклад «Опіки» або «Посадка гелікоптера».</value>
+  </data>
+  <data name="AppliesWhen" xml:space="preserve">
+    <value>Застосовується, коли</value>
+  </data>
+  <data name="AppliesWhenHelp" xml:space="preserve">
+    <value>Залиште всі три на «Будь-який», щоб правило діяло для кожного виклику. Правила для типу підрозділу діють, коли їде підрозділ цього типу (його список пунктів призначення для статусу в застосунках), а не для пункту призначення самого виклику.</value>
+  </data>
+  <data name="CallType" xml:space="preserve">
+    <value>Тип виклику</value>
+  </data>
+  <data name="Priority" xml:space="preserve">
+    <value>Пріоритет</value>
+  </data>
+  <data name="UnitType" xml:space="preserve">
+    <value>Тип підрозділу</value>
+  </data>
+  <data name="Any" xml:space="preserve">
+    <value>Будь-який</value>
+  </data>
+  <data name="DestinationTypes" xml:space="preserve">
+    <value>Типи пунктів призначення</value>
+  </data>
+  <data name="DestinationTypesHelp" xml:space="preserve">
+    <value>Пункт призначення має бути одного з цих типів; якщо нічого не позначено, підходить будь-який тип. Коли два правила вказують типи, що не перетинаються, перемагає конкретніше правило (спершу правила для типу підрозділу), а інше відкладається.</value>
+  </data>
+  <data name="RequiredCapabilities" xml:space="preserve">
+    <value>Обов’язкові можливості</value>
+  </data>
+  <data name="RequiredCapabilitiesHelp" xml:space="preserve">
+    <value>Запропонований пункт призначення має пропонувати всі ці можливості. Якщо жоден пункт призначення в досяжності їх не має, нічого не заповнюється, а найближчі показуються з тим, чого їм бракує.</value>
+  </data>
+  <data name="PreferredCapabilities" xml:space="preserve">
+    <value>Бажані можливості</value>
+  </data>
+  <data name="PreferredCapabilitiesHelp" xml:space="preserve">
+    <value>Розв’язують майже рівні випадки: у межах вікна бажаних можливостей першим іде пункт призначення, що пропонує більше з них.</value>
+  </data>
+  <data name="NoCapabilities" xml:space="preserve">
+    <value>Можливостей POI ще немає.</value>
+  </data>
+  <data name="ManageCapabilities" xml:space="preserve">
+    <value>Керувати можливостями POI</value>
+  </data>
+  <data name="TryIt" xml:space="preserve">
+    <value>Спробуйте</value>
+  </data>
+  <data name="TryItHelp" xml:space="preserve">
+    <value>Виберіть тип виклику, пріоритет і тип підрозділу, щоб побачити, які правила застосовуються і яким має бути пункт призначення.</value>
+  </data>
+  <data name="TryItButton" xml:space="preserve">
+    <value>Показати</value>
+  </data>
+  <data name="AppliedRules" xml:space="preserve">
+    <value>Застосовані правила</value>
+  </data>
+  <data name="SetAsideRules" xml:space="preserve">
+    <value>Відкладені</value>
+  </data>
+  <data name="NoRulesApply" xml:space="preserve">
+    <value>Жодне правило не застосовується: будь-який тип пункту призначення, без вимог.</value>
+  </data>
+  <data name="SetAsideTypesRemoved" xml:space="preserve">
+    <value>його типи пунктів призначення видалено</value>
+  </data>
+  <data name="SetAsideTypeConflict" xml:space="preserve">
+    <value>конкретніше правило спрямовує до інших типів пунктів призначення</value>
+  </data>
+  <data name="NothingRequired" xml:space="preserve">
+    <value>нічого</value>
+  </data>
+  <data name="DestinationRulesLink" xml:space="preserve">
+    <value>Правила пунктів призначення</value>
+  </data>
+  <data name="SuggestedDestinations" xml:space="preserve">
+    <value>Запропоновані</value>
+  </data>
+  <data name="SuggestionLoading" xml:space="preserve">
+    <value>Пошук пунктів призначення...</value>
+  </data>
+  <data name="SuggestionNone" xml:space="preserve">
+    <value>Не знайдено пункту призначення потрібного виду.</value>
+  </data>
+  <data name="SuggestionNoneMeet" xml:space="preserve">
+    <value>Жоден пункт призначення поблизу не пропонує всього потрібного; показано найближчі.</value>
+  </data>
+  <data name="SuggestionNeeds" xml:space="preserve">
+    <value>Потрібно: {0}</value>
+  </data>
+  <data name="SuggestionPrefers" xml:space="preserve">
+    <value>Бажано: {0}</value>
+  </data>
+  <data name="SuggestionRules" xml:space="preserve">
+    <value>Правила: {0}</value>
+  </data>
+  <data name="UseDestination" xml:space="preserve">
+    <value>Використати</value>
+  </data>
+  <data name="InUse" xml:space="preserve">
+    <value>Вибрано</value>
+  </data>
+  <data name="SuggestedBadge" xml:space="preserve">
+    <value>Запропоновано</value>
+  </data>
+  <data name="FilledAutomatically" xml:space="preserve">
+    <value>Заповнено запропонованим пунктом призначення. За потреби виберіть інший.</value>
+  </data>
+  <data name="MissingCapabilities" xml:space="preserve">
+    <value>Бракує: {0}</value>
+  </data>
+  <data name="DownCapabilities" xml:space="preserve">
+    <value>Зараз недоступно: {0}</value>
+  </data>
+  <data name="MinutesShort" xml:space="preserve">
+    <value>{0} хв</value>
+  </data>
+  <data name="KilometersShort" xml:space="preserve">
+    <value>{0} км</value>
+  </data>
+  <data name="StraightLineKilometers" xml:space="preserve">
+    <value>{0} км по прямій</value>
+  </data>
+  <data name="StatusLimited" xml:space="preserve">
+    <value>Обмежено</value>
+  </data>
+  <data name="StatusDiversion" xml:space="preserve">
+    <value>Перенаправлення</value>
+  </data>
+  <data name="StatusClosed" xml:space="preserve">
+    <value>Закрито</value>
+  </data>
+  <data name="SuggestionFailed" xml:space="preserve">
+    <value>Пропозиції пунктів призначення зараз недоступні.</value>
+  </data>
+</root>

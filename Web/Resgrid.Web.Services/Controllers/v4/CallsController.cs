@@ -60,6 +60,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly ICommunicationService _communicationService;
 		private readonly IWeatherAlertService _weatherAlertService;
 		private readonly ICallDispatchStatusService _callDispatchStatusService;
+		private readonly ICallResourceReleaseService _callResourceReleaseService;
 		private readonly IDispatchRecommendationService _dispatchRecommendationService;
 		private readonly IFeatureToggleService _featureToggleService;
 		private readonly IDepartmentDataProtectionService _dataProtectionService;
@@ -139,9 +140,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 			ICallLocationHistoryService callLocationHistoryService,
 			IPendingCallsService pendingCallsService,
 			ICallClosureService callClosureService,
-			IInboundEmailReceiptsService inboundEmailReceiptsService
+			IInboundEmailReceiptsService inboundEmailReceiptsService,
+			ICallResourceReleaseService callResourceReleaseService
 			)
 		{
+			_callResourceReleaseService = callResourceReleaseService;
 			_inboundEmailReceiptsService = inboundEmailReceiptsService;
 			_callClosureService = callClosureService;
 			_callLocationHistoryService = callLocationHistoryService;
@@ -807,7 +810,31 @@ namespace Resgrid.Web.Services.Controllers.v4
 				result.Data.Activity.Add(eventResult);
 			}
 
-			foreach (var dispatch in call.Dispatches)
+			// Members released (stood down) from the call, however they were reached, are listed apart: Dispatches is who is on
+			// the call now. A member released from a dispatched group or role still has that group's entry in Dispatches, so a
+			// client subtracts ReleasedPersonnel from the members it shows on the call.
+			foreach (var release in (call.PersonnelReleases ?? new List<CallPersonnelRelease>()).OrderBy(x => x.ReleasedOn))
+			{
+				var dispatched = call.Dispatches?.FirstOrDefault(x => string.Equals(x.UserId, release.UserId, StringComparison.OrdinalIgnoreCase));
+				var name = names.FirstOrDefault(x => string.Equals(x.UserId, release.UserId, StringComparison.OrdinalIgnoreCase));
+				var released = new DispatchedEventResultData
+				{
+					Id = release.UserId,
+					Type = "User",
+					Name = name?.Name ?? "Unknown User",
+					GroupId = name?.DepartmentGroupId?.ToString(),
+					Group = name?.DepartmentGroupId != null ? name.DepartmentGroupName : null,
+					ReleasedOn = DateTime.SpecifyKind(release.ReleasedOn, DateTimeKind.Utc).ToString("o", CultureInfo.InvariantCulture),
+					ReleasedBy = string.IsNullOrWhiteSpace(release.ReleasedByUserId) ? null
+						: names.FirstOrDefault(x => string.Equals(x.UserId, release.ReleasedByUserId, StringComparison.OrdinalIgnoreCase))?.Name
+				};
+				if (dispatched?.LastDispatchedOn != null)
+					released.Timestamp = dispatched.LastDispatchedOn.Value;
+
+				result.Data.ReleasedPersonnel.Add(released);
+			}
+
+			foreach (var dispatch in call.Dispatches.Where(x => !call.IsUserReleased(x.UserId)))
 			{
 				var eventResult = new DispatchedEventResultData();
 				eventResult.Id = dispatch.UserId;
@@ -882,6 +909,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 					}
 					eventResult.Type = "Unit";
 
+					// A unit released (stood down) from the call is listed apart: Dispatches is who is on the call now.
+					if (unitDispatch.IsReleased)
+					{
+						eventResult.ReleasedOn = DateTime.SpecifyKind(unitDispatch.ReleasedOn.Value, DateTimeKind.Utc).ToString("o", CultureInfo.InvariantCulture);
+						eventResult.ReleasedBy = string.IsNullOrWhiteSpace(unitDispatch.ReleasedByUserId)
+							? null
+							: names.FirstOrDefault(x => x.UserId == unitDispatch.ReleasedByUserId)?.Name;
+					}
+
 					if (responseCodes != null && responseCodes.ShowToCrews && !string.IsNullOrWhiteSpace(unitDispatch.ResponseCode))
 					{
 						eventResult.ResponseCode = unitDispatch.ResponseCode;
@@ -912,7 +948,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 						eventResult.Name = "Unknown Unit";
 					}
 
-					result.Data.Dispatches.Add(eventResult);
+					if (unitDispatch.IsReleased)
+						result.Data.ReleasedUnits.Add(eventResult);
+					else
+						result.Data.Dispatches.Add(eventResult);
 				}
 			}
 
@@ -1777,8 +1816,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			// Capture existing dispatch snapshots for cancel notification diffing
 			var existingDispatches = new List<CallDispatch>(call.Dispatches ?? new List<CallDispatch>());
+			// Members released (stood down) from the call: their dispatch rows stay on the record unless the list names them again.
+			var releasedUserIds = call.GetReleasedUserIds();
+			var redispatchedUserIds = new List<string>();
 			var existingGroupDispatches = new List<CallDispatchGroup>(call.GroupDispatches ?? new List<CallDispatchGroup>());
-			var existingUnitDispatches = new List<CallDispatchUnit>(call.UnitDispatches ?? new List<CallDispatchUnit>());
+			// Units by id, live ones only: re-dispatching a released unit changes its row in place, and it counts as added.
+			var existingUnitIds = CallDispatchUnitReleases.ActiveUnitIds(call.UnitDispatches);
 			var existingRoleDispatches = new List<CallDispatchRole>(call.RoleDispatches ?? new List<CallDispatchRole>());
 
 			if (string.IsNullOrWhiteSpace(editCallInput.DispatchList))
@@ -1850,7 +1893,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 					var dispatchesToRemove = keepUsers
 						? new List<string>()
-						: call.Dispatches.Select(x => x.UserId).Where(y => !usersToDispatch.Contains(y)).ToList();
+						: call.Dispatches.Select(x => x.UserId).Where(y => !usersToDispatch.Contains(y) && !releasedUserIds.Contains(y)).ToList();
 
 					foreach (var userId in dispatchesToRemove)
 					{
@@ -1860,6 +1903,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 					foreach (var user in usersToDispatch)
 					{
+						// Named again: a member released from the call goes back to it.
+						if (releasedUserIds.Contains(user) && activeUsers.Any(x => x.UserId == user && x.IsDeleted == false && x.IsDisabled == false))
+							redispatchedUserIds.Add(user);
+
 						if (!call.Dispatches.Any(x => x.UserId == user))
 						{
 							if (activeUsers.Any(x => x.UserId == user && x.IsDeleted == false && x.IsDisabled == false))
@@ -1942,26 +1989,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 					if (call.UnitDispatches == null)
 						call.UnitDispatches = new List<CallDispatchUnit>();
 
-					var dispatchesToRemove = keepUnits
-						? new List<int>()
-						: call.UnitDispatches.Select(x => x.UnitId).Where(y => !unitsToDispatch.Contains(y)).ToList();
-
-					foreach (var id in dispatchesToRemove)
-					{
-						call.UnitDispatches.Remove(call.UnitDispatches.First(x => x.UnitId == id));
-					}
-
-					foreach (var unit in unitsToDispatch)
-					{
-						if (!call.UnitDispatches.Any(x => x.UnitId == unit))
-						{
-							if (units.Any(x => x.UnitId == unit))
-							{
-								var cdu = new CallDispatchUnit { CallId = call.CallId, UnitId = unit };
-								call.UnitDispatches.Add(cdu);
-							}
-						}
-					}
+					// A unit released from the call stays on its record when the list leaves it out (clients never pre-select
+					// it: GetCallExtraData lists it apart), and goes back to the call when the list names it.
+					CallDispatchUnitReleases.ApplyUnitList(call.UnitDispatches, call.CallId, unitsToDispatch, DateTime.UtcNow,
+						canRemove: _ => !keepUnits, canAdd: unit => units.Any(x => x.UnitId == unit));
 				}
 				catch (Exception ex)
 				{
@@ -2055,26 +2086,34 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			await _callsService.SaveCallAsync(call, cancellationToken);
 
+			// Members named again are back on the call: their releases go, so the broadcast below pages them.
+			if (redispatchedUserIds.Any())
+			{
+				await _callResourceReleaseService.ClearPersonnelReleasesAsync(call.CallId, redispatchedUserIds, cancellationToken);
+				call.PersonnelReleases?.RemoveAll(x => redispatchedUserIds.Contains(x.UserId, StringComparer.OrdinalIgnoreCase));
+			}
+
 			// Attach weather alerts as call notes if enabled (deduplication handled inside)
 			await _weatherAlertService.AttachWeatherAlertsToCallAsync(call, cancellationToken);
 
-			var currentUserIds = call.Dispatches?.Select(x => x.UserId).ToList() ?? new List<string>();
+			// Members by id, live ones only: a member still released is off the call, one named again counts as added.
+			var stillReleasedUserIds = new HashSet<string>(releasedUserIds.Except(redispatchedUserIds, StringComparer.OrdinalIgnoreCase), StringComparer.OrdinalIgnoreCase);
+			var currentUserIds = call.Dispatches?.Select(x => x.UserId).Where(x => !stillReleasedUserIds.Contains(x)).ToList() ?? new List<string>();
 			var currentGroupIds = call.GroupDispatches?.Select(x => x.DepartmentGroupId).ToList() ?? new List<int>();
-			var currentUnitIds = call.UnitDispatches?.Select(x => x.UnitId).ToList() ?? new List<int>();
+			var currentUnitIds = CallDispatchUnitReleases.ActiveUnitIds(call.UnitDispatches);
 			var currentRoleIds = call.RoleDispatches?.Select(x => x.RoleId).ToList() ?? new List<int>();
 
-			var cancelledUserIds = existingDispatches.Select(x => x.UserId)
+			var cancelledUserIds = existingDispatches.Select(x => x.UserId).Where(x => !releasedUserIds.Contains(x))
 				.Where(y => !currentUserIds.Contains(y)).ToList();
 			var cancelledGroupIds = existingGroupDispatches.Select(x => x.DepartmentGroupId)
 				.Where(y => !currentGroupIds.Contains(y)).ToList();
-			var cancelledUnitIds = existingUnitDispatches.Select(x => x.UnitId)
-				.Where(y => !currentUnitIds.Contains(y)).ToList();
+			var cancelledUnitIds = existingUnitIds.Where(y => !currentUnitIds.Contains(y)).ToList();
 			var cancelledRoleIds = existingRoleDispatches.Select(x => x.RoleId)
 				.Where(y => !currentRoleIds.Contains(y)).ToList();
 
-			var newUserIds = currentUserIds.Where(id => !existingDispatches.Any(d => d.UserId == id)).ToList();
+			var newUserIds = currentUserIds.Where(id => releasedUserIds.Contains(id) || !existingDispatches.Any(d => d.UserId == id)).ToList();
 			var newGroupIds = currentGroupIds.Where(id => !existingGroupDispatches.Any(d => d.DepartmentGroupId == id)).ToList();
-			var newUnitIds = currentUnitIds.Where(id => !existingUnitDispatches.Any(d => d.UnitId == id)).ToList();
+			var newUnitIds = currentUnitIds.Where(id => !existingUnitIds.Contains(id)).ToList();
 			var newRoleIds = currentRoleIds.Where(id => !existingRoleDispatches.Any(d => d.RoleId == id)).ToList();
 
 			// Only a call that has gone out notifies anyone or moves statuses: a pending call, or a scheduled call
@@ -2517,6 +2556,139 @@ namespace Resgrid.Web.Services.Controllers.v4
 		}
 
 		/// <summary>
+		/// Releases (stands down) one unit from an open call without closing the call: the unit's dispatch stays on the call's
+		/// record, marked released, and the unit gets the department's release status unless it is already available, out of
+		/// service, or working another open call. Re-dispatching the unit (EditCall with it on the list) sends it back.
+		/// </summary>
+		/// <param name="input">The call, the unit, and whether to send the unit a cancellation notice</param>
+		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+		/// <returns>The release, or 400 with the reason it could not be made</returns>
+		[HttpPost("ReleaseUnit")]
+		[Consumes(MediaTypeNames.Application.Json)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		public async Task<ActionResult<ReleaseUnitResult>> ReleaseUnit([FromBody] ReleaseUnitInput input, CancellationToken cancellationToken)
+		{
+			var result = new ReleaseUnitResult();
+
+			if (input == null || !ModelState.IsValid)
+				return BadRequest();
+
+			if (!int.TryParse(input.CallId, NumberStyles.Integer, CultureInfo.InvariantCulture, out var callId) ||
+				!int.TryParse(input.UnitId, NumberStyles.Integer, CultureInfo.InvariantCulture, out var unitId))
+				return BadRequest();
+
+			var call = await _callsService.GetCallByIdAsync(callId);
+
+			if (call == null || call.IsDeleted)
+			{
+				ResponseHelper.PopulateV4ResponseNotFound(result);
+				return Ok(result);
+			}
+
+			if (call.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			// A dispatcher takes a unit off a call as an edit of its dispatch list (the authority of EditCall); the unit's crew
+			// stands it down with the right that sets its status (UnitStatus/SaveUnitStatus: Security > View Units).
+			if (!await _authorizationService.CanUserEditCallAsync(UserId, callId) && !await _authorizationService.CanUserViewUnitAsync(UserId, unitId))
+				return Unauthorized();
+
+			var release = await _callResourceReleaseService.ReleaseUnitAsync(DepartmentId, callId, unitId, UserId, input.Notify, cancellationToken);
+
+			switch (release.Outcome)
+			{
+				case CallResourceReleaseOutcome.CallNotFound:
+					ResponseHelper.PopulateV4ResponseNotFound(result);
+					return Ok(result);
+				case CallResourceReleaseOutcome.CallNotLive:
+					return BadRequest("Only an open call that has been dispatched can have a unit released. Edit the call's dispatch list instead.");
+				case CallResourceReleaseOutcome.NotOnCall:
+					return BadRequest("That unit is not dispatched to this call.");
+				case CallResourceReleaseOutcome.AlreadyReleased:
+					return BadRequest("That unit was already released from this call.");
+			}
+
+			result.Data.CallId = callId.ToString(CultureInfo.InvariantCulture);
+			result.Data.UnitId = unitId.ToString(CultureInfo.InvariantCulture);
+			result.Data.ReleasedOn = DateTime.SpecifyKind(release.Dispatch.ReleasedOn.Value, DateTimeKind.Utc).ToString("o", CultureInfo.InvariantCulture);
+			result.Data.StatusApplied = release.StatusApplied;
+			result.PageSize = 1;
+			result.Status = ResponseHelper.Updated;
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// Releases (stands down) one member from an open call without closing the call, however the call reached them (by
+		/// name, a dispatched group or role, a unit's crew, or a status set against it). The release is kept on the call's record;
+		/// the member gets the department's personnel release status unless they are already available or unavailable, or
+		/// working another open call. Dispatching the member by name again (EditCall) sends them back.
+		/// </summary>
+		/// <param name="input">The call, the member, and whether to send them a cancellation notice</param>
+		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+		/// <returns>The release, or 400 with the reason it could not be made</returns>
+		[HttpPost("ReleasePersonnel")]
+		[Consumes(MediaTypeNames.Application.Json)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		public async Task<ActionResult<ReleasePersonnelResult>> ReleasePersonnel([FromBody] ReleasePersonnelInput input, CancellationToken cancellationToken)
+		{
+			var result = new ReleasePersonnelResult();
+
+			if (input == null || !ModelState.IsValid || string.IsNullOrWhiteSpace(input.UserId))
+				return BadRequest();
+
+			if (!int.TryParse(input.CallId, NumberStyles.Integer, CultureInfo.InvariantCulture, out var callId))
+				return BadRequest();
+
+			var call = await _callsService.GetCallByIdAsync(callId);
+
+			if (call == null || call.IsDeleted)
+			{
+				ResponseHelper.PopulateV4ResponseNotFound(result);
+				return Ok(result);
+			}
+
+			if (call.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			// A dispatcher releases anyone on the call (the authority of EditCall); a member releases themselves, as they set their
+			// own status (PersonnelStatuses/SavePersonStatus); a department admin may do either.
+			var isSelf = string.Equals(input.UserId, UserId, StringComparison.OrdinalIgnoreCase);
+			if (!isSelf && !ClaimsAuthorizationHelper.IsUserDepartmentAdmin() && !await _authorizationService.CanUserEditCallAsync(UserId, callId))
+				return Unauthorized();
+
+			var release = await _callResourceReleaseService.ReleasePersonnelAsync(DepartmentId, callId, input.UserId, UserId, input.Notify, cancellationToken);
+
+			switch (release.Outcome)
+			{
+				case CallResourceReleaseOutcome.CallNotFound:
+					ResponseHelper.PopulateV4ResponseNotFound(result);
+					return Ok(result);
+				case CallResourceReleaseOutcome.CallNotLive:
+					return BadRequest("Only an open call that has been dispatched can have personnel released. Edit the call's dispatch list instead.");
+				case CallResourceReleaseOutcome.NotOnCall:
+					return BadRequest("That person is not on this call.");
+				case CallResourceReleaseOutcome.AlreadyReleased:
+					return BadRequest("That person was already released from this call.");
+			}
+
+			result.Data.CallId = callId.ToString(CultureInfo.InvariantCulture);
+			result.Data.UserId = release.PersonnelRelease.UserId;
+			result.Data.ReleasedOn = DateTime.SpecifyKind(release.PersonnelRelease.ReleasedOn, DateTimeKind.Utc).ToString("o", CultureInfo.InvariantCulture);
+			result.Data.StatusApplied = release.StatusApplied;
+			result.PageSize = 1;
+			result.Status = ResponseHelper.Updated;
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
+		}
+
+		/// <summary>
 		/// Returns all the non-dispatched (pending) scheduled calls for the department
 		/// </summary>
 		/// <returns>Array of CallResult objects for each active call in the department</returns>
@@ -2841,10 +3013,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			foreach (var id in roleIds.Where(id => !call.RoleDispatches.Any(x => x.RoleId == id)))
 				call.RoleDispatches.Add(new CallDispatchRole { CallId = call.CallId, RoleId = id });
 
-			foreach (var item in call.UnitDispatches.Where(x => !unitIds.Contains(x.UnitId)).ToList())
-				call.UnitDispatches.Remove(item);
-			foreach (var id in unitIds.Where(id => !call.UnitDispatches.Any(x => x.UnitId == id)))
-				call.UnitDispatches.Add(new CallDispatchUnit { CallId = call.CallId, UnitId = id });
+			CallDispatchUnitReleases.ApplyUnitList(call.UnitDispatches, call.CallId, unitIds, DateTime.UtcNow);
 		}
 
 		/// <summary>
@@ -2970,6 +3139,23 @@ namespace Resgrid.Web.Services.Controllers.v4
 				}
 			}
 
+			// Members released (stood down) from the call while it stayed open.
+			foreach (var release in (call.PersonnelReleases ?? new List<CallPersonnelRelease>()))
+			{
+				var releasedName = names.FirstOrDefault(x => string.Equals(x.UserId, release.UserId, StringComparison.OrdinalIgnoreCase));
+				if (releasedName == null)
+					continue;
+
+				var releasedOn = DateTime.SpecifyKind(release.ReleasedOn, DateTimeKind.Utc);
+				result.Data.Add(new CallHistoryResultData()
+				{
+					TimestampUtc = releasedOn,
+					Timestamp = releasedOn.TimeConverter(department),
+					Type = 0,
+					Info = $"{releasedName.LastName}, {releasedName.FirstName} was released from the call"
+				});
+			}
+
 			if (call.GroupDispatches != null && call.GroupDispatches.Any())
 			{
 				foreach (var groupDispatch in call.GroupDispatches)
@@ -3003,6 +3189,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 							Type = 0,
 							Info = $"Unit {unit.Name} was dispatched to the call"
 						});
+
+						if (unitDispatch.IsReleased)
+						{
+							var releasedOn = DateTime.SpecifyKind(unitDispatch.ReleasedOn.Value, DateTimeKind.Utc);
+							result.Data.Add(new CallHistoryResultData()
+							{
+								TimestampUtc = releasedOn,
+								Timestamp = releasedOn.TimeConverter(department),
+								Type = 0,
+								Info = $"Unit {unit.Name} was released from the call"
+							});
+						}
 					}
 				}
 			}
@@ -3230,6 +3428,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			callResult.TypeId = call.CallTypeId?.ToString();
 
 			callResult.CheckInTimersEnabled = call.CheckInTimersEnabled;
+			callResult.RecurringCallId = call.RecurringCallId;
 
 			callResult.Protocols = new List<CallProtocolResultData>();
 			if (protocol != null && protocol.Any())

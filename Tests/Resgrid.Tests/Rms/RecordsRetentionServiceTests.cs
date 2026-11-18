@@ -53,8 +53,10 @@ namespace Resgrid.Tests.Rms
 				.ReturnsAsync((int d, string id, RmsRecordKind kind, long version, DateTime now, CancellationToken c) =>
 				{
 					var record = _store.Records.Single(r => r.RmsOperationalRecordId == id);
-					var years = _policy.ResolveYears(record.DefinitionKey, record.FinalizedOn.Value);
-					if (years <= 0 || record.FinalizedOn.Value.AddYears(years) > now) return new RmsPurgeResult();
+					// A never-finalized cancelled Record closes on its cancel date (RmsRetentionRepository does the same).
+					var closedOn = record.FinalizedOn ?? record.CancelledOn.Value;
+					var years = _policy.ResolveYears(record.DefinitionKey, closedOn);
+					if (years <= 0 || closedOn.AddYears(years) > now) return new RmsPurgeResult();
 					if (_store.LegalHolds.Any(h => h.Covers(id, record.DefinitionKey, record.StartedOn))) return new RmsPurgeResult { Held = true };
 					record.PurgedOn = now; record.DisplaySummary = RecordsRetentionService.PurgedPlaceholder;
 					foreach (var detail in _store.Details.Where(x => x.RecordId == id)) RecordsRetentionService.BlankContent(detail);
@@ -69,6 +71,48 @@ namespace Resgrid.Tests.Rms
 				_incidents.ReportsRepo.Object, _store.DetailsRepo.Object, _store.AttachmentsRepo.Object,
 				_store.LegalHoldsRepo.Object, _store.AuditsRepo.Object, _store.ProjectionsRepo.Object,
 				_scanner.Object, _settings.Object, _purge.Object, new DomainEventOutboxService(_store.OutboxRepo.Object, Mock.Of<Resgrid.Model.Providers.IEventAggregator>()));
+		}
+
+		[Test]
+		public async Task A_never_finalized_cancelled_record_is_purged_once_retention_runs_out_from_its_cancel_date()
+		{
+			var abandoned = SeedFinalized(DateTime.UtcNow.AddYears(-10));
+			abandoned.FinalizedOn = null; abandoned.State = (int)RmsRecordState.Cancelled; abandoned.CancelledOn = DateTime.UtcNow.AddYears(-10);
+			var recent = SeedFinalized(DateTime.UtcNow.AddYears(-1));
+			recent.FinalizedOn = null; recent.State = (int)RmsRecordState.Cancelled; recent.CancelledOn = DateTime.UtcNow.AddYears(-1);
+
+			var result = await _service.SweepAsync();
+
+			result.RecordsPurged.Should().Be(1);
+			abandoned.PurgedOn.Should().NotBeNull("an abandoned draft used to keep its content forever");
+			recent.PurgedOn.Should().BeNull();
+		}
+
+		[Test]
+		public async Task Deleted_incident_reports_are_purged_once_their_recovery_window_runs_out()
+		{
+			var days = IncidentReportsService.DeletedPurgeDays();
+			RmsIncidentReport Deleted(int daysAgo)
+			{
+				var report = new RmsIncidentReport { RmsIncidentReportId = Guid.NewGuid().ToString(), DepartmentId = Dept, State = (int)RmsRecordState.Cancelled,
+					DefinitionKey = RmsDefinitionKeys.NerisIncidentReport, CancelledOn = DateTime.UtcNow.AddDays(-daysAgo), DeletedOn = DateTime.UtcNow.AddDays(-daysAgo), RowVersion = 3 };
+				_incidents.Reports.Add(report);
+				return report;
+			}
+			var expired = Deleted(days + 1);
+			var recovering = Deleted(days - 1 < 1 ? 0 : days - 1);
+			_purge.Setup(p => p.PurgeAsync(Dept, expired.RmsIncidentReportId, RmsRecordKind.IncidentReport, 3, It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new RmsPurgeResult { Purged = true, SearchErasurePending = true });
+
+			var result = await _service.SweepAsync();
+
+			_purge.Verify(p => p.PurgeAsync(Dept, expired.RmsIncidentReportId, RmsRecordKind.IncidentReport, 3, It.IsAny<DateTime>(), It.IsAny<CancellationToken>()), Times.Once);
+			_purge.Verify(p => p.PurgeAsync(Dept, recovering.RmsIncidentReportId, It.IsAny<RmsRecordKind>(), It.IsAny<long>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()), Times.Never,
+				"a deletion still inside its recovery window is left alone");
+			result.DeletedReportsPurged.Should().Be(1);
+			result.RecordsPurged.Should().Be(1);
+			result.Errors.Should().Be(0);
+			_store.Outbox.Should().Contain(o => o.AggregateId == expired.RmsIncidentReportId && o.TriggerEventType == (int)WorkflowTriggerEventType.RecordPurged);
 		}
 
 		private RmsOperationalRecord SeedFinalized(DateTime finalizedOn, string definitionKey = null)

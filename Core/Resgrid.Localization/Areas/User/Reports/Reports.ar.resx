@@ -329,6 +329,9 @@
   <data name="CallUnitTimesClearedHeader" xml:space="preserve">
     <value>أصبحت متاحة</value>
   </data>
+  <data name="CallUnitTimesReleasedHeader" xml:space="preserve">
+    <value>تم التحرير</value>
+  </data>
   <data name="CallUnitTimesSourceHeader" xml:space="preserve">
     <value>الربط بواسطة</value>
   </data>

@@ -46,7 +46,7 @@ namespace Resgrid.Tests.Rms
 			_connection = new SqlConnectionStringBuilder(Master) { InitialCatalog = _database }.ConnectionString;
 			using (var db = new SqlConnection(_connection))
 				await db.ExecuteAsync("CREATE TABLE Departments (DepartmentId int NOT NULL PRIMARY KEY); INSERT Departments VALUES (11),(12); CREATE TABLE DepartmentSettings (DepartmentSettingId int IDENTITY PRIMARY KEY, DepartmentId int NOT NULL, SettingType int NOT NULL, Setting nvarchar(max) NOT NULL); CREATE TABLE WorkflowRuns (WorkflowRunId nvarchar(36) NOT NULL PRIMARY KEY, WorkflowId nvarchar(36) NOT NULL, DepartmentId int NOT NULL, Status int NOT NULL, CompletedOn datetime2 NULL, InputPayload nvarchar(max) NULL, ErrorMessage nvarchar(max) NULL); CREATE TABLE WorkflowRunLogs (WorkflowRunLogId nvarchar(36) NOT NULL PRIMARY KEY, WorkflowRunId nvarchar(36) NOT NULL, RenderedOutput nvarchar(max) NULL, ActionResult nvarchar(max) NULL, ErrorMessage nvarchar(max) NULL);");
-			var versions = new HashSet<long> { 48, 49, 124, 142, 143, 144, 145, 150, 151, 153, 154, 155, 156, 157, 160, 164, 165, 166, 167, 168, 169, 170, 171, 173, 176, 180, 182, 193 };
+			var versions = new HashSet<long> { 48, 49, 124, 142, 143, 144, 145, 150, 151, 153, 154, 155, 156, 157, 160, 164, 165, 166, 167, 168, 169, 170, 171, 173, 176, 180, 182, 193, 318 };
 			var migrations = typeof(M0150_AddRmsRecordsCore).Assembly.GetTypes().Where(t => typeof(IMigration).IsAssignableFrom(t) && !t.IsAbstract)
 				.Where(t => t.GetCustomAttributes(typeof(MigrationAttribute), false).Cast<MigrationAttribute>().Any(a => versions.Contains(a.Version)))
 				.Select(t => (IMigration)Activator.CreateInstance(t)).ToList();
@@ -625,6 +625,83 @@ VALUES (@Id,11,@Id,1,@Id,'system.training',4,@Old,@Old,@Old,'confidentialpump',1
 			(await db.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM RmsAccessAudits WHERE RecordId=@Id AND (Purpose LIKE '%private%' OR DetailJson LIKE '%private%' OR CorrelationId LIKE '%private%')", new { Id = id })).Should().Be(0);
 			Func<Task> rewrite = () => audit.UpdateAsync(source, CancellationToken.None, true);
 			await rewrite.Should().ThrowAsync<InvalidOperationException>();
+		}
+
+		private async Task<string> SeedIncident(SqlConnection db, int callId, RmsRecordState state, DateTime? finalizedOn, DateTime? cancelledOn, DateTime? deletedOn, DateTime modifiedOn, string entity = "FD00000001")
+		{
+			var id = Guid.NewGuid().ToString();
+			await db.ExecuteAsync(@"INSERT RmsIncidentReports (RmsIncidentReportId,DepartmentId,ProtectionId,CallId,ReportingEntityId,DefinitionKey,DefinitionVersion,LifecyclePreset,State,AuthorUserId,FinalizedOn,CancelledOn,DeletedOn,CreatedOn,ModifiedOn,DisplaySummary,RowVersion)
+VALUES (@Id,11,@Id,@Call,@Entity,@Definition,1,1,@State,'officer',@Finalized,@Cancelled,@Deleted,@Modified,@Modified,'private summary',1)",
+				new { Id = id, Call = callId, Entity = entity, Definition = RmsDefinitionKeys.NerisIncidentReport, State = (int)state, Finalized = finalizedOn, Cancelled = cancelledOn, Deleted = deletedOn, Modified = modifiedOn });
+			return id;
+		}
+
+		private RmsIncidentReportsRepository IncidentReports(IConnectionProvider connections, UnitOfWork unit)
+			=> new RmsIncidentReportsRepository(connections, new SqlServerConfiguration(), unit, WriteQueries());
+
+		[Test]
+		public async Task A_cancelled_report_no_longer_holds_its_call_but_a_live_or_voided_one_does()
+		{
+			var call = 7_100_000 + new Random().Next(0, 99_999); var now = DateTime.UtcNow; using var db = new SqlConnection(_connection);
+			var cancelled = await SeedIncident(db, call, RmsRecordState.Cancelled, null, now, null, now);
+			var replacement = await SeedIncident(db, call, RmsRecordState.Draft, null, null, null, now);
+
+			Func<Task> second = () => SeedIncident(db, call, RmsRecordState.Draft, null, null, null, now);
+			await second.Should().ThrowAsync<SqlException>("the live report still holds the Call");
+			var connections = Connections(); using var unit = new UnitOfWork(connections);
+			var reports = IncidentReports(connections, unit);
+			(await reports.GetByCallAsync(11, call, "FD00000001")).RmsIncidentReportId.Should().Be(replacement);
+			(await reports.GetByCallAnyEntityAsync(11, call)).Select(r => r.RmsIncidentReportId).Should().Equal(replacement);
+			cancelled.Should().NotBe(replacement);
+
+			var voidedCall = call + 100_000;
+			await SeedIncident(db, voidedCall, RmsRecordState.Voided, now, null, null, now);
+			Func<Task> afterVoid = () => SeedIncident(db, voidedCall, RmsRecordState.Draft, null, null, null, now);
+			await afterVoid.Should().ThrowAsync<SqlException>("a voided report was official and keeps its Call");
+		}
+
+		[Test]
+		public async Task A_never_finalized_cancelled_report_is_purged_on_the_retention_clock_from_its_cancel_date()
+		{
+			var now = DateTime.UtcNow; var call = 7_300_000 + new Random().Next(0, 99_999); using var db = new SqlConnection(_connection);
+			var old = await SeedIncident(db, call, RmsRecordState.Cancelled, null, now.AddYears(-10), null, now.AddYears(-10));
+			var recent = await SeedIncident(db, call + 1, RmsRecordState.Cancelled, null, now.AddYears(-1), null, now.AddYears(-1));
+			var connections = Connections(); using var unit = new UnitOfWork(connections);
+
+			var candidates = (await IncidentReports(connections, unit).GetRetentionCandidatesAsync(11, now, 10000)).Select(r => r.RmsIncidentReportId).ToList();
+			candidates.Should().Contain(new[] { old, recent }, "an abandoned draft is a retention candidate like a finished report");
+
+			var purged = await Purger(connections, unit).PurgeAsync(11, old, RmsRecordKind.IncidentReport, 1, now);
+			purged.Purged.Should().BeTrue(purged.Reason);
+			(await db.ExecuteScalarAsync<string>("SELECT DisplaySummary FROM RmsIncidentReports WHERE RmsIncidentReportId=@Id", new { Id = old })).Should().Be("[purged]");
+			var kept = await Purger(connections, unit).PurgeAsync(11, recent, RmsRecordKind.IncidentReport, 1, now);
+			kept.Purged.Should().BeFalse(); kept.Reason.Should().Be("Retention has not expired.");
+		}
+
+		[Test]
+		public async Task A_deleted_report_is_erased_after_its_recovery_window_whatever_its_retention()
+		{
+			var now = DateTime.UtcNow; var call = 7_500_000 + new Random().Next(0, 99_999); using var db = new SqlConnection(_connection);
+			var window = Math.Max(1, RecordsRetentionConfig.DeletedIncidentReportPurgeDays);
+			var expired = await SeedIncident(db, call, RmsRecordState.Cancelled, null, now.AddDays(-window - 5), now.AddDays(-window - 5), now.AddDays(-window - 5));
+			// Voided last month: its 7-year retention is far from over, but it was deleted, so the recovery window decides.
+			var voided = await SeedIncident(db, call + 1, RmsRecordState.Voided, now.AddDays(-window - 10), null, now.AddDays(-window - 2), now.AddDays(-window - 2));
+			var inWindow = await SeedIncident(db, call + 2, RmsRecordState.Cancelled, null, now.AddDays(-2), now.AddDays(-2), now.AddDays(-2));
+			var connections = Connections(); using var unit = new UnitOfWork(connections);
+
+			var candidates = (await IncidentReports(connections, unit).GetDeletedPurgeCandidatesAsync(11, now.AddDays(-window), 10000)).Select(r => r.RmsIncidentReportId).ToList();
+			candidates.Should().Contain(new[] { expired, voided }).And.NotContain(inWindow);
+			(await IncidentReports(connections, unit).GetRetentionCandidatesAsync(11, now, 10000)).Select(r => r.RmsIncidentReportId).Should().NotContain(new[] { expired, voided, inWindow }, "deleted reports have their own pass");
+
+			foreach (var id in new[] { expired, voided })
+			{
+				var result = await Purger(connections, unit).PurgeAsync(11, id, RmsRecordKind.IncidentReport, 1, now);
+				result.Purged.Should().BeTrue(result.Reason);
+				(await db.ExecuteScalarAsync<DateTime?>("SELECT PurgedOn FROM RmsIncidentReports WHERE RmsIncidentReportId=@Id", new { Id = id })).Should().NotBeNull();
+				(await db.ExecuteScalarAsync<string>("SELECT TOP 1 Purpose FROM RmsAccessAudits WHERE RecordId=@Id ORDER BY OccurredOn DESC", new { Id = id })).Should().Be(RmsRetentionRepository.DeletedPurgeAuditPurpose);
+			}
+			var held = await Purger(connections, unit).PurgeAsync(11, inWindow, RmsRecordKind.IncidentReport, 1, now);
+			held.Purged.Should().BeFalse(); held.Reason.Should().Be("The deleted report is still within its recovery window.");
 		}
 
 		[Test]

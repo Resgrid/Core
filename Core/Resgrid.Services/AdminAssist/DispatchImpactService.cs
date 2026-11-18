@@ -80,7 +80,8 @@ namespace Resgrid.Services.AdminAssist
 			call = new Call { CallId = call.CallId, DepartmentId = call.DepartmentId,
 				Dispatches = (await directRoutes.GetCallDispatchesByCallIdAsync(call.CallId).WaitAsync(ct))?.ToList() ?? throw new InvalidOperationException(),
 				GroupDispatches = (await groupRoutes.GetAllCallDispatchGroupByCallIdAsync(call.CallId).WaitAsync(ct))?.ToList() ?? throw new InvalidOperationException(),
-				UnitDispatches = (await unitRoutes.GetCallUnitDispatchesByCallIdAsync(call.CallId).WaitAsync(ct))?.ToList() ?? throw new InvalidOperationException(),
+				// A rebroadcast does not page units released (stood down) from the call.
+				UnitDispatches = CallDispatchUnitReleases.Active((await unitRoutes.GetCallUnitDispatchesByCallIdAsync(call.CallId).WaitAsync(ct)) ?? throw new InvalidOperationException()),
 				RoleDispatches = (await roleRoutes.GetCallRoleDispatchesByCallIdAsync(call.CallId).WaitAsync(ct))?.ToList() ?? throw new InvalidOperationException() };
 			var budget = Math.Clamp(Config.AdminAssistConfig.MaxEvidenceRows, 1, 10000);
 			void Consume(int count) { budget -= count; if (budget < 0) throw new InvalidOperationException("Routing evidence bound exceeded."); }

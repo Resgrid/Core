@@ -154,6 +154,10 @@ namespace Resgrid.Chatbot.Handlers
 							ResolveDispatchTimestamp(roleDispatch.LastDispatchedOn, roleDispatch.DispatchedOn, call));
 				}
 
+				// A member released (stood down) from the call is off it: "responding" is for their next call, not this one.
+				if (call != null && call.IsUserReleased(userId))
+					continue;
+
 				if (dispatchedOn.HasValue && dispatchedOn.Value >= cutoff)
 					candidates.Add((call, dispatchedOn.Value));
 			}

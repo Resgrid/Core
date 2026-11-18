@@ -638,6 +638,15 @@
   <data name="AllOfGroupDispatched" xml:space="preserve">
     <value>Wszyscy z {0} zadysponowani</value>
   </data>
+  <data name="ReleaseUnit" xml:space="preserve"><value>Odwołaj</value></data>
+  <data name="ReleaseUnitTitle" xml:space="preserve"><value>Odwołać {0} z tego zgłoszenia?</value></data>
+  <data name="ReleaseUnitText" xml:space="preserve"><value>Jednostka zostaje odwołana z tego zgłoszenia i otrzymuje status odwołania ustawiony przez organizację, chyba że jest już dostępna, poza służbą lub przy innym zgłoszeniu. Zgłoszenie pozostaje otwarte.</value></data>
+  <data name="ReleaseUnitNotify" xml:space="preserve"><value>Powiadom jednostkę</value></data>
+  <data name="ReleaseUnitFailed" xml:space="preserve"><value>Nie udało się odwołać jednostki.</value></data>
+  <data name="UnitReleasedAt" xml:space="preserve"><value>Odwołana {0}</value></data>
+  <data name="ReleasePersonnelText" xml:space="preserve"><value>Osoba zostaje odwołana z tego zgłoszenia i otrzymuje status odwołania personelu ustawiony przez organizację, chyba że jest już dostępna, niedostępna lub przy innym zgłoszeniu. Zgłoszenie pozostaje otwarte.</value></data>
+  <data name="ReleasePersonnelFailed" xml:space="preserve"><value>Nie udało się odwołać osoby.</value></data>
+  <data name="ReleasePersonnelNotify" xml:space="preserve"><value>Powiadom osobę</value></data>
   <data name="AreYouSure" xml:space="preserve">
     <value>Czy na pewno?</value>
   </data>

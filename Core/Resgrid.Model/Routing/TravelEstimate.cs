@@ -32,6 +32,9 @@ namespace Resgrid.Model
 		/// <summary><see cref="EtaSources.Road"/> for a routed time, <see cref="EtaSources.Direct"/> for air travel.</summary>
 		public EtaSources Source { get; set; }
 
+		/// <summary>Travel distance in metres along the route (the straight line for air travel); -1 when unknown.</summary>
+		public double DistanceMeters { get; set; } = -1;
+
 		/// <summary>Seconds active road closures added (included in <see cref="Seconds"/>).</summary>
 		public int ClosureDelaySeconds { get; set; }
 

@@ -70,6 +70,9 @@
 								<span class="rg-scheduled-legend rg-scheduled-skipped">@recurringLocalizer["LegendSkipped"]</span>
 								<span class="rg-scheduled-legend rg-scheduled-cancelled">@recurringLocalizer["LegendCancelled"]</span>
 							</p>
+							<p id="scheduledCalendarError" class="text-danger" role="alert" style="display:none;">
+								<a href="#" id="scheduledCalendarRetry" class="text-danger"><i class="fa fa-refresh" aria-hidden="true"></i> @recurringLocalizer["ActionFailed"]</a>
+							</p>
 							<div id="scheduledCallsCalendar"></div>
 						</div>
 					</div>
@@ -80,7 +83,7 @@
 	</div>
 </div>
 
-<div class="modal fade" id="scheduledOccurrenceModal" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="scheduledOccurrenceModal" tabindex="-1" role="dialog" aria-labelledby="scheduledOccurrenceTitle">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">

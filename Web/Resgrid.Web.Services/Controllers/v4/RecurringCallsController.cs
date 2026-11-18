@@ -86,7 +86,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 		#region Schedules
 
-		/// <summary>The department's recurring call schedules (paused ones included), with each one's next dispatch.</summary>
+		/// <summary>
+		/// The department's recurring call schedules in the caller's dispatch scope (paused ones included), with each one's next
+		/// dispatch.
+		/// </summary>
 		[HttpGet("GetRecurringCalls")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Call_View)]
@@ -100,7 +103,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var profiles = await _userProfileService.GetAllProfilesForDepartmentAsync(DepartmentId) ?? new Dictionary<string, UserProfile>();
 			var canCreate = await CanCreateAsync();
 
-			foreach (var series in await _recurringCallsService.GetAllForDepartmentAsync(DepartmentId))
+			foreach (var series in await _recurringCallsService.GetAllVisibleToUserAsync(DepartmentId, UserId))
 				result.Data.Add(ToData(series, department, upcoming, alertCounts, profiles, canCreate));
 
 			result.PageSize = result.Data.Count;
@@ -110,7 +113,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return Ok(result);
 		}
 
-		/// <summary>One schedule, its next dispatches and the calls it created that have not gone out.</summary>
+		/// <summary>
+		/// One schedule in the caller's dispatch scope, its next dispatches and the calls it created that have not gone out (those
+		/// in the caller's scope; a call can be changed on its own). 404 for a schedule outside the scope.
+		/// </summary>
 		[HttpGet("GetRecurringCall")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -118,7 +124,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		public async Task<ActionResult<RecurringCallResult>> GetRecurringCall(int recurringCallId, CancellationToken cancellationToken)
 		{
 			var series = await _recurringCallsService.GetByIdAsync(DepartmentId, recurringCallId);
-			if (series == null)
+			if (series == null || !await _recurringCallsService.IsVisibleToUserAsync(series, UserId))
 				return NotFound();
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
@@ -135,7 +141,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (series.IsActive && upcoming.TryGetValue(series.RecurringCallId, out var times))
 				detail.NextDispatches = times.Take(6).Select(Iso).ToList();
 
-			foreach (var call in await _recurringCallsService.GetUpcomingCallsAsync(DepartmentId, series.RecurringCallId))
+			foreach (var call in await _recurringCallsService.GetUpcomingCallsAsync(DepartmentId, series.RecurringCallId, UserId))
 			{
 				detail.UpcomingCalls.Add(new RecurringCallUpcomingCallData
 				{
@@ -252,6 +258,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (series.FacilityPoiId.HasValue && !(await _mappingService.GetPOIsForDepartmentAsync(DepartmentId) ?? new List<Poi>()).Any(x => x.PoiId == series.FacilityPoiId.Value))
 				Fail("ErrorFacilityPoiInvalid");
+			else
+				// What the save itself does: a chosen pickup facility fills a blank address, so the fields below are checked as saved.
+				await _recurringCallsService.ApplyFacilityDefaultsAsync(series);
 
 			// The department's New Call Form Fields policy, as for a call entered through the API.
 			var policy = await _departmentSettingsService.GetNewCallFieldPolicyAsync(DepartmentId) ?? new NewCallFieldPolicy();
@@ -342,8 +351,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		#region Calendar and occurrences
 
 		/// <summary>
-		/// The scheduled calls calendar between two instants (ISO-8601; at most 100 days): scheduled calls waiting to go out, the calls
-		/// recurring schedules created, and their occurrences still to come, skipped, waiting for a dispatcher or missed.
+		/// The scheduled calls calendar between two instants (ISO-8601, years 1900 to 9000; at most 100 days): scheduled calls waiting
+		/// to go out, the calls recurring schedules created, and their occurrences still to come, skipped, waiting for a dispatcher or
+		/// missed.
 		/// </summary>
 		[HttpGet("GetScheduledCallsCalendar")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
@@ -352,11 +362,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 		public async Task<ActionResult<ScheduledCallsCalendarResult>> GetScheduledCallsCalendar(string start, string end)
 		{
 			if (!DateTimeOffset.TryParse(start, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out var from) ||
-				!DateTimeOffset.TryParse(end, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out var until) || until <= from)
+				!DateTimeOffset.TryParse(end, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out var until) || until <= from ||
+				!RecurringCallRecurrence.IsSupportedInstant(from.UtcDateTime) || !RecurringCallRecurrence.IsSupportedInstant(until.UtcDateTime))
 				return BadRequest();
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
-			var schedules = (await _recurringCallsService.GetAllForDepartmentAsync(DepartmentId)).ToDictionary(x => x.RecurringCallId);
+			var schedules = (await _recurringCallsService.GetAllVisibleToUserAsync(DepartmentId, UserId)).ToDictionary(x => x.RecurringCallId);
 			var entries = await _recurringCallsService.GetCalendarAsync(DepartmentId, UserId, from.UtcDateTime, until.UtcDateTime);
 			var result = new ScheduledCallsCalendarResult();
 
@@ -437,7 +448,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 		/// <summary>
 		/// Sends an occurrence now (creating its call if it has none), with the schedule's run card and availability rules. Outcome
-		/// Dispatched, or Held when nobody could be sent (the call waits as pending and an alert is raised).
+		/// Dispatched, Held when nobody could be sent (the call waits as pending and an alert is raised), or QueueFailed (not a
+		/// success) when the broadcast could not be queued: nothing went out and the call is waiting again, a scheduled one to be
+		/// retried by the scheduled-calls worker, a held one still pending for a dispatcher. NotWaiting: someone else is sending it,
+		/// or it has gone out or been closed.
 		/// </summary>
 		[HttpPost("DispatchOccurrenceNow")]
 		[Consumes("application/json")]
@@ -515,9 +529,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 					Resolution = alert.Resolution.HasValue ? ((RecurringCallAlertResolutions)alert.Resolution.Value).ToString() : null,
 					ResolvedByName = info.ResolvedByName,
 					ResolutionNote = alert.ResolutionNote,
-					CanSend = alert.IsOpen && !alert.CallId.HasValue && !info.ScheduleDeleted &&
-							  (kind == RecurringCallAlertKinds.DispatchDue || kind == RecurringCallAlertKinds.Missed || kind == RecurringCallAlertKinds.CreateFailed),
-					CanAct = alert.IsOpen && canCreate && !info.ScheduleDeleted
+					// Send / create / skip: the occurrence has no call and the schedule still has it (not deleted, not moved since).
+					CanSend = info.CanSend,
+					// Acknowledge / dismiss: what those endpoints accept, a deleted schedule's alert included.
+					CanAct = alert.IsOpen && canCreate
 				});
 			}
 
@@ -583,8 +598,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 		private async Task<(RecurringCall Series, DateTime Occurrence, ActionResult Error)> OccurrenceAsync(RecurringCallOccurrenceInput input)
 		{
-			if (input == null || !TryParseInstant(input.OccurrenceOn, out var occurrence))
-				return (null, default, BadRequest("OccurrenceOn must be an ISO-8601 instant."));
+			if (input == null || !TryParseInstant(input.OccurrenceOn, out var occurrence) || !RecurringCallRecurrence.IsSupportedInstant(occurrence))
+				return (null, default, BadRequest("OccurrenceOn must be an ISO-8601 instant (years 1900 to 9000)."));
 
 			var series = await _recurringCallsService.GetByIdAsync(DepartmentId, input.RecurringCallId);
 			if (series == null)
@@ -649,7 +664,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			return entries
 				.Where(x => x.RecurringCallId.HasValue && x.DispatchOnUtc >= now &&
-							(x.Kind == ScheduledCallCalendarEntryKinds.Scheduled || x.Kind == ScheduledCallCalendarEntryKinds.Projected))
+							(x.Kind == ScheduledCallCalendarEntryKinds.Scheduled || x.Kind == ScheduledCallCalendarEntryKinds.Projected ||
+							 x.Kind == ScheduledCallCalendarEntryKinds.Due))
 				.GroupBy(x => x.RecurringCallId.Value)
 				.ToDictionary(x => x.Key, x => x.Select(e => e.DispatchOnUtc).OrderBy(e => e).ToList());
 		}

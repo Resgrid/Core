@@ -53,7 +53,18 @@ var resgrid;
                 $('#destinationRulesTryItResult').html(html.join('')).show();
             }
 
+            var sequence = 0;
+
+            function message(key, fallback) {
+                $('#destinationRulesTryItResult').html('<p style="margin: 0;">' + escapeHtml(text(key, fallback)) + '</p>').show();
+            }
+
+            // Only the latest "Try it" answers: an earlier request finishing late never replaces it, and the previous result
+            // is not left on screen as if it answered the new choices.
             function tryIt() {
+                var requestSequence = ++sequence;
+                message('loading', 'Checking the rules...');
+
                 $.ajax({
                     url: resgrid.absoluteBaseUrl + '/User/DestinationRules/Preview',
                     type: 'GET',
@@ -65,8 +76,18 @@ var resgrid;
                         unitTypeId: $('#tryUnitType').val() || null
                     }
                 }).done(function (data) {
+                    if (requestSequence !== sequence) {
+                        return;
+                    }
+
                     if (data && data.success) {
                         render(data);
+                    } else {
+                        message('failed', 'The rules could not be checked right now. Try again.');
+                    }
+                }).fail(function () {
+                    if (requestSequence === sequence) {
+                        message('failed', 'The rules could not be checked right now. Try again.');
                     }
                 });
             }

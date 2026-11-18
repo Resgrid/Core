@@ -3173,7 +3173,9 @@
             Soft-deletes a report (a never-finalized one is cancelled first; a voided one needs a department administrator,
             <c>ReasonText</c>, and no outside delivery). It leaves every list and the change feed sends a tombstone. A policy
             refusal is 409 <c>record_delete_refused</c> with the <see cref="T:Resgrid.Model.IncidentReportDeleteRefusal"/> name as the detail.
-            A retry under the same idempotency key after success answers 200 rather than 404.
+            A stale report is the usual report conflict body; a linked analysis that changed during the delete is 409
+            <c>record_delete_analysis_conflict</c> (reload, then retry). A retry with an idempotency key after success answers
+            200 rather than 404, also when the first attempt committed but its receipt was never stored.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentReportsController.CommandAsync(Resgrid.Web.Services.Models.v4.Records.IncidentReportCommandInput,System.Boolean,System.Func{System.Int64,System.Threading.Tasks.Task{Resgrid.Model.IncidentReportAggregate}},System.String)">
@@ -3399,7 +3401,7 @@
             <param name="latitude">Origin latitude (a unit's position or a call's location).</param>
             <param name="longitude">Origin longitude.</param>
             <param name="capabilityId">Only destinations offering this capability (GetPoiCapabilities); omit for all.</param>
-            <param name="unitId">The travelling unit, so its travel mode and vehicle limits apply; omit for plain driving.</param>
+            <param name="unitId">The travelling unit, so its travel mode and vehicle limits apply; omit for plain driving (a unit the caller cannot view is ignored).</param>
             <param name="take">How many to return (1 to 50, default 10).</param>
             <param name="cancellationToken">Request cancellation.</param>
         </member>
@@ -3416,9 +3418,16 @@
             <param name="type">The call type name; omit to take the call's (with callId).</param>
             <param name="priority">The call priority (the call's Priority value); omit to take the call's (with callId).</param>
             <param name="callId">The call the destination is for; supplies its type and priority when not given.</param>
-            <param name="unitId">The travelling unit: its type's rules, travel mode and vehicle limits apply.</param>
+            <param name="unitId">The travelling unit: its type's rules, travel mode and vehicle limits apply (a unit the caller cannot view is ignored).</param>
             <param name="take">How many to return (1 to 50, default 10).</param>
             <param name="cancellationToken">Request cancellation.</param>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.VisibleUnitIdAsync(System.Nullable{System.Int32})">
+            <summary>
+            The travelling unit for a destination lookup, or null (plain driving, no unit-type rules) when it is not this
+            department's or Security > View Units hides it from the caller: a hidden unit's type and travel profile must not
+            shape what the caller is shown.
+            </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.ConvertDestinationRequirements(Resgrid.Model.DestinationRequirements)">
             <summary>The resolved destination requirements as the v4 shape.</summary>
@@ -4534,10 +4543,16 @@
             <summary>Dispatcher mode: how long before an occurrence the dispatcher is alerted, in minutes.</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.RecurringCallsController.GetRecurringCalls(System.Threading.CancellationToken)">
-            <summary>The department's recurring call schedules (paused ones included), with each one's next dispatch.</summary>
+            <summary>
+            The department's recurring call schedules in the caller's dispatch scope (paused ones included), with each one's next
+            dispatch.
+            </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.RecurringCallsController.GetRecurringCall(System.Int32,System.Threading.CancellationToken)">
-            <summary>One schedule, its next dispatches and the calls it created that have not gone out.</summary>
+            <summary>
+            One schedule in the caller's dispatch scope, its next dispatches and the calls it created that have not gone out (those
+            in the caller's scope; a call can be changed on its own). 404 for a schedule outside the scope.
+            </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.RecurringCallsController.GetRecurringCallOptions">
             <summary>What a recurring call form needs: permissions, run cards, time zone, the lead time and alert choices and the limits.</summary>
@@ -4556,8 +4571,9 @@
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.RecurringCallsController.GetScheduledCallsCalendar(System.String,System.String)">
             <summary>
-            The scheduled calls calendar between two instants (ISO-8601; at most 100 days): scheduled calls waiting to go out, the calls
-            recurring schedules created, and their occurrences still to come, skipped, waiting for a dispatcher or missed.
+            The scheduled calls calendar between two instants (ISO-8601, years 1900 to 9000; at most 100 days): scheduled calls waiting
+            to go out, the calls recurring schedules created, and their occurrences still to come, skipped, waiting for a dispatcher or
+            missed.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.RecurringCallsController.SkipOccurrence(Resgrid.Web.Services.Models.v4.RecurringCalls.RecurringCallOccurrenceInput,System.Threading.CancellationToken)">
@@ -4572,7 +4588,10 @@
         <member name="M:Resgrid.Web.Services.Controllers.v4.RecurringCallsController.DispatchOccurrenceNow(Resgrid.Web.Services.Models.v4.RecurringCalls.RecurringCallOccurrenceInput,System.Threading.CancellationToken)">
             <summary>
             Sends an occurrence now (creating its call if it has none), with the schedule's run card and availability rules. Outcome
-            Dispatched, or Held when nobody could be sent (the call waits as pending and an alert is raised).
+            Dispatched, Held when nobody could be sent (the call waits as pending and an alert is raised), or QueueFailed (not a
+            success) when the broadcast could not be queued: nothing went out and the call is waiting again, a scheduled one to be
+            retried by the scheduled-calls worker, a held one still pending for a dispatcher. NotWaiting: someone else is sending it,
+            or it has gone out or been closed.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.RecurringCallsController.GetRecurringCallAlerts(System.Nullable{System.Int32},System.Threading.CancellationToken)">
@@ -10074,12 +10093,15 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.DispatchedEventResultData.ReleasedOn">
             <summary>
-            <see cref="P:Resgrid.Web.Services.Models.v4.Calls.CallExtraDataResultData.ReleasedUnits"/> entries only: when the unit was released from the call, ISO 8601
-            UTC ("Z"); null elsewhere.
+            <see cref="P:Resgrid.Web.Services.Models.v4.Calls.CallExtraDataResultData.ReleasedUnits"/> and <see cref="P:Resgrid.Web.Services.Models.v4.Calls.CallExtraDataResultData.ReleasedPersonnel"/>
+            entries only: when the unit or member was released from the call, ISO 8601 UTC ("Z"); null elsewhere.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.DispatchedEventResultData.ReleasedBy">
-            <summary><see cref="P:Resgrid.Web.Services.Models.v4.Calls.CallExtraDataResultData.ReleasedUnits"/> entries only: who released the unit; null elsewhere.</summary>
+            <summary>
+            <see cref="P:Resgrid.Web.Services.Models.v4.Calls.CallExtraDataResultData.ReleasedUnits"/> and <see cref="P:Resgrid.Web.Services.Models.v4.Calls.CallExtraDataResultData.ReleasedPersonnel"/>
+            entries only: the name of who released the unit or member; null elsewhere, and null when that member cannot be found.
+            </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Calls.CallHistoryResult">
             <summary>
@@ -10413,8 +10435,9 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.RecurringCallId">
             <summary>
-            The recurring call schedule that created this call (RecurringCalls/GetRecurringCall), or null. A pending call with one was
-            held because nobody chosen was available; see RecurringCalls/GetRecurringCallAlerts.
+            The recurring call schedule that created this call (RecurringCalls/GetRecurringCall), or null. It is only the link to the
+            schedule: a pending call with one may be waiting for a dispatcher (an occurrence created by hand once due) or held because
+            nobody chosen was available, which its NoResources alert says (RecurringCalls/GetRecurringCallAlerts).
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.Contacts">
@@ -11172,7 +11195,8 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.ReleasePersonnelInput.Notify">
             <summary>
-            Optional. When true, the member is sent a cancellation notice for the call.
+            Optional. When true, asks for a cancellation notice to be sent to the member. Best effort: a release that succeeds
+            does not confirm the notice went out, and repeating the request does not resend it (the member is already released).
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Calls.ReleasePersonnelResult">
@@ -11212,8 +11236,9 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.ReleasePersonnelResultData.StatusApplied">
             <summary>
-            True when the release set the member's status (the department's personnel release status); false when the member
-            kept their status because they were already available or unavailable, or working another open call.
+            True when the release set the member's status (the department's personnel release status). False when no status
+            update was confirmed: the member kept their status because they were already available or unavailable, or working
+            another open call, or the status could not be written (the release itself still stands).
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Calls.ReleaseUnitInput">
@@ -11233,7 +11258,9 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.ReleaseUnitInput.Notify">
             <summary>
-            Optional. When true, the unit is sent a cancellation notice for the call (as for a unit taken off an edited call).
+            Optional. When true, asks for a cancellation notice to be sent to the unit (as for a unit taken off an edited call).
+            Best effort: a release that succeeds does not confirm the notice went out, and repeating the request returns "already
+            released" rather than resending it.
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Calls.ReleaseUnitResult">
@@ -11273,8 +11300,9 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.ReleaseUnitResultData.StatusApplied">
             <summary>
-            True when the release set the unit's status (the department's release status); false when the unit kept its status
-            because it was already available, out of service, or working another open call.
+            True when the release set the unit's status (the department's release status). False when no status update was
+            confirmed: the unit kept its status because it was already available, out of service, or working another open call,
+            or the status could not be written (the release itself still stands).
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Calls.ScheduledCallsResult">
@@ -15897,7 +15925,10 @@
             <summary>True when it can take the patient now (not closed; the asked capability not reported unavailable).</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Mapping.NearestDestinationResultData.TravelDistanceMeters">
-            <summary>Travel distance along the route in metres (straight line for air travel); -1 when not looked up.</summary>
+            <summary>
+            Travel distance along the route in metres (straight line for air travel); -1 when unavailable: not looked up (beyond
+            the shortlist), the lookup failed, or the routing answer carried no usable distance.
+            </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Mapping.SuggestedDestinationResultData">
             <summary>One destination of GetSuggestedDestinations, best first.</summary>
@@ -15936,13 +15967,23 @@
             <summary>Rules that matched but did not apply, with the reason.</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Mapping.SuggestedDestinationsResultData.Mode">
-            <summary>The department's setting: 0 off (nothing else is filled), 1 suggest, 2 suggest and fill an empty destination.</summary>
+            <summary>
+            The department's setting: 0 off (no destinations are returned, nothing is routed and <c>SuggestedPoiId</c> is null), 1
+            suggest, 2 suggest and fill an empty destination.
+            </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Mapping.SuggestedDestinationsResultData.PreferredWithinMinutes">
-            <summary>A destination with more preferred capabilities wins only within this many minutes of the fastest.</summary>
+            <summary>
+            A destination with more preferred capabilities wins only within this many minutes of the fastest destination in the
+            same tier; a faster destination in another tier (on diversion, say) never sets the window.
+            </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Mapping.SuggestedDestinationsResultData.SuggestedPoiId">
-            <summary>The best destination that meets the requirements and is not closed; null when none does.</summary>
+            <summary>
+            The best destination of tier 0 or 1 (meets the requirements and can take the patient, possibly on diversion); null when
+            none does. <c>MeetsRequirements</c> and an open status alone do not qualify: a destination reporting a required
+            capability unavailable is tier 2 and never suggested.
+            </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Mapping.SetPoiAvailabilityInput">
             <summary>SetPoiAvailability body.</summary>
@@ -17399,10 +17440,17 @@
             <summary>Draft save; every list replaces the draft rows, except a null list which leaves that set alone.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Records.IncidentReportDeleteResult">
-            <summary>A deleted report: it no longer reads back, so only its id and when its content will be erased are returned.</summary>
+            <summary>
+            A deleted report: it no longer reads back, so only its id and the configured recovery window are returned. The window
+            is when worker 43 first considers erasing the content, not a guaranteed erasure date: retention safeguards (legal
+            holds, recent activity) and the sweep schedule can delay it.
+            </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Records.IncidentReportDeleteData.PurgeAfterDays">
-            <summary>Days after which worker 43 erases the deleted report's content.</summary>
+            <summary>
+            The configured recovery window in days: worker 43 does not consider erasing the content before it ends. Retention
+            safeguards and the sweep schedule can delay the erasure past it.
+            </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Records.NfirsLegacyResult">
             <summary>Read-only NFIRS rendering and crosswalk for one Call (RMS-3); the model is the contract.</summary>
@@ -17840,7 +17888,7 @@
             <summary>ISO UTC.</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.RecurringCalls.RecurringCallUpcomingCallData.IsHeld">
-            <summary>Held as pending (nobody could be sent).</summary>
+            <summary>Pending, waiting for a dispatcher to send it (nobody could be sent, or it was created by hand once due).</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.RecurringCalls.RecurringCallOptionsResultData">
             <summary>What a recurring call form needs to know.</summary>
@@ -17858,7 +17906,10 @@
             <summary>New schedules only: false to save it paused. Use Pause/Resume for an existing one.</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.RecurringCalls.RecurringCallInput.ReplaceUpcomingCalls">
-            <summary>Updating: delete and re-create the calls already created that have not gone out (default true).</summary>
+            <summary>
+            Updating: delete and re-create the scheduled calls already created that have not gone out (default true). A held
+            (pending) call is not replaced: it has an open alert and stays the dispatcher's to send or close.
+            </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.RecurringCalls.SaveRecurringCallResult.Errors">
             <summary>
@@ -17868,6 +17919,12 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.RecurringCalls.PauseRecurringCallInput.ResumeOn">
             <summary>"yyyy-MM-dd" in the department's time zone; null to stay paused.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.RecurringCalls.PauseRecurringCallInput.DeleteUpcomingCalls">
+            <summary>Also delete the scheduled calls already created that have not gone out (held calls stay).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.RecurringCalls.DeleteRecurringCallInput.DeleteUpcomingCalls">
+            <summary>Also delete the scheduled calls already created that have not gone out (default true; held calls stay).</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.RecurringCalls.RecurringCallOccurrenceInput">
             <summary>Acts on one occurrence of a schedule.</summary>

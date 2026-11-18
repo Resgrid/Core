@@ -576,22 +576,27 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		/// <summary>
 		/// Soft-deletes a report from the queue or its details page (IIncidentReportsService.DeleteAsync decides what may go).
-		/// <paramref name="returnTo"/> "Index" sends a refusal back to the queue instead of the details page.
+		/// <paramref name="returnTo"/> "Index" sends a refusal back to the queue instead of the details page. The queue's
+		/// filters and page (<paramref name="year"/>, <paramref name="state"/>, <paramref name="closed"/>, <paramref name="page"/>)
+		/// come back with either answer, so a refused report is still on the list the operator was looking at.
 		/// </summary>
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Record_Void)]
-		public async Task<IActionResult> Delete(string id, string reasonText, string returnTo, CancellationToken cancellationToken)
+		public async Task<IActionResult> Delete(string id, string reasonText, string returnTo, int? year, string state, bool closed, int page, CancellationToken cancellationToken)
 		{
+			if (!(await _cutoverService.GetModuleStateAsync(DepartmentId)).RecordsUsable)
+				return NotFound();
 			if (await LoadAuthorizedAsync(id) == null)
 				return NotFound();
 
+			var queue = new { year, state = string.IsNullOrWhiteSpace(state) ? null : state, closed = closed ? true : (bool?)null, page = page > 1 ? page : (int?)null };
 			string error;
 			try
 			{
 				await _incidentReports.DeleteAsync(DepartmentId, UserId, id, reasonText, RmsOriginClient.Web, cancellationToken);
 				TempData["RecordsMessage"] = _localizer["IncidentReportDeleted"].Value;
-				return RedirectToAction("Index");
+				return RedirectToAction("Index", queue);
 			}
 			catch (UnauthorizedAccessException) { return Forbid(); }
 			catch (IncidentReportDeleteRefusedException ex) { error = DeleteRefusalMessage(ex.Refusal); }
@@ -601,7 +606,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (string.Equals(returnTo, "Index", StringComparison.OrdinalIgnoreCase))
 			{
 				TempData["RecordsError"] = error;
-				return RedirectToAction("Index");
+				return RedirectToAction("Index", queue);
 			}
 			return await DetailsWithErrorAsync(id, error);
 		}

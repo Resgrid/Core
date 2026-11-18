@@ -20,7 +20,9 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		public string UnitId { get; set; }
 
 		/// <summary>
-		/// Optional. When true, the unit is sent a cancellation notice for the call (as for a unit taken off an edited call).
+		/// Optional. When true, asks for a cancellation notice to be sent to the unit (as for a unit taken off an edited call).
+		/// Best effort: a release that succeeds does not confirm the notice went out, and repeating the request returns "already
+		/// released" rather than resending it.
 		/// </summary>
 		public bool Notify { get; set; }
 	}

@@ -120,7 +120,9 @@ namespace Resgrid.Services
 					var unitState = await _unitStatesRepository.GetUnitStateByUnitStateIdAsync(actionLog.UnitStateId.Value);
 					var unitCallId = unitState != null ? CallStatusLinkage.LinkedCallId(unitState.DestinationId, unitState.DestinationType) : null;
 
-					if (unitCallId.HasValue)
+					// A rider released (stood down) from the unit's call is off it, whatever the unit does: their status is not
+					// linked there. It goes on through carry-forward and dispatch below, which skip that call for them too.
+					if (unitCallId.HasValue && !await IsUserReleasedFromCallAsync(actionLog.UserId, unitCallId.Value))
 					{
 						Link(actionLog, unitCallId.Value, StatusDestinationSources.Unit);
 						return;
@@ -465,8 +467,15 @@ namespace Resgrid.Services
 					var start = dispatchedOn ?? unitCallStates.Min(x => x.Timestamp);
 
 					read.StatesByUnit.TryGetValue(unitId, out var unitStates);
-					timeline.AddRange(CallUnitTimeline.Build(call.CallId, dispatchedOn, CallEnd(call), unitCallStates, unitStates,
-						NextDispatch(read.WindowsByUnit, unitId, call.CallId, start, now),
+
+					// A unit released (stood down) from the call stops following on at its release, as its inferred walk does
+					// (WalkEnd): a later status off the record is its next job. The call's own statuses still show.
+					var stopAt = NextDispatch(read.WindowsByUnit, unitId, call.CallId, start, now);
+					var releasedAt = WalkEnd(read.DispatchesByCall[call.CallId], unitId, DateTime.MaxValue);
+					if (releasedAt != DateTime.MaxValue && (!stopAt.HasValue || releasedAt < stopAt.Value))
+						stopAt = releasedAt;
+
+					timeline.AddRange(CallUnitTimeline.Build(call.CallId, dispatchedOn, CallEnd(call), unitCallStates, unitStates, stopAt,
 						s => UnitCallInvolvement.HasFinishedCall(s.State, read.BaseTypes)));
 				}
 
@@ -604,15 +613,33 @@ namespace Resgrid.Services
 			var inferred = new List<ActionLog>();
 			foreach (var subject in subjects)
 			{
-				if (subject.Value.Start > end || !logsByUser.TryGetValue(subject.Key, out var logs))
+				// A member released (stood down) from the call ends their walk there, even with no clearing status after it (the
+				// release's own status is best effort): a later status is their next job, not this call's.
+				var subjectEnd = PersonnelWalkEnd(windowsByUser, subject.Key, callId, end);
+
+				if (subject.Value.Start > subjectEnd || !logsByUser.TryGetValue(subject.Key, out var logs))
 					continue;
 
-				inferred.AddRange(CallStatusAttribution.InferActionLogs(callId, subject.Value.Start, end, subject.Value.RequireEngagement, logs,
+				inferred.AddRange(CallStatusAttribution.InferActionLogs(callId, subject.Value.Start, subjectEnd, subject.Value.RequireEngagement, logs,
 					l => CallStatusLinkage.IsClearingPersonnelStatus(l.ActionTypeId, baseTypes), statusLookup,
-					OtherDispatches(windowsByUser, subject.Key, callId, subject.Value.Start, end)));
+					OtherDispatches(windowsByUser, subject.Key, callId, subject.Value.Start, subjectEnd)));
 			}
 
 			return inferred;
+		}
+
+		/// <summary>
+		/// Where a member's walk on a call ends: the call's end, or their release from the call when it came earlier (the release
+		/// rides on each of their dispatch windows to the call; a cleared release is gone from them).
+		/// </summary>
+		private static DateTime PersonnelWalkEnd(Dictionary<string, List<CallDispatchWindow>> windowsByUser, string userId, int callId, DateTime end)
+		{
+			if (windowsByUser == null || string.IsNullOrWhiteSpace(userId) || !windowsByUser.TryGetValue(userId, out var windows) || windows == null)
+				return end;
+
+			var released = windows.Where(x => x != null && x.CallId == callId && x.ReleasedOn.HasValue).Select(x => (DateTime?)x.ReleasedOn.Value).Max();
+
+			return released.HasValue && released.Value < end ? released.Value : end;
 		}
 
 		private static Dictionary<string, List<ActionLog>> GroupByUser(int departmentId, IEnumerable<ActionLog> logs)

@@ -234,6 +234,7 @@ namespace Resgrid.Services
 			builder.RegisterType<CallClosureService>().As<ICallClosureService>().InstancePerLifetimeScope();
 			builder.RegisterType<CallAutoCloseService>().As<ICallAutoCloseService>().InstancePerLifetimeScope();
 			builder.RegisterType<CallResourceReleaseService>().As<ICallResourceReleaseService>().InstancePerLifetimeScope();
+			builder.RegisterType<CallBroadcastOutboxService>().As<ICallBroadcastOutboxService>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentApiKeysService>().As<IDepartmentApiKeysService>().InstancePerLifetimeScope();
 			builder.RegisterType<SystemOperationsService>().As<ISystemOperationsService>().InstancePerLifetimeScope();
 			builder.RegisterType<InboundEmailReceiptsService>().As<IInboundEmailReceiptsService>().InstancePerLifetimeScope();

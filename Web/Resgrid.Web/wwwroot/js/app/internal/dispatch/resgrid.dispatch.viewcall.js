@@ -263,7 +263,9 @@ var resgrid;
 							__RequestVerificationToken: $('#releaseUnitForm input[name="__RequestVerificationToken"]').val()
 						}
 					}).done(function (data) {
-						if (data && data.success) {
+						// Already released (outcome 4): a retry after a lost response, or another dispatcher got there first.
+						// Either way it is off the call, so show the page as it now is.
+						if (data && (data.success || data.outcome === 4)) {
 							window.location.reload();
 						} else {
 							btn.prop('disabled', false);

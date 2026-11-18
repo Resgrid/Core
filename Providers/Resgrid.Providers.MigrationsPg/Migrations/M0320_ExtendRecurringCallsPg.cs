@@ -48,7 +48,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 					.WithColumn("resolutionnote").AsCustom("citext").Nullable();
 			}
 
-			Execute.Sql("CREATE UNIQUE INDEX IF NOT EXISTS ux_recurringcallalerts_occurrence ON recurringcallalerts (recurringcallid, occurrenceon, kind);");
+			Execute.Sql("CREATE UNIQUE INDEX IF NOT EXISTS ux_recurringcallalerts_occurrence ON recurringcallalerts (recurringcallid, occurrenceon, kind) WHERE resolvedon IS NULL;");
 			Execute.Sql("CREATE INDEX IF NOT EXISTS ix_recurringcallalerts_open ON recurringcallalerts (departmentid, createdon) WHERE resolvedon IS NULL;");
 			Execute.Sql("CREATE INDEX IF NOT EXISTS ix_recurringcallalerts_department ON recurringcallalerts (departmentid, resolvedon);");
 		}

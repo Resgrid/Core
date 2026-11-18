@@ -40,8 +40,9 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		public string ReleasedOn { get; set; }
 
 		/// <summary>
-		/// True when the release set the unit's status (the department's release status); false when the unit kept its status
-		/// because it was already available, out of service, or working another open call.
+		/// True when the release set the unit's status (the department's release status). False when no status update was
+		/// confirmed: the unit kept its status because it was already available, out of service, or working another open call,
+		/// or the status could not be written (the release itself still stands).
 		/// </summary>
 		public bool StatusApplied { get; set; }
 	}

@@ -20,7 +20,8 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		public string UserId { get; set; }
 
 		/// <summary>
-		/// Optional. When true, the member is sent a cancellation notice for the call.
+		/// Optional. When true, asks for a cancellation notice to be sent to the member. Best effort: a release that succeeds
+		/// does not confirm the notice went out, and repeating the request does not resend it (the member is already released).
 		/// </summary>
 		public bool Notify { get; set; }
 	}

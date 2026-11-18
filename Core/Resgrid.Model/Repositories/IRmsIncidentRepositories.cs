@@ -76,7 +76,7 @@ namespace Resgrid.Model.Repositories
 		/// <summary>Closed, not deleted, not purged reports: finalized before the cutoff, or cancelled before it without ever being finalized.</summary>
 		Task<IEnumerable<RmsIncidentReport>> GetRetentionCandidatesAsync(int departmentId, DateTime cutoffUtc, int take, string afterId = null);
 		/// <summary>Deleted, not yet purged reports whose deletion is older than <paramref name="deletedBeforeUtc"/>, in id order.</summary>
-		Task<IEnumerable<RmsIncidentReport>> GetDeletedPurgeCandidatesAsync(int departmentId, DateTime deletedBeforeUtc, int take, string afterId = null);
+		Task<IEnumerable<RmsIncidentReport>> GetDeletedPurgeCandidatesAsync(int departmentId, DateTime deletedBeforeUtc, int take, string afterId = null, CancellationToken cancellationToken = default);
 	}
 
 	/// <summary>Shared contract of every per-report child row set: a working draft (RevisionId null) and immutable revision copies.</summary>

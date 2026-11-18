@@ -77,6 +77,12 @@ namespace Resgrid.Model
 		/// <summary>Users already on the call — never recommended again.</summary>
 		public List<string> AlreadyDispatchedUserIds { get; set; } = new List<string>();
 
+		/// <summary>
+		/// Users never recommended and not counted toward any requirement: members released (stood down) from the call when the
+		/// result is applied automatically, which cannot bring a released member back (only naming them again on the call does).
+		/// </summary>
+		public List<string> ExcludedUserIds { get; set; } = new List<string>();
+
 		/// <summary>Forces a mode instead of resolving department default + card override (preview tooling).</summary>
 		public DispatchRecommendationModes? ModeOverride { get; set; }
 

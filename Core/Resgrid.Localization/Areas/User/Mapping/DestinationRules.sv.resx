@@ -320,4 +320,13 @@
   <data name="SuggestionFailed" xml:space="preserve">
     <value>Destinationsförslag är inte tillgängliga just nu.</value>
   </data>
+  <data name="SuggestionRetry" xml:space="preserve">
+    <value>Försök igen</value>
+  </data>
+  <data name="PreviewLoading" xml:space="preserve">
+    <value>Kontrollerar reglerna...</value>
+  </data>
+  <data name="PreviewFailed" xml:space="preserve">
+    <value>Reglerna kunde inte kontrolleras just nu. Försök igen.</value>
+  </data>
 </root>

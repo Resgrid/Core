@@ -49,38 +49,38 @@ namespace Resgrid.Services.Records
 					throw new IncidentReportDeleteRefusedException(reportId, IncidentReportDeleteRefusal.ReasonRequired);
 			}
 
-			var analysis = await _analyses.GetForReportAsync(departmentId, reportId);
-			if (await HasLeftResgridAsync(report, analysis))
-				throw new IncidentReportDeleteRefusedException(reportId, IncidentReportDeleteRefusal.SubmittedExternally);
-			if (await HasPermanentContentAsync(departmentId, reportId))
-				throw new IncidentReportDeleteRefusedException(reportId, IncidentReportDeleteRefusal.PermanentContent);
-			if (await IsUnderLegalHoldAsync(report, analysis))
-				throw new IncidentReportDeleteRefusedException(reportId, IncidentReportDeleteRefusal.LegalHold);
-
-			if (cancelFirst)
-			{
-				// Its own lifecycle step (RecordCancelled, 107), exactly as the Cancel button would do it.
-				await CancelAsync(departmentId, userId, reportId, cancellationToken);
-				report = await LoadAsync(departmentId, reportId);
-			}
+			// A fast refusal before any lock is taken; the same policy is answered again under the lock below.
+			await RefuseByContentPolicyAsync(report, await _analyses.GetForReportAsync(departmentId, reportId));
 
 			var now = DateTime.UtcNow;
+			var outboxIds = new List<long>();
+			// One transaction for the cancel and the delete: a failure anywhere leaves the draft exactly as it was, with no
+			// RecordCancelled event, instead of a cancelled report that freed its Call but never left the lists.
 			await InTransactionAsync(async () =>
 			{
+				// The version the policy above was answered for. An edit since then fails here and the retry asks again, so a
+				// draft that gained an exposure after the check is never cancelled and hidden on the strength of the old answer.
+				// The bump also takes the department's Records lock, which analysis creation, legal hold placement and content
+				// writes take too: whatever committed before it is visible to the re-check, and nothing new lands until commit.
 				await GuardVersionAsync(report, report.RowVersion, cancellationToken);
+				var analysis = await _analyses.GetForReportAsync(departmentId, reportId);
+				await RefuseByContentPolicyAsync(report, analysis);
+
+				if (cancelFirst)
+				{
+					// Its own lifecycle step (RecordCancelled, 107), exactly as the Cancel button would do it; the event is
+					// dispatched only once the delete has committed with it.
+					MarkCancelled(report, userId, now);
+					await RecordCancelledAsync(report, from, userId, origin, outboxIds, cancellationToken);
+				}
 				// Audited first: the audit repository treats a deleted record as unavailable and strips the purpose and detail
 				// of anything written against it afterwards (so a late audit cannot put content back after a purge).
 				await AuditAsync(departmentId, userId, reportId, report.CurrentRevisionId, RmsAccessAuditAction.Change, DeleteAuditPurpose, origin, cancellationToken,
 					new { fromState = from.ToString(), cancelledFirst = cancelFirst, reason, analysisId = analysis?.RmsIncidentAnalysisId,
 						purgeAfterDays = DeletedPurgeDays() });
-				report.DeletedOn = now;
-				report.ModifiedOn = now;
-				report.ModifiedByUserId = userId;
-				await _reports.UpdateAsync(report, cancellationToken, true);
-				// Anything still queued never went out (HasLeftResgridAsync); it must not go out now.
-				await _submissions.SupersedeOpenForRecordAsync(departmentId, reportId, null, now, cancellationToken);
 				if (analysis != null)
 				{
+					// Before the report is marked deleted: the analysis bump locks its live parent and would refuse a deleted one.
 					// Same compare-and-swap the analysis editor uses, so a save racing the delete loses instead of reviving it.
 					var expected = analysis.RowVersion;
 					if (!await _analyses.TryBumpRowVersionAsync(departmentId, analysis.RmsIncidentAnalysisId, expected, cancellationToken))
@@ -92,9 +92,44 @@ namespace Resgrid.Services.Records
 					await _analyses.UpdateAsync(analysis, cancellationToken, true);
 					await _submissions.SupersedeOpenForRecordAsync(departmentId, analysis.RmsIncidentAnalysisId, null, now, cancellationToken);
 				}
+				report.DeletedOn = now;
+				report.ModifiedOn = now;
+				report.ModifiedByUserId = userId;
+				await _reports.UpdateAsync(report, cancellationToken, true);
+				// Anything still queued never went out (HasLeftResgridAsync); it must not go out now.
+				await _submissions.SupersedeOpenForRecordAsync(departmentId, reportId, null, now, cancellationToken);
 				// The projection carries DeletedOn: search drops the document and the change feed sends a tombstone.
 				await RefreshProjectionAsync(report, cancellationToken);
 			});
+			await _outbox.DispatchAfterCommitAsync(outboxIds, cancellationToken);
+		}
+
+		/// <summary>
+		/// Whether the deleting user removed this report, recently enough that an idempotent retry of their delete is still
+		/// answerable (<see cref="DeleteReplayWindow"/>). A deleted report no longer loads, so without this a retry whose
+		/// first attempt committed but never stored its receipt would hear 404.
+		/// </summary>
+		public async Task<bool> WasDeletedByAsync(int departmentId, string userId, string reportId)
+		{
+			if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(reportId))
+				return false;
+			var report = await _reports.GetByIdForDepartmentAsync(departmentId, reportId);
+			return report?.DeletedOn != null && report.PurgedOn == null && report.DeletedOn.Value > DateTime.UtcNow.Subtract(DeleteReplayWindow)
+				&& string.Equals(report.ModifiedByUserId, userId, StringComparison.OrdinalIgnoreCase);
+		}
+
+		/// <summary>How long a delete stays answerable to its own retry; the same day the API keeps idempotency receipts.</summary>
+		public static readonly TimeSpan DeleteReplayWindow = TimeSpan.FromHours(24);
+
+		private async Task RefuseByContentPolicyAsync(RmsIncidentReport report, RmsIncidentAnalysis analysis)
+		{
+			var reportId = report.RmsIncidentReportId;
+			if (await HasLeftResgridAsync(report, analysis))
+				throw new IncidentReportDeleteRefusedException(reportId, IncidentReportDeleteRefusal.SubmittedExternally);
+			if (await HasPermanentContentAsync(report.DepartmentId, reportId))
+				throw new IncidentReportDeleteRefusedException(reportId, IncidentReportDeleteRefusal.PermanentContent);
+			if (await IsUnderLegalHoldAsync(report, analysis))
+				throw new IncidentReportDeleteRefusedException(reportId, IncidentReportDeleteRefusal.LegalHold);
 		}
 
 		/// <summary>Days a deleted report keeps its content; never below one so the delete can always be undone by support.</summary>

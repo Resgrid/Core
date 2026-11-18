@@ -28,6 +28,37 @@ namespace Resgrid.Tests.Models
 			};
 		}
 
+		[TestCase(52)]
+		[TestCase(24)]
+		public void The_next_occurrence_of_a_schedule_that_runs_every_few_years_is_found(int months)
+		{
+			var series = new RecurringCall
+			{
+				Name = "Annual-ish inspection transfer",
+				Frequency = (int)RecurringCallFrequencies.Monthly,
+				RepeatInterval = months,
+				MonthlyDay = 15,
+				Times = "09:00",
+				StartsOn = new DateTime(2026, 1, 1),
+				LeadTimeMinutes = RecurringCallRecurrence.DefaultLeadTimeMinutes
+			};
+
+			// Just after the first one went out (15 January 2026, 14:00 UTC), the next is the given number of months later.
+			var next = RecurringCallRecurrence.NextOccurrenceUtc(series, Eastern, Utc(2026, 1, 15, 15));
+
+			next.Should().NotBeNull();
+			RecurringCallRecurrence.ToLocal(next.Value, Eastern).Date.Should().Be(new DateTime(2026, 1, 15).AddMonths(months));
+		}
+
+		[Test]
+		public void Instants_the_date_arithmetic_cannot_handle_are_not_supported()
+		{
+			RecurringCallRecurrence.IsSupportedInstant(DateTime.MinValue).Should().BeFalse();
+			RecurringCallRecurrence.IsSupportedInstant(DateTime.MaxValue).Should().BeFalse();
+			RecurringCallRecurrence.IsSupportedInstant(Utc(2026, 11, 18, 9)).Should().BeTrue();
+			RecurringCallRecurrence.NextOccurrenceUtc(Weekly(RecurringCallDays.Tuesday, "08:00", new DateTime(2026, 1, 1)), Eastern, DateTime.MinValue).Should().BeNull();
+		}
+
 		[Test]
 		public void Tuesday_and_Thursday_three_times_a_day_runs_at_the_local_times()
 		{

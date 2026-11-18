@@ -43,17 +43,25 @@ namespace Resgrid.Tests.Web.Services
 		private Mock<IContactsService> _contacts;
 		private Mock<ICallDispatchStatusService> _dispatchStatuses;
 		private Mock<ICallResourceReleaseService> _releases;
+		private InMemoryCallBroadcastOutboxRepository _outbox;
 		private List<Call> _saved;
 		private int _broadcasts;
+		private CallQueueItem _lastBroadcast;
+		private bool _queueAccepts;
 		private Call _stored;
 		private Activity _activity;
+		// The department's current units (Security > View Units aside): 7 the ambulance, 8 the MUG.
+		private List<int> _departmentUnitIds;
 
 		[SetUp]
 		public void SetUp()
 		{
 			_saved = new List<Call>();
 			_broadcasts = 0;
+			_lastBroadcast = null;
+			_queueAccepts = true;
 			_stored = null;
+			_departmentUnitIds = new List<int> { 7, 8 };
 
 			_callsService = new Mock<ICallsService>();
 			_callsService.Setup(x => x.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>()))
@@ -78,13 +86,15 @@ namespace Resgrid.Tests.Web.Services
 				.ReturnsAsync((CallQueueItem item, CancellationToken _) =>
 				{
 					_broadcasts++;
-					return true;
+					_lastBroadcast = item;
+					return _queueAccepts;
 				});
 
 			_settings = new Mock<IDepartmentSettingsService>();
 			_contacts = new Mock<IContactsService>();
 			_dispatchStatuses = new Mock<ICallDispatchStatusService>();
 			_releases = new Mock<ICallResourceReleaseService>();
+			_outbox = new InMemoryCallBroadcastOutboxRepository();
 			_activity = new Activity(nameof(CallsControllerDispatchListTests)).Start();
 		}
 
@@ -132,7 +142,7 @@ namespace Resgrid.Tests.Web.Services
 			var roles = new Mock<IPersonnelRolesService>();
 			roles.Setup(x => x.GetAllRolesForDepartmentAsync(DepartmentId)).ReturnsAsync(new List<PersonnelRole> { new PersonnelRole { PersonnelRoleId = 4 } });
 			var units = new Mock<IUnitsService>();
-			units.Setup(x => x.GetUnitsForDepartmentAsync(DepartmentId)).ReturnsAsync(new List<Unit> { new Unit { UnitId = 7 } });
+			units.Setup(x => x.GetUnitsForDepartmentAsync(DepartmentId)).ReturnsAsync(() => _departmentUnitIds.Select(id => new Unit { UnitId = id }).ToList());
 			var profiles = new Mock<IUserProfileService>();
 			profiles.Setup(x => x.GetSelectedUserProfilesAsync(It.IsAny<List<string>>())).ReturnsAsync(new List<UserProfile>());
 			profiles.Setup(x => x.GetAllProfilesForDepartmentAsync(DepartmentId, It.IsAny<bool>())).ReturnsAsync(new Dictionary<string, UserProfile>());
@@ -151,7 +161,8 @@ namespace Resgrid.Tests.Web.Services
 				Mock.Of<IDispatchRecommendationService>(), Mock.Of<IFeatureToggleService>(), Mock.Of<IDepartmentDataProtectionService>(),
 				Mock.Of<IProtectedReadService>(), protectedWrite.Object, _contacts.Object, Mock.Of<IDispatchScopeService>(),
 				Mock.Of<ICallLocationHistoryService>(), Mock.Of<IPendingCallsService>(), Mock.Of<ICallClosureService>(),
-				new InboundEmailReceiptsService(new MockInboundEmailReceiptsRepository(), TimeProvider.System), _releases.Object)
+				new InboundEmailReceiptsService(new MockInboundEmailReceiptsRepository(), TimeProvider.System), _releases.Object,
+				new CallBroadcastOutboxService(_outbox, _callsService.Object, profiles.Object, _queue.Object))
 			{
 				ControllerContext = new ControllerContext { HttpContext = httpContext }
 			};
@@ -534,6 +545,21 @@ namespace Resgrid.Tests.Web.Services
 		}
 
 		[Test]
+		public async Task EditCall_leaves_a_released_unit_that_is_no_longer_a_department_unit_released()
+		{
+			_stored = StoredCallWithReleasedUnit();
+			// The MUG was deleted after its stand-down: the department's unit list no longer has it.
+			_departmentUnitIds = new List<int> { 7 };
+
+			await Controller().EditCall(new EditCallInput { Id = CallId.ToString(), Priority = 1, Name = "Snoring respirations", Nature = "Logged for the record", DispatchList = "U:7|U:8" },
+				CancellationToken.None);
+
+			_stored.UnitDispatches.Single(x => x.UnitId == 8).IsReleased.Should().BeTrue();
+			_dispatchStatuses.Verify(x => x.ApplyDispatchStatusesAsync(It.IsAny<Call>(), It.IsAny<IEnumerable<int>>(), It.IsAny<IEnumerable<int>>(), It.IsAny<CancellationToken>()), Times.Never);
+			_broadcasts.Should().Be(0);
+		}
+
+		[Test]
 		public async Task EditCall_removing_every_unit_releases_the_live_one_and_keeps_the_released_record()
 		{
 			_stored = StoredCallWithReleasedUnit();
@@ -585,6 +611,32 @@ namespace Resgrid.Tests.Web.Services
 			_releases.Verify(x => x.ClearPersonnelReleasesAsync(CallId, It.Is<IEnumerable<string>>(u => u.SequenceEqual(new[] { "responder-2" })), It.IsAny<CancellationToken>()), Times.Once);
 			_stored.IsUserReleased("responder-2").Should().BeFalse();
 			_broadcasts.Should().Be(1);
+			_lastBroadcast.BroadcastUserIds.Should().Equal(new[] { "responder-2" });
+			_outbox.Single().State.Should().Be((int)CallBroadcastOutboxStates.Sent);
+		}
+
+		[Test]
+		public async Task EditCall_keeps_a_refused_redispatch_page_and_the_same_edit_again_sends_it()
+		{
+			_stored = StoredCallWithReleasedMember();
+			var edit = new EditCallInput { Id = CallId.ToString(), Priority = 1, Name = "Snoring respirations", Nature = "Logged for the record", DispatchList = "P:responder-1|P:responder-2|U:7" };
+
+			// The queue refuses the page: the release is already cleared, so the member is back on the call but nobody told them.
+			_queueAccepts = false;
+			await Controller().EditCall(edit, CancellationToken.None);
+
+			_stored.IsUserReleased("responder-2").Should().BeFalse();
+			_broadcasts.Should().Be(1);
+			_outbox.Single().State.Should().Be((int)CallBroadcastOutboxStates.Pending);
+			_outbox.Single().GetUserIds().Should().Equal(new[] { "responder-2" });
+
+			// The same edit again: nothing on it is new any more, but the page it still owes goes out now.
+			_queueAccepts = true;
+			await Controller().EditCall(edit, CancellationToken.None);
+
+			_broadcasts.Should().Be(2);
+			_lastBroadcast.BroadcastUserIds.Should().Equal(new[] { "responder-2" });
+			_outbox.Single().State.Should().Be((int)CallBroadcastOutboxStates.Sent);
 		}
 	}
 }

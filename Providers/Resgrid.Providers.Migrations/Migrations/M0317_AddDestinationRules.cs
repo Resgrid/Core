@@ -23,9 +23,10 @@ namespace Resgrid.Providers.Migrations.Migrations
 					.WithColumn("CallTypeId").AsInt32().Nullable()
 					.WithColumn("CallPriority").AsInt32().Nullable()
 					.WithColumn("UnitTypeId").AsInt32().Nullable()
-					.WithColumn("PoiTypeIds").AsString(4000).Nullable()
-					.WithColumn("RequiredCapabilityIds").AsString(4000).Nullable()
-					.WithColumn("PreferredCapabilityIds").AsString(4000).Nullable()
+					// nvarchar(max): a rule may name every capability (36-character ids), past nvarchar(4000); PostgreSQL's citext has no cap.
+					.WithColumn("PoiTypeIds").AsString(int.MaxValue).Nullable()
+					.WithColumn("RequiredCapabilityIds").AsString(int.MaxValue).Nullable()
+					.WithColumn("PreferredCapabilityIds").AsString(int.MaxValue).Nullable()
 					.WithColumn("CreatedByUserId").AsString(128).Nullable()
 					.WithColumn("CreatedOn").AsDateTime2().NotNullable()
 					.WithColumn("UpdatedByUserId").AsString(128).Nullable()

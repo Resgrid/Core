@@ -686,15 +686,8 @@
 						<form method="post" asp-controller="IncidentReports" asp-action="Delete" asp-route-area="User" asp-route-id="@r.RmsIncidentReportId" onsubmit="return confirm('@JsEncoder.Encode(string.Format(localizer["DeleteIncidentReportConfirm"].Value, Model.DeletePurgeDays))');">
 							@Html.AntiForgeryToken()
 							<div class="form-group">
-								<label>@localizer["ReasonText"]</label>
-								@if (state == RmsRecordState.Voided)
-								{
-									<textarea class="form-control" name="reasonText" rows="2" maxlength="1000" required></textarea>
-								}
-								else
-								{
-									<textarea class="form-control" name="reasonText" rows="2" maxlength="1000"></textarea>
-								}
+								<label for="delete-reason-text">@localizer["ReasonText"]</label>
+								<textarea class="form-control" id="delete-reason-text" name="reasonText" rows="2" maxlength="1000" required="@(state == RmsRecordState.Voided)"></textarea>
 							</div>
 							<button type="submit" class="btn btn-danger btn-block"><i class="fa fa-trash"></i> @localizer["DeleteIncidentReport"]</button>
 						</form>

@@ -108,9 +108,12 @@ namespace Resgrid.Services.IncidentLogistics
 				foreach (var assignment in await _incidentCommand.GetAssignmentsForCallAsync(actor.DepartmentId, callId) ?? new List<ResourceAssignment>())
 				{
 					if (assignment.ReleasedOn.HasValue) continue;
-					if (assignment.ResourceKind == (int)ResourceAssignmentKind.RealPersonnel)
+					// A board assignment left over from before a stand-down does not bring the resource back: one released from the
+					// call (and not dispatched to it again) is not offered, as on the dispatch lists above.
+					if (assignment.ResourceKind == (int)ResourceAssignmentKind.RealPersonnel && !call.IsUserReleased(assignment.ResourceId))
 						Person(assignment.ResourceId, "Board", assignment.AssignedOn);
-					else if (assignment.ResourceKind == (int)ResourceAssignmentKind.RealUnit && int.TryParse(assignment.ResourceId, out var unitId))
+					else if (assignment.ResourceKind == (int)ResourceAssignmentKind.RealUnit && int.TryParse(assignment.ResourceId, out var unitId) &&
+						(call.IsUnitOnCall(unitId) || !call.HasUnitBeenDispatched(unitId)))
 						UnitRow(unitId, "Board", assignment.AssignedOn);
 				}
 

@@ -323,15 +323,28 @@ namespace Resgrid.Model
 			return result;
 		}
 
-		/// <summary>The first time it runs at or after <paramref name="afterUtc"/>, looking up to a year ahead; null when it never runs again.</summary>
+		/// <summary>
+		/// The first time it runs at or after <paramref name="afterUtc"/>, looking as far ahead as the longest gap the schedule can
+		/// have (every <see cref="MaxInterval"/> months, a little over four years); null when it never runs again.
+		/// </summary>
 		public static DateTime? NextOccurrenceUtc(RecurringCall series, Department department, DateTime afterUtc)
 		{
-			if (series == null)
+			if (series == null || !IsSupportedInstant(afterUtc))
 				return null;
 
-			// Monthly and yearly-ish gaps can exceed one window, so walk window by window.
+			// Gaps can exceed one window (every 52 weeks, every 52 months), so walk window by window, as many as the schedule's
+			// longest gap (its interval plus one more period, for a day of the month a short month does not have) needs.
+			var interval = Math.Clamp(series.RepeatInterval, 1, MaxInterval);
+			var horizonDays = (RecurringCallFrequencies)series.Frequency switch
+			{
+				RecurringCallFrequencies.Monthly => (interval + 1) * 31,
+				RecurringCallFrequencies.Weekly => (interval + 1) * 7,
+				_ => interval + 1
+			};
+			var windows = horizonDays / MaxRangeDays + 2;
+
 			var from = afterUtc;
-			for (var i = 0; i < 4; i++)
+			for (var i = 0; i < windows && IsSupportedInstant(from); i++)
 			{
 				var to = from.AddDays(MaxRangeDays);
 				var next = UtcOccurrences(series, department, from, to).FirstOrDefault();
@@ -347,6 +360,18 @@ namespace Resgrid.Model
 
 			return null;
 		}
+
+		/// <summary>The earliest instant the occurrence and calendar code is asked about (date arithmetic around it cannot underflow).</summary>
+		public static readonly DateTime MinSupportedUtc = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+		/// <summary>The latest instant the occurrence and calendar code is asked about (date arithmetic around it cannot overflow).</summary>
+		public static readonly DateTime MaxSupportedUtc = new DateTime(9000, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+		/// <summary>
+		/// Whether an instant is one the occurrence and calendar code can work with: well inside <see cref="DateTime"/>'s range, so
+		/// the days and months it adds or takes away around it never fall off either end. Request values outside it are rejected.
+		/// </summary>
+		public static bool IsSupportedInstant(DateTime utc) => utc >= MinSupportedUtc && utc <= MaxSupportedUtc;
 
 		/// <summary>
 		/// A local (department) time in UTC, resolved in the department's zone as everything else in Resgrid is (Pacific when it

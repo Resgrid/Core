@@ -313,6 +313,11 @@ namespace Resgrid.Services
 					if (call.IsUnitOnCall(unit.UnitId))
 						continue;
 
+					// A status written against this call (the release status of a unit just stood down from it) never sends the
+					// unit straight back to it; other waiting calls can still take it.
+					if (saved.DestinationType == (int)DestinationEntityTypes.Call && saved.DestinationId == call.CallId)
+						continue;
+
 					var requirement = requirements.FirstOrDefault(r => r.IsOpen && RunCardTargetRules.MatchesUnit(ReadTargets(r), unitType.UnitTypeId, unitType.BaseType));
 
 					if (requirement == null)
@@ -466,7 +471,11 @@ namespace Resgrid.Services
 				var resolvedCount = 0;
 				int? resolvedByUnitId = null;
 
-				foreach (var dispatch in (call.UnitDispatches ?? new List<CallDispatchUnit>()).Where(d => d.DispatchedOn > requirement.CreatedOn).OrderBy(d => d.DispatchedOn))
+				// An open requirement counts only resources still live on the call: a unit or member released (stood down) from it
+				// no longer covers it. A fulfilled requirement keeps the resources it used, released or not.
+				var countsReleased = !requirement.IsOpen;
+
+				foreach (var dispatch in (call.UnitDispatches ?? new List<CallDispatchUnit>()).Where(d => d.DispatchedOn > requirement.CreatedOn && (countsReleased || !d.IsReleased)).OrderBy(d => d.DispatchedOn))
 				{
 					if (resolvedCount >= requirement.RequiredCount || usedUnits.Contains(dispatch.UnitId))
 						continue;
@@ -486,7 +495,7 @@ namespace Resgrid.Services
 				{
 					roles = roles ?? await GetRolesAsync(departmentId);
 
-					foreach (var dispatch in (call.Dispatches ?? new List<CallDispatch>()).Where(d => d.DispatchedOn > requirement.CreatedOn && !string.IsNullOrWhiteSpace(d.UserId)).OrderBy(d => d.DispatchedOn))
+					foreach (var dispatch in (call.Dispatches ?? new List<CallDispatch>()).Where(d => d.DispatchedOn > requirement.CreatedOn && !string.IsNullOrWhiteSpace(d.UserId) && (countsReleased || !call.IsUserReleased(d.UserId))).OrderBy(d => d.DispatchedOn))
 					{
 						if (resolvedCount >= requirement.RequiredCount || usedUsers.Contains(dispatch.UserId))
 							continue;
@@ -684,6 +693,9 @@ namespace Resgrid.Services
 				if (released != null)
 				{
 					released.Redispatch(DateTime.UtcNow);
+					// The code snapshot is the new dispatch's: the old name only stays while the code is the same one.
+					if (released.ResponseCodeId != requirement?.ResponseCodeId)
+						released.ResponseCodeName = null;
 					released.ResponseCodeId = requirement?.ResponseCodeId;
 					released.ResponseCode = requirement?.ResponseCode;
 				}

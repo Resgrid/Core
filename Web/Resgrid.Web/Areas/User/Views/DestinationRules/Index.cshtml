@@ -129,7 +129,7 @@
 												}
 											</td>
 											<td>@(conditions.Count == 0 ? localizer["EveryCall"].Value : string.Join(", ", conditions))</td>
-											<td>@(rule.DestinationTypeNames.Count == 0 ? localizer["AnyDestinationType"].Value : string.Join(", ", rule.DestinationTypeNames))</td>
+											<td>@(rule.AllTypesRemoved ? localizer["DeletedChoice"].Value : rule.DestinationTypeNames.Count == 0 ? localizer["AnyDestinationType"].Value : string.Join(", ", rule.DestinationTypeNames))</td>
 											<td>
 												@foreach (var name in rule.RequiredCapabilityNames)
 												{
@@ -215,7 +215,9 @@
 			requires = localizer["Requires"].Value,
 			prefers = localizer["Prefers"].Value,
 			anyDestinationType = localizer["AnyDestinationType"].Value,
-			nothing = localizer["NothingRequired"].Value
+			nothing = localizer["NothingRequired"].Value,
+			loading = localizer["PreviewLoading"].Value,
+			failed = localizer["PreviewFailed"].Value
 		}, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
 	</script>
 	<script src="~/js/app/internal/mapping/resgrid.mapping.destinationrules.js"></script>

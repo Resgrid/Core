@@ -621,6 +621,32 @@ namespace Resgrid.Tests.Services
 			result.Select(s => s.UserId).Should().BeEquivalentTo(new[] { "user1", "user2" });
 		}
 
+		[Test]
+		public async Task GetCallPersonnelCheckInStatusesAsync_LeavesOut_AMemberReleasedFromTheCall()
+		{
+			var call = new Call
+			{
+				CallId = 1, DepartmentId = 10, State = (int)CallStates.Active, CheckInTimersEnabled = true,
+				LoggedOn = DateTime.UtcNow.AddMinutes(-45),
+				Dispatches = new List<CallDispatch> { new CallDispatch { UserId = "user1" }, new CallDispatch { UserId = "user2" } },
+				UnitDispatches = new List<CallDispatchUnit>(),
+				// Stood down: their dispatch row stays on the record, but no PAR is due from them.
+				PersonnelReleases = new List<CallPersonnelRelease> { new CallPersonnelRelease { CallId = 1, UserId = "USER2", ReleasedOn = DateTime.UtcNow.AddMinutes(-20) } }
+			};
+			var configs = new List<CheckInTimerConfig>
+			{
+				new CheckInTimerConfig { TimerTargetType = 0, DurationMinutes = 30, WarningThresholdMinutes = 5, IsEnabled = true }
+			};
+			_configRepo.Setup(x => x.GetByDepartmentIdAsync(10)).ReturnsAsync(configs);
+			_overrideRepo.Setup(x => x.GetMatchingOverridesAsync(10, null, 0)).ReturnsAsync(new List<CheckInTimerOverride>());
+			_recordRepo.Setup(x => x.GetByCallIdAsync(1)).ReturnsAsync(new List<CheckInRecord>());
+
+			var result = await _service.GetCallPersonnelCheckInStatusesAsync(call);
+
+			result.Select(s => s.UserId).Should().Equal(new[] { "user1" });
+			result.Single().NeedsCheckIn.Should().BeTrue();
+		}
+
 		#endregion Call Personnel Check-In Statuses
 
 		#region State Filtering

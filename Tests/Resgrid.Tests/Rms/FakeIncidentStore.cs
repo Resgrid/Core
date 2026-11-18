@@ -129,8 +129,8 @@ namespace Resgrid.Tests.Rms
 						&& (x.FinalizedOn.HasValue && x.FinalizedOn < cutoff || !x.FinalizedOn.HasValue && x.State == (int)RmsRecordState.Cancelled && x.CancelledOn.HasValue && x.CancelledOn < cutoff)
 						&& (after == null || string.CompareOrdinal(x.RmsIncidentReportId, after) > 0))
 					.OrderBy(x => x.RmsIncidentReportId, StringComparer.Ordinal).Take(take).ToList());
-			ReportsRepo.Setup(r => r.GetDeletedPurgeCandidatesAsync(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<int>(), It.IsAny<string>()))
-				.ReturnsAsync((int d, DateTime cutoff, int take, string after) => Reports
+			ReportsRepo.Setup(r => r.GetDeletedPurgeCandidatesAsync(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((int d, DateTime cutoff, int take, string after, CancellationToken c) => Reports
 					.Where(x => x.DepartmentId == d && x.DeletedOn.HasValue && x.DeletedOn < cutoff && x.PurgedOn == null
 						&& (after == null || string.CompareOrdinal(x.RmsIncidentReportId, after) > 0))
 					.OrderBy(x => x.RmsIncidentReportId, StringComparer.Ordinal).Take(take).ToList());
@@ -229,9 +229,16 @@ namespace Resgrid.Tests.Rms
 				.ReturnsAsync((RmsSubmissionExchange e, CancellationToken c, bool f) => { Exchanges.Add(e); return e; });
 			ExchangesRepo.Setup(r => r.GetForSubmissionAsync(It.IsAny<int>(), It.IsAny<string>()))
 				.ReturnsAsync((int d, string id) => Exchanges.Where(e => e.DepartmentId == d && e.SubmissionId == id).ToList());
+			// Mirrors RmsIncidentAnalysesRepository: the bump locks the live parent report first, and a parent that is
+			// already deleted or purged throws rather than answering false.
 			AnalysesRepo.Setup(r => r.TryBumpRowVersionAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<long>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync((int d, string id, long expected, CancellationToken c) =>
 				{
+					var current = Analyses.FirstOrDefault(x => x.DepartmentId == d && x.RmsIncidentAnalysisId == id);
+					if (current == null || current.DeletedOn.HasValue) return false;
+					var parent = Reports.FirstOrDefault(x => x.DepartmentId == d && x.RmsIncidentReportId == current.IncidentReportId);
+					if (parent != null && (parent.DeletedOn.HasValue || parent.PurgedOn.HasValue))
+						throw new InvalidOperationException("Content cannot be written to a missing or purged RMS record.");
 					var row = Analyses.FirstOrDefault(x => x.DepartmentId == d && x.RmsIncidentAnalysisId == id && x.RowVersion == expected);
 					if (row == null) return false;
 					row.RowVersion = expected + 1;

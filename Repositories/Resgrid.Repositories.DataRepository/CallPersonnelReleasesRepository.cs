@@ -37,19 +37,16 @@ namespace Resgrid.Repositories.DataRepository
 
 		public async Task<int> DeleteForUsersAsync(int callId, IEnumerable<string> userIds, CancellationToken cancellationToken = default)
 		{
-			var ids = (userIds ?? Enumerable.Empty<string>()).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
-			var removed = 0;
+			var ids = InListValue((userIds ?? Enumerable.Empty<string>()).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct(StringComparer.OrdinalIgnoreCase));
+			if (ids.Length == 0)
+				return 0;
 
-			// Few rows (a dispatcher names people back one at a time): one statement per member keeps the user-id comparison
-			// the same in both dialects (citext on PostgreSQL).
-			foreach (var id in ids)
-			{
-				removed += await ExecuteAsync(
-					$"DELETE FROM {Tbl("CallPersonnelReleases")} WHERE {Col("CallId")} = {P}CallId AND {Col("UserId")} = {P}UserId",
-					new { CallId = callId, UserId = id }, cancellationToken);
-			}
-
-			return removed;
+			// One statement, so the members named back on the call lose their releases together or not at all. The user ids
+			// compare case-insensitively in both dialects (citext[] on PostgreSQL, the collation on SQL Server), as the
+			// release's unique index does.
+			return await ExecuteAsync(
+				$"DELETE FROM {Tbl("CallPersonnelReleases")} WHERE {Col("CallId")} = {P}CallId AND {CaseInsensitiveInList("UserId", "UserIds")}",
+				new { CallId = callId, UserIds = ids }, cancellationToken);
 		}
 	}
 }

@@ -80,9 +80,9 @@ namespace Resgrid.Tests.Services
 			_calls.Setup(x => x.PopulateCallData(It.IsAny<Call>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(),
 					It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>()))
 				.ReturnsAsync((Call c, bool _, bool __, bool ___, bool ____, bool _____, bool ______, bool _______, bool ________, bool _________, bool __________) => c);
-			_unitDispatches.Setup(x => x.SaveOrUpdateAsync(It.IsAny<CallDispatchUnit>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
-				.Callback<CallDispatchUnit, CancellationToken, bool>((d, _, __) => _saved.Add(d))
-				.ReturnsAsync((CallDispatchUnit d, CancellationToken _, bool __) => d);
+			_unitDispatches.Setup(x => x.TryReleaseAsync(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+				.Callback<int, DateTime, string, CancellationToken>((id, _, __, ___) => _saved.Add(_call.UnitDispatches.Single(d => d.CallDispatchUnitId == id)))
+				.ReturnsAsync(true);
 			_settings.Setup(x => x.GetTextToCallNumberForDepartmentAsync(DeptId)).ReturnsAsync("+3290000000");
 
 			_customStates.Setup(x => x.GetAllCustomStatesForDepartmentAsync(DeptId)).ReturnsAsync(new List<CustomState>());
@@ -94,11 +94,16 @@ namespace Resgrid.Tests.Services
 				_units.Object, _actionLogs.Object, _groups.Object, _roles.Object, _customStates.Object, _communication.Object, _settings.Object, _events.Object);
 		}
 
+		/// <summary>The unit's latest status before and after the release; a new one is the release automation's, against the call.</summary>
 		private void StatusBeforeAndAfter(int beforeId, int afterId)
 		{
+			var after = afterId == beforeId
+				? new UnitState { UnitStateId = afterId, UnitId = Mug }
+				: new UnitState { UnitStateId = afterId, UnitId = Mug, DestinationId = CallId, DestinationType = (int)DestinationEntityTypes.Call, SetByOrigin = (int)StatusSetOrigins.DispatchAutomation };
+
 			_units.SetupSequence(x => x.GetLastUnitStateByUnitIdAsync(Mug))
 				.ReturnsAsync(new UnitState { UnitStateId = beforeId, UnitId = Mug })
-				.ReturnsAsync(new UnitState { UnitStateId = afterId, UnitId = Mug });
+				.ReturnsAsync(after);
 		}
 
 		[Test]
@@ -225,6 +230,58 @@ namespace Resgrid.Tests.Services
 			_communication.Verify(x => x.SendCancelUnitCallAsync(It.IsAny<Call>(), It.IsAny<CallDispatchUnit>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
 		}
 
+		[Test]
+		public async Task a_release_that_loses_the_race_to_another_dispatcher_changes_nothing_and_sends_nothing()
+		{
+			// Both requests read the unit live; the other one's conditional write changed the row first.
+			StatusBeforeAndAfter(100, 101);
+			_unitDispatches.Setup(x => x.TryReleaseAsync(2, It.IsAny<DateTime>(), "dispatcher-1", It.IsAny<CancellationToken>())).ReturnsAsync(false);
+			_unitDispatches.Setup(x => x.GetCallUnitDispatchesByCallIdAsync(CallId)).ReturnsAsync(new List<CallDispatchUnit>
+			{
+				new CallDispatchUnit { CallDispatchUnitId = 2, CallId = CallId, UnitId = Mug, ReleasedOn = DateTime.UtcNow, ReleasedByUserId = "dispatcher-2" }
+			});
+
+			var result = await _service.ReleaseUnitAsync(DeptId, CallId, Mug, "dispatcher-1", notify: true);
+
+			result.Outcome.Should().Be(CallResourceReleaseOutcome.AlreadyReleased);
+			result.Dispatch.ReleasedByUserId.Should().Be("dispatcher-2");
+			_call.UnitDispatches.Single(x => x.UnitId == Mug).IsReleased.Should().BeFalse("the in-memory row is only marked when this request released it");
+			_dispatchStatuses.Verify(x => x.ApplyReleaseStatusesAsync(It.IsAny<Call>(), It.IsAny<IEnumerable<int>>(), It.IsAny<IEnumerable<int>>(), It.IsAny<CancellationToken>()), Times.Never);
+			_communication.Verify(x => x.SendCancelUnitCallAsync(It.IsAny<Call>(), It.IsAny<CallDispatchUnit>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+			_events.Verify(x => x.SendMessage(It.IsAny<CallUpdatedEvent>()), Times.Never);
+		}
+
+		[Test]
+		public async Task a_failed_release_status_still_completes_the_release()
+		{
+			StatusBeforeAndAfter(100, 101);
+			_dispatchStatuses.Setup(x => x.ApplyReleaseStatusesAsync(It.IsAny<Call>(), It.IsAny<IEnumerable<int>>(), It.IsAny<IEnumerable<int>>(), It.IsAny<CancellationToken>()))
+				.ThrowsAsync(new InvalidOperationException("status store down"));
+
+			var result = await _service.ReleaseUnitAsync(DeptId, CallId, Mug, "dispatcher-1", notify: true);
+
+			// A retry would only see AlreadyReleased, so the notice, the counts and the call update go out now.
+			result.Outcome.Should().Be(CallResourceReleaseOutcome.Released);
+			result.StatusApplied.Should().BeFalse();
+			_communication.Verify(x => x.SendCancelUnitCallAsync(_call, It.Is<CallDispatchUnit>(d => d.UnitId == Mug), "+3290000000", null), Times.Once);
+			_calls.Verify(x => x.InvalidateOpenCallCountsAsync(DeptId), Times.Once);
+			_events.Verify(x => x.SendMessage(It.IsAny<CallUpdatedEvent>()), Times.Once);
+		}
+
+		[Test]
+		public async Task a_crew_status_saved_meanwhile_is_not_reported_as_the_release_status()
+		{
+			// The unit was already available (the automation left it alone) and the crew pressed Available again meanwhile.
+			_units.SetupSequence(x => x.GetLastUnitStateByUnitIdAsync(Mug))
+				.ReturnsAsync(new UnitState { UnitStateId = 100, UnitId = Mug })
+				.ReturnsAsync(new UnitState { UnitStateId = 101, UnitId = Mug, SetByOrigin = (int)StatusSetOrigins.UnitApp });
+
+			var result = await _service.ReleaseUnitAsync(DeptId, CallId, Mug, "dispatcher-1", notify: false);
+
+			result.Outcome.Should().Be(CallResourceReleaseOutcome.Released);
+			result.StatusApplied.Should().BeFalse();
+		}
+
 		private void PersonnelOnCall()
 		{
 			_call.Dispatches = new List<CallDispatch> { new CallDispatch { CallId = CallId, UserId = "medic-1" } };
@@ -316,6 +373,51 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task a_release_stores_the_member_id_as_the_call_spells_it()
+		{
+			PersonnelOnCall();
+
+			var result = await _service.ReleasePersonnelAsync(DeptId, CallId, "DOCTOR-1", "dispatcher-1", notify: false);
+
+			result.Outcome.Should().Be(CallResourceReleaseOutcome.Released);
+			result.PersonnelRelease.UserId.Should().Be("doctor-1");
+			_personnelReleases.Verify(x => x.SaveOrUpdateAsync(It.Is<CallPersonnelRelease>(r => r.UserId == "doctor-1"), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Once);
+		}
+
+		[Test]
+		public async Task a_member_paged_through_a_dispatched_units_station_group_can_be_released()
+		{
+			PersonnelOnCall();
+			_settings.Setup(x => x.GetUnitDispatchAlsoDispatchToGroupAsync(DeptId)).ReturnsAsync(true);
+			_units.Setup(x => x.GetUnitByIdAsync(Ambulance)).ReturnsAsync(new Unit { UnitId = Ambulance, DepartmentId = DeptId, StationGroupId = 8 });
+			_groups.Setup(x => x.GetAllMembersForGroupAsync(8)).ReturnsAsync(new List<DepartmentGroupMember> { new DepartmentGroupMember { UserId = "station-1" } });
+
+			(await _service.ReleasePersonnelAsync(DeptId, CallId, "station-1", "dispatcher-1", notify: false)).Outcome.Should().Be(CallResourceReleaseOutcome.Released);
+
+			// Without the department's unit-group paging the broadcast never reached them, so they are not on the call.
+			_settings.Setup(x => x.GetUnitDispatchAlsoDispatchToGroupAsync(DeptId)).ReturnsAsync(false);
+			_call.PersonnelReleases.Clear();
+			(await _service.ReleasePersonnelAsync(DeptId, CallId, "station-1", "dispatcher-1", notify: false)).Outcome.Should().Be(CallResourceReleaseOutcome.NotOnCall);
+		}
+
+		[Test]
+		public async Task a_member_who_started_on_another_open_call_meanwhile_keeps_that_status()
+		{
+			PersonnelOnCall();
+			// On this call when the release was asked for; responding to call 41 by the time the release status would be set.
+			_actionLogs.SetupSequence(x => x.GetLastActionLogForUserAsync("medic-1", DeptId))
+				.ReturnsAsync(new ActionLog { ActionLogId = 1, UserId = "medic-1", ActionTypeId = (int)ActionTypes.RespondingToScene, DestinationId = CallId, DestinationType = (int)DestinationEntityTypes.Call })
+				.ReturnsAsync(new ActionLog { ActionLogId = 2, UserId = "medic-1", ActionTypeId = (int)ActionTypes.RespondingToScene, DestinationId = 41, DestinationType = (int)DestinationEntityTypes.Call });
+			_callsRepository.Setup(x => x.GetByIdAsync(41)).ReturnsAsync(new Call { CallId = 41, DepartmentId = DeptId, State = (int)CallStates.Active });
+
+			var result = await _service.ReleasePersonnelAsync(DeptId, CallId, "medic-1", "dispatcher-1", notify: false);
+
+			result.Outcome.Should().Be(CallResourceReleaseOutcome.Released);
+			result.StatusApplied.Should().BeFalse();
+			_actionLogs.Verify(x => x.SetUserActionAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
 		public async Task clearing_releases_puts_members_back_on_the_call()
 		{
 			_personnelReleases.Setup(x => x.DeleteForUsersAsync(CallId, It.IsAny<IEnumerable<string>>(), It.IsAny<CancellationToken>())).ReturnsAsync(1);
@@ -392,6 +494,18 @@ namespace Resgrid.Tests.Services
 
 			dispatches.Select(x => x.UnitId).Should().BeEquivalentTo(new[] { 11, 12, 13 });
 			dispatches.Single(x => x.UnitId == 13).CallId.Should().Be(40);
+		}
+
+		[Test]
+		public void a_released_unit_that_can_no_longer_be_dispatched_stays_released()
+		{
+			var dispatches = Dispatches();
+
+			// Unit 12 was deleted since its release: the edit names it, the department's unit list does not.
+			var redispatched = CallDispatchUnitReleases.ApplyUnitList(dispatches, 40, new[] { 11, 12 }, Now, canAdd: id => id != 12);
+
+			redispatched.Should().BeEmpty();
+			dispatches.Single(x => x.UnitId == 12).IsReleased.Should().BeTrue();
 		}
 
 		[Test]

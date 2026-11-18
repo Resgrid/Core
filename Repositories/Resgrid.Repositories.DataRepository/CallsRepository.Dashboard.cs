@@ -20,7 +20,7 @@ namespace Resgrid.Repositories.DataRepository
 			var sql = postgres
 				? "SELECT c.callid AS CallId, " +
 				  $"(SELECT COUNT(DISTINCT cdu.unitid) FROM {schema}.calldispatchunits cdu WHERE cdu.callid = c.callid AND cdu.releasedon IS NULL) AS UnitCount, " +
-				  $"(SELECT COUNT(DISTINCT cd.userid) FROM {schema}.calldispatches cd WHERE cd.callid = c.callid AND NOT EXISTS (SELECT 1 FROM {schema}.callpersonnelreleases pr WHERE pr.callid = cd.callid AND CAST(pr.userid AS text) = CAST(cd.userid AS text))) AS PersonnelCount " +
+				  $"(SELECT COUNT(DISTINCT cd.userid) FROM {schema}.calldispatches cd WHERE cd.callid = c.callid AND NOT EXISTS (SELECT 1 FROM {schema}.callpersonnelreleases pr WHERE pr.callid = cd.callid AND CAST(pr.userid AS citext) = CAST(cd.userid AS citext))) AS PersonnelCount " +
 				  $"FROM {schema}.calls c " +
 				  "WHERE c.departmentid = @DepartmentId AND c.state = 0 AND c.isdeleted = false " +
 				  "AND (c.hasbeendispatched = true OR c.dispatchon IS NULL OR c.dispatchon <= @Now)"

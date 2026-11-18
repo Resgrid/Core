@@ -320,4 +320,13 @@
   <data name="SuggestionFailed" xml:space="preserve">
     <value>Les propositions de destination sont indisponibles pour le moment.</value>
   </data>
+  <data name="SuggestionRetry" xml:space="preserve">
+    <value>Réessayer</value>
+  </data>
+  <data name="PreviewLoading" xml:space="preserve">
+    <value>Vérification des règles...</value>
+  </data>
+  <data name="PreviewFailed" xml:space="preserve">
+    <value>Impossible de vérifier les règles pour le moment. Réessayez.</value>
+  </data>
 </root>

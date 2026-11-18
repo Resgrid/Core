@@ -79,25 +79,53 @@ namespace Resgrid.Services
 			var now = DateTime.UtcNow;
 			var before = await _unitsService.GetLastUnitStateByUnitIdAsync(unitId);
 
+			// Conditional writes: a second dispatcher releasing the same unit at the same moment changes no row, so only the
+			// request that released it applies the status, sends the notice and keeps its release metadata.
+			var released = new List<CallDispatchUnit>();
 			foreach (var dispatch in live)
 			{
+				if (!await _callDispatchUnitRepository.TryReleaseAsync(dispatch.CallDispatchUnitId, now, releasedByUserId, cancellationToken))
+					continue;
+
 				dispatch.Release(now, releasedByUserId);
-				await _callDispatchUnitRepository.SaveOrUpdateAsync(dispatch, cancellationToken, true);
+				released.Add(dispatch);
+			}
+
+			if (released.Count == 0)
+			{
+				var current = ((await _callDispatchUnitRepository.GetCallUnitDispatchesByCallIdAsync(callId)) ?? Enumerable.Empty<CallDispatchUnit>())
+					.Where(x => x != null && x.UnitId == unitId && x.IsReleased)
+					.OrderByDescending(x => x.ReleasedOn)
+					.FirstOrDefault();
+
+				return CallResourceReleaseResult.Failed(CallResourceReleaseOutcome.AlreadyReleased, current ?? live[0]);
 			}
 
 			// The department's release status, for this unit only (no group: the shift personnel stay on the call). A unit
-			// already back in service, out of service, or working another open call keeps its status.
-			await _callDispatchStatusService.ApplyReleaseStatusesAsync(call, Array.Empty<int>(), new[] { unitId }, cancellationToken);
+			// already back in service, out of service, or working another open call keeps its status. The release stands if
+			// the status cannot be written: the notice, counts and call update below still go out, as for a member.
+			var statusApplied = false;
+			try
+			{
+				await _callDispatchStatusService.ApplyReleaseStatusesAsync(call, Array.Empty<int>(), new[] { unitId }, cancellationToken);
 
-			var after = await _unitsService.GetLastUnitStateByUnitIdAsync(unitId);
-			var statusApplied = after != null && (before == null || after.UnitStateId != before.UnitStateId);
+				// Only a status the release automation wrote against this call counts, not a crew's own status saved meanwhile.
+				var after = await _unitsService.GetLastUnitStateByUnitIdAsync(unitId);
+				statusApplied = after != null && (before == null || after.UnitStateId != before.UnitStateId) &&
+					after.DestinationType == (int)DestinationEntityTypes.Call && after.DestinationId == callId &&
+					after.SetByOrigin == (int)StatusSetOrigins.DispatchAutomation;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Releasing unit {unitId} from call {callId}: the release status could not be set.");
+			}
 
 			if (notify)
 			{
 				try
 				{
 					var departmentNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(departmentId);
-					await _communicationService.SendCancelUnitCallAsync(call, live[0], departmentNumber);
+					await _communicationService.SendCancelUnitCallAsync(call, released[0], departmentNumber);
 				}
 				catch (Exception ex)
 				{
@@ -109,7 +137,7 @@ namespace Resgrid.Services
 			await _callsService.InvalidateOpenCallCountsAsync(departmentId);
 			_eventAggregator.SendMessage<CallUpdatedEvent>(new CallUpdatedEvent { DepartmentId = departmentId, Call = call });
 
-			return new CallResourceReleaseResult { Outcome = CallResourceReleaseOutcome.Released, Dispatch = live[0], StatusApplied = statusApplied };
+			return new CallResourceReleaseResult { Outcome = CallResourceReleaseOutcome.Released, Dispatch = released[0], StatusApplied = statusApplied };
 		}
 
 		public async Task<CallResourceReleaseResult> ReleasePersonnelAsync(int departmentId, int callId, string userId, string releasedByUserId, bool notify,
@@ -131,9 +159,13 @@ namespace Resgrid.Services
 
 			var before = await _actionLogsService.GetLastActionLogForUserAsync(userId, departmentId);
 
-			if (!await IsMemberOnCallAsync(call, userId, before))
+			// The release stores the member's id as the call's records spell it, not as the request did: every release reader
+			// (and the PostgreSQL text comparisons) then sees the same identity.
+			var memberUserId = await GetMemberOnCallAsync(call, userId, before);
+			if (memberUserId == null)
 				return CallResourceReleaseResult.Failed(CallResourceReleaseOutcome.NotOnCall);
 
+			userId = memberUserId;
 			var now = DateTime.UtcNow;
 			var release = new CallPersonnelRelease
 			{
@@ -163,7 +195,7 @@ namespace Resgrid.Services
 			call.PersonnelReleases ??= new List<CallPersonnelRelease>();
 			call.PersonnelReleases.Add(release);
 
-			var statusApplied = await ApplyPersonnelReleaseStatusAsync(call, userId, before, cancellationToken);
+			var statusApplied = await ApplyPersonnelReleaseStatusAsync(call, userId, cancellationToken);
 
 			if (notify)
 			{
@@ -209,41 +241,59 @@ namespace Resgrid.Services
 		}
 
 		/// <summary>
-		/// The member is on the call: dispatched by name, in a dispatched group or role, riding a unit still on the call, or with a
-		/// latest status set against the call.
+		/// The member is on the call: dispatched by name, in a dispatched group or role, riding a unit still on the call, in the
+		/// station group of a unit still on the call (when unit dispatches also page the unit's group, as the broadcast does), or
+		/// with a latest status set against the call. Returns the member's id as the matching record spells it, or null.
 		/// </summary>
-		private async Task<bool> IsMemberOnCallAsync(Call call, string userId, ActionLog latest)
+		private async Task<string> GetMemberOnCallAsync(Call call, string userId, ActionLog latest)
 		{
 			bool Same(string other) => String.Equals(other, userId, StringComparison.OrdinalIgnoreCase);
 
-			if (call.Dispatches != null && call.Dispatches.Any(x => x != null && Same(x.UserId)))
-				return true;
+			var direct = call.Dispatches?.FirstOrDefault(x => x != null && Same(x.UserId));
+			if (direct != null)
+				return direct.UserId;
 
 			if (latest != null && latest.DestinationType == (int)DestinationEntityTypes.Call && latest.DestinationId == call.CallId)
-				return true;
+				return String.IsNullOrWhiteSpace(latest.UserId) ? userId : latest.UserId;
 
 			foreach (var group in call.GroupDispatches ?? Enumerable.Empty<CallDispatchGroup>())
 			{
-				var members = await _departmentGroupsService.GetAllMembersForGroupAsync(group.DepartmentGroupId);
-				if (members != null && members.Any(x => x != null && Same(x.UserId)))
-					return true;
+				var member = (await _departmentGroupsService.GetAllMembersForGroupAsync(group.DepartmentGroupId))?.FirstOrDefault(x => x != null && Same(x.UserId));
+				if (member != null)
+					return member.UserId;
 			}
 
 			foreach (var role in call.RoleDispatches ?? Enumerable.Empty<CallDispatchRole>())
 			{
-				var members = await _personnelRolesService.GetAllMembersOfRoleAsync(role.RoleId);
-				if (members != null && members.Any(x => x != null && Same(x.UserId)))
-					return true;
+				var member = (await _personnelRolesService.GetAllMembersOfRoleAsync(role.RoleId))?.FirstOrDefault(x => x != null && Same(x.UserId));
+				if (member != null)
+					return member.UserId;
 			}
 
-			foreach (var unitDispatch in call.GetActiveUnitDispatches())
+			var liveUnits = call.GetActiveUnitDispatches();
+			foreach (var unitDispatch in liveUnits)
 			{
-				var crew = await _unitsService.GetCurrentRolesForUnitAsync(unitDispatch.UnitId);
-				if (crew != null && crew.Any(x => x != null && Same(x.UserId)))
-					return true;
+				var rider = (await _unitsService.GetCurrentRolesForUnitAsync(unitDispatch.UnitId))?.FirstOrDefault(x => x != null && Same(x.UserId));
+				if (rider != null)
+					return rider.UserId;
 			}
 
-			return false;
+			if (liveUnits.Any() && await _departmentSettingsService.GetUnitDispatchAlsoDispatchToGroupAsync(call.DepartmentId))
+			{
+				var checkedGroups = new HashSet<int>();
+				foreach (var unitDispatch in liveUnits)
+				{
+					var unit = await _unitsService.GetUnitByIdAsync(unitDispatch.UnitId);
+					if (unit?.StationGroupId == null || !checkedGroups.Add(unit.StationGroupId.Value))
+						continue;
+
+					var member = (await _departmentGroupsService.GetAllMembersForGroupAsync(unit.StationGroupId.Value))?.FirstOrDefault(x => x != null && Same(x.UserId));
+					if (member != null)
+						return member.UserId;
+				}
+			}
+
+			return null;
 		}
 
 		/// <summary>
@@ -251,10 +301,13 @@ namespace Resgrid.Services
 		/// own Available status, else the built-in Standing By), linked to the call like any release status. A member already
 		/// available or unavailable, or working another open call, keeps their status.
 		/// </summary>
-		private async Task<bool> ApplyPersonnelReleaseStatusAsync(Call call, string userId, ActionLog current, CancellationToken cancellationToken)
+		private async Task<bool> ApplyPersonnelReleaseStatusAsync(Call call, string userId, CancellationToken cancellationToken)
 		{
 			try
 			{
+				// Read now, not the status read before the release was saved: a member who has since started responding to
+				// another open call keeps that status.
+				var current = await _actionLogsService.GetLastActionLogForUserAsync(userId, call.DepartmentId);
 				if (current != null)
 				{
 					var baseTypes = CallStatusLinkage.BuildBaseTypeMap(await _customStateService.GetAllCustomStatesForDepartmentAsync(call.DepartmentId), CustomStateTypes.Personnel);

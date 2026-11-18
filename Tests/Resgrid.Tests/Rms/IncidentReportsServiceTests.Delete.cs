@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
@@ -194,6 +195,121 @@ namespace Resgrid.Tests.Rms
 
 			_store.Analyses.Single().DeletedOn.Should().NotBeNull();
 			_store.Analyses.Single().RowVersion.Should().Be(2);
+		}
+
+		[Test]
+		public async Task Deleting_a_draft_cancels_and_deletes_in_one_transaction()
+		{
+			var started = await _service.StartFromCallAsync(Dept, "author", CallId);
+			var commits = _store.Shared.Commits;
+
+			await _service.DeleteAsync(Dept, "author", started.Report.RmsIncidentReportId, null);
+
+			(_store.Shared.Commits - commits).Should().Be(1, "the cancel and the delete commit together");
+			_store.Outbox.Single(o => o.TriggerEventType == (int)WorkflowTriggerEventType.RecordCancelled).Attempts.Should().Be(1, "RecordCancelled is dispatched once the delete has committed");
+		}
+
+		[Test]
+		public async Task A_delete_that_fails_after_the_cancel_step_commits_nothing_and_dispatches_no_cancel_event()
+		{
+			var started = await _service.StartFromCallAsync(Dept, "author", CallId);
+			var commits = _store.Shared.Commits;
+			var discards = _store.Shared.Discards;
+			_store.Shared.AuditsRepo.Setup(r => r.InsertAsync(It.Is<RmsAccessAudit>(a => a.Purpose == IncidentReportsService.DeleteAuditPurpose), It.IsAny<System.Threading.CancellationToken>(), It.IsAny<bool>()))
+				.ThrowsAsync(new InvalidOperationException("audit store unavailable"));
+
+			Func<Task> delete = () => _service.DeleteAsync(Dept, "author", started.Report.RmsIncidentReportId, null);
+
+			await delete.Should().ThrowAsync<InvalidOperationException>();
+			(_store.Shared.Commits - commits).Should().Be(0, "a cancel committed on its own would free the Call while the report stayed listed");
+			(_store.Shared.Discards - discards).Should().Be(1);
+			_store.Outbox.Where(o => o.TriggerEventType == (int)WorkflowTriggerEventType.RecordCancelled).Should().OnlyContain(o => o.Attempts == 0, "nothing is dispatched from a rolled-back transaction");
+		}
+
+		[Test]
+		public async Task An_edit_after_the_policy_check_fails_the_delete_instead_of_hiding_the_newer_draft()
+		{
+			var started = await _service.StartFromCallAsync(Dept, "author", CallId);
+			var id = started.Report.RmsIncidentReportId;
+			var calls = 0;
+			// Between the first policy answer and the delete, an editor saves an exposure: the stored row moves on a version.
+			LegalHolds.Setup(h => h.GetActiveForDepartmentAsync(Dept)).ReturnsAsync(() =>
+			{
+				if (calls++ == 0)
+				{
+					var stored = _store.Reports.Single(r => r.RmsIncidentReportId == id);
+					var edited = JsonConvert.DeserializeObject<RmsIncidentReport>(JsonConvert.SerializeObject(stored));
+					edited.RowVersion = stored.RowVersion + 1;
+					_store.Reports.Remove(stored);
+					_store.Reports.Add(edited);
+					_store.Exposures.Add(new RmsExposure { RmsExposureId = "x1", DepartmentId = Dept, RecordId = id, ProtectionId = "p" });
+				}
+				return new List<RmsRecordLegalHold>();
+			});
+
+			Func<Task> delete = () => _service.DeleteAsync(Dept, "author", id, null);
+
+			await delete.Should().ThrowAsync<RecordConcurrencyException>();
+			var row = _store.Reports.Single(r => r.RmsIncidentReportId == id);
+			row.DeletedOn.Should().BeNull("the policy was answered for an older version");
+			row.State.Should().Be((int)RmsRecordState.Draft, "the newer draft is not cancelled on the old answer");
+			_store.Outbox.Should().NotContain(o => o.TriggerEventType == (int)WorkflowTriggerEventType.RecordCancelled);
+		}
+
+		[Test]
+		public async Task A_hold_placed_after_the_first_check_still_refuses_the_delete()
+		{
+			var started = await _service.StartFromCallAsync(Dept, "author", CallId);
+			var id = started.Report.RmsIncidentReportId;
+			var calls = 0;
+			LegalHolds.Setup(h => h.GetActiveForDepartmentAsync(Dept)).ReturnsAsync(() => calls++ == 0
+				? new List<RmsRecordLegalHold>()
+				: new List<RmsRecordLegalHold> { new RmsRecordLegalHold { RmsRecordLegalHoldId = "h1", DepartmentId = Dept, RecordId = id } });
+			var commits = _store.Shared.Commits;
+
+			Func<Task> delete = () => _service.DeleteAsync(Dept, "author", id, null);
+
+			(await delete.Should().ThrowAsync<IncidentReportDeleteRefusedException>()).Which.Refusal.Should().Be(IncidentReportDeleteRefusal.LegalHold);
+			_store.Reports.Single(r => r.RmsIncidentReportId == id).DeletedOn.Should().BeNull();
+			(_store.Shared.Commits - commits).Should().Be(0);
+		}
+
+		[Test]
+		public async Task An_analysis_started_after_the_first_check_goes_with_the_report()
+		{
+			var started = await _service.StartFromCallAsync(Dept, "author", CallId);
+			var id = started.Report.RmsIncidentReportId;
+			var calls = 0;
+			_store.AnalysesRepo.Setup(r => r.GetForReportAsync(Dept, id)).ReturnsAsync(() =>
+			{
+				if (calls++ == 0)
+				{
+					// Committed by StartForReportAsync right after the delete's first look.
+					_store.Analyses.Add(new RmsIncidentAnalysis { RmsIncidentAnalysisId = "a1", DepartmentId = Dept, IncidentReportId = id, State = (int)RmsIncidentAnalysisState.Draft, RowVersion = 1 });
+					return null;
+				}
+				return _store.Analyses.FirstOrDefault(a => a.IncidentReportId == id && a.DeletedOn == null);
+			});
+
+			await _service.DeleteAsync(Dept, "author", id, null);
+
+			_store.Analyses.Single().DeletedOn.Should().NotBeNull("an analysis committed before the delete's lock is deleted with its report");
+		}
+
+		[Test]
+		public async Task Only_the_deleting_user_s_recent_delete_answers_a_retry()
+		{
+			var started = await _service.StartFromCallAsync(Dept, "author", CallId);
+			var id = started.Report.RmsIncidentReportId;
+			(await _service.WasDeletedByAsync(Dept, "author", id)).Should().BeFalse("the report is still live");
+
+			await _service.DeleteAsync(Dept, "author", id, null);
+
+			(await _service.WasDeletedByAsync(Dept, "author", id)).Should().BeTrue();
+			(await _service.WasDeletedByAsync(Dept, "someone-else", id)).Should().BeFalse();
+			(await _service.WasDeletedByAsync(Dept + 1, "author", id)).Should().BeFalse();
+			_store.Reports.Single(r => r.RmsIncidentReportId == id).DeletedOn = DateTime.UtcNow.AddDays(-2);
+			(await _service.WasDeletedByAsync(Dept, "author", id)).Should().BeFalse("past the idempotency window a retry is a new request");
 		}
 
 		[Test]

@@ -9,8 +9,12 @@ var resgrid;
             function showFrequency() {
                 var frequency = $('#Frequency').val();
 
+                // A hidden section's fields are disabled too, so the browser neither checks them (a day of the month left at 32 on the
+                // monthly part would block saving a daily schedule) nor posts them. Their values are kept for switching back.
                 $('.recurring-section').each(function () {
-                    $(this).toggle($(this).data('frequency').toString() === frequency);
+                    var active = $(this).data('frequency').toString() === frequency;
+                    $(this).toggle(active);
+                    $(this).find('input, select, textarea').prop('disabled', !active);
                 });
 
                 $('.recurring-unit').each(function () {

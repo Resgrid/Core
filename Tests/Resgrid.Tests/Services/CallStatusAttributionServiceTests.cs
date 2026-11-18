@@ -31,6 +31,7 @@ namespace Resgrid.Tests.Services
 		private Mock<IActionLogsRepository> _actionLogs;
 		private Mock<IUnitsRepository> _units;
 		private Mock<ICustomStateService> _customStates;
+		private Mock<ICallPersonnelReleasesRepository> _releases;
 		private CallStatusAttributionService _service;
 
 		[SetUp]
@@ -47,6 +48,7 @@ namespace Resgrid.Tests.Services
 			_actionLogs = new Mock<IActionLogsRepository>();
 			_units = new Mock<IUnitsRepository>();
 			_customStates = new Mock<ICustomStateService>();
+			_releases = new Mock<ICallPersonnelReleasesRepository>();
 
 			_customStates.Setup(x => x.GetAllCustomStatesForDepartmentAsync(DepartmentId)).ReturnsAsync(new List<CustomState>());
 			_customStates.Setup(x => x.GetDefaultUnitStatuses()).Returns(new CustomStateService(null, null, null, null).GetDefaultUnitStatuses());
@@ -56,7 +58,7 @@ namespace Resgrid.Tests.Services
 
 			_service = new CallStatusAttributionService(_calls.Object, _unitDispatches.Object, _dispatches.Object, _groupDispatches.Object,
 				_roleDispatches.Object, _groupMembers.Object, _roleUsers.Object, _unitStates.Object, _actionLogs.Object, _units.Object, _customStates.Object,
-				Mock.Of<ICallPersonnelReleasesRepository>());
+				_releases.Object);
 		}
 
 		private void Call(int callId, CallStates state = CallStates.Active, int departmentId = DepartmentId, DateTime? closedOn = null) =>
@@ -290,6 +292,19 @@ namespace Resgrid.Tests.Services
 
 			log.DestinationId.Should().Be(42);
 			log.DestinationSource.Should().Be((int)StatusDestinationSources.Unit);
+		}
+
+		[Test]
+		public async Task a_rider_released_from_the_units_call_is_not_linked_back_to_it_through_the_unit()
+		{
+			// The unit still works call 42; the member riding it was stood down from that call.
+			_unitStates.Setup(x => x.GetUnitStateByUnitStateIdAsync(900)).ReturnsAsync(new UnitState { UnitStateId = 900, UnitId = UnitId, DestinationId = 42, DestinationType = (int)DestinationEntityTypes.Call });
+			_releases.Setup(x => x.GetByCallIdAsync(42)).ReturnsAsync(new List<CallPersonnelRelease> { new CallPersonnelRelease { CallId = 42, UserId = UserId.ToUpperInvariant() } });
+			var log = new ActionLog { UserId = UserId, DepartmentId = DepartmentId, ActionTypeId = (int)ActionTypes.OnUnit, UnitStateId = 900, Timestamp = DateTime.UtcNow };
+
+			await _service.AttributeActionLogAsync(log, null);
+
+			log.DestinationId.Should().BeNull();
 		}
 
 		[Test]

@@ -83,7 +83,7 @@ namespace Resgrid.Repositories.DataRepository
 					ORDER BY {Col("RmsIncidentReportId")} {Paging()}", parameters);
 		}
 
-		public Task<IEnumerable<RmsIncidentReport>> GetDeletedPurgeCandidatesAsync(int departmentId, DateTime deletedBeforeUtc, int take, string afterId = null)
+		public Task<IEnumerable<RmsIncidentReport>> GetDeletedPurgeCandidatesAsync(int departmentId, DateTime deletedBeforeUtc, int take, string afterId = null, CancellationToken cancellationToken = default)
 		{
 			var parameters = new DynamicParameters();
 			parameters.Add("DepartmentId", departmentId);
@@ -95,7 +95,7 @@ namespace Resgrid.Repositories.DataRepository
 				$@"SELECT * FROM {Tbl("RmsIncidentReports")}
 					WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("DeletedOn")} IS NOT NULL AND {Col("DeletedOn")} < {P}Cutoff
 					AND {Col("PurgedOn")} IS NULL AND ({P}AfterId IS NULL OR {Col("RmsIncidentReportId")} > {P}AfterId)
-					ORDER BY {Col("RmsIncidentReportId")} {Paging()}", parameters);
+					ORDER BY {Col("RmsIncidentReportId")} {Paging()}", parameters, cancellationToken);
 		}
 
 		/// <summary>

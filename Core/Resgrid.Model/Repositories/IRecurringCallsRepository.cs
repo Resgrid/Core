@@ -58,13 +58,25 @@ namespace Resgrid.Model.Repositories
 		/// </summary>
 		Task<bool> TryTransitionStateAsync(string recurringCallOccurrenceId, int fromState, int toState, string userId, DateTime updatedOnUtc,
 			CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Marks a claim created with its call, only while it is still that claim in <see cref="RecurringCallOccurrenceStates.Creating"/>;
+		/// false when it is not (the stale-claim recovery dropped it, or already recorded the call).
+		/// </summary>
+		Task<bool> TryCompleteClaimAsync(string recurringCallOccurrenceId, int callId, DateTime updatedOnUtc, CancellationToken cancellationToken = default);
 	}
 
 	/// <summary>What dispatchers have to act on for recurring calls (RecurringCallAlerts, M0320).</summary>
 	public interface IRecurringCallAlertsRepository : IRepository<RecurringCallAlert>
 	{
-		/// <summary>Inserts the alert unless the occurrence already has one of that kind; false when it did.</summary>
+		/// <summary>
+		/// Inserts the alert unless the occurrence already has an open one of that kind; false when it did. A closed one does not
+		/// count, so an occurrence restored after its alert was closed can be alerted again.
+		/// </summary>
 		Task<bool> TryRaiseAsync(RecurringCallAlert alert, CancellationToken cancellationToken = default);
+
+		/// <summary>Whether the occurrence has ever had an alert of that kind, open or closed.</summary>
+		Task<bool> AnyForOccurrenceAsync(int recurringCallId, DateTime occurrenceUtc, int kind);
 
 		/// <summary>A department's open alerts.</summary>
 		Task<IEnumerable<RecurringCallAlert>> GetOpenForDepartmentAsync(int departmentId);

@@ -558,16 +558,19 @@ namespace Resgrid.Services
 						rc["destination_name"] = evt.DestinationName;
 						rc["contact_name"] = evt.ScheduleContactName;
 						rc["contact_number"] = evt.ScheduleContactNumber;
-						rc["starts_on"] = evt.StartsOn.ToString("yyyy-MM-dd");
-						rc["ends_on"] = evt.EndsOn?.ToString("yyyy-MM-dd");
+						// Gregorian whatever the worker's culture, as the preview shows them.
+						rc["starts_on"] = evt.StartsOn.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+						rc["ends_on"] = evt.EndsOn?.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
 						rc["times"] = evt.Times;
 						rc["mode"] = evt.CreationMode == (int)RecurringCallCreationModes.Dispatcher ? "Dispatcher" : "Automatic";
 						rc["use_run_card"] = evt.UseRunCard;
 						rc["is_active"] = evt.IsActive;
 						rc["pause_reason"] = evt.PauseReason;
-						rc["resume_on"] = evt.ResumeOn?.ToString("yyyy-MM-dd");
+						rc["resume_on"] = evt.ResumeOn?.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
 						rc["next_occurrence_on"] = evt.NextOccurrenceOn;
 						scriptObject["recurring_call"] = rc;
+						// Who changed it (none for the worker's automatic resume): the common user.* block.
+						triggeringUserId = evt.UserId;
 					}
 					break;
 				}
@@ -593,6 +596,8 @@ namespace Resgrid.Services
 						oc["unavailable_count"] = evt.UnavailableCount;
 						oc["run_card_applied"] = evt.RunCardApplied;
 						scriptObject["occurrence"] = oc;
+						// The dispatcher who created, skipped or sent it (none for the worker): the common user.* block.
+						triggeringUserId = evt.UserId;
 					}
 					break;
 				}

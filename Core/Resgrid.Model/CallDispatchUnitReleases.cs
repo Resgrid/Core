@@ -27,8 +27,8 @@ namespace Resgrid.Model
 		/// Applies an edited unit list to a call's unit dispatches in place. A live unit missing from <paramref name="unitIds"/>
 		/// is removed (when <paramref name="canRemove"/> allows it); a released unit missing from it stays, released, because
 		/// the record of its dispatch and stand-down is history, not a choice the editor made. A listed unit already live is
-		/// kept as it is, a listed released unit is re-dispatched, and a listed unit with no dispatch is added (when
-		/// <paramref name="canAdd"/> allows it).
+		/// kept as it is, and a listed released unit is re-dispatched or a listed unit with no dispatch is added, each only when
+		/// <paramref name="canAdd"/> allows it (a refused released unit stays released).
 		/// </summary>
 		/// <returns>The units re-dispatched from released; the caller treats them like newly added units (notify, dispatch status).</returns>
 		public static List<int> ApplyUnitList(ICollection<CallDispatchUnit> dispatches, int callId, IEnumerable<int> unitIds,
@@ -55,6 +55,10 @@ namespace Resgrid.Model
 
 				if (existing.Count > 0)
 				{
+					// The same rule as adding: a unit that can no longer be dispatched (deleted, not the department's) stays released.
+					if (canAdd != null && !canAdd(unitId))
+						continue;
+
 					existing.OrderByDescending(x => x.DispatchedOn).First().Redispatch(nowUtc);
 					redispatched.Add(unitId);
 					continue;

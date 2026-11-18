@@ -89,7 +89,7 @@ namespace Resgrid.Tests.Services
 			_calls.Setup(c => c.GetCallByIdAsync(CallId, It.IsAny<bool>())).ReturnsAsync(() => _call);
 			_calls.Setup(c => c.PopulateCallData(It.IsAny<Call>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(),
 					It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>()))
-				.ReturnsAsync((Call c, bool a, bool b, bool d, bool e, bool f, bool g, bool h, bool i, bool j, bool k) => c);
+				.ReturnsAsync((Call c, bool a, bool b, bool d, bool e, bool f, bool g, bool h, bool i, bool j, bool k) => c == _call ? c : FreshRead(c));
 
 			_communication = new Mock<ICommunicationService>();
 			_communication.Setup(c => c.SendCallRenotificationAsync(It.IsAny<Call>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(),
@@ -130,6 +130,17 @@ namespace Resgrid.Tests.Services
 			AcknowledgeAfter = _now.AddMinutes(-5 * (attempts + 1)),
 			NextNotifyOn = _now
 		};
+
+		/// <summary>A population of a new call object reads the stored lists as they are now (the stored call is _call).</summary>
+		private Call FreshRead(Call c)
+		{
+			c.Dispatches = _call.Dispatches?.ToList();
+			c.GroupDispatches = _call.GroupDispatches?.ToList();
+			c.RoleDispatches = _call.RoleDispatches?.ToList();
+			c.UnitDispatches = _call.UnitDispatches?.ToList();
+			c.PersonnelReleases = _call.PersonnelReleases?.ToList() ?? new List<CallPersonnelRelease>();
+			return c;
+		}
 
 		private DispatchRenotification UnitRow(int attempts = 0) => new DispatchRenotification
 		{
@@ -439,6 +450,20 @@ namespace Resgrid.Tests.Services
 
 			(await _service.ProcessDueAsync(_now)).Cancelled.Should().Be(1);
 			VerifyNothingSent();
+		}
+
+		[Test]
+		public async Task A_unit_released_while_its_acknowledgment_was_looked_up_is_not_chased()
+		{
+			Due(UnitRow());
+			// The stand-down commits after the sweep read the call, while it looks for the unit's acknowledgment.
+			_unitStates.Setup(u => u.GetAllUnitStatesForUnitInDateRangeAsync(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+				.Callback(() => _call.UnitDispatches = new List<CallDispatchUnit> { new CallDispatchUnit { CallId = CallId, UnitId = UnitId, ReleasedOn = _now } })
+				.ReturnsAsync(new List<UnitState>());
+
+			(await _service.ProcessDueAsync(_now)).Cancelled.Should().Be(1);
+			VerifyNothingSent();
+			_repository.Verify(r => r.TryClaimAttemptAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTime?>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
 
 		[Test]

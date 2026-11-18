@@ -224,6 +224,20 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task stays_open_while_a_unit_sent_back_after_a_stand_down_has_not_reported_since()
+		{
+			// B cleared 10 minutes ago, was stood down, then sent back 5 minutes ago: its Available is from before it went back.
+			_unitDispatches.Setup(x => x.GetCallUnitDispatchesByCallIdAsync(CallId)).ReturnsAsync(() => new List<CallDispatchUnit>
+			{
+				new CallDispatchUnit { CallId = CallId, UnitId = UnitA, DispatchedOn = _now.AddMinutes(-40) },
+				new CallDispatchUnit { CallId = CallId, UnitId = UnitB, DispatchedOn = _now.AddMinutes(-40), LastDispatchedOn = _now.AddMinutes(-5) }
+			});
+
+			(await _service.CloseCallsFinishedByUnitStateAsync(DeptId, Saved((int)UnitStateTypes.Available), Previous((int)UnitStateTypes.OnScene))).Should().BeEmpty();
+			VerifyNotClosed();
+		}
+
+		[Test]
 		public async Task does_nothing_when_the_department_has_not_turned_it_on()
 		{
 			_settings.Setup(x => x.GetCloseCallWhenUnitsClearAsync(DeptId, It.IsAny<bool>())).ReturnsAsync(false);

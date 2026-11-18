@@ -84,7 +84,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!CanManage())
 				return Unauthorized();
 
-			if (!Enum.IsDefined(typeof(DestinationSuggestionModes), mode) || preferredWithinMinutes is < 0 or > DestinationSuggestionConfig.MaximumPreferredWithinMinutes)
+			// A value that did not bind (a non-number mode or window) reads as 0 / null here, which would save "Off" or the default.
+			if (!ModelState.IsValid || !Enum.IsDefined(typeof(DestinationSuggestionModes), mode) ||
+			    preferredWithinMinutes is < 0 or > DestinationSuggestionConfig.MaximumPreferredWithinMinutes)
 			{
 				TempData["DestinationRulesError"] = string.Format(_localizer["SettingsInvalid"].Value, DestinationSuggestionConfig.MaximumPreferredWithinMinutes);
 				return RedirectToAction("Index");
@@ -135,6 +137,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return Unauthorized();
 
 			model ??= new DestinationRuleEditView();
+
+			// A condition that did not bind is null, which would save the rule for every call type, priority or unit type.
+			if (!ModelState.IsValid)
+			{
+				await FillEditViewAsync(model);
+				return View(model);
+			}
+
 			var rule = new DestinationRule
 			{
 				DestinationRuleId = string.IsNullOrWhiteSpace(model.DestinationRuleId) ? null : model.DestinationRuleId.Trim(),
@@ -173,7 +183,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (rule == null)
 				return NotFound();
 
-			await _destinationRulesService.DeleteRuleAsync(DepartmentId, rule.DestinationRuleId, cancellationToken);
+			// Deleted by someone else since the lookup: same answer as a rule that was already gone.
+			if (!await _destinationRulesService.DeleteRuleAsync(DepartmentId, rule.DestinationRuleId, cancellationToken))
+				return NotFound();
+
 			TempData["DestinationRulesMessage"] = string.Format(_localizer["RuleDeleted"].Value, rule.Name);
 
 			return RedirectToAction("Index");
@@ -207,16 +220,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 		/// </summary>
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Call_View)]
-		public async Task<IActionResult> Suggest(double latitude, double longitude, int? priority, string type, CancellationToken cancellationToken)
+		public async Task<IActionResult> Suggest(double? latitude, double? longitude, int? priority, string type, CancellationToken cancellationToken)
 		{
-			if (double.IsNaN(latitude) || double.IsNaN(longitude) || Math.Abs(latitude) > 90 || Math.Abs(longitude) > 180)
+			// A missing coordinate would otherwise bind as 0 (a real place); an explicit 0 is still accepted.
+			if (!latitude.HasValue || !longitude.HasValue || double.IsNaN(latitude.Value) || double.IsNaN(longitude.Value) ||
+			    Math.Abs(latitude.Value) > 90 || Math.Abs(longitude.Value) > 180)
 				return Json(new { success = false });
 
 			var suggestions = await _nearestDestinationService.SuggestDestinationsAsync(new DestinationSuggestionRequest
 			{
 				DepartmentId = DepartmentId,
-				Latitude = latitude,
-				Longitude = longitude,
+				Latitude = latitude.Value,
+				Longitude = longitude.Value,
 				CallType = type,
 				CallPriority = priority,
 				MaxResults = 5

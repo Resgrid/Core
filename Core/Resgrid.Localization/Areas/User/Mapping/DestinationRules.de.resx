@@ -320,4 +320,13 @@
   <data name="SuggestionFailed" xml:space="preserve">
     <value>Zielvorschläge sind derzeit nicht verfügbar.</value>
   </data>
+  <data name="SuggestionRetry" xml:space="preserve">
+    <value>Erneut versuchen</value>
+  </data>
+  <data name="PreviewLoading" xml:space="preserve">
+    <value>Regeln werden geprüft...</value>
+  </data>
+  <data name="PreviewFailed" xml:space="preserve">
+    <value>Die Regeln konnten gerade nicht geprüft werden. Versuchen Sie es erneut.</value>
+  </data>
 </root>

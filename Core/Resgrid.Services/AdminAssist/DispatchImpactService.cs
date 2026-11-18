@@ -20,9 +20,10 @@ namespace Resgrid.Services.AdminAssist
 		IUnitsRepository units, IUnitStateRoleRepository crews, IPersonnelRolesRepository roles, IPersonnelRoleUsersRepository roleMembers,
 		IDepartmentSettingsRepository settings, IShiftsService shifts, IAuthorizationService visibility,
 		IRecordsAuthorizationService authorization, TimeProvider clock, ICallDispatchesRepository directRoutes,
-		ICallDispatchGroupRepository groupRoutes, ICallDispatchUnitRepository unitRoutes, ICallDispatchRoleRepository roleRoutes) : IDispatchImpactService
+		ICallDispatchGroupRepository groupRoutes, ICallDispatchUnitRepository unitRoutes, ICallDispatchRoleRepository roleRoutes,
+		ICallPersonnelReleasesRepository releases) : IDispatchImpactService
 	{
-		private sealed record Inputs(IReadOnlyList<DispatchRoute> Routes, bool Shift, bool Crew, bool UnitGroup);
+		private sealed record Inputs(IReadOnlyList<DispatchRoute> Routes, bool Shift, bool Crew, bool UnitGroup, IReadOnlyCollection<string> Released);
 		private static readonly string[] Limits = { "Impact.NoMutation", "Impact.DispatchScope", "Impact.DispatchTime", "Impact.DispatchDelivery", "Impact.Window" };
 		public async Task<ConfigurationImpactReport> PreviewAsync(AdminAssistActor actor, DispatchImpactRequest request, CancellationToken ct = default)
 		{
@@ -143,17 +144,27 @@ namespace Resgrid.Services.AdminAssist
 				Consume(members.Count);
 				routes.Add(new(DispatchRouteKind.Role, dispatch.RoleId.ToString(CultureInfo.InvariantCulture), members.Select(m => m.UserId).ToArray()));
 			}
+			// A rebroadcast pages nobody released (stood down) from the call, however a route reaches them, so neither
+			// configuration counts them. As CallBroadcast does it: a released member's direct row is skipped, and the releases
+			// seed the resolver's already-reached set for every expanded route (an on-duty roster keeps its released members, so
+			// the empty-shift fallback is decided as the broadcast decides it). Part of the inputs, so the second snapshot sees
+			// a release made in between.
+			var released = new SortedSet<string>(((await releases.GetByCallIdAsync(call.CallId).WaitAsync(ct)) ?? throw new InvalidOperationException())
+				.Where(r => r != null && !string.IsNullOrWhiteSpace(r.UserId)).Select(r => r.UserId), StringComparer.OrdinalIgnoreCase);
+			if (released.Count > 0)
+				routes = routes.Where(r => r.Kind != DispatchRouteKind.Direct || !r.Members.Any(m => released.Contains(m ?? string.Empty))).ToList();
 			foreach (var userId in routes.SelectMany(r => r.Members.Concat(r.OnDutyMembers ?? Array.Empty<string>())).Distinct(StringComparer.Ordinal))
 			{
 				ct.ThrowIfCancellationRequested();
 				if (string.IsNullOrWhiteSpace(userId) || !await authorization.IsAssignableMemberAsync(userId, actor.DepartmentId) ||
 					!await visibility.CanUserViewPersonAsync(actor.UserId, userId, actor.DepartmentId)) throw new UnauthorizedAccessException();
 			}
-			return new(routes, currentShift, currentCrew, currentGroup);
+			return new(routes, currentShift, currentCrew, currentGroup, released);
 		}
 		private static DispatchResolution Resolve(Inputs input, DateTime time, bool shift, bool crew, bool group) =>
 			DispatchRecipientResolver.Resolve(time, input.Routes.Where(r => (r.Kind != DispatchRouteKind.UnitCrew || crew) && (r.Kind != DispatchRouteKind.UnitGroup || group))
-				.Select(r => r.Kind == DispatchRouteKind.Group ? r with { UseResolvedShift = shift } : r));
+				.Select(r => r.Kind == DispatchRouteKind.Group ? r with { UseResolvedShift = shift } : r),
+				new HashSet<string>(input.Released ?? (IEnumerable<string>)Array.Empty<string>(), StringComparer.OrdinalIgnoreCase));
 		private static string Fingerprint(Inputs value) => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(value))));
 	}
 }

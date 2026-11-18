@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Resgrid.Config;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
@@ -8,7 +9,9 @@ using Resgrid.Repositories.DataRepository.Configs;
 using Resgrid.Repositories.DataRepository.Queries.Calls;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Common;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Resgrid.Repositories.DataRepository
@@ -238,6 +241,45 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				Logging.LogException(ex);
 
+				throw;
+			}
+		}
+
+		public async Task<bool> TryReleaseAsync(int callDispatchUnitId, DateTime releasedOnUtc, string releasedByUserId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			// Conditional on the row still being live, so only one of two concurrent releases changes it (and runs the
+			// release's status, notice and event); the other sees zero rows.
+			var postgres = DataConfig.DatabaseType == DatabaseTypes.Postgres;
+			var sql = postgres
+				? $"UPDATE {_sqlConfiguration.SchemaName}.calldispatchunits SET releasedon = @ReleasedOn, releasedbyuserid = @ReleasedByUserId " +
+				  "WHERE calldispatchunitid = @CallDispatchUnitId AND releasedon IS NULL"
+				: $"UPDATE {_sqlConfiguration.SchemaName}.[CallDispatchUnits] SET [ReleasedOn] = @ReleasedOn, [ReleasedByUserId] = @ReleasedByUserId " +
+				  "WHERE [CallDispatchUnitId] = @CallDispatchUnitId AND [ReleasedOn] IS NULL";
+
+			var parameters = new DynamicParameters(new { CallDispatchUnitId = callDispatchUnitId, ReleasedByUserId = releasedByUserId });
+			// PostgreSQL timestamp columns carry no zone (Npgsql binds an Unspecified kind); SQL Server's column is datetime2.
+			if (postgres)
+				parameters.Add("ReleasedOn", DateTime.SpecifyKind(releasedOnUtc, DateTimeKind.Unspecified));
+			else
+				parameters.Add("ReleasedOn", releasedOnUtc, DbType.DateTime2);
+
+			try
+			{
+				if (_unitOfWork?.Connection != null)
+					return await _unitOfWork.CreateOrGetConnection().ExecuteAsync(new Dapper.CommandDefinition(sql, parameters, _unitOfWork.Transaction,
+						cancellationToken: cancellationToken)) == 1;
+
+				await using var connection = _connectionProvider.Create();
+				await connection.OpenAsync(cancellationToken);
+				return await connection.ExecuteAsync(new Dapper.CommandDefinition(sql, parameters, cancellationToken: cancellationToken)) == 1;
+			}
+			catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+			{
+				throw;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
 				throw;
 			}
 		}

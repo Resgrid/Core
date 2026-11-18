@@ -2487,7 +2487,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 							{
 								var unitResource = new OpenCallResourceUnit();
 								unitResource.UnitName = unit.Name;
-								unitResource.DispatchedOn = disaptch.DispatchedOn.TimeConverter(model.Department);
+								// A unit sent back after a stand-down shows when it was sent back (the history keeps the first dispatch).
+								unitResource.DispatchedOn = UnitCallInvolvement.LatestDispatchTime(disaptch).TimeConverter(model.Department);
 
 								if (unit.Roles != null && unit.Roles.Any())
 								{
@@ -2499,7 +2500,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 										{
 											var activeRolePerson = personnel.FirstOrDefault(x => x.UserId == activeRole.UserId);
 
-											if (activeRolePerson != null)
+											// A member released from the call is off it even while still seated on a unit that is on it.
+											if (activeRolePerson != null && !callData.IsUserReleased(activeRolePerson.UserId))
 											{
 												var roleUnitPerson = new OpenCallResourcePerson();
 												roleUnitPerson.Name = activeRolePerson.Name;

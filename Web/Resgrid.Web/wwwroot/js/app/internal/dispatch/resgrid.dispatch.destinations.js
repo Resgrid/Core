@@ -17,10 +17,13 @@ var resgrid;
             var touched = false;      // the dispatcher picked or cleared a destination by hand
             var autoFilledId = null;  // the destination the script last filled in
             var applying = false;     // set while the script itself changes the select
-            var lastData = null;
-            var lastKey = null;       // inputs of the answer on screen
+            var shown = null;         // { key, data }: the answer on screen; null while a new lookup runs or after one failed
+            var cached = null;        // { key, data, at }: the latest answer, reused for the same inputs while fresh
             var pendingKey = null;    // inputs of the request in flight
             var initialized = false;
+
+            // Answers carry live availability (diversion, closed), so one is reused for the same inputs for a minute at most.
+            var cacheMilliseconds = 60000;
 
             function strings() {
                 return typeof destinationSuggestionStrings !== 'undefined' && destinationSuggestionStrings ? destinationSuggestionStrings : {};
@@ -39,10 +42,11 @@ var resgrid;
                 });
             }
 
+            // Safe in text and in quoted attribute values (an availability note such as: Use "East" entrance).
             function escapeHtml(value) {
                 var wrapper = document.createElement('div');
                 wrapper.textContent = value === null || value === undefined ? '' : String(value);
-                return wrapper.innerHTML;
+                return wrapper.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
             }
 
             function row() {
@@ -227,8 +231,62 @@ var resgrid;
             }
 
             function hide() {
-                lastKey = null;
+                shown = null;
                 row().hide();
+            }
+
+            // The lookup inputs on the form now, or null when there is no usable incident location.
+            function inputs() {
+                var lat = parseFloat($('#Latitude').val());
+                var lng = parseFloat($('#Longitude').val());
+                if (isNaN(lat) || isNaN(lng) || (lat === 0 && lng === 0) || Math.abs(lat) > 90 || Math.abs(lng) > 180) {
+                    return null;
+                }
+
+                var priority = $('#CallPriority').val();
+                var type = $('#Call_Type').val();
+                return { latitude: lat, longitude: lng, priority: priority, type: type, key: [lat, lng, priority, type].join('|') };
+            }
+
+            function currentKey() {
+                var current = inputs();
+                return current ? current.key : null;
+            }
+
+            function isFresh(entry, key) {
+                return !!entry && entry.key === key && (Date.now() - entry.at) < cacheMilliseconds;
+            }
+
+            // The inputs moved away from the answer on screen: its Use buttons go, and a destination this script filled in for
+            // the old inputs comes back out (an answer for the new ones fills it again). A manual choice is left alone.
+            function invalidate() {
+                shown = null;
+                if (autoFilledId && !touched && selectedId() === autoFilledId) {
+                    setDestination(null);
+                }
+                autoFilledId = null;
+                showNote('', null);
+
+                if (row().is(':visible')) {
+                    $('#destinationSuggestionsRequirements').empty();
+                    $('#destinationSuggestionsList').html('<p class="text-muted" style="margin: 0;">' + escapeHtml(text('loading', 'Finding destinations...')) + '</p>');
+                }
+            }
+
+            function apply(key, data) {
+                shown = { key: key, data: data };
+                // Fill before rendering, so the row marked "Selected" is the destination now in the field.
+                autoFill(data);
+                render(data);
+                row().show();
+            }
+
+            function showFailure() {
+                shown = null;
+                $('#destinationSuggestionsRequirements').empty();
+                $('#destinationSuggestionsList').html('<p class="text-muted" style="margin: 0;">' + escapeHtml(text('failed', 'Destination suggestions are unavailable right now.')) +
+                    ' <button type="button" class="btn btn-xs btn-default destination-suggestion-retry">' + escapeHtml(text('retry', 'Try again')) + '</button></p>');
+                row().show();
             }
 
             function check() {
@@ -236,27 +294,37 @@ var resgrid;
                     return;
                 }
 
-                var lat = parseFloat($('#Latitude').val());
-                var lng = parseFloat($('#Longitude').val());
-                if (isNaN(lat) || isNaN(lng) || (lat === 0 && lng === 0) || Math.abs(lat) > 90 || Math.abs(lng) > 180) {
+                var current = inputs();
+                if (!current) {
+                    // No location: a lookup in flight is for one no longer on the form, and must not reopen the panel.
+                    sequence++;
+                    pendingKey = null;
+                    invalidate();
                     hide();
                     return;
                 }
 
                 // Every suggestion looks up drive times: the call form fires several change hooks for one edit (the map
-                // marker, the location fields), so the same inputs are not asked for twice.
-                var priority = $('#CallPriority').val();
-                var type = $('#Call_Type').val();
-                var key = [lat, lng, priority, type].join('|');
-                if (key === pendingKey || (key === lastKey && lastData)) {
+                // marker, the location fields), so the same inputs are not asked for twice while the answer is fresh.
+                var key = current.key;
+                if (key === pendingKey || (shown && shown.key === key && isFresh(cached, key))) {
                     return;
+                }
+
+                if (isFresh(cached, key)) {
+                    // Back to inputs answered a moment ago while another lookup was pending: that answer is shown again.
+                    sequence++;
+                    pendingKey = null;
+                    apply(key, cached.data);
+                    return;
+                }
+
+                if (!shown || shown.key !== key) {
+                    invalidate();
                 }
 
                 var requestSequence = ++sequence;
                 pendingKey = key;
-                if (row().is(':visible')) {
-                    $('#destinationSuggestionsList').html('<p class="text-muted" style="margin: 0;">' + escapeHtml(text('loading', 'Finding destinations...')) + '</p>');
-                }
 
                 $.ajax({
                     url: resgrid.absoluteBaseUrl + '/User/DestinationRules/Suggest',
@@ -264,10 +332,10 @@ var resgrid;
                     dataType: 'json',
                     cache: false,
                     data: {
-                        latitude: lat,
-                        longitude: lng,
-                        priority: priority,
-                        type: type
+                        latitude: current.latitude,
+                        longitude: current.longitude,
+                        priority: current.priority,
+                        type: current.type
                     }
                 }).done(function (data) {
                     if (requestSequence !== sequence) {
@@ -275,32 +343,41 @@ var resgrid;
                     }
 
                     pendingKey = null;
+                    if (data && data.success && data.mode === 0) {
+                        mode = 0;
+                        hide();
+                        return;
+                    }
+
+                    if (data && data.success) {
+                        mode = data.mode;
+                        cached = { key: key, data: data, at: Date.now() };
+                    }
+
+                    // The form changed after this request went out (the next check asks for the new inputs).
+                    if (currentKey() !== key) {
+                        return;
+                    }
+
                     if (!data || !data.success) {
                         hide();
                         return;
                     }
 
-                    mode = data.mode;
-                    if (mode === 0) {
-                        hide();
-                        return;
-                    }
-
-                    lastData = data;
-                    lastKey = key;
-                    // Fill before rendering, so the row marked "Selected" is the destination now in the field.
-                    autoFill(data);
-                    render(data);
-                    row().show();
+                    apply(key, data);
                 }).fail(function () {
                     if (requestSequence !== sequence) {
                         return;
                     }
 
                     pendingKey = null;
-                    if (row().is(':visible')) {
-                        $('#destinationSuggestionsList').html('<p class="text-muted" style="margin: 0;">' + escapeHtml(text('failed', 'Destination suggestions are unavailable right now.')) + '</p>');
+                    if (currentKey() !== key) {
+                        return;
                     }
+
+                    // Shown even before a first answer, so a failure is not mistaken for suggestions being off; the
+                    // dispatcher can retry, and the Destination picker stays usable either way.
+                    showFailure();
                 });
             }
             destinations.check = check;
@@ -337,20 +414,29 @@ var resgrid;
                     touched = true;
                     autoFilledId = null;
                     showNote('', null);
-                    if (lastData) {
-                        render(lastData);
+                    // Only an answer for the inputs on the form is drawn again (never an older one's Use buttons mid-lookup).
+                    if (shown && shown.key === currentKey()) {
+                        render(shown.data);
                     }
                 });
 
                 $('#destinationSuggestionsList').on('click', '.destination-suggestion-use', function () {
+                    if (!shown || shown.key !== currentKey()) {
+                        return;
+                    }
+
                     var poiId = String($(this).data('poi-id'));
                     setDestination(poiId);
                     touched = true;
                     autoFilledId = null;
                     showNote('', null);
-                    if (lastData) {
-                        render(lastData);
-                    }
+                    render(shown.data);
+                });
+
+                $('#destinationSuggestionsList').on('click', '.destination-suggestion-retry', function () {
+                    cached = null;
+                    pendingKey = null;
+                    check();
                 });
 
                 $('#CallPriority, #Call_Type, #Latitude, #Longitude').on('change', schedule);

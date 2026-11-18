@@ -117,7 +117,7 @@ namespace Resgrid.Web.Services.Models.v4.RecurringCalls
 		public string Name { get; set; }
 		/// <summary>ISO UTC.</summary>
 		public string DispatchOn { get; set; }
-		/// <summary>Held as pending (nobody could be sent).</summary>
+		/// <summary>Pending, waiting for a dispatcher to send it (nobody could be sent, or it was created by hand once due).</summary>
 		public bool IsHeld { get; set; }
 	}
 
@@ -207,7 +207,10 @@ namespace Resgrid.Web.Services.Models.v4.RecurringCalls
 		public List<int> AlertGroupIds { get; set; }
 		public List<int> AlertRoleIds { get; set; }
 
-		/// <summary>Updating: delete and re-create the calls already created that have not gone out (default true).</summary>
+		/// <summary>
+		/// Updating: delete and re-create the scheduled calls already created that have not gone out (default true). A held
+		/// (pending) call is not replaced: it has an open alert and stays the dispatcher's to send or close.
+		/// </summary>
 		public bool ReplaceUpcomingCalls { get; set; } = true;
 	}
 
@@ -241,6 +244,7 @@ namespace Resgrid.Web.Services.Models.v4.RecurringCalls
 		public string Reason { get; set; }
 		/// <summary>"yyyy-MM-dd" in the department's time zone; null to stay paused.</summary>
 		public string ResumeOn { get; set; }
+		/// <summary>Also delete the scheduled calls already created that have not gone out (held calls stay).</summary>
 		public bool DeleteUpcomingCalls { get; set; }
 	}
 
@@ -252,6 +256,7 @@ namespace Resgrid.Web.Services.Models.v4.RecurringCalls
 	public class DeleteRecurringCallInput
 	{
 		public int RecurringCallId { get; set; }
+		/// <summary>Also delete the scheduled calls already created that have not gone out (default true; held calls stay).</summary>
 		public bool DeleteUpcomingCalls { get; set; } = true;
 	}
 

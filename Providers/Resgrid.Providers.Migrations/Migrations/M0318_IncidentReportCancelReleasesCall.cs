@@ -28,13 +28,13 @@ namespace Resgrid.Providers.Migrations.Migrations
 			if (!Schema.Table("RmsIncidentReports").Exists())
 				return;
 
-			// The M0164 filter can only come back while no Call holds a cancelled report next to its replacement; otherwise
-			// the index build would fail, so the M0318 filter stays rather than any report being touched.
-			Execute.Sql(@"IF NOT EXISTS (SELECT 1 FROM [RmsIncidentReports] WHERE [DeletedOn] IS NULL GROUP BY [DepartmentId], [CallId], [ReportingEntityId], [DefinitionKey] HAVING COUNT(*) > 1)
-BEGIN
-	IF EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'UX_RmsIncidentReports_Call_Entity' AND object_id = OBJECT_ID('RmsIncidentReports')) DROP INDEX [UX_RmsIncidentReports_Call_Entity] ON [RmsIncidentReports];
-	CREATE UNIQUE NONCLUSTERED INDEX [UX_RmsIncidentReports_Call_Entity] ON [RmsIncidentReports] ([DepartmentId], [CallId], [ReportingEntityId], [DefinitionKey]) WHERE [DeletedOn] IS NULL;
-END");
+			// The M0164 filter can only come back while no Call holds a cancelled report next to its replacement. Otherwise the
+			// rollback is refused: no report is touched, and the migration stays recorded, because skipping quietly would drop
+			// version 318 from the history while the M0318 filter is still in place.
+			Execute.Sql(@"IF EXISTS (SELECT 1 FROM [RmsIncidentReports] WHERE [DeletedOn] IS NULL GROUP BY [DepartmentId], [CallId], [ReportingEntityId], [DefinitionKey] HAVING COUNT(*) > 1)
+	THROW 51000, 'M0318 rollback refused: a Call holds a cancelled incident report next to its replacement, so the M0164 unique index cannot be restored. Soft-delete one of each pair first.', 1;
+IF EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'UX_RmsIncidentReports_Call_Entity' AND object_id = OBJECT_ID('RmsIncidentReports')) DROP INDEX [UX_RmsIncidentReports_Call_Entity] ON [RmsIncidentReports];
+CREATE UNIQUE NONCLUSTERED INDEX [UX_RmsIncidentReports_Call_Entity] ON [RmsIncidentReports] ([DepartmentId], [CallId], [ReportingEntityId], [DefinitionKey]) WHERE [DeletedOn] IS NULL;");
 		}
 	}
 }

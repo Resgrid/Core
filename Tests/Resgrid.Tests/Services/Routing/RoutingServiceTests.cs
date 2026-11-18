@@ -441,6 +441,61 @@ namespace Resgrid.Tests.Services.Routing
 		}
 	}
 
+	/// <summary>
+	/// Mapbox matrix requests carry at most 25 coordinates (10 on driving-traffic), origins and destinations together; a
+	/// Valhalla fallback with that many destinations or more must still be split rather than refused (PR #587).
+	/// </summary>
+	[TestFixture]
+	public class MapboxMatrixChunkTests
+	{
+		[TestCase(1, 1, 25)]
+		[TestCase(30, 1, 25)]
+		[TestCase(1, 24, 25)]
+		[TestCase(1, 25, 25)]
+		[TestCase(3, 40, 25)]
+		[TestCase(40, 40, 25)]
+		[TestCase(4, 10, 10)]
+		[TestCase(12, 23, 10)]
+		public void every_pair_is_covered_once_and_no_request_exceeds_the_limit(int origins, int destinations, int limit)
+		{
+			var chunks = MapboxRoutingProvider.MatrixChunks(origins, destinations, limit);
+
+			chunks.Should().NotBeEmpty();
+			chunks.Should().OnlyContain(c => c.OriginCount > 0 && c.DestinationCount > 0 && c.OriginCount + c.DestinationCount <= limit);
+
+			var covered = new int[origins, destinations];
+			foreach (var chunk in chunks)
+				for (var i = chunk.OriginStart; i < chunk.OriginStart + chunk.OriginCount; i++)
+					for (var j = chunk.DestinationStart; j < chunk.DestinationStart + chunk.DestinationCount; j++)
+						covered[i, j]++;
+
+			covered.Cast<int>().Should().OnlyContain(x => x == 1);
+		}
+
+		[Test]
+		public void destinations_that_fit_beside_an_origin_stay_in_one_run()
+		{
+			var chunks = MapboxRoutingProvider.MatrixChunks(30, 5, 25);
+
+			chunks.Should().HaveCount(2);
+			chunks.Should().OnlyContain(c => c.DestinationStart == 0 && c.DestinationCount == 5);
+		}
+
+		[Test]
+		public void the_driving_traffic_limit_is_lower()
+		{
+			MapboxRoutingProvider.MatrixCoordinateLimit("driving-traffic").Should().Be(10);
+			MapboxRoutingProvider.MatrixCoordinateLimit("driving").Should().Be(25);
+		}
+
+		[Test]
+		public void an_empty_side_needs_no_request()
+		{
+			MapboxRoutingProvider.MatrixChunks(0, 5, 25).Should().BeEmpty();
+			MapboxRoutingProvider.MatrixChunks(5, 0, 25).Should().BeEmpty();
+		}
+	}
+
 	[TestFixture]
 	public class RouteOrderOptimizerTests
 	{

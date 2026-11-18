@@ -21,13 +21,15 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 			if (!Schema.Table("rmsincidentreports").Exists())
 				return;
 
-			// Restore the M0164 filter only while no Call holds a cancelled report next to its replacement.
+			// Restore the M0164 filter only while no Call holds a cancelled report next to its replacement; otherwise refuse the
+			// rollback (no report touched, version 318 stays recorded) rather than skip it with the M0318 filter still in place.
 			Execute.Sql(@"DO $$
 BEGIN
-	IF NOT EXISTS (SELECT 1 FROM rmsincidentreports WHERE deletedon IS NULL GROUP BY departmentid, callid, reportingentityid, definitionkey HAVING COUNT(*) > 1) THEN
-		DROP INDEX IF EXISTS ux_rmsincidentreports_call_entity;
-		CREATE UNIQUE INDEX ux_rmsincidentreports_call_entity ON rmsincidentreports (departmentid, callid, reportingentityid, definitionkey) WHERE deletedon IS NULL;
+	IF EXISTS (SELECT 1 FROM rmsincidentreports WHERE deletedon IS NULL GROUP BY departmentid, callid, reportingentityid, definitionkey HAVING COUNT(*) > 1) THEN
+		RAISE EXCEPTION 'M0318 rollback refused: a Call holds a cancelled incident report next to its replacement, so the M0164 unique index cannot be restored. Soft-delete one of each pair first.';
 	END IF;
+	DROP INDEX IF EXISTS ux_rmsincidentreports_call_entity;
+	CREATE UNIQUE INDEX ux_rmsincidentreports_call_entity ON rmsincidentreports (departmentid, callid, reportingentityid, definitionkey) WHERE deletedon IS NULL;
 END $$;");
 		}
 	}

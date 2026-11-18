@@ -21,10 +21,11 @@ namespace Resgrid.Services
 		private readonly IFeatureToggleService _featureToggleService;
 		private readonly IDispatchRecommendationService _dispatchRecommendationService;
 		private readonly IEventAggregator _eventAggregator;
+		private readonly IRecurringCallsService _recurringCallsService;
 
 		public PendingCallsService(ICallsService callsService, IQueueService queueService, IUserProfileService userProfileService,
 			ICallDispatchStatusService callDispatchStatusService, IFeatureToggleService featureToggleService,
-			IDispatchRecommendationService dispatchRecommendationService, IEventAggregator eventAggregator)
+			IDispatchRecommendationService dispatchRecommendationService, IEventAggregator eventAggregator, IRecurringCallsService recurringCallsService)
 		{
 			_callsService = callsService;
 			_queueService = queueService;
@@ -33,6 +34,7 @@ namespace Resgrid.Services
 			_featureToggleService = featureToggleService;
 			_dispatchRecommendationService = dispatchRecommendationService;
 			_eventAggregator = eventAggregator;
+			_recurringCallsService = recurringCallsService;
 		}
 
 		public bool IsWaitingForDispatch(Call call)
@@ -170,6 +172,11 @@ namespace Resgrid.Services
 				_eventAggregator.SendMessage<CallAddedEvent>(new CallAddedEvent() { DepartmentId = savedCall.DepartmentId, Call = savedCall });
 			else
 				_eventAggregator.SendMessage<CallUpdatedEvent>(new CallUpdatedEvent() { DepartmentId = savedCall.DepartmentId, Call = savedCall });
+
+			// A call a recurring schedule created (often one held because nobody was available): its occurrence's alerts close and
+			// its Dispatched trigger runs, as when the schedule sends it itself.
+			if (savedCall.RecurringCallId.HasValue)
+				await _recurringCallsService.OnCallDispatchedAsync(savedCall, userId, CancellationToken.None);
 
 			return DispatchNowOutcome.Dispatched;
 		}

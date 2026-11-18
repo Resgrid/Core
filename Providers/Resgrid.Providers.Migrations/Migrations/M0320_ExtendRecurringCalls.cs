@@ -7,7 +7,7 @@ namespace Resgrid.Providers.Migrations.Migrations
 	/// names and details), dispatcher mode (nothing created; the dispatcher is alerted to send each occurrence), the run card option,
 	/// who to alert, and pause details (who, why, and an optional date it resumes on). RecurringCallAlerts holds what a dispatcher
 	/// has to act on per occurrence (call not created, missed, nobody to dispatch, resources unavailable, dispatcher mode due); its
-	/// unique (RecurringCallId, OccurrenceOn, Kind) index stops a worker pass raising or notifying twice, and the filtered index
+	/// unique (RecurringCallId, OccurrenceOn, Kind) index over open alerts stops a worker pass raising or notifying twice, and the filtered index
 	/// serves the open-alert list. No foreign keys; UnlinkedDepartmentCleanup removes the table. Existence-guarded for safe retry.
 	/// </summary>
 	[Migration(320)]
@@ -53,13 +53,11 @@ namespace Resgrid.Providers.Migrations.Migrations
 					.WithColumn("ResolvedByUserId").AsString(128).Nullable()
 					.WithColumn("Resolution").AsInt32().Nullable()
 					.WithColumn("ResolutionNote").AsString(1000).Nullable();
-
-				Create.Index("UX_RecurringCallAlerts_Occurrence").OnTable("RecurringCallAlerts")
-					.OnColumn("RecurringCallId").Ascending()
-					.OnColumn("OccurrenceOn").Ascending()
-					.OnColumn("Kind").Ascending()
-					.WithOptions().Unique();
 			}
+
+			// Unique over open alerts only: a closed alert keeps its history and an occurrence restored after it was closed can be alerted again.
+			Execute.Sql("IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'UX_RecurringCallAlerts_Occurrence' AND object_id = OBJECT_ID('RecurringCallAlerts')) " +
+						"CREATE UNIQUE INDEX [UX_RecurringCallAlerts_Occurrence] ON [RecurringCallAlerts] ([RecurringCallId], [OccurrenceOn], [Kind]) WHERE [ResolvedOn] IS NULL;");
 
 			Execute.Sql("IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_RecurringCallAlerts_Open' AND object_id = OBJECT_ID('RecurringCallAlerts')) " +
 						"CREATE INDEX [IX_RecurringCallAlerts_Open] ON [RecurringCallAlerts] ([DepartmentId], [CreatedOn]) WHERE [ResolvedOn] IS NULL;");

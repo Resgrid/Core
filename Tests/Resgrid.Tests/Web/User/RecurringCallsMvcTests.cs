@@ -156,6 +156,15 @@ namespace Resgrid.Tests.Web.User
 		}
 
 		[Test]
+		public void Occurrence_seconds_outside_what_the_occurrence_code_handles_are_refused()
+		{
+			RecurringCallsController.TryFromUnix(long.MaxValue, out _).Should().BeFalse();
+			RecurringCallsController.TryFromUnix(long.MinValue, out _).Should().BeFalse();
+			RecurringCallsController.TryFromUnix(new DateTimeOffset(2026, 11, 18, 13, 0, 0, TimeSpan.Zero).ToUnixTimeSeconds(), out var utc).Should().BeTrue();
+			utc.Should().Be(new DateTime(2026, 11, 18, 13, 0, 0, DateTimeKind.Utc));
+		}
+
+		[Test]
 		public void Lead_times_read_in_hours_and_days()
 		{
 			RecurringCallsController.DescribeLeadTime(1440, Localizer()).Should().Be("1 day before");

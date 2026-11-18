@@ -165,6 +165,7 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<PoisRepository>().As<IPoisRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<PoiCapabilitiesRepository>().As<IPoiCapabilitiesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<CallPersonnelReleasesRepository>().As<ICallPersonnelReleasesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<CallBroadcastOutboxRepository>().As<ICallBroadcastOutboxRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<PoiAvailabilitiesRepository>().As<IPoiAvailabilitiesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DestinationRulesRepository>().As<IDestinationRulesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RecurringCallsRepository>().As<IRecurringCallsRepository>().InstancePerLifetimeScope();

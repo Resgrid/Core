@@ -16,33 +16,53 @@ var resgrid;
                 return $('#dispatchCallNowForm input[name="__RequestVerificationToken"]').val();
             }
 
+            // The occurrence a request was made for: its answer only touches the dialog while that occurrence is still the one open
+            // (the dialog may have been closed, or another occurrence opened, before it came back).
+            function isOpen(props) {
+                return current === props && $('#scheduledOccurrenceModal').hasClass('in');
+            }
+
             function post(action, onSuccess) {
                 if (!current) return;
 
+                var props = current;
                 $('#scheduledOccurrenceError').hide();
                 $('#scheduledOccurrenceModal .modal-footer button').prop('disabled', true);
 
                 $.ajax({
                     url: resgrid.absoluteBaseUrl + '/User/RecurringCalls/' + action,
                     type: 'POST',
-                    data: { id: current.recurringCallId, occurrence: current.occurrence, __RequestVerificationToken: token() }
+                    data: { id: props.recurringCallId, occurrence: props.occurrence, __RequestVerificationToken: token() }
                 }).done(function (result) {
                     if (result && result.success) {
-                        onSuccess(result);
-                    } else {
+                        onSuccess(result, isOpen(props));
+                    } else if (isOpen(props)) {
                         $('#scheduledOccurrenceError').show();
                     }
                 }).fail(function () {
-                    $('#scheduledOccurrenceError').show();
+                    if (isOpen(props)) {
+                        $('#scheduledOccurrenceError').show();
+                    }
                 }).always(function () {
-                    $('#scheduledOccurrenceModal .modal-footer button').prop('disabled', false);
+                    if (current === props) {
+                        $('#scheduledOccurrenceModal .modal-footer button').prop('disabled', false);
+                    }
                 });
+            }
+
+            // After a change: the dialog closes if it is still this occurrence's, and the calendar is reloaded either way.
+            function done(stillOpen) {
+                if (stillOpen) {
+                    $('#scheduledOccurrenceModal').modal('hide');
+                }
+                calendarInstance.refetchEvents();
             }
 
             function openOccurrence(props, title) {
                 current = props;
 
                 $('#scheduledOccurrenceTitle').text(props.scheduleName || title);
+                $('#scheduledOccurrenceModal .modal-footer button').prop('disabled', false);
                 $('#scheduledOccurrenceWhen').text(props.when || '');
                 $('#scheduledOccurrenceAddress').text(props.address || '');
                 $('#scheduledOccurrenceError').hide();
@@ -93,6 +113,8 @@ var resgrid;
                         right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
                     },
                     height: 'auto',
+                    // Dates and headings in the page's language (button labels stay English: no FullCalendar locale bundles are shipped).
+                    locale: text.locale || undefined,
                     nowIndicator: true,
                     navLinks: true,
                     editable: false,
@@ -102,8 +124,12 @@ var resgrid;
                     scrollTime: '06:00:00',
                     events: {
                         url: resgrid.absoluteBaseUrl + '/User/RecurringCalls/GetCalendarEvents',
+                        success: function () {
+                            $('#scheduledCalendarError').hide();
+                        },
                         failure: function () {
-                            console.error('Failed to load scheduled calls.');
+                            // Shown on the calendar, not only the console: an empty calendar must not read as "nothing scheduled".
+                            $('#scheduledCalendarError').show();
                         }
                     },
                     eventClick: function (info) {
@@ -135,38 +161,40 @@ var resgrid;
                     render();
                 }
 
+                $('#scheduledCalendarRetry').on('click', function (e) {
+                    e.preventDefault();
+                    $('#scheduledCalendarError').hide();
+                    if (calendarInstance) calendarInstance.refetchEvents();
+                });
+
                 $('#scheduledOccurrenceSend').on('click', function () {
-                    post('DispatchOccurrenceNow', function (result) {
-                        if (result.url) {
+                    post('DispatchOccurrenceNow', function (result, stillOpen) {
+                        if (result.url && stillOpen) {
                             window.location.href = result.url;
                         } else {
-                            $('#scheduledOccurrenceModal').modal('hide');
-                            calendarInstance.refetchEvents();
+                            done(stillOpen);
                         }
                     });
                 });
 
                 $('#scheduledOccurrenceSkip').on('click', function () {
-                    post('SkipOccurrence', function () {
-                        $('#scheduledOccurrenceModal').modal('hide');
-                        calendarInstance.refetchEvents();
+                    post('SkipOccurrence', function (result, stillOpen) {
+                        done(stillOpen);
                     });
                 });
 
                 $('#scheduledOccurrenceRestore').on('click', function () {
-                    post('RestoreOccurrence', function () {
-                        $('#scheduledOccurrenceModal').modal('hide');
-                        calendarInstance.refetchEvents();
+                    post('RestoreOccurrence', function (result, stillOpen) {
+                        done(stillOpen);
                     });
                 });
 
                 $('#scheduledOccurrenceCreate').on('click', function () {
-                    post('CreateOccurrenceNow', function (result) {
-                        if (result.url) {
+                    post('CreateOccurrenceNow', function (result, stillOpen) {
+                        if (result.url && stillOpen) {
                             window.location.href = result.url;
                         } else {
-                            $('#scheduledOccurrenceModal').modal('hide');
-                            calendarInstance.refetchEvents();
+                            done(stillOpen);
                         }
                     });
                 });

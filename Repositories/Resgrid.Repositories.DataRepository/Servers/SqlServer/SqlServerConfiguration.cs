@@ -1380,7 +1380,8 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					WHERE cd.[UserId] = %USERID%
 					  AND c.[DepartmentId] = %DID%
 					  AND c.[CheckInTimersEnabled] = 1
-					  AND c.[State] = 0";
+					  AND c.[State] = 0
+					  AND NOT EXISTS (SELECT 1 FROM %SCHEMA%.CallPersonnelReleases pr WHERE pr.[CallId] = c.[CallId] AND pr.[UserId] = cd.[UserId])";
 			SelectCallsByContactQuery= @"
 					SELECT c.*
 					FROM %SCHEMA%.%CALLSTABLE% c

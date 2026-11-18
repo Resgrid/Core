@@ -172,8 +172,9 @@ namespace Resgrid.Services
 				var latest = await _unitStatesRepository.GetLastUnitStateByUnitIdAsync(dispatch.UnitId);
 
 				// Every other unit must have reported finished since it was sent: one still working, or one that never
-				// reported after its dispatch, keeps the call open.
-				if (latest == null || latest.Timestamp < dispatch.DispatchedOn || !UnitCallInvolvement.HasFinishedCall(latest.State, baseTypes))
+				// reported after its dispatch, keeps the call open. "Sent" is its latest dispatch: a unit sent back after a
+				// stand-down has not finished on a status from before it went back.
+				if (latest == null || latest.Timestamp < UnitCallInvolvement.LatestDispatchTime(dispatch) || !UnitCallInvolvement.HasFinishedCall(latest.State, baseTypes))
 					return false;
 			}
 

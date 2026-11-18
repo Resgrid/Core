@@ -320,4 +320,13 @@
   <data name="SuggestionFailed" xml:space="preserve">
     <value>اقتراحات الوجهات غير متاحة حاليًا.</value>
   </data>
+  <data name="SuggestionRetry" xml:space="preserve">
+    <value>إعادة المحاولة</value>
+  </data>
+  <data name="PreviewLoading" xml:space="preserve">
+    <value>جارٍ التحقق من القواعد...</value>
+  </data>
+  <data name="PreviewFailed" xml:space="preserve">
+    <value>تعذّر التحقق من القواعد الآن. حاول مرة أخرى.</value>
+  </data>
 </root>

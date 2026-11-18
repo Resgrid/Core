@@ -72,17 +72,18 @@ var resgrid;
 
                 $(document).on('click', '.rg-alert-skip', function () {
                     var button = this;
-                    post('SkipOccurrence', { id: $(button).data('id'), occurrence: $(button).data('occurrence') }, button, function (result, row) {
-                        removeRow(row);
+                    // Skipping closes every open alert about that occurrence (a create-failed and a missed one can both be listed), so
+                    // the list is drawn again rather than one row removed.
+                    post('SkipOccurrence', { id: $(button).data('id'), occurrence: $(button).data('occurrence') }, button, function () {
+                        window.location.reload();
                     });
                 });
 
                 $(document).on('click', '.rg-alert-ack', function () {
                     var button = this;
-                    post('AcknowledgeAlert', { alertId: $(button).data('alert') }, button, function (result, row) {
-                        row.removeClass('danger');
-                        $(button).remove();
-                        row.find('button').prop('disabled', false);
+                    // Drawn again so the row shows who acknowledged it (it stays open, and counted, until it is resolved).
+                    post('AcknowledgeAlert', { alertId: $(button).data('alert') }, button, function () {
+                        window.location.reload();
                     });
                 });
 

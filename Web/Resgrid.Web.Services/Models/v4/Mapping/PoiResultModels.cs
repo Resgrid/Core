@@ -109,7 +109,10 @@ namespace Resgrid.Web.Services.Models.v4.Mapping
 		/// <summary>True when it can take the patient now (not closed; the asked capability not reported unavailable).</summary>
 		public bool CanProvide { get; set; }
 
-		/// <summary>Travel distance along the route in metres (straight line for air travel); -1 when not looked up.</summary>
+		/// <summary>
+		/// Travel distance along the route in metres (straight line for air travel); -1 when unavailable: not looked up (beyond
+		/// the shortlist), the lookup failed, or the routing answer carried no usable distance.
+		/// </summary>
 		public double TravelDistanceMeters { get; set; } = -1;
 	}
 
@@ -167,13 +170,23 @@ namespace Resgrid.Web.Services.Models.v4.Mapping
 
 	public class SuggestedDestinationsResultData
 	{
-		/// <summary>The department's setting: 0 off (nothing else is filled), 1 suggest, 2 suggest and fill an empty destination.</summary>
+		/// <summary>
+		/// The department's setting: 0 off (no destinations are returned, nothing is routed and <c>SuggestedPoiId</c> is null), 1
+		/// suggest, 2 suggest and fill an empty destination.
+		/// </summary>
 		public int Mode { get; set; }
 
-		/// <summary>A destination with more preferred capabilities wins only within this many minutes of the fastest.</summary>
+		/// <summary>
+		/// A destination with more preferred capabilities wins only within this many minutes of the fastest destination in the
+		/// same tier; a faster destination in another tier (on diversion, say) never sets the window.
+		/// </summary>
 		public int PreferredWithinMinutes { get; set; }
 
-		/// <summary>The best destination that meets the requirements and is not closed; null when none does.</summary>
+		/// <summary>
+		/// The best destination of tier 0 or 1 (meets the requirements and can take the patient, possibly on diversion); null when
+		/// none does. <c>MeetsRequirements</c> and an open status alone do not qualify: a destination reporting a required
+		/// capability unavailable is tier 2 and never suggested.
+		/// </summary>
 		public int? SuggestedPoiId { get; set; }
 
 		public DestinationRequirementsResultData Requirements { get; set; } = new DestinationRequirementsResultData();

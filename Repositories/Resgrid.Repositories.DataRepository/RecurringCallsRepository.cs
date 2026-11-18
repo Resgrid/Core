@@ -215,6 +215,26 @@ namespace Resgrid.Repositories.DataRepository
 				$"WHERE {Col("RecurringCallOccurrenceId")} = {CaseInsensitive("Id")} AND {Col("State")} = {P}From",
 				parameters, cancellationToken) == 1;
 		}
+
+		public async Task<bool> TryCompleteClaimAsync(string recurringCallOccurrenceId, int callId, DateTime updatedOnUtc, CancellationToken cancellationToken = default)
+		{
+			if (string.IsNullOrWhiteSpace(recurringCallOccurrenceId))
+				return false;
+
+			var parameters = new DynamicParameters(new
+			{
+				Id = recurringCallOccurrenceId,
+				CallId = callId,
+				Creating = (int)RecurringCallOccurrenceStates.Creating,
+				Created = (int)RecurringCallOccurrenceStates.Created
+			});
+			RecurringCallsRepository.AddTimestamp(parameters, "UpdatedOn", updatedOnUtc);
+
+			return await ExecuteAsync(
+				$"UPDATE {Tbl("RecurringCallOccurrences")} SET {Col("State")} = {P}Created, {Col("CallId")} = {P}CallId, {Col("UpdatedOn")} = {P}UpdatedOn " +
+				$"WHERE {Col("RecurringCallOccurrenceId")} = {CaseInsensitive("Id")} AND {Col("State")} = {P}Creating",
+				parameters, cancellationToken) == 1;
+		}
 	}
 
 	/// <summary>Recurring call alerts (M0320).</summary>
@@ -231,15 +251,16 @@ namespace Resgrid.Repositories.DataRepository
 			if (string.IsNullOrWhiteSpace(alert.RecurringCallAlertId))
 				alert.RecurringCallAlertId = Guid.NewGuid().ToString();
 
-			// The unique (RecurringCallId, OccurrenceOn, Kind) index decides between two passes raising the same alert.
+			// The unique (RecurringCallId, OccurrenceOn, Kind) index over open alerts (filtered on ResolvedOn IS NULL) decides between
+			// two passes raising the same alert; a closed one keeps its history without blocking a new raise.
 			var columns = Cols("RecurringCallAlertId", "DepartmentId", "RecurringCallId", "OccurrenceOn", "Kind", "CallId", "DetailJson", "CreatedOn");
 			var values = $"{P}Id, {P}DepartmentId, {P}RecurringCallId, {P}OccurrenceOn, {P}Kind, {P}CallId, {P}DetailJson, {P}CreatedOn";
 			var sql = IsPostgres
 				? $"INSERT INTO {Tbl("RecurringCallAlerts")} ({columns}) VALUES ({values}) " +
-				  $"ON CONFLICT ({Cols("RecurringCallId", "OccurrenceOn", "Kind")}) DO NOTHING"
+				  $"ON CONFLICT ({Cols("RecurringCallId", "OccurrenceOn", "Kind")}) WHERE {Col("ResolvedOn")} IS NULL DO NOTHING"
 				: $"INSERT INTO {Tbl("RecurringCallAlerts")} ({columns}) SELECT {values} " +
 				  $"WHERE NOT EXISTS (SELECT 1 FROM {Tbl("RecurringCallAlerts")} WITH (UPDLOCK, HOLDLOCK) WHERE {Col("RecurringCallId")} = {P}RecurringCallId " +
-				  $"AND {Col("OccurrenceOn")} = {P}OccurrenceOn AND {Col("Kind")} = {P}Kind)";
+				  $"AND {Col("OccurrenceOn")} = {P}OccurrenceOn AND {Col("Kind")} = {P}Kind AND {Col("ResolvedOn")} IS NULL)";
 
 			var parameters = new DynamicParameters(new
 			{
@@ -261,6 +282,19 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				return false;
 			}
+		}
+
+		public async Task<bool> AnyForOccurrenceAsync(int recurringCallId, DateTime occurrenceUtc, int kind)
+		{
+			var parameters = new DynamicParameters(new { RecurringCallId = recurringCallId, Kind = kind });
+			RecurringCallsRepository.AddTimestamp(parameters, "OccurrenceOn", occurrenceUtc);
+
+			var rows = await QueryAsync<RecurringCallAlert>(
+				$"SELECT * FROM {Tbl("RecurringCallAlerts")} WHERE {Col("RecurringCallId")} = {P}RecurringCallId AND {Col("OccurrenceOn")} = {P}OccurrenceOn " +
+				$"AND {Col("Kind")} = {P}Kind",
+				parameters);
+
+			return rows?.Any() == true;
 		}
 
 		public Task<IEnumerable<RecurringCallAlert>> GetOpenForDepartmentAsync(int departmentId)

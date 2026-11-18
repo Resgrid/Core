@@ -7,6 +7,15 @@
 	var selectedTypes = new HashSet<string>((Model.PoiTypeIds ?? new List<int>()).Select(x => x.ToString()));
 	var required = new HashSet<string>(Model.RequiredCapabilityIds ?? new List<string>(), StringComparer.OrdinalIgnoreCase);
 	var preferred = new HashSet<string>(Model.PreferredCapabilityIds ?? new List<string>(), StringComparer.OrdinalIgnoreCase);
+
+	// A saved condition or destination type that was deleted since stays shown (and selected) as "(deleted)", so saving the
+	// rule cannot quietly widen it to "Any"; the service refuses the deleted id until the administrator picks a replacement.
+	string Deleted(int? id, IEnumerable<Resgrid.Web.Areas.User.Models.Mapping.DestinationRuleOption> options) =>
+		id.HasValue && options.All(x => x.Id != id.Value.ToString()) ? id.Value.ToString() : null;
+	var deletedCallType = Deleted(Model.CallTypeId, Model.CallTypes);
+	var deletedPriority = Deleted(Model.CallPriority, Model.Priorities);
+	var deletedUnitType = Deleted(Model.UnitTypeId, Model.UnitTypes);
+	var deletedTypes = (Model.PoiTypeIds ?? new List<int>()).Select(x => x.ToString()).Where(id => Model.DestinationTypes.All(x => x.Id != id)).ToList();
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
@@ -54,6 +63,10 @@
 							<div class="col-sm-4">
 								<select asp-for="CallTypeId" class="form-control">
 									<option value="">@localizer["Any"]</option>
+									@if (deletedCallType != null)
+									{
+										<option value="@deletedCallType" selected="selected">@localizer["DeletedChoice"]</option>
+									}
 									@foreach (var option in Model.CallTypes)
 									{
 										<option value="@option.Id" selected="@(Model.CallTypeId?.ToString() == option.Id)">@option.Name</option>
@@ -66,6 +79,10 @@
 							<div class="col-sm-4">
 								<select asp-for="CallPriority" class="form-control">
 									<option value="">@localizer["Any"]</option>
+									@if (deletedPriority != null)
+									{
+										<option value="@deletedPriority" selected="selected">@localizer["DeletedChoice"]</option>
+									}
 									@foreach (var option in Model.Priorities)
 									{
 										<option value="@option.Id" selected="@(Model.CallPriority?.ToString() == option.Id)">@option.Name</option>
@@ -78,6 +95,10 @@
 							<div class="col-sm-4">
 								<select asp-for="UnitTypeId" class="form-control">
 									<option value="">@localizer["Any"]</option>
+									@if (deletedUnitType != null)
+									{
+										<option value="@deletedUnitType" selected="selected">@localizer["DeletedChoice"]</option>
+									}
 									@foreach (var option in Model.UnitTypes)
 									{
 										<option value="@option.Id" selected="@(Model.UnitTypeId?.ToString() == option.Id)">@option.Name</option>
@@ -90,6 +111,14 @@
 						<div class="form-group" id="destinationRuleTypes">
 							<label class="col-sm-2 control-label">@localizer["DestinationTypes"]</label>
 							<div class="col-sm-6">
+								@foreach (var id in deletedTypes)
+								{
+									<div class="checkbox">
+										<label class="text-danger">
+											<input type="checkbox" name="PoiTypeIds" value="@id" checked="checked" /> @localizer["DeletedChoice"]
+										</label>
+									</div>
+								}
 								@foreach (var option in Model.DestinationTypes)
 								{
 									<div class="checkbox">

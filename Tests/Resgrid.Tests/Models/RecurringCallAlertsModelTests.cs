@@ -155,5 +155,46 @@ namespace Resgrid.Tests.Models
 			var deleted = new Resgrid.Model.Events.AuditEvent { Type = AuditLogTypes.RecurringCallDeleted, Before = "{\"Name\":\"Dialysis transfer\"}" };
 			AuditQueueLogic.GetRecurringCallAuditMessage(deleted, "System").Should().Be("System deleted recurring call Dialysis transfer");
 		}
+
+		[Test]
+		public void An_update_audit_names_the_schedule_whose_settings_changed()
+		{
+			// Two schedules can share a name and the same change: the id says which one it was.
+			var updated = new Resgrid.Model.Events.AuditEvent
+			{
+				Type = AuditLogTypes.RecurringCallUpdated,
+				Before = "{\"RecurringCallId\":12,\"Name\":\"Dialysis transfer\",\"Priority\":1}",
+				After = "{\"RecurringCallId\":12,\"Name\":\"Dialysis transfer\",\"Priority\":2}"
+			};
+
+			var data = AuditQueueLogic.GetRecurringCallUpdatedAuditData(updated);
+
+			data.Should().StartWith("RecurringCallId: 12");
+			data.Should().Contain("Priority: 1 -> 2");
+		}
+
+		[TestCase(WorkflowTriggerEventType.RecurringCallScheduleCreated, "Created", true)]
+		[TestCase(WorkflowTriggerEventType.RecurringCallScheduleUpdated, "Updated", true)]
+		[TestCase(WorkflowTriggerEventType.RecurringCallSchedulePaused, "Paused", false)]
+		[TestCase(WorkflowTriggerEventType.RecurringCallScheduleResumed, "Resumed", true)]
+		[TestCase(WorkflowTriggerEventType.RecurringCallScheduleDeleted, "Deleted", false)]
+		public void The_schedule_preview_matches_what_the_live_trigger_sends(WorkflowTriggerEventType trigger, string change, bool hasNext)
+		{
+			var data = (Scriban.Runtime.ScriptObject)Resgrid.Services.WorkflowSampleDataGenerator.GenerateSampleData(trigger);
+			var schedule = (Scriban.Runtime.ScriptObject)data["recurring_call"];
+
+			schedule["change"].Should().Be(change);
+			(schedule["next_occurrence_on"] != null).Should().Be(hasNext, "a paused or deleted schedule has no next occurrence");
+		}
+
+		[Test]
+		public void A_skipped_occurrence_preview_has_no_call_and_nobody_assigned()
+		{
+			var data = (Scriban.Runtime.ScriptObject)Resgrid.Services.WorkflowSampleDataGenerator.GenerateSampleData(WorkflowTriggerEventType.RecurringCallOccurrenceSkipped);
+			var occurrence = (Scriban.Runtime.ScriptObject)data["occurrence"];
+
+			occurrence["call_id"].Should().Be(0);
+			occurrence["unit_count"].Should().Be(0);
+		}
 	}
 }

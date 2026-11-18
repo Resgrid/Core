@@ -16,16 +16,31 @@ namespace Resgrid.Model.Services
 	/// </summary>
 	public interface IRecurringCallsService
 	{
+		/// <summary>Every schedule of the department, whoever asks (the worker, ownership checks). Lists shown to a member use <see cref="GetAllVisibleToUserAsync"/>.</summary>
 		Task<List<RecurringCall>> GetAllForDepartmentAsync(int departmentId);
+
+		/// <summary>The department's schedules in the member's dispatch scope (the calls they create would be), as the calendar and alerts show them.</summary>
+		Task<List<RecurringCall>> GetAllVisibleToUserAsync(int departmentId, string userId);
+
+		/// <summary>Whether a schedule is in the member's dispatch scope (see <see cref="GetAllVisibleToUserAsync"/>).</summary>
+		Task<bool> IsVisibleToUserAsync(RecurringCall series, string userId);
 
 		/// <summary>The department's schedule, or null (not found, another department's, or deleted).</summary>
 		Task<RecurringCall> GetByIdAsync(int departmentId, int recurringCallId);
 
 		/// <summary>
+		/// A chosen pickup facility point of interest fills the facility name and the address (with its pin) when they are blank, and
+		/// is cleared when it is not one of the department's. <see cref="SaveAsync"/> does it too; callers validating the schedule's
+		/// call fields first apply it so a facility's address counts.
+		/// </summary>
+		Task ApplyFacilityDefaultsAsync(RecurringCall series);
+
+		/// <summary>
 		/// Creates or updates a schedule (already validated with <see cref="RecurringCallRecurrence.Validate"/>), locating its
 		/// address when it has no pin, then creates the calls now due within its lead time. With
-		/// <paramref name="replaceUpcomingCalls"/>, calls it already created that have not gone out are deleted and created again
-		/// from the saved schedule (dropping any edits made to them); without it they are left as they are.
+		/// <paramref name="replaceUpcomingCalls"/>, calls it already created that are scheduled and have not gone out are deleted and
+		/// created again from the saved schedule (dropping any edits made to them); without it they are left as they are. A held
+		/// (pending) call is never replaced: it has an open alert and is the dispatcher's to send or close.
 		/// </summary>
 		Task<RecurringCallSaveResult> SaveAsync(RecurringCall series, string userId, bool replaceUpcomingCalls, AuditOrigin origin = null,
 			CancellationToken cancellationToken = default);
@@ -33,7 +48,7 @@ namespace Resgrid.Model.Services
 		/// <summary>
 		/// Pauses a schedule without deleting it: nothing is created or alerted while paused. <paramref name="resumeOn"/> (a date in
 		/// the department's time zone) resumes it automatically at the start of that day. With <paramref name="deleteUpcomingCalls"/>
-		/// the calls it already created that have not gone out are deleted too. Null when not found.
+		/// the scheduled calls it already created that have not gone out are deleted too (held calls stay). Null when not found.
 		/// </summary>
 		Task<RecurringCall> PauseAsync(int departmentId, int recurringCallId, string userId, string reason, DateTime? resumeOn, bool deleteUpcomingCalls,
 			AuditOrigin origin = null, CancellationToken cancellationToken = default);
@@ -41,12 +56,19 @@ namespace Resgrid.Model.Services
 		/// <summary>Resumes a paused schedule. Resuming never creates an occurrence that was due before it. Null when not found.</summary>
 		Task<RecurringCall> ResumeAsync(int departmentId, int recurringCallId, string userId, AuditOrigin origin = null, CancellationToken cancellationToken = default);
 
-		/// <summary>Deletes a schedule; with <paramref name="deleteUpcomingCalls"/> also the calls it created that have not gone out.</summary>
+		/// <summary>
+		/// Deletes a schedule; with <paramref name="deleteUpcomingCalls"/> also the scheduled calls it created that have not gone
+		/// out (held calls stay for the dispatcher).
+		/// </summary>
 		Task<bool> DeleteAsync(int departmentId, int recurringCallId, string userId, bool deleteUpcomingCalls, AuditOrigin origin = null,
 			CancellationToken cancellationToken = default);
 
-		/// <summary>The calls a schedule created that have not gone out yet (still waiting for their dispatch time, or held).</summary>
-		Task<List<Call>> GetUpcomingCallsAsync(int departmentId, int recurringCallId);
+		/// <summary>
+		/// The calls a schedule created that have not gone out yet: still waiting for their dispatch time (the ones a change can
+		/// replace or delete), or held as pending (left for the dispatcher). With <paramref name="userId"/>, only those in that
+		/// member's dispatch scope.
+		/// </summary>
+		Task<List<Call>> GetUpcomingCallsAsync(int departmentId, int recurringCallId, string userId = null);
 
 		/// <summary>
 		/// Skips an occurrence that has no call yet (still to come, awaiting a dispatcher, or missed). False when it is not an
@@ -82,6 +104,13 @@ namespace Resgrid.Model.Services
 		/// left the call is held as pending and the dispatcher alerted; when some were left off it goes out and the dispatcher is told.
 		/// </summary>
 		Task<RecurringCallDispatchResult> DispatchCallAsync(Call call, string userId, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// A call a schedule created went out some other way than <see cref="DispatchCallAsync"/> (a dispatcher's Dispatch Now on the
+		/// held or pending call): closes the alerts about its occurrence and raises the occurrence's Dispatched trigger, once. Does
+		/// nothing for a call no schedule created; never throws.
+		/// </summary>
+		Task OnCallDispatchedAsync(Call call, string userId, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// The worker pass: resumes schedules whose resume date has come, creates the calls due within each running schedule's lead
@@ -136,7 +165,10 @@ namespace Resgrid.Model.Services
 		/// <summary>Not waiting to go out (sent already, closed, or someone else is sending it).</summary>
 		NotWaiting = 3,
 
-		/// <summary>The broadcast could not be queued; the call is waiting again and the next pass retries.</summary>
+		/// <summary>
+		/// The broadcast could not be queued and nothing went out. The call is waiting again as it was: a scheduled call is retried
+		/// by the worker's next passes (a dispatcher's send-now call is scheduled for now), a held call stays pending.
+		/// </summary>
 		QueueFailed = 4,
 
 		/// <summary>The occurrence is not one of the schedule's, or its call could not be created.</summary>
@@ -176,6 +208,20 @@ namespace Resgrid.Model.Services
 
 		/// <summary>The schedule was deleted since.</summary>
 		public bool ScheduleDeleted { get; set; }
+
+		/// <summary>
+		/// The alert's time is still an occurrence of the schedule as it is now (false once the schedule's times or days changed):
+		/// only then can the occurrence be sent, created or skipped from the alert.
+		/// </summary>
+		public bool OccurrenceScheduled { get; set; }
+
+		/// <summary>
+		/// The occurrence can be sent, created or skipped from the alert: it is open, has no call yet, is about an occurrence with
+		/// nothing done (due for a dispatcher, missed, or its call not created) and the schedule still has that occurrence.
+		/// </summary>
+		public bool CanSend => Alert != null && Alert.IsOpen && !Alert.CallId.HasValue && !ScheduleDeleted && OccurrenceScheduled &&
+							   (Alert.Kind == (int)RecurringCallAlertKinds.DispatchDue || Alert.Kind == (int)RecurringCallAlertKinds.Missed ||
+								Alert.Kind == (int)RecurringCallAlertKinds.CreateFailed);
 
 		public string CallNumber { get; set; }
 

@@ -56,7 +56,7 @@
         <div class="col-lg-9">
             <div class="ibox float-e-margins">
                 <div class="ibox-content">
-                    <label><input id="include-checklists" type="checkbox" /> @checklistStrings["CalendarInclude"]</label>@if (ClaimsAuthorizationHelper.CanViewCalls()) { <label style="margin-left:15px;"><input id="include-scheduled-calls" type="checkbox" /> @recurringLocalizer["IncludeScheduledCalls"]</label> }<div id="calendar"></div>
+                    <label><input id="include-checklists" type="checkbox" /> @checklistStrings["CalendarInclude"]</label>@if (ClaimsAuthorizationHelper.CanViewCalls()) { <label style="margin-left:15px;"><input id="include-scheduled-calls" type="checkbox" /> @recurringLocalizer["IncludeScheduledCalls"]</label> <span id="include-scheduled-calls-error" class="text-danger small" role="alert" style="display:none;">@recurringLocalizer["ActionFailed"]</span> }<div id="calendar"></div>
                 </div>
             </div>
         </div>

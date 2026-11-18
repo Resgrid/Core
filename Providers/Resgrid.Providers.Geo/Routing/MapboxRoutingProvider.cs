@@ -140,22 +140,19 @@ namespace Resgrid.Providers.GeoLocationProvider.Routing
 		public async Task<RouteMatrixResult> GetMatrixAsync(RouteMatrixRequest request, CancellationToken cancellationToken)
 		{
 			var profile = Profile(request.Profile);
-			// driving-traffic matrices take at most 10 coordinates, the others 25 (origins + destinations).
-			var limit = profile == "driving-traffic" ? 10 : 25;
-			var perChunk = Math.Max(1, limit - request.Destinations.Count);
+			var destinationCount = request.Destinations.Count;
 
-			if (request.Destinations.Count >= limit)
-				return new RouteMatrixResult { Provider = Name, Error = "Too many destinations for one Mapbox matrix", NotSent = true };
+			var durations = Enumerable.Range(0, request.Origins.Count).Select(_ => new double?[destinationCount]).ToArray();
+			var distances = Enumerable.Range(0, request.Origins.Count).Select(_ => new double?[destinationCount]).ToArray();
 
-			var durations = new double?[request.Origins.Count][];
-			var distances = new double?[request.Origins.Count][];
-
-			for (var start = 0; start < request.Origins.Count; start += perChunk)
+			// Origins and destinations are both split, so a matrix with as many destinations as the limit (or more) is still
+			// answered by Mapbox rather than handed on to the straight-line estimate.
+			foreach (var chunk in MatrixChunks(request.Origins.Count, destinationCount, MatrixCoordinateLimit(profile)))
 			{
-				var origins = request.Origins.Skip(start).Take(perChunk).ToList();
-				var coordinates = origins.Concat(request.Destinations).ToList();
-				var sources = string.Join(";", Enumerable.Range(0, origins.Count));
-				var destinations = string.Join(";", Enumerable.Range(origins.Count, request.Destinations.Count));
+				var origins = request.Origins.Skip(chunk.OriginStart).Take(chunk.OriginCount).ToList();
+				var coordinates = origins.Concat(request.Destinations.Skip(chunk.DestinationStart).Take(chunk.DestinationCount)).ToList();
+				var sources = string.Join(";", Enumerable.Range(0, chunk.OriginCount));
+				var destinations = string.Join(";", Enumerable.Range(chunk.OriginCount, chunk.DestinationCount));
 
 				var query = new StringBuilder();
 				query.Append("?access_token=").Append(WebUtility.UrlEncode(AccessToken));
@@ -173,15 +170,80 @@ namespace Resgrid.Providers.GeoLocationProvider.Routing
 					var chunkDurations = OsrmShapeParser.ReadTable(document.RootElement, "durations");
 					var chunkDistances = OsrmShapeParser.ReadTable(document.RootElement, "distances");
 
-					for (var i = 0; i < origins.Count; i++)
+					for (var i = 0; i < chunk.OriginCount; i++)
 					{
-						durations[start + i] = chunkDurations != null && i < chunkDurations.Length ? chunkDurations[i] : new double?[request.Destinations.Count];
-						distances[start + i] = chunkDistances != null && i < chunkDistances.Length ? chunkDistances[i] : new double?[request.Destinations.Count];
+						for (var j = 0; j < chunk.DestinationCount; j++)
+						{
+							durations[chunk.OriginStart + i][chunk.DestinationStart + j] = Cell(chunkDurations, i, j);
+							distances[chunk.OriginStart + i][chunk.DestinationStart + j] = Cell(chunkDistances, i, j);
+						}
 					}
 				}
 			}
 
 			return new RouteMatrixResult { Successful = true, Provider = Name, Durations = durations, Distances = distances };
+		}
+
+		/// <summary>Coordinates (origins + destinations) one Mapbox matrix request may carry: 10 on driving-traffic, else 25.</summary>
+		public static int MatrixCoordinateLimit(string profile) => profile == "driving-traffic" ? 10 : 25;
+
+		/// <summary>One Mapbox matrix request: a run of origins against a run of destinations.</summary>
+		public readonly struct MatrixChunk
+		{
+			public MatrixChunk(int originStart, int originCount, int destinationStart, int destinationCount)
+			{
+				OriginStart = originStart;
+				OriginCount = originCount;
+				DestinationStart = destinationStart;
+				DestinationCount = destinationCount;
+			}
+
+			public int OriginStart { get; }
+			public int OriginCount { get; }
+			public int DestinationStart { get; }
+			public int DestinationCount { get; }
+		}
+
+		/// <summary>
+		/// Splits an origins × destinations matrix into requests of at most <paramref name="limit"/> coordinates each, covering
+		/// every pair exactly once with the fewest requests (all destinations in one run whenever they fit beside an origin).
+		/// </summary>
+		public static List<MatrixChunk> MatrixChunks(int originCount, int destinationCount, int limit)
+		{
+			var chunks = new List<MatrixChunk>();
+			if (originCount <= 0 || destinationCount <= 0)
+				return chunks;
+
+			limit = Math.Max(2, limit);
+
+			// The destination run size that needs the fewest requests; ties keep the larger run (fewer distinct origin runs).
+			var bestPerDestination = 1;
+			var bestRequests = long.MaxValue;
+			for (var perDestination = Math.Min(destinationCount, limit - 1); perDestination >= 1; perDestination--)
+			{
+				var perOrigin = limit - perDestination;
+				var requests = (long)((originCount + perOrigin - 1) / perOrigin) * ((destinationCount + perDestination - 1) / perDestination);
+				if (requests < bestRequests)
+				{
+					bestRequests = requests;
+					bestPerDestination = perDestination;
+				}
+			}
+
+			var perOriginRun = limit - bestPerDestination;
+			for (var destinationStart = 0; destinationStart < destinationCount; destinationStart += bestPerDestination)
+			{
+				var destinationRun = Math.Min(bestPerDestination, destinationCount - destinationStart);
+				for (var originStart = 0; originStart < originCount; originStart += perOriginRun)
+					chunks.Add(new MatrixChunk(originStart, Math.Min(perOriginRun, originCount - originStart), destinationStart, destinationRun));
+			}
+
+			return chunks;
+		}
+
+		private static double? Cell(double?[][] table, int row, int column)
+		{
+			return table != null && row < table.Length && table[row] != null && column < table[row].Length ? table[row][column] : null;
 		}
 
 		public async Task<RouteOptimizationResult> OptimizeAsync(RouteOptimizationRequest request, CancellationToken cancellationToken)

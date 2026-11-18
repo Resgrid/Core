@@ -86,10 +86,14 @@ namespace Resgrid.Web.Areas.User.Models.Dispatch
 
 		public string AcknowledgedBy { get; set; }
 
+		/// <summary>The member may act on the alert (acknowledge, dismiss); see <see cref="CanSend"/> for the occurrence actions.</summary>
 		public bool CanAct { get; set; }
 
-		/// <summary>The occurrence has no call yet: it can be sent or skipped from here.</summary>
-		public bool CanSend => !CallId.HasValue && (Kind == RecurringCallAlertKinds.DispatchDue || Kind == RecurringCallAlertKinds.Missed || Kind == RecurringCallAlertKinds.CreateFailed);
+		/// <summary>
+		/// The occurrence has no call yet and the schedule (not deleted) still has it: it can be sent, created or skipped from here
+		/// (<see cref="Resgrid.Model.Services.RecurringCallAlertInfo.CanSend"/>, the same rule the API reports).
+		/// </summary>
+		public bool CanSend { get; set; }
 	}
 
 	/// <summary>The New / Edit Recurring Call form. Dates are "yyyy-MM-dd" and times "HH:mm", in the department's time zone.</summary>

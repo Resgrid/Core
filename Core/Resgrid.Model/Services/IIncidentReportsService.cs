@@ -70,6 +70,12 @@ namespace Resgrid.Model.Services
 		/// </summary>
 		Task DeleteAsync(int departmentId, string userId, string reportId, string reasonText, RmsOriginClient origin = RmsOriginClient.Web, CancellationToken cancellationToken = default);
 
+		/// <summary>
+		/// True when <paramref name="userId"/> deleted the report within the last day and its content is not yet erased: the
+		/// answer an idempotent retry of that delete gets when the first attempt committed but its receipt was never stored.
+		/// </summary>
+		Task<bool> WasDeletedByAsync(int departmentId, string userId, string reportId);
+
 		Task<List<RmsIncidentReport>> QueryAsync(int departmentId, RmsIncidentReportQuery query);
 
 		Task<int> CountAsync(int departmentId, RmsIncidentReportQuery query);

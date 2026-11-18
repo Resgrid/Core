@@ -209,6 +209,9 @@ namespace Resgrid.Services
 				// A unit released (stood down) from the call is not on it any more: it can be recommended again.
 				AlreadyDispatchedUnitIds = CallDispatchUnitReleases.ActiveUnitIds(call.UnitDispatches).ToList(),
 				AlreadyDispatchedUserIds = call.Dispatches?.Select(d => d.UserId).Where(id => !string.IsNullOrWhiteSpace(id) && !call.IsUserReleased(id)).ToList() ?? new List<string>(),
+				// The apply below skips anyone with a dispatch row, so a released member it picked would be reported as added while
+				// staying released (and the role it was meant to fill unmet): released members are left out of this pass.
+				ExcludedUserIds = call.GetReleasedUserIds().ToList(),
 				CallId = call.CallId > 0 ? call.CallId : (int?)null,
 				ForcedLeafNodeKey = forcedLeafNodeKey
 			};
@@ -538,12 +541,13 @@ namespace Resgrid.Services
 			var staffingSelections = allSelections.Where(s => s.SelectionType == (int)RunCardSelectionTypes.PersonnelStaffing).ToList();
 
 			var alreadyDispatched = new HashSet<string>(context.Request.AlreadyDispatchedUserIds ?? new List<string>(), StringComparer.OrdinalIgnoreCase);
+			var excluded = new HashSet<string>(context.Request.ExcludedUserIds ?? new List<string>(), StringComparer.OrdinalIgnoreCase);
 
 			foreach (var pair in rolesByUser)
 			{
 				var userId = pair.Key;
 
-				if (string.IsNullOrWhiteSpace(userId))
+				if (string.IsNullOrWhiteSpace(userId) || excluded.Contains(userId))
 					continue;
 
 				if (alreadyDispatched.Contains(userId))

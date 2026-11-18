@@ -1354,7 +1354,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					INNER JOIN %SCHEMA%.%CALLSTABLE% c ON c.CallId = cd.CallId
 					WHERE c.DepartmentId = %DID% AND c.State = 0 AND c.IsDeleted = false
 						AND (c.HasBeenDispatched = true OR c.DispatchOn IS NULL OR c.DispatchOn <= %NOW%)
-						AND cd.UserId = %USERID% AND NOT EXISTS (SELECT 1 FROM %SCHEMA%.CallPersonnelReleases r WHERE r.CallId = c.CallId AND CAST(r.UserId AS text) = CAST(cd.UserId AS text))
+						AND cd.UserId = %USERID% AND NOT EXISTS (SELECT 1 FROM %SCHEMA%.CallPersonnelReleases r WHERE r.CallId = c.CallId AND CAST(r.UserId AS citext) = CAST(cd.UserId AS citext))
 					UNION ALL
 					SELECT cg.CallId, COALESCE(cg.LastDispatchedOn, cg.DispatchedOn), true
 					FROM %SCHEMA%.%CALLDISPATCHGROUPSTABLE% cg
@@ -1362,7 +1362,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					INNER JOIN %SCHEMA%.%DEPARTMENTGROUPMEMBERSTABLE% gm ON gm.DepartmentGroupId = cg.DepartmentGroupId
 					WHERE c.DepartmentId = %DID% AND c.State = 0 AND c.IsDeleted = false
 						AND (c.HasBeenDispatched = true OR c.DispatchOn IS NULL OR c.DispatchOn <= %NOW%)
-						AND gm.UserId = %USERID% AND NOT EXISTS (SELECT 1 FROM %SCHEMA%.CallPersonnelReleases r WHERE r.CallId = c.CallId AND CAST(r.UserId AS text) = CAST(gm.UserId AS text))
+						AND gm.UserId = %USERID% AND NOT EXISTS (SELECT 1 FROM %SCHEMA%.CallPersonnelReleases r WHERE r.CallId = c.CallId AND CAST(r.UserId AS citext) = CAST(gm.UserId AS citext))
 					UNION ALL
 					SELECT cr.CallId, COALESCE(cr.LastDispatchedOn, cr.DispatchedOn), true
 					FROM %SCHEMA%.%CALLDISPATCHROLESTABLE% cr
@@ -1370,7 +1370,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					INNER JOIN %SCHEMA%.%PERSONNELROLEUSERSTABLE% ru ON ru.PersonnelRoleId = cr.RoleId
 					WHERE c.DepartmentId = %DID% AND c.State = 0 AND c.IsDeleted = false
 						AND (c.HasBeenDispatched = true OR c.DispatchOn IS NULL OR c.DispatchOn <= %NOW%)
-						AND ru.UserId = %USERID% AND NOT EXISTS (SELECT 1 FROM %SCHEMA%.CallPersonnelReleases r WHERE r.CallId = c.CallId AND CAST(r.UserId AS text) = CAST(ru.UserId AS text))";
+						AND ru.UserId = %USERID% AND NOT EXISTS (SELECT 1 FROM %SCHEMA%.CallPersonnelReleases r WHERE r.CallId = c.CallId AND CAST(r.UserId AS citext) = CAST(ru.UserId AS citext))";
 			SelectCallUnitDispatchesForCallsInRangeQuery = @"
 					SELECT cdu.*
 					FROM %SCHEMA%.%CALLDISPATCHUNITSTABLE% cdu
@@ -1398,20 +1398,20 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					WHERE c.DepartmentId = %DID% AND c.IsDeleted = false AND c.LoggedOn >= %LOGGEDFROM% AND c.LoggedOn <= %ENDDATE%
 						AND cdu.DispatchedOn >= %STARTDATE% AND cdu.DispatchedOn <= %ENDDATE%";
 			SelectPersonnelDispatchWindowsQuery = @"
-					SELECT cd.CallId, CAST(cd.UserId AS text) AS UserId, cd.DispatchedOn, c.LoggedOn, c.ClosedOn, false AS Paged, (SELECT MAX(r.ReleasedOn) FROM %SCHEMA%.CallPersonnelReleases r WHERE r.CallId = cd.CallId AND CAST(r.UserId AS text) = CAST(cd.UserId AS text)) AS ReleasedOn
+					SELECT cd.CallId, CAST(cd.UserId AS text) AS UserId, cd.DispatchedOn, c.LoggedOn, c.ClosedOn, false AS Paged, (SELECT MAX(r.ReleasedOn) FROM %SCHEMA%.CallPersonnelReleases r WHERE r.CallId = cd.CallId AND CAST(r.UserId AS citext) = CAST(cd.UserId AS citext)) AS ReleasedOn
 					FROM %SCHEMA%.%CALLDISPATCHESTABLE% cd
 					INNER JOIN %SCHEMA%.%CALLSTABLE% c ON c.CallId = cd.CallId
 					WHERE c.DepartmentId = %DID% AND c.IsDeleted = false AND c.LoggedOn >= %LOGGEDFROM% AND c.LoggedOn <= %ENDDATE%
 						AND cd.DispatchedOn >= %STARTDATE% AND cd.DispatchedOn <= %ENDDATE%
 					UNION ALL
-					SELECT cg.CallId, CAST(gm.UserId AS text), cg.DispatchedOn, c.LoggedOn, c.ClosedOn, true, (SELECT MAX(r.ReleasedOn) FROM %SCHEMA%.CallPersonnelReleases r WHERE r.CallId = cg.CallId AND CAST(r.UserId AS text) = CAST(gm.UserId AS text))
+					SELECT cg.CallId, CAST(gm.UserId AS text), cg.DispatchedOn, c.LoggedOn, c.ClosedOn, true, (SELECT MAX(r.ReleasedOn) FROM %SCHEMA%.CallPersonnelReleases r WHERE r.CallId = cg.CallId AND CAST(r.UserId AS citext) = CAST(gm.UserId AS citext))
 					FROM %SCHEMA%.%CALLDISPATCHGROUPSTABLE% cg
 					INNER JOIN %SCHEMA%.%CALLSTABLE% c ON c.CallId = cg.CallId
 					INNER JOIN %SCHEMA%.%DEPARTMENTGROUPMEMBERSTABLE% gm ON gm.DepartmentGroupId = cg.DepartmentGroupId
 					WHERE c.DepartmentId = %DID% AND c.IsDeleted = false AND c.LoggedOn >= %LOGGEDFROM% AND c.LoggedOn <= %ENDDATE%
 						AND cg.DispatchedOn >= %STARTDATE% AND cg.DispatchedOn <= %ENDDATE%
 					UNION ALL
-					SELECT cr.CallId, CAST(ru.UserId AS text), cr.DispatchedOn, c.LoggedOn, c.ClosedOn, true, (SELECT MAX(r.ReleasedOn) FROM %SCHEMA%.CallPersonnelReleases r WHERE r.CallId = cr.CallId AND CAST(r.UserId AS text) = CAST(ru.UserId AS text))
+					SELECT cr.CallId, CAST(ru.UserId AS text), cr.DispatchedOn, c.LoggedOn, c.ClosedOn, true, (SELECT MAX(r.ReleasedOn) FROM %SCHEMA%.CallPersonnelReleases r WHERE r.CallId = cr.CallId AND CAST(r.UserId AS citext) = CAST(ru.UserId AS citext))
 					FROM %SCHEMA%.%CALLDISPATCHROLESTABLE% cr
 					INNER JOIN %SCHEMA%.%CALLSTABLE% c ON c.CallId = cr.CallId
 					INNER JOIN %SCHEMA%.%PERSONNELROLEUSERSTABLE% ru ON ru.PersonnelRoleId = cr.RoleId
@@ -1450,7 +1450,8 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					WHERE cd.UserId = %USERID%
 					  AND c.DepartmentId = %DID%
 					  AND c.CheckInTimersEnabled = true
-					  AND c.State = 0";
+					  AND c.State = 0
+					  AND NOT EXISTS (SELECT 1 FROM %SCHEMA%.CallPersonnelReleases pr WHERE pr.CallId = c.CallId AND CAST(pr.UserId AS citext) = CAST(cd.UserId AS citext))";
 			SelectCallsByContactQuery= @"
 					SELECT %SCHEMA%.%CALLSTABLE%.*
 					FROM %SCHEMA%.%CALLSTABLE%

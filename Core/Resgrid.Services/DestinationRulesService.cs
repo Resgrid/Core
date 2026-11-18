@@ -122,9 +122,17 @@ namespace Resgrid.Services
 			target.RequiredCapabilityIds = required.Count > 0 ? string.Join(",", required) : null;
 			target.PreferredCapabilityIds = preferred.Count > 0 ? string.Join(",", preferred) : null;
 
-			var saved = await _destinationRulesRepository.SaveOrUpdateAsync(target, cancellationToken);
+			if (string.IsNullOrWhiteSpace(target.DestinationRuleId))
+			{
+				var saved = await _destinationRulesRepository.SaveOrUpdateAsync(target, cancellationToken);
+				return new DestinationRuleSaveResult { Rule = saved ?? target, Error = DestinationRuleSaveErrors.None };
+			}
 
-			return new DestinationRuleSaveResult { Rule = saved ?? target, Error = DestinationRuleSaveErrors.None };
+			// Deleted by another administrator after the lookup above: the edit was not stored.
+			if (!await _destinationRulesRepository.UpdateRuleAsync(target, cancellationToken))
+				return Fail(DestinationRuleSaveErrors.NotFound);
+
+			return new DestinationRuleSaveResult { Rule = target, Error = DestinationRuleSaveErrors.None };
 		}
 
 		public async Task<bool> DeleteRuleAsync(int departmentId, string destinationRuleId, CancellationToken cancellationToken = default(CancellationToken))

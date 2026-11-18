@@ -485,6 +485,33 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task an_edit_is_written_to_the_existing_row()
+		{
+			_repository.Setup(x => x.GetByIdAsync("mine")).ReturnsAsync(new DestinationRule { DestinationRuleId = "mine", DepartmentId = DeptId, Name = "Burns" });
+			_repository.Setup(x => x.UpdateRuleAsync(It.IsAny<DestinationRule>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
+
+			var result = await Save(new DestinationRule { DestinationRuleId = "mine", Name = "Burns (adult)", RequiredCapabilityIds = "burn" });
+
+			result.Success.Should().BeTrue();
+			result.Rule.Name.Should().Be("Burns (adult)");
+			_repository.Verify(x => x.UpdateRuleAsync(It.Is<DestinationRule>(r => r.DestinationRuleId == "mine" && r.DepartmentId == DeptId &&
+				r.Name == "Burns (adult)" && r.RequiredCapabilityIds == "burn" && r.UpdatedByUserId == "admin"), It.IsAny<CancellationToken>()), Times.Once);
+			_repository.Verify(x => x.SaveOrUpdateAsync(It.IsAny<DestinationRule>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Never);
+		}
+
+		[Test]
+		public async Task an_edit_of_a_rule_deleted_meanwhile_is_not_reported_as_saved()
+		{
+			_repository.Setup(x => x.GetByIdAsync("mine")).ReturnsAsync(new DestinationRule { DestinationRuleId = "mine", DepartmentId = DeptId, Name = "Burns" });
+			_repository.Setup(x => x.UpdateRuleAsync(It.IsAny<DestinationRule>(), It.IsAny<CancellationToken>())).ReturnsAsync(false);
+
+			var result = await Save(new DestinationRule { DestinationRuleId = "mine", Name = "Burns", RequiredCapabilityIds = "burn" });
+
+			result.Success.Should().BeFalse();
+			result.Error.Should().Be(DestinationRuleSaveErrors.NotFound);
+		}
+
+		[Test]
 		public async Task the_context_matches_the_call_type_by_name_and_the_unit_by_its_type()
 		{
 			_units.Setup(x => x.GetUnitByIdAsync(44)).ReturnsAsync(new Unit { UnitId = 44, DepartmentId = DeptId, Type = " helicopter " });

@@ -811,7 +811,7 @@ namespace Resgrid.Workers.Framework.Logic
 				case AuditLogTypes.RecurringCallAlertDismissed:
 					auditLog.Message = GetRecurringCallAuditMessage(auditEvent, actorName);
 					auditLog.Data = auditEvent.Type == AuditLogTypes.RecurringCallUpdated
-						? GetSettingsChangedAuditData(auditEvent.Before, auditEvent.After)
+						? GetRecurringCallUpdatedAuditData(auditEvent)
 						: GetRecurringCallAuditData(auditEvent);
 					break;
 
@@ -895,6 +895,22 @@ namespace Resgrid.Workers.Framework.Logic
 				default:
 					return $"{actorName} changed {schedule}";
 			}
+		}
+
+		/// <summary>
+		/// The settings that changed, led by the schedule's id: the diff leaves out what did not change, and two schedules can share
+		/// a name, so without it the row would not say which schedule was updated.
+		/// </summary>
+		public static string GetRecurringCallUpdatedAuditData(AuditEvent auditEvent)
+		{
+			var diff = GetSettingsChangedAuditData(auditEvent.Before, auditEvent.After);
+			var snapshot = TryParseJson(auditEvent.After ?? auditEvent.Before ?? string.Empty) as JObject;
+			var id = snapshot?["RecurringCallId"];
+
+			if (id == null || id.Type == JTokenType.Null || String.IsNullOrWhiteSpace(id.ToString()))
+				return diff;
+
+			return $"RecurringCallId: {FormatJsonValue(id)}{Environment.NewLine}{diff}";
 		}
 
 		private static string GetRecurringCallAuditData(AuditEvent auditEvent)

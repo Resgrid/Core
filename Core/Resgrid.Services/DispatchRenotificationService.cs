@@ -213,6 +213,16 @@ namespace Resgrid.Services
 
 				var nextNotifyOn = attempt >= maxRetries ? (DateTime?)null : nowUtc.AddMinutes(intervalMinutes);
 
+				// The call's lists were read before this row's acknowledgment lookup: a unit or member released (stood down), or
+				// taken off the call, since then is checked against the call as it is now, before anything is claimed or sent.
+				var current = await _callsService.PopulateCallData(new Call { CallId = call.CallId, DepartmentId = call.DepartmentId },
+					true, false, false, true, true, true, false, false, false);
+				if (current != null && !IsStillDispatched(current, row))
+				{
+					toCancel.Add(row.DispatchRenotificationId);
+					continue;
+				}
+
 				// Claim before sending: an overlapping sweep that loses the claim sends nothing.
 				if (!await _dispatchRenotificationsRepository.TryClaimAttemptAsync(row.DispatchRenotificationId, row.Attempts, attempt, nextNotifyOn, nowUtc, cancellationToken))
 					continue;

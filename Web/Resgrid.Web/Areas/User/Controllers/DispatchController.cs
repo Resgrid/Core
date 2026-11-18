@@ -71,6 +71,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IWeatherAlertService _weatherAlertService;
 		private readonly ICallDispatchStatusService _callDispatchStatusService;
 		private readonly ICallResourceReleaseService _callResourceReleaseService;
+		private readonly ICallBroadcastOutboxService _callBroadcastOutboxService;
 		private readonly IPendingCallsService _pendingCallsService;
 		private readonly ICallClosureService _callClosureService;
 		private readonly IModerationService _moderationService;
@@ -106,9 +107,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			ICallLocationHistoryService callLocationHistoryService, IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.LocationHistory> locationHistoryLocalizer,
 			IPendingCallsService pendingCallsService, ICallClosureService callClosureService, IIndoorMapService indoorMapService,
 			IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> departmentLocalizer,
-			IOutstandingRequirementsService outstandingRequirementsService, ICallResourceReleaseService callResourceReleaseService)
+			IOutstandingRequirementsService outstandingRequirementsService, ICallResourceReleaseService callResourceReleaseService,
+			ICallBroadcastOutboxService callBroadcastOutboxService)
 		{
 			_callResourceReleaseService = callResourceReleaseService;
+			_callBroadcastOutboxService = callBroadcastOutboxService;
 			_outstandingRequirementsService = outstandingRequirementsService;
 			_callLocationHistoryService = callLocationHistoryService;
 			_locationHistoryLocalizer = locationHistoryLocalizer;
@@ -1665,6 +1668,49 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 				await _callsService.SaveCallAsync(call, cancellationToken);
 
+				// Members by id, live ones only: a member still released is off the call, one ticked again counts as added.
+				var stillReleasedUserIds = new HashSet<string>(releasedUserIds.Except(redispatchedUserIds, StringComparer.OrdinalIgnoreCase), StringComparer.OrdinalIgnoreCase);
+				var savedUserIds = new HashSet<string>((call.Dispatches ?? Enumerable.Empty<CallDispatch>()).Select(x => x.UserId).Where(x => !stillReleasedUserIds.Contains(x)));
+				var savedGroupIds = new HashSet<int>((call.GroupDispatches ?? Enumerable.Empty<CallDispatchGroup>()).Select(x => x.DepartmentGroupId));
+				var savedUnitIds = CallDispatchUnitReleases.ActiveUnitIds(call.UnitDispatches);
+				var savedRoleIds = new HashSet<int>((call.RoleDispatches ?? Enumerable.Empty<CallDispatchRole>()).Select(x => x.RoleId));
+
+				var cancelledUserIds = existingDispatches.Select(x => x.UserId).Where(x => !releasedUserIds.Contains(x))
+					.Where(y => !savedUserIds.Contains(y)).ToList();
+				var cancelledGroupIds = existingGroupDispatches.Select(x => x.DepartmentGroupId)
+					.Where(y => !savedGroupIds.Contains(y)).ToList();
+				var cancelledUnitIds = existingUnitIds.Where(y => !savedUnitIds.Contains(y)).ToList();
+				var cancelledRoleIds = existingRoleDispatches.Select(x => x.RoleId)
+					.Where(y => !savedRoleIds.Contains(y)).ToList();
+
+				// Released ids keep the release's spelling and the form may tick another casing: compare as the rest of this save does.
+				var redispatchedSet = new HashSet<string>(redispatchedUserIds, StringComparer.OrdinalIgnoreCase);
+				var newUserIds = dispatchingUserIds.Where(id => !stillReleasedUserIds.Contains(id) && (redispatchedSet.Contains(id) || !existingDispatches.Any(d => d.UserId == id))).ToList();
+
+				// Members ticked again are back on the call: their releases go, so the broadcast pages them.
+				if (redispatchedUserIds.Any())
+				{
+					await _callResourceReleaseService.ClearPersonnelReleasesAsync(call.CallId, redispatchedUserIds, cancellationToken);
+					call.PersonnelReleases?.RemoveAll(x => redispatchedSet.Contains(x.UserId));
+
+					// The save rolled the badge version before the releases went; roll it again so no count cached in between stays.
+					await _callsService.InvalidateOpenCallCountsAsync(call.DepartmentId);
+				}
+				var newGroupIds = dispatchingGroupIds.Where(id => !existingGroupDispatches.Any(d => d.DepartmentGroupId == id)).ToList();
+				var newUnitIds = dispatchingUnitIds.Where(id => !existingUnitIds.Contains(id)).Distinct().ToList();
+				var newRoleIds = dispatchingRoleIds.Where(id => !existingRoleDispatches.Any(d => d.RoleId == id)).ToList();
+
+				// Only a call that has gone out notifies anyone or moves statuses: a pending call, or a scheduled call
+				// before its time, sends the edited list when it is dispatched.
+				var shouldApplyDispatchStatuses = call.State == (int)CallStates.Active &&
+					(call.HasBeenDispatched.GetValueOrDefault() || !call.DispatchOn.HasValue || call.DispatchOn.Value <= DateTime.UtcNow);
+
+				// The page for what this save added is recorded before anything else can fail: it is only owed now (the same save
+				// posted again sees nothing new), so a queue refusal or a failure below leaves it for worker 12 instead of losing it.
+				CallBroadcastOutboxEntry addedBroadcast = null;
+				if (shouldApplyDispatchStatuses && !model.RebroadcastCall && (newUserIds.Any() || newGroupIds.Any() || newUnitIds.Any() || newRoleIds.Any()))
+					addedBroadcast = await _callBroadcastOutboxService.RecordAsync(call, newUserIds, newGroupIds, newUnitIds, newRoleIds, UserId);
+
 				// Attach weather alerts as call notes if enabled (deduplication handled inside)
 				await _weatherAlertService.AttachWeatherAlertsToCallAsync(call, cancellationToken);
 
@@ -1703,37 +1749,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 					await _userDefinedFieldsService.SaveFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Call, call.CallId.ToString(), udfValues, UserId, isDeptAdmin, isGroupAdmin, cancellationToken);
 				}
 
-				// Members by id, live ones only: a member still released is off the call, one ticked again counts as added.
-				var stillReleasedUserIds = new HashSet<string>(releasedUserIds.Except(redispatchedUserIds, StringComparer.OrdinalIgnoreCase), StringComparer.OrdinalIgnoreCase);
-				var savedUserIds = new HashSet<string>((call.Dispatches ?? Enumerable.Empty<CallDispatch>()).Select(x => x.UserId).Where(x => !stillReleasedUserIds.Contains(x)));
-				var savedGroupIds = new HashSet<int>((call.GroupDispatches ?? Enumerable.Empty<CallDispatchGroup>()).Select(x => x.DepartmentGroupId));
-				var savedUnitIds = CallDispatchUnitReleases.ActiveUnitIds(call.UnitDispatches);
-				var savedRoleIds = new HashSet<int>((call.RoleDispatches ?? Enumerable.Empty<CallDispatchRole>()).Select(x => x.RoleId));
-
-				var cancelledUserIds = existingDispatches.Select(x => x.UserId).Where(x => !releasedUserIds.Contains(x))
-					.Where(y => !savedUserIds.Contains(y)).ToList();
-				var cancelledGroupIds = existingGroupDispatches.Select(x => x.DepartmentGroupId)
-					.Where(y => !savedGroupIds.Contains(y)).ToList();
-				var cancelledUnitIds = existingUnitIds.Where(y => !savedUnitIds.Contains(y)).ToList();
-				var cancelledRoleIds = existingRoleDispatches.Select(x => x.RoleId)
-					.Where(y => !savedRoleIds.Contains(y)).ToList();
-
-				var newUserIds = dispatchingUserIds.Where(id => !stillReleasedUserIds.Contains(id) && (redispatchedUserIds.Contains(id) || !existingDispatches.Any(d => d.UserId == id))).ToList();
-
-				// Members ticked again are back on the call: their releases go, so the broadcast pages them.
-				if (redispatchedUserIds.Any())
-				{
-					await _callResourceReleaseService.ClearPersonnelReleasesAsync(call.CallId, redispatchedUserIds, cancellationToken);
-					call.PersonnelReleases?.RemoveAll(x => redispatchedUserIds.Contains(x.UserId, StringComparer.OrdinalIgnoreCase));
-				}
-				var newGroupIds = dispatchingGroupIds.Where(id => !existingGroupDispatches.Any(d => d.DepartmentGroupId == id)).ToList();
-				var newUnitIds = dispatchingUnitIds.Where(id => !existingUnitIds.Contains(id)).Distinct().ToList();
-				var newRoleIds = dispatchingRoleIds.Where(id => !existingRoleDispatches.Any(d => d.RoleId == id)).ToList();
-
-				// Only a call that has gone out notifies anyone or moves statuses: a pending call, or a scheduled call
-				// before its time, sends the edited list when it is dispatched.
-				var shouldApplyDispatchStatuses = call.State == (int)CallStates.Active &&
-					(call.HasBeenDispatched.GetValueOrDefault() || !call.DispatchOn.HasValue || call.DispatchOn.Value <= DateTime.UtcNow);
 				if (shouldApplyDispatchStatuses && (cancelledGroupIds.Any() || cancelledUnitIds.Any()))
 				{
 					await _callDispatchStatusService.ApplyReleaseStatusesAsync(call, cancelledGroupIds, cancelledUnitIds, cancellationToken);
@@ -1784,7 +1799,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 							var members = await _departmentGroupsService.GetAllMembersForGroupAsync(groupId);
 							foreach (var member in members)
 							{
-								if (!stillDispatchedUserIds.Contains(member.UserId) && notifiedUserIds.Add(member.UserId))
+								// A member released from the call was stood down already (and told then, if asked).
+								if (!stillDispatchedUserIds.Contains(member.UserId) && !stillReleasedUserIds.Contains(member.UserId) && notifiedUserIds.Add(member.UserId))
 								{
 									var cd = new CallDispatch { CallId = call.CallId, UserId = member.UserId };
 									await _communicationService.SendCancelCallAsync(call, cd, departmentNumber, DepartmentId);
@@ -1798,7 +1814,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 							var members = await _personnelRolesService.GetAllMembersOfRoleAsync(roleId);
 							foreach (var member in members)
 							{
-								if (!stillDispatchedUserIds.Contains(member.UserId) && notifiedUserIds.Add(member.UserId))
+								if (!stillDispatchedUserIds.Contains(member.UserId) && !stillReleasedUserIds.Contains(member.UserId) && notifiedUserIds.Add(member.UserId))
 								{
 									var cd = new CallDispatch { CallId = call.CallId, UserId = member.UserId };
 									await _communicationService.SendCancelCallAsync(call, cd, departmentNumber, DepartmentId);
@@ -1815,23 +1831,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 				}
 
-				// Auto-dispatch newly added entities when RebroadcastCall is not checked
+				// Auto-dispatch newly added entities when RebroadcastCall is not checked: the page recorded above, plus any an earlier
+				// save of this call left unsent (the queue refused it, or that request failed after saving).
 				if (!model.RebroadcastCall && shouldApplyDispatchStatuses)
-				{
-					if (newUserIds.Any() || newGroupIds.Any() || newUnitIds.Any() || newRoleIds.Any())
-					{
-						var cqi = new CallQueueItem();
-						cqi.Call = call;
-						cqi.SetBroadcastDispatches(newUserIds, newGroupIds, newUnitIds, newRoleIds);
-
-						if (newGroupIds.Any() || newUnitIds.Any() || newRoleIds.Any())
-							cqi.Profiles = (await _userProfileService.GetAllProfilesForDepartmentAsync(DepartmentId)).Select(x => x.Value).ToList();
-						else
-							cqi.Profiles = await _userProfileService.GetSelectedUserProfilesAsync(newUserIds);
-
-						await _queueService.EnqueueCallBroadcastAsync(cqi, cancellationToken);
-					}
-				}
+					await _callBroadcastOutboxService.SendPendingForCallAsync(call, addedBroadcast);
 
 				if (model.RebroadcastCall && shouldApplyDispatchStatuses)
 				{
@@ -1847,8 +1850,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 						cqi.Profiles = new List<UserProfile>();
 
 
-					if (dispatchingUserIds.Any() || dispatchingGroupIds.Any() || dispatchingUnitIds.Any() || dispatchingRoleIds.Any())
-						await _queueService.EnqueueCallBroadcastAsync(cqi, cancellationToken);
+					// The whole call went out: pages an earlier save left unsent are covered by it.
+					if ((dispatchingUserIds.Any() || dispatchingGroupIds.Any() || dispatchingUnitIds.Any() || dispatchingRoleIds.Any()) &&
+						await _queueService.EnqueueCallBroadcastAsync(cqi, cancellationToken))
+						await _callBroadcastOutboxService.SupersedeForCallAsync(call.CallId);
 				}
 
 				//	scope.Complete();

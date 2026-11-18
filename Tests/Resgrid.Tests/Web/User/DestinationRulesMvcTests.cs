@@ -239,5 +239,64 @@ namespace Resgrid.Tests.Web.User
 			row["travelDistanceMeters"].Value<double>().Should().Be(7200);
 			row["missing"].Values<string>().Should().Equal("Helipad");
 		}
+
+		[Test]
+		public async Task A_setting_that_did_not_bind_is_refused_rather_than_saved_as_off()
+		{
+			var controller = Build(DepartmentAdmin);
+			controller.ModelState.AddModelError("mode", "The value 'x' is not valid.");
+
+			await controller.SaveSettings(0, null, CancellationToken.None);
+
+			controller.TempData["DestinationRulesError"].Should().NotBeNull();
+			M<IDepartmentSettingsService>().Verify(x => x.SetDestinationSuggestionConfigAsync(It.IsAny<int>(), It.IsAny<DestinationSuggestionConfig>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public async Task A_rule_whose_condition_did_not_bind_is_shown_again_not_saved_for_every_call()
+		{
+			var controller = Build(DepartmentAdmin);
+			controller.ModelState.AddModelError("CallTypeId", "The value 'x' is not valid.");
+
+			var result = await controller.Edit(new DestinationRuleEditView { Name = "Burns", RequiredCapabilityIds = new List<string> { "burn" } }, CancellationToken.None);
+
+			result.Should().BeOfType<ViewResult>();
+			M<IDestinationRulesService>().Verify(x => x.SaveRuleAsync(It.IsAny<int>(), It.IsAny<DestinationRule>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public async Task A_rule_deleted_by_someone_else_meanwhile_is_not_reported_as_deleted_here()
+		{
+			M<IDestinationRulesService>().Setup(x => x.GetRuleByIdAsync(DepartmentId, "r1")).ReturnsAsync(new DestinationRule { DestinationRuleId = "r1", DepartmentId = DepartmentId, Name = "Burns" });
+			M<IDestinationRulesService>().Setup(x => x.DeleteRuleAsync(DepartmentId, "r1", It.IsAny<CancellationToken>())).ReturnsAsync(false);
+			var controller = Build(DepartmentAdmin);
+
+			var result = await controller.Delete("r1", CancellationToken.None);
+
+			result.Should().BeOfType<NotFoundResult>();
+			controller.TempData["DestinationRulesMessage"].Should().BeNull();
+		}
+
+		[TestCase(null, 3.8)]
+		[TestCase(50.8, null)]
+		public async Task Suggestions_need_both_coordinates(double? latitude, double? longitude)
+		{
+			var json = JsonOf(await Build().Suggest(latitude, longitude, 1, "Burns", CancellationToken.None));
+
+			json["success"].Value<bool>().Should().BeFalse();
+			M<INearestDestinationService>().Verify(x => x.SuggestDestinationsAsync(It.IsAny<DestinationSuggestionRequest>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public async Task An_explicit_zero_coordinate_is_still_a_place()
+		{
+			M<INearestDestinationService>().Setup(x => x.SuggestDestinationsAsync(It.IsAny<DestinationSuggestionRequest>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new DestinationSuggestions { Mode = DestinationSuggestionModes.Off });
+
+			await Build().Suggest(0, 3.8, 1, "Burns", CancellationToken.None);
+
+			M<INearestDestinationService>().Verify(x => x.SuggestDestinationsAsync(It.Is<DestinationSuggestionRequest>(r => r.Latitude == 0 && r.Longitude == 3.8),
+				It.IsAny<CancellationToken>()), Times.Once);
+		}
 	}
 }

@@ -59,6 +59,7 @@ namespace Resgrid.Tests.Services
 		private List<UnitState> _unitStates;
 		private List<Call> _saved;
 		private int _nextCallId;
+		private List<RecurringCall> _stored;
 
 		[SetUp]
 		public void SetUp()
@@ -92,6 +93,7 @@ namespace Resgrid.Tests.Services
 			_claims = new List<RecurringCallOccurrence>();
 			_saved = new List<Call>();
 			_nextCallId = 1000;
+			_stored = new List<RecurringCall>();
 
 			_departmentsService.Setup(x => x.GetDepartmentByIdAsync(DepartmentId, It.IsAny<bool>())).ReturnsAsync(Eastern);
 			_departmentsService.Setup(x => x.GetAllMembersForDepartmentAsync(DepartmentId)).ReturnsAsync(new List<DepartmentMember>
@@ -123,6 +125,17 @@ namespace Resgrid.Tests.Services
 			_occurrences.Setup(x => x.SaveOrUpdateAsync(It.IsAny<RecurringCallOccurrence>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
 				.ReturnsAsync((RecurringCallOccurrence o, CancellationToken _, bool __) => o);
 			_occurrences.Setup(x => x.GetStaleClaimsAsync(It.IsAny<DateTime>())).ReturnsAsync(new List<RecurringCallOccurrence>());
+			_occurrences.Setup(x => x.TryCompleteClaimAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((string id, int callId, DateTime on, CancellationToken _) =>
+				{
+					var row = _claims.FirstOrDefault(c => c.RecurringCallOccurrenceId == id && c.State == (int)RecurringCallOccurrenceStates.Creating);
+					if (row == null)
+						return false;
+
+					row.State = (int)RecurringCallOccurrenceStates.Created;
+					row.CallId = callId;
+					return true;
+				});
 
 			_callsService.Setup(x => x.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync((Call c, CancellationToken _) =>
@@ -138,8 +151,13 @@ namespace Resgrid.Tests.Services
 				{
 					if (r.RecurringCallId == 0)
 						r.RecurringCallId = 77;
+					_stored.RemoveAll(x => x.RecurringCallId == r.RecurringCallId);
+					_stored.Add(r);
 					return r;
 				});
+			// The stored schedule (what the worker re-reads before creating): the last one saved or set up; a test can set its own.
+			_repository.Setup(x => x.GetByIdAsync(It.IsAny<object>()))
+				.ReturnsAsync((object id) => _stored.FirstOrDefault(x => Equals(x.RecurringCallId, id)));
 
 			_scopeService.Setup(x => x.FilterCallsForUserAsync(DepartmentId, It.IsAny<string>(), It.IsAny<List<Call>>()))
 				.ReturnsAsync((int d, string u, List<Call> calls) => calls);
@@ -202,11 +220,14 @@ namespace Resgrid.Tests.Services
 			_eventAggregator.Setup(x => x.SendMessage(It.IsAny<RecurringCallScheduleEvent>())).Callback((RecurringCallScheduleEvent e) => _events.Add(e));
 			_eventAggregator.Setup(x => x.SendMessage(It.IsAny<RecurringCallOccurrenceEvent>())).Callback((RecurringCallOccurrenceEvent e) => _events.Add(e));
 			_eventAggregator.Setup(x => x.SendMessage(It.IsAny<RecurringCallAlertEvent>())).Callback((RecurringCallAlertEvent e) => _events.Add(e));
-			_eventAggregator.Setup(x => x.SendMessage(It.IsAny<RecurringCallAlertsUpdatedEvent>())).Callback((RecurringCallAlertsUpdatedEvent e) => _events.Add(e));
+			_eventAggregator.Setup(x => x.SendMessageAsync(It.IsAny<RecurringCallAlertsUpdatedEvent>())).Callback((RecurringCallAlertsUpdatedEvent e) => _events.Add(e))
+				.Returns(Task.CompletedTask);
 			_eventAggregator.Setup(x => x.SendMessage(It.IsAny<AuditEvent>())).Callback((AuditEvent e) => _events.Add(e));
 
 			// Dispatch: the claim is free, the broadcast queues, nothing is available unless a test says so.
 			_callsService.Setup(x => x.TryClaimCallForDispatchAsync(It.IsAny<int>(), DepartmentId, It.IsAny<CancellationToken>())).ReturnsAsync(Now);
+			_callsService.Setup(x => x.ReleaseCallDispatchClaimAsync(It.IsAny<int>(), DepartmentId, It.IsAny<DateTime>(), It.IsAny<int>(), It.IsAny<DateTime?>(), It.IsAny<bool?>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(true);
 			_callsService.Setup(x => x.PopulateCallData(It.IsAny<Call>(), true, false, false, true, true, true, true, false, false, It.IsAny<bool>()))
 				.ReturnsAsync((Call c, bool a, bool b, bool d, bool e, bool f, bool g, bool h, bool i, bool j, bool k) => c);
 			_queueService.Setup(x => x.EnqueueCallBroadcastAsync(It.IsAny<CallQueueItem>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
@@ -258,6 +279,12 @@ namespace Resgrid.Tests.Services
 		private void Schedules(params RecurringCall[] schedules)
 		{
 			_repository.Setup(x => x.GetActiveAsync()).ReturnsAsync(schedules.ToList());
+
+			foreach (var series in schedules)
+			{
+				_stored.RemoveAll(x => x.RecurringCallId == series.RecurringCallId);
+				_stored.Add(series);
+			}
 		}
 
 		[Test]
@@ -729,7 +756,7 @@ namespace Resgrid.Tests.Services
 
 			_alerts.Single().Resolution.Should().Be((int)RecurringCallAlertResolutions.Dispatched);
 			Events<RecurringCallAlertEvent>().Should().ContainSingle(e => !e.Raised && e.Trigger == WorkflowTriggerEventType.RecurringCallAlertResolved && e.Resolution == "Dispatched");
-			Events<RecurringCallOccurrenceEvent>().Should().ContainSingle(e => e.Change == RecurringCallOccurrenceChanges.Dispatched && e.ByDispatcher);
+			Events<RecurringCallOccurrenceEvent>().Should().BeEmpty("whoever sent it raises the Dispatched trigger, so a workflow never runs twice for one dispatch");
 		}
 
 		[Test]
@@ -805,6 +832,322 @@ namespace Resgrid.Tests.Services
 			call.GroupDispatches.Should().NotBeNull();
 			call.UnitDispatches.Should().NotBeNull();
 			call.DestinationPoiId.Should().BeNull("the schedule has none");
+		}
+
+		[Test]
+		public async Task A_hold_whose_claim_could_not_be_released_stops_there()
+		{
+			var series = Series();
+			series.DispatchUserIds = null;
+			series.DispatchGroupIds = null;
+			series.DispatchRoleIds = null;
+			series.DispatchUnitIds = null;
+			_repository.Setup(x => x.GetByIdAsync(77)).ReturnsAsync(series);
+			_callsService.Setup(x => x.ReleaseCallDispatchClaimAsync(It.IsAny<int>(), DepartmentId, It.IsAny<DateTime>(), It.IsAny<int>(), It.IsAny<DateTime?>(), It.IsAny<bool?>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(false);
+			var call = RecurringCallsService.BuildCall(series, Now, Now, "dispatcher-1", RecurringCallDispatchTargets.Everything(series), false);
+			call.CallId = 502;
+
+			var result = await _service.DispatchCallAsync(call, null);
+
+			result.Outcome.Should().Be(RecurringCallDispatchOutcomes.NotWaiting, "the call was closed meanwhile, so it was not held");
+			_alerts.Should().BeEmpty();
+			_callsService.Verify(x => x.ReleaseCallDispatchClaimAsync(502, DepartmentId, It.IsAny<DateTime>(), It.IsAny<int>(), It.IsAny<DateTime?>(), It.IsAny<bool?>(), It.IsAny<CancellationToken>()),
+				Times.Once, "the claim is handed back once, as pending");
+		}
+
+		[Test]
+		public async Task Sending_a_held_call_claims_it_as_it_is_and_a_failed_queue_leaves_it_held()
+		{
+			var series = Series();
+			_repository.Setup(x => x.GetByIdAsync(77)).ReturnsAsync(series);
+			var occurrence = RecurringCallRecurrence.NextOccurrenceUtc(series, Eastern, DateTime.UtcNow.AddDays(-2)).Value;
+			var held = RecurringCallsService.BuildCall(series, occurrence, Now, "dispatcher-1", RecurringCallDispatchTargets.Everything(series), false);
+			held.CallId = 640;
+			held.State = (int)CallStates.Pending;
+			held.HasBeenDispatched = null;
+			_claims.Add(new RecurringCallOccurrence { RecurringCallOccurrenceId = "h", RecurringCallId = 77, DepartmentId = DepartmentId, OccurrenceOn = occurrence, State = (int)RecurringCallOccurrenceStates.Created, CallId = 640 });
+			_callsService.Setup(x => x.GetCallByIdAsync(640, It.IsAny<bool>())).ReturnsAsync(held);
+			_queueService.Setup(x => x.EnqueueCallBroadcastAsync(It.IsAny<CallQueueItem>(), It.IsAny<CancellationToken>())).ReturnsAsync(false);
+
+			var result = await _service.DispatchOccurrenceNowAsync(DepartmentId, 77, occurrence, "dispatcher-2");
+
+			result.Outcome.Should().Be(RecurringCallDispatchOutcomes.QueueFailed);
+			_saved.Should().BeEmpty("a held call is claimed as it is, never saved back to scheduled before the claim");
+			_callsService.Verify(x => x.ReleaseCallDispatchClaimAsync(640, DepartmentId, Now, (int)CallStates.Pending, occurrence, null, It.IsAny<CancellationToken>()), Times.Once,
+				"put back held, as it was");
+			Events<AuditEvent>().Should().NotContain(e => e.Type == AuditLogTypes.RecurringCallOccurrenceCreated, "this request created no call");
+		}
+
+		[Test]
+		public async Task Sending_a_held_call_makes_it_active_and_stamps_when_it_went()
+		{
+			var series = Series();
+			_repository.Setup(x => x.GetByIdAsync(77)).ReturnsAsync(series);
+			var occurrence = RecurringCallRecurrence.NextOccurrenceUtc(series, Eastern, DateTime.UtcNow.AddDays(-2)).Value;
+			var held = RecurringCallsService.BuildCall(series, occurrence, Now, "dispatcher-1", RecurringCallDispatchTargets.Everything(series), false);
+			held.CallId = 641;
+			held.State = (int)CallStates.Pending;
+			held.HasBeenDispatched = null;
+			_claims.Add(new RecurringCallOccurrence { RecurringCallOccurrenceId = "h", RecurringCallId = 77, DepartmentId = DepartmentId, OccurrenceOn = occurrence, State = (int)RecurringCallOccurrenceStates.Created, CallId = 641 });
+			_callsService.Setup(x => x.GetCallByIdAsync(641, It.IsAny<bool>())).ReturnsAsync(held);
+			var before = DateTime.UtcNow;
+
+			var result = await _service.DispatchOccurrenceNowAsync(DepartmentId, 77, occurrence, "dispatcher-2");
+
+			result.Outcome.Should().Be(RecurringCallDispatchOutcomes.Dispatched);
+			_saved.Should().ContainSingle();
+			_saved.Single().State.Should().Be((int)CallStates.Active);
+			_saved.Single().HasBeenDispatched.Should().BeTrue();
+			_saved.Single().DispatchOn.Should().BeOnOrAfter(before);
+		}
+
+		[Test]
+		public async Task A_call_sent_now_for_a_past_occurrence_is_saved_at_its_occurrence_and_retried_now_if_the_queue_fails()
+		{
+			var series = Series();
+			series.CreationMode = (int)RecurringCallCreationModes.Dispatcher;
+			_repository.Setup(x => x.GetByIdAsync(77)).ReturnsAsync(series);
+			var occurrence = RecurringCallRecurrence.NextOccurrenceUtc(series, Eastern, DateTime.UtcNow.AddHours(-20)).Value;
+			_claims.Add(new RecurringCallOccurrence { RecurringCallOccurrenceId = "m", RecurringCallId = 77, DepartmentId = DepartmentId, OccurrenceOn = occurrence, State = (int)RecurringCallOccurrenceStates.Missed });
+			_queueService.Setup(x => x.EnqueueCallBroadcastAsync(It.IsAny<CallQueueItem>(), It.IsAny<CancellationToken>())).ReturnsAsync(false);
+			DateTime? insertedFor = null;
+			_callsService.Setup(x => x.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((Call c, CancellationToken _) =>
+				{
+					insertedFor ??= c.DispatchOn;
+					if (c.CallId == 0)
+						c.CallId = ++_nextCallId;
+					_saved.Add(c);
+					return c;
+				});
+			var before = DateTime.UtcNow;
+
+			var result = await _service.DispatchOccurrenceNowAsync(DepartmentId, 77, occurrence, "dispatcher-2");
+
+			result.Outcome.Should().Be(RecurringCallDispatchOutcomes.QueueFailed);
+			insertedFor.Should().Be(occurrence, "the occurrence's time is the identity a dead claim is recovered by");
+			_callsService.Verify(x => x.ReleaseCallDispatchClaimAsync(result.Call.CallId, DepartmentId, Now, (int)CallStates.Active,
+				It.Is<DateTime?>(d => d.HasValue && d.Value >= before), false, It.IsAny<CancellationToken>()), Times.Once, "scheduled for now, so the worker retries it");
+		}
+
+		[Test]
+		public async Task A_call_saved_before_its_save_failed_is_kept_as_the_occurrences_call()
+		{
+			var series = Series();
+			Schedules(series);
+			_callsService.Setup(x => x.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>())).ThrowsAsync(new InvalidOperationException("protected write failed"));
+			_repository.Setup(x => x.GetCallForOccurrenceAsync(77, It.IsAny<DateTime>(), It.IsAny<DateTime>())).ReturnsAsync((int id, DateTime on, DateTime since) =>
+				new Call { CallId = 800 + on.Day, DepartmentId = DepartmentId, RecurringCallId = 77, DispatchOn = on });
+
+			await _service.GenerateDueCallsAsync(Now);
+
+			_claims.Should().NotBeEmpty();
+			_claims.Should().OnlyContain(c => c.State == (int)RecurringCallOccurrenceStates.Created && c.CallId == 800 + c.OccurrenceOn.Day);
+			_alerts.Should().NotContain(a => a.Kind == (int)RecurringCallAlertKinds.CreateFailed, "the call exists");
+		}
+
+		[Test]
+		public async Task A_creator_that_lost_its_claim_deletes_the_second_call()
+		{
+			var series = Series();
+			Schedules(series);
+			// The stale-claim recovery dropped this claim and another worker took the occurrence (call 990) before the save returned.
+			_callsService.Setup(x => x.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((Call c, CancellationToken _) =>
+				{
+					if (c.CallId == 0)
+					{
+						c.CallId = ++_nextCallId;
+						foreach (var claim in _claims.Where(x => x.State == (int)RecurringCallOccurrenceStates.Creating))
+						{
+							claim.State = (int)RecurringCallOccurrenceStates.Created;
+							claim.CallId = 990;
+							claim.RecurringCallOccurrenceId = "someone-else";
+						}
+					}
+
+					_saved.Add(c);
+					return c;
+				});
+
+			var created = await _service.GenerateDueCallsAsync(Now);
+
+			created.Should().Be(0);
+			_saved.Should().NotBeEmpty();
+			_saved.Where(c => c.CallId != 990).Should().OnlyContain(c => c.IsDeleted && c.DeletedReason == RecurringCallsService.DuplicateReason);
+			_claims.Should().OnlyContain(c => c.CallId == 990);
+		}
+
+		[Test]
+		public async Task A_schedule_paused_after_the_pass_read_it_creates_nothing()
+		{
+			var snapshot = Series(leadMinutes: 60);
+			Schedules(snapshot);
+			var stored = Series(leadMinutes: 60);
+			stored.IsActive = false;
+			stored.UpdatedOn = Now.AddMinutes(-1);
+			_repository.Setup(x => x.GetByIdAsync(77)).ReturnsAsync(stored);
+
+			var created = await _service.GenerateDueCallsAsync(Now);
+
+			created.Should().Be(0);
+			_claims.Should().BeEmpty();
+		}
+
+		[Test]
+		public async Task A_missed_occurrence_whose_alert_was_never_stored_is_alerted_on_the_next_pass_once()
+		{
+			var series = Series();
+			series.CreatedOn = Now.AddDays(-2);
+			Schedules(series);
+			var missed = RecurringCallRecurrence.NextOccurrenceUtc(series, Eastern, Now.AddHours(-20)).Value;
+			_claims.Add(new RecurringCallOccurrence { RecurringCallOccurrenceId = "m", RecurringCallId = 77, DepartmentId = DepartmentId, OccurrenceOn = missed, State = (int)RecurringCallOccurrenceStates.Missed });
+			_alertsRepository.Setup(x => x.AnyForOccurrenceAsync(77, It.IsAny<DateTime>(), It.IsAny<int>()))
+				.ReturnsAsync((int id, DateTime on, int kind) => _alerts.Any(a => a.RecurringCallId == id && a.OccurrenceOn == on && a.Kind == kind));
+
+			await _service.GenerateDueCallsAsync(Now);
+			_alerts.Should().ContainSingle(a => a.OccurrenceOn == missed && a.Kind == (int)RecurringCallAlertKinds.Missed);
+
+			// Dismissed: a later pass does not raise it again.
+			_alerts.Single(a => a.OccurrenceOn == missed).ResolvedOn = Now;
+			await _service.GenerateDueCallsAsync(Now.AddMinutes(1));
+			_alerts.Count(a => a.OccurrenceOn == missed && a.Kind == (int)RecurringCallAlertKinds.Missed).Should().Be(1);
+		}
+
+		[Test]
+		public async Task An_alert_nobody_could_be_told_about_is_sent_again_by_the_worker()
+		{
+			Schedules();
+			var series = Series();
+			_repository.Setup(x => x.GetByIdAsync(77)).ReturnsAsync(series);
+			_departmentsService.Setup(x => x.GetAllMembersForDepartmentAsync(DepartmentId)).ReturnsAsync(new List<DepartmentMember>
+			{
+				new DepartmentMember { UserId = "dispatcher-1", DepartmentId = DepartmentId }
+			});
+			_alerts.Add(new RecurringCallAlert { RecurringCallAlertId = "u", RecurringCallId = 77, DepartmentId = DepartmentId, OccurrenceOn = Now.AddHours(2), Kind = (int)RecurringCallAlertKinds.DispatchDue, CreatedOn = Now.AddMinutes(-5) });
+			_alerts.Add(new RecurringCallAlert { RecurringCallAlertId = "old", RecurringCallId = 77, DepartmentId = DepartmentId, OccurrenceOn = Now.AddHours(3), Kind = (int)RecurringCallAlertKinds.DispatchDue, CreatedOn = Now.AddHours(-3) });
+			_occurrences.Setup(x => x.GetByOccurrenceAsync(77, It.IsAny<DateTime>())).ReturnsAsync(new RecurringCallOccurrence { State = (int)RecurringCallOccurrenceStates.AwaitingDispatcher });
+
+			await _service.GenerateDueCallsAsync(Now);
+
+			_communication.Verify(x => x.SendNotificationAsync("dispatcher-1", DepartmentId, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Department>(), It.IsAny<string>(),
+				It.IsAny<UserProfile>(), It.IsAny<bool>(), RecurringCallsService.AlertEventCodePrefix + "u"), Times.Once);
+			_communication.Verify(x => x.SendNotificationAsync(It.IsAny<string>(), DepartmentId, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Department>(), It.IsAny<string>(),
+				It.IsAny<UserProfile>(), It.IsAny<bool>(), RecurringCallsService.AlertEventCodePrefix + "old"), Times.Never, "past the retry window");
+			_alertsRepository.Verify(x => x.MarkNotifiedAsync("u", It.IsAny<DateTime>(), It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
+		public async Task A_held_call_sent_with_dispatch_now_closes_its_alerts_and_raises_dispatched_once()
+		{
+			var series = Series();
+			_repository.Setup(x => x.GetByIdAsync(77)).ReturnsAsync(series);
+			_claims.Add(new RecurringCallOccurrence { RecurringCallOccurrenceId = "c", RecurringCallId = 77, DepartmentId = DepartmentId, OccurrenceOn = Now, State = (int)RecurringCallOccurrenceStates.Created, CallId = 650 });
+			_alerts.Add(new RecurringCallAlert { RecurringCallAlertId = "held", RecurringCallId = 77, DepartmentId = DepartmentId, OccurrenceOn = Now, Kind = (int)RecurringCallAlertKinds.NoResources, CallId = 650, CreatedOn = Now });
+			var call = new Call { CallId = 650, DepartmentId = DepartmentId, RecurringCallId = 77, State = (int)CallStates.Active, HasBeenDispatched = true, DispatchOn = Now.AddMinutes(30) };
+			_callsService.Setup(x => x.GetCallByIdAsync(650, It.IsAny<bool>())).ReturnsAsync(call);
+
+			await _service.OnCallDispatchedAsync(call, "dispatcher-2");
+			Schedules();
+			await _service.GenerateDueCallsAsync(Now);
+
+			_alerts.Single().Resolution.Should().Be((int)RecurringCallAlertResolutions.Dispatched);
+			Events<RecurringCallOccurrenceEvent>().Should().ContainSingle(e => e.Change == RecurringCallOccurrenceChanges.Dispatched && e.OccurrenceOn == Now && e.UserId == "dispatcher-2");
+		}
+
+		[Test]
+		public async Task A_call_still_being_sent_does_not_close_its_alert()
+		{
+			Schedules();
+			_repository.Setup(x => x.GetByIdAsync(77)).ReturnsAsync(Series());
+			_alerts.Add(new RecurringCallAlert { RecurringCallAlertId = "held", RecurringCallId = 77, DepartmentId = DepartmentId, OccurrenceOn = Now, Kind = (int)RecurringCallAlertKinds.NoResources, CallId = 660, CreatedOn = Now });
+			_callsService.Setup(x => x.GetCallByIdAsync(660, It.IsAny<bool>())).ReturnsAsync(new Call
+			{
+				CallId = 660, DepartmentId = DepartmentId, State = (int)CallStates.Active, HasBeenDispatched = true, DispatchClaimedOn = Now
+			});
+
+			await _service.GenerateDueCallsAsync(Now);
+
+			_alerts.Single().IsOpen.Should().BeTrue("the dispatch claim is still held, so the broadcast may yet be refused");
+		}
+
+		[Test]
+		public async Task Removing_upcoming_calls_leaves_one_being_sent_alone()
+		{
+			var series = Series(leadMinutes: 60);
+			series.EndsOn = new DateTime(2026, 11, 2);
+			var future = DateTime.UtcNow.AddDays(2);
+			var waiting = new Call { CallId = 910, DepartmentId = DepartmentId, RecurringCallId = 77, State = (int)CallStates.Active, HasBeenDispatched = false, DispatchOn = future };
+			_repository.Setup(x => x.GetCallsForScheduleAsync(DepartmentId, 77, It.IsAny<DateTime>())).ReturnsAsync(new List<Call> { waiting });
+			_callsService.Setup(x => x.GetCallByIdAsync(910, It.IsAny<bool>())).ReturnsAsync(waiting);
+			_callsService.Setup(x => x.TryClaimCallForDispatchAsync(910, DepartmentId, It.IsAny<CancellationToken>())).ReturnsAsync((DateTime?)null);
+
+			var result = await _service.SaveAsync(series, "dispatcher-2", true);
+
+			result.ReplacedCalls.Should().Be(0);
+			waiting.IsDeleted.Should().BeFalse("a worker or dispatcher holds its dispatch claim");
+		}
+
+		[Test]
+		public async Task A_deleted_schedules_alerts_follow_its_dispatch_scope()
+		{
+			var series = Series();
+			series.IsDeleted = true;
+			_repository.Setup(x => x.GetByIdAsync(77)).ReturnsAsync(series);
+			_alerts.Add(new RecurringCallAlert { RecurringCallAlertId = "held", RecurringCallId = 77, DepartmentId = DepartmentId, OccurrenceOn = Now, Kind = (int)RecurringCallAlertKinds.NoResources, CallId = 670, CreatedOn = DateTime.UtcNow });
+			_callsService.Setup(x => x.GetCallByIdAsync(670, It.IsAny<bool>())).ReturnsAsync(new Call { CallId = 670, DepartmentId = DepartmentId, State = (int)CallStates.Pending });
+			_scopeService.Setup(x => x.FilterCallsForUserAsync(DepartmentId, "outsider", It.IsAny<List<Call>>())).ReturnsAsync(new List<Call>());
+
+			(await _service.GetAlertsAsync(DepartmentId, "dispatcher-1")).Should().ContainSingle();
+			(await _service.GetAlertsAsync(DepartmentId, "outsider")).Should().BeEmpty();
+		}
+
+		[Test]
+		public async Task Only_the_schedules_in_a_members_scope_are_listed()
+		{
+			var mine = Series();
+			var theirs = Series();
+			theirs.RecurringCallId = 78;
+			_repository.Setup(x => x.GetForDepartmentAsync(DepartmentId)).ReturnsAsync(new List<RecurringCall> { mine, theirs });
+			_scopeService.Setup(x => x.FilterCallsForUserAsync(DepartmentId, "scoped", It.IsAny<List<Call>>()))
+				.ReturnsAsync((int d, string u, List<Call> calls) => calls.Where(c => c.RecurringCallId == 77).ToList());
+
+			(await _service.GetAllVisibleToUserAsync(DepartmentId, "scoped")).Select(x => x.RecurringCallId).Should().Equal(77);
+			(await _service.IsVisibleToUserAsync(theirs, "scoped")).Should().BeFalse();
+			(await _service.GetAllVisibleToUserAsync(DepartmentId, "dispatcher-1")).Should().HaveCount(2);
+		}
+
+		[Test]
+		public async Task An_alert_whose_time_the_schedule_no_longer_has_cannot_be_sent()
+		{
+			var series = Series();
+			_repository.Setup(x => x.GetByIdAsync(77)).ReturnsAsync(series);
+			var due = RecurringCallRecurrence.NextOccurrenceUtc(series, Eastern, Now).Value;
+			_alerts.Add(new RecurringCallAlert { RecurringCallAlertId = "a", RecurringCallId = 77, DepartmentId = DepartmentId, OccurrenceOn = due, Kind = (int)RecurringCallAlertKinds.DispatchDue, CreatedOn = DateTime.UtcNow });
+			_alerts.Add(new RecurringCallAlert { RecurringCallAlertId = "b", RecurringCallId = 77, DepartmentId = DepartmentId, OccurrenceOn = due.AddMinutes(30), Kind = (int)RecurringCallAlertKinds.DispatchDue, CreatedOn = DateTime.UtcNow });
+			_occurrences.Setup(x => x.GetByOccurrenceAsync(77, It.IsAny<DateTime>())).ReturnsAsync(new RecurringCallOccurrence { State = (int)RecurringCallOccurrenceStates.AwaitingDispatcher });
+
+			var alerts = await _service.GetAlertsAsync(DepartmentId, "dispatcher-1");
+
+			alerts.Single(x => x.Alert.RecurringCallAlertId == "a").CanSend.Should().BeTrue();
+			alerts.Single(x => x.Alert.RecurringCallAlertId == "b").CanSend.Should().BeFalse("its schedule moved the time");
+		}
+
+		[Test]
+		public async Task A_call_sent_outside_the_range_keeps_its_occurrence_on_the_calendar()
+		{
+			var series = Series();
+			_repository.Setup(x => x.GetForDepartmentAsync(DepartmentId)).ReturnsAsync(new List<RecurringCall> { series });
+			var from = new DateTime(2026, 11, 22, 5, 0, 0, DateTimeKind.Utc);
+			var sentEarly = new Call { CallId = 700, DepartmentId = DepartmentId, RecurringCallId = 77, State = (int)CallStates.Active, HasBeenDispatched = true, DispatchOn = from.AddHours(18) };
+			var mondayOccurrence = new DateTime(2026, 11, 23, 13, 0, 0, DateTimeKind.Utc);
+			_repository.Setup(x => x.GetScheduledCallsInRangeAsync(DepartmentId, It.IsAny<DateTime>(), It.IsAny<DateTime>())).ReturnsAsync(new List<Call> { sentEarly });
+			_occurrences.Setup(x => x.GetByCallAsync(77, 700)).ReturnsAsync(new RecurringCallOccurrence { RecurringCallId = 77, OccurrenceOn = mondayOccurrence, CallId = 700, State = (int)RecurringCallOccurrenceStates.Created });
+
+			var entries = await _service.GetCalendarAsync(DepartmentId, "dispatcher-1", from, from.AddDays(1));
+
+			entries.Single(x => x.CallId == 700).OccurrenceOnUtc.Should().Be(mondayOccurrence);
 		}
 	}
 }

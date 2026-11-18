@@ -843,11 +843,13 @@ namespace Resgrid.Services
 			if (personnelTimer == null)
 				return new List<PersonnelCallCheckInStatus>();
 
-			// Load dispatched personnel (single query).
-			if (call.Dispatches == null)
-				call = await _callsService.PopulateCallData(call, true, false, false, false, false, false, false, false, false);
+			// Load dispatched personnel and the call's releases (PopulateCallData reads only what is not loaded yet).
+			if (call.Dispatches == null || call.PersonnelReleases == null)
+				call = await _callsService.PopulateCallData(call, true, false, false, false, false, false, false, false, false) ?? call;
 
-			var dispatches = call.Dispatches?.ToList() ?? new List<CallDispatch>();
+			// A member released (stood down) from the call is off its roster: no PAR is due from them. Their check-ins stay on
+			// the call's history.
+			var dispatches = call.Dispatches?.Where(d => d != null && !call.IsUserReleased(d.UserId)).ToList() ?? new List<CallDispatch>();
 			if (!dispatches.Any())
 				return new List<PersonnelCallCheckInStatus>();
 

@@ -155,6 +155,10 @@
 														@Html.AntiForgeryToken()
 														<input type="hidden" name="returnTo" value="Index" />
 														<input type="hidden" name="reasonText" value="" />
+														<input type="hidden" name="year" value="@Model.Year" />
+														<input type="hidden" name="state" value="@Model.StateFilter" />
+														<input type="hidden" name="closed" value="@(Model.IncludeClosed ? "true" : "false")" />
+														<input type="hidden" name="page" value="@Model.Page" />
 														<button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> @localizer["DeleteIncidentReport"]</button>
 													</form>
 												}

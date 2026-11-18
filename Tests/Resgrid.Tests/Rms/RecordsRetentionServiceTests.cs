@@ -115,6 +115,37 @@ namespace Resgrid.Tests.Rms
 			_store.Outbox.Should().Contain(o => o.AggregateId == expired.RmsIncidentReportId && o.TriggerEventType == (int)WorkflowTriggerEventType.RecordPurged);
 		}
 
+		[Test]
+		public async Task A_failed_deleted_report_lookup_still_counts_the_purges_and_rescans_attachments()
+		{
+			var purged = SeedFinalized(DateTime.UtcNow.AddYears(-10));
+			var attachment = SeedAttachment(SeedFinalized(DateTime.UtcNow.AddYears(-1)).RmsOperationalRecordId, RmsAttachmentScanState.Pending);
+			_incidents.ReportsRepo.Setup(r => r.GetDeletedPurgeCandidatesAsync(Dept, It.IsAny<DateTime>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+				.ThrowsAsync(new TimeoutException("query timed out"));
+
+			var result = await _service.SweepAsync();
+
+			purged.PurgedOn.Should().NotBeNull();
+			result.RecordsPurged.Should().Be(1, "the purge committed before the lookup failed is still reported");
+			result.AttachmentsRescanned.Should().Be(1, "a failing deleted-report lookup must not block the attachment rescan");
+			attachment.ScanState.Should().Be((int)RmsAttachmentScanState.Clean);
+			result.Errors.Should().Be(1);
+		}
+
+		[Test]
+		public async Task The_deleted_report_lookup_carries_the_sweep_cancellation()
+		{
+			using var cancellation = new CancellationTokenSource();
+			CancellationToken seen = default;
+			_incidents.ReportsRepo.Setup(r => r.GetDeletedPurgeCandidatesAsync(Dept, It.IsAny<DateTime>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+				.Callback((int d, DateTime cutoff, int take, string after, CancellationToken token) => seen = token)
+				.ReturnsAsync(new List<RmsIncidentReport>());
+
+			await _service.ProcessDepartmentAsync(Dept, cancellation.Token);
+
+			seen.Should().Be(cancellation.Token);
+		}
+
 		private RmsOperationalRecord SeedFinalized(DateTime finalizedOn, string definitionKey = null)
 		{
 			var id = Guid.NewGuid().ToString();

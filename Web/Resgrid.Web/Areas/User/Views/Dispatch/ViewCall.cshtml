@@ -402,9 +402,13 @@
                                                         }
 
 
+                                                        @* A dispatcher who can release resources also sees the members a dispatched group reached, each with
+                                                           the same Release control as a member dispatched by name. *@
+                                                        var listGroupMembers = Model.CanReleaseResources && Model.Call.HasGroupBeenDispatched(g.DepartmentGroupId);
+
                                                         foreach (var u in sortedUsers)
                                                         {
-                                                            if (Model.Call.HasUserBeenDispatched(u.User.UserId))
+                                                            if (Model.Call.HasUserBeenDispatched(u.User.UserId) || listGroupMembers)
                                                             {
                                                                 <tr>
                                                                     <td></td>
@@ -470,8 +474,11 @@
                                                             </tr>
                                                         }
                                                     }
-                                                @* Members released from the call who were not dispatched by name (a group, role, unit crew or status reached them). *@
-                                                @foreach (var release in (Model.Call.PersonnelReleases ?? new List<CallPersonnelRelease>()).Where(r => !Model.Call.HasUserBeenDispatched(r.UserId)))
+                                                @* Members released from the call who were not dispatched by name (a group, role, unit crew or status reached them),
+                                                   unless already listed above under their dispatched group. *@
+                                                @foreach (var release in (Model.Call.PersonnelReleases ?? new List<CallPersonnelRelease>()).Where(r => !Model.Call.HasUserBeenDispatched(r.UserId) &&
+                                                    !(Model.CanReleaseResources && Model.Groups.Any(g => Model.Call.HasGroupBeenDispatched(g.DepartmentGroupId) &&
+                                                        g.Members != null && g.Members.Any(m => string.Equals(m.UserId, r.UserId, StringComparison.OrdinalIgnoreCase))))))
                                                 {
                                                     var releasedName = Model.UserGroupRoles?.FirstOrDefault(x => x.UserId == release.UserId)?.Name ?? release.UserId;
                                                     <tr>

@@ -558,7 +558,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// Soft-deletes a report (a never-finalized one is cancelled first; a voided one needs a department administrator,
 		/// <c>ReasonText</c>, and no outside delivery). It leaves every list and the change feed sends a tombstone. A policy
 		/// refusal is 409 <c>record_delete_refused</c> with the <see cref="IncidentReportDeleteRefusal"/> name as the detail.
-		/// A retry under the same idempotency key after success answers 200 rather than 404.
+		/// A stale report is the usual report conflict body; a linked analysis that changed during the delete is 409
+		/// <c>record_delete_analysis_conflict</c> (reload, then retry). A retry with an idempotency key after success answers
+		/// 200 rather than 404, also when the first attempt committed but its receipt was never stored.
 		/// </summary>
 		[HttpPost("Delete")]
 		[Consumes(MediaTypeNames.Application.Json)]
@@ -581,6 +583,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 			// Checked before the load: a deleted report no longer loads, and the retry must still hear that it worked.
 			if (key != null && string.Equals(await _idempotency.TryGetRecordIdAsync(DepartmentId, UserId, key, nameof(Delete)), input.ReportId, StringComparison.Ordinal))
 				return Ok(DeleteResult(input.ReportId));
+			// The receipt is written after the delete commits; when that write never happened (process stopped, cache down),
+			// the caller's own recent delete still answers its retry instead of a 404.
+			if (key != null && await _incidentReports.WasDeletedByAsync(DepartmentId, UserId, input.ReportId))
+				return Ok(DeleteResult(input.ReportId));
 
 			if (await LoadAuthorizedAsync(input.ReportId) == null)
 				return NotFound();
@@ -596,6 +602,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 			catch (IncidentReportDeleteRefusedException ex)
 			{
 				return Problem(statusCode: StatusCodes.Status409Conflict, title: ex.Message, detail: ex.Refusal.ToString(), type: "record_delete_refused");
+			}
+			catch (RecordConcurrencyException ex) when (!string.Equals(ex.RecordId, input.ReportId, StringComparison.Ordinal))
+			{
+				// The linked analysis changed under the delete. Its version is not the report's, so it never goes into the
+				// report conflict body; the client reloads the report and asks again.
+				return Problem(statusCode: StatusCodes.Status409Conflict, title: "The report's incident analysis changed while the report was being deleted. Reload the report before retrying.", type: "record_delete_analysis_conflict");
 			}
 			catch (RecordConcurrencyException ex)
 			{

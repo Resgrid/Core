@@ -185,7 +185,20 @@ namespace Resgrid.Services.Records
 			while (true)
 			{
 				cancellationToken.ThrowIfCancellationRequested();
-				var page = (await _incidentReports.GetDeletedPurgeCandidatesAsync(departmentId, deletedBefore, MaxRecordsPerDepartment, after))?.ToList() ?? new List<RmsIncidentReport>();
+				List<RmsIncidentReport> page;
+				try
+				{
+					page = (await _incidentReports.GetDeletedPurgeCandidatesAsync(departmentId, deletedBefore, MaxRecordsPerDepartment, after, cancellationToken))?.ToList() ?? new List<RmsIncidentReport>();
+				}
+				catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { throw; }
+				catch (Exception ex)
+				{
+					// A failed lookup leaves the rest for the next sweep; the purges already committed are still counted and
+					// the attachment rescan below still runs.
+					Logging.LogException(ex, $"Deleted incident report discovery failed for department {departmentId}; it will be retried.");
+					result.Errors++;
+					break;
+				}
 				if (page.Count == 0) break;
 				after = page.Last().RmsIncidentReportId;
 				foreach (var report in page)

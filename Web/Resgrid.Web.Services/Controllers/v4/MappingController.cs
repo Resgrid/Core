@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Resgrid.Framework;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Claims;
@@ -883,21 +884,22 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <param name="latitude">Origin latitude (a unit's position or a call's location).</param>
 		/// <param name="longitude">Origin longitude.</param>
 		/// <param name="capabilityId">Only destinations offering this capability (GetPoiCapabilities); omit for all.</param>
-		/// <param name="unitId">The travelling unit, so its travel mode and vehicle limits apply; omit for plain driving.</param>
+		/// <param name="unitId">The travelling unit, so its travel mode and vehicle limits apply; omit for plain driving (a unit the caller cannot view is ignored).</param>
 		/// <param name="take">How many to return (1 to 50, default 10).</param>
 		/// <param name="cancellationToken">Request cancellation.</param>
 		[HttpGet("GetNearestDestinations")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[Authorize(Policy = ResgridResources.Department_View)]
-		public async Task<ActionResult<NearestDestinationsResult>> GetNearestDestinations(double latitude, double longitude, string capabilityId = null, int? unitId = null,
-			int take = 10, CancellationToken cancellationToken = default)
+		public async Task<ActionResult<NearestDestinationsResult>> GetNearestDestinations([BindRequired] double latitude, [BindRequired] double longitude, string capabilityId = null,
+			int? unitId = null, int take = 10, CancellationToken cancellationToken = default)
 		{
 			if (double.IsNaN(latitude) || double.IsNaN(longitude) || Math.Abs(latitude) > 90 || Math.Abs(longitude) > 180)
 				return BadRequest();
 
 			var result = new NearestDestinationsResult();
-			var ranked = await _nearestDestinationService.GetNearestDestinationsAsync(DepartmentId, latitude, longitude, capabilityId, unitId, take, cancellationToken);
+			var ranked = await _nearestDestinationService.GetNearestDestinationsAsync(DepartmentId, latitude, longitude, capabilityId, await VisibleUnitIdAsync(unitId),
+				take, cancellationToken);
 
 			foreach (var destination in ranked)
 			{
@@ -930,15 +932,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <param name="type">The call type name; omit to take the call's (with callId).</param>
 		/// <param name="priority">The call priority (the call's Priority value); omit to take the call's (with callId).</param>
 		/// <param name="callId">The call the destination is for; supplies its type and priority when not given.</param>
-		/// <param name="unitId">The travelling unit: its type's rules, travel mode and vehicle limits apply.</param>
+		/// <param name="unitId">The travelling unit: its type's rules, travel mode and vehicle limits apply (a unit the caller cannot view is ignored).</param>
 		/// <param name="take">How many to return (1 to 50, default 10).</param>
 		/// <param name="cancellationToken">Request cancellation.</param>
 		[HttpGet("GetSuggestedDestinations")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[Authorize(Policy = ResgridResources.Department_View)]
-		public async Task<ActionResult<SuggestedDestinationsResult>> GetSuggestedDestinations(double latitude, double longitude, string type = null, int? priority = null,
-			int? callId = null, int? unitId = null, int take = 10, CancellationToken cancellationToken = default)
+		public async Task<ActionResult<SuggestedDestinationsResult>> GetSuggestedDestinations([BindRequired] double latitude, [BindRequired] double longitude, string type = null,
+			int? priority = null, int? callId = null, int? unitId = null, int take = 10, CancellationToken cancellationToken = default)
 		{
 			if (double.IsNaN(latitude) || double.IsNaN(longitude) || Math.Abs(latitude) > 90 || Math.Abs(longitude) > 180)
 				return BadRequest();
@@ -950,7 +952,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				Longitude = longitude,
 				CallType = type,
 				CallPriority = priority,
-				UnitId = unitId,
+				UnitId = await VisibleUnitIdAsync(unitId),
 				MaxResults = take
 			};
 
@@ -998,6 +1000,24 @@ namespace Resgrid.Web.Services.Controllers.v4
 			ResponseHelper.PopulateV4ResponseData(result);
 
 			return Ok(result);
+		}
+
+		/// <summary>
+		/// The travelling unit for a destination lookup, or null (plain driving, no unit-type rules) when it is not this
+		/// department's or Security > View Units hides it from the caller: a hidden unit's type and travel profile must not
+		/// shape what the caller is shown.
+		/// </summary>
+		private async Task<int?> VisibleUnitIdAsync(int? unitId)
+		{
+			if (!unitId.HasValue || unitId.Value <= 0)
+				return null;
+
+			var unit = await _unitsService.GetUnitByIdAsync(unitId.Value);
+			if (unit == null || unit.DepartmentId != DepartmentId || unit.IsDeleted ||
+			    !await _authorizationService.CanUserViewUnitViaMatrixAsync(unit.UnitId, UserId, DepartmentId))
+				return null;
+
+			return unit.UnitId;
 		}
 
 		/// <summary>The resolved destination requirements as the v4 shape.</summary>

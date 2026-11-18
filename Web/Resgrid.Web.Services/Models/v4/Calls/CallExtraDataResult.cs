@@ -126,12 +126,15 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		public string ResponseCodeColor { get; set; }
 
 		/// <summary>
-		/// <see cref="CallExtraDataResultData.ReleasedUnits"/> entries only: when the unit was released from the call, ISO 8601
-		/// UTC ("Z"); null elsewhere.
+		/// <see cref="CallExtraDataResultData.ReleasedUnits"/> and <see cref="CallExtraDataResultData.ReleasedPersonnel"/>
+		/// entries only: when the unit or member was released from the call, ISO 8601 UTC ("Z"); null elsewhere.
 		/// </summary>
 		public string ReleasedOn { get; set; }
 
-		/// <summary><see cref="CallExtraDataResultData.ReleasedUnits"/> entries only: who released the unit; null elsewhere.</summary>
+		/// <summary>
+		/// <see cref="CallExtraDataResultData.ReleasedUnits"/> and <see cref="CallExtraDataResultData.ReleasedPersonnel"/>
+		/// entries only: the name of who released the unit or member; null elsewhere, and null when that member cannot be found.
+		/// </summary>
 		public string ReleasedBy { get; set; }
 	}
 }

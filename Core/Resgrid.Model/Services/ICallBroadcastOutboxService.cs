@@ -6,7 +6,7 @@ namespace Resgrid.Model.Services
 {
 	/// <summary>
 	/// Pages owed to resources an edit added to a live call (M0321, <see cref="CallBroadcastOutboxEntry"/>). An edit pages only what
-	/// it changed, so a page the queue refuses must outlive the request: the edit records it as soon as the call is saved, sends it
+	/// it changed, so a page the queue refuses must outlive the request: the edit records it just before saving the call, sends it
 	/// at the end, and worker 12 retries whatever is left. Who is paged is decided again at each attempt from the call as it is then.
 	/// </summary>
 	public interface ICallBroadcastOutboxService
@@ -25,8 +25,11 @@ namespace Resgrid.Model.Services
 		/// </summary>
 		Task<int> SendPendingForCallAsync(Call call, CallBroadcastOutboxEntry recorded = null);
 
-		/// <summary>A full rebroadcast of the call went out: its pending pages are covered by it. Never throws.</summary>
-		Task SupersedeForCallAsync(int callId);
+		/// <summary>
+		/// A full rebroadcast of <paramref name="broadcastCall"/> went out: the call's pending pages whose every resource was on that
+		/// call are covered by it; a page for anyone it did not carry (a concurrent edit added them) stays. Never throws.
+		/// </summary>
+		Task SupersedeCoveredAsync(Call broadcastCall);
 
 		/// <summary>Worker 12: sends the pages that are due again, then purges old finished rows. Returns how many the queue accepted.</summary>
 		Task<int> SendDueAsync(int batchSize, CancellationToken cancellationToken);

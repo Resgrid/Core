@@ -104,18 +104,17 @@ namespace Resgrid.Tests.Mocks
 			}
 		}
 
-		public Task<int> SupersedePendingForCallAsync(int callId, DateTime nowUtc, CancellationToken cancellationToken = default)
+		public Task<bool> TrySupersedeAsync(string callBroadcastOutboxId, DateTime nowUtc, CancellationToken cancellationToken = default)
 		{
 			lock (_gate)
 			{
-				var rows = Rows.Where(x => x.CallId == callId && x.State == (int)CallBroadcastOutboxStates.Pending).ToList();
-				foreach (var row in rows)
-				{
-					row.State = (int)CallBroadcastOutboxStates.Superseded;
-					row.CompletedOn = nowUtc;
-				}
+				var row = Find(callBroadcastOutboxId);
+				if (row == null || row.State != (int)CallBroadcastOutboxStates.Pending)
+					return Task.FromResult(false);
 
-				return Task.FromResult(rows.Count);
+				row.State = (int)CallBroadcastOutboxStates.Superseded;
+				row.CompletedOn = nowUtc;
+				return Task.FromResult(true);
 			}
 		}
 

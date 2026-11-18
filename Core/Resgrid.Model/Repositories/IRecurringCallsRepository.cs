@@ -36,6 +36,13 @@ namespace Resgrid.Model.Repositories
 		/// <summary>Inserts the row unless the schedule already has one for that time; false when it did (someone else has it).</summary>
 		Task<bool> TryClaimAsync(RecurringCallOccurrence occurrence, CancellationToken cancellationToken = default);
 
+		/// <summary>
+		/// <see cref="TryClaimAsync"/> for the worker: also only while the stored schedule is active, not deleted and still the revision
+		/// the worker read (<see cref="RecurringCall.EffectiveFrom"/> = <paramref name="scheduleRevisionUtc"/>, to the second). The schedule
+		/// row is locked for the check, so a pause or change either lands first (nothing is claimed) or waits for the claim.
+		/// </summary>
+		Task<bool> TryClaimWhileRunningAsync(RecurringCallOccurrence occurrence, DateTime scheduleRevisionUtc, CancellationToken cancellationToken = default);
+
 		Task<IEnumerable<RecurringCallOccurrence>> GetForScheduleInRangeAsync(int recurringCallId, DateTime fromUtc, DateTime toUtc);
 
 		Task<IEnumerable<RecurringCallOccurrence>> GetForDepartmentInRangeAsync(int departmentId, DateTime fromUtc, DateTime toUtc);
@@ -60,10 +67,31 @@ namespace Resgrid.Model.Repositories
 			CancellationToken cancellationToken = default);
 
 		/// <summary>
-		/// Marks a claim created with its call, only while it is still that claim in <see cref="RecurringCallOccurrenceStates.Creating"/>;
-		/// false when it is not (the stale-claim recovery dropped it, or already recorded the call).
+		/// Marks a claim created with its call, only while it is still that claim (<see cref="RecurringCallOccurrenceStates.Creating"/>
+		/// with <paramref name="claimedOnUtc"/> as its <see cref="RecurringCallOccurrence.UpdatedOn"/>); false when it is not (the
+		/// stale-claim recovery dropped it or recorded the call, or the row was given back and claimed again by someone else).
 		/// </summary>
-		Task<bool> TryCompleteClaimAsync(string recurringCallOccurrenceId, int callId, DateTime updatedOnUtc, CancellationToken cancellationToken = default);
+		Task<bool> TryCompleteClaimAsync(string recurringCallOccurrenceId, int callId, DateTime claimedOnUtc, DateTime updatedOnUtc,
+			CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Renews a claim this caller still holds (same row, still creating, same <paramref name="claimedOnUtc"/>) to
+		/// <paramref name="renewedOnUtc"/>, right before its call is saved, so the stale-claim recovery cannot drop it while the save
+		/// runs. With <paramref name="scheduleRevisionUtc"/>, also only while the schedule runs as that revision (as
+		/// <see cref="TryClaimWhileRunningAsync"/>). False: the claim is not this caller's any more, or the schedule stopped or changed.
+		/// </summary>
+		Task<bool> TryRenewClaimAsync(string recurringCallOccurrenceId, DateTime claimedOnUtc, DateTime renewedOnUtc, DateTime? scheduleRevisionUtc,
+			CancellationToken cancellationToken = default);
+
+		/// <summary>Drops a claim, only while it is still this caller's (creating, with <paramref name="claimedOnUtc"/>).</summary>
+		Task<bool> DeleteClaimAsync(string recurringCallOccurrenceId, DateTime claimedOnUtc, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Puts a claim a dispatcher took over back to <paramref name="toState"/>, only while it is still theirs (creating, with
+		/// <paramref name="claimedOnUtc"/>).
+		/// </summary>
+		Task<bool> TryReturnClaimAsync(string recurringCallOccurrenceId, DateTime claimedOnUtc, int toState, string userId, DateTime updatedOnUtc,
+			CancellationToken cancellationToken = default);
 	}
 
 	/// <summary>What dispatchers have to act on for recurring calls (RecurringCallAlerts, M0320).</summary>
@@ -99,6 +127,16 @@ namespace Resgrid.Model.Repositories
 
 		/// <summary>Marks an open, unacknowledged alert seen; false when it was closed or already acknowledged.</summary>
 		Task<bool> TryAcknowledgeAsync(string recurringCallAlertId, string userId, DateTime acknowledgedOnUtc, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Claims sending an alert to its recipients: only while it is still open and nobody has sent it or is sending it
+		/// (<see cref="RecurringCallAlert.NotifiedOn"/> is null; the claim sets it to <paramref name="claimedOnUtc"/>). False: closed
+		/// meanwhile, or someone else has it.
+		/// </summary>
+		Task<bool> TryClaimNotificationAsync(string recurringCallAlertId, DateTime claimedOnUtc, CancellationToken cancellationToken = default);
+
+		/// <summary>Gives back a notification claim nobody was reached under (only while it is still that claim), so a later pass retries it.</summary>
+		Task<bool> ReleaseNotificationClaimAsync(string recurringCallAlertId, DateTime claimedOnUtc, CancellationToken cancellationToken = default);
 
 		/// <summary>Records that the alert recipients were sent it.</summary>
 		Task MarkNotifiedAsync(string recurringCallAlertId, DateTime notifiedOnUtc, CancellationToken cancellationToken = default);

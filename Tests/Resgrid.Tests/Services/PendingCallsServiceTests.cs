@@ -130,6 +130,23 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task A_held_recurring_call_that_went_out_tells_its_schedule_even_when_its_statuses_fail()
+		{
+			var call = PendingCall(withRecipient: false);
+			call.RecurringCallId = 77;
+			call.UnitDispatches.Add(new CallDispatchUnit { CallId = 42, UnitId = 5 });
+			_callDispatchStatusService.Setup(x => x.ApplyDispatchStatusesAsync(It.IsAny<Call>(), It.IsAny<IEnumerable<int>>(), It.IsAny<IEnumerable<int>>(), It.IsAny<CancellationToken>()))
+				.ThrowsAsync(new OperationCanceledException("the request went away"));
+
+			Func<Task> dispatch = () => _service.DispatchNowAsync(call, "dispatcher");
+
+			await dispatch.Should().ThrowAsync<OperationCanceledException>();
+			_queueService.Verify(x => x.EnqueueCallBroadcastAsync(It.IsAny<CallQueueItem>(), It.IsAny<CancellationToken>()), Times.Once);
+			_recurringCallsService.Verify(x => x.OnCallDispatchedAsync(call, "dispatcher", CancellationToken.None), Times.Once,
+				"the page went out: the occurrence's Dispatched trigger runs and its alerts close whatever failed after it");
+		}
+
+		[Test]
 		public async Task A_call_no_schedule_created_or_one_that_did_not_go_out_does_not_tell_a_schedule()
 		{
 			await _service.DispatchNowAsync(PendingCall(), "dispatcher");

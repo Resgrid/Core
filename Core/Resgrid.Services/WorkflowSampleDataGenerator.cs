@@ -708,18 +708,22 @@ namespace Resgrid.Services
 					recurringCall["destination_name"] = "Riverside Dialysis Center";
 					recurringCall["contact_name"] = "Pat Lee";
 					recurringCall["contact_number"] = "555-0100";
-					recurringCall["starts_on"] = "2026-11-17";
-					recurringCall["ends_on"] = "2027-05-31";
+					// One timeline from today, so the next occurrence (tomorrow) always falls between the start and the end.
+					var sampleToday = DateTime.UtcNow.Date;
+					recurringCall["starts_on"] = sampleToday.AddDays(-14).ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+					recurringCall["ends_on"] = sampleToday.AddMonths(6).ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
 					recurringCall["times"] = "08:00,13:00,19:00";
 					recurringCall["mode"] = "Automatic";
 					recurringCall["use_run_card"] = false;
 					recurringCall["is_active"] = eventType != WorkflowTriggerEventType.RecurringCallSchedulePaused && eventType != WorkflowTriggerEventType.RecurringCallScheduleDeleted;
 					recurringCall["pause_reason"] = eventType == WorkflowTriggerEventType.RecurringCallSchedulePaused ? "Holiday week" : null;
-					recurringCall["resume_on"] = eventType == WorkflowTriggerEventType.RecurringCallSchedulePaused ? "2026-12-28" : null;
+					recurringCall["resume_on"] = eventType == WorkflowTriggerEventType.RecurringCallSchedulePaused
+						? sampleToday.AddDays(14).ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture)
+						: null;
 					// As live: a paused or deleted schedule has no next occurrence.
 					recurringCall["next_occurrence_on"] = eventType == WorkflowTriggerEventType.RecurringCallSchedulePaused || eventType == WorkflowTriggerEventType.RecurringCallScheduleDeleted
 						? null
-						: (object)DateTime.UtcNow.Date.AddDays(1).AddHours(16);
+						: (object)sampleToday.AddDays(1).AddHours(16);
 					obj["recurring_call"] = recurringCall;
 					break;
 
@@ -733,7 +737,8 @@ namespace Resgrid.Services
 					occurrence["occurrence_on"] = DateTime.UtcNow.Date.AddDays(1).AddHours(16);
 					occurrence["call_id"] = eventType == WorkflowTriggerEventType.RecurringCallOccurrenceSkipped ? 0 : 1001;
 					occurrence["call_number"] = eventType == WorkflowTriggerEventType.RecurringCallOccurrenceSkipped ? null : "26-1001";
-					occurrence["by_dispatcher"] = false;
+					// A skip is always a dispatcher's (the live event says so); the samples for creation and dispatch are the worker's.
+					occurrence["by_dispatcher"] = eventType == WorkflowTriggerEventType.RecurringCallOccurrenceSkipped;
 					// A skipped occurrence has no call, so nobody is assigned (the live event reports zero).
 					occurrence["unit_count"] = eventType == WorkflowTriggerEventType.RecurringCallOccurrenceSkipped ? 0 : 1;
 					occurrence["personnel_count"] = 0;

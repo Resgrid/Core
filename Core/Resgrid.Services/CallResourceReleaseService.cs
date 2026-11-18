@@ -98,7 +98,11 @@ namespace Resgrid.Services
 					.OrderByDescending(x => x.ReleasedOn)
 					.FirstOrDefault();
 
-				return CallResourceReleaseResult.Failed(CallResourceReleaseOutcome.AlreadyReleased, current ?? live[0]);
+				// "Released elsewhere" only when the stored rows show that release; a dispatch removed by an edit meanwhile left the
+				// unit with nothing on the call.
+				return current != null
+					? CallResourceReleaseResult.Failed(CallResourceReleaseOutcome.AlreadyReleased, current)
+					: CallResourceReleaseResult.Failed(CallResourceReleaseOutcome.NotOnCall);
 			}
 
 			// The department's release status, for this unit only (no group: the shift personnel stay on the call). A unit

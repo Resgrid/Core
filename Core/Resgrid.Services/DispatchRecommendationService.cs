@@ -385,6 +385,12 @@ namespace Resgrid.Services
 			public double? Longitude { get; set; }
 			public DateTime? LocationTimestamp { get; set; }
 			public bool LocationIsStale { get; set; }
+
+			/// <summary>
+			/// Released from this call (<see cref="DispatchRecommendationRequest.ExcludedUserIds"/>): never picked for it, but back at
+			/// their station, so still counted by station coverage.
+			/// </summary>
+			public bool ExcludedFromSelection { get; set; }
 		}
 
 		private sealed class RecommendationContext
@@ -547,7 +553,7 @@ namespace Resgrid.Services
 			{
 				var userId = pair.Key;
 
-				if (string.IsNullOrWhiteSpace(userId) || excluded.Contains(userId))
+				if (string.IsNullOrWhiteSpace(userId))
 					continue;
 
 				if (alreadyDispatched.Contains(userId))
@@ -574,7 +580,8 @@ namespace Resgrid.Services
 					RoleIds = pair.Value?.Select(r => r.PersonnelRoleId).ToList() ?? new List<int>(),
 					StatusText = GetPersonnelStatusText(lastLog, personnelDetails),
 					StationGroupId = group?.DepartmentGroupId,
-					StationGroupName = group?.Name
+					StationGroupName = group?.Name,
+					ExcludedFromSelection = excluded.Contains(userId)
 				};
 
 				if (lastLog != null)
@@ -983,7 +990,7 @@ namespace Resgrid.Services
 		{
 			var pickedUsers = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 			var pool = context.PersonnelCandidates
-				.Where(c => c.RoleIds.Contains(requirement.PersonnelRoleId))
+				.Where(c => !c.ExcludedFromSelection && c.RoleIds.Contains(requirement.PersonnelRoleId))
 				.Where(c => context.Result.Personnel.All(p => !string.Equals(p.UserId, c.UserId, StringComparison.OrdinalIgnoreCase)))
 				.ToList();
 
@@ -1302,7 +1309,7 @@ namespace Resgrid.Services
 		private async Task FillRoleRequirementByProximityAsync(RecommendationContext context, RunCardRoleRequirement requirement, GeoMath.GeoPoint anchor)
 		{
 			var pool = context.PersonnelCandidates
-				.Where(c => c.RoleIds.Contains(requirement.PersonnelRoleId))
+				.Where(c => !c.ExcludedFromSelection && c.RoleIds.Contains(requirement.PersonnelRoleId))
 				.Where(c => context.Result.Personnel.All(p => !string.Equals(p.UserId, c.UserId, StringComparison.OrdinalIgnoreCase)))
 				.ToList();
 

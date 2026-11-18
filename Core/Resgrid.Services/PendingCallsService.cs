@@ -146,37 +146,43 @@ namespace Resgrid.Services
 			// Sent: end the claim so its lease can never send the call again.
 			await CompleteAsync(savedCall, claimedOn.Value);
 
-			if (recommendation != null)
+			try
 			{
-				try
+				if (recommendation != null)
 				{
-					await _dispatchRecommendationService.RecordActivationAsync(savedCall, recommendation, userId, cancellationToken);
+					try
+					{
+						await _dispatchRecommendationService.RecordActivationAsync(savedCall, recommendation, userId, cancellationToken);
+					}
+					catch (Exception ex)
+					{
+						Logging.LogException(ex);
+					}
 				}
-				catch (Exception ex)
-				{
-					Logging.LogException(ex);
-				}
-			}
 
-			if (savedCall.GroupDispatches?.Any() == true || savedCall.UnitDispatches?.Any() == true)
+				if (savedCall.GroupDispatches?.Any() == true || savedCall.UnitDispatches?.Any() == true)
+				{
+					await _callDispatchStatusService.ApplyDispatchStatusesAsync(savedCall,
+						savedCall.GroupDispatches?.Select(x => x.DepartmentGroupId),
+						savedCall.UnitDispatches?.Select(x => x.UnitId),
+						cancellationToken);
+				}
+
+				// A pending call was never announced, so it is "added" now (incident chat channel, Call Added
+				// workflows, the apps' call lists). A scheduled call was announced when it was entered.
+				if (wasPending)
+					_eventAggregator.SendMessage<CallAddedEvent>(new CallAddedEvent() { DepartmentId = savedCall.DepartmentId, Call = savedCall });
+				else
+					_eventAggregator.SendMessage<CallUpdatedEvent>(new CallUpdatedEvent() { DepartmentId = savedCall.DepartmentId, Call = savedCall });
+			}
+			finally
 			{
-				await _callDispatchStatusService.ApplyDispatchStatusesAsync(savedCall,
-					savedCall.GroupDispatches?.Select(x => x.DepartmentGroupId),
-					savedCall.UnitDispatches?.Select(x => x.UnitId),
-					cancellationToken);
+				// A call a recurring schedule created (often one held because nobody was available): its occurrence's alerts close and
+				// its Dispatched trigger runs, as when the schedule sends it itself. The page went out, so this runs even when a status
+				// update above failed or the request was cancelled (never throws; the claim is complete, so nothing sends it twice).
+				if (savedCall.RecurringCallId.HasValue)
+					await _recurringCallsService.OnCallDispatchedAsync(savedCall, userId, CancellationToken.None);
 			}
-
-			// A pending call was never announced, so it is "added" now (incident chat channel, Call Added
-			// workflows, the apps' call lists). A scheduled call was announced when it was entered.
-			if (wasPending)
-				_eventAggregator.SendMessage<CallAddedEvent>(new CallAddedEvent() { DepartmentId = savedCall.DepartmentId, Call = savedCall });
-			else
-				_eventAggregator.SendMessage<CallUpdatedEvent>(new CallUpdatedEvent() { DepartmentId = savedCall.DepartmentId, Call = savedCall });
-
-			// A call a recurring schedule created (often one held because nobody was available): its occurrence's alerts close and
-			// its Dispatched trigger runs, as when the schedule sends it itself.
-			if (savedCall.RecurringCallId.HasValue)
-				await _recurringCallsService.OnCallDispatchedAsync(savedCall, userId, CancellationToken.None);
 
 			return DispatchNowOutcome.Dispatched;
 		}

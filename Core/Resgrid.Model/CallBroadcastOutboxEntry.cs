@@ -10,7 +10,7 @@ namespace Resgrid.Model
 {
 	/// <summary>
 	/// The page owed to resources an edit added to a live call (M0321): members, groups, units and roles newly dispatched, or
-	/// released members named again. Written right after the call saves, so a broadcast the queue refuses (or a request that
+	/// released members named again. Written just before the call saves, so a broadcast the queue refuses (or a request that
 	/// fails before it reaches the queue) is not lost: the edit only pages what it changed, so a retry of the same edit sees
 	/// nothing new and would page nobody. The edit sends the row at once; worker 12 retries what is left. Whoever is paged is
 	/// decided again at send time from the call as it is then (still live, still dispatched, not released since).

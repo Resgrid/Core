@@ -29,10 +29,16 @@ namespace Resgrid.Tests.Web
 			Api.Iso(utc).Should().Be("2026-11-18T16:00:00Z");
 		}
 
-		[Test]
-		public void A_bad_occurrence_is_refused()
+		[TestCase("tomorrow")]
+		[TestCase("08:00")]
+		[TestCase("16:00:00Z")]
+		[TestCase("2026-11-18")]
+		[TestCase("")]
+		[TestCase(null)]
+		public void A_bad_occurrence_is_refused(string value)
 		{
-			Api.TryParseInstant("tomorrow", out _).Should().BeFalse();
+			// A time alone would take today's date from the server clock: the request must name the occurrence's date and time.
+			Api.TryParseInstant(value, out _).Should().BeFalse();
 		}
 
 		[TestCase("39.7392,-104.9903", "39.7392,-104.9903")]

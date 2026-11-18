@@ -529,8 +529,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 					Resolution = alert.Resolution.HasValue ? ((RecurringCallAlertResolutions)alert.Resolution.Value).ToString() : null,
 					ResolvedByName = info.ResolvedByName,
 					ResolutionNote = alert.ResolutionNote,
-					// Send / create / skip: the occurrence has no call and the schedule still has it (not deleted, not moved since).
-					CanSend = info.CanSend,
+					// Send / create / skip: the occurrence has no call and the schedule still has it (not deleted, not moved since), for a
+					// caller those endpoints accept (Call_Create, as CanAct).
+					CanSend = info.CanSend && canCreate,
 					// Acknowledge / dismiss: what those endpoints accept, a deleted schedule's alert included.
 					CanAct = alert.IsOpen && canCreate
 				});
@@ -852,7 +853,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>An ISO-8601 instant ("…Z", or with an offset); one without either is taken as UTC.</summary>
 		public static bool TryParseInstant(string value, out DateTime utc)
 		{
-			if (DateTimeOffset.TryParse(value, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal, out var parsed))
+			// A full ISO-8601 date and time (an offset optional, UTC without one): a bare "08:00" would otherwise take today's date from
+			// the server clock and act on an occurrence the request never named.
+			if (!string.IsNullOrWhiteSpace(value) && System.Text.RegularExpressions.Regex.IsMatch(value.Trim(), @"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}") &&
+				DateTimeOffset.TryParse(value, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal, out var parsed))
 			{
 				utc = DateTime.SpecifyKind(parsed.UtcDateTime, DateTimeKind.Utc);
 				return true;

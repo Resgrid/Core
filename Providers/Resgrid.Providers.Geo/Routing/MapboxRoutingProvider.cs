@@ -167,6 +167,12 @@ namespace Resgrid.Providers.GeoLocationProvider.Routing
 					if (!ok || document == null)
 						return new RouteMatrixResult { Provider = Name, Error = $"Matrix failed ({status})" };
 
+					// Mapbox answers some failures with HTTP 200 and a code (NoRoute): no tables, so the cells would all be empty
+					// and the whole matrix would look answered instead of falling back to the next provider or the estimate.
+					var code = MatrixResponseCode(document.RootElement);
+					if (code != null && code != "Ok")
+						return new RouteMatrixResult { Provider = Name, Error = $"Matrix failed ({code})" };
+
 					var chunkDurations = OsrmShapeParser.ReadTable(document.RootElement, "durations");
 					var chunkDistances = OsrmShapeParser.ReadTable(document.RootElement, "distances");
 
@@ -204,9 +210,18 @@ namespace Resgrid.Providers.GeoLocationProvider.Routing
 			public int DestinationCount { get; }
 		}
 
+		/// <summary>The response's <c>code</c> ("Ok", "NoRoute", ...); null when it has none.</summary>
+		public static string MatrixResponseCode(System.Text.Json.JsonElement root)
+		{
+			return root.ValueKind == System.Text.Json.JsonValueKind.Object && root.TryGetProperty("code", out var code) &&
+				code.ValueKind == System.Text.Json.JsonValueKind.String ? code.GetString() : null;
+		}
+
 		/// <summary>
 		/// Splits an origins × destinations matrix into requests of at most <paramref name="limit"/> coordinates each, covering
-		/// every pair exactly once with the fewest requests (all destinations in one run whenever they fit beside an origin).
+		/// every pair exactly once with the fewest requests (all destinations in one run whenever they fit beside an origin). Runs
+		/// are evened out, so a split never leaves a lone destination or origin in a request of its own (25 destinations beside
+		/// one origin are 13 + 12, not 24 + 1).
 		/// </summary>
 		public static List<MatrixChunk> MatrixChunks(int originCount, int destinationCount, int limit)
 		{
@@ -230,15 +245,34 @@ namespace Resgrid.Providers.GeoLocationProvider.Routing
 				}
 			}
 
-			var perOriginRun = limit - bestPerDestination;
-			for (var destinationStart = 0; destinationStart < destinationCount; destinationStart += bestPerDestination)
+			// The same number of runs, sized evenly: the largest destination run never grows, so origins get at least as much room.
+			var destinationRuns = (destinationCount + bestPerDestination - 1) / bestPerDestination;
+			var largestDestinationRun = (destinationCount + destinationRuns - 1) / destinationRuns;
+			var originsPerRun = limit - largestDestinationRun;
+			var originRuns = (originCount + originsPerRun - 1) / originsPerRun;
+
+			var destinationStart = 0;
+			for (var d = 0; d < destinationRuns; d++)
 			{
-				var destinationRun = Math.Min(bestPerDestination, destinationCount - destinationStart);
-				for (var originStart = 0; originStart < originCount; originStart += perOriginRun)
-					chunks.Add(new MatrixChunk(originStart, Math.Min(perOriginRun, originCount - originStart), destinationStart, destinationRun));
+				var destinationRun = EvenRun(destinationCount, destinationRuns, d);
+				var originStart = 0;
+				for (var o = 0; o < originRuns; o++)
+				{
+					var originRun = EvenRun(originCount, originRuns, o);
+					chunks.Add(new MatrixChunk(originStart, originRun, destinationStart, destinationRun));
+					originStart += originRun;
+				}
+
+				destinationStart += destinationRun;
 			}
 
 			return chunks;
+		}
+
+		/// <summary>Size of run <paramref name="index"/> when <paramref name="total"/> is split into <paramref name="runs"/> runs differing by at most one.</summary>
+		private static int EvenRun(int total, int runs, int index)
+		{
+			return total / runs + (index < total % runs ? 1 : 0);
 		}
 
 		private static double? Cell(double?[][] table, int row, int column)

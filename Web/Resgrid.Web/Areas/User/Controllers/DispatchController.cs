@@ -1666,8 +1666,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 				call.DispatchOn = null;
 				call.HasBeenDispatched = false;
 			}
-				await _callsService.SaveCallAsync(call, cancellationToken);
-
 				// Members by id, live ones only: a member still released is off the call, one ticked again counts as added.
 				var stillReleasedUserIds = new HashSet<string>(releasedUserIds.Except(redispatchedUserIds, StringComparer.OrdinalIgnoreCase), StringComparer.OrdinalIgnoreCase);
 				var savedUserIds = new HashSet<string>((call.Dispatches ?? Enumerable.Empty<CallDispatch>()).Select(x => x.UserId).Where(x => !stillReleasedUserIds.Contains(x)));
@@ -1686,6 +1684,24 @@ namespace Resgrid.Web.Areas.User.Controllers
 				// Released ids keep the release's spelling and the form may tick another casing: compare as the rest of this save does.
 				var redispatchedSet = new HashSet<string>(redispatchedUserIds, StringComparer.OrdinalIgnoreCase);
 				var newUserIds = dispatchingUserIds.Where(id => !stillReleasedUserIds.Contains(id) && (redispatchedSet.Contains(id) || !existingDispatches.Any(d => d.UserId == id))).ToList();
+				var newGroupIds = dispatchingGroupIds.Where(id => !existingGroupDispatches.Any(d => d.DepartmentGroupId == id)).ToList();
+				var newUnitIds = dispatchingUnitIds.Where(id => !existingUnitIds.Contains(id)).Distinct().ToList();
+				var newRoleIds = dispatchingRoleIds.Where(id => !existingRoleDispatches.Any(d => d.RoleId == id)).ToList();
+
+				// Only a call that has gone out notifies anyone or moves statuses: a pending call, or a scheduled call
+				// before its time, sends the edited list when it is dispatched.
+				var shouldApplyDispatchStatuses = call.State == (int)CallStates.Active &&
+					(call.HasBeenDispatched.GetValueOrDefault() || !call.DispatchOn.HasValue || call.DispatchOn.Value <= DateTime.UtcNow);
+
+				// The page for what this save adds is recorded before the save: it is only owed by this save (the same save posted again
+				// sees nothing new), so a failed save, release clearing, queue refusal or anything else below leaves it for worker 12
+				// instead of losing it. Who it pages is decided when it is sent, from the call as stored then, so a save that never
+				// happened pages nobody. A full rebroadcast records it too: it covers the page only once the queue accepts it.
+				CallBroadcastOutboxEntry addedBroadcast = null;
+				if (shouldApplyDispatchStatuses && (newUserIds.Any() || newGroupIds.Any() || newUnitIds.Any() || newRoleIds.Any()))
+					addedBroadcast = await _callBroadcastOutboxService.RecordAsync(call, newUserIds, newGroupIds, newUnitIds, newRoleIds, UserId);
+
+				await _callsService.SaveCallAsync(call, cancellationToken);
 
 				// Members ticked again are back on the call: their releases go, so the broadcast pages them.
 				if (redispatchedUserIds.Any())
@@ -1696,20 +1712,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 					// The save rolled the badge version before the releases went; roll it again so no count cached in between stays.
 					await _callsService.InvalidateOpenCallCountsAsync(call.DepartmentId);
 				}
-				var newGroupIds = dispatchingGroupIds.Where(id => !existingGroupDispatches.Any(d => d.DepartmentGroupId == id)).ToList();
-				var newUnitIds = dispatchingUnitIds.Where(id => !existingUnitIds.Contains(id)).Distinct().ToList();
-				var newRoleIds = dispatchingRoleIds.Where(id => !existingRoleDispatches.Any(d => d.RoleId == id)).ToList();
-
-				// Only a call that has gone out notifies anyone or moves statuses: a pending call, or a scheduled call
-				// before its time, sends the edited list when it is dispatched.
-				var shouldApplyDispatchStatuses = call.State == (int)CallStates.Active &&
-					(call.HasBeenDispatched.GetValueOrDefault() || !call.DispatchOn.HasValue || call.DispatchOn.Value <= DateTime.UtcNow);
-
-				// The page for what this save added is recorded before anything else can fail: it is only owed now (the same save
-				// posted again sees nothing new), so a queue refusal or a failure below leaves it for worker 12 instead of losing it.
-				CallBroadcastOutboxEntry addedBroadcast = null;
-				if (shouldApplyDispatchStatuses && !model.RebroadcastCall && (newUserIds.Any() || newGroupIds.Any() || newUnitIds.Any() || newRoleIds.Any()))
-					addedBroadcast = await _callBroadcastOutboxService.RecordAsync(call, newUserIds, newGroupIds, newUnitIds, newRoleIds, UserId);
 
 				// Attach weather alerts as call notes if enabled (deduplication handled inside)
 				await _weatherAlertService.AttachWeatherAlertsToCallAsync(call, cancellationToken);
@@ -1850,10 +1852,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 						cqi.Profiles = new List<UserProfile>();
 
 
-					// The whole call went out: pages an earlier save left unsent are covered by it.
-					if ((dispatchingUserIds.Any() || dispatchingGroupIds.Any() || dispatchingUnitIds.Any() || dispatchingRoleIds.Any()) &&
-						await _queueService.EnqueueCallBroadcastAsync(cqi, cancellationToken))
-						await _callBroadcastOutboxService.SupersedeForCallAsync(call.CallId);
+					var broadcastAccepted = (dispatchingUserIds.Any() || dispatchingGroupIds.Any() || dispatchingUnitIds.Any() || dispatchingRoleIds.Any()) &&
+						await _queueService.EnqueueCallBroadcastAsync(cqi, cancellationToken);
+
+					// The whole call went out: the pages it covered (this save's, and any an earlier save left unsent) are done.
+					// Refused, the page this save owes the resources it added is still kept and sent on its own.
+					if (broadcastAccepted)
+						await _callBroadcastOutboxService.SupersedeCoveredAsync(call);
+					else
+						await _callBroadcastOutboxService.SendPendingForCallAsync(call, addedBroadcast);
 				}
 
 				//	scope.Complete();

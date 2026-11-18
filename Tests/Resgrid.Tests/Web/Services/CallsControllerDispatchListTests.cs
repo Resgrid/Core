@@ -638,5 +638,47 @@ namespace Resgrid.Tests.Web.Services
 			_lastBroadcast.BroadcastUserIds.Should().Equal(new[] { "responder-2" });
 			_outbox.Single().State.Should().Be((int)CallBroadcastOutboxStates.Sent);
 		}
+
+		[Test]
+		public void EditCall_records_the_page_it_owes_before_the_save_so_a_failure_after_it_keeps_the_page()
+		{
+			_stored = StoredCallWithReleasedMember();
+			_releases.Setup(x => x.ClearPersonnelReleasesAsync(CallId, It.IsAny<IEnumerable<string>>(), It.IsAny<CancellationToken>()))
+				.ThrowsAsync(new InvalidOperationException("database went away"));
+
+			Assert.ThrowsAsync<InvalidOperationException>(() => Controller().EditCall(
+				new EditCallInput { Id = CallId.ToString(), Priority = 1, Name = "Snoring respirations", Nature = "Logged for the record", DispatchList = "P:responder-1|P:responder-2|U:7" },
+				CancellationToken.None));
+
+			// The call saved, the request failed: the page is still owed, for the worker (who checks the member is still owed it).
+			_broadcasts.Should().Be(0);
+			_outbox.Single().State.Should().Be((int)CallBroadcastOutboxStates.Pending);
+			_outbox.Single().GetUserIds().Should().Equal(new[] { "responder-2" });
+		}
+
+		[Test]
+		public async Task EditCall_with_a_full_rebroadcast_the_queue_refuses_still_keeps_the_page_for_who_it_added()
+		{
+			_stored = StoredCallWithReleasedMember();
+			_queueAccepts = false;
+
+			await Controller().EditCall(new EditCallInput { Id = CallId.ToString(), Priority = 1, Name = "Snoring respirations", Nature = "Logged for the record",
+				DispatchList = "P:responder-1|P:responder-2|U:7", RebroadcastCall = true }, CancellationToken.None);
+
+			_outbox.Single().State.Should().Be((int)CallBroadcastOutboxStates.Pending);
+			_outbox.Single().GetUserIds().Should().Equal(new[] { "responder-2" });
+		}
+
+		[Test]
+		public async Task EditCall_with_a_full_rebroadcast_the_queue_accepts_covers_the_page_for_who_it_added()
+		{
+			_stored = StoredCallWithReleasedMember();
+
+			await Controller().EditCall(new EditCallInput { Id = CallId.ToString(), Priority = 1, Name = "Snoring respirations", Nature = "Logged for the record",
+				DispatchList = "P:responder-1|P:responder-2|U:7", RebroadcastCall = true }, CancellationToken.None);
+
+			_broadcasts.Should().Be(1, "the full broadcast pages everyone; the added member is not paged twice");
+			_outbox.Single().State.Should().Be((int)CallBroadcastOutboxStates.Superseded);
+		}
 	}
 }

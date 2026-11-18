@@ -41,7 +41,10 @@ namespace Resgrid.Model
 
 		public DateTime CreatedOn { get; set; }
 
-		/// <summary>When the alert recipients were sent it (null when nobody could be reached).</summary>
+		/// <summary>
+		/// When the alert recipients were sent it (null when nobody could be reached). Also the send's claim: set before sending, so only
+		/// one sender sends an open alert, and cleared again when nobody was reached so a later worker pass retries it.
+		/// </summary>
 		public DateTime? NotifiedOn { get; set; }
 
 		public DateTime? AcknowledgedOn { get; set; }

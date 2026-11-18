@@ -37,13 +37,34 @@ namespace Resgrid.Model
 		/// <summary>Who skipped it, or asked for its call early; null for the worker.</summary>
 		public string UserId { get; set; }
 
-		/// <summary>When the state was last set (for <see cref="RecurringCallOccurrenceStates.Creating"/>, when the claim was taken).</summary>
+		/// <summary>
+		/// When the state was last set (for <see cref="RecurringCallOccurrenceStates.Creating"/>, when the claim was taken or last
+		/// renewed). A claim's writes are conditional on it, so it is the claim's generation: written as a <see cref="ClaimStamp"/>,
+		/// which both databases store exactly.
+		/// </summary>
 		public DateTime UpdatedOn { get; set; }
 
 		/// <summary>In memory only: the state a dispatcher took the occurrence over from, so a failed create can put it back.</summary>
 		[NotMapped]
 		[JsonIgnore]
 		public int? PreviousState { get; set; }
+
+		/// <summary>
+		/// In memory only: the schedule revision (<see cref="RecurringCall.EffectiveFrom"/>) a worker claim was taken for. Its call is
+		/// saved only while the stored schedule still runs as that revision (a dispatcher's claim has none and is not held to it).
+		/// </summary>
+		[NotMapped]
+		[JsonIgnore]
+		public DateTime? ScheduleRevision { get; set; }
+
+		/// <summary>
+		/// A claim's timestamp, truncated to whole milliseconds: SQL Server's datetime2 and PostgreSQL's timestamp both store it as
+		/// written, so a write fenced on it matches exactly the claim it was taken with.
+		/// </summary>
+		public static DateTime ClaimStamp(DateTime utc)
+		{
+			return new DateTime(utc.Ticks - utc.Ticks % TimeSpan.TicksPerMillisecond, DateTimeKind.Utc);
+		}
 
 		[NotMapped]
 		[JsonIgnore]
@@ -63,7 +84,7 @@ namespace Resgrid.Model
 		public int IdType => 1;
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "PreviousState" };
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "PreviousState", "ScheduleRevision" };
 	}
 
 	public enum RecurringCallOccurrenceStates

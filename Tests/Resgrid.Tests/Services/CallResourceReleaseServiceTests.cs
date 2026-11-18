@@ -252,6 +252,24 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task a_release_whose_dispatch_was_removed_meanwhile_reports_the_unit_not_on_the_call()
+		{
+			// An edit took the unit off the call between this request's read and its write: no released row confirms a release.
+			StatusBeforeAndAfter(100, 101);
+			_unitDispatches.Setup(x => x.TryReleaseAsync(2, It.IsAny<DateTime>(), "dispatcher-1", It.IsAny<CancellationToken>())).ReturnsAsync(false);
+			_unitDispatches.Setup(x => x.GetCallUnitDispatchesByCallIdAsync(CallId)).ReturnsAsync(new List<CallDispatchUnit>
+			{
+				new CallDispatchUnit { CallDispatchUnitId = 1, CallId = CallId, UnitId = Ambulance }
+			});
+
+			var result = await _service.ReleaseUnitAsync(DeptId, CallId, Mug, "dispatcher-1", notify: true);
+
+			result.Outcome.Should().Be(CallResourceReleaseOutcome.NotOnCall);
+			result.Dispatch.Should().BeNull();
+			_communication.Verify(x => x.SendCancelUnitCallAsync(It.IsAny<Call>(), It.IsAny<CallDispatchUnit>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+		}
+
+		[Test]
 		public async Task a_failed_release_status_still_completes_the_release()
 		{
 			StatusBeforeAndAfter(100, 101);

@@ -2087,19 +2087,6 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!protectedWrite.Success)
 				return ProtectedWriteProblem(protectedWrite);
 
-			await _callsService.SaveCallAsync(call, cancellationToken);
-
-			// Members named again are back on the call: their releases go, so the broadcast below pages them.
-			if (redispatchedUserIds.Any())
-			{
-				await _callResourceReleaseService.ClearPersonnelReleasesAsync(call.CallId, redispatchedUserIds, cancellationToken);
-				call.PersonnelReleases?.RemoveAll(x => redispatchedUserIds.Contains(x.UserId, StringComparer.OrdinalIgnoreCase));
-
-				// SaveCallAsync rolled the badge version before the releases went: a "calls I'm on" count read in between was
-				// cached without this call, so roll it again now.
-				await _callsService.InvalidateOpenCallCountsAsync(call.DepartmentId);
-			}
-
 			// Members by id, live ones only: a member still released is off the call, one named again counts as added.
 			var stillReleasedUserIds = new HashSet<string>(releasedUserIds.Except(redispatchedUserIds, StringComparer.OrdinalIgnoreCase), StringComparer.OrdinalIgnoreCase);
 			var currentUserIds = call.Dispatches?.Select(x => x.UserId).Where(x => !stillReleasedUserIds.Contains(x)).ToList() ?? new List<string>();
@@ -2125,11 +2112,26 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var isLive = call.State == (int)CallStates.Active &&
 				(call.HasBeenDispatched.GetValueOrDefault() || !call.DispatchOn.HasValue || call.DispatchOn.Value <= DateTime.UtcNow);
 
-			// The page for what this edit added is recorded before anything else can fail: it is only owed now (a retry of the same
-			// edit sees nothing new), so a queue refusal or a failure below leaves it for worker 12 instead of losing it.
+			// The page for what this edit adds is recorded before the save: it is only owed by this edit (a retry of it sees nothing
+			// new), so a failed save, release clearing, queue refusal or anything else below leaves it for worker 12 instead of losing
+			// it. Who it pages is decided when it is sent, from the call as stored then, so a save that never happened pages nobody.
+			// A full rebroadcast records it too: it covers the page only once the queue accepts it.
 			CallBroadcastOutboxEntry addedBroadcast = null;
-			if (isLive && !editCallInput.RebroadcastCall && (newUserIds.Any() || newGroupIds.Any() || newUnitIds.Any() || newRoleIds.Any()))
+			if (isLive && (newUserIds.Any() || newGroupIds.Any() || newUnitIds.Any() || newRoleIds.Any()))
 				addedBroadcast = await _callBroadcastOutboxService.RecordAsync(call, newUserIds, newGroupIds, newUnitIds, newRoleIds, UserId);
+
+			await _callsService.SaveCallAsync(call, cancellationToken);
+
+			// Members named again are back on the call: their releases go, so the broadcast below pages them.
+			if (redispatchedUserIds.Any())
+			{
+				await _callResourceReleaseService.ClearPersonnelReleasesAsync(call.CallId, redispatchedUserIds, cancellationToken);
+				call.PersonnelReleases?.RemoveAll(x => redispatchedUserIds.Contains(x.UserId, StringComparer.OrdinalIgnoreCase));
+
+				// SaveCallAsync rolled the badge version before the releases went: a "calls I'm on" count read in between was
+				// cached without this call, so roll it again now.
+				await _callsService.InvalidateOpenCallCountsAsync(call.DepartmentId);
+			}
 
 			// Attach weather alerts as call notes if enabled (deduplication handled inside)
 			await _weatherAlertService.AttachWeatherAlertsToCallAsync(call, cancellationToken);
@@ -2233,10 +2235,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 					cqi.Profiles = new List<UserProfile>();
 
 
-				// The whole call went out: pages an earlier edit left unsent are covered by it.
-				if ((cqi.Call.Dispatches.Any() || cqi.Call.GroupDispatches.Any() || cqi.Call.UnitDispatches.Any() || cqi.Call.RoleDispatches.Any()) &&
-					await _queueService.EnqueueCallBroadcastAsync(cqi, cancellationToken))
-					await _callBroadcastOutboxService.SupersedeForCallAsync(call.CallId);
+				var broadcastAccepted = (cqi.Call.Dispatches.Any() || cqi.Call.GroupDispatches.Any() || cqi.Call.UnitDispatches.Any() || cqi.Call.RoleDispatches.Any()) &&
+					await _queueService.EnqueueCallBroadcastAsync(cqi, cancellationToken);
+
+				// The whole call went out: the pages it covered (this edit's, and any an earlier edit left unsent) are done. Refused, the
+				// page this edit owes the resources it added is still kept and sent on its own.
+				if (broadcastAccepted)
+					await _callBroadcastOutboxService.SupersedeCoveredAsync(call);
+				else
+					await _callBroadcastOutboxService.SendPendingForCallAsync(call, addedBroadcast);
 			}
 
 			_eventAggregator.SendMessage<CallUpdatedEvent>(new CallUpdatedEvent() { DepartmentId = DepartmentId, Call = call });

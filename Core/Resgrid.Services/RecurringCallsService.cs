@@ -42,6 +42,8 @@ namespace Resgrid.Services
 		public const string ScheduleDeletedReason = "Its recurring call schedule was deleted";
 		public const string SchedulePausedReason = "Its recurring call schedule was paused";
 		public const string DuplicateReason = "Created twice for one occurrence of its recurring call schedule";
+		public const string UnfinishedReason = "Its recurring call schedule could not finish creating it";
+		public const string ScheduleChangedReason = "Its recurring call schedule was paused, deleted or changed while it was being created";
 
 		/// <summary>The push event code prefix of an alert notification ("RCA:{alertId}").</summary>
 		public const string AlertEventCodePrefix = "RCA:";
@@ -192,8 +194,9 @@ namespace Resgrid.Services
 			var saved = await _recurringCallsRepository.SaveOrUpdateAsync(series, cancellationToken);
 			result.Series = saved;
 
+			// Saved now: the calls of the old shape go to the end even if the request went away (as for a pause or delete).
 			if (replaceUpcomingCalls && !isNew)
-				result.ReplacedCalls = await DeleteUpcomingCallsAsync(saved, userId, ReplacedReason, now, cancellationToken);
+				result.ReplacedCalls = await DeleteUpcomingCallsAsync(saved, userId, ReplacedReason, now, CancellationToken.None);
 
 			Audit(isNew ? AuditLogTypes.RecurringCallCreated : AuditLogTypes.RecurringCallUpdated, saved.DepartmentId, userId, before, saved, origin);
 			await RaiseScheduleEventAsync(saved, isNew ? RecurringCallScheduleChanges.Created : RecurringCallScheduleChanges.Updated, userId, now);
@@ -408,9 +411,9 @@ namespace Resgrid.Services
 
 				Audit(AuditLogTypes.RecurringCallOccurrenceCreated, series.DepartmentId, userId, null, OccurrenceSnapshot(series, occurrenceUtc, call), origin);
 
-				// If the broadcast cannot be queued, a call for a time already past is left scheduled for now, so the worker retries it.
-				if (occurrenceUtc <= now)
-					call.DispatchOn = now;
+				// The dispatcher asked for it now: if the broadcast cannot be queued, the call is handed back scheduled for now (an early
+				// occurrence's too, not its own later time), so the worker's next pass retries it. Only the claim release reads this.
+				call.DispatchOn = now;
 			}
 			else
 			{
@@ -824,8 +827,8 @@ namespace Resgrid.Services
 					if (series == null || series.IsDeleted || series.DepartmentId != alert.DepartmentId)
 						continue;
 
-					if (await NotifyAsync(series, alert, (RecurringCallAlertKinds)alert.Kind, alert.GetDetail()))
-						await _alertsRepository.MarkNotifiedAsync(alert.RecurringCallAlertId, DateTime.UtcNow, CancellationToken.None);
+					// Claimed first: the stored alert may have been closed since this pass read it, or another pass may be sending it.
+					await NotifyOnceAsync(series, alert, (RecurringCallAlertKinds)alert.Kind, alert.GetDetail());
 				}
 				catch (Exception ex)
 				{
@@ -970,6 +973,20 @@ namespace Resgrid.Services
 				   Math.Abs((stored.EffectiveFrom - series.EffectiveFrom).TotalSeconds) < 1;
 		}
 
+		/// <summary>The stored schedule was paused, deleted or changed since this snapshot was read; false when it cannot be read (kept as read).</summary>
+		private async Task<bool> HasStoppedSinceReadAsync(RecurringCall series)
+		{
+			try
+			{
+				return !await IsStillAsReadAsync(series);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Could not re-read recurring call schedule {series.RecurringCallId}.");
+				return false;
+			}
+		}
+
 		/// <summary>
 		/// Occurrences claimed in <paramref name="state"/> whose alert was never stored (the insert failed after the claim): the next
 		/// pass raises it. One raised before (open or closed) is never raised again, so a dismissed alert stays dismissed.
@@ -996,10 +1013,10 @@ namespace Resgrid.Services
 			}
 		}
 
-		/// <summary>Dispatcher mode: claims the occurrence as awaiting a dispatcher and alerts them.</summary>
+		/// <summary>Dispatcher mode: claims the occurrence as awaiting a dispatcher (while the schedule still runs as read) and alerts them.</summary>
 		private async Task AwaitDispatcherAsync(RecurringCall series, DateTime occurrenceUtc, DateTime nowUtc, CancellationToken cancellationToken)
 		{
-			var claimed = await _occurrencesRepository.TryClaimAsync(new RecurringCallOccurrence
+			var claimed = await _occurrencesRepository.TryClaimWhileRunningAsync(new RecurringCallOccurrence
 			{
 				RecurringCallOccurrenceId = Guid.NewGuid().ToString(),
 				RecurringCallId = series.RecurringCallId,
@@ -1007,7 +1024,7 @@ namespace Resgrid.Services
 				OccurrenceOn = occurrenceUtc,
 				State = (int)RecurringCallOccurrenceStates.AwaitingDispatcher,
 				UpdatedOn = nowUtc
-			}, cancellationToken);
+			}, series.EffectiveFrom, cancellationToken);
 
 			if (claimed)
 				await RaiseAlertAsync(series, occurrenceUtc, RecurringCallAlertKinds.DispatchDue, null, null, cancellationToken);
@@ -1030,12 +1047,16 @@ namespace Resgrid.Services
 
 			var dealtWith = await DealtWithAsync(series.RecurringCallId, from, to);
 
-			// Missed with no alert ever raised (storing it failed after the claim): raised now.
+			// Missed with no alert ever raised (storing it failed after the claim): raised now. Likewise one awaiting a dispatcher whose
+			// due window has closed since (claimed at 08:00, its alert insert failed, the 08:11 pass no longer looks at it as due).
 			await RaiseMissingAlertsAsync(series, dealtWith.Values, RecurringCallOccurrenceStates.Missed, RecurringCallAlertKinds.Missed, cancellationToken);
+			if (series.IsDispatcherMode)
+				await RaiseMissingAlertsAsync(series, dealtWith.Values, RecurringCallOccurrenceStates.AwaitingDispatcher, RecurringCallAlertKinds.DispatchDue, cancellationToken);
 
 			foreach (var occurrence in passed.Where(x => !dealtWith.ContainsKey(x)))
 			{
-				var claimed = await _occurrencesRepository.TryClaimAsync(new RecurringCallOccurrence
+				// Only while the schedule still runs as this pass read it: one paused or changed since has missed nothing.
+				var claimed = await _occurrencesRepository.TryClaimWhileRunningAsync(new RecurringCallOccurrence
 				{
 					RecurringCallOccurrenceId = Guid.NewGuid().ToString(),
 					RecurringCallId = series.RecurringCallId,
@@ -1043,7 +1064,7 @@ namespace Resgrid.Services
 					OccurrenceOn = occurrence,
 					State = (int)RecurringCallOccurrenceStates.Missed,
 					UpdatedOn = nowUtc
-				}, cancellationToken);
+				}, series.EffectiveFrom, cancellationToken);
 
 				if (claimed)
 					await RaiseAlertAsync(series, occurrence, RecurringCallAlertKinds.Missed, null, null, cancellationToken);
@@ -1062,10 +1083,12 @@ namespace Resgrid.Services
 				OccurrenceOn = occurrenceUtc,
 				State = (int)RecurringCallOccurrenceStates.Creating,
 				UserId = userId,
-				UpdatedOn = nowUtc
+				UpdatedOn = RecurringCallOccurrence.ClaimStamp(DateTime.UtcNow),
+				// The worker's claim is held to the schedule as it read it, up to the call's save.
+				ScheduleRevision = series.EffectiveFrom
 			};
 
-			if (!await _occurrencesRepository.TryClaimAsync(claim, cancellationToken))
+			if (!await _occurrencesRepository.TryClaimWhileRunningAsync(claim, series.EffectiveFrom, cancellationToken))
 				return null;
 
 			return await CreateClaimedCallAsync(series, claim, occurrenceUtc, nowUtc, userId, targets, (int)CallStates.Active, occurrenceUtc, cancellationToken);
@@ -1080,6 +1103,7 @@ namespace Resgrid.Services
 			RecurringCallDispatchTargets targets, int state, DateTime dispatchOnUtc, CancellationToken cancellationToken)
 		{
 			Call saved;
+			var saveStarted = false;
 			try
 			{
 				var destinationValid = series.DestinationPoiId.HasValue && series.DestinationPoiId.Value > 0 &&
@@ -1090,62 +1114,78 @@ namespace Resgrid.Services
 				if (state == (int)CallStates.Pending)
 					call.HasBeenDispatched = null;
 
+				// Renewed right before the save, only while this caller still holds the claim (and, for the worker, while the schedule
+				// still runs as it read it): a creator that stalled past its lease, whose claim the recovery dropped and someone else
+				// took, never saves a second, dispatchable call for the occurrence, and the fresh lease keeps the recovery off it while
+				// the save runs. A claim still held when the schedule stopped or changed is given back.
+				var renewedOn = RecurringCallOccurrence.ClaimStamp(DateTime.UtcNow);
+				if (!await _occurrencesRepository.TryRenewClaimAsync(claim.RecurringCallOccurrenceId, claim.UpdatedOn, renewedOn, claim.ScheduleRevision,
+						CancellationToken.None))
+				{
+					await GiveBackClaimAsync(claim);
+					return null;
+				}
+
+				claim.UpdatedOn = renewedOn;
+				saveStarted = true;
 				saved = await _callsService.SaveCallAsync(call, cancellationToken);
 			}
 			catch (Exception ex)
 			{
 				Logging.LogException(ex, $"Recurring call schedule {series.RecurringCallId} could not create its call for {occurrenceUtc:O}.");
 
-				// The save inserts the call before its later steps, so a failure can come after the call exists. Looked up by the
-				// occurrence's identity (schedule, dispatch time, logged since the claim): found, it is this occurrence's call; not
-				// known (the lookup failed too), the claim is left for the stale-claim recovery to settle the same way.
-				Call committed;
-				try
+				if (saveStarted)
 				{
-					committed = await _recurringCallsRepository.GetCallForOccurrenceAsync(series.RecurringCallId, DateTime.SpecifyKind(dispatchOnUtc, DateTimeKind.Utc),
-						nowUtc.AddMinutes(-1));
-				}
-				catch (Exception lookupEx)
-				{
-					Logging.LogException(lookupEx, $"Could not tell whether recurring call schedule {series.RecurringCallId} saved its call for {occurrenceUtc:O}.");
-					return null;
-				}
+					// The save inserts the call before its later steps (the protected write among them), so a failure can come after the
+					// call exists. Such a call is never the occurrence's: whatever step failed, its protected fields may still be plaintext.
+					// It is deleted (looked up by the occurrence's identity: schedule, dispatch time, logged since the claim) and the
+					// occurrence is created again. Not known (the lookup failed), or still there (the delete failed too): the claim is left
+					// as it is, so nothing creates a second live call for the occurrence; the stale-claim recovery settles it.
+					Call committed;
+					try
+					{
+						committed = await _recurringCallsRepository.GetCallForOccurrenceAsync(series.RecurringCallId, DateTime.SpecifyKind(dispatchOnUtc, DateTimeKind.Utc),
+							nowUtc.AddMinutes(-1));
+					}
+					catch (Exception lookupEx)
+					{
+						Logging.LogException(lookupEx, $"Could not tell whether recurring call schedule {series.RecurringCallId} saved its call for {occurrenceUtc:O}.");
+						return null;
+					}
 
-				if (committed == null)
-				{
-					if (claim.PreviousState.HasValue)
-						await _occurrencesRepository.TryTransitionStateAsync(claim.RecurringCallOccurrenceId, (int)RecurringCallOccurrenceStates.Creating,
-							claim.PreviousState.Value, claim.UserId, DateTime.UtcNow, CancellationToken.None);
-					else
-						await _occurrencesRepository.DeleteIfStateAsync(claim.RecurringCallOccurrenceId, (int)RecurringCallOccurrenceStates.Creating, CancellationToken.None);
-
-					await RaiseAlertAsync(series, occurrenceUtc, RecurringCallAlertKinds.CreateFailed, null,
-						new RecurringCallAlertDetail { Reason = RecurringCallAlertReasons.SaveFailed }, CancellationToken.None);
-					return null;
+					if (committed != null && !await DiscardUnfinishedCallAsync(committed, userId))
+						return null;
 				}
 
-				saved = committed;
+				await GiveBackClaimAsync(claim);
+				await RaiseAlertAsync(series, occurrenceUtc, RecurringCallAlertKinds.CreateFailed, null,
+					new RecurringCallAlertDetail { Reason = RecurringCallAlertReasons.SaveFailed }, CancellationToken.None);
+				return null;
 			}
 
 			// Marked created only while this caller still holds the claim. A claim that outlived its lease may have been dropped by the
 			// stale-claim recovery and taken by someone else meanwhile: then the call just saved is a second one for the occurrence
 			// and is deleted again (unless the recovery found it and recorded it as the occurrence's call).
-			if (!await _occurrencesRepository.TryCompleteClaimAsync(claim.RecurringCallOccurrenceId, saved.CallId, DateTime.UtcNow, CancellationToken.None))
+			if (!await _occurrencesRepository.TryCompleteClaimAsync(claim.RecurringCallOccurrenceId, saved.CallId, claim.UpdatedOn,
+					RecurringCallOccurrence.ClaimStamp(DateTime.UtcNow), CancellationToken.None))
 			{
 				var row = await _occurrencesRepository.GetByOccurrenceAsync(series.RecurringCallId, DateTime.SpecifyKind(occurrenceUtc, DateTimeKind.Utc));
+				var created = new RecurringCallOccurrence
+				{
+					RecurringCallOccurrenceId = Guid.NewGuid().ToString(),
+					RecurringCallId = series.RecurringCallId,
+					DepartmentId = series.DepartmentId,
+					OccurrenceOn = occurrenceUtc,
+					State = (int)RecurringCallOccurrenceStates.Created,
+					CallId = saved.CallId,
+					UserId = userId,
+					UpdatedOn = RecurringCallOccurrence.ClaimStamp(DateTime.UtcNow)
+				};
 				var kept = row != null
 					? row.CallId == saved.CallId
-					: await _occurrencesRepository.TryClaimAsync(new RecurringCallOccurrence
-					{
-						RecurringCallOccurrenceId = Guid.NewGuid().ToString(),
-						RecurringCallId = series.RecurringCallId,
-						DepartmentId = series.DepartmentId,
-						OccurrenceOn = occurrenceUtc,
-						State = (int)RecurringCallOccurrenceStates.Created,
-						CallId = saved.CallId,
-						UserId = userId,
-						UpdatedOn = DateTime.UtcNow
-					}, CancellationToken.None);
+					: claim.ScheduleRevision.HasValue
+						? await _occurrencesRepository.TryClaimWhileRunningAsync(created, claim.ScheduleRevision.Value, CancellationToken.None)
+						: await _occurrencesRepository.TryClaimAsync(created, CancellationToken.None);
 
 				if (!kept)
 				{
@@ -1153,6 +1193,11 @@ namespace Resgrid.Services
 					return null;
 				}
 			}
+
+			// The worker's call: a schedule paused, deleted or changed while it was being saved creates nothing from it (a pause that
+			// removed the upcoming calls ran before this call existed). Taken back unless someone is already sending it.
+			if (claim.ScheduleRevision.HasValue && await HasStoppedSinceReadAsync(series) && await WithdrawCreatedCallAsync(series, saved, occurrenceUtc))
+				return null;
 
 			claim.State = (int)RecurringCallOccurrenceStates.Created;
 			claim.CallId = saved.CallId;
@@ -1166,6 +1211,102 @@ namespace Resgrid.Services
 			RaiseOccurrenceEvent(series, occurrenceUtc, RecurringCallOccurrenceChanges.Created, saved, userId, !string.IsNullOrWhiteSpace(userId), null);
 
 			return saved;
+		}
+
+		/// <summary>
+		/// Gives back a claim this caller still holds: dropped, or (a dispatcher's take-over) put back to the state it came from. Only
+		/// while it is still this claim, so a row given back and claimed by someone else since is left alone.
+		/// </summary>
+		private async Task GiveBackClaimAsync(RecurringCallOccurrence claim)
+		{
+			try
+			{
+				if (claim.PreviousState.HasValue)
+					await _occurrencesRepository.TryReturnClaimAsync(claim.RecurringCallOccurrenceId, claim.UpdatedOn, claim.PreviousState.Value, claim.UserId,
+						RecurringCallOccurrence.ClaimStamp(DateTime.UtcNow), CancellationToken.None);
+				else
+					await _occurrencesRepository.DeleteClaimAsync(claim.RecurringCallOccurrenceId, claim.UpdatedOn, CancellationToken.None);
+			}
+			catch (Exception ex)
+			{
+				// Left as it is, the claim runs out its lease and the stale-claim recovery settles it.
+				Logging.LogException(ex, $"Could not give back the claim on recurring call occurrence {claim.RecurringCallOccurrenceId}.");
+			}
+		}
+
+		/// <summary>
+		/// A call whose save failed after it was inserted: deleted, never the occurrence's call nor sent. True when it is gone (read back
+		/// from the store); false when it could not be (it is then left to the stale-claim recovery with the claim).
+		/// </summary>
+		private async Task<bool> DiscardUnfinishedCallAsync(Call call, string userId)
+		{
+			try
+			{
+				call.IsDeleted = true;
+				call.DeletedOn = DateTime.UtcNow;
+				call.DeletedByUserId = string.IsNullOrWhiteSpace(userId) ? SystemUserId : userId;
+				call.DeletedReason = UnfinishedReason;
+				await _callsService.SaveCallAsync(call, CancellationToken.None);
+			}
+			catch (Exception ex)
+			{
+				// The delete is written before the steps that failed the first save, which can fail again: read back below.
+				Logging.LogException(ex, $"Could not finish deleting call {call.CallId}, whose recurring call creation failed.");
+			}
+
+			try
+			{
+				var stored = await _callsService.GetCallByIdAsync(call.CallId);
+				return stored == null || stored.IsDeleted;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Could not tell whether call {call.CallId}, whose recurring call creation failed, was deleted.");
+				return false;
+			}
+		}
+
+		/// <summary>
+		/// Takes back a call the worker just created for a schedule paused, deleted or changed meanwhile: deleted (with the dispatch
+		/// claim every sender takes, so one already going out is left alone) and its occurrence forgotten. True when taken back.
+		/// </summary>
+		private async Task<bool> WithdrawCreatedCallAsync(RecurringCall series, Call call, DateTime occurrenceUtc)
+		{
+			try
+			{
+				var claimedOn = await _callsService.TryClaimCallForDispatchAsync(call.CallId, call.DepartmentId, CancellationToken.None);
+				if (!claimedOn.HasValue)
+					return false;
+
+				call.IsDeleted = true;
+				call.DeletedOn = DateTime.UtcNow;
+				call.DeletedByUserId = SystemUserId;
+				call.DeletedReason = ScheduleChangedReason;
+				call.HasBeenDispatched = false;
+
+				try
+				{
+					await _callsService.SaveCallAsync(call, CancellationToken.None);
+				}
+				catch
+				{
+					await _callsService.ReleaseCallDispatchClaimAsync(call.CallId, call.DepartmentId, claimedOn.Value, (int)CallStates.Active, call.DispatchOn, false,
+						CancellationToken.None);
+					throw;
+				}
+
+				var row = await _occurrencesRepository.GetByOccurrenceAsync(series.RecurringCallId, DateTime.SpecifyKind(occurrenceUtc, DateTimeKind.Utc));
+				if (row != null && row.CallId == call.CallId)
+					await _occurrencesRepository.DeleteIfStateAsync(row.RecurringCallOccurrenceId, (int)RecurringCallOccurrenceStates.Created, CancellationToken.None);
+
+				return true;
+			}
+			catch (Exception ex)
+			{
+				// Kept: it is the occurrence's call, as one created just before the schedule changed would be.
+				Logging.LogException(ex, $"Could not take back call {call.CallId}, created while its recurring call schedule changed.");
+				return false;
+			}
 		}
 
 		/// <summary>A call created for an occurrence that already has one (its creator lost the claim): deleted, never announced or sent.</summary>
@@ -1199,6 +1340,8 @@ namespace Resgrid.Services
 			CancellationToken cancellationToken)
 		{
 			var existing = await _occurrencesRepository.GetByOccurrenceAsync(series.RecurringCallId, occurrenceUtc);
+			// The claim's generation: its later writes are fenced on it (a row given back and claimed again carries a new one).
+			var claimedOn = RecurringCallOccurrence.ClaimStamp(DateTime.UtcNow);
 
 			if (existing != null)
 			{
@@ -1221,13 +1364,13 @@ namespace Resgrid.Services
 					case RecurringCallOccurrenceStates.AwaitingDispatcher:
 					case RecurringCallOccurrenceStates.Missed:
 						if (!await _occurrencesRepository.TryTransitionStateAsync(existing.RecurringCallOccurrenceId, existing.State,
-								(int)RecurringCallOccurrenceStates.Creating, userId, nowUtc, cancellationToken))
+								(int)RecurringCallOccurrenceStates.Creating, userId, claimedOn, cancellationToken))
 							return new OccurrenceTakeOver();
 
 						existing.PreviousState = existing.State;
 						existing.State = (int)RecurringCallOccurrenceStates.Creating;
 						existing.UserId = userId;
-						existing.UpdatedOn = nowUtc;
+						existing.UpdatedOn = claimedOn;
 						return new OccurrenceTakeOver { Claim = existing };
 
 					default:
@@ -1244,7 +1387,7 @@ namespace Resgrid.Services
 				OccurrenceOn = occurrenceUtc,
 				State = (int)RecurringCallOccurrenceStates.Creating,
 				UserId = userId,
-				UpdatedOn = nowUtc
+				UpdatedOn = claimedOn
 			};
 
 			return await _occurrencesRepository.TryClaimAsync(claim, cancellationToken) ? new OccurrenceTakeOver { Claim = claim } : new OccurrenceTakeOver();
@@ -1275,10 +1418,12 @@ namespace Resgrid.Services
 					var occurrenceUtc = DateTime.SpecifyKind(claim.OccurrenceOn, DateTimeKind.Utc);
 					var call = await _recurringCallsRepository.GetCallForOccurrenceAsync(claim.RecurringCallId, occurrenceUtc, claimedOn.AddMinutes(-1));
 
+					// Only while it is still the stale claim as read (same generation): a creator that finished or renewed meanwhile, or a
+					// row given back and claimed again by someone else since, is left alone.
 					if (call != null)
 					{
-						// Only while it is still the stale claim: a creator that finished meanwhile has already recorded its call.
-						if (await _occurrencesRepository.TryCompleteClaimAsync(claim.RecurringCallOccurrenceId, call.CallId, nowUtc, cancellationToken))
+						if (await _occurrencesRepository.TryCompleteClaimAsync(claim.RecurringCallOccurrenceId, call.CallId, claim.UpdatedOn,
+								RecurringCallOccurrence.ClaimStamp(nowUtc), cancellationToken))
 						{
 							claim.State = (int)RecurringCallOccurrenceStates.Created;
 							claim.CallId = call.CallId;
@@ -1287,7 +1432,7 @@ namespace Resgrid.Services
 					}
 					else
 					{
-						await _occurrencesRepository.DeleteIfStateAsync(claim.RecurringCallOccurrenceId, (int)RecurringCallOccurrenceStates.Creating, cancellationToken);
+						await _occurrencesRepository.DeleteClaimAsync(claim.RecurringCallOccurrenceId, claim.UpdatedOn, cancellationToken);
 					}
 				}
 				catch (Exception ex)
@@ -1457,8 +1602,7 @@ namespace Resgrid.Services
 
 				try
 				{
-					if (await NotifyAsync(series, alert, kind, detail))
-						await _alertsRepository.MarkNotifiedAsync(alert.RecurringCallAlertId, DateTime.UtcNow, CancellationToken.None);
+					await NotifyOnceAsync(series, alert, kind, detail);
 				}
 				catch (Exception ex)
 				{
@@ -1577,6 +1721,31 @@ namespace Resgrid.Services
 				{
 					Logging.LogException(ex, $"Could not reconcile recurring call alert {alert.RecurringCallAlertId}.");
 				}
+			}
+		}
+
+		/// <summary>
+		/// Sends the alert to its recipients once: only the caller that claims it (still open, not sent or being sent) sends it, so two
+		/// worker passes, or a pass holding a stale copy of an alert closed meanwhile, never send it twice or after it is settled. When
+		/// nobody was reached the claim is given back and a later pass tries again.
+		/// </summary>
+		private async Task NotifyOnceAsync(RecurringCall series, RecurringCallAlert alert, RecurringCallAlertKinds kind, RecurringCallAlertDetail detail)
+		{
+			var claimedOn = RecurringCallOccurrence.ClaimStamp(DateTime.UtcNow);
+			if (!await _alertsRepository.TryClaimNotificationAsync(alert.RecurringCallAlertId, claimedOn, CancellationToken.None))
+				return;
+
+			var sent = false;
+			try
+			{
+				sent = await NotifyAsync(series, alert, kind, detail);
+			}
+			finally
+			{
+				if (sent)
+					await _alertsRepository.MarkNotifiedAsync(alert.RecurringCallAlertId, DateTime.UtcNow, CancellationToken.None);
+				else
+					await _alertsRepository.ReleaseNotificationClaimAsync(alert.RecurringCallAlertId, claimedOn, CancellationToken.None);
 			}
 		}
 
@@ -1753,12 +1922,6 @@ namespace Resgrid.Services
 				});
 			}
 
-			// Occurrences of running schedules still to come, skipped, awaiting a dispatcher or missed.
-			var schedules = (await GetAllForDepartmentAsync(departmentId)).ToList();
-			if (!schedules.Any())
-				return entries.OrderBy(x => x.DispatchOnUtc).ToList();
-
-			var visible = await FilterSchedulesForUserAsync(departmentId, userId, schedules);
 			var dealtWith = (await _occurrencesRepository.GetForDepartmentInRangeAsync(departmentId, fromUtc, toUtc) ?? Enumerable.Empty<RecurringCallOccurrence>())
 				.GroupBy(x => x.RecurringCallId)
 				.ToDictionary(x => x.Key, x => x.GroupBy(o => DateTime.SpecifyKind(o.OccurrenceOn, DateTimeKind.Utc)).ToDictionary(o => o.Key, o => o.First()));
@@ -1775,6 +1938,14 @@ namespace Resgrid.Services
 				if (row != null)
 					entry.OccurrenceOnUtc = DateTime.SpecifyKind(row.OccurrenceOn, DateTimeKind.Utc);
 			}
+
+			// Occurrences of running schedules still to come, skipped, awaiting a dispatcher or missed. The calls above keep their
+			// occurrence times even when no schedule is left (the last one was deleted after it sent a call early).
+			var schedules = (await GetAllForDepartmentAsync(departmentId)).ToList();
+			if (!schedules.Any())
+				return entries.OrderBy(x => x.DispatchOnUtc).ToList();
+
+			var visible = await FilterSchedulesForUserAsync(departmentId, userId, schedules);
 
 			foreach (var series in visible)
 			{
@@ -2014,10 +2185,12 @@ namespace Resgrid.Services
 				_eventAggregator.SendMessage<CallUpdatedEvent>(new CallUpdatedEvent { DepartmentId = fresh.DepartmentId, Call = fresh });
 				deleted++;
 
+				// The call is deleted: its occurrence goes with it whatever happens to the request, or the next pass would take the
+				// occurrence as created and never create it again.
 				var occurrence = await _occurrencesRepository.GetByCallAsync(series.RecurringCallId, fresh.CallId)
 								 ?? await _occurrencesRepository.GetByOccurrenceAsync(series.RecurringCallId, DateTime.SpecifyKind(fresh.DispatchOn.Value, DateTimeKind.Utc));
 				if (occurrence != null && occurrence.CallId == fresh.CallId)
-					await _occurrencesRepository.DeleteIfStateAsync(occurrence.RecurringCallOccurrenceId, (int)RecurringCallOccurrenceStates.Created, cancellationToken);
+					await _occurrencesRepository.DeleteIfStateAsync(occurrence.RecurringCallOccurrenceId, (int)RecurringCallOccurrenceStates.Created, CancellationToken.None);
 			}
 
 			return deleted;

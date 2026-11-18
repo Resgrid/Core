@@ -236,6 +236,7 @@ namespace Resgrid.Tests.Services
 
 			_call.State = (int)CallStates.Closed;
 			_outbox.Single().NextAttemptOn = DateTime.UtcNow.AddSeconds(-1);
+			_outbox.Single().CreatedOn = DateTime.UtcNow.Subtract(CallBroadcastOutboxService.SettleWindow).AddMinutes(-1);
 			_accept = () => true;
 			(await _service.SendDueAsync(100, CancellationToken.None)).Should().Be(0);
 
@@ -285,12 +286,66 @@ namespace Resgrid.Tests.Services
 			var recorded = await RecordMedicAsync();
 			await _service.SendPendingForCallAsync(_call, recorded);
 
-			await _service.SupersedeForCallAsync(CallId);
+			await _service.SupersedeCoveredAsync(_call);
 			_outbox.Single().NextAttemptOn = DateTime.UtcNow.AddSeconds(-1);
 			_accept = () => true;
 
 			(await _service.SendDueAsync(100, CancellationToken.None)).Should().Be(0);
 			_outbox.Single().State.Should().Be((int)CallBroadcastOutboxStates.Superseded);
+		}
+
+		[Test]
+		public async Task A_rebroadcast_leaves_the_page_for_someone_it_did_not_carry()
+		{
+			// The rebroadcast went out from a call read before a concurrent edit added a member and a unit.
+			var broadcastCall = LiveCall();
+			_call.Dispatches.Add(new CallDispatch { CallId = CallId, UserId = "late-member" });
+			_call.UnitDispatches.Add(new CallDispatchUnit { CallId = CallId, UnitId = 99 });
+
+			_accept = () => false;
+			var covered = await RecordMedicAsync();
+			var late = await _service.RecordAsync(_call, new[] { "late-member" }, null, new[] { 99 }, null, "dispatcher-2");
+			await _service.SendPendingForCallAsync(_call, covered);
+
+			await _service.SupersedeCoveredAsync(broadcastCall);
+
+			_outbox.Rows.Single(x => x.CallBroadcastOutboxId == covered.CallBroadcastOutboxId).State.Should().Be((int)CallBroadcastOutboxStates.Superseded);
+			_outbox.Rows.Single(x => x.CallBroadcastOutboxId == late.CallBroadcastOutboxId).State.Should().Be((int)CallBroadcastOutboxStates.Pending,
+				"the broadcast never carried the member or the unit the concurrent edit added");
+		}
+
+		[Test]
+		public async Task The_worker_waits_for_an_edit_still_saving_before_closing_its_page()
+		{
+			// Recorded before the save: the stored call does not have the member on it yet.
+			_call.Dispatches.Remove(_call.Dispatches.Single(x => x.UserId == Medic));
+			await RecordMedicAsync();
+			var row = _outbox.Single();
+			row.NextAttemptOn = DateTime.UtcNow.AddSeconds(-1);
+
+			(await _service.SendDueAsync(100, CancellationToken.None)).Should().Be(0);
+			row.State.Should().Be((int)CallBroadcastOutboxStates.Pending, "the edit may still be saving");
+
+			// The save lands: the next pass pages the member.
+			_call.Dispatches.Add(new CallDispatch { CallId = CallId, UserId = Medic });
+			row.NextAttemptOn = DateTime.UtcNow.AddSeconds(-1);
+			(await _service.SendDueAsync(100, CancellationToken.None)).Should().Be(1);
+			row.State.Should().Be((int)CallBroadcastOutboxStates.Sent);
+		}
+
+		[Test]
+		public async Task A_page_whose_save_never_happened_is_closed_after_the_settle_window()
+		{
+			_call.Dispatches.Remove(_call.Dispatches.Single(x => x.UserId == Medic));
+			await RecordMedicAsync();
+			var row = _outbox.Single();
+			row.NextAttemptOn = DateTime.UtcNow.AddSeconds(-1);
+			row.CreatedOn = DateTime.UtcNow.Subtract(CallBroadcastOutboxService.SettleWindow).AddMinutes(-1);
+
+			(await _service.SendDueAsync(100, CancellationToken.None)).Should().Be(0);
+
+			row.State.Should().Be((int)CallBroadcastOutboxStates.Skipped);
+			_queued.Should().BeEmpty();
 		}
 
 		[Test]

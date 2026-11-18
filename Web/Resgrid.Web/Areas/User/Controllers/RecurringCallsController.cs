@@ -649,7 +649,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				// Acknowledge and dismiss are open to any call creator who sees the alert (as the actions check), the schedule deleted
 				// or not; sending, creating or skipping only while the schedule still has that occurrence.
 				CanAct = canCreate,
-				CanSend = info.CanSend
+				CanSend = info.CanSend && canCreate
 			};
 		}
 

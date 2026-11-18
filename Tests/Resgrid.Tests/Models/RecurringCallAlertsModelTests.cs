@@ -195,6 +195,29 @@ namespace Resgrid.Tests.Models
 
 			occurrence["call_id"].Should().Be(0);
 			occurrence["unit_count"].Should().Be(0);
+			occurrence["by_dispatcher"].Should().Be(true, "a skip is always a dispatcher's, as the live event says");
+		}
+
+		[TestCase(WorkflowTriggerEventType.RecurringCallOccurrenceCreated)]
+		[TestCase(WorkflowTriggerEventType.RecurringCallOccurrenceDispatched)]
+		public void A_created_or_dispatched_occurrence_preview_is_the_workers(WorkflowTriggerEventType trigger)
+		{
+			var data = (Scriban.Runtime.ScriptObject)Resgrid.Services.WorkflowSampleDataGenerator.GenerateSampleData(trigger);
+
+			((Scriban.Runtime.ScriptObject)data["occurrence"])["by_dispatcher"].Should().Be(false);
+		}
+
+		[Test]
+		public void The_schedule_preview_next_occurrence_falls_between_its_start_and_end()
+		{
+			var data = (Scriban.Runtime.ScriptObject)Resgrid.Services.WorkflowSampleDataGenerator.GenerateSampleData(WorkflowTriggerEventType.RecurringCallScheduleUpdated);
+			var schedule = (Scriban.Runtime.ScriptObject)data["recurring_call"];
+
+			var startsOn = DateTime.ParseExact((string)schedule["starts_on"], "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+			var endsOn = DateTime.ParseExact((string)schedule["ends_on"], "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+			var next = (DateTime)schedule["next_occurrence_on"];
+
+			next.Date.Should().BeOnOrAfter(startsOn).And.BeOnOrBefore(endsOn);
 		}
 	}
 }

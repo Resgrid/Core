@@ -136,15 +136,17 @@ namespace Resgrid.Repositories.DataRepository
 			return rows == 1;
 		}
 
-		public async Task<int> SupersedePendingForCallAsync(int callId, DateTime nowUtc, CancellationToken cancellationToken = default)
+		public async Task<bool> TrySupersedeAsync(string callBroadcastOutboxId, DateTime nowUtc, CancellationToken cancellationToken = default)
 		{
-			var parameters = new DynamicParameters(new { CallId = callId, Pending, Superseded = (int)CallBroadcastOutboxStates.Superseded });
+			var parameters = new DynamicParameters(new { Id = callBroadcastOutboxId, Pending, Superseded = (int)CallBroadcastOutboxStates.Superseded });
 			RecurringCallsRepository.AddTimestamp(parameters, "Now", nowUtc);
 
-			return await ExecuteAsync(
+			var rows = await ExecuteAsync(
 				$"UPDATE {Tbl("CallBroadcastOutbox")} SET {Col("State")} = {P}Superseded, {Col("CompletedOn")} = {P}Now " +
-				$"WHERE {Col("CallId")} = {P}CallId AND {Col("State")} = {P}Pending",
+				$"WHERE {Col("CallBroadcastOutboxId")} = {CaseInsensitive("Id")} AND {Col("State")} = {P}Pending",
 				parameters, cancellationToken);
+
+			return rows == 1;
 		}
 
 		public async Task<int> PurgeCompletedBeforeAsync(DateTime beforeUtc, CancellationToken cancellationToken = default)

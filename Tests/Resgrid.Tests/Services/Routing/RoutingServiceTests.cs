@@ -494,6 +494,28 @@ namespace Resgrid.Tests.Services.Routing
 			MapboxRoutingProvider.MatrixChunks(0, 5, 25).Should().BeEmpty();
 			MapboxRoutingProvider.MatrixChunks(5, 0, 25).Should().BeEmpty();
 		}
+
+		[TestCase(1, 25, 25, new[] { 13, 12 })]
+		[TestCase(1, 10, 10, new[] { 5, 5 })]
+		[TestCase(1, 49, 25, new[] { 17, 16, 16 })]
+		public void a_split_is_evened_out_so_no_request_carries_a_lone_destination(int origins, int destinations, int limit, int[] runs)
+		{
+			var chunks = MapboxRoutingProvider.MatrixChunks(origins, destinations, limit);
+
+			chunks.Select(c => c.DestinationCount).Should().Equal(runs);
+		}
+
+		[Test]
+		public void a_response_code_other_than_ok_is_read_so_it_fails_the_matrix()
+		{
+			using var noRoute = System.Text.Json.JsonDocument.Parse("{\"code\":\"NoRoute\",\"message\":\"No route found\"}");
+			using var ok = System.Text.Json.JsonDocument.Parse("{\"code\":\"Ok\",\"durations\":[[1]]}");
+			using var none = System.Text.Json.JsonDocument.Parse("{\"durations\":[[1]]}");
+
+			MapboxRoutingProvider.MatrixResponseCode(noRoute.RootElement).Should().Be("NoRoute");
+			MapboxRoutingProvider.MatrixResponseCode(ok.RootElement).Should().Be("Ok");
+			MapboxRoutingProvider.MatrixResponseCode(none.RootElement).Should().BeNull();
+		}
 	}
 
 	[TestFixture]

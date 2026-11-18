@@ -13,7 +13,7 @@ namespace Resgrid.Services
 {
 	/// <summary>
 	/// Pages owed to resources an edit added to a live call (M0321, <see cref="CallBroadcastOutboxEntry"/>). The edit records the
-	/// page right after the call saves and sends it at the end of the request; whatever the queue refused (or a request that failed
+	/// page just before the call saves and sends it at the end of the request; whatever the queue refused (or a request that failed
 	/// in between never sent) is retried by worker 12 with a short backoff until <see cref="MaximumAge"/>. Each attempt claims the row
 	/// first, so two senders never page the same row; a sender that stops after the queue accepted but before the row was marked
 	/// sent leaves it to be sent again once its lease runs out (at least once: a repeated page over a lost one).
@@ -31,6 +31,12 @@ namespace Resgrid.Services
 
 		/// <summary>Finished rows are kept this long for diagnosis.</summary>
 		public static readonly TimeSpan RetainFinishedFor = TimeSpan.FromDays(7);
+
+		/// <summary>
+		/// A row is recorded before its edit saves the call. Until it is this old, the worker finding nobody owed on the stored call
+		/// may only mean that save has not landed yet, so it tries again later instead of closing the row.
+		/// </summary>
+		public static readonly TimeSpan SettleWindow = TimeSpan.FromMinutes(10);
 
 		private readonly ICallBroadcastOutboxRepository _outboxRepository;
 		private readonly ICallsService _callsService;
@@ -142,17 +148,41 @@ namespace Resgrid.Services
 			return sent;
 		}
 
-		public async Task SupersedeForCallAsync(int callId)
+		public async Task SupersedeCoveredAsync(Call broadcastCall)
 		{
+			if (broadcastCall == null || broadcastCall.CallId <= 0)
+				return;
+
 			try
 			{
-				await _outboxRepository.SupersedePendingForCallAsync(callId, DateTime.UtcNow, CancellationToken.None);
+				var ids = ((await _outboxRepository.GetOpenIdsForCallAsync(broadcastCall.CallId, DateTime.UtcNow, CancellationToken.None)) ?? Enumerable.Empty<string>()).ToList();
+				foreach (var id in ids)
+				{
+					var entry = await _outboxRepository.GetEntryAsync(id, CancellationToken.None);
+
+					// Only what the broadcast carried is covered: a page for a resource a concurrent edit added after this request read the
+					// call still owes that resource its page. Recipients never change on a row, so the check holds for the update below.
+					if (entry != null && entry.State == (int)CallBroadcastOutboxStates.Pending && IsCoveredBy(entry, broadcastCall))
+						await _outboxRepository.TrySupersedeAsync(id, DateTime.UtcNow, CancellationToken.None);
+				}
 			}
 			catch (Exception ex)
 			{
 				// Left pending, a row pages its resources once more; nothing is lost.
-				Logging.LogException(ex, $"Could not mark the pending pages of call {callId} as covered by its rebroadcast.");
+				Logging.LogException(ex, $"Could not mark the pending pages of call {broadcastCall.CallId} as covered by its rebroadcast.");
 			}
+		}
+
+		/// <summary>Every resource on the row was on the call the full broadcast carried.</summary>
+		private static bool IsCoveredBy(CallBroadcastOutboxEntry entry, Call broadcastCall)
+		{
+			var users = new HashSet<string>((broadcastCall.Dispatches ?? new List<CallDispatch>()).Where(x => x != null).Select(x => x.UserId), StringComparer.OrdinalIgnoreCase);
+			var groups = new HashSet<int>((broadcastCall.GroupDispatches ?? new List<CallDispatchGroup>()).Select(x => x.DepartmentGroupId));
+			var units = new HashSet<int>((broadcastCall.UnitDispatches ?? new List<CallDispatchUnit>()).Select(x => x.UnitId));
+			var roles = new HashSet<int>((broadcastCall.RoleDispatches ?? new List<CallDispatchRole>()).Select(x => x.RoleId));
+
+			return entry.GetUserIds().All(users.Contains) && entry.GetGroupIds().All(groups.Contains) &&
+				entry.GetUnitIds().All(units.Contains) && entry.GetRoleIds().All(roles.Contains);
 		}
 
 		public async Task<int> SendDueAsync(int batchSize, CancellationToken cancellationToken)
@@ -209,9 +239,10 @@ namespace Resgrid.Services
 				return false;
 
 			Attempt attempt;
+			var fromStore = call == null || call.CallId != entry.CallId;
 			try
 			{
-				if (call == null || call.CallId != entry.CallId)
+				if (fromStore)
 					call = await LoadCallAsync(entry.CallId);
 
 				attempt = await AttemptAsync(entry, call);
@@ -231,6 +262,13 @@ namespace Resgrid.Services
 					return true;
 
 				case Attempt.NobodyLeft:
+					// Read from the store while its edit may still be saving: not settled yet. The edit's own call is its saved state.
+					if (fromStore && DateTime.UtcNow - entry.CreatedOn < SettleWindow)
+					{
+						await _outboxRepository.RetryLaterAsync(id, claimToken, DateTime.UtcNow.Add(BackoffFor(entry.Attempts)), "Nobody owed the page yet.", CancellationToken.None);
+						return false;
+					}
+
 					await _outboxRepository.CompleteAsync(id, claimToken, CallBroadcastOutboxStates.Skipped, DateTime.UtcNow, null, CancellationToken.None);
 					return false;
 

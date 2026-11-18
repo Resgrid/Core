@@ -33,8 +33,8 @@ namespace Resgrid.Model.Repositories
 		Task<bool> RetryLaterAsync(string callBroadcastOutboxId, string claimToken, DateTime nextAttemptOnUtc, string error,
 			CancellationToken cancellationToken = default);
 
-		/// <summary>Marks the call's pending rows superseded by a full rebroadcast; a row being sent right now is left to finish.</summary>
-		Task<int> SupersedePendingForCallAsync(int callId, DateTime nowUtc, CancellationToken cancellationToken = default);
+		/// <summary>Marks a still-pending row superseded by a full rebroadcast; a row being sent right now is left to finish.</summary>
+		Task<bool> TrySupersedeAsync(string callBroadcastOutboxId, DateTime nowUtc, CancellationToken cancellationToken = default);
 
 		/// <summary>Deletes rows that ended before <paramref name="beforeUtc"/>.</summary>
 		Task<int> PurgeCompletedBeforeAsync(DateTime beforeUtc, CancellationToken cancellationToken = default);

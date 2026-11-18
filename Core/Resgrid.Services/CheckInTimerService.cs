@@ -510,9 +510,10 @@ namespace Resgrid.Services
 			if (!timersWithStateFilter.Any())
 				return timers; // No filtering needed
 
-			// Populate call dispatches if not already loaded
-			if (call.Dispatches == null || call.UnitDispatches == null)
-				call = await _callsService.PopulateCallData(call, true, false, false, false, true, false, false, false, false);
+			// Populate call dispatches if not already loaded; the releases too, or a released member's timers would stay active
+			// (IsUserReleased reads false while PersonnelReleases is not loaded), as the PAR roster already checks.
+			if (call.Dispatches == null || call.UnitDispatches == null || call.PersonnelReleases == null)
+				call = await _callsService.PopulateCallData(call, true, false, false, false, true, false, false, false, false) ?? call;
 
 			// Build a set of current personnel action type IDs (one batch query instead of
 			// one last-action query per dispatched user)

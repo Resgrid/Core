@@ -3,7 +3,7 @@ using FluentMigrator;
 namespace Resgrid.Providers.Migrations.Migrations
 {
 	/// <summary>
-	/// CallBroadcastOutbox: the page owed to resources an edit added to a live call, written right after the call saves so a broadcast
+	/// CallBroadcastOutbox: the page owed to resources an edit added to a live call, written just before the call saves so a broadcast
 	/// the queue refuses is retried (worker 12) instead of lost, since a retry of the same edit sees nothing new to page. The filtered
 	/// index serves the worker's due scan, the call index the edit's own flush, the department index UnlinkedDepartmentCleanup and the
 	/// completed index the purge. No foreign keys. Existence-guarded for safe retry.

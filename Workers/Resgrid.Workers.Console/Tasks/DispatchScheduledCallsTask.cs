@@ -42,8 +42,9 @@ namespace Resgrid.Workers.Console.Tasks
 				IRecurringCallsService recurringCallsService = null;
 				IRecurringCallsService Recurring() => recurringCallsService ??= scope.Resolve<IRecurringCallsService>();
 
-				// Calls already due go out first: recurring schedules (every department's, with their alerts) must never hold them up.
-				await DispatchDueCallsAsync();
+				// Calls already due go out first: recurring schedules (every department's, with their alerts) must never hold them up,
+				// and a failure here must not hold up the recurring schedules or the owed pages below either.
+				await TryDispatchDueCallsAsync();
 
 				// Then recurring calls, in their own failure boundary: each occurrence due within its schedule's lead time becomes an
 				// ordinary scheduled call (dispatcher-mode schedules alert a dispatcher instead; missed occurrences and settled alerts
@@ -65,7 +66,7 @@ namespace Resgrid.Workers.Console.Tasks
 				}
 
 				if (created > 0)
-					await DispatchDueCallsAsync();
+					await TryDispatchDueCallsAsync();
 
 				// Pages owed to resources an edit added to a live call that the queue refused (or that edit never sent): their own
 				// failure boundary, after the scheduled calls.
@@ -85,6 +86,22 @@ namespace Resgrid.Workers.Console.Tasks
 				}
 
 				progress.Report(100, $"Finishing the {Name} Task");
+
+				async Task TryDispatchDueCallsAsync()
+				{
+					try
+					{
+						await DispatchDueCallsAsync();
+					}
+					catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+					{
+						throw;
+					}
+					catch (Exception dueEx)
+					{
+						Resgrid.Framework.Logging.LogException(dueEx, "Scheduled calls due now could not be read or dispatched.");
+					}
+				}
 
 				async Task DispatchDueCallsAsync()
 				{
@@ -130,91 +147,104 @@ namespace Resgrid.Workers.Console.Tasks
 								continue;
 							}
 
-							// A dispatcher may press Dispatch Now on this call while the poll runs: only whoever marks the
-							// stored call dispatched first sends it.
-							var claimedOn = await callsService.TryClaimCallForDispatchAsync(call.CallId, call.DepartmentId, cancellationToken);
-							if (!claimedOn.HasValue)
-								continue;
-
-							var originalDispatchOn = call.DispatchOn;
-							var sent = false;
+							// One call that keeps failing must not hold up the calls after it (or the rest of this task): it is
+							// logged and retried on the next poll.
 							try
 							{
-								// PopulateCallData hydrates and returns the same instance, so this is the
-								// one object carried through enrichment, broadcast and the single save.
-								var populatedCall = await callsService.PopulateCallData(call, true, false, false, true, true, true, true, false, false);
+								// A dispatcher may press Dispatch Now on this call while the poll runs: only whoever marks the
+								// stored call dispatched first sends it.
+								var claimedOn = await callsService.TryClaimCallForDispatchAsync(call.CallId, call.DepartmentId, cancellationToken);
+								if (!claimedOn.HasValue)
+									continue;
 
-								// Run card auto-dispatch: scheduled calls are enriched at dispatch time,
-								// when the call's location and resource picture are final. Enrichment only
-								// mutates the in-memory graph here — persisting it is left to the single
-								// save below, because every save of a call fans out events and workflow
-								// triggers and the call must not be written twice per dispatch.
-								Resgrid.Model.DispatchRecommendationResult recommendation = null;
+								var originalDispatchOn = call.DispatchOn;
+								var sent = false;
 								try
 								{
-									if (await featureToggleService.IsEnabledAsync(Resgrid.Model.FeatureFlagKeys.DispatchRunCards, populatedCall.DepartmentId))
-									{
-										var enriched = await dispatchRecommendationService.EnrichCallForDispatchAsync(populatedCall, 1, true, cancellationToken);
+									// PopulateCallData hydrates and returns the same instance, so this is the
+									// one object carried through enrichment, broadcast and the single save.
+									var populatedCall = await callsService.PopulateCallData(call, true, false, false, true, true, true, true, false, false);
 
-										if (enriched.MatchedRunCardId.HasValue && enriched.AutoDispatch && enriched.HasRecommendations)
-											recommendation = enriched;
-									}
-								}
-								catch (Exception recEx)
-								{
-									// A recommendation failure must never block the scheduled dispatch.
-									Resgrid.Framework.Logging.LogException(recEx);
-								}
-
-								var cqi = new CallQueueItem();
-								cqi.Call = populatedCall;
-
-								if (cqi.Call.Dispatches != null && cqi.Call.Dispatches.Any())
-									cqi.Profiles = await userProfileService.GetSelectedUserProfilesAsync(cqi.Call.Dispatches.Select(x => x.UserId).ToList());
-
-								// Once queued the call has gone out, so nothing after this may hand the claim back.
-								sent = await queueService.EnqueueCallBroadcastAsync(cqi, cancellationToken);
-
-								if (sent)
-								{
-									// Ended before anything else can fail, so the claim's lease never sends the call twice.
+									// Run card auto-dispatch: scheduled calls are enriched at dispatch time,
+									// when the call's location and resource picture are final. Enrichment only
+									// mutates the in-memory graph here — persisting it is left to the single
+									// save below, because every save of a call fans out events and workflow
+									// triggers and the call must not be written twice per dispatch.
+									Resgrid.Model.DispatchRecommendationResult recommendation = null;
 									try
 									{
-										await callsService.CompleteCallDispatchClaimAsync(call.CallId, call.DepartmentId, claimedOn.Value);
+										if (await featureToggleService.IsEnabledAsync(Resgrid.Model.FeatureFlagKeys.DispatchRunCards, populatedCall.DepartmentId))
+										{
+											var enriched = await dispatchRecommendationService.EnrichCallForDispatchAsync(populatedCall, 1, true, cancellationToken);
+
+											if (enriched.MatchedRunCardId.HasValue && enriched.AutoDispatch && enriched.HasRecommendations)
+												recommendation = enriched;
+										}
 									}
-									catch (Exception claimEx)
+									catch (Exception recEx)
 									{
-										Resgrid.Framework.Logging.LogException(claimEx, $"Could not complete the dispatch claim on call {call.CallId}.");
+										// A recommendation failure must never block the scheduled dispatch.
+										Resgrid.Framework.Logging.LogException(recEx);
 									}
 
-									// One write, covering both the dispatched flag and anything the run
-									// card added. If the broadcast failed the claim is given back below so
-									// the next poll retries it cleanly.
-									populatedCall.HasBeenDispatched = true;
-									await callsService.SaveCallAsync(populatedCall, cancellationToken);
+									var cqi = new CallQueueItem();
+									cqi.Call = populatedCall;
 
-									if (recommendation != null)
+									if (cqi.Call.Dispatches != null && cqi.Call.Dispatches.Any())
+										cqi.Profiles = await userProfileService.GetSelectedUserProfilesAsync(cqi.Call.Dispatches.Select(x => x.UserId).ToList());
+
+									// Once queued the call has gone out, so nothing after this may hand the claim back.
+									sent = await queueService.EnqueueCallBroadcastAsync(cqi, cancellationToken);
+
+									if (sent)
 									{
+										// Ended before anything else can fail, so the claim's lease never sends the call twice.
 										try
 										{
-											// Recorded only once the dispatch actually went out, so the audit
-											// trail and its workflow event cannot describe a call that never
-											// broadcast.
-											await dispatchRecommendationService.RecordActivationAsync(populatedCall, recommendation, null, cancellationToken);
+											await callsService.CompleteCallDispatchClaimAsync(call.CallId, call.DepartmentId, claimedOn.Value);
 										}
-										catch (Exception recEx)
+										catch (Exception claimEx)
 										{
-											Resgrid.Framework.Logging.LogException(recEx);
+											Resgrid.Framework.Logging.LogException(claimEx, $"Could not complete the dispatch claim on call {call.CallId}.");
 										}
-									}
 
-									await callDispatchStatusService.ApplyDispatchStatusesAsync(cqi.Call, cancellationToken: cancellationToken);
+										// One write, covering both the dispatched flag and anything the run
+										// card added. If the broadcast failed the claim is given back below so
+										// the next poll retries it cleanly.
+										populatedCall.HasBeenDispatched = true;
+										await callsService.SaveCallAsync(populatedCall, cancellationToken);
+
+										if (recommendation != null)
+										{
+											try
+											{
+												// Recorded only once the dispatch actually went out, so the audit
+												// trail and its workflow event cannot describe a call that never
+												// broadcast.
+												await dispatchRecommendationService.RecordActivationAsync(populatedCall, recommendation, null, cancellationToken);
+											}
+											catch (Exception recEx)
+											{
+												Resgrid.Framework.Logging.LogException(recEx);
+											}
+										}
+
+										await callDispatchStatusService.ApplyDispatchStatusesAsync(cqi.Call, cancellationToken: cancellationToken);
+									}
+								}
+								finally
+								{
+									if (!sent)
+										await callsService.ReleaseCallDispatchClaimAsync(call.CallId, call.DepartmentId, claimedOn.Value, (int)Resgrid.Model.CallStates.Active, originalDispatchOn, false);
 								}
 							}
-							finally
+							catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
 							{
-								if (!sent)
-									await callsService.ReleaseCallDispatchClaimAsync(call.CallId, call.DepartmentId, claimedOn.Value, (int)Resgrid.Model.CallStates.Active, originalDispatchOn, false);
+								throw;
+							}
+							catch (Exception callEx)
+							{
+								Resgrid.Framework.Logging.LogException(callEx, $"Scheduled call {call.CallId} could not be dispatched; it is retried on the next poll.");
 							}
 						}
 					}

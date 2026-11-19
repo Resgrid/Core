@@ -62,7 +62,8 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 					.WithColumn("state").AsInt32().NotNullable()
 					.WithColumn("callid").AsInt32().Nullable()
 					.WithColumn("userid").AsCustom("citext").Nullable()
-					.WithColumn("updatedon").AsDateTime2().NotNullable();
+					.WithColumn("updatedon").AsDateTime2().NotNullable()
+					.WithColumn("dispatchedon").AsDateTime2().Nullable();
 
 				Execute.Sql("CREATE UNIQUE INDEX IF NOT EXISTS ux_recurringcalloccurrences_occurrence ON recurringcalloccurrences (recurringcallid, occurrenceon);");
 				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_recurringcalloccurrences_department ON recurringcalloccurrences (departmentid, occurrenceon);");

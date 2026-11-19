@@ -85,13 +85,16 @@ namespace Resgrid.Tests.Repositories
 				? new NpgsqlConnectionStringBuilder(_master) { Database = _database }.ConnectionString
 				: new SqlConnectionStringBuilder(_master) { InitialCatalog = _database }.ConnectionString;
 
-			// citext for the PostgreSQL tables, and a minimal stand-in for the M0001 Calls table that M0319 extends.
+			// citext for the PostgreSQL tables, and a minimal stand-in for the M0001 Calls table that M0319 extends (LoggedOn is a legacy
+			// datetime on SQL Server, as in M0001).
 			await using (var database = Connect(_connection))
 			{
 				await database.OpenAsync();
 				await database.ExecuteAsync(IsPostgres
-					? "CREATE EXTENSION IF NOT EXISTS citext; CREATE TABLE calls (callid int PRIMARY KEY, departmentid int NOT NULL, dispatchon timestamp NULL);"
-					: "CREATE TABLE Calls (CallId int PRIMARY KEY, DepartmentId int NOT NULL, DispatchOn datetime2 NULL);");
+					? "CREATE EXTENSION IF NOT EXISTS citext; CREATE TABLE calls (callid int PRIMARY KEY, departmentid int NOT NULL, dispatchon timestamp NULL, " +
+					  "loggedon timestamp NOT NULL, isdeleted boolean NOT NULL DEFAULT false);"
+					: "CREATE TABLE Calls (CallId int PRIMARY KEY, DepartmentId int NOT NULL, DispatchOn datetime2 NULL, LoggedOn datetime NOT NULL, " +
+					  "IsDeleted bit NOT NULL DEFAULT 0);");
 
 				// The data source loaded its types before citext existed; without a reload a citext column cannot be read back.
 				if (database is NpgsqlConnection postgres)
@@ -126,6 +129,13 @@ namespace Resgrid.Tests.Repositories
 
 		private static DateTime Stamp(DateTime utc) => RecurringCallOccurrence.ClaimStamp(utc);
 
+		/// <summary>A schedule revision as the service writes it (<see cref="RecurringCall.NextRevision"/>).</summary>
+		private static DateTime Revision(DateTime utc) => RecurringCall.NextRevision(utc, null);
+
+		/// <summary>
+		/// Written with Dapper's default DateTime parameter, as the entity save writes a schedule: on SQL Server that is a datetime
+		/// (1/300 s), so only a storable revision reads back exactly.
+		/// </summary>
 		private async Task<int> SeedScheduleAsync(DateTime createdOn, DateTime? updatedOn = null)
 		{
 			await using var database = Connect(_connection);
@@ -167,7 +177,7 @@ namespace Resgrid.Tests.Repositories
 		[Test]
 		public async Task A_worker_claims_an_occurrence_only_while_its_schedule_runs_as_it_read_it()
 		{
-			var created = Stamp(DateTime.UtcNow.AddHours(-2));
+			var created = Revision(DateTime.UtcNow.AddHours(-2));
 			var scheduleId = await SeedScheduleAsync(created);
 			var occurrences = Occurrences();
 			var first = new DateTime(2026, 12, 1, 8, 0, 0, DateTimeKind.Utc);
@@ -176,6 +186,8 @@ namespace Resgrid.Tests.Repositories
 			(await occurrences.TryClaimWhileRunningAsync(Claim(scheduleId, first, Stamp(DateTime.UtcNow)), created)).Should().BeFalse("the occurrence is claimed already");
 			(await occurrences.TryClaimWhileRunningAsync(Claim(scheduleId, first.AddDays(1), Stamp(DateTime.UtcNow)), created.AddSeconds(5)))
 				.Should().BeFalse("the worker read another revision");
+			(await occurrences.TryClaimWhileRunningAsync(Claim(scheduleId, first.AddDays(1), Stamp(DateTime.UtcNow)), created.AddMilliseconds(10)))
+				.Should().BeFalse("a revision a hundredth of a second later is another revision: compared exactly");
 
 			await SetScheduleAsync(scheduleId, active: false, deleted: false);
 			(await occurrences.TryClaimWhileRunningAsync(Claim(scheduleId, first.AddDays(2), Stamp(DateTime.UtcNow)), created)).Should().BeFalse("paused");
@@ -187,7 +199,7 @@ namespace Resgrid.Tests.Repositories
 			(await occurrences.TryClaimWhileRunningAsync(Claim(scheduleId, first.AddDays(4), Stamp(DateTime.UtcNow)), created)).Should().BeTrue("running again");
 
 			// An edited schedule's revision is its last change.
-			var edited = Stamp(DateTime.UtcNow.AddMinutes(-5));
+			var edited = Revision(DateTime.UtcNow.AddMinutes(-5));
 			var editedId = await SeedScheduleAsync(created, edited);
 			(await occurrences.TryClaimWhileRunningAsync(Claim(editedId, first, Stamp(DateTime.UtcNow)), created)).Should().BeFalse("read before the edit");
 			(await occurrences.TryClaimWhileRunningAsync(Claim(editedId, first, Stamp(DateTime.UtcNow)), edited)).Should().BeTrue();
@@ -196,7 +208,7 @@ namespace Resgrid.Tests.Repositories
 		[Test]
 		public async Task A_claim_is_renewed_and_completed_only_under_its_own_stamp()
 		{
-			var created = Stamp(DateTime.UtcNow.AddHours(-2));
+			var created = Revision(DateTime.UtcNow.AddHours(-2));
 			var scheduleId = await SeedScheduleAsync(created);
 			var occurrences = Occurrences();
 			var claimedOn = Stamp(DateTime.UtcNow.AddSeconds(-30));
@@ -224,7 +236,7 @@ namespace Resgrid.Tests.Repositories
 		[Test]
 		public async Task A_renewal_with_the_schedule_paused_is_refused()
 		{
-			var created = Stamp(DateTime.UtcNow.AddHours(-2));
+			var created = Revision(DateTime.UtcNow.AddHours(-2));
 			var scheduleId = await SeedScheduleAsync(created);
 			var occurrences = Occurrences();
 			var claimedOn = Stamp(DateTime.UtcNow);
@@ -241,7 +253,7 @@ namespace Resgrid.Tests.Repositories
 		[Test]
 		public async Task A_claim_is_returned_or_dropped_only_under_its_own_stamp()
 		{
-			var scheduleId = await SeedScheduleAsync(Stamp(DateTime.UtcNow.AddHours(-2)));
+			var scheduleId = await SeedScheduleAsync(Revision(DateTime.UtcNow.AddHours(-2)));
 			var occurrences = Occurrences();
 
 			var returnedOn = Stamp(DateTime.UtcNow.AddSeconds(-10));
@@ -264,7 +276,7 @@ namespace Resgrid.Tests.Repositories
 		[Test]
 		public async Task An_alert_is_sent_under_one_notification_claim_at_a_time()
 		{
-			var scheduleId = await SeedScheduleAsync(Stamp(DateTime.UtcNow.AddHours(-2)));
+			var scheduleId = await SeedScheduleAsync(Revision(DateTime.UtcNow.AddHours(-2)));
 			var alerts = Alerts();
 			var occurrenceOn = new DateTime(2026, 12, 6, 8, 0, 0, DateTimeKind.Utc);
 			var alert = new RecurringCallAlert
@@ -278,13 +290,17 @@ namespace Resgrid.Tests.Repositories
 			(await alerts.TryRaiseAsync(alert)).Should().BeTrue();
 
 			var first = Stamp(DateTime.UtcNow);
-			(await alerts.TryClaimNotificationAsync(alert.RecurringCallAlertId, first)).Should().BeTrue();
-			(await alerts.TryClaimNotificationAsync(alert.RecurringCallAlertId, Stamp(DateTime.UtcNow.AddSeconds(1)))).Should().BeFalse("someone is sending it");
+			var lease = TimeSpan.FromMinutes(10);
+			(await alerts.TryClaimNotificationAsync(alert.RecurringCallAlertId, first, first - lease)).Should().BeTrue();
+			var second = Stamp(DateTime.UtcNow.AddSeconds(1));
+			(await alerts.TryClaimNotificationAsync(alert.RecurringCallAlertId, second, second - lease)).Should().BeFalse("someone is sending it");
 			(await alerts.ReleaseNotificationClaimAsync(alert.RecurringCallAlertId, first.AddMilliseconds(1))).Should().BeFalse("not that claim");
 			(await alerts.ReleaseNotificationClaimAsync(alert.RecurringCallAlertId, first)).Should().BeTrue();
+			(await ReadAlertAsync(alert.RecurringCallAlertId)).NotifiedOn.Should().BeNull("a claim is not a send");
 
 			(await alerts.TryResolveAsync(alert.RecurringCallAlertId, 1, "dispatcher", null, DateTime.UtcNow)).Should().BeTrue();
-			(await alerts.TryClaimNotificationAsync(alert.RecurringCallAlertId, Stamp(DateTime.UtcNow))).Should().BeFalse("closed meanwhile");
+			var third = Stamp(DateTime.UtcNow);
+			(await alerts.TryClaimNotificationAsync(alert.RecurringCallAlertId, third, third - lease)).Should().BeFalse("closed meanwhile");
 
 			// Closed, the occurrence can be alerted again (the unique index covers open alerts only).
 			var again = new RecurringCallAlert
@@ -304,6 +320,119 @@ namespace Resgrid.Tests.Repositories
 				Kind = (int)RecurringCallAlertKinds.Missed,
 				CreatedOn = DateTime.UtcNow
 			})).Should().BeFalse("one open alert per occurrence and kind");
+		}
+
+		[Test]
+		public async Task A_claim_left_by_a_sender_that_stopped_lapses_and_a_sent_alert_is_never_claimed_again()
+		{
+			var scheduleId = await SeedScheduleAsync(Revision(DateTime.UtcNow.AddHours(-2)));
+			var alerts = Alerts();
+			var alert = new RecurringCallAlert
+			{
+				DepartmentId = DepartmentId,
+				RecurringCallId = scheduleId,
+				OccurrenceOn = new DateTime(2026, 12, 7, 8, 0, 0, DateTimeKind.Utc),
+				Kind = (int)RecurringCallAlertKinds.DispatchDue,
+				CreatedOn = DateTime.UtcNow
+			};
+			(await alerts.TryRaiseAsync(alert)).Should().BeTrue();
+
+			// A sender claimed it 20 minutes ago and stopped before sending or giving the claim back.
+			var lease = TimeSpan.FromMinutes(10);
+			var stopped = Stamp(DateTime.UtcNow.AddMinutes(-20));
+			(await alerts.TryClaimNotificationAsync(alert.RecurringCallAlertId, stopped, stopped - lease)).Should().BeTrue();
+
+			var now = Stamp(DateTime.UtcNow);
+			(await alerts.TryClaimNotificationAsync(alert.RecurringCallAlertId, now, now - lease)).Should().BeTrue("the stopped sender's claim lapsed");
+
+			await alerts.MarkNotifiedAsync(alert.RecurringCallAlertId, DateTime.UtcNow);
+			var stored = await ReadAlertAsync(alert.RecurringCallAlertId);
+			stored.NotifiedOn.Should().NotBeNull();
+			stored.NotificationClaimedOn.Should().BeNull();
+
+			var later = Stamp(DateTime.UtcNow.AddHours(1));
+			(await alerts.TryClaimNotificationAsync(alert.RecurringCallAlertId, later, later - lease)).Should().BeFalse("it was sent");
+		}
+
+		[Test]
+		public async Task A_repair_alert_is_raised_only_while_the_schedule_runs_as_read()
+		{
+			var created = Revision(DateTime.UtcNow.AddHours(-2));
+			var scheduleId = await SeedScheduleAsync(created);
+			var alerts = Alerts();
+			RecurringCallAlert Due(int day) => new RecurringCallAlert
+			{
+				DepartmentId = DepartmentId,
+				RecurringCallId = scheduleId,
+				OccurrenceOn = new DateTime(2026, 12, day, 8, 0, 0, DateTimeKind.Utc),
+				Kind = (int)RecurringCallAlertKinds.DispatchDue,
+				CreatedOn = DateTime.UtcNow
+			};
+
+			(await alerts.TryRaiseWhileRunningAsync(Due(8), created.AddMilliseconds(10))).Should().BeFalse("read another revision");
+			(await alerts.TryRaiseWhileRunningAsync(Due(8), created)).Should().BeTrue();
+			(await alerts.TryRaiseWhileRunningAsync(Due(8), created)).Should().BeFalse("one open alert per occurrence and kind");
+
+			await SetScheduleAsync(scheduleId, active: false, deleted: false);
+			(await alerts.TryRaiseWhileRunningAsync(Due(9), created)).Should().BeFalse("paused since the pass read it");
+		}
+
+		[Test]
+		public async Task A_call_is_found_only_by_its_own_attempts_stamp()
+		{
+			var scheduleId = await SeedScheduleAsync(Revision(DateTime.UtcNow.AddHours(-2)));
+			var calls = Calls();
+			var dispatchOn = new DateTime(2026, 12, 10, 8, 0, 0, DateTimeKind.Utc);
+
+			// Two attempts for one occurrence: a creator that stalled, and the one that took over after its claim was dropped. Each call is
+			// logged at its attempt's stamp, written as the entity save writes it (a datetime on SQL Server).
+			var stalled = RecurringCallOccurrence.StorableStamp(DateTime.UtcNow.AddMinutes(-12).AddTicks(123_456));
+			var takeover = RecurringCallOccurrence.StorableStamp(DateTime.UtcNow.AddMilliseconds(-37));
+			await InsertCallAsync(901, scheduleId, dispatchOn, takeover);
+
+			(await calls.GetCallForAttemptAsync(scheduleId, dispatchOn, takeover))?.CallId.Should().Be(901);
+			(await calls.GetCallForAttemptAsync(scheduleId, dispatchOn, stalled)).Should().BeNull("the stalled creator inserted nothing: the other attempt's call is never its");
+			(await calls.GetCallForAttemptAsync(scheduleId, dispatchOn, takeover.AddMilliseconds(10))).Should().BeNull();
+
+			await InsertCallAsync(902, scheduleId, dispatchOn, stalled, deleted: true);
+			(await calls.GetCallForAttemptAsync(scheduleId, dispatchOn, stalled)).Should().BeNull("a deleted call is gone");
+		}
+
+		[Test]
+		public async Task An_occurrences_dispatch_is_recorded_once()
+		{
+			var scheduleId = await SeedScheduleAsync(Revision(DateTime.UtcNow.AddHours(-2)));
+			var occurrences = Occurrences();
+			var claim = Claim(scheduleId, new DateTime(2026, 12, 11, 8, 0, 0, DateTimeKind.Utc), Stamp(DateTime.UtcNow));
+			(await occurrences.TryClaimAsync(claim)).Should().BeTrue();
+
+			(await occurrences.TryMarkDispatchedAsync(claim.RecurringCallOccurrenceId.ToUpperInvariant(), DateTime.UtcNow)).Should().BeTrue();
+			(await occurrences.TryMarkDispatchedAsync(claim.RecurringCallOccurrenceId, DateTime.UtcNow)).Should().BeFalse("its Dispatched trigger was raised");
+		}
+
+		private RecurringCallsRepository Calls()
+		{
+			var (connections, configuration, queries) = Parts();
+			return new RecurringCallsRepository(connections, configuration, Mock.Of<IUnitOfWork>(), queries);
+		}
+
+		/// <summary>Dapper's default DateTime parameters, as the entity save writes a call.</summary>
+		private async Task InsertCallAsync(int callId, int recurringCallId, DateTime dispatchOn, DateTime loggedOn, bool deleted = false)
+		{
+			await using var database = Connect(_connection);
+			await database.ExecuteAsync(IsPostgres
+				? "INSERT INTO calls (callid, departmentid, dispatchon, loggedon, isdeleted, recurringcallid) VALUES (@CallId, @DepartmentId, @DispatchOn, @LoggedOn, @Deleted, @RecurringCallId)"
+				: "INSERT INTO Calls (CallId, DepartmentId, DispatchOn, LoggedOn, IsDeleted, RecurringCallId) VALUES (@CallId, @DepartmentId, @DispatchOn, @LoggedOn, @Deleted, @RecurringCallId)",
+				new { CallId = callId, DepartmentId, DispatchOn = dispatchOn, LoggedOn = loggedOn, Deleted = deleted, RecurringCallId = recurringCallId });
+		}
+
+		private async Task<(DateTime? NotifiedOn, DateTime? NotificationClaimedOn)> ReadAlertAsync(string id)
+		{
+			await using var database = Connect(_connection);
+			var row = await database.QuerySingleAsync(IsPostgres
+				? "SELECT notifiedon, notificationclaimedon FROM recurringcallalerts WHERE recurringcallalertid = @Id::citext"
+				: "SELECT NotifiedOn AS notifiedon, NotificationClaimedOn AS notificationclaimedon FROM RecurringCallAlerts WHERE RecurringCallAlertId = @Id", new { Id = id });
+			return ((DateTime?)row.notifiedon, (DateTime?)row.notificationclaimedon);
 		}
 	}
 

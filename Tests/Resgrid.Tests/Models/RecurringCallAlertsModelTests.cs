@@ -219,5 +219,23 @@ namespace Resgrid.Tests.Models
 
 			next.Date.Should().BeOnOrAfter(startsOn).And.BeOnOrBefore(endsOn);
 		}
+
+		[Test]
+		public void The_schedule_preview_next_occurrence_is_one_of_its_times_in_the_sample_departments_zone()
+		{
+			var data = (Scriban.Runtime.ScriptObject)Resgrid.Services.WorkflowSampleDataGenerator.GenerateSampleData(WorkflowTriggerEventType.RecurringCallScheduleUpdated);
+			var schedule = (Scriban.Runtime.ScriptObject)data["recurring_call"];
+			var times = ((string)schedule["times"]).Split(',');
+			var eastern = new Department { TimeZone = "Eastern Standard Time" };
+
+			var next = (DateTime)schedule["next_occurrence_on"];
+			var local = RecurringCallRecurrence.ToLocal(next, eastern);
+
+			times.Should().Contain(local.ToString("HH:mm", System.Globalization.CultureInfo.InvariantCulture), "the preview shows the occurrence the way the live event does");
+
+			var occurrence = (Scriban.Runtime.ScriptObject)((Scriban.Runtime.ScriptObject)Resgrid.Services.WorkflowSampleDataGenerator
+				.GenerateSampleData(WorkflowTriggerEventType.RecurringCallOccurrenceCreated))["occurrence"];
+			times.Should().Contain(RecurringCallRecurrence.ToLocal((DateTime)occurrence["occurrence_on"], eastern).ToString("HH:mm", System.Globalization.CultureInfo.InvariantCulture));
+		}
 	}
 }

@@ -41,11 +41,15 @@ namespace Resgrid.Model
 
 		public DateTime CreatedOn { get; set; }
 
-		/// <summary>
-		/// When the alert recipients were sent it (null when nobody could be reached). Also the send's claim: set before sending, so only
-		/// one sender sends an open alert, and cleared again when nobody was reached so a later worker pass retries it.
-		/// </summary>
+		/// <summary>When the alert recipients were sent it: a channel accepted it for at least one of them (null until then).</summary>
 		public DateTime? NotifiedOn { get; set; }
+
+		/// <summary>
+		/// A sender's claim on notifying the recipients (when it was taken), kept apart from <see cref="NotifiedOn"/>: only one sender
+		/// sends an open alert, one that reached nobody gives the claim back, and one that stopped mid-send leaves a claim that lapses
+		/// after its lease, so a later worker pass sends the alert instead of treating it as sent.
+		/// </summary>
+		public DateTime? NotificationClaimedOn { get; set; }
 
 		public DateTime? AcknowledgedOn { get; set; }
 

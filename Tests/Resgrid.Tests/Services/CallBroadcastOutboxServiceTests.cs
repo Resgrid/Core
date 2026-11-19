@@ -188,11 +188,34 @@ namespace Resgrid.Tests.Services
 			await _service.SendPendingForCallAsync(_call, recorded);
 
 			_call.PersonnelReleases.Add(new CallPersonnelRelease { CallId = CallId, UserId = Medic.ToUpperInvariant() });
+			_outbox.Single().CreatedOn = DateTime.UtcNow.Subtract(CallBroadcastOutboxService.SettleWindow).AddMinutes(-1);
 			_accept = () => true;
 			(await _service.SendPendingForCallAsync(_call)).Should().Be(0);
 
 			_queued.Should().HaveCount(1, "only the refused attempt reached the queue");
 			_outbox.Single().State.Should().Be((int)CallBroadcastOutboxStates.Skipped);
+		}
+
+		[Test]
+		public async Task One_edits_flush_never_closes_the_page_another_edit_has_not_saved_yet()
+		{
+			// Edit B recorded its page for a member it is about to add; edit A, saved without that member, flushes first.
+			var stored = LiveCall();
+			_calls.Setup(x => x.GetCallByIdAsync(CallId, It.IsAny<bool>())).ReturnsAsync(() => stored);
+			var editA = LiveCall();
+			var editB = await _service.RecordAsync(_call, new[] { "member-b-adds" }, null, null, null, "dispatcher-b");
+
+			(await _service.SendPendingForCallAsync(editA)).Should().Be(0);
+
+			_outbox.Rows.Single(x => x.CallBroadcastOutboxId == editB.CallBroadcastOutboxId).State
+				.Should().Be((int)CallBroadcastOutboxStates.Pending, "edit B has not saved; its member is still owed the page");
+
+			// Edit B saves and flushes: its member is paged.
+			stored.Dispatches.Add(new CallDispatch { CallId = CallId, UserId = "member-b-adds" });
+			var withMemberB = LiveCall();
+			withMemberB.Dispatches.Add(new CallDispatch { CallId = CallId, UserId = "member-b-adds" });
+			(await _service.SendPendingForCallAsync(withMemberB, editB)).Should().Be(1);
+			_queued.Last().BroadcastUserIds.Should().Equal(new[] { "member-b-adds" });
 		}
 
 		[Test]

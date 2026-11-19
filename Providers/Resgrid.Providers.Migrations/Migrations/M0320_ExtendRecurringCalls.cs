@@ -47,6 +47,7 @@ namespace Resgrid.Providers.Migrations.Migrations
 					.WithColumn("DetailJson").AsString(int.MaxValue).Nullable()
 					.WithColumn("CreatedOn").AsDateTime2().NotNullable()
 					.WithColumn("NotifiedOn").AsDateTime2().Nullable()
+					.WithColumn("NotificationClaimedOn").AsDateTime2().Nullable()
 					.WithColumn("AcknowledgedOn").AsDateTime2().Nullable()
 					.WithColumn("AcknowledgedByUserId").AsString(128).Nullable()
 					.WithColumn("ResolvedOn").AsDateTime2().Nullable()

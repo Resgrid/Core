@@ -26,8 +26,12 @@ namespace Resgrid.Model.Repositories
 		/// <summary>The not-deleted calls a schedule created that are due at or after <paramref name="fromUtc"/>.</summary>
 		Task<IEnumerable<Call>> GetCallsForScheduleAsync(int departmentId, int recurringCallId, DateTime fromUtc);
 
-		/// <summary>The not-deleted call a schedule created for an occurrence, logged at or after <paramref name="loggedSinceUtc"/> (claim recovery).</summary>
-		Task<Call> GetCallForOccurrenceAsync(int recurringCallId, DateTime occurrenceUtc, DateTime loggedSinceUtc);
+		/// <summary>
+		/// The not-deleted call one creation attempt saved: the schedule's call due at <paramref name="dispatchOnUtc"/> whose LoggedOn is
+		/// exactly <paramref name="attemptStampUtc"/> (the attempt's claim stamp, written as the call's LoggedOn). Another attempt's call
+		/// for the same occurrence never matches (claim recovery, and the clean-up after a failed save).
+		/// </summary>
+		Task<Call> GetCallForAttemptAsync(int recurringCallId, DateTime dispatchOnUtc, DateTime attemptStampUtc);
 	}
 
 	/// <summary>Occurrences of recurring schedules that were created, are being created, or were skipped (RecurringCallOccurrences, M0319).</summary>
@@ -92,6 +96,12 @@ namespace Resgrid.Model.Repositories
 		/// </summary>
 		Task<bool> TryReturnClaimAsync(string recurringCallOccurrenceId, DateTime claimedOnUtc, int toState, string userId, DateTime updatedOnUtc,
 			CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Records that the occurrence's call was dispatched, once: true only for the caller that set
+		/// <see cref="RecurringCallOccurrence.DispatchedOn"/>, who raises its Dispatched trigger.
+		/// </summary>
+		Task<bool> TryMarkDispatchedAsync(string recurringCallOccurrenceId, DateTime dispatchedOnUtc, CancellationToken cancellationToken = default);
 	}
 
 	/// <summary>What dispatchers have to act on for recurring calls (RecurringCallAlerts, M0320).</summary>
@@ -102,6 +112,12 @@ namespace Resgrid.Model.Repositories
 		/// count, so an occurrence restored after its alert was closed can be alerted again.
 		/// </summary>
 		Task<bool> TryRaiseAsync(RecurringCallAlert alert, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// <see cref="TryRaiseAsync"/>, only while the stored schedule is active, not deleted and still exactly the revision read
+		/// (<paramref name="scheduleRevisionUtc"/>); the schedule row is locked for the check, as for a worker's occurrence claim.
+		/// </summary>
+		Task<bool> TryRaiseWhileRunningAsync(RecurringCallAlert alert, DateTime scheduleRevisionUtc, CancellationToken cancellationToken = default);
 
 		/// <summary>Whether the occurrence has ever had an alert of that kind, open or closed.</summary>
 		Task<bool> AnyForOccurrenceAsync(int recurringCallId, DateTime occurrenceUtc, int kind);
@@ -129,11 +145,13 @@ namespace Resgrid.Model.Repositories
 		Task<bool> TryAcknowledgeAsync(string recurringCallAlertId, string userId, DateTime acknowledgedOnUtc, CancellationToken cancellationToken = default);
 
 		/// <summary>
-		/// Claims sending an alert to its recipients: only while it is still open and nobody has sent it or is sending it
-		/// (<see cref="RecurringCallAlert.NotifiedOn"/> is null; the claim sets it to <paramref name="claimedOnUtc"/>). False: closed
-		/// meanwhile, or someone else has it.
+		/// Claims sending an alert to its recipients (<see cref="RecurringCallAlert.NotificationClaimedOn"/> = <paramref name="claimedOnUtc"/>):
+		/// only while it is open, was never sent (<see cref="RecurringCallAlert.NotifiedOn"/> is null) and nobody else holds a claim
+		/// taken at or after <paramref name="abandonedBeforeUtc"/> (an older one belongs to a sender that stopped mid-send). False: closed
+		/// or sent meanwhile, or someone else is sending it.
 		/// </summary>
-		Task<bool> TryClaimNotificationAsync(string recurringCallAlertId, DateTime claimedOnUtc, CancellationToken cancellationToken = default);
+		Task<bool> TryClaimNotificationAsync(string recurringCallAlertId, DateTime claimedOnUtc, DateTime abandonedBeforeUtc,
+			CancellationToken cancellationToken = default);
 
 		/// <summary>Gives back a notification claim nobody was reached under (only while it is still that claim), so a later pass retries it.</summary>
 		Task<bool> ReleaseNotificationClaimAsync(string recurringCallAlertId, DateTime claimedOnUtc, CancellationToken cancellationToken = default);

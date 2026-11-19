@@ -1060,22 +1060,34 @@ namespace Resgrid.Services
 
 		public async Task<bool> SendNotificationAsync(string userId, int departmentId, string message, string departmentNumber, Department department, string title, UserProfile profile, bool sendToICApp, string eventCode)
 		{
+			return (await SendNotificationCoreAsync(userId, departmentId, message, departmentNumber, department, title, profile, sendToICApp, eventCode)).Eligible;
+		}
+
+		public async Task<bool> SendNotificationDeliveredAsync(string userId, int departmentId, string message, string departmentNumber, Department department, string title, UserProfile profile, bool sendToICApp, string eventCode)
+		{
+			return (await SendNotificationCoreAsync(userId, departmentId, message, departmentNumber, department, title, profile, sendToICApp, eventCode)).Delivered;
+		}
+
+		/// <summary>Eligible: the member could be sent to (the long-standing result). Delivered: at least one channel reported it sent.</summary>
+		private async Task<(bool Eligible, bool Delivered)> SendNotificationCoreAsync(string userId, int departmentId, string message, string departmentNumber, Department department, string title, UserProfile profile, bool sendToICApp, string eventCode)
+		{
 			if (Config.SystemBehaviorConfig.DoNotBroadcast && !Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(departmentId))
-				return false;
+				return (false, false);
 
 			if (!await CanSendToUser(userId, departmentId))
-				return false;
+				return (false, false);
 
 			if (profile == null)
 				profile = await _userProfileService.GetProfileByUserIdAsync(userId, false);
 
 			var channels = NotificationChannelSelection.From(profile);
+			var delivered = false;
 
 			if (channels.Sms)
 			{
 				try
 				{
-					await _smsService.SendNotificationAsync(userId, departmentId, $"{title} {message}", departmentNumber, profile);
+					delivered |= await _smsService.SendNotificationAsync(userId, departmentId, $"{title} {message}", departmentNumber, profile);
 				}
 				catch (Exception ex)
 				{
@@ -1089,7 +1101,7 @@ namespace Resgrid.Services
 				{
 					try
 					{
-						await _emailService.SendNotificationAsync(userId, $"{title} {message}", departmentId, profile);
+						delivered |= await _emailService.SendNotificationAsync(userId, $"{title} {message}", departmentId, profile);
 
 					}
 					catch (Exception ex)
@@ -1112,9 +1124,9 @@ namespace Resgrid.Services
 				try
 				{
 					if (sendToICApp)
-						await _pushService.PushICNotification(spm, userId, profile);
+						delivered |= await _pushService.PushICNotification(spm, userId, profile);
 					else
-						await _pushService.PushNotification(spm, userId, profile);
+						delivered |= await _pushService.PushNotification(spm, userId, profile);
 
 				}
 				catch (Exception ex)
@@ -1123,9 +1135,9 @@ namespace Resgrid.Services
 				}
 			}
 
-			await SendChatNotificationAsync(userId, departmentId, title, message, ChatbotOutboundType.Notification, profile);
+			delivered |= await SendChatNotificationAsync(userId, departmentId, title, message, ChatbotOutboundType.Notification, profile);
 
-			return true;
+			return (true, delivered);
 		}
 
 		public async Task<bool> SendCalendarAsync(string userId, int departmentId, string message, string departmentNumber, string title = "Notification", UserProfile profile = null, Department department = null)
@@ -1353,7 +1365,8 @@ namespace Resgrid.Services
 			return await _smsService.SendTextAsync(userId, title, message, departmentId, departmentNumber, profile);
 		}
 
-		private async Task SendChatNotificationAsync(string userId, int departmentId, string title, string body,
+		/// <summary>True when a linked chat platform reported the message delivered.</summary>
+		private async Task<bool> SendChatNotificationAsync(string userId, int departmentId, string title, string body,
 			ChatbotOutboundType type, UserProfile profile)
 		{
 			try
@@ -1364,12 +1377,14 @@ namespace Resgrid.Services
 					departmentId, new Message { Subject = title, Body = body, DepartmentId = departmentId,
 						ReceivingUserId = userId, SystemGenerated = true },
 					ProtectedDataEgressChannel.ChatPlatform, profile?.Language);
-				await _chatbotOutboundService.SendToUserAsync(userId, departmentId,
+				var result = await _chatbotOutboundService.SendToUserAsync(userId, departmentId,
 					new ChatbotOutboundMessage { Type = type, Title = chatMessage.Subject, Body = chatMessage.Body });
+				return result?.AnyDelivered == true;
 			}
 			catch (Exception ex)
 			{
 				Logging.LogException(ex);
+				return false;
 			}
 		}
 

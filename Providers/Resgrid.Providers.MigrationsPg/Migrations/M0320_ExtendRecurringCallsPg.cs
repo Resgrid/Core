@@ -40,6 +40,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 					.WithColumn("detailjson").AsCustom("citext").Nullable()
 					.WithColumn("createdon").AsDateTime2().NotNullable()
 					.WithColumn("notifiedon").AsDateTime2().Nullable()
+					.WithColumn("notificationclaimedon").AsDateTime2().Nullable()
 					.WithColumn("acknowledgedon").AsDateTime2().Nullable()
 					.WithColumn("acknowledgedbyuserid").AsCustom("citext").Nullable()
 					.WithColumn("resolvedon").AsDateTime2().Nullable()

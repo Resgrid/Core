@@ -720,10 +720,11 @@ namespace Resgrid.Services
 					recurringCall["resume_on"] = eventType == WorkflowTriggerEventType.RecurringCallSchedulePaused
 						? sampleToday.AddDays(14).ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture)
 						: null;
-					// As live: a paused or deleted schedule has no next occurrence.
+					// As live: a paused or deleted schedule has no next occurrence; a running one's is one of its times (13:00 tomorrow) in the
+					// sample department's time zone.
 					recurringCall["next_occurrence_on"] = eventType == WorkflowTriggerEventType.RecurringCallSchedulePaused || eventType == WorkflowTriggerEventType.RecurringCallScheduleDeleted
 						? null
-						: (object)sampleToday.AddDays(1).AddHours(16);
+						: (object)SampleOccurrenceUtc();
 					obj["recurring_call"] = recurringCall;
 					break;
 
@@ -734,7 +735,7 @@ namespace Resgrid.Services
 					occurrence["recurring_call_id"] = 12;
 					occurrence["name"] = "Dialysis transfer - Mercy to Riverside";
 					occurrence["change"] = eventType == WorkflowTriggerEventType.RecurringCallOccurrenceDispatched ? "Dispatched" : eventType == WorkflowTriggerEventType.RecurringCallOccurrenceSkipped ? "Skipped" : "Created";
-					occurrence["occurrence_on"] = DateTime.UtcNow.Date.AddDays(1).AddHours(16);
+					occurrence["occurrence_on"] = SampleOccurrenceUtc();
 					occurrence["call_id"] = eventType == WorkflowTriggerEventType.RecurringCallOccurrenceSkipped ? 0 : 1001;
 					occurrence["call_number"] = eventType == WorkflowTriggerEventType.RecurringCallOccurrenceSkipped ? null : "26-1001";
 					// A skip is always a dispatcher's (the live event says so); the samples for creation and dispatch are the worker's.
@@ -813,6 +814,17 @@ namespace Resgrid.Services
 		/// <summary>
 		/// Inventory previews use the same variable mapping and permanently withheld content as dispatched events.
 		/// </summary>
+		/// <summary>
+		/// The sample schedule's next occurrence: 13:00 tomorrow (one of its "08:00,13:00,19:00" times) in the sample department's time
+		/// zone, as UTC, the way a live event reports it.
+		/// </summary>
+		public static DateTime SampleOccurrenceUtc()
+		{
+			var department = new Department { TimeZone = "Eastern Standard Time" };
+			var localTomorrow = RecurringCallRecurrence.ToLocal(DateTime.UtcNow, department).Date.AddDays(1);
+			return RecurringCallRecurrence.ToUtc(localTomorrow.AddHours(13), department);
+		}
+
 		private static void AddInventorySamples(ScriptObject obj, WorkflowTriggerEventType eventType)
 		{
 			const string transactionId = "11111111-1111-1111-1111-111111111111";

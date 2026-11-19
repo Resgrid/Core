@@ -148,7 +148,8 @@ namespace Resgrid.Workers.Console.Tasks
 							}
 
 							// One call that keeps failing must not hold up the calls after it (or the rest of this task): it is
-							// logged and retried on the next poll.
+							// logged, and retried on the next poll unless its page already went out.
+							var broadcastAccepted = false;
 							try
 							{
 								// A dispatcher may press Dispatch Now on this call while the poll runs: only whoever marks the
@@ -195,6 +196,7 @@ namespace Resgrid.Workers.Console.Tasks
 
 									// Once queued the call has gone out, so nothing after this may hand the claim back.
 									sent = await queueService.EnqueueCallBroadcastAsync(cqi, cancellationToken);
+									broadcastAccepted = sent;
 
 									if (sent)
 									{
@@ -244,7 +246,12 @@ namespace Resgrid.Workers.Console.Tasks
 							}
 							catch (Exception callEx)
 							{
-								Resgrid.Framework.Logging.LogException(callEx, $"Scheduled call {call.CallId} could not be dispatched; it is retried on the next poll.");
+								// After the queue accepted the page the claim is completed, so the next poll does not send it again: only
+								// the follow-up (dispatched flag, run card record, statuses) is missing. Before that, the claim is given
+								// back and the next poll retries the call while it is still within the look-back.
+								Resgrid.Framework.Logging.LogException(callEx, broadcastAccepted
+									? $"Scheduled call {call.CallId} was dispatched, but the work after its page (dispatched flag, run card record or statuses) failed; it is not sent again."
+									: $"Scheduled call {call.CallId} could not be dispatched; the next poll retries it while it is still due.");
 							}
 						}
 					}

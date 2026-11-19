@@ -111,6 +111,14 @@ namespace Resgrid.Model.Services
 			string title, UserProfile profile, bool sendToICApp, string eventCode);
 
 		/// <summary>
+		/// <see cref="SendNotificationAsync(string, int, string, string, Department, string, UserProfile, bool, string)"/>, but true only
+		/// when at least one channel accepted the message for the member (SMS, email, push or a linked chat platform reported it sent),
+		/// not merely when the member could be sent to. For a caller that must try again when nothing went out.
+		/// </summary>
+		Task<bool> SendNotificationDeliveredAsync(string userId, int departmentId, string message, string departmentNumber, Department department,
+			string title, UserProfile profile, bool sendToICApp, string eventCode);
+
+		/// <summary>
 		/// Sends the trouble alert asynchronous.
 		/// </summary>
 		/// <param name="troubleAlertEvent">The trouble alert event.</param>

@@ -66,6 +66,24 @@ namespace Resgrid.Model
 			return new DateTime(utc.Ticks - utc.Ticks % TimeSpan.TicksPerMillisecond, DateTimeKind.Utc);
 		}
 
+		/// <summary>
+		/// A timestamp truncated to the hundredth of a second, which every column it is written to stores exactly, whichever way it is
+		/// written: SQL Server's datetime (a value written through an ordinary entity save, kept to 1/300 s) as well as datetime2 and
+		/// PostgreSQL's timestamp. Used where a value written one way must later match another exactly: a claim's renewal stamp, which
+		/// becomes its call's LoggedOn (the attempt's identity), and a schedule's revision (<see cref="RecurringCall.EffectiveFrom"/>).
+		/// </summary>
+		public static DateTime StorableStamp(DateTime utc)
+		{
+			const long hundredth = TimeSpan.TicksPerMillisecond * 10;
+			return new DateTime(utc.Ticks - utc.Ticks % hundredth, DateTimeKind.Utc);
+		}
+
+		/// <summary>
+		/// When the occurrence's call was recorded as dispatched (its Dispatched trigger raised). Set once, conditionally, by whoever
+		/// sends the call (the worker, Dispatch Now), so a call sent again after a lost dispatch claim never raises it twice.
+		/// </summary>
+		public DateTime? DispatchedOn { get; set; }
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue

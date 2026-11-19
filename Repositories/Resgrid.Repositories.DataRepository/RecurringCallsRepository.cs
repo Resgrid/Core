@@ -66,18 +66,42 @@ namespace Resgrid.Repositories.DataRepository
 				parameters);
 		}
 
-		public async Task<Call> GetCallForOccurrenceAsync(int recurringCallId, DateTime occurrenceUtc, DateTime loggedSinceUtc)
+		public async Task<Call> GetCallForAttemptAsync(int recurringCallId, DateTime dispatchOnUtc, DateTime attemptStampUtc)
 		{
 			var parameters = new DynamicParameters(new { RecurringCallId = recurringCallId, No = false });
-			AddTimestamp(parameters, "OccurrenceOn", occurrenceUtc);
-			AddTimestamp(parameters, "LoggedSince", loggedSinceUtc);
+			AddTimestamp(parameters, "DispatchOn", dispatchOnUtc);
+			AddTimestamp(parameters, "LoggedOn", attemptStampUtc);
 
+			// LoggedOn is the attempt's own stamp (a storable hundredth, exact in SQL Server's datetime column too), so another
+			// attempt's call for the same occurrence never matches.
 			var calls = await QueryAsync<Call>(
-				$"SELECT * FROM {Tbl("Calls")} WHERE {Col("RecurringCallId")} = {P}RecurringCallId AND {Col("DispatchOn")} = {P}OccurrenceOn " +
-				$"AND {Col("LoggedOn")} >= {P}LoggedSince AND {Col("IsDeleted")} = {P}No",
+				$"SELECT * FROM {Tbl("Calls")} WHERE {Col("RecurringCallId")} = {P}RecurringCallId AND {Col("DispatchOn")} = {P}DispatchOn " +
+				$"AND {Col("LoggedOn")} = {P}LoggedOn AND {Col("IsDeleted")} = {P}No",
 				parameters);
 
 			return calls?.OrderBy(x => x.CallId).FirstOrDefault();
+		}
+
+		/// <summary>
+		/// The schedule (<paramref name="scheduleId"/>, @RecurringCallId by default) is active, not deleted and still exactly the revision
+		/// read (<see cref="RecurringCall.EffectiveFrom"/>: written as <see cref="RecurringCall.NextRevision"/>, stored as written, and
+		/// moved by every change). The schedule row is locked for the check (UPDLOCK on SQL Server, FOR SHARE on PostgreSQL), so a pause
+		/// or change waits for the statement it is part of, or is seen by it.
+		/// </summary>
+		internal static string ScheduleRunsCondition(string recurringCallsTable, string p, DynamicParameters parameters, DateTime scheduleRevisionUtc,
+			string scheduleId = null)
+		{
+			scheduleId ??= $"{p}RecurringCallId";
+			parameters.Add("ScheduleActive", true);
+			parameters.Add("ScheduleDeleted", false);
+			AddTimestamp(parameters, "ScheduleRevision", scheduleRevisionUtc);
+
+			var revision = $"COALESCE(s.{Col("UpdatedOn")}, s.{Col("CreatedOn")})";
+			return IsPostgres
+				? $"EXISTS (SELECT 1 FROM {recurringCallsTable} s WHERE s.{Col("RecurringCallId")} = {scheduleId} AND s.{Col("IsActive")} = {p}ScheduleActive " +
+				  $"AND s.{Col("IsDeleted")} = {p}ScheduleDeleted AND {revision} = {p}ScheduleRevision FOR SHARE)"
+				: $"EXISTS (SELECT 1 FROM {recurringCallsTable} s WITH (UPDLOCK, HOLDLOCK) WHERE s.{Col("RecurringCallId")} = {scheduleId} " +
+				  $"AND s.{Col("IsActive")} = {p}ScheduleActive AND s.{Col("IsDeleted")} = {p}ScheduleDeleted AND {revision} = {p}ScheduleRevision)";
 		}
 
 		/// <summary>datetime2 on SQL Server (a datetime parameter compared with a datetime2 column is widened and can miss); unspecified kind for Npgsql.</summary>
@@ -148,26 +172,9 @@ namespace Resgrid.Repositories.DataRepository
 			}
 		}
 
-		/// <summary>
-		/// The occurrence's schedule (<paramref name="scheduleId"/>, @RecurringCallId by default) is active, not deleted and still the
-		/// revision read (its last-change time, to the second either way: a schedule just saved can come back rounded). The schedule row
-		/// is locked for the check (UPDLOCK on SQL Server, FOR SHARE on PostgreSQL), so a pause or change waits for this statement or is
-		/// seen by it.
-		/// </summary>
 		private string ScheduleRuns(DynamicParameters parameters, DateTime scheduleRevisionUtc, string scheduleId = null)
 		{
-			scheduleId ??= $"{P}RecurringCallId";
-			parameters.Add("ScheduleActive", true);
-			parameters.Add("ScheduleDeleted", false);
-			RecurringCallsRepository.AddTimestamp(parameters, "RevisionFrom", scheduleRevisionUtc.AddSeconds(-1));
-			RecurringCallsRepository.AddTimestamp(parameters, "RevisionTo", scheduleRevisionUtc.AddSeconds(1));
-
-			var revision = $"COALESCE(s.{Col("UpdatedOn")}, s.{Col("CreatedOn")})";
-			return IsPostgres
-				? $"EXISTS (SELECT 1 FROM {Tbl("RecurringCalls")} s WHERE s.{Col("RecurringCallId")} = {scheduleId} AND s.{Col("IsActive")} = {P}ScheduleActive " +
-				  $"AND s.{Col("IsDeleted")} = {P}ScheduleDeleted AND {revision} > {P}RevisionFrom AND {revision} < {P}RevisionTo FOR SHARE)"
-				: $"EXISTS (SELECT 1 FROM {Tbl("RecurringCalls")} s WITH (UPDLOCK, HOLDLOCK) WHERE s.{Col("RecurringCallId")} = {scheduleId} " +
-				  $"AND s.{Col("IsActive")} = {P}ScheduleActive AND s.{Col("IsDeleted")} = {P}ScheduleDeleted AND {revision} > {P}RevisionFrom AND {revision} < {P}RevisionTo)";
+			return RecurringCallsRepository.ScheduleRunsCondition(Tbl("RecurringCalls"), P, parameters, scheduleRevisionUtc, scheduleId);
 		}
 
 		public Task<IEnumerable<RecurringCallOccurrence>> GetForScheduleInRangeAsync(int recurringCallId, DateTime fromUtc, DateTime toUtc)
@@ -312,6 +319,20 @@ namespace Resgrid.Repositories.DataRepository
 		}
 
 		/// <summary>The claim this caller took: the row, still creating, with the claim's own timestamp (its generation).</summary>
+		public async Task<bool> TryMarkDispatchedAsync(string recurringCallOccurrenceId, DateTime dispatchedOnUtc, CancellationToken cancellationToken = default)
+		{
+			if (string.IsNullOrWhiteSpace(recurringCallOccurrenceId))
+				return false;
+
+			var parameters = new DynamicParameters(new { Id = recurringCallOccurrenceId });
+			RecurringCallsRepository.AddTimestamp(parameters, "DispatchedOn", dispatchedOnUtc);
+
+			return await ExecuteAsync(
+				$"UPDATE {Tbl("RecurringCallOccurrences")} SET {Col("DispatchedOn")} = {P}DispatchedOn " +
+				$"WHERE {Col("RecurringCallOccurrenceId")} = {CaseInsensitive("Id")} AND {Col("DispatchedOn")} IS NULL",
+				parameters, cancellationToken) == 1;
+		}
+
 		private string ThisClaim()
 		{
 			return $"{Col("RecurringCallOccurrenceId")} = {CaseInsensitive("Id")} AND {Col("State")} = {P}Creating AND {Col("UpdatedOn")} = {P}ClaimedOn";
@@ -331,24 +352,23 @@ namespace Resgrid.Repositories.DataRepository
 		public RecurringCallAlertsRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
 			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory) { }
 
-		public async Task<bool> TryRaiseAsync(RecurringCallAlert alert, CancellationToken cancellationToken = default)
+		public Task<bool> TryRaiseAsync(RecurringCallAlert alert, CancellationToken cancellationToken = default)
+		{
+			return InsertAlertAsync(alert, null, cancellationToken);
+		}
+
+		public Task<bool> TryRaiseWhileRunningAsync(RecurringCallAlert alert, DateTime scheduleRevisionUtc, CancellationToken cancellationToken = default)
+		{
+			return InsertAlertAsync(alert, scheduleRevisionUtc, cancellationToken);
+		}
+
+		private async Task<bool> InsertAlertAsync(RecurringCallAlert alert, DateTime? scheduleRevisionUtc, CancellationToken cancellationToken)
 		{
 			if (alert == null)
 				return false;
 
 			if (string.IsNullOrWhiteSpace(alert.RecurringCallAlertId))
 				alert.RecurringCallAlertId = Guid.NewGuid().ToString();
-
-			// The unique (RecurringCallId, OccurrenceOn, Kind) index over open alerts (filtered on ResolvedOn IS NULL) decides between
-			// two passes raising the same alert; a closed one keeps its history without blocking a new raise.
-			var columns = Cols("RecurringCallAlertId", "DepartmentId", "RecurringCallId", "OccurrenceOn", "Kind", "CallId", "DetailJson", "CreatedOn");
-			var values = $"{P}Id, {P}DepartmentId, {P}RecurringCallId, {P}OccurrenceOn, {P}Kind, {P}CallId, {P}DetailJson, {P}CreatedOn";
-			var sql = IsPostgres
-				? $"INSERT INTO {Tbl("RecurringCallAlerts")} ({columns}) VALUES ({values}) " +
-				  $"ON CONFLICT ({Cols("RecurringCallId", "OccurrenceOn", "Kind")}) WHERE {Col("ResolvedOn")} IS NULL DO NOTHING"
-				: $"INSERT INTO {Tbl("RecurringCallAlerts")} ({columns}) SELECT {values} " +
-				  $"WHERE NOT EXISTS (SELECT 1 FROM {Tbl("RecurringCallAlerts")} WITH (UPDLOCK, HOLDLOCK) WHERE {Col("RecurringCallId")} = {P}RecurringCallId " +
-				  $"AND {Col("OccurrenceOn")} = {P}OccurrenceOn AND {Col("Kind")} = {P}Kind AND {Col("ResolvedOn")} IS NULL)";
 
 			var parameters = new DynamicParameters(new
 			{
@@ -361,6 +381,21 @@ namespace Resgrid.Repositories.DataRepository
 			});
 			RecurringCallsRepository.AddTimestamp(parameters, "OccurrenceOn", alert.OccurrenceOn);
 			RecurringCallsRepository.AddTimestamp(parameters, "CreatedOn", alert.CreatedOn);
+
+			var running = scheduleRevisionUtc.HasValue
+				? " AND " + RecurringCallsRepository.ScheduleRunsCondition(Tbl("RecurringCalls"), P, parameters, scheduleRevisionUtc.Value)
+				: string.Empty;
+
+			// The unique (RecurringCallId, OccurrenceOn, Kind) index over open alerts (filtered on ResolvedOn IS NULL) decides between
+			// two passes raising the same alert; a closed one keeps its history without blocking a new raise.
+			var columns = Cols("RecurringCallAlertId", "DepartmentId", "RecurringCallId", "OccurrenceOn", "Kind", "CallId", "DetailJson", "CreatedOn");
+			var values = $"{P}Id, {P}DepartmentId, {P}RecurringCallId, {P}OccurrenceOn, {P}Kind, {P}CallId, {P}DetailJson, {P}CreatedOn";
+			var sql = IsPostgres
+				? $"INSERT INTO {Tbl("RecurringCallAlerts")} ({columns}) SELECT {values} WHERE 1 = 1{running} " +
+				  $"ON CONFLICT ({Cols("RecurringCallId", "OccurrenceOn", "Kind")}) WHERE {Col("ResolvedOn")} IS NULL DO NOTHING"
+				: $"INSERT INTO {Tbl("RecurringCallAlerts")} ({columns}) SELECT {values} " +
+				  $"WHERE NOT EXISTS (SELECT 1 FROM {Tbl("RecurringCallAlerts")} WITH (UPDLOCK, HOLDLOCK) WHERE {Col("RecurringCallId")} = {P}RecurringCallId " +
+				  $"AND {Col("OccurrenceOn")} = {P}OccurrenceOn AND {Col("Kind")} = {P}Kind AND {Col("ResolvedOn")} IS NULL){running}";
 
 			try
 			{
@@ -456,17 +491,21 @@ namespace Resgrid.Repositories.DataRepository
 				parameters, cancellationToken) == 1;
 		}
 
-		public async Task<bool> TryClaimNotificationAsync(string recurringCallAlertId, DateTime claimedOnUtc, CancellationToken cancellationToken = default)
+		public async Task<bool> TryClaimNotificationAsync(string recurringCallAlertId, DateTime claimedOnUtc, DateTime abandonedBeforeUtc,
+			CancellationToken cancellationToken = default)
 		{
 			if (string.IsNullOrWhiteSpace(recurringCallAlertId))
 				return false;
 
 			var parameters = new DynamicParameters(new { Id = recurringCallAlertId });
 			RecurringCallsRepository.AddTimestamp(parameters, "ClaimedOn", claimedOnUtc);
+			RecurringCallsRepository.AddTimestamp(parameters, "AbandonedBefore", abandonedBeforeUtc);
 
+			// Open, never sent, and nobody sending it (or a sender that stopped mid-send: its claim lapsed).
 			return await ExecuteAsync(
-				$"UPDATE {Tbl("RecurringCallAlerts")} SET {Col("NotifiedOn")} = {P}ClaimedOn WHERE {Col("RecurringCallAlertId")} = {CaseInsensitive("Id")} " +
-				$"AND {Col("ResolvedOn")} IS NULL AND {Col("NotifiedOn")} IS NULL",
+				$"UPDATE {Tbl("RecurringCallAlerts")} SET {Col("NotificationClaimedOn")} = {P}ClaimedOn WHERE {Col("RecurringCallAlertId")} = {CaseInsensitive("Id")} " +
+				$"AND {Col("ResolvedOn")} IS NULL AND {Col("NotifiedOn")} IS NULL " +
+				$"AND ({Col("NotificationClaimedOn")} IS NULL OR {Col("NotificationClaimedOn")} < {P}AbandonedBefore)",
 				parameters, cancellationToken) == 1;
 		}
 
@@ -479,8 +518,8 @@ namespace Resgrid.Repositories.DataRepository
 			RecurringCallsRepository.AddTimestamp(parameters, "ClaimedOn", claimedOnUtc);
 
 			return await ExecuteAsync(
-				$"UPDATE {Tbl("RecurringCallAlerts")} SET {Col("NotifiedOn")} = NULL WHERE {Col("RecurringCallAlertId")} = {CaseInsensitive("Id")} " +
-				$"AND {Col("NotifiedOn")} = {P}ClaimedOn",
+				$"UPDATE {Tbl("RecurringCallAlerts")} SET {Col("NotificationClaimedOn")} = NULL WHERE {Col("RecurringCallAlertId")} = {CaseInsensitive("Id")} " +
+				$"AND {Col("NotificationClaimedOn")} = {P}ClaimedOn",
 				parameters, cancellationToken) == 1;
 		}
 
@@ -490,7 +529,8 @@ namespace Resgrid.Repositories.DataRepository
 			RecurringCallsRepository.AddTimestamp(parameters, "NotifiedOn", notifiedOnUtc);
 
 			await ExecuteAsync(
-				$"UPDATE {Tbl("RecurringCallAlerts")} SET {Col("NotifiedOn")} = {P}NotifiedOn WHERE {Col("RecurringCallAlertId")} = {CaseInsensitive("Id")}",
+				$"UPDATE {Tbl("RecurringCallAlerts")} SET {Col("NotifiedOn")} = {P}NotifiedOn, {Col("NotificationClaimedOn")} = NULL " +
+				$"WHERE {Col("RecurringCallAlertId")} = {CaseInsensitive("Id")}",
 				parameters, cancellationToken);
 		}
 

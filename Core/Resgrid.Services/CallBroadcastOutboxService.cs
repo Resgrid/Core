@@ -135,8 +135,11 @@ namespace Resgrid.Services
 			{
 				try
 				{
-					// The edit's own row (and one an earlier edit left) goes now, whatever its backoff says.
-					if (await ClaimAndSendAsync(id, call, true))
+					// Every open row goes now, whatever its backoff says. Only the edit's own row is judged from the edit's saved call;
+					// a row another edit recorded is judged from the call as stored, because that edit may not have saved yet and this
+					// edit's copy must never close its page (from the store, a young row with nobody owed yet waits instead).
+					var own = recorded != null && recorded.Persisted && string.Equals(id, recorded.CallBroadcastOutboxId, StringComparison.OrdinalIgnoreCase);
+					if (await ClaimAndSendAsync(id, own ? call : null, true))
 						sent++;
 				}
 				catch (Exception ex)

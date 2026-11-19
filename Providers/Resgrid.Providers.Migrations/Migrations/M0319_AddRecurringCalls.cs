@@ -70,7 +70,8 @@ namespace Resgrid.Providers.Migrations.Migrations
 					.WithColumn("State").AsInt32().NotNullable()
 					.WithColumn("CallId").AsInt32().Nullable()
 					.WithColumn("UserId").AsString(128).Nullable()
-					.WithColumn("UpdatedOn").AsDateTime2().NotNullable();
+					.WithColumn("UpdatedOn").AsDateTime2().NotNullable()
+					.WithColumn("DispatchedOn").AsDateTime2().Nullable();
 
 				Create.Index("UX_RecurringCallOccurrences_Occurrence").OnTable("RecurringCallOccurrences")
 					.OnColumn("RecurringCallId").Ascending()

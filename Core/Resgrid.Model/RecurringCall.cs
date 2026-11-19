@@ -202,9 +202,30 @@ namespace Resgrid.Model
 		[NotMapped]
 		public string OwnerUserId => string.IsNullOrWhiteSpace(UpdatedByUserId) ? CreatedByUserId : UpdatedByUserId;
 
-		/// <summary>When the schedule took its current shape (<see cref="UpdatedOn"/>, else <see cref="CreatedOn"/>).</summary>
+		/// <summary>
+		/// When the schedule took its current shape (<see cref="UpdatedOn"/>, else <see cref="CreatedOn"/>). Also its revision: a worker
+		/// creates calls only while the stored schedule still has the one it read, compared exactly (see <see cref="NextRevision"/>).
+		/// </summary>
 		[NotMapped]
 		public DateTime EffectiveFrom => UpdatedOn ?? CreatedOn;
+
+		/// <summary>
+		/// The value for <see cref="CreatedOn"/> / <see cref="UpdatedOn"/> when the schedule changes: <paramref name="nowUtc"/> as a
+		/// <see cref="RecurringCallOccurrence.StorableStamp"/> (stored exactly however the entity save writes it, so the copy in memory
+		/// and the stored one compare equal), and always later than <paramref name="previousUtc"/>, so every change is a new revision.
+		/// </summary>
+		public static DateTime NextRevision(DateTime nowUtc, DateTime? previousUtc)
+		{
+			var stamp = RecurringCallOccurrence.StorableStamp(nowUtc);
+			if (previousUtc.HasValue)
+			{
+				var after = RecurringCallOccurrence.StorableStamp(previousUtc.Value).AddMilliseconds(10);
+				if (stamp < after)
+					stamp = after;
+			}
+
+			return stamp;
+		}
 
 		public List<string> GetDispatchUserIds() => SplitIds(DispatchUserIds);
 

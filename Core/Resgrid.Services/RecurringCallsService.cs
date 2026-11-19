@@ -767,6 +767,7 @@ namespace Resgrid.Services
 		public async Task<int> GenerateDueCallsAsync(DateTime nowUtc, CancellationToken cancellationToken = default)
 		{
 			await ResolveStaleClaimsAsync(nowUtc, cancellationToken);
+			await ForgetTakenBackOccurrencesAsync(nowUtc, cancellationToken);
 			await ResumeDueSchedulesAsync(nowUtc, cancellationToken);
 
 			var created = 0;
@@ -1314,7 +1315,21 @@ namespace Resgrid.Services
 					// so it goes out as the occurrence's call.
 					Logging.LogException(saveEx, $"Could not finish taking back call {call.CallId}, created while its recurring call schedule changed.");
 
-					var stored = await _callsService.GetCallByIdAsync(call.CallId);
+					Call stored;
+					try
+					{
+						stored = await _callsService.GetCallByIdAsync(call.CallId);
+					}
+					catch (Exception readEx)
+					{
+						// Whether the delete took is unknown, so nothing more is done here: the call is not announced (it may be deleted),
+						// its occurrence is left as it is (if the call is deleted, the next pass forgets the occurrence, see
+						// ForgetTakenBackOccurrencesAsync; if it is live, it stays the occurrence's call) and its dispatch claim is kept
+						// (if it is live, the scheduled-call worker takes the claim over once its lease runs out and sends it).
+						Logging.LogException(readEx, $"Could not read back call {call.CallId} after its take-back failed; it is left to the next worker pass.");
+						return true;
+					}
+
 					if (stored != null && !stored.IsDeleted)
 					{
 						await _callsService.ReleaseCallDispatchClaimAsync(call.CallId, call.DepartmentId, claimedOn.Value, (int)CallStates.Active, call.DispatchOn, false,
@@ -1335,7 +1350,8 @@ namespace Resgrid.Services
 					}
 					catch (Exception cleanupEx)
 					{
-						// Tried once more; left behind, the occurrence stays recorded as created with no live call (logged).
+						// Tried once more; left behind, it is forgotten by the next worker pass (ForgetTakenBackOccurrencesAsync), as the
+						// call it points at was deleted by the system.
 						Logging.LogException(cleanupEx, $"Could not forget the occurrence of taken-back call {call.CallId} (attempt {attempt}).");
 					}
 				}
@@ -1438,6 +1454,30 @@ namespace Resgrid.Services
 		/// Claims left "creating" past their lease belong to a process that died. If its call was saved the occurrence is marked
 		/// created; otherwise the claim is dropped so the occurrence is created again (if still due) or reported missed.
 		/// </summary>
+		/// <summary>
+		/// Occurrences recorded as created whose call the schedule took back (deleted by the system) but could not forget themselves
+		/// (<see cref="WithdrawCreatedCallAsync"/>): forgotten now, so the schedule can create them again. A day back is enough: an
+		/// older occurrence is past and is never created again anyway.
+		/// </summary>
+		private async Task ForgetTakenBackOccurrencesAsync(DateTime nowUtc, CancellationToken cancellationToken)
+		{
+			try
+			{
+				var forgotten = await _occurrencesRepository.DeleteForSystemDeletedCallsAsync(SystemUserId, nowUtc.AddDays(-1), cancellationToken);
+				if (forgotten > 0)
+					Logging.LogInfo($"Recurring calls: forgot {forgotten} occurrence(s) whose call was taken back.");
+			}
+			catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+			{
+				throw;
+			}
+			catch (Exception ex)
+			{
+				// Tried again on the next pass.
+				Logging.LogException(ex, "Could not forget the occurrences of taken-back recurring calls.");
+			}
+		}
+
 		private async Task ResolveStaleClaimsAsync(DateTime nowUtc, CancellationToken cancellationToken)
 		{
 			IEnumerable<RecurringCallOccurrence> stale;

@@ -92,9 +92,9 @@ namespace Resgrid.Tests.Repositories
 				await database.OpenAsync();
 				await database.ExecuteAsync(IsPostgres
 					? "CREATE EXTENSION IF NOT EXISTS citext; CREATE TABLE calls (callid int PRIMARY KEY, departmentid int NOT NULL, dispatchon timestamp NULL, " +
-					  "loggedon timestamp NOT NULL, isdeleted boolean NOT NULL DEFAULT false);"
+					  "loggedon timestamp NOT NULL, isdeleted boolean NOT NULL DEFAULT false, deletedbyuserid citext NULL);"
 					: "CREATE TABLE Calls (CallId int PRIMARY KEY, DepartmentId int NOT NULL, DispatchOn datetime2 NULL, LoggedOn datetime NOT NULL, " +
-					  "IsDeleted bit NOT NULL DEFAULT 0);");
+					  "IsDeleted bit NOT NULL DEFAULT 0, DeletedByUserId nvarchar(128) NULL);");
 
 				// The data source loaded its types before citext existed; without a reload a citext column cannot be read back.
 				if (database is NpgsqlConnection postgres)
@@ -410,6 +410,38 @@ namespace Resgrid.Tests.Repositories
 			(await occurrences.TryMarkDispatchedAsync(claim.RecurringCallOccurrenceId, DateTime.UtcNow)).Should().BeFalse("its Dispatched trigger was raised");
 		}
 
+		[Test]
+		public async Task Only_an_occurrence_whose_call_the_system_took_back_is_forgotten()
+		{
+			var scheduleId = await SeedScheduleAsync(Revision(DateTime.UtcNow.AddHours(-2)));
+			var occurrences = Occurrences();
+			var due = DateTime.UtcNow.Date.AddDays(3).AddHours(8);
+
+			async Task<RecurringCallOccurrence> CreatedAsync(DateTime occurrenceOn, int callId, bool deleted, string deletedBy, int state = (int)RecurringCallOccurrenceStates.Created)
+			{
+				await InsertCallAsync(callId, scheduleId, occurrenceOn, Stamp(DateTime.UtcNow), deleted, deletedBy);
+				var row = Claim(scheduleId, occurrenceOn, Stamp(DateTime.UtcNow));
+				row.State = state;
+				row.CallId = callId;
+				(await occurrences.TryClaimAsync(row)).Should().BeTrue();
+				return row;
+			}
+
+			var takenBack = await CreatedAsync(due, 9101, deleted: true, deletedBy: "system");
+			var deletedByPerson = await CreatedAsync(due.AddDays(1), 9102, deleted: true, deletedBy: "dispatcher-7");
+			var live = await CreatedAsync(due.AddDays(2), 9103, deleted: false, deletedBy: null);
+			var past = await CreatedAsync(DateTime.UtcNow.AddDays(-3), 9104, deleted: true, deletedBy: "system");
+			var creating = await CreatedAsync(due.AddDays(3), 9105, deleted: true, deletedBy: "system", state: (int)RecurringCallOccurrenceStates.Creating);
+
+			(await occurrences.DeleteForSystemDeletedCallsAsync("SYSTEM", DateTime.UtcNow.AddDays(-1))).Should().Be(1, "user ids compare case-insensitively");
+
+			(await ReadOccurrenceAsync(takenBack.RecurringCallOccurrenceId)).Should().BeNull();
+			(await ReadOccurrenceAsync(deletedByPerson.RecurringCallOccurrenceId)).Should().NotBeNull("a person deleted that call");
+			(await ReadOccurrenceAsync(live.RecurringCallOccurrenceId)).Should().NotBeNull();
+			(await ReadOccurrenceAsync(past.RecurringCallOccurrenceId)).Should().NotBeNull("before the window");
+			(await ReadOccurrenceAsync(creating.RecurringCallOccurrenceId)).Should().NotBeNull("still being created");
+		}
+
 		private RecurringCallsRepository Calls()
 		{
 			var (connections, configuration, queries) = Parts();
@@ -417,13 +449,13 @@ namespace Resgrid.Tests.Repositories
 		}
 
 		/// <summary>Dapper's default DateTime parameters, as the entity save writes a call.</summary>
-		private async Task InsertCallAsync(int callId, int recurringCallId, DateTime dispatchOn, DateTime loggedOn, bool deleted = false)
+		private async Task InsertCallAsync(int callId, int recurringCallId, DateTime dispatchOn, DateTime loggedOn, bool deleted = false, string deletedByUserId = null)
 		{
 			await using var database = Connect(_connection);
 			await database.ExecuteAsync(IsPostgres
-				? "INSERT INTO calls (callid, departmentid, dispatchon, loggedon, isdeleted, recurringcallid) VALUES (@CallId, @DepartmentId, @DispatchOn, @LoggedOn, @Deleted, @RecurringCallId)"
-				: "INSERT INTO Calls (CallId, DepartmentId, DispatchOn, LoggedOn, IsDeleted, RecurringCallId) VALUES (@CallId, @DepartmentId, @DispatchOn, @LoggedOn, @Deleted, @RecurringCallId)",
-				new { CallId = callId, DepartmentId, DispatchOn = dispatchOn, LoggedOn = loggedOn, Deleted = deleted, RecurringCallId = recurringCallId });
+				? "INSERT INTO calls (callid, departmentid, dispatchon, loggedon, isdeleted, recurringcallid, deletedbyuserid) VALUES (@CallId, @DepartmentId, @DispatchOn, @LoggedOn, @Deleted, @RecurringCallId, @DeletedByUserId)"
+				: "INSERT INTO Calls (CallId, DepartmentId, DispatchOn, LoggedOn, IsDeleted, RecurringCallId, DeletedByUserId) VALUES (@CallId, @DepartmentId, @DispatchOn, @LoggedOn, @Deleted, @RecurringCallId, @DeletedByUserId)",
+				new { CallId = callId, DepartmentId, DispatchOn = dispatchOn, LoggedOn = loggedOn, Deleted = deleted, RecurringCallId = recurringCallId, DeletedByUserId = deletedByUserId });
 		}
 
 		private async Task<(DateTime? NotifiedOn, DateTime? NotificationClaimedOn)> ReadAlertAsync(string id)

@@ -1705,6 +1705,48 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task A_take_back_that_cannot_read_its_call_back_announces_nothing_and_leaves_the_rest_to_the_next_pass()
+		{
+			Schedules(Series());
+			var stored = Series();
+			_repository.Setup(x => x.GetByIdAsync(77)).ReturnsAsync(stored);
+			_callsService.Setup(x => x.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((Call c, CancellationToken _) =>
+				{
+					if (c.CallId == 0)
+					{
+						c.CallId = ++_nextCallId;
+						stored.IsActive = false;
+						stored.UpdatedOn = Now;
+						_saved.Add(c);
+						return c;
+					}
+
+					throw new InvalidOperationException("a later step of the save failed");
+				});
+			// The read-back fails too: whether the delete took is unknown.
+			_callsService.Setup(x => x.GetCallByIdAsync(It.IsAny<int>(), It.IsAny<bool>())).ThrowsAsync(new InvalidOperationException("database down"));
+
+			var created = await _service.GenerateDueCallsAsync(Now);
+
+			created.Should().Be(0);
+			_eventAggregator.Verify(x => x.SendMessage(It.IsAny<CallAddedEvent>()), Times.Never, "the call may be deleted: never announced");
+			_callsService.Verify(x => x.ReleaseCallDispatchClaimAsync(It.IsAny<int>(), DepartmentId, It.IsAny<DateTime>(), It.IsAny<int>(), It.IsAny<DateTime?>(),
+				It.IsAny<bool?>(), It.IsAny<CancellationToken>()), Times.Never, "kept: a live call goes out once the claim's lease runs out");
+			_claims.Should().Contain(c => c.CallId == _saved.First().CallId, "left for the next pass to forget, if the call turns out deleted");
+		}
+
+		[Test]
+		public async Task Each_pass_forgets_the_occurrences_of_calls_the_system_took_back()
+		{
+			Schedules();
+
+			await _service.GenerateDueCallsAsync(Now);
+
+			_occurrences.Verify(x => x.DeleteForSystemDeletedCallsAsync("system", Now.AddDays(-1), It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
 		public async Task A_missing_alert_is_not_raised_for_a_schedule_paused_since_the_pass_read_it()
 		{
 			var series = Series();

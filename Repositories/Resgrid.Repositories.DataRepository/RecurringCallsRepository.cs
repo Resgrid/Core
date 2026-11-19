@@ -242,6 +242,27 @@ namespace Resgrid.Repositories.DataRepository
 				new { Id = recurringCallOccurrenceId, State = expectedState }, cancellationToken) == 1;
 		}
 
+		public async Task<int> DeleteForSystemDeletedCallsAsync(string systemUserId, DateTime occurrenceSinceUtc, CancellationToken cancellationToken = default)
+		{
+			if (string.IsNullOrWhiteSpace(systemUserId))
+				return 0;
+
+			var parameters = new DynamicParameters(new { Created = (int)RecurringCallOccurrenceStates.Created, SystemUserId = systemUserId, Yes = true });
+			RecurringCallsRepository.AddTimestamp(parameters, "Since", occurrenceSinceUtc);
+
+			// Joined on the row's own CallId, so an occurrence created again since (another call) is never touched. Matched on who deleted
+			// the call, not its reason: the reason is a protected field, enveloped at rest in a protected department.
+			var sql = IsPostgres
+				? $"DELETE FROM {Tbl("RecurringCallOccurrences")} o USING {Tbl("Calls")} c WHERE c.{Col("CallId")} = o.{Col("CallId")} " +
+				  $"AND o.{Col("State")} = {P}Created AND o.{Col("OccurrenceOn")} >= {P}Since AND c.{Col("IsDeleted")} = {P}Yes " +
+				  $"AND c.{Col("DeletedByUserId")} = {CaseInsensitive("SystemUserId")}"
+				: $"DELETE o FROM {Tbl("RecurringCallOccurrences")} o INNER JOIN {Tbl("Calls")} c ON c.{Col("CallId")} = o.{Col("CallId")} " +
+				  $"WHERE o.{Col("State")} = {P}Created AND o.{Col("OccurrenceOn")} >= {P}Since AND c.{Col("IsDeleted")} = {P}Yes " +
+				  $"AND c.{Col("DeletedByUserId")} = {P}SystemUserId";
+
+			return await ExecuteAsync(sql, parameters, cancellationToken);
+		}
+
 		public async Task<bool> TryTransitionStateAsync(string recurringCallOccurrenceId, int fromState, int toState, string userId, DateTime updatedOnUtc,
 			CancellationToken cancellationToken = default)
 		{

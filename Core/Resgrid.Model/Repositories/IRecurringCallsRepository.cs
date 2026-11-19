@@ -63,6 +63,14 @@ namespace Resgrid.Model.Repositories
 		Task<bool> DeleteIfStateAsync(string recurringCallOccurrenceId, int expectedState, CancellationToken cancellationToken = default);
 
 		/// <summary>
+		/// Forgets created occurrences (due on or after <paramref name="occurrenceSinceUtc"/>) whose call the schedule itself deleted
+		/// (<see cref="Call.DeletedByUserId"/> = <paramref name="systemUserId"/>: a call taken back because its schedule changed while it
+		/// was created), so the occurrence can be created again. Only rows that still point at that call; a call a person deleted keeps
+		/// its occurrence. The take-back forgets its occurrence itself; this finishes the ones it could not. Returns how many were forgotten.
+		/// </summary>
+		Task<int> DeleteForSystemDeletedCallsAsync(string systemUserId, DateTime occurrenceSinceUtc, CancellationToken cancellationToken = default);
+
+		/// <summary>
 		/// Moves one row from <paramref name="fromState"/> to <paramref name="toState"/> (and stamps who and when), only while it is
 		/// still in <paramref name="fromState"/>; true when this caller moved it. How a dispatcher takes over an occurrence that is
 		/// awaiting them or was missed.

@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Map Icon Legend and status / priority map icon pages -->
+    <data name="PageTitle" xml:space="preserve">
+    <value>Κανόνες προορισμού</value>
+  </data>
+  <data name="PageIntro" xml:space="preserve">
+    <value>Πείτε στο Resgrid τι πρέπει να προσφέρει ο προορισμός μιας κλήσης, ώστε η φόρμα κλήσης και οι εφαρμογές να προτείνουν τον πλησιέστερο κατάλληλο: «οι κλήσεις για εγκαύματα χρειάζονται κέντρο εγκαυμάτων», «ένα ελικόπτερο χρειάζεται ελικοδρόμιο», «ένα υδροφόρο πηγαίνει σε πηγή νερού που επιτρέπει αναρρόφηση». Όλοι οι κανόνες που ταιριάζουν σε μια κλήση (και στη μονάδα που μετακινείται) ισχύουν μαζί. Προορισμοί είναι οι τύποι POI σας που έχουν σημειωθεί ως προορισμοί· τις δυνατότητες τις διαχειρίζεστε στις Δυνατότητες POI, ενώ το ανοιχτό, η εκτροπή ή το κλειστό προέρχονται από τη Διαθεσιμότητα προορισμών.</value>
+  </data>
+  <data name="SettingsHeader" xml:space="preserve">
+    <value>Προτάσεις προορισμού</value>
+  </data>
+  <data name="Mode" xml:space="preserve">
+    <value>Προτάσεις</value>
+  </data>
+  <data name="ModeOff" xml:space="preserve">
+    <value>Ανενεργές</value>
+  </data>
+  <data name="ModeSuggest" xml:space="preserve">
+    <value>Πρόταση προορισμών</value>
+  </data>
+  <data name="ModeSuggestAndFill" xml:space="preserve">
+    <value>Πρόταση και συμπλήρωση προορισμού</value>
+  </data>
+  <data name="ModeHelp" xml:space="preserve">
+    <value>Η «Πρόταση προορισμών» εμφανίζει τους καλύτερους προορισμούς κάτω από το πεδίο Προορισμός των φορμών Νέα Κλήση και Ενημέρωση Κλήσης και στις λίστες προορισμών των εφαρμογών, με χρόνο διαδρομής και απόσταση. Η «Πρόταση και συμπλήρωση προορισμού» επιπλέον συμπληρώνει τον κενό προορισμό μιας νέας κλήσης με τον καλύτερο· οι συντονιστές και τα πληρώματα μπορούν πάντα να επιλέξουν άλλον. Κάθε πρόταση αναζητά χρόνους διαδρομής, γι' αυτό αφήστε την ανενεργή αν δεν χρησιμοποιείτε προορισμούς.</value>
+  </data>
+  <data name="PreferredWithinMinutes" xml:space="preserve">
+    <value>Παράθυρο προτιμώμενων δυνατοτήτων (λεπτά)</value>
+  </data>
+  <data name="PreferredWithinMinutesHelp" xml:space="preserve">
+    <value>Ένας προορισμός που προσφέρει περισσότερες προτιμώμενες δυνατότητες προηγείται μόνο όσο ο χρόνος διαδρομής του υπερβαίνει εκείνον του πλησιέστερου κατά το πολύ τόσα λεπτά. 0 = μόνο σε ίσους χρόνους.</value>
+  </data>
+  <data name="SaveSettings" xml:space="preserve">
+    <value>Αποθήκευση ρυθμίσεων</value>
+  </data>
+  <data name="SettingsSaved" xml:space="preserve">
+    <value>Οι ρυθμίσεις προτάσεων προορισμού αποθηκεύτηκαν.</value>
+  </data>
+  <data name="SettingsInvalid" xml:space="preserve">
+    <value>Επιλέξτε λειτουργία προτάσεων και παράθυρο από 0 έως {0} λεπτά.</value>
+  </data>
+  <data name="RulesHeader" xml:space="preserve">
+    <value>Κανόνες</value>
+  </data>
+  <data name="AddRule" xml:space="preserve">
+    <value>Προσθήκη κανόνα</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Όνομα</value>
+  </data>
+  <data name="When" xml:space="preserve">
+    <value>Πότε</value>
+  </data>
+  <data name="Destination" xml:space="preserve">
+    <value>Προορισμός</value>
+  </data>
+  <data name="Requires" xml:space="preserve">
+    <value>Απαιτεί</value>
+  </data>
+  <data name="Prefers" xml:space="preserve">
+    <value>Προτιμά</value>
+  </data>
+  <data name="EveryCall" xml:space="preserve">
+    <value>Κάθε κλήση</value>
+  </data>
+  <data name="AnyDestinationType" xml:space="preserve">
+    <value>Οποιοσδήποτε τύπος προορισμού</value>
+  </data>
+  <data name="CallTypeCondition" xml:space="preserve">
+    <value>Τύπος κλήσης: {0}</value>
+  </data>
+  <data name="PriorityCondition" xml:space="preserve">
+    <value>Προτεραιότητα: {0}</value>
+  </data>
+  <data name="UnitTypeCondition" xml:space="preserve">
+    <value>Τύπος μονάδας: {0}</value>
+  </data>
+  <data name="DeletedChoice" xml:space="preserve">
+    <value>(διαγράφηκε)</value>
+  </data>
+  <data name="NeedsAttention" xml:space="preserve">
+    <value>Χρειάζεται προσοχή: {0} από τους τύπους ή τις δυνατότητές του διαγράφηκαν και αγνοούνται.</value>
+  </data>
+  <data name="AllTypesRemoved" xml:space="preserve">
+    <value>Δεν ισχύει ποτέ: όλοι οι τύποι προορισμού που όριζε διαγράφηκαν.</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Επεξεργασία</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Διαγραφή</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Αποθήκευση</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Άκυρο</value>
+  </data>
+  <data name="DeleteRuleConfirm" xml:space="preserve">
+    <value>Διαγραφή του κανόνα «{0}»;</value>
+  </data>
+  <data name="NoRules" xml:space="preserve">
+    <value>Δεν υπάρχουν ακόμη κανόνες προορισμού. Χωρίς κανόνες προτείνεται κάθε προορισμός, πρώτα ο πλησιέστερος ανοιχτός.</value>
+  </data>
+  <data name="NoDestinationTypes" xml:space="preserve">
+    <value>Κανένας τύπος POI δεν έχει σημειωθεί ακόμη ως προορισμός. Σημειώστε έναν ως προορισμό στη Χαρτογράφηση, Σημεία Ενδιαφέροντος πριν προσθέσετε κανόνες.</value>
+  </data>
+  <data name="RuleSaved" xml:space="preserve">
+    <value>Ο κανόνας «{0}» αποθηκεύτηκε.</value>
+  </data>
+  <data name="RuleDeleted" xml:space="preserve">
+    <value>Ο κανόνας «{0}» διαγράφηκε.</value>
+  </data>
+  <data name="RuleNameRequired" xml:space="preserve">
+    <value>Εισαγάγετε όνομα έως {0} χαρακτήρες.</value>
+  </data>
+  <data name="RuleNothingRequired" xml:space="preserve">
+    <value>Επιλέξτε τουλάχιστον έναν τύπο προορισμού ή μία δυνατότητα.</value>
+  </data>
+  <data name="RuleChoicesChanged" xml:space="preserve">
+    <value>Ένας τύπος κλήσης, προτεραιότητα, τύπος μονάδας, τύπος προορισμού ή δυνατότητα που επιλέξατε δεν υπάρχει πλέον. Ελέγξτε τις επιλογές και αποθηκεύστε ξανά.</value>
+  </data>
+  <data name="NewRule" xml:space="preserve">
+    <value>Νέος κανόνας</value>
+  </data>
+  <data name="EditRule" xml:space="preserve">
+    <value>Επεξεργασία κανόνα</value>
+  </data>
+  <data name="RuleNameHelp" xml:space="preserve">
+    <value>Εμφανίζεται στους συντονιστές ως αιτία της απαίτησης, για παράδειγμα «Εγκαύματα» ή «Προσγείωση ελικοπτέρου».</value>
+  </data>
+  <data name="AppliesWhen" xml:space="preserve">
+    <value>Ισχύει όταν</value>
+  </data>
+  <data name="AppliesWhenHelp" xml:space="preserve">
+    <value>Αφήστε και τα τρία στο «Οποιοδήποτε» για να ισχύει ο κανόνας σε κάθε κλήση. Οι κανόνες τύπου μονάδας ισχύουν όταν μετακινείται αυτό το είδος μονάδας (η λίστα προορισμών κατάστασης στις εφαρμογές), όχι για τον ίδιο τον προορισμό της κλήσης.</value>
+  </data>
+  <data name="CallType" xml:space="preserve">
+    <value>Τύπος κλήσης</value>
+  </data>
+  <data name="Priority" xml:space="preserve">
+    <value>Προτεραιότητα</value>
+  </data>
+  <data name="UnitType" xml:space="preserve">
+    <value>Τύπος μονάδας</value>
+  </data>
+  <data name="Any" xml:space="preserve">
+    <value>Οποιοδήποτε</value>
+  </data>
+  <data name="DestinationTypes" xml:space="preserve">
+    <value>Τύποι προορισμού</value>
+  </data>
+  <data name="DestinationTypesHelp" xml:space="preserve">
+    <value>Ο προορισμός πρέπει να είναι ενός από αυτούς τους τύπους· αν δεν είναι επιλεγμένος κανένας, ισχύει οποιοσδήποτε τύπος. Όταν δύο κανόνες ορίζουν τύπους που δεν επικαλύπτονται, υπερισχύει ο πιο συγκεκριμένος κανόνας (πρώτα οι κανόνες τύπου μονάδας) και ο άλλος παραμερίζεται.</value>
+  </data>
+  <data name="RequiredCapabilities" xml:space="preserve">
+    <value>Απαιτούμενες δυνατότητες</value>
+  </data>
+  <data name="RequiredCapabilitiesHelp" xml:space="preserve">
+    <value>Ο προτεινόμενος προορισμός πρέπει να προσφέρει όλες αυτές τις δυνατότητες. Όταν κανένας προορισμός εντός εμβέλειας δεν τις προσφέρει, δεν συμπληρώνεται τίποτα και εμφανίζονται οι πλησιέστεροι με όσα τους λείπουν.</value>
+  </data>
+  <data name="PreferredCapabilities" xml:space="preserve">
+    <value>Προτιμώμενες δυνατότητες</value>
+  </data>
+  <data name="PreferredCapabilitiesHelp" xml:space="preserve">
+    <value>Κρίνουν τις σχεδόν ισοπαλίες: εντός του παραθύρου προτιμώμενων δυνατοτήτων, προηγείται ο προορισμός που προσφέρει περισσότερες από αυτές.</value>
+  </data>
+  <data name="NoCapabilities" xml:space="preserve">
+    <value>Δεν υπάρχουν ακόμη δυνατότητες POI.</value>
+  </data>
+  <data name="ManageCapabilities" xml:space="preserve">
+    <value>Διαχείριση δυνατοτήτων POI</value>
+  </data>
+  <data name="TryIt" xml:space="preserve">
+    <value>Δοκιμάστε το</value>
+  </data>
+  <data name="TryItHelp" xml:space="preserve">
+    <value>Επιλέξτε τύπο κλήσης, προτεραιότητα και τύπο μονάδας για να δείτε ποιοι κανόνες ισχύουν και τι πρέπει να είναι ο προορισμός.</value>
+  </data>
+  <data name="TryItButton" xml:space="preserve">
+    <value>Εμφάνιση</value>
+  </data>
+  <data name="AppliedRules" xml:space="preserve">
+    <value>Κανόνες που ισχύουν</value>
+  </data>
+  <data name="SetAsideRules" xml:space="preserve">
+    <value>Παραμερισμένοι</value>
+  </data>
+  <data name="NoRulesApply" xml:space="preserve">
+    <value>Δεν ισχύει κανένας κανόνας: οποιοσδήποτε τύπος προορισμού, καμία απαίτηση.</value>
+  </data>
+  <data name="SetAsideTypesRemoved" xml:space="preserve">
+    <value>οι τύποι προορισμού του διαγράφηκαν</value>
+  </data>
+  <data name="SetAsideTypeConflict" xml:space="preserve">
+    <value>ένας πιο συγκεκριμένος κανόνας στέλνει σε άλλους τύπους προορισμού</value>
+  </data>
+  <data name="NothingRequired" xml:space="preserve">
+    <value>τίποτα</value>
+  </data>
+  <data name="DestinationRulesLink" xml:space="preserve">
+    <value>Κανόνες προορισμού</value>
+  </data>
+  <data name="SuggestedDestinations" xml:space="preserve">
+    <value>Προτεινόμενοι</value>
+  </data>
+  <data name="SuggestionLoading" xml:space="preserve">
+    <value>Αναζήτηση προορισμών...</value>
+  </data>
+  <data name="SuggestionNone" xml:space="preserve">
+    <value>Δεν βρέθηκε προορισμός του απαιτούμενου είδους.</value>
+  </data>
+  <data name="SuggestionNoneMeet" xml:space="preserve">
+    <value>Κανένας κοντινός προορισμός δεν προσφέρει όλα τα απαιτούμενα· εμφανίζονται οι πλησιέστεροι.</value>
+  </data>
+  <data name="SuggestionNeeds" xml:space="preserve">
+    <value>Χρειάζεται: {0}</value>
+  </data>
+  <data name="SuggestionPrefers" xml:space="preserve">
+    <value>Προτιμά: {0}</value>
+  </data>
+  <data name="SuggestionRules" xml:space="preserve">
+    <value>Κανόνες: {0}</value>
+  </data>
+  <data name="UseDestination" xml:space="preserve">
+    <value>Χρήση</value>
+  </data>
+  <data name="InUse" xml:space="preserve">
+    <value>Επιλεγμένος</value>
+  </data>
+  <data name="SuggestedBadge" xml:space="preserve">
+    <value>Προτεινόμενος</value>
+  </data>
+  <data name="FilledAutomatically" xml:space="preserve">
+    <value>Συμπληρώθηκε με τον προτεινόμενο προορισμό. Επιλέξτε άλλον αν χρειάζεται.</value>
+  </data>
+  <data name="MissingCapabilities" xml:space="preserve">
+    <value>Λείπει: {0}</value>
+  </data>
+  <data name="DownCapabilities" xml:space="preserve">
+    <value>Μη διαθέσιμο τώρα: {0}</value>
+  </data>
+  <data name="MinutesShort" xml:space="preserve">
+    <value>{0} λεπτ.</value>
+  </data>
+  <data name="KilometersShort" xml:space="preserve">
+    <value>{0} χλμ</value>
+  </data>
+  <data name="StraightLineKilometers" xml:space="preserve">
+    <value>{0} χλμ σε ευθεία γραμμή</value>
+  </data>
+  <data name="StatusLimited" xml:space="preserve">
+    <value>Περιορισμένο</value>
+  </data>
+  <data name="StatusDiversion" xml:space="preserve">
+    <value>Εκτροπή</value>
+  </data>
+  <data name="StatusClosed" xml:space="preserve">
+    <value>Κλειστό</value>
+  </data>
+  <data name="SuggestionFailed" xml:space="preserve">
+    <value>Οι προτάσεις προορισμού δεν είναι διαθέσιμες αυτή τη στιγμή.</value>
+  </data>
+  <data name="SuggestionRetry" xml:space="preserve">
+    <value>Δοκιμάστε ξανά</value>
+  </data>
+  <data name="PreviewLoading" xml:space="preserve">
+    <value>Έλεγχος των κανόνων...</value>
+  </data>
+  <data name="PreviewFailed" xml:space="preserve">
+    <value>Δεν ήταν δυνατός ο έλεγχος των κανόνων αυτή τη στιγμή. Δοκιμάστε ξανά.</value>
+  </data>
+</root>

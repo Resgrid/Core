@@ -55,7 +55,8 @@ namespace Resgrid.Services
 				throw new ArgumentNullException(nameof(call));
 
 			var resolvedGroupIds = GetDistinctIds(groupIds, call.GroupDispatches?.Select(x => x.DepartmentGroupId));
-			var resolvedUnitIds = GetDistinctIds(unitIds, call.UnitDispatches?.Select(x => x.UnitId));
+			// A unit released from the call earlier got its release status then; closing the call does not move it again.
+			var resolvedUnitIds = GetDistinctIds(unitIds, call.UnitDispatches != null ? call.GetActiveUnitDispatches().Select(x => x.UnitId) : null);
 
 			if (!resolvedGroupIds.Any() && !resolvedUnitIds.Any())
 				return;
@@ -83,6 +84,9 @@ namespace Resgrid.Services
 				return;
 
 			var shiftUserIds = await GetShiftUserIdsAsync(call, department, groupIds);
+
+			// A member released (stood down) from the call got their release status then and is only sent back by name.
+			shiftUserIds.RemoveWhere(call.IsUserReleased);
 			if (!shiftUserIds.Any())
 				return;
 

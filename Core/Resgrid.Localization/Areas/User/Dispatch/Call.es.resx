@@ -696,6 +696,15 @@
   <data name="AllOfGroupDispatched" xml:space="preserve">
     <value>Todo {0} despachado</value>
   </data>
+  <data name="ReleaseUnit" xml:space="preserve"><value>Liberar</value></data>
+  <data name="ReleaseUnitTitle" xml:space="preserve"><value>¿Liberar {0} de esta llamada?</value></data>
+  <data name="ReleaseUnitText" xml:space="preserve"><value>La unidad se retira de esta llamada y recibe el estado de liberación del departamento, salvo que ya esté disponible, fuera de servicio o en otra llamada. La llamada sigue abierta.</value></data>
+  <data name="ReleaseUnitNotify" xml:space="preserve"><value>Avisar a la unidad</value></data>
+  <data name="ReleaseUnitFailed" xml:space="preserve"><value>No se pudo liberar la unidad.</value></data>
+  <data name="UnitReleasedAt" xml:space="preserve"><value>Liberada {0}</value></data>
+  <data name="ReleasePersonnelText" xml:space="preserve"><value>La persona se retira de esta llamada y recibe el estado de liberación de personal del departamento, salvo que ya esté disponible, no disponible o en otra llamada. La llamada sigue abierta.</value></data>
+  <data name="ReleasePersonnelFailed" xml:space="preserve"><value>No se pudo liberar a la persona.</value></data>
+  <data name="ReleasePersonnelNotify" xml:space="preserve"><value>Avisar a la persona</value></data>
   <data name="AreYouSure" xml:space="preserve">
     <value>¿Está seguro?</value>
   </data>

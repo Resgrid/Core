@@ -27,6 +27,9 @@ namespace Resgrid.Model
 		UnitActiveRolesUpdated = 15,
 
 		/// <summary>A navigating unit's live ETA changed or its navigation ended; item id = unit id, payload = ids and state (no ETA).</summary>
-		UnitNavigationUpdated = 16
+		UnitNavigationUpdated = 16,
+
+		/// <summary>A department's recurring call alerts changed (hub event <c>recurringCallAlertsUpdated</c>: schedule id, payload).</summary>
+		RecurringCallAlertsUpdated = 17
 	}
 }

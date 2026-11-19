@@ -312,9 +312,10 @@ namespace Resgrid.Services.Records
 				UnitState First(Func<UnitState, bool> match) => states.FirstOrDefault(match);
 				bool Is(UnitState s, params UnitStateTypes[] kinds) => CallStatusLinkage.ResolveUnitStateKind(s.State, input.UnitBaseTypes) is UnitStateTypes kind && kinds.Contains(kind);
 
-				// Cancelled en route only counts when the unit never arrived.
+				// Cancelled en route only counts when the unit never arrived. A dispatcher standing the unit down from the call
+				// (released before it got there) is the same thing when the crew never set a cancelled status themselves.
 				if (!summary.OnSceneOn.HasValue)
-					summary.CancelledOn = First(s => Is(s, UnitStateTypes.Cancelled))?.Timestamp;
+					summary.CancelledOn = First(s => Is(s, UnitStateTypes.Cancelled))?.Timestamp ?? row?.ReleasedOn;
 				if (summary.ClearedOn.HasValue)
 					summary.InServiceOn = First(s => s.Timestamp >= summary.ClearedOn.Value && Is(s, UnitStateTypes.Available))?.Timestamp;
 

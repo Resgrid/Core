@@ -799,6 +799,22 @@ namespace Resgrid.Workers.Framework.Logic
 					}
 					break;
 
+				case AuditLogTypes.RecurringCallCreated:
+				case AuditLogTypes.RecurringCallUpdated:
+				case AuditLogTypes.RecurringCallPaused:
+				case AuditLogTypes.RecurringCallResumed:
+				case AuditLogTypes.RecurringCallDeleted:
+				case AuditLogTypes.RecurringCallOccurrenceSkipped:
+				case AuditLogTypes.RecurringCallOccurrenceRestored:
+				case AuditLogTypes.RecurringCallOccurrenceCreated:
+				case AuditLogTypes.RecurringCallAlertAcknowledged:
+				case AuditLogTypes.RecurringCallAlertDismissed:
+					auditLog.Message = GetRecurringCallAuditMessage(auditEvent, actorName);
+					auditLog.Data = auditEvent.Type == AuditLogTypes.RecurringCallUpdated
+						? GetRecurringCallUpdatedAuditData(auditEvent)
+						: GetRecurringCallAuditData(auditEvent);
+					break;
+
 				case AuditLogTypes.UdfFieldValueSaved:
 					if (!String.IsNullOrWhiteSpace(auditEvent.After))
 					{
@@ -838,6 +854,82 @@ namespace Resgrid.Workers.Framework.Logic
 		/// Who the message names as having acted. Service-raised events carry the "system" user id, which has no
 		/// profile, and a member removed before the queue drained has none either; neither may drop the row.
 		/// </summary>
+		/// <summary>"Pat Lee paused recurring call Dialysis transfer" from the schedule (or occurrence / alert) snapshot the service sends.</summary>
+		public static string GetRecurringCallAuditMessage(AuditEvent auditEvent, string actorName)
+		{
+			var snapshot = TryParseJson(auditEvent.After ?? auditEvent.Before ?? string.Empty) as JObject;
+			var name = snapshot?["Name"]?.ToString();
+			var schedule = String.IsNullOrWhiteSpace(name) ? "a recurring call" : $"recurring call {name}";
+			var when = DateTime.TryParse(snapshot?["OccurrenceOn"]?.ToString(), System.Globalization.CultureInfo.InvariantCulture,
+				System.Globalization.DateTimeStyles.AdjustToUniversal | System.Globalization.DateTimeStyles.AssumeUniversal, out var occurrence)
+				? $" due {occurrence:yyyy-MM-dd HH:mm} UTC"
+				: string.Empty;
+			var kind = snapshot?["Kind"]?.ToString();
+
+			switch (auditEvent.Type)
+			{
+				case AuditLogTypes.RecurringCallCreated:
+					return $"{actorName} created {schedule}";
+				case AuditLogTypes.RecurringCallUpdated:
+					return $"{actorName} updated {schedule}";
+				case AuditLogTypes.RecurringCallPaused:
+					var reason = snapshot?["PauseReason"]?.ToString();
+					return String.IsNullOrWhiteSpace(reason) ? $"{actorName} paused {schedule}" : $"{actorName} paused {schedule} ({reason})";
+				case AuditLogTypes.RecurringCallResumed:
+					return $"{actorName} resumed {schedule}";
+				case AuditLogTypes.RecurringCallDeleted:
+					return $"{actorName} deleted {schedule}";
+				case AuditLogTypes.RecurringCallOccurrenceSkipped:
+					return $"{actorName} skipped the occurrence{when} of {schedule}";
+				case AuditLogTypes.RecurringCallOccurrenceRestored:
+					return $"{actorName} restored the occurrence{when} of {schedule}";
+				case AuditLogTypes.RecurringCallOccurrenceCreated:
+					var number = snapshot?["CallNumber"]?.ToString();
+					return String.IsNullOrWhiteSpace(number)
+						? $"{actorName} created the call for the occurrence{when} of {schedule}"
+						: $"{actorName} created call {number} for the occurrence{when} of {schedule}";
+				case AuditLogTypes.RecurringCallAlertAcknowledged:
+					return $"{actorName} acknowledged a {kind ?? "recurring call"} alert{when}";
+				case AuditLogTypes.RecurringCallAlertDismissed:
+					return $"{actorName} dismissed a {kind ?? "recurring call"} alert{when}";
+				default:
+					return $"{actorName} changed {schedule}";
+			}
+		}
+
+		/// <summary>
+		/// The settings that changed, led by the schedule's id: the diff leaves out what did not change, and two schedules can share
+		/// a name, so without it the row would not say which schedule was updated.
+		/// </summary>
+		public static string GetRecurringCallUpdatedAuditData(AuditEvent auditEvent)
+		{
+			var diff = GetSettingsChangedAuditData(auditEvent.Before, auditEvent.After);
+			var snapshot = TryParseJson(auditEvent.After ?? auditEvent.Before ?? string.Empty) as JObject;
+			var id = snapshot?["RecurringCallId"];
+
+			if (id == null || id.Type == JTokenType.Null || String.IsNullOrWhiteSpace(id.ToString()))
+				return diff;
+
+			return $"RecurringCallId: {FormatJsonValue(id)}{Environment.NewLine}{diff}";
+		}
+
+		private static string GetRecurringCallAuditData(AuditEvent auditEvent)
+		{
+			var snapshot = TryParseJson(auditEvent.After ?? auditEvent.Before ?? string.Empty) as JObject;
+			if (snapshot == null)
+				return "No Data";
+
+			var parts = new List<string>();
+			foreach (var key in new[] { "RecurringCallId", "RecurringCallAlertId", "OccurrenceOn", "CallId", "CallNumber", "PauseReason", "ResumeOn" })
+			{
+				var value = snapshot[key];
+				if (value != null && value.Type != JTokenType.Null && !String.IsNullOrWhiteSpace(value.ToString()))
+					parts.Add($"{key}: {FormatJsonValue(value)}");
+			}
+
+			return parts.Any() ? String.Join(", ", parts) : "No Data";
+		}
+
 		private static string GetActorName(string userId, UserProfile profile)
 		{
 			var name = profile?.FullName?.AsFirstNameLastName;

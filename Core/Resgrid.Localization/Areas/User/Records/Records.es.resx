@@ -2273,4 +2273,17 @@
   <data name="NoAlarmActivity" xml:space="preserve"><value>Aún no se han registrado alarmas ni actividades de reducción de riesgos aquí.</value></data>
   <data name="RecordAlarmLeft" xml:space="preserve"><value>Registrar alarma dejada</value></data>
   <data name="AlarmsRequestedColumnHelp" xml:space="preserve"><value>Total de unidades solicitadas (solo humo / solo CO / combinadas)</value></data>
+  <data name="IncidentReportDeleted" xml:space="preserve"><value>Informe de incidente eliminado.</value></data>
+  <data name="DeleteIncidentReport" xml:space="preserve"><value>Eliminar</value></data>
+  <data name="DeleteIncidentReportConfirm" xml:space="preserve"><value>¿Eliminar este informe de incidente? Se quita de todas las listas, su llamada queda libre para un nuevo informe y su contenido se borra después de {0} días.</value></data>
+  <data name="DeleteIncidentReportHelp" xml:space="preserve"><value>Quita el informe de todas las listas y libera su llamada para un nuevo informe. Un informe que nunca se finalizó se cancela primero. El contenido se borra después de {0} días.</value></data>
+  <data name="DeleteVoidedReasonPrompt" xml:space="preserve"><value>¿Por qué se elimina este informe anulado?</value></data>
+  <data name="DeleteRefusedNotDeletable" xml:space="preserve"><value>Un informe finalizado no se puede eliminar. Anúlelo primero.</value></data>
+  <data name="DeleteRefusedVoidedNeedsAdmin" xml:space="preserve"><value>Solo un administrador del departamento puede eliminar un informe anulado.</value></data>
+  <data name="DeleteRefusedReasonRequired" xml:space="preserve"><value>Indique un motivo para eliminar un informe anulado.</value></data>
+  <data name="DeleteRefusedSubmittedExternally" xml:space="preserve"><value>Este informe se envió a un sistema externo como NERIS, por lo que no se puede eliminar. Anúlelo en su lugar.</value></data>
+  <data name="DeleteRefusedLegalHold" xml:space="preserve"><value>Una retención legal cubre este informe, por lo que no se puede eliminar.</value></data>
+  <data name="DeleteRefusedPermanentContent" xml:space="preserve"><value>Este informe tiene entradas de víctimas, rescates o exposiciones, que se conservan de forma permanente. Quítelas del borrador antes de eliminarlo.</value></data>
+  <data name="DeleteRefusedAmendmentOpen" xml:space="preserve"><value>Abandone la enmienda abierta antes de eliminar este informe.</value></data>
+  <data name="IncludeClosedReports" xml:space="preserve"><value>Incluir cancelados y anulados</value></data>
 </root>

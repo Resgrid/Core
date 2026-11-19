@@ -37,10 +37,12 @@ namespace Resgrid.Tests.AdminAssist
 			public readonly Mock<ICallDispatchGroupRepository> GroupRoutes = new();
 			public readonly Mock<ICallDispatchUnitRepository> UnitRoutes = new();
 			public readonly Mock<ICallDispatchRoleRepository> RoleRoutes = new();
+			public readonly Mock<ICallPersonnelReleasesRepository> Releases = new();
 			public DispatchImpactRequest Request => new("0", 14, Now, true, true, true);
 			public DispatchImpactService Service => new(Access.Object, Store.Object, new ConfigurationCatalog(), Calls.Object,
 				Departments.Object, Groups.Object, Units.Object, Crews.Object, Roles.Object, RoleMembers.Object, Settings.Object,
-				Shifts.Object, Visibility.Object, Authorization.Object, TimeProvider.System, Direct.Object, GroupRoutes.Object, UnitRoutes.Object, RoleRoutes.Object);
+				Shifts.Object, Visibility.Object, Authorization.Object, TimeProvider.System, Direct.Object, GroupRoutes.Object, UnitRoutes.Object, RoleRoutes.Object,
+				Releases.Object);
 			public Fixture()
 			{
 				Access.Setup(a => a.CanAccessAsync(It.IsAny<AdminAssistActor>(), false, It.IsAny<CancellationToken>())).ReturnsAsync(true);
@@ -65,7 +67,22 @@ namespace Resgrid.Tests.AdminAssist
 				GroupRoutes.Setup(r => r.GetAllCallDispatchGroupByCallIdAsync(14)).ReturnsAsync(new[] { new CallDispatchGroup { DepartmentGroupId = 10 } });
 				UnitRoutes.Setup(r => r.GetCallUnitDispatchesByCallIdAsync(14)).ReturnsAsync(new[] { new CallDispatchUnit { UnitId = 20 } });
 				RoleRoutes.Setup(r => r.GetCallRoleDispatchesByCallIdAsync(14)).ReturnsAsync(new[] { new CallDispatchRole { RoleId = 30 } });
+				Releases.Setup(r => r.GetByCallIdAsync(14)).ReturnsAsync(Array.Empty<CallPersonnelRelease>());
 			}
+		}
+
+		[Test]
+		public async Task A_member_released_from_the_call_is_counted_on_no_route()
+		{
+			// "a" was dispatched by name (twice) and is in group 10 and its station group; a rebroadcast pages them on none.
+			var f = new Fixture();
+			f.Releases.Setup(r => r.GetByCallIdAsync(14)).ReturnsAsync(new[] { new CallPersonnelRelease { CallId = 14, UserId = "A" } });
+
+			var result = await f.Service.PreviewAsync(new(7, "admin"), f.Request);
+			ConfigurationImpactMetric Metric(string key) => result.Metrics.Single(m => m.LabelKey == "Impact." + key);
+
+			Assert.That(Metric("DispatchPeople").Before, Is.EqualTo(3)); Assert.That(Metric("DispatchPeople").After, Is.EqualTo(4));
+			Assert.That(Metric("DispatchAttempts").Before, Is.EqualTo(3)); Assert.That(Metric("DispatchAttempts").After, Is.EqualTo(4));
 		}
 		[Test]
 		public async Task All_route_families_share_deduplication_and_explicit_roster_time_without_exposing_identities()

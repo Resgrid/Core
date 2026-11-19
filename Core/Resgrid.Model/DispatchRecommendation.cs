@@ -77,6 +77,12 @@ namespace Resgrid.Model
 		/// <summary>Users already on the call — never recommended again.</summary>
 		public List<string> AlreadyDispatchedUserIds { get; set; } = new List<string>();
 
+		/// <summary>
+		/// Users never recommended and not counted toward any requirement: members released (stood down) from the call when the
+		/// result is applied automatically, which cannot bring a released member back (only naming them again on the call does).
+		/// </summary>
+		public List<string> ExcludedUserIds { get; set; } = new List<string>();
+
 		/// <summary>Forces a mode instead of resolving department default + card override (preview tooling).</summary>
 		public DispatchRecommendationModes? ModeOverride { get; set; }
 
@@ -132,8 +138,9 @@ namespace Resgrid.Model
 				Latitude = location?.Latitude,
 				Longitude = location?.Longitude,
 				TargetAlarmLevel = targetLevel,
-				AlreadyDispatchedUnitIds = call.UnitDispatches?.Select(d => d.UnitId).Distinct().ToList() ?? new List<int>(),
-				AlreadyDispatchedUserIds = call.Dispatches?.Select(d => d.UserId).Where(id => !string.IsNullOrWhiteSpace(id)).Distinct().ToList() ?? new List<string>(),
+				// A unit released (stood down) from the call neither covers a requirement nor is kept from being recommended again.
+				AlreadyDispatchedUnitIds = CallDispatchUnitReleases.ActiveUnitIds(call.UnitDispatches).ToList(),
+				AlreadyDispatchedUserIds = call.Dispatches?.Select(d => d.UserId).Where(id => !string.IsNullOrWhiteSpace(id) && !call.IsUserReleased(id)).Distinct().ToList() ?? new List<string>(),
 				CountDispatchedTowardRequirements = targetLevel <= currentLevel,
 				CallId = call.CallId > 0 ? call.CallId : (int?)null
 			};

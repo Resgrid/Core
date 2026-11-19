@@ -1,0 +1,39 @@
+@model (Resgrid.Web.Areas.User.Models.Calls.ViewCallView View, string Kind, string Id, string Name)
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Call> localizer
+@* A unit or member on View Call ("unit" / "user"): "Released {time}" once stood down from the call, else a Release button for a
+   member who may edit the dispatch list (resgrid.dispatch.viewcall.js confirms and posts ReleaseUnitFromCall or
+   ReleasePersonnelFromCall). *@
+@{
+    DateTime? releasedOn = null;
+    var onCall = false;
+
+    if (Model.Kind == "unit" && int.TryParse(Model.Id, out var unitId))
+    {
+        var unitDispatch = Model.View.Call.UnitDispatches?
+            .Where(x => x != null && x.UnitId == unitId)
+            .OrderByDescending(x => x.DispatchedOn)
+            .FirstOrDefault();
+        releasedOn = unitDispatch?.ReleasedOn;
+        onCall = unitDispatch != null && !unitDispatch.IsReleased;
+    }
+    else if (Model.Kind == "user" && !string.IsNullOrWhiteSpace(Model.Id))
+    {
+        releasedOn = Model.View.Call.PersonnelReleases?
+            .FirstOrDefault(x => x != null && string.Equals(x.UserId, Model.Id, StringComparison.OrdinalIgnoreCase))?.ReleasedOn;
+        onCall = !releasedOn.HasValue;
+    }
+}
+@if (releasedOn.HasValue)
+{
+    <span class="label label-default" style="margin-left:6px;">@localizer["UnitReleasedAt", releasedOn.Value.TimeConverterToString(Model.View.Department)]</span>
+}
+else if (onCall && Model.View.CanReleaseResources)
+{
+    <button type="button" class="btn btn-xs btn-default release-resource-button" style="margin-left:6px;"
+            data-kind="@Model.Kind"
+            data-resource-id="@Model.Id"
+            data-title="@localizer["ReleaseUnitTitle", Model.Name]"
+            data-text="@(Model.Kind == "unit" ? localizer["ReleaseUnitText"] : localizer["ReleasePersonnelText"])"
+            data-notify-label="@(Model.Kind == "unit" ? localizer["ReleaseUnitNotify"] : localizer["ReleasePersonnelNotify"])"
+            data-failed="@(Model.Kind == "unit" ? localizer["ReleaseUnitFailed"] : localizer["ReleasePersonnelFailed"])">@localizer["ReleaseUnit"]</button>
+}

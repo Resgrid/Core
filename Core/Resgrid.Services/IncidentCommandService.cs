@@ -2677,9 +2677,15 @@ namespace Resgrid.Services
 				switch ((NeedEntityKind)entity.EntityKind)
 				{
 					case NeedEntityKind.Unit:
-						if (int.TryParse(entity.EntityId, out var unitId) && !call.HasUnitBeenDispatched(unitId))
+						if (int.TryParse(entity.EntityId, out var unitId) && !call.IsUnitOnCall(unitId))
 						{
-							call.UnitDispatches.Add(new CallDispatchUnit { CallId = call.CallId, UnitId = unitId });
+							// A unit released from the call earlier goes back on its own dispatch row.
+							var released = call.UnitDispatches.Where(d => d != null && d.UnitId == unitId).OrderByDescending(d => d.DispatchedOn).FirstOrDefault();
+							if (released != null)
+								released.Redispatch(DateTime.UtcNow);
+							else
+								call.UnitDispatches.Add(new CallDispatchUnit { CallId = call.CallId, UnitId = unitId });
+
 							newUnitIds.Add(unitId);
 						}
 						break;

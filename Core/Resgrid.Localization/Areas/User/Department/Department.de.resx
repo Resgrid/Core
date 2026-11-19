@@ -1377,7 +1377,7 @@
     <value>Beispiel:</value>
   </data>
   <data name="CallNumberPatternHelp" xml:space="preserve">
-    <value>Fester Text (Buchstaben, Ziffern, - _ . /) um Platzhalter: {YYYY} oder {YY} das Jahr, {MM} der Monat, {DD} der Tag und {SEQ} die laufende Nummer, die genau einmal vorkommen muss. Die laufende Nummer beginnt wieder bei 1, sobald sich das Datum in der Nummer ändert: jedes Jahr mit einem Jahr, jeden Monat mit {MM}, jeden Tag mit {DD} und nie ohne Datum. {MM} erfordert ein Jahr und {DD} erfordert {MM}. Daten verwenden die Zeitzone der Abteilung.</value>
+    <value>Fester Text (Buchstaben, Ziffern, - _ . / :) um Platzhalter: {YYYY} oder {YY} das Jahr, {MM} der Monat, {DD} der Tag, {HH} die Stunde, {MIN} die Minute und {SEQ} die laufende Nummer, die genau einmal vorkommen muss. Die laufende Nummer beginnt wieder bei 1, sobald sich das Datum in der Nummer ändert: jedes Jahr mit einem Jahr, jeden Monat mit {MM}, jeden Tag mit {DD} und nie ohne Datum; Stunde und Minute setzen sie nie zurück. {MM} erfordert ein Jahr, {DD} erfordert {MM}, {HH} erfordert {DD} und {MIN} erfordert {HH}. Datum und Uhrzeit verwenden die Zeitzone der Abteilung.</value>
   </data>
   <data name="CallNumberSequenceWidth" xml:space="preserve">
     <value>Stellen der laufenden Nummer</value>
@@ -1410,7 +1410,7 @@
     <value>Nächste Einsatznummer anheben? Sie kann nur angehoben, nie gesenkt werden.</value>
   </data>
   <data name="CallNumberPatternInvalid" xml:space="preserve">
-    <value>Die Einsatznummerierung wurde nicht gespeichert. Das Muster braucht {SEQ} genau einmal, darf nur Buchstaben, Ziffern, - _ . / und die Platzhalter {YYYY}, {YY}, {MM} und {DD} enthalten, braucht ein Jahr für {MM} und {MM} für {DD} und darf höchstens 40 Zeichen lang sein.</value>
+    <value>Die Einsatznummerierung wurde nicht gespeichert. Das Muster braucht {SEQ} genau einmal, darf nur Buchstaben, Ziffern, - _ . / : und die Platzhalter {YYYY}, {YY}, {MM}, {DD}, {HH} und {MIN} enthalten, jeden höchstens einmal (die Minute ist {MIN}, {MM} ist der Monat), braucht ein Jahr für {MM}, {MM} für {DD}, {DD} für {HH} und {HH} für {MIN} und darf höchstens 40 Zeichen lang sein.</value>
   </data>
   <data name="CallNumberNextBelowCurrent" xml:space="preserve">
     <value>Die nächste Einsatznummer wurde nicht angehoben: Sie kann nur über die Nummer angehoben werden, die der nächste Einsatz bereits erhält ({0}).</value>

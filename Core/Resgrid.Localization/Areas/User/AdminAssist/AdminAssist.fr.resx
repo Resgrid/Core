@@ -6784,7 +6784,7 @@
     <value>Configuration de la numérotation des appels / Modèle</value>
   </data>
   <data name="FieldHelp.CallNumberingConfig.Pattern" xml:space="preserve">
-    <value>Comment les numéros d'appel sont écrits, par exemple FD-2026-0153 : texte fixe plus les jetons YYYY ou YY, MM, DD et SEQ. La séquence recommence chaque fois que la date écrite change. Tant qu'aucun modèle n'est enregistré, les appels gardent les numéros YY-SEQ que Resgrid a toujours émis.</value>
+    <value>Comment les numéros d'appel sont écrits, par exemple FD-2026-0153 : texte fixe plus les jetons YYYY ou YY, MM, DD, HH (heure), MIN (minute) et SEQ. La séquence recommence chaque fois que la date écrite change ; l'heure et la minute ne la font jamais recommencer. Tant qu'aucun modèle n'est enregistré, les appels gardent les numéros YY-SEQ que Resgrid a toujours émis.</value>
   </data>
   <data name="Field.CallNumberingConfig.SequenceWidth" xml:space="preserve">
     <value>Configuration de la numérotation des appels / Largeur de la séquence</value>
@@ -7847,5 +7847,11 @@
   </data>
   <data xml:space="preserve" name="SettingHelp.MappingProviderOverrides">
     <value>Comptes propres au service pour l'itinéraire, le trafic en direct et la recherche d'adresses, essayés avant les fournisseurs de Resgrid. Seuls les fournisseurs configurés sont signalés, jamais les clés. Remettre les trois sur la valeur par défaut de Resgrid supprime le paramètre.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.DestinationSuggestions">
+    <value>Propositions de destination</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.DestinationSuggestions">
+    <value>Propose la meilleure destination pour un appel, ainsi que pour la destination de statut d'une unité, à partir des règles de destination du service (Cartographie, Règles de destination) et du lieu de l'intervention, avec le temps de trajet et la distance. « Proposer et renseigner la destination » remplit en plus la destination vide d'un nouvel appel avec la meilleure ; les régulateurs et les équipages peuvent toujours en choisir une autre. Désactivé par défaut, car chaque proposition interroge les temps de trajet.</value>
   </data>
 </root>

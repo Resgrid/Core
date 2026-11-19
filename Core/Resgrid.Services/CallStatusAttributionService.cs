@@ -28,13 +28,16 @@ namespace Resgrid.Services
 		private readonly IActionLogsRepository _actionLogsRepository;
 		private readonly IUnitsRepository _unitsRepository;
 		private readonly ICustomStateService _customStateService;
+		private readonly ICallPersonnelReleasesRepository _callPersonnelReleasesRepository;
 
 		public CallStatusAttributionService(ICallsRepository callsRepository, ICallDispatchUnitRepository callDispatchUnitRepository,
 			ICallDispatchesRepository callDispatchesRepository, ICallDispatchGroupRepository callDispatchGroupRepository,
 			ICallDispatchRoleRepository callDispatchRoleRepository, IDepartmentGroupMembersRepository departmentGroupMembersRepository,
 			IPersonnelRoleUsersRepository personnelRoleUsersRepository, IUnitStatesRepository unitStatesRepository,
-			IActionLogsRepository actionLogsRepository, IUnitsRepository unitsRepository, ICustomStateService customStateService)
+			IActionLogsRepository actionLogsRepository, IUnitsRepository unitsRepository, ICustomStateService customStateService,
+			ICallPersonnelReleasesRepository callPersonnelReleasesRepository)
 		{
+			_callPersonnelReleasesRepository = callPersonnelReleasesRepository;
 			_callsRepository = callsRepository;
 			_callDispatchUnitRepository = callDispatchUnitRepository;
 			_callDispatchesRepository = callDispatchesRepository;
@@ -71,8 +74,10 @@ namespace Resgrid.Services
 				var previousCallId = previous != null ? CallStatusLinkage.LinkedCallId(previous.DestinationId, previous.DestinationType) : null;
 				var previousIsClearing = previous == null || CallStatusLinkage.IsClearingUnitState(previous.State, baseTypes);
 
+				// A unit released (stood down) from that call is off it: its next status is not carried back there.
 				if (previousCallId.HasValue && !previousIsClearing &&
-					CallStatusAttribution.CanCarryForward(previousCallId, previousIsClearing, await IsOpenCallAsync(departmentId, previousCallId.Value)))
+					CallStatusAttribution.CanCarryForward(previousCallId, previousIsClearing, await IsOpenCallAsync(departmentId, previousCallId.Value)) &&
+					!await IsUnitReleasedFromCallAsync(state.UnitId, previousCallId.Value))
 				{
 					Link(state, previousCallId.Value, StatusDestinationSources.CarryForward);
 					return;
@@ -115,7 +120,9 @@ namespace Resgrid.Services
 					var unitState = await _unitStatesRepository.GetUnitStateByUnitStateIdAsync(actionLog.UnitStateId.Value);
 					var unitCallId = unitState != null ? CallStatusLinkage.LinkedCallId(unitState.DestinationId, unitState.DestinationType) : null;
 
-					if (unitCallId.HasValue)
+					// A rider released (stood down) from the unit's call is off it, whatever the unit does: their status is not
+					// linked there. It goes on through carry-forward and dispatch below, which skip that call for them too.
+					if (unitCallId.HasValue && !await IsUserReleasedFromCallAsync(actionLog.UserId, unitCallId.Value))
 					{
 						Link(actionLog, unitCallId.Value, StatusDestinationSources.Unit);
 						return;
@@ -133,8 +140,10 @@ namespace Resgrid.Services
 				var previousCallId = previous != null ? CallStatusLinkage.LinkedCallId(previous.DestinationId, previous.DestinationType) : null;
 				var previousIsClearing = previous == null || CallStatusLinkage.IsClearingPersonnelStatus(previous.ActionTypeId, baseTypes);
 
+				// A member released (stood down) from that call is off it: their next status is not carried back there.
 				if (previousCallId.HasValue && !previousIsClearing &&
-					CallStatusAttribution.CanCarryForward(previousCallId, previousIsClearing, await IsOpenCallAsync(departmentId, previousCallId.Value)))
+					CallStatusAttribution.CanCarryForward(previousCallId, previousIsClearing, await IsOpenCallAsync(departmentId, previousCallId.Value)) &&
+					!await IsUserReleasedFromCallAsync(actionLog.UserId, previousCallId.Value))
 				{
 					Link(actionLog, previousCallId.Value, StatusDestinationSources.CarryForward);
 					return;
@@ -188,12 +197,17 @@ namespace Resgrid.Services
 
 			var baseTypes = await GetBaseTypesAsync(departmentId, CustomStateTypes.Unit);
 
+			var releasedFrom = new Dictionary<int, List<CallDispatchUnit>>();
+
 			foreach (var state in states)
 			{
 				dispatchedByUnit.TryGetValue(state.UnitId, out var dispatched);
 
-				var callId = UnitCallInvolvement.ResolveWorkingCallId(state, state.UnitStateId > 0 && CallStatusLinkage.IsClearingUnitState(state.State, baseTypes),
-					openCallIds, dispatched);
+				// A unit released (stood down) from the call its status points at has cleared that call, whatever the status says.
+				var isClearing = state.UnitStateId > 0 && CallStatusLinkage.IsClearingUnitState(state.State, baseTypes) ||
+					await IsReleasedFromLinkedCallAsync(state, openCallIds, dispatched, releasedFrom);
+
+				var callId = UnitCallInvolvement.ResolveWorkingCallId(state, isClearing, openCallIds, dispatched);
 
 				if (callId.HasValue)
 					working[state.UnitId] = callId.Value;
@@ -223,9 +237,54 @@ namespace Resgrid.Services
 				return null;
 
 			var isClearing = latest != null && latest.UnitStateId > 0 &&
-				CallStatusLinkage.IsClearingUnitState(latest.State, await GetBaseTypesAsync(departmentId, CustomStateTypes.Unit));
+				CallStatusLinkage.IsClearingUnitState(latest.State, await GetBaseTypesAsync(departmentId, CustomStateTypes.Unit)) ||
+				await IsReleasedFromLinkedCallAsync(latest, openCallIds, dispatched, new Dictionary<int, List<CallDispatchUnit>>());
 
 			return UnitCallInvolvement.ResolveWorkingCallId(latest, isClearing, openCallIds, dispatched);
+		}
+		/// <summary>The unit's every dispatch to the call was released (stood down); false when it was never dispatched to it.</summary>
+		private async Task<bool> IsUnitReleasedFromCallAsync(int unitId, int callId)
+		{
+			var dispatches = ((await _callDispatchUnitRepository.GetCallUnitDispatchesByCallIdAsync(callId)) ?? Enumerable.Empty<CallDispatchUnit>())
+				.Where(x => x != null && x.UnitId == unitId).ToList();
+
+			return dispatches.Count > 0 && dispatches.All(x => x.IsReleased);
+		}
+
+		/// <summary>The member was released (stood down) from the call.</summary>
+		private async Task<bool> IsUserReleasedFromCallAsync(string userId, int callId)
+		{
+			if (string.IsNullOrWhiteSpace(userId) || _callPersonnelReleasesRepository == null)
+				return false;
+
+			var releases = await _callPersonnelReleasesRepository.GetByCallIdAsync(callId);
+
+			return releases != null && releases.Any(x => x != null && string.Equals(x.UserId, userId, StringComparison.OrdinalIgnoreCase));
+		}
+
+		/// <summary>
+		/// The unit's latest status points at an open call it is no longer dispatched to because it was released from it. Only
+		/// then is the call's dispatch list read (once per call for a batch).
+		/// </summary>
+		private async Task<bool> IsReleasedFromLinkedCallAsync(UnitState state, ICollection<int> openCallIds, IEnumerable<CallDispatchUnit> liveDispatches,
+			Dictionary<int, List<CallDispatchUnit>> callDispatches)
+		{
+			if (state == null || state.DestinationType != (int)DestinationEntityTypes.Call || !state.DestinationId.HasValue)
+				return false;
+
+			var callId = state.DestinationId.Value;
+			if (openCallIds == null || !openCallIds.Contains(callId) || (liveDispatches ?? Enumerable.Empty<CallDispatchUnit>()).Any(x => x != null && x.CallId == callId))
+				return false;
+
+			if (!callDispatches.TryGetValue(callId, out var rows))
+			{
+				rows = ((await _callDispatchUnitRepository.GetCallUnitDispatchesByCallIdAsync(callId)) ?? Enumerable.Empty<CallDispatchUnit>()).Where(x => x != null).ToList();
+				callDispatches[callId] = rows;
+			}
+
+			var unitRows = rows.Where(x => x.UnitId == state.UnitId).ToList();
+
+			return unitRows.Count > 0 && unitRows.All(x => x.IsReleased);
 		}
 		#endregion Write-time attribution
 
@@ -253,11 +312,16 @@ namespace Resgrid.Services
 			foreach (var subject in subjects)
 			{
 				// Another dispatch that overlaps this one is walked from its own start, so the states are read from there.
-				var others = OtherDispatches(windowsByUnit, subject.UnitId, call.CallId, subject.Start, end);
+				// A unit released (stood down) from the call is walked only to its release.
+				var unitEnd = WalkEnd(dispatches, subject.UnitId, end);
+				if (subject.Start > unitEnd)
+					continue;
+
+				var others = OtherDispatches(windowsByUnit, subject.UnitId, call.CallId, subject.Start, unitEnd);
 				var from = others != null ? Earliest(subject.Start, others.Min(x => x.Start)) : subject.Start;
 
-				var states = await _unitStatesRepository.GetAllUnitStatesForUnitInDateRangeAsync(subject.UnitId, from, end);
-				inferred.AddRange(CallStatusAttribution.InferUnitStates(call.CallId, subject.Start, end, states,
+				var states = await _unitStatesRepository.GetAllUnitStatesForUnitInDateRangeAsync(subject.UnitId, from, unitEnd);
+				inferred.AddRange(CallStatusAttribution.InferUnitStates(call.CallId, subject.Start, unitEnd, states,
 					s => CallStatusLinkage.IsClearingUnitState(s.State, baseTypes), statusLookup, others));
 			}
 
@@ -403,8 +467,15 @@ namespace Resgrid.Services
 					var start = dispatchedOn ?? unitCallStates.Min(x => x.Timestamp);
 
 					read.StatesByUnit.TryGetValue(unitId, out var unitStates);
-					timeline.AddRange(CallUnitTimeline.Build(call.CallId, dispatchedOn, CallEnd(call), unitCallStates, unitStates,
-						NextDispatch(read.WindowsByUnit, unitId, call.CallId, start, now),
+
+					// A unit released (stood down) from the call stops following on at its release, as its inferred walk does
+					// (WalkEnd): a later status off the record is its next job. The call's own statuses still show.
+					var stopAt = NextDispatch(read.WindowsByUnit, unitId, call.CallId, start, now);
+					var releasedAt = WalkEnd(read.DispatchesByCall[call.CallId], unitId, DateTime.MaxValue);
+					if (releasedAt != DateTime.MaxValue && (!stopAt.HasValue || releasedAt < stopAt.Value))
+						stopAt = releasedAt;
+
+					timeline.AddRange(CallUnitTimeline.Build(call.CallId, dispatchedOn, CallEnd(call), unitCallStates, unitStates, stopAt,
 						s => UnitCallInvolvement.HasFinishedCall(s.State, read.BaseTypes)));
 				}
 
@@ -483,11 +554,12 @@ namespace Resgrid.Services
 						continue;
 
 					var start = DispatchStart(dispatch.DispatchedOn, call);
-					if (start > end)
+					var unitEnd = WalkEnd(dispatchesByCall[call.CallId], dispatch.UnitId, end);
+					if (start > unitEnd)
 						continue;
 
-					result[call.CallId].AddRange(CallStatusAttribution.InferUnitStates(call.CallId, start, end, states,
-						s => CallStatusLinkage.IsClearingUnitState(s.State, baseTypes), statusLookup, OtherDispatches(windowsByUnit, dispatch.UnitId, call.CallId, start, end)));
+					result[call.CallId].AddRange(CallStatusAttribution.InferUnitStates(call.CallId, start, unitEnd, states,
+						s => CallStatusLinkage.IsClearingUnitState(s.State, baseTypes), statusLookup, OtherDispatches(windowsByUnit, dispatch.UnitId, call.CallId, start, unitEnd)));
 				}
 			}
 
@@ -541,15 +613,33 @@ namespace Resgrid.Services
 			var inferred = new List<ActionLog>();
 			foreach (var subject in subjects)
 			{
-				if (subject.Value.Start > end || !logsByUser.TryGetValue(subject.Key, out var logs))
+				// A member released (stood down) from the call ends their walk there, even with no clearing status after it (the
+				// release's own status is best effort): a later status is their next job, not this call's.
+				var subjectEnd = PersonnelWalkEnd(windowsByUser, subject.Key, callId, end);
+
+				if (subject.Value.Start > subjectEnd || !logsByUser.TryGetValue(subject.Key, out var logs))
 					continue;
 
-				inferred.AddRange(CallStatusAttribution.InferActionLogs(callId, subject.Value.Start, end, subject.Value.RequireEngagement, logs,
+				inferred.AddRange(CallStatusAttribution.InferActionLogs(callId, subject.Value.Start, subjectEnd, subject.Value.RequireEngagement, logs,
 					l => CallStatusLinkage.IsClearingPersonnelStatus(l.ActionTypeId, baseTypes), statusLookup,
-					OtherDispatches(windowsByUser, subject.Key, callId, subject.Value.Start, end)));
+					OtherDispatches(windowsByUser, subject.Key, callId, subject.Value.Start, subjectEnd)));
 			}
 
 			return inferred;
+		}
+
+		/// <summary>
+		/// Where a member's walk on a call ends: the call's end, or their release from the call when it came earlier (the release
+		/// rides on each of their dispatch windows to the call; a cleared release is gone from them).
+		/// </summary>
+		private static DateTime PersonnelWalkEnd(Dictionary<string, List<CallDispatchWindow>> windowsByUser, string userId, int callId, DateTime end)
+		{
+			if (windowsByUser == null || string.IsNullOrWhiteSpace(userId) || !windowsByUser.TryGetValue(userId, out var windows) || windows == null)
+				return end;
+
+			var released = windows.Where(x => x != null && x.CallId == callId && x.ReleasedOn.HasValue).Select(x => (DateTime?)x.ReleasedOn.Value).Max();
+
+			return released.HasValue && released.Value < end ? released.Value : end;
 		}
 
 		private static Dictionary<string, List<ActionLog>> GroupByUser(int departmentId, IEnumerable<ActionLog> logs)
@@ -704,6 +794,21 @@ namespace Resgrid.Services
 		private static DateTime DispatchStart(DateTime dispatchedOn, Call call)
 		{
 			return dispatchedOn == default(DateTime) ? call.LoggedOn : dispatchedOn;
+		}
+
+		/// <summary>
+		/// Where a unit's walk on a call ends: the call's end, or its release from the call when every dispatch of the unit to it
+		/// was released earlier (a status after the release is the unit's next job, not this call's).
+		/// </summary>
+		private static DateTime WalkEnd(IEnumerable<CallDispatchUnit> callDispatches, int unitId, DateTime end)
+		{
+			var rows = (callDispatches ?? Enumerable.Empty<CallDispatchUnit>()).Where(x => x != null && x.UnitId == unitId).ToList();
+			if (rows.Count == 0 || !rows.All(x => x.IsReleased))
+				return end;
+
+			var released = rows.Max(x => x.ReleasedOn.Value);
+
+			return released < end ? released : end;
 		}
 
 		private static IEnumerable<CallDispatchUnit> EarliestPerUnit(IEnumerable<CallDispatchUnit> dispatches)

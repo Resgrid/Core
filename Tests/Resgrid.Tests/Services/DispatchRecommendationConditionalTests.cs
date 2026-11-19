@@ -324,6 +324,27 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task conditional_role_row_never_picks_a_member_released_from_the_call()
+		{
+			var card = BuildCard();
+			card.AlarmLevels.First().ResponsePackageId = LadderPackageId;
+			EnableConditions(Package(LadderPackageId, "Crew", PackageRow(9010, "Firefighters", 2,
+				new RunCardTarget { TargetKind = (int)RunCardTargetKinds.PersonnelRole, TargetRefId = FirefighterRoleId })));
+			// Station-based: people are placed by their station rosters (the fixture gives them no positions).
+			_departmentSettingsService.Setup(x => x.GetDispatchRecommendationModeAsync(DepartmentId, It.IsAny<bool>()))
+				.ReturnsAsync(DispatchRecommendationModes.StationBased);
+
+			// user-1 was released from this call: the row takes user-2 and is one short, as the fixed-level role rows would be.
+			var request = BuildRequest();
+			request.ExcludedUserIds = new List<string> { "user-1" };
+
+			var result = await _service.GetRecommendationAsync(request);
+
+			result.Personnel.Select(p => p.UserId).Should().Equal(new[] { "user-2" });
+			result.Shortfalls.Should().ContainSingle(s => s.RequirementId == 9010 && s.FilledCount == 1);
+		}
+
+		[Test]
 		public async Task conditional_short_row_without_substitute_is_a_shortfall_marked_outstanding()
 		{
 			var card = BuildCard();

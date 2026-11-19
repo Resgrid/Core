@@ -223,6 +223,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 					Resgrid.Framework.Logging.LogException(ex,
 						$"{nameof(BuildConfigResultAsync)}: {nameof(IDepartmentSettingsService.GetTransportDestinationChecksAsync)} failed for departmentId {departmentId}.");
 				}
+
+				try
+				{
+					result.Data.DestinationSuggestionMode = (int)(await _departmentSettingsService.GetDestinationSuggestionConfigAsync(departmentId)).GetMode();
+				}
+				catch (System.Exception ex)
+				{
+					Resgrid.Framework.Logging.LogException(ex,
+						$"{nameof(BuildConfigResultAsync)}: {nameof(IDepartmentSettingsService.GetDestinationSuggestionConfigAsync)} failed for departmentId {departmentId}.");
+				}
 			}
 
 			bool userModernApplicationSoundsEnabled = false;

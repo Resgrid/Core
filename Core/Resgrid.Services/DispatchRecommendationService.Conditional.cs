@@ -710,7 +710,8 @@ namespace Resgrid.Services
 
 				foreach (var candidate in context.PersonnelCandidates)
 				{
-					if (!RunCardTargetRules.MatchesPerson(targets, candidate.RoleIds))
+					// Released from this call: still counted at their station, never picked for it.
+					if (candidate.ExcludedFromSelection || !RunCardTargetRules.MatchesPerson(targets, candidate.RoleIds))
 						continue;
 
 					// Status filters are unit status meanings; people pass every filter.

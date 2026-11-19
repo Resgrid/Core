@@ -157,8 +157,9 @@ namespace Resgrid.Services
 			if (!call.HasBeenDispatched.GetValueOrDefault() && call.DispatchOn.HasValue && call.DispatchOn.Value > now)
 				return false;
 
+			// A unit released from the call is done with it, whatever it is doing now (often the next call).
 			var dispatches = ((await _callDispatchUnitRepository.GetCallUnitDispatchesByCallIdAsync(callId)) ?? Enumerable.Empty<CallDispatchUnit>())
-				.Where(x => x != null)
+				.Where(x => x != null && !x.IsReleased)
 				.GroupBy(x => x.UnitId)
 				.Select(g => g.OrderBy(x => x.DispatchedOn).First())
 				.ToList();
@@ -171,8 +172,9 @@ namespace Resgrid.Services
 				var latest = await _unitStatesRepository.GetLastUnitStateByUnitIdAsync(dispatch.UnitId);
 
 				// Every other unit must have reported finished since it was sent: one still working, or one that never
-				// reported after its dispatch, keeps the call open.
-				if (latest == null || latest.Timestamp < dispatch.DispatchedOn || !UnitCallInvolvement.HasFinishedCall(latest.State, baseTypes))
+				// reported after its dispatch, keeps the call open. "Sent" is its latest dispatch: a unit sent back after a
+				// stand-down has not finished on a status from before it went back.
+				if (latest == null || latest.Timestamp < UnitCallInvolvement.LatestDispatchTime(dispatch) || !UnitCallInvolvement.HasFinishedCall(latest.State, baseTypes))
 					return false;
 			}
 

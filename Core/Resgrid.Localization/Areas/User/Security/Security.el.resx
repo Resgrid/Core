@@ -1384,6 +1384,16 @@
   <data name="PermRecordsShareCoordinationBoardsNote" xml:space="preserve">
     <value>Επιτρέπει την κοινή χρήση ενός πίνακα συντονισμού με συνεργαζόμενους φορείς.</value>
   </data>
+  <data name="AuditLogTypeRecurringCallCreated" xml:space="preserve"><value>Δημιουργήθηκε επαναλαμβανόμενη κλήση</value></data>
+  <data name="AuditLogTypeRecurringCallUpdated" xml:space="preserve"><value>Ενημερώθηκε επαναλαμβανόμενη κλήση</value></data>
+  <data name="AuditLogTypeRecurringCallPaused" xml:space="preserve"><value>Τέθηκε σε παύση επαναλαμβανόμενη κλήση</value></data>
+  <data name="AuditLogTypeRecurringCallResumed" xml:space="preserve"><value>Συνεχίστηκε επαναλαμβανόμενη κλήση</value></data>
+  <data name="AuditLogTypeRecurringCallDeleted" xml:space="preserve"><value>Διαγράφηκε επαναλαμβανόμενη κλήση</value></data>
+  <data name="AuditLogTypeRecurringCallOccurrenceSkipped" xml:space="preserve"><value>Παραλείφθηκε εμφάνιση επαναλαμβανόμενης κλήσης</value></data>
+  <data name="AuditLogTypeRecurringCallOccurrenceRestored" xml:space="preserve"><value>Επαναφέρθηκε εμφάνιση επαναλαμβανόμενης κλήσης</value></data>
+  <data name="AuditLogTypeRecurringCallOccurrenceCreated" xml:space="preserve"><value>Δημιουργήθηκε εμφάνιση επαναλαμβανόμενης κλήσης</value></data>
+  <data name="AuditLogTypeRecurringCallAlertAcknowledged" xml:space="preserve"><value>Επιβεβαιώθηκε ειδοποίηση επαναλαμβανόμενης κλήσης</value></data>
+  <data name="AuditLogTypeRecurringCallAlertDismissed" xml:space="preserve"><value>Απορρίφθηκε ειδοποίηση επαναλαμβανόμενης κλήσης</value></data>
 </root>
 
 

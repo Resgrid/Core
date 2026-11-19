@@ -60,6 +60,26 @@ namespace Resgrid.Workers.Framework.Logic
 				catch {/* Doesn't matter */}
 
 				var dispatchedUsers = new HashSet<string>();
+				// Released ids compare case-insensitively (as Call.IsUserReleased does); dispatchedUsers keeps the resolver's own
+				// exact-match deduplication.
+				var releasedUsers = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+				// Members released (stood down) from the call are not paged again by a rebroadcast, however the call reaches them
+				// (by name, group, role or unit crew): seeding them as already reached keeps every expanded route below from
+				// selecting them, and the direct rows (which the resolver never deduplicates) check the set themselves.
+				// Read now, not from the queued call: a release made while the broadcast waited in the queue still counts. A failed
+				// read pages as before the release feature: an emergency page is not held back for a stand-down list.
+				try
+				{
+					var releases = await scope.Resolve<Resgrid.Model.Repositories.ICallPersonnelReleasesRepository>().GetByCallIdAsync(cqi.Call.CallId);
+					foreach (var release in releases ?? Enumerable.Empty<CallPersonnelRelease>())
+						if (release != null && !String.IsNullOrWhiteSpace(release.UserId))
+						{
+							dispatchedUsers.Add(release.UserId);
+							releasedUsers.Add(release.UserId);
+						}
+				}
+				catch (Exception ex) { Logging.LogException(ex, $"Call {cqi.Call.CallId} broadcast: released members could not be read; sending to every dispatched member."); }
 
 				// Everyone this broadcast reached, for dispatch re-notification (a no-op unless the department turned it on).
 				var broadcastStartedUtc = DateTime.UtcNow;
@@ -86,6 +106,12 @@ namespace Resgrid.Workers.Framework.Logic
 					foreach (var userId in selection.SelectedUserIds)
 					{
 						dispatchedUsers.Add(userId);
+						if (releasedUsers.Contains(userId))
+						{
+							DispatchTraceTelemetry.Observe(DispatchTraceStage.Skipped, reason: DispatchTraceReason.MemberIneligible, recipientId: userId);
+							continue;
+						}
+
 						try
 						{
 							var profile = cqi.Profiles.FirstOrDefault(x => x.UserId == userId);
@@ -100,6 +126,13 @@ namespace Resgrid.Workers.Framework.Logic
 				if (cqi.Call.Dispatches != null)
 					foreach (var dispatch in cqi.Call.Dispatches)
 					{
+						// A released member keeps their direct dispatch row on the record; it does not page them.
+						if (dispatch != null && releasedUsers.Contains(dispatch.UserId ?? String.Empty))
+						{
+							DispatchTraceTelemetry.Observe(DispatchTraceStage.Skipped, reason: DispatchTraceReason.MemberIneligible, recipientId: dispatch.UserId);
+							continue;
+						}
+
 						try
 						{
 							var selection = DispatchRecipientResolver.Resolve(routingTimeUtc,
@@ -145,12 +178,26 @@ namespace Resgrid.Workers.Framework.Logic
 					}
 				}
 
-				if (cqi.Call.UnitDispatches != null && cqi.Call.UnitDispatches.Any())
+				// A unit released (stood down) from the call is not paged again by a rebroadcast of it, including one released
+				// while this broadcast waited in the queue: the queued units are kept only while still live on the call now. A
+				// failed read pages the queued units, as a failed release read does for members.
+				var liveUnitDispatches = cqi.Call.GetActiveUnitDispatches();
+				if (liveUnitDispatches.Any() && cqi.Call.CallId > 0)
+				{
+					try
+					{
+						var current = await scope.Resolve<Resgrid.Model.Repositories.ICallDispatchUnitRepository>().GetCallUnitDispatchesByCallIdAsync(cqi.Call.CallId);
+						var stillLive = CallDispatchUnitReleases.ActiveUnitIds(current);
+						liveUnitDispatches = liveUnitDispatches.Where(x => stillLive.Contains(x.UnitId)).ToList();
+					}
+					catch (Exception ex) { Logging.LogException(ex, $"Call {cqi.Call.CallId} broadcast: the call's units could not be re-read; paging the queued units."); }
+				}
+				if (liveUnitDispatches.Any())
 				{
 					var _unitsService = scope.Resolve<IUnitsService>();
 					var crew = await _departmentSettingsService.GetUnitDispatchAlsoDispatchToAssignedPersonnelAsync(cqi.Call.DepartmentId);
 					var group = await _departmentSettingsService.GetUnitDispatchAlsoDispatchToGroupAsync(cqi.Call.DepartmentId);
-					foreach (var dispatch in cqi.Call.UnitDispatches)
+					foreach (var dispatch in liveUnitDispatches)
 					{
 						var unit = await _unitsService.GetUnitByIdAsync(dispatch.UnitId);
 						if (unit?.StationGroupId != null && !groupIds.Contains(unit.StationGroupId.Value)) groupIds.Add(unit.StationGroupId.Value);

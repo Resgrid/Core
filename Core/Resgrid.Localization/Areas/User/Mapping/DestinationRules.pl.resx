@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Map Icon Legend and status / priority map icon pages -->
+    <data name="PageTitle" xml:space="preserve">
+    <value>Reguły miejsc docelowych</value>
+  </data>
+  <data name="PageIntro" xml:space="preserve">
+    <value>Wskaż w Resgrid, co musi oferować miejsce docelowe zgłoszenia, aby formularz zgłoszenia i aplikacje mogły zaproponować najbliższe odpowiednie: „zgłoszenia z oparzeniami wymagają centrum leczenia oparzeń”, „śmigłowiec wymaga lądowiska dla śmigłowców”, „beczkowóz jedzie do punktu czerpania wody, który umożliwia zasysanie”. Wszystkie reguły pasujące do zgłoszenia (i jadącej jednostki) obowiązują łącznie. Miejsca docelowe to Twoje typy POI oznaczone jako miejsca docelowe; możliwościami zarządza się w sekcji Możliwości POI, a stan otwarte, przekierowanie lub zamknięte pochodzi z sekcji Dostępność miejsc docelowych.</value>
+  </data>
+  <data name="SettingsHeader" xml:space="preserve">
+    <value>Propozycje miejsc docelowych</value>
+  </data>
+  <data name="Mode" xml:space="preserve">
+    <value>Propozycje</value>
+  </data>
+  <data name="ModeOff" xml:space="preserve">
+    <value>Wyłączone</value>
+  </data>
+  <data name="ModeSuggest" xml:space="preserve">
+    <value>Proponuj miejsca docelowe</value>
+  </data>
+  <data name="ModeSuggestAndFill" xml:space="preserve">
+    <value>Proponuj i uzupełniaj miejsce docelowe</value>
+  </data>
+  <data name="ModeHelp" xml:space="preserve">
+    <value>„Proponuj miejsca docelowe” pokazuje najlepsze miejsca docelowe pod polem Cel w formularzach tworzenia i aktualizacji zgłoszenia oraz na listach miejsc docelowych w aplikacjach, wraz z czasem dojazdu i odległością. „Proponuj i uzupełniaj miejsce docelowe” dodatkowo wpisuje najlepsze miejsce w puste pole celu nowego zgłoszenia; dyspozytorzy i zespoły nadal mogą wybrać inne. Każda propozycja sprawdza czasy dojazdu, więc pozostaw tę opcję wyłączoną, jeśli nie używasz miejsc docelowych.</value>
+  </data>
+  <data name="PreferredWithinMinutes" xml:space="preserve">
+    <value>Okno preferowanych możliwości (minuty)</value>
+  </data>
+  <data name="PreferredWithinMinutesHelp" xml:space="preserve">
+    <value>Miejsce docelowe oferujące więcej preferowanych możliwości trafia na początek tylko wtedy, gdy jego czas dojazdu jest dłuższy od czasu do najbliższego o najwyżej tyle minut. 0 = tylko przy równych czasach.</value>
+  </data>
+  <data name="SaveSettings" xml:space="preserve">
+    <value>Zapisz ustawienia</value>
+  </data>
+  <data name="SettingsSaved" xml:space="preserve">
+    <value>Zapisano ustawienia propozycji miejsc docelowych.</value>
+  </data>
+  <data name="SettingsInvalid" xml:space="preserve">
+    <value>Wybierz tryb propozycji i okno od 0 do {0} minut.</value>
+  </data>
+  <data name="RulesHeader" xml:space="preserve">
+    <value>Reguły</value>
+  </data>
+  <data name="AddRule" xml:space="preserve">
+    <value>Dodaj regułę</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Nazwa</value>
+  </data>
+  <data name="When" xml:space="preserve">
+    <value>Kiedy</value>
+  </data>
+  <data name="Destination" xml:space="preserve">
+    <value>Miejsce docelowe</value>
+  </data>
+  <data name="Requires" xml:space="preserve">
+    <value>Wymaga</value>
+  </data>
+  <data name="Prefers" xml:space="preserve">
+    <value>Preferuje</value>
+  </data>
+  <data name="EveryCall" xml:space="preserve">
+    <value>Każde zgłoszenie</value>
+  </data>
+  <data name="AnyDestinationType" xml:space="preserve">
+    <value>Dowolny typ miejsca docelowego</value>
+  </data>
+  <data name="CallTypeCondition" xml:space="preserve">
+    <value>Typ zgłoszenia: {0}</value>
+  </data>
+  <data name="PriorityCondition" xml:space="preserve">
+    <value>Priorytet: {0}</value>
+  </data>
+  <data name="UnitTypeCondition" xml:space="preserve">
+    <value>Typ jednostki: {0}</value>
+  </data>
+  <data name="DeletedChoice" xml:space="preserve">
+    <value>(usunięte)</value>
+  </data>
+  <data name="NeedsAttention" xml:space="preserve">
+    <value>Wymaga uwagi: {0} z jej typów lub możliwości usunięto i są pomijane.</value>
+  </data>
+  <data name="AllTypesRemoved" xml:space="preserve">
+    <value>Nigdy nie obowiązuje: usunięto wszystkie wskazane w niej typy miejsc docelowych.</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Edytuj</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Usuń</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Zapisz</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Anuluj</value>
+  </data>
+  <data name="DeleteRuleConfirm" xml:space="preserve">
+    <value>Usunąć regułę „{0}”?</value>
+  </data>
+  <data name="NoRules" xml:space="preserve">
+    <value>Nie ma jeszcze reguł miejsc docelowych. Bez reguł proponowane są wszystkie miejsca docelowe, najpierw najbliższe otwarte.</value>
+  </data>
+  <data name="NoDestinationTypes" xml:space="preserve">
+    <value>Żaden typ POI nie jest jeszcze oznaczony jako miejsce docelowe. Przed dodaniem reguł oznacz jeden jako miejsce docelowe w sekcji Mapowanie, POI.</value>
+  </data>
+  <data name="RuleSaved" xml:space="preserve">
+    <value>Zapisano regułę „{0}”.</value>
+  </data>
+  <data name="RuleDeleted" xml:space="preserve">
+    <value>Usunięto regułę „{0}”.</value>
+  </data>
+  <data name="RuleNameRequired" xml:space="preserve">
+    <value>Wpisz nazwę o długości maksymalnie {0} znaków.</value>
+  </data>
+  <data name="RuleNothingRequired" xml:space="preserve">
+    <value>Wybierz co najmniej jeden typ miejsca docelowego lub możliwość.</value>
+  </data>
+  <data name="RuleChoicesChanged" xml:space="preserve">
+    <value>Wybrany typ zgłoszenia, priorytet, typ jednostki, typ miejsca docelowego lub możliwość już nie istnieje. Sprawdź wybór i zapisz ponownie.</value>
+  </data>
+  <data name="NewRule" xml:space="preserve">
+    <value>Nowa reguła</value>
+  </data>
+  <data name="EditRule" xml:space="preserve">
+    <value>Edytuj regułę</value>
+  </data>
+  <data name="RuleNameHelp" xml:space="preserve">
+    <value>Pokazywana dyspozytorom jako powód wymagania, np. „Oparzenia” lub „Lądowanie śmigłowca”.</value>
+  </data>
+  <data name="AppliesWhen" xml:space="preserve">
+    <value>Obowiązuje, gdy</value>
+  </data>
+  <data name="AppliesWhenHelp" xml:space="preserve">
+    <value>Pozostaw wszystkie trzy na „Dowolny”, aby reguła obowiązywała dla każdego zgłoszenia. Reguły typu jednostki obowiązują, gdy jedzie jednostka tego rodzaju (jej lista miejsc docelowych statusu w aplikacjach), a nie dla miejsca docelowego samego zgłoszenia.</value>
+  </data>
+  <data name="CallType" xml:space="preserve">
+    <value>Typ zgłoszenia</value>
+  </data>
+  <data name="Priority" xml:space="preserve">
+    <value>Priorytet</value>
+  </data>
+  <data name="UnitType" xml:space="preserve">
+    <value>Typ jednostki</value>
+  </data>
+  <data name="Any" xml:space="preserve">
+    <value>Dowolny</value>
+  </data>
+  <data name="DestinationTypes" xml:space="preserve">
+    <value>Typy miejsc docelowych</value>
+  </data>
+  <data name="DestinationTypesHelp" xml:space="preserve">
+    <value>Miejsce docelowe musi być jednego z tych typów; jeśli żaden nie jest zaznaczony, pasuje każdy typ. Gdy dwie reguły wskazują typy, które się nie pokrywają, wygrywa reguła bardziej szczegółowa (najpierw reguły typu jednostki), a druga zostaje pominięta.</value>
+  </data>
+  <data name="RequiredCapabilities" xml:space="preserve">
+    <value>Wymagane możliwości</value>
+  </data>
+  <data name="RequiredCapabilitiesHelp" xml:space="preserve">
+    <value>Proponowane miejsce docelowe musi oferować wszystkie te możliwości. Jeśli żadne miejsce w zasięgu ich nie oferuje, nic nie jest uzupełniane, a najbliższe są pokazywane wraz z tym, czego im brakuje.</value>
+  </data>
+  <data name="PreferredCapabilities" xml:space="preserve">
+    <value>Preferowane możliwości</value>
+  </data>
+  <data name="PreferredCapabilitiesHelp" xml:space="preserve">
+    <value>Rozstrzygają niemal równe przypadki: w oknie preferowanych możliwości pierwsze jest miejsce docelowe oferujące ich więcej.</value>
+  </data>
+  <data name="NoCapabilities" xml:space="preserve">
+    <value>Nie ma jeszcze możliwości POI.</value>
+  </data>
+  <data name="ManageCapabilities" xml:space="preserve">
+    <value>Zarządzaj możliwościami POI</value>
+  </data>
+  <data name="TryIt" xml:space="preserve">
+    <value>Wypróbuj</value>
+  </data>
+  <data name="TryItHelp" xml:space="preserve">
+    <value>Wybierz typ zgłoszenia, priorytet i typ jednostki, aby zobaczyć, które reguły obowiązują i jakie musi być miejsce docelowe.</value>
+  </data>
+  <data name="TryItButton" xml:space="preserve">
+    <value>Pokaż</value>
+  </data>
+  <data name="AppliedRules" xml:space="preserve">
+    <value>Obowiązujące reguły</value>
+  </data>
+  <data name="SetAsideRules" xml:space="preserve">
+    <value>Pominięte</value>
+  </data>
+  <data name="NoRulesApply" xml:space="preserve">
+    <value>Żadna reguła nie obowiązuje: dowolny typ miejsca docelowego, brak wymagań.</value>
+  </data>
+  <data name="SetAsideTypesRemoved" xml:space="preserve">
+    <value>usunięto jej typy miejsc docelowych</value>
+  </data>
+  <data name="SetAsideTypeConflict" xml:space="preserve">
+    <value>bardziej szczegółowa reguła kieruje do innych typów miejsc docelowych</value>
+  </data>
+  <data name="NothingRequired" xml:space="preserve">
+    <value>nic</value>
+  </data>
+  <data name="DestinationRulesLink" xml:space="preserve">
+    <value>Reguły miejsc docelowych</value>
+  </data>
+  <data name="SuggestedDestinations" xml:space="preserve">
+    <value>Proponowane</value>
+  </data>
+  <data name="SuggestionLoading" xml:space="preserve">
+    <value>Wyszukiwanie miejsc docelowych...</value>
+  </data>
+  <data name="SuggestionNone" xml:space="preserve">
+    <value>Nie znaleziono miejsca docelowego wymaganego rodzaju.</value>
+  </data>
+  <data name="SuggestionNoneMeet" xml:space="preserve">
+    <value>Żadne pobliskie miejsce docelowe nie oferuje wszystkiego, co wymagane; pokazano najbliższe.</value>
+  </data>
+  <data name="SuggestionNeeds" xml:space="preserve">
+    <value>Wymaga: {0}</value>
+  </data>
+  <data name="SuggestionPrefers" xml:space="preserve">
+    <value>Preferuje: {0}</value>
+  </data>
+  <data name="SuggestionRules" xml:space="preserve">
+    <value>Reguły: {0}</value>
+  </data>
+  <data name="UseDestination" xml:space="preserve">
+    <value>Użyj</value>
+  </data>
+  <data name="InUse" xml:space="preserve">
+    <value>Wybrane</value>
+  </data>
+  <data name="SuggestedBadge" xml:space="preserve">
+    <value>Propozycja</value>
+  </data>
+  <data name="FilledAutomatically" xml:space="preserve">
+    <value>Uzupełniono proponowanym miejscem docelowym. W razie potrzeby wybierz inne.</value>
+  </data>
+  <data name="MissingCapabilities" xml:space="preserve">
+    <value>Brak: {0}</value>
+  </data>
+  <data name="DownCapabilities" xml:space="preserve">
+    <value>Obecnie niedostępne: {0}</value>
+  </data>
+  <data name="MinutesShort" xml:space="preserve">
+    <value>{0} min</value>
+  </data>
+  <data name="KilometersShort" xml:space="preserve">
+    <value>{0} km</value>
+  </data>
+  <data name="StraightLineKilometers" xml:space="preserve">
+    <value>{0} km w linii prostej</value>
+  </data>
+  <data name="StatusLimited" xml:space="preserve">
+    <value>Ograniczone</value>
+  </data>
+  <data name="StatusDiversion" xml:space="preserve">
+    <value>Przekierowanie</value>
+  </data>
+  <data name="StatusClosed" xml:space="preserve">
+    <value>Zamknięte</value>
+  </data>
+  <data name="SuggestionFailed" xml:space="preserve">
+    <value>Propozycje miejsc docelowych są obecnie niedostępne.</value>
+  </data>
+  <data name="SuggestionRetry" xml:space="preserve">
+    <value>Spróbuj ponownie</value>
+  </data>
+  <data name="PreviewLoading" xml:space="preserve">
+    <value>Sprawdzanie reguł...</value>
+  </data>
+  <data name="PreviewFailed" xml:space="preserve">
+    <value>Nie można teraz sprawdzić reguł. Spróbuj ponownie.</value>
+  </data>
+</root>

@@ -188,6 +188,12 @@ namespace Resgrid.Web.Services.Models.v4.Configs
 		public bool TransportDestinationChecks { get; set; }
 
 		/// <summary>
+		/// Destination suggestions (Mapping → Destination Rules): 0 off, 1 suggest (show Mapping/GetSuggestedDestinations next
+		/// to destination pickers), 2 suggest and fill an empty destination. Only signed-in callers get it; 0 otherwise.
+		/// </summary>
+		public int DestinationSuggestionMode { get; set; }
+
+		/// <summary>
 		/// Latitude every map in every client should open on for this department. Resolved from the
 		/// department's configured map center, falling back to its address and finally to a system
 		/// default, so this is always populated.

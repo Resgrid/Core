@@ -224,6 +224,45 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task a_unit_released_from_the_call_is_not_sent_straight_back_to_it()
+		{
+			await _service.CreateFromRecommendationAsync(_call, ResultWithOutstandingMug(), "user-1");
+			_config.WaitingCallAutoDispatch = true;
+			_units.Setup(x => x.GetLastUnitStateByUnitIdAsync(1)).ReturnsAsync(new UnitState { UnitId = 1, State = (int)UnitStateTypes.Available, SetByUserId = "crew" });
+			_events.Invocations.Clear();
+
+			// The release status of a unit just stood down from this call is written against it.
+			await _service.OnUnitStateSavedAsync(DepartmentId,
+				new UnitState { UnitId = 1, State = (int)UnitStateTypes.Available, Timestamp = DateTime.UtcNow, DestinationId = CallId, DestinationType = (int)DestinationEntityTypes.Call },
+				new UnitState { UnitId = 1, State = (int)UnitStateTypes.Committed, Timestamp = DateTime.UtcNow.AddMinutes(-30) });
+
+			_repository.Verify(x => x.TryClaimAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()), Times.Never);
+			_queue.Verify(x => x.EnqueueCallBroadcastAsync(It.IsAny<CallQueueItem>(), It.IsAny<CancellationToken>()), Times.Never);
+			_events.Verify(x => x.SendMessageAsync(It.IsAny<OutstandingRequirementsUpdatedEvent>()), Times.Never);
+			_stored.Single().IsOpen.Should().BeTrue();
+		}
+
+		[Test]
+		public async Task a_released_unit_no_longer_covers_an_open_requirement()
+		{
+			await _service.CreateFromRecommendationAsync(_call, ResultWithOutstandingMug(requiredCount: 2), "user-1");
+			var createdOn = _stored.Single().CreatedOn;
+			_units.Setup(x => x.GetUnitsForDepartmentUnlimitedAsync(DepartmentId)).ReturnsAsync(new List<Unit>
+			{
+				new Unit { UnitId = 1, DepartmentId = DepartmentId, Name = "M-1", Type = "MUG" },
+				new Unit { UnitId = 2, DepartmentId = DepartmentId, Name = "P-21", Type = "PIT" },
+				new Unit { UnitId = 3, DepartmentId = DepartmentId, Name = "M-3", Type = "MUG" }
+			});
+
+			// One MUG sent after the requirement was written, then stood down; a second one arrives.
+			_call.UnitDispatches.Add(new CallDispatchUnit { CallId = CallId, UnitId = 1, DispatchedOn = createdOn.AddMinutes(2), ReleasedOn = createdOn.AddMinutes(4) });
+			_call.UnitDispatches.Add(new CallDispatchUnit { CallId = CallId, UnitId = 3, DispatchedOn = createdOn.AddMinutes(5) });
+
+			(await _service.GetForCallAsync(DepartmentId, CallId)).Should().ContainSingle("only one MUG is live on the call");
+			_stored.Single().ResolvedCount.Should().Be(1);
+		}
+
+		[Test]
 		public async Task a_unit_reporting_available_again_does_not_alert_twice()
 		{
 			await _service.CreateFromRecommendationAsync(_call, ResultWithOutstandingMug(), "user-1");

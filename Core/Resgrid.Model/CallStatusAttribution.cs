@@ -62,8 +62,9 @@ namespace Resgrid.Model
 
 		/// <summary>
 		/// One unit's/person's dispatches, one span per call, as that call's own walk sees them: from the earliest dispatch (the
-		/// call's logging when the dispatch has no time) to the call's close, or now while it is open; engagement is required
-		/// only when every dispatch to the call was a group or role page.
+		/// call's logging when the dispatch has no time) to the call's close, or now while it is open, or to the unit's release
+		/// from the call when every dispatch to it was released earlier; engagement is required only when every dispatch to the
+		/// call was a group or role page.
 		/// </summary>
 		public static List<CallDispatchSpan> DispatchSpans(IEnumerable<CallDispatchWindow> windows, DateTime nowUtc)
 		{
@@ -72,9 +73,24 @@ namespace Resgrid.Model
 				.GroupBy(x => x.CallId)
 				.Select(g => new CallDispatchSpan(g.Key,
 					g.Min(x => x.DispatchedOn == default(DateTime) ? x.LoggedOn : x.DispatchedOn),
-					g.First().ClosedOn ?? nowUtc,
+					SpanEnd(g.ToList(), nowUtc),
 					g.All(x => x.Paged)))
 				.ToList();
+		}
+
+		private static DateTime SpanEnd(List<CallDispatchWindow> windows, DateTime nowUtc)
+		{
+			var end = windows[0].ClosedOn ?? nowUtc;
+
+			// A dispatch still live keeps the span open to the close; only a unit released on every dispatch left early.
+			if (windows.All(x => x.ReleasedOn.HasValue))
+			{
+				var released = windows.Max(x => x.ReleasedOn.Value);
+				if (released < end)
+					end = released;
+			}
+
+			return end;
 		}
 
 		/// <summary>

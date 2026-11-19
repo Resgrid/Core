@@ -2273,4 +2273,17 @@
   <data name="NoAlarmActivity" xml:space="preserve"><value>Тут ще не зафіксовано сповіщувачів чи заходів зі зниження ризиків.</value></data>
   <data name="RecordAlarmLeft" xml:space="preserve"><value>Зафіксувати залишений сповіщувач</value></data>
   <data name="AlarmsRequestedColumnHelp" xml:space="preserve"><value>Усього запитаних пристроїв (лише дим / лише CO / комбіновані)</value></data>
+  <data name="IncidentReportDeleted" xml:space="preserve"><value>Звіт про інцидент видалено.</value></data>
+  <data name="DeleteIncidentReport" xml:space="preserve"><value>Видалити</value></data>
+  <data name="DeleteIncidentReportConfirm" xml:space="preserve"><value>Видалити цей звіт про інцидент? Його буде прибрано з усіх списків, його виклик звільниться для нового звіту, а вміст буде стерто через {0} дн.</value></data>
+  <data name="DeleteIncidentReportHelp" xml:space="preserve"><value>Прибирає звіт з усіх списків і звільняє його виклик для нового звіту. Звіт, який ніколи не був завершений, спочатку скасовується. Вміст стирається через {0} дн.</value></data>
+  <data name="DeleteVoidedReasonPrompt" xml:space="preserve"><value>Чому цей анульований звіт видаляється?</value></data>
+  <data name="DeleteRefusedNotDeletable" xml:space="preserve"><value>Завершений звіт не можна видалити. Спочатку анулюйте його.</value></data>
+  <data name="DeleteRefusedVoidedNeedsAdmin" xml:space="preserve"><value>Лише адміністратор підрозділу може видалити анульований звіт.</value></data>
+  <data name="DeleteRefusedReasonRequired" xml:space="preserve"><value>Вкажіть причину, щоб видалити анульований звіт.</value></data>
+  <data name="DeleteRefusedSubmittedExternally" xml:space="preserve"><value>Цей звіт було надіслано до зовнішньої системи, як-от NERIS, тому його не можна видалити. Натомість анулюйте його.</value></data>
+  <data name="DeleteRefusedLegalHold" xml:space="preserve"><value>Цей звіт підпадає під юридичне утримання, тому його не можна видалити.</value></data>
+  <data name="DeleteRefusedPermanentContent" xml:space="preserve"><value>Цей звіт містить записи про постраждалих, рятування або вплив, які зберігаються назавжди. Приберіть їх із чернетки, перш ніж видаляти звіт.</value></data>
+  <data name="DeleteRefusedAmendmentOpen" xml:space="preserve"><value>Скасуйте відкриту зміну, перш ніж видаляти цей звіт.</value></data>
+  <data name="IncludeClosedReports" xml:space="preserve"><value>Включити скасовані та анульовані</value></data>
 </root>

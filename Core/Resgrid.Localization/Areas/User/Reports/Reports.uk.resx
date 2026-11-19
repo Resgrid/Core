@@ -329,6 +329,9 @@
   <data name="CallUnitTimesClearedHeader" xml:space="preserve">
     <value>Звільнено</value>
   </data>
+  <data name="CallUnitTimesReleasedHeader" xml:space="preserve">
+    <value>Відкликано</value>
+  </data>
   <data name="CallUnitTimesSourceHeader" xml:space="preserve">
     <value>Пов’язано через</value>
   </data>

@@ -628,6 +628,12 @@ var resgrid;
             newcall.applyRecommendationSelections = applyRecommendationSelections;
 
             function checkForRecommendations() {
+                // Every type, priority, template and location change ends here (map, search and drag write the fields with
+                // .val(), which raises no change event), so the suggested destinations refresh with the run card.
+                if (resgrid.dispatch.destinations) {
+                    resgrid.dispatch.destinations.schedule();
+                }
+
                 var callPriorityVal = $('#CallPriority').val();
                 var callTypeVal = $('#Call_Type').val();
                 var lat = $('#Latitude').val();

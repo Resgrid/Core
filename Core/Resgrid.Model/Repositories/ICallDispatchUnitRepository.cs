@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Resgrid.Model.Repositories
@@ -40,5 +41,11 @@ namespace Resgrid.Model.Repositories
 		/// calls logged from <paramref name="loggedFrom"/>.
 		/// </summary>
 		Task<IEnumerable<CallDispatchWindow>> GetUnitDispatchWindowsAsync(int departmentId, DateTime startDate, DateTime endDate, DateTime loggedFrom);
+
+		/// <summary>
+		/// Marks the dispatch released (stood down) only while it is still live (no ReleasedOn): of two requests releasing the
+		/// same unit at once, one changes the row and the other changes nothing. True when this call changed it.
+		/// </summary>
+		Task<bool> TryReleaseAsync(int callDispatchUnitId, DateTime releasedOnUtc, string releasedByUserId, CancellationToken cancellationToken = default(CancellationToken));
 	}
 }

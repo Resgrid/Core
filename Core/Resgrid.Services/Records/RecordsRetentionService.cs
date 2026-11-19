@@ -20,6 +20,10 @@ namespace Resgrid.Services.Records
 	/// <item><b>Retention.</b> Records past their resolved retention period lose their content and keep their
 	/// identity — a content-free tombstone (plan section 4.9), so a reference to a purged Record still resolves
 	/// to a Record that says it was purged rather than to nothing.</item>
+	/// <item><b>Deleted incident reports.</b> A deleted report keeps its content for
+	/// <c>RecordsRetentionConfig.DeletedIncidentReportPurgeDays</c> (so a mistaken delete can be recovered), then gets the
+	/// same tombstone, whatever its retention period. A never-finalized cancelled Record closes on its cancel date and is
+	/// purged on the normal schedule rather than never.</item>
 	/// <item><b>Legal hold.</b> Anything an active hold covers is skipped, and the refusal is written to the
 	/// access audit. A silent skip would be indistinguishable from a sweep that never ran.</item>
 	/// <item><b>Attachment rescan.</b> Attachments left at Pending — stored while the scanner was unreachable
@@ -83,6 +87,7 @@ namespace Resgrid.Services.Records
 					var department = await ProcessDepartmentAsync(cutover.DepartmentId, cancellationToken);
 					result.RecordsEvaluated += department.RecordsEvaluated;
 					result.RecordsPurged += department.RecordsPurged;
+					result.DeletedReportsPurged += department.DeletedReportsPurged;
 					result.SearchErasuresPending += department.SearchErasuresPending;
 					result.AttachmentsPurged += department.AttachmentsPurged;
 					result.HeldByLegalHold += department.HeldByLegalHold;
@@ -99,7 +104,7 @@ namespace Resgrid.Services.Records
 
 			await PurgeOrphanedDepartmentsAsync(result, cancellationToken);
 
-			result.Message = $"{result.DepartmentsEvaluated} departments, {result.RecordsPurged} database content purges, {result.SearchErasuresPending} awaiting committed search erasure, {result.HeldByLegalHold} held, {result.AttachmentsRescanned} rescanned, {result.OrphanedDepartmentsPurged} deleted departments purged ({result.OrphanedDepartmentsHeld} held).";
+			result.Message = $"{result.DepartmentsEvaluated} departments, {result.RecordsPurged} database content purges ({result.DeletedReportsPurged} deleted reports), {result.SearchErasuresPending} awaiting committed search erasure, {result.HeldByLegalHold} held, {result.AttachmentsRescanned} rescanned, {result.OrphanedDepartmentsPurged} deleted departments purged ({result.OrphanedDepartmentsHeld} held).";
 			return result;
 		}
 
@@ -174,19 +179,50 @@ namespace Resgrid.Services.Records
 				}
 				if (page.Count < MaxRecordsPerDepartment) break;
 			}
+			// Deleted incident reports past their recovery window: erased whatever their retention period.
+			after = null;
+			var deletedBefore = now.AddDays(-IncidentReportsService.DeletedPurgeDays());
+			while (true)
+			{
+				cancellationToken.ThrowIfCancellationRequested();
+				List<RmsIncidentReport> page;
+				try
+				{
+					page = (await _incidentReports.GetDeletedPurgeCandidatesAsync(departmentId, deletedBefore, MaxRecordsPerDepartment, after, cancellationToken))?.ToList() ?? new List<RmsIncidentReport>();
+				}
+				catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { throw; }
+				catch (Exception ex)
+				{
+					// A failed lookup leaves the rest for the next sweep; the purges already committed are still counted and
+					// the attachment rescan below still runs.
+					Logging.LogException(ex, $"Deleted incident report discovery failed for department {departmentId}; it will be retried.");
+					result.Errors++;
+					break;
+				}
+				if (page.Count == 0) break;
+				after = page.Last().RmsIncidentReportId;
+				foreach (var report in page)
+				{
+					result.RecordsEvaluated++;
+					if (await ConsiderIncidentReportAsync(departmentId, report, policy, holds, now, result, cancellationToken))
+						result.DeletedReportsPurged++;
+				}
+				if (page.Count < MaxRecordsPerDepartment) break;
+			}
 			await RescanPendingAttachmentsAsync(departmentId, now, result, cancellationToken);
 			return result;
 		}
 
-		private Task ConsiderOperationalAsync(int departmentId, RmsOperationalRecord record, RecordsRetentionPolicy policy,
+		private Task<bool> ConsiderOperationalAsync(int departmentId, RmsOperationalRecord record, RecordsRetentionPolicy policy,
 			List<RmsRecordLegalHold> holds, DateTime now, RecordsRetentionSweepResult result, CancellationToken cancellationToken)
 			=> ConsiderAsync(departmentId, record.RmsOperationalRecordId, RmsRecordKind.Operational, record.RowVersion, now, result, cancellationToken);
 
-		private Task ConsiderIncidentReportAsync(int departmentId, RmsIncidentReport report, RecordsRetentionPolicy policy,
+		private Task<bool> ConsiderIncidentReportAsync(int departmentId, RmsIncidentReport report, RecordsRetentionPolicy policy,
 			List<RmsRecordLegalHold> holds, DateTime now, RecordsRetentionSweepResult result, CancellationToken cancellationToken)
 			=> ConsiderAsync(departmentId, report.RmsIncidentReportId, RmsRecordKind.IncidentReport, report.RowVersion, now, result, cancellationToken);
 
-		private async Task ConsiderAsync(int departmentId, string recordId, RmsRecordKind kind, long version, DateTime now,
+		/// <summary>True when the record's content was purged.</summary>
+		private async Task<bool> ConsiderAsync(int departmentId, string recordId, RmsRecordKind kind, long version, DateTime now,
 			RecordsRetentionSweepResult result, CancellationToken cancellationToken)
 		{
 			try
@@ -203,9 +239,10 @@ namespace Resgrid.Services.Records
 					result.HeldByLegalHold++;
 					await AuditAsync(departmentId, recordId, HeldAuditPurpose, new { outcome.Reason }, now, cancellationToken);
 				}
+				return outcome.Purged;
 			}
 			catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { throw; }
-			catch (Exception ex) { Logging.LogException(ex, "RMS retention purge failed."); result.Errors++; }
+			catch (Exception ex) { Logging.LogException(ex, "RMS retention purge failed."); result.Errors++; return false; }
 		}
 		/// <summary>RecordPurged (159): the identity that was purged and what went with it; the content is gone, so nothing else can be carried.</summary>
 		private async Task EnqueuePurgedAsync(int departmentId, string recordId, RmsRecordKind kind, long version, RmsPurgeResult outcome, DateTime now, CancellationToken cancellationToken)

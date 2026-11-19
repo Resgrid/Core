@@ -1377,7 +1377,7 @@
     <value>Exemple :</value>
   </data>
   <data name="CallNumberPatternHelp" xml:space="preserve">
-    <value>Texte fixe (lettres, chiffres, - _ . /) autour de jetons : {YYYY} ou {YY} l'année, {MM} le mois, {DD} le jour et {SEQ} la séquence, qui doit apparaître une seule fois. La séquence recommence à 1 chaque fois que la date du numéro change : chaque année avec une année, chaque mois avec {MM}, chaque jour avec {DD}, et jamais sans date. {MM} nécessite une année et {DD} nécessite {MM}. Les dates utilisent le fuseau horaire du service.</value>
+    <value>Texte fixe (lettres, chiffres, - _ . / :) autour de jetons : {YYYY} ou {YY} l'année, {MM} le mois, {DD} le jour, {HH} l'heure, {MIN} la minute et {SEQ} la séquence, qui doit apparaître une seule fois. La séquence recommence à 1 chaque fois que la date du numéro change : chaque année avec une année, chaque mois avec {MM}, chaque jour avec {DD}, et jamais sans date ; l'heure et la minute ne la font jamais recommencer. {MM} nécessite une année, {DD} nécessite {MM}, {HH} nécessite {DD} et {MIN} nécessite {HH}. Les dates et heures utilisent le fuseau horaire du service.</value>
   </data>
   <data name="CallNumberSequenceWidth" xml:space="preserve">
     <value>Chiffres de la séquence</value>
@@ -1410,7 +1410,7 @@
     <value>Relever le prochain numéro d'appel ? Il peut seulement être relevé, jamais abaissé.</value>
   </data>
   <data name="CallNumberPatternInvalid" xml:space="preserve">
-    <value>La numérotation des appels n'a pas été enregistrée. Le modèle doit contenir {SEQ} exactement une fois, ne peut contenir que des lettres, des chiffres, - _ . / et les jetons {YYYY}, {YY}, {MM} et {DD}, nécessite une année pour {MM} et {MM} pour {DD}, et ne peut pas dépasser 40 caractères.</value>
+    <value>La numérotation des appels n'a pas été enregistrée. Le modèle doit contenir {SEQ} exactement une fois, ne peut contenir que des lettres, des chiffres, - _ . / : et les jetons {YYYY}, {YY}, {MM}, {DD}, {HH} et {MIN}, chacun au plus une fois (la minute est {MIN}, {MM} est le mois), nécessite une année pour {MM}, {MM} pour {DD}, {DD} pour {HH} et {HH} pour {MIN}, et ne peut pas dépasser 40 caractères.</value>
   </data>
   <data name="CallNumberNextBelowCurrent" xml:space="preserve">
     <value>Le prochain numéro d'appel n'a pas été relevé : il ne peut être relevé qu'au-dessus du numéro que le prochain appel reçoit déjà ({0}).</value>

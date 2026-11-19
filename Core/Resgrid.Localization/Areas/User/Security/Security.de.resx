@@ -2732,4 +2732,14 @@
   <data name="PermRecordsShareCoordinationBoardsNote" xml:space="preserve">
     <value>Ermöglicht das Freigeben einer Koordinationstafel für Partnerbehörden.</value>
   </data>
+  <data name="AuditLogTypeRecurringCallCreated" xml:space="preserve"><value>Wiederkehrender Einsatz erstellt</value></data>
+  <data name="AuditLogTypeRecurringCallUpdated" xml:space="preserve"><value>Wiederkehrender Einsatz aktualisiert</value></data>
+  <data name="AuditLogTypeRecurringCallPaused" xml:space="preserve"><value>Wiederkehrender Einsatz pausiert</value></data>
+  <data name="AuditLogTypeRecurringCallResumed" xml:space="preserve"><value>Wiederkehrender Einsatz fortgesetzt</value></data>
+  <data name="AuditLogTypeRecurringCallDeleted" xml:space="preserve"><value>Wiederkehrender Einsatz gelöscht</value></data>
+  <data name="AuditLogTypeRecurringCallOccurrenceSkipped" xml:space="preserve"><value>Termin eines wiederkehrenden Einsatzes übersprungen</value></data>
+  <data name="AuditLogTypeRecurringCallOccurrenceRestored" xml:space="preserve"><value>Termin eines wiederkehrenden Einsatzes wiederhergestellt</value></data>
+  <data name="AuditLogTypeRecurringCallOccurrenceCreated" xml:space="preserve"><value>Termin eines wiederkehrenden Einsatzes angelegt</value></data>
+  <data name="AuditLogTypeRecurringCallAlertAcknowledged" xml:space="preserve"><value>Benachrichtigung zu wiederkehrendem Einsatz bestätigt</value></data>
+  <data name="AuditLogTypeRecurringCallAlertDismissed" xml:space="preserve"><value>Benachrichtigung zu wiederkehrendem Einsatz verworfen</value></data>
 </root>

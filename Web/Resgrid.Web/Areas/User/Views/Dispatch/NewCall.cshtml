@@ -321,6 +321,7 @@
                                     }
                                 </div>
                             </div>
+                            <partial name="_DestinationSuggestions" view-data='new ViewDataDictionary(ViewData) { { "DestinationSuggestionsFill", true } }' />
                         }
                         @if (Model.IsFieldVisible(NewCallFieldKeys.IndoorLocation))
                         {
@@ -703,6 +704,7 @@
     <partial name="_MapKitConfig" />
     <script src="~/js/app/internal/dispatch/resgrid.dispatch.runcarddecision.js"></script>
     <script src="~/js/app/internal/dispatch/resgrid.dispatch.nearestboard.js"></script>
+    <script src="~/js/app/internal/dispatch/resgrid.dispatch.destinations.js"></script>
     <script src="~/js/app/internal/dispatch/resgrid.dispatch.newcall.js"></script>
 
     <script type="text/javascript">

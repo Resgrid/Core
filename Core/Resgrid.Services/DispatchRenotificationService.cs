@@ -213,6 +213,16 @@ namespace Resgrid.Services
 
 				var nextNotifyOn = attempt >= maxRetries ? (DateTime?)null : nowUtc.AddMinutes(intervalMinutes);
 
+				// The call's lists were read before this row's acknowledgment lookup: a unit or member released (stood down), or
+				// taken off the call, since then is checked against the call as it is now, before anything is claimed or sent.
+				var current = await _callsService.PopulateCallData(new Call { CallId = call.CallId, DepartmentId = call.DepartmentId },
+					true, false, false, true, true, true, false, false, false);
+				if (current != null && !IsStillDispatched(current, row))
+				{
+					toCancel.Add(row.DispatchRenotificationId);
+					continue;
+				}
+
 				// Claim before sending: an overlapping sweep that loses the claim sends nothing.
 				if (!await _dispatchRenotificationsRepository.TryClaimAttemptAsync(row.DispatchRenotificationId, row.Attempts, attempt, nextNotifyOn, nowUtc, cancellationToken))
 					continue;
@@ -275,12 +285,16 @@ namespace Resgrid.Services
 
 		/// <summary>
 		/// Whether the recipient is still on the call: a person dispatched by name, or through the group, role or unit they were
-		/// reached by; a unit still dispatched. Expects the call's dispatch lists to be loaded.
+		/// reached by; a unit still dispatched and not released from the call. Expects the call's dispatch lists to be loaded.
 		/// </summary>
 		public static bool IsStillDispatched(Call call, DispatchRenotification row)
 		{
 			if (row.RecipientType == (int)DispatchRenotifyRecipientTypes.Unit)
-				return int.TryParse(row.RecipientId, out var unitId) && (call.UnitDispatches?.Any(d => d.UnitId == unitId) ?? false);
+				return int.TryParse(row.RecipientId, out var unitId) && call.IsUnitOnCall(unitId);
+
+			// A member released (stood down) from the call is off it however they were reached.
+			if (call.IsUserReleased(row.RecipientId))
+				return false;
 
 			if (call.Dispatches?.Any(d => string.Equals(d.UserId, row.RecipientId, StringComparison.OrdinalIgnoreCase)) ?? false)
 				return true;
@@ -295,7 +309,7 @@ namespace Resgrid.Services
 					return call.RoleDispatches?.Any(d => d.RoleId == sourceId) ?? false;
 				case DispatchRenotifySourceTypes.UnitCrew:
 				case DispatchRenotifySourceTypes.UnitGroup:
-					return call.UnitDispatches?.Any(d => d.UnitId == sourceId) ?? false;
+					return call.IsUnitOnCall(sourceId);
 				default:
 					// Dispatched by name and no longer on the call's list.
 					return false;

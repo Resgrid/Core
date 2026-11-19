@@ -70,6 +70,8 @@ namespace Resgrid.Services.Records
 		private readonly IIncidentSourceFeedService _feeds;
 		private readonly IRecordsProtectionService _protection;
 		private readonly IDepartmentsService _departments;
+		private readonly IRmsIncidentAnalysesRepository _analyses;
+		private readonly IRmsRecordLegalHoldsRepository _legalHolds;
 
 		public IncidentReportsService(IRmsIncidentReportsRepository reports, IRmsSourceFactsRepository facts, IRmsUnitResponsesRepository units,
 			IRmsIncidentTypesRepository types, IRmsActionTacticsRepository tactics, IRmsAidsRepository aids, IRmsLocationsRepository locations,
@@ -80,8 +82,11 @@ namespace Resgrid.Services.Records
 			IDepartmentGroupsService groups, IUserProfileService profiles, IPersonnelRolesService roles, IUnitsService unitsService, ICallsService calls,
 			IDepartmentDataProtectionService dataProtection, IUnitOfWork unitOfWork, INerisProfileService neris, INerisMappingService mapping,
 			INerisValidationService validation, IRecordsAuthorizationService authorization, IRmsRecordAttachmentsRepository attachments, IRmsEvidenceArtifactsRepository evidence, IRecordsUdfService udf, IRecordsEvidenceService evidenceService,
-			IIncidentSourceFeedService feeds, IRecordsProtectionService protection, IDepartmentsService departments)
+			IIncidentSourceFeedService feeds, IRecordsProtectionService protection, IDepartmentsService departments,
+			IRmsIncidentAnalysesRepository analyses, IRmsRecordLegalHoldsRepository legalHolds)
 		{
+			_analyses = analyses;
+			_legalHolds = legalHolds;
 			_departments = departments;
 			_protection = protection;
 			_feeds = feeds;
@@ -139,7 +144,8 @@ namespace Resgrid.Services.Records
 			// SingleAuthoritative (plan 5.2.1): a second start returns the existing report, never a duplicate. The
 			// entity-scoped lookup is not enough on its own — a report started before the NERIS profile was
 			// configured carries the placeholder entity, and matching only the current one would start a second
-			// authoritative report for the same call the moment the department sets its entity id.
+			// authoritative report for the same call the moment the department sets its entity id. A cancelled or deleted
+			// report does not count (M0318): one started by mistake must not keep the Call from getting its real report.
 			var existing = await _reports.GetByCallAsync(departmentId, callId, entity)
 				?? (await _reports.GetByCallAnyEntityAsync(departmentId, callId))?.FirstOrDefault(r => !r.DeletedOn.HasValue);
 			if (existing != null && !existing.DeletedOn.HasValue)
@@ -877,18 +883,33 @@ namespace Resgrid.Services.Records
 			await InTransactionAsync(async () =>
 			{
 				await GuardVersionAsync(report, report.RowVersion, cancellationToken);
-				report.State = (int)RmsRecordState.Cancelled;
-				report.CancelledOn = now;
-				report.CancelledByUserId = userId;
-				report.ModifiedOn = now;
-				report.ModifiedByUserId = userId;
+				MarkCancelled(report, userId, now);
 				await _reports.UpdateAsync(report, cancellationToken, true);
 				await RefreshProjectionAsync(report, cancellationToken);
-				outboxIds.Add((await EnqueueLifecycleEventAsync(report, null, WorkflowTriggerEventType.RecordCancelled, from, RmsRecordState.Cancelled, null, null, cancellationToken, new { number_disposition = string.IsNullOrWhiteSpace(report.RecordNumber) ? "none" : "voided" })).DomainEventOutboxId);
-				await AuditAsync(departmentId, userId, reportId, null, RmsAccessAuditAction.Change, "Cancel", RmsOriginClient.Web, cancellationToken);
+				await RecordCancelledAsync(report, from, userId, RmsOriginClient.Web, outboxIds, cancellationToken);
 			});
 			await _outbox.DispatchAfterCommitAsync(outboxIds, cancellationToken);
 			return await GetAsync(departmentId, reportId, false);
+		}
+
+		/// <summary>The Cancelled header fields; the caller saves the report inside its transaction.</summary>
+		private static void MarkCancelled(RmsIncidentReport report, string userId, DateTime now)
+		{
+			report.State = (int)RmsRecordState.Cancelled;
+			report.CancelledOn = now;
+			report.CancelledByUserId = userId;
+			report.ModifiedOn = now;
+			report.ModifiedByUserId = userId;
+		}
+
+		/// <summary>
+		/// RecordCancelled (107) into the outbox and the Cancel audit, inside the caller's transaction and while the report is
+		/// still live (both writes refuse or strip a deleted record). The caller dispatches <paramref name="outboxIds"/> after commit.
+		/// </summary>
+		private async Task RecordCancelledAsync(RmsIncidentReport report, RmsRecordState from, string userId, RmsOriginClient origin, List<long> outboxIds, CancellationToken cancellationToken)
+		{
+			outboxIds.Add((await EnqueueLifecycleEventAsync(report, null, WorkflowTriggerEventType.RecordCancelled, from, RmsRecordState.Cancelled, null, null, cancellationToken, new { number_disposition = string.IsNullOrWhiteSpace(report.RecordNumber) ? "none" : "voided" })).DomainEventOutboxId);
+			await AuditAsync(report.DepartmentId, userId, report.RmsIncidentReportId, null, RmsAccessAuditAction.Change, "Cancel", origin, cancellationToken);
 		}
 
 		/// <summary>DeleteRecord voids or cancels only reports the caller wrote, owns or reviews, unless they administer the department or the report's group.</summary>

@@ -308,12 +308,17 @@ namespace Resgrid.Tests.Repositories
 			await SeedCallAsync(7, "26-5000", year.AddDays(2));
 			await SeedCallAsync(6, "00153/2026", year.AddDays(5));
 			await SeedCallAsync(6, "26_7", year.AddDays(6));
+			await SeedCallAsync(6, "07-01-2026-19:53-4", year.AddDays(6).AddHours(19));
+			await SeedCallAsync(6, "07-01-2026-08:05-11", year.AddDays(6).AddHours(8));
+			await SeedCallAsync(6, "07-01-2026-0805-12", year.AddDays(6).AddHours(9));
 
 			(await repository.GetHighestIssuedAsync(6, "26-", "", year, year.AddYears(1))).Should().Be(200, "deleted calls keep their numbers");
 			(await repository.GetHighestIssuedAsync(6, "26-", "", null, null)).Should().Be(900, "a pattern without a date reads every year");
 			(await repository.GetHighestIssuedAsync(6, "", "/2026", year, year.AddYears(1))).Should().Be(153);
 			(await repository.GetHighestIssuedAsync(6, "26_", "", year, year.AddYears(1))).Should().Be(7, "an underscore in the pattern is literal, not a LIKE wildcard");
 			(await repository.GetHighestIssuedAsync(6, "27-", "", year, year.AddYears(1))).Should().Be(0);
+			(await repository.GetHighestIssuedAsync(6, "07-01-2026-??:??-", "", year, year.AddYears(1))).Should().Be(11, "'?' is one time-of-day digit, so the day's numbers match whatever time they wrote");
+			(await repository.GetHighestIssuedAsync(6, "07-01-2026-", "", year, year.AddYears(1))).Should().Be(0, "without the wildcard the rendered time is not a sequence");
 		}
 	}
 }

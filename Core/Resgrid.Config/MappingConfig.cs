@@ -112,7 +112,11 @@ namespace Resgrid.Config
 		/// <summary>Routing provider: "valhalla", "mapbox", "google", "osrm" or "estimate" (straight line). Today's behaviour is "google".</summary>
 		public static string RoutingProvider = "google";
 
-		/// <summary>Provider used when the primary fails or times out; the straight-line estimate always remains the last resort.</summary>
+		/// <summary>
+		/// Provider used when the primary fails or times out; the straight-line estimate always remains the last resort. When
+		/// Valhalla is the primary or the fallback, Mapbox (MapboxRoutingAccessToken, else the web map's Mapbox token) is always
+		/// tried before the estimate.
+		/// </summary>
 		public static string RoutingFallbackProvider = "estimate";
 
 		/// <summary>Base URL of a Valhalla server, e.g. http://valhalla:8002 (private network addresses are fine).</summary>
@@ -132,8 +136,8 @@ namespace Resgrid.Config
 
 		/// <summary>
 		/// Where the Valhalla server has map data, as "west,south,east,north" boxes in degrees separated by ";". A route,
-		/// matrix or optimization with any point outside every box goes straight to RoutingFallbackProvider without calling
-		/// Valhalla. Empty: everywhere. North America and Europe (e.g. SimpleRouting): "-170,14,-50,84;-32,27,45,82".
+		/// matrix or optimization with any point outside every box goes straight to RoutingFallbackProvider (then Mapbox) without
+		/// calling Valhalla. Empty: everywhere. North America and Europe (e.g. SimpleRouting): "-170,14,-50,84;-32,27,45,82".
 		/// </summary>
 		public static string ValhallaCoverage = "";
 
@@ -143,7 +147,11 @@ namespace Resgrid.Config
 		/// <summary>Most road-closure points in one Valhalla route; match the server's service_limits.max_exclude_locations (stock Valhalla 50, the setup kit raises it to 200).</summary>
 		public static int ValhallaMaxExcludePoints = 50;
 
-		/// <summary>Server-side Mapbox token for Directions, Matrix and Optimization; may be a secret (sk.) token and is never sent to clients.</summary>
+		/// <summary>
+		/// Server-side Mapbox token for Directions, Matrix and Optimization; may be a secret (sk.) token and is never sent to
+		/// clients. Empty: the web app's Mapbox map token (WebsiteMapboxAccessToken, then WebsiteMapboxKey) is used, sent with
+		/// SystemBehaviorConfig.ResgridBaseUrl as the Referer so a URL-restricted public token is accepted.
+		/// </summary>
 		public static string MapboxRoutingAccessToken = "";
 
 		/// <summary>Use live traffic where the provider has it (Mapbox driving-traffic, Google TRAFFIC_AWARE) for the DrivingTraffic profile and drive times.</summary>

@@ -2273,4 +2273,17 @@
   <data name="NoAlarmActivity" xml:space="preserve"><value>لم تُسجل هنا أي أجهزة إنذار أو أنشطة للحد من المخاطر بعد.</value></data>
   <data name="RecordAlarmLeft" xml:space="preserve"><value>تسجيل جهاز إنذار متروك</value></data>
   <data name="AlarmsRequestedColumnHelp" xml:space="preserve"><value>إجمالي الأجهزة المطلوبة (دخان فقط / أول أكسيد الكربون فقط / مدمج)</value></data>
+  <data name="IncidentReportDeleted" xml:space="preserve"><value>تم حذف تقرير الحادث.</value></data>
+  <data name="DeleteIncidentReport" xml:space="preserve"><value>حذف</value></data>
+  <data name="DeleteIncidentReportConfirm" xml:space="preserve"><value>هل تريد حذف تقرير الحادث هذا؟ ستتم إزالته من كل القوائم، وتحرير مكالمته لتقرير جديد، ومحو محتواه بعد {0} يومًا.</value></data>
+  <data name="DeleteIncidentReportHelp" xml:space="preserve"><value>يزيل التقرير من كل القوائم ويحرر مكالمته لتقرير جديد. يُلغى التقرير الذي لم يُعتمد نهائيًا أولًا. يُمحى المحتوى بعد {0} يومًا.</value></data>
+  <data name="DeleteVoidedReasonPrompt" xml:space="preserve"><value>لماذا يُحذف هذا التقرير الملغى؟</value></data>
+  <data name="DeleteRefusedNotDeletable" xml:space="preserve"><value>لا يمكن حذف تقرير معتمد نهائيًا. ألغِه أولًا.</value></data>
+  <data name="DeleteRefusedVoidedNeedsAdmin" xml:space="preserve"><value>يمكن لمسؤول القسم فقط حذف تقرير ملغى.</value></data>
+  <data name="DeleteRefusedReasonRequired" xml:space="preserve"><value>أدخل سببًا لحذف تقرير ملغى.</value></data>
+  <data name="DeleteRefusedSubmittedExternally" xml:space="preserve"><value>أُرسل هذا التقرير إلى نظام خارجي مثل NERIS، لذا لا يمكن حذفه. ألغِه بدلًا من ذلك.</value></data>
+  <data name="DeleteRefusedLegalHold" xml:space="preserve"><value>يشمل حجز قانوني هذا التقرير، لذا لا يمكن حذفه.</value></data>
+  <data name="DeleteRefusedPermanentContent" xml:space="preserve"><value>يحتوي هذا التقرير على إدخالات إصابات أو عمليات إنقاذ أو تعرّض تُحفظ بشكل دائم. أزلها من المسودة قبل حذفه.</value></data>
+  <data name="DeleteRefusedAmendmentOpen" xml:space="preserve"><value>تخلَّ عن التعديل المفتوح قبل حذف هذا التقرير.</value></data>
+  <data name="IncludeClosedReports" xml:space="preserve"><value>تضمين المسودات الملغاة والتقارير الملغاة</value></data>
 </root>

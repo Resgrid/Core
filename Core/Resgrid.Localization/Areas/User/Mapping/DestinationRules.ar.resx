@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Map Icon Legend and status / priority map icon pages -->
+    <data name="PageTitle" xml:space="preserve">
+    <value>قواعد الوجهات</value>
+  </data>
+  <data name="PageIntro" xml:space="preserve">
+    <value>أخبر Resgrid بما يجب أن توفره وجهة البلاغ، حتى يتمكن نموذج البلاغ والتطبيقات من اقتراح أقرب وجهة مناسبة: «بلاغات الحروق تحتاج إلى مركز حروق»، «المروحية تحتاج إلى مهبط مروحيات»، «صهريج المياه يتجه إلى مصدر مياه يسمح بالشفط». تُطبَّق معًا جميع القواعد التي تطابق البلاغ (والوحدة المتنقلة). الوجهات هي أنواع نقاط الاهتمام لديك المحددة كوجهات؛ وتُدار القدرات ضمن قدرات نقاط الاهتمام، وتأتي حالة مفتوح أو تحويل أو مغلق من توفر الوجهات.</value>
+  </data>
+  <data name="SettingsHeader" xml:space="preserve">
+    <value>اقتراحات الوجهات</value>
+  </data>
+  <data name="Mode" xml:space="preserve">
+    <value>الاقتراحات</value>
+  </data>
+  <data name="ModeOff" xml:space="preserve">
+    <value>متوقفة</value>
+  </data>
+  <data name="ModeSuggest" xml:space="preserve">
+    <value>اقتراح الوجهات</value>
+  </data>
+  <data name="ModeSuggestAndFill" xml:space="preserve">
+    <value>اقتراح الوجهة وتعبئتها</value>
+  </data>
+  <data name="ModeHelp" xml:space="preserve">
+    <value>يعرض «اقتراح الوجهات» أفضل الوجهات أسفل حقل الوجهة في نموذجي بلاغ جديد وتحديث البلاغ وفي قوائم الوجهات في التطبيقات، مع زمن القيادة والمسافة. ويقوم «اقتراح الوجهة وتعبئتها» أيضًا بتعبئة الوجهة الفارغة للبلاغ الجديد بأفضل وجهة؛ ويظل بإمكان المرسلين والطواقم اختيار وجهة أخرى. كل اقتراح يستعلم عن أزمنة القيادة، لذا اترك هذا الخيار متوقفًا إن كنت لا تستخدم الوجهات.</value>
+  </data>
+  <data name="PreferredWithinMinutes" xml:space="preserve">
+    <value>نافذة القدرات المفضلة (بالدقائق)</value>
+  </data>
+  <data name="PreferredWithinMinutesHelp" xml:space="preserve">
+    <value>تتقدم الوجهة التي توفر عددًا أكبر من القدرات المفضلة فقط ما دام زمن القيادة إليها لا يزيد على زمن الأقرب بأكثر من هذا العدد من الدقائق. 0 = عند تساوي الأزمنة فقط.</value>
+  </data>
+  <data name="SaveSettings" xml:space="preserve">
+    <value>حفظ الإعدادات</value>
+  </data>
+  <data name="SettingsSaved" xml:space="preserve">
+    <value>تم حفظ إعدادات اقتراحات الوجهات.</value>
+  </data>
+  <data name="SettingsInvalid" xml:space="preserve">
+    <value>اختر وضع اقتراح ونافذة من 0 إلى {0} دقيقة.</value>
+  </data>
+  <data name="RulesHeader" xml:space="preserve">
+    <value>القواعد</value>
+  </data>
+  <data name="AddRule" xml:space="preserve">
+    <value>إضافة قاعدة</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>الاسم</value>
+  </data>
+  <data name="When" xml:space="preserve">
+    <value>متى</value>
+  </data>
+  <data name="Destination" xml:space="preserve">
+    <value>الوجهة</value>
+  </data>
+  <data name="Requires" xml:space="preserve">
+    <value>تتطلب</value>
+  </data>
+  <data name="Prefers" xml:space="preserve">
+    <value>تفضّل</value>
+  </data>
+  <data name="EveryCall" xml:space="preserve">
+    <value>كل البلاغات</value>
+  </data>
+  <data name="AnyDestinationType" xml:space="preserve">
+    <value>أي نوع وجهة</value>
+  </data>
+  <data name="CallTypeCondition" xml:space="preserve">
+    <value>نوع البلاغ: {0}</value>
+  </data>
+  <data name="PriorityCondition" xml:space="preserve">
+    <value>الأولوية: {0}</value>
+  </data>
+  <data name="UnitTypeCondition" xml:space="preserve">
+    <value>نوع الوحدة: {0}</value>
+  </data>
+  <data name="DeletedChoice" xml:space="preserve">
+    <value>(محذوف)</value>
+  </data>
+  <data name="NeedsAttention" xml:space="preserve">
+    <value>تحتاج إلى مراجعة: حُذف {0} من أنواعها أو قدراتها ويجري تجاهلها.</value>
+  </data>
+  <data name="AllTypesRemoved" xml:space="preserve">
+    <value>لا تُطبَّق أبدًا: حُذفت جميع أنواع الوجهات التي حددتها.</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>تعديل</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>حذف</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>حفظ</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="DeleteRuleConfirm" xml:space="preserve">
+    <value>حذف القاعدة «{0}»؟</value>
+  </data>
+  <data name="NoRules" xml:space="preserve">
+    <value>لا توجد قواعد وجهات بعد. بدون قواعد تُقترح كل الوجهات، بدءًا بأقرب وجهة مفتوحة.</value>
+  </data>
+  <data name="NoDestinationTypes" xml:space="preserve">
+    <value>لم يُحدَّد أي نوع نقطة اهتمام كوجهة بعد. حدّد نوعًا كوجهة ضمن الخرائط، نقاط الاهتمام قبل إضافة القواعد.</value>
+  </data>
+  <data name="RuleSaved" xml:space="preserve">
+    <value>تم حفظ القاعدة «{0}».</value>
+  </data>
+  <data name="RuleDeleted" xml:space="preserve">
+    <value>تم حذف القاعدة «{0}».</value>
+  </data>
+  <data name="RuleNameRequired" xml:space="preserve">
+    <value>أدخل اسمًا لا يتجاوز {0} حرفًا.</value>
+  </data>
+  <data name="RuleNothingRequired" xml:space="preserve">
+    <value>اختر نوع وجهة واحدًا أو قدرة واحدة على الأقل.</value>
+  </data>
+  <data name="RuleChoicesChanged" xml:space="preserve">
+    <value>لم يعد أحد الخيارات التي اخترتها موجودًا (نوع البلاغ أو الأولوية أو نوع الوحدة أو نوع الوجهة أو القدرة). راجع الاختيارات واحفظ مجددًا.</value>
+  </data>
+  <data name="NewRule" xml:space="preserve">
+    <value>قاعدة جديدة</value>
+  </data>
+  <data name="EditRule" xml:space="preserve">
+    <value>تعديل القاعدة</value>
+  </data>
+  <data name="RuleNameHelp" xml:space="preserve">
+    <value>يُعرض للمرسلين كسبب للمتطلب، مثل «حروق» أو «هبوط مروحية».</value>
+  </data>
+  <data name="AppliesWhen" xml:space="preserve">
+    <value>تُطبَّق عندما</value>
+  </data>
+  <data name="AppliesWhenHelp" xml:space="preserve">
+    <value>اترك الحقول الثلاثة على «الكل» لتطبيق القاعدة على كل البلاغات. تُطبَّق قواعد نوع الوحدة عندما يتنقل هذا النوع من الوحدات (قائمة وجهات الحالة الخاصة بها في التطبيقات)، وليس على وجهة البلاغ نفسه.</value>
+  </data>
+  <data name="CallType" xml:space="preserve">
+    <value>نوع البلاغ</value>
+  </data>
+  <data name="Priority" xml:space="preserve">
+    <value>الأولوية</value>
+  </data>
+  <data name="UnitType" xml:space="preserve">
+    <value>نوع الوحدة</value>
+  </data>
+  <data name="Any" xml:space="preserve">
+    <value>الكل</value>
+  </data>
+  <data name="DestinationTypes" xml:space="preserve">
+    <value>أنواع الوجهات</value>
+  </data>
+  <data name="DestinationTypesHelp" xml:space="preserve">
+    <value>يجب أن تكون الوجهة من أحد هذه الأنواع؛ وإذا لم يُحدَّد أي منها فأي نوع وجهة مقبول. عندما تحدد قاعدتان أنواعًا لا تتقاطع، تسود القاعدة الأكثر تحديدًا (قواعد نوع الوحدة أولًا) وتُنحّى الأخرى جانبًا.</value>
+  </data>
+  <data name="RequiredCapabilities" xml:space="preserve">
+    <value>القدرات المطلوبة</value>
+  </data>
+  <data name="RequiredCapabilitiesHelp" xml:space="preserve">
+    <value>يجب أن توفر الوجهة المقترحة كل هذه القدرات. إذا لم توفرها أي وجهة ضمن النطاق، فلا يُعبّأ شيء وتُعرض الأقرب مع ما ينقصها.</value>
+  </data>
+  <data name="PreferredCapabilities" xml:space="preserve">
+    <value>القدرات المفضلة</value>
+  </data>
+  <data name="PreferredCapabilitiesHelp" xml:space="preserve">
+    <value>لحسم الحالات المتقاربة: ضمن نافذة القدرات المفضلة، تتقدم الوجهة التي توفر عددًا أكبر منها.</value>
+  </data>
+  <data name="NoCapabilities" xml:space="preserve">
+    <value>لا توجد قدرات لنقاط الاهتمام بعد.</value>
+  </data>
+  <data name="ManageCapabilities" xml:space="preserve">
+    <value>إدارة قدرات نقاط الاهتمام</value>
+  </data>
+  <data name="TryIt" xml:space="preserve">
+    <value>جرّبها</value>
+  </data>
+  <data name="TryItHelp" xml:space="preserve">
+    <value>اختر نوع البلاغ والأولوية ونوع الوحدة لمعرفة القواعد التي تنطبق وما يجب أن تكون عليه الوجهة.</value>
+  </data>
+  <data name="TryItButton" xml:space="preserve">
+    <value>عرض</value>
+  </data>
+  <data name="AppliedRules" xml:space="preserve">
+    <value>القواعد المطبقة</value>
+  </data>
+  <data name="SetAsideRules" xml:space="preserve">
+    <value>المنحّاة جانبًا</value>
+  </data>
+  <data name="NoRulesApply" xml:space="preserve">
+    <value>لا تنطبق أي قاعدة: أي نوع وجهة، ولا متطلبات.</value>
+  </data>
+  <data name="SetAsideTypesRemoved" xml:space="preserve">
+    <value>حُذفت أنواع وجهاتها</value>
+  </data>
+  <data name="SetAsideTypeConflict" xml:space="preserve">
+    <value>قاعدة أكثر تحديدًا توجّه إلى أنواع وجهات أخرى</value>
+  </data>
+  <data name="NothingRequired" xml:space="preserve">
+    <value>لا شيء</value>
+  </data>
+  <data name="DestinationRulesLink" xml:space="preserve">
+    <value>قواعد الوجهات</value>
+  </data>
+  <data name="SuggestedDestinations" xml:space="preserve">
+    <value>المقترحة</value>
+  </data>
+  <data name="SuggestionLoading" xml:space="preserve">
+    <value>جارٍ البحث عن الوجهات...</value>
+  </data>
+  <data name="SuggestionNone" xml:space="preserve">
+    <value>لم يُعثر على وجهة من النوع المطلوب.</value>
+  </data>
+  <data name="SuggestionNoneMeet" xml:space="preserve">
+    <value>لا توجد وجهة قريبة توفر كل المطلوب؛ تُعرض الأقرب.</value>
+  </data>
+  <data name="SuggestionNeeds" xml:space="preserve">
+    <value>تحتاج: {0}</value>
+  </data>
+  <data name="SuggestionPrefers" xml:space="preserve">
+    <value>تفضّل: {0}</value>
+  </data>
+  <data name="SuggestionRules" xml:space="preserve">
+    <value>القواعد: {0}</value>
+  </data>
+  <data name="UseDestination" xml:space="preserve">
+    <value>استخدام</value>
+  </data>
+  <data name="InUse" xml:space="preserve">
+    <value>محددة</value>
+  </data>
+  <data name="SuggestedBadge" xml:space="preserve">
+    <value>مقترحة</value>
+  </data>
+  <data name="FilledAutomatically" xml:space="preserve">
+    <value>تمت التعبئة بالوجهة المقترحة. اختر وجهة أخرى إذا لزم الأمر.</value>
+  </data>
+  <data name="MissingCapabilities" xml:space="preserve">
+    <value>ناقص: {0}</value>
+  </data>
+  <data name="DownCapabilities" xml:space="preserve">
+    <value>غير متوفر حاليًا: {0}</value>
+  </data>
+  <data name="MinutesShort" xml:space="preserve">
+    <value>{0} دقيقة</value>
+  </data>
+  <data name="KilometersShort" xml:space="preserve">
+    <value>{0} كم</value>
+  </data>
+  <data name="StraightLineKilometers" xml:space="preserve">
+    <value>{0} كم بخط مستقيم</value>
+  </data>
+  <data name="StatusLimited" xml:space="preserve">
+    <value>محدود</value>
+  </data>
+  <data name="StatusDiversion" xml:space="preserve">
+    <value>تحويل</value>
+  </data>
+  <data name="StatusClosed" xml:space="preserve">
+    <value>مغلق</value>
+  </data>
+  <data name="SuggestionFailed" xml:space="preserve">
+    <value>اقتراحات الوجهات غير متاحة حاليًا.</value>
+  </data>
+  <data name="SuggestionRetry" xml:space="preserve">
+    <value>إعادة المحاولة</value>
+  </data>
+  <data name="PreviewLoading" xml:space="preserve">
+    <value>جارٍ التحقق من القواعد...</value>
+  </data>
+  <data name="PreviewFailed" xml:space="preserve">
+    <value>تعذّر التحقق من القواعد الآن. حاول مرة أخرى.</value>
+  </data>
+</root>

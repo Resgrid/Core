@@ -165,6 +165,7 @@
 									<th>@localizer["CallUnitTimesOnSceneHeader"]</th>
 									<th>@localizer["CallUnitTimesStagingHeader"]</th>
 									<th>@localizer["CallUnitTimesClearedHeader"]</th>
+									<th>@localizer["CallUnitTimesReleasedHeader"]</th>
 									<th>@localizer["CallUnitTimesInServiceHeader"]</th>
 									<th>@localizer["CallUnitTimesCommittedHeader"]</th>
 									<th>@localizer["CallUnitTimesSourceHeader"]</th>
@@ -186,6 +187,7 @@
 										<td>@Time(unit.Times.OnSceneOn)</td>
 										<td>@Time(unit.Times.StagingOn)</td>
 										<td>@Time(unit.Times.ClearedOn)</td>
+										<td>@Time(unit.Times.ReleasedOn)</td>
 										<td>@Time(unit.Times.InServiceOn)</td>
 										<td>@Duration(unit.Times.CommittedSeconds)</td>
 										<td>@SourceText(unit.Times.Source)</td>
@@ -194,7 +196,7 @@
 									{
 										<tr class="unit-history">
 											<td></td>
-											<td colspan="8">
+											<td colspan="9">
 												<table class="table table-condensed">
 													<thead>
 														<tr>

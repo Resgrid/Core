@@ -329,6 +329,9 @@
   <data name="CallUnitTimesClearedHeader" xml:space="preserve">
     <value>Libera</value>
   </data>
+  <data name="CallUnitTimesReleasedHeader" xml:space="preserve">
+    <value>Rilasciata</value>
+  </data>
   <data name="CallUnitTimesSourceHeader" xml:space="preserve">
     <value>Collegato da</value>
   </data>

@@ -1,0 +1,704 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Map Icon Legend and status / priority map icon pages -->
+    <data name="ActionFailed" xml:space="preserve">
+    <value>Δεν ήταν δυνατό. Ανανεώστε τη σελίδα και δοκιμάστε ξανά.</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Ενέργειες</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>Ενεργή</value>
+  </data>
+  <data name="ActiveHelp" xml:space="preserve">
+    <value>Καταργήστε την επιλογή για παύση: δεν δημιουργούνται κλήσεις μέχρι να συνεχιστεί.</value>
+  </data>
+  <data name="AddTime" xml:space="preserve">
+    <value>Προσθήκη ώρας</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>Διεύθυνση</value>
+  </data>
+  <data name="AddressHelp" xml:space="preserve">
+    <value>Εντοπίζεται κατά την αποθήκευση, για τον χάρτη και τις οδηγίες.</value>
+  </data>
+  <data name="AlertAcknowledge" xml:space="preserve">
+    <value>Επιβεβαίωση</value>
+  </data>
+  <data name="AlertAcknowledgedBy" xml:space="preserve">
+    <value>Επιβεβαιώθηκε από {0}</value>
+  </data>
+  <data name="AlertCreateCall" xml:space="preserve">
+    <value>Δημιουργία κλήσης</value>
+  </data>
+  <data name="AlertDismiss" xml:space="preserve">
+    <value>Απόρριψη</value>
+  </data>
+  <data name="AlertDismissPrompt" xml:space="preserve">
+    <value>Σημείωση (προαιρετική): γιατί κλείνει αυτή η ειδοποίηση;</value>
+  </data>
+  <data name="AlertKindCreateFailed" xml:space="preserve">
+    <value>Η κλήση δεν μπόρεσε να δημιουργηθεί</value>
+  </data>
+  <data name="AlertKindDispatchDue" xml:space="preserve">
+    <value>Ώρα για αποστολή</value>
+  </data>
+  <data name="AlertKindMissed" xml:space="preserve">
+    <value>Χάθηκε: η κλήση δεν δημιουργήθηκε εγκαίρως</value>
+  </data>
+  <data name="AlertKindNoResources" xml:space="preserve">
+    <value>Δεν μπόρεσε να σταλεί κανείς: η κλήση κρατείται ως εκκρεμής</value>
+  </data>
+  <data name="AlertKindResourcesUnavailable" xml:space="preserve">
+    <value>Στάλθηκε χωρίς ορισμένους επιλεγμένους πόρους</value>
+  </data>
+  <data name="AlertOpenCall" xml:space="preserve">
+    <value>Άνοιγμα κλήσης</value>
+  </data>
+  <data name="AlertReasonDepartmentUnavailable" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η φόρτωση του τμήματος.</value>
+  </data>
+  <data name="AlertReasonNoneAvailable" xml:space="preserve">
+    <value>Κανένας από τους επιλεγμένους πόρους δεν ήταν διαθέσιμος.</value>
+  </data>
+  <data name="AlertReasonNoneChosen" xml:space="preserve">
+    <value>Δεν έχουν επιλεγεί πόροι και δεν ταίριαξε καμία κάρτα επέμβασης.</value>
+  </data>
+  <data name="AlertReasonSaveFailed" xml:space="preserve">
+    <value>Η αποθήκευση της κλήσης απέτυχε· επαναλαμβάνεται μέχρι την ώρα της.</value>
+  </data>
+  <data name="AlertSchedule" xml:space="preserve">
+    <value>Επαναλαμβανόμενη κλήση</value>
+  </data>
+  <data name="AlertUnavailable" xml:space="preserve">
+    <value>Μη διαθέσιμοι: {0}</value>
+  </data>
+  <data name="AlertWhat" xml:space="preserve">
+    <value>Τι συνέβη</value>
+  </data>
+  <data name="AlertWhen" xml:space="preserve">
+    <value>Ώρα</value>
+  </data>
+  <data name="AlertsBanner" xml:space="preserve">
+    <value>{0} ειδοποιήσεις επαναλαμβανόμενων κλήσεων χρειάζονται προσοχή.</value>
+  </data>
+  <data name="AlertsBannerLink" xml:space="preserve">
+    <value>Έλεγχος</value>
+  </data>
+  <data name="AlertsHelp" xml:space="preserve">
+    <value>Ενημερώνονται (push, SMS ή email, κατά τις ρυθμίσεις τους) όταν μια κλήση δεν μπορεί να δημιουργηθεί, χάνεται, δεν μπορεί να σταλεί κανείς, οι επιλεγμένοι πόροι δεν είναι διαθέσιμοι ή πρέπει να τη στείλει διεκπεραιωτής. Αν δεν επιλεγεί κανείς: όποιος δημιούργησε το πρόγραμμα.</value>
+  </data>
+  <data name="AlertsTitle" xml:space="preserve">
+    <value>Χρειάζεται προσοχή</value>
+  </data>
+  <data name="AvailabilityHelp" xml:space="preserve">
+    <value>Όταν αποστέλλεται μια κλήση, οι επιλεγμένες μονάδες και τα μέλη που δεν είναι διαθέσιμα (σε άλλη κλήση, εκτός υπηρεσίας) παραλείπονται και ειδοποιείται ο διεκπεραιωτής. Αν δεν μείνει κανείς, η κλήση κρατείται ως εκκρεμής για διεκπεραιωτή.</value>
+  </data>
+  <data name="Calendar" xml:space="preserve">
+    <value>Ημερολόγιο</value>
+  </data>
+  <data name="ContactName" xml:space="preserve">
+    <value>Όνομα επαφής</value>
+  </data>
+  <data name="ContactNumber" xml:space="preserve">
+    <value>Αριθμός επαφής</value>
+  </data>
+  <data name="Coordinates" xml:space="preserve">
+    <value>Συντεταγμένες</value>
+  </data>
+  <data name="CoordinatesHelp" xml:space="preserve">
+    <value>Γεωγραφικό πλάτος, μήκος (προαιρετικό). Αφήστε κενό για εντοπισμό της διεύθυνσης.</value>
+  </data>
+  <data name="CreateNow" xml:space="preserve">
+    <value>Δημιουργία κλήσης τώρα</value>
+  </data>
+  <data name="CreatedByRecurringCall" xml:space="preserve">
+    <value>Αυτή η κλήση δημιουργήθηκε από επαναλαμβανόμενη κλήση.</value>
+  </data>
+  <data name="CreationMode" xml:space="preserve">
+    <value>Ποιος στέλνει κάθε κλήση</value>
+  </data>
+  <data name="CreationModeAutomatic" xml:space="preserve">
+    <value>Αυτόματα: κάθε κλήση δημιουργείται εκ των προτέρων και αποστέλλεται όταν έρθει η ώρα της</value>
+  </data>
+  <data name="CreationModeDispatcher" xml:space="preserve">
+    <value>Ένας διεκπεραιωτής: τίποτα δεν δημιουργείται εκ των προτέρων· ειδοποιείται όταν έρθει η ώρα και τη στέλνει</value>
+  </data>
+  <data name="DatesFrom" xml:space="preserve">
+    <value>Από {0}</value>
+  </data>
+  <data name="DatesUntil" xml:space="preserve">
+    <value>έως {0}</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Διαγραφή</value>
+  </data>
+  <data name="DeleteConfirm" xml:space="preserve">
+    <value>Διαγραφή αυτής της επαναλαμβανόμενης κλήσης; Δεν θα δημιουργηθούν άλλες κλήσεις από αυτήν.</value>
+  </data>
+  <data name="DeleteRecurringCall" xml:space="preserve">
+    <value>Διαγραφή επαναλαμβανόμενης κλήσης</value>
+  </data>
+  <data name="DeleteUpcoming" xml:space="preserve">
+    <value>Διαγραφή και των {0} επερχόμενων κλήσεων που έχει ήδη δημιουργήσει</value>
+  </data>
+  <data name="DeletedMessage" xml:space="preserve">
+    <value>Η επαναλαμβανόμενη κλήση διαγράφηκε.</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Περιγραφή</value>
+  </data>
+  <data name="DescriptionHelp" xml:space="preserve">
+    <value>Σε τι χρησιμεύει αυτό το πρόγραμμα και ό,τι πρέπει να γνωρίζει ένας διεκπεραιωτής. Παραμένει στο πρόγραμμα, δεν αντιγράφεται στις κλήσεις του.</value>
+  </data>
+  <data name="Destination" xml:space="preserve">
+    <value>Προορισμός</value>
+  </data>
+  <data name="DestinationDetails" xml:space="preserve">
+    <value>Λεπτομέρειες προορισμού</value>
+  </data>
+  <data name="DestinationName" xml:space="preserve">
+    <value>Εγκατάσταση προορισμού</value>
+  </data>
+  <data name="DispatchHelp" xml:space="preserve">
+    <value>Σε ποιον πηγαίνει κάθε κλήση. Αφήστε όλα κενά για να επιλέξει ένας διεκπεραιωτής: όταν έρθει η ώρα της, η κλήση κρατείται ως εκκρεμής και ειδοποιείται ο διεκπεραιωτής.</value>
+  </data>
+  <data name="DueHelp" xml:space="preserve">
+    <value>Ήρθε η ώρα να σταλεί αυτή η κλήση. Στείλτε τη τώρα, δημιουργήστε την πρώτα για να την αλλάξετε ή παραλείψτε την.</value>
+  </data>
+  <data name="DueTitle" xml:space="preserve">
+    <value>Αποστολή: {0}</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Επεξεργασία</value>
+  </data>
+  <data name="EditRecurringCall" xml:space="preserve">
+    <value>Επεξεργασία επαναλαμβανόμενης κλήσης</value>
+  </data>
+  <data name="EnableCheckInTimers" xml:space="preserve">
+    <value>Ενεργοποίηση χρονομέτρων ελέγχου</value>
+  </data>
+  <data name="EndsOn" xml:space="preserve">
+    <value>Λήγει στις</value>
+  </data>
+  <data name="EndsOnHelp" xml:space="preserve">
+    <value>Αφήστε κενό για συνεχή επανάληψη.</value>
+  </data>
+  <data name="ErrorContactEmailInvalid" xml:space="preserve">
+    <value>Εισαγάγετε έγκυρη διεύθυνση email για την επαφή του προγράμματος.</value>
+  </data>
+  <data name="ErrorCoordinatesInvalid" xml:space="preserve">
+    <value>Εισαγάγετε συντεταγμένες ως πλάτος, μήκος (για παράδειγμα 39.7392,-104.9903).</value>
+  </data>
+  <data name="ErrorCreationModeInvalid" xml:space="preserve">
+    <value>Επιλέξτε ποιος στέλνει κάθε κλήση.</value>
+  </data>
+  <data name="ErrorDaysRequired" xml:space="preserve">
+    <value>Επιλέξτε τουλάχιστον μία ημέρα της εβδομάδας.</value>
+  </data>
+  <data name="ErrorEndsBeforeStart" xml:space="preserve">
+    <value>Η ημερομηνία λήξης είναι πριν από την ημερομηνία έναρξης.</value>
+  </data>
+  <data name="ErrorEndsOnInvalid" xml:space="preserve">
+    <value>Εισαγάγετε έγκυρη ημερομηνία λήξης.</value>
+  </data>
+  <data name="ErrorFacilityPoiInvalid" xml:space="preserve">
+    <value>Επιλέξτε το σημείο ενδιαφέροντος παραλαβής από τη λίστα.</value>
+  </data>
+  <data name="ErrorFrequencyInvalid" xml:space="preserve">
+    <value>Επιλέξτε πώς επαναλαμβάνεται.</value>
+  </data>
+  <data name="ErrorIntervalInvalid" xml:space="preserve">
+    <value>Επανάληψη κάθε 1 έως {1}.</value>
+  </data>
+  <data name="ErrorLeadTimeInvalid" xml:space="preserve">
+    <value>Επιλέξτε πότε δημιουργείται κάθε κλήση.</value>
+  </data>
+  <data name="ErrorManualAlertInvalid" xml:space="preserve">
+    <value>Επιλέξτε πότε ειδοποιείται ο διεκπεραιωτής.</value>
+  </data>
+  <data name="ErrorMonthlyDayInvalid" xml:space="preserve">
+    <value>Επιλέξτε ημέρα του μήνα από 1 έως 31.</value>
+  </data>
+  <data name="ErrorMonthlyWeekdayInvalid" xml:space="preserve">
+    <value>Επιλέξτε ποια ημέρα της εβδομάδας του μήνα.</value>
+  </data>
+  <data name="ErrorNameRequired" xml:space="preserve">
+    <value>Εισαγάγετε ένα όνομα.</value>
+  </data>
+  <data name="ErrorResumeOnInvalid" xml:space="preserve">
+    <value>Η ημερομηνία συνέχισης δεν είναι έγκυρη.</value>
+  </data>
+  <data name="ErrorStartsOnRequired" xml:space="preserve">
+    <value>Εισαγάγετε ημερομηνία έναρξης.</value>
+  </data>
+  <data name="ErrorTimeInvalid" xml:space="preserve">
+    <value>Εισαγάγετε κάθε ώρα σε ώρες και λεπτά (για παράδειγμα 08:00).</value>
+  </data>
+  <data name="ErrorTimesRequired" xml:space="preserve">
+    <value>Προσθέστε τουλάχιστον μία ώρα αποστολής.</value>
+  </data>
+  <data name="ErrorTooManyTimes" xml:space="preserve">
+    <value>Χρησιμοποιήστε έως {0} ώρες αποστολής την ημέρα.</value>
+  </data>
+  <data name="Every" xml:space="preserve">
+    <value>Κάθε</value>
+  </data>
+  <data name="ExternalId" xml:space="preserve">
+    <value>Εξωτερικό ID</value>
+  </data>
+  <data name="FacilityDetails" xml:space="preserve">
+    <value>Λεπτομέρειες παραλαβής</value>
+  </data>
+  <data name="FacilityDetailsPlaceholder" xml:space="preserve">
+    <value>Τμήμα, όροφος, δωμάτιο, είσοδος, ποιον να ζητήσετε</value>
+  </data>
+  <data name="FacilityHelp" xml:space="preserve">
+    <value>Οι γραμμές παραλαβής και προορισμού προστίθενται στις σημειώσεις κάθε κλήσης που δημιουργεί, ώστε να τις έχει το πλήρωμα.</value>
+  </data>
+  <data name="FacilityName" xml:space="preserve">
+    <value>Εγκατάσταση παραλαβής</value>
+  </data>
+  <data name="FacilityPoi" xml:space="preserve">
+    <value>Σημείο ενδιαφέροντος παραλαβής</value>
+  </data>
+  <data name="FacilityPoiHelp" xml:space="preserve">
+    <value>Συμπληρώνει την εγκατάσταση παραλαβής και τη διεύθυνση όταν είναι κενές.</value>
+  </data>
+  <data name="FrequencyDaily" xml:space="preserve">
+    <value>Καθημερινά</value>
+  </data>
+  <data name="FrequencyMonthly" xml:space="preserve">
+    <value>Μηνιαία</value>
+  </data>
+  <data name="FrequencyWeekly" xml:space="preserve">
+    <value>Εβδομαδιαία</value>
+  </data>
+  <data name="FromCallNotice" xml:space="preserve">
+    <value>Συμπληρώθηκε από την κλήση {0}. Επιλέξτε πότε επαναλαμβάνεται.</value>
+  </data>
+  <data name="Groups" xml:space="preserve">
+    <value>Ομάδες</value>
+  </data>
+  <data name="HeldMessage" xml:space="preserve">
+    <value>Δεν μπόρεσε να σταλεί κανείς· η κλήση κρατείται ως εκκρεμής.</value>
+  </data>
+  <data name="HeldTitle" xml:space="preserve">
+    <value>Σε αναμονή: {0}</value>
+  </data>
+  <data name="IncidentId" xml:space="preserve">
+    <value>ID συμβάντος</value>
+  </data>
+  <data name="IncludeScheduledCalls" xml:space="preserve">
+    <value>Εμφάνιση προγραμματισμένων κλήσεων</value>
+  </data>
+  <data name="IntervalDays" xml:space="preserve">
+    <value>ημέρα(ες)</value>
+  </data>
+  <data name="IntervalMonths" xml:space="preserve">
+    <value>μήνας(ες)</value>
+  </data>
+  <data name="IntervalWeeks" xml:space="preserve">
+    <value>εβδομάδα(ες)</value>
+  </data>
+  <data name="LeadTime" xml:space="preserve">
+    <value>Δημιουργία κάθε κλήσης</value>
+  </data>
+  <data name="LeadTimeDay" xml:space="preserve">
+    <value>1 ημέρα πριν</value>
+  </data>
+  <data name="LeadTimeDays" xml:space="preserve">
+    <value>{0} ημέρες πριν</value>
+  </data>
+  <data name="LeadTimeHelp" xml:space="preserve">
+    <value>Πόσο πριν από την ώρα αποστολής της δημιουργείται κάθε κλήση. Στη συνέχεια εμφανίζεται στις Προγραμματισμένες κλήσεις, όπου μπορεί να αλλάξει, να αποσταλεί νωρίτερα ή να διαγραφεί μεμονωμένα.</value>
+  </data>
+  <data name="LeadTimeHour" xml:space="preserve">
+    <value>1 ώρα πριν</value>
+  </data>
+  <data name="LeadTimeHours" xml:space="preserve">
+    <value>{0} ώρες πριν</value>
+  </data>
+  <data name="LeadTimeMinutes" xml:space="preserve">
+    <value>{0} λεπτά πριν</value>
+  </data>
+  <data name="LegendCancelled" xml:space="preserve">
+    <value>Έκλεισε πριν από την αποστολή</value>
+  </data>
+  <data name="LegendDispatched" xml:space="preserve">
+    <value>Αποστάλθηκε</value>
+  </data>
+  <data name="LegendDue" xml:space="preserve">
+    <value>Αναμένει διεκπεραιωτή</value>
+  </data>
+  <data name="LegendHeld" xml:space="preserve">
+    <value>Σε αναμονή, κανείς διαθέσιμος</value>
+  </data>
+  <data name="LegendMissed" xml:space="preserve">
+    <value>Χάθηκε</value>
+  </data>
+  <data name="LegendProjected" xml:space="preserve">
+    <value>Επαναλαμβανόμενη, δεν έχει δημιουργηθεί ακόμη</value>
+  </data>
+  <data name="LegendScheduled" xml:space="preserve">
+    <value>Προγραμματισμένη</value>
+  </data>
+  <data name="LegendSkipped" xml:space="preserve">
+    <value>Παραλείφθηκε</value>
+  </data>
+  <data name="ListTab" xml:space="preserve">
+    <value>Λίστα</value>
+  </data>
+  <data name="ManualAlert" xml:space="preserve">
+    <value>Ειδοποίηση διεκπεραιωτή</value>
+  </data>
+  <data name="ManualAlertAtTime" xml:space="preserve">
+    <value>Όταν έρθει η ώρα</value>
+  </data>
+  <data name="ManualAlertHelp" xml:space="preserve">
+    <value>Πότε ενημερώνεται ο διεκπεραιωτής ότι ήρθε η ώρα να στείλει την κλήση. Εμφανίζεται στο «Χρειάζεται προσοχή» στις Επαναλαμβανόμενες κλήσεις και στην εφαρμογή Dispatch μέχρι κάποιος να τη στείλει ή να την παραλείψει.</value>
+  </data>
+  <data name="MapPage" xml:space="preserve">
+    <value>Σελίδα χάρτη</value>
+  </data>
+  <data name="MissedHelp" xml:space="preserve">
+    <value>Η ώρα της πέρασε και δεν δημιουργήθηκε κλήση. Στείλτε τη τώρα ή παραλείψτε την.</value>
+  </data>
+  <data name="MissedTitle" xml:space="preserve">
+    <value>Χάθηκε: {0}</value>
+  </data>
+  <data name="ModeAutomaticShort" xml:space="preserve">
+    <value>Αποστέλλεται αυτόματα</value>
+  </data>
+  <data name="ModeDispatcherShort" xml:space="preserve">
+    <value>Αποστέλλεται από διεκπεραιωτή</value>
+  </data>
+  <data name="MonthlyDayHelp" xml:space="preserve">
+    <value>Σε μήνα χωρίς αυτή την ημέρα, εκτελείται την τελευταία ημέρα.</value>
+  </data>
+  <data name="MonthlyOn" xml:space="preserve">
+    <value>Την</value>
+  </data>
+  <data name="MonthlyOnDay" xml:space="preserve">
+    <value>Ημέρα</value>
+  </data>
+  <data name="MonthlyOnThe" xml:space="preserve">
+    <value>Την</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Όνομα</value>
+  </data>
+  <data name="NameHelp" xml:space="preserve">
+    <value>Κάθε κλήση που δημιουργεί παίρνει αυτό το όνομα.</value>
+  </data>
+  <data name="Nature" xml:space="preserve">
+    <value>Φύση κλήσης</value>
+  </data>
+  <data name="NewRecurringCall" xml:space="preserve">
+    <value>Νέα επαναλαμβανόμενη κλήση</value>
+  </data>
+  <data name="NextDispatch" xml:space="preserve">
+    <value>Επόμενη αποστολή</value>
+  </data>
+  <data name="NextDispatches" xml:space="preserve">
+    <value>Επόμενες αποστολές</value>
+  </data>
+  <data name="NoAlerts" xml:space="preserve">
+    <value>Τίποτα δεν χρειάζεται προσοχή.</value>
+  </data>
+  <data name="NoFacilityPoi" xml:space="preserve">
+    <value>Κανένα</value>
+  </data>
+  <data name="NoNextDispatches" xml:space="preserve">
+    <value>Δεν έχει προγραμματιστεί καμία.</value>
+  </data>
+  <data name="NoRecurringCalls" xml:space="preserve">
+    <value>Δεν υπάρχουν ακόμη επαναλαμβανόμενες κλήσεις.</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Καμία</value>
+  </data>
+  <data name="Notes" xml:space="preserve">
+    <value>Σημειώσεις</value>
+  </data>
+  <data name="OnDays" xml:space="preserve">
+    <value>Στις</value>
+  </data>
+  <data name="OpenAlertsCount" xml:space="preserve">
+    <value>{0} χρειάζονται προσοχή</value>
+  </data>
+  <data name="PageIntro" xml:space="preserve">
+    <value>Μια επαναλαμβανόμενη κλήση αποστέλλεται βάσει προγράμματος, για παράδειγμα διακομιδές μεταξύ εγκαταστάσεων κάθε Τρίτη και Πέμπτη στις 08:00, 13:00 και 19:00. Κάθε κλήση δημιουργείται πριν από την ώρα αποστολής της και εμφανίζεται στις Προγραμματισμένες κλήσεις, όπου μπορεί να αλλάξει, να αποσταλεί νωρίτερα ή να διαγραφεί όπως κάθε άλλη.</value>
+  </data>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Επαναλαμβανόμενες κλήσεις</value>
+  </data>
+  <data name="Pause" xml:space="preserve">
+    <value>Παύση</value>
+  </data>
+  <data name="PauseDeleteUpcoming" xml:space="preserve">
+    <value>Διαγραφή και των κλήσεων που έχει ήδη δημιουργήσει και δεν έχουν σταλεί</value>
+  </data>
+  <data name="PauseHelp" xml:space="preserve">
+    <value>Τίποτα δεν δημιουργείται ούτε ειδοποιείται όσο είναι σε παύση. Το πρόγραμμα, οι ρυθμίσεις και το ιστορικό του διατηρούνται.</value>
+  </data>
+  <data name="PauseReason" xml:space="preserve">
+    <value>Αιτία</value>
+  </data>
+  <data name="PauseTitle" xml:space="preserve">
+    <value>Παύση:</value>
+  </data>
+  <data name="PausedMessage" xml:space="preserve">
+    <value>Η επαναλαμβανόμενη κλήση τέθηκε σε παύση. Δεν θα δημιουργηθούν κλήσεις μέχρι να συνεχιστεί.</value>
+  </data>
+  <data name="PausedUntil" xml:space="preserve">
+    <value>έως {0}</value>
+  </data>
+  <data name="Personnel" xml:space="preserve">
+    <value>Προσωπικό</value>
+  </data>
+  <data name="Priority" xml:space="preserve">
+    <value>Προτεραιότητα</value>
+  </data>
+  <data name="ProjectedHelp" xml:space="preserve">
+    <value>Η κλήση της δεν έχει δημιουργηθεί ακόμη. Αποστείλτε την τώρα, παραλείψτε αυτήν ή δημιουργήστε την κλήση τώρα για να την αλλάξετε μεμονωμένα.</value>
+  </data>
+  <data name="ReadOnlyHelp" xml:space="preserve">
+    <value>Η κλήση της δεν έχει δημιουργηθεί ακόμη. Μόνο μέλη που μπορούν να δημιουργούν κλήσεις μπορούν να την αποστείλουν, να την παραλείψουν ή να τη δημιουργήσουν.</value>
+  </data>
+  <data name="ReferenceId" xml:space="preserve">
+    <value>ID αναφοράς</value>
+  </data>
+  <data name="RemoveTime" xml:space="preserve">
+    <value>Αφαίρεση ώρας</value>
+  </data>
+  <data name="RepeatCall" xml:space="preserve">
+    <value>Επανάληψη κλήσης</value>
+  </data>
+  <data name="RepeatCallHelp" xml:space="preserve">
+    <value>Δημιουργία επαναλαμβανόμενης κλήσης από αυτή την κλήση</value>
+  </data>
+  <data name="Repeats" xml:space="preserve">
+    <value>Επανάληψη</value>
+  </data>
+  <data name="ReplaceUpcoming" xml:space="preserve">
+    <value>Αντικατάσταση των {0} επερχόμενων κλήσεων που έχουν ήδη δημιουργηθεί</value>
+  </data>
+  <data name="ReplaceUpcomingHelp" xml:space="preserve">
+    <value>Διαγράφονται και δημιουργούνται ξανά με αυτά τα στοιχεία, οπότε οι μεμονωμένες αλλαγές τους χάνονται. Καταργήστε την επιλογή για να μείνουν ως έχουν.</value>
+  </data>
+  <data name="RestoreOccurrence" xml:space="preserve">
+    <value>Επαναφορά</value>
+  </data>
+  <data name="Resume" xml:space="preserve">
+    <value>Συνέχιση</value>
+  </data>
+  <data name="ResumeOn" xml:space="preserve">
+    <value>Συνέχιση στις</value>
+  </data>
+  <data name="ResumeOnHelp" xml:space="preserve">
+    <value>Αφήστε κενό για να μείνει σε παύση μέχρι κάποιος να το συνεχίσει.</value>
+  </data>
+  <data name="ResumedMessage" xml:space="preserve">
+    <value>Η επαναλαμβανόμενη κλήση συνεχίστηκε.</value>
+  </data>
+  <data name="Roles" xml:space="preserve">
+    <value>Ρόλοι</value>
+  </data>
+  <data name="RunCardsOffHelp" xml:space="preserve">
+    <value>Οι κάρτες επέμβασης δεν είναι ενεργές για αυτό το τμήμα, οπότε αυτό δεν έχει επίδραση.</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Αποθήκευση</value>
+  </data>
+  <data name="SavedCreatedMessage" xml:space="preserve">
+    <value>Δημιουργήθηκαν {0} επερχόμενες κλήσεις και βρίσκονται στις Προγραμματισμένες κλήσεις.</value>
+  </data>
+  <data name="SavedMessage" xml:space="preserve">
+    <value>Η επαναλαμβανόμενη κλήση αποθηκεύτηκε.</value>
+  </data>
+  <data name="SavedReplacedMessage" xml:space="preserve">
+    <value>Αντικαταστάθηκαν {0} κλήσεις που είχαν ήδη δημιουργηθεί.</value>
+  </data>
+  <data name="Schedule" xml:space="preserve">
+    <value>Πρόγραμμα</value>
+  </data>
+  <data name="ScheduleContactEmail" xml:space="preserve">
+    <value>Email επαφής</value>
+  </data>
+  <data name="ScheduleContactHelp" xml:space="preserve">
+    <value>Ποιος κανόνισε το πρόγραμμα και πρέπει να ενημερώνεται για αλλαγές.</value>
+  </data>
+  <data name="ScheduleContactName" xml:space="preserve">
+    <value>Επαφή προγράμματος</value>
+  </data>
+  <data name="ScheduleContactNumber" xml:space="preserve">
+    <value>Τηλέφωνο επαφής</value>
+  </data>
+  <data name="SectionAlerts" xml:space="preserve">
+    <value>Ποιος ειδοποιείται</value>
+  </data>
+  <data name="SectionCall" xml:space="preserve">
+    <value>Στοιχεία κλήσης</value>
+  </data>
+  <data name="SectionDispatch" xml:space="preserve">
+    <value>Ποιος αποστέλλεται</value>
+  </data>
+  <data name="SectionFacility" xml:space="preserve">
+    <value>Εγκαταστάσεις και επαφή</value>
+  </data>
+  <data name="SectionSchedule" xml:space="preserve">
+    <value>Πρόγραμμα</value>
+  </data>
+  <data name="SelectPlaceholder" xml:space="preserve">
+    <value>Επιλογή...</value>
+  </data>
+  <data name="SendNow" xml:space="preserve">
+    <value>Αποστολή τώρα</value>
+  </data>
+  <data name="SentMessage" xml:space="preserve">
+    <value>Η κλήση στάλθηκε.</value>
+  </data>
+  <data name="SkipOccurrence" xml:space="preserve">
+    <value>Παράλειψη αυτής</value>
+  </data>
+  <data name="SkippedHelp" xml:space="preserve">
+    <value>Αυτή παραλείφθηκε και δεν θα δημιουργηθεί κλήση. Επαναφέρετέ την για να δημιουργηθεί ξανά η κλήση της.</value>
+  </data>
+  <data name="SkippedTitle" xml:space="preserve">
+    <value>Παραλείφθηκε: {0}</value>
+  </data>
+  <data name="StartsOn" xml:space="preserve">
+    <value>Ξεκινά στις</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Κατάσταση</value>
+  </data>
+  <data name="StatusActive" xml:space="preserve">
+    <value>Ενεργή</value>
+  </data>
+  <data name="StatusEnded" xml:space="preserve">
+    <value>Ολοκληρώθηκε</value>
+  </data>
+  <data name="StatusPaused" xml:space="preserve">
+    <value>Σε παύση</value>
+  </data>
+  <data name="SummaryDaily" xml:space="preserve">
+    <value>Κάθε ημέρα</value>
+  </data>
+  <data name="SummaryEveryNDays" xml:space="preserve">
+    <value>Κάθε {0} ημέρες</value>
+  </data>
+  <data name="SummaryEveryNMonthsDay" xml:space="preserve">
+    <value>Κάθε {0} μήνες την ημέρα {1}</value>
+  </data>
+  <data name="SummaryEveryNMonthsWeekday" xml:space="preserve">
+    <value>Κάθε {0} μήνες την {1} {2}</value>
+  </data>
+  <data name="SummaryEveryNWeeks" xml:space="preserve">
+    <value>Κάθε {0} εβδομάδες την {1}</value>
+  </data>
+  <data name="SummaryMonthlyDay" xml:space="preserve">
+    <value>Μηνιαία την ημέρα {0}</value>
+  </data>
+  <data name="SummaryMonthlyWeekday" xml:space="preserve">
+    <value>Μηνιαία την {0} {1}</value>
+  </data>
+  <data name="SummaryWeekly" xml:space="preserve">
+    <value>Εβδομαδιαία την {0}</value>
+  </data>
+  <data name="SummaryWithTimes" xml:space="preserve">
+    <value>{0} στις {1}</value>
+  </data>
+  <data name="Times" xml:space="preserve">
+    <value>Ώρες αποστολής</value>
+  </data>
+  <data name="TimesHelp" xml:space="preserve">
+    <value>Ώρα υπηρεσίας ({0}). Προσθέστε μια ώρα για κάθε κλήση της ημέρας, για παράδειγμα 08:00, 13:00 και 19:00.</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Τύπος</value>
+  </data>
+  <data name="Units" xml:space="preserve">
+    <value>Μονάδες</value>
+  </data>
+  <data name="UseRunCard" xml:space="preserve">
+    <value>Χρήση και της αντίστοιχης κάρτας επέμβασης</value>
+  </data>
+  <data name="UseRunCardHelp" xml:space="preserve">
+    <value>Όταν αποστέλλεται η κλήση, προσθέστε τους πόρους της κάρτας επέμβασης που ταιριάζει στον τύπο, την προτεραιότητα και τη θέση της, ακόμη κι αν δεν κάνει αυτόματη αποστολή.</value>
+  </data>
+  <data name="WeekFirst" xml:space="preserve">
+    <value>πρώτη</value>
+  </data>
+  <data name="WeekFourth" xml:space="preserve">
+    <value>τέταρτη</value>
+  </data>
+  <data name="WeekLast" xml:space="preserve">
+    <value>τελευταία</value>
+  </data>
+  <data name="WeekSecond" xml:space="preserve">
+    <value>δεύτερη</value>
+  </data>
+  <data name="WeekThird" xml:space="preserve">
+    <value>τρίτη</value>
+  </data>
+</root>

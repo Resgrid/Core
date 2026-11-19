@@ -555,6 +555,88 @@ namespace Resgrid.Web.Services.Controllers.v4
 		}
 
 		/// <summary>
+		/// Soft-deletes a report (a never-finalized one is cancelled first; a voided one needs a department administrator,
+		/// <c>ReasonText</c>, and no outside delivery). It leaves every list and the change feed sends a tombstone. A policy
+		/// refusal is 409 <c>record_delete_refused</c> with the <see cref="IncidentReportDeleteRefusal"/> name as the detail.
+		/// A stale report is the usual report conflict body; a linked analysis that changed during the delete is 409
+		/// <c>record_delete_analysis_conflict</c> (reload, then retry). A retry with an idempotency key after success answers
+		/// 200 rather than 404, also when the first attempt committed but its receipt was never stored.
+		/// </summary>
+		[HttpPost("Delete")]
+		[Consumes(MediaTypeNames.Application.Json)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Record_Void)]
+		public async Task<ActionResult<IncidentReportDeleteResult>> Delete(IncidentReportCommandInput input, CancellationToken cancellationToken)
+		{
+			if (input == null || string.IsNullOrWhiteSpace(input.ReportId))
+				return BadRequest();
+			var usable = await UsableAsync();
+			if (usable != null)
+				return usable;
+
+			var origin = RecordsApiHelper.ResolveOrigin(input.OriginClient);
+			var gate = await FieldClientGateAsync(origin);
+			if (gate != null)
+				return gate;
+
+			var key = RecordsApiHelper.ResolveIdempotencyKey(input.IdempotencyKey, Request);
+			// Checked before the load: a deleted report no longer loads, and the retry must still hear that it worked.
+			if (key != null && string.Equals(await _idempotency.TryGetRecordIdAsync(DepartmentId, UserId, key, nameof(Delete)), input.ReportId, StringComparison.Ordinal))
+				return Ok(DeleteResult(input.ReportId));
+			// The receipt is written after the delete commits; when that write never happened (process stopped, cache down),
+			// the caller's own recent delete still answers its retry instead of a 404.
+			if (key != null && await _incidentReports.WasDeletedByAsync(DepartmentId, UserId, input.ReportId))
+				return Ok(DeleteResult(input.ReportId));
+
+			if (await LoadAuthorizedAsync(input.ReportId) == null)
+				return NotFound();
+
+			try
+			{
+				await _incidentReports.DeleteAsync(DepartmentId, UserId, input.ReportId, input.ReasonText, origin, cancellationToken);
+				if (key != null)
+					await _idempotency.RememberAsync(DepartmentId, UserId, key, nameof(Delete), input.ReportId);
+				return Ok(DeleteResult(input.ReportId));
+			}
+			catch (UnauthorizedAccessException) { return Forbid(); }
+			catch (IncidentReportDeleteRefusedException ex)
+			{
+				return Problem(statusCode: StatusCodes.Status409Conflict, title: ex.Message, detail: ex.Refusal.ToString(), type: "record_delete_refused");
+			}
+			catch (RecordConcurrencyException ex) when (!string.Equals(ex.RecordId, input.ReportId, StringComparison.Ordinal))
+			{
+				// The linked analysis changed under the delete. Its version is not the report's, so it never goes into the
+				// report conflict body; the client reloads the report and asks again.
+				return Problem(statusCode: StatusCodes.Status409Conflict, title: "The report's incident analysis changed while the report was being deleted. Reload the report before retrying.", type: "record_delete_analysis_conflict");
+			}
+			catch (RecordConcurrencyException ex)
+			{
+				// Same 409 body as a stale draft save; the result carries no report data of its own type, so unwrap it.
+				return (await ConflictAsync(input.ReportId, ex.ExpectedRowVersion)).Result;
+			}
+			catch (RecordTransitionException ex)
+			{
+				return Problem(statusCode: StatusCodes.Status409Conflict, title: ex.Message, type: "record_transition");
+			}
+			catch (Exception ex) when (ex is ArgumentException || ex is InvalidOperationException)
+			{
+				return Problem(statusCode: StatusCodes.Status400BadRequest, title: ex.Message, type: "record_validation");
+			}
+		}
+
+		private static IncidentReportDeleteResult DeleteResult(string reportId)
+		{
+			var result = new IncidentReportDeleteResult
+			{
+				Data = new IncidentReportDeleteData { ReportId = reportId, PurgeAfterDays = IncidentReportsService.DeletedPurgeDays() },
+				Status = ResponseHelper.Deleted,
+				PageSize = 1
+			};
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
+		/// <summary>
 		/// <paramref name="command"/> scopes the idempotency key to the calling action. Without it a client that
 		/// reused one key for SubmitForReview and then Finalize matched on the report alone and was told the second
 		/// command succeeded without it ever running.

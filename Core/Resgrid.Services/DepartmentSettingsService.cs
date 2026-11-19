@@ -26,6 +26,7 @@ namespace Resgrid.Services
 		private static string StatusHoldToConfirmCacheKey = "DSetStatusHoldToConfirm_{0}";
 		private static string CloseCallWhenUnitsClearCacheKey = "DSetCloseCallWhenUnitsClear_{0}";
 		private static string TransportDestinationChecksCacheKey = "DSetTransportDestinationChecks_{0}";
+		private static string DestinationSuggestionsCacheKey = "DSetDestinationSuggestions_{0}";
 		private static string ModernNotificationsCacheKey = "DSetModernNotifications_{0}";
 		private static string RequirePasswordResetViaEmailCacheKey = "DSetRequirePasswordResetViaEmail_{0}";
 		private static string ForceChatbotSecurityPinCacheKey = "DSetForceChatbotSecurityPin_{0}";
@@ -1807,6 +1808,48 @@ namespace Resgrid.Services
 			return bool.TryParse(value, out var enabled) && enabled;
 		}
 
+		public async Task<DestinationSuggestionConfig> GetDestinationSuggestionConfigAsync(int departmentId, bool bypassCache = false)
+		{
+			async Task<string> getSetting()
+			{
+				var setting = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.DestinationSuggestions);
+				return setting?.Setting ?? string.Empty;
+			}
+
+			var value = Config.SystemBehaviorConfig.CacheEnabled && !bypassCache
+				? await _cacheProvider.RetrieveAsync<string>(string.Format(DestinationSuggestionsCacheKey, departmentId), getSetting, LongCacheLength)
+				: await getSetting();
+
+			if (!String.IsNullOrWhiteSpace(value))
+			{
+				try
+				{
+					var config = ObjectSerialization.Deserialize<DestinationSuggestionConfig>(value);
+					if (config != null)
+						return config;
+				}
+				catch (Exception)
+				{
+					// Read on every call form and status list; a corrupt blob means suggestions are off, never a failed page.
+				}
+			}
+
+			return new DestinationSuggestionConfig();
+		}
+
+		public async Task<DepartmentSetting> SetDestinationSuggestionConfigAsync(int departmentId, DestinationSuggestionConfig config,
+			CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var stored = new DestinationSuggestionConfig
+			{
+				Mode = (int)(config ?? new DestinationSuggestionConfig()).GetMode(),
+				PreferredWithinMinutes = (config ?? new DestinationSuggestionConfig()).GetPreferredWithinMinutes()
+			};
+
+			// SaveOrUpdateSettingAsync invalidates the cached value (see the DestinationSuggestions case in its cache switch).
+			return await SaveOrUpdateSettingAsync(departmentId, ObjectSerialization.Serialize(stored), DepartmentSettingTypes.DestinationSuggestions, cancellationToken);
+		}
+
 		public async Task<DepartmentSetting> SetDepartmentModuleSettingsAsync(int departmentId, DepartmentModuleSettings settings, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			return await SaveOrUpdateSettingAsync(departmentId, ObjectSerialization.Serialize(settings),
@@ -2024,6 +2067,9 @@ namespace Resgrid.Services
 					break;
 				case DepartmentSettingTypes.TransportDestinationChecks:
 					cacheKey = string.Format(TransportDestinationChecksCacheKey, departmentId);
+					break;
+				case DepartmentSettingTypes.DestinationSuggestions:
+					cacheKey = string.Format(DestinationSuggestionsCacheKey, departmentId);
 					break;
 				case DepartmentSettingTypes.EnableModernNotifications:
 					cacheKey = string.Format(ModernNotificationsCacheKey, departmentId);

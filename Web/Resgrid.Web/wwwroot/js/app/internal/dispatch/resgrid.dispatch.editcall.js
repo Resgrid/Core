@@ -612,6 +612,11 @@ var resgrid;
 
             // Debounced: a map click sets the marker before it writes the coordinate fields.
             function scheduleRecommendation() {
+                // Type, priority, template and marker changes all end here, so the suggested destinations refresh too.
+                if (resgrid.dispatch.destinations) {
+                    resgrid.dispatch.destinations.schedule();
+                }
+
                 if (!$('#runCardPanel').length) {
                     return;
                 }

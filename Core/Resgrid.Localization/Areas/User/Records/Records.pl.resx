@@ -2273,4 +2273,17 @@
   <data name="NoAlarmActivity" xml:space="preserve"><value>Nie zarejestrowano tu jeszcze czujek ani aktywności ograniczania ryzyka.</value></data>
   <data name="RecordAlarmLeft" xml:space="preserve"><value>Zarejestruj pozostawioną czujkę</value></data>
   <data name="AlarmsRequestedColumnHelp" xml:space="preserve"><value>Łącznie wnioskowanych urządzeń (tylko dym / tylko CO / łączone)</value></data>
+  <data name="IncidentReportDeleted" xml:space="preserve"><value>Raport ze zdarzenia usunięty.</value></data>
+  <data name="DeleteIncidentReport" xml:space="preserve"><value>Usuń</value></data>
+  <data name="DeleteIncidentReportConfirm" xml:space="preserve"><value>Usunąć ten raport ze zdarzenia? Zostanie usunięty ze wszystkich list, jego zgłoszenie zostanie zwolnione dla nowego raportu, a jego treść zostanie wymazana po {0} dniach.</value></data>
+  <data name="DeleteIncidentReportHelp" xml:space="preserve"><value>Usuwa raport ze wszystkich list i zwalnia jego zgłoszenie dla nowego raportu. Raport, który nigdy nie został sfinalizowany, jest najpierw anulowany. Treść jest wymazywana po {0} dniach.</value></data>
+  <data name="DeleteVoidedReasonPrompt" xml:space="preserve"><value>Dlaczego ten unieważniony raport jest usuwany?</value></data>
+  <data name="DeleteRefusedNotDeletable" xml:space="preserve"><value>Sfinalizowanego raportu nie można usunąć. Najpierw go unieważnij.</value></data>
+  <data name="DeleteRefusedVoidedNeedsAdmin" xml:space="preserve"><value>Tylko administrator jednostki może usunąć unieważniony raport.</value></data>
+  <data name="DeleteRefusedReasonRequired" xml:space="preserve"><value>Podaj powód usunięcia unieważnionego raportu.</value></data>
+  <data name="DeleteRefusedSubmittedExternally" xml:space="preserve"><value>Ten raport został wysłany do zewnętrznego systemu, takiego jak NERIS, więc nie można go usunąć. Zamiast tego go unieważnij.</value></data>
+  <data name="DeleteRefusedLegalHold" xml:space="preserve"><value>Ten raport jest objęty blokadą prawną, więc nie można go usunąć.</value></data>
+  <data name="DeleteRefusedPermanentContent" xml:space="preserve"><value>Ten raport zawiera wpisy o poszkodowanych, akcjach ratowniczych lub narażeniach, które są przechowywane na stałe. Usuń je z wersji roboczej przed usunięciem raportu.</value></data>
+  <data name="DeleteRefusedAmendmentOpen" xml:space="preserve"><value>Porzuć otwartą poprawkę przed usunięciem tego raportu.</value></data>
+  <data name="IncludeClosedReports" xml:space="preserve"><value>Uwzględnij anulowane i unieważnione</value></data>
 </root>

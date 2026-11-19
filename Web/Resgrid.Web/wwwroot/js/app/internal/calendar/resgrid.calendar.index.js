@@ -43,7 +43,8 @@ var resgrid;
                             allDay: rawEvent.allDay || false,
                             url: rawEvent.url,
                             backgroundColor: rawEvent.backgroundColor || '#1e90ff',
-                            borderColor: rawEvent.backgroundColor || '#1e90ff'
+                            borderColor: rawEvent.backgroundColor || '#1e90ff',
+                            classNames: rawEvent.classNames || []
                         };
                     },
                     eventClick: function (info) {
@@ -56,6 +57,23 @@ var resgrid;
 
                 calendarInstance.render();
                 document.getElementById('include-checklists')?.addEventListener('change', function () { calendarInstance.refetchEvents(); });
+                // Scheduled calls (Calls -> Scheduled Calls calendar feed): a second source, only fetched while the box is ticked.
+                document.getElementById('include-scheduled-calls')?.addEventListener('change', function () {
+                    var source = calendarInstance.getEventSourceById('scheduledCalls');
+                    $('#include-scheduled-calls-error').hide();
+                    if (this.checked && !source) {
+                        calendarInstance.addEventSource({
+                            id: 'scheduledCalls',
+                            url: resgrid.absoluteBaseUrl + '/User/RecurringCalls/GetCalendarEvents',
+                            success: function () { $('#include-scheduled-calls-error').hide(); },
+                            // Shown beside the box: ticked with nothing showing must not read as "no scheduled calls". Unticking and
+                            // ticking it again retries.
+                            failure: function () { $('#include-scheduled-calls-error').show(); }
+                        });
+                    } else if (!this.checked && source) {
+                        source.remove();
+                    }
+                });
             });
 
             index.getCalendar = function () { return calendarInstance; };

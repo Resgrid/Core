@@ -101,6 +101,12 @@ namespace Resgrid.Providers.Bus.Rabbit
 			Id = Guid.NewGuid(), Type = (int)EventingTypes.UnitNavigationUpdated, TimeStamp = DateTime.UtcNow, DepartmentId = departmentId, ItemId = unitId.ToString(), Payload = payload
 		}.SerializeJson());
 
+		/// <summary>A department's recurring call alerts changed; item id is the schedule id, payload { alertId, kind, raised }.</summary>
+		public Task<bool> RecurringCallAlertsUpdated(int departmentId, int recurringCallId, string payload) => SendMessage(Topics.EventingTopic, new EventingMessage
+		{
+			Id = Guid.NewGuid(), Type = (int)EventingTypes.RecurringCallAlertsUpdated, TimeStamp = DateTime.UtcNow, DepartmentId = departmentId, ItemId = recurringCallId.ToString(), Payload = payload
+		}.SerializeJson());
+
 		public Task<bool> OutstandingRequirementsUpdated(int departmentId, int callId, string payload) => SendMessage(Topics.EventingTopic, new EventingMessage
 		{
 			Id = Guid.NewGuid(), Type = (int)EventingTypes.OutstandingRequirementsUpdated, TimeStamp = DateTime.UtcNow, DepartmentId = departmentId, ItemId = callId.ToString(), Payload = payload

@@ -246,5 +246,12 @@
 		/// false (the apps still pre-select the call's destination and show the difference, nothing is required or recorded).
 		/// </summary>
 		TransportDestinationChecks = 126,
+
+		/// <summary>
+		/// ProtoBuf <see cref="DestinationSuggestionConfig"/>, Mapping → Destination Rules: whether the call form and the apps
+		/// suggest (and optionally fill in) the best destination from the department's <see cref="DestinationRule"/>s, and the
+		/// near-tie window for preferred capabilities. Missing = off.
+		/// </summary>
+		DestinationSuggestions = 127,
 	}
 }

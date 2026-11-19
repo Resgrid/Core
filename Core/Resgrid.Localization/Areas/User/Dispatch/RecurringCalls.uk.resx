@@ -1,0 +1,704 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Map Icon Legend and status / priority map icon pages -->
+    <data name="ActionFailed" xml:space="preserve">
+    <value>Не вдалося. Оновіть сторінку й спробуйте ще раз.</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Дії</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>Активний</value>
+  </data>
+  <data name="ActiveHelp" xml:space="preserve">
+    <value>Зніміть позначку, щоб призупинити: виклики не створюються до відновлення.</value>
+  </data>
+  <data name="AddTime" xml:space="preserve">
+    <value>Додати час</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>Адреса</value>
+  </data>
+  <data name="AddressHelp" xml:space="preserve">
+    <value>Визначається під час збереження для карти й маршруту.</value>
+  </data>
+  <data name="AlertAcknowledge" xml:space="preserve">
+    <value>Підтвердити</value>
+  </data>
+  <data name="AlertAcknowledgedBy" xml:space="preserve">
+    <value>Підтверджено: {0}</value>
+  </data>
+  <data name="AlertCreateCall" xml:space="preserve">
+    <value>Створити виклик</value>
+  </data>
+  <data name="AlertDismiss" xml:space="preserve">
+    <value>Закрити</value>
+  </data>
+  <data name="AlertDismissPrompt" xml:space="preserve">
+    <value>Нотатка (необов’язково): чому закривається це сповіщення?</value>
+  </data>
+  <data name="AlertKindCreateFailed" xml:space="preserve">
+    <value>Не вдалося створити виклик</value>
+  </data>
+  <data name="AlertKindDispatchDue" xml:space="preserve">
+    <value>Час надіслати</value>
+  </data>
+  <data name="AlertKindMissed" xml:space="preserve">
+    <value>Пропущено: виклик не створено вчасно</value>
+  </data>
+  <data name="AlertKindNoResources" xml:space="preserve">
+    <value>Нікого не вдалося надіслати: виклик утримується як очікуваний</value>
+  </data>
+  <data name="AlertKindResourcesUnavailable" xml:space="preserve">
+    <value>Надіслано без деяких обраних ресурсів</value>
+  </data>
+  <data name="AlertOpenCall" xml:space="preserve">
+    <value>Відкрити виклик</value>
+  </data>
+  <data name="AlertReasonDepartmentUnavailable" xml:space="preserve">
+    <value>Не вдалося завантажити підрозділ.</value>
+  </data>
+  <data name="AlertReasonNoneAvailable" xml:space="preserve">
+    <value>Жоден з обраних ресурсів не був доступний.</value>
+  </data>
+  <data name="AlertReasonNoneChosen" xml:space="preserve">
+    <value>Ресурси не обрано, і жодна картка реагування не підійшла.</value>
+  </data>
+  <data name="AlertReasonSaveFailed" xml:space="preserve">
+    <value>Не вдалося зберегти виклик; спроби триватимуть до призначеного часу.</value>
+  </data>
+  <data name="AlertSchedule" xml:space="preserve">
+    <value>Повторюваний виклик</value>
+  </data>
+  <data name="AlertUnavailable" xml:space="preserve">
+    <value>Недоступні: {0}</value>
+  </data>
+  <data name="AlertWhat" xml:space="preserve">
+    <value>Що сталося</value>
+  </data>
+  <data name="AlertWhen" xml:space="preserve">
+    <value>Час</value>
+  </data>
+  <data name="AlertsBanner" xml:space="preserve">
+    <value>{0} сповіщень повторюваних викликів потребують уваги.</value>
+  </data>
+  <data name="AlertsBannerLink" xml:space="preserve">
+    <value>Переглянути</value>
+  </data>
+  <data name="AlertsHelp" xml:space="preserve">
+    <value>Отримують сповіщення (push, SMS чи email за їхніми налаштуваннями), коли виклик не вдається створити, його пропущено, нікого не можна надіслати, обрані ресурси недоступні або диспетчер має його надіслати. Нікого не обрано: той, хто створив розклад.</value>
+  </data>
+  <data name="AlertsTitle" xml:space="preserve">
+    <value>Потребує уваги</value>
+  </data>
+  <data name="AvailabilityHelp" xml:space="preserve">
+    <value>Коли виклик надсилається, обрані підрозділи й учасники, які недоступні (на іншому виклику, поза службою), пропускаються, а диспетчер отримує сповіщення. Якщо нікого не лишилося, виклик утримується як очікуваний для диспетчера.</value>
+  </data>
+  <data name="Calendar" xml:space="preserve">
+    <value>Календар</value>
+  </data>
+  <data name="ContactName" xml:space="preserve">
+    <value>Ім’я контакту</value>
+  </data>
+  <data name="ContactNumber" xml:space="preserve">
+    <value>Контактний номер</value>
+  </data>
+  <data name="Coordinates" xml:space="preserve">
+    <value>Координати</value>
+  </data>
+  <data name="CoordinatesHelp" xml:space="preserve">
+    <value>Широта, довгота (необов’язково). Залиште порожнім, щоб визначити адресу.</value>
+  </data>
+  <data name="CreateNow" xml:space="preserve">
+    <value>Створити виклик зараз</value>
+  </data>
+  <data name="CreatedByRecurringCall" xml:space="preserve">
+    <value>Цей виклик створено повторюваним викликом.</value>
+  </data>
+  <data name="CreationMode" xml:space="preserve">
+    <value>Хто надсилає кожен виклик</value>
+  </data>
+  <data name="CreationModeAutomatic" xml:space="preserve">
+    <value>Автоматично: кожен виклик створюється заздалегідь і надсилається в призначений час</value>
+  </data>
+  <data name="CreationModeDispatcher" xml:space="preserve">
+    <value>Диспетчер: нічого не створюється заздалегідь; диспетчер отримує сповіщення в призначений час і надсилає виклик</value>
+  </data>
+  <data name="DatesFrom" xml:space="preserve">
+    <value>З {0}</value>
+  </data>
+  <data name="DatesUntil" xml:space="preserve">
+    <value>до {0}</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Видалити</value>
+  </data>
+  <data name="DeleteConfirm" xml:space="preserve">
+    <value>Видалити цей повторюваний виклик? Нові виклики з нього більше не створюватимуться.</value>
+  </data>
+  <data name="DeleteRecurringCall" xml:space="preserve">
+    <value>Видалити повторюваний виклик</value>
+  </data>
+  <data name="DeleteUpcoming" xml:space="preserve">
+    <value>Також видалити {0} вже створених майбутніх викликів</value>
+  </data>
+  <data name="DeletedMessage" xml:space="preserve">
+    <value>Повторюваний виклик видалено.</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Опис</value>
+  </data>
+  <data name="DescriptionHelp" xml:space="preserve">
+    <value>Для чого цей розклад і що має знати диспетчер. Зберігається в розкладі, не копіюється у виклики.</value>
+  </data>
+  <data name="Destination" xml:space="preserve">
+    <value>Пункт призначення</value>
+  </data>
+  <data name="DestinationDetails" xml:space="preserve">
+    <value>Деталі призначення</value>
+  </data>
+  <data name="DestinationName" xml:space="preserve">
+    <value>Заклад призначення</value>
+  </data>
+  <data name="DispatchHelp" xml:space="preserve">
+    <value>Кому надсилається кожен виклик. Залиште все порожнім, щоб обрав диспетчер: у призначений час виклик утримується як очікуваний, а диспетчер отримує сповіщення.</value>
+  </data>
+  <data name="DueHelp" xml:space="preserve">
+    <value>Час надіслати цей виклик. Надішліть зараз, спершу створіть, щоб змінити, або пропустіть.</value>
+  </data>
+  <data name="DueTitle" xml:space="preserve">
+    <value>Надіслати: {0}</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Редагувати</value>
+  </data>
+  <data name="EditRecurringCall" xml:space="preserve">
+    <value>Редагувати повторюваний виклик</value>
+  </data>
+  <data name="EnableCheckInTimers" xml:space="preserve">
+    <value>Увімкнути таймери відмітки</value>
+  </data>
+  <data name="EndsOn" xml:space="preserve">
+    <value>Закінчується</value>
+  </data>
+  <data name="EndsOnHelp" xml:space="preserve">
+    <value>Залиште порожнім, щоб повторювати без кінця.</value>
+  </data>
+  <data name="ErrorContactEmailInvalid" xml:space="preserve">
+    <value>Введіть дійсну адресу ел. пошти контакту розкладу.</value>
+  </data>
+  <data name="ErrorCoordinatesInvalid" xml:space="preserve">
+    <value>Введіть координати як широту, довготу (наприклад 39.7392,-104.9903).</value>
+  </data>
+  <data name="ErrorCreationModeInvalid" xml:space="preserve">
+    <value>Оберіть, хто надсилає кожен виклик.</value>
+  </data>
+  <data name="ErrorDaysRequired" xml:space="preserve">
+    <value>Виберіть принаймні один день тижня.</value>
+  </data>
+  <data name="ErrorEndsBeforeStart" xml:space="preserve">
+    <value>Дата завершення раніша за дату початку.</value>
+  </data>
+  <data name="ErrorEndsOnInvalid" xml:space="preserve">
+    <value>Введіть дійсну дату завершення.</value>
+  </data>
+  <data name="ErrorFacilityPoiInvalid" xml:space="preserve">
+    <value>Оберіть точку інтересу для забору зі списку.</value>
+  </data>
+  <data name="ErrorFrequencyInvalid" xml:space="preserve">
+    <value>Виберіть, як повторювати.</value>
+  </data>
+  <data name="ErrorIntervalInvalid" xml:space="preserve">
+    <value>Повторювати кожні 1–{1}.</value>
+  </data>
+  <data name="ErrorLeadTimeInvalid" xml:space="preserve">
+    <value>Виберіть, коли створюється кожен виклик.</value>
+  </data>
+  <data name="ErrorManualAlertInvalid" xml:space="preserve">
+    <value>Оберіть, коли сповістити диспетчера.</value>
+  </data>
+  <data name="ErrorMonthlyDayInvalid" xml:space="preserve">
+    <value>Виберіть день місяця від 1 до 31.</value>
+  </data>
+  <data name="ErrorMonthlyWeekdayInvalid" xml:space="preserve">
+    <value>Виберіть день тижня в місяці.</value>
+  </data>
+  <data name="ErrorNameRequired" xml:space="preserve">
+    <value>Введіть назву.</value>
+  </data>
+  <data name="ErrorResumeOnInvalid" xml:space="preserve">
+    <value>Дата відновлення недійсна.</value>
+  </data>
+  <data name="ErrorStartsOnRequired" xml:space="preserve">
+    <value>Введіть дату початку.</value>
+  </data>
+  <data name="ErrorTimeInvalid" xml:space="preserve">
+    <value>Вводьте час у годинах і хвилинах (наприклад 08:00).</value>
+  </data>
+  <data name="ErrorTimesRequired" xml:space="preserve">
+    <value>Додайте принаймні один час надсилання.</value>
+  </data>
+  <data name="ErrorTooManyTimes" xml:space="preserve">
+    <value>Використовуйте не більше {0} значень часу на день.</value>
+  </data>
+  <data name="Every" xml:space="preserve">
+    <value>Кожні</value>
+  </data>
+  <data name="ExternalId" xml:space="preserve">
+    <value>Зовнішній ID</value>
+  </data>
+  <data name="FacilityDetails" xml:space="preserve">
+    <value>Деталі забору</value>
+  </data>
+  <data name="FacilityDetailsPlaceholder" xml:space="preserve">
+    <value>Відділення, поверх, палата, вхід, кого питати</value>
+  </data>
+  <data name="FacilityHelp" xml:space="preserve">
+    <value>Рядки про місце забору й призначення додаються до нотаток кожного створеного виклику, щоб екіпаж їх мав.</value>
+  </data>
+  <data name="FacilityName" xml:space="preserve">
+    <value>Заклад забору</value>
+  </data>
+  <data name="FacilityPoi" xml:space="preserve">
+    <value>Точка інтересу для забору</value>
+  </data>
+  <data name="FacilityPoiHelp" xml:space="preserve">
+    <value>Заповнює заклад забору й адресу, якщо вони порожні.</value>
+  </data>
+  <data name="FrequencyDaily" xml:space="preserve">
+    <value>Щодня</value>
+  </data>
+  <data name="FrequencyMonthly" xml:space="preserve">
+    <value>Щомісяця</value>
+  </data>
+  <data name="FrequencyWeekly" xml:space="preserve">
+    <value>Щотижня</value>
+  </data>
+  <data name="FromCallNotice" xml:space="preserve">
+    <value>Заповнено з виклику {0}. Виберіть, коли повторювати.</value>
+  </data>
+  <data name="Groups" xml:space="preserve">
+    <value>Групи</value>
+  </data>
+  <data name="HeldMessage" xml:space="preserve">
+    <value>Нікого не вдалося надіслати; виклик очікує.</value>
+  </data>
+  <data name="HeldTitle" xml:space="preserve">
+    <value>Утримано: {0}</value>
+  </data>
+  <data name="IncidentId" xml:space="preserve">
+    <value>ID інциденту</value>
+  </data>
+  <data name="IncludeScheduledCalls" xml:space="preserve">
+    <value>Показати заплановані виклики</value>
+  </data>
+  <data name="IntervalDays" xml:space="preserve">
+    <value>дн.</value>
+  </data>
+  <data name="IntervalMonths" xml:space="preserve">
+    <value>міс.</value>
+  </data>
+  <data name="IntervalWeeks" xml:space="preserve">
+    <value>тиж.</value>
+  </data>
+  <data name="LeadTime" xml:space="preserve">
+    <value>Створювати кожен виклик</value>
+  </data>
+  <data name="LeadTimeDay" xml:space="preserve">
+    <value>За 1 день</value>
+  </data>
+  <data name="LeadTimeDays" xml:space="preserve">
+    <value>За {0} дн.</value>
+  </data>
+  <data name="LeadTimeHelp" xml:space="preserve">
+    <value>За скільки до часу надсилання створюється кожен виклик. Потім він з’являється в Запланованих викликах, де його можна окремо змінити, надіслати раніше або видалити.</value>
+  </data>
+  <data name="LeadTimeHour" xml:space="preserve">
+    <value>За 1 годину</value>
+  </data>
+  <data name="LeadTimeHours" xml:space="preserve">
+    <value>За {0} год</value>
+  </data>
+  <data name="LeadTimeMinutes" xml:space="preserve">
+    <value>За {0} хв</value>
+  </data>
+  <data name="LegendCancelled" xml:space="preserve">
+    <value>Закрито до надсилання</value>
+  </data>
+  <data name="LegendDispatched" xml:space="preserve">
+    <value>Надіслано</value>
+  </data>
+  <data name="LegendDue" xml:space="preserve">
+    <value>Очікує диспетчера</value>
+  </data>
+  <data name="LegendHeld" xml:space="preserve">
+    <value>Утримано, нікого немає</value>
+  </data>
+  <data name="LegendMissed" xml:space="preserve">
+    <value>Пропущено вчасно</value>
+  </data>
+  <data name="LegendProjected" xml:space="preserve">
+    <value>Повторюваний, ще не створено</value>
+  </data>
+  <data name="LegendScheduled" xml:space="preserve">
+    <value>Заплановано</value>
+  </data>
+  <data name="LegendSkipped" xml:space="preserve">
+    <value>Пропущено</value>
+  </data>
+  <data name="ListTab" xml:space="preserve">
+    <value>Список</value>
+  </data>
+  <data name="ManualAlert" xml:space="preserve">
+    <value>Сповістити диспетчера</value>
+  </data>
+  <data name="ManualAlertAtTime" xml:space="preserve">
+    <value>У призначений час</value>
+  </data>
+  <data name="ManualAlertHelp" xml:space="preserve">
+    <value>Коли диспетчер дізнається, що час надіслати виклик. Показується в розділі «Потребує уваги» у Повторюваних викликах і в застосунку Dispatch, доки хтось його не надішле чи не пропустить.</value>
+  </data>
+  <data name="MapPage" xml:space="preserve">
+    <value>Сторінка карти</value>
+  </data>
+  <data name="MissedHelp" xml:space="preserve">
+    <value>Час минув, а виклик не створено. Надішліть зараз або пропустіть.</value>
+  </data>
+  <data name="MissedTitle" xml:space="preserve">
+    <value>Пропущено: {0}</value>
+  </data>
+  <data name="ModeAutomaticShort" xml:space="preserve">
+    <value>Надсилається автоматично</value>
+  </data>
+  <data name="ModeDispatcherShort" xml:space="preserve">
+    <value>Надсилає диспетчер</value>
+  </data>
+  <data name="MonthlyDayHelp" xml:space="preserve">
+    <value>У місяці без цього дня виконується в останній день.</value>
+  </data>
+  <data name="MonthlyOn" xml:space="preserve">
+    <value>У</value>
+  </data>
+  <data name="MonthlyOnDay" xml:space="preserve">
+    <value>День</value>
+  </data>
+  <data name="MonthlyOnThe" xml:space="preserve">
+    <value>У</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Назва</value>
+  </data>
+  <data name="NameHelp" xml:space="preserve">
+    <value>Кожен створений виклик отримує цю назву.</value>
+  </data>
+  <data name="Nature" xml:space="preserve">
+    <value>Характер виклику</value>
+  </data>
+  <data name="NewRecurringCall" xml:space="preserve">
+    <value>Новий повторюваний виклик</value>
+  </data>
+  <data name="NextDispatch" xml:space="preserve">
+    <value>Наступне надсилання</value>
+  </data>
+  <data name="NextDispatches" xml:space="preserve">
+    <value>Наступні надсилання</value>
+  </data>
+  <data name="NoAlerts" xml:space="preserve">
+    <value>Ніщо не потребує уваги.</value>
+  </data>
+  <data name="NoFacilityPoi" xml:space="preserve">
+    <value>Немає</value>
+  </data>
+  <data name="NoNextDispatches" xml:space="preserve">
+    <value>Нічого не заплановано.</value>
+  </data>
+  <data name="NoRecurringCalls" xml:space="preserve">
+    <value>Повторюваних викликів ще немає.</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Немає</value>
+  </data>
+  <data name="Notes" xml:space="preserve">
+    <value>Нотатки</value>
+  </data>
+  <data name="OnDays" xml:space="preserve">
+    <value>У</value>
+  </data>
+  <data name="OpenAlertsCount" xml:space="preserve">
+    <value>{0} потребує уваги</value>
+  </data>
+  <data name="PageIntro" xml:space="preserve">
+    <value>Повторюваний виклик надсилається за розкладом, наприклад міжлікарняні перевезення щовівторка й щочетверга о 08:00, 13:00 і 19:00. Кожен виклик створюється до часу його надсилання й з’являється в Запланованих викликах, де його можна змінити, надіслати раніше або видалити, як будь-який інший.</value>
+  </data>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Повторювані виклики</value>
+  </data>
+  <data name="Pause" xml:space="preserve">
+    <value>Призупинити</value>
+  </data>
+  <data name="PauseDeleteUpcoming" xml:space="preserve">
+    <value>Також видалити вже створені, ще не надіслані виклики</value>
+  </data>
+  <data name="PauseHelp" xml:space="preserve">
+    <value>Під час призупинення нічого не створюється й не сповіщається. Розклад, налаштування та історія зберігаються.</value>
+  </data>
+  <data name="PauseReason" xml:space="preserve">
+    <value>Причина</value>
+  </data>
+  <data name="PauseTitle" xml:space="preserve">
+    <value>Призупинити:</value>
+  </data>
+  <data name="PausedMessage" xml:space="preserve">
+    <value>Повторюваний виклик призупинено. Виклики не створюватимуться, доки його не буде відновлено.</value>
+  </data>
+  <data name="PausedUntil" xml:space="preserve">
+    <value>до {0}</value>
+  </data>
+  <data name="Personnel" xml:space="preserve">
+    <value>Персонал</value>
+  </data>
+  <data name="Priority" xml:space="preserve">
+    <value>Пріоритет</value>
+  </data>
+  <data name="ProjectedHelp" xml:space="preserve">
+    <value>Виклик ще не створено. Надішліть його зараз, пропустіть цей або створіть виклик зараз, щоб змінити його окремо.</value>
+  </data>
+  <data name="ReadOnlyHelp" xml:space="preserve">
+    <value>Виклик ще не створено. Лише учасники, які можуть створювати виклики, можуть його надіслати, пропустити чи створити.</value>
+  </data>
+  <data name="ReferenceId" xml:space="preserve">
+    <value>Довідковий ID</value>
+  </data>
+  <data name="RemoveTime" xml:space="preserve">
+    <value>Видалити час</value>
+  </data>
+  <data name="RepeatCall" xml:space="preserve">
+    <value>Повторювати</value>
+  </data>
+  <data name="RepeatCallHelp" xml:space="preserve">
+    <value>Створити повторюваний виклик із цього виклику</value>
+  </data>
+  <data name="Repeats" xml:space="preserve">
+    <value>Повторення</value>
+  </data>
+  <data name="ReplaceUpcoming" xml:space="preserve">
+    <value>Замінити {0} вже створених майбутніх викликів</value>
+  </data>
+  <data name="ReplaceUpcomingHelp" xml:space="preserve">
+    <value>Їх буде видалено й створено знову з цими даними, тож окремі зміни в них буде втрачено. Зніміть позначку, щоб залишити їх як є.</value>
+  </data>
+  <data name="RestoreOccurrence" xml:space="preserve">
+    <value>Відновити пропущений</value>
+  </data>
+  <data name="Resume" xml:space="preserve">
+    <value>Відновити</value>
+  </data>
+  <data name="ResumeOn" xml:space="preserve">
+    <value>Відновити</value>
+  </data>
+  <data name="ResumeOnHelp" xml:space="preserve">
+    <value>Залиште порожнім, щоб лишалося призупиненим, доки хтось не відновить.</value>
+  </data>
+  <data name="ResumedMessage" xml:space="preserve">
+    <value>Повторюваний виклик відновлено.</value>
+  </data>
+  <data name="Roles" xml:space="preserve">
+    <value>Ролі</value>
+  </data>
+  <data name="RunCardsOffHelp" xml:space="preserve">
+    <value>Картки реагування не ввімкнено для цього підрозділу, тож це не діє.</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Зберегти</value>
+  </data>
+  <data name="SavedCreatedMessage" xml:space="preserve">
+    <value>Створено {0} майбутніх викликів; вони в Запланованих викликах.</value>
+  </data>
+  <data name="SavedMessage" xml:space="preserve">
+    <value>Повторюваний виклик збережено.</value>
+  </data>
+  <data name="SavedReplacedMessage" xml:space="preserve">
+    <value>Замінено {0} вже створених викликів.</value>
+  </data>
+  <data name="Schedule" xml:space="preserve">
+    <value>Розклад</value>
+  </data>
+  <data name="ScheduleContactEmail" xml:space="preserve">
+    <value>Ел. пошта контакту</value>
+  </data>
+  <data name="ScheduleContactHelp" xml:space="preserve">
+    <value>Хто домовився про розклад і кому телефонувати щодо змін.</value>
+  </data>
+  <data name="ScheduleContactName" xml:space="preserve">
+    <value>Контакт розкладу</value>
+  </data>
+  <data name="ScheduleContactNumber" xml:space="preserve">
+    <value>Телефон контакту</value>
+  </data>
+  <data name="SectionAlerts" xml:space="preserve">
+    <value>Кого сповіщати</value>
+  </data>
+  <data name="SectionCall" xml:space="preserve">
+    <value>Відомості про виклик</value>
+  </data>
+  <data name="SectionDispatch" xml:space="preserve">
+    <value>Кого надсилати</value>
+  </data>
+  <data name="SectionFacility" xml:space="preserve">
+    <value>Заклади та контакт</value>
+  </data>
+  <data name="SectionSchedule" xml:space="preserve">
+    <value>Розклад</value>
+  </data>
+  <data name="SelectPlaceholder" xml:space="preserve">
+    <value>Виберіть...</value>
+  </data>
+  <data name="SendNow" xml:space="preserve">
+    <value>Надіслати зараз</value>
+  </data>
+  <data name="SentMessage" xml:space="preserve">
+    <value>Виклик надіслано.</value>
+  </data>
+  <data name="SkipOccurrence" xml:space="preserve">
+    <value>Пропустити цей</value>
+  </data>
+  <data name="SkippedHelp" xml:space="preserve">
+    <value>Цей пропущено, виклик не буде створено. Відновіть його, щоб виклик створився знову.</value>
+  </data>
+  <data name="SkippedTitle" xml:space="preserve">
+    <value>Пропущено: {0}</value>
+  </data>
+  <data name="StartsOn" xml:space="preserve">
+    <value>Починається</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Стан</value>
+  </data>
+  <data name="StatusActive" xml:space="preserve">
+    <value>Активний</value>
+  </data>
+  <data name="StatusEnded" xml:space="preserve">
+    <value>Завершено</value>
+  </data>
+  <data name="StatusPaused" xml:space="preserve">
+    <value>Призупинено</value>
+  </data>
+  <data name="SummaryDaily" xml:space="preserve">
+    <value>Щодня</value>
+  </data>
+  <data name="SummaryEveryNDays" xml:space="preserve">
+    <value>Кожні {0} дн.</value>
+  </data>
+  <data name="SummaryEveryNMonthsDay" xml:space="preserve">
+    <value>Кожні {0} міс. {1}-го числа</value>
+  </data>
+  <data name="SummaryEveryNMonthsWeekday" xml:space="preserve">
+    <value>Кожні {0} міс.: {1} {2}</value>
+  </data>
+  <data name="SummaryEveryNWeeks" xml:space="preserve">
+    <value>Кожні {0} тиж.: {1}</value>
+  </data>
+  <data name="SummaryMonthlyDay" xml:space="preserve">
+    <value>Щомісяця {0}-го числа</value>
+  </data>
+  <data name="SummaryMonthlyWeekday" xml:space="preserve">
+    <value>Щомісяця: {0} {1}</value>
+  </data>
+  <data name="SummaryWeekly" xml:space="preserve">
+    <value>Щотижня: {0}</value>
+  </data>
+  <data name="SummaryWithTimes" xml:space="preserve">
+    <value>{0} о {1}</value>
+  </data>
+  <data name="Times" xml:space="preserve">
+    <value>Час надсилання</value>
+  </data>
+  <data name="TimesHelp" xml:space="preserve">
+    <value>Час підрозділу ({0}). Додайте час для кожного виклику протягом дня, наприклад 08:00, 13:00 і 19:00.</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Тип</value>
+  </data>
+  <data name="Units" xml:space="preserve">
+    <value>Підрозділи</value>
+  </data>
+  <data name="UseRunCard" xml:space="preserve">
+    <value>Також використовувати відповідну картку реагування</value>
+  </data>
+  <data name="UseRunCardHelp" xml:space="preserve">
+    <value>Коли виклик надсилається, додати ресурси картки реагування, що відповідає його типу, пріоритету й місцю, навіть якщо вона не надсилає автоматично.</value>
+  </data>
+  <data name="WeekFirst" xml:space="preserve">
+    <value>перший</value>
+  </data>
+  <data name="WeekFourth" xml:space="preserve">
+    <value>четвертий</value>
+  </data>
+  <data name="WeekLast" xml:space="preserve">
+    <value>останній</value>
+  </data>
+  <data name="WeekSecond" xml:space="preserve">
+    <value>другий</value>
+  </data>
+  <data name="WeekThird" xml:space="preserve">
+    <value>третій</value>
+  </data>
+</root>

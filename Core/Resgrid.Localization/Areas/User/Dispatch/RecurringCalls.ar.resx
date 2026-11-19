@@ -1,0 +1,704 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Map Icon Legend and status / priority map icon pages -->
+    <data name="ActionFailed" xml:space="preserve">
+    <value>تعذّر تنفيذ ذلك. حدّث الصفحة وحاول مرة أخرى.</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>الإجراءات</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>نشطة</value>
+  </data>
+  <data name="ActiveHelp" xml:space="preserve">
+    <value>أزل التحديد لإيقافها مؤقتًا: لن تُنشأ مكالمات حتى يتم استئنافها.</value>
+  </data>
+  <data name="AddTime" xml:space="preserve">
+    <value>إضافة وقت</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>العنوان</value>
+  </data>
+  <data name="AddressHelp" xml:space="preserve">
+    <value>يُحدَّد موقعه عند الحفظ، للخريطة والاتجاهات.</value>
+  </data>
+  <data name="AlertAcknowledge" xml:space="preserve">
+    <value>إقرار</value>
+  </data>
+  <data name="AlertAcknowledgedBy" xml:space="preserve">
+    <value>أقرّ بها {0}</value>
+  </data>
+  <data name="AlertCreateCall" xml:space="preserve">
+    <value>إنشاء المكالمة</value>
+  </data>
+  <data name="AlertDismiss" xml:space="preserve">
+    <value>تجاهل</value>
+  </data>
+  <data name="AlertDismissPrompt" xml:space="preserve">
+    <value>ملاحظة (اختيارية): لماذا أُغلق هذا التنبيه؟</value>
+  </data>
+  <data name="AlertKindCreateFailed" xml:space="preserve">
+    <value>تعذّر إنشاء المكالمة</value>
+  </data>
+  <data name="AlertKindDispatchDue" xml:space="preserve">
+    <value>حان وقت الإرسال</value>
+  </data>
+  <data name="AlertKindMissed" xml:space="preserve">
+    <value>فائتة: لم تُنشأ المكالمة في الوقت المحدد</value>
+  </data>
+  <data name="AlertKindNoResources" xml:space="preserve">
+    <value>تعذّر إرسال أي أحد: المكالمة معلقة</value>
+  </data>
+  <data name="AlertKindResourcesUnavailable" xml:space="preserve">
+    <value>أُرسلت دون بعض الموارد المختارة</value>
+  </data>
+  <data name="AlertOpenCall" xml:space="preserve">
+    <value>فتح المكالمة</value>
+  </data>
+  <data name="AlertReasonDepartmentUnavailable" xml:space="preserve">
+    <value>تعذّر تحميل القسم.</value>
+  </data>
+  <data name="AlertReasonNoneAvailable" xml:space="preserve">
+    <value>لم يكن أي من الموارد المختارة متاحًا.</value>
+  </data>
+  <data name="AlertReasonNoneChosen" xml:space="preserve">
+    <value>لم تُختر أي موارد ولم تطابق أي بطاقة تشغيل.</value>
+  </data>
+  <data name="AlertReasonSaveFailed" xml:space="preserve">
+    <value>فشل حفظ المكالمة؛ تُعاد المحاولة حتى موعدها.</value>
+  </data>
+  <data name="AlertSchedule" xml:space="preserve">
+    <value>المكالمة المتكررة</value>
+  </data>
+  <data name="AlertUnavailable" xml:space="preserve">
+    <value>غير متاح: {0}</value>
+  </data>
+  <data name="AlertWhat" xml:space="preserve">
+    <value>ما الذي حدث</value>
+  </data>
+  <data name="AlertWhen" xml:space="preserve">
+    <value>الموعد</value>
+  </data>
+  <data name="AlertsBanner" xml:space="preserve">
+    <value>{0} من تنبيهات المكالمات المتكررة بحاجة إلى انتباه.</value>
+  </data>
+  <data name="AlertsBannerLink" xml:space="preserve">
+    <value>مراجعة</value>
+  </data>
+  <data name="AlertsHelp" xml:space="preserve">
+    <value>يُبلَّغون (إشعار أو رسالة نصية أو بريد حسب إعداداتهم) عند تعذّر إنشاء مكالمة أو فواتها أو عدم إمكانية إرسال أحد أو عدم توفر الموارد المختارة أو حاجة المرسل لإرسالها. إن لم يُختر أحد: من أنشأ الجدول.</value>
+  </data>
+  <data name="AlertsTitle" xml:space="preserve">
+    <value>يحتاج إلى انتباه</value>
+  </data>
+  <data name="AvailabilityHelp" xml:space="preserve">
+    <value>عند إرسال المكالمة، تُستبعد الوحدات والأعضاء المختارون غير المتاحين (في مكالمة أخرى، خارج الخدمة، خارج المناوبة) ويُنبَّه المرسل. إذا لم يبقَ أحد، تُعلَّق المكالمة كمعلقة بانتظار المرسل.</value>
+  </data>
+  <data name="Calendar" xml:space="preserve">
+    <value>التقويم</value>
+  </data>
+  <data name="ContactName" xml:space="preserve">
+    <value>اسم جهة الاتصال</value>
+  </data>
+  <data name="ContactNumber" xml:space="preserve">
+    <value>رقم جهة الاتصال</value>
+  </data>
+  <data name="Coordinates" xml:space="preserve">
+    <value>الإحداثيات</value>
+  </data>
+  <data name="CoordinatesHelp" xml:space="preserve">
+    <value>خط العرض، خط الطول (اختياري). اتركه فارغًا لتحديد موقع العنوان.</value>
+  </data>
+  <data name="CreateNow" xml:space="preserve">
+    <value>إنشاء المكالمة الآن</value>
+  </data>
+  <data name="CreatedByRecurringCall" xml:space="preserve">
+    <value>أُنشئت هذه المكالمة بواسطة مكالمة متكررة.</value>
+  </data>
+  <data name="CreationMode" xml:space="preserve">
+    <value>من يرسل كل مكالمة</value>
+  </data>
+  <data name="CreationModeAutomatic" xml:space="preserve">
+    <value>تلقائيًا: تُنشأ كل مكالمة مسبقًا وتُرسل عند حلول موعدها</value>
+  </data>
+  <data name="CreationModeDispatcher" xml:space="preserve">
+    <value>المرسل: لا يُنشأ شيء مسبقًا؛ يُنبَّه المرسل عند حلول موعد كل مكالمة ويرسلها</value>
+  </data>
+  <data name="DatesFrom" xml:space="preserve">
+    <value>من {0}</value>
+  </data>
+  <data name="DatesUntil" xml:space="preserve">
+    <value>حتى {0}</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>حذف</value>
+  </data>
+  <data name="DeleteConfirm" xml:space="preserve">
+    <value>هل تريد حذف هذه المكالمة المتكررة؟ لن تُنشأ منها مكالمات أخرى.</value>
+  </data>
+  <data name="DeleteRecurringCall" xml:space="preserve">
+    <value>حذف المكالمة المتكررة</value>
+  </data>
+  <data name="DeleteUpcoming" xml:space="preserve">
+    <value>احذف أيضًا {0} من المكالمات القادمة التي أنشأتها مسبقًا</value>
+  </data>
+  <data name="DeletedMessage" xml:space="preserve">
+    <value>تم حذف المكالمة المتكررة.</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>الوصف</value>
+  </data>
+  <data name="DescriptionHelp" xml:space="preserve">
+    <value>الغرض من هذا الجدول وأي شيء يجب أن يعرفه المرسل. يُحفظ في الجدول ولا يُنسخ إلى مكالماته.</value>
+  </data>
+  <data name="Destination" xml:space="preserve">
+    <value>الوجهة</value>
+  </data>
+  <data name="DestinationDetails" xml:space="preserve">
+    <value>تفاصيل الوجهة</value>
+  </data>
+  <data name="DestinationName" xml:space="preserve">
+    <value>منشأة الوجهة</value>
+  </data>
+  <data name="DispatchHelp" xml:space="preserve">
+    <value>إلى من تُرسل كل مكالمة. اترك الكل فارغًا ليختار المرسل: عند حلول موعد المكالمة تُعلَّق كمعلقة ويُنبَّه المرسل.</value>
+  </data>
+  <data name="DueHelp" xml:space="preserve">
+    <value>حان وقت إرسال هذه المكالمة. أرسلها الآن، أو أنشئها أولًا لتعديلها، أو تخطها.</value>
+  </data>
+  <data name="DueTitle" xml:space="preserve">
+    <value>إرسال: {0}</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>تعديل</value>
+  </data>
+  <data name="EditRecurringCall" xml:space="preserve">
+    <value>تعديل المكالمة المتكررة</value>
+  </data>
+  <data name="EnableCheckInTimers" xml:space="preserve">
+    <value>تفعيل مؤقتات تسجيل الحضور</value>
+  </data>
+  <data name="EndsOn" xml:space="preserve">
+    <value>ينتهي في</value>
+  </data>
+  <data name="EndsOnHelp" xml:space="preserve">
+    <value>اتركه فارغًا لمواصلة التكرار.</value>
+  </data>
+  <data name="ErrorContactEmailInvalid" xml:space="preserve">
+    <value>أدخل بريدًا إلكترونيًا صالحًا لجهة اتصال الجدول.</value>
+  </data>
+  <data name="ErrorCoordinatesInvalid" xml:space="preserve">
+    <value>أدخل الإحداثيات بصيغة خط العرض، خط الطول (مثل 39.7392,-104.9903).</value>
+  </data>
+  <data name="ErrorCreationModeInvalid" xml:space="preserve">
+    <value>اختر من يرسل كل مكالمة.</value>
+  </data>
+  <data name="ErrorDaysRequired" xml:space="preserve">
+    <value>اختر يومًا واحدًا على الأقل من الأسبوع.</value>
+  </data>
+  <data name="ErrorEndsBeforeStart" xml:space="preserve">
+    <value>تاريخ الانتهاء يسبق تاريخ البدء.</value>
+  </data>
+  <data name="ErrorEndsOnInvalid" xml:space="preserve">
+    <value>أدخل تاريخ انتهاء صالحًا.</value>
+  </data>
+  <data name="ErrorFacilityPoiInvalid" xml:space="preserve">
+    <value>اختر نقطة اهتمام الاستلام من القائمة.</value>
+  </data>
+  <data name="ErrorFrequencyInvalid" xml:space="preserve">
+    <value>اختر طريقة التكرار.</value>
+  </data>
+  <data name="ErrorIntervalInvalid" xml:space="preserve">
+    <value>كرر كل 1 إلى {1}.</value>
+  </data>
+  <data name="ErrorLeadTimeInvalid" xml:space="preserve">
+    <value>اختر متى تُنشأ كل مكالمة.</value>
+  </data>
+  <data name="ErrorManualAlertInvalid" xml:space="preserve">
+    <value>اختر متى يُنبَّه المرسل.</value>
+  </data>
+  <data name="ErrorMonthlyDayInvalid" xml:space="preserve">
+    <value>اختر يومًا من الشهر من 1 إلى 31.</value>
+  </data>
+  <data name="ErrorMonthlyWeekdayInvalid" xml:space="preserve">
+    <value>اختر أي يوم من أيام الأسبوع في الشهر.</value>
+  </data>
+  <data name="ErrorNameRequired" xml:space="preserve">
+    <value>أدخل اسمًا.</value>
+  </data>
+  <data name="ErrorResumeOnInvalid" xml:space="preserve">
+    <value>تاريخ الاستئناف غير صالح.</value>
+  </data>
+  <data name="ErrorStartsOnRequired" xml:space="preserve">
+    <value>أدخل تاريخ البدء.</value>
+  </data>
+  <data name="ErrorTimeInvalid" xml:space="preserve">
+    <value>أدخل كل وقت بالساعات والدقائق (مثل 08:00).</value>
+  </data>
+  <data name="ErrorTimesRequired" xml:space="preserve">
+    <value>أضف وقت إرسال واحدًا على الأقل.</value>
+  </data>
+  <data name="ErrorTooManyTimes" xml:space="preserve">
+    <value>لا تستخدم أكثر من {0} وقت إرسال في اليوم.</value>
+  </data>
+  <data name="Every" xml:space="preserve">
+    <value>كل</value>
+  </data>
+  <data name="ExternalId" xml:space="preserve">
+    <value>المعرف الخارجي</value>
+  </data>
+  <data name="FacilityDetails" xml:space="preserve">
+    <value>تفاصيل الاستلام</value>
+  </data>
+  <data name="FacilityDetailsPlaceholder" xml:space="preserve">
+    <value>الوحدة، الطابق، الغرفة، المدخل، من يُسأل عنه</value>
+  </data>
+  <data name="FacilityHelp" xml:space="preserve">
+    <value>تُضاف سطور مكان الاستلام والوجهة إلى ملاحظات كل مكالمة تُنشأ، ليطّلع عليها الطاقم.</value>
+  </data>
+  <data name="FacilityName" xml:space="preserve">
+    <value>منشأة الاستلام</value>
+  </data>
+  <data name="FacilityPoi" xml:space="preserve">
+    <value>نقطة اهتمام الاستلام</value>
+  </data>
+  <data name="FacilityPoiHelp" xml:space="preserve">
+    <value>يملأ منشأة الاستلام والعنوان عندما يكونان فارغين.</value>
+  </data>
+  <data name="FrequencyDaily" xml:space="preserve">
+    <value>يوميًا</value>
+  </data>
+  <data name="FrequencyMonthly" xml:space="preserve">
+    <value>شهريًا</value>
+  </data>
+  <data name="FrequencyWeekly" xml:space="preserve">
+    <value>أسبوعيًا</value>
+  </data>
+  <data name="FromCallNotice" xml:space="preserve">
+    <value>تمت التعبئة من المكالمة {0}. اختر متى تتكرر.</value>
+  </data>
+  <data name="Groups" xml:space="preserve">
+    <value>المجموعات</value>
+  </data>
+  <data name="HeldMessage" xml:space="preserve">
+    <value>تعذّر إرسال أي أحد؛ المكالمة معلقة.</value>
+  </data>
+  <data name="HeldTitle" xml:space="preserve">
+    <value>معلقة: {0}</value>
+  </data>
+  <data name="IncidentId" xml:space="preserve">
+    <value>معرف الحادث</value>
+  </data>
+  <data name="IncludeScheduledCalls" xml:space="preserve">
+    <value>عرض المكالمات المجدولة</value>
+  </data>
+  <data name="IntervalDays" xml:space="preserve">
+    <value>يوم/أيام</value>
+  </data>
+  <data name="IntervalMonths" xml:space="preserve">
+    <value>شهر/أشهر</value>
+  </data>
+  <data name="IntervalWeeks" xml:space="preserve">
+    <value>أسبوع/أسابيع</value>
+  </data>
+  <data name="LeadTime" xml:space="preserve">
+    <value>إنشاء كل مكالمة</value>
+  </data>
+  <data name="LeadTimeDay" xml:space="preserve">
+    <value>قبل يوم واحد</value>
+  </data>
+  <data name="LeadTimeDays" xml:space="preserve">
+    <value>قبل {0} أيام</value>
+  </data>
+  <data name="LeadTimeHelp" xml:space="preserve">
+    <value>المدة التي تُنشأ فيها كل مكالمة قبل موعد إرسالها. تظهر بعدها في المكالمات المجدولة، حيث يمكن تعديلها أو إرسالها مبكرًا أو حذفها بشكل منفرد.</value>
+  </data>
+  <data name="LeadTimeHour" xml:space="preserve">
+    <value>قبل ساعة واحدة</value>
+  </data>
+  <data name="LeadTimeHours" xml:space="preserve">
+    <value>قبل {0} ساعات</value>
+  </data>
+  <data name="LeadTimeMinutes" xml:space="preserve">
+    <value>قبل {0} دقيقة</value>
+  </data>
+  <data name="LegendCancelled" xml:space="preserve">
+    <value>أُغلقت قبل الإرسال</value>
+  </data>
+  <data name="LegendDispatched" xml:space="preserve">
+    <value>تم الإرسال</value>
+  </data>
+  <data name="LegendDue" xml:space="preserve">
+    <value>بانتظار المرسل</value>
+  </data>
+  <data name="LegendHeld" xml:space="preserve">
+    <value>معلقة، لا أحد متاح</value>
+  </data>
+  <data name="LegendMissed" xml:space="preserve">
+    <value>فائتة</value>
+  </data>
+  <data name="LegendProjected" xml:space="preserve">
+    <value>متكررة، لم تُنشأ بعد</value>
+  </data>
+  <data name="LegendScheduled" xml:space="preserve">
+    <value>مجدولة</value>
+  </data>
+  <data name="LegendSkipped" xml:space="preserve">
+    <value>تم التخطي</value>
+  </data>
+  <data name="ListTab" xml:space="preserve">
+    <value>القائمة</value>
+  </data>
+  <data name="ManualAlert" xml:space="preserve">
+    <value>تنبيه المرسل</value>
+  </data>
+  <data name="ManualAlertAtTime" xml:space="preserve">
+    <value>عند حلول الموعد</value>
+  </data>
+  <data name="ManualAlertHelp" xml:space="preserve">
+    <value>متى يُبلَّغ المرسل بأن وقت إرسال المكالمة قد حان. يظهر تحت "يحتاج إلى انتباه" في المكالمات المتكررة وفي تطبيق الإرسال حتى يرسلها أحد أو يتخطاها.</value>
+  </data>
+  <data name="MapPage" xml:space="preserve">
+    <value>صفحة الخريطة</value>
+  </data>
+  <data name="MissedHelp" xml:space="preserve">
+    <value>مضى موعدها ولم تُنشأ أي مكالمة. أرسلها الآن أو تخطها.</value>
+  </data>
+  <data name="MissedTitle" xml:space="preserve">
+    <value>فائتة: {0}</value>
+  </data>
+  <data name="ModeAutomaticShort" xml:space="preserve">
+    <value>تُرسل تلقائيًا</value>
+  </data>
+  <data name="ModeDispatcherShort" xml:space="preserve">
+    <value>يرسلها المرسل</value>
+  </data>
+  <data name="MonthlyDayHelp" xml:space="preserve">
+    <value>في شهر لا يحتوي على ذلك اليوم، يعمل في آخر يوم.</value>
+  </data>
+  <data name="MonthlyOn" xml:space="preserve">
+    <value>في</value>
+  </data>
+  <data name="MonthlyOnDay" xml:space="preserve">
+    <value>اليوم</value>
+  </data>
+  <data name="MonthlyOnThe" xml:space="preserve">
+    <value>الـ</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>الاسم</value>
+  </data>
+  <data name="NameHelp" xml:space="preserve">
+    <value>تحمل كل مكالمة تُنشأ هذا الاسم.</value>
+  </data>
+  <data name="Nature" xml:space="preserve">
+    <value>طبيعة المكالمة</value>
+  </data>
+  <data name="NewRecurringCall" xml:space="preserve">
+    <value>مكالمة متكررة جديدة</value>
+  </data>
+  <data name="NextDispatch" xml:space="preserve">
+    <value>الإرسال التالي</value>
+  </data>
+  <data name="NextDispatches" xml:space="preserve">
+    <value>عمليات الإرسال التالية</value>
+  </data>
+  <data name="NoAlerts" xml:space="preserve">
+    <value>لا شيء يحتاج إلى انتباه.</value>
+  </data>
+  <data name="NoFacilityPoi" xml:space="preserve">
+    <value>لا شيء</value>
+  </data>
+  <data name="NoNextDispatches" xml:space="preserve">
+    <value>لا يوجد شيء مجدول.</value>
+  </data>
+  <data name="NoRecurringCalls" xml:space="preserve">
+    <value>لا توجد مكالمات متكررة بعد.</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>لا شيء</value>
+  </data>
+  <data name="Notes" xml:space="preserve">
+    <value>ملاحظات</value>
+  </data>
+  <data name="OnDays" xml:space="preserve">
+    <value>في</value>
+  </data>
+  <data name="OpenAlertsCount" xml:space="preserve">
+    <value>{0} بحاجة إلى انتباه</value>
+  </data>
+  <data name="PageIntro" xml:space="preserve">
+    <value>تُرسل المكالمة المتكررة وفق جدول زمني، مثل عمليات النقل بين المنشآت كل ثلاثاء وخميس في الساعة 08:00 و13:00 و19:00. تُنشأ كل مكالمة قبل موعد إرسالها وتظهر في المكالمات المجدولة، حيث يمكن تعديلها أو إرسالها مبكرًا أو حذفها مثل أي مكالمة أخرى.</value>
+  </data>
+  <data name="PageTitle" xml:space="preserve">
+    <value>المكالمات المتكررة</value>
+  </data>
+  <data name="Pause" xml:space="preserve">
+    <value>إيقاف مؤقت</value>
+  </data>
+  <data name="PauseDeleteUpcoming" xml:space="preserve">
+    <value>احذف أيضًا المكالمات التي أنشأها ولم تُرسل بعد</value>
+  </data>
+  <data name="PauseHelp" xml:space="preserve">
+    <value>لا يُنشأ أو يُنبَّه أي شيء أثناء الإيقاف. يُحتفظ بالجدول وإعداداته وسجله.</value>
+  </data>
+  <data name="PauseReason" xml:space="preserve">
+    <value>السبب</value>
+  </data>
+  <data name="PauseTitle" xml:space="preserve">
+    <value>إيقاف مؤقت:</value>
+  </data>
+  <data name="PausedMessage" xml:space="preserve">
+    <value>تم إيقاف المكالمة المتكررة مؤقتًا. لن تُنشأ أي مكالمات حتى يتم استئنافها.</value>
+  </data>
+  <data name="PausedUntil" xml:space="preserve">
+    <value>حتى {0}</value>
+  </data>
+  <data name="Personnel" xml:space="preserve">
+    <value>الأفراد</value>
+  </data>
+  <data name="Priority" xml:space="preserve">
+    <value>الأولوية</value>
+  </data>
+  <data name="ProjectedHelp" xml:space="preserve">
+    <value>لم تُنشأ مكالمتها بعد. أرسلها الآن، أو تخطَّ هذه، أو أنشئ مكالمتها الآن لتعديلها بشكل منفرد.</value>
+  </data>
+  <data name="ReadOnlyHelp" xml:space="preserve">
+    <value>لم تُنشأ مكالمتها بعد. يمكن فقط للأعضاء الذين يستطيعون إنشاء المكالمات إرسالها أو تخطيها أو إنشاؤها.</value>
+  </data>
+  <data name="ReferenceId" xml:space="preserve">
+    <value>المعرف المرجعي</value>
+  </data>
+  <data name="RemoveTime" xml:space="preserve">
+    <value>إزالة الوقت</value>
+  </data>
+  <data name="RepeatCall" xml:space="preserve">
+    <value>تكرار</value>
+  </data>
+  <data name="RepeatCallHelp" xml:space="preserve">
+    <value>إنشاء مكالمة متكررة من هذه المكالمة</value>
+  </data>
+  <data name="Repeats" xml:space="preserve">
+    <value>التكرار</value>
+  </data>
+  <data name="ReplaceUpcoming" xml:space="preserve">
+    <value>استبدال {0} من المكالمات القادمة التي أُنشئت مسبقًا</value>
+  </data>
+  <data name="ReplaceUpcomingHelp" xml:space="preserve">
+    <value>تُحذف ويُعاد إنشاؤها بهذه التفاصيل، لذا تُفقد التغييرات التي أُجريت عليها بشكل منفرد. أزل التحديد لتركها كما هي.</value>
+  </data>
+  <data name="RestoreOccurrence" xml:space="preserve">
+    <value>استعادة</value>
+  </data>
+  <data name="Resume" xml:space="preserve">
+    <value>استئناف</value>
+  </data>
+  <data name="ResumeOn" xml:space="preserve">
+    <value>الاستئناف في</value>
+  </data>
+  <data name="ResumeOnHelp" xml:space="preserve">
+    <value>اتركه فارغًا ليبقى متوقفًا حتى يستأنفه أحد.</value>
+  </data>
+  <data name="ResumedMessage" xml:space="preserve">
+    <value>تم استئناف المكالمة المتكررة.</value>
+  </data>
+  <data name="Roles" xml:space="preserve">
+    <value>الأدوار</value>
+  </data>
+  <data name="RunCardsOffHelp" xml:space="preserve">
+    <value>بطاقات التشغيل غير مفعلة لهذا القسم، لذا لا تأثير لهذا الخيار.</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>حفظ</value>
+  </data>
+  <data name="SavedCreatedMessage" xml:space="preserve">
+    <value>تم إنشاء {0} من المكالمات القادمة وهي في المكالمات المجدولة.</value>
+  </data>
+  <data name="SavedMessage" xml:space="preserve">
+    <value>تم حفظ المكالمة المتكررة.</value>
+  </data>
+  <data name="SavedReplacedMessage" xml:space="preserve">
+    <value>تم استبدال {0} من المكالمات التي أُنشئت مسبقًا.</value>
+  </data>
+  <data name="Schedule" xml:space="preserve">
+    <value>الجدول</value>
+  </data>
+  <data name="ScheduleContactEmail" xml:space="preserve">
+    <value>البريد الإلكتروني لجهة الاتصال</value>
+  </data>
+  <data name="ScheduleContactHelp" xml:space="preserve">
+    <value>من رتّب الجدول ويجب الاتصال به بشأن التغييرات.</value>
+  </data>
+  <data name="ScheduleContactName" xml:space="preserve">
+    <value>جهة اتصال الجدول</value>
+  </data>
+  <data name="ScheduleContactNumber" xml:space="preserve">
+    <value>هاتف جهة الاتصال</value>
+  </data>
+  <data name="SectionAlerts" xml:space="preserve">
+    <value>من يتم تنبيهه</value>
+  </data>
+  <data name="SectionCall" xml:space="preserve">
+    <value>تفاصيل المكالمة</value>
+  </data>
+  <data name="SectionDispatch" xml:space="preserve">
+    <value>من يتم إرساله</value>
+  </data>
+  <data name="SectionFacility" xml:space="preserve">
+    <value>المنشآت وجهة الاتصال</value>
+  </data>
+  <data name="SectionSchedule" xml:space="preserve">
+    <value>الجدول</value>
+  </data>
+  <data name="SelectPlaceholder" xml:space="preserve">
+    <value>اختر...</value>
+  </data>
+  <data name="SendNow" xml:space="preserve">
+    <value>أرسل الآن</value>
+  </data>
+  <data name="SentMessage" xml:space="preserve">
+    <value>تم إرسال المكالمة.</value>
+  </data>
+  <data name="SkipOccurrence" xml:space="preserve">
+    <value>تخطي هذه</value>
+  </data>
+  <data name="SkippedHelp" xml:space="preserve">
+    <value>تم تخطي هذه ولن تُنشأ أي مكالمة. استعدها لإنشاء مكالمتها مرة أخرى.</value>
+  </data>
+  <data name="SkippedTitle" xml:space="preserve">
+    <value>تم التخطي: {0}</value>
+  </data>
+  <data name="StartsOn" xml:space="preserve">
+    <value>يبدأ في</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="StatusActive" xml:space="preserve">
+    <value>نشطة</value>
+  </data>
+  <data name="StatusEnded" xml:space="preserve">
+    <value>منتهية</value>
+  </data>
+  <data name="StatusPaused" xml:space="preserve">
+    <value>متوقفة مؤقتًا</value>
+  </data>
+  <data name="SummaryDaily" xml:space="preserve">
+    <value>كل يوم</value>
+  </data>
+  <data name="SummaryEveryNDays" xml:space="preserve">
+    <value>كل {0} أيام</value>
+  </data>
+  <data name="SummaryEveryNMonthsDay" xml:space="preserve">
+    <value>كل {0} أشهر في اليوم {1}</value>
+  </data>
+  <data name="SummaryEveryNMonthsWeekday" xml:space="preserve">
+    <value>كل {0} أشهر في {2} {1}</value>
+  </data>
+  <data name="SummaryEveryNWeeks" xml:space="preserve">
+    <value>كل {0} أسابيع يوم {1}</value>
+  </data>
+  <data name="SummaryMonthlyDay" xml:space="preserve">
+    <value>شهريًا في اليوم {0}</value>
+  </data>
+  <data name="SummaryMonthlyWeekday" xml:space="preserve">
+    <value>شهريًا في {1} {0}</value>
+  </data>
+  <data name="SummaryWeekly" xml:space="preserve">
+    <value>أسبوعيًا يوم {0}</value>
+  </data>
+  <data name="SummaryWithTimes" xml:space="preserve">
+    <value>{0} في {1}</value>
+  </data>
+  <data name="Times" xml:space="preserve">
+    <value>أوقات الإرسال</value>
+  </data>
+  <data name="TimesHelp" xml:space="preserve">
+    <value>وقت القسم ({0}). أضف وقتًا لكل مكالمة في اليوم، مثل 08:00 و13:00 و19:00.</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>النوع</value>
+  </data>
+  <data name="Units" xml:space="preserve">
+    <value>الوحدات</value>
+  </data>
+  <data name="UseRunCard" xml:space="preserve">
+    <value>استخدم أيضًا بطاقة التشغيل المطابقة</value>
+  </data>
+  <data name="UseRunCardHelp" xml:space="preserve">
+    <value>عند إرسال المكالمة، أضف موارد بطاقة التشغيل المطابقة لنوعها وأولويتها وموقعها، حتى لو لم تكن تلك البطاقة ترسل تلقائيًا.</value>
+  </data>
+  <data name="WeekFirst" xml:space="preserve">
+    <value>الأول</value>
+  </data>
+  <data name="WeekFourth" xml:space="preserve">
+    <value>الرابع</value>
+  </data>
+  <data name="WeekLast" xml:space="preserve">
+    <value>الأخير</value>
+  </data>
+  <data name="WeekSecond" xml:space="preserve">
+    <value>الثاني</value>
+  </data>
+  <data name="WeekThird" xml:space="preserve">
+    <value>الثالث</value>
+  </data>
+</root>

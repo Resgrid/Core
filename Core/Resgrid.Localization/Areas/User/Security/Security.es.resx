@@ -1350,6 +1350,16 @@
   <data name="PermRecordsShareCoordinationBoardsNote" xml:space="preserve">
     <value>Permite compartir un tablero de coordinación con agencias asociadas.</value>
   </data>
+  <data name="AuditLogTypeRecurringCallCreated" xml:space="preserve"><value>Llamada recurrente creada</value></data>
+  <data name="AuditLogTypeRecurringCallUpdated" xml:space="preserve"><value>Llamada recurrente actualizada</value></data>
+  <data name="AuditLogTypeRecurringCallPaused" xml:space="preserve"><value>Llamada recurrente en pausa</value></data>
+  <data name="AuditLogTypeRecurringCallResumed" xml:space="preserve"><value>Llamada recurrente reanudada</value></data>
+  <data name="AuditLogTypeRecurringCallDeleted" xml:space="preserve"><value>Llamada recurrente eliminada</value></data>
+  <data name="AuditLogTypeRecurringCallOccurrenceSkipped" xml:space="preserve"><value>Ocurrencia de llamada recurrente omitida</value></data>
+  <data name="AuditLogTypeRecurringCallOccurrenceRestored" xml:space="preserve"><value>Ocurrencia de llamada recurrente restaurada</value></data>
+  <data name="AuditLogTypeRecurringCallOccurrenceCreated" xml:space="preserve"><value>Ocurrencia de llamada recurrente creada</value></data>
+  <data name="AuditLogTypeRecurringCallAlertAcknowledged" xml:space="preserve"><value>Aviso de llamada recurrente confirmado</value></data>
+  <data name="AuditLogTypeRecurringCallAlertDismissed" xml:space="preserve"><value>Aviso de llamada recurrente descartado</value></data>
 </root>
 
 

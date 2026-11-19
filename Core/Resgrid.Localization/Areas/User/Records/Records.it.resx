@@ -2273,4 +2273,17 @@
   <data name="NoAlarmActivity" xml:space="preserve"><value>Nessun rilevatore o attività di riduzione del rischio registrati qui finora.</value></data>
   <data name="RecordAlarmLeft" xml:space="preserve"><value>Registra rilevatore lasciato</value></data>
   <data name="AlarmsRequestedColumnHelp" xml:space="preserve"><value>Totale dispositivi richiesti (solo fumo / solo CO / combinati)</value></data>
+  <data name="IncidentReportDeleted" xml:space="preserve"><value>Rapporto di incidente eliminato.</value></data>
+  <data name="DeleteIncidentReport" xml:space="preserve"><value>Elimina</value></data>
+  <data name="DeleteIncidentReportConfirm" xml:space="preserve"><value>Eliminare questo rapporto di incidente? Viene rimosso da tutti gli elenchi, la sua chiamata viene liberata per un nuovo rapporto e il suo contenuto viene cancellato dopo {0} giorni.</value></data>
+  <data name="DeleteIncidentReportHelp" xml:space="preserve"><value>Rimuove il rapporto da tutti gli elenchi e libera la sua chiamata per un nuovo rapporto. Un rapporto mai finalizzato viene prima annullato. Il contenuto viene cancellato dopo {0} giorni.</value></data>
+  <data name="DeleteVoidedReasonPrompt" xml:space="preserve"><value>Perché questo rapporto annullato viene eliminato?</value></data>
+  <data name="DeleteRefusedNotDeletable" xml:space="preserve"><value>Un rapporto finalizzato non può essere eliminato. Annullalo prima.</value></data>
+  <data name="DeleteRefusedVoidedNeedsAdmin" xml:space="preserve"><value>Solo un amministratore del dipartimento può eliminare un rapporto annullato.</value></data>
+  <data name="DeleteRefusedReasonRequired" xml:space="preserve"><value>Inserisci un motivo per eliminare un rapporto annullato.</value></data>
+  <data name="DeleteRefusedSubmittedExternally" xml:space="preserve"><value>Questo rapporto è stato inviato a un sistema esterno come NERIS, quindi non può essere eliminato. Annullalo invece.</value></data>
+  <data name="DeleteRefusedLegalHold" xml:space="preserve"><value>Un vincolo legale copre questo rapporto, quindi non può essere eliminato.</value></data>
+  <data name="DeleteRefusedPermanentContent" xml:space="preserve"><value>Questo rapporto contiene voci su vittime, soccorsi o esposizioni, conservate in modo permanente. Rimuovile dalla bozza prima di eliminarlo.</value></data>
+  <data name="DeleteRefusedAmendmentOpen" xml:space="preserve"><value>Abbandona la modifica aperta prima di eliminare questo rapporto.</value></data>
+  <data name="IncludeClosedReports" xml:space="preserve"><value>Includi bozze annullate e rapporti annullati</value></data>
 </root>

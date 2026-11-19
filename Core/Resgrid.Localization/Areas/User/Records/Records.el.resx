@@ -2273,4 +2273,17 @@
   <data name="NoAlarmActivity" xml:space="preserve"><value>Δεν έχουν καταγραφεί ακόμη ανιχνευτές ή δραστηριότητες μείωσης κινδύνου εδώ.</value></data>
   <data name="RecordAlarmLeft" xml:space="preserve"><value>Καταγραφή ανιχνευτή που αφέθηκε</value></data>
   <data name="AlarmsRequestedColumnHelp" xml:space="preserve"><value>Σύνολο συσκευών που ζητήθηκαν (μόνο καπνού / μόνο CO / συνδυασμένοι)</value></data>
+  <data name="IncidentReportDeleted" xml:space="preserve"><value>Η αναφορά συμβάντος διαγράφηκε.</value></data>
+  <data name="DeleteIncidentReport" xml:space="preserve"><value>Διαγραφή</value></data>
+  <data name="DeleteIncidentReportConfirm" xml:space="preserve"><value>Διαγραφή αυτής της αναφοράς συμβάντος; Αφαιρείται από όλες τις λίστες, η κλήση της αποδεσμεύεται για νέα αναφορά και το περιεχόμενό της διαγράφεται οριστικά μετά από {0} ημέρες.</value></data>
+  <data name="DeleteIncidentReportHelp" xml:space="preserve"><value>Αφαιρεί την αναφορά από όλες τις λίστες και αποδεσμεύει την κλήση της για νέα αναφορά. Μια αναφορά που δεν οριστικοποιήθηκε ποτέ ακυρώνεται πρώτα. Το περιεχόμενο διαγράφεται οριστικά μετά από {0} ημέρες.</value></data>
+  <data name="DeleteVoidedReasonPrompt" xml:space="preserve"><value>Γιατί διαγράφεται αυτή η ακυρωμένη αναφορά;</value></data>
+  <data name="DeleteRefusedNotDeletable" xml:space="preserve"><value>Μια οριστικοποιημένη αναφορά δεν μπορεί να διαγραφεί. Ακυρώστε την πρώτα.</value></data>
+  <data name="DeleteRefusedVoidedNeedsAdmin" xml:space="preserve"><value>Μόνο ένας διαχειριστής της υπηρεσίας μπορεί να διαγράψει μια ακυρωμένη αναφορά.</value></data>
+  <data name="DeleteRefusedReasonRequired" xml:space="preserve"><value>Εισαγάγετε αιτιολογία για τη διαγραφή μιας ακυρωμένης αναφοράς.</value></data>
+  <data name="DeleteRefusedSubmittedExternally" xml:space="preserve"><value>Αυτή η αναφορά στάλθηκε σε εξωτερικό σύστημα όπως το NERIS, οπότε δεν μπορεί να διαγραφεί. Ακυρώστε την αντί γι' αυτό.</value></data>
+  <data name="DeleteRefusedLegalHold" xml:space="preserve"><value>Μια νομική δέσμευση καλύπτει αυτή την αναφορά, οπότε δεν μπορεί να διαγραφεί.</value></data>
+  <data name="DeleteRefusedPermanentContent" xml:space="preserve"><value>Αυτή η αναφορά έχει καταχωρίσεις τραυματιών, διασώσεων ή εκθέσεων, που διατηρούνται μόνιμα. Αφαιρέστε τις από το προσχέδιο πριν τη διαγράψετε.</value></data>
+  <data name="DeleteRefusedAmendmentOpen" xml:space="preserve"><value>Εγκαταλείψτε την ανοιχτή τροποποίηση πριν διαγράψετε αυτή την αναφορά.</value></data>
+  <data name="IncludeClosedReports" xml:space="preserve"><value>Συμπερίληψη ακυρωμένων προσχεδίων και αναφορών</value></data>
 </root>

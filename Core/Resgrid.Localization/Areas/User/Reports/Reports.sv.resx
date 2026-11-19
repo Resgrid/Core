@@ -329,6 +329,9 @@
   <data name="CallUnitTimesClearedHeader" xml:space="preserve">
     <value>Klar</value>
   </data>
+  <data name="CallUnitTimesReleasedHeader" xml:space="preserve">
+    <value>Avbeordrad</value>
+  </data>
   <data name="CallUnitTimesSourceHeader" xml:space="preserve">
     <value>Kopplad via</value>
   </data>

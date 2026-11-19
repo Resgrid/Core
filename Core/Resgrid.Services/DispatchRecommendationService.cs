@@ -206,8 +206,12 @@ namespace Resgrid.Services
 				Latitude = location?.Latitude,
 				Longitude = location?.Longitude,
 				TargetAlarmLevel = targetAlarmLevel,
-				AlreadyDispatchedUnitIds = call.UnitDispatches?.Select(d => d.UnitId).ToList() ?? new List<int>(),
-				AlreadyDispatchedUserIds = call.Dispatches?.Select(d => d.UserId).Where(id => !string.IsNullOrWhiteSpace(id)).ToList() ?? new List<string>(),
+				// A unit released (stood down) from the call is not on it any more: it can be recommended again.
+				AlreadyDispatchedUnitIds = CallDispatchUnitReleases.ActiveUnitIds(call.UnitDispatches).ToList(),
+				AlreadyDispatchedUserIds = call.Dispatches?.Select(d => d.UserId).Where(id => !string.IsNullOrWhiteSpace(id) && !call.IsUserReleased(id)).ToList() ?? new List<string>(),
+				// The apply below skips anyone with a dispatch row, so a released member it picked would be reported as added while
+				// staying released (and the role it was meant to fill unmet): released members are left out of this pass.
+				ExcludedUserIds = call.GetReleasedUserIds().ToList(),
 				CallId = call.CallId > 0 ? call.CallId : (int?)null,
 				ForcedLeafNodeKey = forcedLeafNodeKey
 			};
@@ -235,8 +239,19 @@ namespace Resgrid.Services
 
 				foreach (var unit in result.Units)
 				{
-					if (call.UnitDispatches.Any(d => d.UnitId == unit.UnitId))
+					if (call.IsUnitOnCall(unit.UnitId))
 						continue;
+
+					// Recommended again after it was released from the call: the unit goes back on its own dispatch row.
+					var released = call.UnitDispatches.Where(d => d != null && d.UnitId == unit.UnitId).OrderByDescending(d => d.DispatchedOn).FirstOrDefault();
+					if (released != null)
+					{
+						released.Redispatch(DateTime.UtcNow);
+						released.ResponseCodeId = unit.ResponseCodeId;
+						released.ResponseCode = unit.ResponseCode;
+						released.ResponseCodeName = unit.ResponseCodeName;
+						continue;
+					}
 
 					call.UnitDispatches.Add(new CallDispatchUnit
 					{
@@ -370,6 +385,12 @@ namespace Resgrid.Services
 			public double? Longitude { get; set; }
 			public DateTime? LocationTimestamp { get; set; }
 			public bool LocationIsStale { get; set; }
+
+			/// <summary>
+			/// Released from this call (<see cref="DispatchRecommendationRequest.ExcludedUserIds"/>): never picked for it, but back at
+			/// their station, so still counted by station coverage.
+			/// </summary>
+			public bool ExcludedFromSelection { get; set; }
 		}
 
 		private sealed class RecommendationContext
@@ -526,6 +547,7 @@ namespace Resgrid.Services
 			var staffingSelections = allSelections.Where(s => s.SelectionType == (int)RunCardSelectionTypes.PersonnelStaffing).ToList();
 
 			var alreadyDispatched = new HashSet<string>(context.Request.AlreadyDispatchedUserIds ?? new List<string>(), StringComparer.OrdinalIgnoreCase);
+			var excluded = new HashSet<string>(context.Request.ExcludedUserIds ?? new List<string>(), StringComparer.OrdinalIgnoreCase);
 
 			foreach (var pair in rolesByUser)
 			{
@@ -558,7 +580,8 @@ namespace Resgrid.Services
 					RoleIds = pair.Value?.Select(r => r.PersonnelRoleId).ToList() ?? new List<int>(),
 					StatusText = GetPersonnelStatusText(lastLog, personnelDetails),
 					StationGroupId = group?.DepartmentGroupId,
-					StationGroupName = group?.Name
+					StationGroupName = group?.Name,
+					ExcludedFromSelection = excluded.Contains(userId)
 				};
 
 				if (lastLog != null)
@@ -967,7 +990,7 @@ namespace Resgrid.Services
 		{
 			var pickedUsers = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 			var pool = context.PersonnelCandidates
-				.Where(c => c.RoleIds.Contains(requirement.PersonnelRoleId))
+				.Where(c => !c.ExcludedFromSelection && c.RoleIds.Contains(requirement.PersonnelRoleId))
 				.Where(c => context.Result.Personnel.All(p => !string.Equals(p.UserId, c.UserId, StringComparison.OrdinalIgnoreCase)))
 				.ToList();
 
@@ -1286,7 +1309,7 @@ namespace Resgrid.Services
 		private async Task FillRoleRequirementByProximityAsync(RecommendationContext context, RunCardRoleRequirement requirement, GeoMath.GeoPoint anchor)
 		{
 			var pool = context.PersonnelCandidates
-				.Where(c => c.RoleIds.Contains(requirement.PersonnelRoleId))
+				.Where(c => !c.ExcludedFromSelection && c.RoleIds.Contains(requirement.PersonnelRoleId))
 				.Where(c => context.Result.Personnel.All(p => !string.Equals(p.UserId, c.UserId, StringComparison.OrdinalIgnoreCase)))
 				.ToList();
 

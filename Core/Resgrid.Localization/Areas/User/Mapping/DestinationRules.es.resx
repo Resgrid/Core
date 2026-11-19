@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Map Icon Legend and status / priority map icon pages -->
+    <data name="PageTitle" xml:space="preserve">
+    <value>Reglas de destino</value>
+  </data>
+  <data name="PageIntro" xml:space="preserve">
+    <value>Indique a Resgrid qué debe ofrecer el destino de una llamada para que el formulario de la llamada y las aplicaciones sugieran el más cercano adecuado: «las llamadas por quemaduras necesitan una unidad de quemados», «un helicóptero necesita un helipuerto», «un camión cisterna va a un punto de agua que permite la aspiración». Todas las reglas que coinciden con una llamada (y con la unidad que se desplaza) se aplican juntas. Los destinos son sus tipos de POI marcados como destino; las capacidades se gestionan en Capacidades de POI, y el estado abierto, desvío o cerrado procede de Disponibilidad de destinos.</value>
+  </data>
+  <data name="SettingsHeader" xml:space="preserve">
+    <value>Sugerencias de destino</value>
+  </data>
+  <data name="Mode" xml:space="preserve">
+    <value>Sugerencias</value>
+  </data>
+  <data name="ModeOff" xml:space="preserve">
+    <value>Desactivadas</value>
+  </data>
+  <data name="ModeSuggest" xml:space="preserve">
+    <value>Sugerir destinos</value>
+  </data>
+  <data name="ModeSuggestAndFill" xml:space="preserve">
+    <value>Sugerir y rellenar el destino</value>
+  </data>
+  <data name="ModeHelp" xml:space="preserve">
+    <value>«Sugerir destinos» muestra los mejores destinos bajo el campo Destino de los formularios Nueva llamada y Actualizar llamada y en las listas de destinos de las aplicaciones, con el tiempo de trayecto y la distancia. «Sugerir y rellenar el destino» además rellena el destino vacío de una nueva llamada con el mejor; los despachadores y las dotaciones pueden elegir otro igualmente. Cada sugerencia consulta tiempos de trayecto, así que deje esta opción desactivada si no utiliza destinos.</value>
+  </data>
+  <data name="PreferredWithinMinutes" xml:space="preserve">
+    <value>Margen de capacidades preferidas (minutos)</value>
+  </data>
+  <data name="PreferredWithinMinutesHelp" xml:space="preserve">
+    <value>Un destino que ofrece más capacidades preferidas pasa delante solo si su tiempo de trayecto no supera en más de estos minutos al del más cercano. 0 = solo con tiempos iguales.</value>
+  </data>
+  <data name="SaveSettings" xml:space="preserve">
+    <value>Guardar configuración</value>
+  </data>
+  <data name="SettingsSaved" xml:space="preserve">
+    <value>Configuración de sugerencias de destino guardada.</value>
+  </data>
+  <data name="SettingsInvalid" xml:space="preserve">
+    <value>Elija un modo de sugerencia y un margen de 0 a {0} minutos.</value>
+  </data>
+  <data name="RulesHeader" xml:space="preserve">
+    <value>Reglas</value>
+  </data>
+  <data name="AddRule" xml:space="preserve">
+    <value>Añadir regla</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Nombre</value>
+  </data>
+  <data name="When" xml:space="preserve">
+    <value>Cuándo</value>
+  </data>
+  <data name="Destination" xml:space="preserve">
+    <value>Destino</value>
+  </data>
+  <data name="Requires" xml:space="preserve">
+    <value>Requiere</value>
+  </data>
+  <data name="Prefers" xml:space="preserve">
+    <value>Prefiere</value>
+  </data>
+  <data name="EveryCall" xml:space="preserve">
+    <value>Todas las llamadas</value>
+  </data>
+  <data name="AnyDestinationType" xml:space="preserve">
+    <value>Cualquier tipo de destino</value>
+  </data>
+  <data name="CallTypeCondition" xml:space="preserve">
+    <value>Tipo de llamada: {0}</value>
+  </data>
+  <data name="PriorityCondition" xml:space="preserve">
+    <value>Prioridad: {0}</value>
+  </data>
+  <data name="UnitTypeCondition" xml:space="preserve">
+    <value>Tipo de unidad: {0}</value>
+  </data>
+  <data name="DeletedChoice" xml:space="preserve">
+    <value>(eliminado)</value>
+  </data>
+  <data name="NeedsAttention" xml:space="preserve">
+    <value>Requiere atención: {0} de sus tipos o capacidades se eliminaron y se ignoran.</value>
+  </data>
+  <data name="AllTypesRemoved" xml:space="preserve">
+    <value>Nunca se aplica: se eliminaron todos los tipos de destino que indicaba.</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Editar</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Eliminar</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Guardar</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <data name="DeleteRuleConfirm" xml:space="preserve">
+    <value>¿Eliminar la regla «{0}»?</value>
+  </data>
+  <data name="NoRules" xml:space="preserve">
+    <value>Aún no hay reglas de destino. Sin reglas se sugieren todos los destinos, primero el abierto más cercano.</value>
+  </data>
+  <data name="NoDestinationTypes" xml:space="preserve">
+    <value>Aún no hay ningún tipo de POI marcado como destino. Marque uno como destino en Cartografía, PDI antes de añadir reglas.</value>
+  </data>
+  <data name="RuleSaved" xml:space="preserve">
+    <value>Regla «{0}» guardada.</value>
+  </data>
+  <data name="RuleDeleted" xml:space="preserve">
+    <value>Regla «{0}» eliminada.</value>
+  </data>
+  <data name="RuleNameRequired" xml:space="preserve">
+    <value>Introduzca un nombre de {0} caracteres como máximo.</value>
+  </data>
+  <data name="RuleNothingRequired" xml:space="preserve">
+    <value>Elija al menos un tipo de destino o una capacidad.</value>
+  </data>
+  <data name="RuleChoicesChanged" xml:space="preserve">
+    <value>Un tipo de llamada, prioridad, tipo de unidad, tipo de destino o capacidad que eligió ya no existe. Revise las opciones y vuelva a guardar.</value>
+  </data>
+  <data name="NewRule" xml:space="preserve">
+    <value>Nueva regla</value>
+  </data>
+  <data name="EditRule" xml:space="preserve">
+    <value>Editar regla</value>
+  </data>
+  <data name="RuleNameHelp" xml:space="preserve">
+    <value>Se muestra a los despachadores como motivo del requisito, por ejemplo «Quemaduras» o «Aterrizaje de helicóptero».</value>
+  </data>
+  <data name="AppliesWhen" xml:space="preserve">
+    <value>Se aplica cuando</value>
+  </data>
+  <data name="AppliesWhenHelp" xml:space="preserve">
+    <value>Deje los tres en «Cualquiera» para aplicar la regla a todas las llamadas. Las reglas por tipo de unidad se aplican cuando se desplaza ese tipo de unidad (su lista de destinos de estado en las aplicaciones), no al destino de la propia llamada.</value>
+  </data>
+  <data name="CallType" xml:space="preserve">
+    <value>Tipo de llamada</value>
+  </data>
+  <data name="Priority" xml:space="preserve">
+    <value>Prioridad</value>
+  </data>
+  <data name="UnitType" xml:space="preserve">
+    <value>Tipo de unidad</value>
+  </data>
+  <data name="Any" xml:space="preserve">
+    <value>Cualquiera</value>
+  </data>
+  <data name="DestinationTypes" xml:space="preserve">
+    <value>Tipos de destino</value>
+  </data>
+  <data name="DestinationTypesHelp" xml:space="preserve">
+    <value>El destino debe ser de uno de estos tipos; si no se marca ninguno, sirve cualquier tipo de destino. Cuando dos reglas indican tipos que no coinciden, prevalece la regla más específica (primero las de tipo de unidad) y la otra se aparta.</value>
+  </data>
+  <data name="RequiredCapabilities" xml:space="preserve">
+    <value>Capacidades requeridas</value>
+  </data>
+  <data name="RequiredCapabilitiesHelp" xml:space="preserve">
+    <value>El destino sugerido debe ofrecer todas estas capacidades. Si ningún destino al alcance las ofrece, no se rellena nada y se muestran los más cercanos con lo que les falta.</value>
+  </data>
+  <data name="PreferredCapabilities" xml:space="preserve">
+    <value>Capacidades preferidas</value>
+  </data>
+  <data name="PreferredCapabilitiesHelp" xml:space="preserve">
+    <value>Para desempatar casos muy parejos: dentro del margen de capacidades preferidas, pasa delante el destino que ofrezca más de ellas.</value>
+  </data>
+  <data name="NoCapabilities" xml:space="preserve">
+    <value>Aún no hay capacidades de POI.</value>
+  </data>
+  <data name="ManageCapabilities" xml:space="preserve">
+    <value>Gestionar capacidades de POI</value>
+  </data>
+  <data name="TryIt" xml:space="preserve">
+    <value>Pruébelo</value>
+  </data>
+  <data name="TryItHelp" xml:space="preserve">
+    <value>Elija un tipo de llamada, una prioridad y un tipo de unidad para ver qué reglas se aplican y cómo debe ser el destino.</value>
+  </data>
+  <data name="TryItButton" xml:space="preserve">
+    <value>Mostrar</value>
+  </data>
+  <data name="AppliedRules" xml:space="preserve">
+    <value>Reglas que se aplican</value>
+  </data>
+  <data name="SetAsideRules" xml:space="preserve">
+    <value>Apartadas</value>
+  </data>
+  <data name="NoRulesApply" xml:space="preserve">
+    <value>No se aplica ninguna regla: cualquier tipo de destino, sin requisitos.</value>
+  </data>
+  <data name="SetAsideTypesRemoved" xml:space="preserve">
+    <value>se eliminaron sus tipos de destino</value>
+  </data>
+  <data name="SetAsideTypeConflict" xml:space="preserve">
+    <value>una regla más específica envía a otros tipos de destino</value>
+  </data>
+  <data name="NothingRequired" xml:space="preserve">
+    <value>nada</value>
+  </data>
+  <data name="DestinationRulesLink" xml:space="preserve">
+    <value>Reglas de destino</value>
+  </data>
+  <data name="SuggestedDestinations" xml:space="preserve">
+    <value>Sugeridos</value>
+  </data>
+  <data name="SuggestionLoading" xml:space="preserve">
+    <value>Buscando destinos...</value>
+  </data>
+  <data name="SuggestionNone" xml:space="preserve">
+    <value>No se encontró ningún destino del tipo requerido.</value>
+  </data>
+  <data name="SuggestionNoneMeet" xml:space="preserve">
+    <value>Ningún destino cercano ofrece todo lo requerido; se muestran los más cercanos.</value>
+  </data>
+  <data name="SuggestionNeeds" xml:space="preserve">
+    <value>Necesita: {0}</value>
+  </data>
+  <data name="SuggestionPrefers" xml:space="preserve">
+    <value>Prefiere: {0}</value>
+  </data>
+  <data name="SuggestionRules" xml:space="preserve">
+    <value>Reglas: {0}</value>
+  </data>
+  <data name="UseDestination" xml:space="preserve">
+    <value>Usar</value>
+  </data>
+  <data name="InUse" xml:space="preserve">
+    <value>Seleccionado</value>
+  </data>
+  <data name="SuggestedBadge" xml:space="preserve">
+    <value>Sugerido</value>
+  </data>
+  <data name="FilledAutomatically" xml:space="preserve">
+    <value>Rellenado con el destino sugerido. Elija otro si es necesario.</value>
+  </data>
+  <data name="MissingCapabilities" xml:space="preserve">
+    <value>Falta: {0}</value>
+  </data>
+  <data name="DownCapabilities" xml:space="preserve">
+    <value>No disponible ahora: {0}</value>
+  </data>
+  <data name="MinutesShort" xml:space="preserve">
+    <value>{0} min</value>
+  </data>
+  <data name="KilometersShort" xml:space="preserve">
+    <value>{0} km</value>
+  </data>
+  <data name="StraightLineKilometers" xml:space="preserve">
+    <value>{0} km en línea recta</value>
+  </data>
+  <data name="StatusLimited" xml:space="preserve">
+    <value>Limitado</value>
+  </data>
+  <data name="StatusDiversion" xml:space="preserve">
+    <value>Desvío</value>
+  </data>
+  <data name="StatusClosed" xml:space="preserve">
+    <value>Cerrado</value>
+  </data>
+  <data name="SuggestionFailed" xml:space="preserve">
+    <value>Las sugerencias de destino no están disponibles en este momento.</value>
+  </data>
+  <data name="SuggestionRetry" xml:space="preserve">
+    <value>Reintentar</value>
+  </data>
+  <data name="PreviewLoading" xml:space="preserve">
+    <value>Comprobando las reglas...</value>
+  </data>
+  <data name="PreviewFailed" xml:space="preserve">
+    <value>No se pudieron comprobar las reglas en este momento. Inténtelo de nuevo.</value>
+  </data>
+</root>

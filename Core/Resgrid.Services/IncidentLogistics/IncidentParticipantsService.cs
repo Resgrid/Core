@@ -99,17 +99,21 @@ namespace Resgrid.Services.IncidentLogistics
 				if (call == null || call.DepartmentId != actor.DepartmentId)
 					continue;
 				call = await _calls.PopulateCallData(call, true, false, false, false, true, false, false, false, false);
-				foreach (var dispatch in call.Dispatches ?? new List<CallDispatch>())
+				// Resources released (stood down) from the call are not working it, so they are not offered for enrollment.
+				foreach (var dispatch in (call.Dispatches ?? new List<CallDispatch>()).Where(x => !call.IsUserReleased(x.UserId)))
 					Person(dispatch.UserId, "Dispatch", dispatch.DispatchedOn);
-				foreach (var dispatch in call.UnitDispatches ?? new List<CallDispatchUnit>())
+				foreach (var dispatch in call.GetActiveUnitDispatches())
 					UnitRow(dispatch.UnitId, "Dispatch", dispatch.DispatchedOn);
 
 				foreach (var assignment in await _incidentCommand.GetAssignmentsForCallAsync(actor.DepartmentId, callId) ?? new List<ResourceAssignment>())
 				{
 					if (assignment.ReleasedOn.HasValue) continue;
-					if (assignment.ResourceKind == (int)ResourceAssignmentKind.RealPersonnel)
+					// A board assignment left over from before a stand-down does not bring the resource back: one released from the
+					// call (and not dispatched to it again) is not offered, as on the dispatch lists above.
+					if (assignment.ResourceKind == (int)ResourceAssignmentKind.RealPersonnel && !call.IsUserReleased(assignment.ResourceId))
 						Person(assignment.ResourceId, "Board", assignment.AssignedOn);
-					else if (assignment.ResourceKind == (int)ResourceAssignmentKind.RealUnit && int.TryParse(assignment.ResourceId, out var unitId))
+					else if (assignment.ResourceKind == (int)ResourceAssignmentKind.RealUnit && int.TryParse(assignment.ResourceId, out var unitId) &&
+						(call.IsUnitOnCall(unitId) || !call.HasUnitBeenDispatched(unitId)))
 						UnitRow(unitId, "Board", assignment.AssignedOn);
 				}
 

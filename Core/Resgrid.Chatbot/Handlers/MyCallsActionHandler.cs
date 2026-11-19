@@ -63,7 +63,8 @@ namespace Resgrid.Chatbot.Handlers
 			var myCalls = new List<Call>();
 			foreach (var call in await GetActiveCallsWithDispatchesAsync(session.DepartmentId, forUnits: false))
 			{
-				if (call.Dispatches != null && call.Dispatches.Any(d => d.UserId == session.UserId))
+				// A member released (stood down) from the call keeps their dispatch row on the record but is not on the call.
+				if (call.Dispatches != null && call.Dispatches.Any(d => d.UserId == session.UserId) && !call.IsUserReleased(session.UserId))
 					myCalls.Add(call);
 			}
 
@@ -112,7 +113,7 @@ namespace Resgrid.Chatbot.Handlers
 			var unitCalls = new List<Call>();
 			foreach (var call in await GetActiveCallsWithDispatchesAsync(session.DepartmentId, forUnits: true))
 			{
-				if (call.UnitDispatches != null && call.UnitDispatches.Any(d => d.UnitId == unit.UnitId) &&
+				if (call.IsUnitOnCall(unit.UnitId) &&
 					await _authorizationService.CanUserViewCallAsync(session.UserId, call.CallId))
 					unitCalls.Add(call);
 			}

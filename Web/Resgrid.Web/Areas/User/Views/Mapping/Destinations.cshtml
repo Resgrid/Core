@@ -1,5 +1,6 @@
 @model Resgrid.Web.Areas.User.Models.Mapping.DestinationAvailabilityView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.Mapping> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.DestinationRules> destinationRulesLocalizer
 @{
 	ViewBag.Title = "Resgrid | " + localizer["DestinationAvailability"];
 }
@@ -23,6 +24,7 @@
 	{
 		<div class="col-sm-6">
 			<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+				<a class="btn btn-default" asp-controller="DestinationRules" asp-action="Index" asp-route-area="User">@destinationRulesLocalizer["DestinationRulesLink"]</a>
 				<a class="btn btn-info" asp-controller="Mapping" asp-action="PoiCapabilities" asp-route-area="User">@localizer["PoiCapabilities"]</a>
 				<a class="btn btn-primary" asp-controller="Mapping" asp-action="POIs" asp-route-area="User">@localizer["POIsHeader"]</a>
 			</div>

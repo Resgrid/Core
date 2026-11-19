@@ -6784,7 +6784,7 @@
     <value>Konfiguration för larmnumrering / Mönster</value>
   </data>
   <data name="FieldHelp.CallNumberingConfig.Pattern" xml:space="preserve">
-    <value>Hur larmnummer skrivs, till exempel FD-2026-0153: fast text plus platshållarna YYYY eller YY, MM, DD och SEQ. Löpnumret börjar om när datumet som skrivs ändras. Tills ett mönster sparas behåller larm de YY-SEQ-nummer som Resgrid alltid har utfärdat.</value>
+    <value>Hur larmnummer skrivs, till exempel FD-2026-0153: fast text plus platshållarna YYYY eller YY, MM, DD, HH (timme), MIN (minut) och SEQ. Löpnumret börjar om när datumet som skrivs ändras; timme och minut startar aldrig om det. Tills ett mönster sparas behåller larm de YY-SEQ-nummer som Resgrid alltid har utfärdat.</value>
   </data>
   <data name="Field.CallNumberingConfig.SequenceWidth" xml:space="preserve">
     <value>Konfiguration för larmnumrering / Löpnummerbredd</value>
@@ -7847,5 +7847,11 @@
   </data>
   <data xml:space="preserve" name="SettingHelp.MappingProviderOverrides">
     <value>Avdelningens egna konton för vägvisning, trafik i realtid och adressökning, som provas före Resgrids leverantörer. Endast vilka leverantörer som är inställda rapporteras, aldrig nycklarna. Om alla tre återställs till Resgrids standard tas inställningen bort.</value>
+  </data>
+  <data xml:space="preserve" name="Setting.DestinationSuggestions">
+    <value>Destinationsförslag</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.DestinationSuggestions">
+    <value>Föreslår den bästa destinationen för ett larm, och för en enhets statusdestination, utifrån avdelningens destinationsregler (Kartläggning, Destinationsregler) och händelseplatsen, med körtid och avstånd. ”Föreslå och fyll i destinationen” fyller dessutom i ett nytt larms tomma destination med den bästa; larmoperatörer och besättningar kan fortfarande välja en annan. Av som standard, eftersom varje förslag hämtar körtider.</value>
   </data>
 </root>

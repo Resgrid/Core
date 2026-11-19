@@ -2273,4 +2273,17 @@
   <data name="NoAlarmActivity" xml:space="preserve"><value>No alarms or community risk reduction activity recorded here yet.</value></data>
   <data name="RecordAlarmLeft" xml:space="preserve"><value>Record alarm left</value></data>
   <data name="AlarmsRequestedColumnHelp" xml:space="preserve"><value>Total units requested (smoke only / CO only / combination)</value></data>
+  <data name="IncidentReportDeleted" xml:space="preserve"><value>Incident report deleted.</value></data>
+  <data name="DeleteIncidentReport" xml:space="preserve"><value>Delete</value></data>
+  <data name="DeleteIncidentReportConfirm" xml:space="preserve"><value>Delete this incident report? It is removed from every list, its call is freed for a new report, and its content is erased after {0} days.</value></data>
+  <data name="DeleteIncidentReportHelp" xml:space="preserve"><value>Removes the report from every list and frees its call for a new report. A report that was never finalized is cancelled first. The content is erased after {0} days.</value></data>
+  <data name="DeleteVoidedReasonPrompt" xml:space="preserve"><value>Why is this voided report being deleted?</value></data>
+  <data name="DeleteRefusedNotDeletable" xml:space="preserve"><value>A finalized report cannot be deleted. Void it first.</value></data>
+  <data name="DeleteRefusedVoidedNeedsAdmin" xml:space="preserve"><value>Only a department administrator can delete a voided report.</value></data>
+  <data name="DeleteRefusedReasonRequired" xml:space="preserve"><value>Enter a reason to delete a voided report.</value></data>
+  <data name="DeleteRefusedSubmittedExternally" xml:space="preserve"><value>This report was sent to an outside system such as NERIS, so it cannot be deleted. Void it instead.</value></data>
+  <data name="DeleteRefusedLegalHold" xml:space="preserve"><value>A legal hold covers this report, so it cannot be deleted.</value></data>
+  <data name="DeleteRefusedPermanentContent" xml:space="preserve"><value>This report has casualty, rescue or exposure entries, which are kept permanently. Remove them from the draft before deleting it.</value></data>
+  <data name="DeleteRefusedAmendmentOpen" xml:space="preserve"><value>Abandon the open amendment before deleting this report.</value></data>
+  <data name="IncludeClosedReports" xml:space="preserve"><value>Include cancelled and voided</value></data>
 </root>

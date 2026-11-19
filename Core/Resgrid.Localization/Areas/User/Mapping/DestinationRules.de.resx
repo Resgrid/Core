@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Map Icon Legend and status / priority map icon pages -->
+    <data name="PageTitle" xml:space="preserve">
+    <value>Zielregeln</value>
+  </data>
+  <data name="PageIntro" xml:space="preserve">
+    <value>Teilen Sie Resgrid mit, was das Ziel eines Einsatzes bieten muss, damit das Einsatzformular und die Apps das nächstgelegene geeignete Ziel vorschlagen können: „Einsätze wegen Verbrennungen brauchen ein Verbrennungszentrum“, „ein Hubschrauber braucht einen Hubschrauberlandeplatz“, „ein Tanklöschfahrzeug fährt zu einer Wasserentnahmestelle, die Saugbetrieb erlaubt“. Alle Regeln, die auf einen Einsatz (und die anfahrende Einheit) zutreffen, gelten gemeinsam. Ziele sind Ihre als Ziel markierten POI-Typen; Fähigkeiten werden unter POI-Fähigkeiten verwaltet, und ob ein Ziel offen, abgemeldet oder geschlossen ist, stammt aus der Zielverfügbarkeit.</value>
+  </data>
+  <data name="SettingsHeader" xml:space="preserve">
+    <value>Zielvorschläge</value>
+  </data>
+  <data name="Mode" xml:space="preserve">
+    <value>Vorschläge</value>
+  </data>
+  <data name="ModeOff" xml:space="preserve">
+    <value>Aus</value>
+  </data>
+  <data name="ModeSuggest" xml:space="preserve">
+    <value>Ziele vorschlagen</value>
+  </data>
+  <data name="ModeSuggestAndFill" xml:space="preserve">
+    <value>Ziel vorschlagen und eintragen</value>
+  </data>
+  <data name="ModeHelp" xml:space="preserve">
+    <value>„Ziele vorschlagen“ zeigt die besten Ziele unter dem Feld Ziel beim Anlegen und Aktualisieren eines Einsatzes sowie in den Ziellisten der Apps an, mit Fahrzeit und Entfernung. „Ziel vorschlagen und eintragen“ trägt zusätzlich das beste Ziel in das leere Ziel eines neuen Einsatzes ein; Disponenten und Besatzungen können weiterhin ein anderes wählen. Jeder Vorschlag fragt Fahrzeiten ab, lassen Sie dies daher ausgeschaltet, wenn Sie keine Ziele verwenden.</value>
+  </data>
+  <data name="PreferredWithinMinutes" xml:space="preserve">
+    <value>Zeitfenster für bevorzugte Fähigkeiten (Minuten)</value>
+  </data>
+  <data name="PreferredWithinMinutesHelp" xml:space="preserve">
+    <value>Ein Ziel, das mehr der bevorzugten Fähigkeiten bietet, kommt nur dann zuerst, wenn seine Fahrzeit höchstens so viele Minuten über der des nächstgelegenen liegt. 0 = nur bei gleicher Fahrzeit.</value>
+  </data>
+  <data name="SaveSettings" xml:space="preserve">
+    <value>Einstellungen speichern</value>
+  </data>
+  <data name="SettingsSaved" xml:space="preserve">
+    <value>Einstellungen für Zielvorschläge gespeichert.</value>
+  </data>
+  <data name="SettingsInvalid" xml:space="preserve">
+    <value>Wählen Sie einen Vorschlagsmodus und ein Zeitfenster von 0 bis {0} Minuten.</value>
+  </data>
+  <data name="RulesHeader" xml:space="preserve">
+    <value>Regeln</value>
+  </data>
+  <data name="AddRule" xml:space="preserve">
+    <value>Regel hinzufügen</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Bezeichnung</value>
+  </data>
+  <data name="When" xml:space="preserve">
+    <value>Wann</value>
+  </data>
+  <data name="Destination" xml:space="preserve">
+    <value>Ziel</value>
+  </data>
+  <data name="Requires" xml:space="preserve">
+    <value>Erfordert</value>
+  </data>
+  <data name="Prefers" xml:space="preserve">
+    <value>Bevorzugt</value>
+  </data>
+  <data name="EveryCall" xml:space="preserve">
+    <value>Jeder Einsatz</value>
+  </data>
+  <data name="AnyDestinationType" xml:space="preserve">
+    <value>Beliebiger Zieltyp</value>
+  </data>
+  <data name="CallTypeCondition" xml:space="preserve">
+    <value>Einsatzart: {0}</value>
+  </data>
+  <data name="PriorityCondition" xml:space="preserve">
+    <value>Priorität: {0}</value>
+  </data>
+  <data name="UnitTypeCondition" xml:space="preserve">
+    <value>Einheitentyp: {0}</value>
+  </data>
+  <data name="DeletedChoice" xml:space="preserve">
+    <value>(gelöscht)</value>
+  </data>
+  <data name="NeedsAttention" xml:space="preserve">
+    <value>Prüfung nötig: {0} ihrer Typen oder Fähigkeiten wurden gelöscht und werden ignoriert.</value>
+  </data>
+  <data name="AllTypesRemoved" xml:space="preserve">
+    <value>Greift nie: Alle genannten Zieltypen wurden gelöscht.</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Bearbeiten</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Löschen</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Speichern</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Abbrechen</value>
+  </data>
+  <data name="DeleteRuleConfirm" xml:space="preserve">
+    <value>Die Regel „{0}“ löschen?</value>
+  </data>
+  <data name="NoRules" xml:space="preserve">
+    <value>Noch keine Zielregeln. Ohne Regeln wird jedes Ziel vorgeschlagen, das nächstgelegene offene zuerst.</value>
+  </data>
+  <data name="NoDestinationTypes" xml:space="preserve">
+    <value>Noch ist kein POI-Typ als Ziel markiert. Markieren Sie unter Kartierung, POIs einen als Ziel, bevor Sie Regeln hinzufügen.</value>
+  </data>
+  <data name="RuleSaved" xml:space="preserve">
+    <value>Regel „{0}“ gespeichert.</value>
+  </data>
+  <data name="RuleDeleted" xml:space="preserve">
+    <value>Regel „{0}“ gelöscht.</value>
+  </data>
+  <data name="RuleNameRequired" xml:space="preserve">
+    <value>Geben Sie eine Bezeichnung mit höchstens {0} Zeichen ein.</value>
+  </data>
+  <data name="RuleNothingRequired" xml:space="preserve">
+    <value>Wählen Sie mindestens einen Zieltyp oder eine Fähigkeit.</value>
+  </data>
+  <data name="RuleChoicesChanged" xml:space="preserve">
+    <value>Eine gewählte Einsatzart, Priorität, ein Einheitentyp, Zieltyp oder eine Fähigkeit existiert nicht mehr. Prüfen Sie die Auswahl und speichern Sie erneut.</value>
+  </data>
+  <data name="NewRule" xml:space="preserve">
+    <value>Neue Regel</value>
+  </data>
+  <data name="EditRule" xml:space="preserve">
+    <value>Regel bearbeiten</value>
+  </data>
+  <data name="RuleNameHelp" xml:space="preserve">
+    <value>Wird Disponenten als Grund für die Anforderung angezeigt, z. B. „Verbrennungen“ oder „Hubschrauberlandung“.</value>
+  </data>
+  <data name="AppliesWhen" xml:space="preserve">
+    <value>Gilt, wenn</value>
+  </data>
+  <data name="AppliesWhenHelp" xml:space="preserve">
+    <value>Lassen Sie alle drei auf „Beliebig“, damit die Regel für jeden Einsatz gilt. Regeln für Einheitentypen gelten, wenn diese Art von Einheit anfährt (ihre Status-Zielliste in den Apps), nicht für das Ziel des Einsatzes selbst.</value>
+  </data>
+  <data name="CallType" xml:space="preserve">
+    <value>Einsatzart</value>
+  </data>
+  <data name="Priority" xml:space="preserve">
+    <value>Priorität</value>
+  </data>
+  <data name="UnitType" xml:space="preserve">
+    <value>Einheitentyp</value>
+  </data>
+  <data name="Any" xml:space="preserve">
+    <value>Beliebig</value>
+  </data>
+  <data name="DestinationTypes" xml:space="preserve">
+    <value>Zieltypen</value>
+  </data>
+  <data name="DestinationTypesHelp" xml:space="preserve">
+    <value>Das Ziel muss einem dieser Typen angehören; ist keiner angehakt, ist jeder Zieltyp möglich. Nennen zwei Regeln Typen, die sich nicht überschneiden, setzt sich die spezifischere Regel durch (Regeln für Einheitentypen zuerst), und die andere wird zurückgestellt.</value>
+  </data>
+  <data name="RequiredCapabilities" xml:space="preserve">
+    <value>Erforderliche Fähigkeiten</value>
+  </data>
+  <data name="RequiredCapabilitiesHelp" xml:space="preserve">
+    <value>Das vorgeschlagene Ziel muss alle diese Fähigkeiten bieten. Bietet kein Ziel in Reichweite sie, wird nichts eingetragen, und die nächstgelegenen werden mit dem angezeigt, was ihnen fehlt.</value>
+  </data>
+  <data name="PreferredCapabilities" xml:space="preserve">
+    <value>Bevorzugte Fähigkeiten</value>
+  </data>
+  <data name="PreferredCapabilitiesHelp" xml:space="preserve">
+    <value>Für knappe Entscheidungen: Innerhalb des Zeitfensters für bevorzugte Fähigkeiten kommt ein Ziel, das mehr davon bietet, zuerst.</value>
+  </data>
+  <data name="NoCapabilities" xml:space="preserve">
+    <value>Noch keine POI-Fähigkeiten.</value>
+  </data>
+  <data name="ManageCapabilities" xml:space="preserve">
+    <value>POI-Fähigkeiten verwalten</value>
+  </data>
+  <data name="TryIt" xml:space="preserve">
+    <value>Ausprobieren</value>
+  </data>
+  <data name="TryItHelp" xml:space="preserve">
+    <value>Wählen Sie eine Einsatzart, eine Priorität und einen Einheitentyp, um zu sehen, welche Regeln gelten und welches Ziel erforderlich ist.</value>
+  </data>
+  <data name="TryItButton" xml:space="preserve">
+    <value>Anzeigen</value>
+  </data>
+  <data name="AppliedRules" xml:space="preserve">
+    <value>Zutreffende Regeln</value>
+  </data>
+  <data name="SetAsideRules" xml:space="preserve">
+    <value>Zurückgestellt</value>
+  </data>
+  <data name="NoRulesApply" xml:space="preserve">
+    <value>Keine Regel trifft zu: beliebiger Zieltyp, keine Anforderungen.</value>
+  </data>
+  <data name="SetAsideTypesRemoved" xml:space="preserve">
+    <value>ihre Zieltypen wurden gelöscht</value>
+  </data>
+  <data name="SetAsideTypeConflict" xml:space="preserve">
+    <value>eine spezifischere Regel schickt zu anderen Zieltypen</value>
+  </data>
+  <data name="NothingRequired" xml:space="preserve">
+    <value>nichts</value>
+  </data>
+  <data name="DestinationRulesLink" xml:space="preserve">
+    <value>Zielregeln</value>
+  </data>
+  <data name="SuggestedDestinations" xml:space="preserve">
+    <value>Vorgeschlagen</value>
+  </data>
+  <data name="SuggestionLoading" xml:space="preserve">
+    <value>Ziele werden gesucht...</value>
+  </data>
+  <data name="SuggestionNone" xml:space="preserve">
+    <value>Es wurde kein Ziel der erforderlichen Art gefunden.</value>
+  </data>
+  <data name="SuggestionNoneMeet" xml:space="preserve">
+    <value>Kein Ziel in der Nähe bietet alles Erforderliche; die nächstgelegenen werden angezeigt.</value>
+  </data>
+  <data name="SuggestionNeeds" xml:space="preserve">
+    <value>Benötigt: {0}</value>
+  </data>
+  <data name="SuggestionPrefers" xml:space="preserve">
+    <value>Bevorzugt: {0}</value>
+  </data>
+  <data name="SuggestionRules" xml:space="preserve">
+    <value>Regeln: {0}</value>
+  </data>
+  <data name="UseDestination" xml:space="preserve">
+    <value>Übernehmen</value>
+  </data>
+  <data name="InUse" xml:space="preserve">
+    <value>Ausgewählt</value>
+  </data>
+  <data name="SuggestedBadge" xml:space="preserve">
+    <value>Vorschlag</value>
+  </data>
+  <data name="FilledAutomatically" xml:space="preserve">
+    <value>Mit dem vorgeschlagenen Ziel ausgefüllt. Wählen Sie bei Bedarf ein anderes.</value>
+  </data>
+  <data name="MissingCapabilities" xml:space="preserve">
+    <value>Fehlt: {0}</value>
+  </data>
+  <data name="DownCapabilities" xml:space="preserve">
+    <value>Derzeit nicht verfügbar: {0}</value>
+  </data>
+  <data name="MinutesShort" xml:space="preserve">
+    <value>{0} Min.</value>
+  </data>
+  <data name="KilometersShort" xml:space="preserve">
+    <value>{0} km</value>
+  </data>
+  <data name="StraightLineKilometers" xml:space="preserve">
+    <value>{0} km Luftlinie</value>
+  </data>
+  <data name="StatusLimited" xml:space="preserve">
+    <value>Eingeschränkt</value>
+  </data>
+  <data name="StatusDiversion" xml:space="preserve">
+    <value>Abgemeldet</value>
+  </data>
+  <data name="StatusClosed" xml:space="preserve">
+    <value>Geschlossen</value>
+  </data>
+  <data name="SuggestionFailed" xml:space="preserve">
+    <value>Zielvorschläge sind derzeit nicht verfügbar.</value>
+  </data>
+  <data name="SuggestionRetry" xml:space="preserve">
+    <value>Erneut versuchen</value>
+  </data>
+  <data name="PreviewLoading" xml:space="preserve">
+    <value>Regeln werden geprüft...</value>
+  </data>
+  <data name="PreviewFailed" xml:space="preserve">
+    <value>Die Regeln konnten gerade nicht geprüft werden. Versuchen Sie es erneut.</value>
+  </data>
+</root>

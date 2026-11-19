@@ -196,5 +196,15 @@
   "IncidentBudgetAuthorityChanged": 204,
   "IncidentCostShareApportioned": 205,
   "IncidentIntakeBacklog": 206,
-  "IncidentRecoveryDeadlineApproaching": 207
+  "IncidentRecoveryDeadlineApproaching": 207,
+  "RecurringCallScheduleCreated": 208,
+  "RecurringCallScheduleUpdated": 209,
+  "RecurringCallSchedulePaused": 210,
+  "RecurringCallScheduleResumed": 211,
+  "RecurringCallScheduleDeleted": 212,
+  "RecurringCallOccurrenceCreated": 213,
+  "RecurringCallOccurrenceSkipped": 214,
+  "RecurringCallOccurrenceDispatched": 215,
+  "RecurringCallAlertRaised": 216,
+  "RecurringCallAlertResolved": 217
 }

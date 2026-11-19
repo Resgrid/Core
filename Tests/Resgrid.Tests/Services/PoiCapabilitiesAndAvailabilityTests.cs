@@ -317,7 +317,8 @@ namespace Resgrid.Tests.Services
 					return new TravelEstimate { Seconds = Math.Abs(lat - (OriginLat + 0.02)) < 0.0001 ? 9000 : seconds, Source = EtaSources.Road };
 				});
 
-			_service = new NearestDestinationService(_mapping.Object, _geo.Object, _units.Object);
+			_service = new NearestDestinationService(_mapping.Object, _geo.Object, _units.Object, new Mock<IDestinationRulesService>().Object,
+				new Mock<IDepartmentSettingsService>().Object);
 		}
 
 		private static Poi Hospital(int id, string name, double latitudeOffset, PoiType type, params string[] capabilities) => new Poi

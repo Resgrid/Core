@@ -222,6 +222,15 @@
   <data name="NoVideoFeeds" xml:space="preserve"><value>لم تتم إضافة أي بث فيديو لهذه المكالمة.</value></data>
   <data name="Additional" xml:space="preserve"><value>إضافي</value></data>
   <data name="AllOfGroupDispatched" xml:space="preserve"><value>تم إيفاد جميع {0}</value></data>
+  <data name="ReleaseUnit" xml:space="preserve"><value>تحرير</value></data>
+  <data name="ReleaseUnitTitle" xml:space="preserve"><value>تحرير {0} من هذا البلاغ؟</value></data>
+  <data name="ReleaseUnitText" xml:space="preserve"><value>تُسحب الوحدة من هذا البلاغ وتُمنح حالة التحرير المحددة لدى الإدارة، ما لم تكن متاحة بالفعل أو خارج الخدمة أو في بلاغ آخر. يبقى البلاغ مفتوحًا.</value></data>
+  <data name="ReleaseUnitNotify" xml:space="preserve"><value>إشعار الوحدة</value></data>
+  <data name="ReleaseUnitFailed" xml:space="preserve"><value>تعذّر تحرير الوحدة.</value></data>
+  <data name="UnitReleasedAt" xml:space="preserve"><value>تم التحرير {0}</value></data>
+  <data name="ReleasePersonnelText" xml:space="preserve"><value>يُسحب العضو من هذا البلاغ ويُمنح حالة تحرير الأفراد المحددة لدى الإدارة، ما لم يكن متاحًا بالفعل أو غير متاح أو في بلاغ آخر. يبقى البلاغ مفتوحًا.</value></data>
+  <data name="ReleasePersonnelFailed" xml:space="preserve"><value>تعذّر تحرير العضو.</value></data>
+  <data name="ReleasePersonnelNotify" xml:space="preserve"><value>إشعار العضو</value></data>
   <data name="AreYouSure" xml:space="preserve"><value>هل أنت متأكد؟</value></data>
   <data name="CallUpdatedTitle" xml:space="preserve"><value>تم تحديث البلاغ</value></data>
   <data name="CallUpdatedMessage" xml:space="preserve"><value>تم تحديث هذا البلاغ، يرجى تحديث الصفحة لعرض أحدث المعلومات.</value></data>

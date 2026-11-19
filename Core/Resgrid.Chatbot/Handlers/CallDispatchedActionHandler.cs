@@ -79,12 +79,14 @@ namespace Resgrid.Chatbot.Handlers
 
 				var any = false;
 
-				if (call.Dispatches != null && call.Dispatches.Any())
+				// Who is on the call now, as for units below: a member released (stood down) from it is not.
+				var livePersonnel = call.Dispatches?.Where(d => d != null && !call.IsUserReleased(d.UserId)).ToList() ?? new List<CallDispatch>();
+				if (livePersonnel.Any())
 				{
 					any = true;
 					sb.AppendLine(ChatbotResources.Get("Section_Personnel", culture));
 
-					var userIds = call.Dispatches.Select(d => d.UserId).Distinct().ToList();
+					var userIds = livePersonnel.Select(d => d.UserId).Distinct().ToList();
 					var profiles = await _userProfileService.GetSelectedUserProfilesAsync(userIds);
 					foreach (var userId in userIds.Take(MaxLinesPerSection))
 					{
@@ -112,11 +114,13 @@ namespace Resgrid.Chatbot.Handlers
 						sb.AppendLine(roleDispatch.Role?.Name ?? $"Role {roleDispatch.RoleId}");
 				}
 
-				if (call.UnitDispatches != null && call.UnitDispatches.Any())
+				// Who is on the call now: a unit released (stood down) from it is not.
+				var liveUnitDispatches = call.GetActiveUnitDispatches();
+				if (liveUnitDispatches.Any())
 				{
 					any = true;
 					sb.AppendLine(ChatbotResources.Get("Section_Units", culture));
-					foreach (var unitDispatch in call.UnitDispatches.Take(MaxLinesPerSection))
+					foreach (var unitDispatch in liveUnitDispatches.Take(MaxLinesPerSection))
 						sb.AppendLine(unitDispatch.Unit?.Name ?? $"Unit {unitDispatch.UnitId}");
 				}
 

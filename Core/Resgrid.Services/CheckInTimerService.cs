@@ -510,9 +510,10 @@ namespace Resgrid.Services
 			if (!timersWithStateFilter.Any())
 				return timers; // No filtering needed
 
-			// Populate call dispatches if not already loaded
-			if (call.Dispatches == null || call.UnitDispatches == null)
-				call = await _callsService.PopulateCallData(call, true, false, false, false, true, false, false, false, false);
+			// Populate call dispatches if not already loaded; the releases too, or a released member's timers would stay active
+			// (IsUserReleased reads false while PersonnelReleases is not loaded), as the PAR roster already checks.
+			if (call.Dispatches == null || call.UnitDispatches == null || call.PersonnelReleases == null)
+				call = await _callsService.PopulateCallData(call, true, false, false, false, true, false, false, false, false) ?? call;
 
 			// Build a set of current personnel action type IDs (one batch query instead of
 			// one last-action query per dispatched user)
@@ -521,7 +522,8 @@ namespace Resgrid.Services
 			{
 				var lastActionByUser = await reads.LastActionByUserAsync();
 
-				foreach (var dispatch in call.Dispatches)
+				// A member released from the call no longer keeps its timers going.
+				foreach (var dispatch in call.Dispatches.Where(d => !call.IsUserReleased(d.UserId)))
 				{
 					lastActionByUser.TryGetValue(dispatch.UserId, out var lastAction);
 					personnelStates[dispatch.UserId] = lastAction?.ActionTypeId ?? (int)ActionTypes.StandingBy;
@@ -530,12 +532,14 @@ namespace Resgrid.Services
 
 			// Build a set of current unit state IDs keyed by UnitId (one batch query instead
 			// of one last-state query per dispatched unit)
+			// A unit released from the call no longer keeps its timers going, whatever it is doing on its next call.
 			var unitStates = new Dictionary<int, int>();
-			if (call.UnitDispatches != null && call.UnitDispatches.Any())
+			var liveUnitDispatches = call.GetActiveUnitDispatches();
+			if (liveUnitDispatches.Any())
 			{
 				var lastStateByUnit = await reads.LastStateByUnitAsync();
 
-				foreach (var unitDispatch in call.UnitDispatches)
+				foreach (var unitDispatch in liveUnitDispatches)
 				{
 					lastStateByUnit.TryGetValue(unitDispatch.UnitId, out var lastState);
 					unitStates[unitDispatch.UnitId] = lastState?.State ?? (int)UnitStateTypes.Available;
@@ -840,11 +844,13 @@ namespace Resgrid.Services
 			if (personnelTimer == null)
 				return new List<PersonnelCallCheckInStatus>();
 
-			// Load dispatched personnel (single query).
-			if (call.Dispatches == null)
-				call = await _callsService.PopulateCallData(call, true, false, false, false, false, false, false, false, false);
+			// Load dispatched personnel and the call's releases (PopulateCallData reads only what is not loaded yet).
+			if (call.Dispatches == null || call.PersonnelReleases == null)
+				call = await _callsService.PopulateCallData(call, true, false, false, false, false, false, false, false, false) ?? call;
 
-			var dispatches = call.Dispatches?.ToList() ?? new List<CallDispatch>();
+			// A member released (stood down) from the call is off its roster: no PAR is due from them. Their check-ins stay on
+			// the call's history.
+			var dispatches = call.Dispatches?.Where(d => d != null && !call.IsUserReleased(d.UserId)).ToList() ?? new List<CallDispatch>();
 			if (!dispatches.Any())
 				return new List<PersonnelCallCheckInStatus>();
 

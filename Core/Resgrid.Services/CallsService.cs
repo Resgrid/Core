@@ -28,6 +28,7 @@ namespace Resgrid.Services
 		private readonly ICallDispatchesRepository _callDispatchesRepository;
 		private readonly ICallDispatchGroupRepository _callDispatchGroupRepository;
 		private readonly ICallDispatchUnitRepository _callDispatchUnitRepository;
+		private readonly ICallPersonnelReleasesRepository _callPersonnelReleasesRepository;
 		private readonly ICallDispatchRoleRepository _callDispatchRoleRepository;
 		private readonly ICommunicationService _communicationService;
 		private readonly ICallTypesRepository _callTypesRepository;
@@ -66,8 +67,10 @@ namespace Resgrid.Services
 			ICallReferencesRepository callReferencesRepository, ICallContactsRepository callContactsRepository,
 			IIndoorMapService indoorMapService, ICallVideoFeedRepository callVideoFeedRepository, ICallNumberingService callNumberingService,
 			Lazy<IProtectedWriteService> protectedWriteService, Lazy<ISearchProjectionService> searchProjections = null,
-			Lazy<ICallLocationHistoryService> callLocationHistory = null, ITypeIconsRepository typeIconsRepository = null)
+			Lazy<ICallLocationHistoryService> callLocationHistory = null, ITypeIconsRepository typeIconsRepository = null,
+			ICallPersonnelReleasesRepository callPersonnelReleasesRepository = null)
 		{
+			_callPersonnelReleasesRepository = callPersonnelReleasesRepository;
 			_protectedWriteService = protectedWriteService;
 			_callLocationHistory = callLocationHistory;
 			_typeIconsRepository = typeIconsRepository;
@@ -263,6 +266,11 @@ namespace Resgrid.Services
 		/// department-wide one and each group-scoped member's) keys on this version, so the next request counts again.
 		/// The realtime ping that makes the apps ask is sent after the save returns. A cache failure never fails the save.
 		/// </summary>
+		public Task InvalidateOpenCallCountsAsync(int departmentId)
+		{
+			return RollOpenCallCountsAsync(departmentId);
+		}
+
 		private async Task RollOpenCallCountsAsync(int departmentId)
 		{
 			if (_cacheProvider == null || !Config.SystemBehaviorConfig.CacheEnabled || departmentId <= 0)
@@ -741,6 +749,10 @@ namespace Resgrid.Services
 				else
 					call.Dispatches = new List<CallDispatch>();
 			}
+
+			// Who was released from the call goes with whoever was dispatched to it (directly or through a group or role).
+			if ((getDispatches || getGroupDispatches || getRoleDispatches) && call.PersonnelReleases == null && _callPersonnelReleasesRepository != null && call.CallId > 0)
+				call.PersonnelReleases = ((await _callPersonnelReleasesRepository.GetByCallIdAsync(call.CallId)) ?? Enumerable.Empty<CallPersonnelRelease>()).ToList();
 
 			if (getAttachments && call.Attachments == null)
 			{

@@ -298,6 +298,8 @@
             var year = '@Model.CallNumberPreviewDate.ToString("yyyy", System.Globalization.CultureInfo.InvariantCulture)';
             var month = '@Model.CallNumberPreviewDate.ToString("MM", System.Globalization.CultureInfo.InvariantCulture)';
             var day = '@Model.CallNumberPreviewDate.ToString("dd", System.Globalization.CultureInfo.InvariantCulture)';
+            var hour = '@Model.CallNumberPreviewDate.ToString("HH", System.Globalization.CultureInfo.InvariantCulture)';
+            var minute = '@Model.CallNumberPreviewDate.ToString("mm", System.Globalization.CultureInfo.InvariantCulture)';
             // Mirrors NumberingYearStart.YearOf: the year naming today's numbering year. Only yearly patterns use it.
             function numberingYear() {
                 var m = parseInt(startMonth.val(), 10) || 1, d = parseInt(startDay.val(), 10) || 1;
@@ -316,6 +318,7 @@
                 preview.text(text
                     .replace(/\{YYYY\}/gi, shown).replace(/\{YY\}/gi, shown.slice(-2))
                     .replace(/\{MM\}/gi, month).replace(/\{DD\}/gi, day)
+                    .replace(/\{HH\}/gi, hour).replace(/\{MIN\}/gi, minute)
                     .replace(/\{SEQ\}/gi, sequence));
                 // Which year names a fiscal year only matters when it does not start on January 1.
                 yearLabel.toggle(!(startMonth.val() === '1' && (parseInt(startDay.val(), 10) || 1) === 1));

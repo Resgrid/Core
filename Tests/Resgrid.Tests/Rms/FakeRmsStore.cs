@@ -264,7 +264,8 @@ namespace Resgrid.Tests.Rms
 			// RMS-3 retention candidates and the Pending-attachment rescan queue
 			RecordsRepo.Setup(r => r.GetRetentionCandidatesAsync(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<int>(), It.IsAny<string>()))
 				.ReturnsAsync((int d, DateTime cutoff, int take, string after) => Records
-					.Where(x => x.DepartmentId == d && x.DeletedOn == null && x.PurgedOn == null && x.FinalizedOn.HasValue && x.FinalizedOn < cutoff
+					.Where(x => x.DepartmentId == d && x.DeletedOn == null && x.PurgedOn == null
+						&& (x.FinalizedOn.HasValue && x.FinalizedOn < cutoff || !x.FinalizedOn.HasValue && x.State == (int)RmsRecordState.Cancelled && x.CancelledOn.HasValue && x.CancelledOn < cutoff)
 						&& (after == null || string.CompareOrdinal(x.RmsOperationalRecordId, after) > 0))
 					.OrderBy(x => x.RmsOperationalRecordId, StringComparer.Ordinal).Take(take).ToList());
 			AttachmentsRepo.Setup(r => r.GetPendingScanAsync(It.IsAny<int>(), It.IsAny<int>()))

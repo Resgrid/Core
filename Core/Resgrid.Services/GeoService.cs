@@ -173,7 +173,7 @@ namespace Resgrid.Services
 			if (travel.IsAir)
 			{
 				var meters = GeoMath.HaversineMeters(from.Latitude, from.Longitude, to.Latitude, to.Longitude);
-				return new TravelEstimate { Seconds = travel.EstimateSeconds(meters), Source = EtaSources.Direct };
+				return new TravelEstimate { Seconds = travel.EstimateSeconds(meters), Source = EtaSources.Direct, DistanceMeters = meters };
 			}
 
 			var closures = await ClosuresForAsync(lookup?.DepartmentId ?? 0, travel.Mode);
@@ -207,6 +207,7 @@ namespace Resgrid.Services
 			{
 				Seconds = seconds,
 				Source = EtaSources.Road,
+				DistanceMeters = route.DistanceMeters > 0 ? route.DistanceMeters : -1,
 				ClosureDelaySeconds = closureDelay,
 				Closures = route.Closures ?? new List<RouteClosureEffect>()
 			};

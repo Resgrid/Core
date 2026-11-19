@@ -7,6 +7,7 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.LocationHistory> historyLocalizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.ReportSources> reportSourcesLocalizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> recordsLocalizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.RecurringCalls> recurringLocalizer
 @inject Resgrid.Model.Services.IFeatureToggleService featureToggleService
 @{
     ViewBag.Title = $"Resgrid | " + @localizer["ViewCallHeader"] + ": " + @Model.Call.Name;
@@ -72,6 +73,11 @@
                     <button class="btn btn-danger" id="reOpenCallButton" disabled>@localizer["ReopenCall"]</button>
                     <form id="reOpenCallForm">@Html.AntiForgeryToken()</form>
                 }
+                @if (Model.CanReleaseResources)
+                {
+                    @* ReleaseUnitFromCall is POST + antiforgery; resgrid.dispatch.viewcall.js posts this token. *@
+                    <form id="releaseUnitForm">@Html.AntiForgeryToken()</form>
+                }
                 @if (ViewData["IsWaitingForDispatch"] is bool isWaitingForDispatch && isWaitingForDispatch && ClaimsAuthorizationHelper.CanCreateCall())
                 {
                     <form method="post" asp-controller="Dispatch" asp-action="DispatchCallNow" asp-route-area="User" style="display:inline;"
@@ -90,6 +96,8 @@
                     }
                     <a class="btn btn-primary" asp-controller="Dispatch" asp-action="UpdateCall" asp-route-area="User" asp-route-callId="@Model.Call.CallId">@localizer["UpdateCallHeader"]</a>
                     <a style="text-decoration:none;" class="btn btn-warning" asp-controller="Dispatch" asp-action="CloseCall" asp-route-area="User" asp-route-callId="@Model.Call.CallId">@localizer["CloseCallHeader"]</a>
+                    @* Repeat on a schedule: a new recurring call filled in from this one. *@
+                    <a id="repeatCallButton" class="btn btn-default" asp-controller="RecurringCalls" asp-action="New" asp-route-area="User" asp-route-fromCallId="@Model.Call.CallId" title="@recurringLocalizer["RepeatCallHelp"]"><i class="fa fa-repeat"></i> @recurringLocalizer["RepeatCall"]</a>
                 }
                 @{
                     // A crew that leaves a smoke or CO alarm on this call records it from here (CRR module, prevention administrators).
@@ -159,6 +167,10 @@
 @if (ViewData["IsWaitingForDispatch"] is bool waitingBanner && waitingBanner)
 {
     <div class="row"><div class="col-lg-12"><div class="alert alert-warning" style="margin:15px 0 0 0;"><i class="fa fa-hourglass-half"></i> @(Model.Call.State == (int)Resgrid.Model.CallStates.Pending ? localizer["PendingCallBanner"] : localizer["ScheduledCallBanner"])</div></div></div>
+}
+@if (Model.Call.RecurringCallId.HasValue)
+{
+    <div class="row"><div class="col-lg-12"><div class="alert alert-info" id="recurringCallBanner" style="margin:15px 0 0 0;"><i class="fa fa-repeat"></i> @recurringLocalizer["CreatedByRecurringCall"] <a asp-controller="RecurringCalls" asp-action="Index" asp-route-area="User">@recurringLocalizer["PageTitle"]</a></div></div></div>
 }
 
 <div class="row">
@@ -382,7 +394,7 @@
                                                                 if (Model.Call.HasUnitBeenDispatched(unit.UnitId))
                                                                 {
                                                                     <tr>
-                                                                        <td>@TypeIconHtml.Image(Model.UnitTypes, unit.Type)@unit.Name <span class="label label-info" data-unit-eta="@unit.UnitId" style="display:none;margin-left:6px;"></span></td>
+                                                                        <td>@TypeIconHtml.Image(Model.UnitTypes, unit.Type)@unit.Name <span class="label label-info" data-unit-eta="@unit.UnitId" style="display:none;margin-left:6px;"></span>@await Html.PartialAsync("_ViewCallResourceRelease", (Model, "unit", unit.UnitId.ToString(), unit.Name))</td>
                                                                         <td>@unit.Type</td>
                                                                     </tr>
                                                                 }
@@ -390,13 +402,17 @@
                                                         }
 
 
+                                                        @* A dispatcher who can release resources also sees the members a dispatched group reached, each with
+                                                           the same Release control as a member dispatched by name. *@
+                                                        var listGroupMembers = Model.CanReleaseResources && Model.Call.HasGroupBeenDispatched(g.DepartmentGroupId);
+
                                                         foreach (var u in sortedUsers)
                                                         {
-                                                            if (Model.Call.HasUserBeenDispatched(u.User.UserId))
+                                                            if (Model.Call.HasUserBeenDispatched(u.User.UserId) || listGroupMembers)
                                                             {
                                                                 <tr>
                                                                     <td></td>
-                                                                    <td>@u.Name</td>
+                                                                    <td>@u.Name@await Html.PartialAsync("_ViewCallResourceRelease", (Model, "user", u.User.UserId, u.Name))</td>
                                                                 </tr>
                                                             }
                                                         }
@@ -441,7 +457,7 @@
                                                                 if (Model.Call.HasUnitBeenDispatched(unit.UnitId))
                                                                 {
                                                                     <tr>
-                                                                        <td>@TypeIconHtml.Image(Model.UnitTypes, unit.Type)@unit.Name <span class="label label-info" data-unit-eta="@unit.UnitId" style="display:none;margin-left:6px;"></span></td>
+                                                                        <td>@TypeIconHtml.Image(Model.UnitTypes, unit.Type)@unit.Name <span class="label label-info" data-unit-eta="@unit.UnitId" style="display:none;margin-left:6px;"></span>@await Html.PartialAsync("_ViewCallResourceRelease", (Model, "unit", unit.UnitId.ToString(), unit.Name))</td>
                                                                         <td>@unit.Type</td>
                                                                     </tr>
                                                                 }
@@ -454,10 +470,22 @@
                                                         {
                                                             <tr>
                                                                 <td></td>
-                                                                <td>@u.Name</td>
+                                                                <td>@u.Name@await Html.PartialAsync("_ViewCallResourceRelease", (Model, "user", u.User.UserId, u.Name))</td>
                                                             </tr>
                                                         }
                                                     }
+                                                @* Members released from the call who were not dispatched by name (a group, role, unit crew or status reached them),
+                                                   unless already listed above under their dispatched group. *@
+                                                @foreach (var release in (Model.Call.PersonnelReleases ?? new List<CallPersonnelRelease>()).Where(r => !Model.Call.HasUserBeenDispatched(r.UserId) &&
+                                                    !(Model.CanReleaseResources && Model.Groups.Any(g => Model.Call.HasGroupBeenDispatched(g.DepartmentGroupId) &&
+                                                        g.Members != null && g.Members.Any(m => string.Equals(m.UserId, r.UserId, StringComparison.OrdinalIgnoreCase))))))
+                                                {
+                                                    var releasedName = Model.UserGroupRoles?.FirstOrDefault(x => x.UserId == release.UserId)?.Name ?? release.UserId;
+                                                    <tr>
+                                                        <td></td>
+                                                        <td>@releasedName@await Html.PartialAsync("_ViewCallResourceRelease", (Model, "user", release.UserId, releasedName))</td>
+                                                    </tr>
+                                                }
                                                 </tbody>
                                             </table>
                                         </div>

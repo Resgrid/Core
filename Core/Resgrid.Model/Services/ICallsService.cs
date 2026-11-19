@@ -433,6 +433,12 @@ namespace Resgrid.Model.Services
 		/// <returns>Task&lt;Call&gt;.</returns>
 		Task<Call> PopulateCallData(Call call, bool getDispatches, bool getAttachments, bool getNotes, bool getGroupDispatches, bool getUnitDispatches, bool getRoleDispatches, bool getProtocols, bool getReferences, bool getContacts, bool getVideoFeeds = false);
 
+		/// <summary>
+		/// Who is on the department's open calls changed without a call save (a unit or member released from a call): the cached
+		/// call badge counts ("calls I'm on", open calls) are counted again on the next request.
+		/// </summary>
+		Task InvalidateOpenCallCountsAsync(int departmentId);
+
 		Task<List<Call>> GetAllNonDispatchedScheduledCallsWithinDateRange(DateTime startDate, DateTime endDate);
 
 

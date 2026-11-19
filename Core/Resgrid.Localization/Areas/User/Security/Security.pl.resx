@@ -2732,4 +2732,14 @@
   <data name="PermRecordsShareCoordinationBoardsNote" xml:space="preserve">
     <value>Umożliwia udostępnianie tablicy koordynacyjnej instytucjom partnerskim.</value>
   </data>
+  <data name="AuditLogTypeRecurringCallCreated" xml:space="preserve"><value>Utworzono zgłoszenie cykliczne</value></data>
+  <data name="AuditLogTypeRecurringCallUpdated" xml:space="preserve"><value>Zaktualizowano zgłoszenie cykliczne</value></data>
+  <data name="AuditLogTypeRecurringCallPaused" xml:space="preserve"><value>Wstrzymano zgłoszenie cykliczne</value></data>
+  <data name="AuditLogTypeRecurringCallResumed" xml:space="preserve"><value>Wznowiono zgłoszenie cykliczne</value></data>
+  <data name="AuditLogTypeRecurringCallDeleted" xml:space="preserve"><value>Usunięto zgłoszenie cykliczne</value></data>
+  <data name="AuditLogTypeRecurringCallOccurrenceSkipped" xml:space="preserve"><value>Pominięto wystąpienie zgłoszenia cyklicznego</value></data>
+  <data name="AuditLogTypeRecurringCallOccurrenceRestored" xml:space="preserve"><value>Przywrócono wystąpienie zgłoszenia cyklicznego</value></data>
+  <data name="AuditLogTypeRecurringCallOccurrenceCreated" xml:space="preserve"><value>Utworzono wystąpienie zgłoszenia cyklicznego</value></data>
+  <data name="AuditLogTypeRecurringCallAlertAcknowledged" xml:space="preserve"><value>Potwierdzono alert zgłoszenia cyklicznego</value></data>
+  <data name="AuditLogTypeRecurringCallAlertDismissed" xml:space="preserve"><value>Odrzucono alert zgłoszenia cyklicznego</value></data>
 </root>

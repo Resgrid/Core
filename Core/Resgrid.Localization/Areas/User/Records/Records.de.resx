@@ -2273,4 +2273,17 @@
   <data name="NoAlarmActivity" xml:space="preserve"><value>Hier wurden noch keine Melder oder Aktivitäten zur Risikominderung erfasst.</value></data>
   <data name="RecordAlarmLeft" xml:space="preserve"><value>Hinterlassenen Melder erfassen</value></data>
   <data name="AlarmsRequestedColumnHelp" xml:space="preserve"><value>Angefragte Geräte gesamt (nur Rauch / nur CO / Kombination)</value></data>
+  <data name="IncidentReportDeleted" xml:space="preserve"><value>Einsatzbericht gelöscht.</value></data>
+  <data name="DeleteIncidentReport" xml:space="preserve"><value>Löschen</value></data>
+  <data name="DeleteIncidentReportConfirm" xml:space="preserve"><value>Diesen Einsatzbericht löschen? Er wird aus allen Listen entfernt, sein Einsatz wird für einen neuen Bericht freigegeben und sein Inhalt wird nach {0} Tagen gelöscht.</value></data>
+  <data name="DeleteIncidentReportHelp" xml:space="preserve"><value>Entfernt den Bericht aus allen Listen und gibt seinen Einsatz für einen neuen Bericht frei. Ein nie abgeschlossener Bericht wird zuerst verworfen. Der Inhalt wird nach {0} Tagen gelöscht.</value></data>
+  <data name="DeleteVoidedReasonPrompt" xml:space="preserve"><value>Warum wird dieser ungültig gemachte Bericht gelöscht?</value></data>
+  <data name="DeleteRefusedNotDeletable" xml:space="preserve"><value>Ein abgeschlossener Bericht kann nicht gelöscht werden. Machen Sie ihn zuerst ungültig.</value></data>
+  <data name="DeleteRefusedVoidedNeedsAdmin" xml:space="preserve"><value>Nur ein Abteilungsadministrator kann einen ungültig gemachten Bericht löschen.</value></data>
+  <data name="DeleteRefusedReasonRequired" xml:space="preserve"><value>Geben Sie einen Grund an, um einen ungültig gemachten Bericht zu löschen.</value></data>
+  <data name="DeleteRefusedSubmittedExternally" xml:space="preserve"><value>Dieser Bericht wurde an ein externes System wie NERIS gesendet und kann daher nicht gelöscht werden. Machen Sie ihn stattdessen ungültig.</value></data>
+  <data name="DeleteRefusedLegalHold" xml:space="preserve"><value>Für diesen Bericht gilt eine rechtliche Aufbewahrungssperre, daher kann er nicht gelöscht werden.</value></data>
+  <data name="DeleteRefusedPermanentContent" xml:space="preserve"><value>Dieser Bericht enthält Einträge zu Verletzten, Rettungen oder Expositionen, die dauerhaft aufbewahrt werden. Entfernen Sie sie aus dem Entwurf, bevor Sie ihn löschen.</value></data>
+  <data name="DeleteRefusedAmendmentOpen" xml:space="preserve"><value>Verwerfen Sie die offene Änderung, bevor Sie diesen Bericht löschen.</value></data>
+  <data name="IncludeClosedReports" xml:space="preserve"><value>Verworfene und ungültige einbeziehen</value></data>
 </root>

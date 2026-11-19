@@ -638,6 +638,15 @@
   <data name="AllOfGroupDispatched" xml:space="preserve">
     <value>Усіх з {0} направлено</value>
   </data>
+  <data name="ReleaseUnit" xml:space="preserve"><value>Відкликати</value></data>
+  <data name="ReleaseUnitTitle" xml:space="preserve"><value>Відкликати {0} з цього виклику?</value></data>
+  <data name="ReleaseUnitText" xml:space="preserve"><value>Підрозділ відкликають з цього виклику й встановлюють йому статус відкликання, заданий організацією, якщо він ще не доступний, не поза службою і не на іншому виклику. Виклик залишається відкритим.</value></data>
+  <data name="ReleaseUnitNotify" xml:space="preserve"><value>Сповістити підрозділ</value></data>
+  <data name="ReleaseUnitFailed" xml:space="preserve"><value>Не вдалося відкликати підрозділ.</value></data>
+  <data name="UnitReleasedAt" xml:space="preserve"><value>Відкликано {0}</value></data>
+  <data name="ReleasePersonnelText" xml:space="preserve"><value>Особу відкликають з цього виклику й встановлюють їй статус відкликання персоналу, заданий організацією, якщо вона ще не доступна, не недоступна і не на іншому виклику. Виклик залишається відкритим.</value></data>
+  <data name="ReleasePersonnelFailed" xml:space="preserve"><value>Не вдалося відкликати особу.</value></data>
+  <data name="ReleasePersonnelNotify" xml:space="preserve"><value>Сповістити особу</value></data>
   <data name="AreYouSure" xml:space="preserve">
     <value>Ви впевнені?</value>
   </data>

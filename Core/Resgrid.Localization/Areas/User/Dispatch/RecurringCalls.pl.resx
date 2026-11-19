@@ -1,0 +1,704 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Map Icon Legend and status / priority map icon pages -->
+    <data name="ActionFailed" xml:space="preserve">
+    <value>Nie udało się. Odśwież stronę i spróbuj ponownie.</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Akcje</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>Aktywne</value>
+  </data>
+  <data name="ActiveHelp" xml:space="preserve">
+    <value>Odznacz, aby wstrzymać: zgłoszenia nie są tworzone do czasu wznowienia.</value>
+  </data>
+  <data name="AddTime" xml:space="preserve">
+    <value>Dodaj godzinę</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>Adres</value>
+  </data>
+  <data name="AddressHelp" xml:space="preserve">
+    <value>Lokalizowany przy zapisie, dla mapy i wskazówek dojazdu.</value>
+  </data>
+  <data name="AlertAcknowledge" xml:space="preserve">
+    <value>Potwierdź</value>
+  </data>
+  <data name="AlertAcknowledgedBy" xml:space="preserve">
+    <value>Potwierdzone przez {0}</value>
+  </data>
+  <data name="AlertCreateCall" xml:space="preserve">
+    <value>Utwórz zgłoszenie</value>
+  </data>
+  <data name="AlertDismiss" xml:space="preserve">
+    <value>Odrzuć</value>
+  </data>
+  <data name="AlertDismissPrompt" xml:space="preserve">
+    <value>Notatka (opcjonalnie): dlaczego ten alert jest zamykany?</value>
+  </data>
+  <data name="AlertKindCreateFailed" xml:space="preserve">
+    <value>Nie udało się utworzyć zgłoszenia</value>
+  </data>
+  <data name="AlertKindDispatchDue" xml:space="preserve">
+    <value>Pora wysłać</value>
+  </data>
+  <data name="AlertKindMissed" xml:space="preserve">
+    <value>Pominięte: zgłoszenie nie zostało utworzone na czas</value>
+  </data>
+  <data name="AlertKindNoResources" xml:space="preserve">
+    <value>Nikogo nie można było wysłać: zgłoszenie jest wstrzymane jako oczekujące</value>
+  </data>
+  <data name="AlertKindResourcesUnavailable" xml:space="preserve">
+    <value>Wysłane bez części wybranych zasobów</value>
+  </data>
+  <data name="AlertOpenCall" xml:space="preserve">
+    <value>Otwórz zgłoszenie</value>
+  </data>
+  <data name="AlertReasonDepartmentUnavailable" xml:space="preserve">
+    <value>Nie udało się wczytać jednostki.</value>
+  </data>
+  <data name="AlertReasonNoneAvailable" xml:space="preserve">
+    <value>Żaden z wybranych zasobów nie był dostępny.</value>
+  </data>
+  <data name="AlertReasonNoneChosen" xml:space="preserve">
+    <value>Nie wybrano zasobów i żadna karta dysponowania nie pasowała.</value>
+  </data>
+  <data name="AlertReasonSaveFailed" xml:space="preserve">
+    <value>Zapis zgłoszenia nie powiódł się; ponawianie do terminu.</value>
+  </data>
+  <data name="AlertSchedule" xml:space="preserve">
+    <value>Zgłoszenie cykliczne</value>
+  </data>
+  <data name="AlertUnavailable" xml:space="preserve">
+    <value>Niedostępni: {0}</value>
+  </data>
+  <data name="AlertWhat" xml:space="preserve">
+    <value>Co się stało</value>
+  </data>
+  <data name="AlertWhen" xml:space="preserve">
+    <value>Termin</value>
+  </data>
+  <data name="AlertsBanner" xml:space="preserve">
+    <value>{0} alert(y) zgłoszeń cyklicznych wymaga uwagi.</value>
+  </data>
+  <data name="AlertsBannerLink" xml:space="preserve">
+    <value>Przejrzyj</value>
+  </data>
+  <data name="AlertsHelp" xml:space="preserve">
+    <value>Otrzymują powiadomienie (push, SMS lub e-mail wg ustawień), gdy zgłoszenia nie można utworzyć, zostało pominięte, nikogo nie można wysłać, wybrane zasoby są niedostępne lub dyspozytor musi je wysłać. Nikt nie wybrany: osoba, która utworzyła harmonogram.</value>
+  </data>
+  <data name="AlertsTitle" xml:space="preserve">
+    <value>Wymaga uwagi</value>
+  </data>
+  <data name="AvailabilityHelp" xml:space="preserve">
+    <value>Gdy zgłoszenie jest wysyłane, wybrane jednostki i członkowie niedostępni (w innym zgłoszeniu, poza służbą) są pomijani, a dyspozytor otrzymuje alert. Jeśli nikt nie zostanie, zgłoszenie jest wstrzymane jako oczekujące dla dyspozytora.</value>
+  </data>
+  <data name="Calendar" xml:space="preserve">
+    <value>Kalendarz</value>
+  </data>
+  <data name="ContactName" xml:space="preserve">
+    <value>Nazwa kontaktu</value>
+  </data>
+  <data name="ContactNumber" xml:space="preserve">
+    <value>Numer kontaktowy</value>
+  </data>
+  <data name="Coordinates" xml:space="preserve">
+    <value>Współrzędne</value>
+  </data>
+  <data name="CoordinatesHelp" xml:space="preserve">
+    <value>Szerokość, długość geograficzna (opcjonalnie). Pozostaw puste, aby zlokalizować adres.</value>
+  </data>
+  <data name="CreateNow" xml:space="preserve">
+    <value>Utwórz zgłoszenie teraz</value>
+  </data>
+  <data name="CreatedByRecurringCall" xml:space="preserve">
+    <value>To zgłoszenie utworzyło zgłoszenie cykliczne.</value>
+  </data>
+  <data name="CreationMode" xml:space="preserve">
+    <value>Kto wysyła każde zgłoszenie</value>
+  </data>
+  <data name="CreationModeAutomatic" xml:space="preserve">
+    <value>Automatycznie: każde zgłoszenie jest tworzone z wyprzedzeniem i dysponowane w terminie</value>
+  </data>
+  <data name="CreationModeDispatcher" xml:space="preserve">
+    <value>Dyspozytor: nic nie jest tworzone z wyprzedzeniem; dyspozytor dostaje alert w terminie i wysyła zgłoszenie</value>
+  </data>
+  <data name="DatesFrom" xml:space="preserve">
+    <value>Od {0}</value>
+  </data>
+  <data name="DatesUntil" xml:space="preserve">
+    <value>do {0}</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Usuń</value>
+  </data>
+  <data name="DeleteConfirm" xml:space="preserve">
+    <value>Usunąć to zgłoszenie cykliczne? Nie będą z niego tworzone kolejne zgłoszenia.</value>
+  </data>
+  <data name="DeleteRecurringCall" xml:space="preserve">
+    <value>Usuń zgłoszenie cykliczne</value>
+  </data>
+  <data name="DeleteUpcoming" xml:space="preserve">
+    <value>Usuń także {0} już utworzonych nadchodzących zgłoszeń</value>
+  </data>
+  <data name="DeletedMessage" xml:space="preserve">
+    <value>Usunięto zgłoszenie cykliczne.</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Opis</value>
+  </data>
+  <data name="DescriptionHelp" xml:space="preserve">
+    <value>Do czego służy ten harmonogram i co powinien wiedzieć dyspozytor. Zostaje w harmonogramie, nie jest kopiowany do zgłoszeń.</value>
+  </data>
+  <data name="Destination" xml:space="preserve">
+    <value>Cel</value>
+  </data>
+  <data name="DestinationDetails" xml:space="preserve">
+    <value>Szczegóły celu</value>
+  </data>
+  <data name="DestinationName" xml:space="preserve">
+    <value>Placówka docelowa</value>
+  </data>
+  <data name="DispatchHelp" xml:space="preserve">
+    <value>Do kogo trafia każde zgłoszenie. Pozostaw wszystko puste, aby wybrał dyspozytor: w terminie zgłoszenie zostaje wstrzymane jako oczekujące, a dyspozytor otrzymuje alert.</value>
+  </data>
+  <data name="DueHelp" xml:space="preserve">
+    <value>Pora wysłać to zgłoszenie. Wyślij je teraz, najpierw utwórz, aby je zmienić, albo pomiń.</value>
+  </data>
+  <data name="DueTitle" xml:space="preserve">
+    <value>Do wysłania: {0}</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Edytuj</value>
+  </data>
+  <data name="EditRecurringCall" xml:space="preserve">
+    <value>Edytuj zgłoszenie cykliczne</value>
+  </data>
+  <data name="EnableCheckInTimers" xml:space="preserve">
+    <value>Włącz liczniki meldunków</value>
+  </data>
+  <data name="EndsOn" xml:space="preserve">
+    <value>Kończy się</value>
+  </data>
+  <data name="EndsOnHelp" xml:space="preserve">
+    <value>Pozostaw puste, aby powtarzać bez końca.</value>
+  </data>
+  <data name="ErrorContactEmailInvalid" xml:space="preserve">
+    <value>Wpisz prawidłowy adres e-mail kontaktu harmonogramu.</value>
+  </data>
+  <data name="ErrorCoordinatesInvalid" xml:space="preserve">
+    <value>Wpisz współrzędne jako szerokość, długość (na przykład 39.7392,-104.9903).</value>
+  </data>
+  <data name="ErrorCreationModeInvalid" xml:space="preserve">
+    <value>Wybierz, kto wysyła każde zgłoszenie.</value>
+  </data>
+  <data name="ErrorDaysRequired" xml:space="preserve">
+    <value>Wybierz co najmniej jeden dzień tygodnia.</value>
+  </data>
+  <data name="ErrorEndsBeforeStart" xml:space="preserve">
+    <value>Data zakończenia jest wcześniejsza niż data rozpoczęcia.</value>
+  </data>
+  <data name="ErrorEndsOnInvalid" xml:space="preserve">
+    <value>Wpisz prawidłową datę zakończenia.</value>
+  </data>
+  <data name="ErrorFacilityPoiInvalid" xml:space="preserve">
+    <value>Wybierz punkt POI odbioru z listy.</value>
+  </data>
+  <data name="ErrorFrequencyInvalid" xml:space="preserve">
+    <value>Wybierz sposób powtarzania.</value>
+  </data>
+  <data name="ErrorIntervalInvalid" xml:space="preserve">
+    <value>Powtarzaj co 1 do {1}.</value>
+  </data>
+  <data name="ErrorLeadTimeInvalid" xml:space="preserve">
+    <value>Wybierz, kiedy tworzone jest każde zgłoszenie.</value>
+  </data>
+  <data name="ErrorManualAlertInvalid" xml:space="preserve">
+    <value>Wybierz, kiedy powiadomić dyspozytora.</value>
+  </data>
+  <data name="ErrorMonthlyDayInvalid" xml:space="preserve">
+    <value>Wybierz dzień miesiąca od 1 do 31.</value>
+  </data>
+  <data name="ErrorMonthlyWeekdayInvalid" xml:space="preserve">
+    <value>Wybierz dzień tygodnia w miesiącu.</value>
+  </data>
+  <data name="ErrorNameRequired" xml:space="preserve">
+    <value>Wpisz nazwę.</value>
+  </data>
+  <data name="ErrorResumeOnInvalid" xml:space="preserve">
+    <value>Data wznowienia jest nieprawidłowa.</value>
+  </data>
+  <data name="ErrorStartsOnRequired" xml:space="preserve">
+    <value>Wpisz datę rozpoczęcia.</value>
+  </data>
+  <data name="ErrorTimeInvalid" xml:space="preserve">
+    <value>Wpisz każdą godzinę jako godziny i minuty (na przykład 08:00).</value>
+  </data>
+  <data name="ErrorTimesRequired" xml:space="preserve">
+    <value>Dodaj co najmniej jedną godzinę dysponowania.</value>
+  </data>
+  <data name="ErrorTooManyTimes" xml:space="preserve">
+    <value>Użyj najwyżej {0} godzin dysponowania dziennie.</value>
+  </data>
+  <data name="Every" xml:space="preserve">
+    <value>Co</value>
+  </data>
+  <data name="ExternalId" xml:space="preserve">
+    <value>Identyfikator zewnętrzny</value>
+  </data>
+  <data name="FacilityDetails" xml:space="preserve">
+    <value>Szczegóły odbioru</value>
+  </data>
+  <data name="FacilityDetailsPlaceholder" xml:space="preserve">
+    <value>Oddział, piętro, sala, wejście, o kogo pytać</value>
+  </data>
+  <data name="FacilityHelp" xml:space="preserve">
+    <value>Wiersze odbioru i celu są dodawane do notatek każdego tworzonego zgłoszenia, aby zespół je miał.</value>
+  </data>
+  <data name="FacilityName" xml:space="preserve">
+    <value>Placówka odbioru</value>
+  </data>
+  <data name="FacilityPoi" xml:space="preserve">
+    <value>Punkt POI odbioru</value>
+  </data>
+  <data name="FacilityPoiHelp" xml:space="preserve">
+    <value>Uzupełnia placówkę odbioru i adres, gdy są puste.</value>
+  </data>
+  <data name="FrequencyDaily" xml:space="preserve">
+    <value>Codziennie</value>
+  </data>
+  <data name="FrequencyMonthly" xml:space="preserve">
+    <value>Co miesiąc</value>
+  </data>
+  <data name="FrequencyWeekly" xml:space="preserve">
+    <value>Co tydzień</value>
+  </data>
+  <data name="FromCallNotice" xml:space="preserve">
+    <value>Wypełniono na podstawie zgłoszenia {0}. Wybierz, kiedy ma się powtarzać.</value>
+  </data>
+  <data name="Groups" xml:space="preserve">
+    <value>Grupy</value>
+  </data>
+  <data name="HeldMessage" xml:space="preserve">
+    <value>Nikogo nie można było wysłać; zgłoszenie jest oczekujące.</value>
+  </data>
+  <data name="HeldTitle" xml:space="preserve">
+    <value>Wstrzymane: {0}</value>
+  </data>
+  <data name="IncidentId" xml:space="preserve">
+    <value>Identyfikator zdarzenia</value>
+  </data>
+  <data name="IncludeScheduledCalls" xml:space="preserve">
+    <value>Pokaż zaplanowane zgłoszenia</value>
+  </data>
+  <data name="IntervalDays" xml:space="preserve">
+    <value>dni</value>
+  </data>
+  <data name="IntervalMonths" xml:space="preserve">
+    <value>mies.</value>
+  </data>
+  <data name="IntervalWeeks" xml:space="preserve">
+    <value>tyg.</value>
+  </data>
+  <data name="LeadTime" xml:space="preserve">
+    <value>Twórz każde zgłoszenie</value>
+  </data>
+  <data name="LeadTimeDay" xml:space="preserve">
+    <value>1 dzień wcześniej</value>
+  </data>
+  <data name="LeadTimeDays" xml:space="preserve">
+    <value>{0} dni wcześniej</value>
+  </data>
+  <data name="LeadTimeHelp" xml:space="preserve">
+    <value>Jak długo przed czasem dysponowania tworzone jest każde zgłoszenie. Następnie pojawia się w Zaplanowanych zgłoszeniach, gdzie można je osobno zmienić, zadysponować wcześniej lub usunąć.</value>
+  </data>
+  <data name="LeadTimeHour" xml:space="preserve">
+    <value>1 godzinę wcześniej</value>
+  </data>
+  <data name="LeadTimeHours" xml:space="preserve">
+    <value>{0} godz. wcześniej</value>
+  </data>
+  <data name="LeadTimeMinutes" xml:space="preserve">
+    <value>{0} min wcześniej</value>
+  </data>
+  <data name="LegendCancelled" xml:space="preserve">
+    <value>Zamknięte przed dysponowaniem</value>
+  </data>
+  <data name="LegendDispatched" xml:space="preserve">
+    <value>Zadysponowane</value>
+  </data>
+  <data name="LegendDue" xml:space="preserve">
+    <value>Czeka na dyspozytora</value>
+  </data>
+  <data name="LegendHeld" xml:space="preserve">
+    <value>Wstrzymane, nikt niedostępny</value>
+  </data>
+  <data name="LegendMissed" xml:space="preserve">
+    <value>Pominięte w terminie</value>
+  </data>
+  <data name="LegendProjected" xml:space="preserve">
+    <value>Cykliczne, jeszcze nieutworzone</value>
+  </data>
+  <data name="LegendScheduled" xml:space="preserve">
+    <value>Zaplanowane</value>
+  </data>
+  <data name="LegendSkipped" xml:space="preserve">
+    <value>Pominięte</value>
+  </data>
+  <data name="ListTab" xml:space="preserve">
+    <value>Lista</value>
+  </data>
+  <data name="ManualAlert" xml:space="preserve">
+    <value>Powiadom dyspozytora</value>
+  </data>
+  <data name="ManualAlertAtTime" xml:space="preserve">
+    <value>W terminie</value>
+  </data>
+  <data name="ManualAlertHelp" xml:space="preserve">
+    <value>Kiedy dyspozytor dowiaduje się, że pora wysłać zgłoszenie. Widoczne w sekcji Wymaga uwagi w Zgłoszeniach cyklicznych i w aplikacji Dispatch, dopóki ktoś go nie wyśle lub pominie.</value>
+  </data>
+  <data name="MapPage" xml:space="preserve">
+    <value>Strona mapy</value>
+  </data>
+  <data name="MissedHelp" xml:space="preserve">
+    <value>Termin minął i nie utworzono zgłoszenia. Wyślij je teraz lub pomiń.</value>
+  </data>
+  <data name="MissedTitle" xml:space="preserve">
+    <value>Pominięte: {0}</value>
+  </data>
+  <data name="ModeAutomaticShort" xml:space="preserve">
+    <value>Wysyłane automatycznie</value>
+  </data>
+  <data name="ModeDispatcherShort" xml:space="preserve">
+    <value>Wysyła dyspozytor</value>
+  </data>
+  <data name="MonthlyDayHelp" xml:space="preserve">
+    <value>W miesiącu bez tego dnia działa w ostatnim dniu.</value>
+  </data>
+  <data name="MonthlyOn" xml:space="preserve">
+    <value>W dniu</value>
+  </data>
+  <data name="MonthlyOnDay" xml:space="preserve">
+    <value>Dzień</value>
+  </data>
+  <data name="MonthlyOnThe" xml:space="preserve">
+    <value>W</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Nazwa</value>
+  </data>
+  <data name="NameHelp" xml:space="preserve">
+    <value>Każde utworzone zgłoszenie otrzyma tę nazwę.</value>
+  </data>
+  <data name="Nature" xml:space="preserve">
+    <value>Charakter zgłoszenia</value>
+  </data>
+  <data name="NewRecurringCall" xml:space="preserve">
+    <value>Nowe zgłoszenie cykliczne</value>
+  </data>
+  <data name="NextDispatch" xml:space="preserve">
+    <value>Następne dysponowanie</value>
+  </data>
+  <data name="NextDispatches" xml:space="preserve">
+    <value>Następne dysponowania</value>
+  </data>
+  <data name="NoAlerts" xml:space="preserve">
+    <value>Nic nie wymaga uwagi.</value>
+  </data>
+  <data name="NoFacilityPoi" xml:space="preserve">
+    <value>Brak</value>
+  </data>
+  <data name="NoNextDispatches" xml:space="preserve">
+    <value>Nic nie zaplanowano.</value>
+  </data>
+  <data name="NoRecurringCalls" xml:space="preserve">
+    <value>Brak zgłoszeń cyklicznych.</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Brak</value>
+  </data>
+  <data name="Notes" xml:space="preserve">
+    <value>Notatki</value>
+  </data>
+  <data name="OnDays" xml:space="preserve">
+    <value>W</value>
+  </data>
+  <data name="OpenAlertsCount" xml:space="preserve">
+    <value>{0} wymaga uwagi</value>
+  </data>
+  <data name="PageIntro" xml:space="preserve">
+    <value>Zgłoszenie cykliczne jest dysponowane według harmonogramu, na przykład transporty międzyszpitalne w każdy wtorek i czwartek o 08:00, 13:00 i 19:00. Każde zgłoszenie jest tworzone przed czasem dysponowania i pojawia się w Zaplanowanych zgłoszeniach, gdzie można je zmienić, zadysponować wcześniej lub usunąć jak każde inne.</value>
+  </data>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Zgłoszenia cykliczne</value>
+  </data>
+  <data name="Pause" xml:space="preserve">
+    <value>Wstrzymaj</value>
+  </data>
+  <data name="PauseDeleteUpcoming" xml:space="preserve">
+    <value>Usuń też już utworzone, niewysłane zgłoszenia</value>
+  </data>
+  <data name="PauseHelp" xml:space="preserve">
+    <value>W czasie wstrzymania nic nie jest tworzone ani powiadamiane. Harmonogram, ustawienia i historia zostają zachowane.</value>
+  </data>
+  <data name="PauseReason" xml:space="preserve">
+    <value>Powód</value>
+  </data>
+  <data name="PauseTitle" xml:space="preserve">
+    <value>Wstrzymaj:</value>
+  </data>
+  <data name="PausedMessage" xml:space="preserve">
+    <value>Wstrzymano zgłoszenie cykliczne. Do wznowienia nie będą tworzone żadne zgłoszenia.</value>
+  </data>
+  <data name="PausedUntil" xml:space="preserve">
+    <value>do {0}</value>
+  </data>
+  <data name="Personnel" xml:space="preserve">
+    <value>Personel</value>
+  </data>
+  <data name="Priority" xml:space="preserve">
+    <value>Priorytet</value>
+  </data>
+  <data name="ProjectedHelp" xml:space="preserve">
+    <value>Zgłoszenie nie zostało jeszcze utworzone. Zadysponuj je teraz, pomiń to lub utwórz zgłoszenie teraz, aby zmienić je osobno.</value>
+  </data>
+  <data name="ReadOnlyHelp" xml:space="preserve">
+    <value>Zgłoszenie nie zostało jeszcze utworzone. Tylko członkowie uprawnieni do tworzenia zgłoszeń mogą je zadysponować, pominąć lub utworzyć.</value>
+  </data>
+  <data name="ReferenceId" xml:space="preserve">
+    <value>Identyfikator referencyjny</value>
+  </data>
+  <data name="RemoveTime" xml:space="preserve">
+    <value>Usuń godzinę</value>
+  </data>
+  <data name="RepeatCall" xml:space="preserve">
+    <value>Powtarzaj</value>
+  </data>
+  <data name="RepeatCallHelp" xml:space="preserve">
+    <value>Utwórz zgłoszenie cykliczne z tego zgłoszenia</value>
+  </data>
+  <data name="Repeats" xml:space="preserve">
+    <value>Powtarzanie</value>
+  </data>
+  <data name="ReplaceUpcoming" xml:space="preserve">
+    <value>Zastąp {0} już utworzonych nadchodzących zgłoszeń</value>
+  </data>
+  <data name="ReplaceUpcomingHelp" xml:space="preserve">
+    <value>Zostaną usunięte i utworzone ponownie z tymi danymi, więc ich osobne zmiany przepadną. Odznacz, aby pozostawić je bez zmian.</value>
+  </data>
+  <data name="RestoreOccurrence" xml:space="preserve">
+    <value>Przywróć</value>
+  </data>
+  <data name="Resume" xml:space="preserve">
+    <value>Wznów</value>
+  </data>
+  <data name="ResumeOn" xml:space="preserve">
+    <value>Wznów dnia</value>
+  </data>
+  <data name="ResumeOnHelp" xml:space="preserve">
+    <value>Pozostaw puste, aby pozostało wstrzymane, dopóki ktoś nie wznowi.</value>
+  </data>
+  <data name="ResumedMessage" xml:space="preserve">
+    <value>Wznowiono zgłoszenie cykliczne.</value>
+  </data>
+  <data name="Roles" xml:space="preserve">
+    <value>Role</value>
+  </data>
+  <data name="RunCardsOffHelp" xml:space="preserve">
+    <value>Karty dysponowania nie są włączone w tej jednostce, więc nie ma to efektu.</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Zapisz</value>
+  </data>
+  <data name="SavedCreatedMessage" xml:space="preserve">
+    <value>Utworzono {0} nadchodzących zgłoszeń; są w Zaplanowanych zgłoszeniach.</value>
+  </data>
+  <data name="SavedMessage" xml:space="preserve">
+    <value>Zapisano zgłoszenie cykliczne.</value>
+  </data>
+  <data name="SavedReplacedMessage" xml:space="preserve">
+    <value>Zastąpiono {0} już utworzonych zgłoszeń.</value>
+  </data>
+  <data name="Schedule" xml:space="preserve">
+    <value>Harmonogram</value>
+  </data>
+  <data name="ScheduleContactEmail" xml:space="preserve">
+    <value>E-mail kontaktowy</value>
+  </data>
+  <data name="ScheduleContactHelp" xml:space="preserve">
+    <value>Kto ustalił harmonogram i do kogo dzwonić w sprawie zmian.</value>
+  </data>
+  <data name="ScheduleContactName" xml:space="preserve">
+    <value>Kontakt harmonogramu</value>
+  </data>
+  <data name="ScheduleContactNumber" xml:space="preserve">
+    <value>Telefon kontaktowy</value>
+  </data>
+  <data name="SectionAlerts" xml:space="preserve">
+    <value>Kogo powiadomić</value>
+  </data>
+  <data name="SectionCall" xml:space="preserve">
+    <value>Szczegóły zgłoszenia</value>
+  </data>
+  <data name="SectionDispatch" xml:space="preserve">
+    <value>Kogo dysponować</value>
+  </data>
+  <data name="SectionFacility" xml:space="preserve">
+    <value>Placówki i kontakt</value>
+  </data>
+  <data name="SectionSchedule" xml:space="preserve">
+    <value>Harmonogram</value>
+  </data>
+  <data name="SelectPlaceholder" xml:space="preserve">
+    <value>Wybierz...</value>
+  </data>
+  <data name="SendNow" xml:space="preserve">
+    <value>Wyślij teraz</value>
+  </data>
+  <data name="SentMessage" xml:space="preserve">
+    <value>Zgłoszenie zostało wysłane.</value>
+  </data>
+  <data name="SkipOccurrence" xml:space="preserve">
+    <value>Pomiń to</value>
+  </data>
+  <data name="SkippedHelp" xml:space="preserve">
+    <value>To zostało pominięte i zgłoszenie nie zostanie utworzone. Przywróć je, aby ponownie utworzyć zgłoszenie.</value>
+  </data>
+  <data name="SkippedTitle" xml:space="preserve">
+    <value>Pominięte: {0}</value>
+  </data>
+  <data name="StartsOn" xml:space="preserve">
+    <value>Zaczyna się</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Stan</value>
+  </data>
+  <data name="StatusActive" xml:space="preserve">
+    <value>Aktywne</value>
+  </data>
+  <data name="StatusEnded" xml:space="preserve">
+    <value>Zakończone</value>
+  </data>
+  <data name="StatusPaused" xml:space="preserve">
+    <value>Wstrzymane</value>
+  </data>
+  <data name="SummaryDaily" xml:space="preserve">
+    <value>Codziennie</value>
+  </data>
+  <data name="SummaryEveryNDays" xml:space="preserve">
+    <value>Co {0} dni</value>
+  </data>
+  <data name="SummaryEveryNMonthsDay" xml:space="preserve">
+    <value>Co {0} mies. w dniu {1}</value>
+  </data>
+  <data name="SummaryEveryNMonthsWeekday" xml:space="preserve">
+    <value>Co {0} mies.: {1} {2}</value>
+  </data>
+  <data name="SummaryEveryNWeeks" xml:space="preserve">
+    <value>Co {0} tyg.: {1}</value>
+  </data>
+  <data name="SummaryMonthlyDay" xml:space="preserve">
+    <value>Co miesiąc w dniu {0}</value>
+  </data>
+  <data name="SummaryMonthlyWeekday" xml:space="preserve">
+    <value>Co miesiąc: {0} {1}</value>
+  </data>
+  <data name="SummaryWeekly" xml:space="preserve">
+    <value>Co tydzień: {0}</value>
+  </data>
+  <data name="SummaryWithTimes" xml:space="preserve">
+    <value>{0} o {1}</value>
+  </data>
+  <data name="Times" xml:space="preserve">
+    <value>Godziny dysponowania</value>
+  </data>
+  <data name="TimesHelp" xml:space="preserve">
+    <value>Czas jednostki ({0}). Dodaj godzinę dla każdego zgłoszenia w ciągu dnia, na przykład 08:00, 13:00 i 19:00.</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Typ</value>
+  </data>
+  <data name="Units" xml:space="preserve">
+    <value>Jednostki</value>
+  </data>
+  <data name="UseRunCard" xml:space="preserve">
+    <value>Użyj też pasującej karty dysponowania</value>
+  </data>
+  <data name="UseRunCardHelp" xml:space="preserve">
+    <value>Przy wysyłaniu dodaj zasoby karty dysponowania pasującej do typu, priorytetu i lokalizacji, nawet jeśli nie dysponuje automatycznie.</value>
+  </data>
+  <data name="WeekFirst" xml:space="preserve">
+    <value>pierwszy</value>
+  </data>
+  <data name="WeekFourth" xml:space="preserve">
+    <value>czwarty</value>
+  </data>
+  <data name="WeekLast" xml:space="preserve">
+    <value>ostatni</value>
+  </data>
+  <data name="WeekSecond" xml:space="preserve">
+    <value>drugi</value>
+  </data>
+  <data name="WeekThird" xml:space="preserve">
+    <value>trzeci</value>
+  </data>
+</root>

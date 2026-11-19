@@ -1377,7 +1377,7 @@
     <value>Przykład:</value>
   </data>
   <data name="CallNumberPatternHelp" xml:space="preserve">
-    <value>Stały tekst (litery, cyfry, - _ . /) wokół znaczników: {YYYY} lub {YY} rok, {MM} miesiąc, {DD} dzień i {SEQ} numer kolejny, który musi wystąpić dokładnie raz. Numer kolejny zaczyna się ponownie od 1 za każdym razem, gdy zmienia się data w numerze: co roku z rokiem, co miesiąc z {MM}, codziennie z {DD} i nigdy bez daty. {MM} wymaga roku, a {DD} wymaga {MM}. Daty są liczone w strefie czasowej jednostki.</value>
+    <value>Stały tekst (litery, cyfry, - _ . / :) wokół znaczników: {YYYY} lub {YY} rok, {MM} miesiąc, {DD} dzień, {HH} godzina, {MIN} minuta i {SEQ} numer kolejny, który musi wystąpić dokładnie raz. Numer kolejny zaczyna się ponownie od 1 za każdym razem, gdy zmienia się data w numerze: co roku z rokiem, co miesiąc z {MM}, codziennie z {DD} i nigdy bez daty; godzina i minuta nigdy go nie zerują. {MM} wymaga roku, {DD} wymaga {MM}, {HH} wymaga {DD}, a {MIN} wymaga {HH}. Daty i godziny są liczone w strefie czasowej jednostki.</value>
   </data>
   <data name="CallNumberSequenceWidth" xml:space="preserve">
     <value>Cyfry numeru kolejnego</value>
@@ -1410,7 +1410,7 @@
     <value>Podnieść następny numer zgłoszenia? Można go tylko podnieść, nigdy obniżyć.</value>
   </data>
   <data name="CallNumberPatternInvalid" xml:space="preserve">
-    <value>Numeracja zgłoszeń nie została zapisana. Wzorzec wymaga {SEQ} dokładnie raz, może zawierać tylko litery, cyfry, - _ . / oraz znaczniki {YYYY}, {YY}, {MM} i {DD}, wymaga roku dla {MM} i {MM} dla {DD} i może mieć najwyżej 40 znaków.</value>
+    <value>Numeracja zgłoszeń nie została zapisana. Wzorzec wymaga {SEQ} dokładnie raz, może zawierać tylko litery, cyfry, - _ . / : oraz znaczniki {YYYY}, {YY}, {MM}, {DD}, {HH} i {MIN}, każdy najwyżej raz (minuta to {MIN}, {MM} to miesiąc), wymaga roku dla {MM}, {MM} dla {DD}, {DD} dla {HH} i {HH} dla {MIN} i może mieć najwyżej 40 znaków.</value>
   </data>
   <data name="CallNumberNextBelowCurrent" xml:space="preserve">
     <value>Następny numer zgłoszenia nie został podniesiony: można go podnieść tylko powyżej numeru, który następne zgłoszenie już otrzyma ({0}).</value>

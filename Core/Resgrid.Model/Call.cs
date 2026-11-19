@@ -213,7 +213,24 @@ namespace Resgrid.Model
 		[ProtoMember(37)]
 		public int? CallTypeId { get; set; }
 
+		/// <summary>
+		/// Members released (stood down) from this call while it stays open (<see cref="CallPersonnelRelease"/>, M0316), loaded with
+		/// the personnel dispatches by <c>PopulateCallData</c>; null when not loaded. Not a mapped child collection: the rows are
+		/// written by the release service only, never by a call save. Carried on the broadcast queue item so a rebroadcast skips them.
+		/// </summary>
+		[NotMapped]
+		[ProtoMember(38)]
+		public List<CallPersonnelRelease> PersonnelReleases { get; set; }
+
 		public bool CheckInTimersEnabled { get; set; }
+
+		/// <summary>
+		/// The <see cref="RecurringCall"/> schedule that created this call (M0319); null for a call entered by hand. Set once when the
+		/// call is created and never changed, so the schedule can find the calls it made. No foreign key: a deleted schedule is kept
+		/// (soft deleted) and the department purge removes both.
+		/// </summary>
+		[ProtoMember(39)]
+		public int? RecurringCallId { get; set; }
 
 		/// <summary>
 		/// External subject and record identifiers as a JSON object of string keys to string values, for example
@@ -248,7 +265,7 @@ namespace Resgrid.Model
 		public int IdType => 0;
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "ReportingUser", "ClosedByUser", "Department", "Dispatches", "Attachments", "CallNotes", "GroupDispatches", "UnitDispatches", "RoleDispatches", "Protocols", "ShortenedAudioUrl", "ShortenedCallUrl", "CallPriority", "PreviousDispatchCount", "References", "Contacts", "VideoFeeds", "DispatchClaimedOn" };
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "ReportingUser", "ClosedByUser", "Department", "Dispatches", "Attachments", "CallNotes", "GroupDispatches", "UnitDispatches", "RoleDispatches", "Protocols", "ShortenedAudioUrl", "ShortenedCallUrl", "CallPriority", "PreviousDispatchCount", "References", "Contacts", "VideoFeeds", "DispatchClaimedOn", "PersonnelReleases" };
 
 		public string GetIdentifier()
 		{
@@ -288,6 +305,20 @@ namespace Resgrid.Model
 			return $"{number} {name}";
 		}
 
+		/// <summary>True when the member was released from this call (<see cref="PersonnelReleases"/>, which must be loaded).</summary>
+		public bool IsUserReleased(string userId)
+		{
+			return !String.IsNullOrWhiteSpace(userId) && PersonnelReleases != null &&
+				PersonnelReleases.Any(x => x != null && String.Equals(x.UserId, userId, StringComparison.OrdinalIgnoreCase));
+		}
+
+		/// <summary>The members released from this call (empty when none, or when <see cref="PersonnelReleases"/> was not loaded).</summary>
+		public HashSet<string> GetReleasedUserIds()
+		{
+			return new HashSet<string>((PersonnelReleases ?? new List<CallPersonnelRelease>()).Where(x => x != null && !String.IsNullOrWhiteSpace(x.UserId)).Select(x => x.UserId),
+				StringComparer.OrdinalIgnoreCase);
+		}
+
 		public bool HasUserBeenDispatched(string userId)
 		{
 			if (Dispatches != null && Dispatches.Any())
@@ -316,6 +347,25 @@ namespace Resgrid.Model
 			}
 
 			return false;
+		}
+
+		/// <summary>
+		/// True when the unit is dispatched to the call and has not been released from it (<see cref="CallDispatchUnit.ReleasedOn"/>).
+		/// <see cref="HasUnitBeenDispatched"/> reads the record, which keeps released units.
+		/// </summary>
+		public bool IsUnitOnCall(int unitId)
+		{
+			return UnitDispatches != null && UnitDispatches.Any(d => d != null && d.UnitId == unitId && !d.IsReleased);
+		}
+
+		/// <summary>
+		/// The unit dispatches still live on the call: every dispatch except units released (stood down) from it. Readers that
+		/// mean "who is working this call now" (notifications, re-pages, check-ins, requirements, close-time releases) use
+		/// this; readers of the record (reports, exports, incident prefill) use <see cref="UnitDispatches"/>.
+		/// </summary>
+		public List<CallDispatchUnit> GetActiveUnitDispatches()
+		{
+			return CallDispatchUnitReleases.Active(UnitDispatches);
 		}
 
 		public bool HasGroupBeenDispatched(int groupId)

@@ -61,10 +61,13 @@ namespace Resgrid.Services
 			// The closing notice goes to the people the dispatch alerted, routed the way CallBroadcast routed it, not to
 			// every member of every dispatched group: with "dispatch shift instead of group" on, a group dispatch only
 			// alerted that group's on-duty roster at dispatch time.
+			// A member released (stood down) from the call was told then and is off it.
 			foreach (var userId in DispatchRecipientResolver.Resolve(GetDispatchedOnUtc(call), await BuildDispatchRoutesAsync(call)).SelectedUserIds)
-				AddUser(responderUsers, userId);
+				if (!call.IsUserReleased(userId))
+					AddUser(responderUsers, userId);
 
-			foreach (var unitDispatch in call.UnitDispatches ?? Enumerable.Empty<CallDispatchUnit>())
+			// A unit released (stood down) from the call was told then; the closing notice is for the units still on it.
+			foreach (var unitDispatch in call.GetActiveUnitDispatches())
 				unitIds.Add(unitDispatch.UnitId);
 
 			// The incident command team: the latest command for the call (the active one has to be closed before the
@@ -192,7 +195,7 @@ namespace Resgrid.Services
 				}
 			}
 
-			var unitDispatches = (call.UnitDispatches ?? Enumerable.Empty<CallDispatchUnit>()).ToList();
+			var unitDispatches = call.GetActiveUnitDispatches();
 
 			if (unitDispatches.Any())
 			{

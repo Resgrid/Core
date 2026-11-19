@@ -539,6 +539,90 @@ namespace Resgrid.Services
 					}
 					break;
 				}
+				case WorkflowTriggerEventType.RecurringCallScheduleCreated:
+				case WorkflowTriggerEventType.RecurringCallScheduleUpdated:
+				case WorkflowTriggerEventType.RecurringCallSchedulePaused:
+				case WorkflowTriggerEventType.RecurringCallScheduleResumed:
+				case WorkflowTriggerEventType.RecurringCallScheduleDeleted:
+				{
+					var evt = TryDeserialize<RecurringCallScheduleEvent>(eventPayloadJson);
+					if (evt != null)
+					{
+						var rc = new ScriptObject();
+						rc["id"] = evt.RecurringCallId;
+						rc["name"] = evt.Name;
+						rc["change"] = evt.Change.ToString();
+						rc["nature"] = evt.NatureOfCall;
+						rc["address"] = evt.Address;
+						rc["facility_name"] = evt.FacilityName;
+						rc["destination_name"] = evt.DestinationName;
+						rc["contact_name"] = evt.ScheduleContactName;
+						rc["contact_number"] = evt.ScheduleContactNumber;
+						// Gregorian whatever the worker's culture, as the preview shows them.
+						rc["starts_on"] = evt.StartsOn.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+						rc["ends_on"] = evt.EndsOn?.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+						rc["times"] = evt.Times;
+						rc["mode"] = evt.CreationMode == (int)RecurringCallCreationModes.Dispatcher ? "Dispatcher" : "Automatic";
+						rc["use_run_card"] = evt.UseRunCard;
+						rc["is_active"] = evt.IsActive;
+						rc["pause_reason"] = evt.PauseReason;
+						rc["resume_on"] = evt.ResumeOn?.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+						rc["next_occurrence_on"] = evt.NextOccurrenceOn;
+						scriptObject["recurring_call"] = rc;
+						// Who changed it (none for the worker's automatic resume): the common user.* block.
+						triggeringUserId = evt.UserId;
+					}
+					break;
+				}
+				case WorkflowTriggerEventType.RecurringCallOccurrenceCreated:
+				case WorkflowTriggerEventType.RecurringCallOccurrenceSkipped:
+				case WorkflowTriggerEventType.RecurringCallOccurrenceDispatched:
+				{
+					var evt = TryDeserialize<RecurringCallOccurrenceEvent>(eventPayloadJson);
+					if (evt != null)
+					{
+						var oc = new ScriptObject();
+						oc["recurring_call_id"] = evt.RecurringCallId;
+						oc["name"] = evt.Name;
+						oc["change"] = evt.Change.ToString();
+						oc["occurrence_on"] = evt.OccurrenceOn;
+						oc["call_id"] = evt.CallId ?? 0;
+						oc["call_number"] = evt.CallNumber;
+						oc["by_dispatcher"] = evt.ByDispatcher;
+						oc["unit_count"] = evt.UnitCount;
+						oc["personnel_count"] = evt.PersonnelCount;
+						oc["group_count"] = evt.GroupCount;
+						oc["role_count"] = evt.RoleCount;
+						oc["unavailable_count"] = evt.UnavailableCount;
+						oc["run_card_applied"] = evt.RunCardApplied;
+						scriptObject["occurrence"] = oc;
+						// The dispatcher who created, skipped or sent it (none for the worker): the common user.* block.
+						triggeringUserId = evt.UserId;
+					}
+					break;
+				}
+				case WorkflowTriggerEventType.RecurringCallAlertRaised:
+				case WorkflowTriggerEventType.RecurringCallAlertResolved:
+				{
+					var evt = TryDeserialize<RecurringCallAlertEvent>(eventPayloadJson);
+					if (evt != null)
+					{
+						var al = new ScriptObject();
+						al["id"] = evt.AlertId;
+						al["recurring_call_id"] = evt.RecurringCallId;
+						al["name"] = evt.Name;
+						al["kind"] = evt.KindName;
+						al["occurrence_on"] = evt.OccurrenceOn;
+						al["call_id"] = evt.CallId ?? 0;
+						al["reason"] = evt.Reason;
+						al["unavailable_unit_count"] = evt.UnavailableUnitCount;
+						al["unavailable_personnel_count"] = evt.UnavailablePersonnelCount;
+						al["resolution"] = evt.Resolution;
+						al["raised"] = evt.Raised;
+						scriptObject["alert"] = al;
+					}
+					break;
+				}
 				case WorkflowTriggerEventType.StationCoverageGapDetected:
 				{
 					var evt = TryDeserialize<StationCoverageGapEvent>(eventPayloadJson);

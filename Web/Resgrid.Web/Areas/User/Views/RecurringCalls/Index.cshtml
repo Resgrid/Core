@@ -1,0 +1,279 @@
+@using Resgrid.Model
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Dispatch.RecurringCallsIndexView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.RecurringCalls> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Dashboard> dispatchLocalizer
+@{
+	ViewBag.Title = "Resgrid | " + localizer["PageTitle"];
+	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-6">
+		<h2>@localizer["PageTitle"]</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+			</li>
+			<li>
+				<a asp-controller="Dispatch" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["CallsModule"]</a>
+			</li>
+			<li class="active">
+				<strong>@localizer["PageTitle"]</strong>
+			</li>
+		</ol>
+	</div>
+	<div class="col-sm-6">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			<a class="btn btn-info" asp-controller="Dispatch" asp-action="ScheduledCalls" asp-route-area="User" asp-route-view="calendar">@localizer["Calendar"]</a>
+			<a class="btn btn-info" asp-controller="Dispatch" asp-action="ScheduledCalls" asp-route-area="User">@dispatchLocalizer["ScheduledCallsHeader"]</a>
+			@if (Model.CanCreate)
+			{
+				<a id="newRecurringCall" class="btn btn-success" asp-controller="RecurringCalls" asp-action="New" asp-route-area="User">@localizer["NewRecurringCall"]</a>
+			}
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			@if (!string.IsNullOrWhiteSpace(Model.Message))
+			{
+				<div class="alert alert-success" id="recurringCallsMessage">@Model.Message</div>
+			}
+			@if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+			{
+				<div class="alert alert-danger">@Model.ErrorMessage</div>
+			}
+
+			<div class="ibox float-e-margins" id="alerts">
+				<div class="ibox-title">
+					<h5>@localizer["AlertsTitle"] @if (Model.Alerts.Any()) { <span class="label label-danger" id="recurringAlertCount">@Model.Alerts.Count</span> }</h5>
+				</div>
+				<div class="ibox-content">
+					<p id="recurringAlertsError" class="text-danger" style="display:none;">@localizer["ActionFailed"]</p>
+					@if (!Model.Alerts.Any())
+					{
+						<p id="noRecurringAlerts"><em>@localizer["NoAlerts"]</em></p>
+					}
+					else
+					{
+						<div class="table-responsive">
+							<table id="recurringAlertsList" class="table table-bordered table-hover">
+								<thead>
+									<tr>
+										<th>@localizer["AlertWhen"]</th>
+										<th>@localizer["AlertSchedule"]</th>
+										<th>@localizer["AlertWhat"]</th>
+										<th>@localizer["Actions"]</th>
+									</tr>
+								</thead>
+								<tbody>
+									@foreach (var alert in Model.Alerts)
+									{
+										<tr data-alert-id="@alert.AlertId" class="@(alert.Kind == RecurringCallAlertKinds.ResourcesUnavailable || !string.IsNullOrWhiteSpace(alert.AcknowledgedBy) ? "" : "danger")">
+											<td>@alert.When</td>
+											<td>@alert.ScheduleName</td>
+											<td>
+												<strong>@localizer["AlertKind" + alert.Kind]</strong>
+												@if (!string.IsNullOrWhiteSpace(alert.CallNumber))
+												{
+													<span class="text-muted">(@alert.CallNumber)</span>
+												}
+												@if (!string.IsNullOrWhiteSpace(alert.Reason))
+												{
+													<br /><small>@localizer["AlertReason" + alert.Reason]</small>
+												}
+												@if (!string.IsNullOrWhiteSpace(alert.Unavailable))
+												{
+													<br /><small>@string.Format(localizer["AlertUnavailable"].Value, alert.Unavailable)</small>
+												}
+												@if (!string.IsNullOrWhiteSpace(alert.AcknowledgedBy))
+												{
+													<br /><small class="text-muted">@string.Format(localizer["AlertAcknowledgedBy"].Value, alert.AcknowledgedBy)</small>
+												}
+											</td>
+											<td class="rg-alert-actions">
+												@if (alert.CanAct)
+												{
+													@if (alert.CanSend)
+													{
+														<button type="button" class="btn btn-xs btn-primary rg-alert-send" data-id="@alert.RecurringCallId" data-occurrence="@alert.Occurrence">@localizer["SendNow"]</button>
+														<button type="button" class="btn btn-xs btn-default rg-alert-create" data-id="@alert.RecurringCallId" data-occurrence="@alert.Occurrence">@localizer["AlertCreateCall"]</button>
+														<button type="button" class="btn btn-xs btn-warning rg-alert-skip" data-id="@alert.RecurringCallId" data-occurrence="@alert.Occurrence">@localizer["SkipOccurrence"]</button>
+													}
+													@if (alert.CallId.HasValue)
+													{
+														<a class="btn btn-xs btn-primary" asp-controller="Dispatch" asp-action="ViewCall" asp-route-area="User" asp-route-callId="@alert.CallId">@localizer["AlertOpenCall"]</a>
+													}
+													@if (string.IsNullOrWhiteSpace(alert.AcknowledgedBy))
+													{
+														<button type="button" class="btn btn-xs btn-white rg-alert-ack" data-alert="@alert.AlertId">@localizer["AlertAcknowledge"]</button>
+													}
+													<button type="button" class="btn btn-xs btn-white rg-alert-dismiss" data-alert="@alert.AlertId">@localizer["AlertDismiss"]</button>
+												}
+												else if (alert.CallId.HasValue)
+												{
+													<a class="btn btn-xs btn-default" asp-controller="Dispatch" asp-action="ViewCall" asp-route-area="User" asp-route-callId="@alert.CallId">@localizer["AlertOpenCall"]</a>
+												}
+											</td>
+										</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+					}
+				</div>
+			</div>
+
+			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+					<h5>@localizer["PageTitle"]</h5>
+				</div>
+				<div class="ibox-content">
+					<p class="text-muted">@localizer["PageIntro"]</p>
+					@if (!Model.Rows.Any())
+					{
+						<p id="noRecurringCalls"><em>@localizer["NoRecurringCalls"]</em></p>
+					}
+					else
+					{
+						<div class="table-responsive">
+							<table id="recurringCallsList" class="table table-striped table-bordered table-hover">
+								<thead>
+									<tr>
+										<th>@localizer["Name"]</th>
+										<th>@localizer["Schedule"]</th>
+										<th>@localizer["Priority"]</th>
+										<th>@localizer["NextDispatch"]</th>
+										<th>@localizer["Status"]</th>
+										<th>@localizer["Actions"]</th>
+									</tr>
+								</thead>
+								<tbody>
+									@foreach (var row in Model.Rows)
+									{
+										<tr data-recurring-call-id="@row.RecurringCallId">
+											<td>
+												@row.Name
+												@if (!string.IsNullOrWhiteSpace(row.Facility))
+												{
+													<br /><small class="text-muted">@row.Facility</small>
+												}
+											</td>
+											<td>
+												@row.Summary
+												<br /><small class="text-muted">@row.Dates</small>
+												<br /><small class="text-muted">@(row.DispatcherMode ? localizer["ModeDispatcherShort"] : localizer["ModeAutomaticShort"])</small>
+											</td>
+											<td>
+												@if (!string.IsNullOrWhiteSpace(row.PriorityName))
+												{
+													<span class="label" style="background-color:@row.PriorityColor;color:#fff;">@row.PriorityName</span>
+												}
+											</td>
+											<td>@(string.IsNullOrWhiteSpace(row.NextDispatch) ? localizer["None"].Value : row.NextDispatch)</td>
+											<td>
+												@if (row.HasEnded)
+												{
+													<span class="label label-default">@localizer["StatusEnded"]</span>
+												}
+												else if (row.IsActive)
+												{
+													<span class="label label-primary">@localizer["StatusActive"]</span>
+												}
+												else
+												{
+													<span class="label label-warning">@localizer["StatusPaused"]</span>
+													@if (!string.IsNullOrWhiteSpace(row.ResumeOn))
+													{
+														<br /><small>@string.Format(localizer["PausedUntil"].Value, row.ResumeOn)</small>
+													}
+													@if (!string.IsNullOrWhiteSpace(row.PauseReason))
+													{
+														<br /><small class="text-muted">@row.PauseReason</small>
+													}
+												}
+												@if (row.OpenAlerts > 0)
+												{
+													<br /><a href="#alerts" class="label label-danger">@string.Format(localizer["OpenAlertsCount"].Value, row.OpenAlerts)</a>
+												}
+											</td>
+											<td>
+												@if (row.CanManage && Model.CanCreate)
+												{
+													<a class="btn btn-xs btn-primary" asp-controller="RecurringCalls" asp-action="Edit" asp-route-area="User" asp-route-id="@row.RecurringCallId">@localizer["Edit"]</a>
+													@if (row.IsActive)
+													{
+														<button type="button" class="btn btn-xs btn-warning rg-pause" data-id="@row.RecurringCallId" data-name="@row.Name">@localizer["Pause"]</button>
+													}
+													else
+													{
+														<form method="post" asp-controller="RecurringCalls" asp-action="Resume" asp-route-area="User" style="display:inline;">
+															@Html.AntiForgeryToken()
+															<input type="hidden" name="id" value="@row.RecurringCallId" />
+															<button type="submit" class="btn btn-xs btn-success">@localizer["Resume"]</button>
+														</form>
+													}
+												}
+											</td>
+										</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+					}
+				</div>
+			</div>
+			<form id="recurringAlertsForm">@Html.AntiForgeryToken()</form>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="pauseRecurringCallModal" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<form method="post" asp-controller="RecurringCalls" asp-action="Pause" asp-route-area="User" id="pauseRecurringCallForm">
+				@Html.AntiForgeryToken()
+				<input type="hidden" name="id" id="pauseRecurringCallId" />
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title">@localizer["PauseTitle"] <span id="pauseRecurringCallName"></span></h4>
+				</div>
+				<div class="modal-body">
+					<p class="text-muted">@localizer["PauseHelp"]</p>
+					<div class="form-group">
+						<label for="pauseReason">@localizer["PauseReason"]</label>
+						<input type="text" class="form-control" id="pauseReason" name="reason" maxlength="1000" />
+					</div>
+					<div class="form-group">
+						<label for="pauseResumeOn">@localizer["ResumeOn"]</label>
+						<input type="date" class="form-control" id="pauseResumeOn" name="resumeOn" />
+						<span class="help-block">@localizer["ResumeOnHelp"]</span>
+					</div>
+					<div class="checkbox">
+						<label><input type="checkbox" name="deleteUpcomingCalls" value="true" id="pauseDeleteUpcoming" /> @localizer["PauseDeleteUpcoming"]</label>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-white" data-dismiss="modal">@commonLocalizer["Cancel"]</button>
+					<button type="submit" class="btn btn-warning" id="pauseRecurringCallSubmit">@localizer["Pause"]</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+	<script>
+		window.resgridRecurringAlertsText = {
+			failed: '@JsEncoder.Encode(localizer["ActionFailed"].Value)',
+			sent: '@JsEncoder.Encode(localizer["SentMessage"].Value)',
+			held: '@JsEncoder.Encode(localizer["HeldMessage"].Value)',
+			dismissPrompt: '@JsEncoder.Encode(localizer["AlertDismissPrompt"].Value)'
+		};
+	</script>
+	<script src="@Url.Content("~/js/app/internal/dispatch/resgrid.dispatch.recurringcallalerts.js")" asp-append-version="true" type="text/javascript"></script>
+}

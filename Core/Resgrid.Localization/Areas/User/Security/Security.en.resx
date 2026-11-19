@@ -1384,6 +1384,16 @@
   <data name="PermRecordsShareCoordinationBoardsNote" xml:space="preserve">
     <value>Allows sharing a coordination board with partner agencies.</value>
   </data>
+  <data name="AuditLogTypeRecurringCallCreated" xml:space="preserve"><value>Recurring Call Created</value></data>
+  <data name="AuditLogTypeRecurringCallUpdated" xml:space="preserve"><value>Recurring Call Updated</value></data>
+  <data name="AuditLogTypeRecurringCallPaused" xml:space="preserve"><value>Recurring Call Paused</value></data>
+  <data name="AuditLogTypeRecurringCallResumed" xml:space="preserve"><value>Recurring Call Resumed</value></data>
+  <data name="AuditLogTypeRecurringCallDeleted" xml:space="preserve"><value>Recurring Call Deleted</value></data>
+  <data name="AuditLogTypeRecurringCallOccurrenceSkipped" xml:space="preserve"><value>Recurring Call Occurrence Skipped</value></data>
+  <data name="AuditLogTypeRecurringCallOccurrenceRestored" xml:space="preserve"><value>Recurring Call Occurrence Restored</value></data>
+  <data name="AuditLogTypeRecurringCallOccurrenceCreated" xml:space="preserve"><value>Recurring Call Occurrence Created</value></data>
+  <data name="AuditLogTypeRecurringCallAlertAcknowledged" xml:space="preserve"><value>Recurring Call Alert Acknowledged</value></data>
+  <data name="AuditLogTypeRecurringCallAlertDismissed" xml:space="preserve"><value>Recurring Call Alert Dismissed</value></data>
 </root>
 
 

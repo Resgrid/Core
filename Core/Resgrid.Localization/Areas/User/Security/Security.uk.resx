@@ -2732,4 +2732,14 @@
   <data name="PermRecordsShareCoordinationBoardsNote" xml:space="preserve">
     <value>Дозволяє надавати партнерським організаціям спільний доступ до дошки координації.</value>
   </data>
+  <data name="AuditLogTypeRecurringCallCreated" xml:space="preserve"><value>Створено повторюваний виклик</value></data>
+  <data name="AuditLogTypeRecurringCallUpdated" xml:space="preserve"><value>Оновлено повторюваний виклик</value></data>
+  <data name="AuditLogTypeRecurringCallPaused" xml:space="preserve"><value>Призупинено повторюваний виклик</value></data>
+  <data name="AuditLogTypeRecurringCallResumed" xml:space="preserve"><value>Відновлено повторюваний виклик</value></data>
+  <data name="AuditLogTypeRecurringCallDeleted" xml:space="preserve"><value>Видалено повторюваний виклик</value></data>
+  <data name="AuditLogTypeRecurringCallOccurrenceSkipped" xml:space="preserve"><value>Пропущено повтор виклику</value></data>
+  <data name="AuditLogTypeRecurringCallOccurrenceRestored" xml:space="preserve"><value>Відновлено пропущений повтор виклику</value></data>
+  <data name="AuditLogTypeRecurringCallOccurrenceCreated" xml:space="preserve"><value>Створено повтор виклику</value></data>
+  <data name="AuditLogTypeRecurringCallAlertAcknowledged" xml:space="preserve"><value>Підтверджено сповіщення повторюваного виклику</value></data>
+  <data name="AuditLogTypeRecurringCallAlertDismissed" xml:space="preserve"><value>Закрито сповіщення повторюваного виклику</value></data>
 </root>

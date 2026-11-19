@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Map Icon Legend and status / priority map icon pages -->
+    <data name="PageTitle" xml:space="preserve">
+    <value>Destinationsregler</value>
+  </data>
+  <data name="PageIntro" xml:space="preserve">
+    <value>Tala om för Resgrid vad ett larms destination måste erbjuda, så att larmformuläret och apparna kan föreslå den närmaste lämpliga: ”brännskadelarm behöver ett brännskadecenter”, ”en helikopter behöver en helikopterplatta”, ”en tankbil åker till en vattenkälla som tillåter sugning”. Alla regler som matchar ett larm (och enheten som åker) gäller tillsammans. Destinationer är dina POI-typer som markerats som destinationer; förmågor hanteras under POI-förmågor, och öppen, omdirigering eller stängd kommer från Destinationstillgänglighet.</value>
+  </data>
+  <data name="SettingsHeader" xml:space="preserve">
+    <value>Destinationsförslag</value>
+  </data>
+  <data name="Mode" xml:space="preserve">
+    <value>Förslag</value>
+  </data>
+  <data name="ModeOff" xml:space="preserve">
+    <value>Av</value>
+  </data>
+  <data name="ModeSuggest" xml:space="preserve">
+    <value>Föreslå destinationer</value>
+  </data>
+  <data name="ModeSuggestAndFill" xml:space="preserve">
+    <value>Föreslå och fyll i destinationen</value>
+  </data>
+  <data name="ModeHelp" xml:space="preserve">
+    <value>”Föreslå destinationer” visar de bästa destinationerna under fältet Destination i formulären för nya och uppdaterade larm och i apparnas destinationslistor, med körtid och avstånd. ”Föreslå och fyll i destinationen” fyller dessutom i ett nytt larms tomma destination med den bästa; larmoperatörer och besättningar kan fortfarande välja en annan. Varje förslag hämtar körtider, så låt detta vara avstängt om du inte använder destinationer.</value>
+  </data>
+  <data name="PreferredWithinMinutes" xml:space="preserve">
+    <value>Fönster för föredragna förmågor (minuter)</value>
+  </data>
+  <data name="PreferredWithinMinutesHelp" xml:space="preserve">
+    <value>En destination som erbjuder fler av de föredragna förmågorna hamnar först bara om dess körtid är högst så många minuter längre än den närmastes. 0 = bara vid lika tider.</value>
+  </data>
+  <data name="SaveSettings" xml:space="preserve">
+    <value>Spara inställningar</value>
+  </data>
+  <data name="SettingsSaved" xml:space="preserve">
+    <value>Inställningarna för destinationsförslag sparades.</value>
+  </data>
+  <data name="SettingsInvalid" xml:space="preserve">
+    <value>Välj ett förslagsläge och ett fönster från 0 till {0} minuter.</value>
+  </data>
+  <data name="RulesHeader" xml:space="preserve">
+    <value>Regler</value>
+  </data>
+  <data name="AddRule" xml:space="preserve">
+    <value>Lägg till regel</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Namn</value>
+  </data>
+  <data name="When" xml:space="preserve">
+    <value>När</value>
+  </data>
+  <data name="Destination" xml:space="preserve">
+    <value>Destination</value>
+  </data>
+  <data name="Requires" xml:space="preserve">
+    <value>Kräver</value>
+  </data>
+  <data name="Prefers" xml:space="preserve">
+    <value>Föredrar</value>
+  </data>
+  <data name="EveryCall" xml:space="preserve">
+    <value>Alla larm</value>
+  </data>
+  <data name="AnyDestinationType" xml:space="preserve">
+    <value>Valfri destinationstyp</value>
+  </data>
+  <data name="CallTypeCondition" xml:space="preserve">
+    <value>Larmtyp: {0}</value>
+  </data>
+  <data name="PriorityCondition" xml:space="preserve">
+    <value>Prioritet: {0}</value>
+  </data>
+  <data name="UnitTypeCondition" xml:space="preserve">
+    <value>Enhetstyp: {0}</value>
+  </data>
+  <data name="DeletedChoice" xml:space="preserve">
+    <value>(borttagen)</value>
+  </data>
+  <data name="NeedsAttention" xml:space="preserve">
+    <value>Behöver åtgärdas: {0} av dess typer eller förmågor har tagits bort och ignoreras.</value>
+  </data>
+  <data name="AllTypesRemoved" xml:space="preserve">
+    <value>Gäller aldrig: alla destinationstyper den angav har tagits bort.</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Redigera</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Ta bort</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Spara</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Avbryt</value>
+  </data>
+  <data name="DeleteRuleConfirm" xml:space="preserve">
+    <value>Ta bort regeln ”{0}”?</value>
+  </data>
+  <data name="NoRules" xml:space="preserve">
+    <value>Inga destinationsregler ännu. Utan regler föreslås alla destinationer, närmaste öppna först.</value>
+  </data>
+  <data name="NoDestinationTypes" xml:space="preserve">
+    <value>Ingen POI-typ är markerad som destination ännu. Markera en som destination under Kartläggning, POI innan du lägger till regler.</value>
+  </data>
+  <data name="RuleSaved" xml:space="preserve">
+    <value>Regeln ”{0}” sparades.</value>
+  </data>
+  <data name="RuleDeleted" xml:space="preserve">
+    <value>Regeln ”{0}” togs bort.</value>
+  </data>
+  <data name="RuleNameRequired" xml:space="preserve">
+    <value>Ange ett namn på högst {0} tecken.</value>
+  </data>
+  <data name="RuleNothingRequired" xml:space="preserve">
+    <value>Välj minst en destinationstyp eller förmåga.</value>
+  </data>
+  <data name="RuleChoicesChanged" xml:space="preserve">
+    <value>En larmtyp, prioritet, enhetstyp, destinationstyp eller förmåga som du valde finns inte längre. Kontrollera valen och spara igen.</value>
+  </data>
+  <data name="NewRule" xml:space="preserve">
+    <value>Ny regel</value>
+  </data>
+  <data name="EditRule" xml:space="preserve">
+    <value>Redigera regel</value>
+  </data>
+  <data name="RuleNameHelp" xml:space="preserve">
+    <value>Visas för larmoperatörer som skälet till kravet, till exempel ”Brännskador” eller ”Helikopterlandning”.</value>
+  </data>
+  <data name="AppliesWhen" xml:space="preserve">
+    <value>Gäller när</value>
+  </data>
+  <data name="AppliesWhenHelp" xml:space="preserve">
+    <value>Låt alla tre stå på ”Valfri” för att regeln ska gälla alla larm. Regler för enhetstyp gäller när den sortens enhet åker (dess lista över statusdestinationer i apparna), inte larmets egen destination.</value>
+  </data>
+  <data name="CallType" xml:space="preserve">
+    <value>Larmtyp</value>
+  </data>
+  <data name="Priority" xml:space="preserve">
+    <value>Prioritet</value>
+  </data>
+  <data name="UnitType" xml:space="preserve">
+    <value>Enhetstyp</value>
+  </data>
+  <data name="Any" xml:space="preserve">
+    <value>Valfri</value>
+  </data>
+  <data name="DestinationTypes" xml:space="preserve">
+    <value>Destinationstyper</value>
+  </data>
+  <data name="DestinationTypesHelp" xml:space="preserve">
+    <value>Destinationen måste vara av någon av dessa typer; om ingen är markerad går alla destinationstyper bra. När två regler anger typer som inte överlappar vinner den mer specifika regeln (regler för enhetstyp först) och den andra läggs åt sidan.</value>
+  </data>
+  <data name="RequiredCapabilities" xml:space="preserve">
+    <value>Obligatoriska förmågor</value>
+  </data>
+  <data name="RequiredCapabilitiesHelp" xml:space="preserve">
+    <value>Den föreslagna destinationen måste erbjuda alla dessa. Om ingen destination inom räckhåll gör det fylls inget i, och de närmaste visas med det som saknas.</value>
+  </data>
+  <data name="PreferredCapabilities" xml:space="preserve">
+    <value>Föredragna förmågor</value>
+  </data>
+  <data name="PreferredCapabilitiesHelp" xml:space="preserve">
+    <value>Avgör jämna lägen: inom fönstret för föredragna förmågor hamnar en destination som erbjuder fler av dessa först.</value>
+  </data>
+  <data name="NoCapabilities" xml:space="preserve">
+    <value>Inga POI-förmågor ännu.</value>
+  </data>
+  <data name="ManageCapabilities" xml:space="preserve">
+    <value>Hantera POI-förmågor</value>
+  </data>
+  <data name="TryIt" xml:space="preserve">
+    <value>Prova</value>
+  </data>
+  <data name="TryItHelp" xml:space="preserve">
+    <value>Välj larmtyp, prioritet och enhetstyp för att se vilka regler som gäller och vad destinationen måste vara.</value>
+  </data>
+  <data name="TryItButton" xml:space="preserve">
+    <value>Visa</value>
+  </data>
+  <data name="AppliedRules" xml:space="preserve">
+    <value>Regler som gäller</value>
+  </data>
+  <data name="SetAsideRules" xml:space="preserve">
+    <value>Lagda åt sidan</value>
+  </data>
+  <data name="NoRulesApply" xml:space="preserve">
+    <value>Ingen regel gäller: valfri destinationstyp, inga krav.</value>
+  </data>
+  <data name="SetAsideTypesRemoved" xml:space="preserve">
+    <value>dess destinationstyper har tagits bort</value>
+  </data>
+  <data name="SetAsideTypeConflict" xml:space="preserve">
+    <value>en mer specifik regel skickar till andra destinationstyper</value>
+  </data>
+  <data name="NothingRequired" xml:space="preserve">
+    <value>inget</value>
+  </data>
+  <data name="DestinationRulesLink" xml:space="preserve">
+    <value>Destinationsregler</value>
+  </data>
+  <data name="SuggestedDestinations" xml:space="preserve">
+    <value>Föreslagna</value>
+  </data>
+  <data name="SuggestionLoading" xml:space="preserve">
+    <value>Söker destinationer...</value>
+  </data>
+  <data name="SuggestionNone" xml:space="preserve">
+    <value>Ingen destination av den krävda sorten hittades.</value>
+  </data>
+  <data name="SuggestionNoneMeet" xml:space="preserve">
+    <value>Ingen destination i närheten erbjuder allt som krävs; de närmaste visas.</value>
+  </data>
+  <data name="SuggestionNeeds" xml:space="preserve">
+    <value>Behöver: {0}</value>
+  </data>
+  <data name="SuggestionPrefers" xml:space="preserve">
+    <value>Föredrar: {0}</value>
+  </data>
+  <data name="SuggestionRules" xml:space="preserve">
+    <value>Regler: {0}</value>
+  </data>
+  <data name="UseDestination" xml:space="preserve">
+    <value>Använd</value>
+  </data>
+  <data name="InUse" xml:space="preserve">
+    <value>Vald</value>
+  </data>
+  <data name="SuggestedBadge" xml:space="preserve">
+    <value>Föreslagen</value>
+  </data>
+  <data name="FilledAutomatically" xml:space="preserve">
+    <value>Ifylld med den föreslagna destinationen. Välj en annan vid behov.</value>
+  </data>
+  <data name="MissingCapabilities" xml:space="preserve">
+    <value>Saknas: {0}</value>
+  </data>
+  <data name="DownCapabilities" xml:space="preserve">
+    <value>Otillgängligt nu: {0}</value>
+  </data>
+  <data name="MinutesShort" xml:space="preserve">
+    <value>{0} min</value>
+  </data>
+  <data name="KilometersShort" xml:space="preserve">
+    <value>{0} km</value>
+  </data>
+  <data name="StraightLineKilometers" xml:space="preserve">
+    <value>{0} km fågelvägen</value>
+  </data>
+  <data name="StatusLimited" xml:space="preserve">
+    <value>Begränsad</value>
+  </data>
+  <data name="StatusDiversion" xml:space="preserve">
+    <value>Omdirigering</value>
+  </data>
+  <data name="StatusClosed" xml:space="preserve">
+    <value>Stängd</value>
+  </data>
+  <data name="SuggestionFailed" xml:space="preserve">
+    <value>Destinationsförslag är inte tillgängliga just nu.</value>
+  </data>
+  <data name="SuggestionRetry" xml:space="preserve">
+    <value>Försök igen</value>
+  </data>
+  <data name="PreviewLoading" xml:space="preserve">
+    <value>Kontrollerar reglerna...</value>
+  </data>
+  <data name="PreviewFailed" xml:space="preserve">
+    <value>Reglerna kunde inte kontrolleras just nu. Försök igen.</value>
+  </data>
+</root>

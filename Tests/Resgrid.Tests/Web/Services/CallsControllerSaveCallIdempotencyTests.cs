@@ -146,7 +146,7 @@ namespace Resgrid.Tests.Web.Services
 				Mock.Of<IDispatchRecommendationService>(), Mock.Of<IFeatureToggleService>(), Mock.Of<IDepartmentDataProtectionService>(),
 				Mock.Of<IProtectedReadService>(), protectedWrite.Object, Mock.Of<IContactsService>(), Mock.Of<IDispatchScopeService>(),
 				Mock.Of<ICallLocationHistoryService>(), Mock.Of<IPendingCallsService>(), Mock.Of<ICallClosureService>(),
-				new InboundEmailReceiptsService(_receipts, TimeProvider.System))
+				new InboundEmailReceiptsService(_receipts, TimeProvider.System), Mock.Of<ICallResourceReleaseService>(), Mock.Of<ICallBroadcastOutboxService>())
 			{
 				ControllerContext = new ControllerContext { HttpContext = httpContext }
 			};

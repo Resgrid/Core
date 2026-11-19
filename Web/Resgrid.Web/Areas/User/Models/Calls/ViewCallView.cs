@@ -47,6 +47,9 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 		/// <summary>Add Call Data plus call edit rights; false hides Add File and Add Image (AttachCallFile and Files/Upload would refuse).</summary>
 		public bool CanAttachCallFiles { get; set; }
 
+		/// <summary>The call is open and has gone out, and this member may edit its dispatch list: dispatched units get a Release button.</summary>
+		public bool CanReleaseResources { get; set; }
+
 		/// <summary>ADP: true when this call carries protected fields rendered as REDACTED (plan 7.2).</summary>
 		public bool IsProtectedCall { get; set; }
 		public string ProtectedReason { get; set; }

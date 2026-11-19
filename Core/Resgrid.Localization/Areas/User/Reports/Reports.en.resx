@@ -758,6 +758,9 @@
   <data name="CallUnitTimesClearedHeader" xml:space="preserve">
     <value>Cleared</value>
   </data>
+  <data name="CallUnitTimesReleasedHeader" xml:space="preserve">
+    <value>Released</value>
+  </data>
   <data name="CallUnitTimesSourceHeader" xml:space="preserve">
     <value>Linked By</value>
   </data>

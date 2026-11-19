@@ -685,6 +685,88 @@ namespace Resgrid.Services
 					obj["shortfall"] = shortfall;
 					break;
 
+				case WorkflowTriggerEventType.RecurringCallScheduleCreated:
+				case WorkflowTriggerEventType.RecurringCallScheduleUpdated:
+				case WorkflowTriggerEventType.RecurringCallSchedulePaused:
+				case WorkflowTriggerEventType.RecurringCallScheduleResumed:
+				case WorkflowTriggerEventType.RecurringCallScheduleDeleted:
+					var recurringCall = new ScriptObject();
+					recurringCall["id"] = 12;
+					recurringCall["name"] = "Dialysis transfer - Mercy to Riverside";
+					// The live event's change label for each trigger (RecurringCallScheduleChanges).
+					recurringCall["change"] = eventType switch
+					{
+						WorkflowTriggerEventType.RecurringCallScheduleCreated => "Created",
+						WorkflowTriggerEventType.RecurringCallSchedulePaused => "Paused",
+						WorkflowTriggerEventType.RecurringCallScheduleResumed => "Resumed",
+						WorkflowTriggerEventType.RecurringCallScheduleDeleted => "Deleted",
+						_ => "Updated"
+					};
+					recurringCall["nature"] = "Scheduled interfacility transfer";
+					recurringCall["address"] = "1200 Main St, Springfield";
+					recurringCall["facility_name"] = "Mercy General Hospital";
+					recurringCall["destination_name"] = "Riverside Dialysis Center";
+					recurringCall["contact_name"] = "Pat Lee";
+					recurringCall["contact_number"] = "555-0100";
+					// One timeline from today, so the next occurrence (tomorrow) always falls between the start and the end.
+					var sampleToday = DateTime.UtcNow.Date;
+					recurringCall["starts_on"] = sampleToday.AddDays(-14).ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+					recurringCall["ends_on"] = sampleToday.AddMonths(6).ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+					recurringCall["times"] = "08:00,13:00,19:00";
+					recurringCall["mode"] = "Automatic";
+					recurringCall["use_run_card"] = false;
+					recurringCall["is_active"] = eventType != WorkflowTriggerEventType.RecurringCallSchedulePaused && eventType != WorkflowTriggerEventType.RecurringCallScheduleDeleted;
+					recurringCall["pause_reason"] = eventType == WorkflowTriggerEventType.RecurringCallSchedulePaused ? "Holiday week" : null;
+					recurringCall["resume_on"] = eventType == WorkflowTriggerEventType.RecurringCallSchedulePaused
+						? sampleToday.AddDays(14).ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture)
+						: null;
+					// As live: a paused or deleted schedule has no next occurrence; a running one's is one of its times (13:00 tomorrow) in the
+					// sample department's time zone.
+					recurringCall["next_occurrence_on"] = eventType == WorkflowTriggerEventType.RecurringCallSchedulePaused || eventType == WorkflowTriggerEventType.RecurringCallScheduleDeleted
+						? null
+						: (object)SampleOccurrenceUtc();
+					obj["recurring_call"] = recurringCall;
+					break;
+
+				case WorkflowTriggerEventType.RecurringCallOccurrenceCreated:
+				case WorkflowTriggerEventType.RecurringCallOccurrenceSkipped:
+				case WorkflowTriggerEventType.RecurringCallOccurrenceDispatched:
+					var occurrence = new ScriptObject();
+					occurrence["recurring_call_id"] = 12;
+					occurrence["name"] = "Dialysis transfer - Mercy to Riverside";
+					occurrence["change"] = eventType == WorkflowTriggerEventType.RecurringCallOccurrenceDispatched ? "Dispatched" : eventType == WorkflowTriggerEventType.RecurringCallOccurrenceSkipped ? "Skipped" : "Created";
+					occurrence["occurrence_on"] = SampleOccurrenceUtc();
+					occurrence["call_id"] = eventType == WorkflowTriggerEventType.RecurringCallOccurrenceSkipped ? 0 : 1001;
+					occurrence["call_number"] = eventType == WorkflowTriggerEventType.RecurringCallOccurrenceSkipped ? null : "26-1001";
+					// A skip is always a dispatcher's (the live event says so); the samples for creation and dispatch are the worker's.
+					occurrence["by_dispatcher"] = eventType == WorkflowTriggerEventType.RecurringCallOccurrenceSkipped;
+					// A skipped occurrence has no call, so nobody is assigned (the live event reports zero).
+					occurrence["unit_count"] = eventType == WorkflowTriggerEventType.RecurringCallOccurrenceSkipped ? 0 : 1;
+					occurrence["personnel_count"] = 0;
+					occurrence["group_count"] = 0;
+					occurrence["role_count"] = 0;
+					occurrence["unavailable_count"] = 0;
+					occurrence["run_card_applied"] = false;
+					obj["occurrence"] = occurrence;
+					break;
+
+				case WorkflowTriggerEventType.RecurringCallAlertRaised:
+				case WorkflowTriggerEventType.RecurringCallAlertResolved:
+					var recurringAlert = new ScriptObject();
+					recurringAlert["id"] = "3f2b6c1e-8a51-4d0b-9a7e-2c0f6f1d9b42";
+					recurringAlert["recurring_call_id"] = 12;
+					recurringAlert["name"] = "Dialysis transfer - Mercy to Riverside";
+					recurringAlert["kind"] = "NoResources";
+					recurringAlert["occurrence_on"] = DateTime.UtcNow.Date.AddDays(1).AddHours(16);
+					recurringAlert["call_id"] = 1001;
+					recurringAlert["reason"] = "NoneAvailable";
+					recurringAlert["unavailable_unit_count"] = 1;
+					recurringAlert["unavailable_personnel_count"] = 0;
+					recurringAlert["resolution"] = eventType == WorkflowTriggerEventType.RecurringCallAlertResolved ? "Dispatched" : null;
+					recurringAlert["raised"] = eventType == WorkflowTriggerEventType.RecurringCallAlertRaised;
+					obj["alert"] = recurringAlert;
+					break;
+
 				case WorkflowTriggerEventType.StationCoverageGapDetected:
 					var coverageGap = new ScriptObject();
 					coverageGap["call_id"] = 1001;
@@ -732,6 +814,17 @@ namespace Resgrid.Services
 		/// <summary>
 		/// Inventory previews use the same variable mapping and permanently withheld content as dispatched events.
 		/// </summary>
+		/// <summary>
+		/// The sample schedule's next occurrence: 13:00 tomorrow (one of its "08:00,13:00,19:00" times) in the sample department's time
+		/// zone, as UTC, the way a live event reports it.
+		/// </summary>
+		public static DateTime SampleOccurrenceUtc()
+		{
+			var department = new Department { TimeZone = "Eastern Standard Time" };
+			var localTomorrow = RecurringCallRecurrence.ToLocal(DateTime.UtcNow, department).Date.AddDays(1);
+			return RecurringCallRecurrence.ToUtc(localTomorrow.AddHours(13), department);
+		}
+
 		private static void AddInventorySamples(ScriptObject obj, WorkflowTriggerEventType eventType)
 		{
 			const string transactionId = "11111111-1111-1111-1111-111111111111";

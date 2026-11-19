@@ -692,6 +692,15 @@
   </data>
   <data name="Additional" xml:space="preserve"><value>Πρόσθετα</value></data>
   <data name="AllOfGroupDispatched" xml:space="preserve"><value>Όλη η ομάδα {0} Απεστάλη</value></data>
+  <data name="ReleaseUnit" xml:space="preserve"><value>Αποδέσμευση</value></data>
+  <data name="ReleaseUnitTitle" xml:space="preserve"><value>Αποδέσμευση του {0} από αυτή την κλήση;</value></data>
+  <data name="ReleaseUnitText" xml:space="preserve"><value>Η μονάδα αφαιρείται από αυτή την κλήση και λαμβάνει την κατάσταση αποδέσμευσης του οργανισμού, εκτός αν είναι ήδη διαθέσιμη, εκτός υπηρεσίας ή σε άλλη κλήση. Η κλήση παραμένει ανοιχτή.</value></data>
+  <data name="ReleaseUnitNotify" xml:space="preserve"><value>Ειδοποίηση της μονάδας</value></data>
+  <data name="ReleaseUnitFailed" xml:space="preserve"><value>Δεν ήταν δυνατή η αποδέσμευση της μονάδας.</value></data>
+  <data name="UnitReleasedAt" xml:space="preserve"><value>Αποδεσμεύτηκε {0}</value></data>
+  <data name="ReleasePersonnelText" xml:space="preserve"><value>Το μέλος αφαιρείται από αυτή την κλήση και λαμβάνει την κατάσταση αποδέσμευσης προσωπικού του οργανισμού, εκτός αν είναι ήδη διαθέσιμο, μη διαθέσιμο ή σε άλλη κλήση. Η κλήση παραμένει ανοιχτή.</value></data>
+  <data name="ReleasePersonnelFailed" xml:space="preserve"><value>Δεν ήταν δυνατή η αποδέσμευση του μέλους.</value></data>
+  <data name="ReleasePersonnelNotify" xml:space="preserve"><value>Ειδοποίηση του μέλους</value></data>
   <data name="AreYouSure" xml:space="preserve"><value>Είστε βέβαιοι;</value></data>
   <data name="CallUpdatedTitle" xml:space="preserve"><value>Η Κλήση Ενημερώθηκε</value></data>
   <data name="CallUpdatedMessage" xml:space="preserve"><value>Αυτή η κλήση ενημερώθηκε· ανανεώστε τη σελίδα για να δείτε τις τελευταίες πληροφορίες.</value></data>

@@ -1058,6 +1058,38 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task a_member_released_from_the_call_is_not_picked_but_still_covers_their_station()
+		{
+			BuildCard(roleCount: 1);
+			_config.MoveUpRecommendationsEnabled = true;
+			_runCardsService.Setup(x => x.GetStationCoverageRequirementsForDepartmentAsync(DepartmentId))
+				.ReturnsAsync(new List<StationCoverageRequirement>
+				{
+					new StationCoverageRequirement
+					{
+						StationCoverageRequirementId = 1,
+						DepartmentId = DepartmentId,
+						DepartmentGroupId = StationAId,
+						PersonnelRoleId = FirefighterRoleId,
+						MinimumAvailableCount = 1,
+						IsEnabled = true
+					}
+				});
+
+			// user-1 (Station A) was released from this call: the call gets user-2 instead, and user-1, back at Station A,
+			// keeps it covered, so no move-up is suggested for it.
+			var request = BuildRequest();
+			request.ExcludedUserIds = new List<string> { "USER-1" };
+
+			var result = await _service.GetRecommendationAsync(request);
+
+			result.Personnel.Should().ContainSingle(p => p.UserId == "user-2");
+			result.Personnel.Should().NotContain(p => p.UserId == "user-1");
+			result.MoveUps.Should().NotContain(m => m.StationGroupId == StationAId);
+			result.Notes.Should().NotContain(n => n.Contains("drops below minimum coverage"));
+		}
+
+		[Test]
 		public async Task enrich_call_adds_dispatch_rows_without_duplicates_and_stamps_run_card()
 		{
 			BuildCard(engineCount: 2, roleCount: 1);

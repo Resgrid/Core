@@ -2273,4 +2273,17 @@
   <data name="NoAlarmActivity" xml:space="preserve"><value>Aucun détecteur ni aucune activité de réduction des risques enregistrés ici pour l'instant.</value></data>
   <data name="RecordAlarmLeft" xml:space="preserve"><value>Enregistrer un détecteur laissé</value></data>
   <data name="AlarmsRequestedColumnHelp" xml:space="preserve"><value>Total des appareils demandés (fumée seule / CO seul / combinés)</value></data>
+  <data name="IncidentReportDeleted" xml:space="preserve"><value>Rapport d'incident supprimé.</value></data>
+  <data name="DeleteIncidentReport" xml:space="preserve"><value>Supprimer</value></data>
+  <data name="DeleteIncidentReportConfirm" xml:space="preserve"><value>Supprimer ce rapport d'incident ? Il est retiré de toutes les listes, son appel est libéré pour un nouveau rapport et son contenu est effacé après {0} jours.</value></data>
+  <data name="DeleteIncidentReportHelp" xml:space="preserve"><value>Retire le rapport de toutes les listes et libère son appel pour un nouveau rapport. Un rapport jamais finalisé est d'abord annulé. Le contenu est effacé après {0} jours.</value></data>
+  <data name="DeleteVoidedReasonPrompt" xml:space="preserve"><value>Pourquoi ce rapport annulé est-il supprimé ?</value></data>
+  <data name="DeleteRefusedNotDeletable" xml:space="preserve"><value>Un rapport finalisé ne peut pas être supprimé. Annulez-le d'abord.</value></data>
+  <data name="DeleteRefusedVoidedNeedsAdmin" xml:space="preserve"><value>Seul un administrateur du service peut supprimer un rapport annulé.</value></data>
+  <data name="DeleteRefusedReasonRequired" xml:space="preserve"><value>Saisissez un motif pour supprimer un rapport annulé.</value></data>
+  <data name="DeleteRefusedSubmittedExternally" xml:space="preserve"><value>Ce rapport a été envoyé à un système externe comme NERIS ; il ne peut donc pas être supprimé. Annulez-le plutôt.</value></data>
+  <data name="DeleteRefusedLegalHold" xml:space="preserve"><value>Une conservation légale couvre ce rapport ; il ne peut donc pas être supprimé.</value></data>
+  <data name="DeleteRefusedPermanentContent" xml:space="preserve"><value>Ce rapport contient des entrées de victimes, de sauvetages ou d'expositions, conservées de façon permanente. Retirez-les du brouillon avant de le supprimer.</value></data>
+  <data name="DeleteRefusedAmendmentOpen" xml:space="preserve"><value>Abandonnez la modification en cours avant de supprimer ce rapport.</value></data>
+  <data name="IncludeClosedReports" xml:space="preserve"><value>Inclure les brouillons abandonnés et les rapports annulés</value></data>
 </root>

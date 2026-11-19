@@ -1,0 +1,704 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Map Icon Legend and status / priority map icon pages -->
+    <data name="ActionFailed" xml:space="preserve">
+    <value>Det gick inte. Uppdatera sidan och försök igen.</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Åtgärder</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>Aktivt</value>
+  </data>
+  <data name="ActiveHelp" xml:space="preserve">
+    <value>Avmarkera för att pausa: inga larm skapas förrän det återupptas.</value>
+  </data>
+  <data name="AddTime" xml:space="preserve">
+    <value>Lägg till tid</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>Adress</value>
+  </data>
+  <data name="AddressHelp" xml:space="preserve">
+    <value>Lokaliseras när det sparas, för kartan och vägbeskrivningen.</value>
+  </data>
+  <data name="AlertAcknowledge" xml:space="preserve">
+    <value>Kvittera</value>
+  </data>
+  <data name="AlertAcknowledgedBy" xml:space="preserve">
+    <value>Kvitterat av {0}</value>
+  </data>
+  <data name="AlertCreateCall" xml:space="preserve">
+    <value>Skapa larm</value>
+  </data>
+  <data name="AlertDismiss" xml:space="preserve">
+    <value>Avfärda</value>
+  </data>
+  <data name="AlertDismissPrompt" xml:space="preserve">
+    <value>Anteckning (valfritt): varför stängs denna varning?</value>
+  </data>
+  <data name="AlertKindCreateFailed" xml:space="preserve">
+    <value>Larmet kunde inte skapas</value>
+  </data>
+  <data name="AlertKindDispatchDue" xml:space="preserve">
+    <value>Dags att larma</value>
+  </data>
+  <data name="AlertKindMissed" xml:space="preserve">
+    <value>Missat: larmet skapades inte i tid</value>
+  </data>
+  <data name="AlertKindNoResources" xml:space="preserve">
+    <value>Ingen kunde larmas: larmet hålls som väntande</value>
+  </data>
+  <data name="AlertKindResourcesUnavailable" xml:space="preserve">
+    <value>Larmat utan vissa valda resurser</value>
+  </data>
+  <data name="AlertOpenCall" xml:space="preserve">
+    <value>Öppna larm</value>
+  </data>
+  <data name="AlertReasonDepartmentUnavailable" xml:space="preserve">
+    <value>Organisationen kunde inte läsas in.</value>
+  </data>
+  <data name="AlertReasonNoneAvailable" xml:space="preserve">
+    <value>Ingen av de valda resurserna var tillgänglig.</value>
+  </data>
+  <data name="AlertReasonNoneChosen" xml:space="preserve">
+    <value>Inga resurser är valda och ingen larmplan matchade.</value>
+  </data>
+  <data name="AlertReasonSaveFailed" xml:space="preserve">
+    <value>Det gick inte att spara larmet; det försöks igen tills det är dags.</value>
+  </data>
+  <data name="AlertSchedule" xml:space="preserve">
+    <value>Återkommande larm</value>
+  </data>
+  <data name="AlertUnavailable" xml:space="preserve">
+    <value>Inte tillgängliga: {0}</value>
+  </data>
+  <data name="AlertWhat" xml:space="preserve">
+    <value>Vad som hände</value>
+  </data>
+  <data name="AlertWhen" xml:space="preserve">
+    <value>Tid</value>
+  </data>
+  <data name="AlertsBanner" xml:space="preserve">
+    <value>{0} varning(ar) för återkommande larm kräver åtgärd.</value>
+  </data>
+  <data name="AlertsBannerLink" xml:space="preserve">
+    <value>Granska</value>
+  </data>
+  <data name="AlertsHelp" xml:space="preserve">
+    <value>Meddelas (push, sms eller e-post enligt sina inställningar) när ett larm inte kan skapas, missas, ingen kan larmas, valda resurser inte är tillgängliga eller en operatör måste larma det. Ingen vald: den som skapade schemat.</value>
+  </data>
+  <data name="AlertsTitle" xml:space="preserve">
+    <value>Kräver åtgärd</value>
+  </data>
+  <data name="AvailabilityHelp" xml:space="preserve">
+    <value>När ett larm går ut utelämnas valda enheter och medlemmar som inte är tillgängliga (på ett annat larm, ur tjänst, ej i tjänst) och larmoperatören varnas. Om ingen återstår hålls larmet som väntande för en operatör.</value>
+  </data>
+  <data name="Calendar" xml:space="preserve">
+    <value>Kalender</value>
+  </data>
+  <data name="ContactName" xml:space="preserve">
+    <value>Kontaktnamn</value>
+  </data>
+  <data name="ContactNumber" xml:space="preserve">
+    <value>Kontaktnummer</value>
+  </data>
+  <data name="Coordinates" xml:space="preserve">
+    <value>Koordinater</value>
+  </data>
+  <data name="CoordinatesHelp" xml:space="preserve">
+    <value>Latitud, longitud (valfritt). Lämna tomt för att lokalisera adressen.</value>
+  </data>
+  <data name="CreateNow" xml:space="preserve">
+    <value>Skapa larm nu</value>
+  </data>
+  <data name="CreatedByRecurringCall" xml:space="preserve">
+    <value>Detta larm skapades av ett återkommande larm.</value>
+  </data>
+  <data name="CreationMode" xml:space="preserve">
+    <value>Vem som larmar varje larm</value>
+  </data>
+  <data name="CreationModeAutomatic" xml:space="preserve">
+    <value>Automatiskt: varje larm skapas i förväg och larmas när det är dags</value>
+  </data>
+  <data name="CreationModeDispatcher" xml:space="preserve">
+    <value>En larmoperatör: inget skapas i förväg; en operatör varnas när det är dags och larmar</value>
+  </data>
+  <data name="DatesFrom" xml:space="preserve">
+    <value>Från {0}</value>
+  </data>
+  <data name="DatesUntil" xml:space="preserve">
+    <value>till {0}</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Ta bort</value>
+  </data>
+  <data name="DeleteConfirm" xml:space="preserve">
+    <value>Ta bort detta återkommande larm? Inga fler larm skapas från det.</value>
+  </data>
+  <data name="DeleteRecurringCall" xml:space="preserve">
+    <value>Ta bort återkommande larm</value>
+  </data>
+  <data name="DeleteUpcoming" xml:space="preserve">
+    <value>Ta även bort de {0} kommande larm som redan skapats</value>
+  </data>
+  <data name="DeletedMessage" xml:space="preserve">
+    <value>Det återkommande larmet togs bort.</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Beskrivning</value>
+  </data>
+  <data name="DescriptionHelp" xml:space="preserve">
+    <value>Vad schemat är till för och vad en larmoperatör bör veta. Sparas i schemat och kopieras inte till larmen.</value>
+  </data>
+  <data name="Destination" xml:space="preserve">
+    <value>Mål</value>
+  </data>
+  <data name="DestinationDetails" xml:space="preserve">
+    <value>Detaljer om målet</value>
+  </data>
+  <data name="DestinationName" xml:space="preserve">
+    <value>Målinrättning</value>
+  </data>
+  <data name="DispatchHelp" xml:space="preserve">
+    <value>Vem varje larm går till. Lämna allt tomt så att en larmoperatör väljer: när larmet ska gå hålls det som väntande och operatören får en varning.</value>
+  </data>
+  <data name="DueHelp" xml:space="preserve">
+    <value>Det är dags att larma. Larma nu, skapa det först för att ändra det, eller hoppa över det.</value>
+  </data>
+  <data name="DueTitle" xml:space="preserve">
+    <value>Larma: {0}</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Redigera</value>
+  </data>
+  <data name="EditRecurringCall" xml:space="preserve">
+    <value>Redigera återkommande larm</value>
+  </data>
+  <data name="EnableCheckInTimers" xml:space="preserve">
+    <value>Aktivera incheckningstimrar</value>
+  </data>
+  <data name="EndsOn" xml:space="preserve">
+    <value>Slutar den</value>
+  </data>
+  <data name="EndsOnHelp" xml:space="preserve">
+    <value>Lämna tomt för att fortsätta upprepa.</value>
+  </data>
+  <data name="ErrorContactEmailInvalid" xml:space="preserve">
+    <value>Ange en giltig e-postadress för kontakten.</value>
+  </data>
+  <data name="ErrorCoordinatesInvalid" xml:space="preserve">
+    <value>Ange koordinater som latitud, longitud (till exempel 39.7392,-104.9903).</value>
+  </data>
+  <data name="ErrorCreationModeInvalid" xml:space="preserve">
+    <value>Välj vem som larmar varje larm.</value>
+  </data>
+  <data name="ErrorDaysRequired" xml:space="preserve">
+    <value>Välj minst en veckodag.</value>
+  </data>
+  <data name="ErrorEndsBeforeStart" xml:space="preserve">
+    <value>Slutdatumet är före startdatumet.</value>
+  </data>
+  <data name="ErrorEndsOnInvalid" xml:space="preserve">
+    <value>Ange ett giltigt slutdatum.</value>
+  </data>
+  <data name="ErrorFacilityPoiInvalid" xml:space="preserve">
+    <value>Välj intressepunkt för hämtning i listan.</value>
+  </data>
+  <data name="ErrorFrequencyInvalid" xml:space="preserve">
+    <value>Välj hur det upprepas.</value>
+  </data>
+  <data name="ErrorIntervalInvalid" xml:space="preserve">
+    <value>Upprepa var 1 till {1}.</value>
+  </data>
+  <data name="ErrorLeadTimeInvalid" xml:space="preserve">
+    <value>Välj när varje larm skapas.</value>
+  </data>
+  <data name="ErrorManualAlertInvalid" xml:space="preserve">
+    <value>Välj när larmoperatören ska varnas.</value>
+  </data>
+  <data name="ErrorMonthlyDayInvalid" xml:space="preserve">
+    <value>Välj en dag i månaden från 1 till 31.</value>
+  </data>
+  <data name="ErrorMonthlyWeekdayInvalid" xml:space="preserve">
+    <value>Välj vilken veckodag i månaden.</value>
+  </data>
+  <data name="ErrorNameRequired" xml:space="preserve">
+    <value>Ange ett namn.</value>
+  </data>
+  <data name="ErrorResumeOnInvalid" xml:space="preserve">
+    <value>Datumet för återupptagning är ogiltigt.</value>
+  </data>
+  <data name="ErrorStartsOnRequired" xml:space="preserve">
+    <value>Ange ett startdatum.</value>
+  </data>
+  <data name="ErrorTimeInvalid" xml:space="preserve">
+    <value>Ange varje tid i timmar och minuter (till exempel 08:00).</value>
+  </data>
+  <data name="ErrorTimesRequired" xml:space="preserve">
+    <value>Lägg till minst en larmtid.</value>
+  </data>
+  <data name="ErrorTooManyTimes" xml:space="preserve">
+    <value>Använd högst {0} larmtider per dag.</value>
+  </data>
+  <data name="Every" xml:space="preserve">
+    <value>Var</value>
+  </data>
+  <data name="ExternalId" xml:space="preserve">
+    <value>Externt ID</value>
+  </data>
+  <data name="FacilityDetails" xml:space="preserve">
+    <value>Detaljer om hämtning</value>
+  </data>
+  <data name="FacilityDetailsPlaceholder" xml:space="preserve">
+    <value>Avdelning, våning, rum, ingång, vem man frågar efter</value>
+  </data>
+  <data name="FacilityHelp" xml:space="preserve">
+    <value>Raderna om hämtning och mål läggs till i anteckningarna för varje larm som skapas, så att besättningen har dem.</value>
+  </data>
+  <data name="FacilityName" xml:space="preserve">
+    <value>Hämtningsinrättning</value>
+  </data>
+  <data name="FacilityPoi" xml:space="preserve">
+    <value>Intressepunkt för hämtning</value>
+  </data>
+  <data name="FacilityPoiHelp" xml:space="preserve">
+    <value>Fyller i hämtningsinrättning och adress när de är tomma.</value>
+  </data>
+  <data name="FrequencyDaily" xml:space="preserve">
+    <value>Dagligen</value>
+  </data>
+  <data name="FrequencyMonthly" xml:space="preserve">
+    <value>Varje månad</value>
+  </data>
+  <data name="FrequencyWeekly" xml:space="preserve">
+    <value>Varje vecka</value>
+  </data>
+  <data name="FromCallNotice" xml:space="preserve">
+    <value>Ifyllt från larm {0}. Välj när det ska upprepas.</value>
+  </data>
+  <data name="Groups" xml:space="preserve">
+    <value>Grupper</value>
+  </data>
+  <data name="HeldMessage" xml:space="preserve">
+    <value>Ingen kunde larmas; larmet hålls som väntande.</value>
+  </data>
+  <data name="HeldTitle" xml:space="preserve">
+    <value>Hållet: {0}</value>
+  </data>
+  <data name="IncidentId" xml:space="preserve">
+    <value>Händelse-ID</value>
+  </data>
+  <data name="IncludeScheduledCalls" xml:space="preserve">
+    <value>Visa schemalagda larm</value>
+  </data>
+  <data name="IntervalDays" xml:space="preserve">
+    <value>dag(ar)</value>
+  </data>
+  <data name="IntervalMonths" xml:space="preserve">
+    <value>månad(er)</value>
+  </data>
+  <data name="IntervalWeeks" xml:space="preserve">
+    <value>vecka/veckor</value>
+  </data>
+  <data name="LeadTime" xml:space="preserve">
+    <value>Skapa varje larm</value>
+  </data>
+  <data name="LeadTimeDay" xml:space="preserve">
+    <value>1 dag före</value>
+  </data>
+  <data name="LeadTimeDays" xml:space="preserve">
+    <value>{0} dagar före</value>
+  </data>
+  <data name="LeadTimeHelp" xml:space="preserve">
+    <value>Hur lång tid före sin larmtid varje larm skapas. Det visas sedan under Schemalagda larm, där det kan ändras, larmas tidigare eller tas bort för sig.</value>
+  </data>
+  <data name="LeadTimeHour" xml:space="preserve">
+    <value>1 timme före</value>
+  </data>
+  <data name="LeadTimeHours" xml:space="preserve">
+    <value>{0} timmar före</value>
+  </data>
+  <data name="LeadTimeMinutes" xml:space="preserve">
+    <value>{0} minuter före</value>
+  </data>
+  <data name="LegendCancelled" xml:space="preserve">
+    <value>Stängt före larm</value>
+  </data>
+  <data name="LegendDispatched" xml:space="preserve">
+    <value>Larmat</value>
+  </data>
+  <data name="LegendDue" xml:space="preserve">
+    <value>Väntar på operatör</value>
+  </data>
+  <data name="LegendHeld" xml:space="preserve">
+    <value>Hållet, ingen tillgänglig</value>
+  </data>
+  <data name="LegendMissed" xml:space="preserve">
+    <value>Missat</value>
+  </data>
+  <data name="LegendProjected" xml:space="preserve">
+    <value>Återkommande, inte skapat ännu</value>
+  </data>
+  <data name="LegendScheduled" xml:space="preserve">
+    <value>Schemalagt</value>
+  </data>
+  <data name="LegendSkipped" xml:space="preserve">
+    <value>Överhoppat</value>
+  </data>
+  <data name="ListTab" xml:space="preserve">
+    <value>Lista</value>
+  </data>
+  <data name="ManualAlert" xml:space="preserve">
+    <value>Varna larmoperatören</value>
+  </data>
+  <data name="ManualAlertAtTime" xml:space="preserve">
+    <value>När det är dags</value>
+  </data>
+  <data name="ManualAlertHelp" xml:space="preserve">
+    <value>När larmoperatören får veta att det är dags att larma. Visas under Kräver åtgärd i Återkommande larm och i Dispatch-appen tills någon larmar eller hoppar över det.</value>
+  </data>
+  <data name="MapPage" xml:space="preserve">
+    <value>Kartsida</value>
+  </data>
+  <data name="MissedHelp" xml:space="preserve">
+    <value>Tiden har passerat och inget larm skapades. Larma nu eller hoppa över det.</value>
+  </data>
+  <data name="MissedTitle" xml:space="preserve">
+    <value>Missat: {0}</value>
+  </data>
+  <data name="ModeAutomaticShort" xml:space="preserve">
+    <value>Larmas automatiskt</value>
+  </data>
+  <data name="ModeDispatcherShort" xml:space="preserve">
+    <value>Larmas av en operatör</value>
+  </data>
+  <data name="MonthlyDayHelp" xml:space="preserve">
+    <value>En månad utan den dagen körs den den sista dagen.</value>
+  </data>
+  <data name="MonthlyOn" xml:space="preserve">
+    <value>Den</value>
+  </data>
+  <data name="MonthlyOnDay" xml:space="preserve">
+    <value>Dag</value>
+  </data>
+  <data name="MonthlyOnThe" xml:space="preserve">
+    <value>Den</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Namn</value>
+  </data>
+  <data name="NameHelp" xml:space="preserve">
+    <value>Varje larm som skapas får detta namn.</value>
+  </data>
+  <data name="Nature" xml:space="preserve">
+    <value>Larmets art</value>
+  </data>
+  <data name="NewRecurringCall" xml:space="preserve">
+    <value>Nytt återkommande larm</value>
+  </data>
+  <data name="NextDispatch" xml:space="preserve">
+    <value>Nästa larm</value>
+  </data>
+  <data name="NextDispatches" xml:space="preserve">
+    <value>Kommande larm</value>
+  </data>
+  <data name="NoAlerts" xml:space="preserve">
+    <value>Inget kräver åtgärd.</value>
+  </data>
+  <data name="NoFacilityPoi" xml:space="preserve">
+    <value>Ingen</value>
+  </data>
+  <data name="NoNextDispatches" xml:space="preserve">
+    <value>Inget schemalagt.</value>
+  </data>
+  <data name="NoRecurringCalls" xml:space="preserve">
+    <value>Inga återkommande larm ännu.</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Ingen</value>
+  </data>
+  <data name="Notes" xml:space="preserve">
+    <value>Anteckningar</value>
+  </data>
+  <data name="OnDays" xml:space="preserve">
+    <value>På</value>
+  </data>
+  <data name="OpenAlertsCount" xml:space="preserve">
+    <value>{0} kräver åtgärd</value>
+  </data>
+  <data name="PageIntro" xml:space="preserve">
+    <value>Ett återkommande larm larmas enligt ett schema, till exempel transporter mellan vårdinrättningar varje tisdag och torsdag kl. 08:00, 13:00 och 19:00. Varje larm skapas före sin larmtid och visas under Schemalagda larm, där det kan ändras, larmas tidigare eller tas bort som vilket annat larm som helst.</value>
+  </data>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Återkommande larm</value>
+  </data>
+  <data name="Pause" xml:space="preserve">
+    <value>Pausa</value>
+  </data>
+  <data name="PauseDeleteUpcoming" xml:space="preserve">
+    <value>Ta även bort redan skapade larm som inte har gått ut</value>
+  </data>
+  <data name="PauseHelp" xml:space="preserve">
+    <value>Inget skapas eller varnas medan det är pausat. Schemat, dess inställningar och historik behålls.</value>
+  </data>
+  <data name="PauseReason" xml:space="preserve">
+    <value>Orsak</value>
+  </data>
+  <data name="PauseTitle" xml:space="preserve">
+    <value>Pausa:</value>
+  </data>
+  <data name="PausedMessage" xml:space="preserve">
+    <value>Det återkommande larmet pausades. Inga larm skapas förrän det återupptas.</value>
+  </data>
+  <data name="PausedUntil" xml:space="preserve">
+    <value>till {0}</value>
+  </data>
+  <data name="Personnel" xml:space="preserve">
+    <value>Personal</value>
+  </data>
+  <data name="Priority" xml:space="preserve">
+    <value>Prioritet</value>
+  </data>
+  <data name="ProjectedHelp" xml:space="preserve">
+    <value>Larmet är inte skapat ännu. Larma nu, hoppa över detta eller skapa larmet nu för att ändra det separat.</value>
+  </data>
+  <data name="ReadOnlyHelp" xml:space="preserve">
+    <value>Larmet är inte skapat ännu. Bara medlemmar som får skapa larm kan larma, hoppa över eller skapa det.</value>
+  </data>
+  <data name="ReferenceId" xml:space="preserve">
+    <value>Referens-ID</value>
+  </data>
+  <data name="RemoveTime" xml:space="preserve">
+    <value>Ta bort tid</value>
+  </data>
+  <data name="RepeatCall" xml:space="preserve">
+    <value>Upprepa</value>
+  </data>
+  <data name="RepeatCallHelp" xml:space="preserve">
+    <value>Skapa ett återkommande larm från detta larm</value>
+  </data>
+  <data name="Repeats" xml:space="preserve">
+    <value>Upprepas</value>
+  </data>
+  <data name="ReplaceUpcoming" xml:space="preserve">
+    <value>Ersätt de {0} kommande larm som redan skapats</value>
+  </data>
+  <data name="ReplaceUpcomingHelp" xml:space="preserve">
+    <value>De tas bort och skapas igen med dessa uppgifter, så ändringar som gjorts i dem var för sig går förlorade. Avmarkera för att lämna dem som de är.</value>
+  </data>
+  <data name="RestoreOccurrence" xml:space="preserve">
+    <value>Återställ</value>
+  </data>
+  <data name="Resume" xml:space="preserve">
+    <value>Återuppta</value>
+  </data>
+  <data name="ResumeOn" xml:space="preserve">
+    <value>Återuppta den</value>
+  </data>
+  <data name="ResumeOnHelp" xml:space="preserve">
+    <value>Lämna tomt för att förbli pausat tills någon återupptar det.</value>
+  </data>
+  <data name="ResumedMessage" xml:space="preserve">
+    <value>Det återkommande larmet återupptogs.</value>
+  </data>
+  <data name="Roles" xml:space="preserve">
+    <value>Roller</value>
+  </data>
+  <data name="RunCardsOffHelp" xml:space="preserve">
+    <value>Larmplaner är inte aktiverade för organisationen, så detta har ingen effekt.</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Spara</value>
+  </data>
+  <data name="SavedCreatedMessage" xml:space="preserve">
+    <value>{0} kommande larm skapades och finns under Schemalagda larm.</value>
+  </data>
+  <data name="SavedMessage" xml:space="preserve">
+    <value>Det återkommande larmet sparades.</value>
+  </data>
+  <data name="SavedReplacedMessage" xml:space="preserve">
+    <value>{0} redan skapade larm ersattes.</value>
+  </data>
+  <data name="Schedule" xml:space="preserve">
+    <value>Schema</value>
+  </data>
+  <data name="ScheduleContactEmail" xml:space="preserve">
+    <value>Kontaktens e-post</value>
+  </data>
+  <data name="ScheduleContactHelp" xml:space="preserve">
+    <value>Vem som ordnade schemat och ska ringas vid ändringar.</value>
+  </data>
+  <data name="ScheduleContactName" xml:space="preserve">
+    <value>Kontakt för schemat</value>
+  </data>
+  <data name="ScheduleContactNumber" xml:space="preserve">
+    <value>Kontakttelefon</value>
+  </data>
+  <data name="SectionAlerts" xml:space="preserve">
+    <value>Vem som varnas</value>
+  </data>
+  <data name="SectionCall" xml:space="preserve">
+    <value>Larmuppgifter</value>
+  </data>
+  <data name="SectionDispatch" xml:space="preserve">
+    <value>Vem som larmas</value>
+  </data>
+  <data name="SectionFacility" xml:space="preserve">
+    <value>Inrättningar och kontakt</value>
+  </data>
+  <data name="SectionSchedule" xml:space="preserve">
+    <value>Schema</value>
+  </data>
+  <data name="SelectPlaceholder" xml:space="preserve">
+    <value>Välj...</value>
+  </data>
+  <data name="SendNow" xml:space="preserve">
+    <value>Larma nu</value>
+  </data>
+  <data name="SentMessage" xml:space="preserve">
+    <value>Larmet skickades.</value>
+  </data>
+  <data name="SkipOccurrence" xml:space="preserve">
+    <value>Hoppa över detta</value>
+  </data>
+  <data name="SkippedHelp" xml:space="preserve">
+    <value>Detta hoppades över och inget larm skapas. Återställ det för att skapa larmet igen.</value>
+  </data>
+  <data name="SkippedTitle" xml:space="preserve">
+    <value>Överhoppat: {0}</value>
+  </data>
+  <data name="StartsOn" xml:space="preserve">
+    <value>Börjar den</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Läge</value>
+  </data>
+  <data name="StatusActive" xml:space="preserve">
+    <value>Aktivt</value>
+  </data>
+  <data name="StatusEnded" xml:space="preserve">
+    <value>Avslutat</value>
+  </data>
+  <data name="StatusPaused" xml:space="preserve">
+    <value>Pausat</value>
+  </data>
+  <data name="SummaryDaily" xml:space="preserve">
+    <value>Varje dag</value>
+  </data>
+  <data name="SummaryEveryNDays" xml:space="preserve">
+    <value>Var {0}:e dag</value>
+  </data>
+  <data name="SummaryEveryNMonthsDay" xml:space="preserve">
+    <value>Var {0}:e månad den {1}</value>
+  </data>
+  <data name="SummaryEveryNMonthsWeekday" xml:space="preserve">
+    <value>Var {0}:e månad den {1} {2}</value>
+  </data>
+  <data name="SummaryEveryNWeeks" xml:space="preserve">
+    <value>Var {0}:e vecka på {1}</value>
+  </data>
+  <data name="SummaryMonthlyDay" xml:space="preserve">
+    <value>Varje månad den {0}</value>
+  </data>
+  <data name="SummaryMonthlyWeekday" xml:space="preserve">
+    <value>Varje månad den {0} {1}</value>
+  </data>
+  <data name="SummaryWeekly" xml:space="preserve">
+    <value>Varje vecka på {0}</value>
+  </data>
+  <data name="SummaryWithTimes" xml:space="preserve">
+    <value>{0} kl. {1}</value>
+  </data>
+  <data name="Times" xml:space="preserve">
+    <value>Larmtider</value>
+  </data>
+  <data name="TimesHelp" xml:space="preserve">
+    <value>Organisationens tid ({0}). Lägg till en tid för varje larm under dagen, till exempel 08:00, 13:00 och 19:00.</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Typ</value>
+  </data>
+  <data name="Units" xml:space="preserve">
+    <value>Enheter</value>
+  </data>
+  <data name="UseRunCard" xml:space="preserve">
+    <value>Använd även matchande larmplan</value>
+  </data>
+  <data name="UseRunCardHelp" xml:space="preserve">
+    <value>När larmet går ut, lägg till resurserna från den larmplan som matchar typ, prioritet och plats, även om den inte larmar automatiskt.</value>
+  </data>
+  <data name="WeekFirst" xml:space="preserve">
+    <value>första</value>
+  </data>
+  <data name="WeekFourth" xml:space="preserve">
+    <value>fjärde</value>
+  </data>
+  <data name="WeekLast" xml:space="preserve">
+    <value>sista</value>
+  </data>
+  <data name="WeekSecond" xml:space="preserve">
+    <value>andra</value>
+  </data>
+  <data name="WeekThird" xml:space="preserve">
+    <value>tredje</value>
+  </data>
+</root>

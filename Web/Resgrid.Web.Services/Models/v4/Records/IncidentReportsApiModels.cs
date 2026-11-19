@@ -38,6 +38,26 @@ namespace Resgrid.Web.Services.Models.v4.Records
 		public IncidentReportData Data { get; set; }
 	}
 
+	/// <summary>
+	/// A deleted report: it no longer reads back, so only its id and the configured recovery window are returned. The window
+	/// is when worker 43 first considers erasing the content, not a guaranteed erasure date: retention safeguards (legal
+	/// holds, recent activity) and the sweep schedule can delay it.
+	/// </summary>
+	public class IncidentReportDeleteResult : StandardApiResponseV4Base
+	{
+		public IncidentReportDeleteData Data { get; set; }
+	}
+
+	public class IncidentReportDeleteData
+	{
+		public string ReportId { get; set; }
+		/// <summary>
+		/// The configured recovery window in days: worker 43 does not consider erasing the content before it ends. Retention
+		/// safeguards and the sweep schedule can delay the erasure past it.
+		/// </summary>
+		public int PurgeAfterDays { get; set; }
+	}
+
 	/// <summary>Read-only NFIRS rendering and crosswalk for one Call (RMS-3); the model is the contract.</summary>
 	public class NfirsLegacyResult : StandardApiResponseV4Base
 	{

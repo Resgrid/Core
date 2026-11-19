@@ -292,6 +292,30 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task ApplyReleaseStatusesAsync_on_close_skips_a_unit_released_from_the_call_earlier()
+		{
+			_departmentSettingsService.Setup(x => x.GetUnitCallReleaseStatusTargetAsync(7)).ReturnsAsync(StatusTarget.FromStoredValue((int)UnitStateTypes.Available));
+			_unitsService.Setup(x => x.GetLastUnitStateByUnitIdAsync(11)).ReturnsAsync(new UnitState { UnitStateId = 1, UnitId = 11, State = (int)UnitStateTypes.OnScene });
+			_unitsService.Setup(x => x.GetLastUnitStateByUnitIdAsync(12)).ReturnsAsync(new UnitState { UnitStateId = 2, UnitId = 12, State = (int)UnitStateTypes.Responding });
+			var call = new Call
+			{
+				CallId = 40,
+				DepartmentId = 7,
+				UnitDispatches = new List<CallDispatchUnit>
+				{
+					new CallDispatchUnit { CallId = 40, UnitId = 11 },
+					new CallDispatchUnit { CallId = 40, UnitId = 12, ReleasedOn = new DateTime(2026, 11, 16, 14, 41, 0) }
+				}
+			};
+
+			await _service.ApplyReleaseStatusesAsync(call);
+
+			// The stood-down unit (12) got its release status then; whatever it is doing now is its next job.
+			_unitsService.Verify(x => x.SetUnitStateAsync(It.Is<UnitState>(u => u.UnitId == 11 && u.DestinationId == 40), 7, It.IsAny<CancellationToken>(), true), Times.Once);
+			_unitsService.Verify(x => x.SetUnitStateAsync(It.Is<UnitState>(u => u.UnitId == 12), It.IsAny<int>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Never);
+		}
+
+		[Test]
 		public async Task ApplyDispatchStatusesAsync_sets_dispatch_statuses_whatever_the_current_status()
 		{
 			_departmentSettingsService.Setup(x => x.GetUnitCallDispatchStatusTargetAsync(7)).ReturnsAsync(StatusTarget.FromStoredValue(-1));

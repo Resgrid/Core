@@ -27,6 +27,7 @@ namespace Resgrid.Tests.Services
 		private Mock<IFeatureToggleService> _featureToggleService;
 		private Mock<IDispatchRecommendationService> _dispatchRecommendationService;
 		private Mock<IEventAggregator> _eventAggregator;
+		private Mock<IRecurringCallsService> _recurringCallsService;
 		private PendingCallsService _service;
 		private static readonly DateTime ClaimedOn = new DateTime(2026, 10, 7, 9, 30, 0, DateTimeKind.Utc);
 
@@ -40,6 +41,7 @@ namespace Resgrid.Tests.Services
 			_featureToggleService = new Mock<IFeatureToggleService>();
 			_dispatchRecommendationService = new Mock<IDispatchRecommendationService>();
 			_eventAggregator = new Mock<IEventAggregator>();
+			_recurringCallsService = new Mock<IRecurringCallsService>();
 
 			_callsService.Setup(x => x.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync((Call c, CancellationToken _) => c);
@@ -57,7 +59,8 @@ namespace Resgrid.Tests.Services
 				.ReturnsAsync(new Dictionary<string, UserProfile>());
 
 			_service = new PendingCallsService(_callsService.Object, _queueService.Object, _userProfileService.Object,
-				_callDispatchStatusService.Object, _featureToggleService.Object, _dispatchRecommendationService.Object, _eventAggregator.Object);
+				_callDispatchStatusService.Object, _featureToggleService.Object, _dispatchRecommendationService.Object, _eventAggregator.Object,
+				_recurringCallsService.Object);
 		}
 
 		private static Call PendingCall(bool withRecipient = true)
@@ -112,6 +115,48 @@ namespace Resgrid.Tests.Services
 			_queueService.Verify(x => x.EnqueueCallBroadcastAsync(It.Is<CallQueueItem>(q => q.Call == call), It.IsAny<CancellationToken>()), Times.Once);
 			_eventAggregator.Verify(x => x.SendMessage(It.IsAny<CallAddedEvent>()), Times.Once);
 			_eventAggregator.Verify(x => x.SendMessage(It.IsAny<CallUpdatedEvent>()), Times.Never);
+		}
+
+		[Test]
+		public async Task Dispatching_a_held_recurring_call_tells_its_schedule_once()
+		{
+			var call = PendingCall();
+			call.RecurringCallId = 77;
+
+			var outcome = await _service.DispatchNowAsync(call, "dispatcher");
+
+			outcome.Should().Be(DispatchNowOutcome.Dispatched);
+			_recurringCallsService.Verify(x => x.OnCallDispatchedAsync(call, "dispatcher", It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
+		public async Task A_held_recurring_call_that_went_out_tells_its_schedule_even_when_its_statuses_fail()
+		{
+			var call = PendingCall(withRecipient: false);
+			call.RecurringCallId = 77;
+			call.UnitDispatches.Add(new CallDispatchUnit { CallId = 42, UnitId = 5 });
+			_callDispatchStatusService.Setup(x => x.ApplyDispatchStatusesAsync(It.IsAny<Call>(), It.IsAny<IEnumerable<int>>(), It.IsAny<IEnumerable<int>>(), It.IsAny<CancellationToken>()))
+				.ThrowsAsync(new OperationCanceledException("the request went away"));
+
+			Func<Task> dispatch = () => _service.DispatchNowAsync(call, "dispatcher");
+
+			await dispatch.Should().ThrowAsync<OperationCanceledException>();
+			_queueService.Verify(x => x.EnqueueCallBroadcastAsync(It.IsAny<CallQueueItem>(), It.IsAny<CancellationToken>()), Times.Once);
+			_recurringCallsService.Verify(x => x.OnCallDispatchedAsync(call, "dispatcher", CancellationToken.None), Times.Once,
+				"the page went out: the occurrence's Dispatched trigger runs and its alerts close whatever failed after it");
+		}
+
+		[Test]
+		public async Task A_call_no_schedule_created_or_one_that_did_not_go_out_does_not_tell_a_schedule()
+		{
+			await _service.DispatchNowAsync(PendingCall(), "dispatcher");
+
+			var unsent = PendingCall();
+			unsent.RecurringCallId = 77;
+			_queueService.Setup(x => x.EnqueueCallBroadcastAsync(It.IsAny<CallQueueItem>(), It.IsAny<CancellationToken>())).ReturnsAsync(false);
+			(await _service.DispatchNowAsync(unsent, "dispatcher")).Should().Be(DispatchNowOutcome.QueueFailed);
+
+			_recurringCallsService.Verify(x => x.OnCallDispatchedAsync(It.IsAny<Call>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
 
 		[Test]

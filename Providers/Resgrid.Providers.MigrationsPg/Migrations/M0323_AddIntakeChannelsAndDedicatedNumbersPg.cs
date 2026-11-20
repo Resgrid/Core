@@ -101,6 +101,8 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 			Execute.Sql("ALTER TABLE departmentphonenumbers ADD COLUMN IF NOT EXISTS addoninactivesince timestamp NULL;");
 
 			Execute.Sql("CREATE UNIQUE INDEX IF NOT EXISTS ux_departmentphonenumbers_number ON departmentphonenumbers (phonenumber) WHERE status IN (1, 2, 3);");
+			// One held (Provisioning / Active / Lapsed) number per department: two admins buying different numbers at once cannot both claim.
+			Execute.Sql("CREATE UNIQUE INDEX IF NOT EXISTS ux_departmentphonenumbers_departmentheld ON departmentphonenumbers (departmentid) WHERE status IN (1, 2, 3);");
 			Execute.Sql("CREATE INDEX IF NOT EXISTS ix_departmentphonenumbers_department ON departmentphonenumbers (departmentid, status);");
 
 			if (!Schema.Table("voiceintakesessions").Exists())
@@ -189,7 +191,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 			{
 				Execute.Sql(
 					"INSERT INTO featureflags (flagkey, name, description, category, isenabledglobally) " +
-					"SELECT '" + flag.Key + "', '" + flag.Name + "', '" + flag.Description + "', '" + flag.Category + "', false " +
+					"SELECT '" + Literal(flag.Key) + "', '" + Literal(flag.Name) + "', '" + Literal(flag.Description) + "', '" + Literal(flag.Category) + "', false " +
 					"WHERE NOT EXISTS (SELECT 1 FROM featureflags WHERE flagkey = '" + flag.Key + "');");
 
 				if (!flag.AiChild)
@@ -209,5 +211,8 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 						 "departmentphonenumbers", "intakemessages", "intakechannels" })
 				Execute.Sql($"DROP TABLE IF EXISTS {table};");
 		}
+
+		/// <summary>Seed text inside a single-quoted SQL literal ("the department's own number" must not end the literal).</summary>
+		public static string Literal(string value) => (value ?? string.Empty).Replace("'", "''");
 	}
 }

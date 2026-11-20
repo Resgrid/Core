@@ -170,5 +170,34 @@ namespace Resgrid.Tests.AiDestination
 			AiDestinationPrompt.Digest(Context(), "other-model").Should().NotBe(baseline);
 			baseline.Should().HaveLength(64);
 		}
+
+		[Test]
+		public void A_candidate_type_change_is_a_change_the_model_reads()
+		{
+			var context = Context();
+			var retyped = context with
+			{
+				Candidates = context.Candidates.Select(c => c.PoiId == 20 ? c with { TypeName = "Urgent Care" } : c).ToList()
+			};
+
+			AiDestinationPrompt.Digest(retyped, "m").Should().NotBe(AiDestinationPrompt.Digest(context, "m"), "the model is shown each candidate's type");
+		}
+
+		[Test]
+		public void A_reply_without_the_capability_list_is_rejected_but_an_empty_list_is_accepted()
+		{
+			var missing = Proposal("20");
+			missing.RequiredCapabilityIds = null;
+			Action act = () => AiDestinationPrompt.Validate(missing, Context());
+			act.Should().Throw<ArgumentException>();
+
+			// The field as a string (not an array) parses to no list, so it is rejected the same way.
+			var json = JsonSerializer.Serialize(new { recommended_poi_id = "20", required_capability_ids = "c1", rationale = "Level I trauma.", confidence = 0.7 });
+			var parsed = AiDestinationPrompt.Parse(new LlmResult(null, new[] { new LlmToolCall("t1", AiDestinationPrompt.ToolName, json) }, 1, 1, "tool_calls"));
+			Action malformed = () => AiDestinationPrompt.Validate(parsed, Context());
+			malformed.Should().Throw<ArgumentException>();
+
+			AiDestinationPrompt.Validate(Proposal("20"), Context()).RequiredCapabilityIds.Should().BeEmpty("an explicit [] means nothing points to a capability");
+		}
 	}
 }

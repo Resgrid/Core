@@ -22,6 +22,13 @@ namespace Resgrid.Model.Services
 		Task<Model.Plan> GetCurrentPlanForDepartmentAsync(int departmentId, bool byPassCache = true);
 
 		/// <summary>
+		/// The department's current plan only when the Billing API actually answered: its plan, or the free plan when it reports no
+		/// subscription (404) or billing is unconfigured. Null when the read failed (timeout, fault, empty payload), where
+		/// <see cref="GetCurrentPlanForDepartmentAsync"/> substitutes the free plan; for callers that act on a plan being lost.
+		/// </summary>
+		Task<Model.Plan> GetCurrentPlanForDepartmentIfKnownAsync(int departmentId);
+
+		/// <summary>
 		/// Gets the plan counts for department asynchronous.
 		/// </summary>
 		/// <param name="departmentId">The department identifier.</param>

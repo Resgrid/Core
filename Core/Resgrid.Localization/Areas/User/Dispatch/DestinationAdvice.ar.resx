@@ -166,6 +166,12 @@
   <data name="Outcome.DestinationGone" xml:space="preserve">
     <value>لم تعد الوجهة الموصى بها موجودة.</value>
   </data>
+  <data name="Outcome.DestinationClosed" xml:space="preserve">
+    <value>الوجهة الموصى بها مغلقة الآن. اطلب النصيحة مرة أخرى للحصول على نصيحة حالية.</value>
+  </data>
+  <data name="Outcome.CallChanged" xml:space="preserve">
+    <value>تغيّر البلاغ أثناء إجابة Enhanced AI. حاول مرة أخرى.</value>
+  </data>
   <data name="Outcome.NothingToApply" xml:space="preserve">
     <value>لا يوجد ما يُطبَّق: التوصية هي الإبقاء على الوجهة الحالية.</value>
   </data>

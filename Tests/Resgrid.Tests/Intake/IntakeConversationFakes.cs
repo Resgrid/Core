@@ -42,8 +42,18 @@ namespace Resgrid.Tests.Intake
 		public Task<IntakeConversation> GetLatestForCallAsync(int departmentId, int callId) =>
 			Task.FromResult(Copy(Rows.Where(r => r.DepartmentId == departmentId && r.CallId == callId).OrderBy(r => r.State).ThenByDescending(r => r.StartedOn).FirstOrDefault()));
 
-		public Task<List<IntakeConversation>> GetOpenIdleAsync(DateTime idleBefore, int take) =>
-			Task.FromResult(Rows.Where(r => r.IsOpen && r.LastActivityOn < idleBefore).OrderBy(r => r.LastActivityOn).Take(take).Select(Copy).ToList());
+		/// <summary>Runs right after the idle sweep's read, as a text arriving between the read and the close would.</summary>
+		public Action AfterIdleRead { get; set; }
+
+		/// <summary>The next closes throw, as a database that fails mid-STOP would.</summary>
+		public int FailingCloses { get; set; }
+
+		public Task<List<IntakeConversation>> GetOpenIdleAsync(DateTime idleBefore, int take)
+		{
+			var rows = Rows.Where(r => r.IsOpen && r.LastActivityOn < idleBefore).OrderBy(r => r.LastActivityOn).Take(take).Select(Copy).ToList();
+			AfterIdleRead?.Invoke();
+			return Task.FromResult(rows);
+		}
 
 		/// <summary>Call ids the test says ended (closed or deleted).</summary>
 		public readonly HashSet<int> EndedCalls = new HashSet<int>();
@@ -98,6 +108,12 @@ namespace Resgrid.Tests.Intake
 
 		public Task<bool> TryCloseAsync(string conversationId, int departmentId, string reason, bool optedOut, DateTime closedOn, CancellationToken cancellationToken = default)
 		{
+			if (FailingCloses > 0)
+			{
+				FailingCloses--;
+				throw new TimeoutException("database");
+			}
+
 			var row = Row(conversationId, departmentId);
 			if (row == null || !row.IsOpen)
 				return Task.FromResult(false);
@@ -108,8 +124,28 @@ namespace Resgrid.Tests.Intake
 			return Task.FromResult(true);
 		}
 
+		public Task<bool> TryCloseIdleAsync(string conversationId, int departmentId, string reason, DateTime idleBefore, DateTime closedOn, CancellationToken cancellationToken = default)
+		{
+			var row = Row(conversationId, departmentId);
+			if (row == null || !row.IsOpen || row.LastActivityOn >= idleBefore)
+				return Task.FromResult(false);
+			row.State = (int)IntakeConversationStates.Closed;
+			row.ClosedOn = closedOn;
+			row.CloseReason = reason;
+			return Task.FromResult(true);
+		}
+
+		/// <summary>The next activity writes throw, as a database that fails after the texter's note was saved would.</summary>
+		public int FailingTouches { get; set; }
+
 		public Task TouchAsync(string conversationId, int departmentId, DateTime lastActivityOn, DateTime? lastInboundOn, CancellationToken cancellationToken = default)
 		{
+			if (FailingTouches > 0)
+			{
+				FailingTouches--;
+				throw new TimeoutException("database");
+			}
+
 			var row = Row(conversationId, departmentId);
 			if (row != null)
 			{

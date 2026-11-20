@@ -542,7 +542,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!await CanReadInstanceAsync(instance))
 				return NotFound();
 
-			var result = await BuildProgressResult(instance);
+			var result = await BuildProgressResult(instance, await CanSeeRunLocationsAsync(instance));
 			ResponseHelper.PopulateV4ResponseData(result);
 			return Ok(result);
 		}
@@ -612,7 +612,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!await CanReadInstanceAsync(instance))
 				return Unauthorized();
 
-			var result = await BuildProgressResult(instance);
+			var result = await BuildProgressResult(instance, await CanSeeRunLocationsAsync(instance));
 			ResponseHelper.PopulateV4ResponseData(result);
 			return Ok(result);
 		}
@@ -821,6 +821,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!await CanReadInstanceAsync(instance))
 				return Unauthorized();
 
+			var canSeeRunLocations = await CanSeeRunLocationsAsync(instance);
 			var planStops = await _routeService.GetRouteStopsForPlanAsync(instance.RoutePlanId);
 			var instanceStops = await _routeService.GetInstanceStopsAsync(instanceId);
 			var instanceStopLookup = instanceStops.ToDictionary(s => s.RouteStopId);
@@ -860,11 +861,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 					data.Status = iStop.Status;
 					data.CheckInOn = iStop.CheckInOn;
 					data.CheckInType = iStop.CheckInType;
-					data.CheckInLatitude = iStop.CheckInLatitude;
-					data.CheckInLongitude = iStop.CheckInLongitude;
+					data.CheckInLatitude = canSeeRunLocations ? iStop.CheckInLatitude : null;
+					data.CheckInLongitude = canSeeRunLocations ? iStop.CheckInLongitude : null;
 					data.CheckOutOn = iStop.CheckOutOn;
-					data.CheckOutLatitude = iStop.CheckOutLatitude;
-					data.CheckOutLongitude = iStop.CheckOutLongitude;
+					data.CheckOutLatitude = canSeeRunLocations ? iStop.CheckOutLatitude : null;
+					data.CheckOutLongitude = canSeeRunLocations ? iStop.CheckOutLongitude : null;
 					data.DwellSeconds = iStop.DwellSeconds;
 					data.SkipReason = iStop.SkipReason;
 					data.InstanceNotes = iStop.Notes;
@@ -1287,7 +1288,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 		/// <summary>
 		/// Starts the call's route (M0322) for the unit working it, or returns the unit's running or paused run of this call. 409
-		/// (type route_in_progress, detail = the running instance id) when the unit runs another route.
+		/// (type route_in_progress, detail = the running instance id) when the unit runs another route; 400 when the call is closed
+		/// (only an active or pending call gets a run) or its route can no longer be followed.
 		/// </summary>
 		[HttpPost("StartCallRoute")]
 		[Authorize(Policy = ResgridResources.Call_View)]
@@ -1706,6 +1708,19 @@ namespace Resgrid.Web.Services.Controllers.v4
 		}
 
 		/// <summary>
+		/// Where a run's unit checked in and out is the unit's position. Route_View holders see it as before; a member who reads the
+		/// run only through its call (M0322) sees it when See Unit Locations allows them the run's unit (the rule the map and route
+		/// deviations apply), and gets the run without those points otherwise.
+		/// </summary>
+		private async Task<bool> CanSeeRunLocationsAsync(RouteInstance instance)
+		{
+			if (CanViewRoutes)
+				return true;
+
+			return instance != null && await _authorizationService.CanUserViewUnitLocationViaMatrixAsync(instance.UnitId, UserId, DepartmentId);
+		}
+
+		/// <summary>
 		/// Route_Update, or a run of a call's route (M0322) by a unit the caller can view (its crew) on a call the caller can view:
 		/// running the route a dispatcher put on a call is operational work, not route management.
 		/// </summary>
@@ -1784,7 +1799,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			};
 		}
 
-		private async Task<GetRouteProgressResult> BuildProgressResult(RouteInstance instance)
+		/// <param name="canSeeRunLocations">False masks where the unit checked in and out (see <see cref="CanSeeRunLocationsAsync"/>).</param>
+		private async Task<GetRouteProgressResult> BuildProgressResult(RouteInstance instance, bool canSeeRunLocations)
 		{
 			var instanceStops = await _routeService.GetInstanceStopsAsync(instance.RouteInstanceId);
 
@@ -1804,11 +1820,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 					Status = s.Status,
 					CheckInOn = s.CheckInOn,
 					CheckInType = s.CheckInType,
-					CheckInLatitude = s.CheckInLatitude,
-					CheckInLongitude = s.CheckInLongitude,
+					CheckInLatitude = canSeeRunLocations ? s.CheckInLatitude : null,
+					CheckInLongitude = canSeeRunLocations ? s.CheckInLongitude : null,
 					CheckOutOn = s.CheckOutOn,
-					CheckOutLatitude = s.CheckOutLatitude,
-					CheckOutLongitude = s.CheckOutLongitude,
+					CheckOutLatitude = canSeeRunLocations ? s.CheckOutLatitude : null,
+					CheckOutLongitude = canSeeRunLocations ? s.CheckOutLongitude : null,
 					DwellSeconds = s.DwellSeconds,
 					SkipReason = s.SkipReason,
 					Notes = s.Notes,

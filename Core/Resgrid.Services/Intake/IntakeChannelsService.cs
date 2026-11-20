@@ -266,14 +266,25 @@ namespace Resgrid.Services.Intake
 			return normalized;
 		}
 
-		/// <summary>One pattern per entry, trimmed, blank and duplicate entries dropped; null when none remain (anyone).</summary>
+		/// <summary>Longest allowed-sender pattern (the sender column's width: a longer one could never match).</summary>
+		public const int MaxSenderPatternLength = 256;
+
+		/// <summary>
+		/// One pattern per entry, trimmed, blank and duplicate entries dropped; null for a blank list (anyone). An entry longer than
+		/// <see cref="MaxSenderPatternLength"/> is refused ("InvalidSenders") rather than dropped: dropping the only entry would turn
+		/// a restricted channel into one anyone can use.
+		/// </summary>
 		public static string NormalizeSenders(string senders)
 		{
 			if (string.IsNullOrWhiteSpace(senders))
 				return null;
 
-			var patterns = senders.Split(new[] { ',', ';', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)
-				.Select(s => s.Trim()).Where(s => s.Length > 0 && s.Length <= 256).Distinct(StringComparer.OrdinalIgnoreCase).Take(200).ToList();
+			var entries = senders.Split(new[] { ',', ';', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)
+				.Select(s => s.Trim()).Where(s => s.Length > 0).ToList();
+			if (entries.Any(s => s.Length > MaxSenderPatternLength))
+				throw new IntakeChannelValidationException("InvalidSenders");
+
+			var patterns = entries.Distinct(StringComparer.OrdinalIgnoreCase).Take(200).ToList();
 			return patterns.Count == 0 ? null : string.Join(",", patterns);
 		}
 	}

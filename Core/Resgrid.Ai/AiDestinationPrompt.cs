@@ -228,10 +228,12 @@ public static class AiDestinationPrompt
             recommended = poiId == context.CurrentPoiId ? null : poiId;
         }
 
+        // The tool requires the list: an omitted or non-array field is a malformed reply, not "no capability needed" (an explicit [] is).
+        if (proposal.RequiredCapabilityIds == null) throw new ArgumentException("No capability list.");
         var aliases = CapabilityAliases(context);
         var byAlias = aliases.ToDictionary(a => a.Value, a => a.Key, StringComparer.OrdinalIgnoreCase);
         var capabilities = new List<string>();
-        foreach (var raw in proposal.RequiredCapabilityIds ?? new List<string>())
+        foreach (var raw in proposal.RequiredCapabilityIds)
         {
             var value = raw?.Trim() ?? "";
             var id = byAlias.TryGetValue(value, out var real) ? real : aliases.Keys.FirstOrDefault(k => string.Equals(k, value, StringComparison.OrdinalIgnoreCase));
@@ -278,7 +280,7 @@ public static class AiDestinationPrompt
             capabilities = context.Capabilities.Select(c => new[] { c.Id.ToLowerInvariant(), c.Name }),
             candidates = context.Candidates.OrderBy(c => c.PoiId).Select(c => new
             {
-                c.PoiId, c.Name, c.Availability, c.Tier, c.MeetsRules, c.AvailabilityNote,
+                c.PoiId, c.Name, c.TypeName, c.Availability, c.Tier, c.MeetsRules, c.AvailabilityNote,
                 caps = Sorted(c.CapabilityIds), down = Sorted(c.UnavailableCapabilityIds),
                 drive = c.DriveMinutes.HasValue ? (int?)((int)Math.Round(c.DriveMinutes.Value / 5.0) * 5) : null
             })

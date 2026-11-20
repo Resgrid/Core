@@ -244,6 +244,46 @@ namespace Resgrid.Tests.Intake
 		}
 
 		[Test]
+		public async Task made_up_tokens_are_never_counted_and_never_use_up_a_real_channels_allowance()
+		{
+			IntakeConfig.WebhookRequestsPerMinute = 1;
+
+			// A flood of unknown tokens: each is a 404 after its lookup, and none of them takes a place in the limiter.
+			for (var i = 0; i < 5; i++)
+				Status((await Signed("{\"message\":\"x\"}").Webhook("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ" + i, CancellationToken.None)).Result).Should().Be(404);
+
+			IntakeWebhookRateLimiter.TrackedCount.Should().Be(0);
+			Status((await Signed("{\"message\":\"real\"}").Webhook(Token, CancellationToken.None)).Result).Should().Be(200);
+			IntakeWebhookRateLimiter.TrackedCount.Should().Be(1, "only the real channel is counted");
+		}
+
+		[Test]
+		public async Task an_external_id_over_200_characters_is_refused_not_cut()
+		{
+			var longId = new string('A', 200) + "-second";
+			var body = "{\"message\":\"x\",\"externalId\":\"" + longId + "\"}";
+
+			Status((await Signed(body).Webhook(Token, CancellationToken.None)).Result).Should().Be(400);
+			_intake.Verify(i => i.ReceiveAsync(It.IsAny<IntakeEnvelope>(), It.IsAny<CancellationToken>()), Times.Never);
+
+			var exact = "{\"message\":\"x\",\"externalId\":\"" + new string('A', 200) + "\"}";
+			Status((await Signed(exact).Webhook(Token, CancellationToken.None)).Result).Should().Be(200);
+			_received.ProviderMessageId.Should().Be("ext:" + new string('A', 200));
+		}
+
+		[Test]
+		public async Task a_repeat_while_the_first_request_is_still_being_processed_is_conflict()
+		{
+			_intake.Setup(i => i.ReceiveAsync(It.IsAny<IntakeEnvelope>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new IntakeResult { State = IntakeMessageStates.Duplicate, Reason = IntakeResultReasons.DuplicateInProgress });
+
+			var result = await Signed("{\"message\":\"x\",\"externalId\":\"CAD-1\"}").Webhook(Token, CancellationToken.None);
+
+			Status(result.Result).Should().Be(409);
+			((IntakeWebhookResult)((ObjectResult)result.Result).Value).Status.Should().Be("InProgress");
+		}
+
+		[Test]
 		public void the_rate_limiter_window_resets_each_minute()
 		{
 			IntakeWebhookRateLimiter.TryAcquire("t", Now, 1).Should().BeTrue();

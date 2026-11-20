@@ -115,7 +115,7 @@ namespace Resgrid.Web.Tts.Services
 		/// without it, audio synthesised from the old output keeps being replayed after a
 		/// fix. Bump it whenever a change alters the preprocessed text of existing input.
 		/// </summary>
-		public const int OutputRevision = 2;
+		public const int OutputRevision = 3;
 
 		// ---------------------------------------------------------------
 		//  Sentence pacing. Piper synthesises one sentence per inference, and
@@ -354,9 +354,11 @@ namespace Resgrid.Web.Tts.Services
 
 				if (c is ',' or ';' or ':' && next == ' ')
 				{
-					// "3 2 3, 5 7 3" — a comma between digits groups a number; keep it whole.
+					// "3 2 3, 5 7 3" — a comma between the digit groups of a phone number keeps it whole. A comma in a list of
+					// numbers ("units 11, 12, 13") is a pause like any other and may take the break.
 					var afterSpace = i + 2 < sentence.Length ? sentence[i + 2] : '\0';
-					if (!(char.IsDigit(prev) && char.IsDigit(afterSpace)) && spokenLength >= MinSentenceFragmentLength)
+					var betweenDigits = char.IsDigit(prev) && char.IsDigit(afterSpace);
+					if ((!betweenDigits || !IsDigitGroupComma(sentence, i)) && spokenLength >= MinSentenceFragmentLength)
 					{
 						lastClause = i;
 					}
@@ -391,6 +393,23 @@ namespace Resgrid.Web.Tts.Services
 			}
 
 			return lastSpaceBeforeWord > 0 ? lastSpaceBeforeWord : lastSpace;
+		}
+
+		/// <summary>
+		/// True when the comma at <paramref name="comma"/> (followed by a space) joins the digit groups of a number read digit by
+		/// digit — "3 2 3, 5 7 3, 4 2 6 4" from <see cref="ExpandPhoneNumbers"/> — rather than separating the items of a list of
+		/// numbers ("11, 12, 13" or "1, 2, 3"). A group is single digits separated by spaces, so the digit before the comma follows
+		/// "digit space", or the digit after it is followed by "space digit".
+		/// </summary>
+		private static bool IsDigitGroupComma(string sentence, int comma)
+		{
+			var before = comma - 1;
+			var spacedBefore = before >= 2 && char.IsDigit(sentence[before]) && sentence[before - 1] == ' ' && char.IsDigit(sentence[before - 2]);
+
+			var after = comma + 2;
+			var spacedAfter = after + 2 < sentence.Length && char.IsDigit(sentence[after]) && sentence[after + 1] == ' ' && char.IsDigit(sentence[after + 2]);
+
+			return spacedBefore || spacedAfter;
 		}
 
 		private static bool StartsWithConjunction(string sentence, int start)
@@ -730,8 +749,12 @@ namespace Resgrid.Web.Tts.Services
 		[GeneratedRegex(@"(?<![\w.])(?:\+?1[\s.-])?\(?(?<area>\d{3})\)?[\s.-]?(?<exchange>\d{3})[\s.-](?<line>\d{4})(?!\w|[.,\-]\d)", RegexOptions.CultureInvariant)]
 		private static partial Regex PhoneNumberRegex();
 
-		/// <summary>Seven-digit local number written with a hyphen or dot: "573-4264".</summary>
-		[GeneratedRegex(@"(?<![\w.\-])(?<exchange>\d{3})[.\-](?<line>\d{4})(?!\w|[.,\-]\d)", RegexOptions.CultureInvariant)]
+		/// <summary>
+		/// Seven-digit local number written with a hyphen: "573-4264". Not with a dot: "117.1234" is far more often a decimal (a
+		/// longitude) than a phone number, and reading it in digit groups would drop its decimal point. A dotted full number with
+		/// its area code ("323.573.4264") is still read by <see cref="PhoneNumberRegex"/>.
+		/// </summary>
+		[GeneratedRegex(@"(?<![\w.\-])(?<exchange>\d{3})-(?<line>\d{4})(?!\w|[.,\-]\d)", RegexOptions.CultureInvariant)]
 		private static partial Regex LocalPhoneNumberRegex();
 
 		/// <summary>A comma inside a digit list ("1,2,3") — not a thousands separator (exactly three digits after).</summary>

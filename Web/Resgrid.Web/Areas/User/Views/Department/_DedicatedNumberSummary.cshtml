@@ -1,11 +1,19 @@
 @* Text Messaging Settings: the department's dedicated number (Dedicated Number add-on) and a link to manage it. Reads the
    department's number rows only (no billing call), so the settings page stays as fast as before. *@
 @inject Resgrid.Model.Services.IDepartmentPhoneNumbersService departmentPhoneNumbers
+@inject Resgrid.Model.Services.IDepartmentsService summaryDepartments
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.DedicatedNumber> dedicatedNumberLocalizer
 @{
 	var numbers = await departmentPhoneNumbers.GetAllForDepartmentAsync(ClaimsAuthorizationHelper.GetDepartmentId());
 	var activeNumber = numbers.FirstOrDefault(n => n.Status == (int)DepartmentPhoneNumberStatuses.Active);
 	var lapsedNumber = numbers.FirstOrDefault(n => n.Status == (int)DepartmentPhoneNumberStatuses.Lapsed);
+	// ReleaseAfter is UTC: shown as the department's date, as the Dedicated Number page shows it (DedicatedNumberView.LocalDate).
+	var releaseOn = "";
+	if (activeNumber == null && lapsedNumber?.ReleaseAfter != null)
+	{
+		var summaryDepartment = await summaryDepartments.GetDepartmentByIdAsync(lapsedNumber.DepartmentId, false);
+		releaseOn = (summaryDepartment == null ? lapsedNumber.ReleaseAfter.Value : lapsedNumber.ReleaseAfter.Value.TimeConverter(summaryDepartment)).ToString("D");
+	}
 }
 <div class="form-group" id="dedicatedNumberSummary">
 	<label class="col-sm-2 control-label">@dedicatedNumberLocalizer["TextSettingsTitle"]</label>
@@ -18,7 +26,7 @@
 			}
 			else if (lapsedNumber != null)
 			{
-				@string.Format(dedicatedNumberLocalizer["TextSettingsLapsed"].Value, lapsedNumber.PhoneNumber, lapsedNumber.ReleaseAfter.HasValue ? lapsedNumber.ReleaseAfter.Value.ToString("D") : "")
+				@string.Format(dedicatedNumberLocalizer["TextSettingsLapsed"].Value, lapsedNumber.PhoneNumber, releaseOn)
 			}
 			else
 			{

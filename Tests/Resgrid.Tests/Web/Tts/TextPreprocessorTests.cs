@@ -322,6 +322,8 @@ namespace Resgrid.Tests.Web.Tts
 		}
 
 		[TestCase("COORDINATES 34.1679204, -117.7046650", "COORDINATES 34.1 6 7 9 2 0 4, -117.7 0 4 6 6 5 0.")]
+		// A dotted seven-digit value is a decimal (a longitude), not a local phone number: its decimal point stays.
+		[TestCase("longitude 117.1234 east", "longitude 117.1 2 3 4 east.")]
 		[TestCase("CASE 2026-123-4567 OPEN", "CASE 2 0 2 6-123-4 5 6 7 OPEN.")]
 		public void Preprocess_DoesNotReadOtherNumbersAsPhoneNumbers(string input, string expected)
 		{
@@ -375,6 +377,19 @@ namespace Resgrid.Tests.Web.Tts
 
 			AssertEverySentenceFits(result);
 			result.Should().StartWith("Smoke reported from the second floor of the warehouse on the east side of the lot. crews from");
+		}
+
+		[Test]
+		public void Preprocess_BreaksALongListOfNumbersAtItsCommas()
+		{
+			// "11,12,13..." gets its commas spaced as a list; a list comma is a pause like any other, so the sentence can be broken
+			// there (only a phone number's digit-group commas are kept whole).
+			const string input = "Respond units 11,12,13,14,15,16,17,18,19,20,21,22,23.";
+
+			var result = _preprocessor.Preprocess(input, EnglishVoice);
+
+			AssertEverySentenceFits(result);
+			Words(result).Should().Equal(Words(input));
 		}
 
 		[Test]

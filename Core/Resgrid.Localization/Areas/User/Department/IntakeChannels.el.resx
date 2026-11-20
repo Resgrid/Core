@@ -181,6 +181,9 @@
   <data name="Error.Invalid" xml:space="preserve">
     <value>Δεν ήταν δυνατή η αποθήκευση του καναλιού. Ελέγξτε τις τιμές και δοκιμάστε ξανά.</value>
   </data>
+  <data name="Error.InvalidSenders" xml:space="preserve">
+    <value>Κάθε επιτρεπόμενος αποστολέας μπορεί να έχει έως 256 χαρακτήρες. Το κανάλι δεν αποθηκεύτηκε.</value>
+  </data>
   <data name="Type.Sms" xml:space="preserve">
     <value>Μήνυμα κειμένου (SMS)</value>
   </data>

@@ -225,6 +225,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			ApplyCallDetails(model, series, policy);
 			ApplyScheduleDetails(model, series);
 
+			// The route select is on the form only when there is a route to offer (or the schedule's own). A form posted without it
+			// (the route list could not be read) leaves the schedule's route as it was; a blank selection still clears it.
+			if (Request?.HasFormContentType == true && !Request.Form.ContainsKey(nameof(model.RoutePlanId)))
+				series.RoutePlanId = previousRoutePlanId;
+
 			// The unit picker offers only the units the member may see: stored units outside it are kept as they are, and only offered
 			// units can be added (the same rule as the picker, so a crafted post cannot add others).
 			series.DispatchUnitIds = RecurringCall.JoinIds(await MergeDispatchUnitsAsync(previousUnitIds, model.DispatchUnitIds));
@@ -986,18 +991,29 @@ namespace Resgrid.Web.Areas.User.Controllers
 					items.Add(new SelectListItem(callRoute.Plan.Name, callRoute.Plan.RoutePlanId,
 						selected != null && string.Equals(callRoute.Plan.RoutePlanId, selected, StringComparison.OrdinalIgnoreCase)));
 				}
-
-				if (selected != null && !items.Any(x => x.Selected))
-				{
-					var plan = await _routeService.GetRoutePlanByIdAsync(selected);
-					var name = plan != null && plan.DepartmentId == DepartmentId && !string.IsNullOrWhiteSpace(plan.Name) ? plan.Name : _localizer["RoutePlanDeleted"].Value;
-					items.Add(new SelectListItem(string.Format(_localizer["RoutePlanUnavailable"].Value, name), selected, true));
-				}
 			}
 			catch (Exception ex)
 			{
 				// Routes are optional on a schedule: the form still has to open without them.
 				Resgrid.Framework.Logging.LogException(ex, $"Listing the route plans for the recurring calls of department {DepartmentId}");
+			}
+
+			if (selected != null && !items.Any(x => x.Selected))
+			{
+				// The schedule's own route stays offered (and selected) even when the list or its name could not be read, so a save
+				// keeps it.
+				string name = null;
+				try
+				{
+					var plan = await _routeService.GetRoutePlanByIdAsync(selected);
+					name = plan != null && plan.DepartmentId == DepartmentId && !string.IsNullOrWhiteSpace(plan.Name) ? plan.Name : _localizer["RoutePlanDeleted"].Value;
+				}
+				catch (Exception ex)
+				{
+					Resgrid.Framework.Logging.LogException(ex, $"Reading the name of route plan {selected} for the recurring calls of department {DepartmentId}");
+				}
+
+				items.Add(new SelectListItem(string.Format(_localizer["RoutePlanUnavailable"].Value, name ?? _localizer["RoutePlan"].Value), selected, true));
 			}
 
 			return items;

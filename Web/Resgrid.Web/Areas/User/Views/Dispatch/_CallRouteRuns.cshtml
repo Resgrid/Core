@@ -10,7 +10,7 @@
         ? localizer["CallRouteRunStatus" + ((RouteInstanceStatus)status)].Value
         : status.ToString(System.Globalization.CultureInfo.InvariantCulture);
 }
-@if (Model.HasRoute)
+@if (Model.ShowsRouteRuns)
 {
     <h4>@localizer["CallRouteRunsLabel"]</h4>
     @if (!Model.RouteRuns.Any())

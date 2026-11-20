@@ -421,6 +421,40 @@ namespace Resgrid.Tests.Repositories
 		}
 
 		[Test]
+		public async Task Two_publishers_racing_on_one_call_leave_the_newest_advice_open_whatever_the_order()
+		{
+			var advices = Advices();
+
+			// Both inserted before either supersedes: the older one's supersede must not close the newer one, and vice versa.
+			var first = Advice(910, Base);
+			var second = Advice(910, Base.AddSeconds(2));
+			await advices.InsertAsync(first, CancellationToken.None);
+			await advices.InsertAsync(second, CancellationToken.None);
+			(await advices.SupersedeOpenAsync(DepartmentId, 910, second.AiDestinationAdviceId, Base.AddSeconds(3))).Should().Be(1, "the second supersedes the first");
+			(await advices.SupersedeOpenAsync(DepartmentId, 910, first.AiDestinationAdviceId, Base.AddSeconds(3))).Should().Be(0, "the first must not supersede the newer second");
+			(await advices.GetOpenForCallAsync(DepartmentId, 910)).AiDestinationAdviceId.Should().Be(second.AiDestinationAdviceId);
+
+			// The other order ends the same way.
+			var third = Advice(911, Base);
+			var fourth = Advice(911, Base.AddSeconds(2));
+			await advices.InsertAsync(third, CancellationToken.None);
+			await advices.InsertAsync(fourth, CancellationToken.None);
+			(await advices.SupersedeOpenAsync(DepartmentId, 911, third.AiDestinationAdviceId, Base.AddSeconds(3))).Should().Be(0);
+			(await advices.SupersedeOpenAsync(DepartmentId, 911, fourth.AiDestinationAdviceId, Base.AddSeconds(3))).Should().Be(1);
+			(await advices.GetOpenForCallAsync(DepartmentId, 911)).AiDestinationAdviceId.Should().Be(fourth.AiDestinationAdviceId);
+
+			// The same instant: the id decides, so exactly one stays open.
+			var tieA = Advice(912, Base);
+			var tieB = Advice(912, Base);
+			await advices.InsertAsync(tieA, CancellationToken.None);
+			await advices.InsertAsync(tieB, CancellationToken.None);
+			var changed = await advices.SupersedeOpenAsync(DepartmentId, 912, tieA.AiDestinationAdviceId, Base.AddSeconds(1))
+				+ await advices.SupersedeOpenAsync(DepartmentId, 912, tieB.AiDestinationAdviceId, Base.AddSeconds(1));
+			changed.Should().Be(1);
+			(await advices.GetOpenForCallAsync(DepartmentId, 912)).Should().NotBeNull();
+		}
+
+		[Test]
 		public async Task Every_advice_read_and_write_starts_at_the_department()
 		{
 			var advices = Advices();

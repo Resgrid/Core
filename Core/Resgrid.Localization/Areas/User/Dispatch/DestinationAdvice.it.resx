@@ -166,6 +166,12 @@
   <data name="Outcome.DestinationGone" xml:space="preserve">
     <value>La destinazione consigliata non esiste più.</value>
   </data>
+  <data name="Outcome.DestinationClosed" xml:space="preserve">
+    <value>La destinazione consigliata ora è chiusa. Chiedi di nuovo un consiglio aggiornato.</value>
+  </data>
+  <data name="Outcome.CallChanged" xml:space="preserve">
+    <value>La chiamata è cambiata mentre Enhanced AI rispondeva. Riprova.</value>
+  </data>
   <data name="Outcome.NothingToApply" xml:space="preserve">
     <value>Non c'è nulla da applicare: il consiglio è di mantenere la destinazione attuale.</value>
   </data>

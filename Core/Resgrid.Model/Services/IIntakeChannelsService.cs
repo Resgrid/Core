@@ -55,7 +55,7 @@ namespace Resgrid.Model.Services
 	/// <summary>A channel that cannot be saved; <see cref="Code"/> names the problem for the admin page.</summary>
 	public sealed class IntakeChannelValidationException : System.InvalidOperationException
 	{
-		/// <summary>"InvalidAddress", "AddressInUse", "InvalidType", "InvalidMode", "InvalidTemplate", "NameRequired", "NotFound".</summary>
+		/// <summary>"InvalidAddress", "AddressInUse", "InvalidType", "InvalidMode", "InvalidTemplate", "InvalidSenders", "NameRequired", "NotFound".</summary>
 		public string Code { get; }
 
 		public IntakeChannelValidationException(string code) : base("Intake channel: " + code)

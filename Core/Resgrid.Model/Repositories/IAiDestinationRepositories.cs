@@ -17,7 +17,11 @@ namespace Resgrid.Model.Repositories
 		/// <summary>The call's newest advice in any state (its input digest says whether the call changed since), or null.</summary>
 		Task<AiDestinationAdvice> GetLatestForCallAsync(int departmentId, int callId, CancellationToken cancellationToken = default);
 
-		/// <summary>Marks the call's Open advice other than <paramref name="exceptAdviceId"/> Superseded. Returns how many changed.</summary>
+		/// <summary>
+		/// Marks the call's Open advice created before <paramref name="exceptAdviceId"/> (CreatedOn, then id) Superseded; a newer open row
+		/// is left alone, so two publishers racing on one call always leave the newest advice open. A null id supersedes every Open row.
+		/// Returns how many changed.
+		/// </summary>
 		Task<int> SupersedeOpenAsync(int departmentId, int callId, string exceptAdviceId, DateTime nowUtc, CancellationToken cancellationToken = default);
 
 		/// <summary>

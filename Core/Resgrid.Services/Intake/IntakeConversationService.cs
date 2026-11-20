@@ -34,6 +34,15 @@ namespace Resgrid.Services.Intake
 		private const int SweepBatch = 500;
 		private static readonly int[] OpenCallStates = { (int)CallStates.Active, (int)CallStates.Pending };
 
+		/// <summary>
+		/// How long an Enhanced AI reply row may stay Queued while its turn runs (admission wait, model request, send); a Queued row older than
+		/// this belongs to a turn that died and no longer holds the texter's message.
+		/// </summary>
+		private static readonly TimeSpan AssistantReplyInFlight = TimeSpan.FromMinutes(3);
+
+		/// <summary>The Error prefix of an Enhanced AI reply row that never carried text (see <see cref="WithdrawAsync"/>).</summary>
+		public const string WithdrawnPrefix = "Withdrawn:";
+
 		private readonly IIntakeConversationsRepository _conversations;
 		private readonly IIntakeConversationMessagesRepository _messages;
 		private readonly IIntakeChannelsRepository _channels;
@@ -214,6 +223,10 @@ namespace Resgrid.Services.Intake
 		public async Task<bool> HandleParticipantMessageAsync(IntakeConversation conversation, string providerMessageId, string text, DateTime receivedOnUtc,
 			CancellationToken cancellationToken = default)
 		{
+			// Once the texter's words are on the call (their note), the text is this thread's: a later failure (activity, event, routers,
+			// the AI turn, the STOP's close) is logged and the text still counts as handled. Unhandled would make intake create a second
+			// pending call carrying the same text.
+			var recorded = false;
 			try
 			{
 				if (conversation == null)
@@ -225,21 +238,29 @@ namespace Resgrid.Services.Intake
 
 				var message = NewMessage(current, IntakeConversationMessageDirections.Inbound, IntakeConversationAuthors.Participant, null,
 					IntakeConversationMessageStatuses.Received, providerMessageId);
-				// A provider retry of the same text: already recorded, nothing more to do.
+				// A provider retry of the same text: already recorded. A STOP whose first delivery was recorded but whose close failed (the
+				// thread is still open here) finishes closing it now, so the opt-out never stays half done; anything else needs nothing more.
 				if (!await _messages.TryInsertInboundAsync(message, CancellationToken.None))
+				{
+					if (IntakeConversationTexts.IsOptOut(text))
+						await CloseCoreAsync(current, "OptedOut", true, message.CreatedOn);
 					return true;
+				}
 
 				var department = await SafeDepartmentAsync(current.DepartmentId);
 				if (IntakeConversationTexts.IsOptOut(text))
 				{
 					// STOP: nothing more is ever sent on this thread, and it ends. Twilio itself confirms the opt-out to the texter.
 					await LinkNoteAsync(message, await NoteAsync(current.CallId, IntakeConversationTexts.OptedOutNote, CallNoteSources.System, department?.ManagingUserId));
+					recorded = true;
+					// A close that fails here is finished by the provider's retry of the same STOP (the duplicate branch above).
 					await CloseCoreAsync(current, "OptedOut", true, message.CreatedOn);
 					return true;
 				}
 
 				await LinkNoteAsync(message, await NoteAsync(current.CallId, IntakeConversationTexts.CallerNotePrefix + Body(text), CallNoteSources.IntakeText,
 					department?.ManagingUserId));
+				recorded = message.CallNoteId.HasValue;
 				await _conversations.TouchAsync(current.IntakeConversationId, current.DepartmentId, message.CreatedOn, message.CreatedOn, CancellationToken.None);
 				current.LastActivityOn = message.CreatedOn;
 				current.LastInboundOn = message.CreatedOn;
@@ -256,8 +277,10 @@ namespace Resgrid.Services.Intake
 			}
 			catch (Exception ex)
 			{
-				Framework.Logging.LogException(ex, $"Intake conversation {conversation?.IntakeConversationId}: a reply from the caller could not be handled.");
-				return false;
+				Framework.Logging.LogException(ex, recorded
+					? $"Intake conversation {conversation?.IntakeConversationId}: a reply from the caller was noted on the call, but a later step failed."
+					: $"Intake conversation {conversation?.IntakeConversationId}: a reply from the caller could not be handled.");
+				return recorded;
 			}
 		}
 
@@ -293,6 +316,9 @@ namespace Resgrid.Services.Intake
 			var names = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 			foreach (var message in messages)
 			{
+				if (IsAssistantPlaceholder(message))
+					continue;
+
 				string authorName = null;
 				if (message.Author == (int)IntakeConversationAuthors.Dispatcher && !string.IsNullOrWhiteSpace(message.AuthorUserId))
 				{
@@ -364,9 +390,12 @@ namespace Resgrid.Services.Intake
 			if (blocked.HasValue)
 				return blocked.Value;
 
-			// A repeat connect by the connected dispatcher: no second text, no router call.
+			// A repeat connect by the connected dispatcher: no router call, and no second introduction unless the carrier refused the first.
 			if (conversation.Handler == (int)IntakeConversationHandlers.Dispatcher && SameUser(conversation.AssignedUserId, userId))
+			{
+				await EnsureIntroducedAsync(conversation, userId, await SafeDepartmentAsync(departmentId));
 				return IntakeConversationActionResults.Done;
+			}
 
 			var holder = string.IsNullOrWhiteSpace(conversation.AssignedUserId) ? null : conversation.AssignedUserId;
 			if (holder != null && !SameUser(holder, userId) && !takeOver)
@@ -420,6 +449,7 @@ namespace Resgrid.Services.Intake
 			if (blocked.HasValue)
 				return blocked.Value;
 
+			var justConnected = false;
 			if (!SameUser(conversation.AssignedUserId, userId))
 			{
 				// Only the connected dispatcher texts; with nobody connected, sending connects first (the texter is introduced).
@@ -434,14 +464,69 @@ namespace Resgrid.Services.Intake
 				blocked = Blocked(conversation);
 				if (blocked.HasValue)
 					return blocked.Value;
+
+				// Another dispatcher may have taken the thread over between this connect and the reload: then it is theirs to text.
+				if (!SameUser(conversation.AssignedUserId, userId))
+					return IntakeConversationActionResults.HeldByAnotherDispatcher;
+				justConnected = true;
 			}
 
 			var department = await SafeDepartmentAsync(departmentId);
+
+			// The texter hears who they are talking to before the dispatcher's first words (the connect just tried it, so no second try here).
+			if (!justConnected)
+				await EnsureIntroducedAsync(conversation, userId, department);
+
 			var message = await SendAsync(conversation, IntakeConversationAuthors.Dispatcher, userId, body,
 				IntakeConversationTexts.DispatcherNotePrefix(await FirstNameAsync(userId)), department);
 
 			await PublishAsync(conversation);
-			return message.Status == (int)IntakeConversationMessageStatuses.Sent ? IntakeConversationActionResults.Done : IntakeConversationActionResults.SendFailed;
+			return SendOutcome(message);
+		}
+
+		/// <summary>The action result for a dispatcher's text: sent, refused at the last moment (take-over, STOP, close), or failed at the carrier.</summary>
+		private static IntakeConversationActionResults SendOutcome(IntakeConversationMessage message)
+		{
+			if (message.Status == (int)IntakeConversationMessageStatuses.Sent)
+				return IntakeConversationActionResults.Done;
+
+			switch (message.Error)
+			{
+				case SendRefusals.NotConnected:
+					return IntakeConversationActionResults.HeldByAnotherDispatcher;
+				case SendRefusals.OptedOut:
+					return IntakeConversationActionResults.OptedOut;
+				case SendRefusals.Closed:
+					return IntakeConversationActionResults.Closed;
+				case SendRefusals.NotFound:
+					return IntakeConversationActionResults.NotFound;
+				default:
+					return IntakeConversationActionResults.SendFailed;
+			}
+		}
+
+		/// <summary>
+		/// The connected dispatcher's introduction ("You are now connected with …") reached the carrier, or is sent again: a repeat connect or
+		/// the dispatcher's next text retries an introduction the carrier refused, never one it accepted or may still be sending.
+		/// </summary>
+		private async Task EnsureIntroducedAsync(IntakeConversation conversation, string userId, Department department)
+		{
+			try
+			{
+				var since = conversation.AssignedOn ?? DateTime.MinValue;
+				var messages = await _messages.GetForConversationAsync(conversation.DepartmentId, conversation.IntakeConversationId) ?? new List<IntakeConversationMessage>();
+				var introduction = messages.LastOrDefault(m => m.Direction == (int)IntakeConversationMessageDirections.Outbound &&
+					m.Author == (int)IntakeConversationAuthors.System && SameUser(m.AuthorUserId, userId) && m.CreatedOn >= since);
+				if (introduction != null && introduction.Status != (int)IntakeConversationMessageStatuses.Failed)
+					return;
+
+				await SendAsync(conversation, IntakeConversationAuthors.System, userId, IntakeConversationTexts.Connected(await FirstNameAsync(userId)),
+					IntakeConversationTexts.ResgridNotePrefix, department);
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex, $"Intake conversation {conversation.IntakeConversationId}: the connected text could not be sent again.");
+			}
 		}
 
 		public async Task<IntakeConversationActionResults> ReleaseDispatcherAsync(int departmentId, string conversationId, string userId,
@@ -513,11 +598,12 @@ namespace Resgrid.Services.Intake
 					closed++;
 			}
 
+			// The close itself re-checks the idle cutoff: a text that arrives between this read and the close keeps the thread open.
 			var idleBefore = nowUtc.AddMinutes(-Math.Max(1, IntakeConfig.ConversationIdleCloseMinutes));
 			foreach (var conversation in await _conversations.GetOpenIdleAsync(idleBefore, SweepBatch) ?? new List<IntakeConversation>())
 			{
 				cancellationToken.ThrowIfCancellationRequested();
-				if (await SafeCloseAsync(conversation, "Idle", nowUtc))
+				if (await SafeCloseAsync(conversation, "Idle", nowUtc, idleBefore))
 					closed++;
 			}
 
@@ -568,20 +654,31 @@ namespace Resgrid.Services.Intake
 			var lastInbound = messages.LastOrDefault(m => m.Direction == (int)IntakeConversationMessageDirections.Inbound);
 			if (lastInbound == null)
 				return "NothingToAnswer";
-			if (messages.Any(m => m.Direction == (int)IntakeConversationMessageDirections.Outbound && m.CreatedOn > lastInbound.CreatedOn &&
-				(m.Author == (int)IntakeConversationAuthors.Assistant || m.Author == (int)IntakeConversationAuthors.Dispatcher)))
+			if (Answered(messages, lastInbound))
 				return "AlreadyAnswered";
 
 			var blocked = await _assistant.CheckAsync(conversation.DepartmentId);
 			if (blocked != null)
 			{
-				await FinishAssistantAsync(conversation, department);
+				// Earlier turns queued interim refreshes (no summary note); the final one still runs.
+				if (await FinishAssistantAsync(conversation, department) && conversation.AssistantTurns > 0)
+					await QueueRefreshAsync(conversation, true);
 				return blocked;
 			}
 
-			// The claim makes a redelivered or concurrent item a no-op, and counts toward the turn limit even when the model fails.
+			// The reply's row is written (Queued, no text) BEFORE the turn is claimed. A second worker for the same text (a redelivery, or one that
+			// loaded the thread after this claim) reads its messages after loading the thread, so it always finds this row and stands down
+			// (Answered: in flight); and a text that arrives while the model thinks is newer than this row, so it is never taken as answered by it.
+			var reply = NewMessage(conversation, IntakeConversationMessageDirections.Outbound, IntakeConversationAuthors.Assistant, null,
+				IntakeConversationMessageStatuses.Queued, null);
+			await _messages.InsertMessageAsync(reply, CancellationToken.None);
+
+			// The claim makes a concurrent item that loaded the same turn count a no-op, and counts toward the turn limit even when the model fails.
 			if (!await _conversations.TryClaimAssistantTurnAsync(conversation.IntakeConversationId, conversation.DepartmentId, conversation.AssistantTurns, CancellationToken.None))
+			{
+				await WithdrawAsync(reply, "Duplicate");
 				return "Duplicate";
+			}
 
 			var turn = conversation.AssistantTurns + 1;
 			var texts = await NoteTextsAsync(conversation, null, null, false, cancellationToken);
@@ -589,29 +686,57 @@ namespace Resgrid.Services.Intake
 				.Select(m => new IntakeAssistantLine { FromCaller = m.Direction == (int)IntakeConversationMessageDirections.Inbound, Text = texts[m.CallNoteId.Value] })
 				.ToList();
 
-			var answer = await _assistant.AskAsync(new IntakeAssistantRequest
+			IntakeAssistantAnswer answer;
+			try
 			{
-				DepartmentId = conversation.DepartmentId,
-				DepartmentName = department?.Name,
-				Lines = lines,
-				Turn = turn,
-				MaxTurns = max
-			}, cancellationToken) ?? new IntakeAssistantAnswer { Outcome = IntakeAssistantOutcomes.Unavailable };
+				answer = await _assistant.AskAsync(new IntakeAssistantRequest
+				{
+					DepartmentId = conversation.DepartmentId,
+					DepartmentName = department?.Name,
+					Lines = lines,
+					Turn = turn,
+					MaxTurns = max
+				}, cancellationToken) ?? new IntakeAssistantAnswer { Outcome = IntakeAssistantOutcomes.Unavailable };
+			}
+			catch
+			{
+				await WithdrawAsync(reply, "Failed");
+				throw;
+			}
 
 			// A dispatcher may have connected (or the texter stopped) while the model was thinking: then the AI stays silent.
 			var fresh = await LoadAsync(conversation.DepartmentId, conversation.IntakeConversationId);
 			if (fresh == null || !fresh.IsOpen || fresh.OptedOut || fresh.Handler != (int)IntakeConversationHandlers.Assistant)
+			{
+				await WithdrawAsync(reply, SendRefusals.Superseded);
 				return "Superseded";
+			}
+
+			// The texter wrote again while the model was thinking: this answer never saw that text, so it is not sent. A turn for the newest
+			// text runs instead (its own turn may have been the one this claim beat).
+			var newest = (await _messages.GetForConversationAsync(fresh.DepartmentId, fresh.IntakeConversationId) ?? new List<IntakeConversationMessage>())
+				.LastOrDefault(m => m.Direction == (int)IntakeConversationMessageDirections.Inbound);
+			if (newest != null && newest.IntakeConversationMessageId != lastInbound.IntakeConversationMessageId)
+			{
+				await WithdrawAsync(reply, SendRefusals.Superseded);
+				await QueueTurnAsync(fresh, newest.IntakeConversationMessageId);
+				return "Superseded";
+			}
 
 			if (answer.Outcome != IntakeAssistantOutcomes.Answered)
 			{
-				await FinishAssistantAsync(fresh, department);
+				await WithdrawAsync(reply, "NoReply");
+				// An earlier turn's refresh was an interim one (no summary note): the final refresh runs now that Enhanced AI stops.
+				if (await FinishAssistantAsync(fresh, department) && turn > 1)
+					await QueueRefreshAsync(fresh, true);
 				return answer.Outcome;
 			}
 
 			if (!string.IsNullOrWhiteSpace(answer.ReplyText))
-				await SendAsync(fresh, IntakeConversationAuthors.Assistant, null, Cap(answer.ReplyText.Trim(), Math.Max(1, IntakeConfig.ConversationMaxOutboundLength)),
+				await DeliverAsync(fresh, reply, Cap(answer.ReplyText.Trim(), Math.Max(1, IntakeConfig.ConversationMaxOutboundLength)),
 					IntakeConversationTexts.AssistantNotePrefix, department);
+			else
+				await WithdrawAsync(reply, "NoReply");
 
 			var complete = answer.Done || answer.WantsDispatcher || turn >= max;
 			if (complete)
@@ -628,12 +753,12 @@ namespace Resgrid.Services.Intake
 		/// Enhanced AI is done with the thread for good (done, turn limit, wants a dispatcher, unavailable): Unassisted, the turn count
 		/// exhausted so a later release does not restart it, and the closing text.
 		/// </summary>
-		private async Task FinishAssistantAsync(IntakeConversation conversation, Department department)
+		private async Task<bool> FinishAssistantAsync(IntakeConversation conversation, Department department)
 		{
 			var max = Math.Max(0, IntakeConfig.ConversationMaxAssistantTurns);
 			if (!await _conversations.TrySetHandlerAsync(conversation.IntakeConversationId, conversation.DepartmentId, (int)IntakeConversationHandlers.Assistant,
 				(int)IntakeConversationHandlers.Unassisted, true, max, CancellationToken.None))
-				return;
+				return false;
 
 			conversation.Handler = (int)IntakeConversationHandlers.Unassisted;
 			conversation.AssistantTurns = Math.Max(conversation.AssistantTurns, max);
@@ -648,6 +773,7 @@ namespace Resgrid.Services.Intake
 			}
 
 			await PublishAsync(conversation);
+			return true;
 		}
 
 		/// <summary>Enhanced AI when the channel uses it, the department may, and it has turns left; else a dispatcher (Unassisted).</summary>
@@ -671,14 +797,20 @@ namespace Resgrid.Services.Intake
 			}
 		}
 
+		/// <summary>
+		/// Queues the next Enhanced AI turn. When the queue refuses it (or fails, acceptance unknown) nothing would ever answer the texter's
+		/// message, so a dispatcher takes the thread instead (the closing text says one may reply). That is safe either way: a turn the queue did
+		/// take after all finds the thread Unassisted and does nothing.
+		/// </summary>
 		private async Task QueueTurnAsync(IntakeConversation conversation, string messageId)
 		{
 			if (!conversation.CallId.HasValue)
 				return;
 
+			bool queued;
 			try
 			{
-				await _queue.EnqueueAiDispatchTriageAsync(new AiDispatchQueueItem
+				queued = await _queue.EnqueueAiDispatchTriageAsync(new AiDispatchQueueItem
 				{
 					DepartmentId = conversation.DepartmentId,
 					CallId = conversation.CallId.Value,
@@ -691,6 +823,20 @@ namespace Resgrid.Services.Intake
 			catch (Exception ex)
 			{
 				Framework.Logging.LogException(ex, $"Intake conversation {conversation.IntakeConversationId}: the Enhanced AI turn could not be queued.");
+				queued = false;
+			}
+
+			if (queued)
+				return;
+
+			Framework.Logging.LogError($"Intake conversation {conversation.IntakeConversationId}: no Enhanced AI turn was queued; the thread goes to a dispatcher.");
+			try
+			{
+				await FinishAssistantAsync(conversation, await SafeDepartmentAsync(conversation.DepartmentId));
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex, $"Intake conversation {conversation.IntakeConversationId} could not be handed to a dispatcher.");
 			}
 		}
 
@@ -716,6 +862,8 @@ namespace Resgrid.Services.Intake
 					Channel = AiDispatchChannels.IntakeSms,
 					QueuedOnUtc = _clock.GetUtcNow().UtcDateTime,
 					NameIsPlaceholder = placeholder,
+					// As the first enrichment: the worker keeps a dispatcher's rename made after this point (the name no longer matches).
+					PlaceholderNameFingerprint = placeholder ? AiDispatch.AiDispatchEnrichmentService.PlaceholderFingerprint(call.DepartmentId, call.CallId, call.Name) : null,
 					IntakeConversationId = conversation.IntakeConversationId,
 					ConversationComplete = complete
 				}, CancellationToken.None);
@@ -732,19 +880,28 @@ namespace Resgrid.Services.Intake
 
 		/// <summary>
 		/// Records, notes and texts one outbound message from the master number: the delivery row goes Queued, then Sent (with the
-		/// carrier's id) or Failed. Nothing is sent to a texter who opted out.
+		/// carrier's id) or Failed. Nothing is sent to a texter who opted out. <paramref name="closingNotice"/>: the dispatcher's
+		/// "conversation ended" text, sent after the close.
 		/// </summary>
 		private async Task<IntakeConversationMessage> SendAsync(IntakeConversation conversation, IntakeConversationAuthors author, string authorUserId, string text,
-			string notePrefix, Department department)
+			string notePrefix, Department department, bool closingNotice = false)
 		{
 			var message = NewMessage(conversation, IntakeConversationMessageDirections.Outbound, author, authorUserId, IntakeConversationMessageStatuses.Queued, null);
 			await _messages.InsertMessageAsync(message, CancellationToken.None);
-			await LinkNoteAsync(message, await NoteAsync(conversation.CallId, notePrefix + text, CallNoteSources.System, authorUserId ?? department?.ManagingUserId));
+			return await DeliverAsync(conversation, message, text, notePrefix, department, closingNotice);
+		}
 
-			if (conversation.OptedOut)
+		/// <summary>Notes and texts an outbound message whose Queued delivery row is already recorded (<see cref="SendAsync"/>, or an Enhanced AI turn's reply).</summary>
+		private async Task<IntakeConversationMessage> DeliverAsync(IntakeConversation conversation, IntakeConversationMessage message, string text, string notePrefix,
+			Department department, bool closingNotice = false)
+		{
+			await LinkNoteAsync(message, await NoteAsync(conversation.CallId, notePrefix + text, CallNoteSources.System, message.AuthorUserId ?? department?.ManagingUserId));
+
+			var refusal = await SendRefusalAsync(conversation, message, closingNotice);
+			if (refusal != null)
 			{
 				message.Status = (int)IntakeConversationMessageStatuses.Failed;
-				message.Error = "OptedOut";
+				message.Error = refusal;
 			}
 			else
 			{
@@ -773,14 +930,110 @@ namespace Resgrid.Services.Intake
 			return message;
 		}
 
+		/// <summary>Why an outbound text is not handed to the carrier after all (the delivery row's Error).</summary>
+		private static class SendRefusals
+		{
+			public const string OptedOut = "OptedOut";
+			public const string Closed = "Closed";
+			public const string NotFound = "NotFound";
+			public const string NotConnected = "NotConnected";
+			public const string Superseded = "Superseded";
+		}
+
+		/// <summary>
+		/// The thread is read again immediately before the carrier is asked, after the row and the note were written: a STOP, a close, a
+		/// take-over or a dispatcher connecting that committed meanwhile wins over the message in hand (the snapshot the caller loaded can be
+		/// seconds old). Null = send. A closing notice goes out on the thread it just closed, unless the texter opted out. When the thread
+		/// cannot be read the caller's snapshot decides, as before.
+		/// </summary>
+		private async Task<string> SendRefusalAsync(IntakeConversation conversation, IntakeConversationMessage message, bool closingNotice)
+		{
+			if (conversation.OptedOut)
+				return SendRefusals.OptedOut;
+
+			IntakeConversation stored;
+			try
+			{
+				stored = await _conversations.GetByIdAsync(conversation.IntakeConversationId);
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex, $"Intake conversation {conversation.IntakeConversationId} could not be read again before a send.");
+				return null;
+			}
+
+			if (stored == null || stored.DepartmentId != conversation.DepartmentId)
+				return SendRefusals.NotFound;
+			if (stored.OptedOut)
+			{
+				conversation.OptedOut = true;
+				return SendRefusals.OptedOut;
+			}
+			if (closingNotice)
+				return null;
+			if (!stored.IsOpen)
+				return SendRefusals.Closed;
+
+			// Enhanced AI speaks only while it holds the thread; a dispatcher (and their introduction) only while connected.
+			if (message.Author == (int)IntakeConversationAuthors.Assistant && stored.Handler != (int)IntakeConversationHandlers.Assistant)
+				return SendRefusals.Superseded;
+			if ((message.Author == (int)IntakeConversationAuthors.Dispatcher || message.Author == (int)IntakeConversationAuthors.System && !string.IsNullOrWhiteSpace(message.AuthorUserId)) &&
+				!SameUser(stored.AssignedUserId, message.AuthorUserId))
+				return SendRefusals.NotConnected;
+
+			return null;
+		}
+
+		/// <summary>
+		/// An Enhanced AI reply row that will carry no text (duplicate claim, superseded, no question): Failed with a "Withdrawn:" reason. It never
+		/// counts as an answer and the conversation view leaves it out.
+		/// </summary>
+		private async Task WithdrawAsync(IntakeConversationMessage message, string why)
+		{
+			message.Status = (int)IntakeConversationMessageStatuses.Failed;
+			message.Error = WithdrawnPrefix + why;
+			try
+			{
+				await _messages.UpdateDeliveryAsync(message.IntakeConversationMessageId, message.DepartmentId, message.Status, null, message.Error, null, CancellationToken.None);
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex, $"Intake conversation message {message.IntakeConversationMessageId} could not be withdrawn.");
+			}
+		}
+
+		/// <summary>An Enhanced AI reply row still being prepared (Queued, no text yet) or withdrawn: not part of what anyone reads.</summary>
+		private static bool IsAssistantPlaceholder(IntakeConversationMessage message) =>
+			message.Direction == (int)IntakeConversationMessageDirections.Outbound && message.Author == (int)IntakeConversationAuthors.Assistant &&
+			!message.CallNoteId.HasValue && (message.Status == (int)IntakeConversationMessageStatuses.Queued ||
+				message.Error != null && message.Error.StartsWith(WithdrawnPrefix, StringComparison.Ordinal));
+
+		/// <summary>
+		/// The texter's message was answered: a reply from Enhanced AI or a dispatcher after it reached the carrier (Sent; a failed text answered
+		/// nothing), or Enhanced AI is answering it right now (its reply row, written before its turn was claimed, is younger than
+		/// <see cref="AssistantReplyInFlight"/>; an older Queued row belongs to a turn that died).
+		/// </summary>
+		private bool Answered(IEnumerable<IntakeConversationMessage> messages, IntakeConversationMessage inbound)
+		{
+			var now = _clock.GetUtcNow().UtcDateTime;
+			return messages.Any(m => m.Direction == (int)IntakeConversationMessageDirections.Outbound && m.CreatedOn > inbound.CreatedOn &&
+				(m.Author == (int)IntakeConversationAuthors.Assistant || m.Author == (int)IntakeConversationAuthors.Dispatcher) &&
+				(m.Status == (int)IntakeConversationMessageStatuses.Sent ||
+				 m.Author == (int)IntakeConversationAuthors.Assistant && m.Status == (int)IntakeConversationMessageStatuses.Queued && now - m.CreatedOn < AssistantReplyInFlight));
+		}
+
 		/// <summary>
 		/// Closes the thread when it is still open (exactly one caller wins), optionally texting the closing message (<paramref name="notifyUserId"/>
 		/// non-null), then the event and every router's OnConversationClosedAsync, once.
 		/// </summary>
-		private async Task<bool> CloseCoreAsync(IntakeConversation conversation, string reason, bool optedOut, DateTime now, string notifyUserId = null)
+		private async Task<bool> CloseCoreAsync(IntakeConversation conversation, string reason, bool optedOut, DateTime now, string notifyUserId = null,
+			DateTime? idleBefore = null)
 		{
 			var why = Cap(reason, 200);
-			if (!await _conversations.TryCloseAsync(conversation.IntakeConversationId, conversation.DepartmentId, why, optedOut, now, CancellationToken.None))
+			var closed = idleBefore.HasValue
+				? await _conversations.TryCloseIdleAsync(conversation.IntakeConversationId, conversation.DepartmentId, why, idleBefore.Value, now, CancellationToken.None)
+				: await _conversations.TryCloseAsync(conversation.IntakeConversationId, conversation.DepartmentId, why, optedOut, now, CancellationToken.None);
+			if (!closed)
 				return false;
 
 			conversation.State = (int)IntakeConversationStates.Closed;
@@ -794,7 +1047,7 @@ namespace Resgrid.Services.Intake
 				{
 					var department = await SafeDepartmentAsync(conversation.DepartmentId);
 					await SendAsync(conversation, IntakeConversationAuthors.System, notifyUserId.Length == 0 ? null : notifyUserId,
-						IntakeConversationTexts.Closed(department?.Name), IntakeConversationTexts.ResgridNotePrefix, department);
+						IntakeConversationTexts.Closed(department?.Name), IntakeConversationTexts.ResgridNotePrefix, department, closingNotice: true);
 				}
 				catch (Exception ex)
 				{
@@ -810,11 +1063,11 @@ namespace Resgrid.Services.Intake
 			return true;
 		}
 
-		private async Task<bool> SafeCloseAsync(IntakeConversation conversation, string reason, DateTime now)
+		private async Task<bool> SafeCloseAsync(IntakeConversation conversation, string reason, DateTime now, DateTime? idleBefore = null)
 		{
 			try
 			{
-				return await CloseCoreAsync(conversation, reason, false, now);
+				return await CloseCoreAsync(conversation, reason, false, now, null, idleBefore);
 			}
 			catch (Exception ex)
 			{

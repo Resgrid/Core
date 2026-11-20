@@ -149,25 +149,27 @@ namespace Resgrid.Services.AiDestination
 
 		#region Triggers
 
-		public async Task RequestReviewAsync(int departmentId, int callId, AiDestinationReviewTriggers trigger, CancellationToken cancellationToken = default(CancellationToken))
+		public async Task<bool> RequestReviewAsync(int departmentId, int callId, AiDestinationReviewTriggers trigger, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			try
 			{
 				if (departmentId <= 0 || callId <= 0 || !AiDestinationConfig.Enabled)
-					return;
+					return true;
 				if (await CheckAsync(departmentId, false) != null)
-					return;
+					return true;
 
 				var call = await _calls.GetCallByIdAsync(callId);
 				if (!IsOpen(call, departmentId) || !await IsReviewableAsync(call))
-					return;
+					return true;
 
 				await _reviews.QueueAsync(departmentId, callId, trigger, UtcNow, CancellationToken.None);
+				return true;
 			}
 			catch (Exception ex) when (!(ex is OperationCanceledException && cancellationToken.IsCancellationRequested))
 			{
-				// A trigger rides on a note or a call save; it must never fail them.
+				// A trigger rides on a note or a call save; it must never fail them. False tells the caller the next trigger should retry.
 				Framework.Logging.LogException(ex, $"AI destination review could not be queued for call {callId}.");
+				return false;
 			}
 		}
 
@@ -246,7 +248,7 @@ namespace Resgrid.Services.AiDestination
 			if (!AiDestinationConfig.Enabled)
 				return result;
 
-			var lease = TimeSpan.FromSeconds(Math.Clamp(AiDestinationConfig.LeaseSeconds, 60, 3600));
+			var lease = ReviewLease();
 			var debounce = TimeSpan.FromSeconds(Math.Clamp(AiDestinationConfig.DebounceSeconds, 0, 3600));
 			var due = await _reviews.GetDueAsync(nowUtc - debounce, nowUtc - lease, Math.Clamp(AiDestinationConfig.MaxReviewsPerPass, 1, 200), cancellationToken);
 
@@ -303,6 +305,20 @@ namespace Resgrid.Services.AiDestination
 			return result;
 		}
 
+		/// <summary>Slack on top of the admission wait and the model request: reading the call, ranking destinations, writing the advice.</summary>
+		private const int LeaseSlackSeconds = 120;
+
+		/// <summary>
+		/// How long a claim is held before another worker may take the review. Never shorter than the longest one review may run (the
+		/// admission wait plus the model request, both bounded, plus slack), so a configured lease below that cannot let a second worker
+		/// reclaim a review that is still running and publish its advice and alerts twice. A stopped worker's claim still expires.
+		/// </summary>
+		public static TimeSpan ReviewLease()
+		{
+			var longestRun = Math.Clamp(AiDestinationConfig.AdmissionWaitSeconds, 0, 900) + Math.Clamp(AiDestinationConfig.RequestTimeoutSeconds, 5, 300) + LeaseSlackSeconds;
+			return TimeSpan.FromSeconds(Math.Max(Math.Clamp(AiDestinationConfig.LeaseSeconds, 60, 3600), longestRun));
+		}
+
 		private async Task<string> ReviewAsync(AiDestinationReview review, CancellationToken cancellationToken)
 		{
 			var blocked = await CheckAsync(review.DepartmentId, false);
@@ -321,6 +337,7 @@ namespace Resgrid.Services.AiDestination
 		private async Task<AiDestinationAdviceOutcome> AdviseAsync(Call call, AiDestinationReviewTriggers trigger, bool onDemand, CancellationToken cancellationToken)
 		{
 			var departmentId = call.DepartmentId;
+			var asked = CallInputsKey(call);
 			var inputs = await BuildInputsAsync(call, cancellationToken);
 			if (inputs.Outcome != null)
 				return AiDestinationAdviceOutcome.Of(inputs.Outcome, onDemand ? await _advices.GetOpenForCallAsync(departmentId, call.CallId) : null);
@@ -346,6 +363,14 @@ namespace Resgrid.Services.AiDestination
 				AiDestinationPrompt.Digest(inputs.Context with { CurrentPoiId = latest.CurrentPoiId }, AiConfig.Model) == latest.InputDigest)
 				return AiDestinationAdviceOutcome.Of(AiDestinationOutcomes.Unchanged);
 
+			// The availability answer is remembered for minutes per process; Advanced Data Protection enrolled since then must still keep
+			// call text away from inference (plan D9). The policy read is cached in Redis and invalidated on every protection change.
+			if (await _protection.ShouldEncryptNewWritesAsync(departmentId))
+			{
+				_availability.Remove(departmentId);
+				return AiDestinationAdviceOutcome.Of(AiDestinationOutcomes.ProtectionUnsupported, onDemand ? await _advices.GetOpenForCallAsync(departmentId, call.CallId) : null);
+			}
+
 			var answer = await AskAsync(departmentId, inputs.Context, onDemand, cancellationToken);
 			if (answer.Outcome != null)
 				return AiDestinationAdviceOutcome.Of(answer.Outcome, onDemand ? await _advices.GetOpenForCallAsync(departmentId, call.CallId) : null);
@@ -354,6 +379,11 @@ namespace Resgrid.Services.AiDestination
 			var current = await _calls.GetCallByIdAsync(call.CallId);
 			if (!IsOpen(current, departmentId))
 				return AiDestinationAdviceOutcome.Of(AiDestinationOutcomes.CallNotOpen);
+
+			// The answer is about the call as it was asked; if what it was asked about changed meanwhile (a fall became a stroke), it must not
+			// be saved or announced against the new call. That edit queued a review of its own, so the current call is advised next.
+			if (CallInputsKey(current) != asked)
+				return AiDestinationAdviceOutcome.Of(AiDestinationOutcomes.CallChanged, onDemand ? await _advices.GetOpenForCallAsync(departmentId, call.CallId) : null);
 
 			var decision = answer.Decision;
 			var currentPoiId = current.DestinationPoiId is > 0 ? current.DestinationPoiId : null;
@@ -508,7 +538,7 @@ namespace Resgrid.Services.AiDestination
 			}
 
 			var now = UtcNow;
-			var candidates = SelectCandidates(ranked.Where(d => d?.Poi != null).ToList(), Math.Clamp(AiDestinationConfig.MaxCandidates, 1, 25))
+			var candidates = SelectCandidates(ranked.Where(d => d?.Poi != null).ToList(), Math.Clamp(AiDestinationConfig.MaxCandidates, 1, 25), now)
 				.Select(d => ToCandidate(d.Poi, d.Status, d.Tier, d.MeetsRequirements, d.TravelSeconds, d.DistanceMeters, catalog, now)).ToList();
 
 			var currentPoiId = call.DestinationPoiId is > 0 ? call.DestinationPoiId : null;
@@ -571,19 +601,24 @@ namespace Resgrid.Services.AiDestination
 
 		/// <summary>
 		/// The top of the ranking, plus up to five farther destinations that offer a capability none of those do, so a specialty centre
-		/// (a Level I trauma or burn centre past the nearest hospitals) is always on the table.
+		/// (a Level I trauma or burn centre past the nearest hospitals) is always on the table. "Offer" means can provide it at
+		/// <paramref name="nowUtc"/>: a capability a destination reports unavailable, or any capability of a closed destination, does not
+		/// count, so the nearest trauma centre on trauma bypass does not hide the next one that can take the patient.
 		/// </summary>
-		public static List<NearestDestination> SelectCandidates(List<NearestDestination> ranked, int take)
+		public static List<NearestDestination> SelectCandidates(List<NearestDestination> ranked, int take, DateTime nowUtc)
 		{
+			IEnumerable<string> Usable(NearestDestination d) => d.Tier == DestinationTiers.Closed ? Enumerable.Empty<string>()
+				: (d.Poi.CapabilityIds ?? new List<string>()).Where(id => PoiAvailabilityRules.CanProvide(d.Poi.Availability, id, nowUtc));
+
 			var selected = ranked.Take(take).ToList();
-			var offered = new HashSet<string>(selected.SelectMany(d => d.Poi.CapabilityIds ?? new List<string>()), StringComparer.OrdinalIgnoreCase);
+			var offered = new HashSet<string>(selected.SelectMany(Usable), StringComparer.OrdinalIgnoreCase);
 			foreach (var extra in ranked.Skip(take))
 			{
 				if (selected.Count >= take + 5)
 					break;
 
-				var adds = (extra.Poi.CapabilityIds ?? new List<string>()).Where(id => !offered.Contains(id)).ToList();
-				if (adds.Count == 0 || extra.Tier == DestinationTiers.Closed)
+				var adds = Usable(extra).Where(id => !offered.Contains(id)).ToList();
+				if (adds.Count == 0)
 					continue;
 
 				selected.Add(extra);
@@ -706,6 +741,12 @@ namespace Resgrid.Services.AiDestination
 			if (poi == null)
 				return AiDestinationAdviceOutcome.Of(AiDestinationOutcomes.DestinationGone, advice);
 
+			// The model is never allowed to recommend a closed destination; one that closed since the advice was written is not applied
+			// with one press either. The advice stays open (a person may still pick the destination on the call form, or ask again).
+			var availability = (await _mapping.GetCurrentPoiAvailabilitiesAsync(departmentId))?.GetValueOrDefault(poi.PoiId);
+			if (PoiAvailabilityRules.StatusOf(availability, UtcNow) == PoiAvailabilityStatuses.Closed)
+				return AiDestinationAdviceOutcome.Of(AiDestinationOutcomes.DestinationClosed, advice);
+
 			var call = await _calls.GetCallByIdAsync(advice.CallId);
 			if (!IsOpen(call, departmentId))
 				return AiDestinationAdviceOutcome.Of(AiDestinationOutcomes.CallNotOpen, advice);
@@ -722,10 +763,20 @@ namespace Resgrid.Services.AiDestination
 				CallLocations.NormalizeDestination(call);
 				call = await _calls.SaveCallAsync(call, CancellationToken.None);
 			}
-			catch
+			catch (Exception saveError)
 			{
-				await _advices.TryTransitionAsync(departmentId, advice.AiDestinationAdviceId, AiDestinationAdviceStates.Applied, AiDestinationAdviceStates.Open, null, null, CancellationToken.None);
-				throw;
+				// The save writes the destination before its later steps (protected writes, projections, location history), and nothing
+				// rolls it back when one of those throws. The advice must follow what the call actually stores: reopen it only when the
+				// destination did not stick; when it did, the apply happened, so it is noted and announced like any other.
+				var stored = await StoredCallAfterFailedSaveAsync(advice.CallId);
+				if (stored?.DestinationPoiId != poi.PoiId)
+				{
+					await _advices.TryTransitionAsync(departmentId, advice.AiDestinationAdviceId, AiDestinationAdviceStates.Applied, AiDestinationAdviceStates.Open, null, null, CancellationToken.None);
+					throw;
+				}
+
+				Framework.Logging.LogException(saveError, $"Applying AI destination advice {advice.AiDestinationAdviceId}: the call save failed after the destination was stored; the advice stays applied.");
+				call = stored;
 			}
 
 			advice.State = (int)AiDestinationAdviceStates.Applied;
@@ -738,6 +789,20 @@ namespace Resgrid.Services.AiDestination
 			await RaiseAdviceEventAsync(advice);
 
 			return AiDestinationAdviceOutcome.Of(AiDestinationOutcomes.Applied, advice);
+		}
+
+		/// <summary>The call as stored after a failed save, or null when even that read fails (then the save is treated as not stored).</summary>
+		private async Task<Call> StoredCallAfterFailedSaveAsync(int callId)
+		{
+			try
+			{
+				return await _calls.GetCallByIdAsync(callId, true);
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex, $"AI destination advice: call {callId} could not be re-read after a failed save.");
+				return null;
+			}
 		}
 
 		public async Task<AiDestinationAdviceOutcome> DismissAsync(int departmentId, string adviceId, string userId, string reason, CancellationToken cancellationToken = default(CancellationToken))
@@ -888,6 +953,13 @@ namespace Resgrid.Services.AiDestination
 		}
 
 		#endregion Announcing
+
+		/// <summary>
+		/// The call fields the model's answer depends on (type, priority, nature, note, location). The destination is left out on purpose:
+		/// a destination set while the model was answering is what the answer is measured against, not a reason to discard it.
+		/// </summary>
+		private static string CallInputsKey(Call call) =>
+			string.Join("\u001f", call.Priority, call.CallTypeId, call.Type, call.NatureOfCall, call.Notes, call.GeoLocationData);
 
 		private static bool IsOpen(Call call, int departmentId) =>
 			call != null && call.DepartmentId == departmentId && !call.IsDeleted &&

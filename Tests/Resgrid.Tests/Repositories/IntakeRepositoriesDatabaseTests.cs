@@ -100,14 +100,19 @@ namespace Resgrid.Tests.Repositories
 					await setup.ExecuteAsync("CREATE TABLE planaddons (planaddonid varchar(36) PRIMARY KEY, addontype int NOT NULL, cost numeric NOT NULL, externalid citext, testexternalid citext);" +
 						"CREATE TABLE featureflags (featureflagid serial PRIMARY KEY, flagkey citext NOT NULL, name citext, description citext, category citext, isenabledglobally boolean NOT NULL);" +
 						"CREATE TABLE featureflagprerequisites (featureflagid int NOT NULL, requiredfeatureflagid int NOT NULL, requiredvalue citext);" +
-						"INSERT INTO featureflags (flagkey, name, isenabledglobally) VALUES ('Ai.Enhanced', 'Enhanced AI', false);");
+						"INSERT INTO featureflags (flagkey, name, isenabledglobally) VALUES ('Ai.Enhanced', 'Enhanced AI', false);" +
+						// The Calls columns the abandoned-claim lookup reads (types as M0001 creates them).
+						"CREATE TABLE calls (callid int PRIMARY KEY, departmentid int NOT NULL, sourceidentifier citext, callsource integer NOT NULL DEFAULT 0, " +
+						"loggedon timestamp without time zone NOT NULL, isdeleted boolean NOT NULL);");
 				}
 				else
 				{
 					await setup.ExecuteAsync("CREATE TABLE [PlanAddons] ([PlanAddonId] nvarchar(36) PRIMARY KEY, [AddonType] int NOT NULL, [Cost] decimal(18,2) NOT NULL, [ExternalId] nvarchar(200), [TestExternalId] nvarchar(200));" +
 						"CREATE TABLE [FeatureFlags] ([FeatureFlagId] int IDENTITY PRIMARY KEY, [FlagKey] nvarchar(200) NOT NULL, [Name] nvarchar(200), [Description] nvarchar(max), [Category] nvarchar(100), [IsEnabledGlobally] bit NOT NULL);" +
 						"CREATE TABLE [FeatureFlagPrerequisites] ([FeatureFlagId] int NOT NULL, [RequiredFeatureFlagId] int NOT NULL, [RequiredValue] nvarchar(200));" +
-						"INSERT INTO [FeatureFlags] ([FlagKey], [Name], [IsEnabledGlobally]) VALUES ('Ai.Enhanced', 'Enhanced AI', 0);");
+						"INSERT INTO [FeatureFlags] ([FlagKey], [Name], [IsEnabledGlobally]) VALUES ('Ai.Enhanced', 'Enhanced AI', 0);" +
+						"CREATE TABLE [Calls] ([CallId] int PRIMARY KEY, [DepartmentId] int NOT NULL, [SourceIdentifier] nvarchar(max) NULL, [CallSource] int NOT NULL DEFAULT 0, " +
+						"[LoggedOn] datetime2 NOT NULL, [IsDeleted] bit NOT NULL);");
 				}
 			}
 
@@ -141,7 +146,7 @@ namespace Resgrid.Tests.Repositories
 		public async Task Empty_the_tables()
 		{
 			await using var database = Connect(_connection);
-			foreach (var table in new[] { "IntakeMessages", "IntakeChannels", "VoiceIntakeSessions" })
+			foreach (var table in new[] { "IntakeMessages", "IntakeChannels", "VoiceIntakeSessions", "Calls" })
 				await database.ExecuteAsync("DELETE FROM " + (IsPostgres ? table.ToLowerInvariant() : "[" + table + "]"));
 		}
 
@@ -180,14 +185,65 @@ namespace Resgrid.Tests.Repositories
 			var message = Message("ch-1", "SM-2", Base, (int)IntakeMessageStates.Failed);
 			(await repository.TryClaimAsync(message)).Should().BeTrue();
 
-			var takers = await Task.WhenAll(Enumerable.Range(0, 4).Select(_ => Messages().TryReclaimAsync(message.IntakeMessageId, (int)IntakeMessageStates.Failed)));
+			var takers = await Task.WhenAll(Enumerable.Range(0, 4).Select(_ =>
+				Messages().TryReclaimAsync(message.IntakeMessageId, (int)IntakeMessageStates.Failed, Base.AddMinutes(1), Base.AddMinutes(-9))));
 			takers.Count(t => t).Should().Be(1);
 
 			(await repository.CompleteAsync(message.IntakeMessageId, (int)IntakeMessageStates.CallCreated, 900, "ok", Base.AddSeconds(2))).Should().BeTrue();
 			var stored = await repository.GetByProviderMessageIdAsync("ch-1", "SM-2");
 			stored.State.Should().Be((int)IntakeMessageStates.CallCreated);
 			stored.CallId.Should().Be(900);
-			(await repository.TryReclaimAsync(message.IntakeMessageId, (int)IntakeMessageStates.CallCreated)).Should().BeFalse("a message with a call is never taken over");
+			(await repository.TryReclaimAsync(message.IntakeMessageId, (int)IntakeMessageStates.CallCreated, Base.AddMinutes(2), Base.AddMinutes(-8)))
+				.Should().BeFalse("a message with a call is never taken over");
+		}
+
+		[Test]
+		public async Task an_abandoned_claim_is_taken_over_by_one_retry_and_the_new_owner_gets_a_fresh_window()
+		{
+			var repository = Messages();
+			var message = Message("ch-1", "SM-3", Base);
+			(await repository.TryClaimAsync(message)).Should().BeTrue();
+
+			var now = Base.AddMinutes(15);
+			(await repository.TryReclaimAsync(message.IntakeMessageId, (int)IntakeMessageStates.Received, Base.AddMinutes(5), Base.AddMinutes(-5)))
+				.Should().BeFalse("the claim is not old enough yet");
+
+			// Two retries read the same stale row at once: the state stays Received, so only the restamped ReceivedOn stops the second.
+			var takers = await Task.WhenAll(Enumerable.Range(0, 4).Select(_ =>
+				Messages().TryReclaimAsync(message.IntakeMessageId, (int)IntakeMessageStates.Received, now, now.AddMinutes(-10))));
+			takers.Count(t => t).Should().Be(1);
+
+			var stored = await repository.GetByProviderMessageIdAsync("ch-1", "SM-3");
+			stored.State.Should().Be((int)IntakeMessageStates.Received);
+			stored.ReceivedOn.Should().BeCloseTo(now, TimeSpan.FromSeconds(1));
+			(await repository.TryReclaimAsync(message.IntakeMessageId, (int)IntakeMessageStates.Received, now.AddMinutes(1), now.AddMinutes(-9)))
+				.Should().BeFalse("the new owner's claim is fresh again");
+		}
+
+		[Test]
+		public async Task the_call_an_abandoned_claim_saved_is_found_by_its_provider_id_unless_a_message_names_it()
+		{
+			await using (var database = Connect(_connection))
+			{
+				await database.ExecuteAsync(IsPostgres
+					? "INSERT INTO calls (callid, departmentid, sourceidentifier, callsource, loggedon, isdeleted) VALUES " +
+					  "(700, 55, 'SM-4', 6, @Logged, false), (701, 55, 'SM-4', 6, @Old, false), (702, 56, 'SM-4', 6, @Logged, false), " +
+					  "(703, 55, 'SM-4', 1, @Logged, false), (704, 55, 'SM-4', 6, @Logged, true), (705, 55, 'SM-5', 7, @Logged, false), (706, 55, 'SM-5', 7, @Logged, false)"
+					: "INSERT INTO [Calls] ([CallId], [DepartmentId], [SourceIdentifier], [CallSource], [LoggedOn], [IsDeleted]) VALUES " +
+					  "(700, 55, 'SM-4', 6, @Logged, 0), (701, 55, 'SM-4', 6, @Old, 0), (702, 56, 'SM-4', 6, @Logged, 0), " +
+					  "(703, 55, 'SM-4', 1, @Logged, 0), (704, 55, 'SM-4', 6, @Logged, 1), (705, 55, 'SM-5', 7, @Logged, 0), (706, 55, 'SM-5', 7, @Logged, 0)",
+					new { Logged = Base.AddMinutes(1), Old = Base.AddDays(-2) });
+			}
+
+			var repository = Messages();
+			var sources = new[] { (int)CallSources.Intake, (int)CallSources.VoiceIntake };
+			(await repository.GetUnclaimedIntakeCallIdAsync(55, "sm-4", sources, Base)).Should().Be(700,
+				"same department, intake source, logged after the claim, not deleted (and provider ids match regardless of case)");
+
+			// 706 already belongs to another message (it made it); 705 is the orphan.
+			await repository.TryClaimAsync(Message("ch-2", "other", Base, (int)IntakeMessageStates.CallCreated, 706));
+			(await repository.GetUnclaimedIntakeCallIdAsync(55, "SM-5", sources, Base)).Should().Be(705);
+			(await repository.GetUnclaimedIntakeCallIdAsync(55, "SM-9", sources, Base)).Should().BeNull();
 		}
 
 		[Test]
@@ -256,15 +312,33 @@ namespace Resgrid.Tests.Repositories
 			(await repository.TryInsertAsync(first)).Should().BeTrue();
 			(await repository.TryInsertAsync(Session("CA1", Base))).Should().BeFalse();
 
+			// An overlapping callback's snapshot (still at Nature, retries 0) moved it on first: a write from a stale read applies nothing.
+			var newer = await repository.GetByProviderCallIdAsync("CA1");
+			newer.Step = (int)VoiceIntakeSteps.Location;
+			newer.AnswersJson = "{\"Nature\":\"Fire\"}";
+			(await repository.UpdateProgressAsync(newer, (int)VoiceIntakeSteps.Nature, 0)).Should().BeTrue();
+
+			first.Retries = 1;
+			(await repository.UpdateProgressAsync(first, (int)VoiceIntakeSteps.Nature, 0)).Should().BeFalse("the stored session is no longer at the step this callback read");
+			(await repository.GetByProviderCallIdAsync("CA1")).Step.Should().Be((int)VoiceIntakeSteps.Location);
+
 			first.Step = (int)VoiceIntakeSteps.Completed;
+			first.Retries = 0;
 			first.CallId = 900;
 			first.AnswersJson = null;
 			first.CompletedOn = Base.AddMinutes(2);
-			(await repository.UpdateProgressAsync(first)).Should().BeTrue();
+			(await repository.UpdateProgressAsync(first, (int)VoiceIntakeSteps.Location, 0)).Should().BeTrue();
 			var stored = await repository.GetByProviderCallIdAsync("ca1");
 			stored.Step.Should().Be((int)VoiceIntakeSteps.Completed);
 			stored.CallId.Should().Be(900);
 			stored.AnswersJson.Should().BeNull();
+
+			// A completed session is never rewritten, even by a write that read the same step.
+			first.Step = (int)VoiceIntakeSteps.Location;
+			first.CallId = null;
+			first.CompletedOn = null;
+			(await repository.UpdateProgressAsync(first, (int)VoiceIntakeSteps.Completed, 0)).Should().BeFalse();
+			(await repository.GetByProviderCallIdAsync("CA1")).CallId.Should().Be(900);
 
 			await repository.TryInsertAsync(Session("CA2", Base.AddDays(-3)));
 			(await repository.CountStartedAsync(55, Base.AddHours(-1), Base.AddHours(1))).Should().Be(1);

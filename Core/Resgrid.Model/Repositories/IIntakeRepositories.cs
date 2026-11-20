@@ -28,9 +28,19 @@ namespace Resgrid.Model.Repositories
 
 		/// <summary>
 		/// Takes over a claim still in <paramref name="expectedState"/> with no call (a failed or abandoned attempt), so the
-		/// provider's retry processes it once. True when this call took it.
+		/// provider's retry processes it once. A Received claim is taken only while it is still older than
+		/// <paramref name="abandonedBefore"/>; the takeover restamps ReceivedOn with <paramref name="now"/>, so a second retry that
+		/// read the same row fails and the new owner gets a fresh abandonment window. True when this call took it.
 		/// </summary>
-		Task<bool> TryReclaimAsync(string intakeMessageId, int expectedState, CancellationToken cancellationToken = default);
+		Task<bool> TryReclaimAsync(string intakeMessageId, int expectedState, DateTime now, DateTime abandonedBefore, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// A call an abandoned claim saved before its process died (so the claim never got the call id): the department's newest
+		/// intake call (<paramref name="callSources"/>) carrying <paramref name="sourceIdentifier"/>, logged at or after
+		/// <paramref name="loggedSince"/> and not recorded on any intake message. Null when there is none.
+		/// </summary>
+		Task<int?> GetUnclaimedIntakeCallIdAsync(int departmentId, string sourceIdentifier, int[] callSources, DateTime loggedSince,
+			CancellationToken cancellationToken = default);
 
 		/// <summary>Writes the outcome of a claimed message.</summary>
 		Task<bool> CompleteAsync(string intakeMessageId, int state, int? callId, string reason, DateTime completedOn, CancellationToken cancellationToken = default);
@@ -58,8 +68,11 @@ namespace Resgrid.Model.Repositories
 		/// <summary>Inserts the session unless one exists for the CallSid. True when this call inserted it.</summary>
 		Task<bool> TryInsertAsync(VoiceIntakeSession session, CancellationToken cancellationToken = default);
 
-		/// <summary>Writes step, answers, retries, call and completion of the session.</summary>
-		Task<bool> UpdateProgressAsync(VoiceIntakeSession session, CancellationToken cancellationToken = default);
+		/// <summary>
+		/// Writes step, answers, retries, call and completion of the session, only while the stored row is still at <paramref name="expectedStep"/>
+		/// and <paramref name="expectedRetries"/> and not completed (the state the caller read). False when another write got there first.
+		/// </summary>
+		Task<bool> UpdateProgressAsync(VoiceIntakeSession session, int expectedStep, int expectedRetries, CancellationToken cancellationToken = default);
 
 		Task<int> CountStartedAsync(int departmentId, DateTime from, DateTime before);
 

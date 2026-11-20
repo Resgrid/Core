@@ -213,6 +213,23 @@ namespace Resgrid.Repositories.DataRepository
 			return updated == 1;
 		}
 
+		public async Task<bool> TryCloseIdleAsync(string conversationId, int departmentId, string reason, DateTime idleBefore, DateTime closedOn,
+			CancellationToken cancellationToken = default)
+		{
+			var updated = await ExecuteAsync(
+				$"UPDATE {Tbl(Table)} SET {Col("State")} = {P}Closed, {Col("ClosedOn")} = {P}ClosedOn, {Col("CloseReason")} = {P}Reason " +
+				$"WHERE {Col("IntakeConversationId")} = {P}Id AND {Col("DepartmentId")} = {P}DepartmentId AND {Col("State")} = {Open} " +
+				$"AND {Col("LastActivityOn")} < {P}IdleBefore",
+				new
+				{
+					Id = conversationId, DepartmentId = departmentId, Closed = (int)IntakeConversationStates.Closed, ClosedOn = DatabaseTimestamp(closedOn),
+					Reason = reason == null ? null : reason.Length <= 200 ? reason : reason.Substring(0, 200), IdleBefore = DatabaseTimestamp(idleBefore)
+				},
+				cancellationToken);
+
+			return updated == 1;
+		}
+
 		public Task TouchAsync(string conversationId, int departmentId, DateTime lastActivityOn, DateTime? lastInboundOn, CancellationToken cancellationToken = default)
 		{
 			var inbound = lastInboundOn.HasValue

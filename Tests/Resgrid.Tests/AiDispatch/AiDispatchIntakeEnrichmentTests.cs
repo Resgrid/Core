@@ -171,6 +171,83 @@ namespace Resgrid.Tests.AiDispatch
 		}
 
 		[Test]
+		public async Task a_call_a_dispatcher_already_sent_is_not_described_as_pending()
+		{
+			_call.State = (int)CallStates.Active;
+
+			(await Enrich(AiDispatchChannels.IntakeSms)).Should().Be(AiDispatchOutcomes.Applied);
+
+			var user = _requests.Single().Messages.Single(m => m.Role == "user").Content;
+			user.Should().NotContain("nobody has been dispatched");
+			user.Should().Contain("A dispatcher has dispatched the call.");
+		}
+
+		[Test]
+		public void the_system_prompt_states_no_source_or_dispatch_state()
+		{
+			AiDispatchPrompt.System.Should().NotContain("dispatched from");
+			AiDispatchPrompt.System.Should().NotContain("CAD email");
+			AiDispatchEnrichmentService.IntakeSource(AiDispatchChannels.PostmarkEmail, new Call { State = (int)CallStates.Active })
+				.Should().Contain("dispatched automatically", "the dispatch email paths say so in the trusted source line instead");
+		}
+
+		[Test]
+		public async Task a_rename_made_before_the_worker_read_the_call_is_kept()
+		{
+			var savedKey = AiConfig.AuditHmacKey;
+			try
+			{
+				AiConfig.AuditHmacKey = Convert.ToBase64String(Enumerable.Range(1, 32).Select(i => (byte)i).ToArray());
+				var fingerprint = AiDispatchEnrichmentService.PlaceholderFingerprint(DepartmentId, CallId, "Hospital line: +15305550199");
+				fingerprint.Should().NotBeNullOrEmpty().And.NotContain("+15305550199");
+
+				// Queued with the placeholder; a dispatcher renamed the call before the worker first loaded it.
+				_call.Name = "MVA on Route 9";
+				(await _service.EnrichAsync(new AiDispatchQueueItem
+				{
+					DepartmentId = DepartmentId, CallId = CallId, Channel = AiDispatchChannels.IntakeSms, NameIsPlaceholder = true, PlaceholderNameFingerprint = fingerprint
+				}, CancellationToken.None)).Should().Be(AiDispatchOutcomes.Applied);
+				_saved.Single().Name.Should().Be("MVA on Route 9");
+
+				// An untouched placeholder is still replaced by the model's title.
+				_saved.Clear();
+				_call = new Call
+				{
+					CallId = CallId, DepartmentId = DepartmentId, Number = "26-700", Name = "Hospital line: +15305550199", NatureOfCall = Body, Priority = 22,
+					State = (int)CallStates.Pending, CallSource = (int)CallSources.Intake
+				};
+				(await _service.EnrichAsync(new AiDispatchQueueItem
+				{
+					DepartmentId = DepartmentId, CallId = CallId, Channel = AiDispatchChannels.IntakeSms, NameIsPlaceholder = true, PlaceholderNameFingerprint = fingerprint
+				}, CancellationToken.None)).Should().Be(AiDispatchOutcomes.Applied);
+				_saved.Single().Name.Should().Be("Patient transfer, 123 Main St");
+			}
+			finally
+			{
+				AiConfig.AuditHmacKey = savedKey;
+			}
+		}
+
+		[Test]
+		public void without_a_usable_audit_key_there_is_no_fingerprint()
+		{
+			var savedKey = AiConfig.AuditHmacKey;
+			try
+			{
+				AiConfig.AuditHmacKey = "";
+				AiDispatchEnrichmentService.PlaceholderFingerprint(DepartmentId, CallId, "x").Should().BeNull();
+				AiConfig.AuditHmacKey = "not base64!";
+				AiDispatchEnrichmentService.PlaceholderFingerprint(DepartmentId, CallId, "x").Should().BeNull();
+				AiConfig.AuditHmacKey = Convert.ToBase64String(new byte[16]);
+				AiDispatchEnrichmentService.PlaceholderFingerprint(DepartmentId, CallId, "x").Should().BeNull("a short key is not usable");
+			}
+			finally
+			{
+				AiConfig.AuditHmacKey = savedKey;
+			}
+		}
+
+		[Test]
 		public async Task voice_needs_ai_voice_intake_and_gets_the_labelled_answers_description()
 		{
 			_access.Setup(a => a.CanUseAsync(DepartmentId, FeatureFlagKeys.AiVoiceIntake)).ReturnsAsync(false);

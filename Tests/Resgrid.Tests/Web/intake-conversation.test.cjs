@@ -174,6 +174,43 @@ const visible = (page, id) => page.isVisible('#' + id);
             await none.context.close();
         }
 
+        // A text typed while the previous one is sending stays in the box (only the sent text is cleared).
+        {
+            const { context, page } = await harness(browser, thread());
+            await page.fill('#intakeConversationText', 'Where are you?');
+            await page.press('#intakeConversationText', 'Enter');
+            await page.fill('#intakeConversationText', 'Is anyone hurt?');
+            await respond(page, 1, thread({ outcome: 'Done', conversation: { handler: 3, assignedUserId: 'me', isMine: true } }));
+            assert.equal(await page.inputValue('#intakeConversationText'), 'Is anyone hurt?', 'the newer draft is kept');
+            await context.close();
+        }
+
+        // An update event during an action is not lost: the thread is read again once the action ends.
+        {
+            const { context, page } = await harness(browser, thread());
+            await page.click('#intakeConversationTake');
+            await page.evaluate(() => document.dispatchEvent(new CustomEvent('resgrid:intake-conversation-updated', { detail: { callId: '900', payload: '{}' } })));
+            await page.waitForTimeout(600);
+            assert.equal(await callCount(page), 2, 'no read while the action runs');
+            await respond(page, 1, thread({ outcome: 'Done', conversation: { handler: 3, assignedUserId: 'me', isMine: true } }));
+            await page.waitForFunction(() => window.calls.length === 3);
+            assert.equal((await call(page, 2)).url, '/User/IntakeConversations/Thread');
+            await context.close();
+        }
+
+        // A read that was overtaken by an action (or a newer read) never puts older state back on screen.
+        {
+            const { context, page } = await harness(browser, thread());
+            await page.evaluate(() => document.dispatchEvent(new CustomEvent('resgrid:intake-conversation-updated', { detail: { callId: '900', payload: '{}' } })));
+            await page.waitForFunction(() => window.calls.length === 2);
+            await page.click('#intakeConversationTake');
+            await respond(page, 2, thread({ outcome: 'Done', conversation: { handler: 3, assignedUserId: 'me', isMine: true } }));
+            assert.equal(await page.textContent('#intakeConversationHandler'), 'You are connected');
+            await respond(page, 1, thread());
+            assert.equal(await page.textContent('#intakeConversationHandler'), 'You are connected', 'the stale read is dropped');
+            await context.close();
+        }
+
         console.log('intake conversation panel: all checks passed');
     } finally {
         await browser.close();

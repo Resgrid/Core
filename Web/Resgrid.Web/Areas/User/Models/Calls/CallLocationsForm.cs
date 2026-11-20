@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
+using Microsoft.AspNetCore.Http;
 using Resgrid.Model;
 
 namespace Resgrid.Web.Areas.User.Models.Calls
@@ -79,6 +81,9 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 
 		string DestinationLongitude { get; }
 
+		/// <summary>The destination plus code as typed (only a lookup, never stored), kept so a failed save shows it again.</summary>
+		string DestinationPlusCode { get; }
+
 		/// <summary>The member may open Routes (the route preview link).</summary>
 		bool CanViewRoutes { get; }
 
@@ -131,6 +136,30 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 		public static string Invariant(double value) => value.ToString("0.#######", CultureInfo.InvariantCulture);
 	}
 
+	/// <summary>How the Update Call form's location POI and route pickers say whether this editor changed them (M0322).</summary>
+	public static class CallLocationsEdit
+	{
+		/// <summary>
+		/// True when the form posted <paramref name="fieldKey"/> with a value other than the one the picker opened with
+		/// (<paramref name="originalKey"/>, a hidden input). A picker left as it opened is no change, so the call keeps its stored value:
+		/// a save of another field neither clears a stored value the picker could not show nor puts back one another editor replaced
+		/// meanwhile. A form without the original (an older page) compares with <paramref name="storedValue"/> instead; a form without
+		/// the field is no change.
+		/// </summary>
+		public static bool IsChanged(IFormCollection form, string fieldKey, string originalKey, string storedValue)
+		{
+			if (form == null || !form.ContainsKey(fieldKey))
+				return false;
+
+			var posted = Normalize(form[fieldKey].FirstOrDefault());
+			var original = form.ContainsKey(originalKey) ? Normalize(form[originalKey].FirstOrDefault()) : Normalize(storedValue);
+
+			return !String.Equals(posted ?? "", original ?? "", StringComparison.OrdinalIgnoreCase);
+		}
+
+		private static string Normalize(string value) => String.IsNullOrWhiteSpace(value) ? null : value.Trim();
+	}
+
 	/// <summary>One run of a call's route (M0322): which unit, how far it got, when it ran.</summary>
 	public class CallRouteRunRow
 	{
@@ -181,5 +210,11 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 			!String.IsNullOrWhiteSpace(DestinationAddress) || !String.IsNullOrWhiteSpace(DestinationCoordinates) || !String.IsNullOrWhiteSpace(DestinationW3W);
 
 		public bool HasRoute => !String.IsNullOrWhiteSpace(RoutePlanId);
+
+		/// <summary>
+		/// The route runs section shows for a call with a route, and for one whose route was changed or cleared after it ran: a run
+		/// stays linked to the call, so its history is not hidden by the call's current route.
+		/// </summary>
+		public bool ShowsRouteRuns => HasRoute || (RouteRuns != null && RouteRuns.Count > 0);
 	}
 }

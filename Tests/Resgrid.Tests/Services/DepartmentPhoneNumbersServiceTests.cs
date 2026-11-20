@@ -586,8 +586,9 @@ namespace Resgrid.Tests.Services
 			(await _service.NotifyCancellationScheduledAsync(DepartmentId, DedicatedNumberCancellations.AddonRenewal, end)).Should().BeTrue();
 
 			_sent.Select(s => s.UserId).Should().BeEquivalentTo(new[] { "admin-1", "admin-2" });
-			_sent[0].Title.Should().Be("Dedicated number add-on cancelled");
-			_sent[0].Text.Should().Be($"Station Fixture: the Dedicated Number add-on renewal was cancelled. The add-on ends on {LocalDate(end)}; texts and calls to {Number} " +
+			// Product name "Private Inbound Dispatch Number" (renamed 2026-11-20; brand kept in English like the other add-ons).
+			_sent[0].Title.Should().Be("Private Inbound Dispatch Number add-on cancelled");
+			_sent[0].Text.Should().Be($"Station Fixture: the Private Inbound Dispatch Number add-on renewal was cancelled. The add-on ends on {LocalDate(end)}; texts and calls to {Number} " +
 				$"stop on {LocalDateTime(end.AddHours(72))} and the number is released on {LocalDate(end.AddDays(30))}. Renew the add-on before then to keep the number.");
 
 			_sent.Clear();
@@ -791,6 +792,181 @@ namespace Resgrid.Tests.Services
 			_carrier.Verify(c => c.ReleaseDedicatedNumberAsync("PNold", It.IsAny<CancellationToken>()), Times.Never);
 		}
 
+		[Test]
+		public async Task Two_admins_buying_different_numbers_at_once_buy_one()
+		{
+			// PR #588: both requests passed the "already has a number" read before either claim landed. The department index lets only one
+			// claim insert; the other is refused before the carrier is asked.
+			_repository.BeforeInsert = entity =>
+			{
+				_repository.BeforeInsert = null;
+				Held(DepartmentPhoneNumberStatuses.Provisioning, number: "+17755550155").CreatedOn = DateTime.UtcNow.AddSeconds(1);
+			};
+
+			(await FluentActions.Awaiting(() => _service.ProvisionAsync(DepartmentId, Number, "admin")).Should().ThrowAsync<DedicatedNumberException>())
+				.Which.Error.Should().Be(DedicatedNumberErrors.AlreadyHasNumber);
+
+			_carrier.Verify(c => c.PurchaseDedicatedNumberAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+			_repository.Rows.Should().ContainSingle().Which.PhoneNumber.Should().Be("+17755550155");
+		}
+
+		[Test]
+		public async Task An_unanswered_purchase_stays_claimed_until_the_carrier_account_is_checked()
+		{
+			_carrier.Setup(c => c.PurchaseDedicatedNumberAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new CarrierNumberPurchase { Uncertain = true, Error = "The carrier did not confirm the purchase (TaskCanceledException)" });
+
+			var row = await _service.ProvisionAsync(DepartmentId, Number, "admin");
+
+			row.Status.Should().Be((int)DepartmentPhoneNumberStatuses.Provisioning, "a Failed row would leave a possibly bought number unmanaged");
+			Row(row.DepartmentPhoneNumberId).LastError.Should().Contain("did not confirm");
+			_textToCall.Should().BeNull();
+			(await FluentActions.Awaiting(() => _service.ProvisionAsync(DepartmentId, "+17755550166", "admin")).Should().ThrowAsync<DedicatedNumberException>())
+				.Which.Error.Should().Be(DedicatedNumberErrors.AlreadyHasNumber, "no second purchase while the first may have gone through");
+
+			// Before the provisioning timeout nothing is asked; after it the carrier account is.
+			(await _service.ProcessLifecycleAsync(DateTime.UtcNow)).Should().Be(0);
+			_carrier.Verify(c => c.FindDedicatedNumberAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+
+			var later = DateTime.UtcNow.AddHours(2);
+			_carrier.Setup(c => c.FindDedicatedNumberAsync(Number, It.IsAny<CancellationToken>())).ThrowsAsync(new TimeoutException());
+			(await _service.ProcessLifecycleAsync(later)).Should().Be(0);
+			Row(row.DepartmentPhoneNumberId).Status.Should().Be((int)DepartmentPhoneNumberStatuses.Provisioning, "unknown either way: asked again next sweep");
+
+			_carrier.Setup(c => c.FindDedicatedNumberAsync(Number, It.IsAny<CancellationToken>())).ReturnsAsync(new CarrierNumberPurchase
+				{ Success = true, Provider = "Twilio", ProviderNumberId = "PN0009", PhoneNumber = Number, SmsCapable = true, VoiceCapable = true });
+			(await _service.ProcessLifecycleAsync(later)).Should().BeGreaterThan(0);
+
+			var adopted = Row(row.DepartmentPhoneNumberId);
+			adopted.Status.Should().Be((int)DepartmentPhoneNumberStatuses.Active);
+			adopted.ProviderNumberId.Should().Be("PN0009");
+			adopted.LastError.Should().BeNull();
+			_textToCall.Should().Be("17755550100");
+			_channels.Verify(c => c.EnsureChannelAsync(DepartmentId, IntakeChannelTypes.Voice, Number, It.IsAny<string>(), "admin", It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
+		public async Task An_unanswered_purchase_the_carrier_account_does_not_hold_fails_and_can_be_bought_again()
+		{
+			_carrier.Setup(c => c.PurchaseDedicatedNumberAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+				.ThrowsAsync(new TaskCanceledException());
+
+			var row = await _service.ProvisionAsync(DepartmentId, Number, "admin");
+			row.Status.Should().Be((int)DepartmentPhoneNumberStatuses.Provisioning, "a provider throw is no answer, not a refusal");
+
+			_carrier.Setup(c => c.FindDedicatedNumberAsync(Number, It.IsAny<CancellationToken>())).ReturnsAsync((CarrierNumberPurchase)null);
+			(await _service.ProcessLifecycleAsync(DateTime.UtcNow.AddHours(2))).Should().Be(1);
+
+			Row(row.DepartmentPhoneNumberId).Status.Should().Be((int)DepartmentPhoneNumberStatuses.Failed);
+			Row(row.DepartmentPhoneNumberId).LastError.Should().Contain("does not hold");
+		}
+
+		[Test]
+		public async Task Routing_that_failed_after_a_purchase_is_retried_by_the_lifecycle_until_it_is_set_up()
+		{
+			// PR #588: a failed channel write after the purchase was logged and forgotten; the paying sweep never revisits an Active number.
+			_channels.Setup(c => c.EnsureChannelAsync(DepartmentId, IntakeChannelTypes.Voice, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+				.ThrowsAsync(new TimeoutException());
+
+			var row = await _service.ProvisionAsync(DepartmentId, Number, "admin");
+
+			row.Status.Should().Be((int)DepartmentPhoneNumberStatuses.Active, "the number is bought");
+			Row(row.DepartmentPhoneNumberId).LastError.Should().Be(DepartmentPhoneNumbersService.RoutingIncompleteError);
+
+			// Still failing: the marker stays. Billing unknown does not stop the retry (routing an Active number needs no billing answer).
+			_addon = null;
+			(await _service.ProcessLifecycleAsync(DateTime.UtcNow)).Should().Be(0);
+			Row(row.DepartmentPhoneNumberId).LastError.Should().Be(DepartmentPhoneNumbersService.RoutingIncompleteError);
+
+			_channels.Setup(c => c.EnsureChannelAsync(DepartmentId, IntakeChannelTypes.Voice, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new IntakeChannel());
+			(await _service.ProcessLifecycleAsync(DateTime.UtcNow)).Should().Be(1);
+			Row(row.DepartmentPhoneNumberId).LastError.Should().BeNull();
+			_channels.Verify(c => c.EnsureChannelAsync(DepartmentId, IntakeChannelTypes.Sms, Number, It.IsAny<string>(), "admin", It.IsAny<CancellationToken>()), Times.Exactly(3),
+				"the saved SMS switch is respected on every attempt");
+
+			(await _service.ProcessLifecycleAsync(DateTime.UtcNow)).Should().Be(0);
+			_channels.Verify(c => c.EnsureChannelAsync(DepartmentId, IntakeChannelTypes.Voice, Number, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Exactly(3),
+				"a complete setup is not repeated");
+		}
+
+		[Test]
+		public async Task A_due_release_rechecks_the_stored_row_and_loses_to_a_reactivation()
+		{
+			// PR #588: worker 80 read the Lapsed row and an unpaid state, then paused; the admin renewed and reactivated meanwhile.
+			var row = Held(DepartmentPhoneNumberStatuses.Lapsed, releaseAfter: new DateTime(2026, 12, 1, 0, 0, 0, DateTimeKind.Utc));
+			row.AddonInactiveSince = row.ReleaseAfter.Value.AddDays(-30);
+			_addon = false;
+			_repository.BeforeConditionalWrite = id =>
+			{
+				_repository.BeforeConditionalWrite = null;
+				var stored = _repository.Rows.Single(r => r.DepartmentPhoneNumberId == id);
+				stored.Status = (int)DepartmentPhoneNumberStatuses.Active;
+				stored.ReleaseAfter = null;
+			};
+
+			(await _service.ProcessLifecycleAsync(row.ReleaseAfter.Value.AddHours(1))).Should().Be(0);
+
+			_carrier.Verify(c => c.ReleaseDedicatedNumberAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+			Row(row.DepartmentPhoneNumberId).Status.Should().Be((int)DepartmentPhoneNumberStatuses.Active);
+			Row(row.DepartmentPhoneNumberId).ReleasedOn.Should().BeNull();
+		}
+
+		[Test]
+		public async Task A_due_release_is_skipped_when_payment_resumed_after_the_sweeps_billing_read()
+		{
+			var row = Held(DepartmentPhoneNumberStatuses.Lapsed, releaseAfter: new DateTime(2026, 12, 1, 0, 0, 0, DateTimeKind.Utc));
+			row.AddonInactiveSince = row.ReleaseAfter.Value.AddDays(-30);
+			var reads = 0;
+			_access.Setup(a => a.GetPaymentStateAsync(DepartmentId)).ReturnsAsync(() => ++reads == 1
+				? new DedicatedNumberPaymentState { AddonActive = false }
+				: new DedicatedNumberPaymentState { AddonActive = true, PaidEntityPlan = true });
+
+			(await _service.ProcessLifecycleAsync(row.ReleaseAfter.Value.AddHours(1))).Should().Be(0);
+
+			_carrier.Verify(c => c.ReleaseDedicatedNumberAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+			Row(row.DepartmentPhoneNumberId).Status.Should().Be((int)DepartmentPhoneNumberStatuses.Lapsed, "the next paying sweep restores it");
+		}
+
+		[Test]
+		public async Task A_release_whose_carrier_answer_was_lost_is_never_reactivated_and_is_finished_by_the_next_sweep()
+		{
+			// PR #588: the carrier may already have the number back. Restoring the row would leave an Active number nobody holds.
+			var row = Held(DepartmentPhoneNumberStatuses.Lapsed, releaseAfter: new DateTime(2026, 12, 1, 0, 0, 0, DateTimeKind.Utc));
+			row.AddonInactiveSince = row.ReleaseAfter.Value.AddDays(-30);
+			_addon = false;
+			_carrier.Setup(c => c.ReleaseDedicatedNumberAsync(It.IsAny<string>(), It.IsAny<CancellationToken>())).ThrowsAsync(new TimeoutException());
+
+			(await _service.ProcessLifecycleAsync(row.ReleaseAfter.Value.AddHours(1))).Should().Be(0);
+			Row(row.DepartmentPhoneNumberId).Status.Should().Be((int)DepartmentPhoneNumberStatuses.Lapsed);
+			Row(row.DepartmentPhoneNumberId).ReleasedOn.Should().NotBeNull("the release began");
+
+			// Paying again: the admin cannot reactivate it, and neither does the paying sweep; it finishes the release instead.
+			_addon = true;
+			(await _service.ReactivateAsync(DepartmentId, "admin")).Should().BeNull();
+			Row(row.DepartmentPhoneNumberId).Status.Should().Be((int)DepartmentPhoneNumberStatuses.Lapsed);
+
+			_carrier.Setup(c => c.ReleaseDedicatedNumberAsync(It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
+			(await _service.ProcessLifecycleAsync(row.ReleaseAfter.Value.AddHours(2))).Should().Be(1);
+			Row(row.DepartmentPhoneNumberId).Status.Should().Be((int)DepartmentPhoneNumberStatuses.Released);
+			_channels.Verify(c => c.EnsureChannelAsync(It.IsAny<int>(), It.IsAny<IntakeChannelTypes>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public async Task A_release_the_carrier_refused_can_still_be_reactivated()
+		{
+			var row = Held(DepartmentPhoneNumberStatuses.Lapsed, releaseAfter: new DateTime(2026, 12, 1, 0, 0, 0, DateTimeKind.Utc));
+			row.AddonInactiveSince = row.ReleaseAfter.Value.AddDays(-30);
+			_addon = false;
+			_carrier.Setup(c => c.ReleaseDedicatedNumberAsync(It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(false);
+
+			(await _service.ProcessLifecycleAsync(row.ReleaseAfter.Value.AddHours(1))).Should().Be(0);
+			Row(row.DepartmentPhoneNumberId).ReleasedOn.Should().BeNull("the carrier answered and kept the number");
+
+			_addon = true;
+			(await _service.ReactivateAsync(DepartmentId, "admin")).Status.Should().Be((int)DepartmentPhoneNumberStatuses.Active);
+		}
+
 		[TestCase("+1 (775) 555-0100", "+17755550100")]
 		[TestCase("17755550100", "+17755550100")]
 		[TestCase("+44 20 7123 4567", "+442071234567")]
@@ -824,13 +1000,50 @@ namespace Resgrid.Tests.Services
 			public Task<IEnumerable<DepartmentPhoneNumber>> GetAllByDepartmentIdAsync(int departmentId) =>
 				Task.FromResult(Rows.Where(r => r.DepartmentId == departmentId).Select(Copy).ToList().AsEnumerable());
 
+			/// <summary>Runs just before an insert is checked: a concurrent request's write landing between a check and the insert.</summary>
+			public Action<DepartmentPhoneNumber> BeforeInsert;
+
+			/// <summary>Runs just before a conditional write: a concurrent writer landing between a read and the write.</summary>
+			public Action<string> BeforeConditionalWrite;
+
 			public Task<DepartmentPhoneNumber> InsertAsync(DepartmentPhoneNumber entity, CancellationToken cancellationToken, bool firstLevelOnly = false)
 			{
+				BeforeInsert?.Invoke(entity);
 				// UX_DepartmentPhoneNumbers_Number: one Provisioning / Active / Lapsed row per number.
 				if (entity.IsHeld && Rows.Any(r => r.IsHeld && r.PhoneNumber == entity.PhoneNumber))
 					throw new InvalidOperationException("Cannot insert duplicate key row in object 'DepartmentPhoneNumbers' with unique index 'UX_DepartmentPhoneNumbers_Number'.");
+				// UX_DepartmentPhoneNumbers_DepartmentHeld: one Provisioning / Active / Lapsed row per department.
+				if (entity.IsHeld && Rows.Any(r => r.IsHeld && r.DepartmentId == entity.DepartmentId))
+					throw new InvalidOperationException("Cannot insert duplicate key row in object 'DepartmentPhoneNumbers' with unique index 'UX_DepartmentPhoneNumbers_DepartmentHeld'.");
 				Rows.Add(Copy(entity));
 				return Task.FromResult(entity);
+			}
+
+			public Task<bool> TryBeginReleaseAsync(string departmentPhoneNumberId, int expectedStatus, DateTime startedOn, CancellationToken cancellationToken = default)
+			{
+				BeforeConditionalWrite?.Invoke(departmentPhoneNumberId);
+				var row = Rows.FirstOrDefault(r => r.DepartmentPhoneNumberId == departmentPhoneNumberId && r.Status == expectedStatus && !r.ReleasedOn.HasValue);
+				if (row == null)
+					return Task.FromResult(false);
+				row.ReleasedOn = startedOn;
+				row.UpdatedOn = startedOn;
+				return Task.FromResult(true);
+			}
+
+			public Task<bool> TryReactivateAsync(string departmentPhoneNumberId, DateTime updatedOn, CancellationToken cancellationToken = default)
+			{
+				BeforeConditionalWrite?.Invoke(departmentPhoneNumberId);
+				var row = Rows.FirstOrDefault(r => r.DepartmentPhoneNumberId == departmentPhoneNumberId && r.Status == (int)DepartmentPhoneNumberStatuses.Lapsed &&
+					!r.ReleasedOn.HasValue);
+				if (row == null)
+					return Task.FromResult(false);
+				row.Status = (int)DepartmentPhoneNumberStatuses.Active;
+				row.AddonInactiveSince = null;
+				row.ReleaseAfter = null;
+				row.ReleaseWarningsSent = 0;
+				row.LastReleaseWarningOn = null;
+				row.UpdatedOn = updatedOn;
+				return Task.FromResult(true);
 			}
 
 			public Task<DepartmentPhoneNumber> UpdateAsync(DepartmentPhoneNumber entity, CancellationToken cancellationToken, bool firstLevelOnly = false)

@@ -77,6 +77,9 @@ namespace Resgrid.Config
 		public static string GoogleChatServiceAccountEmail = "";
 		public static string GoogleChatPrivateKey = "";
 		public static string TelegramBotToken = "";
+		// The bot's @username, without the @ (optional). Intake chats use it to tell a mention of, or a /command@ addressed to, this
+		// bot from one for another account; blank = any bot-looking name (Telegram bot usernames end in "bot") counts.
+		public static string TelegramBotUsername = "";
 		// Secret token sent by Telegram in the X-Telegram-Bot-Api-Secret-Token header
 		// (configured via setWebhook). When set, inbound webhooks lacking a matching token are rejected.
 		public static string TelegramWebhookSecretToken = "";

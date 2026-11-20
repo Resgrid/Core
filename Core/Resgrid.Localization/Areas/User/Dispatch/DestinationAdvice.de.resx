@@ -166,6 +166,12 @@
   <data name="Outcome.DestinationGone" xml:space="preserve">
     <value>Das empfohlene Ziel existiert nicht mehr.</value>
   </data>
+  <data name="Outcome.DestinationClosed" xml:space="preserve">
+    <value>Das empfohlene Ziel ist jetzt geschlossen. Fragen Sie erneut nach einer aktuellen Empfehlung.</value>
+  </data>
+  <data name="Outcome.CallChanged" xml:space="preserve">
+    <value>Der Einsatz hat sich geändert, während Enhanced AI geantwortet hat. Versuchen Sie es erneut.</value>
+  </data>
   <data name="Outcome.NothingToApply" xml:space="preserve">
     <value>Es gibt nichts zu übernehmen: Die Empfehlung lautet, das aktuelle Ziel beizubehalten.</value>
   </data>

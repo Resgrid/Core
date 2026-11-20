@@ -49,6 +49,9 @@ namespace Resgrid.Providers.NumberProvider
 		public Task<bool> ReleaseDedicatedNumberAsync(string providerNumberId, CancellationToken cancellationToken = default) =>
 			_twilioProvider.ReleaseDedicatedNumberAsync(providerNumberId, cancellationToken);
 
+		public Task<CarrierNumberPurchase> FindDedicatedNumberAsync(string phoneNumber, CancellationToken cancellationToken = default) =>
+			_twilioProvider.FindDedicatedNumberAsync(phoneNumber, cancellationToken);
+
 		public string ConvertCountryToCode(string country)
 		{
 			switch (country)

@@ -38,6 +38,9 @@ namespace Resgrid.Model.Helpers
 		/// </summary>
 		public string DestinationAddress { get; set; }
 		public string DestinationGeolocation { get; set; }
+
+		/// <summary>A free destination's what3words: part of the free destination too (see <see cref="CallLocations.HasFreeDestination"/>).</summary>
+		public string DestinationW3W { get; set; }
 		public string IndoorMapZoneId { get; set; }
 		public bool HasProtocols { get; set; }
 		public bool HasLinkedCall { get; set; }
@@ -118,7 +121,8 @@ namespace Resgrid.Model.Helpers
 			RequireText(NewCallFieldKeys.IndoorLocation, values.IndoorMapZoneId);
 
 			Require(NewCallFieldKeys.DestinationPoi, (values.DestinationPoiId.HasValue && values.DestinationPoiId.Value > 0) ||
-				!string.IsNullOrWhiteSpace(values.DestinationAddress) || GeoMath.ParseLatLonString(values.DestinationGeolocation) != null);
+				!string.IsNullOrWhiteSpace(values.DestinationAddress) || GeoMath.ParseLatLonString(values.DestinationGeolocation) != null ||
+				!string.IsNullOrWhiteSpace(values.DestinationW3W));
 			Require(NewCallFieldKeys.Protocols, values.HasProtocols);
 			Require(NewCallFieldKeys.LinkedCall, values.HasLinkedCall);
 			if (!values.IsPending)

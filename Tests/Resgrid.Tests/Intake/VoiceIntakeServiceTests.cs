@@ -65,7 +65,7 @@ namespace Resgrid.Tests.Intake
 			_sessions.Setup(s => s.GetByProviderCallIdAsync(It.IsAny<string>())).ReturnsAsync(() => _session);
 			_sessions.Setup(s => s.TryInsertAsync(It.IsAny<VoiceIntakeSession>(), It.IsAny<CancellationToken>()))
 				.Callback((VoiceIntakeSession s, CancellationToken _) => _session = s).ReturnsAsync(true);
-			_sessions.Setup(s => s.UpdateProgressAsync(It.IsAny<VoiceIntakeSession>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
+			_sessions.Setup(s => s.UpdateProgressAsync(It.IsAny<VoiceIntakeSession>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
 
 			_channels = new Mock<IIntakeChannelsRepository>();
 			_channels.Setup(c => c.GetLiveByAddressAsync((int)IntakeChannelTypes.Voice, Number))
@@ -94,11 +94,71 @@ namespace Resgrid.Tests.Intake
 			(IntakeConfig.Enabled, IntakeConfig.VoiceMaxRetries, DedicatedNumberAddonConfig.MonthlyVoiceIntakeLimit, AiConfig.SelfHostedDepartmentIds) = _saved;
 		}
 
-		private void MemberCalling(bool disabled = false)
+		private void MemberCalling(bool disabled = false, bool? verified = true)
 		{
-			_profiles.Setup(p => p.GetProfileByMobileNumberAsync("15305550199")).ReturnsAsync(new UserProfile { UserId = "member-1" });
+			_profiles.Setup(p => p.GetProfileByMobileNumberAsync("15305550199")).ReturnsAsync(new UserProfile { UserId = "member-1", MobileNumberVerified = verified });
 			_departments.Setup(d => d.GetDepartmentMemberAsync("member-1", DepartmentId, It.IsAny<bool>()))
 				.ReturnsAsync(new DepartmentMember { UserId = "member-1", DepartmentId = DepartmentId, IsDisabled = disabled });
+		}
+
+		[TestCase(false)]
+		[TestCase(null)]
+		public async Task a_member_number_that_is_not_verified_is_a_caller_not_the_member_menu(bool? verified)
+		{
+			// The member menu acts as the member (status, staffing); caller id alone is not proof (sms-unverified routing policy).
+			MemberCalling(verified: verified);
+
+			var routing = await _service.RouteAsync(_number, Caller, FixedClock.Now);
+
+			routing.Route.Should().Be(VoiceIntakeRoutes.Intake);
+			routing.MemberUserId.Should().BeNull();
+		}
+
+		[Test]
+		public async Task a_verified_home_number_reaches_the_member_menu_when_the_mobile_match_is_unverified()
+		{
+			MemberCalling(verified: false);
+			_profiles.Setup(p => p.GetProfileByHomeNumberAsync("15305550199")).ReturnsAsync(new UserProfile { UserId = "member-1", HomeNumberVerified = true });
+
+			var routing = await _service.RouteAsync(_number, Caller, FixedClock.Now);
+
+			routing.Route.Should().Be(VoiceIntakeRoutes.MemberMenu);
+			routing.MemberUserId.Should().Be("member-1");
+		}
+
+		[Test]
+		public async Task a_lapsed_number_is_inactive_for_members_too()
+		{
+			MemberCalling();
+			_number.Status = (int)DepartmentPhoneNumberStatuses.Lapsed;
+
+			(await _service.RouteAsync(_number, Caller, FixedClock.Now)).Route.Should().Be(VoiceIntakeRoutes.NumberInactive);
+		}
+
+		[Test]
+		public async Task an_answer_that_lost_to_an_overlapping_callback_resumes_the_stored_session()
+		{
+			await _service.StartAsync(_number, "CA1", Caller);
+			var stored = new VoiceIntakeSession
+			{
+				VoiceIntakeSessionId = _session.VoiceIntakeSessionId, DepartmentId = DepartmentId, ProviderCallId = "CA1", FromNumber = Caller, ToNumber = Number,
+				Step = (int)VoiceIntakeSteps.Completed, CallId = 900, CompletedOn = FixedClock.Now
+			};
+			_sessions.SetupSequence(s => s.GetByProviderCallIdAsync("CA1"))
+				.ReturnsAsync(new VoiceIntakeSession
+				{
+					VoiceIntakeSessionId = _session.VoiceIntakeSessionId, DepartmentId = DepartmentId, ProviderCallId = "CA1", FromNumber = Caller, ToNumber = Number,
+					Step = (int)VoiceIntakeSteps.Nature, AnswersJson = "{}"
+				})
+				.ReturnsAsync(stored);
+			_sessions.Setup(s => s.UpdateProgressAsync(It.IsAny<VoiceIntakeSession>(), (int)VoiceIntakeSteps.Nature, 0, It.IsAny<CancellationToken>())).ReturnsAsync(false);
+
+			var turn = await Answer(VoiceIntakeSteps.Nature, "Kitchen fire");
+
+			turn.HangUp.Should().BeTrue("the other callback already completed the call");
+			turn.Step.Should().Be(VoiceIntakeSteps.Completed);
+			turn.CallId.Should().Be(900);
+			_received.Should().BeNull("this callback created nothing");
 		}
 
 		[Test]

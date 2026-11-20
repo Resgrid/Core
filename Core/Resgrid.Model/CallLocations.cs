@@ -75,10 +75,11 @@ namespace Resgrid.Model
 			return TryParsePoint(value, out var latitude, out var longitude) ? FormatPoint(latitude, longitude) : null;
 		}
 
-		/// <summary>True when the call has a free destination (a point or an address), whatever its POI.</summary>
+		/// <summary>True when the call has a free destination (a point, an address or what3words), whatever its POI.</summary>
 		public static bool HasFreeDestination(Call call)
 		{
-			return call != null && (!String.IsNullOrWhiteSpace(call.DestinationGeoLocationData) || !String.IsNullOrWhiteSpace(call.DestinationAddress));
+			return call != null && (!String.IsNullOrWhiteSpace(call.DestinationGeoLocationData) || !String.IsNullOrWhiteSpace(call.DestinationAddress) ||
+									!String.IsNullOrWhiteSpace(call.DestinationW3W));
 		}
 
 		/// <summary>True when the call has a destination: a POI or a free location.</summary>

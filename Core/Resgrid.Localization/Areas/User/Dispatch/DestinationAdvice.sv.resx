@@ -166,6 +166,12 @@
   <data name="Outcome.DestinationGone" xml:space="preserve">
     <value>Det rekommenderade målet finns inte längre.</value>
   </data>
+  <data name="Outcome.DestinationClosed" xml:space="preserve">
+    <value>Det rekommenderade målet är stängt nu. Fråga igen för ett aktuellt råd.</value>
+  </data>
+  <data name="Outcome.CallChanged" xml:space="preserve">
+    <value>Ärendet ändrades medan Enhanced AI svarade. Försök igen.</value>
+  </data>
   <data name="Outcome.NothingToApply" xml:space="preserve">
     <value>Det finns inget att tillämpa: rådet är att behålla nuvarande mål.</value>
   </data>

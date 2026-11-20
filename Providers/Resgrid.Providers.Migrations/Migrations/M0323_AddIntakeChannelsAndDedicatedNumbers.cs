@@ -110,6 +110,8 @@ namespace Resgrid.Providers.Migrations.Migrations
 
 			// A number belongs to one department while it is provisioning, active or held after lapsing.
 			Index("UX_DepartmentPhoneNumbers_Number", "DepartmentPhoneNumbers", "CREATE UNIQUE INDEX [UX_DepartmentPhoneNumbers_Number] ON [DepartmentPhoneNumbers] ([PhoneNumber]) WHERE [Status] IN (1, 2, 3);");
+			// One held (Provisioning / Active / Lapsed) number per department: two admins buying different numbers at once cannot both claim.
+			Index("UX_DepartmentPhoneNumbers_DepartmentHeld", "DepartmentPhoneNumbers", "CREATE UNIQUE INDEX [UX_DepartmentPhoneNumbers_DepartmentHeld] ON [DepartmentPhoneNumbers] ([DepartmentId]) WHERE [Status] IN (1, 2, 3);");
 			Index("IX_DepartmentPhoneNumbers_Department", "DepartmentPhoneNumbers", "CREATE INDEX [IX_DepartmentPhoneNumbers_Department] ON [DepartmentPhoneNumbers] ([DepartmentId], [Status]);");
 
 			if (!Schema.Table("VoiceIntakeSessions").Exists())
@@ -200,7 +202,7 @@ namespace Resgrid.Providers.Migrations.Migrations
 				Execute.Sql(
 					"IF NOT EXISTS (SELECT 1 FROM [FeatureFlags] WHERE [FlagKey] = '" + flag.Key + "') " +
 					"INSERT INTO [FeatureFlags] ([FlagKey], [Name], [Description], [Category], [IsEnabledGlobally]) " +
-					"VALUES ('" + flag.Key + "', '" + flag.Name + "', '" + flag.Description + "', '" + flag.Category + "', 0);");
+					"VALUES ('" + Literal(flag.Key) + "', '" + Literal(flag.Name) + "', '" + Literal(flag.Description) + "', '" + Literal(flag.Category) + "', 0);");
 
 				if (!flag.AiChild)
 					continue;
@@ -231,5 +233,8 @@ namespace Resgrid.Providers.Migrations.Migrations
 		{
 			Execute.Sql($"IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = '{name}' AND object_id = OBJECT_ID('{table}')) " + createSql);
 		}
+
+		/// <summary>Seed text inside a single-quoted SQL literal ("the department's own number" must not end the literal).</summary>
+		public static string Literal(string value) => (value ?? string.Empty).Replace("'", "''");
 	}
 }

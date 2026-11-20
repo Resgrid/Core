@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
+using Resgrid.Config;
 using Resgrid.Model;
 
 namespace Resgrid.Web.Services.Intake
@@ -144,9 +145,12 @@ namespace Resgrid.Web.Services.Intake
 			if (string.IsNullOrWhiteSpace(text))
 				return null;
 
-			var entities = (m["entities"] as JArray ?? m["caption_entities"] as JArray ?? new JArray()).Select(x => S(x, "type")).ToList();
-			var replyToBot = S(m, "reply_to_message.from.is_bot") == "True";
-			var addressesBot = entities.Contains("bot_command") || entities.Contains("mention") || replyToBot;
+			var entities = (m["entities"] as JArray ?? m["caption_entities"] as JArray ?? new JArray()).ToList();
+			var botId = TelegramBotId(ChatbotConfig.TelegramBotToken);
+			// A reply to this bot (by its id, from the token; to any bot only when the id is unknown), a mention of it or a command
+			// addressed to it. A mention of someone else, or a command or reply for another bot, does not address this one.
+			var replyToBot = botId != null ? S(m, "reply_to_message.from.id") == botId : S(m, "reply_to_message.from.is_bot") == "True";
+			var addressesBot = replyToBot || entities.Any(entity => TelegramEntityAddressesBot(entity, text, botId, ChatbotConfig.TelegramBotUsername));
 			var reply = m["reply_to_message"] != null && !replyToBot;
 			if (reply && !addressesBot)
 				return null;
@@ -226,6 +230,52 @@ namespace Resgrid.Web.Services.Intake
 				AddressesBot = true
 			};
 			return message.Text == null ? null : message;
+		}
+
+		/// <summary>The bot's numeric id: the part of its token before the colon ("123456789:AA…"), or null.</summary>
+		public static string TelegramBotId(string token)
+		{
+			if (string.IsNullOrWhiteSpace(token))
+				return null;
+
+			var colon = token.IndexOf(':');
+			var id = colon > 0 ? token.Substring(0, colon).Trim() : null;
+			return id != null && id.Length > 0 && id.All(char.IsDigit) ? id : null;
+		}
+
+		/// <summary>
+		/// Whether one message entity addresses this bot: a mention (@name), a text mention of its id, or a bot command with no
+		/// "@name" suffix or with this bot's name. With no configured username, a name only counts when it is a bot's (Telegram bot
+		/// usernames end in "bot"), so "@anotheruser" never does.
+		/// </summary>
+		public static bool TelegramEntityAddressesBot(JToken entity, string text, string botId, string botUsername)
+		{
+			var type = S(entity, "type");
+			if (type == "text_mention")
+				return botId != null && S(entity, "user.id") == botId;
+			if (type != "mention" && type != "bot_command")
+				return false;
+
+			if (!int.TryParse(S(entity, "offset"), out var offset) || !int.TryParse(S(entity, "length"), out var length) ||
+				offset < 0 || length <= 0 || text == null || offset + length > text.Length)
+				return false;
+
+			var value = text.Substring(offset, length);
+			string name;
+			if (type == "mention")
+				name = value.TrimStart('@');
+			else
+			{
+				var at = value.IndexOf('@');
+				if (at < 0)
+					return true;
+				name = value.Substring(at + 1);
+			}
+
+			var configured = (botUsername ?? string.Empty).Trim().TrimStart('@');
+			return configured.Length > 0
+				? string.Equals(name, configured, StringComparison.OrdinalIgnoreCase)
+				: name.EndsWith("bot", StringComparison.OrdinalIgnoreCase);
 		}
 
 		private static string Clean(string value)

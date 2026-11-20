@@ -20,7 +20,7 @@ namespace Resgrid.Web.Services.Models.v4.AiDestinations
 		/// <summary>
 		/// What the request did, or why it did nothing: Advised, Unchanged, Applied, Dismissed, Disabled, NotEntitled, Unconfigured,
 		/// ProtectionUnsupported, CallNotOpen, NoLocation, NoCandidates, Busy, BudgetExhausted, Unavailable, InvalidOutput, NotFound,
-		/// NotOpen, NothingToApply, DestinationGone. Null on GetAdvice.
+		/// NotOpen, NothingToApply, DestinationGone, DestinationClosed, CallChanged. Null on GetAdvice.
 		/// </summary>
 		public string Outcome { get; set; }
 
@@ -62,7 +62,11 @@ namespace Resgrid.Web.Services.Models.v4.AiDestinations
 		/// <summary>The recommendation differs from the current destination.</summary>
 		public bool IsChange { get; set; }
 
-		/// <summary>True when the change is confident enough to have been noted on the call and pushed (AiDestinationConfig.MinimumConfidence).</summary>
+		/// <summary>
+		/// True when the advice is a change whose confidence meets the current AiDestinationConfig.MinimumConfidence threshold. A comparison
+		/// made when the advice is read, not a record of delivery: whether a call note or push went out was decided against the threshold in
+		/// force when the advice was written.
+		/// </summary>
 		public bool IsConfident { get; set; }
 
 		/// <summary>1 Open, 2 Applied, 3 Dismissed, 4 Superseded.</summary>

@@ -181,6 +181,9 @@
   <data name="Error.Invalid" xml:space="preserve">
     <value>Le canal n'a pas pu être enregistré. Vérifiez les valeurs et réessayez.</value>
   </data>
+  <data name="Error.InvalidSenders" xml:space="preserve">
+    <value>Chaque expéditeur autorisé peut comporter au maximum 256 caractères. Le canal n'a pas été enregistré.</value>
+  </data>
   <data name="Type.Sms" xml:space="preserve">
     <value>Message texte (SMS)</value>
   </data>

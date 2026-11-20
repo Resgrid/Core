@@ -110,7 +110,6 @@ namespace Resgrid.Providers.NumberProvider
 
 			var results = new List<AvailablePhoneNumber>();
 			Exception failure = null;
-			var answered = false;
 
 			// Local numbers first (the only kind in the US); mobile numbers where the country sells them. A number type the country does
 			// not offer answers 404, which simply means none.
@@ -119,9 +118,8 @@ namespace Resgrid.Providers.NumberProvider
 				var local = await LocalResource.ReadAsync(localOptions);
 				results.AddRange(local.Select(n => Map(n.PhoneNumber, n.FriendlyName, n.Locality, n.Region, n.PostalCode, n.IsoCountry, n.Capabilities,
 					DedicatedNumberTypes.Local)));
-				answered = true;
 			}
-			catch (ApiException ex) when (ex.Status == 404) { answered = true; }
+			catch (ApiException ex) when (ex.Status == 404) { }
 			catch (Exception ex) { failure = ex; }
 
 			cancellationToken.ThrowIfCancellationRequested();
@@ -133,17 +131,28 @@ namespace Resgrid.Providers.NumberProvider
 					var mobile = await MobileResource.ReadAsync(mobileOptions);
 					results.AddRange(mobile.Select(n => Map(n.PhoneNumber, n.FriendlyName, n.Locality, n.Region, n.PostalCode, n.IsoCountry, n.Capabilities,
 						DedicatedNumberTypes.Mobile)));
-					answered = true;
 				}
-				catch (ApiException ex) when (ex.Status == 404) { answered = true; }
+				catch (ApiException ex) when (ex.Status == 404) { }
 				catch (Exception ex) { failure ??= ex; }
 			}
 
-			if (!answered && failure != null)
+			return CompleteSearch(results, failure, take);
+		}
+
+		/// <summary>
+		/// The usable numbers (SMS and voice, each once). A failed query with nothing usable to show is a carrier failure, never "no numbers":
+		/// a 404 from the other number type must not hide it. Partial results from one query still count when the other failed.
+		/// </summary>
+		public static List<AvailablePhoneNumber> CompleteSearch(IEnumerable<AvailablePhoneNumber> results, Exception failure, int take)
+		{
+			var usable = (results ?? Enumerable.Empty<AvailablePhoneNumber>())
+				.Where(n => n != null && !string.IsNullOrWhiteSpace(n.PhoneNumber) && n.SmsCapable && n.VoiceCapable)
+				.GroupBy(n => n.PhoneNumber).Select(g => g.First()).Take(take).ToList();
+
+			if (usable.Count == 0 && failure != null)
 				throw new InvalidOperationException("The carrier number search failed.", failure);
 
-			return results.Where(n => !string.IsNullOrWhiteSpace(n.PhoneNumber) && n.SmsCapable && n.VoiceCapable)
-				.GroupBy(n => n.PhoneNumber).Select(g => g.First()).Take(take).ToList();
+			return usable;
 		}
 
 		/// <summary>The Twilio AvailablePhoneNumbers/Local query for a dedicated number search (built without calling Twilio).</summary>
@@ -248,9 +257,53 @@ namespace Resgrid.Providers.NumberProvider
 			}
 			catch (Exception ex)
 			{
-				result.Error = "The carrier purchase failed: " + ex.GetType().Name;
+				// No carrier answer (a timeout, a dropped connection, an unreadable response): Twilio may have sold the number anyway. Ask the
+				// account before calling it a failure, so a bought number is never left unrecorded and unmanaged.
+				return await ReconcilePurchaseAsync(phoneNumber, ex, result);
+			}
+		}
+
+		private async Task<CarrierNumberPurchase> ReconcilePurchaseAsync(string phoneNumber, Exception purchaseFailure, CarrierNumberPurchase result)
+		{
+			try
+			{
+				var held = await FindDedicatedNumberAsync(phoneNumber);
+				if (held != null)
+					return held;
+
+				result.Error = "The carrier purchase failed: " + purchaseFailure.GetType().Name;
 				return result;
 			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex, $"Twilio purchase of dedicated number {phoneNumber} could not be confirmed either way.");
+				result.Uncertain = true;
+				result.Error = "The carrier did not confirm the purchase (" + purchaseFailure.GetType().Name + "); the carrier account is checked again.";
+				return result;
+			}
+		}
+
+		public async Task<CarrierNumberPurchase> FindDedicatedNumberAsync(string phoneNumber, CancellationToken cancellationToken = default)
+		{
+			if (string.IsNullOrWhiteSpace(phoneNumber))
+				return null;
+
+			TwilioClient.Init(Config.NumberProviderConfig.TwilioAccountSid, Config.NumberProviderConfig.TwilioAuthToken);
+
+			var held = await IncomingPhoneNumberResource.ReadAsync(phoneNumber: new PhoneNumber(phoneNumber), limit: 1);
+			var number = held?.FirstOrDefault(n => n != null && !string.IsNullOrWhiteSpace(n.Sid));
+			if (number == null)
+				return null;
+
+			return new CarrierNumberPurchase
+			{
+				Success = true,
+				Provider = DedicatedNumberCarrierSettings.Provider,
+				ProviderNumberId = number.Sid,
+				PhoneNumber = number.PhoneNumber?.ToString() ?? phoneNumber,
+				SmsCapable = number.Capabilities?.Sms != false,
+				VoiceCapable = number.Capabilities?.Voice != false
+			};
 		}
 
 		public async Task<bool> ReleaseDedicatedNumberAsync(string providerNumberId, CancellationToken cancellationToken = default)
@@ -269,11 +322,13 @@ namespace Resgrid.Providers.NumberProvider
 				// Already gone from the account (released by hand or by an earlier attempt).
 				return true;
 			}
-			catch (Exception ex)
+			catch (ApiException ex)
 			{
-				Framework.Logging.LogException(ex, $"Twilio release of dedicated number {providerNumberId} failed.");
+				// Twilio answered and kept the number.
+				Framework.Logging.LogException(ex, $"Twilio refused to release dedicated number {providerNumberId}.");
 				return false;
 			}
+			// Anything else (no answer) is an unknown outcome and propagates: the caller keeps the number marked as being released.
 		}
 
 		private static AvailablePhoneNumber Map(PhoneNumber number, PhoneNumber friendlyName, string locality, string region, string postalCode,

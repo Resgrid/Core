@@ -48,6 +48,9 @@ namespace Resgrid.Providers.NumberProvider
 
         public Task<bool> ReleaseDedicatedNumberAsync(string providerNumberId, CancellationToken cancellationToken = default) => Task.FromResult(false);
 
+        public Task<CarrierNumberPurchase> FindDedicatedNumberAsync(string phoneNumber, CancellationToken cancellationToken = default) =>
+            Task.FromResult<CarrierNumberPurchase>(null);
+
         private static string GenerateGetAvailableNumbersUrl(string country)
         {
             return string.Format("number/search/{0}/{1}/{2}?features=SMS", Config.NumberProviderConfig.NexmoApiKey, Config.NumberProviderConfig.NexmoApiSecret, country);

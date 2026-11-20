@@ -190,6 +190,23 @@ namespace Resgrid.Tests.Repositories
 		}
 
 		[Test]
+		public async Task the_idle_close_applies_only_while_the_thread_is_still_idle()
+		{
+			var repository = Conversations();
+			var thread = Thread(activity: Base);
+			await repository.TryInsertOpenAsync(thread);
+
+			// A text arrived after the sweep read the thread: its activity is past the cutoff, so the idle close writes nothing.
+			await repository.TouchAsync(thread.IntakeConversationId, DepartmentId, Base.AddMinutes(30), Base.AddMinutes(30));
+			(await repository.TryCloseIdleAsync(thread.IntakeConversationId, DepartmentId, "Idle", Base.AddMinutes(10), Base.AddHours(5))).Should().BeFalse();
+			(await repository.GetOpenForParticipantAsync(DepartmentId, (int)IntakeChannelTypes.Sms, Texter)).Should().NotBeNull();
+
+			(await repository.TryCloseIdleAsync(thread.IntakeConversationId, DepartmentId, "Idle", Base.AddHours(1), Base.AddHours(5))).Should().BeTrue();
+			(await repository.TryCloseIdleAsync(thread.IntakeConversationId, DepartmentId, "Idle", Base.AddHours(1), Base.AddHours(5))).Should().BeFalse("closed once");
+			(await repository.GetLatestForCallAsync(DepartmentId, 900)).CloseReason.Should().Be("Idle");
+		}
+
+		[Test]
 		public async Task replies_reach_the_most_recently_active_open_thread_within_the_window()
 		{
 			var repository = Conversations();

@@ -375,9 +375,9 @@
                     <partial name="_DestinationAdvice" model="Model.Call" />
                     @* The text conversation with the member of the public who texted the dedicated number (calls that have one). *@
                     <partial name="_IntakeConversation" model="Model.Call" />
-                    @if (Model.Locations.HasRoute)
+                    @if (Model.Locations.ShowsRouteRuns)
                     {
-                        @* The runs of the call's route (M0322). *@
+                        @* The runs of the call's route (M0322); still listed after the call's route plan is cleared. *@
                         <div class="row">
                             <div class="col-lg-12">
                                 <partial name="_CallRouteRuns" model="Model.Locations" view-data='new ViewDataDictionary(ViewData) { { "CallRouteRunsLinks", true } }' />

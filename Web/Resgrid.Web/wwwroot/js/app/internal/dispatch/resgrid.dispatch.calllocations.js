@@ -20,6 +20,10 @@ var resgrid;
             var routeRequest = 0;
             var routeFitPending = false;
             var destinationColor = '#8e44ad';
+            // Destination lookups (address, plus code, what3words): each one takes the next number, and a result is applied only
+            // while its number is still the latest and its input still reads what was looked up. Editing, clearing or replacing the
+            // destination moves the number on, so a late answer never overwrites what the dispatcher did since.
+            var destinationLookup = 0;
 
             function settings() {
                 return window.callLocationsConfig || {};
@@ -118,8 +122,16 @@ var resgrid;
                 if (option.attr('data-lat') && isPoint(lat, lng)) {
                     setCallLocation(lat, lng, address);
                 } else if (address && $('#Call_Address').length) {
+                    // A POI with an address but no point: the pin that was there belongs to the old location. Its coordinates go,
+                    // and the page looks the new address up the way its own Find button does (the save locates an address-only
+                    // call too), so the pin and the address never name two different places.
                     $('#Call_Address').val(address);
                     window.userSuppliedAddress = true;
+                    $('#Latitude').val('');
+                    $('#Longitude').val('');
+                    if ($('#searchButton').length) {
+                        $('#searchButton').trigger('click');
+                    }
                 }
             }
 
@@ -164,6 +176,21 @@ var resgrid;
 
             function freeDestinationPoint() {
                 return readPoint('#DestinationLatitude', '#DestinationLongitude');
+            }
+
+            /** Starts a destination lookup; its result applies only while isCurrentLookup says so. */
+            function beginDestinationLookup() {
+                destinationLookup++;
+                return destinationLookup;
+            }
+
+            /** Pending lookups no longer apply: the dispatcher changed the destination another way. */
+            function invalidateDestinationLookups() {
+                destinationLookup++;
+            }
+
+            function isCurrentLookup(request, selector, value) {
+                return request === destinationLookup && $.trim($(selector).val() || '') === value;
             }
 
             /** One destination: a POI disables the free fields, a free destination disables the POI select. */
@@ -218,6 +245,7 @@ var resgrid;
 
                 if (!fromPoi) {
                     destinationMarker.onDragEnd(function (moved) {
+                        invalidateDestinationLookups();
                         $('#DestinationLatitude').val(formatCoordinate(moved[0]));
                         $('#DestinationLongitude').val(formatCoordinate(moved[1]));
                         updateDestinationInputs();
@@ -261,12 +289,17 @@ var resgrid;
                     return;
                 }
 
+                var request = beginDestinationLookup();
                 fetch('/api/web-bff/api/v4/Geocoding/ForwardGeocode?address=' + encodeURIComponent(where))
                     .then(function (r) {
                         if (!r.ok) { throw new Error('ForwardGeocode failed with HTTP status ' + r.status); }
                         return r.json();
                     })
                     .then(function (result) {
+                        if (!isCurrentLookup(request, '#Call_DestinationAddress', where)) {
+                            return;
+                        }
+
                         if (result && result.Data && result.Data.Latitude != null && result.Data.Longitude != null &&
                             isPoint(Number(result.Data.Latitude), Number(result.Data.Longitude))) {
                             setDestinationPoint(Number(result.Data.Latitude), Number(result.Data.Longitude));
@@ -275,6 +308,42 @@ var resgrid;
                         }
                     })
                     .catch(function (err) { console.error('Destination geocode error:', err); });
+            }
+
+            /**
+             * Looks the typed plus code up and, when found, makes its point the destination and empties the code (a plus code only
+             * finds the point; it is never stored). onFound runs after that.
+             */
+            function lookupPlusCode(code, onFound) {
+                var request = beginDestinationLookup();
+                fetch('/api/web-bff/api/v4/Geocoding/PlusCodeLookup?code=' + encodeURIComponent(code))
+                    .then(function (r) {
+                        if (!r.ok) { throw new Error('PlusCodeLookup failed with HTTP status ' + r.status); }
+                        return r.json();
+                    })
+                    .then(function (result) {
+                        if (!isCurrentLookup(request, '#DestinationPlusCode', code)) {
+                            return;
+                        }
+
+                        if (result && result.Data && result.Data.Latitude != null && result.Data.Longitude != null &&
+                            isPoint(Number(result.Data.Latitude), Number(result.Data.Longitude))) {
+                            setDestinationPoint(Number(result.Data.Latitude), Number(result.Data.Longitude));
+                            $('#DestinationPlusCode').val('');
+                            updateDestinationInputs();
+                            if (typeof onFound === 'function') {
+                                onFound();
+                            }
+                        } else {
+                            alert(text('plusCodeNotFound', 'No location was found for that plus code.'));
+                        }
+                    })
+                    .catch(function (err) {
+                        console.error('Plus code lookup error:', err);
+                        if (isCurrentLookup(request, '#DestinationPlusCode', code)) {
+                            alert(text('plusCodeNotFound', 'No location was found for that plus code.'));
+                        }
+                    });
             }
 
             function findPlusCode(evt) {
@@ -288,26 +357,37 @@ var resgrid;
                     return;
                 }
 
-                fetch('/api/web-bff/api/v4/Geocoding/PlusCodeLookup?code=' + encodeURIComponent(code))
-                    .then(function (r) {
-                        if (!r.ok) { throw new Error('PlusCodeLookup failed with HTTP status ' + r.status); }
-                        return r.json();
-                    })
-                    .then(function (result) {
-                        if (result && result.Data && result.Data.Latitude != null && result.Data.Longitude != null &&
-                            isPoint(Number(result.Data.Latitude), Number(result.Data.Longitude))) {
-                            // A plus code only finds the point; it is never stored.
-                            setDestinationPoint(Number(result.Data.Latitude), Number(result.Data.Longitude));
-                            $('#DestinationPlusCode').val('');
-                            updateDestinationInputs();
+                lookupPlusCode(code);
+            }
+
+            /**
+             * A plus code is only a way to find the destination point, never saved: a form sent with one still typed in would
+             * silently save no destination. The save waits for the lookup instead; found, the point takes its place and the form
+             * goes on (with the button that was pressed); not found, the dispatcher is told and the form stays.
+             */
+            function onFormSubmit(evt) {
+                var input = $('#DestinationPlusCode');
+                var code = $.trim(input.val() || '');
+                if (code === '' || input.prop('disabled')) {
+                    return true;
+                }
+
+                evt.preventDefault();
+                var form = this;
+                var submitter = evt.originalEvent && evt.originalEvent.submitter ? evt.originalEvent.submitter : null;
+
+                lookupPlusCode(code, function () {
+                    if (typeof form.requestSubmit === 'function') {
+                        if (submitter) {
+                            form.requestSubmit(submitter);
                         } else {
-                            alert(text('plusCodeNotFound', 'No location was found for that plus code.'));
+                            form.requestSubmit();
                         }
-                    })
-                    .catch(function (err) {
-                        console.error('Plus code lookup error:', err);
-                        alert(text('plusCodeNotFound', 'No location was found for that plus code.'));
-                    });
+                    } else {
+                        $(form).trigger('submit');
+                    }
+                });
+                return false;
             }
 
             function findW3w(evt) {
@@ -321,11 +401,16 @@ var resgrid;
                     return;
                 }
 
+                var request = beginDestinationLookup();
                 $.ajax({
                     url: settings().w3wUrl || (resgrid.absoluteBaseUrl + '/User/Dispatch/GetCoordinatesFromW3W'),
                     data: { words: words },
                     type: 'GET'
                 }).done(function (data) {
+                    if (!isCurrentLookup(request, '#Call_DestinationW3W', words)) {
+                        return;
+                    }
+
                     if (data && data.Latitude != null && data.Longitude != null && isPoint(Number(data.Latitude), Number(data.Longitude))) {
                         setDestinationPoint(Number(data.Latitude), Number(data.Longitude));
                     } else {
@@ -336,6 +421,7 @@ var resgrid;
 
             function clearFreeDestination(evt) {
                 evt.preventDefault();
+                invalidateDestinationLookups();
                 freeInputs().val('');
                 syncDestination();
             }
@@ -547,7 +633,9 @@ var resgrid;
                 }
 
                 if (option.attr('data-available') === 'false') {
-                    // A stored route that can no longer be followed: kept on the call, nothing to draw.
+                    // A stored route that can no longer be followed: kept on the call, nothing to draw. A preview still on its way
+                    // for the route picked before is dropped too.
+                    routeRequest++;
                     routeData = null;
                     clearRoute();
                     return;
@@ -588,13 +676,17 @@ var resgrid;
 
                 destinationPoiSelect().on('change', function () {
                     if ($(this).val()) {
-                        // A destination POI replaces any free destination.
+                        // A destination POI replaces any free destination, and any lookup still on its way.
+                        invalidateDestinationLookups();
                         freeInputs().val('');
                     }
                     syncDestination();
                 });
                 freeInputs().on('input change', updateDestinationInputs);
+                // Coordinates typed by hand win over a lookup still on its way.
+                $('#DestinationLatitude, #DestinationLongitude').on('input', invalidateDestinationLookups);
                 $('#DestinationLatitude, #DestinationLongitude').on('change', syncDestination);
+                $('#DestinationPlusCode').closest('form').on('submit', onFormSubmit);
                 $('#Call_DestinationAddress').on('keypress', function (event) {
                     if (event.keyCode === 13) {
                         $('#destinationSearchButton').click();

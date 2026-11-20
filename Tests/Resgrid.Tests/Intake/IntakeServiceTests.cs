@@ -277,16 +277,19 @@ namespace Resgrid.Tests.Intake
 			_messages.Setup(m => m.TryClaimAsync(It.IsAny<IntakeMessage>(), It.IsAny<CancellationToken>())).ReturnsAsync(false);
 			_messages.Setup(m => m.GetByProviderMessageIdAsync("ch-1", "SM1"))
 				.ReturnsAsync(new IntakeMessage { IntakeMessageId = "m-1", State = (int)IntakeMessageStates.Failed, ReceivedOn = FixedClock.Now.AddMinutes(-1) });
-			_messages.Setup(m => m.TryReclaimAsync("m-1", (int)IntakeMessageStates.Failed, It.IsAny<CancellationToken>())).ReturnsAsync(true);
+			_messages.Setup(m => m.TryReclaimAsync("m-1", (int)IntakeMessageStates.Failed, FixedClock.Now, FixedClock.Now.AddMinutes(-10), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(true);
 
 			var result = await _service.ReceiveAsync(Sms());
 
 			result.State.Should().Be(IntakeMessageStates.CallCreated);
 			_saved.Should().ContainSingle();
+			// A failed claim never saved a call, so nothing is looked up for it.
+			_messages.Verify(m => m.GetUnclaimedIntakeCallIdAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int[]>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
 
 		[Test]
-		public async Task a_message_still_in_progress_elsewhere_is_a_duplicate()
+		public async Task a_message_still_in_progress_elsewhere_is_a_duplicate_the_transport_asks_to_redeliver()
 		{
 			_messages.Setup(m => m.TryClaimAsync(It.IsAny<IntakeMessage>(), It.IsAny<CancellationToken>())).ReturnsAsync(false);
 			_messages.Setup(m => m.GetByProviderMessageIdAsync("ch-1", "SM1"))
@@ -295,7 +298,75 @@ namespace Resgrid.Tests.Intake
 			var result = await _service.ReceiveAsync(Sms());
 
 			result.State.Should().Be(IntakeMessageStates.Duplicate);
-			_messages.Verify(m => m.TryReclaimAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Never);
+			result.Reason.Should().Be(IntakeResultReasons.DuplicateInProgress);
+			result.CallId.Should().BeNull();
+			_messages.Verify(m => m.TryReclaimAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public async Task a_finished_message_is_a_plain_duplicate()
+		{
+			_messages.Setup(m => m.TryClaimAsync(It.IsAny<IntakeMessage>(), It.IsAny<CancellationToken>())).ReturnsAsync(false);
+			_messages.Setup(m => m.GetByProviderMessageIdAsync("ch-1", "SM1"))
+				.ReturnsAsync(new IntakeMessage { IntakeMessageId = "m-1", State = (int)IntakeMessageStates.SenderNotAllowed, ReceivedOn = FixedClock.Now.AddMinutes(-1) });
+
+			var result = await _service.ReceiveAsync(Sms());
+
+			result.State.Should().Be(IntakeMessageStates.Duplicate);
+			result.Reason.Should().Be("Duplicate");
+		}
+
+		[Test]
+		public async Task a_retry_after_the_first_attempt_died_between_saving_the_call_and_recording_it_returns_that_call()
+		{
+			// The first attempt saved call 812 and its process died before the claim got the id: the claim stayed Received.
+			var receivedOn = FixedClock.Now.AddMinutes(-20);
+			_messages.Setup(m => m.TryClaimAsync(It.IsAny<IntakeMessage>(), It.IsAny<CancellationToken>())).ReturnsAsync(false);
+			_messages.Setup(m => m.GetByProviderMessageIdAsync("ch-1", "SM1"))
+				.ReturnsAsync(new IntakeMessage { IntakeMessageId = "m-1", State = (int)IntakeMessageStates.Received, ReceivedOn = receivedOn });
+			_messages.Setup(m => m.TryReclaimAsync("m-1", (int)IntakeMessageStates.Received, FixedClock.Now, FixedClock.Now.AddMinutes(-10), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(true);
+			_messages.Setup(m => m.GetUnclaimedIntakeCallIdAsync(DepartmentId, "SM1",
+					It.Is<int[]>(s => s.Contains((int)CallSources.Intake) && s.Contains((int)CallSources.VoiceIntake)), receivedOn.AddDays(-1), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(812);
+
+			var result = await _service.ReceiveAsync(Sms());
+
+			result.State.Should().Be(IntakeMessageStates.Duplicate);
+			result.CallId.Should().Be(812);
+			_saved.Should().BeEmpty("the call the dead attempt saved is the message's call");
+			_completions.Should().ContainSingle(c => c.State == (int)IntakeMessageStates.CallCreated && c.CallId == 812);
+		}
+
+		[Test]
+		public async Task a_retry_of_an_abandoned_claim_with_no_saved_call_creates_it()
+		{
+			_messages.Setup(m => m.TryClaimAsync(It.IsAny<IntakeMessage>(), It.IsAny<CancellationToken>())).ReturnsAsync(false);
+			_messages.Setup(m => m.GetByProviderMessageIdAsync("ch-1", "SM1"))
+				.ReturnsAsync(new IntakeMessage { IntakeMessageId = "m-1", State = (int)IntakeMessageStates.Received, ReceivedOn = FixedClock.Now.AddMinutes(-20) });
+			_messages.Setup(m => m.TryReclaimAsync("m-1", (int)IntakeMessageStates.Received, FixedClock.Now, FixedClock.Now.AddMinutes(-10), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(true);
+
+			var result = await _service.ReceiveAsync(Sms());
+
+			result.State.Should().Be(IntakeMessageStates.CallCreated);
+			_saved.Should().ContainSingle().Which.SourceIdentifier.Should().Be("SM1");
+		}
+
+		[Test]
+		public async Task a_retry_that_loses_the_reclaim_race_creates_nothing()
+		{
+			_messages.Setup(m => m.TryClaimAsync(It.IsAny<IntakeMessage>(), It.IsAny<CancellationToken>())).ReturnsAsync(false);
+			_messages.Setup(m => m.GetByProviderMessageIdAsync("ch-1", "SM1"))
+				.ReturnsAsync(new IntakeMessage { IntakeMessageId = "m-1", State = (int)IntakeMessageStates.Received, ReceivedOn = FixedClock.Now.AddMinutes(-20) });
+			_messages.Setup(m => m.TryReclaimAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(false);
+
+			var result = await _service.ReceiveAsync(Sms());
+
+			result.State.Should().Be(IntakeMessageStates.Duplicate);
+			result.Reason.Should().Be(IntakeResultReasons.DuplicateInProgress);
+			_saved.Should().BeEmpty();
 		}
 
 		[Test]
@@ -526,17 +597,57 @@ namespace Resgrid.Tests.Intake
 			DedicatedNumberAddonConfig.MonthlySmsIntakeLimit = 10;
 			_messages.Setup(m => m.CountAsync(DepartmentId, (int)IntakeChannelTypes.Sms, new DateTime(2026, 11, 1, 0, 0, 0, DateTimeKind.Utc),
 				new DateTime(2026, 12, 1, 0, 0, 0, DateTimeKind.Utc), It.IsAny<int[]>())).ReturnsAsync(11);
-			string marker = null;
-			_cache.Setup(c => c.TryGetStringAsync("IntakeSmsFairUse_55_202611")).ReturnsAsync(() => (true, marker));
-			_cache.Setup(c => c.SetStringAsync("IntakeSmsFairUse_55_202611", "1", It.IsAny<TimeSpan>())).Callback(() => marker = "1").ReturnsAsync(true);
+			var markers = UseMarkerCache();
+			_communication.Setup(c => c.SendNotificationDeliveredAsync(It.IsAny<string>(), DepartmentId, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Department>(),
+				It.IsAny<string>(), It.IsAny<UserProfile>(), It.IsAny<bool>(), It.IsAny<string>())).ReturnsAsync(true);
 
 			var first = await _service.ReceiveAsync(Sms(id: "SM1"));
 			var second = await _service.ReceiveAsync(Sms(id: "SM2"));
 
 			first.State.Should().Be(IntakeMessageStates.CallCreated);
 			second.State.Should().Be(IntakeMessageStates.CallCreated);
-			_communication.Verify(c => c.SendNotificationAsync("admin-1", DepartmentId, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Department>(), It.IsAny<string>(),
-				It.IsAny<UserProfile>(), It.IsAny<bool>()), Times.Once);
+			_communication.Verify(c => c.SendNotificationDeliveredAsync("admin-1", DepartmentId, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Department>(), It.IsAny<string>(),
+				It.IsAny<UserProfile>(), It.IsAny<bool>(), It.IsAny<string>()), Times.Once);
+			markers.Should().ContainKey("IntakeSmsFairUse_55_202611");
+		}
+
+		[Test]
+		public async Task a_fair_use_notice_that_failed_for_one_admin_is_retried_for_that_admin_only()
+		{
+			DedicatedNumberAddonConfig.MonthlySmsIntakeLimit = 10;
+			_messages.Setup(m => m.CountAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int[]>())).ReturnsAsync(11);
+			_departments.Setup(d => d.GetActiveAdminsForDepartmentAsync(DepartmentId))
+				.ReturnsAsync(new List<IdentityUser> { new IdentityUser { Id = "admin-1" }, new IdentityUser { Id = "admin-2" } });
+			var markers = UseMarkerCache();
+			var admin2Attempts = 0;
+			_communication.Setup(c => c.SendNotificationDeliveredAsync("admin-1", DepartmentId, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Department>(),
+				It.IsAny<string>(), It.IsAny<UserProfile>(), It.IsAny<bool>(), It.IsAny<string>())).ReturnsAsync(true);
+			// The first notice to admin-2 throws (provider outage); the next one goes out.
+			_communication.Setup(c => c.SendNotificationDeliveredAsync("admin-2", DepartmentId, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Department>(),
+					It.IsAny<string>(), It.IsAny<UserProfile>(), It.IsAny<bool>(), It.IsAny<string>()))
+				.ReturnsAsync(() => ++admin2Attempts == 1 ? throw new InvalidOperationException("outage") : true);
+
+			await _service.ReceiveAsync(Sms(id: "SM1"));
+			markers.Should().NotContainKey("IntakeSmsFairUse_55_202611", "an admin was not told, so the next text over the limit tries again");
+
+			await _service.ReceiveAsync(Sms(id: "SM2"));
+			await _service.ReceiveAsync(Sms(id: "SM3"));
+
+			_communication.Verify(c => c.SendNotificationDeliveredAsync("admin-1", DepartmentId, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Department>(), It.IsAny<string>(),
+				It.IsAny<UserProfile>(), It.IsAny<bool>(), It.IsAny<string>()), Times.Once, "admin-1 was told the first time");
+			admin2Attempts.Should().Be(2);
+			markers.Should().ContainKey("IntakeSmsFairUse_55_202611");
+		}
+
+		/// <summary>A working cache whose entries the test can see.</summary>
+		private Dictionary<string, string> UseMarkerCache()
+		{
+			var markers = new Dictionary<string, string>();
+			_cache.Setup(c => c.TryGetStringAsync(It.IsAny<string>())).ReturnsAsync((string key) => (true, markers.GetValueOrDefault(key)));
+			_cache.Setup(c => c.SetStringAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TimeSpan>()))
+				.Callback((string key, string value, TimeSpan _) => markers[key] = value).ReturnsAsync(true);
+			_cache.Setup(c => c.RemoveAsync(It.IsAny<string>())).Callback((string key) => markers.Remove(key)).ReturnsAsync(true);
+			return markers;
 		}
 
 		[Test]
@@ -546,6 +657,8 @@ namespace Resgrid.Tests.Intake
 
 			await _service.ReceiveAsync(Sms());
 
+			_communication.Verify(c => c.SendNotificationDeliveredAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Department>(), It.IsAny<string>(),
+				It.IsAny<UserProfile>(), It.IsAny<bool>(), It.IsAny<string>()), Times.Never);
 			_communication.Verify(c => c.SendNotificationAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Department>(), It.IsAny<string>(),
 				It.IsAny<UserProfile>(), It.IsAny<bool>()), Times.Never);
 		}
@@ -688,6 +801,25 @@ namespace Resgrid.Tests.Intake
 			_conversations.Verify(c => c.CloseAsync(DepartmentId, "conv-1", null, "CallClosed", false, It.IsAny<CancellationToken>()), Times.Once);
 			_conversations.Verify(c => c.HandleParticipantMessageAsync(It.IsAny<IntakeConversation>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()), Times.Never);
 			_conversations.Verify(c => c.StartFromIntakeAsync(_channel, It.IsAny<IntakeEnvelope>(), It.IsAny<Call>(), It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
+		public async Task a_request_cancelled_while_joining_its_thread_builds_no_call_and_leaves_the_claim_for_the_retry()
+		{
+			using var cancellation = new CancellationTokenSource();
+			var thread = new IntakeConversation { IntakeConversationId = "conv-1", DepartmentId = DepartmentId, CallId = 880, State = (int)IntakeConversationStates.Open };
+			_conversationOperations.Setup(c => c.GetOpenForParticipantAsync(DepartmentId, IntakeChannelTypes.Sms, Sender)).ReturnsAsync(thread);
+			_calls.Setup(c => c.GetCallByIdAsync(880, It.IsAny<bool>())).ReturnsAsync(new Call { CallId = 880, DepartmentId = DepartmentId, State = (int)CallStates.Pending });
+			_conversations.Setup(c => c.HandleParticipantMessageAsync(thread, "SM2", It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
+				.Callback(() => cancellation.Cancel())
+				.ThrowsAsync(new OperationCanceledException(cancellation.Token));
+
+			Func<Task> receive = () => _service.ReceiveAsync(DedicatedSms("Also a fuel leak", "SM2"), cancellation.Token);
+
+			await receive.Should().ThrowAsync<OperationCanceledException>();
+			_saved.Should().BeEmpty();
+			_calls.Verify(c => c.GetActiveCallPrioritiesForDepartmentAsync(It.IsAny<int>(), It.IsAny<bool>()), Times.Never, "no call is built for a cancelled request");
+			_completions.Should().ContainSingle().Which.Should().Be(((int)IntakeMessageStates.Failed, (int?)null, "Cancelled"));
 		}
 
 		#endregion SMS conversations (plan §8 D15)

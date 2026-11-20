@@ -7,7 +7,9 @@ var resgrid;
             // Enhanced AI destination advice panel (_DestinationAdvice.cshtml; call-intake-and-ai-destinations-plan.md D4). Advice never
             // changes the destination by itself: Apply sets it through the call save, Dismiss hides it. Reloads on the
             // aiDestinationAdviceUpdated eventing event for this call.
-            var panel, callId, canApply = false, current = null, busy = false, refreshTimer = null;
+            // loadGeneration: only the newest read may render, and an action invalidates reads already in flight (a GET that started
+            // before Dismiss must not bring the dismissed advice back). refreshPending: a refresh that arrived during an action runs after it.
+            var panel, callId, canApply = false, current = null, busy = false, refreshTimer = null, refreshPending = false, loadGeneration = 0, loadsInFlight = 0;
 
             function strings() { return window.destinationAdviceStrings || {}; }
             function text(key, fallback) { var s = strings(); return s[key] || fallback || ''; }
@@ -30,22 +32,31 @@ var resgrid;
             }
 
             function load() {
+                var generation = ++loadGeneration;
+                loadsInFlight++;
                 $.ajax({
                     url: resgrid.absoluteBaseUrl + '/User/AiDestinations/Advice',
                     data: { callId: callId },
                     type: 'GET',
                     cache: false
                 }).done(function (response) {
+                    if (generation !== loadGeneration) return;
                     render(response);
                 }).fail(function () {
                     // A failed refresh keeps what is shown.
+                }).always(function () {
+                    loadsInFlight--;
                 });
             }
             destinationadvice.load = load;
 
             function scheduleLoad() {
                 if (refreshTimer) clearTimeout(refreshTimer);
-                refreshTimer = setTimeout(function () { refreshTimer = null; if (!busy) load(); }, 500);
+                refreshTimer = setTimeout(function () {
+                    refreshTimer = null;
+                    if (busy) { refreshPending = true; return; }
+                    load();
+                }, 500);
             }
 
             function render(response) {
@@ -106,6 +117,9 @@ var resgrid;
             function post(action, data, done) {
                 if (busy) return;
                 busy = true;
+                // A read in flight is now stale; whatever change it was fetching is read again once this action is done.
+                if (loadsInFlight > 0) refreshPending = true;
+                loadGeneration++;
                 data.__RequestVerificationToken = token();
                 $('#destinationAdviceAsk, #destinationAdviceApply, #destinationAdviceDismiss').prop('disabled', true);
                 $.ajax({
@@ -120,6 +134,11 @@ var resgrid;
                     busy = false;
                     $('#destinationAdviceAsk, #destinationAdviceApply, #destinationAdviceDismiss').prop('disabled', false);
                     $('#destinationAdviceAsk span').text(text('ask'));
+                    // Someone else changed the advice while this action ran: show it now, whether the action worked or failed.
+                    if (refreshPending) {
+                        refreshPending = false;
+                        load();
+                    }
                 });
             }
 

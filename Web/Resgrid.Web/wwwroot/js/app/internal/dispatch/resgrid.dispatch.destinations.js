@@ -312,7 +312,9 @@ var resgrid;
                     return geocoded.point;
                 }
 
-                geocoded = { address: address, point: null };
+                // This lookup's own record: a later address replaces it, and only the lookup that made it may change it.
+                var lookup = { address: address, point: null };
+                geocoded = lookup;
                 fetch('/api/web-bff/api/v4/Geocoding/ForwardGeocode?address=' + encodeURIComponent(address), { credentials: 'same-origin' })
                     .then(function (r) {
                         if (!r.ok) {
@@ -321,19 +323,24 @@ var resgrid;
                         return r.json();
                     })
                     .then(function (result) {
-                        if (geocoded.address !== address) {
+                        if (geocoded !== lookup) {
                             return;
                         }
 
                         var lat = result && result.Data ? Number(result.Data.Latitude) : NaN;
                         var lng = result && result.Data ? Number(result.Data.Longitude) : NaN;
                         if (usablePoint(lat, lng)) {
-                            geocoded.point = { lat: lat, lng: lng };
+                            lookup.point = { lat: lat, lng: lng };
                             schedule();
                         }
                     })
                     .catch(function (err) {
                         console.error('ForwardGeocode failed', { operation: 'ForwardGeocode', error: err });
+                        // A failed lookup (an outage, not "not found") is forgotten so the same address is tried again on the next
+                        // check, unless a newer lookup has already taken its place.
+                        if (geocoded === lookup) {
+                            geocoded = { address: null, point: null };
+                        }
                     });
 
                 return null;

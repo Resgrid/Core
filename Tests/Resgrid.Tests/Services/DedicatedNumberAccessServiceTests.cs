@@ -63,8 +63,11 @@ namespace Resgrid.Tests.Services
 		private void Flag(bool on) =>
 			_flags.Setup(f => f.EvaluateFreshAsync(FeatureFlagKeys.IntakeDedicatedNumber, DepartmentId)).ReturnsAsync(new FeatureFlagEvaluation { IsEnabled = on });
 
-		private void Plan(int planId) =>
+		private void Plan(int planId)
+		{
 			_subscriptions.Setup(s => s.GetCurrentPlanForDepartmentAsync(DepartmentId, It.IsAny<bool>())).ReturnsAsync(new Plan { PlanId = planId });
+			_subscriptions.Setup(s => s.GetCurrentPlanForDepartmentIfKnownAsync(DepartmentId)).ReturnsAsync(new Plan { PlanId = planId });
+		}
 
 		private void Payments(params PaymentAddon[] rows) =>
 			_subscriptions.Setup(s => s.GetCurrentPaymentAddonsForDepartmentAsync(DepartmentId, It.IsAny<List<string>>())).ReturnsAsync(new List<PaymentAddon>(rows));
@@ -190,6 +193,7 @@ namespace Resgrid.Tests.Services
 			state.Stopped.Should().BeTrue();
 			state.AddonStopped.Should().BeTrue();
 			_subscriptions.Verify(s => s.GetCurrentPlanForDepartmentAsync(It.IsAny<int>(), It.IsAny<bool>()), Times.Never);
+			_subscriptions.Verify(s => s.GetCurrentPlanForDepartmentIfKnownAsync(It.IsAny<int>()), Times.Never);
 
 			// Paid add-on, paid entity plan: paying.
 			Payments(Paid());
@@ -210,12 +214,12 @@ namespace Resgrid.Tests.Services
 		public async Task An_unreadable_plan_or_add_on_is_unknown_never_stopped()
 		{
 			Payments(Paid());
-			_subscriptions.Setup(s => s.GetCurrentPlanForDepartmentAsync(DepartmentId, It.IsAny<bool>())).ReturnsAsync((Plan)null);
+			_subscriptions.Setup(s => s.GetCurrentPlanForDepartmentIfKnownAsync(DepartmentId)).ReturnsAsync((Plan)null);
 			var state = await _service.GetPaymentStateAsync(DepartmentId);
 			state.PaidEntityPlan.Should().BeNull();
 			state.IsUnknown.Should().BeTrue();
 
-			_subscriptions.Setup(s => s.GetCurrentPlanForDepartmentAsync(DepartmentId, It.IsAny<bool>())).ThrowsAsync(new TimeoutException());
+			_subscriptions.Setup(s => s.GetCurrentPlanForDepartmentIfKnownAsync(DepartmentId)).ThrowsAsync(new TimeoutException());
 			(await _service.GetPaymentStateAsync(DepartmentId)).IsUnknown.Should().BeTrue();
 
 			// Billing unreachable for the add-on: unknown whatever the plan read would say (it answers failures with the free plan).
@@ -228,6 +232,22 @@ namespace Resgrid.Tests.Services
 
 			SystemBehaviorConfig.BillingApiBaseUrl = "";
 			(await _service.GetPaymentStateAsync(DepartmentId)).IsUnknown.Should().BeTrue("an unconfigured install never releases a number");
+		}
+
+		[Test]
+		public async Task A_failed_plan_read_is_unknown_even_though_the_ordinary_read_falls_back_to_the_free_plan()
+		{
+			// PR #588: GetCurrentPlanForDepartmentAsync answers a Billing API timeout with the free plan. Read that way, a paying
+			// department would look "plan stopped" and its release clock would start during an outage.
+			Payments(Paid());
+			_subscriptions.Setup(s => s.GetCurrentPlanForDepartmentAsync(DepartmentId, It.IsAny<bool>())).ReturnsAsync(new Plan { PlanId = 1 });
+			_subscriptions.Setup(s => s.GetCurrentPlanForDepartmentIfKnownAsync(DepartmentId)).ReturnsAsync((Plan)null);
+
+			var state = await _service.GetPaymentStateAsync(DepartmentId);
+
+			state.PaidEntityPlan.Should().BeNull();
+			state.PlanStopped.Should().BeFalse();
+			state.IsUnknown.Should().BeTrue();
 		}
 
 		[Test]

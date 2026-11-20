@@ -164,6 +164,57 @@ namespace Resgrid.Tests.Intake
 			ChatIntakeRouting.Telegram(dm).Should().BeNull();
 		}
 
+		private static JObject TelegramReply(string text, object[] entities = null, long replyToId = 4242, bool replyToBot = false) => JObject.FromObject(new
+		{
+			update_id = 9,
+			message = new
+			{
+				message_id = 60, date = 1700000000, text, chat = new { id = -1001234567890, type = "supergroup" }, from = new { id = 4243, is_bot = false },
+				entities = entities ?? Array.Empty<object>(),
+				reply_to_message = new { message_id = 55, from = new { id = replyToId, is_bot = replyToBot } }
+			}
+		});
+
+		[Test]
+		public void a_telegram_reply_counts_only_when_it_addresses_this_bot()
+		{
+			var saved = (ChatbotConfig.TelegramBotToken, ChatbotConfig.TelegramBotUsername);
+			try
+			{
+				ChatbotConfig.TelegramBotToken = "7001:secret-part";
+				ChatbotConfig.TelegramBotUsername = "";
+
+				// Mentioning another person while replying to someone: a discussion, not a request.
+				ChatIntakeRouting.Telegram(TelegramReply("@anotheruser can you take this?", new object[] { new { type = "mention", offset = 0, length = 12 } })).Should().BeNull();
+				// A reply to another bot is not a reply to this one.
+				ChatIntakeRouting.Telegram(TelegramReply("yes please", replyToId: 8888, replyToBot: true)).Should().BeNull();
+				// A reply to this bot (its id is the token's prefix), and a plain command, both address it.
+				ChatIntakeRouting.Telegram(TelegramReply("second patient on scene", replyToId: 7001, replyToBot: true)).Should().NotBeNull();
+				ChatIntakeRouting.Telegram(TelegramReply("/intake Smoke in the stairwell", new object[] { new { type = "bot_command", offset = 0, length = 7 } }))
+					.Text.Should().Be("Smoke in the stairwell");
+
+				// With the username configured, only this bot's name counts.
+				ChatbotConfig.TelegramBotUsername = "ResgridBot";
+				ChatIntakeRouting.Telegram(TelegramReply("@ResgridBot second car", new object[] { new { type = "mention", offset = 0, length = 11 } })).Should().NotBeNull();
+				ChatIntakeRouting.Telegram(TelegramReply("@OtherBot status", new object[] { new { type = "mention", offset = 0, length = 9 } })).Should().BeNull();
+				ChatIntakeRouting.Telegram(TelegramReply("/intake@OtherBot x", new object[] { new { type = "bot_command", offset = 0, length = 16 } })).Should().BeNull();
+				ChatIntakeRouting.Telegram(TelegramReply("/intake@resgridbot x", new object[] { new { type = "bot_command", offset = 0, length = 18 } })).Should().NotBeNull();
+			}
+			finally
+			{
+				(ChatbotConfig.TelegramBotToken, ChatbotConfig.TelegramBotUsername) = saved;
+			}
+		}
+
+		[Test]
+		public void telegram_bot_id_comes_from_the_token_prefix()
+		{
+			ChatIntakeRouting.TelegramBotId("123456:ABC-def").Should().Be("123456");
+			ChatIntakeRouting.TelegramBotId("").Should().BeNull();
+			ChatIntakeRouting.TelegramBotId("no-colon").Should().BeNull();
+			ChatIntakeRouting.TelegramBotId("abc:def").Should().BeNull();
+		}
+
 		[Test]
 		public void discord_server_slash_command_is_intake_and_dm_commands_are_not()
 		{

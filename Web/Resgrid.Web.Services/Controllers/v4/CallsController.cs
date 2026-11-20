@@ -1047,9 +1047,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 				}
 			}
 
-			// Runs of the call's route (M0322): which unit is on it and how far it got.
-			if (!string.IsNullOrWhiteSpace(call.RoutePlanId))
-				result.Data.RouteInstances = await GetCallRouteInstancesAsync(call);
+			// Runs of the call's route (M0322): which unit is on it and how far it got. Linked by the call itself, so runs stay listed
+			// after the call's route is changed or cleared.
+			result.Data.RouteInstances = await GetCallRouteInstancesAsync(call);
 
 			result.PageSize = 0;
 			result.Status = ResponseHelper.Success;
@@ -1159,12 +1159,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 					return BadRequest("LocationPoiId is not a POI in this department.");
 			}
 
+			// A route that can no longer be followed is refused only once the idempotency receipt says this is a new request (below):
+			// a retry of a request whose call was already saved returns or finishes that call whatever the route has become since.
 			CallRoutePlan callRoutePlan = null;
+			var routePlanRefused = false;
 			if (!string.IsNullOrWhiteSpace(newCallInput.RoutePlanId))
 			{
 				callRoutePlan = await _callRoutesService.GetEligibleRoutePlanAsync(effectiveDepartmentId, newCallInput.RoutePlanId);
-				if (callRoutePlan == null)
-					return BadRequest("RoutePlanId is not an active route plan with a start and an end in this department.");
+				routePlanRefused = callRoutePlan == null;
 			}
 
 			var freeDestinationGeolocation = destinationPoi == null ? CallLocations.NormalizePoint(newCallInput.DestinationGeolocation) : null;
@@ -1215,6 +1217,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				DestinationPoiId = newCallInput.DestinationPoiId,
 				DestinationAddress = freeDestinationAddress,
 				DestinationGeolocation = freeDestinationGeolocation,
+				DestinationW3W = destinationPoi == null ? newCallInput.DestinationWhat3Words : null,
 				IndoorMapZoneId = newCallInput.IndoorMapZoneId,
 				HasProtocols = protocols.Any(),
 				HasLinkedCall = linkedCall != null,
@@ -1510,6 +1513,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 			// receipt still lists run again, so nobody gets a second Call Added event or page.
 			var resuming = receipt.Outcome == InboundEmailClaimOutcomes.Resume;
 			bool Pending(InboundEmailPendingSteps step) => !resuming || receipt.Has(step);
+
+			if (!resuming && routePlanRefused)
+			{
+				// A new request: give the claim back so a corrected retry is not held up by it.
+				await _inboundEmailReceiptsService.ReleaseAsync(receipt);
+				return BadRequest("RoutePlanId is not an active route plan with a start and an end in this department.");
+			}
 
 			Call savedCall;
 			if (resuming)
@@ -2149,6 +2159,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				DestinationPoiId = call.DestinationPoiId,
 				DestinationAddress = call.DestinationPoiId.HasValue ? null : call.DestinationAddress,
 				DestinationGeolocation = call.DestinationPoiId.HasValue ? null : call.DestinationGeoLocationData,
+				DestinationW3W = call.DestinationPoiId.HasValue ? null : call.DestinationW3W,
 				IndoorMapZoneId = call.IndoorMapZoneId,
 				HasProtocols = call.Protocols?.Any() ?? false,
 				HasLinkedCall = call.References?.Any() ?? false,

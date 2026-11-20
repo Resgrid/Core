@@ -506,6 +506,12 @@ namespace Resgrid.Services
 					var result = await _deleteRepository.DeleteDepartmentAndUsersAsync(departmentId);
 					if (!result) throw new InvalidOperationException("Department deletion is not supported by the configured database provider.");
 
+					// The purge committed (a deferred or failed one throws above and keeps the department and its number), and the carrier
+					// ids now exist only in heldNumbers: return the numbers before anything below can throw. A failed audit or queue write
+					// sends this attempt to the retry path, and a retry finds no department rows and so no numbers to release. Best effort,
+					// never throws; every outcome is logged with the carrier id for a manual release.
+					await ReleaseDepartmentNumbersAsync(departmentId, heldNumbers);
+
 					// Write the execution audit record only after the delete succeeds: retried
 					// attempts must not each leave an "executed" row. The row is written directly
 					// (not via the queued audit events, which resolve the now-deleted user profile
@@ -520,9 +526,6 @@ namespace Resgrid.Services
 					// Only once the deletion is recorded as done: a deferred or failed purge leaves the department, and
 					// its people still need their pushes. Never throws, so it cannot turn a completed deletion into a retry.
 					await RemoveDepartmentPushSubscribersAsync(departmentId, pushSubscribers, cancellationToken);
-					// The same rule for its numbers: a deferred purge keeps the department and its number; a completed one returns the
-					// number to the carrier (best effort, every outcome logged with the carrier id for a manual release).
-					await ReleaseDepartmentNumbersAsync(departmentId, heldNumbers);
 				}
 				catch (DepartmentDeletionDeferredException deferred)
 				{

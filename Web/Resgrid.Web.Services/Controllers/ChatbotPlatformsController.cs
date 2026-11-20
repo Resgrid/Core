@@ -182,7 +182,11 @@ namespace Resgrid.Web.Services.Controllers
 					SenderName = form.TryGetValue("ProfileName", out var profileName) ? profileName.ToString() : null,
 					Body = form["Body"].ToString(), ReceivedOnUtc = DateTime.UtcNow
 				}, HttpContext?.RequestAborted ?? default);
+				// 503 so the message is delivered again and intake takes the failed claim over. Twilio retries a 5xx only when the webhook
+				// asks for it: the WhatsApp sender's webhook URL must carry the connection override #rp=5xx,ct,rt (operator setup; by
+				// default Twilio retries connection failures only, and the message would be lost).
 				if (result.State == IntakeMessageStates.Failed) return StatusCode(503);
+				if (result.State == IntakeMessageStates.Duplicate && result.Reason == IntakeResultReasons.DuplicateInProgress) return StatusCode(503);
 				// A WhatsApp reply inside the conversation window carries no A2P registration cost, so it goes from the linked sender.
 				var ack = result.State == IntakeMessageStates.CallCreated ? result.Acknowledgement : null;
 				return Content(string.IsNullOrWhiteSpace(ack) ? "<Response></Response>"
@@ -224,6 +228,11 @@ namespace Resgrid.Web.Services.Controllers
 			}, HttpContext?.RequestAborted ?? default);
 
 			if (result.State == IntakeMessageStates.Failed)
+				return StatusCode(503);
+
+			// A redelivery while the first delivery is still creating its call: ask for another delivery rather than acknowledge an
+			// attempt that may still fail (Discord never redelivers an interaction, so it gets its answer below).
+			if (result.State == IntakeMessageStates.Duplicate && result.Reason == IntakeResultReasons.DuplicateInProgress && platform != ChatbotPlatform.Discord)
 				return StatusCode(503);
 
 			var ack = result.State == IntakeMessageStates.CallCreated ? result.Acknowledgement : null;

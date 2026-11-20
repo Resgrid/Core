@@ -98,6 +98,20 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task A_completed_purge_releases_the_numbers_even_when_recording_the_deletion_fails()
+		{
+			// PR #588: the queue write after the purge threw, the attempt went to the retry path, and the carrier ids (gone with the
+			// purge) were never used. A retry finds no department rows and so no numbers.
+			_queue.Setup(q => q.UpdateQueueItem(It.IsAny<QueueItem>(), It.IsAny<CancellationToken>())).ThrowsAsync(new TimeoutException());
+
+			await Service().HandlePendingDepartmentDeletionRequestAsync(_item);
+
+			_order.Should().Equal("read", "purged", "released");
+			_numbers.Verify(n => n.ReleaseAtCarrierAsync(It.Is<IReadOnlyCollection<DepartmentPhoneNumber>>(list => list.Single().ProviderNumberId == "PN1"),
+				CancellationToken.None), Times.Once);
+		}
+
+		[Test]
 		public async Task An_unreadable_number_list_still_deletes_the_department()
 		{
 			_numbers.Setup(n => n.GetAllForDepartmentAsync(DepartmentId)).ThrowsAsync(new TimeoutException());

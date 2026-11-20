@@ -98,8 +98,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return Unauthorized();
 
 			var advised = await _advisor.AdviseNowAsync(DepartmentId, input.CallId, UserId, cancellationToken);
-			result.Data.Available = advised.Outcome is not (AiDestinationOutcomes.Disabled or AiDestinationOutcomes.NotEntitled or AiDestinationOutcomes.Unconfigured
-				or AiDestinationOutcomes.ProtectionUnsupported);
+			result.Data.Available = !BlocksDepartment(advised.Outcome);
 			result.Data.Outcome = advised.Outcome;
 			result.Data.CanApply = true;
 			result.Data.Advice = await ConvertAsync(advised.Advice);
@@ -174,9 +173,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return (advice, null);
 		}
 
+		/// <summary>Outcomes that mean the department may not use advice at all (as opposed to this one request failing).</summary>
+		private static bool BlocksDepartment(string outcome) => outcome is AiDestinationOutcomes.Disabled or AiDestinationOutcomes.NotEntitled
+			or AiDestinationOutcomes.Unconfigured or AiDestinationOutcomes.ProtectionUnsupported;
+
 		private async Task<AiDestinationAdviceResult> FillAsync(AiDestinationAdviceResult result, AiDestinationAdviceOutcome outcome)
 		{
-			result.Data.Available = true;
+			// The department's eligibility, not the action's success: an apply refused for Advanced Data Protection must not read as available.
+			result.Data.Available = !BlocksDepartment(outcome.Outcome) && await _advisor.IsAvailableAsync(DepartmentId);
 			result.Data.Outcome = outcome.Outcome;
 			result.Data.CanApply = true;
 			result.Data.Advice = await ConvertAsync(outcome.Advice);

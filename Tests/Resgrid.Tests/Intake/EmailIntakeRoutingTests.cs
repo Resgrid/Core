@@ -99,6 +99,28 @@ namespace Resgrid.Tests.Intake
 			sent.From.Address.Should().Be("do-not-reply@resgrid.com");
 			sent.Headers["Auto-Submitted"].Should().Be("auto-replied");
 			sent.Body.Should().Be("Received by Springfield Fire.");
+			// The incoming subject ("Transfer request", which may name a patient or an incident) is never repeated back.
+			sent.Subject.Should().Be(EmailController.IntakeAcknowledgementSubject);
+			sent.Subject.Should().NotContain("Transfer");
+		}
+
+		[Test]
+		public async Task a_redelivery_while_the_first_is_still_being_processed_is_conflict_so_postmark_retries()
+		{
+			_intake.Setup(i => i.ReceiveAsync(It.IsAny<IntakeEnvelope>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new IntakeResult { State = IntakeMessageStates.Duplicate, Reason = IntakeResultReasons.DuplicateInProgress });
+
+			Status(await _controller.Receive(Email("hospital"), CancellationToken.None)).Should().Be(409);
+			_sender.Verify(s => s.SendEmail(It.IsAny<MailMessage>()), Times.Never);
+		}
+
+		[Test]
+		public async Task a_redelivery_of_a_finished_email_is_acknowledged()
+		{
+			_intake.Setup(i => i.ReceiveAsync(It.IsAny<IntakeEnvelope>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new IntakeResult { State = IntakeMessageStates.Duplicate, CallId = 900, Reason = IntakeResultReasons.Duplicate });
+
+			Status(await _controller.Receive(Email("hospital"), CancellationToken.None)).Should().Be(200);
 		}
 
 		[Test]

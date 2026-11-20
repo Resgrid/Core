@@ -370,6 +370,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				// The destination field covers a free destination too (M0322): an address or a point satisfies it, as on v4.
 				DestinationAddress = model.ShowsDestination() ? model.Call?.DestinationAddress : null,
 				DestinationGeolocation = model.ShowsDestination() ? model.PostedDestinationPoint() : null,
+				DestinationW3W = model.ShowsDestination() ? model.Call?.DestinationW3W : null,
 				IndoorMapZoneId = collection?["IndoorMapZoneId"].FirstOrDefault(),
 				HasProtocols = selections.HasProtocols,
 				HasLinkedCall = selections.HasLinkedCall,
@@ -1239,6 +1240,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			// The free destination point (M0322) rides in its own invariant inputs, never in Call.DestinationGeoLocationData.
 			(model.DestinationLatitude, model.DestinationLongitude) = CallLocationsForm.SplitPoint(model.Call.DestinationGeoLocationData);
 
+			// What the location POI and route pickers open with, so the save can tell this editor's change from no change.
+			model.OriginalLocationPoiId = model.LocationPois?.FirstOrDefault(x => x.Selected)?.PoiId.ToString(CultureInfo.InvariantCulture);
+			model.OriginalRoutePlanId = model.RoutePlans?.FirstOrDefault(x => x.Selected)?.RoutePlanId;
+
 			return View(model);
 		}
 
@@ -1253,6 +1258,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 			// The zone is posted outside the Call model; carried over so a re-rendered form keeps it.
 			model.Call.IndoorMapZoneId = collection["IndoorMapZoneId"].FirstOrDefault();
 			model.Call.IndoorMapFloorId = collection["IndoorMapFloorId"].FirstOrDefault();
+
+			// The form does not post the department. A re-rendered form (a validation error) needs the stored call's, or the panels
+			// keyed on it (the intake conversation, the destination advice) look in department 0 and vanish.
+			var storedCall = await _callsService.GetCallByIdAsync(model.Call.CallId);
+			if (storedCall != null)
+				model.Call.DepartmentId = storedCall.DepartmentId;
 
 			model = await FillUpdateCallView(model);
 
@@ -1270,7 +1281,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (ModelState.IsValid)
 			{
-				var call = await _callsService.GetCallByIdAsync(model.Call.CallId);
+				var call = storedCall ?? await _callsService.GetCallByIdAsync(model.Call.CallId);
 				call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true, true, true);
 
 				// A field the department hides is not on the form, so the call keeps what it has for it rather than
@@ -1280,12 +1291,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				// M0322 inputs the form rendered. The location POI sits with the address or the pin; the route select has no
 				// policy field and is on the form whenever there was a route to pick or the call had one (it then always
-				// posts, if only ""). Left off the form, the call keeps what it has.
+				// posts, if only ""). Left off the form, the call keeps what it has. A picker posted with the value it opened with
+				// is no change either: the call keeps its stored value, whatever another editor set meanwhile or the picker could
+				// not show (CallLocationsEdit.IsChanged).
 				var editsDestination = Shows(NewCallFieldKeys.DestinationPoi);
-				var editsLocationPoi = (Shows(NewCallFieldKeys.Address) || Shows(NewCallFieldKeys.Geolocation)) && collection.ContainsKey("Call.LocationPoiId");
+				var editsLocationPoi = (Shows(NewCallFieldKeys.Address) || Shows(NewCallFieldKeys.Geolocation)) &&
+									   CallLocationsEdit.IsChanged(collection, "Call.LocationPoiId", "OriginalLocationPoiId",
+										   call.LocationPoiId?.ToString(CultureInfo.InvariantCulture));
 				var postedRoutePlanId = String.IsNullOrWhiteSpace(model.Call.RoutePlanId) ? null : model.Call.RoutePlanId.Trim();
-				var routeChanged = collection.ContainsKey("Call.RoutePlanId") &&
-								   !String.Equals(postedRoutePlanId ?? "", call.RoutePlanId ?? "", StringComparison.OrdinalIgnoreCase);
+				var routeChanged = CallLocationsEdit.IsChanged(collection, "Call.RoutePlanId", "OriginalRoutePlanId", call.RoutePlanId);
 
 				// Only a changed route is checked (as the v4 EditCall does): a stored route that can no longer be followed is
 				// kept by an edit that leaves it alone.
@@ -1331,6 +1345,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 					DestinationGeolocation = editsDestination
 						? (destinationPoi == null ? editLocations.DestinationPoint : null)
 						: (call.DestinationPoiId.HasValue ? null : call.DestinationGeoLocationData),
+					DestinationW3W = editsDestination
+						? (destinationPoi == null ? editLocations.DestinationW3W : null)
+						: (call.DestinationPoiId.HasValue ? null : call.DestinationW3W),
 					IndoorMapZoneId = Shows(NewCallFieldKeys.IndoorLocation) ? indoorMapZoneId : call.IndoorMapZoneId,
 					// Protocols are only ever added on this form, and a list or link left off the post keeps the call's own.
 					HasProtocols = selections.HasProtocols || (call.Protocols?.Any() ?? false),
@@ -4786,26 +4803,37 @@ namespace Resgrid.Web.Areas.User.Controllers
 					});
 				}
 
-				if (keepSelected && selected != null && !options.Any(x => x.Selected))
-				{
-					var plan = await _routeService.GetRoutePlanByIdAsync(selected);
-					var name = plan != null && plan.DepartmentId == DepartmentId && !String.IsNullOrWhiteSpace(plan.Name)
-						? plan.Name
-						: _dispatchLocalizer["CallRouteDeleted"].Value;
-
-					options.Add(new CallRoutePlanOption
-					{
-						RoutePlanId = selected,
-						Name = String.Format(_dispatchLocalizer["CallRouteUnavailable"].Value, name),
-						Selected = true,
-						IsAvailable = false
-					});
-				}
 			}
 			catch (Exception ex)
 			{
 				// Routes are optional on a call: the form still has to open without them.
 				Logging.LogException(ex, $"Listing the call route plans for department {DepartmentId}");
+			}
+
+			if (keepSelected && selected != null && !options.Any(x => x.Selected))
+			{
+				// Offered whatever its name lookup does: without it the picker would open on "No route" and an unrelated save
+				// would clear the route.
+				string name = null;
+				try
+				{
+					var plan = await _routeService.GetRoutePlanByIdAsync(selected);
+					name = plan != null && plan.DepartmentId == DepartmentId && !String.IsNullOrWhiteSpace(plan.Name)
+						? plan.Name
+						: _dispatchLocalizer["CallRouteDeleted"].Value;
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex, $"Reading the name of route plan {selected} for department {DepartmentId}");
+				}
+
+				options.Add(new CallRoutePlanOption
+				{
+					RoutePlanId = selected,
+					Name = String.Format(_dispatchLocalizer["CallRouteUnavailable"].Value, name ?? _dispatchLocalizer["CallRouteLabel"].Value),
+					Selected = true,
+					IsAvailable = false
+				});
 			}
 
 			return options;
@@ -4835,6 +4863,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					details.DestinationCoordinates = CallLocationsForm.Invariant(point.Value.Latitude) + ", " + CallLocationsForm.Invariant(point.Value.Longitude);
 			}
 
+			// Each part on its own: a POI lookup that fails only leaves the POI name out, never the route and its runs.
 			try
 			{
 				if (call.LocationPoiId.HasValue && call.LocationPoiId.Value > 0)
@@ -4843,52 +4872,59 @@ namespace Resgrid.Web.Areas.User.Controllers
 					if (poi != null)
 						details.LocationPoiName = PoiDisplayHelper.GetDisplayName(poi, poi.Type?.Name);
 				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Reading the location POI of call {call.CallId}");
+			}
 
-				// As the v4 call extra data: the runs are read only for a call that has a route.
+			try
+			{
+				var planNames = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+				async Task<string> PlanNameAsync(string routePlanId)
+				{
+					if (String.IsNullOrWhiteSpace(routePlanId))
+						return null;
+
+					if (!planNames.TryGetValue(routePlanId, out var planName))
+					{
+						var plan = await _routeService.GetRoutePlanByIdAsync(routePlanId);
+						planName = plan != null && plan.DepartmentId == call.DepartmentId ? plan.Name : null;
+						planNames[routePlanId] = planName;
+					}
+
+					return planName;
+				}
+
 				if (!String.IsNullOrWhiteSpace(call.RoutePlanId))
 				{
 					details.RoutePlanId = call.RoutePlanId;
-
-					var planNames = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-					async Task<string> PlanNameAsync(string routePlanId)
-					{
-						if (String.IsNullOrWhiteSpace(routePlanId))
-							return null;
-
-						if (!planNames.TryGetValue(routePlanId, out var planName))
-						{
-							var plan = await _routeService.GetRoutePlanByIdAsync(routePlanId);
-							planName = plan != null && plan.DepartmentId == call.DepartmentId ? plan.Name : null;
-							planNames[routePlanId] = planName;
-						}
-
-						return planName;
-					}
-
 					details.RoutePlanName = await PlanNameAsync(call.RoutePlanId);
+				}
 
-					foreach (var instance in await _routeService.GetInstancesForCallAsync(call.DepartmentId, call.CallId) ?? new List<RouteInstance>())
+				// As the v4 call extra data: runs are linked to the call itself, so they are listed even after its route was
+				// changed or cleared.
+				foreach (var instance in await _routeService.GetInstancesForCallAsync(call.DepartmentId, call.CallId) ?? new List<RouteInstance>())
+				{
+					if (instance == null || instance.DepartmentId != call.DepartmentId)
+						continue;
+
+					details.RouteRuns.Add(new CallRouteRunRow
 					{
-						if (instance == null || instance.DepartmentId != call.DepartmentId)
-							continue;
-
-						details.RouteRuns.Add(new CallRouteRunRow
-						{
-							RouteInstanceId = instance.RouteInstanceId,
-							RoutePlanName = await PlanNameAsync(instance.RoutePlanId),
-							UnitName = units?.FirstOrDefault(x => x.UnitId == instance.UnitId)?.Name ?? instance.UnitId.ToString(CultureInfo.InvariantCulture),
-							Status = instance.Status,
-							StopsCompleted = instance.StopsCompleted,
-							StopsTotal = instance.StopsTotal,
-							StartedOn = instance.ActualStartOn.HasValue && department != null ? instance.ActualStartOn.Value.TimeConverterToString(department) : null,
-							EndedOn = instance.ActualEndOn.HasValue && department != null ? instance.ActualEndOn.Value.TimeConverterToString(department) : null
-						});
-					}
+						RouteInstanceId = instance.RouteInstanceId,
+						RoutePlanName = await PlanNameAsync(instance.RoutePlanId),
+						UnitName = units?.FirstOrDefault(x => x.UnitId == instance.UnitId)?.Name ?? instance.UnitId.ToString(CultureInfo.InvariantCulture),
+						Status = instance.Status,
+						StopsCompleted = instance.StopsCompleted,
+						StopsTotal = instance.StopsTotal,
+						StartedOn = instance.ActualStartOn.HasValue && department != null ? instance.ActualStartOn.Value.TimeConverterToString(department) : null,
+						EndedOn = instance.ActualEndOn.HasValue && department != null ? instance.ActualEndOn.Value.TimeConverterToString(department) : null
+					});
 				}
 			}
 			catch (Exception ex)
 			{
-				Logging.LogException(ex, $"Reading the location POI and route of call {call.CallId}");
+				Logging.LogException(ex, $"Reading the route of call {call.CallId}");
 			}
 
 			return details;

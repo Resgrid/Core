@@ -33,6 +33,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 	[RequestSizeLimit(1048576)]
 	public class IntakeController : ControllerBase
 	{
+		/// <summary>Longest accepted externalId (characters, after trimming).</summary>
+		public const int MaxExternalIdLength = 200;
+
 		private readonly IIntakeChannelsService _channels;
 		private readonly IIntakeService _intake;
 
@@ -47,9 +50,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <param name="cancellationToken">Request cancellation.</param>
 		/// <returns>
 		/// 200 with the call id when the call was created (or already had been, for a repeated request); 400 for a body that is not
-		/// the expected JSON; 401 for a missing, stale or wrong signature; 403 when the department or channel refuses it; 404 for an
-		/// unknown or disabled channel; 413 for a body over the limit; 429 when the channel sends too fast; 503 when creating the
-		/// call failed (retry).
+		/// the expected JSON (or an externalId over 200 characters); 401 for a missing, stale or wrong signature; 403 when the
+		/// department or channel refuses it; 404 for an unknown or disabled channel; 409 while an earlier delivery of the same request
+		/// is still creating its call (retry); 413 for a body over the limit; 429 when the channel sends too fast; 503 when creating
+		/// the call failed (retry).
 		/// </returns>
 		[HttpPost("Webhook/{token}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
@@ -57,6 +61,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 		[ProducesResponseType(StatusCodes.Status403Forbidden)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[ProducesResponseType(StatusCodes.Status409Conflict)]
 		[ProducesResponseType(StatusCodes.Status413PayloadTooLarge)]
 		[ProducesResponseType(StatusCodes.Status429TooManyRequests)]
 		[ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
@@ -69,20 +74,22 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (address == null)
 				return NotFound();
 
-			if (!IntakeWebhookRateLimiter.TryAcquire(address, DateTime.UtcNow, IntakeConfig.WebhookRequestsPerMinute))
-				return StatusCode(StatusCodes.Status429TooManyRequests, new IntakeWebhookResult { Status = "TooManyRequests" });
-
 			var max = Math.Clamp(IntakeConfig.MaxWebhookBodyBytes, 256, 1048576);
 			if (Request.ContentLength.HasValue && Request.ContentLength.Value > max)
 				return StatusCode(StatusCodes.Status413PayloadTooLarge, new IntakeWebhookResult { Status = "TooLarge" });
 
-			var rawBody = await ReadBodyAsync(Request.Body, max, cancellationToken);
-			if (rawBody == null)
-				return StatusCode(StatusCodes.Status413PayloadTooLarge, new IntakeWebhookResult { Status = "TooLarge" });
-
+			// The channel is resolved before anything is counted, so the limiter only ever holds real channels: made-up tokens (one
+			// indexed lookup each, then 404) can never grow it, and never use up a real channel's allowance.
 			var channel = await _channels.ResolveChannelAsync(IntakeChannelTypes.Webhook, address);
 			if (channel == null)
 				return NotFound();
+
+			if (!IntakeWebhookRateLimiter.TryAcquire(channel.IntakeChannelId, DateTime.UtcNow, IntakeConfig.WebhookRequestsPerMinute))
+				return StatusCode(StatusCodes.Status429TooManyRequests, new IntakeWebhookResult { Status = "TooManyRequests" });
+
+			var rawBody = await ReadBodyAsync(Request.Body, max, cancellationToken);
+			if (rawBody == null)
+				return StatusCode(StatusCodes.Status413PayloadTooLarge, new IntakeWebhookResult { Status = "TooLarge" });
 
 			var signature = Request.Headers[IntakeWebhookSignature.HeaderName].ToString();
 			var check = IntakeWebhookSignature.Verify(signature, _channels.GetWebhookSecret(channel), rawBody, DateTime.UtcNow,
@@ -92,7 +99,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			var request = Parse(rawBody);
 			if (request == null)
-				return BadRequest(new IntakeWebhookResult { Status = "InvalidBody", Message = "Expected a JSON object with a non-empty \"message\"." });
+				return BadRequest(new IntakeWebhookResult
+				{
+					Status = "InvalidBody",
+					Message = $"Expected a JSON object with a non-empty \"message\" and, when given, an \"externalId\" of at most {MaxExternalIdLength} characters."
+				});
 
 			var result = await _intake.ReceiveAsync(new IntakeEnvelope
 			{
@@ -115,6 +126,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var body = new IntakeWebhookResult { Status = result.State.ToString(), CallId = result.CallId, Message = result.Acknowledgement };
 			switch (result.State)
 			{
+				case IntakeMessageStates.Duplicate when result.Reason == IntakeResultReasons.DuplicateInProgress:
+					// An earlier delivery of the same request has not made its call yet (and may still fail): retry, never "done".
+					body.Status = "InProgress";
+					return StatusCode(StatusCodes.Status409Conflict, body);
 				case IntakeMessageStates.CallCreated:
 				case IntakeMessageStates.Duplicate:
 					return Ok(body);
@@ -178,12 +193,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 					throw new JsonException(name);
 				}
 
+				// The external id is the request's identity (deduplication): a longer one is refused, never cut, or two different ids
+				// sharing their first 200 characters would be taken for one request and the second would create nothing.
+				var externalId = Text("externalId", int.MaxValue);
+				if (externalId != null && externalId.Length > MaxExternalIdLength)
+					return null;
+
 				var request = new IntakeWebhookRequest
 				{
 					Subject = Text("subject", 200),
 					Message = Text("message", Math.Max(100, IntakeConfig.MaxMessageLength)),
 					Sender = Text("sender", 256),
-					ExternalId = Text("externalId", 200),
+					ExternalId = externalId,
 					Address = Text("address", 500),
 					Latitude = Number("latitude"),
 					Longitude = Number("longitude")
@@ -240,8 +261,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 	}
 
 	/// <summary>
-	/// Per webhook token fixed one-minute window, per API process (an unsigned flood is cut off before any database read). Old
-	/// windows are dropped as they are passed.
+	/// Per intake channel fixed one-minute window, per API process, counted once the URL token resolved to a live channel (so the
+	/// key space is the real channels, never caller-chosen tokens). Old windows are dropped as they are passed.
 	/// </summary>
 	public static class IntakeWebhookRateLimiter
 	{
@@ -279,5 +300,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 		/// <summary>Tests: forget every window.</summary>
 		public static void Reset() => Windows.Clear();
+
+		/// <summary>Tests: how many keys hold a window.</summary>
+		public static int TrackedCount => Windows.Count;
 	}
 }

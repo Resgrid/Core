@@ -161,11 +161,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return Ok(await ActedAsync(conversation.IntakeConversationId, outcome, cancellationToken));
 		}
 
-		/// <summary>The department's conversation and, when it exists, whether the caller may edit its call (Unauthorized otherwise).</summary>
+		/// <summary>
+		/// The department's conversation and, when it exists, whether the caller may edit its call (Unauthorized otherwise). A deleted call's
+		/// conversation is not found, as GetForCall treats it: nothing is texted for a call that no longer exists.
+		/// </summary>
 		private async Task<(IntakeConversation Conversation, ActionResult Denied)> AuthorizeAsync(string conversationId)
 		{
 			var conversation = await _conversations.GetByIdAsync(DepartmentId, conversationId.Trim());
 			if (conversation == null || !conversation.CallId.HasValue)
+				return (null, null);
+
+			var call = await _callsService.GetCallByIdAsync(conversation.CallId.Value, false);
+			if (call == null || call.DepartmentId != DepartmentId || call.IsDeleted)
 				return (null, null);
 
 			if (!await _authorizationService.CanUserEditCallAsync(UserId, conversation.CallId.Value))
@@ -178,7 +185,21 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			var result = new IntakeConversationResult();
 			result.Data.Outcome = outcome.ToString();
-			await FillAsync(result, await _conversations.GetByIdAsync(DepartmentId, conversationId), true, cancellationToken);
+
+			// The action already happened (a text may be with the carrier): a refresh that fails must not turn its outcome into a 500, which
+			// a client would retry and so text the caller twice. The outcome comes back without the thread; the client reads it again.
+			try
+			{
+				await FillAsync(result, await _conversations.GetByIdAsync(DepartmentId, conversationId), true, cancellationToken);
+			}
+			catch (Exception ex) when (ex is not OperationCanceledException || !cancellationToken.IsCancellationRequested)
+			{
+				Framework.Logging.LogException(ex, $"Intake conversation {conversationId}: the thread could not be read after {outcome}.");
+				result.Data.Conversation = null;
+				result.Data.Messages = new System.Collections.Generic.List<IntakeConversationMessageData>();
+				result.Data.CanConnect = false;
+			}
+
 			if (outcome == IntakeConversationActionResults.NotFound)
 				result.Status = ResponseHelper.NotFound;
 			return Done(result);

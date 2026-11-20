@@ -166,6 +166,12 @@
   <data name="Outcome.DestinationGone" xml:space="preserve">
     <value>Zalecany cel już nie istnieje.</value>
   </data>
+  <data name="Outcome.DestinationClosed" xml:space="preserve">
+    <value>Zalecany cel jest teraz zamknięty. Zapytaj ponownie o aktualną poradę.</value>
+  </data>
+  <data name="Outcome.CallChanged" xml:space="preserve">
+    <value>Zgłoszenie zmieniło się, gdy Enhanced AI odpowiadał. Spróbuj ponownie.</value>
+  </data>
   <data name="Outcome.NothingToApply" xml:space="preserve">
     <value>Nie ma czego zastosować: porada mówi, by zachować obecny cel.</value>
   </data>

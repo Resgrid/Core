@@ -181,6 +181,9 @@
   <data name="Error.Invalid" xml:space="preserve">
     <value>تعذّر حفظ القناة. تحقق من القيم وحاول مرة أخرى.</value>
   </data>
+  <data name="Error.InvalidSenders" xml:space="preserve">
+    <value>يمكن أن يتكون كل مرسل مسموح به من 256 حرفًا كحد أقصى. لم يتم حفظ القناة.</value>
+  </data>
   <data name="Type.Sms" xml:space="preserve">
     <value>رسالة نصية (SMS)</value>
   </data>

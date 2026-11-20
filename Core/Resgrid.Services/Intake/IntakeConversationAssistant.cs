@@ -105,6 +105,26 @@ namespace Resgrid.Services.Intake
 			var ledgerOutcome = "Unavailable";
 			try
 			{
+				// CheckAsync ran before the admission wait (up to 30 s): a department that enrolled in Advanced Data Protection meanwhile must not
+				// have this transcript sent to inference (D9). The policy read is invalidated on every protection change, as AI dispatch relies on.
+				bool protectedNow;
+				try
+				{
+					protectedNow = await _protection.ShouldEncryptNewWritesAsync(departmentId);
+				}
+				catch (Exception ex)
+				{
+					// Unknown protection state fails closed, as CheckAsync does: a person answers the texter.
+					Framework.Logging.LogException(ex, $"Intake conversation protection state could not be read again for department {departmentId}.");
+					protectedNow = true;
+				}
+
+				if (protectedNow)
+				{
+					ledgerOutcome = IntakeAssistantOutcomes.ProtectionUnsupported;
+					return new IntakeAssistantAnswer { Outcome = IntakeAssistantOutcomes.ProtectionUnsupported };
+				}
+
 				var context = new AiIntakeConversationContext(request.DepartmentName, IntakeConfig.EmergencyNumber,
 					(request.Lines ?? new System.Collections.Generic.List<IntakeAssistantLine>()).Where(l => l != null && !string.IsNullOrWhiteSpace(l.Text))
 						.Select(l => new AiIntakeConversationLine(l.FromCaller, l.Text)).ToList(),

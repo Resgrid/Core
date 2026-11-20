@@ -132,6 +132,30 @@ namespace Resgrid.Tests.Intake
 		}
 
 		[Test]
+		public async Task an_oversized_allowed_sender_is_refused_instead_of_opening_the_channel_to_anyone()
+		{
+			Func<Task> save = () => _service.SaveChannelAsync(new IntakeChannel
+			{
+				DepartmentId = DepartmentId, Name = "Text", ChannelType = (int)IntakeChannelTypes.Webhook, AllowedSenders = new string('a', 257),
+				ProcessingMode = (int)IntakeProcessingModes.Template
+			}, "admin");
+
+			(await save.Should().ThrowAsync<IntakeChannelValidationException>()).Which.Code.Should().Be("InvalidSenders");
+			_repository.Verify(r => r.SaveOrUpdateAsync(It.IsAny<IntakeChannel>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Never);
+		}
+
+		[Test]
+		public void sender_lists_normalize_and_a_blank_list_means_anyone()
+		{
+			IntakeChannelsService.NormalizeSenders(" +17755550100 ; +17755550100,\n@mercy.org ").Should().Be("+17755550100,@mercy.org");
+			IntakeChannelsService.NormalizeSenders("   ").Should().BeNull();
+			IntakeChannelsService.NormalizeSenders(" , ; ").Should().BeNull();
+			IntakeChannelsService.NormalizeSenders(new string('a', 256)).Should().HaveLength(256);
+			FluentActions.Invoking(() => IntakeChannelsService.NormalizeSenders("dispatch@county.gov," + new string('a', 257)))
+				.Should().Throw<IntakeChannelValidationException>().Which.Code.Should().Be("InvalidSenders");
+		}
+
+		[Test]
 		public async Task a_webhook_gets_a_generated_token_whatever_was_typed_and_a_secret_only_on_rotate()
 		{
 			var saved = await _service.SaveChannelAsync(new IntakeChannel

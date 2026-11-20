@@ -314,6 +314,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 					return _localizer["Error.AddressInUse"].Value;
 				case "NameRequired":
 					return _localizer["Error.NameRequired"].Value;
+				case "InvalidSenders":
+					return _localizer["Error.InvalidSenders"].Value;
 				default:
 					return _localizer["Error.Invalid"].Value;
 			}

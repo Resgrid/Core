@@ -225,6 +225,60 @@ namespace Resgrid.Tests.AiDestination
 			call.NatureOfCall = "Fall, now unresponsive";
 			listener.HasRelevantChange(call, now.AddSeconds(20)).Should().BeTrue();
 			listener.HasRelevantChange(call, now.AddHours(1)).Should().BeTrue("the memory is short");
+
+			// A pending call going active changes nothing the advice reads.
+			call.State = (int)CallStates.Pending;
+			listener.HasRelevantChange(call, now.AddHours(1).AddSeconds(5)).Should().BeFalse("the call's state is not part of what the model sees");
+		}
+
+		[Test]
+		public async Task A_review_that_could_not_be_queued_is_retried_by_the_next_save_with_the_same_content()
+		{
+			var saved = AiDestinationConfig.Enabled;
+			try
+			{
+				AiDestinationConfig.Enabled = true;
+				var builder = new Autofac.ContainerBuilder();
+				Autofac.RegistrationExtensions.RegisterInstance(builder, _advisor.Object).As<IAiDestinationAdvisorService>();
+				using var container = builder.Build();
+				var listener = new AiDestinationReviewEventListener(Mock.Of<Resgrid.Model.Providers.IEventAggregator>(), container);
+				var call = new Call { CallId = 5, DepartmentId = DepartmentId, NatureOfCall = "Fall", DestinationPoiId = 10, State = (int)CallStates.Active };
+
+				_advisor.Setup(a => a.RequestReviewAsync(DepartmentId, 5, AiDestinationReviewTriggers.CallUpdated, It.IsAny<CancellationToken>())).ReturnsAsync(false);
+				await listener.OnCallAsync(call, AiDestinationReviewTriggers.CallUpdated);
+
+				_advisor.Setup(a => a.RequestReviewAsync(DepartmentId, 5, AiDestinationReviewTriggers.CallUpdated, It.IsAny<CancellationToken>())).ReturnsAsync(true);
+				await listener.OnCallAsync(call, AiDestinationReviewTriggers.CallUpdated);
+				await listener.OnCallAsync(call, AiDestinationReviewTriggers.CallUpdated);
+
+				_advisor.Verify(a => a.RequestReviewAsync(DepartmentId, 5, AiDestinationReviewTriggers.CallUpdated, It.IsAny<CancellationToken>()), Times.Exactly(2),
+					"the failed attempt is forgotten, the accepted one is remembered");
+			}
+			finally
+			{
+				AiDestinationConfig.Enabled = saved;
+			}
+		}
+
+		[Test]
+		public async Task An_action_refused_for_the_department_reports_advice_as_unavailable()
+		{
+			CanEdit(true);
+			_advisor.Setup(a => a.ApplyAsync(DepartmentId, "adv-1", "user-1", It.IsAny<CancellationToken>()))
+				.ReturnsAsync(AiDestinationAdviceOutcome.Of(AiDestinationOutcomes.ProtectionUnsupported, _advice));
+
+			Body(await _api.ApplyAdvice(new ApplyAiDestinationAdviceInput { AdviceId = "adv-1" }, CancellationToken.None)).Data.Available.Should().BeFalse();
+
+			// A failure of this one action (the destination closed) leaves an eligible department available.
+			_advisor.Setup(a => a.ApplyAsync(DepartmentId, "adv-1", "user-1", It.IsAny<CancellationToken>()))
+				.ReturnsAsync(AiDestinationAdviceOutcome.Of(AiDestinationOutcomes.DestinationClosed, _advice));
+			Body(await _api.ApplyAdvice(new ApplyAiDestinationAdviceInput { AdviceId = "adv-1" }, CancellationToken.None)).Data.Available.Should().BeTrue();
+
+			// Eligibility lapsed since (remembered answer): a dismiss still works but reports the department as unavailable.
+			_advisor.Setup(a => a.IsAvailableAsync(DepartmentId)).ReturnsAsync(false);
+			_advisor.Setup(a => a.DismissAsync(DepartmentId, "adv-1", "user-1", null, It.IsAny<CancellationToken>()))
+				.ReturnsAsync(AiDestinationAdviceOutcome.Of(AiDestinationOutcomes.Dismissed, _advice));
+			Body(await _api.DismissAdvice(new DismissAiDestinationAdviceInput { AdviceId = "adv-1" }, CancellationToken.None)).Data.Available.Should().BeFalse();
 		}
 	}
 }

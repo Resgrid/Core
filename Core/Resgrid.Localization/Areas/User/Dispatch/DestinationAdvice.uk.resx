@@ -166,6 +166,12 @@
   <data name="Outcome.DestinationGone" xml:space="preserve">
     <value>Рекомендованого пункту призначення більше не існує.</value>
   </data>
+  <data name="Outcome.DestinationClosed" xml:space="preserve">
+    <value>Рекомендований пункт призначення зараз закритий. Запитайте ще раз, щоб отримати актуальну пораду.</value>
+  </data>
+  <data name="Outcome.CallChanged" xml:space="preserve">
+    <value>Виклик змінився, поки Enhanced AI відповідав. Спробуйте ще раз.</value>
+  </data>
   <data name="Outcome.NothingToApply" xml:space="preserve">
     <value>Немає чого застосовувати: порада — залишити поточний пункт призначення.</value>
   </data>

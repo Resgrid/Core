@@ -60,9 +60,14 @@ namespace Resgrid.Repositories.DataRepository
 			});
 			AiDestinationReviewsRepository.AddTimestamp(parameters, "Now", nowUtc);
 
+			// Only rows OLDER than the kept advice (CreatedOn, then id): two publishers that each insert and then supersede can never
+			// supersede each other, so whatever the interleaving the newest advice stays the call's one open row. The kept row's
+			// CreatedOn is read in SQL, so no parameter precision can differ from what is stored. No kept id: every open row.
+			var kept = $"(SELECT k.{Col("CreatedOn")} FROM {Tbl("AiDestinationAdvices")} k WHERE k.{Col("AiDestinationAdviceId")} = {P}Except)";
 			return ExecuteAsync(
 				$"UPDATE {Tbl("AiDestinationAdvices")} SET {Col("State")} = {P}Superseded, {Col("ResolvedOn")} = {P}Now " +
-				$"WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("CallId")} = {P}CallId AND {Col("State")} = {P}Open AND {Col("AiDestinationAdviceId")} <> {P}Except",
+				$"WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("CallId")} = {P}CallId AND {Col("State")} = {P}Open AND {Col("AiDestinationAdviceId")} <> {P}Except " +
+				$"AND ({P}Except = '' OR {Col("CreatedOn")} < {kept} OR ({Col("CreatedOn")} = {kept} AND {Col("AiDestinationAdviceId")} < {P}Except))",
 				parameters, cancellationToken);
 		}
 

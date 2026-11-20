@@ -82,6 +82,16 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 		/// <summary>A plus code to find the destination point with; never stored.</summary>
 		public string DestinationPlusCode { get; set; }
 
+		/// <summary>
+		/// The location POI the picker showed selected when the form opened (blank when it did not show the call's own), posted back
+		/// so only a POI this editor changed is written: an unrelated save neither clears a POI the picker could not show nor puts
+		/// back one another editor replaced meanwhile.
+		/// </summary>
+		public string OriginalLocationPoiId { get; set; }
+
+		/// <summary>The route the picker showed selected when the form opened, posted back for the same reason.</summary>
+		public string OriginalRoutePlanId { get; set; }
+
 		/// <summary>The member may open Routes (the route preview link).</summary>
 		public bool CanViewRoutes { get; set; }
 

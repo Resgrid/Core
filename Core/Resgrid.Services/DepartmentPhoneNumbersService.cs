@@ -305,7 +305,9 @@ namespace Resgrid.Services
 			};
 
 			// The Provisioning row claims the number before anything is bought (UX_DepartmentPhoneNumbers_Number), so a failed or crashed
-			// purchase is visible and two departments can never buy the same number.
+			// purchase is visible and two departments can never buy the same number. It also claims the department's one number
+			// (UX_DepartmentPhoneNumbers_DepartmentHeld): two admins buying different numbers at once cannot both insert, whatever order
+			// their checks above ran in.
 			try
 			{
 				await _repository.InsertAsync(row, cancellationToken, true);
@@ -318,10 +320,12 @@ namespace Resgrid.Services
 			{
 				if ((await _repository.GetByNumberAsync(e164, HeldStatuses, CancellationToken.None))?.Any(r => r.DepartmentPhoneNumberId != row.DepartmentPhoneNumberId) == true)
 					throw new DedicatedNumberException(DedicatedNumberErrors.NumberUnavailable);
+				if ((await GetAllForDepartmentAsync(departmentId)).Any(n => n.IsHeld && n.DepartmentPhoneNumberId != row.DepartmentPhoneNumberId))
+					throw new DedicatedNumberException(DedicatedNumberErrors.AlreadyHasNumber);
 				throw;
 			}
 
-			// Two admins buying at once: both rows exist now, and only the earliest claim proceeds to the carrier.
+			// Defense in depth behind the department index: if two claims ever coexist, only the earliest proceeds to the carrier.
 			var claims = (await GetAllForDepartmentAsync(departmentId)).Where(n => n.IsHeld).ToList();
 			var winner = claims.OrderBy(n => n.CreatedOn).ThenBy(n => n.DepartmentPhoneNumberId, StringComparer.Ordinal).FirstOrDefault();
 			if (winner != null && winner.DepartmentPhoneNumberId != row.DepartmentPhoneNumberId)
@@ -337,7 +341,19 @@ namespace Resgrid.Services
 			}
 			catch (Exception ex)
 			{
-				purchase = new CarrierNumberPurchase { Error = "The carrier purchase failed: " + ex.GetType().Name };
+				// The provider answers refusals in its result, so a throw means no answer came back: the number may have been sold.
+				purchase = new CarrierNumberPurchase { Uncertain = true, Error = "The carrier did not answer the purchase: " + ex.GetType().Name };
+			}
+
+			if (purchase?.Uncertain == true)
+			{
+				// Neither bought nor failed: a Failed row would drop out of the lifecycle and leave a possibly bought number unmanaged. The
+				// claim stays Provisioning and worker 80 asks the carrier account once ProvisioningTimeoutMinutes have passed.
+				Framework.Logging.LogError($"Dedicated number purchase for DepartmentId: {departmentId}, number {e164} is unconfirmed: {purchase.Error}");
+				row.LastError = Truncate(purchase.Error ?? "The carrier did not confirm the purchase.", 1000);
+				row.UpdatedOn = DateTime.UtcNow;
+				await _repository.UpdateAsync(row, CancellationToken.None, true);
+				return row;
 			}
 
 			if (purchase == null || !purchase.Success || string.IsNullOrWhiteSpace(purchase.ProviderNumberId))
@@ -348,15 +364,7 @@ namespace Resgrid.Services
 				return row;
 			}
 
-			row.Status = (int)DepartmentPhoneNumberStatuses.Active;
-			row.ProviderNumberId = purchase.ProviderNumberId;
-			row.Provider = string.IsNullOrWhiteSpace(purchase.Provider) ? row.Provider : purchase.Provider;
-			row.PhoneNumber = NormalizeE164(purchase.PhoneNumber) ?? e164;
-			row.SmsCapable = purchase.SmsCapable;
-			row.VoiceCapable = purchase.VoiceCapable;
-			row.ProvisionedOn = DateTime.UtcNow;
-			row.UpdatedOn = row.ProvisionedOn;
-			row.LastError = null;
+			Activate(row, purchase);
 
 			try
 			{
@@ -365,7 +373,8 @@ namespace Resgrid.Services
 			}
 			catch (Exception ex)
 			{
-				// Never keep paying for a number nothing records: give it back, and leave the Provisioning row for worker 80 to fail.
+				// Never keep paying for a number nothing records: give it back, and leave the Provisioning row to worker 80 (it fails the row
+				// once the carrier account no longer holds the number, or adopts the number if the release did not go through).
 				Framework.Logging.LogException(ex, $"Dedicated number {e164} ({purchase.ProviderNumberId}) was bought for DepartmentId: {departmentId} but could not be recorded; releasing it.");
 				await ReleaseAtCarrierAsync(new[] { row }, CancellationToken.None);
 				throw;
@@ -409,7 +418,7 @@ namespace Resgrid.Services
 			if (row == null)
 				return false;
 
-			return await ReleaseRowAsync(row, cancellationToken);
+			return await ReleaseRowAsync(row, DateTime.UtcNow, false, cancellationToken);
 		}
 
 		public async Task<DepartmentPhoneNumber> ReactivateAsync(int departmentId, string userId, CancellationToken cancellationToken = default)
@@ -431,8 +440,11 @@ namespace Resgrid.Services
 			if (state.PaidEntityPlan == false)
 				throw new DedicatedNumberException(DedicatedNumberErrors.PlanRequired);
 
-			await RestoreAsync(lapsed, userId, cancellationToken);
-			return lapsed;
+			// The row may have changed since it was read: worker 80 may have begun releasing it (then it is never restored) or restored it.
+			if (await RestoreAsync(lapsed, userId, cancellationToken))
+				return lapsed;
+
+			return await GetActiveForDepartmentAsync(departmentId);
 		}
 
 		public async Task<int> ReleaseAtCarrierAsync(IReadOnlyCollection<DepartmentPhoneNumber> numbers, CancellationToken cancellationToken = default)
@@ -491,16 +503,33 @@ namespace Resgrid.Services
 		{
 			var changed = 0;
 
-			// A request that crashed between claiming the number and the carrier answering. The carrier may still have sold it, so say so.
+			// A request that crashed between claiming the number and the carrier answering, or whose purchase got no answer. The carrier
+			// may still have sold it: the account is asked, and a number it holds is adopted instead of being left bought and unmanaged.
 			foreach (var stale in rows.Where(n => n.Status == (int)DepartmentPhoneNumberStatuses.Provisioning &&
-				n.CreatedOn < nowUtc.AddMinutes(-Math.Max(1, DedicatedNumberAddonConfig.ProvisioningTimeoutMinutes))))
+				n.CreatedOn < nowUtc.AddMinutes(-Math.Max(1, DedicatedNumberAddonConfig.ProvisioningTimeoutMinutes))).ToList())
 			{
-				Framework.Logging.LogError($"Dedicated number {stale.PhoneNumber} for DepartmentId {departmentId} never finished provisioning; check the carrier account for it.");
-				await FailAsync(stale, "Provisioning did not complete; check the carrier account for this number before buying it again.", cancellationToken);
-				changed++;
+				if (await ReconcileProvisioningAsync(stale, cancellationToken))
+					changed++;
 			}
 
-			var routing = rows.Where(n => n.Status == (int)DepartmentPhoneNumberStatuses.Active || n.Status == (int)DepartmentPhoneNumberStatuses.Lapsed).ToList();
+			// A release that began (the carrier may already have the number back) is finished whatever billing says: such a row is never
+			// restored, so leaving it would strand the number half released.
+			foreach (var releasing in rows.Where(n => n.IsHeld && n.Status != (int)DepartmentPhoneNumberStatuses.Provisioning && n.ReleasedOn.HasValue).ToList())
+			{
+				if (await ReleaseRowAsync(releasing, nowUtc, false, cancellationToken))
+					changed++;
+			}
+
+			// Routing set up after a purchase or restore that did not complete (a failed channel or setting write) is retried until it does.
+			foreach (var pending in rows.Where(n => n.Status == (int)DepartmentPhoneNumberStatuses.Active && !n.ReleasedOn.HasValue && RoutingIncomplete(n)).ToList())
+			{
+				await StartRoutingAsync(pending, pending.ProvisionedByUserId);
+				if (!RoutingIncomplete(pending))
+					changed++;
+			}
+
+			var routing = rows.Where(n => (n.Status == (int)DepartmentPhoneNumberStatuses.Active || n.Status == (int)DepartmentPhoneNumberStatuses.Lapsed) &&
+				!n.ReleasedOn.HasValue).ToList();
 			if (routing.Count == 0)
 				return changed;
 
@@ -523,11 +552,8 @@ namespace Resgrid.Services
 				}
 
 				// Paying again before the number was released (even past its release date, while the carrier still holds it).
-				if (active.Count == 0 && lapsed.Count > 0)
-				{
-					await RestoreAsync(lapsed[0], lapsed[0].ProvisionedByUserId, cancellationToken);
+				if (active.Count == 0 && lapsed.Count > 0 && await RestoreAsync(lapsed[0], lapsed[0].ProvisionedByUserId, cancellationToken))
 					changed++;
-				}
 
 				return changed;
 			}
@@ -562,7 +588,7 @@ namespace Resgrid.Services
 					await _repository.UpdateAsync(row, cancellationToken, true);
 				}
 
-				if (row.ReleaseAfter.Value <= nowUtc && await ReleaseRowAsync(row, cancellationToken))
+				if (row.ReleaseAfter.Value <= nowUtc && await ReleaseRowAsync(row, nowUtc, true, cancellationToken))
 					changed++;
 			}
 
@@ -787,63 +813,172 @@ namespace Resgrid.Services
 			await StopRoutingAsync(row);
 		}
 
-		private async Task RestoreAsync(DepartmentPhoneNumber row, string userId, CancellationToken cancellationToken)
+		/// <summary>
+		/// Lapsed → Active, as one conditional write: it loses to a release that already began (that number is never restored) and to a
+		/// concurrent restore. False when the row was no longer a restorable Lapsed row.
+		/// </summary>
+		private async Task<bool> RestoreAsync(DepartmentPhoneNumber row, string userId, CancellationToken cancellationToken)
 		{
+			var now = DateTime.UtcNow;
+			if (!await _repository.TryReactivateAsync(row.DepartmentPhoneNumberId, now, cancellationToken))
+			{
+				Framework.Logging.LogInfo($"Dedicated number {row.PhoneNumber} of DepartmentId {row.DepartmentId} was not reactivated: it changed meanwhile (being released or already restored).");
+				return false;
+			}
+
 			row.Status = (int)DepartmentPhoneNumberStatuses.Active;
 			ClearStopMarkers(row);
-			row.UpdatedOn = DateTime.UtcNow;
-			await _repository.UpdateAsync(row, cancellationToken, true);
+			row.UpdatedOn = now;
 			Framework.Logging.LogInfo($"Dedicated number {row.PhoneNumber} of DepartmentId {row.DepartmentId} reactivated.");
 
 			await StartRoutingAsync(row, userId);
+			return true;
 		}
 
-		private async Task<bool> ReleaseRowAsync(DepartmentPhoneNumber row, CancellationToken cancellationToken)
+		/// <summary>
+		/// Returns the number to the carrier. Decided on the stored row, never the caller's copy (worker 80 reads its rows before a slow
+		/// billing call, and an admin may reactivate meanwhile). Before the carrier is called the row is claimed (ReleasedOn set while its
+		/// status is unchanged), so a reactivation either wins first or can no longer happen; a carrier answer lost on the way, or a
+		/// release whose final write failed, leaves the claim and the next sweep finishes it (a number already gone answers 404 = released).
+		/// <paramref name="lifecycle"/>: worker 80's due release, which rechecks that the number is still Lapsed, due and unpaid.
+		/// </summary>
+		private async Task<bool> ReleaseRowAsync(DepartmentPhoneNumber row, DateTime nowUtc, bool lifecycle, CancellationToken cancellationToken)
 		{
-			if (row.Status == (int)DepartmentPhoneNumberStatuses.Released)
-				return true;
+			var current = await _repository.GetByIdAsync(row.DepartmentPhoneNumberId);
+			if (current == null)
+				return false;
 
-			// A failed purchase holds nothing at the carrier.
-			if (row.Status == (int)DepartmentPhoneNumberStatuses.Failed && string.IsNullOrWhiteSpace(row.ProviderNumberId))
-				return true;
-
-			if (!string.IsNullOrWhiteSpace(row.ProviderNumberId))
+			try
 			{
-				bool released;
-				try
+				if (current.Status == (int)DepartmentPhoneNumberStatuses.Released)
+					return true;
+
+				// A failed purchase holds nothing at the carrier.
+				if (current.Status == (int)DepartmentPhoneNumberStatuses.Failed && string.IsNullOrWhiteSpace(current.ProviderNumberId))
+					return true;
+
+				if (!string.IsNullOrWhiteSpace(current.ProviderNumberId))
 				{
-					released = await _carrier.ReleaseDedicatedNumberAsync(row.ProviderNumberId, cancellationToken);
-				}
-				catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
-				{
-					throw;
-				}
-				catch (Exception ex)
-				{
-					Framework.Logging.LogException(ex, $"Dedicated number {row.PhoneNumber} release failed for DepartmentId: {row.DepartmentId}");
-					released = false;
+					if (!current.ReleasedOn.HasValue)
+					{
+						if (lifecycle)
+						{
+							if (current.Status != (int)DepartmentPhoneNumberStatuses.Lapsed || !current.ReleaseAfter.HasValue || current.ReleaseAfter.Value > nowUtc)
+								return false;
+
+							// Paying again (the next sweep restores it) or unknown since the sweep's billing read: not released.
+							var state = await _access.GetPaymentStateAsync(current.DepartmentId) ?? new DedicatedNumberPaymentState();
+							if (!state.Stopped)
+								return false;
+						}
+
+						var startedOn = DateTime.UtcNow;
+						if (!await _repository.TryBeginReleaseAsync(current.DepartmentPhoneNumberId, current.Status, startedOn, CancellationToken.None))
+							return false;
+
+						current.ReleasedOn = startedOn;
+						current.UpdatedOn = startedOn;
+					}
+
+					bool released;
+					try
+					{
+						released = await _carrier.ReleaseDedicatedNumberAsync(current.ProviderNumberId, cancellationToken);
+					}
+					catch (Exception ex)
+					{
+						// No answer: the carrier may have taken the number back. The claim stays, so it is never reactivated, and the release is retried.
+						if (!(ex is OperationCanceledException && cancellationToken.IsCancellationRequested))
+							Framework.Logging.LogException(ex, $"Dedicated number {current.PhoneNumber} release was not confirmed for DepartmentId: {current.DepartmentId}; it will be retried.");
+						current.LastError = "The carrier did not confirm the release; it will be retried.";
+						current.UpdatedOn = DateTime.UtcNow;
+						await _repository.UpdateAsync(current, CancellationToken.None, true);
+						if (ex is OperationCanceledException && cancellationToken.IsCancellationRequested)
+							throw;
+						return false;
+					}
+
+					if (!released)
+					{
+						// The carrier answered and kept the number: nothing else changes (it still routes, or stays held and may be reactivated)
+						// and worker 80 retries a lapsed one.
+						current.ReleasedOn = null;
+						current.LastError = "The carrier did not release the number; it will be retried.";
+						current.UpdatedOn = DateTime.UtcNow;
+						await _repository.UpdateAsync(current, CancellationToken.None, true);
+						return false;
+					}
 				}
 
-				if (!released)
-				{
-					// Nothing else changes: the number still routes (or stays held) and worker 80 retries a lapsed one.
-					row.LastError = "The carrier did not release the number; it will be retried.";
-					row.UpdatedOn = DateTime.UtcNow;
-					await _repository.UpdateAsync(row, CancellationToken.None, true);
-					return false;
-				}
+				current.Status = (int)DepartmentPhoneNumberStatuses.Released;
+				current.ReleasedOn = DateTime.UtcNow;
+				current.ReleaseAfter = null;
+				current.LastError = null;
+				current.UpdatedOn = current.ReleasedOn;
+				await _repository.UpdateAsync(current, CancellationToken.None, true);
+				Framework.Logging.LogInfo($"Dedicated number {current.PhoneNumber} of DepartmentId {current.DepartmentId} released.");
+
+				await StopRoutingAsync(current);
+				return true;
+			}
+			finally
+			{
+				// The caller's copy follows the stored row (worker 80 warns only about numbers still held).
+				row.Status = current.Status;
+				row.ReleasedOn = current.ReleasedOn;
+				row.ReleaseAfter = current.ReleaseAfter;
+				row.LastError = current.LastError;
+				row.UpdatedOn = current.UpdatedOn;
+			}
+		}
+
+		/// <summary>
+		/// A Provisioning claim past ProvisioningTimeoutMinutes: the carrier account is asked whether it holds the number. Held: adopted as
+		/// the department's Active number (routing set up). Not held: Failed. The carrier cannot be asked: left for the next sweep.
+		/// </summary>
+		private async Task<bool> ReconcileProvisioningAsync(DepartmentPhoneNumber stale, CancellationToken cancellationToken)
+		{
+			CarrierNumberPurchase held;
+			try
+			{
+				held = await _carrier.FindDedicatedNumberAsync(stale.PhoneNumber, cancellationToken);
+			}
+			catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+			{
+				throw;
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex, $"Dedicated number {stale.PhoneNumber} for DepartmentId {stale.DepartmentId} never finished provisioning and the carrier account could not be checked; retried next sweep.");
+				return false;
 			}
 
-			row.Status = (int)DepartmentPhoneNumberStatuses.Released;
-			row.ReleasedOn = DateTime.UtcNow;
-			row.ReleaseAfter = null;
-			row.LastError = null;
-			row.UpdatedOn = row.ReleasedOn;
-			await _repository.UpdateAsync(row, CancellationToken.None, true);
-			Framework.Logging.LogInfo($"Dedicated number {row.PhoneNumber} of DepartmentId {row.DepartmentId} released.");
+			if (held?.Success == true && !string.IsNullOrWhiteSpace(held.ProviderNumberId))
+			{
+				Activate(stale, held);
+				await _repository.UpdateAsync(stale, CancellationToken.None, true);
+				Framework.Logging.LogInfo($"Dedicated number {stale.PhoneNumber} ({stale.ProviderNumberId}) of DepartmentId {stale.DepartmentId}: the unconfirmed purchase went through; now Active.");
+				await StartRoutingAsync(stale, stale.ProvisionedByUserId);
+				return true;
+			}
 
-			await StopRoutingAsync(row);
+			Framework.Logging.LogError($"Dedicated number {stale.PhoneNumber} for DepartmentId {stale.DepartmentId} never finished provisioning; the carrier account does not hold it.");
+			await FailAsync(stale, "Provisioning did not complete and the carrier account does not hold the number; it can be bought again.", cancellationToken);
 			return true;
+		}
+
+		/// <summary>The bought number on its claim row: Active, with the carrier's id, number and capabilities.</summary>
+		private static void Activate(DepartmentPhoneNumber row, CarrierNumberPurchase purchase)
+		{
+			row.Status = (int)DepartmentPhoneNumberStatuses.Active;
+			row.ProviderNumberId = purchase.ProviderNumberId;
+			row.Provider = string.IsNullOrWhiteSpace(purchase.Provider) ? row.Provider : purchase.Provider;
+			row.PhoneNumber = NormalizeE164(purchase.PhoneNumber) ?? row.PhoneNumber;
+			row.SmsCapable = purchase.SmsCapable;
+			row.VoiceCapable = purchase.VoiceCapable;
+			row.ProvisionedOn = DateTime.UtcNow;
+			row.UpdatedOn = row.ProvisionedOn;
+			row.LastError = null;
 		}
 
 		private async Task FailAsync(DepartmentPhoneNumber row, string error, CancellationToken cancellationToken)
@@ -854,9 +989,21 @@ namespace Resgrid.Services
 			await _repository.UpdateAsync(row, cancellationToken, true);
 		}
 
-		/// <summary>The Active number takes over TextToCallNumber and its intake channels. Each step is best effort: the number is already bought.</summary>
+		/// <summary>
+		/// Shown to the admin and the marker worker 80 retries on: routing for an Active number did not finish setting up.
+		/// </summary>
+		public const string RoutingIncompleteError = "Intake routing for this number did not finish setting up; it is retried automatically.";
+
+		private static bool RoutingIncomplete(DepartmentPhoneNumber row) => string.Equals(row.LastError, RoutingIncompleteError, StringComparison.Ordinal);
+
+		/// <summary>
+		/// The Active number takes over TextToCallNumber and its intake channels (SMS only while SMS intake is on; voice always, it carries
+		/// the member IVR). Each step is best effort, the number is already bought, but an incomplete setup is recorded on the row
+		/// (<see cref="RoutingIncompleteError"/>) and worker 80 repeats it until every step succeeds.
+		/// </summary>
 		private async Task StartRoutingAsync(DepartmentPhoneNumber row, string userId)
 		{
+			var complete = true;
 			try
 			{
 				var current = await _settings.GetTextToCallNumberForDepartmentAsync(row.DepartmentId);
@@ -868,12 +1015,27 @@ namespace Resgrid.Services
 			}
 			catch (Exception ex)
 			{
+				complete = false;
 				Framework.Logging.LogException(ex, $"Dedicated number {row.PhoneNumber}: TextToCallNumber could not be set for DepartmentId: {row.DepartmentId}");
 			}
 
 			if (row.SmsIntakeEnabled)
-				await EnsureChannelAsync(row, IntakeChannelTypes.Sms, userId);
-			await EnsureChannelAsync(row, IntakeChannelTypes.Voice, userId);
+				complete &= await EnsureChannelAsync(row, IntakeChannelTypes.Sms, userId);
+			complete &= await EnsureChannelAsync(row, IntakeChannelTypes.Voice, userId);
+
+			if (complete != RoutingIncomplete(row))
+				return;
+
+			row.LastError = complete ? null : RoutingIncompleteError;
+			row.UpdatedOn = DateTime.UtcNow;
+			try
+			{
+				await _repository.UpdateAsync(row, CancellationToken.None, true);
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex, $"Dedicated number {row.PhoneNumber}: the routing state could not be recorded for DepartmentId: {row.DepartmentId}");
+			}
 		}
 
 		/// <summary>Intake stops: both channels off, and TextToCallNumber cleared while it still names this number.</summary>
@@ -894,15 +1056,17 @@ namespace Resgrid.Services
 			}
 		}
 
-		private async Task EnsureChannelAsync(DepartmentPhoneNumber row, IntakeChannelTypes type, string userId)
+		private async Task<bool> EnsureChannelAsync(DepartmentPhoneNumber row, IntakeChannelTypes type, string userId)
 		{
 			try
 			{
 				await _intakeChannels.EnsureChannelAsync(row.DepartmentId, type, row.PhoneNumber, ChannelName(type, row.PhoneNumber), userId);
+				return true;
 			}
 			catch (Exception ex)
 			{
 				Framework.Logging.LogException(ex, $"Dedicated number {row.PhoneNumber}: the {type} intake channel could not be ensured for DepartmentId: {row.DepartmentId}");
+				return false;
 			}
 		}
 

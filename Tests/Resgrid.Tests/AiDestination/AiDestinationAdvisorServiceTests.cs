@@ -539,9 +539,190 @@ namespace Resgrid.Tests.AiDestination
 			var ranked = Enumerable.Range(1, 12).Select(i => Destination(i, "H" + i, i * 60, Helipad)).ToList();
 			ranked.Add(Destination(50, "Trauma Center", 3000, Trauma));
 
-			var selected = AiDestinationAdvisorService.SelectCandidates(ranked, 10);
+			var selected = AiDestinationAdvisorService.SelectCandidates(ranked, 10, _clock.Now.UtcDateTime);
 
 			selected.Select(d => d.Poi.PoiId).Should().Equal(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 50);
+		}
+
+		[Test]
+		public void A_capability_the_shortlist_reports_unavailable_does_not_hide_a_farther_destination_that_can_provide_it()
+		{
+			var now = _clock.Now.UtcDateTime;
+			var ranked = new List<NearestDestination> { Destination(1, "Near Trauma", 60, Trauma, Helipad) };
+			ranked[0].Poi.Availability = new PoiAvailability { PoiId = 1, Status = (int)PoiAvailabilityStatuses.Limited, UnavailableCapabilityIds = Trauma };
+			ranked.Add(Destination(2, "Far Trauma", 3000, Trauma));
+			ranked.Add(Destination(3, "Far Helipad", 3100, Helipad));
+
+			AiDestinationAdvisorService.SelectCandidates(ranked, 1, now).Select(d => d.Poi.PoiId)
+				.Should().Equal(new[] { 1, 2 }, "trauma on bypass at the first does not count as offered; its helipad still does");
+
+			// Once the report expires, the nearest offers trauma again and the farther one adds nothing.
+			ranked[0].Poi.Availability.ExpiresOn = now.AddMinutes(-1);
+			AiDestinationAdvisorService.SelectCandidates(ranked, 1, now).Select(d => d.Poi.PoiId).Should().Equal(1);
+
+			// A closed farther destination never fills the gap; a closed shortlisted one offers nothing.
+			ranked[0].Poi.Availability.ExpiresOn = null;
+			ranked[1].Tier = DestinationTiers.Closed;
+			AiDestinationAdvisorService.SelectCandidates(ranked, 1, now).Select(d => d.Poi.PoiId).Should().Equal(1);
+			ranked[0].Tier = DestinationTiers.Closed;
+			ranked[1].Tier = DestinationTiers.Ready;
+			AiDestinationAdvisorService.SelectCandidates(ranked, 1, now).Select(d => d.Poi.PoiId).Should().Equal(1, 2, 3);
+		}
+
+		private void ReplyWhileTheCallChanges(Action change)
+		{
+			var json = JsonSerializer.Serialize(new { recommended_poi_id = "20", required_capability_ids = new[] { "c1" }, rationale = "Level I trauma.", confidence = 0.9 });
+			_llm.Setup(l => l.CompleteAsync(It.IsAny<LlmRequest>(), It.IsAny<CancellationToken>()))
+				.Callback(change)
+				.ReturnsAsync(new LlmResult(null, new[] { new LlmToolCall("t1", "advise_destination", json) }, 1200, 80, "tool_calls"));
+		}
+
+		[Test]
+		public async Task An_answer_about_a_call_that_changed_meanwhile_is_discarded()
+		{
+			// The dispatcher re-types the call while the model is answering about the fall.
+			ReplyWhileTheCallChanges(() => _call.NatureOfCall = "Suspected stroke, facial droop");
+
+			var result = await _service.AdviseNowAsync(DepartmentId, CallId, "medic-lead");
+
+			result.Outcome.Should().Be(AiDestinationOutcomes.CallChanged);
+			_inserted.Should().BeEmpty();
+			_notes.Should().BeEmpty();
+			_push.VerifyNoOtherCalls();
+			_adviceEvents.Should().BeEmpty();
+			_advices.Verify(a => a.SupersedeOpenAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public async Task A_destination_set_while_the_model_answered_does_not_discard_the_answer()
+		{
+			ReplyWhileTheCallChanges(() => _call.DestinationPoiId = 20);
+
+			(await _service.AdviseNowAsync(DepartmentId, CallId, "medic-lead")).Outcome.Should().Be(AiDestinationOutcomes.Advised);
+			var advice = _inserted.Should().ContainSingle().Subject;
+			advice.IsChange.Should().BeFalse("the dispatcher already chose the recommended destination");
+			advice.CurrentPoiId.Should().Be(20);
+		}
+
+		[Test]
+		public async Task Protection_enabled_after_availability_was_remembered_still_keeps_call_text_from_the_model()
+		{
+			(await _service.IsAvailableAsync(DepartmentId)).Should().BeTrue("remembered for minutes");
+			_protection.Setup(p => p.ShouldEncryptNewWritesAsync(DepartmentId)).ReturnsAsync(true);
+			var review = new AiDestinationReview { AiDestinationReviewId = "rv1", DepartmentId = DepartmentId, CallId = CallId, ReviewTrigger = (int)AiDestinationReviewTriggers.NoteAdded };
+			_reviews.Setup(r => r.GetDueAsync(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int>(), It.IsAny<CancellationToken>())).ReturnsAsync(new List<AiDestinationReview> { review });
+			_reviews.Setup(r => r.TryClaimAsync("rv1", It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
+			_reviews.Setup(r => r.CompleteAsync("rv1", It.IsAny<DateTime>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
+
+			var sweep = await _service.ProcessDueReviewsAsync(_clock.Now.UtcDateTime);
+
+			sweep.Outcomes.Should().ContainKey(AiDestinationOutcomes.ProtectionUnsupported);
+			NoModelCall();
+			_inserted.Should().BeEmpty();
+			(await _service.IsAvailableAsync(DepartmentId)).Should().BeFalse("the remembered answer is dropped");
+		}
+
+		[Test]
+		public void The_review_lease_always_outlasts_one_review()
+		{
+			var saved = (AiDestinationConfig.LeaseSeconds, AiDestinationConfig.AdmissionWaitSeconds, AiDestinationConfig.RequestTimeoutSeconds);
+			try
+			{
+				(AiDestinationConfig.LeaseSeconds, AiDestinationConfig.AdmissionWaitSeconds, AiDestinationConfig.RequestTimeoutSeconds) = (60, 30, 50);
+				AiDestinationAdvisorService.ReviewLease().Should().BeGreaterThan(TimeSpan.FromSeconds(30 + 50), "a 60 s lease is shorter than one permitted review");
+
+				(AiDestinationConfig.LeaseSeconds, AiDestinationConfig.AdmissionWaitSeconds, AiDestinationConfig.RequestTimeoutSeconds) = (900, 30, 60);
+				AiDestinationAdvisorService.ReviewLease().Should().Be(TimeSpan.FromSeconds(900), "a longer configured lease is kept");
+			}
+			finally
+			{
+				(AiDestinationConfig.LeaseSeconds, AiDestinationConfig.AdmissionWaitSeconds, AiDestinationConfig.RequestTimeoutSeconds) = saved;
+			}
+		}
+
+		[Test]
+		public async Task A_failed_queue_write_is_reported_so_the_trigger_can_retry()
+		{
+			_reviews.Setup(r => r.QueueAsync(DepartmentId, CallId, It.IsAny<AiDestinationReviewTriggers>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
+				.ThrowsAsync(new InvalidOperationException("database down"));
+
+			(await _service.RequestReviewAsync(DepartmentId, CallId, AiDestinationReviewTriggers.CallUpdated)).Should().BeFalse();
+
+			_reviews.Setup(r => r.QueueAsync(DepartmentId, CallId, It.IsAny<AiDestinationReviewTriggers>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
+			(await _service.RequestReviewAsync(DepartmentId, CallId, AiDestinationReviewTriggers.CallUpdated)).Should().BeTrue();
+
+			_call.State = (int)CallStates.Closed;
+			(await _service.RequestReviewAsync(DepartmentId, CallId, AiDestinationReviewTriggers.CallUpdated)).Should().BeTrue("nothing to queue is not a failure");
+		}
+
+		private AiDestinationAdvice OpenChange()
+		{
+			var advice = new AiDestinationAdvice
+			{
+				AiDestinationAdviceId = "adv-1", DepartmentId = DepartmentId, CallId = CallId, CurrentPoiId = 10, RecommendedPoiId = 20, IsChange = true,
+				Confidence = 0.8, State = (int)AiDestinationAdviceStates.Open
+			};
+			_advices.Setup(a => a.GetForDepartmentAsync(DepartmentId, "adv-1", It.IsAny<CancellationToken>())).ReturnsAsync(advice);
+			_advices.Setup(a => a.TryTransitionAsync(DepartmentId, "adv-1", AiDestinationAdviceStates.Open, AiDestinationAdviceStates.Applied, "medic-lead", It.IsAny<DateTime?>(),
+				It.IsAny<CancellationToken>())).ReturnsAsync(true);
+			return advice;
+		}
+
+		[Test]
+		public async Task A_recommendation_that_closed_since_is_not_applied()
+		{
+			OpenChange();
+			_mapping.Setup(m => m.GetCurrentPoiAvailabilitiesAsync(DepartmentId)).ReturnsAsync(new Dictionary<int, PoiAvailability>
+			{
+				[20] = new PoiAvailability { PoiId = 20, Status = (int)PoiAvailabilityStatuses.Closed }
+			});
+
+			var result = await _service.ApplyAsync(DepartmentId, "adv-1", "medic-lead");
+
+			result.Outcome.Should().Be(AiDestinationOutcomes.DestinationClosed);
+			result.Advice.State.Should().Be((int)AiDestinationAdviceStates.Open, "the advice stays open");
+			_saved.Should().BeEmpty();
+			_advices.Verify(a => a.TryTransitionAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<AiDestinationAdviceStates>(), It.IsAny<AiDestinationAdviceStates>(),
+				It.IsAny<string>(), It.IsAny<DateTime?>(), It.IsAny<CancellationToken>()), Times.Never);
+
+			// Diversion is still applicable (crews are warned, as everywhere else).
+			_mapping.Setup(m => m.GetCurrentPoiAvailabilitiesAsync(DepartmentId)).ReturnsAsync(new Dictionary<int, PoiAvailability>
+			{
+				[20] = new PoiAvailability { PoiId = 20, Status = (int)PoiAvailabilityStatuses.Diversion }
+			});
+			(await _service.ApplyAsync(DepartmentId, "adv-1", "medic-lead")).Outcome.Should().Be(AiDestinationOutcomes.Applied);
+		}
+
+		[Test]
+		public async Task A_save_that_failed_after_storing_the_destination_keeps_the_advice_applied_and_notes_it()
+		{
+			OpenChange();
+			// The row was written before a later step of the save threw; the re-read (the same _call here) shows the new destination.
+			_calls.Setup(c => c.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>())).ThrowsAsync(new InvalidOperationException("projection failed"));
+
+			var result = await _service.ApplyAsync(DepartmentId, "adv-1", "medic-lead");
+
+			result.Outcome.Should().Be(AiDestinationOutcomes.Applied);
+			_advices.Verify(a => a.TryTransitionAsync(DepartmentId, "adv-1", AiDestinationAdviceStates.Applied, AiDestinationAdviceStates.Open, It.IsAny<string>(), It.IsAny<DateTime?>(),
+				It.IsAny<CancellationToken>()), Times.Never);
+			_notes.Should().ContainSingle().Which.Note.Should().Contain("destination set to Regional Trauma Center");
+			_events.Verify(e => e.SendMessage(It.Is<CallUpdatedEvent>(c => c.Call.CallId == CallId && c.Call.DestinationPoiId == 20)), Times.Once);
+		}
+
+		[Test]
+		public async Task A_save_that_failed_before_storing_the_destination_reopens_the_advice()
+		{
+			OpenChange();
+			_calls.Setup(c => c.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>())).ThrowsAsync(new InvalidOperationException("database down"));
+			var stored = new Call { CallId = CallId, DepartmentId = DepartmentId, State = (int)CallStates.Active, DestinationPoiId = 10 };
+			_calls.SetupSequence(c => c.GetCallByIdAsync(CallId, true)).ReturnsAsync(_call).ReturnsAsync(stored);
+
+			Func<Task> act = () => _service.ApplyAsync(DepartmentId, "adv-1", "medic-lead");
+
+			await act.Should().ThrowAsync<InvalidOperationException>();
+			_advices.Verify(a => a.TryTransitionAsync(DepartmentId, "adv-1", AiDestinationAdviceStates.Applied, AiDestinationAdviceStates.Open, null, null,
+				It.IsAny<CancellationToken>()), Times.Once);
+			_notes.Should().BeEmpty();
 		}
 	}
 }

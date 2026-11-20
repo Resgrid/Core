@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Repositories.Queries;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Services
@@ -19,6 +20,8 @@ namespace Resgrid.Services
 		private readonly IRouteDeviationsRepository _routeDeviationsRepository;
 		private readonly IUnitLocationsDocRepository _unitLocationsDocRepository;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
+		// Optional (unit tests build the service without one): a route start runs its unit check and insert in one transaction.
+		private readonly IUnitOfWork _unitOfWork;
 
 		// The most location rows read to build an ended instance's track.
 		private const int MaxTrackLocations = 20000;
@@ -31,8 +34,10 @@ namespace Resgrid.Services
 			IRouteInstanceStopsRepository routeInstanceStopsRepository,
 			IRouteDeviationsRepository routeDeviationsRepository,
 			IUnitLocationsDocRepository unitLocationsDocRepository,
-			IDepartmentSettingsService departmentSettingsService)
+			IDepartmentSettingsService departmentSettingsService,
+			IUnitOfWork unitOfWork = null)
 		{
+			_unitOfWork = unitOfWork;
 			_routePlansRepository = routePlansRepository;
 			_routeStopsRepository = routeStopsRepository;
 			_routeSchedulesRepository = routeSchedulesRepository;
@@ -242,9 +247,17 @@ namespace Resgrid.Services
 			if (instance.StartReachedOn.HasValue)
 				return instance;
 
-			instance.StartReachedOn = DateTime.UtcNow;
-			await _routeInstancesRepository.SaveOrUpdateAsync(instance, cancellationToken);
-			return instance;
+			// Only the one column, and only while still unset: saving the whole row read above would put back a status (paused,
+			// ended, cancelled) another request wrote in the meantime.
+			var reachedOn = DateTime.UtcNow;
+			if (await _routeInstancesRepository.SetStartReachedOnAsync(routeInstanceId, reachedOn, cancellationToken))
+			{
+				instance.StartReachedOn = reachedOn;
+				return instance;
+			}
+
+			// Recorded by someone else meanwhile: answer with the stored run.
+			return await _routeInstancesRepository.GetByIdAsync(routeInstanceId) ?? instance;
 		}
 
 		public async Task<List<RouteInstance>> GetInstancesForCallAsync(int departmentId, int callId)
@@ -254,6 +267,42 @@ namespace Resgrid.Services
 		}
 
 		private async Task<RouteInstance> StartAsync(string routePlanId, int unitId, int? callId, string startedByUserId, CancellationToken cancellationToken)
+		{
+			if (_unitOfWork == null)
+				return await StartUnlockedAsync(routePlanId, unitId, callId, startedByUserId, cancellationToken);
+
+			// One run per unit: the "is the unit free" checks and the insert run under a lock on the unit, in one transaction, so two
+			// starts at once (two crew devices, a dispatcher and the crew) cannot both find it free. The run and its stops commit
+			// together.
+			var owns = _unitOfWork.Transaction == null;
+			await _unitOfWork.CreateOrGetConnectionAsync(cancellationToken);
+			try
+			{
+				try
+				{
+					await _routeInstancesRepository.LockUnitForRouteStartAsync(unitId, cancellationToken);
+				}
+				catch (TimeoutException ex)
+				{
+					throw new InvalidOperationException("Another start of a route for this unit is still running; try again.", ex);
+				}
+
+				var instance = await StartUnlockedAsync(routePlanId, unitId, callId, startedByUserId, cancellationToken);
+				if (owns)
+					_unitOfWork.CommitChanges();
+
+				return instance;
+			}
+			catch
+			{
+				if (owns)
+					_unitOfWork.DiscardChanges();
+
+				throw;
+			}
+		}
+
+		private async Task<RouteInstance> StartUnlockedAsync(string routePlanId, int unitId, int? callId, string startedByUserId, CancellationToken cancellationToken)
 		{
 			var existingActive = await GetActiveInstanceForUnitAsync(unitId);
 			if (existingActive != null)

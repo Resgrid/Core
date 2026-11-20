@@ -99,8 +99,8 @@ namespace Resgrid.Repositories.DataRepository
 			await Delete("CallBroadcastOutbox");
 
 			// Intake channels and their message audit, voice intake sessions, AI destination advice and review requests, dedicated
-			// numbers and their billing accounts (M0323); no foreign keys. A number still held at the carrier is released by the
-			// department deletion flow (IDepartmentPhoneNumbersService.ReleaseAsync) before this purge runs.
+			// numbers and their billing accounts (M0323); no foreign keys. The department deletion flow reads the numbers still held at the
+			// carrier before this purge and returns them (IDepartmentPhoneNumbersService.ReleaseAtCarrierAsync) right after it commits.
 			await Delete("IntakeConversationMessages", "IntakeConversations", "IntakeMessages", "IntakeChannels", "VoiceIntakeSessions", "AiDestinationReviews", "AiDestinationAdvices",
 				"DepartmentPhoneNumbers", "DedicatedNumberBillingAccounts");
 

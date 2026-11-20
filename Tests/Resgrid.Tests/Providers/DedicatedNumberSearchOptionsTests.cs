@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
 using Resgrid.Model;
@@ -12,6 +14,27 @@ namespace Resgrid.Tests.Providers
 	[TestFixture]
 	public class DedicatedNumberSearchOptionsTests
 	{
+		[Test]
+		public void A_failed_query_with_nothing_usable_is_a_carrier_failure_not_an_empty_inventory()
+		{
+			// PR #588: the local query failed and the mobile one answered 404; the failure was swallowed and the admin saw "no numbers".
+			var failure = new System.TimeoutException();
+
+			FluentActions.Invoking(() => TwilioProvider.CompleteSearch(new List<AvailablePhoneNumber>(), failure, 20))
+				.Should().Throw<System.InvalidOperationException>().WithInnerException<System.TimeoutException>();
+			FluentActions.Invoking(() => TwilioProvider.CompleteSearch(new[] { new AvailablePhoneNumber { PhoneNumber = "+17755550100", SmsCapable = true } }, failure, 20))
+				.Should().Throw<System.InvalidOperationException>("a number without voice is not usable");
+
+			// Partial results from the query that worked still count; 404 alone (no failure) is a valid empty inventory.
+			TwilioProvider.CompleteSearch(new[]
+			{
+				new AvailablePhoneNumber { PhoneNumber = "+17755550100", SmsCapable = true, VoiceCapable = true },
+				new AvailablePhoneNumber { PhoneNumber = "+17755550100", SmsCapable = true, VoiceCapable = true },
+				new AvailablePhoneNumber { PhoneNumber = "+17755550101", SmsCapable = true, VoiceCapable = true }
+			}, failure, 20).Select(n => n.PhoneNumber).Should().Equal("+17755550100", "+17755550101");
+			TwilioProvider.CompleteSearch(new List<AvailablePhoneNumber>(), null, 20).Should().BeEmpty();
+		}
+
 		[Test]
 		public void A_united_states_search_maps_every_filter_onto_the_local_and_mobile_queries()
 		{

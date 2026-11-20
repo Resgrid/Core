@@ -32,7 +32,7 @@ public sealed record AiIntakeConversationReply(string? ReplyText, bool Done, boo
 /// </summary>
 public static class AiIntakeConversationPrompt
 {
-    public const string Version = "ai-intake-conversation-v1";
+    public const string Version = "ai-intake-conversation-v2";
     public const string ToolName = "reply_to_caller";
     public const int MaxReplyLength = 300;
     private const string Open = "<<<CONVERSATION";
@@ -40,9 +40,17 @@ public static class AiIntakeConversationPrompt
     private const int MaxLineCharacters = 600;
     private const int MaxTranscriptCharacters = 6000;
 
-    // A reply that promises help, a unit or a time is refused outright: only a dispatcher may say that.
+    // A reply that promises help, a unit or a time is refused outright: only a dispatcher may say that. The model writes free text, so this
+    // is a backstop for the prompt, not the policy itself; it errs toward refusing (a refused turn hands the thread to a dispatcher).
     private static readonly Regex Promises = new Regex(
-        @"\b(on (the|their|its|our) way|en route|dispatch(ed|ing) (a |an |the )?(unit|ambulance|crew|engine|officer|help)|(help|units?|an? ambulance|officers?|crews?|someone|police|fire( department)?) (is|are|will be|has been|have been) (coming|sent|dispatched|on)|will (arrive|be there)|arriv(e|ing) (in|within)|\d+\s*(minutes|mins)\s*(away|out))\b",
+        @"\b(on (the|their|its|our) way|en route|dispatch(ed|ing) (a |an |the )?(unit|ambulance|crew|engine|officer|help)|(help|units?|an? ambulance|officers?|crews?|someone|police|fire( department)?) (is|are|will be|has been|have been) (coming|sent|dispatched|on)|will (arrive|be there)|arriv(e|ing) (in|within)|\d+\s*(minutes|mins)\s*(away|out)" +
+        @"|(we|i|they)(['’]ll| will| are going to|['’]re going to) (send|have|get|bring) (someone|somebody|help|people|(a |an |the |some )?(units?|crews?|ambulances?|officers?|deputy|deputies|police|firefighters?|paramedics?|medics?|engines?|trucks?))" +
+        @"|will be (there|here|with you|at your|on (scene|site))|(there|to you) (shortly|soon|right away|any minute)|(be|get) (there|to you) (shortly|soon|quickly|fast))\b",
+        RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+    // First-aid and safety instructions are a dispatcher's or a call-taker's to give (the prompt forbids them; this catches the plain ones).
+    private static readonly Regex Instructions = new Regex(
+        @"\b(cpr|chest compressions|rescue breath(s|ing)?|(apply|put) (firm |direct |steady )?pressure|tourniquet|recovery position|heimlich|abdominal thrusts|epi-?pen|(do not|don['’]t|dont) move (him|her|them|the (patient|victim|person))|tilt (the|their|his|her) head)\b",
         RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
     private static readonly Regex Links = new Regex(@"(https?://|www\.)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
@@ -58,7 +66,8 @@ public static class AiIntakeConversationPrompt
         "Never give medical, first-aid or safety instructions; when the situation is or may be life-threatening, tell them to call " + Number(context.EmergencyNumber) + " now. " +
         "reply_text: plain text, at most " + MaxReplyLength + " characters, no links, in the caller's language, polite and calm. " +
         "Set done true when you have the situation, the location, injuries or hazards, and a name (or the caller will not give more); reply_text may then be empty. " +
-        "Set wants_dispatcher true when the caller asks for a person, is in immediate danger, is abusive, or asks something you must not answer; reply_text may then be empty.";
+        "Set wants_dispatcher true when the caller asks for a person, is in immediate danger, is abusive, or asks something you must not answer; reply_text may then be empty, " +
+        "except when they are or may be in immediate danger: then reply_text tells them to call " + Number(context.EmergencyNumber) + " now.";
 
     public static LlmTool Tool()
     {
@@ -126,6 +135,7 @@ public static class AiIntakeConversationPrompt
         if (text != null && text.Length > MaxReplyLength) throw new ArgumentException("Reply too long.");
         if (text != null && Links.IsMatch(text)) throw new ArgumentException("Reply has a link.");
         if (text != null && Promises.IsMatch(text)) throw new ArgumentException("Reply promises a response.");
+        if (text != null && Instructions.IsMatch(text)) throw new ArgumentException("Reply gives first-aid or safety instructions.");
         var finished = proposal.Done.Value || proposal.WantsDispatcher.Value;
         if (text == null && !finished) throw new ArgumentException("No question.");
         return new AiIntakeConversationReply(text, proposal.Done.Value, proposal.WantsDispatcher.Value);

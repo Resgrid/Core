@@ -166,6 +166,12 @@
   <data name="Outcome.DestinationGone" xml:space="preserve">
     <value>Ο προτεινόμενος προορισμός δεν υπάρχει πλέον.</value>
   </data>
+  <data name="Outcome.DestinationClosed" xml:space="preserve">
+    <value>Ο προτεινόμενος προορισμός είναι πλέον κλειστός. Ζητήστε ξανά για επίκαιρη συμβουλή.</value>
+  </data>
+  <data name="Outcome.CallChanged" xml:space="preserve">
+    <value>Η κλήση άλλαξε ενώ απαντούσε το Enhanced AI. Δοκιμάστε ξανά.</value>
+  </data>
   <data name="Outcome.NothingToApply" xml:space="preserve">
     <value>Δεν υπάρχει τίποτα για εφαρμογή: η σύσταση είναι να διατηρηθεί ο τρέχων προορισμός.</value>
   </data>

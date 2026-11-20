@@ -36,6 +36,8 @@ namespace Resgrid.Services.Intake
 
 		private static readonly int[] NotCounted = { (int)IntakeMessageStates.Duplicate };
 
+		private static readonly int[] IntakeCallSources = { (int)CallSources.Intake, (int)CallSources.VoiceIntake };
+
 		private readonly IIntakeChannelsRepository _channels;
 		private readonly IIntakeMessagesRepository _messages;
 		private readonly IVoiceIntakeSessionsRepository _sessions;
@@ -97,13 +99,27 @@ namespace Resgrid.Services.Intake
 			}
 
 			var now = _clock.GetUtcNow().UtcDateTime;
-			var message = await ClaimAsync(channel, envelope, now, cancellationToken);
+			var (message, recoveredCallId) = await ClaimAsync(channel, envelope, now, cancellationToken);
+			if (recoveredCallId.HasValue)
+			{
+				// A claim abandoned after its call was saved (the process died before the call id was recorded): the call is this message's.
+				result.State = IntakeMessageStates.Duplicate;
+				result.CallId = recoveredCallId;
+				result.Reason = IntakeResultReasons.Duplicate;
+				return result;
+			}
+
 			if (message == null)
 			{
-				var existing = await _messages.GetByProviderMessageIdAsync(channel.IntakeChannelId, Cap(envelope.ProviderMessageId, 256));
+				var existing = await _messages.GetByProviderMessageIdAsync(channel.IntakeChannelId, Cap(envelope.ProviderMessageId?.Trim(), 256));
 				result.State = IntakeMessageStates.Duplicate;
 				result.CallId = existing?.CallId;
-				result.Reason = "Duplicate";
+				// Another delivery still owns the claim (or is retrying a failed one) and has not saved a call yet: the transport should
+				// answer so the provider delivers again later (Postmark 409), not acknowledge a message that may still fail.
+				result.Reason = existing != null && !existing.CallId.HasValue &&
+					(existing.State == (int)IntakeMessageStates.Received || existing.State == (int)IntakeMessageStates.Failed)
+					? IntakeResultReasons.DuplicateInProgress
+					: IntakeResultReasons.Duplicate;
 				return result;
 			}
 
@@ -141,6 +157,10 @@ namespace Resgrid.Services.Intake
 				if (conversational)
 				{
 					var joined = await JoinOpenConversationAsync(channel, envelope, cancellationToken);
+					// A request cancelled while the text was joining its thread ends here (the claim is released for the provider's
+					// retry, which finds the text on the thread if it got there), never with a pending call built for a cancelled request.
+					if (joined == null)
+						cancellationToken.ThrowIfCancellationRequested();
 					if (joined != null)
 					{
 						await _messages.CompleteAsync(message.IntakeMessageId, (int)IntakeMessageStates.AddedToConversation, joined.CallId, "Conversation", now, CancellationToken.None);
@@ -158,7 +178,8 @@ namespace Resgrid.Services.Intake
 				var saved = await _calls.SaveCallAsync(built.Call, cancellationToken);
 				savedCallId = saved.CallId > 0 ? saved.CallId : (int?)null;
 
-				// The id is on the claim before anything else runs, so a retry after a later failure finds the call instead of making another.
+				// The id is on the claim before anything else runs, so a retry after a later failure finds the call instead of making another
+				// (a process that dies between the two is covered by ClaimAsync's lookup of the call by SourceIdentifier).
 				await _messages.CompleteAsync(message.IntakeMessageId, (int)IntakeMessageStates.CallCreated, saved.CallId, built.Reason, now, CancellationToken.None);
 				result.State = IntakeMessageStates.CallCreated;
 				result.CallId = saved.CallId;
@@ -382,7 +403,8 @@ namespace Resgrid.Services.Intake
 			call.DepartmentId = departmentId;
 			call.State = (int)CallStates.Pending;
 			call.CallSource = (int)(voice ? CallSources.VoiceIntake : CallSources.Intake);
-			call.SourceIdentifier = Cap(envelope.ProviderMessageId, 100);
+			// The claim's provider message id (as ClaimAsync stores it): an abandoned claim's retry finds its saved call by it.
+			call.SourceIdentifier = Cap(envelope.ProviderMessageId?.Trim(), 100);
 			call.ReportingUserId = string.IsNullOrWhiteSpace(call.ReportingUserId) ? department.ManagingUserId : call.ReportingUserId;
 			call.LoggedOn = call.LoggedOn == default ? now : call.LoggedOn;
 			call.DispatchOn = null;
@@ -482,8 +504,13 @@ namespace Resgrid.Services.Intake
 			return channel != null && !channel.IsDeleted && channel.ChannelType == (int)envelope.ChannelType ? channel : null;
 		}
 
-		/// <summary>The claim row, or null when another delivery of the same provider message owns or finished it.</summary>
-		private async Task<IntakeMessage> ClaimAsync(IntakeChannel channel, IntakeEnvelope envelope, DateTime now, CancellationToken cancellationToken)
+		/// <summary>
+		/// The claim row, or null when another delivery of the same provider message owns or finished it. RecoveredCallId is set (and
+		/// the claim null) when an abandoned claim turns out to have saved its call before its process died: the claim now records
+		/// that call, and the retry answers with it instead of saving another.
+		/// </summary>
+		private async Task<(IntakeMessage Message, int? RecoveredCallId)> ClaimAsync(IntakeChannel channel, IntakeEnvelope envelope, DateTime now,
+			CancellationToken cancellationToken)
 		{
 			var message = new IntakeMessage
 			{
@@ -498,23 +525,39 @@ namespace Resgrid.Services.Intake
 			};
 
 			if (await _messages.TryClaimAsync(message, cancellationToken))
-				return message;
+				return (message, null);
 
 			// A failed attempt (or one whose request died before it finished) left no call: the provider's retry takes it over.
 			var existing = await _messages.GetByProviderMessageIdAsync(channel.IntakeChannelId, message.ProviderMessageId);
 			if (existing == null || existing.CallId.HasValue)
-				return null;
+				return (null, null);
 
-			var retryable = existing.State == (int)IntakeMessageStates.Failed ||
-				existing.State == (int)IntakeMessageStates.Received && now - existing.ReceivedOn > AbandonedClaim;
-			if (!retryable)
-				return null;
+			var abandoned = existing.State == (int)IntakeMessageStates.Received && now - existing.ReceivedOn > AbandonedClaim;
+			if (existing.State != (int)IntakeMessageStates.Failed && !abandoned)
+				return (null, null);
 
-			if (!await _messages.TryReclaimAsync(existing.IntakeMessageId, existing.State, cancellationToken))
-				return null;
+			var previouslyReceivedOn = existing.ReceivedOn;
+			if (!await _messages.TryReclaimAsync(existing.IntakeMessageId, existing.State, now, now - AbandonedClaim, cancellationToken))
+				return (null, null);
+
+			// An abandoned claim may have saved its call and died before recording the id (the call commits first). The call carries the
+			// provider message id (SourceIdentifier) and no intake message names it: then it is this message's call, never a second one.
+			// A Failed claim never has one: Failed is only written when no call was saved. The day of slack before the claim covers a
+			// template that logged the call at a time read from the message.
+			if (abandoned)
+			{
+				var orphan = await _messages.GetUnclaimedIntakeCallIdAsync(channel.DepartmentId, Cap(message.ProviderMessageId, 100), IntakeCallSources,
+					previouslyReceivedOn.AddDays(-1), cancellationToken);
+				if (orphan.HasValue)
+				{
+					await _messages.CompleteAsync(existing.IntakeMessageId, (int)IntakeMessageStates.CallCreated, orphan, "RecoveredAfterAbandon", now, CancellationToken.None);
+					return (null, orphan);
+				}
+			}
 
 			existing.State = (int)IntakeMessageStates.Received;
-			return existing;
+			existing.ReceivedOn = now;
+			return (existing, null);
 		}
 
 		/// <summary>
@@ -541,7 +584,7 @@ namespace Resgrid.Services.Intake
 					? thread
 					: null;
 			}
-			catch (Exception ex)
+			catch (Exception ex) when (!(ex is OperationCanceledException && cancellationToken.IsCancellationRequested))
 			{
 				// The text is never lost: it becomes a pending call of its own.
 				Framework.Logging.LogException(ex, $"Intake conversation lookup failed for channel {channel.IntakeChannelId}.");
@@ -575,7 +618,11 @@ namespace Resgrid.Services.Intake
 					CallId = saved.CallId,
 					Channel = AiDispatchChannels.ForIntake(channelType),
 					QueuedOnUtc = _clock.GetUtcNow().UtcDateTime,
-					NameIsPlaceholder = nameIsPlaceholder
+					NameIsPlaceholder = nameIsPlaceholder,
+					// The worker replaces the name only while it is still exactly this placeholder (a dispatcher's rename always wins).
+					PlaceholderNameFingerprint = nameIsPlaceholder
+						? Resgrid.Services.AiDispatch.AiDispatchEnrichmentService.PlaceholderFingerprint(saved.DepartmentId, saved.CallId, saved.Name)
+						: null
 				}, cancellationToken);
 			}
 			catch (Exception ex)
@@ -586,7 +633,8 @@ namespace Resgrid.Services.Intake
 
 		/// <summary>
 		/// D6: texts over the monthly fair-use limit still create calls; the department's admins are told once per calendar month
-		/// (a cache marker, else exactly at the first text over the limit when the cache is down).
+		/// (a cache marker, else exactly at the first text over the limit when the cache is down). Each admin reached is remembered on
+		/// their own; when anyone was not reached the department's marker is cleared, so the next text over the limit tries only them.
 		/// </summary>
 		private async Task CheckSmsFairUseAsync(Department department, DateTime now)
 		{
@@ -602,11 +650,15 @@ namespace Resgrid.Services.Intake
 
 				var key = $"IntakeSmsFairUse_{department.DepartmentId}_{now:yyyyMM}";
 				var alert = count == limit + 1;
+				var tracked = false;
 				try
 				{
 					var marker = await _cache.TryGetStringAsync(key);
 					if (marker.Succeeded)
-						alert = string.IsNullOrEmpty(marker.Value) && await _cache.SetStringAsync(key, "1", TimeSpan.FromDays(32));
+					{
+						alert = string.IsNullOrEmpty(marker.Value) && await _cache.SetStringAsync(key, "1", FairUseMarkerLifetime);
+						tracked = alert;
+					}
 				}
 				catch (Exception ex)
 				{
@@ -619,12 +671,75 @@ namespace Resgrid.Services.Intake
 				var text = $"Resgrid: {department.Name} has received {count} texts on its private inbound dispatch number this month, over the fair-use limit of {limit}. " +
 					"Texts still create pending calls. Contact Resgrid support if this volume is expected.";
 				var number = await _departmentSettings.GetTextToCallNumberForDepartmentAsync(department.DepartmentId);
+				var missed = 0;
 				foreach (var admin in await _departments.GetActiveAdminsForDepartmentAsync(department.DepartmentId) ?? new List<IdentityUser>())
-					await _communication.SendNotificationAsync(admin.UserId, department.DepartmentId, text, number, department, "Private Inbound Dispatch Number usage");
+				{
+					// Each admin who was told is remembered on their own, so a retry after a partial failure reaches only the others.
+					var adminKey = key + "_" + admin.UserId;
+					if (tracked && await HasFairUseMarkerAsync(adminKey))
+						continue;
+
+					var delivered = false;
+					try
+					{
+						delivered = await _communication.SendNotificationDeliveredAsync(admin.UserId, department.DepartmentId, text, number, department,
+							"Private Inbound Dispatch Number usage", null, false, null);
+					}
+					catch (Exception ex)
+					{
+						Framework.Logging.LogException(ex, $"Intake fair-use notice to an administrator of department {department.DepartmentId} failed.");
+					}
+
+					if (!delivered)
+						missed++;
+					else if (tracked)
+						await SetFairUseMarkerAsync(adminKey);
+				}
+
+				// Someone was not reached: the department's marker goes, so the next text over the limit tries those admins again.
+				if (tracked && missed > 0)
+				{
+					try
+					{
+						await _cache.RemoveAsync(key);
+					}
+					catch (Exception ex)
+					{
+						Framework.Logging.LogException(ex, "Intake fair-use marker could not be cleared for a retry.");
+					}
+				}
 			}
 			catch (Exception ex)
 			{
 				Framework.Logging.LogException(ex, $"Intake fair-use check failed for department {department.DepartmentId}.");
+			}
+		}
+
+		private static readonly TimeSpan FairUseMarkerLifetime = TimeSpan.FromDays(32);
+
+		private async Task<bool> HasFairUseMarkerAsync(string key)
+		{
+			try
+			{
+				var marker = await _cache.TryGetStringAsync(key);
+				return marker.Succeeded && !string.IsNullOrEmpty(marker.Value);
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex, "Intake fair-use marker unavailable.");
+				return false;
+			}
+		}
+
+		private async Task SetFairUseMarkerAsync(string key)
+		{
+			try
+			{
+				await _cache.SetStringAsync(key, "1", FairUseMarkerLifetime);
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex, "Intake fair-use marker could not be written.");
 			}
 		}
 

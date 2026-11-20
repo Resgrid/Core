@@ -181,6 +181,9 @@
   <data name="Error.Invalid" xml:space="preserve">
     <value>Не вдалося зберегти канал. Перевірте значення та спробуйте ще раз.</value>
   </data>
+  <data name="Error.InvalidSenders" xml:space="preserve">
+    <value>Кожен дозволений відправник може містити щонайбільше 256 символів. Канал не збережено.</value>
+  </data>
   <data name="Type.Sms" xml:space="preserve">
     <value>Текстове повідомлення (SMS)</value>
   </data>

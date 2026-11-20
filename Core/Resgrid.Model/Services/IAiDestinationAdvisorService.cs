@@ -23,9 +23,10 @@ namespace Resgrid.Model.Services
 		/// <summary>
 		/// Queues a review of the call's destination: one waiting review per call, so later triggers fold into it (debounced by
 		/// <c>AiDestinationConfig.DebounceSeconds</c>). A cheap no-op when the feature is off for the department, the call is not open,
-		/// or the call has neither a destination POI nor a matching destination rule. Never throws.
+		/// or the call has neither a destination POI nor a matching destination rule. Never throws: false only when the review should have
+		/// been queued but could not be (a failure worth retrying on the next trigger); true when it was queued or deliberately not needed.
 		/// </summary>
-		Task RequestReviewAsync(int departmentId, int callId, AiDestinationReviewTriggers trigger, CancellationToken cancellationToken = default(CancellationToken));
+		Task<bool> RequestReviewAsync(int departmentId, int callId, AiDestinationReviewTriggers trigger, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>A destination's availability changed: queues a review for each open call going there. Never throws.</summary>
 		Task RequestReviewsForDestinationAsync(int departmentId, int poiId, CancellationToken cancellationToken = default(CancellationToken));

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -36,6 +37,39 @@ namespace Resgrid.Repositories.DataRepository
 				$"ORDER BY {Col("DepartmentId")}, {Col("CreatedOn")}";
 
 			return (await QueryAsync<DepartmentPhoneNumber>(sql, new { Statuses = InListValue(statuses) }, cancellationToken)).ToList();
+		}
+
+		public async Task<bool> TryBeginReleaseAsync(string departmentPhoneNumberId, int expectedStatus, DateTime startedOn, CancellationToken cancellationToken = default)
+		{
+			if (string.IsNullOrWhiteSpace(departmentPhoneNumberId))
+				return false;
+
+			var updated = await ExecuteAsync(
+				$"UPDATE {Tbl("DepartmentPhoneNumbers")} SET {Col("ReleasedOn")} = {P}StartedOn, {Col("UpdatedOn")} = {P}StartedOn " +
+				$"WHERE {Col("DepartmentPhoneNumberId")} = {P}Id AND {Col("Status")} = {P}Status AND {Col("ReleasedOn")} IS NULL",
+				new { Id = departmentPhoneNumberId, Status = expectedStatus, StartedOn = DatabaseTimestamp(startedOn) }, cancellationToken);
+
+			return updated == 1;
+		}
+
+		public async Task<bool> TryReactivateAsync(string departmentPhoneNumberId, DateTime updatedOn, CancellationToken cancellationToken = default)
+		{
+			if (string.IsNullOrWhiteSpace(departmentPhoneNumberId))
+				return false;
+
+			var updated = await ExecuteAsync(
+				$"UPDATE {Tbl("DepartmentPhoneNumbers")} SET {Col("Status")} = {P}Active, {Col("AddonInactiveSince")} = NULL, {Col("ReleaseAfter")} = NULL, " +
+				$"{Col("ReleaseWarningsSent")} = 0, {Col("LastReleaseWarningOn")} = NULL, {Col("UpdatedOn")} = {P}UpdatedOn " +
+				$"WHERE {Col("DepartmentPhoneNumberId")} = {P}Id AND {Col("Status")} = {P}Lapsed AND {Col("ReleasedOn")} IS NULL",
+				new
+				{
+					Id = departmentPhoneNumberId,
+					Active = (int)DepartmentPhoneNumberStatuses.Active,
+					Lapsed = (int)DepartmentPhoneNumberStatuses.Lapsed,
+					UpdatedOn = DatabaseTimestamp(updatedOn)
+				}, cancellationToken);
+
+			return updated == 1;
 		}
 	}
 }

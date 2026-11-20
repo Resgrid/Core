@@ -485,6 +485,7 @@ namespace Resgrid.Tests.Services.Routing
 		{
 			var instance = new RouteInstance { RouteInstanceId = "inst", DepartmentId = 7 };
 			_instances.Setup(i => i.GetByIdAsync("inst")).ReturnsAsync(instance);
+			_instances.Setup(i => i.SetStartReachedOnAsync("inst", It.IsAny<DateTime>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
 
 			var first = await _service.MarkStartReachedAsync("inst");
 			var when = first.StartReachedOn;
@@ -492,7 +493,8 @@ namespace Resgrid.Tests.Services.Routing
 
 			when.Should().NotBeNull();
 			instance.StartReachedOn.Should().Be(when);
-			_saved.Should().ContainSingle();
+			_instances.Verify(i => i.SetStartReachedOnAsync("inst", It.IsAny<DateTime>(), It.IsAny<CancellationToken>()), Times.Once);
+			_saved.Should().BeEmpty("only the start time is written, never the whole row");
 		}
 	}
 

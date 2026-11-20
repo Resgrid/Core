@@ -183,11 +183,38 @@ namespace Resgrid.Tests.Intake
 			user.Split("CONVERSATION>>>").Length.Should().Be(2, "only the real closing delimiter remains");
 		}
 
+		[Test]
+		public async Task a_department_that_enrolls_in_adp_during_the_admission_wait_is_never_sent_to_the_model()
+		{
+			// CheckAsync (before the wait) said no; the read inside the turn sees the enrollment that committed meanwhile.
+			_protection.Setup(p => p.ShouldEncryptNewWritesAsync(DepartmentId)).ReturnsAsync(true);
+
+			(await _assistant.AskAsync(Request("Car crash on Route 9"))).Outcome.Should().Be(IntakeAssistantOutcomes.ProtectionUnsupported);
+
+			_llm.Verify(l => l.CompleteAsync(It.IsAny<LlmRequest>(), It.IsAny<CancellationToken>()), Times.Never);
+			_usage.Verify(u => u.CompleteAsync(It.IsAny<AiUsageReservation>(), 0, IntakeAssistantOutcomes.ProtectionUnsupported, It.IsAny<CancellationToken>()), Times.Once,
+				"the reservation is released, nothing charged");
+		}
+
+		[Test]
+		public void the_prompt_keeps_the_emergency_number_when_the_texter_is_in_danger()
+		{
+			var system = AiIntakeConversationPrompt.System(new AiIntakeConversationContext("Springfield Fire", "112", Array.Empty<AiIntakeConversationLine>(), 1, 8));
+
+			system.Should().Contain("immediate danger: then reply_text tells them to call 112 now");
+		}
+
 		[TestCase("Help is on the way, stay where you are.")]
 		[TestCase("An ambulance has been dispatched to you.")]
 		[TestCase("Units are coming. What is your name?")]
 		[TestCase("They will arrive in 5 minutes.")]
 		[TestCase("Please see https://example.org for safety tips.")]
+		[TestCase("We'll have a crew there shortly.")]
+		[TestCase("We will send someone to you. What is the address?")]
+		[TestCase("Someone will be with you soon.")]
+		[TestCase("Start CPR and push hard on the chest.")]
+		[TestCase("Apply firm pressure to the wound with a cloth.")]
+		[TestCase("Don't move him until help arrives.")]
 		public async Task a_reply_that_promises_help_or_links_is_never_sent(string reply)
 		{
 			Replies(reply, false, false);

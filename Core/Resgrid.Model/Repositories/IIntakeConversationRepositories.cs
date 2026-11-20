@@ -53,6 +53,12 @@ namespace Resgrid.Model.Repositories
 		/// <summary>Closes an open thread (exactly one caller wins). <paramref name="optedOut"/> sets OptedOut too.</summary>
 		Task<bool> TryCloseAsync(string conversationId, int departmentId, string reason, bool optedOut, DateTime closedOn, CancellationToken cancellationToken = default);
 
+		/// <summary>
+		/// Closes an open thread that is still idle: only while its LastActivityOn is before <paramref name="idleBefore"/>, so a message that
+		/// arrived after the sweep read the thread keeps it open.
+		/// </summary>
+		Task<bool> TryCloseIdleAsync(string conversationId, int departmentId, string reason, DateTime idleBefore, DateTime closedOn, CancellationToken cancellationToken = default);
+
 		/// <summary>Records activity (and an inbound message's time when <paramref name="lastInboundOn"/> is set); never moves time backwards.</summary>
 		Task TouchAsync(string conversationId, int departmentId, DateTime lastActivityOn, DateTime? lastInboundOn, CancellationToken cancellationToken = default);
 

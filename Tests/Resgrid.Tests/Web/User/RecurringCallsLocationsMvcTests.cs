@@ -309,6 +309,55 @@ namespace Resgrid.Tests.Web.User
 			M<ICallRoutesService>().Verify(x => x.GetEligibleRoutePlanAsync(DepartmentId, "archived-plan", It.IsAny<int?>()), Times.Never);
 		}
 
+		private static void PostedForm(RecurringCallsController controller, params string[] keys)
+		{
+			var request = controller.ControllerContext.HttpContext.Request;
+			request.ContentType = "application/x-www-form-urlencoded";
+			request.Form = new FormCollection(keys.ToDictionary(k => k, k => new Microsoft.Extensions.Primitives.StringValues("")));
+		}
+
+		[Test]
+		public async Task A_form_posted_without_the_route_select_keeps_the_schedules_route()
+		{
+			// The route list could not be read, so the edit form had no route select: the save must not clear the route.
+			var stored = new RecurringCall { RecurringCallId = 5, DepartmentId = DepartmentId, CreatedByUserId = UserId, IsActive = true, RoutePlanId = RoutePlanId };
+			M<IRecurringCallsService>().Setup(x => x.GetByIdAsync(DepartmentId, 5)).ReturnsAsync(stored);
+			var controller = Build();
+			PostedForm(controller, nameof(RecurringCallEditView.Name));
+
+			var result = await controller.Save(Form(f => f.RecurringCallId = 5), CancellationToken.None);
+
+			result.Should().BeOfType<RedirectToActionResult>();
+			_saved.RoutePlanId.Should().Be(RoutePlanId);
+		}
+
+		[Test]
+		public async Task A_blank_route_selection_still_clears_the_schedules_route()
+		{
+			var stored = new RecurringCall { RecurringCallId = 5, DepartmentId = DepartmentId, CreatedByUserId = UserId, IsActive = true, RoutePlanId = RoutePlanId };
+			M<IRecurringCallsService>().Setup(x => x.GetByIdAsync(DepartmentId, 5)).ReturnsAsync(stored);
+			var controller = Build();
+			PostedForm(controller, nameof(RecurringCallEditView.Name), nameof(RecurringCallEditView.RoutePlanId));
+
+			var result = await controller.Save(Form(f => f.RecurringCallId = 5), CancellationToken.None);
+
+			result.Should().BeOfType<RedirectToActionResult>();
+			_saved.RoutePlanId.Should().BeNull();
+		}
+
+		[Test]
+		public async Task The_schedules_route_stays_offered_when_the_route_list_cannot_be_read()
+		{
+			M<ICallRoutesService>().Setup(x => x.GetCallRoutePlansAsync(DepartmentId)).ThrowsAsync(new InvalidOperationException("database down"));
+			M<IRouteService>().Setup(x => x.GetRoutePlanByIdAsync(RoutePlanId)).ThrowsAsync(new InvalidOperationException("database down"));
+
+			var method = typeof(RecurringCallsController).GetMethod("RoutePlanItemsAsync", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+			var items = await (Task<List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>>)method.Invoke(Build(), new object[] { RoutePlanId });
+
+			items.Should().HaveCount(2, "No route, and the schedule's own route");
+			items.Single(x => x.Selected).Value.Should().Be(RoutePlanId);
+		}
+
 		#endregion Save
 	}
 }

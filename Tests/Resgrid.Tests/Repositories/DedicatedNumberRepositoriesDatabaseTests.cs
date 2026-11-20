@@ -262,6 +262,58 @@ namespace Resgrid.Tests.Repositories
 		}
 
 		[Test]
+		public async Task A_department_holds_one_number_at_a_time()
+		{
+			// PR #588: two admins buying different numbers at once both passed the service's read; only one claim may insert.
+			var claims = await Task.WhenAll(new[] { "+17755550121", "+17755550122", "+17755550123", "+17755550124" }.Select((number, i) =>
+				TryClaimAsync(Row(55, number, DepartmentPhoneNumberStatuses.Provisioning, Base.AddSeconds(i)))));
+
+			claims.Count(c => c).Should().Be(1);
+			var held = (await Numbers().GetAllByDepartmentIdAsync(55)).Single();
+
+			// History does not count: a failed or released row leaves room for the next number.
+			held.Status = (int)DepartmentPhoneNumberStatuses.Failed;
+			await SaveAsync(held);
+			(await TryClaimAsync(Row(55, "+17755550125", DepartmentPhoneNumberStatuses.Provisioning, Base.AddMinutes(1)))).Should().BeTrue();
+			(await TryClaimAsync(Row(56, "+17755550126", DepartmentPhoneNumberStatuses.Provisioning, Base.AddMinutes(1)))).Should().BeTrue("another department");
+		}
+
+		[Test]
+		public async Task A_release_claim_and_a_reactivation_exclude_each_other()
+		{
+			var numbers = Numbers();
+			var row = Row(55, Number, DepartmentPhoneNumberStatuses.Lapsed, Base.AddDays(-40));
+			row.ProviderNumberId = "PN00000000000000000000000000000055";
+			row.AddonInactiveSince = Base.AddDays(-31);
+			row.ReleaseAfter = Base.AddDays(-1);
+			row.ReleaseWarningsSent = 15;
+			(await TryClaimAsync(row)).Should().BeTrue();
+
+			// The release claim wins: the row is never reactivated, and a second claim finds it taken.
+			(await numbers.TryBeginReleaseAsync(row.DepartmentPhoneNumberId, (int)DepartmentPhoneNumberStatuses.Lapsed, Base)).Should().BeTrue();
+			(await numbers.TryBeginReleaseAsync(row.DepartmentPhoneNumberId, (int)DepartmentPhoneNumberStatuses.Lapsed, Base)).Should().BeFalse();
+			(await numbers.TryReactivateAsync(row.DepartmentPhoneNumberId, Base.AddMinutes(1))).Should().BeFalse();
+			var claimed = await numbers.GetByIdAsync(row.DepartmentPhoneNumberId);
+			claimed.Status.Should().Be((int)DepartmentPhoneNumberStatuses.Lapsed);
+			claimed.ReleasedOn.Should().Be(Base);
+
+			// A refused release clears the claim (an entity update); the reactivation then wins and clears the unpaid period.
+			claimed.ReleasedOn = null;
+			await SaveAsync(claimed);
+			(await numbers.TryReactivateAsync(row.DepartmentPhoneNumberId, Base.AddMinutes(2))).Should().BeTrue();
+			var restored = await numbers.GetByIdAsync(row.DepartmentPhoneNumberId);
+			restored.Status.Should().Be((int)DepartmentPhoneNumberStatuses.Active);
+			restored.AddonInactiveSince.Should().BeNull();
+			restored.ReleaseAfter.Should().BeNull();
+			restored.ReleaseWarningsSent.Should().Be(0);
+			restored.LastReleaseWarningOn.Should().BeNull();
+			restored.UpdatedOn.Should().Be(Base.AddMinutes(2));
+			(await numbers.TryReactivateAsync(row.DepartmentPhoneNumberId, Base.AddMinutes(3))).Should().BeFalse("already Active");
+			(await numbers.TryBeginReleaseAsync(row.DepartmentPhoneNumberId, (int)DepartmentPhoneNumberStatuses.Lapsed, Base)).Should().BeFalse("no longer Lapsed");
+			(await numbers.TryBeginReleaseAsync(row.DepartmentPhoneNumberId, (int)DepartmentPhoneNumberStatuses.Active, Base.AddMinutes(4))).Should().BeTrue("an admin release of the Active number");
+		}
+
+		[Test]
 		public async Task Lookups_by_number_read_only_the_statuses_asked_for_newest_first()
 		{
 			var numbers = Numbers();
@@ -299,7 +351,8 @@ namespace Resgrid.Tests.Repositories
 			var lapsedDue = Row(56, "+17755550102", DepartmentPhoneNumberStatuses.Lapsed, Base.AddDays(-20));
 			lapsedDue.ReleaseAfter = Base.AddHours(-1);
 			lapsedDue.AddonInactiveSince = Base.AddDays(-9);
-			var lapsedHeld = Row(56, "+17755550103", DepartmentPhoneNumberStatuses.Lapsed, Base.AddDays(-10));
+			// One held number per department (UX_DepartmentPhoneNumbers_DepartmentHeld), so the second lapsed number is another department's.
+			var lapsedHeld = Row(57, "+17755550103", DepartmentPhoneNumberStatuses.Lapsed, Base.AddDays(-10));
 			lapsedHeld.ReleaseAfter = Base.AddDays(3);
 			var failed = Row(99, "+17755550104", DepartmentPhoneNumberStatuses.Failed, Base.AddDays(-3));
 			var provisioning = Row(99, "+17755550105", DepartmentPhoneNumberStatuses.Provisioning, Base);
@@ -309,7 +362,7 @@ namespace Resgrid.Tests.Repositories
 			// GetAllForDepartmentAsync / GetActiveForDepartmentAsync read the department's rows, released history included.
 			(await numbers.GetAllByDepartmentIdAsync(55)).Select(r => r.DepartmentPhoneNumberId)
 				.Should().BeEquivalentTo(new[] { history.DepartmentPhoneNumberId, active.DepartmentPhoneNumberId });
-			(await numbers.GetAllByDepartmentIdAsync(56)).Should().HaveCount(2).And.OnlyContain(r => r.DepartmentId == 56);
+			(await numbers.GetAllByDepartmentIdAsync(56)).Should().ContainSingle().And.OnlyContain(r => r.DepartmentId == 56);
 			(await numbers.GetAllByDepartmentIdAsync(12345)).Should().BeEmpty();
 			(await numbers.GetByIdAsync(active.DepartmentPhoneNumberId)).Status.Should().Be((int)DepartmentPhoneNumberStatuses.Active);
 

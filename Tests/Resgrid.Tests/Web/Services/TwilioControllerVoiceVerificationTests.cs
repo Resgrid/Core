@@ -631,7 +631,8 @@ namespace Resgrid.Tests.Web.Services
 			var action = typeof(TwilioController).GetMethod(nameof(TwilioController.InboundVoiceActionStatus));
 			dynamic request = Activator.CreateInstance(action!.GetParameters()[1].ParameterType);
 			request.Digits = "9";
-			var result = await (Task<ActionResult>)action.Invoke(controller, new object[] { "user1", request });
+			// The trailing departmentId (a dedicated number's bound department) is null on the master number.
+			var result = await (Task<ActionResult>)action.Invoke(controller, new object[] { "user1", request, null });
 
 			var content = ((ContentResult)result).Content;
 			content.Should().Contain("https://resgridapi.local/api/Twilio/InboundVoiceAction?userId=user1");
@@ -655,7 +656,8 @@ namespace Resgrid.Tests.Web.Services
 			var controller = BuildController();
 			var action = typeof(TwilioController).GetMethod(nameof(TwilioController.InboundVoiceActionStatus));
 			var request = Activator.CreateInstance(action!.GetParameters()[1].ParameterType);
-			var result = await (Task<ActionResult>)action.Invoke(controller, new object[] { "user1", request });
+			// The trailing departmentId (a dedicated number's bound department) is null on the master number.
+			var result = await (Task<ActionResult>)action.Invoke(controller, new object[] { "user1", request, null });
 
 			var content = ((ContentResult)result).Content;
 			content.Should().Contain("https://resgridapi.local/api/Twilio/InboundVoiceAction?userId=user1");

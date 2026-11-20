@@ -234,6 +234,37 @@ namespace Resgrid.Tests.Intake
 		}
 
 		[Test]
+		public async Task A_sent_text_reports_its_outcome_even_when_the_thread_cannot_be_read_again()
+		{
+			// A 500 after the text went out would make a client send it again.
+			CanEdit(true);
+			_conversations.Setup(c => c.SendDispatcherMessageAsync(DepartmentId, "conv-1", "user-1", "Where are you?", It.IsAny<CancellationToken>()))
+				.ReturnsAsync(IntakeConversationActionResults.Done);
+			_operations.Setup(o => o.GetViewAsync(DepartmentId, "conv-1", "user-1", It.IsAny<string>(), It.IsAny<CancellationToken>())).ThrowsAsync(new TimeoutException("db"));
+			_conversations.Setup(c => c.GetViewAsync(DepartmentId, "conv-1", "user-1")).ThrowsAsync(new TimeoutException("db"));
+
+			var body = Body(await _api.Send(new SendIntakeConversationInput { ConversationId = "conv-1", Text = "Where are you?" }, CancellationToken.None));
+			var web = Newtonsoft.Json.JsonConvert.SerializeObject(((JsonResult)await _web.Send("conv-1", "Where are you?")).Value);
+
+			body.Data.Outcome.Should().Be("Done");
+			body.Data.Conversation.Should().BeNull();
+			body.Status.Should().Be("success");
+			web.Should().Contain("\"success\":true").And.Contain("\"outcome\":\"Done\"");
+			_conversations.Verify(c => c.SendDispatcherMessageAsync(DepartmentId, "conv-1", "user-1", "Where are you?", It.IsAny<CancellationToken>()), Times.Exactly(2));
+		}
+
+		[Test]
+		public async Task Mutations_on_a_deleted_calls_conversation_are_not_found()
+		{
+			CanEdit(true);
+			_calls.Setup(c => c.GetCallByIdAsync(CallId, It.IsAny<bool>())).ReturnsAsync(new Call { CallId = CallId, DepartmentId = DepartmentId, IsDeleted = true });
+
+			Body(await _api.Send(new SendIntakeConversationInput { ConversationId = "conv-1", Text = "Hi" }, CancellationToken.None)).Data.Outcome.Should().Be("NotFound");
+			Newtonsoft.Json.JsonConvert.SerializeObject(((JsonResult)await _web.Send("conv-1", "Hi")).Value).Should().Contain("\"outcome\":\"NotFound\"");
+			NoActions();
+		}
+
+		[Test]
 		public async Task The_web_panel_masks_the_number_for_viewers_and_says_whether_it_is_mine()
 		{
 			CanView(true);

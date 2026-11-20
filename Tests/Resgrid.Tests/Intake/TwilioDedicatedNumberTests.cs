@@ -150,6 +150,72 @@ namespace Resgrid.Tests.Intake
 		}
 
 		[Test]
+		public void the_sms_webhook_takes_the_dedicated_numbers_form_post_without_query_fields()
+		{
+			// Dedicated numbers post a form (DedicatedNumberCarrierSettings.SmsMethod = POST) with an empty query. While TwilioMessage was a
+			// Twilio.AspNet.Common TwilioRequest (non-nullable To/From/AccountSid), [ApiController] answered 400 to that POST before the
+			// action read the form (found live 2026-11-20: every text to a dedicated number was refused). Run the real validator on an
+			// empty model, as the empty query binds it.
+			Resgrid.Providers.NumberProvider.DedicatedNumberCarrierSettings.SmsMethod.Should().Be("POST");
+			typeof(TwilioMessage).IsSubclassOf(typeof(Twilio.AspNet.Common.TwilioRequest)).Should().BeFalse();
+
+			var services = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
+			Microsoft.Extensions.DependencyInjection.MvcServiceCollectionExtensions.AddControllers(services);
+			var provider = Microsoft.Extensions.DependencyInjection.ServiceCollectionContainerBuilderExtensions.BuildServiceProvider(services);
+			var validator = (Microsoft.AspNetCore.Mvc.ModelBinding.Validation.IObjectModelValidator)provider.GetService(typeof(Microsoft.AspNetCore.Mvc.ModelBinding.Validation.IObjectModelValidator));
+			var actionContext = new ActionContext(new DefaultHttpContext { RequestServices = provider }, new Microsoft.AspNetCore.Routing.RouteData(), new Microsoft.AspNetCore.Mvc.Abstractions.ActionDescriptor());
+
+			validator.Validate(actionContext, null, string.Empty, new TwilioMessage());
+
+			actionContext.ModelState.IsValid.Should().BeTrue("Twilio's form POST leaves every query field empty");
+		}
+
+		[Test]
+		public async Task intake_that_failed_before_saving_answers_503_so_twilio_records_it()
+		{
+			_intake.Setup(i => i.ReceiveAsync(It.IsAny<IntakeEnvelope>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new IntakeResult { State = IntakeMessageStates.Failed, Reason = "Failed" });
+
+			var result = (ContentResult)await Controller().IncomingMessage(Text());
+
+			result.StatusCode.Should().Be(StatusCodes.Status503ServiceUnavailable);
+			result.Content.Should().NotContain("<Message>");
+			_profiles.Verify(p => p.GetProfileByMobileNumberAsync(It.IsAny<string>()), Times.Never, "a failed intake text never reaches member commands");
+		}
+
+		[Test]
+		public async Task a_duplicate_whose_first_delivery_has_no_call_yet_answers_503_not_an_acknowledgement()
+		{
+			_intake.Setup(i => i.ReceiveAsync(It.IsAny<IntakeEnvelope>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new IntakeResult { State = IntakeMessageStates.Duplicate, Reason = IntakeResultReasons.DuplicateInProgress });
+
+			((ContentResult)await Controller().IncomingMessage(Text())).StatusCode.Should().Be(StatusCodes.Status503ServiceUnavailable);
+
+			_intake.Setup(i => i.ReceiveAsync(It.IsAny<IntakeEnvelope>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new IntakeResult { State = IntakeMessageStates.Duplicate, Reason = IntakeResultReasons.Duplicate, CallId = 900 });
+
+			((ContentResult)await Controller().IncomingMessage(Text())).StatusCode.Should().Be(StatusCodes.Status200OK, "a handled duplicate is done");
+			_text.Verify(t => t.SendTextMessage(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<MobileCarriers>(), It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<int>()), Times.Never);
+		}
+
+		[Test]
+		public async Task intake_that_threw_answers_503()
+		{
+			_intake.Setup(i => i.ReceiveAsync(It.IsAny<IntakeEnvelope>(), It.IsAny<CancellationToken>())).ThrowsAsync(new TimeoutException("db"));
+
+			((ContentResult)await Controller().IncomingMessage(Text())).StatusCode.Should().Be(StatusCodes.Status503ServiceUnavailable);
+		}
+
+		[Test]
+		public async Task a_recorded_text_whose_acknowledgement_fails_is_still_200()
+		{
+			_text.Setup(t => t.SendTextMessage(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<MobileCarriers>(), It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<int>()))
+				.ThrowsAsync(new InvalidOperationException("carrier"));
+
+			((ContentResult)await Controller().IncomingMessage(Text())).StatusCode.Should().Be(StatusCodes.Status200OK, "the call exists; a retry would only be a duplicate");
+		}
+
+		[Test]
 		public async Task the_master_number_keeps_the_existing_paths()
 		{
 			await Controller().IncomingMessage(Text(to: "+18885550000"));
@@ -200,9 +266,50 @@ namespace Resgrid.Tests.Intake
 
 			var twiml = Content(await Controller().InboundVoice(Call()));
 
-			twiml.Should().Contain("InboundVoiceAction?userId=member-1");
+			twiml.Should().Contain("InboundVoiceAction?userId=member-1&amp;departmentId=55", "every menu action stays in the number's department");
 			_spoken.Should().Contain(TwilioVoicePromptCatalog.MainMenuGreeting("Pat", "Springfield Fire"));
 			_departments.Verify(d => d.GetDepartmentByUserIdAsync(It.IsAny<string>(), It.IsAny<bool>()), Times.Never, "the number's department, not the profile's default");
+		}
+
+		[Test]
+		public async Task a_voice_intake_session_that_cannot_start_plays_the_failure_prompt()
+		{
+			_voice.Setup(v => v.RouteAsync(_number, Caller, It.IsAny<DateTime>())).ReturnsAsync(new VoiceIntakeRouting { Route = VoiceIntakeRoutes.Intake, DepartmentId = DepartmentId });
+			_voice.Setup(v => v.StartAsync(_number, "CA1", Caller, It.IsAny<CancellationToken>())).ThrowsAsync(new TimeoutException("session store"));
+
+			var twiml = Content(await Controller().InboundVoice(Call()));
+
+			_spoken.Should().Equal(TwilioVoicePromptCatalog.VoiceIntakeFailed);
+			twiml.Should().Contain("<Hangup").And.NotContain("<Gather");
+		}
+
+		[Test]
+		public async Task a_bound_menu_action_stays_in_its_department_even_when_the_number_cannot_be_read()
+		{
+			_numbers.Setup(n => n.GetByNumberAsync(Dedicated)).ThrowsAsync(new TimeoutException("db"));
+			_departments.Setup(d => d.IsMemberOfDepartmentAsync(DepartmentId, "member-1")).ReturnsAsync(true);
+			_departments.Setup(d => d.GetDepartmentByIdAsync(DepartmentId, false)).ReturnsAsync(new Department { DepartmentId = DepartmentId, Name = "Springfield Fire" });
+			_profiles.Setup(p => p.GetProfileByUserIdAsync("member-1", It.IsAny<bool>())).ReturnsAsync(new UserProfile { UserId = "member-1", FirstName = "Pat" });
+
+			var twiml = Content(await Controller().InboundVoiceAction("member-1", new Twilio.AspNet.Common.VoiceRequest { To = Dedicated, Digits = "0" }, departmentId: DepartmentId));
+
+			_spoken.Should().Contain(TwilioVoicePromptCatalog.MainMenuGreeting("Pat", "Springfield Fire"));
+			twiml.Should().Contain("departmentId=55");
+			_departments.Verify(d => d.GetDepartmentByUserIdAsync(It.IsAny<string>(), It.IsAny<bool>()), Times.Never);
+		}
+
+		[Test]
+		public async Task a_bound_menu_action_for_someone_no_longer_in_the_department_writes_nothing()
+		{
+			// Not a member of the menu's department (any more): never the member's own department, where digit 1 is another department's option.
+			_departments.Setup(d => d.IsMemberOfDepartmentAsync(DepartmentId, "member-1")).ReturnsAsync(false);
+			_departments.Setup(d => d.GetDepartmentByUserIdAsync("member-1", It.IsAny<bool>())).ReturnsAsync(new Department { DepartmentId = 77, Name = "Other" });
+
+			var twiml = Content(await Controller().InboundVoiceActionStaffing("member-1", new Twilio.AspNet.Common.VoiceRequest { To = Dedicated, Digits = "1" }, departmentId: DepartmentId));
+
+			_spoken.Should().Equal(TwilioVoicePromptCatalog.InboundVoiceUnavailable);
+			twiml.Should().Contain("<Hangup");
+			_departments.Verify(d => d.GetDepartmentByUserIdAsync(It.IsAny<string>(), It.IsAny<bool>()), Times.Never);
 		}
 
 		[TestCase(VoiceIntakeRoutes.TextOnly, TwilioVoicePromptCatalog.VoiceIntakeTextOnly)]
@@ -270,8 +377,50 @@ namespace Resgrid.Tests.Intake
 
 		private void OpenThread() => _thread = new IntakeConversation
 		{
-			IntakeConversationId = "conv-1", DepartmentId = DepartmentId, CallId = 900, ParticipantAddress = Caller, State = (int)IntakeConversationStates.Open
+			IntakeConversationId = "conv-1", DepartmentId = DepartmentId, CallId = 900, ParticipantAddress = Caller, ReplyFromAddress = Master,
+			State = (int)IntakeConversationStates.Open
 		};
+
+		[Test]
+		public async Task a_text_to_another_number_is_not_a_reply_to_the_open_thread()
+		{
+			// A dedicated number with SMS intake off (or a legacy department number) is not the number the thread texts from.
+			OpenThread();
+			_number.SmsIntakeEnabled = false;
+
+			await Controller().IncomingMessage(Text(to: Dedicated, body: "Is anyone coming?"));
+
+			_conversations.Verify(c => c.HandleParticipantMessageAsync(It.IsAny<IntakeConversation>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()), Times.Never);
+			_profiles.Verify(p => p.GetProfileByMobileNumberAsync("15305550199"), Times.AtLeastOnce, "that number's own handling runs");
+		}
+
+		[Test]
+		public async Task a_reply_whose_recording_fails_never_becomes_a_member_command()
+		{
+			OpenThread();
+			_conversations.Setup(c => c.HandleParticipantMessageAsync(It.IsAny<IntakeConversation>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
+				.ThrowsAsync(new TimeoutException("db"));
+
+			var result = await Controller().IncomingMessage(Text(to: Master, body: "available"));
+
+			Content(result).Should().NotContain("<Message>");
+			_profiles.Verify(p => p.GetProfileByMobileNumberAsync(It.IsAny<string>()), Times.Never, "the text stays the texter's");
+		}
+
+		[Test]
+		public async Task stop_from_a_non_member_closes_the_thread_and_nothing_answers_them()
+		{
+			OpenThread();
+			_commands.Setup(c => c.DetermineType("STOP")).Returns(new TextCommandPayload { Type = TextCommandTypes.Stop });
+
+			var result = await Controller().IncomingMessage(Text(to: Master, body: "STOP"));
+
+			// No profile for the texter: the legacy department lookup and the chatbot (which answered "An error occurred...") never run.
+			_conversations.Verify(c => c.HandleParticipantMessageAsync(_thread, "SM1", "STOP", It.IsAny<DateTime>(), It.IsAny<CancellationToken>()), Times.Once);
+			result.Should().BeOfType<ContentResult>().Which.Content.Should().NotContain("<Message>");
+			_departments.Verify(d => d.GetActiveSmsDepartmentForUserAsync(It.IsAny<string>(), It.IsAny<bool>()), Times.Never);
+			_legacyNumbers.Verify(n => n.SaveInboundMessageEventAsync(It.Is<InboundMessageEvent>(e => e.Processed == true), It.IsAny<CancellationToken>()), Times.Once);
+		}
 
 		[Test]
 		public async Task a_reply_to_the_master_number_continues_the_open_thread_ahead_of_member_commands()

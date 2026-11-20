@@ -81,6 +81,9 @@
             redelivers and intake takes the failed claim over.
             </summary>
         </member>
+        <member name="F:Resgrid.Web.Services.Controllers.EmailController.IntakeAcknowledgementSubject">
+            <summary>The receipt reply's subject (fixed: nothing from the incoming email is repeated, its subject included).</summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.EmailController.SendIntakeAcknowledgementAsync(PostmarkDotNet.PostmarkInboundMessage,System.String)">
             <summary>
             The receipt reply, from do-not-reply and marked auto-replied (RFC 3834), never to automated senders or in answer to an
@@ -120,10 +123,22 @@
         <member name="F:Resgrid.Web.Services.Controllers.TwilioController.LapsedNumberReply">
             <summary>The SMS refusal for a lapsed dedicated number (sent from the master number; no message content).</summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.TwilioController.DedicatedNumberTexts">
+            <summary>What became of a text sent to a dedicated number.</summary>
+        </member>
+        <member name="F:Resgrid.Web.Services.Controllers.TwilioController.DedicatedNumberTexts.NotDedicated">
+            <summary>Not a dedicated number (or SMS intake is off on it): the master-number paths apply.</summary>
+        </member>
+        <member name="F:Resgrid.Web.Services.Controllers.TwilioController.DedicatedNumberTexts.Handled">
+            <summary>Intake recorded it (a call, a conversation note, a refusal, a duplicate) or it was a STOP: 200.</summary>
+        </member>
+        <member name="F:Resgrid.Web.Services.Controllers.TwilioController.DedicatedNumberTexts.Failed">
+            <summary>Intake failed before anything was saved: 503, so the failure is visible to Twilio and a redelivery is taken again.</summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.TwilioController.TryHandleDedicatedNumberTextAsync(Resgrid.Web.Services.Controllers.TwilioMessage)">
             <summary>
             Texts to a department's dedicated number (Active with SMS intake on) become pending calls through intake; a Lapsed number
-            answers with a polite refusal. False when the number texted is not a dedicated number (or has SMS intake off), so the
+            answers with a polite refusal. NotDedicated when the number texted is not a dedicated number (or has SMS intake off), so the
             master-number paths (text commands, legacy text-to-call, chatbot) run exactly as before. Acknowledgements and refusals
             go out from the master Resgrid number (D5: no outbound from department numbers). Intake text is not copied into the
             inbound message log; the pending call holds it and IntakeMessages is the audit.
@@ -141,17 +156,31 @@
         <member name="M:Resgrid.Web.Services.Controllers.TwilioController.TryHandleConversationReplyAsync(Resgrid.Web.Services.Controllers.TwilioMessage)">
             <summary>
             A text to the master number from someone with an open intake conversation (plan §8 D15; the most recently active one within
-            IntakeConfig.ConversationReplyWindowHours, any department) is that conversation's next message.
+            IntakeConfig.ConversationReplyWindowHours, any department) is that conversation's next message. Only a text to the number the
+            thread texts from (its ReplyFromAddress, the master number) is a reply: a text to any other number (a dedicated number with SMS
+            intake off, a legacy department number) keeps that number's own handling.
             </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.TwilioController.IsConversationReplyNumber(System.String,Resgrid.Model.IntakeConversation)">
+            <summary>The texted number is the one the thread texts the caller from (the master number when the thread has none recorded).</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.TwilioController.DedicatedNumberAsync(System.String)">
             <summary>The dedicated department number (Active or Lapsed) the request was sent to, else null.</summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.TwilioController.ResolveIvrDepartmentAsync(System.String,System.String)">
+        <member name="M:Resgrid.Web.Services.Controllers.TwilioController.ResolveIvrDepartmentAsync(System.String,System.String,System.Nullable{System.Int32})">
             <summary>
-            The member IVR's department: on a department's dedicated number, that department when the caller is one of its members
-            (plan D2); otherwise the caller's own department, as before. Twilio sends the called number on every action request.
+            The member IVR's department. A menu read on a department's dedicated number (plan D2) carries that department in every action
+            URL (<paramref name="boundDepartmentId"/>): the caller stays in it while still its member, and gets nothing otherwise — never the
+            member's own department, where the same digit would mean another department's status or staffing option. Without one (calls to
+            the master number) it is the caller's own department, as before; an action URL from before the binding falls back to the
+            called number. <c>Bound</c> is the department to carry into the next action URL (null on the master number).
             </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.TwilioController.IvrActionUri(System.String,System.String,System.Nullable{System.Int32},System.String)">
+            <summary>The member IVR action URL, carrying the bound department of a dedicated number's menu (see <see cref="M:Resgrid.Web.Services.Controllers.TwilioController.ResolveIvrDepartmentAsync(System.String,System.String,System.Nullable{System.Int32})"/>).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.TwilioController.IvrUnavailableAsync">
+            <summary>The member IVR cannot continue (the department could not be confirmed): one message and a hang-up.</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.TwilioController.DedicatedNumberVoiceAsync(Resgrid.Model.DepartmentPhoneNumber,Resgrid.Web.Services.Models.TwilioGatherRequest)">
             <summary>
@@ -196,6 +225,14 @@
             Priority. Without a configured format, or when the template can't make a call out
             of the message, the text is imported as the nature of the call the way
             Text-To-Call has always done it.
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.TwilioMessage">
+            <summary>
+            An inbound SMS webhook (query string for the master number's GET, form for a dedicated number's POST). Deliberately not a
+            Twilio.AspNet.Common TwilioRequest: that library marks To/From/AccountSid non-nullable, so [ApiController]'s automatic
+            validation answered 400 to a dedicated number's form POST (empty query) before IncomingMessage could read the form.
+            This project has no nullable context, so these fields are optional to model validation; IncomingMessage checks them itself.
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.AccountSecurityController">
@@ -402,6 +439,9 @@
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.AiDestinationsController.AuthorizeAdviceAsync(System.String)">
             <summary>The department's advice and, when it exists, whether the caller may edit its call (Unauthorized otherwise).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AiDestinationsController.BlocksDepartment(System.String)">
+            <summary>Outcomes that mean the department may not use advice at all (as opposed to this one request failing).</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.AiDestinationsController.ConvertAdvice(Resgrid.Model.AiDestinationAdvice,Resgrid.Model.AiDestinationAdviceDetails)">
             <summary>The v4 shape of an advice row with its display names.</summary>
@@ -3404,15 +3444,19 @@
             signed request) never creates a second call.
             </summary>
         </member>
+        <member name="F:Resgrid.Web.Services.Controllers.v4.IntakeController.MaxExternalIdLength">
+            <summary>Longest accepted externalId (characters, after trimming).</summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.IntakeController.Webhook(System.String,System.Threading.CancellationToken)">
             <summary>Creates a pending call from a signed webhook request.</summary>
             <param name="token">The channel's webhook token (from its URL).</param>
             <param name="cancellationToken">Request cancellation.</param>
             <returns>
             200 with the call id when the call was created (or already had been, for a repeated request); 400 for a body that is not
-            the expected JSON; 401 for a missing, stale or wrong signature; 403 when the department or channel refuses it; 404 for an
-            unknown or disabled channel; 413 for a body over the limit; 429 when the channel sends too fast; 503 when creating the
-            call failed (retry).
+            the expected JSON (or an externalId over 200 characters); 401 for a missing, stale or wrong signature; 403 when the
+            department or channel refuses it; 404 for an unknown or disabled channel; 409 while an earlier delivery of the same request
+            is still creating its call (retry); 413 for a body over the limit; 429 when the channel sends too fast; 503 when creating
+            the call failed (retry).
             </returns>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.IntakeController.ReadBodyAsync(System.IO.Stream,System.Int32,System.Threading.CancellationToken)">
@@ -3432,12 +3476,15 @@
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.IntakeWebhookRateLimiter">
             <summary>
-            Per webhook token fixed one-minute window, per API process (an unsigned flood is cut off before any database read). Old
-            windows are dropped as they are passed.
+            Per intake channel fixed one-minute window, per API process, counted once the URL token resolved to a live channel (so the
+            key space is the real channels, never caller-chosen tokens). Old windows are dropped as they are passed.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.IntakeWebhookRateLimiter.Reset">
             <summary>Tests: forget every window.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.v4.IntakeWebhookRateLimiter.TrackedCount">
+            <summary>Tests: how many keys hold a window.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.IntakeConversationsController">
             <summary>
@@ -3467,7 +3514,10 @@
             <summary>Ends the conversation; Notify texts the texter that it ended (from the master number). The pending call stays.</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.IntakeConversationsController.AuthorizeAsync(System.String)">
-            <summary>The department's conversation and, when it exists, whether the caller may edit its call (Unauthorized otherwise).</summary>
+            <summary>
+            The department's conversation and, when it exists, whether the caller may edit its call (Unauthorized otherwise). A deleted call's
+            conversation is not found, as GetForCall treats it: nothing is texted for a call that no longer exists.
+            </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.IntakeConversationsController.ConvertConversation(Resgrid.Model.IntakeConversation,System.Boolean,System.String)">
             <summary>The v4 shape of a conversation; the texter's number is masked unless the caller may edit the call.</summary>
@@ -5073,7 +5123,8 @@
         <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.StartCallRoute(Resgrid.Web.Services.Models.v4.Routes.StartCallRouteInput)">
             <summary>
             Starts the call's route (M0322) for the unit working it, or returns the unit's running or paused run of this call. 409
-            (type route_in_progress, detail = the running instance id) when the unit runs another route.
+            (type route_in_progress, detail = the running instance id) when the unit runs another route; 400 when the call is closed
+            (only an active or pending call gets a run) or its route can no longer be followed.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.ReachRouteStart(Resgrid.Web.Services.Models.v4.Routes.ReachRouteStartInput)">
@@ -5110,6 +5161,13 @@
         <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.CanReadInstanceAsync(Resgrid.Model.RouteInstance)">
             <summary>Route_View, or a run of a call's route (M0322) on a call the caller can view.</summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.CanSeeRunLocationsAsync(Resgrid.Model.RouteInstance)">
+            <summary>
+            Where a run's unit checked in and out is the unit's position. Route_View holders see it as before; a member who reads the
+            run only through its call (M0322) sees it when See Unit Locations allows them the run's unit (the rule the map and route
+            deviations apply), and gets the run without those points otherwise.
+            </summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.CanOperateInstanceAsync(Resgrid.Model.RouteInstance)">
             <summary>
             Route_Update, or a run of a call's route (M0322) by a unit the caller can view (its crew) on a call the caller can view:
@@ -5118,6 +5176,9 @@
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.RouteStartPoint(Resgrid.Model.RoutePlanRouteResult)">
             <summary>The end point of a live route's leading route-start leg: the first waypoint after the origin.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.BuildProgressResult(Resgrid.Model.RouteInstance,System.Boolean)">
+            <param name="canSeeRunLocations">False masks where the unit checked in and out (see <see cref="M:Resgrid.Web.Services.Controllers.v4.RoutesController.CanSeeRunLocationsAsync(Resgrid.Model.RouteInstance)"/>).</param>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.RoutingController">
             <summary>
@@ -9103,6 +9164,16 @@
         <member name="M:Resgrid.Web.Services.Intake.ChatIntakeRouting.GoogleChat(Newtonsoft.Json.Linq.JObject)">
             <summary>Google Chat event: a message in a space or group chat (the app receives those that mention it).</summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Intake.ChatIntakeRouting.TelegramBotId(System.String)">
+            <summary>The bot's numeric id: the part of its token before the colon ("123456789:AA…"), or null.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Intake.ChatIntakeRouting.TelegramEntityAddressesBot(Newtonsoft.Json.Linq.JToken,System.String,System.String,System.String)">
+            <summary>
+            Whether one message entity addresses this bot: a mention (@name), a text mention of its id, or a bot command with no
+            "@name" suffix or with this bot's name. With no configured username, a name only counts when it is a bot's (Telegram bot
+            usernames end in "bot"), so "@anotheruser" never does.
+            </summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Middleware.ResgridAuthenticationEvents.OnAuthenticationFailed">
             <summary>
             Gets or sets the on authentication failed.
@@ -9386,7 +9457,7 @@
             <summary>
             What the request did, or why it did nothing: Advised, Unchanged, Applied, Dismissed, Disabled, NotEntitled, Unconfigured,
             ProtectionUnsupported, CallNotOpen, NoLocation, NoCandidates, Busy, BudgetExhausted, Unavailable, InvalidOutput, NotFound,
-            NotOpen, NothingToApply, DestinationGone. Null on GetAdvice.
+            NotOpen, NothingToApply, DestinationGone, DestinationClosed, CallChanged. Null on GetAdvice.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.AiDestinations.AiDestinationAdviceResultData.CanApply">
@@ -9417,7 +9488,11 @@
             <summary>The recommendation differs from the current destination.</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.AiDestinations.AiDestinationAdviceData.IsConfident">
-            <summary>True when the change is confident enough to have been noted on the call and pushed (AiDestinationConfig.MinimumConfidence).</summary>
+            <summary>
+            True when the advice is a change whose confidence meets the current AiDestinationConfig.MinimumConfidence threshold. A comparison
+            made when the advice is read, not a record of delivery: whether a call note or push went out was decided against the threshold in
+            force when the advice was written.
+            </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.AiDestinations.AiDestinationAdviceData.State">
             <summary>1 Open, 2 Applied, 3 Dismissed, 4 Superseded.</summary>

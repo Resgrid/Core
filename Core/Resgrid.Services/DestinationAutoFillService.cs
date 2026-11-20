@@ -59,11 +59,9 @@ namespace Resgrid.Services
 				if (!IsEligible(call) || !TryReadPoint(call.GeoLocationData, out var latitude, out var longitude))
 					return null;
 
-				// Read first: in Suggest mode nothing is filled, so no drive times are looked up for nothing.
-				var config = await _departmentSettingsService.GetDestinationSuggestionConfigAsync(call.DepartmentId);
-				if (config == null || config.GetMode() != DestinationSuggestionModes.SuggestAndFill)
-					return null;
-
+				// The budget covers the whole lookup, the settings read included. A step that is under way when it runs out finishes
+				// (it is never left running beside the call's save, which shares the request's unit of work), but nothing after it
+				// starts: the suggestion checks the budget between its steps and drive times take it directly.
 				using (var budget = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken))
 				{
 					budget.CancelAfter(TimeBudget);
@@ -71,6 +69,13 @@ namespace Resgrid.Services
 					DestinationSuggestions suggestions;
 					try
 					{
+						// Read first: in Suggest mode nothing is filled, so no drive times are looked up for nothing.
+						var config = await _departmentSettingsService.GetDestinationSuggestionConfigAsync(call.DepartmentId);
+						if (config == null || config.GetMode() != DestinationSuggestionModes.SuggestAndFill)
+							return null;
+
+						budget.Token.ThrowIfCancellationRequested();
+
 						suggestions = await _nearestDestinationService.SuggestDestinationsAsync(new DestinationSuggestionRequest
 						{
 							DepartmentId = call.DepartmentId,
@@ -119,7 +124,7 @@ namespace Resgrid.Services
 				return false;
 
 			if ((call.DestinationPoiId.HasValue && call.DestinationPoiId.Value > 0) || CallLocations.HasFreeDestination(call) ||
-			    !String.IsNullOrWhiteSpace(call.DestinationW3W) || !String.IsNullOrWhiteSpace(call.RoutePlanId))
+			    !String.IsNullOrWhiteSpace(call.RoutePlanId))
 				return false;
 
 			return true;

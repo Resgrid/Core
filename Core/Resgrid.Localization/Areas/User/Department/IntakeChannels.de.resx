@@ -181,6 +181,9 @@
   <data name="Error.Invalid" xml:space="preserve">
     <value>Der Kanal konnte nicht gespeichert werden. Prüfen Sie die Angaben und versuchen Sie es erneut.</value>
   </data>
+  <data name="Error.InvalidSenders" xml:space="preserve">
+    <value>Jeder zugelassene Absender darf höchstens 256 Zeichen lang sein. Der Kanal wurde nicht gespeichert.</value>
+  </data>
   <data name="Type.Sms" xml:space="preserve">
     <value>Textnachricht (SMS)</value>
   </data>

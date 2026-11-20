@@ -69,6 +69,15 @@ namespace Resgrid.Model
 
 		/// <summary>The recommended destination is no longer one of the department's destinations.</summary>
 		public const string DestinationGone = "DestinationGone";
+
+		/// <summary>The recommended destination reports itself closed now, so the advice cannot be applied (it stays open; ask again).</summary>
+		public const string DestinationClosed = "DestinationClosed";
+
+		/// <summary>
+		/// The call's type, priority, nature, note or location changed while the model was answering, so the answer was discarded
+		/// (nothing written or announced); a background review runs again for the current call.
+		/// </summary>
+		public const string CallChanged = "CallChanged";
 	}
 
 	/// <summary>The result of an advisor operation: the outcome and, when there is one, the advice it concerns.</summary>

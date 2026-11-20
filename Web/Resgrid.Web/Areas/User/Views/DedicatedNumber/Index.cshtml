@@ -404,6 +404,10 @@
 				var nanp = option && option.getAttribute('data-nanp') === 'true';
 				document.querySelectorAll('#dedicatedNumberSearchForm .dedicated-number-nanp').forEach(function (group) {
 					group.style.display = nanp ? '' : 'none';
+					// A hidden field must not post: an area code typed for the US would otherwise narrow a GB search as invisible digits.
+					group.querySelectorAll('input, select, textarea').forEach(function (field) {
+						field.disabled = !nanp;
+					});
 				});
 				if (region) {
 					region.querySelectorAll('optgroup').forEach(function (group) {

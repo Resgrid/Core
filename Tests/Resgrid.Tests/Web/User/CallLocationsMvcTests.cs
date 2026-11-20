@@ -503,7 +503,168 @@ namespace Resgrid.Tests.Web.User
 			_saved.Should().BeNull();
 		}
 
+		[Test]
+		public async Task A_re_rendered_edit_keeps_the_stored_calls_department_for_its_panels()
+		{
+			Stored();
+			var controller = Build();
+
+			// The form does not post the department; the intake conversation and destination advice panels look the call up by it.
+			var result = await controller.UpdateCall(UpdateCallForm(c => c.LocationPoiId = 999), Form(("Call.LocationPoiId", "999")), CancellationToken.None);
+
+			var model = result.Should().BeOfType<ViewResult>().Which.Model.Should().BeOfType<UpdateCallView>().Which;
+			model.Call.DepartmentId.Should().Be(DepartmentId);
+			model.Call.LocationPoiId.Should().Be(999, "the posted values stay for the dispatcher to correct");
+		}
+
+		[Test]
+		public async Task Opening_an_edit_records_what_the_pickers_opened_with()
+		{
+			Stored();
+			M<IMappingService>().Setup(x => x.GetPOIsForDepartmentAsync(DepartmentId))
+				.ReturnsAsync(new List<Poi> { new Poi { PoiId = LocationPoiId, Name = "Mercy General", Latitude = 39.74, Longitude = -104.99 } });
+
+			var model = (await Build().UpdateCall(CallId)).Should().BeOfType<ViewResult>().Which.Model.Should().BeOfType<UpdateCallView>().Which;
+
+			model.OriginalLocationPoiId.Should().Be(LocationPoiId.ToString());
+			model.OriginalRoutePlanId.Should().Be("archived-plan", "the call's own route stays offered and selected");
+		}
+
+		[Test]
+		public async Task The_calls_route_stays_selected_when_its_name_cannot_be_read()
+		{
+			Stored();
+			M<IRouteService>().Setup(x => x.GetRoutePlanByIdAsync("archived-plan")).ThrowsAsync(new InvalidOperationException("database down"));
+
+			var model = (await Build().UpdateCall(CallId)).Should().BeOfType<ViewResult>().Which.Model.Should().BeOfType<UpdateCallView>().Which;
+
+			var option = model.RoutePlans.Should().ContainSingle(x => x.Selected).Which;
+			option.RoutePlanId.Should().Be("archived-plan");
+			option.IsAvailable.Should().BeFalse();
+			model.OriginalRoutePlanId.Should().Be("archived-plan");
+		}
+
+		[Test]
+		public async Task A_route_picker_left_as_it_opened_keeps_the_route_another_editor_set()
+		{
+			// Opened on "archived-plan"; another editor saved plan-1 meanwhile; this editor only changed another field.
+			Stored(c => c.RoutePlanId = RoutePlanId);
+
+			(await Build().UpdateCall(UpdateCallForm(c => c.RoutePlanId = "archived-plan"),
+					Form(("Call.RoutePlanId", "archived-plan"), ("OriginalRoutePlanId", "archived-plan")), CancellationToken.None))
+				.Should().BeOfType<RedirectToActionResult>();
+
+			_saved.RoutePlanId.Should().Be(RoutePlanId);
+		}
+
+		[Test]
+		public async Task A_route_this_editor_changed_or_removed_is_still_written()
+		{
+			Stored(c => c.RoutePlanId = "archived-plan");
+			(await Build().UpdateCall(UpdateCallForm(c => c.RoutePlanId = RoutePlanId),
+					Form(("Call.RoutePlanId", RoutePlanId), ("OriginalRoutePlanId", "archived-plan")), CancellationToken.None))
+				.Should().BeOfType<RedirectToActionResult>();
+			_saved.RoutePlanId.Should().Be(RoutePlanId);
+
+			Stored(c => c.RoutePlanId = RoutePlanId);
+			(await Build().UpdateCall(UpdateCallForm(c => c.RoutePlanId = ""),
+					Form(("Call.RoutePlanId", ""), ("OriginalRoutePlanId", RoutePlanId)), CancellationToken.None))
+				.Should().BeOfType<RedirectToActionResult>();
+			_saved.RoutePlanId.Should().BeNull();
+		}
+
+		[Test]
+		public async Task A_location_poi_the_picker_could_not_show_is_kept_by_an_unrelated_save()
+		{
+			// The stored POI was not among the picker's options, so it opened (and posted) blank.
+			Stored();
+
+			(await Build().UpdateCall(UpdateCallForm(c => c.LocationPoiId = null),
+					Form(("Call.LocationPoiId", ""), ("OriginalLocationPoiId", "")), CancellationToken.None))
+				.Should().BeOfType<RedirectToActionResult>();
+
+			_saved.LocationPoiId.Should().Be(LocationPoiId);
+		}
+
+		[Test]
+		public async Task A_location_poi_the_picker_showed_can_still_be_removed()
+		{
+			Stored();
+
+			(await Build().UpdateCall(UpdateCallForm(c => c.LocationPoiId = null),
+					Form(("Call.LocationPoiId", ""), ("OriginalLocationPoiId", LocationPoiId.ToString())), CancellationToken.None))
+				.Should().BeOfType<RedirectToActionResult>();
+
+			_saved.LocationPoiId.Should().BeNull();
+		}
+
+		[TestCase(null, "a", "a", false)]
+		[TestCase("a", "a", "b", false)]
+		[TestCase("b", "a", "b", true)]
+		[TestCase("", "a", "a", true)]
+		[TestCase(" A ", "a", "b", false)]
+		public void A_picker_is_changed_only_when_it_posts_something_else_than_it_opened_with(string posted, string original, string stored, bool changed)
+		{
+			var values = new Dictionary<string, StringValues> { ["Original"] = original };
+			if (posted != null)
+				values["Field"] = posted;
+
+			CallLocationsEdit.IsChanged(new FormCollection(values), "Field", "Original", stored).Should().Be(changed);
+		}
+
+		[Test]
+		public void An_older_form_without_the_original_compares_with_the_stored_value()
+		{
+			CallLocationsEdit.IsChanged(Form(("Field", "a")), "Field", "Original", "a").Should().BeFalse();
+			CallLocationsEdit.IsChanged(Form(("Field", "b")), "Field", "Original", "a").Should().BeTrue();
+		}
+
 		#endregion Update call
+
+		#region Call page
+
+		private async Task<CallLocationDetails> CallLocationDetailsAsync(Call call)
+		{
+			var method = typeof(DispatchController).GetMethod("BuildCallLocationDetailsAsync",
+				System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+			var task = (Task<CallLocationDetails>)method.Invoke(Build(), new object[] { call, new Department { DepartmentId = DepartmentId, TimeZone = "Eastern Standard Time" }, new List<Unit>() });
+			return await task;
+		}
+
+		[Test]
+		public async Task The_route_runs_of_a_call_show_after_its_route_was_cleared()
+		{
+			M<IRouteService>().Setup(x => x.GetInstancesForCallAsync(DepartmentId, CallId)).ReturnsAsync(new List<RouteInstance>
+			{
+				new RouteInstance { RouteInstanceId = "run-1", RoutePlanId = RoutePlanId, DepartmentId = DepartmentId, UnitId = 3, Status = (int)RouteInstanceStatus.Completed }
+			});
+
+			var details = await CallLocationDetailsAsync(new Call { CallId = CallId, DepartmentId = DepartmentId, RoutePlanId = null });
+
+			details.HasRoute.Should().BeFalse();
+			details.RouteRuns.Should().ContainSingle(x => x.RouteInstanceId == "run-1");
+			details.ShowsRouteRuns.Should().BeTrue();
+			new CallLocationDetails().ShowsRouteRuns.Should().BeFalse();
+		}
+
+		[Test]
+		public async Task A_failed_location_poi_lookup_leaves_the_route_and_its_runs()
+		{
+			M<ICallRoutesService>().Setup(x => x.GetLocationPoiAsync(DepartmentId, LocationPoiId)).ThrowsAsync(new InvalidOperationException("database down"));
+			M<IRouteService>().Setup(x => x.GetRoutePlanByIdAsync(RoutePlanId)).ReturnsAsync(new RoutePlan { RoutePlanId = RoutePlanId, DepartmentId = DepartmentId, Name = "Dialysis run" });
+			M<IRouteService>().Setup(x => x.GetInstancesForCallAsync(DepartmentId, CallId)).ReturnsAsync(new List<RouteInstance>
+			{
+				new RouteInstance { RouteInstanceId = "run-1", RoutePlanId = RoutePlanId, DepartmentId = DepartmentId, UnitId = 3 }
+			});
+
+			var details = await CallLocationDetailsAsync(new Call { CallId = CallId, DepartmentId = DepartmentId, LocationPoiId = LocationPoiId, RoutePlanId = RoutePlanId });
+
+			details.LocationPoiName.Should().BeNull();
+			details.RoutePlanName.Should().Be("Dialysis run");
+			details.RouteRuns.Should().ContainSingle();
+		}
+
+		#endregion Call page
 
 		#region Route preview
 

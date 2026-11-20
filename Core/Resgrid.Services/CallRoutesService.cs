@@ -108,6 +108,11 @@ namespace Resgrid.Services
 			if (call == null || String.IsNullOrWhiteSpace(call.RoutePlanId))
 				throw new InvalidOperationException("The call has no route.");
 
+			// Only an open call (active or pending, the rule IsCallOverAsync applies to a leftover run) gets a run: one started for a
+			// closed call would stay in progress, holding the unit, until its next call's start cancelled it.
+			if (!IsOpen(call))
+				throw new InvalidOperationException("The call is closed.");
+
 			// The unit's run of this call is resumed by the client, never started twice.
 			var running = await _routeService.GetActiveOrPausedInstanceForUnitAsync(call.DepartmentId, unitId);
 			if (running != null && running.CallId == call.CallId)
@@ -144,8 +149,13 @@ namespace Resgrid.Services
 		private async Task<bool> IsCallOverAsync(int callId, int departmentId)
 		{
 			var other = await _callsService.Value.GetCallByIdAsync(callId);
-			return other == null || other.DepartmentId != departmentId || other.IsDeleted ||
-				   (other.State != (int)CallStates.Active && other.State != (int)CallStates.Pending);
+			return other == null || other.DepartmentId != departmentId || !IsOpen(other);
+		}
+
+		/// <summary>Not deleted, and active or pending.</summary>
+		private static bool IsOpen(Call call)
+		{
+			return call != null && !call.IsDeleted && (call.State == (int)CallStates.Active || call.State == (int)CallStates.Pending);
 		}
 
 		private async Task<RoutePlanEndpoints> ResolveAsync(RoutePlan plan, int? unitId)

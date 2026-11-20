@@ -181,6 +181,9 @@
   <data name="Error.Invalid" xml:space="preserve">
     <value>Nie udało się zapisać kanału. Sprawdź wartości i spróbuj ponownie.</value>
   </data>
+  <data name="Error.InvalidSenders" xml:space="preserve">
+    <value>Każdy dozwolony nadawca może mieć najwyżej 256 znaków. Kanał nie został zapisany.</value>
+  </data>
   <data name="Type.Sms" xml:space="preserve">
     <value>Wiadomość tekstowa (SMS)</value>
   </data>

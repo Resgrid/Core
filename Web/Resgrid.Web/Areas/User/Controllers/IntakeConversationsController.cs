@@ -124,7 +124,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return Json(await ShapeAsync(conversation.IntakeConversationId, true, outcome));
 		}
 
-		/// <summary>The department's conversation and, when it exists, whether the member may edit its call (Unauthorized otherwise).</summary>
+		/// <summary>
+		/// The department's conversation and, when it exists, whether the member may edit its call (Unauthorized otherwise). A deleted call's
+		/// conversation is not found, as Thread treats it: nothing is texted for a call that no longer exists.
+		/// </summary>
 		private async Task<(IntakeConversation Conversation, IActionResult Denied)> AuthorizeAsync(string conversationId)
 		{
 			if (string.IsNullOrWhiteSpace(conversationId))
@@ -132,6 +135,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var conversation = await _conversations.GetByIdAsync(DepartmentId, conversationId.Trim());
 			if (conversation == null || !conversation.CallId.HasValue)
+				return (null, null);
+
+			var call = await _callsService.GetCallByIdAsync(conversation.CallId.Value, false);
+			if (call == null || call.DepartmentId != DepartmentId || call.IsDeleted)
 				return (null, null);
 
 			if (!await _authorizationService.CanUserEditCallAsync(UserId, conversation.CallId.Value))
@@ -142,7 +149,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		private async Task<object> ShapeAsync(string conversationId, bool canEdit, IntakeConversationActionResults? outcome)
 		{
-			var view = await _conversations.GetViewAsync(DepartmentId, conversationId, UserId);
+			IntakeConversationView view;
+			try
+			{
+				view = await _conversations.GetViewAsync(DepartmentId, conversationId, UserId);
+			}
+			catch (Exception ex) when (outcome.HasValue)
+			{
+				// After an action (a text may be with the carrier) a failed refresh still reports the outcome rather than a 500 that invites a
+				// second Send; the panel reads the thread again on the next update.
+				Resgrid.Framework.Logging.LogException(ex, $"Intake conversation {conversationId}: the thread could not be read after {outcome}.");
+				return new { success = outcome == IntakeConversationActionResults.Done, exists = true, outcome = outcome.Value.ToString() };
+			}
+
 			var conversation = view?.Conversation;
 			if (conversation == null)
 				return new { success = false, exists = false, outcome = (outcome ?? IntakeConversationActionResults.NotFound).ToString() };

@@ -92,16 +92,54 @@ namespace Resgrid.Repositories.DataRepository
 				new { ChannelId = intakeChannelId, ProviderId = providerMessageId });
 		}
 
-		public async Task<bool> TryReclaimAsync(string intakeMessageId, int expectedState, CancellationToken cancellationToken = default)
+		public async Task<bool> TryReclaimAsync(string intakeMessageId, int expectedState, DateTime now, DateTime abandonedBefore, CancellationToken cancellationToken = default)
 		{
+			// A Failed claim changes state on takeover, so a second taker no longer matches it. A Received (abandoned) one keeps its
+			// state, so the age is part of the predicate and ReceivedOn moves to now: the second taker's row is no longer old enough.
 			var updated = await ExecuteAsync(
-				$"UPDATE {Tbl(Table)} SET {Col("State")} = {P}Received, {Col("Reason")} = {P}Reason WHERE {Col("IntakeMessageId")} = {P}Id " +
-				$"AND {Col("State")} = {P}Expected AND {Col("CallId")} IS NULL",
-				new { Id = intakeMessageId, Expected = expectedState, Received = (int)IntakeMessageStates.Received, Reason = "Retried" },
+				$"UPDATE {Tbl(Table)} SET {Col("State")} = {P}Received, {Col("Reason")} = {P}Reason, {Col("ReceivedOn")} = {P}Now " +
+				$"WHERE {Col("IntakeMessageId")} = {P}Id AND {Col("State")} = {P}Expected AND {Col("CallId")} IS NULL " +
+				$"AND ({Col("State")} <> {P}Received OR {Col("ReceivedOn")} < {P}AbandonedBefore)",
+				new
+				{
+					Id = intakeMessageId,
+					Expected = expectedState,
+					Received = (int)IntakeMessageStates.Received,
+					Reason = "Retried",
+					Now = DatabaseTimestamp(now),
+					AbandonedBefore = DatabaseTimestamp(abandonedBefore)
+				},
 				cancellationToken);
 
 			return updated == 1;
 		}
+
+		public async Task<int?> GetUnclaimedIntakeCallIdAsync(int departmentId, string sourceIdentifier, int[] callSources, DateTime loggedSince,
+			CancellationToken cancellationToken = default)
+		{
+			if (string.IsNullOrWhiteSpace(sourceIdentifier) || callSources == null || callSources.Length == 0)
+				return null;
+
+			var parameters = new DynamicParameters();
+			parameters.Add("DepartmentId", departmentId);
+			parameters.Add("SourceIdentifier", sourceIdentifier);
+			parameters.Add("Sources", InListValue(callSources));
+			parameters.Add("LoggedSince", DatabaseTimestamp(loggedSince));
+			var top = IsPostgres ? string.Empty : "TOP 1 ";
+			var limit = IsPostgres ? " LIMIT 1" : string.Empty;
+			var ids = await QueryAsync<int>(
+				$"SELECT {top}c.{Col("CallId")} FROM {Tbl("Calls")} c WHERE c.{Col("DepartmentId")} = {P}DepartmentId " +
+				$"AND c.{Col("SourceIdentifier")} = {CaseInsensitive("SourceIdentifier")} AND {InList("CallSource", "Sources", "c")} " +
+				$"AND c.{Col("LoggedOn")} >= {P}LoggedSince AND c.{Col("IsDeleted")} = {False} " +
+				$"AND NOT EXISTS (SELECT 1 FROM {Tbl(Table)} m WHERE m.{Col("CallId")} = c.{Col("CallId")}) " +
+				$"ORDER BY c.{Col("CallId")} DESC{limit}",
+				parameters, cancellationToken);
+
+			var id = ids?.FirstOrDefault() ?? 0;
+			return id > 0 ? id : (int?)null;
+		}
+
+		private static string False => IsPostgres ? "false" : "0";
 
 		public async Task<bool> CompleteAsync(string intakeMessageId, int state, int? callId, string reason, DateTime completedOn, CancellationToken cancellationToken = default)
 		{
@@ -235,15 +273,18 @@ namespace Resgrid.Repositories.DataRepository
 			return inserted == 1;
 		}
 
-		public async Task<bool> UpdateProgressAsync(VoiceIntakeSession session, CancellationToken cancellationToken = default)
+		public async Task<bool> UpdateProgressAsync(VoiceIntakeSession session, int expectedStep, int expectedRetries, CancellationToken cancellationToken = default)
 		{
 			if (session == null)
 				throw new ArgumentNullException(nameof(session));
 
+			// Conditional on the state the caller read, so an overlapping callback's older snapshot never rewinds the session or clears a
+			// completed one's call and completion.
 			Utf8WriteGuard.Sanitize(session);
 			var updated = await ExecuteAsync(
 				$"UPDATE {Tbl(Table)} SET {Col("Step")} = {P}Step, {Col("AnswersJson")} = {P}AnswersJson, {Col("Retries")} = {P}Retries, " +
-				$"{Col("CallId")} = {P}CallId, {Col("CompletedOn")} = {P}CompletedOn WHERE {Col("VoiceIntakeSessionId")} = {P}Id",
+				$"{Col("CallId")} = {P}CallId, {Col("CompletedOn")} = {P}CompletedOn WHERE {Col("VoiceIntakeSessionId")} = {P}Id " +
+				$"AND {Col("Step")} = {P}ExpectedStep AND {Col("Retries")} = {P}ExpectedRetries AND {Col("CompletedOn")} IS NULL",
 				new
 				{
 					Id = session.VoiceIntakeSessionId,
@@ -251,7 +292,9 @@ namespace Resgrid.Repositories.DataRepository
 					session.AnswersJson,
 					session.Retries,
 					session.CallId,
-					CompletedOn = session.CompletedOn.HasValue ? DatabaseTimestamp(session.CompletedOn.Value) : (DateTime?)null
+					CompletedOn = session.CompletedOn.HasValue ? DatabaseTimestamp(session.CompletedOn.Value) : (DateTime?)null,
+					ExpectedStep = expectedStep,
+					ExpectedRetries = expectedRetries
 				},
 				cancellationToken);
 

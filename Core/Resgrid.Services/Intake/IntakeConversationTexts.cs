@@ -33,16 +33,24 @@ namespace Resgrid.Services.Intake
 			$"You are now connected with {(string.IsNullOrWhiteSpace(firstName) ? FallbackFirstName : firstName.Trim())}. " +
 			"Please describe the situation you are having and your location.";
 
-		/// <summary>D16: Enhanced AI finished (done, turn limit, wants a dispatcher, or the model is unavailable).</summary>
+		/// <summary>
+		/// D16: Enhanced AI finished (done, turn limit, wants a dispatcher, or the model is unavailable). It always repeats the emergency number:
+		/// the model may hand over because the texter is in danger without saying so itself.
+		/// </summary>
 		public static string AssistantFinished(string departmentName) =>
-			$"Thanks — {(string.IsNullOrWhiteSpace(departmentName) ? "the department's" : departmentName.Trim())} dispatch has your information. A dispatcher may text you here.";
+			$"Thanks — {(string.IsNullOrWhiteSpace(departmentName) ? "the department's" : departmentName.Trim())} dispatch has your information. A dispatcher may text you here. " +
+			$"If this is a life-threatening emergency, call {EmergencyNumber()}.";
 
 		/// <summary>A dispatcher closed the conversation and chose to tell the texter.</summary>
 		public static string Closed(string departmentName) =>
 			$"{Department(departmentName)}: This text conversation has ended. If this is a life-threatening emergency, call {EmergencyNumber()}.";
 
+		/// <summary>
+		/// "Text to caller ({name}): ". A name holding the "): " that ends the label would make <see cref="StripPrefix"/> stop inside it and show
+		/// the rest of the name as part of the text, so that sequence is broken up in the name.
+		/// </summary>
 		public static string DispatcherNotePrefix(string firstName) =>
-			string.Format(DispatcherNoteFormat, string.IsNullOrWhiteSpace(firstName) ? "Dispatcher" : firstName.Trim());
+			string.Format(DispatcherNoteFormat, string.IsNullOrWhiteSpace(firstName) ? "Dispatcher" : firstName.Trim().Replace("): ", ") ", StringComparison.Ordinal));
 
 		/// <summary>
 		/// The SMS opt-out words: STOP and UNSUBSCRIBE only, whole message, any case (as TextCommandService). END, QUIT and CANCEL carry

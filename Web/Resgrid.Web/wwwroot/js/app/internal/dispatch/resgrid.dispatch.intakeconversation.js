@@ -8,7 +8,9 @@ var resgrid;
             // the member of the public who texted the department's dedicated number, Take / Release / End and a send box. Everything shown
             // comes from User/IntakeConversations, which applies the member's right to view and edit the call; message text is rendered as
             // plain text. Reloads on the intakeConversationUpdated eventing event for this call.
-            var panel, callId, current = null, busy = false, refreshTimer = null, maxLength = 640;
+            // readSeq: only the newest read renders (an action starts a new sequence, so a read sent before it cannot undo its result);
+            // dirty: an update event arrived while an action was running, so the thread is read again when the action ends.
+            var panel, callId, current = null, busy = false, refreshTimer = null, maxLength = 640, readSeq = 0, dirty = false;
 
             function strings() { return window.intakeConversationStrings || {}; }
             function text(key, fallback) { var s = strings(); return s[key] || fallback || ''; }
@@ -34,12 +36,15 @@ var resgrid;
             }
 
             function load() {
+                var seq = ++readSeq;
                 $.ajax({
                     url: resgrid.absoluteBaseUrl + '/User/IntakeConversations/Thread',
                     data: { callId: callId },
                     type: 'GET',
                     cache: false
                 }).done(function (response) {
+                    // Requests can finish out of order: a read overtaken by a newer read or by an action is dropped.
+                    if (seq !== readSeq || busy) return;
                     render(response);
                 }).fail(function () {
                     // A failed refresh keeps what is shown.
@@ -49,7 +54,11 @@ var resgrid;
 
             function scheduleLoad() {
                 if (refreshTimer) clearTimeout(refreshTimer);
-                refreshTimer = setTimeout(function () { refreshTimer = null; if (!busy) load(); }, 400);
+                refreshTimer = setTimeout(function () {
+                    refreshTimer = null;
+                    if (busy) { dirty = true; return; }
+                    load();
+                }, 400);
             }
 
             function authorLabel(message) {
@@ -137,6 +146,7 @@ var resgrid;
             function post(action, data, done) {
                 if (busy || !current || !current.conversation) return;
                 busy = true;
+                readSeq++;
                 data.conversationId = current.conversation.id;
                 data.__RequestVerificationToken = token();
                 $('#intakeConversationPanel button').prop('disabled', true);
@@ -158,6 +168,11 @@ var resgrid;
                 }).always(function () {
                     busy = false;
                     $('#intakeConversationPanel button').prop('disabled', false);
+                    // A text or change that arrived while the action ran may be newer than its response.
+                    if (dirty) {
+                        dirty = false;
+                        load();
+                    }
                 });
             }
 
@@ -191,7 +206,8 @@ var resgrid;
                     return;
                 }
                 post('Send', { text: value }, function () {
-                    box.val('');
+                    // Only the text that was sent is cleared; a new draft typed while it was sending stays.
+                    if ((box.val() || '').trim() === value) box.val('');
                     updateCounter();
                 });
             }

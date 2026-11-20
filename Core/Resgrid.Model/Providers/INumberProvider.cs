@@ -31,8 +31,17 @@ namespace Resgrid.Model.Providers
 		Task<CarrierNumberPurchase> PurchaseDedicatedNumberAsync(string phoneNumber, string countryCode, string friendlyName,
 			CancellationToken cancellationToken = default);
 
-		/// <summary>Dedicated Number add-on: returns the number to the carrier by its carrier id. True when released or already gone.</summary>
+		/// <summary>
+		/// Dedicated Number add-on: returns the number to the carrier by its carrier id. True when released or already gone, false when the
+		/// carrier answered and refused; throws when the outcome is unknown (the request may have reached the carrier).
+		/// </summary>
 		Task<bool> ReleaseDedicatedNumberAsync(string providerNumberId, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Dedicated Number add-on: the E.164 number as this carrier account holds it (its carrier id and capabilities, Success true), or
+		/// null when the account does not hold it. Reconciles a purchase whose answer was lost. Throws when the carrier cannot be asked.
+		/// </summary>
+		Task<CarrierNumberPurchase> FindDedicatedNumberAsync(string phoneNumber, CancellationToken cancellationToken = default);
 	}
 
 	/// <summary>The outcome of a carrier purchase for a dedicated number.</summary>
@@ -55,5 +64,11 @@ namespace Resgrid.Model.Providers
 
 		/// <summary>Why the purchase failed (the carrier's code and message; never a credential).</summary>
 		public string Error { get; set; }
+
+		/// <summary>
+		/// The request may have bought the number but no answer came back and the account could not be checked: neither bought nor failed.
+		/// The claim stays Provisioning until worker 80 asks the carrier (<see cref="INumberProvider.FindDedicatedNumberAsync"/>).
+		/// </summary>
+		public bool Uncertain { get; set; }
 	}
 }

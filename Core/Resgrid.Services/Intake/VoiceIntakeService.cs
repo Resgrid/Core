@@ -59,6 +59,11 @@ namespace Resgrid.Services.Intake
 
 			var routing = new VoiceIntakeRouting { DepartmentId = number.DepartmentId };
 
+			// A lapsed number is held, not in service: everyone hears that it no longer takes calls, members too (their own IVR stays on the
+			// master number), as a text to it gets the lapsed refusal whoever sends it.
+			if (number.Status != (int)DepartmentPhoneNumberStatuses.Active)
+				return Route(routing, VoiceIntakeRoutes.NumberInactive, "NumberNotActive");
+
 			// Members keep the IVR on their department's number, in that department (not the one their profile defaults to).
 			var memberUserId = await MemberUserIdAsync(number.DepartmentId, fromNumber);
 			if (memberUserId != null)
@@ -67,9 +72,6 @@ namespace Resgrid.Services.Intake
 				routing.MemberUserId = memberUserId;
 				return routing;
 			}
-
-			if (number.Status != (int)DepartmentPhoneNumberStatuses.Active)
-				return Route(routing, VoiceIntakeRoutes.NumberInactive, "NumberNotActive");
 			if (!IntakeConfig.Enabled || !number.VoiceIntakeEnabled || !number.VoiceCapable)
 				return Route(routing, VoiceIntakeRoutes.TextOnly, "VoiceIntakeOff");
 
@@ -146,16 +148,19 @@ namespace Resgrid.Services.Intake
 			if (answer.Step != session.Step)
 				return Ask(step);
 
+			// Every write below applies only while the stored session is still the one read here: an overlapping callback for the same call
+			// (a Twilio retry) that moved it on, or completed it, wins, and this one answers from what it wrote.
+			var read = (Step: session.Step, Retries: session.Retries);
 			var text = await AnswerTextAsync(step, answer, session, cancellationToken);
 			var answers = ReadAnswers(session.AnswersJson);
-			VoiceIntakeTurn turn;
 
 			if (string.IsNullOrWhiteSpace(text))
 			{
 				session.Retries++;
 				if (session.Retries <= Math.Max(0, IntakeConfig.VoiceMaxRetries))
 				{
-					await SaveAsync(session, answers, cancellationToken);
+					if (!await SaveAsync(session, answers, read, cancellationToken))
+						return await ResumeCurrentAsync(session.ProviderCallId);
 					return Ask(step, TwilioVoicePromptCatalog.VoiceIntakeNotHeard);
 				}
 
@@ -163,7 +168,8 @@ namespace Resgrid.Services.Intake
 				{
 					session.Step = (int)VoiceIntakeSteps.Abandoned;
 					session.CompletedOn = _clock.GetUtcNow().UtcDateTime;
-					await SaveAsync(session, null, cancellationToken);
+					if (!await SaveAsync(session, null, read, cancellationToken))
+						return await ResumeCurrentAsync(session.ProviderCallId);
 					return Closing(VoiceIntakeSteps.Abandoned, TwilioVoicePromptCatalog.VoiceIntakeNothingHeard, null);
 				}
 			}
@@ -175,12 +181,19 @@ namespace Resgrid.Services.Intake
 			if (next != VoiceIntakeSteps.Completed)
 			{
 				session.Step = (int)next;
-				await SaveAsync(session, answers, cancellationToken);
+				if (!await SaveAsync(session, answers, read, cancellationToken))
+					return await ResumeCurrentAsync(session.ProviderCallId);
 				return Ask(next);
 			}
 
-			turn = await CompleteAsync(session, answers, cancellationToken);
-			return turn;
+			return await CompleteAsync(session, answers, read, cancellationToken);
+		}
+
+		/// <summary>A write lost to an overlapping callback: continue from the session as it is stored now.</summary>
+		private async Task<VoiceIntakeTurn> ResumeCurrentAsync(string providerCallId)
+		{
+			var current = await _sessions.GetByProviderCallIdAsync(providerCallId);
+			return current != null ? Resume(current) : Closing(VoiceIntakeSteps.Abandoned, TwilioVoicePromptCatalog.VoiceIntakeFailed, null);
 		}
 
 		/// <summary>The labelled transcript the pending call (and the AI) reads: one "Label: answer" line per question answered.</summary>
@@ -213,7 +226,8 @@ namespace Resgrid.Services.Intake
 			}
 		}
 
-		private async Task<VoiceIntakeTurn> CompleteAsync(VoiceIntakeSession session, Dictionary<string, string> answers, CancellationToken cancellationToken)
+		private async Task<VoiceIntakeTurn> CompleteAsync(VoiceIntakeSession session, Dictionary<string, string> answers, (int Step, int Retries) read,
+			CancellationToken cancellationToken)
 		{
 			var now = _clock.GetUtcNow().UtcDateTime;
 			var result = await _intake.ReceiveAsync(new IntakeEnvelope
@@ -232,14 +246,16 @@ namespace Resgrid.Services.Intake
 			{
 				session.Step = (int)VoiceIntakeSteps.Completed;
 				session.CallId = result.CallId;
-				// The transcript now lives on the pending call (where ADP protects it); the session keeps none of it.
-				await SaveAsync(session, null, cancellationToken);
+				// The transcript now lives on the pending call (where ADP protects it); the session keeps none of it. The call exists either way
+				// (intake keys it on the CallSid), so a write lost to an overlapping callback still tells the caller it was received.
+				await SaveAsync(session, null, read, cancellationToken);
 				return Closing(VoiceIntakeSteps.Completed, TwilioVoicePromptCatalog.VoiceIntakeCompleted, result.CallId);
 			}
 
 			// Kept until the retention purge so an operator can recover a message the intake path refused or failed on.
 			session.Step = (int)VoiceIntakeSteps.Abandoned;
-			await SaveAsync(session, answers, cancellationToken);
+			if (!await SaveAsync(session, answers, read, cancellationToken))
+				return await ResumeCurrentAsync(session.ProviderCallId);
 			return Closing(VoiceIntakeSteps.Abandoned, TwilioVoicePromptCatalog.VoiceIntakeFailed, null);
 		}
 
@@ -288,7 +304,17 @@ namespace Resgrid.Services.Intake
 
 			try
 			{
-				var profile = await _profiles.GetProfileByMobileNumberAsync(digits) ?? await _profiles.GetProfileByHomeNumberAsync(digits);
+				// The member menu acts as that member (status, staffing), so the number must be one they verified: caller id is easy to set,
+				// and the lookups fall back to an unverified match. An unverified match is a member of the public here (sms-unverified routing:
+				// an unverified number never authorizes actions).
+				var mobile = await _profiles.GetProfileByMobileNumberAsync(digits);
+				var profile = mobile != null && mobile.MobileNumberVerified == true ? mobile : null;
+				if (profile == null)
+				{
+					var home = await _profiles.GetProfileByHomeNumberAsync(digits);
+					profile = home != null && home.HomeNumberVerified == true ? home : null;
+				}
+
 				if (profile == null || string.IsNullOrWhiteSpace(profile.UserId))
 					return null;
 
@@ -302,10 +328,11 @@ namespace Resgrid.Services.Intake
 			}
 		}
 
-		private async Task SaveAsync(VoiceIntakeSession session, Dictionary<string, string> answers, CancellationToken cancellationToken)
+		/// <summary>False when the stored session moved on since <paramref name="read"/> (another callback's write won; nothing was written).</summary>
+		private async Task<bool> SaveAsync(VoiceIntakeSession session, Dictionary<string, string> answers, (int Step, int Retries) read, CancellationToken cancellationToken)
 		{
 			session.AnswersJson = answers == null ? null : JsonConvert.SerializeObject(answers);
-			await _sessions.UpdateProgressAsync(session, cancellationToken);
+			return await _sessions.UpdateProgressAsync(session, read.Step, read.Retries, cancellationToken);
 		}
 
 		private static VoiceIntakeTurn Resume(VoiceIntakeSession session)

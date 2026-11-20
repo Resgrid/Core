@@ -91,7 +91,7 @@ namespace Resgrid.Services
 		public async Task<DedicatedNumberPaymentState> GetPaymentStateAsync(int departmentId)
 		{
 			// The add-on first: no paid interval is "stopped" without asking about the plan, and an unknown add-on state is unknown
-			// whatever the plan read says (an unreachable Billing API also answers the plan read with the free-plan safety net).
+			// whatever the plan read says.
 			var addon = await GetActiveAddonStateAsync(departmentId);
 			if (addon != true)
 				return new DedicatedNumberPaymentState { AddonActive = addon };
@@ -99,7 +99,11 @@ namespace Resgrid.Services
 			return new DedicatedNumberPaymentState { AddonActive = true, PaidEntityPlan = await GetPaidEntityPlanStateAsync(departmentId) };
 		}
 
-		/// <summary>True: an active paid entity plan. False: a plan that is not one. Null: no plan came back or the read failed.</summary>
+		/// <summary>
+		/// True: an active paid entity plan. False: a plan that is not one. Null: no plan came back or the read failed. Read with
+		/// GetCurrentPlanForDepartmentIfKnownAsync: the ordinary read answers a timeout or fault with the free plan, which here would be
+		/// "known not paying" and start a paying department's release clock during a Billing API outage.
+		/// </summary>
 		private async Task<bool?> GetPaidEntityPlanStateAsync(int departmentId)
 		{
 			if (!IsBillingConfigured())
@@ -107,7 +111,7 @@ namespace Resgrid.Services
 
 			try
 			{
-				var plan = await _subscriptions.GetCurrentPlanForDepartmentAsync(departmentId);
+				var plan = await _subscriptions.GetCurrentPlanForDepartmentIfKnownAsync(departmentId);
 				if (plan == null)
 					return null;
 

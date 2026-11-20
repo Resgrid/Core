@@ -363,26 +363,35 @@ namespace Resgrid.Services.AiDispatch
 			call != null && call.DepartmentId == departmentId && !call.IsDeleted &&
 			(call.State == (int)CallStates.Active || AiDispatchChannels.IsIntake(channel) && call.State == (int)CallStates.Pending);
 
-		/// <summary>Trusted description of an intake message for the model (null for the dispatch email paths).</summary>
-		public static string IntakeSource(int channel)
+		/// <summary>
+		/// Trusted description of the message for the model: where it came from and, read from the call as loaded (a dispatcher may
+		/// have sent an intake call before the enrichment ran), whether anyone has been dispatched. The system prompt states neither.
+		/// </summary>
+		public static string IntakeSource(int channel, Call call)
 		{
-			const string pending = " The call is pending: a dispatcher reviews it and nobody has been dispatched.";
+			var state = call?.State == (int)CallStates.Pending
+				? " The call is pending: a dispatcher reviews it and nobody has been dispatched yet."
+				: " A dispatcher has dispatched the call.";
 			switch (channel)
 			{
 				case AiDispatchChannels.IntakeVoice:
 					return "answers a phone caller gave to the department's automated intake line (speech recognition, so words may be misheard). " +
-						"Lines are labelled Nature, Location, Caller name and Callback number." + pending;
+						"Lines are labelled Nature, Location, Caller name and Callback number." + state;
 				case AiDispatchChannels.IntakeSms:
-					return "a text message sent to the department's intake number." + pending;
+					return "a text message sent to the department's intake number." + state;
 				case AiDispatchChannels.IntakeConversation:
 					return "the text messages a member of the public sent in an SMS conversation with the department's dispatch number, oldest first, " +
-						"one per line (their answers to the department's follow-up questions)." + pending;
+						"one per line (their answers to the department's follow-up questions)." + state;
 				case AiDispatchChannels.IntakeEmail:
-					return "an email sent to the department's intake address." + pending;
+					return "an email sent to the department's intake address." + state;
 				case AiDispatchChannels.IntakeChat:
-					return "a chat message posted in a channel the department linked for intake." + pending;
+					return "a chat message posted in a channel the department linked for intake." + state;
 				case AiDispatchChannels.IntakeWebhook:
-					return "a request another system posted to the department's intake webhook." + pending;
+					return "a request another system posted to the department's intake webhook." + state;
+				case AiDispatchChannels.PostmarkEmail:
+				case AiDispatchChannels.GroupDispatchEmail:
+				case AiDispatchChannels.ImapImport:
+					return "a dispatch email (CAD page or text) the department received; the call was created from it and dispatched automatically.";
 				default:
 					return null;
 			}
@@ -418,8 +427,8 @@ namespace Resgrid.Services.AiDispatch
 				.ToList();
 			// A conversation refresh reads what the texter said across the whole thread; the call's own name and nature otherwise.
 			return transcript != null
-				? new AiDispatchContext(AiDispatchPrompt.MessageText(null, transcript, maxCharacters), types, priorities, candidates) { Source = IntakeSource(AiDispatchChannels.IntakeConversation) }
-				: new AiDispatchContext(AiDispatchPrompt.MessageText(call.Name, call.NatureOfCall, maxCharacters), types, priorities, candidates) { Source = IntakeSource(channel) };
+				? new AiDispatchContext(AiDispatchPrompt.MessageText(null, transcript, maxCharacters), types, priorities, candidates) { Source = IntakeSource(AiDispatchChannels.IntakeConversation, call) }
+				: new AiDispatchContext(AiDispatchPrompt.MessageText(call.Name, call.NatureOfCall, maxCharacters), types, priorities, candidates) { Source = IntakeSource(channel, call) };
 		}
 
 		private sealed record Admission(AiUsageReservation Reservation, string Outcome);
@@ -454,9 +463,12 @@ namespace Resgrid.Services.AiDispatch
 			if (!IsEnrichable(call, original.DepartmentId, item.Channel))
 				return AiDispatchOutcomes.CallNotActive;
 
-			// Intake: the "{channel}: {sender}" fallback name is the placeholder, unless a dispatcher renamed the call meanwhile.
+			// Intake: the "{channel}: {sender}" fallback name is the placeholder, unless a dispatcher renamed the call meanwhile. With the
+			// fingerprint taken at enqueue, a rename made before the worker first read the call counts too (original.Name would hold it).
 			var placeholder = AiDispatchChannels.IsIntake(item.Channel)
-				? item.NameIsPlaceholder && string.Equals(call.Name, original.Name, StringComparison.Ordinal)
+				? item.NameIsPlaceholder && (string.IsNullOrEmpty(item.PlaceholderNameFingerprint)
+					? string.Equals(call.Name, original.Name, StringComparison.Ordinal)
+					: string.Equals(PlaceholderFingerprint(call.DepartmentId, call.CallId, call.Name), item.PlaceholderNameFingerprint, StringComparison.Ordinal))
 				: string.Equals(call.Name?.Trim(), PlaceholderCallName, StringComparison.Ordinal);
 
 			var applied = new List<string>();
@@ -521,6 +533,33 @@ namespace Resgrid.Services.AiDispatch
 			// Boards and apps refresh like any edit; nothing is re-broadcast, so no one is paged again.
 			_events.SendMessage(new CallUpdatedEvent { DepartmentId = call.DepartmentId, Call = call });
 			return AiDispatchOutcomes.Applied;
+		}
+
+		/// <summary>
+		/// <see cref="AiDispatchQueueItem.PlaceholderNameFingerprint"/>: HMAC-SHA256 under AiConfig.AuditHmacKey of the department,
+		/// call and exact name, so the queue item proves "the name is still what it was" without carrying the sender. Null when there is
+		/// no name or no usable key (32+ bytes of base64): the worker then falls back to comparing with the name it first read.
+		/// </summary>
+		public static string PlaceholderFingerprint(int departmentId, int callId, string name)
+		{
+			if (name == null || departmentId <= 0 || callId <= 0 || string.IsNullOrWhiteSpace(AiConfig.AuditHmacKey))
+				return null;
+
+			byte[] key;
+			try
+			{
+				key = Convert.FromBase64String(AiConfig.AuditHmacKey);
+			}
+			catch (FormatException)
+			{
+				return null;
+			}
+			if (key.Length < 32)
+				return null;
+
+			var data = System.Text.Encoding.UTF8.GetBytes("resgrid-intake-placeholder-v1:" + departmentId.ToString(System.Globalization.CultureInfo.InvariantCulture) + ":" +
+				callId.ToString(System.Globalization.CultureInfo.InvariantCulture) + ":" + name);
+			return Convert.ToHexString(System.Security.Cryptography.HMACSHA256.HashData(key, data)).ToLowerInvariant();
 		}
 
 		private CallNote Note(int callId, string userId, string text) => new CallNote

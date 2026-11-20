@@ -49,6 +49,15 @@ namespace Resgrid.Model.Queue
 		/// <summary>A transcript re-enrichment after the conversation's last Enhanced AI turn: the AI note (summary, suggested priority) is written.</summary>
 		[ProtoMember(9)]
 		public bool ConversationComplete { get; set; }
+
+		/// <summary>
+		/// With <see cref="NameIsPlaceholder"/>: a keyed fingerprint (HMAC, never the name itself, so the sender still never travels on
+		/// the bus) of the exact placeholder name when this item was queued. The model's title replaces the call's name only while the
+		/// name still has this fingerprint, so a dispatcher's rename made before the worker read the call is kept. Null (older items,
+		/// or no audit key configured): the worker compares with the name it first read, as before.
+		/// </summary>
+		[ProtoMember(10)]
+		public string PlaceholderNameFingerprint { get; set; }
 	}
 
 	/// <summary>Where an <see cref="AiDispatchQueueItem"/> came from (persisted on the bus; never renumber).</summary>

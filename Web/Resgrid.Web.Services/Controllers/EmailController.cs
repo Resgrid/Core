@@ -952,11 +952,19 @@ namespace Resgrid.Web.Services.Controllers
 			if (result.State == IntakeMessageStates.Failed)
 				return BadRequest();
 
+			// Another delivery of this email is still creating its call (or retrying a failed attempt): 409, as the dispatch path does
+			// for an in-flight receipt, so Postmark delivers it again instead of treating an attempt that may still fail as done.
+			if (result.State == IntakeMessageStates.Duplicate && result.Reason == IntakeResultReasons.DuplicateInProgress)
+				return StatusCode(StatusCodes.Status409Conflict);
+
 			if (result.State == IntakeMessageStates.CallCreated && !string.IsNullOrWhiteSpace(result.Acknowledgement))
 				await SendIntakeAcknowledgementAsync(message, result.Acknowledgement);
 
 			return Ok(new { result.State, result.CallId });
 		}
+
+		/// <summary>The receipt reply's subject (fixed: nothing from the incoming email is repeated, its subject included).</summary>
+		public const string IntakeAcknowledgementSubject = "Received: your request";
 
 		/// <summary>
 		/// The receipt reply, from do-not-reply and marked auto-replied (RFC 3834), never to automated senders or in answer to an
@@ -980,7 +988,8 @@ namespace Resgrid.Web.Services.Controllers
 				using var mail = new System.Net.Mail.MailMessage();
 				mail.To.Add(to);
 				mail.From = new System.Net.Mail.MailAddress("do-not-reply@resgrid.com", "Resgrid");
-				mail.Subject = "Received: " + (string.IsNullOrWhiteSpace(message.Subject) ? "your request" : message.Subject.Trim());
+				// A fixed subject: the incoming subject may carry incident or patient detail, and the reply never repeats message content.
+				mail.Subject = IntakeAcknowledgementSubject;
 				mail.Body = text;
 				mail.IsBodyHtml = false;
 				mail.Headers.Add("Auto-Submitted", "auto-replied");

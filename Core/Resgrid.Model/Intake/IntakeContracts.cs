@@ -195,6 +195,19 @@ namespace Resgrid.Model
 		}
 	}
 
+	/// <summary><see cref="IntakeResult.Reason"/> values a transport acts on.</summary>
+	public static class IntakeResultReasons
+	{
+		/// <summary>A <see cref="IntakeMessageStates.Duplicate"/> of a message that was already handled (CallId set when it made a call).</summary>
+		public const string Duplicate = "Duplicate";
+
+		/// <summary>
+		/// A <see cref="IntakeMessageStates.Duplicate"/> whose first delivery is still being processed (or a failed attempt is being
+		/// retried) and has no call yet: the transport should ask the provider to deliver again later rather than acknowledge it.
+		/// </summary>
+		public const string DuplicateInProgress = "DuplicateInProgress";
+	}
+
 	/// <summary>Where an intake call came from, for the pending list and View Call ("via SMS: Hospital line").</summary>
 	public sealed class IntakeCallSource
 	{

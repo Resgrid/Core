@@ -331,6 +331,9 @@
                         @* The text conversation with the member of the public who texted the dedicated number (calls that have one). *@
                         <partial name="_IntakeConversation" model="Model.Call" view-data='new ViewDataDictionary(ViewData) { { "IntakeConversation.Form", true }, { "IntakeConversation.StartHub", true } }' />
                         <partial name="_CallRoutePlanSelect" model="Model" />
+                        @* What the location POI and route pickers opened with: a picker posted unchanged keeps the call's stored value. *@
+                        <input type="hidden" name="OriginalLocationPoiId" value="@Model.OriginalLocationPoiId" />
+                        <input type="hidden" name="OriginalRoutePlanId" value="@Model.OriginalRoutePlanId" />
                         @if (Model.IsFieldVisible(NewCallFieldKeys.IndoorLocation))
                         {
                             <div class="form-group">

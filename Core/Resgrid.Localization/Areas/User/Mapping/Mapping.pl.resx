@@ -205,7 +205,7 @@
     <value>Importy</value>
   </data>
   <data name="PoiImportsHelp" xml:space="preserve">
-    <value>Importy działają w tle i zwykle zaczynają się w ciągu minuty. Odśwież tę stronę, aby zobaczyć ich postęp.</value>
+    <value>Importy działają w tle i zwykle zaczynają się w ciągu minuty. Ta lista odświeża się sama, gdy trwa import.</value>
   </data>
   <data name="PoiImportsRefresh" xml:space="preserve">
     <value>Odśwież</value>
@@ -580,5 +580,32 @@
   </data>
   <data name="PoiAvailabilitySaveFailed" xml:space="preserve">
     <value>Nie udało się zapisać dostępności: POI nie jest już miejscem docelowym. Odśwież stronę i spróbuj ponownie.</value>
+  </data>
+  <data name="ManagePois" xml:space="preserve">
+    <value>Zarządzaj POI</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>Adres</value>
+  </data>
+  <data name="ImportFileRequired" xml:space="preserve">
+    <value>Wybierz plik do przesłania.</value>
+  </data>
+  <data name="ImportFileTypeInvalid" xml:space="preserve">
+    <value>Typu pliku ({0}) nie można zaimportować jako POI: prześlij plik KML, KMZ lub CSV.</value>
+  </data>
+  <data name="ImportFileTooLarge" xml:space="preserve">
+    <value>Plik jest za duży: musi mieć mniej niż 10 MB.</value>
+  </data>
+  <data name="ImportTypeRequired" xml:space="preserve">
+    <value>Wybierz typ POI, do którego chcesz importować.</value>
+  </data>
+  <data name="ImportChooseType" xml:space="preserve">
+    <value>Wybierz typ POI</value>
+  </data>
+  <data name="ImportNoValidRows" xml:space="preserve">
+    <value>Żaden z {0} wpisów w pliku nie ma prawidłowych współrzędnych ani adresu (sprawdź, czy szerokość i długość geograficzna nie są zamienione lub puste).</value>
+  </data>
+  <data name="ImportNothingFound" xml:space="preserve">
+    <value>W przesłanym pliku nie znaleziono znaczników ani wierszy ze współrzędnymi lub adresem.</value>
   </data>
 </root>

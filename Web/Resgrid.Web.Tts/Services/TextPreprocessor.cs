@@ -11,7 +11,11 @@ namespace Resgrid.Web.Tts.Services
 	/// The preprocessor runs inside audio generation, <em>after</em> the cache
 	/// key has been computed from the raw request text (see TtsService) — two
 	/// requests that only differ by abbreviation style therefore cache as
-	/// separate entries even though they synthesise identical speech.
+	/// separate entries even though they synthesise identical speech. For the same
+	/// reason a change to the output must bump <see cref="OutputRevision"/>.
+	///
+	/// Structural passes (markup, run-on sentences, dash pauses, sentence length)
+	/// apply to every voice; vocabulary and number passes are English-only.
 	///
 	/// Expansion rules are deliberately conservative — we only touch terms
 	/// that the engine routinely gets wrong.  Everything else is passed through
@@ -94,6 +98,51 @@ namespace Resgrid.Web.Tts.Services
 		private static readonly Regex AgeSlashSexRegexField = AgeSlashSexRegex();
 		private static readonly Regex AgeJoinedSexRegexField = AgeJoinedSexRegex();
 		private static readonly Regex TenCodeRegexField = TenCodeRegex();
+		private static readonly Regex EmphasisHeaderRegexField = EmphasisHeaderRegex();
+		private static readonly Regex DecorativeSymbolRegexField = DecorativeSymbolRegex();
+		private static readonly Regex RunOnSentenceRegexField = RunOnSentenceRegex();
+		private static readonly Regex SpacedDashRegexField = SpacedDashRegex();
+		private static readonly Regex DanglingDashRegexField = DanglingDashRegex();
+		private static readonly Regex PhoneNumberRegexField = PhoneNumberRegex();
+		private static readonly Regex LocalPhoneNumberRegexField = LocalPhoneNumberRegex();
+		private static readonly Regex DigitListCommaRegexField = DigitListCommaRegex();
+		private static readonly Regex SentenceSplitRegexField = SentenceSplitRegex();
+
+		/// <summary>
+		/// Revision of the text this class hands to Piper. It is folded into the TTS
+		/// cache key (see <see cref="AudioProcessingService.GetEffectiveSynthesisProfile"/>)
+		/// because the key is computed from the raw request text, before preprocessing:
+		/// without it, audio synthesised from the old output keeps being replayed after a
+		/// fix. Bump it whenever a change alters the preprocessed text of existing input.
+		/// </summary>
+		public const int OutputRevision = 2;
+
+		// ---------------------------------------------------------------
+		//  Sentence pacing. Piper synthesises one sentence per inference, and
+		//  measured on en_US-ryan-medium (same settings as production) a long
+		//  sentence does not just take longer — past roughly 500 phoneme ids
+		//  (~50 words of prose) the audio stops growing and the words are
+		//  crammed and slurred into it: 52 words took 11.6 s, 72 words 12.3 s,
+		//  and a 37-word dispatch nature full of numbers came out at ~9.6
+		//  syllables a second, twice the normal rate ("sped up gibberish").
+		//  Every sentence is kept well under that, at clause boundaries where
+		//  the text offers them.
+		// ---------------------------------------------------------------
+
+		/// <summary>Upper bound on a sentence's estimated spoken length (see EstimateSpokenLength).</summary>
+		public const int MaxSpokenSentenceLength = 160;
+
+		/// <summary>A clause or conjunction break is only taken if the sentence before it is at least this long.</summary>
+		private const int MinSentenceFragmentLength = 40;
+
+		/// <summary>Each digit is spoken as a whole word ("seven", "three hundred"), so it weighs more than a letter.</summary>
+		private const int SpokenDigitWeight = 6;
+
+		private static readonly HashSet<string> BreakBeforeConjunctions = new(StringComparer.OrdinalIgnoreCase)
+		{
+			"and", "or", "then", "but", "while", "where", "until"
+		};
+
 		private readonly ILogger<TextPreprocessor> _logger;
 
 		public TextPreprocessor(ILogger<TextPreprocessor> logger)
@@ -108,14 +157,18 @@ namespace Resgrid.Web.Tts.Services
 				return text ?? string.Empty;
 			}
 
-			var result = text.Trim();
+			var original = text.Trim();
 
-			// Only preprocess English voices — they need their own abbreviation
-			// dictionaries.  Other languages pass through to Piper directly.
+			// Structural passes run for every voice: they fix how the text is broken
+			// into sentences and pauses, which every Piper model depends on equally.
+			var result = StripDecorativeSymbols(original);
+			result = SeparateRunOnSentences(result);
+			result = NormalizeDashPauses(result);
+
+			// Vocabulary and number passes are English-only — they need their own
+			// abbreviation dictionaries. Other languages pass through to Piper directly.
 			if (IsEnglishVoice(voice))
 			{
-				var original = result;
-
 				// Order matters: expand abbreviations first so downstream
 				// passes operate on natural-language words rather than codes.
 				result = ExpandAbbreviations(result);
@@ -128,20 +181,27 @@ namespace Resgrid.Web.Tts.Services
 				// After every expansion map, so a mapped meaning always beats
 				// letter-spelling; before the number passes, which never touch letters.
 				result = ExpandSpellOutCodes(result);
+				// Phone numbers first among the number passes: once grouped into
+				// single digits no later pass (ten-codes, long numbers) can split them.
+				result = ExpandPhoneNumbers(result);
+				result = SpaceDigitLists(result);
 				result = ExpandTenCodes(result);
 				result = ExpandUnitIdentifiers(result);
 				result = ExpandLongNumbers(result);
 				result = NormalizeSmallNumbers(result);
-				// Collapse any whitespace artefacts introduced by expansion.
-				result = WhitespaceRegex.Replace(result, " ").Trim();
+			}
 
-				if (!string.Equals(original, result, StringComparison.Ordinal))
-				{
-					_logger.LogDebug(
-						"TextPreprocessor normalised \"{OriginalText}\" to \"{NormalisedText}\"",
-						original,
-						result);
-				}
+			// Collapse any whitespace artefacts introduced by the passes above.
+			result = WhitespaceRegex.Replace(result, " ").Trim();
+			// Last, so the length estimate sees the text exactly as Piper will.
+			result = PaceLongSentences(result);
+
+			if (!string.Equals(original, result, StringComparison.Ordinal))
+			{
+				_logger.LogDebug(
+					"TextPreprocessor normalised \"{OriginalText}\" to \"{NormalisedText}\"",
+					original,
+					result);
 			}
 
 			// Ensure the text ends with sentence-ending punctuation so that
@@ -154,6 +214,256 @@ namespace Resgrid.Web.Tts.Services
 			}
 
 			return result;
+		}
+
+		// ---------------------------------------------------------------
+		//  Structural passes (every voice)
+		// ---------------------------------------------------------------
+
+		/// <summary>
+		/// Removes markup the engine would otherwise read aloud: "**REQUEST" was spoken
+		/// as "asterisk asterisk request" run together into one word. A CAD-style header
+		/// wrapped in emphasis at the start of a clause ("Nature, ***LOST HIKERS*** 2
+		/// FEMALE...") becomes its own sentence so it is heard as a heading; emphasis in
+		/// the middle of a sentence ("Please **DO NOT** enter") is simply unwrapped.
+		/// </summary>
+		private static string StripDecorativeSymbols(string text)
+		{
+			if (text.IndexOfAny(DecorativeSymbols) < 0)
+			{
+				return text;
+			}
+
+			var source = text;
+			text = EmphasisHeaderRegexField.Replace(source, match =>
+			{
+				var body = match.Groups["body"].Value.Trim();
+				var before = source[..match.Index].TrimEnd();
+				var startsClause = before.Length == 0 || before[^1] is '.' or '!' or '?' or ':' or ';' or ',';
+
+				if (!startsClause || body.Any(char.IsLower))
+				{
+					return $" {body} ";
+				}
+
+				body = body.TrimEnd(':', ';', ',', '-', ' ');
+				return body.Length > 0 && body[^1] is '.' or '!' or '?' ? $" {body} " : $" {body}. ";
+			});
+
+			return DecorativeSymbolRegexField.Replace(text, " ");
+		}
+
+		private static readonly char[] DecorativeSymbols = { '*', '#', '=', '~', '_', '^', '|' };
+
+		/// <summary>
+		/// Restores the sentence break in "missing.Text Powell": with no space after the
+		/// period the engine reads "missing dot text" and the two sentences merge into one
+		/// long one. Requires two letters before and a capital after, so initialisms
+		/// ("U.S.A") and lower-case domains ("resgrid.com") are left alone.
+		/// </summary>
+		private static string SeparateRunOnSentences(string text)
+		{
+			return RunOnSentenceRegexField.Replace(text, "$1 ");
+		}
+
+		/// <summary>
+		/// A dash used as a separator ("APPROVED - San Luis", "UPDATE- Missing Person")
+		/// produces no pause at all, so the clauses run together. Turn it into a comma.
+		/// Hyphenated words, ranges and negative numbers ("I-5", "10-4", "-117.7") have
+		/// no space on both sides and are untouched.
+		/// </summary>
+		private static string NormalizeDashPauses(string text)
+		{
+			if (text.IndexOf('-') < 0 && text.IndexOf('–') < 0 && text.IndexOf('—') < 0)
+			{
+				return text;
+			}
+
+			text = SpacedDashRegexField.Replace(text, ", ");
+			return DanglingDashRegexField.Replace(text, ",");
+		}
+
+		/// <summary>
+		/// Keeps every sentence under <see cref="MaxSpokenSentenceLength"/> (see the pacing
+		/// note above). An over-long sentence is broken at the last clause boundary (comma,
+		/// semicolon, colon) that fits, else before a joining word ("and", "or", "then"...),
+		/// else at the last space that fits — preferring one that leaves a number with the
+		/// word introducing it. Breaks never fall inside a run of digits, so a phone number
+		/// or a grouped "3 2 3, 5 7 3" is never cut in half.
+		/// </summary>
+		private static string PaceLongSentences(string text)
+		{
+			if (EstimateSpokenLength(text, 0, text.Length) <= MaxSpokenSentenceLength)
+			{
+				return text;
+			}
+
+			var pieces = new List<string>();
+
+			foreach (var sentence in SentenceSplitRegexField.Split(text))
+			{
+				var remaining = sentence.Trim();
+
+				while (remaining.Length > 0 && EstimateSpokenLength(remaining, 0, remaining.Length) > MaxSpokenSentenceLength)
+				{
+					var cut = FindSentenceBreak(remaining);
+
+					if (cut <= 0)
+					{
+						break;
+					}
+
+					var head = remaining[..cut].TrimEnd(' ', ',', ';', ':');
+					pieces.Add(head.Length > 0 && head[^1] is '.' or '!' or '?' ? head : head + ".");
+					remaining = remaining[(cut + 1)..].TrimStart();
+				}
+
+				if (remaining.Length > 0)
+				{
+					pieces.Add(remaining);
+				}
+			}
+
+			return string.Join(" ", pieces);
+		}
+
+		/// <summary>
+		/// Returns the index of the character to break the sentence at (a clause
+		/// separator or a space, consumed by the break), or -1 when nothing fits.
+		/// </summary>
+		private static int FindSentenceBreak(string sentence)
+		{
+			var lastClause = -1;
+			var lastConjunction = -1;
+			var lastSpaceBeforeWord = -1;
+			var lastSpace = -1;
+			var spokenLength = 0;
+
+			for (var i = 0; i < sentence.Length; i++)
+			{
+				var c = sentence[i];
+				spokenLength += char.IsDigit(c) ? SpokenDigitWeight : 1;
+
+				if (spokenLength > MaxSpokenSentenceLength)
+				{
+					break;
+				}
+
+				var next = i + 1 < sentence.Length ? sentence[i + 1] : '\0';
+				var prev = i > 0 ? sentence[i - 1] : '\0';
+
+				if (c is ',' or ';' or ':' && next == ' ')
+				{
+					// "3 2 3, 5 7 3" — a comma between digits groups a number; keep it whole.
+					var afterSpace = i + 2 < sentence.Length ? sentence[i + 2] : '\0';
+					if (!(char.IsDigit(prev) && char.IsDigit(afterSpace)) && spokenLength >= MinSentenceFragmentLength)
+					{
+						lastClause = i;
+					}
+				}
+				else if (c == ' ' && !(char.IsDigit(next) && (char.IsDigit(prev) || (prev == ',' && i > 1 && char.IsDigit(sentence[i - 2])))))
+				{
+					lastSpace = i;
+
+					// A number stays with the word that introduces it ("at 3 2 3, ..."),
+					// so a plain space break before a digit is the last resort.
+					if (!char.IsDigit(next))
+					{
+						lastSpaceBeforeWord = i;
+					}
+
+					// "and then": break before the first joining word, never between the two.
+					if (spokenLength >= MinSentenceFragmentLength && StartsWithConjunction(sentence, i + 1) && !EndsWithConjunction(sentence, i))
+					{
+						lastConjunction = i;
+					}
+				}
+			}
+
+			if (lastClause > 0)
+			{
+				return lastClause;
+			}
+
+			if (lastConjunction > 0)
+			{
+				return lastConjunction;
+			}
+
+			return lastSpaceBeforeWord > 0 ? lastSpaceBeforeWord : lastSpace;
+		}
+
+		private static bool StartsWithConjunction(string sentence, int start)
+		{
+			var end = start;
+			while (end < sentence.Length && char.IsLetter(sentence[end]))
+			{
+				end++;
+			}
+
+			return end > start && BreakBeforeConjunctions.Contains(sentence[start..end]);
+		}
+
+		private static bool EndsWithConjunction(string sentence, int end)
+		{
+			var start = end;
+			while (start > 0 && char.IsLetter(sentence[start - 1]))
+			{
+				start--;
+			}
+
+			return end > start && BreakBeforeConjunctions.Contains(sentence[start..end]);
+		}
+
+		/// <summary>
+		/// Rough spoken length of a span: one per character, with digits weighted as the
+		/// whole words they are read as. Only used for pacing, so it only has to rank
+		/// sentences the same way the engine's phoneme count would.
+		/// </summary>
+		public static int EstimateSpokenLength(string text, int start, int length)
+		{
+			var total = 0;
+
+			for (var i = start; i < start + length; i++)
+			{
+				total += char.IsDigit(text[i]) ? SpokenDigitWeight : 1;
+			}
+
+			return total;
+		}
+
+		// ---------------------------------------------------------------
+		//  Phone numbers and digit lists (English)
+		// ---------------------------------------------------------------
+
+		/// <summary>
+		/// Reads phone numbers digit by digit in their groups: "323-573-4264" becomes
+		/// "3 2 3, 5 7 3, 4 2 6 4" — spoken "three two three, five seven three, four two
+		/// six four" — instead of "three hundred twenty three dash five hundred seventy
+		/// three dash four two six four". A leading +1 country code is dropped.
+		/// </summary>
+		private static string ExpandPhoneNumbers(string text)
+		{
+			text = PhoneNumberRegexField.Replace(text, match =>
+				$"{SpaceDigits(match.Groups["area"].Value)}, {SpaceDigits(match.Groups["exchange"].Value)}, {SpaceDigits(match.Groups["line"].Value)}");
+
+			return LocalPhoneNumberRegexField.Replace(text, match =>
+				$"{SpaceDigits(match.Groups["exchange"].Value)}, {SpaceDigits(match.Groups["line"].Value)}");
+		}
+
+		private static string SpaceDigits(string digits)
+		{
+			return string.Join(" ", digits.ToCharArray());
+		}
+
+		/// <summary>
+		/// "type 1,2,3" is read "one two three" with no pause at all; a space after each
+		/// comma restores it. Thousands separators ("30,000", "1,250") — a comma followed
+		/// by exactly three digits — are left alone.
+		/// </summary>
+		private static string SpaceDigitLists(string text)
+		{
+			return DigitListCommaRegexField.Replace(text, ", ");
 		}
 
 		// ---------------------------------------------------------------
@@ -383,9 +693,54 @@ namespace Resgrid.Web.Tts.Services
 		/// The negative lookbehind skips digits that are part of a spaced
 		/// digit-by-digit run produced by ExpandLongNumbers (e.g. "1 2 3 4 5 Elm"),
 		/// which must stay uniformly digit-form rather than ending "...4 five Elm".
+		/// The other lookbehinds keep decimals and digit lists uniform the same way:
+		/// "1.5 AND" must not become "1.five AND", nor "1, 2, 3 for" end "1, 2, three for".
 		/// </summary>
-		[GeneratedRegex(@"(?<!\d\s)\b(?<digits>(?:[1-9]|1[0-9]|20))\s(?<letter>[A-Za-z])", RegexOptions.CultureInvariant)]
+		[GeneratedRegex(@"(?<!\d\s)(?<!\d[.,])(?<!\d,\s)\b(?<digits>(?:[1-9]|1[0-9]|20))\s(?<letter>[A-Za-z])", RegexOptions.CultureInvariant)]
 		private static partial Regex NumberToWordRegex();
+
+		/// <summary>
+		/// A clause wrapped in matching emphasis runs: "***LOST HIKERS***", "**CANCELLED**",
+		/// "## UPDATE ##". The body may not contain the markers or span a line.
+		/// </summary>
+		[GeneratedRegex(@"(?<mark>[*#=~_]{2,})\s*(?<body>[^*#=~_\r\n]{1,80}?)\s*\k<mark>", RegexOptions.CultureInvariant)]
+		private static partial Regex EmphasisHeaderRegex();
+
+		/// <summary>Any asterisk, or a repeated run of other decoration ("=====", "###", "~~").</summary>
+		[GeneratedRegex(@"\*+|([#=~_^|])\1+", RegexOptions.CultureInvariant)]
+		private static partial Regex DecorativeSymbolRegex();
+
+		/// <summary>A sentence end with no space after it: "missing.Text", "MISSING.TEXT".</summary>
+		[GeneratedRegex(@"(?<=\p{L}{2})([.!?])(?=\p{Lu}\p{L})", RegexOptions.CultureInvariant)]
+		private static partial Regex RunOnSentenceRegex();
+
+		/// <summary>A separator dash with whitespace on both sides, absorbing a comma before it.</summary>
+		[GeneratedRegex(@"(?:\s*,)?\s+(?:-{1,3}|[–—])\s+", RegexOptions.CultureInvariant)]
+		private static partial Regex SpacedDashRegex();
+
+		/// <summary>A dash hanging off the end of a word before a space: "UPDATE- Missing".</summary>
+		[GeneratedRegex(@"(?<=\p{L})-(?=\s)", RegexOptions.CultureInvariant)]
+		private static partial Regex DanglingDashRegex();
+
+		/// <summary>
+		/// North American number: optional +1, area code (optionally in parentheses), then
+		/// exchange and line with a separator. Not part of a longer number, word or decimal;
+		/// a sentence-ending period or comma after it is fine.
+		/// </summary>
+		[GeneratedRegex(@"(?<![\w.])(?:\+?1[\s.-])?\(?(?<area>\d{3})\)?[\s.-]?(?<exchange>\d{3})[\s.-](?<line>\d{4})(?!\w|[.,\-]\d)", RegexOptions.CultureInvariant)]
+		private static partial Regex PhoneNumberRegex();
+
+		/// <summary>Seven-digit local number written with a hyphen or dot: "573-4264".</summary>
+		[GeneratedRegex(@"(?<![\w.\-])(?<exchange>\d{3})[.\-](?<line>\d{4})(?!\w|[.,\-]\d)", RegexOptions.CultureInvariant)]
+		private static partial Regex LocalPhoneNumberRegex();
+
+		/// <summary>A comma inside a digit list ("1,2,3") — not a thousands separator (exactly three digits after).</summary>
+		[GeneratedRegex(@"(?<=\d),(?=\d{1,2}(?!\d))", RegexOptions.CultureInvariant)]
+		private static partial Regex DigitListCommaRegex();
+
+		/// <summary>Whitespace after sentence-ending punctuation.</summary>
+		[GeneratedRegex(@"(?<=[.!?])\s+", RegexOptions.CultureInvariant)]
+		private static partial Regex SentenceSplitRegex();
 
 		/// <summary>Matches a run of 4+ consecutive digits not surrounded by other digits.</summary>
 		[GeneratedRegex(@"(?<!\d)(?<digits>\d{4,})(?!\d)", RegexOptions.CultureInvariant)]

@@ -223,11 +223,41 @@ namespace Resgrid.Services
 
 		#region Route Instance Lifecycle
 
-		public async Task<RouteInstance> StartRouteAsync(string routePlanId, int unitId, string startedByUserId, CancellationToken cancellationToken = default)
+		public Task<RouteInstance> StartRouteAsync(string routePlanId, int unitId, string startedByUserId, CancellationToken cancellationToken = default)
+		{
+			return StartAsync(routePlanId, unitId, null, startedByUserId, cancellationToken);
+		}
+
+		public Task<RouteInstance> StartRouteForCallAsync(string routePlanId, int unitId, int callId, string startedByUserId, CancellationToken cancellationToken = default)
+		{
+			return StartAsync(routePlanId, unitId, callId, startedByUserId, cancellationToken);
+		}
+
+		public async Task<RouteInstance> MarkStartReachedAsync(string routeInstanceId, CancellationToken cancellationToken = default)
+		{
+			var instance = await _routeInstancesRepository.GetByIdAsync(routeInstanceId);
+			if (instance == null)
+				throw new ArgumentException("Route instance not found.", nameof(routeInstanceId));
+
+			if (instance.StartReachedOn.HasValue)
+				return instance;
+
+			instance.StartReachedOn = DateTime.UtcNow;
+			await _routeInstancesRepository.SaveOrUpdateAsync(instance, cancellationToken);
+			return instance;
+		}
+
+		public async Task<List<RouteInstance>> GetInstancesForCallAsync(int departmentId, int callId)
+		{
+			var instances = await _routeInstancesRepository.GetInstancesByCallIdAsync(departmentId, callId);
+			return instances?.Where(i => i != null).ToList() ?? new List<RouteInstance>();
+		}
+
+		private async Task<RouteInstance> StartAsync(string routePlanId, int unitId, int? callId, string startedByUserId, CancellationToken cancellationToken)
 		{
 			var existingActive = await GetActiveInstanceForUnitAsync(unitId);
 			if (existingActive != null)
-				throw new InvalidOperationException("Unit already has an active route instance.");
+				throw new RouteInProgressException(existingActive.RouteInstanceId, false);
 
 			var plan = await _routePlansRepository.GetByIdAsync(routePlanId);
 			if (plan == null)
@@ -237,7 +267,7 @@ namespace Resgrid.Services
 			// the unit start a second one.
 			var paused = await GetActiveOrPausedInstanceForUnitAsync(plan.DepartmentId, unitId);
 			if (paused != null)
-				throw new InvalidOperationException("Unit already has a paused route instance.");
+				throw new RouteInProgressException(paused.RouteInstanceId, true);
 
 			var stops = await GetRouteStopsForPlanAsync(routePlanId);
 			var startedOn = DateTime.UtcNow;
@@ -254,7 +284,8 @@ namespace Resgrid.Services
 				StopsTotal = stops.Count,
 				// RD6: snapshot the planned route so later plan edits don't move the line under a running unit.
 				PlannedDirectionsJson = plan.RouteIsStale ? null : plan.RouteDirectionsJson,
-				AddedOn = startedOn
+				AddedOn = startedOn,
+				CallId = callId
 			};
 
 			await _routeInstancesRepository.SaveOrUpdateAsync(instance, cancellationToken);

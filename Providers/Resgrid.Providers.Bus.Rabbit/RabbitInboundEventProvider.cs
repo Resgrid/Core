@@ -36,6 +36,8 @@ namespace Resgrid.Providers.Bus.Rabbit
 		public Func<int, string, string, Task> ProcessOutstandingRequirementsEvent;
 		public Func<int, string, string, Task> ProcessUnitNavigationEvent;
 		public Func<int, string, string, Task> ProcessRecurringCallAlertsEvent;
+		public Func<int, string, string, Task> ProcessAiDestinationAdviceEvent;
+		public Func<int, string, string, Task> ProcessIntakeConversationEvent;
 
 		public async Task Start(string clientName, string queueName)
 		{
@@ -194,6 +196,12 @@ namespace Resgrid.Providers.Bus.Rabbit
 							case EventingTypes.RecurringCallAlertsUpdated:
 								if (ProcessRecurringCallAlertsEvent != null) await ProcessRecurringCallAlertsEvent.Invoke(eventingMessage.DepartmentId, eventingMessage.ItemId, eventingMessage.Payload);
 								break;
+							case EventingTypes.AiDestinationAdviceUpdated:
+								if (ProcessAiDestinationAdviceEvent != null) await ProcessAiDestinationAdviceEvent.Invoke(eventingMessage.DepartmentId, eventingMessage.ItemId, eventingMessage.Payload);
+								break;
+							case EventingTypes.IntakeConversationUpdated:
+								if (ProcessIntakeConversationEvent != null) await ProcessIntakeConversationEvent.Invoke(eventingMessage.DepartmentId, eventingMessage.ItemId, eventingMessage.Payload);
+								break;
 							case EventingTypes.UnitNavigationUpdated:
 								if (ProcessUnitNavigationEvent != null) await ProcessUnitNavigationEvent.Invoke(eventingMessage.DepartmentId, eventingMessage.ItemId, eventingMessage.Payload);
 								break;
@@ -277,6 +285,10 @@ namespace Resgrid.Providers.Bus.Rabbit
 		public void RegisterForUnitNavigationEvents(Func<int, string, string, Task> unitNavigationEvent) => ProcessUnitNavigationEvent = unitNavigationEvent;
 
 		public void RegisterForRecurringCallAlertsEvents(Func<int, string, string, Task> recurringCallAlertsEvent) => ProcessRecurringCallAlertsEvent = recurringCallAlertsEvent;
+
+		public void RegisterForAiDestinationAdviceEvents(Func<int, string, string, Task> aiDestinationAdviceEvent) => ProcessAiDestinationAdviceEvent = aiDestinationAdviceEvent;
+
+		public void RegisterForIntakeConversationEvents(Func<int, string, string, Task> intakeConversationEvent) => ProcessIntakeConversationEvent = intakeConversationEvent;
 
 		public void RegisterForChatEvents(Func<int, string, Task> chatEvent)
 		{

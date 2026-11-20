@@ -465,6 +465,22 @@ namespace Resgrid.Workers.Console
 					Cron.MinuteIntervals(1),
 					stoppingToken);
 
+				// Worker ID 80: intake maintenance (call-intake-and-ai-destinations-plan.md). Purges intake message audit rows and voice
+				// intake transcripts past retention, then lapses / releases dedicated department numbers. Two small queries when idle.
+				_logger.Log(LogLevel.Information, "Scheduling Intake Maintenance");
+				await Client.ScheduleAsync("Intake Maintenance",
+					new Commands.IntakeMaintenanceCommand(80),
+					Cron.MinuteIntervals(15),
+					stoppingToken);
+
+				// Worker ID 81: Enhanced AI destination advice reviews (call-intake-and-ai-destinations-plan.md D4). Every minute, with a
+				// second pass 30 s in; a single indexed query when nothing is due. Idle while AiDestinationConfig.Enabled is off.
+				_logger.Log(LogLevel.Information, "Scheduling AI Destination Advice");
+				await Client.ScheduleAsync("AI Destination Advice",
+					new Commands.AiDestinationAdviceCommand(81),
+					Cron.MinuteIntervals(1),
+					stoppingToken);
+
 				if (UnitTrackingConfig.LocationRetentionWorkerEnabled)
 				{
 					var retentionHour =

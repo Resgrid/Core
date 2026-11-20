@@ -79,6 +79,14 @@
   <data name="EnhancedAiFeature5" xml:space="preserve"><value>Лише моделі з відкритими вагами; приватні дані ніколи не надсилаються хмарному ШІ</value></data>
   <data name="EnhancedAiFeature6" xml:space="preserve"><value>Або використовуйте власну підписку постачальника ШІ</value></data>
   <data name="EnhancedAiNote" xml:space="preserve"><value>Оплата щомісяця за підрозділ. Містить місячний бюджет ШІ без доплат за перевищення. Кожен підрозділ отримує безкоштовні запитання Admin Assist і без нього.</value></data>
+  <data name="DedicatedNumberTitle" xml:space="preserve"><value>Private Inbound Dispatch Number</value></data>
+  <data name="DedicatedNumberTagline" xml:space="preserve"><value>Власний номер підрозділу для SMS і дзвінків</value></data>
+  <data name="DedicatedNumberFeature1" xml:space="preserve"><value>Місцевий номер для вашого підрозділу, обраний вами</value></data>
+  <data name="DedicatedNumberFeature2" xml:space="preserve"><value>Вхідні SMS стають викликами в очікуванні для диспетчерів</value></data>
+  <data name="DedicatedNumberFeature3" xml:space="preserve"><value>Члени телефонують на той самий номер, щоб потрапити в голосове меню</value></data>
+  <data name="DedicatedNumberFeature4" xml:space="preserve"><value>Голосовий прийом з Enhanced AI перетворює відповіді абонентів на виклики в очікуванні</value></data>
+  <data name="DedicatedNumberFeature5" xml:space="preserve"><value>Лише вхідні: відповіді надходять з основного номера Resgrid</value></data>
+  <data name="DedicatedNumberNote" xml:space="preserve"><value>Оплата щомісяця за підрозділ, навіть на річному тарифі. Потрібен активний тариф за сутностями. У США — номери США та Канади; у ЄС — номер у вашій країні, де це можливо.</value></data>
   <data name="AdpTitle" xml:space="preserve"><value>Advanced Data Protection</value></data>
   <data name="AdpTagline" xml:space="preserve"><value>Шифрування та посилений доступ для чутливих даних</value></data>
   <data name="AdpFeature1" xml:space="preserve"><value>Шифрування на рівні полів для медичних і персональних даних</value></data>

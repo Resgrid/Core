@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Private Inbound Dispatch Number</value>
+  </data>
+  <data name="Intro" xml:space="preserve">
+    <value>رقم الهاتف الخاص بقسمك. تتحول الرسائل النصية المرسلة إليه إلى بلاغات معلقة يراجعها المرسلون، ويمكن للأعضاء الاتصال به للوصول إلى القائمة الصوتية.</value>
+  </data>
+  <data name="AddonTitle" xml:space="preserve">
+    <value>الإضافة</value>
+  </data>
+  <data name="AddonActive" xml:space="preserve">
+    <value>لدى قسمك إضافة Private Inbound Dispatch Number.</value>
+  </data>
+  <data name="ManageBilling" xml:space="preserve">
+    <value>إدارة الإضافة</value>
+  </data>
+  <data name="RequiresEntityPlan" xml:space="preserve">
+    <value>تتوفر إضافة Private Inbound Dispatch Number مع خطة كيانات نشطة. غيّر خطتك من صفحة الاشتراك لإضافتها.</value>
+  </data>
+  <data name="ViewPlans" xml:space="preserve">
+    <value>عرض الخطط</value>
+  </data>
+  <data name="NotOffered" xml:space="preserve">
+    <value>إضافة Private Inbound Dispatch Number غير متاحة لقسمك بعد.</value>
+  </data>
+  <data name="BuyPrompt" xml:space="preserve">
+    <value>اشترِ إضافة Private Inbound Dispatch Number لاختيار رقم وتفعيله.</value>
+  </data>
+  <data name="BuyAddon" xml:space="preserve">
+    <value>شراء الإضافة</value>
+  </data>
+  <data name="ActiveTitle" xml:space="preserve">
+    <value>رقمك</value>
+  </data>
+  <data name="ProvisionedOn" xml:space="preserve">
+    <value>فُعِّل في {0}</value>
+  </data>
+  <data name="AddonEnding" xml:space="preserve">
+    <value>لم تعد الإضافة نشطة. يستمر الرقم في العمل لفترة قصيرة، ثم يتوقف عن استقبال الرسائل والمكالمات حتى تُجدَّد الإضافة.</value>
+  </data>
+  <data name="SmsIntake" xml:space="preserve">
+    <value>إنشاء بلاغات معلقة من الرسائل النصية</value>
+  </data>
+  <data name="SmsIntakeHelp" xml:space="preserve">
+    <value>تتحول الرسائل المرسلة إلى هذا الرقم إلى بلاغات معلقة. الرقم للاستقبال فقط؛ تصل أي ردود من رقم Resgrid الرئيسي.</value>
+  </data>
+  <data name="VoiceIntake" xml:space="preserve">
+    <value>استقبال البلاغات صوتيًا</value>
+  </data>
+  <data name="VoiceIntakeHelp" xml:space="preserve">
+    <value>يجيب المتصلون من غير الأعضاء عن أسئلة موجّهة ويُنشأ بلاغ معلق. يتطلب إضافة Enhanced AI مع الاستقبال الصوتي بالذكاء الاصطناعي.</value>
+  </data>
+  <data name="VoiceIntakeUnavailable" xml:space="preserve">
+    <value>الاستقبال الصوتي بالذكاء الاصطناعي غير متاح لقسمك بعد. يسري هذا الإعداد عند إتاحته.</value>
+  </data>
+  <data name="SaveIntake" xml:space="preserve">
+    <value>حفظ</value>
+  </data>
+  <data name="ReleaseTitle" xml:space="preserve">
+    <value>تحرير الرقم</value>
+  </data>
+  <data name="ReleaseHelp" xml:space="preserve">
+    <value>يعيد الرقم إلى شركة الاتصالات فورًا. تتوقف الرسائل والمكالمات إليه، ولا يمكن استعادة الرقم.</value>
+  </data>
+  <data name="ReleaseConfirm" xml:space="preserve">
+    <value>أدرك أنه لا يمكن استعادة الرقم</value>
+  </data>
+  <data name="Release" xml:space="preserve">
+    <value>تحرير الرقم</value>
+  </data>
+  <data name="LapsedTitle" xml:space="preserve">
+    <value>الرقم معلّق</value>
+  </data>
+  <data name="LapsedText" xml:space="preserve">
+    <value>توقف {0} عن استقبال الرسائل والمكالمات عند انتهاء الإضافة. سيُحرَّر في {1} ما لم تُجدَّد الإضافة.</value>
+  </data>
+  <data name="Reactivate" xml:space="preserve">
+    <value>إعادة الرقم إلى الخدمة</value>
+  </data>
+  <data name="ReleaseNow" xml:space="preserve">
+    <value>تحريره الآن</value>
+  </data>
+  <data name="ProvisioningText" xml:space="preserve">
+    <value>شراء {0} قيد التنفيذ. حدّث هذه الصفحة بعد دقيقة.</value>
+  </data>
+  <data name="LastFailure" xml:space="preserve">
+    <value>لم يكتمل آخر شراء لـ {0}. اختر رقمًا آخر.</value>
+  </data>
+  <data name="SearchTitle" xml:space="preserve">
+    <value>اختيار رقم</value>
+  </data>
+  <data name="NoCountries" xml:space="preserve">
+    <value>لا تتوفر أرقام في بلد قسمك بعد. تواصل مع دعم Resgrid.</value>
+  </data>
+  <data name="Country" xml:space="preserve">
+    <value>البلد</value>
+  </data>
+  <data name="AreaCode" xml:space="preserve">
+    <value>رمز المنطقة</value>
+  </data>
+  <data name="Contains" xml:space="preserve">
+    <value>يحتوي على</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>بحث</value>
+  </data>
+  <data name="SearchHelp" xml:space="preserve">
+    <value>تنطبق رموز المناطق على الولايات المتحدة وكندا. استخدم "يحتوي على" للأرقام التي يجب أن يتضمنها الرقم؛ يطابق * أي رقم.</value>
+  </data>
+  <data name="NoResults" xml:space="preserve">
+    <value>لا توجد أرقام مطابقة. جرّب رمز منطقة آخر أو أرقامًا أقل.</value>
+  </data>
+  <data name="ResultsNumber" xml:space="preserve">
+    <value>الرقم</value>
+  </data>
+  <data name="ResultsLocation" xml:space="preserve">
+    <value>الموقع</value>
+  </data>
+  <data name="ProvisionConfirm" xml:space="preserve">
+    <value>تفعيل {0} رقمًا لقسمك؟</value>
+  </data>
+  <data name="Provision" xml:space="preserve">
+    <value>تفعيل</value>
+  </data>
+  <data name="Provisioned" xml:space="preserve">
+    <value>أصبح {0} رقم قسمك الآن.</value>
+  </data>
+  <data name="ProvisionFailed" xml:space="preserve">
+    <value>تعذّر على شركة الاتصالات توفير هذا الرقم. اختر رقمًا آخر.</value>
+  </data>
+  <data name="IntakeSaved" xml:space="preserve">
+    <value>حُفظت إعدادات الاستقبال.</value>
+  </data>
+  <data name="ReleaseConfirmRequired" xml:space="preserve">
+    <value>أكّد أنك تريد تحرير الرقم.</value>
+  </data>
+  <data name="Released" xml:space="preserve">
+    <value>حُرِّر الرقم.</value>
+  </data>
+  <data name="ReleaseFailed" xml:space="preserve">
+    <value>لم تحرّر شركة الاتصالات الرقم. حاول مرة أخرى لاحقًا.</value>
+  </data>
+  <data name="Reactivated" xml:space="preserve">
+    <value>عاد الرقم إلى الخدمة.</value>
+  </data>
+  <data name="Error.AddonRequired" xml:space="preserve">
+    <value>يحتاج قسمك أولًا إلى إضافة Private Inbound Dispatch Number.</value>
+  </data>
+  <data name="Error.AlreadyHasNumber" xml:space="preserve">
+    <value>لدى قسمك رقم بالفعل.</value>
+  </data>
+  <data name="Error.CountryNotAllowed" xml:space="preserve">
+    <value>الأرقام في هذا البلد غير متاحة لقسمك.</value>
+  </data>
+  <data name="Error.InvalidNumber" xml:space="preserve">
+    <value>تحقق من الرقم ورمز المنطقة والأرقام ثم حاول مرة أخرى.</value>
+  </data>
+  <data name="Error.NumberUnavailable" xml:space="preserve">
+    <value>لم يعد هذا الرقم متاحًا. اختر رقمًا آخر.</value>
+  </data>
+  <data name="Error.NoActiveNumber" xml:space="preserve">
+    <value>ليس لدى قسمك رقم لتغييره.</value>
+  </data>
+  <data name="Error.CarrierUnavailable" xml:space="preserve">
+    <value>تعذّر الوصول إلى شركة الاتصالات. حاول مرة أخرى بعد بضع دقائق.</value>
+  </data>
+  <data name="BillingInboundOnlyNote" xml:space="preserve">
+    <value>الرقم يستقبل الرسائل فقط: تتحول إلى بلاغات معلقة، وتصل أي ردود من رقم Resgrid الرئيسي.</value>
+  </data>
+  <data name="BillingLapseNote" xml:space="preserve">
+    <value>إذا انتهت الإضافة، يتوقف الرقم عن استقبال الرسائل والمكالمات ويُحرَّر بعد {0} يومًا ما لم تجدّد.</value>
+  </data>
+  <data name="BillingVoiceNote" xml:space="preserve">
+    <value>يتطلب الاستقبال الصوتي للمتصلين من غير الأعضاء إضافة Enhanced AI.</value>
+  </data>
+  <data name="ManageNumber" xml:space="preserve">
+    <value>إدارة رقمك</value>
+  </data>
+  <data name="TextSettingsTitle" xml:space="preserve">
+    <value>رقم الإرسال الوارد الخاص</value>
+  </data>
+  <data name="TextSettingsActive" xml:space="preserve">
+    <value>يستقبل الرسائل الواردة لقسمك.</value>
+  </data>
+  <data name="TextSettingsSmsOff" xml:space="preserve">
+    <value>هو رقم قسمك؛ لا تنشئ الرسائل المرسلة إليه بلاغات.</value>
+  </data>
+  <data name="TextSettingsLapsed" xml:space="preserve">
+    <value>رقم الإرسال الوارد الخاص بك {0} معلّق حتى {1}.</value>
+  </data>
+  <data name="TextSettingsNone" xml:space="preserve">
+    <value>ليس لدى قسمك رقم خاص به. احصل على رقم مع إضافة Private Inbound Dispatch Number.</value>
+  </data>
+  <data name="TextSettingsLink" xml:space="preserve">
+    <value>إدارة رقم الإرسال الوارد الخاص</value>
+  </data>
+  <data name="TextSettingsInboundOnly" xml:space="preserve">
+    <value>أرقام الأقسام تستقبل الرسائل فقط؛ تصل الردود من رقم Resgrid الرئيسي.</value>
+  </data>
+  <data name="StopTitle" xml:space="preserve">
+    <value>توقّف الدفع مقابل هذا الرقم</value>
+  </data>
+  <data name="StopAddon" xml:space="preserve">
+    <value>توقّف الدفع مقابل إضافة Private Inbound Dispatch Number في {0} (أُلغيت أو لم تُدفع).</value>
+  </data>
+  <data name="StopPlan" xml:space="preserve">
+    <value>منذ {0} لم تعد خطة القسم خطة مدفوعة نشطة، وهي ما تحتاجه إضافة Private Inbound Dispatch Number.</value>
+  </data>
+  <data name="StopIntakeOn" xml:space="preserve">
+    <value>سيتوقف {0} عن استقبال الرسائل والمكالمات في {1}.</value>
+  </data>
+  <data name="StopIntakeStoppedOn" xml:space="preserve">
+    <value>توقف {0} عن استقبال الرسائل والمكالمات في {1}.</value>
+  </data>
+  <data name="StopIntakeStopped" xml:space="preserve">
+    <value>لم يعد {0} يستقبل الرسائل والمكالمات.</value>
+  </data>
+  <data name="StopReleaseOn" xml:space="preserve">
+    <value>سيُعاد الرقم إلى شركة الاتصالات في {0}. جدّد الإضافة (وخطتك) قبل ذلك للاحتفاظ به.</value>
+  </data>
+  <data name="StopWarningsSent" xml:space="preserve">
+    <value>التحذيرات المرسلة إلى مسؤولي القسم: {0}.</value>
+  </data>
+  <data name="StopWarningsNone" xml:space="preserve">
+    <value>لم يُرسَل أي تحذير إلى مسؤولي القسم بعد.</value>
+  </data>
+  <data name="StopLastWarning" xml:space="preserve">
+    <value>آخر تحذير: {0}.</value>
+  </data>
+  <data name="Warning.Stopped" xml:space="preserve">
+    <value>توقّف الدفع</value>
+  </data>
+  <data name="Warning.Days" xml:space="preserve">
+    <value>قبل {0} أيام من التحرير</value>
+  </data>
+  <data name="Warning.OneDay" xml:space="preserve">
+    <value>قبل يوم واحد من التحرير</value>
+  </data>
+  <data name="Region" xml:space="preserve">
+    <value>الولاية / المقاطعة</value>
+  </data>
+  <data name="RegionAny" xml:space="preserve">
+    <value>أي</value>
+  </data>
+  <data name="City" xml:space="preserve">
+    <value>المدينة</value>
+  </data>
+  <data name="PostalCode" xml:space="preserve">
+    <value>الرمز البريدي</value>
+  </data>
+  <data name="NearDepartment" xml:space="preserve">
+    <value>بالقرب من عنوان القسم</value>
+  </data>
+  <data name="NearDistance" xml:space="preserve">
+    <value>ضمن</value>
+  </data>
+  <data name="DistanceMiles" xml:space="preserve">
+    <value>{0} ميل ({1} كم)</value>
+  </data>
+  <data name="SearchFiltersHelp" xml:space="preserve">
+    <value>تنطبق عمليات البحث حسب الولاية / المقاطعة والرمز البريدي وبالقرب من القسم أيضًا على الولايات المتحدة وكندا فقط. يمكن لكل نتيجة استقبال الرسائل والمكالمات معًا.</value>
+  </data>
+  <data name="ResultsType" xml:space="preserve">
+    <value>نوع الرقم</value>
+  </data>
+  <data name="NumberType.Local" xml:space="preserve">
+    <value>رقم محلي</value>
+  </data>
+  <data name="NumberType.Mobile" xml:space="preserve">
+    <value>رقم جوال</value>
+  </data>
+  <data name="Error.DepartmentLocationUnknown" xml:space="preserve">
+    <value>موقع القسم غير معروف. حدّد عنوان القسم أو مركز الخريطة، أو ابحث حسب الولاية أو المدينة أو الرمز البريدي بدلًا من ذلك.</value>
+  </data>
+  <data name="Error.PlanRequired" xml:space="preserve">
+    <value>تحتاج إضافة Private Inbound Dispatch Number إلى خطة مدفوعة نشطة. جدّد خطة القسم أولًا.</value>
+  </data>
+</root>

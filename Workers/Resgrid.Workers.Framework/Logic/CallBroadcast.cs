@@ -361,9 +361,12 @@ namespace Resgrid.Workers.Framework.Logic
 						var ttsLanguage = await departmentSettingsService.GetTtsLanguageForDepartmentAsync(call.DepartmentId);
 						var dispatchText = Resgrid.Services.DispatchVoicePromptBuilder.BuildDispatchPrompt(call, address);
 
+						// Speed is part of the cache key too: the webhook reads the same DispatchSpeed.
+						var dispatchSpeed = Resgrid.Services.DispatchVoicePromptBuilder.DispatchSpeed;
+
 						foreach (var chunk in Resgrid.Services.DispatchVoicePromptBuilder.ChunkText(dispatchText))
 						{
-							await ttsAudioService.GenerateSpeechUrlAsync(chunk, ttsLanguage);
+							await ttsAudioService.GenerateSpeechUrlAsync(chunk, ttsLanguage, dispatchSpeed);
 						}
 					}
 					catch (Exception ex)

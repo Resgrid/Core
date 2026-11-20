@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Канали надходження</value>
+  </data>
+  <data name="PageIntro" xml:space="preserve">
+    <value>Повідомлення, надіслані до каналу надходження, стають викликами в очікуванні. Диспетчер переглядає кожен і вирішує, кому його надіслати; канал ніколи нікого не направляє сам.</value>
+  </data>
+  <data name="FeatureOff" xml:space="preserve">
+    <value>Канали надходження для вашого підрозділу ще не ввімкнено. Ви можете налаштувати їх уже зараз; вони почнуть створювати виклики, щойно функцію буде ввімкнено.</value>
+  </data>
+  <data name="AddChannel" xml:space="preserve">
+    <value>Додати канал</value>
+  </data>
+  <data name="EditChannel" xml:space="preserve">
+    <value>Редагувати канал</value>
+  </data>
+  <data name="NoChannels" xml:space="preserve">
+    <value>Канали надходження ще не налаштовано.</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Назва</value>
+  </data>
+  <data name="NameHelp" xml:space="preserve">
+    <value>Відображається на викликах в очікуванні, створених цим каналом, наприклад "Лінія переведень лікарні".</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Тип каналу</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>Адреса</value>
+  </data>
+  <data name="Mode" xml:space="preserve">
+    <value>Обробка</value>
+  </data>
+  <data name="ModeTemplate" xml:space="preserve">
+    <value>Шаблон виклику</value>
+  </data>
+  <data name="ModeEnhancedAi" xml:space="preserve">
+    <value>Enhanced AI</value>
+  </data>
+  <data name="ModeHelp" xml:space="preserve">
+    <value>Шаблон виклику читає повідомлення за одним із ваших форматів електронних листів викликів. Enhanced AI зберігає повідомлення як виклик в очікуванні, а потім заповнює тип, адресу, пріоритет і стислий опис (потрібен додаток Enhanced AI з прийманням за допомогою ШІ).</value>
+  </data>
+  <data name="TemplateFormat" xml:space="preserve">
+    <value>Шаблон</value>
+  </data>
+  <data name="AllowedSenders" xml:space="preserve">
+    <value>Дозволені відправники</value>
+  </data>
+  <data name="AllowedSendersHelp" xml:space="preserve">
+    <value>Через кому: номери телефонів (із символом-замінником *), адреси електронної пошти або @домени чи ідентифікатори користувачів платформи. Залиште порожнім, щоб приймати від будь-кого, хто надсилає на цю адресу.</value>
+  </data>
+  <data name="DefaultPriority" xml:space="preserve">
+    <value>Пріоритет за замовчуванням</value>
+  </data>
+  <data name="DefaultCallType" xml:space="preserve">
+    <value>Тип виклику за замовчуванням</value>
+  </data>
+  <data name="UseDepartmentDefault" xml:space="preserve">
+    <value>Типово для підрозділу</value>
+  </data>
+  <data name="NoneOption" xml:space="preserve">
+    <value>Немає</value>
+  </data>
+  <data name="SendAcknowledgement" xml:space="preserve">
+    <value>Відповідати відправнику</value>
+  </data>
+  <data name="SendAcknowledgementHelp" xml:space="preserve">
+    <value>Надсилає коротке підтвердження з номером виклику. На SMS відповідає основний номер Resgrid.</value>
+  </data>
+  <data name="Enabled" xml:space="preserve">
+    <value>Увімкнено</value>
+  </data>
+  <data name="Disabled" xml:space="preserve">
+    <value>Вимкнено</value>
+  </data>
+  <data name="Enable" xml:space="preserve">
+    <value>Увімкнути</value>
+  </data>
+  <data name="Disable" xml:space="preserve">
+    <value>Вимкнути</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Редагувати</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Видалити</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Зберегти</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Скасувати</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Стан</value>
+  </data>
+  <data name="ThisMonth" xml:space="preserve">
+    <value>Цього місяця</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Дії</value>
+  </data>
+  <data name="DeleteConfirm" xml:space="preserve">
+    <value>Видалити цей канал надходження? Повідомлення на його адресу більше не створюватимуть виклики.</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Канал надходження збережено.</value>
+  </data>
+  <data name="Deleted" xml:space="preserve">
+    <value>Канал надходження видалено.</value>
+  </data>
+  <data name="Error.InvalidAddress" xml:space="preserve">
+    <value>Ця адреса недійсна для цього типу каналу.</value>
+  </data>
+  <data name="Error.AddressInUse" xml:space="preserve">
+    <value>Цю адресу вже використовує інший канал надходження або адреса диспетчерської пошти підрозділу.</value>
+  </data>
+  <data name="Error.NameRequired" xml:space="preserve">
+    <value>Введіть назву каналу.</value>
+  </data>
+  <data name="Error.Invalid" xml:space="preserve">
+    <value>Не вдалося зберегти канал. Перевірте значення та спробуйте ще раз.</value>
+  </data>
+  <data name="Type.Sms" xml:space="preserve">
+    <value>Текстове повідомлення (SMS)</value>
+  </data>
+  <data name="Type.Email" xml:space="preserve">
+    <value>Електронна пошта</value>
+  </data>
+  <data name="Type.WhatsApp" xml:space="preserve">
+    <value>WhatsApp</value>
+  </data>
+  <data name="Type.Slack" xml:space="preserve">
+    <value>Slack</value>
+  </data>
+  <data name="Type.Teams" xml:space="preserve">
+    <value>Microsoft Teams</value>
+  </data>
+  <data name="Type.Telegram" xml:space="preserve">
+    <value>Telegram</value>
+  </data>
+  <data name="Type.Discord" xml:space="preserve">
+    <value>Discord</value>
+  </data>
+  <data name="Type.GoogleChat" xml:space="preserve">
+    <value>Google Chat</value>
+  </data>
+  <data name="Type.Webhook" xml:space="preserve">
+    <value>Підписаний вебхук</value>
+  </data>
+  <data name="Type.Voice" xml:space="preserve">
+    <value>Телефонний дзвінок (голос)</value>
+  </data>
+  <data name="Help.Sms" xml:space="preserve">
+    <value>Приватний вхідний диспетчерський номер підрозділу в міжнародному форматі, наприклад +17755550100. Цей номер сам створює свій канал під час налаштування.</value>
+  </data>
+  <data name="Help.Voice" xml:space="preserve">
+    <value>Приватний вхідний диспетчерський номер підрозділу в міжнародному форматі. Абоненти, які не є членами, відповідають на голосові запитання голосового приймання Enhanced AI.</value>
+  </data>
+  <data name="Help.Email" xml:space="preserve">
+    <value>Частина перед @. Листи на цю назву в {0} стають викликами в очікуванні. Вона має відрізнятися від адреси диспетчерської пошти вашого підрозділу.</value>
+  </data>
+  <data name="Help.WhatsApp" xml:space="preserve">
+    <value>Номер відправника WhatsApp у міжнародному форматі. Служба підтримки Resgrid реєструє відправника в обліковому записі Twilio компанії Resgrid.</value>
+  </data>
+  <data name="Help.Slack" xml:space="preserve">
+    <value>ID робочого простору/ID каналу, наприклад T012ABCDE/C034FGHIJ. Запросіть застосунок Resgrid до каналу командою /invite @Resgrid, потім скопіюйте ID каналу з відомостей про канал, а ID робочого простору — з відомостей про простір.</value>
+  </data>
+  <data name="Help.Teams" xml:space="preserve">
+    <value>ID клієнта/ID каналу, наприклад 72f988bf-86f1-41af-91ab-2d7cd011db47/19:abc123@thread.tacv2. Додайте застосунок Resgrid до команди й скористайтеся пунктом «Отримати посилання на канал»: ID каналу — частина 19:…@thread.tacv2, ID клієнта — значення tenantId. Згадайте @Resgrid у каналі, щоб надіслати запит.</value>
+  </data>
+  <data name="Help.Telegram" xml:space="preserve">
+    <value>ID чату; ID груп від'ємні, наприклад -1001234567890. Додайте бота Resgrid до групи. Якщо ввімкнено режим приватності, починайте запит із /intake або згадуйте бота.</value>
+  </data>
+  <data name="Help.Discord" xml:space="preserve">
+    <value>ID каналу (увімкніть режим розробника, клацніть канал правою кнопкою й виберіть «Копіювати ID каналу»). Додайте застосунок Resgrid на сервер і використовуйте /resgrid у каналі.</value>
+  </data>
+  <data name="Help.GoogleChat" xml:space="preserve">
+    <value>Назва простору з його URL-адреси, наприклад spaces/AAAAbCdEfGh. Додайте застосунок Resgrid до простору й згадайте його, щоб надіслати запит.</value>
+  </data>
+  <data name="Help.Webhook" xml:space="preserve">
+    <value>Resgrid створює URL-адресу вебхука та секрет підпису під час збереження. Будь-яка система, що вміє надсилати підписаний HTTPS-запит, може створювати виклики.</value>
+  </data>
+  <data name="ChatRules" xml:space="preserve">
+    <value>У пов'язаному чаті кожне нове повідомлення є запитом; відповіді в гілці враховуються, лише якщо згадують Resgrid. Особисті повідомлення боту Resgrid працюють як раніше.</value>
+  </data>
+  <data name="WebhookUrl" xml:space="preserve">
+    <value>URL-адреса вебхука</value>
+  </data>
+  <data name="WebhookSecret" xml:space="preserve">
+    <value>Секрет підпису</value>
+  </data>
+  <data name="WebhookSecretOnce" xml:space="preserve">
+    <value>Скопіюйте секрет зараз. Його показано лише цей раз; якщо його буде втрачено, змініть його.</value>
+  </data>
+  <data name="WebhookNoSecret" xml:space="preserve">
+    <value>Секрет підпису не задано, тому кожен запит відхиляється. Змініть секрет, щоб створити його.</value>
+  </data>
+  <data name="RotateSecret" xml:space="preserve">
+    <value>Змінити секрет</value>
+  </data>
+  <data name="RotateConfirm" xml:space="preserve">
+    <value>Змінити секрет підпису? Поточний секрет одразу перестане працювати.</value>
+  </data>
+  <data name="WebhookSigning" xml:space="preserve">
+    <value>Підписуйте кожен запит заголовком X-Resgrid-Signature: t=&lt;секунди unix&gt;,v1=&lt;шістнадцятковий HMAC-SHA256 від "t.body" із секретом&gt;. Запити, старші за {0} секунд, відхиляються.</value>
+  </data>
+  <data name="WebhookSample" xml:space="preserve">
+    <value>Приклад запиту</value>
+  </data>
+  <data name="WebhookBody" xml:space="preserve">
+    <value>Тіло запиту — JSON: message (обов'язково), subject, sender, externalId (повтор із тим самим ID ніколи не створює другого виклику), address, latitude і longitude.</value>
+  </data>
+  <data name="Via" xml:space="preserve">
+    <value>через {0}: {1}</value>
+  </data>
+  <data name="ViaType" xml:space="preserve">
+    <value>через {0}</value>
+  </data>
+  <data name="TextSettingsIntro" xml:space="preserve">
+    <value>Канали надходження перетворюють SMS, листи, повідомлення чатів і запити вебхуків на виклики в очікуванні.</value>
+  </data>
+  <data name="ManageIntakeChannels" xml:space="preserve">
+    <value>Керувати каналами надходження</value>
+  </data>
+</root>

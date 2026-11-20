@@ -74,7 +74,6 @@ namespace Resgrid.Web.Areas.User.Models
 		public int CallsSort { get; set; }
 		public SelectList CallSortTypes { get; set; }
 
-		public bool EnableModernNotifications { get; set; }
 		public bool RequirePasswordResetViaEmail { get; set; }
 
 		[Display(Name = "Require security PIN for dangerous chatbot/text actions")]

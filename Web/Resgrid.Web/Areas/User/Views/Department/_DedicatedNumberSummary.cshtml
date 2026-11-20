@@ -1,0 +1,31 @@
+@* Text Messaging Settings: the department's dedicated number (Dedicated Number add-on) and a link to manage it. Reads the
+   department's number rows only (no billing call), so the settings page stays as fast as before. *@
+@inject Resgrid.Model.Services.IDepartmentPhoneNumbersService departmentPhoneNumbers
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.DedicatedNumber> dedicatedNumberLocalizer
+@{
+	var numbers = await departmentPhoneNumbers.GetAllForDepartmentAsync(ClaimsAuthorizationHelper.GetDepartmentId());
+	var activeNumber = numbers.FirstOrDefault(n => n.Status == (int)DepartmentPhoneNumberStatuses.Active);
+	var lapsedNumber = numbers.FirstOrDefault(n => n.Status == (int)DepartmentPhoneNumberStatuses.Lapsed);
+}
+<div class="form-group" id="dedicatedNumberSummary">
+	<label class="col-sm-2 control-label">@dedicatedNumberLocalizer["TextSettingsTitle"]</label>
+	<div class="col-sm-10">
+		<p class="form-control-static">
+			@if (activeNumber != null)
+			{
+				<strong>@activeNumber.PhoneNumber</strong>
+				<span class="text-muted">@(activeNumber.SmsIntakeEnabled ? dedicatedNumberLocalizer["TextSettingsActive"] : dedicatedNumberLocalizer["TextSettingsSmsOff"])</span>
+			}
+			else if (lapsedNumber != null)
+			{
+				@string.Format(dedicatedNumberLocalizer["TextSettingsLapsed"].Value, lapsedNumber.PhoneNumber, lapsedNumber.ReleaseAfter.HasValue ? lapsedNumber.ReleaseAfter.Value.ToString("D") : "")
+			}
+			else
+			{
+				@dedicatedNumberLocalizer["TextSettingsNone"]
+			}
+		</p>
+		<a class="btn btn-default btn-sm" asp-controller="DedicatedNumber" asp-action="Index" asp-route-area="User">@dedicatedNumberLocalizer["TextSettingsLink"]</a>
+		<span class="help-block m-b-none">@dedicatedNumberLocalizer["TextSettingsInboundOnly"]</span>
+	</div>
+</div>

@@ -42,7 +42,7 @@
                         <div class="row">
                             <div class="col-xs-6">
                                 <small class="stats-label">@localizer["UnitLabel"]</small>
-                                <h4>@instance.UnitId</h4>
+                                <h4>@(Model.UnitNames.TryGetValue(instance.UnitId, out var unitName) ? unitName : instance.UnitId.ToString())</h4>
                             </div>
                             <div class="col-xs-6">
                                 <small class="stats-label">@localizer["StopsLabel"]</small>
@@ -55,6 +55,12 @@
                         <div class="m-t-sm small">
                             @localizer["StartedLabel"]: @(instance.ActualStartOn?.ToString("HH:mm") ?? "-")
                         </div>
+                        @if (instance.CallId.HasValue && Model.LinkedCalls.TryGetValue(instance.CallId.Value, out var linkedCall))
+                        {
+                            <div class="small">
+                                @localizer["LinkedCall"]: <partial name="_RouteLinkedCall" model="linkedCall" />
+                            </div>
+                        }
                         <a class="btn btn-xs btn-primary m-t-sm" asp-controller="Routes" asp-action="InstanceDetail" asp-route-instanceId="@instance.RouteInstanceId" asp-route-area="User">
                             @localizer["ViewDetails"]
                         </a>

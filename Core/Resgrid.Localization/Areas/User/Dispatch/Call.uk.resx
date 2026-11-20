@@ -1140,4 +1140,112 @@
   <data name="DestinationAvailabilityLink" xml:space="preserve">
     <value>Доступність пунктів призначення</value>
   </data>
+  <data name="LocationPoiPlaceholder" xml:space="preserve">
+    <value>Місцезнаходження з POI (необов'язково)</value>
+  </data>
+  <data name="LocationPoiHelp" xml:space="preserve">
+    <value>Вибір POI заповнює адресу та мітку на мапі; обидва можна змінити.</value>
+  </data>
+  <data name="InvalidLocationPoi" xml:space="preserve">
+    <value>Виберіть зі списку POI для місця виклику.</value>
+  </data>
+  <data name="LocationPoiDisplayLabel" xml:space="preserve">
+    <value>POI місцезнаходження</value>
+  </data>
+  <data name="DestinationLocationLabel" xml:space="preserve">
+    <value>Або місце призначення</value>
+  </data>
+  <data name="DestinationLocationHelp" xml:space="preserve">
+    <value>Для пункту призначення, який не є POI: адреса, координати, what3words або Plus-код. Не можна одночасно вказати POI призначення і місце призначення.</value>
+  </data>
+  <data name="DestinationAddressPlaceholder" xml:space="preserve">
+    <value>Адреса призначення</value>
+  </data>
+  <data name="DestinationPlusCodePlaceholder" xml:space="preserve">
+    <value>Plus-код</value>
+  </data>
+  <data name="FindPlusCode" xml:space="preserve">
+    <value>Знайти Plus-код</value>
+  </data>
+  <data name="ClearDestinationLocation" xml:space="preserve">
+    <value>Очистити місце призначення</value>
+  </data>
+  <data name="InvalidDestinationCoordinates" xml:space="preserve">
+    <value>Введіть широту й довготу пункту призначення як десяткові числа з крапкою, наприклад 50.8503 і 4.3517.</value>
+  </data>
+  <data name="DestinationLocationNotFound" xml:space="preserve">
+    <value>Для цього пункту призначення місце не знайдено.</value>
+  </data>
+  <data name="PlusCodeNotFound" xml:space="preserve">
+    <value>Для цього Plus-коду місце не знайдено.</value>
+  </data>
+  <data name="CallRouteLabel" xml:space="preserve">
+    <value>Маршрут</value>
+  </data>
+  <data name="CallRoutePlaceholder" xml:space="preserve">
+    <value>Без маршруту</value>
+  </data>
+  <data name="CallRouteHelp" xml:space="preserve">
+    <value>Попередньо визначений маршрут для підрозділу, що обслуговує виклик. Порожнє місце виклику отримує початок маршруту, а порожній пункт призначення — його кінець.</value>
+  </data>
+  <data name="CallRoutePreview" xml:space="preserve">
+    <value>Переглянути маршрут</value>
+  </data>
+  <data name="CallRouteStops" xml:space="preserve">
+    <value>Зупинок: {0}</value>
+  </data>
+  <data name="CallRouteUnavailable" xml:space="preserve">
+    <value>{0} (більше недоступний)</value>
+  </data>
+  <data name="CallRouteDeleted" xml:space="preserve">
+    <value>Видалений маршрут</value>
+  </data>
+  <data name="InvalidCallRoute" xml:space="preserve">
+    <value>Виберіть зі списку активний маршрут із початком і кінцем.</value>
+  </data>
+  <data name="CallRouteStart" xml:space="preserve">
+    <value>Початок маршруту</value>
+  </data>
+  <data name="CallRouteEnd" xml:space="preserve">
+    <value>Кінець маршруту</value>
+  </data>
+  <data name="CallRouteRunsLabel" xml:space="preserve">
+    <value>Проходження маршруту</value>
+  </data>
+  <data name="CallRouteRunUnit" xml:space="preserve">
+    <value>Підрозділ</value>
+  </data>
+  <data name="CallRouteRunStatus" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="CallRouteRunStops" xml:space="preserve">
+    <value>Зупинки</value>
+  </data>
+  <data name="CallRouteRunStarted" xml:space="preserve">
+    <value>Розпочато</value>
+  </data>
+  <data name="CallRouteRunEnded" xml:space="preserve">
+    <value>Завершено</value>
+  </data>
+  <data name="CallRouteRunStatusScheduled" xml:space="preserve">
+    <value>Заплановано</value>
+  </data>
+  <data name="CallRouteRunStatusInProgress" xml:space="preserve">
+    <value>Триває</value>
+  </data>
+  <data name="CallRouteRunStatusCompleted" xml:space="preserve">
+    <value>Виконано</value>
+  </data>
+  <data name="CallRouteRunStatusCancelled" xml:space="preserve">
+    <value>Скасовано</value>
+  </data>
+  <data name="CallRouteRunStatusAbandoned" xml:space="preserve">
+    <value>Покинуто</value>
+  </data>
+  <data name="CallRouteRunStatusPaused" xml:space="preserve">
+    <value>Призупинено</value>
+  </data>
+  <data name="CallRouteNoRuns" xml:space="preserve">
+    <value>Жоден підрозділ ще не розпочав цей маршрут.</value>
+  </data>
 </root>

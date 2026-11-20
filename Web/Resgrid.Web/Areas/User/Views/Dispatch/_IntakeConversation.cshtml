@@ -1,0 +1,106 @@
+@model Resgrid.Model.Call
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.IntakeConversation> conversationLocalizer
+@inject Resgrid.Model.Services.IIntakeConversationService intakeConversations
+@*
+	Intake SMS conversation (call-intake-and-ai-destinations-plan.md §8 D15-D17) on View Call and Update Call, for calls that have one:
+	the thread with the member of the public who texted the department's dedicated number (continued from the master Resgrid number),
+	"Take conversation", Release, End (optionally telling the texter) and a send box. Shown whether or not the dispatcher desk took the
+	conversation (the desk follows through its router callbacks). The script loads the thread from User/IntakeConversations/Thread, which
+	applies the member's right to view the call, and reloads on the intakeConversationUpdated eventing event. Texts to the texter are English
+	(outbound localization gap); this panel's own labels are localized. View data "IntakeConversation.Form" = true lays it out as a form group
+	(Update Call); "IntakeConversation.StartHub" = true starts the eventing connection on a page that has none (unless the destination
+	advice panel already does).
+*@
+@{
+	var conversation = Model != null && Model.CallId > 0 && !Model.IsDeleted ? await intakeConversations.GetForCallAsync(Model.DepartmentId, Model.CallId) : null;
+	var form = ViewData["IntakeConversation.Form"] is bool f && f;
+	var startHub = ViewData["IntakeConversation.StartHub"] is bool h && h;
+	var maxLength = Math.Max(1, Resgrid.Config.IntakeConfig.ConversationMaxOutboundLength);
+}
+@if (conversation != null)
+{
+	<div class="@(form ? "form-group" : "row")" id="intakeConversationPanel" style="display: none;" data-call-id="@Model.CallId"
+		 data-start-hub="@(startHub ? "true" : "false")" data-max-length="@maxLength">
+		@if (form)
+		{
+			<label class="col-sm-2 control-label">@conversationLocalizer["Title"]</label>
+		}
+		<div class="@(form ? "col-sm-10" : "col-lg-12")">
+			<div class="panel panel-default" style="margin-bottom: 10px;">
+				<div class="panel-heading" style="padding: 6px 10px;">
+					@if (!form)
+					{
+						<strong><i class="fa fa-comments-o"></i> @conversationLocalizer["Title"]</strong>
+					}
+					<span id="intakeConversationState" class="label"></span>
+					<span id="intakeConversationHandler" class="small"></span>
+					<span id="intakeConversationTexter" class="small text-muted pull-right"></span>
+				</div>
+				<div class="panel-body" style="padding: 8px 10px;">
+					<div id="intakeConversationThread" style="max-height: 320px; overflow-y: auto;"></div>
+					<div id="intakeConversationNotice" class="small" style="display: none; margin-top: 6px;"></div>
+					<div id="intakeConversationActions" style="display: none; margin-top: 8px;">
+						<button type="button" class="btn btn-xs btn-primary" id="intakeConversationTake"><i class="fa fa-headphones"></i> @conversationLocalizer["Take"]</button>
+						<button type="button" class="btn btn-xs btn-white" id="intakeConversationRelease">@conversationLocalizer["Release"]</button>
+						<span class="pull-right">
+							<label class="small" style="font-weight: normal; margin-right: 6px;">
+								<input type="checkbox" id="intakeConversationNotify" /> @conversationLocalizer["NotifyTexter"]
+							</label>
+							<button type="button" class="btn btn-xs btn-white" id="intakeConversationClose">@conversationLocalizer["Close"]</button>
+						</span>
+					</div>
+					<div id="intakeConversationCompose" style="display: none; margin-top: 8px;">
+						<textarea id="intakeConversationText" class="form-control" rows="2" maxlength="@maxLength" placeholder="@conversationLocalizer["SendPlaceholder"]"
+								  aria-label="@conversationLocalizer["SendPlaceholder"]"></textarea>
+						<div class="small text-muted" style="margin-top: 4px;">
+							<span id="intakeConversationCounter">0/@maxLength</span> &middot; @conversationLocalizer["EnterToSend"]
+							<button type="button" class="btn btn-xs btn-primary pull-right" id="intakeConversationSend">@conversationLocalizer["Send"]</button>
+						</div>
+					</div>
+					<div class="small text-muted" style="margin-top: 8px; clear: both;">@conversationLocalizer["FromResgridNumber"]</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		var intakeConversationStrings = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(new
+		{
+			stateOpen = conversationLocalizer["StateOpen"].Value,
+			stateClosed = conversationLocalizer["StateClosed"].Value,
+			handlerAssistant = conversationLocalizer["HandlerAssistant"].Value,
+			handlerUnassisted = conversationLocalizer["HandlerUnassisted"].Value,
+			handlerDispatcher = conversationLocalizer["HandlerDispatcher"].Value,
+			handlerDispatcherYou = conversationLocalizer["HandlerDispatcherYou"].Value,
+			texter = conversationLocalizer["Texter"].Value,
+			optedOut = conversationLocalizer["OptedOut"].Value,
+			closedReason = conversationLocalizer["ClosedReason"].Value,
+			authorCaller = conversationLocalizer["AuthorCaller"].Value,
+			authorAssistant = conversationLocalizer["AuthorAssistant"].Value,
+			authorSystem = conversationLocalizer["AuthorSystem"].Value,
+			authorDispatcher = conversationLocalizer["AuthorDispatcher"].Value,
+			statusQueued = conversationLocalizer["StatusQueued"].Value,
+			statusSent = conversationLocalizer["StatusSent"].Value,
+			statusFailed = conversationLocalizer["StatusFailed"].Value,
+			textUnavailable = conversationLocalizer["TextUnavailable"].Value,
+			noMessages = conversationLocalizer["NoMessages"].Value,
+			takeOverConfirm = conversationLocalizer["TakeOverConfirm"].Value,
+			closeConfirm = conversationLocalizer["CloseConfirm"].Value,
+			failed = conversationLocalizer["Failed"].Value,
+			outcomes = new System.Collections.Generic.Dictionary<string, string>
+			{
+				["NotFound"] = conversationLocalizer["Outcome.NotFound"].Value,
+				["Closed"] = conversationLocalizer["Outcome.Closed"].Value,
+				["HeldByAnotherDispatcher"] = conversationLocalizer["Outcome.HeldByAnotherDispatcher"].Value,
+				["OptedOut"] = conversationLocalizer["Outcome.OptedOut"].Value,
+				["SendFailed"] = conversationLocalizer["Outcome.SendFailed"].Value,
+				["InvalidMessage"] = conversationLocalizer["Outcome.InvalidMessage"].Value
+			},
+			closeReasons = new System.Collections.Generic.Dictionary<string, string>
+			{
+				["OptedOut"] = conversationLocalizer["CloseReason.OptedOut"].Value,
+				["Idle"] = conversationLocalizer["CloseReason.Idle"].Value,
+				["CallClosed"] = conversationLocalizer["CloseReason.CallClosed"].Value
+			}
+		}, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
+	</script>
+}

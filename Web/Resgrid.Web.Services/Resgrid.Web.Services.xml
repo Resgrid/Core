@@ -11,6 +11,15 @@
             passes only with the scope and every other principal passes unchanged. The action's own policy still applies.
             </summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.ChatbotPlatformsController.IntakeAsync(Resgrid.Chatbot.Models.ChatbotPlatform,Resgrid.Web.Services.Intake.ChatIntakeMessage)">
+            <summary>
+            Hands a channel / group message from a chat linked as an intake channel to intake (call-intake plan D3; rules on
+            ChatIntakeRouting). Null when the message is not intake (no message, or the chat is not linked), so the caller keeps its
+            existing handling. The acknowledgement, when the channel asks for one, answers in the same chat: inline where the platform
+            takes a reply in the webhook response (Discord, Google Chat, Telegram), through the adapter otherwise (Slack, Teams).
+            A failed intake answers 503 so the platform redelivers; intake takes the failed claim over.
+            </summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.EmailController.Receive(PostmarkDotNet.PostmarkInboundMessage,System.Threading.CancellationToken)">
             <summary>
             The receiver API method call
@@ -64,6 +73,20 @@
             Enrichment runs afterwards on the worker, so a disabled host or a failed enqueue never touches the dispatch itself.
             </summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.EmailController.ReceiveIntakeEmailAsync(PostmarkDotNet.PostmarkInboundMessage,System.String,System.Threading.CancellationToken)">
+            <summary>
+            Email intake (call-intake-and-ai-destinations-plan.md): null when <paramref name="localPart"/> is not an intake channel's
+            address (the dispatch path continues). Otherwise the result Postmark gets: 200 for every outcome a retry cannot change
+            (call created, duplicate, refused, sender not on the channel's list), 400 when creating the call failed so Postmark
+            redelivers and intake takes the failed claim over.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.EmailController.SendIntakeAcknowledgementAsync(PostmarkDotNet.PostmarkInboundMessage,System.String)">
+            <summary>
+            The receipt reply, from do-not-reply and marked auto-replied (RFC 3834), never to automated senders or in answer to an
+            automatic message, so two systems can never bounce acknowledgements back and forth.
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.PaymentWebhooksController">
             <summary>
             Connect webhook receiver for department-connected payment accounts (Workforce &amp; Business Operations plan,
@@ -92,6 +115,61 @@
             Priority. Without a configured format, or when the template can't make a call out
             of the message, the text is imported as the nature of the call the way
             Text-To-Call has always done it.
+            </summary>
+        </member>
+        <member name="F:Resgrid.Web.Services.Controllers.TwilioController.LapsedNumberReply">
+            <summary>The SMS refusal for a lapsed dedicated number (sent from the master number; no message content).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.TwilioController.TryHandleDedicatedNumberTextAsync(Resgrid.Web.Services.Controllers.TwilioMessage)">
+            <summary>
+            Texts to a department's dedicated number (Active with SMS intake on) become pending calls through intake; a Lapsed number
+            answers with a polite refusal. False when the number texted is not a dedicated number (or has SMS intake off), so the
+            master-number paths (text commands, legacy text-to-call, chatbot) run exactly as before. Acknowledgements and refusals
+            go out from the master Resgrid number (D5: no outbound from department numbers). Intake text is not copied into the
+            inbound message log; the pending call holds it and IntakeMessages is the audit.
+            </summary>
+        </member>
+        <member name="F:Resgrid.Web.Services.Controllers.TwilioController.ConversationReplies.None">
+            <summary>The sender has no open intake conversation: the master number's usual handling applies.</summary>
+        </member>
+        <member name="F:Resgrid.Web.Services.Controllers.TwilioController.ConversationReplies.Handled">
+            <summary>The text went to the sender's open conversation; nothing else runs.</summary>
+        </member>
+        <member name="F:Resgrid.Web.Services.Controllers.TwilioController.ConversationReplies.OptedOut">
+            <summary>STOP closed the sender's conversation; the master number's own STOP handling still runs.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.TwilioController.TryHandleConversationReplyAsync(Resgrid.Web.Services.Controllers.TwilioMessage)">
+            <summary>
+            A text to the master number from someone with an open intake conversation (plan §8 D15; the most recently active one within
+            IntakeConfig.ConversationReplyWindowHours, any department) is that conversation's next message.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.TwilioController.DedicatedNumberAsync(System.String)">
+            <summary>The dedicated department number (Active or Lapsed) the request was sent to, else null.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.TwilioController.ResolveIvrDepartmentAsync(System.String,System.String)">
+            <summary>
+            The member IVR's department: on a department's dedicated number, that department when the caller is one of its members
+            (plan D2); otherwise the caller's own department, as before. Twilio sends the called number on every action request.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.TwilioController.DedicatedNumberVoiceAsync(Resgrid.Model.DepartmentPhoneNumber,Resgrid.Web.Services.Models.TwilioGatherRequest)">
+            <summary>
+            A call to a department's dedicated number (plan D2, D6): members get the member IVR in the number's department; others
+            get Enhanced AI voice intake when the number has it on, the department is entitled and under the monthly limit, else
+            the "please text this number" message.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.TwilioController.VoiceIntakeAnswer(System.Int32)">
+            <summary>
+            Voice intake answers (&lt;Gather input="speech"&gt; action, POST). <paramref name="step"/> is the question the caller was
+            asked, so a Twilio retry of an older action never answers the wrong question. Sessions are keyed by CallSid.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.TwilioController.RenderVoiceIntakeTurnAsync(Resgrid.Model.VoiceIntakeTurn,System.Nullable{System.Int32})">
+            <summary>
+            TwiML for one voice intake turn: the question inside a speech &lt;Gather&gt; (the callback question also takes digits),
+            Piper prompts through the voice response service, or the closing prompt and a hang-up.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.TwilioController.IsPromptAudioReadyAsync(System.String,System.Nullable{System.Int32})">
@@ -296,6 +374,37 @@
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.AdminAssistController.DeleteConversationRequest.#ctor(System.String,System.Int64)">
             <summary>Only an owned conversation identifier and expected revision are accepted.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.AiDestinationsController">
+            <summary>
+            Enhanced AI destination advice (call-intake-and-ai-destinations-plan.md D4): the destination the model recommends for a call from
+            its nature, note and call notes and the department's rule-ranked destinations. Advice never changes the call by itself. Anyone who
+            can view the call can read the advice; asking for it, applying it (which sets the call's destination) and dismissing it need the
+            right to edit the call. Live changes arrive on the eventing hub as <c>aiDestinationAdviceUpdated(callId, payload)</c>.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AiDestinationsController.GetAdvice(System.Int32)">
+            <summary>The call's open destination advice, whether the feature is available, and whether the caller may act on it.</summary>
+            <param name="callId">The call.</param>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AiDestinationsController.RequestAdvice(Resgrid.Web.Services.Models.v4.AiDestinations.RequestAiDestinationAdviceInput,System.Threading.CancellationToken)">
+            <summary>
+            "Ask Enhanced AI": advises on the call's destination now (bounded to about 20 seconds) and returns the advice. When nothing the
+            model reads changed since the open advice, that advice comes back with Outcome "Unchanged". When the feature is unavailable or
+            the model could not answer, Advice is the existing open advice (if any) and Outcome says why.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AiDestinationsController.ApplyAdvice(Resgrid.Web.Services.Models.v4.AiDestinations.ApplyAiDestinationAdviceInput,System.Threading.CancellationToken)">
+            <summary>Sets the call's destination to the advice's recommended POI (clearing a free destination), notes who did it on the call, and marks the advice Applied.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AiDestinationsController.DismissAdvice(Resgrid.Web.Services.Models.v4.AiDestinations.DismissAiDestinationAdviceInput,System.Threading.CancellationToken)">
+            <summary>Dismisses the advice. A dismissed change is noted on the call, with the reason when one is given.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AiDestinationsController.AuthorizeAdviceAsync(System.String)">
+            <summary>The department's advice and, when it exists, whether the caller may edit its call (Unauthorized otherwise).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.AiDestinationsController.ConvertAdvice(Resgrid.Model.AiDestinationAdvice,Resgrid.Model.AiDestinationAdviceDetails)">
+            <summary>The v4 shape of an advice row with its display names.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.AuthenticationController">
             <summary>
@@ -670,6 +779,13 @@
             UserSessionClientApplication claim; tokens predating the claim read as ordinary Api).
             </summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.ApplyIntakeSourcesAsync(System.Int32,System.Collections.Generic.IEnumerable{Resgrid.Web.Services.Models.v4.Calls.CallResultData})">
+            <summary>
+            Fills <see cref="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.IntakeChannelName"/> / <see cref="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.IntakeChannelType"/> for calls an intake
+            channel created (CallSource 6 Intake, 7 VoiceIntake) with one lookup for the whole list. Best effort: a failed lookup
+            leaves them null (clients then show a generic "Intake" label), never fails the read.
+            </summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.ApplyBigBoardSafeShellAsync(System.Collections.Generic.IEnumerable{Resgrid.Web.Services.Models.v4.Calls.CallResultData})">
             <summary>
             ADP plan section 7.3: BigBoard is an unattended display and is structurally stepped down.
@@ -930,6 +1046,12 @@
             to belong to it. (The user checks resolve the acting user's active department, which for the managing user need
             not be the key's department; the key's scope already limits what it may do.)
             </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.GetRoutePlanNamesAsync(System.Int32,System.Collections.Generic.IEnumerable{Resgrid.Model.Call})">
+            <summary>Route plan names by id for the calls that name a route (M0322); empty, without a read, when none does.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.GetCallRouteInstancesAsync(Resgrid.Model.Call)">
+            <summary>Runs of the call's route (M0322), newest first, with plan and unit names.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.CallTypesController">
             <summary>
@@ -3271,6 +3393,85 @@
         <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentVoiceController.CloseIncidentChannels(System.Int32)">
             <summary>Closes all open on-demand tactical channels for a call.</summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.IntakeController">
+            <summary>
+            Signed webhook intake (call-intake-and-ai-destinations-plan.md D3): any other system (CAD bridge, alarm panel, Zapier)
+            posts a JSON request to a department's webhook channel and it becomes a PENDING call a dispatcher reviews. The URL token
+            names the channel; the body is authenticated with the channel's secret: header
+            <c>X-Resgrid-Signature: t=&lt;unix seconds&gt;,v1=&lt;hex HMAC-SHA256 of "{t}.{raw body}"&gt;</c>, within
+            IntakeConfig.WebhookTimestampToleranceSeconds. Body: <c>{ "subject"?, "message", "sender"?, "externalId"?, "latitude"?,
+            "longitude"?, "address"? }</c>, at most IntakeConfig.MaxWebhookBodyBytes. The same externalId (or, without one, the same
+            signed request) never creates a second call.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IntakeController.Webhook(System.String,System.Threading.CancellationToken)">
+            <summary>Creates a pending call from a signed webhook request.</summary>
+            <param name="token">The channel's webhook token (from its URL).</param>
+            <param name="cancellationToken">Request cancellation.</param>
+            <returns>
+            200 with the call id when the call was created (or already had been, for a repeated request); 400 for a body that is not
+            the expected JSON; 401 for a missing, stale or wrong signature; 403 when the department or channel refuses it; 404 for an
+            unknown or disabled channel; 413 for a body over the limit; 429 when the channel sends too fast; 503 when creating the
+            call failed (retry).
+            </returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IntakeController.ReadBodyAsync(System.IO.Stream,System.Int32,System.Threading.CancellationToken)">
+            <summary>The body as UTF-8 text, or null when it is longer than <paramref name="max"/> bytes.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IntakeController.Parse(System.String)">
+            <summary>The request fields, or null when the body is not a JSON object with a non-empty message.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.IntakeWebhookRequest">
+            <summary>The webhook intake body.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.IntakeWebhookResult">
+            <summary>The webhook intake answer.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.v4.IntakeWebhookResult.Status">
+            <summary>CallCreated, Duplicate, Refused, SenderNotAllowed, Failed, InvalidSignature, StaleSignature, InvalidBody, TooLarge, TooManyRequests.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.IntakeWebhookRateLimiter">
+            <summary>
+            Per webhook token fixed one-minute window, per API process (an unsigned flood is cut off before any database read). Old
+            windows are dropped as they are passed.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IntakeWebhookRateLimiter.Reset">
+            <summary>Tests: forget every window.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.IntakeConversationsController">
+            <summary>
+            Intake SMS conversations (call-intake-and-ai-destinations-plan.md §8 D15–D17): a member of the public texted the department's
+            dedicated number, the text became a pending call, and the conversation continues from the master Resgrid number. Anyone who can
+            view the call reads the thread (the texter's number masked unless they may edit the call); taking it ("You are now connected with
+            {FirstName} …"), texting, releasing it back to Enhanced AI / unassisted and closing it need the right to edit the call. Live changes
+            arrive on the eventing hub as <c>intakeConversationUpdated(callId, payload)</c> (payload: conversation id, state, handler).
+            The dispatcher desk uses the same service; this is the call screen's (web View Call, Omni call detail) way in.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IntakeConversationsController.GetForCall(System.Int32,System.Threading.CancellationToken)">
+            <summary>The call's conversation (open, else the newest closed one) with its messages; Conversation is null when the call has none.</summary>
+            <param name="callId">The call.</param>
+            <param name="cancellationToken">The cancellation token.</param>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IntakeConversationsController.Connect(Resgrid.Web.Services.Models.v4.IntakeConversations.ConnectIntakeConversationInput,System.Threading.CancellationToken)">
+            <summary>Takes the conversation: Enhanced AI goes silent and the texter is told who they are connected with. TakeOver takes it from another dispatcher.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IntakeConversationsController.Send(Resgrid.Web.Services.Models.v4.IntakeConversations.SendIntakeConversationInput,System.Threading.CancellationToken)">
+            <summary>Texts the texter (from the master number). Only the connected dispatcher may; with nobody connected, the caller connects first.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IntakeConversationsController.Release(Resgrid.Web.Services.Models.v4.IntakeConversations.ReleaseIntakeConversationInput,System.Threading.CancellationToken)">
+            <summary>Steps away: Enhanced AI resumes when the department has it, else the conversation waits for a dispatcher. No text is sent.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IntakeConversationsController.Close(Resgrid.Web.Services.Models.v4.IntakeConversations.CloseIntakeConversationInput,System.Threading.CancellationToken)">
+            <summary>Ends the conversation; Notify texts the texter that it ended (from the master number). The pending call stays.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IntakeConversationsController.AuthorizeAsync(System.String)">
+            <summary>The department's conversation and, when it exists, whether the caller may edit its call (Unauthorized otherwise).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IntakeConversationsController.ConvertConversation(Resgrid.Model.IntakeConversation,System.Boolean,System.String)">
+            <summary>The v4 shape of a conversation; the texter's number is masked unless the caller may edit the call.</summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.InventoryController.GetAll(System.Int32)">
             <summary>One page of catalog items. Continue with page+1 while HasMore is true.</summary>
         </member>
@@ -3431,6 +3632,19 @@
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.ConvertDestinationRequirements(Resgrid.Model.DestinationRequirements)">
             <summary>The resolved destination requirements as the v4 shape.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.GetDestinationRules">
+            <summary>
+            The department's destination rules (read-only; edited on the web under Mapping -> POIs -> Destination Rules) and its
+            destination suggestions setting, with the names of the call types, priorities, unit types, destination types and
+            capabilities they refer to, so dispatchers can see why a destination is suggested.
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.MappingController.DestinationRuleNames">
+            <summary>The department's names for what destination rules refer to, by id.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.ConvertDestinationRule(Resgrid.Model.DestinationRule,Resgrid.Web.Services.Controllers.v4.MappingController.DestinationRuleNames)">
+            <summary>A destination rule as the v4 shape; ids naming something deleted keep no name and count as missing.</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.SetPoiAvailability(Resgrid.Web.Services.Models.v4.Mapping.SetPoiAvailabilityInput,System.Threading.CancellationToken)">
             <summary>
@@ -4828,7 +5042,7 @@
             offsets, and the full route with turn-by-turn steps. A stale route is regenerated first.
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.GetInstanceDirections(System.String,System.Nullable{System.Decimal},System.Nullable{System.Decimal},System.Nullable{System.Double},System.Boolean,System.String,System.Boolean,System.Threading.CancellationToken)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.GetInstanceDirections(System.String,System.Nullable{System.Decimal},System.Nullable{System.Decimal},System.Nullable{System.Double},System.Boolean,System.String,System.Boolean,System.Boolean,System.Threading.CancellationToken)">
             <summary>
             Gets the route geometry and remaining waypoints for an active route instance. With latitude and longitude the
             route is computed live from that position through the remaining stops, with an ETA per stop (heading, navigation,
@@ -4851,6 +5065,23 @@
             </summary>
         </member>
         <!-- Badly formed XML comment ignored for member "M:Resgrid.Web.Services.Controllers.v4.RoutesController.UpdateStopNotes(Resgrid.Web.Services.Models.v4.Routes.UpdateStopNotesInput)" -->
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.GetCallRoutePlans">
+            <summary>
+            The route plans a call can follow (M0322): active, not deleted, with a start and an end. For the call form's route picker.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.StartCallRoute(Resgrid.Web.Services.Models.v4.Routes.StartCallRouteInput)">
+            <summary>
+            Starts the call's route (M0322) for the unit working it, or returns the unit's running or paused run of this call. 409
+            (type route_in_progress, detail = the running instance id) when the unit runs another route.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.ReachRouteStart(Resgrid.Web.Services.Models.v4.Routes.ReachRouteStartInput)">
+            <summary>
+            Records that the unit reached the plan start of a call route (M0322): the leading leg of instance directions asked with
+            includeStart. No-op when already recorded.
+            </summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.GetActiveRouteInstances">
             <summary>
             Gets all active route instances across the department with progress details
@@ -4872,6 +5103,21 @@
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.PlanReferencesValidAsync(Resgrid.Web.Services.Models.v4.Routes.NewRoutePlanInput)">
             <summary>The plan's unit and stations must be the caller's department's (never trust posted keys).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.CanReadPlan(Resgrid.Model.RoutePlan)">
+            <summary>Route_View reads any plan; a caller who only works calls may read an active plan a call can follow (M0322).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.CanReadInstanceAsync(Resgrid.Model.RouteInstance)">
+            <summary>Route_View, or a run of a call's route (M0322) on a call the caller can view.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.CanOperateInstanceAsync(Resgrid.Model.RouteInstance)">
+            <summary>
+            Route_Update, or a run of a call's route (M0322) by a unit the caller can view (its crew) on a call the caller can view:
+            running the route a dispatcher put on a call is operational work, not route management.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.RouteStartPoint(Resgrid.Model.RoutePlanRouteResult)">
+            <summary>The end point of a live route's leading route-start leg: the first waypoint after the origin.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.RoutingController">
             <summary>
@@ -8812,6 +9058,51 @@
             wait 30 seconds for a group ack that never comes and then throw.
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Intake.ChatIntakeMessage">
+            <summary>A channel / group chat message that may be intake, read from a platform webhook the controller already verified.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Intake.ChatIntakeMessage.Address">
+            <summary>The chat's intake address (IntakeChannel.Address format for the platform).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Intake.ChatIntakeMessage.ProviderMessageId">
+            <summary>Stable per message across the platform's retries and event types (Slack message + app_mention share it).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Intake.ChatIntakeMessage.AddressesBot">
+            <summary>The message addresses the bot (mention, slash command, reply to the bot).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Intake.ChatIntakeMessage.Reply">
+            <summary>What the platform needs to answer in the same chat (acknowledgement).</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Intake.ChatIntakeRouting">
+            <summary>
+            Which channel / group chat messages become intake (call-intake-and-ai-destinations-plan.md D3). Direct messages are never
+            read here: they keep today's chatbot path. The rule, for a chat the department linked as an intake channel:
+            <list type="bullet">
+            <item>a linked chat is intake-only: every top-level human message in it is intake, with or without a mention;</item>
+            <item>a thread reply (Slack thread, Telegram reply to someone else) is intake only when it addresses the bot, so people
+            discussing a request under it do not create more calls;</item>
+            <item>bot, edited, joined/left and other system messages are ignored;</item>
+            <item>platforms that only deliver messages that address the bot in channels (Teams, Google Chat spaces, Discord slash
+            commands, Telegram groups with privacy mode on) therefore need the mention or command there.</item>
+            </list>
+            Unlinked chats are ignored exactly as before (the caller falls through to its existing handling).
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Intake.ChatIntakeRouting.Slack(Newtonsoft.Json.Linq.JObject)">
+            <summary>Slack Events API callback: a message (or app_mention) in a public or private channel.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Intake.ChatIntakeRouting.Teams(Newtonsoft.Json.Linq.JObject)">
+            <summary>Bot Framework activity: a message in a team channel or group chat (Teams delivers only those that mention the bot).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Intake.ChatIntakeRouting.Telegram(Newtonsoft.Json.Linq.JObject)">
+            <summary>Telegram update: a group / supergroup message or a channel post.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Intake.ChatIntakeRouting.Discord(Newtonsoft.Json.Linq.JObject)">
+            <summary>Discord interaction: the /resgrid (or /intake) slash command used in a server channel.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Intake.ChatIntakeRouting.GoogleChat(Newtonsoft.Json.Linq.JObject)">
+            <summary>Google Chat event: a message in a space or group chat (the app receives those that mention it).</summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Middleware.ResgridAuthenticationEvents.OnAuthenticationFailed">
             <summary>
             Gets or sets the on authentication failed.
@@ -8963,6 +9254,9 @@
             cropped image height
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.TwilioGatherRequest.CallSid">
+            <summary>The carrier's call id; voice intake keys its session on it so Twilio's retries resume the same call.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.AccountSecurity.AccountMethodsResult">
             <summary>
             The signed-in user's own sign-in methods (plan section 6.5): the same view in every app.
@@ -9081,6 +9375,64 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.AccountSecurity.FactorRecoveryStatusResultData.Passkeys">
             <summary>The account's passkeys, to choose any that were lost.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.AiDestinations.AiDestinationAdviceResult">
+            <summary>A call's Enhanced AI destination advice, or why there is none.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AiDestinations.AiDestinationAdviceResultData.Available">
+            <summary>The department may use destination advice now (feature, add-on, operator model, not Advanced Data Protection).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AiDestinations.AiDestinationAdviceResultData.Outcome">
+            <summary>
+            What the request did, or why it did nothing: Advised, Unchanged, Applied, Dismissed, Disabled, NotEntitled, Unconfigured,
+            ProtectionUnsupported, CallNotOpen, NoLocation, NoCandidates, Busy, BudgetExhausted, Unavailable, InvalidOutput, NotFound,
+            NotOpen, NothingToApply, DestinationGone. Null on GetAdvice.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AiDestinations.AiDestinationAdviceResultData.CanApply">
+            <summary>The caller may edit the call, so may ask, apply and dismiss.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AiDestinations.AiDestinationAdviceResultData.Advice">
+            <summary>The call's open advice (or the advice the operation acted on); null when there is none.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AiDestinations.AiDestinationAdviceData.CurrentPoiId">
+            <summary>The call's destination POI when the advice was made; null = none or a free destination.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AiDestinations.AiDestinationAdviceData.RecommendedPoiId">
+            <summary>The recommended destination POI; null = keep the current destination.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AiDestinations.AiDestinationAdviceData.RecommendedPoiStatus">
+            <summary>The recommended destination's current availability (0 Open, 1 Limited, 2 Diversion, 3 Closed); null = open, nothing reported.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AiDestinations.AiDestinationAdviceData.RequiredCapabilities">
+            <summary>The capabilities the model judged necessary (department capability ids and names).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AiDestinations.AiDestinationAdviceData.Rationale">
+            <summary>The model's short reasoning (at most 400 characters). Never applied automatically.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AiDestinations.AiDestinationAdviceData.Confidence">
+            <summary>0..1.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AiDestinations.AiDestinationAdviceData.IsChange">
+            <summary>The recommendation differs from the current destination.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AiDestinations.AiDestinationAdviceData.IsConfident">
+            <summary>True when the change is confident enough to have been noted on the call and pushed (AiDestinationConfig.MinimumConfidence).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AiDestinations.AiDestinationAdviceData.State">
+            <summary>1 Open, 2 Applied, 3 Dismissed, 4 Superseded.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.AiDestinations.AiDestinationAdviceData.Trigger">
+            <summary>What asked for it: 1 OnDemand, 2 CallCreated, 3 CallUpdated, 4 NoteAdded, 5 AvailabilityChanged.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.AiDestinations.RequestAiDestinationAdviceInput">
+            <summary>Ask Enhanced AI for the call's destination now.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.AiDestinations.ApplyAiDestinationAdviceInput">
+            <summary>Set the call's destination to the advice's recommendation.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.AiDestinations.DismissAiDestinationAdviceInput">
+            <summary>Dismiss the advice; the reason (optional) is written to the call's notes when the advice was a change.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Authentication.LoginTransactionInput">
             <summary>
@@ -10061,10 +10413,30 @@
             Protocols active fro this call
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallExtraDataResultData.RouteInstances">
+            <summary>
+            Runs of the call's route started by the units working it (M0322), newest first.
+            </summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Models.v4.Calls.CallExtraDataResultData.#ctor">
             <summary>
             Default constructor
             </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Calls.CallRouteInstanceResultData">
+            <summary>A run of the call's route by one unit (M0322).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallRouteInstanceResultData.Status">
+            <summary>RouteInstanceStatus: 0 Scheduled, 1 InProgress, 2 Completed, 3 Cancelled, 4 Abandoned, 5 Paused.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallRouteInstanceResultData.ActualStartOn">
+            <summary>ISO 8601 UTC ("Z"); null when not started.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallRouteInstanceResultData.ActualEndOn">
+            <summary>ISO 8601 UTC ("Z"); null while running.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallRouteInstanceResultData.StartReachedOn">
+            <summary>When the unit reached the plan start, ISO 8601 UTC ("Z"); null until then.</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.DispatchedEventResultData.DestinationSource">
             <summary>
@@ -10253,6 +10625,37 @@
             Destination longitude.
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.DestinationGeolocation">
+            <summary>
+            Free destination point "lat,lon" when the destination is not a POI (M0322); DestinationAddress / DestinationLatitude /
+            DestinationLongitude are filled from the free destination too, with DestinationPoiId and DestinationName null.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.DestinationWhat3Words">
+            <summary>
+            Free destination what3words address (M0322).
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.LocationPoiId">
+            <summary>
+            The POI the call location was picked from (M0322); null when none.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.LocationPoiName">
+            <summary>
+            The location POI's display name, when it was looked up (M0322).
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.RoutePlanId">
+            <summary>
+            The pre-defined route the call follows (M0322); null when none.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.RoutePlanName">
+            <summary>
+            The route plan's name, when it was looked up (GetCall, GetActiveCalls and the pending/scheduled lists).
+            </summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.Geolocation">
             <summary>
             Geo location Coordinates
@@ -10438,6 +10841,24 @@
             The recurring call schedule that created this call (RecurringCalls/GetRecurringCall), or null. It is only the link to the
             schedule: a pending call with one may be waiting for a dispatcher (an occurrence created by hand once due) or held because
             nobody chosen was available, which its NoResources alert says (RecurringCalls/GetRecurringCallAlerts).
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.CallSource">
+            <summary>
+            Where the call came from (CallSources): 1 User, 2 EmailImport, 3 AudioImport, 4 Chatbot, 5 Imported, 6 Intake (an SMS,
+            email, chat or webhook intake channel; saved pending), 7 VoiceIntake (Enhanced AI voice intake; saved pending).
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.IntakeChannelName">
+            <summary>
+            The intake channel's name for calls with CallSource 6 or 7 (GetCall, GetActiveCalls, GetPendingCalls and GetCalls fill
+            it); otherwise null. Null too when the channel has no name or was deleted.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.IntakeChannelType">
+            <summary>
+            The intake channel's type (IntakeChannelTypes: 1 Sms, 2 Email, 3 WhatsApp, 4 Slack, 5 Teams, 6 Telegram, 7 Discord,
+            8 GoogleChat, 9 Webhook, 10 Voice) for calls with CallSource 6 or 7, filled with <see cref="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.IntakeChannelName"/>; else null.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.Contacts">
@@ -10649,6 +11070,31 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.EditCallInput.DestinationPoiId">
             <summary>
             Optional destination POI id for transfers, transports, and relocations.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.EditCallInput.LocationPoiId">
+            <summary>
+            The POI (any type) the call location was picked from (M0322). Null keeps the stored one; 0 clears it.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.EditCallInput.DestinationAddress">
+            <summary>
+            Free destination address (M0322). Null keeps the stored one; an empty string clears it. A destination POI clears it.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.EditCallInput.DestinationGeolocation">
+            <summary>
+            Free destination point "lat,lon" (M0322). Null keeps the stored one; an empty string clears it.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.EditCallInput.DestinationWhat3Words">
+            <summary>
+            Free destination what3words address (M0322). Null keeps the stored one; an empty string clears it.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.EditCallInput.RoutePlanId">
+            <summary>
+            The pre-defined route the call follows (M0322). Null keeps the stored one; an empty string clears it.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.EditCallInput.Geolocation">
@@ -10989,6 +11435,32 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.DestinationPoiId">
             <summary>
             Optional destination POI id for transfers, transports, and relocations.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.LocationPoiId">
+            <summary>
+            The POI (any type) the call location was picked from (M0322). A blank Address / Geolocation is filled from it.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.DestinationAddress">
+            <summary>
+            Free destination address, for a destination that is not a POI (M0322). Ignored when DestinationPoiId is set.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.DestinationGeolocation">
+            <summary>
+            Free destination point "lat,lon" in decimal format (M0322). Ignored when DestinationPoiId is set.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.DestinationWhat3Words">
+            <summary>
+            Free destination what3words address (M0322). Ignored when DestinationPoiId is set.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.RoutePlanId">
+            <summary>
+            The pre-defined route the call follows (M0322): an active route plan with a start and an end (Routes/GetCallRoutePlans).
+            A call without a location starts at the route start; a call without a destination ends at the route end.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.Geolocation">
@@ -13810,8 +14282,9 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.EnableModernApplicationSounds">
             <summary>
-            Whether the current user should use modern application notification sounds. This is
-            enabled when either the department-wide setting or the user's profile setting is enabled.
+            Whether the current user should use modern application notification sounds. Always true:
+            modern sounds are on for every department and user, and the department and profile
+            settings that used to control this have been retired. Kept for apps that still read it.
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Configs.UnitStatusThresholdData">
@@ -15409,6 +15882,81 @@
         <member name="T:Resgrid.Web.Services.Models.v4.IncidentCommand.IncidentCapabilitiesResult">
             <summary>The current user's effective incident capabilities (raw flags value + granted names).</summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.IntakeConversations.IntakeConversationResult">
+            <summary>A call's intake SMS conversation and its messages (or none), and whether the caller may take it.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.IntakeConversations.IntakeConversationResultData.Conversation">
+            <summary>The conversation feeding the call (open, else the newest closed one); null when the call has none.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.IntakeConversations.IntakeConversationResultData.Messages">
+            <summary>Oldest first.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.IntakeConversations.IntakeConversationResultData.CanConnect">
+            <summary>The caller may edit the call, so may take (connect), text, release and close the conversation.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.IntakeConversations.IntakeConversationResultData.Outcome">
+            <summary>
+            POST results: an IntakeConversationActionResults name — Done, NotFound, Closed, HeldByAnotherDispatcher, OptedOut, SendFailed,
+            InvalidMessage. Null on GetForCall.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.IntakeConversations.IntakeConversationData.State">
+            <summary>1 Open, 2 Closed.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.IntakeConversations.IntakeConversationData.Handler">
+            <summary>1 Assistant (Enhanced AI asks), 2 Unassisted (waiting for a dispatcher), 3 Dispatcher (connected).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.IntakeConversations.IntakeConversationData.AssignedUserId">
+            <summary>The connected dispatcher's user id while Handler is 3.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.IntakeConversations.IntakeConversationData.AssignedName">
+            <summary>The connected dispatcher's name.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.IntakeConversations.IntakeConversationData.ParticipantAddress">
+            <summary>The texter's number (E.164); masked ("***1234") unless the caller may edit the call.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.IntakeConversations.IntakeConversationData.StartedOn">
+            <summary>ISO 8601 UTC.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.IntakeConversations.IntakeConversationData.LastActivityOn">
+            <summary>ISO 8601 UTC.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.IntakeConversations.IntakeConversationData.OptedOut">
+            <summary>The texter sent STOP: nothing more can be sent.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.IntakeConversations.IntakeConversationData.CloseReason">
+            <summary>Why it closed (OptedOut, Idle, CallClosed, or the dispatcher's reason); null while open.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.IntakeConversations.IntakeConversationData.DeskItemId">
+            <summary>The dispatcher desk's item for the conversation, when the desk took it.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.IntakeConversations.IntakeConversationMessageData.Direction">
+            <summary>1 Inbound (from the texter), 2 Outbound (to the texter).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.IntakeConversations.IntakeConversationMessageData.Author">
+            <summary>1 Participant, 2 Assistant (Enhanced AI), 3 Dispatcher, 4 System (Resgrid's fixed texts).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.IntakeConversations.IntakeConversationMessageData.AuthorName">
+            <summary>The dispatcher's first name for Author 3; null otherwise.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.IntakeConversations.IntakeConversationMessageData.Text">
+            <summary>The message text (read from the call's notes; REDACTED without a grant in a protected department; null when unavailable). Plain text.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.IntakeConversations.IntakeConversationMessageData.Status">
+            <summary>1 Received, 2 Queued, 3 Sent, 4 Failed.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.IntakeConversations.IntakeConversationMessageData.CreatedOn">
+            <summary>ISO 8601 UTC.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.IntakeConversations.ConnectIntakeConversationInput.TakeOver">
+            <summary>Take the conversation from the dispatcher connected now.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.IntakeConversations.SendIntakeConversationInput.Text">
+            <summary>The text (1 to IntakeConfig.ConversationMaxOutboundLength characters, 640 by default).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.IntakeConversations.CloseIntakeConversationInput.Notify">
+            <summary>Text the texter that the conversation ended (from the master number).</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Inventory.InventoryAdjustmentInput">
             <summary>A positive quantity delta with an explicit direction, never an absolute replacement balance.</summary>
         </member>
@@ -15984,6 +16532,40 @@
             none does. <c>MeetsRequirements</c> and an open status alone do not qualify: a destination reporting a required
             capability unavailable is tier 2 and never suggested.
             </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Mapping.DestinationRuleResultData">
+            <summary>
+            One destination rule (Mapping -> Destination Rules on the web), read-only, with the names of what it refers to so the
+            apps can show it without other lookups. A null condition matches every call (or every unit); a name is null when what
+            the id names was deleted (a rule whose condition was deleted never matches).
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.DestinationRuleResultData.CallTypeId">
+            <summary>Only calls of this type (CallTypes id); null for any.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.DestinationRuleResultData.CallPriority">
+            <summary>Only calls of this priority (the call's Priority value); null for any.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.DestinationRuleResultData.UnitTypeId">
+            <summary>Only when the travelling unit is of this type (UnitTypes id); null for any.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.DestinationRuleResultData.PoiTypeIds">
+            <summary>The destination POI types it allows; empty for any destination type.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.DestinationRuleResultData.PoiTypeNames">
+            <summary>The names of the <see cref="P:Resgrid.Web.Services.Models.v4.Mapping.DestinationRuleResultData.PoiTypeIds"/> that still exist.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.DestinationRuleResultData.MissingReferenceCount">
+            <summary>How many of the ids above name something deleted since (the web page flags the rule to be fixed).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.DestinationRulesResultData.Mode">
+            <summary>The department's destination suggestions setting: 0 off, 1 suggest, 2 suggest and fill an empty destination.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.DestinationRulesResultData.PreferredWithinMinutes">
+            <summary>A destination with more preferred capabilities comes first only within this many minutes of the closest.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.DestinationRulesResultData.Rules">
+            <summary>Every rule; the ones matching a call (and the travelling unit) apply together.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Mapping.SetPoiAvailabilityInput">
             <summary>SetPoiAvailability body.</summary>
@@ -17836,6 +18418,9 @@
         <member name="T:Resgrid.Web.Services.Models.v4.RecurringCalls.RecurringCallResultData">
             <summary>A recurring call schedule.</summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.RecurringCalls.RecurringCallResultData.RoutePlanName">
+            <summary>The route plan's name (GetRecurringCall only; null in lists and when the plan can no longer be followed).</summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.RecurringCalls.RecurringCallResultData.HasEnded">
             <summary>Past its end date: it will never run again.</summary>
         </member>
@@ -17859,6 +18444,15 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.RecurringCalls.RecurringCallResultData.GeoLocationData">
             <summary>"lat,lon".</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.RecurringCalls.RecurringCallResultData.DestinationAddress">
+            <summary>Free destination address when the destination is not a POI (M0322).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.RecurringCalls.RecurringCallResultData.DestinationGeoLocationData">
+            <summary>Free destination point "lat,lon" (M0322).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.RecurringCalls.RecurringCallResultData.RoutePlanId">
+            <summary>The route plan the created calls follow (M0322, Routes/GetCallRoutePlans).</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.RecurringCalls.RecurringCallResultData.PausedOn">
             <summary>ISO UTC; null while running.</summary>
@@ -17904,6 +18498,15 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.RecurringCalls.RecurringCallInput.IsActive">
             <summary>New schedules only: false to save it paused. Use Pause/Resume for an existing one.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.RecurringCalls.RecurringCallInput.DestinationAddress">
+            <summary>Free destination address when the destination is not a POI (M0322).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.RecurringCalls.RecurringCallInput.DestinationGeoLocationData">
+            <summary>Free destination point "lat,lon" (M0322).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.RecurringCalls.RecurringCallInput.RoutePlanId">
+            <summary>The route plan the created calls follow (M0322, Routes/GetCallRoutePlans).</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.RecurringCalls.RecurringCallInput.ReplaceUpcomingCalls">
             <summary>
@@ -18099,6 +18702,12 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Routes.NewRouteStopInput.RouteStopId">
             <summary>On UpdateRoutePlan: the existing stop this entry updates; null adds a stop.</summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Routes.StartCallRouteInput">
+            <summary>Starts the route of a call (M0322 Call.RoutePlanId) for the unit working it.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Routes.ReachRouteStartInput">
+            <summary>The unit reached the plan start of a call route (the leading leg of instance directions asked with includeStart).</summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Routes.CheckOutInput.Latitude">
             <summary>Optional; a check-out without coordinates is stored as before (0,0).</summary>
         </member>
@@ -18159,14 +18768,35 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Routes.RouteDirectionLegData.RouteStopId">
             <summary>The stop this leg arrives at; null for the leg to the route end.</summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routes.RouteDirectionLegData.IsRouteStart">
+            <summary>The leg to a call route's plan start (instance directions with includeStart, M0322); it has no stop.</summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Routes.RouteDirectionLegData.OffsetSeconds">
             <summary>Seconds from the route start (or from now, for live directions) to arrival, including dwell before it.</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Routes.RouteDirectionLegData.EtaUtc">
             <summary>Arrival time for live instance directions.</summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routes.RouteDirectionWaypointData.IsRouteStart">
+            <summary>The call route's plan start (instance directions with includeStart, M0322): no stop ids, StopOrder 0.</summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Routes.RouteDirectionWaypointData.EtaUtc">
             <summary>Live ETA (instance directions from a position) or the planned arrival of a running instance's stop.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routes.ActiveRouteInstanceResultData.CallId">
+            <summary>The call the run was started for (M0322); null for an ordinary route run.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Routes.CallRoutePlanResultData">
+            <summary>A route plan a call can follow (M0322): active, with a start and an end.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routes.CallRoutePlanResultData.RoutingProfile">
+            <summary>A RoutingProfile value.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routes.CallRoutePlanResultData.StartIsStop">
+            <summary>The start is the plan's first stop (checked in like any stop) rather than a station or explicit point.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routes.CallRoutePlanResultData.EndIsStop">
+            <summary>The end is the plan's last stop rather than a station or explicit point.</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Routes.RoutePlanResultData.RoutingProfile">
             <summary>RoutingProfile: Driving=0, DrivingTraffic=1, Truck=2, Walking=3, Cycling=4.</summary>
@@ -18194,6 +18824,12 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Routes.RouteStopResultData.PlannedOffsetSeconds">
             <summary>Seconds from the route start to arrival here, including earlier stops' dwell.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routes.RouteInstanceResultData.CallId">
+            <summary>The call the run was started for (M0322); null for an ordinary route run.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routes.RouteInstanceResultData.StartReachedOn">
+            <summary>When the unit reached a call route's plan start (M0322); null until then and for ordinary runs.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Routing.RoutePointInput">
             <summary>A point in a route request.</summary>
@@ -21148,6 +21784,19 @@
             <summary>
               Overrides the current thread's CurrentUICulture property for all
               resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Twilio.ITwilioVoiceResponseService.AppendDispatchPromptAsync(Twilio.TwiML.VoiceResponse,System.String,System.Threading.CancellationToken,System.String)">
+            <summary>
+            Appends the spoken call dispatch (one &lt;Play&gt; per chunk) at the dispatch speaking
+            rate (DispatchVoicePromptBuilder.DispatchSpeed), which is slower than the menus. Use this,
+            not AppendPromptAsync, for dispatch text: the broadcast worker pre-warms the audio at that
+            rate, and speed is part of the TTS cache key.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Twilio.ITwilioVoiceResponseService.PreWarmDispatchPromptAsync(System.String,System.String)">
+            <summary>
+            PreWarmPromptAsync for dispatch text, at the dispatch speaking rate (see AppendDispatchPromptAsync).
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Twilio.ITwilioVoiceResponseService.AppendSayFallback(Twilio.TwiML.TwiML,System.String)">

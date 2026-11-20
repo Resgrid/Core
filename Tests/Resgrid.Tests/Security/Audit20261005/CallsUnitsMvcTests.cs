@@ -700,13 +700,14 @@ namespace Resgrid.Tests.Security.Audit20261005
 		[Test]
 		public async Task ImportPOIs_reports_a_file_with_nothing_to_import_on_the_upload_page()
 		{
+			Localizer<Resgrid.Localization.Areas.User.Mapping.Mapping>();
 			M<IMappingService>().Setup(x => x.GetTypeByIdAsync(5)).ReturnsAsync(new PoiType { PoiTypeId = 5, DepartmentId = DepartmentId });
 			M<IPoiImportService>().Setup(x => x.ReadFile(It.IsAny<System.IO.Stream>(), "hydrants.kml")).Returns(new PoiImportFile { SkippedCount = 3 });
 			var controller = Build<MappingController>(MapAdmin);
 
 			(await controller.ImportPOIs(new ImportPOIsView { TypeId = 5 }, PoiUpload("hydrants.kml"), CancellationToken.None)).Should().BeOfType<ViewResult>();
 
-			controller.ModelState["fileToUpload"].Errors.Single().ErrorMessage.Should().StartWith("None of the 3 entries in the file have valid coordinates or an address");
+			controller.ModelState["fileToUpload"].Errors.Single().ErrorMessage.Should().Be("ImportNoValidRows");
 			M<IPoiImportService>().Verify(x => x.QueueImportAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<PoiImportFile>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
 
@@ -731,12 +732,13 @@ namespace Resgrid.Tests.Security.Audit20261005
 		[Test]
 		public async Task ImportPOIs_refuses_a_spreadsheet_saved_as_xlsx()
 		{
+			Localizer<Resgrid.Localization.Areas.User.Mapping.Mapping>();
 			M<IMappingService>().Setup(x => x.GetTypeByIdAsync(5)).ReturnsAsync(new PoiType { PoiTypeId = 5, DepartmentId = DepartmentId });
 			var controller = Build<MappingController>(MapAdmin);
 
 			(await controller.ImportPOIs(new ImportPOIsView { TypeId = 5 }, PoiUpload("stores.xlsx"), CancellationToken.None)).Should().BeOfType<ViewResult>();
 
-			controller.ModelState["fileToUpload"].Errors.Single().ErrorMessage.Should().Be("File type (.xlsx) cannot be imported as POIs: upload a KML, KMZ or CSV file.");
+			controller.ModelState["fileToUpload"].Errors.Single().ErrorMessage.Should().Be("ImportFileTypeInvalid");
 			M<IPoiImportService>().Verify(x => x.ReadFile(It.IsAny<System.IO.Stream>(), It.IsAny<string>()), Times.Never);
 		}
 
@@ -814,6 +816,47 @@ namespace Resgrid.Tests.Security.Audit20261005
 			page.Imports.Should().ContainSingle().Which.IsActive.Should().BeTrue();
 			panel.Should().ContainSingle();
 			M<IPoiImportService>().Verify(x => x.GetRecentImportsAsync(DepartmentId, It.IsAny<int>(), null), Times.Never, "the department's list is for map administrators");
+		}
+
+		[Test]
+		public async Task A_hydrant_manager_opening_Import_POIs_from_the_Hydrants_page_chooses_the_type_there()
+		{
+			// The Hydrants page links to Import POIs with no type; the POIs page with its type rows is closed to hydrant managers.
+			Localizer<Resgrid.Localization.Areas.User.Mapping.Mapping>();
+			M<IMappingService>().Setup(x => x.GetPOITypesForDepartmentAsync(DepartmentId)).ReturnsAsync(new List<PoiType>
+			{
+				new PoiType { PoiTypeId = 7, DepartmentId = DepartmentId, Name = "Water Sources" },
+				new PoiType { PoiTypeId = 5, DepartmentId = DepartmentId, Name = "Hospitals" }
+			});
+			var controller = Build<MappingController>(HydrantManager);
+			controller.TempData = new Microsoft.AspNetCore.Mvc.ViewFeatures.TempDataDictionary(controller.HttpContext, Mock.Of<Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataProvider>());
+
+			var fromHydrants = (await controller.ImportPOIs(0)).Should().BeOfType<ViewResult>().Which.Model.Should().BeOfType<ImportPOIsView>().Which;
+			var fromTypeRow = (await controller.ImportPOIs(7)).Should().BeOfType<ViewResult>().Which.Model.Should().BeOfType<ImportPOIsView>().Which;
+			var unknownType = (await controller.ImportPOIs(99)).Should().BeOfType<ViewResult>().Which.Model.Should().BeOfType<ImportPOIsView>().Which;
+
+			fromHydrants.PoiTypes.Select(t => t.Name).Should().Equal("Hospitals", "Water Sources");
+			fromHydrants.TypeId.Should().Be(0);
+			fromHydrants.CanManageMapData.Should().BeFalse("Cancel must not lead to the POIs page a hydrant manager cannot open");
+			fromTypeRow.TypeId.Should().Be(7);
+			unknownType.TypeId.Should().Be(0, "a type that is not the department's is never pre-selected");
+		}
+
+		[Test]
+		public async Task An_upload_refused_with_a_message_keeps_the_type_picker_and_the_imports_panel()
+		{
+			Localizer<Resgrid.Localization.Areas.User.Mapping.Mapping>();
+			M<IMappingService>().Setup(x => x.GetPOITypesForDepartmentAsync(DepartmentId)).ReturnsAsync(new List<PoiType> { new PoiType { PoiTypeId = 5, DepartmentId = DepartmentId, Name = "Stores" } });
+			M<IPoiImportService>().Setup(x => x.GetRecentImportsAsync(DepartmentId, 10, null)).ReturnsAsync(PoiImportsWithEveryReport());
+			var controller = Build<MappingController>(MapAdmin);
+
+			var page = (await controller.ImportPOIs(new ImportPOIsView { TypeId = 5 }, null, CancellationToken.None)).Should().BeOfType<ViewResult>().Which.Model.Should().BeOfType<ImportPOIsView>().Which;
+
+			controller.ModelState["fileToUpload"].Errors.Single().ErrorMessage.Should().Be("ImportFileRequired");
+			page.TypeId.Should().Be(5);
+			page.PoiTypes.Should().ContainSingle();
+			page.Imports.Should().NotBeEmpty();
+			page.CanManageMapData.Should().BeTrue();
 		}
 
 		/// <summary>A running import waiting on a geocoder outage, and a finished one with every kind of unimported row.</summary>

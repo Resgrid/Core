@@ -61,6 +61,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly ICustomMapMercatorTileRenderer _mercatorTileRenderer;
 		private readonly IOfflineMapPackService _offlineMapPackService;
 		private readonly INearestDestinationService _nearestDestinationService;
+		private readonly IDestinationRulesService _destinationRulesService;
 		private readonly IOfflineMapPackStore _offlineMapPackStore;
 		private readonly Microsoft.AspNetCore.Authorization.IAuthorizationService _policyAuthorization;
 		private readonly Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.MapIconLegend> _legendStrings;
@@ -93,10 +94,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 			ICustomMapMercatorTileRenderer mercatorTileRenderer,
 			IOfflineMapPackService offlineMapPackService,
 			IOfflineMapPackStore offlineMapPackStore,
-			INearestDestinationService nearestDestinationService
+			INearestDestinationService nearestDestinationService,
+			IDestinationRulesService destinationRulesService
 			)
 		{
 			_nearestDestinationService = nearestDestinationService;
+			_destinationRulesService = destinationRulesService;
 			_offlineMapPackService = offlineMapPackService;
 			_offlineMapPackStore = offlineMapPackStore;
 			_mercatorTileRenderer = mercatorTileRenderer;
@@ -1037,6 +1040,127 @@ namespace Resgrid.Web.Services.Controllers.v4
 				.Where(x => x?.Rule != null)
 				.Select(x => new DestinationRuleRefResultData { DestinationRuleId = x.Rule.DestinationRuleId, Name = x.Rule.Name, Reason = x.Reason.ToString() })
 				.ToList();
+
+			return data;
+		}
+
+		/// <summary>
+		/// The department's destination rules (read-only; edited on the web under Mapping -> POIs -> Destination Rules) and its
+		/// destination suggestions setting, with the names of the call types, priorities, unit types, destination types and
+		/// capabilities they refer to, so dispatchers can see why a destination is suggested.
+		/// </summary>
+		[HttpGet("GetDestinationRules")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Department_View)]
+		public async Task<ActionResult<DestinationRulesResult>> GetDestinationRules()
+		{
+			var config = await _departmentSettingsService.GetDestinationSuggestionConfigAsync(DepartmentId) ?? new DestinationSuggestionConfig();
+			var names = new DestinationRuleNames
+			{
+				CallTypes = (await _callsService.GetCallTypesForDepartmentAsync(DepartmentId) ?? new List<CallType>())
+					.Where(x => x != null)
+					.GroupBy(x => x.CallTypeId)
+					.ToDictionary(x => x.Key, x => x.First().Type),
+				Priorities = (await _callsService.GetActiveCallPrioritiesForDepartmentAsync(DepartmentId) ?? new List<DepartmentCallPriority>())
+					.Where(x => x != null)
+					.GroupBy(x => x.DepartmentCallPriorityId)
+					.ToDictionary(x => x.Key, x => x.First().Name),
+				UnitTypes = (await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId) ?? new List<UnitType>())
+					.Where(x => x != null)
+					.GroupBy(x => x.UnitTypeId)
+					.ToDictionary(x => x.Key, x => x.First().Type),
+				DestinationTypes = (await _mappingService.GetPOITypesForDepartmentAsync(DepartmentId) ?? new List<PoiType>())
+					.Where(x => x != null && x.IsDestination)
+					.GroupBy(x => x.PoiTypeId)
+					.ToDictionary(x => x.Key, x => x.First().Name),
+				Capabilities = (await _mappingService.GetPoiCapabilitiesForDepartmentAsync(DepartmentId) ?? new List<PoiCapability>())
+					.Where(x => x != null && !string.IsNullOrWhiteSpace(x.PoiCapabilityId))
+					.GroupBy(x => x.PoiCapabilityId, StringComparer.OrdinalIgnoreCase)
+					.ToDictionary(x => x.Key, x => x.First().Name, StringComparer.OrdinalIgnoreCase)
+			};
+
+			var result = new DestinationRulesResult();
+			result.Data.Mode = (int)config.GetMode();
+			result.Data.PreferredWithinMinutes = config.GetPreferredWithinMinutes();
+
+			foreach (var rule in await _destinationRulesService.GetRulesForDepartmentAsync(DepartmentId) ?? new List<DestinationRule>())
+			{
+				if (rule != null)
+					result.Data.Rules.Add(ConvertDestinationRule(rule, names));
+			}
+
+			result.PageSize = result.Data.Rules.Count;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
+		}
+
+		/// <summary>The department's names for what destination rules refer to, by id.</summary>
+		public class DestinationRuleNames
+		{
+			public Dictionary<int, string> CallTypes { get; set; } = new Dictionary<int, string>();
+			public Dictionary<int, string> Priorities { get; set; } = new Dictionary<int, string>();
+			public Dictionary<int, string> UnitTypes { get; set; } = new Dictionary<int, string>();
+			public Dictionary<int, string> DestinationTypes { get; set; } = new Dictionary<int, string>();
+			public Dictionary<string, string> Capabilities { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+		}
+
+		/// <summary>A destination rule as the v4 shape; ids naming something deleted keep no name and count as missing.</summary>
+		public static DestinationRuleResultData ConvertDestinationRule(DestinationRule rule, DestinationRuleNames names)
+		{
+			names ??= new DestinationRuleNames();
+			var data = new DestinationRuleResultData
+			{
+				DestinationRuleId = rule.DestinationRuleId,
+				Name = rule.Name,
+				CallTypeId = rule.CallTypeId,
+				CallPriority = rule.CallPriority,
+				UnitTypeId = rule.UnitTypeId,
+				PoiTypeIds = rule.GetPoiTypeIds().ToList(),
+				RequiredCapabilityIds = rule.GetRequiredCapabilityIds().ToList(),
+				PreferredCapabilityIds = rule.GetPreferredCapabilityIds().ToList()
+			};
+
+			var missing = 0;
+
+			string Lookup(Dictionary<int, string> source, int? id)
+			{
+				if (!id.HasValue)
+					return null;
+
+				if (source != null && source.TryGetValue(id.Value, out var name))
+					return name;
+
+				missing++;
+				return null;
+			}
+
+			List<string> Names<TKey>(IEnumerable<TKey> ids, Func<TKey, string> lookup)
+			{
+				var found = new List<string>();
+				foreach (var id in ids)
+				{
+					var name = lookup(id);
+					if (name == null)
+						missing++;
+					else
+						found.Add(name);
+				}
+
+				return found;
+			}
+
+			string Capability(string id) => names.Capabilities != null && id != null && names.Capabilities.TryGetValue(id, out var name) ? name : null;
+			string DestinationType(int id) => names.DestinationTypes != null && names.DestinationTypes.TryGetValue(id, out var name) ? name : null;
+
+			data.CallTypeName = Lookup(names.CallTypes, rule.CallTypeId);
+			data.CallPriorityName = Lookup(names.Priorities, rule.CallPriority);
+			data.UnitTypeName = Lookup(names.UnitTypes, rule.UnitTypeId);
+			data.PoiTypeNames = Names(data.PoiTypeIds, DestinationType);
+			data.RequiredCapabilityNames = Names(data.RequiredCapabilityIds, Capability);
+			data.PreferredCapabilityNames = Names(data.PreferredCapabilityIds, Capability);
+			data.MissingReferenceCount = missing;
 
 			return data;
 		}

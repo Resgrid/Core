@@ -1,0 +1,457 @@
+@model Resgrid.Web.Areas.User.Models.Departments.DedicatedNumberView
+@using Resgrid.Web.Areas.User.Models.Departments
+@using Resgrid.Web.Areas.User.Models.Subscription
+@using Newtonsoft.Json
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.DedicatedNumber> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Addons.Addons> addonLocalizer
+@{
+	ViewBag.Title = "Resgrid | " + localizer["PageTitle"];
+	var access = Model.Access;
+
+	// A held number whose department stopped paying (plan §8 D10/D12): when intake stops, when the number is released, and which
+	// warnings the department's admins were sent.
+	void ReleaseSchedule(DepartmentPhoneNumber number, DedicatedNumberReleaseSchedule schedule, string id)
+	{
+		var sent = new List<string>();
+		if (schedule.WarningsSent.HasFlag(DedicatedNumberReleaseWarnings.Stopped))
+		{
+			sent.Add(localizer["Warning.Stopped"].Value);
+		}
+		foreach (var stage in Model.WarningStages)
+		{
+			if (schedule.WarningsSent.HasFlag(stage.Stage))
+			{
+				sent.Add(stage.Days == 1 ? localizer["Warning.OneDay"].Value : string.Format(localizer["Warning.Days"].Value, stage.Days));
+			}
+		}
+
+		<div class="alert alert-warning" id="@id">
+			<p><strong>@localizer["StopTitle"]</strong></p>
+			@if (schedule.StoppedOn.HasValue)
+			{
+				<p>@string.Format((Model.PlanStopped ? localizer["StopPlan"] : localizer["StopAddon"]).Value, Model.LocalDate(schedule.StoppedOn.Value))</p>
+			}
+			@if (schedule.IntakeStopped)
+			{
+				<p>@(schedule.IntakeStopsOn.HasValue
+					? string.Format(localizer["StopIntakeStoppedOn"].Value, number.PhoneNumber, Model.LocalDateTime(schedule.IntakeStopsOn.Value))
+					: string.Format(localizer["StopIntakeStopped"].Value, number.PhoneNumber))</p>
+			}
+			else if (schedule.IntakeStopsOn.HasValue)
+			{
+				<p>@string.Format(localizer["StopIntakeOn"].Value, number.PhoneNumber, Model.LocalDateTime(schedule.IntakeStopsOn.Value))</p>
+			}
+			<p>@string.Format(localizer["StopReleaseOn"].Value, Model.LocalDate(schedule.ReleaseOn))</p>
+			<p class="small" style="margin-bottom: 0;">
+				@(sent.Count == 0 ? localizer["StopWarningsNone"].Value : string.Format(localizer["StopWarningsSent"].Value, string.Join(", ", sent)))
+				@if (schedule.LastWarningOn.HasValue)
+				{
+					@(" " + string.Format(localizer["StopLastWarning"].Value, Model.LocalDateTime(schedule.LastWarningOn.Value)))
+				}
+			</p>
+		</div>
+	}
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@localizer["PageTitle"]</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+			</li>
+			<li>
+				<a asp-controller="Department" asp-action="TextSettings" asp-route-area="User">@commonLocalizer["TextMessaging"]</a>
+			</li>
+			<li class="active">
+				<strong>@localizer["PageTitle"]</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content" id="dedicatedNumberPage">
+					<p>@localizer["Intro"]</p>
+
+					@if (!String.IsNullOrEmpty(Model.Message))
+					{
+						<div class="alert alert-success" id="dedicatedNumberMessage">@Model.Message</div>
+					}
+					@if (!String.IsNullOrEmpty(Model.Error))
+					{
+						<div class="alert alert-danger" id="dedicatedNumberError">@Model.Error</div>
+					}
+
+					<h3>@localizer["AddonTitle"]</h3>
+					<div id="dedicatedNumberAddon">
+						@if (Model.CheckoutResult == AddonBillingResults.Complete)
+						{
+							<div class="alert @(access.HasActiveAddon ? "alert-success" : "alert-info")" role="status" id="dedicatedNumberCheckoutResult">
+								<i class="fa @(access.HasActiveAddon ? "fa-check-circle" : "fa-spinner fa-spin")" aria-hidden="true"></i>
+								@(access.HasActiveAddon ? addonLocalizer["BillingStatusActive"] : addonLocalizer["BillingCheckoutComplete"])
+							</div>
+						}
+						else if (Model.CheckoutResult == AddonBillingResults.Cancelled && !access.HasActiveAddon)
+						{
+							<div class="alert alert-warning" role="status" id="dedicatedNumberCheckoutResult"><i class="fa fa-info-circle" aria-hidden="true"></i> @addonLocalizer["BillingCheckoutCancelled"]</div>
+						}
+
+						@if (access.HasActiveAddon)
+						{
+							<p><i class="fa fa-check text-success" aria-hidden="true"></i> @localizer["AddonActive"]</p>
+							<p><a class="btn btn-default btn-sm" asp-controller="DedicatedNumberBilling" asp-action="Index" asp-route-area="User">@localizer["ManageBilling"]</a></p>
+						}
+						else if (!access.HasBillingRelationship)
+						{
+							<div class="alert alert-info">@localizer["RequiresEntityPlan"]</div>
+							<p><a class="btn btn-default btn-sm" asp-controller="Subscription" asp-action="Index" asp-route-area="User">@localizer["ViewPlans"]</a></p>
+						}
+						else if (!access.IsOffered)
+						{
+							<div class="alert alert-info">@localizer["NotOffered"]</div>
+						}
+						else if (!Model.AwaitingActivation)
+						{
+							<p>@localizer["BuyPrompt"]</p>
+							@if (Model.CanBuyHere)
+							{
+								@* Bought right here (same checkout as the add-on's billing page); the provider comes back to this page. *@
+								var billing = Model.Billing;
+								var symbol = string.Equals(billing.Currency, "EUR", StringComparison.OrdinalIgnoreCase) ? "€" : "$";
+								<p id="dedicatedNumberPrice">
+									<strong class="lead">@symbol@billing.MonthlyAmount.ToString("N0")</strong>@addonLocalizer["PerMonth"]
+									<span class="text-muted small">@addonLocalizer["BillingBilledMonthly"]</span>
+								</p>
+								<form method="post" asp-controller="DedicatedNumberBilling" asp-action="Checkout" asp-route-area="User" id="addon-checkout">
+									@Html.AntiForgeryToken()
+									<input type="hidden" name="returnTo" value="@Resgrid.Web.Areas.User.Controllers.DedicatedNumberBillingController.ReturnToNumberPage" />
+									<button type="submit" class="btn btn-primary btn-sm">
+										<i class="fa fa-lock" aria-hidden="true"></i> @string.Format(addonLocalizer["BillingBuy"].Value, addonLocalizer["DedicatedNumberTitle"].Value)
+									</button>
+									<a class="btn btn-link btn-sm" asp-controller="DedicatedNumberBilling" asp-action="Index" asp-route-area="User">@localizer["ManageBilling"]</a>
+								</form>
+								<p class="text-muted small m-t-xs">@string.Format(addonLocalizer["BillingSecureCheckout"].Value, billing.Provider)</p>
+								<p class="alert alert-danger m-t-sm" id="addon-billing-error" role="alert" hidden></p>
+							}
+							else if (Model.IsOwner)
+							{
+								@* Billing is unreachable or checkout is closed for now: the add-on's billing page says why. *@
+								<p><a class="btn btn-primary btn-sm" asp-controller="DedicatedNumberBilling" asp-action="Index" asp-route-area="User">@localizer["BuyAddon"]</a></p>
+							}
+							else
+							{
+								<div class="alert alert-info" id="dedicatedNumberOwnerOnly">@addonLocalizer["BillingOwnerOnly"]</div>
+							}
+						}
+					</div>
+
+					@if (Model.Active != null)
+					{
+						var number = Model.Active;
+						<h3>@localizer["ActiveTitle"]</h3>
+						<div id="dedicatedNumberActive">
+							<p class="lead"><strong>@number.PhoneNumber</strong> <small>@DedicatedNumberView.CountryName(number.CountryCode)</small></p>
+							@if (number.ProvisionedOn.HasValue)
+							{
+								<p class="text-muted">@string.Format(localizer["ProvisionedOn"].Value, number.ProvisionedOn.Value.ToString("D"))</p>
+							}
+							@if (Model.ActiveSchedule != null)
+							{
+								ReleaseSchedule(number, Model.ActiveSchedule, "dedicatedNumberReleaseSchedule");
+							}
+							else if (!access.HasActiveAddon)
+							{
+								<div class="alert alert-warning">@localizer["AddonEnding"]</div>
+							}
+
+							<form class="form-horizontal" method="post" asp-controller="DedicatedNumber" asp-action="UpdateIntake" asp-route-area="User" id="dedicatedNumberIntakeForm">
+								@Html.AntiForgeryToken()
+								<div class="form-group">
+									<div class="col-sm-10">
+										<div class="checkbox checkbox-primary">
+											<input type="checkbox" id="smsIntakeEnabled" name="smsIntakeEnabled" value="true" checked="@number.SmsIntakeEnabled" />
+											<label for="smsIntakeEnabled">@localizer["SmsIntake"]</label>
+										</div>
+										<span class="help-block">@localizer["SmsIntakeHelp"]</span>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="col-sm-10">
+										<div class="checkbox checkbox-primary">
+											<input type="checkbox" id="voiceIntakeEnabled" name="voiceIntakeEnabled" value="true" checked="@number.VoiceIntakeEnabled" />
+											<label for="voiceIntakeEnabled">@localizer["VoiceIntake"]</label>
+										</div>
+										<span class="help-block">@localizer["VoiceIntakeHelp"]</span>
+										@if (!Model.VoiceIntakeAvailable)
+										{
+											<span class="help-block text-warning">@localizer["VoiceIntakeUnavailable"]</span>
+										}
+									</div>
+								</div>
+								<input type="hidden" name="smsIntakeEnabled" value="false" />
+								<input type="hidden" name="voiceIntakeEnabled" value="false" />
+								<button type="submit" class="btn btn-primary">@localizer["SaveIntake"]</button>
+							</form>
+
+							<h4 style="margin-top: 25px;">@localizer["ReleaseTitle"]</h4>
+							<p>@localizer["ReleaseHelp"]</p>
+							<form method="post" asp-controller="DedicatedNumber" asp-action="Release" asp-route-area="User" id="dedicatedNumberReleaseForm">
+								@Html.AntiForgeryToken()
+								<input type="hidden" name="departmentPhoneNumberId" value="@number.DepartmentPhoneNumberId" />
+								<div class="checkbox checkbox-danger">
+									<input type="checkbox" id="confirmRelease" name="confirmRelease" value="true" required />
+									<label for="confirmRelease">@localizer["ReleaseConfirm"]</label>
+								</div>
+								<button type="submit" class="btn btn-danger">@localizer["Release"]</button>
+							</form>
+						</div>
+					}
+
+					@if (Model.Lapsed != null)
+					{
+						var number = Model.Lapsed;
+						<h3>@localizer["LapsedTitle"]</h3>
+						<div id="dedicatedNumberLapsed">
+							@if (Model.LapsedSchedule != null)
+							{
+								ReleaseSchedule(number, Model.LapsedSchedule, "dedicatedNumberLapsedSchedule");
+							}
+							else
+							{
+								<div class="alert alert-warning">
+									@string.Format(localizer["LapsedText"].Value, number.PhoneNumber, number.ReleaseAfter.HasValue ? Model.LocalDate(number.ReleaseAfter.Value) : "")
+								</div>
+							}
+							@if (access.HasActiveAddon && !Model.PlanStopped)
+							{
+								<form method="post" asp-controller="DedicatedNumber" asp-action="Reactivate" asp-route-area="User" style="display: inline-block;">
+									@Html.AntiForgeryToken()
+									<button type="submit" class="btn btn-primary">@localizer["Reactivate"]</button>
+								</form>
+							}
+							<form method="post" asp-controller="DedicatedNumber" asp-action="Release" asp-route-area="User" style="margin-top: 15px;">
+								@Html.AntiForgeryToken()
+								<input type="hidden" name="departmentPhoneNumberId" value="@number.DepartmentPhoneNumberId" />
+								<div class="checkbox checkbox-danger">
+									<input type="checkbox" id="confirmLapsedRelease" name="confirmRelease" value="true" required />
+									<label for="confirmLapsedRelease">@localizer["ReleaseConfirm"]</label>
+								</div>
+								<button type="submit" class="btn btn-danger btn-sm">@localizer["ReleaseNow"]</button>
+							</form>
+						</div>
+					}
+
+					@if (Model.Provisioning != null)
+					{
+						<div class="alert alert-info" id="dedicatedNumberProvisioning">@string.Format(localizer["ProvisioningText"].Value, Model.Provisioning.PhoneNumber)</div>
+					}
+
+					@if (Model.LastFailure != null)
+					{
+						<div class="alert alert-warning" id="dedicatedNumberFailure">
+							@string.Format(localizer["LastFailure"].Value, Model.LastFailure.PhoneNumber)
+							@if (!String.IsNullOrWhiteSpace(Model.LastFailure.LastError))
+							{
+								<br /><small>@Model.LastFailure.LastError</small>
+							}
+						</div>
+					}
+
+					@if (Model.CanSearch)
+					{
+						<h3>@localizer["SearchTitle"]</h3>
+						@if (access.AllowedCountries == null || access.AllowedCountries.Count == 0)
+						{
+							<div class="alert alert-info">@localizer["NoCountries"]</div>
+						}
+						else
+						{
+							<form method="get" asp-controller="DedicatedNumber" asp-action="Index" asp-route-area="User" id="dedicatedNumberSearchForm">
+								<div class="row">
+									<div class="col-sm-3 form-group">
+										<label for="country">@localizer["Country"]</label>
+										<select id="country" name="country" class="form-control">
+											@foreach (var code in access.AllowedCountries)
+											{
+												<option value="@code" selected="@(code == Model.Country)" data-nanp="@(DedicatedNumberSearch.IsNanp(code) ? "true" : "false")">@DedicatedNumberView.CountryName(code)</option>
+											}
+										</select>
+									</div>
+									@if (Model.NanpCountries.Count > 0)
+									{
+										<div class="col-sm-3 form-group dedicated-number-nanp">
+											<label for="region">@localizer["Region"]</label>
+											<select id="region" name="region" class="form-control">
+												<option value="">@localizer["RegionAny"]</option>
+												@foreach (var code in Model.NanpCountries)
+												{
+													<optgroup label="@DedicatedNumberView.CountryName(code)" data-country="@code">
+														@foreach (var region in DedicatedNumberSearch.RegionsFor(code))
+														{
+															<option value="@region.Key" selected="@(code == Model.Country && string.Equals(region.Key, Model.Region, StringComparison.OrdinalIgnoreCase))">@region.Value</option>
+														}
+													</optgroup>
+												}
+											</select>
+										</div>
+									}
+									<div class="col-sm-3 form-group">
+										<label for="city">@localizer["City"]</label>
+										<input type="text" id="city" name="city" class="form-control" maxlength="64" value="@Model.City" />
+									</div>
+									<div class="col-sm-3 form-group dedicated-number-nanp">
+										<label for="postalCode">@localizer["PostalCode"]</label>
+										<input type="text" id="postalCode" name="postalCode" class="form-control" maxlength="10" value="@Model.PostalCode" />
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-3 form-group dedicated-number-nanp">
+										<label for="areaCode">@localizer["AreaCode"]</label>
+										<input type="text" id="areaCode" name="areaCode" class="form-control" maxlength="6" inputmode="numeric" pattern="[0-9]*" value="@Model.AreaCode" />
+									</div>
+									<div class="col-sm-3 form-group">
+										<label for="contains">@localizer["Contains"]</label>
+										<input type="text" id="contains" name="contains" class="form-control" maxlength="10" pattern="[0-9*]*" value="@Model.Contains" />
+									</div>
+									<div class="col-sm-3 form-group dedicated-number-nanp">
+										<label>&nbsp;</label>
+										<div class="checkbox checkbox-primary" style="margin-top: 0;">
+											<input type="checkbox" id="near" name="near" value="true" checked="@Model.Near" />
+											<label for="near">@localizer["NearDepartment"]</label>
+										</div>
+									</div>
+									<div class="col-sm-3 form-group dedicated-number-nanp">
+										<label for="distance">@localizer["NearDistance"]</label>
+										<select id="distance" name="distance" class="form-control">
+											@foreach (var miles in DedicatedNumberView.DistanceOptions)
+											{
+												<option value="@miles" selected="@(miles == Model.Distance)">@string.Format(localizer["DistanceMiles"].Value, miles, (int)Math.Round(miles * 1.609344))</option>
+											}
+										</select>
+									</div>
+								</div>
+								<button type="submit" class="btn btn-primary"><i class="fa fa-search" aria-hidden="true"></i> @localizer["Search"]</button>
+							</form>
+							<p class="help-block">@localizer["SearchHelp"]</p>
+							<p class="help-block">@localizer["SearchFiltersHelp"]</p>
+
+							@if (Model.Searched && Model.Results.Count == 0 && String.IsNullOrEmpty(Model.Error))
+							{
+								<div class="alert alert-info">@localizer["NoResults"]</div>
+							}
+							@if (Model.Results.Count > 0)
+							{
+								<div class="table-responsive">
+									<table class="table table-striped" id="dedicatedNumberResults">
+										<thead>
+											<tr>
+												<th>@localizer["ResultsNumber"]</th>
+												<th>@localizer["ResultsType"]</th>
+												<th>@localizer["City"]</th>
+												<th>@localizer["Region"]</th>
+												<th>@localizer["PostalCode"]</th>
+												<th class="span2"></th>
+											</tr>
+										</thead>
+										<tbody>
+											@foreach (var result in Model.Results)
+											{
+												<tr>
+													<td>@(String.IsNullOrWhiteSpace(result.FriendlyName) ? result.PhoneNumber : result.FriendlyName)</td>
+													<td>@(result.NumberType == DedicatedNumberTypes.Mobile ? localizer["NumberType.Mobile"] : localizer["NumberType.Local"])</td>
+													<td>@result.Locality</td>
+													<td>@result.Region</td>
+													<td>@result.PostalCode</td>
+													<td>
+														<form method="post" asp-controller="DedicatedNumber" asp-action="Provision" asp-route-area="User" class="dedicated-number-provision"
+															  data-confirm="@string.Format(localizer["ProvisionConfirm"].Value, result.PhoneNumber)">
+															@Html.AntiForgeryToken()
+															<input type="hidden" name="phoneNumber" value="@result.PhoneNumber" />
+															<button type="submit" class="btn btn-success btn-xs">@localizer["Provision"]</button>
+														</form>
+													</td>
+												</tr>
+											}
+										</tbody>
+									</table>
+								</div>
+							}
+						}
+					}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+	<script type="text/javascript">
+		// State / province, postal code, area code and near-the-department searches are United States and Canada only: show them for
+		// those countries, and only the selected country's states or provinces.
+		(function () {
+			var country = document.getElementById('country');
+			if (!country) {
+				return;
+			}
+			var region = document.getElementById('region');
+			function sync() {
+				var option = country.options[country.selectedIndex];
+				var nanp = option && option.getAttribute('data-nanp') === 'true';
+				document.querySelectorAll('#dedicatedNumberSearchForm .dedicated-number-nanp').forEach(function (group) {
+					group.style.display = nanp ? '' : 'none';
+				});
+				if (region) {
+					region.querySelectorAll('optgroup').forEach(function (group) {
+						var match = group.getAttribute('data-country') === country.value;
+						group.style.display = match ? '' : 'none';
+						group.disabled = !match;
+					});
+					var selected = region.options[region.selectedIndex];
+					if (selected && selected.parentNode && selected.parentNode.disabled) {
+						region.value = '';
+					}
+				}
+			}
+			country.addEventListener('change', sync);
+			sync();
+		})();
+
+		// One purchase per click: ask first, then disable every buy button so a double click cannot start a second request.
+		document.querySelectorAll('form.dedicated-number-provision').forEach(function (form) {
+			form.addEventListener('submit', function (e) {
+				if (!window.confirm(form.getAttribute('data-confirm'))) {
+					e.preventDefault();
+					return;
+				}
+				document.querySelectorAll('form.dedicated-number-provision button').forEach(function (button) { button.disabled = true; });
+			});
+		});
+	</script>
+	@if (Model.CanBuyHere || Model.AwaitingActivation)
+	{
+		// The add-on billing pages' checkout script: Stripe redirect or Paddle overlay, then back here (?result=complete) and a
+		// self-refresh for about a minute while the provider's webhook activates the add-on.
+		var paddle = Model.Billing?.Provider == "Paddle";
+		var pageUrl = Url.Action("Index", "DedicatedNumber", new { Area = "User" }, Context.Request.Scheme);
+		if (paddle && Model.CanBuyHere)
+		{
+			<script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+		}
+		<script type="application/json" id="addon-billing-config">@Html.Raw(JsonConvert.SerializeObject(new
+		{
+			provider = Model.Billing?.Provider,
+			token = paddle && Model.CanBuyHere ? Resgrid.Config.PaymentProviderConfig.GetPaddleClientToken() : null,
+			environment = Resgrid.Config.PaymentProviderConfig.GetPaddleEnvironment(),
+			error = addonLocalizer["BillingCheckoutFailed"].Value,
+			completeUrl = pageUrl + "?result=" + AddonBillingResults.Complete,
+			pending = Model.AwaitingActivation,
+			attempt = Model.CheckoutAttempt
+		}, new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml }))</script>
+		<script src="~/js/app/internal/subscription/addon-billing.js" asp-append-version="true"></script>
+	}
+}

@@ -168,8 +168,59 @@ namespace Resgrid.Services
 			return await GenerateAsync(routePlanId, cancellationToken);
 		}
 
+		public async Task<RoutePlanEndpoints> ResolveEndpointsAsync(RoutePlan plan, int? unitId = null)
+		{
+			if (plan == null)
+				return new RoutePlanEndpoints();
+
+			var stops = (await _routeService.GetRouteStopsForPlanAsync(plan.RoutePlanId) ?? new List<RouteStop>())
+				.Where(s => IsValid((double)s.Latitude, (double)s.Longitude))
+				.OrderBy(s => s.StopOrder)
+				.ToList();
+
+			Unit unit = null;
+			var routeUnitId = unitId ?? plan.UnitId;
+			if (routeUnitId.HasValue && (plan.UseStationAsStart || plan.UseStationAsEnd))
+			{
+				unit = await _unitsService.GetUnitByIdAsync(routeUnitId.Value);
+				if (unit != null && unit.DepartmentId != plan.DepartmentId)
+					unit = null;
+			}
+
+			var endpoints = new RoutePlanEndpoints
+			{
+				StopsCount = stops.Count,
+				Start = await ResolveEndpointAsync(plan.DepartmentId, plan.UseStationAsStart, plan.StartDepartmentGroupId, unit, plan.StartLatitude, plan.StartLongitude),
+				End = await ResolveEndpointAsync(plan.DepartmentId, plan.UseStationAsEnd, plan.EndDepartmentGroupId, unit, plan.EndLatitude, plan.EndLongitude)
+			};
+
+			if (endpoints.Start == null && stops.Count > 0)
+			{
+				endpoints.Start = StopEndpoint(stops[0]);
+				endpoints.StartIsStop = true;
+			}
+
+			if (endpoints.End == null && stops.Count > 0)
+			{
+				endpoints.End = StopEndpoint(stops[stops.Count - 1]);
+				endpoints.EndIsStop = true;
+			}
+
+			return endpoints;
+		}
+
+		private static RoutePlanEndpoint StopEndpoint(RouteStop stop)
+		{
+			return new RoutePlanEndpoint
+			{
+				Latitude = (double)stop.Latitude,
+				Longitude = (double)stop.Longitude,
+				Name = !string.IsNullOrWhiteSpace(stop.Name) ? stop.Name : stop.Address
+			};
+		}
+
 		public async Task<RoutePlanRouteResult> GetLiveDirectionsAsync(string routeInstanceId, double latitude, double longitude, double? heading,
-			bool navigation, string language, bool metric, CancellationToken cancellationToken = default)
+			bool navigation, string language, bool metric, CancellationToken cancellationToken = default, bool includeStart = false)
 		{
 			var instance = await _routeService.GetInstanceByIdAsync(routeInstanceId);
 			if (instance == null)
@@ -180,7 +231,8 @@ namespace Resgrid.Services
 				return new RoutePlanRouteResult { Error = "Route plan not found" };
 
 			var planStops = await _routeService.GetRouteStopsForPlanAsync(plan.RoutePlanId);
-			var instanceStops = (await _routeService.GetInstanceStopsAsync(routeInstanceId)).Where(s => s.Status == 0 || s.Status == 1).ToList();
+			var allInstanceStops = await _routeService.GetInstanceStopsAsync(routeInstanceId) ?? new List<RouteInstanceStop>();
+			var instanceStops = allInstanceStops.Where(s => s.Status == 0 || s.Status == 1).ToList();
 			var byStopId = planStops.ToDictionary(s => s.RouteStopId);
 
 			var remaining = instanceStops
@@ -191,9 +243,16 @@ namespace Resgrid.Services
 			// The instance's own unit may differ from the plan's; its vehicle limits apply.
 			var inputs = await ResolveInputsAsync(plan, instance.UnitId);
 			var origin = new RoutePlanEndpoint { Latitude = latitude, Longitude = longitude, Name = "" };
-			var live = inputs.WithStart(origin).WithStops(remaining.Select(s => byStopId[s.RouteStopId]).ToList());
 
-			if (remaining.Count == 0 && live.End == null)
+			// A call route (M0322) leads to its plan start first, until the unit has been there or has worked a stop.
+			var routeStart = includeStart ? await PendingRouteStartAsync(instance, plan, inputs.Start, allInstanceStops, latitude, longitude) : null;
+			var liveStops = remaining.Select(s => byStopId[s.RouteStopId]).ToList();
+			if (routeStart != null)
+				liveStops.Insert(0, new RouteStop { RouteStopId = null, Name = routeStart.Name, Latitude = (decimal)routeStart.Latitude, Longitude = (decimal)routeStart.Longitude });
+
+			var live = inputs.WithStart(origin).WithStops(liveStops);
+
+			if (liveStops.Count == 0 && live.End == null)
 				return new RoutePlanRouteResult { Successful = true, Start = origin, Provider = inputs.Provider.Name, Attribution = inputs.Provider.Attribution };
 
 			var result = await RouteAsync(live, steps: true, cancellationToken: cancellationToken, heading: heading, navigation: navigation,
@@ -205,6 +264,8 @@ namespace Resgrid.Services
 			// ETAs: now + legs + dwell. A stop already checked in has only its remaining estimated dwell left.
 			var now = DateTime.UtcNow;
 			var elapsed = 0.0;
+			var startLegs = routeStart != null ? 1 : 0;
+			result.RouteStart = routeStart;
 			for (var i = 0; i < result.Legs.Count; i++)
 			{
 				var leg = result.Legs[i];
@@ -212,9 +273,18 @@ namespace Resgrid.Services
 				leg.OffsetSeconds = elapsed;
 				leg.EtaUtc = now.AddSeconds(elapsed);
 
-				if (i < remaining.Count)
+				if (i < startLegs)
 				{
-					var instanceStop = remaining[i];
+					leg.IsRouteStart = true;
+					leg.RouteStopId = null;
+					leg.RouteInstanceStopId = null;
+					leg.Name = routeStart.Name;
+					continue;
+				}
+
+				if (i - startLegs < remaining.Count)
+				{
+					var instanceStop = remaining[i - startLegs];
 					var dwell = (byStopId[instanceStop.RouteStopId].EstimatedDwellMinutes ?? 0) * 60.0;
 					if (instanceStop.Status == 1 && instanceStop.CheckInOn.HasValue)
 						dwell = Math.Max(0, dwell - (now - instanceStop.CheckInOn.Value).TotalSeconds);
@@ -236,6 +306,36 @@ namespace Resgrid.Services
 			}
 
 			return result;
+		}
+
+		/// <summary>
+		/// The plan start a call route still has to reach, or null: only for a run linked to a call, with a station or explicit start
+		/// (a first-stop start is checked in like any stop), not yet reached and with no stop worked. A unit already within the plan's
+		/// geofence radius of the start has reached it, which is recorded.
+		/// </summary>
+		private async Task<RoutePlanEndpoint> PendingRouteStartAsync(RouteInstance instance, RoutePlan plan, RoutePlanEndpoint start,
+			List<RouteInstanceStop> instanceStops, double latitude, double longitude)
+		{
+			if (!instance.CallId.HasValue || instance.StartReachedOn.HasValue || start == null)
+				return null;
+
+			if (instanceStops.Any(s => s != null && s.Status != 0))
+				return null;
+
+			var radius = plan.GeofenceRadiusMeters > 0 ? plan.GeofenceRadiusMeters : 100;
+			if (GeoMath.HaversineMeters(latitude, longitude, start.Latitude, start.Longitude) > radius)
+				return start;
+
+			try
+			{
+				await _routeService.MarkStartReachedAsync(instance.RouteInstanceId, CancellationToken.None);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Recording the start reached for route instance {instance.RouteInstanceId}");
+			}
+
+			return null;
 		}
 
 		private async Task<RoutePlanRouteResult> GenerateAsync(RoutePlan plan, PlanInputs inputs, CancellationToken cancellationToken)

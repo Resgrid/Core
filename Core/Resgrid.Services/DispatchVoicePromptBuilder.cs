@@ -64,7 +64,22 @@ namespace Resgrid.Services
 			"AB", "BC", "MB", "NB", "NL", "NS", "ON", "PE", "QC", "SK", "NT", "NU", "YT"
 		};
 
-		private static readonly Regex PostalCodeRegex = new(@"^(\d{5}(-\d{4})?|[A-Za-z]\d[A-Za-z]\s?\d[A-Za-z]\d)$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+		// The TTS service accepts 80-450 wpm and rejects anything else.
+		private const int MinSpeed = 80;
+		private const int MaxSpeed = 450;
+
+		/// <summary>
+		/// Speaking rate for the dispatch prompt (<see cref="TtsConfig.DispatchSpeed"/>, falling back
+		/// to <see cref="TtsConfig.DefaultSpeed"/> when unset or out of range). Speed is part of the TTS
+		/// cache key, so the broadcast worker's pre-warm and the voice webhook must both take it from
+		/// here, the same way they share the prompt text and chunking.
+		/// </summary>
+		public static int DispatchSpeed =>
+			TtsConfig.DispatchSpeed >= MinSpeed && TtsConfig.DispatchSpeed <= MaxSpeed
+				? TtsConfig.DispatchSpeed
+				: TtsConfig.DefaultSpeed;
+
+		private static readonly Regex PostalCodeRegex =new(@"^(\d{5}(-\d{4})?|[A-Za-z]\d[A-Za-z]\s?\d[A-Za-z]\d)$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
 		public static string BuildDispatchPrompt(Call call, string address)
 		{

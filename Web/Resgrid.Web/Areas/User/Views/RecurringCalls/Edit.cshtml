@@ -131,6 +131,44 @@
 											<select asp-for="DestinationPoiId" asp-items="Model.DestinationPois" class="form-control recurring-destination"></select>
 										</div>
 									</div>
+									@* Suggest only, from the schedule's coordinates (else its address, looked up), priority and type: using a suggestion
+									   sets the destination POI, which clears the free destination below. *@
+									<partial name="~/Areas/User/Views/Dispatch/_DestinationSuggestions.cshtml" view-data='new ViewDataDictionary(ViewData)
+									{
+										{ "DestinationSuggestions.Destination", "#DestinationPoiId" },
+										{ "DestinationSuggestions.Coordinates", "#Coordinates" },
+										{ "DestinationSuggestions.Address", "#Address" },
+										{ "DestinationSuggestions.Priority", "#Priority" },
+										{ "DestinationSuggestions.Type", "#Type" },
+										{ "DestinationSuggestions.Free", ".recurring-destination-free" }
+									}' />
+									@* A destination that is not a POI (M0322): a destination POI clears these. *@
+									<div class="form-group">
+										<label class="col-sm-2 control-label" for="DestinationAddress">@localizer["DestinationAddress"]</label>
+										<div class="col-sm-6">
+											<input type="text" asp-for="DestinationAddress" class="form-control recurring-destination-free" maxlength="@RecurringCall.MaxShortFieldLength" />
+											<span class="help-block m-b-none">@localizer["DestinationAddressHelp"]</span>
+										</div>
+									</div>
+									@* Its own row: a point such as "39.5234567,-119.8123456" did not fit a two-column field. *@
+									<div class="form-group">
+										<label class="col-sm-2 control-label" for="DestinationCoordinates">@localizer["DestinationCoordinates"]</label>
+										<div class="col-sm-4">
+											<input type="text" asp-for="DestinationCoordinates" class="form-control recurring-destination-free" placeholder="39.7392,-104.9903" />
+											<span class="help-block m-b-none">@localizer["DestinationCoordinatesHelp"]</span>
+										</div>
+									</div>
+								}
+								@if (Model.RoutePlans.Count > 1)
+								{
+									@* A pre-defined route for every call it creates (M0322); no New Call Form Fields entry. *@
+									<div class="form-group">
+										<label class="col-sm-2 control-label" for="RoutePlanId">@localizer["RoutePlan"]</label>
+										<div class="col-sm-8">
+											<select asp-for="RoutePlanId" asp-items="Model.RoutePlans" class="form-control recurring-destination"></select>
+											<span class="help-block m-b-none">@localizer["RoutePlanHelp"]</span>
+										</div>
+									</div>
 								}
 								@if (Model.IsVisible(NewCallFieldKeys.ContactName) || Model.IsVisible(NewCallFieldKeys.ContactInfo))
 								{
@@ -211,7 +249,7 @@
 									<label class="col-sm-2 control-label" for="FacilityPoiId">@localizer["FacilityPoi"]</label>
 									<div class="col-sm-8">
 										<select asp-for="FacilityPoiId" asp-items="Model.FacilityPois" class="form-control recurring-destination"></select>
-										<span class="help-block m-b-none">@localizer["FacilityPoiHelp"]</span>
+										<span class="help-block m-b-none">@localizer["FacilityPoiHelp"] @localizer["FacilityPoiCallLocationHelp"]</span>
 									</div>
 								</div>
 								<div class="form-group">
@@ -570,5 +608,9 @@
 
 @section Scripts
 {
+	@if (Model.IsVisible(NewCallFieldKeys.DestinationPoi))
+	{
+		<script src="@Url.Content("~/js/app/internal/dispatch/resgrid.dispatch.destinations.js")" asp-append-version="true" type="text/javascript"></script>
+	}
 	<script src="@Url.Content("~/js/app/internal/dispatch/resgrid.dispatch.recurringcalls.js")" asp-append-version="true" type="text/javascript"></script>
 }

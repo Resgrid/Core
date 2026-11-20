@@ -217,12 +217,9 @@ namespace Resgrid.Model
 		[ProtoMember(52)]
 		public bool SecurityPinEnabled { get; set; }
 
-		/// <summary>
-		/// The user opted in to modern application notification sounds. The department-level
-		/// EnableModernNotifications setting overrides this to on for every user.
-		/// </summary>
-		[ProtoMember(53)]
-		public bool EnableModernApplicationSounds { get; set; }
+		// ProtoMember 53 is retired: it was EnableModernApplicationSounds, the per-user opt-in to modern
+		// notification sounds, which are now on for everyone. Do not reuse 53; cached profiles may still
+		// carry it. The UserProfiles column (M0100) is left in place and is no longer read or written.
 
 		// ── Verification send-window tracking (separate from the daily confirm-attempt counters) ──
 

@@ -329,4 +329,7 @@
   <data name="PreviewFailed" xml:space="preserve">
     <value>تعذّر التحقق من القواعد الآن. حاول مرة أخرى.</value>
   </data>
+  <data name="BestForUnit" xml:space="preserve">
+    <value>الأنسب لهذه الوحدة</value>
+  </data>
 </root>

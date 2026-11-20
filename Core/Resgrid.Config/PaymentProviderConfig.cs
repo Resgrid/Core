@@ -195,6 +195,12 @@ namespace Resgrid.Config
 			return NormalizeConfigValue(IsTestMode ? PaddleIncidentBackOfficeAddonTest : PaddleIncidentBackOfficeAddon);
 		}
 
+		/// <summary>The Dedicated Number add-on's Paddle price (EUR 20/month, product pro_01m7wvch9xs37n1k6a0chvt20f), kept on DedicatedNumberAddonConfig.</summary>
+		public static string GetPaddleDedicatedNumberAddonPriceId()
+		{
+			return NormalizeConfigValue(IsTestMode ? DedicatedNumberAddonConfig.PaddleTestPriceId : DedicatedNumberAddonConfig.PaddlePriceId);
+		}
+
 		public static string GetPaddleEnvironment()
 		{
 			if (IsTestMode)

@@ -2286,4 +2286,10 @@
   <data name="DeleteRefusedPermanentContent" xml:space="preserve"><value>Dieser Bericht enthält Einträge zu Verletzten, Rettungen oder Expositionen, die dauerhaft aufbewahrt werden. Entfernen Sie sie aus dem Entwurf, bevor Sie ihn löschen.</value></data>
   <data name="DeleteRefusedAmendmentOpen" xml:space="preserve"><value>Verwerfen Sie die offene Änderung, bevor Sie diesen Bericht löschen.</value></data>
   <data name="IncludeClosedReports" xml:space="preserve"><value>Verworfene und ungültige einbeziehen</value></data>
+  <data name="ImportMapPois" xml:space="preserve">
+    <value>Karten-POIs importieren</value>
+  </data>
+  <data name="ImportMapPoisHelp" xml:space="preserve">
+    <value>Eine KML-, KMZ- oder CSV-Datei als Karten-POIs (Orientierungspunkte) importieren, getrennt von den Hydrantendatensätzen.</value>
+  </data>
 </root>

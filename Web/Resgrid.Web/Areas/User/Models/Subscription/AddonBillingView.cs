@@ -5,7 +5,7 @@ using Resgrid.Model;
 namespace Resgrid.Web.Areas.User.Models.Subscription
 {
 	/// <summary>
-	/// One add-on billing page (Readiness Pro, Business Ops, Incident Back Office, Enhanced AI). Every page shares this model and the
+	/// One add-on billing page (Readiness Pro, Business Ops, Incident Back Office, Enhanced AI, Dedicated Number). Every page shares this model and the
 	/// _AddonBilling partial so they read and behave the same; the controller adds the add-on's own notes and links.
 	/// </summary>
 	public sealed class AddonBillingView
@@ -88,6 +88,12 @@ namespace Resgrid.Web.Areas.User.Models.Subscription
 		};
 
 		public static AddonBillingStatusView From(AiBillingStatus s) => s == null ? null : new AddonBillingStatusView
+		{
+			Provider = s.Provider, Currency = s.Currency, Amount = s.MonthlyAmount, CheckoutAvailable = s.CheckoutAvailable, Active = s.Active,
+			CanCancel = s.CanCancel, Cancelled = s.Cancelled, PaidThroughUtc = s.PaidThroughUtc
+		};
+
+		public static AddonBillingStatusView From(DedicatedNumberBillingStatus s) => s == null ? null : new AddonBillingStatusView
 		{
 			Provider = s.Provider, Currency = s.Currency, Amount = s.MonthlyAmount, CheckoutAvailable = s.CheckoutAvailable, Active = s.Active,
 			CanCancel = s.CanCancel, Cancelled = s.Cancelled, PaidThroughUtc = s.PaidThroughUtc

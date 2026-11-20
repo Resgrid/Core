@@ -1,0 +1,29 @@
+@model Resgrid.Web.Areas.User.Models.Calls.ICallLocationsForm
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Call> localizer
+@*
+    Settings and text for resgrid.dispatch.calllocations.js (M0322): the location POI, free destination and route pickers on the
+    call forms. ViewData["CallLocationsPage"] names the page script whose map and pin the module uses (newcall, editcall,
+    addArchivedCall). Include after _MapKitConfig and _DispatchLocalizationScript.
+*@
+<script type="text/javascript">
+    window.callLocationsConfig = @Html.ScriptJson(new
+    {
+        page = ViewData["CallLocationsPage"] as string ?? "newcall",
+        previewUrl = Url.Action("GetCallRoutePreview", "Dispatch", new { area = "User" }),
+        w3wUrl = Url.Action("GetCoordinatesFromW3W", "Dispatch", new { area = "User" }),
+        routeViewUrl = Model.CanViewRoutes ? Url.Action("View", "Routes", new { area = "User" }) : null,
+        destinationPoiPoints = Model.DestinationPoiPoints ?? new Dictionary<string, double[]>(),
+        text = new
+        {
+            destination = localizer["Destination"].Value,
+            routeStart = localizer["CallRouteStart"].Value,
+            routeEnd = localizer["CallRouteEnd"].Value,
+            notFound = localizer["DestinationLocationNotFound"].Value,
+            plusCodeNotFound = localizer["PlusCodeNotFound"].Value,
+            w3wNotFound = localizer["WhatThreeWordsNotFound"].Value,
+            searchLocationPois = localizer["LocationPoiPlaceholder"].Value,
+            searchRoutes = localizer["CallRoutePlaceholder"].Value
+        }
+    });
+</script>
+<script src="~/js/app/internal/dispatch/resgrid.dispatch.calllocations.js" asp-append-version="true"></script>

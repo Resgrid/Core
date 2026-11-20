@@ -27,6 +27,9 @@
         case PlanAddonTypes.IncidentBackOffice:
             actionUrl = Url.Action("Index", "IncidentBackOfficeBilling", new { Area = "User" });
             break;
+        case PlanAddonTypes.DedicatedNumber:
+            actionUrl = Url.Action("Index", "DedicatedNumberBilling", new { Area = "User" });
+            break;
         default:
             actionUrl = Url.Action("Index", "AiBilling", new { Area = "User" });
             break;

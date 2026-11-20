@@ -329,4 +329,7 @@
   <data name="PreviewFailed" xml:space="preserve">
     <value>Reglerna kunde inte kontrolleras just nu. Försök igen.</value>
   </data>
+  <data name="BestForUnit" xml:space="preserve">
+    <value>Bäst för den här enheten</value>
+  </data>
 </root>

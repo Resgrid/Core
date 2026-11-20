@@ -32,7 +32,7 @@ namespace Resgrid.Repositories.DataRepository
 		{
 			"CallLocationIndexStates", "CallNumberSequences", "DocumentNumberSequences", "DepartmentApiKeys", "ScheduledTasks", "UserStates",
 			"UdfDefinitions", "ChatbotSessions", "ChatbotMessageLog", "ChatbotDepartmentConfigs", "AiDispatchAudits", "DepartmentAiDispatchConfigs",
-			"AiBillingAccounts", "AdpBillingAccounts", "ContactPreplanHazards", "ContactPreplans", "ContactAttachments", "DepartmentProfileMedia", "TypeIcons", "MapVisualizations", "RoadClosures", "PoiImports", "PoiCapabilityAssignments", "PoiCapabilities", "PoiAvailabilities", "DestinationRules", "RecurringCallAlerts", "RecurringCallOccurrences", "RecurringCalls", "CallPersonnelReleases", "CallBroadcastOutbox", "UserDashboards", "DepartmentDashboardTemplates",
+			"AiBillingAccounts", "AdpBillingAccounts", "ContactPreplanHazards", "ContactPreplans", "ContactAttachments", "DepartmentProfileMedia", "TypeIcons", "MapVisualizations", "RoadClosures", "PoiImports", "PoiCapabilityAssignments", "PoiCapabilities", "PoiAvailabilities", "DestinationRules", "RecurringCallAlerts", "RecurringCallOccurrences", "RecurringCalls", "CallPersonnelReleases", "CallBroadcastOutbox", "IntakeConversationMessages", "IntakeConversations", "IntakeMessages", "IntakeChannels", "VoiceIntakeSessions", "DepartmentPhoneNumbers", "AiDestinationReviews", "AiDestinationAdvices", "DedicatedNumberBillingAccounts", "UserDashboards", "DepartmentDashboardTemplates",
 			"CallOutstandingRequirements", "RunCardDecisions", "RunCardTargets", "ResponsePackages", "RunCardActivations",
 			"RunCards", "StationCoverageRequirements", "ModerationActions", "ModerationReports", "ModerationRequests", "MessageRecipients", "Messages",
 			"DepartmentMemberSensitiveData", "DepartmentMemberEmergencyContacts", "UserExternalIdentityLinks", "DepartmentSecurityPolicies",
@@ -97,6 +97,12 @@ namespace Resgrid.Repositories.DataRepository
 
 			// Pages owed to resources added to live calls (M0321); no foreign keys
 			await Delete("CallBroadcastOutbox");
+
+			// Intake channels and their message audit, voice intake sessions, AI destination advice and review requests, dedicated
+			// numbers and their billing accounts (M0323); no foreign keys. A number still held at the carrier is released by the
+			// department deletion flow (IDepartmentPhoneNumbersService.ReleaseAsync) before this purge runs.
+			await Delete("IntakeConversationMessages", "IntakeConversations", "IntakeMessages", "IntakeChannels", "VoiceIntakeSessions", "AiDestinationReviews", "AiDestinationAdvices",
+				"DepartmentPhoneNumbers", "DedicatedNumberBillingAccounts");
 
 			// Home dashboard boards and department templates (layouts only)
 			await Delete("UserDashboards", "DepartmentDashboardTemplates");

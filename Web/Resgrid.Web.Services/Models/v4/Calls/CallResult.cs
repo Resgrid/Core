@@ -112,6 +112,37 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		public double? DestinationLongitude { get; set; }
 
 		/// <summary>
+		/// Free destination point "lat,lon" when the destination is not a POI (M0322); DestinationAddress / DestinationLatitude /
+		/// DestinationLongitude are filled from the free destination too, with DestinationPoiId and DestinationName null.
+		/// </summary>
+		public string DestinationGeolocation { get; set; }
+
+		/// <summary>
+		/// Free destination what3words address (M0322).
+		/// </summary>
+		public string DestinationWhat3Words { get; set; }
+
+		/// <summary>
+		/// The POI the call location was picked from (M0322); null when none.
+		/// </summary>
+		public int? LocationPoiId { get; set; }
+
+		/// <summary>
+		/// The location POI's display name, when it was looked up (M0322).
+		/// </summary>
+		public string LocationPoiName { get; set; }
+
+		/// <summary>
+		/// The pre-defined route the call follows (M0322); null when none.
+		/// </summary>
+		public string RoutePlanId { get; set; }
+
+		/// <summary>
+		/// The route plan's name, when it was looked up (GetCall, GetActiveCalls and the pending/scheduled lists).
+		/// </summary>
+		public string RoutePlanName { get; set; }
+
+		/// <summary>
 		/// Geo location Coordinates
 		/// </summary>
 		public string Geolocation { get; set; }
@@ -300,6 +331,24 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		/// nobody chosen was available, which its NoResources alert says (RecurringCalls/GetRecurringCallAlerts).
 		/// </summary>
 		public int? RecurringCallId { get; set; }
+
+		/// <summary>
+		/// Where the call came from (CallSources): 1 User, 2 EmailImport, 3 AudioImport, 4 Chatbot, 5 Imported, 6 Intake (an SMS,
+		/// email, chat or webhook intake channel; saved pending), 7 VoiceIntake (Enhanced AI voice intake; saved pending).
+		/// </summary>
+		public int CallSource { get; set; }
+
+		/// <summary>
+		/// The intake channel's name for calls with CallSource 6 or 7 (GetCall, GetActiveCalls, GetPendingCalls and GetCalls fill
+		/// it); otherwise null. Null too when the channel has no name or was deleted.
+		/// </summary>
+		public string IntakeChannelName { get; set; }
+
+		/// <summary>
+		/// The intake channel's type (IntakeChannelTypes: 1 Sms, 2 Email, 3 WhatsApp, 4 Slack, 5 Teams, 6 Telegram, 7 Discord,
+		/// 8 GoogleChat, 9 Webhook, 10 Voice) for calls with CallSource 6 or 7, filled with <see cref="IntakeChannelName"/>; else null.
+		/// </summary>
+		public int? IntakeChannelType { get; set; }
 
 		/// <summary>
 		/// Contacts linked to this call (primary first) with pre-plan / alert / hazard indicators.

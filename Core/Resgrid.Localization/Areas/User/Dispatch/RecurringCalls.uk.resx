@@ -701,4 +701,40 @@
   <data name="WeekThird" xml:space="preserve">
     <value>третій</value>
   </data>
+  <data name="DestinationAddress" xml:space="preserve">
+    <value>Адреса призначення</value>
+  </data>
+  <data name="DestinationAddressHelp" xml:space="preserve">
+    <value>Коли пункт призначення не є POI.</value>
+  </data>
+  <data name="DestinationCoordinates" xml:space="preserve">
+    <value>Координати призначення</value>
+  </data>
+  <data name="DestinationCoordinatesHelp" xml:space="preserve">
+    <value>Широта, довгота (необов'язково).</value>
+  </data>
+  <data name="ErrorDestinationCoordinatesInvalid" xml:space="preserve">
+    <value>Введіть координати призначення у форматі широта, довгота (наприклад 39.7392,-104.9903).</value>
+  </data>
+  <data name="RoutePlan" xml:space="preserve">
+    <value>Маршрут</value>
+  </data>
+  <data name="NoRoutePlan" xml:space="preserve">
+    <value>Без маршруту</value>
+  </data>
+  <data name="RoutePlanHelp" xml:space="preserve">
+    <value>Кожен створений виклик іде цим маршрутом: порожня адреса починається на початку маршруту, а порожній пункт призначення закінчується в його кінці.</value>
+  </data>
+  <data name="ErrorRoutePlanInvalid" xml:space="preserve">
+    <value>Виберіть зі списку активний маршрут із початком і кінцем.</value>
+  </data>
+  <data name="RoutePlanUnavailable" xml:space="preserve">
+    <value>{0} (більше недоступний)</value>
+  </data>
+  <data name="RoutePlanDeleted" xml:space="preserve">
+    <value>Видалений маршрут</value>
+  </data>
+  <data name="FacilityPoiCallLocationHelp" xml:space="preserve">
+    <value>Кожен створений виклик починається з цього POI.</value>
+  </data>
 </root>

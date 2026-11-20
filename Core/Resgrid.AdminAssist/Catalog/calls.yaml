@@ -2634,6 +2634,27 @@
       "DocsPath": "/web-app/dispatch-calls/#creating-a-call"
     },
     {
+      "Id": "call-locations",
+      "AreaId": "calls",
+      "LabelKey": "Feature.call-locations",
+      "PurposeKey": "FeaturePurpose.call-locations",
+      "ValueKey": "AreaValue.calls",
+      "ExampleKey": "AreaExample.calls",
+      "AdoptionKey": "FeatureSetup.call-locations",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Dispatch",
+        "Action": "NewCall"
+      },
+      "Requirements": [],
+      "SettingIds": [
+        "setting.NewCallFieldPolicy"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/dispatch-calls/#locations-destinations-and-routes"
+    },
+    {
       "Id": "archived-calls",
       "AreaId": "calls",
       "LabelKey": "Feature.archived-calls",
@@ -2688,7 +2709,26 @@
       "SettingIds": [],
       "RuleIds": [],
       "Prominence": "Detail",
-      "DocsPath": "/web-app/dispatch-calls/#pending-and-scheduled-calls"
+      "DocsPath": "/web-app/scheduled-calls/#scheduled-calls"
+    },
+    {
+      "Id": "recurring-calls",
+      "AreaId": "calls",
+      "LabelKey": "Feature.recurring-calls",
+      "PurposeKey": "FeaturePurpose.recurring-calls",
+      "ValueKey": "AreaValue.calls",
+      "ExampleKey": "AreaExample.calls",
+      "AdoptionKey": "FeatureSetup.recurring-calls",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "RecurringCalls",
+        "Action": "Index"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/scheduled-calls/#recurring-calls"
     },
     {
       "Id": "call-templates",
@@ -3967,6 +4007,17 @@
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
     {
+      "Id": "call-locations",
+      "Locale": "en",
+      "TitleKey": "Feature.call-locations",
+      "Body": "Call locations, destinations and routes A call's location can be picked from a point of interest, its destination can be a point of interest or a free address, coordinates or what3words, and it can carry a pre-defined route that the unit working it runs in the app, stop by stop. Consistent call types and statuses make dispatching, response tracking and reporting reliable from the first call. Add the places you pick up from and deliver to as points of interest, and create active route plans with a start and an end for runs you repeat. On New Call, pick the location's point of interest, the destination and a route; a blank call location takes the route start and a blank destination the route end. It works on new, pending, scheduled and recurring calls, on Update Call and in the Omni Dispatch app. Picking a point of interest fills the address and the map pin, which can still be changed. A destination POI and a free destination location are exclusive: choosing one clears the other. Plus codes are only looked up, never stored. The route picker lists only active route plans whose start and end can be found, and is hidden when there are none; a route never overwrites a location or destination already filled. When a unit makes the call its active call, the Omni Unit app starts the route run, leads the unit to the route start first and checks in at each stop; View Call lists the call's route runs. The New Call Form Fields rule for Destination covers a destination POI and a free destination alike.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "call-locations",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-19T00:00:00Z"
+    },
+    {
       "Id": "archived-calls",
       "Locale": "en",
       "TitleKey": "Feature.archived-calls",
@@ -3992,12 +4043,23 @@
       "Id": "scheduled-calls",
       "Locale": "en",
       "TitleKey": "Feature.scheduled-calls",
-      "Body": "Scheduled Calls Calls that go out by themselves at a future time and can be sent early or rescheduled. Consistent call types and statuses make dispatching, response tracking and reporting reliable from the first call. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Collect your call types, the statuses members report while responding, and the details of any CAD or paging system that should create calls.",
+      "Body": "Scheduled Calls Calls that go out by themselves at a future time and can be sent early or rescheduled, with a calendar of every scheduled and recurring call. Consistent call types and statuses make dispatching, response tracking and reporting reliable from the first call. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Collect your call types, the statuses members report while responding, and the details of any CAD or paging system that should create calls.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "scheduled-calls",
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-10-06T00:00:00Z"
+      "ReviewedOn": "2026-11-19T00:00:00Z"
+    },
+    {
+      "Id": "recurring-calls",
+      "Locale": "en",
+      "TitleKey": "Feature.recurring-calls",
+      "Body": "Recurring calls Calls that repeat on a schedule, such as transfers every Tuesday and Thursday at 08:00, 13:00 and 19:00. Each one becomes a scheduled call ahead of its time and goes out by itself, or a dispatcher is alerted to send it. Consistent call types and statuses make dispatching, response tracking and reporting reliable from the first call. Open Scheduled Calls and choose Recurring Calls, then New Recurring Call, or press Repeat on a call you already sent. Fill in the call details, facilities and contact, who to dispatch and who to alert, then the schedule, when each call is created and who sends each call. Check the next dispatches and the calendar before you save. Times are the department's local time. Each call is created the chosen time ahead of its dispatch (one hour to seven days, one day by default) and then shows in Scheduled Calls, where it can be changed, sent early or deleted on its own. A call is never created for a time more than 10 minutes past, and saving or resuming never sends one at once. When a call goes out, units and people who are unavailable are left off it; if nobody is left, it is held as a pending call. Needs attention lists held, missed, failed and due calls and alerts the people chosen under Who to alert. Also use the matching run card adds that run card's resources when the call goes out. The pickup facility's point of interest becomes each call's location, and a destination and a route can be set. A recurring call can be paused with a reason and a date to resume, and changing it can replace upcoming calls already created. Anyone who can view calls sees recurring calls and the calendar; anyone who can create calls can send, skip or create a single run; whoever created a recurring call, and department admins, change, pause or delete it.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "recurring-calls",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-19T00:00:00Z"
     },
     {
       "Id": "call-templates",

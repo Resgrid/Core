@@ -30,6 +30,14 @@ namespace Resgrid.Model
 		UnitNavigationUpdated = 16,
 
 		/// <summary>A department's recurring call alerts changed (hub event <c>recurringCallAlertsUpdated</c>: schedule id, payload).</summary>
-		RecurringCallAlertsUpdated = 17
+		RecurringCallAlertsUpdated = 17,
+
+		/// <summary>A call's Enhanced AI destination advice changed (hub event <c>aiDestinationAdviceUpdated</c>: call id, payload = advice id and state; M0323).</summary>
+		AiDestinationAdviceUpdated = 18,
+
+		// 19 DispatcherDeskUpdated and 20 DispatcherQueueUpdated are the dispatcher desk's (M0324, worktree dispatchers-on-duty).
+
+		/// <summary>An intake SMS conversation changed (hub event <c>intakeConversationUpdated</c>: call id, payload = conversation id, state, handler; M0325).</summary>
+		IntakeConversationUpdated = 21
 	}
 }

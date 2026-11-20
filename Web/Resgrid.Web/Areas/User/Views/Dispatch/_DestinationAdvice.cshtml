@@ -1,0 +1,92 @@
+@model Resgrid.Model.Call
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.DestinationAdvice> adviceLocalizer
+@inject Resgrid.Model.Services.IAiDestinationAdvisorService destinationAdvisor
+@*
+	Enhanced AI destination advice (call-intake-and-ai-destinations-plan.md D4) on View Call and Update Call: the destination the model
+	recommends from the call's nature, note and call notes, an "Ask Enhanced AI" button, and Apply / Dismiss for members who can edit
+	the call. Advice never changes the destination by itself. Rendered only for open calls while the department may use the feature
+	(a remembered answer, so the page does not call the Billing API); the script reloads on the aiDestinationAdviceUpdated event.
+	View data "DestinationAdvice.Form" = true lays it out as a form group (Update Call) and makes Apply set the form's destination
+	field too, so saving the form keeps the applied destination; "DestinationAdvice.StartHub" = true starts the eventing connection on
+	a page that has none.
+*@
+@{
+	var open = Model != null && !Model.IsDeleted &&
+		(Model.State == (int)Resgrid.Model.CallStates.Active || Model.State == (int)Resgrid.Model.CallStates.Pending);
+	var show = open && await destinationAdvisor.IsAvailableAsync(Model.DepartmentId);
+	var form = ViewData["DestinationAdvice.Form"] is bool f && f;
+	var startHub = ViewData["DestinationAdvice.StartHub"] is bool h && h;
+	var hasFreeDestination = Model != null && !(Model.DestinationPoiId is > 0) && Resgrid.Model.CallLocations.HasFreeDestination(Model);
+}
+@if (show)
+{
+	<div class="@(form ? "form-group" : "row")" id="destinationAdvicePanel" style="display: none;" data-call-id="@Model.CallId"
+		 data-mode="@(form ? "form" : "view")" data-start-hub="@(startHub ? "true" : "false")" data-free-destination="@(hasFreeDestination ? "true" : "false")">
+		@if (form)
+		{
+			<label class="col-sm-2 control-label">@adviceLocalizer["Title"]</label>
+		}
+		<div class="@(form ? "col-sm-10" : "col-lg-12")">
+			<div class="alert alert-info" style="margin-bottom: 10px;">
+				<button type="button" class="btn btn-xs btn-white pull-right" id="destinationAdviceAsk" style="display: none;">
+					<i class="fa fa-magic"></i> <span>@adviceLocalizer["Ask"]</span>
+				</button>
+				@if (!form)
+				{
+					<strong><i class="fa fa-lightbulb-o"></i> @adviceLocalizer["Title"]</strong>
+				}
+				<div id="destinationAdviceBody" style="margin-top: 4px;"></div>
+				<div id="destinationAdviceActions" style="display: none; margin-top: 6px;">
+					<button type="button" class="btn btn-xs btn-primary" id="destinationAdviceApply">@adviceLocalizer["Apply"]</button>
+					<button type="button" class="btn btn-xs btn-white" id="destinationAdviceDismiss">@adviceLocalizer["Dismiss"]</button>
+				</div>
+				<div id="destinationAdviceMessage" class="small" style="display: none; margin-top: 4px;"></div>
+				<div class="small text-muted" style="margin-top: 4px;">@adviceLocalizer["AdviceOnly"]</div>
+			</div>
+			<div style="display: none;">@Html.AntiForgeryToken()</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		var destinationAdviceStrings = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(new
+		{
+			ask = adviceLocalizer["Ask"].Value,
+			asking = adviceLocalizer["Asking"].Value,
+			dismissReason = adviceLocalizer["DismissReason"].Value,
+			consider = adviceLocalizer["Consider"].Value,
+			keep = adviceLocalizer["Keep"].Value,
+			noSuggestion = adviceLocalizer["NoSuggestion"].Value,
+			current = adviceLocalizer["Current"].Value,
+			currentNone = adviceLocalizer["CurrentNone"].Value,
+			currentFree = adviceLocalizer["CurrentFree"].Value,
+			needs = adviceLocalizer["Needs"].Value,
+			confidence = adviceLocalizer["Confidence"].Value,
+			lowConfidence = adviceLocalizer["LowConfidence"].Value,
+			advisedAt = adviceLocalizer["AdvisedAt"].Value,
+			noAdvice = adviceLocalizer["NoAdvice"].Value,
+			applied = adviceLocalizer["Applied"].Value,
+			dismissed = adviceLocalizer["Dismissed"].Value,
+			failed = adviceLocalizer["Failed"].Value,
+			status1 = adviceLocalizer["StatusLimited"].Value,
+			status2 = adviceLocalizer["StatusDiversion"].Value,
+			status3 = adviceLocalizer["StatusClosed"].Value,
+			outcomes = new System.Collections.Generic.Dictionary<string, string>
+			{
+				["Unchanged"] = adviceLocalizer["Outcome.Unchanged"].Value,
+				["Busy"] = adviceLocalizer["Outcome.Busy"].Value,
+				["Unavailable"] = adviceLocalizer["Outcome.Unavailable"].Value,
+				["InvalidOutput"] = adviceLocalizer["Outcome.InvalidOutput"].Value,
+				["NoLocation"] = adviceLocalizer["Outcome.NoLocation"].Value,
+				["NoCandidates"] = adviceLocalizer["Outcome.NoCandidates"].Value,
+				["BudgetExhausted"] = adviceLocalizer["Outcome.BudgetExhausted"].Value,
+				["ProtectionUnsupported"] = adviceLocalizer["Outcome.ProtectionUnsupported"].Value,
+				["NotEntitled"] = adviceLocalizer["Outcome.NotEntitled"].Value,
+				["Disabled"] = adviceLocalizer["Outcome.NotEntitled"].Value,
+				["Unconfigured"] = adviceLocalizer["Outcome.NotEntitled"].Value,
+				["CallNotOpen"] = adviceLocalizer["Outcome.CallNotOpen"].Value,
+				["NotOpen"] = adviceLocalizer["Outcome.NotOpen"].Value,
+				["DestinationGone"] = adviceLocalizer["Outcome.DestinationGone"].Value,
+				["NothingToApply"] = adviceLocalizer["Outcome.NothingToApply"].Value
+			}
+		}, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
+	</script>
+}

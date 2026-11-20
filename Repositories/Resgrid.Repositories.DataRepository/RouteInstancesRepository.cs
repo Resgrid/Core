@@ -186,13 +186,42 @@ namespace Resgrid.Repositories.DataRepository
 			var schema = _sqlConfiguration.SchemaName;
 			var sql = postgres
 				? "SELECT routeinstanceid, routeplanid, routescheduleid, unitid, departmentid, status, startedbyuserid, scheduledstarton, actualstarton, " +
-				  "actualendon, endedbyuserid, totaldistancemeters, totaldurationseconds, stopscompleted, stopstotal, addedon " +
+				  "actualendon, endedbyuserid, totaldistancemeters, totaldurationseconds, stopscompleted, stopstotal, addedon, callid, startreachedon " +
 				  $"FROM {schema}.routeinstances WHERE departmentid = @DepartmentId AND status = ANY(@Statuses) ORDER BY actualstarton DESC"
 				: "SELECT [RouteInstanceId], [RoutePlanId], [RouteScheduleId], [UnitId], [DepartmentId], [Status], [StartedByUserId], [ScheduledStartOn], " +
-				  "[ActualStartOn], [ActualEndOn], [EndedByUserId], [TotalDistanceMeters], [TotalDurationSeconds], [StopsCompleted], [StopsTotal], [AddedOn] " +
+				  "[ActualStartOn], [ActualEndOn], [EndedByUserId], [TotalDistanceMeters], [TotalDurationSeconds], [StopsCompleted], [StopsTotal], [AddedOn], [CallId], [StartReachedOn] " +
 				  $"FROM {schema}.[RouteInstances] WHERE [DepartmentId] = @DepartmentId AND [Status] IN @Statuses ORDER BY [ActualStartOn] DESC";
 
 			var parameters = new { DepartmentId = departmentId, Statuses = new[] { (int)RouteInstanceStatus.InProgress, (int)RouteInstanceStatus.Paused } };
+
+			try
+			{
+				if (_unitOfWork?.Connection != null)
+					return await _unitOfWork.CreateOrGetConnection().QueryAsync<RouteInstance>(sql, parameters, _unitOfWork.Transaction);
+
+				using (var conn = _connectionProvider.Create())
+				{
+					await conn.OpenAsync();
+					return await conn.QueryAsync<RouteInstance>(sql, parameters);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				throw;
+			}
+		}
+
+		public async Task<IEnumerable<RouteInstance>> GetInstancesByCallIdAsync(int departmentId, int callId)
+		{
+			// Every run started for the call (M0322), newest first; the filtered IX_RouteInstances_CallId index serves it.
+			var postgres = DataConfig.DatabaseType == DatabaseTypes.Postgres;
+			var schema = _sqlConfiguration.SchemaName;
+			var sql = postgres
+				? $"SELECT * FROM {schema}.routeinstances WHERE callid = @CallId AND departmentid = @DepartmentId ORDER BY addedon DESC"
+				: $"SELECT * FROM {schema}.[RouteInstances] WHERE [CallId] = @CallId AND [DepartmentId] = @DepartmentId ORDER BY [AddedOn] DESC";
+
+			var parameters = new { DepartmentId = departmentId, CallId = callId };
 
 			try
 			{

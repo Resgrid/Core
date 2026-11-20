@@ -324,8 +324,9 @@ namespace Resgrid.Web.Services.Models.v4.Configs
 		public string AnalyticsHost { get; set; }
 
 		/// <summary>
-		/// Whether the current user should use modern application notification sounds. This is
-		/// enabled when either the department-wide setting or the user's profile setting is enabled.
+		/// Whether the current user should use modern application notification sounds. Always true:
+		/// modern sounds are on for every department and user, and the department and profile
+		/// settings that used to control this have been retired. Kept for apps that still read it.
 		/// </summary>
 		public bool EnableModernApplicationSounds { get; set; }
 	}

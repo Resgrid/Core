@@ -74,6 +74,12 @@ namespace Resgrid.Web.Areas.User.Models.Subscription
 			},
 			new AddonDefinition
 			{
+				// Sold only with an active paid entity plan (the Billing API refuses checkout otherwise; the billing page says why).
+				Type = PlanAddonTypes.DedicatedNumber, Key = "DedicatedNumber", Icon = "fa-phone", Slug = "dedicated-number", FeatureFlag = FeatureFlagKeys.IntakeDedicatedNumber,
+				Period = AddonBillingPeriod.Monthly, FeatureCount = 5, StripeAmount = () => DedicatedNumberAddonConfig.StripeMonthlyAmount, PaddleAmount = () => DedicatedNumberAddonConfig.PaddleMonthlyAmount
+			},
+			new AddonDefinition
+			{
 				Type = PlanAddonTypes.ADP, Key = "Adp", Icon = "fa-shield", Slug = "advanced-data-protection", FeatureFlag = FeatureFlagKeys.DepartmentProtectedDataEnrollment,
 				Period = AddonBillingPeriod.Yearly, FeatureCount = 5, StripeAmount = () => AdpAddonConfig.StripeYearlyAmount, PaddleAmount = () => AdpAddonConfig.PaddleYearlyAmount
 			}

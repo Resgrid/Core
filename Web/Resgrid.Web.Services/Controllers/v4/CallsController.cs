@@ -62,6 +62,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly ICallDispatchStatusService _callDispatchStatusService;
 		private readonly ICallResourceReleaseService _callResourceReleaseService;
 		private readonly ICallBroadcastOutboxService _callBroadcastOutboxService;
+		private readonly ICallRoutesService _callRoutesService;
+		private readonly IRouteService _routeService;
 		private readonly IDispatchRecommendationService _dispatchRecommendationService;
 		private readonly IFeatureToggleService _featureToggleService;
 		private readonly IDepartmentDataProtectionService _dataProtectionService;
@@ -73,6 +75,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IPendingCallsService _pendingCallsService;
 		private readonly ICallClosureService _callClosureService;
 		private readonly IInboundEmailReceiptsService _inboundEmailReceiptsService;
+		private readonly IIntakeService _intakeService;
 
 		/// <summary>
 		/// Optional on SaveCall and SaveCallFile: a client that may send the same request twice (the SMTP relay retries a message
@@ -143,9 +146,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 			ICallClosureService callClosureService,
 			IInboundEmailReceiptsService inboundEmailReceiptsService,
 			ICallResourceReleaseService callResourceReleaseService,
-			ICallBroadcastOutboxService callBroadcastOutboxService
+			ICallBroadcastOutboxService callBroadcastOutboxService,
+			ICallRoutesService callRoutesService,
+			IRouteService routeService,
+			IIntakeService intakeService = null
 			)
 		{
+			_intakeService = intakeService;
+			_callRoutesService = callRoutesService;
+			_routeService = routeService;
 			_callResourceReleaseService = callResourceReleaseService;
 			_callBroadcastOutboxService = callBroadcastOutboxService;
 			_inboundEmailReceiptsService = inboundEmailReceiptsService;
@@ -191,6 +200,43 @@ namespace Resgrid.Web.Services.Controllers.v4
 			string.Equals(User?.FindFirst(Resgrid.Model.Security.SessionClaimTypes.ClientApp)?.Value,
 				((int)UserSessionClientApplication.BigBoard).ToString(CultureInfo.InvariantCulture),
 				StringComparison.Ordinal);
+
+		/// <summary>
+		/// Fills <see cref="CallResultData.IntakeChannelName"/> / <see cref="CallResultData.IntakeChannelType"/> for calls an intake
+		/// channel created (CallSource 6 Intake, 7 VoiceIntake) with one lookup for the whole list. Best effort: a failed lookup
+		/// leaves them null (clients then show a generic "Intake" label), never fails the read.
+		/// </summary>
+		private async Task ApplyIntakeSourcesAsync(int departmentId, IEnumerable<CallResultData> calls)
+		{
+			if (_intakeService == null || calls == null)
+				return;
+
+			var intakeCalls = calls.Where(c => c != null && (c.CallSource == (int)CallSources.Intake || c.CallSource == (int)CallSources.VoiceIntake))
+				.Select(c => new { Data = c, Id = int.TryParse(c.CallId, NumberStyles.Integer, CultureInfo.InvariantCulture, out var id) ? id : 0 })
+				.Where(c => c.Id > 0).ToList();
+			if (intakeCalls.Count == 0)
+				return;
+
+			try
+			{
+				var sources = await _intakeService.GetCallSourcesAsync(departmentId, intakeCalls.Select(c => c.Id).Distinct().ToList());
+				if (sources == null)
+					return;
+
+				foreach (var call in intakeCalls)
+				{
+					if (sources.TryGetValue(call.Id, out var source) && source != null)
+					{
+						call.Data.IntakeChannelType = source.ChannelType;
+						call.Data.IntakeChannelName = string.IsNullOrWhiteSpace(source.ChannelName) ? null : source.ChannelName;
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"v4 Calls: intake source lookup failed for department {departmentId}");
+			}
+		}
 
 		/// <summary>
 		/// ADP plan section 7.3: BigBoard is an unattended display and is structurally stepped down.
@@ -325,6 +371,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				.OrderByDescending(x => x.LoggedOn).ToList();
 			var destinationPois = await _mappingService.GetPOIsForDepartmentAsync(DepartmentId);
 			var destinationPoiLookup = destinationPois.ToDictionary(x => x.PoiId);
+			var routePlanNames = await GetRoutePlanNamesAsync(DepartmentId, calls);
 
 			if (calls != null && calls.Any())
 			{
@@ -349,7 +396,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 						address = c.Address;
 
 					destinationPoiLookup.TryGetValue(callWithData.DestinationPoiId.GetValueOrDefault(), out var destinationPoi);
-					var callData = ConvertCall(callWithData, null, address, TimeZone, destinationPoi, callTypes);
+					var callData = ConvertCall(callWithData, null, address, TimeZone, destinationPoi, callTypes, LookupPoi(destinationPoiLookup, callWithData.LocationPoiId),
+						RoutePlanName(routePlanNames, callWithData));
 					if (protectedReads.TryGetValue(callWithData.CallId, out var protectedRead))
 						ApplyProtectedReadMetadata(callData, protectedRead);
 					contactPairs.Add(new KeyValuePair<Call, CallResultData>(callWithData, callData));
@@ -359,6 +407,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				// Linked contacts with pre-plan / alert / hazard indicators (Contacts plan Phase A, 3a).
 				await ApplyCallContactsAsync(DepartmentId, contactPairs);
 
+				await ApplyIntakeSourcesAsync(DepartmentId, result.Data);
 				await ApplyBigBoardSafeShellAsync(result.Data);
 				result.PageSize = result.Data.Count();
 				result.Status = ResponseHelper.Success;
@@ -439,11 +488,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 				}
 			}
 
-			result.Data = ConvertCall(c, protocols, address, TimeZone, destinationPoi, callTypes);
+			var callLocationPoi = c.LocationPoiId.HasValue ? await _callRoutesService.GetLocationPoiAsync(effectiveDepartmentId, c.LocationPoiId.Value) : null;
+			var callRouteNames = await GetRoutePlanNamesAsync(effectiveDepartmentId, new[] { c });
+			result.Data = ConvertCall(c, protocols, address, TimeZone, destinationPoi, callTypes, callLocationPoi, RoutePlanName(callRouteNames, c));
 			ApplyProtectedReadMetadata(result.Data, protectedRead);
 
 			// Linked contacts with pre-plan / alert / hazard indicators (Contacts plan Phase A, 3a).
 			await ApplyCallContactsAsync(effectiveDepartmentId, new List<KeyValuePair<Call, CallResultData>> { new KeyValuePair<Call, CallResultData>(c, result.Data) });
+			await ApplyIntakeSourcesAsync(effectiveDepartmentId, new[] { result.Data });
 
 			// BigBoard shells also suppress UDF submissions — user-authored free text defaults to
 			// sensitive in a protected department (plan section 5.2).
@@ -995,6 +1047,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 				}
 			}
 
+			// Runs of the call's route (M0322): which unit is on it and how far it got.
+			if (!string.IsNullOrWhiteSpace(call.RoutePlanId))
+				result.Data.RouteInstances = await GetCallRouteInstancesAsync(call);
+
 			result.PageSize = 0;
 			result.Status = ResponseHelper.Success;
 
@@ -1093,6 +1149,27 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (newCallInput.DestinationPoiId.HasValue && newCallInput.DestinationPoiId.Value > 0 && destinationPoi == null)
 				return BadRequest();
 
+			// Call start/destination locations and route (M0322): a location POI of another department or a route the call cannot
+			// follow is refused, like an unknown destination POI.
+			Poi locationPoi = null;
+			if (newCallInput.LocationPoiId.HasValue && newCallInput.LocationPoiId.Value > 0)
+			{
+				locationPoi = await _callRoutesService.GetLocationPoiAsync(effectiveDepartmentId, newCallInput.LocationPoiId.Value);
+				if (locationPoi == null)
+					return BadRequest("LocationPoiId is not a POI in this department.");
+			}
+
+			CallRoutePlan callRoutePlan = null;
+			if (!string.IsNullOrWhiteSpace(newCallInput.RoutePlanId))
+			{
+				callRoutePlan = await _callRoutesService.GetEligibleRoutePlanAsync(effectiveDepartmentId, newCallInput.RoutePlanId);
+				if (callRoutePlan == null)
+					return BadRequest("RoutePlanId is not an active route plan with a start and an end in this department.");
+			}
+
+			var freeDestinationGeolocation = destinationPoi == null ? CallLocations.NormalizePoint(newCallInput.DestinationGeolocation) : null;
+			var freeDestinationAddress = destinationPoi == null && !string.IsNullOrWhiteSpace(newCallInput.DestinationAddress) ? newCallInput.DestinationAddress.Trim() : null;
+
 			// A pending call is saved for a dispatcher to send later: nobody is notified, and any scheduled
 			// time is ignored because the dispatcher decides when it goes out.
 			var isPending = newCallInput.IsPending == true;
@@ -1136,6 +1213,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 				MapPage = newCallInput.MapPage,
 				PrimaryContactId = newCallInput.ContactId,
 				DestinationPoiId = newCallInput.DestinationPoiId,
+				DestinationAddress = freeDestinationAddress,
+				DestinationGeolocation = freeDestinationGeolocation,
 				IndoorMapZoneId = newCallInput.IndoorMapZoneId,
 				HasProtocols = protocols.Any(),
 				HasLinkedCall = linkedCall != null,
@@ -1207,6 +1286,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 				call.Address = newCallInput.Address;
 
 			call.DestinationPoiId = destinationPoi?.PoiId;
+			call.LocationPoiId = locationPoi?.PoiId;
+			call.RoutePlanId = callRoutePlan?.Plan.RoutePlanId;
+
+			if (destinationPoi == null)
+			{
+				call.DestinationAddress = freeDestinationAddress;
+				call.DestinationGeoLocationData = freeDestinationGeolocation;
+				call.DestinationW3W = string.IsNullOrWhiteSpace(newCallInput.DestinationWhat3Words) ? null : newCallInput.DestinationWhat3Words.Trim();
+			}
 
 			if (!string.IsNullOrWhiteSpace(newCallInput.What3Words))
 				call.W3W = newCallInput.What3Words;
@@ -1667,6 +1755,24 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (editCallInput.DestinationPoiId.HasValue && editCallInput.DestinationPoiId.Value > 0 && destinationPoi == null)
 				return BadRequest();
 
+			// M0322: null keeps the stored location POI / route (older clients never send them), 0 or "" clears.
+			Poi editLocationPoi = null;
+			if (editCallInput.LocationPoiId.HasValue && editCallInput.LocationPoiId.Value > 0)
+			{
+				editLocationPoi = await _callRoutesService.GetLocationPoiAsync(DepartmentId, editCallInput.LocationPoiId.Value);
+				if (editLocationPoi == null)
+					return BadRequest("LocationPoiId is not a POI in this department.");
+			}
+
+			CallRoutePlan editRoutePlan = null;
+			var routeChanged = editCallInput.RoutePlanId != null && !string.Equals(editCallInput.RoutePlanId.Trim(), call.RoutePlanId ?? "", StringComparison.OrdinalIgnoreCase);
+			if (routeChanged && !string.IsNullOrWhiteSpace(editCallInput.RoutePlanId))
+			{
+				editRoutePlan = await _callRoutesService.GetEligibleRoutePlanAsync(DepartmentId, editCallInput.RoutePlanId);
+				if (editRoutePlan == null)
+					return BadRequest("RoutePlanId is not an active route plan with a start and an end in this department.");
+			}
+
 			// ADP: snapshot the stored cataloged values BEFORE the input overwrites them, so a
 			// round-tripped REDACTED sentinel restores the stored envelope instead of persisting
 			// the literal placeholder.
@@ -1715,6 +1821,22 @@ namespace Resgrid.Web.Services.Controllers.v4
 			// No destination posted for a hidden destination means the client never showed it, not that it was cleared.
 			if (destinationPoi != null || fieldPolicy.IsVisible(NewCallFieldKeys.DestinationPoi))
 				call.DestinationPoiId = destinationPoi?.PoiId;
+
+			// Free destination (M0322): null keeps, "" clears; a destination POI clears it when the call saves.
+			if (editCallInput.DestinationAddress != null)
+				call.DestinationAddress = string.IsNullOrWhiteSpace(editCallInput.DestinationAddress) ? null : editCallInput.DestinationAddress.Trim();
+
+			if (editCallInput.DestinationGeolocation != null)
+				call.DestinationGeoLocationData = CallLocations.NormalizePoint(editCallInput.DestinationGeolocation);
+
+			if (editCallInput.DestinationWhat3Words != null)
+				call.DestinationW3W = string.IsNullOrWhiteSpace(editCallInput.DestinationWhat3Words) ? null : editCallInput.DestinationWhat3Words.Trim();
+
+			if (editCallInput.LocationPoiId.HasValue)
+				call.LocationPoiId = editLocationPoi?.PoiId;
+
+			if (routeChanged)
+				call.RoutePlanId = editRoutePlan?.Plan.RoutePlanId;
 
 			if (!string.IsNullOrWhiteSpace(editCallInput.What3Words))
 				call.W3W = editCallInput.What3Words;
@@ -2025,6 +2147,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 				MapPage = call.MapPage,
 				PrimaryContactId = editCallInput.ContactId ?? call.Contacts?.FirstOrDefault(x => x.CallContactType == 0)?.ContactId,
 				DestinationPoiId = call.DestinationPoiId,
+				DestinationAddress = call.DestinationPoiId.HasValue ? null : call.DestinationAddress,
+				DestinationGeolocation = call.DestinationPoiId.HasValue ? null : call.DestinationGeoLocationData,
 				IndoorMapZoneId = call.IndoorMapZoneId,
 				HasProtocols = call.Protocols?.Any() ?? false,
 				HasLinkedCall = call.References?.Any() ?? false,
@@ -2719,6 +2843,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 			var destinationPois = await _mappingService.GetPOIsForDepartmentAsync(DepartmentId);
 			var destinationPoiLookup = destinationPois.ToDictionary(x => x.PoiId);
+			var routePlanNames = await GetRoutePlanNamesAsync(DepartmentId, calls);
 
 			if (calls != null && calls.Any())
 			{
@@ -2738,7 +2863,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 						address = c.Address;
 
 					destinationPoiLookup.TryGetValue(c.DestinationPoiId.GetValueOrDefault(), out var destinationPoi);
-					var callData = ConvertCall(c, null, address, TimeZone, destinationPoi, callTypes);
+					var callData = ConvertCall(c, null, address, TimeZone, destinationPoi, callTypes, LookupPoi(destinationPoiLookup, c.LocationPoiId),
+						RoutePlanName(routePlanNames, c));
 					if (protectedReads.TryGetValue(c.CallId, out var protectedRead))
 						ApplyProtectedReadMetadata(callData, protectedRead);
 					result.Data.Add(callData);
@@ -2777,6 +2903,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				.OrderBy(x => x.LoggedOn).ToList();
 			var destinationPois = await _mappingService.GetPOIsForDepartmentAsync(DepartmentId);
 			var destinationPoiLookup = destinationPois.ToDictionary(x => x.PoiId);
+			var routePlanNames = await GetRoutePlanNamesAsync(DepartmentId, calls);
 
 			if (calls.Any())
 			{
@@ -2785,12 +2912,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 				foreach (var c in calls)
 				{
 					destinationPoiLookup.TryGetValue(c.DestinationPoiId.GetValueOrDefault(), out var destinationPoi);
-					var callData = ConvertCall(c, null, c.Address, TimeZone, destinationPoi, callTypes);
+					var callData = ConvertCall(c, null, c.Address, TimeZone, destinationPoi, callTypes, LookupPoi(destinationPoiLookup, c.LocationPoiId),
+						RoutePlanName(routePlanNames, c));
 					if (protectedReads.TryGetValue(c.CallId, out var protectedRead))
 						ApplyProtectedReadMetadata(callData, protectedRead);
 					result.Data.Add(callData);
 				}
 
+				await ApplyIntakeSourcesAsync(DepartmentId, result.Data);
 				await ApplyBigBoardSafeShellAsync(result.Data);
 				result.PageSize = result.Data.Count;
 				result.Status = ResponseHelper.Success;
@@ -2881,7 +3010,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				foreach (var call in pageCalls)
 				{
 					destinationPois.TryGetValue(call.DestinationPoiId.GetValueOrDefault(), out var destinationPoi);
-					var callData = ConvertCall(call, null, call.Address, archiveTimeZone, destinationPoi, callTypes);
+					var callData = ConvertCall(call, null, call.Address, archiveTimeZone, destinationPoi, callTypes, LookupPoi(destinationPois, call.LocationPoiId));
 					if (protectedReads.TryGetValue(call.CallId, out var protectedRead))
 						ApplyProtectedReadMetadata(callData, protectedRead);
 					if (contentCounts.TryGetValue(call.CallId, out var counts))
@@ -3292,6 +3421,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				.OrderByDescending(x => x.LoggedOn).ToList();
 			var destinationPois = await _mappingService.GetPOIsForDepartmentAsync(DepartmentId);
 			var destinationPoiLookup = destinationPois.ToDictionary(x => x.PoiId);
+			var routePlanNames = await GetRoutePlanNamesAsync(DepartmentId, calls);
 
 			if (calls != null && calls.Any())
 			{
@@ -3319,12 +3449,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 						address = c.Address;
 
 					destinationPoiLookup.TryGetValue(callWithData.DestinationPoiId.GetValueOrDefault(), out var destinationPoi);
-					var callData = ConvertCall(callWithData, null, address, TimeZone, destinationPoi, callTypes);
+					var callData = ConvertCall(callWithData, null, address, TimeZone, destinationPoi, callTypes, LookupPoi(destinationPoiLookup, callWithData.LocationPoiId),
+						RoutePlanName(routePlanNames, callWithData));
 					if (protectedReads.TryGetValue(callWithData.CallId, out var protectedRead))
 						ApplyProtectedReadMetadata(callData, protectedRead);
 					result.Data.Add(callData);
 				}
 
+				await ApplyIntakeSourcesAsync(DepartmentId, result.Data);
 				await ApplyBigBoardSafeShellAsync(result.Data);
 				result.PageSize = result.Data.Count();
 				result.Status = ResponseHelper.Success;
@@ -3353,7 +3485,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		}
 
 		public static CallResultData ConvertCall(Call call, List<DispatchProtocol> protocol, string geoLocationAddress, string timeZone, Poi destinationPoi = null,
-			IEnumerable<CallType> callTypes = null)
+			IEnumerable<CallType> callTypes = null, Poi locationPoi = null, string routePlanName = null)
 		{
 			var callResult = new CallResultData();
 
@@ -3406,6 +3538,31 @@ namespace Resgrid.Web.Services.Controllers.v4
 				callResult.DestinationLatitude = destinationPoi.Latitude;
 				callResult.DestinationLongitude = destinationPoi.Longitude;
 			}
+			else if (!call.DestinationPoiId.HasValue && CallLocations.HasFreeDestination(call))
+			{
+				// A free destination (M0322) fills the same fields clients already read for a POI, so a destination
+				// target works without knowing the difference; DestinationPoiId and DestinationName stay null.
+				callResult.DestinationAddress = call.DestinationAddress;
+				var freePoint = CallLocations.GetFreeDestinationPoint(call);
+				if (freePoint.HasValue)
+				{
+					callResult.DestinationLatitude = freePoint.Value.Latitude;
+					callResult.DestinationLongitude = freePoint.Value.Longitude;
+				}
+			}
+
+			if (!call.DestinationPoiId.HasValue)
+			{
+				callResult.DestinationGeolocation = call.DestinationGeoLocationData;
+				callResult.DestinationWhat3Words = call.DestinationW3W;
+			}
+
+			callResult.LocationPoiId = call.LocationPoiId;
+			if (locationPoi != null && call.LocationPoiId == locationPoi.PoiId)
+				callResult.LocationPoiName = PoiDisplayHelper.GetDisplayName(locationPoi, locationPoi.Type?.Name);
+
+			callResult.RoutePlanId = call.RoutePlanId;
+			callResult.RoutePlanName = string.IsNullOrWhiteSpace(call.RoutePlanId) ? null : routePlanName;
 
 			callResult.Geolocation = call.GeoLocationData;
 			var displayDepartment = new Department { TimeZone = timeZone };
@@ -3441,6 +3598,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			callResult.CheckInTimersEnabled = call.CheckInTimersEnabled;
 			callResult.RecurringCallId = call.RecurringCallId;
+			callResult.CallSource = call.CallSource;
 
 			callResult.Protocols = new List<CallProtocolResultData>();
 			if (protocol != null && protocol.Any())
@@ -3614,6 +3772,78 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return edit
 				? await _authorizationService.CanUserEditCallAsync(UserId, callId)
 				: await _authorizationService.CanUserViewCallAsync(UserId, callId);
+		}
+
+		/// <summary>Route plan names by id for the calls that name a route (M0322); empty, without a read, when none does.</summary>
+		private async Task<Dictionary<string, string>> GetRoutePlanNamesAsync(int departmentId, IEnumerable<Call> calls)
+		{
+			var names = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+			if (calls == null || !calls.Any(x => x != null && !string.IsNullOrWhiteSpace(x.RoutePlanId)))
+				return names;
+
+			foreach (var plan in await _routeService.GetRoutePlansForDepartmentAsync(departmentId) ?? new List<RoutePlan>())
+			{
+				if (plan != null && !string.IsNullOrWhiteSpace(plan.RoutePlanId) && plan.DepartmentId == departmentId && !names.ContainsKey(plan.RoutePlanId))
+					names[plan.RoutePlanId] = plan.Name;
+			}
+
+			return names;
+		}
+
+		private static string RoutePlanName(Dictionary<string, string> names, Call call)
+		{
+			return call != null && !string.IsNullOrWhiteSpace(call.RoutePlanId) && names != null && names.TryGetValue(call.RoutePlanId, out var name) ? name : null;
+		}
+
+		private static Poi LookupPoi(IDictionary<int, Poi> lookup, int? poiId)
+		{
+			return poiId.HasValue && lookup != null && lookup.TryGetValue(poiId.Value, out var poi) ? poi : null;
+		}
+
+		/// <summary>Runs of the call's route (M0322), newest first, with plan and unit names.</summary>
+		private async Task<List<CallRouteInstanceResultData>> GetCallRouteInstancesAsync(Call call)
+		{
+			var results = new List<CallRouteInstanceResultData>();
+			if (call == null)
+				return results;
+
+			var instances = await _routeService.GetInstancesForCallAsync(call.DepartmentId, call.CallId);
+			if (instances == null || instances.Count == 0)
+				return results;
+
+			var planNames = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+			foreach (var planId in instances.Select(x => x.RoutePlanId).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct(StringComparer.OrdinalIgnoreCase))
+			{
+				var plan = await _routeService.GetRoutePlanByIdAsync(planId);
+				planNames[planId] = plan != null && plan.DepartmentId == call.DepartmentId ? plan.Name : null;
+			}
+
+			var units = await _unitsService.GetUnitsForDepartmentAsync(call.DepartmentId) ?? new List<Unit>();
+
+			foreach (var instance in instances)
+			{
+				results.Add(new CallRouteInstanceResultData
+				{
+					RouteInstanceId = instance.RouteInstanceId,
+					RoutePlanId = instance.RoutePlanId,
+					RoutePlanName = instance.RoutePlanId != null && planNames.TryGetValue(instance.RoutePlanId, out var planName) ? planName : null,
+					UnitId = instance.UnitId,
+					UnitName = units.FirstOrDefault(x => x.UnitId == instance.UnitId)?.Name,
+					Status = instance.Status,
+					StopsCompleted = instance.StopsCompleted,
+					StopsTotal = instance.StopsTotal,
+					ActualStartOn = IsoUtc(instance.ActualStartOn),
+					ActualEndOn = IsoUtc(instance.ActualEndOn),
+					StartReachedOn = IsoUtc(instance.StartReachedOn)
+				});
+			}
+
+			return results;
+		}
+
+		private static string IsoUtc(DateTime? value)
+		{
+			return value.HasValue ? DateTime.SpecifyKind(value.Value, DateTimeKind.Utc).ToString("o", CultureInfo.InvariantCulture) : null;
 		}
 
 		private async Task<Poi> GetValidatedDestinationPoiAsync(int? destinationPoiId, int? departmentIdOverride = null)

@@ -24,7 +24,6 @@ namespace Resgrid.Web.Services.Controllers.v4
 	{
 		#region Members and Constructors
 		private readonly IDepartmentSettingsService _departmentSettingsService;
-		private readonly IUserProfileService _userProfileService;
 		private readonly IFeatureToggleService _featureToggleService;
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IMapStyleService _mapStyleService;
@@ -32,13 +31,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IRoutingService _routingService;
 		private readonly IOfflineMapPackService _offlineMapPackService;
 
-		public ConfigController(IDepartmentSettingsService departmentSettingsService, IUserProfileService userProfileService,
+		public ConfigController(IDepartmentSettingsService departmentSettingsService,
 			IFeatureToggleService featureToggleService, IDepartmentsService departmentsService, IMapStyleService mapStyleService,
 			IStaticMapService staticMapService, IRoutingService routingService, IOfflineMapPackService offlineMapPackService)
 		{
 			_offlineMapPackService = offlineMapPackService;
 			_departmentSettingsService = departmentSettingsService;
-			_userProfileService = userProfileService;
 			_featureToggleService = featureToggleService;
 			_departmentsService = departmentsService;
 			_mapStyleService = mapStyleService;
@@ -190,20 +188,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			result.Data.AnalyticsApiKey = "";
 			result.Data.AnalyticsHost = "";
 
-			bool departmentModernApplicationSoundsEnabled = false;
-
 			if (departmentId > 0)
 			{
-				try
-				{
-					departmentModernApplicationSoundsEnabled = await _departmentSettingsService.GetModernNotificationsEnabledAsync(departmentId);
-				}
-				catch (System.Exception ex)
-				{
-					Resgrid.Framework.Logging.LogException(ex,
-						$"{nameof(BuildConfigResultAsync)}: {nameof(IDepartmentSettingsService.GetModernNotificationsEnabledAsync)} failed for departmentId {departmentId}.");
-				}
-
 				try
 				{
 					result.Data.StatusHoldToConfirm = await _departmentSettingsService.GetStatusHoldToConfirmAsync(departmentId);
@@ -235,18 +221,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 				}
 			}
 
-			bool userModernApplicationSoundsEnabled = false;
-			var userId = GetCurrentUserId();
-
-			if (!string.IsNullOrWhiteSpace(userId))
-			{
-				var profile = await _userProfileService.GetProfileByUserIdAsync(userId);
-				userModernApplicationSoundsEnabled = profile?.EnableModernApplicationSounds == true;
-			}
-
-			result.Data.EnableModernApplicationSounds = ModernApplicationSoundSettings.IsEnabled(
-				departmentModernApplicationSoundsEnabled,
-				userModernApplicationSoundsEnabled);
+			// Modern sounds are on for everyone now; the field stays so apps that read it keep working.
+			result.Data.EnableModernApplicationSounds = true;
 
 			if (departmentId > 0)
 			{
@@ -431,16 +407,6 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return ClaimsAuthorizationHelper.GetDepartmentId();
 
 			return 0;
-		}
-
-		private static string GetCurrentUserId()
-		{
-			var principal = ClaimsAuthorizationHelper.GetClaimsPrincipal();
-
-			if (principal?.Identity != null && principal.Identity.IsAuthenticated)
-				return ClaimsAuthorizationHelper.GetUserId();
-
-			return string.Empty;
 		}
 	}
 }

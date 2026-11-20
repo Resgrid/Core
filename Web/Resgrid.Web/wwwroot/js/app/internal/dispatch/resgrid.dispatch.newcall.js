@@ -140,6 +140,11 @@ var resgrid;
 
                     resgrid.dispatch.nearestboard.drawBoundaries();
 
+                        // Location POI, destination and route (resgrid.dispatch.calllocations.js) draw on the same map.
+                        if (resgrid.dispatch.calllocations && typeof resgrid.dispatch.calllocations.mapReady === 'function') {
+                            resgrid.dispatch.calllocations.mapReady(map);
+                        }
+
                         // A location placed before the map finished loading gets its pin now.
                         var placedLat = parseFloat($("#Latitude").val());
                         var placedLng = parseFloat($("#Longitude").val());

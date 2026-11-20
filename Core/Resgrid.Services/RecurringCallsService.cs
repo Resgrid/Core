@@ -65,6 +65,7 @@ namespace Resgrid.Services
 		private readonly IUnitsService _unitsService;
 		private readonly IPersonnelRolesService _personnelRolesService;
 		private readonly IMappingService _mappingService;
+		private readonly ICallRoutesService _callRoutesService;
 		private readonly IGeoLocationProvider _geoLocationProvider;
 		private readonly IDispatchScopeService _dispatchScopeService;
 		private readonly IEventAggregator _eventAggregator;
@@ -86,8 +87,10 @@ namespace Resgrid.Services
 			IEventAggregator eventAggregator, IQueueService queueService, IUserProfileService userProfileService,
 			ICallDispatchStatusService callDispatchStatusService, IFeatureToggleService featureToggleService,
 			IDispatchRecommendationService dispatchRecommendationService, ICustomStateService customStateService, IActionLogsService actionLogsService,
-			IUserStateService userStateService, ICommunicationService communicationService, IDepartmentSettingsService departmentSettingsService)
+			IUserStateService userStateService, ICommunicationService communicationService, IDepartmentSettingsService departmentSettingsService,
+			ICallRoutesService callRoutesService)
 		{
+			_callRoutesService = callRoutesService;
 			_recurringCallsRepository = recurringCallsRepository;
 			_occurrencesRepository = occurrencesRepository;
 			_alertsRepository = alertsRepository;
@@ -164,6 +167,9 @@ namespace Resgrid.Services
 			series.ScheduleContactEmail = string.IsNullOrWhiteSpace(series.ScheduleContactEmail) ? null : series.ScheduleContactEmail.Trim();
 
 			await ApplyFacilityDefaultsAsync(series);
+
+			// One destination (a POI clears the free one, M0322); a free point is normalized.
+			CallLocations.NormalizeDestination(series);
 
 			// An address with no pin is located once here, rather than on every call the schedule creates.
 			if (string.IsNullOrWhiteSpace(series.GeoLocationData) && !string.IsNullOrWhiteSpace(series.Address))
@@ -1124,7 +1130,13 @@ namespace Resgrid.Services
 				var destinationValid = series.DestinationPoiId.HasValue && series.DestinationPoiId.Value > 0 &&
 									   await _mappingService.GetDestinationPOIByIdAsync(series.DepartmentId, series.DestinationPoiId.Value) != null;
 
-				var call = BuildCall(series, dispatchOnUtc, nowUtc, userId ?? series.OwnerUserId, targets, destinationValid);
+				// The route and the pickup facility (the call's location POI, M0322) are dropped from the call when they can no longer be used.
+				var routeValid = !string.IsNullOrWhiteSpace(series.RoutePlanId) &&
+								 await _callRoutesService.GetEligibleRoutePlanAsync(series.DepartmentId, series.RoutePlanId) != null;
+				var facilityValid = series.FacilityPoiId.HasValue && series.FacilityPoiId.Value > 0 &&
+									await _callRoutesService.GetLocationPoiAsync(series.DepartmentId, series.FacilityPoiId.Value) != null;
+
+				var call = BuildCall(series, dispatchOnUtc, nowUtc, userId ?? series.OwnerUserId, targets, destinationValid, routeValid, facilityValid);
 				call.State = state;
 				if (state == (int)CallStates.Pending)
 					call.HasBeenDispatched = null;
@@ -2080,7 +2092,12 @@ namespace Resgrid.Services
 		#region Helpers
 
 		/// <summary>The call an occurrence of a schedule creates, before it is saved. Recipients not in the given sets are left off.</summary>
-		public static Call BuildCall(RecurringCall series, DateTime dispatchOnUtc, DateTime nowUtc, string reportingUserId, RecurringCallDispatchTargets targets, bool destinationValid)
+		/// <remarks>
+		/// The call's location POI is the schedule's pickup facility (<paramref name="facilityValid"/>), its route the schedule's route
+		/// (<paramref name="routeValid"/>) and, when the destination POI is not used, its free destination the schedule's (M0322).
+		/// </remarks>
+		public static Call BuildCall(RecurringCall series, DateTime dispatchOnUtc, DateTime nowUtc, string reportingUserId, RecurringCallDispatchTargets targets, bool destinationValid,
+			bool routeValid = false, bool facilityValid = false)
 		{
 			var call = new Call
 			{
@@ -2099,6 +2116,10 @@ namespace Resgrid.Services
 				IncidentNumber = series.IncidentNumber,
 				MapPage = series.MapPage,
 				DestinationPoiId = destinationValid ? series.DestinationPoiId : null,
+				DestinationAddress = destinationValid ? null : series.DestinationAddress,
+				DestinationGeoLocationData = destinationValid ? null : series.DestinationGeoLocationData,
+				LocationPoiId = facilityValid ? series.FacilityPoiId : null,
+				RoutePlanId = routeValid ? series.RoutePlanId : null,
 				CheckInTimersEnabled = series.CheckInTimersEnabled,
 				ReportingUserId = reportingUserId,
 				LoggedOn = nowUtc,
@@ -2457,6 +2478,9 @@ namespace Resgrid.Services
 				series.FacilityPoiId,
 				series.DestinationName,
 				series.DestinationPoiId,
+				series.DestinationAddress,
+				series.DestinationGeoLocationData,
+				series.RoutePlanId,
 				series.ScheduleContactName,
 				series.ScheduleContactNumber,
 				series.ScheduleContactEmail,

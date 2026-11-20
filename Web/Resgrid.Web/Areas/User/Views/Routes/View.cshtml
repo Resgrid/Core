@@ -74,11 +74,13 @@
                 <div class="ibox-title"><h5>@localizer["Stops"] (@Model.Stops.Count)</h5></div>
                 <div class="ibox-content">
                     <div class="feed-activity-list">
+                        @{ var stopNumber = 0; }
                         @foreach (var stop in Model.Stops.OrderBy(s => s.StopOrder))
                         {
+                            stopNumber++;
                             <div class="feed-element">
                                 <div class="media-body">
-                                    <strong>@(stop.StopOrder + 1). @stop.Name</strong>
+                                    <strong>@(stopNumber). @stop.Name</strong>
                                     @if (!string.IsNullOrEmpty(stop.Address))
                                     {
                                         <br /><small class="text-muted">@stop.Address</small>

@@ -77,7 +77,8 @@ namespace Resgrid.Tests.Repositories
 				? new NpgsqlConnectionStringBuilder(_master) { Database = _database }.ConnectionString
 				: new SqlConnectionStringBuilder(_master) { InitialCatalog = _database }.ConnectionString;
 
-			// Minimal stand-ins for the tables the three queries read.
+			// Minimal stand-ins for the tables the three queries read, including M0316's release columns and table (a released unit
+			// or person is no longer on the call).
 			await using var database = Connect(_connection);
 			await database.OpenAsync();
 			await database.ExecuteAsync(IsPostgres
@@ -85,7 +86,10 @@ namespace Resgrid.Tests.Repositories
 					CREATE TABLE calls (callid int PRIMARY KEY, departmentid int NOT NULL, state int NOT NULL, dispatchon timestamp NULL,
 						hasbeendispatched boolean NULL, isdeleted boolean NOT NULL DEFAULT false);
 					CREATE TABLE calldispatchunits (calldispatchunitid serial PRIMARY KEY, callid int NOT NULL, unitid int NOT NULL,
-						dispatchcount int NOT NULL DEFAULT 1, lastdispatchedon timestamp NULL, dispatchedon timestamp NOT NULL);
+						dispatchcount int NOT NULL DEFAULT 1, lastdispatchedon timestamp NULL, dispatchedon timestamp NOT NULL,
+						releasedon timestamp NULL, releasedbyuserid citext NULL);
+					CREATE TABLE callpersonnelreleases (callpersonnelreleaseid varchar(36) PRIMARY KEY, departmentid int NOT NULL, callid int NOT NULL,
+						userid citext NOT NULL, releasedon timestamp NOT NULL, releasedbyuserid citext NULL);
 					CREATE TABLE calldispatches (calldispatchid serial PRIMARY KEY, callid int NOT NULL, userid citext NOT NULL,
 						dispatchedon timestamp NOT NULL, lastdispatchedon timestamp NULL);
 					CREATE TABLE calldispatchgroups (calldispatchgroupid serial PRIMARY KEY, callid int NOT NULL, departmentgroupid int NOT NULL,
@@ -97,7 +101,10 @@ namespace Resgrid.Tests.Repositories
 				: @"CREATE TABLE Calls (CallId int PRIMARY KEY, DepartmentId int NOT NULL, State int NOT NULL, DispatchOn datetime2 NULL,
 						HasBeenDispatched bit NULL, IsDeleted bit NOT NULL DEFAULT 0);
 					CREATE TABLE CallDispatchUnits (CallDispatchUnitId int IDENTITY PRIMARY KEY, CallId int NOT NULL, UnitId int NOT NULL,
-						DispatchCount int NOT NULL DEFAULT 1, LastDispatchedOn datetime2 NULL, DispatchedOn datetime2 NOT NULL);
+						DispatchCount int NOT NULL DEFAULT 1, LastDispatchedOn datetime2 NULL, DispatchedOn datetime2 NOT NULL,
+						ReleasedOn datetime2 NULL, ReleasedByUserId nvarchar(128) NULL);
+					CREATE TABLE CallPersonnelReleases (CallPersonnelReleaseId nvarchar(36) PRIMARY KEY, DepartmentId int NOT NULL, CallId int NOT NULL,
+						UserId nvarchar(128) NOT NULL, ReleasedOn datetime2 NOT NULL, ReleasedByUserId nvarchar(128) NULL);
 					CREATE TABLE CallDispatches (CallDispatchId int IDENTITY PRIMARY KEY, CallId int NOT NULL, UserId nvarchar(128) NOT NULL,
 						DispatchedOn datetime2 NOT NULL, LastDispatchedOn datetime2 NULL);
 					CREATE TABLE CallDispatchGroups (CallDispatchGroupId int IDENTITY PRIMARY KEY, CallId int NOT NULL, DepartmentGroupId int NOT NULL,
@@ -159,6 +166,42 @@ namespace Resgrid.Tests.Repositories
 			(await units.GetOpenCallUnitDispatchesForUnitAsync(DepartmentId, UnitId)).Select(x => x.CallId).Should().BeEquivalentTo(new[] { 1, 3, 4 });
 			(await units.GetOpenCallUnitDispatchesForDepartmentAsync(DepartmentId)).Select(x => x.CallId).Should().BeEquivalentTo(new[] { 1, 3, 4 });
 			(await people.GetOpenCallDispatchesForUserAsync(DepartmentId, UserId)).Select(x => x.CallId).Should().BeEquivalentTo(new[] { 1, 3, 4 });
+		}
+
+		// M0316: a unit stood down from a call (ReleasedOn) and a person released from it (CallPersonnelReleases) are no longer
+		// working it, so neither open list offers that call for them; another person on the same call still gets it.
+		[Test]
+		public async Task a_released_unit_or_person_is_no_longer_on_the_open_call()
+		{
+			const int ReleaseDepartmentId = 9, StillOnCallId = 30, ReleasedCallId = 31;
+			const string OtherUserId = "user-2";
+			var now = DateTime.UtcNow;
+			await using (var database = Connect(_connection))
+			{
+				await database.ExecuteAsync(IsPostgres
+					? @"INSERT INTO calls (callid, departmentid, state, dispatchon, hasbeendispatched, isdeleted) VALUES (@StillOn, @DepartmentId, 0, NULL, NULL, false), (@Released, @DepartmentId, 0, NULL, NULL, false);
+						INSERT INTO calldispatchunits (callid, unitid, dispatchedon) VALUES (@StillOn, @UnitId, @Dispatched);
+						INSERT INTO calldispatchunits (callid, unitid, dispatchedon, releasedon, releasedbyuserid) VALUES (@Released, @UnitId, @Dispatched, @ReleasedOn, @OtherUserId);
+						INSERT INTO calldispatches (callid, userid, dispatchedon) VALUES (@StillOn, @UserId, @Dispatched), (@Released, @UserId, @Dispatched), (@Released, @OtherUserId, @Dispatched);
+						INSERT INTO callpersonnelreleases (callpersonnelreleaseid, departmentid, callid, userid, releasedon, releasedbyuserid) VALUES (@ReleaseId, @DepartmentId, @Released, @UserId, @ReleasedOn, @OtherUserId);"
+					: @"INSERT INTO Calls (CallId, DepartmentId, State, DispatchOn, HasBeenDispatched, IsDeleted) VALUES (@StillOn, @DepartmentId, 0, NULL, NULL, 0), (@Released, @DepartmentId, 0, NULL, NULL, 0);
+						INSERT INTO CallDispatchUnits (CallId, UnitId, DispatchedOn) VALUES (@StillOn, @UnitId, @Dispatched);
+						INSERT INTO CallDispatchUnits (CallId, UnitId, DispatchedOn, ReleasedOn, ReleasedByUserId) VALUES (@Released, @UnitId, @Dispatched, @ReleasedOn, @OtherUserId);
+						INSERT INTO CallDispatches (CallId, UserId, DispatchedOn) VALUES (@StillOn, @UserId, @Dispatched), (@Released, @UserId, @Dispatched), (@Released, @OtherUserId, @Dispatched);
+						INSERT INTO CallPersonnelReleases (CallPersonnelReleaseId, DepartmentId, CallId, UserId, ReleasedOn, ReleasedByUserId) VALUES (@ReleaseId, @DepartmentId, @Released, @UserId, @ReleasedOn, @OtherUserId);",
+					new
+					{
+						StillOn = StillOnCallId, Released = ReleasedCallId, DepartmentId = ReleaseDepartmentId, UnitId, UserId, OtherUserId,
+						Dispatched = now.AddMinutes(-30), ReleasedOn = now.AddMinutes(-5), ReleaseId = Guid.NewGuid().ToString("D")
+					});
+			}
+
+			var (units, people) = Repositories();
+
+			(await units.GetOpenCallUnitDispatchesForUnitAsync(ReleaseDepartmentId, UnitId)).Select(x => x.CallId).Should().BeEquivalentTo(new[] { StillOnCallId });
+			(await units.GetOpenCallUnitDispatchesForDepartmentAsync(ReleaseDepartmentId)).Select(x => x.CallId).Should().BeEquivalentTo(new[] { StillOnCallId });
+			(await people.GetOpenCallDispatchesForUserAsync(ReleaseDepartmentId, UserId)).Select(x => x.CallId).Should().BeEquivalentTo(new[] { StillOnCallId });
+			(await people.GetOpenCallDispatchesForUserAsync(ReleaseDepartmentId, OtherUserId)).Select(x => x.CallId).Should().BeEquivalentTo(new[] { ReleasedCallId });
 		}
 
 		// Write-time attribution compares these times with the person's last clear (PR #546 follow-up).

@@ -79,6 +79,14 @@
   <data name="EnhancedAiFeature5" xml:space="preserve"><value>نماذج مفتوحة الأوزان فقط؛ لا تُرسل البيانات الخاصة أبدًا إلى ذكاء اصطناعي سحابي</value></data>
   <data name="EnhancedAiFeature6" xml:space="preserve"><value>أو استخدم اشتراكك الخاص لدى مزوّد ذكاء اصطناعي</value></data>
   <data name="EnhancedAiNote" xml:space="preserve"><value>تُفوتر شهريًا لكل قسم. تتضمن ميزانية شهرية للذكاء الاصطناعي دون رسوم تجاوز. يحصل كل قسم على أسئلة Admin Assist مجانية بدونها.</value></data>
+  <data name="DedicatedNumberTitle" xml:space="preserve"><value>Private Inbound Dispatch Number</value></data>
+  <data name="DedicatedNumberTagline" xml:space="preserve"><value>رقم قسمك الخاص للرسائل والمكالمات</value></data>
+  <data name="DedicatedNumberFeature1" xml:space="preserve"><value>رقم محلي لقسمك تختاره بنفسك</value></data>
+  <data name="DedicatedNumberFeature2" xml:space="preserve"><value>تتحول الرسائل الواردة إلى بلاغات معلقة للإرسال</value></data>
+  <data name="DedicatedNumberFeature3" xml:space="preserve"><value>يتصل الأعضاء بالرقم نفسه للوصول إلى القائمة الصوتية</value></data>
+  <data name="DedicatedNumberFeature4" xml:space="preserve"><value>يحوّل الاستقبال الصوتي مع Enhanced AI إجابات المتصلين إلى بلاغات معلقة</value></data>
+  <data name="DedicatedNumberFeature5" xml:space="preserve"><value>للوارد فقط: تصل الردود من رقم Resgrid الرئيسي</value></data>
+  <data name="DedicatedNumberNote" xml:space="preserve"><value>تُفوتر شهريًا لكل قسم، حتى مع الخطة السنوية. تتطلب خطة كيانات نشطة. في الولايات المتحدة أرقام أمريكية وكندية؛ وفي الاتحاد الأوروبي رقم في بلدك حيثما توفر.</value></data>
   <data name="AdpTitle" xml:space="preserve"><value>Advanced Data Protection</value></data>
   <data name="AdpTagline" xml:space="preserve"><value>تشفير ووصول بتحقق إضافي للبيانات الحساسة</value></data>
   <data name="AdpFeature1" xml:space="preserve"><value>تشفير على مستوى الحقول للمعلومات الصحية والشخصية</value></data>

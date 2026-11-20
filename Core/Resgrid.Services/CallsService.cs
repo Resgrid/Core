@@ -52,6 +52,14 @@ namespace Resgrid.Services
 		private readonly Lazy<IProtectedWriteService> _protectedWriteService;
 
 		private readonly Lazy<ISearchProjectionService> _searchProjections;
+		// Lazy: the route services reach the units service, which reaches back here.
+		private readonly Lazy<ICallRoutesService> _callRoutes;
+
+		// Lazy: the destination rules service reads call types back through this service (plan D8).
+		private readonly Lazy<IDestinationAutoFillService> _destinationAutoFill;
+
+		// Lazy: the destination advisor reads the call and saves notes back through this service (plan D4).
+		private readonly Lazy<IAiDestinationAdvisorService> _aiDestinationAdvisor;
 
 		// Lazy: the location history service reads back through dispatch scope, which depends on this service.
 		private readonly Lazy<ICallLocationHistoryService> _callLocationHistory;
@@ -68,8 +76,12 @@ namespace Resgrid.Services
 			IIndoorMapService indoorMapService, ICallVideoFeedRepository callVideoFeedRepository, ICallNumberingService callNumberingService,
 			Lazy<IProtectedWriteService> protectedWriteService, Lazy<ISearchProjectionService> searchProjections = null,
 			Lazy<ICallLocationHistoryService> callLocationHistory = null, ITypeIconsRepository typeIconsRepository = null,
-			ICallPersonnelReleasesRepository callPersonnelReleasesRepository = null)
+			ICallPersonnelReleasesRepository callPersonnelReleasesRepository = null, Lazy<ICallRoutesService> callRoutes = null,
+			Lazy<IDestinationAutoFillService> destinationAutoFill = null, Lazy<IAiDestinationAdvisorService> aiDestinationAdvisor = null)
 		{
+			_callRoutes = callRoutes;
+			_destinationAutoFill = destinationAutoFill;
+			_aiDestinationAdvisor = aiDestinationAdvisor;
 			_callPersonnelReleasesRepository = callPersonnelReleasesRepository;
 			_protectedWriteService = protectedWriteService;
 			_callLocationHistory = callLocationHistory;
@@ -111,6 +123,13 @@ namespace Resgrid.Services
 				call.GeoLocationData = "";
 
 			call.CallTypeId = CallTypeLink.Resolve(call.Type, call.CallTypeId, await GetCallTypesForDepartmentAsync(call.DepartmentId));
+
+			// One destination (a POI clears the free one); a blank location from the location POI or the route start, a missing
+			// destination from the route end (M0322). Never overwrites what the call has.
+			if (_callRoutes != null)
+				await _callRoutes.Value.ApplyDefaultsAsync(call);
+			else
+				CallLocations.NormalizeDestination(call);
 
 			// Enrich call with indoor zone data if an indoor zone is selected
 			if (!String.IsNullOrWhiteSpace(call.IndoorMapZoneId))
@@ -172,6 +191,24 @@ namespace Resgrid.Services
 					if (String.IsNullOrWhiteSpace(reference.CallReferenceId))
 						reference.AddedOn = DateTime.UtcNow;
 				}
+			}
+
+			// Plan D8: a new call nobody entered in a form, with no destination, takes the one the department's destination rules
+			// suggest (setting 127 = Suggest and fill). Asked after every location default above; never throws, never blocks the save.
+			DestinationAutoFillChoice autoFilledDestination = null;
+			if (call.CallId == 0 && _destinationAutoFill != null)
+			{
+				try
+				{
+					autoFilledDestination = await _destinationAutoFill.Value.ChooseDestinationAsync(call, cancellationToken);
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex, $"Destination auto-fill could not run for a new call of department {call.DepartmentId}; the call is saved without it.");
+				}
+
+				if (autoFilledDestination != null)
+					call.DestinationPoiId = autoFilledDestination.PoiId;
 			}
 
 			// A round-tripped REDACTED placeholder on an edit (a client that never saw the plaintext
@@ -255,10 +292,36 @@ namespace Resgrid.Services
 				}
 			}
 
+			if (autoFilledDestination != null)
+				await AddDestinationAutoFillNoteAsync(savedCall, autoFilledDestination, cancellationToken);
+
 			if (_searchProjections != null) await _searchProjections.Value.ProjectCallAsync(savedCall, cancellationToken);
 			if (_callLocationHistory != null) await _callLocationHistory.Value.IndexCallAsync(savedCall, cancellationToken);
 			await RollOpenCallCountsAsync(savedCall.DepartmentId);
 			return savedCall;
+		}
+
+		/// <summary>
+		/// The system note saying the destination came from the department's destination rules (plan D8), so dispatchers can see
+		/// nobody picked it. The call is already saved: a failed note is logged, never thrown.
+		/// </summary>
+		private async Task AddDestinationAutoFillNoteAsync(Call savedCall, DestinationAutoFillChoice choice, CancellationToken cancellationToken)
+		{
+			try
+			{
+				await SaveCallNoteAsync(new CallNote
+				{
+					CallId = savedCall.CallId,
+					UserId = savedCall.ReportingUserId,
+					Note = DestinationAutoFillService.BuildNoteText(choice.PoiName),
+					Source = (int)CallNoteSources.System,
+					Timestamp = DateTime.UtcNow
+				}, cancellationToken);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"The destination note of call {savedCall.CallId} could not be saved; the destination is set.");
+			}
 		}
 
 		/// <summary>
@@ -530,6 +593,14 @@ namespace Resgrid.Services
 
 			// The note text is part of the call's search projection; refresh it so the catch-up sweep re-indexes the call.
 			if (_searchProjections != null) await _searchProjections.Value.ProjectCallAsync(call, cancellationToken);
+
+			// A person's note can change what the patient needs, so Enhanced AI re-checks the destination (plan D4). System notes,
+			// the advisor's own among them, never do. Queues at most one debounced review; never throws.
+			if (_aiDestinationAdvisor != null && saved.Source != (int)CallNoteSources.System && !saved.IsDeleted)
+			{
+				try { await _aiDestinationAdvisor.Value.RequestReviewAsync(call.DepartmentId, call.CallId, AiDestinationReviewTriggers.NoteAdded, cancellationToken); }
+				catch (Exception ex) when (ex is not OperationCanceledException) { Logging.LogException(ex); }
+			}
 			return saved;
 		}
 

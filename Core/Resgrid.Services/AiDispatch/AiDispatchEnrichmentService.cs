@@ -46,11 +46,16 @@ namespace Resgrid.Services.AiDispatch
 		private readonly Lazy<IDecisionClient> _decisions;
 		private readonly IEventAggregator _events;
 		private readonly TimeProvider _clock;
+		private readonly Lazy<IIntakeConversationOperations> _conversations;
 
+		/// <param name="conversations">Intake SMS conversations (plan §8): the transcript a conversation refresh reads. Lazy: the conversation
+		/// service queues this enrichment.</param>
 		public AiDispatchEnrichmentService(IEnhancedAiAccessService enhancedAi, IFeatureToggleService flags, IDepartmentsService departments, ICallsService calls,
 			IGeoLocationProvider geo, IDepartmentDataProtectionService protection, IAiDispatchAuditRepository audits, IAiDispatchConfigRepository settings,
-			IAiBackgroundAdmission admission, IAiUsageMeter usage, Lazy<ILlmClient> client, Lazy<IDecisionClient> decisions, IEventAggregator events, TimeProvider clock)
+			IAiBackgroundAdmission admission, IAiUsageMeter usage, Lazy<ILlmClient> client, Lazy<IDecisionClient> decisions, IEventAggregator events, TimeProvider clock,
+			Lazy<IIntakeConversationOperations> conversations = null)
 		{
+			_conversations = conversations;
 			_enhancedAi = enhancedAi;
 			_flags = flags;
 			_departments = departments;
@@ -71,12 +76,21 @@ namespace Resgrid.Services.AiDispatch
 		{
 			if (item == null || item.DepartmentId <= 0 || item.CallId <= 0 || !AiDispatchConfig.EnrichEnabled)
 				return "Disabled";
+			// A conversation's AI turn is not an enrichment; the queue consumer hands it to the conversation service.
+			if (item.Channel == AiDispatchChannels.IntakeConversation)
+				return "NotEnrichment";
 			var departmentId = item.DepartmentId;
 			var selfHosted = AiOperatorSettings.IsListedDepartment(AiConfig.SelfHostedDepartmentIds, departmentId);
-			if (!await IsAvailableAsync(departmentId) || !await UsesAiFormatAsync(departmentId))
+			// Intake calls (pending, from an intake channel) are gated by Ai.Intake / Ai.VoiceIntake, not by the department's email format.
+			var intake = AiDispatchChannels.IsIntake(item.Channel);
+			if (intake ? !await IsIntakeAvailableAsync(departmentId, item.Channel) : !await IsAvailableAsync(departmentId) || !await UsesAiFormatAsync(departmentId))
 				return "NotEntitled";
 			if (!OperatorConfigured() && !DecisionConfigured())
 				return "Unconfigured";
+
+			// An intake SMS conversation re-enriches its pending call from the whole transcript after each Enhanced AI turn (plan §8 D16).
+			// The call's one audit row (unique per call) belongs to its first enrichment; the conversation turn is the refresh's claim.
+			var refresh = AiDispatchChannels.IsConversationRefresh(item);
 
 			// The claim row is written before any work so an at-least-once redelivery can never enrich a call twice.
 			var audit = new AiDispatchAuditRow
@@ -85,7 +99,7 @@ namespace Resgrid.Services.AiDispatch
 				Outcome = AiDispatchOutcomes.InProgress, PromptVersion = AiDispatchPrompt.Version, ModelName = AiConfig.Model,
 				ModelRevision = AiConfig.ModelRevision, RuntimeDigest = AiConfig.RuntimeDigest, CreatedOnUtc = _clock.GetUtcNow().UtcDateTime
 			};
-			if (!await _audits.TryClaimAsync(audit, cancellationToken))
+			if (!refresh && !await _audits.TryClaimAsync(audit, cancellationToken))
 				return "Duplicate";
 
 			var settings = await _settings.GetAsync(departmentId, cancellationToken) ?? new DepartmentAiDispatchConfig { DepartmentId = departmentId };
@@ -106,7 +120,8 @@ namespace Resgrid.Services.AiDispatch
 			finally
 			{
 				audit.CompletedOnUtc = _clock.GetUtcNow().UtcDateTime;
-				await _audits.CompleteAsync(audit, CancellationToken.None);
+				if (!refresh)
+					await _audits.CompleteAsync(audit, CancellationToken.None);
 				await PruneAsync(departmentId, settings);
 			}
 			return audit.Outcome;
@@ -121,6 +136,28 @@ namespace Resgrid.Services.AiDispatch
 				return AiOperatorSettings.IsListedDepartment(AiConfig.SelfHostedDepartmentIds, departmentId)
 					? await _enhancedAi.IsEnabledAsync(departmentId) && (await _flags.EvaluateFreshAsync(FeatureFlagKeys.AiDispatchTemplate, departmentId))?.IsEnabled == true
 					: await _enhancedAi.CanUseAsync(departmentId, FeatureFlagKeys.AiDispatchTemplate);
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex);
+				return false;
+			}
+		}
+
+		/// <summary>
+		/// Intake enrichment (call-intake-and-ai-destinations-plan.md §3): the host switches, then the Ai.Intake (voice: Ai.VoiceIntake)
+		/// capability, paid or operator-listed self-hosted. ADP departments are still skipped in RunAsync (D9).
+		/// </summary>
+		public async Task<bool> IsIntakeAvailableAsync(int departmentId, int channel)
+		{
+			if (departmentId <= 0 || !AiDispatchConfig.EnrichEnabled || !IntakeConfig.Enabled || !AiDispatchChannels.IsIntake(channel))
+				return false;
+			var flag = AiDispatchChannels.IntakeCapabilityFlag(channel);
+			try
+			{
+				return AiOperatorSettings.IsListedDepartment(AiConfig.SelfHostedDepartmentIds, departmentId)
+					? await _enhancedAi.IsEnabledAsync(departmentId) && (await _flags.EvaluateFreshAsync(flag, departmentId))?.IsEnabled == true
+					: await _enhancedAi.CanUseAsync(departmentId, flag);
 			}
 			catch (Exception ex)
 			{
@@ -194,10 +231,10 @@ namespace Resgrid.Services.AiDispatch
 				return AiDispatchOutcomes.ProtectionUnsupported;
 
 			var call = await _calls.GetCallByIdAsync(item.CallId, true);
-			if (!IsEnrichable(call, departmentId))
+			if (!IsEnrichable(call, departmentId, item.Channel))
 				return AiDispatchOutcomes.CallNotActive;
 
-			var context = await BuildContextAsync(call, cancellationToken);
+			var context = await BuildContextAsync(call, item, cancellationToken);
 
 			var reservation = await ReserveAsync(departmentId, selfHosted, settings.MonthlyTokenCap, cancellationToken);
 			if (reservation.Outcome != null)
@@ -273,7 +310,7 @@ namespace Resgrid.Services.AiDispatch
 				if (enrichment.Confidence < minimum)
 					return AiDispatchOutcomes.LowConfidence;
 
-				return await ApplyAsync(call, enrichment, audit, settings, cancellationToken);
+				return await ApplyAsync(call, enrichment, audit, settings, item, cancellationToken);
 			}
 			finally
 			{
@@ -319,12 +356,55 @@ namespace Resgrid.Services.AiDispatch
 			}
 		}
 
-		private static bool IsEnrichable(Call call, int departmentId) =>
-			call != null && call.DepartmentId == departmentId && !call.IsDeleted && call.State == (int)CallStates.Active;
+		private static bool IsEnrichable(Call call, int departmentId) => IsEnrichable(call, departmentId, AiDispatchChannels.PostmarkEmail);
 
-		private async Task<AiDispatchContext> BuildContextAsync(Call call, CancellationToken cancellationToken)
+		/// <summary>Email paths enrich active calls; intake calls are enriched while pending (or once a dispatcher has sent them).</summary>
+		public static bool IsEnrichable(Call call, int departmentId, int channel) =>
+			call != null && call.DepartmentId == departmentId && !call.IsDeleted &&
+			(call.State == (int)CallStates.Active || AiDispatchChannels.IsIntake(channel) && call.State == (int)CallStates.Pending);
+
+		/// <summary>Trusted description of an intake message for the model (null for the dispatch email paths).</summary>
+		public static string IntakeSource(int channel)
+		{
+			const string pending = " The call is pending: a dispatcher reviews it and nobody has been dispatched.";
+			switch (channel)
+			{
+				case AiDispatchChannels.IntakeVoice:
+					return "answers a phone caller gave to the department's automated intake line (speech recognition, so words may be misheard). " +
+						"Lines are labelled Nature, Location, Caller name and Callback number." + pending;
+				case AiDispatchChannels.IntakeSms:
+					return "a text message sent to the department's intake number." + pending;
+				case AiDispatchChannels.IntakeConversation:
+					return "the text messages a member of the public sent in an SMS conversation with the department's dispatch number, oldest first, " +
+						"one per line (their answers to the department's follow-up questions)." + pending;
+				case AiDispatchChannels.IntakeEmail:
+					return "an email sent to the department's intake address." + pending;
+				case AiDispatchChannels.IntakeChat:
+					return "a chat message posted in a channel the department linked for intake." + pending;
+				case AiDispatchChannels.IntakeWebhook:
+					return "a request another system posted to the department's intake webhook." + pending;
+				default:
+					return null;
+			}
+		}
+
+		private async Task<AiDispatchContext> BuildContextAsync(Call call, AiDispatchQueueItem item, CancellationToken cancellationToken)
 		{
 			var departmentId = call.DepartmentId;
+			var channel = item.Channel;
+			var maxCharacters = Math.Clamp(AiDispatchConfig.MaxMessageCharacters, 200, 12000);
+			string transcript = null;
+			if (AiDispatchChannels.IsConversationRefresh(item) && _conversations != null)
+			{
+				try
+				{
+					transcript = await _conversations.Value.GetParticipantTranscriptAsync(departmentId, item.IntakeConversationId, maxCharacters);
+				}
+				catch (Exception ex) when (ex is not OperationCanceledException)
+				{
+					Framework.Logging.LogException(ex, $"AI dispatch could not read the conversation transcript for call {call.CallId}; using the call's text.");
+				}
+			}
 			var types = (await _calls.GetCallTypesForDepartmentAsync(departmentId) ?? new List<CallType>())
 				.Where(t => t != null && !string.IsNullOrWhiteSpace(t.Type)).Take(60).Select(t => new AiDispatchChoice(t.CallTypeId, t.Type.Trim())).ToList();
 			var priorities = (await _calls.GetActiveCallPrioritiesForDepartmentAsync(departmentId) ?? new List<DepartmentCallPriority>())
@@ -336,8 +416,10 @@ namespace Resgrid.Services.AiDispatch
 				.OrderByDescending(c => c.LoggedOn).Take(Math.Clamp(AiDispatchConfig.MaxCandidateCalls, 0, 20))
 				.Select(c => new AiDispatchCandidateCall(c.CallId, c.Number, Truncate(c.Name, 80), Truncate(c.Address, 120), (int)Math.Max(0, (now - c.LoggedOn).TotalMinutes)))
 				.ToList();
-			return new AiDispatchContext(AiDispatchPrompt.MessageText(call.Name, call.NatureOfCall, Math.Clamp(AiDispatchConfig.MaxMessageCharacters, 200, 12000)),
-				types, priorities, candidates);
+			// A conversation refresh reads what the texter said across the whole thread; the call's own name and nature otherwise.
+			return transcript != null
+				? new AiDispatchContext(AiDispatchPrompt.MessageText(null, transcript, maxCharacters), types, priorities, candidates) { Source = IntakeSource(AiDispatchChannels.IntakeConversation) }
+				: new AiDispatchContext(AiDispatchPrompt.MessageText(call.Name, call.NatureOfCall, maxCharacters), types, priorities, candidates) { Source = IntakeSource(channel) };
 		}
 
 		private sealed record Admission(AiUsageReservation Reservation, string Outcome);
@@ -364,12 +446,18 @@ namespace Resgrid.Services.AiDispatch
 			}
 		}
 
-		private async Task<string> ApplyAsync(Call original, AiDispatchEnrichment enrichment, AiDispatchAuditRow audit, DepartmentAiDispatchConfig settings, CancellationToken cancellationToken)
+		private async Task<string> ApplyAsync(Call original, AiDispatchEnrichment enrichment, AiDispatchAuditRow audit, DepartmentAiDispatchConfig settings,
+			AiDispatchQueueItem item, CancellationToken cancellationToken)
 		{
 			// Re-read so a dispatcher's edit made while the model was thinking always wins.
 			var call = await _calls.GetCallByIdAsync(original.CallId, true);
-			if (!IsEnrichable(call, original.DepartmentId))
+			if (!IsEnrichable(call, original.DepartmentId, item.Channel))
 				return AiDispatchOutcomes.CallNotActive;
+
+			// Intake: the "{channel}: {sender}" fallback name is the placeholder, unless a dispatcher renamed the call meanwhile.
+			var placeholder = AiDispatchChannels.IsIntake(item.Channel)
+				? item.NameIsPlaceholder && string.Equals(call.Name, original.Name, StringComparison.Ordinal)
+				: string.Equals(call.Name?.Trim(), PlaceholderCallName, StringComparison.Ordinal);
 
 			var applied = new List<string>();
 			if (enrichment.IsDispatch)
@@ -388,7 +476,7 @@ namespace Resgrid.Services.AiDispatch
 				if (settings.FillContact && string.IsNullOrWhiteSpace(call.ContactName) && enrichment.ContactName != null) { call.ContactName = enrichment.ContactName; applied.Add(nameof(Call.ContactName)); }
 				if (settings.FillContact && string.IsNullOrWhiteSpace(call.ContactNumber) && enrichment.ContactNumber != null) { call.ContactNumber = enrichment.ContactNumber; applied.Add(nameof(Call.ContactNumber)); }
 				if (settings.FillIncidentNumber && string.IsNullOrWhiteSpace(call.IncidentNumber) && enrichment.IncidentNumber != null) { call.IncidentNumber = enrichment.IncidentNumber; applied.Add(nameof(Call.IncidentNumber)); }
-				if (settings.RenamePlaceholder && string.Equals(call.Name?.Trim(), PlaceholderCallName, StringComparison.Ordinal) && enrichment.Title != null) { call.Name = enrichment.Title; applied.Add(nameof(Call.Name)); }
+				if (settings.RenamePlaceholder && placeholder && enrichment.Title != null) { call.Name = enrichment.Title; applied.Add(nameof(Call.Name)); }
 			}
 
 			var saved = applied.Count > 0;
@@ -401,7 +489,9 @@ namespace Resgrid.Services.AiDispatch
 
 			try
 			{
-				var note = BuildNote(call, enrichment, settings);
+				// A conversation refresh after each AI turn only fills fields; its AI note (summary, suggested priority, related calls) waits for the
+				// conversation's last turn so the call is not flooded with one note per text.
+				var note = AiDispatchChannels.IsConversationRefresh(item) && !item.ConversationComplete ? null : BuildNote(call, enrichment, settings);
 				var managingUserId = (await _departments.GetDepartmentByIdAsync(call.DepartmentId, false))?.ManagingUserId;
 				var noted = false;
 				if (note != null && !string.IsNullOrWhiteSpace(managingUserId))

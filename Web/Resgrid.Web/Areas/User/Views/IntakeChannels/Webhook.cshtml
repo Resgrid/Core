@@ -1,0 +1,87 @@
+@model Resgrid.Web.Areas.User.Models.IntakeChannels.IntakeWebhookView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.IntakeChannels> localizer
+@{
+	ViewBag.Title = "Resgrid | " + localizer["Type.Webhook"];
+	var sample = "BODY='{\"subject\":\"Lift assist\",\"message\":\"Resident fell, conscious, needs lift assist\",\"externalId\":\"CAD-1042\",\"address\":\"123 Main St, Springfield\"}'\n" +
+		"T=$(date +%s)\n" +
+		"SIG=$(printf '%s.%s' \"$T\" \"$BODY\" | openssl dgst -sha256 -hmac \"$SECRET\" | sed 's/^.* //')\n" +
+		"curl -X POST '" + Model.Url + "' \\\n" +
+		"  -H 'Content-Type: application/json' \\\n" +
+		"  -H \"X-Resgrid-Signature: t=$T,v1=$SIG\" \\\n" +
+		"  --data \"$BODY\"";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@localizer["Type.Webhook"]: @Model.Name</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+			</li>
+			<li>
+				<a asp-controller="IntakeChannels" asp-action="Index" asp-route-area="User">@localizer["PageTitle"]</a>
+			</li>
+			<li class="active">
+				<strong>@Model.Name</strong>
+			</li>
+		</ol>
+	</div>
+	<div class="col-sm-4">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			<a class="btn btn-default" asp-controller="IntakeChannels" asp-action="Edit" asp-route-area="User" asp-route-id="@Model.IntakeChannelId">@localizer["Edit"]</a>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<p>@localizer["Help.Webhook"]</p>
+
+					<h4>@localizer["WebhookUrl"]</h4>
+					<pre id="intakeWebhookUrl" style="white-space:pre-wrap;word-break:break-all;">@Model.Url</pre>
+
+					<h4>@localizer["WebhookSecret"]</h4>
+					@if (!String.IsNullOrEmpty(Model.Secret))
+					{
+						<div class="alert alert-warning">@localizer["WebhookSecretOnce"]</div>
+						<pre id="intakeWebhookSecret" style="white-space:pre-wrap;word-break:break-all;">@Model.Secret</pre>
+					}
+					else if (!Model.HasSecret)
+					{
+						<div class="alert alert-danger">@localizer["WebhookNoSecret"]</div>
+					}
+					else
+					{
+						<p><code>••••••••</code></p>
+					}
+
+					<form method="post" asp-controller="IntakeChannels" asp-action="RotateSecret" asp-route-area="User" id="intakeRotateSecret">
+						@Html.AntiForgeryToken()
+						<input type="hidden" name="id" value="@Model.IntakeChannelId" />
+						<button type="submit" class="btn btn-warning">@localizer["RotateSecret"]</button>
+					</form>
+
+					<h4 style="margin-top:20px;">@localizer["WebhookSample"]</h4>
+					<p>@localizer["WebhookSigning", Model.ToleranceSeconds]</p>
+					<p>@localizer["WebhookBody"]</p>
+					<pre style="white-space:pre-wrap;">@sample</pre>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+	<script type="text/javascript">
+		$(document).ready(function () {
+			var confirmText = '@JsEncoder.Encode(localizer["RotateConfirm"].Value)';
+			$('#intakeRotateSecret').on('submit', function (e) {
+				if (!window.confirm(confirmText)) { e.preventDefault(); }
+			});
+		});
+	</script>
+}

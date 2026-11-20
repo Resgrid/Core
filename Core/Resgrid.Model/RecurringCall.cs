@@ -142,6 +142,16 @@ namespace Resgrid.Model
 		/// <summary>Where at the destination (unit, floor, room).</summary>
 		public string DestinationDetails { get; set; }
 
+		/// <summary>Free destination address when the destination is not a POI, as <see cref="Call.DestinationAddress"/> (M0322).</summary>
+		[MaxLength(MaxShortFieldLength)]
+		public string DestinationAddress { get; set; }
+
+		/// <summary>Free destination point "lat,lon", as <see cref="Call.DestinationGeoLocationData"/> (M0322).</summary>
+		public string DestinationGeoLocationData { get; set; }
+
+		/// <summary>The route plan the created calls follow, as <see cref="Call.RoutePlanId"/>; dropped from a created call if no longer eligible (M0322).</summary>
+		public string RoutePlanId { get; set; }
+
 		/// <summary><see cref="RecurringCallCreationModes"/>: created and dispatched by the system, or left for a dispatcher.</summary>
 		public int CreationMode { get; set; } = (int)RecurringCallCreationModes.Automatic;
 

@@ -7,10 +7,11 @@ var resgrid;
         (function (destinations) {
             'use strict';
 
-            // Suggested destinations under the call form's Destination field (Mapping -> Destination Rules). The server ranks
-            // the department's destinations for the call type and priority from the incident location; with "suggest and fill"
-            // (New Call only) an empty destination the dispatcher has not touched takes the best one, and follows later changes
-            // of type, priority or location until the dispatcher picks or clears a destination by hand.
+            // Suggested destinations under the call form's Destination field (Mapping -> Destination Rules): New Call, Update
+            // Call, Add Archived Call and the recurring call form. The server ranks the department's destinations for the call
+            // type and priority (and a travelling unit, when the page names one) from the incident location; with "suggest and
+            // fill" (New Call only) an empty destination the dispatcher has not touched takes the best one, and follows later
+            // changes of type, priority or location until the dispatcher picks or clears a destination by hand.
             var mode = null;          // null until the first answer; 0 = off (no more requests)
             var sequence = 0;
             var timer = null;
@@ -53,8 +54,44 @@ var resgrid;
                 return $('#destinationSuggestionsRow');
             }
 
+            // The form fields the suggestions read, from the partial's data-* attributes; the call forms (New, Update, Add
+            // Archived Call) use the defaults, the recurring call form names its own (a single "lat,lon" field and an address
+            // that is geocoded when it has no point). Optional: a type id field, the travelling unit and the call.
+            var settings = null;
+            function cfg() {
+                if (settings) {
+                    return settings;
+                }
+
+                var r = row();
+                function attr(name, fallback) {
+                    var value = r.length ? r.attr('data-' + name) : null;
+                    return value ? value : fallback;
+                }
+
+                var current = {
+                    destination: attr('destination', '#Call_DestinationPoiId'),
+                    latitude: attr('latitude', '#Latitude'),
+                    longitude: attr('longitude', '#Longitude'),
+                    coordinates: attr('coordinates', null),
+                    address: attr('address', null),
+                    priority: attr('priority', '#CallPriority'),
+                    type: attr('type', '#Call_Type'),
+                    typeId: attr('type-id', null),
+                    unit: attr('unit', null),
+                    unitId: attr('unit-id', null),
+                    callId: attr('call-id', null),
+                    free: attr('free', '.call-destination-free')
+                };
+
+                if (r.length) {
+                    settings = current;
+                }
+                return current;
+            }
+
             function select() {
-                return $('#Call_DestinationPoiId');
+                return $(cfg().destination);
             }
 
             function canFill() {
@@ -205,6 +242,17 @@ var resgrid;
 
             // "Suggest and fill": an empty destination, or the one the script filled in, follows the best suggestion until the
             // dispatcher picks or clears one by hand.
+            /** True when the call form holds a free destination (the call locations partial's inputs). */
+            function hasFreeDestination() {
+                var any = false;
+                $(cfg().free).each(function () {
+                    if ($.trim($(this).val() || '') !== '') {
+                        any = true;
+                    }
+                });
+                return any;
+            }
+
             function autoFill(data) {
                 if (!canFill() || touched || data.mode !== 2) {
                     return;
@@ -212,6 +260,12 @@ var resgrid;
 
                 var current = selectedId();
                 if (current && current !== autoFilledId) {
+                    return;
+                }
+
+                // A free destination (address, point, what3words; typed, or the end of the call's route) is a destination
+                // already: picking a POI would clear it, so the fill leaves it alone (M0322).
+                if (!current && hasFreeDestination()) {
                     return;
                 }
 
@@ -235,17 +289,124 @@ var resgrid;
                 row().hide();
             }
 
-            // The lookup inputs on the form now, or null when there is no usable incident location.
-            function inputs() {
-                var lat = parseFloat($('#Latitude').val());
-                var lng = parseFloat($('#Longitude').val());
-                if (isNaN(lat) || isNaN(lng) || (lat === 0 && lng === 0) || Math.abs(lat) > 90 || Math.abs(lng) > 180) {
+            function usablePoint(lat, lng) {
+                return !isNaN(lat) && !isNaN(lng) && !(lat === 0 && lng === 0) && Math.abs(lat) <= 90 && Math.abs(lng) <= 180;
+            }
+
+            // The address the form's point was looked up from (only on forms that name an address field): one lookup per address.
+            var geocoded = { address: null, point: null };
+
+            function geocodedPoint() {
+                var field = cfg().address;
+                if (!field) {
                     return null;
                 }
 
-                var priority = $('#CallPriority').val();
-                var type = $('#Call_Type').val();
-                return { latitude: lat, longitude: lng, priority: priority, type: type, key: [lat, lng, priority, type].join('|') };
+                var address = $.trim($(field).val() || '');
+                if (address.length < 3) {
+                    return null;
+                }
+
+                if (geocoded.address === address) {
+                    // Null while the lookup runs and when the address was not found.
+                    return geocoded.point;
+                }
+
+                geocoded = { address: address, point: null };
+                fetch('/api/web-bff/api/v4/Geocoding/ForwardGeocode?address=' + encodeURIComponent(address), { credentials: 'same-origin' })
+                    .then(function (r) {
+                        if (!r.ok) {
+                            throw new Error('ForwardGeocode failed with HTTP status ' + r.status);
+                        }
+                        return r.json();
+                    })
+                    .then(function (result) {
+                        if (geocoded.address !== address) {
+                            return;
+                        }
+
+                        var lat = result && result.Data ? Number(result.Data.Latitude) : NaN;
+                        var lng = result && result.Data ? Number(result.Data.Longitude) : NaN;
+                        if (usablePoint(lat, lng)) {
+                            geocoded.point = { lat: lat, lng: lng };
+                            schedule();
+                        }
+                    })
+                    .catch(function (err) {
+                        console.error('ForwardGeocode failed', { operation: 'ForwardGeocode', error: err });
+                    });
+
+                return null;
+            }
+
+            // The incident location on the form: the latitude/longitude fields, or a single "lat,lon" field (read the way the
+            // server reads it, with a decimal point), else the address's looked-up point.
+            function point() {
+                var c = cfg();
+                if (c.coordinates) {
+                    var parts = $.trim($(c.coordinates).val() || '').split(',');
+                    if (parts.length === 2 && $.trim(parts[0]) !== '' && $.trim(parts[1]) !== '') {
+                        var latitude = Number($.trim(parts[0]));
+                        var longitude = Number($.trim(parts[1]));
+                        if (usablePoint(latitude, longitude)) {
+                            return { lat: latitude, lng: longitude };
+                        }
+                    }
+                } else {
+                    var lat = parseFloat($(c.latitude).val());
+                    var lng = parseFloat($(c.longitude).val());
+                    if (usablePoint(lat, lng)) {
+                        return { lat: lat, lng: lng };
+                    }
+                }
+
+                return geocodedPoint();
+            }
+
+            function idOrBlank(value) {
+                var text = $.trim(value === null || value === undefined ? '' : String(value));
+                return /^\d+$/.test(text) && Number(text) > 0 ? text : '';
+            }
+
+            // The call type id when the page knows it: a type id field, or the chosen type option's data-call-type-id.
+            function typeId() {
+                var c = cfg();
+                if (c.typeId) {
+                    return idOrBlank($(c.typeId).val());
+                }
+
+                return idOrBlank($(c.type).find('option:selected').attr('data-call-type-id'));
+            }
+
+            // The travelling unit, when the page has one (a unit field, or a fixed id).
+            function unitId() {
+                var c = cfg();
+                return c.unit ? idOrBlank($(c.unit).val()) : idOrBlank(c.unitId);
+            }
+
+            // The lookup inputs on the form now, or null when there is no usable incident location.
+            function inputs() {
+                var where = point();
+                if (!where) {
+                    return null;
+                }
+
+                var c = cfg();
+                var priority = $(c.priority).val();
+                var type = $(c.type).val();
+                var callTypeId = typeId();
+                var travellingUnitId = unitId();
+                var callId = idOrBlank(c.callId);
+                return {
+                    latitude: where.lat,
+                    longitude: where.lng,
+                    priority: priority,
+                    type: type,
+                    callTypeId: callTypeId,
+                    unitId: travellingUnitId,
+                    callId: callId,
+                    key: [where.lat, where.lng, priority, type, callTypeId, travellingUnitId, callId].join('|')
+                };
             }
 
             function currentKey() {
@@ -326,17 +487,28 @@ var resgrid;
                 var requestSequence = ++sequence;
                 pendingKey = key;
 
+                var query = {
+                    latitude: current.latitude,
+                    longitude: current.longitude,
+                    priority: current.priority,
+                    type: current.type
+                };
+                if (current.callTypeId) {
+                    query.callTypeId = current.callTypeId;
+                }
+                if (current.unitId) {
+                    query.unitId = current.unitId;
+                }
+                if (current.callId) {
+                    query.callId = current.callId;
+                }
+
                 $.ajax({
                     url: resgrid.absoluteBaseUrl + '/User/DestinationRules/Suggest',
                     type: 'GET',
                     dataType: 'json',
                     cache: false,
-                    data: {
-                        latitude: current.latitude,
-                        longitude: current.longitude,
-                        priority: current.priority,
-                        type: current.type
-                    }
+                    data: query
                 }).done(function (data) {
                     if (requestSequence !== sequence) {
                         return;
@@ -439,7 +611,9 @@ var resgrid;
                     check();
                 });
 
-                $('#CallPriority, #Call_Type, #Latitude, #Longitude').on('change', schedule);
+                var c = cfg();
+                $([c.priority, c.type, c.latitude, c.longitude, c.coordinates, c.address, c.typeId, c.unit].filter(function (x) { return !!x; }).join(', '))
+                    .on('change', schedule);
                 schedule();
             }
             destinations.init = init;

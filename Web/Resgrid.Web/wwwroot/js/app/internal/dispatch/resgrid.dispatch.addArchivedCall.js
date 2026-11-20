@@ -45,6 +45,14 @@
                 }
                 return label.prop('outerHTML');
             }
+            // The suggested destinations (resgrid.dispatch.destinations.js, suggest only here) follow the incident location,
+            // type and priority. Pin, lookup and template changes set the fields without a change event, so they ask here.
+            function scheduleDestinations() {
+                if (resgrid.dispatch.destinations && typeof resgrid.dispatch.destinations.schedule === 'function') {
+                    resgrid.dispatch.destinations.schedule();
+                }
+            }
+
             addArchivedCall.protocolCount = 0;
             addArchivedCall.protocolData = {};
             $(document).ready(function () {
@@ -134,6 +142,11 @@
 
                         resgrid.dispatch.addArchivedCall.geocodeCoordinates(e.latlng.lat, e.latlng.lng);
                     });
+
+                        // Location POI, destination and route (resgrid.dispatch.calllocations.js) draw on the same map.
+                        if (resgrid.dispatch.calllocations && typeof resgrid.dispatch.calllocations.mapReady === 'function') {
+                            resgrid.dispatch.calllocations.mapReady(map);
+                        }
                     });
                 }
 
@@ -423,6 +436,9 @@
             addArchivedCall.noLocation = noLocation;
 
             function setMarkerLocation(lat, lng) {
+                // Before the map check: with the map hidden by the field policy, lookups still move the location.
+                scheduleDestinations();
+
                 if (!map) {
                     return;
                 }
@@ -437,6 +453,7 @@
 
                         $("#Latitude").val(position.lat);
                         $("#Longitude").val(position.lng);
+                        scheduleDestinations();
 
                         resgrid.dispatch.addArchivedCall.geocodeCoordinates(position.lat, position.lng);
                     });
@@ -479,6 +496,7 @@
 					});
                 $("#Latitude").val(pos.lat.toString());
                 $("#Longitude").val(pos.lng.toString());
+                scheduleDestinations();
             }
             addArchivedCall.findLocation = findLocation;
 
@@ -534,6 +552,9 @@
                 var callPriorityVal = $('#CallPriority').val();
                 var callTypeVal = $('#Call_Type').val();
                 var request = ++protocolsRequest;
+
+                // Type and priority changes (a template's too) re-rank the suggested destinations.
+                scheduleDestinations();
 
                 $("#protocols tr").remove();
 

@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Title" xml:space="preserve">
+    <value>Σύσταση προορισμού Enhanced AI</value>
+  </data>
+  <data name="Ask" xml:space="preserve">
+    <value>Ρωτήστε το Enhanced AI</value>
+  </data>
+  <data name="Asking" xml:space="preserve">
+    <value>Ερώτηση στο Enhanced AI…</value>
+  </data>
+  <data name="Apply" xml:space="preserve">
+    <value>Εφαρμογή</value>
+  </data>
+  <data name="Dismiss" xml:space="preserve">
+    <value>Απόρριψη</value>
+  </data>
+  <data name="DismissReason" xml:space="preserve">
+    <value>Γιατί απορρίπτετε αυτή τη σύσταση; (προαιρετικό)</value>
+  </data>
+  <data name="Consider" xml:space="preserve">
+    <value>Εξετάστε {0}</value>
+  </data>
+  <data name="Keep" xml:space="preserve">
+    <value>Το Enhanced AI συμφωνεί με τον τρέχοντα προορισμό.</value>
+  </data>
+  <data name="NoSuggestion" xml:space="preserve">
+    <value>Το Enhanced AI δεν έχει προορισμό να προτείνει.</value>
+  </data>
+  <data name="Current" xml:space="preserve">
+    <value>Τρέχων προορισμός: {0}</value>
+  </data>
+  <data name="CurrentNone" xml:space="preserve">
+    <value>Δεν έχει οριστεί προορισμός</value>
+  </data>
+  <data name="CurrentFree" xml:space="preserve">
+    <value>Τρέχων προορισμός: μια τοποθεσία που δεν είναι POI</value>
+  </data>
+  <data name="Needs" xml:space="preserve">
+    <value>Χρειάζεται: {0}</value>
+  </data>
+  <data name="Confidence" xml:space="preserve">
+    <value>Βεβαιότητα: {0}%</value>
+  </data>
+  <data name="LowConfidence" xml:space="preserve">
+    <value>Χαμηλή βεβαιότητα: δεν ανακοινώθηκε στην κλήση.</value>
+  </data>
+  <data name="AdvisedAt" xml:space="preserve">
+    <value>Προτάθηκε {0}</value>
+  </data>
+  <data name="AdviceOnly" xml:space="preserve">
+    <value>Μόνο σύσταση: τίποτα δεν αλλάζει μέχρι να την εφαρμόσει κάποιος.</value>
+  </data>
+  <data name="NoAdvice" xml:space="preserve">
+    <value>Δεν υπάρχει ακόμη σύσταση. Το Enhanced AI εξετάζει τον προορισμό όταν αλλάζουν τα στοιχεία ή οι σημειώσεις της κλήσης.</value>
+  </data>
+  <data name="Applied" xml:space="preserve">
+    <value>Ο προορισμός ορίστηκε σε {0}.</value>
+  </data>
+  <data name="Dismissed" xml:space="preserve">
+    <value>Η σύσταση απορρίφθηκε.</value>
+  </data>
+  <data name="Failed" xml:space="preserve">
+    <value>Δεν ήταν δυνατό. Ανανεώστε τη σελίδα και δοκιμάστε ξανά.</value>
+  </data>
+  <data name="StatusLimited" xml:space="preserve">
+    <value>περιορισμένος</value>
+  </data>
+  <data name="StatusDiversion" xml:space="preserve">
+    <value>σε εκτροπή</value>
+  </data>
+  <data name="StatusClosed" xml:space="preserve">
+    <value>κλειστός</value>
+  </data>
+  <data name="Outcome.Unchanged" xml:space="preserve">
+    <value>Τίποτα δεν άλλαξε από την τελευταία σύσταση.</value>
+  </data>
+  <data name="Outcome.Busy" xml:space="preserve">
+    <value>Το Enhanced AI είναι απασχολημένο. Δοκιμάστε ξανά σε λίγο.</value>
+  </data>
+  <data name="Outcome.Unavailable" xml:space="preserve">
+    <value>Το Enhanced AI δεν απάντησε έγκαιρα. Δοκιμάστε ξανά.</value>
+  </data>
+  <data name="Outcome.InvalidOutput" xml:space="preserve">
+    <value>Η απάντηση του Enhanced AI δεν ήταν δυνατό να χρησιμοποιηθεί. Δοκιμάστε ξανά.</value>
+  </data>
+  <data name="Outcome.NoLocation" xml:space="preserve">
+    <value>Η κλήση δεν έχει τοποθεσία από την οποία να καταταχθούν οι προορισμοί.</value>
+  </data>
+  <data name="Outcome.NoCandidates" xml:space="preserve">
+    <value>Δεν υπάρχουν προορισμοί για επιλογή.</value>
+  </data>
+  <data name="Outcome.BudgetExhausted" xml:space="preserve">
+    <value>Ο προϋπολογισμός Enhanced AI του μήνα έχει εξαντληθεί.</value>
+  </data>
+  <data name="Outcome.ProtectionUnsupported" xml:space="preserve">
+    <value>Δεν είναι διαθέσιμο όσο το τμήμα χρησιμοποιεί Advanced Data Protection.</value>
+  </data>
+  <data name="Outcome.NotEntitled" xml:space="preserve">
+    <value>Οι συστάσεις προορισμού δεν είναι διαθέσιμες για αυτό το τμήμα.</value>
+  </data>
+  <data name="Outcome.CallNotOpen" xml:space="preserve">
+    <value>Η κλήση δεν είναι πλέον ανοιχτή.</value>
+  </data>
+  <data name="Outcome.NotOpen" xml:space="preserve">
+    <value>Αυτή η σύσταση έχει ήδη εφαρμοστεί ή απορριφθεί.</value>
+  </data>
+  <data name="Outcome.DestinationGone" xml:space="preserve">
+    <value>Ο προτεινόμενος προορισμός δεν υπάρχει πλέον.</value>
+  </data>
+  <data name="Outcome.NothingToApply" xml:space="preserve">
+    <value>Δεν υπάρχει τίποτα για εφαρμογή: η σύσταση είναι να διατηρηθεί ο τρέχων προορισμός.</value>
+  </data>
+</root>

@@ -205,7 +205,7 @@
     <value>Імпорти</value>
   </data>
   <data name="PoiImportsHelp" xml:space="preserve">
-    <value>Імпорт виконується у фоновому режимі й зазвичай починається протягом хвилини. Оновіть сторінку, щоб побачити перебіг.</value>
+    <value>Імпорт виконується у фоновому режимі й зазвичай починається протягом хвилини. Цей список оновлюється сам, поки триває імпорт.</value>
   </data>
   <data name="PoiImportsRefresh" xml:space="preserve">
     <value>Оновити</value>
@@ -580,5 +580,32 @@
   </data>
   <data name="PoiAvailabilitySaveFailed" xml:space="preserve">
     <value>Не вдалося зберегти доступність: POI більше не є пунктом призначення. Перезавантажте сторінку й спробуйте ще раз.</value>
+  </data>
+  <data name="ManagePois" xml:space="preserve">
+    <value>Керувати POI</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>Адреса</value>
+  </data>
+  <data name="ImportFileRequired" xml:space="preserve">
+    <value>Виберіть файл для завантаження.</value>
+  </data>
+  <data name="ImportFileTypeInvalid" xml:space="preserve">
+    <value>Тип файлу ({0}) не можна імпортувати як POI: завантажте файл KML, KMZ або CSV.</value>
+  </data>
+  <data name="ImportFileTooLarge" xml:space="preserve">
+    <value>Файл завеликий: він має бути меншим за 10 МБ.</value>
+  </data>
+  <data name="ImportTypeRequired" xml:space="preserve">
+    <value>Виберіть тип POI, до якого імпортувати.</value>
+  </data>
+  <data name="ImportChooseType" xml:space="preserve">
+    <value>Виберіть тип POI</value>
+  </data>
+  <data name="ImportNoValidRows" xml:space="preserve">
+    <value>Жоден із {0} записів у файлі не має дійсних координат чи адреси (перевірте, що широту й довготу не переплутано і вони не порожні).</value>
+  </data>
+  <data name="ImportNothingFound" xml:space="preserve">
+    <value>У завантаженому файлі не знайдено міток чи рядків із координатами або адресою.</value>
   </data>
 </root>

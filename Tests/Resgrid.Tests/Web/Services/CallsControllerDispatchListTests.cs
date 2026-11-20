@@ -162,7 +162,7 @@ namespace Resgrid.Tests.Web.Services
 				Mock.Of<IProtectedReadService>(), protectedWrite.Object, _contacts.Object, Mock.Of<IDispatchScopeService>(),
 				Mock.Of<ICallLocationHistoryService>(), Mock.Of<IPendingCallsService>(), Mock.Of<ICallClosureService>(),
 				new InboundEmailReceiptsService(new MockInboundEmailReceiptsRepository(), TimeProvider.System), _releases.Object,
-				new CallBroadcastOutboxService(_outbox, _callsService.Object, profiles.Object, _queue.Object))
+				new CallBroadcastOutboxService(_outbox, _callsService.Object, profiles.Object, _queue.Object), Mock.Of<ICallRoutesService>(), Mock.Of<IRouteService>())
 			{
 				ControllerContext = new ControllerContext { HttpContext = httpContext }
 			};

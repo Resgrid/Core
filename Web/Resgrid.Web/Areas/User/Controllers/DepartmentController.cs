@@ -291,7 +291,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var mapHideUnavailable = await _departmentSettingsService.GetBigBoardHideUnavailableDepartmentAsync(DepartmentId);
 			var activeCallRssKey = await _departmentSettingsService.GetRssKeyForDepartmentAsync(DepartmentId);
 			model.DisableAutoAvailable = await _departmentSettingsService.GetDisableAutoAvailableForDepartmentAsync(DepartmentId);
-			model.EnableModernNotifications = await _departmentSettingsService.GetModernNotificationsEnabledAsync(DepartmentId);
 			model.RequirePasswordResetViaEmail = await _departmentSettingsService.GetRequirePasswordResetViaEmailAsync(DepartmentId);
 			model.ForceChatbotSecurityPin = await _departmentSettingsService.GetForceChatbotSecurityPinAsync(DepartmentId);
 			model.TtsLanguage = await _departmentSettingsService.GetTtsLanguageForDepartmentAsync(DepartmentId);
@@ -588,8 +587,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 					await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.MapHideUnavailable.ToString(), DepartmentSettingTypes.BigBoardHideUnavailable,
 						cancellationToken);
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.DisableAutoAvailable.ToString(), DepartmentSettingTypes.DisabledAutoAvailable,
-					cancellationToken);
-				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.EnableModernNotifications.ToString(), DepartmentSettingTypes.EnableModernNotifications,
 					cancellationToken);
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.RequirePasswordResetViaEmail.ToString(),
 					DepartmentSettingTypes.RequirePasswordResetViaEmail, cancellationToken);
@@ -1926,45 +1923,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public async Task<IActionResult> ProvisionNumber(string msisdn, string country, CancellationToken cancellationToken)
+		public IActionResult ProvisionNumber(string msisdn, string country, CancellationToken cancellationToken)
 		{
-			if (!await _limitsService.CanDepartmentProvisionNumberAsync(DepartmentId))
-				return RedirectToAction("Unauthorized", "Public", new { Area = "" });
-
-			var success = await _numbersService.ProvisionNumberAsync(DepartmentId, msisdn, country);
-
-			if (success)
-			{
-				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, "0", DepartmentSettingTypes.TextToCallImportFormat, cancellationToken);
-				return RedirectToAction("TextSettings");
-			}
-
-			return RedirectToAction("ProvisionFailed");
+			// Department numbers are bought with the Dedicated Number add-on (Department -> Dedicated Number), never on a plan check alone.
+			return RedirectToAction("Index", "DedicatedNumber", new { Area = "User" });
 		}
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public async Task<IActionResult> ProvisionDefaultNumberAsync(string country, string areaCode, CancellationToken cancellationToken)
+		public IActionResult ProvisionDefaultNumberAsync(string country, string areaCode, CancellationToken cancellationToken)
 		{
-			if (!await _limitsService.CanDepartmentProvisionNumberAsync(DepartmentId))
-				return RedirectToAction("Unauthorized", "Public", new { Area = "" });
-
-			var numbers = await _numbersService.GetAvailableNumbers(country, areaCode);
-
-			if (numbers.Count > 0)
-			{
-				var success = await _numbersService.ProvisionNumberAsync(DepartmentId, numbers.First().msisdn, country);
-
-				if (success)
-				{
-					await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, "0", DepartmentSettingTypes.TextToCallImportFormat, cancellationToken);
-
-					return Content(numbers.First().msisdn);
-				}
-			}
-
-			return Content("Could not provision number");
+			// Department numbers are bought with the Dedicated Number add-on (Department -> Dedicated Number), never on a plan check alone.
+			return RedirectToAction("Index", "DedicatedNumber", new { Area = "User" });
 		}
 
 		public async Task<IActionResult> ProvisionFailed()

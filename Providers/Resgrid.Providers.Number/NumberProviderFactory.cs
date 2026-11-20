@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
@@ -32,6 +33,21 @@ namespace Resgrid.Providers.NumberProvider
 
 			return await _twilioProvider.ProvisionNumber(country, number);
 		}
+
+		// Dedicated numbers are Twilio only: the webhooks, regulatory bundles and release all speak the Twilio API.
+		public Task<List<AvailablePhoneNumber>> SearchDedicatedNumbersAsync(string countryCode, string areaCode, string contains, int limit,
+			CancellationToken cancellationToken = default) =>
+			_twilioProvider.SearchDedicatedNumbersAsync(countryCode, areaCode, contains, limit, cancellationToken);
+
+		public Task<List<AvailablePhoneNumber>> SearchDedicatedNumbersAsync(DedicatedNumberSearch search, CancellationToken cancellationToken = default) =>
+			_twilioProvider.SearchDedicatedNumbersAsync(search, cancellationToken);
+
+		public Task<CarrierNumberPurchase> PurchaseDedicatedNumberAsync(string phoneNumber, string countryCode, string friendlyName,
+			CancellationToken cancellationToken = default) =>
+			_twilioProvider.PurchaseDedicatedNumberAsync(phoneNumber, countryCode, friendlyName, cancellationToken);
+
+		public Task<bool> ReleaseDedicatedNumberAsync(string providerNumberId, CancellationToken cancellationToken = default) =>
+			_twilioProvider.ReleaseDedicatedNumberAsync(providerNumberId, cancellationToken);
 
 		public string ConvertCountryToCode(string country)
 		{

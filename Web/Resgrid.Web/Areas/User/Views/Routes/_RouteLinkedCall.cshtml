@@ -1,0 +1,17 @@
+@model Resgrid.Web.Areas.User.Models.Routes.RouteLinkedCall
+@*
+    The call a route run was started for (M0322): its number linked to the call, and its name, for a member who may open it;
+    the number alone otherwise.
+*@
+@if (Model.CanView)
+{
+    <a asp-controller="Dispatch" asp-action="ViewCall" asp-route-area="User" asp-route-callId="@Model.CallId">@Model.Number</a>
+    @if (!string.IsNullOrWhiteSpace(Model.Name))
+    {
+        <span class="text-muted">@Model.Name</span>
+    }
+}
+else
+{
+    <span>@Model.Number</span>
+}

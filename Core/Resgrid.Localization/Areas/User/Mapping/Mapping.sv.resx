@@ -205,7 +205,7 @@
     <value>Importer</value>
   </data>
   <data name="PoiImportsHelp" xml:space="preserve">
-    <value>Importer körs i bakgrunden och startar oftast inom en minut. Uppdatera sidan för att se förloppet.</value>
+    <value>Importer körs i bakgrunden och startar oftast inom en minut. Listan uppdateras av sig själv medan en import pågår.</value>
   </data>
   <data name="PoiImportsRefresh" xml:space="preserve">
     <value>Uppdatera</value>
@@ -580,5 +580,32 @@
   </data>
   <data name="PoiAvailabilitySaveFailed" xml:space="preserve">
     <value>Tillgängligheten kunde inte sparas: POI:n är inte längre en destination. Ladda om sidan och försök igen.</value>
+  </data>
+  <data name="ManagePois" xml:space="preserve">
+    <value>Hantera POI</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>Adress</value>
+  </data>
+  <data name="ImportFileRequired" xml:space="preserve">
+    <value>Välj en fil att ladda upp.</value>
+  </data>
+  <data name="ImportFileTypeInvalid" xml:space="preserve">
+    <value>Filtypen ({0}) kan inte importeras som POI: ladda upp en KML-, KMZ- eller CSV-fil.</value>
+  </data>
+  <data name="ImportFileTooLarge" xml:space="preserve">
+    <value>Filen är för stor: den måste vara mindre än 10 MB.</value>
+  </data>
+  <data name="ImportTypeRequired" xml:space="preserve">
+    <value>Välj den POI-typ som ska importeras till.</value>
+  </data>
+  <data name="ImportChooseType" xml:space="preserve">
+    <value>Välj en POI-typ</value>
+  </data>
+  <data name="ImportNoValidRows" xml:space="preserve">
+    <value>Ingen av de {0} posterna i filen har giltiga koordinater eller en adress (kontrollera att latitud och longitud inte är omkastade eller tomma).</value>
+  </data>
+  <data name="ImportNothingFound" xml:space="preserve">
+    <value>Inga platsmarkeringar eller rader med koordinater eller en adress hittades i den uppladdade filen.</value>
   </data>
 </root>

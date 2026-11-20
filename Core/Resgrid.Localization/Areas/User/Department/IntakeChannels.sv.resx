@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Mottagningskanaler</value>
+  </data>
+  <data name="PageIntro" xml:space="preserve">
+    <value>Meddelanden till en mottagningskanal blir väntande larm. En larmoperatör granskar varje larm och väljer vem det skickas till; mottagningen larmar aldrig någon på egen hand.</value>
+  </data>
+  <data name="FeatureOff" xml:space="preserve">
+    <value>Mottagningskanaler är ännu inte påslagna för er organisation. Ni kan redan nu konfigurera kanaler; de börjar skapa larm när funktionen slås på.</value>
+  </data>
+  <data name="AddChannel" xml:space="preserve">
+    <value>Lägg till kanal</value>
+  </data>
+  <data name="EditChannel" xml:space="preserve">
+    <value>Redigera kanal</value>
+  </data>
+  <data name="NoChannels" xml:space="preserve">
+    <value>Inga mottagningskanaler har konfigurerats ännu.</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Namn</value>
+  </data>
+  <data name="NameHelp" xml:space="preserve">
+    <value>Visas på de väntande larm som kanalen skapar, till exempel "Sjukhusets överflyttningslinje".</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Kanaltyp</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>Adress</value>
+  </data>
+  <data name="Mode" xml:space="preserve">
+    <value>Bearbetning</value>
+  </data>
+  <data name="ModeTemplate" xml:space="preserve">
+    <value>Larmmall</value>
+  </data>
+  <data name="ModeEnhancedAi" xml:space="preserve">
+    <value>Enhanced AI</value>
+  </data>
+  <data name="ModeHelp" xml:space="preserve">
+    <value>Larmmallen läser meddelandet med ett av era e-postformat för larm. Enhanced AI sparar meddelandet som ett väntande larm och fyller sedan i typ, adress, prioritet och en sammanfattning (kräver tillägget Enhanced AI med AI-mottagning).</value>
+  </data>
+  <data name="TemplateFormat" xml:space="preserve">
+    <value>Mall</value>
+  </data>
+  <data name="AllowedSenders" xml:space="preserve">
+    <value>Tillåtna avsändare</value>
+  </data>
+  <data name="AllowedSendersHelp" xml:space="preserve">
+    <value>Kommaseparerade: telefonnummer (med jokertecknet *), e-postadresser eller @domäner, eller plattformens användar-ID. Lämna tomt för att ta emot från alla som når adressen.</value>
+  </data>
+  <data name="DefaultPriority" xml:space="preserve">
+    <value>Standardprioritet</value>
+  </data>
+  <data name="DefaultCallType" xml:space="preserve">
+    <value>Standardlarmtyp</value>
+  </data>
+  <data name="UseDepartmentDefault" xml:space="preserve">
+    <value>Organisationens standard</value>
+  </data>
+  <data name="NoneOption" xml:space="preserve">
+    <value>Ingen</value>
+  </data>
+  <data name="SendAcknowledgement" xml:space="preserve">
+    <value>Svara avsändaren</value>
+  </data>
+  <data name="SendAcknowledgementHelp" xml:space="preserve">
+    <value>Skickar ett kort kvitto med larmnumret. Sms besvaras från Resgrids huvudnummer.</value>
+  </data>
+  <data name="Enabled" xml:space="preserve">
+    <value>Aktiverad</value>
+  </data>
+  <data name="Disabled" xml:space="preserve">
+    <value>Avaktiverad</value>
+  </data>
+  <data name="Enable" xml:space="preserve">
+    <value>Aktivera</value>
+  </data>
+  <data name="Disable" xml:space="preserve">
+    <value>Avaktivera</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Redigera</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Ta bort</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Spara</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Avbryt</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Läge</value>
+  </data>
+  <data name="ThisMonth" xml:space="preserve">
+    <value>Denna månad</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Åtgärder</value>
+  </data>
+  <data name="DeleteConfirm" xml:space="preserve">
+    <value>Ta bort den här mottagningskanalen? Meddelanden till dess adress skapar då inte längre larm.</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Mottagningskanalen sparades.</value>
+  </data>
+  <data name="Deleted" xml:space="preserve">
+    <value>Mottagningskanalen togs bort.</value>
+  </data>
+  <data name="Error.InvalidAddress" xml:space="preserve">
+    <value>Adressen är inte giltig för den här kanaltypen.</value>
+  </data>
+  <data name="Error.AddressInUse" xml:space="preserve">
+    <value>Adressen används redan av en annan mottagningskanal eller som en organisations larm-e-postadress.</value>
+  </data>
+  <data name="Error.NameRequired" xml:space="preserve">
+    <value>Ange ett namn på kanalen.</value>
+  </data>
+  <data name="Error.Invalid" xml:space="preserve">
+    <value>Kanalen kunde inte sparas. Kontrollera värdena och försök igen.</value>
+  </data>
+  <data name="Type.Sms" xml:space="preserve">
+    <value>Textmeddelande (sms)</value>
+  </data>
+  <data name="Type.Email" xml:space="preserve">
+    <value>E-post</value>
+  </data>
+  <data name="Type.WhatsApp" xml:space="preserve">
+    <value>WhatsApp</value>
+  </data>
+  <data name="Type.Slack" xml:space="preserve">
+    <value>Slack</value>
+  </data>
+  <data name="Type.Teams" xml:space="preserve">
+    <value>Microsoft Teams</value>
+  </data>
+  <data name="Type.Telegram" xml:space="preserve">
+    <value>Telegram</value>
+  </data>
+  <data name="Type.Discord" xml:space="preserve">
+    <value>Discord</value>
+  </data>
+  <data name="Type.GoogleChat" xml:space="preserve">
+    <value>Google Chat</value>
+  </data>
+  <data name="Type.Webhook" xml:space="preserve">
+    <value>Signerad webhook</value>
+  </data>
+  <data name="Type.Voice" xml:space="preserve">
+    <value>Telefonsamtal (röst)</value>
+  </data>
+  <data name="Help.Sms" xml:space="preserve">
+    <value>Organisationens privata inkommande larmnummer i internationellt format, till exempel +17755550100. Det numret skapar sin egen kanal när det konfigureras.</value>
+  </data>
+  <data name="Help.Voice" xml:space="preserve">
+    <value>Organisationens privata inkommande larmnummer i internationellt format. Uppringare som inte är medlemmar svarar på talade frågor från Enhanced AI:s röstmottagning.</value>
+  </data>
+  <data name="Help.Email" xml:space="preserve">
+    <value>Delen före @. E-post till det namnet på {0} blir ett väntande larm. Den måste skilja sig från er organisations larm-e-postadress.</value>
+  </data>
+  <data name="Help.WhatsApp" xml:space="preserve">
+    <value>WhatsApp-avsändarnumret i internationellt format. Resgrids support registrerar avsändaren på Resgrids Twilio-konto.</value>
+  </data>
+  <data name="Help.Slack" xml:space="preserve">
+    <value>Arbetsyte-ID/kanal-ID, till exempel T012ABCDE/C034FGHIJ. Bjud in Resgrid-appen till kanalen med /invite @Resgrid och kopiera sedan kanal-ID:t från kanalinformationen och arbetsyte-ID:t från informationen om arbetsytan.</value>
+  </data>
+  <data name="Help.Teams" xml:space="preserve">
+    <value>Klient-ID/kanal-ID, till exempel 72f988bf-86f1-41af-91ab-2d7cd011db47/19:abc123@thread.tacv2. Lägg till Resgrid-appen i teamet och använd Hämta länk till kanal: kanal-ID:t är delen 19:…@thread.tacv2 och klient-ID:t är värdet tenantId. Nämn @Resgrid i kanalen för att skicka en förfrågan.</value>
+  </data>
+  <data name="Help.Telegram" xml:space="preserve">
+    <value>Chatt-ID:t; grupp-ID:n är negativa, till exempel -1001234567890. Lägg till Resgrid-boten i gruppen. Med sekretessläget på börjar du en förfrågan med /intake eller nämner boten.</value>
+  </data>
+  <data name="Help.Discord" xml:space="preserve">
+    <value>Kanal-ID:t (slå på utvecklarläget, högerklicka på kanalen och välj Kopiera kanal-ID). Lägg till Resgrid-appen på servern och använd /resgrid i kanalen.</value>
+  </data>
+  <data name="Help.GoogleChat" xml:space="preserve">
+    <value>Utrymmets namn från dess URL, till exempel spaces/AAAAbCdEfGh. Lägg till Resgrid-appen i utrymmet och nämn den för att skicka en förfrågan.</value>
+  </data>
+  <data name="Help.Webhook" xml:space="preserve">
+    <value>Resgrid skapar webhook-URL:en och signeringshemligheten när du sparar. Alla system som kan skicka en signerad HTTPS-begäran kan skapa larm.</value>
+  </data>
+  <data name="ChatRules" xml:space="preserve">
+    <value>I en länkad chatt är varje nytt meddelande en förfrågan; svar i en tråd räknas bara när de nämner Resgrid. Direktmeddelanden till Resgrid-boten fungerar som tidigare.</value>
+  </data>
+  <data name="WebhookUrl" xml:space="preserve">
+    <value>Webhook-adress</value>
+  </data>
+  <data name="WebhookSecret" xml:space="preserve">
+    <value>Signeringshemlighet</value>
+  </data>
+  <data name="WebhookSecretOnce" xml:space="preserve">
+    <value>Kopiera hemligheten nu. Den visas bara den här gången; byt ut den om den kommer bort.</value>
+  </data>
+  <data name="WebhookNoSecret" xml:space="preserve">
+    <value>Ingen signeringshemlighet är angiven, så alla förfrågningar avvisas. Byt hemlighet för att skapa en.</value>
+  </data>
+  <data name="RotateSecret" xml:space="preserve">
+    <value>Byt hemlighet</value>
+  </data>
+  <data name="RotateConfirm" xml:space="preserve">
+    <value>Byta signeringshemlighet? Den nuvarande hemligheten slutar fungera direkt.</value>
+  </data>
+  <data name="WebhookSigning" xml:space="preserve">
+    <value>Signera varje begäran med rubriken X-Resgrid-Signature: t=&lt;unix-sekunder&gt;,v1=&lt;hex HMAC-SHA256 av "t.body" med hemligheten&gt;. Förfrågningar äldre än {0} sekunder avvisas.</value>
+  </data>
+  <data name="WebhookSample" xml:space="preserve">
+    <value>Exempelbegäran</value>
+  </data>
+  <data name="WebhookBody" xml:space="preserve">
+    <value>Innehållet är JSON: message (obligatoriskt), subject, sender, externalId (en upprepning med samma ID skapar aldrig ett andra larm), address, latitude och longitude.</value>
+  </data>
+  <data name="Via" xml:space="preserve">
+    <value>från {0}: {1}</value>
+  </data>
+  <data name="ViaType" xml:space="preserve">
+    <value>från {0}</value>
+  </data>
+  <data name="TextSettingsIntro" xml:space="preserve">
+    <value>Mottagningskanaler gör om sms, e-post, chattmeddelanden och webhook-förfrågningar till väntande larm.</value>
+  </data>
+  <data name="ManageIntakeChannels" xml:space="preserve">
+    <value>Hantera mottagningskanaler</value>
+  </data>
+</root>

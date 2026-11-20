@@ -9,6 +9,8 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> recordsLocalizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.RecurringCalls> recurringLocalizer
 @inject Resgrid.Model.Services.IFeatureToggleService featureToggleService
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.IntakeChannels> intakeLocalizer
+@inject Resgrid.Model.Services.IIntakeService intakeService
 @{
     ViewBag.Title = $"Resgrid | " + @localizer["ViewCallHeader"] + ": " + @Model.Call.Name;
     Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
@@ -172,6 +174,15 @@
 {
     <div class="row"><div class="col-lg-12"><div class="alert alert-info" id="recurringCallBanner" style="margin:15px 0 0 0;"><i class="fa fa-repeat"></i> @recurringLocalizer["CreatedByRecurringCall"] <a asp-controller="RecurringCalls" asp-action="Index" asp-route-area="User">@recurringLocalizer["PageTitle"]</a></div></div></div>
 }
+@if (Model.Call.CallSource == (int)CallSources.Intake || Model.Call.CallSource == (int)CallSources.VoiceIntake)
+{
+    @* Intake calls (M0323) say which channel they came from: "via Text message (SMS): Hospital line". *@
+    var intakeSources = await intakeService.GetCallSourcesAsync(Model.Call.DepartmentId, new[] { Model.Call.CallId });
+    var intakeLabel = intakeSources.TryGetValue(Model.Call.CallId, out var intakeSource)
+        ? Resgrid.Web.Areas.User.Controllers.IntakeChannelsController.SourceLabel(intakeLocalizer, intakeSource)
+        : intakeLocalizer["ViaType", intakeLocalizer[Model.Call.CallSource == (int)CallSources.VoiceIntake ? "Type.Voice" : "PageTitle"].Value].Value;
+    <div class="row"><div class="col-lg-12"><div class="alert alert-info" id="intakeSourceBanner" style="margin:15px 0 0 0;"><i class="fa fa-inbox"></i> @intakeLabel</div></div></div>
+}
 
 <div class="row">
     <div class="col-lg-8">
@@ -236,6 +247,11 @@
                                  <dd><span style="display: block;">@(await DispatchDisplayHelper.GetLocalizedCallPriorityAsync(Model.Department.DepartmentId, Model.Call.Priority, localizer))</span></dd>
                                  <dt>@localizer["LocationLabel"]:</dt>
                                  <dd><span data-adp-field="calls.address">@Model.Call.Address</span></dd>
+                                 @if (!String.IsNullOrWhiteSpace(Model.Locations.LocationPoiName))
+                                 {
+                                     <dt>@localizer["LocationPoiDisplayLabel"]:</dt>
+                                     <dd>@Model.Locations.LocationPoiName</dd>
+                                 }
                                  @if (!String.IsNullOrWhiteSpace(Model.DestinationName))
                                  {
                                      <dt>@localizer["Destination"]:</dt>
@@ -248,6 +264,39 @@
                                          @if (!String.IsNullOrWhiteSpace(Model.DestinationAddress) && Model.DestinationAddress != Model.DestinationName)
                                          {
                                              <div class="text-muted">@Model.DestinationAddress</div>
+                                         }
+                                     </dd>
+                                 }
+                                 else if (Model.Locations.HasFreeDestination)
+                                 {
+                                     @* A destination that is not a POI (M0322). *@
+                                     <dt>@localizer["Destination"]:</dt>
+                                     <dd>
+                                         @if (!String.IsNullOrWhiteSpace(Model.Locations.DestinationAddress))
+                                         {
+                                             <div>@Model.Locations.DestinationAddress</div>
+                                         }
+                                         @if (!String.IsNullOrWhiteSpace(Model.Locations.DestinationCoordinates))
+                                         {
+                                             <div class="text-muted">@Model.Locations.DestinationCoordinates</div>
+                                         }
+                                         @if (!String.IsNullOrWhiteSpace(Model.Locations.DestinationW3W))
+                                         {
+                                             <div class="text-muted">///@Model.Locations.DestinationW3W</div>
+                                         }
+                                     </dd>
+                                 }
+                                 @if (Model.Locations.HasRoute)
+                                 {
+                                     <dt>@localizer["CallRouteLabel"]:</dt>
+                                     <dd>
+                                         @if (!String.IsNullOrWhiteSpace(Model.Locations.RoutePlanName) && Model.Locations.CanViewRoutes)
+                                         {
+                                             <a asp-controller="Routes" asp-action="View" asp-route-area="User" asp-route-id="@Model.Locations.RoutePlanId">@Model.Locations.RoutePlanName</a>
+                                         }
+                                         else
+                                         {
+                                             @(Model.Locations.RoutePlanName ?? localizer["CallRouteDeleted"].Value)
                                          }
                                      </dd>
                                  }
@@ -322,6 +371,19 @@
                             </dl>
                         </div>
                     </div>
+                    @* Enhanced AI destination advice (open calls, when the department has it). *@
+                    <partial name="_DestinationAdvice" model="Model.Call" />
+                    @* The text conversation with the member of the public who texted the dedicated number (calls that have one). *@
+                    <partial name="_IntakeConversation" model="Model.Call" />
+                    @if (Model.Locations.HasRoute)
+                    {
+                        @* The runs of the call's route (M0322). *@
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <partial name="_CallRouteRuns" model="Model.Locations" view-data='new ViewDataDictionary(ViewData) { { "CallRouteRunsLinks", true } }' />
+                            </div>
+                        </div>
+                    }
                     <div class="row m-t-sm">
                         <div class="col-lg-12">
                             <div class="panel blank-panel">
@@ -1331,6 +1393,8 @@
     @await Html.PartialAsync("_DispatchLocalizationScript")
     <partial name="_MapKitConfig" />
     <script src="~/js/app/internal/dispatch/resgrid.dispatch.viewcall.js" type="text/javascript"></script>
+    <script src="~/js/app/internal/dispatch/resgrid.dispatch.destinationadvice.js" asp-append-version="true" type="text/javascript"></script>
+    <script src="~/js/app/internal/dispatch/resgrid.dispatch.intakeconversation.js" asp-append-version="true" type="text/javascript"></script>
     <script src="~/js/app/internal/dispatch/resgrid.dispatch.locationhistory.js" asp-append-version="true" type="text/javascript"></script>
     @if (Model.Call.CheckInTimersEnabled)
     {

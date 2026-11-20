@@ -34,7 +34,8 @@ namespace Resgrid.Services.Dashboard
 			{ PlanAddonTypes.ReadinessPro, FeatureFlagKeys.MaintenanceWorkOrders },
 			{ PlanAddonTypes.BusinessOperations, FeatureFlagKeys.BusinessOperations },
 			{ PlanAddonTypes.EnhancedAi, FeatureFlagKeys.AiEnhanced },
-			{ PlanAddonTypes.IncidentBackOffice, FeatureFlagKeys.IncidentBackOffice }
+			{ PlanAddonTypes.IncidentBackOffice, FeatureFlagKeys.IncidentBackOffice },
+			{ PlanAddonTypes.DedicatedNumber, FeatureFlagKeys.IntakeDedicatedNumber }
 		};
 
 		private readonly IFeatureToggleService _featureToggleService;
@@ -51,13 +52,15 @@ namespace Resgrid.Services.Dashboard
 		private readonly IPermissionsService _permissionsService;
 		private readonly IPersonnelRolesService _personnelRolesService;
 		private readonly IDepartmentDataProtectionService _dataProtectionService;
+		private readonly IDedicatedNumberAccessService _dedicatedNumberAccessService;
 
 		public DashboardEntitlementService(IFeatureToggleService featureToggleService, IDepartmentSettingsService departmentSettingsService,
 			IReadinessAccessService readinessAccessService, IRecordsCutoverService recordsCutoverService,
 			IBusinessOperationsAccessService businessOperationsAccessService, IIncidentBackOfficeAccessService incidentBackOfficeAccessService,
 			IEnhancedAiAccessService enhancedAiAccessService, IVoiceService voiceService, IAiDispatchAdminService aiDispatchAdminService,
 			INerisProfileService nerisProfileService, IRecordsAuthorizationService recordsAuthorizationService, IPermissionsService permissionsService,
-			IPersonnelRolesService personnelRolesService, IDepartmentDataProtectionService dataProtectionService)
+			IPersonnelRolesService personnelRolesService, IDepartmentDataProtectionService dataProtectionService,
+			IDedicatedNumberAccessService dedicatedNumberAccessService)
 		{
 			_featureToggleService = featureToggleService;
 			_departmentSettingsService = departmentSettingsService;
@@ -73,6 +76,7 @@ namespace Resgrid.Services.Dashboard
 			_permissionsService = permissionsService;
 			_personnelRolesService = personnelRolesService;
 			_dataProtectionService = dataProtectionService;
+			_dedicatedNumberAccessService = dedicatedNumberAccessService;
 		}
 
 		public async Task<DashboardViewer> CompleteViewerAsync(DashboardViewer viewer)
@@ -187,6 +191,7 @@ namespace Resgrid.Services.Dashboard
 			if (await _businessOperationsAccessService.HasActiveAddonAsync(departmentId)) viewer.HeldAddons.Add(PlanAddonTypes.BusinessOperations);
 			if (await _incidentBackOfficeAccessService.HasActiveAddonAsync(departmentId)) viewer.HeldAddons.Add(PlanAddonTypes.IncidentBackOffice);
 			if (await _enhancedAiAccessService.HasActiveAddonAsync(departmentId)) viewer.HeldAddons.Add(PlanAddonTypes.EnhancedAi);
+			if (await _dedicatedNumberAccessService.HasActiveAddonAsync(departmentId)) viewer.HeldAddons.Add(PlanAddonTypes.DedicatedNumber);
 			if (await _voiceService.CanDepartmentUseVoiceAsync(departmentId)) viewer.HeldAddons.Add(PlanAddonTypes.PTT);
 			if (viewer.AdpEnforced) viewer.HeldAddons.Add(PlanAddonTypes.ADP);
 		}

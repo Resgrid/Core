@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Title" xml:space="preserve">
+    <value>توصية الوجهة من Enhanced AI</value>
+  </data>
+  <data name="Ask" xml:space="preserve">
+    <value>اسأل Enhanced AI</value>
+  </data>
+  <data name="Asking" xml:space="preserve">
+    <value>جارٍ سؤال Enhanced AI…</value>
+  </data>
+  <data name="Apply" xml:space="preserve">
+    <value>تطبيق</value>
+  </data>
+  <data name="Dismiss" xml:space="preserve">
+    <value>تجاهل</value>
+  </data>
+  <data name="DismissReason" xml:space="preserve">
+    <value>لماذا تتجاهل هذه التوصية؟ (اختياري)</value>
+  </data>
+  <data name="Consider" xml:space="preserve">
+    <value>فكّر في {0}</value>
+  </data>
+  <data name="Keep" xml:space="preserve">
+    <value>يوافق Enhanced AI على الوجهة الحالية.</value>
+  </data>
+  <data name="NoSuggestion" xml:space="preserve">
+    <value>ليس لدى Enhanced AI وجهة لاقتراحها.</value>
+  </data>
+  <data name="Current" xml:space="preserve">
+    <value>الوجهة الحالية: {0}</value>
+  </data>
+  <data name="CurrentNone" xml:space="preserve">
+    <value>لم تُحدَّد وجهة</value>
+  </data>
+  <data name="CurrentFree" xml:space="preserve">
+    <value>الوجهة الحالية: موقع ليس نقطة اهتمام</value>
+  </data>
+  <data name="Needs" xml:space="preserve">
+    <value>يحتاج إلى: {0}</value>
+  </data>
+  <data name="Confidence" xml:space="preserve">
+    <value>الثقة: {0}%</value>
+  </data>
+  <data name="LowConfidence" xml:space="preserve">
+    <value>ثقة منخفضة: لم يُعلَن في البلاغ.</value>
+  </data>
+  <data name="AdvisedAt" xml:space="preserve">
+    <value>أُوصي بها {0}</value>
+  </data>
+  <data name="AdviceOnly" xml:space="preserve">
+    <value>مجرد توصية: لن يتغير شيء حتى يطبّقها أحد.</value>
+  </data>
+  <data name="NoAdvice" xml:space="preserve">
+    <value>لا توجد توصية بعد. يراجع Enhanced AI الوجهة عند تغيّر تفاصيل البلاغ أو ملاحظاته.</value>
+  </data>
+  <data name="Applied" xml:space="preserve">
+    <value>تم تعيين الوجهة إلى {0}.</value>
+  </data>
+  <data name="Dismissed" xml:space="preserve">
+    <value>تم تجاهل التوصية.</value>
+  </data>
+  <data name="Failed" xml:space="preserve">
+    <value>تعذّر تنفيذ ذلك. حدّث الصفحة وحاول مرة أخرى.</value>
+  </data>
+  <data name="StatusLimited" xml:space="preserve">
+    <value>محدودة</value>
+  </data>
+  <data name="StatusDiversion" xml:space="preserve">
+    <value>في حالة تحويل</value>
+  </data>
+  <data name="StatusClosed" xml:space="preserve">
+    <value>مغلقة</value>
+  </data>
+  <data name="Outcome.Unchanged" xml:space="preserve">
+    <value>لم يتغير شيء منذ آخر توصية.</value>
+  </data>
+  <data name="Outcome.Busy" xml:space="preserve">
+    <value>Enhanced AI مشغول. حاول مرة أخرى بعد لحظة.</value>
+  </data>
+  <data name="Outcome.Unavailable" xml:space="preserve">
+    <value>لم يُجب Enhanced AI في الوقت المحدد. حاول مرة أخرى.</value>
+  </data>
+  <data name="Outcome.InvalidOutput" xml:space="preserve">
+    <value>تعذّر استخدام إجابة Enhanced AI. حاول مرة أخرى.</value>
+  </data>
+  <data name="Outcome.NoLocation" xml:space="preserve">
+    <value>ليس للبلاغ موقع يمكن ترتيب الوجهات منه.</value>
+  </data>
+  <data name="Outcome.NoCandidates" xml:space="preserve">
+    <value>لا توجد وجهات للاختيار من بينها.</value>
+  </data>
+  <data name="Outcome.BudgetExhausted" xml:space="preserve">
+    <value>استُنفدت ميزانية Enhanced AI لهذا الشهر.</value>
+  </data>
+  <data name="Outcome.ProtectionUnsupported" xml:space="preserve">
+    <value>غير متاح ما دامت الإدارة تستخدم Advanced Data Protection.</value>
+  </data>
+  <data name="Outcome.NotEntitled" xml:space="preserve">
+    <value>توصيات الوجهة غير متاحة لهذه الإدارة.</value>
+  </data>
+  <data name="Outcome.CallNotOpen" xml:space="preserve">
+    <value>لم يعد البلاغ مفتوحًا.</value>
+  </data>
+  <data name="Outcome.NotOpen" xml:space="preserve">
+    <value>تم تطبيق هذه التوصية أو تجاهلها بالفعل.</value>
+  </data>
+  <data name="Outcome.DestinationGone" xml:space="preserve">
+    <value>لم تعد الوجهة الموصى بها موجودة.</value>
+  </data>
+  <data name="Outcome.NothingToApply" xml:space="preserve">
+    <value>لا يوجد ما يُطبَّق: التوصية هي الإبقاء على الوجهة الحالية.</value>
+  </data>
+</root>

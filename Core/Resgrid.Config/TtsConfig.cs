@@ -34,6 +34,18 @@ namespace Resgrid.Config
 
 		public static string DefaultVoice = "en-us+klatt4";
 		public static int DefaultSpeed = 150;
+
+		/// <summary>
+		/// Speaking rate, in words per minute on the eSpeak scale (175 = the voice's natural pace,
+		/// lower is slower), for the spoken call dispatch only: nature, address, phone numbers and
+		/// unit codes need a slower read over a phone line than the menus and prompts that use
+		/// <see cref="DefaultSpeed"/>. Measured on the production voice, 125 reads at about four
+		/// syllables a second against 4.6 at 150. Valid range 80-450; anything outside falls back
+		/// to <see cref="DefaultSpeed"/>. Both the broadcast worker (pre-warm) and the voice webhook
+		/// read it through DispatchVoicePromptBuilder.DispatchSpeed, and speed is part of the TTS
+		/// cache key, so the two must run with the same value or the pre-warmed audio is missed.
+		/// </summary>
+		public static int DispatchSpeed = 125;
 		public static int MaxConcurrentGenerations = 4;
 		public static int MaxTextLength = 1000;
 

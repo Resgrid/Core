@@ -309,12 +309,6 @@
   <data name="NotificationHeader" xml:space="preserve">
     <value>Επιλογές Ειδοποιήσεων</value>
   </data>
-  <data name="ModernApplicationSoundsLabel" xml:space="preserve">
-    <value>Ενεργοποίηση Σύγχρονων Ήχων Εφαρμογής</value>
-  </data>
-  <data name="ModernApplicationSoundsHelp" xml:space="preserve">
-    <value>Χρησιμοποιήστε σύγχρονους ήχους ειδοποιήσεων αντί για τους παλαιούς. Αν το τμήμα σας ενεργοποιήσει τους σύγχρονους ήχους, χρησιμοποιούνται ανεξάρτητα από αυτή τη ρύθμιση.</value>
-  </data>
   <data name="NotificationOtherHeader" xml:space="preserve">
     <value>Άλλες Επιλογές Ειδοποιήσεων</value>
   </data>

@@ -19,6 +19,37 @@ namespace Resgrid.Tests.Web.Services
 			};
 		}
 
+		[TestCase(125, 150, 125)]
+		[TestCase(80, 150, 80)]
+		[TestCase(450, 150, 450)]
+		[TestCase(0, 150, 150)]
+		[TestCase(79, 165, 165)]
+		[TestCase(451, 165, 165)]
+		public void dispatch_speed_should_use_the_dispatch_setting_or_fall_back_to_the_default(int dispatchSpeed, int defaultSpeed, int expected)
+		{
+			var originalDispatchSpeed = Resgrid.Config.TtsConfig.DispatchSpeed;
+			var originalDefaultSpeed = Resgrid.Config.TtsConfig.DefaultSpeed;
+
+			try
+			{
+				Resgrid.Config.TtsConfig.DispatchSpeed = dispatchSpeed;
+				Resgrid.Config.TtsConfig.DefaultSpeed = defaultSpeed;
+
+				DispatchVoicePromptBuilder.DispatchSpeed.Should().Be(expected);
+			}
+			finally
+			{
+				Resgrid.Config.TtsConfig.DispatchSpeed = originalDispatchSpeed;
+				Resgrid.Config.TtsConfig.DefaultSpeed = originalDefaultSpeed;
+			}
+		}
+
+		[Test]
+		public void dispatch_speed_should_default_slower_than_the_menu_speed()
+		{
+			Resgrid.Config.TtsConfig.DispatchSpeed.Should().BeLessThan(Resgrid.Config.TtsConfig.DefaultSpeed);
+		}
+
 		[Test]
 		public void should_announce_new_call_with_nature_then_address_then_priority()
 		{

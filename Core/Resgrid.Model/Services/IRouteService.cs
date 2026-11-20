@@ -30,6 +30,18 @@ namespace Resgrid.Model.Services
 
 		// Route Instance Lifecycle
 		Task<RouteInstance> StartRouteAsync(string routePlanId, int unitId, string startedByUserId, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Starts the plan for a unit working a call (M0322): as <see cref="StartRouteAsync(string, int, string, CancellationToken)"/>, with
+		/// the run linked to the call. Throws <see cref="RouteInProgressException"/> when the unit already runs (or paused) a route.
+		/// </summary>
+		Task<RouteInstance> StartRouteForCallAsync(string routePlanId, int unitId, int callId, string startedByUserId, CancellationToken cancellationToken = default);
+
+		/// <summary>Records that the unit reached the plan start of a call route (no-op when already recorded).</summary>
+		Task<RouteInstance> MarkStartReachedAsync(string routeInstanceId, CancellationToken cancellationToken = default);
+
+		/// <summary>Every run started for the call, newest first.</summary>
+		Task<List<RouteInstance>> GetInstancesForCallAsync(int departmentId, int callId);
 		Task<RouteInstance> EndRouteAsync(string routeInstanceId, string endedByUserId, CancellationToken cancellationToken = default);
 		Task<RouteInstance> CancelRouteAsync(string routeInstanceId, string userId, string reason, CancellationToken cancellationToken = default);
 		Task<RouteInstance> PauseRouteAsync(string routeInstanceId, string userId, CancellationToken cancellationToken = default);

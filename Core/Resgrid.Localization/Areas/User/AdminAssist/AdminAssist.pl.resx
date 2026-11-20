@@ -1534,7 +1534,7 @@
     <value>Aplikacja członka do odbierania dysponowania, reagowania i ustawiania statusu.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.routes">
-    <value>Zaplanowane trasy, takie jak patrole, oraz osoby do nich przypisane.</value>
+    <value>Zaplanowane trasy, takie jak patrole lub transporty, osoby do nich przypisane oraz trasy, które może mieć zgłoszenie, aby przydzielona jednostka pokonała zaplanowane przystanki.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.run-cards">
     <value>Zalecane zasoby dla każdego typu zgłoszenia lub obszaru.</value>
@@ -1729,7 +1729,7 @@
     <value>Utwórz role, którymi dysponujesz lub które raportujesz, i przypisz je członkom. Prześlij ikonę mapy dla ról, które mają się wyróżniać, a potem ustaw kolejność na stronie Role: znacznik każdej osoby używa ikony jej pierwszej roli w tej kolejności, która ją ma.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.pois">
-    <value>Dodaj lokalizacje, które muszą widzieć dyspozytorzy. Nadaj typowi POI własną ikonę, która zastąpi jego znacznik na mapie i w aplikacjach.</value>
+    <value>Dodaj lokalizacje, które muszą widzieć dyspozytorzy, pojedynczo lub importując plik KML, KMZ albo CSV; adresy z pliku są wyszukiwane w tle. Nadaj typowi POI własną ikonę, która zastąpi jego znacznik na mapie i w aplikacjach.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.preventive-maintenance">
     <value>Zaplanuj rutynowy serwis dla każdego pojazdu.</value>
@@ -4900,7 +4900,7 @@
     <value>Rozszerza dysponowane grupy o rozstrzygnięty grafik osób na służbie. Wynik pustej zmiany powoduje powrót do członków grupy — sprawdź podgląd obu przypadków.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.EnableModernNotifications">
-    <value>Używa obsługiwanego, nowoczesnego zachowania powiadomień. Zweryfikuj każdego odbiorcę i kanał — akceptacja przez dostawcę nie oznacza doręczenia.</value>
+    <value>Wycofane. Nowoczesne dźwięki powiadomień są teraz włączone dla każdego działu i użytkownika — nie ma tu nic do ustawienia.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.EnableTextCommand">
     <value>Skonfigurowana preferencja poleceń tekstowych. Wzorce źródeł dyspozytorskich i zweryfikowana tożsamość w poleceniach członka to odrębne kontrole. Ścieżki dostawcy i chatbota nie egzekwują tego przełącznika jednolicie — przed zmianą sprawdź aktywnego odbiorcę.</value>
@@ -6802,7 +6802,7 @@
     <value>Zgłoszenia zaplanowane</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.scheduled-calls">
-    <value>Zgłoszenia wysyłane automatycznie o przyszłej godzinie, które można wysłać wcześniej lub przełożyć.</value>
+    <value>Zgłoszenia wysyłane automatycznie o przyszłej godzinie, które można wysłać wcześniej lub przełożyć, z kalendarzem wszystkich zgłoszeń zaplanowanych i cyklicznych.</value>
   </data>
   <data xml:space="preserve" name="Feature.api-keys">
     <value>Klucze API</value>
@@ -7852,6 +7852,153 @@
     <value>Propozycje miejsc docelowych</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.DestinationSuggestions">
-    <value>Proponuje najlepsze miejsce docelowe dla zgłoszenia oraz dla miejsca docelowego statusu jednostki na podstawie reguł miejsc docelowych departamentu (Mapowanie, Reguły miejsc docelowych) i lokalizacji zdarzenia, wraz z czasem dojazdu i odległością. „Proponuj i uzupełniaj miejsce docelowe” dodatkowo wpisuje najlepsze miejsce w puste pole celu nowego zgłoszenia; dyspozytorzy i zespoły nadal mogą wybrać inne. Domyślnie wyłączone, ponieważ każda propozycja sprawdza czasy dojazdu.</value>
+    <value>Proponuje najlepsze miejsce docelowe dla zgłoszenia oraz dla miejsca docelowego statusu jednostki na podstawie reguł miejsc docelowych departamentu (Mapowanie, Zarządzaj POI, Reguły miejsc docelowych) i lokalizacji zdarzenia, wraz z czasem dojazdu i odległością. „Proponuj i uzupełniaj miejsce docelowe” dodatkowo wpisuje najlepsze miejsce w puste pole celu nowego zgłoszenia; dyspozytorzy i zespoły nadal mogą wybrać inne. Domyślnie wyłączone, ponieważ każda propozycja sprawdza czasy dojazdu.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.recurring-calls">
+    <value>Zgłoszenia cykliczne</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.recurring-calls">
+    <value>Zgłoszenia powtarzane według harmonogramu, na przykład transporty co wtorek i czwartek o 08:00, 13:00 i 19:00. Każde z nich jest tworzone z wyprzedzeniem jako zgłoszenie zaplanowane i wysyłane automatycznie albo dyspozytor dostaje alert, aby je wysłać.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.recurring-calls">
+    <value>Otwórz Zgłoszenia zaplanowane i wybierz Zgłoszenia cykliczne, a następnie Nowe zgłoszenie cykliczne, albo naciśnij Powtarzaj przy już wysłanym zgłoszeniu. Uzupełnij szczegóły zgłoszenia, placówki i kontakt, kogo zadysponować i kogo powiadomić, a następnie harmonogram, kiedy tworzone jest każde zgłoszenie i kto je wysyła. Przed zapisaniem sprawdź najbliższe dysponowania i kalendarz.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.call-locations">
+    <value>Lokalizacje, cele i trasy zgłoszeń</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.call-locations">
+    <value>Lokalizację zgłoszenia można wybrać spośród punktów zainteresowania, cel może być punktem zainteresowania albo dowolnym adresem, współrzędnymi lub what3words, a zgłoszenie może mieć zdefiniowaną trasę, którą przydzielona jednostka pokonuje w aplikacji przystanek po przystanku.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.call-locations">
+    <value>Dodaj jako punkty zainteresowania miejsca odbioru i dostarczenia oraz utwórz aktywne plany tras z początkiem i końcem dla powtarzających się kursów. W Nowym zgłoszeniu wybierz POI lokalizacji, cel i trasę; pusta lokalizacja przyjmuje początek trasy, a pusty cel jej koniec.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.poi-capabilities">
+    <value>Możliwości POI</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.poi-capabilities">
+    <value>To, co oferują Twoje punkty zainteresowania, na przykład pracownia hemodynamiki, oddział udarowy, lądowisko dla śmigłowców lub punkt czerpania wody, zaznaczone przy każdym POI, aby dyspozytorzy i załogi filtrowali i porządkowali cele według potrzeb pacjenta lub zadania.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.poi-capabilities">
+    <value>Otwórz Mapowanie, następnie Zarządzaj POI, i wybierz Możliwości POI. Dodaj to, co oferują Twoje miejsca docelowe, a potem zaznacz to przy każdym POI lub dodaj kolumnę Capabilities do pliku importu POI.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.destination-availability">
+    <value>Dostępność miejsc docelowych</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.destination-availability">
+    <value>Czy każde miejsce docelowe może teraz przyjąć pacjentów: otwarte, ograniczone, na przekierowaniu lub zamknięte, wraz z możliwościami, których nie może zapewnić, notatką i czasem obowiązywania zgłoszenia.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.destination-availability">
+    <value>Otwórz Mapowanie, następnie Zarządzaj POI, i wybierz Dostępność miejsc docelowych albo użyj łącza Dostępność miejsc docelowych pod Celem w formularzu zgłoszenia. Wybierz Ustaw dostępność przy miejscu docelowym, gdy zgłasza przekierowanie, zamknięcie lub niedostępną możliwość.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.destination-rules">
+    <value>Reguły miejsc docelowych</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.destination-rules">
+    <value>Reguły, które na podstawie rodzaju i priorytetu zgłoszenia oraz typu jadącej jednostki wybierają typy miejsc docelowych oraz wymagane i preferowane możliwości, dzięki czemu Resgrid proponuje najbliższe odpowiednie miejsce docelowe z czasem dojazdu i odległością.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.destination-rules">
+    <value>Otwórz Mapowanie, następnie Zarządzaj POI, i wybierz Reguły miejsc docelowych. Dodaj regułę dla każdego przypadku, na przykład zgłoszenia kardiologiczne do szpitala z pracownią hemodynamiki, a beczkowóz do punktu czerpania wody, sprawdź je przyciskiem Wypróbuj, a następnie ustaw Propozycje miejsc docelowych na Proponuj miejsca docelowe lub Proponuj i uzupełniaj miejsce docelowe.</value>
+  </data>
+  <data name="Area.dedicated-number" xml:space="preserve">
+    <value>Private Inbound Dispatch Number</value>
+  </data>
+  <data name="AreaPurpose.dedicated-number" xml:space="preserve">
+    <value>Własny numer telefonu jednostki. SMS-y wysłane na ten numer stają się zgłoszeniami oczekującymi, a z Enhanced AI dzwoniący mogą zgłosić zdarzenie głosowo.</value>
+  </data>
+  <data name="AreaValue.dedicated-number" xml:space="preserve">
+    <value>Daj mieszkańcom, służbom partnerskim i członkom jeden lokalny numer do SMS-ów i połączeń: każde zgłoszenie czeka na dyspozytora w Zgłoszeniach oczekujących, a nie w czyimś prywatnym telefonie.</value>
+  </data>
+  <data name="AreaExample.dedicated-number" xml:space="preserve">
+    <value>Wiejska jednostka drukuje swój nowy lokalny numer na ulotkach do zgłoszeń, które nie są nagłe, a SMS o drzewie powalonym na drogę trafia jako zgłoszenie oczekujące, które dyspozytor sprawdza i wysyła.</value>
+  </data>
+  <data name="ModuleAdoption.dedicated-number" xml:space="preserve">
+    <value>Wymaga dodatku Private Inbound Dispatch Number, sprzedawanego tylko z aktywnym płatnym planem na jednostki. Numer tylko odbiera SMS-y; odpowiedzi wychodzą z głównego numeru Resgrid. Przyjmowanie głosowe wymaga też dodatku Enhanced AI.</value>
+  </data>
+  <data name="Ui.AddonRequired.DedicatedNumber" xml:space="preserve">
+    <value>Wymaga dodatku Private Inbound Dispatch Number</value>
+  </data>
+  <data name="Feature.dedicated-number" xml:space="preserve">
+    <value>Numer jednostki i przyjmowanie zgłoszeń</value>
+  </data>
+  <data name="FeaturePurpose.dedicated-number" xml:space="preserve">
+    <value>Wybierz i uruchom numer jednostki, zdecyduj, czy SMS-y i połączenia głosowe na ten numer tworzą zgłoszenia oczekujące, i zwolnij go, gdy nie będzie już potrzebny.</value>
+  </data>
+  <data name="FeatureSetup.dedicated-number" xml:space="preserve">
+    <value>Gdy dodatek jest aktywny, otwórz menu jednostki, a następnie Private Inbound Dispatch Number. Wyszukaj według kraju, numeru kierunkowego lub cyfr, uruchom wybrany numer, włącz Twórz oczekujące zgłoszenia z SMS-ów i zapisz. Następnie wyślij na numer testowy SMS i sprawdź Zgłoszenia oczekujące.</value>
+  </data>
+  <data name="Feature.addon-dedicated-number" xml:space="preserve">
+    <value>Private Inbound Dispatch Number</value>
+  </data>
+  <data name="FeaturePurpose.addon-dedicated-number" xml:space="preserve">
+    <value>Dodatek Private Inbound Dispatch Number: własny numer telefonu jednostki do przyjmowania zgłoszeń SMS-em i głosowo.</value>
+  </data>
+  <data name="FeatureValue.addon-dedicated-number" xml:space="preserve">
+    <value>Członkowie i mieszkańcy kontaktują się z jednostką bezpośrednio, a nie przez wspólny numer Resgrid.</value>
+  </data>
+  <data name="FeatureExample.addon-dedicated-number" xml:space="preserve">
+    <value>Członek zarządzający kupuje dodatek na stronie Private Inbound Dispatch Number lub na jego stronie rozliczeń, a następnie administrator jednostki uruchamia lokalny numer.</value>
+  </data>
+  <data name="FeatureAdoption.addon-dedicated-number" xml:space="preserve">
+    <value>Sprzedawany tylko z aktywnym płatnym planem na jednostki; kupuje go lub anuluje członek zarządzający. Rozliczany co miesiąc za jednostkę, nawet przy planie rocznym. Po wygaśnięciu dodatku numer przestaje przyjmować SMS-y i połączenia i zostaje zwolniony po okresie karencji, chyba że dodatek zostanie odnowiony.</value>
+  </data>
+  <data name="Feature.intake-channels" xml:space="preserve">
+    <value>Kanały przyjmowania zgłoszeń</value>
+  </data>
+  <data name="FeaturePurpose.intake-channels" xml:space="preserve">
+    <value>Zamieniaj w zgłoszenia oczekujące SMS-y na numer jednostki, e-maile na adres przyjmowania, wiadomości w połączonym kanale Slack, Teams, WhatsApp, Telegram, Discord lub Google Chat oraz podpisane żądania webhook.</value>
+  </data>
+  <data name="FeatureValue.intake-channels" xml:space="preserve">
+    <value>Prośby, które przychodzą poza radiem i systemem CAD, trafiają do jednej kolejki do przejrzenia przez dyspozytora; przyjmowanie nigdy samo nikogo nie dysponuje.</value>
+  </data>
+  <data name="FeatureExample.intake-channels" xml:space="preserve">
+    <value>Dział transportów szpitala publikuje prośby we wspólnym kanale Teams, a każdy wpis staje się zgłoszeniem oczekującym z domyślnym typem zgłoszenia i priorytetem kanału.</value>
+  </data>
+  <data name="FeatureSetup.intake-channels" xml:space="preserve">
+    <value>Otwórz menu jednostki, a następnie Kanały przyjmowania zgłoszeń, i dodaj kanał dla każdego źródła. Wybierz przetwarzanie Szablon zgłoszenia lub Enhanced AI, ogranicz Dozwolonych nadawców, ustaw domyślny priorytet i typ zgłoszenia, a potem wyślij wiadomość testową i sprawdź Zgłoszenia oczekujące.</value>
+  </data>
+  <data name="Feature.ai-intake" xml:space="preserve">
+    <value>Przyjmowanie zgłoszeń z Enhanced AI</value>
+  </data>
+  <data name="FeaturePurpose.ai-intake" xml:space="preserve">
+    <value>Enhanced AI odczytuje każdą wiadomość z kanału przyjmowania ustawionego na przetwarzanie Enhanced AI i uzupełnia typ, adres, priorytet oraz podsumowanie zgłoszenia oczekującego.</value>
+  </data>
+  <data name="FeatureValue.ai-intake" xml:space="preserve">
+    <value>Dyspozytorzy zaczynają od wypełnionego zgłoszenia zamiast przepisywać dowolny tekst. Zgłoszenie oczekujące jest zapisywane najpierw, więc żadna wiadomość nie ginie, gdy AI jest niedostępna.</value>
+  </data>
+  <data name="FeatureExample.ai-intake" xml:space="preserve">
+    <value>SMS o samochodzie w rowie na drodze nr 9 w pobliżu 12. kilometra staje się zgłoszeniem oczekującym o wypadku drogowym z uzupełnioną lokalizacją, gotowym do sprawdzenia przez dyspozytora.</value>
+  </data>
+  <data name="FeatureSetup.ai-intake" xml:space="preserve">
+    <value>Wymaga dodatku Enhanced AI z włączonym dla jednostki przyjmowaniem przez AI. W Kanałach przyjmowania zgłoszeń edytuj kanał i ustaw Przetwarzanie na Enhanced AI. Dyspozytor nadal przegląda każde zgłoszenie oczekujące, a jednostki korzystające z Advanced Data Protection nie są przetwarzane przez AI.</value>
+  </data>
+  <data name="Feature.ai-voice-intake" xml:space="preserve">
+    <value>Przyjmowanie głosowe z Enhanced AI</value>
+  </data>
+  <data name="FeaturePurpose.ai-voice-intake" xml:space="preserve">
+    <value>Dzwoniący na prywatny numer dyspozytorski jednostki, którzy nie są członkami, odpowiadają na zadawane głosowo pytania, a Enhanced AI zamienia ich odpowiedzi w zgłoszenie oczekujące.</value>
+  </data>
+  <data name="FeatureValue.ai-voice-intake" xml:space="preserve">
+    <value>Przyjmuj zgłoszenia telefonicznie o każdej porze bez odbierania przez człowieka, a dyspozytor nadal decyduje, kogo wysłać.</value>
+  </data>
+  <data name="FeatureExample.ai-voice-intake" xml:space="preserve">
+    <value>Dzwoniący zgłasza dym za stodołą, odpowiada na pytania o miejsce i to, co widzi, a zgłoszenie oczekujące z transkrypcją czeka na dyspozytora.</value>
+  </data>
+  <data name="FeatureSetup.ai-voice-intake" xml:space="preserve">
+    <value>Wymaga dodatków Private Inbound Dispatch Number i Enhanced AI z włączonym dla jednostki głosowym przyjmowaniem przez AI. Na stronie Private Inbound Dispatch Number włącz Przyjmuj zgłoszenia głosowo i zapisz. Połączenia głosowe mają miesięczny limit uczciwego użytkowania; po jego przekroczeniu dzwoniący są proszeni o wysłanie SMS-a na numer.</value>
+  </data>
+  <data name="Feature.ai-destination-advice" xml:space="preserve">
+    <value>Porada Enhanced AI dotycząca miejsca docelowego</value>
+  </data>
+  <data name="FeaturePurpose.ai-destination-advice" xml:space="preserve">
+    <value>Enhanced AI zaleca miejsce docelowe dla otwartego zgłoszenia na podstawie jego charakteru, notatki i notatek zgłoszenia oraz możliwości i dostępności miejsc docelowych, a gdy szczegóły zgłoszenia się zmienią, proponuje zmianę.</value>
+  </data>
+  <data name="FeatureValue.ai-destination-advice" xml:space="preserve">
+    <value>Wychwyć pacjenta, który potrzebuje teraz wyższego poziomu opieki, na przykład centrum urazowego, bez ręcznego ponownego sprawdzania każdego miejsca docelowego.</value>
+  </data>
+  <data name="FeatureExample.ai-destination-advice" xml:space="preserve">
+    <value>Notatka zgłoszenia informuje o ranie penetrującej, a porada przy zgłoszeniu proponuje centrum urazowe zamiast najbliższego szpitala; dyspozytor ją stosuje lub odrzuca.</value>
+  </data>
+  <data name="FeatureSetup.ai-destination-advice" xml:space="preserve">
+    <value>Wymaga dodatku Enhanced AI z włączoną dla jednostki poradą AI dotyczącą miejsca docelowego. Najpierw dodaj miejsca docelowe z ich możliwościami oraz reguły miejsc docelowych. Porada pojawia się przy podglądzie i aktualizacji zgłoszenia, nic się nie zmienia, dopóki ktoś jej nie zastosuje, a jednostki korzystające z Advanced Data Protection nie otrzymują porad.</value>
   </data>
 </root>

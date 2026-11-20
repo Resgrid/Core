@@ -1140,4 +1140,112 @@
   <data name="DestinationAvailabilityLink" xml:space="preserve">
     <value>Zielverfügbarkeit</value>
   </data>
+  <data name="LocationPoiPlaceholder" xml:space="preserve">
+    <value>Standort aus einem POI (optional)</value>
+  </data>
+  <data name="LocationPoiHelp" xml:space="preserve">
+    <value>Die Auswahl eines POI füllt die Adresse und die Kartenmarkierung aus; beide können weiterhin geändert werden.</value>
+  </data>
+  <data name="InvalidLocationPoi" xml:space="preserve">
+    <value>Wählen Sie den POI für den Einsatzort aus der Liste.</value>
+  </data>
+  <data name="LocationPoiDisplayLabel" xml:space="preserve">
+    <value>Standort-POI</value>
+  </data>
+  <data name="DestinationLocationLabel" xml:space="preserve">
+    <value>Oder ein Zielort</value>
+  </data>
+  <data name="DestinationLocationHelp" xml:space="preserve">
+    <value>Für ein Ziel, das kein POI ist: eine Adresse, Koordinaten, what3words oder ein Plus-Code. Ein Ziel-POI und ein Zielort können nicht gleichzeitig gesetzt sein.</value>
+  </data>
+  <data name="DestinationAddressPlaceholder" xml:space="preserve">
+    <value>Zieladresse</value>
+  </data>
+  <data name="DestinationPlusCodePlaceholder" xml:space="preserve">
+    <value>Plus-Code</value>
+  </data>
+  <data name="FindPlusCode" xml:space="preserve">
+    <value>Plus-Code suchen</value>
+  </data>
+  <data name="ClearDestinationLocation" xml:space="preserve">
+    <value>Zielort leeren</value>
+  </data>
+  <data name="InvalidDestinationCoordinates" xml:space="preserve">
+    <value>Geben Sie Breiten- und Längengrad des Ziels als Dezimalzahlen mit Punkt ein, zum Beispiel 50.8503 und 4.3517.</value>
+  </data>
+  <data name="DestinationLocationNotFound" xml:space="preserve">
+    <value>Für dieses Ziel wurde kein Ort gefunden.</value>
+  </data>
+  <data name="PlusCodeNotFound" xml:space="preserve">
+    <value>Für diesen Plus-Code wurde kein Ort gefunden.</value>
+  </data>
+  <data name="CallRouteLabel" xml:space="preserve">
+    <value>Fahrtroute</value>
+  </data>
+  <data name="CallRoutePlaceholder" xml:space="preserve">
+    <value>Keine Fahrtroute</value>
+  </data>
+  <data name="CallRouteHelp" xml:space="preserve">
+    <value>Eine vordefinierte Fahrtroute für die Einheit, die den Einsatz bearbeitet. Ein leerer Einsatzort übernimmt den Routenstart, ein leeres Ziel das Routenende.</value>
+  </data>
+  <data name="CallRoutePreview" xml:space="preserve">
+    <value>Fahrtroute ansehen</value>
+  </data>
+  <data name="CallRouteStops" xml:space="preserve">
+    <value>{0} Haltepunkte</value>
+  </data>
+  <data name="CallRouteUnavailable" xml:space="preserve">
+    <value>{0} (nicht mehr verfügbar)</value>
+  </data>
+  <data name="CallRouteDeleted" xml:space="preserve">
+    <value>Gelöschte Fahrtroute</value>
+  </data>
+  <data name="InvalidCallRoute" xml:space="preserve">
+    <value>Wählen Sie aus der Liste eine aktive Fahrtroute mit Start und Ende.</value>
+  </data>
+  <data name="CallRouteStart" xml:space="preserve">
+    <value>Routenstart</value>
+  </data>
+  <data name="CallRouteEnd" xml:space="preserve">
+    <value>Routenende</value>
+  </data>
+  <data name="CallRouteRunsLabel" xml:space="preserve">
+    <value>Routenfahrten</value>
+  </data>
+  <data name="CallRouteRunUnit" xml:space="preserve">
+    <value>Einheit</value>
+  </data>
+  <data name="CallRouteRunStatus" xml:space="preserve">
+    <value>Zustand</value>
+  </data>
+  <data name="CallRouteRunStops" xml:space="preserve">
+    <value>Haltepunkte</value>
+  </data>
+  <data name="CallRouteRunStarted" xml:space="preserve">
+    <value>Gestartet</value>
+  </data>
+  <data name="CallRouteRunEnded" xml:space="preserve">
+    <value>Beendet</value>
+  </data>
+  <data name="CallRouteRunStatusScheduled" xml:space="preserve">
+    <value>Geplant</value>
+  </data>
+  <data name="CallRouteRunStatusInProgress" xml:space="preserve">
+    <value>Läuft</value>
+  </data>
+  <data name="CallRouteRunStatusCompleted" xml:space="preserve">
+    <value>Abgeschlossen</value>
+  </data>
+  <data name="CallRouteRunStatusCancelled" xml:space="preserve">
+    <value>Abgebrochen</value>
+  </data>
+  <data name="CallRouteRunStatusAbandoned" xml:space="preserve">
+    <value>Aufgegeben</value>
+  </data>
+  <data name="CallRouteRunStatusPaused" xml:space="preserve">
+    <value>Pausiert</value>
+  </data>
+  <data name="CallRouteNoRuns" xml:space="preserve">
+    <value>Noch keine Einheit hat diese Fahrtroute gestartet.</value>
+  </data>
 </root>

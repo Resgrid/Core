@@ -30,7 +30,18 @@ namespace Resgrid.Model.Services
 		/// Route from the unit's position through the instance's remaining (pending or checked-in) stops to the plan end,
 		/// with an ETA per stop (now + legs + dwell). Only the instance's LastRoutedOn is written.
 		/// </summary>
+		/// <remarks>
+		/// With <paramref name="includeStart"/>, a call route (M0322) the unit has not yet brought to its plan start (no
+		/// <see cref="RouteInstance.StartReachedOn"/>, no stop worked, a station or explicit start) first leads to that start: the first leg
+		/// has <see cref="RoutePlanLeg.IsRouteStart"/>. A position already within the plan's geofence radius of the start records it reached.
+		/// </remarks>
 		Task<RoutePlanRouteResult> GetLiveDirectionsAsync(string routeInstanceId, double latitude, double longitude, double? heading,
-			bool navigation, string language, bool metric, CancellationToken cancellationToken = default);
+			bool navigation, string language, bool metric, CancellationToken cancellationToken = default, bool includeStart = false);
+
+		/// <summary>
+		/// Where the plan starts and ends for a call (M0322): the station or explicit point, else the first or last stop. The unit (or the
+		/// plan's unit) supplies the station when the plan uses "the unit's station".
+		/// </summary>
+		Task<RoutePlanEndpoints> ResolveEndpointsAsync(RoutePlan plan, int? unitId = null);
 	}
 }

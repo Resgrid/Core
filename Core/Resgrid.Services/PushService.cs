@@ -14,17 +14,14 @@ namespace Resgrid.Services
 		private readonly IPushLogsService _pushLogsService;
 		private readonly IUserProfileService _userProfileService;
 		private readonly INovuProvider _novuProvider;
-		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly IUnitsService _unitsService;
 
 		public PushService(IPushLogsService pushLogsService, IUserProfileService userProfileService,
-			INovuProvider novuProvider, IDepartmentSettingsService departmentSettingsService,
-			IUnitsService unitsService)
+			INovuProvider novuProvider, IUnitsService unitsService)
 		{
 			_pushLogsService = pushLogsService;
 			_userProfileService = userProfileService;
 			_novuProvider = novuProvider;
-			_departmentSettingsService = departmentSettingsService;
 			_unitsService = unitsService;
 		}
 
@@ -252,7 +249,7 @@ namespace Resgrid.Services
 
 			if (profile != null && profile.SendMessagePush)
 			{
-				string soundType = await GetSoundTypeAsync(message.DepartmentId, profile, PushSoundTypes.Message, PushSoundTypes.ModernMessage);
+				string soundType = SoundCode(PushSoundTypes.ModernMessage);
 
 				try
 				{
@@ -282,7 +279,7 @@ namespace Resgrid.Services
 			if (profile == null || !profile.SendNotificationPush)
 				return false;
 
-			string soundType = await GetSoundTypeAsync(message.DepartmentId, profile, PushSoundTypes.Notifiation, PushSoundTypes.ModernNotification);
+			string soundType = SoundCode(PushSoundTypes.ModernNotification);
 
 			// An event code supplied on the message wins, so a caller can round-trip its own
 			// identifier to the device (the communication test sends "CT:{responseToken}" and the
@@ -322,7 +319,7 @@ namespace Resgrid.Services
 
 			if (profile != null && profile.SendNotificationPush)
 			{
-				string soundType = await GetSoundTypeAsync(message.DepartmentId, profile, PushSoundTypes.Notifiation, PushSoundTypes.ModernNotification);
+				string soundType = SoundCode(PushSoundTypes.ModernNotification);
 
 				// As in PushNotification: a caller's event code (e.g. "C{callId}" so a tap opens the call) wins over
 				// the default "N{id}".
@@ -366,7 +363,7 @@ namespace Resgrid.Services
 				return false;
 			}
 
-			string soundType = await GetSoundTypeAsync(message.DepartmentId, profile, PushSoundTypes.Message, PushSoundTypes.ModernChat);
+			string soundType = SoundCode(PushSoundTypes.ModernChat);
 
 			if (string.IsNullOrWhiteSpace(message.DepartmentCode))
 				Framework.Logging.LogWarning($"PushChatMessage: department {message.DepartmentId} has no Code, Novu chat push skipped for {userId} ({eventCode}).");
@@ -400,7 +397,7 @@ namespace Resgrid.Services
 
 			try
 			{
-				await _novuProvider.SendUnitChatMessage(message.Title, message.SubTitle, unitId, message.DepartmentCode, eventCode, ((int)PushSoundTypes.ModernChat).ToString(), unreadCount);
+				await _novuProvider.SendUnitChatMessage(message.Title, message.SubTitle, unitId, message.DepartmentCode, eventCode, SoundCode(PushSoundTypes.ModernChat), unreadCount);
 			}
 			catch (Exception ex)
 			{
@@ -427,7 +424,7 @@ namespace Resgrid.Services
 				if (priority != null)
 					color = priority.Color;
 
-				string soundType = await GetCallSoundTypeAsync(call, priority, profile);
+				string soundType = GetCallSoundType(call, priority);
 
 				try
 				{
@@ -454,7 +451,7 @@ namespace Resgrid.Services
 			if (priority != null)
 				color = priority.Color;
 
-			string soundType = await GetCallSoundTypeAsync(call, priority);
+			string soundType = GetCallSoundType(call, priority);
 
 			try
 			{
@@ -476,7 +473,7 @@ namespace Resgrid.Services
 			if (Config.SystemBehaviorConfig.DoNotBroadcast && !Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(message.DepartmentId.GetValueOrDefault()))
 				return false;
 
-			string soundType = await GetSoundTypeAsync(message.DepartmentId, null, PushSoundTypes.Notifiation, PushSoundTypes.ModernNotification);
+			string soundType = SoundCode(PushSoundTypes.ModernNotification);
 			var eventCode = !string.IsNullOrWhiteSpace(message.Id) ? message.Id : string.Format("N{0}", message.MessageId);
 
 			try
@@ -490,66 +487,45 @@ namespace Resgrid.Services
 			}
 		}
 
-		private async Task<string> GetSoundTypeAsync(int? departmentId, UserProfile profile, PushSoundTypes legacyType, PushSoundTypes modernType)
+		// Modern application sounds are on for every department and user: the department "Enable Modern
+		// Notifications" setting and the per-user profile opt-in were retired once the store apps that
+		// ship the modern sound files were out, so no lookup decides between modern and legacy any more.
+		private static string SoundCode(PushSoundTypes soundType)
 		{
-			bool useModern = await GetModernApplicationSoundsEnabledAsync(departmentId, profile);
-
-			return ((int)(useModern ? modernType : legacyType)).ToString();
+			return ((int)soundType).ToString();
 		}
 
-		private async Task<string> GetCallSoundTypeAsync(StandardPushCall call, DepartmentCallPriority priority, UserProfile profile = null)
+		private static string GetCallSoundType(StandardPushCall call, DepartmentCallPriority priority)
 		{
-			// A push that names its own sound (a dispatch re-notification) keeps it, whatever the priority or sound settings.
+			// A push that names its own sound (a dispatch re-notification) keeps it, whatever the priority.
 			if (call.SoundType.HasValue)
-				return ((int)call.SoundType.Value).ToString();
+				return SoundCode(call.SoundType.Value);
 
-			bool useModern = await GetModernApplicationSoundsEnabledAsync(call.DepartmentId, profile);
-			return ConvertCallPriorityToSound((int)call.Priority, priority, useModern);
+			return ConvertCallPriorityToSound((int)call.Priority, priority);
 		}
 
-		private async Task<bool> GetModernApplicationSoundsEnabledAsync(int? departmentId, UserProfile profile)
-		{
-			bool departmentEnabled = false;
-
-			if (departmentId.HasValue)
-			{
-				try
-				{
-					departmentEnabled = await _departmentSettingsService.GetModernNotificationsEnabledAsync(departmentId.Value);
-				}
-				catch (Exception ex)
-				{
-					Framework.Logging.LogException(ex);
-				}
-			}
-
-			return ModernApplicationSoundSettings.IsEnabled(
-				departmentEnabled,
-				profile?.EnableModernApplicationSounds == true);
-		}
-
-		private string ConvertCallPriorityToSound(int priority, DepartmentCallPriority callPriority, bool useModern)
+		private static string ConvertCallPriorityToSound(int priority, DepartmentCallPriority callPriority)
 		{
 			if (priority > 3 && callPriority != null)
 			{
 				if (callPriority.Tone > 0)
 					return $"c{callPriority.Tone}";
 				else
-					return ((int)(useModern ? PushSoundTypes.ModernCallHigh : PushSoundTypes.CallHigh)).ToString();
+					return SoundCode(PushSoundTypes.ModernCallHigh);
 			}
 
 			switch (priority)
 			{
 				case (int)CallPriority.Low:
-					return ((int)(useModern ? PushSoundTypes.ModernCallLow : PushSoundTypes.CallLow)).ToString();
+					return SoundCode(PushSoundTypes.ModernCallLow);
 				case (int)CallPriority.Medium:
-					return ((int)(useModern ? PushSoundTypes.ModernCallMedium : PushSoundTypes.CallMedium)).ToString();
+					return SoundCode(PushSoundTypes.ModernCallMedium);
 				case (int)CallPriority.High:
-					return ((int)(useModern ? PushSoundTypes.ModernCallHigh : PushSoundTypes.CallHigh)).ToString();
+					return SoundCode(PushSoundTypes.ModernCallHigh);
 				case (int)CallPriority.Emergency:
-					return ((int)(useModern ? PushSoundTypes.ModernCallEmergency : PushSoundTypes.CallEmergency)).ToString();
+					return SoundCode(PushSoundTypes.ModernCallEmergency);
 				default:
-					return ((int)(useModern ? PushSoundTypes.ModernCallHigh : PushSoundTypes.CallHigh)).ToString();
+					return SoundCode(PushSoundTypes.ModernCallHigh);
 			}
 		}
 

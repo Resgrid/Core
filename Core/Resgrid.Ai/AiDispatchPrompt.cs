@@ -63,10 +63,12 @@ public static class AiDispatchPrompt
         });
         // The delimiters are neutralized inside the message so it cannot close its own block.
         var message = (context.Message ?? "").Replace(Open, "<<MESSAGE", StringComparison.Ordinal).Replace(Close, "MESSAGE>>", StringComparison.Ordinal);
+        // Intake calls (pending, from an SMS / chat / webhook / voice channel) say so; the dispatch email paths send exactly what they always did.
+        var source = string.IsNullOrWhiteSpace(context.Source) ? "" : "Message source (trusted): " + context.Source.Trim() + "\n";
         return new[]
         {
             new LlmMessage("system", System),
-            new LlmMessage("user", "Department lists (trusted): " + lists + "\n" + Open + "\n" + message + "\n" + Close)
+            new LlmMessage("user", source + "Department lists (trusted): " + lists + "\n" + Open + "\n" + message + "\n" + Close)
         };
     }
 

@@ -70,6 +70,11 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		public List<CallProtocolResultData> Protocols { get; set; }
 
 		/// <summary>
+		/// Runs of the call's route started by the units working it (M0322), newest first.
+		/// </summary>
+		public List<CallRouteInstanceResultData> RouteInstances { get; set; }
+
+		/// <summary>
 		/// Default constructor
 		/// </summary>
 		public CallExtraDataResultData()
@@ -79,7 +84,38 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 			ReleasedUnits = new List<DispatchedEventResultData>();
 			ReleasedPersonnel = new List<DispatchedEventResultData>();
 			Protocols = new List<CallProtocolResultData>();
+			RouteInstances = new List<CallRouteInstanceResultData>();
 		}
+	}
+
+	/// <summary>A run of the call's route by one unit (M0322).</summary>
+	public class CallRouteInstanceResultData
+	{
+		public string RouteInstanceId { get; set; }
+
+		public string RoutePlanId { get; set; }
+
+		public string RoutePlanName { get; set; }
+
+		public int UnitId { get; set; }
+
+		public string UnitName { get; set; }
+
+		/// <summary>RouteInstanceStatus: 0 Scheduled, 1 InProgress, 2 Completed, 3 Cancelled, 4 Abandoned, 5 Paused.</summary>
+		public int Status { get; set; }
+
+		public int StopsCompleted { get; set; }
+
+		public int StopsTotal { get; set; }
+
+		/// <summary>ISO 8601 UTC ("Z"); null when not started.</summary>
+		public string ActualStartOn { get; set; }
+
+		/// <summary>ISO 8601 UTC ("Z"); null while running.</summary>
+		public string ActualEndOn { get; set; }
+
+		/// <summary>When the unit reached the plan start, ISO 8601 UTC ("Z"); null until then.</summary>
+		public string StartReachedOn { get; set; }
 	}
 
 	public class DispatchedEventResultData

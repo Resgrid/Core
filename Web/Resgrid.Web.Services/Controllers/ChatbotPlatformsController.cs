@@ -9,11 +9,13 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Resgrid.Chatbot.Models;
 using Resgrid.Config;
+using Resgrid.Model;
 using Resgrid.Model.Queue;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Chatbot.Adapters;
 using Resgrid.Providers.Chatbot.Interfaces;
 using Resgrid.Providers.Chatbot.Services;
+using Resgrid.Web.Services.Intake;
 using Twilio.Security;
 
 namespace Resgrid.Web.Services.Controllers
@@ -28,8 +30,11 @@ namespace Resgrid.Web.Services.Controllers
 		private readonly IQueueService _queue;
 		private readonly IChatbotAdapterRegistry _registry;
 		private readonly ChatbotJwtValidator _jwt;
-		public ChatbotPlatformsController(IQueueService queue, IChatbotAdapterRegistry registry, ChatbotJwtValidator jwt)
-		{ _queue = queue; _registry = registry; _jwt = jwt; }
+		private readonly IIntakeChannelsService _intakeChannels;
+		private readonly IIntakeService _intake;
+		public ChatbotPlatformsController(IQueueService queue, IChatbotAdapterRegistry registry, ChatbotJwtValidator jwt,
+			IIntakeChannelsService intakeChannels, IIntakeService intake)
+		{ _queue = queue; _registry = registry; _jwt = jwt; _intakeChannels = intakeChannels; _intake = intake; }
 
 		[HttpPost("{platform}")]
 		public async Task<IActionResult> Receive(string platform)
@@ -61,6 +66,9 @@ namespace Resgrid.Web.Services.Controllers
 				switch (kind)
 				{
 					case ChatbotPlatform.Telegram:
+						// Group, supergroup and channel posts in a chat linked as an intake channel (ChatIntakeRouting); DMs below.
+						var telegramIntake = await IntakeAsync(kind, ChatIntakeRouting.Telegram(root));
+						if (telegramIntake != null) return telegramIntake;
 						var tm = root["message"];
 						if (S(tm, "chat.type") != "private" || S(tm, "from.is_bot") == "True"
 							|| S(tm, "chat.id") != S(tm, "from.id")) return Ok();
@@ -68,6 +76,10 @@ namespace Resgrid.Web.Services.Controllers
 						break;
 					case ChatbotPlatform.Slack:
 						if (S(root, "type") == "url_verification") return Ok(new { challenge = S(root, "challenge") });
+						// A linked intake channel may live in any workspace that installed the app (the signature proves the app);
+						// everything else keeps the single configured workspace.
+						var slackIntake = await IntakeAsync(kind, ChatIntakeRouting.Slack(root));
+						if (slackIntake != null) return slackIntake;
 						if (S(root, "team_id") != ChatbotConfig.SlackTeamId) return Unauthorized();
 						var se = root["event"];
 						if (S(se, "type") != "message" || S(se, "channel_type") != "im" || se?["subtype"] != null || se?["bot_id"] != null) return Ok();
@@ -76,6 +88,9 @@ namespace Resgrid.Web.Services.Controllers
 					case ChatbotPlatform.Discord:
 						if (S(root, "type") == "1") return Ok(new { type = 1 });
 						if (S(root, "application_id") != ChatbotConfig.DiscordClientId) return Unauthorized();
+						// /resgrid in a server channel linked as an intake channel; any other server use is refused below as before.
+						var discordIntake = await IntakeAsync(kind, ChatIntakeRouting.Discord(root));
+						if (discordIntake != null) return discordIntake;
 						// Keep commands and replies in private bot conversations. Group/server content is ignored.
 						if (S(root, "type") != "2" || root["guild_id"] != null || S(root, "channel.type") != "1"
 							|| S(root, "data.name") != "resgrid")
@@ -114,6 +129,12 @@ namespace Resgrid.Web.Services.Controllers
 						break;
 					case ChatbotPlatform.MicrosoftTeams:
 						if (!await _jwt.ValidateTeamsAsync(Header("Authorization"), S(root, "serviceUrl"))) return Unauthorized();
+						// Channel and group chat messages that mention the bot, in a conversation linked as an intake channel.
+						if (TeamsBotAdapter.IsServiceUrlAllowed(S(root, "serviceUrl")))
+						{
+							var teamsIntake = await IntakeAsync(kind, ChatIntakeRouting.Teams(root));
+							if (teamsIntake != null) return teamsIntake;
+						}
 						if (S(root, "channelId") != "msteams" || S(root, "type") != "message"
 							|| S(root, "conversation.conversationType") != "personal" || root.SelectToken("conversation.isGroup")?.Value<bool>() == true) return Ok();
 						if (!Guid.TryParse(S(root, "channelData.tenant.id"), out var tenantId)
@@ -126,6 +147,9 @@ namespace Resgrid.Web.Services.Controllers
 						break;
 					case ChatbotPlatform.GoogleChat:
 						if (!await _jwt.ValidateGoogleChatAsync(Header("Authorization"), ChatbotConfig.GoogleChatAudience)) return Unauthorized();
+						// Messages that mention the app in a space linked as an intake channel.
+						var googleIntake = await IntakeAsync(kind, ChatIntakeRouting.GoogleChat(root));
+						if (googleIntake != null) return googleIntake;
 						if (S(root, "type") != "MESSAGE" || S(root, "space.type") != "DM" || S(root, "user.type") != "HUMAN") return Ok();
 						await EnqueueAsync(kind, S(root, "message.name"), S(root, "user.name"), S(root, "message.text"), new() { ["space"] = S(root, "space.name") }, occurredAt: DateTimeOffset.Parse(S(root, "eventTime"), System.Globalization.CultureInfo.InvariantCulture).UtcDateTime);
 						break;
@@ -147,6 +171,23 @@ namespace Resgrid.Web.Services.Controllers
 			var fields = form.ToDictionary(x => x.Key, x => x.Value.ToString());
 			if (!new RequestValidator(NumberProviderConfig.TwilioAuthToken).Validate(ChatbotConfig.WhatsAppWebhookUrl, fields, Header("X-Twilio-Signature"))) return Unauthorized();
 			if (form["AccountSid"] != NumberProviderConfig.TwilioAccountSid || !form["From"].ToString().StartsWith("whatsapp:+", StringComparison.Ordinal)) return Unauthorized();
+			// A WhatsApp sender of the Twilio account that a department linked as an intake channel: the message is intake.
+			var whatsAppChannel = await _intakeChannels.ResolveChannelAsync(IntakeChannelTypes.WhatsApp, form["To"].ToString());
+			if (whatsAppChannel != null)
+			{
+				var result = await _intake.ReceiveAsync(new IntakeEnvelope
+				{
+					ChannelType = IntakeChannelTypes.WhatsApp, IntakeChannelId = whatsAppChannel.IntakeChannelId, ChannelAddress = form["To"].ToString(),
+					ProviderMessageId = form["MessageSid"].ToString(), Sender = IntakeChannelAddresses.PhoneNumber(form["From"].ToString()),
+					SenderName = form.TryGetValue("ProfileName", out var profileName) ? profileName.ToString() : null,
+					Body = form["Body"].ToString(), ReceivedOnUtc = DateTime.UtcNow
+				}, HttpContext?.RequestAborted ?? default);
+				if (result.State == IntakeMessageStates.Failed) return StatusCode(503);
+				// A WhatsApp reply inside the conversation window carries no A2P registration cost, so it goes from the linked sender.
+				var ack = result.State == IntakeMessageStates.CallCreated ? result.Acknowledgement : null;
+				return Content(string.IsNullOrWhiteSpace(ack) ? "<Response></Response>"
+					: "<Response><Message>" + System.Security.SecurityElement.Escape(ack) + "</Message></Response>", "application/xml");
+			}
 			var target = "whatsapp:+" + ChatbotConfig.WhatsAppFromNumber.Replace("whatsapp:", "").TrimStart('+');
 			if (form["To"] != target) return Unauthorized();
 			if (_registry.GetAdapter(ChatbotPlatform.WhatsApp) is not WhatsAppAdapter transport) return StatusCode(503);
@@ -154,6 +195,74 @@ namespace Resgrid.Web.Services.Controllers
 			await EnqueueAsync(ChatbotPlatform.WhatsApp, form["MessageSid"], form["From"].ToString().Substring(10), form["Body"], occurredAt: created);
 			return Content("<Response></Response>", "application/xml");
 		}
+		/// <summary>
+		/// Hands a channel / group message from a chat linked as an intake channel to intake (call-intake plan D3; rules on
+		/// ChatIntakeRouting). Null when the message is not intake (no message, or the chat is not linked), so the caller keeps its
+		/// existing handling. The acknowledgement, when the channel asks for one, answers in the same chat: inline where the platform
+		/// takes a reply in the webhook response (Discord, Google Chat, Telegram), through the adapter otherwise (Slack, Teams).
+		/// A failed intake answers 503 so the platform redelivers; intake takes the failed claim over.
+		/// </summary>
+		private async Task<IActionResult> IntakeAsync(ChatbotPlatform platform, ChatIntakeMessage chat)
+		{
+			if (chat == null)
+				return null;
+
+			var channel = await _intakeChannels.ResolveChannelAsync(chat.ChannelType, chat.Address);
+			if (channel == null)
+				return null;
+
+			var result = await _intake.ReceiveAsync(new IntakeEnvelope
+			{
+				ChannelType = chat.ChannelType,
+				IntakeChannelId = channel.IntakeChannelId,
+				ChannelAddress = chat.Address,
+				ProviderMessageId = chat.ProviderMessageId,
+				Sender = chat.Sender,
+				SenderName = chat.SenderName,
+				Body = chat.Text,
+				ReceivedOnUtc = DateTime.UtcNow
+			}, HttpContext?.RequestAborted ?? default);
+
+			if (result.State == IntakeMessageStates.Failed)
+				return StatusCode(503);
+
+			var ack = result.State == IntakeMessageStates.CallCreated ? result.Acknowledgement : null;
+			switch (platform)
+			{
+				case ChatbotPlatform.Discord:
+					// An interaction always needs an answer; it is shown only to the person who used the command.
+					var text = ack ?? (result.State == IntakeMessageStates.Duplicate || result.State == IntakeMessageStates.CallCreated
+						? "Your request was received." : "This channel is not accepting requests right now.");
+					return Ok(new { type = 4, data = new { content = text, flags = 64 } });
+				case ChatbotPlatform.GoogleChat:
+					return ack == null ? Ok(new { }) : Ok(new { text = ack });
+				case ChatbotPlatform.Telegram:
+					if (ack == null || !long.TryParse(chat.Reply.GetValueOrDefault("chat_id"), out var chatId) || !long.TryParse(chat.Reply.GetValueOrDefault("message_id"), out var messageId))
+						return Ok();
+					return Ok(new { method = "sendMessage", chat_id = chatId, text = ack, reply_parameters = new { message_id = messageId } });
+				case ChatbotPlatform.Slack:
+				case ChatbotPlatform.MicrosoftTeams:
+					if (ack != null)
+					{
+						try
+						{
+							if (_registry.GetAdapter(platform) is SlackBotAdapter slack)
+								await slack.PostToConversationAsync(chat.Reply, ack);
+							else if (_registry.GetAdapter(platform) is TeamsBotAdapter teams)
+								await teams.PostToConversationAsync(chat.Reply, ack);
+						}
+						catch (Exception ex)
+						{
+							// The pending call exists; a reply that cannot be posted (another Slack workspace, an unknown Teams tenant) is not retried.
+							Framework.Logging.LogException(ex, $"Intake acknowledgement could not be posted on {platform}.");
+						}
+					}
+					return Ok();
+				default:
+					return Ok();
+			}
+		}
+
 		private async Task EnqueueAsync(ChatbotPlatform platform, string id, string from, string text, Dictionary<string, string> metadata = null, DateTime? occurredAt = null)
 		{
 			if (string.IsNullOrWhiteSpace(text)) return;

@@ -56,6 +56,19 @@ namespace Resgrid.Web.Services.Twilio
 			}
 		}
 
+		public async System.Threading.Tasks.Task AppendDispatchPromptAsync(VoiceResponse response, string dispatchText, CancellationToken cancellationToken, string voice)
+		{
+			foreach (var verb in await CreatePlayVerbsAsync(dispatchText, voice, cancellationToken, global::Resgrid.Services.DispatchVoicePromptBuilder.DispatchSpeed))
+			{
+				response.Append(verb);
+			}
+		}
+
+		public System.Threading.Tasks.Task PreWarmDispatchPromptAsync(string dispatchText, string voice)
+		{
+			return PreWarmAsync(dispatchText, voice, global::Resgrid.Services.DispatchVoicePromptBuilder.DispatchSpeed);
+		}
+
 		public void AppendSayFallback(TwiML parent, string text)
 		{
 			if (!TtsConfig.TwilioSayFallbackEnabled)
@@ -78,7 +91,7 @@ namespace Resgrid.Web.Services.Twilio
 			Logging.LogInfo($"[Twilio Voice] TTS unavailable and Say fallback is disabled; skipping prompt ({text?.Length ?? 0} chars).");
 		}
 
-		private async Task<IReadOnlyCollection<TwiML>> CreatePlayVerbsAsync(string text, string voice, CancellationToken cancellationToken)
+		private async Task<IReadOnlyCollection<TwiML>> CreatePlayVerbsAsync(string text, string voice, CancellationToken cancellationToken, int? speed = null)
 		{
 			var chunks = ChunkText(text).ToList();
 
@@ -89,7 +102,7 @@ namespace Resgrid.Web.Services.Twilio
 
 			try
 			{
-				var urls = await System.Threading.Tasks.Task.WhenAll(chunks.Select(chunk => GetOrCreatePromptUrlAsync(chunk, voice, cancellationToken)));
+				var urls = await System.Threading.Tasks.Task.WhenAll(chunks.Select(chunk => GetOrCreatePromptUrlAsync(chunk, voice, cancellationToken, speed)));
 				return urls.Select(CreatePlay).Cast<TwiML>().ToList();
 			}
 			catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -134,6 +147,11 @@ namespace Resgrid.Web.Services.Twilio
 
 		public System.Threading.Tasks.Task PreWarmPromptAsync(string text, string voice = null)
 		{
+			return PreWarmAsync(text, voice, speed: null);
+		}
+
+		private System.Threading.Tasks.Task PreWarmAsync(string text, string voice, int? speed)
+		{
 			ArgumentException.ThrowIfNullOrWhiteSpace(text);
 
 			// Start generation for each chunk (or return the existing task) without
@@ -142,7 +160,7 @@ namespace Resgrid.Web.Services.Twilio
 			// will find the URLs. Long dispatch text spans multiple chunks, so warm them all.
 			foreach (var chunk in ChunkText(text))
 			{
-				GetOrCreatePromptUrlAsync(chunk, voice, CancellationToken.None)
+				GetOrCreatePromptUrlAsync(chunk, voice, CancellationToken.None, speed)
 					.ContinueWith(t =>
 					{
 						if (t.IsFaulted && t.Exception != null)
@@ -163,15 +181,19 @@ namespace Resgrid.Web.Services.Twilio
 			return await GetOrCreatePromptUrlAsync(chunks[0], voice, cancellationToken);
 		}
 
-		private async Task<Uri> GetOrCreatePromptUrlAsync(string chunk, string voice, CancellationToken cancellationToken)
+		private async Task<Uri> GetOrCreatePromptUrlAsync(string chunk, string voice, CancellationToken cancellationToken, int? speed = null)
 		{
+			// Speed is part of the key: the same text at the dispatch rate and the default
+			// rate is two different audio files.
 			var cacheKey = string.IsNullOrWhiteSpace(voice)
 				? chunk
 				: $"{voice.Trim()}\u001F{chunk}";
+			if (speed.HasValue)
+				cacheKey = $"{speed.Value}\u001F{cacheKey}";
 			var lazyUrl = _promptUrlCache.GetOrAdd(
 				cacheKey,
 				_ => new Lazy<Task<Uri>>(
-					() => _ttsAudioService.GenerateSpeechUrlAsync(chunk, voice, cancellationToken: CancellationToken.None),
+					() => _ttsAudioService.GenerateSpeechUrlAsync(chunk, voice, speed, CancellationToken.None),
 					LazyThreadSafetyMode.ExecutionAndPublication));
 			var generationTask = lazyUrl.Value;
 

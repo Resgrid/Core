@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Private Inbound Dispatch Number</value>
+  </data>
+  <data name="Intro" xml:space="preserve">
+    <value>Власний номер телефону вашого підрозділу. SMS на цей номер стають викликами в очікуванні, які переглядають диспетчери, а члени можуть телефонувати на нього, щоб потрапити в голосове меню.</value>
+  </data>
+  <data name="AddonTitle" xml:space="preserve">
+    <value>Доповнення</value>
+  </data>
+  <data name="AddonActive" xml:space="preserve">
+    <value>Ваш підрозділ має доповнення «Private Inbound Dispatch Number».</value>
+  </data>
+  <data name="ManageBilling" xml:space="preserve">
+    <value>Керувати доповненням</value>
+  </data>
+  <data name="RequiresEntityPlan" xml:space="preserve">
+    <value>Доповнення «Private Inbound Dispatch Number» доступне з активним тарифом за сутностями. Змініть тариф на сторінці підписки, щоб додати його.</value>
+  </data>
+  <data name="ViewPlans" xml:space="preserve">
+    <value>Переглянути тарифи</value>
+  </data>
+  <data name="NotOffered" xml:space="preserve">
+    <value>Доповнення «Private Inbound Dispatch Number» поки що недоступне для вашого підрозділу.</value>
+  </data>
+  <data name="BuyPrompt" xml:space="preserve">
+    <value>Придбайте доповнення «Private Inbound Dispatch Number», щоб вибрати й підключити номер.</value>
+  </data>
+  <data name="BuyAddon" xml:space="preserve">
+    <value>Придбати доповнення</value>
+  </data>
+  <data name="ActiveTitle" xml:space="preserve">
+    <value>Ваш номер</value>
+  </data>
+  <data name="ProvisionedOn" xml:space="preserve">
+    <value>Підключено {0}</value>
+  </data>
+  <data name="AddonEnding" xml:space="preserve">
+    <value>Доповнення більше не активне. Номер працюватиме ще недовго, а потім перестане приймати SMS і дзвінки, доки доповнення не буде поновлено.</value>
+  </data>
+  <data name="SmsIntake" xml:space="preserve">
+    <value>Створювати виклики в очікуванні з SMS</value>
+  </data>
+  <data name="SmsIntakeHelp" xml:space="preserve">
+    <value>SMS на цей номер стають викликами в очікуванні. Номер лише приймає повідомлення; відповіді надходять з основного номера Resgrid.</value>
+  </data>
+  <data name="VoiceIntake" xml:space="preserve">
+    <value>Приймати повідомлення голосом</value>
+  </data>
+  <data name="VoiceIntakeHelp" xml:space="preserve">
+    <value>Абоненти, які не є членами, відповідають на кероване опитування, і створюється виклик в очікуванні. Потрібне доповнення Enhanced AI з голосовим прийомом ШІ.</value>
+  </data>
+  <data name="VoiceIntakeUnavailable" xml:space="preserve">
+    <value>Голосовий прийом ШІ поки що недоступний для вашого підрозділу. Це налаштування почне діяти, щойно він стане доступним.</value>
+  </data>
+  <data name="SaveIntake" xml:space="preserve">
+    <value>Зберегти</value>
+  </data>
+  <data name="ReleaseTitle" xml:space="preserve">
+    <value>Звільнити номер</value>
+  </data>
+  <data name="ReleaseHelp" xml:space="preserve">
+    <value>Негайно повертає номер оператору зв'язку. SMS і дзвінки на нього припиняються, і номер не можна відновити.</value>
+  </data>
+  <data name="ReleaseConfirm" xml:space="preserve">
+    <value>Я розумію, що номер не можна відновити</value>
+  </data>
+  <data name="Release" xml:space="preserve">
+    <value>Звільнити номер</value>
+  </data>
+  <data name="LapsedTitle" xml:space="preserve">
+    <value>Номер призупинено</value>
+  </data>
+  <data name="LapsedText" xml:space="preserve">
+    <value>{0} перестав приймати SMS і дзвінки після завершення доповнення. Його буде звільнено {1}, якщо доповнення не поновлять.</value>
+  </data>
+  <data name="Reactivate" xml:space="preserve">
+    <value>Повернути номер до роботи</value>
+  </data>
+  <data name="ReleaseNow" xml:space="preserve">
+    <value>Звільнити зараз</value>
+  </data>
+  <data name="ProvisioningText" xml:space="preserve">
+    <value>Триває придбання номера {0}. Оновіть цю сторінку за хвилину.</value>
+  </data>
+  <data name="LastFailure" xml:space="preserve">
+    <value>Останнє придбання номера {0} не завершилося. Виберіть інший номер.</value>
+  </data>
+  <data name="SearchTitle" xml:space="preserve">
+    <value>Вибрати номер</value>
+  </data>
+  <data name="NoCountries" xml:space="preserve">
+    <value>У країні вашого підрозділу поки що немає доступних номерів. Зверніться до служби підтримки Resgrid.</value>
+  </data>
+  <data name="Country" xml:space="preserve">
+    <value>Країна</value>
+  </data>
+  <data name="AreaCode" xml:space="preserve">
+    <value>Код регіону</value>
+  </data>
+  <data name="Contains" xml:space="preserve">
+    <value>Містить</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Шукати</value>
+  </data>
+  <data name="SearchHelp" xml:space="preserve">
+    <value>Коди регіонів діють для США та Канади. У полі «Містить» вкажіть цифри, які має містити номер; * відповідає будь-якій цифрі.</value>
+  </data>
+  <data name="NoResults" xml:space="preserve">
+    <value>Немає відповідних номерів. Спробуйте інший код регіону або менше цифр.</value>
+  </data>
+  <data name="ResultsNumber" xml:space="preserve">
+    <value>Номер</value>
+  </data>
+  <data name="ResultsLocation" xml:space="preserve">
+    <value>Розташування</value>
+  </data>
+  <data name="ProvisionConfirm" xml:space="preserve">
+    <value>Підключити {0} як номер вашого підрозділу?</value>
+  </data>
+  <data name="Provision" xml:space="preserve">
+    <value>Підключити</value>
+  </data>
+  <data name="Provisioned" xml:space="preserve">
+    <value>{0} тепер номер вашого підрозділу.</value>
+  </data>
+  <data name="ProvisionFailed" xml:space="preserve">
+    <value>Оператор не зміг надати цей номер. Виберіть інший.</value>
+  </data>
+  <data name="IntakeSaved" xml:space="preserve">
+    <value>Налаштування прийому збережено.</value>
+  </data>
+  <data name="ReleaseConfirmRequired" xml:space="preserve">
+    <value>Підтвердьте, що хочете звільнити номер.</value>
+  </data>
+  <data name="Released" xml:space="preserve">
+    <value>Номер звільнено.</value>
+  </data>
+  <data name="ReleaseFailed" xml:space="preserve">
+    <value>Оператор не звільнив номер. Спробуйте пізніше.</value>
+  </data>
+  <data name="Reactivated" xml:space="preserve">
+    <value>Номер знову працює.</value>
+  </data>
+  <data name="Error.AddonRequired" xml:space="preserve">
+    <value>Вашому підрозділу спершу потрібне доповнення «Private Inbound Dispatch Number».</value>
+  </data>
+  <data name="Error.AlreadyHasNumber" xml:space="preserve">
+    <value>Ваш підрозділ уже має номер.</value>
+  </data>
+  <data name="Error.CountryNotAllowed" xml:space="preserve">
+    <value>Номери в цій країні недоступні для вашого підрозділу.</value>
+  </data>
+  <data name="Error.InvalidNumber" xml:space="preserve">
+    <value>Перевірте номер, код регіону й цифри та спробуйте ще раз.</value>
+  </data>
+  <data name="Error.NumberUnavailable" xml:space="preserve">
+    <value>Цей номер більше недоступний. Виберіть інший.</value>
+  </data>
+  <data name="Error.NoActiveNumber" xml:space="preserve">
+    <value>Ваш підрозділ не має номера, який можна змінити.</value>
+  </data>
+  <data name="Error.CarrierUnavailable" xml:space="preserve">
+    <value>Не вдалося зв'язатися з оператором. Спробуйте за кілька хвилин.</value>
+  </data>
+  <data name="BillingInboundOnlyNote" xml:space="preserve">
+    <value>Номер лише приймає SMS: вони стають викликами в очікуванні, а відповіді надходять з основного номера Resgrid.</value>
+  </data>
+  <data name="BillingLapseNote" xml:space="preserve">
+    <value>Якщо доповнення завершиться, номер перестане приймати SMS і дзвінки і буде звільнений через {0} днів, якщо ви не поновите його.</value>
+  </data>
+  <data name="BillingVoiceNote" xml:space="preserve">
+    <value>Голосовий прийом для абонентів, які не є членами, потребує доповнення Enhanced AI.</value>
+  </data>
+  <data name="ManageNumber" xml:space="preserve">
+    <value>Керувати номером</value>
+  </data>
+  <data name="TextSettingsTitle" xml:space="preserve">
+    <value>Приватний вхідний диспетчерський номер</value>
+  </data>
+  <data name="TextSettingsActive" xml:space="preserve">
+    <value>приймає вхідні SMS для вашого підрозділу.</value>
+  </data>
+  <data name="TextSettingsSmsOff" xml:space="preserve">
+    <value>— номер вашого підрозділу; SMS на нього не створюють викликів.</value>
+  </data>
+  <data name="TextSettingsLapsed" xml:space="preserve">
+    <value>Ваш приватний вхідний диспетчерський номер {0} призупинено до {1}.</value>
+  </data>
+  <data name="TextSettingsNone" xml:space="preserve">
+    <value>Ваш підрозділ не має власного номера. Отримайте його з доповненням «Private Inbound Dispatch Number».</value>
+  </data>
+  <data name="TextSettingsLink" xml:space="preserve">
+    <value>Керувати приватним вхідним диспетчерським номером</value>
+  </data>
+  <data name="TextSettingsInboundOnly" xml:space="preserve">
+    <value>Номери підрозділів лише приймають SMS; відповіді надходять з основного номера Resgrid.</value>
+  </data>
+  <data name="StopTitle" xml:space="preserve">
+    <value>Оплату за цей номер припинено</value>
+  </data>
+  <data name="StopAddon" xml:space="preserve">
+    <value>Оплата доповнення «Private Inbound Dispatch Number» припинилася {0} (скасовано або не сплачено).</value>
+  </data>
+  <data name="StopPlan" xml:space="preserve">
+    <value>З {0} тариф підрозділу більше не є активним платним тарифом, потрібним для доповнення «Private Inbound Dispatch Number».</value>
+  </data>
+  <data name="StopIntakeOn" xml:space="preserve">
+    <value>{0} перестане приймати SMS і дзвінки {1}.</value>
+  </data>
+  <data name="StopIntakeStoppedOn" xml:space="preserve">
+    <value>{0} перестав приймати SMS і дзвінки {1}.</value>
+  </data>
+  <data name="StopIntakeStopped" xml:space="preserve">
+    <value>{0} більше не приймає SMS і дзвінки.</value>
+  </data>
+  <data name="StopReleaseOn" xml:space="preserve">
+    <value>Номер буде повернуто операторові {0}. Поновіть доповнення (і свій тариф) до цього часу, щоб зберегти його.</value>
+  </data>
+  <data name="StopWarningsSent" xml:space="preserve">
+    <value>Попередження, надіслані адміністраторам підрозділу: {0}.</value>
+  </data>
+  <data name="StopWarningsNone" xml:space="preserve">
+    <value>Адміністраторам підрозділу ще не надіслано жодного попередження.</value>
+  </data>
+  <data name="StopLastWarning" xml:space="preserve">
+    <value>Останнє попередження: {0}.</value>
+  </data>
+  <data name="Warning.Stopped" xml:space="preserve">
+    <value>оплату припинено</value>
+  </data>
+  <data name="Warning.Days" xml:space="preserve">
+    <value>за {0} дн. до звільнення</value>
+  </data>
+  <data name="Warning.OneDay" xml:space="preserve">
+    <value>за 1 день до звільнення</value>
+  </data>
+  <data name="Region" xml:space="preserve">
+    <value>Штат / провінція</value>
+  </data>
+  <data name="RegionAny" xml:space="preserve">
+    <value>Будь-який</value>
+  </data>
+  <data name="City" xml:space="preserve">
+    <value>Місто</value>
+  </data>
+  <data name="PostalCode" xml:space="preserve">
+    <value>Поштовий індекс</value>
+  </data>
+  <data name="NearDepartment" xml:space="preserve">
+    <value>Поблизу адреси підрозділу</value>
+  </data>
+  <data name="NearDistance" xml:space="preserve">
+    <value>У радіусі</value>
+  </data>
+  <data name="DistanceMiles" xml:space="preserve">
+    <value>{0} миль ({1} км)</value>
+  </data>
+  <data name="SearchFiltersHelp" xml:space="preserve">
+    <value>Пошук за штатом / провінцією, поштовим індексом і поблизу підрозділу також діє лише для США та Канади. Кожен результат може приймати і SMS, і дзвінки.</value>
+  </data>
+  <data name="ResultsType" xml:space="preserve">
+    <value>Тип номера</value>
+  </data>
+  <data name="NumberType.Local" xml:space="preserve">
+    <value>Місцевий номер</value>
+  </data>
+  <data name="NumberType.Mobile" xml:space="preserve">
+    <value>Мобільний номер</value>
+  </data>
+  <data name="Error.DepartmentLocationUnknown" xml:space="preserve">
+    <value>Розташування підрозділу невідоме. Вкажіть адресу або центр карти підрозділу чи шукайте за штатом, містом або поштовим індексом.</value>
+  </data>
+  <data name="Error.PlanRequired" xml:space="preserve">
+    <value>Доповнення «Private Inbound Dispatch Number» потребує активного платного тарифу. Спершу поновіть тариф підрозділу.</value>
+  </data>
+</root>

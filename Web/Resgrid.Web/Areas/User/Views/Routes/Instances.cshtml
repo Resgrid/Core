@@ -29,6 +29,7 @@
                                 <th>@localizer["Started"]</th>
                                 <th>@localizer["Ended"]</th>
                                 <th>@localizer["Stops"]</th>
+                                <th>@localizer["LinkedCall"]</th>
                                 <th>@localizer["Actions"]</th>
                             </tr>
                             </thead>
@@ -37,10 +38,20 @@
                             {
                                 <tr>
                                     <td>@((Resgrid.Model.RouteInstanceStatus)instance.Status)</td>
-                                    <td>@instance.UnitId</td>
+                                    <td>@(Model.UnitNames.TryGetValue(instance.UnitId, out var unitName) ? unitName : instance.UnitId.ToString())</td>
                                     <td>@(instance.ActualStartOn?.ToString("yyyy-MM-dd HH:mm") ?? "-")</td>
                                     <td>@(instance.ActualEndOn?.ToString("yyyy-MM-dd HH:mm") ?? "-")</td>
                                     <td>@instance.StopsCompleted / @instance.StopsTotal</td>
+                                    <td>
+                                        @if (instance.CallId.HasValue && Model.LinkedCalls.TryGetValue(instance.CallId.Value, out var linkedCall))
+                                        {
+                                            <partial name="_RouteLinkedCall" model="linkedCall" />
+                                        }
+                                        else
+                                        {
+                                            <span>-</span>
+                                        }
+                                    </td>
                                     <td>
                                         <a class="btn btn-xs btn-primary" asp-controller="Routes" asp-action="InstanceDetail" asp-route-instanceId="@instance.RouteInstanceId" asp-route-area="User">
                                             <i class="fa fa-eye"></i> @localizer["Detail"]

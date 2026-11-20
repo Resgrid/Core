@@ -8,6 +8,27 @@ var resgrid;
         (function (waitingcalls) {
             var pendingTable = null;
             var panelMode = false;
+            // Intake calls (SMS, email, chat, webhook, voice) say which channel they came from: callId -> "via SMS: Hospital line".
+            var intakeSources = {};
+
+            function loadIntakeSources(rows) {
+                var ids = $.map(rows || [], function (row) {
+                    return row && row.CallId && !intakeSources.hasOwnProperty(row.CallId) ? row.CallId : null;
+                });
+                if (!ids.length) {
+                    return;
+                }
+
+                $.ajax({
+                    url: resgrid.absoluteBaseUrl + '/User/IntakeChannels/CallSources',
+                    type: 'GET',
+                    cache: false,
+                    data: { callIds: ids.slice(0, 200).join(',') }
+                }).done(function (sources) {
+                    $.each(ids, function (_, id) { intakeSources[id] = (sources && sources[id]) || ''; });
+                    if (pendingTable) { pendingTable.rows().invalidate('data').draw(false); }
+                });
+            }
 
             function getText(key, fallback) {
                 return (resgrid.dispatch && typeof resgrid.dispatch.getText === 'function')
@@ -87,6 +108,7 @@ var resgrid;
                             if (panelMode) {
                                 $('#pendingCallsPanel').toggle(rows && rows.length > 0);
                             }
+                            loadIntakeSources(rows);
                             return rows || [];
                         }
                     },
@@ -97,7 +119,14 @@ var resgrid;
                     language: { emptyTable: getText('noPendingCalls', 'No calls are waiting to be dispatched.') },
                     columns: [
                         { data: 'Number', title: getText('number', 'Number'), type: 'string', render: resgrid.callNumberCell },
-                        { data: 'Name', title: getText('name', 'Name'), render: function (data) { return escapeHtml(data); } },
+                        {
+                            data: 'Name', title: getText('name', 'Name'),
+                            render: function (data, type, row) {
+                                var source = intakeSources[row.CallId];
+                                if (type !== 'display' || !source) { return escapeHtml(data); }
+                                return escapeHtml(data) + '<div class="text-muted small intake-source">' + escapeHtml(source) + '</div>';
+                            }
+                        },
                         { data: 'Address', title: getText('address', 'Address'), render: function (data) { return escapeHtml(data); } },
                         {
                             data: 'LoggedOn', title: getText('received', 'Received'),

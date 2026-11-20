@@ -54,6 +54,7 @@
 		UnitCallDispatchStatusToSet = 50,
 		UnitCallReleaseStatusToSet = 51,
 		UnitCallStatusOverridesByUnitType = 52,
+		/// <summary>RETIRED: modern notification sounds are on for every department and user. Nothing reads or writes it; the value stays so existing rows remain identifiable.</summary>
 		EnableModernNotifications = 53,
 		ForceChatbotSecurityPin = 54,
 		HardwareTrackingStaleAfterSeconds = 55,

@@ -39,36 +39,7 @@ var resgrid;
                         $('#betaWarning').hide();
                 });
             });
-            $('#searchNumbers').click(function () {
-                if ($('#country').val()) {
-                    resgrid.showProgress($("#phoneNumberTableBody"), true);
-                    if ($('#country').val())
-                        $.ajax({
-                            url: resgrid.absoluteBaseUrl + '/User/Department/GetAvailableNumbers?country=' + $('#country').val() + "&areaCode=" + $('#areaCode').val(),
-                            contentType: 'application/json; charset=utf-8',
-                            type: 'GET'
-                        }).done(function (results) {
-                            $('#phoneNumberTableBody').empty();
-                            var tableHtml;
-                            $.each(results, function (index, value) {
-                                var tr = '<tr>';
-                                tr += '<td>' + value.msisdn + '</td>';
-                                // Provisioning is a POST with the antiforgery token, so each choice is a small form rather than a link.
-                                tr += '<td><form method="post" style="display:inline;" action="/User/Department/ProvisionNumber?msisdn=' + encodeURIComponent(value.msisdn) + '&country=' + encodeURIComponent($('#country').val()) + '&areaCode=' + encodeURIComponent($('#areaCode').val()) + '">' +
-                                    '<input type="hidden" name="__RequestVerificationToken" value="' + $('meta[name="request-verification-token"]').attr('content') + '" />' +
-                                    '<button type="submit" class="btn btn-xs btn-primary">Select This Number</button></form></td>';
-                                tr += '</tr>';
-                                tableHtml += tr;
-                            });
-                            resgrid.showProgress($("#personnelGrid"), false);
-                            $('#phoneNumberTableBody').html(tableHtml);
-                        });
-                }
-                else {
-                    resgrid.showProgress($("#personnelGrid"), false);
-                    $('#phoneNumberTableBody').empty();
-                }
-            });
+            // Numbers are searched for and bought on Department -> Dedicated Number (the Dedicated Number add-on).
             //$('#country').on('change', function () {
             //	if ($('#country').val()) {
             //		if ($('#country').val() === "AU") {

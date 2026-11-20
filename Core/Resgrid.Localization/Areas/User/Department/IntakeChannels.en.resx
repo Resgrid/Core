@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Intake Channels</value>
+  </data>
+  <data name="PageIntro" xml:space="preserve">
+    <value>Messages sent to an intake channel become pending calls. A dispatcher reviews each one and chooses who to send it to; intake never dispatches anyone by itself.</value>
+  </data>
+  <data name="FeatureOff" xml:space="preserve">
+    <value>Intake channels are not turned on for your department yet. You can set channels up now; they start creating calls once the feature is turned on.</value>
+  </data>
+  <data name="AddChannel" xml:space="preserve">
+    <value>Add Channel</value>
+  </data>
+  <data name="EditChannel" xml:space="preserve">
+    <value>Edit Channel</value>
+  </data>
+  <data name="NoChannels" xml:space="preserve">
+    <value>No intake channels have been set up yet.</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="NameHelp" xml:space="preserve">
+    <value>Shown on the pending calls this channel creates, for example "Hospital transfer line".</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Channel type</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="Mode" xml:space="preserve">
+    <value>Processing</value>
+  </data>
+  <data name="ModeTemplate" xml:space="preserve">
+    <value>Call template</value>
+  </data>
+  <data name="ModeEnhancedAi" xml:space="preserve">
+    <value>Enhanced AI</value>
+  </data>
+  <data name="ModeHelp" xml:space="preserve">
+    <value>Call template reads the message with one of your call email formats. Enhanced AI saves the message as a pending call, then fills in the call type, address, priority and a summary (needs the Enhanced AI add-on with AI intake).</value>
+  </data>
+  <data name="TemplateFormat" xml:space="preserve">
+    <value>Template</value>
+  </data>
+  <data name="AllowedSenders" xml:space="preserve">
+    <value>Allowed senders</value>
+  </data>
+  <data name="AllowedSendersHelp" xml:space="preserve">
+    <value>Comma-separated: phone numbers (with * wildcards), email addresses or @domains, or platform user IDs. Leave blank to accept anyone who can reach the address.</value>
+  </data>
+  <data name="DefaultPriority" xml:space="preserve">
+    <value>Default priority</value>
+  </data>
+  <data name="DefaultCallType" xml:space="preserve">
+    <value>Default call type</value>
+  </data>
+  <data name="UseDepartmentDefault" xml:space="preserve">
+    <value>Department default</value>
+  </data>
+  <data name="NoneOption" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="SendAcknowledgement" xml:space="preserve">
+    <value>Reply to the sender</value>
+  </data>
+  <data name="SendAcknowledgementHelp" xml:space="preserve">
+    <value>Sends a short receipt with the call number. Texts are answered from the main Resgrid number.</value>
+  </data>
+  <data name="Enabled" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
+  <data name="Disabled" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
+  <data name="Enable" xml:space="preserve">
+    <value>Enable</value>
+  </data>
+  <data name="Disable" xml:space="preserve">
+    <value>Disable</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="ThisMonth" xml:space="preserve">
+    <value>This month</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="DeleteConfirm" xml:space="preserve">
+    <value>Delete this intake channel? Messages sent to its address will no longer create calls.</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>The intake channel was saved.</value>
+  </data>
+  <data name="Deleted" xml:space="preserve">
+    <value>The intake channel was deleted.</value>
+  </data>
+  <data name="Error.InvalidAddress" xml:space="preserve">
+    <value>That address is not valid for this channel type.</value>
+  </data>
+  <data name="Error.AddressInUse" xml:space="preserve">
+    <value>That address is already used by another intake channel or by a department's dispatch email address.</value>
+  </data>
+  <data name="Error.NameRequired" xml:space="preserve">
+    <value>Enter a name for the channel.</value>
+  </data>
+  <data name="Error.Invalid" xml:space="preserve">
+    <value>The channel could not be saved. Check the values and try again.</value>
+  </data>
+  <data name="Type.Sms" xml:space="preserve">
+    <value>Text message (SMS)</value>
+  </data>
+  <data name="Type.Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="Type.WhatsApp" xml:space="preserve">
+    <value>WhatsApp</value>
+  </data>
+  <data name="Type.Slack" xml:space="preserve">
+    <value>Slack</value>
+  </data>
+  <data name="Type.Teams" xml:space="preserve">
+    <value>Microsoft Teams</value>
+  </data>
+  <data name="Type.Telegram" xml:space="preserve">
+    <value>Telegram</value>
+  </data>
+  <data name="Type.Discord" xml:space="preserve">
+    <value>Discord</value>
+  </data>
+  <data name="Type.GoogleChat" xml:space="preserve">
+    <value>Google Chat</value>
+  </data>
+  <data name="Type.Webhook" xml:space="preserve">
+    <value>Signed webhook</value>
+  </data>
+  <data name="Type.Voice" xml:space="preserve">
+    <value>Phone call (voice)</value>
+  </data>
+  <data name="Help.Sms" xml:space="preserve">
+    <value>The department's private inbound dispatch number in international format, for example +17755550100. That number creates its own channel when it is set up.</value>
+  </data>
+  <data name="Help.Voice" xml:space="preserve">
+    <value>The department's private inbound dispatch number in international format. Callers who are not members are taken through spoken questions by Enhanced AI voice intake.</value>
+  </data>
+  <data name="Help.Email" xml:space="preserve">
+    <value>The part before the @. Email sent to that name at {0} becomes a pending call. It must differ from your department's dispatch email address.</value>
+  </data>
+  <data name="Help.WhatsApp" xml:space="preserve">
+    <value>The WhatsApp sender number in international format. Resgrid support registers the sender on Resgrid's Twilio account.</value>
+  </data>
+  <data name="Help.Slack" xml:space="preserve">
+    <value>Workspace ID/channel ID, for example T012ABCDE/C034FGHIJ. Invite the Resgrid app to the channel with /invite @Resgrid, then copy the channel ID from the channel details and the workspace ID from About this workspace.</value>
+  </data>
+  <data name="Help.Teams" xml:space="preserve">
+    <value>Tenant ID/channel ID, for example 72f988bf-86f1-41af-91ab-2d7cd011db47/19:abc123@thread.tacv2. Add the Resgrid app to the team and use Get link to channel: the channel ID is the 19:…@thread.tacv2 part and the tenant ID is the tenantId value. Mention @Resgrid in the channel to send a request.</value>
+  </data>
+  <data name="Help.Telegram" xml:space="preserve">
+    <value>The chat ID; group IDs are negative, for example -1001234567890. Add the Resgrid bot to the group. With privacy mode on, start a request with /intake or mention the bot.</value>
+  </data>
+  <data name="Help.Discord" xml:space="preserve">
+    <value>The channel ID (turn on Developer Mode, right-click the channel, Copy Channel ID). Add the Resgrid app to the server and use /resgrid in the channel.</value>
+  </data>
+  <data name="Help.GoogleChat" xml:space="preserve">
+    <value>The space name from the space URL, for example spaces/AAAAbCdEfGh. Add the Resgrid app to the space and mention it to send a request.</value>
+  </data>
+  <data name="Help.Webhook" xml:space="preserve">
+    <value>Resgrid creates the webhook URL and signing secret when you save. Any system that can send a signed HTTPS request can create calls.</value>
+  </data>
+  <data name="ChatRules" xml:space="preserve">
+    <value>In a linked chat every new message is a request; replies in a thread count only when they mention Resgrid. Direct messages to the Resgrid bot work as before.</value>
+  </data>
+  <data name="WebhookUrl" xml:space="preserve">
+    <value>Webhook URL</value>
+  </data>
+  <data name="WebhookSecret" xml:space="preserve">
+    <value>Signing secret</value>
+  </data>
+  <data name="WebhookSecretOnce" xml:space="preserve">
+    <value>Copy the secret now. It is shown only this once; rotate it if it is lost.</value>
+  </data>
+  <data name="WebhookNoSecret" xml:space="preserve">
+    <value>No signing secret is set, so every request is refused. Rotate the secret to create one.</value>
+  </data>
+  <data name="RotateSecret" xml:space="preserve">
+    <value>Rotate Secret</value>
+  </data>
+  <data name="RotateConfirm" xml:space="preserve">
+    <value>Rotate the signing secret? The current secret stops working immediately.</value>
+  </data>
+  <data name="WebhookSigning" xml:space="preserve">
+    <value>Sign each request with the header X-Resgrid-Signature: t=&lt;unix seconds&gt;,v1=&lt;hex HMAC-SHA256 of "t.body" using the secret&gt;. Requests more than {0} seconds old are refused.</value>
+  </data>
+  <data name="WebhookSample" xml:space="preserve">
+    <value>Example request</value>
+  </data>
+  <data name="WebhookBody" xml:space="preserve">
+    <value>The body is JSON: message (required), subject, sender, externalId (a repeat with the same ID never creates a second call), address, latitude and longitude.</value>
+  </data>
+  <data name="Via" xml:space="preserve">
+    <value>via {0}: {1}</value>
+  </data>
+  <data name="ViaType" xml:space="preserve">
+    <value>via {0}</value>
+  </data>
+  <data name="TextSettingsIntro" xml:space="preserve">
+    <value>Intake channels turn texts, emails, chat messages and webhook requests into pending calls.</value>
+  </data>
+  <data name="ManageIntakeChannels" xml:space="preserve">
+    <value>Manage Intake Channels</value>
+  </data>
+</root>

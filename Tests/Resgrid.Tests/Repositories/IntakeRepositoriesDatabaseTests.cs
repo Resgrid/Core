@@ -1,0 +1,275 @@
+using System;
+using System.Collections.Concurrent;
+using System.Data.Common;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Dapper;
+using FluentAssertions;
+using FluentMigrator;
+using FluentMigrator.Runner;
+using FluentMigrator.Runner.Initialization;
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.DependencyInjection;
+using Moq;
+using Npgsql;
+using NUnit.Framework;
+using Resgrid.Config;
+using Resgrid.Model;
+using Resgrid.Model.Repositories.Connection;
+using Resgrid.Model.Repositories.Queries;
+using Resgrid.Model.Repositories.Queries.Contracts;
+using Resgrid.Providers.Migrations.Migrations;
+using Resgrid.Providers.MigrationsPg.Migrations;
+using Resgrid.Repositories.DataRepository;
+using Resgrid.Repositories.DataRepository.Configs;
+using Resgrid.Repositories.DataRepository.Queries;
+using Resgrid.Repositories.DataRepository.Queries.Common;
+using Resgrid.Repositories.DataRepository.Servers.SqlServer;
+
+namespace Resgrid.Tests.Repositories
+{
+	/// <summary>
+	/// Real-database proof for the M0323 intake tables on both engines: an intake message is claimed once per channel and provider
+	/// id (without the collision ever raising), a failed claim is taken over by one retry only, counts and call lookups read the
+	/// rows back, channel addresses match regardless of case and one live channel holds an address, voice sessions are unique per
+	/// CallSid, and purges remove only old rows. Set RESGRID_ADP_SQLSERVER_TEST_CONNECTION / RESGRID_ADP_POSTGRES_TEST_CONNECTION
+	/// (server-level connections) to run.
+	/// </summary>
+	[TestFixture(DatabaseTypes.SqlServer), TestFixture(DatabaseTypes.Postgres), NonParallelizable]
+	public class IntakeRepositoriesDatabaseTests(DatabaseTypes type)
+	{
+		private const string Prefix = "intake_repositories_";
+		private static readonly DateTime Base = new DateTime(2026, 11, 19, 12, 0, 0, DateTimeKind.Utc);
+
+		private DatabaseTypes _previous;
+		private bool _configured;
+		private string _master, _connection, _database;
+		private ServiceProvider _runner;
+
+		private bool IsPostgres => type == DatabaseTypes.Postgres;
+
+		private DbConnection Connect(string connection) => IsPostgres ? new NpgsqlConnection(connection) : new SqlConnection(connection);
+
+		private (IConnectionProvider, SqlConfiguration, IUnitOfWork, IQueryFactory) Parts()
+		{
+			var connections = new Mock<IConnectionProvider>();
+			connections.Setup(c => c.Create()).Returns(() => Connect(_connection));
+			SqlConfiguration configuration = IsPostgres ? new PostgreSqlConfiguration() : new SqlServerConfiguration();
+			var queries = new ConcurrentDictionary<Type, IQuery>();
+			queries[typeof(InsertQuery)] = new InsertQuery(configuration);
+			queries[typeof(UpdateQuery)] = new UpdateQuery(configuration);
+			queries[typeof(SelectByIdQuery)] = new SelectByIdQuery(configuration);
+			queries[typeof(SelectByDepartmentIdQuery)] = new SelectByDepartmentIdQuery(configuration);
+			var list = new Mock<IQueryList>();
+			list.Setup(l => l.RetrieveQueryList()).Returns(queries);
+			return (connections.Object, configuration, Mock.Of<IUnitOfWork>(), new QueryFactory(list.Object));
+		}
+
+		private IntakeMessagesRepository Messages() { var (c, s, u, q) = Parts(); return new IntakeMessagesRepository(c, s, u, q); }
+		private IntakeChannelsRepository Channels() { var (c, s, u, q) = Parts(); return new IntakeChannelsRepository(c, s, u, q); }
+		private VoiceIntakeSessionsRepository Sessions() { var (c, s, u, q) = Parts(); return new VoiceIntakeSessionsRepository(c, s, u, q); }
+
+		[OneTimeSetUp]
+		public async Task Create_isolated_database()
+		{
+			_master = Environment.GetEnvironmentVariable(IsPostgres ? "RESGRID_ADP_POSTGRES_TEST_CONNECTION" : "RESGRID_ADP_SQLSERVER_TEST_CONNECTION");
+			if (string.IsNullOrWhiteSpace(_master)) Assert.Ignore("Set a test connection to run real database checks.");
+
+			if (IsPostgres) AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
+			_previous = DataConfig.DatabaseType;
+			DataConfig.DatabaseType = type;
+			_configured = true;
+			var database = Prefix + Guid.NewGuid().ToString("N");
+			await using (var master = Connect(_master))
+				await master.ExecuteAsync("CREATE DATABASE " + database);
+			_database = database;
+			_connection = IsPostgres
+				? new NpgsqlConnectionStringBuilder(_master) { Database = _database }.ConnectionString
+				: new SqlConnectionStringBuilder(_master) { InitialCatalog = _database }.ConnectionString;
+
+			await using (var setup = Connect(_connection))
+			{
+				await setup.OpenAsync();
+				// M0323 seeds a PlanAddons row and feature flags; those tables belong to earlier migrations.
+				if (IsPostgres)
+				{
+					await setup.ExecuteAsync("CREATE EXTENSION IF NOT EXISTS citext;");
+					await ((NpgsqlConnection)setup).ReloadTypesAsync();
+					await setup.ExecuteAsync("CREATE TABLE planaddons (planaddonid varchar(36) PRIMARY KEY, addontype int NOT NULL, cost numeric NOT NULL, externalid citext, testexternalid citext);" +
+						"CREATE TABLE featureflags (featureflagid serial PRIMARY KEY, flagkey citext NOT NULL, name citext, description citext, category citext, isenabledglobally boolean NOT NULL);" +
+						"CREATE TABLE featureflagprerequisites (featureflagid int NOT NULL, requiredfeatureflagid int NOT NULL, requiredvalue citext);" +
+						"INSERT INTO featureflags (flagkey, name, isenabledglobally) VALUES ('Ai.Enhanced', 'Enhanced AI', false);");
+				}
+				else
+				{
+					await setup.ExecuteAsync("CREATE TABLE [PlanAddons] ([PlanAddonId] nvarchar(36) PRIMARY KEY, [AddonType] int NOT NULL, [Cost] decimal(18,2) NOT NULL, [ExternalId] nvarchar(200), [TestExternalId] nvarchar(200));" +
+						"CREATE TABLE [FeatureFlags] ([FeatureFlagId] int IDENTITY PRIMARY KEY, [FlagKey] nvarchar(200) NOT NULL, [Name] nvarchar(200), [Description] nvarchar(max), [Category] nvarchar(100), [IsEnabledGlobally] bit NOT NULL);" +
+						"CREATE TABLE [FeatureFlagPrerequisites] ([FeatureFlagId] int NOT NULL, [RequiredFeatureFlagId] int NOT NULL, [RequiredValue] nvarchar(200));" +
+						"INSERT INTO [FeatureFlags] ([FlagKey], [Name], [IsEnabledGlobally]) VALUES ('Ai.Enhanced', 'Enhanced AI', 0);");
+				}
+			}
+
+			var source = new Mock<IMigrationSource>();
+			source.Setup(s => s.GetMigrations()).Returns(IsPostgres
+				? new IMigration[] { new M0323_AddIntakeChannelsAndDedicatedNumbersPg() }
+				: new IMigration[] { new M0323_AddIntakeChannelsAndDedicatedNumbers() });
+			_runner = new ServiceCollection().AddFluentMigratorCore().ConfigureRunner(r =>
+			{
+				if (IsPostgres) r.AddPostgres(); else r.AddSqlServer();
+				r.WithGlobalConnectionString(_connection);
+			}).AddSingleton(source.Object).BuildServiceProvider();
+			_runner.GetRequiredService<IMigrationRunner>().MigrateUp();
+		}
+
+		[OneTimeTearDown]
+		public async Task Remove_only_this_fixture_database()
+		{
+			_runner?.Dispose();
+			if (_configured) DataConfig.DatabaseType = _previous;
+			if (_database == null) return;
+			if (!_database.StartsWith(Prefix, StringComparison.Ordinal) || !Guid.TryParseExact(_database.Substring(Prefix.Length), "N", out _))
+				throw new InvalidOperationException("Unexpected test database name.");
+			if (IsPostgres) NpgsqlConnection.ClearAllPools(); else SqlConnection.ClearAllPools();
+			await using var master = Connect(_master);
+			await master.ExecuteAsync(IsPostgres ? "DROP DATABASE " + _database + " WITH (FORCE)"
+				: "ALTER DATABASE " + _database + " SET SINGLE_USER WITH ROLLBACK IMMEDIATE; DROP DATABASE " + _database);
+		}
+
+		[SetUp]
+		public async Task Empty_the_tables()
+		{
+			await using var database = Connect(_connection);
+			foreach (var table in new[] { "IntakeMessages", "IntakeChannels", "VoiceIntakeSessions" })
+				await database.ExecuteAsync("DELETE FROM " + (IsPostgres ? table.ToLowerInvariant() : "[" + table + "]"));
+		}
+
+		private static IntakeMessage Message(string channelId, string providerId, DateTime receivedOn, int state = (int)IntakeMessageStates.Received, int? callId = null,
+			int channelType = (int)IntakeChannelTypes.Sms) => new IntakeMessage
+		{
+			IntakeMessageId = Guid.NewGuid().ToString("D"), DepartmentId = 55, IntakeChannelId = channelId, ChannelType = channelType, ProviderMessageId = providerId,
+			Sender = "+15305550199", State = state, CallId = callId, ReceivedOn = receivedOn
+		};
+
+		[Test]
+		public async Task a_provider_message_is_claimed_once_per_channel_even_concurrently()
+		{
+			var repository = Messages();
+
+			var claims = await Task.WhenAll(Enumerable.Range(0, 6).Select(_ => Messages().TryClaimAsync(Message("ch-1", "SM-1", Base))));
+
+			claims.Count(c => c).Should().Be(1);
+			(await repository.TryClaimAsync(Message("ch-2", "SM-1", Base))).Should().BeTrue("the same id on another channel is another message");
+			(await repository.GetByProviderMessageIdAsync("ch-1", "sm-1")).Should().NotBeNull("provider ids match regardless of case");
+		}
+
+		[Test]
+		public async Task rows_without_a_provider_id_always_insert()
+		{
+			var repository = Messages();
+
+			(await repository.TryClaimAsync(Message("ch-1", null, Base))).Should().BeTrue();
+			(await repository.TryClaimAsync(Message("ch-1", null, Base))).Should().BeTrue();
+		}
+
+		[Test]
+		public async Task a_failed_claim_is_taken_over_by_one_retry_and_completion_is_recorded()
+		{
+			var repository = Messages();
+			var message = Message("ch-1", "SM-2", Base, (int)IntakeMessageStates.Failed);
+			(await repository.TryClaimAsync(message)).Should().BeTrue();
+
+			var takers = await Task.WhenAll(Enumerable.Range(0, 4).Select(_ => Messages().TryReclaimAsync(message.IntakeMessageId, (int)IntakeMessageStates.Failed)));
+			takers.Count(t => t).Should().Be(1);
+
+			(await repository.CompleteAsync(message.IntakeMessageId, (int)IntakeMessageStates.CallCreated, 900, "ok", Base.AddSeconds(2))).Should().BeTrue();
+			var stored = await repository.GetByProviderMessageIdAsync("ch-1", "SM-2");
+			stored.State.Should().Be((int)IntakeMessageStates.CallCreated);
+			stored.CallId.Should().Be(900);
+			(await repository.TryReclaimAsync(message.IntakeMessageId, (int)IntakeMessageStates.CallCreated)).Should().BeFalse("a message with a call is never taken over");
+		}
+
+		[Test]
+		public async Task counts_and_call_lookups()
+		{
+			var repository = Messages();
+			await repository.TryClaimAsync(Message("ch-1", "a", Base, (int)IntakeMessageStates.CallCreated, 900));
+			await repository.TryClaimAsync(Message("ch-1", "b", Base.AddDays(1), (int)IntakeMessageStates.SenderNotAllowed));
+			await repository.TryClaimAsync(Message("ch-2", "c", Base, (int)IntakeMessageStates.CallCreated, 901, (int)IntakeChannelTypes.Email));
+			await repository.TryClaimAsync(Message("ch-1", "d", Base.AddMonths(-1), (int)IntakeMessageStates.CallCreated, 800));
+
+			var from = new DateTime(2026, 11, 1, 0, 0, 0, DateTimeKind.Utc);
+			var before = from.AddMonths(1);
+			(await repository.CountAsync(55, (int)IntakeChannelTypes.Sms, from, before, new[] { (int)IntakeMessageStates.Duplicate })).Should().Be(2);
+			(await repository.CountAsync(55, (int)IntakeChannelTypes.Sms, from, before, new[] { (int)IntakeMessageStates.SenderNotAllowed })).Should().Be(1);
+			(await repository.CountAsync(55, (int)IntakeChannelTypes.Sms, from, before, Array.Empty<int>())).Should().Be(2);
+			var byType = await repository.CountByTypeAsync(55, from, before, Array.Empty<int>());
+			byType[(int)IntakeChannelTypes.Sms].Should().Be(2);
+			byType[(int)IntakeChannelTypes.Email].Should().Be(1);
+			(await repository.CountByChannelAsync(55, from, before, Array.Empty<int>()))["ch-1"].Should().Be(2);
+
+			var calls = await repository.GetByCallIdsAsync(55, new[] { 900, 901, 902 });
+			calls.Select(c => c.CallId).Should().BeEquivalentTo(new int?[] { 900, 901 });
+			(await repository.GetByCallIdsAsync(99, new[] { 900 })).Should().BeEmpty();
+
+			(await repository.PurgeReceivedBeforeAsync(from)).Should().Be(1);
+		}
+
+		[Test]
+		public async Task one_live_channel_per_address_matched_regardless_of_case()
+		{
+			var repository = Channels();
+			var channel = new IntakeChannel
+			{
+				DepartmentId = 55, Name = "Intake", ChannelType = (int)IntakeChannelTypes.Email, Address = "hospital", ProcessingMode = 1, IsEnabled = true, CreatedOn = Base
+			};
+			await repository.SaveOrUpdateAsync(channel, CancellationToken.None);
+
+			(await repository.GetLiveByAddressAsync((int)IntakeChannelTypes.Email, "HOSPITAL"))?.IntakeChannelId.Should().Be(channel.IntakeChannelId);
+			(await repository.GetLiveByAddressAsync((int)IntakeChannelTypes.Slack, "hospital")).Should().BeNull();
+			(await repository.GetLiveForDepartmentAsync(55)).Should().ContainSingle();
+
+			Func<Task> twin = () => Channels().SaveOrUpdateAsync(new IntakeChannel
+			{
+				DepartmentId = 99, Name = "Twin", ChannelType = (int)IntakeChannelTypes.Email, Address = "hospital", ProcessingMode = 1, IsEnabled = true, CreatedOn = Base
+			}, CancellationToken.None);
+			await twin.Should().ThrowAsync<Exception>("UX_IntakeChannels_Address holds one live channel per address");
+
+			channel.IsDeleted = true;
+			await repository.SaveOrUpdateAsync(channel, CancellationToken.None);
+			(await repository.GetLiveByAddressAsync((int)IntakeChannelTypes.Email, "hospital")).Should().BeNull();
+			(await repository.GetLiveForDepartmentAsync(55)).Should().BeEmpty();
+		}
+
+		[Test]
+		public async Task voice_sessions_are_unique_per_call_sid_and_purged_by_age()
+		{
+			var repository = Sessions();
+			VoiceIntakeSession Session(string sid, DateTime started) => new VoiceIntakeSession
+			{
+				VoiceIntakeSessionId = Guid.NewGuid().ToString("D"), DepartmentId = 55, ProviderCallId = sid, FromNumber = "+15305550199", ToNumber = "+17755550100",
+				Step = (int)VoiceIntakeSteps.Nature, AnswersJson = "{}", StartedOn = started
+			};
+
+			var first = Session("CA1", Base);
+			(await repository.TryInsertAsync(first)).Should().BeTrue();
+			(await repository.TryInsertAsync(Session("CA1", Base))).Should().BeFalse();
+
+			first.Step = (int)VoiceIntakeSteps.Completed;
+			first.CallId = 900;
+			first.AnswersJson = null;
+			first.CompletedOn = Base.AddMinutes(2);
+			(await repository.UpdateProgressAsync(first)).Should().BeTrue();
+			var stored = await repository.GetByProviderCallIdAsync("ca1");
+			stored.Step.Should().Be((int)VoiceIntakeSteps.Completed);
+			stored.CallId.Should().Be(900);
+			stored.AnswersJson.Should().BeNull();
+
+			await repository.TryInsertAsync(Session("CA2", Base.AddDays(-3)));
+			(await repository.CountStartedAsync(55, Base.AddHours(-1), Base.AddHours(1))).Should().Be(1);
+			(await repository.PurgeStartedBeforeAsync(Base.AddDays(-2))).Should().Be(1);
+			(await repository.GetByProviderCallIdAsync("CA2")).Should().BeNull();
+		}
+	}
+}

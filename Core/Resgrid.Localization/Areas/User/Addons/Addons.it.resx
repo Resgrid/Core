@@ -79,6 +79,14 @@
   <data name="EnhancedAiFeature5" xml:space="preserve"><value>Solo modelli open-weight; i dati privati non vengono mai inviati a IA cloud</value></data>
   <data name="EnhancedAiFeature6" xml:space="preserve"><value>Oppure usa il tuo abbonamento a un fornitore di IA</value></data>
   <data name="EnhancedAiNote" xml:space="preserve"><value>Fatturato mensilmente per dipartimento. Include un budget IA mensile senza costi di eccedenza. Ogni dipartimento ha domande Admin Assist gratuite anche senza.</value></data>
+  <data name="DedicatedNumberTitle" xml:space="preserve"><value>Private Inbound Dispatch Number</value></data>
+  <data name="DedicatedNumberTagline" xml:space="preserve"><value>Il numero del tuo dipartimento per SMS e chiamate</value></data>
+  <data name="DedicatedNumberFeature1" xml:space="preserve"><value>Un numero locale per il tuo dipartimento, scelto da te</value></data>
+  <data name="DedicatedNumberFeature2" xml:space="preserve"><value>Gli SMS in arrivo diventano chiamate in attesa per la centrale</value></data>
+  <data name="DedicatedNumberFeature3" xml:space="preserve"><value>I membri chiamano lo stesso numero per accedere al menu vocale</value></data>
+  <data name="DedicatedNumberFeature4" xml:space="preserve"><value>La ricezione vocale con Enhanced AI trasforma le risposte in chiamate in attesa</value></data>
+  <data name="DedicatedNumberFeature5" xml:space="preserve"><value>Solo in entrata: le risposte arrivano dal numero principale di Resgrid</value></data>
+  <data name="DedicatedNumberNote" xml:space="preserve"><value>Fatturato mensilmente per dipartimento, anche con un piano annuale. Richiede un piano a entità attivo. Negli USA numeri di Stati Uniti e Canada; nell'UE un numero nel tuo paese, dove disponibile.</value></data>
   <data name="AdpTitle" xml:space="preserve"><value>Advanced Data Protection</value></data>
   <data name="AdpTagline" xml:space="preserve"><value>Crittografia e accesso rafforzato per i dati sensibili</value></data>
   <data name="AdpFeature1" xml:space="preserve"><value>Crittografia a livello di campo per dati sanitari e personali</value></data>

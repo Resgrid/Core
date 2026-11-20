@@ -18,10 +18,13 @@ namespace Resgrid.Web.Services.Controllers
         private readonly IQueueService _queue;
         private readonly IChatbotAdapterRegistry _registry;
         private readonly ChatbotJwtValidator _jwt;
-        public ChatbotTelegramController(IQueueService queue, IChatbotAdapterRegistry registry, ChatbotJwtValidator jwt)
-        { _queue = queue; _registry = registry; _jwt = jwt; }
+        private readonly IIntakeChannelsService _intakeChannels;
+        private readonly IIntakeService _intake;
+        public ChatbotTelegramController(IQueueService queue, IChatbotAdapterRegistry registry, ChatbotJwtValidator jwt,
+            IIntakeChannelsService intakeChannels, IIntakeService intake)
+        { _queue = queue; _registry = registry; _jwt = jwt; _intakeChannels = intakeChannels; _intake = intake; }
         [HttpPost("Webhook")]
-        public Task<IActionResult> Webhook() => new ChatbotPlatformsController(_queue, _registry, _jwt)
+        public Task<IActionResult> Webhook() => new ChatbotPlatformsController(_queue, _registry, _jwt, _intakeChannels, _intake)
         { ControllerContext = ControllerContext }.Receive("Telegram");
     }
 }

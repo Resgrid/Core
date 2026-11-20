@@ -13,5 +13,8 @@ namespace Resgrid.Model.Repositories
 
 		/// <summary>The department's in-progress and paused instances, without route geometry or notes (summary read).</summary>
 		Task<IEnumerable<RouteInstance>> GetActiveInstancesByDepartmentIdAsync(int departmentId);
+
+		/// <summary>Every run started for the call (M0322 <see cref="RouteInstance.CallId"/>), newest first.</summary>
+		Task<IEnumerable<RouteInstance>> GetInstancesByCallIdAsync(int departmentId, int callId);
 	}
 }

@@ -2286,4 +2286,10 @@
   <data name="DeleteRefusedPermanentContent" xml:space="preserve"><value>Ce rapport contient des entrées de victimes, de sauvetages ou d'expositions, conservées de façon permanente. Retirez-les du brouillon avant de le supprimer.</value></data>
   <data name="DeleteRefusedAmendmentOpen" xml:space="preserve"><value>Abandonnez la modification en cours avant de supprimer ce rapport.</value></data>
   <data name="IncludeClosedReports" xml:space="preserve"><value>Inclure les brouillons abandonnés et les rapports annulés</value></data>
+  <data name="ImportMapPois" xml:space="preserve">
+    <value>Importer des POI de carte</value>
+  </data>
+  <data name="ImportMapPoisHelp" xml:space="preserve">
+    <value>Importer un fichier KML, KMZ ou CSV comme points d'intérêt de carte (repères), distincts des fiches de poteaux d'incendie.</value>
+  </data>
 </root>

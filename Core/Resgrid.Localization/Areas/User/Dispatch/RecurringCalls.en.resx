@@ -701,4 +701,40 @@
   <data name="WeekThird" xml:space="preserve">
     <value>third</value>
   </data>
+  <data name="DestinationAddress" xml:space="preserve">
+    <value>Destination address</value>
+  </data>
+  <data name="DestinationAddressHelp" xml:space="preserve">
+    <value>When the destination is not a point of interest.</value>
+  </data>
+  <data name="DestinationCoordinates" xml:space="preserve">
+    <value>Destination coordinates</value>
+  </data>
+  <data name="DestinationCoordinatesHelp" xml:space="preserve">
+    <value>Latitude, longitude (optional).</value>
+  </data>
+  <data name="ErrorDestinationCoordinatesInvalid" xml:space="preserve">
+    <value>Enter the destination coordinates as latitude, longitude (for example 39.7392,-104.9903).</value>
+  </data>
+  <data name="RoutePlan" xml:space="preserve">
+    <value>Route</value>
+  </data>
+  <data name="NoRoutePlan" xml:space="preserve">
+    <value>No route</value>
+  </data>
+  <data name="RoutePlanHelp" xml:space="preserve">
+    <value>Every call it creates follows this route: a blank address starts at the route start and a blank destination ends at the route end.</value>
+  </data>
+  <data name="ErrorRoutePlanInvalid" xml:space="preserve">
+    <value>Choose an active route with a start and an end from the list.</value>
+  </data>
+  <data name="RoutePlanUnavailable" xml:space="preserve">
+    <value>{0} (no longer available)</value>
+  </data>
+  <data name="RoutePlanDeleted" xml:space="preserve">
+    <value>Deleted route</value>
+  </data>
+  <data name="FacilityPoiCallLocationHelp" xml:space="preserve">
+    <value>Every call it creates starts from this point of interest.</value>
+  </data>
 </root>

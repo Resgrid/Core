@@ -5,6 +5,12 @@
 		None		= 0,
 		Web			= 1,
 		Mobile	= 2,
-		System  = 3
+		System  = 3,
+
+		/// <summary>
+		/// A member of the public's text on an intake SMS conversation (plan §8 D15, M0325). Not System on purpose: the texter's new
+		/// information is a person's note, so it triggers the Enhanced AI destination review like any other person-written note.
+		/// </summary>
+		IntakeText = 4
 	}
 }

@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Title" xml:space="preserve">
+    <value>Συνομιλία SMS</value>
+  </data>
+  <data name="StateOpen" xml:space="preserve">
+    <value>Ανοιχτή</value>
+  </data>
+  <data name="StateClosed" xml:space="preserve">
+    <value>Ολοκληρώθηκε</value>
+  </data>
+  <data name="HandlerAssistant" xml:space="preserve">
+    <value>Ο βοηθός ΤΝ κάνει ερωτήσεις στον αποστολέα</value>
+  </data>
+  <data name="HandlerUnassisted" xml:space="preserve">
+    <value>Αναμονή για απάντηση από διεκπεραιωτή</value>
+  </data>
+  <data name="HandlerDispatcher" xml:space="preserve">
+    <value>Συνδεδεμένος με {0}</value>
+  </data>
+  <data name="HandlerDispatcherYou" xml:space="preserve">
+    <value>Είστε συνδεδεμένοι</value>
+  </data>
+  <data name="Texter" xml:space="preserve">
+    <value>Αποστολέας: {0}</value>
+  </data>
+  <data name="OptedOut" xml:space="preserve">
+    <value>Ο αποστολέας διέκοψε τα μηνύματα (STOP). Δεν μπορούν να σταλούν άλλα μηνύματα.</value>
+  </data>
+  <data name="ClosedReason" xml:space="preserve">
+    <value>Ολοκληρώθηκε: {0}</value>
+  </data>
+  <data name="AuthorCaller" xml:space="preserve">
+    <value>Καλών</value>
+  </data>
+  <data name="AuthorAssistant" xml:space="preserve">
+    <value>Βοηθός ΤΝ</value>
+  </data>
+  <data name="AuthorSystem" xml:space="preserve">
+    <value>Αυτόματο μήνυμα</value>
+  </data>
+  <data name="AuthorDispatcher" xml:space="preserve">
+    <value>Διεκπεραιωτής</value>
+  </data>
+  <data name="StatusQueued" xml:space="preserve">
+    <value>Αποστέλλεται</value>
+  </data>
+  <data name="StatusSent" xml:space="preserve">
+    <value>Στάλθηκε</value>
+  </data>
+  <data name="StatusFailed" xml:space="preserve">
+    <value>Δεν παραδόθηκε</value>
+  </data>
+  <data name="TextUnavailable" xml:space="preserve">
+    <value>(το κείμενο δεν είναι διαθέσιμο)</value>
+  </data>
+  <data name="NoMessages" xml:space="preserve">
+    <value>Δεν υπάρχουν ακόμη μηνύματα.</value>
+  </data>
+  <data name="Take" xml:space="preserve">
+    <value>Ανάληψη συνομιλίας</value>
+  </data>
+  <data name="TakeOverConfirm" xml:space="preserve">
+    <value>Άλλος διεκπεραιωτής είναι συνδεδεμένος σε αυτή τη συνομιλία. Να την αναλάβετε;</value>
+  </data>
+  <data name="Release" xml:space="preserve">
+    <value>Αποδέσμευση</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Τερματισμός</value>
+  </data>
+  <data name="CloseConfirm" xml:space="preserve">
+    <value>Τερματισμός αυτής της συνομιλίας SMS; Η κλήση παραμένει ανοιχτή.</value>
+  </data>
+  <data name="NotifyTexter" xml:space="preserve">
+    <value>Ενημέρωση αποστολέα</value>
+  </data>
+  <data name="Send" xml:space="preserve">
+    <value>Αποστολή</value>
+  </data>
+  <data name="SendPlaceholder" xml:space="preserve">
+    <value>Γράψτε στον καλούντα…</value>
+  </data>
+  <data name="EnterToSend" xml:space="preserve">
+    <value>Το Enter στέλνει, το Shift+Enter προσθέτει γραμμή.</value>
+  </data>
+  <data name="FromResgridNumber" xml:space="preserve">
+    <value>Τα μηνύματα φτάνουν στον καλούντα από τον αριθμό του Resgrid, όχι από τον αριθμό της υπηρεσίας.</value>
+  </data>
+  <data name="Outcome.NotFound" xml:space="preserve">
+    <value>Η συνομιλία δεν βρέθηκε.</value>
+  </data>
+  <data name="Outcome.Closed" xml:space="preserve">
+    <value>Η συνομιλία έχει ολοκληρωθεί.</value>
+  </data>
+  <data name="Outcome.HeldByAnotherDispatcher" xml:space="preserve">
+    <value>Άλλος διεκπεραιωτής είναι συνδεδεμένος σε αυτή τη συνομιλία.</value>
+  </data>
+  <data name="Outcome.OptedOut" xml:space="preserve">
+    <value>Ο αποστολέας διέκοψε τα μηνύματα. Δεν μπορεί να σταλεί τίποτα.</value>
+  </data>
+  <data name="Outcome.SendFailed" xml:space="preserve">
+    <value>Το μήνυμα δεν ήταν δυνατό να παραδοθεί.</value>
+  </data>
+  <data name="Outcome.InvalidMessage" xml:space="preserve">
+    <value>Εισαγάγετε μήνυμα από 1 έως {0} χαρακτήρες.</value>
+  </data>
+  <data name="Failed" xml:space="preserve">
+    <value>Το αίτημα απέτυχε. Δοκιμάστε ξανά.</value>
+  </data>
+  <data name="CloseReason.OptedOut" xml:space="preserve">
+    <value>Ο αποστολέας διέκοψε τα μηνύματα</value>
+  </data>
+  <data name="CloseReason.Idle" xml:space="preserve">
+    <value>Καμία κίνηση για αρκετό χρόνο</value>
+  </data>
+  <data name="CloseReason.CallClosed" xml:space="preserve">
+    <value>Η κλήση έκλεισε</value>
+  </data>
+</root>

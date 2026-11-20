@@ -31,11 +31,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IMappingService _mappingService;
 		private readonly ICallsService _callsService;
 		private readonly IUnitsService _unitsService;
+		private readonly Resgrid.Model.Services.IAuthorizationService _authorizationService;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.DestinationRules> _localizer;
 
 		public DestinationRulesController(IDestinationRulesService destinationRulesService, INearestDestinationService nearestDestinationService,
 			IDepartmentSettingsService departmentSettingsService, IMappingService mappingService, ICallsService callsService, IUnitsService unitsService,
-			IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.DestinationRules> localizer)
+			Resgrid.Model.Services.IAuthorizationService authorizationService, IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.DestinationRules> localizer)
 		{
 			_destinationRulesService = destinationRulesService;
 			_nearestDestinationService = nearestDestinationService;
@@ -43,6 +44,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_mappingService = mappingService;
 			_callsService = callsService;
 			_unitsService = unitsService;
+			_authorizationService = authorizationService;
 			_localizer = localizer;
 		}
 
@@ -215,27 +217,58 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		/// <summary>
-		/// The New Call / Update Call destination suggestions: the department's setting, what the rules require for the call type
-		/// and priority, and the best destinations from the incident location with drive time and distance. Off answers at once.
+		/// The call form destination suggestions (New Call, Update Call, Add Archived Call, the recurring call form): the department's
+		/// setting, what the rules require for the call type and priority (and the travelling unit's type), and the best destinations
+		/// from the incident location with drive time and distance. Off answers at once.
 		/// </summary>
+		/// <param name="latitude">The incident location.</param>
+		/// <param name="longitude">The incident location.</param>
+		/// <param name="priority">The call priority (the call's Priority value); omit to take the call's (with callId).</param>
+		/// <param name="type">The call type name; omit (with no callTypeId) to take the call's (with callId).</param>
+		/// <param name="callTypeId">The call type id, when the page knows it; matched before the name.</param>
+		/// <param name="unitId">The travelling unit: its type's rules, travel mode and vehicle limits apply. A unit of another
+		/// department, deleted, or hidden from the member by Security &gt; View Units is ignored.</param>
+		/// <param name="callId">The call the destination is for: supplies its type and priority when not given, only when the member can view it.</param>
+		/// <param name="cancellationToken">Request cancellation.</param>
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Call_View)]
-		public async Task<IActionResult> Suggest(double? latitude, double? longitude, int? priority, string type, CancellationToken cancellationToken)
+		public async Task<IActionResult> Suggest(double? latitude, double? longitude, int? priority, string type, int? callTypeId = null, int? unitId = null,
+			int? callId = null, CancellationToken cancellationToken = default)
 		{
 			// A missing coordinate would otherwise bind as 0 (a real place); an explicit 0 is still accepted.
 			if (!latitude.HasValue || !longitude.HasValue || double.IsNaN(latitude.Value) || double.IsNaN(longitude.Value) ||
 			    Math.Abs(latitude.Value) > 90 || Math.Abs(longitude.Value) > 180)
 				return Json(new { success = false });
 
-			var suggestions = await _nearestDestinationService.SuggestDestinationsAsync(new DestinationSuggestionRequest
+			var request = new DestinationSuggestionRequest
 			{
 				DepartmentId = DepartmentId,
 				Latitude = latitude.Value,
 				Longitude = longitude.Value,
+				CallTypeId = callTypeId is > 0 ? callTypeId : null,
 				CallType = type,
 				CallPriority = priority,
+				UnitId = await VisibleUnitIdAsync(unitId),
 				MaxResults = 5
-			}, cancellationToken);
+			};
+
+			var typeGiven = request.CallTypeId.HasValue || !string.IsNullOrWhiteSpace(type);
+			if (callId is > 0 && (!typeGiven || !priority.HasValue))
+			{
+				var call = await _callsService.GetCallByIdAsync(callId.Value);
+				if (call != null && call.DepartmentId == DepartmentId && !call.IsDeleted && await _authorizationService.CanUserViewCallAsync(UserId, call.CallId))
+				{
+					if (!typeGiven)
+					{
+						request.CallTypeId = call.CallTypeId;
+						request.CallType = call.Type;
+					}
+
+					request.CallPriority ??= call.Priority;
+				}
+			}
+
+			var suggestions = await _nearestDestinationService.SuggestDestinationsAsync(request, cancellationToken);
 
 			if (suggestions.Mode == DestinationSuggestionModes.Off)
 				return Json(new { success = true, mode = 0 });
@@ -276,6 +309,24 @@ namespace Resgrid.Web.Areas.User.Controllers
 						.ToList()
 				}).ToList()
 			});
+		}
+
+		/// <summary>
+		/// The travelling unit for a suggestion, or null (plain driving, no unit-type rules) when it is not this department's, is
+		/// deleted, or Security &gt; View Units hides it from the member: a hidden unit's type and travel profile must not shape what
+		/// the member is shown (as the v4 GetSuggestedDestinations).
+		/// </summary>
+		private async Task<int?> VisibleUnitIdAsync(int? unitId)
+		{
+			if (!unitId.HasValue || unitId.Value <= 0)
+				return null;
+
+			var unit = await _unitsService.GetUnitByIdAsync(unitId.Value);
+			if (unit == null || unit.DepartmentId != DepartmentId || unit.IsDeleted ||
+			    !await _authorizationService.CanUserViewUnitViaMatrixAsync(unit.UnitId, UserId, DepartmentId))
+				return null;
+
+			return unit.UnitId;
 		}
 
 		private string ErrorText(DestinationRuleSaveErrors error)

@@ -288,3 +288,4 @@ opencode.json
 !/docs/admin-assist/
 .claude/settings.local.json
 *.stackdump
+/MEMORY.md

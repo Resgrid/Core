@@ -89,6 +89,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IIndoorMapService _indoorMapService;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> _departmentLocalizer;
 		private readonly IOutstandingRequirementsService _outstandingRequirementsService;
+		private readonly ICallRoutesService _callRoutesService;
+		private readonly IRouteService _routeService;
 
 		public DispatchController(IDepartmentsService departmentsService, IUsersService usersService, ICallsService callsService,
 			IDepartmentGroupsService departmentGroupsService, ICommunicationService communicationService, IQueueService queueService,
@@ -108,8 +110,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			IPendingCallsService pendingCallsService, ICallClosureService callClosureService, IIndoorMapService indoorMapService,
 			IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> departmentLocalizer,
 			IOutstandingRequirementsService outstandingRequirementsService, ICallResourceReleaseService callResourceReleaseService,
-			ICallBroadcastOutboxService callBroadcastOutboxService)
+			ICallBroadcastOutboxService callBroadcastOutboxService, ICallRoutesService callRoutesService, IRouteService routeService)
 		{
+			_callRoutesService = callRoutesService;
+			_routeService = routeService;
 			_callResourceReleaseService = callResourceReleaseService;
 			_callBroadcastOutboxService = callBroadcastOutboxService;
 			_outstandingRequirementsService = outstandingRequirementsService;
@@ -363,6 +367,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				MapPage = model.Call?.MapPage,
 				PrimaryContactId = model.PrimaryContact,
 				DestinationPoiId = model.Call?.DestinationPoiId,
+				// The destination field covers a free destination too (M0322): an address or a point satisfies it, as on v4.
+				DestinationAddress = model.ShowsDestination() ? model.Call?.DestinationAddress : null,
+				DestinationGeolocation = model.ShowsDestination() ? model.PostedDestinationPoint() : null,
+				DestinationW3W = model.ShowsDestination() ? model.Call?.DestinationW3W : null,
 				IndoorMapZoneId = collection?["IndoorMapZoneId"].FirstOrDefault(),
 				HasProtocols = selections.HasProtocols,
 				HasLinkedCall = selections.HasLinkedCall,
@@ -407,6 +415,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (model.Call?.DestinationPoiId.HasValue == true && model.Call.DestinationPoiId.Value > 0 && destinationPoi == null)
 				ModelState.AddModelError("Call.DestinationPoiId", _dispatchLocalizer["InvalidDestinationPoi"].Value);
 
+			// Location POI, route and free destination (M0322), refused as the v4 SaveCall refuses them.
+			var callLocations = await ReadPostedCallLocationsAsync(model, model.Call);
+
 			// The form posts the pin only as Latitude/Longitude. Call.GeoLocationData is model-bound, so drop anything
 			// posted into it (as with CallFormData below) rather than let an unchecked value satisfy the policy or be saved.
 			if (model.Call != null)
@@ -439,6 +450,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					model.Call.W3W = model.What3Word;
 
 				model.Call.DestinationPoiId = destinationPoi?.PoiId;
+				ApplyPostedCallLocations(model.Call, callLocations, destinationPoi);
 
 				if (model.Call.Type == _dispatchLocalizer["NoType"].Value)
 					model.Call.Type = null;
@@ -1221,6 +1233,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.Longitude = loc[1];
 			}
 
+			// The form posts What3Word back into the call, so it has to open with the call's own words: left blank, every edit
+			// with the field shown cleared them.
+			model.What3Word = model.Call.W3W;
+
+			// The free destination point (M0322) rides in its own invariant inputs, never in Call.DestinationGeoLocationData.
+			(model.DestinationLatitude, model.DestinationLongitude) = CallLocationsForm.SplitPoint(model.Call.DestinationGeoLocationData);
+
+			// What the location POI and route pickers open with, so the save can tell this editor's change from no change.
+			model.OriginalLocationPoiId = model.LocationPois?.FirstOrDefault(x => x.Selected)?.PoiId.ToString(CultureInfo.InvariantCulture);
+			model.OriginalRoutePlanId = model.RoutePlans?.FirstOrDefault(x => x.Selected)?.RoutePlanId;
+
 			return View(model);
 		}
 
@@ -1236,6 +1259,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Call.IndoorMapZoneId = collection["IndoorMapZoneId"].FirstOrDefault();
 			model.Call.IndoorMapFloorId = collection["IndoorMapFloorId"].FirstOrDefault();
 
+			// The form does not post the department. A re-rendered form (a validation error) needs the stored call's, or the panels
+			// keyed on it (the intake conversation, the destination advice) look in department 0 and vanish.
+			var storedCall = await _callsService.GetCallByIdAsync(model.Call.CallId);
+			if (storedCall != null)
+				model.Call.DepartmentId = storedCall.DepartmentId;
+
 			model = await FillUpdateCallView(model);
 
 			// Populate navigation properties (References, Contacts, etc.) so the view can
@@ -1247,15 +1276,39 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (model.Call?.DestinationPoiId.HasValue == true && model.Call.DestinationPoiId.Value > 0 && destinationPoi == null)
 				ModelState.AddModelError("Call.DestinationPoiId", _dispatchLocalizer["InvalidDestinationPoi"].Value);
 
+			// Location POI and free destination (M0322). The route is checked below, against the call's stored one.
+			var editLocations = await ReadPostedCallLocationsAsync(model, model.Call, checkRoute: false);
+
 			if (ModelState.IsValid)
 			{
-				var call = await _callsService.GetCallByIdAsync(model.Call.CallId);
+				var call = storedCall ?? await _callsService.GetCallByIdAsync(model.Call.CallId);
 				call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true, true, true);
 
 				// A field the department hides is not on the form, so the call keeps what it has for it rather than
 				// taking the blank the form posts.
 				var policy = model.FieldPolicy ?? new NewCallFieldPolicy();
 				bool Shows(string key) => policy.IsVisible(key);
+
+				// M0322 inputs the form rendered. The location POI sits with the address or the pin; the route select has no
+				// policy field and is on the form whenever there was a route to pick or the call had one (it then always
+				// posts, if only ""). Left off the form, the call keeps what it has. A picker posted with the value it opened with
+				// is no change either: the call keeps its stored value, whatever another editor set meanwhile or the picker could
+				// not show (CallLocationsEdit.IsChanged).
+				var editsDestination = Shows(NewCallFieldKeys.DestinationPoi);
+				var editsLocationPoi = (Shows(NewCallFieldKeys.Address) || Shows(NewCallFieldKeys.Geolocation)) &&
+									   CallLocationsEdit.IsChanged(collection, "Call.LocationPoiId", "OriginalLocationPoiId",
+										   call.LocationPoiId?.ToString(CultureInfo.InvariantCulture));
+				var postedRoutePlanId = String.IsNullOrWhiteSpace(model.Call.RoutePlanId) ? null : model.Call.RoutePlanId.Trim();
+				var routeChanged = CallLocationsEdit.IsChanged(collection, "Call.RoutePlanId", "OriginalRoutePlanId", call.RoutePlanId);
+
+				// Only a changed route is checked (as the v4 EditCall does): a stored route that can no longer be followed is
+				// kept by an edit that leaves it alone.
+				if (routeChanged && postedRoutePlanId != null)
+				{
+					editLocations.RoutePlan = await _callRoutesService.GetEligibleRoutePlanAsync(DepartmentId, postedRoutePlanId);
+					if (editLocations.RoutePlan == null)
+						ModelState.AddModelError("Call.RoutePlanId", _dispatchLocalizer["InvalidCallRoute"].Value);
+				}
 
 				var indoorMapZoneId = collection["IndoorMapZoneId"].FirstOrDefault();
 				var indoorMapFloorId = collection["IndoorMapFloorId"].FirstOrDefault();
@@ -1285,6 +1338,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 					IncidentId = Shows(NewCallFieldKeys.IncidentId) ? model.Call.IncidentNumber : call.IncidentNumber,
 					ReferenceId = Shows(NewCallFieldKeys.ReferenceId) ? model.Call.ReferenceNumber : call.ReferenceNumber,
 					DestinationPoiId = Shows(NewCallFieldKeys.DestinationPoi) ? destinationPoi?.PoiId : call.DestinationPoiId,
+					// The free destination counts toward the destination field (M0322); a POI destination clears it.
+					DestinationAddress = editsDestination
+						? (destinationPoi == null ? editLocations.DestinationAddress : null)
+						: (call.DestinationPoiId.HasValue ? null : call.DestinationAddress),
+					DestinationGeolocation = editsDestination
+						? (destinationPoi == null ? editLocations.DestinationPoint : null)
+						: (call.DestinationPoiId.HasValue ? null : call.DestinationGeoLocationData),
+					DestinationW3W = editsDestination
+						? (destinationPoi == null ? editLocations.DestinationW3W : null)
+						: (call.DestinationPoiId.HasValue ? null : call.DestinationW3W),
 					IndoorMapZoneId = Shows(NewCallFieldKeys.IndoorLocation) ? indoorMapZoneId : call.IndoorMapZoneId,
 					// Protocols are only ever added on this form, and a list or link left off the post keeps the call's own.
 					HasProtocols = selections.HasProtocols || (call.Protocols?.Any() ?? false),
@@ -1343,6 +1406,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (Shows(NewCallFieldKeys.DestinationPoi))
 					call.DestinationPoiId = destinationPoi?.PoiId;
+
+				// A hidden destination keeps the stored POI and free destination alike; a shown one takes the form's (a POI
+				// clears the free fields).
+				if (editsDestination)
+				{
+					call.DestinationAddress = destinationPoi == null ? editLocations.DestinationAddress : null;
+					call.DestinationGeoLocationData = destinationPoi == null ? editLocations.DestinationPoint : null;
+					call.DestinationW3W = destinationPoi == null ? editLocations.DestinationW3W : null;
+				}
+
+				if (editsLocationPoi)
+					call.LocationPoiId = editLocations.LocationPoi?.PoiId;
+
+				if (routeChanged)
+					call.RoutePlanId = editLocations.RoutePlan?.Plan?.RoutePlanId;
 
 				if (postedPin != null)
 					call.GeoLocationData = postedPin;
@@ -2058,6 +2136,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.DestinationName = destinationInfo.Name;
 			model.DestinationAddress = destinationInfo.Address;
 			model.DestinationTypeName = destinationInfo.TypeName;
+			model.Locations = await BuildCallLocationDetailsAsync(model.Call, model.Department, model.Units);
 
 			if (model.Stations == null)
 				model.Stations = new List<DepartmentGroup>();
@@ -2200,6 +2279,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (model.Call?.DestinationPoiId.HasValue == true && model.Call.DestinationPoiId.Value > 0 && destinationPoi == null)
 				ModelState.AddModelError("Call.DestinationPoiId", _dispatchLocalizer["InvalidDestinationPoi"].Value);
 
+			// Location POI, route (optional) and free destination (M0322), checked as on NewCall.
+			var callLocations = await ReadPostedCallLocationsAsync(model, model.Call);
+
 			// As on NewCall: the pin is posted only as Latitude/Longitude, so anything bound into GeoLocationData is dropped.
 			model.Call.GeoLocationData = null;
 
@@ -2225,6 +2307,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					model.Call.W3W = model.What3Word;
 
 				model.Call.DestinationPoiId = destinationPoi?.PoiId;
+				ApplyPostedCallLocations(model.Call, callLocations, destinationPoi);
 
 				if (model.Call.Type == _dispatchLocalizer["NoType"].Value)
 					model.Call.Type = null;
@@ -3107,6 +3190,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 			model.CheckInRecords = await _checkInTimerService.GetCheckInsForCallAsync(callId);
 			model.TimerConfigs = await _checkInTimerService.ResolveAllTimersForCallAsync(model.Call);
+			model.Locations = await BuildCallLocationDetailsAsync(model.Call, model.Department, model.Units);
 
 			return View(model);
 		}
@@ -3167,6 +3251,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.Contacts = await _contactsService.GetAllContactsForDepartmentAsync(DepartmentId);
 				model.CheckInRecords = await _checkInTimerService.GetCheckInsForCallAsync(call.CallId);
 				model.TimerConfigs = await _checkInTimerService.ResolveAllTimersForCallAsync(model.Call);
+				model.Locations = await BuildCallLocationDetailsAsync(model.Call, model.Department, model.Units);
 
 				return View(model);
 			}
@@ -3206,6 +3291,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.Contacts = await _contactsService.GetAllContactsForDepartmentAsync(DepartmentId);
 				model.CheckInRecords = await _checkInTimerService.GetCheckInsForCallAsync(call.CallId);
 				model.TimerConfigs = await _checkInTimerService.ResolveAllTimersForCallAsync(model.Call);
+				model.Locations = await BuildCallLocationDetailsAsync(model.Call, model.Department, model.Units);
 
 				if (!String.IsNullOrWhiteSpace(items[2]) && items[2] != "0")
 				{
@@ -3920,6 +4006,44 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return Json(result);
 		}
 
+		/// <summary>
+		/// What the call forms draw for a picked route (M0322): the plan's route line (GeoJSON), its numbered stops and where it
+		/// starts and ends. Only a route a call of this department can follow.
+		/// </summary>
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		public async Task<IActionResult> GetCallRoutePreview(string routePlanId)
+		{
+			var eligible = await _callRoutesService.GetEligibleRoutePlanAsync(DepartmentId, routePlanId);
+			if (eligible?.Plan == null)
+				return Json(new { success = false });
+
+			var plan = eligible.Plan;
+			var stops = (await _routeService.GetRouteStopsForPlanAsync(plan.RoutePlanId) ?? new List<RouteStop>())
+				.Where(x => x != null && !x.IsDeleted && x.RoutePlanId == plan.RoutePlanId)
+				.OrderBy(x => x.StopOrder)
+				.ToList();
+
+			object Endpoint(RoutePlanEndpoint endpoint) => endpoint == null || !CallLocations.IsValidPoint(endpoint.Latitude, endpoint.Longitude)
+				? null
+				: new { name = endpoint.Name, lat = endpoint.Latitude, lng = endpoint.Longitude };
+
+			return Json(new
+			{
+				success = true,
+				routePlanId = plan.RoutePlanId,
+				name = plan.Name,
+				color = plan.RouteColor,
+				geometry = String.IsNullOrWhiteSpace(plan.MapboxRouteGeometry) ? null : plan.MapboxRouteGeometry,
+				stale = plan.RouteIsStale,
+				stops = stops.Select((x, index) => new { order = index + 1, name = x.Name, lat = (double)x.Latitude, lng = (double)x.Longitude }).ToList(),
+				start = Endpoint(eligible.Endpoints?.Start),
+				end = Endpoint(eligible.Endpoints?.End),
+				startIsStop = eligible.Endpoints?.StartIsStop ?? false,
+				endIsStop = eligible.Endpoints?.EndIsStop ?? false
+			});
+		}
+
 		public async Task<IActionResult> GetTopActiveCalls()
 		{
 			var model = new TopActiveCallsView();
@@ -4234,7 +4358,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 				//model.ContactsList = new SelectList(model.Contacts, "ContactId", "Name");
 			}
 
-			model.DestinationPois = await GetDestinationPoiSelectListAsync(model.Call?.DestinationPoiId);
+			model.DestinationPois = await GetDestinationPoiSelectListAsync(model.Call?.DestinationPoiId, model.DestinationPoiPoints);
+
+			// Location POI and route pickers (M0322). A new call is only offered the routes it can follow.
+			model.LocationPois = await GetLocationPoiOptionsAsync(model.Call?.LocationPoiId);
+			model.RoutePlans = await GetRoutePlanOptionsAsync(model.Call?.RoutePlanId, false);
+			model.CanViewRoutes = User.HasClaim(ResgridClaimTypes.Resources.Route, ResgridClaimTypes.Actions.View);
 
 			// The same policy ApplyNewCallFieldPolicyAsync enforces on post: hidden fields are not rendered, required
 			// ones are marked.
@@ -4333,8 +4462,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 				}
 			}
 
-			model.DestinationPois = await GetDestinationPoiSelectListAsync(model.Call?.DestinationPoiId);
+			model.DestinationPois = await GetDestinationPoiSelectListAsync(model.Call?.DestinationPoiId, model.DestinationPoiPoints);
 			model.FieldPolicy = await _departmentSettingsService.GetNewCallFieldPolicyAsync(DepartmentId) ?? new NewCallFieldPolicy();
+
+			// Location POI and route pickers (M0322). The call's own route stays offered even when it can no longer be followed,
+			// so an edit that leaves it alone keeps it.
+			model.LocationPois = await GetLocationPoiOptionsAsync(model.Call?.LocationPoiId);
+			model.RoutePlans = await GetRoutePlanOptionsAsync(model.Call?.RoutePlanId, true);
+			model.CanViewRoutes = User.HasClaim(ResgridClaimTypes.Resources.Route, ResgridClaimTypes.Actions.View);
 
 			// The edit form used to open with an empty indoor location and post that back, clearing the zone on every save.
 			if (!string.IsNullOrWhiteSpace(model.Call?.IndoorMapZoneId))
@@ -4446,7 +4581,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return model;
 		}
 
-		private async Task<List<SelectListItem>> GetDestinationPoiSelectListAsync(int? selectedPoiId)
+		private async Task<List<SelectListItem>> GetDestinationPoiSelectListAsync(int? selectedPoiId, Dictionary<string, double[]> points = null)
 		{
 			var selectListItems = new List<SelectListItem>
 			{
@@ -4484,6 +4619,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 					Selected = selectedPoiId.HasValue && selectedPoiId.Value == poi.PoiId,
 					Group = groups[groupName]
 				});
+
+				// Where the destination marker goes on the call map when this POI is picked (M0322).
+				if (points != null && CallLocations.IsValidPoint(poi.Latitude, poi.Longitude))
+					points[poi.PoiId.ToString(CultureInfo.InvariantCulture)] = new[] { poi.Latitude, poi.Longitude };
 			}
 
 			return selectListItems;
@@ -4522,6 +4661,273 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return (null, null, null);
 
 			return (PoiDisplayHelper.GetDisplayName(destinationPoi, destinationPoi.Type?.Name), destinationPoi.Address, PoiDisplayHelper.GetTypeName(destinationPoi));
+		}
+
+		/// <summary>The location POI, route and free destination a call form posted (M0322), once checked.</summary>
+		private sealed class PostedCallLocations
+		{
+			/// <summary>The department's POI the location was picked from; null when none (or not the department's).</summary>
+			public Poi LocationPoi { get; set; }
+
+			/// <summary>The route the call follows; null when none (or one it cannot follow).</summary>
+			public CallRoutePlan RoutePlan { get; set; }
+
+			public string DestinationAddress { get; set; }
+
+			/// <summary>The free destination point, "lat,lon" invariant.</summary>
+			public string DestinationPoint { get; set; }
+
+			public string DestinationW3W { get; set; }
+		}
+
+		/// <summary>
+		/// Reads and checks a call form's M0322 inputs as the v4 SaveCall/EditCall check them: a location POI that is not the
+		/// department's, a route the call cannot follow and a destination point that is not a coordinate are model errors.
+		/// Call.DestinationGeoLocationData is model-bound, so whatever was posted into it is dropped: the form posts the point
+		/// as DestinationLatitude/DestinationLongitude. A destination the department hides yields no free destination.
+		/// </summary>
+		private async Task<PostedCallLocations> ReadPostedCallLocationsAsync(ICallLocationsForm form, Resgrid.Model.Call call, bool checkRoute = true)
+		{
+			var posted = new PostedCallLocations();
+			if (call == null)
+				return posted;
+
+			call.DestinationGeoLocationData = null;
+
+			if (call.LocationPoiId.HasValue && call.LocationPoiId.Value > 0)
+			{
+				posted.LocationPoi = await _callRoutesService.GetLocationPoiAsync(DepartmentId, call.LocationPoiId.Value);
+				if (posted.LocationPoi == null)
+					ModelState.AddModelError("Call.LocationPoiId", _dispatchLocalizer["InvalidLocationPoi"].Value);
+			}
+
+			if (checkRoute && !String.IsNullOrWhiteSpace(call.RoutePlanId))
+			{
+				posted.RoutePlan = await _callRoutesService.GetEligibleRoutePlanAsync(DepartmentId, call.RoutePlanId.Trim());
+				if (posted.RoutePlan == null)
+					ModelState.AddModelError("Call.RoutePlanId", _dispatchLocalizer["InvalidCallRoute"].Value);
+			}
+
+			if (!form.ShowsDestination())
+				return posted;
+
+			if (form.HasInvalidDestinationPoint())
+				ModelState.AddModelError(nameof(NewCallView.DestinationLatitude), _dispatchLocalizer["InvalidDestinationCoordinates"].Value);
+
+			posted.DestinationPoint = form.PostedDestinationPoint();
+			posted.DestinationAddress = String.IsNullOrWhiteSpace(call.DestinationAddress) ? null : call.DestinationAddress.Trim();
+			posted.DestinationW3W = String.IsNullOrWhiteSpace(call.DestinationW3W) ? null : call.DestinationW3W.Trim();
+
+			return posted;
+		}
+
+		/// <summary>
+		/// Writes a new call's M0322 inputs: the checked location POI and route, and the free destination unless the destination
+		/// is a POI (one destination only). Blank location/destination are filled from the POI and route when the call is saved
+		/// (<see cref="ICallRoutesService.ApplyDefaultsAsync"/>).
+		/// </summary>
+		private static void ApplyPostedCallLocations(Resgrid.Model.Call call, PostedCallLocations posted, Poi destinationPoi)
+		{
+			call.LocationPoiId = posted.LocationPoi?.PoiId;
+			call.RoutePlanId = posted.RoutePlan?.Plan?.RoutePlanId;
+			call.DestinationAddress = destinationPoi == null ? posted.DestinationAddress : null;
+			call.DestinationGeoLocationData = destinationPoi == null ? posted.DestinationPoint : null;
+			call.DestinationW3W = destinationPoi == null ? posted.DestinationW3W : null;
+		}
+
+		/// <summary>The department's POIs of every type, grouped by type, as the call location picker's options (M0322).</summary>
+		private async Task<List<CallLocationPoiOption>> GetLocationPoiOptionsAsync(int? selectedPoiId)
+		{
+			var options = new List<CallLocationPoiOption>();
+
+			try
+			{
+				var pois = await _mappingService.GetPOIsForDepartmentAsync(DepartmentId) ?? new List<Poi>();
+
+				foreach (var poi in pois.Where(x => x != null).OrderBy(x => x.Type?.Name).ThenBy(x => x.Name).ThenBy(x => x.Address).ThenBy(x => x.Note))
+				{
+					var groupName = !String.IsNullOrWhiteSpace(poi.Type?.Name) ? poi.Type.Name : _dispatchLocalizer["Pois"].Value;
+
+					options.Add(new CallLocationPoiOption
+					{
+						PoiId = poi.PoiId,
+						Text = PoiDisplayHelper.GetSelectionLabel(poi, groupName),
+						Group = groupName,
+						Latitude = poi.Latitude,
+						Longitude = poi.Longitude,
+						Address = !String.IsNullOrWhiteSpace(poi.Address) ? poi.Address.Trim() : PoiDisplayHelper.GetDisplayName(poi, groupName),
+						Selected = selectedPoiId.HasValue && selectedPoiId.Value == poi.PoiId
+					});
+				}
+			}
+			catch (Exception ex)
+			{
+				// The picker is a convenience: the call form still has to open.
+				Logging.LogException(ex, $"Listing the call location POIs for department {DepartmentId}");
+			}
+
+			return options;
+		}
+
+		/// <summary>
+		/// The route plans a call can follow, with their start and end (M0322). With <paramref name="keepSelected"/>, a call's
+		/// stored route that can no longer be followed is offered too (marked), so an edit that leaves it alone keeps it.
+		/// </summary>
+		private async Task<List<CallRoutePlanOption>> GetRoutePlanOptionsAsync(string selectedRoutePlanId, bool keepSelected)
+		{
+			var options = new List<CallRoutePlanOption>();
+			var selected = String.IsNullOrWhiteSpace(selectedRoutePlanId) ? null : selectedRoutePlanId.Trim();
+
+			try
+			{
+				foreach (var callRoute in await _callRoutesService.GetCallRoutePlansAsync(DepartmentId) ?? new List<CallRoutePlan>())
+				{
+					if (callRoute?.Plan == null)
+						continue;
+
+					var start = callRoute.Endpoints?.Start;
+					var end = callRoute.Endpoints?.End;
+
+					options.Add(new CallRoutePlanOption
+					{
+						RoutePlanId = callRoute.Plan.RoutePlanId,
+						Name = callRoute.Plan.Name,
+						StopsCount = callRoute.Endpoints?.StopsCount ?? 0,
+						StartName = start?.Name,
+						StartLatitude = start?.Latitude,
+						StartLongitude = start?.Longitude,
+						EndName = end?.Name,
+						EndLatitude = end?.Latitude,
+						EndLongitude = end?.Longitude,
+						Selected = selected != null && String.Equals(callRoute.Plan.RoutePlanId, selected, StringComparison.OrdinalIgnoreCase)
+					});
+				}
+
+			}
+			catch (Exception ex)
+			{
+				// Routes are optional on a call: the form still has to open without them.
+				Logging.LogException(ex, $"Listing the call route plans for department {DepartmentId}");
+			}
+
+			if (keepSelected && selected != null && !options.Any(x => x.Selected))
+			{
+				// Offered whatever its name lookup does: without it the picker would open on "No route" and an unrelated save
+				// would clear the route.
+				string name = null;
+				try
+				{
+					var plan = await _routeService.GetRoutePlanByIdAsync(selected);
+					name = plan != null && plan.DepartmentId == DepartmentId && !String.IsNullOrWhiteSpace(plan.Name)
+						? plan.Name
+						: _dispatchLocalizer["CallRouteDeleted"].Value;
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex, $"Reading the name of route plan {selected} for department {DepartmentId}");
+				}
+
+				options.Add(new CallRoutePlanOption
+				{
+					RoutePlanId = selected,
+					Name = String.Format(_dispatchLocalizer["CallRouteUnavailable"].Value, name ?? _dispatchLocalizer["CallRouteLabel"].Value),
+					Selected = true,
+					IsAvailable = false
+				});
+			}
+
+			return options;
+		}
+
+		/// <summary>
+		/// The call's location POI, free destination, route and route runs for the call page and the exports (M0322). Never
+		/// stops the page: a lookup that fails leaves the part it was for blank.
+		/// </summary>
+		private async Task<CallLocationDetails> BuildCallLocationDetailsAsync(Resgrid.Model.Call call, Department department, List<Unit> units)
+		{
+			var details = new CallLocationDetails
+			{
+				CanViewRoutes = User?.HasClaim(ResgridClaimTypes.Resources.Route, ResgridClaimTypes.Actions.View) == true
+			};
+
+			if (call == null)
+				return details;
+
+			if (!call.DestinationPoiId.HasValue)
+			{
+				details.DestinationAddress = String.IsNullOrWhiteSpace(call.DestinationAddress) ? null : call.DestinationAddress;
+				details.DestinationW3W = String.IsNullOrWhiteSpace(call.DestinationW3W) ? null : call.DestinationW3W;
+
+				var point = CallLocations.GetFreeDestinationPoint(call);
+				if (point.HasValue)
+					details.DestinationCoordinates = CallLocationsForm.Invariant(point.Value.Latitude) + ", " + CallLocationsForm.Invariant(point.Value.Longitude);
+			}
+
+			// Each part on its own: a POI lookup that fails only leaves the POI name out, never the route and its runs.
+			try
+			{
+				if (call.LocationPoiId.HasValue && call.LocationPoiId.Value > 0)
+				{
+					var poi = await _callRoutesService.GetLocationPoiAsync(call.DepartmentId, call.LocationPoiId.Value);
+					if (poi != null)
+						details.LocationPoiName = PoiDisplayHelper.GetDisplayName(poi, poi.Type?.Name);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Reading the location POI of call {call.CallId}");
+			}
+
+			try
+			{
+				var planNames = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+				async Task<string> PlanNameAsync(string routePlanId)
+				{
+					if (String.IsNullOrWhiteSpace(routePlanId))
+						return null;
+
+					if (!planNames.TryGetValue(routePlanId, out var planName))
+					{
+						var plan = await _routeService.GetRoutePlanByIdAsync(routePlanId);
+						planName = plan != null && plan.DepartmentId == call.DepartmentId ? plan.Name : null;
+						planNames[routePlanId] = planName;
+					}
+
+					return planName;
+				}
+
+				if (!String.IsNullOrWhiteSpace(call.RoutePlanId))
+				{
+					details.RoutePlanId = call.RoutePlanId;
+					details.RoutePlanName = await PlanNameAsync(call.RoutePlanId);
+				}
+
+				// As the v4 call extra data: runs are linked to the call itself, so they are listed even after its route was
+				// changed or cleared.
+				foreach (var instance in await _routeService.GetInstancesForCallAsync(call.DepartmentId, call.CallId) ?? new List<RouteInstance>())
+				{
+					if (instance == null || instance.DepartmentId != call.DepartmentId)
+						continue;
+
+					details.RouteRuns.Add(new CallRouteRunRow
+					{
+						RouteInstanceId = instance.RouteInstanceId,
+						RoutePlanName = await PlanNameAsync(instance.RoutePlanId),
+						UnitName = units?.FirstOrDefault(x => x.UnitId == instance.UnitId)?.Name ?? instance.UnitId.ToString(CultureInfo.InvariantCulture),
+						Status = instance.Status,
+						StopsCompleted = instance.StopsCompleted,
+						StopsTotal = instance.StopsTotal,
+						StartedOn = instance.ActualStartOn.HasValue && department != null ? instance.ActualStartOn.Value.TimeConverterToString(department) : null,
+						EndedOn = instance.ActualEndOn.HasValue && department != null ? instance.ActualEndOn.Value.TimeConverterToString(department) : null
+					});
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Reading the route of call {call.CallId}");
+			}
+
+			return details;
 		}
 
 		private async Task<CloseCallView> FillCloseCallView(CloseCallView model)

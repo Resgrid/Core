@@ -161,6 +161,11 @@ var resgrid;
                         });
 
                         resgrid.dispatch.editcall.setMarkerLocation(data.centerLat, data.centerLon);
+
+                        // Location POI, destination and route (resgrid.dispatch.calllocations.js) draw on the same map.
+                        if (resgrid.dispatch.calllocations && typeof resgrid.dispatch.calllocations.mapReady === 'function') {
+                            resgrid.dispatch.calllocations.mapReady(map);
+                        }
                         });
                     }
                 });

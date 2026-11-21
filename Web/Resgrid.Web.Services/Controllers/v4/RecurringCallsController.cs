@@ -37,6 +37,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>Dispatcher mode: how long before an occurrence the dispatcher is alerted, in minutes.</summary>
 		public static readonly int[] ManualAlertChoices = { 0, 5, 10, 15, 30, 60, 120, 240 };
 
+		private readonly ICallRoutesService _callRoutesService;
+
 		private static readonly Dictionary<string, string> ErrorMessages = new Dictionary<string, string>(StringComparer.Ordinal)
 		{
 			[RecurringCallRecurrence.Errors.NameRequired] = "A name is required.",
@@ -58,6 +60,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			["ErrorCoordinatesInvalid"] = "GeoLocationData must be \"lat,lon\".",
 			["ErrorDestinationPoiInvalid"] = "DestinationPoiId is not one of the department's destinations.",
 			["ErrorFacilityPoiInvalid"] = "FacilityPoiId is not one of the department's points of interest.",
+			["ErrorDestinationCoordinatesInvalid"] = "DestinationGeoLocationData must be \"lat,lon\".",
+			["ErrorRoutePlanInvalid"] = "RoutePlanId is not an active route plan with a start and an end in this department.",
 			["ErrorResumeOnInvalid"] = "ResumeOn must be yyyy-MM-dd."
 		};
 
@@ -72,8 +76,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 		public RecurringCallsController(IRecurringCallsService recurringCallsService, IDepartmentsService departmentsService, ICallsService callsService,
 			IAuthorizationService authorizationService, IFeatureToggleService featureToggleService, IDepartmentSettingsService departmentSettingsService,
-			IMappingService mappingService, IUserProfileService userProfileService)
+			IMappingService mappingService, IUserProfileService userProfileService, ICallRoutesService callRoutesService)
 		{
+			_callRoutesService = callRoutesService;
 			_recurringCallsService = recurringCallsService;
 			_departmentsService = departmentsService;
 			_callsService = callsService;
@@ -137,6 +142,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				RecurringCall = ToData(series, department, upcoming, alertCounts, profiles, await CanCreateAsync())
 			};
+
+			if (!string.IsNullOrWhiteSpace(series.RoutePlanId))
+				detail.RecurringCall.RoutePlanName = (await _callRoutesService.GetEligibleRoutePlanAsync(DepartmentId, series.RoutePlanId))?.Plan.Name;
 
 			if (series.IsActive && upcoming.TryGetValue(series.RecurringCallId, out var times))
 				detail.NextDispatches = times.Take(6).Select(Iso).ToList();
@@ -248,6 +256,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 					Fail("ErrorCoordinatesInvalid");
 			}
 
+			// A stored route that can no longer be followed is kept while the edit leaves it alone (the calls it creates drop it), as on
+			// the web form; only a changed route is checked.
+			var storedRoutePlanId = series.RoutePlanId;
+
 			Apply(input, series, startsOn, endsOn, geo);
 
 			foreach (var error in RecurringCallRecurrence.Validate(series))
@@ -255,6 +267,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (series.DestinationPoiId.HasValue && await _mappingService.GetDestinationPOIByIdAsync(DepartmentId, series.DestinationPoiId.Value) == null)
 				Fail("ErrorDestinationPoiInvalid");
+
+			// Free destination and route (M0322).
+			if (!series.DestinationPoiId.HasValue && !string.IsNullOrWhiteSpace(input.DestinationGeoLocationData) && CallLocations.NormalizePoint(input.DestinationGeoLocationData) == null)
+				Fail("ErrorDestinationCoordinatesInvalid");
+
+			if (!string.IsNullOrWhiteSpace(series.RoutePlanId) && !string.Equals(series.RoutePlanId, storedRoutePlanId, StringComparison.OrdinalIgnoreCase) &&
+				await _callRoutesService.GetEligibleRoutePlanAsync(DepartmentId, series.RoutePlanId) == null)
+				Fail("ErrorRoutePlanInvalid");
+
+			CallLocations.NormalizeDestination(series);
 
 			if (series.FacilityPoiId.HasValue && !(await _mappingService.GetPOIsForDepartmentAsync(DepartmentId) ?? new List<Poi>()).Any(x => x.PoiId == series.FacilityPoiId.Value))
 				Fail("ErrorFacilityPoiInvalid");
@@ -730,6 +752,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 				FacilityPoiId = series.FacilityPoiId,
 				DestinationName = series.DestinationName,
 				DestinationDetails = series.DestinationDetails,
+				DestinationAddress = series.DestinationAddress,
+				DestinationGeoLocationData = series.DestinationGeoLocationData,
+				RoutePlanId = series.RoutePlanId,
 				DispatchUserIds = series.GetDispatchUserIds(),
 				DispatchGroupIds = series.GetDispatchGroupIds(),
 				DispatchUnitIds = series.GetDispatchUnitIds(),
@@ -809,6 +834,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			series.FacilityPoiId = input.FacilityPoiId.HasValue && input.FacilityPoiId.Value > 0 ? input.FacilityPoiId : null;
 			series.DestinationName = Clean(input.DestinationName, RecurringCall.MaxShortFieldLength);
 			series.DestinationDetails = Clean(input.DestinationDetails, 2000);
+			series.DestinationAddress = Clean(input.DestinationAddress, RecurringCall.MaxShortFieldLength);
+			series.DestinationGeoLocationData = CallLocations.NormalizePoint(input.DestinationGeoLocationData);
+			series.RoutePlanId = Clean(input.RoutePlanId, 128);
 
 			series.DispatchUserIds = RecurringCall.JoinIds(input.DispatchUserIds);
 			series.DispatchGroupIds = RecurringCall.JoinIds(input.DispatchGroupIds);

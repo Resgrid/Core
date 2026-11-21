@@ -233,6 +233,37 @@ namespace Resgrid.Model
 		public int? RecurringCallId { get; set; }
 
 		/// <summary>
+		/// The POI the call location (its start point) was picked from (M0322); null when the location was typed, geocoded or placed on
+		/// the map. <see cref="Address"/> and <see cref="GeoLocationData"/> stay the location every reader uses; a blank one is filled
+		/// from the POI on save. Any POI type, not only destinations. No foreign key: a deleted POI leaves the call as it was.
+		/// </summary>
+		[ProtoMember(40)]
+		public int? LocationPoiId { get; set; }
+
+		/// <summary>
+		/// Free destination address for a call whose destination is not a POI (M0322). Only one destination is kept: a
+		/// <see cref="DestinationPoiId"/> clears the free destination (see <see cref="CallLocations.NormalizeDestination"/>).
+		/// </summary>
+		[ProtoMember(41)]
+		public string DestinationAddress { get; set; }
+
+		/// <summary>Free destination point as "lat,lon" (invariant), the same format as <see cref="GeoLocationData"/> (M0322).</summary>
+		[ProtoMember(42)]
+		public string DestinationGeoLocationData { get; set; }
+
+		/// <summary>Free destination what3words address (M0322).</summary>
+		[ProtoMember(43)]
+		public string DestinationW3W { get; set; }
+
+		/// <summary>
+		/// The pre-defined route (<see cref="RoutePlan"/>) the call follows (M0322); null when none. The unit working the call runs it
+		/// as a route instance linked back by <see cref="RouteInstance.CallId"/>. No foreign key: a deleted or archived plan stays named
+		/// here but can no longer be started.
+		/// </summary>
+		[ProtoMember(44)]
+		public string RoutePlanId { get; set; }
+
+		/// <summary>
 		/// External subject and record identifiers as a JSON object of string keys to string values, for example
 		/// {"ehr_client_id":"123456","ehr_encounter_id":"E-9"}. Protected (catalog calls.subjectidentifiers): an
 		/// envelope in an ADP department. Kept apart from ExternalIdentifier, which integrations already use for their

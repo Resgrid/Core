@@ -33,6 +33,7 @@ namespace Resgrid.Tests.Dashboard
 		private Mock<IPermissionsService> _permissions;
 		private Mock<IPersonnelRolesService> _roles;
 		private Mock<IDepartmentDataProtectionService> _protection;
+		private Mock<IDedicatedNumberAccessService> _dedicatedNumber;
 
 		[SetUp]
 		public void SetUp()
@@ -51,6 +52,7 @@ namespace Resgrid.Tests.Dashboard
 			_permissions = new Mock<IPermissionsService>();
 			_roles = new Mock<IPersonnelRolesService>();
 			_protection = new Mock<IDepartmentDataProtectionService>();
+			_dedicatedNumber = new Mock<IDedicatedNumberAccessService>();
 
 			_settings.Setup(s => s.GetDepartmentModuleSettingsAsync(DepartmentId, It.IsAny<bool>())).ReturnsAsync(new DepartmentModuleSettings());
 			_roles.Setup(r => r.GetRolesForUserAsync(It.IsAny<string>(), DepartmentId)).ReturnsAsync(new List<PersonnelRole>());
@@ -58,7 +60,7 @@ namespace Resgrid.Tests.Dashboard
 
 		private DashboardEntitlementService Service() => new DashboardEntitlementService(_flags.Object, _settings.Object, _readiness.Object, _records.Object,
 			_business.Object, _ibo.Object, _ai.Object, _voice.Object, _aiDispatch.Object, _neris.Object, _recordsAuthorization.Object, _permissions.Object,
-			_roles.Object, _protection.Object);
+			_roles.Object, _protection.Object, _dedicatedNumber.Object);
 
 		private static DashboardViewer Viewer(bool admin = false, params string[] policies) => new DashboardViewer
 		{
@@ -137,6 +139,21 @@ namespace Resgrid.Tests.Dashboard
 			var member = Viewer();
 			member.OfferedAddons.Add(PlanAddonTypes.IncidentBackOffice);
 			service.IsLockedForAdmin(paid, member).Should().BeFalse("members never see upsell");
+		}
+
+		[Test]
+		public async Task Admin_completion_offers_the_dedicated_number_by_its_flag_and_reads_the_held_add_on()
+		{
+			var offered = await Service().CompleteViewerAsync(Viewer(admin: true));
+			offered.OfferedAddons.Should().NotContain(PlanAddonTypes.DedicatedNumber, "Intake.DedicatedNumber is off");
+			offered.HeldAddons.Should().NotContain(PlanAddonTypes.DedicatedNumber);
+
+			_flags.Setup(f => f.IsEnabledAsync(FeatureFlagKeys.IntakeDedicatedNumber, DepartmentId, It.IsAny<bool>(), It.IsAny<IDictionary<string, string>>())).ReturnsAsync(true);
+			_dedicatedNumber.Setup(d => d.HasActiveAddonAsync(DepartmentId)).ReturnsAsync(true);
+			var held = await Service().CompleteViewerAsync(Viewer(admin: true));
+
+			held.OfferedAddons.Should().Contain(PlanAddonTypes.DedicatedNumber);
+			held.HeldAddons.Should().Contain(PlanAddonTypes.DedicatedNumber);
 		}
 
 		[Test]

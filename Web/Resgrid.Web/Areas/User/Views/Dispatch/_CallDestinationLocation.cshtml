@@ -1,0 +1,57 @@
+@model Resgrid.Web.Areas.User.Models.Calls.ICallLocationsForm
+@using Resgrid.Web.Areas.User.Models.Calls
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Call> localizer
+@*
+    A free destination (M0322) for a destination that is not a POI: address (geocoded through the web BFF), coordinates,
+    what3words or a plus code (both only find the point; the words are kept, a plus code never is). One destination only: a
+    destination POI clears and disables these, and these clear the POI (resgrid.dispatch.calllocations.js). Part of the
+    Destination field of the New Call Form Fields policy, so it renders with the destination POI.
+*@
+<div class="form-group" id="callDestinationLocation">
+    <label class="col-sm-2 control-label">@localizer["DestinationLocationLabel"]</label>
+    <div class="col-sm-10">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="input-group input-group-sm">
+                    <input type="text" class="form-control call-destination-free" id="Call_DestinationAddress" name="Call.DestinationAddress"
+                           value="@Model.Call?.DestinationAddress" maxlength="500" placeholder="@localizer["DestinationAddressPlaceholder"]">
+                    <span class="input-group-btn">
+                        <a id="destinationSearchButton" href="#" class="btn btn-info">@localizer["FindAddress"]</a>
+                    </span>
+                </div>
+            </div>
+            <div class="col-md-5" style="padding-left: 0px;">
+                <div class="input-group input-group-sm">
+                    <input type="text" class="form-control call-destination-free" id="DestinationPlusCode" name="DestinationPlusCode"
+                           value="@Model.DestinationPlusCode" placeholder="@localizer["DestinationPlusCodePlaceholder"]">
+                    <span class="input-group-btn">
+                        <a id="destinationPlusCodeButton" href="#" class="btn btn-info">@localizer["FindPlusCode"]</a>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-top: 8px;">
+            <div class="col-md-6">
+                <div class="input-group input-group-sm">
+                    <span class="input-group-addon">@localizer["LatitudeShort"]</span>
+                    <input type="text" class="form-control call-destination-free" id="DestinationLatitude" name="DestinationLatitude"
+                           value="@Model.DestinationLatitude" placeholder="@localizer["Latitude"]" inputmode="decimal">
+                    <span class="input-group-addon">@localizer["LongitudeShort"]</span>
+                    <input type="text" class="form-control call-destination-free" id="DestinationLongitude" name="DestinationLongitude"
+                           value="@Model.DestinationLongitude" placeholder="@localizer["Longitude"]" inputmode="decimal">
+                </div>
+            </div>
+            <div class="col-md-5" style="padding-left: 0px;">
+                <div class="input-group input-group-sm">
+                    <input type="text" class="form-control call-destination-free" id="Call_DestinationW3W" name="Call.DestinationW3W"
+                           value="@Model.Call?.DestinationW3W" maxlength="100" placeholder="@localizer["WhatThreeWordsPlaceholder"]">
+                    <span class="input-group-btn">
+                        <a id="destinationW3wButton" href="#" class="btn btn-info">@localizer["FindW3wLocation"]</a>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <span class="help-inline">@localizer["DestinationLocationHelp"]</span>
+        <a id="destinationClearButton" href="#" class="small" style="margin-left: 6px;">@localizer["ClearDestinationLocation"]</a>
+    </div>
+</div>

@@ -1,0 +1,55 @@
+@model Resgrid.Web.Areas.User.Models.Calls.CallLocationDetails
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Call> localizer
+@*
+    The runs of a call's route (M0322): which unit ran it, how far it got and when, newest first. Used by the call page and the
+    call exports; ViewData["CallRouteRunsLinks"] = true links each run to Routes > Instance Detail (members who can view routes).
+*@
+@{
+    var links = Model.CanViewRoutes && ViewData["CallRouteRunsLinks"] is bool linkRuns && linkRuns;
+    string statusText(int status) => Enum.IsDefined(typeof(RouteInstanceStatus), status)
+        ? localizer["CallRouteRunStatus" + ((RouteInstanceStatus)status)].Value
+        : status.ToString(System.Globalization.CultureInfo.InvariantCulture);
+}
+@if (Model.ShowsRouteRuns)
+{
+    <h4>@localizer["CallRouteRunsLabel"]</h4>
+    @if (!Model.RouteRuns.Any())
+    {
+        <p class="text-muted">@localizer["CallRouteNoRuns"]</p>
+    }
+    else
+    {
+        <table class="table table-condensed table-striped">
+            <thead>
+            <tr>
+                <th>@localizer["CallRouteRunUnit"]</th>
+                <th>@localizer["CallRouteRunStatus"]</th>
+                <th>@localizer["CallRouteRunStops"]</th>
+                <th>@localizer["CallRouteRunStarted"]</th>
+                <th>@localizer["CallRouteRunEnded"]</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var run in Model.RouteRuns)
+            {
+                <tr>
+                    <td>
+                        @if (links)
+                        {
+                            <a asp-controller="Routes" asp-action="InstanceDetail" asp-route-area="User" asp-route-instanceId="@run.RouteInstanceId">@run.UnitName</a>
+                        }
+                        else
+                        {
+                            @run.UnitName
+                        }
+                    </td>
+                    <td>@statusText(run.Status)</td>
+                    <td>@run.StopsCompleted / @run.StopsTotal</td>
+                    <td>@(run.StartedOn ?? "-")</td>
+                    <td>@(run.EndedOn ?? "-")</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+}

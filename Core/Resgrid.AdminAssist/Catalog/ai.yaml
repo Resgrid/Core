@@ -50,6 +50,98 @@
       ],
       "Prominence": "Key",
       "DocsPath": "/web-app/help-setup/"
+    },
+    {
+      "Id": "ai-intake",
+      "AreaId": "ai",
+      "LabelKey": "Feature.ai-intake",
+      "PurposeKey": "FeaturePurpose.ai-intake",
+      "ValueKey": "FeatureValue.ai-intake",
+      "ExampleKey": "FeatureExample.ai-intake",
+      "AdoptionKey": "FeatureSetup.ai-intake",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "IntakeChannels",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "addon",
+          "Id": "EnhancedAi"
+        },
+        {
+          "Kind": "flag",
+          "Id": "Ai.Intake"
+        },
+        {
+          "Kind": "flag",
+          "Id": "Intake.Channels"
+        }
+      ],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/intake-channels/overview/#enhanced-ai-intake"
+    },
+    {
+      "Id": "ai-voice-intake",
+      "AreaId": "ai",
+      "LabelKey": "Feature.ai-voice-intake",
+      "PurposeKey": "FeaturePurpose.ai-voice-intake",
+      "ValueKey": "FeatureValue.ai-voice-intake",
+      "ExampleKey": "FeatureExample.ai-voice-intake",
+      "AdoptionKey": "FeatureSetup.ai-voice-intake",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "DedicatedNumber",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "addon",
+          "Id": "EnhancedAi"
+        },
+        {
+          "Kind": "addon",
+          "Id": "DedicatedNumber"
+        },
+        {
+          "Kind": "flag",
+          "Id": "Ai.VoiceIntake"
+        }
+      ],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/intake-channels/dedicated-number/#voice-intake"
+    },
+    {
+      "Id": "ai-destination-advice",
+      "AreaId": "ai",
+      "LabelKey": "Feature.ai-destination-advice",
+      "PurposeKey": "FeaturePurpose.ai-destination-advice",
+      "ValueKey": "FeatureValue.ai-destination-advice",
+      "ExampleKey": "FeatureExample.ai-destination-advice",
+      "AdoptionKey": "FeatureSetup.ai-destination-advice",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Dispatch",
+        "Action": "Dashboard"
+      },
+      "Requirements": [
+        {
+          "Kind": "addon",
+          "Id": "EnhancedAi"
+        },
+        {
+          "Kind": "flag",
+          "Id": "Ai.DestinationAdvice"
+        }
+      ],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/destinations/#ai-destination-advice"
     }
   ],
   "Rules": [],
@@ -65,6 +157,39 @@
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "ai-intake",
+      "Locale": "en",
+      "TitleKey": "Feature.ai-intake",
+      "Body": "Enhanced AI call intake Enhanced AI reads each message from an intake channel set to Enhanced AI processing and fills in the pending call's type, address, priority and a summary. Dispatchers start from a filled-in call instead of retyping free text. The pending call is saved first, so no message is lost when AI is unavailable. A text saying a car is in the ditch on Route 9 near mile marker 12 becomes a pending vehicle accident call with the location filled in, ready for a dispatcher to check. Needs the Enhanced AI add-on with AI intake turned on for your department. On Intake Channels, edit a channel and set Processing to Enhanced AI. A dispatcher still reviews every pending call, and departments using Advanced Data Protection are not processed by AI.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "ai-intake",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-19T00:00:00Z"
+    },
+    {
+      "Id": "ai-voice-intake",
+      "Locale": "en",
+      "TitleKey": "Feature.ai-voice-intake",
+      "Body": "Enhanced AI voice intake Callers to the department's private inbound dispatch number who are not members answer spoken, guided questions, and Enhanced AI turns their answers into a pending call. Take incident reports by phone at any hour without someone answering, while a dispatcher still decides who to send. A caller reports smoke behind a barn, answers the questions about where it is and what they see, and a pending call with the transcript waits for the dispatcher. Needs the Private Inbound Dispatch Number and Enhanced AI add-ons with AI voice intake turned on for your department. On Private Inbound Dispatch Number, turn on Take incident reports by voice and save. Voice calls have a monthly fair-use limit; over it, callers are asked to text the number instead.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "ai-voice-intake",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-19T00:00:00Z"
+    },
+    {
+      "Id": "ai-destination-advice",
+      "Locale": "en",
+      "TitleKey": "Feature.ai-destination-advice",
+      "Body": "Enhanced AI destination advice Enhanced AI recommends the destination for an open call from its nature, note and call notes and your destinations' capabilities and availability, and suggests a change when the call's details change. Catch a patient who now needs a higher level of care, such as a trauma center, without anyone re-checking every destination by hand. A call note reports a penetrating injury, and the advice on the call suggests the trauma center instead of the nearest hospital, for the dispatcher to apply or dismiss. Needs the Enhanced AI add-on with AI destination advice turned on for your department. Add your destinations with their capabilities and destination rules first. The advice shows on View Call and Update Call, nothing changes until someone applies it, and departments using Advanced Data Protection do not get advice.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "ai-destination-advice",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-19T00:00:00Z"
     }
   ]
 }

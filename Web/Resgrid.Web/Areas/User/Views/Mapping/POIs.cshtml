@@ -59,7 +59,7 @@
 										@localizer["Color"]
 									</th>
 									<th>
-										Destination
+										@localizer["IsDestination"]
 									</th>
 									<th>
 										@localizer["PointCount"]
@@ -79,7 +79,7 @@
 											<span style="color:@u.Color;">@u.Color</span>
 										</td>
 										<td>
-											@(u.IsDestination ? "Yes" : "No")
+											@(u.IsDestination ? commonLocalizer["Yes"] : commonLocalizer["No"])
 										</td>
 										<td>
 											@u.Pois.Count

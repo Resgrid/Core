@@ -701,4 +701,40 @@
   <data name="WeekThird" xml:space="preserve">
     <value>الثالث</value>
   </data>
+  <data name="DestinationAddress" xml:space="preserve">
+    <value>عنوان الوجهة</value>
+  </data>
+  <data name="DestinationAddressHelp" xml:space="preserve">
+    <value>عندما لا تكون الوجهة نقطة اهتمام.</value>
+  </data>
+  <data name="DestinationCoordinates" xml:space="preserve">
+    <value>إحداثيات الوجهة</value>
+  </data>
+  <data name="DestinationCoordinatesHelp" xml:space="preserve">
+    <value>خط العرض، خط الطول (اختياري).</value>
+  </data>
+  <data name="ErrorDestinationCoordinatesInvalid" xml:space="preserve">
+    <value>أدخل إحداثيات الوجهة بصيغة خط العرض، خط الطول (مثل 39.7392,-104.9903).</value>
+  </data>
+  <data name="RoutePlan" xml:space="preserve">
+    <value>المسار</value>
+  </data>
+  <data name="NoRoutePlan" xml:space="preserve">
+    <value>بدون مسار</value>
+  </data>
+  <data name="RoutePlanHelp" xml:space="preserve">
+    <value>يتبع كل بلاغ يتم إنشاؤه هذا المسار: يبدأ العنوان الفارغ من بداية المسار وتنتهي الوجهة الفارغة عند نهايته.</value>
+  </data>
+  <data name="ErrorRoutePlanInvalid" xml:space="preserve">
+    <value>اختر من القائمة مسارًا نشطًا له بداية ونهاية.</value>
+  </data>
+  <data name="RoutePlanUnavailable" xml:space="preserve">
+    <value>{0} (لم يعد متاحًا)</value>
+  </data>
+  <data name="RoutePlanDeleted" xml:space="preserve">
+    <value>مسار محذوف</value>
+  </data>
+  <data name="FacilityPoiCallLocationHelp" xml:space="preserve">
+    <value>يبدأ كل بلاغ يتم إنشاؤه من نقطة الاهتمام هذه.</value>
+  </data>
 </root>

@@ -582,4 +582,112 @@
   <data name="DestinationAvailabilityLink" xml:space="preserve">
     <value>توفر الوجهات</value>
   </data>
+  <data name="LocationPoiPlaceholder" xml:space="preserve">
+    <value>الموقع من نقطة اهتمام (اختياري)</value>
+  </data>
+  <data name="LocationPoiHelp" xml:space="preserve">
+    <value>يؤدي اختيار نقطة اهتمام إلى تعبئة العنوان ودبوس الخريطة، ويمكن تغييرهما بعد ذلك.</value>
+  </data>
+  <data name="InvalidLocationPoi" xml:space="preserve">
+    <value>اختر نقطة الاهتمام لموقع البلاغ من القائمة.</value>
+  </data>
+  <data name="LocationPoiDisplayLabel" xml:space="preserve">
+    <value>نقطة اهتمام الموقع</value>
+  </data>
+  <data name="DestinationLocationLabel" xml:space="preserve">
+    <value>أو موقع وجهة</value>
+  </data>
+  <data name="DestinationLocationHelp" xml:space="preserve">
+    <value>لوجهة ليست نقطة اهتمام: عنوان أو إحداثيات أو what3words أو رمز Plus. لا يمكن تعيين نقطة اهتمام للوجهة وموقع وجهة معًا.</value>
+  </data>
+  <data name="DestinationAddressPlaceholder" xml:space="preserve">
+    <value>عنوان الوجهة</value>
+  </data>
+  <data name="DestinationPlusCodePlaceholder" xml:space="preserve">
+    <value>رمز Plus</value>
+  </data>
+  <data name="FindPlusCode" xml:space="preserve">
+    <value>البحث عن رمز Plus</value>
+  </data>
+  <data name="ClearDestinationLocation" xml:space="preserve">
+    <value>مسح موقع الوجهة</value>
+  </data>
+  <data name="InvalidDestinationCoordinates" xml:space="preserve">
+    <value>أدخل خط العرض وخط الطول للوجهة كأرقام عشرية بنقطة، مثل 50.8503 و4.3517.</value>
+  </data>
+  <data name="DestinationLocationNotFound" xml:space="preserve">
+    <value>لم يتم العثور على موقع لتلك الوجهة.</value>
+  </data>
+  <data name="PlusCodeNotFound" xml:space="preserve">
+    <value>لم يتم العثور على موقع لرمز Plus هذا.</value>
+  </data>
+  <data name="CallRouteLabel" xml:space="preserve">
+    <value>المسار</value>
+  </data>
+  <data name="CallRoutePlaceholder" xml:space="preserve">
+    <value>بدون مسار</value>
+  </data>
+  <data name="CallRouteHelp" xml:space="preserve">
+    <value>مسار محدد مسبقًا للوحدة التي تتولى البلاغ. يأخذ الموقع الفارغ بداية المسار وتأخذ الوجهة الفارغة نهايته.</value>
+  </data>
+  <data name="CallRoutePreview" xml:space="preserve">
+    <value>معاينة المسار</value>
+  </data>
+  <data name="CallRouteStops" xml:space="preserve">
+    <value>المحطات: {0}</value>
+  </data>
+  <data name="CallRouteUnavailable" xml:space="preserve">
+    <value>{0} (لم يعد متاحًا)</value>
+  </data>
+  <data name="CallRouteDeleted" xml:space="preserve">
+    <value>مسار محذوف</value>
+  </data>
+  <data name="InvalidCallRoute" xml:space="preserve">
+    <value>اختر من القائمة مسارًا نشطًا له بداية ونهاية.</value>
+  </data>
+  <data name="CallRouteStart" xml:space="preserve">
+    <value>بداية المسار</value>
+  </data>
+  <data name="CallRouteEnd" xml:space="preserve">
+    <value>نهاية المسار</value>
+  </data>
+  <data name="CallRouteRunsLabel" xml:space="preserve">
+    <value>مرات تنفيذ المسار</value>
+  </data>
+  <data name="CallRouteRunUnit" xml:space="preserve">
+    <value>الوحدة</value>
+  </data>
+  <data name="CallRouteRunStatus" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="CallRouteRunStops" xml:space="preserve">
+    <value>المحطات</value>
+  </data>
+  <data name="CallRouteRunStarted" xml:space="preserve">
+    <value>بدأ</value>
+  </data>
+  <data name="CallRouteRunEnded" xml:space="preserve">
+    <value>انتهى</value>
+  </data>
+  <data name="CallRouteRunStatusScheduled" xml:space="preserve">
+    <value>مجدول</value>
+  </data>
+  <data name="CallRouteRunStatusInProgress" xml:space="preserve">
+    <value>قيد التنفيذ</value>
+  </data>
+  <data name="CallRouteRunStatusCompleted" xml:space="preserve">
+    <value>مكتمل</value>
+  </data>
+  <data name="CallRouteRunStatusCancelled" xml:space="preserve">
+    <value>ملغى</value>
+  </data>
+  <data name="CallRouteRunStatusAbandoned" xml:space="preserve">
+    <value>متروك</value>
+  </data>
+  <data name="CallRouteRunStatusPaused" xml:space="preserve">
+    <value>متوقف مؤقتًا</value>
+  </data>
+  <data name="CallRouteNoRuns" xml:space="preserve">
+    <value>لم تبدأ أي وحدة هذا المسار بعد.</value>
+  </data>
 </root>

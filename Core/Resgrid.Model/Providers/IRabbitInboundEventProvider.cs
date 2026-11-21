@@ -47,5 +47,11 @@ namespace Resgrid.Model.Providers
 
 		/// <summary>Recurring call alerts changed (department id, schedule id, payload { alertId, kind, raised }).</summary>
 		void RegisterForRecurringCallAlertsEvents(Func<int, string, string, Task> recurringCallAlertsEvent);
+
+		/// <summary>A call's Enhanced AI destination advice changed (department id, call id, payload { adviceId, state, isChange }).</summary>
+		void RegisterForAiDestinationAdviceEvents(Func<int, string, string, Task> aiDestinationAdviceEvent);
+
+		/// <summary>An intake SMS conversation changed (department id, call id, payload { conversationId, state, handler }; no text).</summary>
+		void RegisterForIntakeConversationEvents(Func<int, string, string, Task> intakeConversationEvent);
 	}
 }

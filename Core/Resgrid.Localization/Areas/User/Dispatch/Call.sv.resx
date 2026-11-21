@@ -1140,4 +1140,112 @@
   <data name="DestinationAvailabilityLink" xml:space="preserve">
     <value>Destinationstillgänglighet</value>
   </data>
+  <data name="LocationPoiPlaceholder" xml:space="preserve">
+    <value>Plats från en POI (valfritt)</value>
+  </data>
+  <data name="LocationPoiHelp" xml:space="preserve">
+    <value>Att välja en POI fyller i adressen och kartnålen; båda kan fortfarande ändras.</value>
+  </data>
+  <data name="InvalidLocationPoi" xml:space="preserve">
+    <value>Välj POI för larmets plats i listan.</value>
+  </data>
+  <data name="LocationPoiDisplayLabel" xml:space="preserve">
+    <value>Plats-POI</value>
+  </data>
+  <data name="DestinationLocationLabel" xml:space="preserve">
+    <value>Eller en destinationsplats</value>
+  </data>
+  <data name="DestinationLocationHelp" xml:space="preserve">
+    <value>För en destination som inte är en POI: en adress, koordinater, what3words eller en pluskod. En destinations-POI och en destinationsplats kan inte anges samtidigt.</value>
+  </data>
+  <data name="DestinationAddressPlaceholder" xml:space="preserve">
+    <value>Destinationsadress</value>
+  </data>
+  <data name="DestinationPlusCodePlaceholder" xml:space="preserve">
+    <value>Pluskod</value>
+  </data>
+  <data name="FindPlusCode" xml:space="preserve">
+    <value>Hitta pluskod</value>
+  </data>
+  <data name="ClearDestinationLocation" xml:space="preserve">
+    <value>Rensa destinationsplatsen</value>
+  </data>
+  <data name="InvalidDestinationCoordinates" xml:space="preserve">
+    <value>Ange destinationens latitud och longitud som decimaltal med punkt, till exempel 50.8503 och 4.3517.</value>
+  </data>
+  <data name="DestinationLocationNotFound" xml:space="preserve">
+    <value>Ingen plats hittades för den destinationen.</value>
+  </data>
+  <data name="PlusCodeNotFound" xml:space="preserve">
+    <value>Ingen plats hittades för den pluskoden.</value>
+  </data>
+  <data name="CallRouteLabel" xml:space="preserve">
+    <value>Rutt</value>
+  </data>
+  <data name="CallRoutePlaceholder" xml:space="preserve">
+    <value>Ingen rutt</value>
+  </data>
+  <data name="CallRouteHelp" xml:space="preserve">
+    <value>En fördefinierad rutt för enheten som hanterar larmet. En tom plats får ruttens start och en tom destination ruttens slut.</value>
+  </data>
+  <data name="CallRoutePreview" xml:space="preserve">
+    <value>Förhandsgranska rutten</value>
+  </data>
+  <data name="CallRouteStops" xml:space="preserve">
+    <value>{0} stopp</value>
+  </data>
+  <data name="CallRouteUnavailable" xml:space="preserve">
+    <value>{0} (inte längre tillgänglig)</value>
+  </data>
+  <data name="CallRouteDeleted" xml:space="preserve">
+    <value>Borttagen rutt</value>
+  </data>
+  <data name="InvalidCallRoute" xml:space="preserve">
+    <value>Välj en aktiv rutt med start och slut i listan.</value>
+  </data>
+  <data name="CallRouteStart" xml:space="preserve">
+    <value>Ruttens start</value>
+  </data>
+  <data name="CallRouteEnd" xml:space="preserve">
+    <value>Ruttens slut</value>
+  </data>
+  <data name="CallRouteRunsLabel" xml:space="preserve">
+    <value>Ruttkörningar</value>
+  </data>
+  <data name="CallRouteRunUnit" xml:space="preserve">
+    <value>Enhet</value>
+  </data>
+  <data name="CallRouteRunStatus" xml:space="preserve">
+    <value>Läge</value>
+  </data>
+  <data name="CallRouteRunStops" xml:space="preserve">
+    <value>Hållplatser</value>
+  </data>
+  <data name="CallRouteRunStarted" xml:space="preserve">
+    <value>Startad</value>
+  </data>
+  <data name="CallRouteRunEnded" xml:space="preserve">
+    <value>Avslutad</value>
+  </data>
+  <data name="CallRouteRunStatusScheduled" xml:space="preserve">
+    <value>Schemalagd</value>
+  </data>
+  <data name="CallRouteRunStatusInProgress" xml:space="preserve">
+    <value>Pågår</value>
+  </data>
+  <data name="CallRouteRunStatusCompleted" xml:space="preserve">
+    <value>Slutförd</value>
+  </data>
+  <data name="CallRouteRunStatusCancelled" xml:space="preserve">
+    <value>Avbruten</value>
+  </data>
+  <data name="CallRouteRunStatusAbandoned" xml:space="preserve">
+    <value>Övergiven</value>
+  </data>
+  <data name="CallRouteRunStatusPaused" xml:space="preserve">
+    <value>Pausad</value>
+  </data>
+  <data name="CallRouteNoRuns" xml:space="preserve">
+    <value>Ingen enhet har startat den här rutten ännu.</value>
+  </data>
 </root>

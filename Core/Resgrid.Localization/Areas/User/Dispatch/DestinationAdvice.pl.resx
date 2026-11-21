@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Title" xml:space="preserve">
+    <value>Porada Enhanced AI dotycząca celu</value>
+  </data>
+  <data name="Ask" xml:space="preserve">
+    <value>Zapytaj Enhanced AI</value>
+  </data>
+  <data name="Asking" xml:space="preserve">
+    <value>Pytanie Enhanced AI…</value>
+  </data>
+  <data name="Apply" xml:space="preserve">
+    <value>Zastosuj</value>
+  </data>
+  <data name="Dismiss" xml:space="preserve">
+    <value>Odrzuć</value>
+  </data>
+  <data name="DismissReason" xml:space="preserve">
+    <value>Dlaczego odrzucasz tę poradę? (opcjonalnie)</value>
+  </data>
+  <data name="Consider" xml:space="preserve">
+    <value>Rozważ {0}</value>
+  </data>
+  <data name="Keep" xml:space="preserve">
+    <value>Enhanced AI zgadza się z obecnym celem.</value>
+  </data>
+  <data name="NoSuggestion" xml:space="preserve">
+    <value>Enhanced AI nie ma celu do zaproponowania.</value>
+  </data>
+  <data name="Current" xml:space="preserve">
+    <value>Obecny cel: {0}</value>
+  </data>
+  <data name="CurrentNone" xml:space="preserve">
+    <value>Nie ustawiono celu</value>
+  </data>
+  <data name="CurrentFree" xml:space="preserve">
+    <value>Obecny cel: miejsce, które nie jest POI</value>
+  </data>
+  <data name="Needs" xml:space="preserve">
+    <value>Wymaga: {0}</value>
+  </data>
+  <data name="Confidence" xml:space="preserve">
+    <value>Pewność: {0}%</value>
+  </data>
+  <data name="LowConfidence" xml:space="preserve">
+    <value>Niska pewność: nie ogłoszono w zgłoszeniu.</value>
+  </data>
+  <data name="AdvisedAt" xml:space="preserve">
+    <value>Doradzono {0}</value>
+  </data>
+  <data name="AdviceOnly" xml:space="preserve">
+    <value>To tylko porada: nic się nie zmieni, dopóki ktoś jej nie zastosuje.</value>
+  </data>
+  <data name="NoAdvice" xml:space="preserve">
+    <value>Brak porady. Enhanced AI sprawdza cel, gdy zmieniają się dane lub notatki zgłoszenia.</value>
+  </data>
+  <data name="Applied" xml:space="preserve">
+    <value>Cel ustawiono na {0}.</value>
+  </data>
+  <data name="Dismissed" xml:space="preserve">
+    <value>Poradę odrzucono.</value>
+  </data>
+  <data name="Failed" xml:space="preserve">
+    <value>Nie udało się. Odśwież stronę i spróbuj ponownie.</value>
+  </data>
+  <data name="StatusLimited" xml:space="preserve">
+    <value>ograniczony</value>
+  </data>
+  <data name="StatusDiversion" xml:space="preserve">
+    <value>przekierowanie</value>
+  </data>
+  <data name="StatusClosed" xml:space="preserve">
+    <value>zamknięty</value>
+  </data>
+  <data name="Outcome.Unchanged" xml:space="preserve">
+    <value>Od ostatniej porady nic się nie zmieniło.</value>
+  </data>
+  <data name="Outcome.Busy" xml:space="preserve">
+    <value>Enhanced AI jest zajęty. Spróbuj ponownie za chwilę.</value>
+  </data>
+  <data name="Outcome.Unavailable" xml:space="preserve">
+    <value>Enhanced AI nie odpowiedział na czas. Spróbuj ponownie.</value>
+  </data>
+  <data name="Outcome.InvalidOutput" xml:space="preserve">
+    <value>Nie można użyć odpowiedzi Enhanced AI. Spróbuj ponownie.</value>
+  </data>
+  <data name="Outcome.NoLocation" xml:space="preserve">
+    <value>Zgłoszenie nie ma lokalizacji, od której można uszeregować cele.</value>
+  </data>
+  <data name="Outcome.NoCandidates" xml:space="preserve">
+    <value>Nie ma celów do wyboru.</value>
+  </data>
+  <data name="Outcome.BudgetExhausted" xml:space="preserve">
+    <value>Budżet Enhanced AI na ten miesiąc został wyczerpany.</value>
+  </data>
+  <data name="Outcome.ProtectionUnsupported" xml:space="preserve">
+    <value>Niedostępne, dopóki jednostka korzysta z Advanced Data Protection.</value>
+  </data>
+  <data name="Outcome.NotEntitled" xml:space="preserve">
+    <value>Porady dotyczące celu nie są dostępne dla tej jednostki.</value>
+  </data>
+  <data name="Outcome.CallNotOpen" xml:space="preserve">
+    <value>Zgłoszenie nie jest już otwarte.</value>
+  </data>
+  <data name="Outcome.NotOpen" xml:space="preserve">
+    <value>Ta porada została już zastosowana lub odrzucona.</value>
+  </data>
+  <data name="Outcome.DestinationGone" xml:space="preserve">
+    <value>Zalecany cel już nie istnieje.</value>
+  </data>
+  <data name="Outcome.DestinationClosed" xml:space="preserve">
+    <value>Zalecany cel jest teraz zamknięty. Zapytaj ponownie o aktualną poradę.</value>
+  </data>
+  <data name="Outcome.CallChanged" xml:space="preserve">
+    <value>Zgłoszenie zmieniło się, gdy Enhanced AI odpowiadał. Spróbuj ponownie.</value>
+  </data>
+  <data name="Outcome.NothingToApply" xml:space="preserve">
+    <value>Nie ma czego zastosować: porada mówi, by zachować obecny cel.</value>
+  </data>
+</root>

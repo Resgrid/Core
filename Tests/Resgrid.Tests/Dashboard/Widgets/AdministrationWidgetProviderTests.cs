@@ -173,7 +173,7 @@ namespace Resgrid.Tests.Dashboard.Widgets
 			data.RenewsOn.Should().Be(new DateTime(2027, 1, 1, 0, 0, 0, DateTimeKind.Utc));
 			data.EntityCount.Should().Be(25);
 			data.UsedPercent.Should().Be(50);
-			data.Addons.Select(a => a.Key).Should().Equal("PTT", "ReadinessPro", "BusinessOperations", "IncidentBackOffice", "EnhancedAi", "ADP");
+			data.Addons.Select(a => a.Key).Should().Equal("PTT", "ReadinessPro", "BusinessOperations", "IncidentBackOffice", "EnhancedAi", "DedicatedNumber", "ADP");
 			data.Addons.Single(a => a.Key == "BusinessOperations").Should().BeEquivalentTo(new AdminPlanAddon { Key = "BusinessOperations", Offered = true, Held = true, Cancelled = true, EndsOn = new DateTime(2026, 12, 1) });
 			data.Addons.Single(a => a.Key == "PTT").Offered.Should().BeTrue("Push-To-Talk is always offered");
 			data.Addons.Single(a => a.Key == "EnhancedAi").Offered.Should().BeFalse();
@@ -191,7 +191,7 @@ namespace Resgrid.Tests.Dashboard.Widgets
 
 			data.RenewsOn.Should().BeNull();
 			data.Cost.Should().Be(99m);
-			data.Addons.Should().HaveCount(6).And.OnlyContain(a => !a.Held);
+			data.Addons.Should().HaveCount(7).And.OnlyContain(a => !a.Held);
 		}
 
 		#endregion

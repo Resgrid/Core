@@ -47,6 +47,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.RecurringCalls> _localizer;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Call> _callLocalizer;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> _departmentLocalizer;
+		private readonly ICallRoutesService _callRoutesService;
+		private readonly IRouteService _routeService;
 
 		public RecurringCallsController(IRecurringCallsService recurringCallsService, ICallsService callsService, IDepartmentsService departmentsService,
 			IDepartmentGroupsService departmentGroupsService, IUnitsService unitsService, IPersonnelRolesService personnelRolesService,
@@ -54,8 +56,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			Resgrid.Model.Services.IAuthorizationService authorizationService, IFeatureToggleService featureToggleService,
 			IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.RecurringCalls> localizer,
 			IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Call> callLocalizer,
-			IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> departmentLocalizer)
+			IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> departmentLocalizer,
+			ICallRoutesService callRoutesService, IRouteService routeService)
 		{
+			_callRoutesService = callRoutesService;
+			_routeService = routeService;
 			_recurringCallsService = recurringCallsService;
 			_callsService = callsService;
 			_departmentsService = departmentsService;
@@ -211,6 +216,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var previousAddress = series.Address;
 			var previousGeoLocation = series.GeoLocationData;
+			var previousRoutePlanId = series.RoutePlanId;
 			var previousUnitIds = series.GetDispatchUnitIds();
 			var wasActive = series.RecurringCallId > 0 ? series.IsActive : (bool?)null;
 			var isNew = series.RecurringCallId == 0;
@@ -218,6 +224,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			ApplySchedule(model, series);
 			ApplyCallDetails(model, series, policy);
 			ApplyScheduleDetails(model, series);
+
+			// The route select is on the form only when there is a route to offer (or the schedule's own). A form posted without it
+			// (the route list could not be read) leaves the schedule's route as it was; a blank selection still clears it.
+			if (Request?.HasFormContentType == true && !Request.Form.ContainsKey(nameof(model.RoutePlanId)))
+				series.RoutePlanId = previousRoutePlanId;
 
 			// The unit picker offers only the units the member may see: stored units outside it are kept as they are, and only offered
 			// units can be added (the same rule as the picker, so a crafted post cannot add others).
@@ -275,6 +286,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (series.DestinationPoiId.HasValue && await _mappingService.GetDestinationPOIByIdAsync(DepartmentId, series.DestinationPoiId.Value) == null)
 				ModelState.AddModelError(nameof(model.DestinationPoiId), _callLocalizer["InvalidDestinationPoi"].Value);
+
+			// Free destination and route (M0322), as the v4 API checks them. Only a changed route is checked, as the call edit form
+			// does: a schedule whose route can no longer be followed keeps it (its calls are then created without it).
+			if (model.IsVisible(NewCallFieldKeys.DestinationPoi) && !series.DestinationPoiId.HasValue &&
+				!string.IsNullOrWhiteSpace(model.DestinationCoordinates) && CallLocations.NormalizePoint(model.DestinationCoordinates) == null)
+				ModelState.AddModelError(nameof(model.DestinationCoordinates), _localizer["ErrorDestinationCoordinatesInvalid"].Value);
+
+			if (!string.IsNullOrWhiteSpace(series.RoutePlanId) &&
+				!string.Equals(series.RoutePlanId, previousRoutePlanId ?? "", StringComparison.OrdinalIgnoreCase) &&
+				await _callRoutesService.GetEligibleRoutePlanAsync(DepartmentId, series.RoutePlanId) == null)
+				ModelState.AddModelError(nameof(model.RoutePlanId), _localizer["ErrorRoutePlanInvalid"].Value);
+
+			CallLocations.NormalizeDestination(series);
 
 			if (series.FacilityPoiId.HasValue && !(await _mappingService.GetPOIsForDepartmentAsync(DepartmentId) ?? new List<Poi>()).Any(x => x.PoiId == series.FacilityPoiId.Value))
 				ModelState.AddModelError(nameof(model.FacilityPoiId), _localizer["ErrorFacilityPoiInvalid"].Value);
@@ -781,6 +805,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			series.FacilityPoiId = model.FacilityPoiId.HasValue && model.FacilityPoiId.Value > 0 ? model.FacilityPoiId : null;
 			series.DestinationName = Clean(model.DestinationName, RecurringCall.MaxShortFieldLength);
 			series.DestinationDetails = Clean(model.DestinationDetails, 2000);
+			// The route every call it creates follows (M0322); no New Call Form Fields entry, so on the form whenever one is offered.
+			series.RoutePlanId = Clean(model.RoutePlanId, 128);
 			series.AlertUserIds = RecurringCall.JoinIds(model.AlertUserIds);
 			series.AlertGroupIds = RecurringCall.JoinIds(model.AlertGroupIds);
 			series.AlertRoleIds = RecurringCall.JoinIds(model.AlertRoleIds);
@@ -812,7 +838,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (Shows(NewCallFieldKeys.IncidentId) || isNew) series.IncidentNumber = Shows(NewCallFieldKeys.IncidentId) ? Clean(model.IncidentNumber) : null;
 			if (Shows(NewCallFieldKeys.MapPage) || isNew) series.MapPage = Shows(NewCallFieldKeys.MapPage) ? Clean(model.MapPage) : null;
 			if (Shows(NewCallFieldKeys.DestinationPoi) || isNew)
+			{
 				series.DestinationPoiId = Shows(NewCallFieldKeys.DestinationPoi) && model.DestinationPoiId.HasValue && model.DestinationPoiId.Value > 0 ? model.DestinationPoiId : null;
+
+				// The free destination (M0322) is part of the same field, and a destination POI clears it: one destination only.
+				var destinationAddress = Shows(NewCallFieldKeys.DestinationPoi) && !series.DestinationPoiId.HasValue ? Clean(model.DestinationAddress) : null;
+				series.DestinationAddress = destinationAddress != null && destinationAddress.Length > RecurringCall.MaxShortFieldLength
+					? destinationAddress.Substring(0, RecurringCall.MaxShortFieldLength)
+					: destinationAddress;
+				series.DestinationGeoLocationData = Shows(NewCallFieldKeys.DestinationPoi) && !series.DestinationPoiId.HasValue
+					? CallLocations.NormalizePoint(model.DestinationCoordinates)
+					: null;
+			}
 			if (Shows(NewCallFieldKeys.CheckInTimers))
 				series.CheckInTimersEnabled = model.CheckInTimersEnabled;
 			else if (isNew)
@@ -829,7 +866,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		/// <summary>What the New Call Form Fields policy checks, for a schedule. Fields this form has no input for are unsupported.</summary>
 		public static NewCallFieldValues FieldValues(RecurringCall series) => RecurringCallRecurrence.FieldValues(series);
 
-		private static RecurringCallEditView ToEditView(RecurringCall series)
+		public static RecurringCallEditView ToEditView(RecurringCall series)
 		{
 			var days = new List<int>();
 			for (var day = 0; day < 7; day++)
@@ -877,6 +914,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				Address = series.Address,
 				Coordinates = series.GeoLocationData,
 				DestinationPoiId = series.DestinationPoiId,
+				DestinationAddress = series.DestinationAddress,
+				DestinationCoordinates = series.DestinationGeoLocationData,
+				RoutePlanId = series.RoutePlanId,
 				ContactName = series.ContactName,
 				ContactNumber = series.ContactNumber,
 				ExternalIdentifier = series.ExternalIdentifier,
@@ -893,7 +933,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		/// <summary>"Repeat this call": its details and recipients; its dispatch time (if scheduled) becomes the first date and time.</summary>
-		private static void CopyFromCall(RecurringCallEditView model, Call call, Department department)
+		public static void CopyFromCall(RecurringCallEditView model, Call call, Department department)
 		{
 			model.FromCallNumber = call.Number;
 			model.Name = ProtectedDataEnvelope.SafeDisplay(call.Name);
@@ -904,6 +944,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Address = ProtectedDataEnvelope.SafeDisplay(call.Address);
 			model.Coordinates = ParseCoordinates(call.GeoLocationData);
 			model.DestinationPoiId = call.DestinationPoiId;
+			// A free destination and the route come along too (M0322), and the POI the call location was picked from becomes the
+			// pickup facility, which every call it creates starts from.
+			model.DestinationAddress = call.DestinationPoiId.HasValue ? null : ProtectedDataEnvelope.SafeDisplay(call.DestinationAddress);
+			model.DestinationCoordinates = call.DestinationPoiId.HasValue ? null : CallLocations.NormalizePoint(call.DestinationGeoLocationData);
+			model.RoutePlanId = string.IsNullOrWhiteSpace(call.RoutePlanId) ? null : call.RoutePlanId;
+			if (!model.FacilityPoiId.HasValue && call.LocationPoiId.HasValue && call.LocationPoiId.Value > 0)
+				model.FacilityPoiId = call.LocationPoiId;
 			model.ContactName = ProtectedDataEnvelope.SafeDisplay(call.ContactName);
 			model.ContactNumber = ProtectedDataEnvelope.SafeDisplay(call.ContactNumber);
 			model.ExternalIdentifier = call.ExternalIdentifier;
@@ -923,6 +970,53 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Days = new List<int> { (int)when.DayOfWeek };
 			model.MonthlyDay = when.Day;
 			model.Times = new List<string> { when.ToString("HH:mm", CultureInfo.InvariantCulture) };
+		}
+
+		/// <summary>
+		/// "No route" and the route plans a call can follow (M0322). A route the schedule names that can no longer be followed stays
+		/// selectable, marked, so saving keeps it rather than silently dropping it.
+		/// </summary>
+		private async Task<List<SelectListItem>> RoutePlanItemsAsync(string selectedRoutePlanId)
+		{
+			var items = new List<SelectListItem> { new SelectListItem(_localizer["NoRoutePlan"].Value, "") };
+			var selected = string.IsNullOrWhiteSpace(selectedRoutePlanId) ? null : selectedRoutePlanId.Trim();
+
+			try
+			{
+				foreach (var callRoute in await _callRoutesService.GetCallRoutePlansAsync(DepartmentId) ?? new List<CallRoutePlan>())
+				{
+					if (callRoute?.Plan == null)
+						continue;
+
+					items.Add(new SelectListItem(callRoute.Plan.Name, callRoute.Plan.RoutePlanId,
+						selected != null && string.Equals(callRoute.Plan.RoutePlanId, selected, StringComparison.OrdinalIgnoreCase)));
+				}
+			}
+			catch (Exception ex)
+			{
+				// Routes are optional on a schedule: the form still has to open without them.
+				Resgrid.Framework.Logging.LogException(ex, $"Listing the route plans for the recurring calls of department {DepartmentId}");
+			}
+
+			if (selected != null && !items.Any(x => x.Selected))
+			{
+				// The schedule's own route stays offered (and selected) even when the list or its name could not be read, so a save
+				// keeps it.
+				string name = null;
+				try
+				{
+					var plan = await _routeService.GetRoutePlanByIdAsync(selected);
+					name = plan != null && plan.DepartmentId == DepartmentId && !string.IsNullOrWhiteSpace(plan.Name) ? plan.Name : _localizer["RoutePlanDeleted"].Value;
+				}
+				catch (Exception ex)
+				{
+					Resgrid.Framework.Logging.LogException(ex, $"Reading the name of route plan {selected} for the recurring calls of department {DepartmentId}");
+				}
+
+				items.Add(new SelectListItem(string.Format(_localizer["RoutePlanUnavailable"].Value, name ?? _localizer["RoutePlan"].Value), selected, true));
+			}
+
+			return items;
 		}
 
 		private async Task FillEditViewAsync(RecurringCallEditView model, Department department, RecurringCall series = null)
@@ -957,6 +1051,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.DestinationPois.Add(new SelectListItem(PoiDisplayHelper.GetSelectionLabel(poi, groupName), poi.PoiId.ToString(CultureInfo.InvariantCulture),
 					model.DestinationPoiId == poi.PoiId) { Group = group });
 			}
+
+			model.RoutePlans = await RoutePlanItemsAsync(model.RoutePlanId);
 
 			model.FacilityPois = new List<SelectListItem> { new SelectListItem(_localizer["NoFacilityPoi"].Value, "") };
 			var facilityGroups = new Dictionary<string, SelectListGroup>(StringComparer.OrdinalIgnoreCase);

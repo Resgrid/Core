@@ -337,6 +337,20 @@ namespace Resgrid.Tests.Web.Tts
 				"/tmp/normalized.wav");
 		}
 
+		[Test]
+		public void effective_synthesis_profile_should_carry_the_model_and_the_text_revision()
+		{
+			var service = CreateService();
+
+			// The cache key is hashed from the raw request text, so the preprocessor's
+			// output revision has to be part of the profile: otherwise a preprocessing
+			// fix keeps replaying the audio cached before it.
+			var profile = service.GetEffectiveSynthesisProfile("en-us+klatt4", 150);
+
+			profile.Voice.Should().Be($"en_US-ryan-medium.onnx#t{TextPreprocessor.OutputRevision}");
+			profile.Speed.Should().Be(150);
+		}
+
 		private static AudioProcessingService CreateService()
 		{
 			return new AudioProcessingService(

@@ -79,6 +79,14 @@
   <data name="EnhancedAiFeature5" xml:space="preserve"><value>Modèles à poids ouverts uniquement ; les données privées ne sont jamais envoyées à une IA dans le cloud</value></data>
   <data name="EnhancedAiFeature6" xml:space="preserve"><value>Ou utilisez votre propre abonnement auprès d'un fournisseur d'IA</value></data>
   <data name="EnhancedAiNote" xml:space="preserve"><value>Facturé chaque mois par service. Comprend un budget IA mensuel sans frais de dépassement. Chaque service dispose de questions Admin Assist gratuites même sans ce module.</value></data>
+  <data name="DedicatedNumberTitle" xml:space="preserve"><value>Private Inbound Dispatch Number</value></data>
+  <data name="DedicatedNumberTagline" xml:space="preserve"><value>Le numéro propre à votre service pour les SMS et les appels</value></data>
+  <data name="DedicatedNumberFeature1" xml:space="preserve"><value>Un numéro local pour votre service, choisi par vous</value></data>
+  <data name="DedicatedNumberFeature2" xml:space="preserve"><value>Les SMS entrants deviennent des appels en attente pour la régulation</value></data>
+  <data name="DedicatedNumberFeature3" xml:space="preserve"><value>Les membres appellent le même numéro pour accéder au menu vocal</value></data>
+  <data name="DedicatedNumberFeature4" xml:space="preserve"><value>La réception vocale avec Enhanced AI transforme les réponses en appels en attente</value></data>
+  <data name="DedicatedNumberFeature5" xml:space="preserve"><value>Réception uniquement : les réponses viennent du numéro principal de Resgrid</value></data>
+  <data name="DedicatedNumberNote" xml:space="preserve"><value>Facturé chaque mois par service, même avec un forfait annuel. Nécessite un forfait par entités actif. Aux États-Unis, numéros des États-Unis et du Canada ; dans l'UE, un numéro de votre pays lorsqu'il est disponible.</value></data>
   <data name="AdpTitle" xml:space="preserve"><value>Advanced Data Protection</value></data>
   <data name="AdpTagline" xml:space="preserve"><value>Chiffrement et accès renforcé pour les données sensibles</value></data>
   <data name="AdpFeature1" xml:space="preserve"><value>Chiffrement au niveau des champs pour les données de santé et personnelles</value></data>

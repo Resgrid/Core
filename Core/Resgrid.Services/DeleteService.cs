@@ -57,6 +57,7 @@ namespace Resgrid.Services
 		private readonly IRmsDepartmentCutoversRepository _rmsCutovers;
 		private readonly IRmsRecordLegalHoldsRepository _rmsLegalHolds;
 		private readonly INovuProvider _novuProvider;
+		private readonly IDepartmentPhoneNumbersService _departmentPhoneNumbers;
 
 		// How many Novu subscriber deletes run at once when a department is deleted.
 		private const int PushSubscriberDeleteParallelism = 4;
@@ -76,9 +77,10 @@ namespace Resgrid.Services
 			IDeploymentService deploymentService = null, IDeploymentPersonnelRepository deploymentPersonnel = null, IWorkforceService workforceService = null,
 			IMfaAccountCleanupService mfaAccountCleanup = null, IEmailMarketingService emailMarketingService = null,
 			IRmsDepartmentCutoversRepository rmsCutovers = null, IRmsRecordLegalHoldsRepository rmsLegalHolds = null,
-			INovuProvider novuProvider = null)
+			INovuProvider novuProvider = null, IDepartmentPhoneNumbersService departmentPhoneNumbers = null)
 		{
 			_novuProvider = novuProvider;
+			_departmentPhoneNumbers = departmentPhoneNumbers;
 			_rmsCutovers = rmsCutovers;
 			_rmsLegalHolds = rmsLegalHolds;
 			_mfaAccountCleanup = mfaAccountCleanup;
@@ -498,9 +500,17 @@ namespace Resgrid.Services
 
 					// Read before the purge: once the department's rows are gone nothing names its push subscribers.
 					var pushSubscribers = await GetDepartmentPushSubscribersAsync(departmentId);
+					// Likewise its dedicated numbers (Dedicated Number add-on): the purge deletes the only record of their carrier ids.
+					var heldNumbers = await GetDepartmentHeldNumbersAsync(departmentId);
 
 					var result = await _deleteRepository.DeleteDepartmentAndUsersAsync(departmentId);
 					if (!result) throw new InvalidOperationException("Department deletion is not supported by the configured database provider.");
+
+					// The purge committed (a deferred or failed one throws above and keeps the department and its number), and the carrier
+					// ids now exist only in heldNumbers: return the numbers before anything below can throw. A failed audit or queue write
+					// sends this attempt to the retry path, and a retry finds no department rows and so no numbers to release. Best effort,
+					// never throws; every outcome is logged with the carrier id for a manual release.
+					await ReleaseDepartmentNumbersAsync(departmentId, heldNumbers);
 
 					// Write the execution audit record only after the delete succeeds: retried
 					// attempts must not each leave an "executed" row. The row is written directly
@@ -621,6 +631,43 @@ namespace Resgrid.Services
 		/// Every member (removed members included: their subscriber can still hold a phone) and every unit (deleted
 		/// units included). Null when there is nothing to remove or the read failed; the deletion goes ahead either way.
 		/// </summary>
+		/// <summary>The department's numbers still held at the carrier (Provisioning, Active, Lapsed); empty when none or unreadable.</summary>
+		private async Task<List<DepartmentPhoneNumber>> GetDepartmentHeldNumbersAsync(int departmentId)
+		{
+			if (_departmentPhoneNumbers == null)
+				return new List<DepartmentPhoneNumber>();
+
+			try
+			{
+				var held = (await _departmentPhoneNumbers.GetAllForDepartmentAsync(departmentId) ?? new List<DepartmentPhoneNumber>())
+					.Where(n => n != null && n.IsHeld && !string.IsNullOrWhiteSpace(n.ProviderNumberId)).ToList();
+				foreach (var number in held)
+					Logging.LogInfo($"DeleteService::Department {departmentId} deletion will release dedicated number {number.PhoneNumber} ({number.ProviderNumberId}).");
+				return held;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"DeleteService::Unable to read dedicated numbers for DepartmentId {departmentId}; release any at the carrier by hand.");
+				return new List<DepartmentPhoneNumber>();
+			}
+		}
+
+		private async Task ReleaseDepartmentNumbersAsync(int departmentId, List<DepartmentPhoneNumber> numbers)
+		{
+			if (_departmentPhoneNumbers == null || numbers == null || numbers.Count == 0)
+				return;
+
+			try
+			{
+				// The deletion is already committed: the carrier call must finish even if the worker is stopping.
+				await _departmentPhoneNumbers.ReleaseAtCarrierAsync(numbers, CancellationToken.None);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"DeleteService::Dedicated numbers of deleted DepartmentId {departmentId} could not be released; release them at the carrier by hand.");
+			}
+		}
+
 		private async Task<DepartmentPushSubscribers> GetDepartmentPushSubscribersAsync(int departmentId)
 		{
 			if (_novuProvider == null)

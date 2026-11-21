@@ -1534,7 +1534,7 @@
     <value>Medlemsappen för att ta emot utlarmningar, svara och ange status.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.routes">
-    <value>Planerade rutter, till exempel patrulleringar, och vem som är tilldelad dem.</value>
+    <value>Planerade rutter, till exempel patrulleringar eller transporter, vem som är tilldelad dem och rutter ett larm kan ha så att enheten på larmet kör de planerade stoppen.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.run-cards">
     <value>Rekommenderade resurser för varje larmtyp eller område.</value>
@@ -1729,7 +1729,7 @@
     <value>Skapa rollerna ni larmar ut eller rapporterar på, och tilldela dem till medlemmar. Ladda upp en kartikon för roller som ska synas tydligt och ställ sedan in ordningen på sidan Roller: varje persons kartmarkör använder ikonen från den första roll personen har, i den ordningen, som har en.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.pois">
-    <value>Lägg till de platser larmoperatörer behöver se. Ge en POI-typ en egen ikon som ersätter dess markör på kartan och i apparna.</value>
+    <value>Lägg till de platser larmoperatörer behöver se, en i taget eller genom att importera en KML-, KMZ- eller CSV-fil; adresser i filen slås upp i bakgrunden. Ge en POI-typ en egen ikon som ersätter dess markör på kartan och i apparna.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.preventive-maintenance">
     <value>Schemalägg rutinservice för varje fordon.</value>
@@ -4900,7 +4900,7 @@
     <value>Expandera dirigerade grupper med hjälp av det lösta tjänstgörande schemat. Ett tomt skiftresultat faller tillbaka till gruppmedlemmar – förhandsgranska båda fallen.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.EnableModernNotifications">
-    <value>Använd modernt aviseringsbeteende som stöds. Verifiera varje mottagare och kanal; leverantörsgodkännande är inte leverans.</value>
+    <value>Utfasad. Moderna aviseringsljud är nu på för alla avdelningar och användare; det finns inget att ställa in.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.EnableTextCommand">
     <value>Konfigurerad inställning för textkommando. Mönster för utlarmningskälla och verifierad identitet för medlemskommando är olika kontroller. Leverantörs- och chattbotvägar tillämpar inte den här inställningen enhetligt – granska den aktiva mottagaren innan du ändrar den.</value>
@@ -6802,7 +6802,7 @@
     <value>Schemalagda larm</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.scheduled-calls">
-    <value>Larm som går ut av sig själva vid en senare tidpunkt och kan skickas tidigare eller schemaläggas om.</value>
+    <value>Larm som går ut av sig själva vid en senare tidpunkt och kan skickas tidigare eller schemaläggas om, med en kalender över alla schemalagda och återkommande larm.</value>
   </data>
   <data xml:space="preserve" name="Feature.api-keys">
     <value>API-nycklar</value>
@@ -7852,6 +7852,153 @@
     <value>Destinationsförslag</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.DestinationSuggestions">
-    <value>Föreslår den bästa destinationen för ett larm, och för en enhets statusdestination, utifrån avdelningens destinationsregler (Kartläggning, Destinationsregler) och händelseplatsen, med körtid och avstånd. ”Föreslå och fyll i destinationen” fyller dessutom i ett nytt larms tomma destination med den bästa; larmoperatörer och besättningar kan fortfarande välja en annan. Av som standard, eftersom varje förslag hämtar körtider.</value>
+    <value>Föreslår den bästa destinationen för ett larm, och för en enhets statusdestination, utifrån avdelningens destinationsregler (Kartläggning, Hantera POI, Destinationsregler) och händelseplatsen, med körtid och avstånd. ”Föreslå och fyll i destinationen” fyller dessutom i ett nytt larms tomma destination med den bästa; larmoperatörer och besättningar kan fortfarande välja en annan. Av som standard, eftersom varje förslag hämtar körtider.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.recurring-calls">
+    <value>Återkommande larm</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.recurring-calls">
+    <value>Larm som upprepas enligt ett schema, till exempel transporter varje tisdag och torsdag kl. 08:00, 13:00 och 19:00. Vart och ett skapas i förväg som ett schemalagt larm och går ut av sig självt, eller så aviseras en larmoperatör att skicka det.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.recurring-calls">
+    <value>Öppna Schemalagda larm och välj Återkommande larm, sedan Nytt återkommande larm, eller tryck på Upprepa på ett larm som redan skickats. Fyll i larmuppgifter, anläggningar och kontakt, vilka som ska larmas och vilka som ska aviseras, sedan schemat, när varje larm skapas och vem som larmar. Kontrollera kommande utlarmningar och kalendern innan du sparar.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.call-locations">
+    <value>Larmplatser, destinationer och rutter</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.call-locations">
+    <value>Ett larms plats kan hämtas från en intressepunkt, destinationen kan vara en intressepunkt eller en fri adress, koordinater eller what3words, och larmet kan ha en fördefinierad rutt som enheten på larmet kör i appen, stopp för stopp.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.call-locations">
+    <value>Lägg till platserna där ni hämtar och lämnar som intressepunkter och skapa aktiva ruttplaner med start och slut för körningar som upprepas. Välj plats-POI, destination och rutt under Nytt larm; en tom larmplats tar ruttens start och en tom destination ruttens slut.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.poi-capabilities">
+    <value>POI-förmågor</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.poi-capabilities">
+    <value>Vad era intressepunkter erbjuder, till exempel PCI-lab, strokeenhet, helikopterplatta eller vattenuttag, markerat på varje POI så att larmoperatörer och besättningar kan filtrera och rangordna destinationer efter vad patienten eller uppdraget behöver.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.poi-capabilities">
+    <value>Öppna Kartläggning, sedan Hantera POI, och välj POI-förmågor. Lägg till vad era destinationer erbjuder och markera det på varje POI, eller lägg till en kolumn Capabilities i en POI-importfil.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.destination-availability">
+    <value>Destinationstillgänglighet</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.destination-availability">
+    <value>Om varje destination kan ta emot patienter just nu: öppen, begränsad, omdirigerar eller stängd, med de förmågor den inte kan ge, en anteckning och hur länge rapporten gäller.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.destination-availability">
+    <value>Öppna Kartläggning, sedan Hantera POI, och välj Destinationstillgänglighet, eller använd länken Destinationstillgänglighet under larmformulärets Destination. Välj Ange tillgänglighet på en destination när den rapporterar omdirigering, stängning eller en förmåga som inte fungerar.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.destination-rules">
+    <value>Destinationsregler</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.destination-rules">
+    <value>Regler som väljer destinationstyper och krävda och önskade förmågor utifrån larmets typ och prioritet och typen av enhet som åker, så att Resgrid kan föreslå närmaste lämpliga destination med körtid och avstånd.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.destination-rules">
+    <value>Öppna Kartläggning, sedan Hantera POI, och välj Destinationsregler. Lägg till en regel för varje fall, till exempel hjärtlarm till ett sjukhus med PCI-lab och en tankbil till ett vattenuttag, kontrollera dem med Prova och ställ sedan Destinationsförslag på Föreslå destinationer eller Föreslå och fyll i destinationen.</value>
+  </data>
+  <data name="Area.dedicated-number" xml:space="preserve">
+    <value>Private Inbound Dispatch Number</value>
+  </data>
+  <data name="AreaPurpose.dedicated-number" xml:space="preserve">
+    <value>Avdelningens eget telefonnummer. Sms till numret blir väntande larm, och med Enhanced AI kan uppringare rapportera en händelse med rösten.</value>
+  </data>
+  <data name="AreaValue.dedicated-number" xml:space="preserve">
+    <value>Ge allmänheten, samverkande organisationer och medlemmar ett lokalt nummer att sms:a eller ringa, så väntar varje rapport på en larmoperatör under Väntande larm i stället för i någons privata telefon.</value>
+  </data>
+  <data name="AreaExample.dedicated-number" xml:space="preserve">
+    <value>Ett landsbygdsdistrikt trycker sitt nya lokala nummer på flygblad för rapporter som inte är nödärenden, och ett sms om ett träd som fallit över en väg kommer in som ett väntande larm som en larmoperatör kontrollerar och skickar.</value>
+  </data>
+  <data name="ModuleAdoption.dedicated-number" xml:space="preserve">
+    <value>Kräver tillägget Private Inbound Dispatch Number, som bara säljs med en aktiv betald enhetsplan. Numret tar bara emot sms; svar skickas från Resgrids huvudnummer. Röstmottagning kräver även tillägget Enhanced AI.</value>
+  </data>
+  <data name="Ui.AddonRequired.DedicatedNumber" xml:space="preserve">
+    <value>Kräver Private Inbound Dispatch Number</value>
+  </data>
+  <data name="Feature.dedicated-number" xml:space="preserve">
+    <value>Avdelningens nummer och mottagning</value>
+  </data>
+  <data name="FeaturePurpose.dedicated-number" xml:space="preserve">
+    <value>Välj och aktivera avdelningens nummer, bestäm om sms och röstsamtal till det skapar väntande larm, och släpp det när ni inte längre behöver det.</value>
+  </data>
+  <data name="FeatureSetup.dedicated-number" xml:space="preserve">
+    <value>När tillägget är aktivt öppnar du avdelningsmenyn och sedan Private Inbound Dispatch Number. Sök på land, riktnummer eller siffror, aktivera numret du vill ha, slå på Skapa väntande ärenden från sms och spara. Skicka sedan ett test-sms till numret och kontrollera Väntande larm.</value>
+  </data>
+  <data name="Feature.addon-dedicated-number" xml:space="preserve">
+    <value>Private Inbound Dispatch Number</value>
+  </data>
+  <data name="FeaturePurpose.addon-dedicated-number" xml:space="preserve">
+    <value>Tillägget Private Inbound Dispatch Number: avdelningens eget telefonnummer för att ta emot larm via sms och röst.</value>
+  </data>
+  <data name="FeatureValue.addon-dedicated-number" xml:space="preserve">
+    <value>Medlemmar och allmänheten når er avdelning direkt i stället för via Resgrids gemensamma nummer.</value>
+  </data>
+  <data name="FeatureExample.addon-dedicated-number" xml:space="preserve">
+    <value>Den förvaltande medlemmen köper tillägget på sidan Private Inbound Dispatch Number eller på dess faktureringssida, och sedan aktiverar en avdelningsadministratör ett lokalt nummer.</value>
+  </data>
+  <data name="FeatureAdoption.addon-dedicated-number" xml:space="preserve">
+    <value>Säljs bara med en aktiv betald enhetsplan och köps eller sägs upp av den förvaltande medlemmen. Faktureras månadsvis per avdelning, även med en årsplan. När tillägget upphör slutar numret ta emot sms och samtal och släpps efter en respitperiod om tillägget inte förnyas.</value>
+  </data>
+  <data name="Feature.intake-channels" xml:space="preserve">
+    <value>Mottagningskanaler</value>
+  </data>
+  <data name="FeaturePurpose.intake-channels" xml:space="preserve">
+    <value>Gör väntande larm av sms till avdelningens nummer, e-post till en mottagningsadress, inlägg i en länkad Slack-, Teams-, WhatsApp-, Telegram-, Discord- eller Google Chat-kanal och signerade webhook-anrop.</value>
+  </data>
+  <data name="FeatureValue.intake-channels" xml:space="preserve">
+    <value>Förfrågningar som kommer utanför radion och ledningssystemet hamnar i en kö som en larmoperatör granskar; mottagningen larmar aldrig ut någon på egen hand.</value>
+  </data>
+  <data name="FeatureExample.intake-channels" xml:space="preserve">
+    <value>Transportsamordningen på ett sjukhus lägger upp förfrågningar i en delad Teams-kanal, och varje inlägg blir ett väntande larm med kanalens standardlarmtyp och standardprioritet.</value>
+  </data>
+  <data name="FeatureSetup.intake-channels" xml:space="preserve">
+    <value>Öppna avdelningsmenyn, sedan Mottagningskanaler, och lägg till en kanal för varje källa. Välj bearbetningen Larmmall eller Enhanced AI, begränsa Tillåtna avsändare, ange standardprioritet och standardlarmtyp, skicka sedan ett testmeddelande och kontrollera Väntande larm.</value>
+  </data>
+  <data name="Feature.ai-intake" xml:space="preserve">
+    <value>Larmmottagning med Enhanced AI</value>
+  </data>
+  <data name="FeaturePurpose.ai-intake" xml:space="preserve">
+    <value>Enhanced AI läser varje meddelande från en mottagningskanal med bearbetningen Enhanced AI och fyller i det väntande larmets typ, adress, prioritet och en sammanfattning.</value>
+  </data>
+  <data name="FeatureValue.ai-intake" xml:space="preserve">
+    <value>Larmoperatörer utgår från ett ifyllt larm i stället för att skriva av fritext. Det väntande larmet sparas först, så inget meddelande går förlorat när AI inte är tillgänglig.</value>
+  </data>
+  <data name="FeatureExample.ai-intake" xml:space="preserve">
+    <value>Ett sms om att en bil har kört i diket på väg 9 nära kilometer 12 blir ett väntande trafikolyckslarm med platsen ifylld, redo för en larmoperatör att kontrollera.</value>
+  </data>
+  <data name="FeatureSetup.ai-intake" xml:space="preserve">
+    <value>Kräver tillägget Enhanced AI med AI-mottagning aktiverad för er avdelning. Under Mottagningskanaler redigerar du en kanal och ställer Bearbetning på Enhanced AI. En larmoperatör granskar fortfarande varje väntande larm, och avdelningar som använder Advanced Data Protection bearbetas inte av AI.</value>
+  </data>
+  <data name="Feature.ai-voice-intake" xml:space="preserve">
+    <value>Röstmottagning med Enhanced AI</value>
+  </data>
+  <data name="FeaturePurpose.ai-voice-intake" xml:space="preserve">
+    <value>Uppringare till avdelningens privata inkommande larmnummer som inte är medlemmar svarar på upplästa, guidade frågor, och Enhanced AI gör om svaren till ett väntande larm.</value>
+  </data>
+  <data name="FeatureValue.ai-voice-intake" xml:space="preserve">
+    <value>Ta emot händelserapporter per telefon dygnet runt utan att någon svarar, medan en larmoperatör fortfarande bestämmer vem som skickas.</value>
+  </data>
+  <data name="FeatureExample.ai-voice-intake" xml:space="preserve">
+    <value>En uppringare rapporterar rök bakom en lada, svarar på frågorna om var det är och vad hen ser, och ett väntande larm med transkriptionen väntar på larmoperatören.</value>
+  </data>
+  <data name="FeatureSetup.ai-voice-intake" xml:space="preserve">
+    <value>Kräver tilläggen Private Inbound Dispatch Number och Enhanced AI med AI-röstmottagning aktiverad för er avdelning. Under Private Inbound Dispatch Number slår du på Ta emot rapporter via röst och sparar. Röstsamtal har en månatlig gräns för skälig användning; över den ombeds uppringare att sms:a numret i stället.</value>
+  </data>
+  <data name="Feature.ai-destination-advice" xml:space="preserve">
+    <value>Destinationsråd från Enhanced AI</value>
+  </data>
+  <data name="FeaturePurpose.ai-destination-advice" xml:space="preserve">
+    <value>Enhanced AI rekommenderar destination för ett öppet larm utifrån dess art, anteckning och larmanteckningar samt destinationernas förmågor och tillgänglighet, och föreslår en ändring när larmets uppgifter ändras.</value>
+  </data>
+  <data name="FeatureValue.ai-destination-advice" xml:space="preserve">
+    <value>Upptäck en patient som nu behöver en högre vårdnivå, till exempel ett traumacenter, utan att någon kontrollerar varje destination för hand igen.</value>
+  </data>
+  <data name="FeatureExample.ai-destination-advice" xml:space="preserve">
+    <value>En larmanteckning rapporterar en penetrerande skada, och rådet på larmet föreslår traumacentret i stället för närmaste sjukhus, så att larmoperatören kan tillämpa eller avfärda det.</value>
+  </data>
+  <data name="FeatureSetup.ai-destination-advice" xml:space="preserve">
+    <value>Kräver tillägget Enhanced AI med AI-destinationsråd aktiverat för er avdelning. Lägg först till era destinationer med deras förmågor samt destinationsregler. Rådet visas när larmet visas och uppdateras, inget ändras förrän någon tillämpar det, och avdelningar som använder Advanced Data Protection får inga råd.</value>
   </data>
 </root>

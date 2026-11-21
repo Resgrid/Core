@@ -701,4 +701,40 @@
   <data name="WeekThird" xml:space="preserve">
     <value>dritten</value>
   </data>
+  <data name="DestinationAddress" xml:space="preserve">
+    <value>Zieladresse</value>
+  </data>
+  <data name="DestinationAddressHelp" xml:space="preserve">
+    <value>Wenn das Ziel kein POI ist.</value>
+  </data>
+  <data name="DestinationCoordinates" xml:space="preserve">
+    <value>Zielkoordinaten</value>
+  </data>
+  <data name="DestinationCoordinatesHelp" xml:space="preserve">
+    <value>Breitengrad, Längengrad (optional).</value>
+  </data>
+  <data name="ErrorDestinationCoordinatesInvalid" xml:space="preserve">
+    <value>Geben Sie die Zielkoordinaten als Breitengrad, Längengrad ein (zum Beispiel 39.7392,-104.9903).</value>
+  </data>
+  <data name="RoutePlan" xml:space="preserve">
+    <value>Fahrtroute</value>
+  </data>
+  <data name="NoRoutePlan" xml:space="preserve">
+    <value>Keine Fahrtroute</value>
+  </data>
+  <data name="RoutePlanHelp" xml:space="preserve">
+    <value>Jeder angelegte Einsatz folgt dieser Fahrtroute: eine leere Adresse beginnt am Routenstart, ein leeres Ziel endet am Routenende.</value>
+  </data>
+  <data name="ErrorRoutePlanInvalid" xml:space="preserve">
+    <value>Wählen Sie aus der Liste eine aktive Fahrtroute mit Start und Ende.</value>
+  </data>
+  <data name="RoutePlanUnavailable" xml:space="preserve">
+    <value>{0} (nicht mehr verfügbar)</value>
+  </data>
+  <data name="RoutePlanDeleted" xml:space="preserve">
+    <value>Gelöschte Fahrtroute</value>
+  </data>
+  <data name="FacilityPoiCallLocationHelp" xml:space="preserve">
+    <value>Jeder angelegte Einsatz beginnt an diesem POI.</value>
+  </data>
 </root>

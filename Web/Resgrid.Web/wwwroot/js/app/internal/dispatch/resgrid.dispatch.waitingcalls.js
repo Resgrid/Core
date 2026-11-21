@@ -8,6 +8,62 @@ var resgrid;
         (function (waitingcalls) {
             var pendingTable = null;
             var panelMode = false;
+            // Intake calls (SMS, email, chat, webhook, voice) say which channel they came from: callId -> { text: "via SMS: Hospital line",
+            // expires }. Every entry expires (a call with no source yet is asked again soon, as its intake record may still be being
+            // written), so a long-open page neither keeps stale answers nor grows without bound. An entry is placed while its request
+            // is in flight so a refresh does not ask for the same calls twice.
+            var intakeSources = {};
+            var SourceBatchSize = 200;   // the endpoint answers at most this many calls per request
+            var SourceTtlMs = 30 * 60 * 1000;
+            var MissingSourceTtlMs = 2 * 60 * 1000;
+
+            function intakeSourceText(callId) {
+                var entry = intakeSources[callId];
+                return entry && entry.expires > Date.now() ? entry.text : '';
+            }
+
+            function loadIntakeSources(rows) {
+                var now = Date.now();
+                $.each(Object.keys(intakeSources), function (_, id) {
+                    if (intakeSources[id].expires <= now) { delete intakeSources[id]; }
+                });
+
+                var seen = {};
+                var ids = $.map(rows || [], function (row) {
+                    if (!row || !row.CallId || seen[row.CallId] || intakeSources.hasOwnProperty(row.CallId)) { return null; }
+                    seen[row.CallId] = true;
+                    return row.CallId;
+                });
+
+                for (var i = 0; i < ids.length; i += SourceBatchSize) {
+                    requestIntakeSources(ids.slice(i, i + SourceBatchSize));
+                }
+            }
+
+            // Only the ids sent are cached: an id the endpoint was never asked about must not be taken for "no source".
+            function requestIntakeSources(batch) {
+                var placeholderUntil = Date.now() + MissingSourceTtlMs;
+                $.each(batch, function (_, id) { intakeSources[id] = { text: '', expires: placeholderUntil }; });
+
+                $.ajax({
+                    url: resgrid.absoluteBaseUrl + '/User/IntakeChannels/CallSources',
+                    type: 'GET',
+                    cache: false,
+                    data: { callIds: batch.join(',') }
+                }).done(function (sources) {
+                    var now = Date.now();
+                    $.each(batch, function (_, id) {
+                        var text = (sources && sources[id]) || '';
+                        intakeSources[id] = { text: text, expires: now + (text ? SourceTtlMs : MissingSourceTtlMs) };
+                    });
+                    if (pendingTable) { pendingTable.rows().invalidate('data').draw(false); }
+                }).fail(function () {
+                    // Asked again on the next refresh.
+                    $.each(batch, function (_, id) { delete intakeSources[id]; });
+                });
+            }
+            waitingcalls.loadIntakeSources = loadIntakeSources;
+            waitingcalls.intakeSourceText = intakeSourceText;
 
             function getText(key, fallback) {
                 return (resgrid.dispatch && typeof resgrid.dispatch.getText === 'function')
@@ -87,6 +143,7 @@ var resgrid;
                             if (panelMode) {
                                 $('#pendingCallsPanel').toggle(rows && rows.length > 0);
                             }
+                            loadIntakeSources(rows);
                             return rows || [];
                         }
                     },
@@ -97,7 +154,14 @@ var resgrid;
                     language: { emptyTable: getText('noPendingCalls', 'No calls are waiting to be dispatched.') },
                     columns: [
                         { data: 'Number', title: getText('number', 'Number'), type: 'string', render: resgrid.callNumberCell },
-                        { data: 'Name', title: getText('name', 'Name'), render: function (data) { return escapeHtml(data); } },
+                        {
+                            data: 'Name', title: getText('name', 'Name'),
+                            render: function (data, type, row) {
+                                var source = intakeSourceText(row.CallId);
+                                if (type !== 'display' || !source) { return escapeHtml(data); }
+                                return escapeHtml(data) + '<div class="text-muted small intake-source">' + escapeHtml(source) + '</div>';
+                            }
+                        },
                         { data: 'Address', title: getText('address', 'Address'), render: function (data) { return escapeHtml(data); } },
                         {
                             data: 'LoggedOn', title: getText('received', 'Received'),

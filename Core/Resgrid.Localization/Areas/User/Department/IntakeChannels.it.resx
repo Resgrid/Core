@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Canali di ricezione</value>
+  </data>
+  <data name="PageIntro" xml:space="preserve">
+    <value>I messaggi inviati a un canale di ricezione diventano chiamate in attesa. Un operatore le esamina una per una e sceglie a chi inviarle; la ricezione non allerta mai nessuno da sola.</value>
+  </data>
+  <data name="FeatureOff" xml:space="preserve">
+    <value>I canali di ricezione non sono ancora attivi per il tuo dipartimento. Puoi configurarli ora; inizieranno a creare chiamate quando la funzione verrà attivata.</value>
+  </data>
+  <data name="AddChannel" xml:space="preserve">
+    <value>Aggiungi canale</value>
+  </data>
+  <data name="EditChannel" xml:space="preserve">
+    <value>Modifica canale</value>
+  </data>
+  <data name="NoChannels" xml:space="preserve">
+    <value>Non è ancora stato configurato alcun canale di ricezione.</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Nome</value>
+  </data>
+  <data name="NameHelp" xml:space="preserve">
+    <value>Mostrato sulle chiamate in attesa create da questo canale, ad esempio "Linea trasferimenti ospedale".</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Tipo di canale</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>Indirizzo</value>
+  </data>
+  <data name="Mode" xml:space="preserve">
+    <value>Elaborazione</value>
+  </data>
+  <data name="ModeTemplate" xml:space="preserve">
+    <value>Modello di chiamata</value>
+  </data>
+  <data name="ModeEnhancedAi" xml:space="preserve">
+    <value>Enhanced AI</value>
+  </data>
+  <data name="ModeHelp" xml:space="preserve">
+    <value>Il modello di chiamata legge il messaggio con uno dei tuoi formati email per le chiamate. Enhanced AI salva il messaggio come chiamata in attesa, poi compila tipo, indirizzo, priorità e un riepilogo (richiede il componente aggiuntivo Enhanced AI con ricezione IA).</value>
+  </data>
+  <data name="TemplateFormat" xml:space="preserve">
+    <value>Modello</value>
+  </data>
+  <data name="AllowedSenders" xml:space="preserve">
+    <value>Mittenti consentiti</value>
+  </data>
+  <data name="AllowedSendersHelp" xml:space="preserve">
+    <value>Separati da virgole: numeri di telefono (con caratteri jolly *), indirizzi email o @domini, oppure ID utente della piattaforma. Lascia vuoto per accettare chiunque raggiunga l'indirizzo.</value>
+  </data>
+  <data name="DefaultPriority" xml:space="preserve">
+    <value>Priorità predefinita</value>
+  </data>
+  <data name="DefaultCallType" xml:space="preserve">
+    <value>Tipo di chiamata predefinito</value>
+  </data>
+  <data name="UseDepartmentDefault" xml:space="preserve">
+    <value>Predefinito del dipartimento</value>
+  </data>
+  <data name="NoneOption" xml:space="preserve">
+    <value>Nessuno</value>
+  </data>
+  <data name="SendAcknowledgement" xml:space="preserve">
+    <value>Rispondi al mittente</value>
+  </data>
+  <data name="SendAcknowledgementHelp" xml:space="preserve">
+    <value>Invia una breve conferma di ricezione con il numero della chiamata. Agli SMS si risponde dal numero principale di Resgrid.</value>
+  </data>
+  <data name="Enabled" xml:space="preserve">
+    <value>Attivo</value>
+  </data>
+  <data name="Disabled" xml:space="preserve">
+    <value>Disattivato</value>
+  </data>
+  <data name="Enable" xml:space="preserve">
+    <value>Attiva</value>
+  </data>
+  <data name="Disable" xml:space="preserve">
+    <value>Disattiva</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Modifica</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Elimina</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Salva</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Annulla</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Stato</value>
+  </data>
+  <data name="ThisMonth" xml:space="preserve">
+    <value>Questo mese</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Azioni</value>
+  </data>
+  <data name="DeleteConfirm" xml:space="preserve">
+    <value>Eliminare questo canale di ricezione? I messaggi inviati al suo indirizzo non creeranno più chiamate.</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Il canale di ricezione è stato salvato.</value>
+  </data>
+  <data name="Deleted" xml:space="preserve">
+    <value>Il canale di ricezione è stato eliminato.</value>
+  </data>
+  <data name="Error.InvalidAddress" xml:space="preserve">
+    <value>Questo indirizzo non è valido per questo tipo di canale.</value>
+  </data>
+  <data name="Error.AddressInUse" xml:space="preserve">
+    <value>Questo indirizzo è già usato da un altro canale di ricezione o dall'indirizzo email di invio di un dipartimento.</value>
+  </data>
+  <data name="Error.NameRequired" xml:space="preserve">
+    <value>Inserisci un nome per il canale.</value>
+  </data>
+  <data name="Error.Invalid" xml:space="preserve">
+    <value>Impossibile salvare il canale. Controlla i valori e riprova.</value>
+  </data>
+  <data name="Error.InvalidSenders" xml:space="preserve">
+    <value>Ogni mittente consentito può contenere al massimo 256 caratteri. Il canale non è stato salvato.</value>
+  </data>
+  <data name="Type.Sms" xml:space="preserve">
+    <value>Messaggio di testo (SMS)</value>
+  </data>
+  <data name="Type.Email" xml:space="preserve">
+    <value>Posta elettronica</value>
+  </data>
+  <data name="Type.WhatsApp" xml:space="preserve">
+    <value>WhatsApp</value>
+  </data>
+  <data name="Type.Slack" xml:space="preserve">
+    <value>Slack</value>
+  </data>
+  <data name="Type.Teams" xml:space="preserve">
+    <value>Microsoft Teams</value>
+  </data>
+  <data name="Type.Telegram" xml:space="preserve">
+    <value>Telegram</value>
+  </data>
+  <data name="Type.Discord" xml:space="preserve">
+    <value>Discord</value>
+  </data>
+  <data name="Type.GoogleChat" xml:space="preserve">
+    <value>Google Chat</value>
+  </data>
+  <data name="Type.Webhook" xml:space="preserve">
+    <value>Webhook firmato</value>
+  </data>
+  <data name="Type.Voice" xml:space="preserve">
+    <value>Telefonata (voce)</value>
+  </data>
+  <data name="Help.Sms" xml:space="preserve">
+    <value>Il numero privato della centrale del dipartimento in formato internazionale, ad esempio +17755550100. Quel numero crea il proprio canale quando viene configurato.</value>
+  </data>
+  <data name="Help.Voice" xml:space="preserve">
+    <value>Il numero privato della centrale del dipartimento in formato internazionale. Chi chiama senza essere membro risponde alle domande vocali della ricezione vocale Enhanced AI.</value>
+  </data>
+  <data name="Help.Email" xml:space="preserve">
+    <value>La parte prima della @. Le email inviate a quel nome su {0} diventano chiamate in attesa. Deve essere diversa dall'indirizzo email di invio del tuo dipartimento.</value>
+  </data>
+  <data name="Help.WhatsApp" xml:space="preserve">
+    <value>Il numero mittente WhatsApp in formato internazionale. Il supporto Resgrid registra il mittente sull'account Twilio di Resgrid.</value>
+  </data>
+  <data name="Help.Slack" xml:space="preserve">
+    <value>ID dell'area di lavoro/ID del canale, ad esempio T012ABCDE/C034FGHIJ. Invita l'app Resgrid nel canale con /invite @Resgrid, poi copia l'ID del canale dai dettagli del canale e l'ID dell'area di lavoro dalle informazioni dell'area.</value>
+  </data>
+  <data name="Help.Teams" xml:space="preserve">
+    <value>ID tenant/ID canale, ad esempio 72f988bf-86f1-41af-91ab-2d7cd011db47/19:abc123@thread.tacv2. Aggiungi l'app Resgrid al team e usa Ottieni collegamento al canale: l'ID del canale è la parte 19:…@thread.tacv2 e l'ID tenant è il valore tenantId. Menziona @Resgrid nel canale per inviare una richiesta.</value>
+  </data>
+  <data name="Help.Telegram" xml:space="preserve">
+    <value>L'ID della chat; gli ID dei gruppi sono negativi, ad esempio -1001234567890. Aggiungi il bot Resgrid al gruppo. Con la modalità privacy attiva, inizia la richiesta con /intake o menziona il bot.</value>
+  </data>
+  <data name="Help.Discord" xml:space="preserve">
+    <value>L'ID del canale (attiva la modalità sviluppatore, fai clic destro sul canale, Copia ID canale). Aggiungi l'app Resgrid al server e usa /resgrid nel canale.</value>
+  </data>
+  <data name="Help.GoogleChat" xml:space="preserve">
+    <value>Il nome dello spazio preso dal suo URL, ad esempio spaces/AAAAbCdEfGh. Aggiungi l'app Resgrid allo spazio e menzionala per inviare una richiesta.</value>
+  </data>
+  <data name="Help.Webhook" xml:space="preserve">
+    <value>Resgrid crea l'URL del webhook e il segreto di firma al salvataggio. Qualsiasi sistema in grado di inviare una richiesta HTTPS firmata può creare chiamate.</value>
+  </data>
+  <data name="ChatRules" xml:space="preserve">
+    <value>In una chat collegata ogni nuovo messaggio è una richiesta; le risposte in un thread contano solo se menzionano Resgrid. I messaggi diretti al bot Resgrid funzionano come prima.</value>
+  </data>
+  <data name="WebhookUrl" xml:space="preserve">
+    <value>URL del webhook</value>
+  </data>
+  <data name="WebhookSecret" xml:space="preserve">
+    <value>Segreto di firma</value>
+  </data>
+  <data name="WebhookSecretOnce" xml:space="preserve">
+    <value>Copia ora il segreto. Viene mostrato solo questa volta; rinnovalo se lo perdi.</value>
+  </data>
+  <data name="WebhookNoSecret" xml:space="preserve">
+    <value>Non è impostato alcun segreto di firma, quindi ogni richiesta viene rifiutata. Rinnova il segreto per crearne uno.</value>
+  </data>
+  <data name="RotateSecret" xml:space="preserve">
+    <value>Rinnova segreto</value>
+  </data>
+  <data name="RotateConfirm" xml:space="preserve">
+    <value>Rinnovare il segreto di firma? Il segreto attuale smette subito di funzionare.</value>
+  </data>
+  <data name="WebhookSigning" xml:space="preserve">
+    <value>Firma ogni richiesta con l'intestazione X-Resgrid-Signature: t=&lt;secondi unix&gt;,v1=&lt;HMAC-SHA256 esadecimale di "t.body" con il segreto&gt;. Le richieste più vecchie di {0} secondi vengono rifiutate.</value>
+  </data>
+  <data name="WebhookSample" xml:space="preserve">
+    <value>Richiesta di esempio</value>
+  </data>
+  <data name="WebhookBody" xml:space="preserve">
+    <value>Il corpo è JSON: message (obbligatorio), subject, sender, externalId (una ripetizione con lo stesso ID non crea mai una seconda chiamata), address, latitude e longitude.</value>
+  </data>
+  <data name="Via" xml:space="preserve">
+    <value>tramite {0}: {1}</value>
+  </data>
+  <data name="ViaType" xml:space="preserve">
+    <value>tramite {0}</value>
+  </data>
+  <data name="TextSettingsIntro" xml:space="preserve">
+    <value>I canali di ricezione trasformano SMS, email, messaggi di chat e richieste webhook in chiamate in attesa.</value>
+  </data>
+  <data name="ManageIntakeChannels" xml:space="preserve">
+    <value>Gestisci canali di ricezione</value>
+  </data>
+  <data name="BlockedSenders" xml:space="preserve">
+    <value>Mittenti bloccati</value>
+  </data>
+  <data name="BlockedSendersIntro" xml:space="preserve">
+    <value>Mittenti che un operatore ha scartato come spam. I loro messaggi e le loro chiamate verso i canali di ingresso vengono registrati ma non creano chiamate, e non viene inviato loro nulla. Il blocco termina da solo alla data indicata.</value>
+  </data>
+  <data name="NoBlockedSenders" xml:space="preserve">
+    <value>Nessun mittente è bloccato.</value>
+  </data>
+  <data name="Sender" xml:space="preserve">
+    <value>Mittente</value>
+  </data>
+  <data name="BlockedBy" xml:space="preserve">
+    <value>Bloccato da</value>
+  </data>
+  <data name="BlockedOn" xml:space="preserve">
+    <value>Bloccato il</value>
+  </data>
+  <data name="BlockedUntil" xml:space="preserve">
+    <value>Fino al</value>
+  </data>
+  <data name="BlockedCall" xml:space="preserve">
+    <value>Visualizza chiamata</value>
+  </data>
+  <data name="BlockExpired" xml:space="preserve">
+    <value>Scaduto</value>
+  </data>
+  <data name="BlockedUntilLifted" xml:space="preserve">
+    <value>Fino alla rimozione</value>
+  </data>
+  <data name="Unblock" xml:space="preserve">
+    <value>Sblocca</value>
+  </data>
+  <data name="UnblockConfirm" xml:space="preserve">
+    <value>Sbloccare questo mittente? I suoi messaggi creeranno di nuovo chiamate in attesa.</value>
+  </data>
+  <data name="Unblocked" xml:space="preserve">
+    <value>Il mittente è stato sbloccato.</value>
+  </data>
+  <data name="DismissAsSpam" xml:space="preserve">
+    <value>Scarta come spam</value>
+  </data>
+  <data name="DismissConfirm" xml:space="preserve">
+    <value>Scartare questa chiamata come spam? Viene annullata e nessuno viene avvisato.</value>
+  </data>
+  <data name="DismissBlockSender" xml:space="preserve">
+    <value>Blocca anche il mittente per {0} giorni</value>
+  </data>
+  <data name="DismissBlockSenderForever" xml:space="preserve">
+    <value>Blocca anche il mittente</value>
+  </data>
+  <data name="Dismissed" xml:space="preserve">
+    <value>La chiamata è stata scartata come spam.</value>
+  </data>
+  <data name="DismissedAndBlocked" xml:space="preserve">
+    <value>La chiamata è stata scartata come spam e il mittente è bloccato.</value>
+  </data>
+  <data name="DismissedNotBlockable" xml:space="preserve">
+    <value>La chiamata è stata scartata come spam. Il chiamante ha nascosto il proprio numero, quindi non è stato possibile bloccarlo.</value>
+  </data>
+  <data name="DismissNotPending" xml:space="preserve">
+    <value>Questa chiamata non è più in attesa, quindi non può essere scartata come spam.</value>
+  </data>
+  <data name="Screening.LikelyNotIncident" xml:space="preserve">
+    <value>Enhanced AI: probabilmente non è un intervento</value>
+  </data>
+  <data name="Screening.RepeatSender" xml:space="preserve">
+    <value>Mittente ripetuto: oltre il limite orario</value>
+  </data>
+  <data name="Screening.DismissedAsSpam" xml:space="preserve">
+    <value>Scartata come spam</value>
+  </data>
+</root>

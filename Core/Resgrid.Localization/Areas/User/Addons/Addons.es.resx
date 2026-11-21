@@ -79,6 +79,14 @@
   <data name="EnhancedAiFeature5" xml:space="preserve"><value>Solo modelos de pesos abiertos; los datos privados nunca se envían a IA en la nube</value></data>
   <data name="EnhancedAiFeature6" xml:space="preserve"><value>O use su propia suscripción a un proveedor de IA</value></data>
   <data name="EnhancedAiNote" xml:space="preserve"><value>Facturación mensual por departamento. Incluye un presupuesto mensual de IA sin cargos por exceso. Todos los departamentos tienen preguntas gratuitas de Admin Assist sin él.</value></data>
+  <data name="DedicatedNumberTitle" xml:space="preserve"><value>Private Inbound Dispatch Number</value></data>
+  <data name="DedicatedNumberTagline" xml:space="preserve"><value>El número propio de su departamento para mensajes y llamadas</value></data>
+  <data name="DedicatedNumberFeature1" xml:space="preserve"><value>Un número local para su departamento, elegido por usted</value></data>
+  <data name="DedicatedNumberFeature2" xml:space="preserve"><value>Los mensajes entrantes se convierten en llamadas pendientes para el despacho</value></data>
+  <data name="DedicatedNumberFeature3" xml:space="preserve"><value>Los miembros llaman al mismo número para acceder al menú de voz</value></data>
+  <data name="DedicatedNumberFeature4" xml:space="preserve"><value>La recepción por voz con Enhanced AI convierte las respuestas en llamadas pendientes</value></data>
+  <data name="DedicatedNumberFeature5" xml:space="preserve"><value>Solo entrante: las respuestas llegan desde el número principal de Resgrid</value></data>
+  <data name="DedicatedNumberNote" xml:space="preserve"><value>Facturación mensual por departamento, incluso con un plan anual. Requiere un plan de entidades activo. En EE. UU., números de Estados Unidos y Canadá; en la UE, un número de su país cuando esté disponible.</value></data>
   <data name="AdpTitle" xml:space="preserve"><value>Advanced Data Protection</value></data>
   <data name="AdpTagline" xml:space="preserve"><value>Cifrado y acceso reforzado para datos sensibles</value></data>
   <data name="AdpFeature1" xml:space="preserve"><value>Cifrado a nivel de campo para datos de salud y datos personales</value></data>

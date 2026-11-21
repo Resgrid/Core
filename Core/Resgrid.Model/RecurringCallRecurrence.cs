@@ -195,6 +195,8 @@ namespace Resgrid.Model
 				ReferenceId = series.ReferenceNumber,
 				MapPage = series.MapPage,
 				DestinationPoiId = series.DestinationPoiId,
+				DestinationAddress = series.DestinationPoiId.HasValue ? null : series.DestinationAddress,
+				DestinationGeolocation = series.DestinationPoiId.HasValue ? null : series.DestinationGeoLocationData,
 				HasDispatchList = series.HasDispatchTargets,
 				// Every call it creates has a dispatch time.
 				DispatchOn = series.StartsOn

@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Private Inbound Dispatch Number</value>
+  </data>
+  <data name="Intro" xml:space="preserve">
+    <value>Ο δικός σας αριθμός τηλεφώνου για το τμήμα. Τα SMS προς αυτόν γίνονται εκκρεμείς κλήσεις που εξετάζουν οι συντονιστές, και τα μέλη μπορούν να τον καλούν για το φωνητικό μενού.</value>
+  </data>
+  <data name="AddonTitle" xml:space="preserve">
+    <value>Πρόσθετο</value>
+  </data>
+  <data name="AddonActive" xml:space="preserve">
+    <value>Το τμήμα σας διαθέτει το πρόσθετο Private Inbound Dispatch Number.</value>
+  </data>
+  <data name="ManageBilling" xml:space="preserve">
+    <value>Διαχείριση του πρόσθετου</value>
+  </data>
+  <data name="RequiresEntityPlan" xml:space="preserve">
+    <value>Το πρόσθετο Private Inbound Dispatch Number διατίθεται με ενεργό πρόγραμμα οντοτήτων. Αλλάξτε πρόγραμμα στη σελίδα συνδρομής για να το προσθέσετε.</value>
+  </data>
+  <data name="ViewPlans" xml:space="preserve">
+    <value>Προβολή προγραμμάτων</value>
+  </data>
+  <data name="NotOffered" xml:space="preserve">
+    <value>Το πρόσθετο Private Inbound Dispatch Number δεν είναι ακόμη διαθέσιμο για το τμήμα σας.</value>
+  </data>
+  <data name="BuyPrompt" xml:space="preserve">
+    <value>Αγοράστε το πρόσθετο Private Inbound Dispatch Number για να επιλέξετε και να ενεργοποιήσετε έναν αριθμό.</value>
+  </data>
+  <data name="BuyAddon" xml:space="preserve">
+    <value>Αγορά του πρόσθετου</value>
+  </data>
+  <data name="ActiveTitle" xml:space="preserve">
+    <value>Ο αριθμός σας</value>
+  </data>
+  <data name="ProvisionedOn" xml:space="preserve">
+    <value>Ενεργοποιήθηκε στις {0}</value>
+  </data>
+  <data name="AddonEnding" xml:space="preserve">
+    <value>Το πρόσθετο δεν είναι πλέον ενεργό. Ο αριθμός λειτουργεί για λίγο ακόμη και μετά σταματά να δέχεται SMS και κλήσεις μέχρι να ανανεωθεί το πρόσθετο.</value>
+  </data>
+  <data name="SmsIntake" xml:space="preserve">
+    <value>Δημιουργία εκκρεμών κλήσεων από SMS</value>
+  </data>
+  <data name="SmsIntakeHelp" xml:space="preserve">
+    <value>Τα SMS προς αυτόν τον αριθμό γίνονται εκκρεμείς κλήσεις. Ο αριθμός μόνο λαμβάνει· οι απαντήσεις έρχονται από τον κύριο αριθμό του Resgrid.</value>
+  </data>
+  <data name="VoiceIntake" xml:space="preserve">
+    <value>Λήψη αναφορών με φωνή</value>
+  </data>
+  <data name="VoiceIntakeHelp" xml:space="preserve">
+    <value>Όσοι καλούν χωρίς να είναι μέλη απαντούν σε καθοδηγούμενες ερωτήσεις και δημιουργείται εκκρεμής κλήση. Απαιτεί το πρόσθετο Enhanced AI με φωνητική λήψη AI.</value>
+  </data>
+  <data name="VoiceIntakeUnavailable" xml:space="preserve">
+    <value>Η φωνητική λήψη AI δεν είναι ακόμη διαθέσιμη για το τμήμα σας. Η ρύθμιση θα ισχύσει μόλις γίνει.</value>
+  </data>
+  <data name="SaveIntake" xml:space="preserve">
+    <value>Αποθήκευση</value>
+  </data>
+  <data name="ReleaseTitle" xml:space="preserve">
+    <value>Αποδέσμευση του αριθμού</value>
+  </data>
+  <data name="ReleaseHelp" xml:space="preserve">
+    <value>Επιστρέφει αμέσως τον αριθμό στον πάροχο. Τα SMS και οι κλήσεις προς αυτόν σταματούν και ο αριθμός δεν μπορεί να ανακτηθεί.</value>
+  </data>
+  <data name="ReleaseConfirm" xml:space="preserve">
+    <value>Καταλαβαίνω ότι ο αριθμός δεν μπορεί να ανακτηθεί</value>
+  </data>
+  <data name="Release" xml:space="preserve">
+    <value>Αποδέσμευση αριθμού</value>
+  </data>
+  <data name="LapsedTitle" xml:space="preserve">
+    <value>Αριθμός σε αναμονή</value>
+  </data>
+  <data name="LapsedText" xml:space="preserve">
+    <value>Ο {0} σταμάτησε να δέχεται SMS και κλήσεις όταν έληξε το πρόσθετο. Θα αποδεσμευτεί στις {1}, εκτός αν ανανεωθεί το πρόσθετο.</value>
+  </data>
+  <data name="Reactivate" xml:space="preserve">
+    <value>Επαναφορά του αριθμού σε λειτουργία</value>
+  </data>
+  <data name="ReleaseNow" xml:space="preserve">
+    <value>Αποδέσμευση τώρα</value>
+  </data>
+  <data name="ProvisioningText" xml:space="preserve">
+    <value>Η αγορά του {0} βρίσκεται σε εξέλιξη. Ανανεώστε αυτή τη σελίδα σε ένα λεπτό.</value>
+  </data>
+  <data name="LastFailure" xml:space="preserve">
+    <value>Η τελευταία αγορά του {0} δεν ολοκληρώθηκε. Επιλέξτε άλλον αριθμό.</value>
+  </data>
+  <data name="SearchTitle" xml:space="preserve">
+    <value>Επιλογή αριθμού</value>
+  </data>
+  <data name="NoCountries" xml:space="preserve">
+    <value>Δεν υπάρχουν ακόμη διαθέσιμοι αριθμοί στη χώρα του τμήματός σας. Επικοινωνήστε με την υποστήριξη του Resgrid.</value>
+  </data>
+  <data name="Country" xml:space="preserve">
+    <value>Χώρα</value>
+  </data>
+  <data name="AreaCode" xml:space="preserve">
+    <value>Κωδικός περιοχής</value>
+  </data>
+  <data name="Contains" xml:space="preserve">
+    <value>Περιέχει</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Αναζήτηση</value>
+  </data>
+  <data name="SearchHelp" xml:space="preserve">
+    <value>Οι κωδικοί περιοχής ισχύουν για τις ΗΠΑ και τον Καναδά. Χρησιμοποιήστε το Περιέχει για ψηφία που πρέπει να περιέχει ο αριθμός· το * αντιστοιχεί σε οποιοδήποτε ψηφίο.</value>
+  </data>
+  <data name="NoResults" xml:space="preserve">
+    <value>Δεν βρέθηκαν αριθμοί. Δοκιμάστε άλλον κωδικό περιοχής ή λιγότερα ψηφία.</value>
+  </data>
+  <data name="ResultsNumber" xml:space="preserve">
+    <value>Αριθμός</value>
+  </data>
+  <data name="ResultsLocation" xml:space="preserve">
+    <value>Τοποθεσία</value>
+  </data>
+  <data name="ProvisionConfirm" xml:space="preserve">
+    <value>Ενεργοποίηση του {0} ως αριθμού του τμήματός σας;</value>
+  </data>
+  <data name="Provision" xml:space="preserve">
+    <value>Ενεργοποίηση</value>
+  </data>
+  <data name="Provisioned" xml:space="preserve">
+    <value>Ο {0} είναι πλέον ο αριθμός του τμήματός σας.</value>
+  </data>
+  <data name="ProvisionFailed" xml:space="preserve">
+    <value>Ο πάροχος δεν μπόρεσε να διαθέσει αυτόν τον αριθμό. Επιλέξτε άλλον.</value>
+  </data>
+  <data name="IntakeSaved" xml:space="preserve">
+    <value>Οι ρυθμίσεις λήψης αποθηκεύτηκαν.</value>
+  </data>
+  <data name="ReleaseConfirmRequired" xml:space="preserve">
+    <value>Επιβεβαιώστε ότι θέλετε να αποδεσμεύσετε τον αριθμό.</value>
+  </data>
+  <data name="Released" xml:space="preserve">
+    <value>Ο αριθμός αποδεσμεύτηκε.</value>
+  </data>
+  <data name="ReleaseFailed" xml:space="preserve">
+    <value>Ο πάροχος δεν αποδέσμευσε τον αριθμό. Δοκιμάστε ξανά αργότερα.</value>
+  </data>
+  <data name="Reactivated" xml:space="preserve">
+    <value>Ο αριθμός λειτουργεί ξανά.</value>
+  </data>
+  <data name="Error.AddonRequired" xml:space="preserve">
+    <value>Το τμήμα σας χρειάζεται πρώτα το πρόσθετο Private Inbound Dispatch Number.</value>
+  </data>
+  <data name="Error.AlreadyHasNumber" xml:space="preserve">
+    <value>Το τμήμα σας έχει ήδη αριθμό.</value>
+  </data>
+  <data name="Error.CountryNotAllowed" xml:space="preserve">
+    <value>Οι αριθμοί σε αυτή τη χώρα δεν είναι διαθέσιμοι για το τμήμα σας.</value>
+  </data>
+  <data name="Error.InvalidNumber" xml:space="preserve">
+    <value>Ελέγξτε τον αριθμό, τον κωδικό περιοχής και τα ψηφία και δοκιμάστε ξανά.</value>
+  </data>
+  <data name="Error.NumberUnavailable" xml:space="preserve">
+    <value>Αυτός ο αριθμός δεν είναι πλέον διαθέσιμος. Επιλέξτε άλλον.</value>
+  </data>
+  <data name="Error.NoActiveNumber" xml:space="preserve">
+    <value>Το τμήμα σας δεν έχει αριθμό για αλλαγή.</value>
+  </data>
+  <data name="Error.CarrierUnavailable" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η επικοινωνία με τον πάροχο. Δοκιμάστε ξανά σε λίγα λεπτά.</value>
+  </data>
+  <data name="BillingInboundOnlyNote" xml:space="preserve">
+    <value>Ο αριθμός μόνο λαμβάνει SMS: γίνονται εκκρεμείς κλήσεις και οι απαντήσεις έρχονται από τον κύριο αριθμό του Resgrid.</value>
+  </data>
+  <data name="BillingLapseNote" xml:space="preserve">
+    <value>Αν λήξει το πρόσθετο, ο αριθμός σταματά να δέχεται SMS και κλήσεις και αποδεσμεύεται {0} ημέρες αργότερα, εκτός αν το ανανεώσετε.</value>
+  </data>
+  <data name="BillingVoiceNote" xml:space="preserve">
+    <value>Η φωνητική λήψη για όσους καλούν χωρίς να είναι μέλη απαιτεί το πρόσθετο Enhanced AI.</value>
+  </data>
+  <data name="ManageNumber" xml:space="preserve">
+    <value>Διαχείριση του αριθμού σας</value>
+  </data>
+  <data name="TextSettingsTitle" xml:space="preserve">
+    <value>Ιδιωτικός εισερχόμενος αριθμός διεκπεραίωσης</value>
+  </data>
+  <data name="TextSettingsActive" xml:space="preserve">
+    <value>δέχεται εισερχόμενα SMS για το τμήμα σας.</value>
+  </data>
+  <data name="TextSettingsSmsOff" xml:space="preserve">
+    <value>είναι ο αριθμός του τμήματός σας· τα SMS προς αυτόν δεν δημιουργούν κλήσεις.</value>
+  </data>
+  <data name="TextSettingsLapsed" xml:space="preserve">
+    <value>Ο ιδιωτικός εισερχόμενος αριθμός διεκπεραίωσής σας {0} είναι σε αναμονή έως {1}.</value>
+  </data>
+  <data name="TextSettingsNone" xml:space="preserve">
+    <value>Το τμήμα σας δεν έχει δικό του αριθμό. Αποκτήστε έναν με το πρόσθετο Private Inbound Dispatch Number.</value>
+  </data>
+  <data name="TextSettingsLink" xml:space="preserve">
+    <value>Διαχείριση ιδιωτικού εισερχόμενου αριθμού διεκπεραίωσης</value>
+  </data>
+  <data name="TextSettingsInboundOnly" xml:space="preserve">
+    <value>Οι αριθμοί τμημάτων μόνο λαμβάνουν SMS· οι απαντήσεις έρχονται από τον κύριο αριθμό του Resgrid.</value>
+  </data>
+  <data name="StopTitle" xml:space="preserve">
+    <value>Η πληρωμή για αυτόν τον αριθμό έχει σταματήσει</value>
+  </data>
+  <data name="StopAddon" xml:space="preserve">
+    <value>Η πληρωμή του πρόσθετου Private Inbound Dispatch Number σταμάτησε στις {0} (ακυρώθηκε ή δεν πληρώθηκε).</value>
+  </data>
+  <data name="StopPlan" xml:space="preserve">
+    <value>Από τις {0} το πρόγραμμα του τμήματος δεν είναι πλέον ενεργό επί πληρωμή πρόγραμμα, το οποίο απαιτεί το πρόσθετο Private Inbound Dispatch Number.</value>
+  </data>
+  <data name="StopIntakeOn" xml:space="preserve">
+    <value>Ο {0} θα σταματήσει να δέχεται SMS και κλήσεις στις {1}.</value>
+  </data>
+  <data name="StopIntakeStoppedOn" xml:space="preserve">
+    <value>Ο {0} σταμάτησε να δέχεται SMS και κλήσεις στις {1}.</value>
+  </data>
+  <data name="StopIntakeStopped" xml:space="preserve">
+    <value>Ο {0} δεν δέχεται πλέον SMS και κλήσεις.</value>
+  </data>
+  <data name="StopReleaseOn" xml:space="preserve">
+    <value>Ο αριθμός θα επιστραφεί στον πάροχο στις {0}. Ανανεώστε το πρόσθετο (και το πρόγραμμά σας) πριν από τότε για να τον κρατήσετε.</value>
+  </data>
+  <data name="StopWarningsSent" xml:space="preserve">
+    <value>Προειδοποιήσεις που στάλθηκαν στους διαχειριστές του τμήματος: {0}.</value>
+  </data>
+  <data name="StopWarningsNone" xml:space="preserve">
+    <value>Δεν έχει σταλεί ακόμη καμία προειδοποίηση στους διαχειριστές του τμήματος.</value>
+  </data>
+  <data name="StopLastWarning" xml:space="preserve">
+    <value>Τελευταία προειδοποίηση: {0}.</value>
+  </data>
+  <data name="Warning.Stopped" xml:space="preserve">
+    <value>διακοπή πληρωμής</value>
+  </data>
+  <data name="Warning.Days" xml:space="preserve">
+    <value>{0} ημέρες πριν από την αποδέσμευση</value>
+  </data>
+  <data name="Warning.OneDay" xml:space="preserve">
+    <value>1 ημέρα πριν από την αποδέσμευση</value>
+  </data>
+  <data name="Region" xml:space="preserve">
+    <value>Πολιτεία / επαρχία</value>
+  </data>
+  <data name="RegionAny" xml:space="preserve">
+    <value>Οποιαδήποτε</value>
+  </data>
+  <data name="City" xml:space="preserve">
+    <value>Πόλη</value>
+  </data>
+  <data name="PostalCode" xml:space="preserve">
+    <value>Ταχυδρομικός κώδικας</value>
+  </data>
+  <data name="NearDepartment" xml:space="preserve">
+    <value>Κοντά στη διεύθυνση του τμήματος</value>
+  </data>
+  <data name="NearDistance" xml:space="preserve">
+    <value>Σε ακτίνα</value>
+  </data>
+  <data name="DistanceMiles" xml:space="preserve">
+    <value>{0} μίλια ({1} χλμ.)</value>
+  </data>
+  <data name="SearchFiltersHelp" xml:space="preserve">
+    <value>Οι αναζητήσεις κατά πολιτεία / επαρχία, ταχυδρομικό κώδικα και κοντά στο τμήμα ισχύουν επίσης μόνο για τις ΗΠΑ και τον Καναδά. Κάθε αποτέλεσμα μπορεί να δέχεται και SMS και κλήσεις.</value>
+  </data>
+  <data name="ResultsType" xml:space="preserve">
+    <value>Τύπος αριθμού</value>
+  </data>
+  <data name="NumberType.Local" xml:space="preserve">
+    <value>Τοπικός αριθμός</value>
+  </data>
+  <data name="NumberType.Mobile" xml:space="preserve">
+    <value>Αριθμός κινητού</value>
+  </data>
+  <data name="Error.DepartmentLocationUnknown" xml:space="preserve">
+    <value>Η τοποθεσία του τμήματος δεν είναι γνωστή. Ορίστε τη διεύθυνση ή το κέντρο χάρτη του τμήματος ή αναζητήστε κατά πολιτεία, πόλη ή ταχυδρομικό κώδικα.</value>
+  </data>
+  <data name="Error.PlanRequired" xml:space="preserve">
+    <value>Το πρόσθετο Private Inbound Dispatch Number απαιτεί ενεργό επί πληρωμή πρόγραμμα. Ανανεώστε πρώτα το πρόγραμμα του τμήματος.</value>
+  </data>
+</root>

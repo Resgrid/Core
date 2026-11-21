@@ -261,7 +261,7 @@ namespace Resgrid.Tests.Chatbot
 					context.Request.Headers["X-Signature-Ed25519"] = signed.Signature;
 					break;
 			}
-			return (new ChatbotPlatformsController(queue.Object, registry.Object, new ChatbotJwtValidator())
+			return (new ChatbotPlatformsController(queue.Object, registry.Object, new ChatbotJwtValidator(), Mock.Of<Resgrid.Model.Services.IIntakeChannelsService>(), Mock.Of<Resgrid.Model.Services.IIntakeService>())
 				{ ControllerContext = new ControllerContext { HttpContext = context } }, messages);
 		}
 

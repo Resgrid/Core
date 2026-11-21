@@ -52,6 +52,14 @@ namespace Resgrid.Tests.Localization
 			"Areas/User/Mapping/DestinationRules",
 			// Recurring Calls and the scheduled calls calendar (2026-11-17) shipped fully translated.
 			"Areas/User/Dispatch/RecurringCalls",
+			// Enhanced AI destination advice on View Call / Update Call (2026-11-19) shipped fully translated.
+			"Areas/User/Dispatch/DestinationAdvice",
+			// Department -> Dedicated Number and its add-on billing notes (2026-11-19) shipped fully translated.
+			"Areas/User/Department/DedicatedNumber",
+			// Department -> Intake Channels, the webhook page and the "via {channel}" call source (2026-11-19) shipped fully translated.
+			"Areas/User/Department/IntakeChannels",
+			// Intake SMS conversation panel on View Call / Update Call (2026-11-20) shipped fully translated.
+			"Areas/User/Dispatch/IntakeConversation",
 		};
 
 		private static string LocalizationRoot()
@@ -98,6 +106,11 @@ namespace Resgrid.Tests.Localization
 			"DashboardWidgets|W.incidentCommand.active.Commander", "DashboardWidgets|W.inventory.alerts.TimesCount",
 			"DashboardWidgets|W.personnel.staffingSummary.GroupAvailable", "DashboardWidgets|W.records.legalHolds.Period",
 			"DashboardWidgets|W.shifts.coverage.Changes", "DashboardWidgets|W.voice.ptt.Title",
+			// Intake channels (2026-11-19): chat platform product names and the Enhanced AI add-on name.
+			"IntakeChannels|ModeEnhancedAi", "IntakeChannels|Type.WhatsApp", "IntakeChannels|Type.Slack", "IntakeChannels|Type.Teams",
+			"IntakeChannels|Type.Telegram", "IntakeChannels|Type.Discord", "IntakeChannels|Type.GoogleChat",
+			// The Private Inbound Dispatch Number add-on name (renamed from Dedicated Number 2026-11-20), kept in English like the other add-ons.
+			"DashboardWidgets|W.admin.plan.Addon.DedicatedNumber", "DedicatedNumber|PageTitle",
 		};
 
 		private static readonly HashSet<string> KnownIdentical = new HashSet<string>(StringComparer.Ordinal)

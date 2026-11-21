@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Title" xml:space="preserve">
+    <value>SMS-розмова</value>
+  </data>
+  <data name="StateOpen" xml:space="preserve">
+    <value>Відкрита</value>
+  </data>
+  <data name="StateClosed" xml:space="preserve">
+    <value>Завершена</value>
+  </data>
+  <data name="HandlerAssistant" xml:space="preserve">
+    <value>ШІ-асистент ставить запитання відправнику</value>
+  </data>
+  <data name="HandlerUnassisted" xml:space="preserve">
+    <value>Очікування відповіді диспетчера</value>
+  </data>
+  <data name="HandlerDispatcher" xml:space="preserve">
+    <value>З'єднано з {0}</value>
+  </data>
+  <data name="HandlerDispatcherYou" xml:space="preserve">
+    <value>Ви з'єднані</value>
+  </data>
+  <data name="Texter" xml:space="preserve">
+    <value>Відправник: {0}</value>
+  </data>
+  <data name="OptedOut" xml:space="preserve">
+    <value>Відправник відмовився від повідомлень (STOP). Надсилати більше нічого не можна.</value>
+  </data>
+  <data name="ClosedReason" xml:space="preserve">
+    <value>Завершено: {0}</value>
+  </data>
+  <data name="AuthorCaller" xml:space="preserve">
+    <value>Абонент</value>
+  </data>
+  <data name="AuthorAssistant" xml:space="preserve">
+    <value>ШІ-асистент</value>
+  </data>
+  <data name="AuthorSystem" xml:space="preserve">
+    <value>Автоматичне повідомлення</value>
+  </data>
+  <data name="AuthorDispatcher" xml:space="preserve">
+    <value>Диспетчер</value>
+  </data>
+  <data name="StatusQueued" xml:space="preserve">
+    <value>Надсилання</value>
+  </data>
+  <data name="StatusSent" xml:space="preserve">
+    <value>Надіслано</value>
+  </data>
+  <data name="StatusFailed" xml:space="preserve">
+    <value>Не доставлено</value>
+  </data>
+  <data name="TextUnavailable" xml:space="preserve">
+    <value>(текст недоступний)</value>
+  </data>
+  <data name="NoMessages" xml:space="preserve">
+    <value>Повідомлень ще немає.</value>
+  </data>
+  <data name="Take" xml:space="preserve">
+    <value>Прийняти розмову</value>
+  </data>
+  <data name="TakeOverConfirm" xml:space="preserve">
+    <value>До цієї розмови підключений інший диспетчер. Перейняти її?</value>
+  </data>
+  <data name="Release" xml:space="preserve">
+    <value>Звільнити</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Завершити</value>
+  </data>
+  <data name="CloseConfirm" xml:space="preserve">
+    <value>Завершити цю SMS-розмову? Виклик залишиться відкритим.</value>
+  </data>
+  <data name="NotifyTexter" xml:space="preserve">
+    <value>Повідомити відправника</value>
+  </data>
+  <data name="Send" xml:space="preserve">
+    <value>Надіслати</value>
+  </data>
+  <data name="SendPlaceholder" xml:space="preserve">
+    <value>Напишіть абоненту…</value>
+  </data>
+  <data name="EnterToSend" xml:space="preserve">
+    <value>Enter надсилає, Shift+Enter додає рядок.</value>
+  </data>
+  <data name="FromResgridNumber" xml:space="preserve">
+    <value>Повідомлення надходять абоненту з номера Resgrid, а не з номера підрозділу.</value>
+  </data>
+  <data name="Outcome.NotFound" xml:space="preserve">
+    <value>Розмову не знайдено.</value>
+  </data>
+  <data name="Outcome.Closed" xml:space="preserve">
+    <value>Цю розмову завершено.</value>
+  </data>
+  <data name="Outcome.HeldByAnotherDispatcher" xml:space="preserve">
+    <value>До цієї розмови підключений інший диспетчер.</value>
+  </data>
+  <data name="Outcome.OptedOut" xml:space="preserve">
+    <value>Відправник відмовився від повідомлень. Надіслати нічого не можна.</value>
+  </data>
+  <data name="Outcome.SendFailed" xml:space="preserve">
+    <value>Не вдалося доставити повідомлення.</value>
+  </data>
+  <data name="Outcome.InvalidMessage" xml:space="preserve">
+    <value>Введіть повідомлення довжиною від 1 до {0} символів.</value>
+  </data>
+  <data name="Failed" xml:space="preserve">
+    <value>Запит не виконано. Спробуйте ще раз.</value>
+  </data>
+  <data name="CloseReason.OptedOut" xml:space="preserve">
+    <value>Відправник відмовився від повідомлень</value>
+  </data>
+  <data name="CloseReason.Idle" xml:space="preserve">
+    <value>Тривалий час без повідомлень</value>
+  </data>
+  <data name="CloseReason.CallClosed" xml:space="preserve">
+    <value>Виклик закрито</value>
+  </data>
+</root>

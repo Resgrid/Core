@@ -1,0 +1,9 @@
+@model Resgrid.Web.Areas.User.Models.Subscription.AddonBillingView
+@{ ViewBag.Title = "Resgrid | " + Model.Title; }
+@section Styles {
+    <link rel="stylesheet" href="~/css/addons.css" asp-append-version="true" />
+}
+<partial name="_AddonBilling" model="Model" />
+@section Scripts {
+    <partial name="_AddonBillingScripts" model="Model" />
+}

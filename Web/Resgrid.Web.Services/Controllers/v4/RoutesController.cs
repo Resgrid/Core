@@ -30,11 +30,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IRoutePlanRoutingService _routePlanRoutingService;
 		private readonly IUnitsService _unitsService;
 		private readonly IDepartmentGroupsService _departmentGroupsService;
+		private readonly ICallsService _callsService;
+		private readonly ICallRoutesService _callRoutesService;
 
 		public RoutesController(IRouteService routeService, IContactsService contactsService,
 			IProtectedReadService protectedReadService, Model.Services.IAuthorizationService authorizationService,
-			IRoutePlanRoutingService routePlanRoutingService, IUnitsService unitsService, IDepartmentGroupsService departmentGroupsService)
+			IRoutePlanRoutingService routePlanRoutingService, IUnitsService unitsService, IDepartmentGroupsService departmentGroupsService,
+			ICallsService callsService, ICallRoutesService callRoutesService)
 		{
+			_callsService = callsService;
+			_callRoutesService = callRoutesService;
 			_routeService = routeService;
 			_contactsService = contactsService;
 			_protectedReadService = protectedReadService;
@@ -126,7 +131,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// Gets a single route plan with stops and schedules
 		/// </summary>
 		[HttpGet("GetRoutePlan/{id}")]
-		[Authorize(Policy = ResgridResources.Route_View)]
+		[Authorize(Policy = ResgridResources.Call_View)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public async Task<ActionResult<GetRoutePlanResult>> GetRoutePlan(string id, CancellationToken cancellationToken)
@@ -134,6 +139,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var plan = await _routeService.GetRoutePlanByIdAsync(id);
 			if (plan == null || plan.DepartmentId != DepartmentId)
 				return NotFound();
+
+			// Route_View reads any plan; anyone who works calls may preview an active plan a call can follow (M0322).
+			if (!CanReadPlan(plan))
+				return Unauthorized();
 
 			// A stale or never-generated route is regenerated on read (plan section 10.4); failures keep the stored values.
 			var route = await CurrentRouteAsync(id, cancellationToken);
@@ -395,10 +404,22 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (unit == null || unit.DepartmentId != DepartmentId)
 				return NotFound();
 
+			// As on the web Start Route page: only an active plan can be run.
+			if (plan.IsDeleted || plan.RouteStatus != (int)RouteStatus.Active)
+				return BadRequest("The route plan is not active.");
+
 			// Planned ETAs come from the stored route, so bring it up to date first (best effort).
 			await CurrentRouteAsync(input.RoutePlanId, CancellationToken.None);
 
-			var instance = await _routeService.StartRouteAsync(input.RoutePlanId, input.UnitId, UserId);
+			RouteInstance instance;
+			try
+			{
+				instance = await _routeService.StartRouteAsync(input.RoutePlanId, input.UnitId, UserId);
+			}
+			catch (RouteInProgressException ex)
+			{
+				return RouteInProgress(ex);
+			}
 
 			var result = new GetRouteInstanceResult();
 			result.Data = MapInstanceToResult(instance);
@@ -410,13 +431,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// Ends a route instance
 		/// </summary>
 		[HttpPost("EndRoute")]
-		[Authorize(Policy = ResgridResources.Route_Update)]
+		[Authorize(Policy = ResgridResources.Call_View)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public async Task<ActionResult<GetRouteInstanceResult>> EndRoute([FromBody] EndRouteInput input)
 		{
-			if (await InstanceInDepartmentAsync(input.RouteInstanceId) == null)
+			var target = await InstanceInDepartmentAsync(input.RouteInstanceId);
+			if (target == null)
 				return NotFound();
+
+			if (!await CanOperateInstanceAsync(target))
+				return Unauthorized();
 
 			var instance = await _routeService.EndRouteAsync(input.RouteInstanceId, UserId);
 
@@ -430,13 +455,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// Pauses a route instance
 		/// </summary>
 		[HttpPost("PauseRoute")]
-		[Authorize(Policy = ResgridResources.Route_Update)]
+		[Authorize(Policy = ResgridResources.Call_View)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public async Task<ActionResult<GetRouteInstanceResult>> PauseRoute([FromBody] PauseRouteInput input)
 		{
-			if (await InstanceInDepartmentAsync(input.RouteInstanceId) == null)
+			var target = await InstanceInDepartmentAsync(input.RouteInstanceId);
+			if (target == null)
 				return NotFound();
+
+			if (!await CanOperateInstanceAsync(target))
+				return Unauthorized();
 
 			var instance = await _routeService.PauseRouteAsync(input.RouteInstanceId, UserId);
 
@@ -450,13 +479,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// Resumes a paused route instance
 		/// </summary>
 		[HttpPost("ResumeRoute")]
-		[Authorize(Policy = ResgridResources.Route_Update)]
+		[Authorize(Policy = ResgridResources.Call_View)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public async Task<ActionResult<GetRouteInstanceResult>> ResumeRoute([FromBody] ResumeRouteInput input)
 		{
-			if (await InstanceInDepartmentAsync(input.RouteInstanceId) == null)
+			var target = await InstanceInDepartmentAsync(input.RouteInstanceId);
+			if (target == null)
 				return NotFound();
+
+			if (!await CanOperateInstanceAsync(target))
+				return Unauthorized();
 
 			var instance = await _routeService.ResumeRouteAsync(input.RouteInstanceId, UserId);
 
@@ -470,13 +503,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// Cancels a route instance
 		/// </summary>
 		[HttpPost("CancelRoute")]
-		[Authorize(Policy = ResgridResources.Route_Update)]
+		[Authorize(Policy = ResgridResources.Call_View)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public async Task<ActionResult<GetRouteInstanceResult>> CancelRoute([FromBody] CancelRouteInput input)
 		{
-			if (await InstanceInDepartmentAsync(input.RouteInstanceId) == null)
+			var target = await InstanceInDepartmentAsync(input.RouteInstanceId);
+			if (target == null)
 				return NotFound();
+
+			if (!await CanOperateInstanceAsync(target))
+				return Unauthorized();
 
 			var instance = await _routeService.CancelRouteAsync(input.RouteInstanceId, UserId, input.Reason);
 
@@ -491,7 +528,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// in-progress one wins); without it only an in-progress instance is returned, as before.
 		/// </summary>
 		[HttpGet("GetActiveRouteForUnit/{unitId}")]
-		[Authorize(Policy = ResgridResources.Route_View)]
+		[Authorize(Policy = ResgridResources.Call_View)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public async Task<ActionResult<GetRouteProgressResult>> GetActiveRouteForUnit(int unitId, [FromQuery] bool includePaused = false)
@@ -502,7 +539,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (instance == null || instance.DepartmentId != DepartmentId)
 				return NotFound();
 
-			var result = await BuildProgressResult(instance);
+			if (!await CanReadInstanceAsync(instance))
+				return NotFound();
+
+			var result = await BuildProgressResult(instance, await CanSeeRunLocationsAsync(instance));
 			ResponseHelper.PopulateV4ResponseData(result);
 			return Ok(result);
 		}
@@ -560,7 +600,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// Gets progress for a route instance
 		/// </summary>
 		[HttpGet("GetRouteProgress/{instanceId}")]
-		[Authorize(Policy = ResgridResources.Route_View)]
+		[Authorize(Policy = ResgridResources.Call_View)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public async Task<ActionResult<GetRouteProgressResult>> GetRouteProgress(string instanceId)
@@ -569,7 +609,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (instance == null || instance.DepartmentId != DepartmentId)
 				return NotFound();
 
-			var result = await BuildProgressResult(instance);
+			if (!await CanReadInstanceAsync(instance))
+				return Unauthorized();
+
+			var result = await BuildProgressResult(instance, await CanSeeRunLocationsAsync(instance));
 			ResponseHelper.PopulateV4ResponseData(result);
 			return Ok(result);
 		}
@@ -578,13 +621,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// Check in at a stop
 		/// </summary>
 		[HttpPost("CheckInAtStop")]
-		[Authorize(Policy = ResgridResources.Route_Update)]
+		[Authorize(Policy = ResgridResources.Call_View)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public async Task<ActionResult> CheckInAtStop([FromBody] CheckInInput input)
 		{
-			if (!await InstanceStopInDepartmentAsync(input.RouteInstanceStopId))
+			var target = await InstanceForStopAsync(input.RouteInstanceStopId);
+			if (target == null)
 				return NotFound();
+
+			if (!await CanOperateInstanceAsync(target))
+				return Unauthorized();
 
 			await _routeService.CheckInAtStopAsync(input.RouteInstanceStopId, input.Latitude, input.Longitude, RouteStopCheckInType.Manual);
 			return Ok();
@@ -594,14 +641,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// Check out from a stop. Latitude and longitude are optional.
 		/// </summary>
 		[HttpPost("CheckOutFromStop")]
-		[Authorize(Policy = ResgridResources.Route_Update)]
+		[Authorize(Policy = ResgridResources.Call_View)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public async Task<ActionResult> CheckOutFromStop([FromBody] CheckOutInput input)
 		{
 			// RD10: the stop must belong to a route of the caller's department.
-			if (!await InstanceStopInDepartmentAsync(input.RouteInstanceStopId))
+			var target = await InstanceForStopAsync(input.RouteInstanceStopId);
+			if (target == null)
 				return NotFound();
+
+			if (!await CanOperateInstanceAsync(target))
+				return Unauthorized();
 
 			await _routeService.CheckOutFromStopAsync(input.RouteInstanceStopId, input.Latitude, input.Longitude);
 			return Ok();
@@ -611,13 +662,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// Skip a stop with reason
 		/// </summary>
 		[HttpPost("SkipStop")]
-		[Authorize(Policy = ResgridResources.Route_Update)]
+		[Authorize(Policy = ResgridResources.Call_View)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public async Task<ActionResult> SkipStop([FromBody] SkipStopInput input)
 		{
-			if (!await InstanceStopInDepartmentAsync(input.RouteInstanceStopId))
+			var target = await InstanceForStopAsync(input.RouteInstanceStopId);
+			if (target == null)
 				return NotFound();
+
+			if (!await CanOperateInstanceAsync(target))
+				return Unauthorized();
 
 			await _routeService.SkipStopAsync(input.RouteInstanceStopId, input.Reason);
 			return Ok();
@@ -627,7 +682,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// Auto check-in from geofence proximity
 		/// </summary>
 		[HttpPost("GeofenceCheckIn")]
-		[Authorize(Policy = ResgridResources.Route_Update)]
+		[Authorize(Policy = ResgridResources.Call_View)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public async Task<ActionResult> GeofenceCheckIn([FromBody] GeofenceCheckInInput input)
@@ -639,6 +694,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var stop = await _routeService.CheckGeofenceProximityAsync(input.UnitId, input.Latitude, input.Longitude);
 			if (stop != null)
 			{
+				var target = await InstanceInDepartmentAsync(stop.RouteInstanceId);
+				if (target == null)
+					return NotFound();
+
+				if (!await CanOperateInstanceAsync(target))
+					return Unauthorized();
+
 				await _routeService.CheckInAtStopAsync(stop.RouteInstanceStopId, input.Latitude, input.Longitude, RouteStopCheckInType.Geofence);
 			}
 
@@ -649,7 +711,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// Records a deviation for a running route instance (e.g. OffRoute from in-app navigation)
 		/// </summary>
 		[HttpPost("RecordDeviation")]
-		[Authorize(Policy = ResgridResources.Route_Update)]
+		[Authorize(Policy = ResgridResources.Call_View)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -662,6 +724,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var instance = await InstanceInDepartmentAsync(input.RouteInstanceId);
 			if (instance == null)
 				return NotFound();
+
+			if (!await CanOperateInstanceAsync(instance))
+				return Unauthorized();
 
 			if (instance.Status != (int)RouteInstanceStatus.InProgress && instance.Status != (int)RouteInstanceStatus.Paused)
 				return BadRequest();
@@ -744,7 +809,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// Gets all stops for an active route instance, merging plan data with execution state
 		/// </summary>
 		[HttpGet("GetStopsForInstance/{instanceId}")]
-		[Authorize(Policy = ResgridResources.Route_View)]
+		[Authorize(Policy = ResgridResources.Call_View)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public async Task<ActionResult<GetRouteStopsWithDetailsResult>> GetStopsForInstance(string instanceId)
@@ -753,6 +818,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (instance == null || instance.DepartmentId != DepartmentId)
 				return NotFound();
 
+			if (!await CanReadInstanceAsync(instance))
+				return Unauthorized();
+
+			var canSeeRunLocations = await CanSeeRunLocationsAsync(instance);
 			var planStops = await _routeService.GetRouteStopsForPlanAsync(instance.RoutePlanId);
 			var instanceStops = await _routeService.GetInstanceStopsAsync(instanceId);
 			var instanceStopLookup = instanceStops.ToDictionary(s => s.RouteStopId);
@@ -792,11 +861,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 					data.Status = iStop.Status;
 					data.CheckInOn = iStop.CheckInOn;
 					data.CheckInType = iStop.CheckInType;
-					data.CheckInLatitude = iStop.CheckInLatitude;
-					data.CheckInLongitude = iStop.CheckInLongitude;
+					data.CheckInLatitude = canSeeRunLocations ? iStop.CheckInLatitude : null;
+					data.CheckInLongitude = canSeeRunLocations ? iStop.CheckInLongitude : null;
 					data.CheckOutOn = iStop.CheckOutOn;
-					data.CheckOutLatitude = iStop.CheckOutLatitude;
-					data.CheckOutLongitude = iStop.CheckOutLongitude;
+					data.CheckOutLatitude = canSeeRunLocations ? iStop.CheckOutLatitude : null;
+					data.CheckOutLongitude = canSeeRunLocations ? iStop.CheckOutLongitude : null;
 					data.DwellSeconds = iStop.DwellSeconds;
 					data.SkipReason = iStop.SkipReason;
 					data.InstanceNotes = iStop.Notes;
@@ -897,7 +966,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// offsets, and the full route with turn-by-turn steps. A stale route is regenerated first.
 		/// </summary>
 		[HttpGet("GetDirections/{routePlanId}")]
-		[Authorize(Policy = ResgridResources.Route_View)]
+		[Authorize(Policy = ResgridResources.Call_View)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public async Task<ActionResult<GetRouteDirectionsResult>> GetDirections(string routePlanId, CancellationToken cancellationToken)
@@ -905,6 +974,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var plan = await _routeService.GetRoutePlanByIdAsync(routePlanId);
 			if (plan == null || plan.DepartmentId != DepartmentId)
 				return NotFound();
+
+			if (!CanReadPlan(plan))
+				return Unauthorized();
 
 			var route = await CurrentRouteAsync(routePlanId, cancellationToken);
 			if (route?.Stored == true)
@@ -949,7 +1021,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// language and metric refine it); without them the stored plan route is returned, as before.
 		/// </summary>
 		[HttpGet("GetInstanceDirections/{instanceId}")]
-		[Authorize(Policy = ResgridResources.Route_View)]
+		[Authorize(Policy = ResgridResources.Call_View)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public async Task<ActionResult<GetRouteDirectionsResult>> GetInstanceDirections(
@@ -960,11 +1032,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 			[FromQuery] bool navigation = false,
 			[FromQuery] string language = null,
 			[FromQuery] bool metric = false,
+			[FromQuery] bool includeStart = false,
 			CancellationToken cancellationToken = default)
 		{
 			var instance = await _routeService.GetInstanceByIdAsync(instanceId);
 			if (instance == null || instance.DepartmentId != DepartmentId)
 				return NotFound();
+
+			if (!await CanReadInstanceAsync(instance))
+				return Unauthorized();
 
 			var plan = await _routeService.GetRoutePlanByIdAsync(instance.RoutePlanId);
 			var planStops = await _routeService.GetRouteStopsForPlanAsync(instance.RoutePlanId);
@@ -1025,13 +1101,33 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				// RD5: a live route from the unit's position through the remaining stops.
 				var live = await _routePlanRoutingService.GetLiveDirectionsAsync(instanceId, (double)originLat.Value, (double)originLng.Value,
-					heading, navigation, language, metric, cancellationToken);
+					heading, navigation, language, metric, cancellationToken, includeStart);
 
 				if (live?.Successful == true)
 				{
 					ApplyRoute(result.Data, live, live: true);
 					if (!string.IsNullOrWhiteSpace(live.GeometryGeoJson))
 						result.Data.Geometry = live.GeometryGeoJson;
+
+					// A call route not yet at its plan start leads there first (M0322): that leg's end is the first waypoint.
+					var startLeg = live.Legs.FirstOrDefault(l => l.IsRouteStart);
+					if (startLeg != null)
+					{
+						var startPoint = live.Legs.IndexOf(startLeg) == 0 ? RouteStartPoint(live) : null;
+						if (startPoint != null)
+						{
+							waypoints.Insert(0, new RouteDirectionWaypointData
+							{
+								IsRouteStart = true,
+								StopOrder = 0,
+								Name = startLeg.Name ?? "",
+								Latitude = (decimal)startPoint.Latitude,
+								Longitude = (decimal)startPoint.Longitude,
+								Status = 0,
+								EtaUtc = startLeg.EtaUtc
+							});
+						}
+					}
 
 					foreach (var leg in live.Legs.Where(l => l.RouteStopId != null))
 					{
@@ -1134,7 +1230,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// Updates notes on an active route instance stop
 		/// </summary>
 		[HttpPost("UpdateStopNotes")]
-		[Authorize(Policy = ResgridResources.Route_Update)]
+		[Authorize(Policy = ResgridResources.Call_View)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public async Task<ActionResult> UpdateStopNotes([FromBody] UpdateStopNotesInput input)
@@ -1147,8 +1243,127 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (instance == null || instance.DepartmentId != DepartmentId)
 				return NotFound();
 
+			if (!await CanOperateInstanceAsync(instance))
+				return Unauthorized();
+
 			await _routeService.UpdateInstanceStopNotesAsync(input.RouteInstanceStopId, input.Notes);
 			return Ok();
+		}
+
+		/// <summary>
+		/// The route plans a call can follow (M0322): active, not deleted, with a start and an end. For the call form's route picker.
+		/// </summary>
+		[HttpGet("GetCallRoutePlans")]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		public async Task<ActionResult<GetCallRoutePlansResult>> GetCallRoutePlans()
+		{
+			var result = new GetCallRoutePlansResult();
+
+			foreach (var eligible in await _callRoutesService.GetCallRoutePlansAsync(DepartmentId))
+			{
+				var plan = eligible.Plan;
+				result.Data.Add(new CallRoutePlanResultData
+				{
+					RoutePlanId = plan.RoutePlanId,
+					Name = plan.Name,
+					Description = plan.Description,
+					RouteColor = plan.RouteColor,
+					UnitId = plan.UnitId,
+					StopsCount = eligible.Endpoints.StopsCount,
+					EstimatedDistanceMeters = plan.EstimatedDistanceMeters,
+					EstimatedDurationSeconds = plan.EstimatedDurationSeconds,
+					RoutingProfile = plan.RoutingProfile,
+					Start = ToEndpointData(eligible.Endpoints.Start),
+					End = ToEndpointData(eligible.Endpoints.End),
+					StartIsStop = eligible.Endpoints.StartIsStop,
+					EndIsStop = eligible.Endpoints.EndIsStop
+				});
+			}
+
+			result.PageSize = result.Data.Count;
+			ResponseHelper.PopulateV4ResponseData(result);
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// Starts the call's route (M0322) for the unit working it, or returns the unit's running or paused run of this call. 409
+		/// (type route_in_progress, detail = the running instance id) when the unit runs another route; 400 when the call is closed
+		/// (only an active or pending call gets a run) or its route can no longer be followed.
+		/// </summary>
+		[HttpPost("StartCallRoute")]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[ProducesResponseType(StatusCodes.Status409Conflict)]
+		public async Task<ActionResult<GetRouteInstanceResult>> StartCallRoute([FromBody] StartCallRouteInput input)
+		{
+			if (input == null)
+				return BadRequest();
+
+			var call = await _callsService.GetCallByIdAsync(input.CallId);
+			if (call == null || call.DepartmentId != DepartmentId || call.IsDeleted)
+				return NotFound();
+
+			var unit = await _unitsService.GetUnitByIdAsync(input.UnitId);
+			if (unit == null || unit.DepartmentId != DepartmentId)
+				return NotFound();
+
+			if (!await _authorizationService.CanUserViewCallAsync(UserId, call.CallId))
+				return Unauthorized();
+
+			if (!CanUpdateRoutes && !await _authorizationService.CanUserViewUnitAsync(UserId, unit.UnitId))
+				return Unauthorized();
+
+			if (string.IsNullOrWhiteSpace(call.RoutePlanId))
+				return BadRequest("The call has no route.");
+
+			RouteInstance instance;
+			try
+			{
+				instance = await _callRoutesService.StartCallRouteAsync(call, unit.UnitId, UserId);
+			}
+			catch (RouteInProgressException ex)
+			{
+				return RouteInProgress(ex);
+			}
+			catch (InvalidOperationException ex)
+			{
+				return BadRequest(ex.Message);
+			}
+
+			var result = new GetRouteInstanceResult();
+			result.Data = MapInstanceToResult(instance);
+			result.Data.RoutePlanName = (await _routeService.GetRoutePlanByIdAsync(instance.RoutePlanId))?.Name;
+			ResponseHelper.PopulateV4ResponseData(result);
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// Records that the unit reached the plan start of a call route (M0322): the leading leg of instance directions asked with
+		/// includeStart. No-op when already recorded.
+		/// </summary>
+		[HttpPost("ReachRouteStart")]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		public async Task<ActionResult<GetRouteInstanceResult>> ReachRouteStart([FromBody] ReachRouteStartInput input)
+		{
+			var instance = await InstanceInDepartmentAsync(input?.RouteInstanceId);
+			if (instance == null)
+				return NotFound();
+
+			if (!await CanOperateInstanceAsync(instance))
+				return Unauthorized();
+
+			if (instance.Status == (int)RouteInstanceStatus.InProgress || instance.Status == (int)RouteInstanceStatus.Paused)
+				instance = await _routeService.MarkStartReachedAsync(instance.RouteInstanceId);
+
+			var result = new GetRouteInstanceResult();
+			result.Data = MapInstanceToResult(instance);
+			ResponseHelper.PopulateV4ResponseData(result);
+			return Ok(result);
 		}
 
 		/// <summary>
@@ -1193,7 +1408,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 					StopsTotal = instance.StopsTotal,
 					ProgressPercent = progressPercent,
 					CurrentStopIndex = currentStop?.StopOrder ?? -1,
-					CurrentStopName = currentStopName
+					CurrentStopName = currentStopName,
+					CallId = instance.CallId
 				});
 			}
 
@@ -1353,6 +1569,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				RouteStopId = l.RouteStopId,
 				RouteInstanceStopId = l.RouteInstanceStopId,
 				Name = l.Name,
+				IsRouteStart = l.IsRouteStart,
 				DistanceMeters = Math.Round(l.DistanceMeters, 1),
 				DurationSeconds = Math.Round(l.DurationSeconds, 1),
 				OffsetSeconds = Math.Round(l.OffsetSeconds, 1),
@@ -1466,6 +1683,83 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return true;
 		}
 
+		private bool HasRouteClaim(string action)
+		{
+			return User?.HasClaim(ResgridClaimTypes.Resources.Route, action) ?? false;
+		}
+
+		private bool CanViewRoutes => HasRouteClaim(ResgridClaimTypes.Actions.View);
+
+		private bool CanUpdateRoutes => HasRouteClaim(ResgridClaimTypes.Actions.Update);
+
+		/// <summary>Route_View reads any plan; a caller who only works calls may read an active plan a call can follow (M0322).</summary>
+		private bool CanReadPlan(RoutePlan plan)
+		{
+			return CanViewRoutes || (plan != null && !plan.IsDeleted && plan.RouteStatus == (int)RouteStatus.Active);
+		}
+
+		/// <summary>Route_View, or a run of a call's route (M0322) on a call the caller can view.</summary>
+		private async Task<bool> CanReadInstanceAsync(RouteInstance instance)
+		{
+			if (CanViewRoutes)
+				return true;
+
+			return instance?.CallId != null && await _authorizationService.CanUserViewCallAsync(UserId, instance.CallId.Value);
+		}
+
+		/// <summary>
+		/// Where a run's unit checked in and out is the unit's position. Route_View holders see it as before; a member who reads the
+		/// run only through its call (M0322) sees it when See Unit Locations allows them the run's unit (the rule the map and route
+		/// deviations apply), and gets the run without those points otherwise.
+		/// </summary>
+		private async Task<bool> CanSeeRunLocationsAsync(RouteInstance instance)
+		{
+			if (CanViewRoutes)
+				return true;
+
+			return instance != null && await _authorizationService.CanUserViewUnitLocationViaMatrixAsync(instance.UnitId, UserId, DepartmentId);
+		}
+
+		/// <summary>
+		/// Route_Update, or a run of a call's route (M0322) by a unit the caller can view (its crew) on a call the caller can view:
+		/// running the route a dispatcher put on a call is operational work, not route management.
+		/// </summary>
+		private async Task<bool> CanOperateInstanceAsync(RouteInstance instance)
+		{
+			if (CanUpdateRoutes)
+				return true;
+
+			return instance?.CallId != null && await _authorizationService.CanUserViewCallAsync(UserId, instance.CallId.Value) &&
+				   await _authorizationService.CanUserViewUnitAsync(UserId, instance.UnitId);
+		}
+
+		private async Task<RouteInstance> InstanceForStopAsync(string routeInstanceStopId)
+		{
+			if (string.IsNullOrWhiteSpace(routeInstanceStopId))
+				return null;
+
+			var instanceStop = await _routeService.GetInstanceStopByIdAsync(routeInstanceStopId);
+			return instanceStop == null ? null : await InstanceInDepartmentAsync(instanceStop.RouteInstanceId);
+		}
+
+		private ActionResult RouteInProgress(RouteInProgressException ex)
+		{
+			return Problem(type: "route_in_progress", title: ex.Message, detail: ex.RouteInstanceId, statusCode: StatusCodes.Status409Conflict);
+		}
+
+		private static RouteEndpointData ToEndpointData(RoutePlanEndpoint endpoint)
+		{
+			return endpoint == null
+				? null
+				: new RouteEndpointData { Latitude = endpoint.Latitude, Longitude = endpoint.Longitude, DepartmentGroupId = endpoint.DepartmentGroupId, Name = endpoint.Name };
+		}
+
+		/// <summary>The end point of a live route's leading route-start leg: the first waypoint after the origin.</summary>
+		private static RoutePlanEndpoint RouteStartPoint(RoutePlanRouteResult live)
+		{
+			return live?.RouteStart;
+		}
+
 		private async Task<RouteInstance> InstanceInDepartmentAsync(string routeInstanceId)
 		{
 			if (string.IsNullOrWhiteSpace(routeInstanceId))
@@ -1499,11 +1793,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 				TotalDistanceMeters = instance.TotalDistanceMeters,
 				TotalDurationSeconds = instance.TotalDurationSeconds,
 				Notes = instance.Notes,
-				AddedOn = instance.AddedOn
+				AddedOn = instance.AddedOn,
+				CallId = instance.CallId,
+				StartReachedOn = instance.StartReachedOn
 			};
 		}
 
-		private async Task<GetRouteProgressResult> BuildProgressResult(RouteInstance instance)
+		/// <param name="canSeeRunLocations">False masks where the unit checked in and out (see <see cref="CanSeeRunLocationsAsync"/>).</param>
+		private async Task<GetRouteProgressResult> BuildProgressResult(RouteInstance instance, bool canSeeRunLocations)
 		{
 			var instanceStops = await _routeService.GetInstanceStopsAsync(instance.RouteInstanceId);
 
@@ -1523,11 +1820,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 					Status = s.Status,
 					CheckInOn = s.CheckInOn,
 					CheckInType = s.CheckInType,
-					CheckInLatitude = s.CheckInLatitude,
-					CheckInLongitude = s.CheckInLongitude,
+					CheckInLatitude = canSeeRunLocations ? s.CheckInLatitude : null,
+					CheckInLongitude = canSeeRunLocations ? s.CheckInLongitude : null,
 					CheckOutOn = s.CheckOutOn,
-					CheckOutLatitude = s.CheckOutLatitude,
-					CheckOutLongitude = s.CheckOutLongitude,
+					CheckOutLatitude = canSeeRunLocations ? s.CheckOutLatitude : null,
+					CheckOutLongitude = canSeeRunLocations ? s.CheckOutLongitude : null,
 					DwellSeconds = s.DwellSeconds,
 					SkipReason = s.SkipReason,
 					Notes = s.Notes,

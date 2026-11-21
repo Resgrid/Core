@@ -701,4 +701,40 @@
   <data name="WeekThird" xml:space="preserve">
     <value>τρίτη</value>
   </data>
+  <data name="DestinationAddress" xml:space="preserve">
+    <value>Διεύθυνση προορισμού</value>
+  </data>
+  <data name="DestinationAddressHelp" xml:space="preserve">
+    <value>Όταν ο προορισμός δεν είναι σημείο ενδιαφέροντος.</value>
+  </data>
+  <data name="DestinationCoordinates" xml:space="preserve">
+    <value>Συντεταγμένες προορισμού</value>
+  </data>
+  <data name="DestinationCoordinatesHelp" xml:space="preserve">
+    <value>Γεωγραφικό πλάτος, μήκος (προαιρετικό).</value>
+  </data>
+  <data name="ErrorDestinationCoordinatesInvalid" xml:space="preserve">
+    <value>Εισαγάγετε τις συντεταγμένες προορισμού ως πλάτος, μήκος (για παράδειγμα 39.7392,-104.9903).</value>
+  </data>
+  <data name="RoutePlan" xml:space="preserve">
+    <value>Διαδρομή</value>
+  </data>
+  <data name="NoRoutePlan" xml:space="preserve">
+    <value>Χωρίς διαδρομή</value>
+  </data>
+  <data name="RoutePlanHelp" xml:space="preserve">
+    <value>Κάθε κλήση που δημιουργεί ακολουθεί αυτή τη διαδρομή: μια κενή διεύθυνση ξεκινά από την αρχή της διαδρομής και ένας κενός προορισμός τελειώνει στο τέλος της.</value>
+  </data>
+  <data name="ErrorRoutePlanInvalid" xml:space="preserve">
+    <value>Επιλέξτε από τη λίστα μια ενεργή διαδρομή με αρχή και τέλος.</value>
+  </data>
+  <data name="RoutePlanUnavailable" xml:space="preserve">
+    <value>{0} (δεν είναι πλέον διαθέσιμη)</value>
+  </data>
+  <data name="RoutePlanDeleted" xml:space="preserve">
+    <value>Διαγραμμένη διαδρομή</value>
+  </data>
+  <data name="FacilityPoiCallLocationHelp" xml:space="preserve">
+    <value>Κάθε κλήση που δημιουργεί ξεκινά από αυτό το σημείο ενδιαφέροντος.</value>
+  </data>
 </root>

@@ -46,10 +46,23 @@
 								}
 								<div asp-validation-summary="All" class="text-danger"></div>
 								@Html.AntiForgeryToken()
-								@Html.HiddenFor(m => m.TypeId)
 							</div>
 						</div>
 
+						<div class="form-group">
+							<label class="col-sm-2 control-label required" for="TypeId">
+								@localizer["PoiType"]
+							</label>
+							<div class="col-sm-6">
+								<select class="form-control" id="TypeId" name="TypeId" required>
+									<option value="">@localizer["ImportChooseType"]</option>
+									@foreach (var type in Model.PoiTypes)
+									{
+										<option value="@type.PoiTypeId" selected="@(type.PoiTypeId == Model.TypeId)">@type.Name</option>
+									}
+								</select>
+							</div>
+						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label">
 								@localizer["Upload"]
@@ -62,7 +75,7 @@
 
 						<div class="form-group">
 							<div class="col-sm-4 col-sm-offset-2">
-								<a class="btn btn-white" asp-controller="Mapping" asp-action="POIs" asp-route-area="User">@localizer["Cancel"]</a>
+								@if (Model.CanManageMapData) { <a class="btn btn-white" asp-controller="Mapping" asp-action="POIs" asp-route-area="User">@localizer["Cancel"]</a> } else if (Model.HydrantsEnabled) { <a class="btn btn-white" asp-controller="RecordHydrants" asp-action="Index" asp-route-area="User">@localizer["Cancel"]</a> } else { <a class="btn btn-white" asp-controller="Mapping" asp-action="Index" asp-route-area="User">@localizer["Cancel"]</a> }
 								<button class="btn btn-primary" type="submit">@localizer["ImportPOIsButton"]</button>
 							</div>
 						</div>

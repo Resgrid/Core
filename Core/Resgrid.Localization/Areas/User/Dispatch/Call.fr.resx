@@ -1140,4 +1140,112 @@
   <data name="DestinationAvailabilityLink" xml:space="preserve">
     <value>Disponibilité des destinations</value>
   </data>
+  <data name="LocationPoiPlaceholder" xml:space="preserve">
+    <value>Emplacement depuis un POI (facultatif)</value>
+  </data>
+  <data name="LocationPoiHelp" xml:space="preserve">
+    <value>Choisir un POI remplit l'adresse et le repère sur la carte ; les deux restent modifiables.</value>
+  </data>
+  <data name="InvalidLocationPoi" xml:space="preserve">
+    <value>Choisissez dans la liste le POI de l'emplacement de l'appel.</value>
+  </data>
+  <data name="LocationPoiDisplayLabel" xml:space="preserve">
+    <value>POI de l'emplacement</value>
+  </data>
+  <data name="DestinationLocationLabel" xml:space="preserve">
+    <value>Ou un lieu de destination</value>
+  </data>
+  <data name="DestinationLocationHelp" xml:space="preserve">
+    <value>Pour une destination qui n'est pas un POI : une adresse, des coordonnées, what3words ou un code plus. Un POI de destination et un lieu de destination ne peuvent pas être définis ensemble.</value>
+  </data>
+  <data name="DestinationAddressPlaceholder" xml:space="preserve">
+    <value>Adresse de destination</value>
+  </data>
+  <data name="DestinationPlusCodePlaceholder" xml:space="preserve">
+    <value>Code plus</value>
+  </data>
+  <data name="FindPlusCode" xml:space="preserve">
+    <value>Trouver le code plus</value>
+  </data>
+  <data name="ClearDestinationLocation" xml:space="preserve">
+    <value>Effacer le lieu de destination</value>
+  </data>
+  <data name="InvalidDestinationCoordinates" xml:space="preserve">
+    <value>Saisissez la latitude et la longitude de la destination en nombres décimaux avec un point, par exemple 50.8503 et 4.3517.</value>
+  </data>
+  <data name="DestinationLocationNotFound" xml:space="preserve">
+    <value>Aucun lieu n'a été trouvé pour cette destination.</value>
+  </data>
+  <data name="PlusCodeNotFound" xml:space="preserve">
+    <value>Aucun lieu n'a été trouvé pour ce code plus.</value>
+  </data>
+  <data name="CallRouteLabel" xml:space="preserve">
+    <value>Itinéraire</value>
+  </data>
+  <data name="CallRoutePlaceholder" xml:space="preserve">
+    <value>Aucun itinéraire</value>
+  </data>
+  <data name="CallRouteHelp" xml:space="preserve">
+    <value>Un itinéraire prédéfini pour l'unité qui traite l'appel. Un emplacement vide prend le départ de l'itinéraire et une destination vide son arrivée.</value>
+  </data>
+  <data name="CallRoutePreview" xml:space="preserve">
+    <value>Aperçu de l'itinéraire</value>
+  </data>
+  <data name="CallRouteStops" xml:space="preserve">
+    <value>{0} arrêts</value>
+  </data>
+  <data name="CallRouteUnavailable" xml:space="preserve">
+    <value>{0} (n'est plus disponible)</value>
+  </data>
+  <data name="CallRouteDeleted" xml:space="preserve">
+    <value>Itinéraire supprimé</value>
+  </data>
+  <data name="InvalidCallRoute" xml:space="preserve">
+    <value>Choisissez dans la liste un itinéraire actif avec un départ et une arrivée.</value>
+  </data>
+  <data name="CallRouteStart" xml:space="preserve">
+    <value>Départ de l'itinéraire</value>
+  </data>
+  <data name="CallRouteEnd" xml:space="preserve">
+    <value>Arrivée de l'itinéraire</value>
+  </data>
+  <data name="CallRouteRunsLabel" xml:space="preserve">
+    <value>Parcours de l'itinéraire</value>
+  </data>
+  <data name="CallRouteRunUnit" xml:space="preserve">
+    <value>Unité</value>
+  </data>
+  <data name="CallRouteRunStatus" xml:space="preserve">
+    <value>Statut</value>
+  </data>
+  <data name="CallRouteRunStops" xml:space="preserve">
+    <value>Arrêts</value>
+  </data>
+  <data name="CallRouteRunStarted" xml:space="preserve">
+    <value>Commencé</value>
+  </data>
+  <data name="CallRouteRunEnded" xml:space="preserve">
+    <value>Terminé</value>
+  </data>
+  <data name="CallRouteRunStatusScheduled" xml:space="preserve">
+    <value>Planifié</value>
+  </data>
+  <data name="CallRouteRunStatusInProgress" xml:space="preserve">
+    <value>En cours</value>
+  </data>
+  <data name="CallRouteRunStatusCompleted" xml:space="preserve">
+    <value>Achevé</value>
+  </data>
+  <data name="CallRouteRunStatusCancelled" xml:space="preserve">
+    <value>Annulé</value>
+  </data>
+  <data name="CallRouteRunStatusAbandoned" xml:space="preserve">
+    <value>Abandonné</value>
+  </data>
+  <data name="CallRouteRunStatusPaused" xml:space="preserve">
+    <value>En pause</value>
+  </data>
+  <data name="CallRouteNoRuns" xml:space="preserve">
+    <value>Aucune unité n'a encore commencé cet itinéraire.</value>
+  </data>
 </root>

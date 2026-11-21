@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Private Inbound Dispatch Number</value>
+  </data>
+  <data name="Intro" xml:space="preserve">
+    <value>Il numero di telefono del tuo dipartimento. Gli SMS ricevuti diventano chiamate in attesa che i dispatcher esaminano, e i membri possono chiamarlo per accedere al menu vocale.</value>
+  </data>
+  <data name="AddonTitle" xml:space="preserve">
+    <value>Componente aggiuntivo</value>
+  </data>
+  <data name="AddonActive" xml:space="preserve">
+    <value>Il tuo dipartimento ha il componente Private Inbound Dispatch Number.</value>
+  </data>
+  <data name="ManageBilling" xml:space="preserve">
+    <value>Gestisci il componente</value>
+  </data>
+  <data name="RequiresEntityPlan" xml:space="preserve">
+    <value>Il componente Private Inbound Dispatch Number è disponibile con un piano a entità attivo. Cambia piano nella pagina Abbonamento per aggiungerlo.</value>
+  </data>
+  <data name="ViewPlans" xml:space="preserve">
+    <value>Vedi i piani</value>
+  </data>
+  <data name="NotOffered" xml:space="preserve">
+    <value>Il componente Private Inbound Dispatch Number non è ancora disponibile per il tuo dipartimento.</value>
+  </data>
+  <data name="BuyPrompt" xml:space="preserve">
+    <value>Acquista il componente Private Inbound Dispatch Number per scegliere e attivare un numero.</value>
+  </data>
+  <data name="BuyAddon" xml:space="preserve">
+    <value>Acquista il componente</value>
+  </data>
+  <data name="ActiveTitle" xml:space="preserve">
+    <value>Il tuo numero</value>
+  </data>
+  <data name="ProvisionedOn" xml:space="preserve">
+    <value>Attivato il {0}</value>
+  </data>
+  <data name="AddonEnding" xml:space="preserve">
+    <value>Il componente non è più attivo. Il numero funziona ancora per poco, poi smette di ricevere SMS e chiamate finché il componente non viene rinnovato.</value>
+  </data>
+  <data name="SmsIntake" xml:space="preserve">
+    <value>Crea chiamate in attesa dagli SMS</value>
+  </data>
+  <data name="SmsIntakeHelp" xml:space="preserve">
+    <value>Gli SMS inviati a questo numero diventano chiamate in attesa. Il numero riceve soltanto; le risposte arrivano dal numero principale di Resgrid.</value>
+  </data>
+  <data name="VoiceIntake" xml:space="preserve">
+    <value>Ricevi segnalazioni a voce</value>
+  </data>
+  <data name="VoiceIntakeHelp" xml:space="preserve">
+    <value>Chi chiama senza essere membro risponde a domande guidate e viene creata una chiamata in attesa. Richiede il componente Enhanced AI con la ricezione vocale IA.</value>
+  </data>
+  <data name="VoiceIntakeUnavailable" xml:space="preserve">
+    <value>La ricezione vocale IA non è ancora disponibile per il tuo dipartimento. Questa impostazione avrà effetto quando lo sarà.</value>
+  </data>
+  <data name="SaveIntake" xml:space="preserve">
+    <value>Salva</value>
+  </data>
+  <data name="ReleaseTitle" xml:space="preserve">
+    <value>Rilascia il numero</value>
+  </data>
+  <data name="ReleaseHelp" xml:space="preserve">
+    <value>Restituisce subito il numero all'operatore telefonico. SMS e chiamate si interrompono e il numero non può essere recuperato.</value>
+  </data>
+  <data name="ReleaseConfirm" xml:space="preserve">
+    <value>Ho capito che il numero non può essere recuperato</value>
+  </data>
+  <data name="Release" xml:space="preserve">
+    <value>Rilascia numero</value>
+  </data>
+  <data name="LapsedTitle" xml:space="preserve">
+    <value>Numero sospeso</value>
+  </data>
+  <data name="LapsedText" xml:space="preserve">
+    <value>{0} non riceve più SMS e chiamate da quando il componente è terminato. Sarà rilasciato il {1} se il componente non viene rinnovato.</value>
+  </data>
+  <data name="Reactivate" xml:space="preserve">
+    <value>Rimetti in servizio il numero</value>
+  </data>
+  <data name="ReleaseNow" xml:space="preserve">
+    <value>Rilascialo ora</value>
+  </data>
+  <data name="ProvisioningText" xml:space="preserve">
+    <value>L'acquisto di {0} è in corso. Aggiorna questa pagina tra un minuto.</value>
+  </data>
+  <data name="LastFailure" xml:space="preserve">
+    <value>L'ultimo acquisto di {0} non è stato completato. Scegli un altro numero.</value>
+  </data>
+  <data name="SearchTitle" xml:space="preserve">
+    <value>Scegli un numero</value>
+  </data>
+  <data name="NoCountries" xml:space="preserve">
+    <value>Non ci sono ancora numeri disponibili nel paese del tuo dipartimento. Contatta il supporto Resgrid.</value>
+  </data>
+  <data name="Country" xml:space="preserve">
+    <value>Paese</value>
+  </data>
+  <data name="AreaCode" xml:space="preserve">
+    <value>Prefisso</value>
+  </data>
+  <data name="Contains" xml:space="preserve">
+    <value>Contiene</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Cerca</value>
+  </data>
+  <data name="SearchHelp" xml:space="preserve">
+    <value>I prefissi valgono per Stati Uniti e Canada. Usa Contiene per le cifre che il numero deve includere; * corrisponde a qualsiasi cifra.</value>
+  </data>
+  <data name="NoResults" xml:space="preserve">
+    <value>Nessun numero corrisponde. Prova un altro prefisso o meno cifre.</value>
+  </data>
+  <data name="ResultsNumber" xml:space="preserve">
+    <value>Numero</value>
+  </data>
+  <data name="ResultsLocation" xml:space="preserve">
+    <value>Località</value>
+  </data>
+  <data name="ProvisionConfirm" xml:space="preserve">
+    <value>Attivare {0} come numero del tuo dipartimento?</value>
+  </data>
+  <data name="Provision" xml:space="preserve">
+    <value>Attiva</value>
+  </data>
+  <data name="Provisioned" xml:space="preserve">
+    <value>{0} è ora il numero del tuo dipartimento.</value>
+  </data>
+  <data name="ProvisionFailed" xml:space="preserve">
+    <value>L'operatore non ha potuto fornire quel numero. Scegline un altro.</value>
+  </data>
+  <data name="IntakeSaved" xml:space="preserve">
+    <value>Impostazioni di ricezione salvate.</value>
+  </data>
+  <data name="ReleaseConfirmRequired" xml:space="preserve">
+    <value>Conferma di voler rilasciare il numero.</value>
+  </data>
+  <data name="Released" xml:space="preserve">
+    <value>Il numero è stato rilasciato.</value>
+  </data>
+  <data name="ReleaseFailed" xml:space="preserve">
+    <value>L'operatore non ha rilasciato il numero. Riprova più tardi.</value>
+  </data>
+  <data name="Reactivated" xml:space="preserve">
+    <value>Il numero è di nuovo in servizio.</value>
+  </data>
+  <data name="Error.AddonRequired" xml:space="preserve">
+    <value>Il tuo dipartimento ha bisogno prima del componente Private Inbound Dispatch Number.</value>
+  </data>
+  <data name="Error.AlreadyHasNumber" xml:space="preserve">
+    <value>Il tuo dipartimento ha già un numero.</value>
+  </data>
+  <data name="Error.CountryNotAllowed" xml:space="preserve">
+    <value>I numeri di quel paese non sono disponibili per il tuo dipartimento.</value>
+  </data>
+  <data name="Error.InvalidNumber" xml:space="preserve">
+    <value>Controlla numero, prefisso e cifre, poi riprova.</value>
+  </data>
+  <data name="Error.NumberUnavailable" xml:space="preserve">
+    <value>Quel numero non è più disponibile. Scegline un altro.</value>
+  </data>
+  <data name="Error.NoActiveNumber" xml:space="preserve">
+    <value>Il tuo dipartimento non ha alcun numero da modificare.</value>
+  </data>
+  <data name="Error.CarrierUnavailable" xml:space="preserve">
+    <value>Impossibile contattare l'operatore telefonico. Riprova tra qualche minuto.</value>
+  </data>
+  <data name="BillingInboundOnlyNote" xml:space="preserve">
+    <value>Il numero riceve soltanto SMS: diventano chiamate in attesa e le risposte arrivano dal numero principale di Resgrid.</value>
+  </data>
+  <data name="BillingLapseNote" xml:space="preserve">
+    <value>Se il componente termina, il numero smette di ricevere SMS e chiamate e viene rilasciato {0} giorni dopo, a meno che tu non rinnovi.</value>
+  </data>
+  <data name="BillingVoiceNote" xml:space="preserve">
+    <value>La ricezione vocale per chi chiama senza essere membro richiede il componente Enhanced AI.</value>
+  </data>
+  <data name="ManageNumber" xml:space="preserve">
+    <value>Gestisci il tuo numero</value>
+  </data>
+  <data name="TextSettingsTitle" xml:space="preserve">
+    <value>Numero privato della centrale</value>
+  </data>
+  <data name="TextSettingsActive" xml:space="preserve">
+    <value>riceve gli SMS in arrivo per il tuo dipartimento.</value>
+  </data>
+  <data name="TextSettingsSmsOff" xml:space="preserve">
+    <value>è il numero del tuo dipartimento; gli SMS ricevuti non creano chiamate.</value>
+  </data>
+  <data name="TextSettingsLapsed" xml:space="preserve">
+    <value>Il tuo numero privato della centrale {0} è sospeso fino al {1}.</value>
+  </data>
+  <data name="TextSettingsNone" xml:space="preserve">
+    <value>Il tuo dipartimento non ha un numero proprio. Ottienine uno con il componente Private Inbound Dispatch Number.</value>
+  </data>
+  <data name="TextSettingsLink" xml:space="preserve">
+    <value>Gestisci il numero privato della centrale</value>
+  </data>
+  <data name="TextSettingsInboundOnly" xml:space="preserve">
+    <value>I numeri dei dipartimenti ricevono soltanto SMS; le risposte arrivano dal numero principale di Resgrid.</value>
+  </data>
+  <data name="StopTitle" xml:space="preserve">
+    <value>Il pagamento di questo numero si è interrotto</value>
+  </data>
+  <data name="StopAddon" xml:space="preserve">
+    <value>Il pagamento del componente Private Inbound Dispatch Number si è interrotto il {0} (annullato o non pagato).</value>
+  </data>
+  <data name="StopPlan" xml:space="preserve">
+    <value>Dal {0} il piano del dipartimento non è più un piano a pagamento attivo, necessario per il componente Private Inbound Dispatch Number.</value>
+  </data>
+  <data name="StopIntakeOn" xml:space="preserve">
+    <value>{0} smetterà di ricevere SMS e chiamate il {1}.</value>
+  </data>
+  <data name="StopIntakeStoppedOn" xml:space="preserve">
+    <value>{0} ha smesso di ricevere SMS e chiamate il {1}.</value>
+  </data>
+  <data name="StopIntakeStopped" xml:space="preserve">
+    <value>{0} non riceve più SMS e chiamate.</value>
+  </data>
+  <data name="StopReleaseOn" xml:space="preserve">
+    <value>Il numero sarà restituito all'operatore il {0}. Rinnova il componente (e il tuo piano) prima di allora per mantenerlo.</value>
+  </data>
+  <data name="StopWarningsSent" xml:space="preserve">
+    <value>Avvisi inviati agli amministratori del dipartimento: {0}.</value>
+  </data>
+  <data name="StopWarningsNone" xml:space="preserve">
+    <value>Nessun avviso è stato ancora inviato agli amministratori del dipartimento.</value>
+  </data>
+  <data name="StopLastWarning" xml:space="preserve">
+    <value>Ultimo avviso: {0}.</value>
+  </data>
+  <data name="Warning.Stopped" xml:space="preserve">
+    <value>pagamento interrotto</value>
+  </data>
+  <data name="Warning.Days" xml:space="preserve">
+    <value>{0} giorni prima del rilascio</value>
+  </data>
+  <data name="Warning.OneDay" xml:space="preserve">
+    <value>1 giorno prima del rilascio</value>
+  </data>
+  <data name="Region" xml:space="preserve">
+    <value>Stato / provincia</value>
+  </data>
+  <data name="RegionAny" xml:space="preserve">
+    <value>Qualsiasi</value>
+  </data>
+  <data name="City" xml:space="preserve">
+    <value>Città</value>
+  </data>
+  <data name="PostalCode" xml:space="preserve">
+    <value>CAP</value>
+  </data>
+  <data name="NearDepartment" xml:space="preserve">
+    <value>Vicino all'indirizzo del dipartimento</value>
+  </data>
+  <data name="NearDistance" xml:space="preserve">
+    <value>Entro</value>
+  </data>
+  <data name="DistanceMiles" xml:space="preserve">
+    <value>{0} miglia ({1} km)</value>
+  </data>
+  <data name="SearchFiltersHelp" xml:space="preserve">
+    <value>Anche le ricerche per stato / provincia, CAP e vicino al dipartimento valgono solo per Stati Uniti e Canada. Ogni risultato può ricevere sia SMS sia chiamate.</value>
+  </data>
+  <data name="ResultsType" xml:space="preserve">
+    <value>Tipo di numero</value>
+  </data>
+  <data name="NumberType.Local" xml:space="preserve">
+    <value>Numero locale</value>
+  </data>
+  <data name="NumberType.Mobile" xml:space="preserve">
+    <value>Numero mobile</value>
+  </data>
+  <data name="Error.DepartmentLocationUnknown" xml:space="preserve">
+    <value>La posizione del dipartimento non è nota. Imposta l'indirizzo o il centro mappa del dipartimento, oppure cerca per stato, città o CAP.</value>
+  </data>
+  <data name="Error.PlanRequired" xml:space="preserve">
+    <value>Il componente Private Inbound Dispatch Number richiede un piano a pagamento attivo. Rinnova prima il piano del dipartimento.</value>
+  </data>
+</root>

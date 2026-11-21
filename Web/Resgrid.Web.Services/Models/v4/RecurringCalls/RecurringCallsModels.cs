@@ -9,6 +9,9 @@ namespace Resgrid.Web.Services.Models.v4.RecurringCalls
 	/// <summary>A recurring call schedule.</summary>
 	public class RecurringCallResultData
 	{
+		/// <summary>The route plan's name (GetRecurringCall only; null in lists and when the plan can no longer be followed).</summary>
+		public string RoutePlanName { get; set; }
+
 		public int RecurringCallId { get; set; }
 		public string Name { get; set; }
 		public string Description { get; set; }
@@ -63,6 +66,15 @@ namespace Resgrid.Web.Services.Models.v4.RecurringCalls
 		public int? FacilityPoiId { get; set; }
 		public string DestinationName { get; set; }
 		public string DestinationDetails { get; set; }
+
+		/// <summary>Free destination address when the destination is not a POI (M0322).</summary>
+		public string DestinationAddress { get; set; }
+
+		/// <summary>Free destination point "lat,lon" (M0322).</summary>
+		public string DestinationGeoLocationData { get; set; }
+
+		/// <summary>The route plan the created calls follow (M0322, Routes/GetCallRoutePlans).</summary>
+		public string RoutePlanId { get; set; }
 
 		// Who
 		public List<string> DispatchUserIds { get; set; } = new List<string>();
@@ -198,6 +210,15 @@ namespace Resgrid.Web.Services.Models.v4.RecurringCalls
 		public int? FacilityPoiId { get; set; }
 		public string DestinationName { get; set; }
 		public string DestinationDetails { get; set; }
+
+		/// <summary>Free destination address when the destination is not a POI (M0322).</summary>
+		public string DestinationAddress { get; set; }
+
+		/// <summary>Free destination point "lat,lon" (M0322).</summary>
+		public string DestinationGeoLocationData { get; set; }
+
+		/// <summary>The route plan the created calls follow (M0322, Routes/GetCallRoutePlans).</summary>
+		public string RoutePlanId { get; set; }
 
 		public List<string> DispatchUserIds { get; set; }
 		public List<int> DispatchGroupIds { get; set; }

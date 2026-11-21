@@ -181,6 +181,17 @@ namespace Resgrid.Web.Areas.User.Models.Dispatch
 
 		public int? DestinationPoiId { get; set; }
 
+		/// <summary>
+		/// Free destination (M0322) for a destination that is not a POI: an address and/or "lat,lon". Part of the destination field
+		/// of the New Call Form Fields policy; a destination POI clears it.
+		/// </summary>
+		public string DestinationAddress { get; set; }
+
+		public string DestinationCoordinates { get; set; }
+
+		/// <summary>The route plan every call it creates follows (M0322); blank for none.</summary>
+		public string RoutePlanId { get; set; }
+
 		public string ContactName { get; set; }
 
 		public string ContactNumber { get; set; }
@@ -223,6 +234,9 @@ namespace Resgrid.Web.Areas.User.Models.Dispatch
 		public List<SelectListItem> CallTypes { get; set; } = new List<SelectListItem>();
 
 		public List<SelectListItem> DestinationPois { get; set; } = new List<SelectListItem>();
+
+		/// <summary>"No route" and the route plans a call can follow (plus the schedule's own, marked, when it no longer can).</summary>
+		public List<SelectListItem> RoutePlans { get; set; } = new List<SelectListItem>();
 
 		public List<SelectListItem> Personnel { get; set; } = new List<SelectListItem>();
 

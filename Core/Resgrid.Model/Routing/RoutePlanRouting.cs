@@ -42,6 +42,9 @@ namespace Resgrid.Model
 		/// <summary>The instance stop the leg arrives at (live instance directions only).</summary>
 		public string RouteInstanceStopId { get; set; }
 
+		/// <summary>The leg to a call route's plan start (live directions asked with includeStart, M0322); it has no stop.</summary>
+		public bool IsRouteStart { get; set; }
+
 		public string Name { get; set; }
 
 		public double DistanceMeters { get; set; }
@@ -58,6 +61,12 @@ namespace Resgrid.Model
 	/// <summary>A route plan's route: stored, freshly generated, or live from a unit's position.</summary>
 	public class RoutePlanRouteResult
 	{
+		/// <summary>
+		/// Live directions only (M0322): the call route's plan start the first leg leads to (<see cref="RoutePlanLeg.IsRouteStart"/>); null
+		/// when the route goes straight to its stops.
+		/// </summary>
+		public RoutePlanEndpoint RouteStart { get; set; }
+
 		public bool Successful { get; set; }
 
 		/// <summary>True when only the straight-line estimate answered; such routes are never stored.</summary>

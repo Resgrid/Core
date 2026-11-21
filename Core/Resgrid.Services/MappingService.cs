@@ -21,11 +21,15 @@ namespace Resgrid.Services
 		private readonly IPoiCapabilitiesRepository _poiCapabilitiesRepository;
 		private readonly IPoiAvailabilitiesRepository _poiAvailabilitiesRepository;
 
+		// Lazy: the destination advisor ranks destinations through this service (plan D4).
+		private readonly Lazy<IAiDestinationAdvisorService> _aiDestinationAdvisor;
+
 		public MappingService(IPoiTypesRepository poiTypesRepository, IPoisRepository poisRepository, Lazy<IMongoRepository<MapLayer>> mapLayersRepository,
 			IMapLayersDocRepository mapLayersDocRepository, Lazy<ISearchProjectionService> searchProjections = null,
 			ITypeIconsRepository typeIconsRepository = null, IPoiCapabilitiesRepository poiCapabilitiesRepository = null,
-			IPoiAvailabilitiesRepository poiAvailabilitiesRepository = null)
+			IPoiAvailabilitiesRepository poiAvailabilitiesRepository = null, Lazy<IAiDestinationAdvisorService> aiDestinationAdvisor = null)
 		{
+			_aiDestinationAdvisor = aiDestinationAdvisor;
 			_poiCapabilitiesRepository = poiCapabilitiesRepository;
 			_poiAvailabilitiesRepository = poiAvailabilitiesRepository;
 			_searchProjections = searchProjections;
@@ -394,7 +398,10 @@ namespace Resgrid.Services
 			if (status == PoiAvailabilityStatuses.Open || (expiresOnUtc.HasValue && expiresOnUtc.Value <= now))
 			{
 				if (existing != null)
+				{
 					await _poiAvailabilitiesRepository.DeleteForPoisAsync(departmentId, new[] { poiId }, cancellationToken);
+					await RequestDestinationReviewsAsync(departmentId, poiId, cancellationToken);
+				}
 
 				return null;
 			}
@@ -420,7 +427,22 @@ namespace Resgrid.Services
 			report.SetOn = now;
 			report.ExpiresOn = expiresOnUtc.HasValue && expiresOnUtc.Value > now + PoiAvailabilityRules.MaxExpiry ? now + PoiAvailabilityRules.MaxExpiry : expiresOnUtc;
 
-			return await _poiAvailabilitiesRepository.SaveOrUpdateAsync(report, cancellationToken);
+			var saved = await _poiAvailabilitiesRepository.SaveOrUpdateAsync(report, cancellationToken);
+			await RequestDestinationReviewsAsync(departmentId, poiId, cancellationToken);
+			return saved;
+		}
+
+		/// <summary>
+		/// A destination went on diversion, closed, lost a capability or reopened: Enhanced AI re-checks the open calls going there (plan
+		/// D4). Queues debounced reviews only; never fails the availability change.
+		/// </summary>
+		private async Task RequestDestinationReviewsAsync(int departmentId, int poiId, CancellationToken cancellationToken)
+		{
+			if (_aiDestinationAdvisor == null)
+				return;
+
+			try { await _aiDestinationAdvisor.Value.RequestReviewsForDestinationAsync(departmentId, poiId, cancellationToken); }
+			catch (Exception ex) when (ex is not OperationCanceledException) { Framework.Logging.LogException(ex); }
 		}
 
 		/// <summary>Most POIs one bulk removal accepts.</summary>

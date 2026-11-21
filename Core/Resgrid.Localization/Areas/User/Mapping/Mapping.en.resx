@@ -205,7 +205,7 @@
     <value>Imports</value>
   </data>
   <data name="PoiImportsHelp" xml:space="preserve">
-    <value>Imports run in the background and usually start within a minute. Refresh this page to see their progress.</value>
+    <value>Imports run in the background and usually start within a minute. This list updates by itself while an import is running.</value>
   </data>
   <data name="PoiImportsRefresh" xml:space="preserve">
     <value>Refresh</value>
@@ -580,5 +580,32 @@
   </data>
   <data name="PoiAvailabilitySaveFailed" xml:space="preserve">
     <value>The availability could not be saved: the POI is no longer a destination. Reload the page and try again.</value>
+  </data>
+  <data name="ManagePois" xml:space="preserve">
+    <value>Manage POIs</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="ImportFileRequired" xml:space="preserve">
+    <value>Choose a file to upload.</value>
+  </data>
+  <data name="ImportFileTypeInvalid" xml:space="preserve">
+    <value>File type ({0}) cannot be imported as POIs: upload a KML, KMZ or CSV file.</value>
+  </data>
+  <data name="ImportFileTooLarge" xml:space="preserve">
+    <value>The file is too large: it must be smaller than 10 MB.</value>
+  </data>
+  <data name="ImportTypeRequired" xml:space="preserve">
+    <value>Choose the POI type to import into.</value>
+  </data>
+  <data name="ImportChooseType" xml:space="preserve">
+    <value>Choose a POI type</value>
+  </data>
+  <data name="ImportNoValidRows" xml:space="preserve">
+    <value>None of the {0} entries in the file have valid coordinates or an address (check that latitude and longitude are not swapped or blank).</value>
+  </data>
+  <data name="ImportNothingFound" xml:space="preserve">
+    <value>No placemarks or rows with coordinates or an address could be found in the uploaded file.</value>
   </data>
 </root>

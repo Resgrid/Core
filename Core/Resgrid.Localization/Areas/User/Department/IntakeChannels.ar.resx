@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PageTitle" xml:space="preserve">
+    <value>قنوات الاستقبال</value>
+  </data>
+  <data name="PageIntro" xml:space="preserve">
+    <value>تصبح الرسائل المرسلة إلى قناة استقبال بلاغات معلّقة. يراجع المرسِل كل بلاغ ويختار من يُرسَل إليه؛ ولا تقوم القناة بإرسال أي أحد من تلقاء نفسها.</value>
+  </data>
+  <data name="FeatureOff" xml:space="preserve">
+    <value>لم يتم تفعيل قنوات الاستقبال لإدارتك بعد. يمكنك إعداد القنوات الآن، وستبدأ في إنشاء البلاغات بمجرد تفعيل الميزة.</value>
+  </data>
+  <data name="AddChannel" xml:space="preserve">
+    <value>إضافة قناة</value>
+  </data>
+  <data name="EditChannel" xml:space="preserve">
+    <value>تعديل القناة</value>
+  </data>
+  <data name="NoChannels" xml:space="preserve">
+    <value>لم يتم إعداد أي قنوات استقبال بعد.</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>الاسم</value>
+  </data>
+  <data name="NameHelp" xml:space="preserve">
+    <value>يظهر على البلاغات المعلّقة التي تنشئها هذه القناة، مثل "خط تحويلات المستشفى".</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>نوع القناة</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>العنوان</value>
+  </data>
+  <data name="Mode" xml:space="preserve">
+    <value>المعالجة</value>
+  </data>
+  <data name="ModeTemplate" xml:space="preserve">
+    <value>قالب البلاغ</value>
+  </data>
+  <data name="ModeEnhancedAi" xml:space="preserve">
+    <value>Enhanced AI</value>
+  </data>
+  <data name="ModeHelp" xml:space="preserve">
+    <value>يقرأ قالب البلاغ الرسالة باستخدام أحد تنسيقات بريد البلاغات لديك. أما Enhanced AI فيحفظ الرسالة كبلاغ معلّق ثم يملأ النوع والعنوان والأولوية وملخصًا (يتطلب إضافة Enhanced AI مع الاستقبال بالذكاء الاصطناعي).</value>
+  </data>
+  <data name="TemplateFormat" xml:space="preserve">
+    <value>القالب</value>
+  </data>
+  <data name="AllowedSenders" xml:space="preserve">
+    <value>المرسلون المسموح لهم</value>
+  </data>
+  <data name="AllowedSendersHelp" xml:space="preserve">
+    <value>مفصولة بفواصل: أرقام هواتف (مع الرمز * كبديل)، أو عناوين بريد إلكتروني أو @نطاقات، أو معرّفات مستخدمي المنصة. اتركه فارغًا لقبول أي شخص يصل إلى العنوان.</value>
+  </data>
+  <data name="DefaultPriority" xml:space="preserve">
+    <value>الأولوية الافتراضية</value>
+  </data>
+  <data name="DefaultCallType" xml:space="preserve">
+    <value>نوع البلاغ الافتراضي</value>
+  </data>
+  <data name="UseDepartmentDefault" xml:space="preserve">
+    <value>الافتراضي للإدارة</value>
+  </data>
+  <data name="NoneOption" xml:space="preserve">
+    <value>لا شيء</value>
+  </data>
+  <data name="SendAcknowledgement" xml:space="preserve">
+    <value>الرد على المرسِل</value>
+  </data>
+  <data name="SendAcknowledgementHelp" xml:space="preserve">
+    <value>يرسل إشعار استلام قصيرًا برقم البلاغ. يتم الرد على الرسائل النصية من رقم Resgrid الرئيسي.</value>
+  </data>
+  <data name="Enabled" xml:space="preserve">
+    <value>مفعّل</value>
+  </data>
+  <data name="Disabled" xml:space="preserve">
+    <value>معطّل</value>
+  </data>
+  <data name="Enable" xml:space="preserve">
+    <value>تفعيل</value>
+  </data>
+  <data name="Disable" xml:space="preserve">
+    <value>تعطيل</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>تعديل</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>حذف</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>حفظ</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="ThisMonth" xml:space="preserve">
+    <value>هذا الشهر</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>الإجراءات</value>
+  </data>
+  <data name="DeleteConfirm" xml:space="preserve">
+    <value>هل تريد حذف قناة الاستقبال هذه؟ لن تنشئ الرسائل المرسلة إلى عنوانها بلاغات بعد الآن.</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>تم حفظ قناة الاستقبال.</value>
+  </data>
+  <data name="Deleted" xml:space="preserve">
+    <value>تم حذف قناة الاستقبال.</value>
+  </data>
+  <data name="Error.InvalidAddress" xml:space="preserve">
+    <value>هذا العنوان غير صالح لنوع القناة هذا.</value>
+  </data>
+  <data name="Error.AddressInUse" xml:space="preserve">
+    <value>هذا العنوان مستخدم بالفعل في قناة استقبال أخرى أو كعنوان بريد إرسال لإحدى الإدارات.</value>
+  </data>
+  <data name="Error.NameRequired" xml:space="preserve">
+    <value>أدخل اسمًا للقناة.</value>
+  </data>
+  <data name="Error.Invalid" xml:space="preserve">
+    <value>تعذّر حفظ القناة. تحقق من القيم وحاول مرة أخرى.</value>
+  </data>
+  <data name="Error.InvalidSenders" xml:space="preserve">
+    <value>يمكن أن يتكون كل مرسل مسموح به من 256 حرفًا كحد أقصى. لم يتم حفظ القناة.</value>
+  </data>
+  <data name="Type.Sms" xml:space="preserve">
+    <value>رسالة نصية (SMS)</value>
+  </data>
+  <data name="Type.Email" xml:space="preserve">
+    <value>البريد الإلكتروني</value>
+  </data>
+  <data name="Type.WhatsApp" xml:space="preserve">
+    <value>WhatsApp</value>
+  </data>
+  <data name="Type.Slack" xml:space="preserve">
+    <value>Slack</value>
+  </data>
+  <data name="Type.Teams" xml:space="preserve">
+    <value>Microsoft Teams</value>
+  </data>
+  <data name="Type.Telegram" xml:space="preserve">
+    <value>Telegram</value>
+  </data>
+  <data name="Type.Discord" xml:space="preserve">
+    <value>Discord</value>
+  </data>
+  <data name="Type.GoogleChat" xml:space="preserve">
+    <value>Google Chat</value>
+  </data>
+  <data name="Type.Webhook" xml:space="preserve">
+    <value>خطاف ويب موقّع</value>
+  </data>
+  <data name="Type.Voice" xml:space="preserve">
+    <value>مكالمة هاتفية (صوت)</value>
+  </data>
+  <data name="Help.Sms" xml:space="preserve">
+    <value>رقم الإرسال الوارد الخاص بالإدارة بالتنسيق الدولي، مثل +17755550100. ينشئ هذا الرقم قناته الخاصة عند إعداده.</value>
+  </data>
+  <data name="Help.Voice" xml:space="preserve">
+    <value>رقم الإرسال الوارد الخاص بالإدارة بالتنسيق الدولي. يجيب المتصلون من غير الأعضاء عن أسئلة صوتية يطرحها الاستقبال الصوتي في Enhanced AI.</value>
+  </data>
+  <data name="Help.Email" xml:space="preserve">
+    <value>الجزء الذي يسبق @. تصبح الرسائل المرسلة إلى هذا الاسم في {0} بلاغات معلّقة. يجب أن يختلف عن عنوان بريد الإرسال الخاص بإدارتك.</value>
+  </data>
+  <data name="Help.WhatsApp" xml:space="preserve">
+    <value>رقم مرسِل WhatsApp بالتنسيق الدولي. يقوم دعم Resgrid بتسجيل المرسِل في حساب Twilio الخاص بـ Resgrid.</value>
+  </data>
+  <data name="Help.Slack" xml:space="preserve">
+    <value>معرّف مساحة العمل/معرّف القناة، مثل T012ABCDE/C034FGHIJ. ادعُ تطبيق Resgrid إلى القناة باستخدام ‎/invite @Resgrid، ثم انسخ معرّف القناة من تفاصيلها ومعرّف مساحة العمل من معلومات مساحة العمل.</value>
+  </data>
+  <data name="Help.Teams" xml:space="preserve">
+    <value>معرّف المستأجر/معرّف القناة، مثل 72f988bf-86f1-41af-91ab-2d7cd011db47/19:abc123@thread.tacv2. أضف تطبيق Resgrid إلى الفريق واستخدم «الحصول على ارتباط القناة»: معرّف القناة هو الجزء 19:…@thread.tacv2 ومعرّف المستأجر هو قيمة tenantId. اذكر ‎@Resgrid في القناة لإرسال طلب.</value>
+  </data>
+  <data name="Help.Telegram" xml:space="preserve">
+    <value>معرّف المحادثة؛ معرّفات المجموعات سالبة، مثل ‎-1001234567890. أضف روبوت Resgrid إلى المجموعة. عند تفعيل وضع الخصوصية، ابدأ الطلب بـ ‎/intake أو اذكر الروبوت.</value>
+  </data>
+  <data name="Help.Discord" xml:space="preserve">
+    <value>معرّف القناة (فعّل وضع المطوّر، وانقر بزر الماوس الأيمن على القناة، ثم نسخ معرّف القناة). أضف تطبيق Resgrid إلى الخادم واستخدم ‎/resgrid في القناة.</value>
+  </data>
+  <data name="Help.GoogleChat" xml:space="preserve">
+    <value>اسم المساحة من عنوان URL الخاص بها، مثل spaces/AAAAbCdEfGh. أضف تطبيق Resgrid إلى المساحة واذكره لإرسال طلب.</value>
+  </data>
+  <data name="Help.Webhook" xml:space="preserve">
+    <value>ينشئ Resgrid عنوان URL لخطاف الويب وسر التوقيع عند الحفظ. يمكن لأي نظام قادر على إرسال طلب HTTPS موقّع إنشاء بلاغات.</value>
+  </data>
+  <data name="ChatRules" xml:space="preserve">
+    <value>في المحادثة المرتبطة تُعد كل رسالة جديدة طلبًا؛ ولا تُحتسب الردود داخل سلسلة إلا إذا ذكرت Resgrid. تعمل الرسائل المباشرة إلى روبوت Resgrid كما كانت.</value>
+  </data>
+  <data name="WebhookUrl" xml:space="preserve">
+    <value>عنوان URL لخطاف الويب</value>
+  </data>
+  <data name="WebhookSecret" xml:space="preserve">
+    <value>سر التوقيع</value>
+  </data>
+  <data name="WebhookSecretOnce" xml:space="preserve">
+    <value>انسخ السر الآن. لن يُعرض إلا هذه المرة؛ جدّده إذا فُقد.</value>
+  </data>
+  <data name="WebhookNoSecret" xml:space="preserve">
+    <value>لم يتم تعيين سر توقيع، لذلك يُرفض كل طلب. جدّد السر لإنشاء واحد.</value>
+  </data>
+  <data name="RotateSecret" xml:space="preserve">
+    <value>تجديد السر</value>
+  </data>
+  <data name="RotateConfirm" xml:space="preserve">
+    <value>هل تريد تجديد سر التوقيع؟ سيتوقف السر الحالي عن العمل فورًا.</value>
+  </data>
+  <data name="WebhookSigning" xml:space="preserve">
+    <value>وقّع كل طلب بالترويسة X-Resgrid-Signature: t=&lt;ثوانٍ unix&gt;,v1=&lt;HMAC-SHA256 ست عشري لـ "t.body" باستخدام السر&gt;. تُرفض الطلبات التي مضى عليها أكثر من {0} ثانية.</value>
+  </data>
+  <data name="WebhookSample" xml:space="preserve">
+    <value>مثال على الطلب</value>
+  </data>
+  <data name="WebhookBody" xml:space="preserve">
+    <value>المحتوى بتنسيق JSON: message (مطلوب)، وsubject، وsender، وexternalId (التكرار بالمعرّف نفسه لا ينشئ بلاغًا ثانيًا أبدًا)، وaddress، وlatitude، وlongitude.</value>
+  </data>
+  <data name="Via" xml:space="preserve">
+    <value>عبر {0}: {1}</value>
+  </data>
+  <data name="ViaType" xml:space="preserve">
+    <value>عبر {0}</value>
+  </data>
+  <data name="TextSettingsIntro" xml:space="preserve">
+    <value>تحوّل قنوات الاستقبال الرسائل النصية ورسائل البريد الإلكتروني ورسائل الدردشة وطلبات خطافات الويب إلى بلاغات معلّقة.</value>
+  </data>
+  <data name="ManageIntakeChannels" xml:space="preserve">
+    <value>إدارة قنوات الاستقبال</value>
+  </data>
+  <data name="BlockedSenders" xml:space="preserve">
+    <value>المرسلون المحظورون</value>
+  </data>
+  <data name="BlockedSendersIntro" xml:space="preserve">
+    <value>مرسلون رفضهم أحد المرسِلين كرسائل مزعجة. تُسجَّل رسائلهم ومكالماتهم إلى قنوات الاستقبال لديك لكنها لا تُنشئ بلاغات، ولا يُرسل إليهم أي شيء. ينتهي الحظر تلقائيًا في التاريخ المعروض.</value>
+  </data>
+  <data name="NoBlockedSenders" xml:space="preserve">
+    <value>لا يوجد مرسلون محظورون.</value>
+  </data>
+  <data name="Sender" xml:space="preserve">
+    <value>المرسل</value>
+  </data>
+  <data name="BlockedBy" xml:space="preserve">
+    <value>حظره</value>
+  </data>
+  <data name="BlockedOn" xml:space="preserve">
+    <value>تاريخ الحظر</value>
+  </data>
+  <data name="BlockedUntil" xml:space="preserve">
+    <value>حتى</value>
+  </data>
+  <data name="BlockedCall" xml:space="preserve">
+    <value>عرض البلاغ</value>
+  </data>
+  <data name="BlockExpired" xml:space="preserve">
+    <value>منتهٍ</value>
+  </data>
+  <data name="BlockedUntilLifted" xml:space="preserve">
+    <value>حتى رفعه</value>
+  </data>
+  <data name="Unblock" xml:space="preserve">
+    <value>رفع الحظر</value>
+  </data>
+  <data name="UnblockConfirm" xml:space="preserve">
+    <value>رفع الحظر عن هذا المرسل؟ ستُنشئ رسائله بلاغات معلّقة مرة أخرى.</value>
+  </data>
+  <data name="Unblocked" xml:space="preserve">
+    <value>تم رفع الحظر عن المرسل.</value>
+  </data>
+  <data name="DismissAsSpam" xml:space="preserve">
+    <value>رفض كرسالة مزعجة</value>
+  </data>
+  <data name="DismissConfirm" xml:space="preserve">
+    <value>رفض هذا البلاغ كرسالة مزعجة؟ سيُلغى ولن يُبلَّغ أحد.</value>
+  </data>
+  <data name="DismissBlockSender" xml:space="preserve">
+    <value>حظر المرسل أيضًا لمدة {0} يومًا</value>
+  </data>
+  <data name="DismissBlockSenderForever" xml:space="preserve">
+    <value>حظر المرسل أيضًا</value>
+  </data>
+  <data name="Dismissed" xml:space="preserve">
+    <value>تم رفض البلاغ كرسالة مزعجة.</value>
+  </data>
+  <data name="DismissedAndBlocked" xml:space="preserve">
+    <value>تم رفض البلاغ كرسالة مزعجة وحظر المرسل.</value>
+  </data>
+  <data name="DismissedNotBlockable" xml:space="preserve">
+    <value>تم رفض البلاغ كرسالة مزعجة. أخفى المتصل رقمه، لذلك تعذّر حظره.</value>
+  </data>
+  <data name="DismissNotPending" xml:space="preserve">
+    <value>لم يعد هذا البلاغ معلّقًا، لذا لا يمكن رفضه كرسالة مزعجة.</value>
+  </data>
+  <data name="Screening.LikelyNotIncident" xml:space="preserve">
+    <value>Enhanced AI: على الأرجح ليس حادثًا</value>
+  </data>
+  <data name="Screening.RepeatSender" xml:space="preserve">
+    <value>مرسل متكرر: تجاوز الحد بالساعة</value>
+  </data>
+  <data name="Screening.DismissedAsSpam" xml:space="preserve">
+    <value>مرفوض كرسالة مزعجة</value>
+  </data>
+</root>

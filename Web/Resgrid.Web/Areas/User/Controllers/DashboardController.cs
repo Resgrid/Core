@@ -51,7 +51,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{ PlanAddonTypes.ReadinessPro, ("ReadinessProTitle", "/User/ReadinessProBilling") },
 			{ PlanAddonTypes.BusinessOperations, ("BusinessOpsTitle", "/User/BusinessOperationsBilling") },
 			{ PlanAddonTypes.EnhancedAi, ("EnhancedAiTitle", "/User/AiBilling") },
-			{ PlanAddonTypes.IncidentBackOffice, ("IncidentBackOfficeTitle", "/User/IncidentBackOfficeBilling") }
+			{ PlanAddonTypes.IncidentBackOffice, ("IncidentBackOfficeTitle", "/User/IncidentBackOfficeBilling") },
+			{ PlanAddonTypes.DedicatedNumber, ("DedicatedNumberTitle", "/User/DedicatedNumberBilling") }
 		};
 
 		private readonly IDashboardService _dashboardService;

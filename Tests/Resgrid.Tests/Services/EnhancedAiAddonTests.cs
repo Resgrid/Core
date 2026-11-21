@@ -91,11 +91,21 @@ namespace Resgrid.Tests.Services
 		[TestCase(PlanAddonTypes.BusinessOperations, true)]
 		[TestCase(PlanAddonTypes.EnhancedAi, true)]
 		[TestCase(PlanAddonTypes.IncidentBackOffice, true)]
+		[TestCase(PlanAddonTypes.DedicatedNumber, true)]
 		[TestCase(PlanAddonTypes.PTT, false)]
 		[TestCase(PlanAddonTypes.ADP, false)]
 		public void Only_the_monthly_add_ons_with_their_own_checkout_are_dedicated(PlanAddonTypes type, bool dedicated)
 		{
 			PlanAddon.IsDedicatedMonthlyAddon((int)type).Should().Be(dedicated);
+		}
+
+		[TestCase(PlanAddonTypes.IncidentBackOffice, "Incident Back Office")]
+		[TestCase(PlanAddonTypes.DedicatedNumber, "Private Inbound Dispatch Number")]
+		public void Every_dedicated_monthly_add_on_has_a_name_and_a_monthly_interval(PlanAddonTypes type, string name)
+		{
+			var addon = new PlanAddon { AddonType = (int)type };
+			addon.GetAddonName().Should().Be(name);
+			addon.GetEndDateFromNow().Should().BeCloseTo(DateTime.UtcNow.AddMonths(1), TimeSpan.FromMinutes(1));
 		}
 
 		[Test]

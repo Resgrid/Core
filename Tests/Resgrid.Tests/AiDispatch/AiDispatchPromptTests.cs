@@ -148,11 +148,21 @@ namespace Resgrid.Tests.AiDispatch
 		[Test]
 		public void Queue_item_carries_identifiers_only_and_round_trips()
 		{
-			var item = new AiDispatchQueueItem { DepartmentId = 5, CallId = 42, Channel = 3, QueuedOnUtc = new DateTime(2026, 9, 25, 12, 0, 0, DateTimeKind.Utc), SenderNotAllowed = true };
+			var item = new AiDispatchQueueItem
+			{
+				DepartmentId = 5, CallId = 42, Channel = 3, QueuedOnUtc = new DateTime(2026, 9, 25, 12, 0, 0, DateTimeKind.Utc), SenderNotAllowed = true,
+				IntakeConversationId = Guid.NewGuid().ToString("D"), IntakeConversationMessageId = Guid.NewGuid().ToString("D"), ConversationComplete = true,
+				PlaceholderNameFingerprint = new string('f', 64)
+			};
 			var copy = ObjectSerialization.Deserialize<AiDispatchQueueItem>(ObjectSerialization.Serialize(item));
 			copy.Should().BeEquivalentTo(item);
-			typeof(AiDispatchQueueItem).GetProperties().Select(p => p.PropertyType).Should().OnlyContain(t => t == typeof(int) || t == typeof(DateTime) || t == typeof(bool),
+			typeof(AiDispatchQueueItem).GetProperties().Select(p => p.PropertyType).Should().OnlyContain(t => t == typeof(int) || t == typeof(DateTime) || t == typeof(bool) || t == typeof(string),
 				"message text, callers and patients never travel on the bus");
+			// The only strings are the intake conversation's row ids (plan §8): the worker reads the text from the call's notes. The
+			// placeholder fingerprint is an HMAC under the operator's audit key, never the name (which holds the sender).
+			typeof(AiDispatchQueueItem).GetProperties().Where(p => p.PropertyType == typeof(string)).Select(p => p.Name)
+				.Should().BeEquivalentTo(new[] { nameof(AiDispatchQueueItem.IntakeConversationId), nameof(AiDispatchQueueItem.IntakeConversationMessageId),
+					nameof(AiDispatchQueueItem.PlaceholderNameFingerprint) });
 		}
 
 		[Test]

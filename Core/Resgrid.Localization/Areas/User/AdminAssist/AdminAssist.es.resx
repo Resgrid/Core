@@ -1534,7 +1534,7 @@
     <value>La aplicación para miembros con la que reciben despachos, responden y establecen su estado.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.routes">
-    <value>Rutas planificadas, como patrullajes, y quién tiene asignada cada una.</value>
+    <value>Rutas planificadas, como patrullajes o traslados, quién tiene asignada cada una y las rutas que puede llevar una llamada para que la unidad asignada recorra las paradas previstas.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.run-cards">
     <value>Recursos recomendados para cada tipo de llamada o área.</value>
@@ -1729,7 +1729,7 @@
     <value>Cree los roles que despacha o sobre los que informa, y asígnelos a los miembros. Suba un icono de mapa para los roles que deban destacar y luego defina el orden en la página Roles: el marcador de cada persona usa el icono de su primer rol, en ese orden, que tenga uno.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.pois">
-    <value>Agregue las ubicaciones que los despachadores necesitan ver. Asigne a un tipo de POI un icono personalizado que sustituya su marcador en el mapa y en las aplicaciones.</value>
+    <value>Agregue las ubicaciones que los despachadores necesitan ver, una a una o importando un archivo KML, KMZ o CSV; las direcciones del archivo se buscan en segundo plano. Asigne a un tipo de POI un icono personalizado que sustituya su marcador en el mapa y en las aplicaciones.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.preventive-maintenance">
     <value>Programe el servicio de rutina para cada vehículo.</value>
@@ -4900,7 +4900,7 @@
     <value>Expande los grupos despachados usando la lista de personal de guardia resuelta. Un resultado de turno vacío recurre a los miembros del grupo; obtenga una vista previa de ambos casos.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.EnableModernNotifications">
-    <value>Usa el comportamiento de notificaciones modernas admitido. Verifique cada consumidor y canal; la aceptación del proveedor no equivale a la entrega.</value>
+    <value>Retirada. Los sonidos de notificación modernos están ahora activados para todos los departamentos y usuarios; no hay nada que configurar.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.EnableTextCommand">
     <value>Preferencia configurada de comandos por texto. Los patrones de origen de despacho y la identidad verificada de comandos de miembros son verificaciones distintas. Las rutas del proveedor y del chatbot no aplican este interruptor de manera uniforme; revise el consumidor activo antes de cambiarlo.</value>
@@ -6802,7 +6802,7 @@
     <value>Llamadas programadas</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.scheduled-calls">
-    <value>Llamadas que se envían solas a una hora futura y que se pueden enviar antes o reprogramar.</value>
+    <value>Llamadas que se envían solas a una hora futura y que se pueden enviar antes o reprogramar, con un calendario de todas las llamadas programadas y recurrentes.</value>
   </data>
   <data xml:space="preserve" name="Feature.api-keys">
     <value>Claves de API</value>
@@ -7852,6 +7852,153 @@
     <value>Sugerencias de destino</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.DestinationSuggestions">
-    <value>Sugiere el mejor destino para una llamada, y para el destino de estado de una unidad, a partir de las reglas de destino del departamento (Cartografía, Reglas de destino) y la ubicación del incidente, con el tiempo de trayecto y la distancia. «Sugerir y rellenar el destino» además rellena el destino vacío de una nueva llamada con el mejor; los despachadores y las dotaciones pueden elegir otro igualmente. Desactivado de forma predeterminada, porque cada sugerencia consulta tiempos de trayecto.</value>
+    <value>Sugiere el mejor destino para una llamada, y para el destino de estado de una unidad, a partir de las reglas de destino del departamento (Cartografía, Administrar PDI, Reglas de destino) y la ubicación del incidente, con el tiempo de trayecto y la distancia. «Sugerir y rellenar el destino» además rellena el destino vacío de una nueva llamada con el mejor; los despachadores y las dotaciones pueden elegir otro igualmente. Desactivado de forma predeterminada, porque cada sugerencia consulta tiempos de trayecto.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.recurring-calls">
+    <value>Llamadas recurrentes</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.recurring-calls">
+    <value>Llamadas que se repiten según un calendario, como traslados cada martes y jueves a las 08:00, 13:00 y 19:00. Cada una se crea con antelación como llamada programada y se envía sola, o se avisa a un despachador para que la envíe.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.recurring-calls">
+    <value>Abra Llamadas programadas y elija Llamadas recurrentes, luego Nueva llamada recurrente, o pulse Repetir en una llamada ya enviada. Complete los detalles de la llamada, los centros y el contacto, a quién despachar y a quién avisar, y después el calendario, cuándo se crea cada llamada y quién la envía. Revise los próximos despachos y el calendario antes de guardar.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.call-locations">
+    <value>Ubicaciones, destinos y rutas de las llamadas</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.call-locations">
+    <value>La ubicación de una llamada puede tomarse de un punto de interés, su destino puede ser un punto de interés o una dirección libre, coordenadas o what3words, y puede llevar una ruta predefinida que la unidad asignada recorre en la aplicación, parada por parada.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.call-locations">
+    <value>Agregue como puntos de interés los lugares donde recoge y entrega, y cree planes de ruta activos con inicio y fin para los trayectos que se repiten. En Nueva llamada, elija el PDI de ubicación, el destino y una ruta; una ubicación vacía toma el inicio de la ruta y un destino vacío su fin.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.poi-capabilities">
+    <value>Capacidades de POI</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.poi-capabilities">
+    <value>Lo que ofrecen sus puntos de interés, como sala de hemodinámica, unidad de ictus, helipuerto o punto de toma de agua, marcado en cada POI para que despachadores y dotaciones filtren y ordenen los destinos según lo que necesita el paciente o la tarea.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.poi-capabilities">
+    <value>Abra Cartografía, luego Administrar PDI, y elija Capacidades de POI. Agregue lo que ofrecen sus destinos y márquelo en cada POI, o agregue una columna Capabilities a un archivo de importación de POI.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.destination-availability">
+    <value>Disponibilidad de destinos</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.destination-availability">
+    <value>Si cada destino puede recibir pacientes ahora mismo: abierto, limitado, en desvío o cerrado, con las capacidades que no puede ofrecer, una nota y cuánto dura el aviso.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.destination-availability">
+    <value>Abra Cartografía, luego Administrar PDI, y elija Disponibilidad de destinos, o use el enlace Disponibilidad de destinos bajo el Destino del formulario de llamada. Elija Establecer disponibilidad en un destino cuando informe un desvío, un cierre o una capacidad fuera de servicio.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.destination-rules">
+    <value>Reglas de destino</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.destination-rules">
+    <value>Reglas que eligen los tipos de destino y las capacidades requeridas y preferidas según el tipo y la prioridad de la llamada y el tipo de la unidad que se desplaza, para que Resgrid sugiera el destino adecuado más cercano con tiempo de viaje y distancia.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.destination-rules">
+    <value>Abra Cartografía, luego Administrar PDI, y elija Reglas de destino. Agregue una regla para cada caso, por ejemplo las llamadas cardíacas a un hospital con sala de hemodinámica y un camión cisterna a un punto de toma de agua, compruébelas con Pruébelo y luego ponga Sugerencias de destino en Sugerir destinos o Sugerir y rellenar el destino.</value>
+  </data>
+  <data name="Area.dedicated-number" xml:space="preserve">
+    <value>Private Inbound Dispatch Number</value>
+  </data>
+  <data name="AreaPurpose.dedicated-number" xml:space="preserve">
+    <value>El número de teléfono propio de su departamento. Los mensajes de texto que recibe se convierten en llamadas pendientes y, con Enhanced AI, quien llama puede comunicar un incidente por voz.</value>
+  </data>
+  <data name="AreaValue.dedicated-number" xml:space="preserve">
+    <value>Ofrezca al público, a las agencias asociadas y a los miembros un número local al que escribir o llamar: cada aviso espera a un despachador en Llamadas pendientes en lugar de quedarse en el teléfono personal de alguien.</value>
+  </data>
+  <data name="AreaExample.dedicated-number" xml:space="preserve">
+    <value>Un distrito rural imprime su nuevo número local en sus folletos para avisos que no son de emergencia, y un mensaje sobre un árbol caído en una carretera llega como llamada pendiente que un despachador revisa y envía.</value>
+  </data>
+  <data name="ModuleAdoption.dedicated-number" xml:space="preserve">
+    <value>Requiere el complemento Private Inbound Dispatch Number, que solo se vende con un plan de entidades de pago activo. El número solo recibe mensajes de texto; las respuestas salen del número principal de Resgrid. La recepción por voz también necesita el complemento Enhanced AI.</value>
+  </data>
+  <data name="Ui.AddonRequired.DedicatedNumber" xml:space="preserve">
+    <value>Requiere Private Inbound Dispatch Number</value>
+  </data>
+  <data name="Feature.dedicated-number" xml:space="preserve">
+    <value>Número del departamento y recepción</value>
+  </data>
+  <data name="FeaturePurpose.dedicated-number" xml:space="preserve">
+    <value>Elija y active el número de su departamento, decida si los mensajes de texto y las llamadas de voz que recibe crean llamadas pendientes y libérelo cuando ya no lo necesite.</value>
+  </data>
+  <data name="FeatureSetup.dedicated-number" xml:space="preserve">
+    <value>Cuando el complemento esté activo, abra el menú del departamento y luego Private Inbound Dispatch Number. Busque por país, código de área o dígitos, active el número que quiera, encienda Crear llamadas pendientes a partir de mensajes de texto y guarde. Después envíe un mensaje de prueba al número y revise Llamadas pendientes.</value>
+  </data>
+  <data name="Feature.addon-dedicated-number" xml:space="preserve">
+    <value>Private Inbound Dispatch Number</value>
+  </data>
+  <data name="FeaturePurpose.addon-dedicated-number" xml:space="preserve">
+    <value>El complemento Private Inbound Dispatch Number: el número de teléfono propio de su departamento para recibir llamadas por mensaje de texto y por voz.</value>
+  </data>
+  <data name="FeatureValue.addon-dedicated-number" xml:space="preserve">
+    <value>Los miembros y el público contactan con su departamento directamente, en lugar de hacerlo a través del número compartido de Resgrid.</value>
+  </data>
+  <data name="FeatureExample.addon-dedicated-number" xml:space="preserve">
+    <value>El miembro gestor compra el complemento en la página Private Inbound Dispatch Number o en su página de facturación, y después un administrador del departamento activa un número local.</value>
+  </data>
+  <data name="FeatureAdoption.addon-dedicated-number" xml:space="preserve">
+    <value>Solo se vende con un plan de entidades de pago activo, y lo compra o cancela el miembro gestor. Se factura mensualmente por departamento, incluso con un plan anual. Cuando el complemento termina, el número deja de recibir mensajes y llamadas y se libera tras un período de gracia, salvo que se renueve el complemento.</value>
+  </data>
+  <data name="Feature.intake-channels" xml:space="preserve">
+    <value>Canales de entrada</value>
+  </data>
+  <data name="FeaturePurpose.intake-channels" xml:space="preserve">
+    <value>Convierta en llamadas pendientes los mensajes de texto al número del departamento, los correos a una dirección de entrada, las publicaciones en un canal vinculado de Slack, Teams, WhatsApp, Telegram, Discord o Google Chat y las solicitudes de webhook firmadas.</value>
+  </data>
+  <data name="FeatureValue.intake-channels" xml:space="preserve">
+    <value>Las solicitudes que llegan fuera de la radio y del CAD quedan en una sola cola para que un despachador las revise; la entrada nunca despacha a nadie por sí sola.</value>
+  </data>
+  <data name="FeatureExample.intake-channels" xml:space="preserve">
+    <value>La mesa de traslados de un hospital publica solicitudes en un canal compartido de Teams, y cada publicación se convierte en una llamada pendiente con el tipo de llamada y la prioridad predeterminados del canal.</value>
+  </data>
+  <data name="FeatureSetup.intake-channels" xml:space="preserve">
+    <value>Abra el menú del departamento, luego Canales de entrada, y agregue un canal para cada origen. Elija el procesamiento Plantilla de llamada o Enhanced AI, limite los Remitentes permitidos, defina una prioridad y un tipo de llamada predeterminados, y luego envíe un mensaje de prueba y revise Llamadas pendientes.</value>
+  </data>
+  <data name="Feature.ai-intake" xml:space="preserve">
+    <value>Recepción de llamadas con Enhanced AI</value>
+  </data>
+  <data name="FeaturePurpose.ai-intake" xml:space="preserve">
+    <value>Enhanced AI lee cada mensaje de un canal de entrada configurado con el procesamiento Enhanced AI y completa el tipo, la dirección, la prioridad y un resumen de la llamada pendiente.</value>
+  </data>
+  <data name="FeatureValue.ai-intake" xml:space="preserve">
+    <value>Los despachadores parten de una llamada ya completada en lugar de volver a escribir texto libre. La llamada pendiente se guarda primero, así que ningún mensaje se pierde si la IA no está disponible.</value>
+  </data>
+  <data name="FeatureExample.ai-intake" xml:space="preserve">
+    <value>Un mensaje que dice que un coche está en la cuneta de la carretera 9 cerca del kilómetro 12 se convierte en una llamada pendiente de accidente de tráfico con la ubicación completada, lista para que un despachador la revise.</value>
+  </data>
+  <data name="FeatureSetup.ai-intake" xml:space="preserve">
+    <value>Necesita el complemento Enhanced AI con la entrada por IA activada para su departamento. En Canales de entrada, edite un canal y ponga Procesamiento en Enhanced AI. Un despachador sigue revisando cada llamada pendiente, y los departamentos que usan Advanced Data Protection no se procesan con IA.</value>
+  </data>
+  <data name="Feature.ai-voice-intake" xml:space="preserve">
+    <value>Recepción por voz con Enhanced AI</value>
+  </data>
+  <data name="FeaturePurpose.ai-voice-intake" xml:space="preserve">
+    <value>Quienes llaman al número privado de despacho del departamento sin ser miembros responden a preguntas guiadas habladas, y Enhanced AI convierte sus respuestas en una llamada pendiente.</value>
+  </data>
+  <data name="FeatureValue.ai-voice-intake" xml:space="preserve">
+    <value>Reciba avisos por teléfono a cualquier hora sin que nadie conteste, mientras un despachador sigue decidiendo a quién enviar.</value>
+  </data>
+  <data name="FeatureExample.ai-voice-intake" xml:space="preserve">
+    <value>Una persona avisa de humo detrás de un granero, responde a las preguntas sobre dónde es y qué ve, y una llamada pendiente con la transcripción espera al despachador.</value>
+  </data>
+  <data name="FeatureSetup.ai-voice-intake" xml:space="preserve">
+    <value>Necesita los complementos Private Inbound Dispatch Number y Enhanced AI con la recepción por voz con IA activada para su departamento. En Private Inbound Dispatch Number, active Recibir avisos por voz y guarde. Las llamadas de voz tienen un límite mensual de uso razonable; por encima de él, se pide a quien llama que envíe un mensaje de texto al número.</value>
+  </data>
+  <data name="Feature.ai-destination-advice" xml:space="preserve">
+    <value>Recomendación de destino de Enhanced AI</value>
+  </data>
+  <data name="FeaturePurpose.ai-destination-advice" xml:space="preserve">
+    <value>Enhanced AI recomienda el destino de una llamada abierta según su naturaleza, su nota y sus notas de llamada, y las capacidades y la disponibilidad de sus destinos, y sugiere un cambio cuando cambian los detalles de la llamada.</value>
+  </data>
+  <data name="FeatureValue.ai-destination-advice" xml:space="preserve">
+    <value>Detecte a un paciente que ahora necesita un nivel de atención superior, como un centro de trauma, sin que nadie vuelva a revisar cada destino a mano.</value>
+  </data>
+  <data name="FeatureExample.ai-destination-advice" xml:space="preserve">
+    <value>Una nota de la llamada informa de una herida penetrante, y la recomendación en la llamada sugiere el centro de trauma en lugar del hospital más cercano, para que el despachador la aplique o la descarte.</value>
+  </data>
+  <data name="FeatureSetup.ai-destination-advice" xml:space="preserve">
+    <value>Necesita el complemento Enhanced AI con la recomendación de destino con IA activada para su departamento. Agregue primero sus destinos con sus capacidades y reglas de destino. La recomendación aparece al ver y al actualizar la llamada, nada cambia hasta que alguien la aplica, y los departamentos que usan Advanced Data Protection no reciben recomendaciones.</value>
   </data>
 </root>

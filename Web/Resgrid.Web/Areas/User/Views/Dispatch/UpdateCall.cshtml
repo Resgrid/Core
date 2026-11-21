@@ -25,6 +25,9 @@
     var hasCallTypes = Model.CallTypes != null && Model.CallTypes.Count() > 1;
     ViewData["AllCallIsEdit"] = true;
 
+    // resgrid.dispatch.calllocations.js places the call pin through this page's script (M0322).
+    ViewData["CallLocationsPage"] = "editcall";
+
     Microsoft.AspNetCore.Html.IHtmlContent requiredMark(params string[] keys) => keys.Any(Model.IsFieldRequired)
         ? new Microsoft.AspNetCore.Html.HtmlString(" <span class=\"text-danger\">*</span>")
         : Microsoft.AspNetCore.Html.HtmlString.Empty;
@@ -250,6 +253,7 @@
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">@localizer["LocationLabel"]@requiredMark(NewCallFieldKeys.Address, NewCallFieldKeys.What3Words, NewCallFieldKeys.Geolocation)</label>
                                 <div class="col-sm-10">
+                                    <partial name="_CallLocationPoiSelect" model="Model" />
                                     @if (showAddress || showWhat3Words)
                                     {
                                         <div class="row">
@@ -320,7 +324,16 @@
                             </div>
                             @* Suggest only: an existing call's destination is never filled in automatically. *@
                             <partial name="_DestinationSuggestions" />
+                            @* Enhanced AI destination advice; Apply also sets the destination field above. *@
+                            <partial name="_DestinationAdvice" model="Model.Call" view-data='new ViewDataDictionary(ViewData) { { "DestinationAdvice.Form", true }, { "DestinationAdvice.StartHub", true } }' />
+                            <partial name="_CallDestinationLocation" model="Model" />
                         }
+                        @* The text conversation with the member of the public who texted the dedicated number (calls that have one). *@
+                        <partial name="_IntakeConversation" model="Model.Call" view-data='new ViewDataDictionary(ViewData) { { "IntakeConversation.Form", true }, { "IntakeConversation.StartHub", true } }' />
+                        <partial name="_CallRoutePlanSelect" model="Model" />
+                        @* What the location POI and route pickers opened with: a picker posted unchanged keeps the call's stored value. *@
+                        <input type="hidden" name="OriginalLocationPoiId" value="@Model.OriginalLocationPoiId" />
+                        <input type="hidden" name="OriginalRoutePlanId" value="@Model.OriginalRoutePlanId" />
                         @if (Model.IsFieldVisible(NewCallFieldKeys.IndoorLocation))
                         {
                             <div class="form-group">
@@ -716,7 +729,11 @@
     <script src="~/js/app/internal/dispatch/resgrid.dispatch.runcarddecision.js"></script>
     <script src="~/js/app/internal/dispatch/resgrid.dispatch.nearestboard.js"></script>
     <script src="~/js/app/internal/dispatch/resgrid.dispatch.destinations.js"></script>
+    <script src="~/js/app/common/signalr/resgrid.common.signalr.js" type="text/javascript"></script>
+    <script src="~/js/app/internal/dispatch/resgrid.dispatch.destinationadvice.js" asp-append-version="true" type="text/javascript"></script>
+    <script src="~/js/app/internal/dispatch/resgrid.dispatch.intakeconversation.js" asp-append-version="true" type="text/javascript"></script>
     <script src="~/js/app/internal/dispatch/resgrid.dispatch.editcall.js"></script>
+    <partial name="_CallLocationsScript" model="Model" />
 
     <script type="text/javascript">
         var _alertNotes = [];

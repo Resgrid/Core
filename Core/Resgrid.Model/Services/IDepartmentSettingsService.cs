@@ -505,8 +505,6 @@ namespace Resgrid.Model.Services
 		/// </summary>
 		Task<DepartmentSetting> GetSettingByTypeAsync(int departmentId, DepartmentSettingTypes type);
 
-		Task<bool> GetModernNotificationsEnabledAsync(int departmentId, bool bypassCache = false);
-
 		/// <summary>
 		/// True when administrator-initiated password resets must send the member a single-use email
 		/// link instead of allowing the administrator to choose the new password.

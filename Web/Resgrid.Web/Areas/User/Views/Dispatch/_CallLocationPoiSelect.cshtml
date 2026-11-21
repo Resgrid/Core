@@ -1,0 +1,37 @@
+@model Resgrid.Web.Areas.User.Models.Calls.ICallLocationsForm
+@using Resgrid.Web.Areas.User.Models.Calls
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Call> localizer
+@*
+    Call location from a POI (M0322): any of the department's points of interest, grouped by type. Picking one fills the
+    address and the pin (resgrid.dispatch.calllocations.js); the call keeps the POI as Call.LocationPoiId. Rendered inside the
+    Location group, only with the address or the pin on the form and only when the department has POIs.
+*@
+@if (Model.ShowsLocationPoi())
+{
+    <div class="row" style="margin-bottom: 8px;">
+        <div class="col-md-11">
+            <select id="Call_LocationPoiId" name="Call.LocationPoiId" class="form-control location-poi-search" style="width:100%;"
+                    data-placeholder="@localizer["LocationPoiPlaceholder"]">
+                <option value="">@localizer["LocationPoiPlaceholder"]</option>
+                @foreach (var group in Model.LocationPois.GroupBy(x => x.Group))
+                {
+                    <optgroup label="@group.Key">
+                        @foreach (var poi in group)
+                        {
+                            if (poi.HasPoint)
+                            {
+                                <option value="@poi.PoiId" selected="@poi.Selected" data-address="@poi.Address"
+                                        data-lat="@CallLocationsForm.Invariant(poi.Latitude)" data-lng="@CallLocationsForm.Invariant(poi.Longitude)">@poi.Text</option>
+                            }
+                            else
+                            {
+                                <option value="@poi.PoiId" selected="@poi.Selected" data-address="@poi.Address">@poi.Text</option>
+                            }
+                        }
+                    </optgroup>
+                }
+            </select>
+            <span class="help-inline">@localizer["LocationPoiHelp"]</span>
+        </div>
+    </div>
+}

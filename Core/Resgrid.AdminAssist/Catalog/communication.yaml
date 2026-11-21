@@ -25,16 +25,15 @@
       "LabelKey": "Setting.EnableModernNotifications",
       "HelpKey": "SettingHelp.EnableModernNotifications",
       "Binding": "DepartmentSettingTypes.EnableModernNotifications",
-      "ValueType": "boolean",
+      "ValueType": "reserved",
       "Classification": "Internal",
       "Secret": false,
       "Location": {
         "Controller": "Department",
-        "Action": "Settings",
-        "Field": "EnableModernNotifications"
+        "Action": "Settings"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z",
+      "ReviewedOn": "2026-11-19T00:00:00Z",
       "Impact": {
         "Risk": "Medium",
         "AudienceKey": "Impact.Audience",
@@ -47,10 +46,10 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "setting.EnableModernNotifications",
-      "DefaultValue": "false",
+      "DefaultValue": "unused",
       "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
       "EvidenceSource": "DepartmentSettings",
-      "Availability": "available"
+      "Availability": "retired"
     },
     {
       "Id": "module.MessagingDisabled",
@@ -1378,12 +1377,12 @@
       "Id": "setting.EnableModernNotifications",
       "Locale": "en",
       "TitleKey": "Setting.EnableModernNotifications",
-      "Body": "Enable Modern Notifications. Use supported modern notification behavior. Verify each consumer and channel; provider acceptance is not delivery.",
+      "Body": "Enable Modern Notifications. Retired. Modern notification sounds are now on for every department and user; there is nothing to set.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-enablemodernnotifications",
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
+      "ReviewedOn": "2026-11-19T00:00:00Z"
     },
     {
       "Id": "module.MessagingDisabled",

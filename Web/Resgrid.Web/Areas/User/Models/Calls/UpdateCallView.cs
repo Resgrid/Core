@@ -6,7 +6,7 @@ using Resgrid.Model.Identity;
 
 namespace Resgrid.Web.Areas.User.Models.Calls
 {
-	public class UpdateCallView: BaseUserModel
+	public class UpdateCallView: BaseUserModel, ICallLocationsForm
 	{
 		public string UdfFormHtml { get; set; }
 
@@ -61,6 +61,39 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 
 		/// <summary>Name of the call's indoor map zone, so the picker opens showing it.</summary>
 		public string IndoorMapZoneName { get; set; }
+
+		/// <summary>The department's POIs the call location can be picked from (M0322); empty hides the picker.</summary>
+		public List<CallLocationPoiOption> LocationPois { get; set; } = new List<CallLocationPoiOption>();
+
+		/// <summary>The route plans the call can follow (M0322); empty hides the route picker.</summary>
+		public List<CallRoutePlanOption> RoutePlans { get; set; } = new List<CallRoutePlanOption>();
+
+		/// <summary>Destination POI points by id, for the destination marker on the call map.</summary>
+		public Dictionary<string, double[]> DestinationPoiPoints { get; set; } = new Dictionary<string, double[]>();
+
+		/// <summary>
+		/// The free destination point (M0322) as typed, kept as text and parsed invariant (see <see cref="CallLocationsForm.PostedPoint"/>):
+		/// the form never posts Call.DestinationGeoLocationData.
+		/// </summary>
+		public string DestinationLatitude { get; set; }
+
+		public string DestinationLongitude { get; set; }
+
+		/// <summary>A plus code to find the destination point with; never stored.</summary>
+		public string DestinationPlusCode { get; set; }
+
+		/// <summary>
+		/// The location POI the picker showed selected when the form opened (blank when it did not show the call's own), posted back
+		/// so only a POI this editor changed is written: an unrelated save neither clears a POI the picker could not show nor puts
+		/// back one another editor replaced meanwhile.
+		/// </summary>
+		public string OriginalLocationPoiId { get; set; }
+
+		/// <summary>The route the picker showed selected when the form opened, posted back for the same reason.</summary>
+		public string OriginalRoutePlanId { get; set; }
+
+		/// <summary>The member may open Routes (the route preview link).</summary>
+		public bool CanViewRoutes { get; set; }
 
 		public UpdateCallView()
 		{

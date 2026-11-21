@@ -38,6 +38,44 @@ namespace Resgrid.Tests.Web.Services
 		}
 
 		[Test]
+		public async Task dispatch_prompts_should_request_the_dispatch_speed_and_cache_apart_from_the_default_speed()
+		{
+			var originalDispatchSpeed = Resgrid.Config.TtsConfig.DispatchSpeed;
+			Resgrid.Config.TtsConfig.DispatchSpeed = 120;
+
+			try
+			{
+				var defaultUrl = new Uri("https://tts.example.com/tts/audio/default.wav");
+				var dispatchUrl = new Uri("https://tts.example.com/tts/audio/dispatch.wav");
+				var ttsAudioService = new Mock<ITtsAudioService>(MockBehavior.Strict);
+				ttsAudioService
+					.Setup(x => x.GenerateSpeechUrlAsync("New call, Fire.", "en-us", null, It.IsAny<CancellationToken>()))
+					.ReturnsAsync(defaultUrl);
+				ttsAudioService
+					.Setup(x => x.GenerateSpeechUrlAsync("New call, Fire.", "en-us", 120, It.IsAny<CancellationToken>()))
+					.ReturnsAsync(dispatchUrl);
+
+				var service = new TwilioVoiceResponseService(ttsAudioService.Object);
+				var response = new VoiceResponse();
+
+				await service.PreWarmDispatchPromptAsync("New call, Fire.", "en-us");
+				await service.AppendDispatchPromptAsync(response, "New call, Fire.", CancellationToken.None, "en-us");
+				await service.AppendPromptAsync(response, "New call, Fire.", CancellationToken.None, "en-us");
+
+				var xml = response.ToString();
+				xml.IndexOf(dispatchUrl.ToString(), StringComparison.Ordinal)
+					.Should().BeLessThan(xml.IndexOf(defaultUrl.ToString(), StringComparison.Ordinal));
+				// The pre-warm and the playback share one generation; the default-rate prompt is its own.
+				ttsAudioService.Verify(x => x.GenerateSpeechUrlAsync("New call, Fire.", "en-us", 120, It.IsAny<CancellationToken>()), Times.Once);
+				ttsAudioService.Verify(x => x.GenerateSpeechUrlAsync("New call, Fire.", "en-us", null, It.IsAny<CancellationToken>()), Times.Once);
+			}
+			finally
+			{
+				Resgrid.Config.TtsConfig.DispatchSpeed = originalDispatchSpeed;
+			}
+		}
+
+		[Test]
 		public async Task append_prompt_async_should_scope_cache_entries_by_voice()
 		{
 			var spanishPromptUrl = new Uri("https://tts.example.com/tts/audio/es.wav");

@@ -51,7 +51,7 @@ GROUP_TYPES = {'organizational': 1, 'station': 2}
 # DepartmentSettingTypes.cs.
 SETTING = {
     'BigBoardMapCenterGpsCoordinates': 5, 'DisabledAutoAvailable': 9, 'InternalDispatchEmail': 15, 'PersonnelSortOrder': 18, 'UnitsSortOrder': 19,
-    'CallsSortOrder': 20, 'ModuleSettings': 32, 'Require2FAForAdmins': 36, 'CheckInTimersAutoEnableForNewCalls': 38, 'EnableModernNotifications': 53,
+    'CallsSortOrder': 20, 'ModuleSettings': 32, 'Require2FAForAdmins': 36, 'CheckInTimersAutoEnableForNewCalls': 38,
     'CallNumberingConfig': 115, 'DepartmentTerminology': 118,
 }
 SORT_ORDERS = {
@@ -252,9 +252,8 @@ class Builder:
             'TimeZone': d['timeZone'], 'DepartmentType': d['type'], 'Use24HourTime': bool(d.get('use24HourTime')),
             'AddressId': self.key('address', 'department') if d.get('address') else None,
         }, key=('department', ''), returns='DepartmentId', label='department')
-        # What registration writes (DepartmentsService.CreateDepartmentAsync): a unique dispatch email code and modern sounds.
+        # What registration writes (DepartmentsService.CreateDepartmentAsync): a unique dispatch email code.
         self.setting('InternalDispatchEmail', _code(self.run.tag + self.sid + 'dispatch', 6).lower())
-        self.setting('EnableModernNotifications', 'True')
         if d.get('location'):
             self.setting('BigBoardMapCenterGpsCoordinates', '{},{}'.format(*d['location']))
         settings = self.s.get('settings', {})

@@ -27,7 +27,6 @@ namespace Resgrid.Services
 		private static string CloseCallWhenUnitsClearCacheKey = "DSetCloseCallWhenUnitsClear_{0}";
 		private static string TransportDestinationChecksCacheKey = "DSetTransportDestinationChecks_{0}";
 		private static string DestinationSuggestionsCacheKey = "DSetDestinationSuggestions_{0}";
-		private static string ModernNotificationsCacheKey = "DSetModernNotifications_{0}";
 		private static string RequirePasswordResetViaEmailCacheKey = "DSetRequirePasswordResetViaEmail_{0}";
 		private static string ForceChatbotSecurityPinCacheKey = "DSetForceChatbotSecurityPin_{0}";
 		private static string HardwareTrackingStaleAfterSecondsCacheKey = "DSetHardwareTrackingStale_{0}";
@@ -1916,23 +1915,6 @@ namespace Resgrid.Services
 			return await GetSettingByDepartmentIdType(departmentId, type);
 		}
 
-		public async Task<bool> GetModernNotificationsEnabledAsync(int departmentId, bool bypassCache = false)
-		{
-			async Task<string> getSetting()
-			{
-				var s = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.EnableModernNotifications);
-				return s?.Setting ?? "false";
-			}
-
-			if (Config.SystemBehaviorConfig.CacheEnabled && !bypassCache)
-			{
-				var cachedValue = await _cacheProvider.RetrieveAsync<string>(string.Format(ModernNotificationsCacheKey, departmentId), getSetting, LongCacheLength);
-				return bool.Parse(cachedValue);
-			}
-
-			return bool.Parse(await getSetting());
-		}
-
 		public async Task<bool> GetRequirePasswordResetViaEmailAsync(int departmentId, bool bypassCache = false)
 		{
 			async Task<string> getSetting()
@@ -2070,9 +2052,6 @@ namespace Resgrid.Services
 					break;
 				case DepartmentSettingTypes.DestinationSuggestions:
 					cacheKey = string.Format(DestinationSuggestionsCacheKey, departmentId);
-					break;
-				case DepartmentSettingTypes.EnableModernNotifications:
-					cacheKey = string.Format(ModernNotificationsCacheKey, departmentId);
 					break;
 				case DepartmentSettingTypes.RequirePasswordResetViaEmail:
 					cacheKey = string.Format(RequirePasswordResetViaEmailCacheKey, departmentId);

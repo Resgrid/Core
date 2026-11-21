@@ -65,14 +65,20 @@ namespace Resgrid.Services
 			if (result.Mode == DestinationSuggestionModes.Off || !IsUsableCoordinate(request.Latitude, request.Longitude))
 				return result;
 
+			// The metadata reads take no token, so a caller's deadline (the server destination fill) is checked between them: once
+			// it has passed, no further step starts.
 			var departmentId = request.DepartmentId;
+			cancellationToken.ThrowIfCancellationRequested();
 			result.Context = await _destinationRulesService.BuildContextAsync(departmentId, request.CallTypeId, request.CallType, request.CallPriority, request.UnitId);
 
 			// One load of the types (with their POIs) serves both the rules and the candidates.
+			cancellationToken.ThrowIfCancellationRequested();
 			var destinationTypes = (await _mappingService.GetPOITypesForDepartmentAsync(departmentId) ?? new List<PoiType>())
 				.Where(x => x != null && x.IsDestination && x.DepartmentId == departmentId)
 				.ToList();
+			cancellationToken.ThrowIfCancellationRequested();
 			var capabilities = await _mappingService.GetPoiCapabilitiesForDepartmentAsync(departmentId) ?? new List<PoiCapability>();
+			cancellationToken.ThrowIfCancellationRequested();
 			var rules = await _destinationRulesService.GetRulesForDepartmentAsync(departmentId) ?? new List<DestinationRule>();
 
 			result.Requirements = DestinationRuleResolver.Resolve(rules, result.Context, destinationTypes.Select(x => x.PoiTypeId),
@@ -91,8 +97,10 @@ namespace Resgrid.Services
 				}
 			}
 
+			cancellationToken.ThrowIfCancellationRequested();
 			await _mappingService.PopulatePoiDetailsAsync(departmentId, pois);
 
+			cancellationToken.ThrowIfCancellationRequested();
 			var candidates = BuildCandidates(pois, request.Latitude, request.Longitude, result.Requirements);
 			await RouteShortlistAsync(departmentId, request.Latitude, request.Longitude, candidates, request.UnitId, cancellationToken);
 

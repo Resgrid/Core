@@ -2286,4 +2286,10 @@
   <data name="DeleteRefusedPermanentContent" xml:space="preserve"><value>Den här rapporten har poster om skadade, räddningar eller exponeringar, som sparas permanent. Ta bort dem från utkastet innan du tar bort rapporten.</value></data>
   <data name="DeleteRefusedAmendmentOpen" xml:space="preserve"><value>Överge den öppna ändringen innan du tar bort den här rapporten.</value></data>
   <data name="IncludeClosedReports" xml:space="preserve"><value>Inkludera avbrutna och ogiltigförklarade</value></data>
+  <data name="ImportMapPois" xml:space="preserve">
+    <value>Importera kart-POI</value>
+  </data>
+  <data name="ImportMapPoisHelp" xml:space="preserve">
+    <value>Importera en KML-, KMZ- eller CSV-fil som kartans intressepunkter (landmärken), skilda från brandpostposterna.</value>
+  </data>
 </root>

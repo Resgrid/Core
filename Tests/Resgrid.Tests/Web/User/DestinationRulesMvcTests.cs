@@ -195,7 +195,7 @@ namespace Resgrid.Tests.Web.User
 			M<INearestDestinationService>().Setup(x => x.SuggestDestinationsAsync(It.IsAny<DestinationSuggestionRequest>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync(new DestinationSuggestions { Mode = DestinationSuggestionModes.Off });
 
-			var json = JsonOf(await Build().Suggest(50.8, 3.8, 1, "Burns", CancellationToken.None));
+			var json = JsonOf(await Build().Suggest(50.8, 3.8, 1, "Burns", cancellationToken: CancellationToken.None));
 
 			json["success"].Value<bool>().Should().BeTrue();
 			json["mode"].Value<int>().Should().Be(0);
@@ -227,7 +227,7 @@ namespace Resgrid.Tests.Web.User
 					}
 				});
 
-			var json = JsonOf(await Build().Suggest(50.8, 3.8, 1, "Burns", CancellationToken.None));
+			var json = JsonOf(await Build().Suggest(50.8, 3.8, 1, "Burns", cancellationToken: CancellationToken.None));
 
 			json["mode"].Value<int>().Should().Be(2);
 			json["suggestedPoiId"].Type.Should().Be(JTokenType.Null);
@@ -281,7 +281,7 @@ namespace Resgrid.Tests.Web.User
 		[TestCase(50.8, null)]
 		public async Task Suggestions_need_both_coordinates(double? latitude, double? longitude)
 		{
-			var json = JsonOf(await Build().Suggest(latitude, longitude, 1, "Burns", CancellationToken.None));
+			var json = JsonOf(await Build().Suggest(latitude, longitude, 1, "Burns", cancellationToken: CancellationToken.None));
 
 			json["success"].Value<bool>().Should().BeFalse();
 			M<INearestDestinationService>().Verify(x => x.SuggestDestinationsAsync(It.IsAny<DestinationSuggestionRequest>(), It.IsAny<CancellationToken>()), Times.Never);
@@ -293,10 +293,168 @@ namespace Resgrid.Tests.Web.User
 			M<INearestDestinationService>().Setup(x => x.SuggestDestinationsAsync(It.IsAny<DestinationSuggestionRequest>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync(new DestinationSuggestions { Mode = DestinationSuggestionModes.Off });
 
-			await Build().Suggest(0, 3.8, 1, "Burns", CancellationToken.None);
+			await Build().Suggest(0, 3.8, 1, "Burns", cancellationToken: CancellationToken.None);
 
 			M<INearestDestinationService>().Verify(x => x.SuggestDestinationsAsync(It.Is<DestinationSuggestionRequest>(r => r.Latitude == 0 && r.Longitude == 3.8),
 				It.IsAny<CancellationToken>()), Times.Once);
 		}
+
+		#region Suggest: call type id, travelling unit and call context
+
+		private const int CallId = 900;
+		private const int UnitId = 44;
+
+		/// <summary>Answers Off and keeps the request the controller sent.</summary>
+		private Func<DestinationSuggestionRequest> CaptureRequest()
+		{
+			DestinationSuggestionRequest sent = null;
+			M<INearestDestinationService>().Setup(x => x.SuggestDestinationsAsync(It.IsAny<DestinationSuggestionRequest>(), It.IsAny<CancellationToken>()))
+				.Callback((DestinationSuggestionRequest r, CancellationToken _) => sent = r)
+				.ReturnsAsync(new DestinationSuggestions { Mode = DestinationSuggestionModes.Off });
+			return () => sent;
+		}
+
+		private void GivenUnit(int departmentId = DepartmentId, bool deleted = false, bool visible = true)
+		{
+			M<IUnitsService>().Setup(x => x.GetUnitByIdAsync(UnitId)).ReturnsAsync(new Unit { UnitId = UnitId, DepartmentId = departmentId, IsDeleted = deleted, Type = "Helicopter" });
+			M<IAuthorizationService>().Setup(x => x.CanUserViewUnitViaMatrixAsync(UnitId, UserId, DepartmentId)).ReturnsAsync(visible);
+		}
+
+		private void GivenCall(int departmentId = DepartmentId, bool canView = true, bool deleted = false)
+		{
+			M<ICallsService>().Setup(x => x.GetCallByIdAsync(CallId, It.IsAny<bool>()))
+				.ReturnsAsync(new Call { CallId = CallId, DepartmentId = departmentId, IsDeleted = deleted, Type = "Burns", CallTypeId = 31, Priority = 3 });
+			M<IAuthorizationService>().Setup(x => x.CanUserViewCallAsync(UserId, CallId)).ReturnsAsync(canView);
+		}
+
+		[Test]
+		public async Task Suggestions_pass_the_call_type_id_when_the_page_knows_it()
+		{
+			var sent = CaptureRequest();
+
+			await Build().Suggest(50.8, 3.8, 1, "Burns", callTypeId: 31, cancellationToken: CancellationToken.None);
+
+			sent().CallTypeId.Should().Be(31);
+			sent().CallType.Should().Be("Burns");
+		}
+
+		[Test]
+		public async Task A_zero_call_type_id_is_no_type_id()
+		{
+			var sent = CaptureRequest();
+
+			await Build().Suggest(50.8, 3.8, 1, "Burns", callTypeId: 0, cancellationToken: CancellationToken.None);
+
+			sent().CallTypeId.Should().BeNull();
+		}
+
+		[Test]
+		public async Task A_visible_unit_of_the_department_travels()
+		{
+			GivenUnit();
+			var sent = CaptureRequest();
+
+			await Build().Suggest(50.8, 3.8, 1, "Burns", unitId: UnitId, cancellationToken: CancellationToken.None);
+
+			sent().UnitId.Should().Be(UnitId);
+		}
+
+		[Test]
+		public async Task A_unit_of_another_department_is_ignored()
+		{
+			GivenUnit(departmentId: 99);
+			var sent = CaptureRequest();
+
+			await Build().Suggest(50.8, 3.8, 1, "Burns", unitId: UnitId, cancellationToken: CancellationToken.None);
+
+			sent().UnitId.Should().BeNull();
+		}
+
+		[Test]
+		public async Task A_unit_hidden_from_the_member_is_ignored()
+		{
+			GivenUnit(visible: false);
+			var sent = CaptureRequest();
+
+			await Build().Suggest(50.8, 3.8, 1, "Burns", unitId: UnitId, cancellationToken: CancellationToken.None);
+
+			sent().UnitId.Should().BeNull();
+		}
+
+		[Test]
+		public async Task A_deleted_unit_is_ignored()
+		{
+			GivenUnit(deleted: true);
+			var sent = CaptureRequest();
+
+			await Build().Suggest(50.8, 3.8, 1, "Burns", unitId: UnitId, cancellationToken: CancellationToken.None);
+
+			sent().UnitId.Should().BeNull();
+		}
+
+		[Test]
+		public async Task The_call_supplies_type_and_priority_when_the_page_has_none()
+		{
+			GivenCall();
+			var sent = CaptureRequest();
+
+			await Build().Suggest(50.8, 3.8, null, null, callId: CallId, cancellationToken: CancellationToken.None);
+
+			sent().CallTypeId.Should().Be(31);
+			sent().CallType.Should().Be("Burns");
+			sent().CallPriority.Should().Be(3);
+		}
+
+		[Test]
+		public async Task The_page_type_and_priority_win_over_the_calls()
+		{
+			GivenCall();
+			var sent = CaptureRequest();
+
+			await Build().Suggest(50.8, 3.8, 1, "Medical", callId: CallId, cancellationToken: CancellationToken.None);
+
+			sent().CallType.Should().Be("Medical");
+			sent().CallTypeId.Should().BeNull();
+			sent().CallPriority.Should().Be(1);
+			M<ICallsService>().Verify(x => x.GetCallByIdAsync(It.IsAny<int>(), It.IsAny<bool>()), Times.Never);
+		}
+
+		[Test]
+		public async Task The_call_fills_only_what_the_page_left_blank()
+		{
+			GivenCall();
+			var sent = CaptureRequest();
+
+			await Build().Suggest(50.8, 3.8, null, "Medical", callId: CallId, cancellationToken: CancellationToken.None);
+
+			sent().CallType.Should().Be("Medical");
+			sent().CallPriority.Should().Be(3);
+		}
+
+		[TestCase(false, 12, false)]
+		[TestCase(true, 99, false)]
+		[TestCase(true, 12, true)]
+		public async Task A_call_the_member_cannot_see_says_nothing(bool canView, int departmentId, bool deleted)
+		{
+			GivenCall(departmentId: departmentId, canView: canView, deleted: deleted);
+			var sent = CaptureRequest();
+
+			await Build().Suggest(50.8, 3.8, null, null, callId: CallId, cancellationToken: CancellationToken.None);
+
+			sent().CallTypeId.Should().BeNull();
+			sent().CallType.Should().BeNull();
+			sent().CallPriority.Should().BeNull();
+		}
+
+		[Test]
+		public void The_new_parameters_are_optional_so_older_pages_keep_working()
+		{
+			var parameters = typeof(DestinationRulesController).GetMethod(nameof(DestinationRulesController.Suggest)).GetParameters();
+
+			parameters.Where(p => p.Name == "callTypeId" || p.Name == "unitId" || p.Name == "callId").Should().HaveCount(3)
+				.And.OnlyContain(p => p.IsOptional);
+		}
+
+		#endregion
 	}
 }

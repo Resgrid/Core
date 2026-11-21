@@ -63,6 +63,12 @@ namespace Resgrid.Web.Services.Controllers
 	private readonly Model.Services.IAuthorizationService _authorizationService;
 	private readonly IAdpReleaseService _adpRelease;
 	private readonly IProtectedProjectionService _adpProjection;
+	private readonly IDepartmentPhoneNumbersService _departmentPhoneNumbersService;
+	private readonly IIntakeService _intakeService;
+	private readonly IVoiceIntakeService _voiceIntakeService;
+	private readonly ITextMessageProvider _textMessageProvider;
+	private readonly IIntakeConversationService _intakeConversations;
+	private readonly IIntakeConversationOperations _intakeConversationOperations;
 
 	public TwilioController(IDepartmentSettingsService departmentSettingsService, INumbersService numbersService,
 		ILimitsService limitsService, ICallsService callsService, IQueueService queueService, IDepartmentsService departmentsService,
@@ -73,8 +79,16 @@ namespace Resgrid.Web.Services.Controllers
 		IEncryptionService encryptionService, ITwilioVoiceResponseService twilioVoiceResponseService,
 		IFeatureToggleService featureToggleService, ITextDepartmentSwitchService textDepartmentSwitchService,
 		IDispatchRecommendationService dispatchRecommendationService, IDispatchScopeService dispatchScopeService,
-		Model.Services.IAuthorizationService authorizationService, IAdpReleaseService adpRelease, IProtectedProjectionService adpProjection)
+		Model.Services.IAuthorizationService authorizationService, IAdpReleaseService adpRelease, IProtectedProjectionService adpProjection,
+		IDepartmentPhoneNumbersService departmentPhoneNumbersService, IIntakeService intakeService, IVoiceIntakeService voiceIntakeService,
+		ITextMessageProvider textMessageProvider, IIntakeConversationService intakeConversations, IIntakeConversationOperations intakeConversationOperations)
 	{
+		_intakeConversations = intakeConversations;
+		_intakeConversationOperations = intakeConversationOperations;
+		_departmentPhoneNumbersService = departmentPhoneNumbersService;
+		_intakeService = intakeService;
+		_voiceIntakeService = voiceIntakeService;
+		_textMessageProvider = textMessageProvider;
 		_dispatchScopeService = dispatchScopeService;
 		_authorizationService = authorizationService;
 		_adpRelease = adpRelease;
@@ -228,6 +242,30 @@ namespace Resgrid.Web.Services.Controllers
 				};
 			}
 
+			// A department's dedicated number (call-intake plan D5): every text to it is intake, a pending call, whoever sends it,
+			// before any profile routing. The TwiML stays empty: the number is inbound-only, so a reply goes from the master number.
+			// Intake that failed before anything was saved answers 503: Twilio records the failure (debugger, fallback URL, a configured
+			// retry), and a redelivery of the same MessageSid takes the failed claim again rather than being a duplicate.
+			var dedicated = await TryHandleDedicatedNumberTextAsync(request);
+			if (dedicated != DedicatedNumberTexts.NotDedicated)
+				return new ContentResult
+				{
+					Content = response.ToString(),
+					ContentType = "application/xml",
+					StatusCode = dedicated == DedicatedNumberTexts.Failed
+						? Microsoft.AspNetCore.Http.StatusCodes.Status503ServiceUnavailable
+						: Microsoft.AspNetCore.Http.StatusCodes.Status200OK
+				};
+
+			// Intake SMS conversations (plan §8 D15): a member of the public's reply to the master number continues their open thread with
+			// a department. This check runs after the PIN / CT- replies and the dedicated-number branch, and BEFORE any other handling of
+			// the sender (profile routing, member commands, legacy text-to-call, chatbot). The dispatcher desk's D9 hook (legacy
+			// TextToCallNumber numbers) goes after this check, never before it. The text stays out of the inbound message log (the
+			// thread's call notes hold it). STOP closes the thread and opts out, then the master number's own STOP handling below runs too.
+			var conversationReply = await TryHandleConversationReplyAsync(request);
+			if (conversationReply == ConversationReplies.Handled)
+				return new ContentResult { Content = response.ToString(), ContentType = "application/xml", StatusCode = 200 };
+
 			try
 			{
 				// Going-forward model: one master Resgrid number handles all inbound SMS, so the department is
@@ -245,6 +283,19 @@ namespace Resgrid.Web.Services.Controllers
 				bool senderNumberUnverified = userProfile != null && userProfile.MobileNumberVerified != true;
 				if (senderNumberUnverified)
 					Framework.Logging.LogInfo($"[Twilio SMS] MessageSid={request.MessageSid} From={Framework.StringHelpers.MaskPhoneNumber(textMessage.Msisdn)} matched a profile but the mobile number is not verified; using profile for routing only, actions blocked until verified.");
+
+				// STOP closed a member of the public's intake conversation above. The master number's own STOP handling is a member's
+				// (turn their texts off); for anyone else what follows is legacy text-to-call and the chatbot, which must not answer
+				// someone who just opted out (found live 2026-11-20: the chatbot replied with an error message). Twilio's carrier-level
+				// opt-out sends the STOP confirmation.
+				if (conversationReply == ConversationReplies.OptedOut && userProfile == null)
+				{
+					Framework.Logging.LogInfo($"[Twilio SMS] MessageSid={request.MessageSid} STOP from a non-member closed their intake conversation; nothing else runs.");
+					messageEvent.Processed = true;
+
+					// The enclosing finally saves messageEvent, as for a member's STOP below.
+					return new ContentResult { Content = response.ToString(), ContentType = "application/xml", StatusCode = 200 };
+				}
 
 				int? departmentId = null;
 				if (userProfile != null)
@@ -347,6 +398,232 @@ namespace Resgrid.Web.Services.Controllers
 				ContentType = "application/xml",
 				StatusCode = 200
 			};
+		}
+
+		/// <summary>The SMS refusal for a lapsed dedicated number (sent from the master number; no message content).</summary>
+		public const string LapsedNumberReply = "This number no longer accepts messages for the department. For emergencies, dial 911.";
+
+		/// <summary>What became of a text sent to a dedicated number.</summary>
+		private enum DedicatedNumberTexts
+		{
+			/// <summary>Not a dedicated number (or SMS intake is off on it): the master-number paths apply.</summary>
+			NotDedicated = 0,
+
+			/// <summary>Intake recorded it (a call, a conversation note, a refusal, a duplicate) or it was a STOP: 200.</summary>
+			Handled = 1,
+
+			/// <summary>Intake failed before anything was saved: 503, so the failure is visible to Twilio and a redelivery is taken again.</summary>
+			Failed = 2
+		}
+
+		/// <summary>
+		/// Texts to a department's dedicated number (Active with SMS intake on) become pending calls through intake; a Lapsed number
+		/// answers with a polite refusal. NotDedicated when the number texted is not a dedicated number (or has SMS intake off), so the
+		/// master-number paths (text commands, legacy text-to-call, chatbot) run exactly as before. Acknowledgements and refusals
+		/// go out from the master Resgrid number (D5: no outbound from department numbers). Intake text is not copied into the
+		/// inbound message log; the pending call holds it and IntakeMessages is the audit.
+		/// </summary>
+		private async Task<DedicatedNumberTexts> TryHandleDedicatedNumberTextAsync(TwilioMessage request)
+		{
+			var number = await DedicatedNumberAsync(request.To);
+			if (number == null)
+				return DedicatedNumberTexts.NotDedicated;
+
+			var isLapsed = number.Status == (int)DepartmentPhoneNumberStatuses.Lapsed;
+			if (!isLapsed && (number.Status != (int)DepartmentPhoneNumberStatuses.Active || !number.SmsIntakeEnabled))
+				return DedicatedNumberTexts.NotDedicated;
+
+			// M0326: only a phone number can report something (and be texted back). Short codes and alphanumeric sender ids (marketing,
+			// verification codes, carrier notices) are recorded as refused: no call, no conversation, nothing sent back.
+			var phone = IntakeChannelAddresses.PhoneNumber(request.From);
+			var sender = phone ?? request.From;
+
+			// Opting out never creates a call, and nothing is sent back to someone who asked us to stop. Their open conversation with the
+			// department (plan §8) closes and stops texting them: replies come from the master number, which this STOP did not reach.
+			if (_textCommandService.DetermineType(request.Body).Type == TextCommandTypes.Stop)
+			{
+				try
+				{
+					var thread = await _intakeConversationOperations.GetOpenForParticipantAsync(number.DepartmentId, IntakeChannelTypes.Sms, sender);
+					if (thread != null)
+						await _intakeConversations.HandleParticipantMessageAsync(thread, request.MessageSid, request.Body, DateTime.UtcNow, CancellationToken.None);
+				}
+				catch (Exception ex)
+				{
+					Framework.Logging.LogException(ex, $"[Twilio SMS] MessageSid={request.MessageSid} conversation opt-out on a dedicated number failed.");
+				}
+
+				return DedicatedNumberTexts.Handled;
+			}
+
+			IntakeResult result;
+			try
+			{
+				result = await _intakeService.ReceiveAsync(new IntakeEnvelope
+				{
+					ChannelType = IntakeChannelTypes.Sms,
+					ChannelAddress = number.PhoneNumber,
+					ProviderMessageId = request.MessageSid,
+					Sender = sender,
+					Body = request.Body,
+					ReceivedOnUtc = DateTime.UtcNow,
+					RefusalReason = isLapsed ? "NumberLapsed" : phone == null ? "SenderNotPhoneNumber" : null,
+					// Plan §8 D15: the text opens (or joins) a conversation continued from the master number; its welcome replaces the ack.
+					OpensConversation = !isLapsed && phone != null
+				}, HttpContext?.RequestAborted ?? CancellationToken.None);
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex, $"[Twilio SMS] MessageSid={request.MessageSid} dedicated number intake failed.");
+				return DedicatedNumberTexts.Failed;
+			}
+
+			Framework.Logging.LogInfo($"[Twilio SMS] MessageSid={request.MessageSid} dedicated number of department {number.DepartmentId}: intake {result?.State} ({result?.Reason})");
+
+			// Failed without a call: nothing holds the text (IntakeService keeps a call it saved as CallCreated, never Failed). A duplicate whose
+			// first delivery has no call yet (still running, or failed and not retried) is no proof either: the same 503, never an acknowledgement.
+			if (result == null || result.State == IntakeMessageStates.Failed && !result.CallId.HasValue ||
+				result.State == IntakeMessageStates.Duplicate && result.Reason == IntakeResultReasons.DuplicateInProgress)
+				return DedicatedNumberTexts.Failed;
+
+			try
+			{
+				var reply = isLapsed ? LapsedNumberReply : result.Acknowledgement;
+				// Nothing goes back to a sender that is not a phone number, a blocked sender, or one past the per-sender limit (M0326).
+				if (!string.IsNullOrWhiteSpace(reply) && phone != null && result.State != IntakeMessageStates.Duplicate &&
+					result.State != IntakeMessageStates.SenderNotAllowed && result.State != IntakeMessageStates.SenderBlocked &&
+					result.State != IntakeMessageStates.AddedToCall)
+					await _textMessageProvider.SendTextMessage(sender, reply, null, default(MobileCarriers), number.DepartmentId);
+			}
+			catch (Exception ex)
+			{
+				// The text is recorded; a lost acknowledgement must not make Twilio deliver it again.
+				Framework.Logging.LogException(ex, $"[Twilio SMS] MessageSid={request.MessageSid} dedicated number acknowledgement failed.");
+			}
+
+			return DedicatedNumberTexts.Handled;
+		}
+
+		private enum ConversationReplies
+		{
+			/// <summary>The sender has no open intake conversation: the master number's usual handling applies.</summary>
+			None = 0,
+
+			/// <summary>The text went to the sender's open conversation; nothing else runs.</summary>
+			Handled = 1,
+
+			/// <summary>STOP closed the sender's conversation; the master number's own STOP handling still runs.</summary>
+			OptedOut = 2
+		}
+
+		/// <summary>
+		/// A text to the master number from someone with an open intake conversation (plan §8 D15; the most recently active one within
+		/// IntakeConfig.ConversationReplyWindowHours, any department) is that conversation's next message. Only a text to the number the
+		/// thread texts from (its ReplyFromAddress, the master number) is a reply: a text to any other number (a dedicated number with SMS
+		/// intake off, a legacy department number) keeps that number's own handling.
+		/// </summary>
+		private async Task<ConversationReplies> TryHandleConversationReplyAsync(TwilioMessage request)
+		{
+			IntakeConversation thread;
+			try
+			{
+				var sender = IntakeChannelAddresses.PhoneNumber(request.From) ?? request.From;
+				thread = await _intakeConversations.FindOpenForReplyAsync(IntakeChannelTypes.Sms, sender, DateTime.UtcNow);
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex, $"[Twilio SMS] MessageSid={request.MessageSid} intake conversation reply lookup failed.");
+				return ConversationReplies.None;
+			}
+
+			if (thread == null || !IsConversationReplyNumber(request.To, thread))
+				return ConversationReplies.None;
+
+			// From here the text is the texter's, whatever happens while it is recorded: it never falls through to member commands.
+			var stop = Resgrid.Services.Intake.IntakeConversationTexts.IsOptOut(request.Body);
+			try
+			{
+				var handled = await _intakeConversations.HandleParticipantMessageAsync(thread, request.MessageSid, request.Body, DateTime.UtcNow, CancellationToken.None);
+				Framework.Logging.LogInfo($"[Twilio SMS] MessageSid={request.MessageSid} reply to intake conversation of department {thread.DepartmentId} (handled={handled}, stop={stop}).");
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex, $"[Twilio SMS] MessageSid={request.MessageSid} intake conversation reply could not be recorded.");
+			}
+
+			return stop ? ConversationReplies.OptedOut : ConversationReplies.Handled;
+		}
+
+		/// <summary>The texted number is the one the thread texts the caller from (the master number when the thread has none recorded).</summary>
+		private static bool IsConversationReplyNumber(string calledNumber, IntakeConversation thread)
+		{
+			var to = IntakeChannelAddresses.PhoneNumber(calledNumber);
+			var replyFrom = IntakeChannelAddresses.PhoneNumber(string.IsNullOrWhiteSpace(thread.ReplyFromAddress) ? Config.NumberProviderConfig.TwilioResgridNumber : thread.ReplyFromAddress);
+			return to != null && replyFrom != null && string.Equals(to, replyFrom, StringComparison.Ordinal);
+		}
+
+		/// <summary>The dedicated department number (Active or Lapsed) the request was sent to, else null.</summary>
+		private async Task<DepartmentPhoneNumber> DedicatedNumberAsync(string calledNumber)
+		{
+			var e164 = IntakeChannelAddresses.PhoneNumber(calledNumber);
+			if (e164 == null)
+				return null;
+
+			try
+			{
+				return await _departmentPhoneNumbersService.GetByNumberAsync(e164);
+			}
+			catch (Exception ex)
+			{
+				// The master-number paths still work while the number table cannot be read.
+				Framework.Logging.LogException(ex, "Dedicated number lookup failed.");
+				return null;
+			}
+		}
+
+		/// <summary>
+		/// The member IVR's department. A menu read on a department's dedicated number (plan D2) carries that department in every action
+		/// URL (<paramref name="boundDepartmentId"/>): the caller stays in it while still its member, and gets nothing otherwise — never the
+		/// member's own department, where the same digit would mean another department's status or staffing option. Without one (calls to
+		/// the master number) it is the caller's own department, as before; an action URL from before the binding falls back to the
+		/// called number. <c>Bound</c> is the department to carry into the next action URL (null on the master number).
+		/// </summary>
+		private async Task<(Department Department, int? Bound)> ResolveIvrDepartmentAsync(string userId, string calledNumber, int? boundDepartmentId)
+		{
+			int? bound = boundDepartmentId.HasValue && boundDepartmentId.Value > 0 ? boundDepartmentId : null;
+			if (!bound.HasValue)
+			{
+				var number = string.IsNullOrWhiteSpace(calledNumber) ? null : await DedicatedNumberAsync(calledNumber);
+				if (number == null)
+					return (await _departmentsService.GetDepartmentByUserIdAsync(userId), null);
+				bound = number.DepartmentId;
+			}
+
+			try
+			{
+				if (!string.IsNullOrWhiteSpace(userId) && await _departmentsService.IsMemberOfDepartmentAsync(bound.Value, userId))
+					return (await _departmentsService.GetDepartmentByIdAsync(bound.Value, false), bound);
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex, $"[Twilio Voice] the member IVR could not confirm the caller in department {bound.Value}.");
+			}
+
+			return (null, bound);
+		}
+
+		/// <summary>The member IVR action URL, carrying the bound department of a dedicated number's menu (see <see cref="ResolveIvrDepartmentAsync"/>).</summary>
+		private static Uri IvrActionUri(string action, string userId, int? boundDepartmentId, string query = null) =>
+			new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/{action}?userId={userId}{query}" +
+				(boundDepartmentId.HasValue ? $"&departmentId={boundDepartmentId.Value.ToString(CultureInfo.InvariantCulture)}" : string.Empty));
+
+		/// <summary>The member IVR cannot continue (the department could not be confirmed): one message and a hang-up.</summary>
+		private async Task<ActionResult> IvrUnavailableAsync()
+		{
+			var response = new VoiceResponse();
+			await AppendVoicePromptAsync(response, TwilioVoicePromptCatalog.InboundVoiceUnavailable);
+			response.Hangup();
+			return CreateVoiceContentResult(response);
 		}
 
 		// Original (pre-chatbot) inbound text-command handling. Retained so departments that have not
@@ -887,7 +1164,7 @@ namespace Resgrid.Web.Services.Controllers
 
 					// Fire off TTS generation in the background. The TTS microservice
 					// caches the result, so the redirect will find it once ready.
-					_twilioVoiceResponseService.PreWarmPromptAsync(dispatchText, ttsLanguage)
+					_twilioVoiceResponseService.PreWarmDispatchPromptAsync(dispatchText, ttsLanguage)
 						.ContinueWith(t =>
 						{
 							if (t.IsFaulted && t.Exception != null)
@@ -1176,6 +1453,12 @@ namespace Resgrid.Web.Services.Controllers
 			if (request == null || string.IsNullOrWhiteSpace(request.To) || string.IsNullOrWhiteSpace(request.From))
 				return BadRequest();
 
+			// A department's dedicated number (plan D2): its members get the member IVR in that department, anyone else Enhanced AI
+			// voice intake (or the "please text" message). Calls to the master number keep the profile-based IVR below.
+			var dedicatedNumber = await DedicatedNumberAsync(request.To);
+			if (dedicatedNumber != null)
+				return await DedicatedNumberVoiceAsync(dedicatedNumber, request.CallSid, request.From, passedGate: false);
+
 			var response = new VoiceResponse();
 			UserProfile profile = null;
 			profile = await _userProfileService.GetProfileByMobileNumberAsync(request.From.Replace("+", ""));
@@ -1229,6 +1512,225 @@ namespace Resgrid.Web.Services.Controllers
 			return CreateVoiceContentResult(response);
 		}
 
+		/// <summary>
+		/// A call to a department's dedicated number (plan D2, D6): members get the member IVR in the number's department; others
+		/// get Enhanced AI voice intake when the number has it on, the department is entitled and under the monthly limit, else
+		/// the "please text this number" message. With IntakeConfig.VoiceGateEnabled (M0326) the caller first presses 1
+		/// (<see cref="VoiceIntakeGate"/>), so auto-dialers and recordings never start a session or use the monthly limit.
+		/// </summary>
+		private async Task<ActionResult> DedicatedNumberVoiceAsync(DepartmentPhoneNumber number, string callSid, string fromNumber, bool passedGate)
+		{
+			var response = new VoiceResponse();
+			VoiceIntakeRouting routing;
+			try
+			{
+				routing = await _voiceIntakeService.RouteAsync(number, fromNumber, DateTime.UtcNow);
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex, "Voice intake routing failed.");
+				routing = new VoiceIntakeRouting { Route = VoiceIntakeRoutes.TextOnly, DepartmentId = number.DepartmentId };
+			}
+
+			Framework.Logging.LogInfo($"[Twilio Voice] CallSid={callSid} dedicated number of department {number.DepartmentId}: route {routing.Route} ({routing.Reason}){(passedGate ? " after the gate" : "")}");
+
+			switch (routing.Route)
+			{
+				case VoiceIntakeRoutes.MemberMenu:
+					var profile = await _userProfileService.GetProfileByUserIdAsync(routing.MemberUserId);
+					var department = await _departmentsService.GetDepartmentByIdAsync(number.DepartmentId, false);
+					if (profile != null && department != null && await _limitsService.CanDepartmentProvisionNumberAsync(department.DepartmentId))
+					{
+						for (int repeat = 0; repeat < 2; repeat++)
+						{
+							// The menu is this department's: every action of it stays in this department (see ResolveIvrDepartmentAsync).
+							var gatherResponse = new Gather(numDigits: 1, action: IvrActionUri("InboundVoiceAction", profile.UserId, number.DepartmentId), method: "GET")
+							{
+								BargeIn = true
+							};
+							await AppendVoicePromptsAsync(gatherResponse, BuildMainMenuPrompts(profile.FirstName, department.Name), department.DepartmentId);
+							response.Append(gatherResponse);
+						}
+
+						response.Hangup();
+						return CreateVoiceContentResult(response);
+					}
+
+					await AppendVoicePromptAsync(response, TwilioVoicePromptCatalog.InboundVoiceUnavailable, number.DepartmentId);
+					response.Hangup();
+					return CreateVoiceContentResult(response);
+
+				case VoiceIntakeRoutes.Intake:
+					// M0326 gate: "press 1" before any session exists. Nothing pressed = the closing prompt and a hang-up, nothing recorded.
+					if (Config.IntakeConfig.VoiceGateEnabled && !passedGate)
+					{
+						var gate = new Gather(
+							input: new List<Gather.InputEnum> { Gather.InputEnum.Dtmf },
+							action: new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/VoiceIntakeGate"),
+							method: "POST",
+							timeout: Math.Clamp(Config.IntakeConfig.VoiceGateTimeoutSeconds, 3, 30),
+							numDigits: 1)
+						{
+							ActionOnEmptyResult = false
+						};
+						await AppendVoicePromptAsync(gate, TwilioVoicePromptCatalog.VoiceIntakeGate, number.DepartmentId);
+						response.Append(gate);
+						await AppendVoicePromptAsync(response, TwilioVoicePromptCatalog.VoiceIntakeNothingHeard, number.DepartmentId);
+						response.Hangup();
+						return CreateVoiceContentResult(response);
+					}
+
+					// A session store that fails still answers with TwiML: the caller hears the failure prompt (a null turn) and the line hangs up.
+					VoiceIntakeTurn turn;
+					try
+					{
+						turn = await _voiceIntakeService.StartAsync(number, callSid, fromNumber, HttpContext?.RequestAborted ?? CancellationToken.None);
+					}
+					catch (Exception ex) when (ex is not OperationCanceledException)
+					{
+						Framework.Logging.LogException(ex, $"[Twilio Voice] CallSid={callSid} voice intake session start failed.");
+						turn = null;
+					}
+					return await RenderVoiceIntakeTurnAsync(turn, number.DepartmentId);
+
+				case VoiceIntakeRoutes.Blocked:
+					await AppendVoicePromptAsync(response, TwilioVoicePromptCatalog.VoiceIntakeUnavailable, number.DepartmentId);
+					response.Hangup();
+					return CreateVoiceContentResult(response);
+
+				case VoiceIntakeRoutes.NumberInactive:
+					await AppendVoicePromptAsync(response, TwilioVoicePromptCatalog.VoiceIntakeNumberInactive, number.DepartmentId);
+					response.Hangup();
+					return CreateVoiceContentResult(response);
+
+				default:
+					await AppendVoicePromptAsync(response, TwilioVoicePromptCatalog.VoiceIntakeTextOnly, number.DepartmentId);
+					response.Hangup();
+					return CreateVoiceContentResult(response);
+			}
+		}
+
+		/// <summary>
+		/// The voice intake gate's &lt;Gather input="dtmf"&gt; action (M0326). Only "1" goes on, and the call is routed again (a block,
+		/// the monthly limit or the add-on may have changed meanwhile) before the guided questions start; anything else hangs up.
+		/// </summary>
+		[HttpGet("VoiceIntakeGate")]
+		[HttpPost("VoiceIntakeGate")]
+		[Produces("application/xml")]
+		[ValidateRequest]
+		public async Task<ActionResult> VoiceIntakeGate()
+		{
+			string Field(string name) => Request.HasFormContentType && Request.Form.ContainsKey(name) ? Request.Form[name].ToString() : Request.Query[name].ToString();
+
+			var callSid = Field("CallSid");
+			var from = Field("From");
+			var to = Field("To");
+			if (string.IsNullOrWhiteSpace(callSid) || string.IsNullOrWhiteSpace(from) || string.IsNullOrWhiteSpace(to))
+				return BadRequest();
+
+			var number = await DedicatedNumberAsync(to);
+			if (number == null)
+			{
+				var gone = new VoiceResponse();
+				await AppendVoicePromptAsync(gone, TwilioVoicePromptCatalog.VoiceIntakeNumberInactive);
+				gone.Hangup();
+				return CreateVoiceContentResult(gone);
+			}
+
+			if (!string.Equals(Field("Digits")?.Trim(), "1", StringComparison.Ordinal))
+			{
+				Framework.Logging.LogInfo($"[Twilio Voice] CallSid={callSid} dedicated number of department {number.DepartmentId}: the caller did not press 1 at the gate.");
+				var closing = new VoiceResponse();
+				await AppendVoicePromptAsync(closing, TwilioVoicePromptCatalog.VoiceIntakeNothingHeard, number.DepartmentId);
+				closing.Hangup();
+				return CreateVoiceContentResult(closing);
+			}
+
+			return await DedicatedNumberVoiceAsync(number, callSid, from, passedGate: true);
+		}
+
+		/// <summary>
+		/// Voice intake answers (&lt;Gather input="speech"&gt; action, POST). <paramref name="step"/> is the question the caller was
+		/// asked, so a Twilio retry of an older action never answers the wrong question. Sessions are keyed by CallSid.
+		/// </summary>
+		[HttpGet("VoiceIntakeAnswer")]
+		[HttpPost("VoiceIntakeAnswer")]
+		[Produces("application/xml")]
+		[ValidateRequest]
+		public async Task<ActionResult> VoiceIntakeAnswer([FromQuery] int step)
+		{
+			string Field(string name) => Request.HasFormContentType && Request.Form.ContainsKey(name) ? Request.Form[name].ToString() : Request.Query[name].ToString();
+
+			var callSid = Field("CallSid");
+			if (string.IsNullOrWhiteSpace(callSid))
+				return BadRequest();
+
+			double? confidence = double.TryParse(Field("Confidence"), NumberStyles.Float, CultureInfo.InvariantCulture, out var parsed) ? parsed : (double?)null;
+			VoiceIntakeTurn turn;
+			try
+			{
+				turn = await _voiceIntakeService.AnswerAsync(new VoiceIntakeAnswer
+				{
+					ProviderCallId = callSid,
+					FromNumber = Field("From"),
+					ToNumber = Field("To"),
+					Step = step,
+					SpeechResult = Field("SpeechResult"),
+					Confidence = confidence,
+					Digits = Field("Digits")
+				}, HttpContext?.RequestAborted ?? CancellationToken.None);
+			}
+			catch (Exception ex) when (ex is not OperationCanceledException)
+			{
+				Framework.Logging.LogException(ex, $"[Twilio Voice] CallSid={callSid} voice intake answer failed.");
+				turn = new VoiceIntakeTurn { HangUp = true, Prompts = new List<string> { TwilioVoicePromptCatalog.VoiceIntakeFailed } };
+			}
+
+			var number = await DedicatedNumberAsync(Field("To"));
+			return await RenderVoiceIntakeTurnAsync(turn, number?.DepartmentId);
+		}
+
+		/// <summary>
+		/// TwiML for one voice intake turn: the question inside a speech &lt;Gather&gt; (the callback question also takes digits),
+		/// Piper prompts through the voice response service, or the closing prompt and a hang-up.
+		/// </summary>
+		private async Task<ActionResult> RenderVoiceIntakeTurnAsync(VoiceIntakeTurn turn, int? departmentId)
+		{
+			var response = new VoiceResponse();
+			if (turn?.Gather == true)
+			{
+				var action = new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/VoiceIntakeAnswer?step={(int)turn.Step}");
+				var gather = new Gather(
+					input: turn.AcceptDigits
+						? new List<Gather.InputEnum> { Gather.InputEnum.Speech, Gather.InputEnum.Dtmf }
+						: new List<Gather.InputEnum> { Gather.InputEnum.Speech },
+					action: action,
+					method: "POST")
+				{
+					SpeechTimeout = Config.IntakeConfig.VoiceSpeechTimeoutSeconds > 0
+						? Config.IntakeConfig.VoiceSpeechTimeoutSeconds.ToString(CultureInfo.InvariantCulture) : "auto",
+					SpeechModel = string.IsNullOrWhiteSpace(Config.IntakeConfig.VoiceSpeechModel) ? null : Config.IntakeConfig.VoiceSpeechModel,
+					ActionOnEmptyResult = true,
+					ProfanityFilter = false,
+					BargeIn = true
+				};
+
+				if (turn.AcceptDigits)
+					gather.FinishOnKey = "#";
+
+				await AppendVoicePromptsAsync(gather, turn.Prompts, departmentId);
+				response.Append(gather);
+
+				// Nothing heard and Twilio fell through the gather: post the same step with no answer, which counts a re-ask.
+				response.Redirect(action, "POST");
+				return CreateVoiceContentResult(response);
+			}
+
+			await AppendVoicePromptsAsync(response, turn?.Prompts ?? new List<string> { TwilioVoicePromptCatalog.VoiceIntakeFailed }, departmentId);
+			response.Hangup();
+			return CreateVoiceContentResult(response);
+		}
+
 		protected virtual void ReportVoiceVerificationDecryptionFailure(CryptographicException exception)
 		{
 			Framework.Logging.LogException(
@@ -1248,16 +1750,19 @@ namespace Resgrid.Web.Services.Controllers
 		[HttpGet("InboundVoiceAction")]
 		[Produces("application/xml")]
 		[ValidateRequest]
-		public async Task<ActionResult> InboundVoiceAction(string userId, [FromQuery] VoiceRequest twilioRequest, [FromQuery] string retry = null)
+		public async Task<ActionResult> InboundVoiceAction(string userId, [FromQuery] VoiceRequest twilioRequest, [FromQuery] string retry = null,
+			[FromQuery] int? departmentId = null)
 		{
 			var response = new VoiceResponse();
 
-			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
+			var (department, bound) = await ResolveIvrDepartmentAsync(userId, twilioRequest?.To, departmentId);
+			if (department == null)
+				return await IvrUnavailableAsync();
 			var profile = await _userProfileService.GetProfileByUserIdAsync(userId);
 
 			var prompts = new List<string>();
 			var isDynamicListing = false;
-			Uri gatherAction = new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/InboundVoiceAction?userId={userId}");
+			Uri gatherAction = IvrActionUri("InboundVoiceAction", userId, bound);
 			string gatherFinishOnKey = null;
 			int? gatherNumDigits = 1;
 			string goBackPrompt = TwilioVoicePromptCatalog.GoBackToMainMenu;
@@ -1404,7 +1909,7 @@ namespace Resgrid.Web.Services.Controllers
 					index++;
 				}
 
-				gatherAction = new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/InboundVoiceActionStatus?userId={userId}");
+				gatherAction = IvrActionUri("InboundVoiceActionStatus", userId, bound);
 				gatherFinishOnKey = "#";
 				gatherNumDigits = null;
 				goBackPrompt = TwilioVoicePromptCatalog.GoBackToMainMenuWithPound;
@@ -1422,7 +1927,7 @@ namespace Resgrid.Web.Services.Controllers
 					index++;
 				}
 
-				gatherAction = new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/InboundVoiceActionStaffing?userId={userId}");
+				gatherAction = IvrActionUri("InboundVoiceActionStaffing", userId, bound);
 				gatherFinishOnKey = "#";
 				gatherNumDigits = null;
 				goBackPrompt = TwilioVoicePromptCatalog.GoBackToMainMenuWithPound;
@@ -1442,9 +1947,7 @@ namespace Resgrid.Web.Services.Controllers
 				if (retryCount < MAX_LISTING_RETRY)
 				{
 					await AppendVoicePromptAsync(response, TwilioVoicePromptCatalog.PleaseWaitForInformation, department.DepartmentId);
-					response.Redirect(
-						new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/InboundVoiceAction?userId={userId}&Digits={twilioRequest.Digits}&retry={retryCount + 1}"),
-						"GET");
+					response.Redirect(IvrActionUri("InboundVoiceAction", userId, bound, $"&Digits={twilioRequest.Digits}&retry={retryCount + 1}"), "GET");
 					return CreateVoiceContentResult(response);
 				}
 
@@ -1509,11 +2012,13 @@ namespace Resgrid.Web.Services.Controllers
 		[HttpGet("InboundVoiceActionStatus")]
 		[Produces("application/xml")]
 		[ValidateRequest]
-		public async Task<ActionResult> InboundVoiceActionStatus(string userId, [FromQuery] VoiceRequest twilioRequest)
+		public async Task<ActionResult> InboundVoiceActionStatus(string userId, [FromQuery] VoiceRequest twilioRequest, [FromQuery] int? departmentId = null)
 		{
 			var response = new VoiceResponse();
 
-			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
+			var (department, bound) = await ResolveIvrDepartmentAsync(userId, twilioRequest?.To, departmentId);
+			if (department == null)
+				return await IvrUnavailableAsync();
 			var profile = await _userProfileService.GetProfileByUserIdAsync(userId);
 			var options = await _customStateService.GetCustomPersonnelStatusesOrDefaultsAsync(department.DepartmentId);
 			var activeOptions = VoiceSelectableOptions(options);
@@ -1522,7 +2027,7 @@ namespace Resgrid.Web.Services.Controllers
 			{
 				if (twilioRequest.Digits == "0")
 				{
-					response.Redirect(new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/InboundVoiceAction?userId={userId}"), "GET");
+					response.Redirect(IvrActionUri("InboundVoiceAction", userId, bound), "GET");
 				}
 				else if (int.TryParse(twilioRequest.Digits, out int digit) && digit > 0 && digit <= activeOptions.Count)
 				{
@@ -1538,13 +2043,13 @@ namespace Resgrid.Web.Services.Controllers
 				else
 				{
 					await AppendVoicePromptAsync(response, TwilioVoicePromptCatalog.InvalidStatusSelection, department.DepartmentId);
-					response.Redirect(new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/InboundVoiceAction?userId={userId}"), "GET");
+					response.Redirect(IvrActionUri("InboundVoiceAction", userId, bound), "GET");
 				}
 			}
 			else
 			{
 				await AppendVoicePromptAsync(response, TwilioVoicePromptCatalog.NoStatusSelection, department.DepartmentId);
-				response.Redirect(new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/InboundVoiceAction?userId={userId}"), "GET");
+				response.Redirect(IvrActionUri("InboundVoiceAction", userId, bound), "GET");
 			}
 
 			return CreateVoiceContentResult(response);
@@ -1553,10 +2058,12 @@ namespace Resgrid.Web.Services.Controllers
 		[HttpGet("InboundVoiceActionStaffing")]
 		[Produces("application/xml")]
 		[ValidateRequest]
-		public async Task<ActionResult> InboundVoiceActionStaffing(string userId, [FromQuery] VoiceRequest twilioRequest)
+		public async Task<ActionResult> InboundVoiceActionStaffing(string userId, [FromQuery] VoiceRequest twilioRequest, [FromQuery] int? departmentId = null)
 		{
 			var response = new VoiceResponse();
-			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
+			var (department, bound) = await ResolveIvrDepartmentAsync(userId, twilioRequest?.To, departmentId);
+			if (department == null)
+				return await IvrUnavailableAsync();
 			var profile = await _userProfileService.GetProfileByUserIdAsync(userId);
 			var options = await _customStateService.GetCustomPersonnelStaffingsOrDefaultsAsync(department.DepartmentId);
 			var activeOptions = VoiceSelectableOptions(options);
@@ -1564,7 +2071,7 @@ namespace Resgrid.Web.Services.Controllers
 			{
 				if (twilioRequest.Digits == "0")
 				{
-					response.Redirect(new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/InboundVoiceAction?userId={userId}"), "GET");
+					response.Redirect(IvrActionUri("InboundVoiceAction", userId, bound), "GET");
 				}
 				else if (int.TryParse(twilioRequest.Digits, out int digit) && digit > 0 && digit <= activeOptions.Count)
 				{
@@ -1576,13 +2083,13 @@ namespace Resgrid.Web.Services.Controllers
 				else
 				{
 					await AppendVoicePromptAsync(response, TwilioVoicePromptCatalog.InvalidStaffingSelection, department.DepartmentId);
-					response.Redirect(new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/InboundVoiceAction?userId={userId}"), "GET");
+					response.Redirect(IvrActionUri("InboundVoiceAction", userId, bound), "GET");
 				}
 			}
 			else
 			{
 				await AppendVoicePromptAsync(response, TwilioVoicePromptCatalog.NoStaffingSelection, department.DepartmentId);
-				response.Redirect(new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/InboundVoiceAction?userId={userId}"), "GET");
+				response.Redirect(IvrActionUri("InboundVoiceAction", userId, bound), "GET");
 			}
 
 			return CreateVoiceContentResult(response);
@@ -1703,7 +2210,9 @@ namespace Resgrid.Web.Services.Controllers
 				// Dispatch text can exceed the TTS chunk limit (long notes/address), so use the
 				// multi-chunk-aware AppendPromptAsync (one <Play> per chunk) instead of GetPromptUrlAsync,
 				// which only supports single-chunk text and throws ArgumentException otherwise.
-				await _twilioVoiceResponseService.AppendPromptAsync(response, dispatchText, linkedCts.Token, ttsLanguage);
+				// The dispatch-rate variant: the broadcast worker pre-warms at DispatchSpeed, and
+				// speed is part of the TTS cache key.
+				await _twilioVoiceResponseService.AppendDispatchPromptAsync(response, dispatchText, linkedCts.Token, ttsLanguage);
 				return (true, dispatchText);
 			}
 			catch (OperationCanceledException) when (timeoutCts.IsCancellationRequested)
@@ -1855,9 +2364,18 @@ namespace Resgrid.Web.Services.Controllers
 
 	}
 
+	/// <summary>
+	/// An inbound SMS webhook (query string for the master number's GET, form for a dedicated number's POST). Deliberately not a
+	/// Twilio.AspNet.Common TwilioRequest: that library marks To/From/AccountSid non-nullable, so [ApiController]'s automatic
+	/// validation answered 400 to a dedicated number's form POST (empty query) before IncomingMessage could read the form.
+	/// This project has no nullable context, so these fields are optional to model validation; IncomingMessage checks them itself.
+	/// </summary>
 	[Serializable]
-	public class TwilioMessage : TwilioRequest
+	public class TwilioMessage
 	{
+		public string AccountSid { get; set; }
+		public string From { get; set; }
+		public string To { get; set; }
 		public string MessageSid { get; set; }
 		public string SmsMessageSid { get; set; }
 		public string Body { get; set; }

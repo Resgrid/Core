@@ -101,6 +101,18 @@ namespace Resgrid.Providers.Bus.Rabbit
 			Id = Guid.NewGuid(), Type = (int)EventingTypes.UnitNavigationUpdated, TimeStamp = DateTime.UtcNow, DepartmentId = departmentId, ItemId = unitId.ToString(), Payload = payload
 		}.SerializeJson());
 
+		/// <summary>A call's Enhanced AI destination advice changed (EventingTypes 18); item id is the call id, payload { adviceId, state, isChange }.</summary>
+		public Task<bool> AiDestinationAdviceUpdated(int departmentId, int callId, string payload) => SendMessage(Topics.EventingTopic, new EventingMessage
+		{
+			Id = Guid.NewGuid(), Type = (int)EventingTypes.AiDestinationAdviceUpdated, TimeStamp = DateTime.UtcNow, DepartmentId = departmentId, ItemId = callId.ToString(), Payload = payload
+		}.SerializeJson());
+
+		/// <summary>An intake SMS conversation changed (EventingTypes 21); item id is the call id, payload { conversationId, state, handler } (no text).</summary>
+		public Task<bool> IntakeConversationUpdated(int departmentId, int callId, string payload) => SendMessage(Topics.EventingTopic, new EventingMessage
+		{
+			Id = Guid.NewGuid(), Type = (int)EventingTypes.IntakeConversationUpdated, TimeStamp = DateTime.UtcNow, DepartmentId = departmentId, ItemId = callId.ToString(), Payload = payload
+		}.SerializeJson());
+
 		/// <summary>A department's recurring call alerts changed; item id is the schedule id, payload { alertId, kind, raised }.</summary>
 		public Task<bool> RecurringCallAlertsUpdated(int departmentId, int recurringCallId, string payload) => SendMessage(Topics.EventingTopic, new EventingMessage
 		{

@@ -701,4 +701,40 @@
   <data name="WeekThird" xml:space="preserve">
     <value>terzo</value>
   </data>
+  <data name="DestinationAddress" xml:space="preserve">
+    <value>Indirizzo di destinazione</value>
+  </data>
+  <data name="DestinationAddressHelp" xml:space="preserve">
+    <value>Quando la destinazione non è un POI.</value>
+  </data>
+  <data name="DestinationCoordinates" xml:space="preserve">
+    <value>Coordinate di destinazione</value>
+  </data>
+  <data name="DestinationCoordinatesHelp" xml:space="preserve">
+    <value>Latitudine, longitudine (facoltativo).</value>
+  </data>
+  <data name="ErrorDestinationCoordinatesInvalid" xml:space="preserve">
+    <value>Inserire le coordinate di destinazione come latitudine, longitudine (ad esempio 39.7392,-104.9903).</value>
+  </data>
+  <data name="RoutePlan" xml:space="preserve">
+    <value>Percorso</value>
+  </data>
+  <data name="NoRoutePlan" xml:space="preserve">
+    <value>Nessun percorso</value>
+  </data>
+  <data name="RoutePlanHelp" xml:space="preserve">
+    <value>Ogni chiamata creata segue questo percorso: un indirizzo vuoto parte dall'inizio del percorso e una destinazione vuota termina alla sua fine.</value>
+  </data>
+  <data name="ErrorRoutePlanInvalid" xml:space="preserve">
+    <value>Scegliere dall'elenco un percorso attivo con un inizio e una fine.</value>
+  </data>
+  <data name="RoutePlanUnavailable" xml:space="preserve">
+    <value>{0} (non più disponibile)</value>
+  </data>
+  <data name="RoutePlanDeleted" xml:space="preserve">
+    <value>Percorso eliminato</value>
+  </data>
+  <data name="FacilityPoiCallLocationHelp" xml:space="preserve">
+    <value>Ogni chiamata creata parte da questo POI.</value>
+  </data>
 </root>

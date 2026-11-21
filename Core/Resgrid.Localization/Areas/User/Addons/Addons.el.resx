@@ -79,6 +79,14 @@
   <data name="EnhancedAiFeature5" xml:space="preserve"><value>Μόνο μοντέλα ανοιχτών βαρών· τα ιδιωτικά δεδομένα δεν αποστέλλονται ποτέ σε AI νέφους</value></data>
   <data name="EnhancedAiFeature6" xml:space="preserve"><value>Ή χρησιμοποιήστε τη δική σας συνδρομή σε πάροχο AI</value></data>
   <data name="EnhancedAiNote" xml:space="preserve"><value>Χρεώνεται μηνιαία ανά τμήμα. Περιλαμβάνει μηνιαίο προϋπολογισμό AI χωρίς επιπλέον χρεώσεις. Κάθε τμήμα έχει δωρεάν ερωτήσεις Admin Assist και χωρίς αυτό.</value></data>
+  <data name="DedicatedNumberTitle" xml:space="preserve"><value>Private Inbound Dispatch Number</value></data>
+  <data name="DedicatedNumberTagline" xml:space="preserve"><value>Ο δικός αριθμός του τμήματός σας για SMS και κλήσεις</value></data>
+  <data name="DedicatedNumberFeature1" xml:space="preserve"><value>Ένας τοπικός αριθμός για το τμήμα σας, της επιλογής σας</value></data>
+  <data name="DedicatedNumberFeature2" xml:space="preserve"><value>Τα εισερχόμενα SMS γίνονται εκκρεμείς κλήσεις για τον συντονισμό</value></data>
+  <data name="DedicatedNumberFeature3" xml:space="preserve"><value>Τα μέλη καλούν τον ίδιο αριθμό για το φωνητικό μενού</value></data>
+  <data name="DedicatedNumberFeature4" xml:space="preserve"><value>Η φωνητική λήψη με Enhanced AI μετατρέπει τις απαντήσεις σε εκκρεμείς κλήσεις</value></data>
+  <data name="DedicatedNumberFeature5" xml:space="preserve"><value>Μόνο εισερχόμενα: οι απαντήσεις έρχονται από τον κύριο αριθμό του Resgrid</value></data>
+  <data name="DedicatedNumberNote" xml:space="preserve"><value>Χρεώνεται μηνιαία ανά τμήμα, ακόμη και σε ετήσιο πρόγραμμα. Απαιτεί ενεργό πρόγραμμα οντοτήτων. Στις ΗΠΑ αριθμοί ΗΠΑ και Καναδά· στην ΕΕ αριθμός στη χώρα σας, όπου διατίθεται.</value></data>
   <data name="AdpTitle" xml:space="preserve"><value>Advanced Data Protection</value></data>
   <data name="AdpTagline" xml:space="preserve"><value>Κρυπτογράφηση και ενισχυμένη πρόσβαση για ευαίσθητα δεδομένα</value></data>
   <data name="AdpFeature1" xml:space="preserve"><value>Κρυπτογράφηση σε επίπεδο πεδίου για δεδομένα υγείας και προσωπικά δεδομένα</value></data>

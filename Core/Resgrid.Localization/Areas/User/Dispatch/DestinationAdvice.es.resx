@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Title" xml:space="preserve">
+    <value>Recomendación de destino de Enhanced AI</value>
+  </data>
+  <data name="Ask" xml:space="preserve">
+    <value>Preguntar a Enhanced AI</value>
+  </data>
+  <data name="Asking" xml:space="preserve">
+    <value>Preguntando a Enhanced AI…</value>
+  </data>
+  <data name="Apply" xml:space="preserve">
+    <value>Aplicar</value>
+  </data>
+  <data name="Dismiss" xml:space="preserve">
+    <value>Descartar</value>
+  </data>
+  <data name="DismissReason" xml:space="preserve">
+    <value>¿Por qué descarta esta recomendación? (opcional)</value>
+  </data>
+  <data name="Consider" xml:space="preserve">
+    <value>Considere {0}</value>
+  </data>
+  <data name="Keep" xml:space="preserve">
+    <value>Enhanced AI está de acuerdo con el destino actual.</value>
+  </data>
+  <data name="NoSuggestion" xml:space="preserve">
+    <value>Enhanced AI no tiene ningún destino que sugerir.</value>
+  </data>
+  <data name="Current" xml:space="preserve">
+    <value>Destino actual: {0}</value>
+  </data>
+  <data name="CurrentNone" xml:space="preserve">
+    <value>Sin destino asignado</value>
+  </data>
+  <data name="CurrentFree" xml:space="preserve">
+    <value>Destino actual: un lugar que no es un POI</value>
+  </data>
+  <data name="Needs" xml:space="preserve">
+    <value>Necesita: {0}</value>
+  </data>
+  <data name="Confidence" xml:space="preserve">
+    <value>Confianza: {0} %</value>
+  </data>
+  <data name="LowConfidence" xml:space="preserve">
+    <value>Confianza baja: no se anunció en la llamada.</value>
+  </data>
+  <data name="AdvisedAt" xml:space="preserve">
+    <value>Recomendado {0}</value>
+  </data>
+  <data name="AdviceOnly" xml:space="preserve">
+    <value>Solo es una recomendación: nada cambia hasta que alguien la aplique.</value>
+  </data>
+  <data name="NoAdvice" xml:space="preserve">
+    <value>Aún no hay recomendación. Enhanced AI revisa el destino cuando cambian los datos o las notas de la llamada.</value>
+  </data>
+  <data name="Applied" xml:space="preserve">
+    <value>Destino cambiado a {0}.</value>
+  </data>
+  <data name="Dismissed" xml:space="preserve">
+    <value>Recomendación descartada.</value>
+  </data>
+  <data name="Failed" xml:space="preserve">
+    <value>No se pudo hacer. Actualice la página e inténtelo de nuevo.</value>
+  </data>
+  <data name="StatusLimited" xml:space="preserve">
+    <value>limitado</value>
+  </data>
+  <data name="StatusDiversion" xml:space="preserve">
+    <value>en desvío</value>
+  </data>
+  <data name="StatusClosed" xml:space="preserve">
+    <value>cerrado</value>
+  </data>
+  <data name="Outcome.Unchanged" xml:space="preserve">
+    <value>No ha cambiado nada desde la última recomendación.</value>
+  </data>
+  <data name="Outcome.Busy" xml:space="preserve">
+    <value>Enhanced AI está ocupado. Inténtelo de nuevo en un momento.</value>
+  </data>
+  <data name="Outcome.Unavailable" xml:space="preserve">
+    <value>Enhanced AI no respondió a tiempo. Inténtelo de nuevo.</value>
+  </data>
+  <data name="Outcome.InvalidOutput" xml:space="preserve">
+    <value>No se pudo usar la respuesta de Enhanced AI. Inténtelo de nuevo.</value>
+  </data>
+  <data name="Outcome.NoLocation" xml:space="preserve">
+    <value>La llamada no tiene una ubicación desde la que clasificar los destinos.</value>
+  </data>
+  <data name="Outcome.NoCandidates" xml:space="preserve">
+    <value>No hay destinos entre los que elegir.</value>
+  </data>
+  <data name="Outcome.BudgetExhausted" xml:space="preserve">
+    <value>Se agotó el presupuesto de Enhanced AI de este mes.</value>
+  </data>
+  <data name="Outcome.ProtectionUnsupported" xml:space="preserve">
+    <value>No disponible mientras el departamento use Advanced Data Protection.</value>
+  </data>
+  <data name="Outcome.NotEntitled" xml:space="preserve">
+    <value>La recomendación de destino no está disponible para este departamento.</value>
+  </data>
+  <data name="Outcome.CallNotOpen" xml:space="preserve">
+    <value>La llamada ya no está abierta.</value>
+  </data>
+  <data name="Outcome.NotOpen" xml:space="preserve">
+    <value>Esta recomendación ya se aplicó o se descartó.</value>
+  </data>
+  <data name="Outcome.DestinationGone" xml:space="preserve">
+    <value>El destino recomendado ya no existe.</value>
+  </data>
+  <data name="Outcome.DestinationClosed" xml:space="preserve">
+    <value>El destino recomendado está cerrado ahora. Vuelva a preguntar para obtener un consejo actual.</value>
+  </data>
+  <data name="Outcome.CallChanged" xml:space="preserve">
+    <value>La llamada cambió mientras Enhanced AI respondía. Inténtelo de nuevo.</value>
+  </data>
+  <data name="Outcome.NothingToApply" xml:space="preserve">
+    <value>No hay nada que aplicar: la recomendación es mantener el destino actual.</value>
+  </data>
+</root>

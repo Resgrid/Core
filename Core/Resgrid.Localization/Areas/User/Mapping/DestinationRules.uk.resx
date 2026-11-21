@@ -329,4 +329,7 @@
   <data name="PreviewFailed" xml:space="preserve">
     <value>Зараз не вдалося перевірити правила. Спробуйте ще раз.</value>
   </data>
+  <data name="BestForUnit" xml:space="preserve">
+    <value>Найкращі для цього підрозділу</value>
+  </data>
 </root>

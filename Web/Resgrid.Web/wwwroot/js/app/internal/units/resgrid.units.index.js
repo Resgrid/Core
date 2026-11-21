@@ -90,23 +90,28 @@ var resgrid;
 
                     $.get(resgrid.absoluteBaseUrl + '/User/Units/GetUnitStatusHtmlForDropdownByStateId?customStateId=' + customStateType, function (data) {
                         $(setUnitStatusDropdown).empty().append(data);
-
-
-                        let setUnitStatusDestinationDropdown = $('#UnitStatusDestinationDropdown');
-                        $.get(resgrid.absoluteBaseUrl + '/User/Units/GetUnitStatusDestinationHtmlForDropdown?customStateId=' + $('#setUnitStateCustomStateId').val() + '&customStatusDetailId=' + $("#UnitStatusDropdown").val(), function (data) {
-                            $(setUnitStatusDestinationDropdown).empty().append(data);
-                        });
+                        loadUnitStatusDestinations($("#UnitStatusDropdown").val());
                     });
                 });
 
-                $("#UnitStatusDropdown").change(function () {
-                    let status = this.value;
-
+                // One unit: its id lets the server rank the destinations by the destination rules for the unit and its call, and
+                // pre-select a transport status's destination. Only the answer for the status chosen last is shown.
+                let unitStatusDestinationRequest = 0;
+                function loadUnitStatusDestinations(status) {
+                    let request = ++unitStatusDestinationRequest;
                     let setUnitStatusDestinationDropdown = $('#UnitStatusDestinationDropdown');
+                    let url = resgrid.absoluteBaseUrl + '/User/Units/GetUnitStatusDestinationHtmlForDropdown?customStateId=' + encodeURIComponent($('#setUnitStateCustomStateId').val() || '') +
+                        '&customStatusDetailId=' + encodeURIComponent(status || '') + '&unitId=' + encodeURIComponent($('#setUnitStateUnitId').val() || '');
 
-                    $.get(resgrid.absoluteBaseUrl + '/User/Units/GetUnitStatusDestinationHtmlForDropdown?customStateId=' + $('#setUnitStateCustomStateId').val() + '&customStatusDetailId=' + status, function (data) {
+                    $.get(url, function (data) {
+                        if (request !== unitStatusDestinationRequest)
+                            return;
                         $(setUnitStatusDestinationDropdown).empty().append(data);
                     });
+                }
+
+                $("#UnitStatusDropdown").change(function () {
+                    loadUnitStatusDestinations(this.value);
                 });
 
                 $(document).on('click', '#savingUnitStatusButton',

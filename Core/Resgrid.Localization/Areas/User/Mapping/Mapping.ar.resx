@@ -61,7 +61,7 @@
   <data name="ImportPOIsHelp" xml:space="preserve"><value>ارفع ملف KML أو KMZ، أو ملف CSV يحتوي صفه الأول على أسماء الأعمدة. يحتاج كل إدخال إلى خط العرض وخط الطول، أو إلى عنوان (عمود "Address" أو "Street"، مع أعمدة اختيارية "City" و"State" و"Postal Code") يتم تحديد موقعه عند الاستيراد. يحدد عمود "Name" اسم كل نقطة اهتمام، ويضيف عمود "Notes" ملاحظة.</value></data>
   <data name="PoiImportQueued" xml:space="preserve"><value>تمت إضافة {0} إلى قائمة انتظار الاستيراد ({1} إدخال). يعمل الاستيراد في الخلفية ويبدأ عادةً خلال دقيقة؛ يظهر تقدّمه أدناه.</value></data>
   <data name="PoiImportsHeader" xml:space="preserve"><value>عمليات الاستيراد</value></data>
-  <data name="PoiImportsHelp" xml:space="preserve"><value>يعمل الاستيراد في الخلفية ويبدأ عادةً خلال دقيقة. حدّث هذه الصفحة لمتابعة التقدّم.</value></data>
+  <data name="PoiImportsHelp" xml:space="preserve"><value>يعمل الاستيراد في الخلفية ويبدأ عادةً خلال دقيقة. تتحدّث هذه القائمة تلقائياً أثناء تشغيل الاستيراد.</value></data>
   <data name="PoiImportsRefresh" xml:space="preserve"><value>تحديث</value></data>
   <data name="PoiImportFileColumn" xml:space="preserve"><value>الملف</value></data>
   <data name="PoiImportUploadedColumn" xml:space="preserve"><value>تاريخ الرفع</value></data>
@@ -336,5 +336,32 @@
   </data>
   <data name="PoiAvailabilitySaveFailed" xml:space="preserve">
     <value>تعذّر حفظ التوفر: لم تعد نقطة الاهتمام وجهة. أعد تحميل الصفحة وحاول مرة أخرى.</value>
+  </data>
+  <data name="ManagePois" xml:space="preserve">
+    <value>إدارة نقاط الاهتمام</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>العنوان</value>
+  </data>
+  <data name="ImportFileRequired" xml:space="preserve">
+    <value>اختر ملفاً لرفعه.</value>
+  </data>
+  <data name="ImportFileTypeInvalid" xml:space="preserve">
+    <value>لا يمكن استيراد نوع الملف ({0}) كنقاط اهتمام: ارفع ملف KML أو KMZ أو CSV.</value>
+  </data>
+  <data name="ImportFileTooLarge" xml:space="preserve">
+    <value>الملف كبير جداً: يجب أن يكون أصغر من 10 ميغابايت.</value>
+  </data>
+  <data name="ImportTypeRequired" xml:space="preserve">
+    <value>اختر نوع نقطة الاهتمام الذي سيُستورد إليه.</value>
+  </data>
+  <data name="ImportChooseType" xml:space="preserve">
+    <value>اختر نوع نقطة الاهتمام</value>
+  </data>
+  <data name="ImportNoValidRows" xml:space="preserve">
+    <value>لا يحتوي أي من الإدخالات الـ{0} في الملف على إحداثيات صالحة أو عنوان (تحقق من أن خطي العرض والطول غير متبادلين أو فارغين).</value>
+  </data>
+  <data name="ImportNothingFound" xml:space="preserve">
+    <value>لم يُعثر في الملف المرفوع على علامات أماكن أو صفوف تحتوي على إحداثيات أو عنوان.</value>
   </data>
 </root>

@@ -185,7 +185,7 @@ namespace Resgrid.Tests.Chatbot
             var adapter = new WhatsAppAdapter(new ChatbotHttpClient(_client));
             var registry = new Mock<IChatbotAdapterRegistry>();
             registry.Setup(x => x.GetAdapter(ChatbotPlatform.WhatsApp)).Returns(adapter);
-            return new ChatbotPlatformsController(_queue.Object, registry.Object, new ChatbotJwtValidator())
+            return new ChatbotPlatformsController(_queue.Object, registry.Object, new ChatbotJwtValidator(), Mock.Of<Resgrid.Model.Services.IIntakeChannelsService>(), Mock.Of<Resgrid.Model.Services.IIntakeService>())
                 { ControllerContext = new ControllerContext { HttpContext = context } };
         }
 

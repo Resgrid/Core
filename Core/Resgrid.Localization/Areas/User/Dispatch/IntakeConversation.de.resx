@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Title" xml:space="preserve">
+    <value>Textunterhaltung</value>
+  </data>
+  <data name="StateOpen" xml:space="preserve">
+    <value>Offen</value>
+  </data>
+  <data name="StateClosed" xml:space="preserve">
+    <value>Beendet</value>
+  </data>
+  <data name="HandlerAssistant" xml:space="preserve">
+    <value>Der KI-Assistent stellt dem Absender Fragen</value>
+  </data>
+  <data name="HandlerUnassisted" xml:space="preserve">
+    <value>Wartet auf die Antwort eines Disponenten</value>
+  </data>
+  <data name="HandlerDispatcher" xml:space="preserve">
+    <value>Verbunden mit {0}</value>
+  </data>
+  <data name="HandlerDispatcherYou" xml:space="preserve">
+    <value>Sie sind verbunden</value>
+  </data>
+  <data name="Texter" xml:space="preserve">
+    <value>Absender: {0}</value>
+  </data>
+  <data name="OptedOut" xml:space="preserve">
+    <value>Der Absender hat sich abgemeldet (STOP). Es können keine Nachrichten mehr gesendet werden.</value>
+  </data>
+  <data name="ClosedReason" xml:space="preserve">
+    <value>Beendet: {0}</value>
+  </data>
+  <data name="AuthorCaller" xml:space="preserve">
+    <value>Anrufer</value>
+  </data>
+  <data name="AuthorAssistant" xml:space="preserve">
+    <value>KI-Assistent</value>
+  </data>
+  <data name="AuthorSystem" xml:space="preserve">
+    <value>Automatische Nachricht</value>
+  </data>
+  <data name="AuthorDispatcher" xml:space="preserve">
+    <value>Disponent</value>
+  </data>
+  <data name="StatusQueued" xml:space="preserve">
+    <value>Wird gesendet</value>
+  </data>
+  <data name="StatusSent" xml:space="preserve">
+    <value>Gesendet</value>
+  </data>
+  <data name="StatusFailed" xml:space="preserve">
+    <value>Nicht zugestellt</value>
+  </data>
+  <data name="TextUnavailable" xml:space="preserve">
+    <value>(Text nicht verfügbar)</value>
+  </data>
+  <data name="NoMessages" xml:space="preserve">
+    <value>Noch keine Nachrichten.</value>
+  </data>
+  <data name="Take" xml:space="preserve">
+    <value>Unterhaltung übernehmen</value>
+  </data>
+  <data name="TakeOverConfirm" xml:space="preserve">
+    <value>Ein anderer Disponent ist mit dieser Unterhaltung verbunden. Übernehmen?</value>
+  </data>
+  <data name="Release" xml:space="preserve">
+    <value>Freigeben</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Beenden</value>
+  </data>
+  <data name="CloseConfirm" xml:space="preserve">
+    <value>Diese Textunterhaltung beenden? Der Einsatz bleibt offen.</value>
+  </data>
+  <data name="NotifyTexter" xml:space="preserve">
+    <value>Absender benachrichtigen</value>
+  </data>
+  <data name="Send" xml:space="preserve">
+    <value>Senden</value>
+  </data>
+  <data name="SendPlaceholder" xml:space="preserve">
+    <value>Nachricht an den Anrufer…</value>
+  </data>
+  <data name="EnterToSend" xml:space="preserve">
+    <value>Eingabetaste sendet, Umschalt+Eingabe fügt eine Zeile hinzu.</value>
+  </data>
+  <data name="FromResgridNumber" xml:space="preserve">
+    <value>Nachrichten gehen von der Resgrid-Nummer an den Anrufer, nicht von der Nummer der Organisation.</value>
+  </data>
+  <data name="Outcome.NotFound" xml:space="preserve">
+    <value>Diese Unterhaltung wurde nicht gefunden.</value>
+  </data>
+  <data name="Outcome.Closed" xml:space="preserve">
+    <value>Diese Unterhaltung ist beendet.</value>
+  </data>
+  <data name="Outcome.HeldByAnotherDispatcher" xml:space="preserve">
+    <value>Ein anderer Disponent ist mit dieser Unterhaltung verbunden.</value>
+  </data>
+  <data name="Outcome.OptedOut" xml:space="preserve">
+    <value>Der Absender hat sich abgemeldet. Es kann nichts gesendet werden.</value>
+  </data>
+  <data name="Outcome.SendFailed" xml:space="preserve">
+    <value>Die Nachricht konnte nicht zugestellt werden.</value>
+  </data>
+  <data name="Outcome.InvalidMessage" xml:space="preserve">
+    <value>Geben Sie eine Nachricht mit 1 bis {0} Zeichen ein.</value>
+  </data>
+  <data name="Failed" xml:space="preserve">
+    <value>Die Anfrage ist fehlgeschlagen. Bitte versuchen Sie es erneut.</value>
+  </data>
+  <data name="CloseReason.OptedOut" xml:space="preserve">
+    <value>Der Absender hat sich abgemeldet</value>
+  </data>
+  <data name="CloseReason.Idle" xml:space="preserve">
+    <value>Längere Zeit keine Nachrichten</value>
+  </data>
+  <data name="CloseReason.CallClosed" xml:space="preserve">
+    <value>Der Einsatz wurde geschlossen</value>
+  </data>
+</root>

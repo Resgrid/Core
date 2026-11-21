@@ -205,7 +205,7 @@
     <value>Importazioni</value>
   </data>
   <data name="PoiImportsHelp" xml:space="preserve">
-    <value>Le importazioni vengono eseguite in background e di solito iniziano entro un minuto. Aggiorna questa pagina per vederne l'avanzamento.</value>
+    <value>Le importazioni vengono eseguite in background e di solito iniziano entro un minuto. Questo elenco si aggiorna da solo mentre un'importazione è in corso.</value>
   </data>
   <data name="PoiImportsRefresh" xml:space="preserve">
     <value>Aggiorna</value>
@@ -580,5 +580,32 @@
   </data>
   <data name="PoiAvailabilitySaveFailed" xml:space="preserve">
     <value>Impossibile salvare la disponibilità: il POI non è più una destinazione. Ricaricate la pagina e riprovate.</value>
+  </data>
+  <data name="ManagePois" xml:space="preserve">
+    <value>Gestisci POI</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>Indirizzo</value>
+  </data>
+  <data name="ImportFileRequired" xml:space="preserve">
+    <value>Scegli un file da caricare.</value>
+  </data>
+  <data name="ImportFileTypeInvalid" xml:space="preserve">
+    <value>Il tipo di file ({0}) non può essere importato come POI: carica un file KML, KMZ o CSV.</value>
+  </data>
+  <data name="ImportFileTooLarge" xml:space="preserve">
+    <value>Il file è troppo grande: deve essere inferiore a 10 MB.</value>
+  </data>
+  <data name="ImportTypeRequired" xml:space="preserve">
+    <value>Scegli il tipo di POI in cui importare.</value>
+  </data>
+  <data name="ImportChooseType" xml:space="preserve">
+    <value>Scegli un tipo di POI</value>
+  </data>
+  <data name="ImportNoValidRows" xml:space="preserve">
+    <value>Nessuna delle {0} voci del file ha coordinate valide o un indirizzo (controlla che latitudine e longitudine non siano invertite o vuote).</value>
+  </data>
+  <data name="ImportNothingFound" xml:space="preserve">
+    <value>Nel file caricato non sono stati trovati segnaposti o righe con coordinate o un indirizzo.</value>
   </data>
 </root>

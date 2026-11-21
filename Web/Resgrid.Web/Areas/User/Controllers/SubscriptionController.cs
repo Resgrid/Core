@@ -52,13 +52,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IDepartmentDataProtectionService _dataProtectionService;
 		private readonly IFeatureToggleService _featureToggleService;
 		private readonly IAdpBillingService _adpBillingService;
+		private readonly IDepartmentPhoneNumbersService _departmentPhoneNumbers;
 
 		public SubscriptionController(IDepartmentsService departmentsService, IUsersService usersService, IDepartmentGroupsService departmentGroupsService,
 			Model.Services.IAuthorizationService authorizationService, ISubscriptionsService subscriptionsService, IPersonnelRolesService personnelRolesService, IUnitsService unitsService,
 			IDepartmentSettingsService departmentSettingsService, IEmailService emailService, IAffiliateService affiliateService,
 			IUserProfileService userProfileService, IOptions<AppOptions> appOptionsAccessor, IEventAggregator eventAggregator,
-			IDepartmentDataProtectionService dataProtectionService, IFeatureToggleService featureToggleService, IAdpBillingService adpBillingService)
+			IDepartmentDataProtectionService dataProtectionService, IFeatureToggleService featureToggleService, IAdpBillingService adpBillingService,
+			IDepartmentPhoneNumbersService departmentPhoneNumbers = null)
 		{
+			_departmentPhoneNumbers = departmentPhoneNumbers;
 			_dataProtectionService = dataProtectionService;
 			_featureToggleService = featureToggleService;
 			_adpBillingService = adpBillingService;
@@ -963,7 +966,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 						_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
 						if (result)
+						{
+							// Paddle cancels at the end of the billing period.
+							await NotifyDedicatedNumberOfPlanCancellationAsync(payment.EndingOn);
 							return RedirectToAction("CancelSuccess", "Subscription", new { Area = "User" });
+						}
 						else
 							return RedirectToAction("CancelFailure", "Subscription", new { Area = "User" });
 					}
@@ -1397,6 +1404,26 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				return RedirectToAction("PaymentFailed", "Subscription",
 						new { Area = "User", chargeId = "", errorMessage = ex.Message });
+			}
+		}
+
+		/// <summary>
+		/// call-intake-and-ai-destinations-plan.md §8 D12: a plan cancelled at the end of its period stops the Dedicated Number add-on with it,
+		/// so a department holding a number hears now when texts and calls stop and when the number is released. An immediate cancellation
+		/// (Stripe here) is left to worker 80's "payment stopped" warning. Never fails the cancellation.
+		/// </summary>
+		private async Task NotifyDedicatedNumberOfPlanCancellationAsync(DateTime? endsOnUtc)
+		{
+			if (_departmentPhoneNumbers == null)
+				return;
+
+			try
+			{
+				await _departmentPhoneNumbers.NotifyCancellationScheduledAsync(DepartmentId, DedicatedNumberCancellations.Plan, endsOnUtc);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Dedicated number plan-cancelled notice failed for DepartmentId: {DepartmentId}");
 			}
 		}
 

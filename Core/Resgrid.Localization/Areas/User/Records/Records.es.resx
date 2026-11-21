@@ -2286,4 +2286,10 @@
   <data name="DeleteRefusedPermanentContent" xml:space="preserve"><value>Este informe tiene entradas de víctimas, rescates o exposiciones, que se conservan de forma permanente. Quítelas del borrador antes de eliminarlo.</value></data>
   <data name="DeleteRefusedAmendmentOpen" xml:space="preserve"><value>Abandone la enmienda abierta antes de eliminar este informe.</value></data>
   <data name="IncludeClosedReports" xml:space="preserve"><value>Incluir cancelados y anulados</value></data>
+  <data name="ImportMapPois" xml:space="preserve">
+    <value>Importar PDI del mapa</value>
+  </data>
+  <data name="ImportMapPoisHelp" xml:space="preserve">
+    <value>Importe un archivo KML, KMZ o CSV como puntos de interés del mapa (referencias), separados de los registros de hidrantes.</value>
+  </data>
 </root>

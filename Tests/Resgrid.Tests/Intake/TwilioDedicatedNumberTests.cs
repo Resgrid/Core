@@ -45,6 +45,7 @@ namespace Resgrid.Tests.Intake
 		private Mock<IIntakeConversationService> _conversations;
 		private Mock<IIntakeConversationOperations> _conversationOperations;
 		private Mock<ICommunicationTestService> _communicationTests;
+		private Mock<IIntakeScreeningService> _screening;
 		private IntakeConversation _thread;
 		private DepartmentPhoneNumber _number;
 		private IntakeEnvelope _received;
@@ -80,6 +81,7 @@ namespace Resgrid.Tests.Intake
 			_conversations.Setup(c => c.HandleParticipantMessageAsync(It.IsAny<IntakeConversation>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync(true);
 			_conversationOperations = new Mock<IIntakeConversationOperations>();
+			_screening = new Mock<IIntakeScreeningService>();
 			_communicationTests = new Mock<ICommunicationTestService>();
 			_prompts = new Mock<ITwilioVoiceResponseService>();
 			_prompts.Setup(p => p.AppendPromptAsync(It.IsAny<VoiceResponse>(), It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<string>()))
@@ -98,7 +100,7 @@ namespace Resgrid.Tests.Intake
 				Mock.Of<ICalendarService>(), _communicationTests.Object, Mock.Of<IEncryptionService>(), _prompts.Object, _flags.Object,
 				Mock.Of<ITextDepartmentSwitchService>(), Mock.Of<IDispatchRecommendationService>(), Mock.Of<IDispatchScopeService>(),
 				Mock.Of<Resgrid.Model.Services.IAuthorizationService>(), Mock.Of<IAdpReleaseService>(), Mock.Of<IProtectedProjectionService>(),
-				_numbers.Object, _intake.Object, _voice.Object, _text.Object, _conversations.Object, _conversationOperations.Object)
+				_numbers.Object, _intake.Object, _voice.Object, _text.Object, _conversations.Object, _conversationOperations.Object, _screening.Object)
 			{
 				ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() }
 			};
@@ -347,7 +349,7 @@ namespace Resgrid.Tests.Intake
 			var twiml = Content(await GateController("1").VoiceIntakeGate());
 
 			twiml.Should().Contain("<Gather").And.Contain("input=\"speech\"").And.Contain("/api/Twilio/VoiceIntakeAnswer?step=1");
-			twiml.Should().Contain("speechTimeout=\"auto\"");
+			twiml.Should().Contain("speechModel=\"phone_call\"").And.Contain("speechTimeout=\"3\"", "Twilio refuses \"auto\" with a speech model (warning 13335)");
 			twiml.Should().Contain("actionOnEmptyResult=\"true\"");
 			_spoken.Should().Equal(TwilioVoicePromptCatalog.VoiceIntakeGreeting, TwilioVoicePromptCatalog.VoiceIntakeAskNature);
 			_profiles.Verify(p => p.GetProfileByMobileNumberAsync(It.IsAny<string>()), Times.Never);
@@ -502,7 +504,138 @@ namespace Resgrid.Tests.Intake
 			var result = await Controller().IncomingMessage(Text(to: Master, body: "available"));
 
 			Content(result).Should().NotContain("<Message>");
+			((ContentResult)result).StatusCode.Should().Be(StatusCodes.Status503ServiceUnavailable, "nothing holds the text yet: a retryable answer, not an acknowledgement");
 			_profiles.Verify(p => p.GetProfileByMobileNumberAsync(It.IsAny<string>()), Times.Never, "the text stays the texter's");
+		}
+
+		[Test]
+		public async Task a_reply_the_thread_could_not_record_answers_503_and_never_becomes_a_member_command()
+		{
+			OpenThread();
+			_conversations.Setup(c => c.HandleParticipantMessageAsync(It.IsAny<IntakeConversation>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(false);
+
+			var result = (ContentResult)await Controller().IncomingMessage(Text(to: Master, body: "available"));
+
+			result.StatusCode.Should().Be(StatusCodes.Status503ServiceUnavailable);
+			result.Content.Should().NotContain("<Message>");
+			_profiles.Verify(p => p.GetProfileByMobileNumberAsync(It.IsAny<string>()), Times.Never);
+		}
+
+		[Test]
+		public async Task a_non_members_stop_to_the_master_number_after_its_thread_closed_reaches_neither_the_chatbot_nor_text_to_call()
+		{
+			// The first STOP closed the thread; Twilio did not get its 200 and delivers the STOP again: no open thread any more.
+			var saved = Resgrid.Config.NumberProviderConfig.TwilioResgridNumber;
+			try
+			{
+				Resgrid.Config.NumberProviderConfig.TwilioResgridNumber = Master;
+				_commands.Setup(c => c.DetermineType("STOP")).Returns(new TextCommandPayload { Type = TextCommandTypes.Stop });
+				_flags.Setup(f => f.IsEnabledAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<IDictionary<string, string>>())).ReturnsAsync(true);
+
+				var result = (ContentResult)await Controller().IncomingMessage(Text(to: Master, body: "STOP"));
+
+				result.StatusCode.Should().Be(StatusCodes.Status200OK);
+				result.Content.Should().NotContain("<Message>");
+				_flags.Verify(f => f.IsEnabledAsync(FeatureFlagKeys.ChatbotTwilioTextIntegration, It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<IDictionary<string, string>>()), Times.Never);
+				_legacyNumbers.Verify(n => n.SaveInboundMessageEventAsync(It.Is<InboundMessageEvent>(e => e.Processed == true), It.IsAny<CancellationToken>()), Times.Once);
+			}
+			finally
+			{
+				Resgrid.Config.NumberProviderConfig.TwilioResgridNumber = saved;
+			}
+		}
+
+		[Test]
+		public async Task a_dedicated_number_stop_whose_close_did_not_take_answers_503()
+		{
+			OpenThread();
+			_commands.Setup(c => c.DetermineType("STOP")).Returns(new TextCommandPayload { Type = TextCommandTypes.Stop });
+			_conversationOperations.Setup(c => c.GetOpenForParticipantAsync(DepartmentId, IntakeChannelTypes.Sms, Caller)).ReturnsAsync(() => _thread);
+			_conversations.Setup(c => c.HandleParticipantMessageAsync(It.IsAny<IntakeConversation>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(false);
+
+			((ContentResult)await Controller().IncomingMessage(Text(body: "STOP"))).StatusCode.Should().Be(StatusCodes.Status503ServiceUnavailable,
+				"the opt-out is not durable yet; the redelivered STOP closes the thread");
+
+			_conversationOperations.Setup(c => c.GetOpenForParticipantAsync(DepartmentId, IntakeChannelTypes.Sms, Caller)).ThrowsAsync(new TimeoutException("db"));
+			((ContentResult)await Controller().IncomingMessage(Text(body: "STOP"))).StatusCode.Should().Be(StatusCodes.Status503ServiceUnavailable);
+			_received.Should().BeNull("STOP never creates a call");
+		}
+
+		[Test]
+		public async Task a_blocked_sender_on_a_lapsed_number_gets_no_lapsed_notice()
+		{
+			_number.Status = (int)DepartmentPhoneNumberStatuses.Lapsed;
+			_screening.Setup(s => s.GetBlockAsync(DepartmentId, Caller)).ReturnsAsync(new IntakeBlockedSender { DepartmentId = DepartmentId, Sender = Caller });
+
+			((ContentResult)await Controller().IncomingMessage(Text())).StatusCode.Should().Be(StatusCodes.Status200OK);
+
+			_text.Verify(t => t.SendTextMessage(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<MobileCarriers>(), It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<int>()), Times.Never);
+
+			// A block list that cannot be read lets the notice through, as intake lets messages through.
+			_screening.Setup(s => s.GetBlockAsync(DepartmentId, Caller)).ThrowsAsync(new TimeoutException("db"));
+			await Controller().IncomingMessage(Text());
+			_text.Verify(t => t.SendTextMessage(Caller, TwilioController.LapsedNumberReply, null, It.IsAny<MobileCarriers>(), DepartmentId, false, false, 0), Times.Once);
+		}
+
+		[Test]
+		public async Task a_text_to_a_number_that_cannot_be_looked_up_answers_503_not_member_commands()
+		{
+			_numbers.Setup(n => n.GetByNumberAsync(Dedicated)).ThrowsAsync(new TimeoutException("db"));
+
+			var result = (ContentResult)await Controller().IncomingMessage(Text(body: "1"));
+
+			result.StatusCode.Should().Be(StatusCodes.Status503ServiceUnavailable, "it may be a dedicated number: never the sender's own department's commands");
+			_profiles.Verify(p => p.GetProfileByMobileNumberAsync(It.IsAny<string>()), Times.Never);
+		}
+
+		[Test]
+		public async Task a_call_to_a_number_that_cannot_be_looked_up_never_gets_the_callers_own_department_menu()
+		{
+			_numbers.Setup(n => n.GetByNumberAsync(Dedicated)).ThrowsAsync(new TimeoutException("db"));
+			_profiles.Setup(p => p.GetProfileByMobileNumberAsync(It.IsAny<string>())).ReturnsAsync(new UserProfile { UserId = "member-1", FirstName = "Pat" });
+
+			var twiml = Content(await Controller().InboundVoice(Call()));
+
+			_spoken.Should().Equal(TwilioVoicePromptCatalog.InboundVoiceUnavailable);
+			twiml.Should().Contain("<Hangup").And.NotContain("<Gather");
+			_departments.Verify(d => d.GetDepartmentByUserIdAsync(It.IsAny<string>(), It.IsAny<bool>()), Times.Never);
+
+			// An action URL without the menu's department (from before the binding) is the same: nothing, never the member's own department.
+			_spoken.Clear();
+			await Controller().InboundVoiceAction("member-1", new Twilio.AspNet.Common.VoiceRequest { To = Dedicated, Digits = "0" });
+			_spoken.Should().Equal(TwilioVoicePromptCatalog.InboundVoiceUnavailable);
+			_departments.Verify(d => d.GetDepartmentByUserIdAsync(It.IsAny<string>(), It.IsAny<bool>()), Times.Never);
+		}
+
+		[Test]
+		public async Task a_call_to_the_master_number_keeps_its_menu_while_the_number_table_is_down()
+		{
+			var saved = Resgrid.Config.NumberProviderConfig.TwilioResgridNumber;
+			try
+			{
+				Resgrid.Config.NumberProviderConfig.TwilioResgridNumber = Master;
+				_numbers.Setup(n => n.GetByNumberAsync(It.IsAny<string>())).ThrowsAsync(new TimeoutException("db"));
+
+				await Controller().InboundVoice(new TwilioGatherRequest { To = Master, From = Caller, CallSid = "CA1" });
+
+				_profiles.Verify(p => p.GetProfileByMobileNumberAsync("15305550199"), Times.Once, "the master number is never a dedicated number: its profile IVR runs");
+			}
+			finally
+			{
+				Resgrid.Config.NumberProviderConfig.TwilioResgridNumber = saved;
+			}
+		}
+
+		[TestCase("phone_call", 0, "3")]
+		[TestCase("phone_call", 5, "5")]
+		[TestCase("", 0, "auto")]
+		[TestCase(null, 0, "auto")]
+		[TestCase(null, 2, "2")]
+		public void the_speech_timeout_is_a_number_whenever_a_speech_model_is_set(string model, int seconds, string expected)
+		{
+			TwilioController.VoiceSpeechTimeout(model, seconds).Should().Be(expected);
 		}
 
 		[Test]

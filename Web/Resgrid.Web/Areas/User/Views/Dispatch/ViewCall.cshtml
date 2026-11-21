@@ -11,6 +11,7 @@
 @inject Resgrid.Model.Services.IFeatureToggleService featureToggleService
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.IntakeChannels> intakeLocalizer
 @inject Resgrid.Model.Services.IIntakeService intakeService
+@inject Resgrid.Model.Services.IAuthorizationService dismissAuthorization
 @{
     ViewBag.Title = $"Resgrid | " + @localizer["ViewCallHeader"] + ": " + @Model.Call.Name;
     Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
@@ -183,7 +184,10 @@
         : intakeLocalizer["ViaType", intakeLocalizer[Model.Call.CallSource == (int)CallSources.VoiceIntake ? "Type.Voice" : "PageTitle"].Value].Value;
     @* M0326: why the call is screened, and "dismiss as spam" (cancel + block the sender) while it is still pending. *@
     var screeningLabel = intakeSource == null ? null : Resgrid.Web.Areas.User.Controllers.IntakeChannelsController.ScreeningLabel(intakeLocalizer, intakeSource.Screening);
-    var canDismiss = intakeSource != null && Model.Call.State == (int)CallStates.Pending && ClaimsAuthorizationHelper.CanCreateCall();
+    @* The same rules as the DismissAsSpam action (Call_Update, then the right to close this call), so the button never leads to Unauthorized. *@
+    var canDismiss = intakeSource != null && Model.Call.State == (int)CallStates.Pending &&
+        User.HasClaim(Resgrid.Providers.Claims.ResgridClaimTypes.Resources.Call, Resgrid.Providers.Claims.ResgridClaimTypes.Actions.Update) &&
+        await dismissAuthorization.CanUserCloseCallAsync(ClaimsAuthorizationHelper.GetUserId(), Model.Call.CallId, Model.Call.DepartmentId);
     var blockDays = Resgrid.Config.IntakeConfig.SpamBlockDays;
     <div class="row"><div class="col-lg-12"><div class="alert alert-info" id="intakeSourceBanner" style="margin:15px 0 0 0;">
         <i class="fa fa-inbox"></i> @intakeLabel

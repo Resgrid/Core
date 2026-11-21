@@ -15,7 +15,10 @@ namespace Resgrid.Config
 		/// <summary>Hours voice intake sessions (transcripts) are kept after they end (worker 80 purge).</summary>
 		public static int VoiceSessionRetentionHours = 48;
 
-		/// <summary>Seconds of silence before a spoken answer ends (Twilio speechTimeout; "auto" when 0).</summary>
+		/// <summary>
+		/// Seconds of silence before a spoken answer ends (Twilio speechTimeout). 0 = "auto" without a VoiceSpeechModel; with a model Twilio
+		/// requires a positive value (warning 13335), so 0 then means 3 seconds.
+		/// </summary>
 		public static int VoiceSpeechTimeoutSeconds = 0;
 
 		/// <summary>Re-asks of a voice intake question when nothing usable was heard.</summary>
@@ -69,8 +72,9 @@ namespace Resgrid.Config
 		public static int SpamBlockDays = 30;
 
 		/// <summary>
-		/// Voice intake asks the caller to press 1 before the guided questions start (M0326). Auto-dialers and recorded robocalls do
-		/// not, so they create no session, no call and no use of the monthly voice limit.
+		/// Voice intake asks the caller to press 1 before the guided questions start (M0326). Most auto-dialers and recorded robocalls
+		/// do not, so they create no session, no call and no use of the monthly voice limit; this reduces automated calls, it does not
+		/// stop one that sends "1".
 		/// </summary>
 		public static bool VoiceGateEnabled = true;
 

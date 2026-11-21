@@ -69,6 +69,7 @@ namespace Resgrid.Web.Services.Controllers
 	private readonly ITextMessageProvider _textMessageProvider;
 	private readonly IIntakeConversationService _intakeConversations;
 	private readonly IIntakeConversationOperations _intakeConversationOperations;
+	private readonly IIntakeScreeningService _intakeScreening;
 
 	public TwilioController(IDepartmentSettingsService departmentSettingsService, INumbersService numbersService,
 		ILimitsService limitsService, ICallsService callsService, IQueueService queueService, IDepartmentsService departmentsService,
@@ -81,8 +82,10 @@ namespace Resgrid.Web.Services.Controllers
 		IDispatchRecommendationService dispatchRecommendationService, IDispatchScopeService dispatchScopeService,
 		Model.Services.IAuthorizationService authorizationService, IAdpReleaseService adpRelease, IProtectedProjectionService adpProjection,
 		IDepartmentPhoneNumbersService departmentPhoneNumbersService, IIntakeService intakeService, IVoiceIntakeService voiceIntakeService,
-		ITextMessageProvider textMessageProvider, IIntakeConversationService intakeConversations, IIntakeConversationOperations intakeConversationOperations)
+		ITextMessageProvider textMessageProvider, IIntakeConversationService intakeConversations, IIntakeConversationOperations intakeConversationOperations,
+		IIntakeScreeningService intakeScreening)
 	{
+		_intakeScreening = intakeScreening;
 		_intakeConversations = intakeConversations;
 		_intakeConversationOperations = intakeConversationOperations;
 		_departmentPhoneNumbersService = departmentPhoneNumbersService;
@@ -266,6 +269,17 @@ namespace Resgrid.Web.Services.Controllers
 			if (conversationReply == ConversationReplies.Handled)
 				return new ContentResult { Content = response.ToString(), ContentType = "application/xml", StatusCode = 200 };
 
+			// The text is the open thread's but did not become durable (its row, its note on the call, or a STOP's close failed): a retryable
+			// 503 (a configured Twilio retry, the debugger, a fallback URL) instead of an acknowledgement, and it never reaches member commands.
+			// The redelivery of the same MessageSid finishes what this one could not.
+			if (conversationReply == ConversationReplies.Retry)
+				return new ContentResult
+				{
+					Content = response.ToString(),
+					ContentType = "application/xml",
+					StatusCode = Microsoft.AspNetCore.Http.StatusCodes.Status503ServiceUnavailable
+				};
+
 			try
 			{
 				// Going-forward model: one master Resgrid number handles all inbound SMS, so the department is
@@ -287,8 +301,11 @@ namespace Resgrid.Web.Services.Controllers
 				// STOP closed a member of the public's intake conversation above. The master number's own STOP handling is a member's
 				// (turn their texts off); for anyone else what follows is legacy text-to-call and the chatbot, which must not answer
 				// someone who just opted out (found live 2026-11-20: the chatbot replied with an error message). Twilio's carrier-level
-				// opt-out sends the STOP confirmation.
-				if (conversationReply == ConversationReplies.OptedOut && userProfile == null)
+				// opt-out sends the STOP confirmation. That holds for any non-member's STOP to the master number, not only one that closed a
+				// thread just now: a redelivered STOP (the first one closed the thread, its 200 was lost) finds no open thread any more.
+				var nonMemberStop = userProfile == null && IsMasterNumber(textMessage.To) &&
+					_textCommandService.DetermineType(textMessage.Text).Type == TextCommandTypes.Stop;
+				if ((conversationReply == ConversationReplies.OptedOut || nonMemberStop) && userProfile == null)
 				{
 					Framework.Logging.LogInfo($"[Twilio SMS] MessageSid={request.MessageSid} STOP from a non-member closed their intake conversation; nothing else runs.");
 					messageEvent.Processed = true;
@@ -425,9 +442,15 @@ namespace Resgrid.Web.Services.Controllers
 		/// </summary>
 		private async Task<DedicatedNumberTexts> TryHandleDedicatedNumberTextAsync(TwilioMessage request)
 		{
-			var number = await DedicatedNumberAsync(request.To);
+			var (number, lookupFailed) = await FindDedicatedNumberAsync(request.To);
 			if (number == null)
+			{
+				// The number table could not be read and the text was not sent to the master number: it may be a dedicated number, whose texts
+				// must never run as the sender's member commands in their own department. 503, so the failure shows and a redelivery is taken again.
+				if (lookupFailed && !IsMasterNumber(request.To))
+					return DedicatedNumberTexts.Failed;
 				return DedicatedNumberTexts.NotDedicated;
+			}
 
 			var isLapsed = number.Status == (int)DepartmentPhoneNumberStatuses.Lapsed;
 			if (!isLapsed && (number.Status != (int)DepartmentPhoneNumberStatuses.Active || !number.SmsIntakeEnabled))
@@ -440,17 +463,23 @@ namespace Resgrid.Web.Services.Controllers
 
 			// Opting out never creates a call, and nothing is sent back to someone who asked us to stop. Their open conversation with the
 			// department (plan §8) closes and stops texting them: replies come from the master number, which this STOP did not reach.
+			// An opt-out that did not take (the thread could not be read, or its close failed) answers 503 until it is durable; the redelivery of
+			// the STOP closes the thread.
 			if (_textCommandService.DetermineType(request.Body).Type == TextCommandTypes.Stop)
 			{
 				try
 				{
 					var thread = await _intakeConversationOperations.GetOpenForParticipantAsync(number.DepartmentId, IntakeChannelTypes.Sms, sender);
-					if (thread != null)
-						await _intakeConversations.HandleParticipantMessageAsync(thread, request.MessageSid, request.Body, DateTime.UtcNow, CancellationToken.None);
+					if (thread != null && !await _intakeConversations.HandleParticipantMessageAsync(thread, request.MessageSid, request.Body, DateTime.UtcNow, CancellationToken.None))
+					{
+						Framework.Logging.LogError($"[Twilio SMS] MessageSid={request.MessageSid} conversation opt-out on a dedicated number did not take; answering 503.");
+						return DedicatedNumberTexts.Failed;
+					}
 				}
 				catch (Exception ex)
 				{
 					Framework.Logging.LogException(ex, $"[Twilio SMS] MessageSid={request.MessageSid} conversation opt-out on a dedicated number failed.");
+					return DedicatedNumberTexts.Failed;
 				}
 
 				return DedicatedNumberTexts.Handled;
@@ -489,10 +518,11 @@ namespace Resgrid.Web.Services.Controllers
 			try
 			{
 				var reply = isLapsed ? LapsedNumberReply : result.Acknowledgement;
-				// Nothing goes back to a sender that is not a phone number, a blocked sender, or one past the per-sender limit (M0326).
+				// Nothing goes back to a sender that is not a phone number, a blocked sender, or one past the per-sender limit (M0326). A lapsed
+				// number's refusal is recorded before intake looks at the block list, so a blocked sender is checked here too.
 				if (!string.IsNullOrWhiteSpace(reply) && phone != null && result.State != IntakeMessageStates.Duplicate &&
 					result.State != IntakeMessageStates.SenderNotAllowed && result.State != IntakeMessageStates.SenderBlocked &&
-					result.State != IntakeMessageStates.AddedToCall)
+					result.State != IntakeMessageStates.AddedToCall && !(isLapsed && await IsSenderBlockedAsync(number.DepartmentId, sender)))
 					await _textMessageProvider.SendTextMessage(sender, reply, null, default(MobileCarriers), number.DepartmentId);
 			}
 			catch (Exception ex)
@@ -513,7 +543,10 @@ namespace Resgrid.Web.Services.Controllers
 			Handled = 1,
 
 			/// <summary>STOP closed the sender's conversation; the master number's own STOP handling still runs.</summary>
-			OptedOut = 2
+			OptedOut = 2,
+
+			/// <summary>The text is the open conversation's but could not be made durable: 503, nothing else runs.</summary>
+			Retry = 3
 		}
 
 		/// <summary>
@@ -539,18 +572,24 @@ namespace Resgrid.Web.Services.Controllers
 			if (thread == null || !IsConversationReplyNumber(request.To, thread))
 				return ConversationReplies.None;
 
-			// From here the text is the texter's, whatever happens while it is recorded: it never falls through to member commands.
+			// From here the text is the texter's, whatever happens while it is recorded: it never falls through to member commands. Not handled
+			// means it is not durable on the thread (the thread closed meanwhile, or its row, note or STOP close failed): a retryable answer, so a
+			// redelivery either finishes it or, with the thread closed, takes the master number's usual path.
 			var stop = Resgrid.Services.Intake.IntakeConversationTexts.IsOptOut(request.Body);
+			bool handled;
 			try
 			{
-				var handled = await _intakeConversations.HandleParticipantMessageAsync(thread, request.MessageSid, request.Body, DateTime.UtcNow, CancellationToken.None);
+				handled = await _intakeConversations.HandleParticipantMessageAsync(thread, request.MessageSid, request.Body, DateTime.UtcNow, CancellationToken.None);
 				Framework.Logging.LogInfo($"[Twilio SMS] MessageSid={request.MessageSid} reply to intake conversation of department {thread.DepartmentId} (handled={handled}, stop={stop}).");
 			}
 			catch (Exception ex)
 			{
 				Framework.Logging.LogException(ex, $"[Twilio SMS] MessageSid={request.MessageSid} intake conversation reply could not be recorded.");
+				handled = false;
 			}
 
+			if (!handled)
+				return ConversationReplies.Retry;
 			return stop ? ConversationReplies.OptedOut : ConversationReplies.Handled;
 		}
 
@@ -563,21 +602,49 @@ namespace Resgrid.Web.Services.Controllers
 		}
 
 		/// <summary>The dedicated department number (Active or Lapsed) the request was sent to, else null.</summary>
-		private async Task<DepartmentPhoneNumber> DedicatedNumberAsync(string calledNumber)
+		private async Task<DepartmentPhoneNumber> DedicatedNumberAsync(string calledNumber) => (await FindDedicatedNumberAsync(calledNumber)).Number;
+
+		/// <summary>
+		/// The dedicated department number (Active or Lapsed) the request was sent to. <c>LookupFailed</c>: the number table could not be read,
+		/// so a null Number does not prove the called number is not a dedicated one (only <see cref="IsMasterNumber"/> does then).
+		/// </summary>
+		private async Task<(DepartmentPhoneNumber Number, bool LookupFailed)> FindDedicatedNumberAsync(string calledNumber)
 		{
 			var e164 = IntakeChannelAddresses.PhoneNumber(calledNumber);
 			if (e164 == null)
-				return null;
+				return (null, false);
 
 			try
 			{
-				return await _departmentPhoneNumbersService.GetByNumberAsync(e164);
+				return (await _departmentPhoneNumbersService.GetByNumberAsync(e164), false);
 			}
 			catch (Exception ex)
 			{
 				// The master-number paths still work while the number table cannot be read.
 				Framework.Logging.LogException(ex, "Dedicated number lookup failed.");
-				return null;
+				return (null, true);
+			}
+		}
+
+		/// <summary>The request was sent to the region's master Resgrid number, which is never a department's dedicated number.</summary>
+		private static bool IsMasterNumber(string calledNumber)
+		{
+			var to = IntakeChannelAddresses.PhoneNumber(calledNumber);
+			var master = IntakeChannelAddresses.PhoneNumber(Config.NumberProviderConfig.TwilioResgridNumber);
+			return to != null && master != null && string.Equals(to, master, StringComparison.Ordinal);
+		}
+
+		/// <summary>The sender is on the department's blocked list (M0326); a list that cannot be read lets the message through, as intake does.</summary>
+		private async Task<bool> IsSenderBlockedAsync(int departmentId, string sender)
+		{
+			try
+			{
+				return await _intakeScreening.GetBlockAsync(departmentId, sender) != null;
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex, $"[Twilio SMS] blocked-sender check failed for department {departmentId}.");
+				return false;
 			}
 		}
 
@@ -593,9 +660,15 @@ namespace Resgrid.Web.Services.Controllers
 			int? bound = boundDepartmentId.HasValue && boundDepartmentId.Value > 0 ? boundDepartmentId : null;
 			if (!bound.HasValue)
 			{
-				var number = string.IsNullOrWhiteSpace(calledNumber) ? null : await DedicatedNumberAsync(calledNumber);
+				var (number, lookupFailed) = string.IsNullOrWhiteSpace(calledNumber) ? (null, false) : await FindDedicatedNumberAsync(calledNumber);
 				if (number == null)
+				{
+					// A number that may be a dedicated one (its lookup failed, and it is not the master number) never falls back to the
+					// caller's own department: nothing.
+					if (lookupFailed && !IsMasterNumber(calledNumber))
+						return (null, null);
 					return (await _departmentsService.GetDepartmentByUserIdAsync(userId), null);
+				}
 				bound = number.DepartmentId;
 			}
 
@@ -1455,9 +1528,14 @@ namespace Resgrid.Web.Services.Controllers
 
 			// A department's dedicated number (plan D2): its members get the member IVR in that department, anyone else Enhanced AI
 			// voice intake (or the "please text" message). Calls to the master number keep the profile-based IVR below.
-			var dedicatedNumber = await DedicatedNumberAsync(request.To);
+			var (dedicatedNumber, lookupFailed) = await FindDedicatedNumberAsync(request.To);
 			if (dedicatedNumber != null)
 				return await DedicatedNumberVoiceAsync(dedicatedNumber, request.CallSid, request.From, passedGate: false);
+
+			// The number table could not be read and the call is not to the master number: it may be a dedicated number, whose menu must never
+			// name (or act in) the caller's own department. One message and a hang-up; the master number keeps its profile IVR.
+			if (lookupFailed && !IsMasterNumber(request.To))
+				return await IvrUnavailableAsync();
 
 			var response = new VoiceResponse();
 			UserProfile profile = null;
@@ -1516,7 +1594,8 @@ namespace Resgrid.Web.Services.Controllers
 		/// A call to a department's dedicated number (plan D2, D6): members get the member IVR in the number's department; others
 		/// get Enhanced AI voice intake when the number has it on, the department is entitled and under the monthly limit, else
 		/// the "please text this number" message. With IntakeConfig.VoiceGateEnabled (M0326) the caller first presses 1
-		/// (<see cref="VoiceIntakeGate"/>), so auto-dialers and recordings never start a session or use the monthly limit.
+		/// (<see cref="VoiceIntakeGate"/>), so most auto-dialers and recordings never start a session or use the monthly limit
+		/// (one that sends "1" still passes; the sender block list and limits still apply to it).
 		/// </summary>
 		private async Task<ActionResult> DedicatedNumberVoiceAsync(DepartmentPhoneNumber number, string callSid, string fromNumber, bool passedGate)
 		{
@@ -1690,6 +1769,20 @@ namespace Resgrid.Web.Services.Controllers
 			return await RenderVoiceIntakeTurnAsync(turn, number?.DepartmentId);
 		}
 
+		/// <summary>Seconds of silence that end a spoken answer when a speech model is set and IntakeConfig.VoiceSpeechTimeoutSeconds is 0.</summary>
+		public const int DefaultModelSpeechTimeoutSeconds = 3;
+
+		/// <summary>
+		/// The &lt;Gather&gt; speechTimeout. "auto" (Twilio's own end-of-speech detection) is allowed only without a speechModel: with one,
+		/// Twilio requires a positive number of seconds (warning 13335), so 0 then means <see cref="DefaultModelSpeechTimeoutSeconds"/>.
+		/// </summary>
+		public static string VoiceSpeechTimeout(string speechModel, int configuredSeconds)
+		{
+			if (configuredSeconds > 0)
+				return configuredSeconds.ToString(CultureInfo.InvariantCulture);
+			return string.IsNullOrWhiteSpace(speechModel) ? "auto" : DefaultModelSpeechTimeoutSeconds.ToString(CultureInfo.InvariantCulture);
+		}
+
 		/// <summary>
 		/// TwiML for one voice intake turn: the question inside a speech &lt;Gather&gt; (the callback question also takes digits),
 		/// Piper prompts through the voice response service, or the closing prompt and a hang-up.
@@ -1707,8 +1800,7 @@ namespace Resgrid.Web.Services.Controllers
 					action: action,
 					method: "POST")
 				{
-					SpeechTimeout = Config.IntakeConfig.VoiceSpeechTimeoutSeconds > 0
-						? Config.IntakeConfig.VoiceSpeechTimeoutSeconds.ToString(CultureInfo.InvariantCulture) : "auto",
+					SpeechTimeout = VoiceSpeechTimeout(Config.IntakeConfig.VoiceSpeechModel, Config.IntakeConfig.VoiceSpeechTimeoutSeconds),
 					SpeechModel = string.IsNullOrWhiteSpace(Config.IntakeConfig.VoiceSpeechModel) ? null : Config.IntakeConfig.VoiceSpeechModel,
 					ActionOnEmptyResult = true,
 					ProfanityFilter = false,

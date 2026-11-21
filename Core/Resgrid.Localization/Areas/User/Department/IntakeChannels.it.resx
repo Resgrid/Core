@@ -182,7 +182,7 @@
     <value>Impossibile salvare il canale. Controlla i valori e riprova.</value>
   </data>
   <data name="Error.InvalidSenders" xml:space="preserve">
-    <value>Ogni mittente consentito può contenere al massimo 256 caratteri. Il canale non è stato salvato.</value>
+    <value>Indica al massimo 200 mittenti consentiti, ciascuno di al massimo 256 caratteri, separati da virgole o a capo. Il canale non è stato salvato.</value>
   </data>
   <data name="Type.Sms" xml:space="preserve">
     <value>Messaggio di testo (SMS)</value>
@@ -348,6 +348,12 @@
   </data>
   <data name="DismissNotPending" xml:space="preserve">
     <value>Questa chiamata non è più in attesa, quindi non può essere scartata come spam.</value>
+  </data>
+  <data name="DismissFailed" xml:space="preserve">
+    <value>Non è stato possibile scartare la chiamata in questo momento ed è ancora in attesa. Riprova.</value>
+  </data>
+  <data name="BlockedSendersUnavailable" xml:space="preserve">
+    <value>Non è stato possibile caricare l'elenco dei mittenti bloccati. Ricarica la pagina per riprovare.</value>
   </data>
   <data name="Screening.LikelyNotIncident" xml:space="preserve">
     <value>Enhanced AI: probabilmente non è un intervento</value>

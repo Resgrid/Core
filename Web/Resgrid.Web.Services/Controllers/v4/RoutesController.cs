@@ -1099,9 +1099,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (originLat.HasValue && plan != null)
 			{
-				// RD5: a live route from the unit's position through the remaining stops.
+				// RD5: a live route from the unit's position through the remaining stops. A position inside the start radius records the
+				// route start reached, so that write needs the same operate check as ReachRouteStart; a read-only caller still sees the leg.
+				var recordStartReached = includeStart && await CanOperateInstanceAsync(instance);
 				var live = await _routePlanRoutingService.GetLiveDirectionsAsync(instanceId, (double)originLat.Value, (double)originLng.Value,
-					heading, navigation, language, metric, cancellationToken, includeStart);
+					heading, navigation, language, metric, cancellationToken, includeStart, recordStartReached);
 
 				if (live?.Successful == true)
 				{

@@ -54,8 +54,9 @@ namespace Resgrid.Model.Repositories
 		Task<bool> TryCloseAsync(string conversationId, int departmentId, string reason, bool optedOut, DateTime closedOn, CancellationToken cancellationToken = default);
 
 		/// <summary>
-		/// Closes an open thread that is still idle: only while its LastActivityOn is before <paramref name="idleBefore"/>, so a message that
-		/// arrived after the sweep read the thread keeps it open.
+		/// Closes an open thread that is still idle: only while its LastActivityOn is before <paramref name="idleBefore"/> and no inbound message
+		/// row is from <paramref name="idleBefore"/> on, so a message that arrived after the sweep read the thread keeps it open (even before
+		/// its handler has touched the thread's activity).
 		/// </summary>
 		Task<bool> TryCloseIdleAsync(string conversationId, int departmentId, string reason, DateTime idleBefore, DateTime closedOn, CancellationToken cancellationToken = default);
 

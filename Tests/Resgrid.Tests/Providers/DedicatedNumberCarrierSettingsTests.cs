@@ -1,3 +1,4 @@
+using System;
 using FluentAssertions;
 using NUnit.Framework;
 using Resgrid.Config;
@@ -26,10 +27,25 @@ namespace Resgrid.Tests.Providers
 		{
 			SystemBehaviorConfig.ResgridApiBaseUrl = "https://api.resgrid.example/";
 
-			DedicatedNumberCarrierSettings.SmsUrl().ToString().Should().Be("https://api.resgrid.example/api/Twilio/IncomingMessage");
+			DedicatedNumberCarrierSettings.SmsUrl().ToString().Should().Be("https://api.resgrid.example/api/Twilio/IncomingMessage#rp=5xx,ct,rt");
 			DedicatedNumberCarrierSettings.VoiceUrl().ToString().Should().Be("https://api.resgrid.example/api/Twilio/InboundVoice");
 			DedicatedNumberCarrierSettings.SmsMethod.Should().Be("POST", "IncomingMessage reads Twilio's form body on POST");
 			DedicatedNumberCarrierSettings.VoiceMethod.Should().Be("GET", "InboundVoice is [HttpGet] and binds from the query string");
+		}
+
+		[Test]
+		public void The_sms_webhook_asks_twilio_to_retry_a_5xx_without_changing_the_url_it_signs()
+		{
+			// PR #588 round 2: IncomingMessage answers 503 when intake failed before saving anything, but Twilio's default policy retries
+			// connection failures only. The retry policy travels as a URL fragment, which Twilio neither sends nor signs.
+			SystemBehaviorConfig.ResgridApiBaseUrl = "https://api.resgrid.example";
+
+			var sms = DedicatedNumberCarrierSettings.SmsUrl();
+
+			sms.Fragment.Should().Be("#rp=5xx,ct,rt");
+			sms.GetLeftPart(UriPartial.Query).Should().Be("https://api.resgrid.example/api/Twilio/IncomingMessage",
+				"the URL Twilio calls and signs, which [ValidateRequest] rebuilds from the request, has no fragment");
+			DedicatedNumberCarrierSettings.VoiceUrl().Fragment.Should().BeEmpty("a voice webhook retry would leave the caller waiting");
 		}
 
 		[TestCase("")]

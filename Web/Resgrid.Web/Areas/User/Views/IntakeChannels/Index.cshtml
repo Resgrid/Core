@@ -127,7 +127,11 @@
 
 					<h3 style="margin-top:25px;">@localizer["BlockedSenders"]</h3>
 					<p class="text-muted">@localizer["BlockedSendersIntro"]</p>
-					@if (!Model.BlockedSenders.Any())
+					@if (Model.BlockedSendersUnavailable)
+					{
+						<div class="alert alert-warning" id="intakeBlockedSendersUnavailable">@localizer["BlockedSendersUnavailable"]</div>
+					}
+					else if (!Model.BlockedSenders.Any())
 					{
 						<p><em>@localizer["NoBlockedSenders"]</em></p>
 					}

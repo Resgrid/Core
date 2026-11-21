@@ -224,6 +224,33 @@ namespace Resgrid.Tests.Intake
 		}
 
 		[Test]
+		public async Task a_blocked_senders_text_to_a_lapsed_number_is_recorded_as_blocked()
+		{
+			var envelope = Sms();
+			envelope.RefusalReason = "NumberLapsed";
+			_blocked.Setup(b => b.GetInForceAsync(DepartmentId, Sender, FixedClock.Now)).ReturnsAsync(new IntakeBlockedSender { DepartmentId = DepartmentId, Sender = Sender });
+
+			var result = await _service.ReceiveAsync(envelope);
+
+			result.State.Should().Be(IntakeMessageStates.SenderBlocked, "blocked messages are never counted toward the month");
+			_completions.Should().ContainSingle().Which.Should().Be(((int)IntakeMessageStates.SenderBlocked, (int?)null, "SenderBlocked"));
+			_saved.Should().BeEmpty();
+		}
+
+		[Test]
+		public async Task an_unreadable_block_list_keeps_the_transports_refusal()
+		{
+			var envelope = Sms();
+			envelope.RefusalReason = "NumberLapsed";
+			_blocked.Setup(b => b.GetInForceAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<DateTime>())).ThrowsAsync(new InvalidOperationException("db down"));
+
+			var result = await _service.ReceiveAsync(envelope);
+
+			result.State.Should().Be(IntakeMessageStates.Refused);
+			_completions.Should().ContainSingle(c => c.Reason == "NumberLapsed");
+		}
+
+		[Test]
 		public async Task sender_outside_the_allowed_list_is_recorded_and_ignored()
 		{
 			_channel.AllowedSenders = "+19165550100, +19165550101";
@@ -641,6 +668,70 @@ namespace Resgrid.Tests.Intake
 			markers.Should().ContainKey("IntakeSmsFairUse_55_202611");
 		}
 
+		[Test]
+		public async Task a_fair_use_notice_that_cannot_be_prepared_frees_the_marker_for_the_next_text()
+		{
+			DedicatedNumberAddonConfig.MonthlySmsIntakeLimit = 10;
+			_messages.Setup(m => m.CountAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int[]>())).ReturnsAsync(11);
+			var markers = UseMarkerCache();
+			// The admin list read fails after this attempt set the department's marker: nobody was told.
+			_departments.Setup(d => d.GetActiveAdminsForDepartmentAsync(DepartmentId)).ThrowsAsync(new InvalidOperationException("db down"));
+
+			(await _service.ReceiveAsync(Sms(id: "SM1"))).State.Should().Be(IntakeMessageStates.CallCreated);
+
+			markers.Should().NotContainKey("IntakeSmsFairUse_55_202611", "the next text over the limit must try again");
+		}
+
+		[Test]
+		public async Task call_sources_are_read_in_batches_so_every_call_of_a_long_list_gets_one()
+		{
+			var ids = Enumerable.Range(1, IntakeService.CallLookupBatchSize * 2 + 100).ToList();
+			var batches = new List<int>();
+			_messages.Setup(m => m.GetByCallIdsAsync(DepartmentId, It.IsAny<IEnumerable<int>>()))
+				.ReturnsAsync((int _, IEnumerable<int> batch) =>
+				{
+					var list = batch.ToList();
+					batches.Add(list.Count);
+					return list.Select(id => new IntakeMessage { DepartmentId = DepartmentId, CallId = id, IntakeChannelId = "ch-1", ChannelType = (int)IntakeChannelTypes.Sms, Screening = 1 }).ToList();
+				});
+			_channels.Setup(c => c.GetAllByDepartmentIdAsync(DepartmentId)).ReturnsAsync(new List<IntakeChannel> { _channel });
+
+			var sources = await _service.GetCallSourcesAsync(DepartmentId, ids);
+
+			sources.Should().HaveCount(ids.Count);
+			sources[ids.Last()].Screening.Should().Be(1, "the last call is past the first 500 and still gets its screening");
+			batches.Should().Equal(new[] { IntakeService.CallLookupBatchSize, IntakeService.CallLookupBatchSize, 100 });
+		}
+
+		[Test]
+		public async Task a_failed_saved_call_lookup_gives_the_takeover_back_and_builds_nothing()
+		{
+			var receivedOn = FixedClock.Now.AddMinutes(-20);
+			_messages.Setup(m => m.TryClaimAsync(It.IsAny<IntakeMessage>(), It.IsAny<CancellationToken>())).ReturnsAsync(false);
+			_messages.Setup(m => m.GetByProviderMessageIdAsync("ch-1", "SM1"))
+				.ReturnsAsync(new IntakeMessage { IntakeMessageId = "m-1", State = (int)IntakeMessageStates.Received, ReceivedOn = receivedOn });
+			_messages.Setup(m => m.TryReclaimAsync("m-1", (int)IntakeMessageStates.Received, FixedClock.Now, FixedClock.Now.AddMinutes(-10), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(true);
+			_messages.Setup(m => m.GetUnclaimedIntakeCallIdAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int[]>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
+				.ThrowsAsync(new InvalidOperationException("db down"));
+
+			Func<Task> receive = () => _service.ReceiveAsync(Sms());
+
+			// An unknown answer is not "no saved call": nothing is built, and the takeover goes back so the next delivery looks again at once.
+			await receive.Should().ThrowAsync<InvalidOperationException>();
+			_saved.Should().BeEmpty();
+			_messages.Verify(m => m.ReleaseReclaimAsync("m-1", receivedOn, It.IsAny<CancellationToken>()), Times.Once);
+			_completions.Should().BeEmpty("the claim is never marked Failed: that state skips the lookup and could make a second call");
+		}
+
+		[TestCase("*")]
+		[TestCase("+15305550100, *")]
+		public void a_wildcard_allowed_list_is_no_allowed_list_for_the_hourly_limit(string allowed)
+		{
+			// "*" lets anyone in (IsSenderAllowed), so it must not also exempt everyone from the per-sender cap.
+			IntakeService.IsSenderLimited(new IntakeChannel { ChannelType = (int)IntakeChannelTypes.Sms, AllowedSenders = allowed }).Should().BeTrue();
+		}
+
 		/// <summary>A working cache whose entries the test can see.</summary>
 		private Dictionary<string, string> UseMarkerCache()
 		{
@@ -835,7 +926,7 @@ namespace Resgrid.Tests.Intake
 				IntakeMessageId = "m-" + c.CallId, DepartmentId = DepartmentId, Sender = Sender, State = (int)IntakeMessageStates.CallCreated, CallId = c.CallId,
 				ReceivedOn = FixedClock.Now.AddMinutes(-5 - i)
 			}).ToList();
-			_messages.Setup(m => m.GetCallsCreatedBySenderSinceAsync(DepartmentId, Sender, FixedClock.Now.AddHours(-1))).ReturnsAsync(rows);
+			_messages.Setup(m => m.GetCallsCreatedBySenderSinceAsync(DepartmentId, Sender, FixedClock.Now.AddHours(-1), It.IsAny<int[]>())).ReturnsAsync(rows);
 			foreach (var call in calls)
 				_calls.Setup(c => c.GetCallByIdAsync(call.CallId, It.IsAny<bool>())).ReturnsAsync(new Call { CallId = call.CallId, DepartmentId = DepartmentId, State = call.State });
 		}
@@ -983,7 +1074,65 @@ namespace Resgrid.Tests.Intake
 			PreviousCalls((803, (int)CallStates.Pending), (802, (int)CallStates.Pending), (801, (int)CallStates.Pending));
 
 			(await _service.ReceiveAsync(Sms(id: "SM8"))).State.Should().Be(IntakeMessageStates.CallCreated);
-			_messages.Verify(m => m.GetCallsCreatedBySenderSinceAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<DateTime>()), Times.Never);
+			_messages.Verify(m => m.GetCallsCreatedBySenderSinceAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<int[]>()), Times.Never);
+		}
+
+		[Test]
+		public async Task a_note_past_the_limit_is_never_turned_into_a_call_when_its_update_cannot_be_published()
+		{
+			var saved = IntakeConfig.MaxCallsPerSenderPerHour;
+			try
+			{
+				IntakeConfig.MaxCallsPerSenderPerHour = 3;
+				PreviousCalls((802, (int)CallStates.Pending), (801, (int)CallStates.Pending), (800, (int)CallStates.Pending));
+				_calls.Setup(c => c.SaveCallNoteAsync(It.IsAny<CallNote>(), It.IsAny<CancellationToken>()))
+					.ReturnsAsync((CallNote n, CancellationToken _) => { n.CallNoteId = 7; return n; });
+				_events.Setup(e => e.SendMessage(It.IsAny<CallUpdatedEvent>())).Throws(new InvalidOperationException("hub down"));
+
+				var result = await _service.ReceiveAsync(Sms("Win a free cruise", "SM9"));
+
+				result.State.Should().Be(IntakeMessageStates.AddedToCall);
+				result.CallId.Should().Be(802);
+				_saved.Should().BeEmpty("the text is already a note on call 802");
+			}
+			finally
+			{
+				IntakeConfig.MaxCallsPerSenderPerHour = saved;
+			}
+		}
+
+		[Test]
+		public async Task a_note_past_the_limit_keeps_its_outcome_when_the_claim_write_fails()
+		{
+			var saved = IntakeConfig.MaxCallsPerSenderPerHour;
+			try
+			{
+				IntakeConfig.MaxCallsPerSenderPerHour = 3;
+				PreviousCalls((802, (int)CallStates.Pending), (801, (int)CallStates.Pending), (800, (int)CallStates.Pending));
+				_calls.Setup(c => c.SaveCallNoteAsync(It.IsAny<CallNote>(), It.IsAny<CancellationToken>()))
+					.ReturnsAsync((CallNote n, CancellationToken _) => { n.CallNoteId = 7; return n; });
+				// The first outcome write fails after the note is on the call; the recovery write goes through.
+				var writes = 0;
+				_messages.Setup(m => m.CompleteAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int?>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
+					.Returns((string id, int state, int? callId, string reason, DateTime _, CancellationToken __) =>
+					{
+						if (++writes == 1)
+							throw new InvalidOperationException("db blip");
+						_completions.Add((state, callId, reason));
+						return Task.FromResult(true);
+					});
+
+				var result = await _service.ReceiveAsync(Sms("Win a free cruise", "SM10"));
+
+				result.State.Should().Be(IntakeMessageStates.AddedToCall, "the provider's retry must be a duplicate, not a second copy of the note");
+				result.CallId.Should().Be(802);
+				_completions.Should().ContainSingle().Which.Should().Be(((int)IntakeMessageStates.AddedToCall, (int?)802, "SenderLimit"));
+				_saved.Should().BeEmpty();
+			}
+			finally
+			{
+				IntakeConfig.MaxCallsPerSenderPerHour = saved;
+			}
 		}
 
 		[Test]
@@ -995,7 +1144,7 @@ namespace Resgrid.Tests.Intake
 			var result = await _service.ReceiveAsync(envelope);
 
 			result.State.Should().Be(IntakeMessageStates.CallCreated);
-			_messages.Verify(m => m.GetCallsCreatedBySenderSinceAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<DateTime>()), Times.Never);
+			_messages.Verify(m => m.GetCallsCreatedBySenderSinceAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<int[]>()), Times.Never);
 			_blocked.Verify(b => b.GetInForceAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<DateTime>()), Times.Never);
 		}
 

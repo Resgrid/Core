@@ -182,7 +182,7 @@
     <value>Kanalen kunde inte sparas. Kontrollera värdena och försök igen.</value>
   </data>
   <data name="Error.InvalidSenders" xml:space="preserve">
-    <value>Varje tillåten avsändare får vara högst 256 tecken. Kanalen sparades inte.</value>
+    <value>Ange högst 200 tillåtna avsändare, var och en högst 256 tecken, åtskilda med kommatecken eller radbrytningar. Kanalen sparades inte.</value>
   </data>
   <data name="Type.Sms" xml:space="preserve">
     <value>Textmeddelande (sms)</value>
@@ -348,6 +348,12 @@
   </data>
   <data name="DismissNotPending" xml:space="preserve">
     <value>Ärendet väntar inte längre och kan därför inte avfärdas som skräp.</value>
+  </data>
+  <data name="DismissFailed" xml:space="preserve">
+    <value>Ärendet kunde inte avfärdas just nu och väntar fortfarande. Försök igen.</value>
+  </data>
+  <data name="BlockedSendersUnavailable" xml:space="preserve">
+    <value>Listan över blockerade avsändare kunde inte läsas in. Ladda om sidan för att försöka igen.</value>
   </data>
   <data name="Screening.LikelyNotIncident" xml:space="preserve">
     <value>Enhanced AI: troligen ingen händelse</value>

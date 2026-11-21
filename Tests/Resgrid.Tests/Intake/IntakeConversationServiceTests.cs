@@ -44,6 +44,7 @@ namespace Resgrid.Tests.Intake
 		private Mock<IProtectedReadService> _protectedRead;
 		private Mock<IQueueService> _queue;
 		private Mock<IEventAggregator> _events;
+		private Mock<IIntakeBlockedSendersRepository> _blocked;
 		private RecordingRouter _router;
 		private SteppingClock _clock;
 		private IntakeChannel _channel;
@@ -79,6 +80,8 @@ namespace Resgrid.Tests.Intake
 
 			_conversations = new FakeIntakeConversationsRepository();
 			_messages = new FakeIntakeConversationMessagesRepository();
+			_conversations.Messages = _messages;
+			_blocked = new Mock<IIntakeBlockedSendersRepository>();
 			_channel = new IntakeChannel
 			{
 				IntakeChannelId = "ch-sms", DepartmentId = DepartmentId, Name = "Dedicated number SMS " + Dedicated, ChannelType = (int)IntakeChannelTypes.Sms,
@@ -141,7 +144,7 @@ namespace Resgrid.Tests.Intake
 
 		private IntakeConversationService NewService(params IIntakeConversationRouter[] routers) =>
 			new IntakeConversationService(_conversations, _messages, _channels.Object, _calls.Object, _departments.Object, _profiles.Object, _sms.Object,
-				_assistant.Object, _protectedRead.Object, _queue.Object, _events.Object, new Lazy<IEnumerable<IIntakeConversationRouter>>(() => routers), _clock);
+				_assistant.Object, _protectedRead.Object, _queue.Object, _events.Object, new Lazy<IEnumerable<IIntakeConversationRouter>>(() => routers), _blocked.Object, _clock);
 
 		private static IntakeEnvelope Envelope(string body = "Car crash on Route 9, two cars", string sid = "SM1") => new IntakeEnvelope
 		{
@@ -941,10 +944,11 @@ namespace Resgrid.Tests.Intake
 		public async Task a_stop_whose_close_failed_finishes_closing_on_the_carriers_retry()
 		{
 			var conversation = await StartAsync();
-			_conversations.FailingCloses = 1;
+			_conversations.FailingCloses = 2;
 
-			(await _service.HandleParticipantMessageAsync(conversation, "SM9", "STOP", DateTime.UtcNow)).Should().BeTrue("the STOP is recorded on the thread");
-			Stored(conversation.IntakeConversationId).IsOpen.Should().BeTrue("the close failed after the STOP was recorded");
+			// Not durable yet: the webhook answers a retryable failure instead of an acknowledgement.
+			(await _service.HandleParticipantMessageAsync(conversation, "SM9", "STOP", DateTime.UtcNow)).Should().BeFalse("the opt-out did not take");
+			Stored(conversation.IntakeConversationId).IsOpen.Should().BeTrue("the close failed (twice) after the STOP was recorded");
 
 			(await _service.HandleParticipantMessageAsync(conversation, "SM9", "STOP", DateTime.UtcNow)).Should().BeTrue();
 
@@ -952,6 +956,186 @@ namespace Resgrid.Tests.Intake
 			row.IsOpen.Should().BeFalse();
 			row.OptedOut.Should().BeTrue();
 			Messages(conversation.IntakeConversationId).Count(m => m.ProviderMessageId == "SM9").Should().Be(1);
+		}
+
+		[Test]
+		public async Task a_stop_whose_first_close_fails_is_closed_by_the_second_try_in_the_same_delivery()
+		{
+			var conversation = await StartAsync();
+			_conversations.FailingCloses = 1;
+
+			(await _service.HandleParticipantMessageAsync(conversation, "SM9", "STOP", DateTime.UtcNow)).Should().BeTrue();
+
+			Stored(conversation.IntakeConversationId).OptedOut.Should().BeTrue();
+			Stored(conversation.IntakeConversationId).IsOpen.Should().BeFalse();
+		}
+
+		[Test]
+		public async Task a_reply_whose_note_failed_is_not_handled_and_its_redelivery_writes_the_note_once()
+		{
+			var conversation = await StartAsync(IntakeProcessingModes.EnhancedAi);
+			_queued.Clear();
+			_router.Calls.Clear();
+			_calls.Setup(c => c.SaveCallNoteAsync(It.IsAny<CallNote>(), It.IsAny<CancellationToken>())).ReturnsAsync((CallNote)null);
+
+			(await _service.HandleParticipantMessageAsync(conversation, "SM2", "Main and 5th", DateTime.UtcNow)).Should().BeFalse("the text is on no call yet");
+			_queued.Should().BeEmpty("Enhanced AI would answer a transcript missing the text");
+
+			_calls.Setup(c => c.SaveCallNoteAsync(It.IsAny<CallNote>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((CallNote n, CancellationToken _) => { n.CallNoteId = _notes.Count + 1; _notes.Add(n); return n; });
+			(await _service.HandleParticipantMessageAsync(conversation, "SM2", "Main and 5th", DateTime.UtcNow)).Should().BeTrue();
+			(await _service.HandleParticipantMessageAsync(conversation, "SM2", "Main and 5th", DateTime.UtcNow)).Should().BeTrue();
+
+			_notes.Count(n => n.Note == IntakeConversationTexts.CallerNotePrefix + "Main and 5th").Should().Be(1);
+			var inbound = Messages(conversation.IntakeConversationId).Where(m => m.ProviderMessageId == "SM2").ToList();
+			inbound.Should().ContainSingle();
+			inbound[0].CallNoteId.Should().NotBeNull("the redelivery linked its note to the row the first delivery wrote");
+			_queued.Should().ContainSingle(q => q.Channel == AiDispatchChannels.IntakeConversation, "the redelivery finished what the first skipped, once");
+			_router.Calls.Should().ContainSingle(c => c.StartsWith("Message:"));
+		}
+
+		[Test]
+		public async Task a_text_from_a_sender_blocked_after_the_thread_opened_is_dropped_but_stop_still_closes()
+		{
+			var conversation = await StartAsync(IntakeProcessingModes.EnhancedAi);
+			_queued.Clear();
+			_blocked.Setup(b => b.GetInForceAsync(DepartmentId, It.IsAny<string>(), It.IsAny<DateTime>()))
+				.ReturnsAsync(new IntakeBlockedSender { DepartmentId = DepartmentId, Sender = Texter });
+
+			(await _service.HandleParticipantMessageAsync(conversation, "SM2", "Free money, click here", DateTime.UtcNow)).Should().BeTrue("handled: dropped, never a pending call of its own");
+
+			_notes.Should().NotContain(n => n.Note.Contains("Free money"));
+			_queued.Should().BeEmpty();
+			Messages(conversation.IntakeConversationId).Should().NotContain(m => m.ProviderMessageId == "SM2");
+
+			(await _service.HandleParticipantMessageAsync(conversation, "SM3", "STOP", DateTime.UtcNow)).Should().BeTrue();
+			Stored(conversation.IntakeConversationId).OptedOut.Should().BeTrue("an opt-out works for a blocked sender too");
+
+			// A block list that cannot be read lets the text through.
+			var second = await StartAsync();
+			_blocked.Setup(b => b.GetInForceAsync(DepartmentId, It.IsAny<string>(), It.IsAny<DateTime>())).ThrowsAsync(new TimeoutException("db"));
+			(await _service.HandleParticipantMessageAsync(second, "SM4", "Still here", DateTime.UtcNow)).Should().BeTrue();
+			_notes.Should().Contain(n => n.Note == IntakeConversationTexts.CallerNotePrefix + "Still here");
+		}
+
+		[Test]
+		public async Task a_turn_whose_transcript_cannot_be_read_hands_the_thread_to_a_dispatcher()
+		{
+			var conversation = await StartAsync(IntakeProcessingModes.EnhancedAi);
+			_calls.Setup(c => c.PopulateCallData(It.IsAny<Call>(), false, false, true, false, false, false, false, false, false, false))
+				.ThrowsAsync(new TimeoutException("db"));
+			ModelAnswers("Where are you?");
+			_sent.Clear();
+
+			Func<Task> turn = () => _service.ProcessAssistantTurnAsync(LastTurn());
+			await turn.Should().ThrowAsync<TimeoutException>();
+
+			Stored(conversation.IntakeConversationId).Handler.Should().Be((int)IntakeConversationHandlers.Unassisted, "the worker never retries the item; nobody else would answer");
+			_sent.Select(s => s.Text).Should().Equal(Finished);
+			var placeholder = Messages(conversation.IntakeConversationId).Single(m => m.Author == (int)IntakeConversationAuthors.Assistant);
+			placeholder.Error.Should().StartWith(IntakeConversationService.WithdrawnPrefix, "a stranded Queued row would read as 'being answered'");
+			_assistant.Verify(a => a.AskAsync(It.IsAny<IntakeAssistantRequest>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public async Task a_text_recorded_while_the_reply_note_is_written_stops_the_reply_at_the_carrier()
+		{
+			var conversation = await StartAsync(IntakeProcessingModes.EnhancedAi);
+			ModelAnswers("Where are you?");
+			var injected = false;
+			_calls.Setup(c => c.SaveCallNoteAsync(It.IsAny<CallNote>(), It.IsAny<CancellationToken>()))
+				.Returns(async (CallNote n, CancellationToken _) =>
+				{
+					n.CallNoteId = _notes.Count + 1;
+					_notes.Add(n);
+					// The texter writes again after the turn's last check, while the reply's note is being saved.
+					if (!injected && n.Note == IntakeConversationTexts.AssistantNotePrefix + "Where are you?")
+					{
+						injected = true;
+						await _service.HandleParticipantMessageAsync(conversation, "SM2", "Main and 5th, hurry", DateTime.UtcNow);
+					}
+					return n;
+				});
+			_sent.Clear();
+			_queued.Clear();
+
+			(await _service.ProcessAssistantTurnAsync(new AiDispatchQueueItem
+			{
+				DepartmentId = DepartmentId, CallId = CallId, Channel = AiDispatchChannels.IntakeConversation, IntakeConversationId = conversation.IntakeConversationId
+			})).Should().Be("Superseded");
+
+			_sent.Should().BeEmpty("the reply never saw the newer text");
+			Messages(conversation.IntakeConversationId).Single(m => m.Author == (int)IntakeConversationAuthors.Assistant).Error.Should().Be("NewerMessage");
+			var newest = Messages(conversation.IntakeConversationId).Last(m => m.Direction == (int)IntakeConversationMessageDirections.Inbound);
+			_queued.Last(q => q.Channel == AiDispatchChannels.IntakeConversation).IntakeConversationMessageId.Should().Be(newest.IntakeConversationMessageId);
+		}
+
+		[Test]
+		public async Task the_model_reads_only_texts_that_reached_the_texter()
+		{
+			_sendFails = true;
+			await StartAsync(IntakeProcessingModes.EnhancedAi);
+			_sendFails = false;
+			ModelAnswers("Where are you?");
+
+			await _service.ProcessAssistantTurnAsync(LastTurn());
+
+			_asked.Lines.Should().OnlyContain(l => l.FromCaller, "the welcome the carrier refused never reached the texter");
+			_notes.Should().Contain(n => n.Note.StartsWith("Text to caller (Resgrid): Springfield Fire: You texted"), "its note stays for the dispatcher");
+		}
+
+		[Test]
+		public async Task a_thread_that_cannot_be_read_before_a_send_is_not_texted()
+		{
+			var conversation = await StartAsync();
+			await _service.ConnectDispatcherAsync(DepartmentId, conversation.IntakeConversationId, "disp-1");
+			_calls.Setup(c => c.SaveCallNoteAsync(It.IsAny<CallNote>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((CallNote n, CancellationToken _) =>
+				{
+					n.CallNoteId = _notes.Count + 1;
+					_notes.Add(n);
+					// The read right before the carrier fails (a STOP may have committed meanwhile).
+					if (n.Note.EndsWith("Are you safe?", StringComparison.Ordinal))
+						_conversations.FailNextRead = true;
+					return n;
+				});
+			_sent.Clear();
+
+			(await _service.SendDispatcherMessageAsync(DepartmentId, conversation.IntakeConversationId, "disp-1", "Are you safe?"))
+				.Should().Be(IntakeConversationActionResults.SendFailed, "the dispatcher can send again; the retry reads the thread");
+
+			_sent.Should().BeEmpty();
+			Messages(conversation.IntakeConversationId).Last().Error.Should().Be("Unconfirmed");
+		}
+
+		[Test]
+		public async Task a_later_turn_the_queue_refuses_still_queues_the_final_refresh()
+		{
+			var conversation = await StartAsync(IntakeProcessingModes.EnhancedAi);
+			ModelAnswers("Where are you?");
+			await _service.ProcessAssistantTurnAsync(LastTurn());
+			_queue.Setup(q => q.EnqueueAiDispatchTriageAsync(It.Is<AiDispatchQueueItem>(i => i.Channel == AiDispatchChannels.IntakeConversation), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(false);
+			_queued.Clear();
+
+			await _service.HandleParticipantMessageAsync(conversation, "SM2", "Main St", DateTime.UtcNow);
+
+			Stored(conversation.IntakeConversationId).Handler.Should().Be((int)IntakeConversationHandlers.Unassisted);
+			_queued.Should().ContainSingle(q => q.Channel == AiDispatchChannels.IntakeSms && q.ConversationComplete,
+				"turn 1's interim refresh wrote no summary; the last one must");
+		}
+
+		[Test]
+		public async Task resgrids_own_texts_go_whole_whatever_the_outbound_cap()
+		{
+			IntakeConfig.ConversationMaxOutboundLength = 40;
+			await StartAsync(IntakeProcessingModes.EnhancedAi);
+			ModelAnswers(null, done: true);
+
+			await _service.ProcessAssistantTurnAsync(LastTurn());
+
+			// The provider caps at the length it is given: the closing text's emergency sentence must survive it.
+			_sms.Verify(s => s.SendAsync(Texter, Finished, DepartmentId, It.Is<int>(max => max >= Finished.Length), It.IsAny<CancellationToken>()), Times.Once);
 		}
 
 		[Test]
@@ -1004,6 +1188,24 @@ namespace Resgrid.Tests.Intake
 			var conversation = await StartAsync();
 			var sweepAt = _clock.Now.AddMinutes(IntakeConfig.ConversationIdleCloseMinutes + 5);
 			_conversations.AfterIdleRead = () => Stored(conversation.IntakeConversationId).LastActivityOn = sweepAt;
+
+			(await _service.CloseIdleAsync(sweepAt)).Should().Be(0);
+
+			Stored(conversation.IntakeConversationId).IsOpen.Should().BeTrue();
+		}
+
+		[Test]
+		public async Task a_reply_recorded_before_its_activity_touch_keeps_an_idle_thread_open()
+		{
+			// The reply's row is written before the handler touches LastActivityOn: the close must not win in between.
+			var conversation = await StartAsync();
+			var sweepAt = _clock.Now.AddMinutes(IntakeConfig.ConversationIdleCloseMinutes + 5);
+			_conversations.AfterIdleRead = () => _messages.Rows.Add(new IntakeConversationMessage
+			{
+				IntakeConversationMessageId = "late", IntakeConversationId = conversation.IntakeConversationId, DepartmentId = DepartmentId,
+				Direction = (int)IntakeConversationMessageDirections.Inbound, Author = (int)IntakeConversationAuthors.Participant,
+				Status = (int)IntakeConversationMessageStatuses.Received, ProviderMessageId = "SM7", CreatedOn = sweepAt.AddSeconds(-1)
+			});
 
 			(await _service.CloseIdleAsync(sweepAt)).Should().Be(0);
 

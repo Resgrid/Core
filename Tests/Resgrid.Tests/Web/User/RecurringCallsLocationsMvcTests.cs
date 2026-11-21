@@ -332,6 +332,31 @@ namespace Resgrid.Tests.Web.User
 		}
 
 		[Test]
+		public async Task A_form_without_the_route_select_re_rendered_for_another_error_still_shows_the_schedules_route()
+		{
+			// PR #588 round 2: only the schedule kept the route; the re-rendered form built its select from the posted (missing) value, showed
+			// "No route", and its next post cleared the route.
+			var stored = new RecurringCall { RecurringCallId = 5, DepartmentId = DepartmentId, CreatedByUserId = UserId, IsActive = true, RoutePlanId = RoutePlanId };
+			M<IRecurringCallsService>().Setup(x => x.GetByIdAsync(DepartmentId, 5)).ReturnsAsync(stored);
+			M<IRecurringCallsService>().Setup(x => x.GetUpcomingCallsAsync(DepartmentId, 5, It.IsAny<string>())).ReturnsAsync(new List<Call>());
+			M<IRecurringCallsService>().Setup(x => x.GetCalendarAsync(DepartmentId, UserId, It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+				.ReturnsAsync(new List<ScheduledCallCalendarEntry>());
+			var controller = Build();
+			PostedForm(controller, nameof(RecurringCallEditView.Name));
+
+			var model = Form(f =>
+			{
+				f.RecurringCallId = 5;
+				f.DestinationCoordinates = "39,8;-105";
+			});
+			var result = await controller.Save(model, CancellationToken.None);
+
+			result.Should().BeOfType<ViewResult>().Which.Model.Should().BeSameAs(model);
+			model.RoutePlanId.Should().Be(RoutePlanId);
+			_saved.Should().BeNull();
+		}
+
+		[Test]
 		public async Task A_blank_route_selection_still_clears_the_schedules_route()
 		{
 			var stored = new RecurringCall { RecurringCallId = 5, DepartmentId = DepartmentId, CreatedByUserId = UserId, IsActive = true, RoutePlanId = RoutePlanId };

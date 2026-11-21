@@ -45,6 +45,7 @@ namespace Resgrid.Tests.Repositories
 		private const string Prefix = "dedicated_number_repositories_";
 		private const string AddonId = "3b1c7f0e-5d2a-4c86-9a4e-7f2d1e6b8c40";
 		private const string Number = "+17755550100";
+		private const string RoutingPending = "routing pending (test)";
 		private static readonly DateTime Base = new DateTime(2026, 11, 19, 12, 0, 0, DateTimeKind.Utc);
 
 		private static readonly int[] HeldStatuses =
@@ -292,7 +293,7 @@ namespace Resgrid.Tests.Repositories
 			// The release claim wins: the row is never reactivated, and a second claim finds it taken.
 			(await numbers.TryBeginReleaseAsync(row.DepartmentPhoneNumberId, (int)DepartmentPhoneNumberStatuses.Lapsed, Base)).Should().BeTrue();
 			(await numbers.TryBeginReleaseAsync(row.DepartmentPhoneNumberId, (int)DepartmentPhoneNumberStatuses.Lapsed, Base)).Should().BeFalse();
-			(await numbers.TryReactivateAsync(row.DepartmentPhoneNumberId, Base.AddMinutes(1))).Should().BeFalse();
+			(await numbers.TryReactivateAsync(row.DepartmentPhoneNumberId, Base.AddMinutes(1), RoutingPending)).Should().BeFalse();
 			var claimed = await numbers.GetByIdAsync(row.DepartmentPhoneNumberId);
 			claimed.Status.Should().Be((int)DepartmentPhoneNumberStatuses.Lapsed);
 			claimed.ReleasedOn.Should().Be(Base);
@@ -300,17 +301,42 @@ namespace Resgrid.Tests.Repositories
 			// A refused release clears the claim (an entity update); the reactivation then wins and clears the unpaid period.
 			claimed.ReleasedOn = null;
 			await SaveAsync(claimed);
-			(await numbers.TryReactivateAsync(row.DepartmentPhoneNumberId, Base.AddMinutes(2))).Should().BeTrue();
+			(await numbers.TryReactivateAsync(row.DepartmentPhoneNumberId, Base.AddMinutes(2), RoutingPending)).Should().BeTrue();
 			var restored = await numbers.GetByIdAsync(row.DepartmentPhoneNumberId);
 			restored.Status.Should().Be((int)DepartmentPhoneNumberStatuses.Active);
 			restored.AddonInactiveSince.Should().BeNull();
 			restored.ReleaseAfter.Should().BeNull();
 			restored.ReleaseWarningsSent.Should().Be(0);
 			restored.LastReleaseWarningOn.Should().BeNull();
+			restored.LastError.Should().Be(RoutingPending, "the routing-pending marker is written with the reactivation");
 			restored.UpdatedOn.Should().Be(Base.AddMinutes(2));
-			(await numbers.TryReactivateAsync(row.DepartmentPhoneNumberId, Base.AddMinutes(3))).Should().BeFalse("already Active");
+			(await numbers.TryReactivateAsync(row.DepartmentPhoneNumberId, Base.AddMinutes(3), RoutingPending)).Should().BeFalse("already Active");
 			(await numbers.TryBeginReleaseAsync(row.DepartmentPhoneNumberId, (int)DepartmentPhoneNumberStatuses.Lapsed, Base)).Should().BeFalse("no longer Lapsed");
 			(await numbers.TryBeginReleaseAsync(row.DepartmentPhoneNumberId, (int)DepartmentPhoneNumberStatuses.Active, Base.AddMinutes(4))).Should().BeTrue("an admin release of the Active number");
+		}
+
+		[Test]
+		public async Task The_routing_state_write_touches_only_an_active_unreleased_number_and_never_its_status()
+		{
+			var numbers = Numbers();
+			var row = Row(55, Number, DepartmentPhoneNumberStatuses.Active, Base.AddDays(-2));
+			row.ProviderNumberId = "PN00000000000000000000000000000055";
+			row.LastError = RoutingPending;
+			(await TryClaimAsync(row)).Should().BeTrue();
+
+			(await numbers.TrySetRoutingStateAsync(row.DepartmentPhoneNumberId, null, Base.AddMinutes(1))).Should().BeTrue();
+			var routed = await numbers.GetByIdAsync(row.DepartmentPhoneNumberId);
+			routed.LastError.Should().BeNull();
+			routed.UpdatedOn.Should().Be(Base.AddMinutes(1));
+			routed.Status.Should().Be((int)DepartmentPhoneNumberStatuses.Active);
+
+			// A release that began while routing was being set up: the late routing write loses and leaves the claim in place.
+			(await numbers.TryBeginReleaseAsync(row.DepartmentPhoneNumberId, (int)DepartmentPhoneNumberStatuses.Active, Base.AddMinutes(2))).Should().BeTrue();
+			(await numbers.TrySetRoutingStateAsync(row.DepartmentPhoneNumberId, RoutingPending, Base.AddMinutes(3))).Should().BeFalse();
+			var releasing = await numbers.GetByIdAsync(row.DepartmentPhoneNumberId);
+			releasing.ReleasedOn.Should().Be(Base.AddMinutes(2));
+			releasing.LastError.Should().BeNull();
+			releasing.UpdatedOn.Should().Be(Base.AddMinutes(2));
 		}
 
 		[Test]

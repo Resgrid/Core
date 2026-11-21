@@ -166,8 +166,13 @@ public static class AiIntakeConversationPrompt
         return kept;
     }
 
-    private static string Neutralize(string text) =>
-        Regex.Replace(text.Replace(Open, "<<CONVERSATION", StringComparison.Ordinal).Replace(Close, "CONVERSATION>>", StringComparison.Ordinal), @"\s+", " ").Trim();
+    // Whole runs of the marker characters, any case: a single replace would turn "<<<<CONVERSATION" into "<<<CONVERSATION" (still the marker).
+    private static string Neutralize(string text)
+    {
+        var line = Regex.Replace(text, @"\s+", " ").Trim();
+        line = Regex.Replace(line, "<{3,}CONVERSATION", "<<CONVERSATION", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+        return Regex.Replace(line, "CONVERSATION>{3,}", "CONVERSATION>>", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+    }
 
     private static string Name(string? department) => string.IsNullOrWhiteSpace(department) ? "the department" : department.Trim();
 

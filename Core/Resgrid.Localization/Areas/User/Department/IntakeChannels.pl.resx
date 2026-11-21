@@ -182,7 +182,7 @@
     <value>Nie udało się zapisać kanału. Sprawdź wartości i spróbuj ponownie.</value>
   </data>
   <data name="Error.InvalidSenders" xml:space="preserve">
-    <value>Każdy dozwolony nadawca może mieć najwyżej 256 znaków. Kanał nie został zapisany.</value>
+    <value>Podaj najwyżej 200 dozwolonych nadawców, każdy o długości najwyżej 256 znaków, rozdzielonych przecinkami lub nowymi wierszami. Kanał nie został zapisany.</value>
   </data>
   <data name="Type.Sms" xml:space="preserve">
     <value>Wiadomość tekstowa (SMS)</value>
@@ -348,6 +348,12 @@
   </data>
   <data name="DismissNotPending" xml:space="preserve">
     <value>To zgłoszenie nie oczekuje już, więc nie można go odrzucić jako spam.</value>
+  </data>
+  <data name="DismissFailed" xml:space="preserve">
+    <value>Nie udało się teraz odrzucić zgłoszenia i nadal oczekuje. Spróbuj ponownie.</value>
+  </data>
+  <data name="BlockedSendersUnavailable" xml:space="preserve">
+    <value>Nie udało się wczytać listy zablokowanych nadawców. Odśwież stronę, aby spróbować ponownie.</value>
   </data>
   <data name="Screening.LikelyNotIncident" xml:space="preserve">
     <value>Enhanced AI: prawdopodobnie to nie zdarzenie</value>

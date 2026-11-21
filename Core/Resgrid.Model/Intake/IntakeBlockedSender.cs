@@ -122,8 +122,14 @@ namespace Resgrid.Model
 		/// <summary>No such call in the department, or it did not come from intake (or its intake record was already purged).</summary>
 		NotFound = 1,
 
-		/// <summary>The call is no longer pending (a dispatcher sent or closed it).</summary>
-		NotPending = 2
+		/// <summary>The call is no longer pending (a dispatcher sent or closed it, or is sending it right now).</summary>
+		NotPending = 2,
+
+		/// <summary>
+		/// Nothing was dismissed and the call is still pending: the block asked for could not be put in force, or the label or the
+		/// cancel could not be saved. The dispatcher tries again.
+		/// </summary>
+		Failed = 3
 	}
 
 	/// <summary>What <c>IIntakeScreeningService.DismissAsSpamAsync</c> did.</summary>

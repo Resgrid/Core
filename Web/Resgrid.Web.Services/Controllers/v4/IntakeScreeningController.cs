@@ -14,9 +14,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 {
 	/// <summary>
 	/// Intake spam handling (call-intake-and-ai-destinations-plan.md §9, M0326). A dispatcher who may close a pending intake call can
-	/// dismiss it as spam: it is cancelled (nobody is notified; nobody was dispatched), its SMS conversation ends without texting the
-	/// sender, and the sender is blocked from the department's intake channels for IntakeConfig.SpamBlockDays. Admins lift blocks on
-	/// the web Intake Channels page. Calls carry their screening on the v4 call model (<c>IntakeScreening</c>).
+	/// dismiss it as spam: it is cancelled (nobody is notified; nobody was dispatched) and its SMS conversation ends without texting the
+	/// sender. Only when the request asks for it (<c>BlockSender</c>, the default) is the sender also blocked from the department's
+	/// intake channels for IntakeConfig.SpamBlockDays; with <c>BlockSender</c> false the sender can still reach intake. Admins lift
+	/// blocks on the web Intake Channels page. Calls carry their screening on the v4 call model (<c>IntakeScreening</c>).
 	/// </summary>
 	[Route("api/v{VersionId:apiVersion}/[controller]")]
 	[ApiVersion("4.0")]
@@ -35,7 +36,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>Cancels a pending intake call as spam and (by default) blocks its sender.</summary>
 		/// <param name="input">The call, and whether to block its sender.</param>
 		/// <param name="cancellationToken">Request cancellation.</param>
-		/// <returns>The outcome: Dismissed, NotFound or NotPending (with Status NotFound for the last two).</returns>
+		/// <returns>
+		/// The outcome: Dismissed; NotFound or NotPending (Status not_found); or Failed (Status failure: nothing was dismissed and the
+		/// call is still pending, try again; <c>SenderBlocked</c> says whether a block was made before the failure).
+		/// </returns>
 		[HttpPost("DismissAsSpam")]
 		[Consumes(MediaTypeNames.Application.Json)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
@@ -60,7 +64,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			result.Data.SenderNotBlockable = outcome.SenderNotBlockable;
 			result.Data.BlockedUntilUtc = outcome.Block?.ExpiresOn;
 			result.PageSize = outcome.Result == IntakeDismissResults.Dismissed ? 1 : 0;
-			result.Status = outcome.Result == IntakeDismissResults.Dismissed ? ResponseHelper.Updated : ResponseHelper.NotFound;
+			result.Status = outcome.Result == IntakeDismissResults.Dismissed ? ResponseHelper.Updated
+				: outcome.Result == IntakeDismissResults.Failed ? ResponseHelper.Failure
+				: ResponseHelper.NotFound;
 			ResponseHelper.PopulateV4ResponseData(result);
 			return Ok(result);
 		}

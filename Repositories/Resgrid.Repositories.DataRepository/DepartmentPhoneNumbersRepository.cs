@@ -52,20 +52,40 @@ namespace Resgrid.Repositories.DataRepository
 			return updated == 1;
 		}
 
-		public async Task<bool> TryReactivateAsync(string departmentPhoneNumberId, DateTime updatedOn, CancellationToken cancellationToken = default)
+		public async Task<bool> TryReactivateAsync(string departmentPhoneNumberId, DateTime updatedOn, string lastError, CancellationToken cancellationToken = default)
 		{
 			if (string.IsNullOrWhiteSpace(departmentPhoneNumberId))
 				return false;
 
 			var updated = await ExecuteAsync(
 				$"UPDATE {Tbl("DepartmentPhoneNumbers")} SET {Col("Status")} = {P}Active, {Col("AddonInactiveSince")} = NULL, {Col("ReleaseAfter")} = NULL, " +
-				$"{Col("ReleaseWarningsSent")} = 0, {Col("LastReleaseWarningOn")} = NULL, {Col("UpdatedOn")} = {P}UpdatedOn " +
+				$"{Col("ReleaseWarningsSent")} = 0, {Col("LastReleaseWarningOn")} = NULL, {Col("LastError")} = {P}LastError, {Col("UpdatedOn")} = {P}UpdatedOn " +
 				$"WHERE {Col("DepartmentPhoneNumberId")} = {P}Id AND {Col("Status")} = {P}Lapsed AND {Col("ReleasedOn")} IS NULL",
 				new
 				{
 					Id = departmentPhoneNumberId,
 					Active = (int)DepartmentPhoneNumberStatuses.Active,
 					Lapsed = (int)DepartmentPhoneNumberStatuses.Lapsed,
+					LastError = lastError,
+					UpdatedOn = DatabaseTimestamp(updatedOn)
+				}, cancellationToken);
+
+			return updated == 1;
+		}
+
+		public async Task<bool> TrySetRoutingStateAsync(string departmentPhoneNumberId, string lastError, DateTime updatedOn, CancellationToken cancellationToken = default)
+		{
+			if (string.IsNullOrWhiteSpace(departmentPhoneNumberId))
+				return false;
+
+			var updated = await ExecuteAsync(
+				$"UPDATE {Tbl("DepartmentPhoneNumbers")} SET {Col("LastError")} = {P}LastError, {Col("UpdatedOn")} = {P}UpdatedOn " +
+				$"WHERE {Col("DepartmentPhoneNumberId")} = {P}Id AND {Col("Status")} = {P}Active AND {Col("ReleasedOn")} IS NULL",
+				new
+				{
+					Id = departmentPhoneNumberId,
+					Active = (int)DepartmentPhoneNumberStatuses.Active,
+					LastError = lastError,
 					UpdatedOn = DatabaseTimestamp(updatedOn)
 				}, cancellationToken);
 

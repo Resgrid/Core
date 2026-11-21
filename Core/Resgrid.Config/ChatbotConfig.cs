@@ -56,6 +56,12 @@ namespace Resgrid.Config
 		public static string SlackTeamId = "";
 		public static string DiscordPublicKey = "";
 		public static string WhatsAppFromNumber = "";
+		// The public URL Twilio posts WhatsApp messages to; inbound signatures are checked against it. REQUIRED setup for every WhatsApp
+		// sender linked as an intake channel: a retry policy that includes 5xx, either the connection override on the sender's webhook URL
+		// (configure it in Twilio as this URL + "#rp=5xx,ct,rt") or a Twilio Webhook Setting with 5xx retries applied through a Webhook
+		// Rule. Intake answers 503 when a message could not be recorded (or its first delivery is still running) so that Twilio delivers
+		// it again; with Twilio's default policy (connection failures only) that message is lost. The fragment never reaches this server
+		// and is not signed; a value that carries one is validated without it.
 		public static string WhatsAppWebhookUrl = "";
 		// An approved, static template telling the user to open Resgrid (no incident data/variables).
 		public static string WhatsAppNotificationContentSid = "";
@@ -77,8 +83,10 @@ namespace Resgrid.Config
 		public static string GoogleChatServiceAccountEmail = "";
 		public static string GoogleChatPrivateKey = "";
 		public static string TelegramBotToken = "";
-		// The bot's @username, without the @ (optional). Intake chats use it to tell a mention of, or a /command@ addressed to, this
-		// bot from one for another account; blank = any bot-looking name (Telegram bot usernames end in "bot") counts.
+		// The bot's @username, without the @. Intake chats use it to tell a mention of, or a /command@ addressed to, this bot from one
+		// for another account. Blank = no name-based match at all (a mention of another bot must never address this one): in a linked
+		// group a reply to someone else then reaches intake only as a reply to this bot, a text mention of it, or a bare /command.
+		// Set it wherever Telegram groups are linked as intake channels.
 		public static string TelegramBotUsername = "";
 		// Secret token sent by Telegram in the X-Telegram-Bot-Api-Secret-Token header
 		// (configured via setWebhook). When set, inbound webhooks lacking a matching token are rejected.

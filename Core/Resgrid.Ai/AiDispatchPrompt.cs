@@ -19,6 +19,8 @@ public static class AiDispatchPrompt
     public const string ToolName = "enrich_dispatch";
     private const string Open = "<<<MESSAGE";
     private const string Close = "MESSAGE>>>";
+    private static readonly Regex OpenRun = new Regex("<{3,}(?=MESSAGE)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+    private static readonly Regex CloseRun = new Regex("(?<=MESSAGE)>{3,}", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
     // Where the call came from (CAD email, intake text, voice, chat, webhook) and whether anyone was dispatched yet is stated in the
     // trusted message source line, never assumed here: intake calls are enriched while they are still pending.
@@ -64,8 +66,9 @@ public static class AiDispatchPrompt
             priorities = context.Priorities.Select(p => new { id = p.Id, name = p.Name }),
             activeCalls = context.Candidates.Select(c => new { id = c.CallId, number = c.Number, name = c.Name, address = c.Address, minutesAgo = c.MinutesAgo })
         });
-        // The delimiters are neutralized inside the message so it cannot close its own block.
-        var message = (context.Message ?? "").Replace(Open, "<<MESSAGE", StringComparison.Ordinal).Replace(Close, "MESSAGE>>", StringComparison.Ordinal);
+        // The delimiters are neutralized inside the message so it cannot close its own block: a whole run of angle brackets next to the
+        // marker is cut to two (any case). A single String.Replace does not rescan its output, so "MESSAGE>>>>" became "MESSAGE>>>".
+        var message = CloseRun.Replace(OpenRun.Replace(context.Message ?? "", "<<"), ">>");
         // Intake calls (pending, from an SMS / chat / webhook / voice channel) say so; the dispatch email paths send exactly what they always did.
         var source = string.IsNullOrWhiteSpace(context.Source) ? "" : "Message source (trusted): " + context.Source.Trim() + "\n";
         return new[]

@@ -269,10 +269,14 @@ namespace Resgrid.Services.Intake
 		/// <summary>Longest allowed-sender pattern (the sender column's width: a longer one could never match).</summary>
 		public const int MaxSenderPatternLength = 256;
 
+		/// <summary>Most distinct allowed-sender entries a channel keeps.</summary>
+		public const int MaxSenderPatterns = 200;
+
 		/// <summary>
-		/// One pattern per entry, trimmed, blank and duplicate entries dropped; null for a blank list (anyone). An entry longer than
-		/// <see cref="MaxSenderPatternLength"/> is refused ("InvalidSenders") rather than dropped: dropping the only entry would turn
-		/// a restricted channel into one anyone can use.
+		/// One pattern per entry, trimmed, blank and duplicate entries dropped; null only for a blank list (anyone). Every way of losing
+		/// an entry is refused ("InvalidSenders") rather than dropped, because dropping the only entries would turn a restricted channel
+		/// into one anyone can use: an entry longer than <see cref="MaxSenderPatternLength"/>, more than <see cref="MaxSenderPatterns"/>
+		/// distinct entries, or a list of nothing but separators.
 		/// </summary>
 		public static string NormalizeSenders(string senders)
 		{
@@ -281,11 +285,14 @@ namespace Resgrid.Services.Intake
 
 			var entries = senders.Split(new[] { ',', ';', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)
 				.Select(s => s.Trim()).Where(s => s.Length > 0).ToList();
-			if (entries.Any(s => s.Length > MaxSenderPatternLength))
+			if (entries.Count == 0 || entries.Any(s => s.Length > MaxSenderPatternLength))
 				throw new IntakeChannelValidationException("InvalidSenders");
 
-			var patterns = entries.Distinct(StringComparer.OrdinalIgnoreCase).Take(200).ToList();
-			return patterns.Count == 0 ? null : string.Join(",", patterns);
+			var patterns = entries.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+			if (patterns.Count > MaxSenderPatterns)
+				throw new IntakeChannelValidationException("InvalidSenders");
+
+			return string.Join(",", patterns);
 		}
 	}
 }

@@ -182,7 +182,7 @@
     <value>Le canal n'a pas pu être enregistré. Vérifiez les valeurs et réessayez.</value>
   </data>
   <data name="Error.InvalidSenders" xml:space="preserve">
-    <value>Chaque expéditeur autorisé peut comporter au maximum 256 caractères. Le canal n'a pas été enregistré.</value>
+    <value>Indiquez au maximum 200 expéditeurs autorisés, de 256 caractères au maximum chacun, séparés par des virgules ou des retours à la ligne. Le canal n'a pas été enregistré.</value>
   </data>
   <data name="Type.Sms" xml:space="preserve">
     <value>Message texte (SMS)</value>
@@ -348,6 +348,12 @@
   </data>
   <data name="DismissNotPending" xml:space="preserve">
     <value>Cet appel n'est plus en attente, il ne peut donc pas être écarté comme spam.</value>
+  </data>
+  <data name="DismissFailed" xml:space="preserve">
+    <value>L'appel n'a pas pu être écarté pour le moment et reste en attente. Réessayez.</value>
+  </data>
+  <data name="BlockedSendersUnavailable" xml:space="preserve">
+    <value>La liste des expéditeurs bloqués n'a pas pu être chargée. Rechargez la page pour réessayer.</value>
   </data>
   <data name="Screening.LikelyNotIncident" xml:space="preserve">
     <value>Enhanced AI : probablement pas un incident</value>

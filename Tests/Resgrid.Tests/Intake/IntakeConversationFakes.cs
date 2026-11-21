@@ -124,10 +124,15 @@ namespace Resgrid.Tests.Intake
 			return Task.FromResult(true);
 		}
 
+		/// <summary>The message rows the idle close checks for a reply after the cutoff (as the repository's NOT EXISTS does).</summary>
+		public FakeIntakeConversationMessagesRepository Messages { get; set; }
+
 		public Task<bool> TryCloseIdleAsync(string conversationId, int departmentId, string reason, DateTime idleBefore, DateTime closedOn, CancellationToken cancellationToken = default)
 		{
 			var row = Row(conversationId, departmentId);
 			if (row == null || !row.IsOpen || row.LastActivityOn >= idleBefore)
+				return Task.FromResult(false);
+			if (Messages != null && Messages.Rows.Any(m => m.IntakeConversationId == conversationId && m.Direction == (int)IntakeConversationMessageDirections.Inbound && m.CreatedOn >= idleBefore))
 				return Task.FromResult(false);
 			row.State = (int)IntakeConversationStates.Closed;
 			row.ClosedOn = closedOn;
@@ -164,7 +169,19 @@ namespace Resgrid.Tests.Intake
 			return Task.FromResult(true);
 		}
 
-		public Task<IntakeConversation> GetByIdAsync(object id) => Task.FromResult(Copy(Rows.FirstOrDefault(r => r.IntakeConversationId == (string)id)));
+		/// <summary>The next read by id throws, as a database that fails just before a send would.</summary>
+		public bool FailNextRead { get; set; }
+
+		public Task<IntakeConversation> GetByIdAsync(object id)
+		{
+			if (FailNextRead)
+			{
+				FailNextRead = false;
+				throw new TimeoutException("database");
+			}
+
+			return Task.FromResult(Copy(Rows.FirstOrDefault(r => r.IntakeConversationId == (string)id)));
+		}
 
 		public Task<IEnumerable<IntakeConversation>> GetAllAsync() => throw new NotSupportedException();
 		public Task<IEnumerable<IntakeConversation>> GetAllByDepartmentIdAsync(int departmentId) => throw new NotSupportedException();

@@ -182,7 +182,7 @@
     <value>Der Kanal konnte nicht gespeichert werden. Prüfen Sie die Angaben und versuchen Sie es erneut.</value>
   </data>
   <data name="Error.InvalidSenders" xml:space="preserve">
-    <value>Jeder zugelassene Absender darf höchstens 256 Zeichen lang sein. Der Kanal wurde nicht gespeichert.</value>
+    <value>Geben Sie höchstens 200 zugelassene Absender mit jeweils höchstens 256 Zeichen an, getrennt durch Kommas oder Zeilenumbrüche. Der Kanal wurde nicht gespeichert.</value>
   </data>
   <data name="Type.Sms" xml:space="preserve">
     <value>Textnachricht (SMS)</value>
@@ -348,6 +348,12 @@
   </data>
   <data name="DismissNotPending" xml:space="preserve">
     <value>Dieser Einsatz wartet nicht mehr und kann daher nicht als Spam verworfen werden.</value>
+  </data>
+  <data name="DismissFailed" xml:space="preserve">
+    <value>Der Einsatz konnte gerade nicht verworfen werden und wartet weiterhin. Versuchen Sie es erneut.</value>
+  </data>
+  <data name="BlockedSendersUnavailable" xml:space="preserve">
+    <value>Die Liste der gesperrten Absender konnte nicht geladen werden. Laden Sie die Seite neu, um es erneut zu versuchen.</value>
   </data>
   <data name="Screening.LikelyNotIncident" xml:space="preserve">
     <value>Enhanced AI: wahrscheinlich kein Einsatz</value>

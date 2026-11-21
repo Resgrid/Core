@@ -447,6 +447,56 @@ namespace Resgrid.Tests.Intake
 		}
 
 		[Test]
+		public async Task an_overlapping_final_callback_whose_intake_is_still_running_never_abandons_the_session()
+		{
+			// Two final callbacks for the same call (a Twilio retry): the first owns the intake and is still saving the call when the second
+			// asks. The second writes nothing; the caller is asked the callback number again, and that answer gets the call the first made.
+			_intake.Setup(i => i.ReceiveAsync(It.IsAny<IntakeEnvelope>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new IntakeResult { State = IntakeMessageStates.Duplicate, Reason = IntakeResultReasons.DuplicateInProgress });
+			await _service.StartAsync(_number, "CA1", Caller);
+			await Answer(VoiceIntakeSteps.Nature, "fire alarm");
+			await Answer(VoiceIntakeSteps.Location, "school");
+			await Answer(VoiceIntakeSteps.CallerName, "Lee");
+
+			var turn = await Answer(VoiceIntakeSteps.Callback, null, "*");
+
+			turn.Gather.Should().BeTrue();
+			turn.Step.Should().Be(VoiceIntakeSteps.Callback);
+			_session.Step.Should().Be((int)VoiceIntakeSteps.Callback, "only the callback that owns the intake records how it ended");
+			_session.CompletedOn.Should().BeNull();
+			_sessions.Verify(s => s.UpdateProgressAsync(It.Is<VoiceIntakeSession>(v => v.Step == (int)VoiceIntakeSteps.Abandoned), It.IsAny<int>(), It.IsAny<int>(),
+				It.IsAny<CancellationToken>()), Times.Never);
+
+			_intake.Setup(i => i.ReceiveAsync(It.IsAny<IntakeEnvelope>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new IntakeResult { State = IntakeMessageStates.Duplicate, Reason = IntakeResultReasons.Duplicate, CallId = 900 });
+			var again = await Answer(VoiceIntakeSteps.Callback, null, "*");
+
+			again.Prompts.Should().Equal(TwilioVoicePromptCatalog.VoiceIntakeCompleted);
+			again.CallId.Should().Be(900);
+			_session.Step.Should().Be((int)VoiceIntakeSteps.Completed);
+		}
+
+		[Test]
+		public async Task a_verified_home_number_of_a_member_wins_over_a_verified_mobile_of_someone_outside_the_department()
+		{
+			// One number on two profiles: a verified mobile on a user of another department, a verified home number on this department's member.
+			_profiles.Setup(p => p.GetProfileByMobileNumberAsync("15305550199")).ReturnsAsync(new UserProfile { UserId = "outsider", MobileNumberVerified = true });
+			_profiles.Setup(p => p.GetProfileByHomeNumberAsync("15305550199")).ReturnsAsync(new UserProfile { UserId = "member-1", HomeNumberVerified = true });
+			_departments.Setup(d => d.GetDepartmentMemberAsync("member-1", DepartmentId, It.IsAny<bool>()))
+				.ReturnsAsync(new DepartmentMember { UserId = "member-1", DepartmentId = DepartmentId });
+
+			var routing = await _service.RouteAsync(_number, Caller, FixedClock.Now);
+
+			routing.Route.Should().Be(VoiceIntakeRoutes.MemberMenu);
+			routing.MemberUserId.Should().Be("member-1");
+
+			// Both verified members of the department: the mobile match comes first.
+			_departments.Setup(d => d.GetDepartmentMemberAsync("outsider", DepartmentId, It.IsAny<bool>()))
+				.ReturnsAsync(new DepartmentMember { UserId = "outsider", DepartmentId = DepartmentId });
+			(await _service.RouteAsync(_number, Caller, FixedClock.Now)).MemberUserId.Should().Be("outsider");
+		}
+
+		[Test]
 		public void voice_intake_prompts_are_pre_warmed_and_read_as_sentences()
 		{
 			TwilioVoicePromptCatalog.GetStaticPrompts().Should().Contain(new[]

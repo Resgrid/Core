@@ -207,6 +207,25 @@ namespace Resgrid.Tests.Repositories
 		}
 
 		[Test]
+		public async Task a_reply_row_from_after_the_cutoff_keeps_the_thread_open_before_its_activity_is_touched()
+		{
+			var repository = Conversations();
+			var thread = Thread(activity: Base);
+			await repository.TryInsertOpenAsync(thread);
+
+			// The handler wrote the reply's row; LastActivityOn still says Base (the touch comes later).
+			(await Messages().TryInsertInboundAsync(Message(thread.IntakeConversationId, "SM5", createdOn: Base.AddHours(2)))).Should().BeTrue();
+			// An outbound row after the cutoff is no reply.
+			await Messages().InsertMessageAsync(Message(thread.IntakeConversationId, null, (int)IntakeConversationMessageDirections.Outbound, Base.AddHours(3)));
+
+			(await repository.TryCloseIdleAsync(thread.IntakeConversationId, DepartmentId, "Idle", Base.AddHours(1), Base.AddHours(5))).Should().BeFalse();
+			(await repository.GetOpenForParticipantAsync(DepartmentId, (int)IntakeChannelTypes.Sms, Texter)).Should().NotBeNull();
+
+			// A reply older than the cutoff does not keep it open.
+			(await repository.TryCloseIdleAsync(thread.IntakeConversationId, DepartmentId, "Idle", Base.AddHours(2).AddMinutes(1), Base.AddHours(5))).Should().BeTrue();
+		}
+
+		[Test]
 		public async Task replies_reach_the_most_recently_active_open_thread_within_the_window()
 		{
 			var repository = Conversations();

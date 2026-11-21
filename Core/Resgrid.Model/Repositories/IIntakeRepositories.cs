@@ -42,8 +42,18 @@ namespace Resgrid.Model.Repositories
 		Task<int?> GetUnclaimedIntakeCallIdAsync(int departmentId, string sourceIdentifier, int[] callSources, DateTime loggedSince,
 			CancellationToken cancellationToken = default);
 
-		/// <summary>Writes the outcome of a claimed message.</summary>
+		/// <summary>
+		/// Writes the outcome of a claimed message. A call already recorded on the row is never cleared or replaced by another (false
+		/// then): a late completion from an attempt that lost its claim cannot unlink the call the new owner recorded.
+		/// </summary>
 		Task<bool> CompleteAsync(string intakeMessageId, int state, int? callId, string reason, DateTime completedOn, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Gives back a takeover (<see cref="TryReclaimAsync"/>) whose saved-call lookup failed: ReceivedOn goes back to
+		/// <paramref name="receivedOn"/> (the abandoned attempt's) while the row is still Received with no call, so the next delivery
+		/// takes it over at once and repeats the lookup instead of waiting out a fresh abandonment window.
+		/// </summary>
+		Task<bool> ReleaseReclaimAsync(string intakeMessageId, DateTime receivedOn, CancellationToken cancellationToken = default);
 
 		/// <summary>Rows for the department and transport received in [from, before), excluding the given states.</summary>
 		Task<int> CountAsync(int departmentId, int channelType, DateTime from, DateTime before, int[] excludedStates);
@@ -58,10 +68,12 @@ namespace Resgrid.Model.Repositories
 		Task<List<IntakeMessage>> GetByCallIdsAsync(int departmentId, IEnumerable<int> callIds);
 
 		/// <summary>
-		/// The department's rows from <paramref name="sender"/> (as recorded) that created a call and were received at or after
-		/// <paramref name="since"/>, newest first (M0326 per-sender limit).
+		/// The department's rows from <paramref name="sender"/> (as recorded) on <paramref name="channelTypes"/> that created a call and
+		/// were received at or after <paramref name="since"/>, newest first (M0326 per-sender limit). The limit passes the public phone
+		/// lines, so a webhook or chat row whose sender label happens to be a phone number never counts toward a texter's or caller's
+		/// hour or receives their notes.
 		/// </summary>
-		Task<List<IntakeMessage>> GetCallsCreatedBySenderSinceAsync(int departmentId, string sender, DateTime since);
+		Task<List<IntakeMessage>> GetCallsCreatedBySenderSinceAsync(int departmentId, string sender, DateTime since, int[] channelTypes);
 
 		/// <summary>
 		/// Sets the screening of the row that created <paramref name="callId"/> (M0326), only while the row is unscreened or holds one of
@@ -91,7 +103,11 @@ namespace Resgrid.Model.Repositories
 		/// </summary>
 		Task<bool> TryInsertAsync(IntakeBlockedSender block, CancellationToken cancellationToken = default);
 
-		/// <summary>Renews a row that has not been lifted: new expiry, who blocked it, when, why and from which call.</summary>
+		/// <summary>
+		/// Renews a row that has not been lifted: who blocked it, when, why and from which call, and an expiry that only moves later
+		/// (decided against the stored row in the same statement, so a renewal that read a stale row cannot shorten it; a row that never
+		/// expires stays so, and a null expiry makes it permanent).
+		/// </summary>
 		Task<bool> RenewAsync(IntakeBlockedSender block, CancellationToken cancellationToken = default);
 
 		/// <summary>Lifts the department's block (sets RemovedOn / RemovedByUserId). True when a standing row changed.</summary>

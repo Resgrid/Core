@@ -891,6 +891,64 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task A_restore_carries_the_routing_marker_until_its_routing_is_recorded_so_an_interrupted_one_is_retried()
+		{
+			// PR #588 round 2: lapsing turned the channels off and cleared TextToCallNumber. A restore that stopped between the reactivation and
+			// its routing left an Active row with nothing routed and no marker, and no sweep ever revisited it.
+			var lapsed = Held(DepartmentPhoneNumberStatuses.Lapsed, releaseAfter: DateTime.UtcNow.AddDays(3));
+			string storedDuringRouting = "not read";
+			_settings.Setup(s => s.GetTextToCallNumberForDepartmentAsync(DepartmentId))
+				.Callback(() => storedDuringRouting = Row(lapsed.DepartmentPhoneNumberId).LastError)
+				.ReturnsAsync(() => _textToCall);
+			_addon = true;
+			_repository.FailNextRoutingStateWrite = true;
+
+			(await _service.ReactivateAsync(DepartmentId, "admin")).Status.Should().Be((int)DepartmentPhoneNumberStatuses.Active);
+
+			storedDuringRouting.Should().Be(DepartmentPhoneNumbersService.RoutingIncompleteError, "the marker is stored with the reactivation, before routing starts");
+			Row(lapsed.DepartmentPhoneNumberId).LastError.Should().Be(DepartmentPhoneNumbersService.RoutingIncompleteError,
+				"routing ran but its completion was never recorded, so the stored row still says pending");
+
+			(await _service.ProcessLifecycleAsync(DateTime.UtcNow)).Should().BeGreaterThan(0);
+			Row(lapsed.DepartmentPhoneNumberId).LastError.Should().BeNull("the sweep repeated the routing and recorded it");
+			Row(lapsed.DepartmentPhoneNumberId).Status.Should().Be((int)DepartmentPhoneNumberStatuses.Active);
+		}
+
+		[Test]
+		public async Task A_bought_number_is_stored_with_the_routing_marker_and_cleared_once_routed()
+		{
+			string storedDuringRouting = "not read";
+			_settings.Setup(s => s.GetTextToCallNumberForDepartmentAsync(DepartmentId))
+				.Callback(() => storedDuringRouting = _repository.Rows.Single(r => r.DepartmentId == DepartmentId).LastError)
+				.ReturnsAsync(() => _textToCall);
+
+			var row = await _service.ProvisionAsync(DepartmentId, Number, "admin");
+
+			storedDuringRouting.Should().Be(DepartmentPhoneNumbersService.RoutingIncompleteError, "a purchase interrupted before routing is retried by worker 80");
+			row.LastError.Should().BeNull();
+			Row(row.DepartmentPhoneNumberId).LastError.Should().BeNull();
+		}
+
+		[Test]
+		public async Task A_release_that_began_while_routing_was_being_set_up_is_not_undone_by_the_routing_write()
+		{
+			// PR #588 round 2: the routing state was saved as the whole row read before the settings and channel calls, so a release claimed
+			// meanwhile (ReleasedOn) was written back to null and the number looked Active after the carrier took it back.
+			var releasedOn = DateTime.UtcNow;
+			_repository.BeforeRoutingStateWrite = id =>
+			{
+				var stored = Row(id);
+				stored.ReleasedOn = releasedOn;
+			};
+
+			var row = await _service.ProvisionAsync(DepartmentId, Number, "admin");
+
+			var stored = Row(row.DepartmentPhoneNumberId);
+			stored.ReleasedOn.Should().Be(releasedOn, "the release claim stays");
+			stored.LastError.Should().Be(DepartmentPhoneNumbersService.RoutingIncompleteError, "the late routing write lost and changed nothing");
+		}
+
+		[Test]
 		public async Task A_due_release_rechecks_the_stored_row_and_loses_to_a_reactivation()
 		{
 			// PR #588: worker 80 read the Lapsed row and an unpaid state, then paused; the admin renewed and reactivated meanwhile.
@@ -1030,7 +1088,7 @@ namespace Resgrid.Tests.Services
 				return Task.FromResult(true);
 			}
 
-			public Task<bool> TryReactivateAsync(string departmentPhoneNumberId, DateTime updatedOn, CancellationToken cancellationToken = default)
+			public Task<bool> TryReactivateAsync(string departmentPhoneNumberId, DateTime updatedOn, string lastError, CancellationToken cancellationToken = default)
 			{
 				BeforeConditionalWrite?.Invoke(departmentPhoneNumberId);
 				var row = Rows.FirstOrDefault(r => r.DepartmentPhoneNumberId == departmentPhoneNumberId && r.Status == (int)DepartmentPhoneNumberStatuses.Lapsed &&
@@ -1042,6 +1100,31 @@ namespace Resgrid.Tests.Services
 				row.ReleaseAfter = null;
 				row.ReleaseWarningsSent = 0;
 				row.LastReleaseWarningOn = null;
+				row.LastError = lastError;
+				row.UpdatedOn = updatedOn;
+				return Task.FromResult(true);
+			}
+
+			/// <summary>Runs just before a routing-state write: a release or lapse landing while routing was being set up.</summary>
+			public Action<string> BeforeRoutingStateWrite;
+
+			/// <summary>When set, the next routing-state write throws (the database is unreachable at that moment).</summary>
+			public bool FailNextRoutingStateWrite;
+
+			public Task<bool> TrySetRoutingStateAsync(string departmentPhoneNumberId, string lastError, DateTime updatedOn, CancellationToken cancellationToken = default)
+			{
+				BeforeRoutingStateWrite?.Invoke(departmentPhoneNumberId);
+				if (FailNextRoutingStateWrite)
+				{
+					FailNextRoutingStateWrite = false;
+					throw new InvalidOperationException("The routing state write failed.");
+				}
+
+				var row = Rows.FirstOrDefault(r => r.DepartmentPhoneNumberId == departmentPhoneNumberId && r.Status == (int)DepartmentPhoneNumberStatuses.Active &&
+					!r.ReleasedOn.HasValue);
+				if (row == null)
+					return Task.FromResult(false);
+				row.LastError = lastError;
 				row.UpdatedOn = updatedOn;
 				return Task.FromResult(true);
 			}

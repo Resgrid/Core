@@ -248,6 +248,13 @@ namespace Resgrid.Services.Intake
 				Answers = answers
 			}, cancellationToken);
 
+			// An overlapping callback for the same call (a Twilio retry of this answer) owns the intake and is still creating the call: not a
+			// result. This one writes nothing (the owner records Completed or Abandoned) and answers from the stored session: finished by now,
+			// or still on this question, which is asked again; intake, keyed on the CallSid, then returns the call it made instead of a second.
+			if (result != null && result.State == IntakeMessageStates.Duplicate && !result.CallId.HasValue &&
+				result.Reason == IntakeResultReasons.DuplicateInProgress)
+				return await ResumeCurrentAsync(session.ProviderCallId);
+
 			session.CompletedOn = now;
 			// AddedToCall (M0326): a caller past the hourly limit was recorded as a note on their open call, which still counts as received.
 			if (result?.CallId != null && (result.State == IntakeMessageStates.CallCreated || result.State == IntakeMessageStates.Duplicate ||
@@ -316,19 +323,25 @@ namespace Resgrid.Services.Intake
 				// The member menu acts as that member (status, staffing), so the number must be one they verified: caller id is easy to set,
 				// and the lookups fall back to an unverified match. An unverified match is a member of the public here (sms-unverified routing:
 				// an unverified number never authorizes actions).
+				// One number can be a verified mobile on one profile and a verified home number on another (a household, a shared line): every
+				// verified match is a candidate, the mobile one first, and the first active member of this department is the caller.
+				var candidates = new List<UserProfile>(2);
 				var mobile = await _profiles.GetProfileByMobileNumberAsync(digits);
-				var profile = mobile != null && mobile.MobileNumberVerified == true ? mobile : null;
-				if (profile == null)
+				if (mobile != null && mobile.MobileNumberVerified == true && !string.IsNullOrWhiteSpace(mobile.UserId))
+					candidates.Add(mobile);
+				var home = await _profiles.GetProfileByHomeNumberAsync(digits);
+				if (home != null && home.HomeNumberVerified == true && !string.IsNullOrWhiteSpace(home.UserId) &&
+					!candidates.Any(c => string.Equals(c.UserId, home.UserId, StringComparison.OrdinalIgnoreCase)))
+					candidates.Add(home);
+
+				foreach (var profile in candidates)
 				{
-					var home = await _profiles.GetProfileByHomeNumberAsync(digits);
-					profile = home != null && home.HomeNumberVerified == true ? home : null;
+					var member = await _departments.GetDepartmentMemberAsync(profile.UserId, departmentId);
+					if (member != null && member.DepartmentId == departmentId && !member.IsDeleted && member.IsDisabled != true)
+						return profile.UserId;
 				}
 
-				if (profile == null || string.IsNullOrWhiteSpace(profile.UserId))
-					return null;
-
-				var member = await _departments.GetDepartmentMemberAsync(profile.UserId, departmentId);
-				return member != null && member.DepartmentId == departmentId && !member.IsDeleted && member.IsDisabled != true ? profile.UserId : null;
+				return null;
 			}
 			catch (Exception ex)
 			{

@@ -1281,7 +1281,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (ModelState.IsValid)
 			{
-				var call = storedCall ?? await _callsService.GetCallByIdAsync(model.Call.CallId);
+				// Read again here, not the copy read for the department above: the form lookups since then awaited, and an unchanged picker
+				// keeps the stored value, so it must be the value stored now (another editor's route saved meanwhile is kept).
+				var call = await _callsService.GetCallByIdAsync(model.Call.CallId);
 				call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true, true, true);
 
 				// A field the department hides is not on the form, so the call keeps what it has for it rather than

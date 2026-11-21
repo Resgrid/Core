@@ -180,9 +180,13 @@ public static class AiDestinationPrompt
         return text.Length == 0 ? "(no call text)" : text.ToString().TrimEnd('\n');
     }
 
-    // The delimiters are neutralized inside the untrusted text so it cannot close its own block; line breaks are flattened.
+    // The delimiters are neutralized inside the untrusted text so it cannot close its own block; line breaks are flattened. A whole run
+    // of angle brackets is cut to two (any case): a single String.Replace does not rescan its output, so "CALL>>>>" became "CALL>>>" again.
+    private static readonly Regex OpenRun = new Regex("<{3,}(?=CALL)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+    private static readonly Regex CloseRun = new Regex("(?<=CALL)>{3,}", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+
     private static string Neutralize(string value) =>
-        Regex.Replace(value.Replace(Open, "<<CALL", StringComparison.Ordinal).Replace(Close, "CALL>>", StringComparison.Ordinal), @"\s+", " ").Trim();
+        Regex.Replace(CloseRun.Replace(OpenRun.Replace(value, "<<"), ">>"), @"\s+", " ").Trim();
 
     /// <summary>Reads the tool call (or, failing that, a bare JSON reply). Throws <see cref="ArgumentException"/> when there is nothing parseable.</summary>
     public static AiDestinationProposal Parse(LlmResult result)

@@ -14,6 +14,9 @@ namespace Resgrid.Web.Areas.User.Models.IntakeChannels
 		/// <summary>Senders blocked from the department's intake channels (M0326), newest first.</summary>
 		public List<IntakeBlockedSenderRow> BlockedSenders { get; set; } = new List<IntakeBlockedSenderRow>();
 
+		/// <summary>The block list could not be read: the page says so rather than showing it empty.</summary>
+		public bool BlockedSendersUnavailable { get; set; }
+
 		public string Message { get; set; }
 
 		public string ErrorMessage { get; set; }

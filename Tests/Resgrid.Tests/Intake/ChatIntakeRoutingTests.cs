@@ -186,6 +186,11 @@ namespace Resgrid.Tests.Intake
 
 				// Mentioning another person while replying to someone: a discussion, not a request.
 				ChatIntakeRouting.Telegram(TelegramReply("@anotheruser can you take this?", new object[] { new { type = "mention", offset = 0, length = 12 } })).Should().BeNull();
+				// Without the username a name proves nothing: a mention of, or a command for, another bot never addresses this one.
+				ChatIntakeRouting.Telegram(TelegramReply("@OtherBot status", new object[] { new { type = "mention", offset = 0, length = 9 } })).Should().BeNull();
+				ChatIntakeRouting.Telegram(TelegramReply("/intake@OtherBot x", new object[] { new { type = "bot_command", offset = 0, length = 16 } })).Should().BeNull();
+				// A text mention carries the bot's id, so it still counts.
+				ChatIntakeRouting.Telegram(TelegramReply("Resgrid take this", new object[] { new { type = "text_mention", offset = 0, length = 7, user = new { id = 7001 } } })).Should().NotBeNull();
 				// A reply to another bot is not a reply to this one.
 				ChatIntakeRouting.Telegram(TelegramReply("yes please", replyToId: 8888, replyToBot: true)).Should().BeNull();
 				// A reply to this bot (its id is the token's prefix), and a plain command, both address it.

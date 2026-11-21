@@ -353,6 +353,26 @@ namespace Resgrid.Tests.Services.Routing
 
 			progressStop.CheckInLatitude.Should().Be(39.1m);
 		}
+
+		[TestCase(false, false)]
+		[TestCase(true, true)]
+		public async Task Directions_with_the_start_leg_record_the_start_reached_only_for_a_caller_who_can_operate_the_run(bool canViewUnit, bool expected)
+		{
+			// PR #588 round 2: GetInstanceDirections is Call_View; ReachRouteStart needs the operate check, and so does the arrival the
+			// preview records when the posted position is inside the start radius.
+			M<IAuthorizationService>().Setup(x => x.CanUserViewUnitAsync(UserId, 7)).ReturnsAsync(canViewUnit);
+			M<IRouteService>().Setup(x => x.GetRoutePlanByIdAsync("alpha")).ReturnsAsync(new RoutePlan { RoutePlanId = "alpha", DepartmentId = DepartmentId });
+			bool? recorded = null;
+			M<IRoutePlanRoutingService>()
+				.Setup(x => x.GetLiveDirectionsAsync("call-run", It.IsAny<double>(), It.IsAny<double>(), It.IsAny<double?>(), It.IsAny<bool>(), It.IsAny<string>(),
+					It.IsAny<bool>(), It.IsAny<CancellationToken>(), It.IsAny<bool>(), It.IsAny<bool>()))
+				.Callback<string, double, double, double?, bool, string, bool, CancellationToken, bool, bool>((_, _, _, _, _, _, _, _, _, record) => recorded = record)
+				.ReturnsAsync(new RoutePlanRouteResult { Successful = false, Error = "test" });
+
+			await Build().GetInstanceDirections("call-run", 39.5m, -119.8m, includeStart: true);
+
+			recorded.Should().Be(expected);
+		}
 	}
 
 	/// <summary>The server destination fill's budget covers the whole lookup: nothing starts once it has run out.</summary>

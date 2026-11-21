@@ -33,6 +33,8 @@ namespace Resgrid.Tests.Intake
 			public override DateTimeOffset GetUtcNow() => new DateTimeOffset(Now);
 		}
 
+		private static readonly DateTime Claimed = new DateTime(2026, 11, 20, 17, 59, 59, DateTimeKind.Utc);
+
 		private Mock<IIntakeMessagesRepository> _messages;
 		private Mock<IIntakeBlockedSendersRepository> _blocked;
 		private Mock<ICallsService> _calls;
@@ -74,6 +76,9 @@ namespace Resgrid.Tests.Intake
 			_calls = new Mock<ICallsService>();
 			_calls.Setup(c => c.GetCallByIdAsync(CallId, true)).ReturnsAsync(() => _call);
 			_calls.Setup(c => c.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>())).ReturnsAsync((Call c, CancellationToken _) => c);
+			// The dismissal claims the stored call the way a dispatch does; like the real claim, it marks the row dispatched.
+			_calls.Setup(c => c.TryClaimCallForDispatchAsync(CallId, DepartmentId, It.IsAny<CancellationToken>()))
+				.Callback(() => _call.HasBeenDispatched = true).ReturnsAsync(Claimed);
 
 			_conversations = new Mock<IIntakeConversationService>();
 			_events = new Mock<IEventAggregator>();
@@ -110,6 +115,89 @@ namespace Resgrid.Tests.Intake
 				It.Is<int[]>(r => r.SequenceEqual(new[] { 0, 1, 2 })), "dispatcher-1", FixedClock.Now, It.IsAny<CancellationToken>()), Times.Once);
 			_conversations.Verify(c => c.CloseAsync(DepartmentId, "conv-1", "dispatcher-1", "DismissedAsSpam", false, It.IsAny<CancellationToken>()), Times.Once);
 			_events.Verify(e => e.SendMessage(It.Is<CallClosedEvent>(x => x.DepartmentId == DepartmentId && x.Call.CallId == CallId)), Times.Once);
+			// Claimed like a dispatch, saved as never sent, and the claim ended.
+			_call.HasBeenDispatched.Should().BeNull("a dismissed call was never sent; the claim's mark is not kept");
+			_calls.Verify(c => c.CompleteCallDispatchClaimAsync(CallId, DepartmentId, Claimed, It.IsAny<CancellationToken>()), Times.Once);
+			_calls.Verify(c => c.ReleaseCallDispatchClaimAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<int>(), It.IsAny<DateTime?>(),
+				It.IsAny<bool?>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public async Task a_call_sent_while_it_is_being_dismissed_is_not_pending_and_nobody_is_blocked()
+		{
+			// A dispatcher's "Dispatch now" (or the scheduled-calls worker) claimed the stored row after this request read it as pending.
+			_calls.Setup(c => c.TryClaimCallForDispatchAsync(CallId, DepartmentId, It.IsAny<CancellationToken>())).ReturnsAsync((DateTime?)null);
+
+			var result = await _service.DismissAsSpamAsync(DepartmentId, CallId, "dispatcher-1", blockSender: true);
+
+			result.Result.Should().Be(IntakeDismissResults.NotPending);
+			result.Block.Should().BeNull();
+			_calls.Verify(c => c.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>()), Times.Never, "a stale save would overwrite the dispatch");
+			_blocked.Verify(b => b.TryInsertAsync(It.IsAny<IntakeBlockedSender>(), It.IsAny<CancellationToken>()), Times.Never,
+				"a call a dispatcher decided to send is not spam");
+			_messages.Verify(m => m.SetScreeningAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int[]>(), It.IsAny<string>(), It.IsAny<DateTime>(),
+				It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public async Task a_block_that_is_not_in_force_fails_the_dismissal_and_gives_the_call_back()
+		{
+			// Every read found the row lifted again by the time of the write (a racing unblock), so no block stands.
+			_blocked.Setup(b => b.GetCurrentAsync(DepartmentId, Sender)).ReturnsAsync((IntakeBlockedSender)null);
+			_blocked.Setup(b => b.TryInsertAsync(It.IsAny<IntakeBlockedSender>(), It.IsAny<CancellationToken>())).ReturnsAsync(false);
+
+			var result = await _service.DismissAsSpamAsync(DepartmentId, CallId, "dispatcher-1", blockSender: true);
+
+			result.Result.Should().Be(IntakeDismissResults.Failed);
+			result.Block.Should().BeNull();
+			_calls.Verify(c => c.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>()), Times.Never);
+			_calls.Verify(c => c.ReleaseCallDispatchClaimAsync(CallId, DepartmentId, Claimed, (int)CallStates.Pending, null, null, It.IsAny<CancellationToken>()), Times.Once);
+			_messages.Verify(m => m.SetScreeningAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int[]>(), It.IsAny<string>(), It.IsAny<DateTime>(),
+				It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public async Task an_expired_standing_block_is_not_reported_as_a_block_in_force()
+		{
+			// Every read is a fresh row (as the database returns), still expired because every renewal lost.
+			_blocked.Setup(b => b.GetCurrentAsync(DepartmentId, Sender)).ReturnsAsync(() =>
+				new IntakeBlockedSender { IntakeBlockedSenderId = "b-1", DepartmentId = DepartmentId, Sender = Sender, ExpiresOn = FixedClock.Now.AddDays(-1) });
+			_blocked.Setup(b => b.RenewAsync(It.IsAny<IntakeBlockedSender>(), It.IsAny<CancellationToken>())).ReturnsAsync(false);
+
+			var result = await _service.DismissAsSpamAsync(DepartmentId, CallId, "dispatcher-1", blockSender: true);
+
+			result.Result.Should().Be(IntakeDismissResults.Failed);
+			_calls.Verify(c => c.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public async Task a_label_that_cannot_be_written_leaves_the_call_pending()
+		{
+			_messages.Setup(m => m.SetScreeningAsync(DepartmentId, CallId, (int)IntakeScreenings.DismissedAsSpam, It.IsAny<int[]>(), It.IsAny<string>(), It.IsAny<DateTime>(),
+				It.IsAny<CancellationToken>())).ThrowsAsync(new InvalidOperationException("db down"));
+
+			var result = await _service.DismissAsSpamAsync(DepartmentId, CallId, "dispatcher-1", blockSender: false);
+
+			result.Result.Should().Be(IntakeDismissResults.Failed, "a dismissal is never reported without its label");
+			_call.State.Should().Be((int)CallStates.Pending);
+			_calls.Verify(c => c.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>()), Times.Never);
+			_calls.Verify(c => c.ReleaseCallDispatchClaimAsync(CallId, DepartmentId, Claimed, (int)CallStates.Pending, null, null, It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
+		public async Task a_cancel_that_cannot_be_saved_takes_the_label_back_off()
+		{
+			_message.Screening = (int)IntakeScreenings.LikelyNotIncident;
+			_calls.Setup(c => c.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>())).ThrowsAsync(new InvalidOperationException("db down"));
+
+			var result = await _service.DismissAsSpamAsync(DepartmentId, CallId, "dispatcher-1", blockSender: false);
+
+			result.Result.Should().Be(IntakeDismissResults.Failed);
+			_calls.Verify(c => c.ReleaseCallDispatchClaimAsync(CallId, DepartmentId, Claimed, (int)CallStates.Pending, null, null, It.IsAny<CancellationToken>()), Times.Once);
+			_messages.Verify(m => m.SetScreeningAsync(DepartmentId, CallId, (int)IntakeScreenings.LikelyNotIncident,
+				It.Is<int[]>(r => r.SequenceEqual(new[] { (int)IntakeScreenings.DismissedAsSpam })), null, It.IsAny<DateTime>(), It.IsAny<CancellationToken>()), Times.Once,
+				"the call is still pending, so it goes back to what it said before");
+			_events.Verify(e => e.SendMessage(It.IsAny<CallClosedEvent>()), Times.Never);
 		}
 
 		[Test]
@@ -216,7 +304,8 @@ namespace Resgrid.Tests.Intake
 		public async Task losing_the_insert_race_renews_the_winners_block()
 		{
 			var winner = new IntakeBlockedSender { IntakeBlockedSenderId = "b-9", DepartmentId = DepartmentId, Sender = Sender, ExpiresOn = FixedClock.Now.AddDays(30) };
-			_blocked.SetupSequence(b => b.GetCurrentAsync(DepartmentId, Sender)).ReturnsAsync((IntakeBlockedSender)null).ReturnsAsync(winner);
+			// The last read is the renewal's read-back of the stored row.
+			_blocked.SetupSequence(b => b.GetCurrentAsync(DepartmentId, Sender)).ReturnsAsync((IntakeBlockedSender)null).ReturnsAsync(winner).ReturnsAsync(winner);
 			_blocked.Setup(b => b.TryInsertAsync(It.IsAny<IntakeBlockedSender>(), It.IsAny<CancellationToken>())).ReturnsAsync(false);
 
 			var result = await _service.DismissAsSpamAsync(DepartmentId, CallId, "dispatcher-1", true);
@@ -230,11 +319,13 @@ namespace Resgrid.Tests.Intake
 		{
 			_blocked.Setup(b => b.TryInsertAsync(It.IsAny<IntakeBlockedSender>(), It.IsAny<CancellationToken>())).ThrowsAsync(new InvalidOperationException("db down"));
 
-			Func<Task> dismiss = () => _service.DismissAsSpamAsync(DepartmentId, CallId, "dispatcher-1", true);
+			var result = await _service.DismissAsSpamAsync(DepartmentId, CallId, "dispatcher-1", true);
 
-			await dismiss.Should().ThrowAsync<InvalidOperationException>();
+			result.Result.Should().Be(IntakeDismissResults.Failed);
 			_call.State.Should().Be((int)CallStates.Pending);
 			_calls.Verify(c => c.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>()), Times.Never);
+			_calls.Verify(c => c.ReleaseCallDispatchClaimAsync(CallId, DepartmentId, Claimed, (int)CallStates.Pending, null, null, It.IsAny<CancellationToken>()), Times.Once,
+				"the call is given back to waiting for the dispatcher to try again");
 		}
 
 		[Test]

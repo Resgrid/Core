@@ -189,14 +189,81 @@ namespace Resgrid.Tests.Repositories
 			other.Sender = "+19165550100";
 			var email = Message("ch-3", "EM-1", Base.AddMinutes(-3), (int)IntakeMessageStates.CallCreated, 804, (int)IntakeChannelTypes.Email);
 			email.Sender = "Dispatch@Mercy.org";
-			foreach (var message in new[] { old, first, second, joined, other, email })
+			// A signed webhook whose sender label is the same phone number: not the texter's history.
+			var webhook = Message("ch-4", "WH-1", Base.AddMinutes(-2), (int)IntakeMessageStates.CallCreated, 805, (int)IntakeChannelTypes.Webhook);
+			foreach (var message in new[] { old, first, second, joined, other, email, webhook })
 				(await repository.TryClaimAsync(message)).Should().BeTrue();
 
-			var rows = await repository.GetCallsCreatedBySenderSinceAsync(55, "+15305550199", Base.AddHours(-1));
-			rows.Select(r => r.CallId).Should().Equal(802, 801);
+			var phoneLines = new[] { (int)IntakeChannelTypes.Sms, (int)IntakeChannelTypes.Voice, (int)IntakeChannelTypes.WhatsApp };
+			var rows = await repository.GetCallsCreatedBySenderSinceAsync(55, "+15305550199", Base.AddHours(-1), phoneLines);
+			rows.Select(r => r.CallId).Should().Equal(new int?[] { 802, 801 }, "the webhook row with the same label is left out");
 
-			(await repository.GetCallsCreatedBySenderSinceAsync(55, "dispatch@mercy.org", Base.AddHours(-1))).Should().ContainSingle("senders match regardless of case");
-			(await repository.GetCallsCreatedBySenderSinceAsync(56, "+15305550199", Base.AddHours(-1))).Should().BeEmpty();
+			(await repository.GetCallsCreatedBySenderSinceAsync(55, "dispatch@mercy.org", Base.AddHours(-1), new[] { (int)IntakeChannelTypes.Email }))
+				.Should().ContainSingle("senders match regardless of case");
+			(await repository.GetCallsCreatedBySenderSinceAsync(55, "dispatch@mercy.org", Base.AddHours(-1), phoneLines)).Should().BeEmpty();
+			(await repository.GetCallsCreatedBySenderSinceAsync(56, "+15305550199", Base.AddHours(-1), phoneLines)).Should().BeEmpty();
+		}
+
+		[Test]
+		public async Task a_renewal_never_shortens_a_block_or_ends_a_permanent_one()
+		{
+			var repository = Blocked();
+			var block = Block("+15305550199", Base, Base.AddDays(30));
+			(await repository.TryInsertAsync(block)).Should().BeTrue();
+
+			// Two dismissals read the row at once; the one with the later end commits first, then the stale one.
+			var later = await repository.GetCurrentAsync(55, "+15305550199");
+			var stale = await repository.GetCurrentAsync(55, "+15305550199");
+			later.ExpiresOn = Base.AddDays(90);
+			stale.ExpiresOn = Base.AddDays(45);
+			(await repository.RenewAsync(later)).Should().BeTrue();
+			(await repository.RenewAsync(stale)).Should().BeTrue();
+			(await repository.GetCurrentAsync(55, "+15305550199")).ExpiresOn.Should().BeCloseTo(Base.AddDays(90), TimeSpan.FromSeconds(1), "the later end stands");
+
+			// A permanent renewal makes it permanent, and a finite one written after it does not end it.
+			var permanent = await repository.GetCurrentAsync(55, "+15305550199");
+			permanent.ExpiresOn = null;
+			(await repository.RenewAsync(permanent)).Should().BeTrue();
+			stale.ExpiresOn = Base.AddDays(120);
+			(await repository.RenewAsync(stale)).Should().BeTrue();
+			(await repository.GetCurrentAsync(55, "+15305550199")).ExpiresOn.Should().BeNull();
+		}
+
+		[Test]
+		public async Task a_completion_never_clears_or_replaces_the_call_recorded_on_the_claim()
+		{
+			var repository = Messages();
+			var message = Message("ch-1", "SM-late", Base);
+			(await repository.TryClaimAsync(message)).Should().BeTrue();
+			(await repository.CompleteAsync(message.IntakeMessageId, (int)IntakeMessageStates.CallCreated, 900, "ok", Base.AddSeconds(1))).Should().BeTrue();
+
+			// A late attempt that lost the claim reports a failure, or the duplicate call it made: neither unlinks call 900.
+			(await repository.CompleteAsync(message.IntakeMessageId, (int)IntakeMessageStates.Failed, null, "Failed", Base.AddSeconds(2))).Should().BeFalse();
+			(await repository.CompleteAsync(message.IntakeMessageId, (int)IntakeMessageStates.CallCreated, 901, "late", Base.AddSeconds(3))).Should().BeFalse();
+			(await repository.CompleteAsync(message.IntakeMessageId, (int)IntakeMessageStates.CallCreated, 900, "AfterSaveFailed", Base.AddSeconds(4)))
+				.Should().BeTrue("the same call may be recorded again");
+
+			var stored = await repository.GetByProviderMessageIdAsync("ch-1", "SM-late");
+			stored.State.Should().Be((int)IntakeMessageStates.CallCreated);
+			stored.CallId.Should().Be(900);
+		}
+
+		[Test]
+		public async Task a_takeover_whose_lookup_failed_is_given_back_for_the_next_delivery()
+		{
+			var repository = Messages();
+			var message = Message("ch-1", "SM-back", Base);
+			(await repository.TryClaimAsync(message)).Should().BeTrue();
+			var now = Base.AddMinutes(15);
+			(await repository.TryReclaimAsync(message.IntakeMessageId, (int)IntakeMessageStates.Received, now, now.AddMinutes(-10))).Should().BeTrue();
+
+			(await repository.ReleaseReclaimAsync(message.IntakeMessageId, Base)).Should().BeTrue();
+			(await repository.GetByProviderMessageIdAsync("ch-1", "SM-back")).ReceivedOn.Should().BeCloseTo(Base, TimeSpan.FromSeconds(1));
+			(await repository.TryReclaimAsync(message.IntakeMessageId, (int)IntakeMessageStates.Received, now.AddMinutes(1), now.AddMinutes(-9)))
+				.Should().BeTrue("the next delivery takes it over at once");
+
+			(await repository.CompleteAsync(message.IntakeMessageId, (int)IntakeMessageStates.CallCreated, 902, "ok", now.AddMinutes(2))).Should().BeTrue();
+			(await repository.ReleaseReclaimAsync(message.IntakeMessageId, Base)).Should().BeFalse("a finished claim is never moved back");
 		}
 
 		[Test]

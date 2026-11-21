@@ -227,8 +227,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			// The route select is on the form only when there is a route to offer (or the schedule's own). A form posted without it
 			// (the route list could not be read) leaves the schedule's route as it was; a blank selection still clears it.
+			// The model gets it too: a form re-rendered for another field's error then shows the route selected, and its next post keeps it.
 			if (Request?.HasFormContentType == true && !Request.Form.ContainsKey(nameof(model.RoutePlanId)))
+			{
 				series.RoutePlanId = previousRoutePlanId;
+				model.RoutePlanId = previousRoutePlanId;
+			}
 
 			// The unit picker offers only the units the member may see: stored units outside it are kept as they are, and only offered
 			// units can be added (the same rule as the picker, so a crafted post cannot add others).

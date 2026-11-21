@@ -50,7 +50,9 @@ namespace Resgrid.Model.Services
 		/// <summary>
 		/// Cancels the department's pending intake call <paramref name="callId"/>, closes its SMS conversation without texting the
 		/// sender, marks it <see cref="IntakeScreenings.DismissedAsSpam"/> and, when <paramref name="blockSender"/>, blocks its sender for
-		/// IntakeConfig.SpamBlockDays (0 = until lifted). <paramref name="userId"/> must already be allowed to close the call.
+		/// IntakeConfig.SpamBlockDays (0 = until lifted). <paramref name="userId"/> must already be allowed to close the call. The stored
+		/// call is claimed the way a dispatch claims it, so a call sent meanwhile is NotPending; a block asked for that cannot be put in
+		/// force, or a label or cancel that cannot be saved, leaves the call pending (<see cref="IntakeDismissResults.Failed"/>).
 		/// </summary>
 		Task<IntakeDismissResult> DismissAsSpamAsync(int departmentId, int callId, string userId, bool blockSender, CancellationToken cancellationToken = default);
 

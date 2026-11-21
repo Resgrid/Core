@@ -169,7 +169,7 @@ namespace Resgrid.Web.Services.Controllers
 			var form = await Request.ReadFormAsync();
 			if (form.Any(x => x.Value.Count != 1)) return BadRequest();
 			var fields = form.ToDictionary(x => x.Key, x => x.Value.ToString());
-			if (!new RequestValidator(NumberProviderConfig.TwilioAuthToken).Validate(ChatbotConfig.WhatsAppWebhookUrl, fields, Header("X-Twilio-Signature"))) return Unauthorized();
+			if (!new RequestValidator(NumberProviderConfig.TwilioAuthToken).Validate(SignedUrl(ChatbotConfig.WhatsAppWebhookUrl), fields, Header("X-Twilio-Signature"))) return Unauthorized();
 			if (form["AccountSid"] != NumberProviderConfig.TwilioAccountSid || !form["From"].ToString().StartsWith("whatsapp:+", StringComparison.Ordinal)) return Unauthorized();
 			// A WhatsApp sender of the Twilio account that a department linked as an intake channel: the message is intake.
 			var whatsAppChannel = await _intakeChannels.ResolveChannelAsync(IntakeChannelTypes.WhatsApp, form["To"].ToString());
@@ -182,9 +182,9 @@ namespace Resgrid.Web.Services.Controllers
 					SenderName = form.TryGetValue("ProfileName", out var profileName) ? profileName.ToString() : null,
 					Body = form["Body"].ToString(), ReceivedOnUtc = DateTime.UtcNow
 				}, HttpContext?.RequestAborted ?? default);
-				// 503 so the message is delivered again and intake takes the failed claim over. Twilio retries a 5xx only when the webhook
-				// asks for it: the WhatsApp sender's webhook URL must carry the connection override #rp=5xx,ct,rt (operator setup; by
-				// default Twilio retries connection failures only, and the message would be lost).
+				// 503 so the message is delivered again and intake takes the failed claim over. Twilio retries a 5xx only when the sender's
+				// webhook asks for it: REQUIRED operator setup for every WhatsApp sender linked as an intake channel, see
+				// ChatbotConfig.WhatsAppWebhookUrl (by default Twilio retries connection failures only, and the message would be lost).
 				if (result.State == IntakeMessageStates.Failed) return StatusCode(503);
 				if (result.State == IntakeMessageStates.Duplicate && result.Reason == IntakeResultReasons.DuplicateInProgress) return StatusCode(503);
 				// A WhatsApp reply inside the conversation window carries no A2P registration cost, so it goes from the linked sender.
@@ -239,9 +239,12 @@ namespace Resgrid.Web.Services.Controllers
 			switch (platform)
 			{
 				case ChatbotPlatform.Discord:
-					// An interaction always needs an answer; it is shown only to the person who used the command.
-					var text = ack ?? (result.State == IntakeMessageStates.Duplicate || result.State == IntakeMessageStates.CallCreated
-						? "Your request was received." : "This channel is not accepting requests right now.");
+					// An interaction always needs an answer; it is shown only to the person who used the command. A duplicate whose first
+					// delivery has not saved its call yet is not confirmed: say so, rather than "received" for a request that may still fail.
+					var text = ack ?? (result.State == IntakeMessageStates.Duplicate && result.Reason == IntakeResultReasons.DuplicateInProgress && !result.CallId.HasValue
+						? "Your request is still being processed and is not confirmed yet. If it does not show up as a call soon, send it again."
+						: result.State == IntakeMessageStates.Duplicate || result.State == IntakeMessageStates.CallCreated
+							? "Your request was received." : "This channel is not accepting requests right now.");
 					return Ok(new { type = 4, data = new { content = text, flags = 64 } });
 				case ChatbotPlatform.GoogleChat:
 					return ack == null ? Ok(new { }) : Ok(new { text = ack });
@@ -295,6 +298,19 @@ namespace Resgrid.Web.Services.Controllers
             return DateTimeOffset.FromUnixTimeMilliseconds((long)(value >> 22) + 1420070400000L).UtcDateTime;
         }
         private string Header(string name) => Request.Headers[name].ToString();
+
+        /// <summary>
+        /// The URL Twilio signed: a connection-override fragment ("#rp=5xx,ct,rt") is Twilio's own setting, never sent and never part of
+        /// X-Twilio-Signature, so a configured URL that carries one still validates.
+        /// </summary>
+        public static string SignedUrl(string configuredUrl)
+        {
+            if (string.IsNullOrEmpty(configuredUrl))
+                return configuredUrl;
+
+            var hash = configuredUrl.IndexOf('#');
+            return hash < 0 ? configuredUrl : configuredUrl.Substring(0, hash);
+        }
 		private static string S(JToken token, string path) => token?.SelectToken(path)?.ToString();
 	}
 }

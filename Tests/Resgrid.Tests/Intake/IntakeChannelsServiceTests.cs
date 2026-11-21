@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -149,10 +150,26 @@ namespace Resgrid.Tests.Intake
 		{
 			IntakeChannelsService.NormalizeSenders(" +17755550100 ; +17755550100,\n@mercy.org ").Should().Be("+17755550100,@mercy.org");
 			IntakeChannelsService.NormalizeSenders("   ").Should().BeNull();
-			IntakeChannelsService.NormalizeSenders(" , ; ").Should().BeNull();
 			IntakeChannelsService.NormalizeSenders(new string('a', 256)).Should().HaveLength(256);
 			FluentActions.Invoking(() => IntakeChannelsService.NormalizeSenders("dispatch@county.gov," + new string('a', 257)))
 				.Should().Throw<IntakeChannelValidationException>().Which.Code.Should().Be("InvalidSenders");
+		}
+
+		[Test]
+		public void a_sender_list_that_would_lose_entries_is_refused_not_opened_to_anyone()
+		{
+			// Nothing but separators: saving it as "anyone" would open a restricted channel.
+			FluentActions.Invoking(() => IntakeChannelsService.NormalizeSenders(" , ; "))
+				.Should().Throw<IntakeChannelValidationException>().Which.Code.Should().Be("InvalidSenders");
+
+			// 201 distinct senders: the 201st would be refused after a "successful" save.
+			var tooMany = string.Join(",", Enumerable.Range(0, IntakeChannelsService.MaxSenderPatterns + 1).Select(i => $"user{i}@county.gov"));
+			FluentActions.Invoking(() => IntakeChannelsService.NormalizeSenders(tooMany))
+				.Should().Throw<IntakeChannelValidationException>().Which.Code.Should().Be("InvalidSenders");
+
+			// Duplicates (any case) do not count toward the limit.
+			var withDuplicates = string.Join(",", Enumerable.Range(0, IntakeChannelsService.MaxSenderPatterns).Select(i => $"user{i}@county.gov")) + ",USER0@county.gov";
+			IntakeChannelsService.NormalizeSenders(withDuplicates).Split(',').Should().HaveCount(IntakeChannelsService.MaxSenderPatterns);
 		}
 
 		[Test]

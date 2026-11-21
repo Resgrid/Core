@@ -54,7 +54,7 @@ namespace Resgrid.Model.Queue
 		/// With <see cref="NameIsPlaceholder"/>: a keyed fingerprint (HMAC, never the name itself, so the sender still never travels on
 		/// the bus) of the exact placeholder name when this item was queued. The model's title replaces the call's name only while the
 		/// name still has this fingerprint, so a dispatcher's rename made before the worker read the call is kept. Null (older items,
-		/// or no audit key configured): the worker compares with the name it first read, as before.
+		/// or no audit key configured): the worker never renames the call.
 		/// </summary>
 		[ProtoMember(10)]
 		public string PlaceholderNameFingerprint { get; set; }

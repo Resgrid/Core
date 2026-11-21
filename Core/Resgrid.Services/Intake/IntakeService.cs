@@ -39,6 +39,9 @@ namespace Resgrid.Services.Intake
 
 		private static readonly int[] IntakeCallSources = { (int)CallSources.Intake, (int)CallSources.VoiceIntake };
 
+		/// <summary>Call ids per IntakeMessages read when looking up many calls' sources at once.</summary>
+		public const int CallLookupBatchSize = 500;
+
 		private readonly IIntakeChannelsRepository _channels;
 		private readonly IIntakeMessagesRepository _messages;
 		private readonly IVoiceIntakeSessionsRepository _sessions;
@@ -129,12 +132,27 @@ namespace Resgrid.Services.Intake
 
 			int? savedCallId = null;
 			Call pendingCall = null;
+			// The call the message was added to as a note (its open conversation, or the sender's open call past the hourly limit). Once
+			// the note is saved, a later failure records that outcome instead of Failed: a retry must not add the same text again.
+			int? notedCallId = null;
+			var notedState = IntakeMessageStates.AddedToCall;
+			string notedReason = null;
 			try
 			{
 				string refusal = null;
 				var state = IntakeMessageStates.Refused;
 				if (!string.IsNullOrWhiteSpace(envelope.RefusalReason))
-					refusal = Cap(envelope.RefusalReason.Trim(), 100);
+				{
+					// The transport refused it (a lapsed number). A sender the department blocked is still recorded as blocked (and not
+					// counted toward the month); a block list that cannot be read keeps the transport's reason.
+					if (await IsBlockedAsync(channel.DepartmentId, envelope.Sender, now))
+					{
+						refusal = "SenderBlocked";
+						state = IntakeMessageStates.SenderBlocked;
+					}
+					else
+						refusal = Cap(envelope.RefusalReason.Trim(), 100);
+				}
 				else if (!await _flags.IsEnabledAsync(FeatureFlagKeys.IntakeChannels, channel.DepartmentId))
 					refusal = "FeatureOff";
 				else if (!channel.IsEnabled)
@@ -173,6 +191,7 @@ namespace Resgrid.Services.Intake
 						cancellationToken.ThrowIfCancellationRequested();
 					if (joined != null)
 					{
+						(notedCallId, notedState, notedReason) = (joined.CallId, IntakeMessageStates.AddedToConversation, "Conversation");
 						await _messages.CompleteAsync(message.IntakeMessageId, (int)IntakeMessageStates.AddedToConversation, joined.CallId, "Conversation", now, CancellationToken.None);
 						result.State = IntakeMessageStates.AddedToConversation;
 						result.CallId = joined.CallId;
@@ -187,6 +206,7 @@ namespace Resgrid.Services.Intake
 				var limit = await CheckSenderLimitAsync(channel, department, envelope, now, cancellationToken);
 				if (limit.JoinedCallId.HasValue)
 				{
+					(notedCallId, notedState, notedReason) = (limit.JoinedCallId, IntakeMessageStates.AddedToCall, "SenderLimit");
 					await _messages.CompleteAsync(message.IntakeMessageId, (int)IntakeMessageStates.AddedToCall, limit.JoinedCallId, "SenderLimit", now, CancellationToken.None);
 					result.State = IntakeMessageStates.AddedToCall;
 					result.CallId = limit.JoinedCallId;
@@ -238,8 +258,12 @@ namespace Resgrid.Services.Intake
 			catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
 			{
 				savedCallId ??= pendingCall?.CallId > 0 ? pendingCall.CallId : (int?)null;
-				// A call already saved keeps its claim, so the provider's retry is a duplicate rather than a second call.
-				await SafeCompleteAsync(message.IntakeMessageId, savedCallId.HasValue ? IntakeMessageStates.CallCreated : IntakeMessageStates.Failed, savedCallId, "Cancelled", now);
+				// A call already saved (or a note already added) keeps its claim, so the provider's retry is a duplicate rather than a
+				// second call or a second copy of the note.
+				if (!savedCallId.HasValue && notedCallId.HasValue)
+					await SafeCompleteAsync(message.IntakeMessageId, notedState, notedCallId, notedReason, now);
+				else
+					await SafeCompleteAsync(message.IntakeMessageId, savedCallId.HasValue ? IntakeMessageStates.CallCreated : IntakeMessageStates.Failed, savedCallId, "Cancelled", now);
 				throw;
 			}
 			catch (Exception ex)
@@ -253,6 +277,17 @@ namespace Resgrid.Services.Intake
 					result.State = IntakeMessageStates.CallCreated;
 					result.CallId = savedCallId;
 					result.Reason = "AfterSaveFailed";
+					return result;
+				}
+
+				// The text is already a note on its call (conversation or sender limit): the claim records that, so the provider's
+				// retry is a duplicate and the note is never added twice.
+				if (notedCallId.HasValue)
+				{
+					await SafeCompleteAsync(message.IntakeMessageId, notedState, notedCallId, notedReason, now);
+					result.State = notedState;
+					result.CallId = notedCallId;
+					result.Reason = notedReason;
 					return result;
 				}
 
@@ -295,11 +330,14 @@ namespace Resgrid.Services.Intake
 		public async Task<Dictionary<int, IntakeCallSource>> GetCallSourcesAsync(int departmentId, IEnumerable<int> callIds)
 		{
 			var sources = new Dictionary<int, IntakeCallSource>();
-			var ids = (callIds ?? Enumerable.Empty<int>()).Where(id => id > 0).Distinct().Take(500).ToList();
+			var ids = (callIds ?? Enumerable.Empty<int>()).Where(id => id > 0).Distinct().ToList();
 			if (ids.Count == 0)
 				return sources;
 
-			var messages = await _messages.GetByCallIdsAsync(departmentId, ids) ?? new List<IntakeMessage>();
+			// Read in batches (the IN list stays well under SQL Server's parameter limit) so every call in a long list gets its source.
+			var messages = new List<IntakeMessage>();
+			foreach (var batch in ids.Chunk(CallLookupBatchSize))
+				messages.AddRange(await _messages.GetByCallIdsAsync(departmentId, batch) ?? new List<IntakeMessage>());
 			if (messages.Count == 0)
 				return sources;
 
@@ -393,7 +431,7 @@ namespace Resgrid.Services.Intake
 
 			try
 			{
-				var recent = await _messages.GetCallsCreatedBySenderSinceAsync(channel.DepartmentId, sender, now.AddHours(-1)) ?? new List<IntakeMessage>();
+				var recent = await _messages.GetCallsCreatedBySenderSinceAsync(channel.DepartmentId, sender, now.AddHours(-1), PublicPhoneLines) ?? new List<IntakeMessage>();
 				if (recent.Count < max)
 					return default;
 
@@ -417,7 +455,16 @@ namespace Resgrid.Services.Intake
 					if (note == null || note.CallNoteId <= 0)
 						break;
 
-					_events.SendMessage(new CallUpdatedEvent { DepartmentId = channel.DepartmentId, Call = call });
+					// The message is on the call now: a failed refresh must not send it on to make a call of its own as well.
+					try
+					{
+						_events.SendMessage(new CallUpdatedEvent { DepartmentId = channel.DepartmentId, Call = call });
+					}
+					catch (Exception ex)
+					{
+						Framework.Logging.LogException(ex, $"Intake per-sender note on call {call.CallId} was saved but its update could not be published.");
+					}
+
 					return new SenderLimit(true, call.CallId);
 				}
 
@@ -434,11 +481,25 @@ namespace Resgrid.Services.Intake
 		/// The per-sender limit covers the public phone lines only (SMS, voice, WhatsApp) and only while the channel takes anyone. Email,
 		/// chat and webhook channels are linked by an admin and often carry a CAD bridge or alarm panel that legitimately sends many
 		/// incidents an hour from one address, and a sender on a channel's allowed list is trusted: their messages always make calls.
+		/// A list that names nobody in particular ("*", which <see cref="IsSenderAllowed"/> reads as anyone) is no allowed list.
 		/// </summary>
 		public static bool IsSenderLimited(IntakeChannel channel) =>
-			channel != null && string.IsNullOrWhiteSpace(channel.AllowedSenders) &&
-			(channel.ChannelType == (int)IntakeChannelTypes.Sms || channel.ChannelType == (int)IntakeChannelTypes.Voice ||
-			 channel.ChannelType == (int)IntakeChannelTypes.WhatsApp);
+			channel != null && !NamesSpecificSenders(channel.AllowedSenders) && PublicPhoneLines.Contains(channel.ChannelType);
+
+		/// <summary>The transports the per-sender limit covers; only their history counts toward a sender's hour.</summary>
+		private static readonly int[] PublicPhoneLines = { (int)IntakeChannelTypes.Sms, (int)IntakeChannelTypes.Voice, (int)IntakeChannelTypes.WhatsApp };
+
+		/// <summary>The allowed-sender list restricts the channel: it has entries and none of them is the "*" anyone pattern.</summary>
+		private static bool NamesSpecificSenders(string allowedSenders)
+		{
+			var patterns = SenderPatterns(allowedSenders);
+			return patterns.Count > 0 && !patterns.Contains("*");
+		}
+
+		private static List<string> SenderPatterns(string allowedSenders) =>
+			string.IsNullOrWhiteSpace(allowedSenders)
+				? new List<string>()
+				: allowedSenders.Split(new[] { ',', ';', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries).Select(p => p.Trim()).Where(p => p.Length > 0).ToList();
 
 		/// <summary>Labels a call this service just created; a failure only loses the label, never the call.</summary>
 		private async Task SafeScreenAsync(int departmentId, int callId, IntakeScreenings screening, DateTime now)
@@ -461,8 +522,7 @@ namespace Resgrid.Services.Intake
 			if (string.IsNullOrWhiteSpace(sender))
 				return false;
 
-			var patterns = channel.AllowedSenders.Split(new[] { ',', ';', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)
-				.Select(p => p.Trim()).Where(p => p.Length > 0).ToList();
+			var patterns = SenderPatterns(channel.AllowedSenders);
 			if (patterns.Count == 0 || patterns.Contains("*"))
 				return true;
 
@@ -691,12 +751,22 @@ namespace Resgrid.Services.Intake
 			// template that logged the call at a time read from the message.
 			if (abandoned)
 			{
-				var orphan = await _messages.GetUnclaimedIntakeCallIdAsync(channel.DepartmentId, Cap(message.ProviderMessageId, 100), IntakeCallSources,
-					previouslyReceivedOn.AddDays(-1), cancellationToken);
-				if (orphan.HasValue)
+				try
 				{
-					await _messages.CompleteAsync(existing.IntakeMessageId, (int)IntakeMessageStates.CallCreated, orphan, "RecoveredAfterAbandon", now, CancellationToken.None);
-					return (null, orphan);
+					var orphan = await _messages.GetUnclaimedIntakeCallIdAsync(channel.DepartmentId, Cap(message.ProviderMessageId, 100), IntakeCallSources,
+						previouslyReceivedOn.AddDays(-1), cancellationToken);
+					if (orphan.HasValue)
+					{
+						await _messages.CompleteAsync(existing.IntakeMessageId, (int)IntakeMessageStates.CallCreated, orphan, "RecoveredAfterAbandon", now, CancellationToken.None);
+						return (null, orphan);
+					}
+				}
+				catch
+				{
+					// An unknown answer is not "no saved call", so nothing is built. The takeover is given back as it was (still abandoned):
+					// the provider's next delivery repeats the lookup at once instead of answering "in progress" until a fresh lease ran out.
+					await SafeReleaseReclaimAsync(existing.IntakeMessageId, previouslyReceivedOn);
+					throw;
 				}
 			}
 
@@ -734,6 +804,18 @@ namespace Resgrid.Services.Intake
 				// The text is never lost: it becomes a pending call of its own.
 				Framework.Logging.LogException(ex, $"Intake conversation lookup failed for channel {channel.IntakeChannelId}.");
 				return null;
+			}
+		}
+
+		private async Task SafeReleaseReclaimAsync(string intakeMessageId, DateTime receivedOn)
+		{
+			try
+			{
+				await _messages.ReleaseReclaimAsync(intakeMessageId, receivedOn, CancellationToken.None);
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex, $"Intake message {intakeMessageId} takeover could not be given back; it is retried once its lease runs out.");
 			}
 		}
 
@@ -780,6 +862,7 @@ namespace Resgrid.Services.Intake
 		/// D6: texts over the monthly fair-use limit still create calls; the department's admins are told once per calendar month
 		/// (a cache marker, else exactly at the first text over the limit when the cache is down). Each admin reached is remembered on
 		/// their own; when anyone was not reached the department's marker is cleared, so the next text over the limit tries only them.
+		/// The markers are best effort: an admin whose marker could not be written may be told twice, which beats an admin never told.
 		/// </summary>
 		private async Task CheckSmsFairUseAsync(Department department, DateTime now)
 		{
@@ -813,32 +896,42 @@ namespace Resgrid.Services.Intake
 				if (!alert)
 					return;
 
-				var text = $"Resgrid: {department.Name} has received {count} texts on its private inbound dispatch number this month, over the fair-use limit of {limit}. " +
-					"Texts still create pending calls. Contact Resgrid support if this volume is expected.";
-				var number = await _departmentSettings.GetTextToCallNumberForDepartmentAsync(department.DepartmentId);
 				var missed = 0;
-				foreach (var admin in await _departments.GetActiveAdminsForDepartmentAsync(department.DepartmentId) ?? new List<IdentityUser>())
+				try
 				{
-					// Each admin who was told is remembered on their own, so a retry after a partial failure reaches only the others.
-					var adminKey = key + "_" + admin.UserId;
-					if (tracked && await HasFairUseMarkerAsync(adminKey))
-						continue;
-
-					var delivered = false;
-					try
+					var text = $"Resgrid: {department.Name} has received {count} texts on its private inbound dispatch number this month, over the fair-use limit of {limit}. " +
+						"Texts still create pending calls. Contact Resgrid support if this volume is expected.";
+					var number = await _departmentSettings.GetTextToCallNumberForDepartmentAsync(department.DepartmentId);
+					foreach (var admin in await _departments.GetActiveAdminsForDepartmentAsync(department.DepartmentId) ?? new List<IdentityUser>())
 					{
-						delivered = await _communication.SendNotificationDeliveredAsync(admin.UserId, department.DepartmentId, text, number, department,
-							"Private Inbound Dispatch Number usage", null, false, null);
-					}
-					catch (Exception ex)
-					{
-						Framework.Logging.LogException(ex, $"Intake fair-use notice to an administrator of department {department.DepartmentId} failed.");
-					}
+						// Each admin who was told is remembered on their own, so a retry after a partial failure reaches only the others.
+						var adminKey = key + "_" + admin.UserId;
+						if (tracked && await HasFairUseMarkerAsync(adminKey))
+							continue;
 
-					if (!delivered)
-						missed++;
-					else if (tracked)
-						await SetFairUseMarkerAsync(adminKey);
+						var delivered = false;
+						try
+						{
+							delivered = await _communication.SendNotificationDeliveredAsync(admin.UserId, department.DepartmentId, text, number, department,
+								"Private Inbound Dispatch Number usage", null, false, null);
+						}
+						catch (Exception ex)
+						{
+							Framework.Logging.LogException(ex, $"Intake fair-use notice to an administrator of department {department.DepartmentId} failed.");
+						}
+
+						if (!delivered)
+							missed++;
+						else if (tracked)
+							await SetFairUseMarkerAsync(adminKey);
+					}
+				}
+				catch (Exception ex)
+				{
+					// The number or the admin list could not be read, so nobody (or not everyone) was told: the marker this attempt just set
+					// must not keep the next text over the limit from trying again.
+					missed++;
+					Framework.Logging.LogException(ex, $"Intake fair-use notice for department {department.DepartmentId} could not be sent.");
 				}
 
 				// Someone was not reached: the department's marker goes, so the next text over the limit tries those admins again.

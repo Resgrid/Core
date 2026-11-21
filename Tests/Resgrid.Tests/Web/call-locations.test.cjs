@@ -123,6 +123,29 @@ const settle = (page) => page.waitForTimeout(50);
             await context.close();
         }
 
+        // PR #588 round 2: an edit to another free-destination field (here what3words) also wins over an address lookup still on its way,
+        // although the address itself is unchanged.
+        {
+            const { context, page, errors } = await harness(browser);
+            await page.fill('#Call_DestinationAddress', 'Old Hospital');
+            await page.click('#destinationSearchButton');
+            await page.fill('#Call_DestinationW3W', 'filled.count.soap');
+            await answer(page, 0, { Latitude: 40.1, Longitude: -105.1 });
+            await settle(page);
+            assert.equal(await value(page, '#DestinationLatitude'), '', 'the address lookup answered after the what3words edit and is dropped');
+            assert.equal(await value(page, '#DestinationLongitude'), '');
+            assert.equal(await value(page, '#Call_DestinationW3W'), 'filled.count.soap');
+
+            // The lookup's own result (filled with .val()) does not cancel itself.
+            await page.fill('#Call_DestinationW3W', '');
+            await page.click('#destinationSearchButton');
+            await answer(page, 1, { Latitude: 51.05, Longitude: 3.72 });
+            await settle(page);
+            assert.equal(await value(page, '#DestinationLatitude'), '51.05');
+            assert.deepEqual(errors, []);
+            await context.close();
+        }
+
         // A save with an unresolved plus code waits for it: found, the point replaces the code and the form goes on with the pressed button.
         {
             const { context, page, errors } = await harness(browser);

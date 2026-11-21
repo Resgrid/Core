@@ -220,7 +220,8 @@ namespace Resgrid.Services
 		}
 
 		public async Task<RoutePlanRouteResult> GetLiveDirectionsAsync(string routeInstanceId, double latitude, double longitude, double? heading,
-			bool navigation, string language, bool metric, CancellationToken cancellationToken = default, bool includeStart = false)
+			bool navigation, string language, bool metric, CancellationToken cancellationToken = default, bool includeStart = false,
+			bool recordStartReached = true)
 		{
 			var instance = await _routeService.GetInstanceByIdAsync(routeInstanceId);
 			if (instance == null)
@@ -245,7 +246,7 @@ namespace Resgrid.Services
 			var origin = new RoutePlanEndpoint { Latitude = latitude, Longitude = longitude, Name = "" };
 
 			// A call route (M0322) leads to its plan start first, until the unit has been there or has worked a stop.
-			var routeStart = includeStart ? await PendingRouteStartAsync(instance, plan, inputs.Start, allInstanceStops, latitude, longitude) : null;
+			var routeStart = includeStart ? await PendingRouteStartAsync(instance, plan, inputs.Start, allInstanceStops, latitude, longitude, recordStartReached) : null;
 			var liveStops = remaining.Select(s => byStopId[s.RouteStopId]).ToList();
 			if (routeStart != null)
 				liveStops.Insert(0, new RouteStop { RouteStopId = null, Name = routeStart.Name, Latitude = (decimal)routeStart.Latitude, Longitude = (decimal)routeStart.Longitude });
@@ -314,7 +315,7 @@ namespace Resgrid.Services
 		/// geofence radius of the start has reached it, which is recorded.
 		/// </summary>
 		private async Task<RoutePlanEndpoint> PendingRouteStartAsync(RouteInstance instance, RoutePlan plan, RoutePlanEndpoint start,
-			List<RouteInstanceStop> instanceStops, double latitude, double longitude)
+			List<RouteInstanceStop> instanceStops, double latitude, double longitude, bool recordStartReached)
 		{
 			if (!instance.CallId.HasValue || instance.StartReachedOn.HasValue || start == null)
 				return null;
@@ -325,6 +326,11 @@ namespace Resgrid.Services
 			var radius = plan.GeofenceRadiusMeters > 0 ? plan.GeofenceRadiusMeters : 100;
 			if (GeoMath.HaversineMeters(latitude, longitude, start.Latitude, start.Longitude) > radius)
 				return start;
+
+			// At the start already. Only a caller who can operate the run records it (the position is the caller's own claim); a read-only
+			// preview just routes on from here.
+			if (!recordStartReached)
+				return null;
 
 			try
 			{

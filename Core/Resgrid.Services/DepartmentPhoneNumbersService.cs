@@ -820,7 +820,9 @@ namespace Resgrid.Services
 		private async Task<bool> RestoreAsync(DepartmentPhoneNumber row, string userId, CancellationToken cancellationToken)
 		{
 			var now = DateTime.UtcNow;
-			if (!await _repository.TryReactivateAsync(row.DepartmentPhoneNumberId, now, cancellationToken))
+			// The routing-pending marker goes in with the reactivation: lapsing turned the channels off and cleared TextToCallNumber, so a
+			// restore interrupted before StartRoutingAsync finishes must still be retried by worker 80 (it clears the marker on success).
+			if (!await _repository.TryReactivateAsync(row.DepartmentPhoneNumberId, now, RoutingIncompleteError, cancellationToken))
 			{
 				Framework.Logging.LogInfo($"Dedicated number {row.PhoneNumber} of DepartmentId {row.DepartmentId} was not reactivated: it changed meanwhile (being released or already restored).");
 				return false;
@@ -828,6 +830,7 @@ namespace Resgrid.Services
 
 			row.Status = (int)DepartmentPhoneNumberStatuses.Active;
 			ClearStopMarkers(row);
+			row.LastError = RoutingIncompleteError;
 			row.UpdatedOn = now;
 			Framework.Logging.LogInfo($"Dedicated number {row.PhoneNumber} of DepartmentId {row.DepartmentId} reactivated.");
 
@@ -967,7 +970,11 @@ namespace Resgrid.Services
 			return true;
 		}
 
-		/// <summary>The bought number on its claim row: Active, with the carrier's id, number and capabilities.</summary>
+		/// <summary>
+		/// The bought number on its claim row: Active, with the carrier's id, number and capabilities. Its routing is not set up yet, so the
+		/// row is saved with the routing-pending marker; StartRoutingAsync clears it once every step succeeds, and worker 80 retries a
+		/// purchase or adoption interrupted before that.
+		/// </summary>
 		private static void Activate(DepartmentPhoneNumber row, CarrierNumberPurchase purchase)
 		{
 			row.Status = (int)DepartmentPhoneNumberStatuses.Active;
@@ -978,7 +985,7 @@ namespace Resgrid.Services
 			row.VoiceCapable = purchase.VoiceCapable;
 			row.ProvisionedOn = DateTime.UtcNow;
 			row.UpdatedOn = row.ProvisionedOn;
-			row.LastError = null;
+			row.LastError = RoutingIncompleteError;
 		}
 
 		private async Task FailAsync(DepartmentPhoneNumber row, string error, CancellationToken cancellationToken)
@@ -1026,11 +1033,21 @@ namespace Resgrid.Services
 			if (complete != RoutingIncomplete(row))
 				return;
 
-			row.LastError = complete ? null : RoutingIncompleteError;
-			row.UpdatedOn = DateTime.UtcNow;
+			var lastError = complete ? null : RoutingIncompleteError;
+			var updatedOn = DateTime.UtcNow;
 			try
 			{
-				await _repository.UpdateAsync(row, CancellationToken.None, true);
+				// Only the routing state, and only while the number is still Active and unreleased: a full-row write here could put back
+				// Status/ReleasedOn over a release that began during the settings and channel calls above.
+				if (await _repository.TrySetRoutingStateAsync(row.DepartmentPhoneNumberId, lastError, updatedOn, CancellationToken.None))
+				{
+					row.LastError = lastError;
+					row.UpdatedOn = updatedOn;
+				}
+				else
+				{
+					Framework.Logging.LogInfo($"Dedicated number {row.PhoneNumber} of DepartmentId {row.DepartmentId}: routing state not recorded, the number is no longer Active (a release began or it lapsed meanwhile).");
+				}
 			}
 			catch (Exception ex)
 			{

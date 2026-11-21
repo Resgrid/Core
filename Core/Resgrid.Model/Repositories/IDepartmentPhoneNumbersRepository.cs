@@ -25,9 +25,18 @@ namespace Resgrid.Model.Repositories
 		Task<bool> TryBeginReleaseAsync(string departmentPhoneNumberId, int expectedStatus, DateTime startedOn, CancellationToken cancellationToken = default);
 
 		/// <summary>
-		/// Lapsed → Active with the unpaid period's markers cleared (T0, release date, warnings), only while the row is still Lapsed and
-		/// no release has begun. False when the row changed under the caller (released, being released, or already reactivated).
+		/// Lapsed → Active with the unpaid period's markers cleared (T0, release date, warnings) and LastError set to
+		/// <paramref name="lastError"/> in the same write (the routing-pending marker, so a restore interrupted before its routing is set up
+		/// is retried), only while the row is still Lapsed and no release has begun. False when the row changed under the caller (released,
+		/// being released, or already reactivated).
 		/// </summary>
-		Task<bool> TryReactivateAsync(string departmentPhoneNumberId, DateTime updatedOn, CancellationToken cancellationToken = default);
+		Task<bool> TryReactivateAsync(string departmentPhoneNumberId, DateTime updatedOn, string lastError, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Records the routing set-up state only (LastError, UpdatedOn), only while the row is still Active and no release has begun: it
+		/// never writes Status or ReleasedOn, so it cannot undo a release that started while routing was being set up. False when the row
+		/// is no longer an Active, unreleased number.
+		/// </summary>
+		Task<bool> TrySetRoutingStateAsync(string departmentPhoneNumberId, string lastError, DateTime updatedOn, CancellationToken cancellationToken = default);
 	}
 }

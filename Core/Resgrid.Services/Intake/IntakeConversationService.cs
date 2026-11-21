@@ -55,13 +55,16 @@ namespace Resgrid.Services.Intake
 		private readonly IQueueService _queue;
 		private readonly IEventAggregator _events;
 		private readonly Lazy<IEnumerable<IIntakeConversationRouter>> _routers;
+		private readonly IIntakeBlockedSendersRepository _blocked;
 		private readonly TimeProvider _clock;
 		private DateTime _lastStamp = DateTime.MinValue;
 
 		public IntakeConversationService(IIntakeConversationsRepository conversations, IIntakeConversationMessagesRepository messages, IIntakeChannelsRepository channels,
 			ICallsService calls, IDepartmentsService departments, IUserProfileService profiles, IIntakeSmsProvider sms, IIntakeConversationAssistant assistant,
-			IProtectedReadService protectedRead, IQueueService queue, IEventAggregator events, Lazy<IEnumerable<IIntakeConversationRouter>> routers, TimeProvider clock)
+			IProtectedReadService protectedRead, IQueueService queue, IEventAggregator events, Lazy<IEnumerable<IIntakeConversationRouter>> routers,
+			IIntakeBlockedSendersRepository blocked, TimeProvider clock)
 		{
+			_blocked = blocked;
 			_conversations = conversations;
 			_messages = messages;
 			_channels = channels;
@@ -223,9 +226,12 @@ namespace Resgrid.Services.Intake
 		public async Task<bool> HandleParticipantMessageAsync(IntakeConversation conversation, string providerMessageId, string text, DateTime receivedOnUtc,
 			CancellationToken cancellationToken = default)
 		{
-			// Once the texter's words are on the call (their note), the text is this thread's: a later failure (activity, event, routers,
-			// the AI turn, the STOP's close) is logged and the text still counts as handled. Unhandled would make intake create a second
-			// pending call carrying the same text.
+			// True = the text is this thread's and durable: on the call (its note), a provider retry of a text already there, a STOP whose
+			// close took, or a blocked sender's text dropped on purpose. Once the texter's words are on the call, a later failure (activity,
+			// event, routers, the AI turn) is logged and the text still counts as handled: unhandled would make intake create a second pending
+			// call carrying the same text. False = not on this thread (closed meanwhile), or not durable yet (the row, its note or a STOP's close
+			// failed): the dedicated-number path keeps the text on a pending call of its own and the master number answers a retryable 503;
+			// a redelivery of the same provider id finishes what this one could not (the duplicate branch below).
 			var recorded = false;
 			try
 			{
@@ -236,31 +242,54 @@ namespace Resgrid.Services.Intake
 				if (current == null || !current.IsOpen)
 					return false;
 
-				var message = NewMessage(current, IntakeConversationMessageDirections.Inbound, IntakeConversationAuthors.Participant, null,
-					IntakeConversationMessageStatuses.Received, providerMessageId);
-				// A provider retry of the same text: already recorded. A STOP whose first delivery was recorded but whose close failed (the
-				// thread is still open here) finishes closing it now, so the opt-out never stays half done; anything else needs nothing more.
-				if (!await _messages.TryInsertInboundAsync(message, CancellationToken.None))
+				var optOut = IntakeConversationTexts.IsOptOut(text);
+
+				// M0326: a sender the department blocked after the thread opened is not heard on it either (nothing on the call, no AI turn,
+				// nothing sent back). STOP still opts out and closes the thread.
+				if (!optOut && await IsBlockedAsync(current))
 				{
-					if (IntakeConversationTexts.IsOptOut(text))
-						await CloseCoreAsync(current, "OptedOut", true, message.CreatedOn);
+					Framework.Logging.LogInfo($"Intake conversation {current.IntakeConversationId}: a text from a sender department {current.DepartmentId} blocked was dropped.");
 					return true;
 				}
 
+				var message = NewMessage(current, IntakeConversationMessageDirections.Inbound, IntakeConversationAuthors.Participant, null,
+					IntakeConversationMessageStatuses.Received, providerMessageId);
+				if (!await _messages.TryInsertInboundAsync(message, CancellationToken.None))
+				{
+					// A provider retry of the same text. A STOP whose first delivery was recorded but whose close failed (the thread is still open
+					// here) finishes closing it now, so the opt-out never stays half done.
+					if (optOut)
+						return await CloseOptedOutAsync(current, message.CreatedOn);
+
+					// The first delivery recorded the row but not its note (the text was on no call): this one writes the note on the same call
+					// and finishes the steps the first skipped. A row that has its note needs nothing more.
+					var stored = (await _messages.GetForConversationAsync(current.DepartmentId, current.IntakeConversationId) ?? new List<IntakeConversationMessage>())
+						.LastOrDefault(m => m.Direction == (int)IntakeConversationMessageDirections.Inbound && !string.IsNullOrWhiteSpace(m.ProviderMessageId) &&
+							string.Equals(m.ProviderMessageId, message.ProviderMessageId, StringComparison.OrdinalIgnoreCase));
+					if (stored == null || stored.CallNoteId.HasValue)
+						return true;
+					message = stored;
+				}
+
 				var department = await SafeDepartmentAsync(current.DepartmentId);
-				if (IntakeConversationTexts.IsOptOut(text))
+				if (optOut)
 				{
 					// STOP: nothing more is ever sent on this thread, and it ends. Twilio itself confirms the opt-out to the texter.
 					await LinkNoteAsync(message, await NoteAsync(current.CallId, IntakeConversationTexts.OptedOutNote, CallNoteSources.System, department?.ManagingUserId));
 					recorded = true;
-					// A close that fails here is finished by the provider's retry of the same STOP (the duplicate branch above).
-					await CloseCoreAsync(current, "OptedOut", true, message.CreatedOn);
-					return true;
+					return await CloseOptedOutAsync(current, message.CreatedOn);
 				}
 
 				await LinkNoteAsync(message, await NoteAsync(current.CallId, IntakeConversationTexts.CallerNotePrefix + Body(text), CallNoteSources.IntakeText,
 					department?.ManagingUserId));
-				recorded = message.CallNoteId.HasValue;
+				if (!message.CallNoteId.HasValue)
+				{
+					// The text is in the delivery log only, on no call: nothing a dispatcher or Enhanced AI reads holds it yet.
+					Framework.Logging.LogError($"Intake conversation {current.IntakeConversationId}: a reply from the caller could not be noted on call {current.CallId}.");
+					return false;
+				}
+
+				recorded = true;
 				await _conversations.TouchAsync(current.IntakeConversationId, current.DepartmentId, message.CreatedOn, message.CreatedOn, CancellationToken.None);
 				current.LastActivityOn = message.CreatedOn;
 				current.LastInboundOn = message.CreatedOn;
@@ -681,14 +710,17 @@ namespace Resgrid.Services.Intake
 			}
 
 			var turn = conversation.AssistantTurns + 1;
-			var texts = await NoteTextsAsync(conversation, null, null, false, cancellationToken);
-			var lines = messages.Where(m => m.CallNoteId.HasValue && texts.ContainsKey(m.CallNoteId.Value))
-				.Select(m => new IntakeAssistantLine { FromCaller = m.Direction == (int)IntakeConversationMessageDirections.Inbound, Text = texts[m.CallNoteId.Value] })
-				.ToList();
-
 			IntakeAssistantAnswer answer;
 			try
 			{
+				// The model reads what the texter actually saw: every message of theirs, and only the texts to them that reached the carrier
+				// (Sent). A refused or failed text keeps its note for the dispatcher's history but is no part of the dialogue.
+				var texts = await NoteTextsAsync(conversation, null, null, false, cancellationToken);
+				var lines = messages.Where(m => m.CallNoteId.HasValue && texts.ContainsKey(m.CallNoteId.Value) &&
+						(m.Direction == (int)IntakeConversationMessageDirections.Inbound || m.Status == (int)IntakeConversationMessageStatuses.Sent))
+					.Select(m => new IntakeAssistantLine { FromCaller = m.Direction == (int)IntakeConversationMessageDirections.Inbound, Text = texts[m.CallNoteId.Value] })
+					.ToList();
+
 				answer = await _assistant.AskAsync(new IntakeAssistantRequest
 				{
 					DepartmentId = conversation.DepartmentId,
@@ -700,7 +732,10 @@ namespace Resgrid.Services.Intake
 			}
 			catch
 			{
+				// The worker does not retry the item, so nothing would ever answer the texter's message: the placeholder goes (it would read
+				// as "being answered" for minutes) and a dispatcher takes the thread, as when a turn cannot be queued.
 				await WithdrawAsync(reply, "Failed");
+				await HandOverAfterFailedTurnAsync(conversation, department, turn);
 				throw;
 			}
 
@@ -733,8 +768,20 @@ namespace Resgrid.Services.Intake
 			}
 
 			if (!string.IsNullOrWhiteSpace(answer.ReplyText))
-				await DeliverAsync(fresh, reply, Cap(answer.ReplyText.Trim(), Math.Max(1, IntakeConfig.ConversationMaxOutboundLength)),
-					IntakeConversationTexts.AssistantNotePrefix, department);
+			{
+				var delivered = await DeliverAsync(fresh, reply, Cap(answer.ReplyText.Trim(), Math.Max(1, IntakeConfig.ConversationMaxOutboundLength)),
+					IntakeConversationTexts.AssistantNotePrefix, department, answersInboundMessageId: lastInbound.IntakeConversationMessageId);
+
+				// The texter wrote again while this reply's note was being written (the check above was passed): the reply is not sent, and
+				// the newest text gets a turn of its own, as above.
+				if (delivered.Error == SendRefusals.NewerMessage)
+				{
+					var newer = (await _messages.GetForConversationAsync(fresh.DepartmentId, fresh.IntakeConversationId) ?? new List<IntakeConversationMessage>())
+						.LastOrDefault(m => m.Direction == (int)IntakeConversationMessageDirections.Inbound);
+					await QueueTurnAsync(fresh, newer?.IntakeConversationMessageId);
+					return "Superseded";
+				}
+			}
 			else
 				await WithdrawAsync(reply, "NoReply");
 
@@ -774,6 +821,23 @@ namespace Resgrid.Services.Intake
 
 			await PublishAsync(conversation);
 			return true;
+		}
+
+		/// <summary>
+		/// A turn that threw before it could answer (reading the transcript, the model call): a dispatcher takes the thread, and when earlier
+		/// turns ran (their refreshes were interim, no summary note) the final refresh is queued. Never throws: the caller rethrows its own error.
+		/// </summary>
+		private async Task HandOverAfterFailedTurnAsync(IntakeConversation conversation, Department department, int turn)
+		{
+			try
+			{
+				if (await FinishAssistantAsync(conversation, department) && turn > 1)
+					await QueueRefreshAsync(conversation, true);
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex, $"Intake conversation {conversation.IntakeConversationId} could not be handed to a dispatcher after a failed turn.");
+			}
 		}
 
 		/// <summary>Enhanced AI when the channel uses it, the department may, and it has turns left; else a dispatcher (Unassisted).</summary>
@@ -832,7 +896,11 @@ namespace Resgrid.Services.Intake
 			Framework.Logging.LogError($"Intake conversation {conversation.IntakeConversationId}: no Enhanced AI turn was queued; the thread goes to a dispatcher.");
 			try
 			{
-				await FinishAssistantAsync(conversation, await SafeDepartmentAsync(conversation.DepartmentId));
+				// Earlier turns queued interim refreshes (no summary note): the final one runs now that Enhanced AI stops, as on every other
+				// way a thread leaves Enhanced AI.
+				var hadTurns = conversation.AssistantTurns > 0;
+				if (await FinishAssistantAsync(conversation, await SafeDepartmentAsync(conversation.DepartmentId)) && hadTurns)
+					await QueueRefreshAsync(conversation, true);
 			}
 			catch (Exception ex)
 			{
@@ -891,13 +959,17 @@ namespace Resgrid.Services.Intake
 			return await DeliverAsync(conversation, message, text, notePrefix, department, closingNotice);
 		}
 
-		/// <summary>Notes and texts an outbound message whose Queued delivery row is already recorded (<see cref="SendAsync"/>, or an Enhanced AI turn's reply).</summary>
+		/// <summary>
+		/// Notes and texts an outbound message whose Queued delivery row is already recorded (<see cref="SendAsync"/>, or an Enhanced AI turn's reply).
+		/// <paramref name="answersInboundMessageId"/>: the texter's message an Enhanced AI reply answers; a newer one recorded meanwhile stops it at
+		/// the carrier boundary (<see cref="SendRefusals.NewerMessage"/>).
+		/// </summary>
 		private async Task<IntakeConversationMessage> DeliverAsync(IntakeConversation conversation, IntakeConversationMessage message, string text, string notePrefix,
-			Department department, bool closingNotice = false)
+			Department department, bool closingNotice = false, string answersInboundMessageId = null)
 		{
 			await LinkNoteAsync(message, await NoteAsync(conversation.CallId, notePrefix + text, CallNoteSources.System, message.AuthorUserId ?? department?.ManagingUserId));
 
-			var refusal = await SendRefusalAsync(conversation, message, closingNotice);
+			var refusal = await SendRefusalAsync(conversation, message, closingNotice, answersInboundMessageId);
 			if (refusal != null)
 			{
 				message.Status = (int)IntakeConversationMessageStatuses.Failed;
@@ -905,10 +977,16 @@ namespace Resgrid.Services.Intake
 			}
 			else
 			{
+				// The cap is for what dispatchers and Enhanced AI write. Resgrid's own fixed texts (welcome, introduction, closing) go whole, so the
+				// emergency-number sentence they end with is never cut off by a small ConversationMaxOutboundLength.
+				var maxLength = Math.Max(1, IntakeConfig.ConversationMaxOutboundLength);
+				if (message.Author == (int)IntakeConversationAuthors.System)
+					maxLength = Math.Max(maxLength, text?.Length ?? 0);
+
 				IntakeSmsSendResult result;
 				try
 				{
-					result = await _sms.SendAsync(conversation.ParticipantAddress, text, conversation.DepartmentId, Math.Max(1, IntakeConfig.ConversationMaxOutboundLength),
+					result = await _sms.SendAsync(conversation.ParticipantAddress, text, conversation.DepartmentId, maxLength,
 						CancellationToken.None) ?? new IntakeSmsSendResult { Error = "NoResult" };
 				}
 				catch (Exception ex)
@@ -938,15 +1016,22 @@ namespace Resgrid.Services.Intake
 			public const string NotFound = "NotFound";
 			public const string NotConnected = "NotConnected";
 			public const string Superseded = "Superseded";
+
+			/// <summary>An Enhanced AI reply whose texter wrote again after the turn read the thread: it never saw that text.</summary>
+			public const string NewerMessage = "NewerMessage";
+
+			/// <summary>The thread could not be read again before the send: an opt-out may have committed, so nothing goes out (a dispatcher retries).</summary>
+			public const string Unconfirmed = "Unconfirmed";
 		}
 
 		/// <summary>
 		/// The thread is read again immediately before the carrier is asked, after the row and the note were written: a STOP, a close, a
 		/// take-over or a dispatcher connecting that committed meanwhile wins over the message in hand (the snapshot the caller loaded can be
-		/// seconds old). Null = send. A closing notice goes out on the thread it just closed, unless the texter opted out. When the thread
-		/// cannot be read the caller's snapshot decides, as before.
+		/// seconds old). Null = send. A closing notice goes out on the thread it just closed, unless the texter opted out. A thread that cannot
+		/// be read is not permission to send: the text fails as <see cref="SendRefusals.Unconfirmed"/> (a dispatcher's send reports SendFailed
+		/// and can be retried, and the retry reads the thread again).
 		/// </summary>
-		private async Task<string> SendRefusalAsync(IntakeConversation conversation, IntakeConversationMessage message, bool closingNotice)
+		private async Task<string> SendRefusalAsync(IntakeConversation conversation, IntakeConversationMessage message, bool closingNotice, string answersInboundMessageId)
 		{
 			if (conversation.OptedOut)
 				return SendRefusals.OptedOut;
@@ -958,8 +1043,8 @@ namespace Resgrid.Services.Intake
 			}
 			catch (Exception ex)
 			{
-				Framework.Logging.LogException(ex, $"Intake conversation {conversation.IntakeConversationId} could not be read again before a send.");
-				return null;
+				Framework.Logging.LogException(ex, $"Intake conversation {conversation.IntakeConversationId} could not be read again before a send; nothing was sent.");
+				return SendRefusals.Unconfirmed;
 			}
 
 			if (stored == null || stored.DepartmentId != conversation.DepartmentId)
@@ -980,6 +1065,23 @@ namespace Resgrid.Services.Intake
 			if ((message.Author == (int)IntakeConversationAuthors.Dispatcher || message.Author == (int)IntakeConversationAuthors.System && !string.IsNullOrWhiteSpace(message.AuthorUserId)) &&
 				!SameUser(stored.AssignedUserId, message.AuthorUserId))
 				return SendRefusals.NotConnected;
+
+			// An Enhanced AI reply answers the texter's latest message only while it still is the latest.
+			if (!string.IsNullOrWhiteSpace(answersInboundMessageId))
+			{
+				try
+				{
+					var newest = (await _messages.GetForConversationAsync(conversation.DepartmentId, conversation.IntakeConversationId) ?? new List<IntakeConversationMessage>())
+						.LastOrDefault(m => m.Direction == (int)IntakeConversationMessageDirections.Inbound);
+					if (newest != null && !string.Equals(newest.IntakeConversationMessageId, answersInboundMessageId, StringComparison.Ordinal))
+						return SendRefusals.NewerMessage;
+				}
+				catch (Exception ex)
+				{
+					Framework.Logging.LogException(ex, $"Intake conversation {conversation.IntakeConversationId}: its messages could not be read again before a send; nothing was sent.");
+					return SendRefusals.Unconfirmed;
+				}
+			}
 
 			return null;
 		}
@@ -1061,6 +1163,52 @@ namespace Resgrid.Services.Intake
 					async token => { await router.OnConversationClosedAsync(conversation, token); return true; }, false);
 
 			return true;
+		}
+
+		/// <summary>
+		/// A STOP's close, tried twice: true once the thread is closed (by this call or one that won first), false when the close itself
+		/// keeps failing, so the caller answers the provider with a retryable failure and its redelivery of the STOP closes the thread.
+		/// </summary>
+		private async Task<bool> CloseOptedOutAsync(IntakeConversation conversation, DateTime now)
+		{
+			try
+			{
+				await CloseCoreAsync(conversation, "OptedOut", true, now);
+				return true;
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex, $"Intake conversation {conversation.IntakeConversationId}: the opt-out close failed; trying again.");
+			}
+
+			try
+			{
+				await CloseCoreAsync(conversation, "OptedOut", true, now);
+				return true;
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex, $"Intake conversation {conversation.IntakeConversationId}: the opt-out close failed again; the provider's redelivery finishes it.");
+				return false;
+			}
+		}
+
+		/// <summary>The texter is on the department's blocked list (M0326). A list that cannot be read lets the text through, as intake does.</summary>
+		private async Task<bool> IsBlockedAsync(IntakeConversation conversation)
+		{
+			var key = IntakeBlockedSenders.Normalize(conversation.ParticipantAddress);
+			if (key == null)
+				return false;
+
+			try
+			{
+				return await _blocked.GetInForceAsync(conversation.DepartmentId, key, _clock.GetUtcNow().UtcDateTime) != null;
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex, $"Intake conversation {conversation.IntakeConversationId}: the blocked-sender check failed; the text is let through.");
+				return false;
+			}
 		}
 
 		private async Task<bool> SafeCloseAsync(IntakeConversation conversation, string reason, DateTime now, DateTime? idleBefore = null)

@@ -90,15 +90,38 @@ namespace Resgrid.Web.Areas.User.Controllers
 				});
 			}
 
-			foreach (var block in await _screening.GetBlockedSendersAsync(DepartmentId))
+			// The block list is its own read: when it fails the channels still render and can be managed, and the page says the list is
+			// unavailable instead of showing it empty.
+			List<IntakeBlockedSender> blocks;
+			try
 			{
+				blocks = await _screening.GetBlockedSendersAsync(DepartmentId) ?? new List<IntakeBlockedSender>();
+			}
+			catch (Exception ex)
+			{
+				Resgrid.Framework.Logging.LogException(ex, $"Intake Channels: the blocked senders of department {DepartmentId} could not be read.");
+				blocks = new List<IntakeBlockedSender>();
+				model.BlockedSendersUnavailable = true;
+			}
+
+			// One name lookup per dispatcher, however many senders they blocked.
+			var names = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+			foreach (var block in blocks)
+			{
+				string blockedByName = null;
+				if (!string.IsNullOrWhiteSpace(block.BlockedByUserId) && !names.TryGetValue(block.BlockedByUserId, out blockedByName))
+				{
+					blockedByName = await UserHelper.GetFullNameForUser(block.BlockedByUserId);
+					names[block.BlockedByUserId] = blockedByName;
+				}
+
 				model.BlockedSenders.Add(new IntakeBlockedSenderRow
 				{
 					IntakeBlockedSenderId = block.IntakeBlockedSenderId,
 					Sender = block.Sender,
 					ChannelType = (IntakeChannelTypes)block.ChannelType,
 					CallId = block.CallId,
-					BlockedByName = string.IsNullOrWhiteSpace(block.BlockedByUserId) ? null : await UserHelper.GetFullNameForUser(block.BlockedByUserId),
+					BlockedByName = blockedByName,
 					BlockedOn = block.BlockedOn,
 					ExpiresOn = block.ExpiresOn,
 					Expired = !block.IsInForce(now)
@@ -134,6 +157,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 					break;
 				case IntakeDismissResults.NotPending:
 					TempData["IntakeDismissError"] = _localizer["DismissNotPending"].Value;
+					break;
+				case IntakeDismissResults.Failed:
+					TempData["IntakeDismissError"] = _localizer["DismissFailed"].Value;
 					break;
 				default:
 					return NotFound();

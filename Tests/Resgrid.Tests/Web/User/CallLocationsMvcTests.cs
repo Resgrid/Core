@@ -558,6 +558,25 @@ namespace Resgrid.Tests.Web.User
 		}
 
 		[Test]
+		public async Task The_save_reads_the_call_again_so_a_route_saved_while_the_form_was_checked_is_kept()
+		{
+			// PR #588 round 2: the POST read the call once, before the form lookups, and saved that copy. Another editor's route saved during
+			// those lookups was then written back over by this editor's unchanged picker.
+			Stored(c => c.RoutePlanId = RoutePlanId);
+			var reads = 0;
+			M<ICallsService>().Setup(x => x.GetCallByIdAsync(CallId, It.IsAny<bool>()))
+				.ReturnsAsync(() => ++reads == 1 ? new Call { CallId = CallId, DepartmentId = DepartmentId, RoutePlanId = "archived-plan" } : _stored);
+
+			(await Build().UpdateCall(UpdateCallForm(c => c.RoutePlanId = "archived-plan"),
+					Form(("Call.RoutePlanId", "archived-plan"), ("OriginalRoutePlanId", "archived-plan")), CancellationToken.None))
+				.Should().BeOfType<RedirectToActionResult>();
+
+			reads.Should().BeGreaterThan(1);
+			_saved.Should().BeSameAs(_stored, "the save writes the call as stored at the point of use");
+			_saved.RoutePlanId.Should().Be(RoutePlanId);
+		}
+
+		[Test]
 		public async Task A_route_this_editor_changed_or_removed_is_still_written()
 		{
 			Stored(c => c.RoutePlanId = "archived-plan");

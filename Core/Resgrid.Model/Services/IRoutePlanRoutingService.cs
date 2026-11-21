@@ -33,10 +33,12 @@ namespace Resgrid.Model.Services
 		/// <remarks>
 		/// With <paramref name="includeStart"/>, a call route (M0322) the unit has not yet brought to its plan start (no
 		/// <see cref="RouteInstance.StartReachedOn"/>, no stop worked, a station or explicit start) first leads to that start: the first leg
-		/// has <see cref="RoutePlanLeg.IsRouteStart"/>. A position already within the plan's geofence radius of the start records it reached.
+		/// has <see cref="RoutePlanLeg.IsRouteStart"/>. A position already within the plan's geofence radius of the start records it reached,
+		/// but only with <paramref name="recordStartReached"/> (the caller can operate the run); a read-only preview just drops the start leg.
 		/// </remarks>
 		Task<RoutePlanRouteResult> GetLiveDirectionsAsync(string routeInstanceId, double latitude, double longitude, double? heading,
-			bool navigation, string language, bool metric, CancellationToken cancellationToken = default, bool includeStart = false);
+			bool navigation, string language, bool metric, CancellationToken cancellationToken = default, bool includeStart = false,
+			bool recordStartReached = true);
 
 		/// <summary>
 		/// Where the plan starts and ends for a call (M0322): the station or explicit point, else the first or last stop. The unit (or the

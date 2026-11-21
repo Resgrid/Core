@@ -182,7 +182,7 @@
     <value>تعذّر حفظ القناة. تحقق من القيم وحاول مرة أخرى.</value>
   </data>
   <data name="Error.InvalidSenders" xml:space="preserve">
-    <value>يمكن أن يتكون كل مرسل مسموح به من 256 حرفًا كحد أقصى. لم يتم حفظ القناة.</value>
+    <value>أدرج 200 مرسل مسموح به كحد أقصى، لا يتجاوز كل منهم 256 حرفًا، مفصولين بفواصل أو أسطر جديدة. لم يتم حفظ القناة.</value>
   </data>
   <data name="Type.Sms" xml:space="preserve">
     <value>رسالة نصية (SMS)</value>
@@ -348,6 +348,12 @@
   </data>
   <data name="DismissNotPending" xml:space="preserve">
     <value>لم يعد هذا البلاغ معلّقًا، لذا لا يمكن رفضه كرسالة مزعجة.</value>
+  </data>
+  <data name="DismissFailed" xml:space="preserve">
+    <value>تعذّر رفض هذا البلاغ الآن، ولا يزال معلّقًا. حاول مرة أخرى.</value>
+  </data>
+  <data name="BlockedSendersUnavailable" xml:space="preserve">
+    <value>تعذّر تحميل قائمة المرسلين المحظورين. أعد تحميل الصفحة للمحاولة مرة أخرى.</value>
   </data>
   <data name="Screening.LikelyNotIncident" xml:space="preserve">
     <value>Enhanced AI: على الأرجح ليس حادثًا</value>

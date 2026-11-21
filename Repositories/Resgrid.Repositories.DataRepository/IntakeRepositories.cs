@@ -143,10 +143,25 @@ namespace Resgrid.Repositories.DataRepository
 
 		public async Task<bool> CompleteAsync(string intakeMessageId, int state, int? callId, string reason, DateTime completedOn, CancellationToken cancellationToken = default)
 		{
+			// A call recorded on the claim is never cleared or replaced: a late completion from an attempt that lost its claim (it ran past
+			// the abandonment window while a retry took over) must not unlink the call the new owner recorded.
 			var updated = await ExecuteAsync(
 				$"UPDATE {Tbl(Table)} SET {Col("State")} = {P}State, {Col("CallId")} = {P}CallId, {Col("Reason")} = {P}Reason, {Col("CompletedOn")} = {P}CompletedOn " +
-				$"WHERE {Col("IntakeMessageId")} = {P}Id",
+				$"WHERE {Col("IntakeMessageId")} = {P}Id AND ({Col("CallId")} IS NULL OR {Col("CallId")} = {P}CallId)",
 				new { Id = intakeMessageId, State = state, CallId = callId, Reason = reason, CompletedOn = DatabaseTimestamp(completedOn) },
+				cancellationToken);
+
+			return updated == 1;
+		}
+
+		public async Task<bool> ReleaseReclaimAsync(string intakeMessageId, DateTime receivedOn, CancellationToken cancellationToken = default)
+		{
+			// Only a takeover still in progress (Received, no call) moves back, and only to an earlier time: the row reads as abandoned
+			// again, so the next delivery takes it over at once and repeats the saved-call lookup.
+			var updated = await ExecuteAsync(
+				$"UPDATE {Tbl(Table)} SET {Col("ReceivedOn")} = {P}ReceivedOn, {Col("Reason")} = {P}Reason " +
+				$"WHERE {Col("IntakeMessageId")} = {P}Id AND {Col("State")} = {P}Received AND {Col("CallId")} IS NULL AND {Col("ReceivedOn")} > {P}ReceivedOn",
+				new { Id = intakeMessageId, Received = (int)IntakeMessageStates.Received, Reason = "RetryReleased", ReceivedOn = DatabaseTimestamp(receivedOn) },
 				cancellationToken);
 
 			return updated == 1;
@@ -201,15 +216,22 @@ namespace Resgrid.Repositories.DataRepository
 			return rows?.ToList() ?? new List<IntakeMessage>();
 		}
 
-		public async Task<List<IntakeMessage>> GetCallsCreatedBySenderSinceAsync(int departmentId, string sender, DateTime since)
+		public async Task<List<IntakeMessage>> GetCallsCreatedBySenderSinceAsync(int departmentId, string sender, DateTime since, int[] channelTypes)
 		{
-			if (string.IsNullOrWhiteSpace(sender))
+			if (string.IsNullOrWhiteSpace(sender) || channelTypes == null || channelTypes.Length == 0)
 				return new List<IntakeMessage>();
 
+			var parameters = new DynamicParameters();
+			parameters.Add("DepartmentId", departmentId);
+			parameters.Add("Sender", sender);
+			parameters.Add("Created", (int)IntakeMessageStates.CallCreated);
+			parameters.Add("Since", DatabaseTimestamp(since));
+			parameters.Add("ChannelTypes", InListValue(channelTypes));
 			var rows = await QueryAsync<IntakeMessage>(
 				$"SELECT * FROM {Tbl(Table)} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("Sender")} = {CaseInsensitive("Sender")} " +
-				$"AND {Col("State")} = {P}Created AND {Col("CallId")} IS NOT NULL AND {Col("ReceivedOn")} >= {P}Since ORDER BY {Col("ReceivedOn")} DESC",
-				new { DepartmentId = departmentId, Sender = sender, Created = (int)IntakeMessageStates.CallCreated, Since = DatabaseTimestamp(since) });
+				$"AND {InList("ChannelType", "ChannelTypes")} AND {Col("State")} = {P}Created AND {Col("CallId")} IS NOT NULL AND {Col("ReceivedOn")} >= {P}Since " +
+				$"ORDER BY {Col("ReceivedOn")} DESC",
+				parameters);
 
 			return rows?.ToList() ?? new List<IntakeMessage>();
 		}
@@ -342,9 +364,13 @@ namespace Resgrid.Repositories.DataRepository
 				throw new ArgumentNullException(nameof(block));
 
 			Utf8WriteGuard.Sanitize(block);
+			// The expiry only ever moves later, decided against the stored row in the same statement: a renewal that read the row before
+			// another one committed cannot shorten it, and a block that never expires stays so (a null expiry asked for makes it permanent).
+			var expires = Col("ExpiresOn");
 			var updated = await ExecuteAsync(
 				$"UPDATE {Tbl(Table)} SET {Col("ChannelType")} = {P}ChannelType, {Col("Reason")} = {P}Reason, {Col("CallId")} = {P}CallId, " +
-				$"{Col("BlockedByUserId")} = {P}BlockedByUserId, {Col("BlockedOn")} = {P}BlockedOn, {Col("ExpiresOn")} = {P}ExpiresOn " +
+				$"{Col("BlockedByUserId")} = {P}BlockedByUserId, {Col("BlockedOn")} = {P}BlockedOn, " +
+				$"{expires} = CASE WHEN {expires} IS NULL OR {P}ExpiresOn IS NULL THEN NULL WHEN {expires} > {P}ExpiresOn THEN {expires} ELSE {P}ExpiresOn END " +
 				$"WHERE {Col("IntakeBlockedSenderId")} = {P}Id AND {Col("DepartmentId")} = {P}DepartmentId AND {Col("RemovedOn")} IS NULL",
 				new
 				{

@@ -683,8 +683,9 @@ var resgrid;
                     syncDestination();
                 });
                 freeInputs().on('input change', updateDestinationInputs);
-                // Coordinates typed by hand win over a lookup still on its way.
-                $('#DestinationLatitude, #DestinationLongitude').on('input', invalidateDestinationLookups);
+                // An edit to any free-destination field (address, plus code, coordinates, what3words) wins over a lookup still on its way;
+                // a lookup's own .val() fires no input event, so it never cancels itself.
+                freeInputs().on('input', invalidateDestinationLookups);
                 $('#DestinationLatitude, #DestinationLongitude').on('change', syncDestination);
                 $('#DestinationPlusCode').closest('form').on('submit', onFormSubmit);
                 $('#Call_DestinationAddress').on('keypress', function (event) {

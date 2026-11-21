@@ -261,19 +261,22 @@ namespace Resgrid.Repositories.DataRepository
 				if (DataConfig.DatabaseType == DatabaseTypes.Postgres)
 				{
 					// Transaction-scoped: released when the start commits or rolls back. Polled, so a stuck start cannot hold
-					// another one forever.
-					var waitedMs = 0;
+					// another one forever. The budget is wall-clock (polls included), and no poll starts once it is spent.
+					var waited = System.Diagnostics.Stopwatch.StartNew();
 					while (true)
 					{
+						var commandSeconds = Math.Max(1, (int)Math.Ceiling((RouteStartLockTimeoutMs - waited.ElapsedMilliseconds) / 1000.0));
 						if (await connection.ExecuteScalarAsync<bool>(new Dapper.CommandDefinition("SELECT pg_try_advisory_xact_lock(@Space, @UnitId)",
-								new { Space = RouteStartLockSpace, UnitId = unitId }, transaction, cancellationToken: cancellationToken)))
+								new { Space = RouteStartLockSpace, UnitId = unitId }, transaction, commandTimeout: commandSeconds, cancellationToken: cancellationToken)))
 							return;
 
-						if (waitedMs >= RouteStartLockTimeoutMs)
+						var remainingMs = RouteStartLockTimeoutMs - waited.ElapsedMilliseconds;
+						if (remainingMs <= 0)
 							throw new TimeoutException($"Another route start for unit {unitId} is still running.");
 
-						await Task.Delay(250, cancellationToken);
-						waitedMs += 250;
+						await Task.Delay((int)Math.Min(250, remainingMs), cancellationToken);
+						if (waited.ElapsedMilliseconds >= RouteStartLockTimeoutMs)
+							throw new TimeoutException($"Another route start for unit {unitId} is still running.");
 					}
 				}
 
@@ -303,7 +306,9 @@ namespace Resgrid.Repositories.DataRepository
 				? $"UPDATE {schema}.routeinstances SET startreachedon = @ReachedOn WHERE routeinstanceid = @RouteInstanceId AND startreachedon IS NULL"
 				: $"UPDATE {schema}.[RouteInstances] SET [StartReachedOn] = @ReachedOn WHERE [RouteInstanceId] = @RouteInstanceId AND [StartReachedOn] IS NULL";
 
-			var parameters = new { RouteInstanceId = routeInstanceId, ReachedOn = reachedOn };
+			// The column is a timestamp without time zone on PostgreSQL: bind the UTC value as Unspecified (as RmsRepositoryBase.DatabaseTimestamp
+			// does), so the session TimeZone never shifts it when the legacy Npgsql timestamp switch is off.
+			var parameters = new { RouteInstanceId = routeInstanceId, ReachedOn = postgres ? DateTime.SpecifyKind(reachedOn, DateTimeKind.Unspecified) : reachedOn };
 
 			try
 			{

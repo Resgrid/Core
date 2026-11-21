@@ -272,10 +272,9 @@ namespace Resgrid.Web.Services.Intake
 				name = value.Substring(at + 1);
 			}
 
+			// Without a configured username a name proves nothing ("@OtherBot" is also a bot), so only the id-based checks count.
 			var configured = (botUsername ?? string.Empty).Trim().TrimStart('@');
-			return configured.Length > 0
-				? string.Equals(name, configured, StringComparison.OrdinalIgnoreCase)
-				: name.EndsWith("bot", StringComparison.OrdinalIgnoreCase);
+			return configured.Length > 0 && string.Equals(name, configured, StringComparison.OrdinalIgnoreCase);
 		}
 
 		private static string Clean(string value)

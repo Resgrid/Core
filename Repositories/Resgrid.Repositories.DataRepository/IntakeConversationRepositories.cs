@@ -216,14 +216,19 @@ namespace Resgrid.Repositories.DataRepository
 		public async Task<bool> TryCloseIdleAsync(string conversationId, int departmentId, string reason, DateTime idleBefore, DateTime closedOn,
 			CancellationToken cancellationToken = default)
 		{
+			// A reply is recorded (its message row) before the handler touches the thread's activity: a message row from after the cutoff keeps the
+			// thread open even while LastActivityOn is still the old value.
 			var updated = await ExecuteAsync(
 				$"UPDATE {Tbl(Table)} SET {Col("State")} = {P}Closed, {Col("ClosedOn")} = {P}ClosedOn, {Col("CloseReason")} = {P}Reason " +
 				$"WHERE {Col("IntakeConversationId")} = {P}Id AND {Col("DepartmentId")} = {P}DepartmentId AND {Col("State")} = {Open} " +
-				$"AND {Col("LastActivityOn")} < {P}IdleBefore",
+				$"AND {Col("LastActivityOn")} < {P}IdleBefore " +
+				$"AND NOT EXISTS (SELECT 1 FROM {Tbl("IntakeConversationMessages")} m WHERE m.{Col("IntakeConversationId")} = {P}Id " +
+				$"AND m.{Col("Direction")} = {P}Inbound AND m.{Col("CreatedOn")} >= {P}IdleBefore)",
 				new
 				{
 					Id = conversationId, DepartmentId = departmentId, Closed = (int)IntakeConversationStates.Closed, ClosedOn = DatabaseTimestamp(closedOn),
-					Reason = reason == null ? null : reason.Length <= 200 ? reason : reason.Substring(0, 200), IdleBefore = DatabaseTimestamp(idleBefore)
+					Reason = reason == null ? null : reason.Length <= 200 ? reason : reason.Substring(0, 200), IdleBefore = DatabaseTimestamp(idleBefore),
+					Inbound = (int)IntakeConversationMessageDirections.Inbound
 				},
 				cancellationToken);
 

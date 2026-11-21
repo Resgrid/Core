@@ -74,6 +74,9 @@ namespace Resgrid.Tests.AiDispatch
 			AiConfig.RuntimeDigest = "sha256:" + new string('b', 64);
 			AiConfig.SelfHostedDepartmentIds = "";
 			AiConfig.MonthlyTokenLimit = 2000000;
+			// The placeholder rename needs the enqueue-time fingerprint, which needs a usable audit key.
+			_savedAuditKey = AiConfig.AuditHmacKey;
+			AiConfig.AuditHmacKey = Convert.ToBase64String(Enumerable.Range(1, 32).Select(i => (byte)i).ToArray());
 			_saved.Clear();
 			_requests.Clear();
 			_completed = null;
@@ -190,6 +193,37 @@ namespace Resgrid.Tests.AiDispatch
 		}
 
 		[Test]
+		public async Task a_note_that_fails_on_a_not_a_dispatch_reading_still_leaves_the_label()
+		{
+			// No field is saved for a "not a dispatch" reading, so the note used to be the only write before the label: its failure ended
+			// the enrichment and the label was never written (a redelivery is a Duplicate and cannot recover it).
+			ModelReplies(isDispatch: false, confidence: 0.92);
+			_screening.Setup(s => s.SetAiScreeningAsync(DepartmentId, CallId, true, It.IsAny<CancellationToken>())).ReturnsAsync(true);
+			_calls.Setup(c => c.SaveCallNoteAsync(It.IsAny<CallNote>(), It.IsAny<CancellationToken>())).ThrowsAsync(new InvalidOperationException("db down"));
+
+			var outcome = await Enrich(AiDispatchChannels.IntakeSms);
+
+			_calls.Verify(c => c.SaveCallNoteAsync(It.IsAny<CallNote>(), It.IsAny<CancellationToken>()), Times.Once, "the reading's review note was attempted");
+			_screening.Verify(s => s.SetAiScreeningAsync(DepartmentId, CallId, true, It.IsAny<CancellationToken>()), Times.Once);
+			outcome.Should().Be(AiDispatchOutcomes.Applied);
+			_completed.AppliedFields.Should().Be("Screening");
+		}
+
+		[Test]
+		public async Task without_an_enqueue_fingerprint_the_placeholder_name_is_left_alone()
+		{
+			// An item queued without a usable audit key carries no fingerprint: comparing with the name the worker first read would
+			// overwrite a rename made between the enqueue and that read, so the name is never replaced.
+			(await _service.EnrichAsync(new AiDispatchQueueItem
+			{
+				DepartmentId = DepartmentId, CallId = CallId, Channel = AiDispatchChannels.IntakeSms, NameIsPlaceholder = true, PlaceholderNameFingerprint = null
+			}, CancellationToken.None)).Should().Be(AiDispatchOutcomes.Applied);
+
+			_saved.Single().Name.Should().Be("Hospital line: +15305550199");
+			_saved.Single().Type.Should().Be("Transfer", "the other fields are still filled");
+		}
+
+		[Test]
 		public async Task intake_prompts_carry_the_spam_guidance_and_email_prompts_do_not()
 		{
 			await Enrich(AiDispatchChannels.IntakeSms);
@@ -205,11 +239,16 @@ namespace Resgrid.Tests.AiDispatch
 			(AiDispatchConfig.EnrichEnabled, AiConfig.Endpoint, AiConfig.AllowPrivateEndpoint, AiConfig.ApiKey, AiConfig.Model, AiConfig.ModelRevision,
 				AiConfig.RuntimeDigest, AiConfig.SelfHostedDepartmentIds, AiConfig.MonthlyTokenLimit, AiDispatchConfig.DecisionsEnabled, AiDispatchConfig.MinimumConfidence,
 				AiDispatchConfig.AdmissionWaitSeconds, IntakeConfig.Enabled, AiConfig.SendCacheSalt) = _savedConfig;
+			AiConfig.AuditHmacKey = _savedAuditKey;
 		}
 
+		private string _savedAuditKey;
+
+		// As IntakeService queues it: the fingerprint of the placeholder name the call was saved with.
 		private Task<string> Enrich(int channel, bool placeholder = true) => _service.EnrichAsync(new AiDispatchQueueItem
 		{
-			DepartmentId = DepartmentId, CallId = CallId, Channel = channel, NameIsPlaceholder = placeholder
+			DepartmentId = DepartmentId, CallId = CallId, Channel = channel, NameIsPlaceholder = placeholder,
+			PlaceholderNameFingerprint = placeholder ? AiDispatchEnrichmentService.PlaceholderFingerprint(DepartmentId, CallId, _call.Name) : null
 		}, CancellationToken.None);
 
 		[TestCase(AiDispatchChannels.IntakeSms)]

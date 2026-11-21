@@ -68,32 +68,79 @@ namespace Resgrid.Services.Intake
 				return result;
 			}
 
-			var now = _clock.GetUtcNow().UtcDateTime;
-
-			// The block goes first: a block that fails leaves the call untouched for the dispatcher to try again.
-			if (blockSender)
+			// The stored call must still be pending when it is cancelled. Claiming it the way a dispatch does (one conditional write on the
+			// stored row) keeps a dispatcher's "Dispatch now" or the scheduled-calls worker from sending it while it is being dismissed,
+			// and a call sent in the meantime is reported NotPending before anything (the block included) is done.
+			var wasDispatched = call.HasBeenDispatched;
+			var dispatchOn = call.DispatchOn;
+			var claimedOn = await _calls.TryClaimCallForDispatchAsync(callId, departmentId, cancellationToken);
+			if (!claimedOn.HasValue)
 			{
-				var sender = IntakeBlockedSenders.Normalize(message.Sender);
-				if (sender == null)
-					result.SenderNotBlockable = true;
-				else
-					result.Block = await BlockAsync(departmentId, sender, message.ChannelType, callId, userId, now, cancellationToken);
+				result.Result = IntakeDismissResults.NotPending;
+				return result;
 			}
 
-			// Cancelled, as Omni's "Cancel call" on a pending call: nobody was dispatched, so nobody is told and nothing is released.
-			call.State = (int)CallStates.Cancelled;
-			call.ClosedByUserId = userId;
-			call.ClosedOn = now;
-			var saved = await _calls.SaveCallAsync(call, cancellationToken);
-			result.Result = IntakeDismissResults.Dismissed;
-
+			var now = _clock.GetUtcNow().UtcDateTime;
+			var labelled = false;
+			Call saved;
 			try
 			{
-				await _messages.SetScreeningAsync(departmentId, callId, (int)IntakeScreenings.DismissedAsSpam, DismissReplaceable, userId, now, CancellationToken.None);
+				// The block goes first: a block asked for must be in force before the call goes, or the sender would keep reaching a
+				// dispatcher who believes them blocked. One that cannot be made leaves the call pending for the dispatcher to try again.
+				if (blockSender)
+				{
+					var sender = IntakeBlockedSenders.Normalize(message.Sender);
+					if (sender == null)
+						result.SenderNotBlockable = true;
+					else
+					{
+						result.Block = await BlockAsync(departmentId, sender, message.ChannelType, callId, userId, now, cancellationToken);
+						if (result.Block == null)
+						{
+							await GiveBackClaimAsync(callId, departmentId, claimedOn.Value, dispatchOn, wasDispatched);
+							result.Result = IntakeDismissResults.Failed;
+							return result;
+						}
+					}
+				}
+
+				// The label goes before the cancel: a dismissed call is never left unlabelled (an automatic reading treats None as its to
+				// replace), and a label that cannot be written leaves the call pending for a retry instead of cancelled without it.
+				labelled = await _messages.SetScreeningAsync(departmentId, callId, (int)IntakeScreenings.DismissedAsSpam, DismissReplaceable, userId, now,
+					CancellationToken.None);
+
+				// Cancelled, as Omni's "Cancel call" on a pending call: nobody was dispatched, so nobody is told and nothing is released.
+				// The stored row is read again under the claim so edits made before it are kept; the claim's dispatched mark is not.
+				var stored = await _calls.GetCallByIdAsync(callId, true) ?? call;
+				stored.State = (int)CallStates.Cancelled;
+				stored.ClosedByUserId = userId;
+				stored.ClosedOn = now;
+				stored.HasBeenDispatched = wasDispatched;
+				saved = await _calls.SaveCallAsync(stored, cancellationToken);
 			}
 			catch (Exception ex)
 			{
-				Framework.Logging.LogException(ex, $"Intake call {callId} was dismissed but its screening could not be recorded.");
+				await GiveBackClaimAsync(callId, departmentId, claimedOn.Value, dispatchOn, wasDispatched);
+				if (labelled)
+					await RestoreScreeningAsync(departmentId, callId, message, now);
+
+				if (ex is OperationCanceledException && cancellationToken.IsCancellationRequested)
+					throw;
+
+				Framework.Logging.LogException(ex, $"Intake call {callId} could not be dismissed as spam; it is still pending.");
+				result.Result = IntakeDismissResults.Failed;
+				return result;
+			}
+
+			result.Result = IntakeDismissResults.Dismissed;
+			try
+			{
+				await _calls.CompleteCallDispatchClaimAsync(callId, departmentId, claimedOn.Value, CancellationToken.None);
+			}
+			catch (Exception ex)
+			{
+				// Harmless: a cancelled call can never be claimed again.
+				Framework.Logging.LogException(ex, $"Intake call {callId} was dismissed but its claim could not be ended.");
 			}
 
 			// The texter is not told the thread ended: nothing goes back to a number dismissed as spam.
@@ -110,6 +157,34 @@ namespace Resgrid.Services.Intake
 
 			_events.SendMessage(new CallClosedEvent { DepartmentId = departmentId, Call = saved ?? call });
 			return result;
+		}
+
+		/// <summary>Puts the claimed call back to waiting (only this claim; a call that moved on meanwhile is left alone).</summary>
+		private async Task GiveBackClaimAsync(int callId, int departmentId, DateTime claimedOn, DateTime? dispatchOn, bool? wasDispatched)
+		{
+			try
+			{
+				await _calls.ReleaseCallDispatchClaimAsync(callId, departmentId, claimedOn, (int)CallStates.Pending, dispatchOn, wasDispatched, CancellationToken.None);
+			}
+			catch (Exception ex)
+			{
+				// The claim's lease runs out on its own (CallDispatchClaims.Lease) and the call can be sent or dismissed again then.
+				Framework.Logging.LogException(ex, $"Intake call {callId} claim could not be given back after a failed dismissal.");
+			}
+		}
+
+		/// <summary>Takes the dismissal label back off a call that stayed pending, restoring what the row said before.</summary>
+		private async Task RestoreScreeningAsync(int departmentId, int callId, IntakeMessage message, DateTime now)
+		{
+			try
+			{
+				await _messages.SetScreeningAsync(departmentId, callId, message.Screening ?? (int)IntakeScreenings.None, new[] { (int)IntakeScreenings.DismissedAsSpam },
+					message.ScreenedByUserId, message.ScreenedOn ?? now, CancellationToken.None);
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex, $"Intake call {callId} kept a dismissal label although it was not dismissed.");
+			}
 		}
 
 		public async Task<IntakeBlockedSender> GetBlockAsync(int departmentId, string sender)
@@ -153,11 +228,16 @@ namespace Resgrid.Services.Intake
 		public async Task<Dictionary<int, IntakeScreenings>> GetScreeningsAsync(int departmentId, IEnumerable<int> callIds)
 		{
 			var screenings = new Dictionary<int, IntakeScreenings>();
-			var ids = (callIds ?? Enumerable.Empty<int>()).Where(id => id > 0).Distinct().Take(500).ToList();
+			var ids = (callIds ?? Enumerable.Empty<int>()).Where(id => id > 0).Distinct().ToList();
 			if (departmentId <= 0 || ids.Count == 0)
 				return screenings;
 
-			foreach (var message in await _messages.GetByCallIdsAsync(departmentId, ids) ?? new List<IntakeMessage>())
+			// In batches, so every call of a long list gets its screening (the IN list stays under SQL Server's parameter limit).
+			var messages = new List<IntakeMessage>();
+			foreach (var batch in ids.Chunk(IntakeService.CallLookupBatchSize))
+				messages.AddRange(await _messages.GetByCallIdsAsync(departmentId, batch) ?? new List<IntakeMessage>());
+
+			foreach (var message in messages)
 			{
 				if (message.CallId.HasValue && message.DepartmentId == departmentId && (message.Screening ?? 0) != (int)IntakeScreenings.None &&
 					Enum.IsDefined(typeof(IntakeScreenings), message.Screening.Value))
@@ -193,7 +273,8 @@ namespace Resgrid.Services.Intake
 							? (expiresOn.HasValue ? current.ExpiresOn : null)
 							: expiresOn;
 					if (await _blocked.RenewAsync(current, cancellationToken))
-						return current;
+						// The stored expiry is decided in the renewing statement (a concurrent renewal may have set a later one): answer with it.
+						return await _blocked.GetCurrentAsync(departmentId, sender) ?? current;
 
 					continue;
 				}
@@ -214,8 +295,10 @@ namespace Resgrid.Services.Intake
 					return block;
 			}
 
-			// Another writer keeps winning: the block it made stands.
-			return await _blocked.GetCurrentAsync(departmentId, sender);
+			// Another writer keeps winning: the block it made stands. Null when there is none even now (it was lifted between every read
+			// and write, or the row left standing has expired): the dismissal then fails rather than reporting a sender blocked who is not.
+			var standing = await _blocked.GetCurrentAsync(departmentId, sender);
+			return standing != null && standing.IsInForce(now) ? standing : null;
 		}
 	}
 }

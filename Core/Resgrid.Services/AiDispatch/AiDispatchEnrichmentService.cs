@@ -468,12 +468,13 @@ namespace Resgrid.Services.AiDispatch
 			if (!IsEnrichable(call, original.DepartmentId, item.Channel))
 				return AiDispatchOutcomes.CallNotActive;
 
-			// Intake: the "{channel}: {sender}" fallback name is the placeholder, unless a dispatcher renamed the call meanwhile. With the
-			// fingerprint taken at enqueue, a rename made before the worker first read the call counts too (original.Name would hold it).
+			// Intake: the "{channel}: {sender}" fallback name is the placeholder, unless a dispatcher renamed the call meanwhile. Only the
+			// fingerprint taken at enqueue proves the name is still the placeholder: comparing with the name the worker first read would
+			// miss a rename made before that read. No fingerprint (no usable AiConfig.AuditHmacKey, or an item queued before it existed)
+			// means the name is left alone.
 			var placeholder = AiDispatchChannels.IsIntake(item.Channel)
-				? item.NameIsPlaceholder && (string.IsNullOrEmpty(item.PlaceholderNameFingerprint)
-					? string.Equals(call.Name, original.Name, StringComparison.Ordinal)
-					: string.Equals(PlaceholderFingerprint(call.DepartmentId, call.CallId, call.Name), item.PlaceholderNameFingerprint, StringComparison.Ordinal))
+				? item.NameIsPlaceholder && !string.IsNullOrEmpty(item.PlaceholderNameFingerprint) &&
+				  string.Equals(PlaceholderFingerprint(call.DepartmentId, call.CallId, call.Name), item.PlaceholderNameFingerprint, StringComparison.Ordinal)
 				: string.Equals(call.Name?.Trim(), PlaceholderCallName, StringComparison.Ordinal);
 
 			var applied = new List<string>();
@@ -504,6 +505,11 @@ namespace Resgrid.Services.AiDispatch
 				audit.AppliedFields = string.Join(",", applied);
 			}
 
+			// Intake (M0326): the reading labels the call either way, so a later turn that finds a real request clears the label. Only a
+			// confident reading gets here (LowConfidence returned earlier). Written before the note, so a note that fails (and ends the
+			// enrichment when no field was saved) cannot lose it; a label that cannot be written never fails the enrichment.
+			var screened = AiDispatchChannels.IsIntake(item.Channel) && await ScreenAsync(call, !enrichment.IsDispatch);
+
 			try
 			{
 				// A conversation refresh after each AI turn only fills fields; its AI note (summary, suggested priority, related calls) waits for the
@@ -525,15 +531,13 @@ namespace Resgrid.Services.AiDispatch
 						await _calls.SaveCallNoteAsync(Note(related.CallId, managingUserId, $"AI suggestion (Enhanced AI): call {call.Number} may be about this same incident. Please review."), cancellationToken);
 				}
 			}
-			// Once fields are saved, a failed note must not hide them from the audit or keep boards from refreshing.
-			catch (Exception ex) when (saved && ex is not OperationCanceledException)
+			// Once fields (or the intake label) are saved, a failed note must not hide them from the audit or keep boards from refreshing.
+			catch (Exception ex) when ((saved || screened) && ex is not OperationCanceledException)
 			{
 				Framework.Logging.LogException(ex, $"AI dispatch note failed for call {call.CallId}; the applied fields were saved.");
 			}
 
-			// Intake (M0326): the reading labels the call either way, so a later turn that finds a real request clears the label. Only a
-			// confident reading gets here (LowConfidence returned earlier). A label that cannot be written never fails the enrichment.
-			if (AiDispatchChannels.IsIntake(item.Channel) && await ScreenAsync(call, !enrichment.IsDispatch))
+			if (screened)
 				applied.Add("Screening");
 
 			audit.AppliedFields = applied.Count == 0 ? null : string.Join(",", applied);
@@ -564,7 +568,7 @@ namespace Resgrid.Services.AiDispatch
 		/// <summary>
 		/// <see cref="AiDispatchQueueItem.PlaceholderNameFingerprint"/>: HMAC-SHA256 under AiConfig.AuditHmacKey of the department,
 		/// call and exact name, so the queue item proves "the name is still what it was" without carrying the sender. Null when there is
-		/// no name or no usable key (32+ bytes of base64): the worker then falls back to comparing with the name it first read.
+		/// no name or no usable key (32+ bytes of base64): the worker then leaves the call's name alone (a dispatcher's rename always wins).
 		/// </summary>
 		public static string PlaceholderFingerprint(int departmentId, int callId, string name)
 		{

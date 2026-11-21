@@ -280,6 +280,22 @@ namespace Resgrid.Tests.Services.Routing
 			live.Legs.Should().NotContain(l => l.IsRouteStart);
 			_routes.Verify(r => r.MarkStartReachedAsync("inst", It.IsAny<CancellationToken>()), Times.Once);
 		}
+
+		[Test]
+		public async Task A_read_only_preview_at_the_start_records_nothing()
+		{
+			// PR #588 round 2: GetInstanceDirections needs only Call_View, and the position is the caller's own claim, so a caller who cannot
+			// operate the run must not be able to mark its start reached through the preview.
+			var live = await _service.GetLiveDirectionsAsync("inst", 39.5001, -119.8001, null, true, "en", false, includeStart: true, recordStartReached: false);
+
+			live.Successful.Should().BeTrue();
+			live.Legs.Should().NotContain(l => l.IsRouteStart, "the unit is already there, so the preview routes on from its position");
+			_routes.Verify(r => r.MarkStartReachedAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+
+			// Away from the start, the read-only preview still shows the leg there.
+			(await _service.GetLiveDirectionsAsync("inst", 39.40, -119.70, null, true, "en", false, includeStart: true, recordStartReached: false))
+				.Legs[0].IsRouteStart.Should().BeTrue();
+		}
 	}
 
 	/// <summary>Which plans a call can follow, call defaults and starting a call's route (M0322).</summary>

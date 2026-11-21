@@ -182,7 +182,7 @@
     <value>Δεν ήταν δυνατή η αποθήκευση του καναλιού. Ελέγξτε τις τιμές και δοκιμάστε ξανά.</value>
   </data>
   <data name="Error.InvalidSenders" xml:space="preserve">
-    <value>Κάθε επιτρεπόμενος αποστολέας μπορεί να έχει έως 256 χαρακτήρες. Το κανάλι δεν αποθηκεύτηκε.</value>
+    <value>Καταχωρίστε έως 200 επιτρεπόμενους αποστολείς, με έως 256 χαρακτήρες ο καθένας, χωρισμένους με κόμματα ή νέες γραμμές. Το κανάλι δεν αποθηκεύτηκε.</value>
   </data>
   <data name="Type.Sms" xml:space="preserve">
     <value>Μήνυμα κειμένου (SMS)</value>
@@ -348,6 +348,12 @@
   </data>
   <data name="DismissNotPending" xml:space="preserve">
     <value>Αυτό το συμβάν δεν είναι πλέον σε αναμονή, οπότε δεν μπορεί να απορριφθεί ως ανεπιθύμητο.</value>
+  </data>
+  <data name="DismissFailed" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η απόρριψη του συμβάντος αυτή τη στιγμή και παραμένει σε αναμονή. Δοκιμάστε ξανά.</value>
+  </data>
+  <data name="BlockedSendersUnavailable" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η φόρτωση της λίστας αποκλεισμένων αποστολέων. Φορτώστε ξανά τη σελίδα για να δοκιμάσετε πάλι.</value>
   </data>
   <data name="Screening.LikelyNotIncident" xml:space="preserve">
     <value>Enhanced AI: πιθανότατα δεν είναι συμβάν</value>

@@ -124,9 +124,79 @@ namespace Resgrid.Tests.AiDispatch
 					summary = "Patient transfer requested at 123 Main St."
 				})) }, 900, 100, "tool_calls"));
 
+			_screening = new Mock<IIntakeScreeningService>();
+			_screening.Setup(s => s.SetAiScreeningAsync(DepartmentId, CallId, It.IsAny<bool>(), It.IsAny<CancellationToken>())).ReturnsAsync(false);
+
 			_service = new AiDispatchEnrichmentService(_access.Object, _flags.Object, _departments.Object, _calls.Object, Mock.Of<IGeoLocationProvider>(), _protection.Object,
 				_audits.Object, settings.Object, _admission.Object, _usage.Object, new Lazy<ILlmClient>(() => _llm.Object),
-				new Lazy<IDecisionClient>(() => Mock.Of<IDecisionClient>()), Mock.Of<IEventAggregator>(), new FixedClock());
+				new Lazy<IDecisionClient>(() => Mock.Of<IDecisionClient>()), Mock.Of<IEventAggregator>(), new FixedClock(),
+				screening: new Lazy<IIntakeScreeningService>(() => _screening.Object));
+		}
+
+		private Mock<IIntakeScreeningService> _screening;
+
+		private void ModelReplies(bool isDispatch, double confidence)
+		{
+			_llm.Setup(l => l.CompleteAsync(It.IsAny<LlmRequest>(), It.IsAny<CancellationToken>()))
+				.Callback((LlmRequest r, CancellationToken _) => _requests.Add(r))
+				.ReturnsAsync(new LlmResult(null, new[] { new LlmToolCall("t1", AiDispatchPrompt.ToolName, JsonSerializer.Serialize(new
+				{
+					isDispatch, confidence, title = (string)null, callTypeId = (int?)null, priorityId = (int?)null, address = (string)null,
+					contactName = (string)null, contactNumber = (string)null, incidentNumber = (string)null, possibleDuplicateOfCallId = (int?)null, summary = (string)null
+				})) }, 900, 100, "tool_calls"));
+		}
+
+		[Test]
+		public async Task a_confident_not_a_dispatch_reading_labels_the_intake_call_likely_not_an_incident()
+		{
+			ModelReplies(isDispatch: false, confidence: 0.92);
+			_screening.Setup(s => s.SetAiScreeningAsync(DepartmentId, CallId, true, It.IsAny<CancellationToken>())).ReturnsAsync(true);
+
+			(await Enrich(AiDispatchChannels.IntakeSms)).Should().Be(AiDispatchOutcomes.Applied);
+
+			_screening.Verify(s => s.SetAiScreeningAsync(DepartmentId, CallId, true, It.IsAny<CancellationToken>()), Times.Once);
+			_completed.AppliedFields.Should().Contain("Screening");
+			_saved.Should().BeEmpty("a label changes no call field");
+		}
+
+		[Test]
+		public async Task a_dispatch_reading_clears_the_label_so_a_later_turn_can_undo_it()
+		{
+			(await Enrich(AiDispatchChannels.IntakeSms)).Should().Be(AiDispatchOutcomes.Applied);
+
+			_screening.Verify(s => s.SetAiScreeningAsync(DepartmentId, CallId, false, It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
+		public async Task a_low_confidence_reading_never_labels_the_call()
+		{
+			ModelReplies(isDispatch: false, confidence: 0.3);
+
+			(await Enrich(AiDispatchChannels.IntakeSms)).Should().Be(AiDispatchOutcomes.LowConfidence);
+
+			_screening.Verify(s => s.SetAiScreeningAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public async Task a_label_that_cannot_be_written_never_fails_the_enrichment()
+		{
+			ModelReplies(isDispatch: false, confidence: 0.92);
+			_screening.Setup(s => s.SetAiScreeningAsync(DepartmentId, CallId, true, It.IsAny<CancellationToken>())).ThrowsAsync(new InvalidOperationException("db down"));
+
+			var outcome = await Enrich(AiDispatchChannels.IntakeSms);
+
+			outcome.Should().NotBe(AiDispatchOutcomes.Unavailable);
+			_completed.AppliedFields?.Should().NotContain("Screening");
+		}
+
+		[Test]
+		public async Task intake_prompts_carry_the_spam_guidance_and_email_prompts_do_not()
+		{
+			await Enrich(AiDispatchChannels.IntakeSms);
+			_requests.Single().Messages.Single(m => m.Role == "user").Content.Should().Contain(AiDispatchEnrichmentService.IntakeScreeningHint.Trim());
+
+			AiDispatchEnrichmentService.IntakeSource(AiDispatchChannels.PostmarkEmail, new Call { State = (int)CallStates.Active })
+				.Should().NotContain("spam");
 		}
 
 		[TearDown]

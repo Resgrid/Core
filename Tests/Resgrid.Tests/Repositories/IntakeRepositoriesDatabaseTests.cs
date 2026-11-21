@@ -118,8 +118,8 @@ namespace Resgrid.Tests.Repositories
 
 			var source = new Mock<IMigrationSource>();
 			source.Setup(s => s.GetMigrations()).Returns(IsPostgres
-				? new IMigration[] { new M0323_AddIntakeChannelsAndDedicatedNumbersPg() }
-				: new IMigration[] { new M0323_AddIntakeChannelsAndDedicatedNumbers() });
+				? new IMigration[] { new M0323_AddIntakeChannelsAndDedicatedNumbersPg(), new M0326_AddIntakeSpamScreeningPg() }
+				: new IMigration[] { new M0323_AddIntakeChannelsAndDedicatedNumbers(), new M0326_AddIntakeSpamScreening() });
 			_runner = new ServiceCollection().AddFluentMigratorCore().ConfigureRunner(r =>
 			{
 				if (IsPostgres) r.AddPostgres(); else r.AddSqlServer();
@@ -146,7 +146,7 @@ namespace Resgrid.Tests.Repositories
 		public async Task Empty_the_tables()
 		{
 			await using var database = Connect(_connection);
-			foreach (var table in new[] { "IntakeMessages", "IntakeChannels", "VoiceIntakeSessions", "Calls" })
+			foreach (var table in new[] { "IntakeMessages", "IntakeChannels", "VoiceIntakeSessions", "Calls", "IntakeBlockedSenders" })
 				await database.ExecuteAsync("DELETE FROM " + (IsPostgres ? table.ToLowerInvariant() : "[" + table + "]"));
 		}
 
@@ -167,6 +167,110 @@ namespace Resgrid.Tests.Repositories
 			claims.Count(c => c).Should().Be(1);
 			(await repository.TryClaimAsync(Message("ch-2", "SM-1", Base))).Should().BeTrue("the same id on another channel is another message");
 			(await repository.GetByProviderMessageIdAsync("ch-1", "sm-1")).Should().NotBeNull("provider ids match regardless of case");
+		}
+
+		private IntakeBlockedSendersRepository Blocked() { var (c, s, u, q) = Parts(); return new IntakeBlockedSendersRepository(c, s, u, q); }
+
+		private static IntakeBlockedSender Block(string sender, DateTime blockedOn, DateTime? expiresOn, int departmentId = 55) => new IntakeBlockedSender
+		{
+			IntakeBlockedSenderId = Guid.NewGuid().ToString("D"), DepartmentId = departmentId, Sender = sender, ChannelType = (int)IntakeChannelTypes.Sms,
+			Reason = IntakeBlockReasons.Spam, CallId = 900, BlockedByUserId = "dispatcher-1", BlockedOn = blockedOn, ExpiresOn = expiresOn
+		};
+
+		[Test]
+		public async Task the_per_sender_lookup_reads_only_the_senders_recent_calls_newest_first()
+		{
+			var repository = Messages();
+			var old = Message("ch-1", "SM-old", Base.AddHours(-2), (int)IntakeMessageStates.CallCreated, 800);
+			var first = Message("ch-1", "SM-a", Base.AddMinutes(-40), (int)IntakeMessageStates.CallCreated, 801);
+			var second = Message("ch-2", "SM-b", Base.AddMinutes(-10), (int)IntakeMessageStates.CallCreated, 802);
+			var joined = Message("ch-1", "SM-c", Base.AddMinutes(-5), (int)IntakeMessageStates.AddedToCall, 802);
+			var other = Message("ch-1", "SM-d", Base.AddMinutes(-5), (int)IntakeMessageStates.CallCreated, 803);
+			other.Sender = "+19165550100";
+			var email = Message("ch-3", "EM-1", Base.AddMinutes(-3), (int)IntakeMessageStates.CallCreated, 804, (int)IntakeChannelTypes.Email);
+			email.Sender = "Dispatch@Mercy.org";
+			foreach (var message in new[] { old, first, second, joined, other, email })
+				(await repository.TryClaimAsync(message)).Should().BeTrue();
+
+			var rows = await repository.GetCallsCreatedBySenderSinceAsync(55, "+15305550199", Base.AddHours(-1));
+			rows.Select(r => r.CallId).Should().Equal(802, 801);
+
+			(await repository.GetCallsCreatedBySenderSinceAsync(55, "dispatch@mercy.org", Base.AddHours(-1))).Should().ContainSingle("senders match regardless of case");
+			(await repository.GetCallsCreatedBySenderSinceAsync(56, "+15305550199", Base.AddHours(-1))).Should().BeEmpty();
+		}
+
+		[Test]
+		public async Task screenings_replace_only_what_they_are_allowed_to()
+		{
+			var repository = Messages();
+			var created = Message("ch-1", "SM-s", Base, (int)IntakeMessageStates.CallCreated, 900);
+			var joined = Message("ch-1", "SM-j", Base, (int)IntakeMessageStates.AddedToConversation, 900);
+			(await repository.TryClaimAsync(created)).Should().BeTrue();
+			(await repository.TryClaimAsync(joined)).Should().BeTrue();
+
+			(await repository.SetScreeningAsync(55, 900, (int)IntakeScreenings.LikelyNotIncident, new[] { 0, 1 }, null, Base)).Should().BeTrue("unscreened (NULL) reads as None");
+			(await repository.SetScreeningAsync(55, 900, (int)IntakeScreenings.LikelyNotIncident, new[] { 0, 1 }, null, Base)).Should().BeFalse("no change");
+			(await repository.SetScreeningAsync(55, 900, (int)IntakeScreenings.DismissedAsSpam, new[] { 0, 1, 2 }, "dispatcher-1", Base.AddMinutes(1))).Should().BeTrue();
+			(await repository.SetScreeningAsync(55, 900, (int)IntakeScreenings.None, new[] { 1 }, null, Base.AddMinutes(2))).Should().BeFalse("the AI never clears a dismissal");
+			(await repository.SetScreeningAsync(56, 900, (int)IntakeScreenings.RepeatSender, new[] { 0, 1, 2, 3 }, null, Base)).Should().BeFalse("another department's call");
+
+			var rows = await repository.GetByCallIdsAsync(55, new[] { 900 });
+			rows.Should().ContainSingle("only the row that created the call carries the screening");
+			rows[0].Screening.Should().Be((int)IntakeScreenings.DismissedAsSpam);
+			rows[0].ScreenedByUserId.Should().Be("dispatcher-1");
+			rows[0].ScreenedOn.Should().Be(Base.AddMinutes(1));
+		}
+
+		[Test]
+		public async Task one_standing_block_per_sender_even_concurrently_and_expiry_and_lifting_apply()
+		{
+			var repository = Blocked();
+			var inserts = await Task.WhenAll(Enumerable.Range(0, 5).Select(_ => Blocked().TryInsertAsync(Block("+15305550199", Base, Base.AddDays(30)))));
+			inserts.Count(i => i).Should().Be(1);
+			(await repository.TryInsertAsync(Block("+15305550199", Base, null, departmentId: 56))).Should().BeTrue("another department blocks on its own");
+
+			(await repository.GetInForceAsync(55, "+15305550199", Base.AddDays(29))).Should().NotBeNull();
+			(await repository.GetInForceAsync(55, "+15305550199", Base.AddDays(31))).Should().BeNull("expired");
+			(await repository.GetCurrentAsync(55, "+15305550199")).Should().NotBeNull("an expired row stands until lifted or purged");
+
+			var current = await repository.GetCurrentAsync(55, "+15305550199");
+			current.ExpiresOn = Base.AddDays(60);
+			current.BlockedByUserId = "dispatcher-2";
+			(await repository.RenewAsync(current)).Should().BeTrue();
+			(await repository.GetInForceAsync(55, "+15305550199", Base.AddDays(45))).BlockedByUserId.Should().Be("dispatcher-2");
+
+			(await repository.RemoveAsync(56, current.IntakeBlockedSenderId, "admin-1", Base.AddDays(1))).Should().BeFalse("not that department's block");
+			(await repository.RemoveAsync(55, current.IntakeBlockedSenderId, "admin-1", Base.AddDays(1))).Should().BeTrue();
+			(await repository.RemoveAsync(55, current.IntakeBlockedSenderId, "admin-1", Base.AddDays(1))).Should().BeFalse("already lifted");
+			(await repository.GetInForceAsync(55, "+15305550199", Base.AddDays(2))).Should().BeNull();
+			(await repository.GetCurrentForDepartmentAsync(55)).Should().BeEmpty();
+			(await repository.TryInsertAsync(Block("+15305550199", Base.AddDays(3), null))).Should().BeTrue("a lifted block makes room for a new one");
+		}
+
+		[Test]
+		public async Task email_blocks_match_regardless_of_case()
+		{
+			var repository = Blocked();
+			(await repository.TryInsertAsync(Block("dispatch@mercy.org", Base, null))).Should().BeTrue();
+			(await repository.TryInsertAsync(Block("Dispatch@Mercy.ORG", Base, null))).Should().BeFalse("the same sender");
+			(await repository.GetInForceAsync(55, "DISPATCH@mercy.org", Base)).Should().NotBeNull();
+		}
+
+		[Test]
+		public async Task the_purge_removes_only_blocks_that_ended_before_the_cutoff()
+		{
+			var repository = Blocked();
+			var lifted = Block("+15305550101", Base.AddDays(-200), null);
+			var expired = Block("+15305550102", Base.AddDays(-200), Base.AddDays(-100));
+			var standing = Block("+15305550103", Base.AddDays(-200), null);
+			var recent = Block("+15305550104", Base.AddDays(-20), Base.AddDays(-10));
+			foreach (var block in new[] { lifted, expired, standing, recent })
+				(await repository.TryInsertAsync(block)).Should().BeTrue();
+			(await repository.RemoveAsync(55, lifted.IntakeBlockedSenderId, "admin-1", Base.AddDays(-150))).Should().BeTrue();
+
+			(await repository.PurgeEndedBeforeAsync(Base.AddDays(-90))).Should().Be(2);
+
+			(await repository.GetCurrentForDepartmentAsync(55)).Select(b => b.Sender).Should().BeEquivalentTo("+15305550103", "+15305550104");
 		}
 
 		[Test]

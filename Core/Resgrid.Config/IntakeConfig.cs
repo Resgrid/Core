@@ -56,5 +56,25 @@ namespace Resgrid.Config
 
 		/// <summary>Webhook intake: requests accepted per channel token per minute and API process (signed or not); more get 429.</summary>
 		public static int WebhookRequestsPerMinute = 60;
+
+		/// <summary>
+		/// Pending calls one sender may create per department in a rolling hour on the public phone lines (SMS, voice, WhatsApp channels
+		/// with no allowed-sender list; M0326; 0 = no limit). Past it, a message joins the sender's newest open intake call as a note; with
+		/// none open it still creates a call, screened RepeatSender, which the dispatcher desk does not offer. Email, chat and webhook
+		/// channels (CAD bridges, alarm panels) are never limited.
+		/// </summary>
+		public static int MaxCallsPerSenderPerHour = 3;
+
+		/// <summary>Days a "dismiss as spam" block lasts (phone numbers are reassigned); 0 = until an admin lifts it.</summary>
+		public static int SpamBlockDays = 30;
+
+		/// <summary>
+		/// Voice intake asks the caller to press 1 before the guided questions start (M0326). Auto-dialers and recorded robocalls do
+		/// not, so they create no session, no call and no use of the monthly voice limit.
+		/// </summary>
+		public static bool VoiceGateEnabled = true;
+
+		/// <summary>Seconds the voice gate waits for the caller to press 1.</summary>
+		public static int VoiceGateTimeoutSeconds = 8;
 	}
 }

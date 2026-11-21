@@ -53,6 +53,8 @@ namespace Resgrid.Model
 		public const string VoiceIntakeNothingHeard = "We did not hear a request. Please call back or text this number. For emergencies, dial 911. Goodbye.";
 		public const string VoiceIntakeTextOnly = "This line takes text messages. Please text this number. For emergencies, dial 911. Goodbye.";
 		public const string VoiceIntakeNumberInactive = "This number is no longer in service for the department. For emergencies, dial 911. Goodbye.";
+		public const string VoiceIntakeGate = "Thank you for calling. To leave a request for the dispatcher, press 1 now.";
+		public const string VoiceIntakeUnavailable = "This line cannot take your call. For emergencies, dial 911. Goodbye.";
 
 		public static string CallClosedByNumber(string callNumber) => $"This call, ID {callNumber}, has been closed. Goodbye.";
 
@@ -121,7 +123,9 @@ namespace Resgrid.Model
 				VoiceIntakeFailed,
 				VoiceIntakeNothingHeard,
 				VoiceIntakeTextOnly,
-				VoiceIntakeNumberInactive
+				VoiceIntakeNumberInactive,
+				VoiceIntakeGate,
+				VoiceIntakeUnavailable
 			};
 		}
 	}

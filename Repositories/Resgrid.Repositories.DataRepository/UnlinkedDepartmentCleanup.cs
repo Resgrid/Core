@@ -32,7 +32,7 @@ namespace Resgrid.Repositories.DataRepository
 		{
 			"CallLocationIndexStates", "CallNumberSequences", "DocumentNumberSequences", "DepartmentApiKeys", "ScheduledTasks", "UserStates",
 			"UdfDefinitions", "ChatbotSessions", "ChatbotMessageLog", "ChatbotDepartmentConfigs", "AiDispatchAudits", "DepartmentAiDispatchConfigs",
-			"AiBillingAccounts", "AdpBillingAccounts", "ContactPreplanHazards", "ContactPreplans", "ContactAttachments", "DepartmentProfileMedia", "TypeIcons", "MapVisualizations", "RoadClosures", "PoiImports", "PoiCapabilityAssignments", "PoiCapabilities", "PoiAvailabilities", "DestinationRules", "RecurringCallAlerts", "RecurringCallOccurrences", "RecurringCalls", "CallPersonnelReleases", "CallBroadcastOutbox", "IntakeConversationMessages", "IntakeConversations", "IntakeMessages", "IntakeChannels", "VoiceIntakeSessions", "DepartmentPhoneNumbers", "AiDestinationReviews", "AiDestinationAdvices", "DedicatedNumberBillingAccounts", "UserDashboards", "DepartmentDashboardTemplates",
+			"AiBillingAccounts", "AdpBillingAccounts", "ContactPreplanHazards", "ContactPreplans", "ContactAttachments", "DepartmentProfileMedia", "TypeIcons", "MapVisualizations", "RoadClosures", "PoiImports", "PoiCapabilityAssignments", "PoiCapabilities", "PoiAvailabilities", "DestinationRules", "RecurringCallAlerts", "RecurringCallOccurrences", "RecurringCalls", "CallPersonnelReleases", "CallBroadcastOutbox", "IntakeConversationMessages", "IntakeConversations", "IntakeBlockedSenders", "IntakeMessages", "IntakeChannels", "VoiceIntakeSessions", "DepartmentPhoneNumbers", "AiDestinationReviews", "AiDestinationAdvices", "DedicatedNumberBillingAccounts", "UserDashboards", "DepartmentDashboardTemplates",
 			"CallOutstandingRequirements", "RunCardDecisions", "RunCardTargets", "ResponsePackages", "RunCardActivations",
 			"RunCards", "StationCoverageRequirements", "ModerationActions", "ModerationReports", "ModerationRequests", "MessageRecipients", "Messages",
 			"DepartmentMemberSensitiveData", "DepartmentMemberEmergencyContacts", "UserExternalIdentityLinks", "DepartmentSecurityPolicies",
@@ -101,7 +101,7 @@ namespace Resgrid.Repositories.DataRepository
 			// Intake channels and their message audit, voice intake sessions, AI destination advice and review requests, dedicated
 			// numbers and their billing accounts (M0323); no foreign keys. The department deletion flow reads the numbers still held at the
 			// carrier before this purge and returns them (IDepartmentPhoneNumbersService.ReleaseAtCarrierAsync) right after it commits.
-			await Delete("IntakeConversationMessages", "IntakeConversations", "IntakeMessages", "IntakeChannels", "VoiceIntakeSessions", "AiDestinationReviews", "AiDestinationAdvices",
+			await Delete("IntakeConversationMessages", "IntakeConversations", "IntakeBlockedSenders", "IntakeMessages", "IntakeChannels", "VoiceIntakeSessions", "AiDestinationReviews", "AiDestinationAdvices",
 				"DepartmentPhoneNumbers", "DedicatedNumberBillingAccounts");
 
 			// Home dashboard boards and department templates (layouts only)

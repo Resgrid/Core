@@ -33,11 +33,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly ICallsService _calls;
 		private readonly IFeatureToggleService _flags;
 		private readonly IEventAggregator _events;
+		private readonly IIntakeScreeningService _screening;
+		private readonly Resgrid.Model.Services.IAuthorizationService _authorization;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Department.IntakeChannels> _localizer;
 
 		public IntakeChannelsController(IIntakeChannelsService channels, IIntakeService intake, ICallsService calls, IFeatureToggleService flags,
-			IEventAggregator events, IStringLocalizer<Resgrid.Localization.Areas.User.Department.IntakeChannels> localizer)
+			IEventAggregator events, IIntakeScreeningService screening, Resgrid.Model.Services.IAuthorizationService authorization,
+			IStringLocalizer<Resgrid.Localization.Areas.User.Department.IntakeChannels> localizer)
 		{
+			_screening = screening;
+			_authorization = authorization;
 			_channels = channels;
 			_intake = intake;
 			_calls = calls;
@@ -85,8 +90,76 @@ namespace Resgrid.Web.Areas.User.Controllers
 				});
 			}
 
+			foreach (var block in await _screening.GetBlockedSendersAsync(DepartmentId))
+			{
+				model.BlockedSenders.Add(new IntakeBlockedSenderRow
+				{
+					IntakeBlockedSenderId = block.IntakeBlockedSenderId,
+					Sender = block.Sender,
+					ChannelType = (IntakeChannelTypes)block.ChannelType,
+					CallId = block.CallId,
+					BlockedByName = string.IsNullOrWhiteSpace(block.BlockedByUserId) ? null : await UserHelper.GetFullNameForUser(block.BlockedByUserId),
+					BlockedOn = block.BlockedOn,
+					ExpiresOn = block.ExpiresOn,
+					Expired = !block.IsInForce(now)
+				});
+			}
+
 			return View(model);
 		}
+
+		/// <summary>
+		/// "Dismiss as spam" on a pending intake call (M0326): cancels it without notifying anyone, ends its SMS conversation silently and,
+		/// when <paramref name="blockSender"/>, blocks the sender for IntakeConfig.SpamBlockDays. Needs the right to close the call.
+		/// </summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Call_Update)]
+		public async Task<IActionResult> DismissAsSpam(int callId, bool blockSender, CancellationToken cancellationToken)
+		{
+			if (callId <= 0)
+				return BadRequest();
+
+			if (!await _authorization.CanUserCloseCallAsync(UserId, callId, DepartmentId))
+				return Unauthorized();
+
+			var outcome = await _screening.DismissAsSpamAsync(DepartmentId, callId, UserId, blockSender, cancellationToken);
+			switch (outcome.Result)
+			{
+				case IntakeDismissResults.Dismissed:
+					AuditDismissal(callId, outcome);
+					TempData["IntakeDismissMessage"] = outcome.Block != null ? _localizer["DismissedAndBlocked"].Value
+						: outcome.SenderNotBlockable ? _localizer["DismissedNotBlockable"].Value
+						: _localizer["Dismissed"].Value;
+					break;
+				case IntakeDismissResults.NotPending:
+					TempData["IntakeDismissError"] = _localizer["DismissNotPending"].Value;
+					break;
+				default:
+					return NotFound();
+			}
+
+			return RedirectToAction("ViewCall", "Dispatch", new { area = "User", callId });
+		}
+
+		/// <summary>Lifts a blocked sender early (M0326).</summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> Unblock(string id, CancellationToken cancellationToken)
+		{
+			var block = (await _screening.GetBlockedSendersAsync(DepartmentId)).FirstOrDefault(b => string.Equals(b.IntakeBlockedSenderId, id, StringComparison.OrdinalIgnoreCase));
+			if (block == null || !await _screening.UnblockAsync(DepartmentId, block.IntakeBlockedSenderId, UserId, cancellationToken))
+				return NotFound();
+
+			AuditBlock(new { IntakeBlockedSender = BlockSnapshot(block) }, new { IntakeBlockedSender = BlockSnapshot(block), Change = "Unblocked" });
+			TempData["IntakeChannelsMessage"] = _localizer["Unblocked"].Value;
+			return RedirectToAction(nameof(Index));
+		}
+
+		/// <summary>The label for a screened intake call ("Enhanced AI: likely not an incident"), or null when it is not screened.</summary>
+		public static string ScreeningLabel(IStringLocalizer localizer, int screening) =>
+			screening > 0 && Enum.IsDefined(typeof(IntakeScreenings), screening) ? localizer["Screening." + (IntakeScreenings)screening].Value : null;
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_Update)]
@@ -240,7 +313,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var ids = (callIds ?? string.Empty).Split(',', StringSplitOptions.RemoveEmptyEntries)
 				.Select(v => int.TryParse(v.Trim(), out var id) ? id : 0).Where(id => id > 0).Distinct().Take(200).ToList();
 			var sources = await _intake.GetCallSourcesAsync(DepartmentId, ids);
-			return Json(sources.ToDictionary(s => s.Key.ToString(), s => SourceLabel(_localizer, s.Value)));
+			// A screened call says why after its source: "via Text message (SMS): Hospital line · Enhanced AI: likely not an incident".
+			return Json(sources.ToDictionary(s => s.Key.ToString(), s =>
+			{
+				var label = SourceLabel(_localizer, s.Value);
+				var screening = ScreeningLabel(_localizer, s.Value?.Screening ?? 0);
+				return screening == null ? label : label + " · " + screening;
+			}));
 		}
 
 		/// <summary>"via Text message (SMS): Hospital line" (or "via …" when the channel has no name).</summary>
@@ -330,6 +409,37 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var copy = JsonConvert.DeserializeObject<IntakeChannel>(JsonConvert.SerializeObject(channel));
 			copy.WebhookSecretProtected = string.IsNullOrWhiteSpace(channel.WebhookSecretProtected) ? null : "(set)";
 			return copy;
+		}
+
+		private static object BlockSnapshot(IntakeBlockedSender block) => new
+		{
+			block.IntakeBlockedSenderId, block.Sender, block.ChannelType, block.Reason, block.CallId, block.BlockedByUserId, block.BlockedOn, block.ExpiresOn
+		};
+
+		private void AuditDismissal(int callId, IntakeDismissResult outcome)
+		{
+			AuditBlock(null, new
+			{
+				IntakeCallDismissedAsSpam = callId,
+				IntakeBlockedSender = outcome.Block == null ? null : BlockSnapshot(outcome.Block),
+				outcome.SenderNotBlockable
+			});
+		}
+
+		private void AuditBlock(object before, object after)
+		{
+			_events.SendMessage(new AuditEvent
+			{
+				DepartmentId = DepartmentId,
+				UserId = UserId,
+				Type = AuditLogTypes.DepartmentSettingsChanged,
+				Before = before == null ? null : JsonConvert.SerializeObject(before),
+				After = after == null ? null : JsonConvert.SerializeObject(after),
+				Successful = true,
+				IpAddress = IpAddressHelper.GetRequestIP(Request, true),
+				ServerName = Environment.MachineName,
+				UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}"
+			});
 		}
 
 		private void Audit(IntakeChannel before, IntakeChannel after, string change = null)

@@ -102,6 +102,18 @@ namespace Resgrid.Model
 			return E164.IsMatch(e164) ? e164 : null;
 		}
 
+		/// <summary>
+		/// The keypad-spelled numbers Twilio sends as From when the caller withheld their number (ANONYMOUS, RESTRICTED, BLOCKED,
+		/// UNKNOWN, UNAVAILABLE). Every withheld caller shares them, so they are never blocked or treated as one sender.
+		/// </summary>
+		private static readonly HashSet<string> WithheldCallerIds = new HashSet<string>(StringComparer.Ordinal)
+		{
+			"+266696687", "+7378742833", "+2562533", "+8656696", "+86282452253"
+		};
+
+		/// <summary>True when the E.164 <paramref name="e164"/> is a withheld caller id placeholder rather than a real number.</summary>
+		public static bool IsWithheldCallerId(string e164) => !string.IsNullOrWhiteSpace(e164) && WithheldCallerIds.Contains(e164.Trim());
+
 		/// <summary>A Teams channel conversation id without the thread suffix ("19:abc@thread.tacv2;messageid=123" → "19:abc@thread.tacv2").</summary>
 		public static string TeamsChannelId(string conversationId)
 		{
@@ -217,6 +229,9 @@ namespace Resgrid.Model
 		public int ChannelType { get; set; }
 
 		public string ChannelName { get; set; }
+
+		/// <summary>An <see cref="IntakeScreenings"/> value (M0326); 0 = not screened.</summary>
+		public int Screening { get; set; }
 	}
 
 	/// <summary>Rows removed by one worker 80 purge.</summary>
@@ -225,6 +240,9 @@ namespace Resgrid.Model
 		public int Messages { get; set; }
 
 		public int VoiceSessions { get; set; }
+
+		/// <summary>Blocked-sender rows lifted or expired longer ago than the message retention (M0326).</summary>
+		public int BlockedSenders { get; set; }
 	}
 
 	/// <summary>Who answers a call to a department's dedicated number (plan D2).</summary>
@@ -240,7 +258,10 @@ namespace Resgrid.Model
 		TextOnly = 3,
 
 		/// <summary>The number lapsed: intake has stopped.</summary>
-		NumberInactive = 4
+		NumberInactive = 4,
+
+		/// <summary>The caller is on the department's blocked list (M0326): told the line cannot take the call, nothing recorded.</summary>
+		Blocked = 5
 	}
 
 	/// <summary>The routing decision for one inbound call to a dedicated number.</summary>

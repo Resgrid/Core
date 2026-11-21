@@ -286,4 +286,76 @@
   <data name="ManageIntakeChannels" xml:space="preserve">
     <value>Zarządzaj kanałami przyjmowania</value>
   </data>
+  <data name="BlockedSenders" xml:space="preserve">
+    <value>Zablokowani nadawcy</value>
+  </data>
+  <data name="BlockedSendersIntro" xml:space="preserve">
+    <value>Nadawcy, których dyspozytor odrzucił jako spam. Ich wiadomości i połączenia do kanałów przyjmowania są rejestrowane, ale nie tworzą zgłoszeń i nic nie jest do nich odsyłane. Blokada kończy się sama w podanym dniu.</value>
+  </data>
+  <data name="NoBlockedSenders" xml:space="preserve">
+    <value>Brak zablokowanych nadawców.</value>
+  </data>
+  <data name="Sender" xml:space="preserve">
+    <value>Nadawca</value>
+  </data>
+  <data name="BlockedBy" xml:space="preserve">
+    <value>Zablokował</value>
+  </data>
+  <data name="BlockedOn" xml:space="preserve">
+    <value>Zablokowano</value>
+  </data>
+  <data name="BlockedUntil" xml:space="preserve">
+    <value>Do</value>
+  </data>
+  <data name="BlockedCall" xml:space="preserve">
+    <value>Pokaż zgłoszenie</value>
+  </data>
+  <data name="BlockExpired" xml:space="preserve">
+    <value>Wygasła</value>
+  </data>
+  <data name="BlockedUntilLifted" xml:space="preserve">
+    <value>Do odwołania</value>
+  </data>
+  <data name="Unblock" xml:space="preserve">
+    <value>Odblokuj</value>
+  </data>
+  <data name="UnblockConfirm" xml:space="preserve">
+    <value>Odblokować tego nadawcę? Jego wiadomości znowu będą tworzyć oczekujące zgłoszenia.</value>
+  </data>
+  <data name="Unblocked" xml:space="preserve">
+    <value>Nadawca został odblokowany.</value>
+  </data>
+  <data name="DismissAsSpam" xml:space="preserve">
+    <value>Odrzuć jako spam</value>
+  </data>
+  <data name="DismissConfirm" xml:space="preserve">
+    <value>Odrzucić to zgłoszenie jako spam? Zostanie anulowane i nikt nie zostanie powiadomiony.</value>
+  </data>
+  <data name="DismissBlockSender" xml:space="preserve">
+    <value>Zablokuj też nadawcę na {0} dni</value>
+  </data>
+  <data name="DismissBlockSenderForever" xml:space="preserve">
+    <value>Zablokuj też nadawcę</value>
+  </data>
+  <data name="Dismissed" xml:space="preserve">
+    <value>Zgłoszenie odrzucono jako spam.</value>
+  </data>
+  <data name="DismissedAndBlocked" xml:space="preserve">
+    <value>Zgłoszenie odrzucono jako spam, a nadawca jest zablokowany.</value>
+  </data>
+  <data name="DismissedNotBlockable" xml:space="preserve">
+    <value>Zgłoszenie odrzucono jako spam. Dzwoniący ukrył numer, więc nie można go było zablokować.</value>
+  </data>
+  <data name="DismissNotPending" xml:space="preserve">
+    <value>To zgłoszenie nie oczekuje już, więc nie można go odrzucić jako spam.</value>
+  </data>
+  <data name="Screening.LikelyNotIncident" xml:space="preserve">
+    <value>Enhanced AI: prawdopodobnie to nie zdarzenie</value>
+  </data>
+  <data name="Screening.RepeatSender" xml:space="preserve">
+    <value>Powtarzający się nadawca: ponad limit godzinowy</value>
+  </data>
+  <data name="Screening.DismissedAsSpam" xml:space="preserve">
+    <value>Odrzucone jako spam</value>
+  </data>
 </root>

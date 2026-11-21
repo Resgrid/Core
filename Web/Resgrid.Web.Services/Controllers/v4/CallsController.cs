@@ -229,6 +229,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 					{
 						call.Data.IntakeChannelType = source.ChannelType;
 						call.Data.IntakeChannelName = string.IsNullOrWhiteSpace(source.ChannelName) ? null : source.ChannelName;
+						call.Data.IntakeScreening = source.Screening > 0 ? source.Screening : (int?)null;
 					}
 				}
 			}

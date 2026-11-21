@@ -433,7 +433,10 @@ namespace Resgrid.Web.Services.Controllers
 			if (!isLapsed && (number.Status != (int)DepartmentPhoneNumberStatuses.Active || !number.SmsIntakeEnabled))
 				return DedicatedNumberTexts.NotDedicated;
 
-			var sender = IntakeChannelAddresses.PhoneNumber(request.From) ?? request.From;
+			// M0326: only a phone number can report something (and be texted back). Short codes and alphanumeric sender ids (marketing,
+			// verification codes, carrier notices) are recorded as refused: no call, no conversation, nothing sent back.
+			var phone = IntakeChannelAddresses.PhoneNumber(request.From);
+			var sender = phone ?? request.From;
 
 			// Opting out never creates a call, and nothing is sent back to someone who asked us to stop. Their open conversation with the
 			// department (plan §8) closes and stops texting them: replies come from the master number, which this STOP did not reach.
@@ -464,9 +467,9 @@ namespace Resgrid.Web.Services.Controllers
 					Sender = sender,
 					Body = request.Body,
 					ReceivedOnUtc = DateTime.UtcNow,
-					RefusalReason = isLapsed ? "NumberLapsed" : null,
+					RefusalReason = isLapsed ? "NumberLapsed" : phone == null ? "SenderNotPhoneNumber" : null,
 					// Plan §8 D15: the text opens (or joins) a conversation continued from the master number; its welcome replaces the ack.
-					OpensConversation = !isLapsed
+					OpensConversation = !isLapsed && phone != null
 				}, HttpContext?.RequestAborted ?? CancellationToken.None);
 			}
 			catch (Exception ex)
@@ -486,7 +489,10 @@ namespace Resgrid.Web.Services.Controllers
 			try
 			{
 				var reply = isLapsed ? LapsedNumberReply : result.Acknowledgement;
-				if (!string.IsNullOrWhiteSpace(reply) && result.State != IntakeMessageStates.Duplicate && result.State != IntakeMessageStates.SenderNotAllowed)
+				// Nothing goes back to a sender that is not a phone number, a blocked sender, or one past the per-sender limit (M0326).
+				if (!string.IsNullOrWhiteSpace(reply) && phone != null && result.State != IntakeMessageStates.Duplicate &&
+					result.State != IntakeMessageStates.SenderNotAllowed && result.State != IntakeMessageStates.SenderBlocked &&
+					result.State != IntakeMessageStates.AddedToCall)
 					await _textMessageProvider.SendTextMessage(sender, reply, null, default(MobileCarriers), number.DepartmentId);
 			}
 			catch (Exception ex)
@@ -1451,7 +1457,7 @@ namespace Resgrid.Web.Services.Controllers
 			// voice intake (or the "please text" message). Calls to the master number keep the profile-based IVR below.
 			var dedicatedNumber = await DedicatedNumberAsync(request.To);
 			if (dedicatedNumber != null)
-				return await DedicatedNumberVoiceAsync(dedicatedNumber, request);
+				return await DedicatedNumberVoiceAsync(dedicatedNumber, request.CallSid, request.From, passedGate: false);
 
 			var response = new VoiceResponse();
 			UserProfile profile = null;
@@ -1509,15 +1515,16 @@ namespace Resgrid.Web.Services.Controllers
 		/// <summary>
 		/// A call to a department's dedicated number (plan D2, D6): members get the member IVR in the number's department; others
 		/// get Enhanced AI voice intake when the number has it on, the department is entitled and under the monthly limit, else
-		/// the "please text this number" message.
+		/// the "please text this number" message. With IntakeConfig.VoiceGateEnabled (M0326) the caller first presses 1
+		/// (<see cref="VoiceIntakeGate"/>), so auto-dialers and recordings never start a session or use the monthly limit.
 		/// </summary>
-		private async Task<ActionResult> DedicatedNumberVoiceAsync(DepartmentPhoneNumber number, TwilioGatherRequest request)
+		private async Task<ActionResult> DedicatedNumberVoiceAsync(DepartmentPhoneNumber number, string callSid, string fromNumber, bool passedGate)
 		{
 			var response = new VoiceResponse();
 			VoiceIntakeRouting routing;
 			try
 			{
-				routing = await _voiceIntakeService.RouteAsync(number, request.From, DateTime.UtcNow);
+				routing = await _voiceIntakeService.RouteAsync(number, fromNumber, DateTime.UtcNow);
 			}
 			catch (Exception ex)
 			{
@@ -1525,7 +1532,7 @@ namespace Resgrid.Web.Services.Controllers
 				routing = new VoiceIntakeRouting { Route = VoiceIntakeRoutes.TextOnly, DepartmentId = number.DepartmentId };
 			}
 
-			Framework.Logging.LogInfo($"[Twilio Voice] CallSid={request.CallSid} dedicated number of department {number.DepartmentId}: route {routing.Route} ({routing.Reason})");
+			Framework.Logging.LogInfo($"[Twilio Voice] CallSid={callSid} dedicated number of department {number.DepartmentId}: route {routing.Route} ({routing.Reason}){(passedGate ? " after the gate" : "")}");
 
 			switch (routing.Route)
 			{
@@ -1554,18 +1561,42 @@ namespace Resgrid.Web.Services.Controllers
 					return CreateVoiceContentResult(response);
 
 				case VoiceIntakeRoutes.Intake:
+					// M0326 gate: "press 1" before any session exists. Nothing pressed = the closing prompt and a hang-up, nothing recorded.
+					if (Config.IntakeConfig.VoiceGateEnabled && !passedGate)
+					{
+						var gate = new Gather(
+							input: new List<Gather.InputEnum> { Gather.InputEnum.Dtmf },
+							action: new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/VoiceIntakeGate"),
+							method: "POST",
+							timeout: Math.Clamp(Config.IntakeConfig.VoiceGateTimeoutSeconds, 3, 30),
+							numDigits: 1)
+						{
+							ActionOnEmptyResult = false
+						};
+						await AppendVoicePromptAsync(gate, TwilioVoicePromptCatalog.VoiceIntakeGate, number.DepartmentId);
+						response.Append(gate);
+						await AppendVoicePromptAsync(response, TwilioVoicePromptCatalog.VoiceIntakeNothingHeard, number.DepartmentId);
+						response.Hangup();
+						return CreateVoiceContentResult(response);
+					}
+
 					// A session store that fails still answers with TwiML: the caller hears the failure prompt (a null turn) and the line hangs up.
 					VoiceIntakeTurn turn;
 					try
 					{
-						turn = await _voiceIntakeService.StartAsync(number, request.CallSid, request.From, HttpContext?.RequestAborted ?? CancellationToken.None);
+						turn = await _voiceIntakeService.StartAsync(number, callSid, fromNumber, HttpContext?.RequestAborted ?? CancellationToken.None);
 					}
 					catch (Exception ex) when (ex is not OperationCanceledException)
 					{
-						Framework.Logging.LogException(ex, $"[Twilio Voice] CallSid={request.CallSid} voice intake session start failed.");
+						Framework.Logging.LogException(ex, $"[Twilio Voice] CallSid={callSid} voice intake session start failed.");
 						turn = null;
 					}
 					return await RenderVoiceIntakeTurnAsync(turn, number.DepartmentId);
+
+				case VoiceIntakeRoutes.Blocked:
+					await AppendVoicePromptAsync(response, TwilioVoicePromptCatalog.VoiceIntakeUnavailable, number.DepartmentId);
+					response.Hangup();
+					return CreateVoiceContentResult(response);
 
 				case VoiceIntakeRoutes.NumberInactive:
 					await AppendVoicePromptAsync(response, TwilioVoicePromptCatalog.VoiceIntakeNumberInactive, number.DepartmentId);
@@ -1577,6 +1608,45 @@ namespace Resgrid.Web.Services.Controllers
 					response.Hangup();
 					return CreateVoiceContentResult(response);
 			}
+		}
+
+		/// <summary>
+		/// The voice intake gate's &lt;Gather input="dtmf"&gt; action (M0326). Only "1" goes on, and the call is routed again (a block,
+		/// the monthly limit or the add-on may have changed meanwhile) before the guided questions start; anything else hangs up.
+		/// </summary>
+		[HttpGet("VoiceIntakeGate")]
+		[HttpPost("VoiceIntakeGate")]
+		[Produces("application/xml")]
+		[ValidateRequest]
+		public async Task<ActionResult> VoiceIntakeGate()
+		{
+			string Field(string name) => Request.HasFormContentType && Request.Form.ContainsKey(name) ? Request.Form[name].ToString() : Request.Query[name].ToString();
+
+			var callSid = Field("CallSid");
+			var from = Field("From");
+			var to = Field("To");
+			if (string.IsNullOrWhiteSpace(callSid) || string.IsNullOrWhiteSpace(from) || string.IsNullOrWhiteSpace(to))
+				return BadRequest();
+
+			var number = await DedicatedNumberAsync(to);
+			if (number == null)
+			{
+				var gone = new VoiceResponse();
+				await AppendVoicePromptAsync(gone, TwilioVoicePromptCatalog.VoiceIntakeNumberInactive);
+				gone.Hangup();
+				return CreateVoiceContentResult(gone);
+			}
+
+			if (!string.Equals(Field("Digits")?.Trim(), "1", StringComparison.Ordinal))
+			{
+				Framework.Logging.LogInfo($"[Twilio Voice] CallSid={callSid} dedicated number of department {number.DepartmentId}: the caller did not press 1 at the gate.");
+				var closing = new VoiceResponse();
+				await AppendVoicePromptAsync(closing, TwilioVoicePromptCatalog.VoiceIntakeNothingHeard, number.DepartmentId);
+				closing.Hangup();
+				return CreateVoiceContentResult(closing);
+			}
+
+			return await DedicatedNumberVoiceAsync(number, callSid, from, passedGate: true);
 		}
 
 		/// <summary>

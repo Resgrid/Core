@@ -15,7 +15,7 @@ namespace Resgrid.Ai;
 /// </summary>
 public static class AiDispatchPrompt
 {
-    public const string Version = "ai-dispatch-enrich-v2";
+    public const string Version = "ai-dispatch-enrich-v3";
     public const string ToolName = "enrich_dispatch";
     private const string Open = "<<<MESSAGE";
     private const string Close = "MESSAGE>>>";

@@ -182,11 +182,18 @@
         <member name="M:Resgrid.Web.Services.Controllers.TwilioController.IvrUnavailableAsync">
             <summary>The member IVR cannot continue (the department could not be confirmed): one message and a hang-up.</summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.TwilioController.DedicatedNumberVoiceAsync(Resgrid.Model.DepartmentPhoneNumber,Resgrid.Web.Services.Models.TwilioGatherRequest)">
+        <member name="M:Resgrid.Web.Services.Controllers.TwilioController.DedicatedNumberVoiceAsync(Resgrid.Model.DepartmentPhoneNumber,System.String,System.String,System.Boolean)">
             <summary>
             A call to a department's dedicated number (plan D2, D6): members get the member IVR in the number's department; others
             get Enhanced AI voice intake when the number has it on, the department is entitled and under the monthly limit, else
-            the "please text this number" message.
+            the "please text this number" message. With IntakeConfig.VoiceGateEnabled (M0326) the caller first presses 1
+            (<see cref="M:Resgrid.Web.Services.Controllers.TwilioController.VoiceIntakeGate"/>), so auto-dialers and recordings never start a session or use the monthly limit.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.TwilioController.VoiceIntakeGate">
+            <summary>
+            The voice intake gate's &lt;Gather input="dtmf"&gt; action (M0326). Only "1" goes on, and the call is routed again (a block,
+            the monthly limit or the add-on may have changed meanwhile) before the guided questions start; anything else hangs up.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.TwilioController.VoiceIntakeAnswer(System.Int32)">
@@ -3521,6 +3528,20 @@
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.IntakeConversationsController.ConvertConversation(Resgrid.Model.IntakeConversation,System.Boolean,System.String)">
             <summary>The v4 shape of a conversation; the texter's number is masked unless the caller may edit the call.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.IntakeScreeningController">
+            <summary>
+            Intake spam handling (call-intake-and-ai-destinations-plan.md §9, M0326). A dispatcher who may close a pending intake call can
+            dismiss it as spam: it is cancelled (nobody is notified; nobody was dispatched), its SMS conversation ends without texting the
+            sender, and the sender is blocked from the department's intake channels for IntakeConfig.SpamBlockDays. Admins lift blocks on
+            the web Intake Channels page. Calls carry their screening on the v4 call model (<c>IntakeScreening</c>).
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IntakeScreeningController.DismissAsSpam(Resgrid.Web.Services.Models.v4.IntakeScreening.DismissIntakeCallInput,System.Threading.CancellationToken)">
+            <summary>Cancels a pending intake call as spam and (by default) blocks its sender.</summary>
+            <param name="input">The call, and whether to block its sender.</param>
+            <param name="cancellationToken">Request cancellation.</param>
+            <returns>The outcome: Dismissed, NotFound or NotPending (with Status NotFound for the last two).</returns>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.InventoryController.GetAll(System.Int32)">
             <summary>One page of catalog items. Continue with page+1 while HasMore is true.</summary>
@@ -10936,6 +10957,13 @@
             8 GoogleChat, 9 Webhook, 10 Voice) for calls with CallSource 6 or 7, filled with <see cref="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.IntakeChannelName"/>; else null.
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.IntakeScreening">
+            <summary>
+            Why the intake call is badged and kept out of the dispatcher desk's offers (IntakeScreenings: 1 LikelyNotIncident, Enhanced AI
+            read it as reporting no incident; 2 RepeatSender, the sender is over the hourly limit; 3 DismissedAsSpam), filled with
+            <see cref="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.IntakeChannelName"/>; null when not screened or not an intake call.
+            </summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.Contacts">
             <summary>
             Contacts linked to this call (primary first) with pre-plan / alert / hazard indicators.
@@ -16031,6 +16059,27 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.IntakeConversations.CloseIntakeConversationInput.Notify">
             <summary>Text the texter that the conversation ended (from the master number).</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.IntakeScreening.DismissIntakeCallInput">
+            <summary>Dismiss a pending intake call as spam (cancel it, optionally block its sender).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.IntakeScreening.DismissIntakeCallInput.BlockSender">
+            <summary>Also block the sender from the department's intake channels for IntakeConfig.SpamBlockDays (default true).</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.IntakeScreening.DismissIntakeCallResult">
+            <summary>What a dismissal did.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.IntakeScreening.DismissIntakeCallResultData.Outcome">
+            <summary>Dismissed, NotFound (no such intake call in the department), or NotPending (it was already sent or closed).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.IntakeScreening.DismissIntakeCallResultData.SenderBlocked">
+            <summary>The sender is now blocked.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.IntakeScreening.DismissIntakeCallResultData.SenderNotBlockable">
+            <summary>A block was asked for but the sender cannot be blocked (withheld caller id).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.IntakeScreening.DismissIntakeCallResultData.BlockedUntilUtc">
+            <summary>When the block ends (UTC); null = until an admin lifts it, or no block.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Inventory.InventoryAdjustmentInput">
             <summary>A positive quantity delta with an explicit direction, never an absolute replacement balance.</summary>

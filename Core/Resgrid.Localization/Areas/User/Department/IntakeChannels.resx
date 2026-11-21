@@ -286,4 +286,76 @@
   <data name="ManageIntakeChannels" xml:space="preserve">
     <value>Manage Intake Channels</value>
   </data>
+  <data name="BlockedSenders" xml:space="preserve">
+    <value>Blocked senders</value>
+  </data>
+  <data name="BlockedSendersIntro" xml:space="preserve">
+    <value>Senders a dispatcher dismissed as spam. Their texts and calls to your intake channels are recorded but create no calls, and nothing is sent back to them. A block ends by itself on the date shown.</value>
+  </data>
+  <data name="NoBlockedSenders" xml:space="preserve">
+    <value>No senders are blocked.</value>
+  </data>
+  <data name="Sender" xml:space="preserve">
+    <value>Sender</value>
+  </data>
+  <data name="BlockedBy" xml:space="preserve">
+    <value>Blocked by</value>
+  </data>
+  <data name="BlockedOn" xml:space="preserve">
+    <value>Blocked</value>
+  </data>
+  <data name="BlockedUntil" xml:space="preserve">
+    <value>Until</value>
+  </data>
+  <data name="BlockedCall" xml:space="preserve">
+    <value>View call</value>
+  </data>
+  <data name="BlockExpired" xml:space="preserve">
+    <value>Expired</value>
+  </data>
+  <data name="BlockedUntilLifted" xml:space="preserve">
+    <value>Until lifted</value>
+  </data>
+  <data name="Unblock" xml:space="preserve">
+    <value>Unblock</value>
+  </data>
+  <data name="UnblockConfirm" xml:space="preserve">
+    <value>Unblock this sender? Their messages will create pending calls again.</value>
+  </data>
+  <data name="Unblocked" xml:space="preserve">
+    <value>The sender was unblocked.</value>
+  </data>
+  <data name="DismissAsSpam" xml:space="preserve">
+    <value>Dismiss as spam</value>
+  </data>
+  <data name="DismissConfirm" xml:space="preserve">
+    <value>Dismiss this call as spam? It is cancelled and nobody is notified.</value>
+  </data>
+  <data name="DismissBlockSender" xml:space="preserve">
+    <value>Also block the sender for {0} days</value>
+  </data>
+  <data name="DismissBlockSenderForever" xml:space="preserve">
+    <value>Also block the sender</value>
+  </data>
+  <data name="Dismissed" xml:space="preserve">
+    <value>The call was dismissed as spam.</value>
+  </data>
+  <data name="DismissedAndBlocked" xml:space="preserve">
+    <value>The call was dismissed as spam and the sender is blocked.</value>
+  </data>
+  <data name="DismissedNotBlockable" xml:space="preserve">
+    <value>The call was dismissed as spam. The caller withheld their number, so they could not be blocked.</value>
+  </data>
+  <data name="DismissNotPending" xml:space="preserve">
+    <value>This call is no longer pending, so it cannot be dismissed as spam.</value>
+  </data>
+  <data name="Screening.LikelyNotIncident" xml:space="preserve">
+    <value>Enhanced AI: likely not an incident</value>
+  </data>
+  <data name="Screening.RepeatSender" xml:space="preserve">
+    <value>Repeat sender: over the hourly limit</value>
+  </data>
+  <data name="Screening.DismissedAsSpam" xml:space="preserve">
+    <value>Dismissed as spam</value>
+  </data>
 </root>

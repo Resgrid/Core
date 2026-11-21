@@ -286,4 +286,76 @@
   <data name="ManageIntakeChannels" xml:space="preserve">
     <value>Eingangskanäle verwalten</value>
   </data>
+  <data name="BlockedSenders" xml:space="preserve">
+    <value>Gesperrte Absender</value>
+  </data>
+  <data name="BlockedSendersIntro" xml:space="preserve">
+    <value>Absender, die ein Disponent als Spam verworfen hat. Ihre Nachrichten und Anrufe an Ihre Eingangskanäle werden protokolliert, erzeugen aber keine Einsätze, und es wird nichts an sie zurückgesendet. Eine Sperre endet von selbst am angezeigten Datum.</value>
+  </data>
+  <data name="NoBlockedSenders" xml:space="preserve">
+    <value>Es sind keine Absender gesperrt.</value>
+  </data>
+  <data name="Sender" xml:space="preserve">
+    <value>Absender</value>
+  </data>
+  <data name="BlockedBy" xml:space="preserve">
+    <value>Gesperrt von</value>
+  </data>
+  <data name="BlockedOn" xml:space="preserve">
+    <value>Gesperrt am</value>
+  </data>
+  <data name="BlockedUntil" xml:space="preserve">
+    <value>Bis</value>
+  </data>
+  <data name="BlockedCall" xml:space="preserve">
+    <value>Einsatz anzeigen</value>
+  </data>
+  <data name="BlockExpired" xml:space="preserve">
+    <value>Abgelaufen</value>
+  </data>
+  <data name="BlockedUntilLifted" xml:space="preserve">
+    <value>Bis zur Aufhebung</value>
+  </data>
+  <data name="Unblock" xml:space="preserve">
+    <value>Entsperren</value>
+  </data>
+  <data name="UnblockConfirm" xml:space="preserve">
+    <value>Diesen Absender entsperren? Seine Nachrichten erzeugen dann wieder wartende Einsätze.</value>
+  </data>
+  <data name="Unblocked" xml:space="preserve">
+    <value>Der Absender wurde entsperrt.</value>
+  </data>
+  <data name="DismissAsSpam" xml:space="preserve">
+    <value>Als Spam verwerfen</value>
+  </data>
+  <data name="DismissConfirm" xml:space="preserve">
+    <value>Diesen Einsatz als Spam verwerfen? Er wird storniert und niemand wird benachrichtigt.</value>
+  </data>
+  <data name="DismissBlockSender" xml:space="preserve">
+    <value>Absender zusätzlich für {0} Tage sperren</value>
+  </data>
+  <data name="DismissBlockSenderForever" xml:space="preserve">
+    <value>Absender zusätzlich sperren</value>
+  </data>
+  <data name="Dismissed" xml:space="preserve">
+    <value>Der Einsatz wurde als Spam verworfen.</value>
+  </data>
+  <data name="DismissedAndBlocked" xml:space="preserve">
+    <value>Der Einsatz wurde als Spam verworfen und der Absender ist gesperrt.</value>
+  </data>
+  <data name="DismissedNotBlockable" xml:space="preserve">
+    <value>Der Einsatz wurde als Spam verworfen. Der Anrufer hat seine Nummer unterdrückt und konnte daher nicht gesperrt werden.</value>
+  </data>
+  <data name="DismissNotPending" xml:space="preserve">
+    <value>Dieser Einsatz wartet nicht mehr und kann daher nicht als Spam verworfen werden.</value>
+  </data>
+  <data name="Screening.LikelyNotIncident" xml:space="preserve">
+    <value>Enhanced AI: wahrscheinlich kein Einsatz</value>
+  </data>
+  <data name="Screening.RepeatSender" xml:space="preserve">
+    <value>Wiederholter Absender: über dem Stundenlimit</value>
+  </data>
+  <data name="Screening.DismissedAsSpam" xml:space="preserve">
+    <value>Als Spam verworfen</value>
+  </data>
 </root>

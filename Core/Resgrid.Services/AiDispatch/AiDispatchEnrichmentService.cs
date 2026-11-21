@@ -47,15 +47,19 @@ namespace Resgrid.Services.AiDispatch
 		private readonly IEventAggregator _events;
 		private readonly TimeProvider _clock;
 		private readonly Lazy<IIntakeConversationOperations> _conversations;
+		private readonly Lazy<IIntakeScreeningService> _screening;
 
 		/// <param name="conversations">Intake SMS conversations (plan §8): the transcript a conversation refresh reads. Lazy: the conversation
 		/// service queues this enrichment.</param>
+		/// <param name="screening">Intake spam screening (plan §9, M0326): a confident "not a dispatch" reading labels the intake call
+		/// LikelyNotIncident, which the dispatcher desk does not offer. Lazy for the same reason.</param>
 		public AiDispatchEnrichmentService(IEnhancedAiAccessService enhancedAi, IFeatureToggleService flags, IDepartmentsService departments, ICallsService calls,
 			IGeoLocationProvider geo, IDepartmentDataProtectionService protection, IAiDispatchAuditRepository audits, IAiDispatchConfigRepository settings,
 			IAiBackgroundAdmission admission, IAiUsageMeter usage, Lazy<ILlmClient> client, Lazy<IDecisionClient> decisions, IEventAggregator events, TimeProvider clock,
-			Lazy<IIntakeConversationOperations> conversations = null)
+			Lazy<IIntakeConversationOperations> conversations = null, Lazy<IIntakeScreeningService> screening = null)
 		{
 			_conversations = conversations;
+			_screening = screening;
 			_enhancedAi = enhancedAi;
 			_flags = flags;
 			_departments = departments;
@@ -369,9 +373,10 @@ namespace Resgrid.Services.AiDispatch
 		/// </summary>
 		public static string IntakeSource(int channel, Call call)
 		{
-			var state = call?.State == (int)CallStates.Pending
+			// Intake lines are public (M0326): the reading that the message reports no incident labels the call for the dispatcher.
+			var state = (call?.State == (int)CallStates.Pending
 				? " The call is pending: a dispatcher reviews it and nobody has been dispatched yet."
-				: " A dispatcher has dispatched the call.";
+				: " A dispatcher has dispatched the call.") + IntakeScreeningHint;
 			switch (channel)
 			{
 				case AiDispatchChannels.IntakeVoice:
@@ -526,6 +531,11 @@ namespace Resgrid.Services.AiDispatch
 				Framework.Logging.LogException(ex, $"AI dispatch note failed for call {call.CallId}; the applied fields were saved.");
 			}
 
+			// Intake (M0326): the reading labels the call either way, so a later turn that finds a real request clears the label. Only a
+			// confident reading gets here (LowConfidence returned earlier). A label that cannot be written never fails the enrichment.
+			if (AiDispatchChannels.IsIntake(item.Channel) && await ScreenAsync(call, !enrichment.IsDispatch))
+				applied.Add("Screening");
+
 			audit.AppliedFields = applied.Count == 0 ? null : string.Join(",", applied);
 			if (applied.Count == 0)
 				return AiDispatchOutcomes.NoChange;
@@ -533,6 +543,22 @@ namespace Resgrid.Services.AiDispatch
 			// Boards and apps refresh like any edit; nothing is re-broadcast, so no one is paged again.
 			_events.SendMessage(new CallUpdatedEvent { DepartmentId = call.DepartmentId, Call = call });
 			return AiDispatchOutcomes.Applied;
+		}
+
+		private async Task<bool> ScreenAsync(Call call, bool likelyNotIncident)
+		{
+			if (_screening == null)
+				return false;
+
+			try
+			{
+				return await _screening.Value.SetAiScreeningAsync(call.DepartmentId, call.CallId, likelyNotIncident, CancellationToken.None);
+			}
+			catch (Exception ex) when (ex is not OperationCanceledException)
+			{
+				Framework.Logging.LogException(ex, $"AI dispatch could not record the intake screening of call {call.CallId}.");
+				return false;
+			}
 		}
 
 		/// <summary>
@@ -561,6 +587,10 @@ namespace Resgrid.Services.AiDispatch
 				callId.ToString(System.Globalization.CultureInfo.InvariantCulture) + ":" + name);
 			return Convert.ToHexString(System.Security.Cryptography.HMACSHA256.HashData(key, data)).ToLowerInvariant();
 		}
+
+		/// <summary>The intake-only isDispatch guidance (the dispatch email paths keep their own wording in the system prompt).</summary>
+		public const string IntakeScreeningHint = " Set isDispatch false when the message reports no incident and asks " +
+			"nothing of the department (spam, advertising, a wrong number, a test).";
 
 		private CallNote Note(int callId, string userId, string text) => new CallNote
 		{

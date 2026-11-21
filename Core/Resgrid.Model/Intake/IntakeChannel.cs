@@ -165,7 +165,37 @@ namespace Resgrid.Model
 		/// The sender already has an open SMS conversation with the department (plan §8 D15, M0325): the text joined it as a note on
 		/// that conversation's call (<see cref="IntakeMessage.CallId"/>) instead of creating a second pending call.
 		/// </summary>
-		AddedToConversation = 7
+		AddedToConversation = 7,
+
+		/// <summary>
+		/// The sender is on the department's blocked list (M0326, a dispatcher dismissed one of their calls as spam): nothing was
+		/// created, nothing is sent back, and the message does not count toward the monthly volume.
+		/// </summary>
+		SenderBlocked = 8,
+
+		/// <summary>
+		/// The sender reached IntakeConfig.MaxCallsPerSenderPerHour (M0326): the message joined their newest open intake call as a note
+		/// (<see cref="IntakeMessage.CallId"/>) instead of creating another pending call.
+		/// </summary>
+		AddedToCall = 9
+	}
+
+	/// <summary>
+	/// Why an intake call is held out of the dispatcher desk's offers and badged on pending lists (M0326, persisted; never renumber).
+	/// A screening only labels the call: it is still a pending call any dispatcher can open, dispatch or close.
+	/// </summary>
+	public enum IntakeScreenings
+	{
+		None = 0,
+
+		/// <summary>Enhanced AI read the message as reporting no incident (spam, advertising, a wrong number, a test).</summary>
+		LikelyNotIncident = 1,
+
+		/// <summary>The sender already made IntakeConfig.MaxCallsPerSenderPerHour calls this hour and none of them is still open.</summary>
+		RepeatSender = 2,
+
+		/// <summary>A dispatcher dismissed the call as spam (it is cancelled).</summary>
+		DismissedAsSpam = 3
 	}
 
 	/// <summary>
@@ -207,6 +237,14 @@ namespace Resgrid.Model
 		public DateTime ReceivedOn { get; set; }
 
 		public DateTime? CompletedOn { get; set; }
+
+		/// <summary>An <see cref="IntakeScreenings"/> value on the row that created the call (M0326); null = never screened.</summary>
+		public int? Screening { get; set; }
+
+		public DateTime? ScreenedOn { get; set; }
+
+		/// <summary>The dispatcher who dismissed the call (<see cref="IntakeScreenings.DismissedAsSpam"/>); null for automatic screenings.</summary>
+		public string ScreenedByUserId { get; set; }
 
 		[NotMapped]
 		[JsonIgnore]

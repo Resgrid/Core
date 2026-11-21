@@ -38,6 +38,7 @@ namespace Resgrid.Tests.Intake
 		private Mock<IFeatureToggleService> _flags;
 		private Mock<IUserProfileService> _profiles;
 		private Mock<IDepartmentsService> _departments;
+		private Mock<IIntakeBlockedSendersRepository> _blocked;
 		private VoiceIntakeService _service;
 		private DepartmentPhoneNumber _number;
 		private VoiceIntakeSession _session;
@@ -83,9 +84,10 @@ namespace Resgrid.Tests.Intake
 			_flags.Setup(f => f.IsEnabledAsync(FeatureFlagKeys.IntakeChannels, DepartmentId, It.IsAny<bool>(), It.IsAny<IDictionary<string, string>>())).ReturnsAsync(true);
 			_profiles = new Mock<IUserProfileService>();
 			_departments = new Mock<IDepartmentsService>();
+			_blocked = new Mock<IIntakeBlockedSendersRepository>();
 
 			_service = new VoiceIntakeService(_sessions.Object, _channels.Object, _intake.Object, new TwilioSpeechTranscriber(), _enhancedAi.Object, _flags.Object,
-				_profiles.Object, _departments.Object, new FixedClock());
+				_profiles.Object, _departments.Object, _blocked.Object, new FixedClock());
 		}
 
 		[TearDown]
@@ -171,6 +173,43 @@ namespace Resgrid.Tests.Intake
 			routing.Route.Should().Be(VoiceIntakeRoutes.MemberMenu);
 			routing.MemberUserId.Should().Be("member-1");
 			routing.DepartmentId.Should().Be(DepartmentId);
+		}
+
+		[Test]
+		public async Task a_blocked_caller_is_told_the_line_cannot_take_the_call()
+		{
+			_blocked.Setup(b => b.GetInForceAsync(DepartmentId, Caller, FixedClock.Now))
+				.ReturnsAsync(new IntakeBlockedSender { DepartmentId = DepartmentId, Sender = Caller, BlockedOn = FixedClock.Now.AddDays(-1) });
+
+			var routing = await _service.RouteAsync(_number, Caller, FixedClock.Now);
+
+			routing.Route.Should().Be(VoiceIntakeRoutes.Blocked);
+			routing.Reason.Should().Be("SenderBlocked");
+			_intake.Verify(i => i.GetMonthlyCountAsync(It.IsAny<int>(), It.IsAny<IntakeChannelTypes>(), It.IsAny<DateTime>()), Times.Never);
+		}
+
+		[Test]
+		public async Task a_member_is_never_held_by_the_blocked_list()
+		{
+			MemberCalling();
+			_blocked.Setup(b => b.GetInForceAsync(DepartmentId, Caller, It.IsAny<DateTime>())).ReturnsAsync(new IntakeBlockedSender { Sender = Caller });
+
+			(await _service.RouteAsync(_number, Caller, FixedClock.Now)).Route.Should().Be(VoiceIntakeRoutes.MemberMenu);
+		}
+
+		[Test]
+		public async Task a_blocked_list_that_cannot_be_read_lets_the_caller_through()
+		{
+			_blocked.Setup(b => b.GetInForceAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<DateTime>())).ThrowsAsync(new InvalidOperationException("db down"));
+
+			(await _service.RouteAsync(_number, Caller, FixedClock.Now)).Route.Should().Be(VoiceIntakeRoutes.Intake);
+		}
+
+		[Test]
+		public async Task a_withheld_caller_id_is_never_looked_up_on_the_blocked_list()
+		{
+			(await _service.RouteAsync(_number, "+266696687", FixedClock.Now)).Route.Should().Be(VoiceIntakeRoutes.Intake);
+			_blocked.Verify(b => b.GetInForceAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<DateTime>()), Times.Never);
 		}
 
 		[Test]
@@ -371,6 +410,23 @@ namespace Resgrid.Tests.Intake
 			await Answer(VoiceIntakeSteps.CallerName, "Sam");
 			await Answer(VoiceIntakeSteps.Callback, "same number");
 			_received.Answers["Callback"].Should().Be(Caller);
+		}
+
+		[Test]
+		public async Task a_caller_past_the_hourly_limit_whose_answers_joined_their_open_call_hears_it_was_recorded()
+		{
+			_intake.Setup(i => i.ReceiveAsync(It.IsAny<IntakeEnvelope>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new IntakeResult { State = IntakeMessageStates.AddedToCall, CallId = 880, Reason = "SenderLimit" });
+			await _service.StartAsync(_number, "CA1", Caller);
+			await Answer(VoiceIntakeSteps.Nature, "same fire as before");
+			await Answer(VoiceIntakeSteps.Location, "school");
+			await Answer(VoiceIntakeSteps.CallerName, "Lee");
+
+			var turn = await Answer(VoiceIntakeSteps.Callback, null, "*");
+
+			turn.Prompts.Should().Equal(TwilioVoicePromptCatalog.VoiceIntakeCompleted);
+			turn.CallId.Should().Be(880);
+			_session.Step.Should().Be((int)VoiceIntakeSteps.Completed);
 		}
 
 		[Test]

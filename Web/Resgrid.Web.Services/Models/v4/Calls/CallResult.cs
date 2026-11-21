@@ -351,6 +351,13 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		public int? IntakeChannelType { get; set; }
 
 		/// <summary>
+		/// Why the intake call is badged and kept out of the dispatcher desk's offers (IntakeScreenings: 1 LikelyNotIncident, Enhanced AI
+		/// read it as reporting no incident; 2 RepeatSender, the sender is over the hourly limit; 3 DismissedAsSpam), filled with
+		/// <see cref="IntakeChannelName"/>; null when not screened or not an intake call.
+		/// </summary>
+		public int? IntakeScreening { get; set; }
+
+		/// <summary>
 		/// Contacts linked to this call (primary first) with pre-plan / alert / hazard indicators.
 		/// Populated by GetCall and GetActiveCalls; empty on other list endpoints. Use
 		/// GetCallSiteInfo for the full site knowledge. Contacts plan Phase A, decision 3a.

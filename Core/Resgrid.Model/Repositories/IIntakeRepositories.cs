@@ -57,7 +57,48 @@ namespace Resgrid.Model.Repositories
 		/// <summary>The rows that created these calls (State CallCreated).</summary>
 		Task<List<IntakeMessage>> GetByCallIdsAsync(int departmentId, IEnumerable<int> callIds);
 
+		/// <summary>
+		/// The department's rows from <paramref name="sender"/> (as recorded) that created a call and were received at or after
+		/// <paramref name="since"/>, newest first (M0326 per-sender limit).
+		/// </summary>
+		Task<List<IntakeMessage>> GetCallsCreatedBySenderSinceAsync(int departmentId, string sender, DateTime since);
+
+		/// <summary>
+		/// Sets the screening of the row that created <paramref name="callId"/> (M0326), only while the row is unscreened or holds one of
+		/// <paramref name="replaceable"/>, so an automatic screening never overwrites a dispatcher's dismissal. True when a row changed.
+		/// </summary>
+		Task<bool> SetScreeningAsync(int departmentId, int callId, int screening, int[] replaceable, string userId, DateTime screenedOn,
+			CancellationToken cancellationToken = default);
+
 		Task<int> PurgeReceivedBeforeAsync(DateTime before, CancellationToken cancellationToken = default);
+	}
+
+	/// <summary>Senders blocked from a department's intake channels (IntakeBlockedSenders, M0326).</summary>
+	public interface IIntakeBlockedSendersRepository : IRepository<IntakeBlockedSender>
+	{
+		/// <summary>The department's block of <paramref name="sender"/> (normalized) that applies at <paramref name="nowUtc"/>, else null.</summary>
+		Task<IntakeBlockedSender> GetInForceAsync(int departmentId, string sender, DateTime nowUtc);
+
+		/// <summary>The department's row for <paramref name="sender"/> that has not been lifted (it may have expired), else null.</summary>
+		Task<IntakeBlockedSender> GetCurrentAsync(int departmentId, string sender);
+
+		/// <summary>The department's rows that have not been lifted, newest first (expired ones included).</summary>
+		Task<List<IntakeBlockedSender>> GetCurrentForDepartmentAsync(int departmentId);
+
+		/// <summary>
+		/// Inserts the block unless the department already has a row for the sender that has not been lifted (one conditional statement).
+		/// True when this call inserted it.
+		/// </summary>
+		Task<bool> TryInsertAsync(IntakeBlockedSender block, CancellationToken cancellationToken = default);
+
+		/// <summary>Renews a row that has not been lifted: new expiry, who blocked it, when, why and from which call.</summary>
+		Task<bool> RenewAsync(IntakeBlockedSender block, CancellationToken cancellationToken = default);
+
+		/// <summary>Lifts the department's block (sets RemovedOn / RemovedByUserId). True when a standing row changed.</summary>
+		Task<bool> RemoveAsync(int departmentId, string intakeBlockedSenderId, string userId, DateTime removedOn, CancellationToken cancellationToken = default);
+
+		/// <summary>Deletes rows lifted, or expired, before <paramref name="before"/>.</summary>
+		Task<int> PurgeEndedBeforeAsync(DateTime before, CancellationToken cancellationToken = default);
 	}
 
 	/// <summary>Voice intake sessions (VoiceIntakeSessions, M0323), one per phone call.</summary>

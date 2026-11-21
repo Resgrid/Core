@@ -286,4 +286,76 @@
   <data name="ManageIntakeChannels" xml:space="preserve">
     <value>Gérer les canaux d'entrée</value>
   </data>
+  <data name="BlockedSenders" xml:space="preserve">
+    <value>Expéditeurs bloqués</value>
+  </data>
+  <data name="BlockedSendersIntro" xml:space="preserve">
+    <value>Expéditeurs qu'un répartiteur a écartés comme spam. Leurs messages et appels vers vos canaux d'entrée sont enregistrés mais ne créent aucun appel, et rien ne leur est renvoyé. Un blocage prend fin de lui-même à la date indiquée.</value>
+  </data>
+  <data name="NoBlockedSenders" xml:space="preserve">
+    <value>Aucun expéditeur n'est bloqué.</value>
+  </data>
+  <data name="Sender" xml:space="preserve">
+    <value>Expéditeur</value>
+  </data>
+  <data name="BlockedBy" xml:space="preserve">
+    <value>Bloqué par</value>
+  </data>
+  <data name="BlockedOn" xml:space="preserve">
+    <value>Bloqué le</value>
+  </data>
+  <data name="BlockedUntil" xml:space="preserve">
+    <value>Jusqu'au</value>
+  </data>
+  <data name="BlockedCall" xml:space="preserve">
+    <value>Voir l'appel</value>
+  </data>
+  <data name="BlockExpired" xml:space="preserve">
+    <value>Expiré</value>
+  </data>
+  <data name="BlockedUntilLifted" xml:space="preserve">
+    <value>Jusqu'à levée</value>
+  </data>
+  <data name="Unblock" xml:space="preserve">
+    <value>Débloquer</value>
+  </data>
+  <data name="UnblockConfirm" xml:space="preserve">
+    <value>Débloquer cet expéditeur ? Ses messages créeront de nouveau des appels en attente.</value>
+  </data>
+  <data name="Unblocked" xml:space="preserve">
+    <value>L'expéditeur a été débloqué.</value>
+  </data>
+  <data name="DismissAsSpam" xml:space="preserve">
+    <value>Écarter comme spam</value>
+  </data>
+  <data name="DismissConfirm" xml:space="preserve">
+    <value>Écarter cet appel comme spam ? Il est annulé et personne n'est prévenu.</value>
+  </data>
+  <data name="DismissBlockSender" xml:space="preserve">
+    <value>Bloquer aussi l'expéditeur pendant {0} jours</value>
+  </data>
+  <data name="DismissBlockSenderForever" xml:space="preserve">
+    <value>Bloquer aussi l'expéditeur</value>
+  </data>
+  <data name="Dismissed" xml:space="preserve">
+    <value>L'appel a été écarté comme spam.</value>
+  </data>
+  <data name="DismissedAndBlocked" xml:space="preserve">
+    <value>L'appel a été écarté comme spam et l'expéditeur est bloqué.</value>
+  </data>
+  <data name="DismissedNotBlockable" xml:space="preserve">
+    <value>L'appel a été écarté comme spam. L'appelant a masqué son numéro, il n'a donc pas pu être bloqué.</value>
+  </data>
+  <data name="DismissNotPending" xml:space="preserve">
+    <value>Cet appel n'est plus en attente, il ne peut donc pas être écarté comme spam.</value>
+  </data>
+  <data name="Screening.LikelyNotIncident" xml:space="preserve">
+    <value>Enhanced AI : probablement pas un incident</value>
+  </data>
+  <data name="Screening.RepeatSender" xml:space="preserve">
+    <value>Expéditeur répété : au-delà de la limite horaire</value>
+  </data>
+  <data name="Screening.DismissedAsSpam" xml:space="preserve">
+    <value>Écarté comme spam</value>
+  </data>
 </root>

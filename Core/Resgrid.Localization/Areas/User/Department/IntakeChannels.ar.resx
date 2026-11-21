@@ -286,4 +286,76 @@
   <data name="ManageIntakeChannels" xml:space="preserve">
     <value>إدارة قنوات الاستقبال</value>
   </data>
+  <data name="BlockedSenders" xml:space="preserve">
+    <value>المرسلون المحظورون</value>
+  </data>
+  <data name="BlockedSendersIntro" xml:space="preserve">
+    <value>مرسلون رفضهم أحد المرسِلين كرسائل مزعجة. تُسجَّل رسائلهم ومكالماتهم إلى قنوات الاستقبال لديك لكنها لا تُنشئ بلاغات، ولا يُرسل إليهم أي شيء. ينتهي الحظر تلقائيًا في التاريخ المعروض.</value>
+  </data>
+  <data name="NoBlockedSenders" xml:space="preserve">
+    <value>لا يوجد مرسلون محظورون.</value>
+  </data>
+  <data name="Sender" xml:space="preserve">
+    <value>المرسل</value>
+  </data>
+  <data name="BlockedBy" xml:space="preserve">
+    <value>حظره</value>
+  </data>
+  <data name="BlockedOn" xml:space="preserve">
+    <value>تاريخ الحظر</value>
+  </data>
+  <data name="BlockedUntil" xml:space="preserve">
+    <value>حتى</value>
+  </data>
+  <data name="BlockedCall" xml:space="preserve">
+    <value>عرض البلاغ</value>
+  </data>
+  <data name="BlockExpired" xml:space="preserve">
+    <value>منتهٍ</value>
+  </data>
+  <data name="BlockedUntilLifted" xml:space="preserve">
+    <value>حتى رفعه</value>
+  </data>
+  <data name="Unblock" xml:space="preserve">
+    <value>رفع الحظر</value>
+  </data>
+  <data name="UnblockConfirm" xml:space="preserve">
+    <value>رفع الحظر عن هذا المرسل؟ ستُنشئ رسائله بلاغات معلّقة مرة أخرى.</value>
+  </data>
+  <data name="Unblocked" xml:space="preserve">
+    <value>تم رفع الحظر عن المرسل.</value>
+  </data>
+  <data name="DismissAsSpam" xml:space="preserve">
+    <value>رفض كرسالة مزعجة</value>
+  </data>
+  <data name="DismissConfirm" xml:space="preserve">
+    <value>رفض هذا البلاغ كرسالة مزعجة؟ سيُلغى ولن يُبلَّغ أحد.</value>
+  </data>
+  <data name="DismissBlockSender" xml:space="preserve">
+    <value>حظر المرسل أيضًا لمدة {0} يومًا</value>
+  </data>
+  <data name="DismissBlockSenderForever" xml:space="preserve">
+    <value>حظر المرسل أيضًا</value>
+  </data>
+  <data name="Dismissed" xml:space="preserve">
+    <value>تم رفض البلاغ كرسالة مزعجة.</value>
+  </data>
+  <data name="DismissedAndBlocked" xml:space="preserve">
+    <value>تم رفض البلاغ كرسالة مزعجة وحظر المرسل.</value>
+  </data>
+  <data name="DismissedNotBlockable" xml:space="preserve">
+    <value>تم رفض البلاغ كرسالة مزعجة. أخفى المتصل رقمه، لذلك تعذّر حظره.</value>
+  </data>
+  <data name="DismissNotPending" xml:space="preserve">
+    <value>لم يعد هذا البلاغ معلّقًا، لذا لا يمكن رفضه كرسالة مزعجة.</value>
+  </data>
+  <data name="Screening.LikelyNotIncident" xml:space="preserve">
+    <value>Enhanced AI: على الأرجح ليس حادثًا</value>
+  </data>
+  <data name="Screening.RepeatSender" xml:space="preserve">
+    <value>مرسل متكرر: تجاوز الحد بالساعة</value>
+  </data>
+  <data name="Screening.DismissedAsSpam" xml:space="preserve">
+    <value>مرفوض كرسالة مزعجة</value>
+  </data>
 </root>

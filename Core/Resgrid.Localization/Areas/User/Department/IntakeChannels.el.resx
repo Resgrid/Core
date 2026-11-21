@@ -286,4 +286,76 @@
   <data name="ManageIntakeChannels" xml:space="preserve">
     <value>Διαχείριση καναλιών εισερχομένων</value>
   </data>
+  <data name="BlockedSenders" xml:space="preserve">
+    <value>Αποκλεισμένοι αποστολείς</value>
+  </data>
+  <data name="BlockedSendersIntro" xml:space="preserve">
+    <value>Αποστολείς που ένας χειριστής απέρριψε ως ανεπιθύμητους. Τα μηνύματα και οι κλήσεις τους προς τα κανάλια εισόδου σας καταγράφονται, αλλά δεν δημιουργούν συμβάντα και δεν τους αποστέλλεται τίποτα. Ο αποκλεισμός λήγει μόνος του την ημερομηνία που εμφανίζεται.</value>
+  </data>
+  <data name="NoBlockedSenders" xml:space="preserve">
+    <value>Δεν υπάρχουν αποκλεισμένοι αποστολείς.</value>
+  </data>
+  <data name="Sender" xml:space="preserve">
+    <value>Αποστολέας</value>
+  </data>
+  <data name="BlockedBy" xml:space="preserve">
+    <value>Αποκλείστηκε από</value>
+  </data>
+  <data name="BlockedOn" xml:space="preserve">
+    <value>Αποκλείστηκε</value>
+  </data>
+  <data name="BlockedUntil" xml:space="preserve">
+    <value>Έως</value>
+  </data>
+  <data name="BlockedCall" xml:space="preserve">
+    <value>Προβολή συμβάντος</value>
+  </data>
+  <data name="BlockExpired" xml:space="preserve">
+    <value>Έληξε</value>
+  </data>
+  <data name="BlockedUntilLifted" xml:space="preserve">
+    <value>Έως την άρση</value>
+  </data>
+  <data name="Unblock" xml:space="preserve">
+    <value>Άρση αποκλεισμού</value>
+  </data>
+  <data name="UnblockConfirm" xml:space="preserve">
+    <value>Άρση αποκλεισμού αυτού του αποστολέα; Τα μηνύματά του θα δημιουργούν ξανά συμβάντα σε αναμονή.</value>
+  </data>
+  <data name="Unblocked" xml:space="preserve">
+    <value>Ο αποκλεισμός του αποστολέα άρθηκε.</value>
+  </data>
+  <data name="DismissAsSpam" xml:space="preserve">
+    <value>Απόρριψη ως ανεπιθύμητο</value>
+  </data>
+  <data name="DismissConfirm" xml:space="preserve">
+    <value>Απόρριψη αυτού του συμβάντος ως ανεπιθύμητου; Ακυρώνεται και κανείς δεν ειδοποιείται.</value>
+  </data>
+  <data name="DismissBlockSender" xml:space="preserve">
+    <value>Αποκλεισμός και του αποστολέα για {0} ημέρες</value>
+  </data>
+  <data name="DismissBlockSenderForever" xml:space="preserve">
+    <value>Αποκλεισμός και του αποστολέα</value>
+  </data>
+  <data name="Dismissed" xml:space="preserve">
+    <value>Το συμβάν απορρίφθηκε ως ανεπιθύμητο.</value>
+  </data>
+  <data name="DismissedAndBlocked" xml:space="preserve">
+    <value>Το συμβάν απορρίφθηκε ως ανεπιθύμητο και ο αποστολέας αποκλείστηκε.</value>
+  </data>
+  <data name="DismissedNotBlockable" xml:space="preserve">
+    <value>Το συμβάν απορρίφθηκε ως ανεπιθύμητο. Ο καλών απέκρυψε τον αριθμό του, οπότε δεν ήταν δυνατός ο αποκλεισμός του.</value>
+  </data>
+  <data name="DismissNotPending" xml:space="preserve">
+    <value>Αυτό το συμβάν δεν είναι πλέον σε αναμονή, οπότε δεν μπορεί να απορριφθεί ως ανεπιθύμητο.</value>
+  </data>
+  <data name="Screening.LikelyNotIncident" xml:space="preserve">
+    <value>Enhanced AI: πιθανότατα δεν είναι συμβάν</value>
+  </data>
+  <data name="Screening.RepeatSender" xml:space="preserve">
+    <value>Επαναλαμβανόμενος αποστολέας: πάνω από το ωριαίο όριο</value>
+  </data>
+  <data name="Screening.DismissedAsSpam" xml:space="preserve">
+    <value>Απορρίφθηκε ως ανεπιθύμητο</value>
+  </data>
 </root>

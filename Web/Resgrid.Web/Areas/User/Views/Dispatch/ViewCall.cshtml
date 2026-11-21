@@ -181,7 +181,39 @@
     var intakeLabel = intakeSources.TryGetValue(Model.Call.CallId, out var intakeSource)
         ? Resgrid.Web.Areas.User.Controllers.IntakeChannelsController.SourceLabel(intakeLocalizer, intakeSource)
         : intakeLocalizer["ViaType", intakeLocalizer[Model.Call.CallSource == (int)CallSources.VoiceIntake ? "Type.Voice" : "PageTitle"].Value].Value;
-    <div class="row"><div class="col-lg-12"><div class="alert alert-info" id="intakeSourceBanner" style="margin:15px 0 0 0;"><i class="fa fa-inbox"></i> @intakeLabel</div></div></div>
+    @* M0326: why the call is screened, and "dismiss as spam" (cancel + block the sender) while it is still pending. *@
+    var screeningLabel = intakeSource == null ? null : Resgrid.Web.Areas.User.Controllers.IntakeChannelsController.ScreeningLabel(intakeLocalizer, intakeSource.Screening);
+    var canDismiss = intakeSource != null && Model.Call.State == (int)CallStates.Pending && ClaimsAuthorizationHelper.CanCreateCall();
+    var blockDays = Resgrid.Config.IntakeConfig.SpamBlockDays;
+    <div class="row"><div class="col-lg-12"><div class="alert alert-info" id="intakeSourceBanner" style="margin:15px 0 0 0;">
+        <i class="fa fa-inbox"></i> @intakeLabel
+        @if (screeningLabel != null)
+        {
+            <span class="label label-warning" id="intakeScreeningLabel" style="margin-left:8px;">@screeningLabel</span>
+        }
+        @if (canDismiss)
+        {
+            <form method="post" asp-controller="IntakeChannels" asp-action="DismissAsSpam" asp-route-area="User" id="intakeDismissForm" class="pull-right" style="margin:-4px 0 0 8px;"
+                  onsubmit="return confirm('@JsEncoder.Encode(intakeLocalizer["DismissConfirm"].Value)');">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="callId" value="@Model.Call.CallId" />
+                <label class="checkbox-inline" style="margin-right:8px;">
+                    <input type="checkbox" name="blockSender" value="true" checked="checked" />
+                    @(blockDays > 0 ? intakeLocalizer["DismissBlockSender", blockDays].Value : intakeLocalizer["DismissBlockSenderForever"].Value)
+                </label>
+                <input type="hidden" name="blockSender" value="false" />
+                <button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-ban"></i> @intakeLocalizer["DismissAsSpam"]</button>
+            </form>
+        }
+    </div></div></div>
+}
+@if (TempData["IntakeDismissMessage"] is string intakeDismissMessage && !string.IsNullOrEmpty(intakeDismissMessage))
+{
+    <div class="row"><div class="col-lg-12"><div class="alert alert-success" style="margin:15px 0 0 0;">@intakeDismissMessage</div></div></div>
+}
+@if (TempData["IntakeDismissError"] is string intakeDismissError && !string.IsNullOrEmpty(intakeDismissError))
+{
+    <div class="row"><div class="col-lg-12"><div class="alert alert-danger" style="margin:15px 0 0 0;">@intakeDismissError</div></div></div>
 }
 
 <div class="row">

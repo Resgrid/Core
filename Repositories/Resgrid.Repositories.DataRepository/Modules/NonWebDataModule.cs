@@ -190,6 +190,7 @@ namespace Resgrid.Repositories.DataRepository
 			// Intake channels, messages and voice intake sessions (M0323).
 			builder.RegisterType<IntakeChannelsRepository>().As<IIntakeChannelsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<IntakeMessagesRepository>().As<IIntakeMessagesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<IntakeBlockedSendersRepository>().As<IIntakeBlockedSendersRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<VoiceIntakeSessionsRepository>().As<IVoiceIntakeSessionsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<IntakeConversationsRepository>().As<IIntakeConversationsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<IntakeConversationMessagesRepository>().As<IIntakeConversationMessagesRepository>().InstancePerLifetimeScope();

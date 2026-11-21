@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Resgrid.Model;
 
@@ -10,9 +11,33 @@ namespace Resgrid.Web.Areas.User.Models.IntakeChannels
 
 		public List<IntakeChannelRow> Channels { get; set; } = new List<IntakeChannelRow>();
 
+		/// <summary>Senders blocked from the department's intake channels (M0326), newest first.</summary>
+		public List<IntakeBlockedSenderRow> BlockedSenders { get; set; } = new List<IntakeBlockedSenderRow>();
+
 		public string Message { get; set; }
 
 		public string ErrorMessage { get; set; }
+	}
+
+	/// <summary>One standing block (expired ones show until worker 80 purges them).</summary>
+	public class IntakeBlockedSenderRow
+	{
+		public string IntakeBlockedSenderId { get; set; }
+
+		public string Sender { get; set; }
+
+		public IntakeChannelTypes ChannelType { get; set; }
+
+		public int? CallId { get; set; }
+
+		public string BlockedByName { get; set; }
+
+		public DateTime BlockedOn { get; set; }
+
+		/// <summary>Null = until lifted.</summary>
+		public DateTime? ExpiresOn { get; set; }
+
+		public bool Expired { get; set; }
 	}
 
 	public class IntakeChannelRow

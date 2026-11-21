@@ -286,4 +286,76 @@
   <data name="ManageIntakeChannels" xml:space="preserve">
     <value>Hantera mottagningskanaler</value>
   </data>
+  <data name="BlockedSenders" xml:space="preserve">
+    <value>Blockerade avsändare</value>
+  </data>
+  <data name="BlockedSendersIntro" xml:space="preserve">
+    <value>Avsändare som en larmoperatör har avfärdat som skräp. Deras meddelanden och samtal till era inkanaler registreras men skapar inga ärenden, och inget skickas tillbaka till dem. En blockering upphör av sig själv på det angivna datumet.</value>
+  </data>
+  <data name="NoBlockedSenders" xml:space="preserve">
+    <value>Inga avsändare är blockerade.</value>
+  </data>
+  <data name="Sender" xml:space="preserve">
+    <value>Avsändare</value>
+  </data>
+  <data name="BlockedBy" xml:space="preserve">
+    <value>Blockerad av</value>
+  </data>
+  <data name="BlockedOn" xml:space="preserve">
+    <value>Blockerad</value>
+  </data>
+  <data name="BlockedUntil" xml:space="preserve">
+    <value>Till</value>
+  </data>
+  <data name="BlockedCall" xml:space="preserve">
+    <value>Visa ärende</value>
+  </data>
+  <data name="BlockExpired" xml:space="preserve">
+    <value>Har upphört</value>
+  </data>
+  <data name="BlockedUntilLifted" xml:space="preserve">
+    <value>Tills den hävs</value>
+  </data>
+  <data name="Unblock" xml:space="preserve">
+    <value>Häv blockering</value>
+  </data>
+  <data name="UnblockConfirm" xml:space="preserve">
+    <value>Häva blockeringen av den här avsändaren? Deras meddelanden skapar väntande ärenden igen.</value>
+  </data>
+  <data name="Unblocked" xml:space="preserve">
+    <value>Blockeringen av avsändaren hävdes.</value>
+  </data>
+  <data name="DismissAsSpam" xml:space="preserve">
+    <value>Avfärda som skräp</value>
+  </data>
+  <data name="DismissConfirm" xml:space="preserve">
+    <value>Avfärda det här ärendet som skräp? Det avbryts och ingen meddelas.</value>
+  </data>
+  <data name="DismissBlockSender" xml:space="preserve">
+    <value>Blockera även avsändaren i {0} dagar</value>
+  </data>
+  <data name="DismissBlockSenderForever" xml:space="preserve">
+    <value>Blockera även avsändaren</value>
+  </data>
+  <data name="Dismissed" xml:space="preserve">
+    <value>Ärendet avfärdades som skräp.</value>
+  </data>
+  <data name="DismissedAndBlocked" xml:space="preserve">
+    <value>Ärendet avfärdades som skräp och avsändaren är blockerad.</value>
+  </data>
+  <data name="DismissedNotBlockable" xml:space="preserve">
+    <value>Ärendet avfärdades som skräp. Den som ringde dolde sitt nummer och kunde därför inte blockeras.</value>
+  </data>
+  <data name="DismissNotPending" xml:space="preserve">
+    <value>Ärendet väntar inte längre och kan därför inte avfärdas som skräp.</value>
+  </data>
+  <data name="Screening.LikelyNotIncident" xml:space="preserve">
+    <value>Enhanced AI: troligen ingen händelse</value>
+  </data>
+  <data name="Screening.RepeatSender" xml:space="preserve">
+    <value>Upprepad avsändare: över timgränsen</value>
+  </data>
+  <data name="Screening.DismissedAsSpam" xml:space="preserve">
+    <value>Avfärdad som skräp</value>
+  </data>
 </root>

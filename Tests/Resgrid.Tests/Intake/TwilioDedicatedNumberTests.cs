@@ -24,7 +24,7 @@ namespace Resgrid.Tests.Intake
 	/// refuses politely, the master number keeps every existing path; calls reach the member IVR, guided intake or the text-only
 	/// message as VoiceIntakeService decides.
 	/// </summary>
-	[TestFixture]
+	[TestFixture, NonParallelizable]
 	public class TwilioDedicatedNumberTests
 	{
 		private const int DepartmentId = 55;
@@ -138,6 +138,31 @@ namespace Resgrid.Tests.Intake
 			_text.Verify(t => t.SendTextMessage(Caller, TwilioController.LapsedNumberReply, null, It.IsAny<MobileCarriers>(), DepartmentId, false, false, 0), Times.Once);
 		}
 
+		[TestCase("73822")]
+		[TestCase("AMAZON")]
+		[TestCase("+12345")]
+		public async Task a_text_from_a_short_code_or_sender_id_is_refused_and_never_answered(string from)
+		{
+			var result = await Controller().IncomingMessage(new TwilioMessage { To = Dedicated, From = from, Body = "Your code is 123456", MessageSid = "SM1" });
+
+			_received.RefusalReason.Should().Be("SenderNotPhoneNumber");
+			_received.OpensConversation.Should().BeFalse();
+			((ContentResult)result).StatusCode.Should().Be(StatusCodes.Status200OK);
+			_text.Verify(t => t.SendTextMessage(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<MobileCarriers>(), It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<int>()), Times.Never);
+		}
+
+		[TestCase(IntakeMessageStates.SenderBlocked)]
+		[TestCase(IntakeMessageStates.AddedToCall)]
+		public async Task a_blocked_or_repeat_sender_gets_nothing_back(IntakeMessageStates state)
+		{
+			_intake.Setup(i => i.ReceiveAsync(It.IsAny<IntakeEnvelope>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new IntakeResult { State = state, CallId = state == IntakeMessageStates.AddedToCall ? 900 : (int?)null, Acknowledgement = "Received by Springfield Fire." });
+
+			((ContentResult)await Controller().IncomingMessage(Text())).StatusCode.Should().Be(StatusCodes.Status200OK);
+
+			_text.Verify(t => t.SendTextMessage(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<MobileCarriers>(), It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<int>()), Times.Never);
+		}
+
 		[Test]
 		public async Task stop_to_a_dedicated_number_creates_nothing_and_sends_nothing()
 		{
@@ -237,8 +262,80 @@ namespace Resgrid.Tests.Intake
 
 		private static TwilioGatherRequest Call() => new TwilioGatherRequest { To = Dedicated, From = Caller, CallSid = "CA1" };
 
+		private TwilioController GateController(string digits)
+		{
+			var controller = Controller();
+			controller.ControllerContext.HttpContext.Request.QueryString =
+				new QueryString("?CallSid=CA1&To=%2B17755550100&From=%2B15305550199" + (digits == null ? "" : "&Digits=" + Uri.EscapeDataString(digits)));
+			return controller;
+		}
+
 		[Test]
-		public async Task a_non_member_call_starts_guided_speech_intake()
+		public async Task a_non_member_call_first_hears_the_press_1_gate_and_no_session_starts()
+		{
+			_voice.Setup(v => v.RouteAsync(_number, Caller, It.IsAny<DateTime>())).ReturnsAsync(new VoiceIntakeRouting { Route = VoiceIntakeRoutes.Intake, DepartmentId = DepartmentId });
+
+			var twiml = Content(await Controller().InboundVoice(Call()));
+
+			twiml.Should().Contain("<Gather").And.Contain("input=\"dtmf\"").And.Contain("numDigits=\"1\"").And.Contain("/api/Twilio/VoiceIntakeGate");
+			twiml.Should().Contain("<Hangup");
+			_spoken.Should().Equal(TwilioVoicePromptCatalog.VoiceIntakeGate, TwilioVoicePromptCatalog.VoiceIntakeNothingHeard);
+			_voice.Verify(v => v.StartAsync(It.IsAny<DepartmentPhoneNumber>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never,
+				"a robocall that never presses 1 leaves no session and uses none of the monthly limit");
+		}
+
+		[TestCase(null)]
+		[TestCase("")]
+		[TestCase("2")]
+		[TestCase("#")]
+		public async Task anything_but_1_at_the_gate_hangs_up_without_routing_again(string digits)
+		{
+			var twiml = Content(await GateController(digits).VoiceIntakeGate());
+
+			_spoken.Should().Equal(TwilioVoicePromptCatalog.VoiceIntakeNothingHeard);
+			twiml.Should().Contain("<Hangup").And.NotContain("<Gather");
+			_voice.Verify(v => v.RouteAsync(It.IsAny<DepartmentPhoneNumber>(), It.IsAny<string>(), It.IsAny<DateTime>()), Times.Never);
+			_voice.Verify(v => v.StartAsync(It.IsAny<DepartmentPhoneNumber>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public async Task a_caller_blocked_meanwhile_is_turned_away_after_pressing_1()
+		{
+			_voice.Setup(v => v.RouteAsync(_number, Caller, It.IsAny<DateTime>())).ReturnsAsync(new VoiceIntakeRouting { Route = VoiceIntakeRoutes.Blocked, DepartmentId = DepartmentId });
+
+			var twiml = Content(await GateController("1").VoiceIntakeGate());
+
+			_spoken.Should().Equal(TwilioVoicePromptCatalog.VoiceIntakeUnavailable);
+			twiml.Should().Contain("<Hangup").And.NotContain("<Gather");
+			_voice.Verify(v => v.StartAsync(It.IsAny<DepartmentPhoneNumber>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public async Task with_the_gate_off_guided_intake_starts_at_once()
+		{
+			var saved = Resgrid.Config.IntakeConfig.VoiceGateEnabled;
+			try
+			{
+				Resgrid.Config.IntakeConfig.VoiceGateEnabled = false;
+				_voice.Setup(v => v.RouteAsync(_number, Caller, It.IsAny<DateTime>())).ReturnsAsync(new VoiceIntakeRouting { Route = VoiceIntakeRoutes.Intake, DepartmentId = DepartmentId });
+				_voice.Setup(v => v.StartAsync(_number, "CA1", Caller, It.IsAny<CancellationToken>())).ReturnsAsync(new VoiceIntakeTurn
+				{
+					Step = VoiceIntakeSteps.Nature, Gather = true, Prompts = new List<string> { TwilioVoicePromptCatalog.VoiceIntakeGreeting, TwilioVoicePromptCatalog.VoiceIntakeAskNature }
+				});
+
+				var twiml = Content(await Controller().InboundVoice(Call()));
+
+				twiml.Should().Contain("input=\"speech\"").And.NotContain("VoiceIntakeGate");
+				_voice.Verify(v => v.StartAsync(_number, "CA1", Caller, It.IsAny<CancellationToken>()), Times.Once);
+			}
+			finally
+			{
+				Resgrid.Config.IntakeConfig.VoiceGateEnabled = saved;
+			}
+		}
+
+		[Test]
+		public async Task a_caller_who_pressed_1_starts_guided_speech_intake()
 		{
 			_voice.Setup(v => v.RouteAsync(_number, Caller, It.IsAny<DateTime>())).ReturnsAsync(new VoiceIntakeRouting { Route = VoiceIntakeRoutes.Intake, DepartmentId = DepartmentId });
 			_voice.Setup(v => v.StartAsync(_number, "CA1", Caller, It.IsAny<CancellationToken>())).ReturnsAsync(new VoiceIntakeTurn
@@ -247,7 +344,7 @@ namespace Resgrid.Tests.Intake
 				Prompts = new List<string> { TwilioVoicePromptCatalog.VoiceIntakeGreeting, TwilioVoicePromptCatalog.VoiceIntakeAskNature }
 			});
 
-			var twiml = Content(await Controller().InboundVoice(Call()));
+			var twiml = Content(await GateController("1").VoiceIntakeGate());
 
 			twiml.Should().Contain("<Gather").And.Contain("input=\"speech\"").And.Contain("/api/Twilio/VoiceIntakeAnswer?step=1");
 			twiml.Should().Contain("speechTimeout=\"auto\"");
@@ -277,7 +374,7 @@ namespace Resgrid.Tests.Intake
 			_voice.Setup(v => v.RouteAsync(_number, Caller, It.IsAny<DateTime>())).ReturnsAsync(new VoiceIntakeRouting { Route = VoiceIntakeRoutes.Intake, DepartmentId = DepartmentId });
 			_voice.Setup(v => v.StartAsync(_number, "CA1", Caller, It.IsAny<CancellationToken>())).ThrowsAsync(new TimeoutException("session store"));
 
-			var twiml = Content(await Controller().InboundVoice(Call()));
+			var twiml = Content(await GateController("1").VoiceIntakeGate());
 
 			_spoken.Should().Equal(TwilioVoicePromptCatalog.VoiceIntakeFailed);
 			twiml.Should().Contain("<Hangup").And.NotContain("<Gather");
@@ -314,6 +411,7 @@ namespace Resgrid.Tests.Intake
 
 		[TestCase(VoiceIntakeRoutes.TextOnly, TwilioVoicePromptCatalog.VoiceIntakeTextOnly)]
 		[TestCase(VoiceIntakeRoutes.NumberInactive, TwilioVoicePromptCatalog.VoiceIntakeNumberInactive)]
+		[TestCase(VoiceIntakeRoutes.Blocked, TwilioVoicePromptCatalog.VoiceIntakeUnavailable)]
 		public async Task other_routes_say_one_message_and_hang_up(VoiceIntakeRoutes route, string prompt)
 		{
 			_voice.Setup(v => v.RouteAsync(_number, Caller, It.IsAny<DateTime>())).ReturnsAsync(new VoiceIntakeRouting { Route = route, DepartmentId = DepartmentId });

@@ -201,6 +201,44 @@ namespace Resgrid.Repositories.DataRepository
 			return rows?.ToList() ?? new List<IntakeMessage>();
 		}
 
+		public async Task<List<IntakeMessage>> GetCallsCreatedBySenderSinceAsync(int departmentId, string sender, DateTime since)
+		{
+			if (string.IsNullOrWhiteSpace(sender))
+				return new List<IntakeMessage>();
+
+			var rows = await QueryAsync<IntakeMessage>(
+				$"SELECT * FROM {Tbl(Table)} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("Sender")} = {CaseInsensitive("Sender")} " +
+				$"AND {Col("State")} = {P}Created AND {Col("CallId")} IS NOT NULL AND {Col("ReceivedOn")} >= {P}Since ORDER BY {Col("ReceivedOn")} DESC",
+				new { DepartmentId = departmentId, Sender = sender, Created = (int)IntakeMessageStates.CallCreated, Since = DatabaseTimestamp(since) });
+
+			return rows?.ToList() ?? new List<IntakeMessage>();
+		}
+
+		public async Task<bool> SetScreeningAsync(int departmentId, int callId, int screening, int[] replaceable, string userId, DateTime screenedOn,
+			CancellationToken cancellationToken = default)
+		{
+			var parameters = new DynamicParameters();
+			parameters.Add("DepartmentId", departmentId);
+			parameters.Add("CallId", callId);
+			parameters.Add("Created", (int)IntakeMessageStates.CallCreated);
+			parameters.Add("Screening", screening);
+			parameters.Add("UserId", userId);
+			parameters.Add("ScreenedOn", DatabaseTimestamp(screenedOn));
+			// An empty IN list is invalid SQL Server; -1 is never an IntakeScreenings value.
+			parameters.Add("Replaceable", InListValue(replaceable != null && replaceable.Length > 0 ? replaceable : new[] { -1 }));
+
+			// Unscreened rows (NULL, from before M0326 or never screened) read as None, so "replace None" covers both.
+			var current = $"COALESCE({Col("Screening")}, 0)";
+			var replaceableMatch = IsPostgres ? $"{current} = ANY({P}Replaceable)" : $"{current} IN {P}Replaceable";
+			var updated = await ExecuteAsync(
+				$"UPDATE {Tbl(Table)} SET {Col("Screening")} = {P}Screening, {Col("ScreenedOn")} = {P}ScreenedOn, {Col("ScreenedByUserId")} = {P}UserId " +
+				$"WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("CallId")} = {P}CallId AND {Col("State")} = {P}Created " +
+				$"AND {replaceableMatch} AND {current} <> {P}Screening",
+				parameters, cancellationToken);
+
+			return updated > 0;
+		}
+
 		public Task<int> PurgeReceivedBeforeAsync(DateTime before, CancellationToken cancellationToken = default)
 		{
 			return ExecuteAsync($"DELETE FROM {Tbl(Table)} WHERE {Col("ReceivedOn")} < {P}Before", new { Before = DatabaseTimestamp(before) }, cancellationToken);
@@ -222,6 +260,124 @@ namespace Resgrid.Repositories.DataRepository
 			public TKey Key { get; set; }
 
 			public int Count { get; set; }
+		}
+	}
+
+	/// <summary>
+	/// Blocked intake senders (M0326). One standing (not lifted) row per department and sender, enforced by a filtered unique index and
+	/// a conditional insert, so two dispatchers dismissing the same sender at once leave one row. Sender is citext on PostgreSQL.
+	/// </summary>
+	public class IntakeBlockedSendersRepository : RmsRepositoryBase<IntakeBlockedSender>, IIntakeBlockedSendersRepository
+	{
+		private const string Table = "IntakeBlockedSenders";
+
+		private static readonly string[] InsertColumns =
+		{
+			"IntakeBlockedSenderId", "DepartmentId", "Sender", "ChannelType", "Reason", "CallId", "BlockedByUserId", "BlockedOn", "ExpiresOn",
+			"RemovedByUserId", "RemovedOn"
+		};
+
+		public IntakeBlockedSendersRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
+			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory) { }
+
+		public Task<IntakeBlockedSender> GetInForceAsync(int departmentId, string sender, DateTime nowUtc)
+		{
+			return QueryFirstOrDefaultAsync<IntakeBlockedSender>(
+				$"SELECT * FROM {Tbl(Table)} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("Sender")} = {CaseInsensitive("Sender")} " +
+				$"AND {Col("RemovedOn")} IS NULL AND ({Col("ExpiresOn")} IS NULL OR {Col("ExpiresOn")} > {P}Now)",
+				new { DepartmentId = departmentId, Sender = sender, Now = DatabaseTimestamp(nowUtc) });
+		}
+
+		public Task<IntakeBlockedSender> GetCurrentAsync(int departmentId, string sender)
+		{
+			return QueryFirstOrDefaultAsync<IntakeBlockedSender>(
+				$"SELECT * FROM {Tbl(Table)} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("Sender")} = {CaseInsensitive("Sender")} AND {Col("RemovedOn")} IS NULL",
+				new { DepartmentId = departmentId, Sender = sender });
+		}
+
+		public async Task<List<IntakeBlockedSender>> GetCurrentForDepartmentAsync(int departmentId)
+		{
+			var rows = await QueryAsync<IntakeBlockedSender>(
+				$"SELECT * FROM {Tbl(Table)} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RemovedOn")} IS NULL ORDER BY {Col("BlockedOn")} DESC",
+				new { DepartmentId = departmentId });
+
+			return rows?.ToList() ?? new List<IntakeBlockedSender>();
+		}
+
+		public async Task<bool> TryInsertAsync(IntakeBlockedSender block, CancellationToken cancellationToken = default)
+		{
+			if (block == null)
+				throw new ArgumentNullException(nameof(block));
+
+			Utf8WriteGuard.Sanitize(block);
+			var values = string.Join(", ", Array.ConvertAll(InsertColumns, c => P + c));
+			var sql = IsPostgres
+				? $"INSERT INTO {Tbl(Table)} ({Cols(InsertColumns)}) VALUES ({values}) ON CONFLICT ({Col("DepartmentId")}, {Col("Sender")}) " +
+				  $"WHERE {Col("RemovedOn")} IS NULL DO NOTHING"
+				: $"INSERT INTO {Tbl(Table)} ({Cols(InsertColumns)}) SELECT {values} " +
+				  $"WHERE NOT EXISTS (SELECT 1 FROM {Tbl(Table)} WITH (UPDLOCK, HOLDLOCK) WHERE {Col("DepartmentId")} = {P}DepartmentId " +
+				  $"AND {Col("Sender")} = {P}Sender AND {Col("RemovedOn")} IS NULL)";
+
+			var inserted = await ExecuteAsync(sql, new
+			{
+				block.IntakeBlockedSenderId,
+				block.DepartmentId,
+				block.Sender,
+				block.ChannelType,
+				block.Reason,
+				block.CallId,
+				block.BlockedByUserId,
+				BlockedOn = DatabaseTimestamp(block.BlockedOn),
+				ExpiresOn = block.ExpiresOn.HasValue ? DatabaseTimestamp(block.ExpiresOn.Value) : (DateTime?)null,
+				block.RemovedByUserId,
+				RemovedOn = block.RemovedOn.HasValue ? DatabaseTimestamp(block.RemovedOn.Value) : (DateTime?)null
+			}, cancellationToken);
+
+			return inserted == 1;
+		}
+
+		public async Task<bool> RenewAsync(IntakeBlockedSender block, CancellationToken cancellationToken = default)
+		{
+			if (block == null)
+				throw new ArgumentNullException(nameof(block));
+
+			Utf8WriteGuard.Sanitize(block);
+			var updated = await ExecuteAsync(
+				$"UPDATE {Tbl(Table)} SET {Col("ChannelType")} = {P}ChannelType, {Col("Reason")} = {P}Reason, {Col("CallId")} = {P}CallId, " +
+				$"{Col("BlockedByUserId")} = {P}BlockedByUserId, {Col("BlockedOn")} = {P}BlockedOn, {Col("ExpiresOn")} = {P}ExpiresOn " +
+				$"WHERE {Col("IntakeBlockedSenderId")} = {P}Id AND {Col("DepartmentId")} = {P}DepartmentId AND {Col("RemovedOn")} IS NULL",
+				new
+				{
+					Id = block.IntakeBlockedSenderId,
+					block.DepartmentId,
+					block.ChannelType,
+					block.Reason,
+					block.CallId,
+					block.BlockedByUserId,
+					BlockedOn = DatabaseTimestamp(block.BlockedOn),
+					ExpiresOn = block.ExpiresOn.HasValue ? DatabaseTimestamp(block.ExpiresOn.Value) : (DateTime?)null
+				}, cancellationToken);
+
+			return updated == 1;
+		}
+
+		public async Task<bool> RemoveAsync(int departmentId, string intakeBlockedSenderId, string userId, DateTime removedOn, CancellationToken cancellationToken = default)
+		{
+			var updated = await ExecuteAsync(
+				$"UPDATE {Tbl(Table)} SET {Col("RemovedOn")} = {P}RemovedOn, {Col("RemovedByUserId")} = {P}UserId " +
+				$"WHERE {Col("IntakeBlockedSenderId")} = {P}Id AND {Col("DepartmentId")} = {P}DepartmentId AND {Col("RemovedOn")} IS NULL",
+				new { Id = intakeBlockedSenderId, DepartmentId = departmentId, UserId = userId, RemovedOn = DatabaseTimestamp(removedOn) },
+				cancellationToken);
+
+			return updated == 1;
+		}
+
+		public Task<int> PurgeEndedBeforeAsync(DateTime before, CancellationToken cancellationToken = default)
+		{
+			return ExecuteAsync(
+				$"DELETE FROM {Tbl(Table)} WHERE ({Col("RemovedOn")} IS NOT NULL AND {Col("RemovedOn")} < {P}Before) " +
+				$"OR ({Col("RemovedOn")} IS NULL AND {Col("ExpiresOn")} IS NOT NULL AND {Col("ExpiresOn")} < {P}Before)",
+				new { Before = DatabaseTimestamp(before) }, cancellationToken);
 		}
 	}
 

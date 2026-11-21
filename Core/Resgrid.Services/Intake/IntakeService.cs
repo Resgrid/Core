@@ -34,7 +34,8 @@ namespace Resgrid.Services.Intake
 		/// <summary>A claim that stayed Received this long was abandoned by a crashed request and may be taken again.</summary>
 		private static readonly TimeSpan AbandonedClaim = TimeSpan.FromMinutes(10);
 
-		private static readonly int[] NotCounted = { (int)IntakeMessageStates.Duplicate };
+		// A blocked sender's messages are refused before anything is built, so they never count toward the monthly volume (M0326).
+		private static readonly int[] NotCounted = { (int)IntakeMessageStates.Duplicate, (int)IntakeMessageStates.SenderBlocked };
 
 		private static readonly int[] IntakeCallSources = { (int)CallSources.Intake, (int)CallSources.VoiceIntake };
 
@@ -53,13 +54,16 @@ namespace Resgrid.Services.Intake
 		private readonly ICacheProvider _cache;
 		private readonly IIntakeConversationService _conversations;
 		private readonly IIntakeConversationOperations _conversationOperations;
+		private readonly IIntakeBlockedSendersRepository _blocked;
 		private readonly TimeProvider _clock;
 
 		public IntakeService(IIntakeChannelsRepository channels, IIntakeMessagesRepository messages, IVoiceIntakeSessionsRepository sessions,
 			IDepartmentsService departments, IDepartmentSettingsService departmentSettings, IFeatureToggleService flags, ICallsService calls,
 			INumbersService numbers, IGeoLocationProvider geo, IEventAggregator events, IQueueService queue, ICommunicationService communication,
-			ICacheProvider cache, IIntakeConversationService conversations, IIntakeConversationOperations conversationOperations, TimeProvider clock)
+			ICacheProvider cache, IIntakeConversationService conversations, IIntakeConversationOperations conversationOperations,
+			IIntakeBlockedSendersRepository blocked, TimeProvider clock)
 		{
+			_blocked = blocked;
 			_channels = channels;
 			_messages = messages;
 			_sessions = sessions;
@@ -137,6 +141,12 @@ namespace Resgrid.Services.Intake
 					refusal = "ChannelDisabled";
 				else if (string.IsNullOrWhiteSpace(envelope.Body) && string.IsNullOrWhiteSpace(envelope.Subject))
 					refusal = "EmptyMessage";
+				else if (await IsBlockedAsync(channel.DepartmentId, envelope.Sender, now))
+				{
+					// M0326: a sender a dispatcher blocked (dismiss as spam). Recorded, never answered, not counted.
+					refusal = "SenderBlocked";
+					state = IntakeMessageStates.SenderBlocked;
+				}
 				else if (!IsSenderAllowed(channel, envelope.Sender))
 				{
 					refusal = "SenderNotAllowed";
@@ -173,6 +183,19 @@ namespace Resgrid.Services.Intake
 					}
 				}
 
+				// M0326 per-sender limit: past IntakeConfig.MaxCallsPerSenderPerHour, the message joins the sender's newest open call as a note.
+				var limit = await CheckSenderLimitAsync(channel, department, envelope, now, cancellationToken);
+				if (limit.JoinedCallId.HasValue)
+				{
+					await _messages.CompleteAsync(message.IntakeMessageId, (int)IntakeMessageStates.AddedToCall, limit.JoinedCallId, "SenderLimit", now, CancellationToken.None);
+					result.State = IntakeMessageStates.AddedToCall;
+					result.CallId = limit.JoinedCallId;
+					result.Reason = "SenderLimit";
+					if (envelope.ChannelType == IntakeChannelTypes.Sms)
+						await CheckSmsFairUseAsync(department, now);
+					return result;
+				}
+
 				var built = await BuildCallAsync(channel, department, envelope, now);
 				pendingCall = built.Call;
 				var saved = await _calls.SaveCallAsync(built.Call, cancellationToken);
@@ -185,13 +208,19 @@ namespace Resgrid.Services.Intake
 				result.CallId = saved.CallId;
 				result.Reason = built.Reason;
 
+				// Over the limit with none of the sender's calls still open: the call stands, labelled so the desk does not offer it (before
+				// the event below, so the boards and the desk read the label with the call).
+				if (limit.OverLimit)
+					await SafeScreenAsync(channel.DepartmentId, saved.CallId, IntakeScreenings.RepeatSender, now);
+
 				// As the v4 pending path: dispatcher screens refresh; "call added" (chat channel, workflows, field apps) waits for dispatch.
 				_events.SendMessage(new CallUpdatedEvent { DepartmentId = channel.DepartmentId, Call = saved });
 
 				// The conversation's welcome (from the master number) replaces the acknowledgement: one text, never two. Started before the
-				// enrichment is queued so the first Enhanced AI question is not stuck behind it on the queue.
+				// enrichment is queued so the first Enhanced AI question is not stuck behind it on the queue. A repeat sender gets neither:
+				// nothing goes back to a number that is flooding the line, and its next texts join this call as notes.
 				IntakeConversation conversation = null;
-				if (conversational)
+				if (conversational && !limit.OverLimit)
 					conversation = await _conversations.StartFromIntakeAsync(channel, envelope, saved, cancellationToken);
 				result.IntakeConversationId = conversation?.IntakeConversationId;
 
@@ -201,7 +230,7 @@ namespace Resgrid.Services.Intake
 				if (envelope.ChannelType == IntakeChannelTypes.Sms)
 					await CheckSmsFairUseAsync(department, now);
 
-				if (channel.SendAcknowledgement && conversation == null)
+				if (channel.SendAcknowledgement && conversation == null && !limit.OverLimit)
 					result.Acknowledgement = Acknowledgement(department, saved);
 
 				return result;
@@ -289,7 +318,8 @@ namespace Resgrid.Services.Intake
 				{
 					CallId = message.CallId.Value,
 					ChannelType = message.ChannelType,
-					ChannelName = channel?.Name
+					ChannelName = channel?.Name,
+					Screening = message.Screening ?? (int)IntakeScreenings.None
 				};
 			}
 
@@ -304,8 +334,123 @@ namespace Resgrid.Services.Intake
 			return new IntakePurgeResult
 			{
 				Messages = await _messages.PurgeReceivedBeforeAsync(messagesBefore, cancellationToken),
-				VoiceSessions = await _sessions.PurgeStartedBeforeAsync(sessionsBefore, cancellationToken)
+				VoiceSessions = await _sessions.PurgeStartedBeforeAsync(sessionsBefore, cancellationToken),
+				// A lifted or expired block is kept as long as the messages it refused, then goes.
+				BlockedSenders = await _blocked.PurgeEndedBeforeAsync(messagesBefore, cancellationToken)
 			};
+		}
+
+		/// <summary>
+		/// The sender is on the department's blocked list (M0326). A list that cannot be read lets the message through: a block-list
+		/// outage must never lose a real request.
+		/// </summary>
+		private async Task<bool> IsBlockedAsync(int departmentId, string sender, DateTime now)
+		{
+			var key = IntakeBlockedSenders.Normalize(sender);
+			if (key == null)
+				return false;
+
+			try
+			{
+				return await _blocked.GetInForceAsync(departmentId, key, now) != null;
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex, $"Intake blocked-sender check failed for department {departmentId}; the message is let through.");
+				return false;
+			}
+		}
+
+		/// <summary>The per-sender hourly limit's verdict for one message (M0326).</summary>
+		private readonly struct SenderLimit
+		{
+			public SenderLimit(bool overLimit, int? joinedCallId)
+			{
+				OverLimit = overLimit;
+				JoinedCallId = joinedCallId;
+			}
+
+			/// <summary>The sender already made the hour's allowance of calls.</summary>
+			public bool OverLimit { get; }
+
+			/// <summary>The open call the message was added to as a note; null = the message makes a call of its own.</summary>
+			public int? JoinedCallId { get; }
+		}
+
+		/// <summary>
+		/// M0326: a sender (recorded form) who already created IntakeConfig.MaxCallsPerSenderPerHour calls in the department this rolling
+		/// hour has the message added to the newest of those calls still open (pending or active) as a note. With none open the message
+		/// still makes a call (OverLimit, screened RepeatSender). Withheld caller ids share one placeholder number, so they are never
+		/// limited as one sender. Any failure lets the message make its own call.
+		/// </summary>
+		private async Task<SenderLimit> CheckSenderLimitAsync(IntakeChannel channel, Department department, IntakeEnvelope envelope, DateTime now,
+			CancellationToken cancellationToken)
+		{
+			var max = IntakeConfig.MaxCallsPerSenderPerHour;
+			var sender = Cap(envelope.Sender?.Trim(), MaxSenderLength);
+			if (max <= 0 || !IsSenderLimited(channel) || IntakeBlockedSenders.Normalize(sender) == null)
+				return default;
+
+			try
+			{
+				var recent = await _messages.GetCallsCreatedBySenderSinceAsync(channel.DepartmentId, sender, now.AddHours(-1)) ?? new List<IntakeMessage>();
+				if (recent.Count < max)
+					return default;
+
+				foreach (var callId in recent.Where(m => m.CallId.HasValue).Select(m => m.CallId.Value).Distinct())
+				{
+					var call = await _calls.GetCallByIdAsync(callId, false);
+					if (call == null || call.IsDeleted || call.DepartmentId != channel.DepartmentId ||
+						call.State != (int)CallStates.Pending && call.State != (int)CallStates.Active)
+						continue;
+
+					var text = MessageText(envelope.Body) ?? Cap(envelope.Subject?.Trim(), MaxNameLength);
+					var note = await _calls.SaveCallNoteAsync(new CallNote
+					{
+						CallId = call.CallId,
+						UserId = department.ManagingUserId,
+						Note = $"Another message from {SenderLabel(envelope)} ({channel.Name}): {text}",
+						Source = (int)CallNoteSources.IntakeText,
+						Timestamp = now
+					}, cancellationToken);
+
+					if (note == null || note.CallNoteId <= 0)
+						break;
+
+					_events.SendMessage(new CallUpdatedEvent { DepartmentId = channel.DepartmentId, Call = call });
+					return new SenderLimit(true, call.CallId);
+				}
+
+				return new SenderLimit(true, null);
+			}
+			catch (Exception ex) when (!(ex is OperationCanceledException && cancellationToken.IsCancellationRequested))
+			{
+				Framework.Logging.LogException(ex, $"Intake per-sender limit check failed for channel {channel.IntakeChannelId}; the message makes its own call.");
+				return default;
+			}
+		}
+
+		/// <summary>
+		/// The per-sender limit covers the public phone lines only (SMS, voice, WhatsApp) and only while the channel takes anyone. Email,
+		/// chat and webhook channels are linked by an admin and often carry a CAD bridge or alarm panel that legitimately sends many
+		/// incidents an hour from one address, and a sender on a channel's allowed list is trusted: their messages always make calls.
+		/// </summary>
+		public static bool IsSenderLimited(IntakeChannel channel) =>
+			channel != null && string.IsNullOrWhiteSpace(channel.AllowedSenders) &&
+			(channel.ChannelType == (int)IntakeChannelTypes.Sms || channel.ChannelType == (int)IntakeChannelTypes.Voice ||
+			 channel.ChannelType == (int)IntakeChannelTypes.WhatsApp);
+
+		/// <summary>Labels a call this service just created; a failure only loses the label, never the call.</summary>
+		private async Task SafeScreenAsync(int departmentId, int callId, IntakeScreenings screening, DateTime now)
+		{
+			try
+			{
+				await _messages.SetScreeningAsync(departmentId, callId, (int)screening, new[] { (int)IntakeScreenings.None }, null, now, CancellationToken.None);
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex, $"Intake call {callId} could not be screened {screening}.");
+			}
 		}
 
 		/// <summary>Whether the sender may create calls on the channel (blank list = anyone who can reach the address).</summary>

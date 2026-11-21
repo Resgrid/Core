@@ -441,6 +441,8 @@ namespace Resgrid.Services
 			builder.RegisterType<Intake.IntakeChannelsService>().As<IIntakeChannelsService>().InstancePerLifetimeScope();
 			builder.RegisterType<Intake.IntakeService>().As<IIntakeService>().InstancePerLifetimeScope();
 			builder.RegisterType<Intake.VoiceIntakeService>().As<IVoiceIntakeService>().InstancePerLifetimeScope();
+			// Intake spam handling (plan §9, M0326): blocked senders, dismiss as spam, screening labels.
+			builder.RegisterType<Intake.IntakeScreeningService>().As<IIntakeScreeningService>().InstancePerLifetimeScope();
 			// Intake SMS conversations (plan §8): one instance serves the desk contract and the intake/worker operations.
 			builder.RegisterType<Intake.IntakeConversationService>().As<IIntakeConversationService>().As<IIntakeConversationOperations>().InstancePerLifetimeScope();
 			builder.RegisterType<Intake.IntakeConversationAssistant>().As<IIntakeConversationAssistant>().InstancePerLifetimeScope();

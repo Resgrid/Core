@@ -51,6 +51,7 @@ namespace Resgrid.Tests.Intake
 		private Mock<ICacheProvider> _cache;
 		private Mock<IIntakeConversationService> _conversations;
 		private Mock<IIntakeConversationOperations> _conversationOperations;
+		private Mock<IIntakeBlockedSendersRepository> _blocked;
 		private IntakeChannel _channel;
 		private Call _templateCall;
 		private readonly List<Call> _saved = new List<Call>();
@@ -132,10 +133,11 @@ namespace Resgrid.Tests.Intake
 
 			_conversations = new Mock<IIntakeConversationService>();
 			_conversationOperations = new Mock<IIntakeConversationOperations>();
+			_blocked = new Mock<IIntakeBlockedSendersRepository>();
 
 			_service = new IntakeService(_channels.Object, _messages.Object, _sessions.Object, _departments.Object, _settings.Object, _flags.Object, _calls.Object,
 				_numbers.Object, _geo.Object, _events.Object, _queue.Object, _communication.Object, _cache.Object, _conversations.Object, _conversationOperations.Object,
-				new FixedClock());
+				_blocked.Object, new FixedClock());
 		}
 
 		[TearDown]
@@ -823,5 +825,195 @@ namespace Resgrid.Tests.Intake
 		}
 
 		#endregion SMS conversations (plan §8 D15)
+
+		#region Spam screening (plan §9, M0326)
+
+		private void PreviousCalls(params (int CallId, int State)[] calls)
+		{
+			var rows = calls.Select((c, i) => new IntakeMessage
+			{
+				IntakeMessageId = "m-" + c.CallId, DepartmentId = DepartmentId, Sender = Sender, State = (int)IntakeMessageStates.CallCreated, CallId = c.CallId,
+				ReceivedOn = FixedClock.Now.AddMinutes(-5 - i)
+			}).ToList();
+			_messages.Setup(m => m.GetCallsCreatedBySenderSinceAsync(DepartmentId, Sender, FixedClock.Now.AddHours(-1))).ReturnsAsync(rows);
+			foreach (var call in calls)
+				_calls.Setup(c => c.GetCallByIdAsync(call.CallId, It.IsAny<bool>())).ReturnsAsync(new Call { CallId = call.CallId, DepartmentId = DepartmentId, State = call.State });
+		}
+
+		[Test]
+		public async Task a_blocked_sender_is_recorded_and_creates_nothing()
+		{
+			_channel.SendAcknowledgement = true;
+			_blocked.Setup(b => b.GetInForceAsync(DepartmentId, Sender, FixedClock.Now)).ReturnsAsync(new IntakeBlockedSender { DepartmentId = DepartmentId, Sender = Sender });
+
+			var result = await _service.ReceiveAsync(DedicatedSms());
+
+			result.State.Should().Be(IntakeMessageStates.SenderBlocked);
+			result.Reason.Should().Be("SenderBlocked");
+			result.Acknowledgement.Should().BeNull();
+			_saved.Should().BeEmpty();
+			_completions.Should().ContainSingle().Which.Should().Be(((int)IntakeMessageStates.SenderBlocked, (int?)null, "SenderBlocked"));
+			_conversationOperations.Verify(c => c.GetOpenForParticipantAsync(It.IsAny<int>(), It.IsAny<IntakeChannelTypes>(), It.IsAny<string>()), Times.Never);
+		}
+
+		[Test]
+		public async Task a_blocked_list_that_cannot_be_read_lets_the_message_through()
+		{
+			_blocked.Setup(b => b.GetInForceAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<DateTime>())).ThrowsAsync(new InvalidOperationException("db down"));
+
+			var result = await _service.ReceiveAsync(Sms());
+
+			result.State.Should().Be(IntakeMessageStates.CallCreated);
+			_saved.Should().ContainSingle();
+		}
+
+		[Test]
+		public async Task blocked_messages_and_duplicates_do_not_count_toward_the_month()
+		{
+			int[] excluded = null;
+			_messages.Setup(m => m.CountAsync(DepartmentId, (int)IntakeChannelTypes.Sms, It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int[]>()))
+				.Callback((int _, int __, DateTime ___, DateTime ____, int[] states) => excluded = states).ReturnsAsync(4);
+
+			await _service.GetMonthlyCountAsync(DepartmentId, IntakeChannelTypes.Sms, FixedClock.Now);
+
+			excluded.Should().BeEquivalentTo(new[] { (int)IntakeMessageStates.Duplicate, (int)IntakeMessageStates.SenderBlocked });
+		}
+
+		[Test]
+		public async Task past_the_hourly_limit_the_message_joins_the_senders_newest_open_call_as_a_note()
+		{
+			var saved = IntakeConfig.MaxCallsPerSenderPerHour;
+			try
+			{
+				IntakeConfig.MaxCallsPerSenderPerHour = 3;
+				_channel.SendAcknowledgement = true;
+				PreviousCalls((803, (int)CallStates.Cancelled), (802, (int)CallStates.Pending), (801, (int)CallStates.Pending));
+				CallNote note = null;
+				_calls.Setup(c => c.SaveCallNoteAsync(It.IsAny<CallNote>(), It.IsAny<CancellationToken>()))
+					.Callback((CallNote n, CancellationToken _) => note = n).ReturnsAsync((CallNote n, CancellationToken _) => { n.CallNoteId = 7; return n; });
+
+				var result = await _service.ReceiveAsync(Sms("Win a free cruise", "SM4"));
+
+				result.State.Should().Be(IntakeMessageStates.AddedToCall);
+				result.CallId.Should().Be(802, "the newest call still open; 803 was cancelled");
+				result.Acknowledgement.Should().BeNull();
+				_saved.Should().BeEmpty();
+				note.CallId.Should().Be(802);
+				note.Source.Should().Be((int)CallNoteSources.IntakeText);
+				note.Note.Should().Contain("Win a free cruise");
+				_completions.Should().ContainSingle().Which.Should().Be(((int)IntakeMessageStates.AddedToCall, (int?)802, "SenderLimit"));
+			}
+			finally
+			{
+				IntakeConfig.MaxCallsPerSenderPerHour = saved;
+			}
+		}
+
+		[Test]
+		public async Task past_the_hourly_limit_with_nothing_open_the_call_stands_screened_and_nothing_goes_back()
+		{
+			var saved = IntakeConfig.MaxCallsPerSenderPerHour;
+			try
+			{
+				IntakeConfig.MaxCallsPerSenderPerHour = 2;
+				_channel.SendAcknowledgement = true;
+				PreviousCalls((802, (int)CallStates.Cancelled), (801, (int)CallStates.Closed));
+
+				var result = await _service.ReceiveAsync(DedicatedSms("Win a free cruise", "SM4"));
+
+				result.State.Should().Be(IntakeMessageStates.CallCreated);
+				result.Acknowledgement.Should().BeNull();
+				result.IntakeConversationId.Should().BeNull();
+				_saved.Should().ContainSingle();
+				_messages.Verify(m => m.SetScreeningAsync(DepartmentId, 900, (int)IntakeScreenings.RepeatSender, It.Is<int[]>(r => r.SequenceEqual(new[] { 0 })),
+					null, FixedClock.Now, It.IsAny<CancellationToken>()), Times.Once);
+				_conversations.Verify(c => c.StartFromIntakeAsync(It.IsAny<IntakeChannel>(), It.IsAny<IntakeEnvelope>(), It.IsAny<Call>(), It.IsAny<CancellationToken>()), Times.Never);
+			}
+			finally
+			{
+				IntakeConfig.MaxCallsPerSenderPerHour = saved;
+			}
+		}
+
+		[Test]
+		public async Task under_the_limit_or_with_the_limit_off_the_message_makes_its_own_call()
+		{
+			var saved = IntakeConfig.MaxCallsPerSenderPerHour;
+			try
+			{
+				IntakeConfig.MaxCallsPerSenderPerHour = 3;
+				PreviousCalls((801, (int)CallStates.Pending), (800, (int)CallStates.Pending));
+				(await _service.ReceiveAsync(Sms(id: "SM5"))).State.Should().Be(IntakeMessageStates.CallCreated);
+
+				IntakeConfig.MaxCallsPerSenderPerHour = 0;
+				PreviousCalls((803, (int)CallStates.Pending), (802, (int)CallStates.Pending), (801, (int)CallStates.Pending), (800, (int)CallStates.Pending));
+				(await _service.ReceiveAsync(Sms(id: "SM6"))).State.Should().Be(IntakeMessageStates.CallCreated);
+
+				_messages.Verify(m => m.SetScreeningAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int[]>(), It.IsAny<string>(), It.IsAny<DateTime>(),
+					It.IsAny<CancellationToken>()), Times.Never);
+			}
+			finally
+			{
+				IntakeConfig.MaxCallsPerSenderPerHour = saved;
+			}
+		}
+
+		[TestCase(IntakeChannelTypes.Email, null)]
+		[TestCase(IntakeChannelTypes.Webhook, null)]
+		[TestCase(IntakeChannelTypes.Slack, null)]
+		[TestCase(IntakeChannelTypes.Sms, "+15305550199")]
+		public void system_channels_and_allow_listed_senders_are_never_limited(IntakeChannelTypes type, string allowed)
+		{
+			// A CAD bridge or alarm panel legitimately sends many incidents an hour from one address.
+			IntakeService.IsSenderLimited(new IntakeChannel { ChannelType = (int)type, AllowedSenders = allowed }).Should().BeFalse();
+		}
+
+		[TestCase(IntakeChannelTypes.Sms)]
+		[TestCase(IntakeChannelTypes.Voice)]
+		[TestCase(IntakeChannelTypes.WhatsApp)]
+		public void the_public_phone_lines_are_limited(IntakeChannelTypes type)
+		{
+			IntakeService.IsSenderLimited(new IntakeChannel { ChannelType = (int)type }).Should().BeTrue();
+		}
+
+		[Test]
+		public async Task an_allow_listed_sender_past_the_hourly_count_still_makes_its_own_call()
+		{
+			_channel.AllowedSenders = Sender;
+			PreviousCalls((803, (int)CallStates.Pending), (802, (int)CallStates.Pending), (801, (int)CallStates.Pending));
+
+			(await _service.ReceiveAsync(Sms(id: "SM8"))).State.Should().Be(IntakeMessageStates.CallCreated);
+			_messages.Verify(m => m.GetCallsCreatedBySenderSinceAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<DateTime>()), Times.Never);
+		}
+
+		[Test]
+		public async Task withheld_caller_ids_are_never_limited_as_one_sender()
+		{
+			var envelope = Sms(id: "CA7");
+			envelope.Sender = "+266696687";
+
+			var result = await _service.ReceiveAsync(envelope);
+
+			result.State.Should().Be(IntakeMessageStates.CallCreated);
+			_messages.Verify(m => m.GetCallsCreatedBySenderSinceAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<DateTime>()), Times.Never);
+			_blocked.Verify(b => b.GetInForceAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<DateTime>()), Times.Never);
+		}
+
+		[Test]
+		public async Task call_sources_carry_the_screening()
+		{
+			_messages.Setup(m => m.GetByCallIdsAsync(DepartmentId, It.IsAny<IEnumerable<int>>())).ReturnsAsync(new List<IntakeMessage>
+			{
+				new IntakeMessage { DepartmentId = DepartmentId, CallId = 900, IntakeChannelId = "ch-1", ChannelType = (int)IntakeChannelTypes.Sms, Screening = (int)IntakeScreenings.LikelyNotIncident },
+				new IntakeMessage { DepartmentId = DepartmentId, CallId = 901, IntakeChannelId = "ch-1", ChannelType = (int)IntakeChannelTypes.Sms }
+			});
+
+			var sources = await _service.GetCallSourcesAsync(DepartmentId, new[] { 900, 901 });
+
+			sources[900].Screening.Should().Be((int)IntakeScreenings.LikelyNotIncident);
+			sources[901].Screening.Should().Be(0);
+		}
+
+		#endregion Spam screening (plan §9, M0326)
 	}
 }

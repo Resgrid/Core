@@ -286,4 +286,76 @@
   <data name="ManageIntakeChannels" xml:space="preserve">
     <value>Administrar canales de entrada</value>
   </data>
+  <data name="BlockedSenders" xml:space="preserve">
+    <value>Remitentes bloqueados</value>
+  </data>
+  <data name="BlockedSendersIntro" xml:space="preserve">
+    <value>Remitentes que un despachador descartó como spam. Sus mensajes y llamadas a sus canales de entrada se registran, pero no crean llamadas y no se les envía nada. El bloqueo termina solo en la fecha indicada.</value>
+  </data>
+  <data name="NoBlockedSenders" xml:space="preserve">
+    <value>No hay remitentes bloqueados.</value>
+  </data>
+  <data name="Sender" xml:space="preserve">
+    <value>Remitente</value>
+  </data>
+  <data name="BlockedBy" xml:space="preserve">
+    <value>Bloqueado por</value>
+  </data>
+  <data name="BlockedOn" xml:space="preserve">
+    <value>Bloqueado</value>
+  </data>
+  <data name="BlockedUntil" xml:space="preserve">
+    <value>Hasta</value>
+  </data>
+  <data name="BlockedCall" xml:space="preserve">
+    <value>Ver llamada</value>
+  </data>
+  <data name="BlockExpired" xml:space="preserve">
+    <value>Caducado</value>
+  </data>
+  <data name="BlockedUntilLifted" xml:space="preserve">
+    <value>Hasta que se levante</value>
+  </data>
+  <data name="Unblock" xml:space="preserve">
+    <value>Desbloquear</value>
+  </data>
+  <data name="UnblockConfirm" xml:space="preserve">
+    <value>¿Desbloquear a este remitente? Sus mensajes volverán a crear llamadas pendientes.</value>
+  </data>
+  <data name="Unblocked" xml:space="preserve">
+    <value>El remitente fue desbloqueado.</value>
+  </data>
+  <data name="DismissAsSpam" xml:space="preserve">
+    <value>Descartar como spam</value>
+  </data>
+  <data name="DismissConfirm" xml:space="preserve">
+    <value>¿Descartar esta llamada como spam? Se cancela y no se notifica a nadie.</value>
+  </data>
+  <data name="DismissBlockSender" xml:space="preserve">
+    <value>Bloquear también al remitente durante {0} días</value>
+  </data>
+  <data name="DismissBlockSenderForever" xml:space="preserve">
+    <value>Bloquear también al remitente</value>
+  </data>
+  <data name="Dismissed" xml:space="preserve">
+    <value>La llamada se descartó como spam.</value>
+  </data>
+  <data name="DismissedAndBlocked" xml:space="preserve">
+    <value>La llamada se descartó como spam y el remitente está bloqueado.</value>
+  </data>
+  <data name="DismissedNotBlockable" xml:space="preserve">
+    <value>La llamada se descartó como spam. La persona que llamó ocultó su número, por lo que no se pudo bloquear.</value>
+  </data>
+  <data name="DismissNotPending" xml:space="preserve">
+    <value>Esta llamada ya no está pendiente, por lo que no se puede descartar como spam.</value>
+  </data>
+  <data name="Screening.LikelyNotIncident" xml:space="preserve">
+    <value>Enhanced AI: probablemente no es un incidente</value>
+  </data>
+  <data name="Screening.RepeatSender" xml:space="preserve">
+    <value>Remitente repetido: supera el límite por hora</value>
+  </data>
+  <data name="Screening.DismissedAsSpam" xml:space="preserve">
+    <value>Descartada como spam</value>
+  </data>
 </root>

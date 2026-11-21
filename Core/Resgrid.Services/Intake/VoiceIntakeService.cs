@@ -36,11 +36,14 @@ namespace Resgrid.Services.Intake
 		private readonly IFeatureToggleService _flags;
 		private readonly IUserProfileService _profiles;
 		private readonly IDepartmentsService _departments;
+		private readonly IIntakeBlockedSendersRepository _blocked;
 		private readonly TimeProvider _clock;
 
 		public VoiceIntakeService(IVoiceIntakeSessionsRepository sessions, IIntakeChannelsRepository channels, IIntakeService intake, IVoiceIntakeTranscriber transcriber,
-			IEnhancedAiAccessService enhancedAi, IFeatureToggleService flags, IUserProfileService profiles, IDepartmentsService departments, TimeProvider clock)
+			IEnhancedAiAccessService enhancedAi, IFeatureToggleService flags, IUserProfileService profiles, IDepartmentsService departments,
+			IIntakeBlockedSendersRepository blocked, TimeProvider clock)
 		{
+			_blocked = blocked;
 			_sessions = sessions;
 			_channels = channels;
 			_intake = intake;
@@ -72,6 +75,10 @@ namespace Resgrid.Services.Intake
 				routing.MemberUserId = memberUserId;
 				return routing;
 			}
+
+			// M0326: a caller the department blocked (dismiss as spam) hears that the line cannot take the call; no session, no limit used.
+			if (await IsBlockedAsync(number.DepartmentId, fromNumber, nowUtc))
+				return Route(routing, VoiceIntakeRoutes.Blocked, "SenderBlocked");
 			if (!IntakeConfig.Enabled || !number.VoiceIntakeEnabled || !number.VoiceCapable)
 				return Route(routing, VoiceIntakeRoutes.TextOnly, "VoiceIntakeOff");
 
@@ -242,7 +249,9 @@ namespace Resgrid.Services.Intake
 			}, cancellationToken);
 
 			session.CompletedOn = now;
-			if (result?.CallId != null && (result.State == IntakeMessageStates.CallCreated || result.State == IntakeMessageStates.Duplicate))
+			// AddedToCall (M0326): a caller past the hourly limit was recorded as a note on their open call, which still counts as received.
+			if (result?.CallId != null && (result.State == IntakeMessageStates.CallCreated || result.State == IntakeMessageStates.Duplicate ||
+				result.State == IntakeMessageStates.AddedToCall))
 			{
 				session.Step = (int)VoiceIntakeSteps.Completed;
 				session.CallId = result.CallId;
@@ -405,6 +414,24 @@ namespace Resgrid.Services.Intake
 
 			var text = Regex.Replace(new string(value.Where(c => !char.IsControl(c)).ToArray()), @"\s+", " ").Trim();
 			return text.Length == 0 ? null : Cap(text, MaxAnswerLength);
+		}
+
+		/// <summary>The caller is on the department's blocked list; a list that cannot be read lets the call through.</summary>
+		private async Task<bool> IsBlockedAsync(int departmentId, string fromNumber, DateTime nowUtc)
+		{
+			var key = IntakeBlockedSenders.Normalize(fromNumber);
+			if (key == null)
+				return false;
+
+			try
+			{
+				return await _blocked.GetInForceAsync(departmentId, key, nowUtc) != null;
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex, $"Voice intake blocked-caller check failed for department {departmentId}; the call is let through.");
+				return false;
+			}
 		}
 
 		private static VoiceIntakeRouting Route(VoiceIntakeRouting routing, VoiceIntakeRoutes route, string reason)

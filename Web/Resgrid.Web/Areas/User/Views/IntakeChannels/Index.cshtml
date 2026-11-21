@@ -124,6 +124,71 @@
 							</table>
 						</div>
 					}
+
+					<h3 style="margin-top:25px;">@localizer["BlockedSenders"]</h3>
+					<p class="text-muted">@localizer["BlockedSendersIntro"]</p>
+					@if (!Model.BlockedSenders.Any())
+					{
+						<p><em>@localizer["NoBlockedSenders"]</em></p>
+					}
+					else
+					{
+						<div class="table-responsive">
+							<table class="table table-striped table-bordered" id="intakeBlockedSendersTable">
+								<thead>
+									<tr>
+										<th>@localizer["Sender"]</th>
+										<th>@localizer["Type"]</th>
+										<th>@localizer["BlockedBy"]</th>
+										<th>@localizer["BlockedOn"]</th>
+										<th>@localizer["BlockedUntil"]</th>
+										<th>@localizer["Actions"]</th>
+									</tr>
+								</thead>
+								<tbody>
+									@foreach (var block in Model.BlockedSenders)
+									{
+										<tr>
+											<td>
+												<code>@block.Sender</code>
+												@if (block.CallId.HasValue)
+												{
+													<a asp-controller="Dispatch" asp-action="ViewCall" asp-route-area="User" asp-route-callId="@block.CallId" style="margin-left:6px;">@localizer["BlockedCall"]</a>
+												}
+											</td>
+											<td>@localizer["Type." + block.ChannelType]</td>
+											<td>@block.BlockedByName</td>
+											<td>@block.BlockedOn.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture)</td>
+											<td>
+												@if (block.Expired)
+												{
+													<span class="label label-default">@localizer["BlockExpired"]</span>
+												}
+												else if (block.ExpiresOn.HasValue)
+												{
+													@block.ExpiresOn.Value.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture)
+												}
+												else
+												{
+													@localizer["BlockedUntilLifted"]
+												}
+											</td>
+											<td style="white-space:nowrap;">
+												@if (!block.Expired)
+												{
+													<form method="post" asp-controller="IntakeChannels" asp-action="Unblock" asp-route-area="User" style="display:inline;" class="intake-unblock-form">
+														@Html.AntiForgeryToken()
+														<input type="hidden" name="id" value="@block.IntakeBlockedSenderId" />
+														<button type="submit" class="btn btn-xs btn-default">@localizer["Unblock"]</button>
+													</form>
+												}
+											</td>
+										</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+					}
 				</div>
 			</div>
 		</div>
@@ -137,6 +202,10 @@
 			var confirmText = '@JsEncoder.Encode(localizer["DeleteConfirm"].Value)';
 			$('.intake-delete-form').on('submit', function (e) {
 				if (!window.confirm(confirmText)) { e.preventDefault(); }
+			});
+			var unblockText = '@JsEncoder.Encode(localizer["UnblockConfirm"].Value)';
+			$('.intake-unblock-form').on('submit', function (e) {
+				if (!window.confirm(unblockText)) { e.preventDefault(); }
 			});
 		});
 	</script>

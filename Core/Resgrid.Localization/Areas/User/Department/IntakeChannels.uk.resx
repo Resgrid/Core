@@ -286,4 +286,76 @@
   <data name="ManageIntakeChannels" xml:space="preserve">
     <value>Керувати каналами надходження</value>
   </data>
+  <data name="BlockedSenders" xml:space="preserve">
+    <value>Заблоковані відправники</value>
+  </data>
+  <data name="BlockedSendersIntro" xml:space="preserve">
+    <value>Відправники, яких диспетчер відхилив як спам. Їхні повідомлення та дзвінки на ваші канали прийому записуються, але не створюють викликів, і їм нічого не надсилається у відповідь. Блокування завершується саме у вказану дату.</value>
+  </data>
+  <data name="NoBlockedSenders" xml:space="preserve">
+    <value>Заблокованих відправників немає.</value>
+  </data>
+  <data name="Sender" xml:space="preserve">
+    <value>Відправник</value>
+  </data>
+  <data name="BlockedBy" xml:space="preserve">
+    <value>Заблокував</value>
+  </data>
+  <data name="BlockedOn" xml:space="preserve">
+    <value>Заблоковано</value>
+  </data>
+  <data name="BlockedUntil" xml:space="preserve">
+    <value>До</value>
+  </data>
+  <data name="BlockedCall" xml:space="preserve">
+    <value>Переглянути виклик</value>
+  </data>
+  <data name="BlockExpired" xml:space="preserve">
+    <value>Закінчилося</value>
+  </data>
+  <data name="BlockedUntilLifted" xml:space="preserve">
+    <value>До скасування</value>
+  </data>
+  <data name="Unblock" xml:space="preserve">
+    <value>Розблокувати</value>
+  </data>
+  <data name="UnblockConfirm" xml:space="preserve">
+    <value>Розблокувати цього відправника? Його повідомлення знову створюватимуть виклики в очікуванні.</value>
+  </data>
+  <data name="Unblocked" xml:space="preserve">
+    <value>Відправника розблоковано.</value>
+  </data>
+  <data name="DismissAsSpam" xml:space="preserve">
+    <value>Відхилити як спам</value>
+  </data>
+  <data name="DismissConfirm" xml:space="preserve">
+    <value>Відхилити цей виклик як спам? Його буде скасовано, і нікого не буде сповіщено.</value>
+  </data>
+  <data name="DismissBlockSender" xml:space="preserve">
+    <value>Також заблокувати відправника на {0} днів</value>
+  </data>
+  <data name="DismissBlockSenderForever" xml:space="preserve">
+    <value>Також заблокувати відправника</value>
+  </data>
+  <data name="Dismissed" xml:space="preserve">
+    <value>Виклик відхилено як спам.</value>
+  </data>
+  <data name="DismissedAndBlocked" xml:space="preserve">
+    <value>Виклик відхилено як спам, а відправника заблоковано.</value>
+  </data>
+  <data name="DismissedNotBlockable" xml:space="preserve">
+    <value>Виклик відхилено як спам. Абонент приховав свій номер, тому його не вдалося заблокувати.</value>
+  </data>
+  <data name="DismissNotPending" xml:space="preserve">
+    <value>Цей виклик більше не очікує, тому його не можна відхилити як спам.</value>
+  </data>
+  <data name="Screening.LikelyNotIncident" xml:space="preserve">
+    <value>Enhanced AI: імовірно, не інцидент</value>
+  </data>
+  <data name="Screening.RepeatSender" xml:space="preserve">
+    <value>Повторний відправник: понад погодинний ліміт</value>
+  </data>
+  <data name="Screening.DismissedAsSpam" xml:space="preserve">
+    <value>Відхилено як спам</value>
+  </data>
 </root>

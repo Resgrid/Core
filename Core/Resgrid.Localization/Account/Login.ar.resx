@@ -205,7 +205,7 @@
     <value>Discount Code</value>
   </data>
   <data name="AffiliateCode" xml:space="preserve">
-    <value>Affiliate Code</value>
+    <value>رمز الشريك/الحساب</value>
   </data>
   <data name="Region" xml:space="preserve">
     <value>المنطقة</value>

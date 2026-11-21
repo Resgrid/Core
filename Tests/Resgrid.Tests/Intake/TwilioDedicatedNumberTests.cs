@@ -653,6 +653,47 @@ namespace Resgrid.Tests.Intake
 			_legacyNumbers.Verify(n => n.SaveInboundMessageEventAsync(It.Is<InboundMessageEvent>(e => e.Processed == true), It.IsAny<CancellationToken>()), Times.Once);
 		}
 
+		private IntakeConversation FirstThread(bool open) => new IntakeConversation
+		{
+			IntakeConversationId = "conv-first", DepartmentId = DepartmentId + 1, CallId = 901, ParticipantAddress = Caller, ReplyFromAddress = Master,
+			State = (int)(open ? IntakeConversationStates.Open : IntakeConversationStates.Closed)
+		};
+
+		[Test]
+		public async Task a_redelivered_reply_stays_with_the_thread_that_first_recorded_it()
+		{
+			// The first delivery was recorded on another department's thread and answered 503; that department's texter has since become the
+			// most recently active thread of a different department.
+			OpenThread();
+			var first = FirstThread(open: true);
+			_conversationOperations.Setup(o => o.FindThreadForProviderMessageAsync(IntakeChannelTypes.Sms, Caller, "SM1")).ReturnsAsync((first, false));
+
+			await Controller().IncomingMessage(Text(to: Master, body: "It's at the Shell station"));
+
+			_conversations.Verify(c => c.HandleParticipantMessageAsync(It.Is<IntakeConversation>(t => t.IntakeConversationId == "conv-first"), "SM1",
+				It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()), Times.Once);
+			_conversations.Verify(c => c.HandleParticipantMessageAsync(It.Is<IntakeConversation>(t => t.IntakeConversationId == "conv-1"), It.IsAny<string>(),
+				It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()), Times.Never, "never another department's call");
+		}
+
+		[TestCase(true)]
+		[TestCase(false)]
+		public async Task a_redelivered_reply_whose_first_thread_closed_is_never_moved_to_another_thread(bool recorded)
+		{
+			OpenThread();
+			_conversationOperations.Setup(o => o.FindThreadForProviderMessageAsync(IntakeChannelTypes.Sms, Caller, "SM1")).ReturnsAsync((FirstThread(open: false), recorded));
+
+			var result = (ContentResult)await Controller().IncomingMessage(Text(to: Master, body: "It's at the Shell station"));
+
+			result.StatusCode.Should().Be(StatusCodes.Status200OK);
+			_conversations.Verify(c => c.HandleParticipantMessageAsync(It.IsAny<IntakeConversation>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(),
+				It.IsAny<CancellationToken>()), Times.Never);
+			if (recorded)
+				_profiles.Verify(p => p.GetProfileByMobileNumberAsync(It.IsAny<string>()), Times.Never, "the text is on its first thread's call: done");
+			else
+				_profiles.Verify(p => p.GetProfileByMobileNumberAsync("15305550199"), Times.AtLeastOnce, "the master number's usual handling, as for a closed thread");
+		}
+
 		[Test]
 		public async Task a_reply_to_the_master_number_continues_the_open_thread_ahead_of_member_commands()
 		{

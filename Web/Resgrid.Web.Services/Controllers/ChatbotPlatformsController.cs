@@ -227,7 +227,8 @@ namespace Resgrid.Web.Services.Controllers
 				ReceivedOnUtc = DateTime.UtcNow
 			}, HttpContext?.RequestAborted ?? default);
 
-			if (result.State == IntakeMessageStates.Failed)
+			// Discord never redelivers an interaction and shows a bare 503 as "This interaction failed": it gets its answer below.
+			if (result.State == IntakeMessageStates.Failed && platform != ChatbotPlatform.Discord)
 				return StatusCode(503);
 
 			// A redelivery while the first delivery is still creating its call: ask for another delivery rather than acknowledge an
@@ -241,10 +242,12 @@ namespace Resgrid.Web.Services.Controllers
 				case ChatbotPlatform.Discord:
 					// An interaction always needs an answer; it is shown only to the person who used the command. A duplicate whose first
 					// delivery has not saved its call yet is not confirmed: say so, rather than "received" for a request that may still fail.
-					var text = ack ?? (result.State == IntakeMessageStates.Duplicate && result.Reason == IntakeResultReasons.DuplicateInProgress && !result.CallId.HasValue
-						? "Your request is still being processed and is not confirmed yet. If it does not show up as a call soon, send it again."
-						: result.State == IntakeMessageStates.Duplicate || result.State == IntakeMessageStates.CallCreated
-							? "Your request was received." : "This channel is not accepting requests right now.");
+					var text = ack ?? (result.State == IntakeMessageStates.Failed
+						? "Your request could not be recorded. Please send it again."
+						: result.State == IntakeMessageStates.Duplicate && result.Reason == IntakeResultReasons.DuplicateInProgress && !result.CallId.HasValue
+							? "Your request is still being processed and is not confirmed yet. If it does not show up as a call soon, send it again."
+							: result.State == IntakeMessageStates.Duplicate || result.State == IntakeMessageStates.CallCreated
+								? "Your request was received." : "This channel is not accepting requests right now.");
 					return Ok(new { type = 4, data = new { content = text, flags = 64 } });
 				case ChatbotPlatform.GoogleChat:
 					return ack == null ? Ok(new { }) : Ok(new { text = ack });

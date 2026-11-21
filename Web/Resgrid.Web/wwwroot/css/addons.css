@@ -123,7 +123,7 @@
 .rg-addon-links { list-style: none; margin: 0; padding: 0; }
 .rg-addon-links li { padding: 4px 0; }
 
-/* Discount and affiliate code panel (Subscription page) */
+/* Discount and partner/account code panel (Subscription page) */
 .rg-codes { margin-top: 10px; }
 .rg-code-form label, .rg-codes > .row label { font-weight: 600; color: #2f4050; }
 .rg-code-form .help-block { margin-bottom: 0; }

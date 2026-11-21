@@ -257,13 +257,33 @@ namespace Resgrid.Tests.Repositories
 			var now = Base.AddMinutes(15);
 			(await repository.TryReclaimAsync(message.IntakeMessageId, (int)IntakeMessageStates.Received, now, now.AddMinutes(-10))).Should().BeTrue();
 
-			(await repository.ReleaseReclaimAsync(message.IntakeMessageId, Base)).Should().BeTrue();
+			(await repository.ReleaseReclaimAsync(message.IntakeMessageId, now, Base)).Should().BeTrue();
 			(await repository.GetByProviderMessageIdAsync("ch-1", "SM-back")).ReceivedOn.Should().BeCloseTo(Base, TimeSpan.FromSeconds(1));
 			(await repository.TryReclaimAsync(message.IntakeMessageId, (int)IntakeMessageStates.Received, now.AddMinutes(1), now.AddMinutes(-9)))
 				.Should().BeTrue("the next delivery takes it over at once");
 
 			(await repository.CompleteAsync(message.IntakeMessageId, (int)IntakeMessageStates.CallCreated, 902, "ok", now.AddMinutes(2))).Should().BeTrue();
-			(await repository.ReleaseReclaimAsync(message.IntakeMessageId, Base)).Should().BeFalse("a finished claim is never moved back");
+			(await repository.ReleaseReclaimAsync(message.IntakeMessageId, now.AddMinutes(1), Base)).Should().BeFalse("a finished claim is never moved back");
+		}
+
+		[Test]
+		public async Task a_stalled_takeover_never_gives_back_a_newer_owners_takeover()
+		{
+			var repository = Messages();
+			var message = Message("ch-1", "SM-stall", Base);
+			(await repository.TryClaimAsync(message)).Should().BeTrue();
+
+			// Attempt A takes the abandoned claim over, then stalls past its own lease; attempt B takes it over from A.
+			var claimedByA = Base.AddMinutes(15);
+			(await repository.TryReclaimAsync(message.IntakeMessageId, (int)IntakeMessageStates.Received, claimedByA, claimedByA.AddMinutes(-10))).Should().BeTrue();
+			var claimedByB = claimedByA.AddMinutes(11);
+			(await repository.TryReclaimAsync(message.IntakeMessageId, (int)IntakeMessageStates.Received, claimedByB, claimedByB.AddMinutes(-10))).Should().BeTrue();
+
+			// A's lookup fails late: its release must not move B's lease back (a third delivery would then take over while B builds the call).
+			(await repository.ReleaseReclaimAsync(message.IntakeMessageId, claimedByA, Base)).Should().BeFalse();
+			(await repository.GetByProviderMessageIdAsync("ch-1", "SM-stall")).ReceivedOn.Should().BeCloseTo(claimedByB, TimeSpan.FromSeconds(1));
+
+			(await repository.ReleaseReclaimAsync(message.IntakeMessageId, claimedByB, Base)).Should().BeTrue("B may still give its own takeover back");
 		}
 
 		[Test]

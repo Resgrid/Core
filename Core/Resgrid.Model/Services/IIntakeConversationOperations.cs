@@ -16,6 +16,14 @@ namespace Resgrid.Model.Services
 		Task<IntakeConversation> GetOpenForParticipantAsync(int departmentId, IntakeChannelTypes channelType, string participantAddress);
 
 		/// <summary>
+		/// The thread (any department, any state) that already recorded the participant's text <paramref name="providerMessageId"/>, and whether
+		/// that text is on its call (Recorded); (null, false) when no thread has it. A provider's redelivery stays with that thread, even when
+		/// another thread of the same texter has become the most recently active since (<see cref="IIntakeConversationService.FindOpenForReplyAsync"/>).
+		/// </summary>
+		Task<(IntakeConversation Thread, bool Recorded)> FindThreadForProviderMessageAsync(IntakeChannelTypes channelType, string participantAddress,
+			string providerMessageId);
+
+		/// <summary>
 		/// Worker (aidispatchtriage queue, <see cref="AiDispatchChannels.IntakeConversation"/>): takes the thread's next Enhanced AI turn
 		/// and texts the caller, or hands the thread to a dispatcher. Returns the outcome; never throws for model or policy failures.
 		/// </summary>

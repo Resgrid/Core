@@ -51,9 +51,11 @@ namespace Resgrid.Model.Repositories
 		/// <summary>
 		/// Gives back a takeover (<see cref="TryReclaimAsync"/>) whose saved-call lookup failed: ReceivedOn goes back to
 		/// <paramref name="receivedOn"/> (the abandoned attempt's) while the row is still Received with no call, so the next delivery
-		/// takes it over at once and repeats the lookup instead of waiting out a fresh abandonment window.
+		/// takes it over at once and repeats the lookup instead of waiting out a fresh abandonment window. Only the caller's own takeover
+		/// moves: the row must still carry <paramref name="claimedOn"/> (the ReceivedOn its <see cref="TryReclaimAsync"/> wrote), so an attempt
+		/// that stalled past its lease never gives back a newer owner's takeover.
 		/// </summary>
-		Task<bool> ReleaseReclaimAsync(string intakeMessageId, DateTime receivedOn, CancellationToken cancellationToken = default);
+		Task<bool> ReleaseReclaimAsync(string intakeMessageId, DateTime claimedOn, DateTime receivedOn, CancellationToken cancellationToken = default);
 
 		/// <summary>Rows for the department and transport received in [from, before), excluding the given states.</summary>
 		Task<int> CountAsync(int departmentId, int channelType, DateTime from, DateTime before, int[] excludedStates);

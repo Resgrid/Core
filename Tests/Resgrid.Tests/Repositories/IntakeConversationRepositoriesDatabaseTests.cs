@@ -349,5 +349,44 @@ namespace Resgrid.Tests.Repositories
 			rows.Last().CallNoteId.Should().Be(4321);
 			rows.Last().SentOn.Should().Be(Base.AddSeconds(4));
 		}
+
+		[Test]
+		public async Task a_redelivery_finds_the_thread_that_recorded_its_provider_id_in_any_department_or_state()
+		{
+			var conversations = Conversations();
+			var first = Thread(departmentId: 56);
+			await conversations.TryInsertOpenAsync(first);
+			var newer = Thread(activity: Base.AddMinutes(5));
+			await conversations.TryInsertOpenAsync(newer);
+			var messages = Messages();
+			var row = Message(first.IntakeConversationId, "SMredeliver");
+			(await messages.TryInsertInboundAsync(row)).Should().BeTrue();
+			(await conversations.TryCloseAsync(first.IntakeConversationId, 56, "Closed by dispatcher", false, Base.AddMinutes(6))).Should().BeTrue();
+
+			var found = await messages.GetInboundByProviderIdAsync((int)IntakeChannelTypes.Sms, Texter, "SMredeliver");
+			found.Should().NotBeNull();
+			found.IntakeConversationId.Should().Be(first.IntakeConversationId, "the thread it was first recorded on, closed or not");
+			(await messages.GetInboundByProviderIdAsync((int)IntakeChannelTypes.Sms, "+17755559999", "SMredeliver")).Should().BeNull("another texter");
+			(await messages.GetInboundByProviderIdAsync((int)IntakeChannelTypes.Sms, Texter, "SMother")).Should().BeNull();
+		}
+
+		[Test]
+		public async Task an_opt_out_is_recorded_on_a_thread_another_close_already_closed()
+		{
+			var conversations = Conversations();
+			var thread = Thread();
+			await conversations.TryInsertOpenAsync(thread);
+			(await conversations.TryCloseAsync(thread.IntakeConversationId, DepartmentId, "Closed by dispatcher", false, Base.AddMinutes(1))).Should().BeTrue();
+			(await conversations.TryCloseAsync(thread.IntakeConversationId, DepartmentId, "OptedOut", true, Base.AddMinutes(2))).Should().BeFalse("the STOP's close lost");
+
+			(await conversations.MarkOptedOutAsync(thread.IntakeConversationId, DepartmentId)).Should().BeTrue();
+			(await conversations.MarkOptedOutAsync(thread.IntakeConversationId, DepartmentId)).Should().BeTrue("already opted out still counts");
+			(await conversations.MarkOptedOutAsync(thread.IntakeConversationId, DepartmentId + 1)).Should().BeFalse("not that department's thread");
+
+			var stored = await conversations.GetByIdAsync(thread.IntakeConversationId);
+			stored.OptedOut.Should().BeTrue();
+			stored.CloseReason.Should().Be("Closed by dispatcher");
+			stored.ClosedOn.Should().Be(Base.AddMinutes(1));
+		}
 	}
 }

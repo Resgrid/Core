@@ -443,14 +443,28 @@ namespace Resgrid.Services.Intake
 						continue;
 
 					var text = MessageText(envelope.Body) ?? Cap(envelope.Subject?.Trim(), MaxNameLength);
-					var note = await _calls.SaveCallNoteAsync(new CallNote
+					var pendingNote = new CallNote
 					{
 						CallId = call.CallId,
 						UserId = department.ManagingUserId,
 						Note = $"Another message from {SenderLabel(envelope)} ({channel.Name}): {text}",
 						Source = (int)CallNoteSources.IntakeText,
 						Timestamp = now
-					}, cancellationToken);
+					};
+
+					CallNote note;
+					try
+					{
+						note = await _calls.SaveCallNoteAsync(pendingNote, cancellationToken);
+					}
+					catch (Exception ex) when (pendingNote.CallNoteId > 0)
+					{
+						// SaveCallNoteAsync inserts the note before its post-save work (protected-write check, search projection): the
+						// insert gave the note its id, so the message is on the call even though that work failed. It must not go on to
+						// make a call of its own as well (nor, on a cancelled request, be retried into a second note).
+						Framework.Logging.LogException(ex, $"Intake per-sender note {pendingNote.CallNoteId} on call {call.CallId} was saved but its follow-up failed.");
+						note = pendingNote;
+					}
 
 					if (note == null || note.CallNoteId <= 0)
 						break;
@@ -496,10 +510,7 @@ namespace Resgrid.Services.Intake
 			return patterns.Count > 0 && !patterns.Contains("*");
 		}
 
-		private static List<string> SenderPatterns(string allowedSenders) =>
-			string.IsNullOrWhiteSpace(allowedSenders)
-				? new List<string>()
-				: allowedSenders.Split(new[] { ',', ';', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries).Select(p => p.Trim()).Where(p => p.Length > 0).ToList();
+		private static List<string> SenderPatterns(string allowedSenders) => IntakeChannelsService.SenderEntries(allowedSenders);
 
 		/// <summary>Labels a call this service just created; a failure only loses the label, never the call.</summary>
 		private async Task SafeScreenAsync(int departmentId, int callId, IntakeScreenings screening, DateTime now)
@@ -765,7 +776,7 @@ namespace Resgrid.Services.Intake
 				{
 					// An unknown answer is not "no saved call", so nothing is built. The takeover is given back as it was (still abandoned):
 					// the provider's next delivery repeats the lookup at once instead of answering "in progress" until a fresh lease ran out.
-					await SafeReleaseReclaimAsync(existing.IntakeMessageId, previouslyReceivedOn);
+					await SafeReleaseReclaimAsync(existing.IntakeMessageId, now, previouslyReceivedOn);
 					throw;
 				}
 			}
@@ -807,11 +818,12 @@ namespace Resgrid.Services.Intake
 			}
 		}
 
-		private async Task SafeReleaseReclaimAsync(string intakeMessageId, DateTime receivedOn)
+		/// <param name="claimedOn">The ReceivedOn this attempt's takeover wrote: only a row still carrying it is given back.</param>
+		private async Task SafeReleaseReclaimAsync(string intakeMessageId, DateTime claimedOn, DateTime receivedOn)
 		{
 			try
 			{
-				await _messages.ReleaseReclaimAsync(intakeMessageId, receivedOn, CancellationToken.None);
+				await _messages.ReleaseReclaimAsync(intakeMessageId, claimedOn, receivedOn, CancellationToken.None);
 			}
 			catch (Exception ex)
 			{

@@ -95,8 +95,8 @@
   <data name="AdpFeature4" xml:space="preserve"><value>Flux de travail, notifications et BigBoard expurgés</value></data>
   <data name="AdpFeature5" xml:space="preserve"><value>Requis pour un accord BAA HIPAA avec Resgrid</value></data>
   <data name="AdpNote" xml:space="preserve"><value>Facturé chaque année, même si votre service a un forfait mensuel. L'activation se fait en libre-service dès que le module est actif.</value></data>
-  <data name="CodesHeader" xml:space="preserve"><value>Codes de réduction et de parrainage</value></data>
-  <data name="CodesIntro" xml:space="preserve"><value>Vous avez un code de réduction ou un partenaire Resgrid vous a recommandé ? Vous pouvez le saisir ici à tout moment, pas seulement à l'inscription.</value></data>
+  <data name="CodesHeader" xml:space="preserve"><value>Codes de réduction et codes partenaire/compte</value></data>
+  <data name="CodesIntro" xml:space="preserve"><value>Vous avez un code de réduction, ou un code partenaire/compte fourni par un partenaire Resgrid ou votre chargé de compte ? Vous pouvez le saisir ici à tout moment, pas seulement à l'inscription.</value></data>
   <data name="DiscountCodeLabel" xml:space="preserve"><value>Code de réduction</value></data>
   <data name="DiscountCodePlaceholder" xml:space="preserve"><value>Saisissez un code de réduction</value></data>
   <data name="DiscountCodeApply" xml:space="preserve"><value>Appliquer</value></data>
@@ -107,12 +107,12 @@
   <data name="MessageDiscountPending" xml:space="preserve"><value>Le code de réduction est valide et sera appliqué lorsque vous achèterez un forfait ci-dessus.</value></data>
   <data name="MessageDiscountInvalid" xml:space="preserve"><value>Ce code de réduction n'est pas valide, a expiré ou ne peut pas être utilisé par votre service.</value></data>
   <data name="MessageDiscountUnavailable" xml:space="preserve"><value>Les codes de réduction ne peuvent pas être vérifiés pour le moment. Réessayez plus tard.</value></data>
-  <data name="AffiliateCodeLabel" xml:space="preserve"><value>Code d'affilié (parrainage)</value></data>
-  <data name="AffiliateCodePlaceholder" xml:space="preserve"><value>Saisissez un code d'affilié</value></data>
+  <data name="AffiliateCodeLabel" xml:space="preserve"><value>Code partenaire/compte</value></data>
+  <data name="AffiliateCodePlaceholder" xml:space="preserve"><value>Saisissez un code partenaire/compte</value></data>
   <data name="AffiliateCodeSave" xml:space="preserve"><value>Enregistrer</value></data>
   <data name="AffiliateCodeSetHelp" xml:space="preserve"><value>Peut être ajouté une seule fois. Contactez-nous s'il doit être modifié.</value></data>
-  <data name="AffiliateCodeCurrent" xml:space="preserve"><value>Parrainé avec le code d'affilié {0}</value></data>
-  <data name="MessageAffiliateApplied" xml:space="preserve"><value>Le code d'affilié a été enregistré pour votre service.</value></data>
-  <data name="MessageAffiliateInvalid" xml:space="preserve"><value>Ce code d'affilié n'est pas valide ou n'est plus actif.</value></data>
-  <data name="MessageAffiliateAlreadySet" xml:space="preserve"><value>Votre service a déjà un code d'affilié. Contactez-nous s'il doit être modifié.</value></data>
+  <data name="AffiliateCodeCurrent" xml:space="preserve"><value>Code partenaire/compte : {0}</value></data>
+  <data name="MessageAffiliateApplied" xml:space="preserve"><value>Le code partenaire/compte a été enregistré pour votre service.</value></data>
+  <data name="MessageAffiliateInvalid" xml:space="preserve"><value>Ce code partenaire/compte n'est pas valide ou n'est plus actif.</value></data>
+  <data name="MessageAffiliateAlreadySet" xml:space="preserve"><value>Votre service a déjà un code partenaire/compte. Contactez-nous s'il doit être modifié.</value></data>
 </root>

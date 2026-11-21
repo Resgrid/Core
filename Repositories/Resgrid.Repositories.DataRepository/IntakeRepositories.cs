@@ -154,14 +154,23 @@ namespace Resgrid.Repositories.DataRepository
 			return updated == 1;
 		}
 
-		public async Task<bool> ReleaseReclaimAsync(string intakeMessageId, DateTime receivedOn, CancellationToken cancellationToken = default)
+		public async Task<bool> ReleaseReclaimAsync(string intakeMessageId, DateTime claimedOn, DateTime receivedOn, CancellationToken cancellationToken = default)
 		{
-			// Only a takeover still in progress (Received, no call) moves back, and only to an earlier time: the row reads as abandoned
-			// again, so the next delivery takes it over at once and repeats the saved-call lookup.
+			// Only this caller's takeover still in progress (Received, no call, ReceivedOn still the stamp its takeover wrote) moves back,
+			// and only to an earlier time: the row reads as abandoned again, so the next delivery takes it over at once and repeats the
+			// saved-call lookup. A newer owner's takeover restamped ReceivedOn, so a stalled attempt's release matches nothing.
 			var updated = await ExecuteAsync(
 				$"UPDATE {Tbl(Table)} SET {Col("ReceivedOn")} = {P}ReceivedOn, {Col("Reason")} = {P}Reason " +
-				$"WHERE {Col("IntakeMessageId")} = {P}Id AND {Col("State")} = {P}Received AND {Col("CallId")} IS NULL AND {Col("ReceivedOn")} > {P}ReceivedOn",
-				new { Id = intakeMessageId, Received = (int)IntakeMessageStates.Received, Reason = "RetryReleased", ReceivedOn = DatabaseTimestamp(receivedOn) },
+				$"WHERE {Col("IntakeMessageId")} = {P}Id AND {Col("State")} = {P}Received AND {Col("CallId")} IS NULL " +
+				$"AND {Col("ReceivedOn")} = {P}ClaimedOn AND {Col("ReceivedOn")} > {P}ReceivedOn",
+				new
+				{
+					Id = intakeMessageId,
+					Received = (int)IntakeMessageStates.Received,
+					Reason = "RetryReleased",
+					ClaimedOn = DatabaseTimestamp(claimedOn),
+					ReceivedOn = DatabaseTimestamp(receivedOn)
+				},
 				cancellationToken);
 
 			return updated == 1;

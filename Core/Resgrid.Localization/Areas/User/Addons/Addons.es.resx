@@ -95,8 +95,8 @@
   <data name="AdpFeature4" xml:space="preserve"><value>Flujos de trabajo, notificaciones y BigBoard con datos ocultos</value></data>
   <data name="AdpFeature5" xml:space="preserve"><value>Necesario para un BAA de HIPAA con Resgrid</value></data>
   <data name="AdpNote" xml:space="preserve"><value>Facturación anual, aunque su departamento tenga un plan mensual. La inscripción es autoservicio una vez activo el complemento.</value></data>
-  <data name="CodesHeader" xml:space="preserve"><value>Códigos de descuento y de referido</value></data>
-  <data name="CodesIntro" xml:space="preserve"><value>¿Tiene un código de descuento o le recomendó un socio de Resgrid? Puede introducirlo aquí en cualquier momento, no solo al registrarse.</value></data>
+  <data name="CodesHeader" xml:space="preserve"><value>Códigos de descuento y de socio/cuenta</value></data>
+  <data name="CodesIntro" xml:space="preserve"><value>¿Tiene un código de descuento o un código de socio/cuenta de un socio de Resgrid o de su ejecutivo de cuenta? Puede introducirlo aquí en cualquier momento, no solo al registrarse.</value></data>
   <data name="DiscountCodeLabel" xml:space="preserve"><value>Código de descuento</value></data>
   <data name="DiscountCodePlaceholder" xml:space="preserve"><value>Introduzca un código de descuento</value></data>
   <data name="DiscountCodeApply" xml:space="preserve"><value>Aplicar</value></data>
@@ -107,12 +107,12 @@
   <data name="MessageDiscountPending" xml:space="preserve"><value>El código de descuento es válido y se aplicará cuando compre un plan arriba.</value></data>
   <data name="MessageDiscountInvalid" xml:space="preserve"><value>Ese código de descuento no es válido, ha caducado o su departamento no puede usarlo.</value></data>
   <data name="MessageDiscountUnavailable" xml:space="preserve"><value>Los códigos de descuento no se pueden comprobar en este momento. Inténtelo más tarde.</value></data>
-  <data name="AffiliateCodeLabel" xml:space="preserve"><value>Código de afiliado (referido)</value></data>
-  <data name="AffiliateCodePlaceholder" xml:space="preserve"><value>Introduzca un código de afiliado</value></data>
+  <data name="AffiliateCodeLabel" xml:space="preserve"><value>Código de socio/cuenta</value></data>
+  <data name="AffiliateCodePlaceholder" xml:space="preserve"><value>Introduzca un código de socio/cuenta</value></data>
   <data name="AffiliateCodeSave" xml:space="preserve"><value>Guardar</value></data>
   <data name="AffiliateCodeSetHelp" xml:space="preserve"><value>Se puede añadir una vez. Contáctenos si alguna vez necesita cambiarlo.</value></data>
-  <data name="AffiliateCodeCurrent" xml:space="preserve"><value>Recomendado con el código de afiliado {0}</value></data>
-  <data name="MessageAffiliateApplied" xml:space="preserve"><value>El código de afiliado se guardó para su departamento.</value></data>
-  <data name="MessageAffiliateInvalid" xml:space="preserve"><value>Ese código de afiliado no es válido o ya no está activo.</value></data>
-  <data name="MessageAffiliateAlreadySet" xml:space="preserve"><value>Su departamento ya tiene un código de afiliado. Contáctenos si necesita cambiarlo.</value></data>
+  <data name="AffiliateCodeCurrent" xml:space="preserve"><value>Código de socio/cuenta: {0}</value></data>
+  <data name="MessageAffiliateApplied" xml:space="preserve"><value>El código de socio/cuenta se guardó para su departamento.</value></data>
+  <data name="MessageAffiliateInvalid" xml:space="preserve"><value>Ese código de socio/cuenta no es válido o ya no está activo.</value></data>
+  <data name="MessageAffiliateAlreadySet" xml:space="preserve"><value>Su departamento ya tiene un código de socio/cuenta. Contáctenos si necesita cambiarlo.</value></data>
 </root>

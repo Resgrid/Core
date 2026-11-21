@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Resgrid.Framework;
 using Resgrid.Model;
+using Resgrid.Model.Billing.Api;
 using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
@@ -426,17 +427,45 @@ namespace Resgrid.Web.Controllers
 		// GET: /Account/Register
 		[HttpGet]
 		[AllowAnonymous]
-		public IActionResult Register(string returnUrl = null, string affiliateCode = null)
+		public IActionResult Register(string returnUrl = null, string partnerCode = null, string accountCode = null, string affiliateCode = null,
+			string aid = null, string discountCode = null, string discount = null)
 		{
 			if (String.IsNullOrWhiteSpace(SystemBehaviorConfig.BillingApiBaseUrl) || String.IsNullOrWhiteSpace(ApiConfig.BackendInternalApikey))
 				return RedirectToAction("LogOn", "Account");
 
 			RegisterViewModel model = new RegisterViewModel();
 			model.SiteKey = WebConfig.RecaptchaPublicKey;
-			model.AffiliateCode = affiliateCode;
+			// A signup link from a partner or account executive may carry either code; the fields are prefilled and stay editable.
+			// affiliateCode and aid are the names older partner links used.
+			model.AffiliateCode = SignupLinkCode(partnerCode, accountCode, affiliateCode, aid);
+			model.DiscountCode = SignupLinkCode(discountCode, discount);
 			ViewData["ReturnUrl"] = returnUrl;
 
 			return View(model);
+		}
+
+		/// <summary>The longest partner/account or discount code a signup link may prefill; the Subscription page takes the same.</summary>
+		public const int SignupLinkCodeMaxLength = 64;
+
+		/// <summary>
+		/// The first code a signup link supplies among its accepted parameter names, trimmed. A value longer than any real code is
+		/// dropped rather than cut short, so a mangled link leaves the field empty instead of prefilling a code that cannot match.
+		/// </summary>
+		public static string SignupLinkCode(params string[] values)
+		{
+			if (values == null)
+				return null;
+
+			foreach (var value in values)
+			{
+				var code = value?.Trim();
+				if (string.IsNullOrEmpty(code))
+					continue;
+
+				return code.Length > SignupLinkCodeMaxLength ? null : code;
+			}
+
+			return null;
 		}
 
 		//
@@ -529,9 +558,11 @@ namespace Resgrid.Web.Controllers
 				department = await _departmentsService.CreateDepartmentAsync(model.DepartmentName, user.Id, model.DepartmentType, null, cancellationToken);
 				await _departmentsService.AddUserToDepartmentAsync(department.DepartmentId, user.Id, true, cancellationToken);
 
-				if (!String.IsNullOrWhiteSpace(model.AffiliateCode))
+				// Partner/account code (stored as the department's AffiliateCode): an unknown or inactive one is ignored.
+				var partnerCode = model.AffiliateCode?.Trim();
+				if (!String.IsNullOrWhiteSpace(partnerCode) && partnerCode.Length <= SignupLinkCodeMaxLength)
 				{
-					var affiliate = await _affiliateService.GetActiveAffiliateByCodeAsync(model.AffiliateCode);
+					var affiliate = await _affiliateService.GetActiveAffiliateByCodeAsync(partnerCode);
 					if (affiliate != null)
 					{
 						department.AffiliateCode = affiliate.AffiliateCode;
@@ -583,10 +614,15 @@ namespace Resgrid.Web.Controllers
 						return View(model);
 					}
 
+					// The plan picker takes the discount code to its checkout.
+					if (String.IsNullOrWhiteSpace(returnUrl) && SystemBehaviorConfig.RequirePlanSelectionDuringSignup)
+						return RedirectToAction("SelectRegistrationPlan", "Subscription", new { Area = "User", discountCode = model.DiscountCode?.Trim() });
+
+					var discountEntered = await HoldSignupDiscountCodeAsync(department.DepartmentId, user.Id, model.DiscountCode);
 					if (!String.IsNullOrWhiteSpace(returnUrl))
 						return RedirectToLocal(returnUrl);
-					else if (SystemBehaviorConfig.RequirePlanSelectionDuringSignup)
-						return RedirectToAction("SelectRegistrationPlan", "Subscription", new { Area = "User", discountCode = model.DiscountCode });
+					else if (discountEntered)
+						return RedirectToAction("Index", "Subscription", new { Area = "User" }, "codes");
 					else
 						return RedirectToAction("Dashboard", "Home", new { Area = "User" });
 				}
@@ -596,9 +632,55 @@ namespace Resgrid.Web.Controllers
 				Logging.LogException(ex, $"New account {user.Id} was registered but could not be signed in.");
 			}
 
+			// Not signed in, so no plan picker follows: the code waits for the Subscription page once they sign in in this browser.
+			await HoldSignupDiscountCodeAsync(department.DepartmentId, user.Id, model.DiscountCode);
+
 			// Registered, but not signed in: the sign-in page says so, rather than this form coming back as if nothing happened.
 			TempData["LoginMfaMessage"] = "Your account was created. Sign in with the username and password you just chose.";
 			return RedirectToAction(nameof(LogOn));
+		}
+
+		/// <summary>
+		/// A discount code entered on the signup form when no plan picker follows (plan selection is off, a return URL was given, or
+		/// sign-in did not finish). It is checked and, if valid, held for checkout exactly like one entered on the Subscription page,
+		/// rather than dropped. True when a code was entered and checked, so the caller can send them to see the outcome. Never
+		/// throws: the account and department are already made.
+		/// </summary>
+		private async Task<bool> HoldSignupDiscountCodeAsync(int departmentId, string userId, string discountCode)
+		{
+			if (String.IsNullOrWhiteSpace(discountCode))
+				return false;
+
+			DiscountCodeOutcomes outcome;
+			try
+			{
+				outcome = await DiscountCodeEntry.EnterAsync(_subscriptionsService, TempData, departmentId, discountCode);
+			}
+			catch (Exception ex) when (!(ex is OperationCanceledException))
+			{
+				Logging.LogException(ex, $"The signup discount code for new department {departmentId} could not be checked.");
+				return false;
+			}
+
+			try
+			{
+				var auditEvent = new AuditEvent();
+				auditEvent.DepartmentId = departmentId;
+				auditEvent.UserId = userId;
+				auditEvent.Type = AuditLogTypes.SubscriptionUpdated;
+				auditEvent.After = $"Discount code entered at signup: {outcome}";
+				auditEvent.Successful = DiscountCodeEntry.Succeeded(outcome);
+				auditEvent.IpAddress = ClientIp();
+				auditEvent.ServerName = Environment.MachineName;
+				auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
+				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
+			}
+			catch (Exception ex) when (!(ex is OperationCanceledException))
+			{
+				Logging.LogException(ex, $"The signup discount code audit for new department {departmentId} could not be recorded.");
+			}
+
+			return true;
 		}
 
 		/// <summary>How long a finished account-creating post keeps answering its own repeats (a double click, a resend).</summary>

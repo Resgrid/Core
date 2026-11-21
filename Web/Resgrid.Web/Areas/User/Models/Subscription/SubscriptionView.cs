@@ -53,10 +53,10 @@ namespace Resgrid.Web.Areas.User.Models.Subscription
 		/// <summary>Every add-on with its toggle and holding state, in catalog order; the view decides which cards to draw.</summary>
 		public List<AddonAvailability> Addons { get; set; } = new List<AddonAvailability>();
 
-		/// <summary>The department's referral code; once set it is shown, not editable.</summary>
+		/// <summary>The department's partner/account code; once set it is shown, not editable.</summary>
 		public string AffiliateCode { get; set; }
 
-		/// <summary>Outcome key of the last discount or affiliate code post (an Addons resource key suffix).</summary>
+		/// <summary>Outcome key of the last discount or partner/account code post (an Addons resource key suffix).</summary>
 		public string CodesMessage { get; set; }
 
 		/// <summary>A validated discount code entered before the department has an active subscription; checkout pre-applies it.</summary>

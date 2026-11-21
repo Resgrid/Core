@@ -95,8 +95,8 @@
   <data name="AdpFeature4" xml:space="preserve"><value>Geschwärzte Workflows, Benachrichtigungen und BigBoard</value></data>
   <data name="AdpFeature5" xml:space="preserve"><value>Voraussetzung für eine HIPAA-BAA mit Resgrid</value></data>
   <data name="AdpNote" xml:space="preserve"><value>Jährliche Abrechnung, auch wenn Ihre Abteilung einen Monatstarif hat. Die Aktivierung erfolgt selbstständig, sobald das Add-on aktiv ist.</value></data>
-  <data name="CodesHeader" xml:space="preserve"><value>Rabatt- und Empfehlungscodes</value></data>
-  <data name="CodesIntro" xml:space="preserve"><value>Sie haben einen Rabattcode oder wurden von einem Resgrid-Partner empfohlen? Sie können ihn hier jederzeit eingeben, nicht nur bei der Registrierung.</value></data>
+  <data name="CodesHeader" xml:space="preserve"><value>Rabatt- und Partner-/Kontocodes</value></data>
+  <data name="CodesIntro" xml:space="preserve"><value>Sie haben einen Rabattcode oder einen Partner-/Kontocode von einem Resgrid-Partner oder Ihrem Account Executive? Sie können ihn hier jederzeit eingeben, nicht nur bei der Registrierung.</value></data>
   <data name="DiscountCodeLabel" xml:space="preserve"><value>Rabattcode</value></data>
   <data name="DiscountCodePlaceholder" xml:space="preserve"><value>Rabattcode eingeben</value></data>
   <data name="DiscountCodeApply" xml:space="preserve"><value>Anwenden</value></data>
@@ -107,12 +107,12 @@
   <data name="MessageDiscountPending" xml:space="preserve"><value>Der Rabattcode ist gültig und wird angewendet, wenn Sie oben einen Tarif kaufen.</value></data>
   <data name="MessageDiscountInvalid" xml:space="preserve"><value>Dieser Rabattcode ist ungültig, abgelaufen oder für Ihre Abteilung nicht verwendbar.</value></data>
   <data name="MessageDiscountUnavailable" xml:space="preserve"><value>Rabattcodes können derzeit nicht geprüft werden. Bitte versuchen Sie es später erneut.</value></data>
-  <data name="AffiliateCodeLabel" xml:space="preserve"><value>Partner- (Empfehlungs-)Code</value></data>
-  <data name="AffiliateCodePlaceholder" xml:space="preserve"><value>Partnercode eingeben</value></data>
+  <data name="AffiliateCodeLabel" xml:space="preserve"><value>Partner-/Kontocode</value></data>
+  <data name="AffiliateCodePlaceholder" xml:space="preserve"><value>Partner-/Kontocode eingeben</value></data>
   <data name="AffiliateCodeSave" xml:space="preserve"><value>Speichern</value></data>
   <data name="AffiliateCodeSetHelp" xml:space="preserve"><value>Kann einmal hinzugefügt werden. Kontaktieren Sie uns, falls er geändert werden muss.</value></data>
-  <data name="AffiliateCodeCurrent" xml:space="preserve"><value>Empfohlen über Partnercode {0}</value></data>
-  <data name="MessageAffiliateApplied" xml:space="preserve"><value>Der Partnercode wurde für Ihre Abteilung gespeichert.</value></data>
-  <data name="MessageAffiliateInvalid" xml:space="preserve"><value>Dieser Partnercode ist ungültig oder nicht mehr aktiv.</value></data>
-  <data name="MessageAffiliateAlreadySet" xml:space="preserve"><value>Ihre Abteilung hat bereits einen Partnercode. Kontaktieren Sie uns, falls er geändert werden muss.</value></data>
+  <data name="AffiliateCodeCurrent" xml:space="preserve"><value>Partner-/Kontocode: {0}</value></data>
+  <data name="MessageAffiliateApplied" xml:space="preserve"><value>Der Partner-/Kontocode wurde für Ihre Abteilung gespeichert.</value></data>
+  <data name="MessageAffiliateInvalid" xml:space="preserve"><value>Dieser Partner-/Kontocode ist ungültig oder nicht mehr aktiv.</value></data>
+  <data name="MessageAffiliateAlreadySet" xml:space="preserve"><value>Ihre Abteilung hat bereits einen Partner-/Kontocode. Kontaktieren Sie uns, falls er geändert werden muss.</value></data>
 </root>

@@ -60,6 +60,12 @@ namespace Resgrid.Model.Repositories
 		/// </summary>
 		Task<bool> TryCloseIdleAsync(string conversationId, int departmentId, string reason, DateTime idleBefore, DateTime closedOn, CancellationToken cancellationToken = default);
 
+		/// <summary>
+		/// Records the texter's opt-out on the thread whatever its state (a STOP whose close lost to a dispatcher's or the idle sweep's): nothing
+		/// is ever sent on it again. Changes nothing else and raises nothing. True when the thread exists.
+		/// </summary>
+		Task<bool> MarkOptedOutAsync(string conversationId, int departmentId, CancellationToken cancellationToken = default);
+
 		/// <summary>Records activity (and an inbound message's time when <paramref name="lastInboundOn"/> is set); never moves time backwards.</summary>
 		Task TouchAsync(string conversationId, int departmentId, DateTime lastActivityOn, DateTime? lastInboundOn, CancellationToken cancellationToken = default);
 
@@ -80,6 +86,12 @@ namespace Resgrid.Model.Repositories
 
 		/// <summary>The conversation's messages, oldest first.</summary>
 		Task<List<IntakeConversationMessage>> GetForConversationAsync(int departmentId, string conversationId);
+
+		/// <summary>
+		/// The inbound row a thread of this participant (any department, any state) recorded for <paramref name="providerMessageId"/>, or null:
+		/// a provider's redelivery of a text stays with the thread it was first recorded on.
+		/// </summary>
+		Task<IntakeConversationMessage> GetInboundByProviderIdAsync(int channelType, string participantAddress, string providerMessageId);
 
 		/// <summary>Writes a send's outcome (status, carrier id, error, time).</summary>
 		Task<bool> UpdateDeliveryAsync(string messageId, int departmentId, int status, string providerMessageId, string error, DateTime? sentOn,

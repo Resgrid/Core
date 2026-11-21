@@ -140,6 +140,15 @@ namespace Resgrid.Tests.Intake
 			return Task.FromResult(true);
 		}
 
+		public Task<bool> MarkOptedOutAsync(string conversationId, int departmentId, CancellationToken cancellationToken = default)
+		{
+			var row = Row(conversationId, departmentId);
+			if (row == null)
+				return Task.FromResult(false);
+			row.OptedOut = true;
+			return Task.FromResult(true);
+		}
+
 		/// <summary>The next activity writes throw, as a database that fails after the texter's note was saved would.</summary>
 		public int FailingTouches { get; set; }
 
@@ -213,8 +222,30 @@ namespace Resgrid.Tests.Intake
 			return Task.CompletedTask;
 		}
 
-		public Task<List<IntakeConversationMessage>> GetForConversationAsync(int departmentId, string conversationId) =>
-			Task.FromResult(Rows.Where(r => r.DepartmentId == departmentId && r.IntakeConversationId == conversationId).OrderBy(r => r.CreatedOn).ToList());
+		/// <summary>Runs once, right after the next read of a conversation's messages (a write committing while that read is in flight).</summary>
+		public Action AfterNextRead { get; set; }
+
+		public Task<List<IntakeConversationMessage>> GetForConversationAsync(int departmentId, string conversationId)
+		{
+			var rows = Rows.Where(r => r.DepartmentId == departmentId && r.IntakeConversationId == conversationId).OrderBy(r => r.CreatedOn).ToList();
+			var after = AfterNextRead;
+			AfterNextRead = null;
+			after?.Invoke();
+			return Task.FromResult(rows);
+		}
+
+		/// <summary>The conversations the provider-id lookup joins to (as the repository's join on IntakeConversations does).</summary>
+		public FakeIntakeConversationsRepository Conversations { get; set; }
+
+		public Task<IntakeConversationMessage> GetInboundByProviderIdAsync(int channelType, string participantAddress, string providerMessageId) =>
+			Task.FromResult(Rows.Where(m => m.Direction == (int)IntakeConversationMessageDirections.Inbound &&
+					string.Equals(m.ProviderMessageId, providerMessageId, StringComparison.OrdinalIgnoreCase) &&
+					Conversations != null && Conversations.Rows.Any(c => c.IntakeConversationId == m.IntakeConversationId && c.ChannelType == channelType &&
+						string.Equals(c.ParticipantAddress, participantAddress, StringComparison.OrdinalIgnoreCase)))
+				.OrderBy(m => m.CreatedOn).FirstOrDefault());
+
+		/// <summary>The next note links throw, as a database that fails right after the note was saved would.</summary>
+		public int FailingNoteLinks { get; set; }
 
 		public Task<bool> UpdateDeliveryAsync(string messageId, int departmentId, int status, string providerMessageId, string error, DateTime? sentOn,
 			CancellationToken cancellationToken = default)
@@ -231,6 +262,12 @@ namespace Resgrid.Tests.Intake
 
 		public Task<bool> SetCallNoteAsync(string messageId, int departmentId, int callNoteId, CancellationToken cancellationToken = default)
 		{
+			if (FailingNoteLinks > 0)
+			{
+				FailingNoteLinks--;
+				throw new TimeoutException("database");
+			}
+
 			var row = Rows.FirstOrDefault(r => r.IntakeConversationMessageId == messageId && r.DepartmentId == departmentId);
 			if (row == null)
 				return Task.FromResult(false);

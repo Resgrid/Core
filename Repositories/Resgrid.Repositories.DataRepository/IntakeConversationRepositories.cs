@@ -213,6 +213,17 @@ namespace Resgrid.Repositories.DataRepository
 			return updated == 1;
 		}
 
+		public async Task<bool> MarkOptedOutAsync(string conversationId, int departmentId, CancellationToken cancellationToken = default)
+		{
+			// No state condition: the row counts as updated whether or not it was already opted out, so true = it exists and is opted out.
+			var updated = await ExecuteAsync(
+				$"UPDATE {Tbl(Table)} SET {Col("OptedOut")} = {P}OptedOut WHERE {Col("IntakeConversationId")} = {P}Id AND {Col("DepartmentId")} = {P}DepartmentId",
+				new { Id = conversationId, DepartmentId = departmentId, OptedOut = true },
+				cancellationToken);
+
+			return updated == 1;
+		}
+
 		public async Task<bool> TryCloseIdleAsync(string conversationId, int departmentId, string reason, DateTime idleBefore, DateTime closedOn,
 			CancellationToken cancellationToken = default)
 		{
@@ -317,6 +328,26 @@ namespace Resgrid.Repositories.DataRepository
 				new { Id = conversationId, DepartmentId = departmentId });
 
 			return rows?.ToList() ?? new List<IntakeConversationMessage>();
+		}
+
+		public Task<IntakeConversationMessage> GetInboundByProviderIdAsync(int channelType, string participantAddress, string providerMessageId)
+		{
+			if (string.IsNullOrWhiteSpace(participantAddress) || string.IsNullOrWhiteSpace(providerMessageId))
+				return Task.FromResult<IntakeConversationMessage>(null);
+
+			// The participant's threads (IX_IntakeConversations_Participant), then the provider id on each (UX_IntakeConversationMessages_Provider).
+			var where = $"WHERE c.{Col("ChannelType")} = {P}ChannelType AND c.{Col("ParticipantAddress")} = {CaseInsensitive("Participant")} " +
+				$"AND m.{Col("ProviderMessageId")} = {P}ProviderId AND m.{Col("Direction")} = {P}Inbound ORDER BY m.{Col("CreatedOn")} ASC";
+			var from = $"FROM {Tbl(Table)} m INNER JOIN {Tbl("IntakeConversations")} c ON c.{Col("IntakeConversationId")} = m.{Col("IntakeConversationId")} {where}";
+			var sql = IsPostgres
+				? $"SELECT m.* {from} LIMIT 1"
+				: $"SELECT TOP (1) m.* {from}";
+
+			return QueryFirstOrDefaultAsync<IntakeConversationMessage>(sql, new
+			{
+				ChannelType = channelType, Participant = participantAddress, ProviderId = Cap(providerMessageId.Trim(), 256),
+				Inbound = (int)IntakeConversationMessageDirections.Inbound
+			});
 		}
 
 		public async Task<bool> UpdateDeliveryAsync(string messageId, int departmentId, int status, string providerMessageId, string error, DateTime? sentOn,

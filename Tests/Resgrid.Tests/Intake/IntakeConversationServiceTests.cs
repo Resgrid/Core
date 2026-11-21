@@ -81,6 +81,7 @@ namespace Resgrid.Tests.Intake
 			_conversations = new FakeIntakeConversationsRepository();
 			_messages = new FakeIntakeConversationMessagesRepository();
 			_conversations.Messages = _messages;
+			_messages.Conversations = _conversations;
 			_blocked = new Mock<IIntakeBlockedSendersRepository>();
 			_channel = new IntakeChannel
 			{
@@ -99,7 +100,7 @@ namespace Resgrid.Tests.Intake
 			_calls.Setup(c => c.PopulateCallData(It.IsAny<Call>(), false, false, true, false, false, false, false, false, false, false))
 				.ReturnsAsync((Call c, bool a, bool b, bool d, bool e, bool f, bool g, bool h, bool i, bool j, bool k) =>
 				{
-					c.CallNotes = _notes.Where(n => n.CallId == c.CallId).Select(n => new CallNote { CallNoteId = n.CallNoteId, CallId = n.CallId, Note = n.Note, Source = n.Source, UserId = n.UserId }).ToList();
+					c.CallNotes = _notes.Where(n => n.CallId == c.CallId).Select(n => new CallNote { CallNoteId = n.CallNoteId, CallId = n.CallId, Note = n.Note, Source = n.Source, UserId = n.UserId, Timestamp = n.Timestamp }).ToList();
 					return c;
 				});
 
@@ -992,6 +993,141 @@ namespace Resgrid.Tests.Intake
 			inbound[0].CallNoteId.Should().NotBeNull("the redelivery linked its note to the row the first delivery wrote");
 			_queued.Should().ContainSingle(q => q.Channel == AiDispatchChannels.IntakeConversation, "the redelivery finished what the first skipped, once");
 			_router.Calls.Should().ContainSingle(c => c.StartsWith("Message:"));
+		}
+
+		[Test]
+		public async Task a_reply_whose_note_could_not_be_linked_is_not_handled_and_its_redelivery_links_that_same_note()
+		{
+			var conversation = await StartAsync(IntakeProcessingModes.EnhancedAi);
+			_queued.Clear();
+			_messages.FailingNoteLinks = 2;
+
+			(await _service.HandleParticipantMessageAsync(conversation, "SM2", "Main and 5th", DateTime.UtcNow)).Should()
+				.BeFalse("the note is on the call but the thread cannot find it: the conversation and Enhanced AI read texts through the link");
+			var row = Messages(conversation.IntakeConversationId).Single(m => m.ProviderMessageId == "SM2");
+			row.CallNoteId.Should().BeNull("an id held in memory is not a stored link");
+			_queued.Should().BeEmpty();
+
+			(await _service.HandleParticipantMessageAsync(conversation, "SM2", "Main and 5th", DateTime.UtcNow)).Should().BeTrue();
+
+			var notes = _notes.Where(n => n.Note == IntakeConversationTexts.CallerNotePrefix + "Main and 5th").ToList();
+			notes.Should().ContainSingle("the redelivery links the first delivery's note instead of writing another");
+			row.CallNoteId.Should().Be(notes[0].CallNoteId);
+			_queued.Should().ContainSingle(q => q.Channel == AiDispatchChannels.IntakeConversation);
+		}
+
+		[Test]
+		public async Task a_redelivery_that_arrives_while_the_first_delivery_links_its_note_reuses_that_note()
+		{
+			var conversation = await StartAsync();
+			var redelivered = (bool?)null;
+			_calls.Setup(c => c.SaveCallNoteAsync(It.IsAny<CallNote>(), It.IsAny<CancellationToken>()))
+				.Returns(async (CallNote n, CancellationToken _) =>
+				{
+					n.CallNoteId = _notes.Count + 1;
+					_notes.Add(n);
+					// Twilio retries (a slow first answer) after the first delivery saved its note and before it linked it.
+					if (redelivered == null && n.Note == IntakeConversationTexts.CallerNotePrefix + "Main and 5th")
+						redelivered = await _service.HandleParticipantMessageAsync(conversation, "SM2", "Main and 5th", DateTime.UtcNow);
+					return n;
+				});
+
+			(await _service.HandleParticipantMessageAsync(conversation, "SM2", "Main and 5th", DateTime.UtcNow)).Should().BeTrue();
+
+			redelivered.Should().BeTrue();
+			_notes.Count(n => n.Note == IntakeConversationTexts.CallerNotePrefix + "Main and 5th").Should().Be(1, "one text, one note");
+			Messages(conversation.IntakeConversationId).Single(m => m.ProviderMessageId == "SM2").CallNoteId.Should().NotBeNull();
+		}
+
+		[Test]
+		public async Task an_ai_reply_that_cannot_be_confirmed_before_the_send_hands_the_thread_to_a_dispatcher()
+		{
+			var conversation = await StartAsync(IntakeProcessingModes.EnhancedAi);
+			ModelAnswers("Where are you?");
+			_calls.Setup(c => c.SaveCallNoteAsync(It.IsAny<CallNote>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((CallNote n, CancellationToken _) =>
+				{
+					n.CallNoteId = _notes.Count + 1;
+					_notes.Add(n);
+					// The read right before the carrier fails (a STOP may have committed meanwhile).
+					if (n.Note == IntakeConversationTexts.AssistantNotePrefix + "Where are you?")
+						_conversations.FailNextRead = true;
+					return n;
+				});
+			_sent.Clear();
+
+			(await _service.ProcessAssistantTurnAsync(LastTurn())).Should().Be("Unconfirmed", "the texter's message was not answered");
+
+			_sent.Select(s => s.Text).Should().NotContain("Where are you?");
+			Stored(conversation.IntakeConversationId).Handler.Should().Be((int)IntakeConversationHandlers.Unassisted,
+				"nothing else would answer the texter: a dispatcher takes the thread");
+			_sent.Select(s => s.Text).Should().Contain(Finished, "the hand-over text passed its own check of the stored thread");
+		}
+
+		[Test]
+		public async Task a_stop_that_commits_while_the_newest_text_is_checked_stops_the_ai_reply()
+		{
+			var conversation = await StartAsync(IntakeProcessingModes.EnhancedAi);
+			ModelAnswers("Where are you?");
+			_calls.Setup(c => c.SaveCallNoteAsync(It.IsAny<CallNote>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((CallNote n, CancellationToken _) =>
+				{
+					n.CallNoteId = _notes.Count + 1;
+					_notes.Add(n);
+					if (n.Note == IntakeConversationTexts.AssistantNotePrefix + "Where are you?")
+						_messages.AfterNextRead = () =>
+						{
+							// The texter's STOP commits while the send gate reads the thread's messages.
+							Stored(conversation.IntakeConversationId).OptedOut = true;
+							Stored(conversation.IntakeConversationId).State = (int)IntakeConversationStates.Closed;
+						};
+					return n;
+				});
+			_sent.Clear();
+
+			await _service.ProcessAssistantTurnAsync(LastTurn());
+
+			_sent.Should().BeEmpty("the thread's state is read after the newest-text check");
+			Messages(conversation.IntakeConversationId).Single(m => m.Author == (int)IntakeConversationAuthors.Assistant).Error.Should().Be("OptedOut");
+		}
+
+		[Test]
+		public async Task a_stop_whose_close_lost_to_a_dispatchers_close_still_opts_the_thread_out()
+		{
+			var conversation = await StartAsync();
+			_calls.Setup(c => c.SaveCallNoteAsync(It.IsAny<CallNote>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((CallNote n, CancellationToken _) =>
+				{
+					n.CallNoteId = _notes.Count + 1;
+					_notes.Add(n);
+					// A dispatcher closes the thread after the STOP loaded it and before its close.
+					if (n.Note == IntakeConversationTexts.OptedOutNote)
+					{
+						Stored(conversation.IntakeConversationId).State = (int)IntakeConversationStates.Closed;
+						Stored(conversation.IntakeConversationId).CloseReason = "Closed by dispatcher";
+					}
+					return n;
+				});
+			_published.Clear();
+
+			(await _service.HandleParticipantMessageAsync(conversation, "SM9", "STOP", DateTime.UtcNow)).Should().BeTrue();
+
+			var row = Stored(conversation.IntakeConversationId);
+			row.OptedOut.Should().BeTrue("a closing notice (or any later text) on this thread must be refused");
+			row.CloseReason.Should().Be("Closed by dispatcher", "the opt-out is recorded on the closed thread, not a second close");
+			_published.Should().BeEmpty("no second close event");
+		}
+
+		[Test]
+		public async Task a_redelivered_text_finds_the_thread_that_first_recorded_it_in_any_department()
+		{
+			var conversation = await StartAsync();
+			(await _service.HandleParticipantMessageAsync(conversation, "SM2", "Main and 5th", DateTime.UtcNow)).Should().BeTrue();
+
+			var bound = await _service.FindThreadForProviderMessageAsync(IntakeChannelTypes.Sms, Texter, "SM2");
+			bound.Thread.IntakeConversationId.Should().Be(conversation.IntakeConversationId);
+			bound.Recorded.Should().BeTrue();
+			(await _service.FindThreadForProviderMessageAsync(IntakeChannelTypes.Sms, Texter, "SM404")).Thread.Should().BeNull();
 		}
 
 		[Test]

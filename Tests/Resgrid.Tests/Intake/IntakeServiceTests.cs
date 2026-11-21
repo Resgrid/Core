@@ -720,7 +720,8 @@ namespace Resgrid.Tests.Intake
 			// An unknown answer is not "no saved call": nothing is built, and the takeover goes back so the next delivery looks again at once.
 			await receive.Should().ThrowAsync<InvalidOperationException>();
 			_saved.Should().BeEmpty();
-			_messages.Verify(m => m.ReleaseReclaimAsync("m-1", receivedOn, It.IsAny<CancellationToken>()), Times.Once);
+			_messages.Verify(m => m.ReleaseReclaimAsync("m-1", FixedClock.Now, receivedOn, It.IsAny<CancellationToken>()), Times.Once,
+				"only the takeover this attempt made (stamped now) is given back");
 			_completions.Should().BeEmpty("the claim is never marked Failed: that state skips the lookup and could make a second call");
 		}
 
@@ -1094,6 +1095,56 @@ namespace Resgrid.Tests.Intake
 				result.State.Should().Be(IntakeMessageStates.AddedToCall);
 				result.CallId.Should().Be(802);
 				_saved.Should().BeEmpty("the text is already a note on call 802");
+			}
+			finally
+			{
+				IntakeConfig.MaxCallsPerSenderPerHour = saved;
+			}
+		}
+
+		[Test]
+		public async Task a_note_past_the_limit_saved_before_its_follow_up_failed_is_never_turned_into_a_call()
+		{
+			var saved = IntakeConfig.MaxCallsPerSenderPerHour;
+			try
+			{
+				IntakeConfig.MaxCallsPerSenderPerHour = 3;
+				PreviousCalls((802, (int)CallStates.Pending), (801, (int)CallStates.Pending), (800, (int)CallStates.Pending));
+				// SaveCallNoteAsync inserted the note (the insert set its id), then its search-projection refresh threw.
+				_calls.Setup(c => c.SaveCallNoteAsync(It.IsAny<CallNote>(), It.IsAny<CancellationToken>()))
+					.Returns((CallNote n, CancellationToken _) =>
+					{
+						n.CallNoteId = 7;
+						throw new InvalidOperationException("search projection down");
+					});
+
+				var result = await _service.ReceiveAsync(Sms("Win a free cruise", "SM11"));
+
+				result.State.Should().Be(IntakeMessageStates.AddedToCall);
+				result.CallId.Should().Be(802);
+				_saved.Should().BeEmpty("the text is already a note on call 802");
+				_completions.Should().ContainSingle().Which.Should().Be(((int)IntakeMessageStates.AddedToCall, (int?)802, "SenderLimit"));
+			}
+			finally
+			{
+				IntakeConfig.MaxCallsPerSenderPerHour = saved;
+			}
+		}
+
+		[Test]
+		public async Task a_note_past_the_limit_that_was_never_saved_lets_the_message_make_its_own_call()
+		{
+			var saved = IntakeConfig.MaxCallsPerSenderPerHour;
+			try
+			{
+				IntakeConfig.MaxCallsPerSenderPerHour = 3;
+				PreviousCalls((802, (int)CallStates.Pending), (801, (int)CallStates.Pending), (800, (int)CallStates.Pending));
+				_calls.Setup(c => c.SaveCallNoteAsync(It.IsAny<CallNote>(), It.IsAny<CancellationToken>())).ThrowsAsync(new InvalidOperationException("db down"));
+
+				var result = await _service.ReceiveAsync(Sms("Win a free cruise", "SM12"));
+
+				result.State.Should().Be(IntakeMessageStates.CallCreated, "nothing reached call 802, so the text is not lost");
+				_saved.Should().ContainSingle();
 			}
 			finally
 			{

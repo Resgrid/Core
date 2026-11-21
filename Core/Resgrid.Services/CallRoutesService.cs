@@ -142,7 +142,20 @@ namespace Resgrid.Services
 				Logging.LogException(ex, $"Refreshing route plan {eligible.Plan.RoutePlanId} before starting it for call {call.CallId}");
 			}
 
-			return await _routeService.StartRouteForCallAsync(eligible.Plan.RoutePlanId, unitId, call.CallId, userId, cancellationToken);
+			try
+			{
+				return await _routeService.StartRouteForCallAsync(eligible.Plan.RoutePlanId, unitId, call.CallId, userId, cancellationToken);
+			}
+			catch (RouteInProgressException)
+			{
+				// A concurrent start of this same call took the unit lock first (two crew devices): its run is this call's run, resumed
+				// as above. A run of another call keeps the 409.
+				var winner = await _routeService.GetActiveOrPausedInstanceForUnitAsync(call.DepartmentId, unitId);
+				if (winner != null && winner.CallId == call.CallId)
+					return winner;
+
+				throw;
+			}
 		}
 
 		/// <summary>True when the call is closed, deleted or gone (a pending call is still open).</summary>

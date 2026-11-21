@@ -572,10 +572,42 @@ namespace Resgrid.Web.Services.Controllers
 			if (thread == null || !IsConversationReplyNumber(request.To, thread))
 				return ConversationReplies.None;
 
+			var stop = Resgrid.Services.Intake.IntakeConversationTexts.IsOptOut(request.Body);
+
+			// A redelivery (Twilio retrying a 503 or a lost answer) stays with the thread that recorded this MessageSid the first time, even when
+			// another department's thread of the same texter has become the most recently active since: the text is never moved to another
+			// department's call. Looked up only when the texter has an open thread (the reply path), so member commands pay nothing for it.
+			try
+			{
+				var sender = IntakeChannelAddresses.PhoneNumber(request.From) ?? request.From;
+				var bound = await _intakeConversationOperations.FindThreadForProviderMessageAsync(IntakeChannelTypes.Sms, sender, request.MessageSid);
+				if (bound.Thread != null && !string.Equals(bound.Thread.IntakeConversationId, thread.IntakeConversationId, StringComparison.Ordinal))
+				{
+					if (!bound.Thread.IsOpen)
+					{
+						// Its thread closed since. On its call already: done (a STOP still gets the master number's own STOP handling). Not on it:
+						// the master number's usual handling, as for any reply to a closed thread, and never the other thread.
+						Framework.Logging.LogInfo($"[Twilio SMS] MessageSid={request.MessageSid} was first recorded on closed intake conversation " +
+							$"{bound.Thread.IntakeConversationId} (department {bound.Thread.DepartmentId}, recorded={bound.Recorded}); not moved to another thread.");
+						if (!bound.Recorded)
+							return ConversationReplies.None;
+						return stop ? ConversationReplies.OptedOut : ConversationReplies.Handled;
+					}
+
+					if (!IsConversationReplyNumber(request.To, bound.Thread))
+						return ConversationReplies.None;
+					thread = bound.Thread;
+				}
+			}
+			catch (Exception ex)
+			{
+				// The first delivery's thread could not be looked up: the most recently active thread, as before this text had a delivery.
+				Framework.Logging.LogException(ex, $"[Twilio SMS] MessageSid={request.MessageSid} intake conversation redelivery lookup failed.");
+			}
+
 			// From here the text is the texter's, whatever happens while it is recorded: it never falls through to member commands. Not handled
 			// means it is not durable on the thread (the thread closed meanwhile, or its row, note or STOP close failed): a retryable answer, so a
-			// redelivery either finishes it or, with the thread closed, takes the master number's usual path.
-			var stop = Resgrid.Services.Intake.IntakeConversationTexts.IsOptOut(request.Body);
+			// redelivery either finishes it on the same thread or, with the thread closed, takes the master number's usual path.
 			bool handled;
 			try
 			{

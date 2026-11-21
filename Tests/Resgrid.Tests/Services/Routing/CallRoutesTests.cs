@@ -393,6 +393,36 @@ namespace Resgrid.Tests.Services.Routing
 		}
 
 		[Test]
+		public async Task A_concurrent_start_of_the_same_call_that_loses_the_unit_lock_resumes_the_winners_run()
+		{
+			var call = new Call { CallId = 42, DepartmentId = 7, RoutePlanId = "alpha" };
+			_routes.Setup(r => r.GetRoutePlanByIdAsync("alpha")).ReturnsAsync(Plan("alpha"));
+			// Free before the lock; the other device's start of this call won the lock meanwhile.
+			_routes.SetupSequence(r => r.GetActiveOrPausedInstanceForUnitAsync(7, 30))
+				.ReturnsAsync((RouteInstance)null)
+				.ReturnsAsync(new RouteInstance { RouteInstanceId = "winner", CallId = 42, Status = (int)RouteInstanceStatus.InProgress });
+			_routes.Setup(r => r.StartRouteForCallAsync("alpha", 30, 42, "user", It.IsAny<CancellationToken>()))
+				.ThrowsAsync(new RouteInProgressException("winner", false));
+
+			(await _service.StartCallRouteAsync(call, 30, "user")).RouteInstanceId.Should().Be("winner", "the run of this call is resumed, never a 409");
+		}
+
+		[Test]
+		public async Task A_concurrent_start_that_loses_the_unit_lock_to_another_calls_run_keeps_the_conflict()
+		{
+			var call = new Call { CallId = 42, DepartmentId = 7, RoutePlanId = "alpha" };
+			_routes.Setup(r => r.GetRoutePlanByIdAsync("alpha")).ReturnsAsync(Plan("alpha"));
+			_routes.SetupSequence(r => r.GetActiveOrPausedInstanceForUnitAsync(7, 30))
+				.ReturnsAsync((RouteInstance)null)
+				.ReturnsAsync(new RouteInstance { RouteInstanceId = "other", CallId = 77, Status = (int)RouteInstanceStatus.InProgress });
+			_routes.Setup(r => r.StartRouteForCallAsync("alpha", 30, 42, "user", It.IsAny<CancellationToken>()))
+				.ThrowsAsync(new RouteInProgressException("other", false));
+
+			var conflict = (await FluentActions.Awaiting(() => _service.StartCallRouteAsync(call, 30, "user")).Should().ThrowAsync<RouteInProgressException>()).Which;
+			conflict.RouteInstanceId.Should().Be("other");
+		}
+
+		[Test]
 		public async Task A_run_left_from_a_closed_call_is_cancelled_instead_of_blocking()
 		{
 			var call = new Call { CallId = 42, DepartmentId = 7, RoutePlanId = "alpha" };

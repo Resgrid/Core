@@ -188,6 +188,8 @@ namespace Resgrid.Tests.Intake
 		public async Task a_cancel_that_cannot_be_saved_takes_the_label_back_off()
 		{
 			_message.Screening = (int)IntakeScreenings.LikelyNotIncident;
+			// Reads return the stored row (a fresh copy, as the database does): the failed save never reached it, so it is still pending.
+			_calls.Setup(c => c.GetCallByIdAsync(CallId, true)).ReturnsAsync(() => StoredCopy((int)CallStates.Pending));
 			_calls.Setup(c => c.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>())).ThrowsAsync(new InvalidOperationException("db down"));
 
 			var result = await _service.DismissAsSpamAsync(DepartmentId, CallId, "dispatcher-1", blockSender: false);
@@ -199,6 +201,80 @@ namespace Resgrid.Tests.Intake
 				"the call is still pending, so it goes back to what it said before");
 			_events.Verify(e => e.SendMessage(It.IsAny<CallClosedEvent>()), Times.Never);
 		}
+
+		[Test]
+		public async Task a_cancel_that_committed_before_its_save_failed_stays_dismissed_with_its_label()
+		{
+			// SaveCallAsync wrote the cancel, then its post-save work (search projection, protected-write check) threw.
+			var storedState = (int)CallStates.Pending;
+			_calls.Setup(c => c.GetCallByIdAsync(CallId, true)).ReturnsAsync(() => StoredCopy(storedState));
+			_calls.Setup(c => c.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>()))
+				.Callback((Call c, CancellationToken _) => storedState = c.State).ThrowsAsync(new InvalidOperationException("projection down"));
+			_conversations.Setup(c => c.GetForCallAsync(DepartmentId, CallId))
+				.ReturnsAsync(new IntakeConversation { IntakeConversationId = "conv-1", DepartmentId = DepartmentId, CallId = CallId, State = (int)IntakeConversationStates.Open });
+
+			var result = await _service.DismissAsSpamAsync(DepartmentId, CallId, "dispatcher-1", blockSender: false);
+
+			result.Result.Should().Be(IntakeDismissResults.Dismissed, "the cancel is on the row; a retry would only answer NotPending");
+			_messages.Verify(m => m.SetScreeningAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+				It.Is<int[]>(r => r.SequenceEqual(new[] { (int)IntakeScreenings.DismissedAsSpam })), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()),
+				Times.Never, "a committed dismissal keeps its label");
+			_calls.Verify(c => c.ReleaseCallDispatchClaimAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<int>(), It.IsAny<DateTime?>(),
+				It.IsAny<bool?>(), It.IsAny<CancellationToken>()), Times.Never);
+			_calls.Verify(c => c.CompleteCallDispatchClaimAsync(CallId, DepartmentId, Claimed, It.IsAny<CancellationToken>()), Times.Once);
+			_conversations.Verify(c => c.CloseAsync(DepartmentId, "conv-1", "dispatcher-1", "DismissedAsSpam", false, It.IsAny<CancellationToken>()), Times.Once);
+			_events.Verify(e => e.SendMessage(It.Is<CallClosedEvent>(x => x.Call.CallId == CallId && x.Call.State == (int)CallStates.Cancelled)), Times.Once);
+		}
+
+		[Test]
+		public async Task a_label_write_that_matches_no_row_leaves_the_call_pending()
+		{
+			// The intake row was purged (or no longer matches) after the first read: the write changes nothing and the label is not there.
+			_messages.Setup(m => m.SetScreeningAsync(DepartmentId, CallId, (int)IntakeScreenings.DismissedAsSpam, It.IsAny<int[]>(), It.IsAny<string>(), It.IsAny<DateTime>(),
+				It.IsAny<CancellationToken>())).ReturnsAsync(false);
+
+			var result = await _service.DismissAsSpamAsync(DepartmentId, CallId, "dispatcher-1", blockSender: false);
+
+			result.Result.Should().Be(IntakeDismissResults.Failed, "a dismissal is never cancelled without its label");
+			_call.State.Should().Be((int)CallStates.Pending);
+			_calls.Verify(c => c.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>()), Times.Never);
+			_calls.Verify(c => c.ReleaseCallDispatchClaimAsync(CallId, DepartmentId, Claimed, (int)CallStates.Pending, null, null, It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
+		public async Task a_label_already_reading_dismissed_lets_the_retry_cancel_the_call()
+		{
+			// An earlier attempt left the label on the still-pending call; the conditional write matches nothing this time.
+			_message.Screening = (int)IntakeScreenings.DismissedAsSpam;
+			_messages.Setup(m => m.SetScreeningAsync(DepartmentId, CallId, (int)IntakeScreenings.DismissedAsSpam, It.IsAny<int[]>(), It.IsAny<string>(), It.IsAny<DateTime>(),
+				It.IsAny<CancellationToken>())).ReturnsAsync(false);
+
+			var result = await _service.DismissAsSpamAsync(DepartmentId, CallId, "dispatcher-1", blockSender: false);
+
+			result.Result.Should().Be(IntakeDismissResults.Dismissed);
+			_call.State.Should().Be((int)CallStates.Cancelled);
+		}
+
+		[Test]
+		public async Task a_block_lifted_right_after_its_renewal_fails_the_dismissal()
+		{
+			// The renewal wrote, then an admin unblocked the sender before the read-back.
+			var standing = new IntakeBlockedSender { IntakeBlockedSenderId = "b-1", DepartmentId = DepartmentId, Sender = Sender, ExpiresOn = FixedClock.Now.AddDays(10) };
+			_blocked.SetupSequence(b => b.GetCurrentAsync(DepartmentId, Sender)).ReturnsAsync(standing).ReturnsAsync((IntakeBlockedSender)null);
+
+			var result = await _service.DismissAsSpamAsync(DepartmentId, CallId, "dispatcher-1", blockSender: true);
+
+			result.Result.Should().Be(IntakeDismissResults.Failed, "the sender is not blocked, so the dismissal is not reported as blocking them");
+			result.Block.Should().BeNull();
+			_calls.Verify(c => c.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>()), Times.Never);
+			_calls.Verify(c => c.ReleaseCallDispatchClaimAsync(CallId, DepartmentId, Claimed, (int)CallStates.Pending, null, null, It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		/// <summary>A fresh read of the stored call row in <paramref name="state"/>.</summary>
+		private Call StoredCopy(int state) => new Call
+		{
+			CallId = CallId, DepartmentId = DepartmentId, State = state, CallSource = (int)CallSources.Intake, Name = _call.Name
+		};
 
 		[Test]
 		public async Task dismissing_without_blocking_leaves_the_sender_alone()

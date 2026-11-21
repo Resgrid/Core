@@ -82,6 +82,7 @@ namespace Resgrid.Services.Intake
 
 			var now = _clock.GetUtcNow().UtcDateTime;
 			var labelled = false;
+			var cancelAttempted = false;
 			Call saved;
 			try
 			{
@@ -109,6 +110,16 @@ namespace Resgrid.Services.Intake
 				labelled = await _messages.SetScreeningAsync(departmentId, callId, (int)IntakeScreenings.DismissedAsSpam, DismissReplaceable, userId, now,
 					CancellationToken.None);
 
+				// No row matched: either the label already reads DismissedAsSpam (an earlier attempt's, left on the pending call) or the
+				// intake row is gone (retention purges by age). Only the first may go on to the cancel.
+				if (!labelled && !await IsLabelledDismissedAsync(departmentId, callId))
+				{
+					await GiveBackClaimAsync(callId, departmentId, claimedOn.Value, dispatchOn, wasDispatched);
+					Framework.Logging.LogError($"Intake call {callId} could not be labelled as spam (its intake record no longer matches); it is still pending.");
+					result.Result = IntakeDismissResults.Failed;
+					return result;
+				}
+
 				// Cancelled, as Omni's "Cancel call" on a pending call: nobody was dispatched, so nobody is told and nothing is released.
 				// The stored row is read again under the claim so edits made before it are kept; the claim's dispatched mark is not.
 				var stored = await _calls.GetCallByIdAsync(callId, true) ?? call;
@@ -116,20 +127,31 @@ namespace Resgrid.Services.Intake
 				stored.ClosedByUserId = userId;
 				stored.ClosedOn = now;
 				stored.HasBeenDispatched = wasDispatched;
+				cancelAttempted = true;
 				saved = await _calls.SaveCallAsync(stored, cancellationToken);
 			}
 			catch (Exception ex)
 			{
-				await GiveBackClaimAsync(callId, departmentId, claimedOn.Value, dispatchOn, wasDispatched);
-				if (labelled)
-					await RestoreScreeningAsync(departmentId, callId, message, now);
+				// SaveCallAsync writes the call before its post-save work (protected-write checks, search projection, index), which can
+				// throw after the cancel committed. A cancelled row can no longer be claimed or given back, so a committed cancel keeps its
+				// label and is a dismissal; only a cancel that never reached the row (or whose outcome cannot be read) is compensated.
+				var committed = cancelAttempted ? await ReadCommittedCancelAsync(callId, departmentId) : null;
+				if (committed == null)
+				{
+					await GiveBackClaimAsync(callId, departmentId, claimedOn.Value, dispatchOn, wasDispatched);
+					if (labelled)
+						await RestoreScreeningAsync(departmentId, callId, message, now);
 
-				if (ex is OperationCanceledException && cancellationToken.IsCancellationRequested)
-					throw;
+					if (ex is OperationCanceledException && cancellationToken.IsCancellationRequested)
+						throw;
 
-				Framework.Logging.LogException(ex, $"Intake call {callId} could not be dismissed as spam; it is still pending.");
-				result.Result = IntakeDismissResults.Failed;
-				return result;
+					Framework.Logging.LogException(ex, $"Intake call {callId} could not be dismissed as spam; it is still pending.");
+					result.Result = IntakeDismissResults.Failed;
+					return result;
+				}
+
+				Framework.Logging.LogException(ex, $"Intake call {callId} was cancelled as spam, but work after its save failed; it stays dismissed.");
+				saved = committed;
 			}
 
 			result.Result = IntakeDismissResults.Dismissed;
@@ -170,6 +192,32 @@ namespace Resgrid.Services.Intake
 			{
 				// The claim's lease runs out on its own (CallDispatchClaims.Lease) and the call can be sent or dismissed again then.
 				Framework.Logging.LogException(ex, $"Intake call {callId} claim could not be given back after a failed dismissal.");
+			}
+		}
+
+		/// <summary>True when the call's intake row already carries the dismissal label (read again under the claim).</summary>
+		private async Task<bool> IsLabelledDismissedAsync(int departmentId, int callId)
+		{
+			var current = (await _messages.GetByCallIdsAsync(departmentId, new[] { callId }) ?? new List<IntakeMessage>())
+				.FirstOrDefault(m => m.CallId == callId && m.DepartmentId == departmentId);
+			return current?.Screening == (int)IntakeScreenings.DismissedAsSpam;
+		}
+
+		/// <summary>
+		/// The stored call when the dismissal's cancel is on the row (read past the cache); null when it is not, or when the read fails
+		/// (an unknown outcome is compensated like a failed cancel: the claim give-back is conditional, so it cannot reopen a cancelled row).
+		/// </summary>
+		private async Task<Call> ReadCommittedCancelAsync(int callId, int departmentId)
+		{
+			try
+			{
+				var stored = await _calls.GetCallByIdAsync(callId, true);
+				return stored != null && stored.DepartmentId == departmentId && !stored.IsDeleted && stored.State == (int)CallStates.Cancelled ? stored : null;
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex, $"Intake call {callId} could not be read back after a failed dismissal.");
+				return null;
 			}
 		}
 
@@ -273,8 +321,12 @@ namespace Resgrid.Services.Intake
 							? (expiresOn.HasValue ? current.ExpiresOn : null)
 							: expiresOn;
 					if (await _blocked.RenewAsync(current, cancellationToken))
+					{
 						// The stored expiry is decided in the renewing statement (a concurrent renewal may have set a later one): answer with it.
-						return await _blocked.GetCurrentAsync(departmentId, sender) ?? current;
+						// A block lifted right after the renewal reads as none, so the dismissal fails rather than report a sender blocked.
+						var renewed = await _blocked.GetCurrentAsync(departmentId, sender);
+						return renewed != null && renewed.IsInForce(now) ? renewed : null;
+					}
 
 					continue;
 				}

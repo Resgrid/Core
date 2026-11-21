@@ -117,6 +117,19 @@ namespace Resgrid.Tests.Intake
 		}
 
 		[Test]
+		public async Task a_member_on_their_verified_mobile_reaches_the_member_menu_even_when_the_home_lookup_fails()
+		{
+			MemberCalling();
+			_profiles.Setup(p => p.GetProfileByHomeNumberAsync(It.IsAny<string>())).ThrowsAsync(new TimeoutException("db"));
+
+			var routing = await _service.RouteAsync(_number, Caller, FixedClock.Now);
+
+			routing.Route.Should().Be(VoiceIntakeRoutes.MemberMenu, "the verified mobile already settled it; the home number is only for when it does not");
+			routing.MemberUserId.Should().Be("member-1");
+			_profiles.Verify(p => p.GetProfileByHomeNumberAsync(It.IsAny<string>()), Times.Never);
+		}
+
+		[Test]
 		public async Task a_verified_home_number_reaches_the_member_menu_when_the_mobile_match_is_unverified()
 		{
 			MemberCalling(verified: false);

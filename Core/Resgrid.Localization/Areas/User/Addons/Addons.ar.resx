@@ -95,8 +95,8 @@
   <data name="AdpFeature4" xml:space="preserve"><value>حجب البيانات في سير العمل والإشعارات وBigBoard</value></data>
   <data name="AdpFeature5" xml:space="preserve"><value>مطلوبة لإبرام اتفاقية شريك أعمال HIPAA مع Resgrid</value></data>
   <data name="AdpNote" xml:space="preserve"><value>تُفوتر سنويًا، حتى لو كان قسمك على خطة شهرية. يتم التسجيل ذاتيًا بمجرد تفعيل الإضافة.</value></data>
-  <data name="CodesHeader" xml:space="preserve"><value>رموز الخصم والإحالة</value></data>
-  <data name="CodesIntro" xml:space="preserve"><value>هل لديك رمز خصم، أو تمت إحالتك من شريك لـ Resgrid؟ يمكنك إدخاله هنا في أي وقت، وليس عند التسجيل فقط.</value></data>
+  <data name="CodesHeader" xml:space="preserve"><value>رموز الخصم ورموز الشريك/الحساب</value></data>
+  <data name="CodesIntro" xml:space="preserve"><value>هل لديك رمز خصم، أو رمز شريك/حساب من شريك لـ Resgrid أو من مدير حسابك؟ يمكنك إدخاله هنا في أي وقت، وليس عند التسجيل فقط.</value></data>
   <data name="DiscountCodeLabel" xml:space="preserve"><value>رمز الخصم</value></data>
   <data name="DiscountCodePlaceholder" xml:space="preserve"><value>أدخل رمز الخصم</value></data>
   <data name="DiscountCodeApply" xml:space="preserve"><value>تطبيق</value></data>
@@ -107,12 +107,12 @@
   <data name="MessageDiscountPending" xml:space="preserve"><value>رمز الخصم صالح وسيُطبَّق عند شراء خطة أعلاه.</value></data>
   <data name="MessageDiscountInvalid" xml:space="preserve"><value>رمز الخصم هذا غير صالح أو منتهي الصلاحية أو لا يمكن لقسمك استخدامه.</value></data>
   <data name="MessageDiscountUnavailable" xml:space="preserve"><value>لا يمكن التحقق من رموز الخصم الآن. يرجى المحاولة لاحقًا.</value></data>
-  <data name="AffiliateCodeLabel" xml:space="preserve"><value>رمز الشريك (الإحالة)</value></data>
-  <data name="AffiliateCodePlaceholder" xml:space="preserve"><value>أدخل رمز الشريك</value></data>
+  <data name="AffiliateCodeLabel" xml:space="preserve"><value>رمز الشريك/الحساب</value></data>
+  <data name="AffiliateCodePlaceholder" xml:space="preserve"><value>أدخل رمز الشريك/الحساب</value></data>
   <data name="AffiliateCodeSave" xml:space="preserve"><value>حفظ</value></data>
   <data name="AffiliateCodeSetHelp" xml:space="preserve"><value>يمكن إضافته مرة واحدة. تواصل معنا إذا احتاج إلى تغيير.</value></data>
-  <data name="AffiliateCodeCurrent" xml:space="preserve"><value>تمت الإحالة برمز الشريك {0}</value></data>
-  <data name="MessageAffiliateApplied" xml:space="preserve"><value>تم حفظ رمز الشريك لقسمك.</value></data>
-  <data name="MessageAffiliateInvalid" xml:space="preserve"><value>رمز الشريك هذا غير صالح أو لم يعد نشطًا.</value></data>
-  <data name="MessageAffiliateAlreadySet" xml:space="preserve"><value>لدى قسمك رمز شريك بالفعل. تواصل معنا إذا احتاج إلى تغيير.</value></data>
+  <data name="AffiliateCodeCurrent" xml:space="preserve"><value>رمز الشريك/الحساب: {0}</value></data>
+  <data name="MessageAffiliateApplied" xml:space="preserve"><value>تم حفظ رمز الشريك/الحساب لقسمك.</value></data>
+  <data name="MessageAffiliateInvalid" xml:space="preserve"><value>رمز الشريك/الحساب هذا غير صالح أو لم يعد نشطًا.</value></data>
+  <data name="MessageAffiliateAlreadySet" xml:space="preserve"><value>لدى قسمك رمز شريك/حساب بالفعل. تواصل معنا إذا احتاج إلى تغيير.</value></data>
 </root>

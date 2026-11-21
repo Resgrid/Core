@@ -247,6 +247,33 @@ namespace Resgrid.Tests.Chatbot
 			Assert.That(reply["data"]["content"].Value<string>(), Does.Not.Contain("was received"));
 		}
 
+		[Test]
+		public async Task Discord_intake_that_failed_gets_an_interaction_answer_not_a_503()
+		{
+			// Discord never redelivers an interaction and shows a bare 503 as "This interaction failed".
+			var body = JObject.FromObject(new
+			{
+				type = 2, application_id = "application-123", id = "1180000000000000001", guild_id = "900000000000000000", channel_id = "1234567890123456789",
+				member = new { user = new { id = "111111111111111111", username = "dispatch" } },
+				data = new { name = "resgrid", options = new[] { new { name = "message", value = "Brush fire mile 12" } } }
+			});
+			var channels = new Mock<IIntakeChannelsService>();
+			channels.Setup(c => c.ResolveChannelAsync(Resgrid.Model.IntakeChannelTypes.Discord, "1234567890123456789"))
+				.ReturnsAsync(new Resgrid.Model.IntakeChannel { IntakeChannelId = "ch-d", DepartmentId = 55, ChannelType = (int)Resgrid.Model.IntakeChannelTypes.Discord });
+			var intake = new Mock<IIntakeService>();
+			intake.Setup(i => i.ReceiveAsync(It.IsAny<Resgrid.Model.IntakeEnvelope>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new Resgrid.Model.IntakeResult { State = Resgrid.Model.IntakeMessageStates.Failed, Reason = "Failed" });
+			var fixture = Controller(ChatbotPlatform.Discord, body, intakeChannels: channels.Object, intake: intake.Object);
+
+			var result = await fixture.Controller.Receive("Discord") as OkObjectResult;
+
+			Assert.That(result, Is.Not.Null);
+			var reply = JObject.FromObject(result.Value);
+			Assert.That(reply["type"].Value<int>(), Is.EqualTo(4));
+			Assert.That(reply["data"]["flags"].Value<int>(), Is.EqualTo(64));
+			Assert.That(reply["data"]["content"].Value<string>(), Does.Contain("could not be recorded"));
+		}
+
 		private static JObject DiscordEnvelope(DateTimeOffset time) => JObject.FromObject(new
 		{
 			type = 2, application_id = "application-123",

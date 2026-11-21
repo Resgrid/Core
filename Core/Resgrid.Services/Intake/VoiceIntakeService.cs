@@ -323,23 +323,18 @@ namespace Resgrid.Services.Intake
 				// The member menu acts as that member (status, staffing), so the number must be one they verified: caller id is easy to set,
 				// and the lookups fall back to an unverified match. An unverified match is a member of the public here (sms-unverified routing:
 				// an unverified number never authorizes actions).
-				// One number can be a verified mobile on one profile and a verified home number on another (a household, a shared line): every
-				// verified match is a candidate, the mobile one first, and the first active member of this department is the caller.
-				var candidates = new List<UserProfile>(2);
+				// One number can be a verified mobile on one profile and a verified home number on another (a household, a shared line): the
+				// verified mobile match is tried first and settles it when it is an active member of this department; the home number is only
+				// looked up when it is not (so a failing home lookup never turns a member calling from their verified mobile into the public).
 				var mobile = await _profiles.GetProfileByMobileNumberAsync(digits);
-				if (mobile != null && mobile.MobileNumberVerified == true && !string.IsNullOrWhiteSpace(mobile.UserId))
-					candidates.Add(mobile);
+				var mobileUserId = mobile != null && mobile.MobileNumberVerified == true && !string.IsNullOrWhiteSpace(mobile.UserId) ? mobile.UserId : null;
+				if (mobileUserId != null && await IsActiveMemberAsync(mobileUserId, departmentId))
+					return mobileUserId;
+
 				var home = await _profiles.GetProfileByHomeNumberAsync(digits);
 				if (home != null && home.HomeNumberVerified == true && !string.IsNullOrWhiteSpace(home.UserId) &&
-					!candidates.Any(c => string.Equals(c.UserId, home.UserId, StringComparison.OrdinalIgnoreCase)))
-					candidates.Add(home);
-
-				foreach (var profile in candidates)
-				{
-					var member = await _departments.GetDepartmentMemberAsync(profile.UserId, departmentId);
-					if (member != null && member.DepartmentId == departmentId && !member.IsDeleted && member.IsDisabled != true)
-						return profile.UserId;
-				}
+					!string.Equals(home.UserId, mobileUserId, StringComparison.OrdinalIgnoreCase) && await IsActiveMemberAsync(home.UserId, departmentId))
+					return home.UserId;
 
 				return null;
 			}
@@ -348,6 +343,12 @@ namespace Resgrid.Services.Intake
 				Framework.Logging.LogException(ex, "Voice intake member lookup failed.");
 				return null;
 			}
+		}
+
+		private async Task<bool> IsActiveMemberAsync(string userId, int departmentId)
+		{
+			var member = await _departments.GetDepartmentMemberAsync(userId, departmentId);
+			return member != null && member.DepartmentId == departmentId && !member.IsDeleted && member.IsDisabled != true;
 		}
 
 		/// <summary>False when the stored session moved on since <paramref name="read"/> (another callback's write won; nothing was written).</summary>

@@ -95,8 +95,8 @@
   <data name="AdpFeature4" xml:space="preserve"><value>Приховані дані в робочих процесах, сповіщеннях і BigBoard</value></data>
   <data name="AdpFeature5" xml:space="preserve"><value>Потрібно для угоди HIPAA BAA з Resgrid</value></data>
   <data name="AdpNote" xml:space="preserve"><value>Оплата щороку, навіть якщо підрозділ на місячному тарифі. Підключення самостійне після активації доповнення.</value></data>
-  <data name="CodesHeader" xml:space="preserve"><value>Коди знижки та реферальні коди</value></data>
-  <data name="CodesIntro" xml:space="preserve"><value>Маєте код знижки або вас порекомендував партнер Resgrid? Його можна ввести тут будь-коли, не лише під час реєстрації.</value></data>
+  <data name="CodesHeader" xml:space="preserve"><value>Коди знижки та коди партнера/акаунта</value></data>
+  <data name="CodesIntro" xml:space="preserve"><value>Маєте код знижки або код партнера/акаунта від партнера Resgrid чи вашого менеджера акаунта? Його можна ввести тут будь-коли, не лише під час реєстрації.</value></data>
   <data name="DiscountCodeLabel" xml:space="preserve"><value>Код знижки</value></data>
   <data name="DiscountCodePlaceholder" xml:space="preserve"><value>Введіть код знижки</value></data>
   <data name="DiscountCodeApply" xml:space="preserve"><value>Застосувати</value></data>
@@ -107,12 +107,12 @@
   <data name="MessageDiscountPending" xml:space="preserve"><value>Код знижки дійсний і буде застосований під час купівлі тарифу вище.</value></data>
   <data name="MessageDiscountInvalid" xml:space="preserve"><value>Цей код знижки недійсний, прострочений або не може бути використаний вашим підрозділом.</value></data>
   <data name="MessageDiscountUnavailable" xml:space="preserve"><value>Зараз неможливо перевірити коди знижки. Спробуйте пізніше.</value></data>
-  <data name="AffiliateCodeLabel" xml:space="preserve"><value>Партнерський (реферальний) код</value></data>
-  <data name="AffiliateCodePlaceholder" xml:space="preserve"><value>Введіть партнерський код</value></data>
+  <data name="AffiliateCodeLabel" xml:space="preserve"><value>Код партнера/акаунта</value></data>
+  <data name="AffiliateCodePlaceholder" xml:space="preserve"><value>Введіть код партнера/акаунта</value></data>
   <data name="AffiliateCodeSave" xml:space="preserve"><value>Зберегти</value></data>
   <data name="AffiliateCodeSetHelp" xml:space="preserve"><value>Можна додати один раз. Зв'яжіться з нами, якщо його потрібно змінити.</value></data>
-  <data name="AffiliateCodeCurrent" xml:space="preserve"><value>Рекомендовано за партнерським кодом {0}</value></data>
-  <data name="MessageAffiliateApplied" xml:space="preserve"><value>Партнерський код збережено для вашого підрозділу.</value></data>
-  <data name="MessageAffiliateInvalid" xml:space="preserve"><value>Цей партнерський код недійсний або більше не активний.</value></data>
-  <data name="MessageAffiliateAlreadySet" xml:space="preserve"><value>Ваш підрозділ уже має партнерський код. Зв'яжіться з нами, якщо його потрібно змінити.</value></data>
+  <data name="AffiliateCodeCurrent" xml:space="preserve"><value>Код партнера/акаунта: {0}</value></data>
+  <data name="MessageAffiliateApplied" xml:space="preserve"><value>Код партнера/акаунта збережено для вашого підрозділу.</value></data>
+  <data name="MessageAffiliateInvalid" xml:space="preserve"><value>Цей код партнера/акаунта недійсний або більше не активний.</value></data>
+  <data name="MessageAffiliateAlreadySet" xml:space="preserve"><value>Ваш підрозділ уже має код партнера/акаунта. Зв'яжіться з нами, якщо його потрібно змінити.</value></data>
 </root>

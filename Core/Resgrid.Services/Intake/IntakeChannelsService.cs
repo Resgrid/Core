@@ -272,6 +272,17 @@ namespace Resgrid.Services.Intake
 		/// <summary>Most distinct allowed-sender entries a channel keeps.</summary>
 		public const int MaxSenderPatterns = 200;
 
+		private static readonly char[] SenderSeparators = { ',', ';', '\n', '\r' };
+
+		/// <summary>
+		/// The entries of an allowed-sender list, split and trimmed the one way both saving (<see cref="NormalizeSenders"/>) and intake
+		/// (IntakeService's sender check) read it, so a saved list always means at intake what it meant when it was saved.
+		/// </summary>
+		public static List<string> SenderEntries(string senders) =>
+			string.IsNullOrWhiteSpace(senders)
+				? new List<string>()
+				: senders.Split(SenderSeparators, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).Where(s => s.Length > 0).ToList();
+
 		/// <summary>
 		/// One pattern per entry, trimmed, blank and duplicate entries dropped; null only for a blank list (anyone). Every way of losing
 		/// an entry is refused ("InvalidSenders") rather than dropped, because dropping the only entries would turn a restricted channel
@@ -283,8 +294,7 @@ namespace Resgrid.Services.Intake
 			if (string.IsNullOrWhiteSpace(senders))
 				return null;
 
-			var entries = senders.Split(new[] { ',', ';', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)
-				.Select(s => s.Trim()).Where(s => s.Length > 0).ToList();
+			var entries = SenderEntries(senders);
 			if (entries.Count == 0 || entries.Any(s => s.Length > MaxSenderPatternLength))
 				throw new IntakeChannelValidationException("InvalidSenders");
 

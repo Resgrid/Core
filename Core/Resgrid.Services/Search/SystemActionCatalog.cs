@@ -92,6 +92,7 @@ namespace Resgrid.Services.Search
 			Nav("archived-calls", "Archived Calls", "Closed and historical calls", "/User/Dispatch/ArchivedCalls", new[] { "closed", "history", "old calls" }, Call, View),
 			Nav("pending-calls", "Pending Calls", "Calls waiting for a dispatcher to send them; nobody has been notified", "/User/Dispatch/PendingCalls", new[] { "pending", "to be dispatched", "waiting", "follow-up", "queue" }, Call, View),
 			Nav("scheduled-calls", "Scheduled Calls", "Calls set to go out at a future time", "/User/Dispatch/ScheduledCalls", new[] { "scheduled", "future", "timed", "delayed dispatch" }, Call, View),
+			Nav("recurring-calls", "Recurring Calls", "Calls that repeat on a schedule, such as weekly transfers, with their calendar and alerts", "/User/RecurringCalls", new[] { "recurring", "repeat", "repeating", "weekly", "transfers", "calendar" }, Call, View),
 
 			// ---- Personnel
 			Nav("personnel", "Personnel", "People in the department, status and staffing", "/User/Personnel", new[] { "people", "members", "users", "staff", "responders", "roster" }, Personnel, View),
@@ -113,6 +114,9 @@ namespace Resgrid.Services.Search
 			// ---- Mapping
 			Nav("mapping", "Mapping", "Large map with layers, personnel and units", "/User/Mapping", new[] { "map", "gps", "avl", "location", "layers" }, module: SystemActionModules.Mapping),
 			Nav("pois", "Points of Interest", "Manage map points of interest", "/User/Mapping/POIs", new[] { "poi", "hydrants", "landmarks", "map markers" }, module: SystemActionModules.Mapping),
+			Nav("poi-capabilities", "POI Capabilities", "What destinations and other points of interest offer, such as a cath lab or helipad", "/User/Mapping/PoiCapabilities", new[] { "capabilities", "cath lab", "stroke center", "trauma center", "specialties", "services" }, module: SystemActionModules.Mapping, adminOnly: true),
+			Nav("destination-availability", "Destination Availability", "Hospitals and other destinations that are limited, on diversion or closed", "/User/Mapping/Destinations", new[] { "diversion", "hospital", "availability", "closed", "capacity", "destinations" }, Call, Create, SystemActionModules.Mapping),
+			Nav("destination-rules", "Destination Rules", "Where each call type, priority and unit type should go, and destination suggestions", "/User/DestinationRules", new[] { "destination", "nearest hospital", "suggest destination", "rules", "cath lab" }, module: SystemActionModules.Mapping, adminOnly: true),
 			Nav("map-layers", "Map Layers", "Manage map layers", "/User/Mapping/Layers", new[] { "layers", "kml", "geojson" }, module: SystemActionModules.Mapping),
 			Nav("map-visualizations", "Map Visualizations", "Call heat maps, hot zones, response times and unit tracks on the map", "/User/MapVisualizations",
 				new[] { "heat map", "heatmap", "hot zone", "hot spots", "density", "response time map", "coverage", "tracks", "analytics" }, Call, View, SystemActionModules.Mapping),

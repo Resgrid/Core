@@ -33,7 +33,7 @@
 		/// <summary>
 		/// A dispatch re-notification: the reminder sent to a member or unit that has not acknowledged a call (Dispatch
 		/// Re-notification). Its sound is louder and more insistent than the emergency call sound. Sent whatever the call's
-		/// priority and whether or not the department uses modern sounds; an app without the sound plays its default.
+		/// priority; an app without the sound plays its default.
 		/// </summary>
 		ModernCallRenotify = 27
 	}

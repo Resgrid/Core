@@ -51,6 +51,7 @@ namespace Resgrid.Tests.Services
 		private Mock<IUserStateService> _userStates;
 		private Mock<ICommunicationService> _communication;
 		private Mock<IDepartmentSettingsService> _settings;
+		private Mock<ICallRoutesService> _callRoutes;
 		private RecurringCallsService _service;
 
 		private List<RecurringCallOccurrence> _claims;
@@ -86,6 +87,7 @@ namespace Resgrid.Tests.Services
 			_userStates = new Mock<IUserStateService>();
 			_communication = new Mock<ICommunicationService>();
 			_settings = new Mock<IDepartmentSettingsService>();
+			_callRoutes = new Mock<ICallRoutesService>();
 
 			_alerts = new List<RecurringCallAlert>();
 			_events = new List<object>();
@@ -322,7 +324,8 @@ namespace Resgrid.Tests.Services
 			_service = new RecurringCallsService(_repository.Object, _occurrences.Object, _alertsRepository.Object, _callsService.Object, _departmentsService.Object,
 				_groupsService.Object, _unitsService.Object, _rolesService.Object, _mappingService.Object, _geoLocationProvider.Object,
 				_scopeService.Object, _eventAggregator.Object, _queueService.Object, _profiles.Object, _dispatchStatus.Object, _featureToggles.Object,
-				_recommendations.Object, _customStates.Object, _actionLogs.Object, _userStates.Object, _communication.Object, _settings.Object);
+				_recommendations.Object, _customStates.Object, _actionLogs.Object, _userStates.Object, _communication.Object, _settings.Object,
+				_callRoutes.Object);
 		}
 
 		private List<T> Events<T>() => _events.OfType<T>().ToList();
@@ -817,6 +820,9 @@ namespace Resgrid.Tests.Services
 			paused.PauseReason.Should().Be("Clinic closed for the holidays");
 			paused.PausedByUserId.Should().Be("dispatcher-1");
 			paused.ResumeOn.Should().Be(new DateTime(2026, 11, 20));
+			// Pausing stamps the real clock; the worker passes below use fixed instants. Keep the pause revision so the resume
+			// assertion holds whichever side of those instants the suite runs on (revisions only ever move forward).
+			var pausedRevision = series.UpdatedOn.Value;
 			Events<AuditEvent>().Should().ContainSingle(e => e.Type == AuditLogTypes.RecurringCallPaused && e.IpAddress == "10.0.0.1" && e.After.Contains("Clinic closed"));
 			Events<RecurringCallScheduleEvent>().Should().ContainSingle(e => e.Trigger == WorkflowTriggerEventType.RecurringCallSchedulePaused && !e.IsActive);
 
@@ -830,7 +836,9 @@ namespace Resgrid.Tests.Services
 			series.IsActive.Should().BeTrue();
 			series.PauseReason.Should().BeNull();
 			series.ResumeOn.Should().BeNull();
-			series.UpdatedOn.Should().Be(new DateTime(2026, 11, 20, 5, 30, 0, DateTimeKind.Utc), "nothing due while it was paused is created");
+			var resumedAt = new DateTime(2026, 11, 20, 5, 30, 0, DateTimeKind.Utc);
+			series.UpdatedOn.Should().Be(RecurringCall.NextRevision(resumedAt, pausedRevision), "nothing due while it was paused is created");
+			series.UpdatedOn.Value.Should().BeOnOrAfter(resumedAt).And.BeAfter(pausedRevision);
 			Events<AuditEvent>().Should().ContainSingle(e => e.Type == AuditLogTypes.RecurringCallResumed && e.UserId == "system");
 		}
 

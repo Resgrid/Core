@@ -218,6 +218,125 @@ namespace Resgrid.Tests.Chatbot
 			_ => throw new ArgumentOutOfRangeException(nameof(platform))
 		};
 
+		[Test]
+		public async Task Discord_intake_still_in_progress_is_not_told_its_request_was_received()
+		{
+			// A redelivered /resgrid whose first delivery has not saved its call yet: Discord never redelivers, so it gets an answer, but
+			// one that does not confirm a request that may still fail.
+			var body = JObject.FromObject(new
+			{
+				type = 2, application_id = "application-123", id = "1180000000000000000", guild_id = "900000000000000000", channel_id = "1234567890123456789",
+				member = new { user = new { id = "111111111111111111", username = "dispatch" } },
+				data = new { name = "resgrid", options = new[] { new { name = "message", value = "Brush fire mile 12" } } }
+			});
+			var channels = new Mock<IIntakeChannelsService>();
+			channels.Setup(c => c.ResolveChannelAsync(Resgrid.Model.IntakeChannelTypes.Discord, "1234567890123456789"))
+				.ReturnsAsync(new Resgrid.Model.IntakeChannel { IntakeChannelId = "ch-d", DepartmentId = 55, ChannelType = (int)Resgrid.Model.IntakeChannelTypes.Discord });
+			var intake = new Mock<IIntakeService>();
+			intake.Setup(i => i.ReceiveAsync(It.IsAny<Resgrid.Model.IntakeEnvelope>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new Resgrid.Model.IntakeResult { State = Resgrid.Model.IntakeMessageStates.Duplicate, Reason = Resgrid.Model.IntakeResultReasons.DuplicateInProgress });
+			var fixture = Controller(ChatbotPlatform.Discord, body, intakeChannels: channels.Object, intake: intake.Object);
+
+			var result = await fixture.Controller.Receive("Discord") as OkObjectResult;
+
+			Assert.That(result, Is.Not.Null);
+			var reply = JObject.FromObject(result.Value);
+			Assert.That(reply["type"].Value<int>(), Is.EqualTo(4));
+			Assert.That(reply["data"]["flags"].Value<int>(), Is.EqualTo(64), "shown only to the person who used the command");
+			Assert.That(reply["data"]["content"].Value<string>(), Does.Contain("not confirmed"));
+			Assert.That(reply["data"]["content"].Value<string>(), Does.Not.Contain("was received"));
+		}
+
+		[Test]
+		public async Task Discord_intake_that_failed_gets_an_interaction_answer_not_a_503()
+		{
+			// Discord never redelivers an interaction and shows a bare 503 as "This interaction failed".
+			var body = JObject.FromObject(new
+			{
+				type = 2, application_id = "application-123", id = "1180000000000000001", guild_id = "900000000000000000", channel_id = "1234567890123456789",
+				member = new { user = new { id = "111111111111111111", username = "dispatch" } },
+				data = new { name = "resgrid", options = new[] { new { name = "message", value = "Brush fire mile 12" } } }
+			});
+			var channels = new Mock<IIntakeChannelsService>();
+			channels.Setup(c => c.ResolveChannelAsync(Resgrid.Model.IntakeChannelTypes.Discord, "1234567890123456789"))
+				.ReturnsAsync(new Resgrid.Model.IntakeChannel { IntakeChannelId = "ch-d", DepartmentId = 55, ChannelType = (int)Resgrid.Model.IntakeChannelTypes.Discord });
+			var intake = new Mock<IIntakeService>();
+			intake.Setup(i => i.ReceiveAsync(It.IsAny<Resgrid.Model.IntakeEnvelope>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new Resgrid.Model.IntakeResult { State = Resgrid.Model.IntakeMessageStates.Failed, Reason = "Failed" });
+			var fixture = Controller(ChatbotPlatform.Discord, body, intakeChannels: channels.Object, intake: intake.Object);
+
+			var result = await fixture.Controller.Receive("Discord") as OkObjectResult;
+
+			Assert.That(result, Is.Not.Null);
+			var reply = JObject.FromObject(result.Value);
+			Assert.That(reply["type"].Value<int>(), Is.EqualTo(4));
+			Assert.That(reply["data"]["flags"].Value<int>(), Is.EqualTo(64));
+			Assert.That(reply["data"]["content"].Value<string>(), Does.Contain("could not be recorded"));
+		}
+
+		[Test]
+		public async Task Discord_intake_that_throws_gets_an_interaction_answer_that_neither_confirms_nor_denies_the_call()
+		{
+			// Intake may have saved the call before it threw: the answer does not say nothing was saved, and it is not a bare 503.
+			var (body, channels) = DiscordIntakeCommand();
+			var intake = new Mock<IIntakeService>();
+			intake.Setup(i => i.ReceiveAsync(It.IsAny<Resgrid.Model.IntakeEnvelope>(), It.IsAny<CancellationToken>())).ThrowsAsync(new TimeoutException("database"));
+			var fixture = Controller(ChatbotPlatform.Discord, body, intakeChannels: channels.Object, intake: intake.Object);
+
+			var result = await fixture.Controller.Receive("Discord") as OkObjectResult;
+
+			Assert.That(result, Is.Not.Null);
+			var reply = JObject.FromObject(result.Value);
+			Assert.That(reply["data"]["flags"].Value<int>(), Is.EqualTo(64));
+			Assert.That(reply["data"]["content"].Value<string>(), Does.Contain("could not be confirmed"));
+			Assert.That(reply["data"]["content"].Value<string>(), Does.Not.Contain("could not be recorded"));
+		}
+
+		[Test]
+		public async Task Discord_replay_of_a_refused_interaction_is_not_told_its_request_was_received()
+		{
+			// The first delivery was refused (recorded with no call); its replay finds that row: a duplicate with no call id.
+			var (body, channels) = DiscordIntakeCommand();
+			var intake = new Mock<IIntakeService>();
+			intake.Setup(i => i.ReceiveAsync(It.IsAny<Resgrid.Model.IntakeEnvelope>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new Resgrid.Model.IntakeResult { State = Resgrid.Model.IntakeMessageStates.Duplicate, Reason = Resgrid.Model.IntakeResultReasons.Duplicate });
+			var fixture = Controller(ChatbotPlatform.Discord, body, intakeChannels: channels.Object, intake: intake.Object);
+
+			var result = await fixture.Controller.Receive("Discord") as OkObjectResult;
+
+			var content = JObject.FromObject(result.Value)["data"]["content"].Value<string>();
+			Assert.That(content, Does.Not.Contain("received"));
+			Assert.That(content, Does.Contain("not accepting requests"));
+		}
+
+		[Test]
+		public async Task Discord_replay_of_an_interaction_that_made_a_call_is_told_it_was_received()
+		{
+			var (body, channels) = DiscordIntakeCommand();
+			var intake = new Mock<IIntakeService>();
+			intake.Setup(i => i.ReceiveAsync(It.IsAny<Resgrid.Model.IntakeEnvelope>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new Resgrid.Model.IntakeResult { State = Resgrid.Model.IntakeMessageStates.Duplicate, Reason = Resgrid.Model.IntakeResultReasons.Duplicate, CallId = 77 });
+			var fixture = Controller(ChatbotPlatform.Discord, body, intakeChannels: channels.Object, intake: intake.Object);
+
+			var result = await fixture.Controller.Receive("Discord") as OkObjectResult;
+
+			Assert.That(JObject.FromObject(result.Value)["data"]["content"].Value<string>(), Is.EqualTo("Your request was received."));
+		}
+
+		private static (JObject Body, Mock<IIntakeChannelsService> Channels) DiscordIntakeCommand()
+		{
+			var body = JObject.FromObject(new
+			{
+				type = 2, application_id = "application-123", id = "1180000000000000001", guild_id = "900000000000000000", channel_id = "1234567890123456789",
+				member = new { user = new { id = "111111111111111111", username = "dispatch" } },
+				data = new { name = "resgrid", options = new[] { new { name = "message", value = "Brush fire mile 12" } } }
+			});
+			var channels = new Mock<IIntakeChannelsService>();
+			channels.Setup(c => c.ResolveChannelAsync(Resgrid.Model.IntakeChannelTypes.Discord, "1234567890123456789"))
+				.ReturnsAsync(new Resgrid.Model.IntakeChannel { IntakeChannelId = "ch-d", DepartmentId = 55, ChannelType = (int)Resgrid.Model.IntakeChannelTypes.Discord });
+			return (body, channels);
+		}
+
 		private static JObject DiscordEnvelope(DateTimeOffset time) => JObject.FromObject(new
 		{
 			type = 2, application_id = "application-123",
@@ -227,7 +346,7 @@ namespace Resgrid.Tests.Chatbot
 		});
 
 		private static (ChatbotPlatformsController Controller, List<ChatbotMessageQueueItem> Messages) Controller(
-			ChatbotPlatform platform, JObject payload, bool configured = true)
+			ChatbotPlatform platform, JObject payload, bool configured = true, IIntakeChannelsService intakeChannels = null, IIntakeService intake = null)
 		{
 			var messages = new List<ChatbotMessageQueueItem>();
 			var queue = new Mock<IQueueService>();
@@ -261,7 +380,8 @@ namespace Resgrid.Tests.Chatbot
 					context.Request.Headers["X-Signature-Ed25519"] = signed.Signature;
 					break;
 			}
-			return (new ChatbotPlatformsController(queue.Object, registry.Object, new ChatbotJwtValidator())
+			return (new ChatbotPlatformsController(queue.Object, registry.Object, new ChatbotJwtValidator(), intakeChannels ?? Mock.Of<Resgrid.Model.Services.IIntakeChannelsService>(),
+					intake ?? Mock.Of<Resgrid.Model.Services.IIntakeService>())
 				{ ControllerContext = new ControllerContext { HttpContext = context } }, messages);
 		}
 

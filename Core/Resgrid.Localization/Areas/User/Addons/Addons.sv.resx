@@ -79,6 +79,14 @@
   <data name="EnhancedAiFeature5" xml:space="preserve"><value>Endast modeller med öppna vikter; privata data skickas aldrig till moln-AI</value></data>
   <data name="EnhancedAiFeature6" xml:space="preserve"><value>Eller använd ert eget abonnemang hos en AI-leverantör</value></data>
   <data name="EnhancedAiNote" xml:space="preserve"><value>Faktureras månadsvis per avdelning. Inkluderar en månatlig AI-budget utan överdebitering. Alla avdelningar får gratis Admin Assist-frågor även utan tillägget.</value></data>
+  <data name="DedicatedNumberTitle" xml:space="preserve"><value>Private Inbound Dispatch Number</value></data>
+  <data name="DedicatedNumberTagline" xml:space="preserve"><value>Er avdelnings eget nummer för sms och samtal</value></data>
+  <data name="DedicatedNumberFeature1" xml:space="preserve"><value>Ett lokalt nummer för er avdelning, valt av er</value></data>
+  <data name="DedicatedNumberFeature2" xml:space="preserve"><value>Inkommande sms blir väntande ärenden för larmcentralen</value></data>
+  <data name="DedicatedNumberFeature3" xml:space="preserve"><value>Medlemmar ringer samma nummer för att nå röstmenyn</value></data>
+  <data name="DedicatedNumberFeature4" xml:space="preserve"><value>Röstmottagning med Enhanced AI gör uppringares svar till väntande ärenden</value></data>
+  <data name="DedicatedNumberFeature5" xml:space="preserve"><value>Bara inkommande: svar kommer från Resgrids huvudnummer</value></data>
+  <data name="DedicatedNumberNote" xml:space="preserve"><value>Faktureras månadsvis per avdelning, även med en årsplan. Kräver en aktiv enhetsplan. I USA nummer från USA och Kanada; i EU ett nummer i ert land där det finns.</value></data>
   <data name="AdpTitle" xml:space="preserve"><value>Advanced Data Protection</value></data>
   <data name="AdpTagline" xml:space="preserve"><value>Kryptering och förstärkt åtkomst för känsliga uppgifter</value></data>
   <data name="AdpFeature1" xml:space="preserve"><value>Kryptering på fältnivå för hälso- och personuppgifter</value></data>
@@ -87,8 +95,8 @@
   <data name="AdpFeature4" xml:space="preserve"><value>Maskerade arbetsflöden, aviseringar och BigBoard</value></data>
   <data name="AdpFeature5" xml:space="preserve"><value>Krävs för ett HIPAA BAA med Resgrid</value></data>
   <data name="AdpNote" xml:space="preserve"><value>Faktureras årsvis, även om din avdelning har en månadsplan. Anslutningen sker på egen hand när tillägget är aktivt.</value></data>
-  <data name="CodesHeader" xml:space="preserve"><value>Rabatt- och värvningskoder</value></data>
-  <data name="CodesIntro" xml:space="preserve"><value>Har du en rabattkod eller blev du värvad av en Resgrid-partner? Du kan ange den här när som helst, inte bara vid registreringen.</value></data>
+  <data name="CodesHeader" xml:space="preserve"><value>Rabattkoder och partner-/kontokoder</value></data>
+  <data name="CodesIntro" xml:space="preserve"><value>Har du en rabattkod eller en partner-/kontokod från en Resgrid-partner eller din kontoansvarige? Du kan ange den här när som helst, inte bara vid registreringen.</value></data>
   <data name="DiscountCodeLabel" xml:space="preserve"><value>Rabattkod</value></data>
   <data name="DiscountCodePlaceholder" xml:space="preserve"><value>Ange en rabattkod</value></data>
   <data name="DiscountCodeApply" xml:space="preserve"><value>Använd</value></data>
@@ -99,12 +107,12 @@
   <data name="MessageDiscountPending" xml:space="preserve"><value>Rabattkoden är giltig och tillämpas när du köper en plan ovan.</value></data>
   <data name="MessageDiscountInvalid" xml:space="preserve"><value>Rabattkoden är ogiltig, har gått ut eller kan inte användas av din avdelning.</value></data>
   <data name="MessageDiscountUnavailable" xml:space="preserve"><value>Rabattkoder kan inte kontrolleras just nu. Försök igen senare.</value></data>
-  <data name="AffiliateCodeLabel" xml:space="preserve"><value>Partnerkod (värvningskod)</value></data>
-  <data name="AffiliateCodePlaceholder" xml:space="preserve"><value>Ange en partnerkod</value></data>
+  <data name="AffiliateCodeLabel" xml:space="preserve"><value>Partner-/kontokod</value></data>
+  <data name="AffiliateCodePlaceholder" xml:space="preserve"><value>Ange en partner-/kontokod</value></data>
   <data name="AffiliateCodeSave" xml:space="preserve"><value>Spara</value></data>
   <data name="AffiliateCodeSetHelp" xml:space="preserve"><value>Kan läggas till en gång. Kontakta oss om den behöver ändras.</value></data>
-  <data name="AffiliateCodeCurrent" xml:space="preserve"><value>Värvad med partnerkod {0}</value></data>
-  <data name="MessageAffiliateApplied" xml:space="preserve"><value>Partnerkoden har sparats för din avdelning.</value></data>
-  <data name="MessageAffiliateInvalid" xml:space="preserve"><value>Partnerkoden är ogiltig eller inte längre aktiv.</value></data>
-  <data name="MessageAffiliateAlreadySet" xml:space="preserve"><value>Din avdelning har redan en partnerkod. Kontakta oss om den behöver ändras.</value></data>
+  <data name="AffiliateCodeCurrent" xml:space="preserve"><value>Partner-/kontokod: {0}</value></data>
+  <data name="MessageAffiliateApplied" xml:space="preserve"><value>Partner-/kontokoden har sparats för din avdelning.</value></data>
+  <data name="MessageAffiliateInvalid" xml:space="preserve"><value>Partner-/kontokoden är ogiltig eller inte längre aktiv.</value></data>
+  <data name="MessageAffiliateAlreadySet" xml:space="preserve"><value>Din avdelning har redan en partner-/kontokod. Kontakta oss om den behöver ändras.</value></data>
 </root>

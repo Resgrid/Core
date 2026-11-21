@@ -51,7 +51,7 @@
 						@Html.AntiForgeryToken()
 						<div class="form-group">
 							<label class="sr-only" for="newPoiCapabilityName">@localizer["Name"]</label>
-							<input type="text" id="newPoiCapabilityName" name="name" class="form-control" maxlength="@PoiCapability.MaxNameLength" required placeholder="@localizer["PoiCapabilityNamePlaceholder"]" />
+							<input type="text" id="newPoiCapabilityName" name="name" class="form-control" style="width: 320px; max-width: 100%;" maxlength="@PoiCapability.MaxNameLength" required placeholder="@localizer["PoiCapabilityNamePlaceholder"]" />
 						</div>
 						<div class="form-group">
 							<label class="sr-only" for="newPoiCapabilitySort">@localizer["SortOrder"]</label>

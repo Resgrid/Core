@@ -14,6 +14,7 @@ using NUnit.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Services;
 using Resgrid.Web.Services.Controllers.v4;
+using Resgrid.Web.Services.Models.v4.Mapping;
 using Resgrid.Web.ServicesCore.Helpers;
 using IAuthorizationService = Resgrid.Model.Services.IAuthorizationService;
 
@@ -125,6 +126,72 @@ namespace Resgrid.Tests.Web.Services
 
 			parameters.Where(p => p.Name == "latitude" || p.Name == "longitude")
 				.Should().HaveCount(2).And.OnlyContain(p => p.GetCustomAttribute<BindRequiredAttribute>() != null);
+		}
+
+		/// <summary>Omni Dispatch's Destinations screen shows the rules read-only: names resolved, deleted references counted.</summary>
+		[Test]
+		public async Task Destination_rules_come_with_names_and_the_suggestion_setting()
+		{
+			M<IDepartmentSettingsService>().Setup(x => x.GetDestinationSuggestionConfigAsync(DepartmentId, It.IsAny<bool>()))
+				.ReturnsAsync(new DestinationSuggestionConfig { Mode = (int)DestinationSuggestionModes.SuggestAndFill, PreferredWithinMinutes = 5 });
+			M<ICallsService>().Setup(x => x.GetCallTypesForDepartmentAsync(DepartmentId)).ReturnsAsync(new List<CallType> { new CallType { CallTypeId = 3, Type = "Burns" } });
+			M<ICallsService>().Setup(x => x.GetActiveCallPrioritiesForDepartmentAsync(DepartmentId, It.IsAny<bool>()))
+				.ReturnsAsync(new List<DepartmentCallPriority> { new DepartmentCallPriority { DepartmentCallPriorityId = 3, Name = "Emergency" } });
+			M<IUnitsService>().Setup(x => x.GetUnitTypesForDepartmentAsync(DepartmentId)).ReturnsAsync(new List<UnitType> { new UnitType { UnitTypeId = 7, Type = "Helicopter" } });
+			M<IMappingService>().Setup(x => x.GetPOITypesForDepartmentAsync(DepartmentId)).ReturnsAsync(new List<PoiType>
+			{
+				new PoiType { PoiTypeId = 10, Name = "Hospitals", IsDestination = true },
+				new PoiType { PoiTypeId = 11, Name = "Parks", IsDestination = false }
+			});
+			M<IMappingService>().Setup(x => x.GetPoiCapabilitiesForDepartmentAsync(DepartmentId)).ReturnsAsync(new List<PoiCapability>
+			{
+				new PoiCapability { PoiCapabilityId = "burn", Name = "Burn Center" },
+				new PoiCapability { PoiCapabilityId = "heli", Name = "Helipad" }
+			});
+			M<IDestinationRulesService>().Setup(x => x.GetRulesForDepartmentAsync(DepartmentId)).ReturnsAsync(new List<DestinationRule>
+			{
+				new DestinationRule { DestinationRuleId = "burns", Name = "Burns", CallTypeId = 3, PoiTypeIds = "10", RequiredCapabilityIds = "BURN" },
+				new DestinationRule { DestinationRuleId = "air", Name = "Helicopter", UnitTypeId = 7, CallPriority = 3, PreferredCapabilityIds = "heli" },
+				new DestinationRule { DestinationRuleId = "stale", Name = "Old rule", CallTypeId = 99, PoiTypeIds = "10,11", RequiredCapabilityIds = "gone" }
+			});
+
+			var response = await Build().GetDestinationRules();
+
+			var data = ((DestinationRulesResult)((OkObjectResult)response.Result).Value).Data;
+			data.Mode.Should().Be((int)DestinationSuggestionModes.SuggestAndFill);
+			data.PreferredWithinMinutes.Should().Be(5);
+			data.Rules.Select(x => x.DestinationRuleId).Should().Equal("burns", "air", "stale");
+
+			var burns = data.Rules[0];
+			burns.CallTypeName.Should().Be("Burns");
+			burns.PoiTypeNames.Should().Equal("Hospitals");
+			burns.RequiredCapabilityNames.Should().Equal("Burn Center");
+			burns.MissingReferenceCount.Should().Be(0);
+
+			var air = data.Rules[1];
+			air.UnitTypeName.Should().Be("Helicopter");
+			air.CallPriorityName.Should().Be("Emergency");
+			air.PoiTypeIds.Should().BeEmpty();
+			air.PreferredCapabilityNames.Should().Equal("Helipad");
+
+			// Call type 99 deleted, "Parks" is no destination type any more, capability "gone" deleted.
+			var stale = data.Rules[2];
+			stale.CallTypeId.Should().Be(99);
+			stale.CallTypeName.Should().BeNull();
+			stale.PoiTypeNames.Should().Equal("Hospitals");
+			stale.RequiredCapabilityIds.Should().Equal("gone");
+			stale.RequiredCapabilityNames.Should().BeEmpty();
+			stale.MissingReferenceCount.Should().Be(3);
+		}
+
+		[Test]
+		public async Task Destination_rules_are_empty_without_rules_or_setting()
+		{
+			var response = await Build().GetDestinationRules();
+
+			var data = ((DestinationRulesResult)((OkObjectResult)response.Result).Value).Data;
+			data.Mode.Should().Be((int)DestinationSuggestionModes.Off);
+			data.Rules.Should().BeEmpty();
 		}
 	}
 }

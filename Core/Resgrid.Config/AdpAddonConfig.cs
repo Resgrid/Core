@@ -6,9 +6,10 @@ namespace Resgrid.Config
 	/// Stripe subscription (which cannot mix a yearly price into a monthly plan, and has no Paddle path). Departments that bought the
 	/// legacy item keep it on the original PlanAddons row (M0126, USD 999) until they cancel.
 	///
-	/// The Stripe price id lives on the yearly PlanAddons row (<see cref="YearlyPlanAddonId"/>, M0298: ExternalId / TestExternalId);
-	/// the Paddle price id is PaymentProviderConfig.PaddleAdpAddon (the Readiness Pro convention). Both must be USD 1,950 / EUR 2,550
-	/// per year with no trial: the Billing API validates the provider price against these amounts and fails closed when they differ.
+	/// The Stripe price id lives on the yearly PlanAddons row (<see cref="YearlyPlanAddonId"/>, M0298: ExternalId / TestExternalId;
+	/// M0327 set the USD 3,600 price); the Paddle price id is PaymentProviderConfig.PaddleAdpAddon (the Readiness Pro convention).
+	/// Both must be USD 3,600 / EUR 2,550 per year with no trial: the Billing API validates the provider price against these amounts
+	/// and fails closed when they differ. The HIPAA BAA is US-only, so the EU price did not move with the 2026-11-21 US increase.
 	/// Environment keys: RESGRID:AdpAddonConfig:StripeProductId, :StripeTestProductId, :PaddleProductId, :PaddleTestProductId,
 	/// :StripeYearlyAmount, :PaddleYearlyAmount.
 	/// </summary>
@@ -23,7 +24,7 @@ namespace Resgrid.Config
 		public static string PaddleTestProductId = "";
 
 		/// <summary>USD per department per year through Stripe (US cluster), as resgrid.com/pricing lists it.</summary>
-		public static decimal StripeYearlyAmount = 1950m;
+		public static decimal StripeYearlyAmount = 3600m;
 
 		/// <summary>EUR per department per year through Paddle (EU cluster), as resgrid.com/pricing lists it.</summary>
 		public static decimal PaddleYearlyAmount = 2550m;

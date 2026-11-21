@@ -79,6 +79,14 @@
   <data name="EnhancedAiFeature5" xml:space="preserve"><value>Open-weight models only; private data never sent to cloud AI</value></data>
   <data name="EnhancedAiFeature6" xml:space="preserve"><value>Or bring your own AI provider subscription</value></data>
   <data name="EnhancedAiNote" xml:space="preserve"><value>Billed monthly per department. Includes a monthly AI budget with no overage charges. Every department gets free Admin Assist AI questions without it.</value></data>
+  <data name="DedicatedNumberTitle" xml:space="preserve"><value>Private Inbound Dispatch Number</value></data>
+  <data name="DedicatedNumberTagline" xml:space="preserve"><value>Your department's own number for texts and calls</value></data>
+  <data name="DedicatedNumberFeature1" xml:space="preserve"><value>A local number for your department, chosen by you</value></data>
+  <data name="DedicatedNumberFeature2" xml:space="preserve"><value>Inbound texts become pending calls for dispatchers to review</value></data>
+  <data name="DedicatedNumberFeature3" xml:space="preserve"><value>Members call the same number to reach the voice menu</value></data>
+  <data name="DedicatedNumberFeature4" xml:space="preserve"><value>Voice intake with Enhanced AI turns callers' answers into pending calls</value></data>
+  <data name="DedicatedNumberFeature5" xml:space="preserve"><value>Inbound only: replies come from the main Resgrid number</value></data>
+  <data name="DedicatedNumberNote" xml:space="preserve"><value>Billed monthly per department, even on an annual plan. Requires an active entity plan. US and Canadian numbers in the US; in the EU, a number in your country where available.</value></data>
   <data name="AdpTitle" xml:space="preserve"><value>Advanced Data Protection</value></data>
   <data name="AdpTagline" xml:space="preserve"><value>Encryption and step-up access for sensitive data</value></data>
   <data name="AdpFeature1" xml:space="preserve"><value>Field-level encryption for PHI and PII</value></data>
@@ -87,8 +95,8 @@
   <data name="AdpFeature4" xml:space="preserve"><value>Redacted workflows, notifications and BigBoard</value></data>
   <data name="AdpFeature5" xml:space="preserve"><value>Required for a HIPAA BAA with Resgrid</value></data>
   <data name="AdpNote" xml:space="preserve"><value>Billed yearly, even if your department is on a monthly plan. Enrollment is self-service once the add-on is active.</value></data>
-  <data name="CodesHeader" xml:space="preserve"><value>Discount and referral codes</value></data>
-  <data name="CodesIntro" xml:space="preserve"><value>Have a discount code, or were you referred by a Resgrid partner? You can enter it here at any time, not only at signup.</value></data>
+  <data name="CodesHeader" xml:space="preserve"><value>Discount and partner/account codes</value></data>
+  <data name="CodesIntro" xml:space="preserve"><value>Have a discount code, or a partner/account code from a Resgrid partner or account executive? You can enter it here at any time, not only at signup.</value></data>
   <data name="DiscountCodeLabel" xml:space="preserve"><value>Discount code</value></data>
   <data name="DiscountCodePlaceholder" xml:space="preserve"><value>Enter a discount code</value></data>
   <data name="DiscountCodeApply" xml:space="preserve"><value>Apply</value></data>
@@ -99,12 +107,12 @@
   <data name="MessageDiscountPending" xml:space="preserve"><value>The discount code is valid and will be applied when you buy a plan above.</value></data>
   <data name="MessageDiscountInvalid" xml:space="preserve"><value>That discount code is not valid, has expired or cannot be used by your department.</value></data>
   <data name="MessageDiscountUnavailable" xml:space="preserve"><value>Discount codes cannot be checked right now. Please try again later.</value></data>
-  <data name="AffiliateCodeLabel" xml:space="preserve"><value>Affiliate (referral) code</value></data>
-  <data name="AffiliateCodePlaceholder" xml:space="preserve"><value>Enter an affiliate code</value></data>
+  <data name="AffiliateCodeLabel" xml:space="preserve"><value>Partner/account code</value></data>
+  <data name="AffiliateCodePlaceholder" xml:space="preserve"><value>Enter a partner/account code</value></data>
   <data name="AffiliateCodeSave" xml:space="preserve"><value>Save</value></data>
   <data name="AffiliateCodeSetHelp" xml:space="preserve"><value>Can be added once. Contact us if it ever needs to change.</value></data>
-  <data name="AffiliateCodeCurrent" xml:space="preserve"><value>Referred by affiliate code {0}</value></data>
-  <data name="MessageAffiliateApplied" xml:space="preserve"><value>The affiliate code was saved for your department.</value></data>
-  <data name="MessageAffiliateInvalid" xml:space="preserve"><value>That affiliate code is not valid or is no longer active.</value></data>
-  <data name="MessageAffiliateAlreadySet" xml:space="preserve"><value>Your department already has an affiliate code. Contact us if it needs to change.</value></data>
+  <data name="AffiliateCodeCurrent" xml:space="preserve"><value>Partner/account code: {0}</value></data>
+  <data name="MessageAffiliateApplied" xml:space="preserve"><value>The partner/account code was saved for your department.</value></data>
+  <data name="MessageAffiliateInvalid" xml:space="preserve"><value>That partner/account code is not valid or is no longer active.</value></data>
+  <data name="MessageAffiliateAlreadySet" xml:space="preserve"><value>Your department already has a partner/account code. Contact us if it needs to change.</value></data>
 </root>

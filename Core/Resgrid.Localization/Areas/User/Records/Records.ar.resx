@@ -2286,4 +2286,10 @@
   <data name="DeleteRefusedPermanentContent" xml:space="preserve"><value>يحتوي هذا التقرير على إدخالات إصابات أو عمليات إنقاذ أو تعرّض تُحفظ بشكل دائم. أزلها من المسودة قبل حذفه.</value></data>
   <data name="DeleteRefusedAmendmentOpen" xml:space="preserve"><value>تخلَّ عن التعديل المفتوح قبل حذف هذا التقرير.</value></data>
   <data name="IncludeClosedReports" xml:space="preserve"><value>تضمين المسودات الملغاة والتقارير الملغاة</value></data>
+  <data name="ImportMapPois" xml:space="preserve">
+    <value>استيراد نقاط اهتمام الخريطة</value>
+  </data>
+  <data name="ImportMapPoisHelp" xml:space="preserve">
+    <value>استورد ملف KML أو KMZ أو CSV كنقاط اهتمام على الخريطة (معالم)، منفصلة عن سجلات صنابير الحريق.</value>
+  </data>
 </root>

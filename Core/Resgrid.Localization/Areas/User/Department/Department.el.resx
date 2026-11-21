@@ -762,12 +762,6 @@
   <data name="ChatbotSaveError" xml:space="preserve">
     <value>Παρουσιάστηκε σφάλμα κατά την αποθήκευση των ρυθμίσεων βοηθού.</value>
   </data>
-  <data name="EnableModernNotifications" xml:space="preserve">
-    <value>Ενεργοποίηση Σύγχρονων Ειδοποιήσεων</value>
-  </data>
-  <data name="EnableModernNotificationsHelp" xml:space="preserve">
-    <value>Όταν είναι ενεργοποιημένο, οι ειδοποιήσεις push θα χρησιμοποιούν τους σύγχρονους ήχους ειδοποίησης αντί για τους παλαιούς για όλους τους χρήστες αυτού του τμήματος.</value>
-  </data>
   <data name="ForceChatbotSecurityPin" xml:space="preserve">
     <value>Απαίτηση PIN Ασφαλείας</value>
   </data>

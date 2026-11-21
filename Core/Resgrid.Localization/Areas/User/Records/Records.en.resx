@@ -2286,4 +2286,10 @@
   <data name="DeleteRefusedPermanentContent" xml:space="preserve"><value>This report has casualty, rescue or exposure entries, which are kept permanently. Remove them from the draft before deleting it.</value></data>
   <data name="DeleteRefusedAmendmentOpen" xml:space="preserve"><value>Abandon the open amendment before deleting this report.</value></data>
   <data name="IncludeClosedReports" xml:space="preserve"><value>Include cancelled and voided</value></data>
+  <data name="ImportMapPois" xml:space="preserve">
+    <value>Import map POIs</value>
+  </data>
+  <data name="ImportMapPoisHelp" xml:space="preserve">
+    <value>Import a KML, KMZ or CSV file as map points of interest (landmarks), separate from hydrant records.</value>
+  </data>
 </root>

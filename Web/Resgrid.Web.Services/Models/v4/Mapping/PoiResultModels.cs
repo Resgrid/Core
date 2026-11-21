@@ -199,6 +199,60 @@ namespace Resgrid.Web.Services.Models.v4.Mapping
 		public SuggestedDestinationsResultData Data { get; set; } = new SuggestedDestinationsResultData();
 	}
 
+	/// <summary>
+	/// One destination rule (Mapping -> Destination Rules on the web), read-only, with the names of what it refers to so the
+	/// apps can show it without other lookups. A null condition matches every call (or every unit); a name is null when what
+	/// the id names was deleted (a rule whose condition was deleted never matches).
+	/// </summary>
+	public class DestinationRuleResultData
+	{
+		public string DestinationRuleId { get; set; }
+		public string Name { get; set; }
+
+		/// <summary>Only calls of this type (CallTypes id); null for any.</summary>
+		public int? CallTypeId { get; set; }
+		public string CallTypeName { get; set; }
+
+		/// <summary>Only calls of this priority (the call's Priority value); null for any.</summary>
+		public int? CallPriority { get; set; }
+		public string CallPriorityName { get; set; }
+
+		/// <summary>Only when the travelling unit is of this type (UnitTypes id); null for any.</summary>
+		public int? UnitTypeId { get; set; }
+		public string UnitTypeName { get; set; }
+
+		/// <summary>The destination POI types it allows; empty for any destination type.</summary>
+		public List<int> PoiTypeIds { get; set; } = new List<int>();
+
+		/// <summary>The names of the <see cref="PoiTypeIds"/> that still exist.</summary>
+		public List<string> PoiTypeNames { get; set; } = new List<string>();
+
+		public List<string> RequiredCapabilityIds { get; set; } = new List<string>();
+		public List<string> RequiredCapabilityNames { get; set; } = new List<string>();
+		public List<string> PreferredCapabilityIds { get; set; } = new List<string>();
+		public List<string> PreferredCapabilityNames { get; set; } = new List<string>();
+
+		/// <summary>How many of the ids above name something deleted since (the web page flags the rule to be fixed).</summary>
+		public int MissingReferenceCount { get; set; }
+	}
+
+	public class DestinationRulesResultData
+	{
+		/// <summary>The department's destination suggestions setting: 0 off, 1 suggest, 2 suggest and fill an empty destination.</summary>
+		public int Mode { get; set; }
+
+		/// <summary>A destination with more preferred capabilities comes first only within this many minutes of the closest.</summary>
+		public int PreferredWithinMinutes { get; set; }
+
+		/// <summary>Every rule; the ones matching a call (and the travelling unit) apply together.</summary>
+		public List<DestinationRuleResultData> Rules { get; set; } = new List<DestinationRuleResultData>();
+	}
+
+	public class DestinationRulesResult : StandardApiResponseV4Base
+	{
+		public DestinationRulesResultData Data { get; set; } = new DestinationRulesResultData();
+	}
+
 	/// <summary>SetPoiAvailability body.</summary>
 	public class SetPoiAvailabilityInput
 	{

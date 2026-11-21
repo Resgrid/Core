@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Title" xml:space="preserve">
+    <value>Sms-konversation</value>
+  </data>
+  <data name="StateOpen" xml:space="preserve">
+    <value>Öppen</value>
+  </data>
+  <data name="StateClosed" xml:space="preserve">
+    <value>Avslutad</value>
+  </data>
+  <data name="HandlerAssistant" xml:space="preserve">
+    <value>AI-assistenten ställer frågor till avsändaren</value>
+  </data>
+  <data name="HandlerUnassisted" xml:space="preserve">
+    <value>Väntar på svar från en larmoperatör</value>
+  </data>
+  <data name="HandlerDispatcher" xml:space="preserve">
+    <value>Ansluten till {0}</value>
+  </data>
+  <data name="HandlerDispatcherYou" xml:space="preserve">
+    <value>Du är ansluten</value>
+  </data>
+  <data name="Texter" xml:space="preserve">
+    <value>Avsändare: {0}</value>
+  </data>
+  <data name="OptedOut" xml:space="preserve">
+    <value>Avsändaren har avregistrerat sig (STOP). Inga fler sms kan skickas.</value>
+  </data>
+  <data name="ClosedReason" xml:space="preserve">
+    <value>Avslutad: {0}</value>
+  </data>
+  <data name="AuthorCaller" xml:space="preserve">
+    <value>Inringare</value>
+  </data>
+  <data name="AuthorAssistant" xml:space="preserve">
+    <value>AI-assistent</value>
+  </data>
+  <data name="AuthorSystem" xml:space="preserve">
+    <value>Automatiskt meddelande</value>
+  </data>
+  <data name="AuthorDispatcher" xml:space="preserve">
+    <value>Larmoperatör</value>
+  </data>
+  <data name="StatusQueued" xml:space="preserve">
+    <value>Skickas</value>
+  </data>
+  <data name="StatusSent" xml:space="preserve">
+    <value>Skickat</value>
+  </data>
+  <data name="StatusFailed" xml:space="preserve">
+    <value>Inte levererat</value>
+  </data>
+  <data name="TextUnavailable" xml:space="preserve">
+    <value>(texten är inte tillgänglig)</value>
+  </data>
+  <data name="NoMessages" xml:space="preserve">
+    <value>Inga meddelanden ännu.</value>
+  </data>
+  <data name="Take" xml:space="preserve">
+    <value>Ta över konversationen</value>
+  </data>
+  <data name="TakeOverConfirm" xml:space="preserve">
+    <value>En annan larmoperatör är ansluten till konversationen. Ta över den?</value>
+  </data>
+  <data name="Release" xml:space="preserve">
+    <value>Släpp</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Avsluta</value>
+  </data>
+  <data name="CloseConfirm" xml:space="preserve">
+    <value>Avsluta den här sms-konversationen? Ärendet förblir öppet.</value>
+  </data>
+  <data name="NotifyTexter" xml:space="preserve">
+    <value>Meddela avsändaren</value>
+  </data>
+  <data name="Send" xml:space="preserve">
+    <value>Skicka</value>
+  </data>
+  <data name="SendPlaceholder" xml:space="preserve">
+    <value>Skriv till inringaren…</value>
+  </data>
+  <data name="EnterToSend" xml:space="preserve">
+    <value>Enter skickar, Skift+Enter lägger till en rad.</value>
+  </data>
+  <data name="FromResgridNumber" xml:space="preserve">
+    <value>Sms når inringaren från Resgrids nummer, inte från organisationens nummer.</value>
+  </data>
+  <data name="Outcome.NotFound" xml:space="preserve">
+    <value>Konversationen hittades inte.</value>
+  </data>
+  <data name="Outcome.Closed" xml:space="preserve">
+    <value>Konversationen är avslutad.</value>
+  </data>
+  <data name="Outcome.HeldByAnotherDispatcher" xml:space="preserve">
+    <value>En annan larmoperatör är ansluten till konversationen.</value>
+  </data>
+  <data name="Outcome.OptedOut" xml:space="preserve">
+    <value>Avsändaren har avregistrerat sig. Inget kan skickas.</value>
+  </data>
+  <data name="Outcome.SendFailed" xml:space="preserve">
+    <value>Sms:et kunde inte levereras.</value>
+  </data>
+  <data name="Outcome.InvalidMessage" xml:space="preserve">
+    <value>Skriv ett meddelande på 1 till {0} tecken.</value>
+  </data>
+  <data name="Failed" xml:space="preserve">
+    <value>Begäran misslyckades. Försök igen.</value>
+  </data>
+  <data name="CloseReason.OptedOut" xml:space="preserve">
+    <value>Avsändaren har avregistrerat sig</value>
+  </data>
+  <data name="CloseReason.Idle" xml:space="preserve">
+    <value>Inga meddelanden på ett tag</value>
+  </data>
+  <data name="CloseReason.CallClosed" xml:space="preserve">
+    <value>Ärendet stängdes</value>
+  </data>
+</root>

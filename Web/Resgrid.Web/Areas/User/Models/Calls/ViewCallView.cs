@@ -38,6 +38,9 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 		public string DestinationAddress { get; set; }
 		public string DestinationTypeName { get; set; }
 
+		/// <summary>The location POI, free destination, route and route runs of the call (M0322).</summary>
+		public CallLocationDetails Locations { get; set; } = new CallLocationDetails();
+
 		/// <summary>RMS: false hides the Incident Report control, which would otherwise 404 on Start.</summary>
 		public bool RecordsUsable { get; set; }
 

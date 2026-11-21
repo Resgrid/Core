@@ -31,6 +31,16 @@ namespace Resgrid.Model.Helpers
 		/// <summary>The contact chosen as the call's primary contact (Contacts module), blank for none.</summary>
 		public string PrimaryContactId { get; set; }
 		public int? DestinationPoiId { get; set; }
+
+		/// <summary>
+		/// A free destination (M0322): an address or a "lat,lon" point for a destination that is not a POI. The destination field
+		/// (<see cref="NewCallFieldKeys.DestinationPoi"/>) covers both, so either satisfies its requirement.
+		/// </summary>
+		public string DestinationAddress { get; set; }
+		public string DestinationGeolocation { get; set; }
+
+		/// <summary>A free destination's what3words: part of the free destination too (see <see cref="CallLocations.HasFreeDestination"/>).</summary>
+		public string DestinationW3W { get; set; }
 		public string IndoorMapZoneId { get; set; }
 		public bool HasProtocols { get; set; }
 		public bool HasLinkedCall { get; set; }
@@ -110,7 +120,9 @@ namespace Resgrid.Model.Helpers
 			RequireText(NewCallFieldKeys.PrimaryContact, values.PrimaryContactId);
 			RequireText(NewCallFieldKeys.IndoorLocation, values.IndoorMapZoneId);
 
-			Require(NewCallFieldKeys.DestinationPoi, values.DestinationPoiId.HasValue && values.DestinationPoiId.Value > 0);
+			Require(NewCallFieldKeys.DestinationPoi, (values.DestinationPoiId.HasValue && values.DestinationPoiId.Value > 0) ||
+				!string.IsNullOrWhiteSpace(values.DestinationAddress) || GeoMath.ParseLatLonString(values.DestinationGeolocation) != null ||
+				!string.IsNullOrWhiteSpace(values.DestinationW3W));
 			Require(NewCallFieldKeys.Protocols, values.HasProtocols);
 			Require(NewCallFieldKeys.LinkedCall, values.HasLinkedCall);
 			if (!values.IsPending)

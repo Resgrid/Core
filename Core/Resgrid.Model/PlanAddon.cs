@@ -43,11 +43,12 @@ namespace Resgrid.Model
 		/// <summary>
 		/// Add-ons sold through their own monthly Billing API checkout (not the legacy PTT quantity flow), each with a
 		/// dedicated backend, billing-account table and live/test price pair: Readiness Pro, Business Operations, Enhanced AI,
-		/// Incident Back Office.
+		/// Incident Back Office, Dedicated Number.
 		/// </summary>
 		public static bool IsDedicatedMonthlyAddon(int addonType) =>
 			addonType == (int)PlanAddonTypes.ReadinessPro || addonType == (int)PlanAddonTypes.BusinessOperations ||
-			addonType == (int)PlanAddonTypes.EnhancedAi || addonType == (int)PlanAddonTypes.IncidentBackOffice;
+			addonType == (int)PlanAddonTypes.EnhancedAi || addonType == (int)PlanAddonTypes.IncidentBackOffice ||
+			addonType == (int)PlanAddonTypes.DedicatedNumber;
 
 		/// <summary>
 		/// The Advanced Data Protection yearly checkout row (M0298). ADP has two catalog rows: the legacy item on the base Stripe
@@ -145,6 +146,10 @@ namespace Resgrid.Model
 					return "Business Operations";
 				case PlanAddonTypes.EnhancedAi:
 					return "Enhanced AI";
+				case PlanAddonTypes.IncidentBackOffice:
+					return "Incident Back Office";
+				case PlanAddonTypes.DedicatedNumber:
+					return "Private Inbound Dispatch Number";
 				default:
 					throw new ArgumentOutOfRangeException();
 			}

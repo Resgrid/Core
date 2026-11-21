@@ -701,4 +701,40 @@
   <data name="WeekThird" xml:space="preserve">
     <value>tredje</value>
   </data>
+  <data name="DestinationAddress" xml:space="preserve">
+    <value>Måladress</value>
+  </data>
+  <data name="DestinationAddressHelp" xml:space="preserve">
+    <value>När målet inte är en POI.</value>
+  </data>
+  <data name="DestinationCoordinates" xml:space="preserve">
+    <value>Målkoordinater</value>
+  </data>
+  <data name="DestinationCoordinatesHelp" xml:space="preserve">
+    <value>Latitud, longitud (valfritt).</value>
+  </data>
+  <data name="ErrorDestinationCoordinatesInvalid" xml:space="preserve">
+    <value>Ange målkoordinaterna som latitud, longitud (till exempel 39.7392,-104.9903).</value>
+  </data>
+  <data name="RoutePlan" xml:space="preserve">
+    <value>Rutt</value>
+  </data>
+  <data name="NoRoutePlan" xml:space="preserve">
+    <value>Ingen rutt</value>
+  </data>
+  <data name="RoutePlanHelp" xml:space="preserve">
+    <value>Varje larm som skapas följer denna rutt: en tom adress börjar vid ruttens start och ett tomt mål slutar vid ruttens slut.</value>
+  </data>
+  <data name="ErrorRoutePlanInvalid" xml:space="preserve">
+    <value>Välj en aktiv rutt med start och slut i listan.</value>
+  </data>
+  <data name="RoutePlanUnavailable" xml:space="preserve">
+    <value>{0} (inte längre tillgänglig)</value>
+  </data>
+  <data name="RoutePlanDeleted" xml:space="preserve">
+    <value>Borttagen rutt</value>
+  </data>
+  <data name="FacilityPoiCallLocationHelp" xml:space="preserve">
+    <value>Varje larm som skapas utgår från denna POI.</value>
+  </data>
 </root>

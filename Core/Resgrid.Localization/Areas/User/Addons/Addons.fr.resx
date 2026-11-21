@@ -79,6 +79,14 @@
   <data name="EnhancedAiFeature5" xml:space="preserve"><value>Modèles à poids ouverts uniquement ; les données privées ne sont jamais envoyées à une IA dans le cloud</value></data>
   <data name="EnhancedAiFeature6" xml:space="preserve"><value>Ou utilisez votre propre abonnement auprès d'un fournisseur d'IA</value></data>
   <data name="EnhancedAiNote" xml:space="preserve"><value>Facturé chaque mois par service. Comprend un budget IA mensuel sans frais de dépassement. Chaque service dispose de questions Admin Assist gratuites même sans ce module.</value></data>
+  <data name="DedicatedNumberTitle" xml:space="preserve"><value>Private Inbound Dispatch Number</value></data>
+  <data name="DedicatedNumberTagline" xml:space="preserve"><value>Le numéro propre à votre service pour les SMS et les appels</value></data>
+  <data name="DedicatedNumberFeature1" xml:space="preserve"><value>Un numéro local pour votre service, choisi par vous</value></data>
+  <data name="DedicatedNumberFeature2" xml:space="preserve"><value>Les SMS entrants deviennent des appels en attente pour la régulation</value></data>
+  <data name="DedicatedNumberFeature3" xml:space="preserve"><value>Les membres appellent le même numéro pour accéder au menu vocal</value></data>
+  <data name="DedicatedNumberFeature4" xml:space="preserve"><value>La réception vocale avec Enhanced AI transforme les réponses en appels en attente</value></data>
+  <data name="DedicatedNumberFeature5" xml:space="preserve"><value>Réception uniquement : les réponses viennent du numéro principal de Resgrid</value></data>
+  <data name="DedicatedNumberNote" xml:space="preserve"><value>Facturé chaque mois par service, même avec un forfait annuel. Nécessite un forfait par entités actif. Aux États-Unis, numéros des États-Unis et du Canada ; dans l'UE, un numéro de votre pays lorsqu'il est disponible.</value></data>
   <data name="AdpTitle" xml:space="preserve"><value>Advanced Data Protection</value></data>
   <data name="AdpTagline" xml:space="preserve"><value>Chiffrement et accès renforcé pour les données sensibles</value></data>
   <data name="AdpFeature1" xml:space="preserve"><value>Chiffrement au niveau des champs pour les données de santé et personnelles</value></data>
@@ -87,8 +95,8 @@
   <data name="AdpFeature4" xml:space="preserve"><value>Flux de travail, notifications et BigBoard expurgés</value></data>
   <data name="AdpFeature5" xml:space="preserve"><value>Requis pour un accord BAA HIPAA avec Resgrid</value></data>
   <data name="AdpNote" xml:space="preserve"><value>Facturé chaque année, même si votre service a un forfait mensuel. L'activation se fait en libre-service dès que le module est actif.</value></data>
-  <data name="CodesHeader" xml:space="preserve"><value>Codes de réduction et de parrainage</value></data>
-  <data name="CodesIntro" xml:space="preserve"><value>Vous avez un code de réduction ou un partenaire Resgrid vous a recommandé ? Vous pouvez le saisir ici à tout moment, pas seulement à l'inscription.</value></data>
+  <data name="CodesHeader" xml:space="preserve"><value>Codes de réduction et codes partenaire/compte</value></data>
+  <data name="CodesIntro" xml:space="preserve"><value>Vous avez un code de réduction, ou un code partenaire/compte fourni par un partenaire Resgrid ou votre chargé de compte ? Vous pouvez le saisir ici à tout moment, pas seulement à l'inscription.</value></data>
   <data name="DiscountCodeLabel" xml:space="preserve"><value>Code de réduction</value></data>
   <data name="DiscountCodePlaceholder" xml:space="preserve"><value>Saisissez un code de réduction</value></data>
   <data name="DiscountCodeApply" xml:space="preserve"><value>Appliquer</value></data>
@@ -99,12 +107,12 @@
   <data name="MessageDiscountPending" xml:space="preserve"><value>Le code de réduction est valide et sera appliqué lorsque vous achèterez un forfait ci-dessus.</value></data>
   <data name="MessageDiscountInvalid" xml:space="preserve"><value>Ce code de réduction n'est pas valide, a expiré ou ne peut pas être utilisé par votre service.</value></data>
   <data name="MessageDiscountUnavailable" xml:space="preserve"><value>Les codes de réduction ne peuvent pas être vérifiés pour le moment. Réessayez plus tard.</value></data>
-  <data name="AffiliateCodeLabel" xml:space="preserve"><value>Code d'affilié (parrainage)</value></data>
-  <data name="AffiliateCodePlaceholder" xml:space="preserve"><value>Saisissez un code d'affilié</value></data>
+  <data name="AffiliateCodeLabel" xml:space="preserve"><value>Code partenaire/compte</value></data>
+  <data name="AffiliateCodePlaceholder" xml:space="preserve"><value>Saisissez un code partenaire/compte</value></data>
   <data name="AffiliateCodeSave" xml:space="preserve"><value>Enregistrer</value></data>
   <data name="AffiliateCodeSetHelp" xml:space="preserve"><value>Peut être ajouté une seule fois. Contactez-nous s'il doit être modifié.</value></data>
-  <data name="AffiliateCodeCurrent" xml:space="preserve"><value>Parrainé avec le code d'affilié {0}</value></data>
-  <data name="MessageAffiliateApplied" xml:space="preserve"><value>Le code d'affilié a été enregistré pour votre service.</value></data>
-  <data name="MessageAffiliateInvalid" xml:space="preserve"><value>Ce code d'affilié n'est pas valide ou n'est plus actif.</value></data>
-  <data name="MessageAffiliateAlreadySet" xml:space="preserve"><value>Votre service a déjà un code d'affilié. Contactez-nous s'il doit être modifié.</value></data>
+  <data name="AffiliateCodeCurrent" xml:space="preserve"><value>Code partenaire/compte : {0}</value></data>
+  <data name="MessageAffiliateApplied" xml:space="preserve"><value>Le code partenaire/compte a été enregistré pour votre service.</value></data>
+  <data name="MessageAffiliateInvalid" xml:space="preserve"><value>Ce code partenaire/compte n'est pas valide ou n'est plus actif.</value></data>
+  <data name="MessageAffiliateAlreadySet" xml:space="preserve"><value>Votre service a déjà un code partenaire/compte. Contactez-nous s'il doit être modifié.</value></data>
 </root>

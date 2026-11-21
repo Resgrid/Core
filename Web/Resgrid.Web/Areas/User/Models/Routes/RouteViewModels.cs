@@ -136,10 +136,29 @@ namespace Resgrid.Web.Areas.User.Models.Routes
 		}
 	}
 
+	/// <summary>The call a route run was started for (M0322, <see cref="RouteInstance.CallId"/>).</summary>
+	public class RouteLinkedCall
+	{
+		public int CallId { get; set; }
+
+		public string Number { get; set; }
+
+		public string Name { get; set; }
+
+		/// <summary>The member may open the call: its number links to it and its name shows.</summary>
+		public bool CanView { get; set; }
+	}
+
 	public class RouteInstancesView : BaseUserModel
 	{
 		public RoutePlan Plan { get; set; }
 		public List<RouteInstance> Instances { get; set; }
+
+		/// <summary>The calls runs were started for, by call id (M0322).</summary>
+		public Dictionary<int, RouteLinkedCall> LinkedCalls { get; set; } = new Dictionary<int, RouteLinkedCall>();
+
+		/// <summary>Unit names by unit id, deleted units included, so a run shows the unit that drove it.</summary>
+		public Dictionary<int, string> UnitNames { get; set; } = new Dictionary<int, string>();
 		public RouteInstancesView()
 		{
 			Plan = new RoutePlan();
@@ -151,6 +170,12 @@ namespace Resgrid.Web.Areas.User.Models.Routes
 	{
 		public List<RouteInstance> Instances { get; set; }
 		public List<RoutePlan> Plans { get; set; }
+
+		/// <summary>The calls runs were started for, by call id (M0322).</summary>
+		public Dictionary<int, RouteLinkedCall> LinkedCalls { get; set; } = new Dictionary<int, RouteLinkedCall>();
+
+		/// <summary>Unit names by unit id, deleted units included, so a run shows the unit that drives it.</summary>
+		public Dictionary<int, string> UnitNames { get; set; } = new Dictionary<int, string>();
 		public ActiveRoutesView()
 		{
 			Instances = new List<RouteInstance>();
@@ -169,6 +194,12 @@ namespace Resgrid.Web.Areas.User.Models.Routes
 
 		/// <summary>The driven track and deviation positions are the unit's locations: shown under See Unit Locations only.</summary>
 		public bool CanSeeTrack { get; set; }
+
+		/// <summary>The call the run was started for (M0322); null for an ordinary run.</summary>
+		public RouteLinkedCall LinkedCall { get; set; }
+
+		/// <summary>The name of the unit that drove the run (deleted units included); null when the unit is gone entirely.</summary>
+		public string UnitName { get; set; }
 		public RouteInstanceDetailView()
 		{
 			Instance = new RouteInstance();

@@ -2286,4 +2286,10 @@
   <data name="DeleteRefusedPermanentContent" xml:space="preserve"><value>Ten raport zawiera wpisy o poszkodowanych, akcjach ratowniczych lub narażeniach, które są przechowywane na stałe. Usuń je z wersji roboczej przed usunięciem raportu.</value></data>
   <data name="DeleteRefusedAmendmentOpen" xml:space="preserve"><value>Porzuć otwartą poprawkę przed usunięciem tego raportu.</value></data>
   <data name="IncludeClosedReports" xml:space="preserve"><value>Uwzględnij anulowane i unieważnione</value></data>
+  <data name="ImportMapPois" xml:space="preserve">
+    <value>Importuj POI mapy</value>
+  </data>
+  <data name="ImportMapPoisHelp" xml:space="preserve">
+    <value>Zaimportuj plik KML, KMZ lub CSV jako punkty zainteresowania na mapie (punkty orientacyjne), oddzielnie od rejestru hydrantów.</value>
+  </data>
 </root>

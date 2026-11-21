@@ -68,7 +68,7 @@ namespace Resgrid.Tests.Web.User
 			_departmentsService.Setup(x => x.GetDepartmentByIdAsync(DepartmentId, It.IsAny<bool>())).ReturnsAsync(department);
 
 			var legacyPlanAddon = new PlanAddon { PlanAddonId = "adp-addon", AddonType = (int)PlanAddonTypes.ADP, PlanId = 4, Cost = 999 };
-			var yearlyPlanAddon = new PlanAddon { PlanAddonId = AdpAddonConfig.YearlyPlanAddonId, AddonType = (int)PlanAddonTypes.ADP, Cost = 1950 };
+			var yearlyPlanAddon = new PlanAddon { PlanAddonId = AdpAddonConfig.YearlyPlanAddonId, AddonType = (int)PlanAddonTypes.ADP, Cost = 3600 };
 
 			_subscriptionsService = new Mock<ISubscriptionsService>();
 			_subscriptionsService.Setup(x => x.GetAllAddonPlansByTypeAsync(PlanAddonTypes.ADP, false))
@@ -85,7 +85,7 @@ namespace Resgrid.Tests.Web.User
 			_flags.Setup(x => x.EvaluateFreshAsync(FeatureFlagKeys.DepartmentProtectedDataEnrollment, DepartmentId))
 				.ReturnsAsync(new FeatureFlagEvaluation { Key = FeatureFlagKeys.DepartmentProtectedDataEnrollment, IsEnabled = true });
 			_adpBilling = new Mock<IAdpBillingService>();
-			_adpBilling.Setup(x => x.GetAsync(DepartmentId)).ReturnsAsync(new AdpBillingStatus { Provider = "Stripe", Currency = "USD", YearlyAmount = 1950, CheckoutAvailable = true });
+			_adpBilling.Setup(x => x.GetAsync(DepartmentId)).ReturnsAsync(new AdpBillingStatus { Provider = "Stripe", Currency = "USD", YearlyAmount = 3600, CheckoutAvailable = true });
 			_adpBilling.Setup(x => x.BeginCheckoutAsync(DepartmentId)).ReturnsAsync(new AdpCheckout { Provider = "Stripe", Url = "https://checkout.stripe.com/c/pay/cs_adp" });
 
 			var httpContext = new DefaultHttpContext
@@ -272,7 +272,7 @@ namespace Resgrid.Tests.Web.User
 
 			var model = (await controller.BuyAdpAddon()).Should().BeOfType<ViewResult>().Which.Model.Should().BeOfType<AdpAddonView>().Subject;
 
-			model.Price.Should().Be("$1,950", "resgrid.com/pricing lists ADP at USD 1,950 a year");
+			model.Price.Should().Be("$3,600", "resgrid.com/pricing lists ADP at USD 3,600 a year");
 			model.PlanAddonId.Should().Be(AdpAddonConfig.YearlyPlanAddonId);
 			model.CanPurchaseOnline.Should().BeTrue();
 			model.CheckoutProvider.Should().Be("Stripe");

@@ -653,7 +653,7 @@ namespace Resgrid.Services
 
 				foreach (var code in codes)
 					await _novu.SendUserNotification(PushTitle, PushBody, userId, code, PushEventPrefix + approvalRequestId,
-						((int)PushSoundTypes.Notifiation).ToString(CultureInfo.InvariantCulture));
+						((int)PushSoundTypes.ModernNotification).ToString(CultureInfo.InvariantCulture));
 			}
 			catch (Exception ex)
 			{

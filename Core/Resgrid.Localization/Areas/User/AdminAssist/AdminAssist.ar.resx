@@ -1534,7 +1534,7 @@
     <value>تطبيق العضو لاستلام عمليات الإرسال والاستجابة وضبط الحالة.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.routes">
-    <value>المسارات المخطَّطة، مثل الدوريات، ومن أُسند إليها.</value>
+    <value>المسارات المخطَّطة، مثل الدوريات أو عمليات النقل، ومن أُسند إليها، والمسارات التي يمكن أن يحملها البلاغ لتسلك الوحدة المكلفة المحطات المخطَّطة.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.run-cards">
     <value>الموارد الموصى بها لكل نوع بلاغ أو منطقة.</value>
@@ -1729,7 +1729,7 @@
     <value>أنشئ الأدوار التي ترسلها أو تُعدّ تقارير عنها، وأسندها إلى الأعضاء. ارفع أيقونة خريطة للأدوار التي يجب أن تبرز، ثم حدّد ترتيب الأدوار في صفحة الأدوار: تستخدم علامة كل شخص على الخريطة أيقونة أول دور لديه، بهذا الترتيب، له أيقونة.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.pois">
-    <value>أضف المواقع التي يحتاج موظفو الإرسال إلى رؤيتها. امنح نوع نقطة الاهتمام أيقونة مخصصة تحل محل علامته على الخريطة وفي التطبيقات.</value>
+    <value>أضف المواقع التي يحتاج موظفو الإرسال إلى رؤيتها، واحداً تلو الآخر أو باستيراد ملف KML أو KMZ أو CSV؛ يُبحث عن العناوين الواردة في الملف في الخلفية. امنح نوع نقطة الاهتمام أيقونة مخصصة تحل محل علامته على الخريطة وفي التطبيقات.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.preventive-maintenance">
     <value>جدوِل الصيانة الروتينية لكل آلية.</value>
@@ -4900,7 +4900,7 @@
     <value>يوسّع المجموعات المُرسَل إليها باستخدام جدول الخدمة المُحلَّل. تؤدي نتيجة الوردية الفارغة إلى الرجوع إلى أعضاء المجموعة؛ عايِن كلتا الحالتين.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.EnableModernNotifications">
-    <value>يستخدم سلوك الإشعارات الحديثة المدعوم. تحقق من كل جهة مستهلكة وقناة؛ فقبول المزوّد ليس تسليمًا.</value>
+    <value>متوقف. أصوات الإشعارات الحديثة مفعّلة الآن لكل الأقسام وكل المستخدمين؛ لا يوجد ما يمكن ضبطه.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.EnableTextCommand">
     <value>تفضيل أوامر الرسائل النصية المُعدَّة. أنماط مصدر الإرسال وهوية أوامر العضو التي تم التحقق منها فحصان مختلفان. لا تُنفِذ مسارات المزوّد وروبوت الدردشة هذا المفتاح بشكل موحّد؛ راجع الجهة المستهلكة النشطة قبل تغييره.</value>
@@ -6802,7 +6802,7 @@
     <value>البلاغات المجدولة</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.scheduled-calls">
-    <value>بلاغات تُرسل تلقائياً في وقت لاحق ويمكن إرسالها مبكراً أو إعادة جدولتها.</value>
+    <value>بلاغات تُرسل تلقائياً في وقت لاحق ويمكن إرسالها مبكراً أو إعادة جدولتها، مع تقويم لكل البلاغات المجدولة والمتكررة.</value>
   </data>
   <data xml:space="preserve" name="Feature.api-keys">
     <value>مفاتيح API</value>
@@ -7852,6 +7852,153 @@
     <value>اقتراحات الوجهات</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.DestinationSuggestions">
-    <value>يقترح أفضل وجهة للبلاغ، ولوجهة حالة الوحدة، بناءً على قواعد الوجهات في القسم (الخرائط، قواعد الوجهات) وموقع الحادث، مع زمن القيادة والمسافة. ويقوم «اقتراح الوجهة وتعبئتها» أيضًا بتعبئة الوجهة الفارغة للبلاغ الجديد بأفضل وجهة؛ ويظل بإمكان المرسلين والطواقم اختيار وجهة أخرى. متوقف افتراضيًا، لأن كل اقتراح يستعلم عن أزمنة القيادة.</value>
+    <value>يقترح أفضل وجهة للبلاغ، ولوجهة حالة الوحدة، بناءً على قواعد الوجهات في القسم (الخرائط، إدارة نقاط الاهتمام، قواعد الوجهات) وموقع الحادث، مع زمن القيادة والمسافة. ويقوم «اقتراح الوجهة وتعبئتها» أيضًا بتعبئة الوجهة الفارغة للبلاغ الجديد بأفضل وجهة؛ ويظل بإمكان المرسلين والطواقم اختيار وجهة أخرى. متوقف افتراضيًا، لأن كل اقتراح يستعلم عن أزمنة القيادة.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.recurring-calls">
+    <value>المكالمات المتكررة</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.recurring-calls">
+    <value>بلاغات تتكرر وفق جدول، مثل عمليات النقل كل ثلاثاء وخميس في الساعة 08:00 و13:00 و19:00. يُنشأ كل منها مسبقاً كبلاغ مجدول ويُرسل تلقائياً، أو يُنبَّه موظف الإرسال لإرساله.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.recurring-calls">
+    <value>افتح البلاغات المجدولة واختر المكالمات المتكررة، ثم مكالمة متكررة جديدة، أو اضغط تكرار على بلاغ أُرسل بالفعل. املأ تفاصيل البلاغ والمرافق وجهة الاتصال ومن يُرسل إليه ومن يُنبَّه، ثم الجدول ومتى يُنشأ كل بلاغ ومن يرسله. راجع الإرسالات القادمة والتقويم قبل الحفظ.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.call-locations">
+    <value>مواقع البلاغات ووجهاتها ومساراتها</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.call-locations">
+    <value>يمكن اختيار موقع البلاغ من نقطة اهتمام، ويمكن أن تكون وجهته نقطة اهتمام أو عنواناً حراً أو إحداثيات أو what3words، ويمكن أن يحمل مساراً محدداً مسبقاً تسلكه الوحدة المكلفة في التطبيق محطةً بعد محطة.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.call-locations">
+    <value>أضف الأماكن التي تستلم منها وتسلّم إليها كنقاط اهتمام، وأنشئ خطط مسارات نشطة لها بداية ونهاية للرحلات المتكررة. في بلاغ جديد، اختر نقطة اهتمام الموقع والوجهة ومساراً؛ يأخذ الموقع الفارغ بداية المسار وتأخذ الوجهة الفارغة نهايته.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.poi-capabilities">
+    <value>قدرات نقاط الاهتمام</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.poi-capabilities">
+    <value>ما تقدمه نقاط الاهتمام لديك، مثل مختبر القسطرة أو مركز السكتة الدماغية أو مهبط المروحيات أو نقطة سحب المياه، محدداً على كل نقطة اهتمام حتى يتمكن موظفو الإرسال والطواقم من تصفية الوجهات وترتيبها حسب ما يحتاجه المريض أو المهمة.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.poi-capabilities">
+    <value>افتح الخرائط، ثم إدارة نقاط الاهتمام، واختر قدرات نقاط الاهتمام. أضف ما تقدمه وجهاتك ثم حدده على كل نقطة اهتمام، أو أضف عمود Capabilities إلى ملف استيراد نقاط الاهتمام.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.destination-availability">
+    <value>توفر الوجهات</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.destination-availability">
+    <value>ما إذا كانت كل وجهة تستطيع استقبال المرضى الآن: مفتوحة أو محدودة أو في حالة تحويل أو مغلقة، مع القدرات التي لا تستطيع تقديمها وملاحظة ومدة سريان البلاغ عنها.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.destination-availability">
+    <value>افتح الخرائط، ثم إدارة نقاط الاهتمام، واختر توفر الوجهات، أو استخدم رابط توفر الوجهات أسفل الوجهة في نموذج البلاغ. اختر تعيين التوفر على وجهة عندما تبلغ عن تحويل أو إغلاق أو قدرة متوقفة.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.destination-rules">
+    <value>قواعد الوجهات</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.destination-rules">
+    <value>قواعد تختار أنواع الوجهات والقدرات المطلوبة والمفضلة بحسب نوع البلاغ وأولويته ونوع الوحدة المتحركة، حتى يقترح Resgrid أقرب وجهة مناسبة مع زمن القيادة والمسافة.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.destination-rules">
+    <value>افتح الخرائط، ثم إدارة نقاط الاهتمام، واختر قواعد الوجهات. أضف قاعدة لكل حالة، مثل توجيه بلاغات القلب إلى مستشفى فيه مختبر قسطرة وصهريج المياه إلى نقطة سحب مياه، وتحقق منها باستخدام جرّبها، ثم اضبط اقتراحات الوجهات على اقتراح الوجهات أو اقتراح الوجهة وتعبئتها.</value>
+  </data>
+  <data name="Area.dedicated-number" xml:space="preserve">
+    <value>Private Inbound Dispatch Number</value>
+  </data>
+  <data name="AreaPurpose.dedicated-number" xml:space="preserve">
+    <value>رقم الهاتف الخاص بقسمك. تتحول الرسائل النصية المرسلة إليه إلى بلاغات معلقة، ومع Enhanced AI يمكن للمتصلين الإبلاغ عن حادث صوتيًا.</value>
+  </data>
+  <data name="AreaValue.dedicated-number" xml:space="preserve">
+    <value>امنح الجمهور والجهات الشريكة والأعضاء رقمًا محليًا واحدًا للمراسلة أو الاتصال، فينتظر كل بلاغ المرسِل في البلاغات المعلقة بدلًا من بقائه على الهاتف الشخصي لأحدهم.</value>
+  </data>
+  <data name="AreaExample.dedicated-number" xml:space="preserve">
+    <value>تطبع منطقة ريفية رقمها المحلي الجديد على منشورات البلاغات غير الطارئة، وتصل رسالة نصية عن شجرة سقطت على طريق كبلاغ معلق يراجعه المرسِل ثم يرسله.</value>
+  </data>
+  <data name="ModuleAdoption.dedicated-number" xml:space="preserve">
+    <value>يتطلب إضافة Private Inbound Dispatch Number، التي لا تُباع إلا مع خطة كيانات مدفوعة نشطة. يستقبل الرقم الرسائل النصية فقط، وتُرسل الردود من رقم Resgrid الرئيسي. ويحتاج الاستقبال الصوتي أيضًا إلى إضافة Enhanced AI.</value>
+  </data>
+  <data name="Ui.AddonRequired.DedicatedNumber" xml:space="preserve">
+    <value>يتطلب إضافة Private Inbound Dispatch Number</value>
+  </data>
+  <data name="Feature.dedicated-number" xml:space="preserve">
+    <value>رقم القسم والاستقبال</value>
+  </data>
+  <data name="FeaturePurpose.dedicated-number" xml:space="preserve">
+    <value>اختر رقم قسمك وفعّله، وحدد ما إذا كانت الرسائل النصية والمكالمات الصوتية إليه تنشئ بلاغات معلقة، وحرّره عندما لا تعود بحاجة إليه.</value>
+  </data>
+  <data name="FeatureSetup.dedicated-number" xml:space="preserve">
+    <value>بعد تفعيل الإضافة، افتح قائمة القسم ثم Private Inbound Dispatch Number. ابحث حسب البلد أو رمز المنطقة أو الأرقام، وفعّل الرقم الذي تريده، وشغّل إنشاء بلاغات معلقة من الرسائل النصية واحفظ. ثم أرسل رسالة نصية تجريبية إلى الرقم وتحقق من البلاغات المعلقة.</value>
+  </data>
+  <data name="Feature.addon-dedicated-number" xml:space="preserve">
+    <value>Private Inbound Dispatch Number</value>
+  </data>
+  <data name="FeaturePurpose.addon-dedicated-number" xml:space="preserve">
+    <value>إضافة Private Inbound Dispatch Number: رقم هاتف خاص بقسمك لاستقبال البلاغات عبر الرسائل النصية وصوتيًا.</value>
+  </data>
+  <data name="FeatureValue.addon-dedicated-number" xml:space="preserve">
+    <value>يتواصل الأعضاء والجمهور مع قسمك مباشرة بدلًا من رقم Resgrid المشترك.</value>
+  </data>
+  <data name="FeatureExample.addon-dedicated-number" xml:space="preserve">
+    <value>يشتري العضو المسؤول عن الإدارة الإضافة من صفحة Private Inbound Dispatch Number أو من صفحة الفوترة الخاصة بها، ثم يفعّل مسؤول القسم رقمًا محليًا.</value>
+  </data>
+  <data name="FeatureAdoption.addon-dedicated-number" xml:space="preserve">
+    <value>لا تُباع إلا مع خطة كيانات مدفوعة نشطة، ويشتريها العضو المسؤول عن الإدارة أو يلغيها. تُحتسب شهريًا لكل قسم، حتى مع الخطة السنوية. عند انتهاء الإضافة يتوقف الرقم عن استقبال الرسائل والمكالمات ويُحرَّر بعد فترة سماح ما لم تُجدَّد الإضافة.</value>
+  </data>
+  <data name="Feature.intake-channels" xml:space="preserve">
+    <value>قنوات الاستقبال</value>
+  </data>
+  <data name="FeaturePurpose.intake-channels" xml:space="preserve">
+    <value>حوّل إلى بلاغات معلقة الرسائل النصية المرسلة إلى رقم القسم، والرسائل الواردة إلى عنوان بريد الاستقبال، والمنشورات في قناة Slack أو Teams أو WhatsApp أو Telegram أو Discord أو Google Chat مرتبطة، وطلبات webhook الموقّعة.</value>
+  </data>
+  <data name="FeatureValue.intake-channels" xml:space="preserve">
+    <value>تصل الطلبات الواردة من خارج اللاسلكي ونظام CAD إلى قائمة انتظار واحدة ليراجعها المرسِل، ولا يُرسل الاستقبال أحدًا من تلقاء نفسه.</value>
+  </data>
+  <data name="FeatureExample.intake-channels" xml:space="preserve">
+    <value>ينشر مكتب نقل المرضى في مستشفى طلباته في قناة Teams مشتركة، فيتحول كل منشور إلى بلاغ معلق بنوع البلاغ والأولوية الافتراضيين للقناة.</value>
+  </data>
+  <data name="FeatureSetup.intake-channels" xml:space="preserve">
+    <value>افتح قائمة القسم، ثم قنوات الاستقبال، وأضف قناة لكل مصدر. اختر المعالجة بقالب البلاغ أو Enhanced AI، وقيّد المرسلين المسموح لهم، واضبط الأولوية ونوع البلاغ الافتراضيين، ثم أرسل رسالة تجريبية وتحقق من البلاغات المعلقة.</value>
+  </data>
+  <data name="Feature.ai-intake" xml:space="preserve">
+    <value>استقبال البلاغات بواسطة Enhanced AI</value>
+  </data>
+  <data name="FeaturePurpose.ai-intake" xml:space="preserve">
+    <value>يقرأ Enhanced AI كل رسالة من قناة استقبال مضبوطة على المعالجة بـ Enhanced AI ويملأ نوع البلاغ المعلق وعنوانه وأولويته وملخصًا له.</value>
+  </data>
+  <data name="FeatureValue.ai-intake" xml:space="preserve">
+    <value>يبدأ المرسِلون من بلاغ مُعبَّأ بدلًا من إعادة كتابة نص حر. يُحفظ البلاغ المعلق أولًا، فلا تضيع أي رسالة عندما يكون الذكاء الاصطناعي غير متاح.</value>
+  </data>
+  <data name="FeatureExample.ai-intake" xml:space="preserve">
+    <value>تتحول رسالة نصية تفيد بأن سيارة انزلقت إلى الخندق على الطريق 9 قرب الكيلومتر 12 إلى بلاغ معلق عن حادث سير مع تعبئة الموقع، جاهز ليتحقق منه المرسِل.</value>
+  </data>
+  <data name="FeatureSetup.ai-intake" xml:space="preserve">
+    <value>يتطلب إضافة Enhanced AI مع تفعيل الاستقبال بالذكاء الاصطناعي لقسمك. في قنوات الاستقبال، عدّل قناة واضبط المعالجة على Enhanced AI. يظل المرسِل يراجع كل بلاغ معلق، ولا يعالج الذكاء الاصطناعي الأقسام التي تستخدم Advanced Data Protection.</value>
+  </data>
+  <data name="Feature.ai-voice-intake" xml:space="preserve">
+    <value>الاستقبال الصوتي بواسطة Enhanced AI</value>
+  </data>
+  <data name="FeaturePurpose.ai-voice-intake" xml:space="preserve">
+    <value>يجيب المتصلون برقم الإرسال الوارد الخاص بالقسم من غير الأعضاء عن أسئلة موجَّهة منطوقة، ويحوّل Enhanced AI إجاباتهم إلى بلاغ معلق.</value>
+  </data>
+  <data name="FeatureValue.ai-voice-intake" xml:space="preserve">
+    <value>استقبل بلاغات الحوادث عبر الهاتف في أي ساعة دون أن يرد أحد، بينما يظل المرسِل هو من يقرر من يُرسَل.</value>
+  </data>
+  <data name="FeatureExample.ai-voice-intake" xml:space="preserve">
+    <value>يبلغ متصل عن دخان خلف حظيرة، ويجيب عن الأسئلة حول المكان وما يراه، فينتظر المرسِلَ بلاغٌ معلق مع النص المفرَّغ.</value>
+  </data>
+  <data name="FeatureSetup.ai-voice-intake" xml:space="preserve">
+    <value>يتطلب إضافتي Private Inbound Dispatch Number وEnhanced AI مع تفعيل الاستقبال الصوتي بالذكاء الاصطناعي لقسمك. في صفحة Private Inbound Dispatch Number، شغّل استقبال البلاغات صوتيًا واحفظ. للمكالمات الصوتية حد شهري للاستخدام العادل، وبعد تجاوزه يُطلب من المتصلين إرسال رسالة نصية إلى الرقم بدلًا من ذلك.</value>
+  </data>
+  <data name="Feature.ai-destination-advice" xml:space="preserve">
+    <value>توصية الوجهة من Enhanced AI</value>
+  </data>
+  <data name="FeaturePurpose.ai-destination-advice" xml:space="preserve">
+    <value>يوصي Enhanced AI بوجهة البلاغ المفتوح بناءً على طبيعته وملاحظته وملاحظات البلاغ، وقدرات وجهاتك وتوفرها، ويقترح تغييرها عندما تتغير تفاصيل البلاغ.</value>
+  </data>
+  <data name="FeatureValue.ai-destination-advice" xml:space="preserve">
+    <value>اكتشف المريض الذي أصبح يحتاج إلى مستوى رعاية أعلى، مثل مركز إصابات، دون أن يعيد أحد فحص كل وجهة يدويًا.</value>
+  </data>
+  <data name="FeatureExample.ai-destination-advice" xml:space="preserve">
+    <value>تذكر ملاحظة في البلاغ إصابة نافذة، فتقترح التوصية على البلاغ مركز الإصابات بدلًا من أقرب مستشفى، ليطبقها المرسِل أو يرفضها.</value>
+  </data>
+  <data name="FeatureSetup.ai-destination-advice" xml:space="preserve">
+    <value>يتطلب إضافة Enhanced AI مع تفعيل توصية الوجهة بالذكاء الاصطناعي لقسمك. أضف أولًا وجهاتك بقدراتها وقواعد الوجهات. تظهر التوصية عند عرض البلاغ وتحديثه، ولا يتغير شيء حتى يطبقها أحد، ولا تحصل الأقسام التي تستخدم Advanced Data Protection على توصيات.</value>
   </data>
 </root>

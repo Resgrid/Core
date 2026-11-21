@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Title" xml:space="preserve">
+    <value>محادثة نصية</value>
+  </data>
+  <data name="StateOpen" xml:space="preserve">
+    <value>مفتوحة</value>
+  </data>
+  <data name="StateClosed" xml:space="preserve">
+    <value>منتهية</value>
+  </data>
+  <data name="HandlerAssistant" xml:space="preserve">
+    <value>مساعد الذكاء الاصطناعي يطرح الأسئلة على صاحب الرسالة</value>
+  </data>
+  <data name="HandlerUnassisted" xml:space="preserve">
+    <value>بانتظار رد أحد المرسلين</value>
+  </data>
+  <data name="HandlerDispatcher" xml:space="preserve">
+    <value>متصل مع {0}</value>
+  </data>
+  <data name="HandlerDispatcherYou" xml:space="preserve">
+    <value>أنت متصل</value>
+  </data>
+  <data name="Texter" xml:space="preserve">
+    <value>صاحب الرسالة: {0}</value>
+  </data>
+  <data name="OptedOut" xml:space="preserve">
+    <value>ألغى صاحب الرسالة الاشتراك (STOP). لا يمكن إرسال المزيد من الرسائل.</value>
+  </data>
+  <data name="ClosedReason" xml:space="preserve">
+    <value>انتهت: {0}</value>
+  </data>
+  <data name="AuthorCaller" xml:space="preserve">
+    <value>المتصل</value>
+  </data>
+  <data name="AuthorAssistant" xml:space="preserve">
+    <value>مساعد الذكاء الاصطناعي</value>
+  </data>
+  <data name="AuthorSystem" xml:space="preserve">
+    <value>رسالة تلقائية</value>
+  </data>
+  <data name="AuthorDispatcher" xml:space="preserve">
+    <value>المرسل</value>
+  </data>
+  <data name="StatusQueued" xml:space="preserve">
+    <value>جارٍ الإرسال</value>
+  </data>
+  <data name="StatusSent" xml:space="preserve">
+    <value>تم الإرسال</value>
+  </data>
+  <data name="StatusFailed" xml:space="preserve">
+    <value>لم يتم التسليم</value>
+  </data>
+  <data name="TextUnavailable" xml:space="preserve">
+    <value>(النص غير متاح)</value>
+  </data>
+  <data name="NoMessages" xml:space="preserve">
+    <value>لا توجد رسائل بعد.</value>
+  </data>
+  <data name="Take" xml:space="preserve">
+    <value>تولي المحادثة</value>
+  </data>
+  <data name="TakeOverConfirm" xml:space="preserve">
+    <value>مرسل آخر متصل بهذه المحادثة. هل تريد توليها؟</value>
+  </data>
+  <data name="Release" xml:space="preserve">
+    <value>تحرير</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>إنهاء</value>
+  </data>
+  <data name="CloseConfirm" xml:space="preserve">
+    <value>هل تريد إنهاء هذه المحادثة النصية؟ يبقى البلاغ مفتوحًا.</value>
+  </data>
+  <data name="NotifyTexter" xml:space="preserve">
+    <value>إبلاغ صاحب الرسالة</value>
+  </data>
+  <data name="Send" xml:space="preserve">
+    <value>إرسال</value>
+  </data>
+  <data name="SendPlaceholder" xml:space="preserve">
+    <value>اكتب إلى المتصل…</value>
+  </data>
+  <data name="EnterToSend" xml:space="preserve">
+    <value>يرسل Enter الرسالة، ويضيف Shift+Enter سطرًا جديدًا.</value>
+  </data>
+  <data name="FromResgridNumber" xml:space="preserve">
+    <value>تصل الرسائل إلى المتصل من رقم Resgrid وليس من رقم الإدارة.</value>
+  </data>
+  <data name="Outcome.NotFound" xml:space="preserve">
+    <value>لم يتم العثور على هذه المحادثة.</value>
+  </data>
+  <data name="Outcome.Closed" xml:space="preserve">
+    <value>انتهت هذه المحادثة.</value>
+  </data>
+  <data name="Outcome.HeldByAnotherDispatcher" xml:space="preserve">
+    <value>مرسل آخر متصل بهذه المحادثة.</value>
+  </data>
+  <data name="Outcome.OptedOut" xml:space="preserve">
+    <value>ألغى صاحب الرسالة الاشتراك. لا يمكن إرسال أي شيء.</value>
+  </data>
+  <data name="Outcome.SendFailed" xml:space="preserve">
+    <value>تعذّر تسليم الرسالة.</value>
+  </data>
+  <data name="Outcome.InvalidMessage" xml:space="preserve">
+    <value>أدخل رسالة من 1 إلى {0} حرفًا.</value>
+  </data>
+  <data name="Failed" xml:space="preserve">
+    <value>فشل الطلب. يرجى المحاولة مرة أخرى.</value>
+  </data>
+  <data name="CloseReason.OptedOut" xml:space="preserve">
+    <value>ألغى صاحب الرسالة الاشتراك</value>
+  </data>
+  <data name="CloseReason.Idle" xml:space="preserve">
+    <value>لا توجد رسائل منذ فترة</value>
+  </data>
+  <data name="CloseReason.CallClosed" xml:space="preserve">
+    <value>تم إغلاق البلاغ</value>
+  </data>
+</root>

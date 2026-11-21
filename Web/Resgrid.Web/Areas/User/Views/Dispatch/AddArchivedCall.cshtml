@@ -23,6 +23,9 @@
     var hasContacts = Model.ContactsList != null;
     var hasCallTypes = Model.CallTypes != null && Model.CallTypes.Count() > 1;
 
+    // resgrid.dispatch.calllocations.js places the call pin through this page's script (M0322).
+    ViewData["CallLocationsPage"] = "addArchivedCall";
+
     Microsoft.AspNetCore.Html.IHtmlContent requiredMark(params string[] keys) => keys.Any(Model.IsFieldRequired)
         ? new Microsoft.AspNetCore.Html.HtmlString(" <span class=\"text-danger\">*</span>")
         : Microsoft.AspNetCore.Html.HtmlString.Empty;
@@ -223,6 +226,7 @@
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">@localizer["LocationLabel"]@requiredMark(NewCallFieldKeys.Address, NewCallFieldKeys.What3Words, NewCallFieldKeys.Geolocation)</label>
                                 <div class="col-sm-10">
+                                    <partial name="_CallLocationPoiSelect" model="Model" />
                                     @if (showAddress || showWhat3Words)
                                     {
                                         <div class="row">
@@ -286,7 +290,11 @@
                                     <span class="help-inline">@localizer["DestinationHelp"]</span>
                                 </div>
                             </div>
+                            @* Suggest only: a call entered after the fact keeps the destination the dispatcher records. *@
+                            <partial name="_DestinationSuggestions" />
+                            <partial name="_CallDestinationLocation" model="Model" />
                         }
+                        <partial name="_CallRoutePlanSelect" model="Model" />
                         @if (Model.IsFieldVisible(NewCallFieldKeys.IndoorLocation))
                         {
                             <div class="form-group">
@@ -569,14 +577,16 @@
     @if (Model.CenterCoordinates != null && Model.CenterCoordinates.Latitude.HasValue && Model.CenterCoordinates.Longitude.HasValue)
     {
         <script type="text/javascript">
-            var centerLat = @(Model.CenterCoordinates.Latitude.Value);
-            var centerLng = @(Model.CenterCoordinates.Longitude.Value);
+            var centerLat = @(Model.CenterCoordinates.Latitude.Value.ToString(System.Globalization.CultureInfo.InvariantCulture));
+            var centerLng = @(Model.CenterCoordinates.Longitude.Value.ToString(System.Globalization.CultureInfo.InvariantCulture));
         </script>
     }
 
     @await Html.PartialAsync("_DispatchLocalizationScript")
     <partial name="_MapKitConfig" />
+    <script src="~/js/app/internal/dispatch/resgrid.dispatch.destinations.js"></script>
     <script src="~/js/app/internal/dispatch/resgrid.dispatch.addArchivedCall.js"></script>
+    <partial name="_CallLocationsScript" model="Model" />
 
     <script type="text/javascript">
         var _alertNotes = [];

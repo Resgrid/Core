@@ -201,7 +201,7 @@
     <value>Discount Code</value>
   </data>
   <data name="AffiliateCode" xml:space="preserve">
-    <value>Affiliate Code</value>
+    <value>Code partenaire/compte</value>
   </data>
   <data name="Region" xml:space="preserve">
     <value>Région</value>

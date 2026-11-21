@@ -205,7 +205,7 @@
     <value>Importaciones</value>
   </data>
   <data name="PoiImportsHelp" xml:space="preserve">
-    <value>Las importaciones se ejecutan en segundo plano y suelen empezar en menos de un minuto. Actualice esta página para ver su progreso.</value>
+    <value>Las importaciones se ejecutan en segundo plano y suelen empezar en menos de un minuto. Esta lista se actualiza sola mientras hay una importación en curso.</value>
   </data>
   <data name="PoiImportsRefresh" xml:space="preserve">
     <value>Actualizar</value>
@@ -580,5 +580,32 @@
   </data>
   <data name="PoiAvailabilitySaveFailed" xml:space="preserve">
     <value>No se pudo guardar la disponibilidad: el POI ya no es un destino. Vuelva a cargar la página e inténtelo de nuevo.</value>
+  </data>
+  <data name="ManagePois" xml:space="preserve">
+    <value>Administrar PDI</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>Dirección</value>
+  </data>
+  <data name="ImportFileRequired" xml:space="preserve">
+    <value>Elija un archivo para subir.</value>
+  </data>
+  <data name="ImportFileTypeInvalid" xml:space="preserve">
+    <value>El tipo de archivo ({0}) no se puede importar como PDI: suba un archivo KML, KMZ o CSV.</value>
+  </data>
+  <data name="ImportFileTooLarge" xml:space="preserve">
+    <value>El archivo es demasiado grande: debe ser menor de 10 MB.</value>
+  </data>
+  <data name="ImportTypeRequired" xml:space="preserve">
+    <value>Elija el tipo de PDI en el que importar.</value>
+  </data>
+  <data name="ImportChooseType" xml:space="preserve">
+    <value>Elija un tipo de PDI</value>
+  </data>
+  <data name="ImportNoValidRows" xml:space="preserve">
+    <value>Ninguna de las {0} entradas del archivo tiene coordenadas válidas ni una dirección (compruebe que la latitud y la longitud no estén intercambiadas ni vacías).</value>
+  </data>
+  <data name="ImportNothingFound" xml:space="preserve">
+    <value>No se encontraron marcadores ni filas con coordenadas o una dirección en el archivo subido.</value>
   </data>
 </root>

@@ -2026,6 +2026,11 @@ Calls Active calls and their dispatch status. Closing a call can notify everyone
 
 New Call Create and dispatch a call. Consistent call types and statuses make dispatching, response tracking and reporting reliable from the first call. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Collect your call types, the statuses members report while responding, and the details of any CAD or paging system that should create calls.
 
+<a id="call-locations"></a>
+## Call locations, destinations and routes
+
+Call locations, destinations and routes A call's location can be picked from a point of interest, its destination can be a point of interest or a free address, coordinates or what3words, and it can carry a pre-defined route that the unit working it runs in the app, stop by stop. Consistent call types and statuses make dispatching, response tracking and reporting reliable from the first call. Add the places you pick up from and deliver to as points of interest, and create active route plans with a start and an end for runs you repeat. On New Call, pick the location's point of interest, the destination and a route; a blank call location takes the route start and a blank destination the route end. It works on new, pending, scheduled and recurring calls, on Update Call and in the Omni Dispatch app. Picking a point of interest fills the address and the map pin, which can still be changed. A destination POI and a free destination location are exclusive: choosing one clears the other. Plus codes are only looked up, never stored. The route picker lists only active route plans whose start and end can be found, and is hidden when there are none; a route never overwrites a location or destination already filled. When a unit makes the call its active call, the Omni Unit app starts the route run, leads the unit to the route start first and checks in at each stop; View Call lists the call's route runs. The New Call Form Fields rule for Destination covers a destination POI and a free destination alike.
+
 <a id="archived-calls"></a>
 ## Archived Calls
 
@@ -2039,7 +2044,12 @@ Pending Calls Calls saved for a dispatcher to send later, such as follow-ups ano
 <a id="scheduled-calls"></a>
 ## Scheduled Calls
 
-Scheduled Calls Calls that go out by themselves at a future time and can be sent early or rescheduled. Consistent call types and statuses make dispatching, response tracking and reporting reliable from the first call. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Collect your call types, the statuses members report while responding, and the details of any CAD or paging system that should create calls.
+Scheduled Calls Calls that go out by themselves at a future time and can be sent early or rescheduled, with a calendar of every scheduled and recurring call. Consistent call types and statuses make dispatching, response tracking and reporting reliable from the first call. A department adds Structure Fire and Medical call types, sets Responding and On Scene statuses and connects its county CAD email feed. Collect your call types, the statuses members report while responding, and the details of any CAD or paging system that should create calls.
+
+<a id="recurring-calls"></a>
+## Recurring calls
+
+Recurring calls Calls that repeat on a schedule, such as transfers every Tuesday and Thursday at 08:00, 13:00 and 19:00. Each one becomes a scheduled call ahead of its time and goes out by itself, or a dispatcher is alerted to send it. Consistent call types and statuses make dispatching, response tracking and reporting reliable from the first call. Open Scheduled Calls and choose Recurring Calls, then New Recurring Call, or press Repeat on a call you already sent. Fill in the call details, facilities and contact, who to dispatch and who to alert, then the schedule, when each call is created and who sends each call. Check the next dispatches and the calendar before you save. Times are the department's local time. Each call is created the chosen time ahead of its dispatch (one hour to seven days, one day by default) and then shows in Scheduled Calls, where it can be changed, sent early or deleted on its own. A call is never created for a time more than 10 minutes past, and saving or resuming never sends one at once. When a call goes out, units and people who are unavailable are left off it; if nobody is left, it is held as a pending call. Needs attention lists held, missed, failed and due calls and alerts the people chosen under Who to alert. Also use the matching run card adds that run card's resources when the call goes out. The pickup facility's point of interest becomes each call's location, and a destination and a route can be set. A recurring call can be paused with a reason and a date to resume, and changing it can replace upcoming calls already created. Anyone who can view calls sees recurring calls and the calendar; anyone who can create calls can send, skip or create a single run; whoever created a recurring call, and department admins, change, pause or delete it.
 
 <a id="call-templates"></a>
 ## Call templates
@@ -2096,9 +2106,9 @@ Unit Staffing Assign crew members to units. Units let dispatchers send the right
 <a id="setting-enablemodernnotifications"></a>
 ## Enable Modern Notifications
 
-Enable Modern Notifications. Use supported modern notification behavior. Verify each consumer and channel; provider acceptance is not delivery.
+Enable Modern Notifications. Retired. Modern notification sounds are now on for every department and user; there is nothing to set.
 
-Default: false. Source: DepartmentSettingTypes.EnableModernNotifications.
+Default: unused. Source: DepartmentSettingTypes.EnableModernNotifications.
 
 <a id="module-messagingdisabled"></a>
 ## Messaging availability
@@ -2601,7 +2611,7 @@ Default: none (Resgrid's providers). Source: DepartmentSettingTypes.MappingProvi
 <a id="setting-destinationsuggestions"></a>
 ## Destination suggestions
 
-Destination suggestions. Suggests the best destination for a call, and for a unit's status destination, from the department's destination rules (Mapping, Destination Rules) and the incident location, with drive time and distance. Suggest and fill also fills a new call's empty destination with the best one; dispatchers and crews can still choose another. Off by default, because each suggestion looks up drive times.
+Destination suggestions. Suggests the best destination for a call, and for a unit's status destination, from the department's destination rules (Mapping, Manage POIs, Destination Rules) and the incident location, with drive time and distance. Suggest and fill also fills a new call's empty destination with the best one; dispatchers and crews can still choose another. Off by default, because each suggestion looks up drive times.
 
 Default: off (preferred capability window 3 minutes). Source: DepartmentSettingTypes.DestinationSuggestions.
 
@@ -2746,7 +2756,22 @@ Mapping The live map of personnel, units and calls. A current map shows where re
 <a id="pois"></a>
 ## Points of Interest
 
-Points of Interest Points of interest such as stations, hospitals and hydrants. A current map shows where responders and apparatus are and puts important locations in front of dispatchers. A department adds its stations and hospitals as points of interest and lets personnel locations expire after 60 minutes so old positions disappear. Add the locations dispatchers need to see. Give a POI type a custom icon to replace its marker on the map and in the apps.
+Points of Interest Points of interest such as stations, hospitals and hydrants. A current map shows where responders and apparatus are and puts important locations in front of dispatchers. A department adds its stations and hospitals as points of interest and lets personnel locations expire after 60 minutes so old positions disappear. Add the locations dispatchers need to see, one at a time or by importing a KML, KMZ or CSV file; addresses in the file are looked up in the background. Give a POI type a custom icon to replace its marker on the map and in the apps. The import runs in the background: the POIs page shows each import's progress, retries addresses the lookup service could not answer and reports the rows it could not place. Department admins and hydrant managers can import, and department admins can remove POIs in bulk.
+
+<a id="poi-capabilities"></a>
+## POI capabilities
+
+POI capabilities What your points of interest offer, such as a cath lab, stroke center, helipad or drafting site, ticked on each POI so dispatchers and crews can filter and rank destinations by what the patient or task needs. A current map shows where responders and apparatus are and puts important locations in front of dispatchers. Open Mapping, then Manage POIs, and choose POI Capabilities. Add what your destinations offer, then tick them on each POI, or add a Capabilities column to a POI import file. Department admins manage the list; deleting a capability takes it off every POI. An import file's Capabilities column (also Specialties or Services, several values separated by ;, , or |) tags each imported POI and adds any capability the department does not have yet. Capabilities show in the POI list, the web call form's destination list and the apps' destination pickers, where crews filter by one capability and see the nearest first. Destination rules can require or prefer them, and destination availability can mark one unavailable.
+
+<a id="destination-availability"></a>
+## Destination availability
+
+Destination availability Whether each destination can take patients right now: open, limited, on diversion or closed, with the capabilities it cannot provide, a note and how long the report lasts. A current map shows where responders and apparatus are and puts important locations in front of dispatchers. Open Mapping, then Manage POIs, and choose Destination Availability, or use the Destination availability link under the call form's Destination. Choose {SET} on a destination when it reports a diversion, a closure or a capability that is down. Department admins and anyone who can create calls can set it. A report lasts from 1 to 24 hours or until someone changes it; setting it back to Open clears it, and an expired report reads as open. Every app badges a destination that is on diversion or closed and ranks it after those that can take the patient, and destination suggestions only fall back to it when nothing better is left. Nothing is refused: a crew with no alternative can still go there. The Omni Dispatch app's Destinations screen shows the same list.
+
+<a id="destination-rules"></a>
+## Destination rules
+
+Destination rules Rules that choose the destination types and the required and preferred capabilities for a call's type and priority and the travelling unit's type, so Resgrid can suggest the nearest suitable destination with drive time and distance. A current map shows where responders and apparatus are and puts important locations in front of dispatchers. Open Mapping, then Manage POIs, and choose Destination Rules. Add a rule for each case, for example cardiac calls go to a hospital with a cath lab and a water tender goes to a drafting site, check them with Try it, then set Destination suggestions to Suggest destinations or Suggest and fill in the destination. A rule matches on call types, priorities and unit types. Rules for a unit type come first, then rules with more conditions; the first rule with destination types sets them, later ones narrow them, and a rule that would leave no type is set aside, which Try it shows with the reason. A preferred capability only wins within the preferred window (3 minutes by default) of the nearest destination that meets the requirements. Suggestions rank destinations that are ready first, then those on diversion, then those missing a required capability or with it down, then closed ones, and look up drive times for the five nearest that can take the patient. Suggestions are Off by default because each one looks up drive times. In Suggest and fill mode New Call fills an empty destination, never one somebody chose or a free destination location; Update Call only suggests. Department admins manage the rules and the setting.
 
 <a id="custom-map-icons"></a>
 ## Custom map icons
@@ -2796,7 +2821,7 @@ Indoor maps Floor plans and zones for buildings. Keep building references availa
 <a id="routes"></a>
 ## Routes
 
-Routes Planned routes, such as patrols, and who is assigned to them. Prepare recurring route information with current source ownership. A department adds its stations and hospitals as points of interest and lets personnel locations expire after 60 minutes so old positions disappear. Confirm members allow location sharing in the Responder app, and decide how long a position should stay on the map.
+Routes Planned routes, such as patrols or transport runs, who is assigned to them, and routes a call can carry so the unit working it runs the planned stops. Prepare recurring route information with current source ownership. A department adds its stations and hospitals as points of interest and lets personnel locations expire after 60 minutes so old positions disappear. Confirm members allow location sharing in the Responder app, and decide how long a position should stay on the map. A route plan that is active and has a start and an end can be put on a call; the unit working the call then runs it in the Omni Unit app, and the run links back to the call.
 
 <a id="setting-allowsignupsformultipleshiftgroups"></a>
 ## Allow Signups For Multiple Shift Groups
@@ -3791,6 +3816,21 @@ Advanced Data Protection The Advanced Data Protection add-on: extra encryption a
 
 Enhanced AI AI assistance beyond the free Admin Assist allowance. Help explain approved evidence and prepare drafts for human review when released. Ask for an explanation of a configuration finding when the conversational feature is available. Nothing to set up yet; your free Admin Assist allowance works without it.
 
+<a id="ai-intake"></a>
+## Enhanced AI call intake
+
+Enhanced AI call intake Enhanced AI reads each message from an intake channel set to Enhanced AI processing and fills in the pending call's type, address, priority and a summary. Dispatchers start from a filled-in call instead of retyping free text. The pending call is saved first, so no message is lost when AI is unavailable. A text saying a car is in the ditch on Route 9 near mile marker 12 becomes a pending vehicle accident call with the location filled in, ready for a dispatcher to check. Needs the Enhanced AI add-on with AI intake turned on for your department. On Intake Channels, edit a channel and set Processing to Enhanced AI. A dispatcher still reviews every pending call, and departments using Advanced Data Protection are not processed by AI.
+
+<a id="ai-voice-intake"></a>
+## Enhanced AI voice intake
+
+Enhanced AI voice intake Callers to the department's private inbound dispatch number who are not members answer spoken, guided questions, and Enhanced AI turns their answers into a pending call. Take incident reports by phone at any hour without someone answering, while a dispatcher still decides who to send. A caller reports smoke behind a barn, answers the questions about where it is and what they see, and a pending call with the transcript waits for the dispatcher. Needs the Private Inbound Dispatch Number and Enhanced AI add-ons with AI voice intake turned on for your department. On Private Inbound Dispatch Number, turn on Take incident reports by voice and save. Voice calls have a monthly fair-use limit; over it, callers are asked to text the number instead.
+
+<a id="ai-destination-advice"></a>
+## Enhanced AI destination advice
+
+Enhanced AI destination advice Enhanced AI recommends the destination for an open call from its nature, note and call notes and your destinations' capabilities and availability, and suggests a change when the call's details change. Catch a patient who now needs a higher level of care, such as a trauma center, without anyone re-checking every destination by hand. A call note reports a penetrating injury, and the advice on the call suggests the trauma center instead of the nearest hospital, for the dispatcher to apply or dismiss. Needs the Enhanced AI add-on with AI destination advice turned on for your department. Add your destinations with their capabilities and destination rules first. The advice shows on View Call and Update Call, nothing changes until someone applies it, and departments using Advanced Data Protection do not get advice.
+
 <a id="setting-documentnumberingconfig"></a>
 ## Document Numbering Config
 
@@ -4162,3 +4202,18 @@ Situation Desk Lifeline status, open actions, decisions and mapped situation fea
 ## Incident Back Office
 
 Incident Back Office The Incident Back Office add-on: activation, planning, logistics, finance and coordination boards for large incidents. Keep the support side of a long incident in one place instead of spreadsheets, radio notes and email. Book lodging and meals for arriving crews and track each purchase against the incident budget. Incident finance and coordination boards are turned on separately. Incident records stay in Records and follow its permissions. No reimbursement is guaranteed.
+
+<a id="dedicated-number"></a>
+## Department number and intake
+
+Department number and intake Choose and provision your department's number, choose whether texts and voice calls to it create pending calls, and release it when you no longer need it. Give the public, partner agencies and members one local number to text or call, and every report waits in Pending Calls for a dispatcher instead of on someone's personal phone. A rural district prints its new local number on its non-emergency reporting flyers, and a text about a tree down across a road arrives as a pending call that a dispatcher checks and sends. Once the add-on is active, open the department menu, then Private Inbound Dispatch Number. Search by country, area code or digits, provision the number you want, turn on Create pending calls from texts and save. Then send the number a test text and check Pending Calls.
+
+<a id="intake-channels"></a>
+## Intake channels
+
+Intake channels Turn texts to the department's number, mail to an intake email address, posts in a linked Slack, Teams, WhatsApp, Telegram, Discord or Google Chat channel, and signed webhook requests into pending calls. Requests that arrive outside the radio and CAD land in one queue for a dispatcher to review; intake never dispatches anyone by itself. A hospital transfer desk posts requests in a shared Teams channel, and each post becomes a pending call with the channel's default call type and priority. Open the department menu, then Intake Channels, and add a channel for each source. Choose Call template or Enhanced AI processing, limit Allowed senders, set a default priority and call type, then send a test message and check Pending Calls.
+
+<a id="addon-dedicated-number"></a>
+## Private Inbound Dispatch Number
+
+Private Inbound Dispatch Number The Private Inbound Dispatch Number add-on: your department's own phone number for taking calls by text and by voice. Members and the public reach your department directly instead of through the shared Resgrid number. The managing member buys the add-on on the Private Inbound Dispatch Number page or its billing page, and a department admin then provisions a local number. Sold only with an active paid entity plan, and bought or cancelled by the managing member. Billed monthly per department, even on an annual plan. When the add-on ends, the number stops taking texts and calls and is released after a grace period unless the add-on is renewed.

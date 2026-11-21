@@ -73,6 +73,8 @@ namespace Resgrid.Providers.Bus
 			_eventAggregator.AddAsyncListener(outstandingRequirementsUpdatedTopicHandler);
 			_eventAggregator.AddAsyncListener(unitNavigationUpdatedTopicHandler);
 			_eventAggregator.AddAsyncListener(recurringCallAlertsUpdatedTopicHandler);
+			_eventAggregator.AddAsyncListener(aiDestinationAdviceUpdatedTopicHandler);
+			_eventAggregator.AddAsyncListener(intakeConversationUpdatedTopicHandler);
 			_eventAggregator.AddAsyncListener<DomainEventDispatchedEvent>(async message =>
 			{
 				if (message.ProducerSubsystem != "Checklists") return;
@@ -741,6 +743,26 @@ namespace Resgrid.Providers.Bus
 
 			if (!await _rabbitTopicProvider.UnitNavigationUpdated(message.DepartmentId, message.UnitId, message.Payload))
 				Framework.Logging.LogError($"Unable to publish the unit navigation realtime update for department {message.DepartmentId}.");
+		};
+
+		/// <summary>EventingTypes 18: a call's Enhanced AI destination advice changed (ids and state only).</summary>
+		public Func<AiDestinationAdviceUpdatedEvent, Task> aiDestinationAdviceUpdatedTopicHandler = async delegate (AiDestinationAdviceUpdatedEvent message)
+		{
+			if (_rabbitTopicProvider == null)
+				_rabbitTopicProvider = new RabbitTopicProvider();
+
+			if (!await _rabbitTopicProvider.AiDestinationAdviceUpdated(message.DepartmentId, message.CallId, message.Payload))
+				Framework.Logging.LogError($"Unable to publish the AI destination advice realtime update for department {message.DepartmentId}.");
+		};
+
+		/// <summary>EventingTypes 21: an intake SMS conversation changed (ids, state and handler only; never the text or the texter's number).</summary>
+		public Func<IntakeConversationUpdatedEvent, Task> intakeConversationUpdatedTopicHandler = async delegate (IntakeConversationUpdatedEvent message)
+		{
+			if (_rabbitTopicProvider == null)
+				_rabbitTopicProvider = new RabbitTopicProvider();
+
+			if (!await _rabbitTopicProvider.IntakeConversationUpdated(message.DepartmentId, message.CallId, message.Payload))
+				Framework.Logging.LogError($"Unable to publish the intake conversation realtime update for department {message.DepartmentId}.");
 		};
 
 		public Func<RecurringCallAlertsUpdatedEvent, Task> recurringCallAlertsUpdatedTopicHandler = async delegate (RecurringCallAlertsUpdatedEvent message)

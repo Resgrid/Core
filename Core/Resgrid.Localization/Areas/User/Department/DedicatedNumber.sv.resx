@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Private Inbound Dispatch Number</value>
+  </data>
+  <data name="Intro" xml:space="preserve">
+    <value>Er avdelnings eget telefonnummer. Sms till numret blir väntande ärenden som larmoperatörerna granskar, och medlemmar kan ringa det för att nå röstmenyn.</value>
+  </data>
+  <data name="AddonTitle" xml:space="preserve">
+    <value>Tillägg</value>
+  </data>
+  <data name="AddonActive" xml:space="preserve">
+    <value>Er avdelning har tillägget Private Inbound Dispatch Number.</value>
+  </data>
+  <data name="ManageBilling" xml:space="preserve">
+    <value>Hantera tillägget</value>
+  </data>
+  <data name="RequiresEntityPlan" xml:space="preserve">
+    <value>Tillägget Private Inbound Dispatch Number finns med en aktiv enhetsplan. Byt plan på prenumerationssidan för att lägga till det.</value>
+  </data>
+  <data name="ViewPlans" xml:space="preserve">
+    <value>Visa planer</value>
+  </data>
+  <data name="NotOffered" xml:space="preserve">
+    <value>Tillägget Private Inbound Dispatch Number är inte tillgängligt för er avdelning ännu.</value>
+  </data>
+  <data name="BuyPrompt" xml:space="preserve">
+    <value>Köp tillägget Private Inbound Dispatch Number för att välja och aktivera ett nummer.</value>
+  </data>
+  <data name="BuyAddon" xml:space="preserve">
+    <value>Köp tillägget</value>
+  </data>
+  <data name="ActiveTitle" xml:space="preserve">
+    <value>Ert nummer</value>
+  </data>
+  <data name="ProvisionedOn" xml:space="preserve">
+    <value>Aktiverat {0}</value>
+  </data>
+  <data name="AddonEnding" xml:space="preserve">
+    <value>Tillägget är inte längre aktivt. Numret fungerar en kort tid till och tar sedan inte emot sms och samtal förrän tillägget förnyas.</value>
+  </data>
+  <data name="SmsIntake" xml:space="preserve">
+    <value>Skapa väntande ärenden från sms</value>
+  </data>
+  <data name="SmsIntakeHelp" xml:space="preserve">
+    <value>Sms till det här numret blir väntande ärenden. Numret tar bara emot; svar kommer från Resgrids huvudnummer.</value>
+  </data>
+  <data name="VoiceIntake" xml:space="preserve">
+    <value>Ta emot rapporter via röst</value>
+  </data>
+  <data name="VoiceIntakeHelp" xml:space="preserve">
+    <value>Uppringare som inte är medlemmar svarar på guidade frågor och ett väntande ärende skapas. Kräver tillägget Enhanced AI med AI-röstmottagning.</value>
+  </data>
+  <data name="VoiceIntakeUnavailable" xml:space="preserve">
+    <value>AI-röstmottagning är inte tillgänglig för er avdelning ännu. Inställningen gäller när den blir det.</value>
+  </data>
+  <data name="SaveIntake" xml:space="preserve">
+    <value>Spara</value>
+  </data>
+  <data name="ReleaseTitle" xml:space="preserve">
+    <value>Släpp numret</value>
+  </data>
+  <data name="ReleaseHelp" xml:space="preserve">
+    <value>Lämnar tillbaka numret till operatören direkt. Sms och samtal till det upphör, och numret kan inte återställas.</value>
+  </data>
+  <data name="ReleaseConfirm" xml:space="preserve">
+    <value>Jag förstår att numret inte kan återställas</value>
+  </data>
+  <data name="Release" xml:space="preserve">
+    <value>Släpp numret</value>
+  </data>
+  <data name="LapsedTitle" xml:space="preserve">
+    <value>Nummer pausat</value>
+  </data>
+  <data name="LapsedText" xml:space="preserve">
+    <value>{0} slutade ta emot sms och samtal när tillägget upphörde. Det släpps {1} om tillägget inte förnyas.</value>
+  </data>
+  <data name="Reactivate" xml:space="preserve">
+    <value>Ta numret i bruk igen</value>
+  </data>
+  <data name="ReleaseNow" xml:space="preserve">
+    <value>Släpp det nu</value>
+  </data>
+  <data name="ProvisioningText" xml:space="preserve">
+    <value>Köpet av {0} pågår. Uppdatera sidan om en minut.</value>
+  </data>
+  <data name="LastFailure" xml:space="preserve">
+    <value>Det senaste köpet av {0} slutfördes inte. Välj ett annat nummer.</value>
+  </data>
+  <data name="SearchTitle" xml:space="preserve">
+    <value>Välj ett nummer</value>
+  </data>
+  <data name="NoCountries" xml:space="preserve">
+    <value>Det finns inga nummer i er avdelnings land ännu. Kontakta Resgrids support.</value>
+  </data>
+  <data name="Country" xml:space="preserve">
+    <value>Land</value>
+  </data>
+  <data name="AreaCode" xml:space="preserve">
+    <value>Riktnummer</value>
+  </data>
+  <data name="Contains" xml:space="preserve">
+    <value>Innehåller</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Sök</value>
+  </data>
+  <data name="SearchHelp" xml:space="preserve">
+    <value>Riktnummer gäller USA och Kanada. Använd Innehåller för siffror som numret ska innehålla; * matchar valfri siffra.</value>
+  </data>
+  <data name="NoResults" xml:space="preserve">
+    <value>Inga nummer matchade. Prova ett annat riktnummer eller färre siffror.</value>
+  </data>
+  <data name="ResultsNumber" xml:space="preserve">
+    <value>Nummer</value>
+  </data>
+  <data name="ResultsLocation" xml:space="preserve">
+    <value>Plats</value>
+  </data>
+  <data name="ProvisionConfirm" xml:space="preserve">
+    <value>Aktivera {0} som er avdelnings nummer?</value>
+  </data>
+  <data name="Provision" xml:space="preserve">
+    <value>Aktivera</value>
+  </data>
+  <data name="Provisioned" xml:space="preserve">
+    <value>{0} är nu er avdelnings nummer.</value>
+  </data>
+  <data name="ProvisionFailed" xml:space="preserve">
+    <value>Operatören kunde inte leverera det numret. Välj ett annat.</value>
+  </data>
+  <data name="IntakeSaved" xml:space="preserve">
+    <value>Mottagningsinställningarna sparades.</value>
+  </data>
+  <data name="ReleaseConfirmRequired" xml:space="preserve">
+    <value>Bekräfta att du vill släppa numret.</value>
+  </data>
+  <data name="Released" xml:space="preserve">
+    <value>Numret släpptes.</value>
+  </data>
+  <data name="ReleaseFailed" xml:space="preserve">
+    <value>Operatören släppte inte numret. Försök igen senare.</value>
+  </data>
+  <data name="Reactivated" xml:space="preserve">
+    <value>Numret är i bruk igen.</value>
+  </data>
+  <data name="Error.AddonRequired" xml:space="preserve">
+    <value>Er avdelning behöver först tillägget Private Inbound Dispatch Number.</value>
+  </data>
+  <data name="Error.AlreadyHasNumber" xml:space="preserve">
+    <value>Er avdelning har redan ett nummer.</value>
+  </data>
+  <data name="Error.CountryNotAllowed" xml:space="preserve">
+    <value>Nummer i det landet är inte tillgängliga för er avdelning.</value>
+  </data>
+  <data name="Error.InvalidNumber" xml:space="preserve">
+    <value>Kontrollera numret, riktnumret och siffrorna och försök igen.</value>
+  </data>
+  <data name="Error.NumberUnavailable" xml:space="preserve">
+    <value>Det numret är inte längre tillgängligt. Välj ett annat.</value>
+  </data>
+  <data name="Error.NoActiveNumber" xml:space="preserve">
+    <value>Er avdelning har inget nummer att ändra.</value>
+  </data>
+  <data name="Error.CarrierUnavailable" xml:space="preserve">
+    <value>Telefonoperatören gick inte att nå. Försök igen om några minuter.</value>
+  </data>
+  <data name="BillingInboundOnlyNote" xml:space="preserve">
+    <value>Numret tar bara emot sms: de blir väntande ärenden, och svar kommer från Resgrids huvudnummer.</value>
+  </data>
+  <data name="BillingLapseNote" xml:space="preserve">
+    <value>Om tillägget upphör slutar numret ta emot sms och samtal och släpps {0} dagar senare om ni inte förnyar.</value>
+  </data>
+  <data name="BillingVoiceNote" xml:space="preserve">
+    <value>Röstmottagning för uppringare som inte är medlemmar kräver tillägget Enhanced AI.</value>
+  </data>
+  <data name="ManageNumber" xml:space="preserve">
+    <value>Hantera ert nummer</value>
+  </data>
+  <data name="TextSettingsTitle" xml:space="preserve">
+    <value>Privat inkommande larmnummer</value>
+  </data>
+  <data name="TextSettingsActive" xml:space="preserve">
+    <value>tar emot inkommande sms för er avdelning.</value>
+  </data>
+  <data name="TextSettingsSmsOff" xml:space="preserve">
+    <value>är er avdelnings nummer; sms till det skapar inga ärenden.</value>
+  </data>
+  <data name="TextSettingsLapsed" xml:space="preserve">
+    <value>Ert privata inkommande larmnummer {0} är pausat till {1}.</value>
+  </data>
+  <data name="TextSettingsNone" xml:space="preserve">
+    <value>Er avdelning har inget eget nummer. Skaffa ett med tillägget Private Inbound Dispatch Number.</value>
+  </data>
+  <data name="TextSettingsLink" xml:space="preserve">
+    <value>Hantera privat inkommande larmnummer</value>
+  </data>
+  <data name="TextSettingsInboundOnly" xml:space="preserve">
+    <value>Avdelningsnummer tar bara emot sms; svar kommer från Resgrids huvudnummer.</value>
+  </data>
+  <data name="StopTitle" xml:space="preserve">
+    <value>Betalningen för det här numret har upphört</value>
+  </data>
+  <data name="StopAddon" xml:space="preserve">
+    <value>Betalningen för tillägget Private Inbound Dispatch Number upphörde {0} (uppsagt eller obetalt).</value>
+  </data>
+  <data name="StopPlan" xml:space="preserve">
+    <value>Sedan {0} är avdelningens plan inte längre en aktiv betald plan, vilket tillägget Private Inbound Dispatch Number kräver.</value>
+  </data>
+  <data name="StopIntakeOn" xml:space="preserve">
+    <value>{0} slutar ta emot sms och samtal {1}.</value>
+  </data>
+  <data name="StopIntakeStoppedOn" xml:space="preserve">
+    <value>{0} slutade ta emot sms och samtal {1}.</value>
+  </data>
+  <data name="StopIntakeStopped" xml:space="preserve">
+    <value>{0} tar inte längre emot sms och samtal.</value>
+  </data>
+  <data name="StopReleaseOn" xml:space="preserve">
+    <value>Numret lämnas tillbaka till operatören {0}. Förnya tillägget (och er plan) innan dess för att behålla det.</value>
+  </data>
+  <data name="StopWarningsSent" xml:space="preserve">
+    <value>Varningar som skickats till avdelningens administratörer: {0}.</value>
+  </data>
+  <data name="StopWarningsNone" xml:space="preserve">
+    <value>Ingen varning har skickats till avdelningens administratörer ännu.</value>
+  </data>
+  <data name="StopLastWarning" xml:space="preserve">
+    <value>Senaste varning: {0}.</value>
+  </data>
+  <data name="Warning.Stopped" xml:space="preserve">
+    <value>betalningen upphörde</value>
+  </data>
+  <data name="Warning.Days" xml:space="preserve">
+    <value>{0} dagar före frisläppningen</value>
+  </data>
+  <data name="Warning.OneDay" xml:space="preserve">
+    <value>1 dag före frisläppningen</value>
+  </data>
+  <data name="Region" xml:space="preserve">
+    <value>Delstat / provins</value>
+  </data>
+  <data name="RegionAny" xml:space="preserve">
+    <value>Alla</value>
+  </data>
+  <data name="City" xml:space="preserve">
+    <value>Ort</value>
+  </data>
+  <data name="PostalCode" xml:space="preserve">
+    <value>Postnummer</value>
+  </data>
+  <data name="NearDepartment" xml:space="preserve">
+    <value>Nära avdelningens adress</value>
+  </data>
+  <data name="NearDistance" xml:space="preserve">
+    <value>Inom</value>
+  </data>
+  <data name="DistanceMiles" xml:space="preserve">
+    <value>{0} engelska mil ({1} km)</value>
+  </data>
+  <data name="SearchFiltersHelp" xml:space="preserve">
+    <value>Sökningar på delstat / provins, postnummer och nära avdelningen gäller också bara USA och Kanada. Varje resultat kan ta emot både sms och samtal.</value>
+  </data>
+  <data name="ResultsType" xml:space="preserve">
+    <value>Nummertyp</value>
+  </data>
+  <data name="NumberType.Local" xml:space="preserve">
+    <value>Lokalt nummer</value>
+  </data>
+  <data name="NumberType.Mobile" xml:space="preserve">
+    <value>Mobilnummer</value>
+  </data>
+  <data name="Error.DepartmentLocationUnknown" xml:space="preserve">
+    <value>Avdelningens plats är okänd. Ange avdelningens adress eller kartcentrum, eller sök på delstat, ort eller postnummer i stället.</value>
+  </data>
+  <data name="Error.PlanRequired" xml:space="preserve">
+    <value>Tillägget Private Inbound Dispatch Number kräver en aktiv betald plan. Förnya avdelningens plan först.</value>
+  </data>
+</root>

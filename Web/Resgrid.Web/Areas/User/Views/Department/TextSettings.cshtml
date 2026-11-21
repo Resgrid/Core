@@ -1,5 +1,6 @@
 ﻿@using Resgrid.Model
 @model Resgrid.Web.Areas.User.Models.Departments.Text.TextSetupModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.IntakeChannels> intakeChannelsLocalizer
 @{
 	ViewBag.Title = "Resgrid | Text Messaging Settings";
 }
@@ -39,72 +40,16 @@
 								}
 							</div>
 						</div>
-						@*
-						@if (!Model.CanProvisionNumber)
-						{
-							<div class="row">
-								<div class="col-md-12">
-									<div class="alert alert-danger fade in">
-										<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-										<h4>Wrong Plan</h4>
-										<p>Your department's current plan doesn't support inbound Text Messaging. Upgrade your plan to Professional or higher to get this feature.</p>
-										<p>
-											<a href="@Url.Action("Index", "Subscription", new {Area = "User"})" class="btn btn-success">Upgrade Your Plan</a>
-										</p>
-									</div>
-								</div>
-							</div>
-						}
-
-						<div class="form-group">
-							<label class="col-sm-2 control-label">Enable Text to Call</label>
+						@* Department numbers are bought with the Dedicated Number add-on on their own page; this only summarizes it. *@
+						<partial name="_DedicatedNumberSummary" />
+						@* Intake channels (texts, email, chat, webhooks → pending calls) are managed on their own page. *@
+						<div class="form-group" id="intakeChannelsLink">
+							<label class="col-sm-2 control-label">@intakeChannelsLocalizer["PageTitle"]</label>
 							<div class="col-sm-10">
-								<div class="checkbox checkbox-primary">
-									<input type="checkbox" class="checkbox checkbox-primary" asp-for="EnableTextToCall">
-									<label></label>
-								</div>
-								<span class="help-block m-b-none">This enables the ability of the department to create calls from text messages</span>
+								<p class="form-control-static">@intakeChannelsLocalizer["TextSettingsIntro"]</p>
+								<a class="btn btn-default btn-sm" asp-controller="IntakeChannels" asp-action="Index" asp-route-area="User">@intakeChannelsLocalizer["ManageIntakeChannels"]</a>
 							</div>
 						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">Enable Text Command</label>
-							<div class="col-sm-10">
-								<div class="checkbox checkbox-primary">
-									<input type="checkbox" class="checkbox checkbox-primary" asp-for="EnableTextCommand">
-									<label></label>
-								</div>
-								<span class="help-block m-b-none">This enables the ability of personnel to control Resgrid via text messages</span>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label"></label>
-							<div class="col-sm-10">
-								<span class="help-block m-b-none"><b>Due to reglatory changes, for example A2P 10DLC, we are unable to send text messages out via department numbers. As such these provisioned numbers are for inbound call creation only.</b></span>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">
-								Your Inbound SMS/Text Number
-							</label>
-							<div class="col-sm-10">
-								<div class="row">
-									<div class="col-md-6">
-											@if (Model.CanProvisionNumber && String.IsNullOrWhiteSpace(Model.DepartmentTextToCallNumber))
-											{
-												<a data-toggle="modal" data-target="#provisionPhoneNumberModal" href="#"><div class="text-primary"><strong>No Phone Number</strong> <small>click to choose number.</small></div></a>
-											}
-											else if (!String.IsNullOrWhiteSpace(Model.DepartmentTextToCallNumber))
-											{
-												<div class="text-primary"><strong>@Model.DepartmentTextToCallNumber</strong></div>
-											}
-											else
-											{
-												<div class="text-primary"><strong>No Phone Number</strong></div>
-											}
-									</div>
-								</div>
-							</div>
-						</div>*@
 						<div class="form-group">
 							<label class="col-sm-2 control-label">
 								Inbound Dispatch Numbers
@@ -132,76 +77,6 @@
 						</div>
 					</form>
 				</div>
-			</div>
-		</div>
-	</div>
-</div>
-
-<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" id="provisionPhoneNumberModal">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title">Resgrid Text Message Number</h4>
-			</div>
-			<div class="modal-body">
-				<div class="row">
-					<div class="col-xs-5">
-						<div class="form-group">
-							<label class=" control-label required">
-								Country (Required)
-							</label>
-							<div class="controls">
-								<select class="input-xlarge" id="country" name="country">
-									<option value="" selected="selected">Select Country</option>
-									<option value="US">United States</option>
-									<option value="CA">Canada</option>
-									<option value="GB">United Kingdom</option>
-									<option value="AU">Australia</option>
-									<option value="IE">Ireland</option>
-									<option value="DE">Germany</option>
-								</select>
-							</div>
-						</div>
-					</div>
-					<div class="col-xs-5">
-						<div class="form-group">
-							<label class=" control-label">
-								Area Code (Optional)
-							</label>
-							<div class="controls">
-								<input type="text" id="areaCode" name="areaCode" class="input-xlarge" />
-							</div>
-						</div>
-					</div>
-					<div class="col-xs-2">
-						<div class="form-group">
-							<label class=" control-label">
-								
-							</label>
-							<div class="controls">
-								<button type="button" class="btn btn-primary btn-sm" id="searchNumbers" name="searchNumbers">
-									<span class="glyphicon glyphicon-search" aria-hidden="true"></span>
-								</button>
-							</div>
-						</div>
-						
-					</div>
-				</div>
-
-
-				<table class="table table-bordered table-striped table-hover data-table">
-					<thead>
-						<tr>
-							<th>Phone Number</th>
-							<th>&nbsp;</th>
-						</tr>
-					</thead>
-					<tbody id="phoneNumberTableBody"></tbody>
-				</table>
-			</div>
-			<div class="modal-footer">
-				<a href="@Url.Action("TextSettings", "Department", new {area = "User"})" class="btn btn-default">Close</a>
 			</div>
 		</div>
 	</div>

@@ -671,12 +671,6 @@
   <data name="ChatbotSaveError" xml:space="preserve">
     <value>Wystąpił błąd podczas zapisywania ustawień asystenta.</value>
   </data>
-  <data name="EnableModernNotifications" xml:space="preserve">
-    <value>Enable Modern Notifications</value>
-  </data>
-  <data name="EnableModernNotificationsHelp" xml:space="preserve">
-    <value>When enabled, push notifications will use the modern notification sounds instead of the legacy sounds for all users in this department.</value>
-  </data>
   <data name="ForceChatbotSecurityPin" xml:space="preserve">
     <value>Wymagaj kodu PIN bezpieczeństwa</value>
   </data>

@@ -4,6 +4,8 @@
 @inject Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.Search.Search> searchLocalizer
 @inject Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.DepartmentImport.DepartmentImport> importLocalizer
 @inject Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> departmentLocalizer
+@inject Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.Department.DedicatedNumber> dedicatedNumberLocalizer
+@inject Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.Department.IntakeChannels> intakeChannelsLocalizer
 @{
 	// Admin Assist opens on its setup tabs (Admin.Setup), or on its Admin AI tab once Admin.Assist and Ai.AdminAssist are on.
 	var adminAssistVisible = ClaimsAuthorizationHelper.IsUserDepartmentAdmin() &&
@@ -18,6 +20,12 @@
 	// Import & Migration: department administrators (permission 72) once Onboarding.MigrationWizard is on.
 	var importVisible = ClaimsAuthorizationHelper.IsUserDepartmentAdmin() &&
 		await featureToggleService.IsEnabledAsync(FeatureFlagKeys.OnboardingMigrationWizard, ClaimsAuthorizationHelper.GetDepartmentId());
+	// Dedicated Number (Intake.DedicatedNumber): department administrators; Text Messaging Settings links to it whatever the flag.
+	var dedicatedNumberVisible = ClaimsAuthorizationHelper.IsUserDepartmentAdmin() &&
+		await featureToggleService.IsEnabledAsync(FeatureFlagKeys.IntakeDedicatedNumber, ClaimsAuthorizationHelper.GetDepartmentId());
+	// Intake Channels (Intake.Channels): department administrators; Text Messaging Settings links to it whatever the flag.
+	var intakeChannelsVisible = ClaimsAuthorizationHelper.IsUserDepartmentAdmin() &&
+		await featureToggleService.IsEnabledAsync(FeatureFlagKeys.IntakeChannels, ClaimsAuthorizationHelper.GetDepartmentId());
 	// Calls awaiting resources (conditional run cards): dispatchers only; the badge stays hidden until a call is waiting.
 	var awaitingResourcesVisible = ClaimsAuthorizationHelper.CanCreateCall() &&
 		await featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCards, ClaimsAuthorizationHelper.GetDepartmentId()) &&
@@ -73,6 +81,14 @@
                         <li class="@Html.IsSelected(controller: "Department", action: "CallSettings")"><a asp-controller="Department" asp-action="CallSettings" asp-route-area="User">@commonLocalizer["CallSettings"]</a></li>
                         <li class="@Html.IsSelected(controller: "CustomStatuses", action: "Index")"><a asp-controller="CustomStatuses" asp-action="Index" asp-route-area="User">@commonLocalizer["CustomStatuses"]</a></li>
                         <li class="@Html.IsSelected(controller: "Department", action: "TextSettings")"><a asp-controller="Department" asp-action="TextSettings" asp-route-area="User">@commonLocalizer["TextMessaging"]</a></li>
+                        @if (dedicatedNumberVisible)
+                        {
+                            <li class="@Html.IsSelected(controller: "DedicatedNumber")"><a asp-controller="DedicatedNumber" asp-action="Index" asp-route-area="User">@dedicatedNumberLocalizer["PageTitle"]</a></li>
+                        }
+                        @if (intakeChannelsVisible)
+                        {
+                            <li class="@Html.IsSelected(controller: "IntakeChannels")"><a asp-controller="IntakeChannels" asp-action="Index" asp-route-area="User">@intakeChannelsLocalizer["PageTitle"]</a></li>
+                        }
                         <li class="@Html.IsSelected(controller: "Templates", action: "Index")"><a asp-controller="Templates" asp-action="Index" asp-route-area="User">@commonLocalizer["Templates"]</a></li>
                         <li class="@Html.IsSelected(controller: "Protocols", action: "Index")"><a asp-controller="Protocols" asp-action="Index" asp-route-area="User">@commonLocalizer["Protocols"]</a></li>
                         <li class="@Html.IsSelected(controller: "Department", action: "Types")"><a asp-controller="Department" asp-action="Types" asp-route-area="User">@commonLocalizer["Types"]</a></li>

@@ -31,6 +31,7 @@ namespace Resgrid.Services.Dashboard.Widgets.Administration
 			(PlanAddonTypes.BusinessOperations, FeatureFlagKeys.BusinessOperations),
 			(PlanAddonTypes.IncidentBackOffice, FeatureFlagKeys.IncidentBackOffice),
 			(PlanAddonTypes.EnhancedAi, FeatureFlagKeys.AiEnhanced),
+			(PlanAddonTypes.DedicatedNumber, FeatureFlagKeys.IntakeDedicatedNumber),
 			(PlanAddonTypes.ADP, FeatureFlagKeys.DepartmentProtectedDataEnrollment)
 		};
 

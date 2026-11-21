@@ -1,0 +1,144 @@
+{
+  "Version": "2026.09.25.2",
+  "Areas": [
+    {
+      "Id": "dedicated-number",
+      "LabelKey": "Area.dedicated-number",
+      "PurposeKey": "AreaPurpose.dedicated-number",
+      "Order": 22,
+      "Archetypes": [],
+      "Tier": "AddOn",
+      "Addon": "DedicatedNumber",
+      "Global": false,
+      "ValueKey": "AreaValue.dedicated-number",
+      "ExampleKey": "AreaExample.dedicated-number",
+      "AdoptionKey": "ModuleAdoption.dedicated-number",
+      "MinimumMinutes": 10,
+      "MaximumMinutes": 30,
+      "DocsPath": "/web-app/intake-channels/dedicated-number/"
+    }
+  ],
+  "Settings": [],
+  "Capabilities": [
+    {
+      "Id": "dedicated-number",
+      "AreaId": "dedicated-number",
+      "LabelKey": "Feature.dedicated-number",
+      "PurposeKey": "FeaturePurpose.dedicated-number",
+      "ValueKey": "AreaValue.dedicated-number",
+      "ExampleKey": "AreaExample.dedicated-number",
+      "AdoptionKey": "FeatureSetup.dedicated-number",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "DedicatedNumber",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Intake.DedicatedNumber"
+        },
+        {
+          "Kind": "addon",
+          "Id": "DedicatedNumber"
+        }
+      ],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Key",
+      "DocsPath": "/web-app/intake-channels/dedicated-number/"
+    },
+    {
+      "Id": "intake-channels",
+      "AreaId": "communication",
+      "LabelKey": "Feature.intake-channels",
+      "PurposeKey": "FeaturePurpose.intake-channels",
+      "ValueKey": "FeatureValue.intake-channels",
+      "ExampleKey": "FeatureExample.intake-channels",
+      "AdoptionKey": "FeatureSetup.intake-channels",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "IntakeChannels",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Intake.Channels"
+        }
+      ],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/intake-channels/overview/"
+    },
+    {
+      "Id": "addon-dedicated-number",
+      "AreaId": "dedicated-number",
+      "LabelKey": "Feature.addon-dedicated-number",
+      "PurposeKey": "FeaturePurpose.addon-dedicated-number",
+      "ValueKey": "FeatureValue.addon-dedicated-number",
+      "ExampleKey": "FeatureExample.addon-dedicated-number",
+      "AdoptionKey": "FeatureAdoption.addon-dedicated-number",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Subscription",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "addon",
+          "Id": "DedicatedNumber"
+        }
+      ],
+      "SettingIds": [
+        "setting.BrainTreeCustomerId",
+        "setting.PaddleCustomerId",
+        "setting.StripeCustomerId"
+      ],
+      "RuleIds": [
+        "personnel-limit",
+        "unit-limit"
+      ],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/intake-channels/dedicated-number/"
+    }
+  ],
+  "Rules": [],
+  "Packs": [],
+  "Articles": [
+    {
+      "Id": "dedicated-number",
+      "Locale": "en",
+      "TitleKey": "Feature.dedicated-number",
+      "Body": "Department number and intake Choose and provision your department's number, choose whether texts and voice calls to it create pending calls, and release it when you no longer need it. Give the public, partner agencies and members one local number to text or call, and every report waits in Pending Calls for a dispatcher instead of on someone's personal phone. A rural district prints its new local number on its non-emergency reporting flyers, and a text about a tree down across a road arrives as a pending call that a dispatcher checks and sends. Once the add-on is active, open the department menu, then Private Inbound Dispatch Number. Search by country, area code or digits, provision the number you want, turn on Create pending calls from texts and save. Then send the number a test text and check Pending Calls.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "dedicated-number",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-19T00:00:00Z"
+    },
+    {
+      "Id": "intake-channels",
+      "Locale": "en",
+      "TitleKey": "Feature.intake-channels",
+      "Body": "Intake channels Turn texts to the department's number, mail to an intake email address, posts in a linked Slack, Teams, WhatsApp, Telegram, Discord or Google Chat channel, and signed webhook requests into pending calls. Requests that arrive outside the radio and CAD land in one queue for a dispatcher to review; intake never dispatches anyone by itself. A hospital transfer desk posts requests in a shared Teams channel, and each post becomes a pending call with the channel's default call type and priority. Open the department menu, then Intake Channels, and add a channel for each source. Choose Call template or Enhanced AI processing, limit Allowed senders, set a default priority and call type, then send a test message and check Pending Calls.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "intake-channels",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-19T00:00:00Z"
+    },
+    {
+      "Id": "addon-dedicated-number",
+      "Locale": "en",
+      "TitleKey": "Feature.addon-dedicated-number",
+      "Body": "Private Inbound Dispatch Number The Private Inbound Dispatch Number add-on: your department's own phone number for taking calls by text and by voice. Members and the public reach your department directly instead of through the shared Resgrid number. The managing member buys the add-on on the Private Inbound Dispatch Number page or its billing page, and a department admin then provisions a local number. Sold only with an active paid entity plan, and bought or cancelled by the managing member. Billed monthly per department, even on an annual plan. When the add-on ends, the number stops taking texts and calls and is released after a grace period unless the add-on is renewed.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "addon-dedicated-number",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-19T00:00:00Z"
+    }
+  ]
+}

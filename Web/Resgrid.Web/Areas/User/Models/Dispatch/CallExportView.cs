@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Resgrid.Model;
 using Resgrid.Model.Identity;
+using Resgrid.Web.Areas.User.Models.Calls;
 
 namespace Resgrid.Web.Areas.User.Models.Dispatch
 {
@@ -28,5 +29,8 @@ namespace Resgrid.Web.Areas.User.Models.Dispatch
 		public string DestinationName { get; set; }
 		public string DestinationAddress { get; set; }
 		public string DestinationTypeName { get; set; }
+
+		/// <summary>The location POI, free destination, route and route runs of the call (M0322).</summary>
+		public CallLocationDetails Locations { get; set; } = new CallLocationDetails();
 	}
 }

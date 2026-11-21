@@ -37,6 +37,7 @@ namespace Resgrid.Tests.Web.Services
 		private Mock<IDispatchScopeService> _dispatchScope;
 		private Mock<IMappingService> _mappingService;
 		private Mock<IDepartmentsService> _departmentsService;
+		private Mock<IIntakeService> _intakeService;
 		private CallsController _controller;
 		private Activity _activity;
 
@@ -73,6 +74,7 @@ namespace Resgrid.Tests.Web.Services
 			_dispatchScope = PassThroughDispatchScope();
 			_mappingService = new Mock<IMappingService>();
 			_departmentsService = new Mock<IDepartmentsService>();
+			_intakeService = new Mock<IIntakeService>();
 
 			var httpContext = new DefaultHttpContext
 			{
@@ -117,7 +119,7 @@ namespace Resgrid.Tests.Web.Services
 				Mock.Of<ICallLocationHistoryService>(),
 				Mock.Of<IPendingCallsService>(),
 				Mock.Of<ICallClosureService>(),
-				new Resgrid.Services.InboundEmailReceiptsService(new Resgrid.Tests.Mocks.MockInboundEmailReceiptsRepository(), TimeProvider.System), Mock.Of<ICallResourceReleaseService>(), Mock.Of<ICallBroadcastOutboxService>())
+				new Resgrid.Services.InboundEmailReceiptsService(new Resgrid.Tests.Mocks.MockInboundEmailReceiptsRepository(), TimeProvider.System), Mock.Of<ICallResourceReleaseService>(), Mock.Of<ICallBroadcastOutboxService>(), Mock.Of<ICallRoutesService>(), Mock.Of<IRouteService>(), _intakeService.Object)
 			{
 				ControllerContext = new ControllerContext { HttpContext = httpContext }
 			};
@@ -364,6 +366,61 @@ namespace Resgrid.Tests.Web.Services
 			result.Should().NotBeNull();
 			result.Data.Select(x => x.CallId).Should().Equal(new[] { "3" });
 			_dispatchScope.Verify(x => x.FilterCallsForUserAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<List<Call>>()), Times.Never);
+		}
+
+		[Test]
+		public async Task GetPendingCalls_NamesTheIntakeChannel_OnlyForIntakeCalls()
+		{
+			var pending = new List<Call>
+			{
+				new Call { CallId = 7, DepartmentId = DepartmentId, Name = "Hospital line: +15551230000", State = (int)CallStates.Pending, CallSource = (int)CallSources.Intake, LoggedOn = DateTime.UtcNow },
+				new Call { CallId = 8, DepartmentId = DepartmentId, Name = "Caller", State = (int)CallStates.Pending, CallSource = (int)CallSources.VoiceIntake, LoggedOn = DateTime.UtcNow },
+				new Call { CallId = 9, DepartmentId = DepartmentId, Name = "Typed", State = (int)CallStates.Pending, CallSource = (int)CallSources.User, LoggedOn = DateTime.UtcNow }
+			};
+			_callsService.Setup(x => x.GetPendingCallsByDepartmentIdAsync(DepartmentId)).ReturnsAsync(pending);
+			_mappingService.Setup(x => x.GetPOIsForDepartmentAsync(DepartmentId)).ReturnsAsync(new List<Poi>());
+			IEnumerable<int> askedFor = null;
+			_intakeService.Setup(x => x.GetCallSourcesAsync(DepartmentId, It.IsAny<IEnumerable<int>>()))
+				.Callback<int, IEnumerable<int>>((d, ids) => askedFor = ids.ToList())
+				.ReturnsAsync(new Dictionary<int, IntakeCallSource>
+				{
+					[7] = new IntakeCallSource { CallId = 7, ChannelType = (int)IntakeChannelTypes.Sms, ChannelName = "Hospital line" },
+					[8] = new IntakeCallSource { CallId = 8, ChannelType = (int)IntakeChannelTypes.Voice, ChannelName = " " }
+				});
+
+			var response = await _controller.GetPendingCalls();
+
+			var result = (response.Result as OkObjectResult)?.Value as PendingCallsResult;
+			result.Should().NotBeNull();
+			askedFor.Should().BeEquivalentTo(new[] { 7, 8 });
+			var sms = result.Data.Single(x => x.CallId == "7");
+			sms.CallSource.Should().Be((int)CallSources.Intake);
+			sms.IntakeChannelType.Should().Be((int)IntakeChannelTypes.Sms);
+			sms.IntakeChannelName.Should().Be("Hospital line");
+			var voice = result.Data.Single(x => x.CallId == "8");
+			voice.IntakeChannelType.Should().Be((int)IntakeChannelTypes.Voice);
+			voice.IntakeChannelName.Should().BeNull();
+			var typed = result.Data.Single(x => x.CallId == "9");
+			typed.IntakeChannelType.Should().BeNull();
+			typed.IntakeChannelName.Should().BeNull();
+		}
+
+		[Test]
+		public async Task GetPendingCalls_StillAnswers_WhenTheIntakeLookupFails()
+		{
+			var pending = new List<Call>
+			{
+				new Call { CallId = 7, DepartmentId = DepartmentId, Name = "Hospital line", State = (int)CallStates.Pending, CallSource = (int)CallSources.Intake, LoggedOn = DateTime.UtcNow }
+			};
+			_callsService.Setup(x => x.GetPendingCallsByDepartmentIdAsync(DepartmentId)).ReturnsAsync(pending);
+			_mappingService.Setup(x => x.GetPOIsForDepartmentAsync(DepartmentId)).ReturnsAsync(new List<Poi>());
+			_intakeService.Setup(x => x.GetCallSourcesAsync(DepartmentId, It.IsAny<IEnumerable<int>>())).ThrowsAsync(new InvalidOperationException("db down"));
+
+			var response = await _controller.GetPendingCalls();
+
+			var result = (response.Result as OkObjectResult)?.Value as PendingCallsResult;
+			result.Should().NotBeNull();
+			result.Data.Single().IntakeChannelName.Should().BeNull();
 		}
 
 		[Test]

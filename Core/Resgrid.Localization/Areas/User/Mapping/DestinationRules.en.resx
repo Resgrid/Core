@@ -329,4 +329,7 @@
   <data name="PreviewFailed" xml:space="preserve">
     <value>The rules could not be checked right now. Try again.</value>
   </data>
+  <data name="BestForUnit" xml:space="preserve">
+    <value>Best for this unit</value>
+  </data>
 </root>

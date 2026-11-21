@@ -34,13 +34,18 @@
                         <dt>@localizer["StatusLabel"]</dt>
                         <dd><span class="label label-primary">@((Resgrid.Model.RouteInstanceStatus)Model.Instance.Status)</span></dd>
                         <dt>@localizer["Unit"]</dt>
-                        <dd>@Model.Instance.UnitId</dd>
+                        <dd>@(Model.UnitName ?? Model.Instance.UnitId.ToString())</dd>
                         <dt>@localizer["StartedDt"]</dt>
                         <dd>@(Model.Instance.ActualStartOn?.ToString("yyyy-MM-dd HH:mm") ?? "-")</dd>
                         <dt>@localizer["EndedDt"]</dt>
                         <dd>@(Model.Instance.ActualEndOn?.ToString("yyyy-MM-dd HH:mm") ?? "-")</dd>
                         <dt>@localizer["Progress"]</dt>
                         <dd>@Model.Instance.StopsCompleted / @Model.Instance.StopsTotal</dd>
+                        @if (Model.LinkedCall != null)
+                        {
+                            <dt>@localizer["LinkedCall"]</dt>
+                            <dd><partial name="_RouteLinkedCall" model="Model.LinkedCall" /></dd>
+                        }
                     </dl>
                     <div class="progress progress-striped active">
                         @{
@@ -55,8 +60,10 @@
                 <div class="ibox-title"><h5>@localizer["StopTimelineTitle"]</h5></div>
                 <div class="ibox-content">
                     <div id="vertical-timeline" class="vertical-container light-timeline">
+                        @{ var stopNumber = 0; }
                         @foreach (var stop in Model.Stops.OrderBy(s => s.StopOrder))
                         {
+                            stopNumber++;
                             var statusClass = stop.Status switch { 1 => "lazur-bg", 2 => "navy-bg", 3 => "warning-bg", _ => "default-bg" };
                             var statusText = stop.Status switch { 0 => localizer["StopStatusPending"].Value, 1 => localizer["StopStatusCheckedIn"].Value, 2 => localizer["StopStatusCompleted"].Value, 3 => localizer["StopStatusSkipped"].Value, _ => localizer["StopStatusUnknown"].Value };
                             <div class="vertical-timeline-block">
@@ -64,7 +71,7 @@
                                     <i class="fa fa-map-marker"></i>
                                 </div>
                                 <div class="vertical-timeline-content">
-                                    <h2>@localizer["StopLabel"] @(stop.StopOrder + 1)</h2>
+                                    <h2>@localizer["StopLabel"] @stopNumber</h2>
                                     <p><strong>@statusText</strong></p>
                                     @if (stop.CheckInOn.HasValue)
                                     {

@@ -8,7 +8,7 @@ using Resgrid.Model.Identity;
 
 namespace Resgrid.Web.Areas.User.Models.Calls
 {
-	public class NewCallView : BaseUserModel
+	public class NewCallView : BaseUserModel, ICallLocationsForm
 	{
 		public string UdfFormHtml { get; set; }
 		public Department Department { get; set; }
@@ -47,6 +47,29 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 
 		/// <summary>Save the call to Pending Calls without notifying anyone; a dispatcher sends it later.</summary>
 		public bool SaveAsPending { get; set; }
+
+		/// <summary>The department's POIs the call location can be picked from (M0322); empty hides the picker.</summary>
+		public List<CallLocationPoiOption> LocationPois { get; set; } = new List<CallLocationPoiOption>();
+
+		/// <summary>The route plans the call can follow (M0322); empty hides the route picker.</summary>
+		public List<CallRoutePlanOption> RoutePlans { get; set; } = new List<CallRoutePlanOption>();
+
+		/// <summary>Destination POI points by id, for the destination marker on the call map.</summary>
+		public Dictionary<string, double[]> DestinationPoiPoints { get; set; } = new Dictionary<string, double[]>();
+
+		/// <summary>
+		/// The free destination point (M0322) as typed, kept as text and parsed invariant (see <see cref="CallLocationsForm.PostedPoint"/>):
+		/// the form never posts Call.DestinationGeoLocationData.
+		/// </summary>
+		public string DestinationLatitude { get; set; }
+
+		public string DestinationLongitude { get; set; }
+
+		/// <summary>A plus code to find the destination point with; never stored.</summary>
+		public string DestinationPlusCode { get; set; }
+
+		/// <summary>The member may open Routes (the route preview link).</summary>
+		public bool CanViewRoutes { get; set; }
 
 		/// <summary>
 		/// The department's new-call field policy: which built-in fields the form renders and which it marks required.

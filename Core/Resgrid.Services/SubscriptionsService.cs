@@ -55,9 +55,20 @@ namespace Resgrid.Services
 			_paymentProviderEventsRepository = paymentProviderEventsRepository;
 		}
 
-		public async Task<Model.Plan> GetCurrentPlanForDepartmentAsync(int departmentId, bool byPassCache = true)
+		public Task<Model.Plan> GetCurrentPlanForDepartmentAsync(int departmentId, bool byPassCache = true) =>
+			ReadCurrentPlanForDepartmentAsync(departmentId, knownOnly: false);
+
+		public Task<Model.Plan> GetCurrentPlanForDepartmentIfKnownAsync(int departmentId) =>
+			ReadCurrentPlanForDepartmentAsync(departmentId, knownOnly: true);
+
+		/// <summary>
+		/// <paramref name="knownOnly"/>: a failed read (timeout, fault, empty payload) is null instead of the free-plan safety net, so a caller
+		/// that acts on a lost plan cannot mistake a Billing API outage for one. A 404 (no subscription) is the free plan either way.
+		/// </summary>
+		private async Task<Model.Plan> ReadCurrentPlanForDepartmentAsync(int departmentId, bool knownOnly)
 		{
 			var freePlan = await _plansRepository.GetByIdAsync(FreePlanId);
+			var failed = knownOnly ? null : freePlan;
 
 			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
 			{
@@ -80,14 +91,14 @@ namespace Resgrid.Services
 						return freePlan;
 
 					if (response.Data == null || response.Data.Data == null)
-						return freePlan;
+						return failed;
 
 					return response.Data.Data;
 				}
 				catch (Exception ex)
 				{
 					Framework.Logging.LogException(ex);
-					return freePlan;
+					return failed;
 				}
 			}
 

@@ -480,13 +480,26 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!CanImportPois())
 				return Unauthorized();
 
-			var model = new ImportPOIsView { HydrantsEnabled = await HydrantsAvailableAsync() };
-			model.TypeId = poiTypeId;
+			var model = new ImportPOIsView { TypeId = poiTypeId };
 			// An importer who cannot open the POIs page comes back here after an upload, to follow the import and read its report.
 			model.Message = TempData["ImportPOIsMessage"] as string;
-			model.Imports = await GetPoiImportListAsync();
+			await PopulateImportPOIsViewAsync(model);
 
 			return View(model);
+		}
+
+		/// <summary>
+		/// What the Import POIs page shows besides the posted values: the department's POI types (a hydrant manager reaches the page
+		/// from the Hydrants page, without a type row to start from), where Cancel goes, the hydrant note and the imports panel.
+		/// </summary>
+		private async Task PopulateImportPOIsViewAsync(ImportPOIsView model)
+		{
+			model.HydrantsEnabled = await HydrantsAvailableAsync();
+			model.CanManageMapData = CanManageMapData();
+			model.PoiTypes = (await _mappingService.GetPOITypesForDepartmentAsync(DepartmentId) ?? new List<PoiType>()).OrderBy(t => t.Name).ToList();
+			if (model.PoiTypes.All(t => t.PoiTypeId != model.TypeId))
+				model.TypeId = 0;
+			model.Imports = await GetPoiImportListAsync();
 		}
 
 		[HttpPost]
@@ -498,21 +511,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (fileToUpload == null || fileToUpload.Length == 0)
 			{
-				ModelState.AddModelError("fileToUpload", "Please select a file to upload.");
+				ModelState.AddModelError("fileToUpload", _localizer["ImportFileRequired"]);
 			}
 			else
 			{
 				var extension = Path.GetExtension(fileToUpload.FileName).ToLower();
 
 				if (extension != ".kml" && extension != ".kmz" && extension != ".csv")
-					ModelState.AddModelError("fileToUpload", string.Format("File type ({0}) cannot be imported as POIs: upload a KML, KMZ or CSV file.", extension));
+					ModelState.AddModelError("fileToUpload", string.Format(_localizer["ImportFileTypeInvalid"].Value, extension));
 
 				if (fileToUpload.Length > 10000000)
-					ModelState.AddModelError("fileToUpload", "Document is too large, must be smaller then 10MB.");
+					ModelState.AddModelError("fileToUpload", _localizer["ImportFileTooLarge"]);
 			}
 
 			if (modal.TypeId <= 0)
-				ModelState.AddModelError("TypeId", "Please select a POI type before importing.");
+				ModelState.AddModelError("TypeId", _localizer["ImportTypeRequired"]);
 
 			if (ModelState.IsValid)
 			{
@@ -531,14 +544,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (!string.IsNullOrEmpty(file.Error))
 				{
 					ModelState.AddModelError("fileToUpload", file.Error);
+					await PopulateImportPOIsViewAsync(modal);
 					return View(modal);
 				}
 
 				if (file.Rows.Count == 0)
 				{
 					ModelState.AddModelError("fileToUpload", file.SkippedCount > 0
-						? string.Format("None of the {0} entries in the file have valid coordinates or an address (check that latitude and longitude are not swapped or blank).", file.SkippedCount)
-						: "No placemarks or rows with coordinates or an address could be found in the uploaded file.");
+						? string.Format(_localizer["ImportNoValidRows"].Value, file.SkippedCount)
+						: _localizer["ImportNothingFound"].Value);
+					await PopulateImportPOIsViewAsync(modal);
 					return View(modal);
 				}
 
@@ -551,6 +566,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return CanManageMapData() ? RedirectToAction("POIs") : RedirectToAction("ImportPOIs", new { poiTypeId = modal.TypeId });
 			}
 
+			await PopulateImportPOIsViewAsync(modal);
 			return View(modal);
 		}
 

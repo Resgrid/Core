@@ -205,7 +205,7 @@
     <value>Importations</value>
   </data>
   <data name="PoiImportsHelp" xml:space="preserve">
-    <value>Les importations s'exécutent en arrière-plan et démarrent généralement en moins d'une minute. Actualisez cette page pour suivre leur progression.</value>
+    <value>Les importations s'exécutent en arrière-plan et démarrent généralement en moins d'une minute. Cette liste se met à jour d'elle-même pendant qu'une importation est en cours.</value>
   </data>
   <data name="PoiImportsRefresh" xml:space="preserve">
     <value>Actualiser</value>
@@ -580,5 +580,32 @@
   </data>
   <data name="PoiAvailabilitySaveFailed" xml:space="preserve">
     <value>La disponibilité n'a pas pu être enregistrée : le POI n'est plus une destination. Rechargez la page et réessayez.</value>
+  </data>
+  <data name="ManagePois" xml:space="preserve">
+    <value>Gérer les POI</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>Adresse</value>
+  </data>
+  <data name="ImportFileRequired" xml:space="preserve">
+    <value>Choisissez un fichier à téléverser.</value>
+  </data>
+  <data name="ImportFileTypeInvalid" xml:space="preserve">
+    <value>Le type de fichier ({0}) ne peut pas être importé comme POI : téléversez un fichier KML, KMZ ou CSV.</value>
+  </data>
+  <data name="ImportFileTooLarge" xml:space="preserve">
+    <value>Le fichier est trop volumineux : il doit faire moins de 10 Mo.</value>
+  </data>
+  <data name="ImportTypeRequired" xml:space="preserve">
+    <value>Choisissez le type de POI dans lequel importer.</value>
+  </data>
+  <data name="ImportChooseType" xml:space="preserve">
+    <value>Choisissez un type de POI</value>
+  </data>
+  <data name="ImportNoValidRows" xml:space="preserve">
+    <value>Aucune des {0} entrées du fichier n'a de coordonnées valides ni d'adresse (vérifiez que la latitude et la longitude ne sont ni inversées ni vides).</value>
+  </data>
+  <data name="ImportNothingFound" xml:space="preserve">
+    <value>Aucun repère ni aucune ligne avec des coordonnées ou une adresse n'a été trouvé dans le fichier téléversé.</value>
   </data>
 </root>

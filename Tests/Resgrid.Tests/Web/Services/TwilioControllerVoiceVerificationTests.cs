@@ -136,6 +136,19 @@ namespace Resgrid.Tests.Web.Services
 			_twilioVoiceResponseServiceMock
 				.Setup(x => x.PreWarmPromptAsync(It.IsAny<string>(), It.IsAny<string>()))
 				.Returns(System.Threading.Tasks.Task.CompletedTask);
+			_twilioVoiceResponseServiceMock
+				.Setup(x => x.AppendDispatchPromptAsync(It.IsAny<VoiceResponse>(), It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<string>()))
+				.Returns<VoiceResponse, string, CancellationToken, string>((response, text, _, __) =>
+				{
+					response.Append(new Play
+					{
+						Url = new Uri($"https://tts.example/{Uri.EscapeDataString(text)}.wav")
+					});
+					return System.Threading.Tasks.Task.CompletedTask;
+				});
+			_twilioVoiceResponseServiceMock
+				.Setup(x => x.PreWarmDispatchPromptAsync(It.IsAny<string>(), It.IsAny<string>()))
+				.Returns(System.Threading.Tasks.Task.CompletedTask);
 		}
 
 		private TestableTwilioController BuildController()
@@ -309,6 +322,10 @@ namespace Resgrid.Tests.Web.Services
 			content.Should().Contain(dispatchPrompt);
 			content.Should().Contain("https://resgridapi.local/api/Twilio/VoiceCallAction?userId=user1&amp;callId=42");
 			content.IndexOf(dispatchPrompt, StringComparison.Ordinal).Should().BeLessThan(content.IndexOf(menuPrompt, StringComparison.Ordinal));
+			// Dispatch text goes through the dispatch-rate path the broadcast worker pre-warms, never the menu-rate one.
+			const string dispatchText = "New call, Call 42. Nature, Structure fire. Address, 123 Main St. Priority, High.";
+			_twilioVoiceResponseServiceMock.Verify(x => x.AppendDispatchPromptAsync(It.IsAny<VoiceResponse>(), dispatchText, It.IsAny<CancellationToken>(), It.IsAny<string>()), Times.Once);
+			_twilioVoiceResponseServiceMock.Verify(x => x.AppendPromptAsync(It.IsAny<VoiceResponse>(), dispatchText, It.IsAny<CancellationToken>(), It.IsAny<string>()), Times.Never);
 		}
 
 		[Test]
@@ -614,7 +631,8 @@ namespace Resgrid.Tests.Web.Services
 			var action = typeof(TwilioController).GetMethod(nameof(TwilioController.InboundVoiceActionStatus));
 			dynamic request = Activator.CreateInstance(action!.GetParameters()[1].ParameterType);
 			request.Digits = "9";
-			var result = await (Task<ActionResult>)action.Invoke(controller, new object[] { "user1", request });
+			// The trailing departmentId (a dedicated number's bound department) is null on the master number.
+			var result = await (Task<ActionResult>)action.Invoke(controller, new object[] { "user1", request, null });
 
 			var content = ((ContentResult)result).Content;
 			content.Should().Contain("https://resgridapi.local/api/Twilio/InboundVoiceAction?userId=user1");
@@ -638,7 +656,8 @@ namespace Resgrid.Tests.Web.Services
 			var controller = BuildController();
 			var action = typeof(TwilioController).GetMethod(nameof(TwilioController.InboundVoiceActionStatus));
 			var request = Activator.CreateInstance(action!.GetParameters()[1].ParameterType);
-			var result = await (Task<ActionResult>)action.Invoke(controller, new object[] { "user1", request });
+			// The trailing departmentId (a dedicated number's bound department) is null on the master number.
+			var result = await (Task<ActionResult>)action.Invoke(controller, new object[] { "user1", request, null });
 
 			var content = ((ContentResult)result).Content;
 			content.Should().Contain("https://resgridapi.local/api/Twilio/InboundVoiceAction?userId=user1");
@@ -760,7 +779,10 @@ namespace Resgrid.Tests.Web.Services
 					textDepartmentSwitchService,
 					Mock.Of<IDispatchRecommendationService>(),
 					dispatchScopeService,
-					authorizationService, adpRelease, Projection())
+					authorizationService, adpRelease, Projection(),
+					Mock.Of<IDepartmentPhoneNumbersService>(), Mock.Of<IIntakeService>(), Mock.Of<IVoiceIntakeService>(),
+					Mock.Of<Resgrid.Model.Providers.ITextMessageProvider>(), Mock.Of<IIntakeConversationService>(),
+					Mock.Of<IIntakeConversationOperations>(), Mock.Of<IIntakeScreeningService>())
 			{
 				ControllerContext = new ControllerContext { HttpContext = new Microsoft.AspNetCore.Http.DefaultHttpContext() };
 			}

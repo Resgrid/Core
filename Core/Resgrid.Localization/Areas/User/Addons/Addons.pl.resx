@@ -79,6 +79,14 @@
   <data name="EnhancedAiFeature5" xml:space="preserve"><value>Tylko modele o otwartych wagach; prywatne dane nigdy nie trafiają do chmurowej AI</value></data>
   <data name="EnhancedAiFeature6" xml:space="preserve"><value>Lub użyj własnej subskrypcji dostawcy AI</value></data>
   <data name="EnhancedAiNote" xml:space="preserve"><value>Rozliczane co miesiąc za oddział. Zawiera miesięczny budżet AI bez opłat za przekroczenie. Każdy oddział ma bezpłatne pytania Admin Assist również bez dodatku.</value></data>
+  <data name="DedicatedNumberTitle" xml:space="preserve"><value>Private Inbound Dispatch Number</value></data>
+  <data name="DedicatedNumberTagline" xml:space="preserve"><value>Własny numer oddziału do SMS-ów i połączeń</value></data>
+  <data name="DedicatedNumberFeature1" xml:space="preserve"><value>Lokalny numer dla Twojego oddziału, wybrany przez Ciebie</value></data>
+  <data name="DedicatedNumberFeature2" xml:space="preserve"><value>Przychodzące SMS-y stają się oczekującymi zgłoszeniami dla dyspozytorów</value></data>
+  <data name="DedicatedNumberFeature3" xml:space="preserve"><value>Członkowie dzwonią na ten sam numer, aby skorzystać z menu głosowego</value></data>
+  <data name="DedicatedNumberFeature4" xml:space="preserve"><value>Głosowe przyjmowanie z Enhanced AI zamienia odpowiedzi dzwoniących w oczekujące zgłoszenia</value></data>
+  <data name="DedicatedNumberFeature5" xml:space="preserve"><value>Tylko przychodzące: odpowiedzi przychodzą z głównego numeru Resgrid</value></data>
+  <data name="DedicatedNumberNote" xml:space="preserve"><value>Rozliczane co miesiąc za oddział, nawet przy planie rocznym. Wymaga aktywnego planu na jednostki. W USA numery z USA i Kanady; w UE numer w Twoim kraju, jeśli jest dostępny.</value></data>
   <data name="AdpTitle" xml:space="preserve"><value>Advanced Data Protection</value></data>
   <data name="AdpTagline" xml:space="preserve"><value>Szyfrowanie i wzmocniony dostęp do danych wrażliwych</value></data>
   <data name="AdpFeature1" xml:space="preserve"><value>Szyfrowanie na poziomie pól dla danych medycznych i osobowych</value></data>
@@ -87,8 +95,8 @@
   <data name="AdpFeature4" xml:space="preserve"><value>Zanonimizowane przepływy pracy, powiadomienia i BigBoard</value></data>
   <data name="AdpFeature5" xml:space="preserve"><value>Wymagane do umowy HIPAA BAA z Resgrid</value></data>
   <data name="AdpNote" xml:space="preserve"><value>Rozliczane co rok, nawet jeśli oddział ma plan miesięczny. Po aktywacji dodatku włączenie ochrony jest samoobsługowe.</value></data>
-  <data name="CodesHeader" xml:space="preserve"><value>Kody rabatowe i polecające</value></data>
-  <data name="CodesIntro" xml:space="preserve"><value>Masz kod rabatowy lub poleca Cię partner Resgrid? Możesz go wpisać tutaj w dowolnym momencie, nie tylko przy rejestracji.</value></data>
+  <data name="CodesHeader" xml:space="preserve"><value>Kody rabatowe i kody partnera/konta</value></data>
+  <data name="CodesIntro" xml:space="preserve"><value>Masz kod rabatowy lub kod partnera/konta od partnera Resgrid albo swojego opiekuna klienta? Możesz go wpisać tutaj w dowolnym momencie, nie tylko przy rejestracji.</value></data>
   <data name="DiscountCodeLabel" xml:space="preserve"><value>Kod rabatowy</value></data>
   <data name="DiscountCodePlaceholder" xml:space="preserve"><value>Wpisz kod rabatowy</value></data>
   <data name="DiscountCodeApply" xml:space="preserve"><value>Zastosuj</value></data>
@@ -99,12 +107,12 @@
   <data name="MessageDiscountPending" xml:space="preserve"><value>Kod rabatowy jest prawidłowy i zostanie zastosowany przy zakupie planu powyżej.</value></data>
   <data name="MessageDiscountInvalid" xml:space="preserve"><value>Ten kod rabatowy jest nieprawidłowy, wygasł lub nie może być użyty przez oddział.</value></data>
   <data name="MessageDiscountUnavailable" xml:space="preserve"><value>Nie można teraz sprawdzić kodów rabatowych. Spróbuj ponownie później.</value></data>
-  <data name="AffiliateCodeLabel" xml:space="preserve"><value>Kod partnera (polecający)</value></data>
-  <data name="AffiliateCodePlaceholder" xml:space="preserve"><value>Wpisz kod partnera</value></data>
+  <data name="AffiliateCodeLabel" xml:space="preserve"><value>Kod partnera/konta</value></data>
+  <data name="AffiliateCodePlaceholder" xml:space="preserve"><value>Wpisz kod partnera/konta</value></data>
   <data name="AffiliateCodeSave" xml:space="preserve"><value>Zapisz</value></data>
   <data name="AffiliateCodeSetHelp" xml:space="preserve"><value>Można go dodać jeden raz. Skontaktuj się z nami, jeśli trzeba go zmienić.</value></data>
-  <data name="AffiliateCodeCurrent" xml:space="preserve"><value>Polecony kodem partnera {0}</value></data>
-  <data name="MessageAffiliateApplied" xml:space="preserve"><value>Kod partnera został zapisany dla oddziału.</value></data>
-  <data name="MessageAffiliateInvalid" xml:space="preserve"><value>Ten kod partnera jest nieprawidłowy lub nie jest już aktywny.</value></data>
-  <data name="MessageAffiliateAlreadySet" xml:space="preserve"><value>Oddział ma już kod partnera. Skontaktuj się z nami, jeśli trzeba go zmienić.</value></data>
+  <data name="AffiliateCodeCurrent" xml:space="preserve"><value>Kod partnera/konta: {0}</value></data>
+  <data name="MessageAffiliateApplied" xml:space="preserve"><value>Kod partnera/konta został zapisany dla oddziału.</value></data>
+  <data name="MessageAffiliateInvalid" xml:space="preserve"><value>Ten kod partnera/konta jest nieprawidłowy lub nie jest już aktywny.</value></data>
+  <data name="MessageAffiliateAlreadySet" xml:space="preserve"><value>Oddział ma już kod partnera/konta. Skontaktuj się z nami, jeśli trzeba go zmienić.</value></data>
 </root>

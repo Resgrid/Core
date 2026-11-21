@@ -701,4 +701,40 @@
   <data name="WeekThird" xml:space="preserve">
     <value>tercer</value>
   </data>
+  <data name="DestinationAddress" xml:space="preserve">
+    <value>Dirección de destino</value>
+  </data>
+  <data name="DestinationAddressHelp" xml:space="preserve">
+    <value>Cuando el destino no es un PDI.</value>
+  </data>
+  <data name="DestinationCoordinates" xml:space="preserve">
+    <value>Coordenadas de destino</value>
+  </data>
+  <data name="DestinationCoordinatesHelp" xml:space="preserve">
+    <value>Latitud, longitud (opcional).</value>
+  </data>
+  <data name="ErrorDestinationCoordinatesInvalid" xml:space="preserve">
+    <value>Introduzca las coordenadas de destino como latitud, longitud (por ejemplo 39.7392,-104.9903).</value>
+  </data>
+  <data name="RoutePlan" xml:space="preserve">
+    <value>Ruta</value>
+  </data>
+  <data name="NoRoutePlan" xml:space="preserve">
+    <value>Sin ruta</value>
+  </data>
+  <data name="RoutePlanHelp" xml:space="preserve">
+    <value>Cada llamada que crea sigue esta ruta: una dirección vacía empieza en el inicio de la ruta y un destino vacío termina en su final.</value>
+  </data>
+  <data name="ErrorRoutePlanInvalid" xml:space="preserve">
+    <value>Elija de la lista una ruta activa con inicio y final.</value>
+  </data>
+  <data name="RoutePlanUnavailable" xml:space="preserve">
+    <value>{0} (ya no disponible)</value>
+  </data>
+  <data name="RoutePlanDeleted" xml:space="preserve">
+    <value>Ruta eliminada</value>
+  </data>
+  <data name="FacilityPoiCallLocationHelp" xml:space="preserve">
+    <value>Cada llamada que crea parte de este PDI.</value>
+  </data>
 </root>

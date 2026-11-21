@@ -25,7 +25,6 @@ namespace Resgrid.Tests.Services
 		private const string DepartmentCode = "DEPT";
 
 		private Mock<INovuProvider> _novuProvider;
-		private Mock<IDepartmentSettingsService> _departmentSettingsService;
 		private PushService _pushService;
 		private bool _departmentWasAlreadyBypassed;
 
@@ -36,22 +35,16 @@ namespace Resgrid.Tests.Services
 			SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Add(DepartmentId);
 
 			_novuProvider = new Mock<INovuProvider>();
-			_departmentSettingsService = new Mock<IDepartmentSettingsService>();
 
 			_novuProvider
 				.Setup(x => x.SendUserNotification(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
 					It.IsAny<string>(), It.IsAny<string>()))
 				.ReturnsAsync(true);
 
-			_departmentSettingsService
-				.Setup(x => x.GetModernNotificationsEnabledAsync(DepartmentId, false))
-				.ReturnsAsync(false);
-
 			_pushService = new PushService(
 				new Mock<IPushLogsService>().Object,
 				new Mock<IUserProfileService>().Object,
 				_novuProvider.Object,
-				_departmentSettingsService.Object,
 				new Mock<IUnitsService>().Object);
 		}
 

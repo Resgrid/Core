@@ -42,7 +42,6 @@ namespace Resgrid.Tests.Services
 				Mock.Of<IPushLogsService>(),
 				_userProfileService.Object,
 				_novuProvider.Object,
-				Mock.Of<IDepartmentSettingsService>(),
 				Mock.Of<IUnitsService>());
 		}
 

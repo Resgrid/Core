@@ -58,10 +58,10 @@ namespace Resgrid.Tests.Dashboard.Widgets
 		}
 
 		public static bool Visible(string key, DashboardViewer viewer) =>
-			new DashboardEntitlementService(null, null, null, null, null, null, null, null, null, null, null, null, null, null).IsVisible(DashboardWidgetCatalog.Find(key), viewer);
+			new DashboardEntitlementService(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null).IsVisible(DashboardWidgetCatalog.Find(key), viewer);
 
 		public static bool LockedForAdmin(string key, DashboardViewer viewer) =>
-			new DashboardEntitlementService(null, null, null, null, null, null, null, null, null, null, null, null, null, null).IsLockedForAdmin(DashboardWidgetCatalog.Find(key), viewer);
+			new DashboardEntitlementService(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null).IsLockedForAdmin(DashboardWidgetCatalog.Find(key), viewer);
 
 		/// <summary>The department's permission rows for the claim-equivalent checks (none = every catalog no-row default applies).</summary>
 		public static Mock<IPermissionsService> Permissions(params Permission[] rows)

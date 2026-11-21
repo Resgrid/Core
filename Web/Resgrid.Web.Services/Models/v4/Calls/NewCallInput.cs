@@ -44,6 +44,32 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		public int? DestinationPoiId { get; set; }
 
 		/// <summary>
+		/// The POI (any type) the call location was picked from (M0322). A blank Address / Geolocation is filled from it.
+		/// </summary>
+		public int? LocationPoiId { get; set; }
+
+		/// <summary>
+		/// Free destination address, for a destination that is not a POI (M0322). Ignored when DestinationPoiId is set.
+		/// </summary>
+		public string DestinationAddress { get; set; }
+
+		/// <summary>
+		/// Free destination point "lat,lon" in decimal format (M0322). Ignored when DestinationPoiId is set.
+		/// </summary>
+		public string DestinationGeolocation { get; set; }
+
+		/// <summary>
+		/// Free destination what3words address (M0322). Ignored when DestinationPoiId is set.
+		/// </summary>
+		public string DestinationWhat3Words { get; set; }
+
+		/// <summary>
+		/// The pre-defined route the call follows (M0322): an active route plan with a start and an end (Routes/GetCallRoutePlans).
+		/// A call without a location starts at the route start; a call without a destination ends at the route end.
+		/// </summary>
+		public string RoutePlanId { get; set; }
+
+		/// <summary>
 		/// Geolocation data "lat,lon" in decimal format
 		/// </summary>
 		public string Geolocation { get; set; }

@@ -81,7 +81,14 @@ namespace Resgrid.Model.AiDispatch
 
 	/// <summary>Everything the model is shown for one call. <see cref="Message"/> is untrusted inbound text.</summary>
 	public sealed record AiDispatchContext(string Message, IReadOnlyList<AiDispatchChoice> CallTypes, IReadOnlyList<AiDispatchChoice> Priorities,
-		IReadOnlyList<AiDispatchCandidateCall> Candidates);
+		IReadOnlyList<AiDispatchCandidateCall> Candidates)
+	{
+		/// <summary>
+		/// Trusted description of where <see cref="Message"/> came from when it is not a dispatch email (intake channels: the
+		/// call is pending, nobody was dispatched; voice: labelled speech-to-text answers). Null for the dispatch email paths.
+		/// </summary>
+		public string Source { get; init; }
+	}
 
 	/// <summary>The model's structured reply before validation. Every field is optional and untrusted.</summary>
 	public sealed class AiDispatchProposal

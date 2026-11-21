@@ -52,13 +52,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IDepartmentDataProtectionService _dataProtectionService;
 		private readonly IFeatureToggleService _featureToggleService;
 		private readonly IAdpBillingService _adpBillingService;
+		private readonly IDepartmentPhoneNumbersService _departmentPhoneNumbers;
 
 		public SubscriptionController(IDepartmentsService departmentsService, IUsersService usersService, IDepartmentGroupsService departmentGroupsService,
 			Model.Services.IAuthorizationService authorizationService, ISubscriptionsService subscriptionsService, IPersonnelRolesService personnelRolesService, IUnitsService unitsService,
 			IDepartmentSettingsService departmentSettingsService, IEmailService emailService, IAffiliateService affiliateService,
 			IUserProfileService userProfileService, IOptions<AppOptions> appOptionsAccessor, IEventAggregator eventAggregator,
-			IDepartmentDataProtectionService dataProtectionService, IFeatureToggleService featureToggleService, IAdpBillingService adpBillingService)
+			IDepartmentDataProtectionService dataProtectionService, IFeatureToggleService featureToggleService, IAdpBillingService adpBillingService,
+			IDepartmentPhoneNumbersService departmentPhoneNumbers = null)
 		{
+			_departmentPhoneNumbers = departmentPhoneNumbers;
 			_dataProtectionService = dataProtectionService;
 			_featureToggleService = featureToggleService;
 			_adpBillingService = adpBillingService;
@@ -620,7 +623,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			model.Addons = await GetAddonAvailabilityAsync(addon);
 
-			// Discount / affiliate code panel: the outcome of the last post, and a valid code still waiting for a checkout. Peek keeps the
+			// Discount / partner-account code panel: the outcome of the last post, and a valid code still waiting for a checkout. Peek keeps the
 			// pending code for the checkout request that follows; it lives only in this browser's TempData.
 			model.AffiliateCode = department?.AffiliateCode;
 			model.CodesMessage = TempData[CodesMessageKey] as string;
@@ -771,52 +774,30 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!await _authorizationService.CanUserManageSubscriptionAsync(UserId, DepartmentId))
 				return Unauthorized();
 
-			// A new entry replaces the code waiting for checkout, whatever its outcome: only a code still pending is carried forward.
-			TempData.Remove(PendingDiscountCodeKey);
-
 			var code = discountCode?.Trim();
-			if (string.IsNullOrWhiteSpace(code) || code.Length > 64)
-			{
-				TempData[CodesMessageKey] = "DiscountInvalid";
+			var sentToBilling = !string.IsNullOrWhiteSpace(code) && code.Length <= DiscountCodeEntry.MaxLength;
+			var outcome = await DiscountCodeEntry.EnterAsync(_subscriptionsService, TempData, DepartmentId, code);
+			if (!sentToBilling)
 				return RedirectToAction("Index", "Subscription", new { Area = "User" });
-			}
-
-			var result = await _subscriptionsService.ApplyDiscountCodeToDepartmentAsync(DepartmentId, code);
 
 			var auditEvent = new AuditEvent();
 			auditEvent.DepartmentId = DepartmentId;
 			auditEvent.UserId = UserId;
 			auditEvent.Type = AuditLogTypes.SubscriptionUpdated;
-			auditEvent.After = $"Discount code entered: {result.Outcome}";
-			auditEvent.Successful = result.Outcome == DiscountCodeOutcomes.Applied || result.Outcome == DiscountCodeOutcomes.NoActiveSubscription;
+			auditEvent.After = $"Discount code entered: {outcome}";
+			auditEvent.Successful = DiscountCodeEntry.Succeeded(outcome);
 			auditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
 			auditEvent.ServerName = Environment.MachineName;
 			auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
 			_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
-			switch (result.Outcome)
-			{
-				case DiscountCodeOutcomes.Applied:
-					TempData[CodesMessageKey] = "DiscountApplied";
-					break;
-				case DiscountCodeOutcomes.NoActiveSubscription:
-					TempData[CodesMessageKey] = "DiscountPending";
-					TempData[PendingDiscountCodeKey] = code;
-					break;
-				case DiscountCodeOutcomes.InvalidCode:
-					TempData[CodesMessageKey] = "DiscountInvalid";
-					break;
-				default:
-					TempData[CodesMessageKey] = "DiscountUnavailable";
-					break;
-			}
-
 			return RedirectToAction("Index", "Subscription", new { Area = "User" });
 		}
 
 		/// <summary>
-		/// Records the affiliate (referral) code for a department that did not enter one at signup. Set once: an attribution already on
-		/// the department is never replaced from here, so a referral cannot be moved to another affiliate after the fact.
+		/// Records the partner/account code (an external partner or a Resgrid account executive; stored as Department.AffiliateCode) for a
+		/// department that did not enter one at signup. Set once: an attribution already on
+		/// the department is never replaced from here, so it cannot be moved to another partner or account executive after the fact.
 		/// </summary>
 		[HttpPost]
 		[ValidateAntiForgeryToken]
@@ -853,7 +834,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			auditEvent.UserId = UserId;
 			auditEvent.Type = AuditLogTypes.SubscriptionUpdated;
 			auditEvent.Before = null;
-			auditEvent.After = $"Affiliate code set: {affiliate.AffiliateCode}";
+			auditEvent.After = $"Partner/account code set: {affiliate.AffiliateCode}";
 			auditEvent.Successful = true;
 			auditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
 			auditEvent.ServerName = Environment.MachineName;
@@ -864,8 +845,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return RedirectToAction("Index", "Subscription", new { Area = "User" });
 		}
 
-		private const string CodesMessageKey = "SubscriptionCodesMessage";
-		private const string PendingDiscountCodeKey = "SubscriptionPendingDiscountCode";
+		private const string CodesMessageKey = DiscountCodeEntry.MessageKey;
+		private const string PendingDiscountCodeKey = DiscountCodeEntry.PendingCodeKey;
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_Update)]
@@ -963,7 +944,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 						_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
 						if (result)
+						{
+							// Paddle cancels at the end of the billing period.
+							await NotifyDedicatedNumberOfPlanCancellationAsync(payment.EndingOn);
 							return RedirectToAction("CancelSuccess", "Subscription", new { Area = "User" });
+						}
 						else
 							return RedirectToAction("CancelFailure", "Subscription", new { Area = "User" });
 					}
@@ -1397,6 +1382,26 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				return RedirectToAction("PaymentFailed", "Subscription",
 						new { Area = "User", chargeId = "", errorMessage = ex.Message });
+			}
+		}
+
+		/// <summary>
+		/// call-intake-and-ai-destinations-plan.md §8 D12: a plan cancelled at the end of its period stops the Dedicated Number add-on with it,
+		/// so a department holding a number hears now when texts and calls stop and when the number is released. An immediate cancellation
+		/// (Stripe here) is left to worker 80's "payment stopped" warning. Never fails the cancellation.
+		/// </summary>
+		private async Task NotifyDedicatedNumberOfPlanCancellationAsync(DateTime? endsOnUtc)
+		{
+			if (_departmentPhoneNumbers == null)
+				return;
+
+			try
+			{
+				await _departmentPhoneNumbers.NotifyCancellationScheduledAsync(DepartmentId, DedicatedNumberCancellations.Plan, endsOnUtc);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Dedicated number plan-cancelled notice failed for DepartmentId: {DepartmentId}");
 			}
 		}
 

@@ -68,6 +68,10 @@ namespace Resgrid.Web.Eventing
 			// Ids and state only; clients reload the ETA through Routing/GetActiveNavigations, which applies the viewer's visibility.
 			// Ids only; clients reload the alerts through RecurringCalls/GetRecurringCallAlerts, which applies the viewer's dispatch scope.
 			_rabbitInboundEventProvider.RegisterForRecurringCallAlertsEvents((departmentId, id, payload) => _eventingHub.Clients.Group(departmentId.ToString()).SendAsync("recurringCallAlertsUpdated", id, payload));
+			// Call id plus advice id and state; clients reload through AiDestinations/GetAdvice, which checks the viewer may see the call.
+			_rabbitInboundEventProvider.RegisterForAiDestinationAdviceEvents((departmentId, id, payload) => _eventingHub.Clients.Group(departmentId.ToString()).SendAsync("aiDestinationAdviceUpdated", id, payload));
+			// Call id plus conversation id, state and handler (no text); clients reload through IntakeConversations/GetForCall, which checks the viewer may see the call.
+			_rabbitInboundEventProvider.RegisterForIntakeConversationEvents((departmentId, id, payload) => _eventingHub.Clients.Group(departmentId.ToString()).SendAsync("intakeConversationUpdated", id, payload));
 			_rabbitInboundEventProvider.RegisterForUnitNavigationEvents((departmentId, id, payload) => _eventingHub.Clients.Group(departmentId.ToString()).SendAsync("unitNavigationUpdated", id, payload));
 
 			await StartProviderAsync();

@@ -88,6 +88,24 @@ namespace Resgrid.Web.Services.Models.v4.Routes
 		public int UnitId { get; set; }
 	}
 
+	/// <summary>Starts the route of a call (M0322 Call.RoutePlanId) for the unit working it.</summary>
+	public class StartCallRouteInput
+	{
+		[Required]
+		public int CallId { get; set; }
+		[Required]
+		public int UnitId { get; set; }
+	}
+
+	/// <summary>The unit reached the plan start of a call route (the leading leg of instance directions asked with includeStart).</summary>
+	public class ReachRouteStartInput
+	{
+		[Required]
+		public string RouteInstanceId { get; set; }
+		public decimal? Latitude { get; set; }
+		public decimal? Longitude { get; set; }
+	}
+
 	public class EndRouteInput
 	{
 		[Required]

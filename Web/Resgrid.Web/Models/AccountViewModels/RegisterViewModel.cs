@@ -57,7 +57,8 @@ namespace Resgrid.Web.Models.AccountViewModels
 		[Display(Name = "Discount Code")]
 		public string DiscountCode { get; set; }
 
-		[Display(Name = "Affiliate Code")]
+		/// <summary>Partner/account code: issued to external partners and Resgrid account executives. Stored as Department.AffiliateCode.</summary>
+		[Display(Name = "Partner/Account Code")]
 		public string AffiliateCode { get; set; }
 	}
 }

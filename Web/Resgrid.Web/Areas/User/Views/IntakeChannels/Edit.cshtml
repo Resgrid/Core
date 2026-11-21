@@ -1,0 +1,199 @@
+@model Resgrid.Web.Areas.User.Models.IntakeChannels.IntakeChannelEditView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.IntakeChannels> localizer
+@{
+	var type = (IntakeChannelTypes)Model.ChannelType;
+	var title = Model.IsNew ? localizer["AddChannel"] : localizer["EditChannel"];
+	ViewBag.Title = "Resgrid | " + title;
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@title: @localizer["Type." + type]</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+			</li>
+			<li>
+				<a asp-controller="IntakeChannels" asp-action="Index" asp-route-area="User">@localizer["PageTitle"]</a>
+			</li>
+			<li class="active">
+				<strong>@title</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					@if (!String.IsNullOrEmpty(Model.ErrorMessage))
+					{
+						<div class="alert alert-danger" id="intakeChannelError">@Model.ErrorMessage</div>
+					}
+
+					<form class="form-horizontal" method="post" asp-controller="IntakeChannels" asp-action="Edit" asp-route-area="User" id="intakeChannelForm">
+						@Html.AntiForgeryToken()
+						<input type="hidden" asp-for="IntakeChannelId" />
+						<input type="hidden" asp-for="ChannelType" />
+
+						<div class="form-group">
+							<label class="col-sm-3 control-label" asp-for="Name">@localizer["Name"]</label>
+							<div class="col-sm-6">
+								<input type="text" class="form-control" asp-for="Name" maxlength="@IntakeChannel.MaxNameLength" required />
+								<span class="help-block m-b-none">@localizer["NameHelp"]</span>
+							</div>
+						</div>
+
+						@if (type != IntakeChannelTypes.Webhook)
+						{
+							<div class="form-group">
+								<label class="col-sm-3 control-label" asp-for="Address">@localizer["Address"]</label>
+								<div class="col-sm-6">
+									<input type="text" class="form-control" asp-for="Address" maxlength="@IntakeChannel.MaxAddressLength" required />
+									<span class="help-block m-b-none">
+										@if (type == IntakeChannelTypes.Email)
+										{
+											@localizer["Help.Email", Model.EmailDomain]
+										}
+										else
+										{
+											@localizer["Help." + type]
+										}
+									</span>
+								</div>
+							</div>
+						}
+						else
+						{
+							<div class="form-group">
+								<div class="col-sm-offset-3 col-sm-6">
+									<span class="help-block m-b-none">@localizer["Help.Webhook"]</span>
+								</div>
+							</div>
+						}
+
+						@if (type == IntakeChannelTypes.Slack || type == IntakeChannelTypes.Teams || type == IntakeChannelTypes.Telegram ||
+							type == IntakeChannelTypes.Discord || type == IntakeChannelTypes.GoogleChat)
+						{
+							<div class="form-group">
+								<div class="col-sm-offset-3 col-sm-6">
+									<span class="help-block m-b-none">@localizer["ChatRules"]</span>
+								</div>
+							</div>
+						}
+
+						@if (type != IntakeChannelTypes.Voice)
+						{
+							<div class="form-group">
+								<label class="col-sm-3 control-label" asp-for="ProcessingMode">@localizer["Mode"]</label>
+								<div class="col-sm-6">
+									<select class="form-control" asp-for="ProcessingMode" id="intakeProcessingMode">
+										<option value="@((int)IntakeProcessingModes.Template)">@localizer["ModeTemplate"]</option>
+										<option value="@((int)IntakeProcessingModes.EnhancedAi)">@localizer["ModeEnhancedAi"]</option>
+									</select>
+									<span class="help-block m-b-none">@localizer["ModeHelp"]</span>
+								</div>
+							</div>
+
+							<div class="form-group" id="intakeTemplateGroup">
+								<label class="col-sm-3 control-label" asp-for="TemplateFormat">@localizer["TemplateFormat"]</label>
+								<div class="col-sm-6">
+									<select class="form-control" asp-for="TemplateFormat">
+										@foreach (var format in Model.TemplateFormats)
+										{
+											<option value="@format.Key" selected="@(Model.TemplateFormat == format.Key || !Model.TemplateFormat.HasValue && format.Key == (int)CallEmailTypes.Generic)">@format.Value</option>
+										}
+									</select>
+								</div>
+							</div>
+						}
+						else
+						{
+							<input type="hidden" asp-for="ProcessingMode" value="@((int)IntakeProcessingModes.EnhancedAi)" />
+						}
+
+						<div class="form-group">
+							<label class="col-sm-3 control-label" asp-for="AllowedSenders">@localizer["AllowedSenders"]</label>
+							<div class="col-sm-6">
+								<textarea class="form-control" asp-for="AllowedSenders" rows="2"></textarea>
+								<span class="help-block m-b-none">@localizer["AllowedSendersHelp"]</span>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-3 control-label" asp-for="DefaultPriority">@localizer["DefaultPriority"]</label>
+							<div class="col-sm-6">
+								<select class="form-control" asp-for="DefaultPriority">
+									<option value="">@localizer["UseDepartmentDefault"]</option>
+									@foreach (var priority in Model.Priorities)
+									{
+										<option value="@priority.Key" selected="@(Model.DefaultPriority == priority.Key)">@priority.Value</option>
+									}
+								</select>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-3 control-label" asp-for="DefaultCallTypeId">@localizer["DefaultCallType"]</label>
+							<div class="col-sm-6">
+								<select class="form-control" asp-for="DefaultCallTypeId">
+									<option value="">@localizer["NoneOption"]</option>
+									@foreach (var callType in Model.CallTypes)
+									{
+										<option value="@callType.Key" selected="@(Model.DefaultCallTypeId == callType.Key)">@callType.Value</option>
+									}
+								</select>
+							</div>
+						</div>
+
+						@if (type != IntakeChannelTypes.Voice)
+						{
+							<div class="form-group">
+								<label class="col-sm-3 control-label" asp-for="SendAcknowledgement">@localizer["SendAcknowledgement"]</label>
+								<div class="col-sm-6">
+									<div class="checkbox checkbox-primary">
+										<input type="checkbox" asp-for="SendAcknowledgement" />
+										<label for="SendAcknowledgement"></label>
+									</div>
+									<span class="help-block m-b-none">@localizer["SendAcknowledgementHelp"]</span>
+								</div>
+							</div>
+						}
+
+						<div class="form-group">
+							<label class="col-sm-3 control-label" asp-for="IsEnabled">@localizer["Enabled"]</label>
+							<div class="col-sm-6">
+								<div class="checkbox checkbox-primary">
+									<input type="checkbox" asp-for="IsEnabled" />
+									<label for="IsEnabled"></label>
+								</div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<div class="col-sm-offset-3 col-sm-6">
+								<a class="btn btn-default" asp-controller="IntakeChannels" asp-action="Index" asp-route-area="User">@localizer["Cancel"]</a>
+								<button type="submit" class="btn btn-primary">@localizer["Save"]</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+	<script type="text/javascript">
+		$(document).ready(function () {
+			function toggleTemplate() {
+				$('#intakeTemplateGroup').toggle($('#intakeProcessingMode').val() === '@((int)IntakeProcessingModes.Template)');
+			}
+			$('#intakeProcessingMode').on('change', toggleTemplate);
+			toggleTemplate();
+		});
+	</script>
+}

@@ -663,7 +663,7 @@
         "Field": null
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-11-16T00:00:00Z",
+      "ReviewedOn": "2026-11-19T00:00:00Z",
       "Impact": {
         "Risk": "Low",
         "AudienceKey": "Impact.Audience",
@@ -1305,6 +1305,86 @@
       "RuleIds": [],
       "Prominence": "Key",
       "DocsPath": "/web-app/mapping/#points-of-interest-pois"
+    },
+    {
+      "Id": "poi-capabilities",
+      "AreaId": "mapping",
+      "LabelKey": "Feature.poi-capabilities",
+      "PurposeKey": "FeaturePurpose.poi-capabilities",
+      "ValueKey": "AreaValue.mapping",
+      "ExampleKey": "AreaExample.mapping",
+      "AdoptionKey": "FeatureSetup.poi-capabilities",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Mapping",
+        "Action": "PoiCapabilities"
+      },
+      "Requirements": [
+        {
+          "Kind": "module",
+          "Id": "Mapping"
+        }
+      ],
+      "SettingIds": [
+        "module.MappingDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/destinations/#poi-capabilities"
+    },
+    {
+      "Id": "destination-availability",
+      "AreaId": "mapping",
+      "LabelKey": "Feature.destination-availability",
+      "PurposeKey": "FeaturePurpose.destination-availability",
+      "ValueKey": "AreaValue.mapping",
+      "ExampleKey": "AreaExample.mapping",
+      "AdoptionKey": "FeatureSetup.destination-availability",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Mapping",
+        "Action": "Destinations"
+      },
+      "Requirements": [
+        {
+          "Kind": "module",
+          "Id": "Mapping"
+        }
+      ],
+      "SettingIds": [
+        "module.MappingDisabled",
+        "setting.TransportDestinationChecks"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/destinations/#destination-availability"
+    },
+    {
+      "Id": "destination-rules",
+      "AreaId": "mapping",
+      "LabelKey": "Feature.destination-rules",
+      "PurposeKey": "FeaturePurpose.destination-rules",
+      "ValueKey": "AreaValue.mapping",
+      "ExampleKey": "AreaExample.mapping",
+      "AdoptionKey": "FeatureSetup.destination-rules",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "DestinationRules",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "module",
+          "Id": "Mapping"
+        }
+      ],
+      "SettingIds": [
+        "module.MappingDisabled",
+        "setting.DestinationSuggestions"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/destinations/#destination-rules"
     },
     {
       "Id": "custom-map-icons",
@@ -2087,12 +2167,45 @@
       "Id": "pois",
       "Locale": "en",
       "TitleKey": "Feature.pois",
-      "Body": "Points of Interest Points of interest such as stations, hospitals and hydrants. A current map shows where responders and apparatus are and puts important locations in front of dispatchers. A department adds its stations and hospitals as points of interest and lets personnel locations expire after 60 minutes so old positions disappear. Add the locations dispatchers need to see. Give a POI type a custom icon to replace its marker on the map and in the apps.",
+      "Body": "Points of Interest Points of interest such as stations, hospitals and hydrants. A current map shows where responders and apparatus are and puts important locations in front of dispatchers. A department adds its stations and hospitals as points of interest and lets personnel locations expire after 60 minutes so old positions disappear. Add the locations dispatchers need to see, one at a time or by importing a KML, KMZ or CSV file; addresses in the file are looked up in the background. Give a POI type a custom icon to replace its marker on the map and in the apps. The import runs in the background: the POIs page shows each import's progress, retries addresses the lookup service could not answer and reports the rows it could not place. Department admins and hydrant managers can import, and department admins can remove POIs in bulk.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "pois",
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-10-21T00:00:00Z"
+      "ReviewedOn": "2026-11-19T00:00:00Z"
+    },
+    {
+      "Id": "poi-capabilities",
+      "Locale": "en",
+      "TitleKey": "Feature.poi-capabilities",
+      "Body": "POI capabilities What your points of interest offer, such as a cath lab, stroke center, helipad or drafting site, ticked on each POI so dispatchers and crews can filter and rank destinations by what the patient or task needs. A current map shows where responders and apparatus are and puts important locations in front of dispatchers. Open Mapping, then Manage POIs, and choose POI Capabilities. Add what your destinations offer, then tick them on each POI, or add a Capabilities column to a POI import file. Department admins manage the list; deleting a capability takes it off every POI. An import file's Capabilities column (also Specialties or Services, several values separated by ;, , or |) tags each imported POI and adds any capability the department does not have yet. Capabilities show in the POI list, the web call form's destination list and the apps' destination pickers, where crews filter by one capability and see the nearest first. Destination rules can require or prefer them, and destination availability can mark one unavailable.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "poi-capabilities",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-19T00:00:00Z"
+    },
+    {
+      "Id": "destination-availability",
+      "Locale": "en",
+      "TitleKey": "Feature.destination-availability",
+      "Body": "Destination availability Whether each destination can take patients right now: open, limited, on diversion or closed, with the capabilities it cannot provide, a note and how long the report lasts. A current map shows where responders and apparatus are and puts important locations in front of dispatchers. Open Mapping, then Manage POIs, and choose Destination Availability, or use the Destination availability link under the call form's Destination. Choose {SET} on a destination when it reports a diversion, a closure or a capability that is down. Department admins and anyone who can create calls can set it. A report lasts from 1 to 24 hours or until someone changes it; setting it back to Open clears it, and an expired report reads as open. Every app badges a destination that is on diversion or closed and ranks it after those that can take the patient, and destination suggestions only fall back to it when nothing better is left. Nothing is refused: a crew with no alternative can still go there. The Omni Dispatch app's Destinations screen shows the same list.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "destination-availability",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-19T00:00:00Z"
+    },
+    {
+      "Id": "destination-rules",
+      "Locale": "en",
+      "TitleKey": "Feature.destination-rules",
+      "Body": "Destination rules Rules that choose the destination types and the required and preferred capabilities for a call's type and priority and the travelling unit's type, so Resgrid can suggest the nearest suitable destination with drive time and distance. A current map shows where responders and apparatus are and puts important locations in front of dispatchers. Open Mapping, then Manage POIs, and choose Destination Rules. Add a rule for each case, for example cardiac calls go to a hospital with a cath lab and a water tender goes to a drafting site, check them with Try it, then set Destination suggestions to Suggest destinations or Suggest and fill in the destination. A rule matches on call types, priorities and unit types. Rules for a unit type come first, then rules with more conditions; the first rule with destination types sets them, later ones narrow them, and a rule that would leave no type is set aside, which Try it shows with the reason. A preferred capability only wins within the preferred window (3 minutes by default) of the nearest destination that meets the requirements. Suggestions rank destinations that are ready first, then those on diversion, then those missing a required capability or with it down, then closed ones, and look up drive times for the five nearest that can take the patient. Suggestions are Off by default because each one looks up drive times. In Suggest and fill mode New Call fills an empty destination, never one somebody chose or a free destination location; Update Call only suggests. Department admins manage the rules and the setting.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "destination-rules",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-19T00:00:00Z"
     },
     {
       "Id": "custom-map-icons",
@@ -2197,12 +2310,12 @@
       "Id": "routes",
       "Locale": "en",
       "TitleKey": "Feature.routes",
-      "Body": "Routes Planned routes, such as patrols, and who is assigned to them. Prepare recurring route information with current source ownership. A department adds its stations and hospitals as points of interest and lets personnel locations expire after 60 minutes so old positions disappear. Confirm members allow location sharing in the Responder app, and decide how long a position should stay on the map.",
+      "Body": "Routes Planned routes, such as patrols or transport runs, who is assigned to them, and routes a call can carry so the unit working it runs the planned stops. Prepare recurring route information with current source ownership. A department adds its stations and hospitals as points of interest and lets personnel locations expire after 60 minutes so old positions disappear. Confirm members allow location sharing in the Responder app, and decide how long a position should stay on the map. A route plan that is active and has a start and an end can be put on a call; the unit working the call then runs it in the Omni Unit app, and the run links back to the call.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "routes",
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
+      "ReviewedOn": "2026-11-19T00:00:00Z"
     },
     {
       "Id": "setting.MappingProviderOverrides",
@@ -2219,12 +2332,12 @@
       "Id": "setting.DestinationSuggestions",
       "Locale": "en",
       "TitleKey": "Setting.DestinationSuggestions",
-      "Body": "Destination suggestions. Suggests the best destination for a call, and for a unit's status destination, from the department's destination rules (Mapping, Destination Rules) and the incident location, with drive time and distance. Suggest and fill also fills a new call's empty destination with the best one; dispatchers and crews can still choose another. Off by default, because each suggestion looks up drive times.",
+      "Body": "Destination suggestions. Suggests the best destination for a call, and for a unit's status destination, from the department's destination rules (Mapping, Manage POIs, Destination Rules) and the incident location, with drive time and distance. Suggest and fill also fills a new call's empty destination with the best one; dispatchers and crews can still choose another. Off by default, because each suggestion looks up drive times.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-destinationsuggestions",
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-11-16T00:00:00Z"
+      "ReviewedOn": "2026-11-19T00:00:00Z"
     }
   ]
 }

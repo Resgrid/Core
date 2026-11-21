@@ -1052,4 +1052,112 @@
   <data name="DestinationAvailabilityLink" xml:space="preserve">
     <value>Διαθεσιμότητα προορισμών</value>
   </data>
+  <data name="LocationPoiPlaceholder" xml:space="preserve">
+    <value>Τοποθεσία από σημείο ενδιαφέροντος (προαιρετικό)</value>
+  </data>
+  <data name="LocationPoiHelp" xml:space="preserve">
+    <value>Η επιλογή σημείου ενδιαφέροντος συμπληρώνει τη διεύθυνση και την πινέζα στον χάρτη· και τα δύο μπορούν ακόμη να αλλάξουν.</value>
+  </data>
+  <data name="InvalidLocationPoi" xml:space="preserve">
+    <value>Επιλέξτε από τη λίστα το σημείο ενδιαφέροντος της τοποθεσίας της κλήσης.</value>
+  </data>
+  <data name="LocationPoiDisplayLabel" xml:space="preserve">
+    <value>Σημείο ενδιαφέροντος τοποθεσίας</value>
+  </data>
+  <data name="DestinationLocationLabel" xml:space="preserve">
+    <value>Ή μια τοποθεσία προορισμού</value>
+  </data>
+  <data name="DestinationLocationHelp" xml:space="preserve">
+    <value>Για προορισμό που δεν είναι σημείο ενδιαφέροντος: διεύθυνση, συντεταγμένες, what3words ή κωδικός Plus. Δεν μπορούν να οριστούν ταυτόχρονα σημείο ενδιαφέροντος προορισμού και τοποθεσία προορισμού.</value>
+  </data>
+  <data name="DestinationAddressPlaceholder" xml:space="preserve">
+    <value>Διεύθυνση προορισμού</value>
+  </data>
+  <data name="DestinationPlusCodePlaceholder" xml:space="preserve">
+    <value>Κωδικός Plus</value>
+  </data>
+  <data name="FindPlusCode" xml:space="preserve">
+    <value>Εύρεση κωδικού Plus</value>
+  </data>
+  <data name="ClearDestinationLocation" xml:space="preserve">
+    <value>Εκκαθάριση τοποθεσίας προορισμού</value>
+  </data>
+  <data name="InvalidDestinationCoordinates" xml:space="preserve">
+    <value>Εισαγάγετε το γεωγραφικό πλάτος και μήκος του προορισμού ως δεκαδικούς αριθμούς με τελεία, για παράδειγμα 50.8503 και 4.3517.</value>
+  </data>
+  <data name="DestinationLocationNotFound" xml:space="preserve">
+    <value>Δεν βρέθηκε τοποθεσία για αυτόν τον προορισμό.</value>
+  </data>
+  <data name="PlusCodeNotFound" xml:space="preserve">
+    <value>Δεν βρέθηκε τοποθεσία για αυτόν τον κωδικό Plus.</value>
+  </data>
+  <data name="CallRouteLabel" xml:space="preserve">
+    <value>Διαδρομή</value>
+  </data>
+  <data name="CallRoutePlaceholder" xml:space="preserve">
+    <value>Χωρίς διαδρομή</value>
+  </data>
+  <data name="CallRouteHelp" xml:space="preserve">
+    <value>Μια προκαθορισμένη διαδρομή για τη μονάδα που χειρίζεται την κλήση. Μια κενή τοποθεσία παίρνει την αρχή της διαδρομής και ένας κενός προορισμός το τέλος της.</value>
+  </data>
+  <data name="CallRoutePreview" xml:space="preserve">
+    <value>Προεπισκόπηση διαδρομής</value>
+  </data>
+  <data name="CallRouteStops" xml:space="preserve">
+    <value>{0} στάσεις</value>
+  </data>
+  <data name="CallRouteUnavailable" xml:space="preserve">
+    <value>{0} (δεν είναι πλέον διαθέσιμη)</value>
+  </data>
+  <data name="CallRouteDeleted" xml:space="preserve">
+    <value>Διαγραμμένη διαδρομή</value>
+  </data>
+  <data name="InvalidCallRoute" xml:space="preserve">
+    <value>Επιλέξτε από τη λίστα μια ενεργή διαδρομή με αρχή και τέλος.</value>
+  </data>
+  <data name="CallRouteStart" xml:space="preserve">
+    <value>Αρχή διαδρομής</value>
+  </data>
+  <data name="CallRouteEnd" xml:space="preserve">
+    <value>Τέλος διαδρομής</value>
+  </data>
+  <data name="CallRouteRunsLabel" xml:space="preserve">
+    <value>Εκτελέσεις διαδρομής</value>
+  </data>
+  <data name="CallRouteRunUnit" xml:space="preserve">
+    <value>Μονάδα</value>
+  </data>
+  <data name="CallRouteRunStatus" xml:space="preserve">
+    <value>Κατάσταση</value>
+  </data>
+  <data name="CallRouteRunStops" xml:space="preserve">
+    <value>Στάσεις</value>
+  </data>
+  <data name="CallRouteRunStarted" xml:space="preserve">
+    <value>Έναρξη</value>
+  </data>
+  <data name="CallRouteRunEnded" xml:space="preserve">
+    <value>Λήξη</value>
+  </data>
+  <data name="CallRouteRunStatusScheduled" xml:space="preserve">
+    <value>Προγραμματισμένη</value>
+  </data>
+  <data name="CallRouteRunStatusInProgress" xml:space="preserve">
+    <value>Σε εξέλιξη</value>
+  </data>
+  <data name="CallRouteRunStatusCompleted" xml:space="preserve">
+    <value>Ολοκληρώθηκε</value>
+  </data>
+  <data name="CallRouteRunStatusCancelled" xml:space="preserve">
+    <value>Ακυρώθηκε</value>
+  </data>
+  <data name="CallRouteRunStatusAbandoned" xml:space="preserve">
+    <value>Εγκαταλείφθηκε</value>
+  </data>
+  <data name="CallRouteRunStatusPaused" xml:space="preserve">
+    <value>Σε παύση</value>
+  </data>
+  <data name="CallRouteNoRuns" xml:space="preserve">
+    <value>Καμία μονάδα δεν έχει ξεκινήσει ακόμη αυτή τη διαδρομή.</value>
+  </data>
 </root>

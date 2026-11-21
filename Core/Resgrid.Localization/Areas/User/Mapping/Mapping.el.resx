@@ -205,7 +205,7 @@
     <value>Εισαγωγές</value>
   </data>
   <data name="PoiImportsHelp" xml:space="preserve">
-    <value>Οι εισαγωγές εκτελούνται στο παρασκήνιο και συνήθως ξεκινούν μέσα σε ένα λεπτό. Ανανεώστε τη σελίδα για να δείτε την πρόοδο.</value>
+    <value>Οι εισαγωγές εκτελούνται στο παρασκήνιο και συνήθως ξεκινούν μέσα σε ένα λεπτό. Η λίστα ενημερώνεται μόνη της όσο εκτελείται μια εισαγωγή.</value>
   </data>
   <data name="PoiImportsRefresh" xml:space="preserve">
     <value>Ανανέωση</value>
@@ -580,5 +580,32 @@
   </data>
   <data name="PoiAvailabilitySaveFailed" xml:space="preserve">
     <value>Δεν ήταν δυνατή η αποθήκευση της διαθεσιμότητας: το POI δεν είναι πλέον προορισμός. Ανανεώστε τη σελίδα και δοκιμάστε ξανά.</value>
+  </data>
+  <data name="ManagePois" xml:space="preserve">
+    <value>Διαχείριση Σημείων Ενδιαφέροντος</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>Διεύθυνση</value>
+  </data>
+  <data name="ImportFileRequired" xml:space="preserve">
+    <value>Επιλέξτε ένα αρχείο για μεταφόρτωση.</value>
+  </data>
+  <data name="ImportFileTypeInvalid" xml:space="preserve">
+    <value>Ο τύπος αρχείου ({0}) δεν μπορεί να εισαχθεί ως σημεία ενδιαφέροντος: μεταφορτώστε ένα αρχείο KML, KMZ ή CSV.</value>
+  </data>
+  <data name="ImportFileTooLarge" xml:space="preserve">
+    <value>Το αρχείο είναι πολύ μεγάλο: πρέπει να είναι μικρότερο από 10 MB.</value>
+  </data>
+  <data name="ImportTypeRequired" xml:space="preserve">
+    <value>Επιλέξτε τον τύπο POI στον οποίο θα γίνει η εισαγωγή.</value>
+  </data>
+  <data name="ImportChooseType" xml:space="preserve">
+    <value>Επιλέξτε τύπο POI</value>
+  </data>
+  <data name="ImportNoValidRows" xml:space="preserve">
+    <value>Καμία από τις {0} εγγραφές του αρχείου δεν έχει έγκυρες συντεταγμένες ή διεύθυνση (ελέγξτε ότι το γεωγραφικό πλάτος και μήκος δεν έχουν αντιμετατεθεί ή δεν είναι κενά).</value>
+  </data>
+  <data name="ImportNothingFound" xml:space="preserve">
+    <value>Δεν βρέθηκαν σημάνσεις ή γραμμές με συντεταγμένες ή διεύθυνση στο αρχείο που μεταφορτώθηκε.</value>
   </data>
 </root>

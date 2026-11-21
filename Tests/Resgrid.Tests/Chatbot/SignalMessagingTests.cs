@@ -326,7 +326,7 @@ namespace Resgrid.Tests.Chatbot
 			var context = new DefaultHttpContext();
 			context.Request.Body = new MemoryStream(Encoding.UTF8.GetBytes(body.ToString(Formatting.None)));
 			context.Request.Headers["X-Resgrid-Signal-Secret"] = secret;
-			var controller = new ChatbotPlatformsController(_queue.Object, _registry, new ChatbotJwtValidator())
+			var controller = new ChatbotPlatformsController(_queue.Object, _registry, new ChatbotJwtValidator(), Mock.Of<Resgrid.Model.Services.IIntakeChannelsService>(), Mock.Of<Resgrid.Model.Services.IIntakeService>())
 			{ ControllerContext = new ControllerContext { HttpContext = context } };
 			return controller.Receive("Signal");
 		}

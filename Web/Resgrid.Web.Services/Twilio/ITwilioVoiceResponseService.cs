@@ -18,6 +18,19 @@ namespace Resgrid.Web.Services.Twilio
 		System.Threading.Tasks.Task AppendPromptsAsync(Gather gather, IEnumerable<string> prompts, CancellationToken cancellationToken = default, string voice = null);
 
 		/// <summary>
+		/// Appends the spoken call dispatch (one &lt;Play&gt; per chunk) at the dispatch speaking
+		/// rate (DispatchVoicePromptBuilder.DispatchSpeed), which is slower than the menus. Use this,
+		/// not AppendPromptAsync, for dispatch text: the broadcast worker pre-warms the audio at that
+		/// rate, and speed is part of the TTS cache key.
+		/// </summary>
+		System.Threading.Tasks.Task AppendDispatchPromptAsync(VoiceResponse response, string dispatchText, CancellationToken cancellationToken, string voice);
+
+		/// <summary>
+		/// PreWarmPromptAsync for dispatch text, at the dispatch speaking rate (see AppendDispatchPromptAsync).
+		/// </summary>
+		System.Threading.Tasks.Task PreWarmDispatchPromptAsync(string dispatchText, string voice);
+
+		/// <summary>
 		/// Appends the text as Twilio-native &lt;Say&gt; verbs to the given TwiML
 		/// parent (VoiceResponse, Gather, ...), split into the same chunks the TTS
 		/// pipeline would use so no single verb exceeds Twilio's per-&lt;Say&gt;

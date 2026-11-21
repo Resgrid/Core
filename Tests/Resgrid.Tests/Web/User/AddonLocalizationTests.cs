@@ -24,7 +24,7 @@ namespace Resgrid.Tests.Web.User
 
 		// Product names stay in English in every language; their keys are the only identical values allowed.
 		private static readonly string[] ProductNames =
-			{ "PttTitle", "ReadinessProTitle", "BusinessOpsTitle", "IncidentBackOfficeTitle", "EnhancedAiTitle", "AdpTitle" };
+			{ "PttTitle", "ReadinessProTitle", "BusinessOpsTitle", "IncidentBackOfficeTitle", "EnhancedAiTitle", "AdpTitle", "DedicatedNumberTitle" };
 
 		private static readonly Dictionary<string, string[]> SharedSpellings = new Dictionary<string, string[]>
 		{

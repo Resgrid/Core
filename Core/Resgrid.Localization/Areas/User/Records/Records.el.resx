@@ -2286,4 +2286,10 @@
   <data name="DeleteRefusedPermanentContent" xml:space="preserve"><value>Αυτή η αναφορά έχει καταχωρίσεις τραυματιών, διασώσεων ή εκθέσεων, που διατηρούνται μόνιμα. Αφαιρέστε τις από το προσχέδιο πριν τη διαγράψετε.</value></data>
   <data name="DeleteRefusedAmendmentOpen" xml:space="preserve"><value>Εγκαταλείψτε την ανοιχτή τροποποίηση πριν διαγράψετε αυτή την αναφορά.</value></data>
   <data name="IncludeClosedReports" xml:space="preserve"><value>Συμπερίληψη ακυρωμένων προσχεδίων και αναφορών</value></data>
+  <data name="ImportMapPois" xml:space="preserve">
+    <value>Εισαγωγή σημείων ενδιαφέροντος χάρτη</value>
+  </data>
+  <data name="ImportMapPoisHelp" xml:space="preserve">
+    <value>Εισαγωγή αρχείου KML, KMZ ή CSV ως σημεία ενδιαφέροντος χάρτη (ορόσημα), χωριστά από τις εγγραφές κρουνών.</value>
+  </data>
 </root>

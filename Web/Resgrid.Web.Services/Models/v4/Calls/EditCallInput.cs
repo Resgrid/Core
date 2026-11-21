@@ -50,6 +50,31 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		public int? DestinationPoiId { get; set; }
 
 		/// <summary>
+		/// The POI (any type) the call location was picked from (M0322). Null keeps the stored one; 0 clears it.
+		/// </summary>
+		public int? LocationPoiId { get; set; }
+
+		/// <summary>
+		/// Free destination address (M0322). Null keeps the stored one; an empty string clears it. A destination POI clears it.
+		/// </summary>
+		public string DestinationAddress { get; set; }
+
+		/// <summary>
+		/// Free destination point "lat,lon" (M0322). Null keeps the stored one; an empty string clears it.
+		/// </summary>
+		public string DestinationGeolocation { get; set; }
+
+		/// <summary>
+		/// Free destination what3words address (M0322). Null keeps the stored one; an empty string clears it.
+		/// </summary>
+		public string DestinationWhat3Words { get; set; }
+
+		/// <summary>
+		/// The pre-defined route the call follows (M0322). Null keeps the stored one; an empty string clears it.
+		/// </summary>
+		public string RoutePlanId { get; set; }
+
+		/// <summary>
 		/// Geolocation data "lat,lon"
 		/// </summary>
 		public string Geolocation { get; set; }

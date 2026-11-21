@@ -151,6 +151,14 @@ var resgrid;
                 eventHub.on("unitNavigationUpdated", function (id, payload) {
                     document.dispatchEvent(new CustomEvent("resgrid:unit-navigation-updated", { detail: { unitId: id, payload: payload } }));
                 });
+                // A call's Enhanced AI destination advice changed (EventingTypes 18); payload = advice id, state and whether it is a change.
+                eventHub.on("aiDestinationAdviceUpdated", function (id, payload) {
+                    document.dispatchEvent(new CustomEvent("resgrid:ai-destination-advice-updated", { detail: { callId: id, payload: payload } }));
+                });
+                // An intake SMS conversation changed (EventingTypes 21); payload = conversation id, state and handler (no text).
+                eventHub.on("intakeConversationUpdated", function (id, payload) {
+                    document.dispatchEvent(new CustomEvent("resgrid:intake-conversation-updated", { detail: { callId: id, payload: payload } }));
+                });
                 eventHub.on("onConnected", function (id) {
                     //connectionId = id;
                 });

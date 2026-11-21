@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Eingangskanäle</value>
+  </data>
+  <data name="PageIntro" xml:space="preserve">
+    <value>Nachrichten an einen Eingangskanal werden zu wartenden Einsätzen. Ein Disponent prüft jeden und entscheidet, wer alarmiert wird; der Eingang alarmiert nie selbst.</value>
+  </data>
+  <data name="FeatureOff" xml:space="preserve">
+    <value>Eingangskanäle sind für Ihre Organisation noch nicht freigeschaltet. Sie können Kanäle schon einrichten; sie erzeugen Einsätze, sobald die Funktion aktiviert ist.</value>
+  </data>
+  <data name="AddChannel" xml:space="preserve">
+    <value>Kanal hinzufügen</value>
+  </data>
+  <data name="EditChannel" xml:space="preserve">
+    <value>Kanal bearbeiten</value>
+  </data>
+  <data name="NoChannels" xml:space="preserve">
+    <value>Es sind noch keine Eingangskanäle eingerichtet.</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Bezeichnung</value>
+  </data>
+  <data name="NameHelp" xml:space="preserve">
+    <value>Wird auf den wartenden Einsätzen dieses Kanals angezeigt, zum Beispiel "Verlegungsleitung Klinikum".</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Kanaltyp</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>Adresse</value>
+  </data>
+  <data name="Mode" xml:space="preserve">
+    <value>Verarbeitung</value>
+  </data>
+  <data name="ModeTemplate" xml:space="preserve">
+    <value>Einsatzvorlage</value>
+  </data>
+  <data name="ModeEnhancedAi" xml:space="preserve">
+    <value>Enhanced AI</value>
+  </data>
+  <data name="ModeHelp" xml:space="preserve">
+    <value>Die Einsatzvorlage liest die Nachricht mit einem Ihrer E-Mail-Einsatzformate. Enhanced AI speichert die Nachricht als wartenden Einsatz und ergänzt danach Einsatzart, Adresse, Priorität und eine Zusammenfassung (erfordert das Enhanced-AI-Add-on mit KI-Eingang).</value>
+  </data>
+  <data name="TemplateFormat" xml:space="preserve">
+    <value>Vorlage</value>
+  </data>
+  <data name="AllowedSenders" xml:space="preserve">
+    <value>Zugelassene Absender</value>
+  </data>
+  <data name="AllowedSendersHelp" xml:space="preserve">
+    <value>Durch Kommas getrennt: Telefonnummern (mit *-Platzhaltern), E-Mail-Adressen oder @Domains oder Benutzer-IDs der Plattform. Leer lassen, um jeden anzunehmen, der die Adresse erreicht.</value>
+  </data>
+  <data name="DefaultPriority" xml:space="preserve">
+    <value>Standardpriorität</value>
+  </data>
+  <data name="DefaultCallType" xml:space="preserve">
+    <value>Standard-Einsatzart</value>
+  </data>
+  <data name="UseDepartmentDefault" xml:space="preserve">
+    <value>Standard der Organisation</value>
+  </data>
+  <data name="NoneOption" xml:space="preserve">
+    <value>Keine</value>
+  </data>
+  <data name="SendAcknowledgement" xml:space="preserve">
+    <value>Dem Absender antworten</value>
+  </data>
+  <data name="SendAcknowledgementHelp" xml:space="preserve">
+    <value>Sendet eine kurze Empfangsbestätigung mit der Einsatznummer. SMS werden von der Resgrid-Hauptnummer beantwortet.</value>
+  </data>
+  <data name="Enabled" xml:space="preserve">
+    <value>Aktiv</value>
+  </data>
+  <data name="Disabled" xml:space="preserve">
+    <value>Inaktiv</value>
+  </data>
+  <data name="Enable" xml:space="preserve">
+    <value>Aktivieren</value>
+  </data>
+  <data name="Disable" xml:space="preserve">
+    <value>Deaktivieren</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Bearbeiten</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Löschen</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Speichern</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Abbrechen</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Zustand</value>
+  </data>
+  <data name="ThisMonth" xml:space="preserve">
+    <value>Dieser Monat</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Aktionen</value>
+  </data>
+  <data name="DeleteConfirm" xml:space="preserve">
+    <value>Diesen Eingangskanal löschen? Nachrichten an seine Adresse erzeugen dann keine Einsätze mehr.</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Der Eingangskanal wurde gespeichert.</value>
+  </data>
+  <data name="Deleted" xml:space="preserve">
+    <value>Der Eingangskanal wurde gelöscht.</value>
+  </data>
+  <data name="Error.InvalidAddress" xml:space="preserve">
+    <value>Diese Adresse ist für diesen Kanaltyp ungültig.</value>
+  </data>
+  <data name="Error.AddressInUse" xml:space="preserve">
+    <value>Diese Adresse wird bereits von einem anderen Eingangskanal oder als Alarmierungs-E-Mail-Adresse einer Organisation verwendet.</value>
+  </data>
+  <data name="Error.NameRequired" xml:space="preserve">
+    <value>Geben Sie eine Bezeichnung für den Kanal ein.</value>
+  </data>
+  <data name="Error.Invalid" xml:space="preserve">
+    <value>Der Kanal konnte nicht gespeichert werden. Prüfen Sie die Angaben und versuchen Sie es erneut.</value>
+  </data>
+  <data name="Error.InvalidSenders" xml:space="preserve">
+    <value>Geben Sie höchstens 200 zugelassene Absender mit jeweils höchstens 256 Zeichen an, getrennt durch Kommas oder Zeilenumbrüche. Der Kanal wurde nicht gespeichert.</value>
+  </data>
+  <data name="Type.Sms" xml:space="preserve">
+    <value>Textnachricht (SMS)</value>
+  </data>
+  <data name="Type.Email" xml:space="preserve">
+    <value>E-Mail</value>
+  </data>
+  <data name="Type.WhatsApp" xml:space="preserve">
+    <value>WhatsApp</value>
+  </data>
+  <data name="Type.Slack" xml:space="preserve">
+    <value>Slack</value>
+  </data>
+  <data name="Type.Teams" xml:space="preserve">
+    <value>Microsoft Teams</value>
+  </data>
+  <data name="Type.Telegram" xml:space="preserve">
+    <value>Telegram</value>
+  </data>
+  <data name="Type.Discord" xml:space="preserve">
+    <value>Discord</value>
+  </data>
+  <data name="Type.GoogleChat" xml:space="preserve">
+    <value>Google Chat</value>
+  </data>
+  <data name="Type.Webhook" xml:space="preserve">
+    <value>Signierter Webhook</value>
+  </data>
+  <data name="Type.Voice" xml:space="preserve">
+    <value>Telefonanruf (Sprache)</value>
+  </data>
+  <data name="Help.Sms" xml:space="preserve">
+    <value>Die private Einsatz-Eingangsnummer der Organisation im internationalen Format, zum Beispiel +17755550100. Diese Nummer legt ihren Kanal bei der Einrichtung selbst an.</value>
+  </data>
+  <data name="Help.Voice" xml:space="preserve">
+    <value>Die private Einsatz-Eingangsnummer der Organisation im internationalen Format. Anrufer, die keine Mitglieder sind, beantworten gesprochene Fragen der Enhanced-AI-Sprachannahme.</value>
+  </data>
+  <data name="Help.Email" xml:space="preserve">
+    <value>Der Teil vor dem @. E-Mails an diesen Namen bei {0} werden zu wartenden Einsätzen. Er muss sich von der Alarmierungs-E-Mail-Adresse Ihrer Organisation unterscheiden.</value>
+  </data>
+  <data name="Help.WhatsApp" xml:space="preserve">
+    <value>Die WhatsApp-Absendernummer im internationalen Format. Der Resgrid-Support registriert den Absender im Twilio-Konto von Resgrid.</value>
+  </data>
+  <data name="Help.Slack" xml:space="preserve">
+    <value>Workspace-ID/Kanal-ID, zum Beispiel T012ABCDE/C034FGHIJ. Laden Sie die Resgrid-App mit /invite @Resgrid in den Kanal ein und kopieren Sie die Kanal-ID aus den Kanaldetails und die Workspace-ID aus den Workspace-Informationen.</value>
+  </data>
+  <data name="Help.Teams" xml:space="preserve">
+    <value>Mandanten-ID/Kanal-ID, zum Beispiel 72f988bf-86f1-41af-91ab-2d7cd011db47/19:abc123@thread.tacv2. Fügen Sie die Resgrid-App dem Team hinzu und verwenden Sie "Link zum Kanal abrufen": Die Kanal-ID ist der Teil 19:…@thread.tacv2, die Mandanten-ID der Wert tenantId. Erwähnen Sie @Resgrid im Kanal, um eine Anfrage zu senden.</value>
+  </data>
+  <data name="Help.Telegram" xml:space="preserve">
+    <value>Die Chat-ID; Gruppen-IDs sind negativ, zum Beispiel -1001234567890. Fügen Sie den Resgrid-Bot der Gruppe hinzu. Bei aktiviertem Datenschutzmodus beginnen Sie eine Anfrage mit /intake oder erwähnen den Bot.</value>
+  </data>
+  <data name="Help.Discord" xml:space="preserve">
+    <value>Die Kanal-ID (Entwicklermodus einschalten, Kanal rechts anklicken, Kanal-ID kopieren). Fügen Sie die Resgrid-App dem Server hinzu und verwenden Sie /resgrid im Kanal.</value>
+  </data>
+  <data name="Help.GoogleChat" xml:space="preserve">
+    <value>Der Bereichsname aus der URL des Bereichs, zum Beispiel spaces/AAAAbCdEfGh. Fügen Sie die Resgrid-App dem Bereich hinzu und erwähnen Sie sie, um eine Anfrage zu senden.</value>
+  </data>
+  <data name="Help.Webhook" xml:space="preserve">
+    <value>Resgrid erzeugt die Webhook-URL und das Signaturgeheimnis beim Speichern. Jedes System, das eine signierte HTTPS-Anfrage senden kann, kann Einsätze anlegen.</value>
+  </data>
+  <data name="ChatRules" xml:space="preserve">
+    <value>In einem verknüpften Chat ist jede neue Nachricht eine Anfrage; Antworten in einem Thread zählen nur, wenn sie Resgrid erwähnen. Direktnachrichten an den Resgrid-Bot funktionieren wie bisher.</value>
+  </data>
+  <data name="WebhookUrl" xml:space="preserve">
+    <value>Webhook-URL</value>
+  </data>
+  <data name="WebhookSecret" xml:space="preserve">
+    <value>Signaturgeheimnis</value>
+  </data>
+  <data name="WebhookSecretOnce" xml:space="preserve">
+    <value>Kopieren Sie das Geheimnis jetzt. Es wird nur dieses eine Mal angezeigt; erneuern Sie es, wenn es verloren geht.</value>
+  </data>
+  <data name="WebhookNoSecret" xml:space="preserve">
+    <value>Es ist kein Signaturgeheimnis gesetzt, daher wird jede Anfrage abgelehnt. Erneuern Sie das Geheimnis, um eines zu erzeugen.</value>
+  </data>
+  <data name="RotateSecret" xml:space="preserve">
+    <value>Geheimnis erneuern</value>
+  </data>
+  <data name="RotateConfirm" xml:space="preserve">
+    <value>Das Signaturgeheimnis erneuern? Das aktuelle Geheimnis funktioniert sofort nicht mehr.</value>
+  </data>
+  <data name="WebhookSigning" xml:space="preserve">
+    <value>Signieren Sie jede Anfrage mit dem Header X-Resgrid-Signature: t=&lt;Unix-Sekunden&gt;,v1=&lt;hex HMAC-SHA256 von "t.body" mit dem Geheimnis&gt;. Anfragen, die älter als {0} Sekunden sind, werden abgelehnt.</value>
+  </data>
+  <data name="WebhookSample" xml:space="preserve">
+    <value>Beispielanfrage</value>
+  </data>
+  <data name="WebhookBody" xml:space="preserve">
+    <value>Der Inhalt ist JSON: message (Pflicht), subject, sender, externalId (eine Wiederholung mit derselben ID erzeugt nie einen zweiten Einsatz), address, latitude und longitude.</value>
+  </data>
+  <data name="Via" xml:space="preserve">
+    <value>über {0}: {1}</value>
+  </data>
+  <data name="ViaType" xml:space="preserve">
+    <value>über {0}</value>
+  </data>
+  <data name="TextSettingsIntro" xml:space="preserve">
+    <value>Eingangskanäle machen aus SMS, E-Mails, Chatnachrichten und Webhook-Anfragen wartende Einsätze.</value>
+  </data>
+  <data name="ManageIntakeChannels" xml:space="preserve">
+    <value>Eingangskanäle verwalten</value>
+  </data>
+  <data name="BlockedSenders" xml:space="preserve">
+    <value>Gesperrte Absender</value>
+  </data>
+  <data name="BlockedSendersIntro" xml:space="preserve">
+    <value>Absender, die ein Disponent als Spam verworfen hat. Ihre Nachrichten und Anrufe an Ihre Eingangskanäle werden protokolliert, erzeugen aber keine Einsätze, und es wird nichts an sie zurückgesendet. Eine Sperre endet von selbst am angezeigten Datum.</value>
+  </data>
+  <data name="NoBlockedSenders" xml:space="preserve">
+    <value>Es sind keine Absender gesperrt.</value>
+  </data>
+  <data name="Sender" xml:space="preserve">
+    <value>Absender</value>
+  </data>
+  <data name="BlockedBy" xml:space="preserve">
+    <value>Gesperrt von</value>
+  </data>
+  <data name="BlockedOn" xml:space="preserve">
+    <value>Gesperrt am</value>
+  </data>
+  <data name="BlockedUntil" xml:space="preserve">
+    <value>Bis</value>
+  </data>
+  <data name="BlockedCall" xml:space="preserve">
+    <value>Einsatz anzeigen</value>
+  </data>
+  <data name="BlockExpired" xml:space="preserve">
+    <value>Abgelaufen</value>
+  </data>
+  <data name="BlockedUntilLifted" xml:space="preserve">
+    <value>Bis zur Aufhebung</value>
+  </data>
+  <data name="Unblock" xml:space="preserve">
+    <value>Entsperren</value>
+  </data>
+  <data name="UnblockConfirm" xml:space="preserve">
+    <value>Diesen Absender entsperren? Seine Nachrichten erzeugen dann wieder wartende Einsätze.</value>
+  </data>
+  <data name="Unblocked" xml:space="preserve">
+    <value>Der Absender wurde entsperrt.</value>
+  </data>
+  <data name="DismissAsSpam" xml:space="preserve">
+    <value>Als Spam verwerfen</value>
+  </data>
+  <data name="DismissConfirm" xml:space="preserve">
+    <value>Diesen Einsatz als Spam verwerfen? Er wird storniert und niemand wird benachrichtigt.</value>
+  </data>
+  <data name="DismissBlockSender" xml:space="preserve">
+    <value>Absender zusätzlich für {0} Tage sperren</value>
+  </data>
+  <data name="DismissBlockSenderForever" xml:space="preserve">
+    <value>Absender zusätzlich sperren</value>
+  </data>
+  <data name="Dismissed" xml:space="preserve">
+    <value>Der Einsatz wurde als Spam verworfen.</value>
+  </data>
+  <data name="DismissedAndBlocked" xml:space="preserve">
+    <value>Der Einsatz wurde als Spam verworfen und der Absender ist gesperrt.</value>
+  </data>
+  <data name="DismissedNotBlockable" xml:space="preserve">
+    <value>Der Einsatz wurde als Spam verworfen. Der Anrufer hat seine Nummer unterdrückt und konnte daher nicht gesperrt werden.</value>
+  </data>
+  <data name="DismissNotPending" xml:space="preserve">
+    <value>Dieser Einsatz wartet nicht mehr und kann daher nicht als Spam verworfen werden.</value>
+  </data>
+  <data name="DismissFailed" xml:space="preserve">
+    <value>Der Einsatz konnte gerade nicht verworfen werden und wartet weiterhin. Versuchen Sie es erneut.</value>
+  </data>
+  <data name="BlockedSendersUnavailable" xml:space="preserve">
+    <value>Die Liste der gesperrten Absender konnte nicht geladen werden. Laden Sie die Seite neu, um es erneut zu versuchen.</value>
+  </data>
+  <data name="Screening.LikelyNotIncident" xml:space="preserve">
+    <value>Enhanced AI: wahrscheinlich kein Einsatz</value>
+  </data>
+  <data name="Screening.RepeatSender" xml:space="preserve">
+    <value>Wiederholter Absender: über dem Stundenlimit</value>
+  </data>
+  <data name="Screening.DismissedAsSpam" xml:space="preserve">
+    <value>Als Spam verworfen</value>
+  </data>
+</root>

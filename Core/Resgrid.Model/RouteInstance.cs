@@ -48,6 +48,15 @@ namespace Resgrid.Model
 
 		public DateTime AddedOn { get; set; }
 
+		/// <summary>The call this run was started for (M0322, <see cref="Call.RoutePlanId"/>); null for an ordinary route run.</summary>
+		public int? CallId { get; set; }
+
+		/// <summary>
+		/// When the unit reached the plan's start point (M0322). A call route's live directions lead to the plan start first until this is
+		/// set (or a stop has been worked); ordinary runs start where the unit is and never set it.
+		/// </summary>
+		public DateTime? StartReachedOn { get; set; }
+
 		[NotMapped]
 		public string TableName => "RouteInstances";
 

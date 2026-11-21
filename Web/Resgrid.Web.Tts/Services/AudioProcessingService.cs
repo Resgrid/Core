@@ -100,10 +100,16 @@ namespace Resgrid.Web.Tts.Services
 			}
 		}
 
+		/// <summary>
+		/// The identity of the audio a request produces, which TtsService hashes into the
+		/// cache key: the Piper model plus the preprocessor's output revision. The key is
+		/// computed from the raw request text, so the revision is what makes a
+		/// preprocessing fix regenerate audio instead of replaying what was cached before it.
+		/// </summary>
 		public (string Voice, int Speed) GetEffectiveSynthesisProfile(string voice, int speed)
 		{
 			var invocation = GetPiperInvocation(voice, speed);
-			return (invocation.ModelName, speed);
+			return ($"{invocation.ModelName}#t{TextPreprocessor.OutputRevision}", speed);
 		}
 
 		/// <summary>

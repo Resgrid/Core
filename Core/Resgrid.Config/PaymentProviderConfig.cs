@@ -42,7 +42,7 @@ namespace Resgrid.Config
 		public static decimal PttAddonPaddleMonthlyAmount = 45m;
 
 		// Advanced Data Protection yearly addon (Paddle product pro_01m11vjn9cjmgmwzgv2kt8wndk), sold through the Billing API's
-		// AdpBilling checkout (AdpAddonConfig). The Stripe price lives on the yearly PlanAddons row (M0298); this Paddle price must be
+		// AdpBilling checkout (AdpAddonConfig). The Stripe price (USD 3,600/yr) lives on the yearly PlanAddons row (M0298, M0327); this Paddle price must be
 		// EUR 2,550 per year or the Billing API refuses to open a checkout. A missing sandbox price never falls back to production.
 		public static string PaddleAdpAddon = "pri_01m11vm50c17z0rxcgy4fppf80";
 		public static string PaddleAdpAddonTest = "";
@@ -193,6 +193,12 @@ namespace Resgrid.Config
 		public static string GetPaddleIncidentBackOfficeAddonPriceId()
 		{
 			return NormalizeConfigValue(IsTestMode ? PaddleIncidentBackOfficeAddonTest : PaddleIncidentBackOfficeAddon);
+		}
+
+		/// <summary>The Dedicated Number add-on's Paddle price (EUR 20/month, product pro_01m7wvch9xs37n1k6a0chvt20f), kept on DedicatedNumberAddonConfig.</summary>
+		public static string GetPaddleDedicatedNumberAddonPriceId()
+		{
+			return NormalizeConfigValue(IsTestMode ? DedicatedNumberAddonConfig.PaddleTestPriceId : DedicatedNumberAddonConfig.PaddlePriceId);
 		}
 
 		public static string GetPaddleEnvironment()

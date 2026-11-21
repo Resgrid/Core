@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Private Inbound Dispatch Number</value>
+  </data>
+  <data name="Intro" xml:space="preserve">
+    <value>Your department's own phone number. Texts to it become pending calls for dispatchers to review, and members can call it to reach the voice menu.</value>
+  </data>
+  <data name="AddonTitle" xml:space="preserve">
+    <value>Add-on</value>
+  </data>
+  <data name="AddonActive" xml:space="preserve">
+    <value>Your department holds the Private Inbound Dispatch Number add-on.</value>
+  </data>
+  <data name="ManageBilling" xml:space="preserve">
+    <value>Manage the add-on</value>
+  </data>
+  <data name="RequiresEntityPlan" xml:space="preserve">
+    <value>The Private Inbound Dispatch Number add-on is available with an active entity plan. Change your plan on the Subscription page to add it.</value>
+  </data>
+  <data name="ViewPlans" xml:space="preserve">
+    <value>View plans</value>
+  </data>
+  <data name="NotOffered" xml:space="preserve">
+    <value>The Private Inbound Dispatch Number add-on is not available for your department yet.</value>
+  </data>
+  <data name="BuyPrompt" xml:space="preserve">
+    <value>Buy the Private Inbound Dispatch Number add-on to choose and provision a number.</value>
+  </data>
+  <data name="BuyAddon" xml:space="preserve">
+    <value>Buy the add-on</value>
+  </data>
+  <data name="ActiveTitle" xml:space="preserve">
+    <value>Your number</value>
+  </data>
+  <data name="ProvisionedOn" xml:space="preserve">
+    <value>Provisioned on {0}</value>
+  </data>
+  <data name="AddonEnding" xml:space="preserve">
+    <value>The add-on is no longer active. The number keeps working for a short time, then stops taking texts and calls until the add-on is renewed.</value>
+  </data>
+  <data name="SmsIntake" xml:space="preserve">
+    <value>Create pending calls from texts</value>
+  </data>
+  <data name="SmsIntakeHelp" xml:space="preserve">
+    <value>Texts sent to this number become pending calls. The number only receives texts; any reply comes from the main Resgrid number.</value>
+  </data>
+  <data name="VoiceIntake" xml:space="preserve">
+    <value>Take incident reports by voice</value>
+  </data>
+  <data name="VoiceIntakeHelp" xml:space="preserve">
+    <value>Callers who are not members answer guided questions and a pending call is created. Needs the Enhanced AI add-on with AI voice intake.</value>
+  </data>
+  <data name="VoiceIntakeUnavailable" xml:space="preserve">
+    <value>AI voice intake is not available for your department yet. This setting takes effect once it is.</value>
+  </data>
+  <data name="SaveIntake" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="ReleaseTitle" xml:space="preserve">
+    <value>Release the number</value>
+  </data>
+  <data name="ReleaseHelp" xml:space="preserve">
+    <value>Returns the number to the phone carrier now. Texts and calls to it stop, and the number cannot be recovered.</value>
+  </data>
+  <data name="ReleaseConfirm" xml:space="preserve">
+    <value>I understand the number cannot be recovered</value>
+  </data>
+  <data name="Release" xml:space="preserve">
+    <value>Release number</value>
+  </data>
+  <data name="LapsedTitle" xml:space="preserve">
+    <value>Number on hold</value>
+  </data>
+  <data name="LapsedText" xml:space="preserve">
+    <value>{0} stopped taking texts and calls when the add-on ended. It will be released on {1} unless the add-on is renewed.</value>
+  </data>
+  <data name="Reactivate" xml:space="preserve">
+    <value>Put the number back in service</value>
+  </data>
+  <data name="ReleaseNow" xml:space="preserve">
+    <value>Release it now</value>
+  </data>
+  <data name="ProvisioningText" xml:space="preserve">
+    <value>The purchase of {0} is in progress. Refresh this page in a minute.</value>
+  </data>
+  <data name="LastFailure" xml:space="preserve">
+    <value>The last purchase of {0} did not complete. Choose another number.</value>
+  </data>
+  <data name="SearchTitle" xml:space="preserve">
+    <value>Choose a number</value>
+  </data>
+  <data name="NoCountries" xml:space="preserve">
+    <value>Numbers are not available in your department's country yet. Contact Resgrid support.</value>
+  </data>
+  <data name="Country" xml:space="preserve">
+    <value>Country</value>
+  </data>
+  <data name="AreaCode" xml:space="preserve">
+    <value>Area code</value>
+  </data>
+  <data name="Contains" xml:space="preserve">
+    <value>Contains</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="SearchHelp" xml:space="preserve">
+    <value>Area codes apply to the United States and Canada. Use Contains for digits the number should include; * matches any digit.</value>
+  </data>
+  <data name="NoResults" xml:space="preserve">
+    <value>No numbers matched. Try another area code or fewer digits.</value>
+  </data>
+  <data name="ResultsNumber" xml:space="preserve">
+    <value>Number</value>
+  </data>
+  <data name="ResultsLocation" xml:space="preserve">
+    <value>Location</value>
+  </data>
+  <data name="ProvisionConfirm" xml:space="preserve">
+    <value>Provision {0} as your department's number?</value>
+  </data>
+  <data name="Provision" xml:space="preserve">
+    <value>Provision</value>
+  </data>
+  <data name="Provisioned" xml:space="preserve">
+    <value>{0} is now your department's number.</value>
+  </data>
+  <data name="ProvisionFailed" xml:space="preserve">
+    <value>The carrier could not provide that number. Choose another one.</value>
+  </data>
+  <data name="IntakeSaved" xml:space="preserve">
+    <value>Intake settings saved.</value>
+  </data>
+  <data name="ReleaseConfirmRequired" xml:space="preserve">
+    <value>Confirm that you want to release the number.</value>
+  </data>
+  <data name="Released" xml:space="preserve">
+    <value>The number was released.</value>
+  </data>
+  <data name="ReleaseFailed" xml:space="preserve">
+    <value>The carrier did not release the number. Try again later.</value>
+  </data>
+  <data name="Reactivated" xml:space="preserve">
+    <value>The number is back in service.</value>
+  </data>
+  <data name="Error.AddonRequired" xml:space="preserve">
+    <value>Your department needs the Private Inbound Dispatch Number add-on first.</value>
+  </data>
+  <data name="Error.AlreadyHasNumber" xml:space="preserve">
+    <value>Your department already has a number.</value>
+  </data>
+  <data name="Error.CountryNotAllowed" xml:space="preserve">
+    <value>Numbers in that country are not available for your department.</value>
+  </data>
+  <data name="Error.InvalidNumber" xml:space="preserve">
+    <value>Check the number, area code and digits, then try again.</value>
+  </data>
+  <data name="Error.NumberUnavailable" xml:space="preserve">
+    <value>That number is no longer available. Choose another one.</value>
+  </data>
+  <data name="Error.NoActiveNumber" xml:space="preserve">
+    <value>Your department has no number to change.</value>
+  </data>
+  <data name="Error.CarrierUnavailable" xml:space="preserve">
+    <value>The phone carrier could not be reached. Try again in a few minutes.</value>
+  </data>
+  <data name="BillingInboundOnlyNote" xml:space="preserve">
+    <value>The number only receives texts: they become pending calls, and any reply comes from the main Resgrid number.</value>
+  </data>
+  <data name="BillingLapseNote" xml:space="preserve">
+    <value>If the add-on ends, the number stops taking texts and calls and is released {0} days later unless you renew.</value>
+  </data>
+  <data name="BillingVoiceNote" xml:space="preserve">
+    <value>Voice intake for callers who are not members needs the Enhanced AI add-on.</value>
+  </data>
+  <data name="ManageNumber" xml:space="preserve">
+    <value>Manage your number</value>
+  </data>
+  <data name="TextSettingsTitle" xml:space="preserve">
+    <value>Private inbound dispatch number</value>
+  </data>
+  <data name="TextSettingsActive" xml:space="preserve">
+    <value>takes inbound texts for your department.</value>
+  </data>
+  <data name="TextSettingsSmsOff" xml:space="preserve">
+    <value>is your department's number; texts to it do not create calls.</value>
+  </data>
+  <data name="TextSettingsLapsed" xml:space="preserve">
+    <value>Your private inbound dispatch number {0} is on hold until {1}.</value>
+  </data>
+  <data name="TextSettingsNone" xml:space="preserve">
+    <value>Your department does not have a number of its own. Get one with the Private Inbound Dispatch Number add-on.</value>
+  </data>
+  <data name="TextSettingsLink" xml:space="preserve">
+    <value>Manage private inbound dispatch number</value>
+  </data>
+  <data name="TextSettingsInboundOnly" xml:space="preserve">
+    <value>Department numbers only receive texts; replies come from the main Resgrid number.</value>
+  </data>
+  <data name="StopTitle" xml:space="preserve">
+    <value>Payment for this number has stopped</value>
+  </data>
+  <data name="StopAddon" xml:space="preserve">
+    <value>Payment for the Private Inbound Dispatch Number add-on stopped on {0} (cancelled or unpaid).</value>
+  </data>
+  <data name="StopPlan" xml:space="preserve">
+    <value>Since {0} the department's plan is no longer an active paid plan, which the Private Inbound Dispatch Number add-on needs.</value>
+  </data>
+  <data name="StopIntakeOn" xml:space="preserve">
+    <value>Texts and calls to {0} stop on {1}.</value>
+  </data>
+  <data name="StopIntakeStoppedOn" xml:space="preserve">
+    <value>Texts and calls to {0} stopped on {1}.</value>
+  </data>
+  <data name="StopIntakeStopped" xml:space="preserve">
+    <value>Texts and calls to {0} have stopped.</value>
+  </data>
+  <data name="StopReleaseOn" xml:space="preserve">
+    <value>The number will be released to the carrier on {0}. Renew the add-on (and your plan) before then to keep it.</value>
+  </data>
+  <data name="StopWarningsSent" xml:space="preserve">
+    <value>Warnings sent to the department's administrators: {0}.</value>
+  </data>
+  <data name="StopWarningsNone" xml:space="preserve">
+    <value>No warning has been sent to the department's administrators yet.</value>
+  </data>
+  <data name="StopLastWarning" xml:space="preserve">
+    <value>Last warning: {0}.</value>
+  </data>
+  <data name="Warning.Stopped" xml:space="preserve">
+    <value>payment stopped</value>
+  </data>
+  <data name="Warning.Days" xml:space="preserve">
+    <value>{0} days before release</value>
+  </data>
+  <data name="Warning.OneDay" xml:space="preserve">
+    <value>1 day before release</value>
+  </data>
+  <data name="Region" xml:space="preserve">
+    <value>State / province</value>
+  </data>
+  <data name="RegionAny" xml:space="preserve">
+    <value>Any</value>
+  </data>
+  <data name="City" xml:space="preserve">
+    <value>City</value>
+  </data>
+  <data name="PostalCode" xml:space="preserve">
+    <value>Postal code</value>
+  </data>
+  <data name="NearDepartment" xml:space="preserve">
+    <value>Near the department's address</value>
+  </data>
+  <data name="NearDistance" xml:space="preserve">
+    <value>Within</value>
+  </data>
+  <data name="DistanceMiles" xml:space="preserve">
+    <value>{0} miles ({1} km)</value>
+  </data>
+  <data name="SearchFiltersHelp" xml:space="preserve">
+    <value>State / province, postal code and near-the-department searches also apply only to the United States and Canada. Every result can receive both texts and calls.</value>
+  </data>
+  <data name="ResultsType" xml:space="preserve">
+    <value>Number type</value>
+  </data>
+  <data name="NumberType.Local" xml:space="preserve">
+    <value>Local number</value>
+  </data>
+  <data name="NumberType.Mobile" xml:space="preserve">
+    <value>Mobile number</value>
+  </data>
+  <data name="Error.DepartmentLocationUnknown" xml:space="preserve">
+    <value>The department's location is not known. Set the department's address or map center, or search by state, city or postal code instead.</value>
+  </data>
+  <data name="Error.PlanRequired" xml:space="preserve">
+    <value>The Private Inbound Dispatch Number add-on needs an active paid plan. Renew the department's plan first.</value>
+  </data>
+</root>

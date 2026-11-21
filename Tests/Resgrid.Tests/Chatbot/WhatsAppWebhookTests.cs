@@ -105,6 +105,21 @@ namespace Resgrid.Tests.Chatbot
         }
 
         [Test]
+        public async Task A_configured_url_carrying_the_twilio_retry_override_still_validates()
+        {
+            // Operators register the sender as the URL + "#rp=5xx,ct,rt" so Twilio retries a 503; the fragment is never sent or signed.
+            ChatbotConfig.WhatsAppWebhookUrl = PublicUrl + "#rp=5xx,ct,rt";
+            var controller = await CreateControllerAsync();
+
+            var result = await controller.Receive("WhatsApp");
+
+            Assert.That(result, Is.TypeOf<ContentResult>(), "the signature over the plain URL is accepted");
+            _queue.Verify(x => x.EnqueueChatbotMessageAsync(It.IsAny<ChatbotMessageQueueItem>(), It.IsAny<CancellationToken>()), Times.Once);
+            Assert.That(ChatbotPlatformsController.SignedUrl("https://x.test/a#rp=all"), Is.EqualTo("https://x.test/a"));
+            Assert.That(ChatbotPlatformsController.SignedUrl("https://x.test/a"), Is.EqualTo("https://x.test/a"));
+        }
+
+        [Test]
         public async Task Old_signed_replay_is_not_freshened_after_the_deduplication_window()
         {
             _handler.Resource["date_created"] = DateTime.UtcNow.AddHours(-25).ToString("r", CultureInfo.InvariantCulture);
@@ -185,7 +200,7 @@ namespace Resgrid.Tests.Chatbot
             var adapter = new WhatsAppAdapter(new ChatbotHttpClient(_client));
             var registry = new Mock<IChatbotAdapterRegistry>();
             registry.Setup(x => x.GetAdapter(ChatbotPlatform.WhatsApp)).Returns(adapter);
-            return new ChatbotPlatformsController(_queue.Object, registry.Object, new ChatbotJwtValidator())
+            return new ChatbotPlatformsController(_queue.Object, registry.Object, new ChatbotJwtValidator(), Mock.Of<Resgrid.Model.Services.IIntakeChannelsService>(), Mock.Of<Resgrid.Model.Services.IIntakeService>())
                 { ControllerContext = new ControllerContext { HttpContext = context } };
         }
 

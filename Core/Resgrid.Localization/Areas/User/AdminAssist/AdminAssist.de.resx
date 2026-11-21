@@ -1534,7 +1534,7 @@
     <value>Die Mitglieder-App zum Empfangen von Alarmierungen, Reagieren und Setzen des Status.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.routes">
-    <value>Geplante Routen, etwa Streifenfahrten, und wer ihnen zugewiesen ist.</value>
+    <value>Geplante Routen, etwa Streifen- oder Transportfahrten, wer ihnen zugewiesen ist und Fahrtrouten, die ein Einsatz mitführen kann, damit die zuständige Einheit die geplanten Halte abfährt.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.run-cards">
     <value>Empfohlene Ressourcen für jeden Einsatztyp oder Bereich.</value>
@@ -1729,7 +1729,7 @@
     <value>Erstellen Sie die Rollen, die Sie disponieren oder auswerten, und weisen Sie sie Mitgliedern zu. Laden Sie für Rollen, die hervorstechen sollen, ein Kartensymbol hoch und legen Sie dann auf der Rollenseite die Reihenfolge fest: Die Kartenmarkierung jeder Person verwendet das Symbol ihrer ersten Rolle in dieser Reihenfolge, die eines hat.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.pois">
-    <value>Fügen Sie die Standorte hinzu, die Disponenten sehen müssen. Geben Sie einem POI-Typ ein eigenes Symbol, das seine Markierung auf der Karte und in den Apps ersetzt.</value>
+    <value>Fügen Sie die Standorte hinzu, die Disponenten sehen müssen, einzeln oder per Import einer KML-, KMZ- oder CSV-Datei; Adressen in der Datei werden im Hintergrund nachgeschlagen. Geben Sie einem POI-Typ ein eigenes Symbol, das seine Markierung auf der Karte und in den Apps ersetzt.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.preventive-maintenance">
     <value>Planen Sie routinemäßige Wartung für jedes Fahrzeug.</value>
@@ -4900,7 +4900,7 @@
     <value>Erweitert disponierte Gruppen anhand des aufgelösten aktuellen Dienstplans. Ein leeres Schichtergebnis fällt auf Gruppenmitglieder zurück; prüfen Sie beide Fälle in der Vorschau.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.EnableModernNotifications">
-    <value>Verwendet unterstütztes modernes Benachrichtigungsverhalten. Prüfen Sie jeden Verbraucher und Kanal; die Annahme durch den Anbieter ist keine Zustellung.</value>
+    <value>Eingestellt. Moderne Benachrichtigungstöne sind jetzt für jede Abteilung und jeden Benutzer aktiv; hier gibt es nichts einzustellen.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.EnableTextCommand">
     <value>Konfigurierte Einstellung für Textbefehle. Dispositionsquellenmuster und verifizierte Mitgliederbefehlsidentität sind unterschiedliche Prüfungen. Anbieter- und Chatbot-Pfade setzen diesen Schalter nicht einheitlich durch; prüfen Sie den aktiven Verbraucher, bevor Sie ihn ändern.</value>
@@ -6802,7 +6802,7 @@
     <value>Geplante Einsätze</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.scheduled-calls">
-    <value>Einsätze, die zu einem späteren Zeitpunkt automatisch alarmiert werden und früher gesendet oder verschoben werden können.</value>
+    <value>Einsätze, die zu einem späteren Zeitpunkt automatisch alarmiert werden und früher gesendet oder verschoben werden können, mit einem Kalender aller geplanten und wiederkehrenden Einsätze.</value>
   </data>
   <data xml:space="preserve" name="Feature.api-keys">
     <value>API-Schlüssel</value>
@@ -7852,6 +7852,153 @@
     <value>Zielvorschläge</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.DestinationSuggestions">
-    <value>Schlägt das beste Ziel für einen Einsatz und für das Statusziel einer Einheit vor, ermittelt aus den Zielregeln der Abteilung (Kartierung, Zielregeln) und dem Einsatzort, mit Fahrzeit und Entfernung. „Ziel vorschlagen und eintragen“ trägt zusätzlich das beste Ziel in das leere Ziel eines neuen Einsatzes ein; Disponenten und Besatzungen können weiterhin ein anderes wählen. Standardmäßig aus, da jeder Vorschlag Fahrzeiten abfragt.</value>
+    <value>Schlägt das beste Ziel für einen Einsatz und für das Statusziel einer Einheit vor, ermittelt aus den Zielregeln der Abteilung (Kartierung, POIs verwalten, Zielregeln) und dem Einsatzort, mit Fahrzeit und Entfernung. „Ziel vorschlagen und eintragen“ trägt zusätzlich das beste Ziel in das leere Ziel eines neuen Einsatzes ein; Disponenten und Besatzungen können weiterhin ein anderes wählen. Standardmäßig aus, da jeder Vorschlag Fahrzeiten abfragt.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.recurring-calls">
+    <value>Wiederkehrende Einsätze</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.recurring-calls">
+    <value>Einsätze, die sich nach Plan wiederholen, etwa Verlegungen jeden Dienstag und Donnerstag um 08:00, 13:00 und 19:00 Uhr. Jeder wird vorab als geplanter Einsatz angelegt und automatisch alarmiert, oder ein Disponent wird benachrichtigt, ihn zu senden.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.recurring-calls">
+    <value>Öffnen Sie Geplante Einsätze und wählen Sie Wiederkehrende Einsätze, dann Neuer wiederkehrender Einsatz, oder drücken Sie Wiederholen bei einem bereits gesendeten Einsatz. Füllen Sie Einsatzdetails, Einrichtungen und Kontakt sowie die zu alarmierenden und zu benachrichtigenden Kräfte aus, dann den Zeitplan, wann jeder Einsatz angelegt wird und wer ihn alarmiert. Prüfen Sie vor dem Speichern die nächsten Alarmierungen und den Kalender.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.call-locations">
+    <value>Einsatzorte, Ziele und Fahrtrouten</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.call-locations">
+    <value>Der Einsatzort kann aus einem interessanten Ort übernommen werden, das Ziel kann ein interessanter Ort oder eine freie Adresse, Koordinaten oder what3words sein, und ein Einsatz kann eine vordefinierte Fahrtroute mitführen, die die zuständige Einheit in der App Halt für Halt abfährt.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.call-locations">
+    <value>Legen Sie die Orte, an denen Sie abholen und abliefern, als interessante Orte an und erstellen Sie aktive Routenpläne mit Start und Ende für wiederkehrende Fahrten. Wählen Sie unter Neuer Einsatz den Standort-POI, das Ziel und eine Fahrtroute; ein leerer Einsatzort übernimmt den Routenstart und ein leeres Ziel das Routenende.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.poi-capabilities">
+    <value>POI-Fähigkeiten</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.poi-capabilities">
+    <value>Was Ihre interessanten Orte bieten, etwa Herzkatheterlabor, Stroke Unit, Hubschrauberlandeplatz oder Wasserentnahmestelle, an jedem POI angekreuzt, damit Disponenten und Besatzungen Ziele danach filtern und ordnen können, was Patient oder Auftrag brauchen.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.poi-capabilities">
+    <value>Öffnen Sie Kartierung, dann POIs verwalten, und wählen Sie POI-Fähigkeiten. Fügen Sie hinzu, was Ihre Ziele bieten, und kreuzen Sie es an jedem POI an, oder ergänzen Sie eine Spalte Capabilities in einer POI-Importdatei.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.destination-availability">
+    <value>Zielverfügbarkeit</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.destination-availability">
+    <value>Ob jedes Ziel gerade Patienten aufnehmen kann: offen, eingeschränkt, abgemeldet oder geschlossen, mit den Fähigkeiten, die es nicht bieten kann, einer Notiz und der Dauer der Meldung.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.destination-availability">
+    <value>Öffnen Sie Kartierung, dann POIs verwalten, und wählen Sie Zielverfügbarkeit, oder nutzen Sie den Link Zielverfügbarkeit unter dem Ziel im Einsatzformular. Wählen Sie bei einem Ziel Verfügbarkeit setzen, wenn es eine Abmeldung, eine Schließung oder eine ausgefallene Fähigkeit meldet.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.destination-rules">
+    <value>Zielregeln</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.destination-rules">
+    <value>Regeln, die für Einsatzart und Priorität eines Einsatzes und den Typ der fahrenden Einheit die Zieltypen sowie erforderliche und bevorzugte Fähigkeiten festlegen, damit Resgrid das nächste geeignete Ziel mit Fahrzeit und Entfernung vorschlagen kann.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.destination-rules">
+    <value>Öffnen Sie Kartierung, dann POIs verwalten, und wählen Sie Zielregeln. Legen Sie für jeden Fall eine Regel an, zum Beispiel Herzeinsätze in ein Krankenhaus mit Herzkatheterlabor und ein Tanklöschfahrzeug zu einer Wasserentnahmestelle, prüfen Sie sie mit Ausprobieren und stellen Sie dann Zielvorschläge auf Ziele vorschlagen oder Ziel vorschlagen und eintragen.</value>
+  </data>
+  <data name="Area.dedicated-number" xml:space="preserve">
+    <value>Private Inbound Dispatch Number</value>
+  </data>
+  <data name="AreaPurpose.dedicated-number" xml:space="preserve">
+    <value>Die eigene Telefonnummer Ihrer Abteilung. SMS an diese Nummer werden zu ausstehenden Einsätzen, und mit Enhanced AI können Anrufer einen Vorfall per Sprache melden.</value>
+  </data>
+  <data name="AreaValue.dedicated-number" xml:space="preserve">
+    <value>Geben Sie Bürgern, Partnerbehörden und Mitgliedern eine lokale Nummer für SMS und Anrufe; jede Meldung wartet unter Ausstehende Einsätze auf einen Disponenten statt auf dem privaten Telefon einer Person.</value>
+  </data>
+  <data name="AreaExample.dedicated-number" xml:space="preserve">
+    <value>Ein ländlicher Bezirk druckt seine neue lokale Nummer auf Flyer für Meldungen, die keine Notfälle sind, und eine SMS über einen umgestürzten Baum auf einer Straße kommt als ausstehender Einsatz an, den ein Disponent prüft und auslöst.</value>
+  </data>
+  <data name="ModuleAdoption.dedicated-number" xml:space="preserve">
+    <value>Erfordert die Erweiterung Private Inbound Dispatch Number, die nur mit einem aktiven kostenpflichtigen Entity-Tarif erhältlich ist. Die Nummer empfängt nur SMS; Antworten kommen von der Resgrid-Hauptnummer. Die Sprachannahme benötigt zusätzlich die Erweiterung Enhanced AI.</value>
+  </data>
+  <data name="Ui.AddonRequired.DedicatedNumber" xml:space="preserve">
+    <value>Erfordert Private Inbound Dispatch Number</value>
+  </data>
+  <data name="Feature.dedicated-number" xml:space="preserve">
+    <value>Rufnummer der Abteilung und Annahme</value>
+  </data>
+  <data name="FeaturePurpose.dedicated-number" xml:space="preserve">
+    <value>Wählen Sie die Nummer Ihrer Abteilung aus und stellen Sie sie bereit, legen Sie fest, ob SMS und Anrufe an sie ausstehende Einsätze erzeugen, und geben Sie sie frei, wenn Sie sie nicht mehr brauchen.</value>
+  </data>
+  <data name="FeatureSetup.dedicated-number" xml:space="preserve">
+    <value>Sobald die Erweiterung aktiv ist, öffnen Sie das Abteilungsmenü und dann Private Inbound Dispatch Number. Suchen Sie nach Land, Vorwahl oder Ziffern, stellen Sie die gewünschte Nummer bereit, aktivieren Sie Ausstehende Einsätze aus SMS erstellen und speichern Sie. Senden Sie dann eine Test-SMS an die Nummer und prüfen Sie Ausstehende Einsätze.</value>
+  </data>
+  <data name="Feature.addon-dedicated-number" xml:space="preserve">
+    <value>Private Inbound Dispatch Number</value>
+  </data>
+  <data name="FeaturePurpose.addon-dedicated-number" xml:space="preserve">
+    <value>Die Erweiterung Private Inbound Dispatch Number: die eigene Telefonnummer Ihrer Abteilung für die Annahme von Einsätzen per SMS und per Sprache.</value>
+  </data>
+  <data name="FeatureValue.addon-dedicated-number" xml:space="preserve">
+    <value>Mitglieder und Bürger erreichen Ihre Abteilung direkt statt über die gemeinsame Resgrid-Nummer.</value>
+  </data>
+  <data name="FeatureExample.addon-dedicated-number" xml:space="preserve">
+    <value>Das verwaltende Mitglied kauft die Erweiterung auf der Seite Private Inbound Dispatch Number oder auf ihrer Abrechnungsseite, danach stellt ein Abteilungsadministrator eine lokale Nummer bereit.</value>
+  </data>
+  <data name="FeatureAdoption.addon-dedicated-number" xml:space="preserve">
+    <value>Nur mit einem aktiven kostenpflichtigen Entity-Tarif erhältlich; Kauf und Kündigung übernimmt das verwaltende Mitglied. Monatliche Abrechnung pro Abteilung, auch bei einem Jahrestarif. Endet die Erweiterung, nimmt die Nummer keine SMS und Anrufe mehr an und wird nach einer Karenzzeit freigegeben, sofern die Erweiterung nicht verlängert wird.</value>
+  </data>
+  <data name="Feature.intake-channels" xml:space="preserve">
+    <value>Eingangskanäle</value>
+  </data>
+  <data name="FeaturePurpose.intake-channels" xml:space="preserve">
+    <value>Machen Sie aus SMS an die Nummer der Abteilung, E-Mails an eine Eingangsadresse, Beiträgen in einem verknüpften Slack-, Teams-, WhatsApp-, Telegram-, Discord- oder Google-Chat-Kanal und signierten Webhook-Anfragen ausstehende Einsätze.</value>
+  </data>
+  <data name="FeatureValue.intake-channels" xml:space="preserve">
+    <value>Anfragen, die nicht über Funk oder Einsatzleitsystem eingehen, landen in einer Warteschlange zur Prüfung durch einen Disponenten; der Eingang alarmiert nie selbst.</value>
+  </data>
+  <data name="FeatureExample.intake-channels" xml:space="preserve">
+    <value>Die Verlegungsstelle eines Krankenhauses postet Anfragen in einem gemeinsamen Teams-Kanal, und jeder Beitrag wird zu einem ausstehenden Einsatz mit der Standard-Einsatzart und Standardpriorität des Kanals.</value>
+  </data>
+  <data name="FeatureSetup.intake-channels" xml:space="preserve">
+    <value>Öffnen Sie das Abteilungsmenü und dann Eingangskanäle, und legen Sie für jede Quelle einen Kanal an. Wählen Sie als Verarbeitung Einsatzvorlage oder Enhanced AI, beschränken Sie Zugelassene Absender, legen Sie Standardpriorität und Standard-Einsatzart fest, senden Sie dann eine Testnachricht und prüfen Sie Ausstehende Einsätze.</value>
+  </data>
+  <data name="Feature.ai-intake" xml:space="preserve">
+    <value>Enhanced-AI-Einsatzannahme</value>
+  </data>
+  <data name="FeaturePurpose.ai-intake" xml:space="preserve">
+    <value>Enhanced AI liest jede Nachricht aus einem Eingangskanal mit der Verarbeitung Enhanced AI und ergänzt Einsatzart, Adresse, Priorität und eine Zusammenfassung des ausstehenden Einsatzes.</value>
+  </data>
+  <data name="FeatureValue.ai-intake" xml:space="preserve">
+    <value>Disponenten beginnen mit einem ausgefüllten Einsatz, statt Freitext abzutippen. Der ausstehende Einsatz wird zuerst gespeichert, sodass keine Nachricht verloren geht, wenn die KI nicht verfügbar ist.</value>
+  </data>
+  <data name="FeatureExample.ai-intake" xml:space="preserve">
+    <value>Eine SMS, dass auf der B 9 bei Kilometer 12 ein Auto im Graben liegt, wird zu einem ausstehenden Einsatz Verkehrsunfall mit eingetragenem Ort, den ein Disponent nur noch prüfen muss.</value>
+  </data>
+  <data name="FeatureSetup.ai-intake" xml:space="preserve">
+    <value>Erfordert die Erweiterung Enhanced AI mit für Ihre Abteilung aktiviertem KI-Eingang. Bearbeiten Sie unter Eingangskanäle einen Kanal und stellen Sie Verarbeitung auf Enhanced AI. Ein Disponent prüft weiterhin jeden ausstehenden Einsatz, und Abteilungen mit Advanced Data Protection werden nicht von der KI verarbeitet.</value>
+  </data>
+  <data name="Feature.ai-voice-intake" xml:space="preserve">
+    <value>Enhanced-AI-Sprachannahme</value>
+  </data>
+  <data name="FeaturePurpose.ai-voice-intake" xml:space="preserve">
+    <value>Anrufer, die keine Mitglieder sind, beantworten an der privaten Einsatz-Eingangsnummer der Abteilung gesprochene, geführte Fragen, und Enhanced AI macht aus ihren Antworten einen ausstehenden Einsatz.</value>
+  </data>
+  <data name="FeatureValue.ai-voice-intake" xml:space="preserve">
+    <value>Nehmen Sie rund um die Uhr Meldungen per Telefon an, ohne dass jemand abnehmen muss; ein Disponent entscheidet weiterhin, wer alarmiert wird.</value>
+  </data>
+  <data name="FeatureExample.ai-voice-intake" xml:space="preserve">
+    <value>Ein Anrufer meldet Rauch hinter einer Scheune, beantwortet die Fragen nach Ort und Beobachtung, und ein ausstehender Einsatz mit dem Transkript wartet auf den Disponenten.</value>
+  </data>
+  <data name="FeatureSetup.ai-voice-intake" xml:space="preserve">
+    <value>Erfordert die Erweiterungen Private Inbound Dispatch Number und Enhanced AI mit für Ihre Abteilung aktivierter KI-Sprachannahme. Aktivieren Sie unter Private Inbound Dispatch Number Meldungen per Sprache annehmen und speichern Sie. Für Sprachanrufe gilt ein monatliches Fair-Use-Limit; darüber hinaus werden Anrufer gebeten, stattdessen eine SMS an die Nummer zu senden.</value>
+  </data>
+  <data name="Feature.ai-destination-advice" xml:space="preserve">
+    <value>Enhanced-AI-Zielempfehlung</value>
+  </data>
+  <data name="FeaturePurpose.ai-destination-advice" xml:space="preserve">
+    <value>Enhanced AI empfiehlt das Ziel für einen offenen Einsatz anhand von Einsatzgrund, Notiz und Einsatznotizen sowie der Fähigkeiten und Verfügbarkeit Ihrer Ziele und schlägt eine Änderung vor, wenn sich die Angaben des Einsatzes ändern.</value>
+  </data>
+  <data name="FeatureValue.ai-destination-advice" xml:space="preserve">
+    <value>Erkennen Sie, wenn ein Patient inzwischen eine höhere Versorgungsstufe wie ein Traumazentrum braucht, ohne dass jemand jedes Ziel von Hand neu prüfen muss.</value>
+  </data>
+  <data name="FeatureExample.ai-destination-advice" xml:space="preserve">
+    <value>Eine Einsatznotiz meldet eine penetrierende Verletzung, und die Empfehlung am Einsatz schlägt das Traumazentrum statt des nächsten Krankenhauses vor; der Disponent übernimmt oder verwirft sie.</value>
+  </data>
+  <data name="FeatureSetup.ai-destination-advice" xml:space="preserve">
+    <value>Erfordert die Erweiterung Enhanced AI mit für Ihre Abteilung aktivierter KI-Zielempfehlung. Legen Sie zuerst Ihre Ziele mit ihren Fähigkeiten sowie Zielregeln an. Die Empfehlung erscheint in der Einsatzansicht und beim Bearbeiten des Einsatzes, nichts ändert sich, bis jemand sie übernimmt, und Abteilungen mit Advanced Data Protection erhalten keine Empfehlungen.</value>
   </data>
 </root>

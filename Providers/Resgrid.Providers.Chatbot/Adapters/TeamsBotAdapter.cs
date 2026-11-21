@@ -81,6 +81,46 @@ namespace Resgrid.Providers.Chatbot.Adapters
 				ValidateRoute(recipient, route);
 			}
 
+			var accessToken = await AccessTokenAsync();
+
+			await Http.PostAsync(NormalizeServiceUrl(route.ServiceUrl) + "v3/conversations/"
+				+ Uri.EscapeDataString(route.ConversationId) + "/activities", new
+				{
+					type = "message", text, textFormat = "plain", channelId = "msteams",
+					from = new { id = route.BotId }, recipient = new { id = route.UserId },
+					conversation = new { id = route.ConversationId },
+					channelData = new { tenant = new { id = route.TenantId } }
+				}, "Bearer " + accessToken);
+		}
+
+		/// <summary>
+		/// Intake acknowledgements (call-intake plan D3): a reply in the channel conversation an intake message came from, through the
+		/// connector service URL the authenticated activity named (it must be an allowed service URL). Route keys: service_url,
+		/// conversation_id, bot_id, tenant_id.
+		/// </summary>
+		public async Task PostToConversationAsync(IReadOnlyDictionary<string, string> route, string text)
+		{
+			if (!IsConfigured) throw new InvalidOperationException("Teams messaging is not configured.");
+			string Value(string key) => route != null && route.TryGetValue(key, out var v) ? v : null;
+			var serviceUrl = NormalizeServiceUrl(Value("service_url"));
+			var conversationId = Value("conversation_id");
+			if (serviceUrl == null || !IsServiceUrlAllowed(serviceUrl) || string.IsNullOrWhiteSpace(conversationId) || string.IsNullOrWhiteSpace(Value("bot_id")))
+				throw new InvalidOperationException("The Teams conversation cannot be answered.");
+			var body = Resgrid.Model.ProtectedOutboundGuard.Scrub(text, out _);
+			if (string.IsNullOrWhiteSpace(body)) return;
+
+			var accessToken = await AccessTokenAsync();
+			await Http.PostAsync(serviceUrl + "v3/conversations/" + Uri.EscapeDataString(conversationId) + "/activities", new
+			{
+				type = "message", text = body.Length > MessageLength ? body.Substring(0, MessageLength) : body, textFormat = "plain", channelId = "msteams",
+				from = new { id = Value("bot_id") },
+				conversation = new { id = conversationId },
+				channelData = new { tenant = new { id = Value("tenant_id") } }
+			}, "Bearer " + accessToken);
+		}
+
+		private async Task<string> AccessTokenAsync()
+		{
 			var token = await Http.SendAsync(
 				$"https://login.microsoftonline.com/{Guid.Parse(ChatbotConfig.TeamsTenantId):D}/oauth2/v2.0/token",
 				new FormUrlEncodedContent(new Dictionary<string, string>
@@ -93,15 +133,7 @@ namespace Resgrid.Providers.Chatbot.Adapters
 			var accessToken = token["access_token"]?.Type == Newtonsoft.Json.Linq.JTokenType.String
 				? (string)token["access_token"] : null;
 			if (string.IsNullOrWhiteSpace(accessToken)) throw new InvalidOperationException("Teams authentication failed.");
-
-			await Http.PostAsync(NormalizeServiceUrl(route.ServiceUrl) + "v3/conversations/"
-				+ Uri.EscapeDataString(route.ConversationId) + "/activities", new
-				{
-					type = "message", text, textFormat = "plain", channelId = "msteams",
-					from = new { id = route.BotId }, recipient = new { id = route.UserId },
-					conversation = new { id = route.ConversationId },
-					channelData = new { tenant = new { id = route.TenantId } }
-				}, "Bearer " + accessToken);
+			return accessToken;
 		}
 
 		private static void ValidateRoute(string recipient, TeamsRoute route)

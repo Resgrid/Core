@@ -185,6 +185,33 @@
                                             <span style="display: block;">@Model.DestinationAddress</span>
                                         }
                                     }
+                                    else if (Model.Locations.HasFreeDestination)
+                                    {
+                                        @* A destination that is not a POI (M0322). *@
+                                        <strong><small>@localizer["Destination"]</small></strong>
+                                        @if (!String.IsNullOrWhiteSpace(Model.Locations.DestinationAddress))
+                                        {
+                                            <span style="display: block;">@Model.Locations.DestinationAddress</span>
+                                        }
+                                        @if (!String.IsNullOrWhiteSpace(Model.Locations.DestinationCoordinates))
+                                        {
+                                            <span style="display: block; font-size: 10px;">@Model.Locations.DestinationCoordinates</span>
+                                        }
+                                        @if (!String.IsNullOrWhiteSpace(Model.Locations.DestinationW3W))
+                                        {
+                                            <span style="display: block; font-size: 10px;">///@Model.Locations.DestinationW3W</span>
+                                        }
+                                    }
+                                    @if (!String.IsNullOrWhiteSpace(Model.Locations.LocationPoiName))
+                                    {
+                                        <strong><small>@localizer["LocationPoiDisplayLabel"]</small></strong>
+                                        <span style="display: block;">@Model.Locations.LocationPoiName</span>
+                                    }
+                                    @if (Model.Locations.HasRoute)
+                                    {
+                                        <strong><small>@localizer["CallRouteLabel"]</small></strong>
+                                        <span style="display: block;">@(Model.Locations.RoutePlanName ?? localizer["CallRouteDeleted"].Value)</span>
+                                    }
                                 </td>
                                 <td colspan="1">
                                     <strong><small>@localizer["GPSLabel"]</small></strong>
@@ -208,6 +235,15 @@
                 </table>
             </div>
         </div>
+        @if (Model.Locations.ShowsRouteRuns)
+        {
+            @* The runs of the call's route (M0322). *@
+            <div class="row">
+                <div class="col-xs-12">
+                    <partial name="_CallRouteRuns" model="Model.Locations" />
+                </div>
+            </div>
+        }
         @if (Model.Call.Contacts != null && Model.Call.Contacts.Any())
         {
             <div class="row">

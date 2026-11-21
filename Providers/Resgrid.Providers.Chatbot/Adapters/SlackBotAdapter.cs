@@ -27,5 +27,27 @@ namespace Resgrid.Providers.Chatbot.Adapters
                 "Bearer " + ChatbotConfig.SlackBotToken);
             if (sent.Value<bool?>("ok") != true) throw new InvalidOperationException("Slack rejected the message.");
         }
+
+        /// <summary>
+        /// Intake acknowledgements (call-intake plan D3): a threaded reply under the intake message in the linked channel. Only the
+        /// configured workspace (ChatbotConfig.SlackTeamId) can be answered: the bot token belongs to it. Route keys: team_id,
+        /// channel, thread_ts.
+        /// </summary>
+        public async Task PostToConversationAsync(System.Collections.Generic.IReadOnlyDictionary<string, string> route, string text)
+        {
+            if (!IsConfigured) throw new InvalidOperationException("Slack messaging is not configured.");
+            string Value(string key) => route != null && route.TryGetValue(key, out var v) ? v : null;
+            var channel = Value("channel");
+            if (!string.Equals(Value("team_id"), ChatbotConfig.SlackTeamId, StringComparison.Ordinal)
+                || !System.Text.RegularExpressions.Regex.IsMatch(channel ?? "", "^[CG][A-Z0-9]+$"))
+                throw new InvalidOperationException("The Slack channel cannot be answered.");
+            var body = Resgrid.Model.ProtectedOutboundGuard.Scrub(text, out _);
+            if (string.IsNullOrWhiteSpace(body)) return;
+            var sent = await Http.PostAsync("https://slack.com/api/chat.postMessage",
+                new { channel, thread_ts = Value("thread_ts"), text = body.Length > MessageLength ? body.Substring(0, MessageLength) : body,
+                    mrkdwn = false, parse = "none", unfurl_links = false, unfurl_media = false },
+                "Bearer " + ChatbotConfig.SlackBotToken);
+            if (sent.Value<bool?>("ok") != true) throw new InvalidOperationException("Slack rejected the message.");
+        }
     }
 }

@@ -147,6 +147,8 @@ namespace Resgrid.Web.Services.Models.v4.Routes
 		public string RouteStopId { get; set; }
 		public string RouteInstanceStopId { get; set; }
 		public string Name { get; set; }
+		/// <summary>The leg to a call route's plan start (instance directions with includeStart, M0322); it has no stop.</summary>
+		public bool IsRouteStart { get; set; }
 		public double DistanceMeters { get; set; }
 		public double DurationSeconds { get; set; }
 		/// <summary>Seconds from the route start (or from now, for live directions) to arrival, including dwell before it.</summary>
@@ -176,6 +178,8 @@ namespace Resgrid.Web.Services.Models.v4.Routes
 
 	public class RouteDirectionWaypointData
 	{
+		/// <summary>The call route's plan start (instance directions with includeStart, M0322): no stop ids, StopOrder 0.</summary>
+		public bool IsRouteStart { get; set; }
 		public string RouteStopId { get; set; }
 		public string RouteInstanceStopId { get; set; }
 		public int StopOrder { get; set; }
@@ -211,6 +215,35 @@ namespace Resgrid.Web.Services.Models.v4.Routes
 		public int ProgressPercent { get; set; }
 		public int CurrentStopIndex { get; set; }
 		public string CurrentStopName { get; set; }
+		/// <summary>The call the run was started for (M0322); null for an ordinary route run.</summary>
+		public int? CallId { get; set; }
+	}
+
+	public class GetCallRoutePlansResult : StandardApiResponseV4Base
+	{
+		public List<CallRoutePlanResultData> Data { get; set; }
+		public GetCallRoutePlansResult() { Data = new List<CallRoutePlanResultData>(); }
+	}
+
+	/// <summary>A route plan a call can follow (M0322): active, with a start and an end.</summary>
+	public class CallRoutePlanResultData
+	{
+		public string RoutePlanId { get; set; }
+		public string Name { get; set; }
+		public string Description { get; set; }
+		public string RouteColor { get; set; }
+		public int? UnitId { get; set; }
+		public int StopsCount { get; set; }
+		public double? EstimatedDistanceMeters { get; set; }
+		public double? EstimatedDurationSeconds { get; set; }
+		/// <summary>A RoutingProfile value.</summary>
+		public int RoutingProfile { get; set; }
+		public RouteEndpointData Start { get; set; }
+		public RouteEndpointData End { get; set; }
+		/// <summary>The start is the plan's first stop (checked in like any stop) rather than a station or explicit point.</summary>
+		public bool StartIsStop { get; set; }
+		/// <summary>The end is the plan's last stop rather than a station or explicit point.</summary>
+		public bool EndIsStop { get; set; }
 	}
 
 	public class GetScheduledRoutesResult : StandardApiResponseV4Base
@@ -406,6 +439,10 @@ namespace Resgrid.Web.Services.Models.v4.Routes
 		public double? TotalDurationSeconds { get; set; }
 		public string Notes { get; set; }
 		public DateTime AddedOn { get; set; }
+		/// <summary>The call the run was started for (M0322); null for an ordinary route run.</summary>
+		public int? CallId { get; set; }
+		/// <summary>When the unit reached a call route's plan start (M0322); null until then and for ordinary runs.</summary>
+		public DateTime? StartReachedOn { get; set; }
 	}
 
 	public class RouteProgressResultData

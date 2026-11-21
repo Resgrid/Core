@@ -111,6 +111,17 @@ namespace Resgrid.Services
 					return (Func<RestClient>)(() => scope.ResolveNamed<RestClient>("ai-billing-client"));
 				}).InstancePerLifetimeScope();
 			builder.RegisterType<EnhancedAiAccessService>().As<IEnhancedAiAccessService>().InstancePerLifetimeScope();
+			// Dedicated Number add-on (call-intake-and-ai-destinations-plan.md D1): billing proxy, entitlement and the department's number.
+			builder.Register(_ => new RestClient(new RestClientOptions(SystemBehaviorConfig.BillingApiBaseUrl) { Timeout = TimeSpan.FromSeconds(10) },
+				configureSerialization: serializer => serializer.UseNewtonsoftJson())).Named<RestClient>("dedicated-number-billing-client").SingleInstance();
+			builder.RegisterType<DedicatedNumberBillingService>().As<IDedicatedNumberBillingService>()
+				.WithParameter((parameter, _) => parameter.ParameterType == typeof(Func<RestClient>), (_, context) =>
+				{
+					var scope = context.Resolve<ILifetimeScope>();
+					return (Func<RestClient>)(() => scope.ResolveNamed<RestClient>("dedicated-number-billing-client"));
+				}).InstancePerLifetimeScope();
+			builder.RegisterType<DedicatedNumberAccessService>().As<IDedicatedNumberAccessService>().InstancePerLifetimeScope();
+			builder.RegisterType<DepartmentPhoneNumbersService>().As<IDepartmentPhoneNumbersService>().InstancePerLifetimeScope();
 			// Advanced Data Protection yearly checkout (AdpAddonConfig): billing proxy, cloned from Enhanced AI.
 			builder.Register(_ => new RestClient(new RestClientOptions(SystemBehaviorConfig.BillingApiBaseUrl) { Timeout = TimeSpan.FromSeconds(10) },
 				configureSerialization: serializer => serializer.UseNewtonsoftJson())).Named<RestClient>("adp-billing-client").SingleInstance();
@@ -125,6 +136,10 @@ namespace Resgrid.Services
 			// AI dispatch, Enrich mode (enhanced-ai-addon-plan.md §4): worker-side enrichment of calls created from AI-format dispatch email.
 			builder.RegisterType<AiDispatch.AiDispatchEnrichmentService>().As<Resgrid.Model.AiDispatch.IAiDispatchEnrichmentService>().InstancePerLifetimeScope();
 			builder.RegisterType<AiDispatch.AiDispatchAdminService>().As<Resgrid.Model.AiDispatch.IAiDispatchAdminService>().InstancePerLifetimeScope();
+			// Enhanced AI destination advice (call-intake-and-ai-destinations-plan.md D4): advisor, entitlement memory, call save triggers.
+			builder.RegisterType<AiDestination.AiDestinationAvailabilityCache>().AsSelf().SingleInstance();
+			builder.RegisterType<AiDestination.AiDestinationAdvisorService>().As<IAiDestinationAdvisorService>().InstancePerLifetimeScope();
+			builder.RegisterType<AiDestination.AiDestinationReviewEventListener>().AsSelf().SingleInstance().AutoActivate();
 			builder.RegisterType<Invoicing.InvoicingService>().As<IInvoicingService>().InstancePerLifetimeScope();
 			builder.RegisterType<Invoicing.DeploymentService>().As<IDeploymentService>().InstancePerLifetimeScope();
 			builder.RegisterType<Invoicing.TimeTrackingService>().As<ITimeTrackingService>().InstancePerLifetimeScope();
@@ -410,6 +425,7 @@ namespace Resgrid.Services
 			builder.RegisterType<CustomMapService>().As<ICustomMapService>().InstancePerLifetimeScope();
 			builder.RegisterType<RouteService>().As<IRouteService>().InstancePerLifetimeScope();
 			builder.RegisterType<RoutePlanRoutingService>().As<IRoutePlanRoutingService>().InstancePerLifetimeScope();
+			builder.RegisterType<CallRoutesService>().As<ICallRoutesService>().InstancePerLifetimeScope();
 			builder.RegisterType<UnitNavigationStateService>().As<IUnitNavigationStateService>().InstancePerLifetimeScope();
 			builder.RegisterType<OfflineMapPackService>().As<IOfflineMapPackService>().InstancePerLifetimeScope();
 			builder.RegisterType<CheckInTimerService>().As<ICheckInTimerService>().InstancePerLifetimeScope();
@@ -421,6 +437,18 @@ namespace Resgrid.Services
 			builder.RegisterType<TransportDestinationCheckService>().As<ITransportDestinationCheckService>().InstancePerLifetimeScope();
 			builder.RegisterType<NearestDestinationService>().As<INearestDestinationService>().InstancePerLifetimeScope();
 			builder.RegisterType<DestinationRulesService>().As<IDestinationRulesService>().InstancePerLifetimeScope();
+			// Intake channels and Enhanced AI voice intake (call-intake-and-ai-destinations-plan.md, workstream C).
+			builder.RegisterType<Intake.IntakeChannelsService>().As<IIntakeChannelsService>().InstancePerLifetimeScope();
+			builder.RegisterType<Intake.IntakeService>().As<IIntakeService>().InstancePerLifetimeScope();
+			builder.RegisterType<Intake.VoiceIntakeService>().As<IVoiceIntakeService>().InstancePerLifetimeScope();
+			// Intake spam handling (plan §9, M0326): blocked senders, dismiss as spam, screening labels.
+			builder.RegisterType<Intake.IntakeScreeningService>().As<IIntakeScreeningService>().InstancePerLifetimeScope();
+			// Intake SMS conversations (plan §8): one instance serves the desk contract and the intake/worker operations.
+			builder.RegisterType<Intake.IntakeConversationService>().As<IIntakeConversationService>().As<IIntakeConversationOperations>().InstancePerLifetimeScope();
+			builder.RegisterType<Intake.IntakeConversationAssistant>().As<IIntakeConversationAssistant>().InstancePerLifetimeScope();
+			builder.RegisterType<Intake.TwilioSpeechTranscriber>().As<IVoiceIntakeTranscriber>().InstancePerLifetimeScope();
+			// Plan D8: CallsService takes it as a Lazy (it reaches the rules service, which reaches back to calls).
+			builder.RegisterType<DestinationAutoFillService>().As<IDestinationAutoFillService>().InstancePerLifetimeScope();
 			builder.RegisterType<RecurringCallsService>().As<IRecurringCallsService>().InstancePerLifetimeScope();
 			builder.RegisterType<RunCardTemplatesService>().As<IRunCardTemplatesService>().InstancePerLifetimeScope();
 			builder.RegisterType<PersonnelLocationResolver>().As<IPersonnelLocationResolver>().InstancePerLifetimeScope();

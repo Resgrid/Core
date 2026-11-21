@@ -2286,4 +2286,10 @@
   <data name="DeleteRefusedPermanentContent" xml:space="preserve"><value>Цей звіт містить записи про постраждалих, рятування або вплив, які зберігаються назавжди. Приберіть їх із чернетки, перш ніж видаляти звіт.</value></data>
   <data name="DeleteRefusedAmendmentOpen" xml:space="preserve"><value>Скасуйте відкриту зміну, перш ніж видаляти цей звіт.</value></data>
   <data name="IncludeClosedReports" xml:space="preserve"><value>Включити скасовані та анульовані</value></data>
+  <data name="ImportMapPois" xml:space="preserve">
+    <value>Імпортувати POI карти</value>
+  </data>
+  <data name="ImportMapPoisHelp" xml:space="preserve">
+    <value>Імпортуйте файл KML, KMZ або CSV як цікаві місця на карті (орієнтири), окремо від записів гідрантів.</value>
+  </data>
 </root>

@@ -205,7 +205,7 @@
     <value>Importe</value>
   </data>
   <data name="PoiImportsHelp" xml:space="preserve">
-    <value>Importe laufen im Hintergrund und starten meist innerhalb einer Minute. Aktualisieren Sie diese Seite, um den Fortschritt zu sehen.</value>
+    <value>Importe laufen im Hintergrund und starten meist innerhalb einer Minute. Diese Liste aktualisiert sich selbst, solange ein Import läuft.</value>
   </data>
   <data name="PoiImportsRefresh" xml:space="preserve">
     <value>Aktualisieren</value>
@@ -580,5 +580,32 @@
   </data>
   <data name="PoiAvailabilitySaveFailed" xml:space="preserve">
     <value>Die Verfügbarkeit konnte nicht gespeichert werden: Der POI ist kein Ziel mehr. Laden Sie die Seite neu und versuchen Sie es erneut.</value>
+  </data>
+  <data name="ManagePois" xml:space="preserve">
+    <value>POIs verwalten</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>Adresse</value>
+  </data>
+  <data name="ImportFileRequired" xml:space="preserve">
+    <value>Wählen Sie eine Datei zum Hochladen.</value>
+  </data>
+  <data name="ImportFileTypeInvalid" xml:space="preserve">
+    <value>Der Dateityp ({0}) kann nicht als POIs importiert werden: Laden Sie eine KML-, KMZ- oder CSV-Datei hoch.</value>
+  </data>
+  <data name="ImportFileTooLarge" xml:space="preserve">
+    <value>Die Datei ist zu groß: Sie muss kleiner als 10 MB sein.</value>
+  </data>
+  <data name="ImportTypeRequired" xml:space="preserve">
+    <value>Wählen Sie den POI-Typ, in den importiert werden soll.</value>
+  </data>
+  <data name="ImportChooseType" xml:space="preserve">
+    <value>POI-Typ wählen</value>
+  </data>
+  <data name="ImportNoValidRows" xml:space="preserve">
+    <value>Keiner der {0} Einträge in der Datei hat gültige Koordinaten oder eine Adresse (prüfen Sie, ob Breiten- und Längengrad vertauscht oder leer sind).</value>
+  </data>
+  <data name="ImportNothingFound" xml:space="preserve">
+    <value>In der hochgeladenen Datei wurden keine Ortsmarken oder Zeilen mit Koordinaten oder einer Adresse gefunden.</value>
   </data>
 </root>

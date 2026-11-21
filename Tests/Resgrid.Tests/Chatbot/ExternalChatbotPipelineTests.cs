@@ -204,7 +204,7 @@ namespace Resgrid.Tests.Chatbot
             var registry = new Mock<IChatbotAdapterRegistry>(); registry.Setup(x => x.GetAdapter(ChatbotPlatform.Telegram)).Returns(adapter.Object);
             var http = new DefaultHttpContext(); http.Request.Body = new MemoryStream(Encoding.UTF8.GetBytes(body));
             http.Request.Headers["X-Telegram-Bot-Api-Secret-Token"] = secret;
-            return (new ChatbotPlatformsController(queue.Object, registry.Object, new ChatbotJwtValidator())
+            return (new ChatbotPlatformsController(queue.Object, registry.Object, new ChatbotJwtValidator(), Mock.Of<Resgrid.Model.Services.IIntakeChannelsService>(), Mock.Of<Resgrid.Model.Services.IIntakeService>())
                 { ControllerContext = new ControllerContext { HttpContext = http } }, queue);
         }
         private static string Update(string type = "private", long? date = null) => Newtonsoft.Json.JsonConvert.SerializeObject(new

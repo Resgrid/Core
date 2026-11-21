@@ -701,4 +701,40 @@
   <data name="WeekThird" xml:space="preserve">
     <value>trzeci</value>
   </data>
+  <data name="DestinationAddress" xml:space="preserve">
+    <value>Adres celu</value>
+  </data>
+  <data name="DestinationAddressHelp" xml:space="preserve">
+    <value>Gdy cel nie jest POI.</value>
+  </data>
+  <data name="DestinationCoordinates" xml:space="preserve">
+    <value>Współrzędne celu</value>
+  </data>
+  <data name="DestinationCoordinatesHelp" xml:space="preserve">
+    <value>Szerokość, długość geograficzna (opcjonalnie).</value>
+  </data>
+  <data name="ErrorDestinationCoordinatesInvalid" xml:space="preserve">
+    <value>Wpisz współrzędne celu jako szerokość, długość (na przykład 39.7392,-104.9903).</value>
+  </data>
+  <data name="RoutePlan" xml:space="preserve">
+    <value>Trasa</value>
+  </data>
+  <data name="NoRoutePlan" xml:space="preserve">
+    <value>Brak trasy</value>
+  </data>
+  <data name="RoutePlanHelp" xml:space="preserve">
+    <value>Każde tworzone zgłoszenie podąża tą trasą: pusty adres zaczyna się na początku trasy, a pusty cel kończy się na jej końcu.</value>
+  </data>
+  <data name="ErrorRoutePlanInvalid" xml:space="preserve">
+    <value>Wybierz z listy aktywną trasę z początkiem i końcem.</value>
+  </data>
+  <data name="RoutePlanUnavailable" xml:space="preserve">
+    <value>{0} (już niedostępna)</value>
+  </data>
+  <data name="RoutePlanDeleted" xml:space="preserve">
+    <value>Usunięta trasa</value>
+  </data>
+  <data name="FacilityPoiCallLocationHelp" xml:space="preserve">
+    <value>Każde tworzone zgłoszenie zaczyna się w tym POI.</value>
+  </data>
 </root>

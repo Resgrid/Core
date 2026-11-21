@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mime;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
@@ -50,6 +51,8 @@ namespace Resgrid.Web.Services.Controllers
 		private readonly IFeatureToggleService _featureToggleService;
 		private readonly Resgrid.Model.AiDispatch.IAiDispatchAdminService _aiDispatchAdminService;
 		private readonly IInboundEmailReceiptsService _inboundEmailReceiptsService;
+		private readonly IIntakeService _intakeService;
+		private readonly IEmailSender _emailSender;
 
 		public EmailController(IDepartmentSettingsService departmentSettingsService, INumbersService numbersService,
 			ILimitsService limitsService, ICallsService callsService, IQueueService queueService, IDepartmentsService departmentsService,
@@ -58,8 +61,11 @@ namespace Resgrid.Web.Services.Controllers
 			IUsersService usersService, IEmailService emailService, IDepartmentGroupsService departmentGroupsService, IMessageService messageService,
 			IFileService fileService, IUnitsService unitsService, IGeoLocationProvider geoLocationProvider, ICallDispatchStatusService callDispatchStatusService,
 			IDispatchRecommendationService dispatchRecommendationService, IFeatureToggleService featureToggleService,
-			Resgrid.Model.AiDispatch.IAiDispatchAdminService aiDispatchAdminService, IInboundEmailReceiptsService inboundEmailReceiptsService)
+			Resgrid.Model.AiDispatch.IAiDispatchAdminService aiDispatchAdminService, IInboundEmailReceiptsService inboundEmailReceiptsService,
+			IIntakeService intakeService, IEmailSender emailSender)
 		{
+			_intakeService = intakeService;
+			_emailSender = emailSender;
 			_departmentSettingsService = departmentSettingsService;
 			_numbersService = numbersService;
 			_limitsService = limitsService;
@@ -306,6 +312,12 @@ namespace Resgrid.Web.Services.Controllers
 
 					if (type == 1)  // Dispatch
 					{
+						// An intake channel's address on the dispatch domain (distinct from every department's dispatch address):
+						// the email becomes a PENDING call. IntakeMessages is its idempotency claim, so no InboundEmailReceipt is taken.
+						var intake = await ReceiveIntakeEmailAsync(message, emailAddress, cancellationToken);
+						if (intake != null)
+							return intake;
+
 						#region Dispatch Email
 						var departmentId = await _departmentSettingsService.GetDepartmentIdForDispatchEmailAsync(emailAddress);
 
@@ -905,6 +917,95 @@ namespace Resgrid.Web.Services.Controllers
 			{
 				Logging.LogException(ex);
 			}
+		}
+
+		/// <summary>
+		/// Email intake (call-intake-and-ai-destinations-plan.md): null when <paramref name="localPart"/> is not an intake channel's
+		/// address (the dispatch path continues). Otherwise the result Postmark gets: 200 for every outcome a retry cannot change
+		/// (call created, duplicate, refused, sender not on the channel's list), 400 when creating the call failed so Postmark
+		/// redelivers and intake takes the failed claim over.
+		/// </summary>
+		private async Task<ActionResult> ReceiveIntakeEmailAsync(PostmarkInboundMessage message, string localPart, CancellationToken cancellationToken)
+		{
+			if (string.IsNullOrWhiteSpace(localPart))
+				return null;
+
+			var body = !String.IsNullOrWhiteSpace(message.TextBody)
+				? message.TextBody
+				: String.IsNullOrWhiteSpace(message.HtmlBody) ? null : StringHelpers.StripHtmlTagsCharArray(HttpUtility.HtmlDecode(message.HtmlBody));
+
+			var result = await _intakeService.ReceiveAsync(new IntakeEnvelope
+			{
+				ChannelType = IntakeChannelTypes.Email,
+				ChannelAddress = localPart,
+				ProviderMessageId = message.MessageID,
+				Sender = message.FromFull?.Email?.Trim(),
+				SenderName = message.FromFull?.Name?.Trim(),
+				Subject = message.Subject,
+				Body = body,
+				ReceivedOnUtc = DateTime.UtcNow
+			}, cancellationToken);
+
+			if (result == null || result.State == IntakeMessageStates.Refused && (result.Reason == "NoChannel" || result.Reason == "IntakeDisabled"))
+				return null;
+
+			if (result.State == IntakeMessageStates.Failed)
+				return BadRequest();
+
+			// Another delivery of this email is still creating its call (or retrying a failed attempt): 409, as the dispatch path does
+			// for an in-flight receipt, so Postmark delivers it again instead of treating an attempt that may still fail as done.
+			if (result.State == IntakeMessageStates.Duplicate && result.Reason == IntakeResultReasons.DuplicateInProgress)
+				return StatusCode(StatusCodes.Status409Conflict);
+
+			if (result.State == IntakeMessageStates.CallCreated && !string.IsNullOrWhiteSpace(result.Acknowledgement))
+				await SendIntakeAcknowledgementAsync(message, result.Acknowledgement);
+
+			return Ok(new { result.State, result.CallId });
+		}
+
+		/// <summary>The receipt reply's subject (fixed: nothing from the incoming email is repeated, its subject included).</summary>
+		public const string IntakeAcknowledgementSubject = "Received: your request";
+
+		/// <summary>
+		/// The receipt reply, from do-not-reply and marked auto-replied (RFC 3834), never to automated senders or in answer to an
+		/// automatic message, so two systems can never bounce acknowledgements back and forth.
+		/// </summary>
+		private async Task SendIntakeAcknowledgementAsync(PostmarkInboundMessage message, string text)
+		{
+			try
+			{
+				var to = message.FromFull?.Email?.Trim();
+				if (string.IsNullOrWhiteSpace(to) || !StringHelpers.ValidateEmail(to) || IsAutomatedSender(to))
+					return;
+
+				var autoSubmitted = message.Headers?.FirstOrDefault(h => string.Equals(h.Name, "Auto-Submitted", StringComparison.OrdinalIgnoreCase))?.Value;
+				var precedence = message.Headers?.FirstOrDefault(h => string.Equals(h.Name, "Precedence", StringComparison.OrdinalIgnoreCase))?.Value;
+				if (!string.IsNullOrWhiteSpace(autoSubmitted) && !string.Equals(autoSubmitted.Trim(), "no", StringComparison.OrdinalIgnoreCase))
+					return;
+				if (!string.IsNullOrWhiteSpace(precedence) && Regex.IsMatch(precedence, "bulk|junk|list|auto_reply", RegexOptions.IgnoreCase))
+					return;
+
+				using var mail = new System.Net.Mail.MailMessage();
+				mail.To.Add(to);
+				mail.From = new System.Net.Mail.MailAddress("do-not-reply@resgrid.com", "Resgrid");
+				// A fixed subject: the incoming subject may carry incident or patient detail, and the reply never repeats message content.
+				mail.Subject = IntakeAcknowledgementSubject;
+				mail.Body = text;
+				mail.IsBodyHtml = false;
+				mail.Headers.Add("Auto-Submitted", "auto-replied");
+				await _emailSender.SendEmail(mail);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, "Intake email acknowledgement failed.");
+			}
+		}
+
+		private static bool IsAutomatedSender(string address)
+		{
+			var local = address.Split('@')[0].ToLowerInvariant();
+			return local.Contains("noreply") || local.Contains("no-reply") || local.Contains("donotreply") || local.Contains("do-not-reply") ||
+				local == "mailer-daemon" || local == "postmaster" || local.Contains("bounce");
 		}
 
 		private static Tuple<int, string> ProcessEmailAddress(string email)

@@ -79,6 +79,14 @@
   <data name="EnhancedAiFeature5" xml:space="preserve"><value>Nur Open-Weight-Modelle; private Daten gehen nie an Cloud-KI</value></data>
   <data name="EnhancedAiFeature6" xml:space="preserve"><value>Oder nutzen Sie Ihr eigenes Abonnement eines KI-Anbieters</value></data>
   <data name="EnhancedAiNote" xml:space="preserve"><value>Monatliche Abrechnung pro Abteilung. Enthält ein monatliches KI-Budget ohne Mehrkosten. Jede Abteilung erhält auch ohne Add-on kostenlose Admin-Assist-Fragen.</value></data>
+  <data name="DedicatedNumberTitle" xml:space="preserve"><value>Private Inbound Dispatch Number</value></data>
+  <data name="DedicatedNumberTagline" xml:space="preserve"><value>Die eigene Nummer Ihrer Abteilung für SMS und Anrufe</value></data>
+  <data name="DedicatedNumberFeature1" xml:space="preserve"><value>Eine Ortsnummer für Ihre Abteilung, von Ihnen ausgewählt</value></data>
+  <data name="DedicatedNumberFeature2" xml:space="preserve"><value>Eingehende SMS werden zu ausstehenden Einsätzen für die Disposition</value></data>
+  <data name="DedicatedNumberFeature3" xml:space="preserve"><value>Mitglieder erreichen über dieselbe Nummer das Sprachmenü</value></data>
+  <data name="DedicatedNumberFeature4" xml:space="preserve"><value>Sprachannahme mit Enhanced AI macht aus Anruferantworten ausstehende Einsätze</value></data>
+  <data name="DedicatedNumberFeature5" xml:space="preserve"><value>Nur eingehend: Antworten kommen von der Resgrid-Hauptnummer</value></data>
+  <data name="DedicatedNumberNote" xml:space="preserve"><value>Monatliche Abrechnung pro Abteilung, auch bei einem Jahrestarif. Erfordert einen aktiven Entity-Tarif. In den USA Nummern aus den USA und Kanada; in der EU eine Nummer in Ihrem Land, sofern verfügbar.</value></data>
   <data name="AdpTitle" xml:space="preserve"><value>Advanced Data Protection</value></data>
   <data name="AdpTagline" xml:space="preserve"><value>Verschlüsselung und abgesicherter Zugriff für sensible Daten</value></data>
   <data name="AdpFeature1" xml:space="preserve"><value>Verschlüsselung auf Feldebene für Gesundheits- und personenbezogene Daten</value></data>
@@ -87,8 +95,8 @@
   <data name="AdpFeature4" xml:space="preserve"><value>Geschwärzte Workflows, Benachrichtigungen und BigBoard</value></data>
   <data name="AdpFeature5" xml:space="preserve"><value>Voraussetzung für eine HIPAA-BAA mit Resgrid</value></data>
   <data name="AdpNote" xml:space="preserve"><value>Jährliche Abrechnung, auch wenn Ihre Abteilung einen Monatstarif hat. Die Aktivierung erfolgt selbstständig, sobald das Add-on aktiv ist.</value></data>
-  <data name="CodesHeader" xml:space="preserve"><value>Rabatt- und Empfehlungscodes</value></data>
-  <data name="CodesIntro" xml:space="preserve"><value>Sie haben einen Rabattcode oder wurden von einem Resgrid-Partner empfohlen? Sie können ihn hier jederzeit eingeben, nicht nur bei der Registrierung.</value></data>
+  <data name="CodesHeader" xml:space="preserve"><value>Rabatt- und Partner-/Kontocodes</value></data>
+  <data name="CodesIntro" xml:space="preserve"><value>Sie haben einen Rabattcode oder einen Partner-/Kontocode von einem Resgrid-Partner oder Ihrem Account Executive? Sie können ihn hier jederzeit eingeben, nicht nur bei der Registrierung.</value></data>
   <data name="DiscountCodeLabel" xml:space="preserve"><value>Rabattcode</value></data>
   <data name="DiscountCodePlaceholder" xml:space="preserve"><value>Rabattcode eingeben</value></data>
   <data name="DiscountCodeApply" xml:space="preserve"><value>Anwenden</value></data>
@@ -99,12 +107,12 @@
   <data name="MessageDiscountPending" xml:space="preserve"><value>Der Rabattcode ist gültig und wird angewendet, wenn Sie oben einen Tarif kaufen.</value></data>
   <data name="MessageDiscountInvalid" xml:space="preserve"><value>Dieser Rabattcode ist ungültig, abgelaufen oder für Ihre Abteilung nicht verwendbar.</value></data>
   <data name="MessageDiscountUnavailable" xml:space="preserve"><value>Rabattcodes können derzeit nicht geprüft werden. Bitte versuchen Sie es später erneut.</value></data>
-  <data name="AffiliateCodeLabel" xml:space="preserve"><value>Partner- (Empfehlungs-)Code</value></data>
-  <data name="AffiliateCodePlaceholder" xml:space="preserve"><value>Partnercode eingeben</value></data>
+  <data name="AffiliateCodeLabel" xml:space="preserve"><value>Partner-/Kontocode</value></data>
+  <data name="AffiliateCodePlaceholder" xml:space="preserve"><value>Partner-/Kontocode eingeben</value></data>
   <data name="AffiliateCodeSave" xml:space="preserve"><value>Speichern</value></data>
   <data name="AffiliateCodeSetHelp" xml:space="preserve"><value>Kann einmal hinzugefügt werden. Kontaktieren Sie uns, falls er geändert werden muss.</value></data>
-  <data name="AffiliateCodeCurrent" xml:space="preserve"><value>Empfohlen über Partnercode {0}</value></data>
-  <data name="MessageAffiliateApplied" xml:space="preserve"><value>Der Partnercode wurde für Ihre Abteilung gespeichert.</value></data>
-  <data name="MessageAffiliateInvalid" xml:space="preserve"><value>Dieser Partnercode ist ungültig oder nicht mehr aktiv.</value></data>
-  <data name="MessageAffiliateAlreadySet" xml:space="preserve"><value>Ihre Abteilung hat bereits einen Partnercode. Kontaktieren Sie uns, falls er geändert werden muss.</value></data>
+  <data name="AffiliateCodeCurrent" xml:space="preserve"><value>Partner-/Kontocode: {0}</value></data>
+  <data name="MessageAffiliateApplied" xml:space="preserve"><value>Der Partner-/Kontocode wurde für Ihre Abteilung gespeichert.</value></data>
+  <data name="MessageAffiliateInvalid" xml:space="preserve"><value>Dieser Partner-/Kontocode ist ungültig oder nicht mehr aktiv.</value></data>
+  <data name="MessageAffiliateAlreadySet" xml:space="preserve"><value>Ihre Abteilung hat bereits einen Partner-/Kontocode. Kontaktieren Sie uns, falls er geändert werden muss.</value></data>
 </root>

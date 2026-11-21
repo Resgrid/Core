@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Κανάλια εισερχομένων</value>
+  </data>
+  <data name="PageIntro" xml:space="preserve">
+    <value>Τα μηνύματα που φτάνουν σε ένα κανάλι εισερχομένων γίνονται κλήσεις σε αναμονή. Ένας συντονιστής ελέγχει την καθεμία και επιλέγει σε ποιους θα σταλεί· το κανάλι δεν κινητοποιεί ποτέ κανέναν από μόνο του.</value>
+  </data>
+  <data name="FeatureOff" xml:space="preserve">
+    <value>Τα κανάλια εισερχομένων δεν έχουν ενεργοποιηθεί ακόμη για τον φορέα σας. Μπορείτε να τα ρυθμίσετε τώρα· θα αρχίσουν να δημιουργούν κλήσεις μόλις ενεργοποιηθεί η λειτουργία.</value>
+  </data>
+  <data name="AddChannel" xml:space="preserve">
+    <value>Προσθήκη καναλιού</value>
+  </data>
+  <data name="EditChannel" xml:space="preserve">
+    <value>Επεξεργασία καναλιού</value>
+  </data>
+  <data name="NoChannels" xml:space="preserve">
+    <value>Δεν έχουν ρυθμιστεί ακόμη κανάλια εισερχομένων.</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Όνομα</value>
+  </data>
+  <data name="NameHelp" xml:space="preserve">
+    <value>Εμφανίζεται στις κλήσεις σε αναμονή που δημιουργεί το κανάλι, για παράδειγμα «Γραμμή διακομιδών νοσοκομείου».</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Τύπος καναλιού</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>Διεύθυνση</value>
+  </data>
+  <data name="Mode" xml:space="preserve">
+    <value>Επεξεργασία</value>
+  </data>
+  <data name="ModeTemplate" xml:space="preserve">
+    <value>Πρότυπο κλήσης</value>
+  </data>
+  <data name="ModeEnhancedAi" xml:space="preserve">
+    <value>Enhanced AI</value>
+  </data>
+  <data name="ModeHelp" xml:space="preserve">
+    <value>Το πρότυπο κλήσης διαβάζει το μήνυμα με μία από τις μορφές email κλήσεων. Το Enhanced AI αποθηκεύει το μήνυμα ως κλήση σε αναμονή και μετά συμπληρώνει τύπο, διεύθυνση, προτεραιότητα και σύνοψη (απαιτεί το πρόσθετο Enhanced AI με εισερχόμενα AI).</value>
+  </data>
+  <data name="TemplateFormat" xml:space="preserve">
+    <value>Πρότυπο</value>
+  </data>
+  <data name="AllowedSenders" xml:space="preserve">
+    <value>Επιτρεπόμενοι αποστολείς</value>
+  </data>
+  <data name="AllowedSendersHelp" xml:space="preserve">
+    <value>Χωρισμένα με κόμμα: αριθμοί τηλεφώνου (με χαρακτήρα μπαλαντέρ *), διευθύνσεις email ή @τομείς, ή αναγνωριστικά χρηστών της πλατφόρμας. Αφήστε το κενό για να δέχεστε όποιον στέλνει στη διεύθυνση.</value>
+  </data>
+  <data name="DefaultPriority" xml:space="preserve">
+    <value>Προεπιλεγμένη προτεραιότητα</value>
+  </data>
+  <data name="DefaultCallType" xml:space="preserve">
+    <value>Προεπιλεγμένος τύπος κλήσης</value>
+  </data>
+  <data name="UseDepartmentDefault" xml:space="preserve">
+    <value>Προεπιλογή φορέα</value>
+  </data>
+  <data name="NoneOption" xml:space="preserve">
+    <value>Κανένας</value>
+  </data>
+  <data name="SendAcknowledgement" xml:space="preserve">
+    <value>Απάντηση στον αποστολέα</value>
+  </data>
+  <data name="SendAcknowledgementHelp" xml:space="preserve">
+    <value>Στέλνει σύντομη επιβεβαίωση λήψης με τον αριθμό της κλήσης. Στα SMS απαντά ο κεντρικός αριθμός του Resgrid.</value>
+  </data>
+  <data name="Enabled" xml:space="preserve">
+    <value>Ενεργό</value>
+  </data>
+  <data name="Disabled" xml:space="preserve">
+    <value>Ανενεργό</value>
+  </data>
+  <data name="Enable" xml:space="preserve">
+    <value>Ενεργοποίηση</value>
+  </data>
+  <data name="Disable" xml:space="preserve">
+    <value>Απενεργοποίηση</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Επεξεργασία</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Διαγραφή</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Αποθήκευση</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Άκυρο</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Κατάσταση</value>
+  </data>
+  <data name="ThisMonth" xml:space="preserve">
+    <value>Αυτόν τον μήνα</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Ενέργειες</value>
+  </data>
+  <data name="DeleteConfirm" xml:space="preserve">
+    <value>Διαγραφή αυτού του καναλιού; Τα μηνύματα προς τη διεύθυνσή του δεν θα δημιουργούν πλέον κλήσεις.</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Το κανάλι αποθηκεύτηκε.</value>
+  </data>
+  <data name="Deleted" xml:space="preserve">
+    <value>Το κανάλι διαγράφηκε.</value>
+  </data>
+  <data name="Error.InvalidAddress" xml:space="preserve">
+    <value>Η διεύθυνση δεν είναι έγκυρη για αυτόν τον τύπο καναλιού.</value>
+  </data>
+  <data name="Error.AddressInUse" xml:space="preserve">
+    <value>Η διεύθυνση χρησιμοποιείται ήδη από άλλο κανάλι ή ως διεύθυνση email αποστολής ενός φορέα.</value>
+  </data>
+  <data name="Error.NameRequired" xml:space="preserve">
+    <value>Εισαγάγετε όνομα για το κανάλι.</value>
+  </data>
+  <data name="Error.Invalid" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η αποθήκευση του καναλιού. Ελέγξτε τις τιμές και δοκιμάστε ξανά.</value>
+  </data>
+  <data name="Error.InvalidSenders" xml:space="preserve">
+    <value>Καταχωρίστε έως 200 επιτρεπόμενους αποστολείς, με έως 256 χαρακτήρες ο καθένας, χωρισμένους με κόμματα ή νέες γραμμές. Το κανάλι δεν αποθηκεύτηκε.</value>
+  </data>
+  <data name="Type.Sms" xml:space="preserve">
+    <value>Μήνυμα κειμένου (SMS)</value>
+  </data>
+  <data name="Type.Email" xml:space="preserve">
+    <value>Ηλεκτρονικό ταχυδρομείο</value>
+  </data>
+  <data name="Type.WhatsApp" xml:space="preserve">
+    <value>WhatsApp</value>
+  </data>
+  <data name="Type.Slack" xml:space="preserve">
+    <value>Slack</value>
+  </data>
+  <data name="Type.Teams" xml:space="preserve">
+    <value>Microsoft Teams</value>
+  </data>
+  <data name="Type.Telegram" xml:space="preserve">
+    <value>Telegram</value>
+  </data>
+  <data name="Type.Discord" xml:space="preserve">
+    <value>Discord</value>
+  </data>
+  <data name="Type.GoogleChat" xml:space="preserve">
+    <value>Google Chat</value>
+  </data>
+  <data name="Type.Webhook" xml:space="preserve">
+    <value>Υπογεγραμμένο webhook</value>
+  </data>
+  <data name="Type.Voice" xml:space="preserve">
+    <value>Τηλεφωνική κλήση (φωνή)</value>
+  </data>
+  <data name="Help.Sms" xml:space="preserve">
+    <value>Ο ιδιωτικός εισερχόμενος αριθμός διεκπεραίωσης του φορέα σε διεθνή μορφή, για παράδειγμα +17755550100. Αυτός ο αριθμός δημιουργεί μόνος του το κανάλι του κατά τη ρύθμιση.</value>
+  </data>
+  <data name="Help.Voice" xml:space="preserve">
+    <value>Ο ιδιωτικός εισερχόμενος αριθμός διεκπεραίωσης του φορέα σε διεθνή μορφή. Όσοι καλούν χωρίς να είναι μέλη απαντούν σε φωνητικές ερωτήσεις της φωνητικής λήψης Enhanced AI.</value>
+  </data>
+  <data name="Help.Email" xml:space="preserve">
+    <value>Το μέρος πριν από το @. Τα email προς αυτό το όνομα στο {0} γίνονται κλήσεις σε αναμονή. Πρέπει να διαφέρει από τη διεύθυνση email αποστολής του φορέα σας.</value>
+  </data>
+  <data name="Help.WhatsApp" xml:space="preserve">
+    <value>Ο αριθμός αποστολέα WhatsApp σε διεθνή μορφή. Η υποστήριξη του Resgrid καταχωρεί τον αποστολέα στον λογαριασμό Twilio του Resgrid.</value>
+  </data>
+  <data name="Help.Slack" xml:space="preserve">
+    <value>ID χώρου εργασίας/ID καναλιού, για παράδειγμα T012ABCDE/C034FGHIJ. Προσκαλέστε την εφαρμογή Resgrid στο κανάλι με /invite @Resgrid και αντιγράψτε το ID καναλιού από τις λεπτομέρειές του και το ID χώρου από τις πληροφορίες του χώρου εργασίας.</value>
+  </data>
+  <data name="Help.Teams" xml:space="preserve">
+    <value>ID μισθωτή/ID καναλιού, για παράδειγμα 72f988bf-86f1-41af-91ab-2d7cd011db47/19:abc123@thread.tacv2. Προσθέστε την εφαρμογή Resgrid στην ομάδα και χρησιμοποιήστε τη Λήψη συνδέσμου προς το κανάλι: το ID καναλιού είναι το τμήμα 19:…@thread.tacv2 και το ID μισθωτή η τιμή tenantId. Αναφέρετε το @Resgrid στο κανάλι για να στείλετε αίτημα.</value>
+  </data>
+  <data name="Help.Telegram" xml:space="preserve">
+    <value>Το ID της συνομιλίας· τα ID ομάδων είναι αρνητικά, για παράδειγμα -1001234567890. Προσθέστε το bot του Resgrid στην ομάδα. Με ενεργή τη λειτουργία απορρήτου, ξεκινήστε το αίτημα με /intake ή αναφέρετε το bot.</value>
+  </data>
+  <data name="Help.Discord" xml:space="preserve">
+    <value>Το ID του καναλιού (ενεργοποιήστε τη λειτουργία προγραμματιστή, κάντε δεξί κλικ στο κανάλι, Αντιγραφή ID καναλιού). Προσθέστε την εφαρμογή Resgrid στον διακομιστή και χρησιμοποιήστε /resgrid στο κανάλι.</value>
+  </data>
+  <data name="Help.GoogleChat" xml:space="preserve">
+    <value>Το όνομα του χώρου από το URL του, για παράδειγμα spaces/AAAAbCdEfGh. Προσθέστε την εφαρμογή Resgrid στον χώρο και αναφέρετέ την για να στείλετε αίτημα.</value>
+  </data>
+  <data name="Help.Webhook" xml:space="preserve">
+    <value>Το Resgrid δημιουργεί το URL του webhook και το μυστικό υπογραφής κατά την αποθήκευση. Κάθε σύστημα που στέλνει υπογεγραμμένο αίτημα HTTPS μπορεί να δημιουργεί κλήσεις.</value>
+  </data>
+  <data name="ChatRules" xml:space="preserve">
+    <value>Σε συνδεδεμένη συνομιλία κάθε νέο μήνυμα είναι αίτημα· οι απαντήσεις σε νήμα μετράνε μόνο όταν αναφέρουν το Resgrid. Τα άμεσα μηνύματα προς το bot του Resgrid λειτουργούν όπως πριν.</value>
+  </data>
+  <data name="WebhookUrl" xml:space="preserve">
+    <value>URL του webhook</value>
+  </data>
+  <data name="WebhookSecret" xml:space="preserve">
+    <value>Μυστικό υπογραφής</value>
+  </data>
+  <data name="WebhookSecretOnce" xml:space="preserve">
+    <value>Αντιγράψτε το μυστικό τώρα. Εμφανίζεται μόνο αυτή τη φορά· αν χαθεί, ανανεώστε το.</value>
+  </data>
+  <data name="WebhookNoSecret" xml:space="preserve">
+    <value>Δεν έχει οριστεί μυστικό υπογραφής, οπότε κάθε αίτημα απορρίπτεται. Ανανεώστε το μυστικό για να δημιουργηθεί.</value>
+  </data>
+  <data name="RotateSecret" xml:space="preserve">
+    <value>Ανανέωση μυστικού</value>
+  </data>
+  <data name="RotateConfirm" xml:space="preserve">
+    <value>Ανανέωση του μυστικού υπογραφής; Το τρέχον μυστικό παύει αμέσως να λειτουργεί.</value>
+  </data>
+  <data name="WebhookSigning" xml:space="preserve">
+    <value>Υπογράψτε κάθε αίτημα με την κεφαλίδα X-Resgrid-Signature: t=&lt;δευτερόλεπτα unix&gt;,v1=&lt;δεκαεξαδικό HMAC-SHA256 του "t.body" με το μυστικό&gt;. Αιτήματα παλαιότερα από {0} δευτερόλεπτα απορρίπτονται.</value>
+  </data>
+  <data name="WebhookSample" xml:space="preserve">
+    <value>Παράδειγμα αιτήματος</value>
+  </data>
+  <data name="WebhookBody" xml:space="preserve">
+    <value>Το σώμα είναι JSON: message (υποχρεωτικό), subject, sender, externalId (μια επανάληψη με το ίδιο ID δεν δημιουργεί ποτέ δεύτερη κλήση), address, latitude και longitude.</value>
+  </data>
+  <data name="Via" xml:space="preserve">
+    <value>μέσω {0}: {1}</value>
+  </data>
+  <data name="ViaType" xml:space="preserve">
+    <value>μέσω {0}</value>
+  </data>
+  <data name="TextSettingsIntro" xml:space="preserve">
+    <value>Τα κανάλια εισερχομένων μετατρέπουν SMS, email, μηνύματα συνομιλίας και αιτήματα webhook σε κλήσεις σε αναμονή.</value>
+  </data>
+  <data name="ManageIntakeChannels" xml:space="preserve">
+    <value>Διαχείριση καναλιών εισερχομένων</value>
+  </data>
+  <data name="BlockedSenders" xml:space="preserve">
+    <value>Αποκλεισμένοι αποστολείς</value>
+  </data>
+  <data name="BlockedSendersIntro" xml:space="preserve">
+    <value>Αποστολείς που ένας χειριστής απέρριψε ως ανεπιθύμητους. Τα μηνύματα και οι κλήσεις τους προς τα κανάλια εισόδου σας καταγράφονται, αλλά δεν δημιουργούν συμβάντα και δεν τους αποστέλλεται τίποτα. Ο αποκλεισμός λήγει μόνος του την ημερομηνία που εμφανίζεται.</value>
+  </data>
+  <data name="NoBlockedSenders" xml:space="preserve">
+    <value>Δεν υπάρχουν αποκλεισμένοι αποστολείς.</value>
+  </data>
+  <data name="Sender" xml:space="preserve">
+    <value>Αποστολέας</value>
+  </data>
+  <data name="BlockedBy" xml:space="preserve">
+    <value>Αποκλείστηκε από</value>
+  </data>
+  <data name="BlockedOn" xml:space="preserve">
+    <value>Αποκλείστηκε</value>
+  </data>
+  <data name="BlockedUntil" xml:space="preserve">
+    <value>Έως</value>
+  </data>
+  <data name="BlockedCall" xml:space="preserve">
+    <value>Προβολή συμβάντος</value>
+  </data>
+  <data name="BlockExpired" xml:space="preserve">
+    <value>Έληξε</value>
+  </data>
+  <data name="BlockedUntilLifted" xml:space="preserve">
+    <value>Έως την άρση</value>
+  </data>
+  <data name="Unblock" xml:space="preserve">
+    <value>Άρση αποκλεισμού</value>
+  </data>
+  <data name="UnblockConfirm" xml:space="preserve">
+    <value>Άρση αποκλεισμού αυτού του αποστολέα; Τα μηνύματά του θα δημιουργούν ξανά συμβάντα σε αναμονή.</value>
+  </data>
+  <data name="Unblocked" xml:space="preserve">
+    <value>Ο αποκλεισμός του αποστολέα άρθηκε.</value>
+  </data>
+  <data name="DismissAsSpam" xml:space="preserve">
+    <value>Απόρριψη ως ανεπιθύμητο</value>
+  </data>
+  <data name="DismissConfirm" xml:space="preserve">
+    <value>Απόρριψη αυτού του συμβάντος ως ανεπιθύμητου; Ακυρώνεται και κανείς δεν ειδοποιείται.</value>
+  </data>
+  <data name="DismissBlockSender" xml:space="preserve">
+    <value>Αποκλεισμός και του αποστολέα για {0} ημέρες</value>
+  </data>
+  <data name="DismissBlockSenderForever" xml:space="preserve">
+    <value>Αποκλεισμός και του αποστολέα</value>
+  </data>
+  <data name="Dismissed" xml:space="preserve">
+    <value>Το συμβάν απορρίφθηκε ως ανεπιθύμητο.</value>
+  </data>
+  <data name="DismissedAndBlocked" xml:space="preserve">
+    <value>Το συμβάν απορρίφθηκε ως ανεπιθύμητο και ο αποστολέας αποκλείστηκε.</value>
+  </data>
+  <data name="DismissedNotBlockable" xml:space="preserve">
+    <value>Το συμβάν απορρίφθηκε ως ανεπιθύμητο. Ο καλών απέκρυψε τον αριθμό του, οπότε δεν ήταν δυνατός ο αποκλεισμός του.</value>
+  </data>
+  <data name="DismissNotPending" xml:space="preserve">
+    <value>Αυτό το συμβάν δεν είναι πλέον σε αναμονή, οπότε δεν μπορεί να απορριφθεί ως ανεπιθύμητο.</value>
+  </data>
+  <data name="DismissFailed" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η απόρριψη του συμβάντος αυτή τη στιγμή και παραμένει σε αναμονή. Δοκιμάστε ξανά.</value>
+  </data>
+  <data name="BlockedSendersUnavailable" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η φόρτωση της λίστας αποκλεισμένων αποστολέων. Φορτώστε ξανά τη σελίδα για να δοκιμάσετε πάλι.</value>
+  </data>
+  <data name="Screening.LikelyNotIncident" xml:space="preserve">
+    <value>Enhanced AI: πιθανότατα δεν είναι συμβάν</value>
+  </data>
+  <data name="Screening.RepeatSender" xml:space="preserve">
+    <value>Επαναλαμβανόμενος αποστολέας: πάνω από το ωριαίο όριο</value>
+  </data>
+  <data name="Screening.DismissedAsSpam" xml:space="preserve">
+    <value>Απορρίφθηκε ως ανεπιθύμητο</value>
+  </data>
+</root>

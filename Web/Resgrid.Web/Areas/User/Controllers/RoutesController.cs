@@ -351,6 +351,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var model = new RouteInstancesView();
 			model.Plan = plan;
 			model.Instances = filtered;
+			model.LinkedCalls = await LinkedCallsAsync(filtered);
+			model.UnitNames = await UnitNamesAsync();
 			return View(model);
 		}
 
@@ -365,6 +367,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var model = new ActiveRoutesView();
 			model.Instances = active;
 			model.Plans = plans;
+			model.LinkedCalls = await LinkedCallsAsync(active);
+			model.UnitNames = await UnitNamesAsync();
 			return View(model);
 		}
 
@@ -632,7 +636,61 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.CanSeeTrack = await _authorizationService.CanUserViewUnitLocationViaMatrixAsync(instance.UnitId, UserId, DepartmentId);
 			if (model.CanSeeTrack)
 				model.Deviations = await _routeService.GetDeviationsForInstanceAsync(instanceId);
+			(await LinkedCallsAsync(new[] { instance })).TryGetValue(instance.CallId.GetValueOrDefault(), out var linkedCall);
+			model.LinkedCall = linkedCall;
+			(await UnitNamesAsync()).TryGetValue(instance.UnitId, out var unitName);
+			model.UnitName = unitName;
 			return View(model);
+		}
+
+		/// <summary>
+		/// The department's unit names by id, deleted units included: a run (and its history) keeps the unit that drove it after
+		/// the unit is removed.
+		/// </summary>
+		private async Task<Dictionary<int, string>> UnitNamesAsync()
+		{
+			var units = await _unitsService.GetUnitsForDepartmentIncludingDeletedAsync(DepartmentId) ?? new List<Unit>();
+			return units.Where(u => u.DepartmentId == DepartmentId).GroupBy(u => u.UnitId).ToDictionary(g => g.Key, g => g.First().Name);
+		}
+
+		/// <summary>
+		/// The calls route runs were started for (M0322, <see cref="RouteInstance.CallId"/>), this department's only, by call id. A
+		/// call the member may not open shows its number only.
+		/// </summary>
+		private async Task<Dictionary<int, RouteLinkedCall>> LinkedCallsAsync(IEnumerable<RouteInstance> instances)
+		{
+			var linked = new Dictionary<int, RouteLinkedCall>();
+			var callIds = (instances ?? Enumerable.Empty<RouteInstance>())
+				.Where(i => i != null && i.CallId.HasValue && i.CallId.Value > 0)
+				.Select(i => i.CallId.Value)
+				.Distinct()
+				.ToList();
+
+			foreach (var callId in callIds)
+			{
+				try
+				{
+					var call = await _callsService.GetCallByIdAsync(callId);
+					if (call == null || call.DepartmentId != DepartmentId)
+						continue;
+
+					var canView = !call.IsDeleted && await _authorizationService.CanUserViewCallAsync(UserId, callId);
+					linked[callId] = new RouteLinkedCall
+					{
+						CallId = callId,
+						Number = string.IsNullOrWhiteSpace(call.Number) ? callId.ToString() : call.Number,
+						Name = canView ? ProtectedDataEnvelope.SafeDisplay(call.Name) : null,
+						CanView = canView
+					};
+				}
+				catch (Exception ex)
+				{
+					// The run lists still show without the call.
+					Logging.LogException(ex, $"Reading call {callId} linked to a route run");
+				}
+			}
+
+			return linked;
 		}
 
 		/// <summary>

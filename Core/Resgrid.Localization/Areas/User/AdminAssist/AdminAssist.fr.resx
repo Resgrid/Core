@@ -1534,7 +1534,7 @@
     <value>L'application membre pour recevoir les régulations, répondre et définir son statut.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.routes">
-    <value>Itinéraires planifiés, tels que les patrouilles, et les personnes qui y sont affectées.</value>
+    <value>Itinéraires planifiés, tels que les patrouilles ou les transports, les personnes qui y sont affectées, et les itinéraires qu'un appel peut porter pour que l'unité engagée suive les arrêts prévus.</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.run-cards">
     <value>Ressources recommandées pour chaque type d'appel ou secteur.</value>
@@ -1729,7 +1729,7 @@
     <value>Créez les rôles que vous régulez ou sur lesquels vous établissez des rapports, et attribuez-les aux membres. Téléversez une icône de carte pour les rôles qui doivent ressortir, puis définissez l'ordre des rôles sur la page Rôles : le marqueur de chaque personne utilise l'icône de son premier rôle, dans cet ordre, qui en a une.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.pois">
-    <value>Ajoutez les emplacements que les régulateurs doivent voir. Donnez à un type de POI une icône personnalisée qui remplace son marqueur sur la carte et dans les applications.</value>
+    <value>Ajoutez les emplacements que les régulateurs doivent voir, un par un ou en important un fichier KML, KMZ ou CSV ; les adresses du fichier sont géolocalisées en arrière-plan. Donnez à un type de POI une icône personnalisée qui remplace son marqueur sur la carte et dans les applications.</value>
   </data>
   <data xml:space="preserve" name="FeatureSetup.preventive-maintenance">
     <value>Planifiez l'entretien courant de chaque engin.</value>
@@ -4900,7 +4900,7 @@
     <value>Développer les groupes régulés à l’aide du tableau de service résolu. Un résultat de quart vide se replie sur les membres du groupe ; prévisualisez les deux cas.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.EnableModernNotifications">
-    <value>Utiliser le comportement de notification moderne pris en charge. Vérifiez chaque consommateur et chaque canal ; l’acceptation par le prestataire n’est pas une distribution.</value>
+    <value>Retiré. Les sons de notification modernes sont désormais activés pour chaque département et chaque utilisateur ; il n’y a rien à régler.</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.EnableTextCommand">
     <value>Préférence configurée pour les commandes par texto. Les modèles de source de régulation et l’identité vérifiée des commandes des membres sont des vérifications distinctes. Les circuits du prestataire et du chatbot n’appliquent pas ce commutateur de manière uniforme ; examinez le consommateur actif avant de le modifier.</value>
@@ -6802,7 +6802,7 @@
     <value>Appels planifiés</value>
   </data>
   <data xml:space="preserve" name="FeaturePurpose.scheduled-calls">
-    <value>Appels envoyés automatiquement à une heure future, qui peuvent être envoyés plus tôt ou replanifiés.</value>
+    <value>Appels envoyés automatiquement à une heure future, qui peuvent être envoyés plus tôt ou replanifiés, avec un calendrier de tous les appels planifiés et récurrents.</value>
   </data>
   <data xml:space="preserve" name="Feature.api-keys">
     <value>Clés d'API</value>
@@ -7852,6 +7852,153 @@
     <value>Propositions de destination</value>
   </data>
   <data xml:space="preserve" name="SettingHelp.DestinationSuggestions">
-    <value>Propose la meilleure destination pour un appel, ainsi que pour la destination de statut d'une unité, à partir des règles de destination du service (Cartographie, Règles de destination) et du lieu de l'intervention, avec le temps de trajet et la distance. « Proposer et renseigner la destination » remplit en plus la destination vide d'un nouvel appel avec la meilleure ; les régulateurs et les équipages peuvent toujours en choisir une autre. Désactivé par défaut, car chaque proposition interroge les temps de trajet.</value>
+    <value>Propose la meilleure destination pour un appel, ainsi que pour la destination de statut d'une unité, à partir des règles de destination du service (Cartographie, Gérer les POI, Règles de destination) et du lieu de l'intervention, avec le temps de trajet et la distance. « Proposer et renseigner la destination » remplit en plus la destination vide d'un nouvel appel avec la meilleure ; les régulateurs et les équipages peuvent toujours en choisir une autre. Désactivé par défaut, car chaque proposition interroge les temps de trajet.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.recurring-calls">
+    <value>Appels récurrents</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.recurring-calls">
+    <value>Appels qui se répètent selon un calendrier, comme des transferts chaque mardi et jeudi à 08:00, 13:00 et 19:00. Chacun devient un appel planifié créé à l'avance et envoyé automatiquement, ou un régulateur est alerté pour l'envoyer.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.recurring-calls">
+    <value>Ouvrez Appels planifiés et choisissez Appels récurrents, puis Nouvel appel récurrent, ou appuyez sur Répéter sur un appel déjà envoyé. Renseignez les détails de l'appel, les établissements et le contact, qui engager et qui alerter, puis le calendrier, quand chaque appel est créé et qui le déclenche. Vérifiez les prochains envois et le calendrier avant d'enregistrer.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.call-locations">
+    <value>Lieux, destinations et itinéraires des appels</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.call-locations">
+    <value>Le lieu d'un appel peut être choisi parmi les points d'intérêt, sa destination peut être un point d'intérêt ou une adresse libre, des coordonnées ou what3words, et il peut porter un itinéraire prédéfini que l'unité engagée suit dans l'application, arrêt par arrêt.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.call-locations">
+    <value>Ajoutez comme points d'intérêt les lieux où vous prenez en charge et déposez, et créez des plans d'itinéraire actifs avec un départ et une arrivée pour les trajets répétés. Dans Nouvel appel, choisissez le POI de l'emplacement, la destination et un itinéraire ; un lieu d'appel vide prend le départ de l'itinéraire et une destination vide son arrivée.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.poi-capabilities">
+    <value>Capacités des POI</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.poi-capabilities">
+    <value>Ce que proposent vos points d'intérêt, comme une salle de cathétérisme, une unité neurovasculaire, une hélistation ou un point d'aspiration, cochés sur chaque POI afin que régulateurs et équipages filtrent et classent les destinations selon les besoins du patient ou de la mission.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.poi-capabilities">
+    <value>Ouvrez Cartographie, puis Gérer les POI, et choisissez Capacités des POI. Ajoutez ce que proposent vos destinations, puis cochez-les sur chaque POI, ou ajoutez une colonne Capabilities à un fichier d'import de POI.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.destination-availability">
+    <value>Disponibilité des destinations</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.destination-availability">
+    <value>Si chaque destination peut accueillir des patients en ce moment : ouverte, limitée, en délestage ou fermée, avec les capacités qu'elle ne peut pas assurer, une note et la durée du signalement.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.destination-availability">
+    <value>Ouvrez Cartographie, puis Gérer les POI, et choisissez Disponibilité des destinations, ou utilisez le lien Disponibilité des destinations sous la Destination du formulaire d'appel. Choisissez Définir la disponibilité sur une destination lorsqu'elle signale un délestage, une fermeture ou une capacité indisponible.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.destination-rules">
+    <value>Règles de destination</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.destination-rules">
+    <value>Des règles qui choisissent les types de destination et les capacités requises et préférées selon le type et la priorité de l'appel et le type de l'unité qui se déplace, afin que Resgrid propose la destination adaptée la plus proche avec le temps de trajet et la distance.</value>
+  </data>
+  <data xml:space="preserve" name="FeatureSetup.destination-rules">
+    <value>Ouvrez Cartographie, puis Gérer les POI, et choisissez Règles de destination. Ajoutez une règle par cas, par exemple les appels cardiaques vers un hôpital avec salle de cathétérisme et un camion-citerne vers un point d'aspiration, vérifiez-les avec Essayer, puis réglez Propositions de destination sur Proposer des destinations ou Proposer et renseigner la destination.</value>
+  </data>
+  <data name="Area.dedicated-number" xml:space="preserve">
+    <value>Private Inbound Dispatch Number</value>
+  </data>
+  <data name="AreaPurpose.dedicated-number" xml:space="preserve">
+    <value>Le numéro de téléphone propre à votre service. Les SMS qui lui sont envoyés deviennent des appels en attente et, avec Enhanced AI, les appelants peuvent signaler un incident de vive voix.</value>
+  </data>
+  <data name="AreaValue.dedicated-number" xml:space="preserve">
+    <value>Donnez au public, aux organismes partenaires et aux membres un numéro local à appeler ou à qui écrire : chaque signalement attend un répartiteur dans Appels en attente au lieu de rester sur le téléphone personnel de quelqu'un.</value>
+  </data>
+  <data name="AreaExample.dedicated-number" xml:space="preserve">
+    <value>Un district rural imprime son nouveau numéro local sur ses dépliants de signalement hors urgence, et un SMS signalant un arbre tombé en travers d'une route arrive comme appel en attente qu'un répartiteur vérifie puis envoie.</value>
+  </data>
+  <data name="ModuleAdoption.dedicated-number" xml:space="preserve">
+    <value>Nécessite le module complémentaire Private Inbound Dispatch Number, vendu uniquement avec un forfait par entités payant actif. Le numéro reçoit uniquement des SMS ; les réponses partent du numéro principal de Resgrid. La réception vocale nécessite aussi le module complémentaire Enhanced AI.</value>
+  </data>
+  <data name="Ui.AddonRequired.DedicatedNumber" xml:space="preserve">
+    <value>Nécessite Private Inbound Dispatch Number</value>
+  </data>
+  <data name="Feature.dedicated-number" xml:space="preserve">
+    <value>Numéro du service et réception</value>
+  </data>
+  <data name="FeaturePurpose.dedicated-number" xml:space="preserve">
+    <value>Choisissez et mettez en service le numéro de votre service, décidez si les SMS et les appels vocaux qu'il reçoit créent des appels en attente, et libérez-le quand vous n'en avez plus besoin.</value>
+  </data>
+  <data name="FeatureSetup.dedicated-number" xml:space="preserve">
+    <value>Une fois le module complémentaire actif, ouvrez le menu du service, puis Private Inbound Dispatch Number. Recherchez par pays, indicatif régional ou chiffres, mettez en service le numéro voulu, activez Créer des appels en attente à partir des SMS et enregistrez. Envoyez ensuite un SMS de test au numéro et vérifiez Appels en attente.</value>
+  </data>
+  <data name="Feature.addon-dedicated-number" xml:space="preserve">
+    <value>Private Inbound Dispatch Number</value>
+  </data>
+  <data name="FeaturePurpose.addon-dedicated-number" xml:space="preserve">
+    <value>Le module complémentaire Private Inbound Dispatch Number : le numéro de téléphone propre à votre service pour recevoir des appels par SMS et par la voix.</value>
+  </data>
+  <data name="FeatureValue.addon-dedicated-number" xml:space="preserve">
+    <value>Les membres et le public joignent votre service directement plutôt que par le numéro Resgrid partagé.</value>
+  </data>
+  <data name="FeatureExample.addon-dedicated-number" xml:space="preserve">
+    <value>Le membre gestionnaire achète le module complémentaire sur la page Private Inbound Dispatch Number ou sur sa page de facturation, puis un administrateur du service met en service un numéro local.</value>
+  </data>
+  <data name="FeatureAdoption.addon-dedicated-number" xml:space="preserve">
+    <value>Vendu uniquement avec un forfait par entités payant actif, et acheté ou résilié par le membre gestionnaire. Facturé mensuellement par service, même avec un forfait annuel. À la fin du module complémentaire, le numéro cesse de recevoir SMS et appels et est libéré après un délai de grâce, sauf renouvellement du module.</value>
+  </data>
+  <data name="Feature.intake-channels" xml:space="preserve">
+    <value>Canaux d'entrée</value>
+  </data>
+  <data name="FeaturePurpose.intake-channels" xml:space="preserve">
+    <value>Transformez en appels en attente les SMS envoyés au numéro du service, les e-mails reçus sur une adresse d'entrée, les messages d'un canal Slack, Teams, WhatsApp, Telegram, Discord ou Google Chat associé et les requêtes webhook signées.</value>
+  </data>
+  <data name="FeatureValue.intake-channels" xml:space="preserve">
+    <value>Les demandes qui arrivent hors radio et hors CAD aboutissent dans une seule file qu'un répartiteur examine ; l'entrée n'engage jamais personne d'elle-même.</value>
+  </data>
+  <data name="FeatureExample.intake-channels" xml:space="preserve">
+    <value>Le bureau des transferts d'un hôpital publie ses demandes dans un canal Teams partagé, et chaque message devient un appel en attente avec le type d'appel et la priorité par défaut du canal.</value>
+  </data>
+  <data name="FeatureSetup.intake-channels" xml:space="preserve">
+    <value>Ouvrez le menu du service, puis Canaux d'entrée, et ajoutez un canal pour chaque source. Choisissez le traitement Modèle d'appel ou Enhanced AI, limitez les Expéditeurs autorisés, définissez une priorité et un type d'appel par défaut, puis envoyez un message de test et vérifiez Appels en attente.</value>
+  </data>
+  <data name="Feature.ai-intake" xml:space="preserve">
+    <value>Réception des appels par Enhanced AI</value>
+  </data>
+  <data name="FeaturePurpose.ai-intake" xml:space="preserve">
+    <value>Enhanced AI lit chaque message d'un canal d'entrée réglé sur le traitement Enhanced AI et complète le type, l'adresse, la priorité et un résumé de l'appel en attente.</value>
+  </data>
+  <data name="FeatureValue.ai-intake" xml:space="preserve">
+    <value>Les répartiteurs partent d'un appel déjà rempli au lieu de ressaisir du texte libre. L'appel en attente est enregistré en premier, donc aucun message n'est perdu si l'IA est indisponible.</value>
+  </data>
+  <data name="FeatureExample.ai-intake" xml:space="preserve">
+    <value>Un SMS signalant une voiture dans le fossé sur la route 9 près du kilomètre 12 devient un appel en attente pour accident de la circulation avec le lieu renseigné, prêt à être vérifié par un répartiteur.</value>
+  </data>
+  <data name="FeatureSetup.ai-intake" xml:space="preserve">
+    <value>Nécessite le module complémentaire Enhanced AI avec l'entrée par IA activée pour votre service. Dans Canaux d'entrée, modifiez un canal et réglez Traitement sur Enhanced AI. Un répartiteur examine toujours chaque appel en attente, et les services qui utilisent Advanced Data Protection ne sont pas traités par l'IA.</value>
+  </data>
+  <data name="Feature.ai-voice-intake" xml:space="preserve">
+    <value>Réception vocale par Enhanced AI</value>
+  </data>
+  <data name="FeaturePurpose.ai-voice-intake" xml:space="preserve">
+    <value>Les appelants du numéro privé de répartition du service qui ne sont pas membres répondent à des questions guidées énoncées à voix haute, et Enhanced AI transforme leurs réponses en appel en attente.</value>
+  </data>
+  <data name="FeatureValue.ai-voice-intake" xml:space="preserve">
+    <value>Recevez des signalements par téléphone à toute heure sans que personne ne décroche, tandis qu'un répartiteur décide toujours qui envoyer.</value>
+  </data>
+  <data name="FeatureExample.ai-voice-intake" xml:space="preserve">
+    <value>Un appelant signale de la fumée derrière une grange, répond aux questions sur le lieu et ce qu'il voit, et un appel en attente avec la transcription attend le répartiteur.</value>
+  </data>
+  <data name="FeatureSetup.ai-voice-intake" xml:space="preserve">
+    <value>Nécessite les modules complémentaires Private Inbound Dispatch Number et Enhanced AI avec la réception vocale par IA activée pour votre service. Dans Private Inbound Dispatch Number, activez Recevoir des signalements par la voix et enregistrez. Les appels vocaux ont une limite mensuelle d'usage raisonnable ; au-delà, les appelants sont invités à envoyer plutôt un SMS au numéro.</value>
+  </data>
+  <data name="Feature.ai-destination-advice" xml:space="preserve">
+    <value>Conseil de destination Enhanced AI</value>
+  </data>
+  <data name="FeaturePurpose.ai-destination-advice" xml:space="preserve">
+    <value>Enhanced AI recommande la destination d'un appel ouvert d'après sa nature, sa note et ses notes d'appel ainsi que les capacités et la disponibilité de vos destinations, et propose un changement quand les détails de l'appel changent.</value>
+  </data>
+  <data name="FeatureValue.ai-destination-advice" xml:space="preserve">
+    <value>Repérez un patient qui a désormais besoin d'un niveau de soins plus élevé, comme un centre de traumatologie, sans que personne ne revérifie chaque destination à la main.</value>
+  </data>
+  <data name="FeatureExample.ai-destination-advice" xml:space="preserve">
+    <value>Une note d'appel signale une plaie pénétrante, et le conseil affiché sur l'appel propose le centre de traumatologie au lieu de l'hôpital le plus proche ; le répartiteur l'applique ou l'écarte.</value>
+  </data>
+  <data name="FeatureSetup.ai-destination-advice" xml:space="preserve">
+    <value>Nécessite le module complémentaire Enhanced AI avec le conseil de destination par IA activé pour votre service. Ajoutez d'abord vos destinations avec leurs capacités, ainsi que des règles de destination. Le conseil s'affiche à la consultation et à la modification de l'appel, rien ne change tant que personne ne l'applique, et les services qui utilisent Advanced Data Protection n'en reçoivent pas.</value>
   </data>
 </root>

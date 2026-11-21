@@ -26,6 +26,16 @@ namespace Resgrid.Model
 		public const string AiAnalytics = "Ai.Analytics";
 		/// <summary>AI dispatch (CallEmailTypes.AI). Requires Ai.Enhanced and the Enhanced AI add-on; Enrich mode only until the ai-dispatch GPU is in service. Seeded off by M0240.</summary>
 		public const string AiDispatchTemplate = "Dispatch.AiTemplate";
+		/// <summary>Enhanced AI child: destination advice from the call's nature, note and call notes, with change suggestions. Requires Ai.Enhanced. Seeded off by M0323.</summary>
+		public const string AiDestinationAdvice = "Ai.DestinationAdvice";
+		/// <summary>Enhanced AI child: intake messages (SMS, email, chat, webhook) saved as pending calls are filled in by the model. Requires Ai.Enhanced. Seeded off by M0323.</summary>
+		public const string AiIntake = "Ai.Intake";
+		/// <summary>Enhanced AI child: voice intake on the department's dedicated number. Requires Ai.Enhanced. Seeded off by M0323.</summary>
+		public const string AiVoiceIntake = "Ai.VoiceIntake";
+		/// <summary>Intake channels (SMS, email, chat, webhook → pending calls) operator rollout. Seeded off by M0323.</summary>
+		public const string IntakeChannels = "Intake.Channels";
+		/// <summary>Dedicated Number add-on card and checkout (PlanAddonTypes.DedicatedNumber). Seeded off by M0323.</summary>
+		public const string IntakeDedicatedNumber = "Intake.DedicatedNumber";
 		/// <summary>Free checklists rollout gate. Independent of paid plans and Maintenance.WorkOrders. Seeded off by M0189.</summary>
 		public const string ChecklistsSystem = "Checklists.System";
 

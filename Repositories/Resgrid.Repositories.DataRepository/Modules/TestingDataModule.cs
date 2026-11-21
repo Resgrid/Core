@@ -24,6 +24,8 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<BusinessOperationsBillingRepository>().As<IBusinessOperationsBillingRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<IncidentBackOfficeBillingRepository>().As<IIncidentBackOfficeBillingRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<AiBillingRepository>().As<IAiBillingRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DedicatedNumberBillingRepository>().As<IDedicatedNumberBillingRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DepartmentPhoneNumbersRepository>().As<IDepartmentPhoneNumbersRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<AdpBillingRepository>().As<IAdpBillingRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<CustomerBillingProfileRepository>().As<ICustomerBillingProfileRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RateCardRepository>().As<IRateCardRepository>().InstancePerLifetimeScope();
@@ -172,6 +174,15 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<CallBroadcastOutboxRepository>().As<ICallBroadcastOutboxRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<PoiAvailabilitiesRepository>().As<IPoiAvailabilitiesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DestinationRulesRepository>().As<IDestinationRulesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<AiDestinationAdvicesRepository>().As<IAiDestinationAdvicesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<AiDestinationReviewsRepository>().As<IAiDestinationReviewsRepository>().InstancePerLifetimeScope();
+			// Intake channels, messages and voice intake sessions (M0323).
+			builder.RegisterType<IntakeChannelsRepository>().As<IIntakeChannelsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<IntakeMessagesRepository>().As<IIntakeMessagesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<IntakeBlockedSendersRepository>().As<IIntakeBlockedSendersRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<VoiceIntakeSessionsRepository>().As<IVoiceIntakeSessionsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<IntakeConversationsRepository>().As<IIntakeConversationsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<IntakeConversationMessagesRepository>().As<IIntakeConversationMessagesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RecurringCallsRepository>().As<IRecurringCallsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RecurringCallOccurrencesRepository>().As<IRecurringCallOccurrencesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RecurringCallAlertsRepository>().As<IRecurringCallAlertsRepository>().InstancePerLifetimeScope();

@@ -3,11 +3,19 @@
 	Suggested destinations under the Destination field (Mapping → Destination Rules, M0317). Hidden until the first answer:
 	while the department's suggestions are off the script stops after one cheap request. "fill" (New Call only) lets the
 	script fill an empty, untouched destination with the best suggestion.
+	A form whose fields are not the call form's names them with "DestinationSuggestions.{Field}" view data (jQuery selectors):
+	Destination, Latitude, Longitude, Coordinates (one "lat,lon" field), Address (looked up when there is no point), Priority,
+	Type, TypeId, Free (free destination inputs), Unit (a unit field); UnitId and CallId are ids. Blank keeps the call form's.
 *@
 @{
 	var fill = ViewData["DestinationSuggestionsFill"] is bool b && b;
+	Func<string, string> field = key => ViewData["DestinationSuggestions." + key]?.ToString();
 }
-<div class="form-group" id="destinationSuggestionsRow" style="display: none;" data-fill="@(fill ? "true" : "false")">
+<div class="form-group" id="destinationSuggestionsRow" style="display: none;" data-fill="@(fill ? "true" : "false")"
+	 data-destination="@field("Destination")" data-latitude="@field("Latitude")" data-longitude="@field("Longitude")"
+	 data-coordinates="@field("Coordinates")" data-address="@field("Address")" data-priority="@field("Priority")"
+	 data-type="@field("Type")" data-type-id="@field("TypeId")" data-free="@field("Free")" data-unit="@field("Unit")"
+	 data-unit-id="@field("UnitId")" data-call-id="@field("CallId")">
 	<label class="col-sm-2 control-label">@destinationRulesLocalizer["SuggestedDestinations"]</label>
 	<div class="col-sm-10">
 		<div id="destinationSuggestionsRequirements" class="text-muted small" style="margin-bottom: 4px;"></div>

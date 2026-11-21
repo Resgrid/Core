@@ -1,0 +1,39 @@
+@model Resgrid.Web.Areas.User.Models.Calls.ICallLocationsForm
+@using Resgrid.Web.Areas.User.Models.Calls
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Call> localizer
+@*
+    A pre-defined route for the call (M0322): the department's active route plans with a start and an end. Each option carries
+    where the route starts and ends, so picking one fills a blank call location and a blank destination and draws the route on
+    the call map (resgrid.dispatch.calllocations.js). No New Call Form Fields entry: shown whenever there is a route to pick.
+*@
+@if (Model.ShowsRoute())
+{
+    <div class="form-group">
+        <label class="col-sm-2 control-label" for="Call_RoutePlanId">@localizer["CallRouteLabel"]</label>
+        <div class="col-sm-6">
+            <select id="Call_RoutePlanId" name="Call.RoutePlanId" class="form-control route-plan-search" style="width:100%;"
+                    data-placeholder="@localizer["CallRoutePlaceholder"]">
+                <option value="">@localizer["CallRoutePlaceholder"]</option>
+                @foreach (var plan in Model.RoutePlans)
+                {
+                    var text = plan.IsAvailable && plan.StopsCount > 0
+                        ? plan.Name + " (" + string.Format(localizer["CallRouteStops"].Value, plan.StopsCount) + ")"
+                        : plan.Name;
+                    <option value="@plan.RoutePlanId" selected="@plan.Selected"
+                            data-available="@(plan.IsAvailable ? "true" : "false")"
+                            data-start-name="@plan.StartName"
+                            data-start-lat="@(plan.StartLatitude.HasValue ? CallLocationsForm.Invariant(plan.StartLatitude.Value) : null)"
+                            data-start-lng="@(plan.StartLongitude.HasValue ? CallLocationsForm.Invariant(plan.StartLongitude.Value) : null)"
+                            data-end-name="@plan.EndName"
+                            data-end-lat="@(plan.EndLatitude.HasValue ? CallLocationsForm.Invariant(plan.EndLatitude.Value) : null)"
+                            data-end-lng="@(plan.EndLongitude.HasValue ? CallLocationsForm.Invariant(plan.EndLongitude.Value) : null)">@text</option>
+                }
+            </select>
+            <span class="help-inline">@localizer["CallRouteHelp"]</span>
+            @if (Model.CanViewRoutes)
+            {
+                <a id="callRoutePreviewLink" class="small" href="#" target="_blank" rel="noopener" style="display:none; margin-left: 6px;">@localizer["CallRoutePreview"]</a>
+            }
+        </div>
+    </div>
+}

@@ -53,14 +53,23 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IProtectedReadService _protectedReadService;
 		private readonly IRecordsCutoverService _recordsCutoverService;
 		private readonly IDispatchScopeService _dispatchScopeService;
+		// The Set Status destination list ranked by the destination rules (setting 127); null leaves the list unranked.
+		private readonly INearestDestinationService _nearestDestinationService;
+		private readonly ICallStatusAttributionService _callStatusAttributionService;
+		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.DestinationRules> _destinationRulesLocalizer;
 
 		public UnitsController(IDepartmentsService departmentsService, IUsersService usersService, IUnitsService unitsService, Model.Services.IAuthorizationService authorizationService,
 			ILimitsService limitsService, IDepartmentGroupsService departmentGroupsService, ICallsService callsService, IEventAggregator eventAggregator, ICustomStateService customStateService,
 			IGeoService geoService, IDepartmentSettingsService departmentSettingsService, IGeoLocationProvider geoLocationProvider, INovuProvider novuProvider, IMappingService mappingService,
 			IUserDefinedFieldsService userDefinedFieldsService, IUdfRenderingService udfRenderingService, IStringLocalizer<Resgrid.Localization.Common> localizer,
 			IPersonnelRolesService personnelRolesService, IProtectedReadService protectedReadService,
-			IRecordsCutoverService recordsCutoverService, IDispatchScopeService dispatchScopeService)
+			IRecordsCutoverService recordsCutoverService, IDispatchScopeService dispatchScopeService,
+			INearestDestinationService nearestDestinationService = null, ICallStatusAttributionService callStatusAttributionService = null,
+			IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.DestinationRules> destinationRulesLocalizer = null)
 		{
+			_nearestDestinationService = nearestDestinationService;
+			_callStatusAttributionService = callStatusAttributionService;
+			_destinationRulesLocalizer = destinationRulesLocalizer;
 			_dispatchScopeService = dispatchScopeService;
 			_recordsCutoverService = recordsCutoverService;
 			_departmentsService = departmentsService;
@@ -1648,9 +1657,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return Content(buttonHtml);
 		}
 
+		/// <summary>
+		/// The Set Status modal's destination options for a status. With <paramref name="unitId"/> (one unit) and the department's
+		/// destination suggestions on (setting 127), the destinations come first ranked for that unit by the destination rules (its
+		/// type, its travel, and its working call's type and priority), the suggested one and what each lacks named; for a transport
+		/// status the unit's current transport destination, else its working call's destination, else (Suggest and fill) the
+		/// suggestion is pre-selected. Without a unit, or with suggestions off, the list is grouped by type alphabetically.
+		/// </summary>
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Unit_View)]
-		public async Task<IActionResult> GetUnitStatusDestinationHtmlForDropdown(int customStateId, int customStatusDetailId)
+		public async Task<IActionResult> GetUnitStatusDestinationHtmlForDropdown(int customStateId, int customStatusDetailId, int? unitId = null,
+			CancellationToken cancellationToken = default)
 		{
 			var activeDetails = await GetActiveUnitStatusDetailsAsync(customStateId);
 			var state = activeDetails.FirstOrDefault(x => x.CustomStateDetailId == customStatusDetailId);
@@ -1663,10 +1680,200 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (state != null)
 			{
-				AppendDestinationOptions(sb, state, activeCalls, stations, destinationPois, _localizer["Calls"].Value, _localizer["Call"].Value);
+				var ranking = state.DetailType.SupportsPois()
+					? await RankDestinationsForUnitAsync(unitId, state, activeDetails, activeCalls, destinationPois, cancellationToken)
+					: null;
+
+				AppendDestinationOptions(sb, state, activeCalls, stations, destinationPois, _localizer["Calls"].Value, _localizer["Call"].Value, ranking);
 			}
 
 			return Content(sb.ToString());
+		}
+
+		/// <summary>The modal's destinations for one unit: those ranked by the destination rules, and the one to pre-select.</summary>
+		private sealed class UnitDestinationRanking
+		{
+			public string GroupLabel { get; set; }
+
+			/// <summary>Ranked best first: the POI and its option text.</summary>
+			public List<KeyValuePair<Poi, string>> Options { get; } = new List<KeyValuePair<Poi, string>>();
+
+			public int? SelectedPoiId { get; set; }
+
+			public bool IsRanked(int poiId) => Options.Any(x => x.Key.PoiId == poiId);
+		}
+
+		/// <summary>How old a unit's position may be to be the origin of its destination ranking; older, the working call's location is used.</summary>
+		private static readonly TimeSpan UnitPositionFreshFor = TimeSpan.FromMinutes(30);
+
+		/// <summary>The suggestion lookup's budget, so a slow routing provider never holds the modal; past it the list is unranked.</summary>
+		private static readonly TimeSpan DestinationRankingBudget = TimeSpan.FromSeconds(8);
+
+		private string DestinationRulesText(string key, string fallback)
+		{
+			var value = _destinationRulesLocalizer?[key];
+			return value == null || value.ResourceNotFound || String.IsNullOrWhiteSpace(value.Value) ? fallback : value.Value;
+		}
+
+		/// <summary>
+		/// Null (today's list) for no unit, a unit the member cannot see or of another department, suggestions off, or a failed or
+		/// slow lookup. The working call is the unit's (its current status's call while open, else the open call it is dispatched to),
+		/// and only when it is one the member can see; its type and priority choose the rules.
+		/// </summary>
+		private async Task<UnitDestinationRanking> RankDestinationsForUnitAsync(int? unitId, CustomStateDetail state, List<CustomStateDetail> activeDetails,
+			List<Call> activeCalls, List<Poi> destinationPois, CancellationToken cancellationToken)
+		{
+			if (!unitId.HasValue || unitId.Value <= 0 || _nearestDestinationService == null || destinationPois == null || destinationPois.Count == 0)
+				return null;
+
+			try
+			{
+				var config = await _departmentSettingsService.GetDestinationSuggestionConfigAsync(DepartmentId) ?? new DestinationSuggestionConfig();
+				var mode = config.GetMode();
+				if (mode == DestinationSuggestionModes.Off)
+					return null;
+
+				var unit = await _unitsService.GetUnitByIdAsync(unitId.Value);
+				if (unit == null || unit.DepartmentId != DepartmentId || unit.IsDeleted ||
+				    !await _authorizationService.CanUserViewUnitViaMatrixAsync(unit.UnitId, UserId, DepartmentId))
+					return null;
+
+				var lastState = await _unitsService.GetLastUnitStateByUnitIdAsync(unit.UnitId);
+				if (lastState != null && lastState.UnitId != unit.UnitId)
+					lastState = null;
+
+				Call workingCall = null;
+				if (_callStatusAttributionService != null)
+				{
+					var workingCallId = await _callStatusAttributionService.GetWorkingCallIdForUnitAsync(DepartmentId, unit.UnitId, lastState);
+					if (workingCallId.HasValue)
+						workingCall = (activeCalls ?? new List<Call>()).FirstOrDefault(x => x != null && x.CallId == workingCallId.Value && x.DepartmentId == DepartmentId);
+				}
+
+				var ranking = new UnitDestinationRanking { GroupLabel = DestinationRulesText("BestForUnit", "Best for this unit") };
+				var poisById = destinationPois.Where(x => x != null).GroupBy(x => x.PoiId).ToDictionary(x => x.Key, x => x.First());
+
+				DestinationSuggestions suggestions = null;
+				var origin = await DestinationOriginForUnitAsync(unit, lastState, workingCall);
+				if (origin.HasValue)
+				{
+					using (var budget = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken))
+					{
+						budget.CancelAfter(DestinationRankingBudget);
+						suggestions = await _nearestDestinationService.SuggestDestinationsAsync(new DestinationSuggestionRequest
+						{
+							DepartmentId = DepartmentId,
+							Latitude = origin.Value.Latitude,
+							Longitude = origin.Value.Longitude,
+							CallTypeId = workingCall?.CallTypeId,
+							CallType = workingCall?.Type,
+							CallPriority = workingCall?.Priority,
+							UnitId = unit.UnitId,
+							MaxResults = INearestDestinationService.MaximumResults
+						}, budget.Token);
+					}
+				}
+
+				if (suggestions != null && suggestions.Mode != DestinationSuggestionModes.Off)
+				{
+					var capabilityNames = (await _mappingService.GetPoiCapabilitiesForDepartmentAsync(DepartmentId) ?? new List<PoiCapability>())
+						.Where(x => x != null && !String.IsNullOrWhiteSpace(x.PoiCapabilityId))
+						.GroupBy(x => x.PoiCapabilityId, StringComparer.OrdinalIgnoreCase)
+						.ToDictionary(x => x.Key, x => x.First().Name, StringComparer.OrdinalIgnoreCase);
+
+					foreach (var destination in suggestions.Destinations ?? new List<NearestDestination>())
+					{
+						if (destination?.Poi == null || !poisById.TryGetValue(destination.Poi.PoiId, out var poi) || ranking.IsRanked(poi.PoiId))
+							continue;
+
+						var isSuggested = suggestions.SuggestedPoiId == poi.PoiId;
+						ranking.Options.Add(new KeyValuePair<Poi, string>(poi, RankedOptionText(poi, destination, isSuggested, capabilityNames)));
+					}
+				}
+
+				ranking.SelectedPoiId = PreselectedPoiId(state, activeDetails, lastState, workingCall, mode, suggestions?.SuggestedPoiId, poisById);
+
+				return ranking.Options.Count > 0 || ranking.SelectedPoiId.HasValue ? ranking : null;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Ranking the status destinations of unit {unitId} failed; the list is shown unranked.");
+				return null;
+			}
+		}
+
+		/// <summary>
+		/// What a transport status (Transporting, At Hospital) pre-selects, as the apps do (<see cref="TransportDestinationRules"/>): the
+		/// POI the unit's current transport status already points at, else the working call's destination, else, only in Suggest and
+		/// fill, the suggested destination. Other statuses pre-select nothing. Only a POI in the list is pre-selected.
+		/// </summary>
+		private static int? PreselectedPoiId(CustomStateDetail state, List<CustomStateDetail> activeDetails, UnitState lastState, Call workingCall,
+			DestinationSuggestionModes mode, int? suggestedPoiId, Dictionary<int, Poi> poisById)
+		{
+			if (state == null || !TransportDestinationRules.IsTransportBaseType(state.BaseType))
+				return null;
+
+			var lastDetail = lastState == null ? null : (activeDetails ?? new List<CustomStateDetail>()).FirstOrDefault(x => x.CustomStateDetailId == lastState.State);
+			if (lastDetail != null && TransportDestinationRules.IsTransportBaseType(lastDetail.BaseType) &&
+			    lastState.DestinationType == (int)DestinationEntityTypes.Poi && lastState.DestinationId.HasValue && poisById.ContainsKey(lastState.DestinationId.Value))
+				return lastState.DestinationId.Value;
+
+			var assigned = TransportDestinationRules.AssignedDestinationPoiId(workingCall);
+			if (assigned.HasValue && poisById.ContainsKey(assigned.Value))
+				return assigned.Value;
+
+			if (mode == DestinationSuggestionModes.SuggestAndFill && suggestedPoiId.HasValue && poisById.ContainsKey(suggestedPoiId.Value))
+				return suggestedPoiId.Value;
+
+			return null;
+		}
+
+		/// <summary>
+		/// Where the ranking starts: the unit's position when the member may see it and it is recent, else the working call's location.
+		/// </summary>
+		private async Task<(double Latitude, double Longitude)?> DestinationOriginForUnitAsync(Unit unit, UnitState lastState, Call workingCall)
+		{
+			var freshSince = DateTime.UtcNow - UnitPositionFreshFor;
+
+			if (await _authorizationService.CanUserViewUnitLocationViaMatrixAsync(unit.UnitId, UserId, DepartmentId))
+			{
+				var location = await _unitsService.GetLatestUnitLocationForDepartmentAsync(DepartmentId, unit.UnitId);
+				if (location != null && location.Timestamp >= freshSince && CallLocations.IsValidPoint((double)location.Latitude, (double)location.Longitude))
+					return ((double)location.Latitude, (double)location.Longitude);
+
+				if (lastState != null && lastState.Timestamp >= freshSince && lastState.Latitude.HasValue && lastState.Longitude.HasValue &&
+				    CallLocations.IsValidPoint((double)lastState.Latitude.Value, (double)lastState.Longitude.Value))
+					return ((double)lastState.Latitude.Value, (double)lastState.Longitude.Value);
+			}
+
+			if (workingCall != null && Resgrid.Services.DestinationAutoFillService.TryReadPoint(workingCall.GeoLocationData, out var latitude, out var longitude))
+				return (latitude, longitude);
+
+			return null;
+		}
+
+		/// <summary>"Name (Suggested · 12 min)", "Name (Missing: Helipad · Diversion)": why a destination ranks where it does.</summary>
+		private string RankedOptionText(Poi poi, NearestDestination destination, bool isSuggested, Dictionary<string, string> capabilityNames)
+		{
+			var parts = new List<string>();
+
+			if (isSuggested)
+				parts.Add(DestinationRulesText("SuggestedBadge", "Suggested"));
+
+			if (destination.MissingCapabilityIds != null && destination.MissingCapabilityIds.Count > 0)
+			{
+				var missing = destination.MissingCapabilityIds.Select(id => id != null && capabilityNames.TryGetValue(id, out var name) ? name : id);
+				parts.Add(String.Format(DestinationRulesText("MissingCapabilities", "Missing: {0}"), String.Join(", ", missing)));
+			}
+
+			if (destination.Status != PoiAvailabilityStatuses.Open)
+				parts.Add(DestinationRulesText("Status" + destination.Status, destination.Status.ToString()));
+
+			if (destination.TravelSeconds >= 0)
+				parts.Add(String.Format(DestinationRulesText("MinutesShort", "{0} min"), Math.Max(1, (int)Math.Round(destination.TravelSeconds / 60))));
+
+			var text = GetPoiDisplayText(poi);
+			return parts.Count == 0 ? text : $"{text} ({String.Join(" · ", parts)})";
 		}
 
 
@@ -1825,7 +2032,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		private static void AppendDestinationOptions(StringBuilder sb, CustomStateDetail state, List<Call> activeCalls, List<DepartmentGroup> stations, List<Poi> destinationPois,
-			string callsLabel, string callPrefix)
+			string callsLabel, string callPrefix, UnitDestinationRanking ranking = null)
 		{
 			if (state.DetailType.SupportsCalls())
 			{
@@ -1849,12 +2056,26 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (state.DetailType.SupportsPois())
 			{
-				foreach (var poiGroup in destinationPois.GroupBy(x => !String.IsNullOrWhiteSpace(x.Type?.Name) ? x.Type.Name : "POIs"))
+				string selected(int poiId) => ranking?.SelectedPoiId == poiId ? " selected='selected'" : string.Empty;
+
+				// One unit with destination suggestions on: the ranked destinations first, best first; the rest stay grouped below.
+				if (ranking != null && ranking.Options.Count > 0)
+				{
+					sb.Append($"<optgroup label=\"{HttpUtility.HtmlEncode(ranking.GroupLabel)}\">");
+					foreach (var option in ranking.Options)
+					{
+						sb.Append($"<option value='{(int)DestinationEntityTypes.Poi}:{option.Key.PoiId}'{selected(option.Key.PoiId)}>{HttpUtility.HtmlEncode(option.Value)}</option>");
+					}
+					sb.Append("</optgroup>");
+				}
+
+				var others = ranking == null ? destinationPois : destinationPois.Where(x => !ranking.IsRanked(x.PoiId)).ToList();
+				foreach (var poiGroup in others.GroupBy(x => !String.IsNullOrWhiteSpace(x.Type?.Name) ? x.Type.Name : "POIs"))
 				{
 					sb.Append($"<optgroup label=\"{HttpUtility.HtmlEncode(poiGroup.Key)}\">");
 					foreach (var poi in poiGroup.OrderBy(x => x.Name).ThenBy(x => x.Address).ThenBy(x => x.Note))
 					{
-						sb.Append($"<option value='{(int)DestinationEntityTypes.Poi}:{poi.PoiId}'>{HttpUtility.HtmlEncode(GetPoiDisplayText(poi))}</option>");
+						sb.Append($"<option value='{(int)DestinationEntityTypes.Poi}:{poi.PoiId}'{selected(poi.PoiId)}>{HttpUtility.HtmlEncode(GetPoiDisplayText(poi))}</option>");
 					}
 					sb.Append("</optgroup>");
 				}

@@ -310,7 +310,7 @@ namespace Resgrid.Tests.Security
 			row.ExpiresOnUtc.Should().Be(_clock.Now.AddSeconds(PasskeyConfig.ApprovalRequestLifetimeSeconds));
 
 			_novu.Verify(n => n.SendUserNotification("Sign-in approval requested", "Open Resgrid Responder to review.", UserId, "DEPT",
-				"NA:" + start.ApprovalRequestId, It.IsAny<string>()), Times.Once);
+				"NA:" + start.ApprovalRequestId, ((int)PushSoundTypes.ModernNotification).ToString()), Times.Once);
 			_novu.Verify(n => n.SendUserNotification(It.IsAny<string>(), It.Is<string>(body => body.Contains(start.MatchNumber)), It.IsAny<string>(),
 				It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
 		}

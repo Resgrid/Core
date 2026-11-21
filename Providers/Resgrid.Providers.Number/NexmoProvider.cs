@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
@@ -33,6 +34,22 @@ namespace Resgrid.Providers.NumberProvider
 
             return null;
         }
+
+        // Dedicated department numbers are bought from Twilio only (NumberProviderFactory); Nexmo never sells them.
+        public Task<List<AvailablePhoneNumber>> SearchDedicatedNumbersAsync(string countryCode, string areaCode, string contains, int limit,
+            CancellationToken cancellationToken = default) => Task.FromResult(new List<AvailablePhoneNumber>());
+
+        public Task<List<AvailablePhoneNumber>> SearchDedicatedNumbersAsync(DedicatedNumberSearch search, CancellationToken cancellationToken = default) =>
+            Task.FromResult(new List<AvailablePhoneNumber>());
+
+        public Task<CarrierNumberPurchase> PurchaseDedicatedNumberAsync(string phoneNumber, string countryCode, string friendlyName,
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult(new CarrierNumberPurchase { Provider = "Nexmo", Error = "Dedicated numbers are not sold through Nexmo." });
+
+        public Task<bool> ReleaseDedicatedNumberAsync(string providerNumberId, CancellationToken cancellationToken = default) => Task.FromResult(false);
+
+        public Task<CarrierNumberPurchase> FindDedicatedNumberAsync(string phoneNumber, CancellationToken cancellationToken = default) =>
+            Task.FromResult<CarrierNumberPurchase>(null);
 
         private static string GenerateGetAvailableNumbersUrl(string country)
         {

@@ -74,6 +74,17 @@ var resgrid;
                     $('.recurring-destination').select2({ allowClear: false, minimumResultsForSearch: 0, width: '100%' });
                 }
 
+                // One destination (M0322): a destination POI clears and disables the free destination fields.
+                function syncFreeDestination() {
+                    var hasPoi = !!$('#DestinationPoiId').val();
+                    if (hasPoi) {
+                        $('.recurring-destination-free').val('');
+                    }
+                    $('.recurring-destination-free').prop('disabled', hasPoi);
+                }
+                $('#DestinationPoiId').on('change', syncFreeDestination);
+                syncFreeDestination();
+
                 $('#deleteRecurringCallForm').on('submit', function (e) {
                     var message = $(this).data('confirm');
                     if (message && !window.confirm(message)) {

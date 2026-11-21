@@ -259,7 +259,7 @@
     <value>Κωδικός Έκπτωσης</value>
   </data>
   <data name="AffiliateCode" xml:space="preserve">
-    <value>Κωδικός Συνεργάτη</value>
+    <value>Κωδικός Συνεργάτη/Λογαριασμού</value>
   </data>
   <data name="Region" xml:space="preserve">
     <value>Περιοχή</value>

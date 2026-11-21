@@ -1,3 +1,4 @@
+using System.Linq;
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
@@ -260,6 +261,183 @@ namespace Resgrid.Tests.Web.Tts
 		{
 			_preprocessor.Preprocess("123 Main St", "es")
 				.Should().Be("123 Main St.");
+		}
+
+		// -----------------------------------------------------------
+		//  Markup, run-on sentences and separator dashes: the engine read
+		//  "**" as "asterisk asterisk", "missing.Text" as "missing dot text",
+		//  and gave " - " no pause at all.
+		// -----------------------------------------------------------
+
+		[TestCase("**REQUEST APPROVED", "REQUEST APPROVED.")]
+		[TestCase("Nature, ***LOST HIKERS*** 2 FEMALE HIKERS", "Nature, LOST HIKERS. two FEMALE HIKERS.")]
+		[TestCase("**CANCELLATION PAGE** HIKERS FOUND", "CANCELLATION PAGE. HIKERS FOUND.")]
+		[TestCase("Please **DO NOT** enter", "Please DO NOT enter.")]
+		[TestCase("Crews staged ===== stand by", "Crews staged stand by.")]
+		public void Preprocess_StripsDecorativeMarkup(string input, string expected)
+		{
+			_preprocessor.Preprocess(input, EnglishVoice).Should().Be(expected);
+		}
+
+		[TestCase("non-verbal missing.Text Powell", "non-verbal missing. Text Powell.")]
+		[TestCase("HIKER MISSING.TEXT CALLER", "HIKER MISSING. TEXT CALLER.")]
+		[TestCase("Reported by U.S.A team", "Reported by U.S.A team.")]
+		[TestCase("Updates at resgrid.com", "Updates at resgrid.com.")]
+		public void Preprocess_RestoresMissingSpaceAfterSentenceEnd(string input, string expected)
+		{
+			_preprocessor.Preprocess(input, EnglishVoice).Should().Be(expected);
+		}
+
+		[TestCase("REQUEST APPROVED - San Luis Obispo", "REQUEST APPROVED, San Luis Obispo.")]
+		[TestCase("UPDATE- Missing Person SLO- Now", "UPDATE, Missing Person SLO, Now.")]
+		[TestCase("Nature, - fall victim", "Nature, fall victim.")]
+		[TestCase("pain — conscious", "pain, conscious.")]
+		public void Preprocess_TurnsSeparatorDashesIntoPauses(string input, string expected)
+		{
+			_preprocessor.Preprocess(input, EnglishVoice).Should().Be(expected);
+		}
+
+		[Test]
+		public void Preprocess_StructuralPassesApplyToEveryVoice()
+		{
+			// Markup and sentence breaks are engine problems, not English ones; the
+			// vocabulary and number passes still stay English-only.
+			_preprocessor.Preprocess("**ALERTE** incendie.Merci - 123 Main St", "fr")
+				.Should().Be("ALERTE. incendie. Merci, 123 Main St.");
+		}
+
+		// -----------------------------------------------------------
+		//  Phone numbers, digit lists and decimals.
+		// -----------------------------------------------------------
+
+		[TestCase("Text Powell 323-573-4264", "Text Powell 3 2 3, 5 7 3, 4 2 6 4.")]
+		[TestCase("Text Powell 323-573-4264.", "Text Powell 3 2 3, 5 7 3, 4 2 6 4.")]
+		[TestCase("Call (909) 641-7460", "Call 9 0 9, 6 4 1, 7 4 6 0.")]
+		[TestCase("JULIA(909 641 7460) WRG", "JULIA(9 0 9, 6 4 1, 7 4 6 0) WRG.")]
+		[TestCase("Call +1 323.573.4264 now", "Call 3 2 3, 5 7 3, 4 2 6 4 now.")]
+		[TestCase("Call 573-4264 now", "Call 5 7 3, 4 2 6 4 now.")]
+		public void Preprocess_ReadsPhoneNumbersInDigitGroups(string input, string expected)
+		{
+			_preprocessor.Preprocess(input, EnglishVoice).Should().Be(expected);
+		}
+
+		[TestCase("COORDINATES 34.1679204, -117.7046650", "COORDINATES 34.1 6 7 9 2 0 4, -117.7 0 4 6 6 5 0.")]
+		// A dotted seven-digit value is a decimal (a longitude), not a local phone number: its decimal point stays.
+		[TestCase("longitude 117.1234 east", "longitude 117.1 2 3 4 east.")]
+		[TestCase("CASE 2026-123-4567 OPEN", "CASE 2 0 2 6-123-4 5 6 7 OPEN.")]
+		public void Preprocess_DoesNotReadOtherNumbersAsPhoneNumbers(string input, string expected)
+		{
+			_preprocessor.Preprocess(input, EnglishVoice).Should().Be(expected);
+		}
+
+		[TestCase("requesting 30 type 1,2,3 for a team", "requesting 30 type 1, 2, 3 for a team.")]
+		[TestCase("Budget 30,000 units", "Budget 30,000 units.")]
+		[TestCase("BY MILE MARKER 1.5 AND", "BY MILE MARKER 1.5 AND.")]
+		public void Preprocess_KeepsDigitListsAndDecimalsInDigitForm(string input, string expected)
+		{
+			_preprocessor.Preprocess(input, EnglishVoice).Should().Be(expected);
+		}
+
+		// -----------------------------------------------------------
+		//  Sentence pacing: past ~500 phoneme ids Piper crams a sentence
+		//  into the same ~12 s of audio, so long ones are broken up.
+		// -----------------------------------------------------------
+
+		[Test]
+		public void Preprocess_LeavesShortSentencesWhole()
+		{
+			_preprocessor.Preprocess("Structure fire, smoke showing, two crews staged at the hydrant", EnglishVoice)
+				.Should().Be("Structure fire, smoke showing, two crews staged at the hydrant.");
+		}
+
+		[Test]
+		public void Preprocess_BreaksLongSentencesWithoutLosingWords()
+		{
+			const string input = "The crew should stage at the north trailhead and wait for the sheriff before heading up the canyon road "
+				+ "toward the old ranger station and then the second team will follow the creek bed down toward the lower parking area "
+				+ "where the family is waiting with the deputy and the medic unit until the helicopter arrives overhead and the incident "
+				+ "commander gives the order to begin the grid search of the eastern slope";
+
+			var result = _preprocessor.Preprocess(input, EnglishVoice);
+
+			AssertEverySentenceFits(result);
+			Words(result).Should().Equal(Words(input));
+			// Broken before the pair of joining words, never between them.
+			result.Should().Contain("ranger station. and then the second team");
+		}
+
+		[Test]
+		public void Preprocess_PrefersClauseBoundariesWhenBreaking()
+		{
+			const string input = "Smoke reported from the second floor of the warehouse on the east side of the lot, "
+				+ "crews from the north station are already on scene and requesting a second ladder truck with additional "
+				+ "personnel for ventilation and search operations";
+
+			var result = _preprocessor.Preprocess(input, EnglishVoice);
+
+			AssertEverySentenceFits(result);
+			result.Should().StartWith("Smoke reported from the second floor of the warehouse on the east side of the lot. crews from");
+		}
+
+		[Test]
+		public void Preprocess_BreaksALongListOfNumbersAtItsCommas()
+		{
+			// "11,12,13..." gets its commas spaced as a list; a list comma is a pause like any other, so the sentence can be broken
+			// there (only a phone number's digit-group commas are kept whole).
+			const string input = "Respond units 11,12,13,14,15,16,17,18,19,20,21,22,23.";
+
+			var result = _preprocessor.Preprocess(input, EnglishVoice);
+
+			AssertEverySentenceFits(result);
+			Words(result).Should().Equal(Words(input));
+		}
+
+		[Test]
+		public void Preprocess_NeverBreaksInsideAGroupedPhoneNumber()
+		{
+			const string input = "Contact the reporting party who is waiting near the gate on the access road for the arriving units at 323-573-4264 "
+				+ "or the backup number 909-641-7460 or the ranger station at 626-555-0142 or the county dispatch line at 213-555-0199";
+
+			var result = _preprocessor.Preprocess(input, EnglishVoice);
+
+			AssertEverySentenceFits(result);
+			result.Should().Contain("3 2 3, 5 7 3, 4 2 6 4")
+				.And.Contain("9 0 9, 6 4 1, 7 4 6 0")
+				.And.Contain("6 2 6, 5 5 5, 0 1 4 2")
+				.And.Contain("2 1 3, 5 5 5, 0 1 9 9");
+			// Each number stays with the word that introduces it.
+			result.Should().NotMatchRegex(@"\b(at|number)\. \d");
+		}
+
+		[Test]
+		public void Preprocess_CallTwentySixTwoSeventySevenDispatchPrompt()
+		{
+			// Regression: the dispatch prompt for a real call (dept 2294, 26-277) that was
+			// heard as "sped-up gibberish". The nature ran into one 37-word sentence through
+			// "missing.Text", which Piper spoke at ~9.7 syllables a second.
+			const string prompt = "New call, UPDATE- Missing Person SLO- Now Immediate Responce. Nature, **REQUEST APPROVED - San Luis Obispo "
+				+ "requesting 30 type 1,2,3 for a 16 year old Autistic non-verbal missing.Text Powell if available 323-573-4264. Priority, High.";
+
+			_preprocessor.Preprocess(prompt, EnglishVoice).Should().Be(
+				"New call, UPDATE, Missing Person SLO, Now Immediate Responce. Nature, REQUEST APPROVED, San Luis Obispo "
+				+ "requesting 30 type 1, 2, 3 for a sixteen year old Autistic non-verbal missing. Text Powell if available "
+				+ "3 2 3, 5 7 3, 4 2 6 4. Priority, High.");
+		}
+
+		private static void AssertEverySentenceFits(string text)
+		{
+			foreach (var sentence in System.Text.RegularExpressions.Regex.Split(text, @"(?<=[.!?])\s+"))
+			{
+				TextPreprocessor.EstimateSpokenLength(sentence, 0, sentence.Length)
+					.Should().BeLessThanOrEqualTo(TextPreprocessor.MaxSpokenSentenceLength, $"\"{sentence}\" is too long for one Piper sentence");
+			}
+		}
+
+		private static string[] Words(string text)
+		{
+			return System.Text.RegularExpressions.Regex.Matches(text.ToLowerInvariant(), @"[a-z0-9]+")
+				.Select(match => match.Value)
+				.ToArray();
 		}
 	}
 }

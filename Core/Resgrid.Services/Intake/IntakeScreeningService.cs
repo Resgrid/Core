@@ -138,9 +138,11 @@ namespace Resgrid.Services.Intake
 				var committed = cancelAttempted ? await ReadCommittedCancelAsync(callId, departmentId) : null;
 				if (committed == null)
 				{
-					await GiveBackClaimAsync(callId, departmentId, claimedOn.Value, dispatchOn, wasDispatched);
+					// The label goes back while this claim still holds the call: given back first, another dismissal could claim it, take the
+					// label as its own (IsLabelledDismissedAsync) and cancel, and this late restore would then strip a real dismissal's label.
 					if (labelled)
 						await RestoreScreeningAsync(departmentId, callId, message, now);
+					await GiveBackClaimAsync(callId, departmentId, claimedOn.Value, dispatchOn, wasDispatched);
 
 					if (ex is OperationCanceledException && cancellationToken.IsCancellationRequested)
 						throw;

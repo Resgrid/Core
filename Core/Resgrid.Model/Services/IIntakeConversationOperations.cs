@@ -24,6 +24,12 @@ namespace Resgrid.Model.Services
 			string providerMessageId);
 
 		/// <summary>
+		/// Finishes a STOP the thread recorded but could not persist (its close lost to another and the opt-out write failed): marks the thread
+		/// opted out; nothing is reopened or sent. True once the thread reads opted out (or no longer exists); false when the write failed.
+		/// </summary>
+		Task<bool> CompleteOptOutAsync(IntakeConversation conversation);
+
+		/// <summary>
 		/// Worker (aidispatchtriage queue, <see cref="AiDispatchChannels.IntakeConversation"/>): takes the thread's next Enhanced AI turn
 		/// and texts the caller, or hands the thread to a dispatcher. Returns the outcome; never throws for model or policy failures.
 		/// </summary>

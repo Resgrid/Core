@@ -695,6 +695,60 @@ namespace Resgrid.Tests.Intake
 		}
 
 		[Test]
+		public async Task a_redelivered_reply_recorded_on_a_thread_that_closed_is_done_even_with_no_thread_open()
+		{
+			// The reply was recorded, its 200 was lost, and its thread closed: no thread of the texter is open any more.
+			_conversationOperations.Setup(o => o.FindThreadForProviderMessageAsync(IntakeChannelTypes.Sms, Caller, "SM1")).ReturnsAsync((FirstThread(open: false), true));
+
+			var result = (ContentResult)await Controller().IncomingMessage(Text(to: Master, body: "It's at the Shell station"));
+
+			result.StatusCode.Should().Be(StatusCodes.Status200OK);
+			_profiles.Verify(p => p.GetProfileByMobileNumberAsync(It.IsAny<string>()), Times.Never, "member commands and the chatbot never see a recorded reply");
+			_conversations.Verify(c => c.HandleParticipantMessageAsync(It.IsAny<IntakeConversation>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(),
+				It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public async Task a_text_from_someone_with_no_thread_and_no_binding_keeps_the_master_numbers_usual_handling()
+		{
+			await Controller().IncomingMessage(Text(to: Master, body: "It's at the Shell station"));
+
+			_profiles.Verify(p => p.GetProfileByMobileNumberAsync("15305550199"), Times.AtLeastOnce);
+		}
+
+		[TestCase(true, StatusCodes.Status200OK)]
+		[TestCase(false, StatusCodes.Status503ServiceUnavailable)]
+		public async Task a_redelivered_stop_whose_opt_out_never_persisted_finishes_it_on_its_own_thread(bool persisted, int status)
+		{
+			// The STOP's note was linked, its close lost to a dispatcher's and both opt-out writes failed: the closed thread still reads opted in.
+			var first = FirstThread(open: false);
+			_conversationOperations.Setup(o => o.FindThreadForProviderMessageAsync(IntakeChannelTypes.Sms, Caller, "SM1")).ReturnsAsync((first, true));
+			_conversationOperations.Setup(o => o.CompleteOptOutAsync(first)).ReturnsAsync(persisted);
+			_commands.Setup(c => c.DetermineType("STOP")).Returns(new TextCommandPayload { Type = TextCommandTypes.Stop });
+
+			var result = (ContentResult)await Controller().IncomingMessage(Text(to: Master, body: "STOP"));
+
+			_conversationOperations.Verify(o => o.CompleteOptOutAsync(first), Times.Once);
+			result.StatusCode.Should().Be(status, persisted ? "the opt-out is on its thread now" : "Twilio delivers the STOP again until it is");
+			_conversations.Verify(c => c.HandleParticipantMessageAsync(It.IsAny<IntakeConversation>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(),
+				It.IsAny<CancellationToken>()), Times.Never, "the closed thread is not reopened");
+		}
+
+		[Test]
+		public async Task a_reply_whose_redelivery_lookup_fails_answers_503_and_is_not_put_on_the_latest_thread()
+		{
+			OpenThread();
+			_conversationOperations.Setup(o => o.FindThreadForProviderMessageAsync(IntakeChannelTypes.Sms, Caller, "SM1")).ThrowsAsync(new TimeoutException("database"));
+
+			var result = (ContentResult)await Controller().IncomingMessage(Text(to: Master, body: "It's at the Shell station"));
+
+			result.StatusCode.Should().Be(StatusCodes.Status503ServiceUnavailable, "Twilio delivers it again and the binding is read again");
+			_conversations.Verify(c => c.HandleParticipantMessageAsync(It.IsAny<IntakeConversation>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(),
+				It.IsAny<CancellationToken>()), Times.Never, "the most recently active thread may be another department's");
+			_profiles.Verify(p => p.GetProfileByMobileNumberAsync(It.IsAny<string>()), Times.Never);
+		}
+
+		[Test]
 		public async Task a_reply_to_the_master_number_continues_the_open_thread_ahead_of_member_commands()
 		{
 			OpenThread();
@@ -725,7 +779,7 @@ namespace Resgrid.Tests.Intake
 		[Test]
 		public async Task without_an_open_thread_the_master_number_is_unchanged()
 		{
-			await Controller().IncomingMessage(Text(to: Master, body: "STATUS"));
+			await Controller().IncomingMessage(Text(to: Master, body: "It's at the Shell station"));
 
 			_conversations.Verify(c => c.FindOpenForReplyAsync(IntakeChannelTypes.Sms, Caller, It.IsAny<DateTime>()), Times.Once);
 			_conversations.Verify(c => c.HandleParticipantMessageAsync(It.IsAny<IntakeConversation>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()), Times.Never);

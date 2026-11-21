@@ -20,6 +20,9 @@
             A failed intake answers 503 so the platform redelivers; intake takes the failed claim over.
             </summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.ChatbotPlatformsController.DiscordReply(System.String)">
+            <summary>An immediate interaction answer shown only to the person who used the command (ephemeral).</summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.ChatbotPlatformsController.SignedUrl(System.String)">
             <summary>
             The URL Twilio signed: a connection-override fragment ("#rp=5xx,ct,rt") is Twilio's own setting, never sent and never part of

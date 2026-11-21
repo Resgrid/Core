@@ -203,6 +203,26 @@ namespace Resgrid.Tests.Intake
 		}
 
 		[Test]
+		public async Task a_failed_cancel_restores_the_label_before_it_gives_the_claim_back()
+		{
+			_message.Screening = (int)IntakeScreenings.LikelyNotIncident;
+			_calls.Setup(c => c.GetCallByIdAsync(CallId, true)).ReturnsAsync(() => StoredCopy((int)CallStates.Pending));
+			_calls.Setup(c => c.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>())).ThrowsAsync(new InvalidOperationException("db down"));
+			var order = new List<string>();
+			_messages.Setup(m => m.SetScreeningAsync(DepartmentId, CallId, (int)IntakeScreenings.LikelyNotIncident, It.IsAny<int[]>(), It.IsAny<string>(), It.IsAny<DateTime>(),
+					It.IsAny<CancellationToken>()))
+				.Callback(() => order.Add("restore")).ReturnsAsync(true);
+			_calls.Setup(c => c.ReleaseCallDispatchClaimAsync(CallId, DepartmentId, Claimed, (int)CallStates.Pending, It.IsAny<DateTime?>(), It.IsAny<bool?>(),
+					It.IsAny<CancellationToken>()))
+				.Callback(() => order.Add("give back")).ReturnsAsync(true);
+
+			(await _service.DismissAsSpamAsync(DepartmentId, CallId, "dispatcher-1", blockSender: false)).Result.Should().Be(IntakeDismissResults.Failed);
+
+			order.Should().Equal(new[] { "restore", "give back" },
+				"once given back another dismissal can claim the call and keep the label as its own; a later restore would strip it");
+		}
+
+		[Test]
 		public async Task a_cancel_that_committed_before_its_save_failed_stays_dismissed_with_its_label()
 		{
 			// SaveCallAsync wrote the cancel, then its post-save work (search projection, protected-write check) threw.

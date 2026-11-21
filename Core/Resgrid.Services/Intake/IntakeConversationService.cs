@@ -40,6 +40,9 @@ namespace Resgrid.Services.Intake
 		/// </summary>
 		private static readonly TimeSpan AssistantReplyInFlight = TimeSpan.FromMinutes(3);
 
+		/// <summary>How far a stored note's timestamp can read before its message row's own (rounding of the stored times).</summary>
+		private static readonly TimeSpan NoteTimestampTolerance = TimeSpan.FromMilliseconds(10);
+
 		/// <summary>The Error prefix of an Enhanced AI reply row that never carried text (see <see cref="WithdrawAsync"/>).</summary>
 		public const string WithdrawnPrefix = "Withdrawn:";
 
@@ -227,6 +230,32 @@ namespace Resgrid.Services.Intake
 
 			var thread = await LoadAsync(row.DepartmentId, row.IntakeConversationId);
 			return thread == null ? (null, false) : (thread, row.CallNoteId.HasValue);
+		}
+
+		public async Task<bool> CompleteOptOutAsync(IntakeConversation conversation)
+		{
+			if (conversation == null)
+				return false;
+			if (conversation.OptedOut)
+				return true;
+
+			for (var attempt = 1; attempt <= 2; attempt++)
+			{
+				try
+				{
+					// False = the thread no longer exists: nothing can be sent on it either.
+					await _conversations.MarkOptedOutAsync(conversation.IntakeConversationId, conversation.DepartmentId, CancellationToken.None);
+					conversation.OptedOut = true;
+					return true;
+				}
+				catch (Exception ex)
+				{
+					Framework.Logging.LogException(ex, $"Intake conversation {conversation.IntakeConversationId}: a redelivered STOP could not mark it opted out" +
+						(attempt == 1 ? "; trying again." : "; the provider's next redelivery tries again."));
+				}
+			}
+
+			return false;
 		}
 
 		public async Task<IntakeConversation> GetOpenForParticipantAsync(int departmentId, IntakeChannelTypes channelType, string participantAddress)
@@ -1041,11 +1070,40 @@ namespace Resgrid.Services.Intake
 				message.SentOn = result.Success ? Stamp() : (DateTime?)null;
 			}
 
-			await _messages.UpdateDeliveryAsync(message.IntakeConversationMessageId, message.DepartmentId, message.Status, message.ProviderMessageId, message.Error,
-				message.SentOn, CancellationToken.None);
-			await _conversations.TouchAsync(conversation.IntakeConversationId, conversation.DepartmentId, message.CreatedOn, null, CancellationToken.None);
+			// The outcome is decided (sent, refused, or failed at the carrier); a write of it that fails is tried once more, then logged, never
+			// thrown. A throw here would skip the caller's recovery for an Enhanced AI reply that did not go out (the hand-over to a dispatcher)
+			// and report a dispatcher's text that reached the texter as failed, inviting a second copy. The caller acts on the outcome in hand.
+			if (!await RecordDeliveryAsync(message) && !await RecordDeliveryAsync(message))
+				Framework.Logging.LogError($"Intake conversation message {message.IntakeConversationMessageId}: its delivery outcome (status {message.Status}, " +
+					$"error {message.Error ?? "none"}) could not be recorded; its row still reads Queued.");
+
+			try
+			{
+				await _conversations.TouchAsync(conversation.IntakeConversationId, conversation.DepartmentId, message.CreatedOn, null, CancellationToken.None);
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex, $"Intake conversation {conversation.IntakeConversationId}: its activity time could not be updated after a send.");
+			}
+
 			conversation.LastActivityOn = message.CreatedOn > conversation.LastActivityOn ? message.CreatedOn : conversation.LastActivityOn;
 			return message;
+		}
+
+		/// <summary>Writes an outbound message's delivery outcome; false (logged) when the write failed.</summary>
+		private async Task<bool> RecordDeliveryAsync(IntakeConversationMessage message)
+		{
+			try
+			{
+				await _messages.UpdateDeliveryAsync(message.IntakeConversationMessageId, message.DepartmentId, message.Status, message.ProviderMessageId, message.Error,
+					message.SentOn, CancellationToken.None);
+				return true;
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex, $"Intake conversation message {message.IntakeConversationMessageId}: its delivery outcome could not be written.");
+				return false;
+			}
 		}
 
 		/// <summary>Why an outbound text is not handed to the carrier after all (the delivery row's Error).</summary>
@@ -1346,12 +1404,18 @@ namespace Resgrid.Services.Intake
 
 				call = await _calls.PopulateCallData(call, false, false, true, false, false, false, false, false, false) ?? call;
 				var linked = new HashSet<int>(threadMessages.Where(m => m.CallNoteId.HasValue).Select(m => m.CallNoteId.Value));
-				// The note is written after the row (same clock); a second of slack covers the database's timestamp precision.
+				// The note is written after the row (same clock); a second of slack covers the database's timestamp precision. Notes carry no
+				// message id, so two texts with the same words a moment apart can both match: a note written at or after this row (its own, when it
+				// saved one) is taken first, the earliest of those, before one written ahead of the row (an earlier text's, whose own redelivery
+				// would otherwise find its note taken and write a second one).
 				var since = message.CreatedOn.AddSeconds(-1);
+				var atRow = message.CreatedOn - NoteTimestampTolerance;
 				return (call.CallNotes ?? new List<CallNote>())
 					.Where(n => n != null && n.CallNoteId > 0 && n.Source == (int)CallNoteSources.IntakeText && n.Timestamp >= since && !linked.Contains(n.CallNoteId) &&
 						string.Equals(n.Note, noteText, StringComparison.Ordinal))
-					.OrderBy(n => n.CallNoteId)
+					.OrderBy(n => n.Timestamp >= atRow ? 0 : 1)
+					.ThenBy(n => n.Timestamp >= atRow ? n.Timestamp.Ticks : -n.Timestamp.Ticks)
+					.ThenBy(n => n.CallNoteId)
 					.Select(n => (int?)n.CallNoteId)
 					.FirstOrDefault();
 			}

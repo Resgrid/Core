@@ -557,10 +557,10 @@ namespace Resgrid.Web.Services.Controllers
 		/// </summary>
 		private async Task<ConversationReplies> TryHandleConversationReplyAsync(TwilioMessage request)
 		{
+			var sender = IntakeChannelAddresses.PhoneNumber(request.From) ?? request.From;
 			IntakeConversation thread;
 			try
 			{
-				var sender = IntakeChannelAddresses.PhoneNumber(request.From) ?? request.From;
 				thread = await _intakeConversations.FindOpenForReplyAsync(IntakeChannelTypes.Sms, sender, DateTime.UtcNow);
 			}
 			catch (Exception ex)
@@ -569,41 +569,54 @@ namespace Resgrid.Web.Services.Controllers
 				return ConversationReplies.None;
 			}
 
-			if (thread == null || !IsConversationReplyNumber(request.To, thread))
-				return ConversationReplies.None;
+			if (thread != null && !IsConversationReplyNumber(request.To, thread))
+				thread = null;
 
 			var stop = Resgrid.Services.Intake.IntakeConversationTexts.IsOptOut(request.Body);
 
-			// A redelivery (Twilio retrying a 503 or a lost answer) stays with the thread that recorded this MessageSid the first time, even when
-			// another department's thread of the same texter has become the most recently active since: the text is never moved to another
-			// department's call. Looked up only when the texter has an open thread (the reply path), so member commands pay nothing for it.
+			// A redelivery (Twilio retrying a 503 or a lost answer) stays with the thread that recorded this MessageSid the first time: even when
+			// another department's thread of the same texter has become the most recently active since (the text is never moved to another
+			// department's call), and even when no thread of theirs is open any more (a recorded reply never falls through to member commands or
+			// the chatbot). One index seek on the texter's own threads; nothing to read for a sender who never texted an intake number.
+			(IntakeConversation Thread, bool Recorded) bound;
 			try
 			{
-				var sender = IntakeChannelAddresses.PhoneNumber(request.From) ?? request.From;
-				var bound = await _intakeConversationOperations.FindThreadForProviderMessageAsync(IntakeChannelTypes.Sms, sender, request.MessageSid);
-				if (bound.Thread != null && !string.Equals(bound.Thread.IntakeConversationId, thread.IntakeConversationId, StringComparison.Ordinal))
-				{
-					if (!bound.Thread.IsOpen)
-					{
-						// Its thread closed since. On its call already: done (a STOP still gets the master number's own STOP handling). Not on it:
-						// the master number's usual handling, as for any reply to a closed thread, and never the other thread.
-						Framework.Logging.LogInfo($"[Twilio SMS] MessageSid={request.MessageSid} was first recorded on closed intake conversation " +
-							$"{bound.Thread.IntakeConversationId} (department {bound.Thread.DepartmentId}, recorded={bound.Recorded}); not moved to another thread.");
-						if (!bound.Recorded)
-							return ConversationReplies.None;
-						return stop ? ConversationReplies.OptedOut : ConversationReplies.Handled;
-					}
-
-					if (!IsConversationReplyNumber(request.To, bound.Thread))
-						return ConversationReplies.None;
-					thread = bound.Thread;
-				}
+				bound = await _intakeConversationOperations.FindThreadForProviderMessageAsync(IntakeChannelTypes.Sms, sender, request.MessageSid);
 			}
 			catch (Exception ex)
 			{
-				// The first delivery's thread could not be looked up: the most recently active thread, as before this text had a delivery.
+				// Which thread first took this text is unknown, so none is chosen: the most recently active one may be another department's.
+				// With an open thread to reply to, a retryable answer (the redelivery reads the binding again); with none, the master number's
+				// usual handling, as for any text from someone with no open thread.
 				Framework.Logging.LogException(ex, $"[Twilio SMS] MessageSid={request.MessageSid} intake conversation redelivery lookup failed.");
+				return thread != null ? ConversationReplies.Retry : ConversationReplies.None;
 			}
+
+			if (bound.Thread != null)
+			{
+				// The bound thread decides, but only for a text to the number it texts from (a MessageSid is one message to one number).
+				if (!IsConversationReplyNumber(request.To, bound.Thread))
+					return ConversationReplies.None;
+
+				if (!bound.Thread.IsOpen)
+				{
+					// Its thread closed since. Not on its call: the master number's usual handling, as for any reply to a closed thread, and never
+					// another thread. On it: done. A STOP whose opt-out never persisted (its close lost to another, the opt-out write failed) is
+					// finished on that thread now, nothing reopened or sent; until it is, a retryable answer.
+					Framework.Logging.LogInfo($"[Twilio SMS] MessageSid={request.MessageSid} was first recorded on closed intake conversation " +
+						$"{bound.Thread.IntakeConversationId} (department {bound.Thread.DepartmentId}, recorded={bound.Recorded}); not moved to another thread.");
+					if (!bound.Recorded)
+						return ConversationReplies.None;
+					if (!stop)
+						return ConversationReplies.Handled;
+					return await _intakeConversationOperations.CompleteOptOutAsync(bound.Thread) ? ConversationReplies.OptedOut : ConversationReplies.Retry;
+				}
+
+				thread = bound.Thread;
+			}
+
+			if (thread == null)
+				return ConversationReplies.None;
 
 			// From here the text is the texter's, whatever happens while it is recorded: it never falls through to member commands. Not handled
 			// means it is not durable on the thread (the thread closed meanwhile, or its row, note or STOP close failed): a retryable answer, so a

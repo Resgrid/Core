@@ -442,6 +442,32 @@ namespace Resgrid.Tests.Intake
 		}
 
 		[Test]
+		public async Task a_dispatchers_text_that_reached_the_texter_is_reported_sent_when_its_outcome_cannot_be_written()
+		{
+			var conversation = await StartAsync();
+			await _service.ConnectDispatcherAsync(DepartmentId, conversation.IntakeConversationId, "disp-1");
+			_messages.FailingDeliveryUpdates = 2;
+			_conversations.FailingTouches = 1;
+			_sent.Clear();
+
+			(await _service.SendDispatcherMessageAsync(DepartmentId, conversation.IntakeConversationId, "disp-1", "Hello?"))
+				.Should().Be(IntakeConversationActionResults.Done, "the carrier took it; a failure report would invite the dispatcher to send it twice");
+			_sent.Select(s => s.Text).Should().Equal("Hello?");
+		}
+
+		[Test]
+		public async Task a_retried_outcome_write_records_the_delivery()
+		{
+			var conversation = await StartAsync();
+			await _service.ConnectDispatcherAsync(DepartmentId, conversation.IntakeConversationId, "disp-1");
+			_messages.FailingDeliveryUpdates = 1;
+
+			(await _service.SendDispatcherMessageAsync(DepartmentId, conversation.IntakeConversationId, "disp-1", "Hello?")).Should().Be(IntakeConversationActionResults.Done);
+
+			Messages(conversation.IntakeConversationId).Last().Status.Should().Be((int)IntakeConversationMessageStatuses.Sent);
+		}
+
+		[Test]
 		public async Task release_returns_an_ai_channel_to_enhanced_ai_without_a_text()
 		{
 			var conversation = await StartAsync(IntakeProcessingModes.EnhancedAi);
@@ -1017,6 +1043,26 @@ namespace Resgrid.Tests.Intake
 		}
 
 		[Test]
+		public async Task a_redelivery_links_its_own_unlinked_note_not_an_earlier_text_with_the_same_words()
+		{
+			var conversation = await StartAsync();
+			// An earlier text with the same words whose note is not linked either (its own redelivery has not come yet).
+			var earlier = new CallNote { CallId = CallId, Note = IntakeConversationTexts.CallerNotePrefix + "Still waiting", Source = (int)CallNoteSources.IntakeText };
+			earlier.CallNoteId = _notes.Count + 1;
+			_notes.Add(earlier);
+			_messages.FailingNoteLinks = 2;
+
+			(await _service.HandleParticipantMessageAsync(conversation, "SM2", "Still waiting", DateTime.UtcNow)).Should().BeFalse();
+			var row = Messages(conversation.IntakeConversationId).Single(m => m.ProviderMessageId == "SM2");
+			var own = _notes.Last(n => n.Note == earlier.Note);
+			earlier.Timestamp = row.CreatedOn.AddMilliseconds(-500);
+
+			(await _service.HandleParticipantMessageAsync(conversation, "SM2", "Still waiting", DateTime.UtcNow)).Should().BeTrue();
+
+			row.CallNoteId.Should().Be(own.CallNoteId, "the note written after this text's row is its own; the earlier one is left for its own redelivery");
+		}
+
+		[Test]
 		public async Task a_redelivery_that_arrives_while_the_first_delivery_links_its_note_reuses_that_note()
 		{
 			var conversation = await StartAsync();
@@ -1062,6 +1108,21 @@ namespace Resgrid.Tests.Intake
 			Stored(conversation.IntakeConversationId).Handler.Should().Be((int)IntakeConversationHandlers.Unassisted,
 				"nothing else would answer the texter: a dispatcher takes the thread");
 			_sent.Select(s => s.Text).Should().Contain(Finished, "the hand-over text passed its own check of the stored thread");
+		}
+
+		[Test]
+		public async Task an_ai_reply_the_carrier_failed_hands_over_even_when_the_failure_cannot_be_written()
+		{
+			var conversation = await StartAsync(IntakeProcessingModes.EnhancedAi);
+			ModelAnswers("Where are you?");
+			_sendFails = true;
+			// Both writes of the reply's outcome fail; the hand-over's own texts write normally.
+			_messages.FailingDeliveryUpdates = 2;
+
+			(await _service.ProcessAssistantTurnAsync(LastTurn())).Should().Be("SendFailed", "the texter's message was not answered");
+
+			Stored(conversation.IntakeConversationId).Handler.Should().Be((int)IntakeConversationHandlers.Unassisted,
+				"nothing else would answer the texter: a dispatcher takes the thread");
 		}
 
 		[Test]
@@ -1128,6 +1189,21 @@ namespace Resgrid.Tests.Intake
 			bound.Thread.IntakeConversationId.Should().Be(conversation.IntakeConversationId);
 			bound.Recorded.Should().BeTrue();
 			(await _service.FindThreadForProviderMessageAsync(IntakeChannelTypes.Sms, Texter, "SM404")).Thread.Should().BeNull();
+		}
+
+		[Test]
+		public async Task completing_a_redelivered_stop_marks_the_closed_thread_opted_out_without_reopening_or_texting_it()
+		{
+			var conversation = await StartAsync();
+			Stored(conversation.IntakeConversationId).State = (int)IntakeConversationStates.Closed;
+			var thread = await _service.GetByIdAsync(DepartmentId, conversation.IntakeConversationId);
+			_sent.Clear();
+
+			(await _service.CompleteOptOutAsync(thread)).Should().BeTrue();
+
+			Stored(conversation.IntakeConversationId).OptedOut.Should().BeTrue();
+			Stored(conversation.IntakeConversationId).State.Should().Be((int)IntakeConversationStates.Closed);
+			_sent.Should().BeEmpty();
 		}
 
 		[Test]

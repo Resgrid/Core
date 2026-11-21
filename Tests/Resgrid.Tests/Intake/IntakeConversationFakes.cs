@@ -247,9 +247,18 @@ namespace Resgrid.Tests.Intake
 		/// <summary>The next note links throw, as a database that fails right after the note was saved would.</summary>
 		public int FailingNoteLinks { get; set; }
 
+		/// <summary>The next delivery-outcome writes throw, as a database that fails right after the carrier answered would.</summary>
+		public int FailingDeliveryUpdates { get; set; }
+
 		public Task<bool> UpdateDeliveryAsync(string messageId, int departmentId, int status, string providerMessageId, string error, DateTime? sentOn,
 			CancellationToken cancellationToken = default)
 		{
+			if (FailingDeliveryUpdates > 0)
+			{
+				FailingDeliveryUpdates--;
+				throw new TimeoutException("database");
+			}
+
 			var row = Rows.FirstOrDefault(r => r.IntakeConversationMessageId == messageId && r.DepartmentId == departmentId);
 			if (row == null)
 				return Task.FromResult(false);

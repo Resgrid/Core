@@ -215,17 +215,28 @@ namespace Resgrid.Web.Services.Controllers
 			if (channel == null)
 				return null;
 
-			var result = await _intake.ReceiveAsync(new IntakeEnvelope
+			IntakeResult result;
+			try
 			{
-				ChannelType = chat.ChannelType,
-				IntakeChannelId = channel.IntakeChannelId,
-				ChannelAddress = chat.Address,
-				ProviderMessageId = chat.ProviderMessageId,
-				Sender = chat.Sender,
-				SenderName = chat.SenderName,
-				Body = chat.Text,
-				ReceivedOnUtc = DateTime.UtcNow
-			}, HttpContext?.RequestAborted ?? default);
+				result = await _intake.ReceiveAsync(new IntakeEnvelope
+				{
+					ChannelType = chat.ChannelType,
+					IntakeChannelId = channel.IntakeChannelId,
+					ChannelAddress = chat.Address,
+					ProviderMessageId = chat.ProviderMessageId,
+					Sender = chat.Sender,
+					SenderName = chat.SenderName,
+					Body = chat.Text,
+					ReceivedOnUtc = DateTime.UtcNow
+				}, HttpContext?.RequestAborted ?? default);
+			}
+			catch (Exception ex) when (platform == ChatbotPlatform.Discord)
+			{
+				// Discord never redelivers an interaction and shows a bare 503 as "This interaction failed". Intake may have saved the call
+				// before it threw, so the answer neither confirms it nor says nothing was saved. Other platforms keep the retryable 503.
+				Framework.Logging.LogException(ex, "Discord intake failed while it was being recorded.");
+				return DiscordReply(DiscordUnconfirmed);
+			}
 
 			// Discord never redelivers an interaction and shows a bare 503 as "This interaction failed": it gets its answer below.
 			if (result.State == IntakeMessageStates.Failed && platform != ChatbotPlatform.Discord)
@@ -242,13 +253,14 @@ namespace Resgrid.Web.Services.Controllers
 				case ChatbotPlatform.Discord:
 					// An interaction always needs an answer; it is shown only to the person who used the command. A duplicate whose first
 					// delivery has not saved its call yet is not confirmed: say so, rather than "received" for a request that may still fail.
+					// A replay of one that was refused (blocked, channel off: recorded with no call) gets the refusal again, never "received".
 					var text = ack ?? (result.State == IntakeMessageStates.Failed
 						? "Your request could not be recorded. Please send it again."
 						: result.State == IntakeMessageStates.Duplicate && result.Reason == IntakeResultReasons.DuplicateInProgress && !result.CallId.HasValue
 							? "Your request is still being processed and is not confirmed yet. If it does not show up as a call soon, send it again."
-							: result.State == IntakeMessageStates.Duplicate || result.State == IntakeMessageStates.CallCreated
-								? "Your request was received." : "This channel is not accepting requests right now.");
-					return Ok(new { type = 4, data = new { content = text, flags = 64 } });
+							: result.State == IntakeMessageStates.CallCreated || result.State == IntakeMessageStates.Duplicate && result.CallId.HasValue
+								? "Your request was received." : DiscordNotAccepting);
+					return DiscordReply(text);
 				case ChatbotPlatform.GoogleChat:
 					return ack == null ? Ok(new { }) : Ok(new { text = ack });
 				case ChatbotPlatform.Telegram:
@@ -277,6 +289,12 @@ namespace Resgrid.Web.Services.Controllers
 					return Ok();
 			}
 		}
+
+		private const string DiscordUnconfirmed = "Your request could not be confirmed. If it does not show up as a call soon, send it again.";
+		private const string DiscordNotAccepting = "This channel is not accepting requests right now.";
+
+		/// <summary>An immediate interaction answer shown only to the person who used the command (ephemeral).</summary>
+		private IActionResult DiscordReply(string text) => Ok(new { type = 4, data = new { content = text, flags = 64 } });
 
 		private async Task EnqueueAsync(ChatbotPlatform platform, string id, string from, string text, Dictionary<string, string> metadata = null, DateTime? occurredAt = null)
 		{

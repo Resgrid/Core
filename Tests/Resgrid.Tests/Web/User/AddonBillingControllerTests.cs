@@ -193,7 +193,7 @@ namespace Resgrid.Tests.Web.User
 	public class AddonCatalogTests
 	{
 		[TestCase(PlanAddonTypes.PTT, 35, 45)]
-		[TestCase(PlanAddonTypes.ADP, 1950, 2550)]
+		[TestCase(PlanAddonTypes.ADP, 3600, 2550)]
 		[TestCase(PlanAddonTypes.ReadinessPro, 150, 195)]
 		[TestCase(PlanAddonTypes.BusinessOperations, 250, 295)]
 		[TestCase(PlanAddonTypes.EnhancedAi, 95, 145)]

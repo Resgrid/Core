@@ -1,4 +1,4 @@
-namespace Resgrid.Model
+﻿namespace Resgrid.Model
 {
 	public enum EventingTypes
 	{
@@ -35,7 +35,17 @@ namespace Resgrid.Model
 		/// <summary>A call's Enhanced AI destination advice changed (hub event <c>aiDestinationAdviceUpdated</c>: call id, payload = advice id and state; M0323).</summary>
 		AiDestinationAdviceUpdated = 18,
 
-		// 19 DispatcherDeskUpdated and 20 DispatcherQueueUpdated are the dispatcher desk's (M0324, worktree dispatchers-on-duty).
+		/// <summary>
+		/// A department's dispatcher desk changed: a dispatcher signed in or off, went on or came back from break, was set Away, or
+		/// the dispatch roster or break plan changed (hub event <c>dispatcherDeskUpdated</c>: user id, payload).
+		/// </summary>
+		DispatcherDeskUpdated = 19,
+
+		/// <summary>
+		/// A department's dispatcher queue changed: work was added, offered, taken, released, transferred, completed or overflowed,
+		/// or a conversation message arrived (hub event <c>dispatcherQueueUpdated</c>: item id, payload).
+		/// </summary>
+		DispatcherQueueUpdated = 20,
 
 		/// <summary>An intake SMS conversation changed (hub event <c>intakeConversationUpdated</c>: call id, payload = conversation id, state, handler; M0325).</summary>
 		IntakeConversationUpdated = 21

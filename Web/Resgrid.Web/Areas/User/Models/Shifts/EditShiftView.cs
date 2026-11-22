@@ -19,5 +19,8 @@ namespace Resgrid.Web.Areas.User.Models.Shifts
 
 		/// <summary>Groups a group-scoped supervisor may use; empty when <see cref="CanManageAllGroups"/>.</summary>
 		public List<int> ManageableGroupIds { get; set; } = new List<int>();
+
+		/// <summary>The "Dispatchers on duty" section (M0324).</summary>
+		public ShiftDispatchSectionView Dispatch { get; set; } = new ShiftDispatchSectionView();
 	}
 }

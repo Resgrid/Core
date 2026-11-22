@@ -51,6 +51,7 @@ namespace Resgrid.Web.Services.Controllers
 	private readonly ITextDepartmentSwitchService _textDepartmentSwitchService;
 	private readonly IDispatchRecommendationService _dispatchRecommendationService;
 	private readonly IFeatureToggleService _featureToggleService;
+	private readonly Resgrid.Web.Services.Twilio.IDispatcherInboundTextHandler _dispatcherInboundTextHandler;
 
 	public SignalWireController(IDepartmentSettingsService departmentSettingsService, INumbersService numbersService,
 		ILimitsService limitsService, ICallsService callsService, IQueueService queueService, IDepartmentsService departmentsService,
@@ -59,8 +60,9 @@ namespace Resgrid.Web.Services.Controllers
 		IDepartmentGroupsService departmentGroupsService, ICustomStateService customStateService, IUnitsService unitsService,
 		ICommunicationTestService communicationTestService, IChatbotIngressService chatbotIngressService, IUsersService usersService,
 		ITextDepartmentSwitchService textDepartmentSwitchService, IDispatchRecommendationService dispatchRecommendationService,
-		IFeatureToggleService featureToggleService)
+		IFeatureToggleService featureToggleService, Resgrid.Web.Services.Twilio.IDispatcherInboundTextHandler dispatcherInboundTextHandler)
 	{
+		_dispatcherInboundTextHandler = dispatcherInboundTextHandler;
 		_departmentSettingsService = departmentSettingsService;
 		_numbersService = numbersService;
 		_limitsService = limitsService;
@@ -201,6 +203,14 @@ namespace Resgrid.Web.Services.Controllers
 				else
 				{
 					departmentId = await _departmentSettingsService.GetDepartmentIdByTextToCallNumberAsync(textMessage.To);
+				}
+
+				// Dispatcher desk (plan D9): no profile, to a department number whose desk takes texts (or a reply to a desk conversation).
+				if (profile == null && await _dispatcherInboundTextHandler.HandleAsync(departmentId,
+					textMessage.Msisdn, textMessage.To, textMessage.Text, textMessage.MessageId, cancellationToken))
+				{
+					messageEvent.Processed = true;
+					return new ContentResult { Content = response, ContentType = "application/xml", StatusCode = 200 };
 				}
 
 				// STOP from an unverified sender: honor the opt-out immediately — turning off messages must

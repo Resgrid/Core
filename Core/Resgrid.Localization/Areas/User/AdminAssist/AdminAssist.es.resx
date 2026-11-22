@@ -7755,6 +7755,12 @@
   <data xml:space="preserve" name="SettingHelp.ShiftTradeApprovers">
     <value>Quién elige qué candidato se queda con una solicitud de intercambio de turno y aprueba los intercambios pendientes. Los administradores del departamento siempre pueden; los administradores de grupo, quien cede el turno y los miembros de roles elegidos los decide el departamento.</value>
   </data>
+  <data xml:space="preserve" name="Setting.DispatcherDeskConfig">
+    <value>Mesa de despachadores</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.DispatcherDeskConfig">
+    <value>Activa el puesto de despacho y define cómo funciona: qué trabajo se ofrece a los despachadores de servicio en la aplicación Dispatch (llamadas pendientes y programadas, mensajes de texto, llamadas telefónicas, correos, chats), cuánto espera una oferta y cuántos elementos puede tener un despachador antes de contar como ocupado, cuántas ofertas perdidas seguidas ponen a un despachador como Ausente, y qué pasa con los mensajes de texto y las llamadas telefónicas cuando nadie está libre (esperar en la cola, Enhanced AI o buzón de voz). También define en qué se convierte una llamada enviada por correo a la dirección de despacho (despachada de inmediato, guardada como pendiente o leída por Enhanced AI en una llamada pendiente) y las reglas de descansos y servicio: recordatorios de descanso, regreso automático de los descansos, el mínimo disponible, rechazar descansos por debajo de él, sin alertas del puesto en descanso, y si los despachadores deben estar en un turno o pueden estar de servicio sin turno (Turnos, Configuración del puesto de despacho). Desactivado por defecto; las llamadas por correo se despachan de inmediato hasta que se cambie Llamadas por correo, lo que se aplica incluso con el envío desactivado.</value>
+  </data>
   <data xml:space="preserve" name="Feature.home-dashboard">
     <value>Panel de inicio personalizable</value>
   </data>
@@ -8000,5 +8006,95 @@
   </data>
   <data name="FeatureSetup.ai-destination-advice" xml:space="preserve">
     <value>Necesita el complemento Enhanced AI con la recomendación de destino con IA activada para su departamento. Agregue primero sus destinos con sus capacidades y reglas de destino. La recomendación aparece al ver y al actualizar la llamada, nada cambia hasta que alguien la aplica, y los departamentos que usan Advanced Data Protection no reciben recomendaciones.</value>
+  </data>
+  <data name="Feature.dispatcher-desk" xml:space="preserve">
+    <value>Puesto de despacho</value>
+  </data>
+  <data name="FeaturePurpose.dispatcher-desk" xml:space="preserve">
+    <value>Un tablero en vivo de los despachadores de servicio y del trabajo que los espera. Las llamadas pendientes y programadas, los mensajes de texto, las llamadas telefónicas, los correos y los chats se ofrecen a un despachador libre cada vez, que los toma en la aplicación Dispatch desde un teléfono o una tableta.</value>
+  </data>
+  <data name="FeatureValue.dispatcher-desk" xml:space="preserve">
+    <value>El trabajo llega a alguien que está libre: un despachador que tiene trabajo cuenta como ocupado, una oferta que nadie acepta pasa al siguiente despachador y el trabajo que queda esperando alerta a todos los de servicio. Los despachadores pueden atender el puesto desde donde estén, no solo desde una consola.</value>
+  </data>
+  <data name="FeatureExample.dispatcher-desk" xml:space="preserve">
+    <value>Dos despachadores voluntarios cubren un fin de semana desde sus teléfonos. Un mensaje sobre un árbol caído que corta una carretera se ofrece al que está libre y se convierte en una llamada, mientras el otro está en su descanso para comer y no recibe alertas del puesto hasta que vuelve.</value>
+  </data>
+  <data name="FeatureSetup.dispatcher-desk" xml:space="preserve">
+    <value>Dé a sus despachadores el permiso Inicio de sesión en la aplicación Dispatch y póngalos en la lista de despacho de un turno. Luego abra Turnos, Configuración del puesto de despacho, active Enviar trabajo a los despachadores de servicio, elija qué Enviar al puesto y guarde. Los despachadores inician sesión en el puesto desde la aplicación Dispatch; la página Puesto de despacho muestra quién está disponible, ocupado o en descanso y la cola abierta, y un supervisor del puesto puede terminar un descanso o pasar trabajo a otra persona.</value>
+  </data>
+  <data name="Feature.shift-dispatchers" xml:space="preserve">
+    <value>Despachadores de servicio</value>
+  </data>
+  <data name="FeaturePurpose.shift-dispatchers" xml:space="preserve">
+    <value>Ponga despachadores en turnos asignados y de inscripción, en un turno solo de despacho o junto a los intervinientes, con el número de puestos de despacho que cubrir, un mínimo en el puesto y un supervisor del puesto.</value>
+  </data>
+  <data name="FeatureValue.shift-dispatchers" xml:space="preserve">
+    <value>El puesto solo ofrece trabajo a los despachadores que de verdad están de servicio: los de la lista de un día de turno en curso, salvo que el departamento permita el servicio sin turno. Los puestos de despacho libres se ven en el día de turno, y De servicio ahora muestra a los despachadores con su estado en el puesto y sus descansos.</value>
+  </data>
+  <data name="FeatureExample.shift-dispatchers" xml:space="preserve">
+    <value>Un centro de despacho funciona con turnos A, B y C solo de despacho con dos despachadores cada uno, y un departamento de voluntarios añade un puesto de despachador a su turno de inscripción del fin de semana.</value>
+  </data>
+  <data name="FeatureSetup.shift-dispatchers" xml:space="preserve">
+    <value>Abra Turnos, cree o edite un turno y active Este turno tiene despachadores. Defina Despachadores necesarios y, en un turno asignado, marque a las personas de la Lista de despacho y a un supervisor del puesto; en un turno de inscripción, los despachadores eligen Inscribirse como despachador en el día de turno. Solo se pueden añadir personas con el permiso Inicio de sesión en la aplicación Dispatch.</value>
+  </data>
+  <data name="Feature.dispatcher-breaks" xml:space="preserve">
+    <value>Descansos de despacho</value>
+  </data>
+  <data name="FeaturePurpose.dispatcher-breaks" xml:space="preserve">
+    <value>Planifique los descansos y las comidas de los despachadores del día en una sola línea de tiempo de cobertura que muestra quién está de servicio, quién está en descanso y dónde la cobertura bajaría del mínimo.</value>
+  </data>
+  <data name="FeatureValue.dispatcher-breaks" xml:space="preserve">
+    <value>Los descansos quedan escalonados para que el puesto nunca quede vacío: Planificar descansos reparte el plan de descansos de un turno entre sus despachadores sin solapes, y el planificador avisa de descansos que se solapan y de huecos antes de que ocurran. Los despachadores reciben un recordatorio antes de cada descanso y, por defecto, ninguna alerta del puesto durante él.</value>
+  </data>
+  <data name="FeatureExample.dispatcher-breaks" xml:space="preserve">
+    <value>En un turno de 12 horas con tres despachadores, Planificar descansos coloca la comida de 30 minutos y dos descansos de 15 minutos de cada uno en horas distintas, y cada despachador recibe un recordatorio cinco minutos antes de que toque un descanso.</value>
+  </data>
+  <data name="FeatureSetup.dispatcher-breaks" xml:space="preserve">
+    <value>Defina un plan de descansos en cada turno, o un plan de descansos predeterminado en Configuración del puesto de despacho. Luego abra Turnos, Descansos de despacho, elija una fecha y un día de turno y use Planificar descansos, o planifique usted mismo descansos sueltos. Los supervisores del puesto y los responsables de turno planifican los descansos de cualquiera; los despachadores planifican los suyos solo en los turnos que lo permiten. Un descanso es una duración, así que si empieza antes también termina antes.</value>
+  </data>
+  <data name="Feature.dispatcher-desk-settings" xml:space="preserve">
+    <value>Configuración del puesto de despacho</value>
+  </data>
+  <data name="FeaturePurpose.dispatcher-desk-settings" xml:space="preserve">
+    <value>Active el envío y elija qué trabajo va al puesto, cuánto espera una oferta, qué pasa con los mensajes de texto y las llamadas telefónicas cuando todos los despachadores están ocupados, en qué se convierte una llamada recibida por correo y las reglas de descansos y servicio.</value>
+  </data>
+  <data name="FeatureValue.dispatcher-desk-settings" xml:space="preserve">
+    <value>El departamento decide una sola vez cómo se comporta el puesto, desde lo rápido que pasa al siguiente el trabajo sin respuesta hasta si un descanso puede dejar menos despachadores disponibles que el mínimo.</value>
+  </data>
+  <data name="FeatureExample.dispatcher-desk-settings" xml:space="preserve">
+    <value>Un departamento envía al puesto los mensajes de texto y las llamadas telefónicas, da 60 segundos a cada oferta, deja que Enhanced AI complete una llamada pendiente cuando nadie está libre y guarda las llamadas por correo como pendientes para que un despachador las revise.</value>
+  </data>
+  <data name="FeatureSetup.dispatcher-desk-settings" xml:space="preserve">
+    <value>Los administradores del departamento abren Turnos y luego Configuración del puesto de despacho. Active Enviar trabajo a los despachadores de servicio, elija Enviar al puesto, el tiempo de cada oferta y los elementos por despachador, qué pasa cuando todos los despachadores están ocupados, Llamadas por correo y las reglas de descanso, y guarde. Las opciones de Enhanced AI necesitan el complemento Enhanced AI.</value>
+  </data>
+  <data name="Feature.dispatcher-desk-activity" xml:space="preserve">
+    <value>Actividad de despacho</value>
+  </data>
+  <data name="FeaturePurpose.dispatcher-desk-activity" xml:space="preserve">
+    <value>La actividad del puesto de hasta 92 días: el trabajo por tipo, los elementos completados, desbordados, cancelados y escalados y el tiempo medio de respuesta, y para cada despachador las ofertas aceptadas, rechazadas y perdidas, el tiempo para aceptar y para completar, y los descansos tomados, perdidos o terminados tarde.</value>
+  </data>
+  <data name="FeatureValue.dispatcher-desk-activity" xml:space="preserve">
+    <value>Vea si el trabajo se atiende rápido, con qué frecuencia se desborda o se escala y si los descansos terminan a tiempo, y ajuste la dotación, los tiempos de oferta o los planes de descanso con las cifras.</value>
+  </data>
+  <data name="FeatureExample.dispatcher-desk-activity" xml:space="preserve">
+    <value>Un supervisor ve que los mensajes de texto se escalaban a menudo los viernes por la tarde y añade un segundo despachador a ese turno.</value>
+  </data>
+  <data name="FeatureSetup.dispatcher-desk-activity" xml:space="preserve">
+    <value>Los administradores del departamento y los supervisores del puesto abren Turnos y luego Actividad de despacho, eligen las fechas Desde y Hasta y seleccionan Mostrar.</value>
+  </data>
+  <data name="Feature.intake-spam-screening" xml:space="preserve">
+    <value>Filtro de spam en la entrada</value>
+  </data>
+  <data name="FeaturePurpose.intake-spam-screening" xml:space="preserve">
+    <value>Mantenga el spam y las llamadas automáticas fuera de Llamadas pendientes: descarte una llamada de entrada como spam y bloquee a su remitente, limite cuántas llamadas puede crear un número de teléfono en una hora, pida a quienes llaman por voz que pulsen 1 antes de las preguntas y marque los mensajes que Enhanced AI interpreta como que no son un incidente.</value>
+  </data>
+  <data name="FeatureValue.intake-spam-screening" xml:space="preserve">
+    <value>Los despachadores dedican su tiempo a avisos reales. Los mensajes y llamadas de un remitente bloqueado no crean llamadas ni reciben respuesta, y una llamada filtrada conserva su etiqueta en Llamadas pendientes pero no se ofrece en el puesto de despacho; un despachador sigue decidiendo qué hacer con ella.</value>
+  </data>
+  <data name="FeatureExample.intake-spam-screening" xml:space="preserve">
+    <value>Un número publicitario escribe una y otra vez al número del departamento. Pasado el límite por hora, sus mensajes se añaden como notas a su llamada abierta, y un despachador descarta esa llamada como spam y bloquea el número durante 30 días.</value>
+  </data>
+  <data name="FeatureSetup.intake-spam-screening" xml:space="preserve">
+    <value>En una llamada de entrada pendiente, elija Descartar como spam y deje marcado Bloquear también al remitente; la llamada se cancela y no se avisa a nadie. Los remitentes bloqueados aparecen en la página Canales de entrada, donde Desbloquear levanta un bloqueo antes de tiempo. El límite por hora se aplica a los canales de texto, voz y WhatsApp sin remitentes permitidos, nunca a los de correo, chat o webhook.</value>
   </data>
 </root>

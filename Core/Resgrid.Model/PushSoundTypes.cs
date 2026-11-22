@@ -35,6 +35,24 @@
 		/// Re-notification). Its sound is louder and more insistent than the emergency call sound. Sent whatever the call's
 		/// priority; an app without the sound plays its default.
 		/// </summary>
-		ModernCallRenotify = 27
+		ModernCallRenotify = 27,
+
+		// Dispatcher desk (M0324): sent only to the Dispatch app, which ships its own sound for each. Every other app plays its
+		// default for these.
+
+		/// <summary>Work routed to you on the dispatcher desk (a pending call, text, phone call, email or chat to take).</summary>
+		ModernDeskOffer = 28,
+
+		/// <summary>Work has waited in the desk queue too long with nobody taking it.</summary>
+		ModernDeskQueueAlert = 29,
+
+		/// <summary>A new message in a desk conversation you hold.</summary>
+		ModernDeskMessage = 30,
+
+		/// <summary>Your break is coming up, or due now.</summary>
+		ModernBreakReminder = 31,
+
+		/// <summary>Your break is over (or you were returned to available), or a dispatcher is overdue back.</summary>
+		ModernBreakOver = 32
 	}
 }

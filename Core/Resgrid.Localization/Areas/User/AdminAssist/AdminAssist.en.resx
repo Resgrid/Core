@@ -7755,6 +7755,12 @@
   <data xml:space="preserve" name="SettingHelp.ShiftTradeApprovers">
     <value>Who may pick which applicant takes a shift trade request and approve trades waiting for approval. Department admins always may; group admins, the person trading out and members of chosen roles are the department’s choice.</value>
   </data>
+  <data xml:space="preserve" name="Setting.DispatcherDeskConfig">
+    <value>Dispatcher desk</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.DispatcherDeskConfig">
+    <value>Turns the dispatcher desk on and sets how it works: which work is offered to the dispatchers on duty in the Dispatch app (pending and scheduled calls, texts, phone calls, emails, chats), how long an offer waits and how many items a dispatcher holds before counting as busy, how many missed offers in a row set a dispatcher Away, and what happens to texts and phone calls when nobody is free (wait in the queue, Enhanced AI, or voicemail). It also sets what a call emailed to the dispatch address becomes (dispatched at once, saved as pending, or read by Enhanced AI into a pending call) and the break and duty rules: break reminders, automatic return from breaks, the minimum available, refusing breaks below it, no desk alerts on break, and whether dispatchers must be on a shift or may go on duty without one (Shifts, Dispatcher Desk Settings). Off by default; emailed calls are dispatched at once until Emailed calls is changed, which applies even while routing is off.</value>
+  </data>
   <data xml:space="preserve" name="Feature.home-dashboard">
     <value>Customizable home dashboard</value>
   </data>
@@ -8000,5 +8006,95 @@
   </data>
   <data name="FeatureSetup.ai-destination-advice" xml:space="preserve">
     <value>Needs the Enhanced AI add-on with AI destination advice turned on for your department. Add your destinations with their capabilities and destination rules first. The advice shows on View Call and Update Call, nothing changes until someone applies it, and departments using Advanced Data Protection do not get advice.</value>
+  </data>
+  <data name="Feature.dispatcher-desk" xml:space="preserve">
+    <value>Dispatcher Desk</value>
+  </data>
+  <data name="FeaturePurpose.dispatcher-desk" xml:space="preserve">
+    <value>A live board of the dispatchers on duty and the work waiting for them. Pending and scheduled calls, texts, phone calls, emails and chats are offered to one free dispatcher at a time, who takes them in the Dispatch app on a phone or tablet.</value>
+  </data>
+  <data name="FeatureValue.dispatcher-desk" xml:space="preserve">
+    <value>Work goes to someone who is free: a dispatcher holding work counts as busy, an offer nobody takes moves on to the next dispatcher, and work left waiting alerts everyone on duty. Dispatchers can work the desk from wherever they are, not only from a console.</value>
+  </data>
+  <data name="FeatureExample.dispatcher-desk" xml:space="preserve">
+    <value>Two volunteer dispatchers cover a weekend from their phones. A text about a tree down across a road is offered to the one who is free and becomes a call, while the other is on a meal break and gets no desk alerts until they are back.</value>
+  </data>
+  <data name="FeatureSetup.dispatcher-desk" xml:space="preserve">
+    <value>Give your dispatchers the Dispatch app login permission and put them on a shift's dispatch roster. Then open Shifts, Dispatcher Desk Settings, turn on Route work to on-duty dispatchers, choose what to Send to the desk and save. Dispatchers sign in to the desk in the Dispatch app; the Dispatcher Desk page shows who is available, busy or on break and the open queue, and a desk supervisor can end a break or move work to someone else.</value>
+  </data>
+  <data name="Feature.shift-dispatchers" xml:space="preserve">
+    <value>Dispatchers on duty</value>
+  </data>
+  <data name="FeaturePurpose.shift-dispatchers" xml:space="preserve">
+    <value>Put dispatchers on Assigned and Sign-up shifts, on a dispatch-only shift or beside the responders, with the number of dispatch positions to fill, a minimum on the desk and a desk supervisor.</value>
+  </data>
+  <data name="FeatureValue.shift-dispatchers" xml:space="preserve">
+    <value>The desk offers work only to dispatchers who are really on duty: those on the roster of a shift day running now, unless the department allows duty without a shift. Open dispatch positions show on the shift day, and On Duty Now lists the dispatchers with their desk state and breaks.</value>
+  </data>
+  <data name="FeatureExample.shift-dispatchers" xml:space="preserve">
+    <value>A dispatch center runs dispatch-only A, B and C shifts with two dispatchers each, and a volunteer department adds one dispatcher position to its weekend sign-up shift.</value>
+  </data>
+  <data name="FeatureSetup.shift-dispatchers" xml:space="preserve">
+    <value>Open Shifts, create or edit a shift and turn on This shift takes dispatchers. Set Dispatchers needed and, on an Assigned shift, tick the people on the Dispatch roster and mark a desk supervisor; on a Sign-up shift, dispatchers choose Sign up as dispatcher on the shift day. Only people with the Dispatch app login permission can be added.</value>
+  </data>
+  <data name="Feature.dispatcher-breaks" xml:space="preserve">
+    <value>Dispatcher Breaks</value>
+  </data>
+  <data name="FeaturePurpose.dispatcher-breaks" xml:space="preserve">
+    <value>Plan breaks and meals for the day's dispatchers on one coverage timeline that shows who is on duty, who is on a break and where coverage would drop below the minimum.</value>
+  </data>
+  <data name="FeatureValue.dispatcher-breaks" xml:space="preserve">
+    <value>Breaks stay staggered so the desk is never left empty: Plan breaks spreads a shift's break plan across its dispatchers without overlaps, and the planner warns about overlapping breaks and gaps before they happen. Dispatchers are reminded before each break and, by default, get no desk alerts while on it.</value>
+  </data>
+  <data name="FeatureExample.dispatcher-breaks" xml:space="preserve">
+    <value>On a 12-hour shift with three dispatchers, Plan breaks places each one's 30-minute meal and two 15-minute breaks at different times, and each dispatcher is reminded five minutes before a break is due.</value>
+  </data>
+  <data name="FeatureSetup.dispatcher-breaks" xml:space="preserve">
+    <value>Set a break plan on each shift, or a default break plan in Dispatcher Desk Settings. Then open Shifts, Dispatcher Breaks, choose a date and a shift day and use Plan breaks, or plan single breaks yourself. Desk supervisors and shift managers plan anyone's breaks; dispatchers plan their own only on shifts that allow it. A break is a length, so a break started early also ends early.</value>
+  </data>
+  <data name="Feature.dispatcher-desk-settings" xml:space="preserve">
+    <value>Dispatcher Desk Settings</value>
+  </data>
+  <data name="FeaturePurpose.dispatcher-desk-settings" xml:space="preserve">
+    <value>Turn routing on and choose which work goes to the desk, how long an offer waits, what happens to texts and phone calls when every dispatcher is busy, what an emailed call becomes, and the rules for breaks and duty.</value>
+  </data>
+  <data name="FeatureValue.dispatcher-desk-settings" xml:space="preserve">
+    <value>The department decides once how the desk behaves, from how quickly unanswered work moves on to whether a break may leave fewer dispatchers available than the minimum.</value>
+  </data>
+  <data name="FeatureExample.dispatcher-desk-settings" xml:space="preserve">
+    <value>A department sends texts and phone calls to the desk, gives each offer 60 seconds, lets Enhanced AI fill in a pending call when nobody is free, and saves emailed calls as pending for a dispatcher to review.</value>
+  </data>
+  <data name="FeatureSetup.dispatcher-desk-settings" xml:space="preserve">
+    <value>Department administrators open Shifts, then Dispatcher Desk Settings. Turn on Route work to on-duty dispatchers, choose Send to the desk, the offer timeout and items per dispatcher, what happens when every dispatcher is busy, Emailed calls and the break rules, then save. The Enhanced AI choices need the Enhanced AI add-on.</value>
+  </data>
+  <data name="Feature.dispatcher-desk-activity" xml:space="preserve">
+    <value>Dispatcher Activity</value>
+  </data>
+  <data name="FeaturePurpose.dispatcher-desk-activity" xml:space="preserve">
+    <value>Desk activity for up to 92 days: work by kind, completed, overflowed, cancelled and escalated items and the average time to answer, and for each dispatcher the offers accepted, declined and missed, the time to accept and complete, and breaks taken, missed or returned from late.</value>
+  </data>
+  <data name="FeatureValue.dispatcher-desk-activity" xml:space="preserve">
+    <value>See whether work is answered quickly, how often it overflows or escalates and whether breaks run on time, then adjust staffing, offer timeouts or break plans from the numbers.</value>
+  </data>
+  <data name="FeatureExample.dispatcher-desk-activity" xml:space="preserve">
+    <value>A supervisor sees that texts often escalated on Friday evenings and adds a second dispatcher to that shift.</value>
+  </data>
+  <data name="FeatureSetup.dispatcher-desk-activity" xml:space="preserve">
+    <value>Department administrators and desk supervisors open Shifts, then Dispatcher Activity, choose the From and To dates and select Show.</value>
+  </data>
+  <data name="Feature.intake-spam-screening" xml:space="preserve">
+    <value>Intake spam screening</value>
+  </data>
+  <data name="FeaturePurpose.intake-spam-screening" xml:space="preserve">
+    <value>Keep spam and robocalls out of Pending Calls: dismiss an intake call as spam and block its sender, limit how many calls one phone number can create in an hour, ask voice callers to press 1 before the questions start, and label messages that Enhanced AI reads as not an incident.</value>
+  </data>
+  <data name="FeatureValue.intake-spam-screening" xml:space="preserve">
+    <value>Dispatchers spend their time on real reports. A blocked sender's texts and calls create no calls and get no reply, and a screened call keeps its label in Pending Calls but is not offered on the dispatcher desk; a dispatcher still decides what happens to it.</value>
+  </data>
+  <data name="FeatureExample.intake-spam-screening" xml:space="preserve">
+    <value>A marketing number keeps texting the department's number. Past the hourly limit its texts are added to its open call as notes, and a dispatcher dismisses that call as spam and blocks the number for 30 days.</value>
+  </data>
+  <data name="FeatureSetup.intake-spam-screening" xml:space="preserve">
+    <value>On a pending intake call, choose Dismiss as spam and keep Also block the sender ticked; the call is cancelled and nobody is notified. Blocked senders are listed on the Intake Channels page, where Unblock lifts a block early. The hourly limit applies to text, voice and WhatsApp channels without allowed senders, never to email, chat or webhook channels.</value>
   </data>
 </root>

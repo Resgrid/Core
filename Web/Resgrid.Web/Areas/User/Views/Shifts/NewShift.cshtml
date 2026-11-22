@@ -1,6 +1,7 @@
 ﻿@using Resgrid.Model
 @model Resgrid.Web.Areas.User.Models.Shifts.NewShiftView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Shifts.Shifts> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.DispatcherDesk.DispatcherDesk> desk
 @{
     ViewBag.Title = "Resgrid | " + localizer["NewShiftHeader"];
     Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
@@ -52,6 +53,7 @@
                                             <li><a href="#tab2" data-toggle="tab">@localizer["WizardSchedule"]</a></li>
                                             <li><a href="#tab3" data-toggle="tab">@localizer["WizardSlots"]</a></li>
                                             <li><a href="#tab4" data-toggle="tab">@localizer["WizardPersonnel"]</a></li>
+                                            <li><a href="#tabDispatch" data-toggle="tab">@desk["WizardDispatchers"]</a></li>
                                             <li><a href="#tab5" data-toggle="tab">@localizer["WizardFinish"]</a></li>
                                         </ul>
                                     </div>
@@ -179,6 +181,14 @@
                                         </div>
                                     }
 
+                                </div>
+                                <div class="tab-pane" id="tabDispatch">
+                                    <div class="row">
+                                        <div class="col-xs-12">
+                                            <p>@desk["DispatchersTabIntro"]</p>
+                                        </div>
+                                    </div>
+                                    <partial name="_ShiftDispatchSection" for="Dispatch" />
                                 </div>
                                 <div class="tab-pane" id="tab5">
                                     <div class="row">
@@ -364,4 +374,5 @@
         };
     </script>
     <script src="~/js/app/internal/shifts/resgrid.shifts.newshift.js"></script>
+    <script src="~/js/app/internal/dispatcherdesk/resgrid.dispatcherdesk.breakplan.js" asp-append-version="true"></script>
 }

@@ -1,0 +1,967 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AcceptedColumn" xml:space="preserve">
+    <value>Accepterade</value>
+  </data>
+  <data name="AcknowledgeTextsHelp" xml:space="preserve">
+    <value>Avsändaren får ett automatiskt svar när sms:et når en operatör.</value>
+  </data>
+  <data name="AcknowledgeTextsLabel" xml:space="preserve">
+    <value>Bekräfta sms automatiskt</value>
+  </data>
+  <data name="ActionDone" xml:space="preserve">
+    <value>Klart.</value>
+  </data>
+  <data name="ActionFailed" xml:space="preserve">
+    <value>Det fungerade inte. Försök igen.</value>
+  </data>
+  <data name="ActivityRangeHelpFormat" xml:space="preserve">
+    <value>Upp till {0} dagar.</value>
+  </data>
+  <data name="ActivityTitle" xml:space="preserve">
+    <value>Operatörsaktivitet</value>
+  </data>
+  <data name="AddBreakRow" xml:space="preserve">
+    <value>Lägg till rast</value>
+  </data>
+  <data name="AddBreakTitle" xml:space="preserve">
+    <value>Planera en rast</value>
+  </data>
+  <data name="AddDispatcherButton" xml:space="preserve">
+    <value>Lägg till operatör</value>
+  </data>
+  <data name="AddDispatcherHeader" xml:space="preserve">
+    <value>Lägg till en operatör den här dagen</value>
+  </data>
+  <data name="AgeColumn" xml:space="preserve">
+    <value>Väntar</value>
+  </data>
+  <data name="AllShiftDays" xml:space="preserve">
+    <value>Alla skiftdagar</value>
+  </data>
+  <data name="AllowSelfScheduledBreaksHelp" xml:space="preserve">
+    <value>Operatörer på det här skiftet får planera och flytta sina egna raster. Annars kan bara arbetsledare och skiftansvariga göra det.</value>
+  </data>
+  <data name="AllowSelfScheduledBreaksLabel" xml:space="preserve">
+    <value>Operatörerna planerar sina egna raster</value>
+  </data>
+  <data name="AllowUnscheduledDutyHelp" xml:space="preserve">
+    <value>Operatörer får logga in på operatörsplatsen utan att stå på ett skift (evenemang, anläggningar, vikariat).</value>
+  </data>
+  <data name="AllowUnscheduledDutyLabel" xml:space="preserve">
+    <value>Tillåt tjänst utan skift</value>
+  </data>
+  <data name="AutoReturnHelp" xml:space="preserve">
+    <value>Gör en operatör tillgänglig igen så här många minuter efter att rastens längd har gått ut. 0 = aldrig (operatören har rast tills den kommer tillbaka eller en arbetsledare avslutar den).</value>
+  </data>
+  <data name="AutoReturnLabel" xml:space="preserve">
+    <value>Automatisk återgång efter (minuter)</value>
+  </data>
+  <data name="AvailableStat" xml:space="preserve">
+    <value>Tillgängliga</value>
+  </data>
+  <data name="AvgAcceptColumn" xml:space="preserve">
+    <value>Snitt till accept</value>
+  </data>
+  <data name="AvgCompleteColumn" xml:space="preserve">
+    <value>Snitt till klar</value>
+  </data>
+  <data name="AwayReasonLabel" xml:space="preserve">
+    <value>Orsak (valfritt)</value>
+  </data>
+  <data name="BackInFormat" xml:space="preserve">
+    <value>Tillbaka om {0}</value>
+  </data>
+  <data name="BelowMinimumFormat" xml:space="preserve">
+    <value>Bara {0} tillgängliga (minst {1})</value>
+  </data>
+  <data name="BoardLoadFailed" xml:space="preserve">
+    <value>Tavlan kunde inte läsas in. Ett nytt försök görs snart.</value>
+  </data>
+  <data name="BoardUpdatedFormat" xml:space="preserve">
+    <value>Uppdaterad {0}</value>
+  </data>
+  <data name="BreakColumn" xml:space="preserve">
+    <value>Rast</value>
+  </data>
+  <data name="BreakLengthColumn" xml:space="preserve">
+    <value>Längd (minuter)</value>
+  </data>
+  <data name="BreakMinutesColumn" xml:space="preserve">
+    <value>Rastminuter</value>
+  </data>
+  <data name="BreakPlanEmpty" xml:space="preserve">
+    <value>Inga planerade raster.</value>
+  </data>
+  <data name="BreakPlanHelp" xml:space="preserve">
+    <value>Mål = minuter efter skiftets början; lämna tomt för att sprida rasten jämnt. ”Planera raster” fördelar dem mellan dagens operatörer så att de inte överlappar där det går, och lämnar aldrig färre än minimum vid platsen.</value>
+  </data>
+  <data name="BreakPlanLabel" xml:space="preserve">
+    <value>Rastplan</value>
+  </data>
+  <data name="BreakPlannerButton" xml:space="preserve">
+    <value>Rastplanering</value>
+  </data>
+  <data name="BreakReminderHelp" xml:space="preserve">
+    <value>Minuter före en planerad rast då operatören påminns. 0 = först när den är dags.</value>
+  </data>
+  <data name="BreakReminderLabel" xml:space="preserve">
+    <value>Rastpåminnelse (minuter före)</value>
+  </data>
+  <data name="BreakState.Active" xml:space="preserve">
+    <value>Har rast nu</value>
+  </data>
+  <data name="BreakState.Completed" xml:space="preserve">
+    <value>Tagen</value>
+  </data>
+  <data name="BreakState.Missed" xml:space="preserve">
+    <value>Missad</value>
+  </data>
+  <data name="BreakState.Scheduled" xml:space="preserve">
+    <value>Planerad</value>
+  </data>
+  <data name="BreakTargetColumn" xml:space="preserve">
+    <value>Mål (minuter efter start)</value>
+  </data>
+  <data name="BreakTargetPlaceholder" xml:space="preserve">
+    <value>Sprid jämnt</value>
+  </data>
+  <data name="BreakTooltipFormat" xml:space="preserve">
+    <value>{0} · {1} · {2}</value>
+  </data>
+  <data name="BreakType.Break" xml:space="preserve">
+    <value>Rast</value>
+  </data>
+  <data name="BreakType.Meal" xml:space="preserve">
+    <value>Måltid</value>
+  </data>
+  <data name="BreakType.Other" xml:space="preserve">
+    <value>Annat</value>
+  </data>
+  <data name="BreakType.Personal" xml:space="preserve">
+    <value>Personlig</value>
+  </data>
+  <data name="BreakTypeColumn" xml:space="preserve">
+    <value>Typ</value>
+  </data>
+  <data name="BreaksColumn" xml:space="preserve">
+    <value>Raster</value>
+  </data>
+  <data name="BreaksMissedColumn" xml:space="preserve">
+    <value>Missade raster</value>
+  </data>
+  <data name="BreaksPlannedFormat" xml:space="preserve">
+    <value>{0} raster planerade.</value>
+  </data>
+  <data name="BreaksTitle" xml:space="preserve">
+    <value>Operatörsraster</value>
+  </data>
+  <data name="ByDispatcherHeader" xml:space="preserve">
+    <value>Per operatör</value>
+  </data>
+  <data name="ByKindHeader" xml:space="preserve">
+    <value>Arbete per slag</value>
+  </data>
+  <data name="CancelBreakButton" xml:space="preserve">
+    <value>Ta bort rast</value>
+  </data>
+  <data name="CancelBreakConfirm" xml:space="preserve">
+    <value>Ta bort den här planerade rasten?</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Avbryt</value>
+  </data>
+  <data name="CapacityHelp" xml:space="preserve">
+    <value>Antal tilldelade ärenden en operatör kan hålla samtidigt innan den räknas som upptagen.</value>
+  </data>
+  <data name="CapacityLabel" xml:space="preserve">
+    <value>Ärenden per operatör</value>
+  </data>
+  <data name="CloseButton" xml:space="preserve">
+    <value>Stäng</value>
+  </data>
+  <data name="CompletedColumn" xml:space="preserve">
+    <value>Klara</value>
+  </data>
+  <data name="ConversationJoinHelp" xml:space="preserve">
+    <value>Ett nytt sms eller chattmeddelande från samma avsändare inom så här många minuter läggs till samma konversation.</value>
+  </data>
+  <data name="ConversationJoinLabel" xml:space="preserve">
+    <value>Konversationsfönster (minuter)</value>
+  </data>
+  <data name="CountColumn" xml:space="preserve">
+    <value>Ärenden</value>
+  </data>
+  <data name="CoverageLane" xml:space="preserve">
+    <value>Bemanning</value>
+  </data>
+  <data name="CoverageSlotFormat" xml:space="preserve">
+    <value>{0}: {1} tillgängliga, {2} på rast, {3} i tjänst</value>
+  </data>
+  <data name="CoverageTimelineHeader" xml:space="preserve">
+    <value>Tidslinje för bemanning</value>
+  </data>
+  <data name="DateLabel" xml:space="preserve">
+    <value>Datum</value>
+  </data>
+  <data name="DeclinedColumn" xml:space="preserve">
+    <value>Avböjda</value>
+  </data>
+  <data name="DefaultBreakPlanHelp" xml:space="preserve">
+    <value>De raster varje operatör får på ett skift utan egen rastplan.</value>
+  </data>
+  <data name="DefaultBreakPlanLabel" xml:space="preserve">
+    <value>Standardrastplan</value>
+  </data>
+  <data name="DeskBoardButton" xml:space="preserve">
+    <value>Operatörstavla</value>
+  </data>
+  <data name="DeskBoardTitle" xml:space="preserve">
+    <value>Operatörsplats</value>
+  </data>
+  <data name="DeskRoutingOffNotice" xml:space="preserve">
+    <value>Tilldelning av arbete till operatörer är avstängd. Scheman och raster fungerar ändå; en avdelningsadministratör kan slå på tilldelningen i inställningarna för operatörsplatsen.</value>
+  </data>
+  <data name="DeskSupervisorBadge" xml:space="preserve">
+    <value>Arbetsledare</value>
+  </data>
+  <data name="DeskSupervisorColumn" xml:space="preserve">
+    <value>Arbetsledare på platsen</value>
+  </data>
+  <data name="DispatchOnlyBadge" xml:space="preserve">
+    <value>Endast larmcentral</value>
+  </data>
+  <data name="DispatchPositionsFilled" xml:space="preserve">
+    <value>Operatörsplatser bemannade</value>
+  </data>
+  <data name="DispatchedColumn" xml:space="preserve">
+    <value>Larmade</value>
+  </data>
+  <data name="DispatcherAddedToDay" xml:space="preserve">
+    <value>Operatören lades till på dagen.</value>
+  </data>
+  <data name="DispatcherColumn" xml:space="preserve">
+    <value>Operatör</value>
+  </data>
+  <data name="DispatcherDeskMenu" xml:space="preserve">
+    <value>Operatörsplats</value>
+  </data>
+  <data name="DispatcherRemovedFromDay" xml:space="preserve">
+    <value>Operatören togs bort från dagen.</value>
+  </data>
+  <data name="DispatcherSignedUp" xml:space="preserve">
+    <value>Du är anmäld som operatör den här dagen.</value>
+  </data>
+  <data name="DispatcherSignupApproved" xml:space="preserve">
+    <value>Operatörens anmälan godkändes.</value>
+  </data>
+  <data name="DispatcherSignupDenied" xml:space="preserve">
+    <value>Operatörens anmälan nekades.</value>
+  </data>
+  <data name="DispatcherSignupNeedsApproval" xml:space="preserve">
+    <value>På det här skiftet godkänner en skiftansvarig operatörernas anmälningar.</value>
+  </data>
+  <data name="DispatcherSignupPending" xml:space="preserve">
+    <value>Din anmälan som operatör väntar på godkännande.</value>
+  </data>
+  <data name="DispatcherWithdrawn" xml:space="preserve">
+    <value>Du är inte längre operatör den här dagen.</value>
+  </data>
+  <data name="DispatchersHeader" xml:space="preserve">
+    <value>Operatörer</value>
+  </data>
+  <data name="DispatchersOnDutyHeader" xml:space="preserve">
+    <value>Operatörer i tjänst</value>
+  </data>
+  <data name="DispatchersTabIntro" xml:space="preserve">
+    <value>Operatörer arbetar på operatörsplatsen i Dispatch-appen. Välj om skiftet har operatörer, hur många som behövs och hur deras raster planeras.</value>
+  </data>
+  <data name="DueBackNow" xml:space="preserve">
+    <value>Ska vara tillbaka nu</value>
+  </data>
+  <data name="DutyColumn" xml:space="preserve">
+    <value>I tjänst</value>
+  </data>
+  <data name="EditBreakTitle" xml:space="preserve">
+    <value>Ändra rast</value>
+  </data>
+  <data name="EmailCallMode.AutoDispatch" xml:space="preserve">
+    <value>Larma direkt</value>
+  </data>
+  <data name="EmailCallMode.AutoDispatchHelp" xml:space="preserve">
+    <value>Larmet från e-postmeddelandet skickas ut direkt (som tidigare).</value>
+  </data>
+  <data name="EmailCallMode.EnhancedAi" xml:space="preserve">
+    <value>Enhanced AI till väntande</value>
+  </data>
+  <data name="EmailCallMode.EnhancedAiHelp" xml:space="preserve">
+    <value>Enhanced AI läser e-postmeddelandet till ett väntande larm (typ, prioritet, adress) som en operatör granskar och skickar. Kräver Enhanced AI.</value>
+  </data>
+  <data name="EmailCallMode.Pending" xml:space="preserve">
+    <value>Spara som väntande</value>
+  </data>
+  <data name="EmailCallMode.PendingHelp" xml:space="preserve">
+    <value>Larmet från e-postmeddelandet sparas som väntande så att en operatör kan granska och skicka det.</value>
+  </data>
+  <data name="EmailCallModeIntro" xml:space="preserve">
+    <value>Vad ett larm som mejlas till avdelningens larmadress blir.</value>
+  </data>
+  <data name="EmailCallModeLabel" xml:space="preserve">
+    <value>Larm via e-post</value>
+  </data>
+  <data name="EnabledHelp" xml:space="preserve">
+    <value>Erbjud väntande och schemalagda larm, sms, samtal, e-post och chattar till operatörerna i tjänst i Dispatch-appen.</value>
+  </data>
+  <data name="EnabledLabel" xml:space="preserve">
+    <value>Tilldela arbete till operatörer i tjänst</value>
+  </data>
+  <data name="EndBreakButton" xml:space="preserve">
+    <value>Avsluta rast</value>
+  </data>
+  <data name="EndBreakConfirm" xml:space="preserve">
+    <value>Avsluta rasten för {0} och göra operatören tillgänglig?</value>
+  </data>
+  <data name="EndsFormat" xml:space="preserve">
+    <value>till {0}</value>
+  </data>
+  <data name="EnhancedAiUnavailable" xml:space="preserve">
+    <value>Enhanced AI är inte tillgängligt för den här avdelningen.</value>
+  </data>
+  <data name="Error.AlreadyOnBreak" xml:space="preserve">
+    <value>Operatören har redan rast.</value>
+  </data>
+  <data name="Error.AlreadyOnRoster" xml:space="preserve">
+    <value>Personen står redan på operatörsschemat den dagen.</value>
+  </data>
+  <data name="Error.AtCapacity" xml:space="preserve">
+    <value>Operatören håller redan så mycket arbete som möjligt.</value>
+  </data>
+  <data name="Error.BreakNotFound" xml:space="preserve">
+    <value>Rasten hittades inte.</value>
+  </data>
+  <data name="Error.BreakNotStartable" xml:space="preserve">
+    <value>Rasten har redan börjat eller slutat och kan inte ändras.</value>
+  </data>
+  <data name="Error.BreakOverlaps" xml:space="preserve">
+    <value>Rasten överlappar en annan rast för samma operatör.</value>
+  </data>
+  <data name="Error.ChannelUnavailable" xml:space="preserve">
+    <value>Kanalen är inte tillgänglig för den här avdelningen.</value>
+  </data>
+  <data name="Error.CoverageTooLow" xml:space="preserve">
+    <value>Då skulle färre operatörer än minimum vara tillgängliga.</value>
+  </data>
+  <data name="Error.DeskDisabled" xml:space="preserve">
+    <value>Operatörsplatsen är avstängd för den här avdelningen.</value>
+  </data>
+  <data name="Error.DispatchersNotEnabled" xml:space="preserve">
+    <value>Det här skiftet har inga operatörer.</value>
+  </data>
+  <data name="Error.HoldingWork" xml:space="preserve">
+    <value>Operatören håller arbete; lägg tillbaka det i kön först.</value>
+  </data>
+  <data name="Error.InvalidInput" xml:space="preserve">
+    <value>Några av de angivna värdena är ogiltiga.</value>
+  </data>
+  <data name="Error.ItemNotAvailable" xml:space="preserve">
+    <value>Ärendet är inte längre tillgängligt.</value>
+  </data>
+  <data name="Error.ItemNotFound" xml:space="preserve">
+    <value>Ärendet hittades inte. Det kan redan ha hanterats.</value>
+  </data>
+  <data name="Error.NoCallbackNumber" xml:space="preserve">
+    <value>Operatören har inget nummer för återuppringning.</value>
+  </data>
+  <data name="Error.None" xml:space="preserve">
+    <value>Inget gick fel.</value>
+  </data>
+  <data name="Error.NotADispatcher" xml:space="preserve">
+    <value>Den här personen kan inte arbeta på operatörsplatsen: behörighet att logga in i Dispatch-appen krävs.</value>
+  </data>
+  <data name="Error.NotAssignedToYou" xml:space="preserve">
+    <value>Ärendet är inte tilldelat dig.</value>
+  </data>
+  <data name="Error.NotOnBreak" xml:space="preserve">
+    <value>Operatören har inte rast.</value>
+  </data>
+  <data name="Error.NotOnDuty" xml:space="preserve">
+    <value>Operatören är inte i tjänst nu.</value>
+  </data>
+  <data name="Error.NotPermitted" xml:space="preserve">
+    <value>Du har inte behörighet att göra det.</value>
+  </data>
+  <data name="Error.NotSignedIn" xml:space="preserve">
+    <value>Operatören är inte inloggad på operatörsplatsen.</value>
+  </data>
+  <data name="Error.ShiftNotFound" xml:space="preserve">
+    <value>Skiftet hittades inte.</value>
+  </data>
+  <data name="EscalatedBadge" xml:space="preserve">
+    <value>Eskalerat</value>
+  </data>
+  <data name="FilterDispatchersPlaceholder" xml:space="preserve">
+    <value>Filtrera operatörer...</value>
+  </data>
+  <data name="FromLabel" xml:space="preserve">
+    <value>Från</value>
+  </data>
+  <data name="HeartbeatTimeoutHelp" xml:space="preserve">
+    <value>Minuter utan signal från Dispatch-appen innan en operatör slutar få tilldelat arbete. 0 = aldrig (en telefon i viloläge får ändå pushnotiser; missade erbjudanden sätter operatören som borta i stället).</value>
+  </data>
+  <data name="HeartbeatTimeoutLabel" xml:space="preserve">
+    <value>Tidsgräns utan signal (minuter)</value>
+  </data>
+  <data name="HeldItemsFormat" xml:space="preserve">
+    <value>{0} pågående</value>
+  </data>
+  <data name="ItemColumn" xml:space="preserve">
+    <value>Ärende</value>
+  </data>
+  <data name="Kind.Chat" xml:space="preserve">
+    <value>Chatt</value>
+  </data>
+  <data name="Kind.Email" xml:space="preserve">
+    <value>E-post</value>
+  </data>
+  <data name="Kind.Other" xml:space="preserve">
+    <value>Annat</value>
+  </data>
+  <data name="Kind.PendingCall" xml:space="preserve">
+    <value>Väntande larm</value>
+  </data>
+  <data name="Kind.ScheduledCall" xml:space="preserve">
+    <value>Schemalagt larm</value>
+  </data>
+  <data name="Kind.Text" xml:space="preserve">
+    <value>Sms</value>
+  </data>
+  <data name="Kind.Voice" xml:space="preserve">
+    <value>Telefonsamtal</value>
+  </data>
+  <data name="KindColumn" xml:space="preserve">
+    <value>Slag</value>
+  </data>
+  <data name="LegendBelowMinimum" xml:space="preserve">
+    <value>Under minimum</value>
+  </data>
+  <data name="LegendCovered" xml:space="preserve">
+    <value>Bemannat</value>
+  </data>
+  <data name="LegendDuty" xml:space="preserve">
+    <value>I tjänst</value>
+  </data>
+  <data name="LegendMissed" xml:space="preserve">
+    <value>Missad</value>
+  </data>
+  <data name="LegendNobodyOnDuty" xml:space="preserve">
+    <value>Ingen i tjänst</value>
+  </data>
+  <data name="LegendOnBreak" xml:space="preserve">
+    <value>Har rast nu</value>
+  </data>
+  <data name="LegendOverlap" xml:space="preserve">
+    <value>Raster överlappar</value>
+  </data>
+  <data name="LegendPlanned" xml:space="preserve">
+    <value>Planerad rast</value>
+  </data>
+  <data name="LegendTaken" xml:space="preserve">
+    <value>Tagen rast</value>
+  </data>
+  <data name="MinimumAvailableHelp" xml:space="preserve">
+    <value>Operatörer som måste vara tillgängliga; att planera eller börja en rast under detta ger en varning. 0 = inget minimum.</value>
+  </data>
+  <data name="MinimumAvailableLabel" xml:space="preserve">
+    <value>Minst tillgängliga</value>
+  </data>
+  <data name="MinimumOnDeskHelpFormat" xml:space="preserve">
+    <value>Operatörer som måste vara tillgängliga under det här skiftet. 0 = avdelningens minimum ({0}).</value>
+  </data>
+  <data name="MinimumOnDeskLabel" xml:space="preserve">
+    <value>Minst på plats</value>
+  </data>
+  <data name="MinutesShortFormat" xml:space="preserve">
+    <value>{0} min</value>
+  </data>
+  <data name="MissedColumn" xml:space="preserve">
+    <value>Missade erbjudanden</value>
+  </data>
+  <data name="MissedOffersHelp" xml:space="preserve">
+    <value>Erbjudanden i rad som en operatör låter gå ut innan operatörsplatsen sätter operatören som borta. 0 = aldrig.</value>
+  </data>
+  <data name="MissedOffersLabel" xml:space="preserve">
+    <value>Missade erbjudanden före borta</value>
+  </data>
+  <data name="NextBreakFormat" xml:space="preserve">
+    <value>{0} i {1} min</value>
+  </data>
+  <data name="NextBreakLabel" xml:space="preserve">
+    <value>Nästa rast:</value>
+  </data>
+  <data name="NoActivity" xml:space="preserve">
+    <value>Ingen aktivitet på operatörsplatsen under perioden.</value>
+  </data>
+  <data name="NoDispatchersInWindow" xml:space="preserve">
+    <value>Inga operatörer är i tjänst eller har raster under perioden.</value>
+  </data>
+  <data name="NoDispatchersOnDay" xml:space="preserve">
+    <value>Inga operatörer är inlagda den här dagen ännu.</value>
+  </data>
+  <data name="NoDispatchersOnDesk" xml:space="preserve">
+    <value>Inga operatörer är i tjänst eller inloggade.</value>
+  </data>
+  <data name="NoEligibleDispatchers" xml:space="preserve">
+    <value>Ingen på avdelningen har behörighet att logga in i Dispatch-appen ännu.</value>
+  </data>
+  <data name="NoTransferTargets" xml:space="preserve">
+    <value>Ingen annan operatör i tjänst kan ta det just nu.</value>
+  </data>
+  <data name="NoWarnings" xml:space="preserve">
+    <value>Inga varningar.</value>
+  </data>
+  <data name="NotEligibleBadge" xml:space="preserve">
+    <value>Saknar Dispatch-åtkomst</value>
+  </data>
+  <data name="NotEligibleHelp" xml:space="preserve">
+    <value>Har inte längre behörighet att logga in i Dispatch-appen; tas bort från schemat när du sparar.</value>
+  </data>
+  <data name="NotSignedInBadge" xml:space="preserve">
+    <value>Inte inloggad</value>
+  </data>
+  <data name="NoteLabel" xml:space="preserve">
+    <value>Anteckning</value>
+  </data>
+  <data name="NotifyOverdueLabel" xml:space="preserve">
+    <value>Meddela arbetsledare när en operatör är sen tillbaka från rasten</value>
+  </data>
+  <data name="OffDutyBadge" xml:space="preserve">
+    <value>Ej i tjänst</value>
+  </data>
+  <data name="OfferTimeoutHelp" xml:space="preserve">
+    <value>Sekunder ett erbjudande väntar på att operatören tar det innan det går vidare till nästa.</value>
+  </data>
+  <data name="OfferTimeoutLabel" xml:space="preserve">
+    <value>Tid för erbjudande (sekunder)</value>
+  </data>
+  <data name="OfferedColumn" xml:space="preserve">
+    <value>Erbjudna</value>
+  </data>
+  <data name="OfferedItemsFormat" xml:space="preserve">
+    <value>{0} erbjudna</value>
+  </data>
+  <data name="OnBreakStat" xml:space="preserve">
+    <value>På rast</value>
+  </data>
+  <data name="OnDutyStat" xml:space="preserve">
+    <value>I tjänst</value>
+  </data>
+  <data name="OnRosterColumn" xml:space="preserve">
+    <value>På schemat</value>
+  </data>
+  <data name="OpenDispatchPositionsFormat" xml:space="preserve">
+    <value>{0} operatörsplatser lediga</value>
+  </data>
+  <data name="OverdueBadge" xml:space="preserve">
+    <value>Försenad</value>
+  </data>
+  <data name="OverdueColumn" xml:space="preserve">
+    <value>Sena tillbaka</value>
+  </data>
+  <data name="OverdueFormat" xml:space="preserve">
+    <value>Försenad {0} min</value>
+  </data>
+  <data name="OverdueMinutesFormat" xml:space="preserve">
+    <value>Totalt {0} minuter sent</value>
+  </data>
+  <data name="OverflowIntro" xml:space="preserve">
+    <value>Vad som händer med ett pågående sms eller samtal när alla operatörer är upptagna eller på rast.</value>
+  </data>
+  <data name="PendingApprovalBadge" xml:space="preserve">
+    <value>Väntar på godkännande</value>
+  </data>
+  <data name="PlanBreaksButton" xml:space="preserve">
+    <value>Planera raster</value>
+  </data>
+  <data name="PlanBreaksConfirm" xml:space="preserve">
+    <value>Lägga skiftets rastplan för alla operatörer den här dagen?</value>
+  </data>
+  <data name="PlanBreaksReplaceConfirm" xml:space="preserve">
+    <value>Ta bort dagens planerade raster och lägga skiftets rastplan på nytt?</value>
+  </data>
+  <data name="PlannedStartHelp" xml:space="preserve">
+    <value>I avdelningens tidszon. En rast är en längd: börjar den tidigare slutar den tidigare.</value>
+  </data>
+  <data name="PlannedStartLabel" xml:space="preserve">
+    <value>Planerad start</value>
+  </data>
+  <data name="PlannerLoadFailed" xml:space="preserve">
+    <value>Rastplaneringen kunde inte läsas in.</value>
+  </data>
+  <data name="PreventBelowMinimumHelp" xml:space="preserve">
+    <value>Neka i stället för att varna för en rast som skulle gå under minimum, om inte en arbetsledare startar den.</value>
+  </data>
+  <data name="PreventBelowMinimumLabel" xml:space="preserve">
+    <value>Förhindra raster under minimum</value>
+  </data>
+  <data name="QueueEmpty" xml:space="preserve">
+    <value>Inget väntar.</value>
+  </data>
+  <data name="QueueEscalationHelp" xml:space="preserve">
+    <value>Minuter ett ärende får vänta utan tilldelning innan alla operatörer och arbetsledare i tjänst larmas. 0 = aldrig.</value>
+  </data>
+  <data name="QueueEscalationLabel" xml:space="preserve">
+    <value>Eskalera väntande arbete efter (minuter)</value>
+  </data>
+  <data name="QueueHeader" xml:space="preserve">
+    <value>Öppen kö</value>
+  </data>
+  <data name="QueueState.Accepted" xml:space="preserve">
+    <value>Hanteras</value>
+  </data>
+  <data name="QueueState.Offered" xml:space="preserve">
+    <value>Erbjudet</value>
+  </data>
+  <data name="QueueState.Queued" xml:space="preserve">
+    <value>Väntar</value>
+  </data>
+  <data name="ReleaseButton" xml:space="preserve">
+    <value>Tillbaka till kön</value>
+  </data>
+  <data name="ReleaseConfirm" xml:space="preserve">
+    <value>Lägga tillbaka ärendet i kön?</value>
+  </data>
+  <data name="RemoveBreakRow" xml:space="preserve">
+    <value>Ta bort den här rasten</value>
+  </data>
+  <data name="RemoveDispatcherConfirm" xml:space="preserve">
+    <value>Ta bort operatören från dagen?</value>
+  </data>
+  <data name="RemoveFromDayButton" xml:space="preserve">
+    <value>Ta bort från dagen</value>
+  </data>
+  <data name="ReplacePlannedLabel" xml:space="preserve">
+    <value>Ersätt planerade raster</value>
+  </data>
+  <data name="RequireShiftHelp" xml:space="preserve">
+    <value>Bara operatörer på operatörsschemat för den skiftdag som pågår är i tjänst.</value>
+  </data>
+  <data name="RequireShiftLabel" xml:space="preserve">
+    <value>Operatörer måste stå på ett skift</value>
+  </data>
+  <data name="RequiredDispatchersHelp" xml:space="preserve">
+    <value>Operatörsplatser att bemanna varje dag (anmälningsplatser och bemanningsmål). 0 = inget mål.</value>
+  </data>
+  <data name="RequiredDispatchersLabel" xml:space="preserve">
+    <value>Operatörer som behövs</value>
+  </data>
+  <data name="RouteChatLabel" xml:space="preserve">
+    <value>Chattar (WhatsApp, Slack, Teams, Telegram, Discord, Google Chat)</value>
+  </data>
+  <data name="RouteEmailLabel" xml:space="preserve">
+    <value>E-post (larm sparade som väntande)</value>
+  </data>
+  <data name="RoutePendingCallsLabel" xml:space="preserve">
+    <value>Väntande larm</value>
+  </data>
+  <data name="RouteScheduledCallsLabel" xml:space="preserve">
+    <value>Schemalagda larm (för granskning innan de går ut)</value>
+  </data>
+  <data name="RouteTextLabel" xml:space="preserve">
+    <value>Sms</value>
+  </data>
+  <data name="RouteToDeskHelp" xml:space="preserve">
+    <value>De slags arbete som erbjuds operatörerna. Det som operatörsplatsen inte tar hanteras som tidigare. E-post eller chatt utan bock kommer ändå till operatörsplatsen som väntande larm så länge Väntande larm är ibockat.</value>
+  </data>
+  <data name="RouteToDeskLabel" xml:space="preserve">
+    <value>Skicka till operatörsplatsen</value>
+  </data>
+  <data name="RouteVoiceLabel" xml:space="preserve">
+    <value>Telefonsamtal</value>
+  </data>
+  <data name="SaveBreakButton" xml:space="preserve">
+    <value>Spara rast</value>
+  </data>
+  <data name="SaveSettingsButton" xml:space="preserve">
+    <value>Spara inställningar</value>
+  </data>
+  <data name="ScheduledCallLeadHelp" xml:space="preserve">
+    <value>Minuter innan ett schemalagt larm går ut som det kommer till operatörsplatsen för granskning (det går ändå ut av sig självt).</value>
+  </data>
+  <data name="ScheduledCallLeadLabel" xml:space="preserve">
+    <value>Granskning av schemalagda larm (minuter före)</value>
+  </data>
+  <data name="SelectDispatcherToAdd" xml:space="preserve">
+    <value>Välj en operatör att lägga till.</value>
+  </data>
+  <data name="SetAvailableButton" xml:space="preserve">
+    <value>Sätt som tillgänglig</value>
+  </data>
+  <data name="SetAwayButton" xml:space="preserve">
+    <value>Sätt som borta</value>
+  </data>
+  <data name="SettingsBreaksSection" xml:space="preserve">
+    <value>Raster och bemanning</value>
+  </data>
+  <data name="SettingsDeskSection" xml:space="preserve">
+    <value>Operatörsplatsen</value>
+  </data>
+  <data name="SettingsEmailSection" xml:space="preserve">
+    <value>Larm via e-post</value>
+  </data>
+  <data name="SettingsIntro" xml:space="preserve">
+    <value>Hur arbete tilldelas operatörerna i tjänst i Dispatch-appen, vad som händer när ingen är ledig och hur raster hanteras.</value>
+  </data>
+  <data name="SettingsOverflowSection" xml:space="preserve">
+    <value>När alla operatörer är upptagna</value>
+  </data>
+  <data name="SettingsRoutingSection" xml:space="preserve">
+    <value>Tilldelning</value>
+  </data>
+  <data name="SettingsSaved" xml:space="preserve">
+    <value>Inställningarna för operatörsplatsen sparades.</value>
+  </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>Inställningar för operatörsplatsen</value>
+  </data>
+  <data name="ShiftColumn" xml:space="preserve">
+    <value>Skift</value>
+  </data>
+  <data name="ShiftDayLabel" xml:space="preserve">
+    <value>Skiftdag</value>
+  </data>
+  <data name="ShiftDispatchEnabledHelp" xml:space="preserve">
+    <value>Operatörer kan läggas på det här skiftet (tilldelat skift) eller anmäla sig till det (anmälningsskift), ensamma eller bredvid insatspersonalen.</value>
+  </data>
+  <data name="ShiftDispatchEnabledLabel" xml:space="preserve">
+    <value>Det här skiftet har operatörer</value>
+  </data>
+  <data name="ShiftDispatchOnlyHelp" xml:space="preserve">
+    <value>Skiftet finns bara för operatörer (en larmcentrals A-, B- och C-skift).</value>
+  </data>
+  <data name="ShiftDispatchOnlyLabel" xml:space="preserve">
+    <value>Rent operatörsskift</value>
+  </data>
+  <data name="ShowButton" xml:space="preserve">
+    <value>Visa</value>
+  </data>
+  <data name="SignOffAtShiftEndHelp" xml:space="preserve">
+    <value>Operatörerna loggas ut från operatörsplatsen när skiftdagen slutar; deras pågående arbete går tillbaka till kön.</value>
+  </data>
+  <data name="SignOffAtShiftEndLabel" xml:space="preserve">
+    <value>Logga ut när skiftet slutar</value>
+  </data>
+  <data name="SignupAsDispatcherButton" xml:space="preserve">
+    <value>Anmäl dig som operatör</value>
+  </data>
+  <data name="SourceAssigned" xml:space="preserve">
+    <value>Tilldelad</value>
+  </data>
+  <data name="SourceSignup" xml:space="preserve">
+    <value>Anmäld</value>
+  </data>
+  <data name="StandingRosterHelp" xml:space="preserve">
+    <value>Operatörerna varje dag på det här skiftet. En arbetsledare på platsen hanterar raster och flyttar arbete åt de andra operatörerna.</value>
+  </data>
+  <data name="StandingRosterLabel" xml:space="preserve">
+    <value>Operatörsschema</value>
+  </data>
+  <data name="StatAverageAnswer" xml:space="preserve">
+    <value>Snittid till svar</value>
+  </data>
+  <data name="StatCancelled" xml:space="preserve">
+    <value>Avbrutna</value>
+  </data>
+  <data name="StatCompleted" xml:space="preserve">
+    <value>Klara</value>
+  </data>
+  <data name="StatCreated" xml:space="preserve">
+    <value>Ärenden</value>
+  </data>
+  <data name="StatEscalated" xml:space="preserve">
+    <value>Eskalerade</value>
+  </data>
+  <data name="StatOverflowed" xml:space="preserve">
+    <value>Överflöd</value>
+  </data>
+  <data name="State.Available" xml:space="preserve">
+    <value>Tillgänglig</value>
+  </data>
+  <data name="State.Away" xml:space="preserve">
+    <value>Borta</value>
+  </data>
+  <data name="State.Busy" xml:space="preserve">
+    <value>Upptagen</value>
+  </data>
+  <data name="State.Offline" xml:space="preserve">
+    <value>Utloggad</value>
+  </data>
+  <data name="State.OnBreak" xml:space="preserve">
+    <value>På rast</value>
+  </data>
+  <data name="StateColumn" xml:space="preserve">
+    <value>Platsstatus</value>
+  </data>
+  <data name="StatusColumn" xml:space="preserve">
+    <value>Läge</value>
+  </data>
+  <data name="SuppressAlertsHelp" xml:space="preserve">
+    <value>Under rasten får en operatör inga notiser eller varningar från operatörsplatsen, bara påminnelsen om att rasten är slut.</value>
+  </data>
+  <data name="SuppressAlertsLabel" xml:space="preserve">
+    <value>Inga varningar från platsen under rasten</value>
+  </data>
+  <data name="TextOverflow.EnhancedAi" xml:space="preserve">
+    <value>Enhanced AI fyller i ett väntande larm</value>
+  </data>
+  <data name="TextOverflow.PendingQueue" xml:space="preserve">
+    <value>Låt det vänta i kön</value>
+  </data>
+  <data name="TextOverflowLabel" xml:space="preserve">
+    <value>Sms</value>
+  </data>
+  <data name="ToLabel" xml:space="preserve">
+    <value>Till</value>
+  </data>
+  <data name="TodayCoverageHeader" xml:space="preserve">
+    <value>Dagens bemanning</value>
+  </data>
+  <data name="TransferButton" xml:space="preserve">
+    <value>Överför</value>
+  </data>
+  <data name="TransferToLabel" xml:space="preserve">
+    <value>Överför till</value>
+  </data>
+  <data name="Unassigned" xml:space="preserve">
+    <value>Ej tilldelat</value>
+  </data>
+  <data name="UnknownPerson" xml:space="preserve">
+    <value>Okänd person</value>
+  </data>
+  <data name="ViewCallButton" xml:space="preserve">
+    <value>Visa larm</value>
+  </data>
+  <data name="VoiceAiUnavailable" xml:space="preserve">
+    <value>Enhanced AI-röstmottagning är inte tillgänglig; uppringare lämnar ett meddelande i stället.</value>
+  </data>
+  <data name="VoiceHoldHelp" xml:space="preserve">
+    <value>Sekunder en uppringare väntar på en operatör innan överflödshanteringen tar över. 0 = direkt.</value>
+  </data>
+  <data name="VoiceHoldLabel" xml:space="preserve">
+    <value>Låt uppringare vänta (sekunder)</value>
+  </data>
+  <data name="VoiceOverflow.EnhancedAiIntake" xml:space="preserve">
+    <value>Enhanced AI-röstmottagning</value>
+  </data>
+  <data name="VoiceOverflow.Voicemail" xml:space="preserve">
+    <value>Röstmeddelande till väntande larm</value>
+  </data>
+  <data name="VoiceOverflowLabel" xml:space="preserve">
+    <value>Telefonsamtal</value>
+  </data>
+  <data name="WaitingInQueueFormat" xml:space="preserve">
+    <value>{0} väntar</value>
+  </data>
+  <data name="WaitingStat" xml:space="preserve">
+    <value>Väntar</value>
+  </data>
+  <data name="Warning.BreaksOverlap" xml:space="preserve">
+    <value>Raster överlappar från {1} till {2}: {0}.</value>
+  </data>
+  <data name="Warning.CoverageBelowMinimum" xml:space="preserve">
+    <value>Bara {0} operatörer tillgängliga (minst {1}) från {2} till {3}.</value>
+  </data>
+  <data name="Warning.NoCoverage" xml:space="preserve">
+    <value>Ingen skulle vara tillgänglig från {0} till {1}.</value>
+  </data>
+  <data name="Warning.OutsideDuty" xml:space="preserve">
+    <value>Rasten hamnar utanför skiftdagen: {0}.</value>
+  </data>
+  <data name="Warning.StartedEarly" xml:space="preserve">
+    <value>{0} började rasten {1} minuter tidigt.</value>
+  </data>
+  <data name="Warning.StartedLate" xml:space="preserve">
+    <value>{0} började rasten {1} minuter sent.</value>
+  </data>
+  <data name="Warning.WorkReturnedToQueue" xml:space="preserve">
+    <value>Arbetet som {0} höll gick tillbaka till kön.</value>
+  </data>
+  <data name="WarningsHeader" xml:space="preserve">
+    <value>Varningar</value>
+  </data>
+  <data name="WithdrawButton" xml:space="preserve">
+    <value>Dra tillbaka</value>
+  </data>
+  <data name="WithdrawDispatcherConfirm" xml:space="preserve">
+    <value>Sluta vara operatör den här dagen?</value>
+  </data>
+  <data name="WizardDispatchers" xml:space="preserve">
+    <value>Operatörer</value>
+  </data>
+  <data name="WorkColumn" xml:space="preserve">
+    <value>Arbete</value>
+  </data>
+  <data name="WorkLoadFormat" xml:space="preserve">
+    <value>{0} av {1}</value>
+  </data>
+  <data name="YouBadge" xml:space="preserve">
+    <value>Du</value>
+  </data>
+</root>

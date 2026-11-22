@@ -73,6 +73,25 @@
       "DocsPath": "/web-app/intake-channels/overview/"
     },
     {
+      "Id": "intake-spam-screening",
+      "AreaId": "communication",
+      "LabelKey": "Feature.intake-spam-screening",
+      "PurposeKey": "FeaturePurpose.intake-spam-screening",
+      "ValueKey": "FeatureValue.intake-spam-screening",
+      "ExampleKey": "FeatureExample.intake-spam-screening",
+      "AdoptionKey": "FeatureSetup.intake-spam-screening",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "IntakeChannels",
+        "Action": "Index"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/intake-channels/overview/#spam-screening"
+    },
+    {
       "Id": "addon-dedicated-number",
       "AreaId": "dedicated-number",
       "LabelKey": "Feature.addon-dedicated-number",
@@ -128,6 +147,17 @@
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-11-19T00:00:00Z"
+    },
+    {
+      "Id": "intake-spam-screening",
+      "Locale": "en",
+      "TitleKey": "Feature.intake-spam-screening",
+      "Body": "Intake spam screening Keep spam and robocalls out of Pending Calls: dismiss an intake call as spam and block its sender, limit how many calls one phone number can create in an hour, ask voice callers to press 1 before the questions start, and label messages that Enhanced AI reads as not an incident. Dispatchers spend their time on real reports. A blocked sender's texts and calls create no calls and get no reply, and a screened call keeps its label in Pending Calls but is not offered on the dispatcher desk; a dispatcher still decides what happens to it. A marketing number keeps texting the department's number. Past the hourly limit its texts are added to its open call as notes, and a dispatcher dismisses that call as spam and blocks the number for 30 days. On a pending intake call, choose Dismiss as spam and keep Also block the sender ticked; the call is cancelled and nobody is notified. Blocked senders are listed on the Intake Channels page, where Unblock lifts a block early. The hourly limit applies to text, voice and WhatsApp channels without allowed senders, never to email, chat or webhook channels.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "intake-spam-screening",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-21T00:00:00Z"
     },
     {
       "Id": "addon-dedicated-number",

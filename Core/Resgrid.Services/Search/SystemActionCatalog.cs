@@ -126,6 +126,18 @@ namespace Resgrid.Services.Search
 
 			// ---- Shifts / calendar
 			Nav("shifts", "Shifts", "Shift signups, recurring shifts and trades", "/User/Shifts", new[] { "schedule", "signup", "trades", "workshift", "roster" }, Shift, View, SystemActionModules.Shifts),
+			// Dispatcher desk (M0324): the pages sit under the Shifts module; each page also checks the viewer is a dispatcher,
+			// shift manager, desk supervisor or department admin (Activity: supervisor or admin).
+			Nav("dispatcher-desk", "Dispatcher Desk", "Dispatchers on duty, their availability and the work waiting for them", "/User/DispatcherDesk",
+				new[] { "dispatchers", "dispatch desk", "dispatcher on the go", "queue", "routing", "available", "busy" }, Shift, View, SystemActionModules.Shifts),
+			Nav("shift-dispatchers", "Dispatchers on Duty", "Dispatchers on duty now with their desk state, breaks and held work", "/User/Shifts/OnDuty",
+				new[] { "dispatchers", "on duty", "dispatch roster", "desk supervisor", "who is dispatching" }, Shift, View, SystemActionModules.Shifts),
+			Nav("dispatcher-breaks", "Dispatcher Breaks", "Plan dispatcher breaks and meals on a coverage timeline", "/User/DispatcherDesk/Breaks",
+				new[] { "breaks", "lunch", "meal", "coverage", "break planner", "timeline" }, Shift, View, SystemActionModules.Shifts),
+			Act("dispatcher-desk-settings", "Dispatcher Desk Settings", "Routing, offers, overflow, emailed calls and break rules for the dispatcher desk", "/User/DispatcherDesk/Settings", SystemActionCategories.Manage,
+				new[] { "desk settings", "routing", "offer timeout", "overflow", "email call mode", "auto return", "breaks" }, module: SystemActionModules.Shifts, adminOnly: true),
+			Nav("dispatcher-desk-activity", "Dispatcher Activity", "Desk work, answer times and breaks per dispatcher for a date range", "/User/DispatcherDesk/Activity",
+				new[] { "desk activity", "dispatcher report", "answer time", "missed offers", "escalated", "statistics" }, Shift, View, SystemActionModules.Shifts),
 			Nav("calendar", "Calendar", "Events, meetings and trainings you can sign up for", "/User/Calendar", new[] { "events", "meetings", "schedule", "rsvp" }, Schedule, View, SystemActionModules.Calendar),
 			Act("new-calendar-item", "New Calendar Event", "Create a calendar event", "/User/Calendar/New", SystemActionCategories.Create, new[] { "event", "meeting", "schedule" }, Schedule, Create, SystemActionModules.Calendar),
 

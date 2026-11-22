@@ -254,5 +254,13 @@
 		/// near-tie window for preferred capabilities. Missing = off.
 		/// </summary>
 		DestinationSuggestions = 127,
+
+		/// <summary>
+		/// ProtoBuf <see cref="DispatcherDeskConfig"/>, Shifts → Dispatcher Desk Settings: routing pending/scheduled calls and
+		/// inbound texts, phone calls, emails and chats to on-duty dispatchers in the Dispatch app, overflow handling, what an
+		/// emailed dispatch becomes (dispatched / pending / Enhanced AI), break reminders and auto return. Missing = desk off and
+		/// emailed calls dispatch at once. Read through <c>IDispatcherDeskConfigService</c> (its own cache key).
+		/// </summary>
+		DispatcherDeskConfig = 128,
 	}
 }

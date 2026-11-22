@@ -89,6 +89,26 @@ namespace Resgrid.Workers.Framework.Logic
 					if (calls.Any())
 					{
 						var departmentTextNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(item.EmailSettings.DepartmentId);
+
+						// The department's email call mode (D10): Pending / EnhancedAi hold each call for a dispatcher instead of paging. The
+						// emails are already off the mail server, so anything going wrong here falls back to dispatching them as before.
+						IDispatcherEmailCallService emailCallService = null;
+						var emailCallMode = DispatcherEmailCallModes.AutoDispatch;
+						try
+						{
+							emailCallService = scope.Resolve<IDispatcherEmailCallService>();
+							emailCallMode = await emailCallService.GetModeAsync(item.EmailSettings.DepartmentId);
+						}
+						catch (Exception modeEx)
+						{
+							Logging.LogException(modeEx);
+						}
+
+						var holdAsPending = emailCallService != null && emailCallMode != DispatcherEmailCallModes.AutoDispatch;
+						var enrich = emailCallService != null
+							? await emailCallService.ShouldEnrichAsync(item.EmailSettings.DepartmentId, item.EmailSettings.FormatType, emailCallMode)
+							: item.EmailSettings.FormatType == (int)CallEmailTypes.AI;
+
 						foreach (var call in calls)
 						{
 							try
@@ -96,7 +116,18 @@ namespace Resgrid.Workers.Framework.Logic
 								// Adding this in here to try and fix the error below with ObjectContext issues. 
 								var newCall = CreateNewCallFromCall(call);
 
-								if (newCall.Dispatches != null && newCall.Dispatches.Any())
+								if (holdAsPending)
+								{
+									// A dispatcher picks the resources of a pending call, so one without a dispatch list is kept too.
+									emailCallService.HoldAsPending(newCall);
+									var pendingCall = await _callsService.SaveCallAsync(newCall);
+									var sender = call.SourceIdentifier == null ? null : senders.GetValueOrDefault(call.SourceIdentifier);
+									await emailCallService.OnPendingCallSavedAsync(pendingCall, sender, call.Name);
+
+									if (enrich)
+										await QueueImportedCallEnrichmentAsync(scope, _queueService, pendingCall, sender);
+								}
+								else if (newCall.Dispatches != null && newCall.Dispatches.Any())
 								{
 									// We've been having this error here:
 									//      The relationship between the two objects cannot be defined because they are attached to different ObjectContext objects.
@@ -134,22 +165,8 @@ namespace Resgrid.Workers.Framework.Logic
 									await _queueService.EnqueueCallBroadcastAsync(cqi);
 
 									// AI dispatch, Enrich mode: enrichment follows the normal dispatch and can never hold it up.
-									if (item.EmailSettings.FormatType == (int)CallEmailTypes.AI && Config.AiDispatchConfig.EnrichEnabled)
-									{
-										try
-										{
-											var aiDispatchAdmin = scope.Resolve<Resgrid.Model.AiDispatch.IAiDispatchAdminService>();
-											await _queueService.EnqueueAiDispatchTriageAsync(new AiDispatchQueueItem
-											{
-												DepartmentId = savedCall.DepartmentId, CallId = savedCall.CallId, Channel = 3, QueuedOnUtc = DateTime.UtcNow,
-												SenderNotAllowed = !await aiDispatchAdmin.IsSenderAllowedAsync(savedCall.DepartmentId, call.SourceIdentifier == null ? null : senders.GetValueOrDefault(call.SourceIdentifier))
-											});
-										}
-										catch (Exception aiEx)
-										{
-											Logging.LogException(aiEx);
-										}
-									}
+									if (enrich)
+										await QueueImportedCallEnrichmentAsync(scope, _queueService, savedCall, call.SourceIdentifier == null ? null : senders.GetValueOrDefault(call.SourceIdentifier));
 								}
 							}
 							catch (Exception ex)
@@ -166,6 +183,26 @@ namespace Resgrid.Workers.Framework.Logic
 			}
 
 			return new Tuple<bool, string>(success, result);
+		}
+
+		private static async Task QueueImportedCallEnrichmentAsync(ILifetimeScope scope, IQueueService queueService, Call savedCall, string sender)
+		{
+			if (!Config.AiDispatchConfig.EnrichEnabled || savedCall == null || savedCall.CallId <= 0)
+				return;
+
+			try
+			{
+				var aiDispatchAdmin = scope.Resolve<Resgrid.Model.AiDispatch.IAiDispatchAdminService>();
+				await queueService.EnqueueAiDispatchTriageAsync(new AiDispatchQueueItem
+				{
+					DepartmentId = savedCall.DepartmentId, CallId = savedCall.CallId, Channel = 3, QueuedOnUtc = DateTime.UtcNow,
+					SenderNotAllowed = !await aiDispatchAdmin.IsSenderAllowedAsync(savedCall.DepartmentId, sender)
+				});
+			}
+			catch (Exception aiEx)
+			{
+				Logging.LogException(aiEx);
+			}
 		}
 
 		private Call CreateNewCallFromCall(Call call)

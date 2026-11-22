@@ -60,12 +60,15 @@ namespace Resgrid.Workers.Console.Tasks
 						if (processLog != null)
 							continue;
 
-						await _logsService.SetProcessLogAsync(ProcessLogTypes.ShiftDayNotifier, schedule.Day.ShiftDayId, schedule.Day.Day);
-
 						var qi = new ShiftNotifierQueueItem();
 						qi.Shift = schedule.Shift;
 						qi.Day = schedule.Day;
 						qi.UserIds = schedule.Roster.Where(x => x.IsOnDuty()).Select(x => x.UserId).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+
+						// Dispatchers on the day's dispatch roster (M0324) are reminded too: a dispatch-only shift has nobody else.
+						var dispatchers = await scope.Resolve<IShiftDispatchersService>().GetDayRosterAsync(schedule.Shift.DepartmentId, schedule.Day.ShiftDayId);
+						qi.UserIds = qi.UserIds.Concat(dispatchers.Where(x => !x.IsPending).Select(x => x.UserId))
+							.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
 						qi.Profiles = qi.UserIds.Any()
 							? await _userProfileService.GetSelectedUserProfilesAsync(qi.UserIds)
 							: new List<UserProfile>();
@@ -75,7 +78,11 @@ namespace Resgrid.Workers.Console.Tasks
 						var result = await logic.Process(qi);
 
 						if (result.Item1)
+						{
+							// Logged only once sent: a failed send is retried on the next run instead of being marked done.
+							await _logsService.SetProcessLogAsync(ProcessLogTypes.ShiftDayNotifier, schedule.Day.ShiftDayId, schedule.Day.Day);
 							_logger.LogInformation($"ShiftNotifer::Processed Shift Notification {qi.Shift.ShiftId} successfully.");
+						}
 						else
 							_logger.LogInformation($"ShiftNotifer::Failed to Process shift notification {qi.Shift.ShiftId} error {result.Item2}");
 					}

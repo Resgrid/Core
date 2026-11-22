@@ -53,6 +53,7 @@ namespace Resgrid.Web.Services.Controllers
 		private readonly IInboundEmailReceiptsService _inboundEmailReceiptsService;
 		private readonly IIntakeService _intakeService;
 		private readonly IEmailSender _emailSender;
+		private readonly IDispatcherEmailCallService _dispatcherEmailCallService;
 
 		public EmailController(IDepartmentSettingsService departmentSettingsService, INumbersService numbersService,
 			ILimitsService limitsService, ICallsService callsService, IQueueService queueService, IDepartmentsService departmentsService,
@@ -62,10 +63,11 @@ namespace Resgrid.Web.Services.Controllers
 			IFileService fileService, IUnitsService unitsService, IGeoLocationProvider geoLocationProvider, ICallDispatchStatusService callDispatchStatusService,
 			IDispatchRecommendationService dispatchRecommendationService, IFeatureToggleService featureToggleService,
 			Resgrid.Model.AiDispatch.IAiDispatchAdminService aiDispatchAdminService, IInboundEmailReceiptsService inboundEmailReceiptsService,
-			IIntakeService intakeService, IEmailSender emailSender)
+			IIntakeService intakeService, IEmailSender emailSender, IDispatcherEmailCallService dispatcherEmailCallService)
 		{
 			_intakeService = intakeService;
 			_emailSender = emailSender;
+			_dispatcherEmailCallService = dispatcherEmailCallService;
 			_departmentSettingsService = departmentSettingsService;
 			_numbersService = numbersService;
 			_limitsService = limitsService;
@@ -401,12 +403,18 @@ namespace Resgrid.Web.Services.Controllers
 
 								if (call != null && call.CallId <= 0)
 								{
-									// New Call Dispatch as normal
+									// New Call Dispatch as normal, unless the department's email call mode holds it pending for a dispatcher (D10)
 									isNewCall = true;
 									call.DepartmentId = departmentId.Value;
-									pendingSteps = InboundEmailPendingSteps.CallBroadcast;
+									var emailCallMode = await _dispatcherEmailCallService.GetModeAsync(departmentId.Value);
+									var holdAsPending = emailCallMode != DispatcherEmailCallModes.AutoDispatch;
+									var enrich = await _dispatcherEmailCallService.ShouldEnrichAsync(departmentId.Value, emailSettings.FormatType, emailCallMode);
+									pendingSteps = holdAsPending ? InboundEmailPendingSteps.CallAddedEvent : InboundEmailPendingSteps.CallBroadcast;
 
-									if (emailSettings.FormatType == (int)CallEmailTypes.AI)
+									if (holdAsPending)
+										_dispatcherEmailCallService.HoldAsPending(call);
+
+									if (enrich)
 										pendingSteps |= InboundEmailPendingSteps.AiEnrichment;
 
 									if (!String.IsNullOrWhiteSpace(call.Address) && (String.IsNullOrWhiteSpace(call.GeoLocationData) || call.GeoLocationData.Length <= 1))
@@ -418,9 +426,12 @@ namespace Resgrid.Web.Services.Controllers
 									await _inboundEmailReceiptsService.MarkSavedAsync(receipt, savedCall.CallId, pendingSteps);
 									saveRecorded = true;
 
-									await QueueCallBroadcastAsync(savedCall, cancellationToken);
+									if (holdAsPending)
+										await _dispatcherEmailCallService.OnPendingCallSavedAsync(savedCall, message.FromFull?.Email, callEmail.Subject, cancellationToken);
+									else
+										await QueueCallBroadcastAsync(savedCall, cancellationToken);
 
-									if (emailSettings.FormatType == (int)CallEmailTypes.AI)
+									if (enrich)
 										await QueueAiDispatchEnrichmentAsync(savedCall, 1, message.FromFull?.Email, cancellationToken);
 
 									await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
@@ -436,8 +447,8 @@ namespace Resgrid.Web.Services.Controllers
 
 									var savedCall = await _callsService.SaveCallAsync(call, cancellationToken);
 
-									// If our Dispatch Count changed, i.e. 2nd Alarm to 3rd Alarm, redispatch
-									if (call.DidDispatchCountChange())
+									// If our Dispatch Count changed, i.e. 2nd Alarm to 3rd Alarm, redispatch (a pending call waits for its dispatcher)
+									if (call.DidDispatchCountChange() && call.State != (int)CallStates.Pending)
 									{
 										await _inboundEmailReceiptsService.MarkSavedAsync(receipt, savedCall.CallId, InboundEmailPendingSteps.CallBroadcast);
 										await QueueCallBroadcastAsync(savedCall, cancellationToken);
@@ -812,13 +823,19 @@ namespace Resgrid.Web.Services.Controllers
 		{
 			var call = receipt.EntityId.HasValue ? await _callsService.GetCallByIdAsync(receipt.EntityId.Value) : null;
 
-			if (call == null || call.IsDeleted || call.State != (int)CallStates.Active)
+			if (call == null || call.IsDeleted || (call.State != (int)CallStates.Active && call.State != (int)CallStates.Pending))
 			{
 				await _inboundEmailReceiptsService.MarkCompletedAsync(receipt);
 				return Ok();
 			}
 
-			if (receipt.Has(InboundEmailPendingSteps.CallBroadcast))
+			// A pending call (email call mode Pending / EnhancedAi) is never paged here: only its desk entry and screen refresh are owed.
+			if (call.State == (int)CallStates.Pending)
+			{
+				if (receipt.Has(InboundEmailPendingSteps.CallAddedEvent))
+					await _dispatcherEmailCallService.OnPendingCallSavedAsync(call, message.FromFull?.Email, message.Subject, cancellationToken);
+			}
+			else if (receipt.Has(InboundEmailPendingSteps.CallBroadcast))
 				await QueueCallBroadcastAsync(call, cancellationToken, allowRunCardEnrichment);
 
 			if (receipt.Has(InboundEmailPendingSteps.AiEnrichment))

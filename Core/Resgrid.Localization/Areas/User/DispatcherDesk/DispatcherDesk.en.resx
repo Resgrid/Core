@@ -1,0 +1,967 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AcceptedColumn" xml:space="preserve">
+    <value>Accepted</value>
+  </data>
+  <data name="AcknowledgeTextsHelp" xml:space="preserve">
+    <value>The sender gets an automatic reply when their text reaches a dispatcher.</value>
+  </data>
+  <data name="AcknowledgeTextsLabel" xml:space="preserve">
+    <value>Acknowledge texts automatically</value>
+  </data>
+  <data name="ActionDone" xml:space="preserve">
+    <value>Done.</value>
+  </data>
+  <data name="ActionFailed" xml:space="preserve">
+    <value>That did not work. Please try again.</value>
+  </data>
+  <data name="ActivityRangeHelpFormat" xml:space="preserve">
+    <value>Up to {0} days.</value>
+  </data>
+  <data name="ActivityTitle" xml:space="preserve">
+    <value>Dispatcher Activity</value>
+  </data>
+  <data name="AddBreakRow" xml:space="preserve">
+    <value>Add break</value>
+  </data>
+  <data name="AddBreakTitle" xml:space="preserve">
+    <value>Plan a break</value>
+  </data>
+  <data name="AddDispatcherButton" xml:space="preserve">
+    <value>Add dispatcher</value>
+  </data>
+  <data name="AddDispatcherHeader" xml:space="preserve">
+    <value>Add a dispatcher to this day</value>
+  </data>
+  <data name="AgeColumn" xml:space="preserve">
+    <value>Waiting</value>
+  </data>
+  <data name="AllShiftDays" xml:space="preserve">
+    <value>All shift days</value>
+  </data>
+  <data name="AllowSelfScheduledBreaksHelp" xml:space="preserve">
+    <value>Dispatchers on this shift may plan and move their own breaks. Otherwise only desk supervisors and shift managers can.</value>
+  </data>
+  <data name="AllowSelfScheduledBreaksLabel" xml:space="preserve">
+    <value>Dispatchers plan their own breaks</value>
+  </data>
+  <data name="AllowUnscheduledDutyHelp" xml:space="preserve">
+    <value>Dispatchers may sign on to the desk without being on a shift (events, facilities, cover).</value>
+  </data>
+  <data name="AllowUnscheduledDutyLabel" xml:space="preserve">
+    <value>Allow duty without a shift</value>
+  </data>
+  <data name="AutoReturnHelp" xml:space="preserve">
+    <value>Make a dispatcher available again this many minutes after their break's length ran out. 0 = never (they stay on break until they come back or a supervisor ends it).</value>
+  </data>
+  <data name="AutoReturnLabel" xml:space="preserve">
+    <value>Auto return after (minutes)</value>
+  </data>
+  <data name="AvailableStat" xml:space="preserve">
+    <value>Available</value>
+  </data>
+  <data name="AvgAcceptColumn" xml:space="preserve">
+    <value>Avg. to accept</value>
+  </data>
+  <data name="AvgCompleteColumn" xml:space="preserve">
+    <value>Avg. to complete</value>
+  </data>
+  <data name="AwayReasonLabel" xml:space="preserve">
+    <value>Reason (optional)</value>
+  </data>
+  <data name="BackInFormat" xml:space="preserve">
+    <value>Back in {0}</value>
+  </data>
+  <data name="BelowMinimumFormat" xml:space="preserve">
+    <value>Only {0} available (minimum {1})</value>
+  </data>
+  <data name="BoardLoadFailed" xml:space="preserve">
+    <value>The desk board could not be loaded. It will try again shortly.</value>
+  </data>
+  <data name="BoardUpdatedFormat" xml:space="preserve">
+    <value>Updated {0}</value>
+  </data>
+  <data name="BreakColumn" xml:space="preserve">
+    <value>Break</value>
+  </data>
+  <data name="BreakLengthColumn" xml:space="preserve">
+    <value>Length (minutes)</value>
+  </data>
+  <data name="BreakMinutesColumn" xml:space="preserve">
+    <value>Break minutes</value>
+  </data>
+  <data name="BreakPlanEmpty" xml:space="preserve">
+    <value>No breaks planned.</value>
+  </data>
+  <data name="BreakPlanHelp" xml:space="preserve">
+    <value>Target = minutes after the shift starts; leave it blank to spread the break evenly. "Plan breaks" staggers these across the day's dispatchers so they do not overlap where the day allows, and never leaves fewer than the minimum on the desk.</value>
+  </data>
+  <data name="BreakPlanLabel" xml:space="preserve">
+    <value>Break plan</value>
+  </data>
+  <data name="BreakPlannerButton" xml:space="preserve">
+    <value>Break planner</value>
+  </data>
+  <data name="BreakReminderHelp" xml:space="preserve">
+    <value>Minutes before a planned break the dispatcher is reminded. 0 = only when it is due.</value>
+  </data>
+  <data name="BreakReminderLabel" xml:space="preserve">
+    <value>Break reminder (minutes before)</value>
+  </data>
+  <data name="BreakState.Active" xml:space="preserve">
+    <value>On break now</value>
+  </data>
+  <data name="BreakState.Completed" xml:space="preserve">
+    <value>Taken</value>
+  </data>
+  <data name="BreakState.Missed" xml:space="preserve">
+    <value>Missed</value>
+  </data>
+  <data name="BreakState.Scheduled" xml:space="preserve">
+    <value>Planned</value>
+  </data>
+  <data name="BreakTargetColumn" xml:space="preserve">
+    <value>Target (minutes after start)</value>
+  </data>
+  <data name="BreakTargetPlaceholder" xml:space="preserve">
+    <value>Spread evenly</value>
+  </data>
+  <data name="BreakTooltipFormat" xml:space="preserve">
+    <value>{0} · {1} · {2}</value>
+  </data>
+  <data name="BreakType.Break" xml:space="preserve">
+    <value>Break</value>
+  </data>
+  <data name="BreakType.Meal" xml:space="preserve">
+    <value>Meal</value>
+  </data>
+  <data name="BreakType.Other" xml:space="preserve">
+    <value>Other</value>
+  </data>
+  <data name="BreakType.Personal" xml:space="preserve">
+    <value>Personal</value>
+  </data>
+  <data name="BreakTypeColumn" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="BreaksColumn" xml:space="preserve">
+    <value>Breaks</value>
+  </data>
+  <data name="BreaksMissedColumn" xml:space="preserve">
+    <value>Missed breaks</value>
+  </data>
+  <data name="BreaksPlannedFormat" xml:space="preserve">
+    <value>{0} breaks planned.</value>
+  </data>
+  <data name="BreaksTitle" xml:space="preserve">
+    <value>Dispatcher Breaks</value>
+  </data>
+  <data name="ByDispatcherHeader" xml:space="preserve">
+    <value>By dispatcher</value>
+  </data>
+  <data name="ByKindHeader" xml:space="preserve">
+    <value>Work by kind</value>
+  </data>
+  <data name="CancelBreakButton" xml:space="preserve">
+    <value>Remove break</value>
+  </data>
+  <data name="CancelBreakConfirm" xml:space="preserve">
+    <value>Remove this planned break?</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="CapacityHelp" xml:space="preserve">
+    <value>Routed items a dispatcher can hold at once before they count as busy.</value>
+  </data>
+  <data name="CapacityLabel" xml:space="preserve">
+    <value>Items per dispatcher</value>
+  </data>
+  <data name="CloseButton" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="CompletedColumn" xml:space="preserve">
+    <value>Completed</value>
+  </data>
+  <data name="ConversationJoinHelp" xml:space="preserve">
+    <value>Another text or chat from the same sender within this many minutes joins the same conversation.</value>
+  </data>
+  <data name="ConversationJoinLabel" xml:space="preserve">
+    <value>Conversation window (minutes)</value>
+  </data>
+  <data name="CountColumn" xml:space="preserve">
+    <value>Items</value>
+  </data>
+  <data name="CoverageLane" xml:space="preserve">
+    <value>Coverage</value>
+  </data>
+  <data name="CoverageSlotFormat" xml:space="preserve">
+    <value>{0}: {1} available, {2} on break, {3} on duty</value>
+  </data>
+  <data name="CoverageTimelineHeader" xml:space="preserve">
+    <value>Coverage timeline</value>
+  </data>
+  <data name="DateLabel" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="DeclinedColumn" xml:space="preserve">
+    <value>Declined</value>
+  </data>
+  <data name="DefaultBreakPlanHelp" xml:space="preserve">
+    <value>The breaks every dispatcher gets on a shift that has no break plan of its own.</value>
+  </data>
+  <data name="DefaultBreakPlanLabel" xml:space="preserve">
+    <value>Default break plan</value>
+  </data>
+  <data name="DeskBoardButton" xml:space="preserve">
+    <value>Desk board</value>
+  </data>
+  <data name="DeskBoardTitle" xml:space="preserve">
+    <value>Dispatcher Desk</value>
+  </data>
+  <data name="DeskRoutingOffNotice" xml:space="preserve">
+    <value>Routing work to dispatchers is turned off. Rosters and breaks still work; a department administrator can turn routing on in the dispatcher desk settings.</value>
+  </data>
+  <data name="DeskSupervisorBadge" xml:space="preserve">
+    <value>Supervisor</value>
+  </data>
+  <data name="DeskSupervisorColumn" xml:space="preserve">
+    <value>Desk supervisor</value>
+  </data>
+  <data name="DispatchOnlyBadge" xml:space="preserve">
+    <value>Dispatch only</value>
+  </data>
+  <data name="DispatchPositionsFilled" xml:space="preserve">
+    <value>Dispatch positions filled</value>
+  </data>
+  <data name="DispatchedColumn" xml:space="preserve">
+    <value>Dispatched</value>
+  </data>
+  <data name="DispatcherAddedToDay" xml:space="preserve">
+    <value>The dispatcher was added to the day.</value>
+  </data>
+  <data name="DispatcherColumn" xml:space="preserve">
+    <value>Dispatcher</value>
+  </data>
+  <data name="DispatcherDeskMenu" xml:space="preserve">
+    <value>Dispatcher Desk</value>
+  </data>
+  <data name="DispatcherRemovedFromDay" xml:space="preserve">
+    <value>The dispatcher was taken off the day.</value>
+  </data>
+  <data name="DispatcherSignedUp" xml:space="preserve">
+    <value>You are signed up to dispatch on this day.</value>
+  </data>
+  <data name="DispatcherSignupApproved" xml:space="preserve">
+    <value>The dispatcher sign-up was approved.</value>
+  </data>
+  <data name="DispatcherSignupDenied" xml:space="preserve">
+    <value>The dispatcher sign-up was denied.</value>
+  </data>
+  <data name="DispatcherSignupNeedsApproval" xml:space="preserve">
+    <value>A shift manager approves dispatcher sign-ups on this shift.</value>
+  </data>
+  <data name="DispatcherSignupPending" xml:space="preserve">
+    <value>Your dispatcher sign-up is waiting for approval.</value>
+  </data>
+  <data name="DispatcherWithdrawn" xml:space="preserve">
+    <value>You are no longer dispatching on this day.</value>
+  </data>
+  <data name="DispatchersHeader" xml:space="preserve">
+    <value>Dispatchers</value>
+  </data>
+  <data name="DispatchersOnDutyHeader" xml:space="preserve">
+    <value>Dispatchers on duty</value>
+  </data>
+  <data name="DispatchersTabIntro" xml:space="preserve">
+    <value>Dispatchers work the dispatcher desk in the Dispatch app. Choose whether this shift takes dispatchers, how many it needs and how their breaks are planned.</value>
+  </data>
+  <data name="DueBackNow" xml:space="preserve">
+    <value>Due back now</value>
+  </data>
+  <data name="DutyColumn" xml:space="preserve">
+    <value>On duty</value>
+  </data>
+  <data name="EditBreakTitle" xml:space="preserve">
+    <value>Change break</value>
+  </data>
+  <data name="EmailCallMode.AutoDispatch" xml:space="preserve">
+    <value>Dispatch immediately</value>
+  </data>
+  <data name="EmailCallMode.AutoDispatchHelp" xml:space="preserve">
+    <value>The call from the email is sent out at once (as before).</value>
+  </data>
+  <data name="EmailCallMode.EnhancedAi" xml:space="preserve">
+    <value>Enhanced AI into pending</value>
+  </data>
+  <data name="EmailCallMode.EnhancedAiHelp" xml:space="preserve">
+    <value>Enhanced AI reads the email into a pending call (type, priority, address) for a dispatcher to review and send. Needs Enhanced AI.</value>
+  </data>
+  <data name="EmailCallMode.Pending" xml:space="preserve">
+    <value>Save as pending</value>
+  </data>
+  <data name="EmailCallMode.PendingHelp" xml:space="preserve">
+    <value>The call from the email is saved as a pending call for a dispatcher to review and send.</value>
+  </data>
+  <data name="EmailCallModeIntro" xml:space="preserve">
+    <value>What a call emailed to the department's dispatch address becomes.</value>
+  </data>
+  <data name="EmailCallModeLabel" xml:space="preserve">
+    <value>Emailed calls</value>
+  </data>
+  <data name="EnabledHelp" xml:space="preserve">
+    <value>Offer pending and scheduled calls, texts, phone calls, emails and chats to the dispatchers on duty in the Dispatch app.</value>
+  </data>
+  <data name="EnabledLabel" xml:space="preserve">
+    <value>Route work to on-duty dispatchers</value>
+  </data>
+  <data name="EndBreakButton" xml:space="preserve">
+    <value>End break</value>
+  </data>
+  <data name="EndBreakConfirm" xml:space="preserve">
+    <value>End {0}'s break and make them available?</value>
+  </data>
+  <data name="EndsFormat" xml:space="preserve">
+    <value>until {0}</value>
+  </data>
+  <data name="EnhancedAiUnavailable" xml:space="preserve">
+    <value>Enhanced AI is not available for this department.</value>
+  </data>
+  <data name="Error.AlreadyOnBreak" xml:space="preserve">
+    <value>This dispatcher is already on a break.</value>
+  </data>
+  <data name="Error.AlreadyOnRoster" xml:space="preserve">
+    <value>This person is already on the dispatch roster for that day.</value>
+  </data>
+  <data name="Error.AtCapacity" xml:space="preserve">
+    <value>This dispatcher is already holding as much work as they can.</value>
+  </data>
+  <data name="Error.BreakNotFound" xml:space="preserve">
+    <value>That break could not be found.</value>
+  </data>
+  <data name="Error.BreakNotStartable" xml:space="preserve">
+    <value>That break has already started or ended and cannot be changed.</value>
+  </data>
+  <data name="Error.BreakOverlaps" xml:space="preserve">
+    <value>That break overlaps another break of the same dispatcher.</value>
+  </data>
+  <data name="Error.ChannelUnavailable" xml:space="preserve">
+    <value>That channel is not available for this department.</value>
+  </data>
+  <data name="Error.CoverageTooLow" xml:space="preserve">
+    <value>That would leave fewer dispatchers available than the minimum.</value>
+  </data>
+  <data name="Error.DeskDisabled" xml:space="preserve">
+    <value>The dispatcher desk is turned off for this department.</value>
+  </data>
+  <data name="Error.DispatchersNotEnabled" xml:space="preserve">
+    <value>This shift does not take dispatchers.</value>
+  </data>
+  <data name="Error.HoldingWork" xml:space="preserve">
+    <value>The dispatcher is holding work; return it to the queue first.</value>
+  </data>
+  <data name="Error.InvalidInput" xml:space="preserve">
+    <value>Some of the values entered are not valid.</value>
+  </data>
+  <data name="Error.ItemNotAvailable" xml:space="preserve">
+    <value>That item is no longer available.</value>
+  </data>
+  <data name="Error.ItemNotFound" xml:space="preserve">
+    <value>That item could not be found. It may already have been handled.</value>
+  </data>
+  <data name="Error.NoCallbackNumber" xml:space="preserve">
+    <value>No callback number is set for this dispatcher.</value>
+  </data>
+  <data name="Error.None" xml:space="preserve">
+    <value>Nothing went wrong.</value>
+  </data>
+  <data name="Error.NotADispatcher" xml:space="preserve">
+    <value>This person cannot work the dispatcher desk: they need the Dispatch app login permission.</value>
+  </data>
+  <data name="Error.NotAssignedToYou" xml:space="preserve">
+    <value>That item is not assigned to you.</value>
+  </data>
+  <data name="Error.NotOnBreak" xml:space="preserve">
+    <value>This dispatcher is not on a break.</value>
+  </data>
+  <data name="Error.NotOnDuty" xml:space="preserve">
+    <value>This dispatcher is not on duty now.</value>
+  </data>
+  <data name="Error.NotPermitted" xml:space="preserve">
+    <value>You are not allowed to do that.</value>
+  </data>
+  <data name="Error.NotSignedIn" xml:space="preserve">
+    <value>This dispatcher is not signed in to the desk.</value>
+  </data>
+  <data name="Error.ShiftNotFound" xml:space="preserve">
+    <value>That shift could not be found.</value>
+  </data>
+  <data name="EscalatedBadge" xml:space="preserve">
+    <value>Escalated</value>
+  </data>
+  <data name="FilterDispatchersPlaceholder" xml:space="preserve">
+    <value>Filter dispatchers...</value>
+  </data>
+  <data name="FromLabel" xml:space="preserve">
+    <value>From</value>
+  </data>
+  <data name="HeartbeatTimeoutHelp" xml:space="preserve">
+    <value>Minutes without a signal from the Dispatch app before a dispatcher stops getting routed work. 0 = never (a phone that sleeps still gets push notifications; missed offers set them away instead).</value>
+  </data>
+  <data name="HeartbeatTimeoutLabel" xml:space="preserve">
+    <value>Heartbeat timeout (minutes)</value>
+  </data>
+  <data name="HeldItemsFormat" xml:space="preserve">
+    <value>{0} held</value>
+  </data>
+  <data name="ItemColumn" xml:space="preserve">
+    <value>Item</value>
+  </data>
+  <data name="Kind.Chat" xml:space="preserve">
+    <value>Chat</value>
+  </data>
+  <data name="Kind.Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="Kind.Other" xml:space="preserve">
+    <value>Other</value>
+  </data>
+  <data name="Kind.PendingCall" xml:space="preserve">
+    <value>Pending call</value>
+  </data>
+  <data name="Kind.ScheduledCall" xml:space="preserve">
+    <value>Scheduled call</value>
+  </data>
+  <data name="Kind.Text" xml:space="preserve">
+    <value>Text message</value>
+  </data>
+  <data name="Kind.Voice" xml:space="preserve">
+    <value>Phone call</value>
+  </data>
+  <data name="KindColumn" xml:space="preserve">
+    <value>Kind</value>
+  </data>
+  <data name="LegendBelowMinimum" xml:space="preserve">
+    <value>Below minimum</value>
+  </data>
+  <data name="LegendCovered" xml:space="preserve">
+    <value>Covered</value>
+  </data>
+  <data name="LegendDuty" xml:space="preserve">
+    <value>On duty</value>
+  </data>
+  <data name="LegendMissed" xml:space="preserve">
+    <value>Missed</value>
+  </data>
+  <data name="LegendNobodyOnDuty" xml:space="preserve">
+    <value>Nobody on duty</value>
+  </data>
+  <data name="LegendOnBreak" xml:space="preserve">
+    <value>On break now</value>
+  </data>
+  <data name="LegendOverlap" xml:space="preserve">
+    <value>Breaks overlap</value>
+  </data>
+  <data name="LegendPlanned" xml:space="preserve">
+    <value>Planned break</value>
+  </data>
+  <data name="LegendTaken" xml:space="preserve">
+    <value>Break taken</value>
+  </data>
+  <data name="MinimumAvailableHelp" xml:space="preserve">
+    <value>Dispatchers who must stay available; planning or starting a break below this warns. 0 = no minimum.</value>
+  </data>
+  <data name="MinimumAvailableLabel" xml:space="preserve">
+    <value>Minimum available</value>
+  </data>
+  <data name="MinimumOnDeskHelpFormat" xml:space="preserve">
+    <value>Dispatchers who must stay available during this shift. 0 = the department minimum ({0}).</value>
+  </data>
+  <data name="MinimumOnDeskLabel" xml:space="preserve">
+    <value>Minimum on desk</value>
+  </data>
+  <data name="MinutesShortFormat" xml:space="preserve">
+    <value>{0} min</value>
+  </data>
+  <data name="MissedColumn" xml:space="preserve">
+    <value>Offers missed</value>
+  </data>
+  <data name="MissedOffersHelp" xml:space="preserve">
+    <value>Offers in a row a dispatcher lets expire before the desk sets them away. 0 = never.</value>
+  </data>
+  <data name="MissedOffersLabel" xml:space="preserve">
+    <value>Missed offers before away</value>
+  </data>
+  <data name="NextBreakFormat" xml:space="preserve">
+    <value>{0} for {1} min</value>
+  </data>
+  <data name="NextBreakLabel" xml:space="preserve">
+    <value>Next break:</value>
+  </data>
+  <data name="NoActivity" xml:space="preserve">
+    <value>No desk activity in this period.</value>
+  </data>
+  <data name="NoDispatchersInWindow" xml:space="preserve">
+    <value>No dispatchers are on duty or have breaks in this period.</value>
+  </data>
+  <data name="NoDispatchersOnDay" xml:space="preserve">
+    <value>No dispatchers are on this day yet.</value>
+  </data>
+  <data name="NoDispatchersOnDesk" xml:space="preserve">
+    <value>No dispatchers are on duty or signed in.</value>
+  </data>
+  <data name="NoEligibleDispatchers" xml:space="preserve">
+    <value>Nobody in the department has the Dispatch app login permission yet.</value>
+  </data>
+  <data name="NoTransferTargets" xml:space="preserve">
+    <value>No other dispatcher on duty can take it right now.</value>
+  </data>
+  <data name="NoWarnings" xml:space="preserve">
+    <value>No warnings.</value>
+  </data>
+  <data name="NotEligibleBadge" xml:space="preserve">
+    <value>No Dispatch access</value>
+  </data>
+  <data name="NotEligibleHelp" xml:space="preserve">
+    <value>No longer has the Dispatch app login permission; leaves the roster when you save.</value>
+  </data>
+  <data name="NotSignedInBadge" xml:space="preserve">
+    <value>Not signed in</value>
+  </data>
+  <data name="NoteLabel" xml:space="preserve">
+    <value>Note</value>
+  </data>
+  <data name="NotifyOverdueLabel" xml:space="preserve">
+    <value>Tell supervisors when a dispatcher is late back from a break</value>
+  </data>
+  <data name="OffDutyBadge" xml:space="preserve">
+    <value>Off duty</value>
+  </data>
+  <data name="OfferTimeoutHelp" xml:space="preserve">
+    <value>Seconds an offer waits for the dispatcher to take it before it moves to the next one.</value>
+  </data>
+  <data name="OfferTimeoutLabel" xml:space="preserve">
+    <value>Offer timeout (seconds)</value>
+  </data>
+  <data name="OfferedColumn" xml:space="preserve">
+    <value>Offered</value>
+  </data>
+  <data name="OfferedItemsFormat" xml:space="preserve">
+    <value>{0} offered</value>
+  </data>
+  <data name="OnBreakStat" xml:space="preserve">
+    <value>On break</value>
+  </data>
+  <data name="OnDutyStat" xml:space="preserve">
+    <value>On duty</value>
+  </data>
+  <data name="OnRosterColumn" xml:space="preserve">
+    <value>On roster</value>
+  </data>
+  <data name="OpenDispatchPositionsFormat" xml:space="preserve">
+    <value>{0} dispatch positions open</value>
+  </data>
+  <data name="OverdueBadge" xml:space="preserve">
+    <value>Overdue</value>
+  </data>
+  <data name="OverdueColumn" xml:space="preserve">
+    <value>Late back</value>
+  </data>
+  <data name="OverdueFormat" xml:space="preserve">
+    <value>Overdue {0} min</value>
+  </data>
+  <data name="OverdueMinutesFormat" xml:space="preserve">
+    <value>{0} minutes late in total</value>
+  </data>
+  <data name="OverflowIntro" xml:space="preserve">
+    <value>What happens to a live text or phone call when every dispatcher is busy or on break.</value>
+  </data>
+  <data name="PendingApprovalBadge" xml:space="preserve">
+    <value>Awaiting approval</value>
+  </data>
+  <data name="PlanBreaksButton" xml:space="preserve">
+    <value>Plan breaks</value>
+  </data>
+  <data name="PlanBreaksConfirm" xml:space="preserve">
+    <value>Place the shift's break plan for every dispatcher on this day?</value>
+  </data>
+  <data name="PlanBreaksReplaceConfirm" xml:space="preserve">
+    <value>Remove this day's planned breaks and place the shift's break plan again?</value>
+  </data>
+  <data name="PlannedStartHelp" xml:space="preserve">
+    <value>In the department's time zone. A break is a length: started early, it ends early.</value>
+  </data>
+  <data name="PlannedStartLabel" xml:space="preserve">
+    <value>Planned start</value>
+  </data>
+  <data name="PlannerLoadFailed" xml:space="preserve">
+    <value>The break planner could not be loaded.</value>
+  </data>
+  <data name="PreventBelowMinimumHelp" xml:space="preserve">
+    <value>Refuse, instead of warn about, a break that would drop below the minimum, unless a supervisor starts it.</value>
+  </data>
+  <data name="PreventBelowMinimumLabel" xml:space="preserve">
+    <value>Prevent breaks below the minimum</value>
+  </data>
+  <data name="QueueEmpty" xml:space="preserve">
+    <value>Nothing is waiting.</value>
+  </data>
+  <data name="QueueEscalationHelp" xml:space="preserve">
+    <value>Minutes an item may wait unassigned before every dispatcher and supervisor on duty is alerted. 0 = never.</value>
+  </data>
+  <data name="QueueEscalationLabel" xml:space="preserve">
+    <value>Escalate waiting work after (minutes)</value>
+  </data>
+  <data name="QueueHeader" xml:space="preserve">
+    <value>Open queue</value>
+  </data>
+  <data name="QueueState.Accepted" xml:space="preserve">
+    <value>Being handled</value>
+  </data>
+  <data name="QueueState.Offered" xml:space="preserve">
+    <value>Offered</value>
+  </data>
+  <data name="QueueState.Queued" xml:space="preserve">
+    <value>Waiting</value>
+  </data>
+  <data name="ReleaseButton" xml:space="preserve">
+    <value>Return to queue</value>
+  </data>
+  <data name="ReleaseConfirm" xml:space="preserve">
+    <value>Return this item to the queue?</value>
+  </data>
+  <data name="RemoveBreakRow" xml:space="preserve">
+    <value>Remove this break</value>
+  </data>
+  <data name="RemoveDispatcherConfirm" xml:space="preserve">
+    <value>Take this dispatcher off the day?</value>
+  </data>
+  <data name="RemoveFromDayButton" xml:space="preserve">
+    <value>Remove from day</value>
+  </data>
+  <data name="ReplacePlannedLabel" xml:space="preserve">
+    <value>Replace planned breaks</value>
+  </data>
+  <data name="RequireShiftHelp" xml:space="preserve">
+    <value>Only dispatchers on a shift's dispatch roster for the day running now are on duty.</value>
+  </data>
+  <data name="RequireShiftLabel" xml:space="preserve">
+    <value>Dispatchers must be on a shift</value>
+  </data>
+  <data name="RequiredDispatchersHelp" xml:space="preserve">
+    <value>Dispatch positions to fill each day (sign-up slots and the staffing target). 0 = no target.</value>
+  </data>
+  <data name="RequiredDispatchersLabel" xml:space="preserve">
+    <value>Dispatchers needed</value>
+  </data>
+  <data name="RouteChatLabel" xml:space="preserve">
+    <value>Chats (WhatsApp, Slack, Teams, Telegram, Discord, Google Chat)</value>
+  </data>
+  <data name="RouteEmailLabel" xml:space="preserve">
+    <value>Emails (calls saved as pending)</value>
+  </data>
+  <data name="RoutePendingCallsLabel" xml:space="preserve">
+    <value>Pending calls</value>
+  </data>
+  <data name="RouteScheduledCallsLabel" xml:space="preserve">
+    <value>Scheduled calls (for review before they go out)</value>
+  </data>
+  <data name="RouteTextLabel" xml:space="preserve">
+    <value>Text messages</value>
+  </data>
+  <data name="RouteToDeskHelp" xml:space="preserve">
+    <value>The kinds of work offered to dispatchers. Work the desk does not take is handled as before. An email or chat that is not ticked still comes to the desk as a pending call while Pending calls is ticked.</value>
+  </data>
+  <data name="RouteToDeskLabel" xml:space="preserve">
+    <value>Send to the desk</value>
+  </data>
+  <data name="RouteVoiceLabel" xml:space="preserve">
+    <value>Phone calls</value>
+  </data>
+  <data name="SaveBreakButton" xml:space="preserve">
+    <value>Save break</value>
+  </data>
+  <data name="SaveSettingsButton" xml:space="preserve">
+    <value>Save settings</value>
+  </data>
+  <data name="ScheduledCallLeadHelp" xml:space="preserve">
+    <value>Minutes before a scheduled call goes out that it comes to the desk for review (it still goes out by itself).</value>
+  </data>
+  <data name="ScheduledCallLeadLabel" xml:space="preserve">
+    <value>Scheduled call review (minutes before)</value>
+  </data>
+  <data name="SelectDispatcherToAdd" xml:space="preserve">
+    <value>Choose a dispatcher to add.</value>
+  </data>
+  <data name="SetAvailableButton" xml:space="preserve">
+    <value>Set available</value>
+  </data>
+  <data name="SetAwayButton" xml:space="preserve">
+    <value>Set away</value>
+  </data>
+  <data name="SettingsBreaksSection" xml:space="preserve">
+    <value>Breaks and coverage</value>
+  </data>
+  <data name="SettingsDeskSection" xml:space="preserve">
+    <value>Desk</value>
+  </data>
+  <data name="SettingsEmailSection" xml:space="preserve">
+    <value>Emailed calls</value>
+  </data>
+  <data name="SettingsIntro" xml:space="preserve">
+    <value>How work is routed to dispatchers on duty in the Dispatch app, what happens when nobody is free, and how breaks are handled.</value>
+  </data>
+  <data name="SettingsOverflowSection" xml:space="preserve">
+    <value>When every dispatcher is busy</value>
+  </data>
+  <data name="SettingsRoutingSection" xml:space="preserve">
+    <value>Routing</value>
+  </data>
+  <data name="SettingsSaved" xml:space="preserve">
+    <value>The dispatcher desk settings were saved.</value>
+  </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>Dispatcher Desk Settings</value>
+  </data>
+  <data name="ShiftColumn" xml:space="preserve">
+    <value>Shift</value>
+  </data>
+  <data name="ShiftDayLabel" xml:space="preserve">
+    <value>Shift day</value>
+  </data>
+  <data name="ShiftDispatchEnabledHelp" xml:space="preserve">
+    <value>Dispatchers can be put on (Assigned shift) or sign up for (Sign-up shift) this shift, alone or beside the responders.</value>
+  </data>
+  <data name="ShiftDispatchEnabledLabel" xml:space="preserve">
+    <value>This shift takes dispatchers</value>
+  </data>
+  <data name="ShiftDispatchOnlyHelp" xml:space="preserve">
+    <value>The shift exists only for dispatchers (a dispatch center's A, B and C shifts).</value>
+  </data>
+  <data name="ShiftDispatchOnlyLabel" xml:space="preserve">
+    <value>Dispatch-only shift</value>
+  </data>
+  <data name="ShowButton" xml:space="preserve">
+    <value>Show</value>
+  </data>
+  <data name="SignOffAtShiftEndHelp" xml:space="preserve">
+    <value>Dispatchers are signed off the desk when their shift day ends; their held work goes back to the queue.</value>
+  </data>
+  <data name="SignOffAtShiftEndLabel" xml:space="preserve">
+    <value>Sign off at the end of the shift</value>
+  </data>
+  <data name="SignupAsDispatcherButton" xml:space="preserve">
+    <value>Sign up as dispatcher</value>
+  </data>
+  <data name="SourceAssigned" xml:space="preserve">
+    <value>Assigned</value>
+  </data>
+  <data name="SourceSignup" xml:space="preserve">
+    <value>Signed up</value>
+  </data>
+  <data name="StandingRosterHelp" xml:space="preserve">
+    <value>The dispatchers on every day of this shift. A desk supervisor manages breaks and moves work for the other dispatchers.</value>
+  </data>
+  <data name="StandingRosterLabel" xml:space="preserve">
+    <value>Dispatch roster</value>
+  </data>
+  <data name="StatAverageAnswer" xml:space="preserve">
+    <value>Avg. time to answer</value>
+  </data>
+  <data name="StatCancelled" xml:space="preserve">
+    <value>Cancelled</value>
+  </data>
+  <data name="StatCompleted" xml:space="preserve">
+    <value>Completed</value>
+  </data>
+  <data name="StatCreated" xml:space="preserve">
+    <value>Items</value>
+  </data>
+  <data name="StatEscalated" xml:space="preserve">
+    <value>Escalated</value>
+  </data>
+  <data name="StatOverflowed" xml:space="preserve">
+    <value>Overflowed</value>
+  </data>
+  <data name="State.Available" xml:space="preserve">
+    <value>Available</value>
+  </data>
+  <data name="State.Away" xml:space="preserve">
+    <value>Away</value>
+  </data>
+  <data name="State.Busy" xml:space="preserve">
+    <value>Busy</value>
+  </data>
+  <data name="State.Offline" xml:space="preserve">
+    <value>Offline</value>
+  </data>
+  <data name="State.OnBreak" xml:space="preserve">
+    <value>On break</value>
+  </data>
+  <data name="StateColumn" xml:space="preserve">
+    <value>Desk state</value>
+  </data>
+  <data name="StatusColumn" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="SuppressAlertsHelp" xml:space="preserve">
+    <value>While on break a dispatcher gets no desk notifications or alerts, only the reminder that the break is over.</value>
+  </data>
+  <data name="SuppressAlertsLabel" xml:space="preserve">
+    <value>No desk alerts while on break</value>
+  </data>
+  <data name="TextOverflow.EnhancedAi" xml:space="preserve">
+    <value>Enhanced AI fills in a pending call</value>
+  </data>
+  <data name="TextOverflow.PendingQueue" xml:space="preserve">
+    <value>Keep it waiting in the queue</value>
+  </data>
+  <data name="TextOverflowLabel" xml:space="preserve">
+    <value>Text messages</value>
+  </data>
+  <data name="ToLabel" xml:space="preserve">
+    <value>To</value>
+  </data>
+  <data name="TodayCoverageHeader" xml:space="preserve">
+    <value>Today's coverage</value>
+  </data>
+  <data name="TransferButton" xml:space="preserve">
+    <value>Transfer</value>
+  </data>
+  <data name="TransferToLabel" xml:space="preserve">
+    <value>Transfer to</value>
+  </data>
+  <data name="Unassigned" xml:space="preserve">
+    <value>Unassigned</value>
+  </data>
+  <data name="UnknownPerson" xml:space="preserve">
+    <value>Unknown person</value>
+  </data>
+  <data name="ViewCallButton" xml:space="preserve">
+    <value>View call</value>
+  </data>
+  <data name="VoiceAiUnavailable" xml:space="preserve">
+    <value>Enhanced AI voice intake is not available; callers leave a message instead.</value>
+  </data>
+  <data name="VoiceHoldHelp" xml:space="preserve">
+    <value>Seconds a caller is held for a dispatcher before the overflow handling takes over. 0 = at once.</value>
+  </data>
+  <data name="VoiceHoldLabel" xml:space="preserve">
+    <value>Hold callers for (seconds)</value>
+  </data>
+  <data name="VoiceOverflow.EnhancedAiIntake" xml:space="preserve">
+    <value>Enhanced AI voice intake</value>
+  </data>
+  <data name="VoiceOverflow.Voicemail" xml:space="preserve">
+    <value>Voicemail into a pending call</value>
+  </data>
+  <data name="VoiceOverflowLabel" xml:space="preserve">
+    <value>Phone calls</value>
+  </data>
+  <data name="WaitingInQueueFormat" xml:space="preserve">
+    <value>{0} waiting</value>
+  </data>
+  <data name="WaitingStat" xml:space="preserve">
+    <value>Waiting</value>
+  </data>
+  <data name="Warning.BreaksOverlap" xml:space="preserve">
+    <value>Breaks overlap from {1} to {2}: {0}.</value>
+  </data>
+  <data name="Warning.CoverageBelowMinimum" xml:space="preserve">
+    <value>Only {0} dispatchers available (minimum {1}) from {2} to {3}.</value>
+  </data>
+  <data name="Warning.NoCoverage" xml:space="preserve">
+    <value>Nobody would be available from {0} to {1}.</value>
+  </data>
+  <data name="Warning.OutsideDuty" xml:space="preserve">
+    <value>The break falls outside the shift day: {0}.</value>
+  </data>
+  <data name="Warning.StartedEarly" xml:space="preserve">
+    <value>{0} started the break {1} minutes early.</value>
+  </data>
+  <data name="Warning.StartedLate" xml:space="preserve">
+    <value>{0} started the break {1} minutes late.</value>
+  </data>
+  <data name="Warning.WorkReturnedToQueue" xml:space="preserve">
+    <value>Work held by {0} went back to the queue.</value>
+  </data>
+  <data name="WarningsHeader" xml:space="preserve">
+    <value>Warnings</value>
+  </data>
+  <data name="WithdrawButton" xml:space="preserve">
+    <value>Withdraw</value>
+  </data>
+  <data name="WithdrawDispatcherConfirm" xml:space="preserve">
+    <value>Stop dispatching on this day?</value>
+  </data>
+  <data name="WizardDispatchers" xml:space="preserve">
+    <value>Dispatchers</value>
+  </data>
+  <data name="WorkColumn" xml:space="preserve">
+    <value>Work</value>
+  </data>
+  <data name="WorkLoadFormat" xml:space="preserve">
+    <value>{0} of {1}</value>
+  </data>
+  <data name="YouBadge" xml:space="preserve">
+    <value>You</value>
+  </data>
+</root>

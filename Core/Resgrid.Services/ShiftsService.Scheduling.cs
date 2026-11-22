@@ -62,6 +62,9 @@ namespace Resgrid.Services
 			return schedules.OrderBy(x => x.Day.Start).ThenBy(x => x.Shift.Name).ToList();
 		}
 
+		/// <summary>How many days back a running shift day may have started (see GetActiveShiftDaySchedulesAsync).</summary>
+		public const int ActiveShiftLookBackDays = 7;
+
 		public async Task<List<ShiftDaySchedule>> GetActiveShiftDaySchedulesAsync(int departmentId, DateTime timestampUtc)
 		{
 			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId, false);
@@ -71,8 +74,9 @@ namespace Resgrid.Services
 
 			var localNow = timestampUtc.TimeConverter(department);
 
-			// Look back far enough for a long shift (Hours up to 48+) that started days ago.
-			var data = await LoadScheduleDataAsync(departmentId, localNow.Date.AddDays(-3), localNow.Date, department);
+			// Look back far enough for a long shift that started days ago. Three days missed shifts longer than 72 hours (a
+			// 96-hour day started four days ago was never on duty); a week covers every length the shift setup allows.
+			var data = await LoadScheduleDataAsync(departmentId, localNow.Date.AddDays(-ActiveShiftLookBackDays), localNow.Date, department);
 			var schedules = new List<ShiftDaySchedule>();
 
 			foreach (var shift in data.Shifts)

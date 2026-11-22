@@ -782,9 +782,18 @@ namespace Resgrid.Tests.Web.Services
 					authorizationService, adpRelease, Projection(),
 					Mock.Of<IDepartmentPhoneNumbersService>(), Mock.Of<IIntakeService>(), Mock.Of<IVoiceIntakeService>(),
 					Mock.Of<Resgrid.Model.Providers.ITextMessageProvider>(), Mock.Of<IIntakeConversationService>(),
-					Mock.Of<IIntakeConversationOperations>(), Mock.Of<IIntakeScreeningService>())
+					Mock.Of<IIntakeConversationOperations>(), Mock.Of<IIntakeScreeningService>(), Mock.Of<IDispatcherInboundTextHandler>(), NoDeskVoice())
 			{
 				ControllerContext = new ControllerContext { HttpContext = new Microsoft.AspNetCore.Http.DefaultHttpContext() };
+			}
+
+			/// <summary>The dispatcher desk takes no calls here (no TwiML), so the member voice flows run as before.</summary>
+			private static IDispatcherInboundVoiceHandler NoDeskVoice()
+			{
+				var desk = new Mock<IDispatcherInboundVoiceHandler>();
+				desk.Setup(x => x.HandleAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+					.ReturnsAsync((string)null);
+				return desk.Object;
 			}
 
 			private static IProtectedProjectionService Projection()

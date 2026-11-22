@@ -1,0 +1,146 @@
+@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.DispatcherDesk.DispatcherDeskActivityView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.DispatcherDesk.DispatcherDesk> desk
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Shifts.Shifts> shiftsLocalizer
+@{
+	ViewBag.Title = "Resgrid | " + desk["ActivityTitle"];
+}
+@functions {
+	// Seconds as m:ss (or h:mm:ss); a dash when nothing was measured.
+	static string Duration(double? seconds)
+	{
+		if (!seconds.HasValue)
+			return "–";
+
+		var span = TimeSpan.FromSeconds(Math.Max(0, Math.Round(seconds.Value)));
+		return span.TotalHours >= 1
+			? $"{(int)span.TotalHours}:{span.Minutes:00}:{span.Seconds:00}"
+			: $"{span.Minutes}:{span.Seconds:00}";
+	}
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@desk["ActivityTitle"]</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Shifts" asp-action="Index" asp-route-area="User">@shiftsLocalizer["ShiftsHeader"]</a></li>
+			<li><a asp-controller="DispatcherDesk" asp-action="Index" asp-route-area="User">@desk["DeskBoardTitle"]</a></li>
+			<li class="active"><strong>@desk["ActivityTitle"]</strong></li>
+		</ol>
+	</div>
+</div>
+
+<div class="wrapper wrapper-content">
+	<div class="ibox float-e-margins">
+		<div class="ibox-content">
+			<form class="form-inline" method="get" asp-controller="DispatcherDesk" asp-action="Activity" asp-route-area="User">
+				<div class="form-group m-r-sm">
+					<label for="activityFrom">@desk["FromLabel"]</label>
+					<input type="date" class="form-control" id="activityFrom" name="from" value="@Model.From" />
+				</div>
+				<div class="form-group m-r-sm">
+					<label for="activityTo">@desk["ToLabel"]</label>
+					<input type="date" class="form-control" id="activityTo" name="to" value="@Model.To" />
+				</div>
+				<button type="submit" class="btn btn-white">@desk["ShowButton"]</button>
+				<span class="help-inline text-muted m-l-sm">@String.Format(desk["ActivityRangeHelpFormat"].Value, Resgrid.Web.Areas.User.Controllers.DispatcherDeskController.MaxActivityDays)</span>
+			</form>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-sm-2 col-xs-6"><div class="widget style1 navy-bg"><span>@desk["StatCreated"]</span><h2 class="font-bold">@Model.Created</h2></div></div>
+		<div class="col-sm-2 col-xs-6"><div class="widget style1 lazur-bg"><span>@desk["StatCompleted"]</span><h2 class="font-bold">@Model.Completed</h2></div></div>
+		<div class="col-sm-2 col-xs-6"><div class="widget style1 yellow-bg"><span>@desk["StatOverflowed"]</span><h2 class="font-bold">@Model.Overflowed</h2></div></div>
+		<div class="col-sm-2 col-xs-6"><div class="widget style1 red-bg"><span>@desk["StatEscalated"]</span><h2 class="font-bold">@Model.Escalated</h2></div></div>
+		<div class="col-sm-2 col-xs-6"><div class="widget style1 gray-bg"><span>@desk["StatCancelled"]</span><h2 class="font-bold">@Model.Cancelled</h2></div></div>
+		<div class="col-sm-2 col-xs-6"><div class="widget style1 white-bg"><span>@desk["StatAverageAnswer"]</span><h2 class="font-bold">@Duration(Model.AverageSecondsToAnswer)</h2></div></div>
+	</div>
+
+	@if (!Model.HasData)
+	{
+		<div class="ibox float-e-margins">
+			<div class="ibox-content"><p class="text-muted">@desk["NoActivity"]</p></div>
+		</div>
+	}
+	else
+	{
+		<div class="row">
+			<div class="col-lg-4">
+				<div class="ibox float-e-margins">
+					<div class="ibox-title"><h5>@desk["ByKindHeader"]</h5></div>
+					<div class="ibox-content">
+						<table class="table table-condensed">
+							<thead><tr><th>@desk["KindColumn"]</th><th class="text-right">@desk["CountColumn"]</th></tr></thead>
+							<tbody>
+								@foreach (var pair in Model.CreatedByKind)
+								{
+									var kindName = Enum.IsDefined(typeof(DispatcherQueueItemKinds), pair.Key) ? ((DispatcherQueueItemKinds)pair.Key).ToString() : "Other";
+									<tr><td>@desk["Kind." + kindName]</td><td class="text-right">@pair.Value</td></tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-8">
+				<div class="ibox float-e-margins">
+					<div class="ibox-title"><h5>@desk["ByDispatcherHeader"]</h5></div>
+					<div class="ibox-content">
+						<div class="table-responsive">
+							<table class="table table-striped table-condensed">
+								<thead>
+									<tr>
+										<th>@desk["DispatcherColumn"]</th>
+										<th class="text-right">@desk["OfferedColumn"]</th>
+										<th class="text-right">@desk["AcceptedColumn"]</th>
+										<th class="text-right">@desk["DeclinedColumn"]</th>
+										<th class="text-right">@desk["MissedColumn"]</th>
+										<th class="text-right">@desk["CompletedColumn"]</th>
+										<th class="text-right">@desk["DispatchedColumn"]</th>
+										<th class="text-right">@desk["AvgAcceptColumn"]</th>
+										<th class="text-right">@desk["AvgCompleteColumn"]</th>
+										<th class="text-right">@desk["BreaksColumn"]</th>
+										<th class="text-right">@desk["BreakMinutesColumn"]</th>
+										<th class="text-right">@desk["OverdueColumn"]</th>
+										<th class="text-right">@desk["BreaksMissedColumn"]</th>
+									</tr>
+								</thead>
+								<tbody>
+									@foreach (var row in Model.Dispatchers)
+									{
+										<tr>
+											<td>@row.Name</td>
+											<td class="text-right">@row.Offered</td>
+											<td class="text-right">@row.Accepted</td>
+											<td class="text-right">@row.Declined</td>
+											<td class="text-right">@row.OffersMissed</td>
+											<td class="text-right">@row.Completed</td>
+											<td class="text-right">@row.Dispatched</td>
+											<td class="text-right">@Duration(row.AverageSecondsToAccept)</td>
+											<td class="text-right">@Duration(row.AverageSecondsToComplete)</td>
+											<td class="text-right">@row.Breaks</td>
+											<td class="text-right">@row.BreakMinutes</td>
+											<td class="text-right">
+												@if (row.BreaksOverdue > 0)
+												{
+													<span class="text-danger" title="@String.Format(desk["OverdueMinutesFormat"].Value, row.OverdueMinutes)">@row.BreaksOverdue</span>
+												}
+												else
+												{
+													@row.BreaksOverdue
+												}
+											</td>
+											<td class="text-right">@row.BreaksMissed</td>
+										</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	}
+</div>

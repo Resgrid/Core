@@ -132,7 +132,7 @@ namespace Resgrid.Tests.AiDispatch
 
 			_service = new AiDispatchEnrichmentService(_access.Object, _flags.Object, _departments.Object, _calls.Object, Mock.Of<IGeoLocationProvider>(), _protection.Object,
 				_audits.Object, settings.Object, _admission.Object, _usage.Object, new Lazy<ILlmClient>(() => _llm.Object),
-				new Lazy<IDecisionClient>(() => Mock.Of<IDecisionClient>()), Mock.Of<IEventAggregator>(), new FixedClock(),
+				new Lazy<IDecisionClient>(() => Mock.Of<IDecisionClient>()), Mock.Of<IEventAggregator>(), new FixedClock(), Mock.Of<IDispatcherDeskConfigService>(),
 				screening: new Lazy<IIntakeScreeningService>(() => _screening.Object));
 		}
 
@@ -431,14 +431,16 @@ namespace Resgrid.Tests.AiDispatch
 		}
 
 		[Test]
-		public async Task the_email_channels_still_refuse_pending_calls_and_need_the_ai_format()
+		public async Task the_email_channels_still_need_the_ai_format()
 		{
 			_access.Setup(a => a.CanUseAsync(DepartmentId, FeatureFlagKeys.AiDispatchTemplate)).ReturnsAsync(true);
 
 			(await Enrich(AiDispatchChannels.PostmarkEmail)).Should().Be("NotEntitled", "the department's email format is not AI");
 
+			// Pending email calls are the dispatcher desk's (held for a dispatcher), so only a closed one is refused here.
 			_departments.Setup(d => d.GetDepartmentEmailSettingsAsync(DepartmentId)).ReturnsAsync(new DepartmentCallEmail { DepartmentId = DepartmentId, FormatType = (int)CallEmailTypes.AI });
-			(await Enrich(AiDispatchChannels.PostmarkEmail)).Should().Be(AiDispatchOutcomes.CallNotActive, "email enrichment only touches active calls");
+			_call.State = (int)CallStates.Closed;
+			(await Enrich(AiDispatchChannels.PostmarkEmail)).Should().Be(AiDispatchOutcomes.CallNotActive, "email enrichment never touches closed calls");
 		}
 
 		[Test]

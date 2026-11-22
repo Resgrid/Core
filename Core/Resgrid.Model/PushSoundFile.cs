@@ -37,6 +37,13 @@ namespace Resgrid.Model
 			{ ((int)PushSoundTypes.ModernUnitNotice).ToString(),        "modernunitnotice" },
 			{ ((int)PushSoundTypes.ModernResourceOrder).ToString(),     "modernresourceorder" },
 			{ ((int)PushSoundTypes.ModernCallRenotify).ToString(),      "moderncallrenotify" },
+
+			// Dispatcher desk (M0324): only the Dispatch app ships these.
+			{ ((int)PushSoundTypes.ModernDeskOffer).ToString(),         "moderndeskoffer" },
+			{ ((int)PushSoundTypes.ModernDeskQueueAlert).ToString(),    "moderndeskqueuealert" },
+			{ ((int)PushSoundTypes.ModernDeskMessage).ToString(),       "moderndeskmessage" },
+			{ ((int)PushSoundTypes.ModernBreakReminder).ToString(),     "modernbreakreminder" },
+			{ ((int)PushSoundTypes.ModernBreakOver).ToString(),         "modernbreakover" },
 		};
 
 		/// <summary>

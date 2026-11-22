@@ -24,6 +24,59 @@ namespace Resgrid.Tests.Providers
 			NovuSubscriberIds.Parse("AB12_Unit_42").Should().Be(new NovuSubscriber("AB12_Unit_42", "AB12", NovuSubscriberKind.Unit, "42"));
 		}
 
+		[Test]
+		public void Parse_should_read_the_dispatch_desk_subscriber()
+		{
+			NovuSubscriberIds.Parse($"AB12_Dispatch_User_{UserId}")
+				.Should().Be(new NovuSubscriber($"AB12_Dispatch_User_{UserId}", "AB12", NovuSubscriberKind.DispatchUser, UserId));
+		}
+
+		[Test]
+		public void DispatchUser_should_build_the_id_Parse_reads_back()
+		{
+			var id = NovuSubscriberIds.DispatchUser("AB12", UserId);
+
+			id.Should().Be($"AB12_Dispatch_User_{UserId}");
+			NovuSubscriberIds.Parse(id).Should().Be(new NovuSubscriber(id, "AB12", NovuSubscriberKind.DispatchUser, UserId));
+		}
+
+		[Test]
+		public void Parse_should_never_read_a_responder_or_IC_subscriber_as_a_dispatch_one()
+		{
+			NovuSubscriberIds.Parse($"AB12_User_{UserId}").Kind.Should().Be(NovuSubscriberKind.User);
+			NovuSubscriberIds.Parse($"AB12_IC_User_{UserId}").Kind.Should().Be(NovuSubscriberKind.ICUser);
+			NovuSubscriberIds.Parse($"AB12_Dispatch_User_{UserId}").Id.Should().Be(UserId, "the marker is not part of the user id");
+		}
+
+		[TestCase("AB12_Dispatch_User_")]
+		[TestCase("AB12_Dispatch_User_   ")]
+		[TestCase("AB12_dispatch_User_abc")]
+		[TestCase("AB12_Dispatch_user_abc")]
+		[TestCase("AB12_DispatchUser_abc")]
+		[TestCase("_Dispatch_User_abc")]
+		public void Parse_should_ignore_malformed_dispatch_ids(string subscriberId)
+		{
+			NovuSubscriberIds.Parse(subscriberId).Should().BeNull();
+		}
+
+		[Test]
+		public void Dispatch_subscribers_of_deleted_departments_and_removed_members_are_found()
+		{
+			const string current = "11111111-1111-1111-1111-111111111111";
+			const string removed = "22222222-2222-2222-2222-222222222222";
+			var ids = new[] { $"LIVE_Dispatch_User_{current}", $"LIVE_Dispatch_User_{removed}", $"GONE_Dispatch_User_{current}" };
+
+			NovuSubscriberIds.FindOrphans(ids, new HashSet<string>(new[] { "LIVE" }, StringComparer.OrdinalIgnoreCase))
+				.Select(o => o.SubscriberId).Should().Equal($"GONE_Dispatch_User_{current}");
+
+			var members = new Dictionary<string, ISet<string>>(StringComparer.OrdinalIgnoreCase)
+			{
+				["LIVE"] = new HashSet<string>(new[] { current }, StringComparer.OrdinalIgnoreCase)
+			};
+			NovuSubscriberIds.FindRemovedMembers(ids, members).Select(r => r.SubscriberId).Should().Equal($"LIVE_Dispatch_User_{removed}");
+			NovuSubscriberIds.FindDeletedUnits(ids, new Dictionary<string, ISet<int>> { ["LIVE"] = new HashSet<int>() }).Should().BeEmpty("a desk subscriber is never a unit");
+		}
+
 		[TestCase(null)]
 		[TestCase("")]
 		[TestCase("someone@example.com")]

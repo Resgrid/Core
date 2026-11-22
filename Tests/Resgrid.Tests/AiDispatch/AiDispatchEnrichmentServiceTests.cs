@@ -50,6 +50,8 @@ namespace Resgrid.Tests.AiDispatch
 		private Mock<ILlmClient> _llm;
 		private Mock<IDecisionClient> _decider;
 		private Mock<IEventAggregator> _events;
+		private Mock<IDispatcherDeskConfigService> _deskConfig;
+		private DispatcherDeskConfig _desk;
 		private Call _call;
 		private Call _related;
 		private AiDispatchAuditRow _completed;
@@ -127,9 +129,12 @@ namespace Resgrid.Tests.AiDispatch
 				contactName = "Jane Q Public", contactNumber = "555-123-4567", incidentNumber = "F26-00417", possibleDuplicateOfCallId = (int?)null, summary = "Structure fire reported at 123 Main St." });
 			_decider = new Mock<IDecisionClient>(MockBehavior.Strict);
 			_events = new Mock<IEventAggregator>();
+			_desk = new DispatcherDeskConfig();
+			_deskConfig = new Mock<IDispatcherDeskConfigService>();
+			_deskConfig.Setup(d => d.GetConfigAsync(DepartmentId, It.IsAny<bool>())).ReturnsAsync(() => _desk);
 			_service = new AiDispatchEnrichmentService(_access.Object, Mock.Of<IFeatureToggleService>(), _departments.Object, _calls.Object, _geo.Object,
 				_protection.Object, _audits.Object, _settings.Object, _admission.Object, _usage.Object, new Lazy<ILlmClient>(() => _llm.Object),
-				new Lazy<IDecisionClient>(() => _decider.Object), _events.Object, new FixedClock());
+				new Lazy<IDecisionClient>(() => _decider.Object), _events.Object, new FixedClock(), _deskConfig.Object);
 		}
 
 		[TearDown]
@@ -338,6 +343,46 @@ namespace Resgrid.Tests.AiDispatch
 			_call.State = (int)CallStates.Closed;
 			(await Enrich()).Should().Be(AiDispatchOutcomes.CallNotActive);
 			VerifyCallUntouched();
+		}
+
+		[Test]
+		public async Task A_pending_call_held_for_a_dispatcher_is_enriched()
+		{
+			_call.State = (int)CallStates.Pending;
+
+			(await Enrich()).Should().Be(AiDispatchOutcomes.Applied);
+
+			_saved.Single().State.Should().Be((int)CallStates.Pending, "enrichment never dispatches");
+		}
+
+		[Test]
+		public async Task The_desk_enhanced_ai_email_mode_enriches_without_the_ai_format()
+		{
+			_departments.Setup(d => d.GetDepartmentEmailSettingsAsync(DepartmentId)).ReturnsAsync(new DepartmentCallEmail { FormatType = (int)CallEmailTypes.Generic });
+			_call.State = (int)CallStates.Pending;
+
+			(await Enrich()).Should().Be("NotEntitled", "AutoDispatch and Pending modes keep the format rule");
+
+			_desk.EmailCallMode = (int)DispatcherEmailCallModes.EnhancedAi;
+			(await Enrich()).Should().Be(AiDispatchOutcomes.Applied, "Postmark (1) dispatch email in EnhancedAi mode");
+			(await _service.EnrichAsync(new AiDispatchQueueItem { DepartmentId = DepartmentId, CallId = CallId, Channel = 2 }, CancellationToken.None))
+				.Should().Be("NotEntitled", "group dispatch addresses are not covered by the email call mode");
+		}
+
+		[Test]
+		public async Task The_desk_enhanced_ai_text_overflow_enriches_overflowed_text_calls()
+		{
+			_departments.Setup(d => d.GetDepartmentEmailSettingsAsync(DepartmentId)).ReturnsAsync(new DepartmentCallEmail { FormatType = (int)CallEmailTypes.Generic });
+			_call.State = (int)CallStates.Pending;
+			// The desk's routing service queues overflowed-text pending calls on channel 1 (SourceIdentifier "DQ:{itemId}").
+			var text = new AiDispatchQueueItem { DepartmentId = DepartmentId, CallId = CallId, Channel = 1 };
+
+			(await _service.EnrichAsync(text, CancellationToken.None)).Should().Be("NotEntitled", "no AI format and no desk AI mode");
+
+			_desk.TextOverflowMode = (int)DispatcherTextOverflowModes.EnhancedAi;
+			(await _service.EnrichAsync(text, CancellationToken.None)).Should().Be(AiDispatchOutcomes.Applied, "the desk's AI text overflow is department-wide");
+			(await _service.EnrichAsync(new AiDispatchQueueItem { DepartmentId = DepartmentId, CallId = CallId, Channel = 2 }, CancellationToken.None))
+				.Should().Be("NotEntitled", "group dispatch addresses stay format-only");
 		}
 
 		[Test]

@@ -37,6 +37,7 @@ namespace Resgrid.Services
 		// Lazy: the staffing service reads shifts through this service, so a direct dependency would be circular.
 		private readonly Lazy<IShiftStaffingService> _shiftStaffingService;
 		private readonly Lazy<IWorkShiftsService> _workShiftsService;
+		private readonly Lazy<IShiftDispatchersService> _shiftDispatchers;
 
 		public ShiftsService(IShiftsRepository shiftsRepository, IShiftPersonRepository shiftPersonRepository,
 			IShiftDaysRepository shiftDaysRepository, IShiftGroupsRepository shiftGroupsRepository,
@@ -45,9 +46,11 @@ namespace Resgrid.Services
 			IShiftStaffingRepository shiftStaffingRepository, IShiftStaffingPersonRepository shiftStaffingPersonRepository, IDepartmentsService departmentsService,
 			IDepartmentGroupsService departmentGroupsService, IShiftGroupAssignmentsRepository shiftGroupAssignmentsRepository, IShiftGroupRolesRepository shiftGroupRolesRepositor,
 			IEventAggregator eventAggregator, IDepartmentSettingsService departmentSettingsService, Lazy<ISearchProjectionService> searchProjections = null,
-			Lazy<IShiftStaffingService> shiftStaffingService = null, Lazy<IWorkShiftsService> workShiftsService = null)
+			Lazy<IShiftStaffingService> shiftStaffingService = null, Lazy<IWorkShiftsService> workShiftsService = null,
+			Lazy<IShiftDispatchersService> shiftDispatchers = null)
 		{
 			_searchProjections = searchProjections;
+			_shiftDispatchers = shiftDispatchers;
 			_shiftsRepository = shiftsRepository;
 			_shiftPersonRepository = shiftPersonRepository;
 			_shiftDaysRepository = shiftDaysRepository;
@@ -273,6 +276,11 @@ namespace Resgrid.Services
 				await ReleaseTradeReferencesToSignupAsync(signup.ShiftSignupId, cancellationToken);
 
 			var deleted = await _shiftsRepository.DeleteAsync(shift, cancellationToken);
+
+			// The dispatch roster and settings (M0324) sit beside the shift with no foreign key.
+			if (deleted && _shiftDispatchers != null)
+				await _shiftDispatchers.Value.DeleteForShiftAsync(shift.ShiftId, cancellationToken);
+
 			if (deleted && _searchProjections != null)
 				await _searchProjections.Value.RemoveAsync(shift.DepartmentId, SearchEntityTypes.Shift, shift.ShiftId.ToString(), cancellationToken);
 			return deleted;

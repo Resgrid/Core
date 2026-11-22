@@ -1,6 +1,7 @@
 ﻿@using Resgrid.Model
 @model Resgrid.Web.Areas.User.Models.Shifts.EditShiftView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Shifts.Shifts> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.DispatcherDesk.DispatcherDesk> desk
 @{
 	ViewBag.Title = "Resgrid | " + localizer["EditShiftDetailsHeader"];
 	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
@@ -113,6 +114,14 @@
 							}
 						}
 
+						<div class="hr-line-dashed"></div>
+						<div class="form-group">
+							<div class="col-sm-offset-2 col-sm-10">
+								<h3>@desk["DispatchersOnDutyHeader"]</h3>
+							</div>
+						</div>
+						<partial name="_ShiftDispatchSection" for="Dispatch" />
+
 						<div class="form-group">
 							<div class="col-sm-4 col-sm-offset-2">
 								<a class="btn btn-white" asp-controller="Shifts" asp-action="Index" asp-route-area="User">@localizer["CancelButton"]</a>
@@ -130,4 +139,5 @@
 @section Scripts
 {
 	<script src="~/js/app/internal/shifts/resgrid.shifts.editshiftdetails.js"></script>
+	<script src="~/js/app/internal/dispatcherdesk/resgrid.dispatcherdesk.breakplan.js" asp-append-version="true"></script>
 }

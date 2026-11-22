@@ -197,6 +197,14 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<RecurringCallsRepository>().As<IRecurringCallsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RecurringCallOccurrencesRepository>().As<IRecurringCallOccurrencesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RecurringCallAlertsRepository>().As<IRecurringCallAlertsRepository>().InstancePerLifetimeScope();
+			// Dispatcher desk (M0324)
+			builder.RegisterType<ShiftDispatchSettingsRepository>().As<IShiftDispatchSettingsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ShiftDispatchersRepository>().As<IShiftDispatchersRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DispatcherBreaksRepository>().As<IDispatcherBreaksRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DispatcherPresencesRepository>().As<IDispatcherPresencesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DispatcherQueueItemsRepository>().As<IDispatcherQueueItemsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DispatcherQueueEventsRepository>().As<IDispatcherQueueEventsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DispatcherConversationMessagesRepository>().As<IDispatcherConversationMessagesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<PoiTypesRepository>().As<IPoiTypesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<QueueItemsRepository>().As<IQueueItemsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<CallQuickTemplateRepository>().As<ICallQuickTemplateRepository>().InstancePerLifetimeScope();

@@ -114,6 +114,11 @@
 					</div>
 				</div>
 			}
+
+			@if (Model.Dispatch != null)
+			{
+				<partial name="_OnDutyDispatchers" model="Model.Dispatch" />
+			}
 		</div>
 	</div>
 </div>

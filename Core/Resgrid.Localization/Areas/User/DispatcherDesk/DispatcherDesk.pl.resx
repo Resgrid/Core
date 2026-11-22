@@ -1,0 +1,967 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AcceptedColumn" xml:space="preserve">
+    <value>Przyjęte</value>
+  </data>
+  <data name="AcknowledgeTextsHelp" xml:space="preserve">
+    <value>Nadawca otrzymuje automatyczną odpowiedź, gdy jego SMS trafi do dyspozytora.</value>
+  </data>
+  <data name="AcknowledgeTextsLabel" xml:space="preserve">
+    <value>Automatycznie potwierdzaj SMS-y</value>
+  </data>
+  <data name="ActionDone" xml:space="preserve">
+    <value>Gotowe.</value>
+  </data>
+  <data name="ActionFailed" xml:space="preserve">
+    <value>Nie udało się. Spróbuj ponownie.</value>
+  </data>
+  <data name="ActivityRangeHelpFormat" xml:space="preserve">
+    <value>Do {0} dni.</value>
+  </data>
+  <data name="ActivityTitle" xml:space="preserve">
+    <value>Aktywność dyspozytorów</value>
+  </data>
+  <data name="AddBreakRow" xml:space="preserve">
+    <value>Dodaj przerwę</value>
+  </data>
+  <data name="AddBreakTitle" xml:space="preserve">
+    <value>Zaplanuj przerwę</value>
+  </data>
+  <data name="AddDispatcherButton" xml:space="preserve">
+    <value>Dodaj dyspozytora</value>
+  </data>
+  <data name="AddDispatcherHeader" xml:space="preserve">
+    <value>Dodaj dyspozytora do tego dnia</value>
+  </data>
+  <data name="AgeColumn" xml:space="preserve">
+    <value>Czeka</value>
+  </data>
+  <data name="AllShiftDays" xml:space="preserve">
+    <value>Wszystkie dni zmian</value>
+  </data>
+  <data name="AllowSelfScheduledBreaksHelp" xml:space="preserve">
+    <value>Dyspozytorzy tej zmiany mogą sami planować i przesuwać swoje przerwy. W przeciwnym razie mogą to robić tylko nadzorujący stanowisko i kierownicy zmian.</value>
+  </data>
+  <data name="AllowSelfScheduledBreaksLabel" xml:space="preserve">
+    <value>Dyspozytorzy sami planują przerwy</value>
+  </data>
+  <data name="AllowUnscheduledDutyHelp" xml:space="preserve">
+    <value>Dyspozytorzy mogą zalogować się na stanowisko bez przypisanej zmiany (wydarzenia, obiekty, zastępstwa).</value>
+  </data>
+  <data name="AllowUnscheduledDutyLabel" xml:space="preserve">
+    <value>Zezwalaj na dyżur bez zmiany</value>
+  </data>
+  <data name="AutoReturnHelp" xml:space="preserve">
+    <value>Przywraca dyspozytora jako dostępnego tyle minut po upływie długości jego przerwy. 0 = nigdy (pozostaje na przerwie, dopóki nie wróci lub nadzorujący jej nie zakończy).</value>
+  </data>
+  <data name="AutoReturnLabel" xml:space="preserve">
+    <value>Automatyczny powrót po (minuty)</value>
+  </data>
+  <data name="AvailableStat" xml:space="preserve">
+    <value>Dostępni</value>
+  </data>
+  <data name="AvgAcceptColumn" xml:space="preserve">
+    <value>Śr. do przyjęcia</value>
+  </data>
+  <data name="AvgCompleteColumn" xml:space="preserve">
+    <value>Śr. do zakończenia</value>
+  </data>
+  <data name="AwayReasonLabel" xml:space="preserve">
+    <value>Powód (opcjonalnie)</value>
+  </data>
+  <data name="BackInFormat" xml:space="preserve">
+    <value>Wraca za {0}</value>
+  </data>
+  <data name="BelowMinimumFormat" xml:space="preserve">
+    <value>Tylko {0} dostępnych (minimum {1})</value>
+  </data>
+  <data name="BoardLoadFailed" xml:space="preserve">
+    <value>Nie udało się wczytać tablicy stanowiska. Za chwilę nastąpi ponowna próba.</value>
+  </data>
+  <data name="BoardUpdatedFormat" xml:space="preserve">
+    <value>Zaktualizowano {0}</value>
+  </data>
+  <data name="BreakColumn" xml:space="preserve">
+    <value>Przerwa</value>
+  </data>
+  <data name="BreakLengthColumn" xml:space="preserve">
+    <value>Długość (minuty)</value>
+  </data>
+  <data name="BreakMinutesColumn" xml:space="preserve">
+    <value>Minuty przerw</value>
+  </data>
+  <data name="BreakPlanEmpty" xml:space="preserve">
+    <value>Brak zaplanowanych przerw.</value>
+  </data>
+  <data name="BreakPlanHelp" xml:space="preserve">
+    <value>Cel = minuty od początku zmiany; zostaw puste, aby rozłożyć przerwę równomiernie. „Zaplanuj przerwy” rozkłada je między dyspozytorów danego dnia tak, by w miarę możliwości się nie nakładały, i nigdy nie zostawia na stanowisku mniej niż minimum.</value>
+  </data>
+  <data name="BreakPlanLabel" xml:space="preserve">
+    <value>Plan przerw</value>
+  </data>
+  <data name="BreakPlannerButton" xml:space="preserve">
+    <value>Planer przerw</value>
+  </data>
+  <data name="BreakReminderHelp" xml:space="preserve">
+    <value>Ile minut przed zaplanowaną przerwą dyspozytor dostaje przypomnienie. 0 = dopiero w chwili przerwy.</value>
+  </data>
+  <data name="BreakReminderLabel" xml:space="preserve">
+    <value>Przypomnienie o przerwie (minuty przed)</value>
+  </data>
+  <data name="BreakState.Active" xml:space="preserve">
+    <value>Teraz na przerwie</value>
+  </data>
+  <data name="BreakState.Completed" xml:space="preserve">
+    <value>Wykorzystana</value>
+  </data>
+  <data name="BreakState.Missed" xml:space="preserve">
+    <value>Pominięta</value>
+  </data>
+  <data name="BreakState.Scheduled" xml:space="preserve">
+    <value>Zaplanowana</value>
+  </data>
+  <data name="BreakTargetColumn" xml:space="preserve">
+    <value>Cel (minuty od początku)</value>
+  </data>
+  <data name="BreakTargetPlaceholder" xml:space="preserve">
+    <value>Rozłóż równomiernie</value>
+  </data>
+  <data name="BreakTooltipFormat" xml:space="preserve">
+    <value>{0} · {1} · {2}</value>
+  </data>
+  <data name="BreakType.Break" xml:space="preserve">
+    <value>Przerwa</value>
+  </data>
+  <data name="BreakType.Meal" xml:space="preserve">
+    <value>Posiłek</value>
+  </data>
+  <data name="BreakType.Other" xml:space="preserve">
+    <value>Inna</value>
+  </data>
+  <data name="BreakType.Personal" xml:space="preserve">
+    <value>Osobista</value>
+  </data>
+  <data name="BreakTypeColumn" xml:space="preserve">
+    <value>Rodzaj</value>
+  </data>
+  <data name="BreaksColumn" xml:space="preserve">
+    <value>Przerwy</value>
+  </data>
+  <data name="BreaksMissedColumn" xml:space="preserve">
+    <value>Pominięte przerwy</value>
+  </data>
+  <data name="BreaksPlannedFormat" xml:space="preserve">
+    <value>Zaplanowano przerwy: {0}.</value>
+  </data>
+  <data name="BreaksTitle" xml:space="preserve">
+    <value>Przerwy dyspozytorów</value>
+  </data>
+  <data name="ByDispatcherHeader" xml:space="preserve">
+    <value>Według dyspozytora</value>
+  </data>
+  <data name="ByKindHeader" xml:space="preserve">
+    <value>Praca według rodzaju</value>
+  </data>
+  <data name="CancelBreakButton" xml:space="preserve">
+    <value>Usuń przerwę</value>
+  </data>
+  <data name="CancelBreakConfirm" xml:space="preserve">
+    <value>Usunąć tę zaplanowaną przerwę?</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Anuluj</value>
+  </data>
+  <data name="CapacityHelp" xml:space="preserve">
+    <value>Liczba przekazanych zadań, które dyspozytor może prowadzić jednocześnie, zanim zostanie uznany za zajętego.</value>
+  </data>
+  <data name="CapacityLabel" xml:space="preserve">
+    <value>Zadania na dyspozytora</value>
+  </data>
+  <data name="CloseButton" xml:space="preserve">
+    <value>Zamknij</value>
+  </data>
+  <data name="CompletedColumn" xml:space="preserve">
+    <value>Zakończone</value>
+  </data>
+  <data name="ConversationJoinHelp" xml:space="preserve">
+    <value>Kolejny SMS lub wiadomość na czacie od tego samego nadawcy w tym czasie dołącza do tej samej rozmowy.</value>
+  </data>
+  <data name="ConversationJoinLabel" xml:space="preserve">
+    <value>Okno rozmowy (minuty)</value>
+  </data>
+  <data name="CountColumn" xml:space="preserve">
+    <value>Zadania</value>
+  </data>
+  <data name="CoverageLane" xml:space="preserve">
+    <value>Obsada</value>
+  </data>
+  <data name="CoverageSlotFormat" xml:space="preserve">
+    <value>{0}: dostępni {1}, na przerwie {2}, na dyżurze {3}</value>
+  </data>
+  <data name="CoverageTimelineHeader" xml:space="preserve">
+    <value>Oś czasu obsady</value>
+  </data>
+  <data name="DateLabel" xml:space="preserve">
+    <value>Data</value>
+  </data>
+  <data name="DeclinedColumn" xml:space="preserve">
+    <value>Odrzucone</value>
+  </data>
+  <data name="DefaultBreakPlanHelp" xml:space="preserve">
+    <value>Przerwy, które otrzymuje każdy dyspozytor na zmianie bez własnego planu przerw.</value>
+  </data>
+  <data name="DefaultBreakPlanLabel" xml:space="preserve">
+    <value>Domyślny plan przerw</value>
+  </data>
+  <data name="DeskBoardButton" xml:space="preserve">
+    <value>Tablica stanowiska</value>
+  </data>
+  <data name="DeskBoardTitle" xml:space="preserve">
+    <value>Stanowisko dyspozytorskie</value>
+  </data>
+  <data name="DeskRoutingOffNotice" xml:space="preserve">
+    <value>Przekazywanie pracy dyspozytorom jest wyłączone. Grafiki i przerwy nadal działają; administrator jednostki może je włączyć w ustawieniach stanowiska dyspozytorskiego.</value>
+  </data>
+  <data name="DeskSupervisorBadge" xml:space="preserve">
+    <value>Nadzorujący</value>
+  </data>
+  <data name="DeskSupervisorColumn" xml:space="preserve">
+    <value>Nadzorujący stanowisko</value>
+  </data>
+  <data name="DispatchOnlyBadge" xml:space="preserve">
+    <value>Tylko dyspozytornia</value>
+  </data>
+  <data name="DispatchPositionsFilled" xml:space="preserve">
+    <value>Stanowiska dyspozytorskie obsadzone</value>
+  </data>
+  <data name="DispatchedColumn" xml:space="preserve">
+    <value>Zadysponowane</value>
+  </data>
+  <data name="DispatcherAddedToDay" xml:space="preserve">
+    <value>Dyspozytor został dodany do dnia.</value>
+  </data>
+  <data name="DispatcherColumn" xml:space="preserve">
+    <value>Dyspozytor</value>
+  </data>
+  <data name="DispatcherDeskMenu" xml:space="preserve">
+    <value>Stanowisko dyspozytorskie</value>
+  </data>
+  <data name="DispatcherRemovedFromDay" xml:space="preserve">
+    <value>Dyspozytor został usunięty z dnia.</value>
+  </data>
+  <data name="DispatcherSignedUp" xml:space="preserve">
+    <value>Jesteś zapisany jako dyspozytor na ten dzień.</value>
+  </data>
+  <data name="DispatcherSignupApproved" xml:space="preserve">
+    <value>Zapis dyspozytora został zatwierdzony.</value>
+  </data>
+  <data name="DispatcherSignupDenied" xml:space="preserve">
+    <value>Zapis dyspozytora został odrzucony.</value>
+  </data>
+  <data name="DispatcherSignupNeedsApproval" xml:space="preserve">
+    <value>Na tej zmianie zapisy dyspozytorów zatwierdza kierownik zmian.</value>
+  </data>
+  <data name="DispatcherSignupPending" xml:space="preserve">
+    <value>Twój zapis jako dyspozytora czeka na zatwierdzenie.</value>
+  </data>
+  <data name="DispatcherWithdrawn" xml:space="preserve">
+    <value>Nie jesteś już dyspozytorem w tym dniu.</value>
+  </data>
+  <data name="DispatchersHeader" xml:space="preserve">
+    <value>Dyspozytorzy</value>
+  </data>
+  <data name="DispatchersOnDutyHeader" xml:space="preserve">
+    <value>Dyspozytorzy na dyżurze</value>
+  </data>
+  <data name="DispatchersTabIntro" xml:space="preserve">
+    <value>Dyspozytorzy pracują na stanowisku dyspozytorskim w aplikacji Dispatch. Wybierz, czy ta zmiana ma dyspozytorów, ilu potrzebuje i jak planowane są ich przerwy.</value>
+  </data>
+  <data name="DueBackNow" xml:space="preserve">
+    <value>Powinien już wrócić</value>
+  </data>
+  <data name="DutyColumn" xml:space="preserve">
+    <value>Na dyżurze</value>
+  </data>
+  <data name="EditBreakTitle" xml:space="preserve">
+    <value>Zmień przerwę</value>
+  </data>
+  <data name="EmailCallMode.AutoDispatch" xml:space="preserve">
+    <value>Dysponuj od razu</value>
+  </data>
+  <data name="EmailCallMode.AutoDispatchHelp" xml:space="preserve">
+    <value>Zgłoszenie z e-maila jest wysyłane natychmiast (jak dotąd).</value>
+  </data>
+  <data name="EmailCallMode.EnhancedAi" xml:space="preserve">
+    <value>Enhanced AI do oczekujących</value>
+  </data>
+  <data name="EmailCallMode.EnhancedAiHelp" xml:space="preserve">
+    <value>Enhanced AI zamienia e-mail w oczekujące zgłoszenie (typ, priorytet, adres), które dyspozytor sprawdza i wysyła. Wymaga Enhanced AI.</value>
+  </data>
+  <data name="EmailCallMode.Pending" xml:space="preserve">
+    <value>Zapisz jako oczekujące</value>
+  </data>
+  <data name="EmailCallMode.PendingHelp" xml:space="preserve">
+    <value>Zgłoszenie z e-maila jest zapisywane jako oczekujące, aby dyspozytor je sprawdził i wysłał.</value>
+  </data>
+  <data name="EmailCallModeIntro" xml:space="preserve">
+    <value>Czym staje się zgłoszenie wysłane e-mailem na adres dysponowania jednostki.</value>
+  </data>
+  <data name="EmailCallModeLabel" xml:space="preserve">
+    <value>Zgłoszenia e-mailem</value>
+  </data>
+  <data name="EnabledHelp" xml:space="preserve">
+    <value>Proponuj zgłoszenia oczekujące i zaplanowane, SMS-y, połączenia telefoniczne, e-maile i czaty dyspozytorom na dyżurze w aplikacji Dispatch.</value>
+  </data>
+  <data name="EnabledLabel" xml:space="preserve">
+    <value>Przekazuj pracę dyspozytorom na dyżurze</value>
+  </data>
+  <data name="EndBreakButton" xml:space="preserve">
+    <value>Zakończ przerwę</value>
+  </data>
+  <data name="EndBreakConfirm" xml:space="preserve">
+    <value>Zakończyć przerwę osoby {0} i oznaczyć ją jako dostępną?</value>
+  </data>
+  <data name="EndsFormat" xml:space="preserve">
+    <value>do {0}</value>
+  </data>
+  <data name="EnhancedAiUnavailable" xml:space="preserve">
+    <value>Enhanced AI nie jest dostępne dla tej jednostki.</value>
+  </data>
+  <data name="Error.AlreadyOnBreak" xml:space="preserve">
+    <value>Ten dyspozytor jest już na przerwie.</value>
+  </data>
+  <data name="Error.AlreadyOnRoster" xml:space="preserve">
+    <value>Ta osoba jest już w grafiku dyspozytorskim na ten dzień.</value>
+  </data>
+  <data name="Error.AtCapacity" xml:space="preserve">
+    <value>Ten dyspozytor prowadzi już tyle pracy, ile może.</value>
+  </data>
+  <data name="Error.BreakNotFound" xml:space="preserve">
+    <value>Nie znaleziono przerwy.</value>
+  </data>
+  <data name="Error.BreakNotStartable" xml:space="preserve">
+    <value>Ta przerwa już się rozpoczęła lub zakończyła i nie można jej zmienić.</value>
+  </data>
+  <data name="Error.BreakOverlaps" xml:space="preserve">
+    <value>Ta przerwa nakłada się na inną przerwę tego samego dyspozytora.</value>
+  </data>
+  <data name="Error.ChannelUnavailable" xml:space="preserve">
+    <value>Ten kanał nie jest dostępny dla tej jednostki.</value>
+  </data>
+  <data name="Error.CoverageTooLow" xml:space="preserve">
+    <value>Dostępnych dyspozytorów byłoby mniej niż minimum.</value>
+  </data>
+  <data name="Error.DeskDisabled" xml:space="preserve">
+    <value>Stanowisko dyspozytorskie jest wyłączone dla tej jednostki.</value>
+  </data>
+  <data name="Error.DispatchersNotEnabled" xml:space="preserve">
+    <value>Ta zmiana nie ma dyspozytorów.</value>
+  </data>
+  <data name="Error.HoldingWork" xml:space="preserve">
+    <value>Dyspozytor prowadzi pracę; najpierw zwróć ją do kolejki.</value>
+  </data>
+  <data name="Error.InvalidInput" xml:space="preserve">
+    <value>Niektóre wprowadzone wartości są nieprawidłowe.</value>
+  </data>
+  <data name="Error.ItemNotAvailable" xml:space="preserve">
+    <value>To zadanie nie jest już dostępne.</value>
+  </data>
+  <data name="Error.ItemNotFound" xml:space="preserve">
+    <value>Nie znaleziono zadania. Być może zostało już obsłużone.</value>
+  </data>
+  <data name="Error.NoCallbackNumber" xml:space="preserve">
+    <value>Ten dyspozytor nie ma ustawionego numeru do oddzwonienia.</value>
+  </data>
+  <data name="Error.None" xml:space="preserve">
+    <value>Nie wystąpił żaden błąd.</value>
+  </data>
+  <data name="Error.NotADispatcher" xml:space="preserve">
+    <value>Ta osoba nie może pracować na stanowisku dyspozytorskim: potrzebuje uprawnienia do logowania w aplikacji Dispatch.</value>
+  </data>
+  <data name="Error.NotAssignedToYou" xml:space="preserve">
+    <value>To zadanie nie jest przypisane do Ciebie.</value>
+  </data>
+  <data name="Error.NotOnBreak" xml:space="preserve">
+    <value>Ten dyspozytor nie jest na przerwie.</value>
+  </data>
+  <data name="Error.NotOnDuty" xml:space="preserve">
+    <value>Ten dyspozytor nie jest teraz na dyżurze.</value>
+  </data>
+  <data name="Error.NotPermitted" xml:space="preserve">
+    <value>Nie masz uprawnień, aby to zrobić.</value>
+  </data>
+  <data name="Error.NotSignedIn" xml:space="preserve">
+    <value>Ten dyspozytor nie jest zalogowany na stanowisku.</value>
+  </data>
+  <data name="Error.ShiftNotFound" xml:space="preserve">
+    <value>Nie znaleziono zmiany.</value>
+  </data>
+  <data name="EscalatedBadge" xml:space="preserve">
+    <value>Eskalowane</value>
+  </data>
+  <data name="FilterDispatchersPlaceholder" xml:space="preserve">
+    <value>Filtruj dyspozytorów...</value>
+  </data>
+  <data name="FromLabel" xml:space="preserve">
+    <value>Od</value>
+  </data>
+  <data name="HeartbeatTimeoutHelp" xml:space="preserve">
+    <value>Minuty bez sygnału z aplikacji Dispatch, po których dyspozytor przestaje dostawać pracę. 0 = nigdy (uśpiony telefon nadal dostaje powiadomienia; pominięte oferty oznaczają go jako nieobecnego).</value>
+  </data>
+  <data name="HeartbeatTimeoutLabel" xml:space="preserve">
+    <value>Limit braku sygnału (minuty)</value>
+  </data>
+  <data name="HeldItemsFormat" xml:space="preserve">
+    <value>W obsłudze: {0}</value>
+  </data>
+  <data name="ItemColumn" xml:space="preserve">
+    <value>Zadanie</value>
+  </data>
+  <data name="Kind.Chat" xml:space="preserve">
+    <value>Czat</value>
+  </data>
+  <data name="Kind.Email" xml:space="preserve">
+    <value>E-mail</value>
+  </data>
+  <data name="Kind.Other" xml:space="preserve">
+    <value>Inne</value>
+  </data>
+  <data name="Kind.PendingCall" xml:space="preserve">
+    <value>Zgłoszenie oczekujące</value>
+  </data>
+  <data name="Kind.ScheduledCall" xml:space="preserve">
+    <value>Zgłoszenie zaplanowane</value>
+  </data>
+  <data name="Kind.Text" xml:space="preserve">
+    <value>SMS</value>
+  </data>
+  <data name="Kind.Voice" xml:space="preserve">
+    <value>Połączenie telefoniczne</value>
+  </data>
+  <data name="KindColumn" xml:space="preserve">
+    <value>Rodzaj</value>
+  </data>
+  <data name="LegendBelowMinimum" xml:space="preserve">
+    <value>Poniżej minimum</value>
+  </data>
+  <data name="LegendCovered" xml:space="preserve">
+    <value>Obsadzone</value>
+  </data>
+  <data name="LegendDuty" xml:space="preserve">
+    <value>Na dyżurze</value>
+  </data>
+  <data name="LegendMissed" xml:space="preserve">
+    <value>Pominięta</value>
+  </data>
+  <data name="LegendNobodyOnDuty" xml:space="preserve">
+    <value>Nikt na dyżurze</value>
+  </data>
+  <data name="LegendOnBreak" xml:space="preserve">
+    <value>Teraz na przerwie</value>
+  </data>
+  <data name="LegendOverlap" xml:space="preserve">
+    <value>Przerwy się nakładają</value>
+  </data>
+  <data name="LegendPlanned" xml:space="preserve">
+    <value>Zaplanowana przerwa</value>
+  </data>
+  <data name="LegendTaken" xml:space="preserve">
+    <value>Wykorzystana przerwa</value>
+  </data>
+  <data name="MinimumAvailableHelp" xml:space="preserve">
+    <value>Dyspozytorzy, którzy muszą pozostać dostępni; zaplanowanie lub rozpoczęcie przerwy poniżej tej liczby wywołuje ostrzeżenie. 0 = bez minimum.</value>
+  </data>
+  <data name="MinimumAvailableLabel" xml:space="preserve">
+    <value>Minimum dostępnych</value>
+  </data>
+  <data name="MinimumOnDeskHelpFormat" xml:space="preserve">
+    <value>Dyspozytorzy, którzy muszą pozostać dostępni podczas tej zmiany. 0 = minimum jednostki ({0}).</value>
+  </data>
+  <data name="MinimumOnDeskLabel" xml:space="preserve">
+    <value>Minimum na stanowisku</value>
+  </data>
+  <data name="MinutesShortFormat" xml:space="preserve">
+    <value>{0} min</value>
+  </data>
+  <data name="MissedColumn" xml:space="preserve">
+    <value>Pominięte oferty</value>
+  </data>
+  <data name="MissedOffersHelp" xml:space="preserve">
+    <value>Kolejne oferty, które dyspozytor pozwala wygasnąć, zanim stanowisko oznaczy go jako nieobecnego. 0 = nigdy.</value>
+  </data>
+  <data name="MissedOffersLabel" xml:space="preserve">
+    <value>Pominięte oferty przed nieobecnością</value>
+  </data>
+  <data name="NextBreakFormat" xml:space="preserve">
+    <value>{0} na {1} min</value>
+  </data>
+  <data name="NextBreakLabel" xml:space="preserve">
+    <value>Następna przerwa:</value>
+  </data>
+  <data name="NoActivity" xml:space="preserve">
+    <value>Brak aktywności stanowiska w tym okresie.</value>
+  </data>
+  <data name="NoDispatchersInWindow" xml:space="preserve">
+    <value>W tym okresie żaden dyspozytor nie ma dyżuru ani przerw.</value>
+  </data>
+  <data name="NoDispatchersOnDay" xml:space="preserve">
+    <value>W tym dniu nie ma jeszcze dyspozytorów.</value>
+  </data>
+  <data name="NoDispatchersOnDesk" xml:space="preserve">
+    <value>Brak dyspozytorów na dyżurze lub zalogowanych.</value>
+  </data>
+  <data name="NoEligibleDispatchers" xml:space="preserve">
+    <value>Nikt w jednostce nie ma jeszcze uprawnienia do logowania w aplikacji Dispatch.</value>
+  </data>
+  <data name="NoTransferTargets" xml:space="preserve">
+    <value>Obecnie żaden inny dyspozytor na dyżurze nie może tego przejąć.</value>
+  </data>
+  <data name="NoWarnings" xml:space="preserve">
+    <value>Brak ostrzeżeń.</value>
+  </data>
+  <data name="NotEligibleBadge" xml:space="preserve">
+    <value>Brak dostępu do Dispatch</value>
+  </data>
+  <data name="NotEligibleHelp" xml:space="preserve">
+    <value>Nie ma już uprawnienia do logowania w aplikacji Dispatch; zostanie usunięty z grafiku przy zapisie.</value>
+  </data>
+  <data name="NotSignedInBadge" xml:space="preserve">
+    <value>Niezalogowany</value>
+  </data>
+  <data name="NoteLabel" xml:space="preserve">
+    <value>Notatka</value>
+  </data>
+  <data name="NotifyOverdueLabel" xml:space="preserve">
+    <value>Powiadamiaj nadzorujących, gdy dyspozytor spóźnia się z powrotem z przerwy</value>
+  </data>
+  <data name="OffDutyBadge" xml:space="preserve">
+    <value>Poza dyżurem</value>
+  </data>
+  <data name="OfferTimeoutHelp" xml:space="preserve">
+    <value>Ile sekund oferta czeka na przyjęcie przez dyspozytora, zanim trafi do następnego.</value>
+  </data>
+  <data name="OfferTimeoutLabel" xml:space="preserve">
+    <value>Czas na ofertę (sekundy)</value>
+  </data>
+  <data name="OfferedColumn" xml:space="preserve">
+    <value>Zaproponowane</value>
+  </data>
+  <data name="OfferedItemsFormat" xml:space="preserve">
+    <value>Zaproponowane: {0}</value>
+  </data>
+  <data name="OnBreakStat" xml:space="preserve">
+    <value>Na przerwie</value>
+  </data>
+  <data name="OnDutyStat" xml:space="preserve">
+    <value>Na dyżurze</value>
+  </data>
+  <data name="OnRosterColumn" xml:space="preserve">
+    <value>W grafiku</value>
+  </data>
+  <data name="OpenDispatchPositionsFormat" xml:space="preserve">
+    <value>Wolne stanowiska dyspozytorskie: {0}</value>
+  </data>
+  <data name="OverdueBadge" xml:space="preserve">
+    <value>Spóźniony</value>
+  </data>
+  <data name="OverdueColumn" xml:space="preserve">
+    <value>Spóźnione powroty</value>
+  </data>
+  <data name="OverdueFormat" xml:space="preserve">
+    <value>Spóźnienie {0} min</value>
+  </data>
+  <data name="OverdueMinutesFormat" xml:space="preserve">
+    <value>Łącznie {0} minut spóźnienia</value>
+  </data>
+  <data name="OverflowIntro" xml:space="preserve">
+    <value>Co dzieje się z bieżącym SMS-em lub połączeniem, gdy wszyscy dyspozytorzy są zajęci lub na przerwie.</value>
+  </data>
+  <data name="PendingApprovalBadge" xml:space="preserve">
+    <value>Czeka na zatwierdzenie</value>
+  </data>
+  <data name="PlanBreaksButton" xml:space="preserve">
+    <value>Zaplanuj przerwy</value>
+  </data>
+  <data name="PlanBreaksConfirm" xml:space="preserve">
+    <value>Zastosować plan przerw zmiany dla wszystkich dyspozytorów tego dnia?</value>
+  </data>
+  <data name="PlanBreaksReplaceConfirm" xml:space="preserve">
+    <value>Usunąć zaplanowane przerwy tego dnia i ponownie zastosować plan zmiany?</value>
+  </data>
+  <data name="PlannedStartHelp" xml:space="preserve">
+    <value>W strefie czasowej jednostki. Przerwa to długość: rozpoczęta wcześniej, kończy się wcześniej.</value>
+  </data>
+  <data name="PlannedStartLabel" xml:space="preserve">
+    <value>Planowany początek</value>
+  </data>
+  <data name="PlannerLoadFailed" xml:space="preserve">
+    <value>Nie udało się wczytać planera przerw.</value>
+  </data>
+  <data name="PreventBelowMinimumHelp" xml:space="preserve">
+    <value>Odrzucaj, zamiast ostrzegać, przerwę, która spadłaby poniżej minimum, chyba że rozpoczyna ją nadzorujący.</value>
+  </data>
+  <data name="PreventBelowMinimumLabel" xml:space="preserve">
+    <value>Blokuj przerwy poniżej minimum</value>
+  </data>
+  <data name="QueueEmpty" xml:space="preserve">
+    <value>Nic nie czeka.</value>
+  </data>
+  <data name="QueueEscalationHelp" xml:space="preserve">
+    <value>Ile minut zadanie może czekać bez przypisania, zanim zostaną powiadomieni wszyscy dyspozytorzy i nadzorujący na dyżurze. 0 = nigdy.</value>
+  </data>
+  <data name="QueueEscalationLabel" xml:space="preserve">
+    <value>Eskaluj oczekującą pracę po (minuty)</value>
+  </data>
+  <data name="QueueHeader" xml:space="preserve">
+    <value>Otwarta kolejka</value>
+  </data>
+  <data name="QueueState.Accepted" xml:space="preserve">
+    <value>W obsłudze</value>
+  </data>
+  <data name="QueueState.Offered" xml:space="preserve">
+    <value>Zaproponowane</value>
+  </data>
+  <data name="QueueState.Queued" xml:space="preserve">
+    <value>Czeka</value>
+  </data>
+  <data name="ReleaseButton" xml:space="preserve">
+    <value>Zwróć do kolejki</value>
+  </data>
+  <data name="ReleaseConfirm" xml:space="preserve">
+    <value>Zwrócić to zadanie do kolejki?</value>
+  </data>
+  <data name="RemoveBreakRow" xml:space="preserve">
+    <value>Usuń tę przerwę</value>
+  </data>
+  <data name="RemoveDispatcherConfirm" xml:space="preserve">
+    <value>Usunąć tego dyspozytora z dnia?</value>
+  </data>
+  <data name="RemoveFromDayButton" xml:space="preserve">
+    <value>Usuń z dnia</value>
+  </data>
+  <data name="ReplacePlannedLabel" xml:space="preserve">
+    <value>Zastąp zaplanowane przerwy</value>
+  </data>
+  <data name="RequireShiftHelp" xml:space="preserve">
+    <value>Na dyżurze są tylko dyspozytorzy z grafiku dyspozytorskiego trwającego dnia zmiany.</value>
+  </data>
+  <data name="RequireShiftLabel" xml:space="preserve">
+    <value>Dyspozytorzy muszą być na zmianie</value>
+  </data>
+  <data name="RequiredDispatchersHelp" xml:space="preserve">
+    <value>Stanowiska dyspozytorskie do obsadzenia każdego dnia (miejsca do zapisu i docelowa obsada). 0 = bez celu.</value>
+  </data>
+  <data name="RequiredDispatchersLabel" xml:space="preserve">
+    <value>Potrzebni dyspozytorzy</value>
+  </data>
+  <data name="RouteChatLabel" xml:space="preserve">
+    <value>Czaty (WhatsApp, Slack, Teams, Telegram, Discord, Google Chat)</value>
+  </data>
+  <data name="RouteEmailLabel" xml:space="preserve">
+    <value>E-maile (zgłoszenia zapisane jako oczekujące)</value>
+  </data>
+  <data name="RoutePendingCallsLabel" xml:space="preserve">
+    <value>Zgłoszenia oczekujące</value>
+  </data>
+  <data name="RouteScheduledCallsLabel" xml:space="preserve">
+    <value>Zgłoszenia zaplanowane (do sprawdzenia przed wysłaniem)</value>
+  </data>
+  <data name="RouteTextLabel" xml:space="preserve">
+    <value>Wiadomości SMS</value>
+  </data>
+  <data name="RouteToDeskHelp" xml:space="preserve">
+    <value>Rodzaje pracy proponowane dyspozytorom. To, czego stanowisko nie przyjmuje, jest obsługiwane jak dotąd. Niezaznaczony e-mail lub czat nadal trafia na stanowisko jako zgłoszenie oczekujące, dopóki zaznaczone są zgłoszenia oczekujące.</value>
+  </data>
+  <data name="RouteToDeskLabel" xml:space="preserve">
+    <value>Wysyłaj na stanowisko</value>
+  </data>
+  <data name="RouteVoiceLabel" xml:space="preserve">
+    <value>Połączenia telefoniczne</value>
+  </data>
+  <data name="SaveBreakButton" xml:space="preserve">
+    <value>Zapisz przerwę</value>
+  </data>
+  <data name="SaveSettingsButton" xml:space="preserve">
+    <value>Zapisz ustawienia</value>
+  </data>
+  <data name="ScheduledCallLeadHelp" xml:space="preserve">
+    <value>Ile minut przed wysłaniem zgłoszenie zaplanowane trafia na stanowisko do sprawdzenia (i tak wyśle się samo).</value>
+  </data>
+  <data name="ScheduledCallLeadLabel" xml:space="preserve">
+    <value>Sprawdzanie zgłoszeń zaplanowanych (minuty przed)</value>
+  </data>
+  <data name="SelectDispatcherToAdd" xml:space="preserve">
+    <value>Wybierz dyspozytora do dodania.</value>
+  </data>
+  <data name="SetAvailableButton" xml:space="preserve">
+    <value>Oznacz jako dostępnego</value>
+  </data>
+  <data name="SetAwayButton" xml:space="preserve">
+    <value>Oznacz jako nieobecnego</value>
+  </data>
+  <data name="SettingsBreaksSection" xml:space="preserve">
+    <value>Przerwy i obsada</value>
+  </data>
+  <data name="SettingsDeskSection" xml:space="preserve">
+    <value>Stanowisko</value>
+  </data>
+  <data name="SettingsEmailSection" xml:space="preserve">
+    <value>Zgłoszenia e-mailem</value>
+  </data>
+  <data name="SettingsIntro" xml:space="preserve">
+    <value>Jak praca jest przekazywana dyspozytorom na dyżurze w aplikacji Dispatch, co się dzieje, gdy nikt nie jest wolny, i jak obsługiwane są przerwy.</value>
+  </data>
+  <data name="SettingsOverflowSection" xml:space="preserve">
+    <value>Gdy wszyscy dyspozytorzy są zajęci</value>
+  </data>
+  <data name="SettingsRoutingSection" xml:space="preserve">
+    <value>Przekazywanie</value>
+  </data>
+  <data name="SettingsSaved" xml:space="preserve">
+    <value>Ustawienia stanowiska dyspozytorskiego zostały zapisane.</value>
+  </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>Ustawienia stanowiska dyspozytorskiego</value>
+  </data>
+  <data name="ShiftColumn" xml:space="preserve">
+    <value>Zmiana</value>
+  </data>
+  <data name="ShiftDayLabel" xml:space="preserve">
+    <value>Dzień zmiany</value>
+  </data>
+  <data name="ShiftDispatchEnabledHelp" xml:space="preserve">
+    <value>Dyspozytorów można przypisać do tej zmiany (zmiana przypisywana) lub mogą się na nią zapisać (zmiana z zapisami), samodzielnie lub obok ratowników.</value>
+  </data>
+  <data name="ShiftDispatchEnabledLabel" xml:space="preserve">
+    <value>Ta zmiana ma dyspozytorów</value>
+  </data>
+  <data name="ShiftDispatchOnlyHelp" xml:space="preserve">
+    <value>Zmiana istnieje tylko dla dyspozytorów (zmiany A, B i C dyspozytorni).</value>
+  </data>
+  <data name="ShiftDispatchOnlyLabel" xml:space="preserve">
+    <value>Zmiana tylko dyspozytorska</value>
+  </data>
+  <data name="ShowButton" xml:space="preserve">
+    <value>Pokaż</value>
+  </data>
+  <data name="SignOffAtShiftEndHelp" xml:space="preserve">
+    <value>Dyspozytorzy są wylogowywani ze stanowiska na koniec dnia zmiany; ich bieżąca praca wraca do kolejki.</value>
+  </data>
+  <data name="SignOffAtShiftEndLabel" xml:space="preserve">
+    <value>Wyloguj na koniec zmiany</value>
+  </data>
+  <data name="SignupAsDispatcherButton" xml:space="preserve">
+    <value>Zapisz się jako dyspozytor</value>
+  </data>
+  <data name="SourceAssigned" xml:space="preserve">
+    <value>Przypisany</value>
+  </data>
+  <data name="SourceSignup" xml:space="preserve">
+    <value>Zapisany</value>
+  </data>
+  <data name="StandingRosterHelp" xml:space="preserve">
+    <value>Dyspozytorzy na każdy dzień tej zmiany. Nadzorujący stanowisko zarządza przerwami i przenosi pracę pozostałych dyspozytorów.</value>
+  </data>
+  <data name="StandingRosterLabel" xml:space="preserve">
+    <value>Grafik dyspozytorski</value>
+  </data>
+  <data name="StatAverageAnswer" xml:space="preserve">
+    <value>Śr. czas do przyjęcia</value>
+  </data>
+  <data name="StatCancelled" xml:space="preserve">
+    <value>Anulowane</value>
+  </data>
+  <data name="StatCompleted" xml:space="preserve">
+    <value>Zakończone</value>
+  </data>
+  <data name="StatCreated" xml:space="preserve">
+    <value>Zadania</value>
+  </data>
+  <data name="StatEscalated" xml:space="preserve">
+    <value>Eskalowane</value>
+  </data>
+  <data name="StatOverflowed" xml:space="preserve">
+    <value>Przepełnienie</value>
+  </data>
+  <data name="State.Available" xml:space="preserve">
+    <value>Dostępny</value>
+  </data>
+  <data name="State.Away" xml:space="preserve">
+    <value>Nieobecny</value>
+  </data>
+  <data name="State.Busy" xml:space="preserve">
+    <value>Zajęty</value>
+  </data>
+  <data name="State.Offline" xml:space="preserve">
+    <value>Niezalogowany</value>
+  </data>
+  <data name="State.OnBreak" xml:space="preserve">
+    <value>Na przerwie</value>
+  </data>
+  <data name="StateColumn" xml:space="preserve">
+    <value>Stan na stanowisku</value>
+  </data>
+  <data name="StatusColumn" xml:space="preserve">
+    <value>Stan</value>
+  </data>
+  <data name="SuppressAlertsHelp" xml:space="preserve">
+    <value>Podczas przerwy dyspozytor nie dostaje powiadomień ani alertów stanowiska, tylko przypomnienie o końcu przerwy.</value>
+  </data>
+  <data name="SuppressAlertsLabel" xml:space="preserve">
+    <value>Bez alertów stanowiska podczas przerwy</value>
+  </data>
+  <data name="TextOverflow.EnhancedAi" xml:space="preserve">
+    <value>Enhanced AI wypełnia oczekujące zgłoszenie</value>
+  </data>
+  <data name="TextOverflow.PendingQueue" xml:space="preserve">
+    <value>Zostaw w kolejce</value>
+  </data>
+  <data name="TextOverflowLabel" xml:space="preserve">
+    <value>Wiadomości SMS</value>
+  </data>
+  <data name="ToLabel" xml:space="preserve">
+    <value>Do</value>
+  </data>
+  <data name="TodayCoverageHeader" xml:space="preserve">
+    <value>Dzisiejsza obsada</value>
+  </data>
+  <data name="TransferButton" xml:space="preserve">
+    <value>Przekaż</value>
+  </data>
+  <data name="TransferToLabel" xml:space="preserve">
+    <value>Przekaż do</value>
+  </data>
+  <data name="Unassigned" xml:space="preserve">
+    <value>Nieprzypisane</value>
+  </data>
+  <data name="UnknownPerson" xml:space="preserve">
+    <value>Nieznana osoba</value>
+  </data>
+  <data name="ViewCallButton" xml:space="preserve">
+    <value>Pokaż zgłoszenie</value>
+  </data>
+  <data name="VoiceAiUnavailable" xml:space="preserve">
+    <value>Głosowe przyjmowanie zgłoszeń Enhanced AI jest niedostępne; dzwoniący zostawiają wiadomość.</value>
+  </data>
+  <data name="VoiceHoldHelp" xml:space="preserve">
+    <value>Ile sekund dzwoniący czeka na dyspozytora, zanim przejmie go obsługa przepełnienia. 0 = od razu.</value>
+  </data>
+  <data name="VoiceHoldLabel" xml:space="preserve">
+    <value>Przytrzymaj dzwoniących przez (sekundy)</value>
+  </data>
+  <data name="VoiceOverflow.EnhancedAiIntake" xml:space="preserve">
+    <value>Głosowe przyjmowanie zgłoszeń Enhanced AI</value>
+  </data>
+  <data name="VoiceOverflow.Voicemail" xml:space="preserve">
+    <value>Poczta głosowa jako oczekujące zgłoszenie</value>
+  </data>
+  <data name="VoiceOverflowLabel" xml:space="preserve">
+    <value>Połączenia telefoniczne</value>
+  </data>
+  <data name="WaitingInQueueFormat" xml:space="preserve">
+    <value>Czeka: {0}</value>
+  </data>
+  <data name="WaitingStat" xml:space="preserve">
+    <value>Czeka</value>
+  </data>
+  <data name="Warning.BreaksOverlap" xml:space="preserve">
+    <value>Przerwy nakładają się od {1} do {2}: {0}.</value>
+  </data>
+  <data name="Warning.CoverageBelowMinimum" xml:space="preserve">
+    <value>Tylko {0} dostępnych dyspozytorów (minimum {1}) od {2} do {3}.</value>
+  </data>
+  <data name="Warning.NoCoverage" xml:space="preserve">
+    <value>Od {0} do {1} nikt nie byłby dostępny.</value>
+  </data>
+  <data name="Warning.OutsideDuty" xml:space="preserve">
+    <value>Przerwa wypada poza dniem zmiany: {0}.</value>
+  </data>
+  <data name="Warning.StartedEarly" xml:space="preserve">
+    <value>{0} rozpoczął przerwę {1} minut wcześniej.</value>
+  </data>
+  <data name="Warning.StartedLate" xml:space="preserve">
+    <value>{0} rozpoczął przerwę {1} minut później.</value>
+  </data>
+  <data name="Warning.WorkReturnedToQueue" xml:space="preserve">
+    <value>Praca osoby {0} wróciła do kolejki.</value>
+  </data>
+  <data name="WarningsHeader" xml:space="preserve">
+    <value>Ostrzeżenia</value>
+  </data>
+  <data name="WithdrawButton" xml:space="preserve">
+    <value>Wycofaj się</value>
+  </data>
+  <data name="WithdrawDispatcherConfirm" xml:space="preserve">
+    <value>Zrezygnować z dysponowania w tym dniu?</value>
+  </data>
+  <data name="WizardDispatchers" xml:space="preserve">
+    <value>Dyspozytorzy</value>
+  </data>
+  <data name="WorkColumn" xml:space="preserve">
+    <value>Praca</value>
+  </data>
+  <data name="WorkLoadFormat" xml:space="preserve">
+    <value>{0} z {1}</value>
+  </data>
+  <data name="YouBadge" xml:space="preserve">
+    <value>Ty</value>
+  </data>
+</root>

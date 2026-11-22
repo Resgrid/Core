@@ -165,7 +165,7 @@ NARR: SMOKE SHOWING";
 				Mock.Of<ICommunicationService>(), Mock.Of<IDistributionListsService>(), Mock.Of<IUsersService>(), Mock.Of<IEmailService>(), groups.Object,
 				messages.Object, Mock.Of<IFileService>(), units.Object, Mock.Of<IGeoLocationProvider>(), Mock.Of<ICallDispatchStatusService>(),
 				Mock.Of<IDispatchRecommendationService>(), Mock.Of<IFeatureToggleService>(), Mock.Of<Resgrid.Model.AiDispatch.IAiDispatchAdminService>(),
-				new InboundEmailReceiptsService(_receipts, TimeProvider.System), Mock.Of<IIntakeService>(), Mock.Of<Resgrid.Model.Providers.IEmailSender>());
+				new InboundEmailReceiptsService(_receipts, TimeProvider.System), Mock.Of<IIntakeService>(), Mock.Of<Resgrid.Model.Providers.IEmailSender>(), Mock.Of<IDispatcherEmailCallService>());
 		}
 
 		private static PostmarkInboundMessage Email(string messageId, string to = null)

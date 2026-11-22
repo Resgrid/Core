@@ -7,22 +7,32 @@ namespace Resgrid.Providers.Messaging
 	{
 		User,
 		ICUser,
-		Unit
+		Unit,
+
+		/// <summary>
+		/// The Dispatch app's desk subscriber, {code}_Dispatch_User_{userId} (M0324): only the Dispatch app registers on it,
+		/// so dispatcher desk pushes never reach the Responder app the user may also have.
+		/// </summary>
+		DispatchUser
 	}
 
 	/// <summary>A subscriber id NovuProvider creates, taken apart.</summary>
 	public sealed record NovuSubscriber(string SubscriberId, string Code, NovuSubscriberKind Kind, string Id);
 
 	/// <summary>
-	/// Reading the subscriber ids NovuProvider creates — {code}_User_{userId}, {code}_IC_User_{userId} and
-	/// {code}_Unit_{unitId} — and Novu's subscriber list. Used to find the subscribers of departments that no longer
-	/// exist (deleted before department deletion started removing them).
+	/// Reading the subscriber ids NovuProvider creates — {code}_User_{userId}, {code}_IC_User_{userId},
+	/// {code}_Dispatch_User_{userId} and {code}_Unit_{unitId} — and Novu's subscriber list. Used to find the subscribers of
+	/// departments that no longer exist (deleted before department deletion started removing them).
 	/// </summary>
 	public static class NovuSubscriberIds
 	{
 		private const string ICUserMarker = "IC_User_";
+		private const string DispatchUserMarker = "Dispatch_User_";
 		private const string UserMarker = "User_";
 		private const string UnitMarker = "Unit_";
+
+		/// <summary>The Dispatch app's desk subscriber of a user: {code}_Dispatch_User_{userId}.</summary>
+		public static string DispatchUser(string code, string userId) => $"{code}_{DispatchUserMarker}{userId}";
 
 		/// <summary>
 		/// The parts of a subscriber id, or null when it is not one NovuProvider creates. A department code is letters
@@ -42,6 +52,11 @@ namespace Resgrid.Providers.Messaging
 
 			if (rest.StartsWith(ICUserMarker, StringComparison.Ordinal))
 				return Build(subscriberId, code, NovuSubscriberKind.ICUser, rest.Substring(ICUserMarker.Length));
+
+			// Checked on its own marker: "Dispatch_User_" never starts with "User_", so a Responder subscriber is never
+			// read as a desk one or the other way round.
+			if (rest.StartsWith(DispatchUserMarker, StringComparison.Ordinal))
+				return Build(subscriberId, code, NovuSubscriberKind.DispatchUser, rest.Substring(DispatchUserMarker.Length));
 
 			if (rest.StartsWith(UserMarker, StringComparison.Ordinal))
 				return Build(subscriberId, code, NovuSubscriberKind.User, rest.Substring(UserMarker.Length));
@@ -71,7 +86,7 @@ namespace Resgrid.Providers.Messaging
 		}
 
 		/// <summary>
-		/// The user and IC user subscribers of members who are no longer in the department: the department still
+		/// The user, IC user and Dispatch user subscribers of members who are no longer in the department: the department still
 		/// exists, but the user is not one of its current members. Only codes present in
 		/// <paramref name="currentMembersByCode"/> are considered, so a department whose members could not be read is
 		/// never judged; unit subscribers and departments that no longer exist are left to <see cref="FindOrphans"/>.

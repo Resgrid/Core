@@ -52,6 +52,8 @@ namespace Resgrid.Tests.Intake
 		private Mock<IIntakeConversationService> _conversations;
 		private Mock<IIntakeConversationOperations> _conversationOperations;
 		private Mock<IIntakeBlockedSendersRepository> _blocked;
+		private Mock<IDispatcherRoutingService> _deskRouting;
+		private readonly List<DispatcherEnqueueRequest> _deskRequests = new List<DispatcherEnqueueRequest>();
 		private IntakeChannel _channel;
 		private Call _templateCall;
 		private readonly List<Call> _saved = new List<Call>();
@@ -72,6 +74,7 @@ namespace Resgrid.Tests.Intake
 			_saved.Clear();
 			_completions.Clear();
 			_queued.Clear();
+			_deskRequests.Clear();
 			_claimed = null;
 
 			_channel = new IntakeChannel
@@ -134,10 +137,14 @@ namespace Resgrid.Tests.Intake
 			_conversations = new Mock<IIntakeConversationService>();
 			_conversationOperations = new Mock<IIntakeConversationOperations>();
 			_blocked = new Mock<IIntakeBlockedSendersRepository>();
+			_deskRouting = new Mock<IDispatcherRoutingService>();
+			_deskRouting.Setup(r => r.EnqueueAsync(It.IsAny<DispatcherEnqueueRequest>(), It.IsAny<CancellationToken>()))
+				.Callback((DispatcherEnqueueRequest r, CancellationToken _) => _deskRequests.Add(r))
+				.ReturnsAsync(new DispatcherRouteResult { Outcome = DispatcherRouteOutcomes.Queued });
 
 			_service = new IntakeService(_channels.Object, _messages.Object, _sessions.Object, _departments.Object, _settings.Object, _flags.Object, _calls.Object,
 				_numbers.Object, _geo.Object, _events.Object, _queue.Object, _communication.Object, _cache.Object, _conversations.Object, _conversationOperations.Object,
-				_blocked.Object, new FixedClock());
+				_blocked.Object, new FixedClock(), new Lazy<IDispatcherRoutingService>(() => _deskRouting.Object));
 		}
 
 		[TearDown]
@@ -425,6 +432,69 @@ namespace Resgrid.Tests.Intake
 			_events.Verify(e => e.SendMessage(It.IsAny<CallAddedEvent>()), Times.Never);
 			_queued.Should().BeEmpty("template channels never queue AI");
 		}
+
+		[Test]
+		public async Task a_chat_apps_call_goes_on_the_dispatcher_desk_as_a_chat_before_the_call_event()
+		{
+			_channel.ChannelType = (int)IntakeChannelTypes.Slack;
+			var order = new List<string>();
+			_deskRouting.Setup(r => r.EnqueueAsync(It.IsAny<DispatcherEnqueueRequest>(), It.IsAny<CancellationToken>()))
+				.Callback((DispatcherEnqueueRequest r, CancellationToken _) => { _deskRequests.Add(r); order.Add("desk"); })
+				.ReturnsAsync(new DispatcherRouteResult { Outcome = DispatcherRouteOutcomes.Queued });
+			_events.Setup(e => e.SendMessage(It.IsAny<CallUpdatedEvent>())).Callback(() => order.Add("event"));
+
+			var result = await _service.ReceiveAsync(new IntakeEnvelope
+			{
+				ChannelType = IntakeChannelTypes.Slack, IntakeChannelId = "ch-1", ProviderMessageId = "slack-1", Sender = "U0123", SenderName = "Pat Doe",
+				Body = "Smoke from the dumpster behind 12 Main St", ReceivedOnUtc = FixedClock.Now
+			});
+
+			result.State.Should().Be(IntakeMessageStates.CallCreated);
+			var request = _deskRequests.Should().ContainSingle().Subject;
+			request.Kind.Should().Be(DispatcherQueueItemKinds.Chat);
+			request.CallId.Should().Be(900);
+			request.DepartmentId.Should().Be(DepartmentId);
+			request.SourceAddress.Should().Be("U0123");
+			request.SourceName.Should().Be("Pat Doe");
+			request.Body.Should().Be("Smoke from the dumpster behind 12 Main St");
+			order.Should().Equal(new[] { "desk", "event" }, "the event's pending-call hand-off then finds the chat on the desk");
+		}
+
+		[Test]
+		public async Task a_desk_failure_never_loses_a_chat_apps_call()
+		{
+			_channel.ChannelType = (int)IntakeChannelTypes.WhatsApp;
+			_deskRouting.Setup(r => r.EnqueueAsync(It.IsAny<DispatcherEnqueueRequest>(), It.IsAny<CancellationToken>())).ThrowsAsync(new InvalidOperationException("desk down"));
+
+			var result = await _service.ReceiveAsync(new IntakeEnvelope
+			{
+				ChannelType = IntakeChannelTypes.WhatsApp, IntakeChannelId = "ch-1", ProviderMessageId = "wa-1", Sender = Sender, Body = "Help", ReceivedOnUtc = FixedClock.Now
+			});
+
+			result.State.Should().Be(IntakeMessageStates.CallCreated);
+			_events.Verify(e => e.SendMessage(It.IsAny<CallUpdatedEvent>()), Times.Once);
+		}
+
+		[Test]
+		public async Task a_text_or_email_call_is_left_to_the_desks_pending_call_hand_off()
+		{
+			await _service.ReceiveAsync(Sms());
+
+			_deskRequests.Should().BeEmpty();
+		}
+
+		[TestCase(IntakeChannelTypes.WhatsApp, true)]
+		[TestCase(IntakeChannelTypes.Slack, true)]
+		[TestCase(IntakeChannelTypes.Teams, true)]
+		[TestCase(IntakeChannelTypes.Telegram, true)]
+		[TestCase(IntakeChannelTypes.Discord, true)]
+		[TestCase(IntakeChannelTypes.GoogleChat, true)]
+		[TestCase(IntakeChannelTypes.Sms, false)]
+		[TestCase(IntakeChannelTypes.Email, false)]
+		[TestCase(IntakeChannelTypes.Webhook, false)]
+		[TestCase(IntakeChannelTypes.Voice, false)]
+		public void chat_channels_are_the_chat_apps(IntakeChannelTypes channelType, bool chat) =>
+			IntakeService.IsChatChannel(channelType).Should().Be(chat);
 
 		[Test]
 		public async Task null_template_format_uses_generic()

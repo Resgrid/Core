@@ -7755,6 +7755,12 @@
   <data xml:space="preserve" name="SettingHelp.ShiftTradeApprovers">
     <value>Qui choisit le candidat qui prend une demande d'échange de garde et approuve les échanges en attente. Les administrateurs du service le peuvent toujours ; les administrateurs de groupe, la personne qui cède sa garde et les membres de rôles choisis relèvent du choix du service.</value>
   </data>
+  <data xml:space="preserve" name="Setting.DispatcherDeskConfig">
+    <value>Poste des répartiteurs</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.DispatcherDeskConfig">
+    <value>Active le poste de répartition et définit son fonctionnement : le travail proposé aux répartiteurs en service dans l'application Dispatch (appels en attente et planifiés, SMS, appels téléphoniques, courriels, discussions), la durée d'attente d'une proposition et le nombre d'éléments qu'un répartiteur détient avant de compter comme occupé, le nombre de propositions manquées d'affilée qui passe un répartiteur Absent, et ce que deviennent les SMS et les appels téléphoniques quand personne n'est libre (attente dans la file, Enhanced AI ou messagerie vocale). Définit aussi ce que devient un appel envoyé par courriel à l'adresse d'alerte (envoyé immédiatement, enregistré en attente ou lu par Enhanced AI dans un appel en attente) et les règles des pauses et du service : rappels de pause, retour automatique de pause, le minimum disponible, le refus des pauses en dessous, aucune alerte du poste en pause, et si les répartiteurs doivent être sur un quart ou peuvent être en service sans quart (Quarts, Paramètres du poste de répartition). Désactivé par défaut ; les appels reçus par courriel sont envoyés immédiatement tant qu'Appels reçus par courriel n'est pas modifié, ce qui vaut même quand l'acheminement est désactivé.</value>
+  </data>
   <data xml:space="preserve" name="Feature.home-dashboard">
     <value>Tableau de bord d'accueil personnalisable</value>
   </data>
@@ -8000,5 +8006,95 @@
   </data>
   <data name="FeatureSetup.ai-destination-advice" xml:space="preserve">
     <value>Nécessite le module complémentaire Enhanced AI avec le conseil de destination par IA activé pour votre service. Ajoutez d'abord vos destinations avec leurs capacités, ainsi que des règles de destination. Le conseil s'affiche à la consultation et à la modification de l'appel, rien ne change tant que personne ne l'applique, et les services qui utilisent Advanced Data Protection n'en reçoivent pas.</value>
+  </data>
+  <data name="Feature.dispatcher-desk" xml:space="preserve">
+    <value>Poste de répartition</value>
+  </data>
+  <data name="FeaturePurpose.dispatcher-desk" xml:space="preserve">
+    <value>Un tableau en direct des répartiteurs en service et du travail qui les attend. Les appels en attente et planifiés, les SMS, les appels téléphoniques, les courriels et les discussions sont proposés à un seul répartiteur libre à la fois, qui les prend dans l'application Dispatch sur un téléphone ou une tablette.</value>
+  </data>
+  <data name="FeatureValue.dispatcher-desk" xml:space="preserve">
+    <value>Le travail va à quelqu'un de libre : un répartiteur qui détient du travail compte comme occupé, une proposition que personne ne prend passe au répartiteur suivant, et le travail resté en attente alerte toute l'équipe en service. Les répartiteurs peuvent tenir le poste d'où ils sont, pas seulement depuis une console.</value>
+  </data>
+  <data name="FeatureExample.dispatcher-desk" xml:space="preserve">
+    <value>Deux répartiteurs bénévoles couvrent un week-end depuis leur téléphone. Un SMS signalant un arbre tombé en travers d'une route est proposé à celui qui est libre et devient un appel, pendant que l'autre est en pause repas et ne reçoit aucune alerte du poste jusqu'à son retour.</value>
+  </data>
+  <data name="FeatureSetup.dispatcher-desk" xml:space="preserve">
+    <value>Donnez à vos répartiteurs la permission Connexion à l'application Dispatch et placez-les sur la liste de répartition d'un quart. Ouvrez ensuite Quarts, Paramètres du poste de répartition, activez Acheminer le travail vers les répartiteurs en service, choisissez quoi Envoyer au poste et enregistrez. Les répartiteurs se connectent au poste dans l'application Dispatch ; la page Poste de répartition montre qui est disponible, occupé ou en pause et la file ouverte, et un superviseur du poste peut terminer une pause ou confier le travail à quelqu'un d'autre.</value>
+  </data>
+  <data name="Feature.shift-dispatchers" xml:space="preserve">
+    <value>Répartiteurs en service</value>
+  </data>
+  <data name="FeaturePurpose.shift-dispatchers" xml:space="preserve">
+    <value>Placez des répartiteurs sur les quarts assignés et à inscription, sur un quart réservé à la répartition ou aux côtés des intervenants, avec le nombre de postes de répartition à pourvoir, un minimum au poste et un superviseur du poste.</value>
+  </data>
+  <data name="FeatureValue.shift-dispatchers" xml:space="preserve">
+    <value>Le poste ne propose du travail qu'aux répartiteurs réellement en service : ceux de la liste d'un jour de quart en cours, sauf si le service autorise le service sans quart. Les postes de répartition libres apparaissent sur le jour de quart, et En service maintenant liste les répartiteurs avec leur état au poste et leurs pauses.</value>
+  </data>
+  <data name="FeatureExample.shift-dispatchers" xml:space="preserve">
+    <value>Un centre de répartition fait tourner des quarts A, B et C réservés à la répartition avec deux répartiteurs chacun, et un service de volontaires ajoute un poste de répartiteur à son quart à inscription du week-end.</value>
+  </data>
+  <data name="FeatureSetup.shift-dispatchers" xml:space="preserve">
+    <value>Ouvrez Quarts, créez ou modifiez un quart et activez Ce quart accueille des répartiteurs. Définissez Répartiteurs nécessaires puis, sur un quart assigné, cochez les personnes de la Liste de répartition et désignez un superviseur du poste ; sur un quart à inscription, les répartiteurs choisissent S'inscrire comme répartiteur sur le jour de quart. Seules les personnes ayant la permission Connexion à l'application Dispatch peuvent être ajoutées.</value>
+  </data>
+  <data name="Feature.dispatcher-breaks" xml:space="preserve">
+    <value>Pauses des répartiteurs</value>
+  </data>
+  <data name="FeaturePurpose.dispatcher-breaks" xml:space="preserve">
+    <value>Planifiez les pauses et les repas des répartiteurs du jour sur une seule frise de couverture qui montre qui est en service, qui est en pause et où la couverture passerait sous le minimum.</value>
+  </data>
+  <data name="FeatureValue.dispatcher-breaks" xml:space="preserve">
+    <value>Les pauses restent décalées pour que le poste ne soit jamais vide : Planifier les pauses répartit le plan des pauses d'un quart entre ses répartiteurs sans chevauchement, et le planificateur signale les pauses qui se chevauchent et les trous avant qu'ils n'arrivent. Les répartiteurs reçoivent un rappel avant chaque pause et, par défaut, aucune alerte du poste pendant celle-ci.</value>
+  </data>
+  <data name="FeatureExample.dispatcher-breaks" xml:space="preserve">
+    <value>Sur un quart de 12 heures avec trois répartiteurs, Planifier les pauses place pour chacun un repas de 30 minutes et deux pauses de 15 minutes à des heures différentes, et chaque répartiteur reçoit un rappel cinq minutes avant une pause.</value>
+  </data>
+  <data name="FeatureSetup.dispatcher-breaks" xml:space="preserve">
+    <value>Définissez un plan des pauses sur chaque quart, ou un plan de pauses par défaut dans Paramètres du poste de répartition. Ouvrez ensuite Quarts, Pauses des répartiteurs, choisissez un jour et un jour de quart et utilisez Planifier les pauses, ou planifiez vous-même des pauses une à une. Les superviseurs du poste et les responsables de quart planifient les pauses de tous ; les répartiteurs planifient les leurs uniquement sur les quarts qui le permettent. Une pause est une durée : commencée plus tôt, elle finit aussi plus tôt.</value>
+  </data>
+  <data name="Feature.dispatcher-desk-settings" xml:space="preserve">
+    <value>Paramètres du poste de répartition</value>
+  </data>
+  <data name="FeaturePurpose.dispatcher-desk-settings" xml:space="preserve">
+    <value>Activez l'acheminement et choisissez le travail envoyé au poste, la durée d'attente d'une proposition, ce que deviennent les SMS et les appels téléphoniques quand tous les répartiteurs sont occupés, ce que devient un appel reçu par courriel et les règles des pauses et du service.</value>
+  </data>
+  <data name="FeatureValue.dispatcher-desk-settings" xml:space="preserve">
+    <value>Le service décide une fois pour toutes du comportement du poste, de la vitesse à laquelle le travail sans réponse passe au suivant jusqu'à savoir si une pause peut laisser moins de répartiteurs disponibles que le minimum.</value>
+  </data>
+  <data name="FeatureExample.dispatcher-desk-settings" xml:space="preserve">
+    <value>Un service envoie les SMS et les appels téléphoniques au poste, laisse 60 secondes à chaque proposition, laisse Enhanced AI remplir un appel en attente quand personne n'est libre et enregistre les appels reçus par courriel comme en attente pour qu'un répartiteur les vérifie.</value>
+  </data>
+  <data name="FeatureSetup.dispatcher-desk-settings" xml:space="preserve">
+    <value>Les administrateurs du service ouvrent Quarts, puis Paramètres du poste de répartition. Activez Acheminer le travail vers les répartiteurs en service, choisissez Envoyer au poste, le délai d'une proposition et les éléments par répartiteur, ce qui se passe quand tous les répartiteurs sont occupés, Appels reçus par courriel et les règles des pauses, puis enregistrez. Les choix Enhanced AI nécessitent le module complémentaire Enhanced AI.</value>
+  </data>
+  <data name="Feature.dispatcher-desk-activity" xml:space="preserve">
+    <value>Activité de répartition</value>
+  </data>
+  <data name="FeaturePurpose.dispatcher-desk-activity" xml:space="preserve">
+    <value>L'activité du poste sur 92 jours au plus : le travail par type, les éléments terminés, débordés, annulés et escaladés et le temps moyen de réponse, et pour chaque répartiteur les propositions acceptées, refusées et manquées, le temps pour accepter et pour terminer, et les pauses prises, manquées ou terminées en retard.</value>
+  </data>
+  <data name="FeatureValue.dispatcher-desk-activity" xml:space="preserve">
+    <value>Voyez si le travail est pris rapidement, à quelle fréquence il déborde ou est escaladé et si les pauses finissent à l'heure, puis ajustez l'effectif, les délais des propositions ou les plans de pauses à partir des chiffres.</value>
+  </data>
+  <data name="FeatureExample.dispatcher-desk-activity" xml:space="preserve">
+    <value>Un superviseur constate que les SMS étaient souvent escaladés le vendredi soir et ajoute un deuxième répartiteur à ce quart.</value>
+  </data>
+  <data name="FeatureSetup.dispatcher-desk-activity" xml:space="preserve">
+    <value>Les administrateurs du service et les superviseurs du poste ouvrent Quarts, puis Activité de répartition, choisissent les dates Du et Au et sélectionnent Afficher.</value>
+  </data>
+  <data name="Feature.intake-spam-screening" xml:space="preserve">
+    <value>Filtrage du spam à l'entrée</value>
+  </data>
+  <data name="FeaturePurpose.intake-spam-screening" xml:space="preserve">
+    <value>Gardez le spam et les appels automatisés hors des Appels en attente : écartez un appel reçu comme spam et bloquez son expéditeur, limitez le nombre d'appels qu'un numéro de téléphone peut créer en une heure, demandez aux appelants vocaux d'appuyer sur 1 avant les questions, et signalez les messages qu'Enhanced AI lit comme n'étant pas un incident.</value>
+  </data>
+  <data name="FeatureValue.intake-spam-screening" xml:space="preserve">
+    <value>Les répartiteurs consacrent leur temps aux vrais signalements. Les SMS et appels d'un expéditeur bloqué ne créent aucun appel et ne reçoivent aucune réponse, et un appel filtré garde son libellé dans Appels en attente mais n'est pas proposé au poste de répartition ; un répartiteur décide toujours de sa suite.</value>
+  </data>
+  <data name="FeatureExample.intake-spam-screening" xml:space="preserve">
+    <value>Un numéro publicitaire écrit sans cesse au numéro du service. Au-delà de la limite horaire, ses SMS sont ajoutés en notes à son appel ouvert, et un répartiteur écarte cet appel comme spam et bloque le numéro pendant 30 jours.</value>
+  </data>
+  <data name="FeatureSetup.intake-spam-screening" xml:space="preserve">
+    <value>Sur un appel reçu en attente, choisissez Écarter comme spam et laissez Bloquer aussi l'expéditeur coché ; l'appel est annulé et personne n'est averti. Les expéditeurs bloqués sont listés sur la page Canaux d'entrée, où Débloquer lève un blocage plus tôt. La limite horaire s'applique aux canaux SMS, vocaux et WhatsApp sans expéditeurs autorisés, jamais aux canaux courriel, discussion ou webhook.</value>
   </data>
 </root>

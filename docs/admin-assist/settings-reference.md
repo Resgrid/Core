@@ -2837,6 +2837,13 @@ Shift trade approvers. Who may pick which applicant takes a shift trade request 
 
 Default: missing = department admins, group admins and the person who asked for the trade. Source: DepartmentSettingTypes.ShiftTradeApprovers.
 
+<a id="setting-dispatcherdeskconfig"></a>
+## Dispatcher desk
+
+Dispatcher desk. Turns the dispatcher desk on and sets how it works: which work is offered to the dispatchers on duty in the Dispatch app (pending and scheduled calls, texts, phone calls, emails, chats), how long an offer waits and how many items a dispatcher holds before counting as busy, how many missed offers in a row set a dispatcher Away, and what happens to texts and phone calls when nobody is free (wait in the queue, Enhanced AI, or voicemail). It also sets what a call emailed to the dispatch address becomes (dispatched at once, saved as pending, or read by Enhanced AI into a pending call) and the break and duty rules: break reminders, automatic return from breaks, the minimum available, refusing breaks below it, no desk alerts on break, and whether dispatchers must be on a shift or may go on duty without one (Shifts, Dispatcher Desk Settings). Off by default; emailed calls are dispatched at once until Emailed calls is changed, which applies even while routing is off.
+
+Default: missing = desk off; emailed calls are dispatched at once (email call mode 0). Once turned on: every kind of work is routed, 45-second offers, 1 item per dispatcher, Away after 2 missed offers in a row, texts wait in the queue, phone calls go to Enhanced AI voice intake (a voicemail without it), 5-minute break reminders, no automatic return, at least 1 dispatcher available, dispatchers must be on a shift. Source: DepartmentSettingTypes.DispatcherDeskConfig.
+
 <a id="module-shiftsdisabled"></a>
 ## Shifts availability
 
@@ -2894,6 +2901,31 @@ Shift staffing Who actually worked each shift day, approved by a supervisor, for
 ## On-Shift Hours report
 
 On-Shift Hours report Each person's hours on shift for a period across assigned, signup and static shifts, for the department, a group or one shift, split into approved and automatic hours. Shifts show who is on duty and can drive dispatch, so calls page the people who are actually working. Open Reports, then On-Shift Hours Report. Choose the period and whether it covers the department, a group or a shift. Approve the staffing of the days that need an exact record on the Shift Staffing page before running it for payroll or compliance.
+
+<a id="dispatcher-desk"></a>
+## Dispatcher Desk
+
+Dispatcher Desk A live board of the dispatchers on duty and the work waiting for them. Pending and scheduled calls, texts, phone calls, emails and chats are offered to one free dispatcher at a time, who takes them in the Dispatch app on a phone or tablet. Work goes to someone who is free: a dispatcher holding work counts as busy, an offer nobody takes moves on to the next dispatcher, and work left waiting alerts everyone on duty. Dispatchers can work the desk from wherever they are, not only from a console. Two volunteer dispatchers cover a weekend from their phones. A text about a tree down across a road is offered to the one who is free and becomes a call, while the other is on a meal break and gets no desk alerts until they are back. Give your dispatchers the Dispatch app login permission and put them on a shift's dispatch roster. Then open Shifts, Dispatcher Desk Settings, turn on Route work to on-duty dispatchers, choose what to Send to the desk and save. Dispatchers sign in to the desk in the Dispatch app; the Dispatcher Desk page shows who is available, busy or on break and the open queue, and a desk supervisor can end a break or move work to someone else.
+
+<a id="shift-dispatchers"></a>
+## Dispatchers on duty
+
+Dispatchers on duty Put dispatchers on Assigned and Sign-up shifts, on a dispatch-only shift or beside the responders, with the number of dispatch positions to fill, a minimum on the desk and a desk supervisor. The desk offers work only to dispatchers who are really on duty: those on the roster of a shift day running now, unless the department allows duty without a shift. Open dispatch positions show on the shift day, and On Duty Now lists the dispatchers with their desk state and breaks. A dispatch center runs dispatch-only A, B and C shifts with two dispatchers each, and a volunteer department adds one dispatcher position to its weekend sign-up shift. Open Shifts, create or edit a shift and turn on This shift takes dispatchers. Set Dispatchers needed and, on an Assigned shift, tick the people on the Dispatch roster and mark a desk supervisor; on a Sign-up shift, dispatchers choose Sign up as dispatcher on the shift day. Only people with the Dispatch app login permission can be added.
+
+<a id="dispatcher-breaks"></a>
+## Dispatcher Breaks
+
+Dispatcher Breaks Plan breaks and meals for the day's dispatchers on one coverage timeline that shows who is on duty, who is on a break and where coverage would drop below the minimum. Breaks stay staggered so the desk is never left empty: Plan breaks spreads a shift's break plan across its dispatchers without overlaps, and the planner warns about overlapping breaks and gaps before they happen. Dispatchers are reminded before each break and, by default, get no desk alerts while on it. On a 12-hour shift with three dispatchers, Plan breaks places each one's 30-minute meal and two 15-minute breaks at different times, and each dispatcher is reminded five minutes before a break is due. Set a break plan on each shift, or a default break plan in Dispatcher Desk Settings. Then open Shifts, Dispatcher Breaks, choose a date and a shift day and use Plan breaks, or plan single breaks yourself. Desk supervisors and shift managers plan anyone's breaks; dispatchers plan their own only on shifts that allow it. A break is a length, so a break started early also ends early.
+
+<a id="dispatcher-desk-settings"></a>
+## Dispatcher Desk Settings
+
+Dispatcher Desk Settings Turn routing on and choose which work goes to the desk, how long an offer waits, what happens to texts and phone calls when every dispatcher is busy, what an emailed call becomes, and the rules for breaks and duty. The department decides once how the desk behaves, from how quickly unanswered work moves on to whether a break may leave fewer dispatchers available than the minimum. A department sends texts and phone calls to the desk, gives each offer 60 seconds, lets Enhanced AI fill in a pending call when nobody is free, and saves emailed calls as pending for a dispatcher to review. Department administrators open Shifts, then Dispatcher Desk Settings. Turn on Route work to on-duty dispatchers, choose Send to the desk, the offer timeout and items per dispatcher, what happens when every dispatcher is busy, Emailed calls and the break rules, then save. The Enhanced AI choices need the Enhanced AI add-on.
+
+<a id="dispatcher-desk-activity"></a>
+## Dispatcher Activity
+
+Dispatcher Activity Desk activity for up to 92 days: work by kind, completed, overflowed, cancelled and escalated items and the average time to answer, and for each dispatcher the offers accepted, declined and missed, the time to accept and complete, and breaks taken, missed or returned from late. See whether work is answered quickly, how often it overflows or escalates and whether breaks run on time, then adjust staffing, offer timeouts or break plans from the numbers. A supervisor sees that texts often escalated on Friday evenings and adds a second dispatcher to that shift. Department administrators and desk supervisors open Shifts, then Dispatcher Activity, choose the From and To dates and select Show.
 
 <a id="module-trainingdisabled"></a>
 ## Training availability
@@ -4212,6 +4244,11 @@ Department number and intake Choose and provision your department's number, choo
 ## Intake channels
 
 Intake channels Turn texts to the department's number, mail to an intake email address, posts in a linked Slack, Teams, WhatsApp, Telegram, Discord or Google Chat channel, and signed webhook requests into pending calls. Requests that arrive outside the radio and CAD land in one queue for a dispatcher to review; intake never dispatches anyone by itself. A hospital transfer desk posts requests in a shared Teams channel, and each post becomes a pending call with the channel's default call type and priority. Open the department menu, then Intake Channels, and add a channel for each source. Choose Call template or Enhanced AI processing, limit Allowed senders, set a default priority and call type, then send a test message and check Pending Calls.
+
+<a id="intake-spam-screening"></a>
+## Intake spam screening
+
+Intake spam screening Keep spam and robocalls out of Pending Calls: dismiss an intake call as spam and block its sender, limit how many calls one phone number can create in an hour, ask voice callers to press 1 before the questions start, and label messages that Enhanced AI reads as not an incident. Dispatchers spend their time on real reports. A blocked sender's texts and calls create no calls and get no reply, and a screened call keeps its label in Pending Calls but is not offered on the dispatcher desk; a dispatcher still decides what happens to it. A marketing number keeps texting the department's number. Past the hourly limit its texts are added to its open call as notes, and a dispatcher dismisses that call as spam and blocks the number for 30 days. On a pending intake call, choose Dismiss as spam and keep Also block the sender ticked; the call is cancelled and nobody is notified. Blocked senders are listed on the Intake Channels page, where Unblock lifts a block early. The hourly limit applies to text, voice and WhatsApp channels without allowed senders, never to email, chat or webhook channels.
 
 <a id="addon-dedicated-number"></a>
 ## Private Inbound Dispatch Number

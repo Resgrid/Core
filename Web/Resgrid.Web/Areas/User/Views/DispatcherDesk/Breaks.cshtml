@@ -1,0 +1,174 @@
+@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.DispatcherDesk.DispatcherDeskBreaksView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.DispatcherDesk.DispatcherDesk> desk
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Shifts.Shifts> shiftsLocalizer
+@{
+	ViewBag.Title = "Resgrid | " + desk["BreaksTitle"];
+
+	var types = new[] { DispatcherBreakTypes.Break, DispatcherBreakTypes.Meal, DispatcherBreakTypes.Personal, DispatcherBreakTypes.Other };
+
+	// Text the planner script puts on the page (it escapes it there).
+	var strings = new[]
+	{
+		"BreakType.Break", "BreakType.Meal", "BreakType.Personal", "BreakType.Other",
+		"BreakState.Scheduled", "BreakState.Active", "BreakState.Completed", "BreakState.Missed",
+		"DeskSupervisorBadge", "YouBadge", "PendingApprovalBadge", "CoverageLane", "CoverageSlotFormat",
+		"NoDispatchersInWindow", "NoWarnings", "PlannerLoadFailed", "ActionFailed", "AddBreakTitle", "EditBreakTitle",
+		"PlanBreaksConfirm", "PlanBreaksReplaceConfirm", "CancelBreakConfirm", "AllShiftDays", "BreakTooltipFormat", "OverdueBadge"
+	}.ToDictionary(x => x, x => desk[x].Value);
+}
+
+@section Styles
+{
+	<link rel="stylesheet" href="~/css/dispatcher-desk.css" asp-append-version="true" />
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-6">
+		<h2>@desk["BreaksTitle"]</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Shifts" asp-action="Index" asp-route-area="User">@shiftsLocalizer["ShiftsHeader"]</a></li>
+			<li><a asp-controller="DispatcherDesk" asp-action="Index" asp-route-area="User">@desk["DeskBoardTitle"]</a></li>
+			<li class="active"><strong>@desk["BreaksTitle"]</strong></li>
+		</ol>
+	</div>
+	<div class="col-sm-6">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			<a class="btn btn-primary top-button" asp-controller="DispatcherDesk" asp-action="Index" asp-route-area="User"><i class="fa fa-headphones"></i> @desk["DeskBoardTitle"]</a>
+			@if (Model.ShiftDayId.HasValue)
+			{
+				<a class="btn btn-white top-button" asp-controller="Shifts" asp-action="ViewShift" asp-route-area="User" asp-route-shiftDayId="@Model.ShiftDayId">@shiftsLocalizer["ViewShiftHeader"]</a>
+			}
+		</div>
+	</div>
+</div>
+
+<div class="wrapper wrapper-content" id="dispatcherBreaks">
+	<div id="breaksAlert" class="alert" style="display:none;" role="alert"></div>
+
+	<div class="ibox float-e-margins">
+		<div class="ibox-content">
+			<form class="form-inline" method="get" asp-controller="DispatcherDesk" asp-action="Breaks" asp-route-area="User" id="breaksFilter">
+				<div class="form-group m-r-sm">
+					<label for="breaksDate">@desk["DateLabel"]</label>
+					<input type="date" class="form-control" id="breaksDate" name="date" value="@Model.Date" />
+				</div>
+				<div class="form-group m-r-sm">
+					<label for="breaksShiftDay">@desk["ShiftDayLabel"]</label>
+					<select class="form-control" id="breaksShiftDay" name="shiftDayId" data-selected="@Model.ShiftDayId">
+						<option value="">@desk["AllShiftDays"]</option>
+					</select>
+				</div>
+				<button type="submit" class="btn btn-white">@desk["ShowButton"]</button>
+				<span class="pull-right">
+					<button type="button" class="btn btn-success" id="breaksAdd" disabled="disabled" style="display:none;"><i class="fa fa-plus"></i> @desk["AddBreakTitle"]</button>
+					@if (Model.CanSupervise)
+					{
+						<span id="breaksPlanGroup" style="display:none;">
+							<label class="checkbox-inline m-r-xs"><input type="checkbox" id="breaksPlanReplace" /> @desk["ReplacePlannedLabel"]</label>
+							<button type="button" class="btn btn-primary" id="breaksPlan" disabled="disabled"><i class="fa fa-magic"></i> @desk["PlanBreaksButton"]</button>
+						</span>
+					}
+				</span>
+			</form>
+		</div>
+	</div>
+
+	<div class="ibox float-e-margins">
+		<div class="ibox-title">
+			<h5 id="breaksTitle">@(Model.ShiftName ?? desk["CoverageTimelineHeader"].Value)</h5>
+		</div>
+		<div class="ibox-content">
+			<div class="desk-timeline" id="breaksTimeline" aria-live="polite"></div>
+			<div class="desk-timeline-legend text-muted">
+				<span><i class="desk-swatch desk-swatch-duty"></i> @desk["LegendDuty"]</span>
+				<span><i class="desk-swatch desk-swatch-planned"></i> @desk["LegendPlanned"]</span>
+				<span><i class="desk-swatch desk-swatch-active"></i> @desk["LegendOnBreak"]</span>
+				<span><i class="desk-swatch desk-swatch-taken"></i> @desk["LegendTaken"]</span>
+				<span><i class="desk-swatch desk-swatch-missed"></i> @desk["LegendMissed"]</span>
+				<span><i class="desk-swatch desk-swatch-below"></i> @desk["LegendBelowMinimum"]</span>
+				<span><i class="desk-swatch desk-swatch-overlap"></i> @desk["LegendOverlap"]</span>
+			</div>
+		</div>
+	</div>
+
+	<div class="ibox float-e-margins">
+		<div class="ibox-title">
+			<h5>@desk["WarningsHeader"]</h5>
+		</div>
+		<div class="ibox-content">
+			<ul id="breaksWarnings" class="m-b-none"></ul>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="breakModal" tabindex="-1" role="dialog" aria-labelledby="breakModalTitle">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="@desk["CloseButton"]"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="breakModalTitle">@desk["AddBreakTitle"]</h4>
+			</div>
+			<div class="modal-body">
+				<div id="breakModalAlert" class="alert" style="display:none;" role="alert"></div>
+				<input type="hidden" id="breakId" />
+				<div class="form-group">
+					<label for="breakUser">@desk["DispatcherColumn"]</label>
+					<select id="breakUser" class="form-control"></select>
+				</div>
+				<div class="row">
+					<div class="col-sm-6 form-group">
+						<label for="breakType">@desk["BreakTypeColumn"]</label>
+						<select id="breakType" class="form-control">
+							@foreach (var type in types)
+							{
+								<option value="@((int)type)">@desk["BreakType." + type]</option>
+							}
+						</select>
+					</div>
+					<div class="col-sm-6 form-group">
+						<label for="breakMinutes">@desk["BreakLengthColumn"]</label>
+						<input type="number" id="breakMinutes" class="form-control" min="1" max="240" step="1" value="15" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="breakStart">@desk["PlannedStartLabel"]</label>
+					<input type="datetime-local" id="breakStart" class="form-control" step="300" />
+					<span class="help-block m-b-none">@desk["PlannedStartHelp"]</span>
+				</div>
+				<div class="form-group">
+					<label for="breakNote">@desk["NoteLabel"]</label>
+					<input type="text" id="breakNote" class="form-control" maxlength="500" />
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-danger pull-left" id="breakCancel" style="display:none;">@desk["CancelBreakButton"]</button>
+				<button type="button" class="btn btn-white" data-dismiss="modal">@desk["CloseButton"]</button>
+				<button type="button" class="btn btn-primary" id="breakSave">@desk["SaveBreakButton"]</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<form id="deskActionToken">@Html.AntiForgeryToken()</form>
+
+@section Scripts
+{
+	<script src="~/js/app/common/signalr/resgrid.common.signalr.js" asp-append-version="true"></script>
+	<script src="~/js/app/internal/dispatcherdesk/resgrid.dispatcherdesk.common.js" asp-append-version="true"></script>
+	<script src="~/js/app/internal/dispatcherdesk/resgrid.dispatcherdesk.breaks.js" asp-append-version="true"></script>
+	<script>
+		$(document).ready(function () {
+			resgrid.dispatcherdesk.breaks.init({
+				dataUrl: '@Url.Action("BreaksData", "DispatcherDesk", new { area = "User" })',
+				saveUrl: '@Url.Action("SaveBreak", "DispatcherDesk", new { area = "User" })',
+				cancelUrl: '@Url.Action("CancelBreak", "DispatcherDesk", new { area = "User" })',
+				planUrl: '@Url.Action("PlanBreaks", "DispatcherDesk", new { area = "User" })',
+				date: @Html.ScriptJson(Model.Date),
+				shiftDayId: @(Model.ShiftDayId.HasValue ? Model.ShiftDayId.Value.ToString(System.Globalization.CultureInfo.InvariantCulture) : "null"),
+				strings: @Html.ScriptJson(strings)
+			});
+		});
+	</script>
+}

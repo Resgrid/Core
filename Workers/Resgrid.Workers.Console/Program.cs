@@ -457,6 +457,14 @@ namespace Resgrid.Workers.Console
 					Cron.MinuteIntervals(1),
 					stoppingToken);
 
+				// Worker ID 82: the dispatcher desk tick (M0324): offer timeouts, overflow, queue escalation, pending/scheduled call
+				// sync, break reminders and auto return, end-of-duty sign-off, purge. A few indexed queries when no desk is on.
+				_logger.Log(LogLevel.Information, "Scheduling Dispatcher Desk");
+				await Client.ScheduleAsync("Dispatcher Desk",
+					new Commands.DispatcherDeskCommand(82),
+					Cron.MinuteIntervals(1),
+					stoppingToken);
+
 				// Worker ID 79: background POI imports (Mapping > POIs > Import). The upload only reads the file; this geocodes
 				// address-only rows and saves the POIs, resuming an import whose worker stopped. A single query when idle.
 				_logger.Log(LogLevel.Information, "Scheduling POI Imports");

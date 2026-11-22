@@ -59,14 +59,17 @@ namespace Resgrid.Services.Intake
 		private readonly IIntakeConversationOperations _conversationOperations;
 		private readonly IIntakeBlockedSendersRepository _blocked;
 		private readonly TimeProvider _clock;
+		// Lazy: the desk's routing reaches back into intake (its conversations and screenings) through its own lazies.
+		private readonly Lazy<IDispatcherRoutingService> _dispatcherRouting;
 
 		public IntakeService(IIntakeChannelsRepository channels, IIntakeMessagesRepository messages, IVoiceIntakeSessionsRepository sessions,
 			IDepartmentsService departments, IDepartmentSettingsService departmentSettings, IFeatureToggleService flags, ICallsService calls,
 			INumbersService numbers, IGeoLocationProvider geo, IEventAggregator events, IQueueService queue, ICommunicationService communication,
 			ICacheProvider cache, IIntakeConversationService conversations, IIntakeConversationOperations conversationOperations,
-			IIntakeBlockedSendersRepository blocked, TimeProvider clock)
+			IIntakeBlockedSendersRepository blocked, TimeProvider clock, Lazy<IDispatcherRoutingService> dispatcherRouting)
 		{
 			_blocked = blocked;
+			_dispatcherRouting = dispatcherRouting;
 			_channels = channels;
 			_messages = messages;
 			_sessions = sessions;
@@ -232,6 +235,11 @@ namespace Resgrid.Services.Intake
 				// the event below, so the boards and the desk read the label with the call).
 				if (limit.OverLimit)
 					await SafeScreenAsync(channel.DepartmentId, saved.CallId, IntakeScreenings.RepeatSender, now);
+
+				// A chat app's call reaches the dispatcher desk as a chat (the desk's Chats option), put there before the event below so the
+				// event's pending-call hand-off finds it on the desk instead of racing it.
+				if (IsChatChannel(envelope.ChannelType))
+					await PutChatOnDeskAsync(envelope, saved);
 
 				// As the v4 pending path: dispatcher screens refresh; "call added" (chat channel, workflows, field apps) waits for dispatch.
 				_events.SendMessage(new CallUpdatedEvent { DepartmentId = channel.DepartmentId, Call = saved });
@@ -561,6 +569,36 @@ namespace Resgrid.Services.Intake
 
 				default:
 					return patterns.Any(p => string.Equals(p, value, StringComparison.OrdinalIgnoreCase));
+			}
+		}
+
+		/// <summary>The chat apps (WhatsApp, Slack, Teams, Telegram, Discord, Google Chat): their calls come to the dispatcher desk as chats.</summary>
+		public static bool IsChatChannel(IntakeChannelTypes channelType) =>
+			channelType == IntakeChannelTypes.WhatsApp || channelType == IntakeChannelTypes.Slack || channelType == IntakeChannelTypes.Teams ||
+			channelType == IntakeChannelTypes.Telegram || channelType == IntakeChannelTypes.Discord || channelType == IntakeChannelTypes.GoogleChat;
+
+		private async Task PutChatOnDeskAsync(IntakeEnvelope envelope, Call saved)
+		{
+			try
+			{
+				// NotRouted (desk off, or Chats unticked) leaves the call to the event's hand-off, which puts it on the desk as a pending
+				// call when the desk takes those, as an emailed call is when Emails is unticked. The call is saved, so nothing here cancels.
+				await _dispatcherRouting.Value.EnqueueAsync(new DispatcherEnqueueRequest
+				{
+					DepartmentId = saved.DepartmentId,
+					Kind = DispatcherQueueItemKinds.Chat,
+					CallId = saved.CallId,
+					SourceAddress = Cap(envelope.Sender?.Trim(), MaxSenderLength),
+					SourceName = Cap(envelope.SenderName?.Trim(), MaxNameLength),
+					Subject = saved.Name,
+					Body = saved.NatureOfCall,
+					CreatedByUserId = saved.ReportingUserId
+				}, CancellationToken.None);
+			}
+			catch (Exception ex)
+			{
+				// The desk's sweep adds the pending call it missed.
+				Framework.Logging.LogException(ex, $"Intake chat call {saved.CallId} could not be put on the dispatcher desk.");
 			}
 		}
 

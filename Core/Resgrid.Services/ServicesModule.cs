@@ -185,6 +185,8 @@ namespace Resgrid.Services
 			builder.RegisterType<ModerationService>().As<IModerationService>().InstancePerLifetimeScope();
 			builder.RegisterType<ChatNotificationService>().As<IChatNotificationService>().InstancePerLifetimeScope();
 			builder.RegisterType<ChatProvisioningEventService>().As<IChatProvisioningEventService>().SingleInstance().AutoActivate();
+			builder.RegisterType<DispatcherDeskCallEventService>().AsSelf().SingleInstance().AutoActivate();
+			builder.RegisterType<DispatcherEmailCallService>().As<IDispatcherEmailCallService>().InstancePerLifetimeScope();
 			builder.RegisterType<IncidentCommandNotificationService>().As<IIncidentCommandNotificationService>().InstancePerLifetimeScope();
 			builder.RegisterType<IncidentVoiceService>().As<IIncidentVoiceService>().InstancePerLifetimeScope();
 			builder.RegisterType<MutualAidService>().As<IMutualAidService>().InstancePerLifetimeScope();
@@ -450,6 +452,19 @@ namespace Resgrid.Services
 			// Plan D8: CallsService takes it as a Lazy (it reaches the rules service, which reaches back to calls).
 			builder.RegisterType<DestinationAutoFillService>().As<IDestinationAutoFillService>().InstancePerLifetimeScope();
 			builder.RegisterType<RecurringCallsService>().As<IRecurringCallsService>().InstancePerLifetimeScope();
+			// Dispatcher desk (M0324): presence, breaks and the conversation service reach routing through Lazy<> (it calls back
+			// into them), routing reaches calls through Lazy<> (call services notify the desk).
+			builder.RegisterType<DispatcherDeskConfigService>().As<IDispatcherDeskConfigService>().InstancePerLifetimeScope();
+			builder.RegisterType<ShiftDispatchersService>().As<IShiftDispatchersService>().InstancePerLifetimeScope();
+			builder.RegisterType<DispatcherDeskNotifier>().As<IDispatcherDeskNotifier>().InstancePerLifetimeScope();
+			builder.RegisterType<DispatcherPresenceService>().As<IDispatcherPresenceService>().InstancePerLifetimeScope();
+			builder.RegisterType<DispatcherRoutingService>().As<IDispatcherRoutingService>().InstancePerLifetimeScope();
+			builder.RegisterType<DispatcherBreaksService>().As<IDispatcherBreaksService>().InstancePerLifetimeScope();
+			builder.RegisterType<DispatcherConversationService>().As<IDispatcherConversationService>().InstancePerLifetimeScope();
+			builder.RegisterType<DispatcherVoiceService>().As<IDispatcherVoiceService>().InstancePerLifetimeScope();
+			builder.RegisterType<DispatcherDeskWorkerService>().As<IDispatcherDeskWorkerService>().InstancePerLifetimeScope();
+			// Intake text threads reach the desk through this router (intake resolves every IIntakeConversationRouter; none = no desk).
+			builder.RegisterType<DispatcherIntakeConversationRouter>().As<IIntakeConversationRouter>().InstancePerLifetimeScope();
 			builder.RegisterType<RunCardTemplatesService>().As<IRunCardTemplatesService>().InstancePerLifetimeScope();
 			builder.RegisterType<PersonnelLocationResolver>().As<IPersonnelLocationResolver>().InstancePerLifetimeScope();
 			// Singleton: it keeps each department's reduced visibility matrix in memory between location pings.

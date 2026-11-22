@@ -71,6 +71,8 @@ namespace Resgrid.Providers.Bus
 			_eventAggregator.AddAsyncListener(unitStatusAlertUpdatedTopicHandler);
 			_eventAggregator.AddAsyncListener(unitActiveRolesUpdatedTopicHandler);
 			_eventAggregator.AddAsyncListener(outstandingRequirementsUpdatedTopicHandler);
+			_eventAggregator.AddAsyncListener(dispatcherDeskUpdatedTopicHandler);
+			_eventAggregator.AddAsyncListener(dispatcherQueueUpdatedTopicHandler);
 			_eventAggregator.AddAsyncListener(unitNavigationUpdatedTopicHandler);
 			_eventAggregator.AddAsyncListener(recurringCallAlertsUpdatedTopicHandler);
 			_eventAggregator.AddAsyncListener(aiDestinationAdviceUpdatedTopicHandler);
@@ -772,6 +774,25 @@ namespace Resgrid.Providers.Bus
 
 			if (!await _rabbitTopicProvider.RecurringCallAlertsUpdated(message.DepartmentId, message.RecurringCallId, message.Payload))
 				Framework.Logging.LogError($"Unable to publish the recurring call alerts realtime update for department {message.DepartmentId}.");
+		};
+
+		// Dispatcher desk (M0324): ids and states only, never message content; clients refetch through v4 DispatcherDesk.
+		public Func<DispatcherDeskUpdatedEvent, Task> dispatcherDeskUpdatedTopicHandler = async delegate (DispatcherDeskUpdatedEvent message)
+		{
+			if (_rabbitTopicProvider == null)
+				_rabbitTopicProvider = new RabbitTopicProvider();
+
+			if (!await _rabbitTopicProvider.DispatcherDeskUpdated(message.DepartmentId, message.UserId, message.Payload))
+				Framework.Logging.LogError($"Unable to publish the dispatcher desk realtime update for department {message.DepartmentId}.");
+		};
+
+		public Func<DispatcherQueueUpdatedEvent, Task> dispatcherQueueUpdatedTopicHandler = async delegate (DispatcherQueueUpdatedEvent message)
+		{
+			if (_rabbitTopicProvider == null)
+				_rabbitTopicProvider = new RabbitTopicProvider();
+
+			if (!await _rabbitTopicProvider.DispatcherQueueUpdated(message.DepartmentId, message.DispatcherQueueItemId, message.Payload))
+				Framework.Logging.LogError($"Unable to publish the dispatcher queue realtime update for department {message.DepartmentId}.");
 		};
 
 		public Func<OutstandingRequirementsUpdatedEvent, Task> outstandingRequirementsUpdatedTopicHandler = async delegate (OutstandingRequirementsUpdatedEvent message)

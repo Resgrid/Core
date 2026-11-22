@@ -1,0 +1,66 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.DispatcherDesk
+@model Resgrid.Web.Areas.User.Models.DispatcherDesk.DispatcherBreakPlanEditorModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.DispatcherDesk.DispatcherDesk> desk
+@* Break plan rows (a shift's plan or the department default). Posted as breakPlanType_{n}, breakPlanMinutes_{n} and
+   breakPlanOffset_{n}; DispatcherDeskForms.ReadBreakPlan reads them. Rows are added and removed by
+   resgrid.dispatcherdesk.breakplan.js from the template below. *@
+@{
+	var types = new[] { DispatcherBreakTypes.Break, DispatcherBreakTypes.Meal, DispatcherBreakTypes.Personal, DispatcherBreakTypes.Other };
+}
+<div class="dispatcher-break-plan" id="@Model.Id" data-next-index="@Model.Rows.Count">
+	<table class="table table-condensed dispatcher-break-plan-table">
+		<thead>
+			<tr>
+				<th>@desk["BreakTypeColumn"]</th>
+				<th style="width: 22%;">@desk["BreakLengthColumn"]</th>
+				<th style="width: 30%;">@desk["BreakTargetColumn"]</th>
+				<th style="width: 1%;"></th>
+			</tr>
+		</thead>
+		<tbody>
+			@for (var i = 0; i < Model.Rows.Count; i++)
+			{
+				var row = Model.Rows[i];
+				<tr class="dispatcher-break-plan-row">
+					<td>
+						<select name="breakPlanType_@i" class="form-control input-sm" aria-label="@desk["BreakTypeColumn"]">
+							@foreach (var type in types)
+							{
+								if ((int)type == row.BreakType)
+								{
+									<option value="@((int)type)" selected="selected">@desk["BreakType." + type]</option>
+								}
+								else
+								{
+									<option value="@((int)type)">@desk["BreakType." + type]</option>
+								}
+							}
+						</select>
+					</td>
+					<td><input type="number" min="1" max="240" step="1" name="breakPlanMinutes_@i" value="@row.DurationMinutes" class="form-control input-sm" aria-label="@desk["BreakLengthColumn"]" /></td>
+					<td><input type="number" min="0" step="5" name="breakPlanOffset_@i" value="@row.TargetOffsetMinutes" class="form-control input-sm" placeholder="@desk["BreakTargetPlaceholder"]" aria-label="@desk["BreakTargetColumn"]" /></td>
+					<td><button type="button" class="btn btn-xs btn-danger dispatcher-break-plan-remove" title="@desk["RemoveBreakRow"]" aria-label="@desk["RemoveBreakRow"]" disabled="disabled"><i class="fa fa-times"></i></button></td>
+				</tr>
+			}
+		</tbody>
+	</table>
+	<p class="text-muted dispatcher-break-plan-empty" style="@(Model.Rows.Any() ? "display:none;" : "")">@desk["BreakPlanEmpty"]</p>
+	<button type="button" class="btn btn-xs btn-success dispatcher-break-plan-add" disabled="disabled"><i class="fa fa-plus"></i> @desk["AddBreakRow"]</button>
+	<span class="help-block m-b-none">@desk["BreakPlanHelp"]</span>
+	<template class="dispatcher-break-plan-template">
+		<tr class="dispatcher-break-plan-row">
+			<td>
+				<select name="breakPlanType___index__" class="form-control input-sm" aria-label="@desk["BreakTypeColumn"]">
+					@foreach (var type in types)
+					{
+						<option value="@((int)type)">@desk["BreakType." + type]</option>
+					}
+				</select>
+			</td>
+			<td><input type="number" min="1" max="240" step="1" name="breakPlanMinutes___index__" value="15" class="form-control input-sm" aria-label="@desk["BreakLengthColumn"]" /></td>
+			<td><input type="number" min="0" step="5" name="breakPlanOffset___index__" value="" class="form-control input-sm" placeholder="@desk["BreakTargetPlaceholder"]" aria-label="@desk["BreakTargetColumn"]" /></td>
+			<td><button type="button" class="btn btn-xs btn-danger dispatcher-break-plan-remove" title="@desk["RemoveBreakRow"]" aria-label="@desk["RemoveBreakRow"]"><i class="fa fa-times"></i></button></td>
+		</tr>
+	</template>
+</div>

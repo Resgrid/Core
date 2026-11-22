@@ -1,0 +1,158 @@
+@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Shifts.ShiftDayView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.DispatcherDesk.DispatcherDesk> desk
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Shifts.Shifts> localizer
+@* The shift day's "Dispatchers on duty" block (M0324): the day's dispatch roster, sign-up / withdraw for dispatchers on a
+   Signup shift, and the roster tools for shift managers. Only rendered when the shift takes dispatchers. *@
+@{
+	var dispatch = Model.Dispatch;
+	string FormatTime(DateTime value) => Model.Department != null ? value.FormatForDepartment(Model.Department, true) : value.ToString("g");
+}
+<div class="ibox float-e-margins" id="shiftDayDispatchers">
+	<div class="ibox-title">
+		<h5>
+			@desk["DispatchersOnDutyHeader"]
+			@if (dispatch.IsDispatchOnly)
+			{
+				<small>@desk["DispatchOnlyBadge"]</small>
+			}
+		</h5>
+		<div class="ibox-tools">
+			@if (dispatch.RequiredDispatchers > 0)
+			{
+				if (dispatch.OpenPositions > 0)
+				{
+					<span class="label label-warning">@String.Format(desk["OpenDispatchPositionsFormat"].Value, dispatch.OpenPositions)</span>
+				}
+				else
+				{
+					<span class="label label-success">@desk["DispatchPositionsFilled"]</span>
+				}
+			}
+			<a class="btn btn-xs btn-white" asp-controller="DispatcherDesk" asp-action="Breaks" asp-route-area="User" asp-route-shiftDayId="@Model.ShiftDayId"><i class="fa fa-coffee"></i> @desk["BreakPlannerButton"]</a>
+		</div>
+	</div>
+	<div class="ibox-content">
+		@if (!dispatch.Rows.Any())
+		{
+			<p class="text-muted">@desk["NoDispatchersOnDay"]</p>
+		}
+		else
+		{
+			<div class="table-responsive">
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>@desk["DispatcherColumn"]</th>
+							<th>@desk["DutyColumn"]</th>
+							<th>@desk["StatusColumn"]</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach (var row in dispatch.Rows)
+						{
+							<tr>
+								<td>
+									@row.Name
+									@if (row.IsYou)
+									{
+										<span class="label label-info">@localizer["YouBadge"]</span>
+									}
+									@if (row.IsSupervisor)
+									{
+										<span class="label label-primary">@desk["DeskSupervisorBadge"]</span>
+									}
+								</td>
+								<td><small>@FormatTime(row.Start) – @FormatTime(row.End)</small></td>
+								<td>
+									@if (row.Source == (int)ShiftDispatcherSources.Signup)
+									{
+										<span class="label label-default">@desk["SourceSignup"]</span>
+									}
+									else
+									{
+										<span class="label label-default">@desk["SourceAssigned"]</span>
+									}
+									@if (row.IsPending)
+									{
+										<span class="label label-warning">@desk["PendingApprovalBadge"]</span>
+									}
+								</td>
+								<td>
+									@if (row.CanReview)
+									{
+										<form method="post" asp-controller="Shifts" asp-action="DispatcherReview" asp-route-area="User" class="form-inline m-b-xs">
+											<input type="hidden" name="shiftDayId" value="@dispatch.ShiftDayId" />
+											<input type="hidden" name="shiftDispatcherId" value="@row.ShiftDispatcherId" />
+											<input type="text" name="note" class="form-control input-sm" maxlength="500" placeholder="@localizer["OptionalNotePlaceholder"]" aria-label="@localizer["OptionalNotePlaceholder"]" />
+											<button type="submit" name="approve" value="true" class="btn btn-xs btn-primary">@localizer["ApproveButton"]</button>
+											<button type="submit" name="approve" value="false" class="btn btn-xs btn-danger">@localizer["DenyButton"]</button>
+										</form>
+									}
+									else if (row.CanRemove)
+									{
+										<form method="post" asp-controller="Shifts" asp-action="DispatcherRemove" asp-route-area="User" class="form-inline m-b-xs">
+											<input type="hidden" name="shiftDayId" value="@dispatch.ShiftDayId" />
+											<input type="hidden" name="userId" value="@row.UserId" />
+											<input type="text" name="note" class="form-control input-sm" maxlength="500" placeholder="@localizer["OptionalNotePlaceholder"]" aria-label="@localizer["OptionalNotePlaceholder"]" />
+											<button type="submit" class="btn btn-xs btn-danger" data-confirm="@desk["RemoveDispatcherConfirm"]">@desk["RemoveFromDayButton"]</button>
+										</form>
+									}
+									@if (row.CanWithdraw)
+									{
+										<form method="post" asp-controller="Shifts" asp-action="DispatcherWithdraw" asp-route-area="User" style="display:inline;">
+											<input type="hidden" name="shiftDayId" value="@dispatch.ShiftDayId" />
+											<button type="submit" class="btn btn-xs btn-danger" data-confirm="@desk["WithdrawDispatcherConfirm"]">@desk["WithdrawButton"]</button>
+										</form>
+									}
+								</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		}
+
+		@if (dispatch.CanSignup)
+		{
+			<form method="post" asp-controller="Shifts" asp-action="DispatcherSignup" asp-route-area="User" class="m-b-xs">
+				<input type="hidden" name="shiftDayId" value="@dispatch.ShiftDayId" />
+				<button type="submit" class="btn btn-success"><i class="fa fa-headphones"></i> @desk["SignupAsDispatcherButton"]</button>
+				@if (dispatch.RequireApproval)
+				{
+					<span class="help-inline text-muted">@desk["DispatcherSignupNeedsApproval"]</span>
+				}
+			</form>
+		}
+
+		@if (dispatch.CanAssign)
+		{
+			<h4 class="m-t-md">@desk["AddDispatcherHeader"]</h4>
+			<form method="post" asp-controller="Shifts" asp-action="DispatcherAssign" asp-route-area="User">
+				<input type="hidden" name="shiftDayId" value="@dispatch.ShiftDayId" />
+				<div class="row">
+					<div class="col-sm-6 form-group">
+						<label for="addDispatcherUserId">@desk["DispatcherColumn"]</label>
+						<select id="addDispatcherUserId" name="userId" class="form-control" style="width:100%;">
+							@foreach (var option in dispatch.AssignOptions)
+							{
+								<option value="@option.Value">@option.Text</option>
+							}
+						</select>
+					</div>
+					<div class="col-sm-3 form-group">
+						<label class="hidden-xs">&nbsp;</label>
+						<div class="checkbox m-t-none">
+							<label><input type="checkbox" name="isSupervisor" value="true" /> @desk["DeskSupervisorColumn"]</label>
+						</div>
+					</div>
+					<div class="col-sm-3 form-group">
+						<label class="hidden-xs">&nbsp;</label>
+						<button type="submit" class="btn btn-primary btn-block">@desk["AddDispatcherButton"]</button>
+					</div>
+				</div>
+			</form>
+		}
+	</div>
+</div>

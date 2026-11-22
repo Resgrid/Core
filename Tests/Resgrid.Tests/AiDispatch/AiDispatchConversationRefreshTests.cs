@@ -115,7 +115,7 @@ namespace Resgrid.Tests.AiDispatch
 
 			_service = new AiDispatchEnrichmentService(access.Object, Mock.Of<IFeatureToggleService>(), departments.Object, _calls.Object, Mock.Of<IGeoLocationProvider>(),
 				Mock.Of<IDepartmentDataProtectionService>(), _audits.Object, settings.Object, admission.Object, usage.Object, new Lazy<ILlmClient>(() => llm.Object),
-				new Lazy<IDecisionClient>(() => Mock.Of<IDecisionClient>()), Mock.Of<IEventAggregator>(), new FixedClock(),
+				new Lazy<IDecisionClient>(() => Mock.Of<IDecisionClient>()), Mock.Of<IEventAggregator>(), new FixedClock(), Mock.Of<IDispatcherDeskConfigService>(),
 				new Lazy<IIntakeConversationOperations>(() => _conversations.Object));
 		}
 

@@ -12,6 +12,8 @@ namespace Resgrid.Providers.NumberProvider
 			builder.RegisterType<OutboundVoiceProvider>().As<IOutboundVoiceProvider>().InstancePerLifetimeScope();
 			// Intake SMS conversations (plan §8): texts from the master number with the carrier message id for the delivery log.
 			builder.RegisterType<IntakeSmsProvider>().As<IIntakeSmsProvider>().InstancePerLifetimeScope();
+			// Dispatcher desk voice (M0324): rings dispatchers' phones and redirects held callers; no message content, so no ADP decorator.
+			builder.RegisterType<DispatcherVoiceProvider>().As<IDispatcherVoiceProvider>().InstancePerLifetimeScope();
 
 			// ADP outbound net (plan 7.5). SMS is scrubbed in place; voice is rebuilt through the
 			// protected projection, because a prompt read aloud as "REDACTED" helps nobody.

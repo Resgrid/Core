@@ -119,6 +119,18 @@ namespace Resgrid.Providers.Bus.Rabbit
 			Id = Guid.NewGuid(), Type = (int)EventingTypes.RecurringCallAlertsUpdated, TimeStamp = DateTime.UtcNow, DepartmentId = departmentId, ItemId = recurringCallId.ToString(), Payload = payload
 		}.SerializeJson());
 
+		/// <summary>A department's dispatcher desk changed (M0324); item id is the dispatcher's user id (empty when not about one), payload { userId, state }.</summary>
+		public Task<bool> DispatcherDeskUpdated(int departmentId, string userId, string payload) => SendMessage(Topics.EventingTopic, new EventingMessage
+		{
+			Id = Guid.NewGuid(), Type = (int)EventingTypes.DispatcherDeskUpdated, TimeStamp = DateTime.UtcNow, DepartmentId = departmentId, ItemId = userId ?? string.Empty, Payload = payload
+		}.SerializeJson());
+
+		/// <summary>A department's dispatcher queue changed (M0324); item id is the queue item id, payload { itemId, state, assignedUserId, kind }.</summary>
+		public Task<bool> DispatcherQueueUpdated(int departmentId, string dispatcherQueueItemId, string payload) => SendMessage(Topics.EventingTopic, new EventingMessage
+		{
+			Id = Guid.NewGuid(), Type = (int)EventingTypes.DispatcherQueueUpdated, TimeStamp = DateTime.UtcNow, DepartmentId = departmentId, ItemId = dispatcherQueueItemId ?? string.Empty, Payload = payload
+		}.SerializeJson());
+
 		public Task<bool> OutstandingRequirementsUpdated(int departmentId, int callId, string payload) => SendMessage(Topics.EventingTopic, new EventingMessage
 		{
 			Id = Guid.NewGuid(), Type = (int)EventingTypes.OutstandingRequirementsUpdated, TimeStamp = DateTime.UtcNow, DepartmentId = departmentId, ItemId = callId.ToString(), Payload = payload

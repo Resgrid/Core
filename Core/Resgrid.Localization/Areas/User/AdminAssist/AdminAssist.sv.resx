@@ -7755,6 +7755,12 @@
   <data xml:space="preserve" name="SettingHelp.ShiftTradeApprovers">
     <value>Vem som väljer vilken sökande som tar en bytesförfrågan och godkänner väntande byten. Avdelningsadministratörer får alltid; gruppadministratörer, den som byter bort sitt pass och medlemmar i valda roller bestämmer avdelningen.</value>
   </data>
+  <data xml:space="preserve" name="Setting.DispatcherDeskConfig">
+    <value>Larmoperatörsplats</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.DispatcherDeskConfig">
+    <value>Slår på operatörsplatsen och anger hur den fungerar: vilket arbete som erbjuds operatörerna i tjänst i Dispatch-appen (väntande och schemalagda larm, sms, telefonsamtal, e-post, chattar), hur länge ett erbjudande väntar och hur många poster en operatör kan hålla innan hen räknas som upptagen, hur många missade erbjudanden i rad som gör en operatör Borta, och vad som händer med sms och telefonsamtal när ingen är ledig (vänta i kön, Enhanced AI eller röstbrevlåda). Anger också vad ett larm som mejlas till larmadressen blir (skickas direkt, sparas som väntande eller läses av Enhanced AI till ett väntande larm) och reglerna för raster och tjänst: rastpåminnelser, automatisk återgång från raster, minsta antal tillgängliga, att neka raster under det, inga aviseringar från platsen under rast, och om operatörer måste vara på ett skift eller får gå i tjänst utan skift (Skift, Inställningar för operatörsplatsen). Av som standard; larm via e-post skickas direkt tills Larm via e-post ändras, vilket gäller även när tilldelningen är avstängd.</value>
+  </data>
   <data xml:space="preserve" name="Feature.home-dashboard">
     <value>Anpassningsbar startöversikt</value>
   </data>
@@ -8000,5 +8006,95 @@
   </data>
   <data name="FeatureSetup.ai-destination-advice" xml:space="preserve">
     <value>Kräver tillägget Enhanced AI med AI-destinationsråd aktiverat för er avdelning. Lägg först till era destinationer med deras förmågor samt destinationsregler. Rådet visas när larmet visas och uppdateras, inget ändras förrän någon tillämpar det, och avdelningar som använder Advanced Data Protection får inga råd.</value>
+  </data>
+  <data name="Feature.dispatcher-desk" xml:space="preserve">
+    <value>Operatörsplats</value>
+  </data>
+  <data name="FeaturePurpose.dispatcher-desk" xml:space="preserve">
+    <value>En direkttavla över operatörerna i tjänst och arbetet som väntar på dem. Väntande och schemalagda larm, sms, telefonsamtal, e-post och chattar erbjuds till en ledig operatör i taget, som tar dem i Dispatch-appen på telefon eller surfplatta.</value>
+  </data>
+  <data name="FeatureValue.dispatcher-desk" xml:space="preserve">
+    <value>Arbetet går till någon som är ledig: en operatör som håller arbete räknas som upptagen, ett erbjudande som ingen tar går vidare till nästa operatör, och arbete som blir liggande larmar alla i tjänst. Operatörerna kan bemanna platsen var de än är, inte bara vid en konsol.</value>
+  </data>
+  <data name="FeatureExample.dispatcher-desk" xml:space="preserve">
+    <value>Två frivilliga operatörer täcker en helg från sina telefoner. Ett sms om ett träd som fallit över en väg erbjuds den som är ledig och blir ett larm, medan den andra har matrast och inte får några aviseringar från platsen förrän hen är tillbaka.</value>
+  </data>
+  <data name="FeatureSetup.dispatcher-desk" xml:space="preserve">
+    <value>Ge operatörerna behörigheten Inloggning i Dispatch-appen och lägg in dem i ett skifts operatörsschema. Öppna sedan Skift, Inställningar för operatörsplatsen, slå på Tilldela arbete till operatörer i tjänst, välj vad som ska Skicka till operatörsplatsen och spara. Operatörerna loggar in på platsen i Dispatch-appen; sidan Operatörsplats visar vem som är tillgänglig, upptagen eller har rast och den öppna kön, och en arbetsledare på platsen kan avsluta en rast eller flytta arbete till någon annan.</value>
+  </data>
+  <data name="Feature.shift-dispatchers" xml:space="preserve">
+    <value>Operatörer i tjänst</value>
+  </data>
+  <data name="FeaturePurpose.shift-dispatchers" xml:space="preserve">
+    <value>Lägg operatörer på tilldelade skift och anmälningsskift, på ett skift bara för operatörer eller bredvid insatspersonalen, med antalet operatörsplatser att fylla, ett minimum på platsen och en arbetsledare på platsen.</value>
+  </data>
+  <data name="FeatureValue.shift-dispatchers" xml:space="preserve">
+    <value>Platsen erbjuder arbete bara till operatörer som verkligen är i tjänst: de som står på schemat för en skiftdag som pågår nu, om inte avdelningen tillåter tjänst utan skift. Lediga operatörsplatser visas på skiftdagen, och I tjänst nu listar operatörerna med deras status på platsen och raster.</value>
+  </data>
+  <data name="FeatureExample.shift-dispatchers" xml:space="preserve">
+    <value>En larmcentral kör skift A, B och C bara för operatörer med två operatörer vardera, och en frivillig avdelning lägger till en operatörsplats på sitt anmälningsskift på helgen.</value>
+  </data>
+  <data name="FeatureSetup.shift-dispatchers" xml:space="preserve">
+    <value>Öppna Skift, skapa eller redigera ett skift och slå på Det här skiftet har operatörer. Ange Operatörer som behövs och, på ett tilldelat skift, kryssa i personerna i Operatörsschema och markera en arbetsledare på platsen; på ett anmälningsskift väljer operatörerna Anmäl dig som operatör på skiftdagen. Bara personer med behörigheten Inloggning i Dispatch-appen kan läggas till.</value>
+  </data>
+  <data name="Feature.dispatcher-breaks" xml:space="preserve">
+    <value>Operatörsraster</value>
+  </data>
+  <data name="FeaturePurpose.dispatcher-breaks" xml:space="preserve">
+    <value>Planera raster och måltider för dagens operatörer på en gemensam tidslinje för täckning som visar vem som är i tjänst, vem som har rast och var bemanningen skulle falla under minimum.</value>
+  </data>
+  <data name="FeatureValue.dispatcher-breaks" xml:space="preserve">
+    <value>Rasterna förblir förskjutna så att platsen aldrig blir tom: Planera raster fördelar ett skifts rastplan på dess operatörer utan överlapp, och planeraren varnar för överlappande raster och luckor innan de uppstår. Operatörerna påminns före varje rast och får som standard inga aviseringar från platsen under den.</value>
+  </data>
+  <data name="FeatureExample.dispatcher-breaks" xml:space="preserve">
+    <value>På ett 12-timmarsskift med tre operatörer lägger Planera raster var och ens 30 minuter långa måltid och två raster på 15 minuter vid olika tider, och varje operatör påminns fem minuter innan en rast ska börja.</value>
+  </data>
+  <data name="FeatureSetup.dispatcher-breaks" xml:space="preserve">
+    <value>Ange en rastplan på varje skift, eller en standardrastplan i Inställningar för operatörsplatsen. Öppna sedan Skift, Operatörsraster, välj ett datum och en skiftdag och använd Planera raster, eller planera enstaka raster själv. Arbetsledare på platsen och skiftansvariga planerar allas raster; operatörer planerar sina egna bara på skift som tillåter det. En rast är en längd, så en rast som börjar tidigt slutar också tidigt.</value>
+  </data>
+  <data name="Feature.dispatcher-desk-settings" xml:space="preserve">
+    <value>Inställningar för operatörsplatsen</value>
+  </data>
+  <data name="FeaturePurpose.dispatcher-desk-settings" xml:space="preserve">
+    <value>Slå på tilldelningen och välj vilket arbete som går till platsen, hur länge ett erbjudande väntar, vad som händer med sms och telefonsamtal när alla operatörer är upptagna, vad ett larm via e-post blir och reglerna för raster och tjänst.</value>
+  </data>
+  <data name="FeatureValue.dispatcher-desk-settings" xml:space="preserve">
+    <value>Avdelningen bestämmer en gång hur platsen beter sig, från hur snabbt obesvarat arbete går vidare till om en rast får lämna färre tillgängliga operatörer än minimum.</value>
+  </data>
+  <data name="FeatureExample.dispatcher-desk-settings" xml:space="preserve">
+    <value>En avdelning skickar sms och telefonsamtal till platsen, ger varje erbjudande 60 sekunder, låter Enhanced AI fylla i ett väntande larm när ingen är ledig och sparar larm via e-post som väntande så att en operatör kan granska dem.</value>
+  </data>
+  <data name="FeatureSetup.dispatcher-desk-settings" xml:space="preserve">
+    <value>Avdelningsadministratörer öppnar Skift och sedan Inställningar för operatörsplatsen. Slå på Tilldela arbete till operatörer i tjänst, välj Skicka till operatörsplatsen, tiden för erbjudanden och poster per operatör, vad som händer när alla operatörer är upptagna, Larm via e-post och rastreglerna, och spara. Valen med Enhanced AI kräver tillägget Enhanced AI.</value>
+  </data>
+  <data name="Feature.dispatcher-desk-activity" xml:space="preserve">
+    <value>Operatörsaktivitet</value>
+  </data>
+  <data name="FeaturePurpose.dispatcher-desk-activity" xml:space="preserve">
+    <value>Platsens aktivitet för upp till 92 dagar: arbete per typ, avslutade, överflödade, avbrutna och eskalerade poster och genomsnittlig svarstid, och för varje operatör accepterade, avböjda och missade erbjudanden, tiden till accept och till avslut samt tagna, missade eller sent avslutade raster.</value>
+  </data>
+  <data name="FeatureValue.dispatcher-desk-activity" xml:space="preserve">
+    <value>Se om arbetet tas snabbt, hur ofta det svämmar över eller eskaleras och om rasterna slutar i tid, och justera sedan bemanning, erbjudandetider eller rastplaner utifrån siffrorna.</value>
+  </data>
+  <data name="FeatureExample.dispatcher-desk-activity" xml:space="preserve">
+    <value>En arbetsledare ser att sms ofta eskalerades på fredagskvällar och lägger till en andra operatör på det skiftet.</value>
+  </data>
+  <data name="FeatureSetup.dispatcher-desk-activity" xml:space="preserve">
+    <value>Avdelningsadministratörer och arbetsledare på platsen öppnar Skift och sedan Operatörsaktivitet, väljer datumen Från och Till och väljer Visa.</value>
+  </data>
+  <data name="Feature.intake-spam-screening" xml:space="preserve">
+    <value>Skräpfiltrering vid mottagning</value>
+  </data>
+  <data name="FeaturePurpose.intake-spam-screening" xml:space="preserve">
+    <value>Håll skräp och robotsamtal borta från Väntande larm: avfärda ett mottaget larm som skräp och blockera avsändaren, begränsa hur många larm ett telefonnummer kan skapa på en timme, be uppringare trycka 1 innan frågorna börjar och märk meddelanden som Enhanced AI läser som ingen händelse.</value>
+  </data>
+  <data name="FeatureValue.intake-spam-screening" xml:space="preserve">
+    <value>Operatörerna lägger sin tid på riktiga rapporter. Sms och samtal från en blockerad avsändare skapar inga larm och får inget svar, och ett filtrerat larm behåller sin märkning i Väntande larm men erbjuds inte på operatörsplatsen; en operatör avgör fortfarande vad som händer med det.</value>
+  </data>
+  <data name="FeatureExample.intake-spam-screening" xml:space="preserve">
+    <value>Ett reklamnummer sms:ar avdelningens nummer gång på gång. Över timgränsen läggs dess sms till som anteckningar på dess öppna larm, och en operatör avfärdar det larmet som skräp och blockerar numret i 30 dagar.</value>
+  </data>
+  <data name="FeatureSetup.intake-spam-screening" xml:space="preserve">
+    <value>På ett väntande mottaget larm väljer du Avfärda som skräp och låter Blockera även avsändaren vara ikryssad; larmet avbryts och ingen meddelas. Blockerade avsändare listas på sidan Mottagningskanaler, där Häv blockering tar bort en blockering i förtid. Timgränsen gäller sms-, röst- och WhatsApp-kanaler utan tillåtna avsändare, aldrig e-post-, chatt- eller webhook-kanaler.</value>
   </data>
 </root>

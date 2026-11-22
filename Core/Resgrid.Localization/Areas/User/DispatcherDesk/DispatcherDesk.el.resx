@@ -1,0 +1,967 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AcceptedColumn" xml:space="preserve">
+    <value>Αποδεκτά</value>
+  </data>
+  <data name="AcknowledgeTextsHelp" xml:space="preserve">
+    <value>Ο αποστολέας λαμβάνει αυτόματη απάντηση όταν το SMS του φτάσει σε συντονιστή.</value>
+  </data>
+  <data name="AcknowledgeTextsLabel" xml:space="preserve">
+    <value>Αυτόματη επιβεβαίωση SMS</value>
+  </data>
+  <data name="ActionDone" xml:space="preserve">
+    <value>Έγινε.</value>
+  </data>
+  <data name="ActionFailed" xml:space="preserve">
+    <value>Δεν ολοκληρώθηκε. Δοκιμάστε ξανά.</value>
+  </data>
+  <data name="ActivityRangeHelpFormat" xml:space="preserve">
+    <value>Έως {0} ημέρες.</value>
+  </data>
+  <data name="ActivityTitle" xml:space="preserve">
+    <value>Δραστηριότητα συντονιστών</value>
+  </data>
+  <data name="AddBreakRow" xml:space="preserve">
+    <value>Προσθήκη διαλείμματος</value>
+  </data>
+  <data name="AddBreakTitle" xml:space="preserve">
+    <value>Προγραμματισμός διαλείμματος</value>
+  </data>
+  <data name="AddDispatcherButton" xml:space="preserve">
+    <value>Προσθήκη συντονιστή</value>
+  </data>
+  <data name="AddDispatcherHeader" xml:space="preserve">
+    <value>Προσθήκη συντονιστή σε αυτή την ημέρα</value>
+  </data>
+  <data name="AgeColumn" xml:space="preserve">
+    <value>Σε αναμονή</value>
+  </data>
+  <data name="AllShiftDays" xml:space="preserve">
+    <value>Όλες οι ημέρες βάρδιας</value>
+  </data>
+  <data name="AllowSelfScheduledBreaksHelp" xml:space="preserve">
+    <value>Οι συντονιστές αυτής της βάρδιας μπορούν να προγραμματίζουν και να μετακινούν τα δικά τους διαλείμματα. Διαφορετικά μόνο οι επόπτες θέσης και οι υπεύθυνοι βαρδιών.</value>
+  </data>
+  <data name="AllowSelfScheduledBreaksLabel" xml:space="preserve">
+    <value>Οι συντονιστές προγραμματίζουν τα διαλείμματά τους</value>
+  </data>
+  <data name="AllowUnscheduledDutyHelp" xml:space="preserve">
+    <value>Οι συντονιστές μπορούν να συνδεθούν στη θέση χωρίς να είναι σε βάρδια (εκδηλώσεις, εγκαταστάσεις, αντικαταστάσεις).</value>
+  </data>
+  <data name="AllowUnscheduledDutyLabel" xml:space="preserve">
+    <value>Υπηρεσία χωρίς βάρδια</value>
+  </data>
+  <data name="AutoReturnHelp" xml:space="preserve">
+    <value>Κάνει ξανά διαθέσιμο τον συντονιστή τόσα λεπτά μετά τη λήξη της διάρκειας του διαλείμματος. 0 = ποτέ (παραμένει σε διάλειμμα μέχρι να επιστρέψει ή να το τερματίσει επόπτης).</value>
+  </data>
+  <data name="AutoReturnLabel" xml:space="preserve">
+    <value>Αυτόματη επιστροφή μετά από (λεπτά)</value>
+  </data>
+  <data name="AvailableStat" xml:space="preserve">
+    <value>Διαθέσιμοι</value>
+  </data>
+  <data name="AvgAcceptColumn" xml:space="preserve">
+    <value>Μ.Ο. έως αποδοχή</value>
+  </data>
+  <data name="AvgCompleteColumn" xml:space="preserve">
+    <value>Μ.Ο. έως ολοκλήρωση</value>
+  </data>
+  <data name="AwayReasonLabel" xml:space="preserve">
+    <value>Αιτία (προαιρετικά)</value>
+  </data>
+  <data name="BackInFormat" xml:space="preserve">
+    <value>Επιστρέφει σε {0}</value>
+  </data>
+  <data name="BelowMinimumFormat" xml:space="preserve">
+    <value>Μόνο {0} διαθέσιμοι (ελάχιστο {1})</value>
+  </data>
+  <data name="BoardLoadFailed" xml:space="preserve">
+    <value>Ο πίνακας της θέσης δεν φορτώθηκε. Θα γίνει νέα προσπάθεια σύντομα.</value>
+  </data>
+  <data name="BoardUpdatedFormat" xml:space="preserve">
+    <value>Ενημερώθηκε {0}</value>
+  </data>
+  <data name="BreakColumn" xml:space="preserve">
+    <value>Διάλειμμα</value>
+  </data>
+  <data name="BreakLengthColumn" xml:space="preserve">
+    <value>Διάρκεια (λεπτά)</value>
+  </data>
+  <data name="BreakMinutesColumn" xml:space="preserve">
+    <value>Λεπτά διαλειμμάτων</value>
+  </data>
+  <data name="BreakPlanEmpty" xml:space="preserve">
+    <value>Δεν έχουν προγραμματιστεί διαλείμματα.</value>
+  </data>
+  <data name="BreakPlanHelp" xml:space="preserve">
+    <value>Στόχος = λεπτά μετά την έναρξη της βάρδιας· αφήστε κενό για ομοιόμορφη κατανομή. Το «Προγραμματισμός διαλειμμάτων» τα κλιμακώνει μεταξύ των συντονιστών της ημέρας ώστε να μην επικαλύπτονται όπου είναι δυνατό, και δεν αφήνει ποτέ λιγότερους από το ελάχιστο στη θέση.</value>
+  </data>
+  <data name="BreakPlanLabel" xml:space="preserve">
+    <value>Πρόγραμμα διαλειμμάτων</value>
+  </data>
+  <data name="BreakPlannerButton" xml:space="preserve">
+    <value>Προγραμματιστής διαλειμμάτων</value>
+  </data>
+  <data name="BreakReminderHelp" xml:space="preserve">
+    <value>Λεπτά πριν από προγραμματισμένο διάλειμμα που ο συντονιστής λαμβάνει υπενθύμιση. 0 = μόνο όταν είναι η ώρα.</value>
+  </data>
+  <data name="BreakReminderLabel" xml:space="preserve">
+    <value>Υπενθύμιση διαλείμματος (λεπτά πριν)</value>
+  </data>
+  <data name="BreakState.Active" xml:space="preserve">
+    <value>Σε διάλειμμα τώρα</value>
+  </data>
+  <data name="BreakState.Completed" xml:space="preserve">
+    <value>Πραγματοποιήθηκε</value>
+  </data>
+  <data name="BreakState.Missed" xml:space="preserve">
+    <value>Χάθηκε</value>
+  </data>
+  <data name="BreakState.Scheduled" xml:space="preserve">
+    <value>Προγραμματισμένο</value>
+  </data>
+  <data name="BreakTargetColumn" xml:space="preserve">
+    <value>Στόχος (λεπτά μετά την έναρξη)</value>
+  </data>
+  <data name="BreakTargetPlaceholder" xml:space="preserve">
+    <value>Ομοιόμορφη κατανομή</value>
+  </data>
+  <data name="BreakTooltipFormat" xml:space="preserve">
+    <value>{0} · {1} · {2}</value>
+  </data>
+  <data name="BreakType.Break" xml:space="preserve">
+    <value>Διάλειμμα</value>
+  </data>
+  <data name="BreakType.Meal" xml:space="preserve">
+    <value>Γεύμα</value>
+  </data>
+  <data name="BreakType.Other" xml:space="preserve">
+    <value>Άλλο</value>
+  </data>
+  <data name="BreakType.Personal" xml:space="preserve">
+    <value>Προσωπικό</value>
+  </data>
+  <data name="BreakTypeColumn" xml:space="preserve">
+    <value>Είδος</value>
+  </data>
+  <data name="BreaksColumn" xml:space="preserve">
+    <value>Διαλείμματα</value>
+  </data>
+  <data name="BreaksMissedColumn" xml:space="preserve">
+    <value>Χαμένα διαλείμματα</value>
+  </data>
+  <data name="BreaksPlannedFormat" xml:space="preserve">
+    <value>Προγραμματίστηκαν {0} διαλείμματα.</value>
+  </data>
+  <data name="BreaksTitle" xml:space="preserve">
+    <value>Διαλείμματα συντονιστών</value>
+  </data>
+  <data name="ByDispatcherHeader" xml:space="preserve">
+    <value>Ανά συντονιστή</value>
+  </data>
+  <data name="ByKindHeader" xml:space="preserve">
+    <value>Εργασία ανά είδος</value>
+  </data>
+  <data name="CancelBreakButton" xml:space="preserve">
+    <value>Αφαίρεση διαλείμματος</value>
+  </data>
+  <data name="CancelBreakConfirm" xml:space="preserve">
+    <value>Να αφαιρεθεί αυτό το προγραμματισμένο διάλειμμα;</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Ακύρωση</value>
+  </data>
+  <data name="CapacityHelp" xml:space="preserve">
+    <value>Εργασίες που μπορεί να χειρίζεται ταυτόχρονα ένας συντονιστής πριν θεωρηθεί απασχολημένος.</value>
+  </data>
+  <data name="CapacityLabel" xml:space="preserve">
+    <value>Εργασίες ανά συντονιστή</value>
+  </data>
+  <data name="CloseButton" xml:space="preserve">
+    <value>Κλείσιμο</value>
+  </data>
+  <data name="CompletedColumn" xml:space="preserve">
+    <value>Ολοκληρωμένα</value>
+  </data>
+  <data name="ConversationJoinHelp" xml:space="preserve">
+    <value>Νέο SMS ή μήνυμα συνομιλίας από τον ίδιο αποστολέα μέσα σε αυτά τα λεπτά προστίθεται στην ίδια συνομιλία.</value>
+  </data>
+  <data name="ConversationJoinLabel" xml:space="preserve">
+    <value>Παράθυρο συνομιλίας (λεπτά)</value>
+  </data>
+  <data name="CountColumn" xml:space="preserve">
+    <value>Εργασίες</value>
+  </data>
+  <data name="CoverageLane" xml:space="preserve">
+    <value>Κάλυψη</value>
+  </data>
+  <data name="CoverageSlotFormat" xml:space="preserve">
+    <value>{0}: {1} διαθέσιμοι, {2} σε διάλειμμα, {3} σε υπηρεσία</value>
+  </data>
+  <data name="CoverageTimelineHeader" xml:space="preserve">
+    <value>Χρονολόγιο κάλυψης</value>
+  </data>
+  <data name="DateLabel" xml:space="preserve">
+    <value>Ημερομηνία</value>
+  </data>
+  <data name="DeclinedColumn" xml:space="preserve">
+    <value>Απορρίφθηκαν</value>
+  </data>
+  <data name="DefaultBreakPlanHelp" xml:space="preserve">
+    <value>Τα διαλείμματα που λαμβάνει κάθε συντονιστής σε βάρδια χωρίς δικό της πρόγραμμα διαλειμμάτων.</value>
+  </data>
+  <data name="DefaultBreakPlanLabel" xml:space="preserve">
+    <value>Προεπιλεγμένο πρόγραμμα διαλειμμάτων</value>
+  </data>
+  <data name="DeskBoardButton" xml:space="preserve">
+    <value>Πίνακας θέσης</value>
+  </data>
+  <data name="DeskBoardTitle" xml:space="preserve">
+    <value>Θέση συντονισμού</value>
+  </data>
+  <data name="DeskRoutingOffNotice" xml:space="preserve">
+    <value>Η δρομολόγηση εργασίας στους συντονιστές είναι απενεργοποιημένη. Τα προγράμματα και τα διαλείμματα λειτουργούν κανονικά· ένας διαχειριστής του τμήματος μπορεί να την ενεργοποιήσει στις ρυθμίσεις της θέσης συντονισμού.</value>
+  </data>
+  <data name="DeskSupervisorBadge" xml:space="preserve">
+    <value>Επόπτης</value>
+  </data>
+  <data name="DeskSupervisorColumn" xml:space="preserve">
+    <value>Επόπτης θέσης</value>
+  </data>
+  <data name="DispatchOnlyBadge" xml:space="preserve">
+    <value>Μόνο συντονισμός</value>
+  </data>
+  <data name="DispatchPositionsFilled" xml:space="preserve">
+    <value>Οι θέσεις συντονισμού καλύφθηκαν</value>
+  </data>
+  <data name="DispatchedColumn" xml:space="preserve">
+    <value>Διατάχθηκαν</value>
+  </data>
+  <data name="DispatcherAddedToDay" xml:space="preserve">
+    <value>Ο συντονιστής προστέθηκε στην ημέρα.</value>
+  </data>
+  <data name="DispatcherColumn" xml:space="preserve">
+    <value>Συντονιστής</value>
+  </data>
+  <data name="DispatcherDeskMenu" xml:space="preserve">
+    <value>Θέση συντονισμού</value>
+  </data>
+  <data name="DispatcherRemovedFromDay" xml:space="preserve">
+    <value>Ο συντονιστής αφαιρέθηκε από την ημέρα.</value>
+  </data>
+  <data name="DispatcherSignedUp" xml:space="preserve">
+    <value>Είστε εγγεγραμμένοι ως συντονιστής αυτή την ημέρα.</value>
+  </data>
+  <data name="DispatcherSignupApproved" xml:space="preserve">
+    <value>Η εγγραφή του συντονιστή εγκρίθηκε.</value>
+  </data>
+  <data name="DispatcherSignupDenied" xml:space="preserve">
+    <value>Η εγγραφή του συντονιστή απορρίφθηκε.</value>
+  </data>
+  <data name="DispatcherSignupNeedsApproval" xml:space="preserve">
+    <value>Σε αυτή τη βάρδια οι εγγραφές συντονιστών εγκρίνονται από υπεύθυνο βαρδιών.</value>
+  </data>
+  <data name="DispatcherSignupPending" xml:space="preserve">
+    <value>Η εγγραφή σας ως συντονιστή περιμένει έγκριση.</value>
+  </data>
+  <data name="DispatcherWithdrawn" xml:space="preserve">
+    <value>Δεν είστε πλέον συντονιστής αυτή την ημέρα.</value>
+  </data>
+  <data name="DispatchersHeader" xml:space="preserve">
+    <value>Συντονιστές</value>
+  </data>
+  <data name="DispatchersOnDutyHeader" xml:space="preserve">
+    <value>Συντονιστές σε υπηρεσία</value>
+  </data>
+  <data name="DispatchersTabIntro" xml:space="preserve">
+    <value>Οι συντονιστές εργάζονται στη θέση συντονισμού της εφαρμογής Dispatch. Επιλέξτε αν αυτή η βάρδια έχει συντονιστές, πόσους χρειάζεται και πώς προγραμματίζονται τα διαλείμματά τους.</value>
+  </data>
+  <data name="DueBackNow" xml:space="preserve">
+    <value>Πρέπει να επιστρέψει τώρα</value>
+  </data>
+  <data name="DutyColumn" xml:space="preserve">
+    <value>Σε υπηρεσία</value>
+  </data>
+  <data name="EditBreakTitle" xml:space="preserve">
+    <value>Αλλαγή διαλείμματος</value>
+  </data>
+  <data name="EmailCallMode.AutoDispatch" xml:space="preserve">
+    <value>Άμεση διάταξη</value>
+  </data>
+  <data name="EmailCallMode.AutoDispatchHelp" xml:space="preserve">
+    <value>Η κλήση από το email αποστέλλεται αμέσως (όπως μέχρι τώρα).</value>
+  </data>
+  <data name="EmailCallMode.EnhancedAi" xml:space="preserve">
+    <value>Enhanced AI σε εκκρεμότητα</value>
+  </data>
+  <data name="EmailCallMode.EnhancedAiHelp" xml:space="preserve">
+    <value>Το Enhanced AI μετατρέπει το email σε κλήση σε εκκρεμότητα (τύπος, προτεραιότητα, διεύθυνση) που ελέγχει και αποστέλλει ένας συντονιστής. Απαιτεί Enhanced AI.</value>
+  </data>
+  <data name="EmailCallMode.Pending" xml:space="preserve">
+    <value>Αποθήκευση σε εκκρεμότητα</value>
+  </data>
+  <data name="EmailCallMode.PendingHelp" xml:space="preserve">
+    <value>Η κλήση από το email αποθηκεύεται σε εκκρεμότητα ώστε να την ελέγξει και να την αποστείλει ένας συντονιστής.</value>
+  </data>
+  <data name="EmailCallModeIntro" xml:space="preserve">
+    <value>Τι γίνεται μια κλήση που στέλνεται με email στη διεύθυνση συντονισμού του τμήματος.</value>
+  </data>
+  <data name="EmailCallModeLabel" xml:space="preserve">
+    <value>Κλήσεις μέσω email</value>
+  </data>
+  <data name="EnabledHelp" xml:space="preserve">
+    <value>Προσφορά κλήσεων σε εκκρεμότητα και προγραμματισμένων, SMS, τηλεφωνημάτων, email και συνομιλιών στους συντονιστές σε υπηρεσία στην εφαρμογή Dispatch.</value>
+  </data>
+  <data name="EnabledLabel" xml:space="preserve">
+    <value>Δρομολόγηση εργασίας στους συντονιστές σε υπηρεσία</value>
+  </data>
+  <data name="EndBreakButton" xml:space="preserve">
+    <value>Λήξη διαλείμματος</value>
+  </data>
+  <data name="EndBreakConfirm" xml:space="preserve">
+    <value>Να λήξει το διάλειμμα του/της {0} και να γίνει διαθέσιμος;</value>
+  </data>
+  <data name="EndsFormat" xml:space="preserve">
+    <value>έως {0}</value>
+  </data>
+  <data name="EnhancedAiUnavailable" xml:space="preserve">
+    <value>Το Enhanced AI δεν είναι διαθέσιμο για αυτό το τμήμα.</value>
+  </data>
+  <data name="Error.AlreadyOnBreak" xml:space="preserve">
+    <value>Αυτός ο συντονιστής είναι ήδη σε διάλειμμα.</value>
+  </data>
+  <data name="Error.AlreadyOnRoster" xml:space="preserve">
+    <value>Αυτό το πρόσωπο είναι ήδη στο πρόγραμμα συντονισμού εκείνης της ημέρας.</value>
+  </data>
+  <data name="Error.AtCapacity" xml:space="preserve">
+    <value>Αυτός ο συντονιστής χειρίζεται ήδη όση εργασία μπορεί.</value>
+  </data>
+  <data name="Error.BreakNotFound" xml:space="preserve">
+    <value>Το διάλειμμα δεν βρέθηκε.</value>
+  </data>
+  <data name="Error.BreakNotStartable" xml:space="preserve">
+    <value>Το διάλειμμα έχει ήδη ξεκινήσει ή τελειώσει και δεν μπορεί να αλλάξει.</value>
+  </data>
+  <data name="Error.BreakOverlaps" xml:space="preserve">
+    <value>Το διάλειμμα επικαλύπτει άλλο διάλειμμα του ίδιου συντονιστή.</value>
+  </data>
+  <data name="Error.ChannelUnavailable" xml:space="preserve">
+    <value>Αυτό το κανάλι δεν είναι διαθέσιμο για αυτό το τμήμα.</value>
+  </data>
+  <data name="Error.CoverageTooLow" xml:space="preserve">
+    <value>Θα έμεναν λιγότεροι διαθέσιμοι συντονιστές από το ελάχιστο.</value>
+  </data>
+  <data name="Error.DeskDisabled" xml:space="preserve">
+    <value>Η θέση συντονισμού είναι απενεργοποιημένη για αυτό το τμήμα.</value>
+  </data>
+  <data name="Error.DispatchersNotEnabled" xml:space="preserve">
+    <value>Αυτή η βάρδια δεν έχει συντονιστές.</value>
+  </data>
+  <data name="Error.HoldingWork" xml:space="preserve">
+    <value>Ο συντονιστής έχει εργασία σε εξέλιξη· επιστρέψτε την πρώτα στην ουρά.</value>
+  </data>
+  <data name="Error.InvalidInput" xml:space="preserve">
+    <value>Ορισμένες τιμές που εισαγάγατε δεν είναι έγκυρες.</value>
+  </data>
+  <data name="Error.ItemNotAvailable" xml:space="preserve">
+    <value>Η εργασία δεν είναι πλέον διαθέσιμη.</value>
+  </data>
+  <data name="Error.ItemNotFound" xml:space="preserve">
+    <value>Η εργασία δεν βρέθηκε. Ίσως έχει ήδη διεκπεραιωθεί.</value>
+  </data>
+  <data name="Error.NoCallbackNumber" xml:space="preserve">
+    <value>Δεν έχει οριστεί αριθμός επανάκλησης για αυτόν τον συντονιστή.</value>
+  </data>
+  <data name="Error.None" xml:space="preserve">
+    <value>Δεν παρουσιάστηκε σφάλμα.</value>
+  </data>
+  <data name="Error.NotADispatcher" xml:space="preserve">
+    <value>Αυτό το πρόσωπο δεν μπορεί να εργαστεί στη θέση συντονισμού: χρειάζεται δικαίωμα σύνδεσης στην εφαρμογή Dispatch.</value>
+  </data>
+  <data name="Error.NotAssignedToYou" xml:space="preserve">
+    <value>Η εργασία δεν σας έχει ανατεθεί.</value>
+  </data>
+  <data name="Error.NotOnBreak" xml:space="preserve">
+    <value>Αυτός ο συντονιστής δεν είναι σε διάλειμμα.</value>
+  </data>
+  <data name="Error.NotOnDuty" xml:space="preserve">
+    <value>Αυτός ο συντονιστής δεν είναι σε υπηρεσία τώρα.</value>
+  </data>
+  <data name="Error.NotPermitted" xml:space="preserve">
+    <value>Δεν επιτρέπεται να το κάνετε αυτό.</value>
+  </data>
+  <data name="Error.NotSignedIn" xml:space="preserve">
+    <value>Αυτός ο συντονιστής δεν είναι συνδεδεμένος στη θέση.</value>
+  </data>
+  <data name="Error.ShiftNotFound" xml:space="preserve">
+    <value>Η βάρδια δεν βρέθηκε.</value>
+  </data>
+  <data name="EscalatedBadge" xml:space="preserve">
+    <value>Κλιμακώθηκε</value>
+  </data>
+  <data name="FilterDispatchersPlaceholder" xml:space="preserve">
+    <value>Φιλτράρισμα συντονιστών...</value>
+  </data>
+  <data name="FromLabel" xml:space="preserve">
+    <value>Από</value>
+  </data>
+  <data name="HeartbeatTimeoutHelp" xml:space="preserve">
+    <value>Λεπτά χωρίς σήμα από την εφαρμογή Dispatch πριν ο συντονιστής σταματήσει να λαμβάνει εργασία. 0 = ποτέ (ένα τηλέφωνο σε αναστολή λαμβάνει ειδοποιήσεις· οι χαμένες προσφορές τον δηλώνουν απόντα).</value>
+  </data>
+  <data name="HeartbeatTimeoutLabel" xml:space="preserve">
+    <value>Όριο χωρίς σήμα (λεπτά)</value>
+  </data>
+  <data name="HeldItemsFormat" xml:space="preserve">
+    <value>{0} σε εξέλιξη</value>
+  </data>
+  <data name="ItemColumn" xml:space="preserve">
+    <value>Εργασία</value>
+  </data>
+  <data name="Kind.Chat" xml:space="preserve">
+    <value>Συνομιλία</value>
+  </data>
+  <data name="Kind.Email" xml:space="preserve">
+    <value>Email μήνυμα</value>
+  </data>
+  <data name="Kind.Other" xml:space="preserve">
+    <value>Άλλο</value>
+  </data>
+  <data name="Kind.PendingCall" xml:space="preserve">
+    <value>Κλήση σε εκκρεμότητα</value>
+  </data>
+  <data name="Kind.ScheduledCall" xml:space="preserve">
+    <value>Προγραμματισμένη κλήση</value>
+  </data>
+  <data name="Kind.Text" xml:space="preserve">
+    <value>SMS</value>
+  </data>
+  <data name="Kind.Voice" xml:space="preserve">
+    <value>Τηλεφώνημα</value>
+  </data>
+  <data name="KindColumn" xml:space="preserve">
+    <value>Είδος</value>
+  </data>
+  <data name="LegendBelowMinimum" xml:space="preserve">
+    <value>Κάτω από το ελάχιστο</value>
+  </data>
+  <data name="LegendCovered" xml:space="preserve">
+    <value>Καλυμμένο</value>
+  </data>
+  <data name="LegendDuty" xml:space="preserve">
+    <value>Σε υπηρεσία</value>
+  </data>
+  <data name="LegendMissed" xml:space="preserve">
+    <value>Χάθηκε</value>
+  </data>
+  <data name="LegendNobodyOnDuty" xml:space="preserve">
+    <value>Κανείς σε υπηρεσία</value>
+  </data>
+  <data name="LegendOnBreak" xml:space="preserve">
+    <value>Σε διάλειμμα τώρα</value>
+  </data>
+  <data name="LegendOverlap" xml:space="preserve">
+    <value>Επικαλυπτόμενα διαλείμματα</value>
+  </data>
+  <data name="LegendPlanned" xml:space="preserve">
+    <value>Προγραμματισμένο διάλειμμα</value>
+  </data>
+  <data name="LegendTaken" xml:space="preserve">
+    <value>Διάλειμμα που έγινε</value>
+  </data>
+  <data name="MinimumAvailableHelp" xml:space="preserve">
+    <value>Συντονιστές που πρέπει να μένουν διαθέσιμοι· ο προγραμματισμός ή η έναρξη διαλείμματος κάτω από αυτό προκαλεί προειδοποίηση. 0 = χωρίς ελάχιστο.</value>
+  </data>
+  <data name="MinimumAvailableLabel" xml:space="preserve">
+    <value>Ελάχιστοι διαθέσιμοι</value>
+  </data>
+  <data name="MinimumOnDeskHelpFormat" xml:space="preserve">
+    <value>Συντονιστές που πρέπει να μένουν διαθέσιμοι σε αυτή τη βάρδια. 0 = το ελάχιστο του τμήματος ({0}).</value>
+  </data>
+  <data name="MinimumOnDeskLabel" xml:space="preserve">
+    <value>Ελάχιστοι στη θέση</value>
+  </data>
+  <data name="MinutesShortFormat" xml:space="preserve">
+    <value>{0} λεπ.</value>
+  </data>
+  <data name="MissedColumn" xml:space="preserve">
+    <value>Χαμένες προσφορές</value>
+  </data>
+  <data name="MissedOffersHelp" xml:space="preserve">
+    <value>Συνεχόμενες προσφορές που ο συντονιστής αφήνει να λήξουν πριν η θέση τον δηλώσει απόντα. 0 = ποτέ.</value>
+  </data>
+  <data name="MissedOffersLabel" xml:space="preserve">
+    <value>Χαμένες προσφορές πριν από απουσία</value>
+  </data>
+  <data name="NextBreakFormat" xml:space="preserve">
+    <value>{0} για {1} λεπ.</value>
+  </data>
+  <data name="NextBreakLabel" xml:space="preserve">
+    <value>Επόμενο διάλειμμα:</value>
+  </data>
+  <data name="NoActivity" xml:space="preserve">
+    <value>Καμία δραστηριότητα στη θέση αυτή την περίοδο.</value>
+  </data>
+  <data name="NoDispatchersInWindow" xml:space="preserve">
+    <value>Κανένας συντονιστής δεν είναι σε υπηρεσία ή σε διάλειμμα αυτή την περίοδο.</value>
+  </data>
+  <data name="NoDispatchersOnDay" xml:space="preserve">
+    <value>Δεν υπάρχουν ακόμη συντονιστές αυτή την ημέρα.</value>
+  </data>
+  <data name="NoDispatchersOnDesk" xml:space="preserve">
+    <value>Κανένας συντονιστής σε υπηρεσία ή συνδεδεμένος.</value>
+  </data>
+  <data name="NoEligibleDispatchers" xml:space="preserve">
+    <value>Κανείς στο τμήμα δεν έχει ακόμη δικαίωμα σύνδεσης στην εφαρμογή Dispatch.</value>
+  </data>
+  <data name="NoTransferTargets" xml:space="preserve">
+    <value>Κανένας άλλος συντονιστής σε υπηρεσία δεν μπορεί να το αναλάβει τώρα.</value>
+  </data>
+  <data name="NoWarnings" xml:space="preserve">
+    <value>Καμία προειδοποίηση.</value>
+  </data>
+  <data name="NotEligibleBadge" xml:space="preserve">
+    <value>Χωρίς πρόσβαση στο Dispatch</value>
+  </data>
+  <data name="NotEligibleHelp" xml:space="preserve">
+    <value>Δεν έχει πλέον δικαίωμα σύνδεσης στην εφαρμογή Dispatch· αφαιρείται από το πρόγραμμα κατά την αποθήκευση.</value>
+  </data>
+  <data name="NotSignedInBadge" xml:space="preserve">
+    <value>Μη συνδεδεμένος</value>
+  </data>
+  <data name="NoteLabel" xml:space="preserve">
+    <value>Σημείωση</value>
+  </data>
+  <data name="NotifyOverdueLabel" xml:space="preserve">
+    <value>Ειδοποίηση των εποπτών όταν ένας συντονιστής αργεί να επιστρέψει από διάλειμμα</value>
+  </data>
+  <data name="OffDutyBadge" xml:space="preserve">
+    <value>Εκτός υπηρεσίας</value>
+  </data>
+  <data name="OfferTimeoutHelp" xml:space="preserve">
+    <value>Δευτερόλεπτα που μια προσφορά περιμένει να την αναλάβει ο συντονιστής πριν περάσει στον επόμενο.</value>
+  </data>
+  <data name="OfferTimeoutLabel" xml:space="preserve">
+    <value>Χρόνος προσφοράς (δευτερόλεπτα)</value>
+  </data>
+  <data name="OfferedColumn" xml:space="preserve">
+    <value>Προσφέρθηκαν</value>
+  </data>
+  <data name="OfferedItemsFormat" xml:space="preserve">
+    <value>{0} προσφέρθηκαν</value>
+  </data>
+  <data name="OnBreakStat" xml:space="preserve">
+    <value>Σε διάλειμμα</value>
+  </data>
+  <data name="OnDutyStat" xml:space="preserve">
+    <value>Σε υπηρεσία</value>
+  </data>
+  <data name="OnRosterColumn" xml:space="preserve">
+    <value>Στο πρόγραμμα</value>
+  </data>
+  <data name="OpenDispatchPositionsFormat" xml:space="preserve">
+    <value>{0} θέσεις συντονισμού ελεύθερες</value>
+  </data>
+  <data name="OverdueBadge" xml:space="preserve">
+    <value>Σε καθυστέρηση</value>
+  </data>
+  <data name="OverdueColumn" xml:space="preserve">
+    <value>Καθυστερημένες επιστροφές</value>
+  </data>
+  <data name="OverdueFormat" xml:space="preserve">
+    <value>Καθυστέρηση {0} λεπ.</value>
+  </data>
+  <data name="OverdueMinutesFormat" xml:space="preserve">
+    <value>Συνολικά {0} λεπτά καθυστέρηση</value>
+  </data>
+  <data name="OverflowIntro" xml:space="preserve">
+    <value>Τι γίνεται με ένα τρέχον SMS ή τηλεφώνημα όταν όλοι οι συντονιστές είναι απασχολημένοι ή σε διάλειμμα.</value>
+  </data>
+  <data name="PendingApprovalBadge" xml:space="preserve">
+    <value>Αναμένει έγκριση</value>
+  </data>
+  <data name="PlanBreaksButton" xml:space="preserve">
+    <value>Προγραμματισμός διαλειμμάτων</value>
+  </data>
+  <data name="PlanBreaksConfirm" xml:space="preserve">
+    <value>Να εφαρμοστεί το πρόγραμμα διαλειμμάτων της βάρδιας σε όλους τους συντονιστές αυτής της ημέρας;</value>
+  </data>
+  <data name="PlanBreaksReplaceConfirm" xml:space="preserve">
+    <value>Να αφαιρεθούν τα προγραμματισμένα διαλείμματα της ημέρας και να εφαρμοστεί ξανά το πρόγραμμα της βάρδιας;</value>
+  </data>
+  <data name="PlannedStartHelp" xml:space="preserve">
+    <value>Στη ζώνη ώρας του τμήματος. Το διάλειμμα είναι διάρκεια: αν ξεκινήσει νωρίτερα, τελειώνει νωρίτερα.</value>
+  </data>
+  <data name="PlannedStartLabel" xml:space="preserve">
+    <value>Προγραμματισμένη έναρξη</value>
+  </data>
+  <data name="PlannerLoadFailed" xml:space="preserve">
+    <value>Ο προγραμματιστής διαλειμμάτων δεν φορτώθηκε.</value>
+  </data>
+  <data name="PreventBelowMinimumHelp" xml:space="preserve">
+    <value>Απόρριψη, αντί για προειδοποίηση, διαλείμματος που θα έριχνε τη διαθεσιμότητα κάτω από το ελάχιστο, εκτός αν το ξεκινά επόπτης.</value>
+  </data>
+  <data name="PreventBelowMinimumLabel" xml:space="preserve">
+    <value>Αποτροπή διαλειμμάτων κάτω από το ελάχιστο</value>
+  </data>
+  <data name="QueueEmpty" xml:space="preserve">
+    <value>Τίποτα σε αναμονή.</value>
+  </data>
+  <data name="QueueEscalationHelp" xml:space="preserve">
+    <value>Λεπτά που μια εργασία μπορεί να περιμένει χωρίς ανάθεση πριν ειδοποιηθούν όλοι οι συντονιστές και επόπτες σε υπηρεσία. 0 = ποτέ.</value>
+  </data>
+  <data name="QueueEscalationLabel" xml:space="preserve">
+    <value>Κλιμάκωση εργασίας σε αναμονή μετά από (λεπτά)</value>
+  </data>
+  <data name="QueueHeader" xml:space="preserve">
+    <value>Ανοιχτή ουρά</value>
+  </data>
+  <data name="QueueState.Accepted" xml:space="preserve">
+    <value>Σε χειρισμό</value>
+  </data>
+  <data name="QueueState.Offered" xml:space="preserve">
+    <value>Προσφέρθηκε</value>
+  </data>
+  <data name="QueueState.Queued" xml:space="preserve">
+    <value>Σε αναμονή</value>
+  </data>
+  <data name="ReleaseButton" xml:space="preserve">
+    <value>Επιστροφή στην ουρά</value>
+  </data>
+  <data name="ReleaseConfirm" xml:space="preserve">
+    <value>Να επιστρέψει αυτή η εργασία στην ουρά;</value>
+  </data>
+  <data name="RemoveBreakRow" xml:space="preserve">
+    <value>Αφαίρεση αυτού του διαλείμματος</value>
+  </data>
+  <data name="RemoveDispatcherConfirm" xml:space="preserve">
+    <value>Να αφαιρεθεί αυτός ο συντονιστής από την ημέρα;</value>
+  </data>
+  <data name="RemoveFromDayButton" xml:space="preserve">
+    <value>Αφαίρεση από την ημέρα</value>
+  </data>
+  <data name="ReplacePlannedLabel" xml:space="preserve">
+    <value>Αντικατάσταση προγραμματισμένων διαλειμμάτων</value>
+  </data>
+  <data name="RequireShiftHelp" xml:space="preserve">
+    <value>Σε υπηρεσία είναι μόνο οι συντονιστές του προγράμματος συντονισμού της τρέχουσας ημέρας βάρδιας.</value>
+  </data>
+  <data name="RequireShiftLabel" xml:space="preserve">
+    <value>Οι συντονιστές πρέπει να είναι σε βάρδια</value>
+  </data>
+  <data name="RequiredDispatchersHelp" xml:space="preserve">
+    <value>Θέσεις συντονισμού προς κάλυψη κάθε ημέρα (θέσεις εγγραφής και στόχος στελέχωσης). 0 = χωρίς στόχο.</value>
+  </data>
+  <data name="RequiredDispatchersLabel" xml:space="preserve">
+    <value>Απαιτούμενοι συντονιστές</value>
+  </data>
+  <data name="RouteChatLabel" xml:space="preserve">
+    <value>Συνομιλίες (WhatsApp, Slack, Teams, Telegram, Discord, Google Chat)</value>
+  </data>
+  <data name="RouteEmailLabel" xml:space="preserve">
+    <value>Email (κλήσεις αποθηκευμένες σε εκκρεμότητα)</value>
+  </data>
+  <data name="RoutePendingCallsLabel" xml:space="preserve">
+    <value>Κλήσεις σε εκκρεμότητα</value>
+  </data>
+  <data name="RouteScheduledCallsLabel" xml:space="preserve">
+    <value>Προγραμματισμένες κλήσεις (για έλεγχο πριν αποσταλούν)</value>
+  </data>
+  <data name="RouteTextLabel" xml:space="preserve">
+    <value>Μηνύματα SMS</value>
+  </data>
+  <data name="RouteToDeskHelp" xml:space="preserve">
+    <value>Τα είδη εργασίας που προσφέρονται στους συντονιστές. Ό,τι δεν δέχεται η θέση χειρίζεται όπως πριν. Ένα email ή μια συνομιλία χωρίς επιλογή φτάνει στη θέση ως κλήση σε εκκρεμότητα, όσο είναι επιλεγμένες οι κλήσεις σε εκκρεμότητα.</value>
+  </data>
+  <data name="RouteToDeskLabel" xml:space="preserve">
+    <value>Αποστολή στη θέση</value>
+  </data>
+  <data name="RouteVoiceLabel" xml:space="preserve">
+    <value>Τηλεφωνήματα</value>
+  </data>
+  <data name="SaveBreakButton" xml:space="preserve">
+    <value>Αποθήκευση διαλείμματος</value>
+  </data>
+  <data name="SaveSettingsButton" xml:space="preserve">
+    <value>Αποθήκευση ρυθμίσεων</value>
+  </data>
+  <data name="ScheduledCallLeadHelp" xml:space="preserve">
+    <value>Λεπτά πριν αποσταλεί μια προγραμματισμένη κλήση που φτάνει στη θέση για έλεγχο (αποστέλλεται ούτως ή άλλως μόνη της).</value>
+  </data>
+  <data name="ScheduledCallLeadLabel" xml:space="preserve">
+    <value>Έλεγχος προγραμματισμένων κλήσεων (λεπτά πριν)</value>
+  </data>
+  <data name="SelectDispatcherToAdd" xml:space="preserve">
+    <value>Επιλέξτε συντονιστή για προσθήκη.</value>
+  </data>
+  <data name="SetAvailableButton" xml:space="preserve">
+    <value>Ορισμός ως διαθέσιμου</value>
+  </data>
+  <data name="SetAwayButton" xml:space="preserve">
+    <value>Ορισμός ως απόντα</value>
+  </data>
+  <data name="SettingsBreaksSection" xml:space="preserve">
+    <value>Διαλείμματα και κάλυψη</value>
+  </data>
+  <data name="SettingsDeskSection" xml:space="preserve">
+    <value>Θέση</value>
+  </data>
+  <data name="SettingsEmailSection" xml:space="preserve">
+    <value>Κλήσεις μέσω email</value>
+  </data>
+  <data name="SettingsIntro" xml:space="preserve">
+    <value>Πώς δρομολογείται η εργασία στους συντονιστές σε υπηρεσία στην εφαρμογή Dispatch, τι γίνεται όταν κανείς δεν είναι ελεύθερος και πώς χειρίζονται τα διαλείμματα.</value>
+  </data>
+  <data name="SettingsOverflowSection" xml:space="preserve">
+    <value>Όταν όλοι οι συντονιστές είναι απασχολημένοι</value>
+  </data>
+  <data name="SettingsRoutingSection" xml:space="preserve">
+    <value>Δρομολόγηση</value>
+  </data>
+  <data name="SettingsSaved" xml:space="preserve">
+    <value>Οι ρυθμίσεις της θέσης συντονισμού αποθηκεύτηκαν.</value>
+  </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>Ρυθμίσεις θέσης συντονισμού</value>
+  </data>
+  <data name="ShiftColumn" xml:space="preserve">
+    <value>Βάρδια</value>
+  </data>
+  <data name="ShiftDayLabel" xml:space="preserve">
+    <value>Ημέρα βάρδιας</value>
+  </data>
+  <data name="ShiftDispatchEnabledHelp" xml:space="preserve">
+    <value>Συντονιστές μπορούν να τοποθετηθούν σε αυτή τη βάρδια (βάρδια ανάθεσης) ή να εγγραφούν σε αυτή (βάρδια εγγραφής), μόνοι ή δίπλα στο προσωπικό επέμβασης.</value>
+  </data>
+  <data name="ShiftDispatchEnabledLabel" xml:space="preserve">
+    <value>Αυτή η βάρδια έχει συντονιστές</value>
+  </data>
+  <data name="ShiftDispatchOnlyHelp" xml:space="preserve">
+    <value>Η βάρδια υπάρχει μόνο για συντονιστές (οι βάρδιες Α, Β και Γ ενός κέντρου).</value>
+  </data>
+  <data name="ShiftDispatchOnlyLabel" xml:space="preserve">
+    <value>Βάρδια μόνο συντονισμού</value>
+  </data>
+  <data name="ShowButton" xml:space="preserve">
+    <value>Εμφάνιση</value>
+  </data>
+  <data name="SignOffAtShiftEndHelp" xml:space="preserve">
+    <value>Οι συντονιστές αποσυνδέονται από τη θέση στο τέλος της ημέρας βάρδιας· η εργασία τους σε εξέλιξη επιστρέφει στην ουρά.</value>
+  </data>
+  <data name="SignOffAtShiftEndLabel" xml:space="preserve">
+    <value>Αποσύνδεση στο τέλος της βάρδιας</value>
+  </data>
+  <data name="SignupAsDispatcherButton" xml:space="preserve">
+    <value>Εγγραφή ως συντονιστής</value>
+  </data>
+  <data name="SourceAssigned" xml:space="preserve">
+    <value>Ανατέθηκε</value>
+  </data>
+  <data name="SourceSignup" xml:space="preserve">
+    <value>Εγγράφηκε</value>
+  </data>
+  <data name="StandingRosterHelp" xml:space="preserve">
+    <value>Οι συντονιστές κάθε ημέρας αυτής της βάρδιας. Ο επόπτης θέσης διαχειρίζεται τα διαλείμματα και μεταφέρει εργασία των άλλων συντονιστών.</value>
+  </data>
+  <data name="StandingRosterLabel" xml:space="preserve">
+    <value>Πρόγραμμα συντονισμού</value>
+  </data>
+  <data name="StatAverageAnswer" xml:space="preserve">
+    <value>Μ.Ο. χρόνου απάντησης</value>
+  </data>
+  <data name="StatCancelled" xml:space="preserve">
+    <value>Ακυρώθηκαν</value>
+  </data>
+  <data name="StatCompleted" xml:space="preserve">
+    <value>Ολοκληρώθηκαν</value>
+  </data>
+  <data name="StatCreated" xml:space="preserve">
+    <value>Εργασίες</value>
+  </data>
+  <data name="StatEscalated" xml:space="preserve">
+    <value>Κλιμακώθηκαν</value>
+  </data>
+  <data name="StatOverflowed" xml:space="preserve">
+    <value>Υπερχείλιση</value>
+  </data>
+  <data name="State.Available" xml:space="preserve">
+    <value>Διαθέσιμος</value>
+  </data>
+  <data name="State.Away" xml:space="preserve">
+    <value>Απών</value>
+  </data>
+  <data name="State.Busy" xml:space="preserve">
+    <value>Απασχολημένος</value>
+  </data>
+  <data name="State.Offline" xml:space="preserve">
+    <value>Αποσυνδεδεμένος</value>
+  </data>
+  <data name="State.OnBreak" xml:space="preserve">
+    <value>Σε διάλειμμα</value>
+  </data>
+  <data name="StateColumn" xml:space="preserve">
+    <value>Κατάσταση θέσης</value>
+  </data>
+  <data name="StatusColumn" xml:space="preserve">
+    <value>Κατάσταση</value>
+  </data>
+  <data name="SuppressAlertsHelp" xml:space="preserve">
+    <value>Στο διάλειμμα ο συντονιστής δεν λαμβάνει ειδοποιήσεις ή ηχητικά της θέσης, μόνο την υπενθύμιση ότι το διάλειμμα τελείωσε.</value>
+  </data>
+  <data name="SuppressAlertsLabel" xml:space="preserve">
+    <value>Χωρίς ειδοποιήσεις θέσης στο διάλειμμα</value>
+  </data>
+  <data name="TextOverflow.EnhancedAi" xml:space="preserve">
+    <value>Το Enhanced AI συμπληρώνει κλήση σε εκκρεμότητα</value>
+  </data>
+  <data name="TextOverflow.PendingQueue" xml:space="preserve">
+    <value>Παραμονή σε αναμονή στην ουρά</value>
+  </data>
+  <data name="TextOverflowLabel" xml:space="preserve">
+    <value>Μηνύματα SMS</value>
+  </data>
+  <data name="ToLabel" xml:space="preserve">
+    <value>Έως</value>
+  </data>
+  <data name="TodayCoverageHeader" xml:space="preserve">
+    <value>Σημερινή κάλυψη</value>
+  </data>
+  <data name="TransferButton" xml:space="preserve">
+    <value>Μεταφορά</value>
+  </data>
+  <data name="TransferToLabel" xml:space="preserve">
+    <value>Μεταφορά σε</value>
+  </data>
+  <data name="Unassigned" xml:space="preserve">
+    <value>Χωρίς ανάθεση</value>
+  </data>
+  <data name="UnknownPerson" xml:space="preserve">
+    <value>Άγνωστο πρόσωπο</value>
+  </data>
+  <data name="ViewCallButton" xml:space="preserve">
+    <value>Προβολή κλήσης</value>
+  </data>
+  <data name="VoiceAiUnavailable" xml:space="preserve">
+    <value>Η φωνητική λήψη Enhanced AI δεν είναι διαθέσιμη· οι καλούντες αφήνουν μήνυμα.</value>
+  </data>
+  <data name="VoiceHoldHelp" xml:space="preserve">
+    <value>Δευτερόλεπτα που ο καλών περιμένει συντονιστή πριν αναλάβει ο χειρισμός υπερχείλισης. 0 = αμέσως.</value>
+  </data>
+  <data name="VoiceHoldLabel" xml:space="preserve">
+    <value>Αναμονή καλούντων για (δευτερόλεπτα)</value>
+  </data>
+  <data name="VoiceOverflow.EnhancedAiIntake" xml:space="preserve">
+    <value>Φωνητική λήψη Enhanced AI</value>
+  </data>
+  <data name="VoiceOverflow.Voicemail" xml:space="preserve">
+    <value>Φωνητικό μήνυμα σε κλήση σε εκκρεμότητα</value>
+  </data>
+  <data name="VoiceOverflowLabel" xml:space="preserve">
+    <value>Τηλεφωνήματα</value>
+  </data>
+  <data name="WaitingInQueueFormat" xml:space="preserve">
+    <value>{0} σε αναμονή</value>
+  </data>
+  <data name="WaitingStat" xml:space="preserve">
+    <value>Σε αναμονή</value>
+  </data>
+  <data name="Warning.BreaksOverlap" xml:space="preserve">
+    <value>Επικαλυπτόμενα διαλείμματα από {1} έως {2}: {0}.</value>
+  </data>
+  <data name="Warning.CoverageBelowMinimum" xml:space="preserve">
+    <value>Μόνο {0} συντονιστές διαθέσιμοι (ελάχιστο {1}) από {2} έως {3}.</value>
+  </data>
+  <data name="Warning.NoCoverage" xml:space="preserve">
+    <value>Κανείς δεν θα ήταν διαθέσιμος από {0} έως {1}.</value>
+  </data>
+  <data name="Warning.OutsideDuty" xml:space="preserve">
+    <value>Το διάλειμμα πέφτει εκτός της ημέρας βάρδιας: {0}.</value>
+  </data>
+  <data name="Warning.StartedEarly" xml:space="preserve">
+    <value>{0}: το διάλειμμα ξεκίνησε {1} λεπτά νωρίτερα.</value>
+  </data>
+  <data name="Warning.StartedLate" xml:space="preserve">
+    <value>{0}: το διάλειμμα ξεκίνησε {1} λεπτά αργότερα.</value>
+  </data>
+  <data name="Warning.WorkReturnedToQueue" xml:space="preserve">
+    <value>Η εργασία του/της {0} επέστρεψε στην ουρά.</value>
+  </data>
+  <data name="WarningsHeader" xml:space="preserve">
+    <value>Προειδοποιήσεις</value>
+  </data>
+  <data name="WithdrawButton" xml:space="preserve">
+    <value>Απόσυρση</value>
+  </data>
+  <data name="WithdrawDispatcherConfirm" xml:space="preserve">
+    <value>Να μην είστε πλέον συντονιστής αυτή την ημέρα;</value>
+  </data>
+  <data name="WizardDispatchers" xml:space="preserve">
+    <value>Συντονιστές</value>
+  </data>
+  <data name="WorkColumn" xml:space="preserve">
+    <value>Εργασία</value>
+  </data>
+  <data name="WorkLoadFormat" xml:space="preserve">
+    <value>{0} από {1}</value>
+  </data>
+  <data name="YouBadge" xml:space="preserve">
+    <value>Εσείς</value>
+  </data>
+</root>

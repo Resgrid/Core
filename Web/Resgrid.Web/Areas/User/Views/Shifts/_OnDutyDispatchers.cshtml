@@ -1,0 +1,107 @@
+@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Shifts.OnDutyDispatchersView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.DispatcherDesk.DispatcherDesk> desk
+@* The On Duty page's dispatcher desk block (M0324): each dispatcher on duty or signed in, their desk state, break and work.
+   The page reloads itself every minute; the live board is Shifts → Dispatcher Desk. *@
+@functions {
+	static string StateClass(DispatcherDisplayStates state)
+	{
+		switch (state)
+		{
+			case DispatcherDisplayStates.Available: return "label-primary";
+			case DispatcherDisplayStates.Busy: return "label-warning";
+			case DispatcherDisplayStates.OnBreak: return "label-info";
+			case DispatcherDisplayStates.Away: return "label-default";
+			default: return "label-default";
+		}
+	}
+}
+<div class="ibox float-e-margins" id="onDutyDispatchers">
+	<div class="ibox-title">
+		<h5>@desk["DispatchersOnDutyHeader"] <span class="badge">@Model.Dispatchers.Count</span></h5>
+		<div class="ibox-tools">
+			@if (Model.BelowMinimum)
+			{
+				<span class="label label-danger">@String.Format(desk["BelowMinimumFormat"].Value, Model.AvailableCount, Model.MinimumAvailable)</span>
+			}
+			@if (Model.QueueCount > 0)
+			{
+				<span class="label label-warning">@String.Format(desk["WaitingInQueueFormat"].Value, Model.QueueCount)</span>
+			}
+			<a class="btn btn-xs btn-white" asp-controller="DispatcherDesk" asp-action="Index" asp-route-area="User"><i class="fa fa-headphones"></i> @desk["DeskBoardButton"]</a>
+		</div>
+	</div>
+	<div class="ibox-content">
+		@if (!Model.DeskEnabled)
+		{
+			<p class="text-muted"><i class="fa fa-info-circle"></i> @desk["DeskRoutingOffNotice"]</p>
+		}
+		<div class="table-responsive">
+			<table class="table table-striped table-condensed">
+				<thead>
+					<tr>
+						<th>@desk["DispatcherColumn"]</th>
+						<th>@desk["StateColumn"]</th>
+						<th>@desk["ShiftColumn"]</th>
+						<th>@desk["BreakColumn"]</th>
+						<th>@desk["WorkColumn"]</th>
+					</tr>
+				</thead>
+				<tbody>
+					@foreach (var dispatcher in Model.Dispatchers)
+					{
+						<tr>
+							<td>
+								<strong>@dispatcher.Name</strong>
+								@if (dispatcher.IsSupervisor)
+								{
+									<span class="label label-primary">@desk["DeskSupervisorBadge"]</span>
+								}
+								@if (!String.IsNullOrWhiteSpace(dispatcher.DeviceKind))
+								{
+									<br /><small class="text-muted">@dispatcher.DeviceKind</small>
+								}
+							</td>
+							<td>
+								<span class="label @StateClass(dispatcher.State)">@desk["State." + dispatcher.State]</span>
+								@if (!dispatcher.IsOnDuty)
+								{
+									<span class="label label-default">@desk["OffDutyBadge"]</span>
+								}
+								@if (!String.IsNullOrWhiteSpace(dispatcher.AwayReason))
+								{
+									<br /><small class="text-muted">@dispatcher.AwayReason</small>
+								}
+							</td>
+							<td>@dispatcher.ShiftName</td>
+							<td>
+								@if (dispatcher.BreakType.HasValue)
+								{
+									<span>@desk["BreakType." + (DispatcherBreakTypes)dispatcher.BreakType.Value]</span>
+									@if (dispatcher.OverdueMinutes > 0)
+									{
+										<br /><span class="text-danger"><strong>@String.Format(desk["OverdueFormat"].Value, dispatcher.OverdueMinutes)</strong></span>
+									}
+									else if (dispatcher.BreakMinutesLeft.HasValue)
+									{
+										<br /><small class="text-muted">@String.Format(desk["BackInFormat"].Value, String.Format(desk["MinutesShortFormat"].Value, dispatcher.BreakMinutesLeft.Value))</small>
+									}
+								}
+							</td>
+							<td>
+								@if (dispatcher.HeldItems > 0)
+								{
+									<span class="label label-warning">@String.Format(desk["HeldItemsFormat"].Value, dispatcher.HeldItems)</span>
+								}
+								@if (dispatcher.OfferedItems > 0)
+								{
+									<span class="label label-info">@String.Format(desk["OfferedItemsFormat"].Value, dispatcher.OfferedItems)</span>
+								}
+							</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>

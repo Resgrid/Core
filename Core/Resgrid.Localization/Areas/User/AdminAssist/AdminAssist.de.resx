@@ -7755,6 +7755,12 @@
   <data xml:space="preserve" name="SettingHelp.ShiftTradeApprovers">
     <value>Wer auswählt, welcher Bewerber eine Schichttauschanfrage übernimmt, und wartende Tausche genehmigt. Abteilungsadministratoren dürfen das immer; Gruppenadministratoren, die tauschende Person und Mitglieder ausgewählter Rollen legt die Abteilung fest.</value>
   </data>
+  <data xml:space="preserve" name="Setting.DispatcherDeskConfig">
+    <value>Disponentenplatz</value>
+  </data>
+  <data xml:space="preserve" name="SettingHelp.DispatcherDeskConfig">
+    <value>Schaltet den Dispositionsplatz ein und legt fest, wie er arbeitet: welche Arbeit den Disponenten im Dienst in der Dispatch-App angeboten wird (ausstehende und geplante Einsätze, SMS, Anrufe, E-Mails, Chats), wie lange ein Angebot wartet und wie viele Einträge ein Disponent halten kann, bevor er als beschäftigt gilt, nach wie vielen verpassten Angeboten in Folge ein Disponent auf Abwesend gesetzt wird und was mit SMS und Anrufen geschieht, wenn niemand frei ist (in der Warteschlange warten, Enhanced AI oder Mailbox). Legt außerdem fest, was aus einem an die Alarmierungsadresse gemailten Einsatz wird (sofort alarmiert, als ausstehend gespeichert oder von Enhanced AI in einen ausstehenden Einsatz übernommen), sowie die Pausen- und Dienstregeln: Pausenerinnerungen, automatische Rückkehr aus Pausen, die Mindestzahl Verfügbarer, das Ablehnen von Pausen darunter, keine Platzbenachrichtigungen in der Pause und ob Disponenten in einer Schicht sein müssen oder auch ohne Schicht Dienst haben dürfen (Schichten, Einstellungen Dispositionsplatz). Standardmäßig aus; per E-Mail gemeldete Einsätze werden sofort alarmiert, bis Per E-Mail gemeldete Einsätze geändert wird, was auch bei ausgeschalteter Weiterleitung gilt.</value>
+  </data>
   <data xml:space="preserve" name="Feature.home-dashboard">
     <value>Anpassbares Start-Dashboard</value>
   </data>
@@ -8000,5 +8006,95 @@
   </data>
   <data name="FeatureSetup.ai-destination-advice" xml:space="preserve">
     <value>Erfordert die Erweiterung Enhanced AI mit für Ihre Abteilung aktivierter KI-Zielempfehlung. Legen Sie zuerst Ihre Ziele mit ihren Fähigkeiten sowie Zielregeln an. Die Empfehlung erscheint in der Einsatzansicht und beim Bearbeiten des Einsatzes, nichts ändert sich, bis jemand sie übernimmt, und Abteilungen mit Advanced Data Protection erhalten keine Empfehlungen.</value>
+  </data>
+  <data name="Feature.dispatcher-desk" xml:space="preserve">
+    <value>Dispositionsplatz</value>
+  </data>
+  <data name="FeaturePurpose.dispatcher-desk" xml:space="preserve">
+    <value>Eine Live-Übersicht der Disponenten im Dienst und der Arbeit, die auf sie wartet. Ausstehende und geplante Einsätze, SMS, Anrufe, E-Mails und Chats werden jeweils einem freien Disponenten angeboten, der sie in der Dispatch-App auf Smartphone oder Tablet übernimmt.</value>
+  </data>
+  <data name="FeatureValue.dispatcher-desk" xml:space="preserve">
+    <value>Die Arbeit geht an jemanden, der frei ist: Wer Arbeit hält, gilt als beschäftigt, ein nicht angenommenes Angebot geht an den nächsten Disponenten, und liegengebliebene Arbeit alarmiert alle im Dienst. Disponenten können den Platz von überall bedienen, nicht nur an einer Konsole.</value>
+  </data>
+  <data name="FeatureExample.dispatcher-desk" xml:space="preserve">
+    <value>Zwei ehrenamtliche Disponenten decken ein Wochenende mit ihren Smartphones ab. Eine SMS über einen umgestürzten Baum auf einer Straße wird dem freien Disponenten angeboten und wird zum Einsatz, während der andere in der Essenspause ist und bis zu seiner Rückkehr keine Platzbenachrichtigungen erhält.</value>
+  </data>
+  <data name="FeatureSetup.dispatcher-desk" xml:space="preserve">
+    <value>Geben Sie Ihren Disponenten die Berechtigung Anmeldung Dispatch-App und setzen Sie sie auf den Dispositionsdienstplan einer Schicht. Öffnen Sie dann Schichten, Einstellungen Dispositionsplatz, aktivieren Sie Arbeit an Disponenten im Dienst weiterleiten, wählen Sie unter An den Dispositionsplatz senden die Arbeit aus und speichern Sie. Disponenten melden sich in der Dispatch-App am Platz an; die Seite Dispositionsplatz zeigt, wer verfügbar, beschäftigt oder in Pause ist, sowie die offene Warteschlange, und eine Aufsicht am Platz kann eine Pause beenden oder Arbeit an jemand anderen übergeben.</value>
+  </data>
+  <data name="Feature.shift-dispatchers" xml:space="preserve">
+    <value>Disponenten im Dienst</value>
+  </data>
+  <data name="FeaturePurpose.shift-dispatchers" xml:space="preserve">
+    <value>Setzen Sie Disponenten auf zugewiesene Schichten und Anmeldeschichten, auf eine reine Dispositionsschicht oder neben die Einsatzkräfte, mit der Zahl der zu besetzenden Dispositionsplätze, einer Mindestbesetzung am Platz und einer Aufsicht am Platz.</value>
+  </data>
+  <data name="FeatureValue.shift-dispatchers" xml:space="preserve">
+    <value>Der Platz bietet Arbeit nur Disponenten an, die wirklich im Dienst sind: denen auf dem Dienstplan eines gerade laufenden Schichttags, sofern die Abteilung keinen Dienst ohne Schicht erlaubt. Offene Dispositionsplätze werden am Schichttag angezeigt, und Jetzt im Dienst listet die Disponenten mit ihrem Status am Platz und ihren Pausen auf.</value>
+  </data>
+  <data name="FeatureExample.shift-dispatchers" xml:space="preserve">
+    <value>Eine Leitstelle betreibt reine Dispositionsschichten A, B und C mit je zwei Disponenten, und eine freiwillige Abteilung ergänzt ihre Wochenend-Anmeldeschicht um einen Dispositionsplatz.</value>
+  </data>
+  <data name="FeatureSetup.shift-dispatchers" xml:space="preserve">
+    <value>Öffnen Sie Schichten, legen Sie eine Schicht an oder bearbeiten Sie sie und aktivieren Sie Diese Schicht hat Disponenten. Legen Sie Benötigte Disponenten fest und haken Sie bei einer zugewiesenen Schicht die Personen im Dispositionsdienstplan an und markieren Sie eine Aufsicht am Platz; bei einer Anmeldeschicht wählen Disponenten am Schichttag Als Disponent anmelden. Hinzugefügt werden können nur Personen mit der Berechtigung Anmeldung Dispatch-App.</value>
+  </data>
+  <data name="Feature.dispatcher-breaks" xml:space="preserve">
+    <value>Disponentenpausen</value>
+  </data>
+  <data name="FeaturePurpose.dispatcher-breaks" xml:space="preserve">
+    <value>Planen Sie Pausen und Essenspausen der Disponenten des Tages auf einer Abdeckungszeitleiste, die zeigt, wer im Dienst ist, wer in Pause ist und wo die Besetzung unter das Minimum fallen würde.</value>
+  </data>
+  <data name="FeatureValue.dispatcher-breaks" xml:space="preserve">
+    <value>Pausen bleiben gestaffelt, damit der Platz nie leer ist: Pausen planen verteilt den Pausenplan einer Schicht ohne Überschneidungen auf ihre Disponenten, und der Planer warnt vor sich überschneidenden Pausen und Lücken, bevor sie entstehen. Disponenten werden vor jeder Pause erinnert und erhalten standardmäßig während der Pause keine Platzbenachrichtigungen.</value>
+  </data>
+  <data name="FeatureExample.dispatcher-breaks" xml:space="preserve">
+    <value>In einer 12-Stunden-Schicht mit drei Disponenten legt Pausen planen für jeden die 30-minütige Essenspause und zwei 15-minütige Pausen zu unterschiedlichen Zeiten, und jeder Disponent wird fünf Minuten vor Beginn einer Pause erinnert.</value>
+  </data>
+  <data name="FeatureSetup.dispatcher-breaks" xml:space="preserve">
+    <value>Legen Sie für jede Schicht einen Pausenplan fest oder einen Standard-Pausenplan in den Einstellungen Dispositionsplatz. Öffnen Sie dann Schichten, Disponentenpausen, wählen Sie ein Datum und einen Schichttag und verwenden Sie Pausen planen, oder planen Sie einzelne Pausen selbst. Aufsichten am Platz und Schichtverantwortliche planen die Pausen aller; Disponenten planen ihre eigenen nur in Schichten, die das erlauben. Eine Pause ist eine Dauer, eine früher begonnene Pause endet also auch früher.</value>
+  </data>
+  <data name="Feature.dispatcher-desk-settings" xml:space="preserve">
+    <value>Einstellungen Dispositionsplatz</value>
+  </data>
+  <data name="FeaturePurpose.dispatcher-desk-settings" xml:space="preserve">
+    <value>Aktivieren Sie die Weiterleitung und legen Sie fest, welche Arbeit an den Platz geht, wie lange ein Angebot wartet, was mit SMS und Anrufen geschieht, wenn alle Disponenten beschäftigt sind, was aus einem per E-Mail gemeldeten Einsatz wird und welche Regeln für Pausen und Dienst gelten.</value>
+  </data>
+  <data name="FeatureValue.dispatcher-desk-settings" xml:space="preserve">
+    <value>Die Abteilung legt einmal fest, wie sich der Platz verhält, von der Frage, wie schnell unbeantwortete Arbeit weitergeht, bis dazu, ob eine Pause weniger verfügbare Disponenten als das Minimum hinterlassen darf.</value>
+  </data>
+  <data name="FeatureExample.dispatcher-desk-settings" xml:space="preserve">
+    <value>Eine Abteilung sendet SMS und Anrufe an den Platz, gibt jedem Angebot 60 Sekunden, lässt Enhanced AI einen ausstehenden Einsatz ausfüllen, wenn niemand frei ist, und speichert per E-Mail gemeldete Einsätze als ausstehend zur Prüfung durch einen Disponenten.</value>
+  </data>
+  <data name="FeatureSetup.dispatcher-desk-settings" xml:space="preserve">
+    <value>Abteilungsadministratoren öffnen Schichten und dann Einstellungen Dispositionsplatz. Aktivieren Sie Arbeit an Disponenten im Dienst weiterleiten, wählen Sie An den Dispositionsplatz senden, die Angebotsdauer und die Einträge pro Disponent, was geschieht, wenn alle Disponenten beschäftigt sind, Per E-Mail gemeldete Einsätze und die Pausenregeln, und speichern Sie. Die Enhanced-AI-Optionen erfordern die Erweiterung Enhanced AI.</value>
+  </data>
+  <data name="Feature.dispatcher-desk-activity" xml:space="preserve">
+    <value>Disponentenaktivität</value>
+  </data>
+  <data name="FeaturePurpose.dispatcher-desk-activity" xml:space="preserve">
+    <value>Platzaktivität für bis zu 92 Tage: Arbeit nach Art, erledigte, übergelaufene, abgebrochene und eskalierte Einträge und die durchschnittliche Zeit bis zur Annahme sowie für jeden Disponenten angenommene, abgelehnte und verpasste Angebote, die Zeit bis zur Annahme und bis zum Abschluss und genommene, verpasste oder verspätet beendete Pausen.</value>
+  </data>
+  <data name="FeatureValue.dispatcher-desk-activity" xml:space="preserve">
+    <value>Sehen Sie, ob Arbeit schnell angenommen wird, wie oft sie überläuft oder eskaliert und ob Pausen pünktlich enden, und passen Sie anhand der Zahlen Besetzung, Angebotsdauer oder Pausenpläne an.</value>
+  </data>
+  <data name="FeatureExample.dispatcher-desk-activity" xml:space="preserve">
+    <value>Eine Aufsicht sieht, dass SMS am Freitagabend oft eskaliert sind, und setzt einen zweiten Disponenten in diese Schicht.</value>
+  </data>
+  <data name="FeatureSetup.dispatcher-desk-activity" xml:space="preserve">
+    <value>Abteilungsadministratoren und Aufsichten am Platz öffnen Schichten und dann Disponentenaktivität, wählen die Daten Von und Bis und wählen Anzeigen.</value>
+  </data>
+  <data name="Feature.intake-spam-screening" xml:space="preserve">
+    <value>Spam-Prüfung im Eingang</value>
+  </data>
+  <data name="FeaturePurpose.intake-spam-screening" xml:space="preserve">
+    <value>Halten Sie Spam und automatische Anrufe aus Ausstehende Einsätze heraus: Verwerfen Sie einen Eingangseinsatz als Spam und sperren Sie den Absender, begrenzen Sie, wie viele Einsätze eine Telefonnummer pro Stunde anlegen kann, lassen Sie Anrufer vor den Fragen die 1 drücken, und kennzeichnen Sie Nachrichten, die Enhanced AI als keinen Einsatz liest.</value>
+  </data>
+  <data name="FeatureValue.intake-spam-screening" xml:space="preserve">
+    <value>Disponenten verbringen ihre Zeit mit echten Meldungen. SMS und Anrufe eines gesperrten Absenders legen keine Einsätze an und erhalten keine Antwort, und ein geprüfter Einsatz behält seine Kennzeichnung in Ausstehende Einsätze, wird aber am Dispositionsplatz nicht angeboten; ein Disponent entscheidet weiterhin, was damit geschieht.</value>
+  </data>
+  <data name="FeatureExample.intake-spam-screening" xml:space="preserve">
+    <value>Eine Werbenummer schreibt immer wieder an die Nummer der Abteilung. Über dem Stundenlimit werden ihre SMS als Notizen an ihren offenen Einsatz angehängt, und ein Disponent verwirft diesen Einsatz als Spam und sperrt die Nummer für 30 Tage.</value>
+  </data>
+  <data name="FeatureSetup.intake-spam-screening" xml:space="preserve">
+    <value>Wählen Sie bei einem ausstehenden Eingangseinsatz Als Spam verwerfen und lassen Sie Absender zusätzlich sperren angehakt; der Einsatz wird abgebrochen, und niemand wird benachrichtigt. Gesperrte Absender stehen auf der Seite Eingangskanäle, wo Entsperren eine Sperre vorzeitig aufhebt. Das Stundenlimit gilt für SMS-, Sprach- und WhatsApp-Kanäle ohne zugelassene Absender, nie für E-Mail-, Chat- oder Webhook-Kanäle.</value>
   </data>
 </root>
